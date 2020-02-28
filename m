@@ -2,156 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C6C17361C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C08A817362A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 12:39:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbgB1LfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 06:35:12 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34610 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgB1LfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:35:11 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i6so1596198pfc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 03:35:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ouTGWuIUR4ceNSkskbl9Csp7Y8Pui/2+vsjeiQPYtso=;
-        b=IQb3ZBk1vuHvPHxRxGSKJCYTi8d30EqOzK2cHF2dZg+4pwg4qVI45YOAN+3U/mimRQ
-         GAu6KBfoDzJhMJAZsOjhi1sj+qocX8+zCwiHI3UlNzB0BEu7FB0VIQxssualMf3nON+S
-         FzjmVy498QDo9y2ei1T2ZRZhhYiHYEUzXKoY7DklI2j7uFgw2psu+hFQaHRkZ6WK2hWN
-         jyeEamqcwPOpi7fTiZdt+iOGED7GWqk8YuWQeo+7bRU3R+4g96avicc2ZacjMD6vmKdL
-         odfmN5kbK+1fvy1uNTYymPjRDNUU68fY2cFyIxwpN0z1NJPndEC0x7tKRRwtJmM+qpjH
-         VyLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ouTGWuIUR4ceNSkskbl9Csp7Y8Pui/2+vsjeiQPYtso=;
-        b=D+pEp1H+Agbdv3NvQfGCFRV4jCPrGQq2cSjIilPoOIuxbUGkySROUgghUB+mAiWg/x
-         pFBqOeVU54D8fYa+iC8+c/GqIKV19v2VDJ3itiGeUySP3MOjbk4AUnE0hOwRTsjfJG6b
-         ZZ1z0m5ULDKNfbi8NZEJXXbesb8+znSVQcvIaly4yfKtLVHcf3NgA6ZZN2AAj++tk1Zd
-         LLhohZz7PEb3C0Zj/Mf6o/UimjYMWkGpoe8iqtoeLs4gN0viAWjDtt4NiVlFEwCUmNOb
-         qtYZ83yIPlbOqHzK0xQJwypqkATNI44qB/S3jrfaxroA2cfeD8lulfQM8NJu7dqsG3oG
-         rLEA==
-X-Gm-Message-State: APjAAAUOMETf1A5FoWZJM0BVJA3KBA+LgvOBnqc0G0yMMDd+t/ESX/FT
-        y7hbVoDvMnEJivrA8aEntw==
-X-Google-Smtp-Source: APXvYqwT4s9eUrkPHKnI8fgZNrAbSk5HCS7MHbN9UD+OioNjos79T6t0N5IxmNUiH9pBXZYSIbQvuA==
-X-Received: by 2002:a62:7d16:: with SMTP id y22mr3962132pfc.220.1582889709431;
-        Fri, 28 Feb 2020 03:35:09 -0800 (PST)
-Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d14sm11402168pfq.117.2020.02.28.03.35.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Feb 2020 03:35:08 -0800 (PST)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     linux-mm@kvack.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCHv5 3/3] mm/gup_benchemark: add LONGTERM_BENCHMARK test in gup fast path
-Date:   Fri, 28 Feb 2020 19:32:30 +0800
-Message-Id: <1582889550-9101-4-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1582889550-9101-1-git-send-email-kernelfans@gmail.com>
-References: <1582889550-9101-1-git-send-email-kernelfans@gmail.com>
+        id S1726748AbgB1LjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 06:39:06 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44638 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726451AbgB1LjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 06:39:05 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 11420E61C5EEB366BDFB;
+        Fri, 28 Feb 2020 19:38:46 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 28 Feb 2020 19:38:36 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <axboe@kernel.dk>
+CC:     <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <takondra@cisco.com>,
+        <tj@kernel.org>, "John Garry" <john.garry@huawei.com>
+Subject: [PATCH] libata: Remove extra scsi_host_put() in ata_scsi_add_hosts()
+Date:   Fri, 28 Feb 2020 19:33:35 +0800
+Message-ID: <1582889615-146214-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a GUP_LONGTERM_BENCHMARK ioctl to test longterm pin in gup fast
-path.
+If the call to scsi_add_host_with_dma() in ata_scsi_add_hosts() fails,
+then we may get use-after-free KASAN warns:
 
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Shuah Khan <shuah@kernel.org>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
+==================================================================
+BUG: KASAN: use-after-free in kobject_put+0x24/0x180
+Read of size 1 at addr ffff0026b8c80364 by task swapper/0/1
+CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W         5.6.0-rc3-00004-g5a71b206ea82-dirty #1765
+Hardware name: Huawei TaiShan 200 (Model 2280)/BC82AMDD, BIOS 2280-V2 CS V3.B160.01 02/24/2020
+Call trace:
+dump_backtrace+0x0/0x298
+show_stack+0x14/0x20
+dump_stack+0x118/0x190
+print_address_description.isra.9+0x6c/0x3b8
+__kasan_report+0x134/0x23c
+kasan_report+0xc/0x18
+__asan_load1+0x5c/0x68
+kobject_put+0x24/0x180
+put_device+0x10/0x20
+scsi_host_put+0x10/0x18
+ata_devres_release+0x74/0xb0
+release_nodes+0x2d0/0x470
+devres_release_all+0x50/0x78
+really_probe+0x2d4/0x560
+driver_probe_device+0x7c/0x148
+device_driver_attach+0x94/0xa0
+__driver_attach+0xa8/0x110
+bus_for_each_dev+0xe8/0x158
+driver_attach+0x30/0x40
+bus_add_driver+0x220/0x2e0
+driver_register+0xbc/0x1d0
+__pci_register_driver+0xbc/0xd0
+ahci_pci_driver_init+0x20/0x28
+do_one_initcall+0xf0/0x608
+kernel_init_freeable+0x31c/0x384
+kernel_init+0x10/0x118
+ret_from_fork+0x10/0x18
+
+Allocated by task 5:
+save_stack+0x28/0xc8
+__kasan_kmalloc.isra.8+0xbc/0xd8
+kasan_kmalloc+0xc/0x18
+__kmalloc+0x1a8/0x280
+scsi_host_alloc+0x44/0x678
+ata_scsi_add_hosts+0x74/0x268
+ata_host_register+0x228/0x488
+ahci_host_activate+0x1c4/0x2a8
+ahci_init_one+0xd18/0x1298
+local_pci_probe+0x74/0xf0
+work_for_cpu_fn+0x2c/0x48
+process_one_work+0x488/0xc08
+worker_thread+0x330/0x5d0
+kthread+0x1c8/0x1d0
+ret_from_fork+0x10/0x18
+
+Freed by task 5:
+save_stack+0x28/0xc8
+__kasan_slab_free+0x118/0x180
+kasan_slab_free+0x10/0x18
+slab_free_freelist_hook+0xa4/0x1a0
+kfree+0xd4/0x3a0
+scsi_host_dev_release+0x100/0x148
+device_release+0x7c/0xe0
+kobject_put+0xb0/0x180
+put_device+0x10/0x20
+scsi_host_put+0x10/0x18
+ata_scsi_add_hosts+0x210/0x268
+ata_host_register+0x228/0x488
+ahci_host_activate+0x1c4/0x2a8
+ahci_init_one+0xd18/0x1298
+local_pci_probe+0x74/0xf0
+work_for_cpu_fn+0x2c/0x48
+process_one_work+0x488/0xc08
+worker_thread+0x330/0x5d0
+kthread+0x1c8/0x1d0
+ret_from_fork+0x10/0x18
+
+There is also refcount issue, as well:
+WARNING: CPU: 1 PID: 1 at lib/refcount.c:28 refcount_warn_saturate+0xf8/0x170
+
+The issue is that we make an erroneous extra call to scsi_host_put()
+for that host:
+
+So in ahci_init_one()->ata_host_alloc_pinfo()->ata_host_alloc(), we setup
+a device release method - ata_devres_release() - which intends to release
+the SCSI hosts:
+
+static void ata_devres_release(struct device *gendev, void *res)
+{
+	...
+	for (i = 0; i < host->n_ports; i++) {
+		struct ata_port *ap = host->ports[i];
+
+		if (!ap)
+			continue;
+
+		if (ap->scsi_host)
+			scsi_host_put(ap->scsi_host);
+
+	}
+	...
+}
+
+However in the ata_scsi_add_hosts() error path, we also call
+scsi_host_put() for the SCSI hosts.
+
+Fix by removing the the scsi_host_put() calls in ata_scsi_add_hosts() and
+leave this to ata_devres_release().
+
+Fixes: f31871951b38 ("libata: separate out ata_host_alloc() and ata_host_register()")
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- mm/gup_benchmark.c                         | 7 +++++++
- tools/testing/selftests/vm/gup_benchmark.c | 6 +++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+Another approach here is to keep the scsi_host_put() call in
+ata_scsi_add_hosts(), but just clear ap->scsi_host there. It may be
+better, as it keeps the alloc and put together, which is more logical.
 
-diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-index 8dba38e..bf61e7a 100644
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -8,6 +8,7 @@
- #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
- #define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
- #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
-+#define GUP_FAST_LONGTERM_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
+I went with this one as it removes code, instead of adding it, above. And
+it also ensures we have a single location for the scsi_host_put() for
+ap->host set.
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index eb2eb599e602..061eebf85e6d 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -4562,22 +4562,19 @@ int ata_scsi_add_hosts(struct ata_host *host, struct scsi_host_template *sht)
+ 		 */
+ 		shost->max_host_blocked = 1;
  
- struct gup_benchmark {
- 	__u64 get_delta_usec;
-@@ -57,6 +58,11 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
- 			nr = get_user_pages_fast(addr, nr, gup->flags,
- 						 pages + i);
- 			break;
-+		case GUP_FAST_LONGTERM_BENCHMARK:
-+			nr = get_user_pages_fast(addr, nr,
-+					(gup->flags & 1) | FOLL_LONGTERM,
-+					 pages + i);
-+			break;
- 		case GUP_LONGTERM_BENCHMARK:
- 			nr = get_user_pages(addr, nr,
- 					    gup->flags | FOLL_LONGTERM,
-@@ -103,6 +109,7 @@ static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
+-		rc = scsi_add_host_with_dma(ap->scsi_host,
+-						&ap->tdev, ap->host->dev);
++		rc = scsi_add_host_with_dma(shost, &ap->tdev, ap->host->dev);
+ 		if (rc)
+-			goto err_add;
++			goto err_alloc;
+ 	}
  
- 	switch (cmd) {
- 	case GUP_FAST_BENCHMARK:
-+	case GUP_FAST_LONGTERM_BENCHMARK:
- 	case GUP_LONGTERM_BENCHMARK:
- 	case GUP_BENCHMARK:
- 		break;
-diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
-index 389327e..5a01c538 100644
---- a/tools/testing/selftests/vm/gup_benchmark.c
-+++ b/tools/testing/selftests/vm/gup_benchmark.c
-@@ -17,6 +17,7 @@
- #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
- #define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
- #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
-+#define GUP_FAST_LONGTERM_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
+ 	return 0;
  
- /* Just the flags we need, copied from mm.h: */
- #define FOLL_WRITE	0x01	/* check pte is writable */
-@@ -40,7 +41,7 @@ int main(int argc, char **argv)
- 	char *file = "/dev/zero";
- 	char *p;
+- err_add:
+-	scsi_host_put(host->ports[i]->scsi_host);
+  err_alloc:
+ 	while (--i >= 0) {
+ 		struct Scsi_Host *shost = host->ports[i]->scsi_host;
  
--	while ((opt = getopt(argc, argv, "m:r:n:f:tTLUwSH")) != -1) {
-+	while ((opt = getopt(argc, argv, "m:r:n:f:tTlLUwSH")) != -1) {
- 		switch (opt) {
- 		case 'm':
- 			size = atoi(optarg) * MB;
-@@ -57,6 +58,9 @@ int main(int argc, char **argv)
- 		case 'T':
- 			thp = 0;
- 			break;
-+		case 'l':
-+			cmd = GUP_FAST_LONGTERM_BENCHMARK;
-+			break;
- 		case 'L':
- 			cmd = GUP_LONGTERM_BENCHMARK;
- 			break;
++		/* scsi_host_put() is in ata_devres_release() */
+ 		scsi_remove_host(shost);
+-		scsi_host_put(shost);
+ 	}
+ 	return rc;
+ }
 -- 
-2.7.5
+2.17.1
 
