@@ -2,209 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B7E173849
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:27:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E33173850
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgB1N06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:26:58 -0500
-Received: from mx1.tq-group.com ([62.157.118.193]:52777 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbgB1N05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:26:57 -0500
-IronPort-SDR: XOPpaeBNeTzozFGsYiPqCIOKkf5giIjyyTeFjQ/yBOBmOJ9LdFsjOBJyBJwO4mmF1mS9/OAHtM
- FTHL7yeIbgmrL1THuX/CK96bjW1vRF2juN3VRJiY3Kz4iDKgwVlAUY2EHfYGZc94a5ZvhxhWJQ
- G1IdktYwFEWk12+TZ/BAMVqaIGDjpDIOx8xFdWyibxEZ0CBZoFpJVkwBcJa9CEacvViLwS5AOH
- t7PMN1bvfomWboVfC0Tr0BWnM4+WuUSOtkSKD76pNAZ1nypyuyPBuN2ouwCRN5glfzfHGwqLVo
- ORA=
-X-IronPort-AV: E=Sophos;i="5.70,496,1574118000"; 
-   d="scan'208";a="11157171"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 28 Feb 2020 14:26:55 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 28 Feb 2020 14:26:55 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 28 Feb 2020 14:26:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1582896415; x=1614432415;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7y5bI79HEJXh1PgG/zHqrk8tD2vnb6fquG3FliyVWMY=;
-  b=XJgLJvBa4jLoF14Kwlrbd/2N4USaktu8Zxj6KNu2nKxBzSPprjZEVx1T
-   /PNmew1Z3J/3BNtdOWXcUwZZx/7tOOcYbz/gnjgTgXGBbOg/xO1HvAwBF
-   cg7XUJKrehh/ynzKqt1I6YSPdvo/t1U81fnsNFUh720lG/qmyqczYZ7mc
-   BDJqTYpWepvt5bJ4BsUat42mZU8wVaQ5j+c3O63kJB8HOXaM7z98O/XCs
-   iehcjr8nDPeByA0d+UeR57vmd5sa09v9JjBbl1BSew0tLRlcrQyg4rT70
-   QWYuer0AyY7c3pL1QE19L6s6xT9CvhzewnRqBFPtnLgWWwiBrjgOPiavs
-   Q==;
-IronPort-SDR: D2bOJmLuTR8ZhZ+KEh+Jmvr7rt9otbDN4djc3ixeqEfiFm36SQVabQUP/ArnfI4LWCZgaPjkcv
- io3xmxewNjkz0egwiXBdgRX/0AoYcmG4UGbFYmBahvhrWES1ZgcqKQzfjfJqSfHC0dExqeJRu0
- /VcmHiYdo1Tuz1pk6oMU+EYqRZFdvIiV6XOr3GeCW6ec/Ylv1a4inGjh/x6DraT6npBalxhnoy
- KnZkJ334d4Ctvw91UsDXzNh3B1pcJx1UAxKKr+FaVuFnZ/YzZv+bOPN/hSWD7EDCXmhhBfgCFa
- 9qE=
-X-IronPort-AV: E=Sophos;i="5.70,496,1574118000"; 
-   d="scan'208";a="11157170"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 28 Feb 2020 14:26:55 +0100
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id DDD67280065;
-        Fri, 28 Feb 2020 14:27:03 +0100 (CET)
-Message-ID: <23144d65d94460d70fd66d67d1f9875303c7bce8.camel@ew.tq-group.com>
-Subject: Re: (EXT) Re: (EXT) Re: [PATCH 1/4] pwm: pca9685: remove unused
- duty_cycle struct element
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 28 Feb 2020 14:26:52 +0100
-In-Reply-To: <20200226192103.bodplhjson7drvgm@pengutronix.de>
-References: <20200226135229.24929-1-matthias.schiffer@ew.tq-group.com>
-         <20200226151034.7i3h5blmrwre2yzg@pengutronix.de>
-         <32ec35c2b3da119dd2c7bc09742796a0d8a9607e.camel@ew.tq-group.com>
-         <20200226192103.bodplhjson7drvgm@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        id S1726733AbgB1N2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:28:41 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46488 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbgB1N2l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:28:41 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j7so2879989wrp.13;
+        Fri, 28 Feb 2020 05:28:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NrHT7T88RoyQjD1urqyZZ0aRh9a3eutzKOCuX5K1yeY=;
+        b=j6znWTYLAzRRvkNdjZ9zjIGXFuDM7tFBO5sd5AZONq1ZAuvPhGMFHHQOAoP61wNFNI
+         mNHtRD/kP22UvMXlJ5U3VoD1aUGzx6sA9covL0XoeczLGAAjioSJiDDNcQC4NskJXa6q
+         0EFE3AyjZ/CkTqKnG23nCGcNxYr4hN0h+3Z6ZnqPkULjB6NGlS0UIKjC1FZm8taT0yTZ
+         qEhmjFrXYy3BYHOU3YFz9EzKp63awNX/eiyDNLZcfi3ZZVdeM5B6PwIZzbFriEQPT8zv
+         ZIgCDKgj2COpOcdpjZ8iZDxOlFRZNROL9pmbfA8xT5yHobnGvQ0uIRxTTMHafZufC2m5
+         +tow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NrHT7T88RoyQjD1urqyZZ0aRh9a3eutzKOCuX5K1yeY=;
+        b=Cbc70BVQ/PKBosUkN5UtwqX8R5D4dksQz9/1GwL2UTZCGMltJIdxJJfwrFhgxJY7Ll
+         UXoq/mwMFSmCAuKHcb57bM2PBWuTBqe878/N3NPoc8AVIlkY+xT0vepcLfeZ/bXKdfKr
+         DnuvnVTssdlOakgdMNMeh6GTBPobFSXYmmfqy8drYUElhK7WesB/NpBA67aFN9IghsAe
+         UWqA4DBpCXgFrEbBcXA2cIqMP11uqQ3+ndZY/9TxssKb+ZBACmy33xCaNtZlFSei5Arm
+         t2zfk0AfeNWEpEkMLNryERvon7L8TXkvXF/0EoOxg3sbU7QQjWS4xHSTUOcp68iWROlF
+         ci1Q==
+X-Gm-Message-State: APjAAAVlseQfpcmyTK7QqT9dQW8GvfH2FpzKUnnn2r3br1g4T48fxAai
+        9PdDKBNMfwaF7PjSgApCZ8A=
+X-Google-Smtp-Source: APXvYqzcazyu+zLUhQgdULQfW0b/6JUEwzdAx/yhhMPyZiEnDR8uFexywppZaicqNefTUid2wvto4g==
+X-Received: by 2002:a5d:5609:: with SMTP id l9mr4697197wrv.48.1582896518952;
+        Fri, 28 Feb 2020 05:28:38 -0800 (PST)
+Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id q9sm12906735wrx.18.2020.02.28.05.28.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 05:28:38 -0800 (PST)
+Subject: Re: [PATCH 3/4] dt-bindings: arm: fix Rockchip rk3399-evb bindings
+To:     Robin Murphy <robin.murphy@arm.com>, heiko@sntech.de
+Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+References: <20200228061436.13506-1-jbx6244@gmail.com>
+ <20200228061436.13506-3-jbx6244@gmail.com>
+ <78b8b53f-2e2a-3804-41fb-bb2610947ca2@arm.com>
+From:   Johan Jonker <jbx6244@gmail.com>
+Message-ID: <229c3511-d99d-8bac-6241-0088c5fc13ef@gmail.com>
+Date:   Fri, 28 Feb 2020 14:28:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <78b8b53f-2e2a-3804-41fb-bb2610947ca2@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-26 at 20:21 +0100, Uwe Kleine-König wrote:
-> On Wed, Feb 26, 2020 at 06:03:02PM +0100, Matthias Schiffer wrote:
-> > On Wed, 2020-02-26 at 16:10 +0100, Uwe Kleine-König wrote:
-> > > Hello Matthias,
-> > > 
-> > > as you seem to have this hardware on your desk, it would be great
-> > > if
-> > > you
-> > > could answer the following questions:
-> > > 
-> > >  - Does the hardware complete the currently running period before
-> > >    applying a new setting?
-> > 
-> > The datasheet claims:
-> > 
-> > > Because the loading of the LEDn_ON and LEDn_OFF registers is via
-> > > the
-> > > I 2 C-bus, and
-> > > asynchronous to the internal oscillator, we want to ensure that
-> > > we do
-> > > not see any visual
-> > > artifacts of changing the ON and OFF values. This is achieved by
-> > > updating the changes at
-> > > the end of the LOW cycle.
-> > 
-> > My interpretation is that the hardware will complete its period
-> > before
-> > applying the new settings. I might check with a scope tomorrow-ish.
-> 
-> I agree given that you can update duty_cycle and period in a single
-> write as you considered below. Maybe it is worth playing with small
-> periods and a slow i2c bus speed (or hijack the bus by simulating a
-> clock stretch).
->  
-> > >  - Is this racy somehow (i.e. can it happen that when going from
-> > >    duty_cycle/period = 1000/5000 to duty_cycle/period =
-> > > 4000/10000 the
-> > >    output is 1000/10000 (or 4000/5000) for one cycle)?
-> > 
-> > It currently is racy. It should be possible to fix that either by
-> > updating all 4 registers in a single I2C write, or by using the
-> > "update
-> > on ACK" mode which requires all 4 registers to be updated before
-> > the
-> > new setting is applied (I'm not sure if this mode would require
-> > using a
-> > single I2C write as well though).
-> 
-> I can offer a second pair of eyeballs to interpret the datasheet.
-> Will
-> take a look tomorrow.
-> 
-> > >  - Does the hardware complete the currently running period before
-> > >    .enabled = false is configured?
-> > 
-> > As my interpretation is that new settings are applied
-> > asynchronously, I
-> > assume that the final running period is completed after .enabled is
-> > set
-> > to false.
-> > 
-> > >  - How does the output pin behave on a disabled PWM. (Usual
-> > > candidates
-> > >    are: freeze where is just happens to be, constant inactive and
-> > >    High-Z).
-> > 
-> > Constant inactive. This is also the case when the chip is put into
-> > sleep mode. Note that the interpretation of "inactive" depends in
-> > the
-> > invert flag in the MODE2 register.
-> 
-> This is optimal.
-> 
-> > As it turns out, this driver is broken in yet another way I didn't
-> > find
-> > before: For changing the global prescaler the chip needs to be put
-> > into
-> > sleep mode, but the driver doesn't follow the restart sequence
-> > described in the datasheet when waking it back up. In consequence,
-> > changing the period of one PWM does not only modify the period of
-> > all
-> > PWMs (which is bad enough, but can't be avoided with this
-> > hardware),
-> > but it also leaves all PWMs disabled...
-> > 
-> > As this hardware only has a single prescaler for all PWMs, should
-> > changing the period for individual PWMs even be allowed at all?
-> > Maybe
-> > only when all other PWMs are inactive?
-> 
-> yes, that is the general approach. Please document this in a
-> Limitiations: paragraph. See drivers/pwm/pwm-imx-tpm.c which has a
-> similar problem.
+Hi Robin,
 
-This raises the question what to do about the GPIO mode supported by
-the driver: While the period does not affect GPIO usage of PWMs,
-changing the period would put the chip in sleep mode and thus briefly
-disable active GPIOs. I assume that this should preclude changing the
-period when there are any PWMs requsted as GPIOs, but now the order in
-which things are initialized becomes crucial:
+When I look at the review process of rk3399-evb.dts
+it is mentioned here:
 
-- All references to PWMs of the same PCA9685 must specify the same
-period
-- When requesting a PWM as GPIO, no period can be specified
-=> When a PWM referenced as GPIO is requested before the first actual
-PWM, setting the correct period becomes impossible.
+https://lore.kernel.org/patchwork/patch/672327/
 
-I can't think of a nice solution that doesn't require serious rework -
-maybe we need at least an optional period property in DTS to support
-this case? This could either be implemented as a default period or a
-fixed period.
+>> +	model = "Rockchip RK3399 Evaluation Board";
+>> +	compatible = "rockchip,rk3399-evb", "rockchip,rk3399",
+>> +		     "google,rk3399evb-rev2", google,rk3399evb-rev1",
+>> +		     "google,rk3399evb-rev0" ;
+> 
+> can you check against which compatibles that coreboot really matches?
+> 
+> As we said that the evb changed between rev1 and rev2, I would expect the 
+> compatible to be something like
+> 
+> 	compatible = "rockchip,rk3399-evb",  "google,rk3399evb-rev2", 
+> 			"rockchip,rk3399";
+> 
+> leaving out the rev1 and rev0
 
-A more elaborate solution could be to remove the GPIO code from PCA9685
-and implement a generic GPIO-PWM driver instead that could be
-configured in DTS (again, I have no idea how to support non-DTS
-platforms). Unfortunately, I assume I won't have time to realize such a
-solution myself.
+The consensus in version 4 ends in what is shown in the dts file, so I
+changed it in rockchip.yaml. Things from the past maybe can better be
+explained by Heiko. Please advise if this patch needs to change and in
+what file.
 
-Matthias
+Kind regards,
+
+Johan
 
 
->  
-> > I could imagine setting it in DTS instead (but I'm not sure what to
-> > do
-> > about non-OF users of this driver, for example when configured via
-> > ACPI).
+On 2/28/20 1:42 PM, Robin Murphy wrote:
+> On 28/02/2020 6:14 am, Johan Jonker wrote:
+>> A test with the command below gives this error:
+>>
+>> arch/arm64/boot/dts/rockchip/rk3399-evb.dt.yaml: /: compatible:
+>> ['rockchip,rk3399-evb', 'rockchip,rk3399', 'google,rk3399evb-rev2']
+>> is not valid under any of the given schemas
+>>
+>> Fix this error by adding 'google,rk3399evb-rev2' to the compatible
+>> property in rockchip.yaml
+>>
+>> make ARCH=arm64 dtbs_check
+>> DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/rockchip.yaml
+>>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/rockchip.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> b/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> index d303790f5..6c6e8273e 100644
+>> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> @@ -509,6 +509,7 @@ properties:
+>>           items:
+>>             - const: rockchip,rk3399-evb
+>>             - const: rockchip,rk3399
+>> +          - const: google,rk3399evb-rev2
 > 
-> I don't like fixing the period in the device tree. This isn't a
-> hardware
-> property and it is less flexible than possible.
+> This looks wrong - the board can't reasonably be a *more* general match
+> than the SoC. If this is supposed to represent a specific variant of the
+> basic EVB design then it should come before "rockchip,rk3399-evb" (and
+> possibly be optional if other variants also exist).
 > 
-> Best regards
-> Uwe
+> Robin.
 > 
+>>           - description: Rockchip RK3399 Sapphire standalone
+>>           items:
+>>
 
