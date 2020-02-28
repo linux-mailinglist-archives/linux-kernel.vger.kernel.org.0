@@ -2,136 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A88D172CE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D45F172CEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:18:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbgB1AQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:16:42 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:40327 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729966AbgB1AQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:16:41 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48T97q5Fx1z9tyJd;
-        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=sz19UU8U; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id uJf4Od7wpm_Y; Fri, 28 Feb 2020 01:16:39 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48T97q3DQBz9tyJg;
-        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1582848999; bh=VgMuq2wX8mbn+y/Awc3vwO6firKTtF6E52gAdT5jeTc=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=sz19UU8UkVIMATYG5vnX/RfjxCA7NCjRJ8yBFSDKxZPyHqb7Dq+aEG/TP5fX6vW12
-         cwB86ltfUnkTBN1S+IaZT3aQGgmPZleouObZijZe45JW5PcVWl4qVBYtNG7cmCxdHC
-         ofj6set5qtRi3YA35+xep1RBEGdfk7PRx13Ri3TU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BED968B883;
-        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ieTAiVBS7p_k; Fri, 28 Feb 2020 01:16:39 +0100 (CET)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 766B88B886;
-        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
-Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id EF3586540E; Fri, 28 Feb 2020 00:14:49 +0000 (UTC)
-Message-Id: <8402c516023da1371953a65af7df2008758ea0c4.1582848567.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1582848567.git.christophe.leroy@c-s.fr>
-References: <cover.1582848567.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 13/13] powerpc/ptrace: move ptrace_triggered() into
- hw_breakpoint.c
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, mikey@neuling.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 28 Feb 2020 00:14:49 +0000 (UTC)
+        id S1730314AbgB1ASr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Feb 2020 19:18:47 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36894 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730059AbgB1ASr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 19:18:47 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a141so1410600wme.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:18:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=Ru4d08QosRwi5UKUDayggsg8+1o9m63515MgXLmokW8=;
+        b=N7Dru5GqzE/OcdgfSN1/3BQ3NNZiOLaahIZAlit1v1rOTfMl+hLle2Dd4GfdXlRShG
+         zLy3WZ7d4KLAYpe08uYHhobMYV+WnOcgo1bTmnhn377N4G++WURA/DEOtUyBn3Gf4SHa
+         9JjrLLgP8R2LUObI2Q5wYuvsepZWJT6vSsc1sATgGrBJY6A0i/DkfUnb0P8XQQ11PjuE
+         zMduzVfK6WDh72Bny18D5qiKhXNava/vOVIxnWKJcL896GGj8zsom+yJVvTDDYmSIY3f
+         IK66bOijoZoAXaK4GQzyWjfnGIIRhyIKi1PQzDl9zmWRWwVLtS9FK7VZeDJcbnqUXEUh
+         hPAA==
+X-Gm-Message-State: APjAAAUVU2KINzY59BN3PhqRqLArjHv5T8o9RPFd+XfbIe9anpP9FJzm
+        DIxokg8gqsaGrz44PRWng3RgYw==
+X-Google-Smtp-Source: APXvYqy+BY8r4CAlQjGnmuK0o8k329k009mLT7m3y33mtID+0H5FRuAG3RePEOUn51L+FOrcaJrpKA==
+X-Received: by 2002:a05:600c:291d:: with SMTP id i29mr1383321wmd.39.1582849124239;
+        Thu, 27 Feb 2020 16:18:44 -0800 (PST)
+Received: from Google-Pixel-3a.fritz.box (ip5f5bf7ec.dynamic.kabel-deutschland.de. [95.91.247.236])
+        by smtp.gmail.com with ESMTPSA id d17sm9543105wmb.36.2020.02.27.16.18.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 16:18:43 -0800 (PST)
+Date:   Fri, 28 Feb 2020 01:18:44 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <966567c7dbaa26a06730d796354f8a086c0ee288.1582847778.git.christophe.leroy@c-s.fr>
+References: <966567c7dbaa26a06730d796354f8a086c0ee288.1582847778.git.christophe.leroy@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] selftests: pidfd: Add pidfd_fdinfo_test in .gitignore
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Christian Kellner <christian@kellner.me>,
+        Shuah Khan <skhan@linuxfoundation.org>
+CC:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+Message-ID: <DB631DFB-DF8B-4B95-AC50-74F1ED733CAE@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ptrace_triggered() is declared in asm/hw_breakpoint.h and
-only needed when CONFIG_HW_BREAKPOINT is set, so move it
-into hw_breakpoint.c
+On February 28, 2020 1:00:08 AM GMT+01:00, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>The commit identified below added pidfd_fdinfo_test
+>but failed to add it to .gitignore
+>
+>Fixes: 2def297ec7fb ("pidfd: add tests for NSpid info in fdinfo")
+>Cc: stable@vger.kernel.org
+>Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>---
+> tools/testing/selftests/pidfd/.gitignore | 1 +
+> 1 file changed, 1 insertion(+)
+>
+>diff --git a/tools/testing/selftests/pidfd/.gitignore
+>b/tools/testing/selftests/pidfd/.gitignore
+>index 3a779c084d96..39559d723c41 100644
+>--- a/tools/testing/selftests/pidfd/.gitignore
+>+++ b/tools/testing/selftests/pidfd/.gitignore
+>@@ -2,4 +2,5 @@ pidfd_open_test
+> pidfd_poll_test
+> pidfd_test
+> pidfd_wait
+>+pidfd_fdinfo_test
+> pidfd_getfd_test
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
-v4: removing inclusing of hw_breakpoint.h now. Previously it was done too early.
----
- arch/powerpc/kernel/hw_breakpoint.c | 16 ++++++++++++++++
- arch/powerpc/kernel/ptrace/ptrace.c | 19 -------------------
- 2 files changed, 16 insertions(+), 19 deletions(-)
+Thanks for spotting this.
+I'll pick this up along with other fixes I have waiting.
 
-diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
-index 2462cd7c565c..2c0be9d941cf 100644
---- a/arch/powerpc/kernel/hw_breakpoint.c
-+++ b/arch/powerpc/kernel/hw_breakpoint.c
-@@ -427,3 +427,19 @@ void hw_breakpoint_pmu_read(struct perf_event *bp)
- {
- 	/* TODO */
- }
-+
-+void ptrace_triggered(struct perf_event *bp,
-+		      struct perf_sample_data *data, struct pt_regs *regs)
-+{
-+	struct perf_event_attr attr;
-+
-+	/*
-+	 * Disable the breakpoint request here since ptrace has defined a
-+	 * one-shot behaviour for breakpoint exceptions in PPC64.
-+	 * The SIGTRAP signal is generated automatically for us in do_dabr().
-+	 * We don't have to do anything about that here
-+	 */
-+	attr = bp->attr;
-+	attr.disabled = true;
-+	modify_user_hw_breakpoint(bp, &attr);
-+}
-diff --git a/arch/powerpc/kernel/ptrace/ptrace.c b/arch/powerpc/kernel/ptrace/ptrace.c
-index a44f6e5e05ff..f6e51be47c6e 100644
---- a/arch/powerpc/kernel/ptrace/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace/ptrace.c
-@@ -18,7 +18,6 @@
- #include <linux/regset.h>
- #include <linux/tracehook.h>
- #include <linux/audit.h>
--#include <linux/hw_breakpoint.h>
- #include <linux/context_tracking.h>
- #include <linux/syscalls.h>
- 
-@@ -31,24 +30,6 @@
- 
- #include "ptrace-decl.h"
- 
--#ifdef CONFIG_HAVE_HW_BREAKPOINT
--void ptrace_triggered(struct perf_event *bp,
--		      struct perf_sample_data *data, struct pt_regs *regs)
--{
--	struct perf_event_attr attr;
--
--	/*
--	 * Disable the breakpoint request here since ptrace has defined a
--	 * one-shot behaviour for breakpoint exceptions in PPC64.
--	 * The SIGTRAP signal is generated automatically for us in do_dabr().
--	 * We don't have to do anything about that here
--	 */
--	attr = bp->attr;
--	attr.disabled = true;
--	modify_user_hw_breakpoint(bp, &attr);
--}
--#endif /* CONFIG_HAVE_HW_BREAKPOINT */
--
- /*
-  * Called by kernel/ptrace.c when detaching..
-  *
--- 
-2.25.0
-
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
