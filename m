@@ -2,43 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F611734C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C7E1734C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:58:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbgB1J6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 04:58:39 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38428 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726413AbgB1J6i (ORCPT
+        id S1727205AbgB1J6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 04:58:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23215 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726413AbgB1J6k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 04:58:38 -0500
+        Fri, 28 Feb 2020 04:58:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582883917;
+        s=mimecast20190719; t=1582883919;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=eLTzVywpCI6O5gjHw18zgQ6Xjgb+LJcKXSKnwdCMRbw=;
-        b=Huc4nSFNTOm9tv9cc8U3b9S7ymOoB1RiPHhSB86//U7OM+X6SWeBUSQFPtEn0xDzny7Kkf
-        hhWqVQZ7DXWMPQ37QhaIDXiTxpqPqhx8/7MhwR3sdGwJp14ZwDXvpnxNz9/w2PtTZrgsfx
-        MyG2KOkZFk4RXyWJNhpvZ9rHIM8yEBY=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MNW9HVPqI0kTe9A0LBBiSsbv8ETEfJ83EjG1Wn7sou0=;
+        b=iNRAbSPOKoFqjQ+a2eaF1sTRBljmdZcWWJxAspAcsBglM5THPde9GSg6xYSw5jAuI8QWGE
+        vMtroG4plU4KIEIler/NN9gxBENdOXPopH4FfqkGrHg/PRS5hTxqo5TFuaF6VjZ60oIpma
+        NbkBQZeIGoMpnPkenGEs6LBXi5+2UgI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-Gsr-x1hANzei_YA3dUEg1Q-1; Fri, 28 Feb 2020 04:58:31 -0500
-X-MC-Unique: Gsr-x1hANzei_YA3dUEg1Q-1
+ us-mta-389-wBE7xIANOIGU3sQYTsMG0A-1; Fri, 28 Feb 2020 04:58:34 -0500
+X-MC-Unique: wBE7xIANOIGU3sQYTsMG0A-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 57F4F18FE861;
-        Fri, 28 Feb 2020 09:58:30 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CFD30800D5B;
+        Fri, 28 Feb 2020 09:58:32 +0000 (UTC)
 Received: from t480s.redhat.com (ovpn-117-180.ams2.redhat.com [10.36.117.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 56F8990793;
-        Fri, 28 Feb 2020 09:58:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A40C76E3EE;
+        Fri, 28 Feb 2020 09:58:30 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>
-Subject: [PATCH v2 0/2] mm/memory_hotplug: __add_pages() and __remove_pages() cleanups
-Date:   Fri, 28 Feb 2020 10:58:17 +0100
-Message-Id: <20200228095819.10750-1-david@redhat.com>
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH v2 1/2] mm/memory_hotplug: simplify calculation of number of pages in __remove_pages()
+Date:   Fri, 28 Feb 2020 10:58:18 +0100
+Message-Id: <20200228095819.10750-2-david@redhat.com>
+In-Reply-To: <20200228095819.10750-1-david@redhat.com>
+References: <20200228095819.10750-1-david@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Content-Transfer-Encoding: quoted-printable
@@ -47,30 +56,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the follow up of:
-	"[PATCH v1] mm/memory_hotplug: Easier calculation to get pages to
-	 next section boundary" [1]
+In commit 52fb87c81f11 ("mm/memory_hotplug: cleanup __remove_pages()"),
+we cleaned up __remove_pages(), and introduced a shorter variant to
+calculate the number of pages to the next section boundary.
 
-Cleanups as a follow up on commit 52fb87c81f11 ("mm/memory_hotplug:
-cleanup __remove_pages()").
+Turns out we can make this calculation easier to read. We always want to
+have the number of pages (> 0) to the next section boundary, starting fro=
+m
+the current pfn.
 
-v1 -> v2:
-- "mm/memory_hotplug: simplify calculation of number of pages in
-   __remove_pages()"
--- Rephrased subject/description, but left patch as is
-- "mm/memory_hotplug: cleanup __add_pages()"
--- Make the logic match the logic in __remove_pages()
+We'll clean up __remove_pages() in a follow-up patch and directly make
+use of this computation.
 
-[1] https://lkml.kernel.org/r/20200205135251.37488-1-david@redhat.com
+Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Wei Yang <richardw.yang@linux.intel.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ mm/memory_hotplug.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-David Hildenbrand (2):
-  mm/memory_hotplug: simplify calculation of number of pages in
-    __remove_pages()
-  mm/memory_hotplug: cleanup __add_pages()
-
- mm/memory_hotplug.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
-
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 4a9b3f6c6b37..8fe7e32dad48 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -534,7 +534,8 @@ void __remove_pages(unsigned long pfn, unsigned long =
+nr_pages,
+ 	for (; pfn < end_pfn; pfn +=3D cur_nr_pages) {
+ 		cond_resched();
+ 		/* Select all remaining pages up to the next section boundary */
+-		cur_nr_pages =3D min(end_pfn - pfn, -(pfn | PAGE_SECTION_MASK));
++		cur_nr_pages =3D min(end_pfn - pfn,
++				   SECTION_ALIGN_UP(pfn + 1) - pfn);
+ 		__remove_section(pfn, cur_nr_pages, map_offset, altmap);
+ 		map_offset =3D 0;
+ 	}
 --=20
 2.24.1
 
