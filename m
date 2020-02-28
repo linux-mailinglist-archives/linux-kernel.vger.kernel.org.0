@@ -2,102 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D97A3172CB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:01:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD49172CCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:09:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbgB1ABe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:01:34 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46017 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730328AbgB1ABa (ORCPT
+        id S1730087AbgB1AJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 19:09:39 -0500
+Received: from mail-qk1-f172.google.com ([209.85.222.172]:34804 "EHLO
+        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730009AbgB1AJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:01:30 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b22so457379pls.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:01:29 -0800 (PST)
+        Thu, 27 Feb 2020 19:09:39 -0500
+Received: by mail-qk1-f172.google.com with SMTP id 11so1403764qkd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Oz6De1dIYEgjxhRabTRk4CB78qRzDNYlR7Nzf0r7zm8=;
-        b=Ej0qYQRkax6vt9VbEqKCxSCRfVTpbF6R6yfkIQH8hH+HCk4aampkSCQAJSBx/l3Eul
-         QYdGcYFrpkp7QbTQ9dqQZFDOh3Tk90FzGpRVXkXIXRjJeG0HLpM37JMU0ecBnf624Z4b
-         p9gSB349m5UGPUQTt7tNnLStSo1C536+EubDM=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dVD12z7+HGBJ25hvAL2ZOLK0dszXMUkehAgzAwaZMJs=;
+        b=cXutoS/O22DmUNAx0wBz5bZRKXrQW1RgDZfbwIMFcsRqCPnclyD3xtyJGyKHhgwfGD
+         0RK/iSQCVoJg9xufBzrPCbImzGhEcozwjkSEpVS+k4sc082pwdeU47+oPYhg8GW0KR+d
+         T6anl3rmC8IoDy+X7fb141P5hMArecIW2oV/iScwT3xvivaPoHYzl1U55b7/LUIgsOni
+         FLv6BJsJGd/O7c1Eb4KzTo3cSGW37eYPfyv2W0e47Hs1CqbHUDR1Bgu1ifz2popmhvmm
+         MdwFFLqybiAlmbGPZ0B/ECKRxOxlmgUXk44fN4aMa0rFgME2+y3m4z4SUIvX4bmnlFLv
+         /6WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Oz6De1dIYEgjxhRabTRk4CB78qRzDNYlR7Nzf0r7zm8=;
-        b=mmDkEWlwj2JqVTzSnt4fC2o30QOp3Gj9FSAzi2py2tnilQLHwZDG+vNDhYl4WYlJdh
-         HuUSaYOcDUEIZX25V23/Y6hdmU9zwD61mHCBo5AP0mlgOm4/ztuB0GNvXXOn6pGCTxD4
-         kxyvyEgDr12igtSaJKD1Pnj1ER2jJJVvlx4Pmo0b0iJK4Z9OPYQtWgso+8h5UUYjmKIN
-         eo+KKPyeB+Qrbi3hSyTNI2+HemroJFew1oYNzYLT6pdRkbGkVVCgIdj4pUMJEDRCf43N
-         /M5r09oQZdgyAAZA3R5n2hRSDTT4uNR/xlhwX/nkoVI7XUucsJuk/Ft+4uG0DVVd6drz
-         0Bzw==
-X-Gm-Message-State: APjAAAUQM16sU9dWlX3u+bXvpJsKDlEyRGh7nDwMp4n4yXsP1DlyxOqF
-        BvhKE9sOOUa6ucWkyoFlxRxu3A==
-X-Google-Smtp-Source: APXvYqyeGsdTWhXYKAUlxHWjZxN7BX3EeYNWjLkfclN9Kp12cCBJnK2qIKd/H/GKqRV9XMIxr86Wng==
-X-Received: by 2002:a17:90a:868b:: with SMTP id p11mr1609353pjn.60.1582848088646;
-        Thu, 27 Feb 2020 16:01:28 -0800 (PST)
-Received: from thgarnie.kir.corp.google.com ([2620:0:1008:1100:6e62:16fa:a60c:1d24])
-        by smtp.gmail.com with ESMTPSA id c18sm7314476pgw.17.2020.02.27.16.01.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 16:01:28 -0800 (PST)
-From:   Thomas Garnier <thgarnie@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     kristen@linux.intel.com, keescook@chromium.org,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 11/11] x86/alternatives: Adapt assembly for PIE support
-Date:   Thu, 27 Feb 2020 16:00:56 -0800
-Message-Id: <20200228000105.165012-12-thgarnie@chromium.org>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-In-Reply-To: <20200228000105.165012-1-thgarnie@chromium.org>
-References: <20200228000105.165012-1-thgarnie@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dVD12z7+HGBJ25hvAL2ZOLK0dszXMUkehAgzAwaZMJs=;
+        b=re/kLjQHDbQ5xG4BfV12ltyqLHlXqy6XuWLEX8KXn+xw39RwXryCmnHAo46dqkFlIG
+         OsfKtu4VW/Cn5MqlZ1u6RHSjHHudSswIpt7vNks8yVSF7Rsq8npj/lryGdbDw9P7YJjg
+         XuUXh8Cg4FYsMXMmRrE2nVojlC1MDGE3tf/pYoVnydUYAKjWCgoPSRjeG0kpYo1Ai09m
+         D/h3KzWGqRseCTKmbZPA8ZIxHX6ZxkTPQP27YYwkeHQ52+Uc17ajarCgzJU3AxwYlBp+
+         wWFPFB/UFS3iv9yXhUJBORO1AhHttc9LULG+2j6CKfzJbVkyW+7aJUrjsfP3SnbFdvCB
+         4qoA==
+X-Gm-Message-State: APjAAAWw/h0cvU2yb+KgPX/ZWcyp4lx/X9WwjhUpyFA+7L4hjBgyaIvU
+        ylHiecEC12EgXvdlOGxvBOZBDFxrfwYrCAqClw6p7Q==
+X-Google-Smtp-Source: APXvYqzTaacBAN5Ah5aNIUgLbjZRHMy8gLlGajSzCoFnld/bi8DzEAZRRHmJu6tkZOJWicpUgdob0q8aoHeeKzK3dks=
+X-Received: by 2002:a37:a4d2:: with SMTP id n201mr2120116qke.479.1582848577901;
+ Thu, 27 Feb 2020 16:09:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200225201130.211124-1-heidifahim@google.com> <20200225222221.GA144971@google.com>
+In-Reply-To: <20200225222221.GA144971@google.com>
+From:   Heidi Fahim <heidifahim@google.com>
+Date:   Thu, 27 Feb 2020 16:09:26 -0800
+Message-ID: <CAMVcs3sUtx17C0SeE435Q5aehE_F2RkoQxJWzeJK5v47GgFjBg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kunit: kunit_parser: making parser more robust
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly options to work with pointers instead of integers.
-The generated code is the same PIE just ensures input is a pointer.
+> >
+> > -TAP_ENTRIES = re.compile(r'^(TAP|\t?ok|\t?not ok|\t?[0-9]+\.\.[0-9]+|\t?#).*$')
+> > +TAP_ENTRIES = re.compile(r'(TAP|\t?ok|\t?not ok|\t?[0-9]+\.\.[0-9]+|\t# .*?:.*?).*$')
+>
+> Since you now strip off prefixes using length, does the old TAP regex no
+> longer work?
+>
 
-Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
----
- arch/x86/include/asm/alternative.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Using old regex (i.e. match instead of search) still works - do you
+prefer this be reverted where possible or be changed to search? Search
+is a little more relaxed when it comes to alignment of the TAP output
+(i.e. some lines could have extra leading whitespaces), but right now
+is not necessary.
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 13adca37c99a..43a148042656 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -243,7 +243,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
- /* Like alternative_io, but for replacing a direct call with another one. */
- #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
- 	asm_inline volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
--		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-+		: output : [old] "X" (oldfunc), [new] "X" (newfunc), ## input)
- 
- /*
-  * Like alternative_call, but there are two features and respective functions.
-@@ -256,8 +256,8 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	asm_inline volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
- 		"call %P[new2]", feature2)				      \
- 		: output, ASM_CALL_CONSTRAINT				      \
--		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
--		  [new2] "i" (newfunc2), ## input)
-+		: [old] "X" (oldfunc), [new1] "X" (newfunc1),		      \
-+		  [new2] "X" (newfunc2), ## input)
- 
- /*
-  * use this macro(s) if you need more than one output parameter
--- 
-2.25.1.481.gfbce0eb801-goog
+> >  def consume_non_diagnositic(lines: List[str]) -> None:
+> > -     while lines and not TAP_ENTRIES.match(lines[0]):
+> > +     while lines and not TAP_ENTRIES.search(lines[0]):
+> >               lines.pop(0)
+> >
+> >  def save_non_diagnositic(lines: List[str], test_case: TestCase) -> None:
+> > -     while lines and not TAP_ENTRIES.match(lines[0]):
+> > +     while lines and not TAP_ENTRIES.search(lines[0]):
+> >               test_case.log.append(lines[0])
+> >               lines.pop(0)
+> >
+> >  OkNotOkResult = namedtuple('OkNotOkResult', ['is_ok','description', 'text'])
+> >
+> > -OK_NOT_OK_SUBTEST = re.compile(r'^\t(ok|not ok) [0-9]+ - (.*)$')
+> > +OK_NOT_OK_SUBTEST = re.compile(r'\t(ok|not ok) [0-9]+ - (.*)$')
+> >
+> > -OK_NOT_OK_MODULE = re.compile(r'^(ok|not ok) [0-9]+ - (.*)$')
+> > +OK_NOT_OK_MODULE = re.compile(r'(ok|not ok) [0-9]+ - (.*)$')
+>
+> Same here.
+>
+> > -def parse_ok_not_ok_test_case(lines: List[str],
+> > -                           test_case: TestCase,
+> > -                           expecting_test_case: bool) -> bool:
+> > +def parse_ok_not_ok_test_case(lines: List[str], test_case: TestCase) -> bool:
+> >       save_non_diagnositic(lines, test_case)
+> >       if not lines:
+> > -             if expecting_test_case:
+> > -                     test_case.status = TestStatus.TEST_CRASHED
+> > -                     return True
+> > -             else:
+> > -                     return False
+> > +             test_case.status = TestStatus.TEST_CRASHED
+> > +             return True
+> >       line = lines[0]
+> >       match = OK_NOT_OK_SUBTEST.match(line)
+> > +     while not match and lines:
+> > +             line = lines.pop(0)
+> > +             match = OK_NOT_OK_SUBTEST.match(line)
+> >       if match:
+> >               test_case.log.append(lines.pop(0))
+> >               test_case.name = match.group(2)
+> > @@ -150,12 +150,12 @@ def parse_diagnostic(lines: List[str], test_case: TestCase) -> bool:
+> >       else:
+> >               return False
+> >
+> > -def parse_test_case(lines: List[str], expecting_test_case: bool) -> TestCase:
+> > +def parse_test_case(lines: List[str]) -> TestCase:
+> >       test_case = TestCase()
+> >       save_non_diagnositic(lines, test_case)
+> >       while parse_diagnostic(lines, test_case):
+> >               pass
+> > -     if parse_ok_not_ok_test_case(lines, test_case, expecting_test_case):
+> > +     if parse_ok_not_ok_test_case(lines, test_case):
+> >               return test_case
+> >       else:
+> >               return None
+> > @@ -202,7 +202,7 @@ def parse_ok_not_ok_test_suite(lines: List[str], test_suite: TestSuite) -> bool:
+> >               test_suite.status = TestStatus.TEST_CRASHED
+> >               return False
+> >       line = lines[0]
+> > -     match = OK_NOT_OK_MODULE.match(line)
+> > +     match = OK_NOT_OK_MODULE.search(line)
+> >       if match:
+> >               lines.pop(0)
+> >               if match.group(1) == 'ok':
+> > @@ -234,11 +234,11 @@ def parse_test_suite(lines: List[str]) -> TestSuite:
+> >       expected_test_case_num = parse_subtest_plan(lines)
+> >       if not expected_test_case_num:
+> >               return None
+> > -     test_case = parse_test_case(lines, expected_test_case_num > 0)
+> > -     expected_test_case_num -= 1
+> > -     while test_case:
+> > +     while expected_test_case_num > 0:
+> > +             test_case = parse_test_case(lines)
+> > +             if not test_case:
+> > +                     break
+> >               test_suite.cases.append(test_case)
+> > -             test_case = parse_test_case(lines, expected_test_case_num > 0)
+> >               expected_test_case_num -= 1
+>
+> Do we use this variable anymore?
 
+Yes, this decides whether we are expecting another test case or if
+we've completed the test suite
+>
+> >       if parse_ok_not_ok_test_suite(lines, test_suite):
+> >               test_suite.status = bubble_up_test_case_errors(test_suite)
+> > @@ -250,7 +250,7 @@ def parse_test_suite(lines: List[str]) -> TestSuite:
+> >               print('failed to parse end of suite' + lines[0])
+> >               return None
+> >
+> > -TAP_HEADER = re.compile(r'^TAP version 14$')
+> > +TAP_HEADER = re.compile(r'TAP version 14$')
+> >
+> >  def parse_tap_header(lines: List[str]) -> bool:
+> >       consume_non_diagnositic(lines)
+>
+> Cheers
+>
+> --
+> You received this message because you are subscribed to the Google Groups "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kunit-dev/20200225222221.GA144971%40google.com.
