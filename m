@@ -2,46 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A79D71740B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 21:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 152411740B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 21:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgB1UJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 15:09:51 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:55830 "EHLO
+        id S1727206AbgB1UKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 15:10:09 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:55850 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1UJv (ORCPT
+        with ESMTP id S1725730AbgB1UKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 15:09:51 -0500
+        Fri, 28 Feb 2020 15:10:09 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4739415995575;
-        Fri, 28 Feb 2020 12:09:50 -0800 (PST)
-Date:   Fri, 28 Feb 2020 12:09:49 -0800 (PST)
-Message-Id: <20200228.120949.760457265313124104.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B1931159A8840;
+        Fri, 28 Feb 2020 12:10:08 -0800 (PST)
+Date:   Fri, 28 Feb 2020 12:10:08 -0800 (PST)
+Message-Id: <20200228.121008.1872143054307710068.davem@davemloft.net>
 To:     gustavo@embeddedor.com
-Cc:     kuba@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        jiri@mellanox.com, nhorman@tuxdriver.com, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: core: Replace zero-length array with
+Cc:     kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bonding: Replace zero-length array with
  flexible-array member
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200228134324.GA29394@embeddedor>
-References: <20200228134324.GA29394@embeddedor>
+In-Reply-To: <20200228135629.GA30289@embeddedor>
+References: <20200228135629.GA30289@embeddedor>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 28 Feb 2020 12:09:50 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 28 Feb 2020 12:10:08 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Fri, 28 Feb 2020 07:43:24 -0600
+Date: Fri, 28 Feb 2020 07:56:29 -0600
 
 > The current codebase makes use of the zero-length array language
 > extension to the C90 standard, but the preferred mechanism to declare
