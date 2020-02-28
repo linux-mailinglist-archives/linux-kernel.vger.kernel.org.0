@@ -2,65 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD0BB173A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47700173A6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbgB1Ozd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 09:55:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbgB1Ozc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 09:55:32 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52107246A0;
-        Fri, 28 Feb 2020 14:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582901731;
-        bh=uzF6Z9bvJm0pdIJlxAl+oKX05ewzkC/oD3pRBGnDBvw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=M+RDVR5DhyOio5Z4jZFVwnnai4AGoFwBAYNiL93GnNbvELW/wTC+W32G3kBNsWlrm
-         tPqtiw6UrVbJqhd+CzDozkerEsOn5ivs2mfn5S8XzbjL6puAyHna6hk4Fx/XEAunuM
-         xOi+v1aDVYFJK1FrxbSXRGOPHPkD3sAZGwNXWpzA=
-Date:   Fri, 28 Feb 2020 23:55:28 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [v2 0/1] Documentation: bootconfig: Documentation updates
-Message-Id: <20200228235528.acfc091ee58d4d685a119f4f@kernel.org>
-In-Reply-To: <0d7d201c-e313-6129-7cfa-4e61eb31342d@web.de>
-References: <158287861133.18632.12035327305997207220.stgit@devnote2>
-        <957cef56-04b0-3889-6c95-a8ed7606b68d@web.de>
-        <20200228222311.f5b9448027031b16a3be372a@kernel.org>
-        <0d7d201c-e313-6129-7cfa-4e61eb31342d@web.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727180AbgB1Ozr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 09:55:47 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:15064 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726906AbgB1Ozq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 09:55:46 -0500
+X-UUID: bec45df404ff4219a8476fd81106c3f9-20200228
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=KupROzX3aGOHBHNRJXxfTvVaiYRDVDCR4a16idnL8VA=;
+        b=i5Zcoth6DexXSmXFNfAo4B6rl2NkfsojbC3nBlrWeDPp4kyLQrXpvwZeDdC8hRWFlcmSous5b/Mbr0AFA/N+RWBCKFZJ7xISDX7pwPurp16w3GDp9qsbQWazZuag0bRcfpC2i9Mvf6hP0uFTDXNYrwA9PS7r6G7Sb1lOTGVD6U0=;
+X-UUID: bec45df404ff4219a8476fd81106c3f9-20200228
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 425614716; Fri, 28 Feb 2020 22:55:42 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Feb 2020 22:54:47 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 28 Feb 2020 22:55:23 +0800
+Message-ID: <1582901741.14824.6.camel@mtksdaap41>
+Subject: Re: [PATCH v3 09/13] soc: mediatek: cmdq: add write_s value function
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        "Ming-Fan Chen" <ming-fan.chen@mediatek.com>
+Date:   Fri, 28 Feb 2020 22:55:41 +0800
+In-Reply-To: <1582897461-15105-11-git-send-email-dennis-yc.hsieh@mediatek.com>
+References: <1582897461-15105-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+         <1582897461-15105-11-git-send-email-dennis-yc.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Feb 2020 15:05:42 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
+SGksIERlbm5pczoNCg0KT24gRnJpLCAyMDIwLTAyLTI4IGF0IDIxOjQ0ICswODAwLCBEZW5uaXMg
+WUMgSHNpZWggd3JvdGU6DQo+IGFkZCB3cml0ZV9zIGZ1bmN0aW9uIGluIGNtZHEgaGVscGVyIGZ1
+bmN0aW9ucyB3aGljaA0KPiB3cml0ZXMgYSBjb25zdGFudCB2YWx1ZSB0byBhZGRyZXNzIHdpdGgg
+bGFyZ2UgZG1hDQo+IGFjY2VzcyBzdXBwb3J0Lg0KPiANCg0KUmV2aWV3ZWQtYnk6IENLIEh1IDxj
+ay5odUBtZWRpYXRlay5jb20+DQoNCj4gU2lnbmVkLW9mZi1ieTogRGVubmlzIFlDIEhzaWVoIDxk
+ZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvc29jL21lZGlh
+dGVrL210ay1jbWRxLWhlbHBlci5jIHwgMjYgKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4g
+IGluY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmggIHwgMTQgKysrKysrKysrKysr
+KysNCj4gIDIgZmlsZXMgY2hhbmdlZCwgNDAgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jIGIvZHJpdmVycy9zb2Mv
+bWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMNCj4gaW5kZXggNDI4Zjk5Mjg4Y2E2Li4xMzM2NTIz
+ZWI3ZDQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBl
+ci5jDQo+ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQo+IEBA
+IC0yNjksNiArMjY5LDMyIEBAIGludCBjbWRxX3BrdF93cml0ZV9zKHN0cnVjdCBjbWRxX3BrdCAq
+cGt0LCB1MTYgaGlnaF9hZGRyX3JlZ19pZHgsDQo+ICB9DQo+ICBFWFBPUlRfU1lNQk9MKGNtZHFf
+cGt0X3dyaXRlX3MpOw0KPiAgDQo+ICtpbnQgY21kcV9wa3Rfd3JpdGVfc192YWx1ZShzdHJ1Y3Qg
+Y21kcV9wa3QgKnBrdCwgdTE2IGhpZ2hfYWRkcl9yZWdfaWR4LA0KPiArCQkJICAgdTE2IGFkZHJf
+bG93LCB1MzIgdmFsdWUsIHUzMiBtYXNrKQ0KPiArew0KPiArCXN0cnVjdCBjbWRxX2luc3RydWN0
+aW9uIGluc3QgPSB7IHswfSB9Ow0KPiArCWludCBlcnI7DQo+ICsNCj4gKwlpZiAobWFzayAhPSBV
+MzJfTUFYKSB7DQo+ICsJCWluc3Qub3AgPSBDTURRX0NPREVfTUFTSzsNCj4gKwkJaW5zdC5tYXNr
+ID0gfm1hc2s7DQo+ICsJCWVyciA9IGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgaW5zdCk7
+DQo+ICsJCWlmIChlcnIgPCAwKQ0KPiArCQkJcmV0dXJuIGVycjsNCj4gKw0KPiArCQlpbnN0Lm9w
+ID0gQ01EUV9DT0RFX1dSSVRFX1NfTUFTSzsNCj4gKwl9IGVsc2Ugew0KPiArCQlpbnN0Lm9wID0g
+Q01EUV9DT0RFX1dSSVRFX1M7DQo+ICsJfQ0KPiArDQo+ICsJaW5zdC5zb3AgPSBoaWdoX2FkZHJf
+cmVnX2lkeDsNCj4gKwlpbnN0Lm9mZnNldCA9IGFkZHJfbG93Ow0KPiArCWluc3QudmFsdWUgPSB2
+YWx1ZTsNCj4gKw0KPiArCXJldHVybiBjbWRxX3BrdF9hcHBlbmRfY29tbWFuZChwa3QsIGluc3Qp
+Ow0KPiArfQ0KPiArRVhQT1JUX1NZTUJPTChjbWRxX3BrdF93cml0ZV9zX3ZhbHVlKTsNCj4gKw0K
+PiAgaW50IGNtZHFfcGt0X3dmZShzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KQ0KPiAg
+ew0KPiAgCXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3QgPSB7IHswfSB9Ow0KPiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaCBiL2luY2x1ZGUvbGlu
+dXgvc29jL21lZGlhdGVrL210ay1jbWRxLmgNCj4gaW5kZXggMDFiNDE4NGFmMzEwLi5mZWMyOTJh
+YWM4M2MgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1jbWRx
+LmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KPiBAQCAt
+MTM1LDYgKzEzNSwyMCBAQCBpbnQgY21kcV9wa3RfcmVhZF9zKHN0cnVjdCBjbWRxX3BrdCAqcGt0
+LCB1MTYgaGlnaF9hZGRyX3JlZ19pZHgsIHUxNiBhZGRyX2xvdywNCj4gIGludCBjbWRxX3BrdF93
+cml0ZV9zKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgaGlnaF9hZGRyX3JlZ19pZHgsDQo+ICAJ
+CSAgICAgdTE2IGFkZHJfbG93LCB1MTYgc3JjX3JlZ19pZHgsIHUzMiBtYXNrKTsNCj4gIA0KPiAr
+LyoqDQo+ICsgKiBjbWRxX3BrdF93cml0ZV9zX3ZhbHVlKCkgLSBhcHBlbmQgd3JpdGVfcyBjb21t
+YW5kIHdpdGggbWFzayB0byB0aGUgQ01EUQ0KPiArICoJCQkgICAgICBwYWNrZXQgd2hpY2ggd3Jp
+dGUgdmFsdWUgdG8gYSBwaHlzaWNhbCBhZGRyZXNzDQo+ICsgKiBAcGt0Ogl0aGUgQ01EUSBwYWNr
+ZXQNCj4gKyAqIEBoaWdoX2FkZHJfcmVnX2lkeDoJaW50ZXJuYWwgcmVnaXNnZXIgSUQgd2hpY2gg
+Y29udGFpbnMgaGlnaCBhZGRyZXNzIG9mIHBhDQo+ICsgKiBAYWRkcl9sb3c6CWxvdyBhZGRyZXNz
+IG9mIHBhDQo+ICsgKiBAdmFsdWU6CXRoZSBzcGVjaWZpZWQgdGFyZ2V0IHZhbHVlDQo+ICsgKiBA
+bWFzazoJdGhlIHNwZWNpZmllZCB0YXJnZXQgbWFzaw0KPiArICoNCj4gKyAqIFJldHVybjogMCBm
+b3Igc3VjY2VzczsgZWxzZSB0aGUgZXJyb3IgY29kZSBpcyByZXR1cm5lZA0KPiArICovDQo+ICtp
+bnQgY21kcV9wa3Rfd3JpdGVfc192YWx1ZShzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGhpZ2hf
+YWRkcl9yZWdfaWR4LA0KPiArCQkJICAgdTE2IGFkZHJfbG93LCB1MzIgdmFsdWUsIHUzMiBtYXNr
+KTsNCj4gKw0KPiAgLyoqDQo+ICAgKiBjbWRxX3BrdF93ZmUoKSAtIGFwcGVuZCB3YWl0IGZvciBl
+dmVudCBjb21tYW5kIHRvIHRoZSBDTURRIHBhY2tldA0KPiAgICogQHBrdDoJdGhlIENNRFEgcGFj
+a2V0DQoNCg==
 
-> > So, if you are interested in it, I don't stop you to write it up.
-> 
-> Will the collaboration continue anyhow?
-
-It's your turn. "ask not what your community can do for you - ask what you can do for your community." :)
-Collaboration is not just talking, but move things step forward.
-
-> Will the clarification become more constructive for remaining challenges?
-
-If you think so, you can send a patch for it.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
