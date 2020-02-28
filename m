@@ -2,68 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27223174034
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 20:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0948B174043
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 20:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbgB1TWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 14:22:13 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42343 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1TWN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 14:22:13 -0500
-Received: by mail-ed1-f66.google.com with SMTP id n18so4618147edw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 11:22:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1D6XTERnADBlFbYpdQMB2hoBZRD3yh+V/F3mcEwTAEE=;
-        b=Xt3muHPTFdIA1OqMdIvcoAxpC1lkpCu6pE6KlLI2Eg7M7RKrBKDok8PuzUaRHw+IBW
-         2z966EaE/4gheSCvV6lwrLeuS7iSkE/M1aXZ4Hz3luEsk/u9XFsGEopueQ82OoPbCnzH
-         GxBaFTYdsIi7xDOVkRMBeBKxUbTtFXpz+OejvDhOcezxrMeTIQk/TYaA863opTMISfBr
-         oXfIiCeJhTKuvF+f1xeBtofBGDpdRNqUgXdh5CaN1q54Dq7kc8m7j6ipEB4lrr0xkxu7
-         h1vezz7TlW5bpjuLWRblBClur9QBN6LgzaHz1xChxELEj4usxBmDvSRuz1L7inOYlQB8
-         KDsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1D6XTERnADBlFbYpdQMB2hoBZRD3yh+V/F3mcEwTAEE=;
-        b=f2aNgzQHfTYNzOxrUhGORIBPSErhj4t7YmIH001CjniFSQGfnYe1dNvFbN+q5FSdCT
-         JXc//SySWyZjXwqC9feA0XsLnTevzFtDm8YMTLlkx1GgAdDFnUeNpCIGalCOXUulHEe8
-         R2TsxrGd5iVLBi7KcCrQykW8mYB6nlhed9E+uq1Pn8uFJJLh8HVhB6PslhXEa0WHiuEr
-         YFoEuW2VrKG0+ZhStyOIG+QOmxFjwDW4digsgxSPKYdu1rBMzmJw4uVDC9qf8cFuK6gk
-         c5HrcepvOrGt1siNfJGVqgp7m5KGE2q3V+2Pg0QMzBTP2WqoQvxMJz7o/YkgMUn1yRbV
-         UA1A==
-X-Gm-Message-State: APjAAAVs4PSdsSOhmOE+cLyegpqBLmJo0JJcnt1s9j/p7oU5tdXbeOdj
-        y+KlcmhnBkLFcUeqnen8P0Fr6FHpKe/pYRBmsFw=
-X-Google-Smtp-Source: APXvYqwpBAjFx2hLp/ojkEpCcwA0zZIhZPiKT+w+8K0Buw4zyabuvaaYAA1NLm869+n8P9DkU3OlcNXPKZewOfBwFeg=
-X-Received: by 2002:a17:906:edb1:: with SMTP id sa17mr5598441ejb.379.1582917731514;
- Fri, 28 Feb 2020 11:22:11 -0800 (PST)
+        id S1726846AbgB1Tdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 14:33:52 -0500
+Received: from mga02.intel.com ([134.134.136.20]:37027 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbgB1Tdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 14:33:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 11:33:51 -0800
+X-IronPort-AV: E=Sophos;i="5.70,497,1574150400"; 
+   d="scan'208";a="257212162"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 11:33:51 -0800
+Subject: [PATCH v3 0/5] libnvdimm: Cross-arch compatible namespace alignment
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Oliver O'Halloran <oohall@gmail.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 28 Feb 2020 11:17:46 -0800
+Message-ID: <158291746615.1609624.7591692546429050845.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-References: <20200223231711.157699-1-jbi.octave@gmail.com> <20200223231711.157699-30-jbi.octave@gmail.com>
-In-Reply-To: <20200223231711.157699-30-jbi.octave@gmail.com>
-From:   Robin Holt <robinmholt@gmail.com>
-Date:   Fri, 28 Feb 2020 13:22:00 -0600
-Message-ID: <CAPp3RGrrurNVniL6Og-+hGuYOBeiiZdjj1iEwvodnx6i3Qs7GQ@mail.gmail.com>
-Subject: Re: [PATCH 29/30] sgi-xp: Add missing annotation for xpc_disconnect_channel()
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     boqun.feng@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        Cliff Whickman <cpw@sgi.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 5:18 PM Jules Irenge <jbi.octave@gmail.com> wrote:
->
-> Sparse reports a warning at xpc_disconnect_channel()
-> warning: context imbalance in xpc_disconnect_channel() - unexpected unlock
-> The root cause is a missing annotation at xpc_disconnect_channel()
-> Add the missing __must_hold(&ch->lock) annotation
->
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-Acked-by: Robin Holt <robinmholt@gmail.com>
+Changes since v2 [1]:
+- Fix up a missing space in flags_show() (Jeff)
+
+- Prompted by Jeff saying that v2 only worked for him if
+  memremap_compat_align() returned PAGE_SIZE (which defeats the purpose)
+  I developed a new ndctl unit test that runs through the possible
+  legacy configurations that the kernel needs to support. Several changes
+  fell out as a result:
+
+  - Update nd_pfn_validate() to add more -EOPNOTSUPP cases. That error
+    code indicates "Stop, the pfn looks coherent, but invalid. Do not
+    proceed with exposing a raw namespace, require the user to
+    investigate whether the infoblock needs to be rewritten, or the
+    kernel configuration (like PAGE_SIZE) needs to change."
+
+  - Move the validation of fsdax and devdax infoblocks to
+    nd_pfn_validate() so that the presence of non-zero 'start_pad' and
+    'end_trunc' can be considered in the alignment validation.
+
+  - Fail namespace creation when the base address is misaligned. A
+    non-zero-start_pad prevents dax operation due to original bug of
+    ->data_offset being base address relative when it should have been
+    ->start_pad relative. So, reject all base address misaligned
+    namespaces in nd_pfn_init().
+
+[1]: http://lore.kernel.org/r/158155489850.3343782.2687127373754434980.stgit@dwillia2-desk3.amr.corp.intel.com
+
+---
+
+Review / merge logistics notes:
+
+Patch "libnvdimm/namespace: Enforce memremap_compat_align()" has
+changed enough that it needs to be reviewed again.
+
+Patch "mm/memremap_pages: Introduce memremap_compat_align()" still
+needs a PowerPC maintainer ack for the touches to
+arch/powerpc/mm/ioremap.c.
+
+---
+
+Aneesh reports that PowerPC requires 16MiB alignment for the address
+range passed to devm_memremap_pages(), and Jeff reports that it is
+possible to create a misaligned namespace which blocks future namespace
+creation in that region. Both of these issues require namespace
+alignment to be managed at the region level rather than padding at the
+namespace level which has been a broken approach to date.
+
+Introduce memremap_compat_align() to indicate the hard requirements of
+an arch's memremap_pages() implementation. Use the maximum known
+memremap_compat_align() to set the default namespace alignment for
+libnvdimm. Consult that alignment when allocating free space. Finally,
+allow the default region alignment to be overridden to maintain the same
+namespace creation capability as previous kernels.
+
+The ndctl unit tests, which have some misaligned namespace assumptions,
+are updated to use the alignment override where necessary.
+
+Thanks to Aneesh for early feedback and testing on this improved
+alignment handling.
+
+---
+
+Dan Williams (5):
+      mm/memremap_pages: Introduce memremap_compat_align()
+      libnvdimm/pfn: Prevent raw mode fallback if pfn-infoblock valid
+      libnvdimm/namespace: Enforce memremap_compat_align()
+      libnvdimm/region: Introduce NDD_LABELING
+      libnvdimm/region: Introduce an 'align' attribute
+
+
+ arch/powerpc/Kconfig                      |    1 
+ arch/powerpc/mm/ioremap.c                 |   21 +++++
+ arch/powerpc/platforms/pseries/papr_scm.c |    2 
+ drivers/acpi/nfit/core.c                  |    4 +
+ drivers/nvdimm/dimm.c                     |    2 
+ drivers/nvdimm/dimm_devs.c                |   95 +++++++++++++++++----
+ drivers/nvdimm/namespace_devs.c           |   23 ++++-
+ drivers/nvdimm/nd.h                       |    3 -
+ drivers/nvdimm/pfn_devs.c                 |   34 ++++++-
+ drivers/nvdimm/region_devs.c              |  132 ++++++++++++++++++++++++++---
+ include/linux/libnvdimm.h                 |    2 
+ include/linux/memremap.h                  |    8 ++
+ include/linux/mmzone.h                    |    1 
+ lib/Kconfig                               |    3 +
+ mm/memremap.c                             |   23 +++++
+ 15 files changed, 307 insertions(+), 47 deletions(-)
+
+base-commit: 11a48a5a18c63fd7621bb050228cebf13566e4d8
