@@ -2,108 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A4A172DEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:04:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB7F172DF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:07:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730389AbgB1BDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 20:03:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34142 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729984AbgB1BDy (ORCPT
+        id S1730504AbgB1BFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 20:05:30 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41471 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729984AbgB1BFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:03:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582851831;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hRN8eHua6qZxJSEBJTd7eqSNMS3wRQFEAkDzQ0pIXII=;
-        b=CgQFtkvjAN7yJSlF6N6YGFFYto3ErZgp6bU8v/tKbSGRLcrmdIUIXdM5NAY/jkZqF89FAy
-        da6uFRlTrZIGfnlW2+14egQH34K6BLaWU5k+HWiWG8mgy8G3Qcl6J7E+Xq/CZGjcavlswE
-        DqQTdQtydexWw7+9mhDZHxH6ZT6Lbl8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-26-CaWvg9btMe-Ck7SyAYdSsw-1; Thu, 27 Feb 2020 20:03:47 -0500
-X-MC-Unique: CaWvg9btMe-Ck7SyAYdSsw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECF09107ACC7;
-        Fri, 28 Feb 2020 01:03:45 +0000 (UTC)
-Received: from treble (ovpn-121-128.rdu2.redhat.com [10.10.121.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DCABD60C18;
-        Fri, 28 Feb 2020 01:03:44 +0000 (UTC)
-Date:   Thu, 27 Feb 2020 19:03:42 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] drm/i915: Minimize uaccess exposure in
- i915_gem_execbuffer2_ioctl()
-Message-ID: <20200228010342.3j3awgvvgvitif7z@treble>
-References: <ed52cfb852d2772bf20f48614d75f1d1b1451995.1582841072.git.jpoimboe@redhat.com>
- <20200227223542.GE23230@ZenIV.linux.org.uk>
+        Thu, 27 Feb 2020 20:05:30 -0500
+Received: by mail-pf1-f196.google.com with SMTP id j9so774076pfa.8;
+        Thu, 27 Feb 2020 17:05:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vYKIHHhVn7nSPH52/lrlIOtB7hqwWnXUydbXUcnZWnI=;
+        b=QFlUCv7nCT2v8zoOhV2qa4uo6mlR9+Nsq7/xVvJLjsHIYBg9P4ixu6A7b7qhQfX8Qe
+         vM2r2IJLVY9WzSAiDaGRlFnxtMv0848tL6yTTWdVjghb2Xv7E37AEUDJvaVREmp1BNIY
+         940Ae6Ut8CrQrOp26oJlS2RyZXS+vfTFD/yZ9tb3CLTw9R9hPaFCY9Tmvvtv3wtrpMv2
+         wsbFKm7PATc4wfRkkFxv4OB6EejtTBAuwkvi2tchL/GS8lh0brgPhwBQKAmHXetqk/pd
+         Fczf/Ob3g8Rk03buXNFyaS8jPj0aEMjWjAAnatVfiDQsw3OFVl9MCsiJrbJCHh/etzdq
+         Iy8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vYKIHHhVn7nSPH52/lrlIOtB7hqwWnXUydbXUcnZWnI=;
+        b=JerhwD9443k8HApuhfBm61aTPYo+k30gThB+pmjj2CXFdU/d+DqWBv2qstT5VcUObz
+         o7nXLNr0yHwA9G3HEnnnFq2iEu3AxX8GK2UFxfSx1imYwCLVNqRYvFvRxN73K5IquErw
+         RIqb2ELrDceZD37Yopsa5wl5lN9nwqQG8uhPMJoSg+VwMnfwYzzl8j9pj+1/XUgbPeF/
+         hipobu1tl1+udva6qXUvqNcm7DclOAqYYb9qbVlBgJRVKXeioWOQDdzsW6S8mRW6duJs
+         s8ZNs/v/GvOG5ICGeL5jyHuYnxbcwOpLVrqy7YdAywe0bSkS9/eTlHxPygxdEMWkG7lj
+         XoOg==
+X-Gm-Message-State: APjAAAWxSuNwF6CwwyMTThpyCYBMlWk+N+86G34azwiIeyOPHVzJeQii
+        bgc45RRA7gmE8YEdTTMbiKc=
+X-Google-Smtp-Source: APXvYqyTntILByeXSll2nrJCqdigFZSVhDQGQyd6dWT/1lZozrCoBY86BHFMbLTiHaa612sjWifBGQ==
+X-Received: by 2002:a62:3343:: with SMTP id z64mr1754059pfz.150.1582851928639;
+        Thu, 27 Feb 2020 17:05:28 -0800 (PST)
+Received: from taoren-ubuntu-R90MNF91 ([2620:10d:c090:500::4:d8f5])
+        by smtp.gmail.com with ESMTPSA id 136sm7975604pgh.26.2020.02.27.17.05.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Feb 2020 17:05:28 -0800 (PST)
+Date:   Thu, 27 Feb 2020 17:05:20 -0800
+From:   Tao Ren <rentao.bupt@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        taoren@fb.com
+Subject: Re: [PATCH v5 7/7] dt-bindings: usb: add documentation for aspeed
+ usb-vhub
+Message-ID: <20200228010444.GA19910@taoren-ubuntu-R90MNF91>
+References: <20200227230507.8682-1-rentao.bupt@gmail.com>
+ <20200227230507.8682-8-rentao.bupt@gmail.com>
+ <3150424b9e9f5856c747a0fbf44647919f49209d.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227223542.GE23230@ZenIV.linux.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <3150424b9e9f5856c747a0fbf44647919f49209d.camel@kernel.crashing.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 10:35:42PM +0000, Al Viro wrote:
-> On Thu, Feb 27, 2020 at 04:08:26PM -0600, Josh Poimboeuf wrote:
-> > With CONFIG_CC_OPTIMIZE_FOR_SIZE, objtool reports:
-> > 
-> >   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: i915_gem_execbuffer2_ioctl()+0x5b7: call to gen8_canonical_addr() with UACCESS enabled
-> > 
-> > This means i915_gem_execbuffer2_ioctl() is calling gen8_canonical_addr()
-> > -- and indirectly, sign_extend64() -- from the user_access_begin/end
-> > critical region (i.e, with SMAP disabled).
-> > 
-> > While it's probably harmless in this case, in general we like to avoid
-> > extra function calls in SMAP-disabled regions because it can open up
-> > inadvertent security holes.
-> > 
-> > Fix it by moving the gen8_canonical_addr() conversion to a separate loop
-> > before user_access_begin() is called.
-> > 
-> > Note that gen8_canonical_addr() is now called *before* masking off the
-> > PIN_OFFSET_MASK bits.  That should be ok because it just does a sign
-> > extension and ignores the masked lower bits anyway.
+On Fri, Feb 28, 2020 at 10:30:02AM +1100, Benjamin Herrenschmidt wrote:
+> On Thu, 2020-02-27 at 15:05 -0800, rentao.bupt@gmail.com wrote:
 > 
-> How painful would it be to inline the damn thing?
-> <looks>
-> static inline u64 gen8_canonical_addr(u64 address)
-> {
->         return sign_extend64(address, GEN8_HIGH_ADDRESS_BIT);
-> }
-> static inline __s64 sign_extend64(__u64 value, int index)
-> {
->         __u8 shift = 63 - index;
->         return (__s64)(value << shift) >> shift;
-> }
+>  .../...
 > 
-> What the hell?  Josh, what kind of .config do you have that these are
-> _not_ inlined?
+> You haven't fixed the problem spotted by Rob which is that the example
+> is now out of sync, it's missing the required properties.
 
-I think this was seen with CONFIG_CC_OPTIMIZE_FOR_SIZE, which tends to
-ignore inline.
+Ahhh, now I know where my problem is..
+Let me see why I cannot reproduce the error on my side; otherwise I may
+create more noise in my next patch set (customize device IDs/strings)..
 
-> And why not mark gen8_canonical_addr() __always_inline?
+> Also long run I think best is going to have a child node per downstream
+> port, so we create a matching linux struct device. This will make it
+> easier to deal with the other device-controller in the ast2600 which is
+> basically one of these without a vhub above it.
 
-Right, marking those two functions as __always_inline is the other
-option.  The problem is, if you keep doing it, eventually you end up
-with __always_inline-itis spreading all over the place.  And it affects
-all the other callers, at least in the CONFIG_CC_OPTIMIZE_FOR_SIZE case.
-At least this fix is localized.
+Maybe a dumb question: what would be the proper place to parse the child
+node/properties when they are added? For example, in some usb_gadget_ops
+callback?
 
-But I agree my patch isn't ideal either.
 
--- 
-Josh
+Cheers,
 
+Tao
