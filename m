@@ -2,185 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7E9172CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:20:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A88D172CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbgB1AUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:20:55 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:55715 "EHLO pegase1.c-s.fr"
+        id S1730173AbgB1AQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 19:16:42 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:40327 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbgB1AUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:20:54 -0500
+        id S1729966AbgB1AQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 19:16:41 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48T9Dh4Wvbz9tyJv;
-        Fri, 28 Feb 2020 01:20:52 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 48T97q5Fx1z9tyJd;
+        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=uqOhSPAg; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=sz19UU8U; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id oJjSBb8-cw6T; Fri, 28 Feb 2020 01:20:52 +0100 (CET)
+        with ESMTP id uJf4Od7wpm_Y; Fri, 28 Feb 2020 01:16:39 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48T9Dh3K9hz9tyJs;
-        Fri, 28 Feb 2020 01:20:52 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48T97q3DQBz9tyJg;
+        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1582849252; bh=+qjclCTypUSk8rUN8fryWx8rZBtGiqAJ4Vg5qmlZkUQ=;
+        t=1582848999; bh=VgMuq2wX8mbn+y/Awc3vwO6firKTtF6E52gAdT5jeTc=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=uqOhSPAgRDAgxYvKU7t/1CwvgC9z5Hg348fUXfIOOGfbFCBTGWO0JPdgOje+FSB1g
-         Iws0KrwOcV8txVcAxcbyZkh6L3VveScEJfimqPDh6L0XcZ+te2ofel6bD9wQ5BVLc+
-         iXUpPztNLPlGKtkL6ywK5vw0/qjAy824LNC8lwn8=
+        b=sz19UU8UkVIMATYG5vnX/RfjxCA7NCjRJ8yBFSDKxZPyHqb7Dq+aEG/TP5fX6vW12
+         cwB86ltfUnkTBN1S+IaZT3aQGgmPZleouObZijZe45JW5PcVWl4qVBYtNG7cmCxdHC
+         ofj6set5qtRi3YA35+xep1RBEGdfk7PRx13Ri3TU=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id AE1C18B882;
-        Fri, 28 Feb 2020 01:20:52 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BED968B883;
+        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id gpMJtqkSz9dN; Fri, 28 Feb 2020 01:20:52 +0100 (CET)
+        with ESMTP id ieTAiVBS7p_k; Fri, 28 Feb 2020 01:16:39 +0100 (CET)
 Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0B6618B881;
-        Fri, 28 Feb 2020 01:20:52 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 766B88B886;
+        Fri, 28 Feb 2020 01:16:39 +0100 (CET)
 Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id E8F78653EC; Fri, 28 Feb 2020 00:14:48 +0000 (UTC)
-Message-Id: <82fefcc1ec75b96cece792878217a5d85ecda0c2.1582848567.git.christophe.leroy@c-s.fr>
+        id EF3586540E; Fri, 28 Feb 2020 00:14:49 +0000 (UTC)
+Message-Id: <8402c516023da1371953a65af7df2008758ea0c4.1582848567.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1582848567.git.christophe.leroy@c-s.fr>
 References: <cover.1582848567.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 12/13] powerpc/ptrace: create ppc_gethwdinfo()
+Subject: [PATCH v5 13/13] powerpc/ptrace: move ptrace_triggered() into
+ hw_breakpoint.c
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, mikey@neuling.org
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 28 Feb 2020 00:14:48 +0000 (UTC)
+Date:   Fri, 28 Feb 2020 00:14:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create ippc_gethwdinfo() to handle PPC_PTRACE_GETHWDBGINFO and
-reduce ifdef mess
+ptrace_triggered() is declared in asm/hw_breakpoint.h and
+only needed when CONFIG_HW_BREAKPOINT is set, so move it
+into hw_breakpoint.c
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/kernel/ptrace/ptrace-adv.c   | 15 +++++++++++
- arch/powerpc/kernel/ptrace/ptrace-decl.h  |  1 +
- arch/powerpc/kernel/ptrace/ptrace-noadv.c | 20 ++++++++++++++
- arch/powerpc/kernel/ptrace/ptrace.c       | 32 +----------------------
- 4 files changed, 37 insertions(+), 31 deletions(-)
+v4: removing inclusing of hw_breakpoint.h now. Previously it was done too early.
+---
+ arch/powerpc/kernel/hw_breakpoint.c | 16 ++++++++++++++++
+ arch/powerpc/kernel/ptrace/ptrace.c | 19 -------------------
+ 2 files changed, 16 insertions(+), 19 deletions(-)
 
-diff --git a/arch/powerpc/kernel/ptrace/ptrace-adv.c b/arch/powerpc/kernel/ptrace/ptrace-adv.c
-index c71bedd54a8b..3990c01ef8cf 100644
---- a/arch/powerpc/kernel/ptrace/ptrace-adv.c
-+++ b/arch/powerpc/kernel/ptrace/ptrace-adv.c
-@@ -56,6 +56,21 @@ void user_disable_single_step(struct task_struct *task)
- 	clear_tsk_thread_flag(task, TIF_SINGLESTEP);
- }
- 
-+void ppc_gethwdinfo(struct ppc_debug_info *dbginfo)
-+{
-+	dbginfo->version = 1;
-+	dbginfo->num_instruction_bps = CONFIG_PPC_ADV_DEBUG_IACS;
-+	dbginfo->num_data_bps = CONFIG_PPC_ADV_DEBUG_DACS;
-+	dbginfo->num_condition_regs = CONFIG_PPC_ADV_DEBUG_DVCS;
-+	dbginfo->data_bp_alignment = 4;
-+	dbginfo->sizeof_condition = 4;
-+	dbginfo->features = PPC_DEBUG_FEATURE_INSN_BP_RANGE |
-+			    PPC_DEBUG_FEATURE_INSN_BP_MASK;
-+	if (IS_ENABLED(CONFIG_PPC_ADV_DEBUG_DAC_RANGE))
-+		dbginfo->features |= PPC_DEBUG_FEATURE_DATA_BP_RANGE |
-+				     PPC_DEBUG_FEATURE_DATA_BP_MASK;
-+}
-+
- int ptrace_get_debugreg(struct task_struct *child, unsigned long addr,
- 			unsigned long __user *datalp)
+diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+index 2462cd7c565c..2c0be9d941cf 100644
+--- a/arch/powerpc/kernel/hw_breakpoint.c
++++ b/arch/powerpc/kernel/hw_breakpoint.c
+@@ -427,3 +427,19 @@ void hw_breakpoint_pmu_read(struct perf_event *bp)
  {
-diff --git a/arch/powerpc/kernel/ptrace/ptrace-decl.h b/arch/powerpc/kernel/ptrace/ptrace-decl.h
-index 4b4b6a1d508a..3c8a81999292 100644
---- a/arch/powerpc/kernel/ptrace/ptrace-decl.h
-+++ b/arch/powerpc/kernel/ptrace/ptrace-decl.h
-@@ -176,6 +176,7 @@ int tm_cgpr32_set(struct task_struct *target, const struct user_regset *regset,
- extern const struct user_regset_view user_ppc_native_view;
- 
- /* ptrace-(no)adv */
-+void ppc_gethwdinfo(struct ppc_debug_info *dbginfo);
- int ptrace_get_debugreg(struct task_struct *child, unsigned long addr,
- 			unsigned long __user *datalp);
- int ptrace_set_debugreg(struct task_struct *task, unsigned long addr, unsigned long data);
-diff --git a/arch/powerpc/kernel/ptrace/ptrace-noadv.c b/arch/powerpc/kernel/ptrace/ptrace-noadv.c
-index 9c1ef9c2ffd4..8a616d87fffb 100644
---- a/arch/powerpc/kernel/ptrace/ptrace-noadv.c
-+++ b/arch/powerpc/kernel/ptrace/ptrace-noadv.c
-@@ -39,6 +39,26 @@ void user_disable_single_step(struct task_struct *task)
- 	clear_tsk_thread_flag(task, TIF_SINGLESTEP);
+ 	/* TODO */
  }
- 
-+void ppc_gethwdinfo(struct ppc_debug_info *dbginfo)
-+{
-+	dbginfo->version = 1;
-+	dbginfo->num_instruction_bps = 0;
-+	if (ppc_breakpoint_available())
-+		dbginfo->num_data_bps = 1;
-+	else
-+		dbginfo->num_data_bps = 0;
-+	dbginfo->num_condition_regs = 0;
-+	dbginfo->data_bp_alignment = sizeof(long);
-+	dbginfo->sizeof_condition = 0;
-+	if (IS_ENABLED(CONFIG_HAVE_HW_BREAKPOINT)) {
-+		dbginfo->features = PPC_DEBUG_FEATURE_DATA_BP_RANGE;
-+		if (dawr_enabled())
-+			dbginfo->features |= PPC_DEBUG_FEATURE_DATA_BP_DAWR;
-+	} else {
-+		dbginfo->features = 0;
-+	}
-+}
 +
- int ptrace_get_debugreg(struct task_struct *child, unsigned long addr,
- 			unsigned long __user *datalp)
- {
++void ptrace_triggered(struct perf_event *bp,
++		      struct perf_sample_data *data, struct pt_regs *regs)
++{
++	struct perf_event_attr attr;
++
++	/*
++	 * Disable the breakpoint request here since ptrace has defined a
++	 * one-shot behaviour for breakpoint exceptions in PPC64.
++	 * The SIGTRAP signal is generated automatically for us in do_dabr().
++	 * We don't have to do anything about that here
++	 */
++	attr = bp->attr;
++	attr.disabled = true;
++	modify_user_hw_breakpoint(bp, &attr);
++}
 diff --git a/arch/powerpc/kernel/ptrace/ptrace.c b/arch/powerpc/kernel/ptrace/ptrace.c
-index d6e1a301d20e..a44f6e5e05ff 100644
+index a44f6e5e05ff..f6e51be47c6e 100644
 --- a/arch/powerpc/kernel/ptrace/ptrace.c
 +++ b/arch/powerpc/kernel/ptrace/ptrace.c
-@@ -139,37 +139,7 @@ long arch_ptrace(struct task_struct *child, long request,
- 	case PPC_PTRACE_GETHWDBGINFO: {
- 		struct ppc_debug_info dbginfo;
+@@ -18,7 +18,6 @@
+ #include <linux/regset.h>
+ #include <linux/tracehook.h>
+ #include <linux/audit.h>
+-#include <linux/hw_breakpoint.h>
+ #include <linux/context_tracking.h>
+ #include <linux/syscalls.h>
  
--		dbginfo.version = 1;
--#ifdef CONFIG_PPC_ADV_DEBUG_REGS
--		dbginfo.num_instruction_bps = CONFIG_PPC_ADV_DEBUG_IACS;
--		dbginfo.num_data_bps = CONFIG_PPC_ADV_DEBUG_DACS;
--		dbginfo.num_condition_regs = CONFIG_PPC_ADV_DEBUG_DVCS;
--		dbginfo.data_bp_alignment = 4;
--		dbginfo.sizeof_condition = 4;
--		dbginfo.features = PPC_DEBUG_FEATURE_INSN_BP_RANGE |
--				   PPC_DEBUG_FEATURE_INSN_BP_MASK;
--#ifdef CONFIG_PPC_ADV_DEBUG_DAC_RANGE
--		dbginfo.features |=
--				   PPC_DEBUG_FEATURE_DATA_BP_RANGE |
--				   PPC_DEBUG_FEATURE_DATA_BP_MASK;
--#endif
--#else /* !CONFIG_PPC_ADV_DEBUG_REGS */
--		dbginfo.num_instruction_bps = 0;
--		if (ppc_breakpoint_available())
--			dbginfo.num_data_bps = 1;
--		else
--			dbginfo.num_data_bps = 0;
--		dbginfo.num_condition_regs = 0;
--		dbginfo.data_bp_alignment = sizeof(long);
--		dbginfo.sizeof_condition = 0;
+@@ -31,24 +30,6 @@
+ 
+ #include "ptrace-decl.h"
+ 
 -#ifdef CONFIG_HAVE_HW_BREAKPOINT
--		dbginfo.features = PPC_DEBUG_FEATURE_DATA_BP_RANGE;
--		if (dawr_enabled())
--			dbginfo.features |= PPC_DEBUG_FEATURE_DATA_BP_DAWR;
--#else
--		dbginfo.features = 0;
+-void ptrace_triggered(struct perf_event *bp,
+-		      struct perf_sample_data *data, struct pt_regs *regs)
+-{
+-	struct perf_event_attr attr;
+-
+-	/*
+-	 * Disable the breakpoint request here since ptrace has defined a
+-	 * one-shot behaviour for breakpoint exceptions in PPC64.
+-	 * The SIGTRAP signal is generated automatically for us in do_dabr().
+-	 * We don't have to do anything about that here
+-	 */
+-	attr = bp->attr;
+-	attr.disabled = true;
+-	modify_user_hw_breakpoint(bp, &attr);
+-}
 -#endif /* CONFIG_HAVE_HW_BREAKPOINT */
--#endif /* CONFIG_PPC_ADV_DEBUG_REGS */
-+		ppc_gethwdinfo(&dbginfo);
- 
- 		if (copy_to_user(datavp, &dbginfo,
- 				 sizeof(struct ppc_debug_info)))
+-
+ /*
+  * Called by kernel/ptrace.c when detaching..
+  *
 -- 
 2.25.0
 
