@@ -2,98 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 443B2172E3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:21:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDA4172E19
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:20:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbgB1BVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 20:21:15 -0500
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:50439 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730675AbgB1BVO (ORCPT
+        id S1730451AbgB1BUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 20:20:47 -0500
+Received: from mail-pl1-f170.google.com ([209.85.214.170]:35808 "EHLO
+        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729984AbgB1BUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:21:14 -0500
-Received: by mail-yw1-f74.google.com with SMTP id w197so2488752ywd.17
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 17:21:13 -0800 (PST)
+        Thu, 27 Feb 2020 20:20:47 -0500
+Received: by mail-pl1-f170.google.com with SMTP id g6so548795plt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 17:20:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=MkaS0G1bk+Q5OhBTj99Zlxgrs85NSvS6F5H6SOsXVyU=;
-        b=IH1npzZ+v8JTFD9rsz35zQYEul6R/W7yA2D6y+OHVbHvXqTHNvw94iwhkAAP2DDbVi
-         GBl13bzJPRjEuu19+D47ufplr6qg9wjANWrvanrNpgcqF3wYeITyoFt3EBjPEKAChMee
-         DeaGGyUBsY44m410q88ZWKqK3we31TbcCkm2I/9FYqcTsjtfZrtU59w7sW8UgKR1PAJe
-         CAKr9zLHEDRGuRNAQVHoLYwNfztD6WsUdwPciC+p1QF6ZslfNc/x8Hy7CBCjDGP7F1O7
-         OMmtpISW28bF/hQBE0TciN5jdd+8PFqiw4ehn8+83YXO6s8MOtXeeqCaCT+kJgk3y0WI
-         ockg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P/Dq6FU7+4ucFlGTVKctoP7T0CYqXsAPYM+oMCvP2zg=;
+        b=mvYiDSKWHF1Bt1SXDcgoLDC4we078lXxF1XJgOv5EyB8iSgVpV1pxozNq1Wz6yRoIX
+         uxRqLLia+Ol/zUccoeVbMav/JsmPmcT3wDjNqw+zTTqOWYVeVcOl/xmQ/dJ0x4SXDDDL
+         /Q/wEejWl2xRGS3ETWipMCWbtoLOYw2izvlt0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=MkaS0G1bk+Q5OhBTj99Zlxgrs85NSvS6F5H6SOsXVyU=;
-        b=Fioup3KdEs2r73uc1zoOHGy9p5HslUyMFFZEYFRIC9lZqqdCex9bp2xFlI9Ye2ApEW
-         q1TRiF4KCeTYSSImSyk3CzZdGZch4pi5IgJoj6kXGFgKcrWOPYqdT5pqJY7rFdjuGiJO
-         9up8O5egnSMRJL56VuaxYLb17xJAUTLABtUL9MZlpNljll5DxPCK2Lm6bmrENaTek8R+
-         F9uiRxpr7gaAp2s2w/l0loqwW2LPkprCOhH8VNtEroxqI6BgBqVuBeP5LsLsiZeq/HlX
-         +IexUUzlzda0+yTLCfXAMGZ3gp7VnkGlRkqK4yREy8f3XgxJLNEMbed9GTjbssPkpqTi
-         qDcQ==
-X-Gm-Message-State: APjAAAVhe7i9/nxvFGCDs8raOetl1LSNY7PDPLa7yQIJcgCI7EuM2MJM
-        IoMJ9jAnXbsT97wyGn8sScR77c3UWC5EDeYNgCo9OQ==
-X-Google-Smtp-Source: APXvYqw/2+N2t2lLq1K+89TJ7bx2qoTvJJopuhhqt7f6cbBPG3uSnhVLpCVqqF2LFAFntCjNNsq3zJIjfvM4Xn6GSUj6sQ==
-X-Received: by 2002:a0d:c584:: with SMTP id h126mr2210425ywd.173.1582852873384;
- Thu, 27 Feb 2020 17:21:13 -0800 (PST)
-Date:   Thu, 27 Feb 2020 17:20:36 -0800
-In-Reply-To: <20200228012036.15682-1-brendanhiggins@google.com>
-Message-Id: <20200228012036.15682-8-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20200228012036.15682-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH v3 7/7] Documentation: Add kunit_shutdown to kernel-parameters.txt
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        arnd@arndb.de, keescook@chromium.org, skhan@linuxfoundation.org,
-        alan.maguire@oracle.com, yzaikin@google.com, davidgow@google.com,
-        akpm@linux-foundation.org, rppt@linux.ibm.com,
-        frowand.list@gmail.com
-Cc:     gregkh@linuxfoundation.org, sboyd@kernel.org, logang@deltatee.com,
-        mcgrof@kernel.org, linux-um@lists.infradead.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P/Dq6FU7+4ucFlGTVKctoP7T0CYqXsAPYM+oMCvP2zg=;
+        b=tBZI1TQIHOFrelQVxQBFEjuplMvueAjFxRXXcB5vy7KA3WnscQPWHdbdc6FawwUk/w
+         EXYwla65A+hwClvj71IQOoJsJf84qMGGdDky9XJgw9vAQ94g+ZW107cxnL5aMgcb8yA1
+         Xk6F/jVEvLjlvwTjgPUwbOVdN7F30t5NXn7/A/EAjf+28s8NMFFXDzb45HdpHqLEun4W
+         N08gaJLuKTdGILK29zejOy/iTzm1gwouE3hBrBvLYz6n5xwjmH/RRJniTtzrXv7gByuY
+         GczN4PRpRlWsfXdHy7l/sxMNHekBPgmNSdMUbbpA/Hs78Cka1S37KX2GoXnjrKDS5k0S
+         u5kA==
+X-Gm-Message-State: APjAAAXaEVX8vAYL3u+zWDBXinbVp2EbMEmNGCy8KUIXB3LAJGLoHWfo
+        XH1FmCRSe4rZV1hP4nLkd68fvQ==
+X-Google-Smtp-Source: APXvYqw1ZDRAUCBUAn3M31x3ckHZ3Bx3FvatakAHQH5RAPr79cOjqm5yMPJiIf549ZE4i/BWMCXPYw==
+X-Received: by 2002:a17:90a:37e7:: with SMTP id v94mr1801881pjb.37.1582852845913;
+        Thu, 27 Feb 2020 17:20:45 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id e189sm3255096pfa.139.2020.02.27.17.20.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 17:20:44 -0800 (PST)
+Date:   Fri, 28 Feb 2020 10:20:42 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 02/11] videobuf2: handle V4L2 buffer cache flags
+Message-ID: <20200228012042.GK122464@google.com>
+References: <20200226111529.180197-1-senozhatsky@chromium.org>
+ <20200226111529.180197-3-senozhatsky@chromium.org>
+ <8f48a4ab-8b8f-576d-9493-bfce7d01224d@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f48a4ab-8b8f-576d-9493-bfce7d01224d@xs4all.nl>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add kunit_shutdown, an option to specify that the kernel shutsdown after
-running KUnit tests, to the kernel-parameters.txt documentation.
+On (20/02/27 12:58), Hans Verkuil wrote:
+[..]
+> > There are two possible alternative approaches:
+> > - The first one is to move cache sync from ->finish() to dqbuf().
+> >   But this breaks some drivers, that need to fix-up buffers before
+> >   dequeueing them.
+> > 
+> > - The second one is to move ->finish() call from ->done() to dqbuf.
+> 
+> It's not clear what the purpose is of describing these alternative approaches.
+> I'd just drop that. It's a bit confusing.
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
----
- Documentation/admin-guide/kernel-parameters.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+OK.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dbc22d6846275..6ad63e98916f9 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2099,6 +2099,14 @@
- 			0: force disabled
- 			1: force enabled
- 
-+	kunit_shutdown	[KERNEL UNIT TESTING FRAMEWORK] Shutdown kernel after
-+			running built-in tests. Tests configured as modules will
-+			not be run.
-+			Default:	(flag not present) don't shutdown
-+			poweroff:	poweroff the kernel after running tests
-+			halt:		halt the kernel after running tests
-+			reboot:		reboot the kernel after running tests
-+
- 	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled MSRs.
- 			Default is 0 (don't ignore, but inject #GP)
- 
--- 
-2.25.1.481.gfbce0eb801-goog
+> > +/**
+> > + * vb2_queue_allows_cache_hints() - Return true if the queue allows cache
+> > + * and memory consistency hints.
+> > + *
+> > + * @q:		pointer to &struct vb2_queue with videobuf2 queue
+> > + */
+> > +static inline bool vb2_queue_allows_cache_hints(struct vb2_queue *q)
+> > +{
+> > +	return (q->allow_cache_hints != 0) && (q->memory == VB2_MEMORY_MMAP);
+> 
+> Simply to:
+> 
+> 	return q->allow_cache_hints && q->memory == VB2_MEMORY_MMAP;
+> 
 
+OK. I saw vb2_is_busy()
+
+static inline bool vb2_is_busy(struct vb2_queue *q)
+{
+	return (q->num_buffers > 0);
+}
+
+in the very same header file and concluded that maybe this is the
+preferred style.
+
+	-ss
