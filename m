@@ -2,94 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FAD5173444
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BAD217344B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 10:40:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgB1Jj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 04:39:26 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:33602 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbgB1JjZ (ORCPT
+        id S1726874AbgB1Jkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 04:40:41 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53522 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgB1Jkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 04:39:25 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id BB4AA1C030F; Fri, 28 Feb 2020 10:39:23 +0100 (CET)
-Date:   Fri, 28 Feb 2020 10:39:23 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Dan Murphy <dmurphy@ti.com>, Greg KH <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@denx.de>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v17 00/17] Multi Color LED Framework
-Message-ID: <20200228093923.GC27860@amd>
-References: <20200127150032.31350-1-dmurphy@ti.com>
- <42d9687b-b488-22cf-0e9a-ff635b2094e3@ti.com>
- <20200225101940.GB16252@amd>
- <be76fdac-9d32-b9b2-c01d-3aa315b14463@gmail.com>
- <20200226125903.GA2800@duo.ucw.cz>
- <20f6bdd5-e899-aead-8c35-1c3a3d09145f@gmail.com>
- <20200227105808.GA27003@duo.ucw.cz>
- <20200227124329.GA994747@kroah.com>
- <4c273c06-5024-b2d4-c656-b165015090be@ti.com>
- <96a31ff6-5ecf-05a7-d61f-2804f2488d1b@gmail.com>
+        Fri, 28 Feb 2020 04:40:40 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01S9chbc165531;
+        Fri, 28 Feb 2020 09:39:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=gm+jit9WiriLmJF7IPwgCrIpTby4gffYqefkK7hcTpE=;
+ b=bnhYWmu7mPJ3ATf+cH3lqCBTo20zdTc2YpS+v0TLLJEW7aEi9lLU4kni3qIOzd3MARsE
+ MvsXIwOqeuaINDleF55nU9fEwwaHvteHpwGw4jGjMyVwBi+Gqx1GvyBoj7mQKRiUTyRO
+ FzVtQunWxGXTLCXbmwnTfthISeoUlgJQd/kiVtHdTkVN3e9VqrapNPUadA+1inHE4bnO
+ NM73HRac+JOCs/UffkxnipgYmzuIqjLuym7DK1dzQK6Qv24rqLcuaa7MGUzerSEUxqqb
+ zDzcD+WbTlj3WmHT2pvTjHxcJbJHv79VjMWZtq8PrcJWouVI6RPmFKsPM0OMNk1U0SsR 7A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2ydct3hn4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 09:39:54 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01S9cGRl167368;
+        Fri, 28 Feb 2020 09:39:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2ydj4q9pxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 09:39:53 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01S9dq94023431;
+        Fri, 28 Feb 2020 09:39:52 GMT
+Received: from [10.39.209.75] (/10.39.209.75)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Feb 2020 01:39:51 -0800
+Subject: Re: [patch 01/24] x86/traps: Split trap numbers out in a seperate
+ header
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20200225221606.511535280@linutronix.de>
+ <20200225222648.285655538@linutronix.de>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <293b53f4-b419-4967-929c-a6367dbb9115@oracle.com>
+Date:   Fri, 28 Feb 2020 10:39:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="E/DnYTRukya0zdZ1"
-Content-Disposition: inline
-In-Reply-To: <96a31ff6-5ecf-05a7-d61f-2804f2488d1b@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200225222648.285655538@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9544 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
+ spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002280080
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9544 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002280080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---E/DnYTRukya0zdZ1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2/25/20 11:16 PM, Thomas Gleixner wrote:
+> So they can be used in ASM code. For this it is also necessary to convert
+> them to defines. Will be used for the rework of the entry code.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   arch/x86/include/asm/trapnr.h |   31 +++++++++++++++++++++++++++++++
+>   arch/x86/include/asm/traps.h  |   26 +-------------------------
+>   2 files changed, 32 insertions(+), 25 deletions(-)
+> 
 
-Hi!
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 
-> >> Writing 3 or 4 or 5 numbers all at once in a single sysfs file to
-> >> represent a single output should be fine.
-> >> thanks,
->=20
-> Thank you for making this clear.
->=20
-> Effectively, the way to go as I see it now is just moving from
-> colors directory to channel_intensity and channel_names files.
-
-Yes.
-
-> Besides that, since the issue of backwards compatibility with
-> LED class still remains, we need to apply the already worked out
-> formula for mapping brightness to color iout values.
->=20
-> This implies that color values written to channel_intensity file
-> will be written unchanged to the hw only when global brightness
-> is equal to max_brightness. This is because they will be multiplied
-> by brightness / max_brightness ratio.
->=20
-> Do you agree, Pavel?
-
-Yes. That seems like possible solution.
-
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---E/DnYTRukya0zdZ1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl5Y38sACgkQMOfwapXb+vJHkwCgofCcau0VBti/twGZP1zeOZV+
-9X4An1TLM76oJaHBTOHcUTt3MF1J5VG5
-=EYF3
------END PGP SIGNATURE-----
-
---E/DnYTRukya0zdZ1--
+alex.
