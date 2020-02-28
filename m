@@ -2,95 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D6891737D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A1501737D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbgB1NEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:04:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbgB1NEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:04:06 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E933222C4;
-        Fri, 28 Feb 2020 13:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582895044;
-        bh=d56XVgErUm3M1UW5MCErbwksy80x9w5E1eEGJl2WGuE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uYqrtZFzmpvXr1DfpXvIIUQUQvGkd0sDZ8An/StOHWKsUN4hqvvmDnwXlcV646D9p
-         n42y7b/BcTWLDtsaqwvj2PrRGqpCYI/PILaz4LJc/K414FlD6fGkJaIddCCP9AsjGj
-         2G+m9sH++Wex0PEYmSHOAyoeqscKhKDT+QDzL4zg=
-Date:   Fri, 28 Feb 2020 14:04:00 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzbot+26183d9746e62da329b8@syzkaller.appspotmail.com
-Subject: Re: [PATCH 2/2] vt: selection, push sel_lock up
-Message-ID: <20200228130400.GA3017265@kroah.com>
-References: <20200228115406.5735-1-jslaby@suse.cz>
- <20200228115406.5735-2-jslaby@suse.cz>
- <20200228120332.GA3011426@kroah.com>
- <71582fee-257c-3ef4-7c03-3d43651898ff@suse.cz>
+        id S1726733AbgB1NEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:04:49 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:40544 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbgB1NEt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:04:49 -0500
+Received: by mail-pj1-f68.google.com with SMTP id 12so1281557pjb.5;
+        Fri, 28 Feb 2020 05:04:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Axw6SM4TlKkpDQmSjDIki+Kkb3gKc6drvaZVVxQvZX8=;
+        b=DHBhJJDs7vStMVIOubzLwDzc2mnFshaJGS5GpJEPB6NtZn35kS2m9GRaviS7tHnnfO
+         uAh1i34NY1d8ihRJorPl9C+ZXeiN9ACAPudbcIha2Me72QKu8VxjZHkzL9hJU+v0FGFx
+         bpTg0WuzDv3MwuVXDgQvV7Sn2hl8h8BW1J/wxHiOqtV9765AHLogr0GKFQLXT63CiK45
+         TTRxsYAQzHcfwM5LqOEDqQXtdHbxkO0chsl2es+hzZCbiP3wJgakP9M9cQmzfMr2Gv/5
+         BSVpaC+RZxSMCOIJgy+gBVvZVA7+IrmAuHNgLmXTJkyZLCWh21wh5Z/Q1JpVgB/qUj4O
+         dIdQ==
+X-Gm-Message-State: APjAAAWsn9bXQo+lqRNVdQQxPWLylEoh0yswlVgH0Mdkn4nOmO69S2P1
+        VSyfIo6XzUgT+8I7COkBc9M=
+X-Google-Smtp-Source: APXvYqxwbp2fHh9NW+5vR6avXUS0Ib0R/hnP0tZUNuU8MGLGv8UH+rasFveMUM3nfst1DGTP20BiBw==
+X-Received: by 2002:a17:902:c20b:: with SMTP id 11mr3196664pll.175.1582895088016;
+        Fri, 28 Feb 2020 05:04:48 -0800 (PST)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id u4sm10200571pgu.75.2020.02.28.05.04.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 05:04:45 -0800 (PST)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id EAE224042C; Fri, 28 Feb 2020 13:04:44 +0000 (UTC)
+Date:   Fri, 28 Feb 2020 13:04:44 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] lib/test_kmod: remove a NULL test
+Message-ID: <20200228130444.GY11244@42.do-not-panic.com>
+References: <20200228092452.vwkhthsn77nrxdy6@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <71582fee-257c-3ef4-7c03-3d43651898ff@suse.cz>
+In-Reply-To: <20200228092452.vwkhthsn77nrxdy6@kili.mountain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 01:59:36PM +0100, Jiri Slaby wrote:
-> On 28. 02. 20, 13:03, Greg KH wrote:
-> > On Fri, Feb 28, 2020 at 12:54:06PM +0100, Jiri Slaby wrote:
-> >> sel_lock cannot nest in the console lock. Thanks to syzkaller, the
-> >> kernel states firmly:
-> >>
-> >>> WARNING: possible circular locking dependency detected
-> >>> 5.6.0-rc3-syzkaller #0 Not tainted
-> >>> ------------------------------------------------------
-> >>> syz-executor.4/20336 is trying to acquire lock:
-> >>> ffff8880a2e952a0 (&tty->termios_rwsem){++++}, at: tty_unthrottle+0x22/0x100 drivers/tty/tty_ioctl.c:136
-> ...
-> >>> other info that might help us debug this:
-> >>>
-> >>> Chain exists of:
-> >>>   &tty->termios_rwsem --> console_lock --> sel_lock
-> >>
-> >> Clearly. From the above, we have:
-> >>  console_lock -> sel_lock
-> >>  sel_lock -> termios_rwsem
-> >>  termios_rwsem -> console_lock
-> >>
-> >> Fix this by reversing the console_lock -> sel_lock dependency in
-> >> ioctl(TIOCL_SETSEL). First, lock sel_lock, then console_lock.
-> >>
-> >> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> >> Reported-by: syzbot+26183d9746e62da329b8@syzkaller.appspotmail.com
-> >> Fixes: 07e6124a1a46 ("vt: selection, close sel_buffer race")
-> > 
-> > As 07e6124a1a46 was marked for stable, both of these should be as well,
-> > right?
+On Fri, Feb 28, 2020 at 12:24:52PM +0300, Dan Carpenter wrote:
+> The "info" pointer has already been dereferenced so checking here is
+> too late.  Fortunately, we never pass NULL pointers to the
+> test_kmod_put_module() function so the test can simply be removed.
 > 
-> Ah, yes. My bad again, sorry.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+
+Andrew, mind this going up through you? I'll bounce you the original
+next.
+
+  Luis
+
+> ---
+>  lib/test_kmod.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > And did you happen to test these two with the syzbot tool to see if it
-> > really did fix the report?
+> diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+> index 9cf77628fc91..e651c37d56db 100644
+> --- a/lib/test_kmod.c
+> +++ b/lib/test_kmod.c
+> @@ -204,7 +204,7 @@ static void test_kmod_put_module(struct kmod_test_device_info *info)
+>  	case TEST_KMOD_DRIVER:
+>  		break;
+>  	case TEST_KMOD_FS_TYPE:
+> -		if (info && info->fs_sync && info->fs_sync->owner)
+> +		if (info->fs_sync && info->fs_sync->owner)
+>  			module_put(info->fs_sync->owner);
+>  		break;
+>  	default:
+> -- 
+> 2.11.0
 > 
-> Nope, this syz* stuff is a black magic for me. How can I do that?
-
-From the syzbot report at the bottom it says:
-	syzbot will keep track of this bug report. See:
-	https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-	syzbot can test patches for this bug, for details see:
-	https://goo.gl/tpsmEJ#testing-patches
-
-Try running these through that and let's see if we get a "success"
-report or not.
-
-thanks,
-
-greg k-h
