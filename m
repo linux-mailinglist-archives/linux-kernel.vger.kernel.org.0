@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 829DA172D1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:23:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A863D172D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:22:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730529AbgB1AXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:23:13 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41843 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730428AbgB1AWy (ORCPT
+        id S1730419AbgB1AWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 19:22:52 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45997 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729984AbgB1AWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:22:54 -0500
-Received: by mail-pg1-f194.google.com with SMTP id b1so537756pgm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:22:52 -0800 (PST)
+        Thu, 27 Feb 2020 19:22:51 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so713797pfg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:22:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6fHzEreEHEKZLIitB5E8ew7g5jiGLQoDWIhz+OknFf0=;
-        b=GkeoYAU8e8z3RjiVy/lNoEzHu3xfZdCSskh8kGhFyVvHqzRnbnRbxbrn4TM4McSa26
-         b5dJvQCjoNTHztfI/3Yk8649TLr/Dejr2bVo8DdGFJbM/WkYGZ0CJ7NMkfa4SauXTXqM
-         Nv+INQ8nhKoWxsj1wa0sdOVKRnF3rnDP62/0w=
+        bh=uceCceIOG2DmkN987H8EhCgiSZQG4q+SFGBRris4xG0=;
+        b=aprtzyrZ60FGeJNkJNjVIQbc99c/fsdw9OKOw87YzHK/0SfhsWmA8PcyTPqZq9ptEL
+         0CNjt4bV3uQWUOlnulxZY8ZKsGjdFr3XpcUK9eN4hf7vx57s1iHQvbosRZGY9/LJNRxo
+         MYhTtklU93oiIUE0nKY046nfAGvZw6E1IkunM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6fHzEreEHEKZLIitB5E8ew7g5jiGLQoDWIhz+OknFf0=;
-        b=LeKL1+2ctnN0YfXq/Tim7u8699tf2nYTUXMEpr3FAleIzkaheWuA1zQOCcs5ekVDih
-         Vwmv3xWK+cPQ9P0N1YN0dCfjiNMCgUyubCKHMro0VBjg3v/v/t3xN7ryMkTzth3egCtm
-         GZrIV6L+h2yYzKkDtbLa5sv4WxPEOe4/WGEPmM6hadfiDFPuAA9ZZLh9mxt/DCYHFP3i
-         LrAnmAdMd/joBCzJ3j7bJrHHV7hzx/uG0WQ+PeJ+Lqu2cOxT0DHP8yir83hQWdVjDdKS
-         yqyL4staesL/9OkYlbLd+mv3lpsabMo05OBaIRMFhfL/J3KZ729kTDqbejauwpm69bIn
-         EmBA==
-X-Gm-Message-State: APjAAAVMV59kAl2qySAWyWOQMtesrg80NFl2HkveZ8JvG/Aaqt1MLbuv
-        RGcEJU/ocYXwdUkZGSJg2iTvxA==
-X-Google-Smtp-Source: APXvYqznb6YTTAlhNn7JqjD0ERUnnj6NxCnvI3DxIeFfKY/2l5deXUBraE5hW9O+0SqGg2RsiPTeNw==
-X-Received: by 2002:aa7:9891:: with SMTP id r17mr1670426pfl.205.1582849372029;
-        Thu, 27 Feb 2020 16:22:52 -0800 (PST)
+        bh=uceCceIOG2DmkN987H8EhCgiSZQG4q+SFGBRris4xG0=;
+        b=L9/kcL8ZzJFconcksRwpcyjrxTaPj5OZOBw2ZYhLCcoNIbCEQQXsIXrLqClmUmItqW
+         tKj62gBy57oXQ/jrF4mMDWPr1Rc/gvm6/guzdk6bjnLtmyIMCTG1mdGira63quESOPMB
+         knnPo+e3bxFv6PKRKhYm8w1npu+4flOttAcwZKdR7Y+3xYmqRbI3i/FAQ/lgYZyGlsf1
+         Ztssw68Sbtr6nbwwKipY0juNga7xB8yst0PBW5xJdpqSiyFQCIUKMjXHTDwXuqT/kzZV
+         xXCG1SvqLYv5WVPZi1oVwwC1eTa4Md1NMD2F9NtYMJNQkUzz/KVjUKgsuSYkSaNWB7p9
+         X0Ig==
+X-Gm-Message-State: APjAAAVK1RfBnaL6uLb7fRO3d8JVtbOO1xsIQm/OA6NL38D0jklRzfLV
+        YFbJhh4UciAqDX07Y4LWxJXgWQ==
+X-Google-Smtp-Source: APXvYqyjOck/5wJSSqU+VYB+XqwXzBg0gQ0/fmVPRW162tG0JSVUcNPf0a5ewRShW9E52SJeL0B9Pg==
+X-Received: by 2002:aa7:9f90:: with SMTP id z16mr1671592pfr.161.1582849370382;
+        Thu, 27 Feb 2020 16:22:50 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z30sm8485301pff.131.2020.02.27.16.22.48
+        by smtp.gmail.com with ESMTPSA id j12sm3646141pjd.4.2020.02.27.16.22.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 27 Feb 2020 16:22:48 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
@@ -56,9 +56,9 @@ Cc:     Kees Cook <keescook@chromium.org>, "H.J. Lu" <hjl.tools@gmail.com>,
         linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
         linux-kbuild@vger.kernel.org, clang-built-linux@googlegroups.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] vmlinux.lds.h: Add .gnu.version* to DISCARDS
-Date:   Thu, 27 Feb 2020 16:22:37 -0800
-Message-Id: <20200228002244.15240-3-keescook@chromium.org>
+Subject: [PATCH 3/9] x86/build: Warn on orphan section placement
+Date:   Thu, 27 Feb 2020 16:22:38 -0800
+Message-Id: <20200228002244.15240-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200228002244.15240-1-keescook@chromium.org>
 References: <20200228002244.15240-1-keescook@chromium.org>
@@ -69,27 +69,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For vmlinux linking, no architecture uses the .gnu.version* section,
-so remove it via the common DISCARDS macro in preparation for adding
---orphan-handling=warn more widely.
+We don't want to depend on the linker's orphan section placement
+heuristics as these can vary between linkers, and may change between
+versions. All sections need to be explicitly named in the linker
+script.
+
+Discards the unused rela, plt, and got sections that are not needed
+in the final vmlinux, and enable orphan section warnings.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/asm-generic/vmlinux.lds.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/Makefile             | 4 ++++
+ arch/x86/kernel/vmlinux.lds.S | 6 ++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index e00f41aa8ec4..303597e51396 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -902,6 +902,7 @@
- 	*(.discard)							\
- 	*(.discard.*)							\
- 	*(.modinfo)							\
-+	*(.gnu.version*)						\
- 	}
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 94df0868804b..b2c8becadce5 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -51,6 +51,10 @@ ifdef CONFIG_X86_NEED_RELOCS
+         LDFLAGS_vmlinux := --emit-relocs --discard-none
+ endif
  
- /**
++# We never want expected sections to be placed heuristically by the
++# linker. All sections should be explicitly named in the linker script.
++LDFLAGS_vmlinux += --orphan-handling=warn
++
+ #
+ # Prevent GCC from generating any FP code by mistake.
+ #
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 5cab3a29adcb..1e345f302a46 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -412,6 +412,12 @@ SECTIONS
+ 	DWARF_DEBUG
+ 
+ 	DISCARDS
++	/DISCARD/ : {
++		*(.rela.*) *(.rela_*)
++		*(.rel.*) *(.rel_*)
++		*(.got) *(.got.*)
++		*(.igot.*) *(.iplt)
++	}
+ }
+ 
+ 
 -- 
 2.20.1
 
