@@ -2,177 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64206172DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB69A172DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbgB1BEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 20:04:54 -0500
-Received: from ozlabs.org ([203.11.71.1]:54715 "EHLO ozlabs.org"
+        id S1730537AbgB1BCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 20:02:45 -0500
+Received: from mga14.intel.com ([192.55.52.115]:40111 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbgB1BEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:04:54 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 48TBCR4GXXz9sRR; Fri, 28 Feb 2020 12:04:51 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1582851891;
-        bh=bDF0YnZ0Ji7KIpNOME8A9+GnboyyHLm+51d5sgfbrXg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VSExQPM54mGS3q5ixPtCfJOcB9KtQ+FzWatNARyCA4xu7wLfK+gz0Ez94swVm2PMe
-         q1bWrFrri/Ez/GKUaD8+ihbfU4GfFrXbRLT5HU3YbFqjaXhlU3udppCAi/1KL39awy
-         DJTBNnHoW/jk6W+//WwyOVIHhKC7g/W256PliEQk=
-Date:   Fri, 28 Feb 2020 11:23:53 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Halil Pasic <pasic@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-s390@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Viktor Mihajlovski <mihajlov@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-Subject: Re: [PATCH 1/2] mm: move force_dma_unencrypted() to mem_encrypt.h
-Message-ID: <20200228002353.GA1842@umbus.fritz.box>
-References: <20200220161146.GA12709@lst.de>
- <4369f099-e4e4-4a58-b38b-642cf53ccca6@de.ibm.com>
- <20200220163135.GA13192@lst.de>
- <20200221032727.GC2298@umbus.fritz.box>
- <20200221140639.54928efe.pasic@linux.ibm.com>
- <20200221104724-mutt-send-email-mst@kernel.org>
- <20200221190702.68fd57fc.pasic@linux.ibm.com>
- <20200224033314.GC1751@umbus.fritz.box>
- <20200224194953.37c0d6b8.pasic@linux.ibm.com>
- <20200225190802.753cffef.cohuck@redhat.com>
+        id S1730534AbgB1BCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 20:02:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 17:02:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
+   d="scan'208";a="317976996"
+Received: from skuppusw-desk.jf.intel.com ([10.7.201.16])
+  by orsmga001.jf.intel.com with ESMTP; 27 Feb 2020 17:02:42 -0800
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: [PATCH v16 0/9] Add Error Disconnect Recover (EDR) support
+Date:   Thu, 27 Feb 2020 16:59:42 -0800
+Message-Id: <cover.1582850766.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Content-Disposition: inline
-In-Reply-To: <20200225190802.753cffef.cohuck@redhat.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset adds support for following features:
 
-On Tue, Feb 25, 2020 at 07:08:02PM +0100, Cornelia Huck wrote:
-> On Mon, 24 Feb 2020 19:49:53 +0100
-> Halil Pasic <pasic@linux.ibm.com> wrote:
->=20
-> > On Mon, 24 Feb 2020 14:33:14 +1100
-> > David Gibson <david@gibson.dropbear.id.au> wrote:
-> >=20
-> > > On Fri, Feb 21, 2020 at 07:07:02PM +0100, Halil Pasic wrote: =20
-> > > > On Fri, 21 Feb 2020 10:48:15 -0500
-> > > > "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > >  =20
-> > > > > On Fri, Feb 21, 2020 at 02:06:39PM +0100, Halil Pasic wrote: =20
-> > > > > > On Fri, 21 Feb 2020 14:27:27 +1100
-> > > > > > David Gibson <david@gibson.dropbear.id.au> wrote:
-> > > > > >  =20
-> > > > > > > On Thu, Feb 20, 2020 at 05:31:35PM +0100, Christoph Hellwig w=
-rote: =20
-> > > > > > > > On Thu, Feb 20, 2020 at 05:23:20PM +0100, Christian Borntra=
-eger wrote: =20
-> > > > > > > > > >From a users perspective it makes absolutely perfect sen=
-se to use the =20
-> > > > > > > > > bounce buffers when they are NEEDED.=20
-> > > > > > > > > Forcing the user to specify iommu_platform just because y=
-ou need bounce buffers
-> > > > > > > > > really feels wrong. And obviously we have a severe perfor=
-mance issue
-> > > > > > > > > because of the indirections. =20
-> > > > > > > >=20
-> > > > > > > > The point is that the user should not have to specify iommu=
-_platform.
-> > > > > > > > We need to make sure any new hypervisor (especially one tha=
-t might require
-> > > > > > > > bounce buffering) always sets it, =20
-> > > > > > >=20
-> > > > > > > So, I have draft qemu patches which enable iommu_platform by =
-default.
-> > > > > > > But that's really because of other problems with !iommu_platf=
-orm, not
-> > > > > > > anything to do with bounce buffering or secure VMs.
-> > > > > > >=20
-> > > > > > > The thing is that the hypervisor *doesn't* require bounce buf=
-fering.
-> > > > > > > In the POWER (and maybe s390 as well) models for Secure VMs, =
-it's the
-> > > > > > > *guest*'s choice to enter secure mode, so the hypervisor has =
-no reason
-> > > > > > > to know whether the guest needs bounce buffering.  As far as =
-the
-> > > > > > > hypervisor and qemu are concerned that's a guest internal det=
-ail, it
-> > > > > > > just expects to get addresses it can access whether those are=
- GPAs
-> > > > > > > (iommu_platform=3Doff) or IOVAs (iommu_platform=3Don). =20
-> > > > > >=20
-> > > > > > I very much agree!
-> > > > > >  =20
-> > > > > > >  =20
-> > > > > > > > as was a rather bogus legacy hack =20
-> > > > > > >=20
-> > > > > > > It was certainly a bad idea, but it was a bad idea that went =
-into a
-> > > > > > > public spec and has been widely deployed for many years.  We =
-can't
-> > > > > > > just pretend it didn't happen and move on.
-> > > > > > >=20
-> > > > > > > Turning iommu_platform=3Don by default breaks old guests, som=
-e of which
-> > > > > > > we still care about.  We can't (automatically) do it only for=
- guests
-> > > > > > > that need bounce buffering, because the hypervisor doesn't kn=
-ow that
-> > > > > > > ahead of time. =20
->=20
-> We could default to iommu_platform=3Don on s390 when the host has active
-> support for protected virtualization... but that's just another kind of
-> horrible, so let's just pretend I didn't suggest it.
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-Yeah, that would break migration between hosts with the feature and
-hosts without - for everything, not just protected guests.  In general
-any kind of guest visible configuration change based on host
-properties is incompatible with the qemu/KVM migration model.
+You can find EDR spec in the following link.
 
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+https://members.pcisig.com/wg/PCI-SIG/document/12614
 
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v15:
+ * Splitted Patch # 3 in previous set into multiple patches.
+ * Refactored EDR driver use pci_dev instead of dpc_dev.
+ * Added some debug logs to EDR driver.
+ * Used pci_aer_raw_clear_status() for clearing AER errors in EDR path.
+ * Addressed other comments from Bjorn.
+ * Rebased patches on top of Bjorns "PCI/DPC: Move data to struct pci_dev" patch.
 
------BEGIN PGP SIGNATURE-----
+Changes since v14:
+ * Rebased on top of v5.6-rc1
 
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl5YXZcACgkQbDjKyiDZ
-s5LdKA//U9QbJilQoiEQCinA1xGVHP1Hm7w/1rqgbm4B30D4A7I3ioERM/uwdqkQ
-ks4shzQNPfx3O2Bkiit5DGE/A4C9CODYVqjvPw0pDpMaYJI6tDVcjd3bgYhyE2QI
-Gp5oQ4l40a4C5oUH9YYoOS7eyx0rg6q1HstQDyTtTUP8MURr5XsqMIU4086N8bDI
-JrYkBRXTU/W5FCuHnKR8wUwuKGUqTu64yEtzlT40YuWCrUw2PRtaG6jjP9CMisqL
-BS2ISdY2UeTZXNnavX0LycUAwUDo4gy/ux4TcSuzSii7A0ztiqqrbs/UFNs/GCUg
-pfcr9JbU7dsT4po/YKERdQ/6PiYuVufHASLOhDdDw6pNVLyuTnzHgmRkWSrRV4NP
-haSVx1u2JbRmJmO66RgJdt774tVxyDVIRhZprWlvg5yX0ad0TAHvx2MqitDgjCiV
-XZdu7rCfKQVCXU35ODteapV9n+CguP8f2KYIVWXJIHCbjLg65nVr4moJNupn/5nd
-kvhC+2MOoszj0PXtMEPTWe7N/H9KDfp4Vv861JhZL5pe3GluF9qsHDk/vHWuovCK
-Vab8lroMXU5o345o4w70Cu/X+PO1lkVeml+MTI3c+hfZHcaGlvnsVehQGDYhwX4I
-XvNb0jeVjkJJRHVxOIIgzD4PxiBaYtpfFV+cBvysaDf5aaCX2Zk=
-=MCKa
------END PGP SIGNATURE-----
+Changes since v13:
+ * Moved all EDR related code to edr.c
+ * Addressed Bjorns comments.
 
---HcAYCG3uE/tztfnV--
+Changes since v12:
+ * Addressed Bjorns comments.
+ * Added check for CONFIG_PCIE_EDR before requesting DPC control from firmware.
+ * Removed ff_check parameter from AER APIs.
+ * Used macros for _OST return status values in DPC driver.
+
+Changes since v11:
+ * Allowed error recovery to proceed after successful reset_link().
+ * Used correct ACPI handle for sending EDR status.
+ * Rebased on top of v5.5-rc5
+
+Changes since v10:
+ * Added "edr_enabled" member to dpc priv structure, which is used to cache EDR
+   enabling status based on status of pcie_ports_dpc_native and FF mode.
+ * Changed type of _DSM argument from Integer to Package in acpi_enable_dpc_port()
+   function to fix ACPI related boot warnings.
+ * Rebased on top of v5.5-rc3
+
+Changes since v9:
+ * Removed caching of pcie_aer_get_firmware_first() in dpc driver.
+ * Added proper spec reference in git log for patch 5 & 7.
+ * Added new function parameter "ff_check" to pci_cleanup_aer_uncorrect_error_status(),
+   pci_aer_clear_fatal_status() and pci_cleanup_aer_error_status_regs() functions.
+ * Rebased on top of v5.4-rc5
+
+Changes since v8:
+ * Rebased on top of v5.4-rc1
+
+Changes since v7:
+ * Updated DSM version number to match the spec.
+
+Changes since v6:
+ * Modified the order of patches to enable EDR only after all necessary support is added in kernel.
+ * Addressed Bjorn comments.
+
+Changes since v5:
+ * Addressed Keith's comments.
+ * Added additional check for FF mode in pci_aer_init().
+ * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
+
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Kuppuswamy Sathyanarayanan (9):
+  PCI/ERR: Update error status after reset_link()
+  PCI/AER: Move pci_cleanup_aer_error_status_regs() declaration to pci.h
+  PCI/ERR: Remove service dependency in pcie_do_recovery()
+  PCI/ERR: Return status of pcie_do_recovery()
+  PCI/DPC: Cache DPC capabilities in pci_init_capabilities()
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Export DPC error recovery functions
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/ACPI: Enable EDR support
+
+ drivers/acpi/pci_root.c   |  16 +++
+ drivers/pci/pci-acpi.c    |   3 +
+ drivers/pci/pci.h         |  16 ++-
+ drivers/pci/pcie/Kconfig  |  10 ++
+ drivers/pci/pcie/Makefile |   1 +
+ drivers/pci/pcie/aer.c    |  33 +++--
+ drivers/pci/pcie/dpc.c    |  46 ++++---
+ drivers/pci/pcie/edr.c    | 251 ++++++++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/err.c    |  26 ++--
+ drivers/pci/probe.c       |   1 +
+ include/linux/acpi.h      |   6 +-
+ include/linux/aer.h       |   5 -
+ include/linux/pci-acpi.h  |   8 ++
+ include/linux/pci.h       |   1 +
+ 14 files changed, 377 insertions(+), 46 deletions(-)
+ create mode 100644 drivers/pci/pcie/edr.c
+
+-- 
+2.21.0
+
