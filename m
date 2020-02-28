@@ -2,235 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B686173EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:01:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BD15173F06
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 19:03:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbgB1SBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 13:01:18 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39919 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1SBS (ORCPT
+        id S1726940AbgB1SCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 13:02:52 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:56557 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbgB1SCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 13:01:18 -0500
-Received: by mail-ot1-f68.google.com with SMTP id x97so3394767ota.6;
-        Fri, 28 Feb 2020 10:01:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6pAsECt7PiBK62q88D+kfvQxUuJNH4AnYnLku6Y2cN8=;
-        b=YNIJWFRH6PD6YH6SLwtDVe2BqkZ8ClZKE2ZrfPAHu3fXTLct8n7boO8SrhcJhRsr4/
-         CV/WSU4jqXgbPVZLlkmg66qJDjU19MTlG9aiq5YbDKrgpsw5ZyrR58QGch0luPDQhbCF
-         Zx1Ck+c/1B0EVfJtO3uuG5r7q60vzeOcFsmIU1E5qB5OHvusA2wZ07BJ/uG0Sxth4P2P
-         TlTX6S6eqQEVQDNapnQjpRdkMku8W4M6Ui3PnloVPx1atZntCZFHio6Pk/PXBb9VDz1p
-         VnO7gpGHFa8ozr7WO2sd1j3cth6J+dOV+72N578DygCHSLsalmZ5c2wYygobKwg9Q+OJ
-         vhDw==
-X-Gm-Message-State: APjAAAW7zLgC7C1nbGIviJ7+K4iWZMHF0bEdDFvyioNqGcPj+jf3DNok
-        lACQtmqhb4O4qMi5QKU15Q==
-X-Google-Smtp-Source: APXvYqyc028jTANUn0xgkw/a9kxcmZKUdVZYKQUcXfDjL8GahTISwR9AkN8XD+xx3EePlmjq7gsFvg==
-X-Received: by 2002:a9d:518b:: with SMTP id y11mr4099645otg.349.1582912877111;
-        Fri, 28 Feb 2020 10:01:17 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m185sm3318360oia.26.2020.02.28.10.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 10:01:16 -0800 (PST)
-Received: (nullmailer pid 21022 invoked by uid 1000);
-        Fri, 28 Feb 2020 18:01:15 -0000
-Date:   Fri, 28 Feb 2020 12:01:15 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 5/9] ASoC: meson: convert axg fifo to schema
-Message-ID: <20200228180115.GA14079@bogus>
-References: <20200224145821.262873-1-jbrunet@baylibre.com>
- <20200224145821.262873-6-jbrunet@baylibre.com>
+        Fri, 28 Feb 2020 13:02:49 -0500
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 9F51023E29;
+        Fri, 28 Feb 2020 19:02:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1582912966;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=IIolW/9xNzEYpVQY0js/vSS0I6ZWuT1Q1y2sroTURdE=;
+        b=Znlmd4OB3KWqQcko68ASQwF820vLtU5RtY/1R64OoTIUaut6v58lUdMIoc0EKOD78btNk+
+        7BtAQnV89tRAXk6ZINTxxQDJVVV06m2pdQf4OliaVvLN+L1x5ZtgdjGZMai0HOttIJyZXU
+        7kRpx5d6wsHy7xfp6o7GlCIU30MUiIc=
+From:   Michael Walle <michael@walle.cc>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [RFC PATCH v2 0/2] AT8031 PHY timestamping support
+Date:   Fri, 28 Feb 2020 19:02:24 +0100
+Message-Id: <20200228180226.22986-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224145821.262873-6-jbrunet@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Spam-Level: ******
+X-Rspamd-Server: web
+X-Spam-Status: Yes, score=6.40
+X-Spam-Score: 6.40
+X-Rspamd-Queue-Id: 9F51023E29
+X-Spamd-Result: default: False [6.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[9];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE];
+         FREEMAIL_CC(0.00)[lunn.ch,gmail.com,armlinux.org.uk,davemloft.net,walle.cc];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 03:58:17PM +0100, Jerome Brunet wrote:
-> Convert the DT binding documentation for the Amlogic axg audio FIFOs to
-> schema.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  .../bindings/sound/amlogic,axg-fifo.txt       |  34 ------
->  .../bindings/sound/amlogic,axg-fifo.yaml      | 111 ++++++++++++++++++
->  2 files changed, 111 insertions(+), 34 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-> deleted file mode 100644
-> index fa4545ed81ca..000000000000
-> --- a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-> +++ /dev/null
-> @@ -1,34 +0,0 @@
-> -* Amlogic Audio FIFO controllers
-> -
-> -Required properties:
-> -- compatible: 'amlogic,axg-toddr' or
-> -	      'amlogic,axg-toddr' or
-> -	      'amlogic,g12a-frddr' or
-> -	      'amlogic,g12a-toddr' or
-> -	      'amlogic,sm1-frddr' or
-> -	      'amlogic,sm1-toddr'
-> -- reg: physical base address of the controller and length of memory
-> -       mapped region.
-> -- interrupts: interrupt specifier for the fifo.
-> -- clocks: phandle to the fifo peripheral clock provided by the audio
-> -	  clock controller.
-> -- resets: list of reset phandle, one for each entry reset-names.
-> -- reset-names: should contain the following:
-> -  * "arb" : memory ARB line (required)
-> -  * "rst" : dedicated device reset line (optional)
-> -- #sound-dai-cells: must be 0.
-> -- amlogic,fifo-depth: The size of the controller's fifo in bytes. This
-> -  		      is useful for determining certain configuration such
-> -		      as the flush threshold of the fifo
-> -
-> -Example of FRDDR A on the A113 SoC:
-> -
-> -frddr_a: audio-controller@1c0 {
-> -	compatible = "amlogic,axg-frddr";
-> -	reg = <0x0 0x1c0 0x0 0x1c>;
-> -	#sound-dai-cells = <0>;
-> -	interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
-> -	clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
-> -	resets = <&arb AXG_ARB_FRDDR_A>;
-> -	fifo-depth = <512>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
-> new file mode 100644
-> index 000000000000..d9fe4f624784
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
-> @@ -0,0 +1,111 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/amlogic,axg-fifo.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic AXG Audio FIFO controllers
-> +
-> +maintainers:
-> +  - Jerome Brunet <jbrunet@baylibre.com>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^audio-controller@.*"
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +        - const:
-> +            amlogic,axg-toddr
-> +      - items:
-> +        - const:
-> +            amlogic,axg-frddr
-> +      - items:
-> +        - enum:
-> +          - amlogic,g12a-toddr
-> +          - amlogic,sm1-toddr
-> +        - const:
-> +            amlogic,axg-toddr
-> +      - items:
-> +        - enum:
-> +          - amlogic,g12a-frddr
-> +          - amlogic,sm1-frddr
-> +        - const:
-> +            amlogic,axg-frddr
-> +
-> +  clocks:
-> +    items:
-> +      - description: Peripheral clock
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    minItems: 1
-> +    items:
-> +      - description: Memory ARB line
-> +      - description: Dedicated device reset line
-> +
-> +  reset-names:
-> +    minItems: 1
-> +    items:
-> +      - const: arb
-> +      - const: rst
-> +
-> +  amlogic,fifo-depth:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Size of the controller's fifo in bytes
+I've put some additional time into figuring out how the PHY works since my
+last RFC. My previous comments on the interrupt handling was caused by my
+broken setup.
 
-Aren't there some constraints on possible values? I'm sure it's more 
-than 0 and less than 2^32.
+This patchset is the current state of my work for adding PHY
+timestamping support. I just wanted to post this to the mailinglist
+before I never do it. Maybe its a starting point for other people. That
+being said, I wouldn't mind comments ;) Also I like to share my findings
+about the PHY. The PHY has three major caveats which IMHO makes it really
+hard to work properly.
 
-> +
-> +required:
-> +  - "#sound-dai-cells"
-> +  - compatible
-> +  - interrupts
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - amlogic,fifo-depth
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - amlogic,g12a-toddr
-> +          - amlogic,sm1-toddr
-> +          - amlogic,g12a-frddr
-> +          - amlogic,sm1-frddr
-> +then:
-> +  properties:
-> +    resets:
-> +      minItems: 2
-> +    reset-names:
-> +      minItems: 2
-> +  required:
-> +    - reset-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/axg-audio-clkc.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
-> +    #include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
-> +
-> +    frddr_a: audio-controller@1c0 {
-> +        compatible = "amlogic,g12a-frddr", "amlogic,axg-frddr";
-> +        reg = <0x0 0x1c0 0x0 0x1c>;
-> +        #sound-dai-cells = <0>;
-> +        interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
-> +        clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
-> +        resets = <&arb AXG_ARB_FRDDR_A>, <&clkc_audio AUD_RESET_FRDDR_A>;
-> +        reset-names = "arb", "rst";
-> +        amlogic,fifo-depth = <512>;
-> +    };
-> +
-> -- 
-> 2.24.1
-> 
+ (1) The PHY doesn't support atomic reading of the (timestamp,
+     messageType, sequenceId) tuple. The workaround is to read the
+     timestamp again and check if it has changed. Actually, you'd have
+     to read the complete tuple again.
+ (2) The PHY generates an interrupt on every PTP packet not only on
+     event messages. Thus the interrupt handler may read the capture
+     registers and then determine that nothing has changed. This also
+     means we have to remember the last read timestamp. I make the
+     assumption that the timestamp is unique.
+ (3) The biggest drawback is that the PHY only provide one set of RX and
+     TX capture registers. It is possible that the timestamp will change
+     when another PTP event message is received while we are still
+     reading the timestamp of the previously received packet.
+
+Example A
+The driver basically works when there is low PTP traffic. Eg. the
+following works pretty good.
+
+ptp4l -m -2 -i eth0 -f ptp.cfg -s
+
+ptp.cfg:
+  [global]
+  tx_timestamp_timeout 100
+
+Example B
+But if you're using a P2P clock with peer delay requests this whole
+thing falls apart because of caveat (3). You'll often see messages like
+  received SYNC without timestamp
+or
+ received PDELAY_RESP without timestamp
+in linuxptp. Sometimes it working for some time and then it starts to
+loosing packets. I suspect this depends on how the PDELAY messages are
+interleaved with the SYNC message. If there is not enough time to until
+the next event message is received either of these two messages won't
+have a timestamp.
+
+ptp4l -m -f gPTP.cfg -i eth0 -s
+
+gPTP.cfg is the one from stock linuxptp with tx_timestamp_timeout set to
+100.
+
+The PHY also supports appending the timestamp to the actual ethernet frame,
+but this seems to only work when the PHY is connected via RGMII. I've never
+get it to work with a SGMII connection.
+
+The first patch might actually be useful outside of this series. See also
+  https://lore.kernel.org/netdev/bd47f8e1ebc04fa98856ed8d89b91419@walle.cc/
+
+Changes since RFC v1:
+net: phy: let the driver register its own IRQ handler
+ - fixed mistake for calling phy_request_interrupt(). Thanks Heiner.
+ - removed phy_drv_interrupt(). just calling phy_mac_interrupt()
+
+net: phy: at803x: add PTP support for AR8031
+ - moved rereading the timestamp out of at8031_read_ts() to
+   at8031_get_rxts()/at8031_get_txts().
+ - call phy_mac_interrupt() instead of phy_drv_interrupt()
+
+Please note that Heiner suggested that I should use handle_interrupt()
+instead of registering my own handler. I've still included my old patch
+here because the discussion is still ongoing and the proposed fix is only
+working for this use case. See also
+  https://lore.kernel.org/netdev/2e4371354d84231abf3a63deae1a0d04@walle.cc/
+
+-michael
+
+Michael Walle (2):
+  net: phy: let the driver register its own IRQ handler
+  net: phy: at803x: add PTP support for AR8031
+
+ drivers/net/phy/Kconfig      |  17 +
+ drivers/net/phy/at803x.c     | 855 ++++++++++++++++++++++++++++++++++-
+ drivers/net/phy/phy_device.c |   6 +-
+ include/linux/phy.h          |   1 +
+ 4 files changed, 852 insertions(+), 27 deletions(-)
+
+-- 
+2.20.1
+
