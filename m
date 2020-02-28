@@ -2,95 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEFD173D61
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E32173D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 17:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbgB1Qp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 11:45:59 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40610 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbgB1Qp7 (ORCPT
+        id S1726720AbgB1Qre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 11:47:34 -0500
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:55693 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgB1Qrd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 11:45:59 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r17so3682359wrj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:45:56 -0800 (PST)
+        Fri, 28 Feb 2020 11:47:33 -0500
+Received: by mail-qk1-f201.google.com with SMTP id t186so3300109qkh.22
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 08:47:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dnB3YbRslroktKcVWBmtkOUB1kEjE4Aqzh9tCjoW9sA=;
-        b=iJrIjG+IiWYGIuv4aS0pjFrtNOSHON/kkOz+fiN9gPNqV/5tmaqI5quNYhYtXpecqj
-         h0lPxpt0G2l3YPQbieYSSvsK9K1gO4106/0u8OWo7DnozluA3vQdUjQ7TMiPNXIbXNBF
-         iTpUnf84x/8gy3ffZuQouprp9+Aa16QxOw013HNiv2Zr2ZTU0WKzVuFvxSZsDw9qO1y8
-         xDkWfOJbsUAe51FkbTGW4vTOwIubvGsJlqATWH9CkYAyBK55vv7ZwHj5hwgWdd2WGvwG
-         Ubm3hqu/llx165YndZ4ECuFC8ejjAW0G3p9AbLSNA4r51+wOvxBKRkmnrwIUTYAyqbAY
-         gGGw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=BnK1UC8c2/CTg4QSSZm4VfbP+eP/ZMTQTgyW0tFmuUo=;
+        b=oKHI60QZm2rlT6eBR6VI7kjQy/pmu9oHGrNy5GtFXYulqvu2WVhbxI6VKR0aJSZo0s
+         0Kq8RgQ5pC99AQczsAgQNGlqf5AXSdoRFDll9Cu30Ikbq3MPnZlbObjMyBsGSEW5/u3J
+         DV5rRIbYPHCudOQB2m87fmFy+50kFlUtQmLWzfU6IixBggrmfSm1gAmArDijGrlaoC8X
+         1ZB0cGKlwNlTE/lvavlzG7Hi+X/7o+WUo9ITg9o6wcelcRa+ZW6pIk++JzmDMB/YQ1St
+         JssiVMa/xjuZRwv0j4u6iF4r981UiGPtXMC5+JbwHrvqMQBDiMFuS3tby67vkeVHyjR5
+         VAGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dnB3YbRslroktKcVWBmtkOUB1kEjE4Aqzh9tCjoW9sA=;
-        b=Bsk0ldypuRmj150RMd18v6qOZXfctUaD3NVEEGqrH/fnGFagcA7RUAjB+lbBGV9V2d
-         7nJF7eaqf1K7o1lxQF84VuNIcWmbIzsL7CEKHOJQz/+PFYVadAsa8FhDmqJxvxJzzfXZ
-         JtX+OI4jwpZBA/KgNcGlRr48UQ+EBVriWOuCy6eU6+3zxuD39LOSuDvM1fhw7EWTjAHn
-         CrSQL8kHjiQNq6Eb+g3uqUx7ADbUb0JQcLLgktb+lMYNKpf/FHpxcOezqwjq2swrqzl2
-         XvxdvSYLkHtfM3GN7uDTSX0jp0l6MrNZeC+ixlVGRi7rk/EDyvpJWMPZXK/x9F6mtrDs
-         JxYw==
-X-Gm-Message-State: APjAAAUkPEviz42VgGnI4rMgkVWj8Y9X08NywqINWRY2Xyjp7koNmAQW
-        PGcjs3v0PoVoSAaOjkp52F+blA==
-X-Google-Smtp-Source: APXvYqxeVMWKAvVvcMF6nm972He/fdlmMo/3+VBeCasLPa2AoHRCa64fawVhVSsW5qeL9ISZwA3mwQ==
-X-Received: by 2002:adf:cd88:: with SMTP id q8mr5442082wrj.286.1582908355553;
-        Fri, 28 Feb 2020 08:45:55 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id j5sm13406763wrw.24.2020.02.28.08.45.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 08:45:54 -0800 (PST)
-Date:   Fri, 28 Feb 2020 16:45:53 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Gyungoh Yoo <jack.yoo@skyworksinc.com>,
-        Bryan Wu <cooloney@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] backlight: sky81452: insure while loop does not
- allow negative array indexing
-Message-ID: <20200228164553.eojh3hbrymq3tw2d@holly.lan>
-References: <20200226195826.6567-1-colin.king@canonical.com>
- <20200227114623.vaevrdwiduxa2mqs@holly.lan>
- <b0e21719-3a7c-099a-292d-c3fa65a84fe8@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0e21719-3a7c-099a-292d-c3fa65a84fe8@canonical.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=BnK1UC8c2/CTg4QSSZm4VfbP+eP/ZMTQTgyW0tFmuUo=;
+        b=Bh2RKaxnA6t+oO9ZcctS6MNPlZVELYuogXmtK6js4y6Jkmv4v4KiKMzaRnenBFLH/D
+         ubvbqAODSBVnALIKjYORlYAJPPQFM+at5nVhZVCaP9Cr4R2FVGJ8nqbjYnZNe3wav4kg
+         8KyUZqZqOVTgpRpKmwO2Q6V1UDVlRJa/B/uXAaU6eif1M/F13DcgfMXCiXPuO4w3MtM5
+         kbr3R+p/uuCk1rkE2ItAWw6AlFGOJFahIcXBMxWxn//CmYER/EcmA73ErPsaDJV72kRF
+         lk4+U5PKmteWpXlrnWqT3BMHT0z2n8Y6o7Bvx2AHSlGw39MuA3FPE4X6Zv7w5YThXu0l
+         mWbw==
+X-Gm-Message-State: APjAAAUxyg8bTDebDlnD9co6ecFMLJ55Vvvt94hGEaUvc1Ornu/IiTk7
+        Z+6EGwN6BnhBxBwrdsK09x6AA//7Nw==
+X-Google-Smtp-Source: APXvYqzJx21ry142l0iuLlgEHIDwP/oc8aeEElRCwP142AhTC+YK6mASR70FruAnTTEZVOchzHvuEhoIeQ==
+X-Received: by 2002:ad4:580e:: with SMTP id dd14mr4596272qvb.84.1582908452572;
+ Fri, 28 Feb 2020 08:47:32 -0800 (PST)
+Date:   Fri, 28 Feb 2020 17:46:21 +0100
+Message-Id: <20200228164621.87523-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH] tools/memory-model/Documentation: Fix "conflict" definition
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, stern@rowland.harvard.edu,
+        parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+        dlustig@nvidia.com, joel@joelfernandes.org,
+        linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 03:10:43PM +0000, Colin Ian King wrote:
-> On 27/02/2020 11:46, Daniel Thompson wrote:
-> > On Wed, Feb 26, 2020 at 07:58:26PM +0000, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> In the unlikely event that num_entry is zero, the while loop
-> >> pre-decrements num_entry to cause negative array indexing into the
-> >> array sources. Fix this by iterating only if num_entry >= 0.
-> >>
-> >> Addresses-Coverity: ("Out-of-bounds read")
-> >> Fixes: f705806c9f35 ("backlight: Add support Skyworks SKY81452 backlight driver")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >> ---
-> >>
-> >> V2: fix typo in commit subject line
-> > 
-> > Isn't the correct spelling "ensure"?
-> 
-> It is. V1 is correct after all. Doh.
+For language-level memory consistency models that are adaptations of
+data-race-free, the definition of "data race" can be summarized as
+"concurrent conflicting accesses, where at least one is non-sync/plain".
 
-It wasn't spelt "ensure" in v1... 
+The definition of "conflict" should not include the type of access nor
+whether the accesses are concurrent or not, which this patch addresses
+for explanation.txt.
 
+The definition of "data race" remains unchanged, but the informal
+definition for "conflict" is restored to what can be found in the
+literature.
 
-Daniel.
+Signed-by: Marco Elver <elver@google.com>
+---
+ tools/memory-model/Documentation/explanation.txt | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
+index e91a2eb19592a..11cf89b5b85d9 100644
+--- a/tools/memory-model/Documentation/explanation.txt
++++ b/tools/memory-model/Documentation/explanation.txt
+@@ -1986,18 +1986,15 @@ violates the compiler's assumptions, which would render the ultimate
+ outcome undefined.
+ 
+ In technical terms, the compiler is allowed to assume that when the
+-program executes, there will not be any data races.  A "data race"
+-occurs when two conflicting memory accesses execute concurrently;
+-two memory accesses "conflict" if:
++program executes, there will not be any data races. A "data race"
++occurs if:
+ 
+-	they access the same location,
++	two concurrent memory accesses "conflict";
+ 
+-	they occur on different CPUs (or in different threads on the
+-	same CPU),
++	and at least one of the accesses is a plain access;
+ 
+-	at least one of them is a plain access,
+-
+-	and at least one of them is a store.
++	where two memory accesses "conflict" if they access the same
++	memory location, and at least one performs a write;
+ 
+ The LKMM tries to determine whether a program contains two conflicting
+ accesses which may execute concurrently; if it does then the LKMM says
+-- 
+2.25.1.481.gfbce0eb801-goog
+
