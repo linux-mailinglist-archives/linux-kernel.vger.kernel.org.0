@@ -2,95 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CBD17425F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 23:45:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C3DD17427C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 23:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbgB1Wnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 17:43:31 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34248 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbgB1Wn3 (ORCPT
+        id S1726627AbgB1WsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 17:48:07 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33989 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgB1WsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 17:43:29 -0500
-Received: by mail-lf1-f65.google.com with SMTP id w27so3288833lfc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 14:43:27 -0800 (PST)
+        Fri, 28 Feb 2020 17:48:06 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x7so5125593ljc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 14:48:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1BxbADyqh67zLR4CkPE+bXFbR7jY3OFFxVQi+eBGBI8=;
-        b=i6Mz6v7Na8BLINyiuQ/hSPnAQQmxYEOfbBcBVFXW97UtP8mWO1dwLWdjpxC9QcQGCg
-         GdGmH5PSCv3zZzOrPrMscGcCVDWEUpcF/bT6gk4hxsNm+jfO9DSU3BDnWl0836NcMsVt
-         AeoxZzXYTmEmRyTbde9eiR8/snn6du/PNUk9R33LMErQxsnUUVCGoyzoCaR7OPs1Lycm
-         KFvIQTf9dTXt9wDtHbgx+sHgl2V0qBKNBlC7Chtn3n2RL5q+hsn2Nku/sT5hzRzxg/Mk
-         GW5LmRNmZk92fK87ghlEjij9rPeSrQnhwdJqJ4cTn9k4ZWcE8oEBFHkcz1F+cG8aVhSU
-         oaUg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=A+iUf1q8MEClAw7zFCnu1KfnBswurqalqrfaVPpzjIg=;
+        b=j+rSunlKdN/kAKRGhPOnBPNtnuI4mJopAbdUyGTJVlTjTub2un8qOnqwPv0YgE327y
+         aHY+108Xztjp2qF2LhuHT6nccbHZNBGB5FJzBvYjdS5l5b2lsuomSPRsrzhTJ9jo4gRd
+         umBQ2OnCPDzOfVSNC9+xSQ0efZmNxy+tzDek9wGXEvZtd+CxFFw5e8JTMEMeNc5NQxEd
+         ktEuCd1EhHWWONd53x+zIsL6rBEZJY3XEH6gpfymR1A5ppGZDrfG4TBxmtuIS85mN/y1
+         O+DNi7nOPllLZK5Ypxu4IUVxQxzrn8lbLiHxSNUK+oFRDetF9rvKIbwASP1I4iUK0NI9
+         kbjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1BxbADyqh67zLR4CkPE+bXFbR7jY3OFFxVQi+eBGBI8=;
-        b=GcCuKZGHaE0DpqDLaRoXC64L/g1OGzlQajLJwnnvn6Q5dfWLzGwrZG+Ya6VtKA2Xmh
-         a42Eq0h9oC7lTGM0mq+XGsIZ9VwVMpSG6SVEuxihfazb5mqO8ArO/aDL7oY9DcJBWSOe
-         XURbtDrslfH0UQEDuzrTMm2sUvk66TVtpe7eN4QIOAcx9B9KOVJTKDspsUe5ShaSLxAu
-         A3vjYwFV1qKpJuMtFxQMA23qk5x/9/mNUcotC0cuK8mrxECLOoBxjb80A//duKKpe5HY
-         h5xKpI8sm6BxWZ5wVPmV/IAjGyDjktj4jTHlpYkqi+Y+DrarRhM0mqrs3M8zJfTygBvK
-         TKnA==
-X-Gm-Message-State: ANhLgQ3FVaVADgf4G8AR2zzlPEn8je36Cgc7BCFQOPCrpYqFR8QBbDqG
-        NTmettHu56e9HqjlAaLPTEgdg4zc2gHmOau8IxA+rQ==
-X-Google-Smtp-Source: ADFU+vvwV+eXKAqc/AH6wyolv56OmLms52Q1I+Lg/sFK1m7+034EZ451eAX8G9p01LxfFc6BXUqFS0ufeeNdx6RY9L0=
-X-Received: by 2002:ac2:44a5:: with SMTP id c5mr3584341lfm.4.1582929807065;
- Fri, 28 Feb 2020 14:43:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20200220130149.26283-1-geert+renesas@glider.be>
- <20200220130149.26283-2-geert+renesas@glider.be> <CACRpkdbgsR1n1qj3HmQWcEjeDdN85N1Mw8kLOUAeDjESW36MDg@mail.gmail.com>
- <d2b87102-fdf3-f22f-8477-5b2105d9583b@gmail.com>
-In-Reply-To: <d2b87102-fdf3-f22f-8477-5b2105d9583b@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Feb 2020 23:43:16 +0100
-Message-ID: <CACRpkdZwaKA-Gq4wjkPZ_VFiOgNgvLPnYmx4A3AFE-0eNNjQpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: of: Extract of_gpiochip_add_hog()
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=A+iUf1q8MEClAw7zFCnu1KfnBswurqalqrfaVPpzjIg=;
+        b=fywPKrpl1pXP/YwMaVv5kabwhPht5M6K+bUuc2bM+3Nzm+FzIFHsweyZNqspRPEMHC
+         7MPcZgEdkmx9gk4cNwk4HgwXl7s7zEuhzg0D/dDRSGJfvT7xkVklw36WSv7tW/eaAlyS
+         6FJz29BE+6fhRGo7o3TrlybaGIY86c3zVu7Z+eYNgR/2kgs8+sxSUwVMQXmuTiQDElSI
+         tW6W6HbqeZe+lvz+DGHAIYHwl8g0JwfnMH82DnHyRBJM/lwTv9TJtTEsX4X3n2OZSVaU
+         EIuEysy3IAbx70riEH7fpleGxoyaqlY/Vi8MtSD3jHmaRSNSF2rVmlaVz1BbxWG8blt9
+         g6Zg==
+X-Gm-Message-State: ANhLgQ18jyYBl8BlYYW3/EUDCTmvobRmUUhcJXjJPR+1Kh9ZCw071oZX
+        z4BoOlw/URBxCR18W52Luj8=
+X-Google-Smtp-Source: ADFU+vuV1zQy8PJeKk+iZ5PNWS05sKhzzSQ5rg4vPdWweL9ZumRLjGymkVf+izwZf1z47RUFlXh+Hg==
+X-Received: by 2002:a2e:b892:: with SMTP id r18mr4268976ljp.252.1582930084594;
+        Fri, 28 Feb 2020 14:48:04 -0800 (PST)
+Received: from localhost.localdomain (188.146.100.83.nat.umts.dynamic.t-mobile.pl. [188.146.100.83])
+        by smtp.gmail.com with ESMTPSA id w24sm5424340ljh.26.2020.02.28.14.48.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 14:48:03 -0800 (PST)
+From:   mateusznosek0@gmail.com
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Nosek <mateusznosek0@gmail.com>, akpm@linux-foundation.org
+Subject: [PATCH] mm/mm_init.c: Clean code. Use BUILD_BUG_ON when comparing compile time constant
+Date:   Fri, 28 Feb 2020 23:46:17 +0100
+Message-Id: <20200228224617.11343-1-mateusznosek0@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 6:18 PM Frank Rowand <frowand.list@gmail.com> wrote:
-> On 2/21/20 10:08 AM, Linus Walleij wrote:
+From: Mateusz Nosek <mateusznosek0@gmail.com>
 
-> > Patch applied with Frank's Review tag.
->
-> I created a devicetree unittest to show the problem that Geert's patches
-> fix.
->
-> I would prefer to have my unittest patch series applied somewhere,
-> immediately followed by Geert's patch series.  This way, after
-> applying my series, a test fail is reported, then after Geert's
-> series is applied, the test fail becomes a test pass.
->
-> Can you coordinate with Rob to accept both series either via
-> your tree or Rob's tree?
+MAX_ZONELISTS is compile time constant,
+so it should be compared using BUILD_BUG_ON not BUG_ON.
 
-I see Rob already applied the test.
+Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
+---
+ mm/mm_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I do not personally bother much about which order problems
-get solved but I guess if Rob can back out the patch I can apply
-it to my tree instead, before these patches. for some time,
-before I start pulling stuff on top.
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 5c918388de99..7da6991d9435 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -37,7 +37,7 @@ void __init mminit_verify_zonelist(void)
+ 		struct zonelist *zonelist;
+ 		int i, listid, zoneid;
+ 
+-		BUG_ON(MAX_ZONELISTS > 2);
++		BUILD_BUG_ON(MAX_ZONELISTS > 2);
+ 		for (i = 0; i < MAX_ZONELISTS * MAX_NR_ZONES; i++) {
+ 
+ 			/* Identify the zone and nodelist */
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
