@@ -2,124 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D7A817395D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:07:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 598AA173943
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 15:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbgB1OBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 09:01:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727515AbgB1OBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 09:01:31 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0DAA246B9;
-        Fri, 28 Feb 2020 14:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582898491;
-        bh=A5fb38kM+GZ7gGMNs4Lmp1mxfiq8mi+VBCVLWTrcR14=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ShUkFuMzDJfu2PbgZ4VEtk1Am3iJeV9fsCVrhVrw31NjSH6CrisH/hs+++80/Tl6+
-         3JNQ3wg1kyboVYdlkwy42/7kNug4Wo0o1TJIy7bEMyKiIXqVdD4zocbIWTLo0etxPo
-         tIl5hHDpPDrbC2LqQxeX1B6OciD9kpl5G0eBLaAA=
-Message-ID: <6567c8fa690d9f9a0682ee22e528fcd5e3b51212.camel@kernel.org>
-Subject: Re: libceph: follow redirect replies from osds
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>,
-        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.co>,
-        ceph-devel@vger.kernel.org
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 28 Feb 2020 09:01:29 -0500
-In-Reply-To: <6ea7e486-a3f3-7def-1f88-2e645e3b9780@canonical.com>
-References: <6ea7e486-a3f3-7def-1f88-2e645e3b9780@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1727211AbgB1N6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:58:53 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.33]:25897 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727176AbgB1N6v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:58:51 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id AB0F9144426
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 07:58:49 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7gADjOawwAGTX7gADjXXIz; Fri, 28 Feb 2020 07:58:49 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=VmWd0kawVjFDVrC58A0HNwnFKmgLjI3Oqnx2bR0eAVQ=; b=VIuaiMohhZXQfd3PZHOPz8KL2P
+        xmeCR3nBB+XF0F6FAAbckyFmLrh2dAB5ooRqkhA4ISAuiBKVlPE9PYmgKnQxaAtvpnY0Exv0dKFYc
+        XwG5I6JsCh9sBMChthQO5jfwxJgMG0uTLoFATzLrBwBCZaqImWS6BpS9eRKtqv9CXzynQCQtd99GK
+        ZWOsN0ci3huFrVZmIOzp6cw5icqYYRiDLer5Rn1K+u6J8W0SrTYqxsY7psj7JIPkle1Xj0J64nPbF
+        xU0OQPPyswEBmEDUXhmztDb0YFEzBTd6qucLCQ9XBe1RdlZJyyicqyhJS4L0T1XAVxFbVVs/ffuPf
+        3Rwiv9Pw==;
+Received: from [201.162.240.44] (port=31926 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j7gAB-001bTU-Pt; Fri, 28 Feb 2020 07:58:48 -0600
+Date:   Fri, 28 Feb 2020 08:01:43 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] af_unix: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200228140143.GA30654@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.240.44
+X-Source-L: No
+X-Exim-ID: 1j7gAB-001bTU-Pt
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.240.44]:31926
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 76
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2020-02-28 at 12:46 +0000, Colin Ian King wrote:
-> Hi,
-> 
-> Static analysis with Coverity has detected a potential issue in the
-> following commit in function ceph_redirect_decode():
-> 
-> commit 205ee1187a671c3b067d7f1e974903b44036f270
-> Author: Ilya Dryomov <ilya.dryomov@inktank.com>
-> Date:   Mon Jan 27 17:40:20 2014 +0200
-> 
->     libceph: follow redirect replies from osds
-> 
-> The issue is as follows:
-> 
-> 
-> 3486        len = ceph_decode_32(p);
-> 
-> Unused value (UNUSED_VALUE)
-> assigned_pointer: Assigning value from len to *p here, but that stored
-> value is overwritten before it can be used.
-> 
-> 3487        *p += len; /* skip osd_instructions */
-> 3488
-> 3489        /* skip the rest */
-> 
-> value_overwrite: Overwriting previous write to *p with value from
-> struct_end.
-> 
-> 3490        *p = struct_end;
-> 
-> The *p assignment in line 3487 is effectively being overwritten by the
-> *p assignment in 3490.  Maybe the following is correct:
-> 
->         len = ceph_decode_32(p);
-> -       p += len; /* skip osd_instructions */
-> +       struct_end = *p + len;  /* skip osd_instructions */
-> 
->         /* skip the rest */
->         *p = struct_end;
-> 
-> I'm not familiar with the ceph structure here, so I'm not sure what the
-> correct fix would be.
-> 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Probably something like this? (untested, of course)
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-----------------------
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-[PATCH] libceph: fix up Coverity warning in ceph_redirect_decode
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-We're going to skip to the end of the msg after checking the
-object_name anyway, so there is no need to separately decode
-the osd instructions that follow it.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- net/ceph/osd_client.c | 3 ---
- 1 file changed, 3 deletions(-)
+ include/net/af_unix.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 8ff2856e2d52..51810db4130a 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -3483,9 +3483,6 @@ static int ceph_redirect_decode(void **p, void
-*end,
- 		goto e_inval;
- 	}
+diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+index 17e10fba2152..e51d727cc3cd 100644
+--- a/include/net/af_unix.h
++++ b/include/net/af_unix.h
+@@ -27,7 +27,7 @@ struct unix_address {
+ 	refcount_t	refcnt;
+ 	int		len;
+ 	unsigned int	hash;
+-	struct sockaddr_un name[0];
++	struct sockaddr_un name[];
+ };
  
--	len = ceph_decode_32(p);
--	*p += len; /* skip osd_instructions */
--
- 	/* skip the rest */
- 	*p = struct_end;
- out:
+ struct unix_skb_parms {
 -- 
-2.24.1
-
-
-
+2.25.0
 
