@@ -2,70 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61987173818
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 093A817382C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:19:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbgB1NQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:16:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726752AbgB1NQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:16:50 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1726562AbgB1NTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:19:42 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51562 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgB1NTm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:19:42 -0500
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E158246B2;
-        Fri, 28 Feb 2020 13:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582895809;
-        bh=kmwO2duRmxrJ+p701KSv+i2iZUGdm8OdYHFt5luodto=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JJEkvhEV8ejzUQW+yZFzWDs/7AEP/Bc5fRB0HdNy3R6My5bUlMPOf8j3f8ESCDA2W
-         cmnHO65NXGHJ31lBuf56eHp+xJXXMhrY5/0nt+J8LLvVSTE8dj+obhU6oZcju00cjc
-         imCckjkxjCh+WFtAwh0YfbDyjoajWiHshFt5darg=
-Date:   Fri, 28 Feb 2020 14:16:47 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     shuah <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.5 000/150] 5.5.7-stable review
-Message-ID: <20200228131647.GA3020536@kroah.com>
-References: <20200227132232.815448360@linuxfoundation.org>
- <e1772ba8-f03a-4423-b41c-ca54e85ad7e2@kernel.org>
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B0434296B9F;
+        Fri, 28 Feb 2020 13:19:40 +0000 (GMT)
+Date:   Fri, 28 Feb 2020 14:18:14 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Pratyush Yadav <p.yadav@ti.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        Mark Brown <broonie@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2 06/11] mtd: spi-nor: add support for DTR protocol
+Message-ID: <20200228141814.633c7195@collabora.com>
+In-Reply-To: <20200228120750.hstohetdnqja2g2p@ti.com>
+References: <20200226093703.19765-1-p.yadav@ti.com>
+        <20200226093703.19765-7-p.yadav@ti.com>
+        <20200227175841.51435e3f@collabora.com>
+        <20200228093658.zc3uifqg4zruokq3@ti.com>
+        <20200228115355.5033798f@collabora.com>
+        <20200228120750.hstohetdnqja2g2p@ti.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1772ba8-f03a-4423-b41c-ca54e85ad7e2@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 08:35:09PM -0700, shuah wrote:
-> On 2/27/20 6:35 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.5.7 release.
-> > There are 150 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 29 Feb 2020 13:21:24 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.7-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
+On Fri, 28 Feb 2020 17:37:50 +0530
+Pratyush Yadav <p.yadav@ti.com> wrote:
+
+ 
+> > Isn't there an EXIT sequence that allows NORs to return to a single 
+> > SPI state?  
 > 
-> Compiled and booted on my test system. No dmesg regressions.
+> Yes there is, but it comes with a lot of strings attached. There is a 
+> hardware reset pin on some flashes that puts the flash in Power-on-Reset 
+> (POR) mode. But that pin is not mandatory. It also might not be 
+> connected on a given board.
+> 
+> The other option is a "Soft Reset" (also optional), which puts the flash 
+> in POR mode after it is given the soft reset command. But to send the 
+> command you need to know the mode the device is in. On top of that, the 
+> Soft Reset opcode differs between flashes. According to the xSPI spec, 
+> some flashes can have the opcode as 0xF0 and some others can have it as 
+> a two command sequence of 0x66 and 0x99.
+> 
+> And the cherry on top is the fact that these reset operations return to 
+> a state based on the value of the non-volatile bits. So, if the 
+> non-volatile configuration is 8D-8D-8D mode, then all these resets 
+> achieve nothing.
 
-Thanks for testing all of these and letting me know.
+Looks like flash vendors don't learn from their mistakes, they keep
+adding more features without really thinking about backward
+compatibility :-(.
 
-greg k-h
+> >   
+> > > 
+> > >     So, the only solution I can now think of is having the flash name in 
+> > >     its compatible string in the device tree. This way we can skip all 
+> > >     the Read ID ugliness and can have flash-specific hooks to make it 
+> > >     easier to detect the mode it is in (though I wonder if it is even 
+> > >     possible to detect the mode in a flash that doesn't have SFDP in 
+> > >     8D-8D-8D).  
+> > 
+> > Hm, I'd really like to avoid that if possible.  
+> 
+> Unfortunately, I don't really see a better alternative. Just so I 
+> understand this better, why do you think it is something worth avoiding?
+
+There are 2 main reasons:
+
+1/ board manufacturers usually source their flashes from different
+vendors so they're not tied to one of them. That means you can't really
+make the compatible too specific or you'd have to deal with DT variants
+(one variant per-flash).
+
+2/ I feel like once we start accepting specific compats, people will
+try to abuse it and decide that they need one for their flash too,
+before even trying to see if there's not a different way to detect the
+flash.
