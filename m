@@ -2,54 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F111173E1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 18:15:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E95B5173E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 18:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgB1RPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 12:15:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41428 "EHLO mail.kernel.org"
+        id S1726562AbgB1RQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 12:16:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgB1RPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 12:15:09 -0500
-Subject: Re: [GIT PULL] ACPI fixes for v5.6-rc4
+        id S1725730AbgB1RQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 12:16:40 -0500
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38C86246AE;
+        Fri, 28 Feb 2020 17:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582910109;
-        bh=xDAZZtFV1EibALfcVTCMV5kttkdTN7Lzoa/vbHh9BS8=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=WBxSQgOR3tUgzLO6pOAaFUAymfNuPH0R/czh2ZTTyXu9GQ52iplz9hBpH2+AGFHeb
-         zzYWKaE+BKOk4P8x4NFRE1z6q6aWNr0HHca9y2hdGIRPiaeau8gnzPHOVGRNvIbnqA
-         BFvA+aT8dO5pC9Aw71eLki1VDjaXGKhaogKhOTjw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0h6eQ72p8uNnxRkAYJjSZ7yTC5yyZitoZ96KA+05Dq7Dg@mail.gmail.com>
-References: <CAJZ5v0h6eQ72p8uNnxRkAYJjSZ7yTC5yyZitoZ96KA+05Dq7Dg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0h6eQ72p8uNnxRkAYJjSZ7yTC5yyZitoZ96KA+05Dq7Dg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
- acpi-5.6-rc4
-X-PR-Tracked-Commit-Id: cabe17d0173ab04bd3f87b8199ae75f43f1ea473
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c60c04021353c55b133519804734415f647f08bd
-Message-Id: <158291010942.6279.13509633892252691233.pr-tracker-bot@kernel.org>
-Date:   Fri, 28 Feb 2020 17:15:09 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        s=default; t=1582910199;
+        bh=IDaZjLZxrZLRt50u+ZaYanMdErYZ7ar+lCyzISvKj2o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WE1j9aFo5u71FkqhULMUZ32EgunKxjjLmN4sqCikQG6oKVcohm+HTAPry5CI+zK5I
+         ouuZ7XMgikz00NqOGVlYGJ1Xht0xbn1dZ9zoT82jGq7PqpmfecBdPe13yK0sdNMryQ
+         2YcPKNie2iqm/l26mqGO1+87yUwl/KY5kR3zrtCw=
+Received: by mail-qk1-f170.google.com with SMTP id f140so3632591qke.11;
+        Fri, 28 Feb 2020 09:16:39 -0800 (PST)
+X-Gm-Message-State: APjAAAXzS4s0fWpkpCPjONCC7stPF+x+sBvOK6p2ZaVWxEMiVcXP2VMJ
+        cyfr0bUn301JIo6HmDOCxuTFeKsHHWmGDcWIAQ==
+X-Google-Smtp-Source: APXvYqwm/UEHV7zIm/RLE/ehDEw018Mzqy218BUmwoYZizs7XmEV5j7FEcuMv4eYBsp5fxF5wJIcJGeBjuznVZuuysk=
+X-Received: by 2002:ae9:e711:: with SMTP id m17mr5272958qka.393.1582910198275;
+ Fri, 28 Feb 2020 09:16:38 -0800 (PST)
+MIME-Version: 1.0
+References: <20200224145821.262873-1-jbrunet@baylibre.com> <20200224145821.262873-3-jbrunet@baylibre.com>
+ <20200228155017.GA24730@bogus> <1jpndyejkn.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jpndyejkn.fsf@starbuckisacylon.baylibre.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 28 Feb 2020 11:16:27 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+K=XHXmPbKrkO1_jnUO8sOyCM-XRpCmEX0+aWwBoBbVw@mail.gmail.com>
+Message-ID: <CAL_Jsq+K=XHXmPbKrkO1_jnUO8sOyCM-XRpCmEX0+aWwBoBbVw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] ASoC: meson: convert axg tdm interface to schema
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 28 Feb 2020 11:27:30 +0100:
+On Fri, Feb 28, 2020 at 10:57 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+>
+> On Fri 28 Feb 2020 at 16:50, Rob Herring <robh@kernel.org> wrote:
+>
+> > On Mon, Feb 24, 2020 at 03:58:14PM +0100, Jerome Brunet wrote:
+> >> Convert the DT binding documentation for the Amlogic tdm interface to
+> >> schema.
+> >>
+> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> >> ---
+> >>  .../bindings/sound/amlogic,axg-tdm-iface.txt  | 22 -------
+> >>  .../bindings/sound/amlogic,axg-tdm-iface.yaml | 57 +++++++++++++++++++
+> >>  2 files changed, 57 insertions(+), 22 deletions(-)
+> >>  delete mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt
+> >>  create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt
+> >> deleted file mode 100644
+> >> index cabfb26a5f22..000000000000
+> >> --- a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.txt
+> >> +++ /dev/null
+> >> @@ -1,22 +0,0 @@
+> >> -* Amlogic Audio TDM Interfaces
+> >> -
+> >> -Required properties:
+> >> -- compatible: 'amlogic,axg-tdm-iface'
+> >> -- clocks: list of clock phandle, one for each entry clock-names.
+> >> -- clock-names: should contain the following:
+> >> -  * "sclk" : bit clock.
+> >> -  * "lrclk": sample clock
+> >> -  * "mclk" : master clock
+> >> -         -> optional if the interface is in clock slave mode.
+> >> -- #sound-dai-cells: must be 0.
+> >> -
+> >> -Example of TDM_A on the A113 SoC:
+> >> -
+> >> -tdmif_a: audio-controller@0 {
+> >> -    compatible = "amlogic,axg-tdm-iface";
+> >> -    #sound-dai-cells = <0>;
+> >> -    clocks = <&clkc_audio AUD_CLKID_MST_A_MCLK>,
+> >> -             <&clkc_audio AUD_CLKID_MST_A_SCLK>,
+> >> -             <&clkc_audio AUD_CLKID_MST_A_LRCLK>;
+> >> -    clock-names = "mclk", "sclk", "lrclk";
+> >> -};
+> >> diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.yaml
+> >> new file mode 100644
+> >> index 000000000000..5f04f9cf30a0
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-iface.yaml
+> >> @@ -0,0 +1,57 @@
+> >> +# SPDX-License-Identifier: GPL-2.0
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Amlogic Audio TDM Interfaces
+> >> +
+> >> +maintainers:
+> >> +  - Jerome Brunet <jbrunet@baylibre.com>
+> >> +
+> >> +properties:
+> >> +  $nodename:
+> >> +    pattern: "^audio-controller-.*"
+> >> +
+> >> +  "#sound-dai-cells":
+> >> +    const: 0
+> >> +
+> >> +  compatible:
+> >> +    items:
+> >> +      - const: 'amlogic,axg-tdm-iface'
+> >> +
+> >> +  clocks:
+> >> +    minItems: 2
+> >> +    maxItems: 3
+> >> +    items:
+> >> +      - description: Bit clock
+> >> +      - description: Sample clock
+> >> +      - description: Master clock #optional
+> >> +
+> >> +  clock-names:
+> >> +    minItems: 2
+> >> +    maxItems: 3
+> >> +    items:
+> >> +      - const: sclk
+> >> +      - const: lrclk
+> >> +      - const: mclk
+> >> +
+> >> +required:
+> >> +  - "#sound-dai-cells"
+> >> +  - compatible
+> >> +  - clocks
+> >> +  - clock-names
+> >
+> > Add an:
+> >
+> > additionalProperties: false
+>
+> I did not put that on purpose.
+> Most of the amlogic devices use an generic ASoC property called
+> "sound-name-prefix"
+>
+> You may see examples of that in
+> arch/arm64/boot/dts/amlogic/meson-axg.dtsi.
+>
+> That property is not expressed in json schema yet, and I don't
+> really know what is the best way to add that.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-5.6-rc4
+Just assume it is (and I believe there's a patch I reviewed adding
+it). Regardless, you still need to define what the strings are.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c60c04021353c55b133519804734415f647f08bd
+> Adding 'additionalProperties: false' right now would generate a fair
+> amount of warning with 'make dtbs_check'
 
-Thank you!
+That's a good way to have a todo...
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Rob
