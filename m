@@ -2,137 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B0B4173106
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6BAE173101
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:30:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgB1GbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 01:31:16 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:50792 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgB1GbQ (ORCPT
+        id S1726583AbgB1Gae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 01:30:34 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36430 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbgB1Gad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 01:31:16 -0500
-X-Greylist: delayed 1866 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Feb 2020 01:31:16 EST
-Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1j7YaJ-0001Y7-1g; Thu, 27 Feb 2020 23:53:15 -0600
-Message-ID: <e8cd8f287934954cfa07dcf76ac73492e2d49a5b.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Jason Yan <yanaijie@huawei.com>, Daniel Axtens <dja@axtens.net>,
-        mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        diana.craciun@nxp.com, christophe.leroy@c-s.fr,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com
-Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
-Date:   Thu, 27 Feb 2020 23:53:13 -0600
-In-Reply-To: <8171d326-5138-4f5c-cff6-ad3ee606f0c2@huawei.com>
-References: <20200206025825.22934-1-yanaijie@huawei.com>
-         <87tv3drf79.fsf@dja-thinkpad.axtens.net>
-         <8171d326-5138-4f5c-cff6-ad3ee606f0c2@huawei.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: yanaijie@huawei.com, dja@axtens.net, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com, christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, keescook@chromium.org, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
-X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Fri, 28 Feb 2020 01:30:33 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t13so1297450qto.3;
+        Thu, 27 Feb 2020 22:30:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7TS07qm5BTzPoIctEpgMyVEvZEu8e9vIDaiI4S1jRII=;
+        b=nZYtRjO2I5BXWjnVy9qkjCyLXjT2Ji1fya8iFrWtSm7NGagYGnzGjEJpYjVg7T1sXA
+         Vehqo1LeklXK5N9yoq0o6uoFcKXMQPMfjcyp1TMBPAkEPk0SL08w8V1V1oLUzBVC9BZo
+         ZHYyIudKx0rfsTQ4leSYIpoxBSesP23LpTR9tbknlOGK4bVI//+2pXh64Sa8UsDo3ewR
+         P4UCBttEUCmQhN9K0mieJP9UjRLJKGYZgEqb4/vW2JZJ1OIIR6GHxL892zDWCHiYa0Q2
+         uEieDhkqY2mdfq1zm3bVRn1NhtasXu7+BmZhmx1AhQeYTleA6/eorLHR0C2RRG55j12x
+         EMoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7TS07qm5BTzPoIctEpgMyVEvZEu8e9vIDaiI4S1jRII=;
+        b=q5vHH1UG0tiNgS5jSG4iPiWzEvjyR8Tue/5+/u10RdWGSJF5npwSv3yC3jBXHumdPq
+         7AKQo+Qfayy/CFVUoXEADAclSf+NLORY4CING+ZqIfyR+8VvhToUJEw4Au4uKX8UOpD1
+         jPlZ4RdvnYrJWYRLJRJ3gNYYXFA4Rgpe2Di3jDzu/D1iWaSeMp3ISXBoE/tRx53rgWEC
+         LS8hF6wFabAN28mZNI5mWD7Q5uMbp4OTT6P/a5qBdk4Jtfli/oqzW2J4S3wjwQ3q+AR7
+         U0XjbjUFRt9ZrTfSR2BsZOAAi5Tp1ZMY/aszJh22MQlQte+Ivyo/iijnzLtW33Hs8qD3
+         WZ0A==
+X-Gm-Message-State: APjAAAW/CjxP9ijXOqCZP8ERyiyQsrX4ePfiIwjDAehIgalg9bwbJ/7m
+        nn1wwvIAOhbXDWsyxGOOJQg=
+X-Google-Smtp-Source: APXvYqyKKsLHfSmrkm4O8hNO/kg9yQvuJCRhggQK6nbbKYMtA5F22j+wO2BXVUeOHtAdu68tCg666Q==
+X-Received: by 2002:ac8:1a19:: with SMTP id v25mr2978785qtj.146.1582871432010;
+        Thu, 27 Feb 2020 22:30:32 -0800 (PST)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id d74sm4563641qke.91.2020.02.27.22.30.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Feb 2020 22:30:31 -0800 (PST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 26FD522223;
+        Fri, 28 Feb 2020 01:30:30 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 28 Feb 2020 01:30:30 -0500
+X-ME-Sender: <xms:grNYXsWgcUpfsfN09fLzyHZUG__G6GTb4afd0J8m0PSo1qxoP8-zqg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleejgdelkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucfkphephedvrd
+    duheehrdduuddurdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
+    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
+    rdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:grNYXs5eGZYyBdtyRgeRt5bitl3y1L8zsOhgTEfm7meDUuW658yxug>
+    <xmx:grNYXjJ74cxQy4R6lApHewhbLkliRfffyDeQwOpaHtWQb3kybLWmqw>
+    <xmx:grNYXtL_W5dH1OPLHRUMJj-hiBETIVOKPF0WhLT5vf4M9dJajaq34g>
+    <xmx:hrNYXk42OucZ4QYMvWLkxJFki1WoSWsYUa5dwpMARXh6Dxr7O7pbJJUKwH8>
+Received: from localhost (unknown [52.155.111.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DE49C3280065;
+        Fri, 28 Feb 2020 01:30:25 -0500 (EST)
+Date:   Fri, 28 Feb 2020 14:30:24 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] Documentation/locking/atomic: Fix atomic-set
+ litmus test
+Message-ID: <20200228063024.GU69864@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <20200227004049.6853-3-boqun.feng@gmail.com>
+ <Pine.LNX.4.44L0.2002271133300.1730-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.2002271133300.1730-100000@iolanthe.rowland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-26 at 16:18 +0800, Jason Yan wrote:
-> Hi Daniel,
+On Thu, Feb 27, 2020 at 11:34:55AM -0500, Alan Stern wrote:
+> On Thu, 27 Feb 2020, Boqun Feng wrote:
 > 
-> 在 2020/2/26 15:16, Daniel Axtens 写道:
-> > Hi Jason,
+> > Currently the litmus test "atomic-set" in atomic_t.txt has a few things
+> > to be improved:
 > > 
-> > > This is a try to implement KASLR for Freescale BookE64 which is based on
-> > > my earlier implementation for Freescale BookE32:
-> > > https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=131718
-> > > 
-> > > The implementation for Freescale BookE64 is similar as BookE32. One
-> > > difference is that Freescale BookE64 set up a TLB mapping of 1G during
-> > > booting. Another difference is that ppc64 needs the kernel to be
-> > > 64K-aligned. So we can randomize the kernel in this 1G mapping and make
-> > > it 64K-aligned. This can save some code to creat another TLB map at
-> > > early boot. The disadvantage is that we only have about 1G/64K = 16384
-> > > slots to put the kernel in.
-> > > 
-> > >      KERNELBASE
-> > > 
-> > >            64K                     |--> kernel <--|
-> > >             |                      |              |
-> > >          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
-> > >          |  |  |  |....|  |  |  |  |  |  |  |  |  |....|  |  |
-> > >          +--+--+--+    +--+--+--+--+--+--+--+--+--+    +--+--+
-> > >          |                         |                        1G
-> > >          |----->   offset    <-----|
-> > > 
-> > >                                kernstart_virt_addr
-> > > 
-> > > I'm not sure if the slot numbers is enough or the design has any
-> > > defects. If you have some better ideas, I would be happy to hear that.
-> > > 
-> > > Thank you all.
-> > > 
+> > 1)	The CPU/Processor numbers "P1,P2" are not only inconsistent with
+> > 	the rest of the document, which uses "CPU0" and "CPU1", but also
+> > 	unacceptable by the herd tool, which requires processors start
+> > 	at "P0".
 > > 
-> > Are you making any attempt to hide kernel address leaks in this series?
-> 
-> Yes.
-> 
-> > I've just been looking at the stackdump code just now, and it directly
-> > prints link registers and stack pointers, which is probably enough to
-> > determine the kernel base address:
+> > 2)	The initialization block uses a "atomic_set()", which is OK, but
+> > 	it's better to use ATOMIC_INIT() to make clear this is an
+> > 	initialization.
 > > 
-> >                    SPs:               LRs:             %pS pointer
-> > [    0.424506] [c0000000de403970] [c000000001fc0458] dump_stack+0xfc/0x154
-> > (unreliable)
-> > [    0.424593] [c0000000de4039c0] [c000000000267eec] panic+0x258/0x5ac
-> > [    0.424659] [c0000000de403a60] [c0000000024d7a00]
-> > mount_block_root+0x634/0x7c0
-> > [    0.424734] [c0000000de403be0] [c0000000024d8100]
-> > prepare_namespace+0x1ec/0x23c
-> > [    0.424811] [c0000000de403c60] [c0000000024d7010]
-> > kernel_init_freeable+0x804/0x880
+> > 3)	The return value of atomic_add_unless() is discarded
+> > 	inexplicitly, which is OK for C language, but it will be helpful
+> > 	to the herd tool if we use a void cast to make the discard
+> > 	explicit.
 > > 
-> > git grep \\\"REG\\\" arch/powerpc shows a few other uses like this, all
-> > in process.c or in xmon.
+> > Therefore fix these and this is the preparation for adding the litmus
+> > test into memory-model litmus-tests directory so that people can
+> > understand better about our requirements of atomic APIs and klitmus tool
+> > can be used to generate tests.
 > > 
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 > 
-> Thanks for reminding this.
+> Patch 5/5 in this series does basically the same thing for 
+> Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.  How come you 
+> used one patch for that, but this is split into two patches (2/5 and 
+> 4/5)?
 > 
-> > Maybe replacing the REG format string in KASLR mode would be sufficient?
-> > 
-> 
-> Most archs have removed the address printing when dumping stack. Do we 
-> really have to print this?
-> 
-> If we have to do this, maybe we can use "%pK" so that they will be 
-> hidden from unprivileged users.
 
-I've found the addresses to be useful, especially if I had a way to dump the
-stack data itself.  Wouldn't the register dump also be likely to give away the
-addresses?
+When I was working one the first version, I wasn't so sure that we would
+reach the agreement of where to put the litmus tests, and the litmus
+test in the atomic_t.txt obviously needs a fix, so I separated the fix
+and the adding of a litmus test to make my rebase easier ;-). But you're
+right, the separation is not needed now. 
 
-I don't see any debug setting for %pK (or %p) to always print the actual
-address (closest is kptr_restrict=1 but that only works in certain
-contexts)... from looking at the code it seems it hashes even if kaslr is
-entirely disabled?  Or am I missing something?
+I will merge those two patches into one in the next version, also with
+the name adjustment you and Andrea have pointed out. Thanks!
 
--Scott
+Regards,
+Boqun
 
-
+> Alan
+> 
+> > ---
+> >  Documentation/atomic_t.txt | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
+> > index 0ab747e0d5ac..ceb85ada378e 100644
+> > --- a/Documentation/atomic_t.txt
+> > +++ b/Documentation/atomic_t.txt
+> > @@ -91,15 +91,15 @@ ops. That is:
+> >    C atomic-set
+> >  
+> >    {
+> > -    atomic_set(v, 1);
+> > +    atomic_t v = ATOMIC_INIT(1);
+> >    }
+> >  
+> > -  P1(atomic_t *v)
+> > +  P0(atomic_t *v)
+> >    {
+> > -    atomic_add_unless(v, 1, 0);
+> > +    (void)atomic_add_unless(v, 1, 0);
+> >    }
+> >  
+> > -  P2(atomic_t *v)
+> > +  P1(atomic_t *v)
+> >    {
+> >      atomic_set(v, 0);
+> >    }
+> > 
+> 
+> 
