@@ -2,157 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B70517423A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 23:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CBD17425F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 23:45:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbgB1Wmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 17:42:53 -0500
-Received: from mail-yw1-f47.google.com ([209.85.161.47]:40004 "EHLO
-        mail-yw1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbgB1Wmr (ORCPT
+        id S1727409AbgB1Wnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 17:43:31 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34248 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbgB1Wn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 17:42:47 -0500
-Received: by mail-yw1-f47.google.com with SMTP id i126so4925540ywe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 14:42:46 -0800 (PST)
+        Fri, 28 Feb 2020 17:43:29 -0500
+Received: by mail-lf1-f65.google.com with SMTP id w27so3288833lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 14:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+OwhcmpR7pb9yvMAW/3zddjXHmCNfQqId9+2KCqrSJ0=;
-        b=aFJmacyoYMfOrWc7Py00c+Je5msNK68dvGgpMGjv4b6l1knIu9+IIbetY2GBb/i0g1
-         Uy3tDaBgLQY5nCv31krfzrDL4NajPGA4s9pswLqtwoaQiN4T5XLmg5PblTbCuhiJX7F/
-         pDJFFYgTCHKHp/WzP+RBmbLrvosSAcU23o0bS5bBZA+zAjSOiaoAlATN6BnmKSx+OZhX
-         ugr0CXu1V78lqqzVGow1mo0qSv0ypxJzAtrO+51fw6J4XlsIVY7BgYaK0cm93NDumSsi
-         B0ukVTvkOtKfCwanqirrfraMtRgF2Ys2Wr4czjjqhnlZlnFGG3GkPZKbPXqufz0cPYPX
-         6IOg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1BxbADyqh67zLR4CkPE+bXFbR7jY3OFFxVQi+eBGBI8=;
+        b=i6Mz6v7Na8BLINyiuQ/hSPnAQQmxYEOfbBcBVFXW97UtP8mWO1dwLWdjpxC9QcQGCg
+         GdGmH5PSCv3zZzOrPrMscGcCVDWEUpcF/bT6gk4hxsNm+jfO9DSU3BDnWl0836NcMsVt
+         AeoxZzXYTmEmRyTbde9eiR8/snn6du/PNUk9R33LMErQxsnUUVCGoyzoCaR7OPs1Lycm
+         KFvIQTf9dTXt9wDtHbgx+sHgl2V0qBKNBlC7Chtn3n2RL5q+hsn2Nku/sT5hzRzxg/Mk
+         GW5LmRNmZk92fK87ghlEjij9rPeSrQnhwdJqJ4cTn9k4ZWcE8oEBFHkcz1F+cG8aVhSU
+         oaUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+OwhcmpR7pb9yvMAW/3zddjXHmCNfQqId9+2KCqrSJ0=;
-        b=nZVo4nizQUIBelWsGsW5/e0jNwJcHQokhGA25uOv9EZjIvu3xMOsrDfpDLySi2urtC
-         gy05fsndN5V2lIkzv/xhFW2SGtx3yDrUDDs53jZbKl8LeA0q8SMBi0EcB+NA0IFLAc44
-         vRX65CT96W5QM2EQHKNAvUcaOXLtcJtAOJsLdwx+LM5hku/Of1XbXpLxuY3VgdLksHTw
-         EMeDIpVKnVm9PSejpoNDdlRPKS5zcb7uGc6i60A08iBq5AFsOz/H2EQ7tGpDywjKQe1d
-         jPqxX4efbAuIUfF3MiPmOSTflPXuKZeEBQoSV4jpWmiFp7dQ1PV9tUrHQZvsfogRYhaC
-         4eDw==
-X-Gm-Message-State: APjAAAXTprZ+kqwG7GmYw4Bm6WTxz0278d1l4UT9fz3aa4Hi3X9aD2EP
-        8Bk63rbfLp6Z4mcPODjhiHlyZA==
-X-Google-Smtp-Source: APXvYqy/xVwiXn9ASJWR47pESZIiWVOz3fDE0idfoGWN5WK6UN8CA60IZR+AvIQawo8+inA2mbi/cQ==
-X-Received: by 2002:a81:82c5:: with SMTP id s188mr6860426ywf.59.1582929765490;
-        Fri, 28 Feb 2020 14:42:45 -0800 (PST)
-Received: from localhost.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.gmail.com with ESMTPSA id d188sm4637830ywe.50.2020.02.28.14.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 14:42:44 -0800 (PST)
-From:   Alex Elder <elder@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Dan Williams <dcbw@redhat.com>,
-        Evan Green <evgreen@google.com>,
-        Eric Caruso <ejcaruso@google.com>,
-        Susheel Yadav Yadagiri <syadagir@codeaurora.org>,
-        Chaitanya Pratapa <cpratapa@codeaurora.org>,
-        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 17/17] arm64: dts: sdm845: add IPA information
-Date:   Fri, 28 Feb 2020 16:42:04 -0600
-Message-Id: <20200228224204.17746-18-elder@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200228224204.17746-1-elder@linaro.org>
-References: <20200228224204.17746-1-elder@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1BxbADyqh67zLR4CkPE+bXFbR7jY3OFFxVQi+eBGBI8=;
+        b=GcCuKZGHaE0DpqDLaRoXC64L/g1OGzlQajLJwnnvn6Q5dfWLzGwrZG+Ya6VtKA2Xmh
+         a42Eq0h9oC7lTGM0mq+XGsIZ9VwVMpSG6SVEuxihfazb5mqO8ArO/aDL7oY9DcJBWSOe
+         XURbtDrslfH0UQEDuzrTMm2sUvk66TVtpe7eN4QIOAcx9B9KOVJTKDspsUe5ShaSLxAu
+         A3vjYwFV1qKpJuMtFxQMA23qk5x/9/mNUcotC0cuK8mrxECLOoBxjb80A//duKKpe5HY
+         h5xKpI8sm6BxWZ5wVPmV/IAjGyDjktj4jTHlpYkqi+Y+DrarRhM0mqrs3M8zJfTygBvK
+         TKnA==
+X-Gm-Message-State: ANhLgQ3FVaVADgf4G8AR2zzlPEn8je36Cgc7BCFQOPCrpYqFR8QBbDqG
+        NTmettHu56e9HqjlAaLPTEgdg4zc2gHmOau8IxA+rQ==
+X-Google-Smtp-Source: ADFU+vvwV+eXKAqc/AH6wyolv56OmLms52Q1I+Lg/sFK1m7+034EZ451eAX8G9p01LxfFc6BXUqFS0ufeeNdx6RY9L0=
+X-Received: by 2002:ac2:44a5:: with SMTP id c5mr3584341lfm.4.1582929807065;
+ Fri, 28 Feb 2020 14:43:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200220130149.26283-1-geert+renesas@glider.be>
+ <20200220130149.26283-2-geert+renesas@glider.be> <CACRpkdbgsR1n1qj3HmQWcEjeDdN85N1Mw8kLOUAeDjESW36MDg@mail.gmail.com>
+ <d2b87102-fdf3-f22f-8477-5b2105d9583b@gmail.com>
+In-Reply-To: <d2b87102-fdf3-f22f-8477-5b2105d9583b@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 28 Feb 2020 23:43:16 +0100
+Message-ID: <CACRpkdZwaKA-Gq4wjkPZ_VFiOgNgvLPnYmx4A3AFE-0eNNjQpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] gpio: of: Extract of_gpiochip_add_hog()
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add IPA-related nodes and definitions to "sdm845.dtsi".
+On Fri, Feb 21, 2020 at 6:18 PM Frank Rowand <frowand.list@gmail.com> wrote:
+> On 2/21/20 10:08 AM, Linus Walleij wrote:
 
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 51 ++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+> > Patch applied with Frank's Review tag.
+>
+> I created a devicetree unittest to show the problem that Geert's patches
+> fix.
+>
+> I would prefer to have my unittest patch series applied somewhere,
+> immediately followed by Geert's patch series.  This way, after
+> applying my series, a test fail is reported, then after Geert's
+> series is applied, the test fail becomes a test pass.
+>
+> Can you coordinate with Rob to accept both series either via
+> your tree or Rob's tree?
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index d42302b8889b..58fd1c611849 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -675,6 +675,17 @@
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-+
-+		ipa_smp2p_out: ipa-ap-to-modem {
-+			qcom,entry-name = "ipa";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		ipa_smp2p_in: ipa-modem-to-ap {
-+			qcom,entry-name = "ipa";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
- 	};
- 
- 	smp2p-slpi {
-@@ -1435,6 +1446,46 @@
- 			};
- 		};
- 
-+		ipa@1e40000 {
-+			compatible = "qcom,sdm845-ipa";
-+
-+			modem-init;
-+			modem-remoteproc = <&mss_pil>;
-+
-+			reg = <0 0x1e40000 0 0x7000>,
-+			      <0 0x1e47000 0 0x2000>,
-+			      <0 0x1e04000 0 0x2c000>;
-+			reg-names = "ipa-reg",
-+				    "ipa-shared",
-+				    "gsi";
-+
-+			interrupts-extended =
-+					<&intc 0 311 IRQ_TYPE_EDGE_RISING>,
-+					<&intc 0 432 IRQ_TYPE_LEVEL_HIGH>,
-+					<&ipa_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					<&ipa_smp2p_in 1 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "ipa",
-+					  "gsi",
-+					  "ipa-clock-query",
-+					  "ipa-setup-ready";
-+
-+			clocks = <&rpmhcc RPMH_IPA_CLK>;
-+			clock-names = "core";
-+
-+			interconnects =
-+				<&rsc_hlos MASTER_IPA &rsc_hlos SLAVE_EBI1>,
-+				<&rsc_hlos MASTER_IPA &rsc_hlos SLAVE_IMEM>,
-+				<&rsc_hlos MASTER_APPSS_PROC &rsc_hlos SLAVE_IPA_CFG>;
-+			interconnect-names = "memory",
-+					     "imem",
-+					     "config";
-+
-+			qcom,smem-states = <&ipa_smp2p_out 0>,
-+					   <&ipa_smp2p_out 1>;
-+			qcom,smem-state-names = "ipa-clock-enabled-valid",
-+						"ipa-clock-enabled";
-+		};
-+
- 		tcsr_mutex_regs: syscon@1f40000 {
- 			compatible = "syscon";
- 			reg = <0 0x01f40000 0 0x40000>;
--- 
-2.20.1
+I see Rob already applied the test.
 
+I do not personally bother much about which order problems
+get solved but I guess if Rob can back out the patch I can apply
+it to my tree instead, before these patches. for some time,
+before I start pulling stuff on top.
+
+Yours,
+Linus Walleij
