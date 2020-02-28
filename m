@@ -2,81 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB538173790
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B2617379D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 13:52:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbgB1MuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 07:50:15 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:36478 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbgB1MuO (ORCPT
+        id S1726614AbgB1MwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 07:52:00 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:36639 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgB1MwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 07:50:14 -0500
-Received: by mail-il1-f199.google.com with SMTP id d22so3224570ild.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 04:50:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=oqhhv1XjJHQ2T1zWZjc9yf8VhjjCLqsDFW+4Y2HXbcM=;
-        b=cXOc+WVzZr7WIW8sy1UIkXi96muYwyco65y8zAhxnni9G15YAnTAWg0aHIILdUZKSs
-         cy1kBFsP+sm7zNPIwaxUFkfXgJ2cR/PJmE11uU7mfu9Mo0BOsq+wks2eO/REKJKa8fF5
-         lG0tiq/34ZqQVgZ91vXZTWNLOxnHlGnnX7QRww5oIYXx1X1rwnUcL4etUumvENAYJ1BF
-         Km5gpOxBesx4RPqPEu6YJ/NDOmArFAGzbFQmoaIIre+OO8LZvO0Pv9yuKil3TksnWSK1
-         w41IE5Z3r4UQCidFJTGjd2arJJfejWdM8fS2VWOCWGBy1WooVdyuZsUItLYUqsZOgxvH
-         /bSg==
-X-Gm-Message-State: APjAAAXuxqkDMFGzhWjV+EI68hL3mngE7e224xS1wXRK5cXMeZGGNi/N
-        1CRG7/w/zIkkxYuIXdIEa2owLBWcbtWHas1zgOpL4KotyG22
-X-Google-Smtp-Source: APXvYqxcv/yMzxG5tAuDiZNSnFqyaEfrAWY0P2rcXUkwBdyaWlgbeg0Q7pPNDp7mz7q814h8gj2ljmOsw1UAtDXDTsNB8rLul5yG
+        Fri, 28 Feb 2020 07:52:00 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1j7f7Q-000737-MY; Fri, 28 Feb 2020 13:51:52 +0100
+Date:   Fri, 28 Feb 2020 13:51:52 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for
+ __fpu__restore_sig()
+Message-ID: <20200228125152.nxp6vntmxconc4bj@linutronix.de>
+References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
+ <20200121201843.12047-9-yu-cheng.yu@intel.com>
+ <20200221175859.GL25747@zn.tnic>
+ <77f3841a92df5d0c819699ee3612118d566b7445.camel@intel.com>
+ <20200228121724.GA25261@zn.tnic>
 MIME-Version: 1.0
-X-Received: by 2002:a92:798d:: with SMTP id u135mr4351064ilc.49.1582894212469;
- Fri, 28 Feb 2020 04:50:12 -0800 (PST)
-Date:   Fri, 28 Feb 2020 04:50:12 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000040573d059fa2474f@google.com>
-Subject: BUG: bad host security descriptor; not enough data (1 vs 5 left)
-From:   syzbot <syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200228121724.GA25261@zn.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2020-02-28 13:17:24 [+0100], Borislav Petkov wrote:
+> On Thu, Feb 27, 2020 at 02:52:12PM -0800, Yu-cheng Yu wrote:
+> > If TIF_NEED_FPU_LOAD is set, then xstates are already in the xsave buffer. 
+> > We can skip saving them again.
+> 
+> Ok, then pls use test_and_set_thread_flag().
 
-syzbot found the following crash on:
+I've been told not to do this while I crafted kernel_fpu_begin() because
+this would introduce an atomic operation which we want avoid.
 
-HEAD commit:    d6ff8147 usb: gadget: add raw-gadget interface
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=159c5d29e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=90a3d9bed5648419
-dashboard link: https://syzkaller.appspot.com/bug?extid=52be5a94ed1c3d6bf9ce
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c172c3e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1461ee65e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+52be5a94ed1c3d6bf9ce@syzkaller.appspotmail.com
-
-usb 1-1: config 0 interface 0 altsetting 0 has 2 endpoint descriptors, different from the interface descriptor's value: 4
-usb 1-1: New USB device found, idVendor=13dc, idProduct=56fc, bcdDevice=40.15
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 1-1: config 0 descriptor??
-hwa-hc 1-1:0.0: Wire Adapter v106.52 newer than groked v1.0
-usb 1-1: BUG: bad host security descriptor; not enough data (1 vs 5 left)
-usb 1-1: supported encryption types: 
-usb 1-1: E: host doesn't support CCM-1 crypto
-hwa-hc 1-1:0.0: Cannot initialize internals: -19
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Sebastian
