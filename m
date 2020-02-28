@@ -2,269 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D442E173902
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2043D1738E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 14:51:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbgB1NwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 08:52:23 -0500
-Received: from mga11.intel.com ([192.55.52.93]:60699 "EHLO mga11.intel.com"
+        id S1726811AbgB1NvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 08:51:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbgB1NwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 08:52:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2020 05:52:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,496,1574150400"; 
-   d="scan'208";a="242383185"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.167])
-  by orsmga006.jf.intel.com with ESMTP; 28 Feb 2020 05:52:18 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 03/13] kprobes: Add symbols for kprobe insn pages
-Date:   Fri, 28 Feb 2020 15:51:15 +0200
-Message-Id: <20200228135125.567-4-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200228135125.567-1-adrian.hunter@intel.com>
-References: <20200228135125.567-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1725892AbgB1NvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 08:51:17 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC56F2469F;
+        Fri, 28 Feb 2020 13:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582897877;
+        bh=PnvV9twaI0HKd5xcbJPqqDp2lk0njkXJ6Pik+bdscuc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Xtj1SeVK3WTv2AMK8Z7K2qfbrVLGe3ZcG0flZs91LwtmuWBhW0u7tXjJbh0gmXp8j
+         2+8Tu0VP1vOKFjBQraetMi1Z5Wppj/+IwYpB+edGFb7O+vqt0lxlk0Uw42nY62/vfC
+         CQgCoTIbFdNwHrWsfl3WENHQu8NdWJlXUgKHgxNs=
+Date:   Fri, 28 Feb 2020 14:51:15 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Chris Paterson <Chris.Paterson2@renesas.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "patches@kernelci.org" <patches@kernelci.org>,
+        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
+        "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/97] 4.19.107-stable review
+Message-ID: <20200228135115.GA3049877@kroah.com>
+References: <20200227132214.553656188@linuxfoundation.org>
+ <TYAPR01MB22855734042EC30DAB547F58B7EB0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYAPR01MB22855734042EC30DAB547F58B7EB0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Symbols are needed for tools to describe instruction addresses. Pages
-allocated for kprobe's purposes need symbols to be created for them.
-Add such symbols to be visible via /proc/kallsyms.
+On Thu, Feb 27, 2020 at 03:51:30PM +0000, Chris Paterson wrote:
+> Hello Greg,
+> 
+> > From: stable-owner@vger.kernel.org <stable-owner@vger.kernel.org> On
+> > Behalf Of Greg Kroah-Hartman
+> > Sent: 27 February 2020 13:36
+> > 
+> > This is the start of the stable review cycle for the 4.19.107 release.
+> > There are 97 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> 
+> No issues seen for CIP configs for Linux Linux 4.19.107-rc1 (6ed3dd5c1f76).
+> 
+> Build/test logs: https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/121568317
+> Pipeline: https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/blob/ba32334b/trees/linux-4.19.y.yml
 
-Note: kprobe insn pages are not used if ftrace is configured. To see the
-effect of this patch, the kernel must be configured with:
+Thanks for testing 2 of these and letting me know.
 
-	# CONFIG_FUNCTION_TRACER is not set
-	CONFIG_KPROBES=y
-
-and for optimised kprobes:
-
-	CONFIG_OPTPROBES=y
-
-Example on x86:
-
-	# perf probe __schedule
-	Added new event:
-	  probe:__schedule     (on __schedule)
-	# cat /proc/kallsyms | grep '\[kprobe\]'
-	ffffffffc0035000 t kprobe_insn_page     [kprobe]
-	ffffffffc0054000 t kprobe_optinsn_page  [kprobe]
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- include/linux/kprobes.h | 15 ++++++++++++++
- kernel/kallsyms.c       | 32 +++++++++++++++++++++++++----
- kernel/kprobes.c        | 45 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index 04bdaf01112c..62d682f47b5e 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -242,6 +242,7 @@ struct kprobe_insn_cache {
- 	struct mutex mutex;
- 	void *(*alloc)(void);	/* allocate insn page */
- 	void (*free)(void *);	/* free insn page */
-+	const char *sym;	/* symbol for insn pages */
- 	struct list_head pages; /* list of kprobe_insn_page */
- 	size_t insn_size;	/* size of instruction slot */
- 	int nr_garbage;
-@@ -272,6 +273,8 @@ static inline bool is_kprobe_##__name##_slot(unsigned long addr)	\
- {									\
- 	return __is_insn_slot_addr(&kprobe_##__name##_slots, addr);	\
- }
-+#define KPROBE_INSN_PAGE_SYM		"kprobe_insn_page"
-+#define KPROBE_OPTINSN_PAGE_SYM		"kprobe_optinsn_page"
- #else /* __ARCH_WANT_KPROBES_INSN_SLOT */
- #define DEFINE_INSN_CACHE_OPS(__name)					\
- static inline bool is_kprobe_##__name##_slot(unsigned long addr)	\
-@@ -373,6 +376,13 @@ void dump_kprobe(struct kprobe *kp);
- void *alloc_insn_page(void);
- void free_insn_page(void *page);
- 
-+int kprobe_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
-+		       char *sym);
-+int kprobe_cache_get_kallsym(struct kprobe_insn_cache *c, unsigned int *symnum,
-+			     unsigned long *value, char *type, char *sym);
-+
-+int arch_kprobe_get_kallsym(unsigned int *symnum, unsigned long *value,
-+			    char *type, char *sym);
- #else /* !CONFIG_KPROBES: */
- 
- static inline int kprobes_built_in(void)
-@@ -435,6 +445,11 @@ static inline bool within_kprobe_blacklist(unsigned long addr)
- {
- 	return true;
- }
-+static inline int kprobe_get_kallsym(unsigned int symnum, unsigned long *value,
-+				     char *type, char *sym)
-+{
-+	return -ERANGE;
-+}
- #endif /* CONFIG_KPROBES */
- static inline int disable_kretprobe(struct kretprobe *rp)
- {
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index 136ce049c4ad..fd5579171087 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/filter.h>
- #include <linux/ftrace.h>
-+#include <linux/kprobes.h>
- #include <linux/compiler.h>
- 
- /*
-@@ -438,6 +439,7 @@ struct kallsym_iter {
- 	loff_t pos_arch_end;
- 	loff_t pos_mod_end;
- 	loff_t pos_ftrace_mod_end;
-+	loff_t pos_bpf_end;
- 	unsigned long value;
- 	unsigned int nameoff; /* If iterating in core kernel symbols. */
- 	char type;
-@@ -497,11 +499,28 @@ static int get_ksymbol_ftrace_mod(struct kallsym_iter *iter)
- 
- static int get_ksymbol_bpf(struct kallsym_iter *iter)
- {
-+	int ret;
-+
- 	strlcpy(iter->module_name, "bpf", MODULE_NAME_LEN);
- 	iter->exported = 0;
--	return bpf_get_kallsym(iter->pos - iter->pos_ftrace_mod_end,
--			       &iter->value, &iter->type,
--			       iter->name) < 0 ? 0 : 1;
-+	ret = bpf_get_kallsym(iter->pos - iter->pos_ftrace_mod_end,
-+			      &iter->value, &iter->type,
-+			      iter->name);
-+	if (ret < 0) {
-+		iter->pos_bpf_end = iter->pos;
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+static int get_ksymbol_kprobe(struct kallsym_iter *iter)
-+{
-+	strlcpy(iter->module_name, "kprobe", MODULE_NAME_LEN);
-+	iter->exported = 0;
-+	return kprobe_get_kallsym(iter->pos - iter->pos_bpf_end,
-+				  &iter->value, &iter->type,
-+				  iter->name) < 0 ? 0 : 1;
- }
- 
- /* Returns space to next name. */
-@@ -528,6 +547,7 @@ static void reset_iter(struct kallsym_iter *iter, loff_t new_pos)
- 		iter->pos_arch_end = 0;
- 		iter->pos_mod_end = 0;
- 		iter->pos_ftrace_mod_end = 0;
-+		iter->pos_bpf_end = 0;
- 	}
- }
- 
-@@ -552,7 +572,11 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
- 	    get_ksymbol_ftrace_mod(iter))
- 		return 1;
- 
--	return get_ksymbol_bpf(iter);
-+	if ((!iter->pos_bpf_end || iter->pos_bpf_end > pos) &&
-+	    get_ksymbol_bpf(iter))
-+		return 1;
-+
-+	return get_ksymbol_kprobe(iter);
- }
- 
- /* Returns false if pos at or past end of file. */
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 2625c241ac00..229d1b596690 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -118,6 +118,7 @@ struct kprobe_insn_cache kprobe_insn_slots = {
- 	.mutex = __MUTEX_INITIALIZER(kprobe_insn_slots.mutex),
- 	.alloc = alloc_insn_page,
- 	.free = free_insn_page,
-+	.sym = KPROBE_INSN_PAGE_SYM,
- 	.pages = LIST_HEAD_INIT(kprobe_insn_slots.pages),
- 	.insn_size = MAX_INSN_SIZE,
- 	.nr_garbage = 0,
-@@ -296,6 +297,7 @@ struct kprobe_insn_cache kprobe_optinsn_slots = {
- 	.mutex = __MUTEX_INITIALIZER(kprobe_optinsn_slots.mutex),
- 	.alloc = alloc_insn_page,
- 	.free = free_insn_page,
-+	.sym = KPROBE_OPTINSN_PAGE_SYM,
- 	.pages = LIST_HEAD_INIT(kprobe_optinsn_slots.pages),
- 	/* .insn_size is initialized later */
- 	.nr_garbage = 0,
-@@ -2179,6 +2181,49 @@ int kprobe_add_area_blacklist(unsigned long start, unsigned long end)
- 	return 0;
- }
- 
-+int kprobe_cache_get_kallsym(struct kprobe_insn_cache *c, unsigned int *symnum,
-+			     unsigned long *value, char *type, char *sym)
-+{
-+	struct kprobe_insn_page *kip;
-+	int ret = -ERANGE;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(kip, &c->pages, list) {
-+		if ((*symnum)--)
-+			continue;
-+		strlcpy(sym, c->sym, KSYM_NAME_LEN);
-+		*type = 't';
-+		*value = (unsigned long)kip->insns;
-+		ret = 0;
-+		break;
-+	}
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
-+int __weak arch_kprobe_get_kallsym(unsigned int *symnum, unsigned long *value,
-+				   char *type, char *sym)
-+{
-+	return -ERANGE;
-+}
-+
-+int kprobe_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
-+		       char *sym)
-+{
-+#ifdef __ARCH_WANT_KPROBES_INSN_SLOT
-+	if (!kprobe_cache_get_kallsym(&kprobe_insn_slots, &symnum, value, type, sym))
-+		return 0;
-+#ifdef CONFIG_OPTPROBES
-+	if (!kprobe_cache_get_kallsym(&kprobe_optinsn_slots, &symnum, value, type, sym))
-+		return 0;
-+#endif
-+#endif
-+	if (!arch_kprobe_get_kallsym(&symnum, value, type, sym))
-+		return 0;
-+	return -ERANGE;
-+}
-+
- int __init __weak arch_populate_kprobe_blacklist(void)
- {
- 	return 0;
--- 
-2.17.1
-
+greg k-h
