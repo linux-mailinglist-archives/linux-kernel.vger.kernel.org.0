@@ -2,71 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B6F8173124
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 943F717311F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 07:34:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgB1Gfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 01:35:34 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44382 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbgB1Gfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 01:35:33 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5DFC9E23F0708A0CB4F0;
-        Fri, 28 Feb 2020 14:35:25 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 28 Feb 2020
- 14:35:19 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <support.opensource@diasemi.com>, <linus.walleij@linaro.org>,
-        <Adam.Thomson.Opensource@diasemi.com>, <m.felsch@pengutronix.de>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] pinctrl: da9062: Fix error gpiolib.h path
-Date:   Fri, 28 Feb 2020 14:34:29 +0800
-Message-ID: <20200228063429.47528-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20200228040047.14808-1-yuehaibing@huawei.com>
-References: <20200228040047.14808-1-yuehaibing@huawei.com>
+        id S1726778AbgB1Geu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 01:34:50 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40168 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbgB1Geu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 01:34:50 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t24so985772pgj.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 22:34:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H06v/GT9nj7/Fe27LeiShYTU4s7PYoRFGJxdUeLF4jk=;
+        b=j/Fs6l++dZ9qALBWak3L+c7UXa4IIRLPenWuacNuEQd8dh3UcBTbCvLq9o546UICn3
+         lwOjLXjWkV01CTlA8JXRELlPW1aRpgcFw/7OHYdLgBFUFjx0D4ZxDFSD+Gj/720l8LXJ
+         OW/OZvqBxYdZrumh3va0nAAytKMaq1z0JFgITQCiXfy44z0D0d2OS52FEmUPTK0GC41r
+         m1WodAtFulspPeMqlkk650z8YG3n0iwfGyyXF9emc6VaRNlDiB+ABeHPlHO/tKR2XTsW
+         geeAgNNQplWQj+VceArexHJvFizxttahyfdxckRpNRAXwnEhxdGOmszhv6tNuYtO8COY
+         hbLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H06v/GT9nj7/Fe27LeiShYTU4s7PYoRFGJxdUeLF4jk=;
+        b=pbaqaGMVeZmFvIqCZPvylxrI8UW7bcFuFs/roCABu5YdYUUX8ajBd+ga2T3Qyq5psC
+         D8zD06gvO/k8TtU/qimDo4FamkOsxPI7TxAOScqEsr+kQPs1YTuWYRS1mBL+04aVbft4
+         EfNTsME8WqVoBY5LzoE8GzZnxF+uiTMLRQFKgfrz97AXG1DpQmSEfz4NnUP9CThu6dOB
+         lyXM7Pviu0noKsJSIfLJGUIg1bfjCvNd8rX8UM+t4SNKaMVdCqNpMDHt3eeKcFknzw8w
+         Wx42q9ysQK5/JQZisLYUGEn8jVCc92IMCOPmNmwQCt7ZSPJsdjUZemkcsdg6VSY1/kLV
+         t5ww==
+X-Gm-Message-State: APjAAAXUdXUxWoIfLy4SnB3Q3J07CA4HrVhsXE4Y5RQIDecC+KD3+zlO
+        ZGq3PNatXgwjpExxBHCvprVioA==
+X-Google-Smtp-Source: APXvYqxyhqToHPPmsxUjYcwCyp1GEtdva6uxDKjmSZjjjjLhF2foY+Q+zG+CAqTI2APSlmWFURYZvA==
+X-Received: by 2002:a63:2c03:: with SMTP id s3mr2934770pgs.19.1582871687805;
+        Thu, 27 Feb 2020 22:34:47 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y5sm9392183pfr.169.2020.02.27.22.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 22:34:46 -0800 (PST)
+Date:   Thu, 27 Feb 2020 22:34:44 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sc7180: Enable soc sleep stats
+Message-ID: <20200228063444.GA857139@builder>
+References: <1582274986-17490-1-git-send-email-mkshah@codeaurora.org>
+ <1582274986-17490-4-git-send-email-mkshah@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582274986-17490-4-git-send-email-mkshah@codeaurora.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc 7.4.0 build fails:
+On Fri 21 Feb 00:49 PST 2020, Maulik Shah wrote:
 
-drivers/pinctrl/pinctrl-da9062.c:28:10: fatal error: ../gpio/gpiolib.h: No such file or directory
- #include <../gpio/gpiolib.h>
-          ^~~~~~~~~~~~~~~~~~~
+> SoC sleep stats provides various low power mode stats.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 8011c5f..eee6d92 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -745,6 +745,11 @@
+>  			};
+>  		};
+>  
+> +		rpmh_sleep_stats: soc-sleep-stats@c3f0000 {
 
-Fix this wrong include path.
+I don't see any reason to reference this node, so you should be able to
+omit the label(?)
 
-Fixes: 56cc3af4e8c8 ("pinctrl: da9062: add driver support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: Fix wrong path
----
- drivers/pinctrl/pinctrl-da9062.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +			compatible = "qcom,rpmh-sleep-stats";
+> +			reg = <0 0xc3f0000 0 0x400>;
 
-diff --git a/drivers/pinctrl/pinctrl-da9062.c b/drivers/pinctrl/pinctrl-da9062.c
-index f704ee0b2fd9..c15eb6e99bc1 100644
---- a/drivers/pinctrl/pinctrl-da9062.c
-+++ b/drivers/pinctrl/pinctrl-da9062.c
-@@ -25,7 +25,7 @@
-  * We need this get the gpio_desc from a <gpio_chip,offset> tuple to decide if
-  * the gpio is active low without a vendor specific dt-binding.
-  */
--#include <../gpio/gpiolib.h>
-+#include "../gpio/gpiolib.h"
- 
- #define DA9062_TYPE(offset)		(4 * (offset % 2))
- #define DA9062_PIN_SHIFT(offset)	(4 * (offset % 2))
--- 
-2.17.1
+Please pad the address to 8 digits and sort the nodes by address.
 
+Regards,
+Bjorn
 
+> +		};
+> +
+>  		tcsr_mutex_regs: syscon@1f40000 {
+>  			compatible = "syscon";
+>  			reg = <0 0x01f40000 0 0x40000>;
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
