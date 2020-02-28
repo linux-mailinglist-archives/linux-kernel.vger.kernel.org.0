@@ -2,206 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC610172DDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC7F172DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 02:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730636AbgB1BCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 20:02:49 -0500
-Received: from mga07.intel.com ([134.134.136.100]:32657 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730568AbgB1BCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:02:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2020 17:02:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,493,1574150400"; 
-   d="scan'208";a="317977019"
-Received: from skuppusw-desk.jf.intel.com ([10.7.201.16])
-  by orsmga001.jf.intel.com with ESMTP; 27 Feb 2020 17:02:42 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v16 9/9] PCI/ACPI: Enable EDR support
-Date:   Thu, 27 Feb 2020 16:59:51 -0800
-Message-Id: <b6076dcb7d4fcce6c401f9d722e2c8fc194d33ae.1582850766.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1582850766.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1582850766.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1730343AbgB1BCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 20:02:04 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:45391 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730148AbgB1BCE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Feb 2020 20:02:04 -0500
+Received: by mail-pf1-f201.google.com with SMTP id x21so805106pfp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 17:02:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=WvkEd8G1uoC4CrLmTdWM5lVBdiBoTiZC+H1EO+F8jJA=;
+        b=ZQBwITVscjb6xlgMwrzq27SqCSzIloefJ153ty5a8pKGJyH6k1lapILVpRMdU2W0+P
+         Il1cD8VOJBPNWBTz7iVVGsimBrahvvXFkpZlWijythJxwZC2g20OTDAIz2duXdjMYRIu
+         94FKqPxG9es/UFwqm58QroRzhvLUTiG6odi1emI7+ch9MPCxMyehTOUAViRxOhm68wuo
+         m9O6TSPp+ewk6DIEkwY/l1kVtGIt5Xri6ZGHv8zr9PUAtpjqkI2Zl2nj0gcZ7YzvSfWu
+         sIyABv6hjYYPAeGRLUBZrdYQEZa6glzfhqe44IP5PGd4DNGIDtU1ePZocu77mxn303Xd
+         SJSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=WvkEd8G1uoC4CrLmTdWM5lVBdiBoTiZC+H1EO+F8jJA=;
+        b=IW8sebwAsqCLzPHNgzyUx18HsrANLi8jDGK6YOi9Z1sw5USSZKp7Y8SiqLhqQQdzM/
+         4JmXhUOBj+JK42bx7OiYGWkbSL+D20GjI2Lt1vFWuVRmaY+Ofyy7xbZ2y0pXxHS2jJbh
+         5ZZhF8ErcTYJv48j3ROl3Etb2+UNJiY1xyIb583I2nQ8GAm345A160zUBKgxJ+3LE6gY
+         GgtrrWQWsAZYM0HBxkNMhD8h3H4tjqAvSTwp6RV3D7e2NiHx9xA28iyF7T3KlCwfc/qK
+         /VeycDewjJIbGbCl2F4lGBSyyvBKhXBo/rNfIsKX1npdROT4JHCjdD/XInne6EijOKdU
+         w2wQ==
+X-Gm-Message-State: APjAAAUemJEYMp+HmxvGH4ReKXjBKcz+nPFLoqCzpOtXUH10G18aHFib
+        HtM9ddBxF60JEmTlUpLAO2gceoK3EKAS
+X-Google-Smtp-Source: APXvYqzPSnGRGLIga7Fjqtb63nBWd6ORkLDSyJ1+BvBOoJTuIejeKklPGKlZY2K1a4YvynWxpdpYi78RMLaG
+X-Received: by 2002:a63:7e09:: with SMTP id z9mr1979768pgc.383.1582851722395;
+ Thu, 27 Feb 2020 17:02:02 -0800 (PST)
+Date:   Thu, 27 Feb 2020 17:01:34 -0800
+Message-Id: <20200228010134.42866-1-joshdon@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH] sched/cpuset: distribute tasks within affinity masks
+From:   Josh Don <joshdon@google.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Li Zefan <lizefan@huawei.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Paul Turner <pjt@google.com>, Josh Don <joshdon@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+From: Paul Turner <pjt@google.com>
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
+Currently, when updating the affinity of tasks via either cpusets.cpus,
+or, sched_setaffinity(); tasks not currently running within the newly
+specified CPU will be arbitrarily assigned to the first CPU within the
+mask.
 
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
+This (particularly in the case that we are restricting masks) can
+result in many tasks being assigned to the first CPUs of their new
+masks.
 
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
+This:
+ 1) Can induce scheduling delays while the load-balancer has a chance to
+    spread them between their new CPUs.
+ 2) Can antogonize a poor load-balancer behavior where it has a
+    difficult time recognizing that a cross-socket imbalance has been
+    forced by an affinity mask.
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
+With this change, tasks are distributed ~evenly across the new mask.  We
+may intentionally move tasks already running on a CPU within the mask to
+avoid edge cases in which a CPU is already overloaded (or would be
+assigned to more times than is desired).
+
+We specifically apply this behavior to the following cases:
+- modifying cpuset.cpus
+- when tasks join a cpuset
+- when modifying a task's affinity via sched_setaffinity(2)
+
+Signed-off-by: Paul Turner <pjt@google.com>
+Co-developed-by: Josh Don <joshdon@google.com>
+Signed-off-by: Josh Don <joshdon@google.com>
 ---
- drivers/acpi/pci_root.c | 16 ++++++++++++++++
- drivers/pci/pcie/edr.c  |  4 +++-
- drivers/pci/probe.c     |  1 +
- include/linux/acpi.h    |  6 ++++--
- include/linux/pci.h     |  1 +
- 5 files changed, 25 insertions(+), 3 deletions(-)
+ include/linux/sched.h  |  8 +++++
+ kernel/cgroup/cpuset.c |  5 +--
+ kernel/sched/core.c    | 81 +++++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 83 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..ad1be5941a00 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,16 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	/*
-+	 * Per the Downstream Port Containment Related Enhancements ECN to
-+	 * the PCI Firmware Spec, r3.2, sec 4.5.1, table 4-5,
-+	 * OSC_PCI_EXPRESS_DPC_CONTROL indicates the OS supports both DPC
-+	 * and EDR. So use CONFIG_PCIE_EDR for requesting DPC control which
-+	 * will only be turned on if both EDR and DPC is enabled.
-+	 */
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +930,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
-index 2d8680be0302..45d165e838bb 100644
---- a/drivers/pci/pcie/edr.c
-+++ b/drivers/pci/pcie/edr.c
-@@ -195,6 +195,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
- void pci_acpi_add_edr_notifier(struct pci_dev *pdev)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 04278493bf15..a2aab6a8a794 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1587,6 +1587,8 @@ extern int task_can_attach(struct task_struct *p, const struct cpumask *cs_cpus_
+ #ifdef CONFIG_SMP
+ extern void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask);
+ extern int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask);
++extern int set_cpus_allowed_ptr_distribute(struct task_struct *p,
++				const struct cpumask *new_mask);
+ #else
+ static inline void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
  {
- 	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-+	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
- 	acpi_status astatus;
+@@ -1597,6 +1599,12 @@ static inline int set_cpus_allowed_ptr(struct task_struct *p, const struct cpuma
+ 		return -EINVAL;
+ 	return 0;
+ }
++
++static inline int set_cpus_allowed_ptr_distribute(struct task_struct *p,
++					const struct cpumask *new_mask)
++{
++	return set_cpus_allowed_ptr(p, new_mask);
++}
+ #endif
  
- 	if (!adev) {
-@@ -214,7 +215,8 @@ void pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- 	 * OS can use bit 7 of _OSC control field to negotiate control
- 	 * over DPC Capability.
- 	 */
--	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native) {
-+	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native ||
-+	    (host->native_dpc)) {
- 		pci_dbg(pdev, "OS handles AER/DPC, so skip EDR init\n");
- 		return;
- 	}
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 512cb4312ddd..c9a9c5b42e72 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -598,6 +598,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
+ extern int yield_to(struct task_struct *p, bool preempt);
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 58f5073acff7..69960cae92e2 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1035,7 +1035,7 @@ static void update_tasks_cpumask(struct cpuset *cs)
+ 
+ 	css_task_iter_start(&cs->css, 0, &it);
+ 	while ((task = css_task_iter_next(&it)))
+-		set_cpus_allowed_ptr(task, cs->effective_cpus);
++		set_cpus_allowed_ptr_distribute(task, cs->effective_cpus);
+ 	css_task_iter_end(&it);
  }
  
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0f24d701fbdc..b7d3caf6f205 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -530,8 +530,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
+@@ -2185,7 +2185,8 @@ static void cpuset_attach(struct cgroup_taskset *tset)
+ 		 * can_attach beforehand should guarantee that this doesn't
+ 		 * fail.  TODO: have a better way to handle failure here
+ 		 */
+-		WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
++		WARN_ON_ONCE(
++			set_cpus_allowed_ptr_distribute(task, cpus_attach));
  
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -540,7 +541,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
+ 		cpuset_change_task_nodemask(task, &cpuset_attach_nodemask_to);
+ 		cpuset_update_task_spread_flag(cs, task);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1a9983da4408..2336d6d66016 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1612,6 +1612,32 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+ 		set_next_task(rq, p);
+ }
  
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index a0b7e7a53741..7ed7c088c952 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -515,6 +515,7 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
++static DEFINE_PER_CPU(int, distribute_cpu_mask_prev);
++
++/*
++ * Returns an arbitrary cpu within *srcp1 & srcp2
++ *
++ * Iterated calls using the same srcp1 and srcp2, passing the previous cpu each
++ * time, will be distributed within their intersection.
++ */
++static int distribute_to_new_cpumask(const struct cpumask *src1p,
++				     const struct cpumask *src2p)
++{
++	int next, prev;
++
++	/* NOTE: our first selection will skip 0. */
++	prev = __this_cpu_read(distribute_cpu_mask_prev);
++
++	next = cpumask_next_and(prev, src1p, src2p);
++	if (next >= nr_cpu_ids)
++		next = cpumask_first_and(src1p, src2p);
++
++	if (next < nr_cpu_ids)
++		__this_cpu_write(distribute_cpu_mask_prev, next);
++
++	return next;
++}
++
+ /*
+  * Change a given task's CPU affinity. Migrate the thread to a
+  * proper CPU and schedule it away if the CPU it's executing on
+@@ -1621,11 +1647,11 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+  * task must not exit() & deallocate itself prematurely. The
+  * call is not atomic; no spinlocks may be held.
+  */
+-static int __set_cpus_allowed_ptr(struct task_struct *p,
++static int __set_cpus_allowed_ptr(struct task_struct *p, bool distribute_cpus,
+ 				  const struct cpumask *new_mask, bool check)
+ {
+ 	const struct cpumask *cpu_valid_mask = cpu_active_mask;
+-	unsigned int dest_cpu;
++	unsigned int dest_cpu, prev_cpu;
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 	int ret = 0;
+@@ -1652,8 +1678,33 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 	if (cpumask_equal(p->cpus_ptr, new_mask))
+ 		goto out;
  
- 	/* Resource alignment requirements */
+-	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
+-	if (dest_cpu >= nr_cpu_ids) {
++	if (!cpumask_intersects(new_mask, cpu_valid_mask)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	prev_cpu = task_cpu(p);
++	if (distribute_cpus) {
++		dest_cpu = distribute_to_new_cpumask(new_mask,
++						     cpu_valid_mask);
++	} else {
++		/*
++		 * Can the task run on the task's current CPU? If so, we're
++		 * done.
++		 *
++		 * We only enable this short-circuit in the case that we're
++		 * not trying to distribute tasks.  As we may otherwise not
++		 * distribute away from a loaded CPU, or make duplicate
++		 * assignments to it.
++		 */
++		if (cpumask_test_cpu(prev_cpu, new_mask))
++			dest_cpu = prev_cpu;
++		else
++			dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
++	}
++
++	/* May have raced with cpu_down */
++	if (unlikely(dest_cpu >= nr_cpu_ids)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1670,8 +1721,7 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 			p->nr_cpus_allowed != 1);
+ 	}
+ 
+-	/* Can the task run on the task's current CPU? If so, we're done */
+-	if (cpumask_test_cpu(task_cpu(p), new_mask))
++	if (dest_cpu == prev_cpu)
+ 		goto out;
+ 
+ 	if (task_running(rq, p) || p->state == TASK_WAKING) {
+@@ -1695,10 +1745,21 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+ 
+ int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
+ {
+-	return __set_cpus_allowed_ptr(p, new_mask, false);
++	return __set_cpus_allowed_ptr(p, false, new_mask, false);
+ }
+ EXPORT_SYMBOL_GPL(set_cpus_allowed_ptr);
+ 
++/*
++ * Each repeated call will attempt to distribute tasks to a new cpu.  As a
++ * result, singular calls will also use a more "random" cpu than the first
++ * allowed in the mask.
++ */
++int set_cpus_allowed_ptr_distribute(struct task_struct *p,
++				    const struct cpumask *new_mask)
++{
++	return __set_cpus_allowed_ptr(p, true, new_mask, false);
++}
++
+ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+ {
+ #ifdef CONFIG_SCHED_DEBUG
+@@ -2160,7 +2221,9 @@ void sched_set_stop_task(int cpu, struct task_struct *stop)
+ #else
+ 
+ static inline int __set_cpus_allowed_ptr(struct task_struct *p,
+-					 const struct cpumask *new_mask, bool check)
++					 bool distribute_cpus,
++					 const struct cpumask *new_mask,
++					 bool check)
+ {
+ 	return set_cpus_allowed_ptr(p, new_mask);
+ }
+@@ -5456,7 +5519,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ 	}
+ #endif
+ again:
+-	retval = __set_cpus_allowed_ptr(p, new_mask, true);
++	retval = __set_cpus_allowed_ptr(p, true, new_mask, true);
+ 
+ 	if (!retval) {
+ 		cpuset_cpus_allowed(p, cpus_allowed);
 -- 
-2.21.0
+2.25.1.481.gfbce0eb801-goog
 
