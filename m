@@ -2,129 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0DD1742AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 00:08:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 742101742B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 00:14:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgB1XIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 18:08:37 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11367 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbgB1XIh (ORCPT
+        id S1726733AbgB1XOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 18:14:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40898 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbgB1XON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 18:08:37 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e599d230000>; Fri, 28 Feb 2020 15:07:15 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 28 Feb 2020 15:08:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 28 Feb 2020 15:08:35 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Feb
- 2020 23:08:35 +0000
-Subject: Re: [RFC v1 1/2] mm/gup: fixup for 9947ea2c1e608e32 "mm/gup: track
- FOLL_PIN pages"
-To:     Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        <linux-next@vger.kernel.org>, <akpm@linux-foundation.org>
-CC:     <borntraeger@de.ibm.com>, <david@redhat.com>,
-        <aarcange@redhat.com>, <linux-mm@kvack.org>,
-        <frankja@linux.ibm.com>, <sfr@canb.auug.org.au>,
-        <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-References: <20200228154322.329228-1-imbrenda@linux.ibm.com>
- <20200228154322.329228-3-imbrenda@linux.ibm.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <c98038da-cf52-27f5-1aed-b69287a5dec0@nvidia.com>
-Date:   Fri, 28 Feb 2020 15:08:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 28 Feb 2020 18:14:13 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 143so5151364ljj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 15:14:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RCFPQwGCfT36oBbvj50m2uhGBMYQU9mYzXWYujIs4Hg=;
+        b=kh0IHMIo5od/nculv7hDPQMJFWDqd7L2ggdxa28vc2GbDL11KjY3AP7gBaaHvdYvgU
+         ItJO0bOTaDyfOHKp6uuqoFuFDP+l83ZahPqIzY5/M6W8PgfmRtSng2UPsbV3zPSlusy7
+         B2toKtW0M3bWb46BQIFEaYRuUSXStlOcIhjKByteCrDb4nRKYoAx2jYbOv5sLn3rHso7
+         hLP7/bXCPT5nQTRx2MH+kHumisUwTDrS0qlR11C9lg+SvO6Vrk9FD26ExX3LlTrs0sHA
+         w2EaYNYlEJr+G4zOl/vhjPaQ0qolNI0xoE5Ur5X5P37dbUdZcQh1aMo2P0k8A/3veynn
+         jpoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RCFPQwGCfT36oBbvj50m2uhGBMYQU9mYzXWYujIs4Hg=;
+        b=Btq9mnWGAyZBTYcGxE+mfHfct4DvKbJYypq4FLDTnEUSW4VDUKu2wQz2Ui331q407O
+         yvD5ZuMU6s0p91DdgvJaioEtdCjBBAQmSwmZ3gH+xZyozbVrH2L1CYqqsdmjDp2BRSMU
+         uHaIX5P3mWPUraeR70h/JpxHb5LwL5G6HzSZObCbSSmCc892oPpfAP1/lY+GQrxwzSW/
+         BDUc6Qa+uWttmremOpccwI9a00HiMOTL6tIuDmyEcrt57Tdev9QrpFW3diZ2GcpOex2x
+         bzzjjUW3RfObfHc4SG9a8YoElFBqtDKC1U5SHxbC2TfPdkgtMh6dtdhDo2CQpMp68Slu
+         In3w==
+X-Gm-Message-State: ANhLgQ2ZGDkqLX+XbgIlddwuN0VNHd2m3OTQ8rY+J+TLa9iwKbDkUl1Y
+        wRQL+oTjn+FSaCh3WvCapthU7I5rA9vg3iDq3d/NaQ==
+X-Google-Smtp-Source: ADFU+vt57HUFay7Zyzi0sUqoX3MQ7XhyigC8Oy5ud//G8IeLLctZCnZPrRZW+5/WocYm1DlW4ITeot6fjbHBh7PuDu0=
+X-Received: by 2002:a05:651c:2c7:: with SMTP id f7mr4222255ljo.125.1582931651687;
+ Fri, 28 Feb 2020 15:14:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200228154322.329228-3-imbrenda@linux.ibm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582931235; bh=xcptddGGOzZ75nvLWP6gD2gojRvwMOSomkPx4Uxwnp8=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=L80xB8UCmWKM+d/AUbUv0fM3LJ1zGwddosILzHsBVsQVivwddBN0KJ0ltimxFs1FJ
-         KVKKudVabSVBujRfnmWZE+aldbr4IhErAKbUS5rqvUmjd4ItI9K2TVWJdOjm0DEb2g
-         KmXsmVFrDcH9ttErOJPsCxf+sICKL/f3g6vvef0uTg1f2x3ocaHRy7MXL2WiNgcOEZ
-         D1mB/H29puGQVN4bk4GLEpLVC7vDcyIH17QwnIWBeKg3wjHHpAflKbN5aed/U0mvD8
-         IkwQuoxv4Iy/4PtTmxxkwetmG9VSCgCvWcB5GCI0PSL9WhA9sAq62VnnkaqpWTbHLz
-         0hQ2pCTT05rlw==
+References: <cover.1582647809.git.Asmaa@mellanox.com> <7ef84476a00e8771cf1edf5745c378273b760f5d.1582647809.git.Asmaa@mellanox.com>
+ <DB6PR0501MB27121431EA6DCCB476B73F1DDAED0@DB6PR0501MB2712.eurprd05.prod.outlook.com>
+In-Reply-To: <DB6PR0501MB27121431EA6DCCB476B73F1DDAED0@DB6PR0501MB2712.eurprd05.prod.outlook.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 29 Feb 2020 00:14:00 +0100
+Message-ID: <CACRpkdZhs=ZYkcYb5bNqK_ayWEVk9=J0w--ELW-vcvoSvG9cxg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] gpio: add driver for Mellanox BlueField 2 GPIO controller
+To:     Asmaa Mnebhi <Asmaa@mellanox.com>
+Cc:     "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/28/20 7:43 AM, Claudio Imbrenda wrote:
-> In case pin fails, we need to unpin, a simple put_page will not be enough
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> ---
->  mm/gup.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index f589299b0d4a..0b9a806898f3 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2134,7 +2134,10 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->  			goto pte_unmap;
->  
->  		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
-> -			put_page(head);
-> +			if (flags & FOLL_GET)
-> +				put_page(head);
-> +			else if (flags & FOLL_PIN)
-> +				unpin_user_page(head);
+On Tue, Feb 25, 2020 at 5:42 PM Asmaa Mnebhi <Asmaa@mellanox.com> wrote:
 
-Hi Claudio,
+> I have addressed your comments and tested the code. Please note
+>  that the YU_ARM_GPIO_LOCK is a shared resource between the 3
+>  gpio blocks instances.
+> So now that we have split up the gpio_chip into 3 instances, we need to share
+>  that LOCK resource accordingly. I have created a global variable for that purpose.
 
-Instead, I think that should actually be:
+Fair enough, all looks so much nicer now :)
 
-		put_compound_head(page, 1, flags);
+This:
 
-which does a bit more (bug checks and /proc/vmstat instrumentation) than your diff,
-but has the same basic idea: call the right "put" function.  
++       /*
++        * Although the arm_gpio_lock was set in the probe function,
++        * check again it is still enabled to be able to write to the
++        * ModeX registers.
++        */
++       spin_lock(&gs->gc.bgpio_lock);
++       ret = mlxbf2_gpio_lock_acquire();
++       if (ret < 0) {
++               spin_unlock(&gs->gc.bgpio_lock);
++               return ret;
++       }
 
-...oh, actually, I see you have the commit hash in the subject line. Instead, it should 
-be in the commit description. Let's maybe change the subject line to approx:
+Is open-coded in two places, please create a helper function for this
+or just merge it into mlbx2_gpio_lock_acquire() since it is done all the
+time when that is called.
 
-    mm/gup: Fix a missing put_compound_head() call in gup_pte_range()
+> Also note, that although it is not supported in this driver at the moment, some
+> gpio interrupt registers will be similar to that LOCK i.e. they are shared among
+> the  3 gpio block instances.
 
-And the write up...how about something like this, if you like it:
+It's a good start like this.
+The robot complains about devm_ioremap_nocache
+which is now deleted, use devm_ioremap() simply, they are
+all write-through.
 
-
-try_grab_compound_head() must be undone via put_compound_head(), not put_page().
-This was missed in the original implementation of the gup/dma tracking patch, so
-fix it now.
-
-Fixes: 0ea2781c3de4 ("mm/gup: track FOLL_PIN pages")
-
-
-    
-(Aside: I'm using the linux-next commit hash. How does one get the correct hash before
-it goes to mainline? I guess maintainer scripts fix all those up?)
-
-It's also good to Cc some reviewers in case I'm overlooking something, so I'm adding
-Jan and Kirill.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
->  			goto pte_unmap;
->  		}
->  
-> 
-
-
+Yours,
+Linus Walleij
