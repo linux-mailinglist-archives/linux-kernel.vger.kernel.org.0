@@ -2,126 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640481734CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:01:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C36CC1734D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 11:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgB1KBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 05:01:17 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54858 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbgB1KBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 05:01:16 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200228100115euoutp020445ab5ae3097588501ffef29071e450~3iK4IJWIK0064500645euoutp02X
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 10:01:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200228100115euoutp020445ab5ae3097588501ffef29071e450~3iK4IJWIK0064500645euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582884075;
-        bh=r7iAjpDLPSMkIvQyWiR/gtZC7/Uvo9W8WiBUY3bIyxc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PIzata/sP4ssB420HUNMBxV8UovlTZ/bOsqBbDGF0D0Eluz4VkzaFP7ACpdVCPsC1
-         F2aATp9RNdfDcMVKnrNTQSFUEaHzO493qrJG9112JzvkvtC3ruCCGtEiQ692qrIWV5
-         P0EDQ6SnR1QdeT0arlG+eGJpiuYuD57VMU9j3uyY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200228100114eucas1p1cf7b49552dc788c951afde0977ae8c62~3iK337i5z0578605786eucas1p1A;
-        Fri, 28 Feb 2020 10:01:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id E6.C5.60679.AE4E85E5; Fri, 28
-        Feb 2020 10:01:14 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200228100114eucas1p23f608fce62f751125d5107721744ce22~3iK3lkMDh1701517015eucas1p2C;
-        Fri, 28 Feb 2020 10:01:14 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200228100114eusmtrp14b1f1d52c6b219b563d9245797aed779~3iK3k73EN1359213592eusmtrp10;
-        Fri, 28 Feb 2020 10:01:14 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-0a-5e58e4ea50f4
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 93.53.08375.AE4E85E5; Fri, 28
-        Feb 2020 10:01:14 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200228100113eusmtip1ab4804ebe72bd37332090963029f9851~3iK3GKNRQ2243522435eusmtip1b;
-        Fri, 28 Feb 2020 10:01:13 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH 2/2] ASoC: wm8994: Silence warnings during deferred probe
-Date:   Fri, 28 Feb 2020 11:00:38 +0100
-Message-Id: <20200228100038.27748-2-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200228100038.27748-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djPc7qvnkTEGXw6rmdx5eIhJoupD5+w
-        WVxp3cRocf/rUUaLb1c6mCwu75rDZrH2yF12i8/v97NaHH7TzurA6bHhcxObx85Zd9k9Nq3q
-        ZPO4c20Pm8f0Of8ZPfq2rGL0+LxJLoA9issmJTUnsyy1SN8ugSvjz4JHTAW72CoWNnxgamBc
-        w9rFyMkhIWAiMWP7QTBbSGAFo8SE3pQuRi4g+wujxNL2j6wQzmdGiSn7trDAdKy/ewMqsZxR
-        Yu6cfexwLRu3TmcEqWITMJToetvFBmKLCMRJLF+8gAmkiFngF6PE50+bmEASwgKeEivW3gVb
-        ziKgKrH+yAuwOK+ArcShHx3sEOvkJVZvOMAMYnMK2EmcvP0MbJCEQDe7ROvRXiaIIheJ+Xc3
-        QH0kLPHq+BaoZhmJ05N7WCAamhklHp5byw7h9DBKXG6awQhRZS1x59wvoFs5gO7TlFi/Sx8i
-        7CjxbudCdpCwhACfxI23giBhZiBz0rbpzBBhXomONiGIajWJWcfXwa09eOESM4TtIXHjchs0
-        hCYyStxfuo55AqP8LIRlCxgZVzGKp5YW56anFhvlpZbrFSfmFpfmpesl5+duYgQmlNP/jn/Z
-        wbjrT9IhRgEORiUe3gU7wuOEWBPLiitzDzFKcDArifBu/BoaJ8SbklhZlVqUH19UmpNafIhR
-        moNFSZzXeNHLWCGB9MSS1OzU1ILUIpgsEwenVANjzgar/XuNrnJpPV7uECf5Z84TddNFbJrr
-        5R5v3fFkY3DEAtePmSt7H/xYyuH56s7qxStXCbaJ7ndlfXxF3ut3tY265IXYjMVlZ9OSLXMy
-        l9jbe2X/lbg24VdAl1h8rE7E0RTePrFfv7xNb5Tulw1NOXfk5P3ccqlp4Zu7Mj2/h8zY5iY/
-        JfC5EktxRqKhFnNRcSIAZubgjCQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsVy+t/xu7qvnkTEGSx6L2Vx5eIhJoupD5+w
-        WVxp3cRocf/rUUaLb1c6mCwu75rDZrH2yF12i8/v97NaHH7TzurA6bHhcxObx85Zd9k9Nq3q
-        ZPO4c20Pm8f0Of8ZPfq2rGL0+LxJLoA9Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DY
-        PNbKyFRJ384mJTUnsyy1SN8uQS/jz4JHTAW72CoWNnxgamBcw9rFyMkhIWAisf7uDSCbi0NI
-        YCmjRNPDt4wQCRmJk9MaoIqEJf5c62KDKPrEKHF07jSwBJuAoUTXW5AEJ4eIQILEoeUtzCBF
-        zAL/GCXePbrJDJIQFvCUWLH2LlgDi4CqxPojL5hAbF4BW4lDPzrYITbIS6zecACsnlPATuLk
-        7WdgNUJANUfnPGSewMi3gJFhFaNIamlxbnpusaFecWJucWleul5yfu4mRmB4bzv2c/MOxksb
-        gw8xCnAwKvHwLtgRHifEmlhWXJl7iFGCg1lJhHfj19A4Id6UxMqq1KL8+KLSnNTiQ4ymQEdN
-        ZJYSTc4Hxl5eSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQbGbk7D
-        ogiT60o1WW/Wfj10oF3LRX9r+f6zL09e665/r7z40+9E8Vwx9VOmSx5qHdvidj+tkv2l45fr
-        560k9C1uL/XvM9j1I+L07jeeuU7T1LYs8z0Rx/7v+mR9paCaFwxmKxSmmLUunlkh3bgit2/C
-        tXuawUn/dwk9O5Z0vI1hxh++LROeVnyarMRSnJFoqMVcVJwIAM1hzieFAgAA
-X-CMS-MailID: 20200228100114eucas1p23f608fce62f751125d5107721744ce22
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200228100114eucas1p23f608fce62f751125d5107721744ce22
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200228100114eucas1p23f608fce62f751125d5107721744ce22
-References: <20200228100038.27748-1-m.szyprowski@samsung.com>
-        <CGME20200228100114eucas1p23f608fce62f751125d5107721744ce22@eucas1p2.samsung.com>
+        id S1726956AbgB1KB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 05:01:27 -0500
+Received: from mout.web.de ([212.227.15.14]:55949 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbgB1KB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 05:01:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1582884045;
+        bh=nScl4ks49FZ81tgQSWXvTIgpT2a2Og6YNvG+91fML4g=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=ryL1Nsdet6bRT8gRGc9UVIZ9rZs5Qgle7yHHOdSY4hkZu7XQnaGV2zlUWjUS6m7H6
+         k9iYmu5hh+G466IoTjf67++/crom5lUiO1Pu5WXXid8X/cxCiylc3ro5t4dfDtqz7x
+         YIfglghQdos//Mjp9mVQZOZSG1mCWQyYFdOWAUNo=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.179.252]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LdVty-1jpzp90tNq-00ijnz; Fri, 28
+ Feb 2020 11:00:45 +0100
+Subject: Re: [PATCH v2] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <158287861133.18632.12035327305997207220.stgit@devnote2>
+ <158287862131.18632.11822701514141299400.stgit@devnote2>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <57b79bdd-36f1-c8c3-e1d3-7d21db47a8f3@web.de>
+Date:   Fri, 28 Feb 2020 11:00:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <158287862131.18632.11822701514141299400.stgit@devnote2>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LkTt5J0ZniET2GsHY3I6zMBBtbCETSg58GoZSp9aMglzsKS29CU
+ LjtZ8SjBcW0nu5zklU6MzimHLm/kIRTxDN2FvJ48wQWHIxKCntkJJiu0sQwsCezK9TLsUMm
+ pCPaadT5qzYBUZUAvccQJc5jLKNrVjESPfvgAWPisWqOoiLq9D5hhss5HPx0bnL288+9+SC
+ yr5aX5FQe52gs4MEPhYwQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xxt8L9JJBuI=:8mD/vYEryeuh8VouzHU1lc
+ d5NE0JTanOyVqrGHGj3aSFzFZ1QxGLyDBYCFS7KjB4FpRJYkC6c8Bov067n/Gfj5JMhmi0z0M
+ sR+hx15sN/6n8nWWqjc5nrlzrc9cngJHoy7fR9a1OgggkJ2fBx0oPaRzNfs0GB2RMqUAR4rZF
+ +6ebC2uWARf1Fk2ZaliSK096C7+mGpE5kI9KK3tQgG39eNS7vajIvcUo+F3nQURgj3dqQpzo6
+ HFUhsbsJx1Ttzcvx57zNy4aIci23MHbalo2soZu60CslqbyTseC9BxGLCt/4r0SV9+kM2hktP
+ KdosKTTugCD/aoRW9v4OrMq3IJRsRU384IxNFrWgjqfX+zKBHYLb1RunnNahMFixh+fR8FeHB
+ HN3Xs4dZBS9NFs7sgwStEeOpMdn+6AccJ7mFk6lg3iVNYYo3732L8KAD0ZuegC59a9Ed5YaZ1
+ vALI7F40d6xchE62bEZmSUQkT+q8BtxAClf1YUmyduogXGT8wZmgiJiKzC/YVpv7i/SMNN239
+ EiH+hayWK0K8lltDRN2pd1ro0P/2xsnltbG6EU30os43szc41e5/N0c86TlGTZypwfKfjc4hQ
+ cyeOakgsKNwtFGsggjwviFqiplNj3a4rD2xlxg8H2ynzGrKAAAM/jlwDO9KvPs72DKosqGriI
+ s62cSRg/RM52QZANQTNxl3Rs3sWhGzdhw2YIAL0Jys8us3k0FI5Af0eM4S7RWOZbaBpqyBoCl
+ x9mB8Wheu8H5k7m8a09ddFEbezcMdx4VV+svteKnRZljy3xtJzj2ZUoH+dhtvpEv7RRtGdLD9
+ Sg0rueBp0SMzVip04Npr14jdBhYr6UC9t1ihTOsOn5UPtEOAzb0nrIugWppUitb+3kMFMBaZ8
+ C1l/GSZjDZNk4eZkTfp21tyzMCuOwoOJJlKFu0zUAzA2TOJrsdiR+gzybDbizSLWsC4tKc3dO
+ I9V/tJbgFey4qxVg5MkhEokRaqXdFwsdIAqrr5bDj9js03KFTqW3oxw4wif0qLnr4okkzyn3T
+ llYn4NKn1Bi2ULQL3VC2eMybnvSjnowvF4ZkR1gZEuIyrJq6BBFBHpm+1zD8yeOOexWu24cnl
+ D05lfZGViOLiafv7BBQ48aw/TqDVCjivcmAJQtloEFiUggmTz/aK1TKPn/DJTJr9s712xT7LX
+ a4EYN5ithozdrB2uUj2lhST1HrVAzXjBUzEZzFa0CssBbZ0WaVHFjLR0oawkqbKJu2Krsj9Jt
+ AoY/zeP5NuJ747kbI
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't confuse user with meaningless warning about the failure in getting
-clocks in case of deferred probe.
+=E2=80=A6
+> +++ b/Documentation/admin-guide/bootconfig.rst
+=E2=80=A6
+> +=E2=80=A6 All sub-keys under "kernel" root key are passed as a part of
+> +kernel command line [1]_, and ones under "init" root key are passed as =
+a part
+> +of init command line. =E2=80=A6
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- sound/soc/codecs/wm8994.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Can an enumeration be clearer for this information?
 
-diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
-index 15ce64a48a87..b4d8da8eb479 100644
---- a/sound/soc/codecs/wm8994.c
-+++ b/sound/soc/codecs/wm8994.c
-@@ -4601,7 +4601,8 @@ static int wm8994_probe(struct platform_device *pdev)
- 	ret = devm_clk_bulk_get_optional(pdev->dev.parent, ARRAY_SIZE(wm8994->mclk),
- 					 wm8994->mclk);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to get clocks: %d\n", ret);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Failed to get clocks: %d\n", ret);
- 		return ret;
- 	}
- 
--- 
-2.17.1
+Will the distinction become more interesting for well-known keys?
 
+Regards,
+Markus
