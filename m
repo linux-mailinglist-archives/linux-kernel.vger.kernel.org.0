@@ -2,151 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58AE6172D1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 519F1172D34
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Feb 2020 01:26:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730511AbgB1AXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Feb 2020 19:23:07 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:40173 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730455AbgB1AW4 (ORCPT
+        id S1730156AbgB1A0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Feb 2020 19:26:09 -0500
+Received: from www62.your-server.de ([213.133.104.62]:57252 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729984AbgB1A0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:22:56 -0500
-Received: by mail-pj1-f66.google.com with SMTP id 12so498534pjb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Feb 2020 16:22:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5pMXhDd5WkHmc2Nd9+Jjb38fhh7Zetn6tk9gX3pPvjM=;
-        b=NdpfQ9E77BQQDeLbRe4C0kneiRaa4BRWlG/661nY6+36gEg6ulvyK6zJdrM6FlpkLx
-         rZnuOrOoXJH6eCy0PMi8rot0VETFWym5wj0fDsIe9QVrzJg7KEO+1C0QPBYDgIEB4mcg
-         xFYZAsgdnMK5ZAzxXgLUxelkrt9eHsy30qa9U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5pMXhDd5WkHmc2Nd9+Jjb38fhh7Zetn6tk9gX3pPvjM=;
-        b=fQCBhqpa3zeOHDdviRnim5ukNMGbJCHiKZ4lZ6AHNsKr9GnrJXwmR+d8zSR65SFzf2
-         68TUlAosANUWFrgsIKkrbi7I+h+TZeZyFPPDHr3IZhvZJZutRBeTAwYLN1ukVjw760QQ
-         uSM5TWZD3ArYJPiYPyWZPNANKwohZgiaBP2lZIAD92XPR1xqE6Kx4sxaG9+BLfLHz2q7
-         kEMsfH4GwFMT4GYYBrJ0AVYGbEqTispDMPne/pH2VaWryp/s+j+IxrBFsafrXuEG7w9o
-         viUS57NAgQz8z6uQBy+fhKD6HLQFy8IRZax6cgtcmrz7P1Qbk6WTpa+PRwSkpq/yuGNt
-         AArQ==
-X-Gm-Message-State: APjAAAWCgH3WRcFrIRa1zP5MpJIThWhYifUE1FX0r4ozGEt1KCMx371R
-        51fZW/1MVsmf3ymTUTwn8YF5LQ==
-X-Google-Smtp-Source: APXvYqzuOX0XiyVaOeVuugXOJBvn7E6Nhu05xm90KTUN/qkQ34/SDiQ4lE0A5jOUkXzf88ArP2HuXA==
-X-Received: by 2002:a17:902:694b:: with SMTP id k11mr1375405plt.334.1582849375873;
-        Thu, 27 Feb 2020 16:22:55 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 3sm8455845pfi.13.2020.02.27.16.22.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2020 16:22:52 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Kees Cook <keescook@chromium.org>, "H.J. Lu" <hjl.tools@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Collingbourne <pcc@google.com>,
-        James Morse <james.morse@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Thu, 27 Feb 2020 19:26:09 -0500
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j7TTW-0006JB-97; Fri, 28 Feb 2020 01:25:54 +0100
+Received: from [85.7.42.192] (helo=pc-9.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j7TTV-0003Mj-UT; Fri, 28 Feb 2020 01:25:53 +0100
+Subject: Re: [PATCH] bpf: Replace zero-length array with flexible-array member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] arm/boot: Warn on orphan section placement
-Date:   Thu, 27 Feb 2020 16:22:44 -0800
-Message-Id: <20200228002244.15240-10-keescook@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200228002244.15240-1-keescook@chromium.org>
-References: <20200228002244.15240-1-keescook@chromium.org>
+References: <20200227001744.GA3317@embeddedor>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <1c4b814a-0f7d-ae10-9bc0-086b2bd6dea0@iogearbox.net>
+Date:   Fri, 28 Feb 2020 01:25:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200227001744.GA3317@embeddedor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.102.2/25735/Thu Feb 27 20:18:16 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't want to depend on the linker's orphan section placement
-heuristics as these can vary between linkers, and may change between
-versions. All sections need to be explicitly named in the linker
-script.
+On 2/27/20 1:17 AM, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>          int stuff;
+>          struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Use common macros for debug sections, discards, and text stubs. Add
-discards for unwanted .note, and .rel sections. Finally, enable orphan
-section warning.
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/arm/boot/compressed/Makefile      |  2 ++
- arch/arm/boot/compressed/vmlinux.lds.S | 17 +++++++----------
- 2 files changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index da599c3a1193..7faa2b5e7e16 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -136,6 +136,8 @@ endif
- LDFLAGS_vmlinux += --no-undefined
- # Delete all temporary local symbols
- LDFLAGS_vmlinux += -X
-+# Report orphan sections
-+LDFLAGS_vmlinux += --orphan-handling=warn
- # Next argument is a linker script
- LDFLAGS_vmlinux += -T
- 
-diff --git a/arch/arm/boot/compressed/vmlinux.lds.S b/arch/arm/boot/compressed/vmlinux.lds.S
-index fc7ed03d8b93..a6a51b5d2328 100644
---- a/arch/arm/boot/compressed/vmlinux.lds.S
-+++ b/arch/arm/boot/compressed/vmlinux.lds.S
-@@ -2,6 +2,7 @@
- /*
-  *  Copyright (C) 2000 Russell King
-  */
-+#include <asm/vmlinux.lds.h>
- 
- #ifdef CONFIG_CPU_ENDIAN_BE8
- #define ZIMAGE_MAGIC(x) ( (((x) >> 24) & 0x000000ff) | \
-@@ -17,8 +18,11 @@ ENTRY(_start)
- SECTIONS
- {
-   /DISCARD/ : {
-+    ARM_COMMON_DISCARD
-     *(.ARM.exidx*)
-     *(.ARM.extab*)
-+    *(.note.*)
-+    *(.rel.*)
-     /*
-      * Discard any r/w data - this produces a link error if we have any,
-      * which is required for PIC decompression.  Local data generates
-@@ -37,9 +41,7 @@ SECTIONS
-     *(.text)
-     *(.text.*)
-     *(.fixup)
--    *(.gnu.warning)
--    *(.glue_7t)
--    *(.glue_7)
-+    ARM_STUBS_TEXT
-   }
-   .table : ALIGN(4) {
-     _table_start = .;
-@@ -124,12 +126,7 @@ SECTIONS
-   PROVIDE(__pecoff_data_size = ALIGN(512) - ADDR(.data));
-   PROVIDE(__pecoff_end = ALIGN(512));
- 
--  .stab 0		: { *(.stab) }
--  .stabstr 0		: { *(.stabstr) }
--  .stab.excl 0		: { *(.stab.excl) }
--  .stab.exclstr 0	: { *(.stab.exclstr) }
--  .stab.index 0		: { *(.stab.index) }
--  .stab.indexstr 0	: { *(.stab.indexstr) }
--  .comment 0		: { *(.comment) }
-+  STABS_DEBUG
-+  DWARF_DEBUG
- }
- ASSERT(_edata_real == _edata, "error: zImage file size is incorrect");
--- 
-2.20.1
-
+Applied, thanks!
