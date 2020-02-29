@@ -2,76 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A27211749F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 00:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFDF01749F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 00:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbgB2XJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 18:09:30 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:54288 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbgB2XJa (ORCPT
+        id S1727520AbgB2XLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 18:11:24 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39265 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbgB2XLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 18:09:30 -0500
-Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1j8BEZ-0002KT-PB; Sat, 29 Feb 2020 17:09:24 -0600
-Message-ID: <498ce16efb7784d95569d000bfab33ae25b823bd.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>
-Cc:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Diana Madalina Craciun <diana.craciun@nxp.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Date:   Sat, 29 Feb 2020 17:09:22 -0600
-In-Reply-To: <20200123111914.2565-1-laurentiu.tudor@nxp.com>
-References: <20200123111914.2565-1-laurentiu.tudor@nxp.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: laurentiu.tudor@nxp.com, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, christophe.leroy@c-s.fr, linux-kernel@vger.kernel.org, diana.craciun@nxp.com, stable@vger.kernel.org
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
-X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
-        *      this recipient and sender
-Subject: Re: [PATCH] powerpc/fsl_booke: avoid creating duplicate tlb1 entry
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Sat, 29 Feb 2020 18:11:24 -0500
+Received: by mail-qk1-f194.google.com with SMTP id e16so6680077qkl.6
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Feb 2020 15:11:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T5ZPrIWUcFdZz+VY7vEnX2GwkgxMVshMmglqEI63Hd0=;
+        b=OfEhwIp2aEf74LXz0/vdWIhFbllJJsJX+MqH8i7jEkHx7XNH5G16bvty+PoCLOq2l/
+         nAla9HuLJbgYSupCz/O4nekjpJkITWzeOAeIe9pSUZBR6lRRF2iXSw5+RcxxkCTrSxqT
+         o8AfjVTq9AoaPI1IJ5/0uGVj/cCGCZhATxCr3jSQ7SqPsffYiPziHCtEhD96d4gmh+Jl
+         Qq29jArCX01E7wJJYE442Lz51z0yKe7ZjHjCjxpd8LrsMhFWvbsbsYxeVrneLV1Fey0M
+         C4qg8B5Z2B8U2Mc3f5gOyj8oaF6ssFlMsfOinrLauUzY7aJcLNbb9MVy5P4c1fsqgnFE
+         T0xg==
+X-Gm-Message-State: APjAAAUcJlgJPMlHTsZkBtjBTJgvlWWYm3Ya0Aou6ZIT9UOFX33CbDAT
+        InUMdtcuBy8DppzmogEaQBY=
+X-Google-Smtp-Source: APXvYqzJ+SJfesoEXBu07OvOjzBqsP/jFC5ZXJWFZcSGrzC5jVvdiMCeSRFshxY0nR3wLP/Z04f2Wg==
+X-Received: by 2002:a05:620a:146c:: with SMTP id j12mr10863660qkl.373.1583017881241;
+        Sat, 29 Feb 2020 15:11:21 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id z6sm7588644qto.86.2020.02.29.15.11.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Feb 2020 15:11:20 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>
+Cc:     kernel-hardening@lists.openwall.com,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/mm/init: Stop printing pgt_buf addresses
+Date:   Sat, 29 Feb 2020 18:11:20 -0500
+Message-Id: <20200229231120.1147527-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-01-23 at 11:19 +0000, Laurentiu Tudor wrote:
-> In the current implementation, the call to loadcam_multi() is wrapped
-> between switch_to_as1() and restore_to_as0() calls so, when it tries
-> to create its own temporary AS=1 TLB1 entry, it ends up duplicating the
-> existing one created by switch_to_as1(). Add a check to skip creating
-> the temporary entry if already running in AS=1.
-> 
-> Fixes: d9e1831a4202 ("powerpc/85xx: Load all early TLB entries at once")
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> Cc: stable@vger.kernel.org
-> ---
->  arch/powerpc/mm/nohash/tlb_low.S | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+This currently leaks kernel physical addresses into userspace.
 
-Assuming you've tested this on all combinations of 32/64 relocatable and not:
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+---
+ arch/x86/mm/init.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Acked-by: Scott Wood <oss@buserror.net>
-
--Scott
-
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index e7bb483557c9..dc4711f09cdc 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -121,8 +121,6 @@ __ref void *alloc_low_pages(unsigned int num)
+ 	} else {
+ 		pfn = pgt_buf_end;
+ 		pgt_buf_end += num;
+-		printk(KERN_DEBUG "BRK [%#010lx, %#010lx] PGTABLE\n",
+-			pfn << PAGE_SHIFT, (pgt_buf_end << PAGE_SHIFT) - 1);
+ 	}
+ 
+ 	for (i = 0; i < num; i++) {
+-- 
+2.24.1
 
