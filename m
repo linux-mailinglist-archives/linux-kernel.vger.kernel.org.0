@@ -2,30 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C5641747D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 17:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 557511747F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 17:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbgB2QFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 11:05:00 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:44099 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbgB2QE7 (ORCPT
+        id S1727250AbgB2QSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 11:18:32 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:43970 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbgB2QSb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 11:04:59 -0500
-Received: from localhost (lfbn-ren-1-591-115.w81-53.abo.wanadoo.fr [81.53.169.115])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 7B566240003;
-        Sat, 29 Feb 2020 16:04:56 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Lorenzo Bianconi <lorenzo@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Remi Pommarel <repk@triplefau.lt>, stable@vger.kernel.org
-Subject: [PATCH] ath9k: Handle txpower changes even when TPC is disabled
-Date:   Sat, 29 Feb 2020 17:13:47 +0100
-Message-Id: <20200229161347.31341-1-repk@triplefau.lt>
-X-Mailer: git-send-email 2.25.0
+        Sat, 29 Feb 2020 11:18:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1582993109; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=lZfOPkwgE6nYYSnIfv4pFhy7q8haHYJZ5qG0aVOe4oU=;
+        b=v0lGJtOJYKbBiHlWAzMord2ep9YNFVEXMg/a+IOzhRXD9a0Ye1ha/D3c8qeThq2Gz8dAWa
+        EF/fW95Uyr6C0dbsM+UQ4ejmSx1a0JpqrEZvEO7KamBo9XqRhA6OMbAn0lgsnDaMYSGiTB
+        /t+DJgzP5FRUtLo8HMvfLpxpQpcx6Hs=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     od@zcrc.me, linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 1/2] dt-bindings: Document JZ4770 PHY bindings
+Date:   Sat, 29 Feb 2020 13:18:19 -0300
+Message-Id: <20200229161820.17824-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -33,53 +37,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When TPC is disabled IEEE80211_CONF_CHANGE_POWER event can be handled to
-reconfigure HW's maximum txpower.
+Add documentation for the devicetree bindings of the
+Ingenic JZ4770 USB transceiver.
 
-This fixes 0dBm txpower setting when user attaches to an interface for
-the first time with the following scenario:
-
-ieee80211_do_open()
-    ath9k_add_interface()
-        ath9k_set_txpower() /* Set TX power with not yet initialized
-                               sc->hw->conf.power_level */
-
-    ieee80211_hw_config() /* Iniatilize sc->hw->conf.power_level and
-                             raise IEEE80211_CONF_CHANGE_POWER */
-
-    ath9k_config() /* IEEE80211_CONF_CHANGE_POWER is ignored */
-
-This issue can be reproduced with the following:
-
-  $ modprobe -r ath9k
-  $ modprobe ath9k
-  $ wpa_supplicant -i wlan0 -c /tmp/wpa.conf &
-  $ iw dev /* Here TX power is either 0 or 3 depending on RF chain */
-  $ killall wpa_supplicant
-  $ iw dev /* TX power goes back to calibrated value and subsequent
-              calls will be fine */
-
-Fixes: 283dd11994cde ("ath9k: add per-vif TX power capability")
-Cc: stable@vger.kernel.org
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/net/wireless/ath/ath9k/main.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
-index 0548aa3702e3..ef2b856670e1 100644
---- a/drivers/net/wireless/ath/ath9k/main.c
-+++ b/drivers/net/wireless/ath/ath9k/main.c
-@@ -1457,6 +1457,9 @@ static int ath9k_config(struct ieee80211_hw *hw, u32 changed)
- 		ath_chanctx_set_channel(sc, ctx, &hw->conf.chandef);
- 	}
- 
-+	if (changed & IEEE80211_CONF_CHANGE_POWER)
-+		ath9k_set_txpower(sc, NULL);
+Notes:
+    v2: No change
+
+ .../bindings/usb/ingenic,jz4770-phy.yaml      | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml
+
+diff --git a/Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml b/Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml
+new file mode 100644
+index 000000000000..a81b0b1a2226
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/ingenic,jz4770-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	mutex_unlock(&sc->mutex);
- 	ath9k_ps_restore(sc);
- 
++title: Ingenic JZ4770 USB PHY devicetree bindings
++
++maintainers:
++  - Paul Cercueil <paul@crapouillou.net>
++
++properties:
++  $nodename:
++    pattern: '^usb-phy@.*'
++
++  compatible:
++    enum:
++      - ingenic,jz4770-phy
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  vcc-supply:
++    description: VCC power supply
++
++  '#phy-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - vcc-supply
++  - '#phy-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/jz4770-cgu.h>
++    otg_phy: usb-phy@3c {
++      compatible = "ingenic,jz4770-phy";
++      reg = <0x3c 0x10>;
++
++      vcc-supply = <&vcc>;
++      clocks = <&cgu JZ4770_CLK_OTG_PHY>;
++
++      #phy-cells = <0>;
++    };
 -- 
-2.25.0
+2.25.1
 
