@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 181A41743B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:11:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D21421743B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:11:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgB2ALH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 19:11:07 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32954 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbgB2ALH (ORCPT
+        id S1726944AbgB2ALN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 19:11:13 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36640 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbgB2ALM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 19:11:07 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so5300753lji.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:11:05 -0800 (PST)
+        Fri, 28 Feb 2020 19:11:12 -0500
+Received: by mail-lf1-f67.google.com with SMTP id s1so2881806lfd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:11:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wJ2G0YZDBOYXpJWKorsJb22qVg865pSK3S5BA357pVU=;
-        b=D2R/m89rmjQl6qPgxblXu/R6YGXFPUV+572xaAsecqEToxOlSOUoJUDxyHOfT0nXVM
-         8+F8oUY2dvpU8minzX/Re6oqcR+ufYai6mftEnCgKmEZcFV0IFHLIcdZYUZeR3zw8Ucm
-         jZZBqI9ujjn8AmjaKP3csW6n9NRrwoUTa5Qoo=
+        bh=soF+XNnQcRWH9WEz1Qgu4eyaAJkJ/vm8FJWGg8joEIc=;
+        b=drg6vS1hx18eHnCXRrGQ5GLjEMSfmRY2PzYoDE87GSE95WIYLG7hgVQOgKgWgEMx7c
+         LOHkgLrdw3gkZ3Hk/eKZvKgsDNviOJBFj0KDVjzmy4tqsn1cSTTTArhz9NFzVmXYdsTH
+         OkA3PEYdCXfvsW81Rl0F3v88UAMpEPZ+txtnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wJ2G0YZDBOYXpJWKorsJb22qVg865pSK3S5BA357pVU=;
-        b=NUB2uNRXbtnpFAvvTaRLxQvg76tT9uM5Atnmnwt+FXfiWh39PpBxWHh8m+iJrCD3Do
-         dsjtAPyrXMOyn1RiXM7Eh0MWEHr8F0T2GqNOXpMH/aIrG31rRDqoKol8jwhxjfOVe/h0
-         8o6qFWrxH+mdHLI+UkViTY6LGcw0/vN+8GvmW09lG0oQIgyq4cUPajnUmL6Z+WAiF7B+
-         2uAIR8AFLEXqBrTxKP22pJyH9W2Kf6hoahpo8LJHTnGGQX2SFDskgKZWrXU8eXSHkg8O
-         1skL1XWZqVokXfu5mBjPsldWlUcou4AN3M+Jq21BgLQOuALvL5NDj5o7afCO68BamOJf
-         Q76g==
-X-Gm-Message-State: ANhLgQ1pFNP5oiDqJQgfNwFu4cluklbW8DJsi8k+BjUgWSTe//ANOAKy
-        NcV3KkPNlPXiViJvAmJBdzGQpWjirpc=
-X-Google-Smtp-Source: ADFU+vvJ78XbOiKwNTVlum8RAPUV8OXqPojXD8QOCDcbQ5ACEvL1JlAZN9C0AIpfkx1LQ8IHIs8b1g==
-X-Received: by 2002:a2e:7315:: with SMTP id o21mr4374373ljc.276.1582935064977;
-        Fri, 28 Feb 2020 16:11:04 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id r15sm6193220ljn.56.2020.02.28.16.11.04
+        bh=soF+XNnQcRWH9WEz1Qgu4eyaAJkJ/vm8FJWGg8joEIc=;
+        b=HcbIOc8opTwvznDDCsS4I7BmtJxnBKLcJZSGEFdRVBn5q0koYZb1IXa2CZ1W4D91yT
+         +ZlMawfdTHIcY0Zd7rPbgQk91dNcFjq6hnadxhJMZjpTswOquP4aJa57ZeNDCeNa5fin
+         qwHg7Q/5CnnDt0to1J4a6AzQ+raqvW2uaGKXp+kWVDtygUsVA3oE9kUPKqG9IP7vkWzo
+         5SaaJanLjUJ2LTaiBND0+qqWsUShX7VDwaj4DLRA4YY/Q9NelieF30VYB7v3s2CCvVsz
+         Hf3rMdPiGRiPbwNZGHkEc0yVAONodyxSlyXYCP7gK7cxA+Ob7lKcHNHIoJlrQjjeJoV5
+         wirA==
+X-Gm-Message-State: ANhLgQ0nACJCNyOXWfltBSruzlHPXsUM2j6n3bcFk25xYk4pWso6RB/F
+        k94SJ4x65mEoPnku4grmW9eJjCgUNxw=
+X-Google-Smtp-Source: ADFU+vuS7tTosc0kIEpPPtjNrtsDQNQJFM8CtCisVamH7aKlLjz2nbfhFm4qj2U2v/4ArI0GN7UvWg==
+X-Received: by 2002:a19:6445:: with SMTP id b5mr3800788lfj.187.1582935068768;
+        Fri, 28 Feb 2020 16:11:08 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id k4sm4088397ljk.12.2020.02.28.16.11.07
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Feb 2020 16:11:04 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id q8so5235408ljj.11
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:11:04 -0800 (PST)
-X-Received: by 2002:a2e:b4a4:: with SMTP id q4mr4387327ljm.208.1582935063547;
- Fri, 28 Feb 2020 16:11:03 -0800 (PST)
+        Fri, 28 Feb 2020 16:11:08 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id h18so5099033ljl.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:11:07 -0800 (PST)
+X-Received: by 2002:a2e:81c7:: with SMTP id s7mr4350118ljg.3.1582935067385;
+ Fri, 28 Feb 2020 16:11:07 -0800 (PST)
 MIME-Version: 1.0
-References: <20200227105632.15041-1-sibis@codeaurora.org> <20200227105632.15041-7-sibis@codeaurora.org>
-In-Reply-To: <20200227105632.15041-7-sibis@codeaurora.org>
+References: <20200227105632.15041-1-sibis@codeaurora.org> <20200227105632.15041-8-sibis@codeaurora.org>
+In-Reply-To: <20200227105632.15041-8-sibis@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 28 Feb 2020 16:10:26 -0800
-X-Gmail-Original-Message-ID: <CAE=gft66VUxk8QYsmHUy9H6zb5EE88n0Y+Wm5f953KgzxATonA@mail.gmail.com>
-Message-ID: <CAE=gft66VUxk8QYsmHUy9H6zb5EE88n0Y+Wm5f953KgzxATonA@mail.gmail.com>
-Subject: Re: [PATCH v5 6/7] arm64: dts: qcom: sdm845: Add OSM L3 interconnect provider
+Date:   Fri, 28 Feb 2020 16:10:30 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7=myM5gYLpuTA48BeUiwwN=Sk157LGAQ_nuz8fi=t0mg@mail.gmail.com>
+Message-ID: <CAE=gft7=myM5gYLpuTA48BeUiwwN=Sk157LGAQ_nuz8fi=t0mg@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] arm64: dts: qcom: sc7180: Add OSM L3 interconnect provider
 To:     Sibi Sankar <sibis@codeaurora.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Georgi Djakov <georgi.djakov@linaro.org>,
@@ -76,7 +76,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Feb 27, 2020 at 2:57 AM Sibi Sankar <sibis@codeaurora.org> wrote:
 >
-> Add Operation State Manager (OSM) L3 interconnect provider on SDM845 SoCs.
+> Add Operation State Manager (OSM) L3 interconnect provider on SC7180 SoCs.
 >
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
