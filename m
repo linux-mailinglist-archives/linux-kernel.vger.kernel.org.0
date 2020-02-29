@@ -2,70 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C08871747D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 17:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D799174807
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 17:30:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgB2QE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 11:04:56 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:60514 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbgB2QEz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 11:04:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1582992293; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=U+bTaqw3ChcPXdwAu0239Q0g38tlXUK/Pg8FxcX6kas=;
-        b=pIeEPB4OqTEnN5H7AVgAqjPxxHNLHLAyDjL3waCtxnnfexnXd3HoWD+rtrT9K02lW2k/Ps
-        kvTmt55RSCj2s/WrU8evemxBsmEm3rjaZDa67x/z8VNznIY9dS1zK3YxUMZ34OXfrrqCmY
-        +JdRg/W5CZmTdUPjH1HBydyJ6eliCLQ=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>, od@zcrc.me,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
-Subject: [PATCH] mtd: rawnand: ingenic: Fix unmet dependency if COMPILE_TEST
-Date:   Sat, 29 Feb 2020 13:04:43 -0300
-Message-Id: <20200229160443.11208-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727350AbgB2QaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 11:30:08 -0500
+Received: from ms9.eaxlabs.cz ([147.135.177.209]:33614 "EHLO ms9.eaxlabs.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727119AbgB2QaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Feb 2020 11:30:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=eaxlabs.cz; s=mail;
+        h=Message-Id:Date:Subject:Cc:To:From; bh=Ckgfb+tZ4UayimR7ATmjnhS6EOieCUCK3o2mRGl5D0k=;
+        b=NkxIiuTkB7rHeUHTFzQ7/Guyj4/QwnLwBusq91zKwUl1NgwFnwEKxYW/yZ7r7f17urT6PP6bkyrUgqGcFcEssp0wR0gN49vFfEDPV+SP1orpR+bsrCORGoOchWPOT/CQ/8LM59e90KbPeBXjhNzNJoLzRgZ0HZ36scpn5WpNERw=;
+Received: from [82.99.129.6] (helo=localhost.localdomain)
+        by ms9.eaxlabs.cz with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <devik@eaxlabs.cz>)
+        id 1j84cV-000150-TL; Sat, 29 Feb 2020 17:05:42 +0100
+From:   Martin Devera <devik@eaxlabs.cz>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32
+        ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
+Cc:     Martin Devera <devik@eaxlabs.cz>
+Subject: [PATCH 1/2] tty/serial: Add st,swap OF option to stm32-usart
+Date:   Sat, 29 Feb 2020 17:05:06 +0100
+Message-Id: <20200229160507.31309-1-devik@eaxlabs.cz>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7c779cf7c1f7 ("mtd: rawnand: ingenic: Allow to compile test the
-new Ingenic driver") dropped the dependency on JZ4780_NEMC when
-COMPILE_TEST was set, which is wrong, as the driver requires symbols
-provided by the jz4780-nemc driver.
+STM32 F7/H7 usarts supports RX & TX pin swapping.
+Add option to turn it on.
+Tested on STM32MP157.
 
-Change the dependency to (MIPS || COMPILE_TEST) && JZ4780_NEMC to
-address the issue.
-
-Fixes: 7c779cf7c1f7 ("mtd: rawnand: ingenic: Allow to compile test the new Ingenic driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Martin Devera <devik@eaxlabs.cz>
 ---
- drivers/mtd/nand/raw/ingenic/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/stm32-usart.c | 3 ++-
+ drivers/tty/serial/stm32-usart.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/ingenic/Kconfig b/drivers/mtd/nand/raw/ingenic/Kconfig
-index 485abfa3f80b..96c5ae8b1bbc 100644
---- a/drivers/mtd/nand/raw/ingenic/Kconfig
-+++ b/drivers/mtd/nand/raw/ingenic/Kconfig
-@@ -1,7 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config MTD_NAND_JZ4780
- 	tristate "JZ4780 NAND controller"
--	depends on JZ4780_NEMC || COMPILE_TEST
-+	depends on MIPS || COMPILE_TEST
-+	depends on JZ4780_NEMC
- 	help
- 	  Enables support for NAND Flash connected to the NEMC on JZ4780 SoC
- 	  based boards, using the BCH controller for hardware error correction.
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index fdcc2142aa79..8d25869a02eb 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -780,7 +780,7 @@ static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	cr1 = USART_CR1_TE | USART_CR1_RE;
+ 	if (stm32_port->fifoen)
+ 		cr1 |= USART_CR1_FIFOEN;
+-	cr2 = 0;
++	cr2 = stm32_port->swap ? USART_CR2_SWAP : 0;
+ 
+ 	/* Tx and RX FIFO configuration */
+ 	cr3 = readl_relaxed(port->membase + ofs->cr3);
+@@ -1097,6 +1097,7 @@ static struct stm32_port *stm32_of_get_stm32_port(struct platform_device *pdev)
+ 
+ 	stm32_ports[id].hw_flow_control = of_property_read_bool(np,
+ 							"st,hw-flow-ctrl");
++	stm32_ports[id].swap = of_property_read_bool(np, "st,swap");
+ 	stm32_ports[id].port.line = id;
+ 	stm32_ports[id].cr1_irq = USART_CR1_RXNEIE;
+ 	stm32_ports[id].cr3_irq = 0;
+diff --git a/drivers/tty/serial/stm32-usart.h b/drivers/tty/serial/stm32-usart.h
+index 2a68bc48652e..2503a91b890c 100644
+--- a/drivers/tty/serial/stm32-usart.h
++++ b/drivers/tty/serial/stm32-usart.h
+@@ -275,6 +275,7 @@ struct stm32_port {
+ 	enum dma_cb rx_dma_cb;	 /* dma rx callback status    */
+ 	bool tx_dma_busy;	 /* dma tx busy               */
+ 	bool hw_flow_control;
++	bool swap;		 /* swap RX & TX pins */
+ 	bool fifoen;
+ 	int wakeirq;
+ 	struct pinctrl_state *console_pins;
 -- 
-2.25.1
+2.11.0
 
