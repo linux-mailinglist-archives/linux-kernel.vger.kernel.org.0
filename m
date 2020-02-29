@@ -2,122 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4DC1743DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:41:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 627EE1743E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgB2AlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 19:41:17 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.87]:25664 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726046AbgB2AlQ (ORCPT
+        id S1726751AbgB2Aq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 19:46:29 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35639 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgB2Aq2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 19:41:16 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 271B520CC6A
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 18:41:16 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7qBwjYFPXvBMd7qBwjTaZF; Fri, 28 Feb 2020 18:41:16 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=N/hhIq6iWRTBqUapgvxGTLwwi+HQloiivG28+tCAbEo=; b=Ww8/bVXSclbVP/+MIayGTzCmfS
-        xZBKuynEcQo5CgQKN18XhIp8Ohyxpypm9XYfr9aUiYjVzYAYIVLov0nD0fzzDV0Xl2UUnTWK5cjNi
-        3hfhXN83gSGatiNVgtabPW6FeIJJwgQB+KJFaEnn5X1WoGNkTwlF4c0LAZpUVhdKde/tSerMi6Tlj
-        ZlC8WyJvN88g2fws0JQlRwnHokd2aj2NSkTXNmrFvAysUhMkYGV2DxuDMoK57G9IcH10yPZJM3aCe
-        ebUQxj43Sqcrchdj4JQcWw9oI2r9Td9FFzXfccZ8DEobpfXrJVnOCsjSj2daUS1IbLY6A0W5ZlaYc
-        zNtLTykQ==;
-Received: from [200.39.15.57] (port=1520 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7qBu-002qxf-5o; Fri, 28 Feb 2020 18:41:14 -0600
-Date:   Fri, 28 Feb 2020 18:44:10 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: ip6_route: Replace zero-length array with
+        Fri, 28 Feb 2020 19:46:28 -0500
+Received: by mail-qt1-f193.google.com with SMTP id 88so3487147qtc.2;
+        Fri, 28 Feb 2020 16:46:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cR46upTIlMw4m1ibbUgQeLhbQZz5s7gR2n5yBhhWrXs=;
+        b=H/42vYqI6C3+3XRVOf3VGnWuxr6yyr21mW/CUAR1hrJvPoeKdgznQT/ZPFUYm4+Qe3
+         mvGVmD+I0VLujYQippY8S9DjMkWuR12S6nvEAcfVsS47RUHnkijZYa/csFS/CdMGwTMP
+         xIATsDIFWRl23sqoSvTxOWp1VSPNXEIs277w++JkIx9cape8CVo30aDlwGKnHCss1qIU
+         NFk2urDObs6vSTkC7j9JIN3JJlSTTtdiCnCY60Jl59+yZuQf3SRBGv/137DdYkTDtQCT
+         ommmnDpnmSuR/VrmM5LRPPKGHkLNlZ8efeBrj/ZVhehJ9FVw6m+zcwdLchoSt4elnxSn
+         DD/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cR46upTIlMw4m1ibbUgQeLhbQZz5s7gR2n5yBhhWrXs=;
+        b=haULqDBsLQ9zgSpGhXreWs8KHK+oLCcJ3OrMTOgJ+/MNKoxT+LKolgbuIXQ0tDOYHL
+         3gA7HO9XF8XeA2WuhQR16imm6x1mNpT4maVc3+BxWLjZD4uC41mE/DPBax+9Q3fN0AcJ
+         RjUPh+dWwS7S98XzueLjqe3oEOAIc7xbeltlH8X8gOHuZU2bYrD5zhgRyX7LighnQQHn
+         465jeg7N5REpvxe2xCDaEbOrDDTbFPytswzfEwdwrOROglNwTOAUP4JUZM70XftZuAQn
+         ARIOEsazwz3jmMuvNw8D6DXdz5P4e8VwK914Oz5BNCtwZHEj2M/J4d00i+xmJ7Ayt/x2
+         rU5g==
+X-Gm-Message-State: APjAAAWuh/rirzfGwZSKiC3QJUujSAZZXem8DzYcTsWIML6HlwQNKoiz
+        kTUvyqYFdshbz2bQmaC37KzcvP11
+X-Google-Smtp-Source: APXvYqx3DvammNkJlU4SIisD6lc7n9lMg/yWmHgbXByDRt8zoiyYS7gjWJnMvZsQIlkxoFw8DUy0Bw==
+X-Received: by 2002:ac8:4d9b:: with SMTP id a27mr5587377qtw.369.1582937187385;
+        Fri, 28 Feb 2020 16:46:27 -0800 (PST)
+Received: from ?IPv6:2601:282:803:7700:29b4:b20:7e73:23f9? ([2601:282:803:7700:29b4:b20:7e73:23f9])
+        by smtp.googlemail.com with ESMTPSA id y49sm6382939qtk.53.2020.02.28.16.46.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 16:46:26 -0800 (PST)
+Subject: Re: [PATCH][next] net: nexthop: Replace zero-length array with
  flexible-array member
-Message-ID: <20200229004410.GA8069@embeddedor>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        David Ahern <dsahern@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200229001411.GA7580@embeddedor>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <a7b747a2-2490-70a2-68a6-05b829eabb2f@gmail.com>
+Date:   Fri, 28 Feb 2020 17:46:25 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.39.15.57
-X-Source-L: No
-X-Exim-ID: 1j7qBu-002qxf-5o
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.39.15.57]:1520
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 23
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200229001411.GA7580@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 2/28/20 5:14 PM, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  include/net/nexthop.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
-
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/net/ip6_route.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/net/ip6_route.h b/include/net/ip6_route.h
-index b69c16cbbf71..f7543c095b33 100644
---- a/include/net/ip6_route.h
-+++ b/include/net/ip6_route.h
-@@ -16,7 +16,7 @@ struct route_info {
- 				reserved_h:3;
- #endif
- 	__be32			lifetime;
--	__u8			prefix[0];	/* 0,8 or 16 */
-+	__u8			prefix[];	/* 0,8 or 16 */
- };
- 
- #include <net/addrconf.h>
--- 
-2.25.0
+Reviewed-by: David Ahern <dsahern@gmail.com>
 
