@@ -2,38 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C81101745B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 10:17:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 600BB1745C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 10:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgB2JRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 04:17:00 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38827 "EHLO
+        id S1727201AbgB2JRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 04:17:32 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38883 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgB2JQ7 (ORCPT
+        with ESMTP id S1727045AbgB2JRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 04:16:59 -0500
+        Sat, 29 Feb 2020 04:17:06 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j7yEw-0005sn-K9; Sat, 29 Feb 2020 10:16:54 +0100
+        id 1j7yEu-0005sO-89; Sat, 29 Feb 2020 10:16:52 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3D6011C0243;
-        Sat, 29 Feb 2020 10:16:51 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D4BFF1C219B;
+        Sat, 29 Feb 2020 10:16:50 +0100 (CET)
 Date:   Sat, 29 Feb 2020 09:16:50 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Ravi Bangoria" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] tools headers UAPI: Update tools's copy of kvm.h headers
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Oliver Upton <oupton@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+Subject: [tip: perf/urgent] perf annotate/tui: Re-render title bar after
+ switching back from script browser
+Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Changbin Du <changbin.du@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Yisheng Xie <xieyisheng1@huawei.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200213064306.160480-2-ravi.bangoria@linux.ibm.com>
+References: <20200213064306.160480-2-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <158296781094.28353.15066391796531146670.tip-bot2@tip-bot2>
+Message-ID: <158296781060.28353.11158644321842269368.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,79 +59,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     0d6f94fd498a7f9d15c5cbf64567727361fd35c0
-Gitweb:        https://git.kernel.org/tip/0d6f94fd498a7f9d15c5cbf64567727361fd35c0
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Thu, 27 Feb 2020 09:51:30 -03:00
+Commit-ID:     54cf752cfb75602c256e94db6fdfd3de9dfbbef1
+Gitweb:        https://git.kernel.org/tip/54cf752cfb75602c256e94db6fdfd3de9dfbbef1
+Author:        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+AuthorDate:    Thu, 13 Feb 2020 12:12:59 +05:30
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 27 Feb 2020 09:51:30 -03:00
+CommitterDate: Thu, 27 Feb 2020 10:44:14 -03:00
 
-tools headers UAPI: Update tools's copy of kvm.h headers
+perf annotate/tui: Re-render title bar after switching back from script browser
 
-Picking the changes from:
+The 'perf annotate' TUI browser provides a 'r' hot key to switch to a
+script browser. But the annotate browser title bar becomes hidden while
+switching back from script browser. Fix it.
 
-  5ef8acbdd687 ("KVM: nVMX: Emulate MTF when performing instruction emulation")
-
-Silencing this perf build warning:
-
-  Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/kvm.h' differs from latest version at 'arch/x86/include/uapi/asm/kvm.h'
-  diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
-
-No change in tooling ensues, just the x86 kvm tooling gets rebuilt as
-those headers are included in its build:
-
-  $ cp arch/x86/include/uapi/asm/kvm.h tools/arch/x86/include/uapi/asm/kvm.h
-  $ make -C tools/perf
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-    BUILD:   Doing 'make -j12' parallel build
-
-  Auto-detecting system features:
-  ...                         dwarf: [ on  ]
-  <SNIP>
-  ...        disassembler-four-args: [ on  ]
-
-    DESCEND  plugins
-    CC       /tmp/build/perf/arch/x86/util/kvm-stat.o
-  <SNIP>
-    LD       /tmp/build/perf/arch/x86/util/perf-in.o
-    LD       /tmp/build/perf/arch/x86/perf-in.o
-    LD       /tmp/build/perf/arch/perf-in.o
-    LD       /tmp/build/perf/perf-in.o
-    LINK     /tmp/build/perf/perf
-  <SNIP>
-  $
-
-As it doesn't seem to be used there:
-
-  $ grep STATE tools/perf/arch/x86/util/kvm-stat.c
-  $
-
-And the 'perf trace' beautifier table generator isn't interested in
-these things:
-
-  $ grep regex= tools/perf/trace/beauty/kvm_ioctl.sh
-  regex='^#[[:space:]]*define[[:space:]]+KVM_(\w+)[[:space:]]+_IO[RW]*\([[:space:]]*KVMIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
-  $
-
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Changbin Du <changbin.du@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Oliver Upton <oupton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Link: http://lore.kernel.org/lkml/20200213064306.160480-2-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/arch/x86/include/uapi/asm/kvm.h | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/ui/browsers/annotate.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
-index 503d3f4..3f3f780 100644
---- a/tools/arch/x86/include/uapi/asm/kvm.h
-+++ b/tools/arch/x86/include/uapi/asm/kvm.h
-@@ -390,6 +390,7 @@ struct kvm_sync_regs {
- #define KVM_STATE_NESTED_GUEST_MODE	0x00000001
- #define KVM_STATE_NESTED_RUN_PENDING	0x00000002
- #define KVM_STATE_NESTED_EVMCS		0x00000004
-+#define KVM_STATE_NESTED_MTF_PENDING	0x00000008
- 
- #define KVM_STATE_NESTED_SMM_GUEST_MODE	0x00000001
- #define KVM_STATE_NESTED_SMM_VMXON	0x00000002
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index badbddb..0dbbf35 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -754,10 +754,9 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 		"?             Search string backwards\n");
+ 			continue;
+ 		case 'r':
+-			{
+-				script_browse(NULL, NULL);
+-				continue;
+-			}
++			script_browse(NULL, NULL);
++			annotate_browser__show(&browser->b, title, help);
++			continue;
+ 		case 'k':
+ 			notes->options->show_linenr = !notes->options->show_linenr;
+ 			break;
