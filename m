@@ -2,120 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E4871743E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:47:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE151743FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:51:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgB2Arb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 19:47:31 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.40]:43210 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726046AbgB2Ara (ORCPT
+        id S1726798AbgB2Avi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 19:51:38 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:37203 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbgB2Avi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 19:47:30 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 0217F8C6965
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 18:47:29 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7qHwjRfw88vkB7qHwjMMlD; Fri, 28 Feb 2020 18:47:28 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1kBV8i/FuTFc7scOAcfC0C6xpXRKNE9rNfOuADX0M/c=; b=BjbkhLEsUj8bHs+lF5w2ihZ8UW
-        qDZfDEkx+e7uMeSGP2NdQE3qmb4H2nBZ2eOhNhmwy411TjZ+eQj4lW1596PvEOcCDTFXJZfIxRyGA
-        j6RzqCGkG53ileexILqk0iQp72QcuZzmf850ZLFabF2V7+qoByb7JZGXsfTzJaZlRANnKtCp1Cm1V
-        8sjw8VyP8NqeVIaGuBbFGDqqP/6EN8YvmedNDnCEOy4YmSWqg4iXwy5L6fIAwPv0nw5m39JGLbuNi
-        0C7j2OhyPkMWKYUcHz33EzOjCa8FbEzp8ejjML5LQ2tDayXYtEOXRf4Q4Iehahoa2vAjlaIH6U2cm
-        eUzHzjFQ==;
-Received: from [200.39.15.57] (port=26146 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7qHu-002tbk-Qn; Fri, 28 Feb 2020 18:47:27 -0600
-Date:   Fri, 28 Feb 2020 18:50:23 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: lwtunnel: Replace zero-length array with
- flexible-array member
-Message-ID: <20200229005023.GA8657@embeddedor>
+        Fri, 28 Feb 2020 19:51:38 -0500
+Received: by mail-pj1-f66.google.com with SMTP id o2so41026pjp.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:51:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M4tgEyFArklK0C2NkHJ4Ev1DbekboBTuLVXflJ8Bdmg=;
+        b=YEZrilU5Emz9Z8Ec+wHK4LiI7fQQzdfCcue2M/IsGBDlntu9mx1MWRLDNRF2DkbyzK
+         R2lwOWZhgB6mzNpT1Pu/aYGOixkKd67bWXduwxC7akBPX2iYuMwBeOQ5JBnJ3PoP/sm+
+         fwHlgE5NWc/QcaNpgQ1v36FCjFUNaQ0QzZjXLhJBB7HSyakmk/gogoPqwcbqcHALKGWF
+         LEwHUDu3Vt5k84kgM8atzhoarq3m2Hp+ubtvEsIOjJSEjTqa8HV47MN06DuHfs+WThz5
+         AS+PNvVOGiAiXvalk95ELB6qY6CzHUNlqNZ8cCZ8Kyzz7tO0GspqtRYJOBiBc4omlRU0
+         Jamg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M4tgEyFArklK0C2NkHJ4Ev1DbekboBTuLVXflJ8Bdmg=;
+        b=mMikz26WX439UJOxL8GlZZKaybee1Mf2FwjNpDfEiDy2/2lqMF6Di9Fg4rj2OYqPCG
+         kAX5g4vugA1A3wZ6N2ti5qN0xGC0Z3gFLnIvY+341Z1qQz1U+2vSY/9ly33QFDbHriUY
+         PZ5uVC7M1+3wRT0idIohh8Hur0sPy6kZYnAkOotYB7OLowy79Ha3iftL0mChAkZmguz4
+         0GXEgYMN1LF08V6yEfE6FXVNpVsVGR3UTSwdD8Su8l4rvgYhdqaxOD0ZrxV1WGCvdclE
+         DL8TDMy9qF953ESiP+TxfaNx4xUuUnrow54kbc+ubfpKbiPsCu2nh7gYqYy42IsP4JQQ
+         AdBQ==
+X-Gm-Message-State: APjAAAU7Uihf2Ft62YG09NyvAi/mqshfgwhDHbTwY0RjyIENq6nw5d4R
+        3RdohODdUi5aG9qDbcoCA4USiQ==
+X-Google-Smtp-Source: APXvYqy82naI/lVAZlOJvZdl3C/jjyr3KkWwvalv9/HybDbYSHFf9yfSUJEYY3U/VEuNZhjYcVENGg==
+X-Received: by 2002:a17:90a:8a8d:: with SMTP id x13mr7344279pjn.97.1582937496771;
+        Fri, 28 Feb 2020 16:51:36 -0800 (PST)
+Received: from google.com ([2620:15c:211:202:ae26:61fb:e2f3:92e7])
+        by smtp.gmail.com with ESMTPSA id y16sm12339385pfn.177.2020.02.28.16.51.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 16:51:36 -0800 (PST)
+Date:   Fri, 28 Feb 2020 16:51:31 -0800
+From:   Marco Ballesio <balejs@google.com>
+To:     tj@kernel.org, guro@fb.com, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lizefan@huawei.com,
+        hannes@cmpxchg.org, corbet@lwn.net, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, linux-doc@vger.kernel.org,
+        linux-pm@vger.kernel.org, minchan@google.com, surenb@google.com,
+        dancol@google.com
+Subject: Re: [PATCH] cgroup-v1: freezer: optionally killable freezer
+Message-ID: <20200229005131.GB9813@google.com>
+References: <20200219183231.50985-1-balejs@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.39.15.57
-X-Source-L: No
-X-Exim-ID: 1j7qHu-002tbk-Qn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.39.15.57]:26146
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 27
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200219183231.50985-1-balejs@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hi all,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+did anyone have time to look into my proposal and, in case, are there
+any suggestions, ideas or comments about it?
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/net/lwtunnel.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/net/lwtunnel.h b/include/net/lwtunnel.h
-index 5d6c5b1fc695..b5e6edf74b70 100644
---- a/include/net/lwtunnel.h
-+++ b/include/net/lwtunnel.h
-@@ -30,7 +30,7 @@ struct lwtunnel_state {
- 	int		(*orig_output)(struct net *net, struct sock *sk, struct sk_buff *skb);
- 	int		(*orig_input)(struct sk_buff *);
- 	struct		rcu_head rcu;
--	__u8            data[0];
-+	__u8            data[];
- };
- 
- struct lwtunnel_encap_ops {
--- 
-2.25.0
-
+Marco
