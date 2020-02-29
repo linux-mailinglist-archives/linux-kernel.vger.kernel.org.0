@@ -2,149 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019A41744C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 04:50:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 323601744BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 04:46:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgB2Dut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 22:50:49 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:35494 "EHLO inva021.nxp.com"
+        id S1726785AbgB2Dqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 22:46:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbgB2Dus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 22:50:48 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7392C2004ED;
-        Sat, 29 Feb 2020 04:50:46 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6F697200505;
-        Sat, 29 Feb 2020 04:50:30 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C2A8A402AD;
-        Sat, 29 Feb 2020 11:50:16 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will@kernel.org, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        peng.fan@nxp.com, aford173@gmail.com, ping.bai@nxp.com,
-        jun.li@nxp.com, shengjiu.wang@nxp.com, bjorn.andersson@linaro.org,
-        olof@lixom.net, vkoul@kernel.org, dinguyen@kernel.org,
-        marcin.juszkiewicz@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2 RESEND 4/4] arm64: dts: imx8mm: Add thermal zone support
-Date:   Sat, 29 Feb 2020 11:44:22 +0800
-Message-Id: <1582947862-11073-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582947862-11073-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582947862-11073-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726603AbgB2Dqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 22:46:33 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9291B246A2;
+        Sat, 29 Feb 2020 03:46:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582947992;
+        bh=8/1smc8j49MqGwnYGm26WRCBSJWhdGq3Kci/+iykrSo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fxl3/WvriTf1bPawKq/fakfqWDP7xNiZ9q2n81QEpCC2VqfIXzfzZBzMYIevtKdar
+         l8dE+NaRFs76WuF4/klGRkJpGjwjRj1RCOO2duaOnAf3uw/S+Pb7HUhcGSNafPQ8CB
+         ZdYL8o9L2kUmpwTaKgIQjUVxfkKISrLyinPt8MgI=
+Date:   Fri, 28 Feb 2020 22:46:31 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: [PATCH 4.14 111/237] tty: synclinkmp: Adjust indentation in
+ several functions
+Message-ID: <20200229034631.GH21491@sasha-vm>
+References: <20200227132255.285644406@linuxfoundation.org>
+ <20200227132305.054909944@linuxfoundation.org>
+ <11c17de7c525997ddddab995223828bdec8e8e93.camel@perches.com>
+ <20200228071239.GC2895159@kroah.com>
+ <a81f6072c8adfc5343fbc249f355c9ea5ced698e.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <a81f6072c8adfc5343fbc249f355c9ea5ced698e.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add thermal zone and tmu node to support i.MX8MM thermal
-driver, ONLY cpu thermal zone is supported, and cpu cooling
-is also added.
+On Fri, Feb 28, 2020 at 10:06:45AM -0800, Joe Perches wrote:
+>On Fri, 2020-02-28 at 08:12 +0100, Greg Kroah-Hartman wrote:
+>> On Thu, Feb 27, 2020 at 07:55:49PM -0800, Joe Perches wrote:
+>> > On Thu, 2020-02-27 at 14:35 +0100, Greg Kroah-Hartman wrote:
+>> > > From: Nathan Chancellor <natechancellor@gmail.com>
+>> >
+>> > I believe these sorts of whitespace only changes should
+>> > not be applied to a stable branch unless it's useful for
+>> > porting other actual defect fixes.
+>>
+>> I want to get clang build warnings down to the same level that gcc build
+>> warnings are, so that they become useful in detecting new issues.  That
+>> is why I add these types of patches to the stable trees.
+>
+>New issues should be found in the current kernel.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change.
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 43 +++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Right, but we're talking about issues with backporting patches. We catch
+a lot of issues where a patch applied to an older version, but is
+missing stuff or is outright incorrect by having the compiler warn us
+about it.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index b3d0b29..e438095 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -68,6 +68,7 @@
- 			nvmem-cells = <&cpu_speed_grade>;
- 			nvmem-cell-names = "speed_grade";
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_1: cpu@1 {
-@@ -80,6 +81,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_2: cpu@2 {
-@@ -92,6 +94,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_3: cpu@3 {
-@@ -104,6 +107,7 @@
- 			next-level-cache = <&A53_L2>;
- 			operating-points-v2 = <&a53_opp_table>;
- 			cpu-idle-states = <&cpu_pd_wait>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_L2: l2-cache0 {
-@@ -204,6 +208,38 @@
- 		arm,no-tick-in-suspend;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <2000>;
-+			thermal-sensors = <&tmu>;
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				cpu_crit0: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device =
-+						<&A53_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+
- 	usbphynop1: usbphynop1 {
- 		compatible = "usb-nop-xceiv";
- 		clocks = <&clk IMX8MM_CLK_USB_PHY_REF>;
-@@ -363,6 +399,13 @@
- 				gpio-ranges = <&iomuxc 0 119 30>;
- 			};
- 
-+			tmu: tmu@30260000 {
-+				compatible = "fsl,imx8mm-tmu";
-+				reg = <0x30260000 0x10000>;
-+				clocks = <&clk IMX8MM_CLK_TMU_ROOT>;
-+				#thermal-sensor-cells = <0>;
-+			};
-+
- 			wdog1: watchdog@30280000 {
- 				compatible = "fsl,imx8mm-wdt", "fsl,imx21-wdt";
- 				reg = <0x30280000 0x10000>;
+We're not trying to debug upstream, but rather to catch broken backports
+that compile but are broken.
+
+>Backporting whitespace changes is value-free.
+
+The value here is to make other errors obvious.
+
 -- 
-2.7.4
-
+Thanks,
+Sasha
