@@ -2,334 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B57551747F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 17:18:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CCE61747F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 17:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgB2QSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 11:18:39 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:43988 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbgB2QSi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 11:18:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1582993113; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kxGsOA3g2K72N6MJIP9ViHY+Ly8xmNm//jXsHT/pLUI=;
-        b=jBWfK0rVNDfn411fUmbKasbmSupopL3pjHTwgoCLeRQFlnBsfqrIN1cokwyzz7OUB8YZHF
-        xau4kt29Eka/0TkO6cNX96+4Ga/h+69iNAOMzS+wjwOdSYHaV87tXRHK03rfvQ1ZQX8+SJ
-        Ka/aq33cYZmlMmwRHQ1aSy9Ig9RZ7F8=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     od@zcrc.me, linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 2/2] usb: phy: Add driver for the Ingenic JZ4770 USB transceiver
-Date:   Sat, 29 Feb 2020 13:18:20 -0300
-Message-Id: <20200229161820.17824-2-paul@crapouillou.net>
-In-Reply-To: <20200229161820.17824-1-paul@crapouillou.net>
-References: <20200229161820.17824-1-paul@crapouillou.net>
-MIME-Version: 1.0
+        id S1727335AbgB2QTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 11:19:16 -0500
+Received: from mail-am6eur05hn2202.outbound.protection.outlook.com ([52.101.152.202]:18118
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727306AbgB2QTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Feb 2020 11:19:14 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MUp4VGOAu/hsVi3DKWkEe1dsIJMSCxzlCRV+1gXScKNM8PnFkyNxiSg67pIGlm8cbfmyODnR3Sl9+HwiqVyqGLh1PpVVeKNyPWhwoSWXLBtr3svwbFlmuUAixyfeVrDHNBe+fBWNU4uVGgBxgCdyxmwOVq1TD1U5sEgzQkC0TZTttD0Q86x+SBgeMTqDefcld7eBYy9hImnXkZfOT304mYLCzje0PrqtqxPyfMWeRzm+rVNLzjiHNt/LOLDFGLMd4Y0Rmog76LlKZWkm2NaTXO4cSK4B6T+xME3Vcv3MTtBVziUwqdM9L9E6JyS/7eBMrLHXpd1Sc7hZEPoW0ZQ8yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JBveL+w3P65mqb0cynVeAJtK3CCR7mathV5B4/ddM64=;
+ b=hm4pjB13xxQpVxHGdl6hSc3wonOFpsflFYTqac7cw9ojIDKw8MPvc83E6H7eIgc9YPVWA6TIT4flLh9xcqiIixzGPzEI3jo7f7MNJiSDjAXo9lmW8aYOZLITPmbIOsgv10DjfN5QFn8jlWcRcF3n+zhJdr6mV5V2imtHBHzMHE9KO0Mgy15FiLJJeTvsTgAQ09xhoZGL+iyR0zHFwkc3IuMFtfTAneBHFh2YsOX+xOi/s4CUE0zKAY6uVptbeFVmKrUFWiocCk7Gm+C4+b7P/OcDaGW+fnGU/qFj2LFyFQfxj6pMnqP4ZklF09vGYBOPM3tG+lTXecLrygUTyrbK5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JBveL+w3P65mqb0cynVeAJtK3CCR7mathV5B4/ddM64=;
+ b=WuXEIAFrdAPLj0ypklU0tputpc7L+ZVtJGZPnqauj+i7xlIjcy5ToLSJ33M4fnRnIVUvZ6Q4xhk4O5FYlHRsb7+QZJjqbfnADDXCuxoLr68ZtIxwU50bd2XXFwAQkpSjk7A0/wQZGq9ucPE5sYM0zm35nDZWTttQtpyHWqWpcf0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com (10.170.238.24) by
+ VI1PR05MB5581.eurprd05.prod.outlook.com (20.177.202.217) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15; Sat, 29 Feb 2020 16:18:49 +0000
+Received: from VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::c14f:4592:515f:6e52]) by VI1PR05MB3279.eurprd05.prod.outlook.com
+ ([fe80::c14f:4592:515f:6e52%7]) with mapi id 15.20.2772.012; Sat, 29 Feb 2020
+ 16:18:49 +0000
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Oleksandr Suvorov <cryosay@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/2] spi: spidev: Fix messages in spidev
+Date:   Sat, 29 Feb 2020 18:18:39 +0200
+Message-Id: <20200229161841.89144-1-oleksandr.suvorov@toradex.com>
+X-Mailer: git-send-email 2.24.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PR2P264CA0040.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:101:1::28) To VI1PR05MB3279.eurprd05.prod.outlook.com
+ (2603:10a6:802:1c::24)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (194.105.145.90) by PR2P264CA0040.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101:1::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18 via Frontend Transport; Sat, 29 Feb 2020 16:18:48 +0000
+X-Mailer: git-send-email 2.24.1
+X-Originating-IP: [194.105.145.90]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 29aafc42-2239-4412-726c-08d7bd330f0e
+X-MS-TrafficTypeDiagnostic: VI1PR05MB5581:|VI1PR05MB5581:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR05MB5581E72C8BF31F198FB2DEAEF9E90@VI1PR05MB5581.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-Forefront-PRVS: 03283976A6
+X-Forefront-Antispam-Report: SFV:SPM;SFS:(10019020)(4636009)(366004)(376002)(396003)(346002)(39840400004)(136003)(199004)(189003)(478600001)(2906002)(54906003)(86362001)(5660300002)(4326008)(36756003)(1076003)(316002)(6486002)(44832011)(8936002)(81166006)(81156014)(8676002)(66556008)(956004)(2616005)(15650500001)(6666004)(66476007)(4744005)(6496006)(52116002)(16526019)(186003)(26005)(66946007)(23200700001);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR05MB5581;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;CAT:OSPM;
+Received-SPF: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HG7J4nULmTzBuBcdrtvXZC4nY69lqxf2UAIvYwGzumyIMzctFr8A1H8v5KxjnA3itP8+PTkp+abaTWljw7yn0Hy+hyAompk5U7VhniJvgw8N0PolvB458XBeObDpROTTtpPnXZ7jaMsh7piM3mAd7KLR5avGRJ6/NdpAiabL/cZmUsXyRgf+zF8GaGVadJo7gkbSpdsNv1RGB2E2ADp2YZtrLybRobLlf9/534xjPFuYz3FNl3BYuSft5JFpABhE0JyRhFJBUOYZxxHQCdTUgt7YsXjT7p13nDA1nZiPOo3fCRT9Bf9D6StkU6yTSJsOxRTAkGG5fD0MTioZsQXgyHqr5s75v6Xg+l+yQqlXPM7prsNNys1L4WHJQ5/gdDmvG5TThC6UXS1/xyerWQ7j4gMLTmTxWbGt/+IRjc0iIxt0JSyu0n3X4A5G77xb1+0/eq3j96DeNdy9tG3/Rcs3gDrs/zPQgo36Q73Ja4V/c+SV2cYZQzzDM/RlqnuyNsyV2nt1M5561qfZPsTPti4DFrNqp1sYhApTK9YcgOddxg950zEZi38GLNevkLxOmcSrOiGUghjxSQEBzC6PEPLxnCpe7hZMPJOGPFJCNiyMKf/tDvtD5H8ppA0Udk3Np1OEu45dTpfJgHim/ayimAmSyF8tnkbgxYpzlS5jDRzQNYtnYzeVBgAWYRvXfwGxtD5sgQdA6vVWv+C/M0mu7ailCb7yuOlaplR0jnOR83Q9ZhV+Tt8FoHA4CFL2b/R49eVLfMR+6rSQBGDbp+rmaZFhqg==
+X-MS-Exchange-AntiSpam-MessageData: qyyT6KtTJNszaOGKyRM1WqEXuigiAeZmrjqj0Yc6IAQtu1h9gz/jN4WPSkLjdVW3xI6cHyWVueiV+Gq7BxKrnOgCXnTHjuwCAOfk7iZYL8yZMjPR3HUc1iKOfKlV8d+r6Rjy/Ly+DZ0WYeSNKWv1LQ==
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29aafc42-2239-4412-726c-08d7bd330f0e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Feb 2020 16:18:49.1180
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0bqivpgyPpPsQRh9cP2Asx3EuMbABO0884at0sIJXiLDvQUb+vbHOtyn3h18gWgTsrDHVFXb4bVBAhDZZM7O15Nb1NvdTzg38c1INK0LLHE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5581
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver to support the USB PHY found in the JZ4770 SoC from
-Ingenic.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+- fix the values source for the xfer debug message.
+- fix the "max speed setting" message showing.
 
-Notes:
-    v2: Add missing include <linux/io.h>
 
- drivers/usb/phy/Kconfig      |   8 ++
- drivers/usb/phy/Makefile     |   1 +
- drivers/usb/phy/phy-jz4770.c | 243 +++++++++++++++++++++++++++++++++++
- 3 files changed, 252 insertions(+)
- create mode 100644 drivers/usb/phy/phy-jz4770.c
 
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index ff24fca0a2d9..4b3fa78995cf 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -184,4 +184,12 @@ config USB_ULPI_VIEWPORT
- 	  Provides read/write operations to the ULPI phy register set for
- 	  controllers with a viewport register (e.g. Chipidea/ARC controllers).
- 
-+config JZ4770_PHY
-+	tristate "Ingenic JZ4770 Transceiver Driver"
-+	depends on MIPS || COMPILE_TEST
-+	select USB_PHY
-+	help
-+	  This driver provides PHY support for the USB controller found
-+	  on the JZ4770 SoC from Ingenic.
-+
- endmenu
-diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
-index df1d99010079..b352bdbe8712 100644
---- a/drivers/usb/phy/Makefile
-+++ b/drivers/usb/phy/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_USB_MXS_PHY)		+= phy-mxs-usb.o
- obj-$(CONFIG_USB_ULPI)			+= phy-ulpi.o
- obj-$(CONFIG_USB_ULPI_VIEWPORT)		+= phy-ulpi-viewport.o
- obj-$(CONFIG_KEYSTONE_USB_PHY)		+= phy-keystone.o
-+obj-$(CONFIG_JZ4770_PHY)		+= phy-jz4770.o
-diff --git a/drivers/usb/phy/phy-jz4770.c b/drivers/usb/phy/phy-jz4770.c
-new file mode 100644
-index 000000000000..3ea1f5b9bcf8
---- /dev/null
-+++ b/drivers/usb/phy/phy-jz4770.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ingenic JZ4770 USB PHY driver
-+ * Copyright (c) Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/usb/otg.h>
-+#include <linux/usb/phy.h>
-+
-+#define REG_USBPCR_OFFSET	0x00
-+#define REG_USBRDT_OFFSET	0x04
-+#define REG_USBVBFIL_OFFSET	0x08
-+#define REG_USBPCR1_OFFSET	0x0c
-+
-+/* USBPCR */
-+#define USBPCR_USB_MODE		BIT(31)
-+#define USBPCR_AVLD_REG		BIT(30)
-+#define USBPCR_INCRM		BIT(27)
-+#define USBPCR_CLK12_EN		BIT(26)
-+#define USBPCR_COMMONONN	BIT(25)
-+#define USBPCR_VBUSVLDEXT	BIT(24)
-+#define USBPCR_VBUSVLDEXTSEL	BIT(23)
-+#define USBPCR_POR		BIT(22)
-+#define USBPCR_SIDDQ		BIT(21)
-+#define USBPCR_OTG_DISABLE	BIT(20)
-+#define USBPCR_TXPREEMPHTUNE	BIT(6)
-+
-+#define USBPCR_IDPULLUP_LSB	28
-+#define USBPCR_IDPULLUP_MASK	GENMASK(29, USBPCR_IDPULLUP_LSB)
-+#define USBPCR_IDPULLUP_ALWAYS	(3 << USBPCR_IDPULLUP_LSB)
-+#define USBPCR_IDPULLUP_SUSPEND	(1 << USBPCR_IDPULLUP_LSB)
-+#define USBPCR_IDPULLUP_OTG	(0 << USBPCR_IDPULLUP_LSB)
-+
-+#define USBPCR_COMPDISTUNE_LSB	17
-+#define USBPCR_COMPDISTUNE_MASK	GENMASK(19, USBPCR_COMPDISTUNE_LSB)
-+#define USBPCR_COMPDISTUNE_DFT	4
-+
-+#define USBPCR_OTGTUNE_LSB	14
-+#define USBPCR_OTGTUNE_MASK	GENMASK(16, USBPCR_OTGTUNE_LSB)
-+#define USBPCR_OTGTUNE_DFT	4
-+
-+#define USBPCR_SQRXTUNE_LSB	11
-+#define USBPCR_SQRXTUNE_MASK	GENMASK(13, USBPCR_SQRXTUNE_LSB)
-+#define USBPCR_SQRXTUNE_DFT	3
-+
-+#define USBPCR_TXFSLSTUNE_LSB	7
-+#define USBPCR_TXFSLSTUNE_MASK	GENMASK(10, USBPCR_TXFSLSTUNE_LSB)
-+#define USBPCR_TXFSLSTUNE_DFT	3
-+
-+#define USBPCR_TXRISETUNE_LSB	4
-+#define USBPCR_TXRISETUNE_MASK	GENMASK(5, USBPCR_TXRISETUNE_LSB)
-+#define USBPCR_TXRISETUNE_DFT	3
-+
-+#define USBPCR_TXVREFTUNE_LSB	0
-+#define USBPCR_TXVREFTUNE_MASK	GENMASK(3, USBPCR_TXVREFTUNE_LSB)
-+#define USBPCR_TXVREFTUNE_DFT	5
-+
-+/* USBRDT */
-+#define USBRDT_VBFIL_LD_EN	BIT(25)
-+#define USBRDT_IDDIG_EN		BIT(24)
-+#define USBRDT_IDDIG_REG	BIT(23)
-+
-+#define USBRDT_USBRDT_LSB	0
-+#define USBRDT_USBRDT_MASK	GENMASK(22, USBRDT_USBRDT_LSB)
-+
-+/* USBPCR1 */
-+#define USBPCR1_UHC_POWON	BIT(5)
-+
-+struct jz4770_phy {
-+	struct usb_phy phy;
-+	struct usb_otg otg;
-+	struct device *dev;
-+	void __iomem *base;
-+	struct clk *clk;
-+	struct regulator *vcc_supply;
-+};
-+
-+static inline struct jz4770_phy *otg_to_jz4770_phy(struct usb_otg *otg)
-+{
-+	return container_of(otg, struct jz4770_phy, otg);
-+}
-+
-+static inline struct jz4770_phy *phy_to_jz4770_phy(struct usb_phy *phy)
-+{
-+	return container_of(phy, struct jz4770_phy, phy);
-+}
-+
-+static int jz4770_phy_set_peripheral(struct usb_otg *otg,
-+				     struct usb_gadget *gadget)
-+{
-+	struct jz4770_phy *priv = otg_to_jz4770_phy(otg);
-+	u32 reg;
-+
-+	reg = readl(priv->base + REG_USBPCR_OFFSET);
-+	reg &= ~USBPCR_USB_MODE;
-+	reg |= USBPCR_VBUSVLDEXT | USBPCR_VBUSVLDEXTSEL | USBPCR_OTG_DISABLE;
-+	writel(reg, priv->base + REG_USBPCR_OFFSET);
-+
-+	return 0;
-+}
-+
-+static int jz4770_phy_set_host(struct usb_otg *otg, struct usb_bus *host)
-+{
-+	struct jz4770_phy *priv = otg_to_jz4770_phy(otg);
-+	u32 reg;
-+
-+	reg = readl(priv->base + REG_USBPCR_OFFSET);
-+	reg &= ~(USBPCR_VBUSVLDEXT | USBPCR_VBUSVLDEXTSEL | USBPCR_OTG_DISABLE);
-+	reg |= USBPCR_USB_MODE;
-+	writel(reg, priv->base + REG_USBPCR_OFFSET);
-+
-+	return 0;
-+}
-+
-+static int jz4770_phy_init(struct usb_phy *phy)
-+{
-+	struct jz4770_phy *priv = phy_to_jz4770_phy(phy);
-+	int err;
-+	u32 reg;
-+
-+	err = regulator_enable(priv->vcc_supply);
-+	if (err) {
-+		dev_err(priv->dev, "Unable to enable VCC: %d", err);
-+		return err;
-+	}
-+
-+	err = clk_prepare_enable(priv->clk);
-+	if (err) {
-+		dev_err(priv->dev, "Unable to start clock: %d", err);
-+		return err;
-+	}
-+
-+	reg = USBPCR_AVLD_REG | USBPCR_COMMONONN | USBPCR_IDPULLUP_ALWAYS |
-+		(USBPCR_COMPDISTUNE_DFT << USBPCR_COMPDISTUNE_LSB) |
-+		(USBPCR_OTGTUNE_DFT << USBPCR_OTGTUNE_LSB) |
-+		(USBPCR_SQRXTUNE_DFT << USBPCR_SQRXTUNE_LSB) |
-+		(USBPCR_TXFSLSTUNE_DFT << USBPCR_TXFSLSTUNE_LSB) |
-+		(USBPCR_TXRISETUNE_DFT << USBPCR_TXRISETUNE_LSB) |
-+		(USBPCR_TXVREFTUNE_DFT << USBPCR_TXVREFTUNE_LSB) |
-+		USBPCR_POR;
-+	writel(reg, priv->base + REG_USBPCR_OFFSET);
-+
-+	/* Wait for PHY to reset */
-+	usleep_range(30, 300);
-+	writel(reg & ~USBPCR_POR, priv->base + REG_USBPCR_OFFSET);
-+	usleep_range(300, 1000);
-+
-+	return 0;
-+}
-+
-+static void jz4770_phy_shutdown(struct usb_phy *phy)
-+{
-+	struct jz4770_phy *priv = phy_to_jz4770_phy(phy);
-+
-+	clk_disable_unprepare(priv->clk);
-+	regulator_disable(priv->vcc_supply);
-+}
-+
-+static void jz4770_phy_remove(void *phy)
-+{
-+	usb_remove_phy(phy);
-+}
-+
-+static int jz4770_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct jz4770_phy *priv;
-+	int err;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+	priv->dev = dev;
-+	priv->phy.dev = dev;
-+	priv->phy.otg = &priv->otg;
-+	priv->phy.label = "jz4770-phy";
-+	priv->phy.init = jz4770_phy_init;
-+	priv->phy.shutdown = jz4770_phy_shutdown;
-+
-+	priv->otg.state = OTG_STATE_UNDEFINED;
-+	priv->otg.usb_phy = &priv->phy;
-+	priv->otg.set_host = jz4770_phy_set_host;
-+	priv->otg.set_peripheral = jz4770_phy_set_peripheral;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base)) {
-+		dev_err(dev, "Failed to map registers");
-+		return PTR_ERR(priv->base);
-+	}
-+
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk)) {
-+		err = PTR_ERR(priv->clk);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to get clock");
-+		return err;
-+	}
-+
-+	priv->vcc_supply = devm_regulator_get(dev, "vcc");
-+	if (IS_ERR(priv->vcc_supply)) {
-+		err = PTR_ERR(priv->vcc_supply);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get regulator");
-+		return err;
-+	}
-+
-+	err = usb_add_phy(&priv->phy, USB_PHY_TYPE_USB2);
-+	if (err) {
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "Unable to register PHY");
-+		return err;
-+	}
-+
-+	return devm_add_action_or_reset(dev, jz4770_phy_remove, &priv->phy);
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id jz4770_phy_of_matches[] = {
-+	{ .compatible = "ingenic,jz4770-phy" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, jz4770_phy_of_matches);
-+#endif
-+
-+static struct platform_driver jz4770_phy_driver = {
-+	.probe		= jz4770_phy_probe,
-+	.driver		= {
-+		.name	= "jz4770-phy",
-+		.of_match_table = of_match_ptr(jz4770_phy_of_matches),
-+	},
-+};
-+module_platform_driver(jz4770_phy_driver);
-+
-+MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
-+MODULE_DESCRIPTION("Ingenic JZ4770 USB PHY driver");
-+MODULE_LICENSE("GPL");
+Oleksandr Suvorov (2):
+  spi: spidev: fix a debug message value
+  spi: spidev: fix speed setting message
+
+ drivers/spi/spidev.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
 -- 
-2.25.1
+2.24.1
 
