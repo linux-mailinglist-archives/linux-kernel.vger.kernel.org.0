@@ -2,77 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91168174465
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 02:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6738517445A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 02:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgB2B61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 20:58:27 -0500
-Received: from funyu.konbu.org ([51.15.241.64]:52988 "EHLO funyu.konbu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726603AbgB2B61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 20:58:27 -0500
-X-Greylist: delayed 420 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Feb 2020 20:58:26 EST
-Received: from tungsten (74.125.148.210.rev.vmobile.jp [210.148.125.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by funyu.konbu.org (Postfix) with ESMTPSA id BA76A2858EF;
-        Sat, 29 Feb 2020 01:50:11 +0000 (UTC)
-Date:   Sat, 29 Feb 2020 10:50:08 +0900
-From:   Boris ARZUR <boris@konbu.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Antti =?iso-8859-1?Q?Sepp=E4l=E4?= <a.seppala@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH 0/4] usb: dwc2: Fixes and improvements
-Message-ID: <20200229015008.GA936@tungsten>
-References: <20200226210414.28133-1-linux@roeck-us.net>
+        id S1726783AbgB2Bxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 20:53:53 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37012 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbgB2Bxx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 20:53:53 -0500
+Received: by mail-ot1-f68.google.com with SMTP id b3so4448700otp.4;
+        Fri, 28 Feb 2020 17:53:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=crY7I29q65NogjvIQrh/RfmKj4YUeYhp8OQxxv1sYQo=;
+        b=dMwE0kW6OYkhYYb1kvh8xuHnI7MMI1xEq2IhGEuypdcG53NLEeV8VNLuSxNPURuCDw
+         RNAMj/cYKpOZVpTOB4eFiRqQAsjjvht3NKxg7KjQa6tP2tqjfEwbdvV6NV9A/q5TXvhi
+         gT+lZ0RIO/8deRWGv+RDHV5ZRGBZnV6qcNtfQLsHvhKJ7JnCeOmHoo4LTnsFmoAN8XmK
+         Z0pBJ+MisKcbDwsH5mRpjN4vuQjio4B1MUpMWgOGdoU9soztiNR899gtmLRhz4DCVP5U
+         0t5Oep2Q1GkUqf31c9RpceV09j9mT7q/mD9pgtcVtUCUp9GyTwLlSInPX4S3h7J+zkza
+         qUUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=crY7I29q65NogjvIQrh/RfmKj4YUeYhp8OQxxv1sYQo=;
+        b=QCgdhCMgLkq1mhA9keUVfbNZG7H95DrCYKCCQeE3t7xPFyLsoJrNdBtX1MHNvAkW5I
+         6CeUnI4z97YwoEvGouJss5qLbbNjm9XMJEsKM7pYxULe47MO0lXPC1VQGkOUp54HMsAH
+         cFNMqvydq2bmTaWLoPWemnx4oTUW+MbQg/FM4bt9YSWQ1FEPbXN83w+/j3etfL0C7imy
+         Iu6Ma5gTwLhB8L/y1S+L3JJVmaSYafFb4Kuh9sYoCIHiYVvPPuaWqRTGoQdKkWrvpiAK
+         LlKsEaEB2yED/d1FPD7KY90pcLhxrtkHTPX5Fdc/gxZnhCdwN9kFWLrHkKxj7l56tmsA
+         tGPQ==
+X-Gm-Message-State: APjAAAXLJEImHUK9jAOJLMLm5Tb3QsABdz4mGNoiX12ZMrbjRGfSbI79
+        L840WLaRdmUCS+ZBXn87EQDFdVMW
+X-Google-Smtp-Source: APXvYqyPGUCcZeY1kzfK90vnLLGeOaFY3yUFr0KaG6KZBh/XpTd/6XjvG1Ei1gJeVm/He5mxaw3kzg==
+X-Received: by 2002:a05:6830:1284:: with SMTP id z4mr543547otp.291.1582941232393;
+        Fri, 28 Feb 2020 17:53:52 -0800 (PST)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id u3sm3782265ote.50.2020.02.28.17.53.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Feb 2020 17:53:51 -0800 (PST)
+Date:   Fri, 28 Feb 2020 18:53:50 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Thelen <gthelen@google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] kunit: add --make_options
+Message-ID: <20200229015350.GA26612@ubuntu-m2-xlarge-x86>
+References: <20200227063134.261636-1-gthelen@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226210414.28133-1-linux@roeck-us.net>
+In-Reply-To: <20200227063134.261636-1-gthelen@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+On Wed, Feb 26, 2020 at 10:31:34PM -0800, 'Greg Thelen' via Clang Built Linux wrote:
+> The kunit.py utility builds an ARCH=um kernel and then runs it.  Add
+> optional --make_options flag to kunit.py allowing for the operator to
+> specify extra build options.
+> 
+> This allows use of the clang compiler for kunit:
+>   tools/testing/kunit/kunit.py run --defconfig \
+>     --make_options CC=clang --make_options HOSTCC=clang
+> 
+> Signed-off-by: Greg Thelen <gthelen@google.com>
 
-Thank you for your work on this.
-
-I tested this series on my usual setup, discussed on a previous thread (kenzo +
-veyron), and your patchset fixes the crashes I was seeing.
-
-I also did some testing with usb-storage, everything works as expected.
-
-Best, Boris.
-
-Guenter Roeck wrote:
->This series addresses the following problems:
->
->- Fix receive buffer corruptions
->- Fix receive transfers with 0 byte transfer length
->- Abort transactions after unknown receive errors
->  if the receive buffer is full
->- Reduce "trimming xfer length" logging noise
->
->The problems fixed with this series were observed when connecting
->a DM9600 Ethernet adapter to Veyron Chromebooks such as the ASUS
->Chromebook C201PA. The series was tested extensively with this and
->other adapters.
->
->The observed problems are also reported when tethering various
->phones, so test coverage with such phones would be very appreciated.
->
->----------------------------------------------------------------
->Guenter Roeck (4):
->      usb: dwc2: Simplify and fix DMA alignment code
->      usb: dwc2: Do not update data length if it is 0 on inbound transfers
->      usb: dwc2: Abort transaction after errors with unknown reason
->      usb: dwc2: Make "trimming xfer length" a debug message
->
-> drivers/usb/dwc2/hcd.c      | 82 ++++++++++++++++++++++++---------------------
-> drivers/usb/dwc2/hcd_intr.c | 14 +++++++-
-> 2 files changed, 56 insertions(+), 40 deletions(-)
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
