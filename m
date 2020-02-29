@@ -2,125 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 494F7174420
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 02:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7DEC17443E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 02:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgB2BXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 20:23:21 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52936 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbgB2BXV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 20:23:21 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so5404769wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 17:23:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i/7YNCxPMBaPfRc0r6hwDsD4AYhHuz/+hoGyVq9vhR0=;
-        b=Irm3kkRLYMDUDnNN3uPknJSw6y6RPEolglih7qe1Xv0+i5lIJVxspusNEcB/2ZQGds
-         NvZ4AoOZQcDlOnv+9Ibvb2DNpNICXcYiY40+86thILBIrsXTg9ulcNAtvJbW9ZLi+CMn
-         LKJ/FMnlD2cIEdwDlogDNQBxPO+INsL5AXGgiN5Mb92+XhtrHQLefbhLqNrj/GRBF/pD
-         1GeCTfYEvaf3JUN4fX9kg2xaAycWqEMPwYr41eugmvLVgwWmb9YSGDFWrKFMuP+LuEw2
-         bHNg4RDSSakp3qzEmmkTU2F4MaSWAhG718xG6TdXIDLPyKv8koZnwLqrb1kXEPAqyA2m
-         8OuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i/7YNCxPMBaPfRc0r6hwDsD4AYhHuz/+hoGyVq9vhR0=;
-        b=kvgf31obIxa0JM4WrL4ngnp2Myy5SIuORLXqzZl/ZjTBNc1g5/fS/tFTlMVQXoYYnC
-         y7FY+h4iP95RzQHQ6Qizv4UCjvqLHa4OEmllzzjCOVFB20Cgbx04k1YIGU4zg4392ce2
-         iE3q2DfxSZTbauZicAvAfjdwFyZVxWKR08/N2fLGl8XKopjOiZR/JY6nDG1s+hLHXifz
-         nVPWmkfsictFC3ldyI0BA1Y8rnX0fdxOUZTAOl86x3tIfEZyKx3DCXIhNl22y7H1FKmW
-         5thTk8QXXNyoDrLb8MgQayxM49EF2NwyamQPIcUdEAKrBnLsGGm6XG6M1M0ZfxQjfsBf
-         Z0/Q==
-X-Gm-Message-State: APjAAAXgTmKGn8JdVjjfQ7+NFa57dfMWMr1/7KQXsFvia+pSfvshLjD6
-        7QKrW5uQCSoqMTwkEBzKwYtmY12aPyAZNYyHZBODrQ==
-X-Google-Smtp-Source: APXvYqzQhxXCwL795xtkqGSlBVQ1HoOyROAl6OSEGKhT6D00L+2+s+oVhuOu/ADLRgmKmQtZKuqq+BDvu+dhn85KPro=
-X-Received: by 2002:a1c:3204:: with SMTP id y4mr7078376wmy.166.1582939398894;
- Fri, 28 Feb 2020 17:23:18 -0800 (PST)
+        id S1726752AbgB2BmA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 28 Feb 2020 20:42:00 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3029 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbgB2BmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Feb 2020 20:42:00 -0500
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 43C06AA82A6CFF55EA6F;
+        Sat, 29 Feb 2020 09:41:57 +0800 (CST)
+Received: from DGGEMM506-MBS.china.huawei.com ([169.254.4.49]) by
+ DGGEMM402-HUB.china.huawei.com ([10.3.20.210]) with mapi id 14.03.0439.000;
+ Sat, 29 Feb 2020 09:41:48 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] cpu-topology: Fix the potential data corruption
+Thread-Topic: [PATCH] cpu-topology: Fix the potential data corruption
+Thread-Index: AQHV7hK2ERrnxNGKY0yF2wIuAuh2Hqgv5MEAgAGAuLA=
+Date:   Sat, 29 Feb 2020 01:41:47 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED341F2AE2@DGGEMM506-MBS.china.huawei.com>
+References: <1582878945-50415-1-git-send-email-prime.zeng@hisilicon.com>
+ <20200228104034.GB26973@bogus>
+In-Reply-To: <20200228104034.GB26973@bogus>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.74.221.187]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20200227024301.217042-1-trishalfonso@google.com>
- <20200227024301.217042-2-trishalfonso@google.com> <CACT4Y+YFewcbRnY62wLHueVNwyXCSZwO8K7SUR2cg=pxZv8uZA@mail.gmail.com>
-In-Reply-To: <CACT4Y+YFewcbRnY62wLHueVNwyXCSZwO8K7SUR2cg=pxZv8uZA@mail.gmail.com>
-From:   Patricia Alfonso <trishalfonso@google.com>
-Date:   Fri, 28 Feb 2020 17:23:07 -0800
-Message-ID: <CAKFsvUJFovti=enpOefqMbtQpeorihQhugH3-1nv0BBwevCwQg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] KUnit: KASAN Integration
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        David Gow <davidgow@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>, vincent.guittot@linaro.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 6:43 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Thu, Feb 27, 2020 at 3:44 AM 'Patricia Alfonso' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
+> -----Original Message-----
+> From: Sudeep Holla [mailto:sudeep.holla@arm.com]
+> Sent: Friday, February 28, 2020 6:41 PM
+> To: Zengtao (B)
+> Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> linux-kernel@vger.kernel.org; Sudeep Holla
+> Subject: Re: [PATCH] cpu-topology: Fix the potential data corruption
+> 
+> On Fri, Feb 28, 2020 at 04:35:45PM +0800, Zeng Tao wrote:
+> > Currently there are only 10 bytes to store the cpu-topology info.
+> > That is:
+> > snprintf(buffer, 10, "cluster%d",i);
+> > snprintf(buffer, 10, "thread%d",i);
+> > snprintf(buffer, 10, "core%d",i);
 > >
-> > Integrate KASAN into KUnit testing framework.
-> >  - Fail tests when KASAN reports an error that is not expected
-> >  - Use KUNIT_EXPECT_KASAN_FAIL to expect a KASAN error in KASAN tests
-> >  - KUnit struct added to current task to keep track of the current test
-> > from KASAN code
-> >  - Booleans representing if a KASAN report is expected and if a KASAN
-> >  report is found added to kunit struct
-> >  - This prints "line# has passed" or "line# has failed"
-> >
-> > Signed-off-by: Patricia Alfonso <trishalfonso@google.com>
-> > ---
-> > If anyone has any suggestions on how best to print the failure
-> > messages, please share!
-> >
-> > One issue I have found while testing this is the allocation fails in
-> > kmalloc_pagealloc_oob_right() sometimes, but not consistently. This
-> > does cause the test to fail on the KUnit side, as expected, but it
-> > seems to skip all the tests before this one because the output starts
-> > with this failure instead of with the first test, kmalloc_oob_right().
+> > In the boundary test, if the cluster number exceeds 100, there will be a
+> 
+> I don't understand you mention of 100 in particular above. I can see
+> issue
+> if there are cluster with more than 2-digit id. Though highly unlikely for
+> now, but I don't have objection to the patch.
 >
-> I don't follow this... we don't check output in any way, so how does
-> output affect execution?...
->
-I'm sorry. I think I was just reading the results wrong before - no
-wonder I was confused!
 
-I just recreated the error and it does work as expected.
+The same meaning, more than 2-digit id equals to more than 100, right?
+Here 100 is for from tester/user perspective.
+And we found this issue when test with QEMU. 
 
->
-> > --- a/tools/testing/kunit/kunit_kernel.py
-> > +++ b/tools/testing/kunit/kunit_kernel.py
-> > @@ -141,7 +141,7 @@ class LinuxSourceTree(object):
-> >                 return True
-> >
-> >         def run_kernel(self, args=[], timeout=None, build_dir=''):
-> > -               args.extend(['mem=256M'])
-> > +               args.extend(['mem=256M', 'kasan_multi_shot'])
->
-> This is better done somewhere else (different default value if
-> KASAN_TEST is enabled or something). Or overridden in the KASAN tests.
-> Not everybody uses tools/testing/kunit/kunit_kernel.py and this seems
-> to be a mandatory part now. This means people will always hit this, be
-> confused, figure out they need to flip the value, and only then be
-> able to run kunit+kasan.
->
-I agree. Is the best way to do this with "bool multishot =
-kasan_save_enable_multi_shot();"  and
-"kasan_restore_multi_shot(multishot);" inside test_kasan.c like what
-was done in the tests before?
-
--- 
-Thank you,
-Patricia Alfonso
+> --
+> Regards,
+> Sudeep
