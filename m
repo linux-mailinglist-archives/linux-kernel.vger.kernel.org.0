@@ -2,114 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 488191745B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 10:17:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B6F1745DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 10:24:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbgB2JRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 04:17:01 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38841 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbgB2JRA (ORCPT
+        id S1726857AbgB2JYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 04:24:31 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42820 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbgB2JYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 04:17:00 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j7yEu-0005u4-PY; Sat, 29 Feb 2020 10:16:53 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9088D1C219E;
-        Sat, 29 Feb 2020 10:16:51 +0100 (CET)
-Date:   Sat, 29 Feb 2020 09:16:51 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] tools arch x86: Sync the msr-index.h copy with the
- kernel sources
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Borislav Petkov <bp@suse.de>, Jiri Olsa <jolsa@kernel.org>,
-        Kim Phillips <kim.phillips@amd.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        Sat, 29 Feb 2020 04:24:31 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p18so6075200wre.9;
+        Sat, 29 Feb 2020 01:24:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RgPJE0orJQVDrDLEaPJ8R2RxW8F5htMBVkLJo9I+3vI=;
+        b=o9rkUgC3sZYDJqLH0G98KAbq5NAH7w8L5tbrS2uN5TzpAoyRCzhVio6e2iwYrB13dY
+         xHsrTSzVBewKcPJcBcLzDrgOToNImEQeZ9joKizsBvGASOzPAiW8/NWryBSUuGRig3Gu
+         NW2y73yAVN4drVh9it/+OBI0+f7gcI7ZM4Y/oiyKjLMWsAYlrMTv+XgxrdYFQ+fxT9tr
+         n0aG94hIH5s6TkVWYbIlamSVDTv2ES+8PkP3zujOXMJ38DcbXtkIt4HCcpsjUcajFbY4
+         JjFcnwg7F8iJT1AT8g6lvnSohzgu6kTK9M6zQqr40j1ST8e7grDp2i6htBLXaxgQH9Wv
+         x1nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RgPJE0orJQVDrDLEaPJ8R2RxW8F5htMBVkLJo9I+3vI=;
+        b=jOPr61QL0QiUaEzpPuWwmFKstJ1f+Ll3dj4VA+os+ppsN85rOuOX6Gz0g0Fd+NN54r
+         QK6rC/kUOsZaBa9WPWh6GLlrVufwT6BvaJf2qisGvWis/E/rGZ3f9Z+XUKRD2+iMD1Ha
+         I9oBDq9e8f0PCykDzzkyR34qslLkLUEv8z8YRdCJ5tuJUqW2SvM6QeFbHAw8qCbhjhuC
+         VK6OfPIdhiGk8x2YDYMhOHyXU3/58h6jVsDFl4mteSzQBqPM0Q4GL9S9QBbc3zIDiw5N
+         jRBKj8dYeq2RsxH18GU8WvTNiQ3Jm4hmi7nGMp95dj1/uQ7nRVi2oj4YUSdXd/65mEwv
+         h67A==
+X-Gm-Message-State: APjAAAWcZemcRXjr2pvPCdzjycZslsa9ABUJyFbXZRc0kS58NRLxcgCw
+        qRRG34f9ht9c/BC0bT4vIf4=
+X-Google-Smtp-Source: APXvYqypQZFf++sh1JdwJcb+KL95+X3s+ht196vQUdpvCNcMCeFhfMHU9OUnkaQTMr1064b6VZ1vPA==
+X-Received: by 2002:a5d:4384:: with SMTP id i4mr5183282wrq.396.1582968268971;
+        Sat, 29 Feb 2020 01:24:28 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id p17sm14011569wre.89.2020.02.29.01.24.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Feb 2020 01:24:27 -0800 (PST)
+Date:   Sat, 29 Feb 2020 10:24:25 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix reloading of GDTR
+ post-relocation
+Message-ID: <20200229092425.GB92847@gmail.com>
+References: <20200226204515.2752095-1-nivedita@alum.mit.edu>
+ <20200226230031.3011645-2-nivedita@alum.mit.edu>
+ <20200227081229.GA29411@gmail.com>
+ <20200227151643.GA3498170@rani.riverdale.lan>
+ <CAKv+Gu8BiW6P6Xv3EAPUEmbS3GQMJW=eRr-yygRbForaGDQyyw@mail.gmail.com>
+ <20200227155421.GA3507597@rani.riverdale.lan>
+ <CAKv+Gu-k0c8GzKysv4Z9tYzEvfhJUzuiKx5nfwD0JU8ys=LZdg@mail.gmail.com>
+ <20200227180305.GA3598722@rani.riverdale.lan>
 MIME-Version: 1.0
-Message-ID: <158296781131.28353.6184599188781210087.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227180305.GA3598722@rani.riverdale.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     d8e3ee2e2b4ef36d7be3dd8a8fb6e136f2661203
-Gitweb:        https://git.kernel.org/tip/d8e3ee2e2b4ef36d7be3dd8a8fb6e136f2661203
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Thu, 27 Feb 2020 09:23:35 -03:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 27 Feb 2020 09:49:56 -03:00
+* Arvind Sankar <nivedita@alum.mit.edu> wrote:
 
-tools arch x86: Sync the msr-index.h copy with the kernel sources
+> On Thu, Feb 27, 2020 at 06:47:55PM +0100, Ard Biesheuvel wrote:
+> > 
+> > Interesting. I am going to rip most of the EFI handover protocol stuff
+> > out of OVMF, since it is mostly unnecessary, and having the PE/COFF
+> > loader put the image in the correct place right away is a nice
+> > complimentary improvement to that. (Note that the OVMF implementation
+> > of the EFI handover protocol does not currently honor the preferred
+> > address from the setup header anyway)
+> 
+> Yeah, for my testing I'm running the image from the EFI shell, which
+> enters via PE entry point and honors the pref address.
 
-To pick up the changes from these csets:
+So with KASLR, which is the distro default on most x86 distros, we'll 
+relocate the kernel to another address anyway, right?
 
-  21b5ee59ef18 ("x86/cpu/amd: Enable the fixed Instructions Retired counter IRPERF")
+But telling the bootloader the preferred address would avoid any 
+relocation overhead even in this case, right?
 
-  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > before
-  $ cp arch/x86/include/asm/msr-index.h tools/arch/x86/include/asm/msr-index.h
-  $ git diff
-  diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-  index ebe1685e92dd..d5e517d1c3dd 100644
-  --- a/tools/arch/x86/include/asm/msr-index.h
-  +++ b/tools/arch/x86/include/asm/msr-index.h
-  @@ -512,6 +512,8 @@
-   #define MSR_K7_HWCR                    0xc0010015
-   #define MSR_K7_HWCR_SMMLOCK_BIT                0
-   #define MSR_K7_HWCR_SMMLOCK            BIT_ULL(MSR_K7_HWCR_SMMLOCK_BIT)
-  +#define MSR_K7_HWCR_IRPERF_EN_BIT      30
-  +#define MSR_K7_HWCR_IRPERF_EN          BIT_ULL(MSR_K7_HWCR_IRPERF_EN_BIT)
-   #define MSR_K7_FID_VID_CTL             0xc0010041
-   #define MSR_K7_FID_VID_STATUS          0xc0010042
-  $
+Thanks,
 
-That don't result in any change in tooling:
-
-  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > after
-  $ diff -u before after
-  $
-
-To silence this perf build warning:
-
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/msr-index.h' differs from latest version at 'arch/x86/include/asm/msr-index.h'
-  diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@amd.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/x86/include/asm/msr-index.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index ebe1685..d5e517d 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -512,6 +512,8 @@
- #define MSR_K7_HWCR			0xc0010015
- #define MSR_K7_HWCR_SMMLOCK_BIT		0
- #define MSR_K7_HWCR_SMMLOCK		BIT_ULL(MSR_K7_HWCR_SMMLOCK_BIT)
-+#define MSR_K7_HWCR_IRPERF_EN_BIT	30
-+#define MSR_K7_HWCR_IRPERF_EN		BIT_ULL(MSR_K7_HWCR_IRPERF_EN_BIT)
- #define MSR_K7_FID_VID_CTL		0xc0010041
- #define MSR_K7_FID_VID_STATUS		0xc0010042
- 
+	Ingo
