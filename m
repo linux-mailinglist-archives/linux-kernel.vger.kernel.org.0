@@ -2,121 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EA681743BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:12:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 025391743C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 01:22:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgB2AMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Feb 2020 19:12:54 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.252]:47547 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725957AbgB2AMx (ORCPT
+        id S1726627AbgB2AWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Feb 2020 19:22:11 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34297 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbgB2AWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Feb 2020 19:12:53 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 6959B2C4B5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 18:11:17 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7pivjX4LpRP4z7pivjvOQa; Fri, 28 Feb 2020 18:11:17 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5b/2M8suuafk8OeTPNdtw9kguzC0VV2KliEDV8H4iH0=; b=y8Dn6BzyXZs47uWtFFyTX03RMH
-        azDCmEAktwjGR/0Dhtif3bovuvGmHyrrBuPp+L3/e3vV30/b11fIBWloQ9uP+RkUAom+NRS27KQk7
-        4glYaXzsWF47Otdm3tqGcfKFa9yWMmQau48ru/o8k0/7GEEYkUgdmKmALKDPKFeHptIt8BuOT3td0
-        VTANAshuvEdzITPxkRAv9fIreRD3F2FTSUsPppfnCyPs/8sNQkg+YFkwDFIxl5ehHCE5upWaFrQPx
-        oeXU6LCVL/Oq42QIkm/VmAh7T0rpvD0P/LBUbQ9E+s1kEXimn9bKP3fWNxsSVT1/skF1veiE1Mi0t
-        PrZcK8aA==;
-Received: from [200.39.15.57] (port=32151 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j7pit-002eIL-I1; Fri, 28 Feb 2020 18:11:15 -0600
-Date:   Fri, 28 Feb 2020 18:14:11 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     David Ahern <dsahern@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: nexthop: Replace zero-length array with
- flexible-array member
-Message-ID: <20200229001411.GA7580@embeddedor>
+        Fri, 28 Feb 2020 19:22:11 -0500
+Received: by mail-lf1-f68.google.com with SMTP id w27so3411300lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:22:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+u0gv0tl7AmgLhCL7vM7Tz8IImT4ldCCBT4qkE7ULKY=;
+        b=fGaQ5JCVhGTePvUAx++hyza0BfqY9JdB2F2GhfTLy9rPR5cQk5nYiP4YxWG8OFvXIw
+         eaxCQprO0+OU8yIrfsI3GJjzKRqnBwA0Up1pGquOWCbSGik5YvXxE4JhmtLjR2sNGlOd
+         k3ZQA8sT66ACy9nosyGTOwS19r/nZ2etYGTq0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+u0gv0tl7AmgLhCL7vM7Tz8IImT4ldCCBT4qkE7ULKY=;
+        b=UFC25wXtesfH0IzqKOmH+24iij0OfpJ3RqOgfg/aGYoxQp/pi3/ff7l/Eni3vYV3Vk
+         7OpdYFtS1ZQ1/9mdR1DEuzDVm6prurNUvlc3yi47LvP6Nsc3ciQgxgOIGmxEl4T463ov
+         UT4AWJYMvJdmWFjv6vB32D3sEl8hDX4qJkrhBfbH8hdH4sIQCBAcAbCEVojFJIUXq1zY
+         8tWJMh2kJpAfrvB4K48i+mzj9W9z2LsMUV7RdmFEJhOy4ViQ6OPNnZLcZGXN18Z+qLpB
+         F0vayfp2jHEIBkbtfyR25sy+6lSilr7f7Spc/b4pFlT8JN3/Tcm7DzgJox4R9D3fl11h
+         YZfg==
+X-Gm-Message-State: ANhLgQ09SlbQB5AZGcmJspjsM5paNl/NVhkqHvvcr+uB5Tv0ZYiMsIJ5
+        HVVa+8Jw+i7SWVgbPSdEHawZr5d8YfA=
+X-Google-Smtp-Source: ADFU+vtKq5b9dgjp+WUFQuPDTzBC7KZ6btOLpaISx+teVOoXesTOAoBPTgK3nXma/8Qp94Ufgv+10A==
+X-Received: by 2002:ac2:5b08:: with SMTP id v8mr4110253lfn.92.1582935728714;
+        Fri, 28 Feb 2020 16:22:08 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id i1sm6719395lji.71.2020.02.28.16.22.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 16:22:07 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id s23so3369637lfs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Feb 2020 16:22:07 -0800 (PST)
+X-Received: by 2002:a19:c611:: with SMTP id w17mr4041445lff.59.1582935726653;
+ Fri, 28 Feb 2020 16:22:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.39.15.57
-X-Source-L: No
-X-Exim-ID: 1j7pit-002eIL-I1
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.39.15.57]:32151
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200227105632.15041-1-sibis@codeaurora.org> <20200227105632.15041-2-sibis@codeaurora.org>
+In-Reply-To: <20200227105632.15041-2-sibis@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 28 Feb 2020 16:21:30 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5=r3MaoAYTn1X416-QGjSBKj5526VDbFoXUbiEvUKO4Q@mail.gmail.com>
+Message-ID: <CAE=gft5=r3MaoAYTn1X416-QGjSBKj5526VDbFoXUbiEvUKO4Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] interconnect: qcom: Allow icc node to be used
+ across icc providers
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Thu, Feb 27, 2020 at 2:57 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> Move the icc node ids to a common header, this will allow for
+> referencing/linking of icc nodes to multiple icc providers on
+> SDM845 SoCs.
+>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
-
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/net/nexthop.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/net/nexthop.h b/include/net/nexthop.h
-index 331ebbc94fe7..c440ccc861fc 100644
---- a/include/net/nexthop.h
-+++ b/include/net/nexthop.h
-@@ -73,7 +73,7 @@ struct nh_group {
- 	u16			num_nh;
- 	bool			mpath;
- 	bool			has_v4;
--	struct nh_grp_entry	nh_entries[0];
-+	struct nh_grp_entry	nh_entries[];
- };
- 
- struct nexthop {
--- 
-2.25.0
-
+Reviewed-by: Evan Green <evgreen@chromium.org>
