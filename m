@@ -2,82 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E60317496A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 21:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6777174972
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Feb 2020 21:55:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbgB2Utz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Feb 2020 15:49:55 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39479 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbgB2Utz (ORCPT
+        id S1727265AbgB2Uzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Feb 2020 15:55:47 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53823 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbgB2Uzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Feb 2020 15:49:55 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j893Z-0004jA-5V; Sat, 29 Feb 2020 21:49:53 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CE3831C21A3;
-        Sat, 29 Feb 2020 21:49:52 +0100 (CET)
-Date:   Sat, 29 Feb 2020 20:49:52 -0000
-From:   "tip-bot2 for Eric W. Biederman" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-cpu-timers: cpu_clock_sample_group() no
- longer needs siglock
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Sat, 29 Feb 2020 15:55:47 -0500
+Received: by mail-pj1-f65.google.com with SMTP id i11so2672371pju.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Feb 2020 12:55:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=LfAey+bVZC63MZcRaKrf1wf+n/7HqfzMlziFP/uZ5DA=;
+        b=ClhsKX9DW5hTIMiI6HHZ0GUWCxU6QbmOxwbUME6SC+2H4MgVlbEAMmNzWoVHCxtZz4
+         jODg4Y20/kt8t5Hi9NP9dV8oxmZ2Grr06rBhEjhVTLCofOWwzlM35aosLDpdH9p0TRrz
+         6y2ZA41P832B+JG3r42ZaWntowDOl24cID7FT913bB+SVyj+BbKUgJ+BGzUC0cPibOb0
+         Fe60zjQFVT9K3JoX6WnKmFcQXwGtRsM8IgIXy8FOHwuaWTp06Ai01R9BScmI2EfR3InQ
+         EK3K2M6kE9dTDpLZj3jvEScnQimKWv1kHMOimtSd/wFbmHFBsKjBTghpKnbJDLCx2QMg
+         sZ2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LfAey+bVZC63MZcRaKrf1wf+n/7HqfzMlziFP/uZ5DA=;
+        b=q7OtmbSTqC468fffI8fncd5GrhKzy/v5yi/y5lgR1VDkScdD7ULJIOgqCaX/hRDlnH
+         1zSZ3fbxeiqFDH0bb3n3Tp46cDZ4fnNlO8rozVqDyaujBgFk2uwXqwNElqgYjNgOXtbp
+         qJWMEP1AAwQaqO4skcgQxqgHZglrNRLA17ZgyX0UMJMMUsbjlzHN15/33petupJPFRw1
+         YJpKBMoZuUveNB1p711RPPmChdWuhZLSMgCcrvJI28NLly49ZKju16MjFikriiC0dkHR
+         y4luCXlR4uDxsuZF8hgxnFUAmIJej74O+sDdiEUnVELuwa5MTvlhz7qwlwbGnLiZHt80
+         IlvQ==
+X-Gm-Message-State: APjAAAXSOY4tpUBgdbTZHri24LdDpnlIMs/c/MA4s+tM3IyHFHHBRUE+
+        1ex0bpLmaPeFJpYxWGARbacXVOMrM4w=
+X-Google-Smtp-Source: APXvYqwOVZngKIRetVCWvncT1J21YRIi0aP5gheYzkQNimZI2jAECzbYCrcgakD8LcCfMLaRbWsjuw==
+X-Received: by 2002:a17:90a:9ee:: with SMTP id 101mr11994638pjo.74.1583009745793;
+        Sat, 29 Feb 2020 12:55:45 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id x4sm10554330pgi.76.2020.02.29.12.55.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Feb 2020 12:55:45 -0800 (PST)
+Subject: Re: [PATCH 1/1] io_uring: remove extra nxt check after punt
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <29e9f945f8aa6646186065469ba00c0a4ef5b210.1583005578.git.asml.silence@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <08e7732a-4a31-424f-ec3f-eba4d753456a@kernel.dk>
+Date:   Sat, 29 Feb 2020 13:55:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Message-ID: <158300939258.28353.113131585377048578.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <29e9f945f8aa6646186065469ba00c0a4ef5b210.1583005578.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+On 2/29/20 12:48 PM, Pavel Begunkov wrote:
+> After __io_queue_sqe() ended up in io_queue_async_work(), it's already
+> known that there is no @nxt req, so skip the check and return from the
+> function.
+> 
+> Also, @nxt initialisation now can be done just before
+> io_put_req_find_next(), as there is no jumping until it's checked.
 
-Commit-ID:     6d022b20c011a75df24d2be90d22769d1d4461d0
-Gitweb:        https://git.kernel.org/tip/6d022b20c011a75df24d2be90d22769d1d4461d0
-Author:        Eric W. Biederman <ebiederm@xmission.com>
-AuthorDate:    Fri, 28 Feb 2020 11:08:45 -06:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 29 Feb 2020 21:44:45 +01:00
+Applied, thanks.
 
-posix-cpu-timers: cpu_clock_sample_group() no longer needs siglock
+-- 
+Jens Axboe
 
-As of e78c3496790e ("time, signal: Protect resource use statistics with
-seqlock") cpu_clock_sample_group() no longer needs siglock protection so
-remove the stale comment.
-
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
----
- kernel/time/posix-cpu-timers.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 8ff6da7..46cc188 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -336,9 +336,7 @@ static void __thread_group_cputime(struct task_struct *tsk, u64 *samples)
- /*
-  * Sample a process (thread group) clock for the given task clkid. If the
-  * group's cputime accounting is already enabled, read the atomic
-- * store. Otherwise a full update is required.  Task's sighand lock must be
-- * held to protect the task traversal on a full update. clkid is already
-- * validated.
-+ * store. Otherwise a full update is required.  clkid is already validated.
-  */
- static u64 cpu_clock_sample_group(const clockid_t clkid, struct task_struct *p,
- 				  bool start)
