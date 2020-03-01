@@ -2,80 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75162174DB3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 15:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 562BF174DAA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 15:33:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgCAOhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 09:37:03 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:42626 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbgCAOhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 09:37:03 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E3A42200C18;
-        Sun,  1 Mar 2020 15:37:01 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3AB4B200B50;
-        Sun,  1 Mar 2020 15:36:56 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 28FC6402D5;
-        Sun,  1 Mar 2020 22:36:49 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1726366AbgCAOdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 09:33:11 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46768 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgCAOdL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 09:33:11 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j7so9127330wrp.13
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 06:33:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=HtofGd4kToXQ+7hP6afMC/zniJHqraZJ2UCvihc7Z5g=;
+        b=B/fT3fVokUh7pBXtAfdkJ19LtYzf9ubc4q9ekSdBwzHdPi7ORgmw4lAH4fo2L1OnW9
+         eKco266285xxfB2ruqo2fqTYiIeZbT4kcZ/QvbqWDvfwmSkPFsbjDlLqDJ6WmoLI+q5w
+         7NhoWo1bTWeaSCjCyVDVtKOrjjdp4vkuWRYgEUMj7XFrmItH69CPjwVEby9+t7CZD0pp
+         WFJckq28RneNlzHSbV2phVqfObKZ03+YWAtCyTP3cCDja3E53+8OWQUyVI+lmiZ2h85N
+         ILYBJ9IAxfzsq02Cz8a51EljWBBLPMkbldCXc1VTpC16Lh+Ckhs/wUx7kXSTQtc3hj9H
+         Sjtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HtofGd4kToXQ+7hP6afMC/zniJHqraZJ2UCvihc7Z5g=;
+        b=A1va6chLuNUoVbJcZHIvf8xzRtqhJhM1J94xEWSaE/rgCbVOrbOeUqDYCbtj7meJUH
+         YwwYxFN2PsvEK2qdsXz/bt0klDUCaZchQbRFoxTTAEOFfLUZfog38W+zk48ndRZdkaw1
+         hEPEVrJe/Ze9r/UrRVvgALtKAa73ybAov7iut/6xtnxcrsL84dxsjwLk2WU3Yl0piQF3
+         8ewJTZ+GjKYbrFv7bJ22WwVJytkev/JlfR7fvxY4gbjor23mjIwYSnPo0NJbPXuGwsie
+         w3OffVCmgDcaT5x8eQ6ASYiYXS2S7Gd8RQ96FOfp0+s0cR1kMXT+3f5++VEXHBf9i9M8
+         S5fA==
+X-Gm-Message-State: APjAAAW4JnU2IYeG0nds/rUUdYxs5DB71dB+JCRUljvxLmySXxg9pZjq
+        FIFrruuZQUp7u0l5udGQ1S0YMg==
+X-Google-Smtp-Source: APXvYqw5YSvUliTyulbl5gq9KLJISDZM/NrbWMGqG+5tngtPZw5UPPomyCVnbwEy0I7UFlE0eioHcA==
+X-Received: by 2002:adf:d4ca:: with SMTP id w10mr16348178wrk.407.1583073188777;
+        Sun, 01 Mar 2020 06:33:08 -0800 (PST)
+Received: from f2.redhat.com (bzq-79-177-42-131.red.bezeqint.net. [79.177.42.131])
+        by smtp.gmail.com with ESMTPSA id l4sm23617241wrv.22.2020.03.01.06.33.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 01 Mar 2020 06:33:08 -0800 (PST)
+From:   Yuri Benditovich <yuri.benditovich@daynix.com>
+To:     mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] thermal: imx_thermal: Use __maybe_unused instead of CONFIG_PM_SLEEP
-Date:   Sun,  1 Mar 2020 22:30:56 +0800
-Message-Id: <1583073056-32297-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+Cc:     yan@daynix.com, virtio-dev@lists.oasis-open.org
+Subject: [PATCH v3 0/3] virtio-net: introduce features defined in the spec
+Date:   Sun,  1 Mar 2020 16:32:59 +0200
+Message-Id: <20200301143302.8556-1-yuri.benditovich@daynix.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use __maybe_unused for power management related functions instead
-of #if CONFIG_PM_SLEEP to simply the code.
+This series introduce virtio-net features VIRTIO_NET_F_RSC_EXT,
+VIRTIO_NET_F_RSS and VIRTIO_NET_F_HASH_REPORT.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/thermal/imx_thermal.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Changes from v2: reformatted structure in patch 1
 
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index bb6754a..e75dda5 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -878,8 +878,7 @@ static int imx_thermal_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int imx_thermal_suspend(struct device *dev)
-+static int __maybe_unused imx_thermal_suspend(struct device *dev)
- {
- 	struct imx_thermal_data *data = dev_get_drvdata(dev);
- 	struct regmap *map = data->tempmon;
-@@ -900,7 +899,7 @@ static int imx_thermal_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int imx_thermal_resume(struct device *dev)
-+static int __maybe_unused imx_thermal_resume(struct device *dev)
- {
- 	struct imx_thermal_data *data = dev_get_drvdata(dev);
- 	struct regmap *map = data->tempmon;
-@@ -918,7 +917,6 @@ static int imx_thermal_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static SIMPLE_DEV_PM_OPS(imx_thermal_pm_ops,
- 			 imx_thermal_suspend, imx_thermal_resume);
+Yuri Benditovich (3):
+  virtio-net: Introduce extended RSC feature
+  virtio-net: Introduce RSS receive steering feature
+  virtio-net: Introduce hash report feature
+
+ include/uapi/linux/virtio_net.h | 100 ++++++++++++++++++++++++++++++--
+ 1 file changed, 96 insertions(+), 4 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
