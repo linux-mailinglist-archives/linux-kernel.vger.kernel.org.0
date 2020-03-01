@@ -2,95 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0CF0174FC3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 22:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C3E2174FCB
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 22:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbgCAVFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 16:05:47 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45037 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726490AbgCAVFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 16:05:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48Vwm8370gz9sST;
-        Mon,  2 Mar 2020 08:05:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583096744;
-        bh=ZSbkdMpMpdF5lvPMUhVIz8Aj93wihvB1224JTqYZAaE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Qd6LEYHbinl8xDZCXgScg0s2ZhXoquCby7PxYfORLDBi8SRLl2nyTclmNPlOlOVv6
-         0P0eGrEduU69RyCm2TWr7J11OkLBl7Apzzbnw/Mri9aA3TZfZQbJiQTLVpmX/pqSVB
-         9h9ubGM9ZaTFhZvgQy66qJ4RDjQJ98PICNBHOva+hl/6YnTppxytH8V6d/s+HC4aJx
-         MLtd8RdS39RbQuTE0d+w7yDZekkcT6G+9IYK9lkRJLXskirnXbfScZOQzqaL8ifA8Y
-         PRxEr9AB0yyskixCZsIUYneXm3H6X05bf6fBTwDnsLQYeysCbvGsEO7yPjAbno8pKE
-         rWgs4zM3999hA==
-Date:   Mon, 2 Mar 2020 08:05:43 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: linux-next: manual merge of the kvm-fixes tree with Linus' tree
-Message-ID: <20200302080543.51450371@canb.auug.org.au>
+        id S1726714AbgCAVUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 16:20:35 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39308 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbgCAVUf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 16:20:35 -0500
+Received: by mail-pf1-f196.google.com with SMTP id l7so4533834pff.6;
+        Sun, 01 Mar 2020 13:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qSE/dLT1/R1TdrIzig5uAH8kZs4aY53Q6FYuH0pUIUk=;
+        b=s4Zf2t2MMt9IzcUlDUUfEqdmZpcN4tLZUAGpHUJ8zKnuw1EVVfQ/JHirIAIlRMDawn
+         mMlMZpbX43B8oPQcTf2btArXgRnDiqq+DzJuv2xdZVpvgt6CiNwX9cMAxo0M6fMhSzqw
+         VswjwJh0v9+r/QO+YVllvuLOTRrLMnv7gelQF7Jnz3POAYwTS+Lxr0/JSUuj9+pLEsvd
+         OqPl/JewYqSoYQnnLR62c2/gNsY083N8DGDMLGBLKLCf4H0aoU05qDUaSc9puM60YrHg
+         u574RD/o+Bvr7HayNpYrmG6x1BbHMGrkVcR8YuxySJSF9wb5dEBilqhpZd9jhEtILqul
+         tGqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qSE/dLT1/R1TdrIzig5uAH8kZs4aY53Q6FYuH0pUIUk=;
+        b=kSnqqRAxRrzJbl1p6ZJTDvABFDBfLgohcC6hHeJRs5lmRHBHHYX3gGvVLwY/W7CXqC
+         q7amGyOXbt6eTDkAoBZhx4QayWiIIVu5WIhz3ZoDtRJ4E5DRcMJq/SL4vzQgMj+2oWL3
+         nnn9Tr72xutEraIIMryGL3vgSjufDN6Ol/BAc59hlrz0WYDUu1+V/YSu77YZdgWu9AmE
+         UKQDqZjSVEHco+wacBMuPCo9KJ/jLSmyNS+21lHT95RFgd3M5uXS5Q8HmcQMz+6spKvj
+         ETot+6fWw5YXly3T+KfOWF4WopMdMvU1q/yL4ca+iTM76VSSND/EDSr3yjc420bcWFHQ
+         I2nw==
+X-Gm-Message-State: APjAAAVWNGPJehhyqlpstK3XEnFUsz1p4d4aJZ8vBPsagBJo62iVuFSu
+        3OII1CFF5YhJ51XqolI7QgOc/XSE
+X-Google-Smtp-Source: APXvYqym95seeMXORpjNvDAtUfGgiQZ4H2PTVGNx06uulZYbhJD58loKpNqvBWcfDllmtRSV3tT+kw==
+X-Received: by 2002:a62:d408:: with SMTP id a8mr14201601pfh.99.1583097633454;
+        Sun, 01 Mar 2020 13:20:33 -0800 (PST)
+Received: from localhost.localdomain ([103.51.74.208])
+        by smtp.gmail.com with ESMTPSA id u19sm4547686pgf.11.2020.03.01.13.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Mar 2020 13:20:32 -0800 (PST)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv2 0/3] Add support for suspend clk for Exynos5422 SoC
+Date:   Sun,  1 Mar 2020 21:20:15 +0000
+Message-Id: <20200301212019.2248-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7rWHSHf1RaPiItDCcNSWExn";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/7rWHSHf1RaPiItDCcNSWExn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Seried build and tested on linux next-20200228.
 
-Hi all,
+This patch series tries to enable suspend clk using
+exynos dwc3 driver, for this I have added new
+compatible string "samsung,exynos5420-dwusb3"
+so that we could add new suspend clk in addition
+to the core clk. exynos dwc3 driver will help
+enable/disable these clk.
 
-Today's linux-next merge of the kvm-fixes tree got a conflict in:
+This series PatchV2.
+--Added the clk names for exynos5420 compatible.
+--Added missing support for Exyno5410 SoC suspend clock.
+--Update the commit message to support suspend clk usages.
 
-  arch/x86/kvm/Makefile
+---
+Long time ago I tried to add suspend clk for dwc3 phy
+which was wrong appoch, see below.
 
-between commit:
+[0] https://lore.kernel.org/patchwork/patch/837635/
+[1] https://lore.kernel.org/patchwork/patch/837636/
 
-  cfe2ce49b9da ("Revert "KVM: x86: enable -Werror"")
+Previous changes V3 (It was send with wrong Patch version)
+[2] https://patchwork.kernel.org/cover/11373043/
 
-from Linus' tree and commit:
+-Anand
 
-  4f337faf1c55 ("KVM: allow disabling -Werror")
+Anand Moon (3):
+  devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3
+    clocks support
+  ARM: dts: exynos: Add missing usbdrd3 suspend clk
+  usb: dwc3: exynos: Add support for Exynos5422 suspend clk
 
-from the kvm-fixes tree.
+ Documentation/devicetree/bindings/usb/exynos-usb.txt | 5 ++++-
+ arch/arm/boot/dts/exynos5410.dtsi                    | 8 ++++----
+ arch/arm/boot/dts/exynos5420.dtsi                    | 8 ++++----
+ arch/arm/boot/dts/exynos54xx.dtsi                    | 4 ++--
+ drivers/usb/dwc3/dwc3-exynos.c                       | 9 +++++++++
+ 5 files changed, 23 insertions(+), 11 deletions(-)
 
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+-- 
+2.25.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7rWHSHf1RaPiItDCcNSWExn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5cI6cACgkQAVBC80lX
-0GwgEgf8DkjI/M5iBYlJlr2nsrJ6GC630tdLdAFXhDdSD/uW/a9EzjNVbkUc2Z9P
-EZKrPiZwm/8gJjvvBbgUWDat2WCDbuk1Om6FOas523gF8gGx1UIPx8GJxiFRzx0H
-0tcUxhXTrMcK2KEb2z7ZaFTdwwQwWng0Cx1qe6bzoeq61IUeYVNEu2CXTpKfoziA
-a0oUh8k1oULa61fxz8z0TdKh70WRDHr9P6AMNdAgW87vSQTSGJgzbyAxBO8Fvled
-iv0wCxv9r5lLof84Lz4IcpjdUJBygs6kk7eJBfuvElXh8Gt4XH7IG0y8wWpbHLMw
-DNNl944bec16oLgHBVI155HGZrxkug==
-=IrIj
------END PGP SIGNATURE-----
-
---Sig_/7rWHSHf1RaPiItDCcNSWExn--
