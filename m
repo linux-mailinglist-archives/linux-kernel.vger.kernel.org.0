@@ -2,110 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C71174C92
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 10:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E678174C9A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 10:42:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgCAJic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 04:38:32 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40515 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbgCAJib (ORCPT
+        id S1726738AbgCAJlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 04:41:55 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:38432 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726146AbgCAJlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 04:38:31 -0500
-Received: by mail-ot1-f68.google.com with SMTP id x19so1998200otp.7;
-        Sun, 01 Mar 2020 01:38:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PZkFkXYlFxgkmvJgFU55SlOGglVdT51q/lgkk0P1mmk=;
-        b=nHEv3nkWqdcwCkQGPM3ObZqDUVnUXIxjtBoKoNMHGoIEkWM2W0hNDk3bIPVV1MI0WK
-         ivPeBIN6UsQpCcsFobhNtF8+jboXSZ1UnzAzieX6shSsjm3E5fr9LbAmqwrQOKE6PnRe
-         jJ2jsP243WpjlHk3Kh9k9leHzeTsmo+B3bPh7wPJlTOuQLGGqAnn04Bsy1hbBDiBvdkG
-         h/rmiBjomivli0KpwEAsbIMsCiQmvJk8EDvRFsuG2+Jnb2pvZYsggEzIexlZNUMRDpsE
-         U5pggSXV8Iaqm/NPpBV80Xum0+y3Jmi2kX2NjKgykbzXrAnf62OmjWl+F5KQcZP3gnaW
-         cnAQ==
-X-Gm-Message-State: APjAAAU3zHPNw5YNC914QUMLldJLKa7JEvqV7NMKgKJKdzt38RUkgDX+
-        V80zoQRyvy0C+Xj+hvDkB6npBgIJuzzlQOLB4N7iwA==
-X-Google-Smtp-Source: APXvYqxpOedhwTtpKPqHlp7kho/JLyNBlapXOA/q5dVMKVUDW8GKWOrjBfkuKhsSVEeE3DT/OEyxkZWqctyO9lnMTTo=
-X-Received: by 2002:a05:6830:100e:: with SMTP id a14mr9462713otp.297.1583055509293;
- Sun, 01 Mar 2020 01:38:29 -0800 (PST)
+        Sun, 1 Mar 2020 04:41:47 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 0219eg7I028745;
+        Sun, 1 Mar 2020 11:40:42 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id B51436032E; Sun,  1 Mar 2020 11:40:42 +0200 (IST)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, joel@jms.id.au, avifishman70@gmail.com,
+        tali.perry1@gmail.com, yuenn@google.com, benjaminfair@google.com
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 0/4] watchdog: npcm: support new capabilities
+Date:   Sun,  1 Mar 2020 11:40:36 +0200
+Message-Id: <20200301094040.123189-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20200227132255.285644406@linuxfoundation.org>
-In-Reply-To: <20200227132255.285644406@linuxfoundation.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 1 Mar 2020 10:38:18 +0100
-Message-ID: <CAMuHMdXPzqmhj1E0AywSiThMQK1AfR4Rp19DV7W8uSp=8p_Zgg@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/237] 4.14.172-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+This patch set adds last reset bootstatus and restart priority
+support in watchdog the Nuvoton NPCM Baseboard Management
+Controller (BMC).
 
-On Thu, Feb 27, 2020 at 2:55 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.14.172 release.
-> There are 237 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 29 Feb 2020 13:21:24 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.172-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
-> -------------
-> Pseudo-Shortlog of commits:
+The NPCM watchdog driver tested on NPCM750 evaluation board.
 
-Given you do have a git branch containing these commits, is there any
-chance you can update your scripts to insert a real (sorted) shortlog
-here?
-That would make it easier for us contributors to track what has been
-backported.
+Tomer Maimon (4):
+  dt-binding: watchdog: add restart priority documentation
+  watchdog: npcm: add restart priority support
+  dt-binding: watchdog: add bootstatus reset type documentation
+  watchdog: npcm: sets card ext1 and ext2 bootstatus during probe
 
-Many thanks in advance!
-
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->     Linux 4.14.172-rc1
->
-> Nathan Chancellor <natechancellor@gmail.com>
->     s390/mm: Explicitly compare PAGE_DEFAULT_KEY against zero in storage_key_init_range
->
-> Thomas Gleixner <tglx@linutronix.de>
->     xen: Enable interrupts when calling _cond_resched()
->
-> Prabhakar Kushwaha <pkushwaha@marvell.com>
->     ata: ahci: Add shutdown to freeze hardware resources of ahci
->
-> Cong Wang <xiyou.wangcong@gmail.com>
->     netfilter: xt_hashlimit: limit the max size of hashtable
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../bindings/watchdog/nuvoton,npcm-wdt.txt    |  32 ++++
+ drivers/watchdog/npcm_wdt.c                   | 138 ++++++++++++++++--
+ 2 files changed, 157 insertions(+), 13 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.22.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
