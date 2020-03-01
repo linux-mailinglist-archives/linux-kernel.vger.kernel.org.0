@@ -2,118 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EFB1750E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 00:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C491750FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 00:36:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgCAXJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 18:09:14 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42355 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbgCAXJN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 18:09:13 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d10so9650226ljl.9;
-        Sun, 01 Mar 2020 15:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Iq/KgsrwSxvpby2goIRSH5cRmhkTMkp2al5Cysx8Mb8=;
-        b=sxTPbIe4c0Af60ar6aopox61tDGdoAuteIgqFp7R5KXi86Vy1mfYhYNHGsK14ibx3a
-         mcMFmdbVr7glbJp7SCAeuMCo6reqCCND/4iXa2mqVx4u3dob92i6T/iQ3BthiNKhcFAt
-         Vjpg/Fqx5zZp4gBvqmr5YZv6N/iIhSxMNQjUGLbZPFNZCFxIcInoMtXoKT9hmdben2lV
-         wRWSl/rgp4Ex+aijp7Wl7zGPIEUfYYKfdiSnOIS2hoZLB9lbmeGHZuf3B83sKOfBdKqZ
-         E5tc0YE9L59eEy6QLd5bGrnexepaa+S91WaccPZwuNj3jpRmtAuvtH4n9Fx9aGuRRHij
-         OkMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Iq/KgsrwSxvpby2goIRSH5cRmhkTMkp2al5Cysx8Mb8=;
-        b=m2f6xhH/rzk3TVkpBOg2dpHUTKcv/6d8WkbJ+JANYlxSeaSiKRMapzX1g8lvrmD3tg
-         NwGjp7PzklEtyJOCZlrnanCOa4WNVRDSDNg0c1uCKM78O0DfhkbB/vS6kO72umrjHMzd
-         IRAQA3MBHFIHKnv5AUx0HarGIwbzVVXQ1VEttbrPov/sxee7RD1VQ13qKL1UO55qJDrM
-         G7a2fnPjEKIm3kyOQDb10qz0Om5v6fiQGAGtfCBsyOdGI48KLh5pH0AiB3n9xY1XkMsZ
-         3r22/FbpKdCXLKrQniv13aUB4RtyEOqXaUsUaZJOIxjfwJWAqowldI3IHcCeETxqeCoq
-         SC/Q==
-X-Gm-Message-State: ANhLgQ3HqFPaiiFHiLPBSxFGu1OO1K2TI6Q2HIUN76IqvJpuIZpQJ/Cv
-        jR9d3nEC2PqXnJ7Upy3McCaUGEz/
-X-Google-Smtp-Source: ADFU+vvVUAThE91+zafUv8AYR5mKTxcSsZQoMmBQquYfQex92iJVJ4aUm5nQ5wDKyofWYP7XnhhrXg==
-X-Received: by 2002:a2e:8490:: with SMTP id b16mr9849000ljh.282.1583104151055;
-        Sun, 01 Mar 2020 15:09:11 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id f14sm9401803lfh.40.2020.03.01.15.09.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Mar 2020 15:09:09 -0800 (PST)
-Subject: Re: [PATCH v1 1/3] mmc: core: Add raw_boot_mult field to mmc_ext_csd
-To:     Avri Altman <Avri.Altman@wdc.com>, Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Billy Laws <blaws05@gmail.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Andrey Danin <danindrey@mail.ru>,
-        Gilles Grandou <gilles@grandou.net>,
-        Ryan Grachek <ryan@edited.us>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200224231841.26550-1-digetx@gmail.com>
- <20200224231841.26550-2-digetx@gmail.com>
- <MN2PR04MB699121991FCB80BE39FC106FFCE60@MN2PR04MB6991.namprd04.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0fb5f6ec-8aa0-3bc8-e6cc-8e061c401839@gmail.com>
-Date:   Mon, 2 Mar 2020 02:09:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726744AbgCAXdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 18:33:02 -0500
+Received: from mail.dsns.gov.ua ([194.0.148.101]:56392 "EHLO mail.dsns.gov.ua"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbgCAXdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 18:33:02 -0500
+X-Greylist: delayed 13666 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Mar 2020 18:33:01 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.dsns.gov.ua (Postfix) with ESMTP id 62B871FC4E5B;
+        Sun,  1 Mar 2020 22:35:54 +0200 (EET)
+Received: from mail.dsns.gov.ua ([127.0.0.1])
+        by localhost (mail.dsns.gov.ua [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id dzmmRlQxjwWJ; Sun,  1 Mar 2020 22:35:54 +0200 (EET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.dsns.gov.ua (Postfix) with ESMTP id EE6CF1FA5D92;
+        Sun,  1 Mar 2020 22:21:44 +0200 (EET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.dsns.gov.ua EE6CF1FA5D92
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dsns.gov.ua;
+        s=1E60DAC0-2607-11E9-81E6-7A77C2B36653; t=1583094105;
+        bh=njlCkWFc0hcw8eBX6ul4CN7Q0eDgIqGtksJn7ge99kc=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=hNS5TNHbyrdbgacjN8K906KL6PIX+/1bOY0fOn7rxFDcyjSp7RO0HfqGTlpYIlNrR
+         GO3VcM0EkTp83vsGSsEv2d5oGy+FaLgvlihh2L8LuZAWnpD3C7rX5ZnOZqgmQ+m7nc
+         GeEhz4Vr/xnVF+EIT4HuWZekT6RmllvDEk9YF370SMKznoBQparUpMiyEtGvhh/KdW
+         WASe3Yed+TORl+OIIBmvm+SGM8RHizMOttknVOhZI2Ffiel8QvW9nuEqFlMJoc0Jzv
+         1J+liLWO9qLEoRv5XMmOw6h7If84fSM2I2lP6WTqobndk2aHUdJrmwhWUdiBAgG/VF
+         zIKsHJfklodig==
+X-Virus-Scanned: amavisd-new at dsns.gov.ua
+Received: from mail.dsns.gov.ua ([127.0.0.1])
+        by localhost (mail.dsns.gov.ua [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id SFz154DCJX_P; Sun,  1 Mar 2020 22:21:44 +0200 (EET)
+Received: from mail.dsns.gov.ua (localhost [127.0.0.1])
+        by mail.dsns.gov.ua (Postfix) with ESMTP id A04FF1FC5450;
+        Sun,  1 Mar 2020 21:59:28 +0200 (EET)
+Date:   Sun, 1 Mar 2020 21:59:28 +0200 (EET)
+From:   Peter Wong <sport08@dsns.gov.ua>
+Reply-To: petrwong@hotmail.com
+Message-ID: <464635221.3674166.1583092768623.JavaMail.zimbra@dsns.gov.ua>
+Subject: Hello
 MIME-Version: 1.0
-In-Reply-To: <MN2PR04MB699121991FCB80BE39FC106FFCE60@MN2PR04MB6991.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [5.154.174.49, 172.68.102.151]
+X-Mailer: Zimbra 8.8.15_GA_3899 (zclient/8.8.15_GA_3899)
+Thread-Index: 3O/8ccrlbZdxQ9U2SgkVgLNKDcW1Og==
+Thread-Topic: Hello
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-01.03.2020 13:50, Avri Altman пишет:
-> Hi,
->>
->>
->> In order to support parsing of NVIDIA Tegra Partition Table format, we
->> need to know the BOOT_SIZE_MULT value of the Extended CSD register
->> because
->> NVIDIA's bootloader linearizes the boot0/boot1/main partitions into a
->> single virtual space, and thus, all partition addresses are shifted by
->> the size of boot0 + boot1 partitions.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/mmc/core/mmc.c   | 2 ++
->>  include/linux/mmc/card.h | 1 +
->>  2 files changed, 3 insertions(+)
->>
->> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> index f6912ded652d..88e5b4224d3c 100644
->> --- a/drivers/mmc/core/mmc.c
->> +++ b/drivers/mmc/core/mmc.c
->> @@ -417,6 +417,8 @@ static int mmc_decode_ext_csd(struct mmc_card
->> *card, u8 *ext_csd)
->>                 ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
->>         card->ext_csd.raw_hc_erase_grp_size =
->>                 ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE];
->> +       card->ext_csd.raw_boot_mult =
->> +               ext_csd[EXT_CSD_BOOT_MULT];
-> You might want at this point multiply it by 128K,
-> And get rid of: part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
-> Below...
 
-But it's not a *raw* _boot_mult anymore then. I'm not sure that it will
-be a worthwhile change.
+
+Can we talk now?
