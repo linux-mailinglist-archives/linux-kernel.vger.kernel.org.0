@@ -2,85 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B72174BA2
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 06:46:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC5A174BDE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 06:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbgCAFqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 00:46:07 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:47627 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbgCAFqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 00:46:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48VXLz2scSz9sPR;
-        Sun,  1 Mar 2020 16:46:03 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583041563;
-        bh=/pXB+eLcTxLdMyzw/DPfjwnN01pePmwjNBZiT+yKci0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=O9J2j+ctd/9vmauwBsInQjq98gTONbPQulyu60jvAe7dSWdTMPnqlji192P5bTcMm
-         PwiviOKBkKWviP0+iYMqmjQ24O/s5XGPdl1Ny/yDSyt9atjl9IaUbqguEJcHz21GkR
-         4o2zk8p/ekOO2RBcr3A2IcwRyelS+juPx01DtWJWEgJMW+gVgrmRMuohO4fzgngn9t
-         WHGvant36f6wOWSMNZ0I8bPM1WS1GhQrUvTukhC4WzZxK1gQyOrjqZoaVBOtqA3drX
-         IWzDqvrbmCyGrKVpXBmR664wXZYLd0IxoJtEUF9ssrvBFKRUwjicImsIzbEG/Zhjh2
-         jZyvPROispblQ==
-Date:   Sun, 1 Mar 2020 16:45:59 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Message-ID: <20200301164559.6148189e@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gl3ARaOVCMcihYwEU/sJb3o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1727041AbgCAFwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 00:52:40 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:38852 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgCAFwk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 00:52:40 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8B31115BDA6EB;
+        Sat, 29 Feb 2020 21:52:39 -0800 (PST)
+Date:   Sat, 29 Feb 2020 21:52:38 -0800 (PST)
+Message-Id: <20200229.215238.2096356361026735220.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: sock_reuseport: Replace zero-length array
+ with flexible-array member
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200229001102.GA6418@embeddedor>
+References: <20200229001102.GA6418@embeddedor>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 29 Feb 2020 21:52:39 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gl3ARaOVCMcihYwEU/sJb3o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Fri, 28 Feb 2020 18:11:02 -0600
 
-Hi all,
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-In commit
-
-  ac5bf39e3968 ("ASoC: soc-dapm: don't use rtd->cpu_dai on for_each_rtd_cpu=
-_dai()")
-
-Fixes tag
-
-  Fixes: commit de6214a33633d ("ASoC: Add multiple CPU DAI support in DAPM")
-
-has these problem(s):
-
-  - leading word 'commit' unexpected
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gl3ARaOVCMcihYwEU/sJb3o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5bTBcACgkQAVBC80lX
-0GwUxAf/RI6yNzSxRh8dxBD/Xbxto9XiEoPjRa4LHZTsDPimtEWItw44hEHHCWhN
-nbArrVXl/DcIABkIVCTC+qaaOkqfPwZtc6mK8m0K44mLUM1Y26Se3jhNidsyCMlN
-AI3I/g3ilCgJCLqwAJ8Sg5DOj+B+3/ltHieGcYMrd2G6G8WwByMQ8nri6n54+XMY
-PWrNjFkIyfspqguSM8Q+gO8r9qHhKEuLdDTEfXspJDQqBlHNmx93M9rYdf1Mz6Op
-C+LADpmwBOhiWEKGjwEK3LaBaiJlcRBciBlHhG13KUH6KWZBVRgsHDAYgWV5EtGk
-7J80OqG5tbtFWpYPllYaBBh1+VS4LQ==
-=WXTJ
------END PGP SIGNATURE-----
-
---Sig_/gl3ARaOVCMcihYwEU/sJb3o--
+Applied.
