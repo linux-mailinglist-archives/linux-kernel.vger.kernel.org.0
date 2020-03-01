@@ -2,86 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F95D174E64
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 17:23:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 667BB174E68
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 17:24:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbgCAQX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 11:23:28 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:36729 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgCAQX2 (ORCPT
+        id S1726744AbgCAQYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 11:24:22 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41974 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgCAQYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 11:23:28 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d7so391544pjw.1;
-        Sun, 01 Mar 2020 08:23:27 -0800 (PST)
+        Sun, 1 Mar 2020 11:24:21 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b1so4147483pgm.8;
+        Sun, 01 Mar 2020 08:24:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l75YHuHCJPf5NKCnDm87HGExQ9J1GGx9GGiE0t5xAbk=;
+        b=d+Bm1MorZjylipRacIUl+2VL5/L1ANg8064s0fc8D/CmdOrbrTijHYJCWTsQx0uFys
+         9pPtIn4M5cP8tH/whXEnCOBdcoh6S6tkLw74LOqZNOZirAJ97RZimkVSOUGWS0LgVlYT
+         lnFlxwi85w2fps21LXI4O33VHsXErfDOV4yrKjum4uzjp/ISC8KlE0iPQBQD6PgG8m9A
+         ymZBvS/2CTZOlw3qCVIpUeT/4Nqs4R6FoMHuE5y2kjt2hiHsA0z8RfUuS3nVJIm48CYT
+         WmD0YeNyPg4r7skRsWbgXutG2wV372/wjFfqWyq+se8fqF2JyA9tJWXxkF+u3+RNFPVd
+         e7Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sGDHMYa2zIpllxKVtEh6fLENFNHlRZiC8UQBM60H7b0=;
-        b=NpXGjNkGyJSNnzBo+zk0JcCiUR07a2PzjbAkD2mJKwMczazoUHOjAOSpaYDW74vUV5
-         2nnKUS2PAILHxBPXlGpuxF5IO0nmYO+7f5937WPjIAAyOIH6GROaxK8WXTXuyJ1dbSxB
-         rXkC/hOpvFE8mK9vbrJqzBjfsjR7X3mO9zpwlKpt28pkjDydb8CjhqKUp9yd5fUJDwFm
-         7TQ3A46bHn7/DAbId8uWJz+Q/j/DAigFptDV8erVaybRtirC5wcLXfJIcJF2bYhtfu1j
-         Ugy5U08jIUopbyg1lcu7hj/f5sPcNbXyMKzrsUGL5FCnhdQGU2d+U9tU72icXLfQ1aIB
-         nOuQ==
-X-Gm-Message-State: APjAAAXUYfKH40DSeN4fdtXBxbRbC31BoqHIl2Sf2MLkLwoU1ygtH9gl
-        q+1pop2WV0k9r5s7Am4Vd18=
-X-Google-Smtp-Source: APXvYqwszWP0QkrO80UloQcOBsxCtbGfjx/E89FFLPOTlDqev5jXQxxJpaxFcvO4gaQxDMdd79/Avw==
-X-Received: by 2002:a17:90a:a005:: with SMTP id q5mr15884127pjp.103.1583079807151;
-        Sun, 01 Mar 2020 08:23:27 -0800 (PST)
-Received: from localhost ([2601:647:5b00:710:c2fa:3aa3:193c:db86])
-        by smtp.gmail.com with ESMTPSA id z13sm17768824pge.29.2020.03.01.08.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 08:23:26 -0800 (PST)
-Date:   Sun, 1 Mar 2020 08:23:25 -0800
-From:   Moritz Fischer <mdf@kernel.org>
-To:     richard.gong@linux.intel.com
-Cc:     gregkh@linuxfoundation.org, mdf@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, dinguyen@kernel.org,
-        linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Richard Gong <richard.gong@intel.com>
-Subject: Re: [PATCHv1 2/7] arm64: dts: agilex: correct FPGA manager driver's
- compatible value
-Message-ID: <20200301162325.GE7593@epycbox.lan>
-References: <1581696052-11540-1-git-send-email-richard.gong@linux.intel.com>
- <1581696052-11540-3-git-send-email-richard.gong@linux.intel.com>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=l75YHuHCJPf5NKCnDm87HGExQ9J1GGx9GGiE0t5xAbk=;
+        b=MgQ5P5JRoQvpfFZixT+LlA26KS8jYLzZ5sMNyn2fPhumqDYZbekjs/WnZU1I7z4fjt
+         GXqG6s8J/sbnDBcgqxpVAQurQ+i3IeVWKE7pd54sc/PlJs2jHjJW8KNCfr9b43+y1VtK
+         BBfihPV8h3nLnXIMRZI3PDG82o7H2FV4clEgYIf9B2l2o5WVdkytA6gv9WgylF1TRuOZ
+         rCzaAsTy0tjO7GeFOhY+xjSugqFn04FR5QrVJT0XSEHYV7joYAoV0i6wsEhmb9mxwQE3
+         xSlIJh6fg5//C9mkbgDRY93gxxIaxio65FjgK0P5gIC6gToS5kM5FeZwRk2c1dE7ZfVh
+         d2sw==
+X-Gm-Message-State: APjAAAXuMGBpt5E5IxEQRn7R75bLtiw+05YawLS91nCPX6WPGQZjsvzE
+        Nr2xwvhEv1za1LUZntl7Vu8=
+X-Google-Smtp-Source: APXvYqwVhni3mFvZ+Tq1eTqYKbFepKmpXw4+HMhbHOwzYPKERKpmZ8yTdu8pSPc8x1EoNR1ERFPc/A==
+X-Received: by 2002:a62:e30f:: with SMTP id g15mr13785771pfh.124.1583079860264;
+        Sun, 01 Mar 2020 08:24:20 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id hg11sm8758778pjb.14.2020.03.01.08.24.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Mar 2020 08:24:19 -0800 (PST)
+Subject: Re: [RFT PATCH 1/4] usb: dwc2: Simplify and fix DMA alignment code
+To:     =?UTF-8?B?QW50dGkgU2VwcMOkbMOk?= <a.seppala@gmail.com>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Boris ARZUR <boris@konbu.org>, linux-usb@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Martin Schiller <ms@dev.tdt.de>
+References: <20200226210414.28133-1-linux@roeck-us.net>
+ <20200226210414.28133-2-linux@roeck-us.net>
+ <CAD=FV=WDd4E-zDW73kb-qHo1QYQrD3BTgVpE70rzowpgeXVy7w@mail.gmail.com>
+ <ce3357a1-467f-1241-ae0d-2e113116ca8d@roeck-us.net>
+ <f94fc372-d81b-e8e4-e7ef-780fe7db1237@roeck-us.net>
+ <CAD=FV=VNsOo--1x+pkwhWOWSGAQyVB6g6CE+o4q7phPSXaDXRw@mail.gmail.com>
+ <20200228175905.GB3188@roeck-us.net>
+ <CAKv9HNbugeO0E5w8PsN-EpgHBtAjOYZppkUz1u0a5Ue6k20GwQ@mail.gmail.com>
+ <62d81632-4a6f-b2d8-e420-b58fb6c9d044@roeck-us.net>
+ <CAKv9HNax9bK-60Gkv3ovZDAS_xVEQa95-J_9WKoEkifqa0u9+A@mail.gmail.com>
+ <CAKv9HNaPJFE5if2th5gqAu+_ncPrfGHVS-sJ67Zy8jao1tJZvg@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <28e29bb7-b536-dd0f-d410-f4add6b2a9ab@roeck-us.net>
+Date:   Sun, 1 Mar 2020 08:24:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581696052-11540-3-git-send-email-richard.gong@linux.intel.com>
+In-Reply-To: <CAKv9HNaPJFE5if2th5gqAu+_ncPrfGHVS-sJ67Zy8jao1tJZvg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 10:00:47AM -0600, richard.gong@linux.intel.com wrote:
-> From: Richard Gong <richard.gong@intel.com>
-> 
-> Correct the compatible property value for FPGA manager driver on
-> Intel Agilex SoC platform.
-> 
-> Signed-off-by: Richard Gong <richard.gong@intel.com>
-> ---
->  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> index e1d357e..8c29853 100644
-> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> @@ -544,7 +544,7 @@
->  				memory-region = <&service_reserved>;
->  
->  				fpga_mgr: fpga-mgr {
-> -					compatible = "intel,stratix10-soc-fpga-mgr";
-> +					compatible = "intel,agilex-soc-fpga-mgr";
->  				};
->  			};
->  		};
-> -- 
-> 2.7.4
-> 
-Applied to for-next,
+Hi Antti,
 
-Thanks
+On 3/1/20 7:51 AM, Antti Seppälä wrote:
+> On Sat, 29 Feb 2020 at 18:33, Antti Seppälä <a.seppala@gmail.com> wrote:
+>>
+>> On Sat, 29 Feb 2020 at 17:25, Guenter Roeck <linux@roeck-us.net> wrote:
+>>>
+>>> Sigh. It would have been too simple. Too bad I can't test myself.
+>>> I'd like to know if this is because URB_NO_TRANSFER_DMA_MAP is set on a
+>>> transfer, or because the beginning of the buffer indeed needs to be aligned
+>>> to the DMA cache line size on that system. In the latter case, the question
+>>> is why the alignment to DWC2_USB_DMA_ALIGN (=4) works. In the former case,
+>>> question would be why the realignment does any good in the first place.
+>>>
+>>> Any chance you can add some test code to help figuring out what exactly
+>>> goes wrong ?
+>>>
+>>
+>> Sure, I can try to help. Just let me know what code you would like to
+>> insert and where and I'll see what I can do.
+>>
+> 
+> So I did some further research on this and it turns out that:
+>  - URB_NO_TRANSFER_DMA_MAP is not set on the offending transfers so
+> the issue really is buffer alignment
+>  - DWC2_USB_DMA_ALIGN=4 "works" because in my limited testcase (usb
+> 4g-dongle utilized via qmi-wwan) all transfers are unaligned. That is,
+> every urb->transfer_buffer is misaligned by 2 bytes == unaligned
+>  - I can fix both issues and thus make the patch work on MIPS by
+> modifying it like this:
+> 
+> -#define DWC2_USB_DMA_ALIGN 4
+> +#define DWC2_USB_DMA_ALIGN dma_get_cache_alignment()
+> 
+>  struct dma_aligned_buffer {
+>         void *old_xfer_buffer;
+> -       u8 data[0];
+> +       u8 data[0] ____cacheline_aligned;
+>  };
+> 
+
+Thanks for the additional testing. That means that the existing code
+is already broken, or am I missing something ?
+
+Updating DWC2_USB_DMA_ALIGN to dma_get_cache_alignment() was part
+of my initial fix, but then I abandoned it because I thought, well,
+the existing alignment works, so that can't be the problem.
+
+Anyway, using ____cacheline_aligned is an excellent idea. I'll make
+the changes suggested above for the next version of my series.
+
+Thanks,
+Guenter
