@@ -2,233 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC40174CE6
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 12:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFE8174CF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 12:20:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbgCALOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 06:14:00 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40804 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgCALOA (ORCPT
+        id S1726720AbgCALUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 06:20:17 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:42820 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbgCALUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 06:14:00 -0500
-Received: by mail-wm1-f66.google.com with SMTP id e26so2370827wme.5;
-        Sun, 01 Mar 2020 03:13:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VfaHc5bk4c2YPoC3p3j9VapHbWmRPMiq8zu69bgaGBQ=;
-        b=UbU308V3ZO/wy/AyBdkeYDz0p1rW14BBroCo8Gj+9ZYznVIQEGUx12BTl0mAW7xFnu
-         S/+VeO2hADszI+oC7FAKO1xBR4rhvAlVo7dnDi55JJQUdaMr9hetMYNmTTRQDszBvOuD
-         0vkH8RHtY45ZdAkMHOI2Z3O0/Ft76ukRyro+gmRX14Sw66dneNAV6UMbFimKRI55m8wp
-         2KHeDyOUYj8g+9g7VZaURS5WQM4J0UrfMjhPIc9HNVMYZisSbEs/QmeJu3UCxT+JJVJO
-         UJhpQtUxYIcFJPbdixPuJN7hWVeAcwOubhPwU8Z72l4b2kqCfJKjX/Up6+Dfc5u3QZT2
-         vGfQ==
+        Sun, 1 Mar 2020 06:20:14 -0500
+Received: by mail-io1-f72.google.com with SMTP id e7so6131301iog.9
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 03:20:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VfaHc5bk4c2YPoC3p3j9VapHbWmRPMiq8zu69bgaGBQ=;
-        b=ioPWp97v2J1l4Ih8T40h415fB6CuwsMkVWoAFg3vuxNTr9sajyKPHAVvnp+JAeRsQd
-         zdmioze0w0uDmgHbBKkGUd8ldKPiinFDWQDZ7l6FlidqfD5uiSchOFBEkrNTesuQOzkx
-         sngD4RwGeA4AQEm34E4GQbh4wIhnw0vdSX0RMlPsL/Y03NsmmnJMft1jbBD5PDlzOPhU
-         /lNUYuKYKWJRLiQIK2lSHnbZMVzbN8shhcciQtc5oe8T6ar80pyH4SuwEipZ54dbpRhX
-         /FWLHFvRwYxNZ9zNYYGwUKLOqrXHhk43HuKlCsQA6B8CRFyp5dac1NG/24xuqPLYEHQ3
-         KRRw==
-X-Gm-Message-State: ANhLgQ3VPZDOKcsZ05Tuh/LmGp6DnswfYrD1eZuspC2vB2zDq9ZpClWu
-        0wzxJO28JOEOe7LFvSVadNw=
-X-Google-Smtp-Source: ADFU+vsYW2HI83S/QDqearsxl1HX/RbUtxGsUdeeJ7OPB17341+LawtTJFCwMxVb25PmMyyoPjnHFg==
-X-Received: by 2002:a05:600c:d8:: with SMTP id u24mr5795232wmm.165.1583061236887;
-        Sun, 01 Mar 2020 03:13:56 -0800 (PST)
-Received: from pc636 ([80.122.78.78])
-        by smtp.gmail.com with ESMTPSA id o9sm22615999wrw.20.2020.03.01.03.13.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 03:13:55 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Sun, 1 Mar 2020 12:13:53 +0100
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Suraj Jitindar Singh <surajjs@amazon.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ext4: fix potential race between online resizing and
- write operations
-Message-ID: <20200301111353.GB8725@pc636>
-References: <20200222222415.GC191380@google.com>
- <20200223011018.GB2935@paulmck-ThinkPad-P72>
- <20200224174030.GA22138@pc636>
- <20200225020705.GA253171@google.com>
- <20200225185400.GA27919@pc636>
- <20200225224745.GX2935@paulmck-ThinkPad-P72>
- <20200226130440.GA30008@pc636>
- <20200226150656.GB2935@paulmck-ThinkPad-P72>
- <20200226155347.GA31097@pc636>
- <20200227140851.GD161459@google.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Qx4YvZdSMNbsqVf6NVymsMcbS9Wpvdv4eBcWmfY1IYs=;
+        b=jL+g+XdXiC5ZxlbZCcavAe1y9TkJTNTvP0i3ITKHDLrfJrupajPNOODq/W+1uTa1Nx
+         mzIkFfz73TYaxORpfYg05Sxbx/E2/06bjwNeYTvj6aYFizzxscjlqfLBLlAs/7WoHdp4
+         b5ECNDZyk9GPSZTtFwHy0wSDzVREfQ2SMq9JzEs0LqDPXd2/Up3d+urmyRIWIydZcZbn
+         bY/yLi+3Q9TxzSxaaJtTUAWGRh4xsJLFcb+HJIWEfBPgyJoDrtEyQthTiiIbA6FyvFu6
+         KbrUD9HVwfE+MbM8VNGv9zeieaFuKgWEe3ik6t9U29WREhI5zLgm/c6OJyqFlRXuZCBF
+         I8fw==
+X-Gm-Message-State: APjAAAV/wbbkgQUpLcYRuuI9KHhzu5wunxbq+fyWErF+Y3hKmskHSfM0
+        xvg51Gao8i2DyftyLDZQf2C5EQyPPKtLIFbQOH6y+Jl0uDIX
+X-Google-Smtp-Source: APXvYqwe6poPv3x76uGWJe0AWoOr/g0M3D2qVW1z2jyo5Su21oATcfuvyBKiDuEFaC9WODsRAdjYwXTg8v+DQaxihkrl3p/1vlwe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227140851.GD161459@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a02:8809:: with SMTP id r9mr9877507jai.50.1583061612140;
+ Sun, 01 Mar 2020 03:20:12 -0800 (PST)
+Date:   Sun, 01 Mar 2020 03:20:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000c9e12059fc941ff@google.com>
+Subject: KASAN: use-after-free Read in rxe_query_port
+From:   syzbot <syzbot+e11efb687f5ab7f01f3d@syzkaller.appspotmail.com>
+To:     dledford@redhat.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, monis@mellanox.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 09:08:51AM -0500, Joel Fernandes wrote:
-> On Wed, Feb 26, 2020 at 04:53:47PM +0100, Uladzislau Rezki wrote:
-> > On Wed, Feb 26, 2020 at 07:06:56AM -0800, Paul E. McKenney wrote:
-> > > On Wed, Feb 26, 2020 at 02:04:40PM +0100, Uladzislau Rezki wrote:
-> > > > On Tue, Feb 25, 2020 at 02:47:45PM -0800, Paul E. McKenney wrote:
-> > > > > On Tue, Feb 25, 2020 at 07:54:00PM +0100, Uladzislau Rezki wrote:
-> > > > > > > > > > I was thinking a 2 fold approach (just thinking out loud..):
-> > > > > > > > > > 
-> > > > > > > > > > If kfree_call_rcu() is called in atomic context or in any rcu reader, then
-> > > > > > > > > > use GFP_ATOMIC to grow an rcu_head wrapper on the atomic memory pool and
-> > > > > > > > > > queue that.
-> > > > > > > > > > 
-> > > > > > > > I am not sure if that is acceptable, i mean what to do when GFP_ATOMIC
-> > > > > > > > gets failed in atomic context? Or we can just consider it as out of
-> > > > > > > > memory and another variant is to say that headless object can be called
-> > > > > > > > from preemptible context only.
-> > > > > > > 
-> > > > > > > Yes that makes sense, and we can always put disclaimer in the API's comments
-> > > > > > > saying if this object is expected to be freed a lot, then don't use the
-> > > > > > > headless-API to be extra safe.
-> > > > > > > 
-> > > > > > Agree.
-> > > > > > 
-> > > > > > > BTW, GFP_ATOMIC the documentation says if GFP_ATOMIC reserves are depleted,
-> > > > > > > the kernel can even panic some times, so if GFP_ATOMIC allocation fails, then
-> > > > > > > there seems to be bigger problems in the system any way. I would say let us
-> > > > > > > write a patch to allocate there and see what the -mm guys think.
-> > > > > > > 
-> > > > > > OK. It might be that they can offer something if they do not like our
-> > > > > > approach. I will try to compose something and send the patch to see.
-> > > > > > The tree.c implementation is almost done, whereas tiny one is on hold.
-> > > > > > 
-> > > > > > I think we should support batching as well as bulk interface there.
-> > > > > > Another way is to workaround head-less object, just to attach the head
-> > > > > > dynamically using kmalloc() and then call_rcu() but then it will not be
-> > > > > > a fair headless support :)
-> > > > > > 
-> > > > > > What is your view?
-> > > > > > 
-> > > > > > > > > > Otherwise, grow an rcu_head on the stack of kfree_call_rcu() and call
-> > > > > > > > > > synchronize_rcu() inline with it.
-> > > > > > > > > > 
-> > > > > > > > > >
-> > > > > > > > What do you mean here, Joel? "grow an rcu_head on the stack"?
-> > > > > > > 
-> > > > > > > By "grow on the stack", use the compiler-allocated rcu_head on the
-> > > > > > > kfree_rcu() caller's stack.
-> > > > > > > 
-> > > > > > > I meant here to say, if we are not in atomic context, then we use regular
-> > > > > > > GFP_KERNEL allocation, and if that fails, then we just use the stack's
-> > > > > > > rcu_head and call synchronize_rcu() or even synchronize_rcu_expedited since
-> > > > > > > the allocation failure would mean the need for RCU to free some memory is
-> > > > > > > probably great.
-> > > > > > > 
-> > > > > > Ah, i got it. I thought you meant something like recursion and then
-> > > > > > unwinding the stack back somehow :)
-> > > > > > 
-> > > > > > > > > > Use preemptible() andr task_struct's rcu_read_lock_nesting to differentiate
-> > > > > > > > > > between the 2 cases.
-> > > > > > > > > > 
-> > > > > > > > If the current context is preemptable then we can inline synchronize_rcu()
-> > > > > > > > together with freeing to handle such corner case, i mean when we are run
-> > > > > > > > out of memory.
-> > > > > > > 
-> > > > > > > Ah yes, exactly what I mean.
-> > > > > > > 
-> > > > > > OK.
-> > > > > > 
-> > > > > > > > As for "task_struct's rcu_read_lock_nesting". Will it be enough just
-> > > > > > > > have a look at preempt_count of current process? If we have for example
-> > > > > > > > nested rcu_read_locks:
-> > > > > > > > 
-> > > > > > > > <snip>
-> > > > > > > > rcu_read_lock()
-> > > > > > > >     rcu_read_lock()
-> > > > > > > >         rcu_read_lock()
-> > > > > > > > <snip>
-> > > > > > > > 
-> > > > > > > > the counter would be 3.
-> > > > > > > 
-> > > > > > > No, because preempt_count is not incremented during rcu_read_lock(). RCU
-> > > > > > > reader sections can be preempted, they just cannot goto sleep in a reader
-> > > > > > > section (unless the kernel is RT).
-> > > > > > > 
-> > > > > > So in CONFIG_PREEMPT kernel we can identify if we are in atomic or not by
-> > > > > > using rcu_preempt_depth() and in_atomic(). When it comes to !CONFIG_PREEMPT
-> > > > > > then we skip it and consider as atomic. Something like:
-> > > > > > 
-> > > > > > <snip>
-> > > > > > static bool is_current_in_atomic()
-> > > > > > {
-> > > > > > #ifdef CONFIG_PREEMPT_RCU
-> > > > > 
-> > > > > If possible: if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-> > > > > 
-> > > > > Much nicer than #ifdef, and I -think- it should work in this case.
-> > > > > 
-> > > > OK. Thank you, Paul!
-> > > > 
-> > > > There is one point i would like to highlight it is about making caller
-> > > > instead to be responsible for atomic or not decision. Like how kmalloc()
-> > > > works, it does not really know the context it runs on, so it is up to
-> > > > caller to inform.
-> > > > 
-> > > > The same way:
-> > > > 
-> > > > kvfree_rcu(p, atomic = true/false);
-> > > > 
-> > > > in this case we could cover !CONFIG_PREEMPT case also.
-> > > 
-> > > Understood, but couldn't we instead use IS_ENABLED() to work out the
-> > > actual situation at runtime and relieve the caller of this burden?
-> > > Or am I missing a corner case?
-> > > 
-> > Yes we can do it in run-time, i mean to detect context type, atomic or not.
-> > But only for CONFIG_PREEMPT kernel. In case of !CONFIG_PREEMPT configuration 
-> > i do not see a straight forward way how to detect it. For example when caller 
-> > holds "spinlock". Therefore for such configuration we can just consider it
-> > as atomic. But in reality it could be not in atomic.
-> > 
-> > We need it for emergency/corner case and head-less objects. When we are run
-> > of memory. So in this case we should attach the rcu_head dynamically and
-> > queue the freed object to be processed later on, after GP.
-> > 
-> > If atomic context use GFP_ATOMIC flag if not use GFP_KERNEL. It is better 
-> > to allocate with GFP_KERNEL flag(if possible) because it has much less
-> > restrictions then GFP_ATOMIC one, i.e. GFP_KERNEL can sleep and wait until
-> > the memory is reclaimed.
-> > 
-> > But that is a corner case and i agree that it would be good to avoid of
-> > such passing of extra info by the caller.
-> > 
-> > Anyway i just share some extra info :)
-> 
-> Hmm, I can't see at the moment how you can use GFP_KERNEL here for
-> !CONFIG_PREEMPT kernels since that sleeps and you can't detect easily if you
-> are in an RCU reader on !CONFIG_PREEMPT unless lockdep is turned on (in which
-> case you could have checked lockdep's map).
-> 
-Right. Therefore i proposed to pass bolean variable indicating atomic or not.
-So a caller is responsible to say where it is. It would be much more easier  
-+ we would cover CONFIG_PREEMPT=n case. Otherwise we have to consider it as
-atomic or in an RCU reader section, i.e. can not use synchronize_rcu() or 
-GFP_KERNEL flags.
+Hello,
 
->
-> How about for !PREEMPT using first: GFP_NOWAIT and second GFP_ATOMIC if
-> (NOWAIT fails)?  And for PREEMPT, use GFP_KERNEL, then GFP_ATOMIC (if
-> GFP_KERNEL fails).  Thoughts?
-> 
-Yes, it makes sense to me :) 
+syzbot found the following crash on:
 
---
-Vlad Rezki
+HEAD commit:    f8788d86 Linux 5.6-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=132d3645e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
+dashboard link: https://syzkaller.appspot.com/bug?extid=e11efb687f5ab7f01f3d
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e11efb687f5ab7f01f3d@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in rxe_query_port+0x294/0x2e0 drivers/infiniband/sw/rxe/rxe_verbs.c:71
+Read of size 4 at addr ffff8880881b4c20 by task kworker/1:194/2945
+
+CPU: 1 PID: 2945 Comm: kworker/1:194 Not tainted 5.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events smc_ib_port_event_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+ __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+ rxe_query_port+0x294/0x2e0 drivers/infiniband/sw/rxe/rxe_verbs.c:71
+ __ib_query_port drivers/infiniband/core/device.c:2022 [inline]
+ ib_query_port drivers/infiniband/core/device.c:2057 [inline]
+ ib_query_port+0x523/0xac0 drivers/infiniband/core/device.c:2047
+ smc_ib_remember_port_attr net/smc/smc_ib.c:219 [inline]
+ smc_ib_port_event_work+0x12e/0x350 net/smc/smc_ib.c:244
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Allocated by task 10530:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:515 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
+ kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
+ kmalloc include/linux/slab.h:555 [inline]
+ kzalloc include/linux/slab.h:669 [inline]
+ smc_ib_add_dev net/smc/smc_ib.c:541 [inline]
+ smc_ib_add_dev+0xae/0x5c0 net/smc/smc_ib.c:532
+ add_client_context+0x3dd/0x550 drivers/infiniband/core/device.c:681
+ enable_device_and_get+0x1df/0x3c0 drivers/infiniband/core/device.c:1316
+ ib_register_device drivers/infiniband/core/device.c:1382 [inline]
+ ib_register_device+0xa89/0xe40 drivers/infiniband/core/device.c:1343
+ rxe_register_device+0x52e/0x655 drivers/infiniband/sw/rxe/rxe_verbs.c:1231
+ rxe_add+0x122b/0x1661 drivers/infiniband/sw/rxe/rxe.c:302
+ rxe_net_add+0x91/0xf0 drivers/infiniband/sw/rxe/rxe_net.c:539
+ rxe_newlink+0x39/0x90 drivers/infiniband/sw/rxe/rxe.c:318
+ nldev_newlink+0x28a/0x430 drivers/infiniband/core/nldev.c:1538
+ rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:195 [inline]
+ rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
+ rdma_nl_rcv+0x5d9/0x980 drivers/infiniband/core/netlink.c:259
+ netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+ netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1329
+ netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1918
+ sock_sendmsg_nosec net/socket.c:652 [inline]
+ sock_sendmsg+0xd7/0x130 net/socket.c:672
+ ____sys_sendmsg+0x753/0x880 net/socket.c:2343
+ ___sys_sendmsg+0x100/0x170 net/socket.c:2397
+ __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
+ __do_sys_sendmsg net/socket.c:2439 [inline]
+ __se_sys_sendmsg net/socket.c:2437 [inline]
+ __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 83:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+ __cache_free mm/slab.c:3426 [inline]
+ kfree+0x10a/0x2c0 mm/slab.c:3757
+ smc_ib_remove_dev+0x1a9/0x2e0 net/smc/smc_ib.c:583
+ remove_client_context+0xc7/0x120 drivers/infiniband/core/device.c:724
+ disable_device+0x14c/0x230 drivers/infiniband/core/device.c:1268
+ __ib_unregister_device+0x9c/0x190 drivers/infiniband/core/device.c:1435
+ ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1545
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8880881b4c00
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 32 bytes inside of
+ 512-byte region [ffff8880881b4c00, ffff8880881b4e00)
+The buggy address belongs to the page:
+page:ffffea0002206d00 refcount:1 mapcount:0 mapping:ffff8880aa400a80 index:0x0
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea00026a5208 ffffea00029ea608 ffff8880aa400a80
+raw: 0000000000000000 ffff8880881b4000 0000000100000004 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8880881b4b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880881b4b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880881b4c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ ffff8880881b4c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880881b4d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
