@@ -2,133 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 007F6174F12
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 20:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3AE174F1F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 20:13:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbgCATDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 14:03:16 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55149 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbgCATDP (ORCPT
+        id S1726846AbgCATNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 14:13:24 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:38685 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbgCATNQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 14:03:15 -0500
-Received: by mail-wm1-f65.google.com with SMTP id z12so8785964wmi.4;
-        Sun, 01 Mar 2020 11:03:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=58YbdIpK87d+hqR4j1GhCFXTctvcaAuYQyq9nvn5aB4=;
-        b=dZIh3WrV88DSs0OHE2R/OsBpcSrRCSKkiHA6OP470nSFenuh9szh4Hiod4/y6IZ7To
-         NSCwLT1izTkX4TsOGp5kMp0+nb+JMtHLJ9lp5emwKxPZzOUuG06pVWz/ie2cZemsBpWo
-         duyl2iAjXgEZQU68ZfGAnzdB9kaEnA/t/ttpQ6j/XVVH2GG4E+IyOmgR0jIAS7LOZXiB
-         CN4rPlnUB6GB+J+nB4ESSgOacx5CWsa2bh93X5QGLBm0fEeJfgvGdPg/dTaiopusLQRd
-         XU7fVJxkNRRtHppPVKt7NqhrWVBpa8/PT6qFHWj/GsEGQUzpLg1ieMszMGvdFLJ3+Pqt
-         P8bQ==
+        Sun, 1 Mar 2020 14:13:16 -0500
+Received: by mail-il1-f197.google.com with SMTP id i67so9151624ilf.5
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 11:13:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=58YbdIpK87d+hqR4j1GhCFXTctvcaAuYQyq9nvn5aB4=;
-        b=YCPanVr+43CvabKKQc63051FMeebvyQNwNjbDQJoL3amj9yG7PprADAMMSDL9ooq6p
-         YCFneI2cEei1YUXyKcd0C0nwxlb5fkMRc0q40mKqeYvZNwwKzX8XEiK5gPcdQxA6xz8Q
-         sB3D4pAWiH7M9LV1hHfy132z51ZjIE59dwVZApM2QCVyGkhqY19YhOClBdv8p2upuMzG
-         wGUa7aPMFEW7aGg0wqX7RbjDob0y75SGMvkx0hq8/KFj48Y9gAO/3d3Eq6zbmVr0s24a
-         d/IDtoqx065ptWNcXkXC6PBnxGqR9jypNLxCKKb7lOKXOxMQ4m6Vv0etuOB98TC+D/MB
-         eb6A==
-X-Gm-Message-State: APjAAAUSh4AHGQGLcG2qrpuCvWo77KM3D4PT+Jqaaye2gd8hFczu0L3X
-        GEmKzeTESwiIZPyRqVcXabSw/sF7
-X-Google-Smtp-Source: APXvYqx+DCwQoDcqnYshPLa/WLdrCvjNxFBw1VLiMslSm7d1FYeYnUIzvMR5kKSpZ8YHZj6iOsN+vQ==
-X-Received: by 2002:a05:600c:21c6:: with SMTP id x6mr15214727wmj.17.1583089393723;
-        Sun, 01 Mar 2020 11:03:13 -0800 (PST)
-Received: from 640k.localdomain.com ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id b16sm19004486wrq.14.2020.03.01.11.03.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Mar 2020 11:03:13 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [GIT PULL] Second batch of KVM changes for Linux 5.6-rc4 (or rc5)
-Date:   Sun,  1 Mar 2020 20:03:10 +0100
-Message-Id: <1583089390-36084-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zNC2T0hLt60hxZU2ALw1d5rG9t+MrQbgwlE91pkiSjU=;
+        b=guvBMCodJobWOQ4hm7lGV8HkwXKMWTM9Ex3QXxlnPfzbKV/n0YyQy50NWBJQdbRqEz
+         kG1XK7JUsUe+ID3V7A5P2/WoogI8KPRa1q4YxTEkABnLEpF+jjaDTRZmR2q5FecHXJfE
+         IsxZ8k41SVTqxJf5zRt4sW8QV45vcEYmpD5Tkezgr3//nLIADtATg4tfOiw7sVvvL+Wo
+         pckYqNIaVhY1sLp2w5+i87aQ4xCi5c2lMLQUDVXhVEgiZePeHdooL38Xn/5UAyTI7d3S
+         Nx/omBPJeytOODCVDgli/13oiO3plascB0mOOyvuOSFPfQIrftYUFxxTzF+xTG5uNgJ1
+         S4FQ==
+X-Gm-Message-State: ANhLgQ1fmowpXyLpGcXsHoJRxWE0MFdzQ6No0rm+gdqSRCIyu+3Yc+0g
+        MD3hzkUiZs4DXh+3I17rLLvOZYEmencHjbRRDCs7afx0ySBt
+X-Google-Smtp-Source: ADFU+vse8hZ5nHKk+5NIY4vMDQDsZ0Lq8jS5ZnqMnsqwtm4/dM31Wy8of6l33EJBnFkg7GHxebhGGIwcsxqDS/iuGInFR6acwxA9
+MIME-Version: 1.0
+X-Received: by 2002:a5d:88c9:: with SMTP id i9mr1713101iol.210.1583089994963;
+ Sun, 01 Mar 2020 11:13:14 -0800 (PST)
+Date:   Sun, 01 Mar 2020 11:13:14 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cc1faf059fcfdc73@google.com>
+Subject: WARNING: lock held when returning to user space in ovl_write_iter
+From:   syzbot <syzbot+9331a354f4f624a52a55@syzkaller.appspotmail.com>
+To:     jiufei.xue@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        mszeredi@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Hello,
 
-The following changes since commit a93236fcbe1d0248461b29c0f87cb0b510c94e6f:
+syzbot found the following crash on:
 
-  KVM: s390: rstify new ioctls in api.rst (2020-02-24 19:28:40 +0100)
+HEAD commit:    bdc5461b Add linux-next specific files for 20200224
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10deee65e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8402e437f1eeea92
+dashboard link: https://syzkaller.appspot.com/bug?extid=9331a354f4f624a52a55
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1571d22de00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=175192c3e00000
 
-are available in the git repository at:
+The bug was bisected to:
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+commit 2406a307ac7ddfd7effeeaff6947149ec6a95b4e
+Author: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Date:   Wed Nov 20 09:45:26 2019 +0000
 
-for you to fetch changes up to 86f7e90ce840aa1db407d3ea6e9b3a52b2ce923c:
+    ovl: implement async IO routines
 
-  KVM: VMX: check descriptor table exits on instruction emulation (2020-03-01 19:26:31 +0100)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113c6d29e00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=133c6d29e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=153c6d29e00000
 
-----------------------------------------------------------------
-More bugfixes, including a few remaining "make W=1" issues such
-as too large frame sizes on some configurations.  On the
-ARM side, the compiler was messing up shadow stacks between
-EL1 and EL2 code, which is easily fixed with __always_inline.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9331a354f4f624a52a55@syzkaller.appspotmail.com
+Fixes: 2406a307ac7d ("ovl: implement async IO routines")
 
-----------------------------------------------------------------
-Christian Borntraeger (1):
-      KVM: let declaration of kvm_get_running_vcpus match implementation
+================================================
+WARNING: lock held when returning to user space!
+5.6.0-rc2-next-20200224-syzkaller #0 Not tainted
+------------------------------------------------
+syz-executor184/10029 is leaving the kernel with locks still held!
+1 lock held by syz-executor184/10029:
+ #0: ffff88809987c418 (sb_writers#3){.+.+}, at: file_start_write include/linux/fs.h:2903 [inline]
+ #0: ffff88809987c418 (sb_writers#3){.+.+}, at: ovl_write_iter+0xcc1/0x1090 fs/overlayfs/file.c:348
 
-Erwan Velu (1):
-      kvm: x86: Limit the number of "kvm: disabled by bios" messages
 
-James Morse (3):
-      KVM: arm64: Ask the compiler to __always_inline functions used at HYP
-      KVM: arm64: Define our own swab32() to avoid a uapi static inline
-      arm64: Ask the compiler to __always_inline functions used by KVM at HYP
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Jeremy Cline (1):
-      KVM: arm/arm64: Fix up includes for trace.h
-
-Mark Rutland (1):
-      kvm: arm/arm64: Fold VHE entry/exit work into kvm_vcpu_run_vhe()
-
-Oliver Upton (1):
-      KVM: VMX: check descriptor table exits on instruction emulation
-
-Paolo Bonzini (4):
-      KVM: SVM: allocate AVIC data structures based on kvm_amd module parameter
-      KVM: allow disabling -Werror
-      KVM: x86: avoid useless copy of cpufreq policy
-      Merge tag 'kvmarm-fixes-5.6-1' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-
-Valdis Kletnieks (1):
-      KVM: x86: allow compiling as non-module with W=1
-
-Wanpeng Li (2):
-      KVM: Introduce pv check helpers
-      KVM: Pre-allocate 1 cpumask variable per cpu for both pv tlb and pv ipis
-
- arch/arm/include/asm/kvm_host.h          |  3 --
- arch/arm64/include/asm/arch_gicv3.h      |  2 +-
- arch/arm64/include/asm/cache.h           |  2 +-
- arch/arm64/include/asm/cacheflush.h      |  2 +-
- arch/arm64/include/asm/cpufeature.h      | 10 ++---
- arch/arm64/include/asm/io.h              |  4 +-
- arch/arm64/include/asm/kvm_emulate.h     | 48 +++++++++++------------
- arch/arm64/include/asm/kvm_host.h        | 32 ----------------
- arch/arm64/include/asm/kvm_hyp.h         |  7 ++++
- arch/arm64/include/asm/kvm_mmu.h         |  3 +-
- arch/arm64/include/asm/virt.h            |  2 +-
- arch/arm64/kvm/hyp/switch.c              | 39 ++++++++++++++++++-
- arch/arm64/kvm/hyp/vgic-v2-cpuif-proxy.c |  4 +-
- arch/x86/kernel/kvm.c                    | 65 +++++++++++++++++++++-----------
- arch/x86/kvm/Kconfig                     | 13 +++++++
- arch/x86/kvm/Makefile                    |  2 +-
- arch/x86/kvm/svm.c                       |  5 ++-
- arch/x86/kvm/vmx/vmx.c                   | 17 +++++++++
- arch/x86/kvm/x86.c                       | 14 +++----
- include/linux/kvm_host.h                 |  2 +-
- virt/kvm/arm/arm.c                       |  2 -
- virt/kvm/arm/trace.h                     |  1 +
- 22 files changed, 171 insertions(+), 108 deletions(-)
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
