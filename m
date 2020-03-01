@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F550174CB9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 11:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18372174CC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 11:28:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgCAKQq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 1 Mar 2020 05:16:46 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40021 "EHLO
+        id S1726755AbgCAK2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 05:28:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40035 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgCAKQq (ORCPT
+        with ESMTP id S1725812AbgCAK16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 05:16:46 -0500
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        Sun, 1 Mar 2020 05:27:58 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j8Le7-0003DH-Ix; Sun, 01 Mar 2020 11:16:27 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id D68BD100EA2; Sun,  1 Mar 2020 11:16:26 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <JGross@suse.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [patch 4/8] x86/entry: Move irq tracing on syscall entry to C-code
-In-Reply-To: <20200229185837.7d92cd2e@oasis.local.home>
-References: <87lfolfo79.fsf@nanos.tec.linutronix.de> <4EFF3B04-2C8A-4D63-BB63-B5804EBFFE2F@amacapital.net> <20200229185837.7d92cd2e@oasis.local.home>
-Date:   Sun, 01 Mar 2020 11:16:26 +0100
-Message-ID: <87imjofkhx.fsf@nanos.tec.linutronix.de>
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j8LpD-0003NK-Hk; Sun, 01 Mar 2020 11:27:55 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2DD031C20DB;
+        Sun,  1 Mar 2020 11:27:55 +0100 (CET)
+Date:   Sun, 01 Mar 2020 10:27:54 -0000
+From:   "tip-bot2 for Eric W. Biederman" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] posix-cpu-timers: Pass the task into arm_timer()
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <8736auvdt1.fsf@x220.int.ebiederm.org>
+References: <8736auvdt1.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Message-ID: <158305847484.28353.10952093270897966054.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -46,25 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steven Rostedt <rostedt@goodmis.org> writes:
+The following commit has been merged into the timers/core branch of tip:
 
-> On Sat, 29 Feb 2020 11:25:24 -0800
-> Andy Lutomirski <luto@amacapital.net> wrote:
->
->> > While the tracer itself seems to handle this correctly, what about
->> > things like BPF programs which can be attached to tracepoints and
->> > function trace entries?  
->> 
->> I think that everything using the tracing code, including BPF, should
->> either do its own rcuidle stuff or explicitly not execute if we’re
->> not in CONTEXT_KERNEL.  That is, we probably need to patch BPF.
->
-> That's basically the route we are taking.
+Commit-ID:     beb41d9cbe4179058634e05d60235b6155c7b6c6
+Gitweb:        https://git.kernel.org/tip/beb41d9cbe4179058634e05d60235b6155c7b6c6
+Author:        Eric W. Biederman <ebiederm@xmission.com>
+AuthorDate:    Fri, 28 Feb 2020 11:09:46 -06:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 01 Mar 2020 11:21:44 +01:00
 
-Ok, but for the time being anything before/after CONTEXT_KERNEL is unsafe
-except trace_hardirq_off/on() as those trace functions do not allow to
-attach anything AFAICT.
+posix-cpu-timers: Pass the task into arm_timer()
 
-Thanks,
+The task has been already computed to take siglock before calling
+arm_timer. So pass the benefit of that labor into arm_timer().
 
-        tglx
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/8736auvdt1.fsf@x220.int.ebiederm.org
+
+---
+ kernel/time/posix-cpu-timers.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 40c2d83..ef936c5 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -482,12 +482,11 @@ void posix_cpu_timers_exit_group(struct task_struct *tsk)
+  * Insert the timer on the appropriate list before any timers that
+  * expire later.  This must be called with the sighand lock held.
+  */
+-static void arm_timer(struct k_itimer *timer)
++static void arm_timer(struct k_itimer *timer, struct task_struct *p)
+ {
+ 	int clkidx = CPUCLOCK_WHICH(timer->it_clock);
+ 	struct cpu_timer *ctmr = &timer->it.cpu;
+ 	u64 newexp = cpu_timer_getexpires(ctmr);
+-	struct task_struct *p = ctmr->task;
+ 	struct posix_cputimer_base *base;
+ 
+ 	if (CPUCLOCK_PERTHREAD(timer->it_clock))
+@@ -660,7 +659,7 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 	 */
+ 	cpu_timer_setexpires(ctmr, new_expires);
+ 	if (new_expires != 0 && val < new_expires) {
+-		arm_timer(timer);
++		arm_timer(timer, p);
+ 	}
+ 
+ 	unlock_task_sighand(p, &flags);
+@@ -980,7 +979,7 @@ static void posix_cpu_timer_rearm(struct k_itimer *timer)
+ 	/*
+ 	 * Now re-arm for the new expiry time.
+ 	 */
+-	arm_timer(timer);
++	arm_timer(timer, p);
+ 	unlock_task_sighand(p, &flags);
+ }
+ 
