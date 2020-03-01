@@ -2,53 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF79B174FCA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 22:20:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC13E174FDE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 22:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbgCAVUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 16:20:34 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:32100 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbgCAVUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 16:20:33 -0500
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 021LKNLR011368;
-        Sun, 1 Mar 2020 22:20:23 +0100
-Date:   Sun, 1 Mar 2020 22:20:23 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     Joe Perches <joe@perches.com>
-Cc:     Denis Efremov <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] floppy: make use of the local/global fdc explicit
-Message-ID: <20200301212023.GA11317@1wt.eu>
-References: <20200301195555.11154-1-w@1wt.eu>
- <03a2ea0b91ab61ba9a11230e82f1fb3bdf420a50.camel@perches.com>
+        id S1726951AbgCAVUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 16:20:55 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48889 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbgCAVUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 16:20:48 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j8W0m-0005u8-3C; Sun, 01 Mar 2020 22:20:32 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j8W0f-0005th-63; Sun, 01 Mar 2020 22:20:25 +0100
+Date:   Sun, 1 Mar 2020 22:20:25 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Roy Im <roy.im.opensource@diasemi.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Brian Masney <masneyb@onstation.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>, Luca Weiss <luca@z3ntu.xyz>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Pascal PAILLET-LME <p.paillet@st.com>,
+        Rob Herring <robh@kernel.org>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH V9 3/3] Input: new da7280 haptic driver
+Message-ID: <20200301212025.lw4f6uv453oulu22@pengutronix.de>
+References: <cover.1582270025.git.Roy.Im@diasemi.com>
+ <1569958274d409298695cf86184c7b67aaf19bef.1582270025.git.Roy.Im@diasemi.com>
+ <20200226161307.6tv5q2yh62cp7vk6@pengutronix.de>
+ <VE1PR10MB30859CB04A6F9DB58D921F7485E90@VE1PR10MB3085.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <03a2ea0b91ab61ba9a11230e82f1fb3bdf420a50.camel@perches.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VE1PR10MB30859CB04A6F9DB58D921F7485E90@VE1PR10MB3085.EURPRD10.PROD.OUTLOOK.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 12:33:25PM -0800, Joe Perches wrote:
-> On Sun, 2020-03-01 at 20:55 +0100, Willy Tarreau wrote:
-> > This is an update to the first minimal cleanup of the floppy driver in
-> > order to make use of the FDC number explicit so as to avoid bugs like
-> > the one fixed by 2e90ca68 ("floppy: check FDC index for errors before
-> > assigning it").
-> 
-> Thanks Willy.
-> 
-> trivia: you could style check the patches using checkpatch.
+Hello Roy,
 
-Oh yes, sorry about this, I did it in the first series but forgot to
-do it again. What checkpatch complains about is essentially lines which
-slightly exceed 80 characters due to the macro expansions, while I tried
-to limit the changes to the strict minimum. I guess that's OK to keep
-future fixes easier to backport.
+On Sat, Feb 29, 2020 at 12:59:20AM +0000, Roy Im wrote:
+> Okay, thanks. I have tried to update that as below.
+> Could I get your comment if you still see anything on this?
+> 
+> 	/* Maximum gain is 0x7fff for PWM mode */
+> 	#define MAX_MAGNITUDE_SHIFT		15
+>        [...]
+> 	period_mag_multi >>= MAX_MAGNITUDE_SHIFT;
+> 
+> 	/* The interpretation of duty cycle depends on the acc_en,
+> 	* it should be from 50% to 100% for acc_en = 0.
+> 	* See datasheet 'PWM mode' section for more details.
+> 	*/
+> 	if (!haptics->acc_en) {
+> 		period_mag_multi += state.period;
+> 		period_mag_multi /= 2;
+> 	}
 
-Thanks,
-Willy
+Much better. Extra points if you add a link to the datasheet at the
+top of the driver. I didn't look at the datasheet and assume that the
+reasoning is obvious then.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
