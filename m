@@ -2,118 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B55174FB1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 21:48:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6439B174F9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 21:45:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgCAUsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 15:48:45 -0500
-Received: from mga09.intel.com ([134.134.136.24]:58737 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbgCAUsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 15:48:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Mar 2020 12:48:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,505,1574150400"; 
-   d="scan'208";a="233094895"
-Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
-  by fmsmga008.fm.intel.com with ESMTP; 01 Mar 2020 12:48:39 -0800
-From:   Gayatri Kammela <gayatri.kammela@intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, mika.westerberg@intel.com,
-        peterz@infradead.org, charles.d.prestopine@intel.com,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Chen Zhou <chenzhou10@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David E . Box" <david.e.box@intel.com>
-Subject: [PATCH v3 5/5] platform/x86: intel_pmc_core: fix: Make pmc_core_lpm_display() generic for platforms that support sub-states
-Date:   Sun,  1 Mar 2020 12:44:26 -0800
-Message-Id: <5e28f488a6cc8b7c1e08b536868844b586a1eaf1.1583093898.git.gayatri.kammela@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1583093898.git.gayatri.kammela@intel.com>
-References: <cover.1583093898.git.gayatri.kammela@intel.com>
-In-Reply-To: <cover.1583093898.git.gayatri.kammela@intel.com>
-References: <cover.1583093898.git.gayatri.kammela@intel.com>
+        id S1726561AbgCAUpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 15:45:34 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:39867 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbgCAUpd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 15:45:33 -0500
+Received: by mail-pj1-f66.google.com with SMTP id e9so3517711pjr.4;
+        Sun, 01 Mar 2020 12:45:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=rKTRr7gH/H3erxMOjX8RHhnD0WNXnZrb4KZ5NXj3rVs=;
+        b=ED+21RTy6uFrUbhqFAJUvVt0+8PRGDmN4LkSicuW7WxsAJ1k5PUH9cHXRzHlzUhLRe
+         UUryCb7SvyQ06BK3HRT6U4qc/rMWFHRxqAqQOoqXmW5gCKRQrqaqH2Se1t/uYts2G6wW
+         wQJw4WF16qD0t7P7nJbTPak36k7X6Rj8KHH5saMV9X+4WBEysjSNGxPF28Vn6U61l+Py
+         73M0xYa5eAUeOg+kJx4NgxnfVF8McUoG0nSZBghGgX1gH+60tZKM5aBihMesy01KEVs2
+         OaXq69FKFk6wGGuxFHeTGZutUEmr6jIusGIjZpE33U8U/gTvvL/vxrPdbhsG7O/jTwu9
+         yBrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=rKTRr7gH/H3erxMOjX8RHhnD0WNXnZrb4KZ5NXj3rVs=;
+        b=Syj/r1JaIY0kx6CvNA3s/g0JUEsAx1MRzAeoFiOlxliZk36PTt4o3Q7dh2iZ6auTyw
+         RBtFKfr2+BX7AdhjiZ4zUH/ZHiPIblrAlcE90BaF563rLgE4wD1IL88T9O8nZVLC0Bzt
+         bxwed/Hdx31XPbEPIJ92kyd/5HXXGFJ8MXdOAjL/fAcZkMHzZ4q3KAIKmUPGXFlWED/l
+         wYi7th+NkXoay791OlX0Fc3uLNAu1yaDztdTbPEVQiFhYlyqHqy5oWJ/WikweUNfYTtq
+         RqBVt1I5xfWo/E9Y3DY01pe1WVehepEASMuW2xRwrKb/xjTcRHSErWEX9/Itl6jS6N9l
+         27lA==
+X-Gm-Message-State: APjAAAUIMu+74LzgMk2PJTL29CMNJ45lN/8AMQ2e3Gyi74r+3/BggDNJ
+        ci3gqfJB1z8NvQGylOGC8NQ=
+X-Google-Smtp-Source: APXvYqzTomvywQgBmsA0iDTcN1YhecACD1PW6HLIrDNCKUMpcYT/bZOHQr1NmKuRvn/iMLmXYazJ7A==
+X-Received: by 2002:a17:902:ab95:: with SMTP id f21mr13470060plr.188.1583095530670;
+        Sun, 01 Mar 2020 12:45:30 -0800 (PST)
+Received: from nishad ([106.51.232.103])
+        by smtp.gmail.com with ESMTPSA id h10sm18127494pfo.181.2020.03.01.12.45.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 01 Mar 2020 12:45:30 -0800 (PST)
+Date:   Mon, 2 Mar 2020 02:15:21 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Joe Perches <joe@perches.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH] tty: serial: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20200301204517.GA10368@nishad>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently pmc_core_lpm_display() uses array of struct pointers i.e.,
-tgl_lpm_maps for Tiger Lake directly to iterate through and to get the
-number of status/live status registers which is hardcoded and cannot
-be re-used for future platforms that support sub-states. To maintain
-readability, make pmc_core_lpm_display() generic, so that it can re-used
-for future platforms.
+This patch corrects the SPDX License Identifier style in
+header files related to tty serial drivers.
+For C header files Documentation/process/license-rules.rst
+mandates C-like comments (opposed to C source files where
+C++ style should be used).
 
-Cc: Chen Zhou <chenzhou10@huawei.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: David E. Box <david.e.box@intel.com>
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+Changes made by using a script provided by Joe Perches here:
+https://lkml.org/lkml/2019/2/7/46.
+
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- drivers/platform/x86/intel_pmc_core.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ drivers/tty/serial/8250/8250.h         | 2 +-
+ drivers/tty/serial/8250/8250_dwlib.h   | 2 +-
+ drivers/tty/serial/atmel_serial.h      | 2 +-
+ drivers/tty/serial/cpm_uart/cpm_uart.h | 2 +-
+ drivers/tty/serial/icom.h              | 2 +-
+ drivers/tty/serial/ifx6x60.h           | 2 +-
+ drivers/tty/serial/jsm/jsm.h           | 2 +-
+ drivers/tty/serial/pic32_uart.h        | 2 +-
+ drivers/tty/serial/serial_mctrl_gpio.h | 2 +-
+ drivers/tty/serial/sirfsoc_uart.h      | 2 +-
+ drivers/tty/serial/stm32-usart.h       | 2 +-
+ drivers/tty/serial/timbuart.h          | 2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 04ac058b9871..cf3aaace21d5 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-+#include <linux/slab.h>
- #include <linux/suspend.h>
- #include <linux/uaccess.h>
+diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
+index 33ad9d6de532..32881e21b0c8 100644
+--- a/drivers/tty/serial/8250/8250.h
++++ b/drivers/tty/serial/8250/8250.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  *  Driver for 8250/16550-type serial ports
+  *
+diff --git a/drivers/tty/serial/8250/8250_dwlib.h b/drivers/tty/serial/8250/8250_dwlib.h
+index 87a4db2a8aba..9a12953832d3 100644
+--- a/drivers/tty/serial/8250/8250_dwlib.h
++++ b/drivers/tty/serial/8250/8250_dwlib.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /* Synopsys DesignWare 8250 library header file. */
  
-@@ -640,15 +641,30 @@ static void pmc_core_slps0_display(struct pmc_dev *pmcdev, struct device *dev,
- 	}
- }
- 
-+static int pmc_core_lpm_get_arr_size(const struct pmc_bit_map **maps)
-+{
-+	int idx, arr_size = 0;
-+
-+	for (idx = 0; maps[idx]; idx++)
-+		arr_size++;
-+
-+	return arr_size;
-+}
-+
- static void pmc_core_lpm_display(struct pmc_dev *pmcdev, struct device *dev,
- 				 struct seq_file *s, u32 offset,
- 				 const char *str,
- 				 const struct pmc_bit_map **maps)
- {
--	u32 lpm_regs[ARRAY_SIZE(tgl_lpm_maps)-1];
--	int index, idx, len = 32, bit_mask;
-+	int arr_size = pmc_core_lpm_get_arr_size(maps);
-+	int index, idx, bit_mask, len = 32;
-+	u32 *lpm_regs;
-+
-+	lpm_regs = kmalloc_array(arr_size, sizeof(*lpm_regs), GFP_KERNEL);
-+	if(!lpm_regs)
-+		goto err;
- 
--	for (index = 0; tgl_lpm_maps[index]; index++) {
-+	for (index = 0; maps[index]; index++) {
- 		lpm_regs[index] = pmc_core_reg_read(pmcdev, offset);
- 		offset += 4;
- 	}
-@@ -672,6 +688,9 @@ static void pmc_core_lpm_display(struct pmc_dev *pmcdev, struct device *dev,
- 					   lpm_regs[idx] & bit_mask ? 1 : 0);
- 		}
- 	}
-+
-+err:
-+	kfree(lpm_regs);
- }
- 
- #if IS_ENABLED(CONFIG_DEBUG_FS)
+ #include <linux/types.h>
+diff --git a/drivers/tty/serial/atmel_serial.h b/drivers/tty/serial/atmel_serial.h
+index d811d4f2d0c0..0d8a0f9cc5c3 100644
+--- a/drivers/tty/serial/atmel_serial.h
++++ b/drivers/tty/serial/atmel_serial.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * include/linux/atmel_serial.h
+  *
+diff --git a/drivers/tty/serial/cpm_uart/cpm_uart.h b/drivers/tty/serial/cpm_uart/cpm_uart.h
+index 9f175a92fb5d..0de77c18c475 100644
+--- a/drivers/tty/serial/cpm_uart/cpm_uart.h
++++ b/drivers/tty/serial/cpm_uart/cpm_uart.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  *  Driver for CPM (SCC/SMC) serial ports
+  *
+diff --git a/drivers/tty/serial/icom.h b/drivers/tty/serial/icom.h
+index 8a77e739b333..26e3aa7b01e2 100644
+--- a/drivers/tty/serial/icom.h
++++ b/drivers/tty/serial/icom.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * icom.h
+  *
+diff --git a/drivers/tty/serial/ifx6x60.h b/drivers/tty/serial/ifx6x60.h
+index c5a2514212ff..cacca5be7390 100644
+--- a/drivers/tty/serial/ifx6x60.h
++++ b/drivers/tty/serial/ifx6x60.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /****************************************************************************
+  *
+  * Driver for the IFX spi modem.
+diff --git a/drivers/tty/serial/jsm/jsm.h b/drivers/tty/serial/jsm/jsm.h
+index 7a128aaa3a66..8489c07f4cd5 100644
+--- a/drivers/tty/serial/jsm/jsm.h
++++ b/drivers/tty/serial/jsm/jsm.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /************************************************************************
+  * Copyright 2003 Digi International (www.digi.com)
+  *
+diff --git a/drivers/tty/serial/pic32_uart.h b/drivers/tty/serial/pic32_uart.h
+index 2f2b56927dc6..b15639cc336b 100644
+--- a/drivers/tty/serial/pic32_uart.h
++++ b/drivers/tty/serial/pic32_uart.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * PIC32 Integrated Serial Driver.
+  *
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.h b/drivers/tty/serial/serial_mctrl_gpio.h
+index 1b2ff503b2c2..b134a0ffc894 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.h
++++ b/drivers/tty/serial/serial_mctrl_gpio.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * Helpers for controlling modem lines via GPIO
+  *
+diff --git a/drivers/tty/serial/sirfsoc_uart.h b/drivers/tty/serial/sirfsoc_uart.h
+index 637b09d3fe79..fb88ac565227 100644
+--- a/drivers/tty/serial/sirfsoc_uart.h
++++ b/drivers/tty/serial/sirfsoc_uart.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * Drivers for CSR SiRFprimaII onboard UARTs.
+  *
+diff --git a/drivers/tty/serial/stm32-usart.h b/drivers/tty/serial/stm32-usart.h
+index a175c1094dc8..db8bf0d4982d 100644
+--- a/drivers/tty/serial/stm32-usart.h
++++ b/drivers/tty/serial/stm32-usart.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) Maxime Coquelin 2015
+  * Copyright (C) STMicroelectronics SA 2017
+diff --git a/drivers/tty/serial/timbuart.h b/drivers/tty/serial/timbuart.h
+index fb00b172117d..007e59af636d 100644
+--- a/drivers/tty/serial/timbuart.h
++++ b/drivers/tty/serial/timbuart.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * timbuart.c timberdale FPGA GPIO driver
+  * Copyright (c) 2009 Intel Corporation
 -- 
 2.17.1
 
