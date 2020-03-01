@@ -2,189 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5AF6174DB9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 15:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA41174DF8
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 16:09:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbgCAOpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 09:45:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51884 "EHLO mail.kernel.org"
+        id S1726470AbgCAPJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 10:09:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726103AbgCAOpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 09:45:01 -0500
-Received: from localhost (unknown [193.47.165.251])
+        id S1725945AbgCAPJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 10:09:25 -0500
+Received: from localhost (unknown [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 674A120880;
-        Sun,  1 Mar 2020 14:45:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00582214DB;
+        Sun,  1 Mar 2020 15:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583073901;
-        bh=kt741SrzGymR/U+kiWUmgrZjC78gpmkY1yf0gURzkCE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dOzzEBsJPve5MnjWSoDv41KxBMEx4EU9TJ/uQBkv5y0Kx0SbhxJJpfh/K4elLU0W6
-         DhoOKm0/eT5xUOpGtESCGzcNMHdIIb1VKe4TSdTMRWyb/xXSDlckPzugyZ4Wo1Z03+
-         Eq4V462zCZhyJn8cu0wifNqJ7GfungYAXs/gS/SU=
-From:   Leon Romanovsky <leon@kernel.org>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     Leon Romanovsky <leonro@mellanox.com>,
-        Ajit Khaparde <ajit.khaparde@broadcom.com>,
-        Ariel Elior <aelior@marvell.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Casey Leedom <leedom@chelsio.com>,
-        Christian Benvenuti <benve@cisco.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Denis Kirjanov <kda@linux-powerpc.org>,
-        Derek Chickles <dchickles@marvell.com>,
-        Doug Berger <opendmb@gmail.com>,
-        Felix Manlunas <fmanlunas@marvell.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Govindarajulu Varadarajan <_govind@gmx.com>,
-        GR-everest-linux-l2@marvell.com, GR-Linux-NIC-Dev@marvell.com,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Li Yang <leoyang.li@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        netdev@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Parvi Kaustubhi <pkaustub@cisco.com>,
-        Prashant Sreedharan <prashant@broadcom.com>,
-        Raghu Vatsavayi <rvatsavayi@caviumnetworks.com>,
-        Rasesh Mody <rmody@marvell.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Satanand Burla <sburla@marvell.com>,
-        Sathya Perla <sathya.perla@broadcom.com>,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        Sunil Goutham <sgoutham@marvell.com>,
-        Vishal Kulkarni <vishal@chelsio.com>
-Subject: [PATCH net-next 00/23] Clean driver, module and FW versions
-Date:   Sun,  1 Mar 2020 16:44:33 +0200
-Message-Id: <20200301144457.119795-1-leon@kernel.org>
-X-Mailer: git-send-email 2.24.1
+        s=default; t=1583075364;
+        bh=L1d+AItbkkBXszkIwnSetgpZqP66VqdmSi0YX0Mk4EY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bZ59e6zO12/gehlMba0wC1AqoYskJYZ31aUz4qLL0ZrKxlDM8sc/4RI3soeWvuW6p
+         8e7qZxnQ0j/KSyqYcHl131c+J+qPMNcBVi9Rmf00PcoQCIc6z4VBPdhRk3Yv0deJBj
+         z7JsJOlgYSYYeEDeSQVfhNcc3svn+CQ9EoEtivds=
+Date:   Sun, 1 Mar 2020 16:09:13 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Oscar Carter <oscar.carter@gmx.com>
+Cc:     devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Forest Bond <forest@alittletooquiet.net>,
+        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH] staging: vt6656: Declare a few variables as __read_mostly
+Message-ID: <20200301150913.GA1470815@kroah.com>
+References: <20200301112620.7892-1-oscar.carter@gmx.com>
+ <20200301122514.GA1461917@kroah.com>
+ <20200301131701.GA7487@ubuntu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200301131701.GA7487@ubuntu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+On Sun, Mar 01, 2020 at 02:17:01PM +0100, Oscar Carter wrote:
+> On Sun, Mar 01, 2020 at 01:25:14PM +0100, Greg Kroah-Hartman wrote:
+> > On Sun, Mar 01, 2020 at 12:26:20PM +0100, Oscar Carter wrote:
+> > > These include module parameters.
+> > >
+> > > Signed-off-by: Oscar Carter <oscar.carter@gmx.com>
+> > > ---
+> > >  drivers/staging/vt6656/main_usb.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+> > > index 5e48b3ddb94c..701300202b21 100644
+> > > --- a/drivers/staging/vt6656/main_usb.c
+> > > +++ b/drivers/staging/vt6656/main_usb.c
+> > > @@ -49,12 +49,12 @@ MODULE_LICENSE("GPL");
+> > >  MODULE_DESCRIPTION(DEVICE_FULL_DRV_NAM);
+> > >
+> > >  #define RX_DESC_DEF0 64
+> > > -static int vnt_rx_buffers = RX_DESC_DEF0;
+> > > +static int __read_mostly vnt_rx_buffers = RX_DESC_DEF0;
+> > >  module_param_named(rx_buffers, vnt_rx_buffers, int, 0644);
+> > >  MODULE_PARM_DESC(rx_buffers, "Number of receive usb rx buffers");
+> > >
+> > >  #define TX_DESC_DEF0 64
+> > > -static int vnt_tx_buffers = TX_DESC_DEF0;
+> > > +static int __read_mostly vnt_tx_buffers = TX_DESC_DEF0;
+> > >  module_param_named(tx_buffers, vnt_tx_buffers, int, 0644);
+> > >  MODULE_PARM_DESC(tx_buffers, "Number of receive usb tx buffers");
+> > >
+> >
+> > Why?  What does this help with?
+> 
+> If we declare these variables __read_mostly we can improve the performance. If
+> these variables are read many more times than written, each core of a multicore
+> system can maintain a copy in a local cache and the time to access is less than
+> if they use the shared-cache.
 
-Hi,
+This is a USB driver, performance is always limited to the hardware, not
+the CPU location of variables.
 
-This is second batch of the series which removes various static versions
-in favour of globaly defined Linux kernel version.
+Please always benchmark things to see if it actually makes sense to make
+changes like this, before proposing them.
 
-The first part with better cover letter can be found here
-https://lore.kernel.org/lkml/20200224085311.460338-1-leon@kernel.org
+thanks,
 
-The code is based on
-68e2c37690b0 ("Merge branch 'hsr-several-code-cleanup-for-hsr-module'")
-
-and WIP branch is
-https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/log/?h=ethtool
-
-Thanks
-
-Leon Romanovsky (23):
-  net/broadcom: Clean broadcom code from driver versions
-  net/broadcom: Don't set N/A FW if it is not available
-  net/brocade: Delete driver version
-  net/liquidio: Delete driver version assignment
-  net/liquidio: Delete non-working LIQUIDIO_PACKAGE check
-  net/cavium: Clean driver versions
-  net/cavium: Delete N/A assignments for ethtool
-  net/chelsio: Delete drive and  module versions
-  net/chelsio: Don't set N/A for not available FW
-  net/cirrus: Delete driver version
-  net/cisco: Delete driver and module versions
-  net/cortina: Delete driver version from ethtool output
-  net/davicom: Delete ethtool version assignment
-  net/dec: Delete driver versions
-  net/dlink: Remove driver version and release date
-  net/dnet: Delete static version from the driver
-  net/emulex: Delete driver version
-  net/faraday: Delete driver version from the drivers
-  net/fealnx: Delete driver version
-  net/freescale: Clean drivers from static versions
-  net/freescale: Don't set zero if FW not-available in dpaa
-  net/freescale: Don't set zero if FW not-available in ucc_geth
-  net/freescale: Don't set zero if FW iand bus not-available in gianfar
-
- drivers/net/ethernet/broadcom/b44.c           |  5 ----
- drivers/net/ethernet/broadcom/bcm63xx_enet.c  | 10 ++-----
- drivers/net/ethernet/broadcom/bcmsysport.c    |  1 -
- drivers/net/ethernet/broadcom/bnx2.c          | 11 --------
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h   |  8 +++++-
- .../ethernet/broadcom/bnx2x/bnx2x_ethtool.c   |  7 -----
- .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  |  7 -----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     |  8 ------
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  4 ++-
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c |  1 -
- drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c |  1 -
- .../net/ethernet/broadcom/genet/bcmgenet.c    |  1 -
- drivers/net/ethernet/broadcom/tg3.c           | 11 +-------
- drivers/net/ethernet/brocade/bna/bnad.c       |  4 ---
- drivers/net/ethernet/brocade/bna/bnad.h       |  2 --
- .../net/ethernet/brocade/bna/bnad_ethtool.c   |  1 -
- .../ethernet/cavium/liquidio/lio_ethtool.c    |  2 --
- .../net/ethernet/cavium/liquidio/lio_main.c   |  8 ------
- .../ethernet/cavium/liquidio/lio_vf_main.c    |  5 ++--
- .../cavium/liquidio/liquidio_common.h         |  6 -----
- .../ethernet/cavium/liquidio/octeon_console.c | 10 ++-----
- .../net/ethernet/cavium/octeon/octeon_mgmt.c  |  6 -----
- .../ethernet/cavium/thunder/nicvf_ethtool.c   |  2 --
- drivers/net/ethernet/chelsio/cxgb/common.h    |  1 -
- drivers/net/ethernet/chelsio/cxgb/cxgb2.c     |  3 ---
- .../net/ethernet/chelsio/cxgb3/cxgb3_main.c   |  4 ---
- drivers/net/ethernet/chelsio/cxgb3/version.h  |  2 --
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |  3 +--
- .../ethernet/chelsio/cxgb4/cxgb4_ethtool.c    |  6 +----
- .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   | 10 -------
- .../ethernet/chelsio/cxgb4vf/cxgb4vf_main.c   |  9 -------
- .../ethernet/chelsio/libcxgb/libcxgb_ppm.c    |  2 --
- drivers/net/ethernet/cirrus/ep93xx_eth.c      |  2 --
- drivers/net/ethernet/cisco/enic/enic.h        |  2 --
- .../net/ethernet/cisco/enic/enic_ethtool.c    |  1 -
- drivers/net/ethernet/cisco/enic/enic_main.c   |  3 ---
- drivers/net/ethernet/cortina/gemini.c         |  2 --
- drivers/net/ethernet/davicom/dm9000.c         |  2 --
- drivers/net/ethernet/dec/tulip/de2104x.c      | 15 -----------
- drivers/net/ethernet/dec/tulip/dmfe.c         | 14 ----------
- drivers/net/ethernet/dec/tulip/tulip_core.c   | 26 ++-----------------
- drivers/net/ethernet/dec/tulip/uli526x.c      | 13 ----------
- drivers/net/ethernet/dec/tulip/winbond-840.c  | 12 ---------
- drivers/net/ethernet/dlink/dl2k.c             |  9 -------
- drivers/net/ethernet/dlink/sundance.c         | 20 --------------
- drivers/net/ethernet/dnet.c                   |  1 -
- drivers/net/ethernet/dnet.h                   |  1 -
- drivers/net/ethernet/emulex/benet/be.h        |  1 -
- .../net/ethernet/emulex/benet/be_ethtool.c    |  1 -
- drivers/net/ethernet/emulex/benet/be_main.c   |  5 +---
- drivers/net/ethernet/faraday/ftgmac100.c      |  2 --
- drivers/net/ethernet/faraday/ftmac100.c       |  3 ---
- drivers/net/ethernet/fealnx.c                 | 20 --------------
- .../ethernet/freescale/dpaa/dpaa_ethtool.c    | 11 --------
- .../net/ethernet/freescale/enetc/enetc_pf.c   | 13 ----------
- .../net/ethernet/freescale/enetc/enetc_vf.c   | 12 ---------
- drivers/net/ethernet/freescale/fec_main.c     |  1 -
- .../ethernet/freescale/fs_enet/fs_enet-main.c |  2 --
- .../net/ethernet/freescale/fs_enet/fs_enet.h  |  2 --
- drivers/net/ethernet/freescale/gianfar.c      |  2 --
- drivers/net/ethernet/freescale/gianfar.h      |  1 -
- .../net/ethernet/freescale/gianfar_ethtool.c  |  4 ---
- drivers/net/ethernet/freescale/ucc_geth.c     |  1 -
- drivers/net/ethernet/freescale/ucc_geth.h     |  1 -
- .../net/ethernet/freescale/ucc_geth_ethtool.c |  2 --
- 65 files changed, 22 insertions(+), 346 deletions(-)
-
---
-2.24.1
-
+greg k-h
