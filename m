@@ -2,83 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C13174DA3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 15:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75162174DB3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 15:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbgCAOYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 09:24:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49162 "EHLO mail.kernel.org"
+        id S1726627AbgCAOhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 09:37:03 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:42626 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbgCAOYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 09:24:15 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BABA2214DB;
-        Sun,  1 Mar 2020 14:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583072654;
-        bh=R0f7aWVxkB1VclGcflnTl+GpVS4uJevvWw/NgoP2MdY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oNQKRYiVUa6RtuajN/EogC9xb2mRbz1jJUxpjVl31syYK5YqWCqgx+W+HegjD8FoH
-         peQUe1y2gKuJCaxjwalg5dMnpDyvPU5papopFsfCVN/vAnofvNTMSnOMaS10Wrz1NR
-         9kvQHyUtPbZbsXgAwHBYTWw7wapMYI0x0F+2yMRU=
-Date:   Sun, 1 Mar 2020 14:24:07 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Petr =?UTF-8?B?xaB0ZXRpYXI=?= <ynezz@true.cz>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Tomasz Duszynski <tduszyns@gmail.com>, stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: chemical: sps30: fix missing triggered buffer
- dependency
-Message-ID: <20200301142407.0e63f6dc@archlinux>
-In-Reply-To: <20200227162734.604-1-ynezz@true.cz>
-References: <20200227162734.604-1-ynezz@true.cz>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        id S1725945AbgCAOhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 09:37:03 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E3A42200C18;
+        Sun,  1 Mar 2020 15:37:01 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3AB4B200B50;
+        Sun,  1 Mar 2020 15:36:56 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 28FC6402D5;
+        Sun,  1 Mar 2020 22:36:49 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] thermal: imx_thermal: Use __maybe_unused instead of CONFIG_PM_SLEEP
+Date:   Sun,  1 Mar 2020 22:30:56 +0800
+Message-Id: <1583073056-32297-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Feb 2020 17:27:34 +0100
-Petr =C5=A0tetiar <ynezz@true.cz> wrote:
+Use __maybe_unused for power management related functions instead
+of #if CONFIG_PM_SLEEP to simply the code.
 
-> SPS30 uses triggered buffer, but the dependency is not specified in the
-> Kconfig file.  Fix this by selecting IIO_BUFFER and IIO_TRIGGERED_BUFFER
-> config symbols.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sens=
-or")
-> Signed-off-by: Petr =C5=A0tetiar <ynezz@true.cz>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/thermal/imx_thermal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Applied to the fixes-togreg branch of iio.git.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/chemical/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
-> index 0b91de4df8f4..a7e65a59bf42 100644
-> --- a/drivers/iio/chemical/Kconfig
-> +++ b/drivers/iio/chemical/Kconfig
-> @@ -91,6 +91,8 @@ config SPS30
->  	tristate "SPS30 particulate matter sensor"
->  	depends on I2C
->  	select CRC8
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  Say Y here to build support for the Sensirion SPS30 particulate
->  	  matter sensor.
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index bb6754a..e75dda5 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -878,8 +878,7 @@ static int imx_thermal_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int imx_thermal_suspend(struct device *dev)
++static int __maybe_unused imx_thermal_suspend(struct device *dev)
+ {
+ 	struct imx_thermal_data *data = dev_get_drvdata(dev);
+ 	struct regmap *map = data->tempmon;
+@@ -900,7 +899,7 @@ static int imx_thermal_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int imx_thermal_resume(struct device *dev)
++static int __maybe_unused imx_thermal_resume(struct device *dev)
+ {
+ 	struct imx_thermal_data *data = dev_get_drvdata(dev);
+ 	struct regmap *map = data->tempmon;
+@@ -918,7 +917,6 @@ static int imx_thermal_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static SIMPLE_DEV_PM_OPS(imx_thermal_pm_ops,
+ 			 imx_thermal_suspend, imx_thermal_resume);
+-- 
+2.7.4
 
