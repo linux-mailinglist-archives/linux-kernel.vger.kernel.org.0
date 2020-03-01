@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0419E174D40
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 13:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A478174D44
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 13:22:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgCAMWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 07:22:01 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:54399 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbgCAMWB (ORCPT
+        id S1726956AbgCAMWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 07:22:16 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:37233 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbgCAMWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 07:22:01 -0500
-Received: by mail-pj1-f66.google.com with SMTP id dw13so3214767pjb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 04:22:00 -0800 (PST)
+        Sun, 1 Mar 2020 07:22:15 -0500
+Received: by mail-pj1-f67.google.com with SMTP id o2so1300492pjp.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 04:22:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=9cIS9wI0z/ly272acO4wuXYRhTq0u593vlOIO8zfEwQ=;
-        b=J1xoBje+Kv+ieI2iI8o2Qh4gAtjEIRvTDeYBaJ/Dh2ZXyPrcDZoYJqcqd4hJRmKP2h
-         qDro6FnOJFAxIGt1A9SziQoamobw/g1oRljc4Ypt9BlAp1MJIc3HFPq8eMbA7fOmwy+B
-         DqiTiiHtfMMaUpQVsUFdPm8EPB0XMhuN2ZycFtvP96nAjoBdfsNAnUiTIgGCy6Oo/Hsk
-         rBCEgV7qTEwEo2TO1Tidn4l1bvd4B+RBkbNKMaZ9AhsJ3g/3s3L4jmR+1TBh0rVzsdhl
-         SnbJl8s+b1wGrjtBSKp7WXrxcLnZszLT7wDV8GY4ECjxq4OpDpM014urhhdGuw83CKe1
-         0fTQ==
+        bh=6RuW8LcV5g6WypRcQIvGZ/SRPet4fNoET5RxUt4w0FQ=;
+        b=hNpiy/uVydyqMqWo83KwxexQEzJHid6YWnsfsiep0CUh6gNn2RqgFVOHvY6gTJMyiD
+         Eaf+TcdWuvFMS9DJRFcH8XWQIPeCCtXML4Tfwek2bBmaDjtfksppHrMIi956IGrBqndC
+         PfLL+9/TpG6+hrDk75dDl8tT3Q5nRU5IxaR8VBwW8cRm8PCEtRhEV8gZacp3OzWY76Sj
+         28ihxoPU2aHwvBHH47CDcophZnBA8/6n2cc65GE3Ml8tigk18JQXpqOUuvrx9hnS19xE
+         +8GMnkBaopOecBmMKgif+qRehxN4EtqVMmQyydbabPUWMgomywtsCBaIumrlucE4PeKy
+         syAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9cIS9wI0z/ly272acO4wuXYRhTq0u593vlOIO8zfEwQ=;
-        b=HkJ6wgKyynNrr6XX9U492He3hf0dNKCtgbE9DzlFbJghtGZCftABLZq3oW+lBqcaId
-         uRW8fAtW/wRhqvTZKrpU/hlVqID7ieB/gOSAINt4RFyOfTC3IbifdK/ezXdVPomgqu7H
-         gFglaiEbYvKmObJkCSqxneWzt0cFUSnRz6UhAXUnzPmAtaw5wPq9TSZwubNZrgLsdNx2
-         iirRihlLwX3gX22lIlF9QFeHHd7GszA66GCOMlvQk2GI9Am56DtmkBtF41ectc22+Joy
-         fdwaTJ8i8BSXN/twi896TAIJafvg89ZpbqZq1oWKBCtsm5+1wAJheHDF4/fwnRa8MxHI
-         fd3g==
-X-Gm-Message-State: APjAAAWHwhyoDRMpQB6r3sPKgqbExYBdHfy2M9FwxZ+1B29nzZ5vZ3Uc
-        k5W9lIsOXsvIIpqLXJwzHP8=
-X-Google-Smtp-Source: APXvYqzQ7LSePL09cmdsNNGSRe3otnppD5HDry8uOivFlQnPHuYZM3uBcbGiBjIjHFC1YfNG4s0fEw==
-X-Received: by 2002:a17:902:8a83:: with SMTP id p3mr13595862plo.56.1583065320065;
-        Sun, 01 Mar 2020 04:22:00 -0800 (PST)
+        bh=6RuW8LcV5g6WypRcQIvGZ/SRPet4fNoET5RxUt4w0FQ=;
+        b=PA67OD+bcVKKKFY1iJ2OyrXKWP59HkZqWcDEqoXESTLirJIJOFFlSL3PFaJGn4JFx1
+         TBsks914rvZL0hx7hKmvp7j1aHqLUGCQp6WwHqZZ0B4uXJ3AMhPFBTqAF/AMEj71Rsel
+         dZgt4rdik81vriuDqkot3dHsBT2fOImMI+P7i2TsU5osVvayBVv1rbssV8EOuTgHmC3U
+         AR/5v2D186Dp1VI9vWTvbn16l5HFee15JDrJmDXN6dGarPGH1ojjTgg+EkUcvRdslHLE
+         kDQMDPtceIIrGRSX+M3/2txHW/wMHvAzV6tNyNnH7PcNpttSdf9GQIlKfn8bX94vBZEe
+         X6WQ==
+X-Gm-Message-State: APjAAAVgUXB2GvCt52GIvp4/nW/WwTmhWqcsA35mGZWSIkC01kcBVCj3
+        l1ewLxuijLuItpJ43yfDWW/vSi0x
+X-Google-Smtp-Source: APXvYqxFvG3KgjDCtFOpqiwrVA/h5V0iFoU894xpJ/5CjNJFPDjijl8I9D/82NNQ22uympXnuRaCXA==
+X-Received: by 2002:a17:902:4a:: with SMTP id 68mr13359156pla.245.1583065334897;
+        Sun, 01 Mar 2020 04:22:14 -0800 (PST)
 Received: from localhost.localdomain ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id d77sm4081997pfd.109.2020.03.01.04.21.57
+        by smtp.gmail.com with ESMTPSA id e1sm17520364pff.188.2020.03.01.04.22.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 04:21:59 -0800 (PST)
+        Sun, 01 Mar 2020 04:22:14 -0800 (PST)
 From:   afzal mohammed <afzal.mohd.ma@gmail.com>
 To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Subject: [PATCH v3] ARM: cns3xxx: replace setup_irq() by request_irq()
-Date:   Sun,  1 Mar 2020 17:51:55 +0530
-Message-Id: <20200301122155.3957-1-afzal.mohd.ma@gmail.com>
+Subject: [PATCH v3] ARM: ebsa110: replace setup_irq() by request_irq()
+Date:   Sun,  1 Mar 2020 17:52:09 +0530
+Message-Id: <20200301122210.4013-1-afzal.mohd.ma@gmail.com>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -89,37 +88,44 @@ v2:
            pr_err("%s: request_irq() failed"
  * Commit message massage
 
- arch/arm/mach-cns3xxx/core.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ arch/arm/mach-ebsa110/core.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-cns3xxx/core.c b/arch/arm/mach-cns3xxx/core.c
-index 1d61a7701c11..e4f4b20b83a2 100644
---- a/arch/arm/mach-cns3xxx/core.c
-+++ b/arch/arm/mach-cns3xxx/core.c
-@@ -189,12 +189,6 @@ static irqreturn_t cns3xxx_timer_interrupt(int irq, void *dev_id)
+diff --git a/arch/arm/mach-ebsa110/core.c b/arch/arm/mach-ebsa110/core.c
+index da2ff4f61d6b..575b2e2b6759 100644
+--- a/arch/arm/mach-ebsa110/core.c
++++ b/arch/arm/mach-ebsa110/core.c
+@@ -201,17 +201,13 @@ ebsa110_timer_interrupt(int irq, void *dev_id)
  	return IRQ_HANDLED;
  }
  
--static struct irqaction cns3xxx_timer_irq = {
--	.name		= "timer",
+-static struct irqaction ebsa110_timer_irq = {
+-	.name		= "EBSA110 Timer Tick",
 -	.flags		= IRQF_TIMER | IRQF_IRQPOLL,
--	.handler	= cns3xxx_timer_interrupt,
+-	.handler	= ebsa110_timer_interrupt,
 -};
 -
  /*
-  * Set up the clock source and clock events devices
+  * Set up timer interrupt.
   */
-@@ -245,7 +239,9 @@ static void __init __cns3xxx_timer_init(unsigned int timer_irq)
- 	writel(val, cns3xxx_tmr1 + TIMER1_2_CONTROL_OFFSET);
+ void __init ebsa110_timer_init(void)
+ {
++	int irq = IRQ_EBSA110_TIMER0;
++
+ 	arch_gettimeoffset = ebsa110_gettimeoffset;
  
- 	/* Make irqs happen for the system timer */
--	setup_irq(timer_irq, &cns3xxx_timer_irq);
-+	if (request_irq(timer_irq, cns3xxx_timer_interrupt,
-+			IRQF_TIMER | IRQF_IRQPOLL, "timer", NULL))
-+		pr_err("Failed to request irq %d (timer)\n", timer_irq);
+ 	/*
+@@ -221,7 +217,9 @@ void __init ebsa110_timer_init(void)
+ 	__raw_writeb(COUNT & 0xff, PIT_T1);
+ 	__raw_writeb(COUNT >> 8, PIT_T1);
  
- 	cns3xxx_clockevents_init(timer_irq);
+-	setup_irq(IRQ_EBSA110_TIMER0, &ebsa110_timer_irq);
++	if (request_irq(irq, ebsa110_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
++			"EBSA110 Timer Tick", NULL))
++		pr_err("Failed to request irq %d (EBSA110 Timer Tick)\n", irq);
  }
+ 
+ static struct plat_serial8250_port serial_platform_data[] = {
 -- 
 2.25.1
 
