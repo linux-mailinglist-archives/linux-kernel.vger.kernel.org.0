@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0987174CEE
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 12:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1241E174CF2
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 12:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbgCALUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 06:20:13 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:43282 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgCALUN (ORCPT
+        id S1726788AbgCALVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 06:21:13 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:45292 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgCALVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 06:20:13 -0500
-Received: by mail-il1-f198.google.com with SMTP id o13so8242021ilf.10
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 03:20:13 -0800 (PST)
+        Sun, 1 Mar 2020 06:21:12 -0500
+Received: by mail-il1-f200.google.com with SMTP id w6so8218309ill.12
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 03:21:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=65OnynFSjOmtQMIac/FTTTX4yDBFQ88yOpqC92JdH08=;
-        b=DmeHTlo+90WnKq2aCKJ2lIk/UggGxnRcTXrCT579Txt2vwK+QV7heVV2wOrey1P6HM
-         eIVwgSj+TNzkgU6iKN3W6QxpBFmsBhecRJ5IrzOwhrJeRc1MLeKcwksxSlKFV+aS3tH9
-         FoZjwLSsJTHKe+Vb3/oLZ3a8i21RRXvk8Mdi2O9T9mffmYv108Dp4WVlQuhJsZMGYPAD
-         NxGPIulzwOZM2Xedz2CpCcXOqUF9sBAcgZci0Cu/9LUq3k014nBMZbLgOpL5h5AaN7nt
-         BPoKXIcCQ7j65OMNYT1D0rjk8bWFAAfLvgXjN9noDdYN6psfgvklhaa9+sxsaJgkwPJG
-         YBJw==
-X-Gm-Message-State: APjAAAVrEMGVzTwp0SR1gWuL0k1hsnlUl1ILUbjyjCUqYX2b/QHn0ABC
-        xyoTi1UOhvNHEjmLAumF+PFbxwa9plsLohjzZ2X7wW6BAzVX
-X-Google-Smtp-Source: APXvYqx5KNVvRS8b8Ll7jiWLv2ac4h2LHyaVkAkz2O2IQ4oAfBF0eM08g0Yu/3aKiKIQYUssku0mayJ0HC0zgsDesymTX0PKxFaX
+        bh=F2M/p9iF68HAFAzmluvJryCbsipnLPuxg09c4nmnAuI=;
+        b=O+6iEiUO0W3zw8I2Xy/sDiJeGI45iTf9brWPtFMvKIIjtuAIkOU2Mzsr7AE3RzsWfi
+         1clIDEQq2WnSgmjE5pXPZhWuFUdOtuG2m/JrUUEq1CiT0sE48Y04swBfrU5B0qRNFUB7
+         pd59+q+74Vxpw8p59nv5Z/tu0KvEQUlUt/B2VKng//2kDnYSV+MaDe591y4pPIqFcZNs
+         vMAt8fu3+l+t+ocSDogzTfgr2GgqGcOpLf5aZouGAvLrEmdE8Nk4rbMDs2q1OlushfXK
+         PGw9G48hJ37s8tpAYQ1FsB7GfYsIHcm/yICRrRc8rkEgxoTosnbLsodqecGp+j+aoB5E
+         UFaA==
+X-Gm-Message-State: APjAAAW6NrzYNXz23UaAqVz2FiWldejP/rF0qbZO07PBXjiUeXiyvaed
+        YDZSvAjjRxURBaNAIklk6CsNfmWtcLA1Ru+HLkE2c+Pj+i80
+X-Google-Smtp-Source: APXvYqzc36P+9OkIwWrhrSY9yuG0z4wTPj0erPw3RDrFfuNtqd2k44Y6NzB3pm4wA/M1s+BEwnpvEUV5WwNPdheKvnmauTIqqmHQ
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ea0e:: with SMTP id m14mr9307164ioc.135.1583061612643;
- Sun, 01 Mar 2020 03:20:12 -0800 (PST)
-Date:   Sun, 01 Mar 2020 03:20:12 -0800
+X-Received: by 2002:a02:cc75:: with SMTP id j21mr9819265jaq.113.1583061672019;
+ Sun, 01 Mar 2020 03:21:12 -0800 (PST)
+Date:   Sun, 01 Mar 2020 03:21:12 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000144d79059fc9415d@google.com>
-Subject: WARNING in srp_remove_one
-From:   syzbot <syzbot+687bc62a84a6a2a3555a@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000009e504d059fc9447a@google.com>
+Subject: general protection fault in gc_worker
+From:   syzbot <syzbot+2a2fe383b2ce0e44b6ea@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@netfilter.org, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,58 +53,56 @@ syzbot found the following crash on:
 
 HEAD commit:    f8788d86 Linux 5.6-rc3
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11c1ad29e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=104263a1e00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-dashboard link: https://syzkaller.appspot.com/bug?extid=687bc62a84a6a2a3555a
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a2fe383b2ce0e44b6ea
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+687bc62a84a6a2a3555a@syzkaller.appspotmail.com
+Reported-by: syzbot+2a2fe383b2ce0e44b6ea@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-sysfs group 'power' not found for kobject 'srp-syz0-1'
-WARNING: CPU: 1 PID: 9946 at fs/sysfs/group.c:278 sysfs_remove_group fs/sysfs/group.c:278 [inline]
-WARNING: CPU: 1 PID: 9946 at fs/sysfs/group.c:278 sysfs_remove_group+0x15b/0x1b0 fs/sysfs/group.c:269
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 9946 Comm: kworker/u4:6 Not tainted 5.6.0-rc3-syzkaller #0
+general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+CPU: 0 PID: 22524 Comm: kworker/0:10 Not tainted 5.6.0-rc3-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events_unbound ib_unregister_work
+Workqueue: events_power_efficient gc_worker
+RIP: 0010:nf_ct_tuplehash_to_ctrack include/net/netfilter/nf_conntrack.h:113 [inline]
+RIP: 0010:gc_worker+0x3b1/0xdd0 net/netfilter/nf_conntrack_core.c:1390
+Code: e8 03 4c 01 f8 85 db 48 89 85 70 ff ff ff 0f 85 53 03 00 00 e8 10 9d 01 fb 49 8d 7e 37 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <42> 0f b6 04 38 38 d0 7f 08 84 c0 0f 85 c4 08 00 00 41 0f b6 46 37
+RSP: 0018:ffffc9000604fc40 EFLAGS: 00010202
+RAX: 0000000000000006 RBX: 0000000000000000 RCX: ffffffff8673ed86
+RDX: 0000000000000007 RSI: ffffffff8673ea40 RDI: 0000000000000037
+RBP: ffffc9000604fd20 R08: ffff8880a25f23c0 R09: ffffed1000025fb8
+R10: ffffed1000025fb7 R11: ffff88800012fdbb R12: ffff88800012fdb8
+R13: 0000000000010000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000005014d000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- panic+0x2e3/0x75c kernel/panic.c:221
- __warn.cold+0x2f/0x3e kernel/panic.c:582
- report_bug+0x289/0x300 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
- do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:sysfs_remove_group fs/sysfs/group.c:278 [inline]
-RIP: 0010:sysfs_remove_group+0x15b/0x1b0 fs/sysfs/group.c:269
-Code: 48 89 d9 49 8b 55 00 48 b8 00 00 00 00 00 fc ff df 48 c1 e9 03 80 3c 01 00 75 41 48 8b 33 48 c7 c7 20 9f 59 88 e8 b4 a9 5b ff <0f> 0b eb 92 e8 bc fd c9 ff e9 d0 fe ff ff 48 89 df e8 af fd c9 ff
-RSP: 0018:ffffc90007d9fa98 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffffffff88b136a0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815eae46 RDI: fffff52000fb3f45
-RBP: ffffc90007d9fac0 R08: ffff88809bbaa340 R09: ffffed1015d26659
-R10: ffffed1015d26658 R11: ffff8880ae9332c7 R12: 0000000000000000
-R13: ffff88809b4c6010 R14: ffffffff88b13c40 R15: ffffffff8a5fef80
- dpm_sysfs_remove+0x9f/0xb0 drivers/base/power/sysfs.c:741
- device_del+0x197/0xda0 drivers/base/core.c:2641
- device_unregister+0x16/0x40 drivers/base/core.c:2696
- srp_remove_one+0xad/0x250 drivers/infiniband/ulp/srp/ib_srp.c:4232
- remove_client_context+0xc7/0x120 drivers/infiniband/core/device.c:724
- disable_device+0x14c/0x230 drivers/infiniband/core/device.c:1268
- __ib_unregister_device+0x9c/0x190 drivers/infiniband/core/device.c:1435
- ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1545
  process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
  kthread+0x361/0x430 kernel/kthread.c:255
  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Modules linked in:
+---[ end trace 3051a0fdf6c90610 ]---
+RIP: 0010:nf_ct_tuplehash_to_ctrack include/net/netfilter/nf_conntrack.h:113 [inline]
+RIP: 0010:gc_worker+0x3b1/0xdd0 net/netfilter/nf_conntrack_core.c:1390
+Code: e8 03 4c 01 f8 85 db 48 89 85 70 ff ff ff 0f 85 53 03 00 00 e8 10 9d 01 fb 49 8d 7e 37 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <42> 0f b6 04 38 38 d0 7f 08 84 c0 0f 85 c4 08 00 00 41 0f b6 46 37
+RSP: 0018:ffffc9000604fc40 EFLAGS: 00010202
+RAX: 0000000000000006 RBX: 0000000000000000 RCX: ffffffff8673ed86
+RDX: 0000000000000007 RSI: ffffffff8673ea40 RDI: 0000000000000037
+RBP: ffffc9000604fd20 R08: ffff8880a25f23c0 R09: ffffed1000025fb8
+R10: ffffed1000025fb7 R11: ffff88800012fdbb R12: ffff88800012fdb8
+R13: 0000000000010000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000928000 CR3: 0000000217f1b000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
