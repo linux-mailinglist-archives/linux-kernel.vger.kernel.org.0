@@ -2,134 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B627174D42
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 13:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDCE174D45
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Mar 2020 13:22:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgCAMWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 07:22:15 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41402 "EHLO
+        id S1726980AbgCAMWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 07:22:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46986 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbgCAMWP (ORCPT
+        with ESMTP id S1726448AbgCAMWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 07:22:15 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t14so3067617plr.8;
-        Sun, 01 Mar 2020 04:22:14 -0800 (PST)
+        Sun, 1 Mar 2020 07:22:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y8so3060113pll.13
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 04:22:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Nl6uqiUH7qk6Y6MADMhhMgJO0FCDRVW4SJPmE5qRI4E=;
-        b=ZqQ7Elr8poJVF7IVcgELGLcCETsfugqQdMvBQXb9PNKtiDOc+PCWno2GNyPp5z819v
-         fi11MCioI7kYhxXsuGqEiRctov8qIHp5LHxQdVx0S8Q9K3rR5I57+ukymnPCa6wTUVx3
-         8U/SWFgJQceYLLKncqhIYJM8D+HyVS28Q+ABVo+yn35zqNeaflPb5SQTGg9Yl+8eLjB7
-         QVlTwLaU0NXlQ2DzZ5KSS/VCQuDvNw7oa97xKL2CbRSlDfBqmZCZvZVCT+fZF/LS1/fZ
-         HuWJ/uqrK2i7ZKeJtmfiKgqeU2sVnj+pQ276PEpYURX5Bo9lhb0J9KMhUgvjM48coBzI
-         1icQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=8DnSngTmvzsd65+fjVgdabNJJWbP31CoAeIiDzwcTxc=;
+        b=SHa2iPWW/niSpSf3cfP6JGgRIP6IKYAiwhBfSzd9Z9BnleNtOAbzXQw0wzgQAVAuXQ
+         8YP7h2g8CZoRyyC+lkV7bbo0aHCSrbxMFQh1t6Y85L0cL0Vku17MsNMnlnlV7Sp7yg+C
+         iAB7onY4u+HNEMgDzInde3O8y5wr36OsOqzjtRtvITPAowj/lmKB48qVN1GCBtlEzAKz
+         BbmdMlb1lZM4o74oB+n6E4BUzpw9twyNsV85cT8xDggchIq5wCls46jYxfLbhT0N9gq6
+         4nk3OPAUueQc23ZwGYnxvptPPFYQAMkOK6WmLnkUqryiPToQ6PT8W+rq00sIfdpWStWB
+         84Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nl6uqiUH7qk6Y6MADMhhMgJO0FCDRVW4SJPmE5qRI4E=;
-        b=CsrNReh78cZXvpb7cCpErKaOUr+LzMFwMgNtqgEmtgv/pfqU0+JocpLWfiQvrrH3Pq
-         G3n8ANXnmhtrwKgMQXmRyltMWxymbrlTPJOYNllmqWZxxGL7Erriisx3oMA1db0pHBnI
-         gABGsI4kPOMvDUYnoNeAzb07vggB4C3clucYg/mQffE6WI5UZ3ZCaaQeQCJk6E/TYuO4
-         +6Ne5FMFtK5JXYA/FBNCzjnHJUbhsp6sOzVhncTi/CHTkQ70j6p33fnpUAlZo8skoxXO
-         f7qqRaH6vRtOluW8YGEdlTKjInfzmJURoiGYRb+C42tJBAJsqlEvQbRFDmX4ic2d/RoZ
-         pyMw==
-X-Gm-Message-State: APjAAAXKnJ2ZN7nYFGrsaHAlL61wrLKTNpplYmyQxiupokXKITT/v1vU
-        zRz0C3FDNRlaZQjHy81vg9M=
-X-Google-Smtp-Source: APXvYqzKnidncZJnTITfWPjqSK7bearuseLOfLxHjtrYw3tP28IlmIGi9T2rckRfHbwcf3T1d3ACFQ==
-X-Received: by 2002:a17:90a:77c3:: with SMTP id e3mr15535343pjs.143.1583065333982;
-        Sun, 01 Mar 2020 04:22:13 -0800 (PST)
-Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
-        by smtp.gmail.com with ESMTPSA id q8sm16955436pfs.161.2020.03.01.04.22.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8DnSngTmvzsd65+fjVgdabNJJWbP31CoAeIiDzwcTxc=;
+        b=O02GMxMAlEPthgZaDbSdwHlMB6h6X1X+R2ZuGNP3YHvJmP1HOqvG9r1HcXCVIQRj/q
+         aSu3XI8xMb3v8x2KH53wXCRfM0o88cjP52ABzT/2RZSWk20WnCd42FF1G2nuBDoAn4Tg
+         /CWthIhTY5jVOVa5JCloxQnhwttAztXSa31xxUvUivzEiEDAu00zthhmh5KkPI6ktxTU
+         U2jW0iO33tH7QLSjINCf/M5DjY4dGy6VUeFapteLYgpGbek85n8rgUDO94oGSeiCh6xe
+         udtLlOItXTQAywo+lm/LfAeUK0c88rJC4ZH0uD7wTK78pAI+Ot/BsEzgdX5+1c9dB104
+         LILg==
+X-Gm-Message-State: ANhLgQ1x0kKHIgVY2eDoqH+RJFbHAzds/UySels15zfqJWJZph+UByWN
+        DpVj/S79l5SZdisCs5Tcqw4=
+X-Google-Smtp-Source: ADFU+vtgZDqLq8qgq7cBmuez/0NVgFMd37RvN5fOD22JK6zkTlXJaygnGb4FycXfbqiHgJRos3bonA==
+X-Received: by 2002:a17:90a:8d03:: with SMTP id c3mr6978240pjo.7.1583065351992;
+        Sun, 01 Mar 2020 04:22:31 -0800 (PST)
+Received: from localhost.localdomain ([106.51.232.35])
+        by smtp.gmail.com with ESMTPSA id z10sm16519219pgf.35.2020.03.01.04.22.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 04:22:13 -0800 (PST)
-Date:   Sun, 1 Mar 2020 04:22:11 -0800
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Michael Walle <michael@walle.cc>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sun, 01 Mar 2020 04:22:31 -0800 (PST)
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
         Russell King <linux@armlinux.org.uk>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: [RFC PATCH v2 2/2] net: phy: at803x: add PTP support for AR8031
-Message-ID: <20200301122211.GA32253@localhost>
-References: <20200228180226.22986-1-michael@walle.cc>
- <20200228180226.22986-3-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228180226.22986-3-michael@walle.cc>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     afzal mohammed <afzal.mohd.ma@gmail.com>
+Subject: [PATCH v3] ARM: iop32x: replace setup_irq() by request_irq()
+Date:   Sun,  1 Mar 2020 17:52:20 +0530
+Message-Id: <20200301122226.4068-1-afzal.mohd.ma@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 07:02:26PM +0100, Michael Walle wrote:
+request_irq() is preferred over setup_irq(). Invocations of setup_irq()
+occur after memory allocators are ready.
 
-> +static int at8031_rtc_adjust(struct phy_device *phydev, s64 delta)
-> +{
-> +	struct timespec64 ts = ns_to_timespec64(delta);
-> +	int ret;
+Per tglx[1], setup_irq() existed in olden days when allocators were not
+ready by the time early interrupts were initialized.
 
-Here the 'ts' is written in multiple steps,
+Hence replace setup_irq() by request_irq().
 
-> +	ret = phy_write_mmd(phydev, MDIO_MMD_PCS,
-> +			    AT8031_MMD3_RTC_OFFSET_SEC_2,
-> +			    (ts.tv_sec >> 32) & 0xffff);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = phy_write_mmd(phydev, MDIO_MMD_PCS,
-> +			    AT8031_MMD3_RTC_OFFSET_SEC_1,
-> +			    (ts.tv_sec >> 16) & 0xffff);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = phy_write_mmd(phydev, MDIO_MMD_PCS,
-> +			    AT8031_MMD3_RTC_OFFSET_SEC_0,
-> +			    ts.tv_sec & 0xffff);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = phy_write_mmd(phydev, MDIO_MMD_PCS,
-> +			    AT8031_MMD3_RTC_OFFSET_NSEC_1,
-> +			    (ts.tv_nsec >> 16) & 0xffff);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = phy_write_mmd(phydev, MDIO_MMD_PCS,
-> +			    AT8031_MMD3_RTC_OFFSET_NSEC_0,
-> +			    ts.tv_nsec & 0xffff);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return phy_write_mmd(phydev, MDIO_MMD_PCS, AT8031_MMD3_RTC_ADJUST,
-> +			     AT8031_RTC_ADJUST);
-> +}
+[1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
 
-...
+Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+---
+Hi sub-arch maintainers,
 
-> +static int at8031_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
-> +{
-> +	struct at803x_priv *priv =
-> +		container_of(ptp, struct at803x_priv, ptp_info);
-> +	struct phy_device *phydev = priv->phydev;
-> +
-> +	return at8031_rtc_adjust(phydev, delta);
-> +}
+If the patch is okay, please take it thr' your tree.
 
-... and here there is no locking.  You would need a mutex here and
-elsewhere to prevent multiple readers/writers from accessing the
-device registers asynchronously.
+Regards
+afzal
 
-(I know this is a just a RFC and that there are bigger problems with
-the HW, but just saying.)
+v3:
+ * Split out from series, also split out from ARM patch to subarch level
+	as Thomas suggested to take it thr' respective maintainers
+ * Modify string displayed in case of error as suggested by Thomas
+ * Re-arrange code as required to improve readability
+ * Remove irrelevant parts from commit message & improve
+ 
+v2:
+ * Replace pr_err("request_irq() on %s failed" by
+           pr_err("%s: request_irq() failed"
+ * Commit message massage
 
-Thanks,
-Richard
+ arch/arm/mach-iop32x/time.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm/mach-iop32x/time.c b/arch/arm/mach-iop32x/time.c
+index 18a4df5c1baa..ae533b66fefd 100644
+--- a/arch/arm/mach-iop32x/time.c
++++ b/arch/arm/mach-iop32x/time.c
+@@ -137,13 +137,6 @@ iop_timer_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static struct irqaction iop_timer_irq = {
+-	.name		= "IOP Timer Tick",
+-	.handler	= iop_timer_interrupt,
+-	.flags		= IRQF_TIMER | IRQF_IRQPOLL,
+-	.dev_id		= &iop_clockevent,
+-};
+-
+ static unsigned long iop_tick_rate;
+ unsigned long get_iop_tick_rate(void)
+ {
+@@ -154,6 +147,7 @@ EXPORT_SYMBOL(get_iop_tick_rate);
+ void __init iop_init_time(unsigned long tick_rate)
+ {
+ 	u32 timer_ctl;
++	int irq = IRQ_IOP32X_TIMER0;
+ 
+ 	sched_clock_register(iop_read_sched_clock, 32, tick_rate);
+ 
+@@ -168,7 +162,9 @@ void __init iop_init_time(unsigned long tick_rate)
+ 	 */
+ 	write_tmr0(timer_ctl & ~IOP_TMR_EN);
+ 	write_tisr(1);
+-	setup_irq(IRQ_IOP32X_TIMER0, &iop_timer_irq);
++	if (request_irq(irq, iop_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
++			"IOP Timer Tick", &iop_clockevent))
++		pr_err("Failed to request irq() %d (IOP Timer Tick)\n", irq);
+ 	iop_clockevent.cpumask = cpumask_of(0);
+ 	clockevents_config_and_register(&iop_clockevent, tick_rate,
+ 					0xf, 0xfffffffe);
+-- 
+2.25.1
 
