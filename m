@@ -2,80 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F25E117642D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BEC176426
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbgCBTl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:41:29 -0500
-Received: from smtprelay0047.hostedemail.com ([216.40.44.47]:58237 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725911AbgCBTl3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:41:29 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 8FB63180A813D;
-        Mon,  2 Mar 2020 19:41:27 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:5007:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21433:21611:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: fear94_c98062e1a951
-X-Filterd-Recvd-Size: 2203
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  2 Mar 2020 19:41:26 +0000 (UTC)
-Message-ID: <ff833cf6a9a489ff446910c85e2a56ff1c11ccb4.camel@perches.com>
-Subject: Re: [PATCH 2/7] parport: Use more comon logging styles
-From:   Joe Perches <joe@perches.com>
-To:     Helge Deller <deller@gmx.de>, Randy Dunlap <rdunlap@infradead.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 02 Mar 2020 11:39:53 -0800
-In-Reply-To: <b4a4f5a8-9ff0-e3d3-93c9-260a11cdb439@gmx.de>
-References: <cover.1582878393.git.joe@perches.com>
-         <1da80f696e3602cc2533988b20f9a47cd42db1c4.1582878394.git.joe@perches.com>
-         <b4a4f5a8-9ff0-e3d3-93c9-260a11cdb439@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1726545AbgCBTkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:40:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbgCBTkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 14:40:05 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BEDB24686;
+        Mon,  2 Mar 2020 19:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583178005;
+        bh=Wwzi7N/ZR9sjSWv9GiSp3pDMsnm6NyYcZEYMgyVYOGU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nroh101O+DuLw3YWxgPSHtYoWw8EH0JCJdmdkD27m18C2vhaGxDA0uiTF5o32pSqk
+         nuW74yQ5pMhZQpOhRMyHYEi2yMgthjv///inMPFtvap7J8Zl9Y+NJOjdNDKRDLHpG3
+         sNjtX+ahRElfUt53OYXjeXeHxYeuUJZKL/sEQmLs=
+Date:   Mon, 2 Mar 2020 20:39:57 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, akpm@linux-foundation.org,
+        "K . Prasad" <prasad@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Quentin Perret <qperret@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, rostedt@goodmis.org
+Subject: Re: [PATCH 0/3] Unexport kallsyms_lookup_name() and
+ kallsyms_on_each_symbol()
+Message-ID: <20200302193957.GA276441@kroah.com>
+References: <20200221114404.14641-1-will@kernel.org>
+ <20200302192811.n6o5645rsib44vco@localhost>
+ <20200302193658.GA272023@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302193658.GA272023@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-03-02 at 20:29 +0100, Helge Deller wrote:
-> On 28.02.20 09:32, Joe Perches wrote:
-> > Some of the logging can be poorly formatted because of unexpected
-> > line breaks given printks without KERN_CONT that should be pr_cont.
-[]
-> > diff --git a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
-[]
-> > @@ -238,14 +238,14 @@ struct parport *parport_gsc_probe_port(unsigned long base,
+On Mon, Mar 02, 2020 at 08:36:58PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 02, 2020 at 02:28:11PM -0500, Mathieu Desnoyers wrote:
+> > On 21-Feb-2020 11:44:01 AM, Will Deacon wrote:
+> > > Hi folks,
+> > > 
+> > > Despite having just a single modular in-tree user that I could spot,
+> > > kallsyms_lookup_name() is exported to modules and provides a mechanism
+> > > for out-of-tree modules to access and invoke arbitrary, non-exported
+> > > kernel symbols when kallsyms is enabled.
+> > > 
+> > > This patch series fixes up that one user and unexports the symbol along
+> > > with kallsyms_on_each_symbol(), since that could also be abused in a
+> > > similar manner.
 > > 
-> >  	priv = kzalloc (sizeof (struct parport_gsc_private), GFP_KERNEL);
-> >  	if (!priv) {
-> > -		printk (KERN_DEBUG "parport (0x%lx): no memory!\n", base);
-> > +		printk(KERN_DEBUG "parport (0x%lx): no memory!\n", base);
+> > Hi,
+> > 
+> > I maintain a GPL kernel tracer (LTTng) since 2005 which happens to be
+> > out-of-tree, even though we have made unsuccessful attempts to upstream
+> > it in the past. It uses kallsyms_lookup_name() to fetch a few symbols. I
+> > would be very glad to have them GPL-exported upstream rather than
+> > relying on this work-around. Here is the list of symbols we would need
+> > to GPL-export:
+> > 
+> > stack_trace_save
+> > stack_trace_save_user
+> > vmalloc_sync_all (CONFIG_X86)
+> > get_pfnblock_flags_mask
+> > disk_name
+> > block_class
+> > disk_type
 > 
-> pr_warn() instead?
+> I hate to ask, but why does anyone need block_class?  or disk_name or
+> disk_type?  I need to put them behind a driver core namespace or
+> something soon...
 
-For all of your remarks, the intent here is to keep the
-same output.
+Wait, disk_type is a static variable.  And there's multiple ones of
+them, how does that work?
 
-Logging level changes and printk(KERN_DEBUG -> pr_debug(
-conversions cause the dmesg output to be different.
+thanks,
 
-	printk(KERN_DEBUG...)
-
-is always emitted when the console level allows but
-
-	pr_debug(...)
-
-is not normally compiled in at all.
-
-So it's possible for all printk(KERN_DEBUG to be pr_debug
-but that causes no logging at all to be emitted when
-DEBUG is not defined or CONFIG_DYNAMIC_DEBUG not enabled.
-
-
+greg k-h
