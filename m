@@ -2,145 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A831175576
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0FD175546
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:15:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgCBIQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:16:57 -0500
-Received: from mail-eopbgr140074.outbound.protection.outlook.com ([40.107.14.74]:41195
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726674AbgCBIQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gHf75m/hdOT+nOoY9y+mtTMDhfIIODD2VqNad+Fb8ZhpTrGPwMX9L9nVTZFjz9xQwbV5xhqu2pYEUORhZHtbusbYe5nQYCEDw2UuIeLAT5+w7JMYEYl0cW+haXDF9PRzSyDBMnuC6bi8hC0Dj61FquPv9wI9eemr0eqd33uIfb/Sh+XVSDuTyM9ROZhagPBxKaWPwuESHempO4/a5i4Xdm8A4RTCwEfXev0S43CyQTqpmf5u3dUn7bLmf5dsy6Nu3m/2ccpPyUt4f8jUDA6F7jJ4Izjd+uuY3HpSmOnQr68pafcReagaFw5kIoEu6lX4eoHR63AXYZoOxphAcxYR5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GXpvb8NL8AR/keyslRQVJFUQhjkTvzvkAAGG/Lws8xw=;
- b=C/muIpZkcXAe5tN9+W4dnIGbc8vY4/GGg3H6psgKmaw2eAVL/gLotDAmYpwUQiFA9O92vsEsC0OiRnqupxAAqlDGA6Znw0jdhudsenZhdcRx0q2b5+ufGNkTu/mdleEzXfWThxTagGbarLFb3n1PNUFuAAcHoCju/t6UDESBRJmtoJDB8mSuUPi+tv8rRKg10YuKCnF2xRQNSRlNb2jGsmSWxGg+tU7qTAw9UmCzUdlMJdEonzC7j+d/xiEZp3MdAqks7am8k71OpkOaPq7v/85vm205VfRv6ZAaP6NZaQPmMj1vE7BMDfldXNWfFRn3K6R4iDOsAR6Ar8dZ8NYOOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GXpvb8NL8AR/keyslRQVJFUQhjkTvzvkAAGG/Lws8xw=;
- b=cnZAWY1pOTsUd7JVzQwMMNWTbfotrDETaUd5k9Hba6l+5QoaTZNjv6DUHrKyAjBt6cx4E2Naa88I7YqmKWXKj1IZDR30HyLnlaPBohl5Cricn/qLck6Qb36PkTdBvaOdCX7q2v/fP1wHTCyq6A6gEPsBmoJSJEMwlc9qIEYEBXg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=andrei.botila@oss.nxp.com; 
-Received: from AM6PR04MB5430.eurprd04.prod.outlook.com (20.178.92.210) by
- AM6PR04MB6328.eurprd04.prod.outlook.com (20.179.5.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.16; Mon, 2 Mar 2020 08:16:48 +0000
-Received: from AM6PR04MB5430.eurprd04.prod.outlook.com
- ([fe80::79f3:d09c:ee2d:396e]) by AM6PR04MB5430.eurprd04.prod.outlook.com
- ([fe80::79f3:d09c:ee2d:396e%3]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
- 08:16:48 +0000
-From:   Andrei Botila <andrei.botila@oss.nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC] crypto: xts - limit accepted key length
-Date:   Mon,  2 Mar 2020 10:16:29 +0200
-Message-Id: <20200302081629.17831-1-andrei.botila@oss.nxp.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR02CA0066.eurprd02.prod.outlook.com
- (2603:10a6:208:d2::43) To AM6PR04MB5430.eurprd04.prod.outlook.com
- (2603:10a6:20b:94::18)
+        id S1727060AbgCBIPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:15:21 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47434 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbgCBIPU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:15:20 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0228Esbw067966;
+        Mon, 2 Mar 2020 02:14:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583136894;
+        bh=TdhMpVGavBMp+rXwCQqseldtj1O3C6Ev8oQyZs2QgMQ=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=DRENygLrbKRMRypHzLIXHGsOsqoyTlJ5Vkm+EKAVOcFMmK11FULvxBUIHsDLXKN+K
+         aNo3jq8jEpTzrBm/UgzqoEZeGBAui6BEtEkGbb++n3N/HIJ+K6sBoq0MpMThKZ84My
+         V/LeFhUvoK7C5lFZaA2WubDIoF2vtwevBqu9Gh70=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0228EsA4016695;
+        Mon, 2 Mar 2020 02:14:54 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Mar
+ 2020 02:14:54 -0600
+Received: from localhost.localdomain (10.64.41.19) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 2 Mar 2020 02:14:54 -0600
+Received: from [10.24.69.157] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 0228EnLq073051;
+        Mon, 2 Mar 2020 02:14:50 -0600
+Subject: Re: [PATCH v2 1/3] dt-bindings: m_can: Add Documentation for
+ transceiver regulator
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
+        <wg@grandegger.com>, <sriram.dash@samsung.com>, <dmurphy@ti.com>
+References: <20200217142836.23702-1-faiz_abbas@ti.com>
+ <20200217142836.23702-2-faiz_abbas@ti.com> <20200219203529.GA21085@bogus>
+ <a987bcd7-ca1c-dfda-72f3-cd2004a87ea5@ti.com>
+ <20b86553-9b98-1a9d-3757-54174aa67c62@pengutronix.de>
+ <72e4b1f4-e7f1-cccd-6327-0c8ab6f9f9a7@ti.com>
+Message-ID: <679bdfd3-5325-b903-de5f-1beb5b577d73@ti.com>
+Date:   Mon, 2 Mar 2020 13:46:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from lsv15007.swis.ro-buh01.nxp.com (212.146.100.6) by AM0PR02CA0066.eurprd02.prod.outlook.com (2603:10a6:208:d2::43) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 08:16:48 +0000
-X-Mailer: git-send-email 2.17.1
-X-Originating-IP: [212.146.100.6]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 6e288297-fe12-49c1-fab0-08d7be820de4
-X-MS-TrafficTypeDiagnostic: AM6PR04MB6328:
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-Microsoft-Antispam-PRVS: <AM6PR04MB6328A6E25AB4DF1FDF7F60EDB4E70@AM6PR04MB6328.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
-X-Forefront-PRVS: 033054F29A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(376002)(346002)(39860400002)(366004)(189003)(199004)(81166006)(8936002)(6486002)(44832011)(6506007)(52116002)(81156014)(8676002)(1076003)(16526019)(2616005)(110136005)(186003)(316002)(956004)(26005)(5660300002)(2906002)(86362001)(66476007)(66946007)(66556008)(4326008)(6666004)(478600001)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6328;H:AM6PR04MB5430.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7TIO/NXWTOO9fA5z+i/huxAbfNlYm71F1jaMvmHCq3QzP0fqu0gybYnjq0h4YIeAvbLAqIaiqpNS3h4WNMCE5aS2puczkjtRAuaBsDOtBQWdiCVIpJ3DLfgsfdjyeSCYHLqXXuQq/0+9MrbFJP69GmhE+VqkGpzCUkCdVlQPgaBct7eLwD3x3dakynxQJQMTaEC7dFHUhgOTkOFVS+9/eP652+VzzBD8hD8DlJNoFSLc7/y0LNJFr5C9dG1xWFvSdzgklKjWKSjKOfy+VEougm2TmcSWRC8ucJqaEYejMD5a7MTfnFysAGTpviMxhUQY8+EG17ZdyGUmAQ2OkBQdlzmAL/0ebrnFTfVJf+r6ponjg1pankxxluAFvsIhuF+kQt0AMwHVQoc8fpszhzX9+JBoe5ET90Pt4R4U5XYC4ud42uWeTqUIxFcUQtcdTvFw
-X-MS-Exchange-AntiSpam-MessageData: 0vfrcNSixwLH3UECtre4DShik5ACP8jHc223z+dUJLNBlC2Ha6XRk/11+UD9kpNks4TP1zGktw+VjsWE45kWaXP+3UMED46YGxGvardLCyHtYAM/VtSGsZndgRmJ5SM9B3IYhv+vmMqf3jayLv+00Q==
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e288297-fe12-49c1-fab0-08d7be820de4
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2020 08:16:48.6829
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jSdSv9BwQnHFLjuUBVgT6iTie4SNmehM9GtSaGpFKUpsJ/k+yqXohAtwPKmtXH4xsixKfcrG3+L+RC3Gd2pT5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6328
+In-Reply-To: <72e4b1f4-e7f1-cccd-6327-0c8ab6f9f9a7@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Botila <andrei.botila@nxp.com>
+Marc,
 
-Currently in XTS generic implementation the valid key length is
-repesented by any length which is even. This is a deviation from
-the XTS-AES standard (IEEE 1619-2007) which allows keys equal
-to {2 x 16B, 2 x 32B} that correspond to underlying XTS-AES-{128, 256}
-algorithm. XTS-AES-192 is not supported as mentioned in commit
-b66ad0b7aa92 ("crypto: tcrypt - remove AES-XTS-192 speed tests")) or
-any other length beside these two specified.
+On 26/02/20 2:40 pm, Faiz Abbas wrote:
+> Hi Marc,
+> 
+> On 21/02/20 2:01 pm, Marc Kleine-Budde wrote:
+>> On 2/21/20 9:31 AM, Faiz Abbas wrote:
+>>> Hi Rob,
+>>>
+>>> On 20/02/20 2:05 am, Rob Herring wrote:
+>>>> On Mon, Feb 17, 2020 at 07:58:34PM +0530, Faiz Abbas wrote:
+>>>>> Some CAN transceivers have a standby line that needs to be asserted
+>>>>> before they can be used. Model this GPIO lines as an optional
+>>>>> fixed-regulator node. Document bindings for the same.
+>>>>>
+>>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/net/can/m_can.txt | 3 +++
+>>>>>  1 file changed, 3 insertions(+)
+>>>>
+>>>> This has moved to DT schema in my tree, so please adjust it and resend.
+>>>
+>>> Ok.
+>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt b/Documentation/devicetree/bindings/net/can/m_can.txt
+>>>>> index ed614383af9c..f17e2a5207dc 100644
+>>>>> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
+>>>>> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
+>>>>> @@ -48,6 +48,9 @@ Optional Subnode:
+>>>>>  			  that can be used for CAN/CAN-FD modes. See
+>>>>>  			  Documentation/devicetree/bindings/net/can/can-transceiver.txt
+>>>>>  			  for details.
+>>>>> +
+>>>>> +- xceiver-supply: Regulator that powers the CAN transceiver.
+>>>>
+>>>> The supply for a transceiver should go in the transceiver node.
+>>>>
+>>>
+>>> Marc, while I have you here, do you agree with this?
+>>
+>> I'll look into the details later today.
+>>
+> 
+> Sure. Be sure to take another look at my attempt to use the transceiver
+> with a phy driver some time ago.
+> 
+> https://lore.kernel.org/patchwork/patch/1006238/
+> 
 
-If this modification is accepted then other ciphers that use XTS mode
-will have to be modified (camellia, cast6, serpent, twofish).
+Do you have any comments?
 
-Signed-off-by: Andrei Botila <andrei.botila@nxp.com>
----
- include/crypto/xts.h | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/include/crypto/xts.h b/include/crypto/xts.h
-index 0f8dba69feb4..26e764a5ae46 100644
---- a/include/crypto/xts.h
-+++ b/include/crypto/xts.h
-@@ -4,6 +4,7 @@
- 
- #include <crypto/b128ops.h>
- #include <crypto/internal/skcipher.h>
-+#include <crypto/aes.h>
- #include <linux/fips.h>
- 
- #define XTS_BLOCK_SIZE 16
-@@ -12,10 +13,10 @@ static inline int xts_check_key(struct crypto_tfm *tfm,
- 				const u8 *key, unsigned int keylen)
- {
- 	/*
--	 * key consists of keys of equal size concatenated, therefore
--	 * the length must be even.
-+	 * key consists of keys of equal size concatenated, possible
-+	 * values are 32 or 64 bytes.
- 	 */
--	if (keylen % 2)
-+	if (keylen != 2 * AES_MIN_KEY_SIZE && keylen != 2 * AES_MAX_KEY_SIZE)
- 		return -EINVAL;
- 
- 	/* ensure that the AES and tweak key are not identical */
-@@ -29,10 +30,10 @@ static inline int xts_verify_key(struct crypto_skcipher *tfm,
- 				 const u8 *key, unsigned int keylen)
- {
- 	/*
--	 * key consists of keys of equal size concatenated, therefore
--	 * the length must be even.
-+	 * key consists of keys of equal size concatenated, possible
-+	 * values are 32 or 64 bytes.
- 	 */
--	if (keylen % 2)
-+	if (keylen != 2 * AES_MIN_KEY_SIZE && keylen != 2 * AES_MAX_KEY_SIZE)
- 		return -EINVAL;
- 
- 	/* ensure that the AES and tweak key are not identical */
--- 
-2.17.1
-
+Thanks,
+Faiz
