@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728CD1755A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A12175597
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbgCBISG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:18:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57214 "EHLO mail.kernel.org"
+        id S1727726AbgCBIRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:17:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727242AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:21 -0500
+        id S1727237AbgCBIQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:22 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95302246F0;
+        by mail.kernel.org (Postfix) with ESMTPSA id 90F4F246EE;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=TVvdyl0GJrye7f1v4SAQ+y//NYsgAc5Ka71XcuuBSjE=;
+        bh=s531gSxDkVtdzJAGp8Gxaqlfbpc382cg5q+qNefPNJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FghARQu1AiuwpGh4txG0QLaWAK30FBrduH4LFbhKtNrDXG2ZnpNP4+KiCBS4UckSd
-         GT/xGHVLUk0AdFiy+q6261/ZbmwtC1eR/SAmkn59XNFexgw8/pNDEWd5T03kh7KsZG
-         8GmY4j6g8ytDa7VOtQF5JeVG/cwgFJp2kx0MVpds=
+        b=X15Rw1GV1++3pJBDxAayewKzBkVMzNrtizhyLzo5iQdKScxac29NZesaAIcRNbzgj
+         AXUV3jbxHgjQ3YUBNeSiFtB1mUtaCZuTd9WEuh5xrtSWQ01YCb5O2p1r7bFS3vsNkQ
+         V/H5cLDzjpucYoHHuHQ6Es/oTnpLa7p6vkDdK5JY=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003ya-Lu; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003yg-Mj; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org
-Subject: [PATCH 25/42] docs: scsi: convert ppa.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:58 +0100
-Message-Id: <3db8cd51d77fef6b66632249412969caa29dec40.1583136624.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 26/42] docs: scsi: convert qlogicfas.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:59 +0100
+Message-Id: <b69f795c781811b9a908abe43485f1dca0ee8ac5.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -48,74 +48,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/index.rst            |  1 +
- Documentation/scsi/{ppa.txt => ppa.rst} | 12 ++++++++----
- drivers/scsi/Kconfig                    |  4 ++--
- 3 files changed, 11 insertions(+), 6 deletions(-)
- rename Documentation/scsi/{ppa.txt => ppa.rst} (32%)
+ Documentation/scsi/index.rst                    |  1 +
+ .../scsi/{qlogicfas.txt => qlogicfas.rst}       | 17 +++++++++++++----
+ drivers/scsi/Kconfig                            |  2 +-
+ 3 files changed, 15 insertions(+), 5 deletions(-)
+ rename Documentation/scsi/{qlogicfas.txt => qlogicfas.rst} (92%)
 
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index eb2df0e0dcb7..17327f67af68 100644
+index 17327f67af68..29e211ee9145 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -29,5 +29,6 @@ Linux SCSI Subsystem
-    megaraid
+@@ -30,5 +30,6 @@ Linux SCSI Subsystem
     ncr53c8xx
     NinjaSCSI
-+   ppa
+    ppa
++   qlogicfas
  
     scsi_transport_srp/figures
-diff --git a/Documentation/scsi/ppa.txt b/Documentation/scsi/ppa.rst
-similarity index 32%
-rename from Documentation/scsi/ppa.txt
-rename to Documentation/scsi/ppa.rst
-index 05ff47dbe8d1..5fe3859a6892 100644
---- a/Documentation/scsi/ppa.txt
-+++ b/Documentation/scsi/ppa.rst
-@@ -1,13 +1,17 @@
---------- Terse where to get ZIP Drive help info --------
+diff --git a/Documentation/scsi/qlogicfas.txt b/Documentation/scsi/qlogicfas.rst
+similarity index 92%
+rename from Documentation/scsi/qlogicfas.txt
+rename to Documentation/scsi/qlogicfas.rst
+index c211d827fef2..b17f1b3676c3 100644
+--- a/Documentation/scsi/qlogicfas.txt
++++ b/Documentation/scsi/qlogicfas.rst
+@@ -1,3 +1,8 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+======================================
-+Terse where to get ZIP Drive help info
-+======================================
++=================================
++Qlogic FASXXX Family Driver Notes
++=================================
  
- General Iomega ZIP drive page for Linux:
--http://web.archive.org/web/*/http://www.torque.net/~campbell/
-+http://web.archive.org/web/%2E/http://www.torque.net/~campbell/
+ This driver supports the Qlogic FASXXX family of chips.  This driver
+ only works with the ISA, VLB, and PCMCIA versions of the Qlogic
+@@ -16,7 +21,8 @@ is provided by the qla1280 driver.
+ Nor does it support the PCI-Basic, which is supported by the
+ 'am53c974' driver.
  
- Driver archive for old drivers:
--http://web.archive.org/web/*/http://www.torque.net/~campbell/ppa
-+http://web.archive.org/web/%2E/http://www.torque.net/~campbell/ppa
+-PCMCIA SUPPORT
++PCMCIA Support
++==============
  
- Linux Parport page (parallel port)
--http://web.archive.org/web/*/http://www.torque.net/parport/
-+http://web.archive.org/web/%2E/http://www.torque.net/parport/
+ This currently only works if the card is enabled first from DOS.  This
+ means you will have to load your socket and card services, and
+@@ -31,7 +37,8 @@ it from configuring the card.
+ I am working with the PCMCIA group to make it more flexible, but that
+ may take a while.
  
- Email list for Linux Parport
- linux-parport@torque.net
+-ALL CARDS
++All Cards
++=========
+ 
+ The top of the qlogic.c file has a number of defines that controls
+ configuration.  As shipped, it provides a balance between speed and
+@@ -46,7 +53,8 @@ command or something.  It comes up faster if this is set to zero, and
+ if you have reliable hardware and connections it may be more useful to
+ not reset things.
+ 
+-SOME TROUBLESHOOTING TIPS
++Some Troubleshooting Tips
++=========================
+ 
+ Make sure it works properly under DOS.  You should also do an initial FDISK
+ on a new drive if you want partitions.
+@@ -54,7 +62,8 @@ on a new drive if you want partitions.
+ Don't enable all the speedups first.  If anything is wrong, they will make
+ any problem worse.
+ 
+-IMPORTANT
++Important
++=========
+ 
+ The best way to test if your cables, termination, etc. are good is to
+ copy a very big file (e.g. a doublespace container file, or a very
 diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index e47498f7627e..82462d6a4ce5 100644
+index 82462d6a4ce5..d34c682e94cf 100644
 --- a/drivers/scsi/Kconfig
 +++ b/drivers/scsi/Kconfig
-@@ -804,7 +804,7 @@ config SCSI_PPA
- 	  newer drives)", below.
+@@ -1117,7 +1117,7 @@ config SCSI_QLOGIC_FAS
+ 	  SCSI support"), below.
  
- 	  For more information about this driver and how to use it you should
--	  read the file <file:Documentation/scsi/ppa.txt>.  You should also read
-+	  read the file <file:Documentation/scsi/ppa.rst>.  You should also read
- 	  the SCSI-HOWTO, which is available from
- 	  <http://www.tldp.org/docs.html#howto>.  If you use this driver,
- 	  you will still be able to use the parallel port for other tasks,
-@@ -831,7 +831,7 @@ config SCSI_IMM
- 	  here and Y to "IOMEGA Parallel Port (ppa - older drives)", above.
+ 	  Information about this driver is contained in
+-	  <file:Documentation/scsi/qlogicfas.txt>.  You should also read the
++	  <file:Documentation/scsi/qlogicfas.rst>.  You should also read the
+ 	  SCSI-HOWTO, available from
+ 	  <http://www.tldp.org/docs.html#howto>.
  
- 	  For more information about this driver and how to use it you should
--	  read the file <file:Documentation/scsi/ppa.txt>.  You should also read
-+	  read the file <file:Documentation/scsi/ppa.rst>.  You should also read
- 	  the SCSI-HOWTO, which is available from
- 	  <http://www.tldp.org/docs.html#howto>.  If you use this driver,
- 	  you will still be able to use the parallel port for other tasks,
 -- 
 2.21.1
 
