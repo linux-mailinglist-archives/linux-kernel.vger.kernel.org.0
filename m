@@ -2,82 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 003351766AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207A11766BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgCBWSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 17:18:32 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33169 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgCBWSc (ORCPT
+        id S1726907AbgCBWUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 17:20:10 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:39138 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbgCBWUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 17:18:32 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a25so927969wmm.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 14:18:30 -0800 (PST)
+        Mon, 2 Mar 2020 17:20:10 -0500
+Received: by mail-pj1-f65.google.com with SMTP id o5so395619pjs.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 14:20:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7SzOkQ6sd0S38QbCyvRBb51L6pZuZ/wIs7mZk/AE8Pw=;
-        b=kgawhBRi1VrmDrFQgMsBn4QCL75ooMSD9VNmosY5S3toaV/UEeN1KOGOzB9S+PihJ2
-         VgcendwtfFF8Yuro0+zjcX244T16q40fqWiIgydyr3QsTRB4Ah7hMJfeNJdeikmYMhaf
-         8OsvnXkbeahCDsIwE0bc/Pf9vIggdDY+JQ9yu4QR6mavsRFL5PFtCafZFAwx+dB3OyWc
-         FE82+w+okkwiBhn5h1tDzh/7lZ4Qxnnvq9RKZ5egWB+mGT4tj4dKLJM/7hIawNB0v3PI
-         VTGgdzqMNReByXDKrZrjhjRIs3NcZJOcDYhejKvLlZCAM9YtiwYJo+mhJxk5HtME0bsJ
-         RwQw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eiRXpYLqa4ejnGphOY97gu7ECpDZYBemFYjwQAOSIN8=;
+        b=aaGbZGjtJ97tAFGUqz1YUpCvWUuKvLCOUoq7GqERz+rB0v9aKkWW1Vu0eodTPN9RqX
+         872hdjf3v+n810DIGbWsb1YA3ylC25C8v7EbWQNdSnyn6CmqUl7EYIv2FFTiNddxIOh7
+         lGAwzdPNbyd6Btislx/JrjefO+I8oHSBuVzcuGPCQJBgfUM96yWecj+MmA8ndhCrt1qV
+         wsqBoVrTHQprLkdeFc8bBH4cBTEiANYeLNTg2xN2rJdvvRvKUTfzQ4otrxw9aIwvUrKk
+         aglUxIPKqfFRNTr5MBy60063UjLYzQNw6+c5p0GejmWLVief8dOlfKcEFSvRknw4chxX
+         3HJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7SzOkQ6sd0S38QbCyvRBb51L6pZuZ/wIs7mZk/AE8Pw=;
-        b=o3PsQiXf/1O/0NwaXYJ7v4/ou2JHdI4+9LFgqxLLTiEkdtALSJm2LkITpbeSclOjDG
-         9259qzz7bZ5EvM3g3Mor7D4HZAGHK17aOWMZTqTQKs0BZpZbN0JYjSNl3/2nukbq5y8S
-         H9qL2TACntoliBxcyJZ0l1E0m35Dcle/5iQrvpN86ZtkoDNrijy+yY35NP5Yzw/uKSPH
-         afF/VmdvrrehoMzeVFSefH0TQkJp/ImuSF42UacoJzQ8zXsBMBXAasPgRq9Ub6Vw2IyI
-         IQSaWMN/+kmVkfBwJ8oB+G+TBlfIuln/163fYXcs4FiOAlQ3U7QPWqcTQWSax3lRiwa2
-         CSrg==
-X-Gm-Message-State: ANhLgQ2WY9pOEBvegmS8wAX2iDvb6bv3CZsI+l/qlFQsBfrhk6DaBl68
-        lGCECfBA29l0PXD//t7bN1s=
-X-Google-Smtp-Source: ADFU+vtm3v5RKkFxeFN4fWtkHqhHV3daajsgvmUfin1v5VU2qsMSSgu8vFJ21B9gNTcGe2n5hYtiiw==
-X-Received: by 2002:a1c:41c3:: with SMTP id o186mr480436wma.27.1583187509682;
-        Mon, 02 Mar 2020 14:18:29 -0800 (PST)
-Received: from kbp1-lhp-F74019 (a81-14-236-68.net-htp.de. [81.14.236.68])
-        by smtp.gmail.com with ESMTPSA id g187sm586933wma.5.2020.03.02.14.18.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Mar 2020 14:18:29 -0800 (PST)
-Date:   Tue, 3 Mar 2020 00:18:26 +0200
-From:   Yan Yankovskyi <yyankovskyi@gmail.com>
-To:     Jan Beulich <jbeulich@suse.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xen: Use 'unsigned int' instead of 'unsigned'
-Message-ID: <20200302221826.GA18206@kbp1-lhp-F74019>
-References: <20200229223035.GA28145@kbp1-lhp-F74019>
- <fba833c4-3173-0094-b4ec-53e9f42bfb3e@suse.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eiRXpYLqa4ejnGphOY97gu7ECpDZYBemFYjwQAOSIN8=;
+        b=jQz6dh+PORaTJevJ2JBXgShiJZzQTdXz+88LaKOeV69q9AyFvbc/1wxQYDT2d3D/k+
+         FFpOpA4fKshfUdXHfoEntrC+dsSz19NLT7x9LVIuQAB0BGGw5AsmfpoPuE+zkQHJOhNk
+         hVO6VXPsFeSsqhwf5F9nqmSUsploS5oBN+97wszCs3mSytB39+F6ilK4LVQoVanNGnab
+         wRT8NfRKYjh5gXgyCEPohJ47Pfodtg2u+rykk8K90b8wHbySZgCOHbuSSso7nmECGKaQ
+         YWy1gA6OxdV/ix7eV0SUvs9nNCvbDMkbQW2tLhhPByQkY+VNdhtQnCc6RX12qWdxGV/u
+         Zwzw==
+X-Gm-Message-State: ANhLgQ0ACBhwE6wv/bn3FuQLRwqT5qlDWonXUkwuIJBUUvrwHOkEp8ga
+        z+QDboV7vQ2EsIinGqih3P79HHj1WCh7B23sCM6nrQ==
+X-Google-Smtp-Source: ADFU+vuOaeld9UBVLAooUJ2zjVQ14iAl+j/4kAj7yT6yN5YktIvgDo9o5Nd/iazOvMtSLESD5sgw76KV2VeNpaXLVLU=
+X-Received: by 2002:a17:90a:3a90:: with SMTP id b16mr120232pjc.29.1583187608902;
+ Mon, 02 Mar 2020 14:20:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fba833c4-3173-0094-b4ec-53e9f42bfb3e@suse.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200228012036.15682-1-brendanhiggins@google.com>
+ <20200302200337.GH11244@42.do-not-panic.com> <20200302211640.GA8364@roeck-us.net>
+In-Reply-To: <20200302211640.GA8364@roeck-us.net>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 2 Mar 2020 14:19:57 -0800
+Message-ID: <CAFd5g452oaKojBZfvTYw-L14wTFqsjDeX4mtYDM=kv6xhcTnig@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] kunit: create a centralized executor to dispatch
+ all KUnit tests
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, rppt@linux.ibm.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-um <linux-um@lists.infradead.org>,
+        linux-arch@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 10:11 Jan Beulich wrote:
-> ... evtchn_port_t here and elsewhere.
+On Mon, Mar 2, 2020 at 1:16 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Mon, Mar 02, 2020 at 08:03:37PM +0000, Luis Chamberlain wrote:
+> > Guenter,
+> >
+> > are you still running your cross-architecture tests? If so any chance
+>
+> Yes
+>
+> > you can try this for your build tests?
+> >
+>
+> I didn't have KUNIT_TEST enabled to start with. I did that now, and
+> started a test run on mainline a minute ago. We'll see how that goes.
 
-There are some interfaces with signed int as a type for port, e.g. in
-include/xen/events.h.
-Should I create additional patch to resolve inconsistency with evtchn
-interface?
-Or you suggest combining these changes into the existing patch?
+FYI, kbuild already found some architectures for which this change doesn't work.
 
-Also as I understand 'evtchn' and 'port' are essentially the same
-entities from perspective of local domain, related to each other roughly
-like connection and file descriptor pair. What do you think about
-renaming all 'evtchn' arguments and variables to 'port'?
-It will eliminate inconsistencies in the code, for example
-in include/xen/interface/event_channel.h and include/xen/events.h.
+So far, I need to fix:
+- arm64 (32 bit seems to work fine)
+- i386 in some cases.
+
+> Afterwards, sure, I can run the series in a test branch. It would be great
+> if I can pick it up from a repository somewhere.
+
+Cool, I will post my next revision to a branch somewhere.
+
+Thanks!
