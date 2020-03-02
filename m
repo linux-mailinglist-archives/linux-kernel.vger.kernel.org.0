@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A781768AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D9317688F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:57:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbgCBX53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:57:29 -0500
-Received: from mga03.intel.com ([134.134.136.65]:17168 "EHLO mga03.intel.com"
+        id S1727552AbgCBX5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:57:34 -0500
+Received: from mga17.intel.com ([192.55.52.151]:37739 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727101AbgCBX5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:57:25 -0500
+        id S1727237AbgCBX50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 18:57:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:57:23 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:57:23 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
-   d="scan'208";a="243384768"
+   d="scan'208";a="243384774"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
   by orsmga006.jf.intel.com with ESMTP; 02 Mar 2020 15:57:23 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -28,9 +28,9 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH v2 48/66] KVM: x86: Remove stateful CPUID handling
-Date:   Mon,  2 Mar 2020 15:56:51 -0800
-Message-Id: <20200302235709.27467-49-sean.j.christopherson@intel.com>
+Subject: [PATCH v2 50/66] KVM: x86: Override host CPUID results with kvm_cpu_caps
+Date:   Mon,  2 Mar 2020 15:56:53 -0800
+Message-Id: <20200302235709.27467-51-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200302235709.27467-1-sean.j.christopherson@intel.com>
 References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
@@ -41,178 +41,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the code for handling stateful CPUID 0x2 and mark the associated
-flags as deprecated.  WARN if host CPUID 0x2.0.AL > 1, i.e. if by some
-miracle a host with stateful CPUID 0x2 is encountered.
+Override CPUID entries with kvm_cpu_caps during KVM_GET_SUPPORTED_CPUID
+instead of masking the host CPUID result, which is redundant now that
+the host CPUID is incorporated into kvm_cpu_caps at runtime.
 
-No known CPU exists that supports hardware accelerated virtualization
-_and_ a stateful CPUID 0x2.  Barring an extremely contrived nested
-virtualization scenario, stateful CPUID support is dead code.
+No functional change intended.
 
-Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- Documentation/virt/kvm/api.rst | 22 ++--------
- arch/x86/kvm/cpuid.c           | 73 ++++++----------------------------
- 2 files changed, 17 insertions(+), 78 deletions(-)
+ arch/x86/kvm/cpuid.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index ebd383fba939..c38cd9f88237 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -1574,8 +1574,8 @@ This ioctl would set vcpu's xcr to the value userspace specified.
-   };
- 
-   #define KVM_CPUID_FLAG_SIGNIFCANT_INDEX		BIT(0)
--  #define KVM_CPUID_FLAG_STATEFUL_FUNC		BIT(1)
--  #define KVM_CPUID_FLAG_STATE_READ_NEXT		BIT(2)
-+  #define KVM_CPUID_FLAG_STATEFUL_FUNC		BIT(1) /* deprecated */
-+  #define KVM_CPUID_FLAG_STATE_READ_NEXT		BIT(2) /* deprecated */
- 
-   struct kvm_cpuid_entry2 {
- 	__u32 function;
-@@ -1626,13 +1626,6 @@ emulate them efficiently. The fields in each entry are defined as follows:
- 
-         KVM_CPUID_FLAG_SIGNIFCANT_INDEX:
-            if the index field is valid
--        KVM_CPUID_FLAG_STATEFUL_FUNC:
--           if cpuid for this function returns different values for successive
--           invocations; there will be several entries with the same function,
--           all with this flag set
--        KVM_CPUID_FLAG_STATE_READ_NEXT:
--           for KVM_CPUID_FLAG_STATEFUL_FUNC entries, set if this entry is
--           the first entry to be read by a cpu
- 
-    eax, ebx, ecx, edx:
-          the values returned by the cpuid instruction for
-@@ -3347,8 +3340,8 @@ The member 'flags' is used for passing flags from userspace.
- ::
- 
-   #define KVM_CPUID_FLAG_SIGNIFCANT_INDEX		BIT(0)
--  #define KVM_CPUID_FLAG_STATEFUL_FUNC		BIT(1)
--  #define KVM_CPUID_FLAG_STATE_READ_NEXT		BIT(2)
-+  #define KVM_CPUID_FLAG_STATEFUL_FUNC		BIT(1) /* deprecated */
-+  #define KVM_CPUID_FLAG_STATE_READ_NEXT		BIT(2) /* deprecated */
- 
-   struct kvm_cpuid_entry2 {
- 	__u32 function;
-@@ -3394,13 +3387,6 @@ The fields in each entry are defined as follows:
- 
-         KVM_CPUID_FLAG_SIGNIFCANT_INDEX:
-            if the index field is valid
--        KVM_CPUID_FLAG_STATEFUL_FUNC:
--           if cpuid for this function returns different values for successive
--           invocations; there will be several entries with the same function,
--           all with this flag set
--        KVM_CPUID_FLAG_STATE_READ_NEXT:
--           for KVM_CPUID_FLAG_STATEFUL_FUNC entries, set if this entry is
--           the first entry to be read by a cpu
- 
-    eax, ebx, ecx, edx:
- 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index b5dce17c070f..49527dbcc90c 100644
+index ec8e24b1c1a7..5fef02dbf4e1 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -495,25 +495,16 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 		 * time, with the least-significant byte in EAX enumerating the
- 		 * number of times software should do CPUID(2, 0).
- 		 *
--		 * Modern CPUs (quite likely every CPU KVM has *ever* run on)
--		 * are less idiotic.  Intel's SDM states that EAX & 0xff "will
--		 * always return 01H. Software should ignore this value and not
-+		 * Modern CPUs, i.e. every CPU KVM has *ever* run on are less
-+		 * idiotic.  Intel's SDM states that EAX & 0xff "will always
-+		 * return 01H. Software should ignore this value and not
- 		 * interpret it as an informational descriptor", while AMD's
- 		 * APM states that CPUID(2) is reserved.
-+		 *
-+		 * WARN if a frankenstein CPU that supports virtualization and
-+		 * a stateful CPUID.0x2 is encountered.
- 		 */
--		max_idx = entry->eax & 0xff;
--		if (likely(max_idx <= 1))
--			break;
--
--		entry->flags |= KVM_CPUID_FLAG_STATEFUL_FUNC;
--		entry->flags |= KVM_CPUID_FLAG_STATE_READ_NEXT;
--
--		for (i = 1; i < max_idx; ++i) {
--			entry = do_host_cpuid(array, function, 0);
--			if (!entry)
--				goto out;
--			entry->flags |= KVM_CPUID_FLAG_STATEFUL_FUNC;
--		}
-+		WARN_ON_ONCE((entry->eax & 0xff) > 1);
- 		break;
- 	/* functions 4 and 0x8000001d have additional index. */
- 	case 4:
-@@ -894,58 +885,20 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
+@@ -261,13 +261,13 @@ int kvm_vcpu_ioctl_get_cpuid2(struct kvm_vcpu *vcpu,
  	return r;
  }
  
--static int move_to_next_stateful_cpuid_entry(struct kvm_vcpu *vcpu, int i)
--{
--	struct kvm_cpuid_entry2 *e = &vcpu->arch.cpuid_entries[i];
--	struct kvm_cpuid_entry2 *ej;
--	int j = i;
--	int nent = vcpu->arch.cpuid_nent;
--
--	e->flags &= ~KVM_CPUID_FLAG_STATE_READ_NEXT;
--	/* when no next entry is found, the current entry[i] is reselected */
--	do {
--		j = (j + 1) % nent;
--		ej = &vcpu->arch.cpuid_entries[j];
--	} while (ej->function != e->function);
--
--	ej->flags |= KVM_CPUID_FLAG_STATE_READ_NEXT;
--
--	return j;
--}
--
--/* find an entry with matching function, matching index (if needed), and that
-- * should be read next (if it's stateful) */
--static int is_matching_cpuid_entry(struct kvm_cpuid_entry2 *e,
--	u32 function, u32 index)
--{
--	if (e->function != function)
--		return 0;
--	if ((e->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX) && e->index != index)
--		return 0;
--	if (unlikely(e->flags & KVM_CPUID_FLAG_STATEFUL_FUNC) &&
--	    !(e->flags & KVM_CPUID_FLAG_STATE_READ_NEXT))
--		return 0;
--	return 1;
--}
--
- struct kvm_cpuid_entry2 *kvm_find_cpuid_entry(struct kvm_vcpu *vcpu,
- 					      u32 function, u32 index)
+-static __always_inline void cpuid_entry_mask(struct kvm_cpuid_entry2 *entry,
+-					     enum cpuid_leafs leaf)
++static __always_inline void cpuid_entry_override(struct kvm_cpuid_entry2 *entry,
++						 enum cpuid_leafs leaf)
  {
-+	struct kvm_cpuid_entry2 *e;
- 	int i;
--	struct kvm_cpuid_entry2 *best = NULL;
+ 	u32 *reg = cpuid_entry_get_reg(entry, leaf * 32);
  
- 	for (i = 0; i < vcpu->arch.cpuid_nent; ++i) {
--		struct kvm_cpuid_entry2 *e;
--
- 		e = &vcpu->arch.cpuid_entries[i];
--		if (is_matching_cpuid_entry(e, function, index)) {
--			if (unlikely(e->flags & KVM_CPUID_FLAG_STATEFUL_FUNC))
--				move_to_next_stateful_cpuid_entry(vcpu, i);
--			best = e;
--			break;
--		}
-+
-+		if (e->function == function && (e->index == index ||
-+		    !(e->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX)))
-+			return e;
- 	}
--	return best;
-+	return NULL;
+ 	BUILD_BUG_ON(leaf >= ARRAY_SIZE(kvm_cpu_caps));
+-	*reg &= kvm_cpu_caps[leaf];
++	*reg = kvm_cpu_caps[leaf];
  }
- EXPORT_SYMBOL_GPL(kvm_find_cpuid_entry);
  
+ static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+@@ -490,8 +490,8 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		entry->eax = min(entry->eax, 0x1fU);
+ 		break;
+ 	case 1:
+-		cpuid_entry_mask(entry, CPUID_1_EDX);
+-		cpuid_entry_mask(entry, CPUID_1_ECX);
++		cpuid_entry_override(entry, CPUID_1_EDX);
++		cpuid_entry_override(entry, CPUID_1_ECX);
+ 		/* we support x2apic emulation even if host does not support
+ 		 * it since we emulate x2apic in software */
+ 		cpuid_entry_set(entry, X86_FEATURE_X2APIC);
+@@ -536,9 +536,9 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 	/* function 7 has additional index. */
+ 	case 7:
+ 		entry->eax = min(entry->eax, 1u);
+-		cpuid_entry_mask(entry, CPUID_7_0_EBX);
+-		cpuid_entry_mask(entry, CPUID_7_ECX);
+-		cpuid_entry_mask(entry, CPUID_7_EDX);
++		cpuid_entry_override(entry, CPUID_7_0_EBX);
++		cpuid_entry_override(entry, CPUID_7_ECX);
++		cpuid_entry_override(entry, CPUID_7_EDX);
+ 
+ 		/* TSC_ADJUST and ARCH_CAPABILITIES are emulated in software. */
+ 		cpuid_entry_set(entry, X86_FEATURE_TSC_ADJUST);
+@@ -557,7 +557,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 			if (!entry)
+ 				goto out;
+ 
+-			cpuid_entry_mask(entry, CPUID_7_1_EAX);
++			cpuid_entry_override(entry, CPUID_7_1_EAX);
+ 			entry->ebx = 0;
+ 			entry->ecx = 0;
+ 			entry->edx = 0;
+@@ -623,7 +623,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		if (!entry)
+ 			goto out;
+ 
+-		cpuid_entry_mask(entry, CPUID_D_1_EAX);
++		cpuid_entry_override(entry, CPUID_D_1_EAX);
+ 		if (entry->eax & (F(XSAVES)|F(XSAVEC)))
+ 			entry->ebx = xstate_required_size(supported_xcr0, true);
+ 		else
+@@ -702,8 +702,8 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		entry->eax = min(entry->eax, 0x8000001f);
+ 		break;
+ 	case 0x80000001:
+-		cpuid_entry_mask(entry, CPUID_8000_0001_EDX);
+-		cpuid_entry_mask(entry, CPUID_8000_0001_ECX);
++		cpuid_entry_override(entry, CPUID_8000_0001_EDX);
++		cpuid_entry_override(entry, CPUID_8000_0001_ECX);
+ 		break;
+ 	case 0x80000007: /* Advanced power management */
+ 		/* invariant TSC is CPUID.80000007H:EDX[8] */
+@@ -721,7 +721,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+-		cpuid_entry_mask(entry, CPUID_8000_0008_EBX);
++		cpuid_entry_override(entry, CPUID_8000_0008_EBX);
+ 		/*
+ 		 * AMD has separate bits for each SPEC_CTRL bit.
+ 		 * arch/x86/kernel/cpu/bugs.c is kind enough to
+@@ -763,7 +763,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		entry->eax = min(entry->eax, 0xC0000004);
+ 		break;
+ 	case 0xC0000001:
+-		cpuid_entry_mask(entry, CPUID_C000_0001_EDX);
++		cpuid_entry_override(entry, CPUID_C000_0001_EDX);
+ 		break;
+ 	case 3: /* Processor serial number */
+ 	case 5: /* MONITOR/MWAIT */
 -- 
 2.24.1
 
