@@ -2,82 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7748175B0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96551175B14
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgCBM6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:58:37 -0500
-Received: from sonic312-20.consmr.mail.bf2.yahoo.com ([74.6.128.82]:36656 "EHLO
-        sonic312-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727595AbgCBM6g (ORCPT
+        id S1727820AbgCBNBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:01:14 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34127 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727173AbgCBNBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:58:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1583153914; bh=/GcFFbn2btZiSKYiGCo/BleXlnSRHZPoMjv/YxR5ftE=; h=Date:From:Reply-To:Subject:References:From:Subject; b=SFsrN0XYusoDAJBPFtwd9hTxOnRHfcFZzRie4wZ3Uq2l0ctnT53LbwwDtRCeQn+CgC16FUec4xDQ7hRVUgqcgiEHXEqi7A7nO8T6/NkgvLbYETS9pBnsF0YTAzwZN+p5rRidDAbr3Qr70eBTjF7gcX4UbOoiHU/ctRR7HAeJ4CSfHbWwP2o8U+u2KpyNC7R4elQLNMed+bvmHQaqjaJ5utCpe85hcBhUZaWQOXY4DhKIWe3/ldpHFP/HwO19N3caS5SpudEydnvZVsyn1V5QKmlXloEvz3dmYLUSCv0YLYS1ZpbDnUBjmy2TDFAYo1S1sBOOdycJxQ9tUsVL+OG6eg==
-X-YMail-OSG: Pve3Lg8VM1n7_oUZAtWE8RQ81zYOA2Gnwux6N2zQe4onPUH5Afv0lH9sDRAEoPv
- IGep23JQQ9MTXQz5fpOURkSgHpk9wxD9sj1KAnbm328ufIEPC.HnDqElh..Cj3Hpkrjn0mciJwC7
- .7.VaQW32MEx9zau1xlEcRAc9JZE7BCURcYcQQ6iPbyDZiC5EZm8.Q_PdocOXr39J45HnBXntYdx
- 7EyL_iQXbcxQWwhLiP6G3U3RQbTlv1nLSHTQpiMVFmkmTIyNIb6wITc_NMkjAe46MYZVIL.7.GGY
- gclOLUEFzlh0SS_JFs3YCPT3f8nRpa8_uFh.IfQTSSNQVgtdOsIuQhm8A4_Msd7VjUUOM5YLZ_jg
- 962NoCSmtbJDghFBhBJXIL90IbrYrZWbYOokHDIDsPRf1Vu9Jq.HVdVQGIj6wZ6b1otOeKUnNL.j
- O.YhM6uLoQNB3abxnKc8sRDc4FmE5pNSmEl5Gyaqd3GTkOeQKC0jGP0cau86KsNTeXq230CBelF0
- uk6i9P9U_6cJn8pTlr8ZC34OdQvU5MqjulY.2kBff.adOVBQlV6iFbX5yn6swLfCcX20YrN3Yr5R
- LyrHRgmQMPWAX7w16FyN30PcS6zhbXmh5rSRurR03ztl866zJ_v0OZMXeqglJniBSB4H3Xnyb_Wf
- pbkak591A24OGcLiJQFusmapuag8Phxrdk8l_wbQ_kEsqGdp6Vd4obj1Jdp09n7zsBAAsCU7ywVu
- y5W0G.RardguAdzIskMpEkaumZHHX5xxiHgSWyvuk6OeJ7RLcYjdaKCVu8z2zZrC3Ups2S628tuL
- nanM6vLEHInpUC54E7EGLw6JiNaKd5katjcRxlAAMlTQxeMGs5zRNano2Ief0qveTnhSyDKQEOkx
- ad_0bO9l8vP7qqb3gEM3gjUQY2rHX5xYEeoeK5gq7iM65Enk5sh5lRWkClCRkYL68J23lmUgLPdF
- NiPuM8pc_Rsvgio6wwztDuLD9DMNc3WeJB3AGNMbpdATSnnb5JgfoH7nrNwoIDCViCmOZFIdq52H
- kkOUwDjBp9r8ToUJ7yFp1q7YpzrxHy75fuAaOOm4WZBzV.WST1y.MOBhtBm34js0ZobvdcmvVUr9
- h7B3S2LsPWkrfSk2LFdqUzzDV2ZhyhIA8yuAlA6ZVM.a82Ope7nLgPSTtVAh6mr57loLlHzW_2U4
- zgAfC42XETBZSeKQKYnU2el2DSJA41hlwr3eVZc343US.PxyQEhCKnA7VTDsd5DkFx25e3m0ZyZo
- g24ro0J54ExMci6dzdSlqNZw2R5I.N9MJi7Pl1Aha9C4.W5woCluMCB0cwGTFuNWRlhw-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Mon, 2 Mar 2020 12:58:34 +0000
-Date:   Mon, 2 Mar 2020 12:58:31 +0000 (UTC)
-From:   Jak Abdullah mishail <mishailjakabdullah397@gmail.com>
-Reply-To: mishailjakabdullah@gmail.com
-Message-ID: <1967107543.2106198.1583153911376@mail.yahoo.com>
-Subject: I NEED YOUR ASSISTANCE AND CO-OPERATION TO INVEST IN YOUR COUNTRY,
+        Mon, 2 Mar 2020 08:01:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583154072;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vFEYElovxs1he3jW2L/2OIMoWJCYaK4R5aZbj7powQE=;
+        b=DOBQYN/nO1B99/m2vL4RH2ddwwn+T3Q5sZPL4wjzlUzY73bkg2G9lZSOSKfUmO9WLqJvtw
+        m4PY+B2iMIGi9k2SoaW8TnISiwrcF3nisZMQIW1gUm+sPCEy7snQoHH4VJNtvMiSKwVAI8
+        lviySL18v8A5avqAmXu16ExE3+lUdxQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-115-mGqsF8LtPxKFCUSTL0Dxww-1; Mon, 02 Mar 2020 08:01:11 -0500
+X-MC-Unique: mGqsF8LtPxKFCUSTL0Dxww-1
+Received: by mail-wr1-f69.google.com with SMTP id y28so5727039wrd.23
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:01:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=vFEYElovxs1he3jW2L/2OIMoWJCYaK4R5aZbj7powQE=;
+        b=KuQEYxakWtH/LCOxlGY6UZtxcvQyDr5+lsnoOFm+meXPVu60/LAdkFX/obamCRda4B
+         2D43oC/eg90bYl2tmE7esgEUMd8Qv/aFQJlsmX/YdOGTTKrUrz5UK0fE27Lng1uX0RXY
+         Gkruj+pgCYHlU/QVZVwmm66TRN9daqp0L3/qpYTaasLD94v41evo0GVPhNTEAcb5pufE
+         JQoW3mMo1whO631nRaxTKk8kEcFixTiqlrpYlGpEer4VGh7+uLSRwidD2LDRAn5zy9AM
+         MkdHO/Z3dJ5DWv1cJsDydF52j8QNpXWr6AGLedn8AaZclkLnKCZzBCm+hcvjltu5AzI+
+         M5og==
+X-Gm-Message-State: APjAAAUo7j4/rEDn820dunztCBeQoRDRNQ1SMKXdrSi+uOlG6irw9Bly
+        UtNnipWp5G4uyrqm1nXJvZClbqkl7LUMUWieiP0YQkZ9NBzB8ywSpltsK5mZm0R5SGouVQeVDmH
+        JTwBEDgfWntuVHW7OpeL6behT
+X-Received: by 2002:a05:600c:251:: with SMTP id 17mr19492297wmj.59.1583154068053;
+        Mon, 02 Mar 2020 05:01:08 -0800 (PST)
+X-Google-Smtp-Source: APXvYqytInT/vs8uW+zSLol0sFtoMeXPxy5TDYEfalNY4crz/GnJg2mECfgk9LJfq+x+gQ9Zc8kXIg==
+X-Received: by 2002:a05:600c:251:: with SMTP id 17mr19492281wmj.59.1583154067821;
+        Mon, 02 Mar 2020 05:01:07 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id i204sm16306020wma.44.2020.03.02.05.01.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 05:01:07 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v3] KVM: X86: Just one leader to trigger kvmclock sync request
+In-Reply-To: <1582859921-11932-1-git-send-email-wanpengli@tencent.com>
+References: <1582859921-11932-1-git-send-email-wanpengli@tencent.com>
+Date:   Mon, 02 Mar 2020 14:01:06 +0100
+Message-ID: <87lfoihpwt.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-References: <1967107543.2106198.1583153911376.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15302 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:47.0) Gecko/20100101 Firefox/47.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greeting,
+Wanpeng Li <kernellwp@gmail.com> writes:
 
-My Name is Mr.Jak Abdullah mishail from Damascus Syria, and I am now resign=
-ed from the government. I am a member of an opposition party goverment in S=
-yria and a business man also,
+> From: Wanpeng Li <wanpengli@tencent.com>
+>
+> In the progress of vCPUs creation, it queues a kvmclock sync worker to the global
+> workqueue before each vCPU creation completes. The workqueue subsystem guarantees 
+> not to queue the already queued work, however, we can make the logic more clear by 
+> make just one leader to trigger this kvmclock sync request and save on cacheline 
+> boucing due to test_and_set_bit.
+>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v2 -> v3:
+>  * update patch description
+> v1 -> v2:
+>  * check vcpu->vcpu_idx
+>
+>  arch/x86/kvm/x86.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index fb5d64e..79bc995 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -9390,8 +9390,9 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+>  	if (!kvmclock_periodic_sync)
+>  		return;
+>  
+> -	schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
+> -					KVMCLOCK_SYNC_PERIOD);
+> +	if (vcpu->vcpu_idx == 0)
+> +		schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
+> +						KVMCLOCK_SYNC_PERIOD);
 
-I need a foreign partner to enable me transport my investment capital and t=
-hen Relocate with my family, honestly I wish I will discuss more and get al=
-ong I need a partner because my investment capital is in my international a=
-ccount. Am interested in buying Properties, houses, building real estates a=
-nd some tourist places, my capital for investment is ($16.5 million USD) Me=
-anwhile if there is any profitable investment that you have so much experie=
-nce on it then we can join together as partners since I=E2=80=99m a foreign=
-er.
+I would've merged this new check with !kvmclock_periodic_sync above
+making it more obvious when the work is scheduled
 
-I came across your e-mail contact through private search while in need of y=
-our assistance and I decided to contact you directly to ask you if you know=
- any Lucrative Business Investment in your Country I can invest my Money si=
-nce my Country Syria Security and Economic Independent has lost to the Grea=
-test Lower level, and our Culture has lost forever including our happiness =
-has been taken away from us. Our Country has been on fire for many years no=
-w.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 5de200663f51..93550976f991 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9389,11 +9389,9 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ 
+        mutex_unlock(&vcpu->mutex);
+ 
+-       if (!kvmclock_periodic_sync)
+-               return;
+-
+-       schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
+-                                       KVMCLOCK_SYNC_PERIOD);
++       if (vcpu->vcpu_idx == 0 && kvmclock_periodic_sync)
++               schedule_delayed_work(&kvm->arch.kvmclock_sync_work,
++                                     KVMCLOCK_SYNC_PERIOD);
+ }
 
-If you are capable of handling this business Contact me for more details i =
-will appreciate it if you can contact me immediately.
-You may as well tell me little more about yourself. Contact me urgently to =
-enable us proceed with the business.
+>  }
+>  
+>  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
 
-I will be waiting for your respond.
+With or without the change mentioned above,
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Sincerely Yours,
+-- 
+Vitaly
 
-Jak Abdullah mishail
