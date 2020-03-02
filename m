@@ -2,179 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 368F3175C6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC5B175C36
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:52:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgCBNyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:54:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53112 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727101AbgCBNyz (ORCPT
+        id S1727328AbgCBNwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:52:25 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55030 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbgCBNwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:54:55 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022DpRn5138752
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Mar 2020 08:54:53 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfhs3pm4q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 08:54:53 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 2 Mar 2020 13:54:50 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Mar 2020 13:54:47 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022Dskmq57475226
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 13:54:46 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 37EC64C046;
-        Mon,  2 Mar 2020 13:54:46 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1642B4C050;
-        Mon,  2 Mar 2020 13:54:45 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.148.207.124])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  2 Mar 2020 13:54:44 +0000 (GMT)
-Date:   Mon, 2 Mar 2020 15:54:43 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Will Deacon <will@kernel.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        suzuki.poulose@arm.com, Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: Linux-next-20200302: arm64 build failed
-References: <CA+G9fYtAM-m0jygud+i0ymU+XknV9_GcAbDQChiD2NZjvQ+D3w@mail.gmail.com>
- <20200302104726.GA7995@willie-the-truck>
+        Mon, 2 Mar 2020 08:52:22 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 022DqLw2020144;
+        Mon, 2 Mar 2020 07:52:21 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583157141;
+        bh=OniR4A38TlbDu0vyPO11NY3qXmfOa8ulyGuImR5VXtA=;
+        h=From:To:CC:Subject:Date;
+        b=RSD4snGVhzz43neG1Xf7P/dEGpStursTYKqif5GbaGWnFud6iAgXvRrgRPPT96lnd
+         LjBbF4kqekPBdF6hg6JpzV8Hk6MNfjB8tE5Q41gdOH9c9xz+f91+EOm8/3ik9W1kw3
+         MGlZpViTAqJBDjsT9+LHsMC6sY8MafAOO4+AMcJ4=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 022DqLUL014751
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Mar 2020 07:52:21 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Mar
+ 2020 07:52:21 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 2 Mar 2020 07:52:20 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 022DqKgB014616;
+        Mon, 2 Mar 2020 07:52:20 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Benoit Parrot <bparrot@ti.com>, stable <stable@vger.kernel.org>
+Subject: [Patch 1/1] media: ti-vpe: cal: fix disable_irqs to only the intended target
+Date:   Mon, 2 Mar 2020 07:56:52 -0600
+Message-ID: <20200302135652.9365-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302104726.GA7995@willie-the-truck>
-X-TM-AS-GCONF: 00
-x-cbid: 20030213-0020-0000-0000-000003AF9840
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030213-0021-0000-0000-00002207C383
-Message-Id: <20200302135443.GA24831@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_04:2020-03-02,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
- suspectscore=5 clxscore=1015 bulkscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2003020101
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 10:47:27AM +0000, Will Deacon wrote:
-> [+Anshuman and Catalin]
-> 
-> On Mon, Mar 02, 2020 at 01:58:26PM +0530, Naresh Kamboju wrote:
-> > Linux-Next 20200302 arm64 build failed due to below errors,
-> > Suspecting patch causing this build break.
-> > 
-> > 87d900aef3e2  arm/arm64: add support for folded p4d page tables
-> > 
-> > Error log,
-> > -------------
-> > arch/arm64/mm/mmu.c: In function 'unmap_hotplug_pud_range':
-> > include/linux/compiler.h:284:1: error: incompatible type for argument
-> > 1 of 'p4d_page_paddr'
-> >  ({         \
-> >  ^
-> > arch/arm64/include/asm/memory.h:270:45: note: in definition of macro
-> > '__phys_to_virt'
-> >  #define __phys_to_virt(x) ((unsigned long)((x) - physvirt_offset))
-> >                                              ^
-> > arch/arm64/include/asm/pgtable.h:629:42: note: in expansion of macro '__va'
-> >  #define pud_offset(dir, addr)  ((pud_t *)__va(pud_offset_phys((dir), (addr))))
-> >                                           ^~~~
-> > include/linux/compiler.h:293:22: note: in expansion of macro '__READ_ONCE'
-> >  #define READ_ONCE(x) __READ_ONCE(x, 1)
-> >                       ^~~~~~~~~~~
-> > arch/arm64/include/asm/pgtable.h:628:52: note: in expansion of macro 'READ_ONCE'
-> >  #define pud_offset_phys(dir, addr) (p4d_page_paddr(READ_ONCE(*(dir)))
-> > + pud_index(addr) * sizeof(pud_t))
-> >                                                     ^~~~~~~~~
-> > arch/arm64/include/asm/pgtable.h:629:47: note: in expansion of macro
-> > 'pud_offset_phys'
-> >  #define pud_offset(dir, addr)  ((pud_t *)__va(pud_offset_phys((dir), (addr))))
-> >                                                ^~~~~~~~~~~~~~~
-> > arch/arm64/mm/mmu.c:827:10: note: in expansion of macro 'pud_offset'
-> >    pudp = pud_offset(pgdp, addr);
-> >           ^~~~~~~~~~
-> 
-> Looks like we need an implementation of unmap_hotplug_p4d_range() to
-> walk the dummy p4d level. Unfortunately, we don't have the folded p4d
-> patches in the arm64 tree so we'll either need a common branch or the
-> hotplug patches will need to be dropped for the moment.
+disable_irqs() was mistakenly disabling all interrupts when called.
+This cause all port stream to stop even if only stopping one of them.
 
-unmap_hotplug_p4d_range() is easy :)
-
-From c7a5d08ff51ca2057b6b0289c4423bdfd7643518 Mon Sep 17 00:00:00 2001
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Mon, 2 Mar 2020 15:53:17 +0200
-Subject: [PATCH] arm64/mm: implement unmap_hotplug_p4d_range
-
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
 ---
- arch/arm64/mm/mmu.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ drivers/media/platform/ti-vpe/cal.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 05ec8e5f1436..c76b11577558 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -840,6 +840,24 @@ static void unmap_hotplug_pud_range(pgd_t *pgdp, unsigned long addr,
- 	} while (addr = next, addr < end);
- }
+diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+index 6e009e479be3..6d4cbb8782ed 100644
+--- a/drivers/media/platform/ti-vpe/cal.c
++++ b/drivers/media/platform/ti-vpe/cal.c
+@@ -722,16 +722,16 @@ static void enable_irqs(struct cal_ctx *ctx)
  
-+static void unmap_hotplug_p4d_range(pgd_t *pgd, unsigned long addr,
-+				unsigned long end, bool free_mapped)
-+{
-+	unsigned long next;
-+	pgd_t *p4dp, p4d;
-+
-+	do {
-+		next = p4d_addr_end(addr, end);
-+		p4dp = p4d_offset(pgd, addr);
-+		p4d = READ_ONCE(*p4dp);
-+		if (p4d_none(p4d))
-+			continue;
-+
-+		WARN_ON(!p4d_present(p4d));
-+		unmap_hotplug_pud_range(p4dp, addr, next, free_mapped);
-+	} while (addr = next, addr < end);
-+}
-+
- static void unmap_hotplug_range(unsigned long addr, unsigned long end,
- 				bool free_mapped)
+ static void disable_irqs(struct cal_ctx *ctx)
  {
-@@ -854,7 +872,7 @@ static void unmap_hotplug_range(unsigned long addr, unsigned long end,
- 			continue;
- 
- 		WARN_ON(!pgd_present(pgd));
--		unmap_hotplug_pud_range(pgdp, addr, next, free_mapped);
-+		unmap_hotplug_p4d_range(pgdp, addr, next, free_mapped);
- 	} while (addr = next, addr < end);
++	u32 val;
++
+ 	/* Disable IRQ_WDMA_END 0/1 */
+-	reg_write_field(ctx->dev,
+-			CAL_HL_IRQENABLE_CLR(2),
+-			CAL_HL_IRQ_CLEAR,
+-			CAL_HL_IRQ_MASK(ctx->csi2_port));
++	val = 0;
++	set_field(&val, CAL_HL_IRQ_CLEAR, CAL_HL_IRQ_MASK(ctx->csi2_port));
++	reg_write(ctx->dev, CAL_HL_IRQENABLE_CLR(2), val);
+ 	/* Disable IRQ_WDMA_START 0/1 */
+-	reg_write_field(ctx->dev,
+-			CAL_HL_IRQENABLE_CLR(3),
+-			CAL_HL_IRQ_CLEAR,
+-			CAL_HL_IRQ_MASK(ctx->csi2_port));
++	val = 0;
++	set_field(&val, CAL_HL_IRQ_CLEAR, CAL_HL_IRQ_MASK(ctx->csi2_port));
++	reg_write(ctx->dev, CAL_HL_IRQENABLE_CLR(3), val);
+ 	/* Todo: Add VC_IRQ and CSI2_COMPLEXIO_IRQ handling */
+ 	reg_write(ctx->dev, CAL_CSI2_VC_IRQENABLE(1), 0);
  }
- 
 -- 
-2.21.1
-
- 
-> Will
-
--- 
-Sincerely yours,
-Mike.
+2.17.1
 
