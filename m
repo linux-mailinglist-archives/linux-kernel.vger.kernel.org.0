@@ -2,204 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80C6B176424
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F25E117642D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:41:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgCBTie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:38:34 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:41060 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbgCBTid (ORCPT
+        id S1726791AbgCBTl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:41:29 -0500
+Received: from smtprelay0047.hostedemail.com ([216.40.44.47]:58237 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725911AbgCBTl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:38:33 -0500
-Received: by mail-vk1-f196.google.com with SMTP id y201so157267vky.8
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 11:38:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j8R94pKpSXXzNdiY8Ys1MGj7S3neBSM+zNRuq7e9bYE=;
-        b=sCVmdcxblem1m25P0lhvWYwWlDFaainwSHrH5z0x63X48b3ZgW3TVWoA95efBblsYT
-         o3PloGAse+JhcX//zcy14pQ9b1UZNEB5a2gIob744q2cK0Osf8QtUF8tUMIQnMf30iuI
-         d6MpkUq5Yk3WwkJxOQOx3ztAIgdTmSizC+7lp/8J0rXe7dEAkysizrF+uBisE09IUtDG
-         oN0iWCHpyFzJY7OUN0iiG1LivpR3o8fEJ5V8OLj4eAWkNLtJ3hoC0OiSX512iO48lSLa
-         H+74KuzS39Wbca+rIJ14Pyqd7A/ZoRbywPvLR7DHRWkW2FqxQCGszA+aWNuFXqBrqxZ2
-         jk/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j8R94pKpSXXzNdiY8Ys1MGj7S3neBSM+zNRuq7e9bYE=;
-        b=p4rpT/pyiRj2Tr67FyzhZno3cMJVUQ6K3ZYkuMv/GUQz4pe9LjfwNliXQrl5z9mm1X
-         7/lM+WipiSZUjGjfVtAzRFkJIY9GvTtG72scDpQCndt06jqQk1WEMNukgDPCeC066bxS
-         grLmQMlrG1QXw8fGWSVdKeLYVpVWCNJ6AgoylBQWbLLLn3lpe7RJGQXKuYlm7rtB9Tq9
-         V7m60SfKTJ21T2vI4VXFob14uJBFsVFCD/5zIqC7k3DLbEb8Bm0kh1KujBMSZ8lcl1vl
-         J2YsipMJHutVw7VUzWUGikETrcrhPegDV+nfYp04W36D6VvYp4OOJtec1Ec7WvZ2EHMr
-         WPpQ==
-X-Gm-Message-State: ANhLgQ0vOW2Hq/0DiKaJXtuGsICwYPr5N83TJf5NMUpvK7xmi9QznaaL
-        EZNc2jtqJ+6yQ2pkNDLcrMbVJAIB2aueB7pTUgAXbg==
-X-Google-Smtp-Source: ADFU+vtGpbwJCJKSGTODLk1NdLLLqodSei6LUwoMrjE1vMlgz2R8nEU56d0H0ZHvSZ5s5xFk82XPCRrc+qE7d00ww4Y=
-X-Received: by 2002:ac5:c914:: with SMTP id t20mr813628vkl.37.1583177911680;
- Mon, 02 Mar 2020 11:38:31 -0800 (PST)
+        Mon, 2 Mar 2020 14:41:29 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 8FB63180A813D;
+        Mon,  2 Mar 2020 19:41:27 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:5007:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21433:21611:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: fear94_c98062e1a951
+X-Filterd-Recvd-Size: 2203
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  2 Mar 2020 19:41:26 +0000 (UTC)
+Message-ID: <ff833cf6a9a489ff446910c85e2a56ff1c11ccb4.camel@perches.com>
+Subject: Re: [PATCH 2/7] parport: Use more comon logging styles
+From:   Joe Perches <joe@perches.com>
+To:     Helge Deller <deller@gmx.de>, Randy Dunlap <rdunlap@infradead.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 02 Mar 2020 11:39:53 -0800
+In-Reply-To: <b4a4f5a8-9ff0-e3d3-93c9-260a11cdb439@gmx.de>
+References: <cover.1582878393.git.joe@perches.com>
+         <1da80f696e3602cc2533988b20f9a47cd42db1c4.1582878394.git.joe@perches.com>
+         <b4a4f5a8-9ff0-e3d3-93c9-260a11cdb439@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <20200219014433.88424-1-minchan@kernel.org> <20200219014433.88424-6-minchan@kernel.org>
- <CAJuCfpE_T1UG_eSQMa6y7n0GXQBOQ8sE=0fcWmSo2ZhHoj4mCg@mail.gmail.com> <20200302192328.GB234476@google.com>
-In-Reply-To: <20200302192328.GB234476@google.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 2 Mar 2020 11:38:20 -0800
-Message-ID: <CAJuCfpHUp7z9wo+rv-+_W9iMupTf41ZJJncZccW4dsiewu7MFA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/7] mm: support both pid and pidfd for process_madvise
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
-        oleksandr@redhat.com, Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>, sj38.park@gmail.com,
-        alexander.h.duyck@linux.intel.com, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 11:23 AM Minchan Kim <minchan@kernel.org> wrote:
->
-> On Fri, Feb 28, 2020 at 02:41:07PM -0800, Suren Baghdasaryan wrote:
-> > On Tue, Feb 18, 2020 at 5:44 PM Minchan Kim <minchan@kernel.org> wrote:
-> > >
-> > > There is a demand[1] to support pid as well pidfd for process_madvise
-> > > to reduce unnecessary syscall to get pidfd if the user has control of
-> > > the target process(ie, they could guarantee the process is not gone
-> > > or pid is not reused. Or, it might be okay to give a hint to wrong
-> > > process).
-> >
-> > nit: When would "give a hint to wrong process" be ok? I would just
-> > remove this part.
->
-> I wanted to say non destructive hints. It's already true for other
-> some hints because they are just best effort so it's not critical
-> to be failed. If you mind it, I will remove the phrase.
+On Mon, 2020-03-02 at 20:29 +0100, Helge Deller wrote:
+> On 28.02.20 09:32, Joe Perches wrote:
+> > Some of the logging can be poorly formatted because of unexpected
+> > line breaks given printks without KERN_CONT that should be pr_cont.
+[]
+> > diff --git a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
+[]
+> > @@ -238,14 +238,14 @@ struct parport *parport_gsc_probe_port(unsigned long base,
+> > 
+> >  	priv = kzalloc (sizeof (struct parport_gsc_private), GFP_KERNEL);
+> >  	if (!priv) {
+> > -		printk (KERN_DEBUG "parport (0x%lx): no memory!\n", base);
+> > +		printk(KERN_DEBUG "parport (0x%lx): no memory!\n", base);
+> 
+> pr_warn() instead?
 
-Up to you, or maybe call it a "non-fatal" error? Saying that it's ok
-to hint a wrong process sounds wrong to me.
+For all of your remarks, the intent here is to keep the
+same output.
 
->
-> Thanks.
->
-> >
-> > >
-> > > This patch aims for supporting both options like waitid(2). So, the
-> > > syscall is currently,
-> > >
-> > >         int process_madvise(int which, pid_t pid, void *addr,
-> > >                 size_t length, int advise, unsigned long flag);
-> > >
-> > > @which is actually idtype_t for userspace libray and currently,
-> > > it supports P_PID and P_PIDFD.
-> > >
-> > > [1]  https://lore.kernel.org/linux-mm/9d849087-3359-c4ab-fbec-859e8186c509@virtuozzo.com/
-> > >
-> > > Cc: Christian Brauner <christian@brauner.io>
-> > > Suggested-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> > > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> > > ---
-> > >  include/linux/syscalls.h |  3 ++-
-> > >  mm/madvise.c             | 34 ++++++++++++++++++++++------------
-> > >  2 files changed, 24 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> > > index e4cd2c2f8bb4..f5ada20e2943 100644
-> > > --- a/include/linux/syscalls.h
-> > > +++ b/include/linux/syscalls.h
-> > > @@ -876,7 +876,8 @@ asmlinkage long sys_munlockall(void);
-> > >  asmlinkage long sys_mincore(unsigned long start, size_t len,
-> > >                                 unsigned char __user * vec);
-> > >  asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
-> > > -asmlinkage long sys_process_madvise(int pidfd, unsigned long start,
-> > > +
-> > > +asmlinkage long sys_process_madvise(int which, pid_t pid, unsigned long start,
-> > >                         size_t len, int behavior, unsigned long flags);
-> > >  asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
-> > >                         unsigned long prot, unsigned long pgoff,
-> > > diff --git a/mm/madvise.c b/mm/madvise.c
-> > > index def1507c2030..f6d9b9e66243 100644
-> > > --- a/mm/madvise.c
-> > > +++ b/mm/madvise.c
-> > > @@ -1182,11 +1182,10 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
-> > >         return do_madvise(current, current->mm, start, len_in, behavior);
-> > >  }
-> > >
-> > > -SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
-> > > +SYSCALL_DEFINE6(process_madvise, int, which, pid_t, upid, unsigned long, start,
-> > >                 size_t, len_in, int, behavior, unsigned long, flags)
-> > >  {
-> > >         int ret;
-> > > -       struct fd f;
-> > >         struct pid *pid;
-> > >         struct task_struct *task;
-> > >         struct mm_struct *mm;
-> > > @@ -1197,20 +1196,31 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
-> > >         if (!process_madvise_behavior_valid(behavior))
-> > >                 return -EINVAL;
-> > >
-> > > -       f = fdget(pidfd);
-> > > -       if (!f.file)
-> > > -               return -EBADF;
-> > > +       switch (which) {
-> > > +       case P_PID:
-> > > +               if (upid <= 0)
-> > > +                       return -EINVAL;
-> > > +
-> > > +               pid = find_get_pid(upid);
-> > > +               if (!pid)
-> > > +                       return -ESRCH;
-> > > +               break;
-> > > +       case P_PIDFD:
-> > > +               if (upid < 0)
-> > > +                       return -EINVAL;
-> > >
-> > > -       pid = pidfd_pid(f.file);
-> > > -       if (IS_ERR(pid)) {
-> > > -               ret = PTR_ERR(pid);
-> > > -               goto fdput;
-> > > +               pid = pidfd_get_pid(upid);
-> > > +               if (IS_ERR(pid))
-> > > +                       return PTR_ERR(pid);
-> > > +               break;
-> > > +       default:
-> > > +               return -EINVAL;
-> > >         }
-> > >
-> > >         task = get_pid_task(pid, PIDTYPE_PID);
-> > >         if (!task) {
-> > >                 ret = -ESRCH;
-> > > -               goto fdput;
-> > > +               goto put_pid;
-> > >         }
-> > >
-> > >         mm = mm_access(task, PTRACE_MODE_ATTACH_FSCREDS);
-> > > @@ -1223,7 +1233,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
-> > >         mmput(mm);
-> > >  release_task:
-> > >         put_task_struct(task);
-> > > -fdput:
-> > > -       fdput(f);
-> > > +put_pid:
-> > > +       put_pid(pid);
-> > >         return ret;
-> > >  }
-> > > --
-> > > 2.25.0.265.gbab2e86ba0-goog
-> > >
-> >
-> > Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Logging level changes and printk(KERN_DEBUG -> pr_debug(
+conversions cause the dmesg output to be different.
+
+	printk(KERN_DEBUG...)
+
+is always emitted when the console level allows but
+
+	pr_debug(...)
+
+is not normally compiled in at all.
+
+So it's possible for all printk(KERN_DEBUG to be pr_debug
+but that causes no logging at all to be emitted when
+DEBUG is not defined or CONFIG_DYNAMIC_DEBUG not enabled.
+
+
