@@ -2,144 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5BC717564A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26AA8175643
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbgCBItq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:49:46 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:56956 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgCBItp (ORCPT
+        id S1727477AbgCBIre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:47:34 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:21353 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726887AbgCBIre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:49:45 -0500
-Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1j8gjL-0001os-3D; Mon, 02 Mar 2020 02:47:15 -0600
-Message-ID: <7f608c18250c509ff091990d4bb460846fae11a0.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Jason Yan <yanaijie@huawei.com>, Daniel Axtens <dja@axtens.net>,
-        mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        diana.craciun@nxp.com, christophe.leroy@c-s.fr,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com,
-        me@tobin.cc
-Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
-Date:   Mon, 02 Mar 2020 02:47:13 -0600
-In-Reply-To: <17658c2b-9eb8-cee9-e9a2-93d316a401b1@huawei.com>
-References: <20200206025825.22934-1-yanaijie@huawei.com>
-         <87tv3drf79.fsf@dja-thinkpad.axtens.net>
-         <8171d326-5138-4f5c-cff6-ad3ee606f0c2@huawei.com>
-         <e8cd8f287934954cfa07dcf76ac73492e2d49a5b.camel@buserror.net>
-         <dd8db870-b607-3f74-d3bc-a8d9f33f9852@huawei.com>
-         <4c0e7fec63dbc7b91fa6c24692c73c256c131f51.camel@buserror.net>
-         <188971ed-f1c4-39b3-c07e-89cc593d88d7@huawei.com>
-         <530c49dfd97c811dc53ffc78c594d7133f7eb1e9.camel@buserror.net>
-         <35e6c660-3896-bdb8-45f3-c1504aa2171f@huawei.com>
-         <31b5966ba579ef246176a7d8ad18c2c02788dd27.camel@buserror.net>
-         <17658c2b-9eb8-cee9-e9a2-93d316a401b1@huawei.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: yanaijie@huawei.com, dja@axtens.net, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com, christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, keescook@chromium.org, kernel-hardening@lists.openwall.com, me@tobin.cc, linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+        Mon, 2 Mar 2020 03:47:34 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583138853; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=wmVI700tbQq6+iaWrtHBd6KzHd/LvL94inrgBbMCajQ=; b=aEquvtIabK/tsD20675Xgj2Gqwqz/QgwbgZX7ak7FxeNNGjrF6GTI8Y8Ba2S9wyilwNrZ9fL
+ eYrEFrZ33eqvhFoqgsOdwB863ud8HiVuw1aWjJ9BUJ6PYxcRD7UFT8tB8ueh1L8u/f1i1xUf
+ YqDJbT7mqd16W//ARZ+s598ttK0=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e5cc824.7f6d358dbb20-smtp-out-n03;
+ Mon, 02 Mar 2020 08:47:32 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CD535C433A2; Mon,  2 Mar 2020 08:47:31 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
-        *      this recipient and sender
-Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: smasetty)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F1A02C43383;
+        Mon,  2 Mar 2020 08:47:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F1A02C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
+From:   Sharat Masetty <smasetty@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jcrouse@codeaurora.org,
+        Sharat Masetty <smasetty@codeaurora.org>
+Subject: [PATCH] drm: msm: a6x: Disable interrupts before recovery
+Date:   Mon,  2 Mar 2020 14:17:16 +0530
+Message-Id: <1583138836-20807-1-git-send-email-smasetty@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-03-02 at 15:12 +0800, Jason Yan wrote:
-> 
-> 在 2020/3/2 11:24, Scott Wood 写道:
-> > On Mon, 2020-03-02 at 10:17 +0800, Jason Yan wrote:
-> > > 
-> > > 在 2020/3/1 6:54, Scott Wood 写道:
-> > > > On Sat, 2020-02-29 at 15:27 +0800, Jason Yan wrote:
-> > > > > 
-> > > > > Turnning to %p may not be a good idea in this situation. So
-> > > > > for the REG logs printed when dumping stack, we can disable it when
-> > > > > KASLR is open. For the REG logs in other places like show_regs(),
-> > > > > only
-> > > > > privileged can trigger it, and they are not combind with a symbol,
-> > > > > so
-> > > > > I think it's ok to keep them.
-> > > > > 
-> > > > > diff --git a/arch/powerpc/kernel/process.c
-> > > > > b/arch/powerpc/kernel/process.c
-> > > > > index fad50db9dcf2..659c51f0739a 100644
-> > > > > --- a/arch/powerpc/kernel/process.c
-> > > > > +++ b/arch/powerpc/kernel/process.c
-> > > > > @@ -2068,7 +2068,10 @@ void show_stack(struct task_struct *tsk,
-> > > > > unsigned
-> > > > > long *stack)
-> > > > >                    newsp = stack[0];
-> > > > >                    ip = stack[STACK_FRAME_LR_SAVE];
-> > > > >                    if (!firstframe || ip != lr) {
-> > > > > -                       printk("["REG"] ["REG"] %pS", sp, ip, (void
-> > > > > *)ip);
-> > > > > +                       if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
-> > > > > +                               printk("%pS", (void *)ip);
-> > > > > +                       else
-> > > > > +                               printk("["REG"] ["REG"] %pS", sp,
-> > > > > ip,
-> > > > > (void *)ip);
-> > > > 
-> > > > This doesn't deal with "nokaslr" on the kernel command line.  It also
-> > > > doesn't
-> > > > seem like something that every callsite should have to opencode,
-> > > > versus
-> > > > having
-> > > > an appropriate format specifier behaves as I described above (and I
-> > > > still
-> > > > don't see why that format specifier should not be "%p").
-> > > > 
-> > > 
-> > > Actually I still do not understand why we should print the raw value
-> > > here. When KALLSYMS is enabled we have symbol name  and  offset like
-> > > put_cred_rcu+0x108/0x110, and when KALLSYMS is disabled we have the raw
-> > > address.
-> > 
-> > I'm more concerned about the stack address for wading through a raw stack
-> > dump
-> > (to find function call arguments, etc).  The return address does help
-> > confirm
-> > that I'm on the right stack frame though, and also makes looking up a line
-> > number slightly easier than having to look up a symbol address and then
-> > add
-> > the offset (at least for non-module addresses).
-> > 
-> > As a random aside, the mismatch between Linux printing a hex offset and
-> > GDB
-> > using decimal in disassembly is annoying...
-> > 
-> 
-> OK, I will send a RFC patch to add a new format specifier such as "%pk" 
-> or change the exsiting "%pK" to print raw value of addresses when KASLR 
-> is disabled and print hash value of addresses when KASLR is enabled. 
-> Let's see what the printk guys would say :)
+This patch disables interrupts in the GPU RBBM hang detect fault handler
+before going to recovery.
 
-I'm not sure that a new format specifier is needed versus changing the
-behavior of "%p", and "%pK" definitely doesn't seem suitable given that it's
-intended to be more restricted than "%p" (see commit ef0010a30935de4).  The
-question is whether there is a legitimate reason to hash in the absence of
-kaslr.
+Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--Scott
-
-
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index dc8ec2c..4dd0f62 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -676,6 +676,9 @@ static void a6xx_fault_detect_irq(struct msm_gpu *gpu)
+ 		gpu_read64(gpu, REG_A6XX_CP_IB2_BASE, REG_A6XX_CP_IB2_BASE_HI),
+ 		gpu_read(gpu, REG_A6XX_CP_IB2_REM_SIZE));
+ 
++	/* Disable interrupts before going for a recovery*/
++	gpu_write(gpu, REG_A6XX_RBBM_INT_0_MASK, 0);
++
+ 	/* Turn off the hangcheck timer to keep it from bothering us */
+ 	del_timer(&gpu->hangcheck_timer);
+ 
+-- 
+1.9.1
