@@ -2,124 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13769175CF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9525175CFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbgCBOZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 09:25:47 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54728 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbgCBOZr (ORCPT
+        id S1727181AbgCBO11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 09:27:27 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33524 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727075AbgCBO11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:25:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id z12so11404441wmi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 06:25:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sgAEKJwQB8Gv3iov0wsQWnGh6y5ovJv8PBH/21hvauM=;
-        b=usYcQwmxMZHE9zWt+Wbda0uEYUct6SDSbr90Px4RGOZFaowiN3Uq9L8K4ijB1dMFlP
-         r3vFqQ4FO5d2AFOd0tto/SAnmdnug0T1U8Vy0tHmjhwOez2zzWL3R+Y0JOmVkRwOf+QL
-         M91LEPgaMATwf/DtIWTUB9PS8WHJ+ybLunoeDvfYtJb23HIDrHBxQdgVg9cqunUPlwsO
-         5ZlHbt9rxqKCaXrO8PK6QPmUkWkCoc7v0R26RKTQFX67wgZVnqW8txCZDXhIzzii492B
-         M9kMHmMQOTmJTp0j/jMd27Pb+SHRLYRBLDpygWCGiLQtGYjMlpnYFpEV7xO3xzcICi9N
-         14Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sgAEKJwQB8Gv3iov0wsQWnGh6y5ovJv8PBH/21hvauM=;
-        b=uDl0fu1V/1/1lL/8RoAkxhAF8ODo38H5RoQ6Crh0NvqQ16QEwkbWTKOHRf19BZ6HYh
-         DPjD1IjNxY8fN/4qZdZuV14aEksx7VdXWMhYar5me50cw0KT1yCJGtoOFHFCwAW3hlvI
-         1jmOytV5SNbnoX0lEb1kik+ua/K/HRtegazslAXQBS8VxY/FLSuYLj/NTY5Fgp3yy4ni
-         PjjHbdrRB6LhjbHVa8SE7LWMrysyih3qH4rmJttArricIizygiqJurwJHdGBrGJb0nq0
-         BxyLJBuB5oi5icQ/OE0uZP1RDZFoQRwKcBh3wzJKDkjWf7+pNt9H5TsDbC9tIjJ9ilkR
-         Armw==
-X-Gm-Message-State: ANhLgQ3pGe/Ybj1BiTvMAyI0/VCk68EOkEYo+QQNGqYUenqaegdI1YKg
-        S9TOMZwzACnQ2j6BBC+9Inxkpw==
-X-Google-Smtp-Source: ADFU+vvHHUg7lLfZiXNvkEyvg6Amyek3SNyX4sKBx5aGr3KFE3/uWGi3Bvm1/kJennkV7lsoWhpEmA==
-X-Received: by 2002:a1c:7f87:: with SMTP id a129mr9205826wmd.160.1583159145606;
-        Mon, 02 Mar 2020 06:25:45 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id c2sm15935583wma.39.2020.03.02.06.25.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 06:25:45 -0800 (PST)
-Date:   Mon, 2 Mar 2020 14:26:21 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/19] platform/x86: Rework intel_scu_ipc and
- intel_pmc_ipc drivers
-Message-ID: <20200302142621.GB3494@dell>
-References: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
+        Mon, 2 Mar 2020 09:27:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583159246;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3+UBgX7eoIkK/t5w+2bDxE2KMKopb4wrJcspZOaATZ0=;
+        b=FYkFLO6yOEtrELHtwzPZxfN051bsIKYVIo8f6FXEQLbSPwt9XE/Of51g0xfuK7YFNX9QMb
+        ucUSwXsh7qNJKb0cnqFNsrOEksUO4p0ujTCZMW9W5kAJ7Wt/MabQCZo3QszaTV7kgdUTsr
+        WsjY+ehtuo/wmO9BRg+tERE5kGOXpP4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-72-_RitG97wNkGAfE8aopeJaA-1; Mon, 02 Mar 2020 09:27:12 -0500
+X-MC-Unique: _RitG97wNkGAfE8aopeJaA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DDC02107ACCC;
+        Mon,  2 Mar 2020 14:27:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D890C5D9C9;
+        Mon,  2 Mar 2020 14:27:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200302115239.pcxvej3szmricxzu@wittgenstein>
+References: <20200302115239.pcxvej3szmricxzu@wittgenstein> <96563.1582901612@warthog.procyon.org.uk> <20200228152427.rv3crd7akwdhta2r@wittgenstein> <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     dhowells@redhat.com, Florian Weimer <fweimer@redhat.com>,
+        linux-api@vger.kernel.org, viro@zeniv.linux.org.uk,
+        metze@samba.org, torvalds@linux-foundation.org, cyphar@cyphar.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <848281.1583159228.1@warthog.procyon.org.uk>
+Date:   Mon, 02 Mar 2020 14:27:08 +0000
+Message-ID: <848282.1583159228@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 02 Mar 2020, Mika Westerberg wrote:
+Christian Brauner <christian.brauner@ubuntu.com> wrote:
 
-> Hi all,
+> > AT_SYMLINK_NOFOLLOW only applies to the last pathname component anyway,
+> > so it's relatively little protection.
 > 
-> Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
-> IPC communications with minor differences. This duplication does not make
-> much sense so this series reworks the two drivers so that there is only a
-> single implementation of the SCU IPC. In addition to that the API will be
-> updated to take SCU instance pointer as an argument, and most of the
-> callers will be converted to this new API. The old API is left there but
-> the plan is to get rid the callers and then the old API as well (this is
-> something we are working with Andy Shevchenko).
-> 
-> The intel_pmc_ipc.c is then moved under MFD which suits better for this
-> kind of a driver that pretty much sets up the SCU IPC and then creates a
-> bunch of platform devices for the things sitting behind the PMC. The driver
-> is renamed to intel_pmc_bxt.c which should follow the existing conventions
-> under drivers/mfd (and it is only meant for Intel Broxton derivatives).
-> 
-> This is on top of platform-driver-x86.git/for-next branch because there is
-> already some cleanup work queued that re-organizes Kconfig and Makefile
-> entries.
-> 
-> I have tested this on Intel Joule (Broxton-M) board.
-> 
-> Changes from v6:
-> 
->   * Added Reviewed-by tag from Andy
->   * Expanded PMC, IPC and IA acronyms
->   * Drop TCO_DEVICE_NAME, PUNIT_DEVICE_NAME and TELEMETRY_DEVICE_NAME
->   * Move struct intel_pmc_dev into include/linux/mfd/intel_pmc_bxt.h
->   * Add PMC_DEVICE_MAX to the enum and use it
->   * Add kernel-docs for simplecmd_store() and northpeak_store()
->   * Use if (ret) return ret; over the ternary operator
->   * Drop "This is index X" from comments
->   * Use acpi_has_watchdog() to determine whether iTCO_wdt is added or not.
->   * Rename intel_scu_ipc_pdata -> intel_scu_ipc_data to make it less
->     confusing wrt. platform data for platform drivers.
+> So this is partially why I think it's at least worth considerings: the
+> new RESOLVE_NO_SYMLINKS flag does block all symlink resolution, not just
+> for the last component in contrast to AT_SYMLINK_NOFOLLOW. This is
+> 278121417a72d87fb29dd8c48801f80821e8f75a
 
-Any reason why you've dropped all my tags?
+That sounds like a potentially significant UAPI change.  What will that break?
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+David
+
