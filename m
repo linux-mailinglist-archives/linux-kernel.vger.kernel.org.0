@@ -2,397 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F39176372
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 260B5176363
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:02:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbgCBTIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:08:13 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:58364 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgCBTIN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:08:13 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 25a61BBHKfSEBt0787ei52j8Li18LJhSbIVdfR++kTxSS0ZFiYZ3OZy+GNFEmbWdz7A3p9amLM
- WyXAFvSSkxx2Ex8S77a5WSkwSHkkJfzwkQbZsozzW87OJbI95cBVIAp8IlXwZDQIawmh6tYupv
- Xysm7Krir2yRftqts3MzlHqwb4AeTX1XLWl0GXQWvhGnYoxqqAlWqC7lEIa5YB2Se5OjOwS9zE
- aD8hN/JaWuO7SUe0Nr0LlBhGBcwSSKYUUf+K7OPoZZcFhm0ha7csuUBYe3X3M7TUwIHPbE9R7P
- bd4=
-X-IronPort-AV: E=Sophos;i="5.70,507,1574146800"; 
-   d="scan'208";a="68560239"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Mar 2020 12:08:11 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 2 Mar 2020 11:07:59 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 2 Mar 2020 11:07:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OfOjWShQvq9wN+Af5BsBrw6zaphSzQ1+oaaTcs/mSjlxeXA9EvIzmKK/0rwGqB7qf5Yh4jmztMk1WIM6/5NqJ6Cya0FxsLjKA8Ayn2F3IXbXnxVZiY24msCxjNVDS1nOQQHUNqVxMEm4Ur6QEqZzklaXqCzsjdv3Yi0CkqMbxKl2Q3RZn7cwUKgOTH6nD3rmx3nuPJgtAF7v1ZS35hk9EA8+mQ+vOtnbVxP7ZX12sCJydC5r21Y6/AxVxMfTSUp0Z2gxMAT5KMFH6mqKptHzz4Uay1K1DlO3H2HHOpdITnXF3n6S54/iGRN8s8GCEP7pMNReBUayCiOU/rzgY008AA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/gwj1lewlxCZuz128eBqYG52vJvp4tGNB6R+jDwK7r0=;
- b=Anp1xhwsmSzQMv95A10pA8Z2h81m5jA4JbTnfAXQ+GYSe941D3TttpYh2+GIIht3Iqg7a373dTtjlTeXEWfFmSYEOZHtf3CQ+edJTiN0EvpOLbS+chgRhMrPEeIcDGCjNw/j/FmnhGgHD4J0QdVx9trRab/oAog+2trVInLbixkT8b4YSFGXXMtog3sTbmQeyrEX18l67VrbNe51BodEIJST2LKsXJhoMjYA73VllR6VZRnkQa3f6ka76lel77n/AxpfeTnqO7VrMPqGZVwOJz9h01Ye/guhTtPQLKSKd5eCfF2v8ppQfds0eo8MKgyaFN/lNE8+hdFVmmsajxwZew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/gwj1lewlxCZuz128eBqYG52vJvp4tGNB6R+jDwK7r0=;
- b=Cun2n6OKwy38J3ufkV/6EWmYh6y2XZ3hzrMvsVcA+rTAdW2DxyiV/TRjaX57H3cuaa8+pR+lnAteBj+qK7rEx1W6RiZ14qDjTisqocumN8hNTvq52mugANzIuqeYcKyNo7egAMGnDZWuEcPi9LmiEIrWdjeIQHChspuytJIDTLI=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (2603:10b6:208:193::29)
- by MN2PR11MB4142.namprd11.prod.outlook.com (2603:10b6:208:135::29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14; Mon, 2 Mar
- 2020 18:07:53 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::3c8f:7a55:cbd:adfb]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::3c8f:7a55:cbd:adfb%5]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
- 18:07:53 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <bbrezillon@kernel.org>, <vigneshr@ti.com>,
-        <linux-mtd@lists.infradead.org>
-CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
-        <matthias.bgg@gmail.com>, <vz@mleia.com>,
-        <michal.simek@xilinx.com>, <ludovic.barre@st.com>,
-        <john.garry@huawei.com>, <tglx@linutronix.de>,
-        <nishkadg.linux@gmail.com>, <michael@walle.cc>,
-        <dinguyen@kernel.org>, <thor.thayer@linux.intel.com>,
-        <swboyd@chromium.org>, <opensource@jilayne.com>,
-        <mika.westerberg@linux.intel.com>, <kstewart@linuxfoundation.org>,
-        <allison@lohutok.net>, <jethro@fortanix.com>, <info@metux.net>,
-        <alexander.sverdlin@nokia.com>, <rfontana@redhat.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <Tudor.Ambarus@microchip.com>
-Subject: [PATCH 14/23] mtd: spi-nor: Move Macronix bits out of core.c
-Thread-Topic: [PATCH 14/23] mtd: spi-nor: Move Macronix bits out of core.c
-Thread-Index: AQHV8L19HP3cY3GvdkWxB5UapEKh2w==
-Date:   Mon, 2 Mar 2020 18:07:52 +0000
-Message-ID: <20200302180730.1886678-15-tudor.ambarus@microchip.com>
-References: <20200302180730.1886678-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20200302180730.1886678-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4f43afd0-015d-4762-19c3-08d7bed4a0bf
-x-ms-traffictypediagnostic: MN2PR11MB4142:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR11MB4142F051D74CF0EBF160EF6AF0E70@MN2PR11MB4142.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 033054F29A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(136003)(396003)(376002)(189003)(199004)(36756003)(26005)(66446008)(107886003)(6486002)(186003)(2616005)(4326008)(478600001)(6512007)(91956017)(64756008)(66946007)(2906002)(71200400001)(76116006)(8936002)(316002)(86362001)(54906003)(6506007)(66556008)(5660300002)(66476007)(7406005)(1076003)(7416002)(81156014)(81166006)(110136005)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4142;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: c2VpvChI3girNijLyFizMAdzMZU9SvbH6mqgrTxAyh8AAXcRXRJxMW8UXoQKpUvQ/83vs3mBTXCHN713YF+yEbo0wAFdpU33clElOGZPixnY/DdFoj7J4CyJSqcrMaeu1eZPcojoH/dfJFHoghqOlzwvLkCPJ1sxPlUDPPqExW9/gntujzVBzabc578t1pxxOA7RO0LejRYfv7qSNh3GJv7oDoRIhip+7n4Z7rHzwNkmO6fmZ/pAMDHzBTcunO70uqQTrpux+KpnEt5e9+myqRM6F/K3S+WCpzShqFAkFHC0TW84FpUX/umFTOasLCmilJXMrGnZt7voQHkYzoHZxcqo8SI8H6PGa/T+S9bTwBe90geQwwFQ/lHp5O9acIdfYHhGG1feVyXHVn8/BhPcDKTmSjzC8FnGnTzzRha4sTSmZzGrfS7dDvPiIV3s/kbM
-x-ms-exchange-antispam-messagedata: KP6hzj5kwUWWtFf4PZahsEpZ1K6lkfPz645tmXR7u6fZkYonIaufZgpvDVHpwbOybZqwpn4BXfqE1JGVXJJN+ggVgvAEGfHWxTIM/eJE1nCwjh1K3wBrdxginUkrz8/EsFB4Wa8LtmBlF+lLYVj+Gg==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727461AbgCBTB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:01:58 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21654 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726451AbgCBTB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 14:01:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 11:01:57 -0800
+X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
+   d="scan'208";a="273846472"
+Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.24.8.183])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 11:01:56 -0800
+Message-ID: <41d7049cb704007b3cd30a3f48198eebb8a31783.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 09/11] kallsyms: hide layout and expose seed
+From:   Kristen Carlson Accardi <kristen@linux.intel.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Date:   Mon, 02 Mar 2020 11:01:56 -0800
+In-Reply-To: <CAG48ez2SucOZORUhHNxt-9juzqcWjTZRD9E_PhP51LpH1UqeLg@mail.gmail.com>
+References: <20200205223950.1212394-1-kristen@linux.intel.com>
+         <20200205223950.1212394-10-kristen@linux.intel.com>
+         <202002060428.08B14F1@keescook>
+         <a915e1eb131551aa766fde4c14de5a3e825af667.camel@linux.intel.com>
+         <CAG48ez2SucOZORUhHNxt-9juzqcWjTZRD9E_PhP51LpH1UqeLg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f43afd0-015d-4762-19c3-08d7bed4a0bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 18:07:52.6632
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 41CZ+FLZJcpK/so1+0jE7aXdk+veURya04JCeQUkbVGJi+yp1xgmg4/dPPGHi1N4KepF1Z5JBx92sLs1FMOWyHqj/JMCPL41BGAl3rF3lm0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4142
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <bbrezillon@kernel.org>
+On Thu, 2020-02-06 at 20:27 +0100, Jann Horn wrote:
+> On Thu, Feb 6, 2020 at 6:51 PM Kristen Carlson Accardi
+> <kristen@linux.intel.com> wrote:
+> > On Thu, 2020-02-06 at 04:32 -0800, Kees Cook wrote:
+> > > In the past, making kallsyms entirely unreadable seemed to break
+> > > weird
+> > > stuff in userspace. How about having an alternative view that
+> > > just
+> > > contains a alphanumeric sort of the symbol names (and they will
+> > > continue
+> > > to have zeroed addresses for unprivileged users)?
+> > > 
+> > > Or perhaps we wait to hear about this causing a problem, and deal
+> > > with
+> > > it then? :)
+> > > 
+> > 
+> > Yeah - I don't know what people want here. Clearly, we can't leave
+> > kallsyms the way it is. Removing it entirely is a pretty fast way
+> > to
+> > figure out how people use it though :).
+> 
+> FYI, a pretty decent way to see how people are using an API is
+> codesearch.debian.net, which searches through the source code of all
+> the packages debian ships:
+> 
+> https://codesearch.debian.net/search?q=%2Fproc%2Fkallsyms&literal=1
 
-Create a SPI NOR manufacturer driver for Macronix chips, and move the
-Macronix definitions outside of core.c.
+I looked through some of these packages as Jann suggested, and it seems
+like there are several that are using /proc/kallsyms to look for
+specific symbol names to determine whether some feature has been
+compiled into the kernel. This practice seems dubious to me, knowing
+that many kernel symbol names can be changed at any time, but
+regardless seems to be fairly common.
 
-Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
- drivers/mtd/spi-nor/Makefile   |  1 +
- drivers/mtd/spi-nor/core.c     | 69 +-----------------------
- drivers/mtd/spi-nor/core.h     |  1 +
- drivers/mtd/spi-nor/macronix.c | 98 ++++++++++++++++++++++++++++++++++
- 4 files changed, 101 insertions(+), 68 deletions(-)
- create mode 100644 drivers/mtd/spi-nor/macronix.c
 
-diff --git a/drivers/mtd/spi-nor/Makefile b/drivers/mtd/spi-nor/Makefile
-index 5c849f104cc4..c94798987801 100644
---- a/drivers/mtd/spi-nor/Makefile
-+++ b/drivers/mtd/spi-nor/Makefile
-@@ -9,4 +9,5 @@ spi-nor-objs			+=3D fujitsu.o
- spi-nor-objs			+=3D gigadevice.o
- spi-nor-objs			+=3D intel.o
- spi-nor-objs			+=3D issi.o
-+spi-nor-objs			+=3D macronix.o
- obj-$(CONFIG_MTD_SPI_NOR)	+=3D spi-nor.o
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index d781cb9af182..9d0e0fc5af45 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -2005,31 +2005,6 @@ int spi_nor_sr2_bit7_quad_enable(struct spi_nor *nor=
-)
- 	return 0;
- }
-=20
--static int
--mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
--			    const struct sfdp_parameter_header *bfpt_header,
--			    const struct sfdp_bfpt *bfpt,
--			    struct spi_nor_flash_parameter *params)
--{
--	/*
--	 * MX25L25635F supports 4B opcodes but MX25L25635E does not.
--	 * Unfortunately, Macronix has re-used the same JEDEC ID for both
--	 * variants which prevents us from defining a new entry in the parts
--	 * table.
--	 * We need a way to differentiate MX25L25635E and MX25L25635F, and it
--	 * seems that the F version advertises support for Fast Read 4-4-4 in
--	 * its BFPT table.
--	 */
--	if (bfpt->dwords[BFPT_DWORD(5)] & BFPT_DWORD5_FAST_READ_4_4_4)
--		nor->flags |=3D SNOR_F_4B_OPCODES;
--
--	return 0;
--}
--
--static struct spi_nor_fixups mx25l25635_fixups =3D {
--	.post_bfpt =3D mx25l25635_post_bfpt_fixups,
--};
--
- /* NOTE: double check command sets and memory organization when you add
-  * more nor chips.  This current list focusses on newer chips, which
-  * have been converging on command sets which including JEDEC ID.
-@@ -2042,39 +2017,6 @@ static struct spi_nor_fixups mx25l25635_fixups =3D {
-  * old entries may be missing 4K flag.
-  */
- static const struct flash_info spi_nor_ids[] =3D {
--	/* Macronix */
--	{ "mx25l512e",   INFO(0xc22010, 0, 64 * 1024,   1, SECT_4K) },
--	{ "mx25l2005a",  INFO(0xc22012, 0, 64 * 1024,   4, SECT_4K) },
--	{ "mx25l4005a",  INFO(0xc22013, 0, 64 * 1024,   8, SECT_4K) },
--	{ "mx25l8005",   INFO(0xc22014, 0, 64 * 1024,  16, 0) },
--	{ "mx25l1606e",  INFO(0xc22015, 0, 64 * 1024,  32, SECT_4K) },
--	{ "mx25l3205d",  INFO(0xc22016, 0, 64 * 1024,  64, SECT_4K) },
--	{ "mx25l3255e",  INFO(0xc29e16, 0, 64 * 1024,  64, SECT_4K) },
--	{ "mx25l6405d",  INFO(0xc22017, 0, 64 * 1024, 128, SECT_4K) },
--	{ "mx25u2033e",  INFO(0xc22532, 0, 64 * 1024,   4, SECT_4K) },
--	{ "mx25u3235f",	 INFO(0xc22536, 0, 64 * 1024,  64,
--			 SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
--	{ "mx25u4035",   INFO(0xc22533, 0, 64 * 1024,   8, SECT_4K) },
--	{ "mx25u8035",   INFO(0xc22534, 0, 64 * 1024,  16, SECT_4K) },
--	{ "mx25u6435f",  INFO(0xc22537, 0, 64 * 1024, 128, SECT_4K) },
--	{ "mx25l12805d", INFO(0xc22018, 0, 64 * 1024, 256, 0) },
--	{ "mx25l12855e", INFO(0xc22618, 0, 64 * 1024, 256, 0) },
--	{ "mx25r3235f",  INFO(0xc22816, 0, 64 * 1024,  64,
--			 SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
--	{ "mx25u12835f", INFO(0xc22538, 0, 64 * 1024, 256,
--			 SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
--	{ "mx25l25635e", INFO(0xc22019, 0, 64 * 1024, 512,
--			 SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)
--			 .fixups =3D &mx25l25635_fixups },
--	{ "mx25u25635f", INFO(0xc22539, 0, 64 * 1024, 512, SECT_4K | SPI_NOR_4B_O=
-PCODES) },
--	{ "mx25v8035f",  INFO(0xc22314, 0, 64 * 1024,  16,
--			 SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
--	{ "mx25l25655e", INFO(0xc22619, 0, 64 * 1024, 512, 0) },
--	{ "mx66l51235l", INFO(0xc2201a, 0, 64 * 1024, 1024, SPI_NOR_DUAL_READ | S=
-PI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
--	{ "mx66u51235f", INFO(0xc2253a, 0, 64 * 1024, 1024, SECT_4K | SPI_NOR_DUA=
-L_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
--	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048, SECT_4K | SPI_NOR_DUA=
-L_READ | SPI_NOR_QUAD_READ) },
--	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048, SPI_NOR_QUAD_READ) },
--
- 	/* Micron <--> ST Micro */
- 	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32, SECT_4K | SPI_NOR_QUAD_=
-READ) },
- 	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
-@@ -2311,6 +2253,7 @@ static const struct spi_nor_manufacturer *manufacture=
-rs[] =3D {
- 	&spi_nor_gigadevice,
- 	&spi_nor_intel,
- 	&spi_nor_issi,
-+	&spi_nor_macronix,
- };
-=20
- static const struct flash_info *
-@@ -3090,12 +3033,6 @@ static int spi_nor_setup(struct spi_nor *nor,
- 	return nor->params.setup(nor, hwcaps);
- }
-=20
--static void macronix_set_default_init(struct spi_nor *nor)
--{
--	nor->params.quad_enable =3D spi_nor_sr1_bit6_quad_enable;
--	nor->params.set_4byte =3D spi_nor_en4_ex4_set_4byte;
--}
--
- static void sst_set_default_init(struct spi_nor *nor)
- {
- 	nor->flags |=3D SNOR_F_HAS_LOCK;
-@@ -3123,10 +3060,6 @@ static void spi_nor_manufacturer_init_params(struct =
-spi_nor *nor)
- {
- 	/* Init flash parameters based on MFR */
- 	switch (JEDEC_MFR(nor->info)) {
--	case SNOR_MFR_MACRONIX:
--		macronix_set_default_init(nor);
--		break;
--
- 	case SNOR_MFR_ST:
- 	case SNOR_MFR_MICRON:
- 		st_micron_set_default_init(nor);
-diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
-index b4ed9acbef63..9af3a701de95 100644
---- a/drivers/mtd/spi-nor/core.h
-+++ b/drivers/mtd/spi-nor/core.h
-@@ -175,6 +175,7 @@ extern const struct spi_nor_manufacturer spi_nor_fujits=
-u;
- extern const struct spi_nor_manufacturer spi_nor_gigadevice;
- extern const struct spi_nor_manufacturer spi_nor_intel;
- extern const struct spi_nor_manufacturer spi_nor_issi;
-+extern const struct spi_nor_manufacturer spi_nor_macronix;
-=20
- int spi_nor_write_enable(struct spi_nor *nor);
- int spi_nor_write_disable(struct spi_nor *nor);
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.=
-c
-new file mode 100644
-index 000000000000..1ae609c44676
---- /dev/null
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2005, Intec Automation Inc.
-+ * Copyright (C) 2014, Freescale Semiconductor, Inc.
-+ */
-+
-+#include <linux/mtd/spi-nor.h>
-+
-+#include "core.h"
-+
-+static int
-+mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
-+			    const struct sfdp_parameter_header *bfpt_header,
-+			    const struct sfdp_bfpt *bfpt,
-+			    struct spi_nor_flash_parameter *params)
-+{
-+	/*
-+	 * MX25L25635F supports 4B opcodes but MX25L25635E does not.
-+	 * Unfortunately, Macronix has re-used the same JEDEC ID for both
-+	 * variants which prevents us from defining a new entry in the parts
-+	 * table.
-+	 * We need a way to differentiate MX25L25635E and MX25L25635F, and it
-+	 * seems that the F version advertises support for Fast Read 4-4-4 in
-+	 * its BFPT table.
-+	 */
-+	if (bfpt->dwords[BFPT_DWORD(5)] & BFPT_DWORD5_FAST_READ_4_4_4)
-+		nor->flags |=3D SNOR_F_4B_OPCODES;
-+
-+	return 0;
-+}
-+
-+static struct spi_nor_fixups mx25l25635_fixups =3D {
-+	.post_bfpt =3D mx25l25635_post_bfpt_fixups,
-+};
-+
-+static const struct flash_info macronix_parts[] =3D {
-+	/* Macronix */
-+	{ "mx25l512e",   INFO(0xc22010, 0, 64 * 1024,   1, SECT_4K) },
-+	{ "mx25l2005a",  INFO(0xc22012, 0, 64 * 1024,   4, SECT_4K) },
-+	{ "mx25l4005a",  INFO(0xc22013, 0, 64 * 1024,   8, SECT_4K) },
-+	{ "mx25l8005",   INFO(0xc22014, 0, 64 * 1024,  16, 0) },
-+	{ "mx25l1606e",  INFO(0xc22015, 0, 64 * 1024,  32, SECT_4K) },
-+	{ "mx25l3205d",  INFO(0xc22016, 0, 64 * 1024,  64, SECT_4K) },
-+	{ "mx25l3255e",  INFO(0xc29e16, 0, 64 * 1024,  64, SECT_4K) },
-+	{ "mx25l6405d",  INFO(0xc22017, 0, 64 * 1024, 128, SECT_4K) },
-+	{ "mx25u2033e",  INFO(0xc22532, 0, 64 * 1024,   4, SECT_4K) },
-+	{ "mx25u3235f",	 INFO(0xc22536, 0, 64 * 1024,  64,
-+			      SECT_4K | SPI_NOR_DUAL_READ |
-+			      SPI_NOR_QUAD_READ) },
-+	{ "mx25u4035",   INFO(0xc22533, 0, 64 * 1024,   8, SECT_4K) },
-+	{ "mx25u8035",   INFO(0xc22534, 0, 64 * 1024,  16, SECT_4K) },
-+	{ "mx25u6435f",  INFO(0xc22537, 0, 64 * 1024, 128, SECT_4K) },
-+	{ "mx25l12805d", INFO(0xc22018, 0, 64 * 1024, 256, 0) },
-+	{ "mx25l12855e", INFO(0xc22618, 0, 64 * 1024, 256, 0) },
-+	{ "mx25r3235f",  INFO(0xc22816, 0, 64 * 1024,  64,
-+			      SECT_4K | SPI_NOR_DUAL_READ |
-+			      SPI_NOR_QUAD_READ) },
-+	{ "mx25u12835f", INFO(0xc22538, 0, 64 * 1024, 256,
-+			      SECT_4K | SPI_NOR_DUAL_READ |
-+			      SPI_NOR_QUAD_READ) },
-+	{ "mx25l25635e", INFO(0xc22019, 0, 64 * 1024, 512,
-+			      SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)
-+		.fixups =3D &mx25l25635_fixups },
-+	{ "mx25u25635f", INFO(0xc22539, 0, 64 * 1024, 512,
-+			      SECT_4K | SPI_NOR_4B_OPCODES) },
-+	{ "mx25v8035f",  INFO(0xc22314, 0, 64 * 1024,  16,
-+			      SECT_4K | SPI_NOR_DUAL_READ |
-+			      SPI_NOR_QUAD_READ) },
-+	{ "mx25l25655e", INFO(0xc22619, 0, 64 * 1024, 512, 0) },
-+	{ "mx66l51235l", INFO(0xc2201a, 0, 64 * 1024, 1024,
-+			      SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
-+			      SPI_NOR_4B_OPCODES) },
-+	{ "mx66u51235f", INFO(0xc2253a, 0, 64 * 1024, 1024,
-+			      SECT_4K | SPI_NOR_DUAL_READ |
-+			      SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
-+	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048,
-+			      SECT_4K | SPI_NOR_DUAL_READ |
-+			      SPI_NOR_QUAD_READ) },
-+	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048,
-+			      SPI_NOR_QUAD_READ) },
-+};
-+
-+static void macronix_default_init(struct spi_nor *nor)
-+{
-+	nor->params.quad_enable =3D spi_nor_sr1_bit6_quad_enable;
-+	nor->params.set_4byte =3D spi_nor_en4_ex4_set_4byte;
-+}
-+
-+static const struct spi_nor_fixups macronix_fixups =3D {
-+	.default_init =3D macronix_default_init,
-+};
-+
-+const struct spi_nor_manufacturer spi_nor_macronix =3D {
-+	.name =3D "macronix",
-+	.parts =3D macronix_parts,
-+	.nparts =3D ARRAY_SIZE(macronix_parts),
-+	.fixups =3D &macronix_fixups,
-+};
---=20
-2.23.0
+
