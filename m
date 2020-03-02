@@ -2,130 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9799F176246
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:17:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BAF176239
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbgCBSR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 13:17:28 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:60683 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgCBSR2 (ORCPT
+        id S1727401AbgCBSQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 13:16:25 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21250 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726451AbgCBSQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 13:17:28 -0500
-Received: from methusalix.internal.home.lespocky.de ([109.250.99.45]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MhCq4-1jeKsj2SoM-00eP3P; Mon, 02 Mar 2020 19:16:51 +0100
-Received: from lemmy.internal.home.lespocky.de ([192.168.243.175] helo=lemmy.home.lespocky.de)
-        by methusalix.internal.home.lespocky.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <alex@home.lespocky.de>)
-        id 1j8pcV-00019g-Di; Mon, 02 Mar 2020 19:16:48 +0100
-Received: (nullmailer pid 21156 invoked by uid 2001);
-        Mon, 02 Mar 2020 18:16:47 -0000
-From:   Alexander Dahl <post@lespocky.de>
-To:     x86@kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        Alexander Dahl <post@lespocky.de>
-Subject: [PATCH] dma: Fix max PFN arithmetic overflow on 32 bit systems
-Date:   Mon,  2 Mar 2020 19:16:12 +0100
-Message-Id: <20200302181612.20597-1-post@lespocky.de>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 7719f4cb0a203ae1a5f64d3866c1573d
-X-Spam-Score: -2.6 (--)
-X-Provags-ID: V03:K1:8B37tE9F2d8izwA/UGPTWbhBuKeo+jRutJy6I7/WLDKVHQsW/DV
- iO1kegFF2RaNOdoRni9TU0dRHbMUJ+9k6MAoADpjWanR5E/IJ3yKmUSHB9nQTMtU4j0mFzk
- Kj8TCvHP9wnYrUG2gIITeaGUAaDG8HcLt0iTCr9RT+VCz1KwuWOtQRu4sWCTBRz3y/XCza/
- qxffYem9wHCi6lbSMMYnw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rnpPttj3NGg=:Mr3Pecror39pfDvFqmoom6
- luO0uKV28oTDMnPJSsBAGB6ck0JCdKr5UsxhuAhfrqHP8/Ug4fx7fqLE5I5PoXIxdyk4RBb4c
- sQ2g/vb2dfNGjVE8ZC1t9xzDrh8/jrwleIt2J8gr088eHfFLye226Fq3w8Xp7mz2eaOpcTxlz
- Q/7+dkqhvlpIY0shFQoHk8BzhH+5/+jHwd9BWqjEW/C7VPEtjET5eTkI6khDzaNRwZERw7Lwh
- FF+zjsG8pZm76Ki0+FEPvI2TZnAms6OM6McQ0Td7zlZr+ozp7DkQWOCQohhNtAYo51vclvD5v
- ESj38IweKQtfRghLkHZtKHDt9wiyxmtGa/pIBD4U2WyFkGP3gNveyWXfZ+3XBJRFQduYCuSBM
- T73MSBcA9NBpWeftQEz/Yf0Pu+C+O5vsaFWCuwosgjKBjSb0Dmsel7T3LBdVRV4jI1WPMwqxF
- ZXWjR9XFv61ZvTFccun7Km7XC7Jm5A7iGijSCveg7c+NpTiqKHM1uqBuUKcZSMCg/HBG7cC+W
- QDk32pSh6sM5Vxe8G6PxhIYwZbqGyARzNKX/pvs0R9YtsgfIHwKoEpC+3N4ruinC0la02SI7A
- Ng2Ro1Wels0uTkLmkWgpX7hYRSdU/i43v7ChE/yl5VTqgxRBQXZNZ1Af036uMCOXWDPuU8uQu
- 2JdIoizWvntYOa8xWQVaT7FN09C2J02b3j17NqZoTBwaaS6CMAcKfIGToJHvqPqm+SFgss/Ik
- VBFsKxx7gP+ay2uZiKOPIxuGq1XxWGUVP0C99d5S03q7Rh84neRUdnC2TNIM4QGZmhZYyVq/t
- V8AfUmMEM4wOJWXSyk74gM/NaPHKfuHJkhWwq0pXUDcPRB+duFXq14rYhuMjnjDksthzBLq
+        Mon, 2 Mar 2020 13:16:24 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022I8vds018378
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Mar 2020 13:16:23 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfm51nps9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 13:16:23 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bmt@zurich.ibm.com>;
+        Mon, 2 Mar 2020 18:16:20 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Mar 2020 18:16:17 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022IGG8N58392724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 18:16:16 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1BD2A4053;
+        Mon,  2 Mar 2020 18:16:16 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A67BA4051;
+        Mon,  2 Mar 2020 18:16:16 +0000 (GMT)
+Received: from spoke.zurich.ibm.com (unknown [9.4.69.152])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Mar 2020 18:16:16 +0000 (GMT)
+From:   Bernard Metzler <bmt@zurich.ibm.com>
+To:     jgg@ziepe.ca, dledford@redhat.com, kamalheib1@gmail.com,
+        krishna2@chelsio.com, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Cc:     Bernard Metzler <bmt@zurich.ibm.com>
+Subject: [PATCH for-rc] RDMA/iwcm: Fix iwcm work deallocation
+Date:   Mon,  2 Mar 2020 19:16:14 +0100
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 20030218-0012-0000-0000-0000038C5F85
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030218-0013-0000-0000-000021C91379
+Message-Id: <20200302181614.17042-1-bmt@zurich.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_07:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxscore=0
+ clxscore=1015 bulkscore=0 spamscore=0 mlxlogscore=917 suspectscore=2
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For ARCH=x86 (32 bit) when you set CONFIG_IOMMU_INTEL since c5a5dc4cbbf4
-("iommu/vt-d: Don't switch off swiotlb if bounce page is used") there's
-a dependency on CONFIG_SWIOTLB, which was not necessarily active before.
+The dealloc_work_entries() function must update the
+work_free_list pointer while freeing its entries, since
+potentially called again on same list. A second iteration
+of the work list caused system crash. This happens, if
+work allocation fails during cma_iw_listen() and
+free_cm_id() tries to free the list again during cleanup.
 
-The init code for swiotlb in 'pci_swiotlb_detect_4gb()' compares
-something against MAX_DMA32_PFN to decide if it should be active.
-However that define suffers from an arithmetic overflow since
-1b7e03ef7570 ("x86, NUMA: Enable emulation on 32bit too") when it was
-first made visible to x86_32.
-
-The effect is at boot time 64 MiB (default size) were allocated for
-bounce buffers now, which is a noticeable amount of memory on small
-systems. We noticed this effect on the fli4l Linux distribution when
-migrating from kernel v4.19 (LTS) to v5.4 (LTS) on boards like pcengines
-ALIX 2D3 with 256 MiB memory for example:
-
-  Linux version 5.4.22 (buildroot@buildroot) (gcc version 7.3.0 (Buildroot 2018.02.8)) #1 SMP Mon Nov 26 23:40:00 CET 2018
-  …
-  Memory: 183484K/261756K available (4594K kernel code, 393K rwdata, 1660K rodata, 536K init, 456K bss , 78272K reserved, 0K cma-reserved, 0K highmem)
-  …
-  PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
-  software IO TLB: mapped [mem 0x0bb78000-0x0fb78000] (64MB)
-
-The initial analysis and the suggested fix was done by user 'sourcejedi'
-at stackoverflow and explicitly marked as GPLv2 for inclusion in the
-Linux kernel:
-
-  https://unix.stackexchange.com/a/520525/50007
-
-Fixes: https://web.nettworks.org/bugs/browse/FFL-2560
-Fixes: https://unix.stackexchange.com/q/520065/50007
-Suggested-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Signed-off-by: Alexander Dahl <post@lespocky.de>
+Reported-by: syzbot+cb0c054eabfba4342146@syzkaller.appspotmail.com
+Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
 ---
-We tested this in qemu and on real hardware with fli4l on top of v5.4,
-v5.5, and v5.6-rc kernels, but only as far as the reserved memory goes.
-The patch itself is based on v5.6-rc3 (IIRC).
+ drivers/infiniband/core/iwcm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-A quick grep over the kernel code showed me this define MAX_DMA32_PFN is
-used in other places as well. I would appreciate feedback on this,
-because I can not oversee all side effects this might have?!
-
-Thanks again to Alan who proposed the fix, and for his permission to
-send it upstream.
-
-Greets
-Alex
----
- arch/x86/include/asm/dma.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/dma.h b/arch/x86/include/asm/dma.h
-index 00f7cf45e699..e25514eca8d6 100644
---- a/arch/x86/include/asm/dma.h
-+++ b/arch/x86/include/asm/dma.h
-@@ -74,7 +74,7 @@
- #define MAX_DMA_PFN   ((16UL * 1024 * 1024) >> PAGE_SHIFT)
+diff --git a/drivers/infiniband/core/iwcm.c b/drivers/infiniband/core/iwcm.c
+index ade71823370f..da8adadf4755 100644
+--- a/drivers/infiniband/core/iwcm.c
++++ b/drivers/infiniband/core/iwcm.c
+@@ -159,8 +159,10 @@ static void dealloc_work_entries(struct iwcm_id_private *cm_id_priv)
+ {
+ 	struct list_head *e, *tmp;
  
- /* 4GB broken PCI/AGP hardware bus master zone */
--#define MAX_DMA32_PFN ((4UL * 1024 * 1024 * 1024) >> PAGE_SHIFT)
-+#define MAX_DMA32_PFN (4UL * ((1024 * 1024 * 1024) >> PAGE_SHIFT))
+-	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list)
++	list_for_each_safe(e, tmp, &cm_id_priv->work_free_list) {
++		list_del(e);
+ 		kfree(list_entry(e, struct iwcm_work, free_list));
++	}
+ }
  
- #ifdef CONFIG_X86_32
- /* The maximum address that we can perform a DMA transfer to on this platform */
+ static int alloc_work_entries(struct iwcm_id_private *cm_id_priv, int count)
 -- 
-2.20.1
+2.17.2
 
