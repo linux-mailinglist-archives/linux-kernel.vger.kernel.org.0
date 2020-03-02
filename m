@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E39175588
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF4F7175577
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbgCBIRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:17:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57070 "EHLO mail.kernel.org"
+        id S1727084AbgCBIRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:17:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbgCBIQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727347AbgCBIQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 03:16:24 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A22D246EC;
+        by mail.kernel.org (Postfix) with ESMTPSA id 99D08246F2;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=Wu8f99FLtwAansaYCxSiJNnIkhPh1PzyJM8dnRZ3aIo=;
+        bh=qb0QCd39Wo7QeZK9RU8cjFB2UYuizkJIFiPvTDnQ8f4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QJbAzJ+AeistVYVX7NAegYn5SL/eXOl0Re0i2c1iDKCQ48UcJMVOi4UfffaYuBMAH
-         QbferFvK2OBKy6e8rFCgQlS8OxCLyBj7PAdUB6yNLI3Z1djVgb9bKSEMoMPZ9TPRon
-         /FrJ18pQ0CEjKWvrz0W7rtWQx+faBP/zNfJR3sT4=
+        b=yODMVuHvE67S8WIzqFepZZ+zYRG4uX8ZbZOehIWAqxQc0OcZO3AyARgngmkSBGZuW
+         piSx5Dfm/hYwqaS8iGKIUywg+LcAjrXcRsOvZ45Ls7OAimo+qnFnVJUkOcP2uaUDpN
+         5Rxo2wru/eCcaRJYecErvkT91w5EwpwgB45xTzFg=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003yp-OL; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003yt-PA; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 28/42] docs: scsi: convert scsi_eh.txt to ReST
-Date:   Mon,  2 Mar 2020 09:16:01 +0100
-Message-Id: <300314197f2e6a3258200711e825aa04c9e8ceaf.1583136624.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 29/42] docs: scsi: convert scsi_fc_transport.txt to ReST
+Date:   Mon,  2 Mar 2020 09:16:02 +0100
+Message-Id: <f75bd9b6512f223847cc4ece8bd7e8e72e434b21.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -45,516 +45,447 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/driver-api/libata.rst           |   2 +-
  Documentation/scsi/index.rst                  |   1 +
- .../scsi/{scsi_eh.txt => scsi_eh.rst}         | 215 ++++++++++--------
- 3 files changed, 128 insertions(+), 90 deletions(-)
- rename Documentation/scsi/{scsi_eh.txt => scsi_eh.rst} (73%)
+ ...fc_transport.txt => scsi_fc_transport.rst} | 236 +++++++++++-------
+ 2 files changed, 151 insertions(+), 86 deletions(-)
+ rename Documentation/scsi/{scsi_fc_transport.txt => scsi_fc_transport.rst} (74%)
 
-diff --git a/Documentation/driver-api/libata.rst b/Documentation/driver-api/libata.rst
-index 207f0d24de69..e2f87b82b074 100644
---- a/Documentation/driver-api/libata.rst
-+++ b/Documentation/driver-api/libata.rst
-@@ -401,7 +401,7 @@ Error handling
- ==============
- 
- This chapter describes how errors are handled under libata. Readers are
--advised to read SCSI EH (Documentation/scsi/scsi_eh.txt) and ATA
-+advised to read SCSI EH (Documentation/scsi/scsi_eh.rst) and ATA
- exceptions doc first.
- 
- Origins of commands
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 635a3b3c5e90..8da7c27f73b7 100644
+index 8da7c27f73b7..471982ef461d 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -32,5 +32,6 @@ Linux SCSI Subsystem
-    ppa
+@@ -33,5 +33,6 @@ Linux SCSI Subsystem
     qlogicfas
     scsi-changer
-+   scsi_eh
+    scsi_eh
++   scsi_fc_transport
  
     scsi_transport_srp/figures
-diff --git a/Documentation/scsi/scsi_eh.txt b/Documentation/scsi/scsi_eh.rst
-similarity index 73%
-rename from Documentation/scsi/scsi_eh.txt
-rename to Documentation/scsi/scsi_eh.rst
-index 1b7436932a2b..341f22f35056 100644
---- a/Documentation/scsi/scsi_eh.txt
-+++ b/Documentation/scsi/scsi_eh.rst
-@@ -1,35 +1,39 @@
+diff --git a/Documentation/scsi/scsi_fc_transport.txt b/Documentation/scsi/scsi_fc_transport.rst
+similarity index 74%
+rename from Documentation/scsi/scsi_fc_transport.txt
+rename to Documentation/scsi/scsi_fc_transport.rst
+index f79282fc48d7..176c1862cb9b 100644
+--- a/Documentation/scsi/scsi_fc_transport.txt
++++ b/Documentation/scsi/scsi_fc_transport.rst
+@@ -1,8 +1,13 @@
+-                             SCSI FC Tansport
+-                 =============================================
 +.. SPDX-License-Identifier: GPL-2.0
- 
-+=======
- SCSI EH
--======================================
-+=======
- 
-- This document describes SCSI midlayer error handling infrastructure.
-+This document describes SCSI midlayer error handling infrastructure.
- Please refer to Documentation/scsi/scsi_mid_low_api.txt for more
- information regarding SCSI midlayer.
- 
--TABLE OF CONTENTS
-+.. TABLE OF CONTENTS
- 
--[1] How SCSI commands travel through the midlayer and to EH
--    [1-1] struct scsi_cmnd
--    [1-2] How do scmd's get completed?
--	[1-2-1] Completing a scmd w/ scsi_done
--	[1-2-2] Completing a scmd w/ timeout
--    [1-3] How EH takes over
--[2] How SCSI EH works
--    [2-1] EH through fine-grained callbacks
--	[2-1-1] Overview
--	[2-1-2] Flow of scmds through EH
--	[2-1-3] Flow of control
--    [2-2] EH through transportt->eh_strategy_handler()
--	[2-2-1] Pre transportt->eh_strategy_handler() SCSI midlayer conditions
--	[2-2-2] Post transportt->eh_strategy_handler() SCSI midlayer conditions
--	[2-2-3] Things to consider
-+   [1] How SCSI commands travel through the midlayer and to EH
-+       [1-1] struct scsi_cmnd
-+       [1-2] How do scmd's get completed?
-+   	[1-2-1] Completing a scmd w/ scsi_done
-+   	[1-2-2] Completing a scmd w/ timeout
-+       [1-3] How EH takes over
-+   [2] How SCSI EH works
-+       [2-1] EH through fine-grained callbacks
-+   	[2-1-1] Overview
-+   	[2-1-2] Flow of scmds through EH
-+   	[2-1-3] Flow of control
-+       [2-2] EH through transportt->eh_strategy_handler()
-+   	[2-2-1] Pre transportt->eh_strategy_handler() SCSI midlayer conditions
-+   	[2-2-2] Post transportt->eh_strategy_handler() SCSI midlayer conditions
-+   	[2-2-3] Things to consider
- 
- 
--[1] How SCSI commands travel through the midlayer and to EH
-+1. How SCSI commands travel through the midlayer and to EH
-+==========================================================
- 
--[1-1] struct scsi_cmnd
-+1.1 struct scsi_cmnd
-+--------------------
- 
-- Each SCSI command is represented with struct scsi_cmnd (== scmd).  A
-+Each SCSI command is represented with struct scsi_cmnd (== scmd).  A
- scmd has two list_head's to link itself into lists.  The two are
- scmd->list and scmd->eh_entry.  The former is used for free list or
- per-device allocated scmd list and not of much interest to this EH
-@@ -38,25 +42,28 @@ otherwise stated scmds are always linked using scmd->eh_entry in this
- discussion.
- 
- 
--[1-2] How do scmd's get completed?
-+1.2 How do scmd's get completed?
-+--------------------------------
- 
-- Once LLDD gets hold of a scmd, either the LLDD will complete the
-+Once LLDD gets hold of a scmd, either the LLDD will complete the
- command by calling scsi_done callback passed from midlayer when
- invoking hostt->queuecommand() or the block layer will time it out.
- 
- 
--[1-2-1] Completing a scmd w/ scsi_done
-+1.2.1 Completing a scmd w/ scsi_done
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-- For all non-EH commands, scsi_done() is the completion callback.  It
-+For all non-EH commands, scsi_done() is the completion callback.  It
- just calls blk_complete_request() to delete the block layer timer and
- raise SCSI_SOFTIRQ
- 
-- SCSI_SOFTIRQ handler scsi_softirq calls scsi_decide_disposition() to
-+SCSI_SOFTIRQ handler scsi_softirq calls scsi_decide_disposition() to
- determine what to do with the command.  scsi_decide_disposition()
- looks at the scmd->result value and sense data to determine what to do
- with the command.
- 
-  - SUCCESS
 +
- 	scsi_finish_command() is invoked for the command.  The
- 	function does some maintenance chores and then calls
- 	scsi_io_completion() to finish the I/O.
-@@ -66,17 +73,21 @@ with the command.
- 	of the data in case of an error.
++================
++SCSI FC Tansport
++================
  
-  - NEEDS_RETRY
+ Date:  11/18/2008
+-Kernel Revisions for features:
 +
-  - ADD_TO_MLQUEUE
++Kernel Revisions for features::
 +
- 	scmd is requeued to blk queue.
- 
-  - otherwise
+   rports : <<TBS>>
+   vports : 2.6.22
+   bsg support : 2.6.30 (?TBD?)
+@@ -12,25 +17,27 @@ Introduction
+ ============
+ This file documents the features and components of the SCSI FC Transport.
+ It also provides documents the API between the transport and FC LLDDs.
+-The FC transport can be found at:
 +
- 	scsi_eh_scmd_add(scmd) is invoked for the command.  See
- 	[1-3] for details of this function.
- 
- 
--[1-2-2] Completing a scmd w/ timeout
-+1.2.2 Completing a scmd w/ timeout
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-- The timeout handler is scsi_times_out().  When a timeout occurs, this
-+The timeout handler is scsi_times_out().  When a timeout occurs, this
- function
- 
-  1. invokes optional hostt->eh_timed_out() callback.  Return value can
-@@ -101,18 +112,21 @@ function
-  3. scsi_eh_scmd_add(scmd, SCSI_EH_CANCEL_CMD) is invoked for the
-     command.  See [1-4] for more information.
- 
--[1-3] Asynchronous command aborts
-+1.3 Asynchronous command aborts
-+-------------------------------
- 
-  After a timeout occurs a command abort is scheduled from
-  scsi_abort_command(). If the abort is successful the command
-  will either be retried (if the number of retries is not exhausted)
-  or terminated with DID_TIME_OUT.
++The FC transport can be found at::
 +
-  Otherwise scsi_eh_scmd_add() is invoked for the command.
-  See [1-4] for more information.
+   drivers/scsi/scsi_transport_fc.c
+   include/scsi/scsi_transport_fc.h
+   include/scsi/scsi_netlink_fc.h
+   include/scsi/scsi_bsg_fc.h
  
--[1-4] How EH takes over
-+1.4 How EH takes over
-+---------------------
- 
-- scmds enter EH via scsi_eh_scmd_add(), which does the following.
-+scmds enter EH via scsi_eh_scmd_add(), which does the following.
- 
-  1. Links scmd->eh_entry to shost->eh_cmd_q
- 
-@@ -122,19 +136,19 @@ function
- 
-  4. Wakes up SCSI EH thread if shost->host_busy == shost->host_failed
- 
-- As can be seen above, once any scmd is added to shost->eh_cmd_q,
-+As can be seen above, once any scmd is added to shost->eh_cmd_q,
- SHOST_RECOVERY shost_state bit is turned on.  This prevents any new
- scmd to be issued from blk queue to the host; eventually, all scmds on
- the host either complete normally, fail and get added to eh_cmd_q, or
- time out and get added to shost->eh_cmd_q.
- 
-- If all scmds either complete or fail, the number of in-flight scmds
-+If all scmds either complete or fail, the number of in-flight scmds
- becomes equal to the number of failed scmds - i.e. shost->host_busy ==
- shost->host_failed.  This wakes up SCSI EH thread.  So, once woken up,
- SCSI EH thread can expect that all in-flight commands have failed and
- are linked on shost->eh_cmd_q.
- 
-- Note that this does not mean lower layers are quiescent.  If a LLDD
-+Note that this does not mean lower layers are quiescent.  If a LLDD
- completed a scmd with error status, the LLDD and lower layers are
- assumed to forget about the scmd at that point.  However, if a scmd
- has timed out, unless hostt->eh_timed_out() made lower layers forget
-@@ -143,13 +157,14 @@ active as long as lower layers are concerned and completion could
- occur at any time.  Of course, all such completions are ignored as the
- timer has already expired.
- 
-- We'll talk about how SCSI EH takes actions to abort - make LLDD
-+We'll talk about how SCSI EH takes actions to abort - make LLDD
- forget about - timed out scmds later.
+-This file is found at Documentation/scsi/scsi_fc_transport.txt
++This file is found at Documentation/scsi/scsi_fc_transport.rst
  
  
--[2] How SCSI EH works
-+2. How SCSI EH works
-+====================
- 
-- LLDD's can implement SCSI EH actions in one of the following two
-+LLDD's can implement SCSI EH actions in one of the following two
- ways.
- 
-  - Fine-grained EH callbacks
-@@ -162,7 +177,7 @@ ways.
- 	handling.  As such, it should do all chores the SCSI midlayer
- 	performs during recovery.  This will be discussed in [2-2].
- 
-- Once recovery is complete, SCSI EH resumes normal operation by
-+Once recovery is complete, SCSI EH resumes normal operation by
- calling scsi_restart_operations(), which
- 
-  1. Checks if door locking is needed and locks door.
-@@ -177,34 +192,38 @@ calling scsi_restart_operations(), which
-  4. Kicks queues in all devices on the host in the asses
+ FC Remote Ports (rports)
+-========================================================================
++========================
+ << To Be Supplied >>
  
  
--[2-1] EH through fine-grained callbacks
-+2.1 EH through fine-grained callbacks
-+-------------------------------------
+ FC Virtual Ports (vports)
+-========================================================================
++=========================
  
--[2-1-1] Overview
-+2.1.1 Overview
-+^^^^^^^^^^^^^^
+-Overview:
+--------------------------------
++Overview
++--------
  
-- If eh_strategy_handler() is not present, SCSI midlayer takes charge
-+If eh_strategy_handler() is not present, SCSI midlayer takes charge
- of driving error handling.  EH's goals are two - make LLDD, host and
- device forget about timed out scmds and make them ready for new
- commands.  A scmd is said to be recovered if the scmd is forgotten by
- lower layers and lower layers are ready to process or fail the scmd
- again.
+   New FC standards have defined mechanisms which allows for a single physical
+   port to appear on as multiple communication ports. Using the N_Port Id
+@@ -61,12 +68,14 @@ Overview:
+   Thus, whether a FC port is based on a physical port or on a virtual port,
+   each will appear as a unique scsi_host with its own target and lun space.
  
-- To achieve these goals, EH performs recovery actions with increasing
-+To achieve these goals, EH performs recovery actions with increasing
- severity.  Some actions are performed by issuing SCSI commands and
- others are performed by invoking one of the following fine-grained
- hostt EH callbacks.  Callbacks may be omitted and omitted ones are
- considered to fail always.
+-  Note: At this time, the transport is written to create only NPIV-based
++  .. Note::
++    At this time, the transport is written to create only NPIV-based
+     vports. However, consideration was given to VF-based vports and it
+     should be a minor change to add support if needed.  The remaining
+     discussion will concentrate on NPIV.
  
--int (* eh_abort_handler)(struct scsi_cmnd *);
--int (* eh_device_reset_handler)(struct scsi_cmnd *);
--int (* eh_bus_reset_handler)(struct scsi_cmnd *);
--int (* eh_host_reset_handler)(struct scsi_cmnd *);
-+::
+-  Note: World Wide Name assignment (and uniqueness guarantees) are left
++  .. Note::
++    World Wide Name assignment (and uniqueness guarantees) are left
+     up to an administrative entity controlling the vport. For example,
+     if vports are to be associated with virtual machines, a XEN mgmt
+     utility would be responsible for creating wwpn/wwnn's for the vport,
+@@ -91,18 +100,29 @@ Device Trees and Vport Objects:
+   port's scsi_host.
  
-- Higher-severity actions are taken only when lower-severity actions
-+    int (* eh_abort_handler)(struct scsi_cmnd *);
-+    int (* eh_device_reset_handler)(struct scsi_cmnd *);
-+    int (* eh_bus_reset_handler)(struct scsi_cmnd *);
-+    int (* eh_host_reset_handler)(struct scsi_cmnd *);
+   Here's what to expect in the device tree :
+-   The typical Physical Port's Scsi_Host:
 +
-+Higher-severity actions are taken only when lower-severity actions
- cannot recover some of failed scmds.  Also, note that failure of the
- highest-severity action means EH failure and results in offlining of
- all unrecovered devices.
- 
-- During recovery, the following rules are followed
-+During recovery, the following rules are followed
- 
-  - Recovery actions are performed on failed scmds on the to do list,
-    eh_work_q.  If a recovery action succeeds for a scmd, recovered
-@@ -221,58 +240,72 @@ all unrecovered devices.
-    timed-out scmds, SCSI EH ensures that LLDD forgets about a scmd
-    before reusing it for EH commands.
- 
-- When a scmd is recovered, the scmd is moved from eh_work_q to EH
-+When a scmd is recovered, the scmd is moved from eh_work_q to EH
- local eh_done_q using scsi_eh_finish_cmd().  After all scmds are
- recovered (eh_work_q is empty), scsi_eh_flush_done_q() is invoked to
- either retry or error-finish (notify upper layer of failure) recovered
- scmds.
- 
-- scmds are retried iff its sdev is still online (not offlined during
-+scmds are retried iff its sdev is still online (not offlined during
- EH), REQ_FAILFAST is not set and ++scmd->retries is less than
- scmd->allowed.
- 
- 
--[2-1-2] Flow of scmds through EH
-+2.1.2 Flow of scmds through EH
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-  1. Error completion / time out
--    ACTION: scsi_eh_scmd_add() is invoked for scmd
++   The typical Physical Port's Scsi_Host::
 +
-+    :ACTION: scsi_eh_scmd_add() is invoked for scmd
+      /sys/devices/.../host17/
+-   and it has the typical descendant tree:
 +
- 	- add scmd to shost->eh_cmd_q
- 	- set SHOST_RECOVERY
- 	- shost->host_failed++
--    LOCKING: shost->host_lock
++   and it has the typical descendant tree::
 +
-+    :LOCKING: shost->host_lock
- 
-  2. EH starts
--    ACTION: move all scmds to EH's local eh_work_q.  shost->eh_cmd_q
--	    is cleared.
--    LOCKING: shost->host_lock (not strictly necessary, just for
+      /sys/devices/.../host17/rport-17:0-0/target17:0:0/17:0:0:0:
+-   and then the vport is created on the Physical Port:
 +
-+    :ACTION: move all scmds to EH's local eh_work_q.  shost->eh_cmd_q
-+	     is cleared.
++   and then the vport is created on the Physical Port::
 +
-+    :LOCKING: shost->host_lock (not strictly necessary, just for
-              consistency)
- 
-  3. scmd recovered
--    ACTION: scsi_eh_finish_cmd() is invoked to EH-finish scmd
+      /sys/devices/.../host17/vport-17:0-0
+-   and the vport's Scsi_Host is then created:
 +
-+    :ACTION: scsi_eh_finish_cmd() is invoked to EH-finish scmd
++   and the vport's Scsi_Host is then created::
 +
- 	- scsi_setup_cmd_retry()
- 	- move from local eh_work_q to local eh_done_q
--    LOCKING: none
--    CONCURRENCY: at most one thread per separate eh_work_q to
--		 keep queue manipulation lockless
+      /sys/devices/.../host17/vport-17:0-0/host18
+-   and then the rest of the tree progresses, such as:
 +
-+    :LOCKING: none
++   and then the rest of the tree progresses, such as::
 +
-+    :CONCURRENCY: at most one thread per separate eh_work_q to
-+		  keep queue manipulation lockless
+      /sys/devices/.../host17/vport-17:0-0/host18/rport-18:0-0/target18:0:0/18:0:0:0:
  
-  4. EH completes
--    ACTION: scsi_eh_flush_done_q() retries scmds or notifies upper
--	    layer of failure. May be called concurrently but must have
--	    a no more than one thread per separate eh_work_q to
--	    manipulate the queue locklessly
--	- scmd is removed from eh_done_q and scmd->eh_entry is cleared
--	- if retry is necessary, scmd is requeued using
--          scsi_queue_insert()
--	- otherwise, scsi_finish_command() is invoked for scmd
--	- zero shost->host_failed
--    LOCKING: queue or finish function performs appropriate locking
--
--
--[2-1-3] Flow of control
+-  Here's what to expect in the sysfs tree :
++  Here's what to expect in the sysfs tree::
 +
-+    :ACTION: scsi_eh_flush_done_q() retries scmds or notifies upper
-+	     layer of failure. May be called concurrently but must have
-+	     a no more than one thread per separate eh_work_q to
-+	     manipulate the queue locklessly
+    scsi_hosts:
+      /sys/class/scsi_host/host17                physical port's scsi_host
+      /sys/class/scsi_host/host18                vport's scsi_host
+@@ -116,8 +136,8 @@ Device Trees and Vport Objects:
+      /sys/class/fc_remote_ports/rport-18:0-0    rport on the vport
+ 
+ 
+-Vport Attributes:
+--------------------------------
++Vport Attributes
++----------------
+ 
+   The new fc_vport class object has the following attributes
+ 
+@@ -184,16 +204,18 @@ Vport Attributes:
+         (e.g. 0x, x, etc).
+ 
+ 
+-Vport States:
+--------------------------------
++Vport States
++------------
+ 
+   Vport instantiation consists of two parts:
 +
-+	     - scmd is removed from eh_done_q and scmd->eh_entry is cleared
-+	     - if retry is necessary, scmd is requeued using
-+	       scsi_queue_insert()
-+	     - otherwise, scsi_finish_command() is invoked for scmd
-+	     - zero shost->host_failed
+     - Creation with the kernel and LLDD. This means all transport and
+       driver data structures are built up, and device objects created.
+       This is equivalent to a driver "attach" on an adapter, which is
+       independent of the adapter's link state.
+     - Instantiation of the vport on the FC link via ELS traffic, etc.
+       This is equivalent to a "link up" and successful link initialization.
 +
-+    :LOCKING: queue or finish function performs appropriate locking
+   Further information can be found in the interfaces section below for
+   Vport Creation.
+ 
+@@ -227,6 +249,7 @@ Vport States:
+     FC_VPORT_NO_FABRIC_SUPP     - No Fabric Support
+       The vport is not operational. One of the following conditions were
+       encountered:
 +
+        - The FC topology is not Point-to-Point
+        - The FC port is not connected to an F_Port
+        - The F_Port has indicated that NPIV is not supported.
+@@ -251,32 +274,53 @@ Vport States:
+ 
+   The following state table indicates the different state transitions:
+ 
+-    State              Event                            New State
+-    --------------------------------------------------------------------
+-     n/a                Initialization                  Unknown
+-    Unknown:            Link Down                       Linkdown
+-                        Link Up & Loop                  No Fabric Support
+-                        Link Up & no Fabric             No Fabric Support
+-                        Link Up & FLOGI response        No Fabric Support
+-                          indicates no NPIV support
+-                        Link Up & FDISC being sent      Initializing
+-                        Disable request                 Disable
+-    Linkdown:           Link Up                         Unknown
+-    Initializing:       FDISC ACC                       Active
+-                        FDISC LS_RJT w/ no resources    No Fabric Resources
+-                        FDISC LS_RJT w/ invalid         Fabric Rejected WWN
+-                          pname or invalid nport_id
+-                        FDISC LS_RJT failed for         Vport Failed
+-                          other reasons
+-                        Link Down                       Linkdown
+-                        Disable request                 Disable
+-    Disable:            Enable request                  Unknown
+-    Active:             LOGO received from fabric       Fabric Logout
+-                        Link Down                       Linkdown
+-                        Disable request                 Disable
+-    Fabric Logout:      Link still up                   Unknown
++   +------------------+--------------------------------+---------------------+
++   | State            | Event                          | New State           |
++   +==================+================================+=====================+
++   | n/a              | Initialization                 | Unknown             |
++   +------------------+--------------------------------+---------------------+
++   | Unknown:         | Link Down                      | Linkdown            |
++   |                  +--------------------------------+---------------------+
++   |                  | Link Up & Loop                 | No Fabric Support   |
++   |                  +--------------------------------+---------------------+
++   |                  | Link Up & no Fabric            | No Fabric Support   |
++   |                  +--------------------------------+---------------------+
++   |                  | Link Up & FLOGI response       | No Fabric Support   |
++   |                  | indicates no NPIV support      |                     |
++   |                  +--------------------------------+---------------------+
++   |                  | Link Up & FDISC being sent     | Initializing        |
++   |                  +--------------------------------+---------------------+
++   |                  | Disable request                | Disable             |
++   +------------------+--------------------------------+---------------------+
++   | Linkdown:        | Link Up                        | Unknown             |
++   +------------------+--------------------------------+---------------------+
++   | Initializing:    | FDISC ACC                      | Active              |
++   |                  +--------------------------------+---------------------+
++   |                  | FDISC LS_RJT w/ no resources   | No Fabric Resources |
++   |                  +--------------------------------+---------------------+
++   |                  | FDISC LS_RJT w/ invalid        | Fabric Rejected WWN |
++   |		      | pname or invalid nport_id      |                     |
++   |                  +--------------------------------+---------------------+
++   |                  | FDISC LS_RJT failed for        | Vport Failed        |
++   |                  | other reasons                  |                     |
++   |                  +--------------------------------+---------------------+
++   |                  | Link Down                      | Linkdown            |
++   |                  +--------------------------------+---------------------+
++   |                  | Disable request                | Disable             |
++   +------------------+--------------------------------+---------------------+
++   | Disable:         | Enable request                 | Unknown             |
++   +------------------+--------------------------------+---------------------+
++   | Active:          | LOGO received from fabric      | Fabric Logout       |
++   |                  +--------------------------------+---------------------+
++   |                  | Link Down                      | Linkdown            |
++   |                  +--------------------------------+---------------------+
++   |                  | Disable request                | Disable             |
++   +------------------+--------------------------------+---------------------+
++   | Fabric Logout:   | Link still up                  | Unknown             |
++   +------------------+--------------------------------+---------------------+
 +
-+2.1.3 Flow of control
-+^^^^^^^^^^^^^^^^^^^^^^
++The following 4 error states all have the same transitions::
  
-  EH through fine-grained callbacks start from scsi_unjam_host().
- 
--<<scsi_unjam_host>>
-+``scsi_unjam_host``
- 
-     1. Lock shost->host_lock, splice_init shost->eh_cmd_q into local
-        eh_work_q and unlock host_lock.  Note that shost->eh_cmd_q is
-@@ -280,7 +313,7 @@ scmd->allowed.
- 
-     2. Invoke scsi_eh_get_sense.
- 
--    <<scsi_eh_get_sense>>
-+    ``scsi_eh_get_sense``
- 
- 	This action is taken for each error-completed
- 	(!SCSI_EH_CANCEL_CMD) commands without valid sense data.  Most
-@@ -315,7 +348,7 @@ scmd->allowed.
- 
-     3. If !list_empty(&eh_work_q), invoke scsi_eh_abort_cmds().
- 
--    <<scsi_eh_abort_cmds>>
-+    ``scsi_eh_abort_cmds``
- 
- 	This action is taken for each timed out command when
- 	no_async_abort is enabled in the host template.
-@@ -339,14 +372,14 @@ scmd->allowed.
- 
-     4. If !list_empty(&eh_work_q), invoke scsi_eh_ready_devs()
- 
--    <<scsi_eh_ready_devs>>
-+    ``scsi_eh_ready_devs``
- 
- 	This function takes four increasingly more severe measures to
- 	make failed sdevs ready for new commands.
- 
- 	1. Invoke scsi_eh_stu()
- 
--	<<scsi_eh_stu>>
-+	``scsi_eh_stu``
- 
- 	    For each sdev which has failed scmds with valid sense data
- 	    of which scsi_check_sense()'s verdict is FAILED,
-@@ -369,7 +402,7 @@ scmd->allowed.
- 
- 	2. If !list_empty(&eh_work_q), invoke scsi_eh_bus_device_reset().
- 
--	<<scsi_eh_bus_device_reset>>
-+	``scsi_eh_bus_device_reset``
- 
- 	    This action is very similar to scsi_eh_stu() except that,
- 	    instead of issuing STU, hostt->eh_device_reset_handler()
-@@ -379,7 +412,7 @@ scmd->allowed.
- 
- 	3. If !list_empty(&eh_work_q), invoke scsi_eh_bus_reset()
- 
--	<<scsi_eh_bus_reset>>
-+	``scsi_eh_bus_reset``
- 
- 	    hostt->eh_bus_reset_handler() is invoked for each channel
- 	    with failed scmds.  If bus reset succeeds, all failed
-@@ -388,7 +421,7 @@ scmd->allowed.
- 
- 	4. If !list_empty(&eh_work_q), invoke scsi_eh_host_reset()
- 
--	<<scsi_eh_host_reset>>
-+	``scsi_eh_host_reset``
- 
- 	    This is the last resort.  hostt->eh_host_reset_handler()
- 	    is invoked.  If host reset succeeds, all failed scmds on
-@@ -396,14 +429,14 @@ scmd->allowed.
- 
- 	5. If !list_empty(&eh_work_q), invoke scsi_eh_offline_sdevs()
- 
--	<<scsi_eh_offline_sdevs>>
-+	``scsi_eh_offline_sdevs``
- 
- 	    Take all sdevs which still have unrecovered scmds offline
- 	    and EH-finish the scmds.
- 
-     5. Invoke scsi_eh_flush_done_q().
- 
--	<<scsi_eh_flush_done_q>>
-+	``scsi_eh_flush_done_q``
- 
- 	    At this point all scmds are recovered (or given up) and
- 	    put on eh_done_q by scsi_eh_finish_cmd().  This function
-@@ -411,9 +444,10 @@ scmd->allowed.
- 	    layer of failure of the scmds.
+-         The following 4 error states all have the same transitions:
+     No Fabric Support:
+     No Fabric Resources:
+     Fabric Rejected WWN:
+@@ -285,8 +329,8 @@ Vport States:
+                         Link goes down                  Linkdown
  
  
--[2-2] EH through transportt->eh_strategy_handler()
-+2.2 EH through transportt->eh_strategy_handler()
-+------------------------------------------------
+-Transport <-> LLDD Interfaces :
+--------------------------------
++Transport <-> LLDD Interfaces
++-----------------------------
  
-- transportt->eh_strategy_handler() is invoked in the place of
-+transportt->eh_strategy_handler() is invoked in the place of
- scsi_unjam_host() and it is responsible for whole recovery process.
- On completion, the handler should have made lower layers forget about
- all failed scmds and either ready for new commands or offline.  Also,
-@@ -422,7 +456,8 @@ SCSI midlayer.  IOW, of the steps described in [2-1-2], all steps
- except for #1 must be implemented by eh_strategy_handler().
+ Vport support by LLDD:
  
+@@ -300,14 +344,17 @@ Vport support by LLDD:
  
--[2-2-1] Pre transportt->eh_strategy_handler() SCSI midlayer conditions
-+2.2.1 Pre transportt->eh_strategy_handler() SCSI midlayer conditions
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ Vport Creation:
  
-  The following conditions are true on entry to the handler.
+-  The LLDD vport_create() syntax is:
++  The LLDD vport_create() syntax is::
  
-@@ -435,7 +470,8 @@ except for #1 must be implemented by eh_strategy_handler().
-  - shost->host_failed == shost->host_busy
+       int vport_create(struct fc_vport *vport, bool disable)
  
- 
--[2-2-2] Post transportt->eh_strategy_handler() SCSI midlayer conditions
-+2.2.2 Post transportt->eh_strategy_handler() SCSI midlayer conditions
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-  The following conditions must be true on exit from the handler.
- 
-@@ -453,7 +489,8 @@ except for #1 must be implemented by eh_strategy_handler().
-    ->allowed to limit the number of retries.
- 
- 
--[2-2-3] Things to consider
-+2.2.3 Things to consider
-+^^^^^^^^^^^^^^^^^^^^^^^^
- 
-  - Know that timed out scmds are still active on lower layers.  Make
-    lower layers forget about them before doing anything else with
-@@ -469,7 +506,7 @@ except for #1 must be implemented by eh_strategy_handler().
-    offline.
- 
- 
----
- Tejun Heo
- htejun@gmail.com
+-    where:
+-      vport:    Is the newly allocated vport object
+-      disable:  If "true", the vport is to be created in a disabled stated.
++  where:
 +
- 11th September 2005
++      =======   ===========================================================
++      vport     Is the newly allocated vport object
++      disable   If "true", the vport is to be created in a disabled stated.
+                 If "false", the vport is to be enabled upon creation.
++      =======   ===========================================================
+ 
+   When a request is made to create a new vport (via sgio/netlink, or the
+   vport_create fc_host attribute), the transport will validate that the LLDD
+@@ -317,6 +364,7 @@ Vport Creation:
+   LLDD's vport_create() function with the newly allocated vport object.
+ 
+   As mentioned above, vport creation is divided into two parts:
++
+     - Creation with the kernel and LLDD. This means all transport and
+       driver data structures are built up, and device objects created.
+       This is equivalent to a driver "attach" on an adapter, which is
+@@ -329,6 +377,7 @@ Vport Creation:
+   infrastructure exists to support NPIV, and complete the first part of
+   vport creation (data structure build up) before returning.  We do not
+   hinge vport_create() on the link-side operation mainly because:
++
+     - The link may be down. It is not a failure if it is. It simply
+       means the vport is in an inoperable state until the link comes up.
+       This is consistent with the link bouncing post vport creation.
+@@ -337,11 +386,15 @@ Vport Creation:
+       FC adapter. The vport_create is synonymous with driver attachment
+       to the adapter, which is independent of link state.
+ 
+-    Note: special error codes have been defined to delineate infrastructure
++  .. Note::
++
++      special error codes have been defined to delineate infrastructure
+       failure cases for quicker resolution.
+ 
+   The expected behavior for the LLDD's vport_create() function is:
++
+     - Validate Infrastructure:
++
+         - If the driver or adapter cannot support another vport, whether
+             due to improper firmware, (a lie about) max_npiv, or a lack of
+             some other resource - return VPCERR_UNSUPPORTED.
+@@ -349,17 +402,21 @@ Vport Creation:
+             the adapter and detects an overlap - return VPCERR_BAD_WWN.
+         - If the driver detects the topology is loop, non-fabric, or the
+             FLOGI did not support NPIV - return VPCERR_NO_FABRIC_SUPP.
++
+     - Allocate data structures. If errors are encountered, such as out
+         of memory conditions, return the respective negative Exxx error code.
+     - If the role is FCP Initiator, the LLDD is to :
++
+         - Call scsi_host_alloc() to allocate a scsi_host for the vport.
+         - Call scsi_add_host(new_shost, &vport->dev) to start the scsi_host
+           and bind it as a child of the vport device.
+         - Initializes the fc_host attribute values.
++
+     - Kick of further vport state transitions based on the disable flag and
+         link state - and return success (zero).
+ 
+   LLDD Implementers Notes:
++
+   - It is suggested that there be a different fc_function_templates for
+     the physical port and the virtual port.  The physical port's template
+     would have the vport_create, vport_delete, and vport_disable functions,
+@@ -373,14 +430,17 @@ Vport Creation:
+ 
+ Vport Disable/Enable:
+ 
+-  The LLDD vport_disable() syntax is:
++  The LLDD vport_disable() syntax is::
+ 
+       int vport_disable(struct fc_vport *vport, bool disable)
+ 
+-    where:
+-      vport:    Is vport to be enabled or disabled
+-      disable:  If "true", the vport is to be disabled.
++  where:
++
++      =======   =======================================
++      vport     Is vport to be enabled or disabled
++      disable   If "true", the vport is to be disabled.
+                 If "false", the vport is to be enabled.
++      =======   =======================================
+ 
+   When a request is made to change the disabled state on a vport, the
+   transport will validate the request against the existing vport state.
+@@ -401,11 +461,12 @@ Vport Disable/Enable:
+ 
+ Vport Deletion:
+ 
+-  The LLDD vport_delete() syntax is:
++  The LLDD vport_delete() syntax is::
+ 
+       int vport_delete(struct fc_vport *vport)
+ 
+-    where:
++  where:
++
+       vport:    Is vport to delete
+ 
+   When a request is made to delete a vport (via sgio/netlink, or via the
+@@ -443,39 +504,42 @@ Transport supplied functions
+ 
+ The following functions are supplied by the FC-transport for use by LLDs.
+ 
+-   fc_vport_create - create a vport
+-   fc_vport_terminate - detach and remove a vport
++   ==================   =========================
++   fc_vport_create      create a vport
++   fc_vport_terminate   detach and remove a vport
++   ==================   =========================
+ 
+-Details:
++Details::
+ 
+-/**
+- * fc_vport_create - Admin App or LLDD requests creation of a vport
+- * @shost:     scsi host the virtual port is connected to.
+- * @ids:       The world wide names, FC4 port roles, etc for
+- *              the virtual port.
+- *
+- * Notes:
+- *     This routine assumes no locks are held on entry.
+- */
+-struct fc_vport *
+-fc_vport_create(struct Scsi_Host *shost, struct fc_vport_identifiers *ids)
++    /**
++    * fc_vport_create - Admin App or LLDD requests creation of a vport
++    * @shost:     scsi host the virtual port is connected to.
++    * @ids:       The world wide names, FC4 port roles, etc for
++    *              the virtual port.
++    *
++    * Notes:
++    *     This routine assumes no locks are held on entry.
++    */
++    struct fc_vport *
++    fc_vport_create(struct Scsi_Host *shost, struct fc_vport_identifiers *ids)
+ 
+-/**
+- * fc_vport_terminate - Admin App or LLDD requests termination of a vport
+- * @vport:      fc_vport to be terminated
+- *
+- * Calls the LLDD vport_delete() function, then deallocates and removes
+- * the vport from the shost and object tree.
+- *
+- * Notes:
+- *      This routine assumes no locks are held on entry.
+- */
+-int
+-fc_vport_terminate(struct fc_vport *vport)
++    /**
++    * fc_vport_terminate - Admin App or LLDD requests termination of a vport
++    * @vport:      fc_vport to be terminated
++    *
++    * Calls the LLDD vport_delete() function, then deallocates and removes
++    * the vport from the shost and object tree.
++    *
++    * Notes:
++    *      This routine assumes no locks are held on entry.
++    */
++    int
++    fc_vport_terminate(struct fc_vport *vport)
+ 
+ 
+ FC BSG support (CT & ELS passthru, and more)
+-========================================================================
++============================================
++
+ << To Be Supplied >>
+ 
+ 
 -- 
 2.21.1
 
