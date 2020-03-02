@@ -2,63 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF14175819
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 11:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9647B17581D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 11:16:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbgCBKPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 05:15:38 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:38741 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbgCBKPi (ORCPT
+        id S1727363AbgCBKQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 05:16:44 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55202 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727027AbgCBKQo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 05:15:38 -0500
-Received: by mail-pj1-f65.google.com with SMTP id a16so3905450pju.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 02:15:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=Fnl4GknCqqOvHGNFUmaqK8gFLuk3N3iSJGAVTBS0Lkw=;
-        b=PL6Nv01fxIro+CXxpRlWN0t16Fah9sMaCgKF/DrerD8W6oeeEFVG/rmNvuvJ7hBEc5
-         5qxdtWRoqo/O5rFckS6acVdfBETiEnM0XF1HSA3XCbgX+clkh5/Fsma3Bl0qXOK1plPV
-         jUiY8Iwg9aZgGt8SIJ3lnKQOxQSol6UM+vc/iDpc08AnjriO0YZGug6Gxd1512wfH6Iq
-         o6h1bzjCw4qqabCSgnCqxSnUgUu83rgvkgPO3eTJaOaJqgEAOPTz76QbS9q8SPOtq6ZL
-         286KNO1aE4zVdYB637lWWcSk+14Wnz0zpkDj9jkRGFD/KmAIqr5oehCWSeV/nAJGMX13
-         NNjQ==
+        Mon, 2 Mar 2020 05:16:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583144203;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IXo+jOnMJnVg0BdBfAq0eKhEwbhNb8AEFiily5Isa3s=;
+        b=Lz48/6MrklQ1TgrAYgUnMvL5H84FnwqamDiw5QpMRvpI+KhLtT1OYWTXsdQKZb4YrC553c
+        pjGPssl6LbEcGWewxswEoLeP2tbCoQn2oasM5FaaNaSExMpoWniYULBixvqkNzdj+wCSl+
+        W1q7crQ1fFotjylPUNKyInhDV5VEHTs=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-260-9l02Ge80Nl22PEqgJcRN4Q-1; Mon, 02 Mar 2020 05:16:41 -0500
+X-MC-Unique: 9l02Ge80Nl22PEqgJcRN4Q-1
+Received: by mail-qk1-f197.google.com with SMTP id d2so8550682qko.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 02:16:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=Fnl4GknCqqOvHGNFUmaqK8gFLuk3N3iSJGAVTBS0Lkw=;
-        b=WwxsJD3SwNSXTjcC4RnBgVRMtK96moZijrcXQGnzwAsk4NrtkJu3jALcZJ5UgebuY7
-         kFP73ipFEG2hle6x9nJdqra5KcRA1gLxCAB2t62/zDBKeylNbx7ZnlsfHzpkYKHuo/R8
-         Js83MujVK+HUNjctyoqHjfWK2T1S+Xg3nOI1KcuJX46xlJrxep1fE6kYiwkqf6KbLWsC
-         cMwSrc9l85WzNULC9/PGCeboOSLwqn+WWwdWvGxmY56QOidgGICJfs9R4tDCATlNs1N9
-         btaJl8iGivQr3ZKE9pQW6nNzp6k2NNDsIcqJV7zK8+KOn52F1j0gSJaUzBj7iTFNcGPP
-         QeDQ==
-X-Gm-Message-State: APjAAAVNOI5dA40O9q2eAh0VT2lS5DysuGWyVpjyaNqYx0FJqZ+CtJHy
-        asR9GPAEGKvFAkcVd3QlcoA94VQ1/9nyqw2OICs=
-X-Google-Smtp-Source: APXvYqxMQjVg9i913fVXDGBwVKjFaiGY9t5cJj2I6/czobFGrdxi5TosheouBY9v7RlRG/yEaajDdOlsWXlT/PLQIAQ=
-X-Received: by 2002:a17:90a:37e7:: with SMTP id v94mr19808719pjb.37.1583144136880;
- Mon, 02 Mar 2020 02:15:36 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IXo+jOnMJnVg0BdBfAq0eKhEwbhNb8AEFiily5Isa3s=;
+        b=NPFSZCVY3kRXW4LFp3xL0UXQfG/iA1BevLnQYjUMlVhsyJDuB+Fi2WLXbPdKOJ/m7c
+         0P/LEEartp/60MbNBbNO6wOTNuCuXoRJK4ko+jlnbqD6HhZ3M2BC04979xBdXrBDmhHm
+         NRBDykKn+OBv41fg7NrekMDiHPZZvVXzAteR7LIYLMACpMVsnZ5r+jcxv+mWs4tFPP0e
+         nhHXjFT1ti16Fl4VlXpoAzyS3SfHRRf85E5Gg9siXi8XiCPt8zR8i/yV46msAnS2TZil
+         DQLLhPuneMjV/E7FF7kaTfRTO7AC7zvvYD6BPb1NuOC190Ddy/nYQ2hoSmfjf7x1v+SX
+         o1vw==
+X-Gm-Message-State: ANhLgQ3jZU3QSKU4lesiL7DtI+9rqxZtjNapnXehks4RBYE+5YYpn/Ue
+        7bRVivu/tbxeAoRxJH17ksv3OV7F59GyVLF5t2EgQXoTyhmums6Ks7DUBxIFSKOcjkznqnwgXud
+        YpInaas7dalTHbORbqlLJwmRke172vSQZmoDeYTaB
+X-Received: by 2002:a05:620a:1517:: with SMTP id i23mr7903639qkk.459.1583144201401;
+        Mon, 02 Mar 2020 02:16:41 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vvciVC+XX0L/bTNhtxk+6Nmcqb4gcKNRf+REB1cVh+9NmujV8iEZpeEbQ7bkpaxLzOlPc2RTSKI9C/8YAO1yK4=
+X-Received: by 2002:a05:620a:1517:: with SMTP id i23mr7903622qkk.459.1583144201197;
+ Mon, 02 Mar 2020 02:16:41 -0800 (PST)
 MIME-Version: 1.0
-Reply-To: yusufosman0142@gmail.com
-Received: by 2002:a17:90a:da06:0:0:0:0 with HTTP; Mon, 2 Mar 2020 02:15:36
- -0800 (PST)
-From:   yusuf osman <yusufosman1042@gmail.com>
-Date:   Mon, 2 Mar 2020 13:15:36 +0300
-X-Google-Sender-Auth: pZi5SUpRNwTfQAU6e0RS-KyBwMk
-Message-ID: <CAApHi5EaqZzQKkNS5vZOrxYvnFNe-phX2JzB72L_DnHe3mQNcw@mail.gmail.com>
-Subject: Urgent reply
-To:     undisclosed-recipients:;
+References: <20200229173007.61838-1-tanure@linux.com>
+In-Reply-To: <20200229173007.61838-1-tanure@linux.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 2 Mar 2020 11:16:30 +0100
+Message-ID: <CAO-hwJJDv=LnOQDbgWwg2sOccM9Tt-h=082Coi0aYdwG-CG-Kg@mail.gmail.com>
+Subject: Re: [PATCH] HID: hyperv: NULL check before some freeing functions is
+ not needed.
+To:     Lucas Tanure <tanure@linux.com>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Jiri Kosina <jikos@kernel.org>, linux-hyperv@vger.kernel.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day,
-I have been waiting for your response, kindly check your inbox and get
-back to me, I really need your responds as soon as possible, I look
-forward to hear from you soon.
-Regards
-Yusuf
+On Sat, Feb 29, 2020 at 6:30 PM Lucas Tanure <tanure@linux.com> wrote:
+>
+> Fix below warnings reported by coccicheck:
+> drivers/hid/hid-hyperv.c:197:2-7: WARNING: NULL check before some freeing functions is not needed.
+> drivers/hid/hid-hyperv.c:211:2-7: WARNING: NULL check before some freeing functions is not needed.
+>
+> Signed-off-by: Lucas Tanure <tanure@linux.com>
+> ---
+
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+
+Sasha, do you prefer taking this through your tree or through the HID
+one. I don't think we have much scheduled for hyperv, so it's up to
+you.
+
+Cheers,
+Benjamin
+
+>  drivers/hid/hid-hyperv.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
+> index dddfca555df9..0b6ee1dee625 100644
+> --- a/drivers/hid/hid-hyperv.c
+> +++ b/drivers/hid/hid-hyperv.c
+> @@ -193,8 +193,7 @@ static void mousevsc_on_receive_device_info(struct mousevsc_dev *input_device,
+>                 goto cleanup;
+>
+>         /* The pointer is not NULL when we resume from hibernation */
+> -       if (input_device->hid_desc != NULL)
+> -               kfree(input_device->hid_desc);
+> +       kfree(input_device->hid_desc);
+>         input_device->hid_desc = kmemdup(desc, desc->bLength, GFP_ATOMIC);
+>
+>         if (!input_device->hid_desc)
+> @@ -207,8 +206,7 @@ static void mousevsc_on_receive_device_info(struct mousevsc_dev *input_device,
+>         }
+>
+>         /* The pointer is not NULL when we resume from hibernation */
+> -       if (input_device->report_desc != NULL)
+> -               kfree(input_device->report_desc);
+> +       kfree(input_device->report_desc);
+>         input_device->report_desc = kzalloc(input_device->report_desc_size,
+>                                           GFP_ATOMIC);
+>
+> --
+> 2.25.1
+>
+
