@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD33F1755AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B680F1755D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:20:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgCBIST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:18:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56974 "EHLO mail.kernel.org"
+        id S1727909AbgCBITD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:19:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727190AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:21 -0500
+        id S1727154AbgCBIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:20 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58489246DF;
+        by mail.kernel.org (Postfix) with ESMTPSA id 401E2246D5;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=VSYlwxOgcKmsJPmO9XgVB01Y5bYH9oETiiWJbAEWE84=;
+        bh=GLxZsUQq+Lij8M5TFkR1baqj1S8OGH1zk8esZJ1wNcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JTaAzv8GDPNJB9SZmyvkuXFZp6FGwMbRh9WqXyiH4E0IDZ+9bZGG5c2i4hLdrV1K7
-         IHZglUKa4yJNEJZsXbrtei6xps1TWy6UkIRbGqZL+DOeSwJufLF4o9IJ2rF3zFgJ8P
-         CGDL6Ug7jHKYRFYBSa5RnG3EFa3l578T2trEhrg0=
+        b=ds7nPUvsI4F0Celyc8rzVkvLv8/pNwQpo5zgezjJtGA1lFPoCD58AHPo7Bct/N2Ne
+         4h2apFBDolOWigUnJXUPUQ+hb4zRJR1NNQNEDFr0ikYPcqgxI2gXOWuhml5NTjpmJK
+         7apaLpK13kNjRc/cnZSp4VRwuest8tfUGdgdMhHc=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003xa-BB; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003xe-C0; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Oliver Neukum <oliver@neukum.org>,
-        Ali Akcaagac <aliakc@web.de>,
-        Jamie Lenehan <lenehan@twibble.org>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        dc395x@twibble.org, linux-scsi@vger.kernel.org
-Subject: [PATCH 13/42] docs: scsi: convert dc395x.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:46 +0100
-Message-Id: <3c0876df0045695185f922a0404c497a69de36a9.1583136624.git.mchehab+huawei@kernel.org>
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH 14/42] docs: scsi: convert dpti.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:47 +0100
+Message-Id: <212fd7961c134c5bd73d87cd818bcddc30270804.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -51,185 +49,267 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/{dc395x.txt => dc395x.rst} | 75 +++++++++++--------
- Documentation/scsi/index.rst                  |  1 +
- MAINTAINERS                                   |  2 +-
- drivers/scsi/Kconfig                          |  2 +-
- 4 files changed, 48 insertions(+), 32 deletions(-)
- rename Documentation/scsi/{dc395x.txt => dc395x.rst} (64%)
+ Documentation/scsi/dpti.rst   | 92 +++++++++++++++++++++++++++++++++++
+ Documentation/scsi/dpti.txt   | 83 -------------------------------
+ Documentation/scsi/index.rst  |  1 +
+ drivers/scsi/Kconfig          |  2 +-
+ drivers/scsi/dpt/dpti_ioctl.h |  2 +-
+ drivers/scsi/dpt_i2o.c        |  2 +-
+ drivers/scsi/dpti.h           |  2 +-
+ 7 files changed, 97 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/scsi/dpti.rst
+ delete mode 100644 Documentation/scsi/dpti.txt
 
-diff --git a/Documentation/scsi/dc395x.txt b/Documentation/scsi/dc395x.rst
-similarity index 64%
-rename from Documentation/scsi/dc395x.txt
-rename to Documentation/scsi/dc395x.rst
-index 88219f96633d..d779e782b1cb 100644
---- a/Documentation/scsi/dc395x.txt
-+++ b/Documentation/scsi/dc395x.rst
-@@ -1,5 +1,8 @@
+diff --git a/Documentation/scsi/dpti.rst b/Documentation/scsi/dpti.rst
+new file mode 100644
+index 000000000000..0496919d87d3
+--- /dev/null
++++ b/Documentation/scsi/dpti.rst
+@@ -0,0 +1,92 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+======================================
- README file for the dc395x SCSI driver
--==========================================
-+======================================
- 
- Status
- ------
-@@ -18,14 +21,14 @@ http://lists.twibble.org/mailman/listinfo/dc395x/
- 
- Parameters
- ----------
--The driver uses the settings from the EEPROM set in the SCSI BIOS 
-+The driver uses the settings from the EEPROM set in the SCSI BIOS
- setup. If there is no EEPROM, the driver uses default values.
- Both can be overridden by command line parameters (module or kernel
- parameters).
- 
- The following parameters are available:
- 
-- - safe
-+safe
-    Default: 0, Acceptable values: 0 or 1
- 
-    If safe is set to 1 then the adapter will use conservative
-@@ -33,52 +36,63 @@ The following parameters are available:
- 
- 		shortcut for dc395x=7,4,9,15,2,10
- 
-- - adapter_id
-+adapter_id
-    Default: 7, Acceptable values: 0 to 15
- 
-    Sets the host adapter SCSI ID.
- 
-- - max_speed
-+max_speed
-    Default: 1, Acceptable value: 0 to 7
--   0 = 20   Mhz
--   1 = 12.2 Mhz
--   2 = 10   Mhz
--   3 = 8    Mhz
--   4 = 6.7  Mhz
--   5 = 5.8  Hhz
--   6 = 5    Mhz
--   7 = 4    Mhz
- 
-- - dev_mode
-+   ==  ========
-+   0   20   Mhz
-+   1   12.2 Mhz
-+   2   10   Mhz
-+   3   8    Mhz
-+   4   6.7  Mhz
-+   5   5.8  Hhz
-+   6   5    Mhz
-+   7   4    Mhz
-+   ==  ========
++===================
++Adaptec dpti driver
++===================
 +
-+dev_mode
-    Bitmap for device configuration
- 
-    DevMode bit definition:
++Redistribution and use in source form, with or without modification, are
++permitted provided that redistributions of source code must retain the
++above copyright notice, this list of conditions and the following disclaimer.
 +
-+      === ======== ========  =========================================
-       Bit Val(hex) Val(dec)  Meaning
--      *0    0x01       1     Parity check
--      *1    0x02       2     Synchronous Negotiation
--      *2    0x04       4     Disconnection
--      *3    0x08       8     Send Start command on startup. (Not used)
--      *4    0x10      16     Tagged Command Queueing
--      *5    0x20      32     Wide Negotiation
-+      === ======== ========  =========================================
-+       0    0x01       1     Parity check
-+       1    0x02       2     Synchronous Negotiation
-+       2    0x04       4     Disconnection
-+       3    0x08       8     Send Start command on startup. (Not used)
-+       4    0x10      16     Tagged Command Queueing
-+       5    0x20      32     Wide Negotiation
-+      === ======== ========  =========================================
- 
-- - adapter_mode
-+adapter_mode
-    Bitmap for adapter configuration
- 
-    AdaptMode bit definition
++This software is provided ``as is`` by Adaptec and
++any express or implied warranties, including, but not limited to, the
++implied warranties of merchantability and fitness for a particular purpose,
++are disclaimed. In no event shall Adaptec be
++liable for any direct, indirect, incidental, special, exemplary or
++consequential damages (including, but not limited to, procurement of
++substitute goods or services; loss of use, data, or profits; or business
++interruptions) however caused and on any theory of liability, whether in
++contract, strict liability, or tort (including negligence or otherwise)
++arising in any way out of the use of this driver software, even if advised
++of the possibility of such damage.
 +
-+    ===== ======== ========  ====================================================
-       Bit Val(hex) Val(dec)  Meaning
--      *0    0x01       1     Support more than two drives. (Not used)
--      *1    0x02       2     Use DOS compatible mapping for HDs greater than 1GB.
--      *2    0x04       4     Reset SCSI Bus on startup.
--      *3    0x08       8     Active Negation: Improves SCSI Bus noise immunity.
-+    ===== ======== ========  ====================================================
-+       0    0x01       1     Support more than two drives. (Not used)
-+       1    0x02       2     Use DOS compatible mapping for HDs greater than 1GB.
-+       2    0x04       4     Reset SCSI Bus on startup.
-+       3    0x08       8     Active Negation: Improves SCSI Bus noise immunity.
-        4    0x10      16     Immediate return on BIOS seek command. (Not used)
-     (*)5    0x20      32     Check for LUNs >= 1.
-+    ===== ======== ========  ====================================================
- 
-- - tags
-+tags
-    Default: 3, Acceptable values: 0-5
--   
++This driver supports the Adaptec I2O RAID and DPT SmartRAID V I2O boards.
 +
-    The number of tags is 1<<x, if x has been specified
- 
-- - reset_delay
-+reset_delay
-    Default: 1, Acceptable values: 0-180
- 
-    The seconds to not accept commands after a SCSI Reset
-@@ -95,8 +109,9 @@ License (GPL). Please read it, before using this driver. It should be
- included in your kernel sources and with your distribution. It carries the
- filename COPYING. If you don't have it, please ask me to send you one by
- email.
--Note: The GNU GPL says also something about warranty and liability. 
++Credits
++=======
 +
-+Note: The GNU GPL says also something about warranty and liability.
- Please be aware the following: While we do my best to provide a working and
--reliable driver, there is a chance, that it will kill your valuable data. 
-+reliable driver, there is a chance, that it will kill your valuable data.
- We refuse to take any responsibility for that. The driver is provided as-is
- and YOU USE IT AT YOUR OWN RESPONSIBILITY.
++The original linux driver was ported to Linux by Karen White while at
++Dell Computer.  It was ported from Bob Pasteur's (of DPT) original
++non-Linux driver.  Mark Salyzyn and Bob Pasteur consulted on the original
++driver.
++
++2.0 version of the driver by Deanna Bonds and Mark Salyzyn.
++
++History
++=======
++
++The driver was originally ported to linux version 2.0.34
++
++==== ==========================================================================
++V2.0 Rewrite of driver.  Re-architectured based on i2o subsystem.
++     This was the first full GPL version since the last version used
++     i2osig headers which were not GPL.  Developer Testing version.
++V2.1 Internal testing
++V2.2 First released version
++
++V2.3 Changes:
++
++     - Added Raptor Support
++     - Fixed bug causing system to hang under extreme load with
++     - management utilities running (removed GFP_DMA from kmalloc flags)
++
++V2.4 First version ready to be submitted to be embedded in the kernel
++
++     Changes:
++
++     - Implemented suggestions from Alan Cox
++     - Added calculation of resid for sg layer
++     - Better error handling
++     - Added checking underflow conditions
++     - Added DATAPROTECT checking
++     - Changed error return codes
++     - Fixed pointer bug in bus reset routine
++     - Enabled hba reset from ioctls (allows a FW flash to reboot and use
++       the new FW without having to reboot)
++     - Changed proc output
++==== ==========================================================================
++
++TODO
++====
++- Add 64 bit Scatter Gather when compiled on 64 bit architectures
++- Add sparse lun scanning
++- Add code that checks if a device that had been taken offline is
++  now online (at the FW level) when test unit ready or inquiry
++  command from scsi-core
++- Add proc read interface
++- busrescan command
++- rescan command
++- Add code to rescan routine that notifies scsi-core about new devices
++- Add support for C-PCI (hotplug stuff)
++- Add ioctl passthru error recovery
++
++Notes
++=====
++The DPT card optimizes the order of processing commands.  Consequently,
++a command may take up to 6 minutes to complete after it has been sent
++to the board.
++
++The files dpti_ioctl.h dptsig.h osd_defs.h osd_util.h sys_info.h are part of the
++interface files for Adaptec's management routines.  These define the structures used
++in the ioctls.  They are written to be portable.  They are hard to read, but I need
++to use them 'as is' or I can miss changes in the interface.
+diff --git a/Documentation/scsi/dpti.txt b/Documentation/scsi/dpti.txt
+deleted file mode 100644
+index f36dc0e7c8da..000000000000
+--- a/Documentation/scsi/dpti.txt
++++ /dev/null
+@@ -1,83 +0,0 @@
+- /* TERMS AND CONDITIONS OF USE
+- * 
+- * Redistribution and use in source form, with or without modification, are
+- * permitted provided that redistributions of source code must retain the
+- * above copyright notice, this list of conditions and the following disclaimer.
+- * 
+- * This software is provided `as is' by Adaptec and
+- * any express or implied warranties, including, but not limited to, the
+- * implied warranties of merchantability and fitness for a particular purpose,
+- * are disclaimed. In no event shall Adaptec be
+- * liable for any direct, indirect, incidental, special, exemplary or
+- * consequential damages (including, but not limited to, procurement of
+- * substitute goods or services; loss of use, data, or profits; or business
+- * interruptions) however caused and on any theory of liability, whether in
+- * contract, strict liability, or tort (including negligence or otherwise)
+- * arising in any way out of the use of this driver software, even if advised
+- * of the possibility of such damage.
+- * 
+- ****************************************************************
+- * This driver supports the Adaptec I2O RAID and DPT SmartRAID V I2O boards.
+- *
+- * CREDITS:
+- * The original linux driver was ported to Linux by Karen White while at 
+- * Dell Computer.  It was ported from Bob Pasteur's (of DPT) original 
+- * non-Linux driver.  Mark Salyzyn and Bob Pasteur consulted on the original
+- * driver. 
+- * 
+- * 2.0 version of the driver by Deanna Bonds and Mark Salyzyn.
+- *
+- * HISTORY:
+- * The driver was originally ported to linux version 2.0.34 
+- *
+- * V2.0 Rewrite of driver.  Re-architectured based on i2o subsystem.
+- *   This was the first full GPL version since the last version used
+- *   i2osig headers which were not GPL.  Developer Testing version.
+- * V2.1 Internal testing
+- * V2.2 First released version
+- *
+- * V2.3 
+- *   Changes:
+- *      Added Raptor Support
+- *      Fixed bug causing system to hang under extreme load with 
+- *         management utilities running (removed GFP_DMA from kmalloc flags)
+- *
+- *
+- * V2.4 First version ready to be submitted to be embedded in the kernel
+- *   Changes: 
+- *      Implemented suggestions from Alan Cox
+- *      Added calculation of resid for sg layer
+- *      Better error handling
+- *         Added checking underflow conditions 
+- *         Added DATAPROTECT checking
+- *         Changed error return codes
+- *         Fixed pointer bug in bus reset routine
+- *      Enabled hba reset from ioctls (allows a FW flash to reboot and use the new
+- *         FW without having to reboot)
+- *      Changed proc output
+- *
+- * TODO:
+- *      Add 64 bit Scatter Gather when compiled on 64 bit architectures
+- *      Add sparse lun scanning 
+- *      Add code that checks if a device that had been taken offline is
+- *         now online (at the FW level) when test unit ready or inquiry 
+- *         command from scsi-core
+- *      Add proc read interface
+- *         busrescan command
+- *         rescan command
+- *      Add code to rescan routine that notifies scsi-core about new devices
+- *      Add support for C-PCI (hotplug stuff)
+- *      Add ioctl passthru error recovery
+- *
+- * NOTES:
+- * The DPT card optimizes the order of processing commands.  Consequently,
+- * a command may take up to 6 minutes to complete after it has been sent
+- * to the board.  
+- *
+- * The files dpti_ioctl.h dptsig.h osd_defs.h osd_util.h sys_info.h are part of the
+- * interface files for Adaptec's management routines.  These define the structures used
+- * in the ioctls.  They are written to be portable.  They are hard to read, but I need
+- * to use them 'as is' or I can miss changes in the interface.
+- *
+- */
+-
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 3809213b83da..6fe00709cbce 100644
+index 6fe00709cbce..b553dd9904bf 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -17,5 +17,6 @@ Linux SCSI Subsystem
-    bnx2fc
+@@ -18,5 +18,6 @@ Linux SCSI Subsystem
     BusLogic
     cxgb3i
-+   dc395x
+    dc395x
++   dpti
  
     scsi_transport_srp/figures
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aac8ef48dc08..1e2ab816fe66 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4690,7 +4690,7 @@ L:	dc395x@twibble.org
- W:	http://twibble.org/dist/dc395x/
- W:	http://lists.twibble.org/mailman/listinfo/dc395x/
- S:	Maintained
--F:	Documentation/scsi/dc395x.txt
-+F:	Documentation/scsi/dc395x.rst
- F:	drivers/scsi/dc395x.*
- 
- DCCP PROTOCOL
 diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 5ec7330f82b6..9f5b2ddec6e0 100644
+index 9f5b2ddec6e0..5e834fba7934 100644
 --- a/drivers/scsi/Kconfig
 +++ b/drivers/scsi/Kconfig
-@@ -1187,7 +1187,7 @@ config SCSI_DC395x
- 	  This driver works, but is still in experimental status. So better
- 	  have a bootable disk and a backup in case of emergency.
- 
--	  Documentation can be found in <file:Documentation/scsi/dc395x.txt>.
-+	  Documentation can be found in <file:Documentation/scsi/dc395x.rst>.
+@@ -448,7 +448,7 @@ config SCSI_DPT_I2O
+ 	help
+ 	  This driver supports all of Adaptec's I2O based RAID controllers as 
+ 	  well as the DPT SmartRaid V cards.  This is an Adaptec maintained
+-	  driver by Deanna Bonds.  See <file:Documentation/scsi/dpti.txt>.
++	  driver by Deanna Bonds.  See <file:Documentation/scsi/dpti.rst>.
  
  	  To compile this driver as a module, choose M here: the
- 	  module will be called dc395x.
+ 	  module will be called dpt_i2o.
+diff --git a/drivers/scsi/dpt/dpti_ioctl.h b/drivers/scsi/dpt/dpti_ioctl.h
+index 6bc33f4f020d..25e9251f8c78 100644
+--- a/drivers/scsi/dpt/dpti_ioctl.h
++++ b/drivers/scsi/dpt/dpti_ioctl.h
+@@ -5,7 +5,7 @@
+     begin                : Thu Sep 7 2000
+     copyright            : (C) 2001 by Adaptec
+ 
+-    See Documentation/scsi/dpti.txt for history, notes, license info
++    See Documentation/scsi/dpti.rst for history, notes, license info
+     and credits
+  ***************************************************************************/
+ 
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index abc74fd474dc..5362fb0b96a7 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -8,7 +8,7 @@
+ 			   July 30, 2001 First version being submitted
+ 			   for inclusion in the kernel.  V2.4
+ 
+-    See Documentation/scsi/dpti.txt for history, notes, license info
++    See Documentation/scsi/dpti.rst for history, notes, license info
+     and credits
+  ***************************************************************************/
+ 
+diff --git a/drivers/scsi/dpti.h b/drivers/scsi/dpti.h
+index 42b1e28b5884..6da9ab1fcfe8 100644
+--- a/drivers/scsi/dpti.h
++++ b/drivers/scsi/dpti.h
+@@ -5,7 +5,7 @@
+     begin                : Thu Sep 7 2000
+     copyright            : (C) 2001 by Adaptec
+ 
+-    See Documentation/scsi/dpti.txt for history, notes, license info
++    See Documentation/scsi/dpti.rst for history, notes, license info
+     and credits
+  ***************************************************************************/
+ 
 -- 
 2.21.1
 
