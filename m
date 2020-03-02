@@ -2,204 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1071765A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5DF176599
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgCBVMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 16:12:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3064 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725781AbgCBVMK (ORCPT
+        id S1726783AbgCBVKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 16:10:53 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40502 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCBVKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 16:12:10 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022KqXpX156668;
-        Mon, 2 Mar 2020 16:08:15 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfjf4bjd5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 16:08:15 -0500
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 022KtwmB168744;
-        Mon, 2 Mar 2020 16:08:14 -0500
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfjf4bjct-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 16:08:14 -0500
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 022L4pRX023307;
-        Mon, 2 Mar 2020 21:08:14 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma01wdc.us.ibm.com with ESMTP id 2yffk5wd3p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 21:08:14 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022L8D6O41484636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 21:08:13 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A741AE05F;
-        Mon,  2 Mar 2020 21:08:13 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 10578AE05C;
-        Mon,  2 Mar 2020 21:08:12 +0000 (GMT)
-Received: from oc3272150783.ibm.com (unknown [9.160.73.190])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon,  2 Mar 2020 21:08:11 +0000 (GMT)
-Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard
- information
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, ak@linux.intel.com, maddy@linux.ibm.com,
-        peterz@infradead.org, alexey.budankov@linux.intel.com,
-        adrian.hunter@intel.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, yao.jin@linux.intel.com,
-        mingo@redhat.com, paulus@samba.org, eranian@google.com,
-        robert.richter@amd.com, namhyung@kernel.org, kim.phillips@amd.com,
-        jolsa@redhat.com, kan.liang@linux.intel.com
-References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
-From:   Paul Clarke <pc@us.ibm.com>
-Message-ID: <91026159-1e83-6efd-c624-464b12b18b5c@us.ibm.com>
-Date:   Mon, 2 Mar 2020 15:08:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 2 Mar 2020 16:10:52 -0500
+Received: by mail-yw1-f67.google.com with SMTP id t192so1237770ywe.7;
+        Mon, 02 Mar 2020 13:10:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gsLGA7VM5zD0pkOH4WpVsNnCZyTuYfAztq4xUCBtVfU=;
+        b=dV325Q2NNUNsrNeDLidC+3jVqSgtjbI0RdPnb5MUISJlbECCniWUtfT4YF87fJ+e75
+         3qMTxC9hG/R7eYTRQJld1l6fgUAYmZKX88NrGUyplIrPpH41tbln7y3QiPouWrxjzJoF
+         BrcPul0rdd/d9VlpYum1Nqggx3PfWwH26WueRp29znkQFgBy0JkYzziWlWwXN8tFwlxa
+         ob0mt+5wQkEQAw44K7iFsJecyDF28BwxF+wC28ajYVe3epEdL+o6NS5kCb+Ecj/2b9I1
+         k0okj15XPdr92HxAYMrvh8+y+SQLIehiuNbFxYqRF1zAxGc4oUyTSjOEe0eQIioWxosh
+         aLug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gsLGA7VM5zD0pkOH4WpVsNnCZyTuYfAztq4xUCBtVfU=;
+        b=BhX13dh2/5I3kXEnzLsTPP1oyoVhh7gTfulu/AY4Ujdoe7XhwuVSAuxmctF06UcGi/
+         aYSQArntmKf0jpKgWEviCDQPN9D4tkhmqg2xsFhLI8rm7izJm/stBXgMEUKhlt9HzsgI
+         jXNi6WcIUTxH3RdUeGduFaaGq6P49sLQw2Lumv9nG25fBjXhyENuSE7NRECO/lqogZw8
+         YnCaN9vWpsnqBEVYVH+eOqg4wreXslkxWJvjHjchcCvkRWNllWUYaJ7/iiGtXOAwTpKT
+         J4cGHUMM9Q+A37n4Txh+FV1egV+AE4tpr8MJ42T/BHX0uK7EjVPCc6ydeJF8ZR3QbXoi
+         VKUg==
+X-Gm-Message-State: ANhLgQ3cFaJ42anNtgQVUhBSRAHolWCxWNdB9uwLiVMz8xwcKSv25DFC
+        OzRZat7sFMU9pyAt4oxCxsDCiACM
+X-Google-Smtp-Source: ADFU+vv1Rz8atppAhpK1WNyETD2r3gJ234q42uB5+UxLVFgAcj8SR45Lt8X9KZBMuVg/l0Ku2ZQypA==
+X-Received: by 2002:a25:384e:: with SMTP id f75mr1019604yba.224.1583183451135;
+        Mon, 02 Mar 2020 13:10:51 -0800 (PST)
+Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id l16sm2400001ywl.33.2020.03.02.13.10.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Mar 2020 13:10:50 -0800 (PST)
+Subject: Re: [PATCH v2 00/12] Convert some DT documentation files to ReST
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+References: <cover.1583135507.git.mchehab+huawei@kernel.org>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <75901744-c4d3-d8a9-09d8-fc994c736e71@gmail.com>
+Date:   Mon, 2 Mar 2020 15:10:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+In-Reply-To: <cover.1583135507.git.mchehab+huawei@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_08:2020-03-02,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1011 impostorscore=0 spamscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003020137
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/1/20 11:23 PM, Ravi Bangoria wrote:
-> Most modern microprocessors employ complex instruction execution
-> pipelines such that many instructions can be 'in flight' at any
-> given point in time. Various factors affect this pipeline and
-> hazards are the primary among them. Different types of hazards
-> exist - Data hazards, Structural hazards and Control hazards.
-> Data hazard is the case where data dependencies exist between
-> instructions in different stages in the pipeline. Structural
-> hazard is when the same processor hardware is needed by more
-> than one instruction in flight at the same time. Control hazards
-> are more the branch misprediction kinds. 
+Hi Mauro,
+
+On 3/2/20 1:59 AM, Mauro Carvalho Chehab wrote:
+> While most of the devicetree stuff has its own format (with is now being
+> converted to YAML format), some documents there are actually
+> describing the DT concepts and how to contribute to it.
 > 
-> Information about these hazards are critical towards analyzing
-> performance issues and also to tune software to overcome such
-> issues. Modern processors export such hazard data in Performance
-> Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
-> Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
-> AMD[3] provides similar information.
+> IMHO, those documents would fit perfectly as part of the documentation
+> body, as part of the firmare documents set.
 > 
-> Implementation detail:
+> This patch series manually converts some DT documents that, on my
+> opinion, would belong to it.
 > 
-> A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
-> If it's set, kernel converts arch specific hazard information
-> into generic format:
+> If you want to see how this would show at the documentation body,
+> a sneak peak of this series (together with the other pending
+> doc patches from me) is available at:
 > 
->   struct perf_pipeline_haz_data {
->          /* Instruction/Opcode type: Load, Store, Branch .... */
->          __u8    itype;
-
-At the risk of bike-shedding (in an RFC, no less), "itype" doesn't convey enough meaning to me.  "inst_type"?  I see in 03/11, you use "perf_inst_type".
-
->          /* Instruction Cache source */
->          __u8    icache;
-
-Possibly same here, and you use "perf_inst_cache" in 03/11.
-
->          /* Instruction suffered hazard in pipeline stage */
->          __u8    hazard_stage;
->          /* Hazard reason */
->          __u8    hazard_reason;
->          /* Instruction suffered stall in pipeline stage */
->          __u8    stall_stage;
->          /* Stall reason */
->          __u8    stall_reason;
->          __u16   pad;
->   };
+> 	https://www.infradead.org/~mchehab/kernel_docs/devicetree/index.html
 > 
-> ... which can be read by user from mmap() ring buffer. With this
-> approach, sample perf report in hazard mode looks like (On IBM
-> PowerPC):
+> This series is available on this devel branch:
 > 
->   # ./perf record --hazard ./ebizzy
->   # ./perf report --hazard
->   Overhead  Symbol          Shared  Instruction Type  Hazard Stage   Hazard Reason         Stall Stage   Stall Reason  ICache access
->     36.58%  [.] thread_run  ebizzy  Load              LSU            Mispredict            LSU           Load fin      L1 hit
->      9.46%  [.] thread_run  ebizzy  Load              LSU            Mispredict            LSU           Dcache_miss   L1 hit
->      1.76%  [.] thread_run  ebizzy  Fixed point       -              -                     -             -             L1 hit
->      1.31%  [.] thread_run  ebizzy  Load              LSU            ERAT Miss             LSU           Load fin      L1 hit
->      1.27%  [.] thread_run  ebizzy  Load              LSU            Mispredict            -             -             L1 hit
->      1.16%  [.] thread_run  ebizzy  Fixed point       -              -                     FXU           Fixed cycle   L1 hit
->      0.50%  [.] thread_run  ebizzy  Fixed point       ISU            Source Unavailable    FXU           Fixed cycle   L1 hit
->      0.30%  [.] thread_run  ebizzy  Load              LSU            LMQ Full, DERAT Miss  LSU           Load fin      L1 hit
->      0.24%  [.] thread_run  ebizzy  Load              LSU            ERAT Miss             -             -             L1 hit
->      0.08%  [.] thread_run  ebizzy  -                 -              -                     BRU           Fixed cycle   L1 hit
->      0.05%  [.] thread_run  ebizzy  Branch            -              -                     BRU           Fixed cycle   L1 hit
->      0.04%  [.] thread_run  ebizzy  Fixed point       ISU            Source Unavailable    -             -             L1 hit
+> 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=dt-docs-20200228
+> 
+> and it is based on next-20200228
 
-How are these to be interpreted?  This is great information, but is it possible to make it more readable for non-experts?  If each of these map 1:1 with hardware events, should you emit the name of the event here, so that can be used to look up further information?  For example, does the first line map to PM_CMPLU_STALL_LSU_FIN?
-What was "Mispredict[ed]"? (Is it different from a branch misprediction?) And how does this relate to "L1 hit"?
-Can we emit "Load finish" instead of "Load fin" for easier reading?  03/11 also has "Marked fin before NTC".
-Nit: why does "Dcache_miss" have an underscore and none of the others?
+Thanks for doing all of this work!  It llooks nice.
 
-> Also perf annotate with hazard data:
+-Frank
 
->          │    static int
->          │    compare(const void *p1, const void *p2)
->          │    {
->    33.23 │      std    r31,-8(r1)
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
->          │       {haz_stage: LSU, haz_reason: Load Hit Store, stall_stage: LSU, stall_reason: -, icache: L3 hit}
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: -, stall_reason: -, icache: L1 hit}
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
->     0.84 │      stdu   r1,-64(r1)
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: -, stall_reason: -, icache: L1 hit}
->     0.24 │      mr     r31,r1
->          │       {haz_stage: -, haz_reason: -, stall_stage: -, stall_reason: -, icache: L1 hit}
->    21.18 │      std    r3,32(r31)
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
->          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+> 
+> -
+> 
+> v2: Fixed my email address and removed extra wrong SoB on all patches.
 > 
 > 
-> Patches:
->  - Patch #1 is a simple cleanup patch
->  - Patch #2, #3, #4 implements generic and arch specific kernel
->    infrastructure
->  - Patch #5 enables perf record and script with hazard mode
->  - Patch #6, #7, #8 enables perf report with hazard mode
->  - Patch #9, #10, #11 enables perf annotate with hazard mode
+> Mauro Carvalho Chehab (12):
+>   docs: dt: add an index.rst file for devicetree
+>   docs: dt: convert usage-model.txt to ReST
+>   docs: dt: usage_model.rst: fix link for DT usage
+>   docs: dt: convert booting-without-of.txt to ReST format
+>   docs: dt: convert changesets to ReST
+>   docs: dt: convert dynamic-resolution-notes.txt to ReST
+>   docs: dt: convert of_unittest.txt to ReST
+>   docs: dt: convert overlay-notes.txt to ReST format
+>   docs: dt: minor adjustments at writing-schema.rst
+>   docs: dt: convert ABI.txt to ReST format
+>   docs: dt: convert submitting-patches.txt to ReST format
+>   docs: dt: convert writing-bindings.txt to ReST
 > 
-> Note:
->  - This series is based on the talk by Madhavan in LPC 2018[4]. This is
->    just an early RFC to get comments about the approach and not intended
->    to be merged yet.
->  - I've prepared the series base on v5.6-rc3. But it depends on generic
->    perf annotate fixes [5][6] which are already merged by Arnaldo in
->    perf/urgent and perf/core.
+>  Documentation/arm/booting.rst                 |   2 +-
+>  Documentation/arm/microchip.rst               |   2 +-
+>  .../devicetree/bindings/{ABI.txt => ABI.rst}  |   5 +-
+>  .../devicetree/bindings/arm/amlogic.yaml      |   2 +-
+>  .../devicetree/bindings/arm/syna.txt          |   2 +-
+>  Documentation/devicetree/bindings/index.rst   |  12 +
+>  ...ing-patches.txt => submitting-patches.rst} |  12 +-
+>  ...ting-bindings.txt => writing-bindings.rst} |   9 +-
+>  ...-without-of.txt => booting-without-of.rst} | 299 ++++++++++--------
+>  .../{changesets.txt => changesets.rst}        |  24 +-
+>  ...notes.txt => dynamic-resolution-notes.rst} |   5 +-
+>  Documentation/devicetree/index.rst            |  18 ++
+>  .../{of_unittest.txt => of_unittest.rst}      | 186 +++++------
+>  .../{overlay-notes.txt => overlay-notes.rst}  | 143 +++++----
+>  .../{usage-model.txt => usage-model.rst}      |  35 +-
+>  Documentation/devicetree/writing-schema.rst   |   9 +-
+>  Documentation/index.rst                       |   3 +
+>  Documentation/process/submitting-patches.rst  |   2 +-
+>  .../it_IT/process/submitting-patches.rst      |   2 +-
+>  Documentation/translations/zh_CN/arm/Booting  |   2 +-
+>  MAINTAINERS                                   |   4 +-
+>  include/linux/mfd/core.h                      |   2 +-
+>  scripts/checkpatch.pl                         |   2 +-
+>  23 files changed, 446 insertions(+), 336 deletions(-)
+>  rename Documentation/devicetree/bindings/{ABI.txt => ABI.rst} (94%)
+>  create mode 100644 Documentation/devicetree/bindings/index.rst
+>  rename Documentation/devicetree/bindings/{submitting-patches.txt => submitting-patches.rst} (92%)
+>  rename Documentation/devicetree/bindings/{writing-bindings.txt => writing-bindings.rst} (89%)
+>  rename Documentation/devicetree/{booting-without-of.txt => booting-without-of.rst} (90%)
+>  rename Documentation/devicetree/{changesets.txt => changesets.rst} (59%)
+>  rename Documentation/devicetree/{dynamic-resolution-notes.txt => dynamic-resolution-notes.rst} (90%)
+>  create mode 100644 Documentation/devicetree/index.rst
+>  rename Documentation/devicetree/{of_unittest.txt => of_unittest.rst} (54%)
+>  rename Documentation/devicetree/{overlay-notes.txt => overlay-notes.rst} (56%)
+>  rename Documentation/devicetree/{usage-model.txt => usage-model.rst} (97%)
 > 
-> [1]: Book III, Section 9.4.10:
->      https://openpowerfoundation.org/?resource_lib=power-isa-version-3-0 
-> [2]: https://wiki.raptorcs.com/w/images/6/6b/POWER9_PMU_UG_v12_28NOV2018_pub.pdf#G9.1106986
 
-This document is also available from the "IBM Portal for OpenPOWER" under the "All IBM Material for OpenPOWER" https://www-355.ibm.com/systems/power/openpower/tgcmDocumentRepository.xhtml?aliasId=OpenPOWER, under each of the individual modules.  (Well hidden, it might be said, and not a simple link like you have here.)
-
-> [3]: https://www.amd.com/system/files/TechDocs/24593.pdf#G19.1089550
-> [4]: https://linuxplumbersconf.org/event/2/contributions/76/
-> [5]: http://lore.kernel.org/r/20200204045233.474937-1-ravi.bangoria@linux.ibm.com
-> [6]: http://lore.kernel.org/r/20200213064306.160480-1-ravi.bangoria@linux.ibm.com
-
-PC
