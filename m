@@ -2,116 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B6B175CDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A7B175CE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:23:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbgCBOX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 09:23:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:33320 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726969AbgCBOX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:23:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D20BE2F;
-        Mon,  2 Mar 2020 06:23:27 -0800 (PST)
-Received: from localhost (e108754-lin.cambridge.arm.com [10.1.198.53])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72AF63F534;
-        Mon,  2 Mar 2020 06:23:27 -0800 (PST)
-Date:   Mon, 2 Mar 2020 14:23:26 +0000
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     will@kernel.org, mark.rutland@arm.com, maz@kernel.org,
-        suzuki.poulose@arm.com, sudeep.holla@arm.com, lukasz.luba@arm.com,
-        valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        rjw@rjwysocki.net, pkondeti@codeaurora.org, peterz@infradead.org,
-        mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] arm64: add support for the AMU extension v1
-Message-ID: <20200302142326.GA15709@arm.com>
-References: <20200226132947.29738-1-ionela.voinescu@arm.com>
- <20200226132947.29738-2-ionela.voinescu@arm.com>
- <20200228103234.GA3904776@arrakis.emea.arm.com>
+        id S1727291AbgCBOXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 09:23:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27590 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726988AbgCBOXn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 09:23:43 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022ELBRk013224
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Mar 2020 09:23:42 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfm51dcee-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 09:23:41 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <maddy@linux.ibm.com>;
+        Mon, 2 Mar 2020 14:23:39 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Mar 2020 14:23:34 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022ENXTY54395004
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 14:23:33 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5210F4C04E;
+        Mon,  2 Mar 2020 14:23:33 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA27E4C044;
+        Mon,  2 Mar 2020 14:23:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.48.197])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Mar 2020 14:23:27 +0000 (GMT)
+Subject: Re: [RFC 02/11] perf/core: Data structure to present hazard data
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        eranian@google.com, mpe@ellerman.id.au, paulus@samba.org,
+        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, adrian.hunter@intel.com, ak@linux.intel.com,
+        kan.liang@linux.intel.com, alexey.budankov@linux.intel.com,
+        yao.jin@linux.intel.com, robert.richter@amd.com,
+        kim.phillips@amd.com,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+ <20200302052355.36365-3-ravi.bangoria@linux.ibm.com>
+ <20200302095515.GR18400@hirez.programming.kicks-ass.net>
+From:   maddy <maddy@linux.ibm.com>
+Date:   Mon, 2 Mar 2020 19:53:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228103234.GA3904776@arrakis.emea.arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200302095515.GR18400@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 20030214-0016-0000-0000-000002EC4BF6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030214-0017-0000-0000-0000334F8EBF
+Message-Id: <c9dc6d62-3847-4080-8122-d62621455372@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_04:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxscore=0
+ clxscore=1015 bulkscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Catalin,
 
-On Friday 28 Feb 2020 at 10:32:34 (+0000), Catalin Marinas wrote:
-> Hi Ionela,
-> 
-> On Wed, Feb 26, 2020 at 01:29:41PM +0000, Ionela Voinescu wrote:
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index dbc22d684627..49f0c436928f 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -318,6 +318,15 @@
-> >  			Format: <a>,<b>
-> >  			See also Documentation/input/joydev/joystick.rst
-> >  
-> > +	amu=		[ARM64]
-> > +			Enables or disables detection, enablement and access to
-> > +			counter registers of the Activity Monitors Unit (AMU).
-> > +			Format: amu=[0/1/on/off/y/n]
-> > +			amu=[0/off/n] ensures access to AMU's counter registers
-> > +				      is not attempted.
-> > +			amu=[1/on/y] (default) enables detection and access to
-> > +				     AMU's counter registers.
-> 
-> Is the only reason for this parameter to be able to disable the feature
-> if the firmware doesn't support it? According to the Kconfig entry, you
-> may see weird behaviour, firmware lock-up. Is the user supposed to try
-> again with amu=0?
-> 
-> I'm not particularly fond of adding kernel parameters to work around
-> broken firmware. We have other architecture features (e.g. PtrAuth) that
-> need enabling at EL3 but we don't have such parameters. If it's likely
-> that we hit this issue in practice, I'd rather have the firmware
-> describing the presence of AMU via some DT entry. But I'd rather not
-> bother at all, just get the vendors to update their firmware.
-> 
 
-The firmware is supposed to do three actions for the kernel to be able
-to use the counters: enable access to EL2/EL1, enable the counters and
-save/restore the counters before/after core-off.
+On 3/2/20 3:25 PM, Peter Zijlstra wrote:
+> On Mon, Mar 02, 2020 at 10:53:46AM +0530, Ravi Bangoria wrote:
+>> From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+>>
+>> Introduce new perf sample_type PERF_SAMPLE_PIPELINE_HAZ to request kernel
+>> to provide cpu pipeline hazard data. Also, introduce arch independent
+>> structure 'perf_pipeline_haz_data' to pass hazard data to userspace. This
+>> is generic structure and arch specific data needs to be converted to this
+>> format.
+>>
+>> Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+>> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+>> ---
+>>   include/linux/perf_event.h            |  7 ++++++
+>>   include/uapi/linux/perf_event.h       | 32 ++++++++++++++++++++++++++-
+>>   kernel/events/core.c                  |  6 +++++
+>>   tools/include/uapi/linux/perf_event.h | 32 ++++++++++++++++++++++++++-
+>>   4 files changed, 75 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 547773f5894e..d5b606e3c57d 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -1001,6 +1001,7 @@ struct perf_sample_data {
+>>   	u64				stack_user_size;
+>>   
+>>   	u64				phys_addr;
+>> +	struct perf_pipeline_haz_data	pipeline_haz;
+>>   } ____cacheline_aligned;
+>>   
+>>   /* default value for data source */
+>> @@ -1021,6 +1022,12 @@ static inline void perf_sample_data_init(struct perf_sample_data *data,
+>>   	data->weight = 0;
+>>   	data->data_src.val = PERF_MEM_NA;
+>>   	data->txn = 0;
+>> +	data->pipeline_haz.itype = PERF_HAZ__ITYPE_NA;
+>> +	data->pipeline_haz.icache = PERF_HAZ__ICACHE_NA;
+>> +	data->pipeline_haz.hazard_stage = PERF_HAZ__PIPE_STAGE_NA;
+>> +	data->pipeline_haz.hazard_reason = PERF_HAZ__HREASON_NA;
+>> +	data->pipeline_haz.stall_stage = PERF_HAZ__PIPE_STAGE_NA;
+>> +	data->pipeline_haz.stall_reason = PERF_HAZ__SREASON_NA;
+>>   }
+> NAK, Don't touch anything outside of the first cacheline here.
 
-Improper firmware support can trigger different issues: kernel/firmware
-lockup/panic, invalid counter values (0, non-monotonic). Some of them
-might be less likely (firmware lockups), and some might just be due to
-present but improper support(save/restore) and therefore more likely.
+My bad, should have looked at the comment in "struct perf_sample_data {".
+Will move it to perf_prepare_sample().
 
-The users of the counters, for example frequency invariance [6/7], does
-some validation for this, but unfortunately not all conditions can be
-fully mitigated - validate and bail out if some condition is not
-accomplished - for example the save and restore functionality. This
-might result in improper scale values after idle.
+Thanks for comments.
+Maddy
 
-Therefore, the amu kernel parameter is not only there if the firmware
-does not support AMU, but it's also there if the firmware support is
-broken/improper. The kernel parameter was added at Suzuki's
-recommendation to be able to bypass its use in single kernels that are
-meant to run on multiple platforms. I also believe this is nice to have
-even for platforms that properly support AMU, but they might not want
-the use of the feature in the kernel.
-
-> If we drop this parameter, patch 1 would need to change. Otherwise the
-> patches look fine.
-> 
-
-This being said, I agree this was added as a 'just in case' and not as
-support for a likely scenario, therefore, I don't fully disagree to drop
-it for now.
-
-Let me know what you think. If you'd still rather I drop it, I can do that
-and rebase on top of Marc's changes and push v6.
-
-Thanks,
-Ionela.
