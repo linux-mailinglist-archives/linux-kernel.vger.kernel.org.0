@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B8B8175BC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F38175BBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:34:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbgCBNdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:33:38 -0500
-Received: from mga17.intel.com ([192.55.52.151]:55147 "EHLO mga17.intel.com"
+        id S1728212AbgCBNeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:34:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:64712 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbgCBNdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:33:37 -0500
+        id S1728101AbgCBNdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 08:33:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 05:33:36 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 05:33:40 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
-   d="scan'208";a="351541673"
+   d="scan'208";a="440136240"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Mar 2020 05:33:33 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 02 Mar 2020 05:33:37 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 1491E8D6; Mon,  2 Mar 2020 15:33:28 +0200 (EET)
+        id 1C53C9E5; Mon,  2 Mar 2020 15:33:28 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 14/19] platform/x86: intel_pmc_ipc: Drop intel_pmc_ipc_command()
-Date:   Mon,  2 Mar 2020 16:33:22 +0300
-Message-Id: <20200302133327.55929-15-mika.westerberg@linux.intel.com>
+Subject: [PATCH v7 15/19] x86/platform/intel-mid: Add empty stubs for intel_scu_devices_[create|destroy]()
+Date:   Mon,  2 Mar 2020 16:33:23 +0300
+Message-Id: <20200302133327.55929-16-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
 References: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
@@ -50,71 +50,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all callers have been converted over to the SCU IPC API we can
-drop intel_pmc_ipc_command().
+This allows to call the functions even when CONFIG_X86_INTEL_MID is not
+enabled.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/x86/include/asm/intel_pmc_ipc.h |  8 --------
- drivers/platform/x86/intel_pmc_ipc.c | 20 --------------------
- 2 files changed, 28 deletions(-)
+ arch/x86/include/asm/intel-mid.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/intel_pmc_ipc.h b/arch/x86/include/asm/intel_pmc_ipc.h
-index ddc964b9c78c..22848df5faaf 100644
---- a/arch/x86/include/asm/intel_pmc_ipc.h
-+++ b/arch/x86/include/asm/intel_pmc_ipc.h
-@@ -27,19 +27,11 @@
- 
- #if IS_ENABLED(CONFIG_INTEL_PMC_IPC)
- 
--int intel_pmc_ipc_command(u32 cmd, u32 sub, u8 *in, u32 inlen,
--		u32 *out, u32 outlen);
- int intel_pmc_s0ix_counter_read(u64 *data);
- int intel_pmc_gcr_read64(u32 offset, u64 *data);
- 
- #else
- 
--static inline int intel_pmc_ipc_command(u32 cmd, u32 sub, u8 *in, u32 inlen,
--		u32 *out, u32 outlen)
--{
--	return -EINVAL;
--}
--
- static inline int intel_pmc_s0ix_counter_read(u64 *data)
- {
- 	return -EINVAL;
-diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index ea85b854c4c6..3ec7a0d1e9b0 100644
---- a/drivers/platform/x86/intel_pmc_ipc.c
-+++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -194,26 +194,6 @@ static int update_no_reboot_bit(void *priv, bool set)
- 				    PMC_CFG_NO_REBOOT_MASK, value);
+diff --git a/arch/x86/include/asm/intel-mid.h b/arch/x86/include/asm/intel-mid.h
+index 8e5af119dc2d..de58391bdee0 100644
+--- a/arch/x86/include/asm/intel-mid.h
++++ b/arch/x86/include/asm/intel-mid.h
+@@ -88,11 +88,17 @@ static inline bool intel_mid_has_msic(void)
+ 	return (intel_mid_identify_cpu() == INTEL_MID_CPU_CHIP_PENWELL);
  }
  
--/**
-- * intel_pmc_ipc_command() -  IPC command with input/output data
-- * @cmd:	IPC command code.
-- * @sub:	IPC command sub type.
-- * @in:		input data of this IPC command.
-- * @inlen:	input data length in bytes.
-- * @out:	output data of this IPC command.
-- * @outlen:	output data length in dwords.
-- *
-- * Send an IPC command to PMC with input/output data.
-- *
-- * Return:	an IPC error code or 0 on success.
-- */
--int intel_pmc_ipc_command(u32 cmd, u32 sub, u8 *in, u32 inlen,
--			  u32 *out, u32 outlen)
--{
--	return intel_scu_ipc_dev_command(NULL, cmd, sub, in, inlen, out, outlen);
--}
--EXPORT_SYMBOL_GPL(intel_pmc_ipc_command);
++extern void intel_scu_devices_create(void);
++extern void intel_scu_devices_destroy(void);
++
+ #else /* !CONFIG_X86_INTEL_MID */
+ 
+ #define intel_mid_identify_cpu()	0
+ #define intel_mid_has_msic()		0
+ 
++static inline void intel_scu_devices_create(void) { }
++static inline void intel_scu_devices_destroy(void) { }
++
+ #endif /* !CONFIG_X86_INTEL_MID */
+ 
+ enum intel_mid_timer_options {
+@@ -115,9 +121,6 @@ extern enum intel_mid_timer_options intel_mid_timer_options;
+ #define SFI_MTMR_MAX_NUM		8
+ #define SFI_MRTC_MAX			8
+ 
+-extern void intel_scu_devices_create(void);
+-extern void intel_scu_devices_destroy(void);
 -
- static int ipc_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
- 	struct intel_pmc_ipc_dev *pmc = &ipcdev;
+ /* VRTC timer */
+ #define MRST_VRTC_MAP_SZ		1024
+ /* #define MRST_VRTC_PGOFFSET		0xc00 */
 -- 
 2.25.0
 
