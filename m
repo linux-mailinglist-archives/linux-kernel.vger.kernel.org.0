@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B5251768FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 01:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D01B1768F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 01:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgCCABi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 19:01:38 -0500
-Received: from mga03.intel.com ([134.134.136.65]:17170 "EHLO mga03.intel.com"
+        id S1727794AbgCCABU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 19:01:20 -0500
+Received: from mga03.intel.com ([134.134.136.65]:17168 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727273AbgCBX50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727350AbgCBX50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 18:57:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:57:23 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:57:24 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
-   d="scan'208";a="243384771"
+   d="scan'208";a="243384780"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
   by orsmga006.jf.intel.com with ESMTP; 02 Mar 2020 15:57:23 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -28,9 +28,9 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH v2 49/66] KVM: x86: Do host CPUID at load time to mask KVM cpu caps
-Date:   Mon,  2 Mar 2020 15:56:52 -0800
-Message-Id: <20200302235709.27467-50-sean.j.christopherson@intel.com>
+Subject: [PATCH v2 52/66] KVM: x86: Use kvm_cpu_caps to detect Intel PT support
+Date:   Mon,  2 Mar 2020 15:56:55 -0800
+Message-Id: <20200302235709.27467-53-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200302235709.27467-1-sean.j.christopherson@intel.com>
 References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
@@ -41,44 +41,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mask kvm_cpu_caps based on host CPUID in preparation for overriding the
-CPUID results during KVM_GET_SUPPORTED_CPUID instead of doing the
-masking at runtime.
-
-Note, masking may or may not be necessary, e.g. the kernel rarely, if
-ever, sets real CPUID bits that are not supported by hardware.  But, the
-code is cheap and only runs once at load, so an abundance of caution is
-warranted.
+Check for Intel PT using kvm_cpu_cap_has() to pave the way toward
+eliminating ->pt_supported().
 
 No functional change intended.
 
 Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kvm/cpuid.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kvm/cpuid.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 49527dbcc90c..ec8e24b1c1a7 100644
+index c0ee0cb33a37..eebd7f613f67 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -272,8 +272,16 @@ static __always_inline void cpuid_entry_mask(struct kvm_cpuid_entry2 *entry,
- 
- static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+@@ -509,7 +509,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
  {
-+	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
-+	struct kvm_cpuid_entry2 entry;
-+
- 	reverse_cpuid_check(leaf);
- 	kvm_cpu_caps[leaf] &= mask;
-+
-+	cpuid_count(cpuid.function, cpuid.index,
-+		    &entry.eax, &entry.ebx, &entry.ecx, &entry.edx);
-+
-+	kvm_cpu_caps[leaf] &= *__cpuid_entry_get_reg(&entry, &cpuid);
- }
+ 	struct kvm_cpuid_entry2 *entry;
+ 	int r, i, max_idx;
+-	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
  
- void kvm_set_cpu_caps(void)
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+@@ -680,7 +679,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		break;
+ 	/* Intel PT */
+ 	case 0x14:
+-		if (!f_intel_pt) {
++		if (!kvm_cpu_cap_has(X86_FEATURE_INTEL_PT)) {
+ 			entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
+ 			break;
+ 		}
 -- 
 2.24.1
 
