@@ -2,67 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2D9817563F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BC717564A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgCBIqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:46:42 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:47841 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726887AbgCBIql (ORCPT
+        id S1727361AbgCBItq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:49:46 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:56956 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgCBItp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:46:41 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=zhangliguang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TrOpVf5_1583138783;
-Received: from localhost(mailfrom:zhangliguang@linux.alibaba.com fp:SMTPD_---0TrOpVf5_1583138783)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 02 Mar 2020 16:46:30 +0800
-From:   luanshi <zhangliguang@linux.alibaba.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luanshi <zhangliguang@linux.alibaba.com>
-Subject: [PATCH] watchdog: sbsa_gwdt: disable watchdog when system panic was trigged by signal WS0
-Date:   Mon,  2 Mar 2020 16:46:21 +0800
-Message-Id: <1583138781-40936-1-git-send-email-zhangliguang@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 2 Mar 2020 03:49:45 -0500
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1j8gjL-0001os-3D; Mon, 02 Mar 2020 02:47:15 -0600
+Message-ID: <7f608c18250c509ff091990d4bb460846fae11a0.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Jason Yan <yanaijie@huawei.com>, Daniel Axtens <dja@axtens.net>,
+        mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        diana.craciun@nxp.com, christophe.leroy@c-s.fr,
+        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
+        keescook@chromium.org, kernel-hardening@lists.openwall.com,
+        me@tobin.cc
+Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
+Date:   Mon, 02 Mar 2020 02:47:13 -0600
+In-Reply-To: <17658c2b-9eb8-cee9-e9a2-93d316a401b1@huawei.com>
+References: <20200206025825.22934-1-yanaijie@huawei.com>
+         <87tv3drf79.fsf@dja-thinkpad.axtens.net>
+         <8171d326-5138-4f5c-cff6-ad3ee606f0c2@huawei.com>
+         <e8cd8f287934954cfa07dcf76ac73492e2d49a5b.camel@buserror.net>
+         <dd8db870-b607-3f74-d3bc-a8d9f33f9852@huawei.com>
+         <4c0e7fec63dbc7b91fa6c24692c73c256c131f51.camel@buserror.net>
+         <188971ed-f1c4-39b3-c07e-89cc593d88d7@huawei.com>
+         <530c49dfd97c811dc53ffc78c594d7133f7eb1e9.camel@buserror.net>
+         <35e6c660-3896-bdb8-45f3-c1504aa2171f@huawei.com>
+         <31b5966ba579ef246176a7d8ad18c2c02788dd27.camel@buserror.net>
+         <17658c2b-9eb8-cee9-e9a2-93d316a401b1@huawei.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: yanaijie@huawei.com, dja@axtens.net, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com, christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, keescook@chromium.org, kernel-hardening@lists.openwall.com, me@tobin.cc, linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
+        *      this recipient and sender
+Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When ARM SBSA Generic Watchdog worked in the two stages mode by setting
-module parameter action to 1, when the timeout is reached, the first
-signal (WS0) will trigger panic. Before panic, the value of register
-SBSA_GWDT_WCS was 0x0, after panic and system startup, the value of
-register SBSA_GWDT_WCS was 0x7, status bits SBSA_GWDT_WCS_EN
-SBSA_GWDT_WCS_WS0 and SBSA_GWDT_WCS_WS1 were set, this will increase the
-refcnt of module sbsa_gwdt by function watchdog_cdev_register because
-flag WDOG_HW_RUNNING was set, so we cannot unload the module again. To be
-consistent with reboot, watchdog should be disabled when system panic was
-trigged by signal(WS0).
+On Mon, 2020-03-02 at 15:12 +0800, Jason Yan wrote:
+> 
+> 在 2020/3/2 11:24, Scott Wood 写道:
+> > On Mon, 2020-03-02 at 10:17 +0800, Jason Yan wrote:
+> > > 
+> > > 在 2020/3/1 6:54, Scott Wood 写道:
+> > > > On Sat, 2020-02-29 at 15:27 +0800, Jason Yan wrote:
+> > > > > 
+> > > > > Turnning to %p may not be a good idea in this situation. So
+> > > > > for the REG logs printed when dumping stack, we can disable it when
+> > > > > KASLR is open. For the REG logs in other places like show_regs(),
+> > > > > only
+> > > > > privileged can trigger it, and they are not combind with a symbol,
+> > > > > so
+> > > > > I think it's ok to keep them.
+> > > > > 
+> > > > > diff --git a/arch/powerpc/kernel/process.c
+> > > > > b/arch/powerpc/kernel/process.c
+> > > > > index fad50db9dcf2..659c51f0739a 100644
+> > > > > --- a/arch/powerpc/kernel/process.c
+> > > > > +++ b/arch/powerpc/kernel/process.c
+> > > > > @@ -2068,7 +2068,10 @@ void show_stack(struct task_struct *tsk,
+> > > > > unsigned
+> > > > > long *stack)
+> > > > >                    newsp = stack[0];
+> > > > >                    ip = stack[STACK_FRAME_LR_SAVE];
+> > > > >                    if (!firstframe || ip != lr) {
+> > > > > -                       printk("["REG"] ["REG"] %pS", sp, ip, (void
+> > > > > *)ip);
+> > > > > +                       if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+> > > > > +                               printk("%pS", (void *)ip);
+> > > > > +                       else
+> > > > > +                               printk("["REG"] ["REG"] %pS", sp,
+> > > > > ip,
+> > > > > (void *)ip);
+> > > > 
+> > > > This doesn't deal with "nokaslr" on the kernel command line.  It also
+> > > > doesn't
+> > > > seem like something that every callsite should have to opencode,
+> > > > versus
+> > > > having
+> > > > an appropriate format specifier behaves as I described above (and I
+> > > > still
+> > > > don't see why that format specifier should not be "%p").
+> > > > 
+> > > 
+> > > Actually I still do not understand why we should print the raw value
+> > > here. When KALLSYMS is enabled we have symbol name  and  offset like
+> > > put_cred_rcu+0x108/0x110, and when KALLSYMS is disabled we have the raw
+> > > address.
+> > 
+> > I'm more concerned about the stack address for wading through a raw stack
+> > dump
+> > (to find function call arguments, etc).  The return address does help
+> > confirm
+> > that I'm on the right stack frame though, and also makes looking up a line
+> > number slightly easier than having to look up a symbol address and then
+> > add
+> > the offset (at least for non-module addresses).
+> > 
+> > As a random aside, the mismatch between Linux printing a hex offset and
+> > GDB
+> > using decimal in disassembly is annoying...
+> > 
+> 
+> OK, I will send a RFC patch to add a new format specifier such as "%pk" 
+> or change the exsiting "%pK" to print raw value of addresses when KASLR 
+> is disabled and print hash value of addresses when KASLR is enabled. 
+> Let's see what the printk guys would say :)
 
-Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
----
- drivers/watchdog/sbsa_gwdt.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I'm not sure that a new format specifier is needed versus changing the
+behavior of "%p", and "%pK" definitely doesn't seem suitable given that it's
+intended to be more restricted than "%p" (see commit ef0010a30935de4).  The
+question is whether there is a legitimate reason to hash in the absence of
+kaslr.
 
-diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
-index f0f1e3b..6bee5bb 100644
---- a/drivers/watchdog/sbsa_gwdt.c
-+++ b/drivers/watchdog/sbsa_gwdt.c
-@@ -194,6 +194,12 @@ static int sbsa_gwdt_stop(struct watchdog_device *wdd)
- 
- static irqreturn_t sbsa_gwdt_interrupt(int irq, void *dev_id)
- {
-+	struct sbsa_gwdt *gwdt = (struct sbsa_gwdt *)dev_id;
-+	struct watchdog_device *wdd = &gwdt->wdd;
-+
-+	if (wdd->ops->stop)
-+		wdd->ops->stop(wdd);
-+
- 	panic(WATCHDOG_NAME " timeout");
- 
- 	return IRQ_HANDLED;
--- 
-1.8.3.1
+-Scott
+
 
