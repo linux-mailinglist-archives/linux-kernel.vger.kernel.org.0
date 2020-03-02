@@ -2,72 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87A7D1766D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31EE81766D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgCBWYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 17:24:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38296 "EHLO mail.kernel.org"
+        id S1726910AbgCBWZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 17:25:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbgCBWYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 17:24:13 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        id S1726728AbgCBWZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 17:25:04 -0500
+Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B597421775;
-        Mon,  2 Mar 2020 22:24:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B93FB21775;
+        Mon,  2 Mar 2020 22:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583187853;
-        bh=JUU4hEGar97jd+V9k2N9lDEIJZMNf+Nfj+ecj2VanY4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=V/qsC4MIBAWcfedFF9SutIYTIaKV0oVS8iCnFgaa6E1jLw3KpHxkKliWr7CsDcakJ
-         msAYZl44Nk/pYtoLL6DV6GCON0+oUguHaQ+pT0TezlWz9BE4LhccfO6Td8JX+FtF6f
-         Ui3csBq7LDMKCXTzP+CUnkwubKa926b83ECFvsOs=
-Date:   Mon, 2 Mar 2020 14:24:12 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>, Will Deacon <will@kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        anshuman.khandual@arm.com,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org,
-        suzuki.poulose@arm.com, Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: Linux-next-20200302: arm64 build failed
-Message-Id: <20200302142412.f8f2b17a3387b46ce94c7cb6@linux-foundation.org>
-In-Reply-To: <20200302174553.GC4166275@arrakis.emea.arm.com>
-References: <CA+G9fYtAM-m0jygud+i0ymU+XknV9_GcAbDQChiD2NZjvQ+D3w@mail.gmail.com>
-        <20200302104726.GA7995@willie-the-truck>
-        <20200302135443.GA24831@linux.ibm.com>
-        <20200302174553.GC4166275@arrakis.emea.arm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1583187904;
+        bh=SVYiFvX92VuCsAsK08u1bS2yUwPnhkO1YCCCd/qjESc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nbNlVyzdc1wWnE6hQv9qUhiKjyavbJQtJRzgZTSYoP4S72CXP5SXVuwGFdckih7f7
+         6POXFe3rMwNkpXFyE/ygkfTZoExlmIl6QbPmfc9og3csYI7bvzMoRqfuhmQvmEUsFn
+         yO4VqpGzM2IYOmhaN+HAeOgrI0uavAF6W2UagrJg=
+Date:   Mon, 2 Mar 2020 23:25:01 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [patch 02/24] x86/entry/64: Avoid pointless code when
+ CONTEXT_TRACKING=n
+Message-ID: <20200302222500.GA25705@lenoir>
+References: <20200225221606.511535280@linutronix.de>
+ <20200225222648.395059616@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225222648.395059616@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Mar 2020 17:45:53 +0000 Catalin Marinas <catalin.marinas@arm.com> wrote:
-
-> >  static void unmap_hotplug_range(unsigned long addr, unsigned long end,
-> >  				bool free_mapped)
-> >  {
-> > @@ -854,7 +872,7 @@ static void unmap_hotplug_range(unsigned long addr, unsigned long end,
-> >  			continue;
-> >  
-> >  		WARN_ON(!pgd_present(pgd));
-> > -		unmap_hotplug_pud_range(pgdp, addr, next, free_mapped);
-> > +		unmap_hotplug_p4d_range(pgdp, addr, next, free_mapped);
-> >  	} while (addr = next, addr < end);
-> >  }
+On Tue, Feb 25, 2020 at 11:16:08PM +0100, Thomas Gleixner wrote:
+> GAS cannot optimize out the test and conditional jump when context tracking
+> is disabled and CALL_enter_from_user_mode is an empty macro.
 > 
-> Thanks Mike. With the additional diff below, I can get it to build with
-> and without the p4d clean-up patches in -next. If Anshuman confirms that
-> they work, I can add them on top of the arm64 for-next/memory-hotremove
-> branch
+> Wrap it in #ifdeffery. Will go away once all this is moved to C.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Can't I simply fold these into the offending -mm
-arm-arm64-add-support-for-folded-p4d-page-tables.patch?
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
