@@ -2,95 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474AE1764D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 21:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 755691764D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 21:21:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgCBUVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 15:21:24 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:36338 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbgCBUVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 15:21:23 -0500
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 022KKr7x020818
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 21:20:53 +0100
-Received: from [139.25.68.37] ([139.25.68.37])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 022KKqOB014549;
-        Mon, 2 Mar 2020 21:20:52 +0100
-Subject: Re: [PATCH 5/6] KVM: x86: Rename "found" variable in kvm_cpuid() to
- "exact_entry_exists"
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
- <20200302195736.24777-6-sean.j.christopherson@intel.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <680d85ee-948c-6968-2d1a-d563d4863140@siemens.com>
-Date:   Mon, 2 Mar 2020 21:20:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726783AbgCBUVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 15:21:05 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:45262 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgCBUVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 15:21:05 -0500
+Received: by mail-qv1-f66.google.com with SMTP id r8so528768qvs.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 12:21:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=f7xtQ2i1qQ4MseVbEz/NaU36jHuoRJkabZ6aciq74v4=;
+        b=TLUUJgpVt9rxnlfQfiL513rKIsohc8VYcTpLLycgzl40zajr8thm2JrsSlUAgvSIvV
+         pg2wosfhC0WFFx/YFDwsI/tmBt0VLt3r4/XYrgwpwAci2ZThxIjZoIDhUSX4IlV/WskQ
+         g6hAHkcvk4lftAu7IZsF5neWW0yNU5wpAfxxM0vVIFdZzpCeqfUr22QucYg0QHjXVSLN
+         C8qDpVAQfSHnCrBooSd0jarrETOXWtG+KUmNdDeLMQcOjkNhcYhYH32JY7O6ODHjFIb0
+         wpLH9nIBN0f1/aPf7PMyHgYWZllDMk9O0yLrVaP2mKWCvJ6bLZG1kBvevT25jGnRbLWB
+         +Bqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=f7xtQ2i1qQ4MseVbEz/NaU36jHuoRJkabZ6aciq74v4=;
+        b=YfiuZgzFj1qgzQJKMTrqeJ+l9GEyJmjPElhJXi8tbM6Y0XzAuTCSZ4qHHVxHoHn8mn
+         j6IuNSELyrHUgk+wjR9dQdGXy5SlEU77NG6NJJ17x8hqyn6hfAmDoQeBSVophsLE8XER
+         VfzHO4MTp/fkkiHcrAgQCEprtsSCqWHyQqcmxfw34sbe504OpnN4hb8TsIZzCC9+iBNY
+         VMpPNl8ppsFoNWy3AQyFthBOZWURcBomFD+SwTeBgRW/yFklo4vtd/4Zoy8iLuvIP7uu
+         YWnuzKWkwEqFLwBUF9r4eiORsjpCuvfnh5CKBqjetOrSgx75TyoMEnh+q6XhqtZViSyL
+         eqaA==
+X-Gm-Message-State: ANhLgQ3pzX7XY6ZvDr9EEYnPalPdaZSVS2ppey4wi+UpJeH0hA+Tctmb
+        581XuaAivQDpDAe+cEVA1gc=
+X-Google-Smtp-Source: ADFU+vubgwJJcDfBaXSsqIWmG79X0Yrhg5BjQ6tXw/dP6Ht+LGeNkXZhKRMNJAcpNv9ZRYVcYGnJOw==
+X-Received: by 2002:a05:6214:a62:: with SMTP id ef2mr1065779qvb.109.1583180464068;
+        Mon, 02 Mar 2020 12:21:04 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id r5sm10839407qtn.25.2020.03.02.12.21.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 12:21:03 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 55884403AD; Mon,  2 Mar 2020 17:21:01 -0300 (-03)
+Date:   Mon, 2 Mar 2020 17:21:01 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Kim Phillips <kim.phillips@amd.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf symbols: Don't try to find a vmlinux file when
+ looking for kernel modules
+Message-ID: <20200302202101.GE10335@kernel.org>
+References: <20200302191007.GD10335@kernel.org>
+ <20200302200249.GA9761@krava>
 MIME-Version: 1.0
-In-Reply-To: <20200302195736.24777-6-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302200249.GA9761@krava>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.03.20 20:57, Sean Christopherson wrote:
-> Rename "found" in kvm_cpuid() to "exact_entry_exists" to better convey
-> that the intent of the tracepoint's "found/not found" output is to trace
-> whether the output values are for the actual requested leaf or for some
-> other (likely unrelated) leaf that was found while processing entries to
-> emulate funky CPU behavior, e.g. the max basic leaf on Intel CPUs when
-> the requested CPUID leaf is out of range.
+Em Mon, Mar 02, 2020 at 09:02:49PM +0100, Jiri Olsa escreveu:
+> On Mon, Mar 02, 2020 at 04:10:07PM -0300, Arnaldo Carvalho de Melo wrote:
+> > The dso->kernel value is now set to everything that is in
+> > machine->kmaps, but that was being used to decide if vmlinux lookup is
+> > needed, which ended up making that lookup be made for kernel modules,
+> > that now have dso->kernel set, leading to these kinds of warnings when
+> > running on a machine with compressed kernel modules, like fedora:31:
+> >     
+> >   [root@five ~]# perf record -F 10000 -a sleep 2
+> >   [ perf record: Woken up 1 times to write data ]
+> >   lzma: fopen failed on vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+> >   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+> >   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+> >   [ perf record: Captured and wrote 1.024 MB perf.data (1366 samples) ]
+> >   [root@five ~]#
+> > 
+> > This happens when collecting the buildid, when we find samples for
+> > kernel modules, fix it by checking if the looked up DSO is a kernel
+> > module by other means.
+> > 
+> > Fixes: 02213cec64bb ("perf maps: Mark module DSOs with kernel type")
 > 
-> Suggested-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->   arch/x86/kvm/cpuid.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> ok, I couldn't see that because kcore took over the modules,
+> for some reason you don't have it enabled on your system?
+
+Humm, maybe you don't have a reachable vmlinux so it ends up using
+/proc/kcore? I even think we should make the default... :-)
+ 
+> because I had to disable it manualy in the code.. I think
+> we should add some --no-kcore option for record
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 869526930cf7..b0a4f3c17932 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -1002,10 +1002,10 @@ void kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
->   {
->   	const u32 function = *eax, index = *ecx;
->   	struct kvm_cpuid_entry2 *entry;
-> -	bool found;
-> +	bool exact_entry_exists;
->   
->   	entry = kvm_find_cpuid_entry(vcpu, function, index);
-> -	found = entry;
-> +	exact_entry_exists = !!entry;
->   	/*
->   	 * Intel CPUID semantics treats any query for an out-of-range
->   	 * leaf as if the highest basic leaf (i.e. CPUID.0H:EAX) were
-> @@ -1047,7 +1047,7 @@ void kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
->   			}
->   		}
->   	}
-> -	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, found);
-> +	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, exact_entry_exists);
+> the fix is working for me:
+> 
+> Tested/Acked-by: Jiri Olsa <jolsa@redhat.com>
 
-Actually, I think we also what to change output in the tracepoint.
-
-Jan
-
->   }
->   EXPORT_SYMBOL_GPL(kvm_cpuid);
->   
+Thanks, for checking!
+ 
+> thanks,
+> jirka
 > 
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+
+- Arnaldo
