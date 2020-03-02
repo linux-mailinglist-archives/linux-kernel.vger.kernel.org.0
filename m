@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F203175510
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B15D51754F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbgCBIAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:00:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51338 "EHLO mail.kernel.org"
+        id S1727349AbgCBH7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 02:59:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbgCBH7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727159AbgCBH7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 02:59:43 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 577BC246BB;
+        by mail.kernel.org (Postfix) with ESMTPSA id 81191246C3;
         Mon,  2 Mar 2020 07:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583135981;
-        bh=y8XYEfq6NmbQQoUDzpQ7O+ujPrrWFkRCBx8v0lfpLvA=;
+        s=default; t=1583135982;
+        bh=Et/NJPkmShQhBov4/lZLpZIRzHT5t2K6PD3WcY35B7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eAO0QGt3iAOudZOXq/FljXYTm2lRs2T6mYaa8/j7iHdUun7FrZN0pVtGzULQ752fg
-         OkG80CtJeQK3EWHKu7hl96kpFq8RN8jjpTxxkTEosc1OBIuoyBwjMoke8VRHta2mnP
-         hfjsFdDWXvWQUg8OKFK1+lFDSjhOdc7LDuR5Mk+w=
+        b=t/KBcIFYLMq/yj1KmU6SE0CxuK030+j1Aud6GAzXiY8mdgaNePBFAG98jiGpbh4tv
+         aOXNZ70XnkQRT8hOksCok4SMv53JOv4pERxRpJriCBmxCuk3G/bX6SwofHVB9rSr4R
+         ou/p4jnLnAp/wciltsgOm87tsAf+eSySH3tDXpU0=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8fzH-0003gh-4v; Mon, 02 Mar 2020 08:59:39 +0100
+        id 1j8fzH-0003gm-5w; Mon, 02 Mar 2020 08:59:39 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Frank Rowand <frowand.list@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v2 06/12] docs: dt: convert dynamic-resolution-notes.txt to ReST
-Date:   Mon,  2 Mar 2020 08:59:31 +0100
-Message-Id: <959df4057c4b09f73924c9ee5bafd4ad8c861f99.1583135507.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 07/12] docs: dt: convert of_unittest.txt to ReST
+Date:   Mon,  2 Mar 2020 08:59:32 +0100
+Message-Id: <09f0a0877184ecdff1df1f6f6d38c164c6bdd8f6.1583135507.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583135507.git.mchehab+huawei@kernel.org>
 References: <cover.1583135507.git.mchehab+huawei@kernel.org>
@@ -47,70 +45,313 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 - Add a SPDX header;
-- Adjust document title;
+- Adjust document and section titles;
+- Adjust numerated list markups;
+- Some whitespace fixes and new line breaks;
+- Mark literal blocks as such;
 - Add it to devicetree/index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- ...mic-resolution-notes.txt => dynamic-resolution-notes.rst} | 5 ++++-
- Documentation/devicetree/index.rst                           | 1 +
- Documentation/devicetree/overlay-notes.txt                   | 2 +-
- MAINTAINERS                                                  | 2 +-
- 4 files changed, 7 insertions(+), 3 deletions(-)
- rename Documentation/devicetree/{dynamic-resolution-notes.txt => dynamic-resolution-notes.rst} (90%)
+ Documentation/devicetree/index.rst            |   1 +
+ .../{of_unittest.txt => of_unittest.rst}      | 186 +++++++++---------
+ 2 files changed, 98 insertions(+), 89 deletions(-)
+ rename Documentation/devicetree/{of_unittest.txt => of_unittest.rst} (54%)
 
-diff --git a/Documentation/devicetree/dynamic-resolution-notes.txt b/Documentation/devicetree/dynamic-resolution-notes.rst
-similarity index 90%
-rename from Documentation/devicetree/dynamic-resolution-notes.txt
-rename to Documentation/devicetree/dynamic-resolution-notes.rst
-index c24ec366c5dc..570b7e1f39eb 100644
---- a/Documentation/devicetree/dynamic-resolution-notes.txt
-+++ b/Documentation/devicetree/dynamic-resolution-notes.rst
-@@ -1,5 +1,8 @@
+diff --git a/Documentation/devicetree/index.rst b/Documentation/devicetree/index.rst
+index 308cac9d7021..ca83258fbba5 100644
+--- a/Documentation/devicetree/index.rst
++++ b/Documentation/devicetree/index.rst
+@@ -12,3 +12,4 @@ Open Firmware and Device Tree
+    booting-without-of
+    changesets
+    dynamic-resolution-notes
++   of_unittest
+diff --git a/Documentation/devicetree/of_unittest.txt b/Documentation/devicetree/of_unittest.rst
+similarity index 54%
+rename from Documentation/devicetree/of_unittest.txt
+rename to Documentation/devicetree/of_unittest.rst
+index 9fdd2de9b770..dea05214f3ad 100644
+--- a/Documentation/devicetree/of_unittest.txt
++++ b/Documentation/devicetree/of_unittest.rst
+@@ -1,9 +1,13 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +==================================
- Device Tree Dynamic Resolver Notes
+ Open Firmware Device Tree Unittest
 -----------------------------------
 +==================================
  
- This document describes the implementation of the in-kernel
- Device Tree resolver, residing in drivers/of/resolver.c
-diff --git a/Documentation/devicetree/index.rst b/Documentation/devicetree/index.rst
-index 64c78c3ffea6..308cac9d7021 100644
---- a/Documentation/devicetree/index.rst
-+++ b/Documentation/devicetree/index.rst
-@@ -11,3 +11,4 @@ Open Firmware and Device Tree
-    writing-schema
-    booting-without-of
-    changesets
-+   dynamic-resolution-notes
-diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.txt
-index 725fb8d255c1..3f20a39e4bc2 100644
---- a/Documentation/devicetree/overlay-notes.txt
-+++ b/Documentation/devicetree/overlay-notes.txt
-@@ -3,7 +3,7 @@ Device Tree Overlay Notes
+ Author: Gaurav Minocha <gaurav.minocha.os@gmail.com>
  
- This document describes the implementation of the in-kernel
- device tree overlay functionality residing in drivers/of/overlay.c and is a
--companion document to Documentation/devicetree/dynamic-resolution-notes.txt[1]
-+companion document to Documentation/devicetree/dynamic-resolution-notes.rst[1]
+ 1. Introduction
++===============
  
- How overlays work
- -----------------
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b04505e7c3..1380b1ed69a2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12458,7 +12458,7 @@ M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
- M:	Frank Rowand <frowand.list@gmail.com>
- L:	devicetree@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/dynamic-resolution-notes.txt
-+F:	Documentation/devicetree/dynamic-resolution-notes.rst
- F:	Documentation/devicetree/overlay-notes.txt
- F:	drivers/of/overlay.c
- F:	drivers/of/resolver.c
+ This document explains how the test data required for executing OF unittest
+ is attached to the live tree dynamically, independent of the machine's
+@@ -11,8 +15,8 @@ architecture.
+ 
+ It is recommended to read the following documents before moving ahead.
+ 
+-[1] Documentation/devicetree/usage-model.rst
+-[2] http://www.devicetree.org/Device_Tree_Usage
++(1) Documentation/devicetree/usage-model.rst
++(2) http://www.devicetree.org/Device_Tree_Usage
+ 
+ OF Selftest has been designed to test the interface (include/linux/of.h)
+ provided to device driver developers to fetch the device information..etc.
+@@ -21,79 +25,82 @@ most of the device drivers in various use cases.
+ 
+ 
+ 2. Test-data
++============
+ 
+ The Device Tree Source file (drivers/of/unittest-data/testcases.dts) contains
+ the test data required for executing the unit tests automated in
+ drivers/of/unittest.c. Currently, following Device Tree Source Include files
+-(.dtsi) are included in testcases.dts:
++(.dtsi) are included in testcases.dts::
+ 
+-drivers/of/unittest-data/tests-interrupts.dtsi
+-drivers/of/unittest-data/tests-platform.dtsi
+-drivers/of/unittest-data/tests-phandle.dtsi
+-drivers/of/unittest-data/tests-match.dtsi
++    drivers/of/unittest-data/tests-interrupts.dtsi
++    drivers/of/unittest-data/tests-platform.dtsi
++    drivers/of/unittest-data/tests-phandle.dtsi
++    drivers/of/unittest-data/tests-match.dtsi
+ 
+-When the kernel is build with OF_SELFTEST enabled, then the following make rule
++When the kernel is build with OF_SELFTEST enabled, then the following make
++rule::
+ 
+-$(obj)/%.dtb: $(src)/%.dts FORCE
+-	$(call if_changed_dep, dtc)
++    $(obj)/%.dtb: $(src)/%.dts FORCE
++	    $(call if_changed_dep, dtc)
+ 
+ is used to compile the DT source file (testcases.dts) into a binary blob
+ (testcases.dtb), also referred as flattened DT.
+ 
+ After that, using the following rule the binary blob above is wrapped as an
+-assembly file (testcases.dtb.S).
++assembly file (testcases.dtb.S)::
+ 
+-$(obj)/%.dtb.S: $(obj)/%.dtb
+-	$(call cmd, dt_S_dtb)
++    $(obj)/%.dtb.S: $(obj)/%.dtb
++	    $(call cmd, dt_S_dtb)
+ 
+ The assembly file is compiled into an object file (testcases.dtb.o), and is
+ linked into the kernel image.
+ 
+ 
+ 2.1. Adding the test data
++-------------------------
+ 
+ Un-flattened device tree structure:
+ 
+ Un-flattened device tree consists of connected device_node(s) in form of a tree
+-structure described below.
++structure described below::
+ 
+-// following struct members are used to construct the tree
+-struct device_node {
+-    ...
+-    struct  device_node *parent;
+-    struct  device_node *child;
+-    struct  device_node *sibling;
+-    ...
+- };
++    // following struct members are used to construct the tree
++    struct device_node {
++	...
++	struct  device_node *parent;
++	struct  device_node *child;
++	struct  device_node *sibling;
++	...
++    };
+ 
+ Figure 1, describes a generic structure of machine's un-flattened device tree
+ considering only child and sibling pointers. There exists another pointer,
+-*parent, that is used to traverse the tree in the reverse direction. So, at
++``*parent``, that is used to traverse the tree in the reverse direction. So, at
+ a particular level the child node and all the sibling nodes will have a parent
+ pointer pointing to a common node (e.g. child1, sibling2, sibling3, sibling4's
+-parent points to root node)
++parent points to root node)::
+ 
+-root ('/')
+-   |
+-child1 -> sibling2 -> sibling3 -> sibling4 -> null
+-   |         |           |           |
+-   |         |           |          null
+-   |         |           |
+-   |         |        child31 -> sibling32 -> null
+-   |         |           |          |
+-   |         |          null       null
+-   |         |
+-   |      child21 -> sibling22 -> sibling23 -> null
+-   |         |          |            |
+-   |        null       null         null
+-   |
+-child11 -> sibling12 -> sibling13 -> sibling14 -> null
+-   |           |           |            |
+-   |           |           |           null
+-   |           |           |
+-  null        null       child131 -> null
+-                           |
+-                          null
++    root ('/')
++    |
++    child1 -> sibling2 -> sibling3 -> sibling4 -> null
++    |         |           |           |
++    |         |           |          null
++    |         |           |
++    |         |        child31 -> sibling32 -> null
++    |         |           |          |
++    |         |          null       null
++    |         |
++    |      child21 -> sibling22 -> sibling23 -> null
++    |         |          |            |
++    |        null       null         null
++    |
++    child11 -> sibling12 -> sibling13 -> sibling14 -> null
++    |           |           |            |
++    |           |           |           null
++    |           |           |
++    null        null       child131 -> null
++			    |
++			    null
+ 
+ Figure 1: Generic structure of un-flattened device tree
+ 
+@@ -101,10 +108,10 @@ Figure 1: Generic structure of un-flattened device tree
+ Before executing OF unittest, it is required to attach the test data to
+ machine's device tree (if present). So, when selftest_data_add() is called,
+ at first it reads the flattened device tree data linked into the kernel image
+-via the following kernel symbols:
++via the following kernel symbols::
+ 
+-__dtb_testcases_begin - address marking the start of test data blob
+-__dtb_testcases_end   - address marking the end of test data blob
++    __dtb_testcases_begin - address marking the start of test data blob
++    __dtb_testcases_end   - address marking the end of test data blob
+ 
+ Secondly, it calls of_fdt_unflatten_tree() to unflatten the flattened
+ blob. And finally, if the machine's device tree (i.e live tree) is present,
+@@ -113,15 +120,15 @@ attaches itself as a live device tree.
+ 
+ attach_node_and_children() uses of_attach_node() to attach the nodes into the
+ live tree as explained below. To explain the same, the test data tree described
+- in Figure 2 is attached to the live tree described in Figure 1.
++in Figure 2 is attached to the live tree described in Figure 1::
+ 
+-root ('/')
+-    |
+- testcase-data
+-    |
+- test-child0 -> test-sibling1 -> test-sibling2 -> test-sibling3 -> null
+-    |               |                |                |
+- test-child01      null             null             null
++    root ('/')
++	|
++    testcase-data
++	|
++    test-child0 -> test-sibling1 -> test-sibling2 -> test-sibling3 -> null
++	|               |                |                |
++    test-child01      null             null             null
+ 
+ 
+ Figure 2: Example test data tree to be attached to live tree.
+@@ -134,39 +141,39 @@ In the function of_attach_node(), the new node is attached as the child of the
+ given parent in live tree. But, if parent already has a child then the new node
+ replaces the current child and turns it into its sibling. So, when the testcase
+ data node is attached to the live tree above (Figure 1), the final structure is
+- as shown in Figure 3.
++as shown in Figure 3::
+ 
+-root ('/')
+-   |
+-testcase-data -> child1 -> sibling2 -> sibling3 -> sibling4 -> null
+-   |               |          |           |           |
+- (...)             |          |           |          null
+-                   |          |         child31 -> sibling32 -> null
+-                   |          |           |           |
+-                   |          |          null        null
+-                   |          |
+-                   |        child21 -> sibling22 -> sibling23 -> null
+-                   |          |           |            |
+-                   |         null        null         null
+-                   |
+-                child11 -> sibling12 -> sibling13 -> sibling14 -> null
+-                   |          |            |            |
+-                  null       null          |           null
+-                                           |
+-                                        child131 -> null
+-                                           |
+-                                          null
+------------------------------------------------------------------------
++    root ('/')
++    |
++    testcase-data -> child1 -> sibling2 -> sibling3 -> sibling4 -> null
++    |               |          |           |           |
++    (...)             |          |           |          null
++		    |          |         child31 -> sibling32 -> null
++		    |          |           |           |
++		    |          |          null        null
++		    |          |
++		    |        child21 -> sibling22 -> sibling23 -> null
++		    |          |           |            |
++		    |         null        null         null
++		    |
++		    child11 -> sibling12 -> sibling13 -> sibling14 -> null
++		    |          |            |            |
++		    null       null          |           null
++					    |
++					    child131 -> null
++					    |
++					    null
++    -----------------------------------------------------------------------
+ 
+-root ('/')
+-   |
+-testcase-data -> child1 -> sibling2 -> sibling3 -> sibling4 -> null
+-   |               |          |           |           |
+-   |             (...)      (...)       (...)        null
+-   |
+-test-sibling3 -> test-sibling2 -> test-sibling1 -> test-child0 -> null
+-   |                |                   |                |
+-  null             null                null         test-child01
++    root ('/')
++    |
++    testcase-data -> child1 -> sibling2 -> sibling3 -> sibling4 -> null
++    |               |          |           |           |
++    |             (...)      (...)       (...)        null
++    |
++    test-sibling3 -> test-sibling2 -> test-sibling1 -> test-child0 -> null
++    |                |                   |                |
++    null             null                null         test-child01
+ 
+ 
+ Figure 3: Live device tree structure after attaching the testcase-data.
+@@ -176,7 +183,7 @@ Astute readers would have noticed that test-child0 node becomes the last
+ sibling compared to the earlier structure (Figure 2). After attaching first
+ test-child0 the test-sibling1 is attached that pushes the child node
+ (i.e. test-child0) to become a sibling and makes itself a child node,
+- as mentioned above.
++as mentioned above.
+ 
+ If a duplicate node is found (i.e. if a node with same full_name property is
+ already present in the live tree), then the node isn't attached rather its
+@@ -185,6 +192,7 @@ update_node_properties().
+ 
+ 
+ 2.2. Removing the test data
++---------------------------
+ 
+ Once the test case execution is complete, selftest_data_remove is called in
+ order to remove the device nodes attached initially (first the leaf nodes are
 -- 
 2.21.1
 
