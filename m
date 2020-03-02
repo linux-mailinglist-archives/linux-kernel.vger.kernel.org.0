@@ -2,84 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C751756AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 10:14:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 569D81756AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 10:14:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgCBJO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 04:14:26 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44442 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727115AbgCBJO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 04:14:26 -0500
-Received: by mail-pg1-f195.google.com with SMTP id a14so5108065pgb.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 01:14:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jbYJ7iAwXtw3qHGCUh262XjdCqjxTMtijdsn55mpS/k=;
-        b=H3+4zIV9HKnladukMOmDiZ35Gh/ZxJkO+dJiwuEemnKI1pSCuFwnbo5kTUHGcNkzja
-         iWny9D9Hw1lNAz+K343wDuZayoQ1sd66CbkM4/1TDx8z7vk1tSDrbZbKt0MmipVWuycZ
-         lT35C/oqjozLxSUo1k3yLoaexycalsdjq8PHtm8/Eu5IOyv6yFRoIRbX0fjFnk/NfMk2
-         2dzsiZoF8CjAVBsRhiYXGQW6KI6xN+IFKt1n6E6vdYHLAkZccDAcC4xIS3mh9Wj5eLQz
-         lfykrvVM/Q6Sq3z1IN9LPtxfSw/OpW9J1fDy1+hTWM/+bEPDbpOwuqQCu+zPeDZ1Ei3Y
-         FExg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jbYJ7iAwXtw3qHGCUh262XjdCqjxTMtijdsn55mpS/k=;
-        b=UmGA7KnhaV769eVvfTLsv8sWLknG6zOxADzieCuJ1w9gKgxLtfea5HxXnlBk8bjnJQ
-         pcJZTuDKVOQPcnu2alpt65DRzEKZvsWnLx8i8xRpiEYeQML4yKAegZmElfSGQHYB6f+s
-         E0cB43v9Sv+AuHtWk2p9wkC8Tlotf7vjemy8nTmD65El81pEfwBcv2UfnShyV6tK7kax
-         q2vAtu75XDjcHD3Mwq/YZ2FfkS0t1w9foMwt5R14oLWrSW9/lZspNWF6v0R2Z03j5Ok2
-         b2wCmcC0hpEwPkN+xr6oPdFl6Dxr0V1LC5cUnDpLB+HXs/cXiLqV2wvQF77FxmyGJ5LK
-         nntg==
-X-Gm-Message-State: APjAAAXy1u5tqXxR3zqAqTPt84dgJxpeagI3oItq0BJn3M4Z3d/dDXU4
-        FVdRtQgoUHs6As8g7T07mrFmNSL2
-X-Google-Smtp-Source: APXvYqymaBUya5ytmvTtp0PboZnQb4U/lUzOvBaqSiMlQfHTNZhmekB97K4JS5Z9cfet6TyDGqGnrA==
-X-Received: by 2002:a63:131f:: with SMTP id i31mr19023174pgl.101.1583140464141;
-        Mon, 02 Mar 2020 01:14:24 -0800 (PST)
-Received: from localhost (g183.222-224-185.ppp.wakwak.ne.jp. [222.224.185.183])
-        by smtp.gmail.com with ESMTPSA id z19sm3079764pfn.121.2020.03.02.01.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 01:14:23 -0800 (PST)
-Date:   Mon, 2 Mar 2020 18:14:20 +0900
-From:   Stafford Horne <shorne@gmail.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Openrisc <openrisc@lists.librecores.org>,
-        Christian Brauner <christian@brauner.io>
-Subject: Re: [PATCH v2 0/3] OpenRISC clone3 support
-Message-ID: <20200302091420.GJ7926@lianli.shorne-pla.net>
-References: <20200301213851.8096-1-shorne@gmail.com>
- <20200302074411.p56ctghzllrijrqz@wittgenstein>
+        id S1727242AbgCBJOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 04:14:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726390AbgCBJOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 04:14:34 -0500
+Received: from localhost (unknown [171.76.77.132])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21AEC246B4;
+        Mon,  2 Mar 2020 09:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583140474;
+        bh=UbuSb7l91NmV7WlYukEACby2rjjpfKz6X4KPoH9f3fM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qgl+4iy5i1PreV+s3vnOUafNyOnJ2mw0E8QyGLfSNJMSJuo4NMbEOYYjPOI6l1woL
+         f2z8sROJFu9dxT15jXYC2GIU+tMG+ltGvpFEnQZs5VMiRZ1XzoJfDZhUHHTjAbm0Pe
+         PV7BKBJj8S+f8sIeCAup/0SipYJeeMSiSMeibwH4=
+Date:   Mon, 2 Mar 2020 14:44:28 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.j.williams@intel.com, grygorii.strashko@ti.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] dmaengine: ti: k3-udma: Support for per channel atype
+Message-ID: <20200302091428.GI4148@vkoul-mobl>
+References: <20200218143126.11361-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200302074411.p56ctghzllrijrqz@wittgenstein>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20200218143126.11361-1-peter.ujfalusi@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 08:44:11AM +0100, Christian Brauner wrote:
-> On Mon, Mar 02, 2020 at 06:38:48AM +0900, Stafford Horne wrote:
-> > This series fixes the clone3 not implemented warnings I have been seeing
-> > during recent builds.  It was a simple case of implementing copy_thread_tls
-> > and turning on clone3 generic support.  Testing shows no issues.
-> > 
-> > Changes since v1:
-> > 
-> >  - Fix some comments pointed out in reviews
-> >  - Add Acks to 2/3 and 3/3 from Christian Brauner
+On 18-02-20, 16:31, Peter Ujfalusi wrote:
+> Hi,
 > 
-> Excellent. I acked all individual patches now. But the whole series:
+> The series is on top of the 5.6 update patches:
+> https://lore.kernel.org/lkml/20200214091441.27535-1-peter.ujfalusi@ti.com/
 > 
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> UDMA channels have ATYPE property which tells UDMA on how to treat the pointers
+> within descriptors (and TRs).
+> The ATYPE defined for j721e are:
+> 0: pointers are physical addresses (no translation)
+> 1: pointers are intermediate addresses (PVU)
+> 2: pointers are virtual addresses (SMMU)
+> 
+> When Linux is booting within a virtualized environment channels must have the
+> ATYPE configured correctly to be able to access memory (ATYPE == 0 is not
+> allowed).
+> The ATYPE can be different for channels and their ATYPE depends on which
+> endpoint they are servicing, but it is not hardwired.
+> 
+> In order to be able to tell the driver the ATYPE for the channel we need to
+> extend the dma-cells in case the device is going to be used in virtualized
+> setup.
+> 
+> Non virtualized setups can still use dma-cells == 1.
+> 
+> If dma-cells == 2, then the UDMA node must have ti,udma-atype property which
+> is used for non slave channels (where no DT binding is exist for a channel).
 
-Thanks a lot for the review.
+Applied, thanks
 
--Stafford
+-- 
+~Vinod
