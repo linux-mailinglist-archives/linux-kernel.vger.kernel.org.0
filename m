@@ -2,112 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A32C175E85
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:42:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3AFD175E8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:42:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbgCBPmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:42:37 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55790 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbgCBPmh (ORCPT
+        id S1727590AbgCBPmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:42:44 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47097 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbgCBPmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:42:37 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200302154235euoutp018de63f8099fa82afa9986f8452ee6a65~4hwwrwDZB1457214572euoutp01R
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 15:42:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200302154235euoutp018de63f8099fa82afa9986f8452ee6a65~4hwwrwDZB1457214572euoutp01R
+        Mon, 2 Mar 2020 10:42:42 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200302154240euoutp0260b343ebcaf38123a0336cd9abd8fe8d~4hw1mOPat1227412274euoutp02j
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 15:42:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200302154240euoutp0260b343ebcaf38123a0336cd9abd8fe8d~4hw1mOPat1227412274euoutp02j
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583163755;
-        bh=eDSx6Ol5pio0KwUFZPvqg82H3h7F/bFkN2rPoKXN2sk=;
+        s=mail20170921; t=1583163760;
+        bh=KWzOteUQaHJimJ522eyRNnUZIVwvvujxlZPPxP9BqIA=;
         h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
-        b=I+9jLMj6PfEz8LZIIkSatEnPKBNpfMzC7vvS7L+CPqfFVpuz4hmACpdbK+JD6xdvC
-         B+UDGG4TE1aS5UvrxeAusWjLDvKCt3gwI0LP3AUcnH+Bl52Z4z4WX0jcsMpesJqJXz
-         ri6VRmuI4j3LnO9yeXZ6zakO1j3+joPPdf812E54=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200302154235eucas1p29481c369be662e126846f6913f0f7bf9~4hwwf4o3f2199621996eucas1p2S;
-        Mon,  2 Mar 2020 15:42:35 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id D8.C3.60698.B692D5E5; Mon,  2
-        Mar 2020 15:42:35 +0000 (GMT)
+        b=ZHQc0RESSl8K6Ftivo41sDPRdup7cZCMZEsgLzyfg121Fkr4OGMU5ybM/ONNrQQsG
+         BkMH0hsBcFbuHm3ojr1W47yCsU7DTALa6PuururxBmOSz+kMCktKbOLlL5OqTakz46
+         qlPisHxoUg+U7KMxY0avtSsF0ORBX+BP3ztOdUKE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200302154240eucas1p13c93cc0a78c632aa4bc02b5803bb67d1~4hw1Z0j6M0821908219eucas1p1k;
+        Mon,  2 Mar 2020 15:42:40 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4B.20.60679.0792D5E5; Mon,  2
+        Mar 2020 15:42:40 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200302154234eucas1p28d4029255b58b6cd63e587655010efbc~4hwwKKjeM2399223992eucas1p2O;
-        Mon,  2 Mar 2020 15:42:34 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200302154239eucas1p1a0bec3246c7e62f1698b46fdd5f4d087~4hw0xJhk92477324773eucas1p1s;
+        Mon,  2 Mar 2020 15:42:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200302154234eusmtrp1257456edfec660818add2723ecf1872d~4hwwJjINk2922329223eusmtrp1M;
-        Mon,  2 Mar 2020 15:42:34 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-84-5e5d296bb470
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 34.00.07950.A692D5E5; Mon,  2
-        Mar 2020 15:42:34 +0000 (GMT)
+        20200302154239eusmtrp1c9c4771037707be72791a4124d74faf1~4hw0wgOEh2922329223eusmtrp1g;
+        Mon,  2 Mar 2020 15:42:39 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-39-5e5d29703169
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.20.08375.F692D5E5; Mon,  2
+        Mar 2020 15:42:39 +0000 (GMT)
 Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200302154234eusmtip2f17357d24d4c7770d7325bb853ea054b~4hwv0j-m32188921889eusmtip2H;
-        Mon,  2 Mar 2020 15:42:34 +0000 (GMT)
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200302154239eusmtip17adf9ee8f0c96b9ac9baa9a9c1ffce59~4hw0dpRVB1015510155eusmtip1j;
+        Mon,  2 Mar 2020 15:42:39 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] video: remove set but not used variable 'ulScaleRight'
+Subject: Re: [PATCH V2] video: remove set but not used variable
+ 'mach64RefFreq'
 To:     yu kuai <yukuai3@huawei.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, zhengbin13@huawei.com,
         yi.zhang@huawei.com
-Message-ID: <0b16ece5-a95c-5420-b5d4-7c576171780f@samsung.com>
-Date:   Mon, 2 Mar 2020 16:42:34 +0100
+Message-ID: <d2c1eb0f-2129-a658-b0ab-5c7c1ba203c1@samsung.com>
+Date:   Mon, 2 Mar 2020 16:42:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
         Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200119121945.12517-1-yukuai3@huawei.com>
+In-Reply-To: <20200120063327.43548-1-yukuai3@huawei.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7djPc7rZmrFxBtvOM1tc+fqezeJE3wdW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7djP87oFmrFxBrtPC1tc+fqezeJE3wdW
         i8u75rBZXHt3hs1izkI2i4WPbrA5sHm0HHnL6nG/+ziTx+dNcgHMUVw2Kak5mWWpRfp2CVwZ
-        +5acZSro4ql4dOs2WwPjd84uRk4OCQETicPbl7CB2EICKxglTrVadTFyAdlfGCXOXj3ICuF8
-        ZpR4efQXUBUHWMeZ//UQ8eWMErdXfGCG6H7LKNHa7wdiswlYSUxsX8UIYgsLeEvMXfudBcQW
-        EVCQuNX8gh2kmVmgh1HiwJc9YAleATuJddf/gw1iEVCR6Dn8hhXEFhWIkPj04DArRI2gxMmZ
-        T8DqOQUsJBatPcQOYjMLiEvcejKfCcKWl2jeOpsZZIGEwGR2iSdPp7JD/OkisX33MiYIW1ji
-        1fEtUHEZidOTe1ggGtYxSvzteAHVvZ1RYvnkf2wQVdYSd85B/M8soCmxfpc+RNhRYs2hfnZI
-        sPBJ3HgrCHEEn8SkbdOZIcK8Eh1tQhDVahIblm1gg1nbtXMl8wRGpVlIXpuF5J1ZSN6ZhbB3
-        ASPLKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMAUc/rf8a87GPf9STrEKMDBqMTDG8Ac
-        GyfEmlhWXJl7iFGCg1lJhNeXMzpOiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/xopexQgLpiSWp
-        2ampBalFMFkmDk6pBsaDxgeTj32f01a9w3bpHdni2stW7z1V7eWmaqwR+ypyK417W67gWpsD
-        a/mNvcsWy2df4prUPj9slVS7RHV1aFGvd/WD9qVvS+VE5uyfc/9O1u5Y/QXvJMSm9CW4rvx5
-        5/G+EP0/b5aJzmJkWnSZZafNRwHZc96nZLOX1MldFz5/pa89VCFI5L8SS3FGoqEWc1FxIgAd
-        hsuNLQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xe7pZmrFxBk/O6Vpc+fqezeJE3wdW
+        jROfMBfM5Kn4tPIySwPjD84uRg4OCQETiU9v3LsYuTiEBFYwSnS/P80M4XwBcqZPZoJwPjNK
+        NEydAORwgnU8ub6UHSKxnFHi/fNXUM5bRomJK5eyglSxCVhJTGxfxQhiCwsESpyZuoAdxBYR
+        UJC41fwCrIFZoIdR4sCXPSwgCV4BO4mu5b/YQY5iEVCROHvaCyQsKhAh8enBYVaIEkGJkzOf
+        gJVzClhI7Jy3FMxmFhCXuPVkPhOELS/RvHU22A8SAovYJS71XGSHONtFYu/tk4wQtrDEq+Nb
+        oOIyEqcn97BANKxjlPjb8QKqezujxPLJ/9ggqqwl7pz7xQZyHbOApsT6XfoQYUeJ6S+eMkJC
+        kk/ixltBiCP4JCZtm84MEeaV6GgTgqhWk9iwbAMbzNqunSuZJzAqzULy2iwk78xC8s4shL0L
+        GFlWMYqnlhbnpqcWG+WllusVJ+YWl+al6yXn525iBCaZ0/+Of9nBuOtP0iFGAQ5GJR7eAObY
+        OCHWxLLiytxDjBIczEoivL6c0XFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeY0XvYwVEkhPLEnN
+        Tk0tSC2CyTJxcEo1MIZd9n37uez6SZ9Yc6av6bsKmEq//k+vqrrbwa17hGFh696JRxZ0P41Q
+        nSd+1nPnw/KjMm/qvtzh93I/ZOFwYqbAkaQm77XH0zNmMRXU5FtecC9OXNkl3MZQf0Ds+T+h
+        Vf+Du9u6M/MXOnIfzV18wZ7xuUj8m8o73n5H2c0iel99/PDqG9vHbCWW4oxEQy3mouJEAAGa
+        1YguAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7r5mrFxBptm61hc+fqezeJE3wdW
         i8u75rBZXHt3hs1izkI2i4WPbrA5sHm0HHnL6nG/+ziTx+dNcgHMUXo2RfmlJakKGfnFJbZK
-        0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZ+5acZSro4ql4dOs2WwPjd84u
-        Rg4OCQETiTP/67sYuTiEBJYySqy6+4cdIi4jcXx9WRcjJ5ApLPHnWhcbRM1rRomHb16wgSTY
-        BKwkJravYgSxhQW8Jeau/c4CYosIKEjcan7BDmIzC/QwSvyaFw/R3A204PsssAZeATuJddf/
-        M4PYLAIqEj2H37CC2KICERKHd8DUCEqcnPkEbCingIXEorWHoIaqS/yZd4kZwhaXuPVkPhOE
-        LS/RvHU28wRGoVlI2mchaZmFpGUWkpYFjCyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAmNq
-        27GfW3Ywdr0LPsQowMGoxMP7gyE2Tog1say4MvcQowQHs5IIry9ndJwQb0piZVVqUX58UWlO
-        avEhRlOg5yYyS4km5wPjPa8k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8T
-        B6dUA2PMHeNfqVYN36wnSR7I5WKxOntwhkTc7nVf5OVqTkjFRH1TlP3ifkL1+2nbzrACu4A4
-        pt6Kf+0p5vtrs4/41SmZ1mTnrTStY9zkZq5i/7Wdo9Z5V2/fimcrElRti9olJkrqs0geqilc
-        Z+c81W73jutL16w7dMh85/qNfVF7Fb/Myc+VbHwxS4mlOCPRUIu5qDgRAPeAlIK/AgAA
-X-CMS-MailID: 20200302154234eucas1p28d4029255b58b6cd63e587655010efbc
+        0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZjROfMBfM5Kn4tPIySwPjD84u
+        Rk4OCQETiSfXl7J3MXJxCAksZZRYcewZYxcjB1BCRuL4+jKIGmGJP9e62CBqXjNK7LlyiQkk
+        wSZgJTGxfRUjiC0sEChxZuoCdhBbREBB4lbzCzCbWaCHUeLXvHiI5m5Gibn/57CBJHgF7CS6
+        lv9iB1nGIqAicfa0F0hYVCBC4vCOWYwQJYISJ2c+YQGxOQUsJHbOW8oCMVNd4s+8S8wQtrjE
+        rSfzmSBseYnmrbOZJzAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yf
+        u4kRGFPbjv3cvIPx0sbgQ4wCHIxKPLwBzLFxQqyJZcWVuYcYJTiYlUR4fTmj44R4UxIrq1KL
+        8uOLSnNSiw8xmgL9NpFZSjQ5HxjveSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1KzU1ML
+        Uotg+pg4OKUaGF2Cmw6Wbqhs31e3hn2+6gY30cqXL1/O+7n0zlplr3mVm56WvPz1YpFF716F
+        mo+r/2gx/Lo+fWv6zCthv+zfPJv8+afH3XsyOyMTGpVm/31juPHllR6tiGKz3zFn7A+pzD1/
+        WPiD57T+mlv7TymfEGs4ttn86HclvrdHoq4ukHioPWnzT235dT2HlViKMxINtZiLihMBCnfB
+        dL8CAAA=
+X-CMS-MailID: 20200302154239eucas1p1a0bec3246c7e62f1698b46fdd5f4d087
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200119122043eucas1p2b450cd177ca0d86d268323a074c82b05
+X-RootMTR: 20200120063426eucas1p278d9f947fad536a5af16356afddab0e4
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200119122043eucas1p2b450cd177ca0d86d268323a074c82b05
-References: <CGME20200119122043eucas1p2b450cd177ca0d86d268323a074c82b05@eucas1p2.samsung.com>
-        <20200119121945.12517-1-yukuai3@huawei.com>
+X-CMS-RootMailID: 20200120063426eucas1p278d9f947fad536a5af16356afddab0e4
+References: <CGME20200120063426eucas1p278d9f947fad536a5af16356afddab0e4@eucas1p2.samsung.com>
+        <20200120063327.43548-1-yukuai3@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 1/19/20 1:19 PM, yu kuai wrote:
+On 1/20/20 7:33 AM, yu kuai wrote:
 > Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> drivers/video/fbdev/kyro/STG4000OverlayDevice.c: In function
-> ‘SetOverlayViewPort’:
-> drivers/video/fbdev/kyro/STG4000OverlayDevice.c:334:19: warning:
-> variable ‘ulScaleRight’ set but not used [-Wunused-but-set-variable]
+> drivers/video/fbdev/aty/mach64_gx.c: In function ‘aty_var_to_pll_8398’:
+> drivers/video/fbdev/aty/mach64_gx.c:621:36: warning: variable
+> ‘mach64RefFreq’ set but not used [-Wunused-but-set-variable]
 > 
 > It is never used, and so can be removed.
 > 
@@ -122,28 +123,31 @@ Samsung R&D Institute Poland
 Samsung Electronics
 
 > ---
->  drivers/video/fbdev/kyro/STG4000OverlayDevice.c | 3 +--
+> changes in V2:
+>  Fix the mistake that definition of 'mach64MinFreq' and 'mach64MaxFreq'
+>  was removed.
+> 
+>  drivers/video/fbdev/aty/mach64_gx.c | 3 +--
 >  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/video/fbdev/kyro/STG4000OverlayDevice.c b/drivers/video/fbdev/kyro/STG4000OverlayDevice.c
-> index 0aeeaa10708b..9fde0e3b69ec 100644
-> --- a/drivers/video/fbdev/kyro/STG4000OverlayDevice.c
-> +++ b/drivers/video/fbdev/kyro/STG4000OverlayDevice.c
-> @@ -331,7 +331,7 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
->  	u32 ulScale;
->  	u32 ulLeft, ulRight;
->  	u32 ulSrcLeft, ulSrcRight;
-> -	u32 ulScaleLeft, ulScaleRight;
-> +	u32 ulScaleLeft;
->  	u32 ulhDecim;
->  	u32 ulsVal;
->  	u32 ulVertDecFactor;
-> @@ -470,7 +470,6 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
->  		 * round down the pixel pos to the nearest 8 pixels.
->  		 */
->  		ulScaleLeft = ulSrcLeft;
-> -		ulScaleRight = ulSrcRight;
+> diff --git a/drivers/video/fbdev/aty/mach64_gx.c b/drivers/video/fbdev/aty/mach64_gx.c
+> index 27cb65fa2ba2..9c37e28fb78b 100644
+> --- a/drivers/video/fbdev/aty/mach64_gx.c
+> +++ b/drivers/video/fbdev/aty/mach64_gx.c
+> @@ -618,14 +618,13 @@ static int aty_var_to_pll_8398(const struct fb_info *info, u32 vclk_per,
+>  	u32 mhz100;		/* in 0.01 MHz */
+>  	u32 program_bits;
+>  	/* u32 post_divider; */
+> -	u32 mach64MinFreq, mach64MaxFreq, mach64RefFreq;
+> +	u32 mach64MinFreq, mach64MaxFreq;
+>  	u16 m, n, k = 0, save_m, save_n, twoToKth;
 >  
->  		/* shift fxscale until it is in the range of the scaler */
->  		ulhDecim = 0;
+>  	/* Calculate the programming word */
+>  	mhz100 = 100000000 / vclk_per;
+>  	mach64MinFreq = MIN_FREQ_2595;
+>  	mach64MaxFreq = MAX_FREQ_2595;
+> -	mach64RefFreq = REF_FREQ_2595;	/* 14.32 MHz */
+>  
+>  	save_m = 0;
+>  	save_n = 0;
 > 
