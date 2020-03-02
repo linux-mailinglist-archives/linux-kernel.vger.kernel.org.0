@@ -2,125 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B29B2175E5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:41:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEAC175E63
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgCBPlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:41:42 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:46744 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbgCBPlm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:41:42 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200302154141euoutp02b8cf56f7ffda8f751246ef5d7db93396~4hv_JimJn1202812028euoutp02c
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 15:41:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200302154141euoutp02b8cf56f7ffda8f751246ef5d7db93396~4hv_JimJn1202812028euoutp02c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583163701;
-        bh=qUmOCHgcBWEf5NAWKlfzof+Y+Hp4MNzKCtSaHKb2HWU=;
-        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
-        b=ZtRlF1+HXXpbVQOygNz/K5K9ClzTNrJPD6FVR7ix+IKRSYFb4xBb5QapAFnJYXMPa
-         OVAbGBMKsX1R08l4mW7TrxrzbDf+6BXlQrxuX9M6wakJsfC00Ww7cK42KfvvHm2WuF
-         XAUvdSWwiua9KbHKS2b9dg8MVbIPCV+ss7HqTdrE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200302154140eucas1p2d7b7733fc4d8dcffe7f017262b19f6af~4hv9zq2Sw2399323993eucas1p2X;
-        Mon,  2 Mar 2020 15:41:40 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id C6.00.60679.4392D5E5; Mon,  2
-        Mar 2020 15:41:40 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200302154140eucas1p2d8edc3a93878743aec8c0872cc0f7e83~4hv9hQOaE0750207502eucas1p2Z;
-        Mon,  2 Mar 2020 15:41:40 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200302154140eusmtrp1f345a0e531ee2a79360a1b33d21f9210~4hv9gmJbj2837828378eusmtrp1B;
-        Mon,  2 Mar 2020 15:41:40 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-86-5e5d29344b35
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 83.EF.07950.4392D5E5; Mon,  2
-        Mar 2020 15:41:40 +0000 (GMT)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200302154140eusmtip14410efcd0ece13a0f69e968b1514c93c~4hv9Li_zm2417824178eusmtip1f;
-        Mon,  2 Mar 2020 15:41:40 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/2] video: fbdev: sh_mobile_lcdcfb: fix sparse warnings
- about using incorrect types
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <25ce3896-7f70-7638-8c53-1b1c984ff2cd@samsung.com>
-Date:   Mon, 2 Mar 2020 16:41:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW0qSAn3S+bpFieP=xukK5SapAq1oRC8XouuMJ6fgqOBA@mail.gmail.com>
+        id S1727357AbgCBPlt convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 10:41:49 -0500
+Received: from mail-oln040092254039.outbound.protection.outlook.com ([40.92.254.39]:60921
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727075AbgCBPlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 10:41:47 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=X21eirYb0isH2CHeHJ7VYaEiUHDy73YYDgnOax0CgcaOwM0vx2GBrOvl/oeqt7JVzWQV+aUH5dbjFnH+c4MFB9DegDs5XFXpQHqJh2Vd6sdTWSj8+8vkdOTQ01FXifEMQtBznV/Yhjip9/IgMEbaCXL5k0E1fxzFp7SEBFaqGa0wyO9pXBUixisJZKdIIzIJmFC45JyUZYW81oDQAbyR0bdB+N/oinccFQqsER7Lhp0Xi327o9VvX/eYuMHGpecmB8PpXJYt6bkucO0gtPiDoe1CggGhvoqc2SRmyh9WXqnYPgl6a1OLafUJSBl/Qb+R+Ntf5JUH6Cv3YncVLcVGiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3zVfrUrcXcwyGgOjZZAeCaf5gh9diZ7bVkNRpOcOR1A=;
+ b=ZkjzJMApksjo4nefeYplYPV65CNpxoF/8ABMxn55bMDDrXRKFtVZhHEQsFVlb0I6ZteCzDj+kOix2F2KBJCjBqCh5E3LHHsnboFW1L2+QHVY0Vgl3VK2NXDxYJdrRASQZqUxJn1wdu5wSUjflDjtE811dFTnNSsYw7MX6oX47ReUsvvsn6xv98+HMD5yuz9yNRCew1idn11LUQinvkHyWwppEodU3/Lrq7PmWfCJglor3tNWhPs9wAwgF4v1VwLcJ6XuC6NUYWYLmmVdGJNAfmYTVZRjPkQGDFhXSfg0TVQaQjjnv0a3ANtCcu3EWEs+FG/sXfUzTtVvoprZ0J8PbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from PU1APC01FT111.eop-APC01.prod.protection.outlook.com
+ (2a01:111:e400:7ebe::36) by
+ PU1APC01HT060.eop-APC01.prod.protection.outlook.com (2a01:111:e400:7ebe::368)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Mon, 2 Mar
+ 2020 15:41:43 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.252.54) by
+ PU1APC01FT111.mail.protection.outlook.com (10.152.252.236) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 15:41:43 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2%7]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 15:41:42 +0000
+Received: from nicholas-dell-linux (2001:44b8:6065:1c:44cc:a624:8145:fa79) by ME2PR01CA0067.ausprd01.prod.outlook.com (2603:10c6:201:2b::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 15:41:41 +0000
+From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Subject: [PATCH v2 0/3] nvmem: Add support for write-only instances, and
+ clean-up
+Thread-Topic: [PATCH v2 0/3] nvmem: Add support for write-only instances, and
+ clean-up
+Thread-Index: AQHV8KkSr37jFfq2CUymVfNYz6th0g==
+Date:   Mon, 2 Mar 2020 15:41:42 +0000
+Message-ID: <PSXP216MB0438FE68DAAFC23CB9AAD5E180E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Accept-Language: en-AU, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjmO7edjSbHqfiiobHCMrxlUjPFNAomKNg/KVwtPXnJTducZRFY
-        5FwmIzWL5lKxy3SJyhjqBJEmqSFMZJoxDENE8rLKNEJZkvNM8t/zPpfvfR/4aFxkJEPoQmUZ
-        q1LKi8WUgOgd2ZyITojMkcV91x6TuLocpGTq9w9KsugaxCRj+p+kxDlgpFJJqX1Yh6Rzj0cx
-        qd5qRtJ1S1gWcUmQnMcWF5azqtiUq4KCrdl3VKmLuG1ds2KV6A9eg/g0MAnwZWSQqEECWsS0
-        I3BMWnjcsIHAY1r0KesImhqrqL1I7bQLcYIJwcqWjeIGN4K6+5uY10UxZ6Cu2oy8OIApgvn2
-        hh0TTQcy0WD0WgQ0zkwhaDNX7R4iZFJgsbKF9HoI5gjMO8ReOojJhl9fh0nO4g8fXywQXsxn
-        LoKueWg3ijPB4FpowTgcDn1uI+59H5g2Hnyam/FdfR46La98pQNgedTK4/BBGG+oJbhAF4K/
-        um++dB8CU8O2L50Es46t3QY4EwndA7EcnQaDunqelwbGDz67/bkj/KC+9znO0ULQaUWcOwJ6
-        3vZQe2trbB34EyQ27Ktm2FfHsK+O4f/eVkSYUTCrUSvyWXW8kr0Vo5Yr1BplfkxuicKCdv7M
-        +PboRj8a8FyzI4ZG4gPCLDxHJiLl5eoKhR0BjYsDhZn8yzKRME9ecYdVlVxRaYpZtR2F0oQ4
-        WHiybSlHxOTLy9gbLFvKqvZUjOaHVKKzTWF1zc4H2qgPRa9n9O3ppozoTtvDxqRpvpR8KsDe
-        5CbmLouGMmx5Ky9bOq57kgW2sqSwQG3iudZDpyexid6p1Yr41ajU2DFN/zIfW7qQPr/Ro88c
-        Dq8/5XfYlUUEVR9tTuu7p+vOdj7rjnOaXcaIRy3uVs972c3QtbvItSQm1AXyE8dxlVr+D/zs
-        kR0vAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7ommrFxBpdfi1jcWneO1eLK1/ds
-        Fs9u7WWyONH3gdXi8q45bA6sHocOdzB63O8+zuTRt2UVo8fnTXIBLFF6NkX5pSWpChn5xSW2
-        StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6Gb/urGYruMVSseXjFqYGxu/M
-        XYycHBICJhI9V28xdjFycQgJLGWUmNd5jLWLkQMoISNxfH0ZRI2wxJ9rXWwgtpDAa0aJrv9q
-        IDabgJXExPZVjCC2sECWxKMVk9lAWkUEdCXm/GQCGckscI1R4tz3eWwQ828ySmyd3gfWwCtg
-        J/GsYT7YLhYBFYlH55RAwqICERKHd8yCKhGUODnzCQuIzSkQKNExbz/YzcwC6hJ/5l2CssUl
-        bj2ZzwRhy0tsfzuHeQKj0Cwk7bOQtMxC0jILScsCRpZVjCKppcW56bnFRnrFibnFpXnpesn5
-        uZsYgTG17djPLTsYu94FH2IU4GBU4uH9wRAbJ8SaWFZcmXuIUYKDWUmE15czOk6INyWxsiq1
-        KD++qDQntfgQoynQbxOZpUST84HxnlcSb2hqaG5haWhubG5sZqEkztshcDBGSCA9sSQ1OzW1
-        ILUIpo+Jg1OqgVG4RNfsVPpevl93lh9cIb6w5XrI2xbVvIvm56aqZq0R3L7i9ep+scg8Ly7n
-        /zOXvRLYvtp/aqRZP9frjQctjrv0vdnuaZ68rTZn3oW55a+OrNSQPajSuOqn56oMnxbJnETG
-        GWxLDsRpzw8wq1o1219a+Zz6bqWGLZXuFdVT7W9FljucuPqVU1iJpTgj0VCLuag4EQDG9ah9
-        vwIAAA==
-X-CMS-MailID: 20200302154140eucas1p2d8edc3a93878743aec8c0872cc0f7e83
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200116145116eucas1p2d512db3f05f01d87bc9039af5bf70af3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200116145116eucas1p2d512db3f05f01d87bc9039af5bf70af3
-References: <CGME20200116145116eucas1p2d512db3f05f01d87bc9039af5bf70af3@eucas1p2.samsung.com>
-        <c687dbc5-cf5a-9508-2a61-e757a1a14568@samsung.com>
-        <CAMuHMdW0qSAn3S+bpFieP=xukK5SapAq1oRC8XouuMJ6fgqOBA@mail.gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: ME2PR01CA0067.ausprd01.prod.outlook.com
+ (2603:10c6:201:2b::31) To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:300:d::20)
+x-incomingtopheadermarker: OriginalChecksum:B976264080D6D5856615D2E0ED59CFB4B0B5C93639779B73F3D0F72B7FF0CFF4;UpperCasedChecksum:9F4A85BBDB4DF0E022AAD0FEB3E1258F9F2C8E332D1DB6067066CBAF88E050A2;SizeAsReceived:7717;Count:48
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [Vfn0h7sZCa+i+0r00iVOqYgpMneFgAqo/zpgzSTQfrdcwpSRjYI+b+D+G1+Vy7V2]
+x-microsoft-original-message-id: <20200302154135.GA480811@nicholas-dell-linux>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 48
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 6248d60d-b0bc-41bd-a116-08d7bec034cc
+x-ms-exchange-slblob-mailprops: wjVjg9/kRd0kSRHgcfi6IkPwPzcQchPL4tt84KJHRq6Mc9Pzy0Ewtn3QAJiM/mTScZhLMWRHSLHfYuEQpeXQu/i4cAPz8Qv83gfyth5QFuYK4lv1A6NYMkUjlJ76ipOc9T52HgPdtQS8rUT8i5KIe35VbKXJo6Mbr2FqtcXd4LN61KfdzpmhWSu5lzKu5qmnGLpctTJ3Epvoo59QlhwsyWWw9I1tjyTiGOWrvPkyAS/sgMor6HMyhURBYbuLddcwRrVoMwos6gETMVXNplLGeQAvSPFaL10piLlcVs3R0qIOLG43FAldFVKHp/8vQBql/qByjB2Shhq+b05A1YLN/XCI4FE22wC5BNvPUGDiS03n73I8tD4jn4JjjRRiHu9pWbLyz6+jatHoK6A4+Pd4BAnJ99Q0+A11jNitqZS/NcjmtfZ2xL7MayEOJPj9R0fB0EE8A0rFl0Y8tnkC839t6g4dqUProsAGyIrAOd6pvluZKnyDzVSbX23NJEPpX4B0PPMJszzawrCCyudhLEZaxkGUalNMaLyYyqPOqa0Rqz76yAXAk0+zhnpwIDTO29bH/6hjw4LuIdKf6Ab6BUhkhQyEidTkt+fhzpmfmic0DND6FfymbRQfvjbMXDtodXs5aYsyTvx8C0GlqwEeg0x82TculqlJ5h66UpYxPAp+aaVNlaXyf/23B7tBoh5VrFaZKCE2dm+8H9Pyo3+zpVM/nEPgRic4+6AhSyzQP0ANuCq9Fl9JgcHJ6+kyO0z5EpmtnFcni0vFXeSlwrklR40JFTGt5CqWAE4O3424j96Hk9L1rj9Qkz+onIUUtyGAeBWcgna9hTqeSMSPCAWCkmj7gxOSX0QYHIoJjp5G93EeCUZGw9Z2J+EekyI8YE7iy2D/MnXnrM3UbsdKz5ez7MYiAXas2dmmFAqdLqyEThrGAZUSoEChSOPqpA==
+x-ms-traffictypediagnostic: PU1APC01HT060:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ODCoboPDXKDlSNTE/taEqQPn0flXXxuEmLRd1449NfigrjX2qFi/PW8dV6JTW6kZ7hlUmJpZy87DBrnLgkmW3N2DgYbNomv0UyuTQmt/M/QpRQWjKK+P7ftbAo7MxOzuiD5dyMQEDFnzOMVaLLVHz/utMY1JQcSloybWAPBSBU84ke9odvYkh4zkEccsmMAmMYclBs/3P58khAupQXxAoDhj6viH4BAbUyQqyVveiZw=
+x-ms-exchange-antispam-messagedata: DS6f7pmhfQwmiMR07QuJsDIhPFWCoSQyhNoC0gZ5VEAJnukZawUI/paAomzc7wuMtRY63zNtcVAPeByPeLhSChzptqIoNoZCOvWtaoEXHodghgtzz2CfNz5F/Zv6LrZO6eRbGdwNew1QU+P16CZYtXyX3u7n8JBf9jkwLx599fsrvSbwp0DW9McbLb9ZSCbdRIYncRXO//aD76lQBPHfOw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A16AAC7BCA7D8B4C8B22D076442622BD@KORP216.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6248d60d-b0bc-41bd-a116-08d7bec034cc
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 15:41:42.8746
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello all,
 
-On 1/17/20 3:08 PM, Geert Uytterhoeven wrote:
-> On Thu, Jan 16, 2020 at 3:51 PM Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->> Use ->screen_buffer instead of ->screen_base to fix sparse warnings.
->>
->> [ Please see commit 17a7b0b4d974 ("fb.h: Provide alternate screen_base
->>   pointer") for details. ]
->>
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Previous version: https://lkml.org/lkml/2020/2/24/973
 
-Thanks, patch queued for v5.7.
+Changed since previous version:
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+- No longer looking to drop read_only flag in this series because of 
+  reasons given by Srinivas. Fixed some areas where I was ignoring the 
+  read_only flag and relying solely on presence of reg_read to determine 
+  if read only.
+
+- Changed nvmem_register() to return failure if group is NULL from 
+  nvmem_sysfs_get_groups().
+
+- Added commit to check for NULL reg_read and reg_write before 
+  dereferencing
+
+- No longer using WARN_ON() because now we can return NULL from 
+  nvmem_sysfs_get_groups() if the inputs are unacceptable. Much nicer.
+
+- No longer providing global writable entry - my bad.
+
+Not changed since previous version despite discussion:
+
+- Not changing read_only flag to world_writable and inverting logic - it 
+  would mean that all of the drivers that do not set the flag now need 
+  to set it and vice-versa. Too much verification for now. I might come 
+  back to these things later, but for now, I realised my eyes should be 
+  on the main goal.
+
+- Not documented kernel-doc of struct nvmem_config. Unclear if this was 
+  required because of WARN_ON() - if so, this no longer applies, as
+  WARN_ON() was removed. If this is still an issue, please clarify whether 
+  this means Documentation/driver-api/nvmem.rst or just the blurb in 
+  include/linux/nvmem-provider.h, and what specific change needs 
+  documenting.
+
+Nicholas Johnson (3):
+  nvmem: Add support for write-only instances
+  nvmem: check for NULL reg_read and reg_write before dereferencing
+  Revert "thunderbolt: Prevent crash if non-active NVMem file is read"
+
+ drivers/nvmem/core.c         |  2 ++
+ drivers/nvmem/nvmem-sysfs.c  | 59 +++++++++++++++++++++++++++++++-----
+ drivers/thunderbolt/switch.c |  7 -----
+ 3 files changed, 54 insertions(+), 14 deletions(-)
+
+-- 
+2.25.1
+
