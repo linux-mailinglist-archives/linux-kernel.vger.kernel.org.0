@@ -2,81 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B36A175DC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B0C175DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:04:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgCBPBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:01:42 -0500
-Received: from muru.com ([72.249.23.125]:58448 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726997AbgCBPBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:01:42 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 664C6809F;
-        Mon,  2 Mar 2020 15:02:25 +0000 (UTC)
-Date:   Mon, 2 Mar 2020 07:01:37 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     linux-omap@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, Jyri Sarha <jsarha@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 1/3] drm/omap: Prepare DSS for probing without legacy
- platform data
-Message-ID: <20200302150137.GP37466@atomide.com>
-References: <20200224191230.30972-1-tony@atomide.com>
- <20200224191230.30972-2-tony@atomide.com>
- <20200224233111.gkctx27usfxj2wgz@earth.universe>
- <20200224234333.GD37466@atomide.com>
- <20200227174424.GI37466@atomide.com>
- <8b27dba3-2e2b-84ce-0927-685f4bfe3ab2@ti.com>
+        id S1727350AbgCBPEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:04:22 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45548 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbgCBPEW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 10:04:22 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 2so5681380pfg.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 07:04:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=5wb/M1Xhg3DLCQOo7on6+3TSa7vvkXU/HcmvFADkKgs=;
+        b=T5yuyP87sUKx6hPaF0dUZWoogYHUBbmicQZwX/IGvTIRhEjAohK3+7YQG/+gSCQAr0
+         wj9Uki4nNe3LaFy50FVVLYVLUDOprhY3qaiYYWk9o7fo/mpOyE2cDge57TkHO9PlDofK
+         MNi2YMIEA3NdsvgobPfQvRrIKZu4htF4ADcttsHI1/w4gziUT4t1PmRlDlaxTPPorhJN
+         c73WOvJOJmwUtwbk0Ka1+FccqZeH+WMuccYQ9IWbvUR2bUXDpGgBXyXo/QISJor+7Fh4
+         BrwVWJ+OTukD3Mz3A/ZlBFOtW4V/r5LEH9TK7NSu/Tsj4OJ+/NebF873BuuYT4++l2Ls
+         P2SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=5wb/M1Xhg3DLCQOo7on6+3TSa7vvkXU/HcmvFADkKgs=;
+        b=Iu+IC1bNePnmLYeEKq+jjZiTrRL6sI2scAf7fDweLfOq3408uhCGIGTIpp09Wzodt0
+         87hKUDl428GHmWzp4nFuWa9TFB6sFLy73mpofAZPtO16q4XhCn7z/j1gXQJPtGi+GbUa
+         YNk+x1cH79bQO5HVn2McWJZpnVcd5aT+HjE3qt+H6X6bVGMMNcNZu92M7A6IPoPZAK+g
+         wZ8eUeVrQ7FILszkjDLFeV/7W2EzPGfxIj7BtnZFa/vp+dMDTaONK/ZxpWk5KNzP6Gvl
+         DEeHQ6hNsuPaD7JlyWSmFQEh//JbSHOjLatPkMcefNTdMVcMNJ8TgIlzR+zJitXCsSTR
+         ExbA==
+X-Gm-Message-State: APjAAAWAl/zWd9K2O8QhVUxhXRsYZF48IbiNpJQyhtVAojcOTRofHIBt
+        nFHdzrOat8Y/In/R29jV5RGy03tmvD/oItiThig=
+X-Google-Smtp-Source: APXvYqwbO1Bwzpeylw6sc8uoyfJoamb0lkRurivkDfL3oUm8ZotktWK7iLdeCjCZ7mlVXrH6t6GTQuAvMfB3IjJn5T8=
+X-Received: by 2002:a63:d18:: with SMTP id c24mr19964921pgl.218.1583161461431;
+ Mon, 02 Mar 2020 07:04:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b27dba3-2e2b-84ce-0927-685f4bfe3ab2@ti.com>
+Received: by 2002:a17:90b:1253:0:0:0:0 with HTTP; Mon, 2 Mar 2020 07:04:20
+ -0800 (PST)
+Reply-To: laboso5653@gmail.com
+From:   Loveth Laboso <bonanrika@gmail.com>
+Date:   Mon, 2 Mar 2020 15:04:20 +0000
+Message-ID: <CAHgmy+iWujGc5zCUXA+JCE-V3GZSpqjvpJtD5CUSswNFHqeU8Q@mail.gmail.com>
+Subject: Yours faithfully
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tomi Valkeinen <tomi.valkeinen@ti.com> [200302 10:29]:
-> On 27/02/2020 19:44, Tony Lindgren wrote:
-> 
-> > > > FWIW, I dropped omapdss-boot-init.c in my patch series updating DSI
-> > > > code to use common panel infrastructure, so this will conflict.
-> > > 
-> > > Hey that's great :) Sounds like we can set up an immutable branch
-> > > for just this $subject patch against v5.6-rc1 to resolve the
-> > > conflict. I can set it up for Tomi or Tomi can set it up for me,
-> > > whichever Tomi prefers.
-> > 
-> > Do you want me to send you a pull request for just this one patch
-> > against v5.6-rc1?
-> 
-> It's probably easier if Sebastian drops the removal patch, and instead
-> creates a patch that removes the panel-dsi-cm from
-> omapdss_of_fixups_whitelist. That change should not conflict, and
-> effectively makes the omapdss-boot-init.c a no-op.
-> 
-> We can then remove the file later.
+--=20
+Good day and God bless you as you read this massage, I am by name
+Loveth Laboso a 23 years old girl from Kenya, yes my Mother was Late
+Mrs. Lorna Laboso the former Kenyan Assistant Minister of Home and
+affairs who was among the plan that crash on board in the remote area
+of Kalong=E2=80=99s western Kenya Read more about the crash with the below =
+web
+site. http://edition.cnn.com/2008/WORLD/africa/06/10/kenya.crash/index.html
+I am constrained to contact you because of the maltreatment I am
+receiving  from my step mother. She planned to take away all my late
+mothers treasury  and properties from me since the unexpected death of
+my beloved mother. One day I opened my mother brave case and secretly
+found out that my mother deposited the sum of $ 27.5 million in BOA
+bank Burkina Faso with my name as the next of kin, then I visited
+Burkina Faso to withdraw the money and take care of myself and start a
+new life, on my arrival the Bank Director I meet in person Mr. Batish
+Zongo told me that my mother left an instruction to the bank, that the
+money should be release to me only when I am married or I present a
+trustee who will help me and invest the money overseas.
 
-OK for resolving the merge commit that works too.
+That is the reason why I am in search of a honest and reliable person
+who will help me and stand as my trustee for the Bank to transfer the
+money to his account for me to come over and join you. It will be my
+great pleasure to compensate you with 30% of the money for your help
+and the balance shall
+be my capital with your kind idea for me to invest under your control
+over there in your country.
 
-Tomi, so do you care to ack the $subject patch though so I can set
-up an immutable branch for us for the $subject patch?
+As soon as I receive your positive response showing your interest I
+will send you my picture's in my next mail and death certificate of my
+Mon and how you will receive the money in your account.
+Contact me though my Email; laboso5653@gmail.com
 
-Or Tomi, do you want to set up an immutable branch for me for the
-$subject patch?
-
-Regards,
-
-Tony
-
+Yours Sincerely
+Loveth Laboso
