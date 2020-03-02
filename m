@@ -2,134 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA621754DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 229D31754EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgCBHt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 02:49:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43042 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgCBHt7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 02:49:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description;
-        bh=0Gx1JYZhfx2m87lYF6sjqKW0wz1nAkV9fNxlNiWemtg=; b=DUv3pXp/WnZAz6/NloRdVJoHy3
-        mZMQveVL2VS0z5P1D/PcDICmKLczfNXGCBGpl+9Kv3OgtSCpT3W7eUlAW1vwHjfFSheUJRhgjHIY+
-        lnXXHN2u04NC3PfDngbIOFXjg6M74Jwez8yXq1CXhCeHRVdhvNoPPlKZrxyvXUtZSe9DcwImDy1rG
-        H0AMXKKNNCDV4WOFOWqyaJZ+5MGQCCi4NIHTyH0vdg17cMs6LTIdVGQUNetCHS1edaSWnjfUQ6n6c
-        uzVkHJfRooFf+sHodHXWKZ9FPze1bxToD4fZzHw58Bt69UAlXLebJRthTLZZBWQMSc+2ehxaoTgUd
-        yUxSCQmw==;
-Received: from ip5f5ad4e9.dynamic.kabel-deutschland.de ([95.90.212.233] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j8fpt-0003Te-42; Mon, 02 Mar 2020 07:49:57 +0000
-Date:   Mon, 2 Mar 2020 08:49:50 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Andy Whitcroft <apw@canonical.com>, devicetree@vger.kernel.org,
-        Harry Wei <harryxiyou@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Joe Perches <joe@perches.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 00/12] Convert some DT documentation files to ReST
-Message-ID: <20200302084950.589fe0b6@coco.lan>
-In-Reply-To: <cover.1583134242.git.mchehab+samsung@kernel.org>
-References: <cover.1583134242.git.mchehab+samsung@kernel.org>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727146AbgCBH4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 02:56:19 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:46186 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725446AbgCBH4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 02:56:19 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BDACF200F0E;
+        Mon,  2 Mar 2020 08:56:17 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 18EFF200F14;
+        Mon,  2 Mar 2020 08:56:12 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7DEBB40299;
+        Mon,  2 Mar 2020 15:56:05 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] thermal: imx_thermal: Use __maybe_unused instead of CONFIG_PM_SLEEP
+Date:   Mon,  2 Mar 2020 15:50:10 +0800
+Message-Id: <1583135410-7496-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon,  2 Mar 2020 08:37:55 +0100
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
+Use __maybe_unused for power management related functions instead
+of #if CONFIG_PM_SLEEP to simplify the code.
 
-Please ignore this patch series. Something got wrong with my settings. It
-ended getting a wrong "From" e-mail address from my previous employer.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Changes since V1:
+	- fix typo of commit message, simply->simplify.
+---
+ drivers/thermal/imx_thermal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-I should be resending it after fixing the issue.
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index bb6754a..e75dda5 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -878,8 +878,7 @@ static int imx_thermal_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int imx_thermal_suspend(struct device *dev)
++static int __maybe_unused imx_thermal_suspend(struct device *dev)
+ {
+ 	struct imx_thermal_data *data = dev_get_drvdata(dev);
+ 	struct regmap *map = data->tempmon;
+@@ -900,7 +899,7 @@ static int imx_thermal_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int imx_thermal_resume(struct device *dev)
++static int __maybe_unused imx_thermal_resume(struct device *dev)
+ {
+ 	struct imx_thermal_data *data = dev_get_drvdata(dev);
+ 	struct regmap *map = data->tempmon;
+@@ -918,7 +917,6 @@ static int imx_thermal_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static SIMPLE_DEV_PM_OPS(imx_thermal_pm_ops,
+ 			 imx_thermal_suspend, imx_thermal_resume);
+-- 
+2.7.4
 
-
-
-
-> While most of the devicetree stuff has its own format (with is now being
-> converted to YAML format), some documents there are actually
-> describing the DT concepts and how to contribute to it.
-> 
-> IMHO, those documents would fit perfectly as part of the documentation
-> body, as part of the firmare documents set.
-> 
-> This patch series manually converts some DT documents that, on my
-> opinion, would belong to it.
-> 
-> If you want to see how this would show at the documentation body,
-> a sneak peak of this series (together with the other pending
-> doc patches from me) is available at:
-> 
-> 	https://www.infradead.org/~mchehab/kernel_docs/devicetree/index.html
-> 
-> Mauro Carvalho Chehab (12):
->   docs: dt: add an index.rst file for devicetree
->   docs: dt: convert usage-model.txt to ReST
->   docs: dt: usage_model.rst: fix link for DT usage
->   docs: dt: convert booting-without-of.txt to ReST format
->   docs: dt: convert changesets to ReST
->   docs: dt: convert dynamic-resolution-notes.txt to ReST
->   docs: dt: convert of_unittest.txt to ReST
->   docs: dt: convert overlay-notes.txt to ReST format
->   docs: dt: minor adjustments at writing-schema.rst
->   docs: dt: convert ABI.txt to ReST format
->   docs: dt: convert submitting-patches.txt to ReST format
->   docs: dt: convert writing-bindings.txt to ReST
-> 
->  Documentation/arm/booting.rst                 |   2 +-
->  Documentation/arm/microchip.rst               |   2 +-
->  .../devicetree/bindings/{ABI.txt => ABI.rst}  |   5 +-
->  .../devicetree/bindings/arm/amlogic.yaml      |   2 +-
->  .../devicetree/bindings/arm/syna.txt          |   2 +-
->  Documentation/devicetree/bindings/index.rst   |  12 +
->  ...ing-patches.txt => submitting-patches.rst} |  12 +-
->  ...ting-bindings.txt => writing-bindings.rst} |   9 +-
->  ...-without-of.txt => booting-without-of.rst} | 299 ++++++++++--------
->  .../{changesets.txt => changesets.rst}        |  24 +-
->  ...notes.txt => dynamic-resolution-notes.rst} |   5 +-
->  Documentation/devicetree/index.rst            |  18 ++
->  .../{of_unittest.txt => of_unittest.rst}      | 186 +++++------
->  .../{overlay-notes.txt => overlay-notes.rst}  | 143 +++++----
->  .../{usage-model.txt => usage-model.rst}      |  35 +-
->  Documentation/devicetree/writing-schema.rst   |   9 +-
->  Documentation/index.rst                       |   3 +
->  Documentation/process/submitting-patches.rst  |   2 +-
->  .../it_IT/process/submitting-patches.rst      |   2 +-
->  Documentation/translations/zh_CN/arm/Booting  |   2 +-
->  MAINTAINERS                                   |   4 +-
->  include/linux/mfd/core.h                      |   2 +-
->  scripts/checkpatch.pl                         |   2 +-
->  23 files changed, 446 insertions(+), 336 deletions(-)
->  rename Documentation/devicetree/bindings/{ABI.txt => ABI.rst} (94%)
->  create mode 100644 Documentation/devicetree/bindings/index.rst
->  rename Documentation/devicetree/bindings/{submitting-patches.txt => submitting-patches.rst} (92%)
->  rename Documentation/devicetree/bindings/{writing-bindings.txt => writing-bindings.rst} (89%)
->  rename Documentation/devicetree/{booting-without-of.txt => booting-without-of.rst} (90%)
->  rename Documentation/devicetree/{changesets.txt => changesets.rst} (59%)
->  rename Documentation/devicetree/{dynamic-resolution-notes.txt => dynamic-resolution-notes.rst} (90%)
->  create mode 100644 Documentation/devicetree/index.rst
->  rename Documentation/devicetree/{of_unittest.txt => of_unittest.rst} (54%)
->  rename Documentation/devicetree/{overlay-notes.txt => overlay-notes.rst} (56%)
->  rename Documentation/devicetree/{usage-model.txt => usage-model.rst} (97%)
-> 
-
-
-Thanks,
-Mauro
