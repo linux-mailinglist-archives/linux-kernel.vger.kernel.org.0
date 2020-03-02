@@ -2,154 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32491762E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:41:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8279E1762B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgCBSlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 13:41:46 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:55530 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbgCBSlq (ORCPT
+        id S1727463AbgCBSaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 13:30:35 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:43062 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbgCBSae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 13:41:46 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: MAMv96/j/LMDj499/TZQWziL9NGmVkwPMckB6taGZVmmH5dT9EGw85L04fK5cKBknLw9UTCHuv
- Wgvi4JAphYLwitmkW2QsVgnHy2fWjCj9ZCbVIspOTZce9LmWi0iltTOugws/gvhdC61bHHRzl7
- aH+DN7i0PQ2ztzTuX8QaN35DH/qFlm0Sc9XJQlINAILwlYzn9Qxvf4FssnY7+hCDPMEn/Sm+6H
- i+X/8fuWRCofaxmbiWFGr5zDnEmbs7mo6R2PTg5Sagq9ztNuf9aAmHr8F7Losv57e+7h48fQj9
- N64=
-X-IronPort-AV: E=Sophos;i="5.70,507,1574146800"; 
-   d="scan'208";a="68556762"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Mar 2020 11:41:45 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 2 Mar 2020 11:11:43 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 2 Mar 2020 11:11:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F7T35jznAy0NxP0HP1mt+cYNJd4VqONpkNJQd/MQLKYYU0J21b7gnnESvOrad4CBy2UfAGx3CLId2+ZpnEvmKn2pgjjj/wnZExJ3y1NTj1y7dyn/FcSuMB3p91LA/EpXkWRMAd7HMx6BhdVaUIFpuK2pnPxJUjUfHxsK5wcrgp8HDJWaxrvdMEtKVlB9uMeo0hgWiMcsLQIfuYxT5z5FARM4FNiU09ItL5nXpBFMcjVajJ4PDcwNwwKwWn/pBXcbk4QZCwALLGMaiuesE3dJiGZkhXrMVmraq/8JAInzYZwja3xiC3vOCdSwAOREmFiAKCEf0T4zqf+asy+VkwiGtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7evzqpedXlC2VW5XtGOozKmkcbq8HWazP2age8MSy8=;
- b=nFlzsBSDN3Tf9SOu7p6DwEcG5//WDqJ04zaMHpOsYa05mDHgDWyiL33EFhh1nAiN/mG6Z35fbl6aRyIHt3upVrO5MOs45uSeQieHExOrJr68Q59ZNPpungzOWS7ra2sqMkLo98UQG8fu/IZ1NmBrFoVAWUI3r/RvH+IvNPIMqrKbTxXEKUBskEyc7jqJcqljAnBmGm/hmMI4pvGWk25T9JeBPJJUlFxhNiQvgkSHxO2h2crQArUFYC7jGGKs1Z5nHTSh4hl4DCCf4Vtf9pPjbNWSqEmEDnqSKFsCsLFtavZn4kLgbbDJwEi1e3qvxTqwNE2YZXd2KIO0WpbeunIaNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+        Mon, 2 Mar 2020 13:30:34 -0500
+Received: by mail-il1-f196.google.com with SMTP id o18so353202ilg.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 10:30:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a7evzqpedXlC2VW5XtGOozKmkcbq8HWazP2age8MSy8=;
- b=Kd3qekBE3f2fljwh10ntKkpezw3ap9Fs/hX3q10TugjOx9xeV+6OrnZ/x3ppYOwr998cp3b2Ukro9jov+idK3FCbF0B7spG+EZClQYHUivF3dr9xKPgsRIIa3Tb+5Iw0uX1Ybu5hRnc3719c783rASxp63kuMmzrQTRVYekEBCw=
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com (2603:10b6:208:193::29)
- by MN2PR11MB4142.namprd11.prod.outlook.com (2603:10b6:208:135::29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14; Mon, 2 Mar
- 2020 18:11:41 +0000
-Received: from MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::3c8f:7a55:cbd:adfb]) by MN2PR11MB4448.namprd11.prod.outlook.com
- ([fe80::3c8f:7a55:cbd:adfb%5]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
- 18:11:41 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <j.neuschaefer@gmx.net>
-CC:     <linux-mtd@lists.infradead.org>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: spi-nor: Refactor spi_nor_read_id()
-Thread-Topic: [PATCH v2] mtd: spi-nor: Refactor spi_nor_read_id()
-Thread-Index: AQHV8L4Gb9MROFWvGECs4qQxGNhQEQ==
-Date:   Mon, 2 Mar 2020 18:11:41 +0000
-Message-ID: <11395630.65iIH9RknS@localhost.localdomain>
-References: <20200223173713.2981-1-j.neuschaefer@gmx.net>
-In-Reply-To: <20200223173713.2981-1-j.neuschaefer@gmx.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3ccbbcf1-7a25-4d15-9532-08d7bed528a9
-x-ms-traffictypediagnostic: MN2PR11MB4142:
-x-microsoft-antispam-prvs: <MN2PR11MB4142A17A7979CD600170DC57F0E70@MN2PR11MB4142.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 033054F29A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(136003)(396003)(376002)(189003)(199004)(26005)(66446008)(6486002)(186003)(4326008)(478600001)(9686003)(6512007)(6916009)(966005)(91956017)(64756008)(66946007)(2906002)(71200400001)(76116006)(8936002)(316002)(53546011)(86362001)(54906003)(6506007)(66556008)(5660300002)(66476007)(81156014)(81166006)(8676002)(39026012);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4142;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: aPb+a+c5DY3M5J/7yVQ+3Cq/WliwU0vtn90GWxRRig6lBwmZza0Aq87Q5rQ7moPMcq3+8BkohdLCviA4BvQFXkrzhhWqdEvCnNXwTkFoYbdhUHvYz3I5Q41gHFDMH271JBbnJXp3AUohKZzlMiwXS/ZrT0ZUdruQ4M9jJCm6XlllYHOLt/rkosm2LwEvUEd9vvGyRVFBa5GS3v050cDlQSAeNGoAoONdXQn4K/sMXNviafqYg//xlo1MKYJEcYxf8MIt/D80BE9zFDNp7cN02CtWMzbp+L+36vtTI6Ps+JEX0tfot5WAdEr7Vt1Y7AmvoNwhO5RKz1AaTdxdxvY7DmQp2zYmEwPKbvKjL0uZTfQSVsExfdgklhh5PWEUvzUqJXRQsBf6BmZVeDiD/Oyaezzbxs47hbzcMUH3twZ38OWlWuw3oTSBGanLQw18qX/d1NiskWS95de8qZGq4f+5F3LI1E6zT79eT+YBDQ0tTbPlV6QjLPGz5KZE1C15XUwK+jyX/OuQn6ICqEwVAUGy1sSx0bcb4lcLKiqWg1Wd73hbnNowqbmG5Jz3YZoPAe/u
-x-ms-exchange-antispam-messagedata: 24b6jiSJqii6+BSGzdpBr0krHHamBMbAvAEEqk2DmjBhuC9OBtBDnipPeS6cAtQzMD2bo/vVKnCx135WXt+KhzzhwcVCz708kB3v8GAx11SuV+5h7penK1SrNP1yrYLyb0qgk94shQU0Rr888lMTDg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <256C4BC2074A704B87D53D8B1AC8A49D@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c9N8pmiznJwsvAz0Mn6RIRQBpDbT8QYW9ssTcn5Srt0=;
+        b=ofrDh/W03+qXgcSrm3KyNkAyQydWdBRXEXFaC9ZchLmfzEVU1Y60uEB3nFcuG7bgJE
+         +Z6e5pb9O93lPOefpvXtL85n8V3UhvZmr4hxaKsvf53treihjwahZH6t5cQrwZHUDEl6
+         gZhEGy5ZG9qzRUf/4W8I3f2w3G2NKzmf01J6xyd2jottQIPjMYgYuSoQGuqfSRtKjvmE
+         07hYHcN8TjXtTAE2BvqPIdSOtRvhkmrXJ4GwZeKtmuAH1YSRA6vlSXYp9Hsz86kJPPjl
+         cOnbrQyg9ijriyRgciuxqarlh4bzlG28g0N3DuIdHVZwU6SX40gRznJheV22kpJvu8fs
+         zL3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c9N8pmiznJwsvAz0Mn6RIRQBpDbT8QYW9ssTcn5Srt0=;
+        b=uBmhKY+W4B/yMxZwcPQ3P71rM4bOFRYPEnvLjHlL9jSQZlUb+9rDI6J1BFzYLAA2AF
+         e6hiKidwxqetoTl/UJ17qBig/r5IcmahnzyQ2C81UT6UT71gxdpYEnOkY9PCRnF1TFHr
+         tgo4/md/Du+kwpkE0JCGj7qo8qTGphln85ZLBFAYxjovovTOJw5MpqMTrPIEZ3wU4gbQ
+         mZQKctQHHaSD3pNC0Jx7Cd+u7W4g9/7itpdu1/7HvVvghpRtGq3rPtFqFdCuurtuTrdK
+         m+LQ5dGwz/u6vTp+IympGZlPNvUbw6tZshro+xQRtPA/lzxqRwj1OomUP9cCMGf7DleN
+         ZuDQ==
+X-Gm-Message-State: ANhLgQ3LX72LrcQNMKVEPIo0laCxYHp28A1tWkARd0nV1EI4AU/ArZB6
+        kTN/XQJ1oTeEOS6XyNiTnamIWDvoW50j7VyJ/KHMYg==
+X-Google-Smtp-Source: ADFU+vvfk/PTke3DmzOx8p1qiyiPWh39Gz/B81yPLGojcctURiXpbxbIgA4e1hpdnL9cY23/exLfgXJeZpz9wnvlANI=
+X-Received: by 2002:a92:8547:: with SMTP id f68mr976871ilh.26.1583173833493;
+ Mon, 02 Mar 2020 10:30:33 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ccbbcf1-7a25-4d15-9532-08d7bed528a9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 18:11:41.4339
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2DTb7qm4tDWhhQ6Om+njeW0d2kMHp2qirOas3s5zR2ubUVGaGgDbYHUMu8T2+ed2l7UJJD53LtrE2lnElUAMpc95EJbk+bIc71fPM8WbvMs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4142
+References: <1582773688-4956-1-git-send-email-linmiaohe@huawei.com>
+ <CALMp9eSaZ557-GaQUVXW6-ZrMkz8jxOC1S6QPk-EVNJ-f2pT5w@mail.gmail.com>
+ <a1ff3db1-1f5a-7bab-6c4b-f76e6d76d468@redhat.com> <CALMp9eQqFKnCLYGXdab-k=Q=h-H5x8VnV20F3HH9fDZTDuQcEQ@mail.gmail.com>
+ <e173c489-dee7-a86d-3ec4-6fe45938a2d8@redhat.com>
+In-Reply-To: <e173c489-dee7-a86d-3ec4-6fe45938a2d8@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Mon, 2 Mar 2020 10:30:22 -0800
+Message-ID: <CALMp9eR9uanguked_O97BXMVGSE032m8QVsBP2qe2SS97j+qmg@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: X86: deprecate obsolete KVM_GET_CPUID2 ioctl
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linmiaohe <linmiaohe@huawei.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, February 23, 2020 7:37:13 PM EET Jonathan Neusch=E4fer wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> - Don't use `tmp` for two purposes (return value, loop counter).
->   Instead, use `i` for the loop counter, and `ret` for the return value.
-> - Don't use tabs between type and name in variable declarations,
->   for consistency with other functions in spi-nor.c.
-> - Rewrite nested `if`s as `if (a && b)`.
-> - Remove `info` variable, and use spi_nor_ids[i] directly.
->=20
-> Signed-off-by: Jonathan Neusch=E4fer <j.neuschaefer@gmx.net>
-> ---
->=20
-> v2:
-> - As suggested by Tudor Ambarus:
->   - rename tmp to ret
->   - remove tabs between variable type and name
->   - remove `info` variable
->=20
-> v1:
-> - https://lore.kernel.org/lkml/20200218151034.24744-1-j.neuschaefer@gmx.n=
-et/
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 25 +++++++++++--------------
->  1 file changed, 11 insertions(+), 14 deletions(-)
->=20
+On Mon, Mar 2, 2020 at 10:02 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 02/03/20 18:44, Jim Mattson wrote:
+> > On Mon, Mar 2, 2020 at 9:09 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> >>
+> >> On 02/03/20 18:01, Jim Mattson wrote:
+> >>>> And in fact, it's not used anywhere. So it should be
+> >>>> deprecated.
+> >>> I don't know how you can make the assertion that this ioctl is not
+> >>> used anywhere. For instance, I see a use of it in Google's code base.
+> >>
+> >> Right, it does not seem to be used anywhere according to e.g. Debian
+> >> code search but of course it can have users.
+> >>
+> >> What are you using it for?  It's true that cpuid->nent is never written
+> >> back to userspace, so the ioctl is basically unusable unless you already
+> >> know how many entries are written.  Or unless you fill the CPUID entries
+> >> with garbage before calling it, I guess; is that what you are doing?
+> >
+> > One could use GET_CPUID2 after SET_CPUID2, to see what changes kvm
+> > made to the requested guest CPUID information without telling you.
+>
+> Yeah, I think GET_CPUID2 with the same number of leaves that you have
+> passed to SET_CPUID2 should work.
 
-Changed i's type from int to unsigned int, reordered local variables and=20
-applied to spi-nor/next. Thanks,
-ta
-
+Having said that, it doesn't look like the method that invokes this
+ioctl (in Google's code base) gets called from anywhere.
