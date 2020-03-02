@@ -2,284 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F31CA1767F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:13:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD181767E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbgCBXNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:13:54 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:21112 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbgCBXNw (ORCPT
+        id S1726843AbgCBXMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:12:41 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37299 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbgCBXMl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:13:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1583190833; x=1614726833;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Mjs7be7Jt2PfOz6LF6Rk11t6ekJAzXeK7FYTH2QG7xw=;
-  b=aw2nU/wxB2wYXuaqkuYBuPWtBNuY/F+vtEawCVvumYMNN8+2KcWIKF6m
-   NE9BIPn/BJguXC38NrjZaqRk0/lpIKx9IDGRz3jFzB+2HLRU4Wkos+iO0
-   FDl8PeH7B+MToMugxX4ffFdc+H3zlRt7Zedc08Fq4dgF3z/nezgmH4jI9
-   4y5ZBHxkV6T7uotE7oucmj6IsVTQue6kN+Fdwi6W9VtE21OevPt/vmpI7
-   5kSuLUlnANFRSqrTG9HexKmHK7+I4Nl+2XDuK1w2ilUh1wVZa/xQ7rMC1
-   A8/I/drv+nMwJDRID2CWWUJv3WsfDiZ2mm4t58kfmfVaDsZIkFe2Qgy98
-   A==;
-IronPort-SDR: pAk9qwzMPRk19Gcaa2QQuHmccyCQvavKi/JEei3Xp5xpWbK6wmkliRcdbMKkKIC+3zZZqmNN/K
- hiNbAV37KtgQ0Xb6+oL1of8OV9l4G9u4rC2GFvSnb3n63IEsDkhaUE5zyZXhxzFx6UkUiBMy7W
- QKUSb47UK1txxoiu7AR4p8SdzOmaGnwFcELG3sv2N9KsQ+Lv9yDBRoNA6NIC5onUXzBB1lRnlq
- pAooEya9xUhXc8PvT+UekKR50wMEaNc/q5Qb+5q/1dQC9fQmRqsTxPIye2J3jbhfWvfi+UKjie
- IdM=
-X-IronPort-AV: E=Sophos;i="5.70,508,1574092800"; 
-   d="scan'208";a="131708415"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Mar 2020 07:13:52 +0800
-IronPort-SDR: yZpHmi2gSNoCe9DIUWTjY4dHGF2YkocuCi84qwj9bZN8tZa0cKq+G/BlX5OoiRG2D17HBjTh3g
- PZ12J78xsoHag6CRr3IFD2o6MBfS278+x9e47ajpG+i7nLeJ1ybqHrpuSE07W5GZFSSAsRECF0
- CeO5WN2vAh0QNoOPUFT2bmu6SRwoV9A+PWt7hR4KtfckdAGK8AXFadXnSomZgQaa4IFwzTo5Mn
- g0cLyJleoecCZ01WmRp+WCb6V0u0MKgUaPDwOxA8FQ68VSRum7xu3zqd6BLyvuIhqy/RWSVAyb
- RF4YMJOchCGkX1jjPsvysali
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:06:08 -0800
-IronPort-SDR: UvUo/F33SJdtlcBWIL2Kco3te34Zifbebw4+5JxuHLG+p0jo1p4F+q5MVTtgASDhqRG3HrOMI9
- Hc0BmZnLxBrNj8W/gM4O4u4+eYI45N0KHfw7lD/eDhrygj0u0+ATRSRTU8G3a4sejTwhsW2srP
- ksv7Ek8oHmmYGtzzuX1rSRfeWCdkk1Lw/bXNC6FgcwP1AGVYR50q1YWSemF7GRwdwy41mB2Kme
- 9u+yxtwY1Bwe7F7GAtr1FvsG7uflcop4a5JmStae2UCxUIFMgOzRtIA2fm5mJ5zApRKQpv6Cqa
- y2s=
-WDCIronportException: Internal
-Received: from usa002267.ad.shared (HELO yoda.hgst.com) ([10.86.54.35])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Mar 2020 15:13:52 -0800
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Anup Patel <anup.patel@wdc.com>, Borislav Petkov <bp@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-riscv@lists.infradead.org, Marc Zyngier <maz@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Steven Price <steven.price@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vincent Chen <vincent.chen@sifive.com>
-Subject: [PATCH v3 2/2] irqchip/sifive-plic: Add support for multiple PLICs
-Date:   Mon,  2 Mar 2020 15:11:46 -0800
-Message-Id: <20200302231146.15530-3-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200302231146.15530-1-atish.patra@wdc.com>
-References: <20200302231146.15530-1-atish.patra@wdc.com>
+        Mon, 2 Mar 2020 18:12:41 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p14so458949pfn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:12:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cZHkLPyQi4lEOu+PeEyqnnKuw6NNgD2Yqbp/RubP2bc=;
+        b=ofnLSi+jS3OXUcK8vE0gMbM1QBDxh7b5jS1IxWi3HkGpKKOEcm3WJd9aEk0Us7IUKO
+         8nmFWDJfiuwlFyqsXCcVKRAwIBQaYQl/evwVVX80Y3CPQhjcxITZ1o5Jk7P5xhZf2YmV
+         JUbFU5wRnrXfDlxWlBhwcEx9xdQfFjkkoY8zYrA9cLB/YTtxDa+Ix3UgLS37laXFK+lF
+         YO5R32/SpDIyenCGvur0FFCxabBbXTYfaf1ITOLkeTmU1Kzvh/HtnQ2WmKgFvoaxK9pj
+         quRJ7rwJz3FmBNE/PilR6rrZsmbZ6ywl2wXJqkGSS2Gt0C8UBc0UKbqYmILkeUOjgzI9
+         blIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cZHkLPyQi4lEOu+PeEyqnnKuw6NNgD2Yqbp/RubP2bc=;
+        b=RAUAr4PMcselqcylCFB0cgJcxe4DS8FdnnrQpgnrKnvP8Hry2p3LSLYmB2A9OXs/x7
+         RsfiiugUCtFq3B64MnLRX+SU6gF/8ahnv9NrJTTBAIUFgcUCNCNqB299AuAaQhjfNv3P
+         VwEcTex5sFC7RwHWqobyuZ+JdIGtW2/NGfHwSXzqmB+PRWDrUTs9BYqeeOCWbeqXVfQ3
+         88FjtKDn8fNnrmrkozD7PDympkQoNaRFPiVTZY3zl1Mmb6HrM5tJZUdER/7ilZW+z1EB
+         /kgqeEYP/q18uYJynAUjNGzLnjEiki0IUtuIn59Xl6JYArVd70zfSkvPxF/0uE4hfQlC
+         /btQ==
+X-Gm-Message-State: ANhLgQ1JkU1u2QLuiub4n6h23ATmMCp/eNzJgcGiByjGui+eUsCA9V0e
+        JfPB3xw25kLE172tRniVGsctww==
+X-Google-Smtp-Source: ADFU+vsbt7xW95b/HirVpnFvyPznPrDnd/h85vDaRcM55B9JmCtuRXICrRpYIjC1wXlERTK8an7NHg==
+X-Received: by 2002:a63:f403:: with SMTP id g3mr1256700pgi.62.1583190759696;
+        Mon, 02 Mar 2020 15:12:39 -0800 (PST)
+Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id x65sm9095993pfd.34.2020.03.02.15.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 15:12:39 -0800 (PST)
+Date:   Mon, 2 Mar 2020 15:12:36 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Clement Leger <cleger@kalray.eu>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-remoteproc@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v5 4/8] remoteproc: Add elf helpers to access elf64 and
+ elf32 fields
+Message-ID: <20200302231236.GD262924@yoga>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-5-cleger@kalray.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302093902.27849-5-cleger@kalray.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current, PLIC driver can support only 1 PLIC on the board. However,
-there can be multiple PLICs present on a two socket systems in RISC-V.
+On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
 
-Modify the driver so that each PLIC handler can have a information
-about individual PLIC registers and an irqdomain associated with it.
+> elf32 and elf64 mainly differ by their types. In order to avoid
+> copy/pasting the whole loader code, generate static inline functions
+> which will access values according to the elf class. It allows to
+> keep a common loader basis.
+> In order to accommodate both elf types sizes, the maximum size for a
+> elf header member is chosen using the maximum value of the field for
+> both elf class.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 
-Tested on two socket RISC-V system based on VCU118 FPGA connected via
-OmniXtend protocol.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
----
- drivers/irqchip/irq-sifive-plic.c | 81 +++++++++++++++++++------------
- 1 file changed, 51 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 7c7f37393f99..c34fb3ae0ff8 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -59,7 +59,11 @@
- #define	PLIC_DISABLE_THRESHOLD		0xf
- #define	PLIC_ENABLE_THRESHOLD		0
- 
--static void __iomem *plic_regs;
-+struct plic_priv {
-+	struct cpumask lmask;
-+	struct irq_domain *irqdomain;
-+	void __iomem *regs;
-+};
- 
- struct plic_handler {
- 	bool			present;
-@@ -70,6 +74,7 @@ struct plic_handler {
- 	 */
- 	raw_spinlock_t		enable_lock;
- 	void __iomem		*enable_base;
-+	struct plic_priv	*priv;
- };
- static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
- 
-@@ -88,31 +93,40 @@ static inline void plic_toggle(struct plic_handler *handler,
- }
- 
- static inline void plic_irq_toggle(const struct cpumask *mask,
--				   int hwirq, int enable)
-+				   struct irq_data *d, int enable)
- {
- 	int cpu;
-+	struct plic_priv *priv = irq_get_chip_data(d->irq);
- 
--	writel(enable, plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
-+	writel(enable, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
- 	for_each_cpu(cpu, mask) {
- 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
- 
--		if (handler->present)
--			plic_toggle(handler, hwirq, enable);
-+		if (handler->present &&
-+		    cpumask_test_cpu(cpu, &handler->priv->lmask))
-+			plic_toggle(handler, d->hwirq, enable);
- 	}
- }
- 
- static void plic_irq_unmask(struct irq_data *d)
- {
--	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
--					   cpu_online_mask);
-+	struct cpumask amask;
-+	unsigned int cpu;
-+	struct plic_priv *priv = irq_get_chip_data(d->irq);
-+
-+	cpumask_and(&amask, &priv->lmask, cpu_online_mask);
-+	cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
-+					   &amask);
- 	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
- 		return;
--	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
-+	plic_irq_toggle(cpumask_of(cpu), d, 1);
- }
- 
- static void plic_irq_mask(struct irq_data *d)
- {
--	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
-+	struct plic_priv *priv = irq_get_chip_data(d->irq);
-+
-+	plic_irq_toggle(&priv->lmask, d, 0);
- }
- 
- #ifdef CONFIG_SMP
-@@ -120,17 +134,21 @@ static int plic_set_affinity(struct irq_data *d,
- 			     const struct cpumask *mask_val, bool force)
- {
- 	unsigned int cpu;
-+	struct cpumask amask;
-+	struct plic_priv *priv = irq_get_chip_data(d->irq);
-+
-+	cpumask_and(&amask, &priv->lmask, mask_val);
- 
- 	if (force)
--		cpu = cpumask_first(mask_val);
-+		cpu = cpumask_first(&amask);
- 	else
--		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-+		cpu = cpumask_any_and(&amask, cpu_online_mask);
- 
- 	if (cpu >= nr_cpu_ids)
- 		return -EINVAL;
- 
--	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
--	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
-+	plic_irq_toggle(&priv->lmask, d, 0);
-+	plic_irq_toggle(cpumask_of(cpu), d, 1);
- 
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
- 
-@@ -191,8 +209,6 @@ static const struct irq_domain_ops plic_irqdomain_ops = {
- 	.free		= irq_domain_free_irqs_top,
- };
- 
--static struct irq_domain *plic_irqdomain;
--
- /*
-  * Handling an interrupt is a two-step process: first you claim the interrupt
-  * by reading the claim register, then you complete the interrupt by writing
-@@ -209,7 +225,7 @@ static void plic_handle_irq(struct pt_regs *regs)
- 
- 	csr_clear(CSR_IE, IE_EIE);
- 	while ((hwirq = readl(claim))) {
--		int irq = irq_find_mapping(plic_irqdomain, hwirq);
-+		int irq = irq_find_mapping(handler->priv->irqdomain, hwirq);
- 
- 		if (unlikely(irq <= 0))
- 			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
-@@ -265,15 +281,17 @@ static int __init plic_init(struct device_node *node,
- {
- 	int error = 0, nr_contexts, nr_handlers = 0, i;
- 	u32 nr_irqs;
-+	struct plic_priv *priv;
- 
--	if (plic_regs) {
--		pr_warn("PLIC already present.\n");
--		return -ENXIO;
--	}
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
- 
--	plic_regs = of_iomap(node, 0);
--	if (WARN_ON(!plic_regs))
--		return -EIO;
-+	priv->regs = of_iomap(node, 0);
-+	if (WARN_ON(!priv->regs)) {
-+		error = -EIO;
-+		goto out_free_priv;
-+	}
- 
- 	error = -EINVAL;
- 	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
-@@ -287,9 +305,9 @@ static int __init plic_init(struct device_node *node,
- 		goto out_iounmap;
- 
- 	error = -ENOMEM;
--	plic_irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
--			&plic_irqdomain_ops, NULL);
--	if (WARN_ON(!plic_irqdomain))
-+	priv->irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
-+			&plic_irqdomain_ops, priv);
-+	if (WARN_ON(!priv->irqdomain))
- 		goto out_iounmap;
- 
- 	for (i = 0; i < nr_contexts; i++) {
-@@ -334,13 +352,14 @@ static int __init plic_init(struct device_node *node,
- 			goto done;
- 		}
- 
-+		cpumask_set_cpu(cpu, &priv->lmask);
- 		handler->present = true;
- 		handler->hart_base =
--			plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
-+			priv->regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
- 		raw_spin_lock_init(&handler->enable_lock);
- 		handler->enable_base =
--			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
--
-+			priv->regs + ENABLE_BASE + i * ENABLE_PER_HART;
-+		handler->priv = priv;
- done:
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 			plic_toggle(handler, hwirq, 0);
-@@ -356,7 +375,9 @@ static int __init plic_init(struct device_node *node,
- 	return 0;
- 
- out_iounmap:
--	iounmap(plic_regs);
-+	iounmap(priv->regs);
-+out_free_priv:
-+	kfree(priv);
- 	return error;
- }
- 
--- 
-2.25.0
-
+> ---
+>  drivers/remoteproc/remoteproc_elf_helpers.h | 96 +++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 drivers/remoteproc/remoteproc_elf_helpers.h
+> 
+> diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
+> new file mode 100644
+> index 000000000000..4b6be7b6bf4d
+> --- /dev/null
+> +++ b/drivers/remoteproc/remoteproc_elf_helpers.h
+> @@ -0,0 +1,96 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Remote processor elf helpers defines
+> + *
+> + * Copyright (C) 2020 Kalray, Inc.
+> + */
+> +
+> +#ifndef REMOTEPROC_ELF_LOADER_H
+> +#define REMOTEPROC_ELF_LOADER_H
+> +
+> +#include <linux/elf.h>
+> +#include <linux/types.h>
+> +
+> +/**
+> + * fw_elf_get_class - Get elf class
+> + * @fw: the ELF firmware image
+> + *
+> + * Note that we use and elf32_hdr to access the class since the start of the
+> + * struct is the same for both elf class
+> + *
+> + * Return: elf class of the firmware
+> + */
+> +static inline u8 fw_elf_get_class(const struct firmware *fw)
+> +{
+> +	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
+> +
+> +	return ehdr->e_ident[EI_CLASS];
+> +}
+> +
+> +static inline void elf_hdr_init_ident(struct elf32_hdr *hdr, u8 class)
+> +{
+> +	memcpy(hdr->e_ident, ELFMAG, SELFMAG);
+> +	hdr->e_ident[EI_CLASS] = class;
+> +	hdr->e_ident[EI_DATA] = ELFDATA2LSB;
+> +	hdr->e_ident[EI_VERSION] = EV_CURRENT;
+> +	hdr->e_ident[EI_OSABI] = ELFOSABI_NONE;
+> +}
+> +
+> +/* Generate getter and setter for a specific elf struct/field */
+> +#define ELF_GEN_FIELD_GET_SET(__s, __field, __type) \
+> +static inline __type elf_##__s##_get_##__field(u8 class, const void *arg) \
+> +{ \
+> +	if (class == ELFCLASS32) \
+> +		return (__type) ((const struct elf32_##__s *) arg)->__field; \
+> +	else \
+> +		return (__type) ((const struct elf64_##__s *) arg)->__field; \
+> +} \
+> +static inline void elf_##__s##_set_##__field(u8 class, void *arg, \
+> +					     __type value) \
+> +{ \
+> +	if (class == ELFCLASS32) \
+> +		((struct elf32_##__s *) arg)->__field = (__type) value; \
+> +	else \
+> +		((struct elf64_##__s *) arg)->__field = (__type) value; \
+> +}
+> +
+> +ELF_GEN_FIELD_GET_SET(hdr, e_entry, u64)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_phnum, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_shnum, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_phoff, u64)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_shoff, u64)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_shstrndx, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_machine, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_type, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_version, u32)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_ehsize, u32)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_phentsize, u16)
+> +
+> +ELF_GEN_FIELD_GET_SET(phdr, p_paddr, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_vaddr, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_filesz, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_memsz, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_type, u32)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_offset, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_flags, u32)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_align, u64)
+> +
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_size, u64)
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_offset, u64)
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_name, u32)
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_addr, u64)
+> +
+> +#define ELF_STRUCT_SIZE(__s) \
+> +static inline unsigned long elf_size_of_##__s(u8 class) \
+> +{ \
+> +	if (class == ELFCLASS32)\
+> +		return sizeof(struct elf32_##__s); \
+> +	else \
+> +		return sizeof(struct elf64_##__s); \
+> +}
+> +
+> +ELF_STRUCT_SIZE(shdr)
+> +ELF_STRUCT_SIZE(phdr)
+> +ELF_STRUCT_SIZE(hdr)
+> +
+> +#endif /* REMOTEPROC_ELF_LOADER_H */
+> -- 
+> 2.15.0.276.g89ea799
+> 
