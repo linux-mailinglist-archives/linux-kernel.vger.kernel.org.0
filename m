@@ -2,96 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530F71759C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 12:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA5D01759D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 12:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgCBLx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 06:53:58 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37787 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbgCBLx5 (ORCPT
+        id S1727784AbgCBL5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 06:57:23 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:46439 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbgCBL5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 06:53:57 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a141so10372992wme.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 03:53:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=azUAbwec9h/nTfVaFPcgmhe6fEkHKvdkY4Og3qBi37Y=;
-        b=r6j9t0b6YVsKN35LyP/H5lUyKRUrdC0WhAe7pyoL9zqxJsdyHeGhs2X3RPXsG77ucE
-         jE/L3lSF6Wv872Mzbni4tCKo2Uf/J5FiErTEvIguKLvUeYhUGNPKhhpaGFNRNrWGk+f2
-         1QjGeQADib8veuFWed0VG38BvxD1/BlcZKNZvBoIdZaKVu4tpxIefsYEaasn1pXrO6pw
-         1IS1EFDyfxBfwjF3zBykGgdaT4Xa+9qN7Hg+f7ZRYZZU9a6HuY5nByYkE4VPQwAGEqOh
-         HGZj0HxfvbruJPh91RNIa+cmcx57q78ersUThwaD49igmWlsnmeX5r7Lhm6Fksn6cv6m
-         AmWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=azUAbwec9h/nTfVaFPcgmhe6fEkHKvdkY4Og3qBi37Y=;
-        b=W8gYYqBUdTg9ixg6dp9K2MtV6y4KvujNcxy7F4UctBiSn0JGJ1jH+5j9ZH6+bLiM22
-         77CyS/GPZLDsQLBNpMTomVkeP6wnvrVbCFgPOC1sJz74KQ9GdLOf/1C/SS8VE26k0LYb
-         M82MN8cX4VrOAOTA/2DBB6W0IzsoHXFTyO48fi42hxM2v07IaKqCAx4VKC9K3tylrzvd
-         2ZIlv53HAGO2FqwC2C2O/8nbZQPlpmIQzf4RY80VVmNuXfAFglQD4XMCvydCHI8iCLu9
-         cnK86OsKA7X+6WDvm0ka66SeFdkedt1gNCALKZE0PyBB2ZM8AaPxNfi+0WgLvnsaiYn7
-         ANMw==
-X-Gm-Message-State: APjAAAV272XbhFMEW3/Vo7rc9PynWp45RlOTT8dV0sTLxwkuhSzcDFRv
-        +qe2VCaKCU+uona1xJ6m/NAFot6OzxI=
-X-Google-Smtp-Source: APXvYqynY+onBCIIhC4P/zjfJVC1tFcUN36uleAbHJTeNOVBp0N74P2fBTF9cu3aqLEh5sEG98Rv7w==
-X-Received: by 2002:a1c:9d85:: with SMTP id g127mr19364122wme.75.1583150036591;
-        Mon, 02 Mar 2020 03:53:56 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id j5sm27954117wrx.56.2020.03.02.03.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 03:53:55 -0800 (PST)
-Date:   Mon, 2 Mar 2020 11:54:32 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] docs: dt: convert usage-model.txt to ReST
-Message-ID: <20200302115432.GX3494@dell>
-References: <cover.1583135507.git.mchehab+huawei@kernel.org>
- <0432bc8cdb6abb8618eac89d68db7441b613106d.1583135507.git.mchehab+huawei@kernel.org>
+        Mon, 2 Mar 2020 06:57:23 -0500
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id E4BE340016;
+        Mon,  2 Mar 2020 11:57:18 +0000 (UTC)
+Message-ID: <daeec373292e14c6aea179ddf690a5dace6c83f7.camel@hadess.net>
+Subject: Re: [PATCH v3 2/2] touchscreen: goodix: define GPIO mapping for GPD
+ P2 Max
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Peter Cai <peter@typeblog.net>, Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Date:   Mon, 02 Mar 2020 12:57:18 +0100
+In-Reply-To: <20190902124352.12291-2-peter@typeblog.net>
+References: <20190831030916.13172-1-peter@typeblog.net>
+         <20190902124352.12291-1-peter@typeblog.net>
+         <20190902124352.12291-2-peter@typeblog.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.35.91 (3.35.91-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0432bc8cdb6abb8618eac89d68db7441b613106d.1583135507.git.mchehab+huawei@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 02 Mar 2020, Mauro Carvalho Chehab wrote:
-
-> - Add a SPDX header;
-> - Adjust document title;
-> - Use footnoote markups;
-> - Some whitespace fixes and new line breaks;
-> - Mark literal blocks as such;
-> - Add it to devicetree/index.rst.
+On Mon, 2019-09-02 at 20:43 +0800, Peter Cai wrote:
+> The firmware of GPD P2 Max could not handle panel resets although
+> code
+> is present in DSDT. The kernel needs to take on this job instead, but
+> the DSDT does not provide _DSD, rendering kernel helpless when trying
+> to
+> find the respective GPIO pins.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/devicetree/index.rst            |  1 +
->  Documentation/devicetree/of_unittest.txt      |  2 +-
->  .../{usage-model.txt => usage-model.rst}      | 35 +++++++++++--------
+> Fortunately, this time GPD has proper DMI vendor / product strings
+> that
+> we could match against. We simply apply an acpi_gpio_mapping table
+> when
+> GPD P2 Max is matched.
+> 
+> Additionally, the DSDT definition of the irq pin specifies a wrong
+> polarity. The new quirk introduced in the previous patch
+> (ACPI_GPIO_QUIRK_OVERRIDE_POLARITY) is applied to correct this.
 
->  include/linux/mfd/core.h                      |  2 +-
+Hans has posted a patchset which reworks GPIO access for ACPI devices.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Could you please check whether you could rebase your patch on top of
+that?
 
->  4 files changed, 23 insertions(+), 17 deletions(-)
->  rename Documentation/devicetree/{usage-model.txt => usage-model.rst} (97%)
+I also think the comment in "Input: goodix - Add support for getting
+IRQ + reset GPIOs on Cherry Trail devices" might also be of use:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
++       case irq_pin_access_acpi_gpio:
++               /*
++                * The IRQ pin triggers on a falling edge, so its gets
+marked
++                * as active-low, use output_raw to avoid the value
+inversion.
++                */
+
+Cheers
+
