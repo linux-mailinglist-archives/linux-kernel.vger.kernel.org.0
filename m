@@ -2,105 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2593175CF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:26:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13769175CF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:25:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbgCBOZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 09:25:54 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:46326 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbgCBOZx (ORCPT
+        id S1727199AbgCBOZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 09:25:47 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54728 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgCBOZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:25:53 -0500
-Received: by mail-wr1-f48.google.com with SMTP id j7so12749099wrp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 06:25:51 -0800 (PST)
+        Mon, 2 Mar 2020 09:25:47 -0500
+Received: by mail-wm1-f65.google.com with SMTP id z12so11404441wmi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 06:25:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=sgAEKJwQB8Gv3iov0wsQWnGh6y5ovJv8PBH/21hvauM=;
+        b=usYcQwmxMZHE9zWt+Wbda0uEYUct6SDSbr90Px4RGOZFaowiN3Uq9L8K4ijB1dMFlP
+         r3vFqQ4FO5d2AFOd0tto/SAnmdnug0T1U8Vy0tHmjhwOez2zzWL3R+Y0JOmVkRwOf+QL
+         M91LEPgaMATwf/DtIWTUB9PS8WHJ+ybLunoeDvfYtJb23HIDrHBxQdgVg9cqunUPlwsO
+         5ZlHbt9rxqKCaXrO8PK6QPmUkWkCoc7v0R26RKTQFX67wgZVnqW8txCZDXhIzzii492B
+         M9kMHmMQOTmJTp0j/jMd27Pb+SHRLYRBLDpygWCGiLQtGYjMlpnYFpEV7xO3xzcICi9N
+         14Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=91i00x+r3ObU17/Jn02LmIVt8253x20peMqSjQ89ikI=;
-        b=uP9ETzMp5LSht6suRXGaPQBDmuKMfa42FlUlgv2DAi77X5ZjtiQ9/mE3L+YAhpKJx8
-         fh+TgBtTR9xv5GVWSZSb04hVxppKC8sa+nwhGRldsO3Wb7piMkfRqC3g1FjBDN6IDezT
-         1Q+f4K6/HGKVfZfu+mtWa8U8ZFTVk8QCD6XptNDjNZ8XbAaLuVfsWtlvYWrFDCRS/pcY
-         YEN2XQ/Z8YmCQQuWPgtybiFlVB3/M1JQ0r+qEArlT83AU1C3q6BJ2YjVCf1y0FcuCEfc
-         hBBxMvHFciJ89p92YvfHqc0KhAqNh3XV7YpxHg4iO5/kfRUqofFqmCpqKrkPgxWXGHss
-         RAug==
-X-Gm-Message-State: APjAAAXN0Y83Ai6f84GCScSFYsiuMwOslSJeq2eiEkMoiqFOCK5vv70J
-        APcyLg/dKid1QBobmhSpTrQ=
-X-Google-Smtp-Source: APXvYqwdAQL3VnZNwjPeETAbUL+bLXtL8v4BUHFJcIm/NTpDVwnZDrNB/j65t032OBVc8SsE4bQMYg==
-X-Received: by 2002:a5d:5286:: with SMTP id c6mr16208977wrv.418.1583159151203;
-        Mon, 02 Mar 2020 06:25:51 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id q12sm30065989wrg.71.2020.03.02.06.25.49
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=sgAEKJwQB8Gv3iov0wsQWnGh6y5ovJv8PBH/21hvauM=;
+        b=uDl0fu1V/1/1lL/8RoAkxhAF8ODo38H5RoQ6Crh0NvqQ16QEwkbWTKOHRf19BZ6HYh
+         DPjD1IjNxY8fN/4qZdZuV14aEksx7VdXWMhYar5me50cw0KT1yCJGtoOFHFCwAW3hlvI
+         1jmOytV5SNbnoX0lEb1kik+ua/K/HRtegazslAXQBS8VxY/FLSuYLj/NTY5Fgp3yy4ni
+         PjjHbdrRB6LhjbHVa8SE7LWMrysyih3qH4rmJttArricIizygiqJurwJHdGBrGJb0nq0
+         BxyLJBuB5oi5icQ/OE0uZP1RDZFoQRwKcBh3wzJKDkjWf7+pNt9H5TsDbC9tIjJ9ilkR
+         Armw==
+X-Gm-Message-State: ANhLgQ3pGe/Ybj1BiTvMAyI0/VCk68EOkEYo+QQNGqYUenqaegdI1YKg
+        S9TOMZwzACnQ2j6BBC+9Inxkpw==
+X-Google-Smtp-Source: ADFU+vvHHUg7lLfZiXNvkEyvg6Amyek3SNyX4sKBx5aGr3KFE3/uWGi3Bvm1/kJennkV7lsoWhpEmA==
+X-Received: by 2002:a1c:7f87:: with SMTP id a129mr9205826wmd.160.1583159145606;
+        Mon, 02 Mar 2020 06:25:45 -0800 (PST)
+Received: from dell ([2.31.163.122])
+        by smtp.gmail.com with ESMTPSA id c2sm15935583wma.39.2020.03.02.06.25.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 06:25:50 -0800 (PST)
-Date:   Mon, 2 Mar 2020 15:25:49 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
-Message-ID: <20200302142549.GO4380@dhcp22.suse.cz>
-References: <20200228033819.3857058-1-ying.huang@intel.com>
- <20200228034248.GE29971@bombadil.infradead.org>
- <87a7538977.fsf@yhuang-dev.intel.com>
- <edae2736-3239-0bdc-499c-560fc234c974@redhat.com>
- <871rqf850z.fsf@yhuang-dev.intel.com>
- <20200228095048.GK3771@dhcp22.suse.cz>
- <87d09u7sm2.fsf@yhuang-dev.intel.com>
+        Mon, 02 Mar 2020 06:25:45 -0800 (PST)
+Date:   Mon, 2 Mar 2020 14:26:21 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/19] platform/x86: Rework intel_scu_ipc and
+ intel_pmc_ipc drivers
+Message-ID: <20200302142621.GB3494@dell>
+References: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87d09u7sm2.fsf@yhuang-dev.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02-03-20 22:12:53, Huang, Ying wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
-[...]
-> > And MADV_FREE pages are a kind of cache as well. If the target node is
-> > short on memory then those will be reclaimed as a cache so a
-> > pro-active freeing sounds counter productive as you do not have any
-> > idea whether that cache is going to be used in future. In other words
-> > you are not going to free a clean page cache if you want to use that
-> > memory as a migration target right? So you should make a clear case
-> > about why MADV_FREE cache is less important than the clean page cache
-> > and ideally have a good justification backed by real workloads.
+On Mon, 02 Mar 2020, Mika Westerberg wrote:
+
+> Hi all,
 > 
-> Clean page cache still have valid contents, while clean MADV_FREE pages
-> has no valid contents.  So penalty of discarding the clean page cache is
-> reading from disk, while the penalty of discarding clean MADV_FREE pages
-> is just page allocation and zeroing.
+> Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
+> IPC communications with minor differences. This duplication does not make
+> much sense so this series reworks the two drivers so that there is only a
+> single implementation of the SCU IPC. In addition to that the API will be
+> updated to take SCU instance pointer as an argument, and most of the
+> callers will be converted to this new API. The old API is left there but
+> the plan is to get rid the callers and then the old API as well (this is
+> something we are working with Andy Shevchenko).
+> 
+> The intel_pmc_ipc.c is then moved under MFD which suits better for this
+> kind of a driver that pretty much sets up the SCU IPC and then creates a
+> bunch of platform devices for the things sitting behind the PMC. The driver
+> is renamed to intel_pmc_bxt.c which should follow the existing conventions
+> under drivers/mfd (and it is only meant for Intel Broxton derivatives).
+> 
+> This is on top of platform-driver-x86.git/for-next branch because there is
+> already some cleanup work queued that re-organizes Kconfig and Makefile
+> entries.
+> 
+> I have tested this on Intel Joule (Broxton-M) board.
+> 
+> Changes from v6:
+> 
+>   * Added Reviewed-by tag from Andy
+>   * Expanded PMC, IPC and IA acronyms
+>   * Drop TCO_DEVICE_NAME, PUNIT_DEVICE_NAME and TELEMETRY_DEVICE_NAME
+>   * Move struct intel_pmc_dev into include/linux/mfd/intel_pmc_bxt.h
+>   * Add PMC_DEVICE_MAX to the enum and use it
+>   * Add kernel-docs for simplecmd_store() and northpeak_store()
+>   * Use if (ret) return ret; over the ternary operator
+>   * Drop "This is index X" from comments
+>   * Use acpi_has_watchdog() to determine whether iTCO_wdt is added or not.
+>   * Rename intel_scu_ipc_pdata -> intel_scu_ipc_data to make it less
+>     confusing wrt. platform data for platform drivers.
 
-And "just page allocation and zeroing" overhead is the primary
-motivation to keep the page in memory. It is a decision of the workload
-to use MADV_FREE because chances are that this will speed things up. All
-that with a contract that the memory goes away under memory pressure so
-with a good workload/memory sizing you do not really lose that
-optimization. Now you want to make decision on behalf of the consumer of
-the MADV_FREE memory.
-
-> I understand that MADV_FREE is another kind of cache and has its value.
-> But in the original implementation, during migration, we have already
-> freed the original "cache", then reallocate the cache elsewhere and
-> copy.  This appears more like all pages are populated in mmap() always.
-> I know there's value to populate all pages in mmap(), but does that need
-> to be done always by default?
-
-It is not. You have to explicitly request MAP_POPULATE to initialize
-mmap.
+Any reason why you've dropped all my tags?
 
 -- 
-Michal Hocko
-SUSE Labs
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
