@@ -2,345 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9DB9176290
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B9D1762A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:29:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgCBSZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 13:25:01 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:48476 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbgCBSZB (ORCPT
+        id S1727501AbgCBS3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 13:29:09 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:21358 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727126AbgCBS3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 13:25:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1583173497; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h6lSOhMC/XBGtbtaKsJ1k7GLSbXNsMxEsiPalqyKXIc=;
-        b=fNi7g+22XO1z3idiEMZnqTtahVH3g8pfVE9Vgrqjgor2TQSz518zoC4Lcmf5I0ek3N9YAI
-        /oYZ+LTfPpkIEqiSU90NvHKX+jJa/nCS1MoWHGInZkFEwtOK8cAp3JQvOoZNewxvnahcM/
-        Zi4z2X+tlh0hpoXxUwNopPBZDKvrRLw=
-Date:   Mon, 02 Mar 2020 15:24:41 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/1] dt-bindings: timer: Convert ingenic,tcu.txt to YAML
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?b?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>, od@zcrc.me,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Message-Id: <1583173481.3.0@crapouillou.net>
-In-Reply-To: <CAL_JsqKGzxdMj4_+i4ycKj6ZjiuGMY8F+yBzVPt_b2CLhrcdKg@mail.gmail.com>
-References: <20200301174636.63446-1-paul@crapouillou.net>
-        <20200301174636.63446-2-paul@crapouillou.net>
-        <CAL_JsqKGzxdMj4_+i4ycKj6ZjiuGMY8F+yBzVPt_b2CLhrcdKg@mail.gmail.com>
+        Mon, 2 Mar 2020 13:29:09 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022IRcju010785;
+        Mon, 2 Mar 2020 10:27:40 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=mKd9uf1AgIDe5RNlalxdwF40OJYaXAH05DlEkFeGAsY=;
+ b=ixoPNZXaA2QRyu0yDpo4myO+kTuLHe6Qy/5WZdgzJ3L6eZ7ntd8hPWelws79Ec4QXFuC
+ 5Lfsei94Ek3d7AoRTEkv3xOgA9+jpR2tDjDWk5JJ2/oVk8jJNcLCNgMzF/26tlXmXYGU
+ /XF2w1e7SJfNmKhVa6rm/0MYShtDz0Cs1rU= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 2yg8dcx5mh-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 02 Mar 2020 10:27:39 -0800
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.230) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 2 Mar 2020 10:27:15 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NACMwikrOJhuUhxFH3fuqmPgD3is5ybLN5t/gUEns6yhc6I1YvVJJ3NDcmt6NKw2yOA10pvgSZxGXw4/NaezzrGTDTiMWHIaIxNFok83DCMVctD3G3mSItEMDrSHWzuY2eadXup/1TF5ljJxM92VGQl3o/zj6u7PkYT8uMlDIkIEjJU9EOKRaKI1rrj3aLldriwoI+WYPhLd9oKhIdCaA8RhXdLzhwm3HeCPj6YwFtnog3hM0FvvMDFYykir+a/xJKhQauocgIRiBeH2prNy/UHwOOvOeJOVufkI1xtLHBBHNl27BY/0whH+wj3YLxKuDE8Tiu01eRLY1wvZlntYWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mKd9uf1AgIDe5RNlalxdwF40OJYaXAH05DlEkFeGAsY=;
+ b=LZTToLfSl6eyKX1T3hySuoAFHyM6/iQKeQgpa2alv2LrJL+klb42GbfUmgHFPvLz0OlACrimRVJx+dbY0NTWAltLK6Lpig6YZ75Zk8gEPKSjBjbvAr2KWBRoCrp+hi/9w0MkghU2PjWM6/2HDiXUuzNm+UuwW+lOzoEzyk7lfiJVcnSA2M674CtQY3uFRdHWa6fPqiPzbarAU/3Z3EfXhQmNOzcxq95iY8Y7kfH6PujYJzCRvcXqzLbeQYs9VoJiZsLxyYkYFwEBKDgsN+vGW5OT98AeTzvEwp23vROH7BqQ84U8s812KA/XWxyCAq7DMOad6jeqS1kyGqmSUKSJug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mKd9uf1AgIDe5RNlalxdwF40OJYaXAH05DlEkFeGAsY=;
+ b=CUzk0WsDAo7GnQn8y7+gAjXpowmapBWEl1tCXmtuwo9JWvMQNtnvQnD5XSG3SOTI1QtsLNopdqHaRXtekksRjslvmG9ep90/bmsA14umZrxE3iiouMoc0O/GupIe7q+f1oxyS0q0NLuuZhqCq0ZOX+8bVfJS5sjOTnhhQEI3w/s=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (2603:10b6:a03:150::19)
+ by BYAPR15MB3400.namprd15.prod.outlook.com (2603:10b6:a03:10f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18; Mon, 2 Mar
+ 2020 18:27:13 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308%7]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 18:27:13 +0000
+Date:   Mon, 2 Mar 2020 10:27:09 -0800
+From:   Roman Gushchin <guro@fb.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+CC:     Marco Ballesio <balejs@google.com>, Tejun Heo <tj@kernel.org>,
+        cgroups mailinglist <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>, <rjw@rjwysocki.net>,
+        <pavel@ucw.cz>, <len.brown@intel.com>, <linux-doc@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Minchan Kim <minchan@google.com>,
+        Daniel Colascione <dancol@google.com>
+Subject: Re: [PATCH] cgroup-v1: freezer: optionally killable freezer
+Message-ID: <20200302182709.GA527458@carbon.dhcp.thefacebook.com>
+References: <20200219183231.50985-1-balejs@google.com>
+ <20200229005131.GB9813@google.com>
+ <20200229184300.GA484762@carbon.DHCP.thefacebook.com>
+ <20200301162003.GA186618@google.com>
+ <20200302165330.GA505299@carbon.DHCP.thefacebook.com>
+ <CAJuCfpEk4gz9YKVuRBW4E-Up_LSGWCSpyJft4y+rOjyPSa08Zg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpEk4gz9YKVuRBW4E-Up_LSGWCSpyJft4y+rOjyPSa08Zg@mail.gmail.com>
+X-ClientProxiedBy: MWHPR15CA0060.namprd15.prod.outlook.com
+ (2603:10b6:301:4c::22) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:150::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:500::4:ec0b) by MWHPR15CA0060.namprd15.prod.outlook.com (2603:10b6:301:4c::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 18:27:12 +0000
+X-Originating-IP: [2620:10d:c090:500::4:ec0b]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7b6f2347-1f75-46f1-c3b0-08d7bed75419
+X-MS-TrafficTypeDiagnostic: BYAPR15MB3400:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB34007914546F0B9E0C4DFF9EBEE70@BYAPR15MB3400.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 033054F29A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(366004)(39860400002)(346002)(189003)(199004)(478600001)(316002)(86362001)(8936002)(81166006)(81156014)(8676002)(6916009)(2906002)(186003)(16526019)(7416002)(55016002)(33656002)(6666004)(54906003)(9686003)(53546011)(52116002)(1076003)(66946007)(66556008)(4326008)(5660300002)(6506007)(7696005)(66476007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3400;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: S3PDV9iqBsRCNy4XkFSj4hmP8nSGnLmiPkeFZroxDMVRLsKakxBBvJxuv6SiYuzqt3sNRU6cWnHfzaTWlmI+OXbvq0ODcNcaT4L+R91MzFbCY4mJEQfsnFujnTxNOIcmVqK1zIuzcPNf6n8sIj06EtkGpmu91Rw4MOnNGcGKp92gytr2yhc+MCG1P/A1kTAwwgPpHgbQqa1aby8L8+JMbdNUQdJIb0J5fySMKbArw+zzvexdckZXeAkSnY3DvmRTTRASSGltqzLjhgMie30pu3+WjfZfHqQTZuKoSw6RphX4lORNcqSIUXN9naDR2omnCLC7k8AINsuSCF/34tOqd9WnlamAsAyJ4bFiiNLTu6pkj6eJoOplp0McaznaXvlwzWZYSsEP8PgUiNKZhW+QRyCQ/deNoLXMOO3mMenkrmOHucPt5pdCMMz5gr6YNiZG
+X-MS-Exchange-AntiSpam-MessageData: nyWtIdFZR1Q6KSkuJEhWKBfN4N0T7msTlM6UwVJ8Nh/Dk8gGwwH04y5ybUT/QMsuxROH9gDZO0w5B+amHSQYwdK2W1B5/19RNOYcZnnvefqMid3jmcqWTp4egwF68k++ro+/I6HLIjgy+2qnPmOsDw8NTg7Luqxv4JEX8JvX9vWl7670T1dsFxT3zXYLVxqR
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b6f2347-1f75-46f1-c3b0-08d7bed75419
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2020 18:27:13.6813
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l4X55bSbnXoc2TIE72leb+iSeEeNIXfGURPReCaAz1K3KrEy8g6imwwvNzLJik1P
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3400
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_07:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 suspectscore=1 phishscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020121
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, Mar 02, 2020 at 09:46:36AM -0800, Suren Baghdasaryan wrote:
+> On Mon, Mar 2, 2020 at 8:53 AM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > On Sun, Mar 01, 2020 at 08:20:03AM -0800, Marco Ballesio wrote:
+> > > On Sat, Feb 29, 2020 at 10:43:00AM -0800, Roman Gushchin wrote:
+> > > > On Fri, Feb 28, 2020 at 04:51:31PM -0800, Marco Ballesio wrote:
+> > > > > Hi all,
+> > > > >
+> > > > > did anyone have time to look into my proposal and, in case, are there
+> > > > > any suggestions, ideas or comments about it?
+> > > >
+> > > > Hello, Marco!
+> > > >
+> > > > I'm sorry, somehow I missed the original letter.
+> > > >
+> > > > In general the cgroup v1 interface is considered frozen. Are there any particular
+> > > > reasons why you want to extend the v1 freezer rather than use the v2 version of it?
+> > > >
+> > > > You don't even need to fully convert to cgroup v2 in order to do it, some v1
+> > > > controllers can still be used.
+> > > >
+> > > > Thanks!
+> > > >
+> > > > Roman
+> > >
+> > > Hi Roman,
+> > >
+> > > When compared with backports of v2 features and their dependency chains, this
+> > > patch would be easier to carry in Android common. The potential is to have
+> > > killability for frozen processes on hw currently in use.
+> >
+> 
+> Hi Roman,
+> 
+> > I see...
+> >
+> > The implementation looks good to me, but I really not sure if adding new control files
+> > to cgroup v1 is a good idea at this point. Are there any plans in the Android world
+> > to move forward to cgroup v2? If not, why not?
+> 
+> There are plans to prototype that and gradually move from cgroups v1
+> to v2 at least for some cgroup controllers (the ones that can use
+> unified hierarchy). Creating an additional per-process cgroup v2
+> hierarchy only for freezer would be a high price to pay today. In the
+> future when we migrate some controllers to v2 the price will be
+> amortized and we will probably be able to do that.
 
+I see... Thanks for the explanation, Suren!
 
-Le lun., mars 2, 2020 at 11:06, Rob Herring <robh+dt@kernel.org> a=20
-=E9crit :
-> On Sun, Mar 1, 2020 at 11:47 AM Paul Cercueil <paul@crapouillou.net>=20
-> wrote:
->>=20
->=20
-> Well, this flew into linux-next quickly and breaks 'make
-> dt_binding_check'... Please drop, revert or fix quickly.
+Overall the idea of extending the frozen v1 interface looks dubious to me.
+Especially if it's only required during the transition to v2.
 
-For my defense I said to merge "provided Rob acks it" ;)
+But of course the decision is on maintainers.
 
->>  Convert the ingenic,tcu.txt file to YAML.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>   .../devicetree/bindings/timer/ingenic,tcu.txt | 138 ----------
->>   .../bindings/timer/ingenic,tcu.yaml           | 235=20
->> ++++++++++++++++++
->>   2 files changed, 235 insertions(+), 138 deletions(-)
->>   delete mode 100644=20
->> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>   create mode 100644=20
->> Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
->=20
->=20
->>  diff --git=20
->> a/Documentation/devicetree/bindings/timer/ingenic,tcu.yaml=20
->> b/Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
->>  new file mode 100644
->>  index 000000000000..1ded3b4762bb
->>  --- /dev/null
->>  +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
->>  @@ -0,0 +1,235 @@
->>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>  +%YAML 1.2
->>  +---
->>  +$id: http://devicetree.org/schemas/timer/ingenic,tcu.yaml#
->>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>  +
->>  +title: Ingenic SoCs Timer/Counter Unit (TCU) devicetree bindings
->>  +
->>  +description: |
->>  +  For a description of the TCU hardware and drivers, have a look at
->>  +  Documentation/mips/ingenic-tcu.rst.
->>  +
->>  +maintainers:
->>  +  - Paul Cercueil <paul@crapouillou.net>
->>  +
->>  +properties:
->>  +  $nodename:
->>  +    pattern: "^timer@.*"
->=20
-> '.*' is redundant.
->=20
->>  +
->>  +  "#address-cells":
->>  +    const: 1
->>  +
->>  +  "#size-cells":
->>  +    const: 1
->>  +
->>  +  "#clock-cells":
->>  +    const: 1
->>  +
->>  +  "#interrupt-cells":
->>  +    const: 1
->>  +
->>  +  interrupt-controller: true
->>  +
->>  +  ranges: true
->>  +
->>  +  compatible:
->>  +    items:
->>  +      - enum:
->>  +        - ingenic,jz4740-tcu
->>  +        - ingenic,jz4725b-tcu
->>  +        - ingenic,jz4770-tcu
->>  +        - ingenic,x1000-tcu
->>  +      - const: simple-mfd
->=20
-> This breaks several examples in dt_binding_check because this schema
-> will be applied to every 'simple-mfd' node. You need a custom select
-> entry that excludes 'simple-mfd'. There should be several examples in
-> tree to copy.
-
-Why would it be applied to all 'single-mfd' nodes? Doesn't what I wrote=20
-specify that it needs one of ingenic,*-tcu _and_ simple-mfd?
-
-I'm not sure I understand what you mean.
-
-I did grep for 'single-mfd' in all YAML files in Documentation/ and=20
-nothing really stands out.
-
--Paul
-
->>  +
->>  +  reg:
->>  +    maxItems: 1
->>  +
->>  +  clocks:
->>  +    items:
->>  +      - description: RTC clock
->>  +      - description: EXT clock
->>  +      - description: PCLK clock
->>  +      - description: TCU clock
->>  +    minItems: 3
->>  +
->>  +  clock-names:
->>  +    items:
->>  +      - const: rtc
->>  +      - const: ext
->>  +      - const: pclk
->>  +      - const: tcu
->>  +    minItems: 3
->>  +
->>  +  interrupts:
->>  +    minItems: 1
->>  +    maxItems: 3
->=20
-> You need to define what each one is.
->=20
->>  +
->>  +  ingenic,pwm-channels-mask:
->>  +    description: Bitmask of TCU channels reserved for PWM use.
->>  +    allOf:
->>  +      - $ref: /schemas/types.yaml#/definitions/uint32
->>  +      - minimum: 0x00
->>  +      - maximum: 0xff
->>  +      - default: 0xfc
->>  +
->>  +patternProperties:
->>  +  "^watchdog@[a-f0-9]+$":
->>  +    type: object
->>  +    allOf: [ $ref: ../watchdog/watchdog.yaml# ]
->>  +    properties:
->>  +      compatible:
->>  +        oneOf:
->>  +          - enum:
->>  +            - ingenic,jz4740-watchdog
->>  +            - ingenic,jz4780-watchdog
->>  +          - items:
->>  +            - const: ingenic,jz4770-watchdog
->>  +            - const: ingenic,jz4740-watchdog
->>  +
->>  +      clocks:
->>  +        maxItems: 1
->>  +
->>  +      clock-names:
->>  +        const: wdt
->>  +
->>  +    required:
->>  +      - compatible
->>  +      - clocks
->>  +      - clock-names
->>  +
->>  +  "^pwm@[a-f0-9]+$":
->>  +    type: object
->>  +    allOf: [ $ref: ../pwm/pwm.yaml# ]
->>  +    properties:
->>  +      compatible:
->>  +        oneOf:
->>  +          - enum:
->>  +            - ingenic,jz4740-pwm
->>  +          - items:
->>  +            - enum:
->>  +              - ingenic,jz4770-pwm
->>  +              - ingenic,jz4780-pwm
->>  +            - const: ingenic,jz4740-pwm
->>  +
->>  +      clocks:
->>  +        minItems: 6
->>  +        maxItems: 8
->>  +
->>  +      clock-names:
->>  +        items:
->>  +          - const: timer0
->>  +          - const: timer1
->>  +          - const: timer2
->>  +          - const: timer3
->>  +          - const: timer4
->>  +          - const: timer5
->>  +          - const: timer6
->>  +          - const: timer7
->>  +        minItems: 6
->>  +
->>  +    required:
->>  +      - compatible
->>  +      - clocks
->>  +      - clock-names
->>  +
->>  +  "^timer@[a-f0-9]+":
->>  +    type: object
->>  +    properties:
->>  +      compatible:
->>  +        oneOf:
->>  +          - enum:
->>  +            - ingenic,jz4725b-ost
->>  +            - ingenic,jz4770-ost
->>  +          - items:
->>  +            - const: ingenic,jz4780-ost
->>  +            - const: ingenic,jz4770-ost
->>  +
->>  +
->>  +      clocks:
->>  +        maxItems: 1
->>  +
->>  +      clock-names:
->>  +        const: ost
->>  +
->>  +      interrupts:
->>  +        maxItems: 1
->>  +
->>  +    required:
->>  +      - compatible
->>  +      - clocks
->>  +      - clock-names
->>  +      - interrupts
->>  +
->>  +required:
->>  +  - "#clock-cells"
->>  +  - "#interrupt-cells"
->>  +  - interrupt-controller
->>  +  - compatible
->>  +  - reg
->>  +  - clocks
->>  +  - clock-names
->>  +  - interrupts
->>  +
->>  +additionalProperties: false
->>  +
->>  +examples:
->>  +  - |
->>  +    #include <dt-bindings/clock/jz4770-cgu.h>
->>  +    #include <dt-bindings/clock/ingenic,tcu.h>
->>  +    tcu: timer@10002000 {
->>  +      compatible =3D "ingenic,jz4770-tcu", "simple-mfd";
->>  +      reg =3D <0x10002000 0x1000>;
->>  +      #address-cells =3D <1>;
->>  +      #size-cells =3D <1>;
->>  +      ranges =3D <0x0 0x10002000 0x1000>;
->>  +
->>  +      #clock-cells =3D <1>;
->>  +
->>  +      clocks =3D <&cgu JZ4770_CLK_RTC>,
->>  +               <&cgu JZ4770_CLK_EXT>,
->>  +               <&cgu JZ4770_CLK_PCLK>;
->>  +      clock-names =3D "rtc", "ext", "pclk";
->>  +
->>  +      interrupt-controller;
->>  +      #interrupt-cells =3D <1>;
->>  +
->>  +      interrupt-parent =3D <&intc>;
->>  +      interrupts =3D <27 26 25>;
->>  +
->>  +      watchdog: watchdog@0 {
->>  +        compatible =3D "ingenic,jz4770-watchdog",=20
->> "ingenic,jz4740-watchdog";
->>  +        reg =3D <0x0 0xc>;
->>  +
->>  +        clocks =3D <&tcu TCU_CLK_WDT>;
->>  +        clock-names =3D "wdt";
->>  +      };
->>  +
->>  +      pwm: pwm@40 {
->>  +        compatible =3D "ingenic,jz4770-pwm", "ingenic,jz4740-pwm";
->>  +        reg =3D <0x40 0x80>;
->>  +
->>  +        #pwm-cells =3D <3>;
->>  +
->>  +        clocks =3D <&tcu TCU_CLK_TIMER0>,
->>  +                 <&tcu TCU_CLK_TIMER1>,
->>  +                 <&tcu TCU_CLK_TIMER2>,
->>  +                 <&tcu TCU_CLK_TIMER3>,
->>  +                 <&tcu TCU_CLK_TIMER4>,
->>  +                 <&tcu TCU_CLK_TIMER5>,
->>  +                 <&tcu TCU_CLK_TIMER6>,
->>  +                 <&tcu TCU_CLK_TIMER7>;
->>  +        clock-names =3D "timer0", "timer1", "timer2", "timer3",
->>  +                "timer4", "timer5", "timer6", "timer7";
->>  +      };
->>  +
->>  +      ost: timer@e0 {
->>  +        compatible =3D "ingenic,jz4770-ost";
->>  +        reg =3D <0xe0 0x20>;
->>  +
->>  +        clocks =3D <&tcu TCU_CLK_OST>;
->>  +        clock-names =3D "ost";
->>  +
->>  +        interrupts =3D <15>;
->>  +      };
->>  +    };
->>  --
->>  2.25.1
->>=20
-
-=
-
+Thanks!
