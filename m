@@ -2,71 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22CF91758BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 11:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D4EF1758A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 11:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgCBKzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 05:55:22 -0500
-Received: from sym2.noone.org ([178.63.92.236]:42046 "EHLO sym2.noone.org"
+        id S1727505AbgCBKuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 05:50:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727365AbgCBKzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 05:55:21 -0500
-X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 05:55:21 EST
-Received: by sym2.noone.org (Postfix, from userid 1002)
-        id 48WH370C3GzvjdQ; Mon,  2 Mar 2020 11:49:54 +0100 (CET)
-From:   Tobias Klauser <tklauser@distanz.ch>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] tty: define and set show_fdinfo only if procfs is enabled
-Date:   Mon,  2 Mar 2020 11:49:54 +0100
-Message-Id: <20200302104954.2812-2-tklauser@distanz.ch>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200302104954.2812-1-tklauser@distanz.ch>
-References: <20200302104954.2812-1-tklauser@distanz.ch>
+        id S1726874AbgCBKuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 05:50:18 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C040621D56;
+        Mon,  2 Mar 2020 10:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583146217;
+        bh=QKkxS8WJjpnmKv55PdXHGXEQzRWU0qw/v6LjAUUYwkc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=apw35yfzM2zjjkMW9To2es0BRLYBHJkMuR74KOS1gavu46sF8VomI0v9ERJ1AdxEf
+         z9cq7bbSp3IHagBY9cF40MsPOULuh8Mk25sHzsBUSkltrEu1cL3xhZH8r0au7VoJkD
+         MS0xUlrCLV7UOzug/UkAQCqFyQ7Vqggwt3QOllK0=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j8ieO-009M1L-3I; Mon, 02 Mar 2020 10:50:16 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 02 Mar 2020 10:50:16 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+Subject: Re: [PATCH v2] KVM: arm64: pmu: Don't increment SW_INCR if PMCR.E is
+ unset
+In-Reply-To: <20200302104830.5593-1-eric.auger@redhat.com>
+References: <20200302104830.5593-1-eric.auger@redhat.com>
+Message-ID: <50e04eb9bcd607c6729919d70ae7e82f@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: eric.auger@redhat.com, eric.auger.pro@gmail.com, stable@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow the pattern used with other *_show_fdinfo functions and only
-define and use tty_show_fdinfo if CONFIG_PROC_FS is set.
+On 2020-03-02 10:48, Eric Auger wrote:
+> commit 3837407c1aa1 upstream.
+> 
+> The specification says PMSWINC increments PMEVCNTR<n>_EL1 by 1
+> if PMEVCNTR<n>_EL0 is enabled and configured to count SW_INCR.
+> 
+> For PMEVCNTR<n>_EL0 to be enabled, we need both PMCNTENSET to
+> be set for the corresponding event counter but we also need
+> the PMCR.E bit to be set.
+> 
+> Fixes: 7a0adc7064b8 ("arm64: KVM: Add access handler for PMSWINC 
+> register")
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Cc: <stable@vger.kernel.org> # 4.9 and 4.14 only
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/tty/tty_io.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index a1453fe10862..4a6b6116aa72 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -467,6 +467,7 @@ static int hung_up_tty_fasync(int fd, struct file *file, int on)
- 	return -ENOTTY;
- }
- 
-+#ifdef CONFIG_PROC_FS
- static void tty_show_fdinfo(struct seq_file *m, struct file *file)
- {
- 	struct tty_struct *tty = file_tty(file);
-@@ -474,6 +475,7 @@ static void tty_show_fdinfo(struct seq_file *m, struct file *file)
- 	if (tty && tty->ops && tty->ops->show_fdinfo)
- 		tty->ops->show_fdinfo(tty, m);
- }
-+#endif
- 
- static const struct file_operations tty_fops = {
- 	.llseek		= no_llseek,
-@@ -485,7 +487,9 @@ static const struct file_operations tty_fops = {
- 	.open		= tty_open,
- 	.release	= tty_release,
- 	.fasync		= tty_fasync,
-+#ifdef CONFIG_PROC_FS
- 	.show_fdinfo	= tty_show_fdinfo,
-+#endif
- };
- 
- static const struct file_operations console_fops = {
+> 
+> ---
+> 
+> This is a backport of 3837407c1aa1 ("KVM: arm64: pmu: Don't
+> increment SW_INCR if PMCR.E is unset") which did not apply on
+> 4.9-stable and 4.14-stable trees. Compared to the original patch
+> __vcpu_sys_reg() is replaced by vcpu_sys_reg().
+> 
+> v1 -> v2:
+> - this patch also is candidate for 4.9-stable
+> ---
+>  virt/kvm/arm/pmu.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
+> index 69ccce308458..9a47b0cfb01d 100644
+> --- a/virt/kvm/arm/pmu.c
+> +++ b/virt/kvm/arm/pmu.c
+> @@ -299,6 +299,9 @@ void kvm_pmu_software_increment(struct kvm_vcpu
+> *vcpu, u64 val)
+>  	if (val == 0)
+>  		return;
+> 
+> +	if (!(vcpu_sys_reg(vcpu, PMCR_EL0) & ARMV8_PMU_PMCR_E))
+> +		return;
+> +
+>  	enable = vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
+>  	for (i = 0; i < ARMV8_PMU_CYCLE_IDX; i++) {
+>  		if (!(val & BIT(i)))
+
 -- 
-2.25.0
-
+Jazz is not dead. It just smells funny...
