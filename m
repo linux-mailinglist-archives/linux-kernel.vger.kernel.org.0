@@ -2,88 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3920E175F1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FBC1175F22
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:05:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgCBQFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 11:05:07 -0500
-Received: from foss.arm.com ([217.140.110.172]:34636 "EHLO foss.arm.com"
+        id S1727452AbgCBQFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 11:05:19 -0500
+Received: from foss.arm.com ([217.140.110.172]:34664 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbgCBQFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 11:05:07 -0500
+        id S1727170AbgCBQFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 11:05:18 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 755AC2F;
-        Mon,  2 Mar 2020 08:05:06 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECDFC3F534;
-        Mon,  2 Mar 2020 08:05:05 -0800 (PST)
-Date:   Mon, 02 Mar 2020 16:05:04 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, Linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: anatop: Improve Kconfig dependency" to the regulator tree
-In-Reply-To:  <1583150118-8014-1-git-send-email-Anson.Huang@nxp.com>
-Message-Id:  <applied-1583150118-8014-1-git-send-email-Anson.Huang@nxp.com>
-X-Patchwork-Hint: ignore
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC05FFEC;
+        Mon,  2 Mar 2020 08:05:17 -0800 (PST)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F8D23F534;
+        Mon,  2 Mar 2020 08:05:13 -0800 (PST)
+Subject: Re: provide in-place uncached remapping for dma-direct v2
+To:     Christoph Hellwig <hch@lst.de>, Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        openrisc@lists.librecores.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200224194446.690816-1-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <4fe14c57-78d4-6590-a4c4-14fbe061238e@arm.com>
+Date:   Mon, 2 Mar 2020 16:05:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200224194446.690816-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 24/02/2020 7:44 pm, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series provides support for remapping places uncached in-place in
+> the generic dma-direct code, and moves openrisc over from its own
+> in-place remapping scheme.  The arm64 folks also had interest in such
+> a scheme to avoid problems with speculating into cache aliases.
+> 
+> Also all architectures that always use small page mappings for the
+> kernel and have non-coherent DMA should look into enabling this
+> scheme, as it is much more efficient than the vmap remapping.
+> 
+> Changes since v1:
+>   - share the arch hook for inline remap and uncached segment support
+> 
 
-   regulator: anatop: Improve Kconfig dependency
+For the whole series:
 
-has been applied to the regulator tree at
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I think we might ultimately want to fiddle around a bit more in 
+dma_direct_alloc_pages() to give ARCH_HAS_DMA_SET_UNCACHED clear 
+precedence over DMA_DIRECT_REMAP if they have to coexist, but let's land 
+these patches first as a solid foundation.
 
 Thanks,
-Mark
-
-From 6179b0e90cbc0117cd4ff994bc24f4ea417b11d7 Mon Sep 17 00:00:00 2001
-From: Anson Huang <Anson.Huang@nxp.com>
-Date: Mon, 2 Mar 2020 19:55:18 +0800
-Subject: [PATCH] regulator: anatop: Improve Kconfig dependency
-
-ANATOP regulator should depend on ARCH_MXC or COMPILE_TEST.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Link: https://lore.kernel.org/r/1583150118-8014-1-git-send-email-Anson.Huang@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index b8ae513514a8..64a39f34ef37 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -107,6 +107,7 @@ config REGULATOR_AD5398
- 
- config REGULATOR_ANATOP
- 	tristate "Freescale i.MX on-chip ANATOP LDO regulators"
-+	depends on ARCH_MXC || COMPILE_TEST
- 	depends on MFD_SYSCON
- 	help
- 	  Say y here to support Freescale i.MX on-chip ANATOP LDOs
--- 
-2.20.1
-
+Robin.
