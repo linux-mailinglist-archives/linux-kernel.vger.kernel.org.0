@@ -2,113 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A90175AD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0920B175ADB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbgCBMvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:51:36 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28354 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727267AbgCBMvg (ORCPT
+        id S1727894AbgCBMx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:53:29 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51221 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727848AbgCBMx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:51:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583153494;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6FPcx9mNIhbN5J4WRPrHMT4YXzuuZ33lg/Dd3R/eu0g=;
-        b=Ka1a7c9eyfqqx35lNOXm0BQMSKV5Fsulny2pBmf6V3AL4ZNy6x1D+CDK/1WFCdGRzaGZWQ
-        XpeUclP8yXj5ykGhuywQVtn6dn3mfFvigNUkAFSzixrDdWYV4Wppbd/NoFDww8SPWJ5fGv
-        s1gAbTSEgyLuF89EQgFvZxwBCuz2Fs0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-190-VGenNzM1PRWg1_JG_ugdAw-1; Mon, 02 Mar 2020 07:51:31 -0500
-X-MC-Unique: VGenNzM1PRWg1_JG_ugdAw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 95DE8800D50;
-        Mon,  2 Mar 2020 12:51:29 +0000 (UTC)
-Received: from krava (ovpn-205-46.brq.redhat.com [10.40.205.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D300560C05;
-        Mon,  2 Mar 2020 12:51:26 +0000 (UTC)
-Date:   Mon, 2 Mar 2020 13:51:23 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v5 0/3] perf report: Support annotation of code without
- symbols
-Message-ID: <20200302125123.GA204976@krava>
-References: <20200227043939.4403-1-yao.jin@linux.intel.com>
+        Mon, 2 Mar 2020 07:53:26 -0500
+Received: by mail-pj1-f65.google.com with SMTP id l8so878850pjy.1;
+        Mon, 02 Mar 2020 04:53:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YVlIC+o1X5elmxMJP01HUn8upQiGdfU1sajDVIWbpjM=;
+        b=YWL92tOaLSZeNycLdLFxyiYmZMgQecJvctiYRM5E2vH1K2tV1g9ns3RtWySc7VDcVB
+         lu+I4DHw1AQLcMmiYpGfikkJAvWt1qn7EHh6VfvVcRye9+kWerZ7rtCvpfJYCzxl0ADu
+         NALgrdqJNF6zkOn8LWHmNdZ2ECtjgynPfqOyiIHkWw2bXXhomNFCHlkdovnPNQgSduZJ
+         SODLphzf3FGoIkbY6cygVsPUEHkEsZmf7MQZ5SZqaoxLpeiaS/2jw+KeSAL5PyQgoOe4
+         3SGO2mtSja/mE9lUxr/ltkOlX7xW/tpKp0CD22DG2XK9eAYzZ06UbLs5Jx7imW9YdzK9
+         LIWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YVlIC+o1X5elmxMJP01HUn8upQiGdfU1sajDVIWbpjM=;
+        b=dxkUUJ4NojSRGvhbNd0G/o5ahQf8Ty7yyW293U/zay6pN9VyVAWC2AGVN3hjknuLDa
+         BXAwYYo5ZIY9Q2oaIpHrM6vNJmrR+yy5FsbESllGyIP3e4J3xEJTsw04ccoRRoTEM9F2
+         aq2GNEqZk1V3g3fHK8llyyJ1s6f1/2LaoFEe+VtTh3+ch01YgnHpWp4O1JwzwofgKQEz
+         hdD+vkJDhH+4O57+v9H2epehJC6S+9QlciDx2N1Cmw8nkU/r4irF9Mhqx/nORsmZqlmA
+         MOhkod3cuj9KoirXsvPE63/WjGC1UoPRNoBFdSAGsXLBKAYLMyiye6MjarA4Ogyde8L9
+         TF3Q==
+X-Gm-Message-State: APjAAAXnoy5rHhBHJpk9o8WPBxC8WGa8iD1xxgfCcCN+nPU1bTdrMxUu
+        wNCz7o6m2efglS45XuuIOdY=
+X-Google-Smtp-Source: APXvYqya77N8AIuo7S/nQDOfsridOc39JQclxt2ko2cBQ4x1i6EExyxwGxTkdNnrd8pZDKP8I4C6Hw==
+X-Received: by 2002:a17:90b:f06:: with SMTP id br6mr20963620pjb.125.1583153605167;
+        Mon, 02 Mar 2020 04:53:25 -0800 (PST)
+Received: from localhost.localdomain ([103.51.74.208])
+        by smtp.gmail.com with ESMTPSA id p2sm2138238pfb.41.2020.03.02.04.53.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 04:53:24 -0800 (PST)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCHv2 0/2] Odroid N2 failes to boot using upstream kernel using microSD card
+Date:   Mon,  2 Mar 2020 12:53:07 +0000
+Message-Id: <20200302125310.742-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227043939.4403-1-yao.jin@linux.intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 12:39:36PM +0800, Jin Yao wrote:
-> For perf report on stripped binaries it is currently impossible to do
-> annotation. The annotation state is all tied to symbols, but there are
-> either no symbols, or symbols are not covering all the code.
-> 
-> We should support the annotation functionality even without symbols.
-> 
-> The first patch uses al_addr to print because it's easy to dump
-> the instructions from this address in binary for branch mode.
-> 
-> The second patch supports the annotation on stripped binary.
-> 
-> The third patch supports the hotkey 'a' on address for annotation.
-> 
->  v5:
->  ---
->  Separate the hotkey 'a' implementation to a new patch
->  "perf report: Support hotkey 'a' on address for annotation"
+When we try to boot the device from microSD card, the board will
+stall in between, on suggestion from Martin, Jerome and Neil it was
+narrowed down to clk not getting enable.
 
-Acked-by: Jiri Olsa <jolsa@redhat.com>
+Fix the clk driver help booting of the kernel.
+Any more suggestion or inputs are welcome.
 
-thanks,
-jirka
+Changes since PATCHv1:
+	[1] https://patchwork.kernel.org/cover/11384523/
+            drop the patch as it was not being parsed correctly.
+            https://patchwork.kernel.org/patch/11384533/
+            fixed the subject and message for core patch.
+            https://patchwork.kernel.org/patch/11384537/
+Changes since RFCv1:
+	[0] https://lore.kernel.org/linux-amlogic/20191007131649.1768-1-linux.amoon@gmail.com/
+	 drop some patches and fix the clk driver as suggested by Neil.
 
-> 
->  v4:
->  ---
->  1. Support the hotkey 'a'. When we press 'a' on address,
->     now it supports the annotation.
-> 
->  2. Change the patch title from
->     "Support interactive annotation of code without symbols" to
->     "perf report: Support interactive annotation of code without symbols"
-> 
->  v3:
->  ---
->  Keep just the ANNOTATION_DUMMY_LEN, and remove the
->  opts->annotate_dummy_len since it's the "maybe in future
->  we will provide" feature.
-> 
->  v2:
->  ---
->  Fix a crash issue when annotating an address in "unknown" object.
-> 
-> Jin Yao (3):
->   perf util: Print al_addr when symbol is not found
->   perf report: Support interactive annotation of code without symbols
->   perf report: Support hotkey 'a' on address for annotation
-> 
->  tools/perf/ui/browsers/hists.c | 90 +++++++++++++++++++++++++++-------
->  tools/perf/util/annotate.h     |  1 +
->  tools/perf/util/sort.c         |  6 ++-
->  3 files changed, 78 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+-Anand
+
+Anand Moon (2):
+  arm64: dts: meson: Add missing regulator linked to VDDAO_3V3 regulator
+    to FLASH_VDD
+  clk: meson: g12a: set cpub_clk flags to CLK_IS_CRITICAL
+
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 1 +
+ drivers/clk/meson/g12a.c                             | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
 
