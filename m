@@ -2,70 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08FD4176889
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4643C1768D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 01:00:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgCBX4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:56:19 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37898 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbgCBX4T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:56:19 -0500
-Received: by mail-lf1-f65.google.com with SMTP id x22so40685lff.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KE3WHx+fg3DotOG85JdL9ozA18748xJIC4YzeAbIJCE=;
-        b=JfuSjJofWcwIa3gy4eg5XDjPZImXxKzCuW3Z36skK8iZ3ByCaK/Rkqb/CLN+SB6+OZ
-         GBCnKO4SF8ftXx9Yh8tOvC1BAbrnckq0bmB+oGoD8HoZcTXzYAq8efg2jsXAP4f23gof
-         k6eUePg3oI7+1fh0dcsWlV5iSHUevlfTefIWak4jqqaKO/8k48W9W/m30ilx55A4mZV6
-         H8yE3oeQOMGyWY0ckoK0fyxG0sQIwI/+zKQfs0V3S0m5z4a45VeGsWC7854a6stDlCug
-         GubQKdzBNxq15uScgxx1P+BjkGyfCvJNwoQ049L3xeT282t1UvdIjeRt6L/eMXFSt950
-         ji+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KE3WHx+fg3DotOG85JdL9ozA18748xJIC4YzeAbIJCE=;
-        b=GnwMVBAL6zuZdTtP7HgnVcLTt03ndf3oO1k16yO0/msVPG/t7fdig6ltmpMK370XnP
-         H4iq14bfiuyCoHKbFnWvhYTR/iWzR5WQQpDLs0+wIEbdnUg0akCnvHhrmOSa1a3+AfGG
-         K7VuNoFk0+K1JA7HAdKn5ggV/rbnEZ43S2f8hXFgH0s+LJDCKs3WeWu0w6XMwAKS7jhX
-         j01EG1H9mhqKB7qz/3R8EberB5bQ/bfWRUFZ8rry5uY8W2CgHoIfqV39/gJoKg7QHe3z
-         AMTJ3gYpuAxOZ8k6LoglZt65K1Vl5ZYH0MJojKKV7I50sIg6AHALi/8EvSUVhsT1F+px
-         jzNw==
-X-Gm-Message-State: ANhLgQ0VcYqWrpFHuBrdFo+OnlQPVVklYxUvR+EVKtIQActUS9UGVFJ1
-        cy/46AzMcQpewUFLBtrr/RgJySOaLLfazxiexD1i
-X-Google-Smtp-Source: ADFU+vvnqF2Yda7JBoegXw2cpEPPLY0woMH2CrU0Ncdh86IuoRlyM//C3KedW8E4G6fkGAcSDSlm+OdsPhcY9tTqENo=
-X-Received: by 2002:a19:840d:: with SMTP id g13mr943582lfd.162.1583193376465;
- Mon, 02 Mar 2020 15:56:16 -0800 (PST)
+        id S1727926AbgCCAAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 19:00:18 -0500
+Received: from mga02.intel.com ([134.134.136.20]:25520 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727413AbgCBX51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 18:57:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:57:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
+   d="scan'208";a="243384656"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga006.jf.intel.com with ESMTP; 02 Mar 2020 15:57:21 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH v2 11/66] KVM: x86: Drop the explicit @index from do_cpuid_7_mask()
+Date:   Mon,  2 Mar 2020 15:56:14 -0800
+Message-Id: <20200302235709.27467-12-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200302235709.27467-1-sean.j.christopherson@intel.com>
+References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-References: <CAKT=dDnFpj2hJd5z73pfcrhXXacDpPVyKzC7+K94tsX=+e_BHg@mail.gmail.com>
- <20200302234840.57188-1-zzyiwei@google.com>
-In-Reply-To: <20200302234840.57188-1-zzyiwei@google.com>
-From:   Yiwei Zhang <zzyiwei@google.com>
-Date:   Mon, 2 Mar 2020 15:56:05 -0800
-Message-ID: <CAKT=dDkfG=STMf=htmazUDvsexedF+e-OqVVEgf_xtFj9XDrBQ@mail.gmail.com>
-Subject: Re: [PATCH] [PATCH v4] gpu/trace: add a gpu total memory usage tracepoint
-To:     Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Greg KH <gregkh@linuxfoundation.org>, elder@kernel.org,
-        federico.vaga@cern.ch, tony.luck@intel.com, vilhelm.gray@gmail.com,
-        Linus Walleij <linus.walleij@linaro.org>, tglx@linutronix.de,
-        yamada.masahiro@socionext.com, paul.walmsley@sifive.com,
-        bhelgaas@google.com, darekm@google.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Prahlad Kilambi <prahladk@google.com>,
-        android-kernel <android-kernel@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the noise here, there's a duplicate "[PATCH]" in the subject
-line. Please refer to this one instead:
-https://lkml.org/lkml/2020/3/2/1181
+Drop the index param from do_cpuid_7_mask() and instead switch on the
+entry's index, which is guaranteed to be set by do_host_cpuid().
+
+No functional change intended.
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kvm/cpuid.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index b626893a11d5..fd04f17d1836 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -346,7 +346,7 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_entry2 *entry,
+ 	return 0;
+ }
+ 
+-static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
++static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
+ {
+ 	unsigned f_invpcid = kvm_x86_ops->invpcid_supported() ? F(INVPCID) : 0;
+ 	unsigned f_mpx = kvm_mpx_supported() ? F(MPX) : 0;
+@@ -380,7 +380,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
+ 	const u32 kvm_cpuid_7_1_eax_x86_features =
+ 		F(AVX512_BF16);
+ 
+-	switch (index) {
++	switch (entry->index) {
+ 	case 0:
+ 		entry->eax = min(entry->eax, 1u);
+ 		entry->ebx &= kvm_cpuid_7_0_ebx_x86_features;
+@@ -573,7 +573,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
+ 	case 7: {
+ 		int i;
+ 
+-		do_cpuid_7_mask(entry, 0);
++		do_cpuid_7_mask(entry);
+ 
+ 		for (i = 1; i <= entry->eax; i++) {
+ 			if (*nent >= maxnent)
+@@ -582,7 +582,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
+ 			do_host_cpuid(&entry[i], function, i);
+ 			++*nent;
+ 
+-			do_cpuid_7_mask(&entry[i], i);
++			do_cpuid_7_mask(&entry[i]);
+ 		}
+ 		break;
+ 	}
+-- 
+2.24.1
+
