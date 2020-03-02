@@ -2,173 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB1E175B51
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BF7175B73
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgCBNLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:11:13 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48610 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbgCBNLM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:11:12 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 022DAw2L071227;
-        Mon, 2 Mar 2020 07:10:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583154658;
-        bh=WOSq9y6rCEhZW0FkxG8Whfp5Agrr46Y+r+ygfnL02xw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pNieg9sNQ290W0dYPDFpOF7XgGdxgmgR2vVpUc+sBfUnDB5XNEZd3qy8A4PuIksow
-         8rL1aeWYSS/6x9+ptkPFp+M53stnAM6DhaEAAmFqVs1MWCcjxm+Ww2Iae+abI1/F/W
-         Ew4Lt08ky++b4OzDhnvfniXD82VXugif3ZhPe26s=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 022DAwK9065900
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Mar 2020 07:10:58 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Mar
- 2020 07:10:57 -0600
-Received: from localhost.localdomain (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 2 Mar 2020 07:10:57 -0600
-Received: from [10.24.69.157] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 022DAqtk053018;
-        Mon, 2 Mar 2020 07:10:53 -0600
-Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>
-CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        <lkft-triage@lists.linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        id S1727769AbgCBNV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:21:59 -0500
+Received: from foss.arm.com ([217.140.110.172]:60728 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727334AbgCBNV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 08:21:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDC762F;
+        Mon,  2 Mar 2020 05:21:57 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32FEA3F534;
+        Mon,  2 Mar 2020 05:21:57 -0800 (PST)
+Date:   Mon, 2 Mar 2020 13:21:55 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         John Stultz <john.stultz@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kishon <kishon@ti.com>
-References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
- <CAPDyKFqqhxC-pmV_j8PLY-D=AbqCAbiipAAHXLpJ4N_BiYYOFw@mail.gmail.com>
- <CA+G9fYugQuAERqp3VXUFG-3QxXoF8bz7OSMh6WGSZcrGkbfDSQ@mail.gmail.com>
- <CAPDyKFo-vEO7zN_F+NqcKtnKmAo_deOZx3gYNiks3yTAQAjv-Q@mail.gmail.com>
- <a602a27a-b960-ce56-c541-3b4b95f5dce2@nvidia.com>
- <CAPDyKFrXQgtHa4gLaKUi_F0rs4FMBai3Y_+TcHZR_zpkb0B4QQ@mail.gmail.com>
- <6523119a-50ac-973a-d1cd-ab1569259411@nvidia.com>
- <f960aa98-5508-36fd-166d-7f41c7d85154@nvidia.com>
- <CAPDyKFokE6x0mn+v5B9=so-SyrdTn0JBU8Mrp3Zdu6kSaCie2g@mail.gmail.com>
- <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com>
- <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <34fd84d7-387b-b6f3-7fb3-aa490909e205@ti.com>
-Date:   Mon, 2 Mar 2020 18:42:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Josh Triplett <josh@joshtriplett.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kconfig: make 'imply' obey the direct dependency
+Message-ID: <20200302132155.GF4166@sirena.org.uk>
+References: <20200219074950.23344-1-masahiroy@kernel.org>
+ <CAMuHMdU7=jRNCWvtiFhJwUM6P4xNmqwXdPX14qvE=6by1V7APA@mail.gmail.com>
+ <CAK7LNATKh9Y_QmO19iPw+zXT8RG-HfXBFY5bvpX0YSyOO-=NGA@mail.gmail.com>
+ <CAMuHMdWNhd3kwqQ2OYOscq3VFDjip_FZtt8w6PVCenz095kCZg@mail.gmail.com>
+ <CAK7LNAQNb-5RdivSwMONVT_YCXohR-0NMJW5ceVrJPxWUGF+Lg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQNb-5RdivSwMONVT_YCXohR-0NMJW5ceVrJPxWUGF+Lg@mail.gmail.com>
+X-Cookie: Whistler's mother is off her rocker.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uffe,
 
-On 26/02/20 8:51 pm, Ulf Hansson wrote:
-> + Anders, Kishon
-> 
-> On Tue, 25 Feb 2020 at 17:24, Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->>
->> On 25/02/2020 14:26, Ulf Hansson wrote:
->>
->> ...
->>
->>> However, from the core point of view, the response is still requested,
->>> only that we don't want the driver to wait for the card to stop
->>> signaling busy. Instead we want to deal with that via "polling" from
->>> the core.
->>>
->>> This is a rather worrying behaviour, as it seems like the host driver
->>> doesn't really follow this expectations from the core point of view.
->>> And mmc_flush_cache() is not the only case, as we have erase, bkops,
->>> sanitize, etc. Are all these working or not really well tested?
->>
->> I don't believe that they are well tested. We have a simple test to
->> mount an eMMC partition, create a file, check the contents, remove the
->> file and unmount. The timeouts always occur during unmounting.
->>
->>> Earlier, before my three patches, if the provided timeout_ms parameter
->>> to __mmc_switch() was zero, which was the case for
->>> mmc_mmc_flush_cache() - this lead to that __mmc_switch() simply
->>> ignored validating host->max_busy_timeout, which was wrong. In any
->>> case, this also meant that an R1B response was always used for
->>> mmc_flush_cache(), as you also indicated above. Perhaps this is the
->>> critical part where things can go wrong.
->>>
->>> BTW, have you tried erase commands for sdhci tegra driver? If those
->>> are working fine, do you have any special treatments for these?
->>
->> That I am not sure, but I will check.
-> 
-> Great, thanks. Looking forward to your report.
-> 
-> So, from my side, me and Anders Roxell, have been collaborating on
-> testing the behaviour on a TI Beagleboard x15 (remotely with limited
-> debug options), which is using the sdhci-omap variant. I am trying to
-> get hold of an Nvidia jetson-TX2, but not found one yet. These are the
-> conclusions from the observed behaviour on the Beagleboard for the
-> CMD6 cache flush command.
-> 
-> First, the reported host->max_busy_timeout is 2581 (ms) for the
-> sdhci-omap driver in this configuration.
-> 
-> 1. As we all know by now, the cache flush command (CMD6) fails with
-> -110 currently. This is when MMC_CACHE_FLUSH_TIMEOUT_MS is set to 30 *
-> 1000 (30s), which means __mmc_switch() drops the MMC_RSP_BUSY flag
-> from the command.
-> 
-> 2. Changing the MMC_CACHE_FLUSH_TIMEOUT_MS to 2000 (2s), means that
-> the MMC_RSP_BUSY flag becomes set by __mmc_switch, because of the
-> timeout_ms parameter is less than max_busy_timeout (2000 <  2581).
-> Then everything works fine.
-> 
-> 3. Updating the code to again use 30s as the
-> MMC_CACHE_FLUSH_TIMEOUT_MS, but instead forcing the MMC_RSP_BUSY to be
-> set, even when the timeout_ms becomes greater than max_busy_timeout.
-> This also works fine.
-> 
-> Clearly this indicates a problem that I think needs to be addressed in
-> the sdhci driver. However, of course I can revert the three discussed
-> patches to fix the problem, but that would only hide the issues and I
-> am sure we would then get back to this issue, sooner or later.
-> 
-> To fix the problem in the sdhci driver, I would appreciate if someone
-> from TI and Nvidia can step in to help, as I don't have the HW on my
-> desk.
-> 
-> Comments or other ideas of how to move forward?
-> 
+--rMWmSaSbD7nr+du9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sorry I missed this earlier.
+On Mon, Mar 02, 2020 at 05:21:51PM +0900, Masahiro Yamada wrote:
+> On Wed, Feb 19, 2020 at 6:54 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-I don't have an X15 with me here but I'm trying to set one up in our
-remote farm. In the meantime, I tried to reproduce this issue on two
-platforms (dra72-evm and am57xx-evm) and wasn't able to see the issue
-because those eMMC's don't even have a cache. I will keep you updated
-when I do get a board with a eMMC that has a cache.
+> > I always do, when running make oldconfig ;-)
 
-Is there a way to reproduce this CMD6 issue with another operation?
+> > I only see expected changes from y to m.
+> > I don't see any unexpected changes from m to n.
 
-Thanks,
-Faiz
+> This is because you used oldconfig.
+
+> The 'imply' keyword defines the default
+> of symbols _without_ user-defined values.
+
+This is going to make the behaviour of imply statements a bit
+inconsistent which doesn't seem ideal though it's *probably* fine for
+the SND_SOC_ALL_CODECS case.
+
+--rMWmSaSbD7nr+du9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5dCHIACgkQJNaLcl1U
+h9D7iAf+PCYi3hwZfSI7GUn9mnmz3xVd890KXV1oVj/Ydpqg88/cMNF99lnezlzV
+MF4B10UmHMv02hHHRxFuX4J7sYecAU6E8cNs3fnrraA5ykrW6hXq83DFprv4PqYi
+X0EyO1dj3jEMxRRE7Q2wESspE9QFg/EoHz+fej7B1LU7Os3YVYMfDISUjZkWbl3y
+l566hoDDN2XfcrP/k+tpv/qFQ5xc2kHjBliUH2F8PCETePWYVN0qXBE6UdfIuKar
+Gyj7JIZEXtZzU8BauE1QGQ1SXYFB5C8ezu75MfxX9sXtzvr3UR3eO8A9AtqsCItx
+u6DiWozVeV+kWjI0V7F0EXdCCD6mKw==
+=rptL
+-----END PGP SIGNATURE-----
+
+--rMWmSaSbD7nr+du9--
