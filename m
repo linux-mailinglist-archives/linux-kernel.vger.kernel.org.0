@@ -2,110 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 579671764D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 21:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB2A1764D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 21:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbgCBUVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 15:21:21 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:33303 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbgCBUVV (ORCPT
+        id S1726690AbgCBUXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 15:23:04 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40399 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725781AbgCBUXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 15:21:21 -0500
-Received: by mail-vk1-f195.google.com with SMTP id i78so217847vke.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 12:21:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GrNNnjItPXoUSAp5/6CuW8AHlrS1JSgSwId4oyjSgCk=;
-        b=lV8GXcPAD9YUu7oqVXNTN6JNL/pszISLDCdNOgt79zz4pHerK02MjVMnhAURV3NvCL
-         FVFoNlTCfa2PZhHk3fEYezlSqSKM62JrSPEwYjwOHyRnUFDTozemgg9LyngGdXKjUq7p
-         Wmh18IXVYhHE4ZDnjl8Mf0viqutS8huzuUi4hNPhnMUbUoyCXJGSijzCz8L9JWEW9l2f
-         hukDFobeolOUmuTVrc93oy20GgtW0hHalC9pjb/i9j75FuU7JC1vidgsB6RVK9We/eWP
-         BJdPE9etmq//Wogoiq4/GZCgdD0EPRY7KHiZqjnzThzLdSAHgMQChrrg3U+Va43dmx2h
-         8gpg==
+        Mon, 2 Mar 2020 15:23:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583180583;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1v3eeaBvxWW08CKlRkVMkWVuW1t+GrIzi7YMfXOkG78=;
+        b=i4ipj4G9yYjywHSe6MGTQjmmVXHksaRwEIoMOnTeCqPnglqwke6aOTeLK5WUon7XR5Cfb9
+        U+xM/L1igAMM6cDlfWFVf45AG/kz5rOjvhP8G1//diH08VJAZ1QrHUDbsBzdEwt8TSRtua
+        o98BS5dMY2jU5gqP3+WExA/j2uC/SUA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-133-vcy8G9dTMYqLTHaiFLjM5g-1; Mon, 02 Mar 2020 15:23:01 -0500
+X-MC-Unique: vcy8G9dTMYqLTHaiFLjM5g-1
+Received: by mail-wm1-f71.google.com with SMTP id w12so105248wmc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 12:23:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GrNNnjItPXoUSAp5/6CuW8AHlrS1JSgSwId4oyjSgCk=;
-        b=Xohls7RQJk7g+sZPrbLNDqQcMklD/5MJ4pD5Bw9d3bHJTu2bHBwwpYxQNZw5Hc/oBm
-         yB4Q3TsLphYzQvRRxKsNI3W7qaCMkrESwSa9quffAmCQl2Ow+MeZ/aUMsaFK1UlYoZuQ
-         ccr5f/TkqZge3FKy6KPv1cMaoq9bgUbRAzQvUD+vvqcFVmNMkXiq5MzUyC+Zklh4ihM4
-         MDJy2uYNSx6gkId6viOnkHFVdVsminyDeyOCbb+r+L/sVtYBLP4llrWogC9HvMYapeAY
-         2eCC/Jff4VaotrnFDPQDjYqvR7jmTBh0m3NIUm8Q0uFyi0D6Z/RScKQ75hiBVwnK6sjh
-         LK/A==
-X-Gm-Message-State: ANhLgQ2eXYDWj28r634frYha1CIyKvr6vAmB5HryMYQuJMJpaBrr8T+g
-        UDGaGLhM1/880IqWrdzy4HgwCn70fKROyUcS+nMJWA==
-X-Google-Smtp-Source: ADFU+vuHDDUez4FqqKiHhS43fjWXjrsrzfWXTcjtessfBqf9EPjwVXyf1gR166Ynvh9kTlFxmW/y8N+oPw7+f3OE5cI=
-X-Received: by 2002:a1f:a9d0:: with SMTP id s199mr926630vke.40.1583180480007;
- Mon, 02 Mar 2020 12:21:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com> <20200302101332.GS18400@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200302101332.GS18400@hirez.programming.kicks-ass.net>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Mon, 2 Mar 2020 12:21:09 -0800
-Message-ID: <CABPqkBSzwpR6p7UZs7g1vWGCJRLsh565mRMGc6m0Enn1SnkC4w@mail.gmail.com>
-Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard information
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        yao.jin@linux.intel.com, Robert Richter <robert.richter@amd.com>,
-        "Phillips, Kim" <kim.phillips@amd.com>, maddy@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=1v3eeaBvxWW08CKlRkVMkWVuW1t+GrIzi7YMfXOkG78=;
+        b=ozinrrFoTy41rRcxxZmBb4O1EIgycWzQT6rRIeGIuaNjyT9YSQTNhKGXc3mp+/mn0j
+         UICwoFqA3HHZ38vvlHSe/HpOOhGEOybEzk4gYptdqQRKbUcz++h5u9pKLyGxQUr6CqK9
+         l+S1cpgFCdgv4OeycazqL+hTW95awIEgwhhif9X56GRZbrCjfOWc+SL+H01rW5Ieku0Q
+         nYI6sd/uHlT37z93KSgcFY/FJm9y/wcZWwBNNUylROuCQ1UuPgRAKQCWd/4xKlmWGmwW
+         8rOSdWzz6Bq+1DA5UYetC4YXMdC9UzEd8n3EBp0J5RHtVqVN0ua/Kuhouwl9Uo4b3thO
+         mbjw==
+X-Gm-Message-State: ANhLgQ1AeRAlLg6qeLFCKkJlbha062cssisM+cMBzVjJ9nEXlJleNora
+        HtzuQEguYoH0jkMvJHN5zqnQZCZctL1t0kDrb57b8Bwte+QDYlepXKB4ikbiqYRpuFZ7zFl2l84
+        qKhGnEFmkS2LgI7LqW5V3aSVm
+X-Received: by 2002:a5d:4b09:: with SMTP id v9mr1170171wrq.85.1583180579492;
+        Mon, 02 Mar 2020 12:22:59 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vuk1tLHYCQN5PVOToQUfe18XsP5CatCYQfDDsLOb5ElxjkF0oSmYiEAR1227TUWRygo8Q0VWQ==
+X-Received: by 2002:a5d:4b09:: with SMTP id v9mr1170154wrq.85.1583180579234;
+        Mon, 02 Mar 2020 12:22:59 -0800 (PST)
+Received: from [192.168.3.122] (p5B0C64B4.dip0.t-ipconnect.de. [91.12.100.180])
+        by smtp.gmail.com with ESMTPSA id j205sm204790wma.42.2020.03.02.12.22.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 12:22:58 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   David Hildenbrand <david@redhat.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH RESEND v6 02/16] mm/gup: Fix __get_user_pages() on fault retry of hugetlb
+Date:   Mon, 2 Mar 2020 21:22:57 +0100
+Message-Id: <671E8651-F7BB-48AF-AFA8-AB38C7AE7BFE@redhat.com>
+References: <20200302200731.GA464129@xz-x1>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Martin Cracauer <cracauer@cons.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mel Gorman <mgorman@suse.de>, Hugh Dickins <hughd@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
+In-Reply-To: <20200302200731.GA464129@xz-x1>
+To:     Peter Xu <peterx@redhat.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 2:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Mar 02, 2020 at 10:53:44AM +0530, Ravi Bangoria wrote:
-> > Modern processors export such hazard data in Performance
-> > Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
-> > Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
-> > AMD[3] provides similar information.
-> >
-> > Implementation detail:
-> >
-> > A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
-> > If it's set, kernel converts arch specific hazard information
-> > into generic format:
-> >
-> >   struct perf_pipeline_haz_data {
-> >          /* Instruction/Opcode type: Load, Store, Branch .... */
-> >          __u8    itype;
-> >          /* Instruction Cache source */
-> >          __u8    icache;
-> >          /* Instruction suffered hazard in pipeline stage */
-> >          __u8    hazard_stage;
-> >          /* Hazard reason */
-> >          __u8    hazard_reason;
-> >          /* Instruction suffered stall in pipeline stage */
-> >          __u8    stall_stage;
-> >          /* Stall reason */
-> >          __u8    stall_reason;
-> >          __u16   pad;
-> >   };
->
-> Kim, does this format indeed work for AMD IBS?
 
 
-Personally, I don't like the term hazard. This is too IBM Power
-specific. We need to find a better term, maybe stall or penalty.
-Also worth considering is the support of ARM SPE (Statistical
-Profiling Extension) which is their version of IBS.
-Whatever gets added need to cover all three with no limitations.
+> Am 02.03.2020 um 21:07 schrieb Peter Xu <peterx@redhat.com>:
+>=20
+> =EF=BB=BFOn Mon, Mar 02, 2020 at 08:02:34PM +0100, David Hildenbrand wrote=
+:
+>>> On 20.02.20 16:53, Peter Xu wrote:
+>>> When follow_hugetlb_page() returns with *locked=3D=3D0, it means we've g=
+ot
+>>> a VM_FAULT_RETRY within the fauling process and we've released the
+>>> mmap_sem.  When that happens, we should stop and bail out.
+>>>=20
+>>> Signed-off-by: Peter Xu <peterx@redhat.com>
+>>> ---
+>>> mm/gup.c | 10 ++++++++++
+>>> 1 file changed, 10 insertions(+)
+>>>=20
+>>> diff --git a/mm/gup.c b/mm/gup.c
+>>> index 1b4411bd0042..76cb420c0fb7 100644
+>>> --- a/mm/gup.c
+>>> +++ b/mm/gup.c
+>>> @@ -849,6 +849,16 @@ static long __get_user_pages(struct task_struct *ts=
+k, struct mm_struct *mm,
+>>>                i =3D follow_hugetlb_page(mm, vma, pages, vmas,
+>>>                        &start, &nr_pages, i,
+>>>                        gup_flags, locked);
+>>> +                if (locked && *locked =3D=3D 0) {
+>>> +                    /*
+>>> +                     * We've got a VM_FAULT_RETRY
+>>> +                     * and we've lost mmap_sem.
+>>> +                     * We must stop here.
+>>> +                     */
+>>> +                    BUG_ON(gup_flags & FOLL_NOWAIT);
+>>> +                    BUG_ON(ret !=3D 0);
+>>=20
+>> Can we be sure ret is really set to !=3D 0 at this point? At least,
+>> reading the code this is not clear to me.
+>=20
+> Here I wanted to make sure ret is zero (it's BUG_ON, not assert).
+
+Sorry, I completely misread that BUG_ON for whatever reason, maybe I was sta=
+ring for too long into my computer screen :)
+
+>=20
+> "ret" is the fallback return value only if error happens when i=3D=3D0.
+> Here we want to make sure even if no page is pinned we'll return zero
+> gracefully when VM_FAULT_RETRY happened when following the hugetlb
+> pages.
+
+Makes sense!
+
+>=20
+>>=20
+>> Shouldn't we set "ret =3D i" and assert that i is an error (e.g., EBUSY?)=
+.
+>> Or set -EBUSY explicitly?
+>=20
+> No.  Here "i" could only be either positive (when we've got some pages
+> pinned no matter where), or zero (when follow_hugetlb_page released
+> the mmap_sem on the first page that it wants to pin).  So imo "i"
+> should never be negative instead.
+
+I briefly scanned the function and spotted some errors being returned, that=E2=
+=80=98s why I was wondering.
+
+Thanks!
+
