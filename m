@@ -2,88 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63DE2176371
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D38D7176379
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbgCBTIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:08:07 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:32893 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgCBTIH (ORCPT
+        id S1727593AbgCBTJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:09:16 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:41114 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbgCBTJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:08:07 -0500
-Received: by mail-pj1-f66.google.com with SMTP id m7so215937pjs.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 11:08:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XbS5Oui71TzDSP82zad1HNkPWeQrHZfwLOAk3ttkqPM=;
-        b=jGUWW+rrTuCc++AiLH0Jj9vkPATEZ//4C63+YRSjlqzn0c9jqq4hDPQi9tXbitIv1u
-         VqLGvPBomCXeewRdCAdzEyMMfvVOASIDci+cn6Mwmiy7QcN2kn9HshsT7n6CqANjidbX
-         SjMtuzQjlBNN7ykH6uerE16g6C1o2QAx56ymw=
+        Mon, 2 Mar 2020 14:09:16 -0500
+Received: by mail-io1-f72.google.com with SMTP id n15so444358iog.8
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 11:09:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XbS5Oui71TzDSP82zad1HNkPWeQrHZfwLOAk3ttkqPM=;
-        b=sJt2DcJHMk2WSLpUd0Hfo4Ooi9Cj+WKbqCeLCQ1/ndNMSeh+1RGoJpP7UMHmphizdd
-         9EFSJ8gRlBpUDAE6eFCveNMd4tbSR/A8U8A8cVEblleIi19GK3/zGQ5WseQBe4PJXlUr
-         muBCj/cVRG1vb6jcAA4vlPKv2vd/uYXy8Ayv6Bar5O7G198dMBt3Ndhp6IWifdq4Mv1B
-         ZEUdFhJsy8a2LkZ1Ge6ozvGQ8vhRKOVtcHa3YCZ/9WPp9JYuZ8kNJ+NqLl1lAjUwdfNz
-         O9inm+iFWV7s31bU9kYVhhIIOrTcy7Iko+qVK9rI0YoXMKU9U2GBokT7yDVOCzKaePIu
-         T0hQ==
-X-Gm-Message-State: ANhLgQ3jZQAVPF0+oxV+GVp1ELxkYtT+/YY++OG49ta4ZYyrHTVcwa9k
-        js/nnhRDgeEKl1fEzZI0db5HrQ==
-X-Google-Smtp-Source: ADFU+vs45YCE/A4RV+RfdPn7aH+3QF9x3z2I7E6FgPpDlVlxqDee5DDZoCBVOcK9O/y13IEDwk7Adg==
-X-Received: by 2002:a17:902:b7c2:: with SMTP id v2mr572385plz.54.1583176084467;
-        Mon, 02 Mar 2020 11:08:04 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r3sm14623739pfq.126.2020.03.02.11.08.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 11:08:03 -0800 (PST)
-Date:   Mon, 2 Mar 2020 11:08:02 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Kristen Carlson Accardi <kristen@linux.intel.com>
-Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [RFC PATCH 09/11] kallsyms: hide layout and expose seed
-Message-ID: <202003021107.38017F90@keescook>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
- <20200205223950.1212394-10-kristen@linux.intel.com>
- <202002060428.08B14F1@keescook>
- <a915e1eb131551aa766fde4c14de5a3e825af667.camel@linux.intel.com>
- <CAG48ez2SucOZORUhHNxt-9juzqcWjTZRD9E_PhP51LpH1UqeLg@mail.gmail.com>
- <41d7049cb704007b3cd30a3f48198eebb8a31783.camel@linux.intel.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=7npg9knZWi2ugFm6fusxk5+E+5/cR+9pt+PLR8BrWY8=;
+        b=dqgGxk2nx1AasHl0BPmPWT/7IGdjZ3Y7dBJzVi3VW19eAQDJtuiMJ4UQDdtT5q8Cf3
+         VRkZn7H+pBR3++kauaH7zPs4dCiKiBh4zVps7jFkID6xm4MF29B/WqFsZhy3zSHRg1ff
+         62+lMXXz/ak4LNfgo5n4bDf0hdgph4FLe9kyEYM6pQ+3vtF4YC33Ny35wbUxfuLesMfz
+         N53LUxHSymiqreDR5o37GhRSdW227wuqHn8Ff9ZLInVeAOszqQIpcN/B5CFUyYdYSeGq
+         WcZUqYF1c15KDibNP63VJIkkI/PuUOpezSNwCGNT8PE7imc48gWUWPNffqefwmjVxO8R
+         PEWg==
+X-Gm-Message-State: ANhLgQ32N1rxF3QkU6BfNszTZsY9ZcZvqJIoKfFLl5e7mlc5b22i5GRB
+        q/p1K4R8SMtF25pZB9SgW/rIoaIt/BZODZUZF2dHG6u98Rd+
+X-Google-Smtp-Source: ADFU+vtqfJorUl9RSyFXcBA9L34wwi7PU6/k7E3cw5PwiysS/ospyxs+EuwJrBrwvF+B5jkzYEtYcQfYUfBKFdm1aijSRvyk8w5D
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41d7049cb704007b3cd30a3f48198eebb8a31783.camel@linux.intel.com>
+X-Received: by 2002:a05:6602:2cce:: with SMTP id j14mr843248iow.23.1583176155259;
+ Mon, 02 Mar 2020 11:09:15 -0800 (PST)
+Date:   Mon, 02 Mar 2020 11:09:15 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000059e701059fe3ec2f@google.com>
+Subject: INFO: task hung in rdma_destroy_id
+From:   syzbot <syzbot+0abbad99bee187cf63d4@syzkaller.appspotmail.com>
+To:     chuck.lever@oracle.com, dledford@redhat.com, jgg@ziepe.ca,
+        leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, parav@mellanox.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 11:01:56AM -0800, Kristen Carlson Accardi wrote:
-> On Thu, 2020-02-06 at 20:27 +0100, Jann Horn wrote:
-> > https://codesearch.debian.net/search?q=%2Fproc%2Fkallsyms&literal=1
-> 
-> I looked through some of these packages as Jann suggested, and it seems
-> like there are several that are using /proc/kallsyms to look for
-> specific symbol names to determine whether some feature has been
-> compiled into the kernel. This practice seems dubious to me, knowing
-> that many kernel symbol names can be changed at any time, but
-> regardless seems to be fairly common.
+Hello,
 
-Cool, so a sorted censored list is fine for non-root. Would root users
-break on a symbol-name-sorted view? (i.e. are two lists needed or can we
-stick to one?)
+syzbot found the following crash on:
 
--- 
-Kees Cook
+HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160452c3e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
+dashboard link: https://syzkaller.appspot.com/bug?extid=0abbad99bee187cf63d4
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0abbad99bee187cf63d4@syzkaller.appspotmail.com
+
+INFO: task syz-executor.5:27890 blocked for more than 143 seconds.
+      Not tainted 5.6.0-rc3-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor.5  D28072 27890  11077 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:3380 [inline]
+ __schedule+0x934/0x1f90 kernel/sched/core.c:4080
+ schedule+0xdc/0x2b0 kernel/sched/core.c:4154
+ schedule_timeout+0x717/0xc50 kernel/time/timer.c:1871
+ do_wait_for_common kernel/sched/completion.c:83 [inline]
+ __wait_for_common kernel/sched/completion.c:104 [inline]
+ wait_for_common kernel/sched/completion.c:115 [inline]
+ wait_for_completion+0x29c/0x440 kernel/sched/completion.c:136
+ rdma_destroy_id+0x680/0xdd0 drivers/infiniband/core/cma.c:1850
+ ucma_close+0x115/0x310 drivers/infiniband/core/ucma.c:1762
+ __fput+0x2ff/0x890 fs/file_table.c:280
+ ____fput+0x16/0x20 fs/file_table.c:313
+ task_work_run+0x145/0x1c0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
+ prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+ do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x416011
+Code: 49 89 fc 48 83 e7 0f 48 81 cf f0 00 00 00 49 8d 43 04 4c 39 d0 0f 83 ec 00 00 00 41 88 38 90 49 c1 ec 04 48 39 d6 74 5d 49 83 <f9> 08 73 48 0f b6 02 48 89 cf 4c 89 c9 48 d3 e0 49 09 c4 90 48 8d
+RSP: 002b:00007ffe941054c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000416011
+RDX: 0000001b2fe20000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000001 R08: 00000000b9fbf2f5 R09: 00000000b9fbf2f9
+R10: 00007ffe941055a0 R11: 0000000000000293 R12: 000000000076c920
+R13: 000000000076c920 R14: 0000000000264fc6 R15: 000000000076bfcc
+
+Showing all locks held in the system:
+2 locks held by kworker/u4:2/99:
+ #0: ffff8880ae937558 (&rq->lock){-.-.}, at: newidle_balance+0xa28/0xe80 kernel/sched/fair.c:10219
+ #1: ffffc90001217dc0 ((work_completion)(&(&bat_priv->nc.work)->work)){+.+.}, at: process_one_work+0x917/0x17a0 kernel/workqueue.c:2239
+1 lock held by khungtaskd/1135:
+ #0: ffffffff89bac340 (rcu_read_lock){....}, at: debug_show_all_locks+0x5f/0x279 kernel/locking/lockdep.c:5333
+2 locks held by rsyslogd/10884:
+ #0: ffff88809b6e6ba0 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110 fs/file.c:821
+ #1: ffffffff89ba13f8 (logbuf_lock){-.-.}, at: is_bpf_image_address+0x0/0x290 kernel/bpf/trampoline.c:86
+2 locks held by getty/11006:
+ #0: ffff888094516090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc9000184b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+2 locks held by getty/11007:
+ #0: ffff888094714090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc9000185b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+2 locks held by getty/11008:
+ #0: ffff8880906b4090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc9000186b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+2 locks held by getty/11009:
+ #0: ffff888092b2c090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc9000187b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+2 locks held by getty/11010:
+ #0: ffff88807bf93090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc900017e72e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+2 locks held by getty/11011:
+ #0: ffff88808599f090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc9000188b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+2 locks held by getty/11012:
+ #0: ffff8880a2abd090 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+ #1: ffffc900017db2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 1135 Comm: khungtaskd Not tainted 5.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
+ arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+ watchdog+0xb11/0x10c0 kernel/hung_task.c:289
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 99 Comm: kworker/u4:2 Not tainted 5.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: bat_events batadv_nc_worker
+RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
+RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:27 [inline]
+RIP: 0010:rcu_dynticks_curr_cpu_in_eqs+0x7a/0xb0 kernel/rcu/tree.c:301
+Code: ec e8 51 00 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 0f b6 14 02 4c 89 e0 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 17 <8b> 83 d8 00 00 00 48 83 c4 08 5b 41 5c 5d d1 e8 83 f0 01 83 e0 01
+RSP: 0018:ffffc90001217c98 EFLAGS: 00000246
+RAX: 0000000000000003 RBX: ffff8880ae938300 RCX: ffffffff816226d4
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880ae9383d8
+RBP: ffffc90001217cb0 R08: 1ffff11015d2707b R09: ffffed1015d2707c
+R10: ffffed1015d2707b R11: ffff8880ae9383db R12: ffff8880ae9383d8
+R13: 0000000000000363 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 000000009b725000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ rcu_is_watching+0x10/0x30 kernel/rcu/tree.c:919
+ rcu_read_unlock include/linux/rcupdate.h:651 [inline]
+ batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:411 [inline]
+ batadv_nc_worker+0x480/0x760 net/batman-adv/network-coding.c:718
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
