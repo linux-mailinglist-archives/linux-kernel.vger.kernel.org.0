@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7C6175589
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CF3175551
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:16:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbgCBIR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:17:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
+        id S1727434AbgCBIQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:16:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727336AbgCBIQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:24 -0500
+        id S1727367AbgCBIQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:25 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B57A1246FC;
+        by mail.kernel.org (Postfix) with ESMTPSA id F2052222C4;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583136979;
-        bh=TedJRCCkSL0w21M1N2Y8vbZhKIe2wnJsDAcEp4djbEw=;
+        s=default; t=1583136980;
+        bh=AITD7simnYvG/55RG6ql5zrQiA32yGAnHizU+xiGK6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YhOovMWcOI8RcurY0dZyqY8dPSA7Of74Tt2SkKN9Q826an4TSJB8OAGKd6hiaey+i
-         ENjSsf/UWEE7vrC/9an17e5EmsMs9R0HiiRcp9PXwpslOsu3DQR1VAxOFas0Sl3sjH
-         VtopjO/61/xngAsVEWZ9vCvsefoH5/35liQ0ntV4=
+        b=D8NY649zEqE6VcLkhcp9pvJn1T1N1bUmAZq6L9TF3l6sDi86OtaQj0I9PiqC7dO7Q
+         8gXQ19WtjUnmwJwi4OlXsXMN7BAd35a0z8BOKRJj2vPamQ3Zw6D3ulWH2zCf8CAoiu
+         H1iwNc68ayXReq2CLZ5SGu+mFFRnIVkeCWS9fRUc=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003zK-Tg; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003zP-Uj; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 34/42] docs: scsi: convert sd-parameters.txt to ReST
-Date:   Mon,  2 Mar 2020 09:16:07 +0100
-Message-Id: <8d0b75b0faf13a2e81373570d6ce601b629fb22a.1583136624.git.mchehab+huawei@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
+Subject: [PATCH 35/42] docs: scsi: convert smartpqi.txt to ReST
+Date:   Mon,  2 Mar 2020 09:16:08 +0100
+Message-Id: <00b398efb7cfc667b046fbef92a84f1d3c33eb64.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -46,64 +50,151 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
  Documentation/scsi/index.rst                  |  1 +
- .../{sd-parameters.txt => sd-parameters.rst}  | 21 ++++++++++++-------
- 2 files changed, 14 insertions(+), 8 deletions(-)
- rename Documentation/scsi/{sd-parameters.txt => sd-parameters.rst} (37%)
+ .../scsi/{smartpqi.txt => smartpqi.rst}       | 52 +++++++++----------
+ MAINTAINERS                                   |  2 +-
+ drivers/scsi/smartpqi/Kconfig                 |  2 +-
+ 4 files changed, 28 insertions(+), 29 deletions(-)
+ rename Documentation/scsi/{smartpqi.txt => smartpqi.rst} (67%)
 
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 97276e425f25..6805e157b6e8 100644
+index 6805e157b6e8..ff98919faed7 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -38,5 +38,6 @@ Linux SCSI Subsystem
-    scsi_mid_low_api
+@@ -39,5 +39,6 @@ Linux SCSI Subsystem
     scsi-parameters
     scsi
-+   sd-parameters
+    sd-parameters
++   smartpqi
  
     scsi_transport_srp/figures
-diff --git a/Documentation/scsi/sd-parameters.txt b/Documentation/scsi/sd-parameters.rst
-similarity index 37%
-rename from Documentation/scsi/sd-parameters.txt
-rename to Documentation/scsi/sd-parameters.rst
-index 8e5af00d88e7..87d554008bfb 100644
---- a/Documentation/scsi/sd-parameters.txt
-+++ b/Documentation/scsi/sd-parameters.rst
-@@ -1,3 +1,6 @@
+diff --git a/Documentation/scsi/smartpqi.txt b/Documentation/scsi/smartpqi.rst
+similarity index 67%
+rename from Documentation/scsi/smartpqi.txt
+rename to Documentation/scsi/smartpqi.rst
+index df129f55ace5..a7de27352c6f 100644
+--- a/Documentation/scsi/smartpqi.txt
++++ b/Documentation/scsi/smartpqi.rst
+@@ -1,6 +1,8 @@
 +.. SPDX-License-Identifier: GPL-2.0
+ 
++=====================================
+ SMARTPQI - Microsemi Smart PQI Driver
+------------------------------------------
++=====================================
+ 
+ This file describes the smartpqi SCSI driver for Microsemi
+ (http://www.microsemi.com) PQI controllers. The smartpqi driver
+@@ -16,20 +18,21 @@ For Microsemi smartpqi controller support, enable the smartpqi driver
+ when configuring the kernel.
+ 
+ For more information on the PQI Queuing Interface, please see:
+-http://www.t10.org/drafts.htm
+-http://www.t10.org/members/w_pqi2.htm
+ 
+-Supported devices:
+-------------------
++- http://www.t10.org/drafts.htm
++- http://www.t10.org/members/w_pqi2.htm
 +
-+======================================
- Linux SCSI Disk Driver (sd) Parameters
- ======================================
++Supported devices
++=================
+ <Controller names to be added as they become publicly available.>
  
-@@ -5,18 +8,20 @@ cache_type (RW)
- ---------------
- Enable/disable drive write & read cache.
+ smartpqi specific entries in /sys
+------------------------------
++=================================
  
-- cache_type string          | WCE RCD | Write cache | Read cache
------------------------------+---------+-------------+------------
-- write through              | 0   0   | off         | on
-- none                       | 0   1   | off         | off
-- write back                 | 1   0   | on          | on
-- write back, no read (daft) | 1   1   | on          | off
-+===========================   === ===   ===========   ==========
-+ cache_type string            WCE RCD   Write cache   Read cache
-+===========================   === ===   ===========   ==========
-+ write through                0   0     off           on
-+ none                         0   1     off           off
-+ write back                   1   0     on            on
-+ write back, no read (daft)   1   1     on            off
-+===========================   === ===   ===========   ==========
+-  smartpqi host attributes:
+-  -------------------------
+-  /sys/class/scsi_host/host*/rescan
+-  /sys/class/scsi_host/host*/driver_version
++smartpqi host attributes
++------------------------
++  - /sys/class/scsi_host/host*/rescan
++  - /sys/class/scsi_host/host*/driver_version
  
--To set cache type to "write back" and save this setting to the drive:
-+To set cache type to "write back" and save this setting to the drive::
+   The host rescan attribute is a write only attribute. Writing to this
+   attribute will trigger the driver to scan for new, changed, or removed
+@@ -37,12 +40,13 @@ smartpqi specific entries in /sys
  
-   # echo "write back" > cache_type
+   The version attribute is read-only and will return the driver version
+   and the controller firmware version.
+-  For example:
++  For example::
++
+               driver: 0.9.13-370
+               firmware: 0.01-522
  
- To modify the caching mode without making the change persistent, prepend
--"temporary " to the cache type string. E.g.:
-+"temporary " to the cache type string. E.g.::
+-  smartpqi sas device attributes
+-  ------------------------------
++smartpqi sas device attributes
++------------------------------
+   HBA devices are added to the SAS transport layer. These attributes are
+   automatically added by the SAS transport layer.
  
-   # echo "temporary write back" > cache_type
+@@ -50,31 +54,25 @@ smartpqi specific entries in /sys
+   /sys/class/sas_device/end_device-X:X/enclosure_identifier
+   /sys/class/sas_device/end_device-X:X/scsi_target_id
+ 
+-smartpqi specific ioctls:
+--------------------------
++smartpqi specific ioctls
++========================
+ 
+   For compatibility with applications written for the cciss protocol.
+ 
+-  CCISS_DEREGDISK
+-  CCISS_REGNEWDISK
+-  CCISS_REGNEWD
+-
+-  The above three ioctls all do exactly the same thing, which is to cause the driver
+-  to rescan for new devices.  This does exactly the same thing as writing to the
+-  smartpqi specific host "rescan" attribute.
++  CCISS_DEREGDISK, CCISS_REGNEWDISK, CCISS_REGNEWD
++	The above three ioctls all do exactly the same thing, which is to cause the driver
++	to rescan for new devices.  This does exactly the same thing as writing to the
++	smartpqi specific host "rescan" attribute.
+ 
+   CCISS_GETPCIINFO
+-
+ 	Returns PCI domain, bus, device and function and "board ID" (PCI subsystem ID).
+ 
+   CCISS_GETDRIVVER
++	Returns driver version in three bytes encoded as::
+ 
+-	Returns driver version in three bytes encoded as:
+-	(DRIVER_MAJOR << 28) | (DRIVER_MINOR << 24) | (DRIVER_RELEASE << 16) | DRIVER_REVISION;
++	  (DRIVER_MAJOR << 28) | (DRIVER_MINOR << 24) | (DRIVER_RELEASE << 16) | DRIVER_REVISION;
+ 
+   CCISS_PASSTHRU
+-
+ 	Allows "BMIC" and "CISS" commands to be passed through to the Smart Storage Array.
+ 	These are used extensively by the SSA Array Configuration Utility, SNMP storage
+ 	agents, etc.
+-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 776de9c5b404..f27c24d82c0f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11153,7 +11153,7 @@ F:	drivers/scsi/smartpqi/Kconfig
+ F:	drivers/scsi/smartpqi/Makefile
+ F:	include/linux/cciss*.h
+ F:	include/uapi/linux/cciss*.h
+-F:	Documentation/scsi/smartpqi.txt
++F:	Documentation/scsi/smartpqi.rst
+ 
+ MICROSEMI ETHERNET SWITCH DRIVER
+ M:	Alexandre Belloni <alexandre.belloni@bootlin.com>
+diff --git a/drivers/scsi/smartpqi/Kconfig b/drivers/scsi/smartpqi/Kconfig
+index bc6506884e3b..d3311c014863 100644
+--- a/drivers/scsi/smartpqi/Kconfig
++++ b/drivers/scsi/smartpqi/Kconfig
+@@ -53,4 +53,4 @@ config SCSI_SMARTPQI
+         Note: the aacraid driver will not manage a smartpqi
+               controller. You need to enable smartpqi for smartpqi
+               controllers. For more information, please see
+-              Documentation/scsi/smartpqi.txt
++              Documentation/scsi/smartpqi.rst
 -- 
 2.21.1
 
