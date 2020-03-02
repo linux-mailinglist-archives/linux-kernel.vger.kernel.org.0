@@ -2,113 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D1151759C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 12:52:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D891759CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 12:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgCBLwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 06:52:45 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54827 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbgCBLwo (ORCPT
+        id S1727813AbgCBLyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 06:54:04 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49236 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbgCBLyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 06:52:44 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8jcm-0001Gr-Fk; Mon, 02 Mar 2020 11:52:40 +0000
-Date:   Mon, 2 Mar 2020 12:52:39 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
-Message-ID: <20200302115239.pcxvej3szmricxzu@wittgenstein>
-References: <96563.1582901612@warthog.procyon.org.uk>
- <20200228152427.rv3crd7akwdhta2r@wittgenstein>
- <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+        Mon, 2 Mar 2020 06:54:04 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 022BrpRx069790;
+        Mon, 2 Mar 2020 05:53:51 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583150031;
+        bh=r1oFGQAljQ37WL7mkb3z3+k9czKzVZLG9ut5lfbWRS0=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=ZyDJyjbFdtj+c7m1/sKMjH6zESrVG3Jrexn1gXjkpBtce83pmyl2gfvaXV/YwZfLH
+         inh6NIM0A0p1DMJU61NPYukioclBBCbqpdbfVJhg+iwktZo4EQuvhqqYA9+TUB/XiJ
+         VFiZNPGcBDKwugudEEuzzaA0hWdX7L3lUaFL6sfU=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 022Brpmn110675
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Mar 2020 05:53:51 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Mar
+ 2020 05:53:51 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 2 Mar 2020 05:53:51 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 022Brn1F101010;
+        Mon, 2 Mar 2020 05:53:50 -0600
+Subject: Re: [PATCH v4 1/2] dmaengine: Add basic debugfs support
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <geert@linux-m68k.org>
+References: <20200228130747.22905-1-peter.ujfalusi@ti.com>
+ <20200228130747.22905-2-peter.ujfalusi@ti.com>
+ <20200302071146.GE4148@vkoul-mobl>
+ <7b4f244d-0855-f979-414d-e2d3cb0f0c2f@ti.com>
+Message-ID: <be7d4df5-121b-0eec-b68c-fa3b5cffc8c9@ti.com>
+Date:   Mon, 2 Mar 2020 13:53:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <7b4f244d-0855-f979-414d-e2d3cb0f0c2f@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 12:30:47PM +0100, Florian Weimer wrote:
-> * Christian Brauner:
-> 
-> > [Cc Florian since that ends up on libc's table sooner or later...]
-> 
-> I'm not sure what you are after here …
 
-Exactly what you've commented below. Input on whether any of these
-changes would be either problematic if you e.g. were to implement
-openat() on top of openat2() in the future or if it would be problematic
-if we e.g. were to really deprecate AT_* flags for new syscalls.
 
+On 02/03/2020 12.28, Peter Ujfalusi wrote:
+> Hi Vinod,
 > 
-> > On Fri, Feb 28, 2020 at 02:53:32PM +0000, David Howells wrote:
-> >> 	
-> >> I've been told that RESOLVE_* flags, which can be found in linux/openat2.h,
-> >> should be used instead of the equivalent AT_* flags for new system calls.  Is
-> >> this the case?
-> >
-> > Imho, it would make sense to use RESOLVE_* flags for new system calls
-> > and afair this was the original intention.
-> > The alternative is that RESOLVE_* flags are special to openat2(). But
-> > that seems strange, imho. The semantics openat2() has might be very
-> > useful for new system calls as well which might also want to support
-> > parts of AT_* flags (see fsinfo()). So we either end up adding new AT_*
-> > flags mirroring the new RESOLVE_* flags or we end up adding new
-> > RESOLVE_* flags mirroring parts of AT_* flags. And if that's a
-> > possibility I vote for RESOLVE_* flags going forward. The have better
-> > naming too imho.
-> >
-> > An argument against this could be that we might end up causing more
-> > confusion for userspace due to yet another set of flags. But maybe this
-> > isn't an issue as long as we restrict RESOLVE_* flags to new syscalls.
-> > When we introduce a new syscall userspace will have to add support for
-> > it anyway.
+> On 02/03/2020 9.11, Vinod Koul wrote:
+>>> diff --git a/drivers/dma/dmaengine.h b/drivers/dma/dmaengine.h
+>>> index e8a320c9e57c..72cd7fe33638 100644
+>>> --- a/drivers/dma/dmaengine.h
+>>> +++ b/drivers/dma/dmaengine.h
+>>> @@ -182,4 +182,10 @@ dmaengine_desc_callback_valid(struct dmaengine_desc_callback *cb)
+>>>  struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
+>>>  struct dma_chan *dma_get_any_slave_channel(struct dma_device *device);
+>>>  
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +#include <linux/debugfs.h>
+>>> +
+>>> +struct dentry *dmaengine_get_debugfs_root(void);
+>>
+>> this needs to have an else defined with NULL return so that we dont
+>> force users to wrap the code under CONFIG_DEBUG_FS..
 > 
-> I missed the start of the dicussion and what this is about, sorry.
+> Drivers would anyways should have their debugfs related code wrapped
+> within ifdef. There is no point of having the code complied when it can
+> not be used (no debugfs support).
 > 
-> Regarding open flags, I think the key point for future APIs is to avoid
-> using the set of flags for both control of the operation itself
-> (O_NOFOLLOW/AT_SYMLINK_NOFOLLOW, O_NOCTTY) and properaties of the
-> resulting descriptor (O_RDWR, O_SYNC).  I expect that doing that would
-> help code that has to re-create an equivalent descriptor.  The operation
-> flags are largely irrelevant to that if you can get the descriptor by
-> other means.
+> But I can add the  else case if we really want to:
 > 
-> >>  (*) It has been suggested that AT_SYMLINK_NOFOLLOW should be the default, but
-> >>      only RESOLVE_NO_SYMLINKS exists.
-> >
-> > I'd be very much in favor of not following symlinks being the default.
-> > That's usually a source of a lot of security issues.
+> #ifdef CONFIG_DEBUG_FS
+> #include <linux/debugfs.h>
 > 
-> But that's inconsistent with the rest of the system.  And for example,
-> if you make /etc/resolv.conf a symbolic link, a program which uses a new
-> I/O library (with the new interfaces) will not be able to read it.
+> struct dentry *dmaengine_get_debugfs_root(void);
+> 
+> #else
+> struct dentry;
+> static inline struct dentry *dmaengine_get_debugfs_root(void)
+> {
+> 	return NULL;
+> }
+> #endif /* CONFIG_DEBUG_FS */
 
-Fair, but I expect that e.g. a C library would simply implement openat()
-on top of openat2() if the latter is available and thus could simply
-pass RESOLVE_SYMLINKS so any new I/O library not making use of the
-syscall directly would simply get the old behavior. For anyone using the
-syscall directly they need to know about its exact semantics anyway. But
-again, maybe just having it opt-in is fine.
+It might be even better if the core creates directories for the dma
+controllers in dma_async_device_register() and removes the whole
+directory in dma_async_device_unregister()
 
-> 
-> AT_SYMLINK_NOFOLLOW only applies to the last pathname component anyway,
-> so it's relatively little protection.
+Then drivers can get their per device root via:
+#ifdef CONFIG_DEBUG_FS
+static inline struct dentry *
+dmaengine_get_debugfs_root(struct dma_device *dma_dev) {
+	return dma_dev->dbg_dev_root;
+}
+#else
+struct dentry;
+static inline struct dentry *
+dmaengine_get_debugfs_root(struct dma_device *dma_dev)
+{
+	return NULL;
+}
+#endif /* CONFIG_DEBUG_FS */
 
-So this is partially why I think it's at least worth considerings: the
-new RESOLVE_NO_SYMLINKS flag does block all symlink resolution, not just
-for the last component in contrast to AT_SYMLINK_NOFOLLOW. This is
-278121417a72d87fb29dd8c48801f80821e8f75a
+- Péter
 
-Christian
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
