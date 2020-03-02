@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF4F7175577
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2834017559B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgCBIRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:17:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57202 "EHLO mail.kernel.org"
+        id S1727500AbgCBIR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:17:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbgCBIQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:24 -0500
+        id S1727264AbgCBIQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:22 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99D08246F2;
+        by mail.kernel.org (Postfix) with ESMTPSA id AC3BA246F9;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=qb0QCd39Wo7QeZK9RU8cjFB2UYuizkJIFiPvTDnQ8f4=;
+        bh=Acai/1h0wAjDOmtj6Bt38+sJqxmQUtlM0h/EuXyQQJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yODMVuHvE67S8WIzqFepZZ+zYRG4uX8ZbZOehIWAqxQc0OcZO3AyARgngmkSBGZuW
-         piSx5Dfm/hYwqaS8iGKIUywg+LcAjrXcRsOvZ45Ls7OAimo+qnFnVJUkOcP2uaUDpN
-         5Rxo2wru/eCcaRJYecErvkT91w5EwpwgB45xTzFg=
+        b=ON18qY/6dYhSKdJ6dVh6zC6R4cU+ztcD7PyvmTeR86g2WAn8gBeeBx0JeLBzA03Q5
+         OV41jmbnKGofAaPeOE/M64ZVv8uyZd2R6rx4JN2nzySxv4cPOFezwahraa+7eEI0Lp
+         Ci8BquKz5uCIXo5/kE0liWa/QU6GgUHvNM0JEt04=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003yt-PA; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003yx-Q2; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 29/42] docs: scsi: convert scsi_fc_transport.txt to ReST
-Date:   Mon,  2 Mar 2020 09:16:02 +0100
-Message-Id: <f75bd9b6512f223847cc4ece8bd7e8e72e434b21.1583136624.git.mchehab+huawei@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Doug Gilbert <dgilbert@interlog.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH 30/42] docs: scsi: convert scsi-generic.txt to ReST
+Date:   Mon,  2 Mar 2020 09:16:03 +0100
+Message-Id: <f57b8ddf30397c2c7213e49634e5e9cbd4246368.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -45,447 +49,200 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/index.rst                  |   1 +
- ...fc_transport.txt => scsi_fc_transport.rst} | 236 +++++++++++-------
- 2 files changed, 151 insertions(+), 86 deletions(-)
- rename Documentation/scsi/{scsi_fc_transport.txt => scsi_fc_transport.rst} (74%)
+ Documentation/scsi/index.rst                  |  1 +
+ .../{scsi-generic.txt => scsi-generic.rst}    | 75 ++++++++++++-------
+ MAINTAINERS                                   |  2 +-
+ drivers/scsi/Kconfig                          |  2 +-
+ include/scsi/sg.h                             |  2 +-
+ 5 files changed, 50 insertions(+), 32 deletions(-)
+ rename Documentation/scsi/{scsi-generic.txt => scsi-generic.rst} (70%)
 
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 8da7c27f73b7..471982ef461d 100644
+index 471982ef461d..119280f26da6 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -33,5 +33,6 @@ Linux SCSI Subsystem
-    qlogicfas
+@@ -34,5 +34,6 @@ Linux SCSI Subsystem
     scsi-changer
     scsi_eh
-+   scsi_fc_transport
+    scsi_fc_transport
++   scsi-generic
  
     scsi_transport_srp/figures
-diff --git a/Documentation/scsi/scsi_fc_transport.txt b/Documentation/scsi/scsi_fc_transport.rst
-similarity index 74%
-rename from Documentation/scsi/scsi_fc_transport.txt
-rename to Documentation/scsi/scsi_fc_transport.rst
-index f79282fc48d7..176c1862cb9b 100644
---- a/Documentation/scsi/scsi_fc_transport.txt
-+++ b/Documentation/scsi/scsi_fc_transport.rst
-@@ -1,8 +1,13 @@
--                             SCSI FC Tansport
--                 =============================================
+diff --git a/Documentation/scsi/scsi-generic.txt b/Documentation/scsi/scsi-generic.rst
+similarity index 70%
+rename from Documentation/scsi/scsi-generic.txt
+rename to Documentation/scsi/scsi-generic.rst
+index 51be20a6a14d..258505e557a6 100644
+--- a/Documentation/scsi/scsi-generic.txt
++++ b/Documentation/scsi/scsi-generic.rst
+@@ -1,6 +1,11 @@
+-            Notes on Linux SCSI Generic (sg) driver
+-            ---------------------------------------
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+================
-+SCSI FC Tansport
-+================
- 
- Date:  11/18/2008
--Kernel Revisions for features:
++=======================================
++Notes on Linux SCSI Generic (sg) driver
++=======================================
 +
-+Kernel Revisions for features::
+                                                         20020126
 +
-   rports : <<TBS>>
-   vports : 2.6.22
-   bsg support : 2.6.30 (?TBD?)
-@@ -12,25 +17,27 @@ Introduction
+ Introduction
  ============
- This file documents the features and components of the SCSI FC Transport.
- It also provides documents the API between the transport and FC LLDDs.
--The FC transport can be found at:
+ The SCSI Generic driver (sg) is one of the four "high level" SCSI device
+@@ -18,7 +23,7 @@ and examples.
+ Major versions of the sg driver
+ ===============================
+ There are three major versions of sg found in the linux kernel (lk):
+-      - sg version 1 (original) from 1992 to early 1999 (lk 2.2.5) . 
++      - sg version 1 (original) from 1992 to early 1999 (lk 2.2.5) .
+ 	It is based in the sg_header interface structure.
+       - sg version 2 from lk 2.2.6 in the 2.2 series. It is based on
+ 	an extended version of the sg_header interface structure.
+@@ -29,12 +34,16 @@ There are three major versions of sg found in the linux kernel (lk):
+ Sg driver documentation
+ =======================
+ The most recent documentation of the sg driver is kept at the Linux
+-Documentation Project's (LDP) site: 
+-http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO
++Documentation Project's (LDP) site:
 +
-+The FC transport can be found at::
++- http://www.tldp.org/HOWTO/SCSI-Generic-HOWTO
 +
-   drivers/scsi/scsi_transport_fc.c
-   include/scsi/scsi_transport_fc.h
-   include/scsi/scsi_netlink_fc.h
-   include/scsi/scsi_bsg_fc.h
- 
--This file is found at Documentation/scsi/scsi_fc_transport.txt
-+This file is found at Documentation/scsi/scsi_fc_transport.rst
- 
- 
- FC Remote Ports (rports)
--========================================================================
-+========================
- << To Be Supplied >>
- 
- 
- FC Virtual Ports (vports)
--========================================================================
-+=========================
- 
--Overview:
---------------------------------
-+Overview
-+--------
- 
-   New FC standards have defined mechanisms which allows for a single physical
-   port to appear on as multiple communication ports. Using the N_Port Id
-@@ -61,12 +68,14 @@ Overview:
-   Thus, whether a FC port is based on a physical port or on a virtual port,
-   each will appear as a unique scsi_host with its own target and lun space.
- 
--  Note: At this time, the transport is written to create only NPIV-based
-+  .. Note::
-+    At this time, the transport is written to create only NPIV-based
-     vports. However, consideration was given to VF-based vports and it
-     should be a minor change to add support if needed.  The remaining
-     discussion will concentrate on NPIV.
- 
--  Note: World Wide Name assignment (and uniqueness guarantees) are left
-+  .. Note::
-+    World Wide Name assignment (and uniqueness guarantees) are left
-     up to an administrative entity controlling the vport. For example,
-     if vports are to be associated with virtual machines, a XEN mgmt
-     utility would be responsible for creating wwpn/wwnn's for the vport,
-@@ -91,18 +100,29 @@ Device Trees and Vport Objects:
-   port's scsi_host.
- 
-   Here's what to expect in the device tree :
--   The typical Physical Port's Scsi_Host:
+ This describes the sg version 3 driver found in the lk 2.4 series.
 +
-+   The typical Physical Port's Scsi_Host::
+ The LDP renders documents in single and multiple page HTML, postscript
+ and pdf. This document can also be found at:
+-http://sg.danny.cz/sg/p/sg_v3_ho.html
 +
-      /sys/devices/.../host17/
--   and it has the typical descendant tree:
++- http://sg.danny.cz/sg/p/sg_v3_ho.html
+ 
+ Documentation for the version 2 sg driver found in the lk 2.2 series can
+ be found at http://sg.danny.cz/sg/. A larger version
+@@ -45,23 +54,27 @@ found at http://www.torque.net/sg/p/original/SCSI-Programming-HOWTO.txt
+ and in the LDP archives.
+ 
+ A changelog with brief notes can be found in the
+-/usr/src/linux/include/scsi/sg.h file. Note that the glibc maintainers copy 
+-and edit this file (removing its changelog for example) before placing it 
+-in /usr/include/scsi/sg.h . Driver debugging information and other notes 
++/usr/src/linux/include/scsi/sg.h file. Note that the glibc maintainers copy
++and edit this file (removing its changelog for example) before placing it
++in /usr/include/scsi/sg.h . Driver debugging information and other notes
+ can be found at the top of the /usr/src/linux/drivers/scsi/sg.c file.
+ 
+-A more general description of the Linux SCSI subsystem of which sg is a 
++A more general description of the Linux SCSI subsystem of which sg is a
+ part can be found at http://www.tldp.org/HOWTO/SCSI-2.4-HOWTO .
+ 
+ 
+ Example code and utilities
+ ==========================
+ There are two packages of sg utilities:
+-  - sg3_utils   for the sg version 3 driver found in lk 2.4
+-  - sg_utils    for the sg version 2 (and original) driver found in lk 2.2
 +
-+   and it has the typical descendant tree::
++    =========   ==========================================================
++    sg3_utils   for the sg version 3 driver found in lk 2.4
++    sg_utils    for the sg version 2 (and original) driver found in lk 2.2
+                 and earlier
++    =========   ==========================================================
 +
-      /sys/devices/.../host17/rport-17:0-0/target17:0:0/17:0:0:0:
--   and then the vport is created on the Physical Port:
+ Both packages will work in the lk 2.4 series however sg3_utils offers more
+-capabilities. They can be found at: http://sg.danny.cz/sg/sg3_utils.html and 
++capabilities. They can be found at: http://sg.danny.cz/sg/sg3_utils.html and
+ freecode.com
+ 
+ Another approach is to look at the applications that use the sg driver.
+@@ -72,30 +85,34 @@ Mapping of Linux kernel versions to sg driver versions
+ ======================================================
+ Here is a list of linux kernels in the 2.4 series that had new version
+ of the sg driver:
+-      lk 2.4.0 : sg version 3.1.17
+-      lk 2.4.7 : sg version 3.1.19 
+-      lk 2.4.10 : sg version 3.1.20  **
+-      lk 2.4.17 : sg version 3.1.22 
+ 
+-** There were 3 changes to sg version 3.1.20 by third parties in the
+-   next six linux kernel versions.
++     - lk 2.4.0 : sg version 3.1.17
++     - lk 2.4.7 : sg version 3.1.19
++     - lk 2.4.10 : sg version 3.1.20 [#]_
++     - lk 2.4.17 : sg version 3.1.22
+ 
+-For reference here is a list of linux kernels in the 2.2 series that had 
++.. [#] There were 3 changes to sg version 3.1.20 by third parties in the
++       next six linux kernel versions.
 +
-+   and then the vport is created on the Physical Port::
++For reference here is a list of linux kernels in the 2.2 series that had
+ new version of the sg driver:
+-      lk 2.2.0 : original sg version [with no version number]
+-      lk 2.2.6 : sg version 2.1.31
+-      lk 2.2.8 : sg version 2.1.32
+-      lk 2.2.10 : sg version 2.1.34 [SG_GET_VERSION_NUM ioctl first appeared]
+-      lk 2.2.14 : sg version 2.1.36
+-      lk 2.2.16 : sg version 2.1.38
+-      lk 2.2.17 : sg version 2.1.39
+-      lk 2.2.20 : sg version 2.1.40
 +
-      /sys/devices/.../host17/vport-17:0-0
--   and the vport's Scsi_Host is then created:
++     - lk 2.2.0 : original sg version [with no version number]
++     - lk 2.2.6 : sg version 2.1.31
++     - lk 2.2.8 : sg version 2.1.32
++     - lk 2.2.10 : sg version 2.1.34 [SG_GET_VERSION_NUM ioctl first appeared]
++     - lk 2.2.14 : sg version 2.1.36
++     - lk 2.2.16 : sg version 2.1.38
++     - lk 2.2.17 : sg version 2.1.39
++     - lk 2.2.20 : sg version 2.1.40
+ 
+ The lk 2.5 development series has recently commenced and it currently
+ contains sg version 3.5.23 which is functionally equivalent to sg
+-version 3.1.22 found in lk 2.4.17 .
++version 3.1.22 found in lk 2.4.17.
+ 
+ 
+ Douglas Gilbert
 +
-+   and the vport's Scsi_Host is then created::
+ 26th January 2002
 +
-      /sys/devices/.../host17/vport-17:0-0/host18
--   and then the rest of the tree progresses, such as:
-+
-+   and then the rest of the tree progresses, such as::
-+
-      /sys/devices/.../host17/vport-17:0-0/host18/rport-18:0-0/target18:0:0/18:0:0:0:
+ dgilbert@interlog.com
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2f441cf59b4b..776de9c5b404 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14857,7 +14857,7 @@ M:	Doug Gilbert <dgilbert@interlog.com>
+ L:	linux-scsi@vger.kernel.org
+ W:	http://sg.danny.cz/sg
+ S:	Maintained
+-F:	Documentation/scsi/scsi-generic.txt
++F:	Documentation/scsi/scsi-generic.rst
+ F:	drivers/scsi/sg.c
+ F:	include/scsi/sg.h
  
--  Here's what to expect in the sysfs tree :
-+  Here's what to expect in the sysfs tree::
-+
-    scsi_hosts:
-      /sys/class/scsi_host/host17                physical port's scsi_host
-      /sys/class/scsi_host/host18                vport's scsi_host
-@@ -116,8 +136,8 @@ Device Trees and Vport Objects:
-      /sys/class/fc_remote_ports/rport-18:0-0    rport on the vport
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 6cb9abb0898d..bdf65b0bb78b 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -133,7 +133,7 @@ config CHR_DEV_SG
+ 	  quality digital reader of audio CDs (<http://www.xiph.org/paranoia/>).
+ 	  For other devices, it's possible that you'll have to write the
+ 	  driver software yourself. Please read the file
+-	  <file:Documentation/scsi/scsi-generic.txt> for more information.
++	  <file:Documentation/scsi/scsi-generic.rst> for more information.
  
- 
--Vport Attributes:
---------------------------------
-+Vport Attributes
-+----------------
- 
-   The new fc_vport class object has the following attributes
- 
-@@ -184,16 +204,18 @@ Vport Attributes:
-         (e.g. 0x, x, etc).
- 
- 
--Vport States:
---------------------------------
-+Vport States
-+------------
- 
-   Vport instantiation consists of two parts:
-+
-     - Creation with the kernel and LLDD. This means all transport and
-       driver data structures are built up, and device objects created.
-       This is equivalent to a driver "attach" on an adapter, which is
-       independent of the adapter's link state.
-     - Instantiation of the vport on the FC link via ELS traffic, etc.
-       This is equivalent to a "link up" and successful link initialization.
-+
-   Further information can be found in the interfaces section below for
-   Vport Creation.
- 
-@@ -227,6 +249,7 @@ Vport States:
-     FC_VPORT_NO_FABRIC_SUPP     - No Fabric Support
-       The vport is not operational. One of the following conditions were
-       encountered:
-+
-        - The FC topology is not Point-to-Point
-        - The FC port is not connected to an F_Port
-        - The F_Port has indicated that NPIV is not supported.
-@@ -251,32 +274,53 @@ Vport States:
- 
-   The following state table indicates the different state transitions:
- 
--    State              Event                            New State
--    --------------------------------------------------------------------
--     n/a                Initialization                  Unknown
--    Unknown:            Link Down                       Linkdown
--                        Link Up & Loop                  No Fabric Support
--                        Link Up & no Fabric             No Fabric Support
--                        Link Up & FLOGI response        No Fabric Support
--                          indicates no NPIV support
--                        Link Up & FDISC being sent      Initializing
--                        Disable request                 Disable
--    Linkdown:           Link Up                         Unknown
--    Initializing:       FDISC ACC                       Active
--                        FDISC LS_RJT w/ no resources    No Fabric Resources
--                        FDISC LS_RJT w/ invalid         Fabric Rejected WWN
--                          pname or invalid nport_id
--                        FDISC LS_RJT failed for         Vport Failed
--                          other reasons
--                        Link Down                       Linkdown
--                        Disable request                 Disable
--    Disable:            Enable request                  Unknown
--    Active:             LOGO received from fabric       Fabric Logout
--                        Link Down                       Linkdown
--                        Disable request                 Disable
--    Fabric Logout:      Link still up                   Unknown
-+   +------------------+--------------------------------+---------------------+
-+   | State            | Event                          | New State           |
-+   +==================+================================+=====================+
-+   | n/a              | Initialization                 | Unknown             |
-+   +------------------+--------------------------------+---------------------+
-+   | Unknown:         | Link Down                      | Linkdown            |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Link Up & Loop                 | No Fabric Support   |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Link Up & no Fabric            | No Fabric Support   |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Link Up & FLOGI response       | No Fabric Support   |
-+   |                  | indicates no NPIV support      |                     |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Link Up & FDISC being sent     | Initializing        |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Disable request                | Disable             |
-+   +------------------+--------------------------------+---------------------+
-+   | Linkdown:        | Link Up                        | Unknown             |
-+   +------------------+--------------------------------+---------------------+
-+   | Initializing:    | FDISC ACC                      | Active              |
-+   |                  +--------------------------------+---------------------+
-+   |                  | FDISC LS_RJT w/ no resources   | No Fabric Resources |
-+   |                  +--------------------------------+---------------------+
-+   |                  | FDISC LS_RJT w/ invalid        | Fabric Rejected WWN |
-+   |		      | pname or invalid nport_id      |                     |
-+   |                  +--------------------------------+---------------------+
-+   |                  | FDISC LS_RJT failed for        | Vport Failed        |
-+   |                  | other reasons                  |                     |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Link Down                      | Linkdown            |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Disable request                | Disable             |
-+   +------------------+--------------------------------+---------------------+
-+   | Disable:         | Enable request                 | Unknown             |
-+   +------------------+--------------------------------+---------------------+
-+   | Active:          | LOGO received from fabric      | Fabric Logout       |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Link Down                      | Linkdown            |
-+   |                  +--------------------------------+---------------------+
-+   |                  | Disable request                | Disable             |
-+   +------------------+--------------------------------+---------------------+
-+   | Fabric Logout:   | Link still up                  | Unknown             |
-+   +------------------+--------------------------------+---------------------+
-+
-+The following 4 error states all have the same transitions::
- 
--         The following 4 error states all have the same transitions:
-     No Fabric Support:
-     No Fabric Resources:
-     Fabric Rejected WWN:
-@@ -285,8 +329,8 @@ Vport States:
-                         Link goes down                  Linkdown
- 
- 
--Transport <-> LLDD Interfaces :
---------------------------------
-+Transport <-> LLDD Interfaces
-+-----------------------------
- 
- Vport support by LLDD:
- 
-@@ -300,14 +344,17 @@ Vport support by LLDD:
- 
- Vport Creation:
- 
--  The LLDD vport_create() syntax is:
-+  The LLDD vport_create() syntax is::
- 
-       int vport_create(struct fc_vport *vport, bool disable)
- 
--    where:
--      vport:    Is the newly allocated vport object
--      disable:  If "true", the vport is to be created in a disabled stated.
-+  where:
-+
-+      =======   ===========================================================
-+      vport     Is the newly allocated vport object
-+      disable   If "true", the vport is to be created in a disabled stated.
-                 If "false", the vport is to be enabled upon creation.
-+      =======   ===========================================================
- 
-   When a request is made to create a new vport (via sgio/netlink, or the
-   vport_create fc_host attribute), the transport will validate that the LLDD
-@@ -317,6 +364,7 @@ Vport Creation:
-   LLDD's vport_create() function with the newly allocated vport object.
- 
-   As mentioned above, vport creation is divided into two parts:
-+
-     - Creation with the kernel and LLDD. This means all transport and
-       driver data structures are built up, and device objects created.
-       This is equivalent to a driver "attach" on an adapter, which is
-@@ -329,6 +377,7 @@ Vport Creation:
-   infrastructure exists to support NPIV, and complete the first part of
-   vport creation (data structure build up) before returning.  We do not
-   hinge vport_create() on the link-side operation mainly because:
-+
-     - The link may be down. It is not a failure if it is. It simply
-       means the vport is in an inoperable state until the link comes up.
-       This is consistent with the link bouncing post vport creation.
-@@ -337,11 +386,15 @@ Vport Creation:
-       FC adapter. The vport_create is synonymous with driver attachment
-       to the adapter, which is independent of link state.
- 
--    Note: special error codes have been defined to delineate infrastructure
-+  .. Note::
-+
-+      special error codes have been defined to delineate infrastructure
-       failure cases for quicker resolution.
- 
-   The expected behavior for the LLDD's vport_create() function is:
-+
-     - Validate Infrastructure:
-+
-         - If the driver or adapter cannot support another vport, whether
-             due to improper firmware, (a lie about) max_npiv, or a lack of
-             some other resource - return VPCERR_UNSUPPORTED.
-@@ -349,17 +402,21 @@ Vport Creation:
-             the adapter and detects an overlap - return VPCERR_BAD_WWN.
-         - If the driver detects the topology is loop, non-fabric, or the
-             FLOGI did not support NPIV - return VPCERR_NO_FABRIC_SUPP.
-+
-     - Allocate data structures. If errors are encountered, such as out
-         of memory conditions, return the respective negative Exxx error code.
-     - If the role is FCP Initiator, the LLDD is to :
-+
-         - Call scsi_host_alloc() to allocate a scsi_host for the vport.
-         - Call scsi_add_host(new_shost, &vport->dev) to start the scsi_host
-           and bind it as a child of the vport device.
-         - Initializes the fc_host attribute values.
-+
-     - Kick of further vport state transitions based on the disable flag and
-         link state - and return success (zero).
- 
-   LLDD Implementers Notes:
-+
-   - It is suggested that there be a different fc_function_templates for
-     the physical port and the virtual port.  The physical port's template
-     would have the vport_create, vport_delete, and vport_disable functions,
-@@ -373,14 +430,17 @@ Vport Creation:
- 
- Vport Disable/Enable:
- 
--  The LLDD vport_disable() syntax is:
-+  The LLDD vport_disable() syntax is::
- 
-       int vport_disable(struct fc_vport *vport, bool disable)
- 
--    where:
--      vport:    Is vport to be enabled or disabled
--      disable:  If "true", the vport is to be disabled.
-+  where:
-+
-+      =======   =======================================
-+      vport     Is vport to be enabled or disabled
-+      disable   If "true", the vport is to be disabled.
-                 If "false", the vport is to be enabled.
-+      =======   =======================================
- 
-   When a request is made to change the disabled state on a vport, the
-   transport will validate the request against the existing vport state.
-@@ -401,11 +461,12 @@ Vport Disable/Enable:
- 
- Vport Deletion:
- 
--  The LLDD vport_delete() syntax is:
-+  The LLDD vport_delete() syntax is::
- 
-       int vport_delete(struct fc_vport *vport)
- 
--    where:
-+  where:
-+
-       vport:    Is vport to delete
- 
-   When a request is made to delete a vport (via sgio/netlink, or via the
-@@ -443,39 +504,42 @@ Transport supplied functions
- 
- The following functions are supplied by the FC-transport for use by LLDs.
- 
--   fc_vport_create - create a vport
--   fc_vport_terminate - detach and remove a vport
-+   ==================   =========================
-+   fc_vport_create      create a vport
-+   fc_vport_terminate   detach and remove a vport
-+   ==================   =========================
- 
--Details:
-+Details::
- 
--/**
-- * fc_vport_create - Admin App or LLDD requests creation of a vport
-- * @shost:     scsi host the virtual port is connected to.
-- * @ids:       The world wide names, FC4 port roles, etc for
-- *              the virtual port.
-- *
-- * Notes:
-- *     This routine assumes no locks are held on entry.
-- */
--struct fc_vport *
--fc_vport_create(struct Scsi_Host *shost, struct fc_vport_identifiers *ids)
-+    /**
-+    * fc_vport_create - Admin App or LLDD requests creation of a vport
-+    * @shost:     scsi host the virtual port is connected to.
-+    * @ids:       The world wide names, FC4 port roles, etc for
-+    *              the virtual port.
-+    *
-+    * Notes:
-+    *     This routine assumes no locks are held on entry.
-+    */
-+    struct fc_vport *
-+    fc_vport_create(struct Scsi_Host *shost, struct fc_vport_identifiers *ids)
- 
--/**
-- * fc_vport_terminate - Admin App or LLDD requests termination of a vport
-- * @vport:      fc_vport to be terminated
-- *
-- * Calls the LLDD vport_delete() function, then deallocates and removes
-- * the vport from the shost and object tree.
-- *
-- * Notes:
-- *      This routine assumes no locks are held on entry.
-- */
--int
--fc_vport_terminate(struct fc_vport *vport)
-+    /**
-+    * fc_vport_terminate - Admin App or LLDD requests termination of a vport
-+    * @vport:      fc_vport to be terminated
-+    *
-+    * Calls the LLDD vport_delete() function, then deallocates and removes
-+    * the vport from the shost and object tree.
-+    *
-+    * Notes:
-+    *      This routine assumes no locks are held on entry.
-+    */
-+    int
-+    fc_vport_terminate(struct fc_vport *vport)
- 
- 
- FC BSG support (CT & ELS passthru, and more)
--========================================================================
-+============================================
-+
- << To Be Supplied >>
- 
- 
+ 	  To compile this driver as a module, choose M here and read
+ 	  <file:Documentation/scsi/scsi.txt>. The module will be called sg.
+diff --git a/include/scsi/sg.h b/include/scsi/sg.h
+index 29c7ad04d2e2..7327e12f3373 100644
+--- a/include/scsi/sg.h
++++ b/include/scsi/sg.h
+@@ -24,7 +24,7 @@
+  *	http://sg.danny.cz/sg  [alternatively check the MAINTAINERS file]
+  * The documentation for the sg version 3 driver can be found at:
+  *	http://sg.danny.cz/sg/p/sg_v3_ho.html
+- * Also see: <kernel_source>/Documentation/scsi/scsi-generic.txt
++ * Also see: <kernel_source>/Documentation/scsi/scsi-generic.rst
+  *
+  * For utility and test programs see: http://sg.danny.cz/sg/sg3_utils.html
+  */
 -- 
 2.21.1
 
