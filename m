@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1877B1763A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B1B1763A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:14:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbgCBTNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:13:51 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:50580 "EHLO honk.sigxcpu.org"
+        id S1727656AbgCBTNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:13:43 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:50546 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727687AbgCBTNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:13:45 -0500
+        id S1727360AbgCBTNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 14:13:42 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 26E61FB06;
-        Mon,  2 Mar 2020 20:13:44 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 5D92BFB02;
+        Mon,  2 Mar 2020 20:13:40 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5R7glgRisUUl; Mon,  2 Mar 2020 20:13:40 +0100 (CET)
+        with ESMTP id 3cX07bvLwRke; Mon,  2 Mar 2020 20:13:38 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 930F04048D; Mon,  2 Mar 2020 20:13:36 +0100 (CET)
+        id 8D62340237; Mon,  2 Mar 2020 20:13:36 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Lucas Stach <l.stach@pengutronix.de>,
         Russell King <linux+etnaviv@armlinux.org.uk>,
@@ -27,9 +27,9 @@ To:     Lucas Stach <l.stach@pengutronix.de>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] drm/etnaviv: Fix typo in comment
-Date:   Mon,  2 Mar 2020 20:13:32 +0100
-Message-Id: <a2f36aa20e749316d41303ddcabef064b035f99b.1583176306.git.agx@sigxcpu.org>
+Subject: [PATCH 2/5] drm/etnaviv: Update idle bits
+Date:   Mon,  2 Mar 2020 20:13:33 +0100
+Message-Id: <29414e54218e74b92342cfebcfbee69ac31546ef.1583176306.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1583176306.git.agx@sigxcpu.org>
 References: <cover.1583176306.git.agx@sigxcpu.org>
@@ -41,27 +41,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use 'is' instead of 'it' so it becomes a valid sentence and
-spell 'resetting' correctly.
+Update the state HI and common header from rnndb commit
+commit 19280a95a (rnndb: Update idle bits)
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/etnaviv/state_hi.xml.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-index 80b99acea1c4..873d9103164d 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-@@ -506,7 +506,7 @@ static int etnaviv_hw_reset(struct etnaviv_gpu *gpu)
- 		/* read idle register. */
- 		idle = gpu_read(gpu, VIVS_HI_IDLE_STATE);
+diff --git a/drivers/gpu/drm/etnaviv/state_hi.xml.h b/drivers/gpu/drm/etnaviv/state_hi.xml.h
+index 41d8da2b6f4f..8fe4598395f1 100644
+--- a/drivers/gpu/drm/etnaviv/state_hi.xml.h
++++ b/drivers/gpu/drm/etnaviv/state_hi.xml.h
+@@ -81,6 +81,13 @@ DEALINGS IN THE SOFTWARE.
+ #define VIVS_HI_IDLE_STATE_IM					0x00000200
+ #define VIVS_HI_IDLE_STATE_FP					0x00000400
+ #define VIVS_HI_IDLE_STATE_TS					0x00000800
++#define VIVS_HI_IDLE_STATE_BL					0x00001000
++#define VIVS_HI_IDLE_STATE_ASYNCFE				0x00002000
++#define VIVS_HI_IDLE_STATE_MC					0x00004000
++#define VIVS_HI_IDLE_STATE_PPA					0x00008000
++#define VIVS_HI_IDLE_STATE_WD					0x00010000
++#define VIVS_HI_IDLE_STATE_NN					0x00020000
++#define VIVS_HI_IDLE_STATE_TP					0x00040000
+ #define VIVS_HI_IDLE_STATE_AXI_LP				0x80000000
  
--		/* try reseting again if FE it not idle */
-+		/* try resetting again if FE is not idle */
- 		if ((idle & VIVS_HI_IDLE_STATE_FE) == 0) {
- 			dev_dbg(gpu->dev, "FE is not idle\n");
- 			continue;
+ #define VIVS_HI_AXI_CONFIG					0x00000008
 -- 
 2.23.0
 
