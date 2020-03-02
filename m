@@ -2,422 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD5517658D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1071765A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:12:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbgCBVFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 16:05:00 -0500
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:56397 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726695AbgCBVE7 (ORCPT
+        id S1726956AbgCBVMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 16:12:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3064 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725781AbgCBVMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 16:04:59 -0500
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from asmaa@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 2 Mar 2020 23:04:54 +0200
-Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
-        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id 022L4ra8010198;
-        Mon, 2 Mar 2020 16:04:53 -0500
-Received: (from asmaa@localhost)
-        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id 022L4rfv016154;
-        Mon, 2 Mar 2020 16:04:53 -0500
-From:   Asmaa Mnebhi <Asmaa@mellanox.com>
-To:     bgolaszewski@baylibre.com, linus.walleij@linaro.org
-Cc:     Asmaa Mnebhi <Asmaa@mellanox.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/1] gpio: add driver for Mellanox BlueField 2 GPIO controller
-Date:   Mon,  2 Mar 2020 16:04:46 -0500
-Message-Id: <1680de9eb6d2b8855228dde9a2dd065f0dcbe1fb.1583182325.git.Asmaa@mellanox.com>
-X-Mailer: git-send-email 2.1.2
-In-Reply-To: <cover.1583182325.git.Asmaa@mellanox.com>
-References: <cover.1583182325.git.Asmaa@mellanox.com>
-In-Reply-To: <cover.1583182325.git.Asmaa@mellanox.com>
-References: <cover.1583182325.git.Asmaa@mellanox.com>
+        Mon, 2 Mar 2020 16:12:10 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022KqXpX156668;
+        Mon, 2 Mar 2020 16:08:15 -0500
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfjf4bjd5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Mar 2020 16:08:15 -0500
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 022KtwmB168744;
+        Mon, 2 Mar 2020 16:08:14 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfjf4bjct-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Mar 2020 16:08:14 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 022L4pRX023307;
+        Mon, 2 Mar 2020 21:08:14 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01wdc.us.ibm.com with ESMTP id 2yffk5wd3p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Mar 2020 21:08:14 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022L8D6O41484636
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 21:08:13 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9A741AE05F;
+        Mon,  2 Mar 2020 21:08:13 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 10578AE05C;
+        Mon,  2 Mar 2020 21:08:12 +0000 (GMT)
+Received: from oc3272150783.ibm.com (unknown [9.160.73.190])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon,  2 Mar 2020 21:08:11 +0000 (GMT)
+Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard
+ information
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, ak@linux.intel.com, maddy@linux.ibm.com,
+        peterz@infradead.org, alexey.budankov@linux.intel.com,
+        adrian.hunter@intel.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, yao.jin@linux.intel.com,
+        mingo@redhat.com, paulus@samba.org, eranian@google.com,
+        robert.richter@amd.com, namhyung@kernel.org, kim.phillips@amd.com,
+        jolsa@redhat.com, kan.liang@linux.intel.com
+References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+From:   Paul Clarke <pc@us.ibm.com>
+Message-ID: <91026159-1e83-6efd-c624-464b12b18b5c@us.ibm.com>
+Date:   Mon, 2 Mar 2020 15:08:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_08:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1011 impostorscore=0 spamscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the GPIO controller used by
-Mellanox BlueField 2 SOCs.
+On 3/1/20 11:23 PM, Ravi Bangoria wrote:
+> Most modern microprocessors employ complex instruction execution
+> pipelines such that many instructions can be 'in flight' at any
+> given point in time. Various factors affect this pipeline and
+> hazards are the primary among them. Different types of hazards
+> exist - Data hazards, Structural hazards and Control hazards.
+> Data hazard is the case where data dependencies exist between
+> instructions in different stages in the pipeline. Structural
+> hazard is when the same processor hardware is needed by more
+> than one instruction in flight at the same time. Control hazards
+> are more the branch misprediction kinds. 
+> 
+> Information about these hazards are critical towards analyzing
+> performance issues and also to tune software to overcome such
+> issues. Modern processors export such hazard data in Performance
+> Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
+> Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
+> AMD[3] provides similar information.
+> 
+> Implementation detail:
+> 
+> A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
+> If it's set, kernel converts arch specific hazard information
+> into generic format:
+> 
+>   struct perf_pipeline_haz_data {
+>          /* Instruction/Opcode type: Load, Store, Branch .... */
+>          __u8    itype;
 
-Signed-off-by: Asmaa Mnebhi <Asmaa@mellanox.com>
----
- drivers/gpio/Kconfig       |   7 +
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-mlxbf2.c | 335 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 343 insertions(+)
- create mode 100644 drivers/gpio/gpio-mlxbf2.c
+At the risk of bike-shedding (in an RFC, no less), "itype" doesn't convey enough meaning to me.  "inst_type"?  I see in 03/11, you use "perf_inst_type".
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b8013cf..6234ccc 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1399,6 +1399,13 @@ config GPIO_MLXBF
- 	help
- 	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
- 
-+config GPIO_MLXBF2
-+	tristate "Mellanox BlueField 2 SoC GPIO"
-+	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || (64BIT && COMPILE_TEST)
-+	select GPIO_GENERIC
-+	help
-+	  Say Y here if you want GPIO support on Mellanox BlueField 2 SoC.
-+
- config GPIO_ML_IOH
- 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 0b57126..b2cfc21 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -93,6 +93,7 @@ obj-$(CONFIG_GPIO_MENZ127)		+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)		+= gpio-merrifield.o
- obj-$(CONFIG_GPIO_ML_IOH)		+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MLXBF)		+= gpio-mlxbf.o
-+obj-$(CONFIG_GPIO_MLXBF2)		+= gpio-mlxbf2.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)		+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)		+= gpio-mockup.o
- obj-$(CONFIG_GPIO_MOXTET)		+= gpio-moxtet.o
-diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-new file mode 100644
-index 0000000..7b70850
---- /dev/null
-+++ b/drivers/gpio/gpio-mlxbf2.c
-@@ -0,0 +1,335 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/acpi.h>
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/resource.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+#include <linux/version.h>
-+
-+/*
-+ * There are 3 YU GPIO blocks:
-+ * gpio[0]: HOST_GPIO0->HOST_GPIO31
-+ * gpio[1]: HOST_GPIO32->HOST_GPIO63
-+ * gpio[2]: HOST_GPIO64->HOST_GPIO69
-+ */
-+#define MLXBF2_GPIO_MAX_PINS_PER_BLOCK 32
-+
-+/*
-+ * arm_gpio_lock register:
-+ * bit[31]	lock status: active if set
-+ * bit[15:0]	set lock
-+ * The lock is enabled only if 0xd42f is written to this field
-+ */
-+#define YU_ARM_GPIO_LOCK_ADDR		0x2801088
-+#define YU_ARM_GPIO_LOCK_SIZE		0x8
-+#define YU_LOCK_ACTIVE_BIT(val)		(val >> 31)
-+#define YU_ARM_GPIO_LOCK_ACQUIRE	0xd42f
-+#define YU_ARM_GPIO_LOCK_RELEASE	0x0
-+
-+/*
-+ * gpio[x] block registers and their offset
-+ */
-+#define YU_GPIO_DATAIN			0x04
-+#define YU_GPIO_MODE1			0x08
-+#define YU_GPIO_MODE0			0x0c
-+#define YU_GPIO_DATASET			0x14
-+#define YU_GPIO_DATACLEAR		0x18
-+#define YU_GPIO_MODE1_CLEAR		0x50
-+#define YU_GPIO_MODE0_SET		0x54
-+#define YU_GPIO_MODE0_CLEAR		0x58
-+
-+#ifdef CONFIG_PM
-+struct mlxbf2_gpio_context_save_regs {
-+	u32 gpio_mode0;
-+	u32 gpio_mode1;
-+};
-+#endif
-+
-+/* BlueField-2 gpio block context structure. */
-+struct mlxbf2_gpio_context {
-+	struct gpio_chip gc;
-+
-+	/* YU GPIO blocks address */
-+	void __iomem *gpio_io;
-+
-+#ifdef CONFIG_PM
-+	struct mlxbf2_gpio_context_save_regs *csave_regs;
-+#endif
-+};
-+
-+/* BlueField-2 gpio shared structure. */
-+struct mlxbf2_gpio_param {
-+	void __iomem *io;
-+	struct resource *res;
-+	struct mutex *lock;
-+};
-+
-+static struct resource yu_arm_gpio_lock_res = {
-+	.start = YU_ARM_GPIO_LOCK_ADDR,
-+	.end   = YU_ARM_GPIO_LOCK_ADDR + YU_ARM_GPIO_LOCK_SIZE - 1,
-+	.name  = "YU_ARM_GPIO_LOCK",
-+};
-+
-+static DEFINE_MUTEX(yu_arm_gpio_lock_mutex);
-+
-+static struct mlxbf2_gpio_param yu_arm_gpio_lock_param = {
-+	.res = &yu_arm_gpio_lock_res,
-+	.lock = &yu_arm_gpio_lock_mutex,
-+};
-+
-+/* Request memory region and map yu_arm_gpio_lock resource */
-+static int mlxbf2_gpio_get_lock_res(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	resource_size_t size;
-+	int ret = 0;
-+
-+	mutex_lock(yu_arm_gpio_lock_param.lock);
-+
-+	/* Check if the memory map already exists */
-+	if (yu_arm_gpio_lock_param.io)
-+		goto exit;
-+
-+	res = yu_arm_gpio_lock_param.res;
-+	size = resource_size(res);
-+
-+	if (!devm_request_mem_region(dev, res->start, size, res->name)) {
-+		ret = -EFAULT;
-+		goto exit;
-+	}
-+
-+	yu_arm_gpio_lock_param.io = devm_ioremap(dev, res->start, size);
-+	if (IS_ERR(yu_arm_gpio_lock_param.io))
-+		ret = PTR_ERR(yu_arm_gpio_lock_param.io);
-+
-+exit:
-+	mutex_unlock(yu_arm_gpio_lock_param.lock);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Acquire the YU arm_gpio_lock to be able to change the direction
-+ * mode. If the lock_active bit is already set, return an error.
-+ */
-+static int mlxbf2_gpio_lock_acquire(struct mlxbf2_gpio_context *gs)
-+{
-+	u32 arm_gpio_lock_val;
-+
-+	spin_lock(&gs->gc.bgpio_lock);
-+	mutex_lock(yu_arm_gpio_lock_param.lock);
-+
-+	arm_gpio_lock_val = readl(yu_arm_gpio_lock_param.io);
-+
-+	/*
-+	 * When lock active bit[31] is set, ModeX is write enabled
-+	 */
-+	if (YU_LOCK_ACTIVE_BIT(arm_gpio_lock_val)) {
-+		mutex_unlock(yu_arm_gpio_lock_param.lock);
-+		spin_unlock(&gs->gc.bgpio_lock);
-+		return -EINVAL;
-+	}
-+
-+	writel(YU_ARM_GPIO_LOCK_ACQUIRE, yu_arm_gpio_lock_param.io);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Release the YU arm_gpio_lock after changing the direction mode.
-+ */
-+static void mlxbf2_gpio_lock_release(struct mlxbf2_gpio_context *gs)
-+{
-+	writel(YU_ARM_GPIO_LOCK_RELEASE, yu_arm_gpio_lock_param.io);
-+	mutex_unlock(yu_arm_gpio_lock_param.lock);
-+	spin_unlock(&gs->gc.bgpio_lock);
-+}
-+
-+/*
-+ * mode0 and mode1 are both locked by the gpio_lock field.
-+ *
-+ * Together, mode0 and mode1 define the gpio Mode dependeing also
-+ * on Reg_DataOut.
-+ *
-+ * {mode1,mode0}:{Reg_DataOut=0,Reg_DataOut=1}->{DataOut=0,DataOut=1}
-+ *
-+ * {0,0}:Reg_DataOut{0,1}->{Z,Z} Input PAD
-+ * {0,1}:Reg_DataOut{0,1}->{0,1} Full drive Output PAD
-+ * {1,0}:Reg_DataOut{0,1}->{0,Z} 0-set PAD to low, 1-float
-+ * {1,1}:Reg_DataOut{0,1}->{Z,1} 0-float, 1-set PAD to high
-+ */
-+
-+/*
-+ * Set input direction:
-+ * {mode1,mode0} = {0,0}
-+ */
-+static int mlxbf2_gpio_direction_input(struct gpio_chip *chip,
-+				       unsigned int offset)
-+{
-+	struct mlxbf2_gpio_context *gs = gpiochip_get_data(chip);
-+	int ret;
-+
-+	/*
-+	 * Although the arm_gpio_lock was set in the probe function, check again
-+	 * if it is still enabled to be able to write to the ModeX registers.
-+	 */
-+	ret = mlxbf2_gpio_lock_acquire(gs);
-+	if (ret < 0)
-+		return ret;
-+
-+	writel(BIT(offset), gs->gpio_io + YU_GPIO_MODE0_CLEAR);
-+	writel(BIT(offset), gs->gpio_io + YU_GPIO_MODE1_CLEAR);
-+
-+	mlxbf2_gpio_lock_release(gs);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Set output direction:
-+ * {mode1,mode0} = {0,1}
-+ */
-+static int mlxbf2_gpio_direction_output(struct gpio_chip *chip,
-+					unsigned int offset,
-+					int value)
-+{
-+	struct mlxbf2_gpio_context *gs = gpiochip_get_data(chip);
-+	int ret = 0;
-+
-+	/*
-+	 * Although the arm_gpio_lock was set in the probe function,
-+	 * check again it is still enabled to be able to write to the
-+	 * ModeX registers.
-+	 */
-+	ret = mlxbf2_gpio_lock_acquire(gs);
-+	if (ret < 0)
-+		return ret;
-+
-+	writel(BIT(offset), gs->gpio_io + YU_GPIO_MODE1_CLEAR);
-+	writel(BIT(offset), gs->gpio_io + YU_GPIO_MODE0_SET);
-+
-+	mlxbf2_gpio_lock_release(gs);
-+
-+	return ret;
-+}
-+
-+/* BlueField-2 GPIO driver initialization routine. */
-+static int
-+mlxbf2_gpio_probe(struct platform_device *pdev)
-+{
-+	struct mlxbf2_gpio_context *gs;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_chip *gc;
-+	struct resource *res;
-+	unsigned int npins;
-+	int ret;
-+
-+	gs = devm_kzalloc(dev, sizeof(*gs), GFP_KERNEL);
-+	if (!gs)
-+		return -ENOMEM;
-+
-+	/* YU GPIO block address */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -ENODEV;
-+
-+	gs->gpio_io = devm_ioremap(dev, res->start, resource_size(res));
-+	if (!gs->gpio_io)
-+		return -ENOMEM;
-+
-+	ret = mlxbf2_gpio_get_lock_res(pdev);
-+	if (ret) {
-+		dev_err(dev, "Failed to get yu_arm_gpio_lock resource\n");
-+		return ret;
-+	}
-+
-+	if (device_property_read_u32(dev, "npins", &npins))
-+		npins = MLXBF2_GPIO_MAX_PINS_PER_BLOCK;
-+
-+	gc = &gs->gc;
-+
-+	ret = bgpio_init(gc, dev, 4,
-+			gs->gpio_io + YU_GPIO_DATAIN,
-+			gs->gpio_io + YU_GPIO_DATASET,
-+			gs->gpio_io + YU_GPIO_DATACLEAR,
-+			NULL,
-+			NULL,
-+			0);
-+
-+	gc->direction_input = mlxbf2_gpio_direction_input;
-+	gc->direction_output = mlxbf2_gpio_direction_output;
-+	gc->ngpio = npins;
-+	gc->owner = THIS_MODULE;
-+
-+	platform_set_drvdata(pdev, gs);
-+
-+	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
-+	if (ret) {
-+		dev_err(dev, "Failed adding memory mapped gpiochip\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int mlxbf2_gpio_suspend(struct platform_device *pdev,
-+				pm_message_t state)
-+{
-+	struct mlxbf2_gpio_context *gs = platform_get_drvdata(pdev);
-+
-+	gs->csave_regs->gpio_mode0 = readl(gs->gpio_io +
-+		YU_GPIO_MODE0);
-+	gs->csave_regs->gpio_mode1 = readl(gs->gpio_io +
-+		YU_GPIO_MODE1);
-+
-+	return 0;
-+}
-+
-+static int mlxbf2_gpio_resume(struct platform_device *pdev)
-+{
-+	struct mlxbf2_gpio_context *gs = platform_get_drvdata(pdev);
-+
-+	writel(gs->csave_regs->gpio_mode0, gs->gpio_io +
-+		YU_GPIO_MODE0);
-+	writel(gs->csave_regs->gpio_mode1, gs->gpio_io +
-+		YU_GPIO_MODE1);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct acpi_device_id mlxbf2_gpio_acpi_match[] = {
-+	{ "MLNXBF22", 0 },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(acpi, mlxbf2_gpio_acpi_match);
-+
-+static struct platform_driver mlxbf2_gpio_driver = {
-+	.driver = {
-+		.name = "mlxbf2_gpio",
-+		.acpi_match_table = ACPI_PTR(mlxbf2_gpio_acpi_match),
-+	},
-+	.probe    = mlxbf2_gpio_probe,
-+#ifdef CONFIG_PM
-+	.suspend  = mlxbf2_gpio_suspend,
-+	.resume   = mlxbf2_gpio_resume,
-+#endif
-+};
-+
-+module_platform_driver(mlxbf2_gpio_driver);
-+
-+MODULE_DESCRIPTION("Mellanox BlueField-2 GPIO Driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL v2");
--- 
-2.1.2
+>          /* Instruction Cache source */
+>          __u8    icache;
 
+Possibly same here, and you use "perf_inst_cache" in 03/11.
+
+>          /* Instruction suffered hazard in pipeline stage */
+>          __u8    hazard_stage;
+>          /* Hazard reason */
+>          __u8    hazard_reason;
+>          /* Instruction suffered stall in pipeline stage */
+>          __u8    stall_stage;
+>          /* Stall reason */
+>          __u8    stall_reason;
+>          __u16   pad;
+>   };
+> 
+> ... which can be read by user from mmap() ring buffer. With this
+> approach, sample perf report in hazard mode looks like (On IBM
+> PowerPC):
+> 
+>   # ./perf record --hazard ./ebizzy
+>   # ./perf report --hazard
+>   Overhead  Symbol          Shared  Instruction Type  Hazard Stage   Hazard Reason         Stall Stage   Stall Reason  ICache access
+>     36.58%  [.] thread_run  ebizzy  Load              LSU            Mispredict            LSU           Load fin      L1 hit
+>      9.46%  [.] thread_run  ebizzy  Load              LSU            Mispredict            LSU           Dcache_miss   L1 hit
+>      1.76%  [.] thread_run  ebizzy  Fixed point       -              -                     -             -             L1 hit
+>      1.31%  [.] thread_run  ebizzy  Load              LSU            ERAT Miss             LSU           Load fin      L1 hit
+>      1.27%  [.] thread_run  ebizzy  Load              LSU            Mispredict            -             -             L1 hit
+>      1.16%  [.] thread_run  ebizzy  Fixed point       -              -                     FXU           Fixed cycle   L1 hit
+>      0.50%  [.] thread_run  ebizzy  Fixed point       ISU            Source Unavailable    FXU           Fixed cycle   L1 hit
+>      0.30%  [.] thread_run  ebizzy  Load              LSU            LMQ Full, DERAT Miss  LSU           Load fin      L1 hit
+>      0.24%  [.] thread_run  ebizzy  Load              LSU            ERAT Miss             -             -             L1 hit
+>      0.08%  [.] thread_run  ebizzy  -                 -              -                     BRU           Fixed cycle   L1 hit
+>      0.05%  [.] thread_run  ebizzy  Branch            -              -                     BRU           Fixed cycle   L1 hit
+>      0.04%  [.] thread_run  ebizzy  Fixed point       ISU            Source Unavailable    -             -             L1 hit
+
+How are these to be interpreted?  This is great information, but is it possible to make it more readable for non-experts?  If each of these map 1:1 with hardware events, should you emit the name of the event here, so that can be used to look up further information?  For example, does the first line map to PM_CMPLU_STALL_LSU_FIN?
+What was "Mispredict[ed]"? (Is it different from a branch misprediction?) And how does this relate to "L1 hit"?
+Can we emit "Load finish" instead of "Load fin" for easier reading?  03/11 also has "Marked fin before NTC".
+Nit: why does "Dcache_miss" have an underscore and none of the others?
+
+> Also perf annotate with hazard data:
+
+>          │    static int
+>          │    compare(const void *p1, const void *p2)
+>          │    {
+>    33.23 │      std    r31,-8(r1)
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>          │       {haz_stage: LSU, haz_reason: Load Hit Store, stall_stage: LSU, stall_reason: -, icache: L3 hit}
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: -, stall_reason: -, icache: L1 hit}
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>     0.84 │      stdu   r1,-64(r1)
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: -, stall_reason: -, icache: L1 hit}
+>     0.24 │      mr     r31,r1
+>          │       {haz_stage: -, haz_reason: -, stall_stage: -, stall_reason: -, icache: L1 hit}
+>    21.18 │      std    r3,32(r31)
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>          │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+> 
+> 
+> Patches:
+>  - Patch #1 is a simple cleanup patch
+>  - Patch #2, #3, #4 implements generic and arch specific kernel
+>    infrastructure
+>  - Patch #5 enables perf record and script with hazard mode
+>  - Patch #6, #7, #8 enables perf report with hazard mode
+>  - Patch #9, #10, #11 enables perf annotate with hazard mode
+> 
+> Note:
+>  - This series is based on the talk by Madhavan in LPC 2018[4]. This is
+>    just an early RFC to get comments about the approach and not intended
+>    to be merged yet.
+>  - I've prepared the series base on v5.6-rc3. But it depends on generic
+>    perf annotate fixes [5][6] which are already merged by Arnaldo in
+>    perf/urgent and perf/core.
+> 
+> [1]: Book III, Section 9.4.10:
+>      https://openpowerfoundation.org/?resource_lib=power-isa-version-3-0 
+> [2]: https://wiki.raptorcs.com/w/images/6/6b/POWER9_PMU_UG_v12_28NOV2018_pub.pdf#G9.1106986
+
+This document is also available from the "IBM Portal for OpenPOWER" under the "All IBM Material for OpenPOWER" https://www-355.ibm.com/systems/power/openpower/tgcmDocumentRepository.xhtml?aliasId=OpenPOWER, under each of the individual modules.  (Well hidden, it might be said, and not a simple link like you have here.)
+
+> [3]: https://www.amd.com/system/files/TechDocs/24593.pdf#G19.1089550
+> [4]: https://linuxplumbersconf.org/event/2/contributions/76/
+> [5]: http://lore.kernel.org/r/20200204045233.474937-1-ravi.bangoria@linux.ibm.com
+> [6]: http://lore.kernel.org/r/20200213064306.160480-1-ravi.bangoria@linux.ibm.com
+
+PC
