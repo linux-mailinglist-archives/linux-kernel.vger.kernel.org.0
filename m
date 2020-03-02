@@ -2,399 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF4AF175CD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 367FF175CDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCBOVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 09:21:22 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43321 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbgCBOVV (ORCPT
+        id S1727250AbgCBOXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 09:23:31 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:60970 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726969AbgCBOX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:21:21 -0500
-Received: by mail-ot1-f68.google.com with SMTP id j5so8935920otn.10
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 06:21:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=42gWKv1rkhmMzg4bqOpxUUGQ9UCFpi1Ui3MOzmb5OYQ=;
-        b=NREOJWWXFC84U1eR6WxIhwa8aMpgKEZe6g0rSTXcTS9qi2T1ZH9oE66qb864DbQyzE
-         Mg/ympkW6Y4/g/27vf7vYpFFXd+ImCN96HkpoJuBADbxhXf/DJow5/kMqw9KhLGZ2X2y
-         A9kg463iOYaGyMcXqV5l5n3Bax5OC8HdjkRLDSiJ+ZrT4korFZCpDmKZlZ+JUB4Iu07u
-         YWM5Omo/3T3BT7NhS1GjYO2o39fiQEdtOG/mmJyRPiRVHMxzVdvfvnl/LC+hOFw2t30G
-         4lzjI/FalBUlKK/dp6SqexaHL8ed5Lqr9CgeKu27kTA3V3ahkt8wHuJ8lz786bMl2jjm
-         T1sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=42gWKv1rkhmMzg4bqOpxUUGQ9UCFpi1Ui3MOzmb5OYQ=;
-        b=j6G1XHUwFMMyR+NP9Cbnxydx+LZIUpmdwVvpnHnOKJjSDHwfe9eOO/BZilwwoesijP
-         ao4ElVfk42qxiZJY/3JDLSpDuVvaHS4H/mv/QEpW53lStrzC3bNZ2LVR+qhivph4IjLP
-         7iWlO53GG2JLmD4L6IwTxtDPeqZzIMzD+96C1dakg+DqZlhi/a5MNOb2QgKrmxA8t+WY
-         mfLbHRLrIcrEWKaBiETlkiHmnsw34Zgi6Qb90vYydMOTGBeVl2L1xFY3f8+g40wMzuB8
-         5PnPGjJuIdYxaB+H7ozSZFm9MzJsDlo/NhjoapqUrIbKtxtiNusZbYopDwOnLQmZffzh
-         /FVg==
-X-Gm-Message-State: APjAAAVcR79Bhv5VGuLUVO1z14Su3rz2xZpmu5gfZDr8b3uulyov04BR
-        ViagnOTddsraz1HAC5FF57cEXgS1qX/zZQJ/1IqoNQ==
-X-Google-Smtp-Source: APXvYqxgARlH1Gwb+QumB5wY2plkxXrZfd0teC0HTRpFXaOJspIIuO+nTylCUSHv3hWqax0YfcAYJNVkL1na9cMsfxE=
-X-Received: by 2002:a9d:906:: with SMTP id 6mr10404522otp.251.1583158878702;
- Mon, 02 Mar 2020 06:21:18 -0800 (PST)
-MIME-Version: 1.0
-References: <CANpmjNMOmirPRKbjX9=V+eZD-YsEvfhUU8r6EDefkOJTBLDYNQ@mail.gmail.com>
- <Pine.LNX.4.44L0.2002281424410.1599-100000@iolanthe.rowland.org> <CANpmjNOzh2S1fvKa+5agFoE+0ZUVUe=K2hgw3i_hj6F48Ga0Gw@mail.gmail.com>
-In-Reply-To: <CANpmjNOzh2S1fvKa+5agFoE+0ZUVUe=K2hgw3i_hj6F48Ga0Gw@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 2 Mar 2020 15:21:07 +0100
-Message-ID: <CANpmjNPoz8=gTodu1wbUa9bt1k4eskuvmpVLy748s0Q6+9c4xA@mail.gmail.com>
-Subject: Re: [PATCH] tools/memory-model/Documentation: Fix "conflict" definition
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
+        Mon, 2 Mar 2020 09:23:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583159008;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=qzHi0fYePwF5PDGy1PMUYXlkuJi/8ZgjqOT16BelPC4=;
+        b=aApkJ8XrgRU7fVPkhQmugZTxSXCvfq6321onF46D509UlnO/rMxnFLZ2sOL/WlHyIdMH+9
+        dk2iSo1+USAySIS6MDKYCauIQoej4uzq4TLbu5pg8yiOU9IEpm59yaVHcLR6LeSQMZAH2j
+        bYfNWE48IlzvJv0nvYEg3ZIJ17VgNsA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-416-EoTnE-xIPnOj9K6Jmttt1w-1; Mon, 02 Mar 2020 09:23:26 -0500
+X-MC-Unique: EoTnE-xIPnOj9K6Jmttt1w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 22EDC801E76;
+        Mon,  2 Mar 2020 14:23:24 +0000 (UTC)
+Received: from [10.36.116.114] (ovpn-116-114.ams2.redhat.com [10.36.116.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2647661069;
+        Mon,  2 Mar 2020 14:23:17 +0000 (UTC)
+Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
+To:     "Huang, Ying" <ying.huang@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+References: <20200228033819.3857058-1-ying.huang@intel.com>
+ <20200228034248.GE29971@bombadil.infradead.org>
+ <87a7538977.fsf@yhuang-dev.intel.com>
+ <edae2736-3239-0bdc-499c-560fc234c974@redhat.com>
+ <871rqf850z.fsf@yhuang-dev.intel.com> <20200228095048.GK3771@dhcp22.suse.cz>
+ <87d09u7sm2.fsf@yhuang-dev.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <8005e5a1-e2f2-1e57-ccb4-0cb9371b080d@redhat.com>
+Date:   Mon, 2 Mar 2020 15:23:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <87d09u7sm2.fsf@yhuang-dev.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Feb 2020 at 21:31, Marco Elver <elver@google.com> wrote:
->
-> On Fri, 28 Feb 2020 at 21:20, Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > On Fri, 28 Feb 2020, Marco Elver wrote:
-> >
-> > > On Fri, 28 Feb 2020 at 19:54, Marco Elver <elver@google.com> wrote:
-> > > >
-> > > > On Fri, 28 Feb 2020 at 18:24, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > > >
-> > > > > On Fri, 28 Feb 2020, Marco Elver wrote:
-> > > > >
-> > > > > > For language-level memory consistency models that are adaptations of
-> > > > > > data-race-free, the definition of "data race" can be summarized as
-> > > > > > "concurrent conflicting accesses, where at least one is non-sync/plain".
-> > > > > >
-> > > > > > The definition of "conflict" should not include the type of access nor
-> > > > > > whether the accesses are concurrent or not, which this patch addresses
-> > > > > > for explanation.txt.
-> > > > >
-> > > > > Why shouldn't it?  Can you provide any references to justify this
-> > > > > assertion?
-> > > >
-> > > > The definition of "conflict" as we know it and is cited by various
-> > > > papers on memory consistency models appeared in [1]: "Two accesses to
-> > > > the same variable conflict if at least one is a write; two operations
-> > > > conflict if they execute conflicting accesses."
-> > > >
-> > > > The LKMM as well as C11 are adaptations of data-race-free, which are
-> > > > based on the work in [2]. Necessarily, we need both conflicting data
-> > > > operations (plain) and synchronization operations (marked). C11's
-> > > > definition is based on [3], which defines a "data race" as:  "Two
-> > > > memory operations conflict if they access the same memory location,
-> > > > and at least one of them is a store, atomic store, or atomic
-> > > > read-modify-write operation. In a sequentially consistent execution,
-> > > > two memory operations from different threads form a type 1 data race
-> > > > if they conflict, at least one of them is a data operation, and they
-> > > > are adjacent in <T (i.e., they may be executed concurrently)."
-> > > >
-> > > > [1] D. Shasha, M. Snir, "Efficient and Correct Execution of Parallel
-> > > > Programs that Share Memory", 1988.
-> > > >       URL: http://snir.cs.illinois.edu/listed/J21.pdf
-> > > >
-> > > > [2] S. Adve, "Designing Memory Consistency Models for Shared-Memory
-> > > > Multiprocessors", 1993.
-> > > >       URL: http://sadve.cs.illinois.edu/Publications/thesis.pdf
-> > > >
-> > > > [3] H.-J. Boehm, S. Adve, "Foundations of the C++ Concurrency Memory
-> > > > Model", 2008.
-> > > >      URL: https://www.hpl.hp.com/techreports/2008/HPL-2008-56.pdf
-> >
-> > Okay, very good.  Please include at least one of these citations in the
-> > description of the next version of your patch.
-> >
-> > > > > Also, note two things: (1) The existing text does not include
-> > > > > concurrency in the definition of "conflict".  (2) Your new text does
-> > > > > include the type of access in the definition (you say that at least one
-> > > > > of the accesses must be a write).
-> > > >
-> > > > Yes, "conflict" is defined in terms of "access to the same memory
-> > > > location and at least one performs a write" (can be any operation that
-> > > > performs a write, including RMWs etc.). It should not include
-> > > > concurrency. We can have conflicting operations that are not
-> > > > concurrent, but these will never be data races.
-> > > >
-> > > > > > The definition of "data race" remains unchanged, but the informal
-> > > > > > definition for "conflict" is restored to what can be found in the
-> > > > > > literature.
-> > > > >
-> > > > > It does not remain unchanged.  You removed the portion that talks about
-> > > > > accesses executing on different CPUs or threads.  Without that
-> > > > > restriction, you raise the nonsensical possibility that a single thread
-> > > > > may by definition have a data race with itself (since modern CPUs use
-> > > > > multiple-instruction dispatch, in which several instructions can
-> > > > > execute at the same time).
-> > > >
-> > > > Andrea raised the point that "occur on different CPUs (or in different
-> > > > threads on the same CPU)" can be interpreted as "in different threads
-> > > > [even if they are serialized via some other synchronization]".
-> > > >
-> > > > Arguably, no sane memory model or abstract machine model permits
-> > > > observable intra-thread concurrency of instructions in the same
-> > > > thread. At the abstract machine level, whether or not there is true
-> > > > parallelism shouldn't be something that the model concerns itself
-> > > > with. Simply talking about "concurrency" is unambiguous, unless the
-> > > > model says intra-thread concurrency is a thing.
-> > > >
-> > > > I can add it back if it helps make this clearer, but we need to mention both.
-> >
-> > Then by all means, let's mention both.
-> >
-> > > > > > Signed-by: Marco Elver <elver@google.com>
-> > > > > > ---
-> > > > > >  tools/memory-model/Documentation/explanation.txt | 15 ++++++---------
-> > > > > >  1 file changed, 6 insertions(+), 9 deletions(-)
-> > > > > >
-> > > > > > diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-> > > > > > index e91a2eb19592a..11cf89b5b85d9 100644
-> > > > > > --- a/tools/memory-model/Documentation/explanation.txt
-> > > > > > +++ b/tools/memory-model/Documentation/explanation.txt
-> > > > > > @@ -1986,18 +1986,15 @@ violates the compiler's assumptions, which would render the ultimate
-> > > > > >  outcome undefined.
-> > > > > >
-> > > > > >  In technical terms, the compiler is allowed to assume that when the
-> > > > > > -program executes, there will not be any data races.  A "data race"
-> > > > > > -occurs when two conflicting memory accesses execute concurrently;
-> > > > > > -two memory accesses "conflict" if:
-> > > > > > +program executes, there will not be any data races. A "data race"
-> > > > >
-> > > > > Unnecessary (and inconsistent with the rest of the document) whitespace
-> > > > > change.
-> > > >
-> > > > Reverted.
-> > > >
-> > > > > > +occurs if:
-> > > > > >
-> > > > > > -     they access the same location,
-> > > > > > +     two concurrent memory accesses "conflict";
-> > > > > >
-> > > > > > -     they occur on different CPUs (or in different threads on the
-> > > > > > -     same CPU),
-> > > > > > +     and at least one of the accesses is a plain access;
-> > > > > >
-> > > > > > -     at least one of them is a plain access,
-> > > > > > -
-> > > > > > -     and at least one of them is a store.
-> > > > > > +     where two memory accesses "conflict" if they access the same
-> > > > > > +     memory location, and at least one performs a write;
-> > > > > >
-> > > > > >  The LKMM tries to determine whether a program contains two conflicting
-> > > > > >  accesses which may execute concurrently; if it does then the LKMM says
-> > > > >
-> > > > > To tell the truth, the only major change I can see here (apart from the
-> > > > > "differenct CPUs" restriction) is that you want to remove the "at least
-> > > > > one is plain" part from the definition of "conflict" and instead make
-> > > > > it a separate requirement for a data race.  That's fine with me in
-> > > > > principle, but there ought to be an easier way of doing it.
-> > > >
-> > > > Yes pretty much. The model needs to be able to talk about "conflicting
-> > > > synchronization accesses" where all accesses are marked. Right now the
-> > > > definition of conflict doesn't permit that.
-> > > >
-> > > > > Furthermore, this section of explanation.txt goes on to use the words
-> > > > > "conflict" and "conflicting" in a way that your patch doesn't address.
-> > > > > For example, shortly after this spot it says "Determining whether two
-> > > > > accesses conflict is easy"; you should change it to say "Determining
-> > > > > whether two accesses conflict and at least one of them is plain is
-> > > > > easy" -- but this looks pretty ungainly.  A better approach might be to
-> > > > > introduce a new term, define it to mean "conflicting accesses at least
-> > > > > one of which is plain", and then use it instead throughout.
-> > > >
-> > > > The definition of "conflict" as used in the later text is synonymous
-> > > > with "data race".
-> > >
-> > > Correction: it's "data race" minus "concurrent" which makes things
-> > > more difficult. In which case, fixing this becomes more difficult.
-> > >
-> > > > > Alternatively, you could simply leave the text as it stands and just
-> > > > > add a parenthetical disclaimer pointing out that in the CS literature,
-> > > > > the term "conflict" is used even when both accesses are marked, so the
-> > > > > usage here is somewhat non-standard.
-> > > >
-> > > > The definition of what a "conflict" is, is decades old [1, 2]. I
-> > > > merely thought we should avoid changing fundamental definitions that
-> > > > have not changed in decades, to avoid confusing people. The literature
-> > > > on memory models is confusing enough, so fundamental definitions that
-> > > > are "common ground" shouldn't be changed if it can be avoided. I think
-> > > > here it is pretty trivial to avoid.
-> >
-> > All right.  Here is my suggestion for a patch that does more or less
-> > what you want.  Fiddle around with it until you like the end result and
-> > let's see what you get.
->
-> Great, thank you!  I'll go through it and send v2 soon (won't get to
-> it today though).
+On 02.03.20 15:12, Huang, Ying wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
+> 
+>> On Fri 28-02-20 16:55:40, Huang, Ying wrote:
+>>> David Hildenbrand <david@redhat.com> writes:
+>> [...]
+>>>> E.g., free page reporting in QEMU wants to use MADV_FREE. The guest will
+>>>> report currently free pages to the hypervisor, which will MADV_FREE the
+>>>> reported memory. As long as there is no memory pressure, there is no
+>>>> need to actually free the pages. Once the guest reuses such a page, it
+>>>> could happen that there is still the old page and pulling in in a fresh
+>>>> (zeroed) page can be avoided.
+>>>>
+>>>> AFAIKs, after your change, we would get more pages discarded from our
+>>>> guest, resulting in more fresh (zeroed) pages having to be pulled in
+>>>> when a guest touches a reported free page again. But OTOH, page
+>>>> migration is speed up (avoiding to migrate these pages).
+>>>
+>>> Let's look at this problem in another perspective.  To migrate the
+>>> MADV_FREE pages of the QEMU process from the node A to the node B, we
+>>> need to free the original pages in the node A, and (maybe) allocate the
+>>> same number of pages in the node B.  So the question becomes
+>>>
+>>> - we may need to allocate some pages in the node B
+>>> - these pages may be accessed by the application or not
+>>> - we should allocate all these pages in advance or allocate them lazily
+>>>   when they are accessed.
+>>>
+>>> We thought the common philosophy in Linux kernel is to allocate lazily.
+>>
+>> The common philosophy is to cache as much as possible.
+> 
+> Yes.  This is another common philosophy.  And MADV_FREE pages is
+> different from caches such as the page caches because it has no valid
+> contents.
 
-v2 here: http://lkml.kernel.org/r/20200302141819.40270-1-elver@google.com
+Side note: It might contain valid content until discarded/zeroed out.
+E.g., an application could use a marker bit (e.g., first bit) to detect
+if the page still contains valid data or not. If the data is still
+marked valid, the content could be reuse immediately. Not sure if there
+is any such application, though :)
 
-Alan: I think this needs your Signed-off-by, since I added you as
-Co-developed-by.
+-- 
+Thanks,
 
-Let me know if this works for you.
+David / dhildenb
 
-Many thanks,
--- Marco
-
-> Thanks,
-> -- Marco
->
-> > Alan
-> >
-> >
-> > Index: usb-devel/tools/memory-model/Documentation/explanation.txt
-> > ===================================================================
-> > --- usb-devel.orig/tools/memory-model/Documentation/explanation.txt
-> > +++ usb-devel/tools/memory-model/Documentation/explanation.txt
-> > @@ -1987,28 +1987,30 @@ outcome undefined.
-> >
-> >  In technical terms, the compiler is allowed to assume that when the
-> >  program executes, there will not be any data races.  A "data race"
-> > -occurs when two conflicting memory accesses execute concurrently;
-> > -two memory accesses "conflict" if:
-> > +occurs when two conflicting memory accesses execute concurrently and
-> > +at least one of them is plain.  Two memory accesses "conflict" if:
-> >
-> >         they access the same location,
-> >
-> >         they occur on different CPUs (or in different threads on the
-> >         same CPU),
-> >
-> > -       at least one of them is a plain access,
-> > -
-> >         and at least one of them is a store.
-> >
-> > -The LKMM tries to determine whether a program contains two conflicting
-> > -accesses which may execute concurrently; if it does then the LKMM says
-> > -there is a potential data race and makes no predictions about the
-> > -program's outcome.
-> > -
-> > -Determining whether two accesses conflict is easy; you can see that
-> > -all the concepts involved in the definition above are already part of
-> > -the memory model.  The hard part is telling whether they may execute
-> > -concurrently.  The LKMM takes a conservative attitude, assuming that
-> > -accesses may be concurrent unless it can prove they cannot.
-> > +We'll say that two accesses are "race candidates" if they conflict and
-> > +at least one of them is plain.  Whether or not two candidates actually
-> > +do race in a given execution then depends on whether they are
-> > +concurrent.  The LKMM tries to determine whether a program contains
-> > +two race candidates which may execute concurrently; if it does then
-> > +the LKMM says there is a potential data race and makes no predictions
-> > +about the program's outcome.
-> > +
-> > +Determining whether two accesses are race candidates is easy; you can
-> > +see that all the concepts involved in the definition above are already
-> > +part of the memory model.  The hard part is telling whether they may
-> > +execute concurrently.  The LKMM takes a conservative attitude,
-> > +assuming that accesses may be concurrent unless it can prove they
-> > +are not.
-> >
-> >  If two memory accesses aren't concurrent then one must execute before
-> >  the other.  Therefore the LKMM decides two accesses aren't concurrent
-> > @@ -2171,8 +2173,8 @@ again, now using plain accesses for buf:
-> >         }
-> >
-> >  This program does not contain a data race.  Although the U and V
-> > -accesses conflict, the LKMM can prove they are not concurrent as
-> > -follows:
-> > +accesses are race candidates, the LKMM can prove they are not
-> > +concurrent as follows:
-> >
-> >         The smp_wmb() fence in P0 is both a compiler barrier and a
-> >         cumul-fence.  It guarantees that no matter what hash of
-> > @@ -2326,12 +2328,11 @@ could now perform the load of x before t
-> >  a control dependency but no address dependency at the machine level).
-> >
-> >  Finally, it turns out there is a situation in which a plain write does
-> > -not need to be w-post-bounded: when it is separated from the
-> > -conflicting access by a fence.  At first glance this may seem
-> > -impossible.  After all, to be conflicting the second access has to be
-> > -on a different CPU from the first, and fences don't link events on
-> > -different CPUs.  Well, normal fences don't -- but rcu-fence can!
-> > -Here's an example:
-> > +not need to be w-post-bounded: when it is separated from the other
-> > +race-candidate access by a fence.  At first glance this may seem
-> > +impossible.  After all, to be race candidates the two accesses must
-> > +be on different CPUs, and fences don't link events on different CPUs.
-> > +Well, normal fences don't -- but rcu-fence can!  Here's an example:
-> >
-> >         int x, y;
-> >
-> > @@ -2367,7 +2368,7 @@ concurrent and there is no race, even th
-> >  isn't w-post-bounded by any marked accesses.
-> >
-> >  Putting all this material together yields the following picture.  For
-> > -two conflicting stores W and W', where W ->co W', the LKMM says the
-> > +race-candidate stores W and W', where W ->co W', the LKMM says the
-> >  stores don't race if W can be linked to W' by a
-> >
-> >         w-post-bounded ; vis ; w-pre-bounded
-> > @@ -2380,8 +2381,8 @@ sequence, and if W' is plain then they a
-> >
-> >         w-post-bounded ; vis ; r-pre-bounded
-> >
-> > -sequence.  For a conflicting load R and store W, the LKMM says the two
-> > -accesses don't race if R can be linked to W by an
-> > +sequence.  For race-candidate load R and store W, the LKMM says the
-> > +two accesses don't race if R can be linked to W by an
-> >
-> >         r-post-bounded ; xb* ; w-pre-bounded
-> >
-> > @@ -2413,20 +2414,20 @@ is, the rules governing the memory subsy
-> >  satisfy a load request and its determination of where a store will
-> >  fall in the coherence order):
-> >
-> > -       If R and W conflict and it is possible to link R to W by one
-> > -       of the xb* sequences listed above, then W ->rfe R is not
-> > -       allowed (i.e., a load cannot read from a store that it
-> > +       If R and W are race candidates and it is possible to link R to
-> > +       W by one of the xb* sequences listed above, then W ->rfe R is
-> > +       not allowed (i.e., a load cannot read from a store that it
-> >         executes before, even if one or both is plain).
-> >
-> > -       If W and R conflict and it is possible to link W to R by one
-> > -       of the vis sequences listed above, then R ->fre W is not
-> > -       allowed (i.e., if a store is visible to a load then the load
-> > -       must read from that store or one coherence-after it).
-> > -
-> > -       If W and W' conflict and it is possible to link W to W' by one
-> > -       of the vis sequences listed above, then W' ->co W is not
-> > -       allowed (i.e., if one store is visible to a second then the
-> > -       second must come after the first in the coherence order).
-> > +       If W and R are race candidates and it is possible to link W to
-> > +       R by one of the vis sequences listed above, then R ->fre W is
-> > +       not allowed (i.e., if a store is visible to a load then the
-> > +       load must read from that store or one coherence-after it).
-> > +
-> > +       If W and W' are race candidates and it is possible to link W
-> > +       to W' by one of the vis sequences listed above, then W' ->co W
-> > +       is not allowed (i.e., if one store is visible to a second then
-> > +       the second must come after the first in the coherence order).
-> >
-> >  This is the extent to which the LKMM deals with plain accesses.
-> >  Perhaps it could say more (for example, plain accesses might
-> >
