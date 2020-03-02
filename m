@@ -2,319 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 295E2175EEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA0C175F0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:00:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbgCBP56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:57:58 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46177 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgCBP56 (ORCPT
+        id S1727242AbgCBQAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 11:00:01 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:38722 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbgCBQAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:57:58 -0500
-Received: by mail-ot1-f65.google.com with SMTP id g96so10156336otb.13;
-        Mon, 02 Mar 2020 07:57:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nito/nrZsWtOKekEZGAYljgXMNzrk2/5S3aE/Pp6hpw=;
-        b=TQLDPo0hedRA5ly3wzJN2d18s/slzog7hkmx7qYItkl/maRDpnuKo4J0W3wo+or3FW
-         evEeS6hQ9Q123MkMH/YRvnKefV1Y7CkQPtJ8X987sU9OSqXOiiciSM+fzkY8qMI4h3gd
-         hkAUt2yLG0zBY40MQhjKup6vcc2lpNYEyqJjFncXGzMD/020tEGEAVE14BQ3DOXL+3Fh
-         ivjYXgxCeeb31BkG9I0nLeh8IPJ2IuuABltmj2GGSNt8eRr3R9CgVphM2A3p7xBn2j+C
-         1UD5iyU9DrRSElnh1Lgkb4n6Cu39j0jPHmEAbyYcamSkohju8T9yjmsbOxq5dpFw3DW0
-         b4UA==
-X-Gm-Message-State: APjAAAXjn+kAZeIbZmOuwKJfZevDQKf9wgDQm554a3J5y7BAfE4DC5PF
-        E05vLcKvnyB5QmGK2bAPppGtQrC+jTK86++fpcQ=
-X-Google-Smtp-Source: APXvYqxZfeCMUCmPDo150isft8U19jV/qbujmuP/cdQANvFKK6654BGfmN/KgnrbsmahhA2IQQrudvzS3H3CA0ko0Eg=
-X-Received: by 2002:a05:6830:100e:: with SMTP id a14mr13887882otp.297.1583164677024;
- Mon, 02 Mar 2020 07:57:57 -0800 (PST)
+        Mon, 2 Mar 2020 11:00:00 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j8nTw-0002Lm-9d; Mon, 02 Mar 2020 08:59:48 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j8nTv-0005zV-Cp; Mon, 02 Mar 2020 08:59:48 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+        <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
+        <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+        <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74zmfc9.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Mon, 02 Mar 2020 09:57:36 -0600
+In-Reply-To: <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        (Bernd Edlinger's message of "Mon, 2 Mar 2020 15:43:24 +0000")
+Message-ID: <87k142lpfz.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20200228170210.18252-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200228170210.18252-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Mar 2020 16:57:35 +0100
-Message-ID: <CAMuHMdUn9njDRWZPcSD87YuejmhNvDK3pUqL5kXNX6KA-8Y72g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0-cat874: Add support for
- AISTARVISION MIPI Adapter V2.1
-To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1j8nTv-0005zV-Cp;;;mid=<87k142lpfz.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/lt4on91tMaQ1/pOt4zAqlZlKm4+95UyU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4692]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 406 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.5 (0.6%), b_tie_ro: 1.68 (0.4%), parse: 1.35
+        (0.3%), extract_message_metadata: 15 (3.8%), get_uri_detail_list: 1.57
+        (0.4%), tests_pri_-1000: 22 (5.5%), tests_pri_-950: 1.57 (0.4%),
+        tests_pri_-900: 1.38 (0.3%), tests_pri_-90: 36 (8.8%), check_bayes: 34
+        (8.4%), b_tokenize: 16 (4.0%), b_tok_get_all: 8 (1.9%), b_comp_prob:
+        3.3 (0.8%), b_tok_touch_all: 4.3 (1.1%), b_finish: 0.61 (0.2%),
+        tests_pri_0: 311 (76.6%), check_dkim_signature: 1.08 (0.3%),
+        check_dkim_adsp: 4.3 (1.1%), poll_dns_idle: 0.25 (0.1%), tests_pri_10:
+        3.0 (0.7%), tests_pri_500: 8 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lad,
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
-CC linux-media
-
-On Fri, Feb 28, 2020 at 6:02 PM Lad Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> This patch adds support AISTARVISION MIPI Adapter V2.1 board connected
-> to G2E board. Common file aistarvision-mipi-adapter-2.1.dtsi is created
-> which have the camera endpoint nodes with disabled status and in
-> r8a774c0-ek874-mipi-2.1.dts file VIN/CSI nodes are enabled. By default
-> imx219 endpoint is tied with CSI2.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> I tried this with s/EACCESS/EACCES/.
+>
+> The test case in this patch is not fixed, but strace does not freeze,
+> at least with my setup where it did freeze repeatable.
 
-Thanks for your patch!
+Thanks, That is what I was aiming at.
 
-> Geert/Rob since the imx219 driver is yet to make into mainline
-> but has been merged into media-subsystem I would like to take
-> this patch via media-tree.
+So we have one method we can pursue to fix this in practice.
 
-Usually DTS patches are merged through renesas-devel and arm-soc, not
-through a driver's subsystems tree.  This is done to avoid merge
-conflicts.  I prefer not to deviate from that, unless there is a very
-good reason to do so.
+> That is
+> obviously because it bypasses the cred_guard_mutex.  But all other
+> process that access this file still freeze, and cannot be
+> interrupted except with kill -9.
+>
+> However that smells like a denial of service, that this
+> simple test case which can be executed by guest, creates a /proc/$pid/mem
+> that freezes any process, even root, when it looks at it.
+> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb.
 
-Is there any dependency on the code in the media tree that I'm missing?
-Once DT bindings have been accepted in a subsystem maintainer's tree,
-you can start using them in DTS files.
+Yes.  Your the test case in your patch a variant of the original
+problem.
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the AISTARVISION MIPI Adapter V2.1
-> + *
-> + * Copyright (C) 2020 Renesas Electronics Corp.
-> + */
-> +
-> +/ {
-> +       ov5645_vdddo_1v8: 1p8v {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "camera_vdddo";
-> +               regulator-min-microvolt = <1800000>;
-> +               regulator-max-microvolt = <1800000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       ov5645_vdda_2v8: 2p8v {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "camera_vdda";
-> +               regulator-min-microvolt = <2800000>;
-> +               regulator-max-microvolt = <2800000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       ov5645_vddd_1v5: 1p5v {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "camera_vddd";
-> +               regulator-min-microvolt = <1500000>;
-> +               regulator-max-microvolt = <1500000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       imx219_vana_2v8: 2p8v {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "camera_vana";
-> +               regulator-min-microvolt = <2800000>;
-> +               regulator-max-microvolt = <2800000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       imx219_vdig_1v8: 1p8v {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "camera_vdig";
-> +               regulator-min-microvolt = <1500000>;
-> +               regulator-max-microvolt = <1500000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       imx219_vddl_1v2: 1p2v {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "camera_vddl";
-> +               regulator-min-microvolt = <1200000>;
-> +               regulator-max-microvolt = <1200000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       imx219_clk: imx219_clk {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <24000000>;
-> +       };
-> +};
-> +
-> +&MIPI_PARENT_I2C {
-> +       ov5645: ov5645@3c {
-> +               compatible = "ovti,ov5645";
-> +               reg = <0x3c>;
-> +               status = "disabled";
 
-Is there any real need to disable this node here?
-Do you envision anyone including this .dtsi file, and not enabling this
-node?
+I have been staring at this trying to understand the fundamentals of the
+original deeper problem.
 
-> +
-> +               clock-names = "xclk";
-> +
-> +               vdddo-supply = <&ov5645_vdddo_1v8>;
-> +               vdda-supply = <&ov5645_vdda_2v8>;
-> +               vddd-supply = <&ov5645_vddd_1v5>;
-> +
-> +               port@0 {
+The current scope of cred_guard_mutex in exec is because being ptraced
+causes suid exec to act differently.  So we need to know early if we are
+ptraced.
 
-DT bindings say "port", without unit-address.
+If that case did not exist we could reduce the scope of the
+cred_guard_mutex in exec to where your patch puts the cred_change_mutex.
 
-> +                       ov5645_ep: endpoint {
-> +                       };
-> +               };
-> +       };
-> +
-> +       rpi_v2_camera: imx219@10 {
-> +               compatible = "sony,imx219";
-> +               reg = <0x10>;
-> +               status = "disabled";
+I am starting to think reworking how we deal with ptrace and exec is the
+way to solve this problem.
 
-Likewise.
-
-> +
-> +               VANA-supply = <&imx219_vana_2v8>;
-> +               VDIG-supply = <&imx219_vdig_1v8>;
-> +               VDDL-supply = <&imx219_vddl_1v2>;
-> +               clocks = <&imx219_clk>;
-> +
-> +               port@0 {
-
-DT bindings say "port", without unit-address...
-
-> +                       reg = <0>;
-
-... and thus no "reg" property.
-
-> +                       imx219_ep0: endpoint {
-> +                       };
-> +               };
-> +       };
-> +};
-> diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
-> new file mode 100644
-> index 000000000000..435b7f62d88d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the Silicon Linux RZ/G2E 96board platform (CAT874)
-> + * connected with aistarvision-mipi-v2-adapter board
-> + *
-> + * Copyright (C) 2020 Renesas Electronics Corp.
-> + */
-> +
-> +/dts-v1/;
-> +#include "r8a774c0-ek874.dts"
-> +#define MIPI_PARENT_I2C i2c3
-> +#include "aistarvision-mipi-adapter-2.1.dtsi"
-> +
-> +/ {
-> +       model = "Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) with aistarvision-mipi-v2-adapter board";
-> +       compatible = "si-linux,cat875", "si-linux,cat874", "renesas,r8a774c0";
-> +};
-> +
-> +&i2c3 {
-> +       status = "okay";
-> +};
-> +
-> +&vin4 {
-> +       status = "okay";
-> +};
-> +
-> +&vin5 {
-> +       status = "okay";
-> +};
-> +
-> +&csi40 {
-> +       status = "okay";
-> +
-> +       ports {
-> +               port@0 {
-> +                       reg = <0>;
-> +
-> +                       csi40_in: endpoint {
-> +                               clock-lanes = <0>;
-> +                               data-lanes = <1 2>;
-> +                               remote-endpoint = <&imx219_ep0>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&ov5645 {
-> +       /* uncomment status and remote-endpoint properties to tie ov5645
-> +        * to CSI2 also make sure remote-endpoint for imx219 camera is
-> +        * commented and remote endpoint in csi40_in is ov5645_ep
-> +        */
-> +       /* status = "okay"; */
-> +
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-
-#{address,size}-cells not needed.
-
-> +       enable-gpios = <&gpio5 5 GPIO_ACTIVE_HIGH>;
-> +       reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
-> +
-> +       clocks = <&cpg CPG_MOD 716>;
-> +       clock-frequency = <24000000>;
-
-I know this is dictated by the DT bindings for the ov5645 camera, but
-specifying a clock rate is usually done through assigned-clock-rates,
-cfr.  Documentation/devicetree/bindings/clock/clock-bindings.txt.
-
-> +
-> +       port@0 {
-
-port {
-
-> +               ov5645_ep: endpoint {
-> +                       clock-lanes = <0>;
-> +                       data-lanes = <1 2>;
-> +                       /* remote-endpoint = <&csi40_in>; */
-> +               };
-> +       };
-> +};
-> +
-> +&rpi_v2_camera {
-> +       status = "okay";
-> +
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +
-> +       port@0 {
-> +               reg = <0>;
-
-port {
-
-> +               imx219_ep0: endpoint {
-> +                       clock-lanes = <0>;
-> +                       data-lanes = <1 2>;
-> +                       remote-endpoint = <&csi40_in>;
-> +                       link-frequencies = /bits/ 64 <456000000>;
-> +               };
-> +       };
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Eric
