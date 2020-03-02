@@ -2,114 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADBA1762E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9A71762EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:42:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbgCBSmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 13:42:18 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40504 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbgCBSmR (ORCPT
+        id S1727636AbgCBSmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 13:42:38 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:49972 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727234AbgCBSmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 13:42:17 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j80so249132oih.7
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 10:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+8nfoKR15NmxwB0eviFINMK7mfZ/bWjSvXOrhjIWgPw=;
-        b=CPm8ZJw3+TWEjm2lgHBD+rU3/76tOPOt/12fFrgnw2C+/jUxelaXCBy/mledMuM2H4
-         UlAIyFz070RaCXY/KEZln/OokcFWj7YxyxPjwaN35ZO3D/q/BDSWAYwsvNEO+nt31v7D
-         49Fax9alh1vhw1rCVJrTQYmQBkemdlKDDBgXcDmdS4MqnUEeqaaULI1Dog21/vZ9Quzl
-         U6ZoxWzBEw6oxC63miSYvzacQ3XQyRUEWCwa16y36z1EtbdkjlHFU/DB78WUlcsAgTQj
-         X4vnNZR9pmMEaoIOyifJCVVs0MyiH0ZaOQ7V6UDcVmgE5ZGcbH8uFVpH1Adv5G/V1hVJ
-         M83Q==
+        Mon, 2 Mar 2020 13:42:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583174556;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6nZFkyEGmcNit7gYHhD2J1/glw8rNRs29/DOfk8LqAE=;
+        b=auWH+k94qmGv0CxPLeIi5bYrgvip88V5xcsLIGAVNPn6ulUI1m2gtboHJH7jiWjvq+2TsR
+        QhzJNCgKLK3o1dcAvzotDrEix86nx3PilgqgD5OGaa4T6qdesX13XKsLwj4mUSAVbad+uf
+        8tVE0fIwsfXao2h5UU5zc9m3G7PNWu8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-447-nDkDM1RyNUuLcCmMMaRAPQ-1; Mon, 02 Mar 2020 13:42:35 -0500
+X-MC-Unique: nDkDM1RyNUuLcCmMMaRAPQ-1
+Received: by mail-wm1-f69.google.com with SMTP id o24so60862wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 10:42:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+8nfoKR15NmxwB0eviFINMK7mfZ/bWjSvXOrhjIWgPw=;
-        b=t7fSdqz/ugAnDl8z804FKTyUtlavIp4ZhQsfX0IoWDw2M04wxFFhMOXCt05umMVUXX
-         UvIL3oRuqBaD1CpfTfvxWUBnMhpOn5FDgO7vhFlkuwm4PuRbdM6Sr/aR6r3Z1Z5HGE4K
-         aSounbhQ7xHKTPZOYuh3ZtQfZsQjGrjZWWfkA4KPYUTZlBrZbBtNCHtSvguj1offPYdO
-         iLathhzklyS0LnkZzbeLBkgYwKu3Ut6F+ZyTRCvicrtz3JPE0JzKc/7Kt65YDMeY4l+9
-         o+pSzkYLrgvPbJN1ZSL9oSiA+A0fcxSgrzmkJu6O1vDiJseTlkJkIdIlz/crJzrq25Ae
-         JsMg==
-X-Gm-Message-State: ANhLgQ3/4qntZ2BswumU72qXDRCHK4Xrs1WRqJLFL1M2+B0wOQxTrgXG
-        qec7xxwSKZbqGg+XvYsIYhUNSmVwnZf1ua1G1FMwjA==
-X-Google-Smtp-Source: ADFU+vvxBj3MBEqz5EKGoBOP9Q8Qnffyo4RLmccwHWhZAvKECUrDC084nmiZgFmtaJWkabRCBnu8WgzsenpBXgnwu2k=
-X-Received: by 2002:a54:4098:: with SMTP id i24mr9465oii.149.1583174537330;
- Mon, 02 Mar 2020 10:42:17 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6nZFkyEGmcNit7gYHhD2J1/glw8rNRs29/DOfk8LqAE=;
+        b=QbUDuzoYds0KriD+pAOlInLriHHXyVn39MAxQVZnav8EuCY33tGGCQajueyJAu9HdP
+         GEEvo/Sfmfo9ZpyvhXtJ/jHa/UsAEltqqRYjDzZAyd/Cukcpai6fXdWGdg15XUv3Tuhx
+         eEFdA+hEhHiuwwMHcRLB8aNH1omibRAJ91uXWE1Sqoi36so6AB2Ud+Cwp0Qkim2UkmAk
+         M6YeE10SBjHcC++VSoX1a8QHeAxlyxhfynLstwungm24d7kOJa9RgLoVJHshxotDCpeD
+         6yt1CXcrz5jiF7D4bWhxkT8sDxF5kRUa6LGE1ie4zpwQjwZ7mPOHh9z7WNsbCSA4OYOK
+         wlbw==
+X-Gm-Message-State: ANhLgQ0p8Lgc472emG3LN+/QkUhG8pN7McQkhTJlusNp2s6T4Cba40nf
+        CSUnfd1NgZOBJXsDH0r3E7ddeI/J3HCeQO87PEmIiW1ze7d7FeK/3WwY3YokijOdKRSTHoQGSS9
+        nftxGM0KIjrk1EF0TZ1CAXtKe
+X-Received: by 2002:adf:dccb:: with SMTP id x11mr870752wrm.214.1583174554009;
+        Mon, 02 Mar 2020 10:42:34 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vtIlUFnhvyvv59cDdCKG7b+P9Hle/BB4YizYqxjffgshDK3TzmwPGP72+wVgq4/Dcv41kNI2A==
+X-Received: by 2002:adf:dccb:: with SMTP id x11mr870739wrm.214.1583174553703;
+        Mon, 02 Mar 2020 10:42:33 -0800 (PST)
+Received: from [192.168.178.40] ([151.30.85.6])
+        by smtp.gmail.com with ESMTPSA id r19sm394854wmh.26.2020.03.02.10.42.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 10:42:32 -0800 (PST)
+Subject: Re: [PATCH v2 00/13] KVM: x86: Allow userspace to disable the
+ emulator
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200218232953.5724-1-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <3ec358a8-859d-9ef1-7392-372d55b28ee4@redhat.com>
+Date:   Mon, 2 Mar 2020 19:42:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200221032720.33893-1-alastair@au1.ibm.com> <20200221032720.33893-16-alastair@au1.ibm.com>
- <9e40ad40-6fa8-0fd2-a53a-8a3029a3639c@linux.ibm.com>
-In-Reply-To: <9e40ad40-6fa8-0fd2-a53a-8a3029a3639c@linux.ibm.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 2 Mar 2020 10:42:06 -0800
-Message-ID: <CAPcyv4gCCjQFnLaSpRPEuKoDq3gOHSxjxLT_=X3N_nr=2ZOcSA@mail.gmail.com>
-Subject: Re: [PATCH v3 15/27] powerpc/powernv/pmem: Add support for near
- storage commands
-To:     Frederic Barrat <fbarrat@linux.ibm.com>
-Cc:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200218232953.5724-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 9:59 AM Frederic Barrat <fbarrat@linux.ibm.com> wrot=
-e:
->
->
->
-> Le 21/02/2020 =C3=A0 04:27, Alastair D'Silva a =C3=A9crit :
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> >
-> > Similar to the previous patch, this adds support for near storage comma=
-nds.
-> >
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
->
->
-> Is any of these new functions ever called?
+On 19/02/20 00:29, Sean Christopherson wrote:
+> The primary intent of this series is to dynamically allocate the emulator
+> and get KVM to a state where the emulator *could* be disabled at some
+> point in the future.  Actually allowing userspace to disable the emulator
+> was a minor change at that point, so I threw it in.
+> 
+> Dynamically allocating the emulator shrinks the size of x86 vcpus by
+> ~2.5k bytes, which is important because 'struct vcpu_vmx' has once again
+> fattened up and squeaked past the PAGE_ALLOC_COSTLY_ORDER threshold.
+> Moving the emulator to its own allocation gives us some breathing room
+> for the near future, and has some other nice side effects.
+> 
+> As for disabling the emulator... in the not-too-distant future, I expect
+> there will be use cases that can truly disable KVM's emulator, e.g. for
+> security (KVM's and/or the guests).  I don't have a strong opinion on
+> whether or not KVM should actually allow userspace to disable the emulator
+> without a concrete use case (unless there already is a use case?), which
+> is why that part is done in its own tiny patch.
+> 
+> Running without an emulator has been "tested" in the sense that the
+> selftests that don't require emulation continue to pass, and everything
+> else fails with the expected "emulation error".
 
-This is my concern as well. The libnvdimm command support is limited
-to the commands that Linux will use. Other passthrough commands are
-supported through a passthrough interface. However, that passthrough
-interface is explicitly limited to publicly documented command sets so
-that the kernel has an opportunity to constrain and consolidate
-command implementations across vendors.
+I agree with Vitaly that, if we want this, it should be a KVM_ENABLE_CAP
+instead.  The first 10 patches are very nice cleanups though so I plan
+to apply them (with Vitaly's suggested nits for review) after you answer
+the question on patch 10.
+
+Paolo
+
+> 
+> v2:
+>   - Rebase to kvm/queue, 2c2787938512 ("KVM: selftests: Stop ...")
+> 
+> Sean Christopherson (13):
+>   KVM: x86: Refactor I/O emulation helpers to provide vcpu-only variant
+>   KVM: x86: Explicitly pass an exception struct to check_intercept
+>   KVM: x86: Move emulation-only helpers to emulate.c
+>   KVM: x86: Refactor R/W page helper to take the emulation context
+>   KVM: x86: Refactor emulated exception injection to take the emul
+>     context
+>   KVM: x86: Refactor emulate tracepoint to explicitly take context
+>   KVM: x86: Refactor init_emulate_ctxt() to explicitly take context
+>   KVM: x86: Dynamically allocate per-vCPU emulation context
+>   KVM: x86: Move kvm_emulate.h into KVM's private directory
+>   KVM: x86: Shrink the usercopy region of the emulation context
+>   KVM: x86: Add helper to "handle" internal emulation error
+>   KVM: x86: Add variable to control existence of emulator
+>   KVM: x86: Allow userspace to disable the kernel's emulator
+> 
+>  arch/x86/include/asm/kvm_host.h             |  12 +-
+>  arch/x86/kvm/emulate.c                      |  13 +-
+>  arch/x86/{include/asm => kvm}/kvm_emulate.h |   9 +-
+>  arch/x86/kvm/mmu/mmu.c                      |   1 +
+>  arch/x86/kvm/svm.c                          |   5 +-
+>  arch/x86/kvm/trace.h                        |  22 +--
+>  arch/x86/kvm/vmx/vmx.c                      |  15 +-
+>  arch/x86/kvm/x86.c                          | 193 +++++++++++++-------
+>  arch/x86/kvm/x86.h                          |  12 +-
+>  9 files changed, 183 insertions(+), 99 deletions(-)
+>  rename arch/x86/{include/asm => kvm}/kvm_emulate.h (99%)
+> 
+
