@@ -2,200 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1301767F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:13:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B541767FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:16:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgCBXNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:13:47 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:55080 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbgCBXNr (ORCPT
+        id S1726907AbgCBXQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:16:38 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:55550 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbgCBXQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:13:47 -0500
-Received: by mail-pj1-f66.google.com with SMTP id dw13so458143pjb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:13:46 -0800 (PST)
+        Mon, 2 Mar 2020 18:16:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VnjZ0Ovav8ThhXJbqB/J6Alq9KHUGhvFu8W6iODhPtE=;
-        b=isjU/5nbZlZNuN0fg1k/tEp5bCxt83Xe5D3f3bYYgKBRkH2drx7YC8+On/HxTBl04m
-         APyz2XsIxjS/zhADo0WQkJVVu3ypfPp71FZtpdXRtEwQ2UK9SdL7rUO9zd5UBxAkx06x
-         x8X2VbTJ1mfblaoiGrX2BIlwTseyEYDj2DQ28J3KLvvwD5fhYRzirz8i6o17ZYJWBHQE
-         lPe+kIPTgm5+PfZeWjDcrwO+0+PVo/XpdwVS/APWBzb6tNkacOy8em0KlRSXiY8x1VpX
-         bbIMAbzjoAOWZUD25viq0KyXxhT9ik2QuzSp961xCHCA1nvzxzzOmDfgs5/LPIt0uoWl
-         7SIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VnjZ0Ovav8ThhXJbqB/J6Alq9KHUGhvFu8W6iODhPtE=;
-        b=POY51jJnqa2SoJ6K9f5gEwSorH/JBoGkvICQE78/AqaPCIr4kVM9U4MvrlIR3iVxfj
-         LKrC0KphJhPAlnqG7RRJqh4nkqcEv/KNBZ9PoTXvcoLDdpSJe3nhlUvAk1GdFBh+Ytt5
-         xVmJjywzitP+uU5R1R6JnU0EXXDRwaTda/Lkpwf0NIt6eVnXpb+WfWD+QEpqwWUsV+zb
-         5xcRYh6wnh8HgHh0Vh/uC3KJiVHc6W5QRFj6MJIO9Q0/KzvU9KVthjG7UVkOJ0pCDj5h
-         VfVadzKhVwqB1dyZUW2Nzfyvy/oE6Zibu24cMPEmF10fNvMKeGwDC0Gf+eylDztUX1O/
-         d0BA==
-X-Gm-Message-State: ANhLgQ3huzRHFDMKVXhIa7aK4VdY8bVO24SHvAnlnIe6W5L0DHWHzFB9
-        Awze3w1Jrj8CM8qOt1NU/SPYDg==
-X-Google-Smtp-Source: ADFU+vvwgZGBSGTSJS7sOaaK6KTefrZb5fJNWL/VfguLMXiwHxst0TaMhTqCP1i2MHKKY4X1QBWHqw==
-X-Received: by 2002:a17:90a:a48:: with SMTP id o66mr924389pjo.66.1583190826077;
-        Mon, 02 Mar 2020 15:13:46 -0800 (PST)
-Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id h5sm21413117pgi.28.2020.03.02.15.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 15:13:45 -0800 (PST)
-Date:   Mon, 2 Mar 2020 15:13:42 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Clement Leger <cleger@kalray.eu>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-remoteproc@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v5 5/8] remoteproc: Rename rproc_elf_sanity_check for
- elf32
-Message-ID: <20200302231342.GE262924@yoga>
-References: <20200210162209.23149-1-cleger@kalray.eu>
- <20200302093902.27849-1-cleger@kalray.eu>
- <20200302093902.27849-6-cleger@kalray.eu>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1583190996; x=1614726996;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=+UWYgNwVFrpqbsiNpxtMLg5PLNo6oZ8uC9opvMf5BxM=;
+  b=l7tmVuEdKKjSETcMNDAmO+0n+0TkXhUOpDquXdI/8bEHlKCjSY2FfWIH
+   hJDX4Xt/5coGy+K29VzVC0/LeS/a0vgUQ2ibmF64EPpqQ6W2YvxR+AEvM
+   ol2F8vAEa43E1BYD0dC85xk8Ia5v7Wnv3oaReop1937hksg1O2I2MQa02
+   k=;
+IronPort-SDR: XLFV+FAbo74E1bixS7QRul4MEISP8hS7PAr4ilEI1Meh59OGdRLNE/QAoxqdvhOztIdQ4SQCcD
+ aWv1Zg7OTn2g==
+X-IronPort-AV: E=Sophos;i="5.70,508,1574121600"; 
+   d="scan'208";a="20370808"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-81e76b79.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 02 Mar 2020 23:16:34 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-81e76b79.us-west-2.amazon.com (Postfix) with ESMTPS id 1B10CA2D8B;
+        Mon,  2 Mar 2020 23:16:34 +0000 (UTC)
+Received: from EX13D22EUB002.ant.amazon.com (10.43.166.131) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Mon, 2 Mar 2020 23:16:33 +0000
+Received: from EX13D10EUB001.ant.amazon.com (10.43.166.211) by
+ EX13D22EUB002.ant.amazon.com (10.43.166.131) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 2 Mar 2020 23:16:32 +0000
+Received: from EX13D10EUB001.ant.amazon.com ([10.43.166.211]) by
+ EX13D10EUB001.ant.amazon.com ([10.43.166.211]) with mapi id 15.00.1497.006;
+ Mon, 2 Mar 2020 23:16:32 +0000
+From:   "Machulsky, Zorik" <zorik@amazon.com>
+To:     Josh Triplett <josh@joshtriplett.org>,
+        "Belgazal, Netanel" <netanel@amazon.com>,
+        "Kiyanovski, Arthur" <akiyano@amazon.com>,
+        "Tzalik, Guy" <gtzalik@amazon.com>,
+        "Bshara, Saeed" <saeedb@amazon.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ena: Speed up initialization 90x by reducing poll delays
+Thread-Topic: [PATCH] ena: Speed up initialization 90x by reducing poll delays
+Thread-Index: AQHV7pdH5S0f1nvr+k6qVAg9VSe/lqg1beyA
+Date:   Mon, 2 Mar 2020 23:16:32 +0000
+Message-ID: <8B4A52CD-FC5A-4256-B7DE-A659B50654CE@amazon.com>
+References: <20200229002813.GA177044@localhost>
+In-Reply-To: <20200229002813.GA177044@localhost>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.216]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DD4EE2F666C630468D8BA52698FD5338@amazon.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302093902.27849-6-cleger@kalray.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
-
-> Since this function will be modified to support both elf32 and elf64,
-> rename the existing one to elf32 (which is the only supported format
-> at the moment). This will allow not to introduce possible side effect
-> when adding elf64 support (ie: all backends will still support only
-> elf32 if not requested explicitely using rproc_elf_sanity_check).
-> 
-
-Is there a reason for preventing ELF64 binaries be loaded?
-
-Regards,
-Bjorn
-
-> Signed-off-by: Clement Leger <cleger@kalray.eu>
-> ---
->  drivers/remoteproc/remoteproc_core.c       | 2 +-
->  drivers/remoteproc/remoteproc_elf_loader.c | 6 +++---
->  drivers/remoteproc/remoteproc_internal.h   | 2 +-
->  drivers/remoteproc/st_remoteproc.c         | 2 +-
->  drivers/remoteproc/st_slim_rproc.c         | 2 +-
->  drivers/remoteproc/stm32_rproc.c           | 2 +-
->  6 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 4bfaf4a3c4a3..99f0b796fbc7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2055,7 +2055,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  		rproc->ops->load = rproc_elf_load_segments;
->  		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
->  		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
-> -		rproc->ops->sanity_check = rproc_elf_sanity_check;
-> +		rproc->ops->sanity_check = rproc_elf32_sanity_check;
->  		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
->  	}
->  
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index c2a9783cfb9a..5a67745f2638 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -25,13 +25,13 @@
->  #include "remoteproc_internal.h"
->  
->  /**
-> - * rproc_elf_sanity_check() - Sanity Check ELF firmware image
-> + * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
->   * @rproc: the remote processor handle
->   * @fw: the ELF firmware image
->   *
->   * Make sure this fw image is sane.
->   */
-> -int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> +int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
->  {
->  	const char *name = rproc->firmware;
->  	struct device *dev = &rproc->dev;
-> @@ -89,7 +89,7 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
->  
->  	return 0;
->  }
-> -EXPORT_SYMBOL(rproc_elf_sanity_check);
-> +EXPORT_SYMBOL(rproc_elf32_sanity_check);
->  
->  /**
->   * rproc_elf_get_boot_addr() - Get rproc's boot address.
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 0deae5f237b8..28639c588d58 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -54,7 +54,7 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
->  phys_addr_t rproc_va_to_pa(void *cpu_addr);
->  int rproc_trigger_recovery(struct rproc *rproc);
->  
-> -int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-> +int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
->  u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index a3268d95a50e..a6cbfa452764 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
->  	.parse_fw		= st_rproc_parse_fw,
->  	.load			= rproc_elf_load_segments,
->  	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
-> -	.sanity_check		= rproc_elf_sanity_check,
-> +	.sanity_check		= rproc_elf32_sanity_check,
->  	.get_boot_addr		= rproc_elf_get_boot_addr,
->  };
->  
-> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-> index 09bcb4d8b9e0..3cca8b65a8db 100644
-> --- a/drivers/remoteproc/st_slim_rproc.c
-> +++ b/drivers/remoteproc/st_slim_rproc.c
-> @@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
->  	.da_to_va       = slim_rproc_da_to_va,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  	.load		= rproc_elf_load_segments,
-> -	.sanity_check	= rproc_elf_sanity_check,
-> +	.sanity_check	= rproc_elf32_sanity_check,
->  };
->  
->  /**
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index a18f88044111..9a8b5f5e2572 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
->  	.load		= rproc_elf_load_segments,
->  	.parse_fw	= stm32_rproc_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-> -	.sanity_check	= rproc_elf_sanity_check,
-> +	.sanity_check	= rproc_elf32_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  };
->  
-> -- 
-> 2.15.0.276.g89ea799
-> 
+DQrvu79PbiAyLzI4LzIwLCA0OjI5IFBNLCAiSm9zaCBUcmlwbGV0dCIgPGpvc2hAam9zaHRyaXBs
+ZXR0Lm9yZz4gd3JvdGU6DQoNCiAgICBCZWZvcmUgaW5pdGlhbGl6aW5nIGNvbXBsZXRpb24gcXVl
+dWUgaW50ZXJydXB0cywgdGhlIGVuYSBkcml2ZXIgdXNlcw0KICAgIHBvbGxpbmcgdG8gd2FpdCBm
+b3IgcmVzcG9uc2VzIG9uIHRoZSBhZG1pbiBjb21tYW5kIHF1ZXVlLiBUaGUgZW5hIGRyaXZlcg0K
+ICAgIHdhaXRzIDVtcyBiZXR3ZWVuIHBvbGxzLCBidXQgdGhlIGhhcmR3YXJlIGhhcyBnZW5lcmFs
+bHkgZmluaXNoZWQgbG9uZw0KICAgIGJlZm9yZSB0aGF0LiBSZWR1Y2UgdGhlIHBvbGwgdGltZSB0
+byAxMHVzLg0KICAgIA0KICAgIE9uIGEgYzUuMTJ4bGFyZ2UsIHRoaXMgaW1wcm92ZXMgZW5hIGlu
+aXRpYWxpemF0aW9uIHRpbWUgZnJvbSAxNzMuNm1zIHRvDQogICAgMS45MjBtcywgYW4gaW1wcm92
+ZW1lbnQgb2YgbW9yZSB0aGFuIDkweC4gVGhpcyBpbXByb3ZlcyBzZXJ2ZXIgYm9vdCB0aW1lDQog
+ICAgYW5kIHRpbWUgdG8gbmV0d29yayBicmluZ3VwLg0KIA0KVGhhbmtzIEpvc2gsDQpXZSBhZ3Jl
+ZSB0aGF0IHBvbGxpbmcgcmF0ZSBzaG91bGQgYmUgaW5jcmVhc2VkLCBidXQgcHJlZmVyIG5vdCB0
+byBkbyBpdCBhZ2dyZXNzaXZlbHkgYW5kIGJsaW5kbHkuDQpGb3IgZXhhbXBsZSBsaW5lYXIgYmFj
+a29mZiBhcHByb2FjaCBtaWdodCBiZSBhIGJldHRlciBjaG9pY2UuIFBsZWFzZSBsZXQgdXMgcmUt
+d29yayBhIGxpdHRsZSB0aGlzIA0KcGF0Y2ggYW5kIGJyaW5nIGl0IHRvIHJldmlldy4gVGhhbmtz
+ISAgICAgIA0KICAgDQogICAgQmVmb3JlOg0KICAgIFsgICAgMC41MzE3MjJdIGNhbGxpbmcgIGVu
+YV9pbml0KzB4MC8weDYzIEAgMQ0KICAgIFsgICAgMC41MzE3MjJdIGVuYTogRWxhc3RpYyBOZXR3
+b3JrIEFkYXB0ZXIgKEVOQSkgdjIuMS4wSw0KICAgIFsgICAgMC41MzE3NTFdIGVuYSAwMDAwOjAw
+OjA1LjA6IEVsYXN0aWMgTmV0d29yayBBZGFwdGVyIChFTkEpIHYyLjEuMEsNCiAgICBbICAgIDAu
+NTMxOTQ2XSBQQ0kgSW50ZXJydXB0IExpbmsgW0xOS0RdIGVuYWJsZWQgYXQgSVJRIDExDQogICAg
+WyAgICAwLjU0NzQyNV0gZW5hOiBlbmEgZGV2aWNlIHZlcnNpb246IDAuMTANCiAgICBbICAgIDAu
+NTQ3NDI3XSBlbmE6IGVuYSBjb250cm9sbGVyIHZlcnNpb246IDAuMC4xIGltcGxlbWVudGF0aW9u
+IHZlcnNpb24gMQ0KICAgIFsgICAgMC43MDk0OTddIGVuYSAwMDAwOjAwOjA1LjA6IEVsYXN0aWMg
+TmV0d29yayBBZGFwdGVyIChFTkEpIGZvdW5kIGF0IG1lbSBmZWJmNDAwMCwgbWFjIGFkZHIgMDY6
+YzQ6MjI6MGU6ZGM6ZGEsIFBsYWNlbWVudCBwb2xpY3k6IExvdyBMYXRlbmN5DQogICAgWyAgICAw
+LjcwOTUwOF0gaW5pdGNhbGwgZW5hX2luaXQrMHgwLzB4NjMgcmV0dXJuZWQgMCBhZnRlciAxNzM2
+MTYgdXNlY3MNCiAgICANCiAgICBBZnRlcjoNCiAgICBbICAgIDAuNTI2OTY1XSBjYWxsaW5nICBl
+bmFfaW5pdCsweDAvMHg2MyBAIDENCiAgICBbICAgIDAuNTI2OTY2XSBlbmE6IEVsYXN0aWMgTmV0
+d29yayBBZGFwdGVyIChFTkEpIHYyLjEuMEsNCiAgICBbICAgIDAuNTI3MDU2XSBlbmEgMDAwMDow
+MDowNS4wOiBFbGFzdGljIE5ldHdvcmsgQWRhcHRlciAoRU5BKSB2Mi4xLjBLDQogICAgWyAgICAw
+LjUyNzE5Nl0gUENJIEludGVycnVwdCBMaW5rIFtMTktEXSBlbmFibGVkIGF0IElSUSAxMQ0KICAg
+IFsgICAgMC41MjcyMTFdIGVuYTogZW5hIGRldmljZSB2ZXJzaW9uOiAwLjEwDQogICAgWyAgICAw
+LjUyNzIxMl0gZW5hOiBlbmEgY29udHJvbGxlciB2ZXJzaW9uOiAwLjAuMSBpbXBsZW1lbnRhdGlv
+biB2ZXJzaW9uIDENCiAgICBbICAgIDAuNTI4OTI1XSBlbmEgMDAwMDowMDowNS4wOiBFbGFzdGlj
+IE5ldHdvcmsgQWRhcHRlciAoRU5BKSBmb3VuZCBhdCBtZW0gZmViZjQwMDAsIG1hYyBhZGRyIDA2
+OmM0OjIyOjBlOmRjOmRhLCBQbGFjZW1lbnQgcG9saWN5OiBMb3cgTGF0ZW5jeQ0KICAgIFsgICAg
+MC41Mjg5MzRdIGluaXRjYWxsIGVuYV9pbml0KzB4MC8weDYzIHJldHVybmVkIDAgYWZ0ZXIgMTky
+MCB1c2Vjcw0KICAgIA0KICAgIFNpZ25lZC1vZmYtYnk6IEpvc2ggVHJpcGxldHQgPGpvc2hAam9z
+aHRyaXBsZXR0Lm9yZz4NCiAgICAtLS0NCiAgICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvYW1hem9u
+L2VuYS9lbmFfY29tLmMgfCAyMiArKysrKysrKysrKystLS0tLS0tLS0tDQogICAgIDEgZmlsZSBj
+aGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCiAgICANCiAgICBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvYW1hem9uL2VuYS9lbmFfY29tLmMgYi9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9hbWF6b24vZW5hL2VuYV9jb20uYw0KICAgIGluZGV4IDFmYjU4Zjlh
+ZDgwYi4uMjAzYjIxMzBkNzA3IDEwMDY0NA0KICAgIC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0
+L2FtYXpvbi9lbmEvZW5hX2NvbS5jDQogICAgKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvYW1h
+em9uL2VuYS9lbmFfY29tLmMNCiAgICBAQCAtNjIsNyArNjIsNyBAQA0KICAgICANCiAgICAgI2Rl
+ZmluZSBFTkFfUkVHU19BRE1JTl9JTlRSX01BU0sgMQ0KICAgICANCiAgICAtI2RlZmluZSBFTkFf
+UE9MTF9NUwk1DQogICAgKyNkZWZpbmUgRU5BX1BPTExfVVMJMTANCiAgICAgDQogICAgIC8qKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKi8NCiAgICAgLyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLw0KICAgIEBAIC01
+NzIsNyArNTcyLDcgQEAgc3RhdGljIGludCBlbmFfY29tX3dhaXRfYW5kX3Byb2Nlc3NfYWRtaW5f
+Y3FfcG9sbGluZyhzdHJ1Y3QgZW5hX2NvbXBfY3R4ICpjb21wX2MNCiAgICAgCQkJZ290byBlcnI7
+DQogICAgIAkJfQ0KICAgICANCiAgICAtCQltc2xlZXAoRU5BX1BPTExfTVMpOw0KICAgICsJCXVz
+bGVlcF9yYW5nZShFTkFfUE9MTF9VUywgMiAqIEVOQV9QT0xMX1VTKTsNCiAgICAgCX0NCiAgICAg
+DQogICAgIAlpZiAodW5saWtlbHkoY29tcF9jdHgtPnN0YXR1cyA9PSBFTkFfQ01EX0FCT1JURUQp
+KSB7DQogICAgQEAgLTk0MywxMiArOTQzLDEzIEBAIHN0YXRpYyB2b2lkIGVuYV9jb21faW9fcXVl
+dWVfZnJlZShzdHJ1Y3QgZW5hX2NvbV9kZXYgKmVuYV9kZXYsDQogICAgIHN0YXRpYyBpbnQgd2Fp
+dF9mb3JfcmVzZXRfc3RhdGUoc3RydWN0IGVuYV9jb21fZGV2ICplbmFfZGV2LCB1MzIgdGltZW91
+dCwNCiAgICAgCQkJCXUxNiBleHBfc3RhdGUpDQogICAgIHsNCiAgICAtCXUzMiB2YWwsIGk7DQog
+ICAgKwl1MzIgdmFsOw0KICAgICsJdW5zaWduZWQgbG9uZyB0aW1lb3V0X2ppZmZpZXM7DQogICAg
+IA0KICAgIC0JLyogQ29udmVydCB0aW1lb3V0IGZyb20gcmVzb2x1dGlvbiBvZiAxMDBtcyB0byBF
+TkFfUE9MTF9NUyAqLw0KICAgIC0JdGltZW91dCA9ICh0aW1lb3V0ICogMTAwKSAvIEVOQV9QT0xM
+X01TOw0KICAgICsJLyogQ29udmVydCB0aW1lb3V0IGZyb20gcmVzb2x1dGlvbiBvZiAxMDBtcyAq
+Lw0KICAgICsJdGltZW91dF9qaWZmaWVzID0gamlmZmllcyArIG1zZWNzX3RvX2ppZmZpZXModGlt
+ZW91dCAqIDEwMCk7DQogICAgIA0KICAgIC0JZm9yIChpID0gMDsgaSA8IHRpbWVvdXQ7IGkrKykg
+ew0KICAgICsJd2hpbGUgKDEpIHsNCiAgICAgCQl2YWwgPSBlbmFfY29tX3JlZ19iYXJfcmVhZDMy
+KGVuYV9kZXYsIEVOQV9SRUdTX0RFVl9TVFNfT0ZGKTsNCiAgICAgDQogICAgIAkJaWYgKHVubGlr
+ZWx5KHZhbCA9PSBFTkFfTU1JT19SRUFEX1RJTUVPVVQpKSB7DQogICAgQEAgLTk2MCwxMCArOTYx
+LDExIEBAIHN0YXRpYyBpbnQgd2FpdF9mb3JfcmVzZXRfc3RhdGUoc3RydWN0IGVuYV9jb21fZGV2
+ICplbmFfZGV2LCB1MzIgdGltZW91dCwNCiAgICAgCQkJZXhwX3N0YXRlKQ0KICAgICAJCQlyZXR1
+cm4gMDsNCiAgICAgDQogICAgLQkJbXNsZWVwKEVOQV9QT0xMX01TKTsNCiAgICAtCX0NCiAgICAr
+CQlpZiAodGltZV9pc19iZWZvcmVfamlmZmllcyh0aW1lb3V0X2ppZmZpZXMpKQ0KICAgICsJCQly
+ZXR1cm4gLUVUSU1FOw0KICAgICANCiAgICAtCXJldHVybiAtRVRJTUU7DQogICAgKwkJdXNsZWVw
+X3JhbmdlKEVOQV9QT0xMX1VTLCAyICogRU5BX1BPTExfVVMpOw0KICAgICsJfQ0KICAgICB9DQog
+ICAgIA0KICAgICBzdGF0aWMgYm9vbCBlbmFfY29tX2NoZWNrX3N1cHBvcnRlZF9mZWF0dXJlX2lk
+KHN0cnVjdCBlbmFfY29tX2RldiAqZW5hX2RldiwNCiAgICBAQCAtMTQ1OCw3ICsxNDYwLDcgQEAg
+dm9pZCBlbmFfY29tX3dhaXRfZm9yX2Fib3J0X2NvbXBsZXRpb24oc3RydWN0IGVuYV9jb21fZGV2
+ICplbmFfZGV2KQ0KICAgICAJc3Bpbl9sb2NrX2lycXNhdmUoJmFkbWluX3F1ZXVlLT5xX2xvY2ss
+IGZsYWdzKTsNCiAgICAgCXdoaWxlIChhdG9taWNfcmVhZCgmYWRtaW5fcXVldWUtPm91dHN0YW5k
+aW5nX2NtZHMpICE9IDApIHsNCiAgICAgCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZhZG1pbl9x
+dWV1ZS0+cV9sb2NrLCBmbGFncyk7DQogICAgLQkJbXNsZWVwKEVOQV9QT0xMX01TKTsNCiAgICAr
+CQl1c2xlZXBfcmFuZ2UoRU5BX1BPTExfVVMsIDIgKiBFTkFfUE9MTF9VUyk7DQogICAgIAkJc3Bp
+bl9sb2NrX2lycXNhdmUoJmFkbWluX3F1ZXVlLT5xX2xvY2ssIGZsYWdzKTsNCiAgICAgCX0NCiAg
+ICAgCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmFkbWluX3F1ZXVlLT5xX2xvY2ssIGZsYWdzKTsN
+CiAgICAtLSANCiAgICAyLjI1LjENCiAgICANCiAgICANCg0K
