@@ -2,86 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2070176168
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:45:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F24A17616D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbgCBRo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 12:44:58 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34056 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbgCBRo5 (ORCPT
+        id S1727471AbgCBRpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 12:45:08 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:33129 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727196AbgCBRpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 12:44:57 -0500
-Received: by mail-io1-f66.google.com with SMTP id z190so351425iof.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 09:44:57 -0800 (PST)
+        Mon, 2 Mar 2020 12:45:08 -0500
+Received: by mail-il1-f196.google.com with SMTP id r4so283859iln.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 09:45:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bkqP5rqEcpTe8UkETGyC05Piyo30bTlkBX2zfQhiYak=;
-        b=K2xxZ6k/fKXqdRvOCWx+o0bgdJCP+yd8W5j2364rXc8L702Bc1Wmif/AzeGUaoIyvt
-         k+m2aJ6AslxkpZ7mQvFRmnQmUhN7o2ZrWI4XqX8MaxkmDTI//BwWcP+tcLjTnbeuZdw3
-         AFIkLe2W3PLWkNJWv8VOOwhopZKemlZSEyOlt7ytg9COABmAEhASuOHZXULeApfo2u6w
-         SR3ILAve6uo6HzklXFmk6HLFDkJYi2icuDuAlMo0RCTJVmtHsDzjMfFeoGsfzo0Vm0lf
-         Hx4wx/5eCmF01cHqrVDwGS39wRsdH2jF4ADU03NfOweDwrEp3RNCeYBELbPVnR8zFjLE
-         g0GQ==
+        bh=sboKaEzAb8dDo8ic4Txr+gqE6z2BPnl5/jyRIrg2YGs=;
+        b=vqYRGb9r7GpichkDcc8O4hlFY3pp72EXr8zLy4oOuHUN9wWnR8g5FD1EvQfGOVvqkY
+         sRuF1ADlrISNDfp5JyFqoNVDLijFdF7aFGLcAaWcfNq4oe0r6gU9hLFYpuT1ickVklCn
+         CLdpu7ULXNDWB9LlrtmXXRyNXJV7rolmIRoH8Ul0nXYVzZ3M0hpPq6Bsr3VdXLXBHVUP
+         FENYOFAJwEpnilVvYgKSOV/FOVjGchZD2DwFoJ+v23lmQOhqLzX2VjFcvj9QRFgQpLX5
+         BwfvicC0Ih7eg5Lp2vOptMvGRAEWXlh57bcb/4UJhBVhkn0Y2oOvC8ny6tDMLTYib2os
+         /Z5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bkqP5rqEcpTe8UkETGyC05Piyo30bTlkBX2zfQhiYak=;
-        b=jEgUD3X7WEGBaAEIIsxfngzGBliQo50+tVjFBel+DKaod8XIrlZcLdS/BZbsVSFOom
-         o4iLkiGkwUHHluUnfFJoKKa0WpNKxNLV9F6ctRiKh3H+0m+0gTmPlFF92NwvALlSIRS+
-         qXCJaVjtUlxpzjNB4vHzhyYmjLWjJTrJEsU1ubvJTEiCpnSRc7Re9SRGDrcLXk4bqITK
-         DNpfUsRj+hpfQnnZxwXqX5feZHgqdCx/q0C8LXEVonwQ9c6KLm0a/1FMtee6o+WozSmR
-         Jo7UY6M9EjnMx5OwCDhHWHVunZud+SanTFV9bPvoe5COgzZknWtjxmgX+q3rff2/xQRY
-         eJVw==
-X-Gm-Message-State: ANhLgQ2DhZ5CKdrpNRx9vOcG8ymTFJvQhlNf9gDt88dy2p/y8Y7OE7kf
-        qQyb6uOV72TBLj283PkgGVE5PKN6z6rrNyc7/hXs8w==
-X-Google-Smtp-Source: ADFU+vtX00vo2g2GZFlbw53ClqMtaKWhDpEWgjNmTVZc8q6YVuwN/BIthZga8jq4MTg4rwSiAe6hEGv+A/C/nYA77JU=
-X-Received: by 2002:a6b:c986:: with SMTP id z128mr563097iof.296.1583171096690;
- Mon, 02 Mar 2020 09:44:56 -0800 (PST)
+        bh=sboKaEzAb8dDo8ic4Txr+gqE6z2BPnl5/jyRIrg2YGs=;
+        b=Ubs2EqyLL/ln5G8T8Mbba46/Y44b1sVf50RZVwLfXnYvkAvAFwMj5frKxJip9G9Zz/
+         i3ECFwVKFdXB5SFblm/US28a6lLm0pMCCDdebZseTSzFhb6zZDq16O3HSwt1UN8s/mIH
+         DGvEFPED7wBv71xLq+kP/HO15eEE/nSy375gNTupOzjH4ibDdmTO3JUhIuxzTB+tWQnG
+         xwJsQsiiKOTklxwJX+8lvD+0+MVw8SU0794OcWqz1XY5j7t8Oq5fAlZG5B1FWkFEww2u
+         w3YLIKG+x2liguC3phSEVOX9XWdMUt+fAoT44GGMFdq8kqhCQm4hbJiB3zBVnYJ1bpl7
+         q74A==
+X-Gm-Message-State: ANhLgQ15fCd2Y8CajB4ND7shYLtqmgsa/mnxFAZpw20XGCvS5IwiR/Xv
+        Cu8JTLjUUlr/LRKEYnkI6cnsMBjTkyJ/LR/eqylGOvaQ
+X-Google-Smtp-Source: ADFU+vu0psz60mr8tK59SdVhE45L5RTpGteOpOydAzRFmNEUtHC65Ad33Ww3KbZbMBtK+aWWHY777/OBZyi95ecGDI8=
+X-Received: by 2002:a05:6e02:eb4:: with SMTP id u20mr708304ilj.57.1583171107274;
+ Mon, 02 Mar 2020 09:45:07 -0800 (PST)
 MIME-Version: 1.0
-References: <1582773688-4956-1-git-send-email-linmiaohe@huawei.com>
- <CALMp9eSaZ557-GaQUVXW6-ZrMkz8jxOC1S6QPk-EVNJ-f2pT5w@mail.gmail.com> <a1ff3db1-1f5a-7bab-6c4b-f76e6d76d468@redhat.com>
-In-Reply-To: <a1ff3db1-1f5a-7bab-6c4b-f76e6d76d468@redhat.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 2 Mar 2020 09:44:45 -0800
-Message-ID: <CALMp9eQqFKnCLYGXdab-k=Q=h-H5x8VnV20F3HH9fDZTDuQcEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] KVM: X86: deprecate obsolete KVM_GET_CPUID2 ioctl
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linmiaohe <linmiaohe@huawei.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+References: <20200228110804.25822-1-nikita.shubin@maquefel.me>
+In-Reply-To: <20200228110804.25822-1-nikita.shubin@maquefel.me>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 2 Mar 2020 10:44:56 -0700
+Message-ID: <CANLsYkyDsJaxO_37qTjEP+aeQju8W2+jhHFRF7+oifBMqJqyng@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: error on kick missing
+To:     nikita.shubin@maquefel.me
+Cc:     Nikita Shubin <NShubin@topcon.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 9:09 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 02/03/20 18:01, Jim Mattson wrote:
-> >> And in fact, it's not used anywhere. So it should be
-> >> deprecated.
-> > I don't know how you can make the assertion that this ioctl is not
-> > used anywhere. For instance, I see a use of it in Google's code base.
->
-> Right, it does not seem to be used anywhere according to e.g. Debian
-> code search but of course it can have users.
->
-> What are you using it for?  It's true that cpuid->nent is never written
-> back to userspace, so the ioctl is basically unusable unless you already
-> know how many entries are written.  Or unless you fill the CPUID entries
-> with garbage before calling it, I guess; is that what you are doing?
+Hi Nikita,
 
-One could use GET_CPUID2 after SET_CPUID2, to see what changes kvm
-made to the requested guest CPUID information without telling you.
+On Fri, 28 Feb 2020 at 04:07, <nikita.shubin@maquefel.me> wrote:
+>
+> From: Nikita Shubin <NShubin@topcon.com>
+>
+> .kick method not set in rproc_ops will result in:
+>
+> 8<--- cut here ---
+> Unable to handle kernel NULL pointer dereference
+>
+> in rproc_virtio_notify, after firmware loading.
+
+There wasn't any kernel stack trace?  What platform was this observed
+on? I'm afraid we won't be able to move forward with this patch
+without one, or more information on what is happening.
+
+>
+> refuse to register an rproc-induced virtio device if no kick method was
+> defined for rproc.
+>
+> Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> ---
+>  drivers/remoteproc/remoteproc_virtio.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index 8c07cb2ca8ba..31a62a0b470e 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -334,6 +334,13 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+>         struct rproc_mem_entry *mem;
+>         int ret;
+>
+> +       if (rproc->ops->kick == NULL) {
+> +               ret = -EINVAL;
+> +               dev_err(dev, ".kick method not defined for %s",
+> +                               rproc->name);
+> +               goto out;
+> +       }
+
+I think it would be better to use WARN_ONCE() in rproc_virtio_notify()
+than prevent a virtio device from being added.  But again I will need
+more information on this case to know for sure.
+
+Thanks,
+Mathieu
+
+> +
+>         /* Try to find dedicated vdev buffer carveout */
+>         mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
+>         if (mem) {
+> --
+> 2.24.1
+>
