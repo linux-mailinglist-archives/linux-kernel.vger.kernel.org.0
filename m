@@ -2,187 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 677B717668C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0CA176686
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:00:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgCBWBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 17:01:05 -0500
-Received: from gateway30.websitewelcome.com ([192.185.179.30]:43925 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725781AbgCBWBE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 17:01:04 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 49BA6451EE8
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 14:02:43 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8rH1jjnu3AGTX8rH1js9Z3; Mon, 02 Mar 2020 14:02:43 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NryDNxu/ODoeBsi1LY9dVerLlUdhHrWu4vysD9oZ7G0=; b=MBl9lRa2uQdQRhFCMyAYyQi7Eu
-        nnvWFpcQylvlPU55gp9C1kURKOBDzpVGjkuh0XLZ/BWjLcBbbs4WDMhqaA1Jtv+CVdwoDQ94ZIPsb
-        8LJx5Vaz5NTeknNadIfgzrrme1o+1i6gpiGjCKtKCBMT8CkUk+fzq7yjFEJqUAKjf7cltIszsICfT
-        xXShumusMdWQiwl02Z2/ndc9TaKK1jlUsFSzYBYsOvr9f1SNeV+hG7D2qcrzQIfyERqG9K17/uY5J
-        qgQYyrIuJvVh5k/RDDJZLiZV9TD9Mx4fWn7EA0FAtx9U2zH0ZRsubRmSJULpN/iT5v7zMLAo3wAa+
-        CKF7lQ8A==;
-Received: from [201.166.169.19] (port=30074 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j8rH0-003xYk-7z; Mon, 02 Mar 2020 14:02:42 -0600
-Subject: Re: [PATCH][next] sunrpc: Replace zero-length array with
- flexible-array member
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200228132323.GA20181@embeddedor>
- <20200302195829.GD1149@fieldses.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <ae7a3879-3344-b50e-6187-3ee898026ec5@embeddedor.com>
-Date:   Mon, 2 Mar 2020 14:05:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200302195829.GD1149@fieldses.org>
-Content-Type: text/plain; charset=utf-8
+        id S1726890AbgCBWAu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 17:00:50 -0500
+Received: from mail-oln040092068021.outbound.protection.outlook.com ([40.92.68.21]:26576
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725781AbgCBWAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 17:00:49 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MN/Lz8sjgk+Yeusp0kxCT8xuPQtnn803Zmy4q6PWXvpIVlSdMWp6eyt8Io6L9QLs5c7UAEvyadfgeANAxsU3U9jYMwUiJdamR6RVRCqTetHL65TDhB84asI8DAnJyoNtT0T+nviMYwIJLrG6xRRZs7SefXh2JtpS8Ke2CrGkikCF27CGkkeENSG4xFjlIGlkiryXnqcbeu9rCJsDLZNtvApDO4mjRUX66McmDAqzAtOs/EZtwFnIIi7AdIdKJ1RqqhMBjZB4zY2sf8kBSzAjcNOQoFKSmKvSzlhNdto0rZ+JzpI0B5/ntEj0H/p69bFrxAh1ktLGYd/zCM1obfvvkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8QZzhBuWiWxXmMmyJixpYHm93oCz9K5B0k3XRFu8az4=;
+ b=mhxdNGDtUoMAuC6P5Ey6T9xKbUlMna62f9c8o8onBYFYr38HJbrbmZQCODAEy7UyZvjUxvOk2+GO15DDcMUzW0SW+q15eWtH8NtBU3F3m8vIZydNqHgW8In9W2BCqXSP040jlX0b1h2nQCXMIbywaFQhGUheJ9CFZqsPvYRxZFTHNbS4e0RNMub70kzTpErR5yr9XXNwgmwmsq+xSIGyzOciOf4pgKzM6MCwfda0+jhL8jZp2vcjiQHh2fpVM/eJiauP4KMDGUQ2GnUUX9rRWJqsRMMb5eBMBMbiSEf+CeJtJnvHykmYKYsYkdb3n+E2lQm8XzPHCAEhmUoB69MUMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HE1EUR02FT019.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:e400:7e1d::39) by
+ HE1EUR02HT071.eop-EUR02.prod.protection.outlook.com (2a01:111:e400:7e1d::215)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Mon, 2 Mar
+ 2020 22:00:42 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.10.57) by
+ HE1EUR02FT019.mail.protection.outlook.com (10.152.10.70) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 22:00:42 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 22:00:42 +0000
+Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0045.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1d::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Mon, 2 Mar 2020 22:00:40 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+Thread-Topic: [PATCHv2] exec: Fix a deadlock in ptrace
+Thread-Index: AQHV8AjGwZG4WijWc0+aQpdADP+q6qg02ufjgACXoYCAAASqH4AAAMAAgAAEyVeAAA77AIAATaqLgAACk4A=
+Date:   Mon, 2 Mar 2020 22:00:42 +0000
+Message-ID: <AM6PR03MB51709689FF4A00A7DCFB26A4E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+ <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
+ <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74zmfc9.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87v9nmjulm.fsf@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.169.19
-X-Source-L: No
-X-Exim-ID: 1j8rH0-003xYk-7z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [201.166.169.19]:30074
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: ZR0P278CA0045.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1d::14) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:C79D43E4464E020949E83EE8248B4C8508FE96D0A7F0B78AC8EE1607E5579DA3;UpperCasedChecksum:45647EE3E8772478C665432775C6FBCB0C8882DDD8F9E95CCBC9F5094683F914;SizeAsReceived:9617;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [RWcdFN4HY5W3ZZLaWdS6b+6Tvl0ONnw6]
+x-microsoft-original-message-id: <392ad677-231a-73aa-12cb-5b5f17fd6c26@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: cf74b29c-8767-4e40-6260-08d7bef5269d
+x-ms-traffictypediagnostic: HE1EUR02HT071:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: FuLv4NiYOQauXnhGG8Y72ga4PODLHLJcHxvySTTnF9L2PcRxvt4c8guyOgzxVK0jjUwRa7b5fLvL2D7LwzpV31zA4Ufo4aIbZrqzxrStDt62/d4VvoF9NTYTftCJBIwEVzPZ6lYJIXeuR+KqJAQ/0yeM75WBkq7A1hC6PWwCrTdd3iuN4WKCjFGeIth+W92S
+x-ms-exchange-antispam-messagedata: vuioXtDVgWXSbj3tO0Iu7GmkNOoEcNvqs5cvH31eIg5Q1cAdHtDJwFvHIrA9s2n+CzuiV7rwGZlpTKr4f2qW8NGgl02ka4gj4NIBAD9RZGD8q7x2yFP6ebcJP8ftdAVes/SPlvxuk2PTInr96kyA7A==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <0275423BDC635A4DB744AD8D7291FEDA@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf74b29c-8767-4e40-6260-08d7bef5269d
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 22:00:42.3756
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/2/20 13:58, J. Bruce Fields wrote:
-> On Fri, Feb 28, 2020 at 07:23:23AM -0600, Gustavo A. R. Silva wrote:
->> The current codebase makes use of the zero-length array language
->> extension to the C90 standard, but the preferred mechanism to declare
->> variable-length types such as these ones is a flexible array member[1][2],
->> introduced in C99:
->>
->> struct foo {
->>         int stuff;
->>         struct boo array[];
->> };
->>
->> By making use of the mechanism above, we will get a compiler warning
->> in case the flexible array does not occur last in the structure, which
->> will help us prevent some kind of undefined behavior bugs from being
->> inadvertently introduced[3] to the codebase from now on.
->>
->> Also, notice that, dynamic memory allocations won't be affected by
->> this change:
->>
->> "Flexible array members have incomplete type, and so the sizeof operator
->> may not be applied. As a quirk of the original implementation of
->> zero-length arrays, sizeof evaluates to zero."[1]
+On 3/2/20 10:49 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 > 
-> I don't understand the quoted sentences at all.  But I assume you're
-> telling me that sizeof(struct svc_deferred_req) won't be changed by this
-> patch, so, good, applied.  Thanks!
+>> On 3/2/20 5:17 PM, Eric W. Biederman wrote:
+>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>>
+>>>> On 3/2/20 4:57 PM, Eric W. Biederman wrote:
+>>>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>>>>
+>>>>>>
+>>>>>> I tried this with s/EACCESS/EACCES/.
+>>>>>>
+>>>>>> The test case in this patch is not fixed, but strace does not freeze,
+>>>>>> at least with my setup where it did freeze repeatable.
+>>>>>
+>>>>> Thanks, That is what I was aiming at.
+>>>>>
+>>>>> So we have one method we can pursue to fix this in practice.
+>>>>>
+>>>>>> That is
+>>>>>> obviously because it bypasses the cred_guard_mutex.  But all other
+>>>>>> process that access this file still freeze, and cannot be
+>>>>>> interrupted except with kill -9.
+>>>>>>
+>>>>>> However that smells like a denial of service, that this
+>>>>>> simple test case which can be executed by guest, creates a /proc/$pid/mem
+>>>>>> that freezes any process, even root, when it looks at it.
+>>>>>> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb.
+>>>>>
+>>>>> Yes.  Your the test case in your patch a variant of the original
+>>>>> problem.
+>>>>>
+>>>>>
+>>>>> I have been staring at this trying to understand the fundamentals of the
+>>>>> original deeper problem.
+>>>>>
+>>>>> The current scope of cred_guard_mutex in exec is because being ptraced
+>>>>> causes suid exec to act differently.  So we need to know early if we are
+>>>>> ptraced.
+>>>>>
+>>>>
+>>>> It has a second use, that it prevents two threads entering execve,
+>>>> which would probably result in disaster.
+>>>
+>>> Exec can fail with an error code up until de_thread.  de_thread causes
+>>> exec to fail with the error code -EAGAIN for the second thread to get
+>>> into de_thread.
+>>>
+>>> So no.  The cred_guard_mutex is not needed for that case at all.
+>>>
+>>
+>> Okay, but that will reset current->in_execve, right?
+> 
+> Absolutely.
+> 
+> The error handling kicks in and exec_binprm fails with a negative
+> return code.  Then __do_excve_file cleans up and clears
+> current->in_execve.
 > 
 
-Correct! :)
+Yes of course.  I was under the wrong impression that that value is
+a kind of global, but it is a thread local.
+
+So I think I need a new boolean see v3 of the patch, and soon v4 (with
+just one comment fixed).
+
+I'm currently executing the strace v5.5 testsuite, and every test
+is passed so far.  I'll also look at gdb testsuite, before I send the
+next version.
+
 
 Thanks
---
-Gustavo
+Bernd.
 
-> --b.
-> 
->>
->> This issue was found with the help of Coccinelle.
->>
->> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->> [2] https://github.com/KSPP/linux/issues/21
->> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  include/linux/sunrpc/svc.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
->> index 1afe38eb33f7..7f0a83451bc0 100644
->> --- a/include/linux/sunrpc/svc.h
->> +++ b/include/linux/sunrpc/svc.h
->> @@ -380,7 +380,7 @@ struct svc_deferred_req {
->>  	struct cache_deferred_req handle;
->>  	size_t			xprt_hlen;
->>  	int			argslen;
->> -	__be32			args[0];
->> +	__be32			args[];
->>  };
->>  
->>  struct svc_process_info {
->> -- 
->> 2.25.0
