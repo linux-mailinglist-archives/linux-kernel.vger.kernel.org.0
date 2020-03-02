@@ -2,97 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC5B175C36
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9902E175C71
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:57:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbgCBNwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:52:25 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:55030 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgCBNwW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:52:22 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 022DqLw2020144;
-        Mon, 2 Mar 2020 07:52:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583157141;
-        bh=OniR4A38TlbDu0vyPO11NY3qXmfOa8ulyGuImR5VXtA=;
-        h=From:To:CC:Subject:Date;
-        b=RSD4snGVhzz43neG1Xf7P/dEGpStursTYKqif5GbaGWnFud6iAgXvRrgRPPT96lnd
-         LjBbF4kqekPBdF6hg6JpzV8Hk6MNfjB8tE5Q41gdOH9c9xz+f91+EOm8/3ik9W1kw3
-         MGlZpViTAqJBDjsT9+LHsMC6sY8MafAOO4+AMcJ4=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 022DqLUL014751
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Mar 2020 07:52:21 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Mar
- 2020 07:52:21 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 2 Mar 2020 07:52:20 -0600
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 022DqKgB014616;
-        Mon, 2 Mar 2020 07:52:20 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Benoit Parrot <bparrot@ti.com>, stable <stable@vger.kernel.org>
-Subject: [Patch 1/1] media: ti-vpe: cal: fix disable_irqs to only the intended target
-Date:   Mon, 2 Mar 2020 07:56:52 -0600
-Message-ID: <20200302135652.9365-1-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726925AbgCBN5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:57:43 -0500
+Received: from mga03.intel.com ([134.134.136.65]:39949 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726451AbgCBN5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 08:57:43 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 05:57:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
+   d="scan'208";a="351545030"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 02 Mar 2020 05:57:39 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 02 Mar 2020 15:57:38 +0200
+Date:   Mon, 2 Mar 2020 15:57:38 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, davidgow@google.com,
+        Heidi Fahim <heidifahim@google.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v1] Revert "software node: Simplify
+ software_node_release() function"
+Message-ID: <20200302135738.GD22243@kuha.fi.intel.com>
+References: <20200228000001.240428-1-brendanhiggins@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228000001.240428-1-brendanhiggins@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-disable_irqs() was mistakenly disabling all interrupts when called.
-This cause all port stream to stop even if only stopping one of them.
+On Thu, Feb 27, 2020 at 04:00:01PM -0800, Brendan Higgins wrote:
+> This reverts commit 3df85a1ae51f6b256982fe9d17c2dc5bfb4cc402.
+> 
+> The reverted commit says "It's possible to release the node ID
+> immediately when fwnode_remove_software_node() is called, no need to
+> wait for software_node_release() with that." However, releasing the node
+> ID before waiting for software_node_release() to be called causes the
+> node ID to be released before the kobject and the underlying sysfs
+> entry; this means there is a period of time where a sysfs entry exists
+> that is associated with an unallocated node ID.
+> 
+> Once consequence of this is that there is a race condition where it is
+> possible to call fwnode_create_software_node() with no parent node
+> specified (NULL) and have it fail with -EEXIST because the node ID that
+> was assigned is still associated with a stale sysfs entry that hasn't
+> been cleaned up yet.
+> 
+> Although it is difficult to reproduce this race condition under normal
+> conditions, it can be deterministically reproduced with the following
+> minconfig on UML:
+> 
+> CONFIG_KUNIT_DRIVER_PE_TEST=y
+> CONFIG_DEBUG_KERNEL=y
+> CONFIG_DEBUG_OBJECTS=y
+> CONFIG_DEBUG_OBJECTS_TIMERS=y
+> CONFIG_DEBUG_KOBJECT_RELEASE=y
+> CONFIG_KUNIT=y
+> 
+> Running the tests with this configuration causes the following failure:
+> 
+> <snip>
+> kobject: 'node0' ((____ptrval____)): kobject_release, parent (____ptrval____) (delayed 400)
+> 	ok 1 - pe_test_uints
+> sysfs: cannot create duplicate filename '/kernel/software_nodes/node0'
+> CPU: 0 PID: 28 Comm: kunit_try_catch Not tainted 5.6.0-rc3-next-20200227 #14
+> <snip>
+> kobject_add_internal failed for node0 with -EEXIST, don't try to register things with the same name in the same directory.
+> kobject: 'node0' ((____ptrval____)): kobject_release, parent (____ptrval____) (delayed 100)
+> 	# pe_test_uint_arrays: ASSERTION FAILED at drivers/base/test/property-entry-test.c:123
+> 	Expected node is not error, but is: -17
+> 	not ok 2 - pe_test_uint_arrays
+> <snip>
+> 
+> Reported-by: Heidi Fahim <heidifahim@google.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
----
- drivers/media/platform/ti-vpe/cal.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 6e009e479be3..6d4cbb8782ed 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -722,16 +722,16 @@ static void enable_irqs(struct cal_ctx *ctx)
- 
- static void disable_irqs(struct cal_ctx *ctx)
- {
-+	u32 val;
-+
- 	/* Disable IRQ_WDMA_END 0/1 */
--	reg_write_field(ctx->dev,
--			CAL_HL_IRQENABLE_CLR(2),
--			CAL_HL_IRQ_CLEAR,
--			CAL_HL_IRQ_MASK(ctx->csi2_port));
-+	val = 0;
-+	set_field(&val, CAL_HL_IRQ_CLEAR, CAL_HL_IRQ_MASK(ctx->csi2_port));
-+	reg_write(ctx->dev, CAL_HL_IRQENABLE_CLR(2), val);
- 	/* Disable IRQ_WDMA_START 0/1 */
--	reg_write_field(ctx->dev,
--			CAL_HL_IRQENABLE_CLR(3),
--			CAL_HL_IRQ_CLEAR,
--			CAL_HL_IRQ_MASK(ctx->csi2_port));
-+	val = 0;
-+	set_field(&val, CAL_HL_IRQ_CLEAR, CAL_HL_IRQ_MASK(ctx->csi2_port));
-+	reg_write(ctx->dev, CAL_HL_IRQENABLE_CLR(3), val);
- 	/* Todo: Add VC_IRQ and CSI2_COMPLEXIO_IRQ handling */
- 	reg_write(ctx->dev, CAL_CSI2_VC_IRQENABLE(1), 0);
- }
+> ---
+>  drivers/base/swnode.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> index 0b081dee1e95c..de8d3543e8fe3 100644
+> --- a/drivers/base/swnode.c
+> +++ b/drivers/base/swnode.c
+> @@ -608,6 +608,13 @@ static void software_node_release(struct kobject *kobj)
+>  {
+>  	struct swnode *swnode = kobj_to_swnode(kobj);
+>  
+> +	if (swnode->parent) {
+> +		ida_simple_remove(&swnode->parent->child_ids, swnode->id);
+> +		list_del(&swnode->entry);
+> +	} else {
+> +		ida_simple_remove(&swnode_root_ids, swnode->id);
+> +	}
+> +
+>  	if (swnode->allocated) {
+>  		property_entries_free(swnode->node->properties);
+>  		kfree(swnode->node);
+> @@ -773,13 +780,6 @@ void fwnode_remove_software_node(struct fwnode_handle *fwnode)
+>  	if (!swnode)
+>  		return;
+>  
+> -	if (swnode->parent) {
+> -		ida_simple_remove(&swnode->parent->child_ids, swnode->id);
+> -		list_del(&swnode->entry);
+> -	} else {
+> -		ida_simple_remove(&swnode_root_ids, swnode->id);
+> -	}
+> -
+>  	kobject_put(&swnode->kobj);
+>  }
+>  EXPORT_SYMBOL_GPL(fwnode_remove_software_node);
+> -- 
+> 2.25.1.481.gfbce0eb801-goog
+
+thanks,
+
 -- 
-2.17.1
-
+heikki
