@@ -2,102 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3122175EE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20596175EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:58:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgCBP5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:57:42 -0500
-Received: from mail-sh.amlogic.com ([58.32.228.43]:27137 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbgCBP5l (ORCPT
+        id S1727464AbgCBP6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:58:25 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3400 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727085AbgCBP6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:57:41 -0500
-Received: from [10.18.91.152] (10.18.91.152) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 2 Mar
- 2020 23:58:09 +0800
-Subject: Re: [PATCH RESEND] dt-bindings: power: Fix dt_binding_check error
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1582856099-105484-1-git-send-email-jianxin.pan@amlogic.com>
- <7h5zfpbbn8.fsf@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <caea291f-0059-ee84-6d75-ddcb1b393952@amlogic.com>
-Date:   Mon, 2 Mar 2020 23:58:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <7h5zfpbbn8.fsf@baylibre.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.91.152]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+        Mon, 2 Mar 2020 10:58:24 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022FnsAe036178
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Mar 2020 10:58:23 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfmwvc1md-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 10:58:23 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bmt@zurich.ibm.com>;
+        Mon, 2 Mar 2020 15:58:20 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Mar 2020 15:58:17 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022FwGrd51118282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 15:58:16 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D24CFA4062;
+        Mon,  2 Mar 2020 15:58:16 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8AD0AA405B;
+        Mon,  2 Mar 2020 15:58:16 +0000 (GMT)
+Received: from spoke.zurich.ibm.com (unknown [9.4.69.152])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Mar 2020 15:58:16 +0000 (GMT)
+From:   Bernard Metzler <bmt@zurich.ibm.com>
+To:     dledford@redhat.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Cc:     Bernard Metzler <bmt@zurich.ibm.com>
+Subject: [Patch for-rc v2] RDMA/siw: Fix failure handling during device creation
+Date:   Mon,  2 Mar 2020 16:58:14 +0100
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 20030215-0008-0000-0000-000003587D7C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030215-0009-0000-0000-00004A79A9BE
+Message-Id: <20200302155814.9896-1-bmt@zurich.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_05:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ clxscore=1015 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+A failing call to ib_device_set_netdev() during device creation
+caused system crash due to xa_destroy of uninitialized xarray
+hit by device deallocation. Fixed by moving xarray initialization
+before potential device deallocation.
 
-Hi Kevin,
+Fixes: bdcf26bf9b3a (rdma/siw: network and RDMA core interface)
+Reported-by: syzbot+2e80962bedd9559fe0b3@syzkaller.appspotmail.com
+Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+---
+v1 -> v2:
+- Fix here only potential system crash during failing device
+  creation, but not missing correct error propagation.
 
+ drivers/infiniband/sw/siw/siw_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On 2020/3/1 0:28, Kevin Hilman wrote:
-> Hi Jianxin,
-> 
-> Jianxin Pan <jianxin.pan@amlogic.com> writes:
-> 
->> Missing ';' in the end of secure-monitor example node.
->>
->> Fixes: f50b4108ede1 ("dt-bindings: power: add Amlogic secure power domains bindings")
-> 
-> Thanks for the fix, but where did this commit ID come from?  I think
-> this is the right upstream commit:
-> 
-> Fixes: 165b5fb294e8 ("dt-bindings: power: add Amlogic secure power domains bindings")
-> 
-> Also, when you resend, can you cc soc@kernel.org.  The soc maintainers
-> are who queue my amlogic tree.  I will ack and they can submit to Linus
-> for v5.7 so Stephen doesn't have to carry his local linux-next fix
-> anymore.
-> 
-> Thanks,
-The commit id is not correct, it from my local branch.
-I corrected it and added soc maintainers to the cc list.
-Thanks for your time. 
-> 
-> Kevin
-> 
->> Reported-by: Rob Herring <robh+dt@kernel.org>
->> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
->>  Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->> index af32209..bc4e037 100644
->> --- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->> @@ -36,5 +36,5 @@ examples:
->>              compatible = "amlogic,meson-a1-pwrc";
->>              #power-domain-cells = <1>;
->>          };
->> -    }
->> +    };
->>  
->> -- 
->> 2.7.4
-> 
-> .
-> 
+diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+index 96ed349c0939..5cd40fb9e20c 100644
+--- a/drivers/infiniband/sw/siw/siw_main.c
++++ b/drivers/infiniband/sw/siw/siw_main.c
+@@ -388,6 +388,9 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+ 		{ .max_segment_size = SZ_2G };
+ 	base_dev->num_comp_vectors = num_possible_cpus();
+ 
++	xa_init_flags(&sdev->qp_xa, XA_FLAGS_ALLOC1);
++	xa_init_flags(&sdev->mem_xa, XA_FLAGS_ALLOC1);
++
+ 	ib_set_device_ops(base_dev, &siw_device_ops);
+ 	rv = ib_device_set_netdev(base_dev, netdev, 1);
+ 	if (rv)
+@@ -415,9 +418,6 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+ 	sdev->attrs.max_srq_wr = SIW_MAX_SRQ_WR;
+ 	sdev->attrs.max_srq_sge = SIW_MAX_SGE;
+ 
+-	xa_init_flags(&sdev->qp_xa, XA_FLAGS_ALLOC1);
+-	xa_init_flags(&sdev->mem_xa, XA_FLAGS_ALLOC1);
+-
+ 	INIT_LIST_HEAD(&sdev->cep_list);
+ 	INIT_LIST_HEAD(&sdev->qp_list);
+ 
+-- 
+2.17.2
 
