@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C06417554E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FDFE17554F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgCBIQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:16:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56682 "EHLO mail.kernel.org"
+        id S1727393AbgCBIQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:16:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbgCBIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:20 -0500
+        id S1727125AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:21 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA6E6246BB;
-        Mon,  2 Mar 2020 08:16:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15470246C2;
+        Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=UUeqA613VDXAuLWp1j8Y80aqjpOlSA5wseX1Ou+T7Z0=;
+        bh=mTZXZyNfex88ftiSETcaCC5SMnrKlg50EFJe11w+CZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFfLmWAuNkxCRk0ytGY3SHL/IW+vg1V+FMLE8AgbyKFzRi7NvlXSwTuAq2Vtilseo
-         q72t32u7cmavmP8Z1bC1zVz9y81qWAUgzveCT4G5vFrkBsTiL5GF0F+zLEUT5AutNO
-         2n47tDr8tLh81JtUsk+ZvNamiCXLHGaB2fTtidjQ=
+        b=xb0kvZ6KN3ieeoRpvRQcneQE4OvWDGFCIIcdLND2awWpOsxYrUH1h8lRifLuCIFYz
+         i0bd0ktaepO9xE4pCY6TX1xlH5wQTPzzT6P+WpOMvXPFlp/4D0J29jwDMf3rLzdzCG
+         /5gqiXq8K+MSlRhfZtjLxaXpj8aGySoPSR1rm0Lg=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003wz-3J; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003x3-4m; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org
-Subject: [PATCH 05/42] docs: scsi: convert advansys.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:38 +0100
-Message-Id: <3c697a046e641c81cdfd0784f037d41d54766931.1583136624.git.mchehab+huawei@kernel.org>
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Juergen E. Fischer" <fischer@norbit.de>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH 06/42] docs: scsi: convert aha152x.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:39 +0100
+Message-Id: <097cfcc7f25343676a1fedcefed7e3b91b41b4df.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,257 +50,227 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../scsi/{advansys.txt => advansys.rst}       | 129 +++++++++++-------
- Documentation/scsi/index.rst                  |   1 +
- MAINTAINERS                                   |   2 +-
- 3 files changed, 81 insertions(+), 51 deletions(-)
- rename Documentation/scsi/{advansys.txt => advansys.rst} (73%)
+ .../scsi/{aha152x.txt => aha152x.rst}         | 73 ++++++++++++-------
+ Documentation/scsi/index.rst                  |  1 +
+ Documentation/scsi/scsi-parameters.txt        |  2 +-
+ drivers/scsi/Kconfig                          |  2 +-
+ drivers/scsi/aha152x.c                        |  4 +-
+ 5 files changed, 52 insertions(+), 30 deletions(-)
+ rename Documentation/scsi/{aha152x.txt => aha152x.rst} (76%)
 
-diff --git a/Documentation/scsi/advansys.txt b/Documentation/scsi/advansys.rst
-similarity index 73%
-rename from Documentation/scsi/advansys.txt
-rename to Documentation/scsi/advansys.rst
-index 4a3db62b7424..e0367e179696 100644
---- a/Documentation/scsi/advansys.txt
-+++ b/Documentation/scsi/advansys.rst
-@@ -1,3 +1,9 @@
+diff --git a/Documentation/scsi/aha152x.txt b/Documentation/scsi/aha152x.rst
+similarity index 76%
+rename from Documentation/scsi/aha152x.txt
+rename to Documentation/scsi/aha152x.rst
+index 94848734ac66..7012b5c46d5d 100644
+--- a/Documentation/scsi/aha152x.txt
++++ b/Documentation/scsi/aha152x.rst
+@@ -1,7 +1,12 @@
+-$Id: README.aha152x,v 1.2 1999/12/25 15:32:30 fischer Exp fischer $
 +.. SPDX-License-Identifier: GPL-2.0
++.. include:: <isonum.txt>
 +
-+=====================
-+AdvanSys Driver Notes
-+=====================
++=====================================================
+ Adaptec AHA-1520/1522 SCSI driver for Linux (aha152x)
++=====================================================
 +
- AdvanSys (Advanced System Products, Inc.) manufactures the following
- RISC-based, Bus-Mastering, Fast (10 Mhz) and Ultra (20 Mhz) Narrow
- (8-bit transfer) SCSI Host Adapters for the ISA, EISA, VL, and PCI
-@@ -12,50 +18,51 @@ adapter detected. The number of CDBs used by the driver can be
- lowered in the BIOS by changing the 'Host Queue Size' adapter setting.
++Copyright |copy| 1993-1999 Jürgen Fischer <fischer@norbit.de>
  
- Laptop Products:
--   ABP-480 - Bus-Master CardBus (16 CDB)
-+  - ABP-480 - Bus-Master CardBus (16 CDB)
+-Copyright 1993-1999 Jürgen Fischer <fischer@norbit.de>
+ TC1550 patches by Luuk van Dijk (ldz@xs4all.nl)
  
- Connectivity Products:
--   ABP510/5150 - Bus-Master ISA (240 CDB)
--   ABP5140 - Bus-Master ISA PnP (16 CDB)
--   ABP5142 - Bus-Master ISA PnP with floppy (16 CDB)
--   ABP902/3902 - Bus-Master PCI (16 CDB)
--   ABP3905 - Bus-Master PCI (16 CDB)
--   ABP915 - Bus-Master PCI (16 CDB)
--   ABP920 - Bus-Master PCI (16 CDB)
--   ABP3922 - Bus-Master PCI (16 CDB)
--   ABP3925 - Bus-Master PCI (16 CDB)
--   ABP930 - Bus-Master PCI (16 CDB)
--   ABP930U - Bus-Master PCI Ultra (16 CDB)
--   ABP930UA - Bus-Master PCI Ultra (16 CDB)
--   ABP960 - Bus-Master PCI MAC/PC (16 CDB)
--   ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)
-+   - ABP510/5150 - Bus-Master ISA (240 CDB)
-+   - ABP5140 - Bus-Master ISA PnP (16 CDB)
-+   - ABP5142 - Bus-Master ISA PnP with floppy (16 CDB)
-+   - ABP902/3902 - Bus-Master PCI (16 CDB)
-+   - ABP3905 - Bus-Master PCI (16 CDB)
-+   - ABP915 - Bus-Master PCI (16 CDB)
-+   - ABP920 - Bus-Master PCI (16 CDB)
-+   - ABP3922 - Bus-Master PCI (16 CDB)
-+   - ABP3925 - Bus-Master PCI (16 CDB)
-+   - ABP930 - Bus-Master PCI (16 CDB)
-+   - ABP930U - Bus-Master PCI Ultra (16 CDB)
-+   - ABP930UA - Bus-Master PCI Ultra (16 CDB)
-+   - ABP960 - Bus-Master PCI MAC/PC (16 CDB)
-+   - ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)
  
- Single Channel Products:
--   ABP542 - Bus-Master ISA with floppy (240 CDB)
--   ABP742 - Bus-Master EISA (240 CDB)
--   ABP842 - Bus-Master VL (240 CDB)
--   ABP940 - Bus-Master PCI (240 CDB)
--   ABP940U - Bus-Master PCI Ultra (240 CDB)
--   ABP940UA/3940UA - Bus-Master PCI Ultra (240 CDB)
--   ABP970 - Bus-Master PCI MAC/PC (240 CDB)
--   ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)
--   ABP3960UA - Bus-Master PCI MAC/PC Ultra (240 CDB)
--   ABP940UW/3940UW - Bus-Master PCI Ultra-Wide (253 CDB)
--   ABP970UW - Bus-Master PCI MAC/PC Ultra-Wide (253 CDB)
--   ABP3940U2W - Bus-Master PCI LVD/Ultra2-Wide (253 CDB)
-+   - ABP542 - Bus-Master ISA with floppy (240 CDB)
-+   - ABP742 - Bus-Master EISA (240 CDB)
-+   - ABP842 - Bus-Master VL (240 CDB)
-+   - ABP940 - Bus-Master PCI (240 CDB)
-+   - ABP940U - Bus-Master PCI Ultra (240 CDB)
-+   - ABP940UA/3940UA - Bus-Master PCI Ultra (240 CDB)
-+   - ABP970 - Bus-Master PCI MAC/PC (240 CDB)
-+   - ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)
-+   - ABP3960UA - Bus-Master PCI MAC/PC Ultra (240 CDB)
-+   - ABP940UW/3940UW - Bus-Master PCI Ultra-Wide (253 CDB)
-+   - ABP970UW - Bus-Master PCI MAC/PC Ultra-Wide (253 CDB)
-+   - ABP3940U2W - Bus-Master PCI LVD/Ultra2-Wide (253 CDB)
+@@ -14,8 +19,10 @@ less polling loops), has slightly higher throughput (at
+ least on my ancient test box; a i486/33Mhz/20MB).
  
- Multi-Channel Products:
--   ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)
--   ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)
--   ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)
--   ABP950UW - Dual Channel Bus-Master PCI Ultra-Wide (253 CDB Per Channel)
--   ABP980 - Four Channel Bus-Master PCI (240 CDB Per Channel)
--   ABP980U - Four Channel Bus-Master PCI Ultra (240 CDB Per Channel)
--   ABP980UA/3980UA - Four Channel Bus-Master PCI Ultra (16 CDB Per Chan.)
--   ABP3950U2W - Bus-Master PCI LVD/Ultra2-Wide and Ultra-Wide (253 CDB)
--   ABP3950U3W - Bus-Master PCI Dual LVD2/Ultra3-Wide (253 CDB)
-+   - ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)
-+   - ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)
-+   - ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)
-+   - ABP950UW - Dual Channel Bus-Master PCI Ultra-Wide (253 CDB Per Channel)
-+   - ABP980 - Four Channel Bus-Master PCI (240 CDB Per Channel)
-+   - ABP980U - Four Channel Bus-Master PCI Ultra (240 CDB Per Channel)
-+   - ABP980UA/3980UA - Four Channel Bus-Master PCI Ultra (16 CDB Per Chan.)
-+   - ABP3950U2W - Bus-Master PCI LVD/Ultra2-Wide and Ultra-Wide (253 CDB)
-+   - ABP3950U3W - Bus-Master PCI Dual LVD2/Ultra3-Wide (253 CDB)
  
- Driver Compile Time Options and Debugging
-+=========================================
+-CONFIGURATION ARGUMENTS:
++Configuration Arguments
++=======================
  
- The following constants can be defined in the source file.
++============  ========================================  ======================
+ IOPORT        base io address                           (0x340/0x140)
+ IRQ           interrupt level                           (9-12; default 11)
+ SCSI_ID       scsi id of controller                     (0-7; default 7)
+@@ -25,31 +32,38 @@ SYNCHRONOUS   enable synchronous transfers              (0/1; default 1 [on])
+ DELAY:        bus reset delay                           (default 100)
+ EXT_TRANS:    enable extended translation               (0/1: default 0 [off])
+               (see NOTES)
++============  ========================================  ======================
  
-@@ -88,26 +95,30 @@ The following constants can be defined in the source file.
-    first three hex digits of the pseudo I/O Port must be set to
-    'deb' and the fourth hex digit specifies the debug level: 0 - F.
-    The following command line will look for an adapter at 0x330
--   and set the debug level to 2.
-+   and set the debug level to 2::
+-COMPILE TIME CONFIGURATION (go into AHA152X in drivers/scsi/Makefile):
++Compile Time Configuration
++==========================
  
-       linux advansys=0x330,0,0,0,0xdeb2
+--DAUTOCONF
+- use configuration the controller reports (AHA-152x only)
++(go into AHA152X in drivers/scsi/Makefile):
  
-    If the driver is built as a loadable module this variable can be
-    defined when the driver is loaded. The following insmod command
--   will set the debug level to one.
-+   will set the debug level to one::
+--DSKIP_BIOSTEST
+- Don't test for BIOS signature (AHA-1510 or disabled BIOS)
++- DAUTOCONF
++    use configuration the controller reports (AHA-152x only)
  
-       insmod advansys.o asc_dbglvl=1
+--DSETUP0="{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }"
+- override for the first controller 
++- DSKIP_BIOSTEST
++    Don't test for BIOS signature (AHA-1510 or disabled BIOS)
  
-    Debugging Message Levels:
--      0: Errors Only
--      1: High-Level Tracing
--      2-N: Verbose Tracing
+--DSETUP1="{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }"
+- override for the second controller
++- DSETUP0="{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }"
++    override for the first controller
+ 
+--DAHA152X_DEBUG
+- enable debugging output
++- DSETUP1="{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }"
++    override for the second controller
+ 
+--DAHA152X_STAT
+- enable some statistics
++- DAHA152X_DEBUG
++    enable debugging output
+ 
++- DAHA152X_STAT
++    enable some statistics
+ 
+-LILO COMMAND LINE OPTIONS:
+ 
+-aha152x=<IOPORT>[,<IRQ>[,<SCSI-ID>[,<RECONNECT>[,<PARITY>[,<SYNCHRONOUS>[,<DELAY> [,<EXT_TRANS]]]]]]]
++LILO Command Line Options
++=========================
 +
++ ::
 +
-+      ==== ==================
-+      0    Errors Only
-+      1    High-Level Tracing
-+      2-N  Verbose Tracing
-+      ==== ==================
++    aha152x=<IOPORT>[,<IRQ>[,<SCSI-ID>[,<RECONNECT>[,<PARITY>[,<SYNCHRONOUS>[,<DELAY> [,<EXT_TRANS]]]]]]]
  
-    To enable debug output to console, please make sure that:
+  The normal configuration can be overridden by specifying a command line.
+  When you do this, the BIOS test is skipped. Entered values have to be
+@@ -58,17 +72,21 @@ aha152x=<IOPORT>[,<IRQ>[,<SCSI-ID>[,<RECONNECT>[,<PARITY>[,<SYNCHRONOUS>[,<DELAY
+  For two controllers use the aha152x statement twice.
  
-    a. System and kernel logging is enabled (syslogd, klogd running).
-    b. Kernel messages are routed to console output. Check
--      /etc/syslog.conf for an entry similar to this:
-+      /etc/syslog.conf for an entry similar to this::
  
-            kern.*                  /dev/console
+-SYMBOLS FOR MODULE CONFIGURATION:
++Symbols for Module Configuration
++================================
  
-@@ -120,8 +131,11 @@ The following constants can be defined in the source file.
+ Choose from 2 alternatives:
  
-    Alternatively you can enable printk() to console with this
-    program. However, this is not the 'official' way to do this.
+-1. specify everything (old)
++1. specify everything (old)::
 +
-    Debug output is logged in /var/log/messages.
++    aha152x=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS
  
-+   ::
+-aha152x=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS
+   configuration override for first controller
+ 
++  ::
 +
-      main()
-      {
-              syscall(103, 7, 0, 0);
-@@ -144,11 +158,11 @@ The following constants can be defined in the source file.
-    Statistics are only available for kernels greater than or equal
-    to v1.3.0 with the CONFIG_PROC_FS (/proc) file system configured.
++    aha152x1=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS
  
--   AdvanSys SCSI adapter files have the following path name format:
-+   AdvanSys SCSI adapter files have the following path name format::
+-aha152x1=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS
+   configuration override for second controller
  
-       /proc/scsi/advansys/{0,1,2,3,...}
+ 2. specify only what you need to (irq or io is required; new)
+@@ -101,7 +119,8 @@ exttrans=EXTTRANS0[,EXTTRANS1]
+ If you use both alternatives the first will be taken.
  
--   This information can be displayed with cat. For example:
-+   This information can be displayed with cat. For example::
  
-       cat /proc/scsi/advansys/0
- 
-@@ -156,6 +170,7 @@ The following constants can be defined in the source file.
-    contain adapter and device configuration information.
- 
- Driver LILO Option
+-NOTES ON EXT_TRANS: 
++Notes on EXT_TRANS
 +==================
  
- If init/main.c is modified as described in the 'Directions for Adding
- the AdvanSys Driver to Linux' section (B.4.) above, the driver will
-@@ -167,17 +182,30 @@ affects searching for ISA and VL boards.
+ SCSI uses block numbers to address blocks/sectors on a device.
+ The BIOS uses a cylinder/head/sector addressing scheme (C/H/S)
+@@ -150,8 +169,9 @@ geometry right in most cases:
+ - for disks<1GB: use default translation (C/32/64)
  
- Examples:
-   1. Eliminate I/O port scanning:
--       boot: linux advansys=
--         or
--       boot: linux advansys=0x0
+ - for disks>1GB:
 +
-+     boot::
-+
-+	linux advansys=
-+
-+     or::
-+
-+	boot: linux advansys=0x0
-+
-   2. Limit I/O port scanning to one I/O port:
--       boot: linux advansys=0x110
-+
-+     boot::
-+
-+	linux advansys=0x110
-+
-   3. Limit I/O port scanning to four I/O ports:
--       boot: linux advansys=0x110,0x210,0x230,0x330
-+
-+     boot::
-+
-+	linux advansys=0x110,0x210,0x230,0x330
+   - take current geometry from the partition table
+-    (using scsicam_bios_param and accept only `valid' geometries,
++    (using scsicam_bios_param and accept only 'valid' geometries,
+     ie. either (C/32/64) or (C/63/255)).  This can be extended translation
+     even if it's not enabled in the driver.
  
- For a loadable module the same effect can be achieved by setting
- the 'asc_iopflag' variable and 'asc_ioport' array when loading
--the driver, e.g.
-+the driver, e.g.::
+@@ -161,7 +181,8 @@ geometry right in most cases:
+     disks.
  
-       insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330
  
-@@ -187,6 +215,7 @@ the 'Driver Compile Time Options and Debugging' section above for
- more information.
+-REFERENCES USED:
++References Used
++===============
  
- Credits (Chronological Order)
-+=============================
+  "AIC-6260 SCSI Chip Specification", Adaptec Corporation.
  
- Bob Frey <bfrey@turbolinux.com.cn> wrote the AdvanSys SCSI driver
- and maintained it up to 3.3F. He continues to answer questions
+@@ -177,7 +198,7 @@ REFERENCES USED:
+ 
+  Drew Eckhardt (drew@cs.colorado.edu)
+ 
+- Eric Youngdale (eric@andante.org) 
++ Eric Youngdale (eric@andante.org)
+ 
+  special thanks to Eric Youngdale for the free(!) supplying the
+  documentation on the chip.
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 2e0429d1a7a5..df526a0ceccf 100644
+index df526a0ceccf..8404e991b588 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -9,5 +9,6 @@ Linux SCSI Subsystem
- 
+@@ -10,5 +10,6 @@ Linux SCSI Subsystem
     53c700
     aacraid
-+   advansys
+    advansys
++   aha152x
  
     scsi_transport_srp/figures
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cb6ecdbc96da..aac8ef48dc08 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -540,7 +540,7 @@ M:	Matthew Wilcox <willy@infradead.org>
- M:	Hannes Reinecke <hare@suse.com>
- L:	linux-scsi@vger.kernel.org
- S:	Maintained
--F:	Documentation/scsi/advansys.txt
-+F:	Documentation/scsi/advansys.rst
- F:	drivers/scsi/advansys.c
+diff --git a/Documentation/scsi/scsi-parameters.txt b/Documentation/scsi/scsi-parameters.txt
+index 25a4b4cf04a6..064d6dfcac26 100644
+--- a/Documentation/scsi/scsi-parameters.txt
++++ b/Documentation/scsi/scsi-parameters.txt
+@@ -16,7 +16,7 @@ parameters may be changed at runtime by the command
+ 			See header of drivers/scsi/advansys.c.
  
- ADXL34X THREE-AXIS DIGITAL ACCELEROMETER DRIVER (ADXL345/ADXL346)
+ 	aha152x=	[HW,SCSI]
+-			See Documentation/scsi/aha152x.txt.
++			See Documentation/scsi/aha152x.rst.
+ 
+ 	aha1542=	[HW,SCSI]
+ 			Format: <portbase>[,<buson>,<busoff>[,<dmaspeed>]]
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index a153444318fb..18af62594bc0 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -383,7 +383,7 @@ config SCSI_AHA152X
+ 
+ 	  It is explained in section 3.3 of the SCSI-HOWTO, available from
+ 	  <http://www.tldp.org/docs.html#howto>. You might also want to
+-	  read the file <file:Documentation/scsi/aha152x.txt>.
++	  read the file <file:Documentation/scsi/aha152x.rst>.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called aha152x.
+diff --git a/drivers/scsi/aha152x.c b/drivers/scsi/aha152x.c
+index eb466c2e1839..90f97df1c42a 100644
+--- a/drivers/scsi/aha152x.c
++++ b/drivers/scsi/aha152x.c
+@@ -220,7 +220,7 @@
+  *
+  **************************************************************************
+ 
+- see Documentation/scsi/aha152x.txt for configuration details
++ see Documentation/scsi/aha152x.rst for configuration details
+ 
+  **************************************************************************/
+ 
+@@ -1249,7 +1249,7 @@ static int aha152x_biosparam(struct scsi_device *sdev, struct block_device *bdev
+ 				       "aha152x: unable to verify geometry for disk with >1GB.\n"
+ 				       "         Using default translation. Please verify yourself.\n"
+ 				       "         Perhaps you need to enable extended translation in the driver.\n"
+-				       "         See Documentation/scsi/aha152x.txt for details.\n");
++				       "         See Documentation/scsi/aha152x.rst for details.\n");
+ 			}
+ 		} else {
+ 			info_array[0] = info[0];
 -- 
 2.21.1
 
