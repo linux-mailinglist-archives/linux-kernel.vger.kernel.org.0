@@ -2,118 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2902D175B23
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32519175B21
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:04:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgCBNEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:04:52 -0500
-Received: from mail-wr1-f74.google.com ([209.85.221.74]:50571 "EHLO
-        mail-wr1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgCBNEv (ORCPT
+        id S1727921AbgCBNEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:04:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38890 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbgCBNEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:04:51 -0500
-Received: by mail-wr1-f74.google.com with SMTP id p5so5729500wrj.17
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:04:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=j3aDuvHmNNb8lZp62OUl5ijcLNjosW5sWfAg0aQm8tI=;
-        b=vHewCuWK7XwWw+VRmDWzRLkq61RHy9RnkX3i1kaJ8fw0M0PseejKlj/CZ68p864I5Y
-         N9SGMmkirAc/jgX9ro369d5IupRgP9uXpmgTu6qWv8iSKdgEsMlJCz2VRmtvOWTC/16r
-         grP1CWYBHUL0E9jvxhIWnmwDxoKIWwJkXclff8CBxM+bx6bGzs+trjRunmDlTB2f/ISR
-         4gaf0upeQTTq1XGdTweSwITQOJ96unRsDb0Lq9uWCv3/Qh1ver1HInXxiCT1JaF/IrcZ
-         6+l3xZm5rOWOQFpx9N2kSsUuQHMUqx615nH6Ov9dq4D2fJQYRKhTRasXzzX8hyCASUJc
-         Yr+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=j3aDuvHmNNb8lZp62OUl5ijcLNjosW5sWfAg0aQm8tI=;
-        b=nFZ0cDXnqB5nQoc5LKL0v7JMnkP6vwIDe5JqpkDysSg79s7nIepBtO8yvOyX0x9Bk5
-         5hRjC4dAjOuMI9TvtO9L5Eo2ScDL2g4htJxpALk1UmvW3uQDMH5V4qSEv8nw0qFMchG5
-         xFFsLiOQyaiOyzeehJOUktLE9zEiwmbdPTqf/12wQFwhU9CGqMZcIxzXuShbeR5e2WEw
-         R4nDP7FEPKGcBvkJS8ZqvHIK9A8Jw4GdgsYcXd2RnnvYma45+Aei84jWBRAxTIbmyRGx
-         9gjRjUuD70kuTaee12t0zE22shTI9YCxmvuPI2LSVCPzhiEbiqOx3DcqEt0jD9GpDNvG
-         VNCg==
-X-Gm-Message-State: ANhLgQ31DRkJ5gwGHvkOgr/mgVncBQ2kdEqexGFl+g6zgzguLEen//3N
-        Ry3hRy78k41TJ2Jh25DmZC2YK1sWuoo=
-X-Google-Smtp-Source: ADFU+vvhEHHYZJ73Yy0CimVvZXBOlQbztjelV2mMGDGzouPCkzbXetIp+8NAtW54Y5Fi1/JwnKRZO766kE8=
-X-Received: by 2002:adf:ce12:: with SMTP id p18mr5676203wrn.88.1583154287784;
- Mon, 02 Mar 2020 05:04:47 -0800 (PST)
-Date:   Mon,  2 Mar 2020 14:04:30 +0100
-In-Reply-To: <20200302130430.201037-1-glider@google.com>
-Message-Id: <20200302130430.201037-3-glider@google.com>
-Mime-Version: 1.0
-References: <20200302130430.201037-1-glider@google.com>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v2 3/3] sched/wait: avoid double initialization in ___wait_event()
-From:   glider@google.com
-To:     tkjos@google.com, keescook@chromium.org,
-        gregkh@linuxfoundation.org, arve@android.com, mingo@redhat.com
-Cc:     dvyukov@google.com, jannh@google.com, devel@driverdev.osuosl.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 2 Mar 2020 08:04:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=h7Dlk8HTPTSVAH8l+fXGmBYGiCphbtgSfwxH7p35WlE=; b=T0UYuvCsXe+47/Zj+UHMbQjXgv
+        1TqJL1MkEsVpu0U9tI6nQDe8t9UGE2oz0dNEGaTRiszh5QO1hBDKoADwNMyi8LqHDyLKd0+PHAKtq
+        9tNFpZVlCLkpgQ9Sv/+rxEEPAq7EbTK5ic8S+PXJ8qiXyb+oN0SYvJ8cKBIybsL94mbTC66Cffxsg
+        i8PXW2FAbLHZX3waC79V8zK3hGBUYJW0ns0thoWLuA1DLHOjHWg60IsnLSBKwOuZtWZ3jyIPVXgbp
+        biDay5U3p673YDbaXYR4qCluefMeBKiX//ejNPv8t0d0PsMuZQeDqcZNlodwJYYJBxZvUTf/X7sjH
+        9balArFw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j8kkL-0005pQ-Eb; Mon, 02 Mar 2020 13:04:33 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8F0733012C3;
+        Mon,  2 Mar 2020 14:02:33 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 40F3D20CB1522; Mon,  2 Mar 2020 14:04:31 +0100 (CET)
+Date:   Mon, 2 Mar 2020 14:04:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200302130431.GA2562@hirez.programming.kicks-ass.net>
+References: <20200302124832.GA7504@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302124832.GA7504@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_INIT_STACK_ALL enabled, the local __wq_entry is initialized
-twice. Because Clang is currently unable to optimize the automatic
-initialization away (init_wait_entry() is defined in another translation
-unit), remove it with the __no_initialize annotation.
+On Mon, Mar 02, 2020 at 06:48:32AM -0600, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Alexander Potapenko <glider@google.com>
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index 397cfd65b3fe..d71023c46058 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -453,7 +453,7 @@ struct perf_event_query_bpf {
+>  	/*
+>  	 * User provided buffer to store program ids
+>  	 */
+> -	__u32	ids[0];
+> +	__u32	ids[];
+>  };
+>  
+>  /*
 
----
- v2:
-  - changed __do_not_initialize to __no_initialize as requested by Kees
-    Cook
----
- drivers/android/binder.c | 4 ++--
- include/linux/wait.h     | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index a59871532ff6b..66984e7c33094 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -4827,7 +4827,7 @@ static int binder_ioctl_write_read(struct file *filp,
- 	struct binder_proc *proc = filp->private_data;
- 	unsigned int size = _IOC_SIZE(cmd);
- 	void __user *ubuf = (void __user *)arg;
--	struct binder_write_read bwr __no_initialize;
-+	struct binder_write_read bwr;
- 
- 	if (size != sizeof(struct binder_write_read)) {
- 		ret = -EINVAL;
-@@ -5026,7 +5026,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			goto err;
- 		break;
- 	case BINDER_SET_MAX_THREADS: {
--		int max_threads;
-+		int max_threads __no_initialize;
- 
- 		if (copy_from_user(&max_threads, ubuf,
- 				   sizeof(max_threads))) {
-diff --git a/include/linux/wait.h b/include/linux/wait.h
-index 3283c8d021377..b52a9bb2c7727 100644
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -262,7 +262,8 @@ extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
- #define ___wait_event(wq_head, condition, state, exclusive, ret, cmd)		\
- ({										\
- 	__label__ __out;							\
--	struct wait_queue_entry __wq_entry;					\
-+	/* Unconditionally initialized by init_wait_entry(). */			\
-+	struct wait_queue_entry __wq_entry __no_initialize;			\
- 	long __ret = ret;	/* explicit shadow */				\
- 										\
- 	init_wait_entry(&__wq_entry, exclusive ? WQ_FLAG_EXCLUSIVE : 0);	\
--- 
-2.25.0.265.gbab2e86ba0-goog
-
+Just to be absolutely sure; there is no ABI difference (or any actual
+difference in generated code), right?
