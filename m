@@ -2,73 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 341D4175D8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC34175D91
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 15:52:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgCBOuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 09:50:14 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21595 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727112AbgCBOuN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:50:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583160612;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rHjGdoM/kz+qPoO2ABvyQ7EE/HX9YQYgQRurjxXqWRI=;
-        b=iIpbY6XDyI79g4Jr6H5wpUlrZCPYsRiu56qS2+OhrFWnL0l4/UxvlSZlpsnpIj+GHR1XZz
-        S0U9Yo2D4FKgDQ9FDwq4oW9Vgs+LcFWYbdWsak+7bmqgJkJRbq8oNyabeCJ3Dx97dMWQeI
-        8rN5CjXS6WIovy+C50OQ9HEN+NslbfU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-349-BIe46xGPNi2Gkh1qTttGxQ-1; Mon, 02 Mar 2020 09:50:09 -0500
-X-MC-Unique: BIe46xGPNi2Gkh1qTttGxQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727316AbgCBOwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 09:52:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727250AbgCBOwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 09:52:21 -0500
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50DC41084420;
-        Mon,  2 Mar 2020 14:50:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64C677386B;
-        Mon,  2 Mar 2020 14:50:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200302143546.srzk3rnh4o6s76a7@wittgenstein>
-References: <20200302143546.srzk3rnh4o6s76a7@wittgenstein> <20200302115239.pcxvej3szmricxzu@wittgenstein> <96563.1582901612@warthog.procyon.org.uk> <20200228152427.rv3crd7akwdhta2r@wittgenstein> <87h7z7ngd4.fsf@oldenburg2.str.redhat.com> <848282.1583159228@warthog.procyon.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     dhowells@redhat.com, Florian Weimer <fweimer@redhat.com>,
-        linux-api@vger.kernel.org, viro@zeniv.linux.org.uk,
-        metze@samba.org, torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+        by mail.kernel.org (Postfix) with ESMTPSA id EE25C24682
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 14:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583160740;
+        bh=FpLJgWkkh8fCmPgOKqDhlneGC4YvaWwoXzMAYLaCZFc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SGSSjUABSQVozTtC4IWs3ii/v+T7bjwhLiRSJ9WKhHMAbVymnYUgl6eLt2glMy+JQ
+         1GVbHa/nmCYdBBcKMYo2Qm4GRvgRJaFHR81rzUoCHnVmF2MSkIQPuVY4ezpIX40JYM
+         f4ynofaR4Q/5EBzsHz1lGGs/fus8RBXk16Fm644E=
+Received: by mail-wr1-f44.google.com with SMTP id v2so12870702wrp.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 06:52:19 -0800 (PST)
+X-Gm-Message-State: ANhLgQ0Ttt44pKSwYqTceAicFFHxmjasOYsgCTanWSJKIxRY1lOBWejd
+        kf2FrHDstkJ+b5sXWzbq+VP4yUwWORsyUe/UfimSeg==
+X-Google-Smtp-Source: ADFU+vuD/JTTM+IbJxK5SJVF+H1KyJRiVk8Ouz9HW+yomY1Ty4oAkjWVxkJixOQT9AmMZ6uSsXE+x/HFSCoPrWL29PI=
+X-Received: by 2002:a5d:6051:: with SMTP id j17mr2737207wrt.151.1583160738331;
+ Mon, 02 Mar 2020 06:52:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <888182.1583160603.1@warthog.procyon.org.uk>
-Date:   Mon, 02 Mar 2020 14:50:03 +0000
-Message-ID: <888183.1583160603@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com> <1583160524.8544.91.camel@linux.ibm.com>
+In-Reply-To: <1583160524.8544.91.camel@linux.ibm.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 2 Mar 2020 15:52:07 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu_E9O05xB7i2Y8KiMJUjtZoq54GxSbHnyTFePcF6fqQNA@mail.gmail.com>
+Message-ID: <CAKv+Gu_E9O05xB7i2Y8KiMJUjtZoq54GxSbHnyTFePcF6fqQNA@mail.gmail.com>
+Subject: Re: [PATCH] ima: add a new CONFIG for loading arch-specific policies
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Nayna Jain <nayna@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian.brauner@ubuntu.com> wrote:
+On Mon, 2 Mar 2020 at 15:48, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Wed, 2020-02-26 at 14:10 -0500, Nayna Jain wrote:
+> > Every time a new architecture defines the IMA architecture specific
+> > functions - arch_ima_get_secureboot() and arch_ima_get_policy(), the IMA
+> > include file needs to be updated. To avoid this "noise", this patch
+> > defines a new IMA Kconfig IMA_SECURE_AND_OR_TRUSTED_BOOT option, allowing
+> > the different architectures to select it.
+> >
+> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> > Cc: Ard Biesheuvel <ardb@kernel.org>
+> > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > Cc: Philipp Rudo <prudo@linux.ibm.com>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > ---
+> >  arch/powerpc/Kconfig           | 2 +-
+> >  arch/s390/Kconfig              | 1 +
+> >  arch/x86/Kconfig               | 1 +
+> >  include/linux/ima.h            | 3 +--
+> >  security/integrity/ima/Kconfig | 9 +++++++++
+> >  5 files changed, 13 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> > index 497b7d0b2d7e..b8ce1b995633 100644
+> > --- a/arch/powerpc/Kconfig
+> > +++ b/arch/powerpc/Kconfig
+> > @@ -246,6 +246,7 @@ config PPC
+> >       select SYSCTL_EXCEPTION_TRACE
+> >       select THREAD_INFO_IN_TASK
+> >       select VIRT_TO_BUS                      if !PPC64
+> > +     select IMA_SECURE_AND_OR_TRUSTED_BOOT   if PPC_SECURE_BOOT
+> >       #
+> >       # Please keep this list sorted alphabetically.
+> >       #
+> > @@ -978,7 +979,6 @@ config PPC_SECURE_BOOT
+> >       prompt "Enable secure boot support"
+> >       bool
+> >       depends on PPC_POWERNV
+> > -     depends on IMA_ARCH_POLICY
+> >       help
+> >         Systems with firmware secure boot enabled need to define security
+> >         policies to extend secure boot to the OS. This config allows a user
+> > diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> > index 8abe77536d9d..90ff3633ade6 100644
+> > --- a/arch/s390/Kconfig
+> > +++ b/arch/s390/Kconfig
+> > @@ -195,6 +195,7 @@ config S390
+> >       select ARCH_HAS_FORCE_DMA_UNENCRYPTED
+> >       select SWIOTLB
+> >       select GENERIC_ALLOCATOR
+> > +     select IMA_SECURE_AND_OR_TRUSTED_BOOT
+> >
+> >
+> >  config SCHED_OMIT_FRAME_POINTER
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index beea77046f9b..cafa66313fe2 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -230,6 +230,7 @@ config X86
+> >       select VIRT_TO_BUS
+> >       select X86_FEATURE_NAMES                if PROC_FS
+> >       select PROC_PID_ARCH_STATUS             if PROC_FS
+> > +     select IMA_SECURE_AND_OR_TRUSTED_BOOT   if EFI
+>
+> Not everyone is interested in enabling IMA or requiring IMA runtime
+> policies.  With this patch, enabling IMA_ARCH_POLICY is therefore
+> still left up to the person building the kernel.  As a result, I'm
+> seeing the following warning, which is kind of cool.
+>
+> WARNING: unmet direct dependencies detected for
+> IMA_SECURE_AND_OR_TRUSTED_BOOT
+>   Depends on [n]: INTEGRITY [=y] && IMA [=y] && IMA_ARCH_POLICY [=n]
+>   Selected by [y]:
+>   - X86 [=y] && EFI [=y]
+>
+> Ard, Michael, Martin, just making sure this type of warning is
+> acceptable before upstreaming this patch.  I would appreciate your
+> tags.
+>
 
-> I think we settled this and can agree on RESOLVE_NO_SYMLINKS being the
-> right thing to do, i.e. not resolving symlinks will stay opt-in.
-> Or is your worry even with the current semantics of openat2()? I don't
-> see the issue since O_NOFOLLOW still works with openat2().
+Ehm, no, warnings like these are not really acceptable. It means there
+is an inconsistency in the way the Kconfig dependencies are defined.
 
-Say, for example, my home dir is on a network volume somewhere and /home has a
-symlink pointing to it.  RESOLVE_NO_SYMLINKS cannot be used to access a file
-inside my homedir if the pathwalk would go through /home/dhowells - this would
-affect fsinfo() - so RESOLVE_NO_SYMLINKS is not a substitute for
-AT_SYMLINK_NOFOLLOW (O_NOFOLLOW would not come into it).
+Does this help:
 
-David
+  select IMA_SECURE_AND_OR_TRUSTED_BOOT   if EFI && IMA_ARCH_POLICY
 
+?
+
+
+>
+> >
+> >  config INSTRUCTION_DECODER
+> >       def_bool y
+> > diff --git a/include/linux/ima.h b/include/linux/ima.h
+> > index 1659217e9b60..aefe758f4466 100644
+> > --- a/include/linux/ima.h
+> > +++ b/include/linux/ima.h
+> > @@ -30,8 +30,7 @@ extern void ima_kexec_cmdline(const void *buf, int size);
+> >  extern void ima_add_kexec_buffer(struct kimage *image);
+> >  #endif
+> >
+> > -#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390) \
+> > -     || defined(CONFIG_PPC_SECURE_BOOT)
+> > +#ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
+> >  extern bool arch_ima_get_secureboot(void);
+> >  extern const char * const *arch_get_ima_policy(void);
+> >  #else
+> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> > index 3f3ee4e2eb0d..d17972aa413a 100644
+> > --- a/security/integrity/ima/Kconfig
+> > +++ b/security/integrity/ima/Kconfig
+> > @@ -327,3 +327,12 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
+> >       depends on IMA_MEASURE_ASYMMETRIC_KEYS
+> >       depends on SYSTEM_TRUSTED_KEYRING
+> >       default y
+> > +
+> > +config IMA_SECURE_AND_OR_TRUSTED_BOOT
+> > +     bool
+> > +     depends on IMA
+> > +     depends on IMA_ARCH_POLICY
+> > +     default n
+> > +     help
+> > +        This option is selected by architectures to enable secure and/or
+> > +        trusted boot based on IMA runtime policies.
+>
+>
+>
+>
