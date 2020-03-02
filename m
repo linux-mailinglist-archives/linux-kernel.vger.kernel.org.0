@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D104817678F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1DC17678D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbgCBWkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 17:40:17 -0500
-Received: from ms.lwn.net ([45.79.88.28]:59688 "EHLO ms.lwn.net"
+        id S1726990AbgCBWkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 17:40:13 -0500
+Received: from ms.lwn.net ([45.79.88.28]:59698 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726755AbgCBWkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726773AbgCBWkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 17:40:10 -0500
 Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id 20EF199C;
+        by ms.lwn.net (Postfix) with ESMTPA id 7D4809B1;
         Mon,  2 Mar 2020 22:40:09 +0000 (UTC)
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     linux-kernel@vger.kernel.org
@@ -20,9 +20,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Masahiro Yamada <masahiroy@kernel.org>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/3] docs: move gcc-plugins to the kbuild manual
-Date:   Mon,  2 Mar 2020 15:39:56 -0700
-Message-Id: <20200302223957.905473-3-corbet@lwn.net>
+Subject: [PATCH 3/3] docs: move core-api/ioctl.rst to driver-api/
+Date:   Mon,  2 Mar 2020 15:39:57 -0700
+Message-Id: <20200302223957.905473-4-corbet@lwn.net>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200302223957.905473-1-corbet@lwn.net>
 References: <20200302223957.905473-1-corbet@lwn.net>
@@ -33,73 +33,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Information about GCC plugins is relevant to kernel building, so move this
-document to the kbuild manual.
+The ioctl() documentation belongs with the rest of the driver-oriented
+info, so move it there.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/core-api/index.rst                   | 1 -
- Documentation/{core-api => kbuild}/gcc-plugins.rst | 0
- Documentation/kbuild/index.rst                     | 1 +
- MAINTAINERS                                        | 2 +-
- scripts/gcc-plugins/Kconfig                        | 2 +-
- 5 files changed, 3 insertions(+), 3 deletions(-)
- rename Documentation/{core-api => kbuild}/gcc-plugins.rst (100%)
+ Documentation/core-api/index.rst                 | 1 -
+ Documentation/driver-api/index.rst               | 1 +
+ Documentation/{core-api => driver-api}/ioctl.rst | 0
+ 3 files changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/{core-api => driver-api}/ioctl.rst (100%)
 
 diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index b39dae276b57..9836a0ac09a3 100644
+index 9836a0ac09a3..0897ad12c119 100644
 --- a/Documentation/core-api/index.rst
 +++ b/Documentation/core-api/index.rst
 @@ -102,7 +102,6 @@ Documents that don't fit elsewhere or which have yet to be categorized.
     :maxdepth: 1
  
     librs
--   gcc-plugins
-    ioctl
+-   ioctl
  
  .. only:: subproject and html
-diff --git a/Documentation/core-api/gcc-plugins.rst b/Documentation/kbuild/gcc-plugins.rst
+ 
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index ea3003b3c5e5..1d8c5599149b 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -17,6 +17,7 @@ available subsections can be seen below.
+    driver-model/index
+    basics
+    infrastructure
++   ioctl
+    early-userspace/index
+    pm/index
+    clk
+diff --git a/Documentation/core-api/ioctl.rst b/Documentation/driver-api/ioctl.rst
 similarity index 100%
-rename from Documentation/core-api/gcc-plugins.rst
-rename to Documentation/kbuild/gcc-plugins.rst
-diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
-index 0f144fad99a6..82daf2efcb73 100644
---- a/Documentation/kbuild/index.rst
-+++ b/Documentation/kbuild/index.rst
-@@ -19,6 +19,7 @@ Kernel Build System
- 
-     issues
-     reproducible-builds
-+    gcc-plugins
- 
- .. only::  subproject and html
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 38fe2f3f7b6f..f508f6c783d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6934,7 +6934,7 @@ S:	Maintained
- F:	scripts/gcc-plugins/
- F:	scripts/gcc-plugin.sh
- F:	scripts/Makefile.gcc-plugins
--F:	Documentation/core-api/gcc-plugins.rst
-+F:	Documentation/kbuild/gcc-plugins.rst
- 
- GASKET DRIVER FRAMEWORK
- M:	Rob Springer <rspringer@google.com>
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index e3569543bdac..f8ca236d6165 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -23,7 +23,7 @@ menuconfig GCC_PLUGINS
- 	  GCC plugins are loadable modules that provide extra features to the
- 	  compiler. They are useful for runtime instrumentation and static analysis.
- 
--	  See Documentation/core-api/gcc-plugins.rst for details.
-+	  See Documentation/kbuild/gcc-plugins.rst for details.
- 
- if GCC_PLUGINS
- 
+rename from Documentation/core-api/ioctl.rst
+rename to Documentation/driver-api/ioctl.rst
 -- 
 2.24.1
 
