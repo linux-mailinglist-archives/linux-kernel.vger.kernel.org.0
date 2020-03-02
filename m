@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DFB17690F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 01:02:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E50B1768E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 01:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgCCAC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 19:02:27 -0500
-Received: from mga17.intel.com ([192.55.52.151]:37738 "EHLO mga17.intel.com"
+        id S1727408AbgCBX51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:57:27 -0500
+Received: from mga17.intel.com ([192.55.52.151]:37739 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbgCBX5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:57:24 -0500
+        id S1727083AbgCBX5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 18:57:25 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:57:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
-   d="scan'208";a="243384713"
+   d="scan'208";a="243384740"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga006.jf.intel.com with ESMTP; 02 Mar 2020 15:57:22 -0800
+  by orsmga006.jf.intel.com with ESMTP; 02 Mar 2020 15:57:23 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Paolo Bonzini <pbonzini@redhat.com>
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
@@ -28,9 +28,9 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH v2 30/66] KVM: x86: Handle MPX CPUID adjustment in VMX code
-Date:   Mon,  2 Mar 2020 15:56:33 -0800
-Message-Id: <20200302235709.27467-31-sean.j.christopherson@intel.com>
+Subject: [PATCH v2 39/66] KVM: SVM: Convert feature updates from CPUID to KVM cpu caps
+Date:   Mon,  2 Mar 2020 15:56:42 -0800
+Message-Id: <20200302235709.27467-40-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200302235709.27467-1-sean.j.christopherson@intel.com>
 References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
@@ -41,71 +41,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the MPX CPUID adjustments into VMX to eliminate an instance of the
-undesirable "unsigned f_* = *_supported ? F(*) : 0" pattern in the
-common CPUID handling code.
+Use the recently introduced KVM CPU caps to propagate SVM-only (kernel)
+settings to supported CPUID flags.
 
-Note, to maintain existing behavior, VMX must manually check for kernel
-support for MPX by querying boot_cpu_has(X86_FEATURE_MPX).  Previously,
-do_cpuid_7_mask() masked MPX based on boot_cpu_data by invoking
-cpuid_mask() on the associated cpufeatures word, but cpuid_mask() runs
-prior to executing vmx_set_supported_cpuid().
+Note, there are a few subtleties:
+
+  - Setting a flag based on a *different* feature is effectively
+    emulation, and must be done at runtime via ->set_supported_cpuid().
+
+  - CPUID 0x8000000A.EDX is a feature leaf that was previously not
+    adjusted by kvm_cpu_cap_mask() because all features are hidden by
+    default.
+
+Opportunistically add a technically unnecessary break and fix an
+indentation issue in svm_set_supported_cpuid().
 
 No functional change intended.
 
 Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kvm/cpuid.c   |  3 +--
- arch/x86/kvm/vmx/vmx.c | 14 ++++++++++++--
- 2 files changed, 13 insertions(+), 4 deletions(-)
+ arch/x86/kvm/cpuid.c |  6 ++++++
+ arch/x86/kvm/svm.c   | 51 +++++++++++++++++++++++++++-----------------
+ 2 files changed, 38 insertions(+), 19 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 04343c54a419..43f76b36f461 100644
+index f0b6885d2415..e26644d8280b 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -340,7 +340,6 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
- static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
- {
- 	unsigned f_invpcid = kvm_x86_ops->invpcid_supported() ? F(INVPCID) : 0;
--	unsigned f_mpx = kvm_mpx_supported() ? F(MPX) : 0;
- 	unsigned f_umip = kvm_x86_ops->umip_emulated() ? F(UMIP) : 0;
- 	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
- 	unsigned f_la57;
-@@ -349,7 +348,7 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry)
- 	/* cpuid 7.0.ebx */
- 	const u32 kvm_cpuid_7_0_ebx_x86_features =
- 		F(FSGSBASE) | F(BMI1) | F(HLE) | F(AVX2) | F(SMEP) |
--		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | f_mpx | F(RDSEED) |
-+		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | 0 /*MPX*/ | F(RDSEED) |
- 		F(ADX) | F(SMAP) | F(AVX512IFMA) | F(AVX512F) | F(AVX512PF) |
- 		F(AVX512ER) | F(AVX512CD) | F(CLFLUSHOPT) | F(CLWB) | F(AVX512DQ) |
- 		F(SHA_NI) | F(AVX512BW) | F(AVX512VL) | f_intel_pt;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 44724e8d0b88..ef3a63ce8a6a 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7126,8 +7126,18 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+@@ -376,6 +376,12 @@ void kvm_set_cpu_caps(void)
+ 		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON)
+ 	);
  
- static void vmx_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
- {
--	if (entry->function == 1 && nested)
--		entry->ecx |= feature_bit(VMX);
-+	switch (entry->function) {
-+	case 0x1:
-+		if (nested)
-+			cpuid_entry_set(entry, X86_FEATURE_VMX);
-+		break;
-+	case 0x7:
-+		if (boot_cpu_has(X86_FEATURE_MPX) && kvm_mpx_supported())
-+			cpuid_entry_set(entry, X86_FEATURE_MPX);
-+		break;
-+	default:
-+		break;
-+	}
++	/*
++	 * Hide all SVM features by default, SVM will set the cap bits for
++	 * features it emulates and/or exposes for L1.
++	 */
++	kvm_cpu_cap_mask(CPUID_8000_000A_EDX, 0);
++
+ 	kvm_cpu_cap_mask(CPUID_C000_0001_EDX,
+ 		F(XSTORE) | F(XSTORE_EN) | F(XCRYPT) | F(XCRYPT_EN) |
+ 		F(ACE2) | F(ACE2_EN) | F(PHE) | F(PHE_EN) |
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 0725a67e3480..8ce07f6ebe8e 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1367,6 +1367,25 @@ static void svm_hardware_teardown(void)
+ 	iopm_base = 0;
  }
  
- static void vmx_request_immediate_exit(struct kvm_vcpu *vcpu)
++static __init void svm_set_cpu_caps(void)
++{
++	/* CPUID 0x1 */
++	if (avic)
++		kvm_cpu_cap_clear(X86_FEATURE_X2APIC);
++
++	/* CPUID 0x80000001 */
++	if (nested)
++		kvm_cpu_cap_set(X86_FEATURE_SVM);
++
++	/* CPUID 0x8000000A */
++	/* Support next_rip if host supports it */
++	if (boot_cpu_has(X86_FEATURE_NRIPS))
++		kvm_cpu_cap_set(X86_FEATURE_NRIPS);
++
++	if (npt_enabled)
++		kvm_cpu_cap_set(X86_FEATURE_NPT);
++}
++
+ static __init int svm_hardware_setup(void)
+ {
+ 	int cpu;
+@@ -1479,6 +1498,8 @@ static __init int svm_hardware_setup(void)
+ 			pr_info("Virtual GIF supported\n");
+ 	}
+ 
++	svm_set_cpu_caps();
++
+ 	return 0;
+ 
+ err:
+@@ -6027,20 +6048,20 @@ static void svm_cpuid_update(struct kvm_vcpu *vcpu)
+ 					 APICV_INHIBIT_REASON_NESTED);
+ }
+ 
++/*
++ * Vendor specific emulation must be handled via ->set_supported_cpuid(), not
++ * svm_set_cpu_caps(), as capabilities configured during hardware_setup() are
++ * masked against hardware/kernel support, i.e. they'd be lost.
++ *
++ * Note, setting a flag based on a *different* feature, e.g. setting VIRT_SSBD
++ * if LS_CFG_SSBD or AMD_SSBD is supported, is effectively emulation.
++ */
+ static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
+ {
+ 	switch (entry->function) {
+-	case 0x1:
+-		if (avic)
+-			cpuid_entry_clear(entry, X86_FEATURE_X2APIC);
+-		break;
+-	case 0x80000001:
+-		if (nested)
+-			cpuid_entry_set(entry, X86_FEATURE_SVM);
+-		break;
+ 	case 0x80000008:
+ 		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD) ||
+-		     boot_cpu_has(X86_FEATURE_AMD_SSBD))
++		    boot_cpu_has(X86_FEATURE_AMD_SSBD))
+ 			cpuid_entry_set(entry, X86_FEATURE_VIRT_SSBD);
+ 		break;
+ 	case 0x8000000A:
+@@ -6048,16 +6069,8 @@ static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
+ 		entry->ebx = 8; /* Lets support 8 ASIDs in case we add proper
+ 				   ASID emulation to nested SVM */
+ 		entry->ecx = 0; /* Reserved */
+-		entry->edx = 0; /* Per default do not support any
+-				   additional features */
+-
+-		/* Support next_rip if host supports it */
+-		if (boot_cpu_has(X86_FEATURE_NRIPS))
+-			cpuid_entry_set(entry, X86_FEATURE_NRIPS);
+-
+-		/* Support NPT for the guest if enabled */
+-		if (npt_enabled)
+-			cpuid_entry_set(entry, X86_FEATURE_NPT);
++		/* Note, 0x8000000A.EDX is managed via kvm_cpu_caps. */;
++		break;
+ 	}
+ }
+ 
 -- 
 2.24.1
 
