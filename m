@@ -2,120 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC5471759F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEE8175A03
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbgCBMEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:04:45 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.189]:36517 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727736AbgCBMEp (ORCPT
+        id S1727826AbgCBMJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:09:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24146 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727736AbgCBMJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:04:45 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 8A99B60C4F
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 06:04:43 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8joRjS0j1RP4z8joRjptYb; Mon, 02 Mar 2020 06:04:43 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aC9iqi902jVDV0FwmY0WOb2/TDDXpbbOOU6f3WzG29g=; b=mOEtgKW1jkzprYDuuFXqL8PGw+
-        9zyI/mXwqkhBBkwsdeW11YwLIVppno33x2MLEK2vpAFxVA6xKiNGgcd2/SAjDBC9YwG4TKrGMlFhe
-        ffNBd+qxsUFI/mNes7I1eJAy2/lFnPa21G06lJszUoFfXAr04aGtbzsIMKTJSrQ6AJIm2Jt5nbncQ
-        TcQ8WZS61Y7R8u1jnE8SsTjD0pGYVsemJx+kFDksZwh6VqblfNBhnFzC05Iv/Se1+dhcb/lFxt6fx
-        8isAEHEFVk6SS2ih0U9u9MjtVVGHvP+D/Nd7AaTnVFu6knt+SEbXQcIPEZl1waOE0zWJPzWgodJnw
-        uFIqLwFQ==;
-Received: from [200.76.83.37] (port=42254 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j8joP-003ugb-GT; Mon, 02 Mar 2020 06:04:41 -0600
-Date:   Mon, 2 Mar 2020 06:07:42 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: inet_sock: Replace zero-length array with
- flexible-array member
-Message-ID: <20200302120742.GA16158@embeddedor>
+        Mon, 2 Mar 2020 07:09:09 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022C60ej030460;
+        Mon, 2 Mar 2020 07:09:04 -0500
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfk5krv72-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Mar 2020 07:09:04 -0500
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 022C5DKL007259;
+        Mon, 2 Mar 2020 12:09:03 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma01dal.us.ibm.com with ESMTP id 2yffk6x937-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Mar 2020 12:09:03 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022C92tL62980592
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 12:09:02 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED02C136060;
+        Mon,  2 Mar 2020 12:09:01 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E70413605D;
+        Mon,  2 Mar 2020 12:09:00 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.102.1.4])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Mar 2020 12:08:59 +0000 (GMT)
+X-Mailer: emacs 27.0.90 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 3/5] libnvdimm/namespace: Enforce
+ memremap_compat_align()
+In-Reply-To: <158291748226.1609624.8971922874557923784.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <158291746615.1609624.7591692546429050845.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <158291748226.1609624.8971922874557923784.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Mon, 02 Mar 2020 17:38:57 +0530
+Message-ID: <87fterrmau.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 200.76.83.37
-X-Source-L: No
-X-Exim-ID: 1j8joP-003ugb-GT
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [200.76.83.37]:42254
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_03:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0
+ suspectscore=2 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Dan Williams <dan.j.williams@intel.com> writes:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> The pmem driver on PowerPC crashes with the following signature when
+> instantiating misaligned namespaces that map their capacity via
+> memremap_pages().
+>
+>     BUG: Unable to handle kernel data access at 0xc001000406000000
+>     Faulting instruction address: 0xc000000000090790
+>     NIP [c000000000090790] arch_add_memory+0xc0/0x130
+>     LR [c000000000090744] arch_add_memory+0x74/0x130
+>     Call Trace:
+>      arch_add_memory+0x74/0x130 (unreliable)
+>      memremap_pages+0x74c/0xa30
+>      devm_memremap_pages+0x3c/0xa0
+>      pmem_attach_disk+0x188/0x770
+>      nvdimm_bus_probe+0xd8/0x470
+>
+> With the assumption that only memremap_pages() has alignment
+> constraints, enforce memremap_compat_align() for
+> pmem_should_map_pages(), nd_pfn, and nd_dax cases. This includes
+> preventing the creation of namespaces where the base address is
+> misaligned and cases there infoblock padding parameters are invalid.
+>
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Jeff Moyer <jmoyer@redhat.com>
+> Fixes: a3619190d62e ("libnvdimm/pfn: stop padding pmem namespaces to section alignment")
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  drivers/nvdimm/namespace_devs.c |   12 ++++++++++++
+>  drivers/nvdimm/pfn_devs.c       |   26 +++++++++++++++++++++++---
+>  2 files changed, 35 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 032dc61725ff..68e89855f779 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/nd.h>
+>  #include "nd-core.h"
+>  #include "pmem.h"
+> +#include "pfn.h"
+>  #include "nd.h"
+>  
+>  static void namespace_io_release(struct device *dev)
+> @@ -1739,6 +1740,17 @@ struct nd_namespace_common *nvdimm_namespace_common_probe(struct device *dev)
+>  		return ERR_PTR(-ENODEV);
+>  	}
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+May be add a comment here that both dax/fsdax namespace details are
+checked in nd_pfn_validate() so that we look at start_pad and end_trunc
+while validating the namespace?
 
-This issue was found with the help of Coccinelle.
+>  
+> +	if (pmem_should_map_pages(dev)) {
+> +		struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+> +		struct resource *res = &nsio->res;
+> +
+> +		if (!IS_ALIGNED(res->start | (res->end + 1),
+> +					memremap_compat_align())) {
+> +			dev_err(&ndns->dev, "%pr misaligned, unable to map\n", res);
+> +			return ERR_PTR(-EOPNOTSUPP);
+> +		}
+> +	}
+> +
+>  	if (is_namespace_pmem(&ndns->dev)) {
+>  		struct nd_namespace_pmem *nspm;
+>  
+> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> index 79fe02d6f657..3bdd4b883d05 100644
+> --- a/drivers/nvdimm/pfn_devs.c
+> +++ b/drivers/nvdimm/pfn_devs.c
+> @@ -446,6 +446,7 @@ static bool nd_supported_alignment(unsigned long align)
+>  int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+>  {
+>  	u64 checksum, offset;
+> +	struct resource *res;
+>  	enum nd_pfn_mode mode;
+>  	struct nd_namespace_io *nsio;
+>  	unsigned long align, start_pad;
+> @@ -578,13 +579,14 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+>  	 * established.
+>  	 */
+>  	nsio = to_nd_namespace_io(&ndns->dev);
+> -	if (offset >= resource_size(&nsio->res)) {
+> +	res = &nsio->res;
+> +	if (offset >= resource_size(res)) {
+>  		dev_err(&nd_pfn->dev, "pfn array size exceeds capacity of %s\n",
+>  				dev_name(&ndns->dev));
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> -	if ((align && !IS_ALIGNED(nsio->res.start + offset + start_pad, align))
+> +	if ((align && !IS_ALIGNED(res->start + offset + start_pad, align))
+>  			|| !IS_ALIGNED(offset, PAGE_SIZE)) {
+>  		dev_err(&nd_pfn->dev,
+>  				"bad offset: %#llx dax disabled align: %#lx\n",
+> @@ -592,6 +594,18 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> +	if (!IS_ALIGNED(res->start + le32_to_cpu(pfn_sb->start_pad),
+> +				memremap_compat_align())) {
+> +		dev_err(&nd_pfn->dev, "resource start misaligned\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	if (!IS_ALIGNED(res->end + 1 - le32_to_cpu(pfn_sb->end_trunc),
+> +				memremap_compat_align())) {
+> +		dev_err(&nd_pfn->dev, "resource end misaligned\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(nd_pfn_validate);
+> @@ -750,7 +764,13 @@ static int nd_pfn_init(struct nd_pfn *nd_pfn)
+>  	start = nsio->res.start;
+>  	size = resource_size(&nsio->res);
+>  	npfns = PHYS_PFN(size - SZ_8K);
+> -	align = max(nd_pfn->align, SUBSECTION_SIZE);
+> +	align = max(nd_pfn->align, memremap_compat_align());
+> +	if (!IS_ALIGNED(start, memremap_compat_align())) {
+> +		dev_err(&nd_pfn->dev, "%s: start %pa misaligned to %#lx\n",
+> +				dev_name(&ndns->dev), &start,
+> +				memremap_compat_align());
+> +		return -EINVAL;
+> +	}
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+This validates start in case of a new namespace creation where the user
+updated nd_region->align value? A comment there would help when looking
+at the code later?
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/net/inet_sock.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/net/inet_sock.h b/include/net/inet_sock.h
-index 34c4436fd18f..a7ce00af6c44 100644
---- a/include/net/inet_sock.h
-+++ b/include/net/inet_sock.h
-@@ -52,7 +52,7 @@ struct ip_options {
- 	unsigned char	router_alert;
- 	unsigned char	cipso;
- 	unsigned char	__pad2;
--	unsigned char	__data[0];
-+	unsigned char	__data[];
- };
- 
- struct ip_options_rcu {
--- 
-2.25.0
-
+>  	end_trunc = start + size - ALIGN_DOWN(start + size, align);
+>  	if (nd_pfn->mode == PFN_MODE_PMEM) {
+>  		/*
+> _______________________________________________
+> Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
+> To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
