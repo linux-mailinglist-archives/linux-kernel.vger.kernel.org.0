@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DEC17557F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7C6175589
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbgCBIRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:17:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57142 "EHLO mail.kernel.org"
+        id S1727665AbgCBIR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:17:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbgCBIQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727336AbgCBIQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 03:16:24 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4E75246FE;
+        by mail.kernel.org (Postfix) with ESMTPSA id B57A1246FC;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583136980;
-        bh=uRMw8DHS2+mjwJ6WCZ5ML8KJ623fBLgRY86aZe0Vbk0=;
+        s=default; t=1583136979;
+        bh=TedJRCCkSL0w21M1N2Y8vbZhKIe2wnJsDAcEp4djbEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E28pUejODXCjrYS5SWr+qOvYQXtSVTwlWEq3vBVhUijmqP6GqBxYzVQF53bZBJwRf
-         VGUg1lPqrNw0pGrEJB1OGcKVymnuXw+F9HvusTxZHgWHxbpsSMVJGHvTQoHypPKjZq
-         RgITMCVSgmJpCVOk6jNZwUEvtDZjkt3CihtKTA0E=
+        b=YhOovMWcOI8RcurY0dZyqY8dPSA7Of74Tt2SkKN9Q826an4TSJB8OAGKd6hiaey+i
+         ENjSsf/UWEE7vrC/9an17e5EmsMs9R0HiiRcp9PXwpslOsu3DQR1VAxOFas0Sl3sjH
+         VtopjO/61/xngAsVEWZ9vCvsefoH5/35liQ0ntV4=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003zC-Sl; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003zK-Tg; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH 33/42] docs: scsi: convert scsi.txt to ReST
-Date:   Mon,  2 Mar 2020 09:16:06 +0100
-Message-Id: <c617b37769a82901def0fed3d236a25995c4e160.1583136624.git.mchehab+huawei@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 34/42] docs: scsi: convert sd-parameters.txt to ReST
+Date:   Mon,  2 Mar 2020 09:16:07 +0100
+Message-Id: <8d0b75b0faf13a2e81373570d6ce601b629fb22a.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -48,168 +45,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/index.rst              |  1 +
- Documentation/scsi/{scsi.txt => scsi.rst} | 31 +++++++++++++----------
- drivers/scsi/Kconfig                      | 16 ++++++------
- 3 files changed, 26 insertions(+), 22 deletions(-)
- rename Documentation/scsi/{scsi.txt => scsi.rst} (82%)
+ Documentation/scsi/index.rst                  |  1 +
+ .../{sd-parameters.txt => sd-parameters.rst}  | 21 ++++++++++++-------
+ 2 files changed, 14 insertions(+), 8 deletions(-)
+ rename Documentation/scsi/{sd-parameters.txt => sd-parameters.rst} (37%)
 
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 4bf0bb26f3d5..97276e425f25 100644
+index 97276e425f25..6805e157b6e8 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -37,5 +37,6 @@ Linux SCSI Subsystem
-    scsi-generic
+@@ -38,5 +38,6 @@ Linux SCSI Subsystem
     scsi_mid_low_api
     scsi-parameters
-+   scsi
+    scsi
++   sd-parameters
  
     scsi_transport_srp/figures
-diff --git a/Documentation/scsi/scsi.txt b/Documentation/scsi/scsi.rst
-similarity index 82%
-rename from Documentation/scsi/scsi.txt
-rename to Documentation/scsi/scsi.rst
-index 3d99d38cb62a..276918eb4d74 100644
---- a/Documentation/scsi/scsi.txt
-+++ b/Documentation/scsi/scsi.rst
-@@ -1,44 +1,47 @@
+diff --git a/Documentation/scsi/sd-parameters.txt b/Documentation/scsi/sd-parameters.rst
+similarity index 37%
+rename from Documentation/scsi/sd-parameters.txt
+rename to Documentation/scsi/sd-parameters.rst
+index 8e5af00d88e7..87d554008bfb 100644
+--- a/Documentation/scsi/sd-parameters.txt
++++ b/Documentation/scsi/sd-parameters.rst
+@@ -1,3 +1,6 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+============================
- SCSI subsystem documentation
- ============================
-+
- The Linux Documentation Project (LDP) maintains a document describing
- the SCSI subsystem in the Linux kernel (lk) 2.4 series. See:
- http://www.tldp.org/HOWTO/SCSI-2.4-HOWTO . The LDP has single
- and multiple page HTML renderings as well as postscript and pdf.
- It can also be found at:
--http://web.archive.org/web/*/http://www.torque.net/scsi/SCSI-2.4-HOWTO
-+http://web.archive.org/web/%2E/http://www.torque.net/scsi/SCSI-2.4-HOWTO
++======================================
+ Linux SCSI Disk Driver (sd) Parameters
+ ======================================
  
- Notes on using modules in the SCSI subsystem
- ============================================
--The scsi support in the linux kernel can be modularized in a number of 
-+The scsi support in the linux kernel can be modularized in a number of
- different ways depending upon the needs of the end user.  To understand
- your options, we should first define a few terms.
+@@ -5,18 +8,20 @@ cache_type (RW)
+ ---------------
+ Enable/disable drive write & read cache.
  
--The scsi-core (also known as the "mid level") contains the core of scsi 
-+The scsi-core (also known as the "mid level") contains the core of scsi
- support.  Without it you can do nothing with any of the other scsi drivers.
- The scsi core support can be a module (scsi_mod.o), or it can be built into
--the kernel. If the core is a module, it must be the first scsi module 
--loaded, and if you unload the modules, it will have to be the last one 
-+the kernel. If the core is a module, it must be the first scsi module
-+loaded, and if you unload the modules, it will have to be the last one
- unloaded.  In practice the modprobe and rmmod commands (and "autoclean")
- will enforce the correct ordering of loading and unloading modules in
- the SCSI subsystem.
+- cache_type string          | WCE RCD | Write cache | Read cache
+-----------------------------+---------+-------------+------------
+- write through              | 0   0   | off         | on
+- none                       | 0   1   | off         | off
+- write back                 | 1   0   | on          | on
+- write back, no read (daft) | 1   1   | on          | off
++===========================   === ===   ===========   ==========
++ cache_type string            WCE RCD   Write cache   Read cache
++===========================   === ===   ===========   ==========
++ write through                0   0     off           on
++ none                         0   1     off           off
++ write back                   1   0     on            on
++ write back, no read (daft)   1   1     on            off
++===========================   === ===   ===========   ==========
  
--The individual upper and lower level drivers can be loaded in any order 
-+The individual upper and lower level drivers can be loaded in any order
- once the scsi core is present in the kernel (either compiled in or loaded
- as a module).  The disk driver (sd_mod.o), cdrom driver (sr_mod.o),
--tape driver ** (st.o) and scsi generics driver (sg.o) represent the upper 
--level drivers to support the various assorted devices which can be 
--controlled.  You can for example load the tape driver to use the tape drive, 
-+tape driver [1]_ (st.o) and scsi generics driver (sg.o) represent the upper
-+level drivers to support the various assorted devices which can be
-+controlled.  You can for example load the tape driver to use the tape drive,
- and then unload it once you have no further need for the driver (and release
- the associated memory).
+-To set cache type to "write back" and save this setting to the drive:
++To set cache type to "write back" and save this setting to the drive::
  
- The lower level drivers are the ones that support the individual cards that
- are supported for the hardware platform that you are running under. Those
- individual cards are often called Host Bus Adapters (HBAs). For example the
--aic7xxx.o driver is used to control all recent SCSI controller cards from 
--Adaptec. Almost all lower level drivers can be built either as modules or 
-+aic7xxx.o driver is used to control all recent SCSI controller cards from
-+Adaptec. Almost all lower level drivers can be built either as modules or
- built into the kernel.
+   # echo "write back" > cache_type
  
--
--** There is a variant of the st driver for controlling OnStream tape
--   devices. Its module name is osst.o .
-+.. [1] There is a variant of the st driver for controlling OnStream tape
-+       devices. Its module name is osst.o .
+ To modify the caching mode without making the change persistent, prepend
+-"temporary " to the cache type string. E.g.:
++"temporary " to the cache type string. E.g.::
  
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index bdf65b0bb78b..c705e2b951a4 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -33,7 +33,7 @@ config SCSI
- 	  Channel, and FireWire storage.
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>.
-+	  <file:Documentation/scsi/scsi.rst>.
- 	  The module will be called scsi_mod.
- 
- 	  However, do not compile this as a module if your root file system
-@@ -79,7 +79,7 @@ config BLK_DEV_SD
- 	  CD-ROMs.
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>.
-+	  <file:Documentation/scsi/scsi.rst>.
- 	  The module will be called sd_mod.
- 
- 	  Do not compile this driver as a module if your root file system
-@@ -98,7 +98,7 @@ config CHR_DEV_ST
- 	  for SCSI CD-ROMs.
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>. The module will be called st.
-+	  <file:Documentation/scsi/scsi.rst>. The module will be called st.
- 
- config BLK_DEV_SR
- 	tristate "SCSI CDROM support"
-@@ -112,7 +112,7 @@ config BLK_DEV_SR
- 	  Make sure to say Y or M to "ISO 9660 CD-ROM file system support".
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>.
-+	  <file:Documentation/scsi/scsi.rst>.
- 	  The module will be called sr_mod.
- 
- config CHR_DEV_SG
-@@ -136,7 +136,7 @@ config CHR_DEV_SG
- 	  <file:Documentation/scsi/scsi-generic.rst> for more information.
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>. The module will be called sg.
-+	  <file:Documentation/scsi/scsi.rst>. The module will be called sg.
- 
- 	  If unsure, say N.
- 
-@@ -154,7 +154,7 @@ config CHR_DEV_SCH
- 	  If you want to compile this as a module ( = code which can be
- 	  inserted in and removed from the running kernel whenever you want),
- 	  say M here and read <file:Documentation/kbuild/modules.rst> and
--	  <file:Documentation/scsi/scsi.txt>. The module will be called ch.o.
-+	  <file:Documentation/scsi/scsi.rst>. The module will be called ch.o.
- 	  If unsure, say N.
- 
- config SCSI_ENCLOSURE
-@@ -604,7 +604,7 @@ config FCOE_FNIC
- 	  This is support for the Cisco PCI-Express FCoE HBA.
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>.
-+	  <file:Documentation/scsi/scsi.rst>.
- 	  The module will be called fnic.
- 
- config SCSI_SNIC
-@@ -614,7 +614,7 @@ config SCSI_SNIC
- 	  This is support for the Cisco PCI-Express SCSI HBA.
- 
- 	  To compile this driver as a module, choose M here and read
--	  <file:Documentation/scsi/scsi.txt>.
-+	  <file:Documentation/scsi/scsi.rst>.
- 	  The module will be called snic.
- 
- config SCSI_SNIC_DEBUG_FS
+   # echo "temporary write back" > cache_type
 -- 
 2.21.1
 
