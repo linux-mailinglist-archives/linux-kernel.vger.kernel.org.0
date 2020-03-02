@@ -2,127 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C1EF1755EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1162F1755F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbgCBIYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:24:25 -0500
-Received: from mout.web.de ([212.227.17.12]:41785 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbgCBIYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:24:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1583137418;
-        bh=oOwZ5yNHNAxH4ADQa6ZEfz/xm5NK1m0TwLEgpPwX9jM=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=SnZZ+hJq+gJJIbCTFQUopz2NfIETURMzSRHoTC8Uf2hyv2TJIJnTB0iGjFoXEDBLD
-         3UQlx8lP//seFRTl0oBx8LfEJ+OQzsi8IIzjbWuIKW7JeRlQ8RBXEan3aOazV9o0Ls
-         Bws75PCh2MvS2HbIsCDcm9j1bUwp9ip2tqwjYg9E=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.91.182]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MAvCS-1jGQ8c1ugW-00A1pt; Mon, 02
- Mar 2020 09:23:38 +0100
-Subject: Re: [v2] Documentation: bootconfig: Update boot configuration
- documentation
-To:     Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <158287861133.18632.12035327305997207220.stgit@devnote2>
- <158287862131.18632.11822701514141299400.stgit@devnote2>
- <972ba3a8-9dd7-e043-d2f0-8fa8620686f7@infradead.org>
- <20200302155247.93558d4865a8bcd160ef39e5@kernel.org>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <5db1431a-7854-6837-4922-214c094e03aa@web.de>
-Date:   Mon, 2 Mar 2020 09:23:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727409AbgCBIZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:25:12 -0500
+Received: from mail-mw2nam10on2063.outbound.protection.outlook.com ([40.107.94.63]:35904
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726887AbgCBIZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:25:12 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GcoDUaAeg9VEBYQTXRIeEGa/cpFdYTtJ0SIKol4tv1PvEnjn48GCMTAydqmtRIQjworWy6g+uaepbdsIXOYGnOg2Vy9p8oWfR9DZWeRbC+5lgUT9LnzzCmVZyBEVxRjQaXrbKf1+tZ3qtTupTzDsRt7AbLh/ma/lDPrLpzzlnMpKf3DJe9R+hT1CJoFzC7GiWE8QM98znowDB8zbVFPdyGecsR/DNeVTvRyAcjR/tIQCBiL0KISrw1WVhnAkUOCOV0Gx+bsyfZtIFipUwUb2D3Vn0ieJLGrKBO+kbpaYkwMoOlW/tDFbo80qtoLVyHuefMqiusAyqwJWctDW+mvDGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6k4MeTQqSnuAL9OxSvKCcY7NndVY6mhe4iddeTQXzFk=;
+ b=D+Z29B5uNvaopOPqOxpIAMnCVxzslVY2ENZp0my0iUToqMoL0MxPg4ORFTEOrwFBuQA5ZRkk6kITmKj3oRPBz0BrE9QfZGqSKxzCR9226eMHjIHUlRS6ZNDxxsZqub6H9wbdj7JwT0qrfH+ydOf0870f0377MdOel45uVghT+TRTiXp5s8tsZ1x9Zfyg/bnwI9OsPrblNBBp1CrDnCxOJn5//3n8fNFr6BnhxCkum4umkhgqeaQXPu2fEBSTiI3qQIse2qYn9Zq+lQKhBHQRjNxHckPQXMicdUvB3FsSLPPjPP+sQCF1HclzBgrH36favPDDZJAbGPuVn2pQJ9bNSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6k4MeTQqSnuAL9OxSvKCcY7NndVY6mhe4iddeTQXzFk=;
+ b=12Iq2DK4p43IwNhwqXAn/fGZ+ipilgVTX/b+cpw/lS8D24kcSSTVH5xWE4itP07TQWEvIywWIJ7BuAxG7kA8BqBvhzFl3tMtJuxUPykVyz6VhKIlkkeV+foBC9InIsS5UIYm1NxeRkVS9U6+YN3aeE5Yt3SmWOY5wDH1hFhaDpo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Akshu.Agrawal@amd.com; 
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com (2603:10b6:208:aa::15)
+ by MN2PR12MB4271.namprd12.prod.outlook.com (2603:10b6:208:1d7::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14; Mon, 2 Mar
+ 2020 08:25:09 +0000
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::c3:c235:f1b0:50cc]) by MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::c3:c235:f1b0:50cc%6]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 08:25:09 +0000
+From:   Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     akshu.agrawal@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
+        AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ASoc: amd: Add DMIC switch capability to machine driver
+Date:   Mon,  2 Mar 2020 13:54:36 +0530
+Message-Id: <20200302082443.51587-1-akshu.agrawal@amd.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: MA1PR0101CA0048.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:22::34) To MN2PR12MB2878.namprd12.prod.outlook.com
+ (2603:10b6:208:aa::15)
 MIME-Version: 1.0
-In-Reply-To: <20200302155247.93558d4865a8bcd160ef39e5@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:N4P7BCyjZtkHyOWM5mUveUfESBrn1sDMVnXFHjwwTnUZ7qhJ9a3
- VNUA+B5BcnzxCFUu4U8Dv7b3BGr+rkiizJD2aI9OwJp3IhWQb3f9mk+MTYhAFahThYmN8PZ
- UjWFN6iEg9yHY71p8GDKABv0mNvBCnekWbJbiLfJtDjYhM/V5B4pCsHLmwJxWrGj+i6Xl8J
- A1ApD4/8tcESmq546ujyw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Sg/GReKFBAU=:KKlUE3s3Tzk5zNbPTzRpyh
- +N+E8YRwKtyDmJGyDjpKnn3GaRv/lQ+HyLy0pPqwAqMDUolkq9vXZpsdOMpz2zzO5s/rh+UmY
- Oh5iTsq2Z+ICjwAzMj4MlGjPB2XrNLbNO3NvVGqQhVVdcy7zEAXEATZAa70Rku1REge26S8mn
- +0mHdo5ZT8N1paZbVlOJ1z2qJcBOvx76vnPCXbdbfolFcynytSWdCqtR3TjDtKBwB5wKvZq+G
- Fuc3WhWsbDtA557A/EHL1MJEIuR9dTJ13Gg2OjVZr/l96aR/DJ1BbgDmLKEBDJKOfM7mtuhQ/
- bVNMj+4C828UbZjrZxSl5CW6P/s2ynqZLuc8H7mHTx+riQK1hmE9a98UBtvDYp0ySP5t7KKav
- 7dDjchnvmcw+GnkpxayM3mz6smyORPyAgyapDqSs5yAbVpcXCev251DRlyVtoUktbUNGpUJGd
- xfht2D/xvkTpxEwMctjQUYuWRSRkZ2v7WkjZLmB6GfdLF8hLWv/cWax7/mF9GOnQ7YXSX8LEX
- RFF41NIJbYXz8Z1EImbDiXVMR725XloFLPu9J78GuElWmd6P5XddWzuQc2olPWGLvIoq9a7II
- gzn3JZ9eRtcSSKIm0vJGNmtaNvHZcVUpWclGtxTkkJ0vTyC9dmTULesYv146vEx2rccnihCVd
- zs7xQFbtQlUuGabzfO3AgSpF+o9RYm0/sFYsYUJuHO7Xka4PEkfGXoLeTV7CBYfEPJ0ne2QAj
- lHOBT+JCxTa9QxSWdCIV4rEMcEfasCgRY3ZS7WSaeuv6vjnQaPzvVCumNv57mxWhN3N1y2hZp
- 0JPdzXaeHOEYd0sy1DYwRQJYuFft9hczLJkRbr2fDuo8+63EjuvvoQG2lIi9n5dPkJV2pEo1E
- xVZGesfla5GCpf5W/zqIsdoIJ3NPTfAk66YUZr6bTPr12ry1bTy4zbhTB7SmPI7PT3kUobw20
- gQUWxcR1oEVlvqEhglyRAvpdsWnJisqm+Zt2w1KINqxDAiCcPKWiX4jqqtJ/qx3pPHAWkJs9w
- Yg4WLTAOZUbyVK16eVTIFNIZ9pTTC9+g6VRBZTKi52twhss1vusuEehN427z7AoGCnO0ws6Ol
- FO/wDTFtt0CHX32GUsEfWKm2eitsoVQgSpHSrHRQuzQD+rOOQGWYF6dASqKvATl/xqk7GpC+s
- 2SW0zzbQpL2weV+vIE58euTU6oVtGWcu8ceYTf+xKUxbREv7SyKMV9cgpIxobJINNIiuh1QU9
- uoqSuc+n7z5zm/KCz
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ETHANOL2.amd.com (165.204.156.251) by MA1PR0101CA0048.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:22::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18 via Frontend Transport; Mon, 2 Mar 2020 08:25:06 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [165.204.156.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2529c90e-1b8b-461e-8723-08d7be833810
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4271:|MN2PR12MB4271:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB4271DFD9E819E2B7A6FC5AD9F8E70@MN2PR12MB4271.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:88;
+X-Forefront-PRVS: 033054F29A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(136003)(396003)(366004)(199004)(189003)(44832011)(956004)(186003)(16526019)(26005)(2616005)(5660300002)(66556008)(66476007)(66946007)(6666004)(8936002)(8676002)(81166006)(1076003)(6486002)(36756003)(81156014)(2906002)(109986005)(478600001)(4326008)(316002)(54906003)(7696005)(52116002)(86362001)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB4271;H:MN2PR12MB2878.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: L+E9/1sZ6RvU7N2k5O43twLDcAZmZOQ5MVx/V0CFjuB/7glXjeoNhp143wtZ13dqOO18VRQLE8eLMNKPqiO44HaLMz56CTLIcfJ5flLco1OY1lniyKZIGDHzEvQPj5bF+6DymuguhW7ZlHyLshLGy2E+6H6XaaOcr234Uuo1MiupOpap7w4pAvsg7CYOEgSzTKAeLLBTMg5OkbhDasJRlEQjrplNy6dxKH40vFKf9rimp4VGYN3XPXI7LvMJet2flRQt2EkjgLsP/uvbJ9RW/bWiwmEfW2AzkiAurwzMj+fepnRun3kUskdfb0J+U8dA816m0AVmgGA/QsoYkp+83KOlbS+OnVyeTo7cyj6hiFMU9qmcpSCnZzKZgI1VOBUEMKObNyyNypU9x1YNsix0xyWB/FqBpniWms3xAWuQmR0Gs0EX/jDyld+vd3rl0B7jSQGFVeakqcVefnOEl3X1dU82TJnv52O65tN6mwW60jg=
+X-MS-Exchange-AntiSpam-MessageData: xEyJaOa2tBir4eLwS21vS98uQrRlU1vKTm7flxtDaXI2LYV8UkuI/wKfpG2WN4CcfAJAI0FVZe2bfmFd4fUNAk8zNB9EF1Num0GTHAlVyXZuIJHguYf/PHrOVddghydk7JB3PLDqadTntZ49gnXeBw==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2529c90e-1b8b-461e-8723-08d7be833810
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2020 08:25:08.8933
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Uxt+esqEfanyHHb1ZVTRT/VixV/dLvU66ooDrpyzantqFd9rhFsbngUbMeLanrd3Mb7HR1NPsstI6SbKBQg41Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4271
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Ah, I got it. The last sentence is confusing. How about below?
->
-> "If you want to use the boot-time tracer, you need to use the boot confi=
-guration."
+Switch between DMIC0 and DMIC1 based on recording device selected.
+This is done by toggling the dmic select gpio.
 
-Can any tracing parameters be specified in the boot command line already?
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+ sound/soc/amd/acp3x-rt5682-max9836.c | 53 ++++++++++++++++++++++++----
+ 1 file changed, 47 insertions(+), 6 deletions(-)
 
-How many settings will fit into the discussed places?
+diff --git a/sound/soc/amd/acp3x-rt5682-max9836.c b/sound/soc/amd/acp3x-rt5682-max9836.c
+index 96fbcd29e3ed..511b8b1722aa 100644
+--- a/sound/soc/amd/acp3x-rt5682-max9836.c
++++ b/sound/soc/amd/acp3x-rt5682-max9836.c
+@@ -12,6 +12,7 @@
+ #include <sound/jack.h>
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
+ #include <linux/input.h>
+@@ -27,6 +28,7 @@
+ static struct snd_soc_jack pco_jack;
+ static struct clk *rt5682_dai_wclk;
+ static struct clk *rt5682_dai_bclk;
++static struct gpio_desc *dmic_sel;
+ 
+ static int acp3x_5682_init(struct snd_soc_pcm_runtime *rtd)
+ {
+@@ -176,7 +178,7 @@ static int acp3x_max_startup(struct snd_pcm_substream *substream)
+ 	return rt5682_clk_enable(substream);
+ }
+ 
+-static int acp3x_ec_startup(struct snd_pcm_substream *substream)
++static int acp3x_ec_dmic0_startup(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_card *card = rtd->card;
+@@ -185,6 +187,23 @@ static int acp3x_ec_startup(struct snd_pcm_substream *substream)
+ 
+ 	machine->cap_i2s_instance = I2S_BT_INSTANCE;
+ 	snd_soc_dai_set_bclk_ratio(codec_dai, 64);
++	if (dmic_sel)
++		gpiod_set_value(dmic_sel, 0);
++
++	return rt5682_clk_enable(substream);
++}
++
++static int acp3x_ec_dmic1_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_card *card = rtd->card;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct acp3x_platform_info *machine = snd_soc_card_get_drvdata(card);
++
++	machine->cap_i2s_instance = I2S_BT_INSTANCE;
++	snd_soc_dai_set_bclk_ratio(codec_dai, 64);
++	if (dmic_sel)
++		gpiod_set_value(dmic_sel, 1);
+ 
+ 	return rt5682_clk_enable(substream);
+ }
+@@ -204,8 +223,13 @@ static const struct snd_soc_ops acp3x_max_play_ops = {
+ 	.shutdown = rt5682_shutdown,
+ };
+ 
+-static const struct snd_soc_ops acp3x_ec_cap_ops = {
+-	.startup = acp3x_ec_startup,
++static const struct snd_soc_ops acp3x_ec_cap0_ops = {
++	.startup = acp3x_ec_dmic0_startup,
++	.shutdown = rt5682_shutdown,
++};
++
++static const struct snd_soc_ops acp3x_ec_cap1_ops = {
++	.startup = acp3x_ec_dmic1_startup,
+ 	.shutdown = rt5682_shutdown,
+ };
+ 
+@@ -246,12 +270,21 @@ static struct snd_soc_dai_link acp3x_dai_5682_98357[] = {
+ 		SND_SOC_DAILINK_REG(acp3x_bt, max, platform),
+ 	},
+ 	{
+-		.name = "acp3x-ec-capture",
+-		.stream_name = "Capture",
++		.name = "acp3x-ec-dmic0-capture",
++		.stream_name = "Capture DMIC0",
++		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF
++				| SND_SOC_DAIFMT_CBS_CFS,
++		.dpcm_capture = 1,
++		.ops = &acp3x_ec_cap0_ops,
++		SND_SOC_DAILINK_REG(acp3x_bt, cros_ec, platform),
++	},
++	{
++		.name = "acp3x-ec-dmic1-capture",
++		.stream_name = "Capture DMIC1",
+ 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF
+ 				| SND_SOC_DAIFMT_CBS_CFS,
+ 		.dpcm_capture = 1,
+-		.ops = &acp3x_ec_cap_ops,
++		.ops = &acp3x_ec_cap1_ops,
+ 		SND_SOC_DAILINK_REG(acp3x_bt, cros_ec, platform),
+ 	},
+ };
+@@ -302,6 +335,14 @@ static int acp3x_probe(struct platform_device *pdev)
+ 	acp3x_card.dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, card);
+ 	snd_soc_card_set_drvdata(card, machine);
++
++	dmic_sel = devm_gpiod_get(&pdev->dev, "dmic", GPIOD_OUT_LOW);
++	if (IS_ERR(dmic_sel)) {
++		dev_err(&pdev->dev, "DMIC gpio failed err=%d\n",
++			PTR_ERR(dmic_sel));
++		return PTR_ERR(dmic_sel);
++	}
++
+ 	ret = devm_snd_soc_register_card(&pdev->dev, &acp3x_card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+-- 
+2.17.1
 
-Regards,
-Markus
