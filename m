@@ -2,186 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE35176138
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DFF6176143
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbgCBRkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 12:40:24 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44246 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbgCBRkX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 12:40:23 -0500
-Received: by mail-pl1-f196.google.com with SMTP id d9so41660plo.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 09:40:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Mimd8L0KkuEU3z0SotImD5hnuEckWKEuDddwOjBPweo=;
-        b=FA0toS2TJ35J4SYiSuP9vUMDFMhFen/aWgOBpH1DNn0wPewzhpyYK9wYqc0nliBdhh
-         QvvhQf5kdDrdDCoD9sDN7up5hR9MxhopeBEZUdHD7Cp/EM0BshYO0MtNG4ufKsbT1bdQ
-         2wX8HnXHdPY5T9ZM8DO4386+uwLh6JrGQ8ZpqHQNBUdhexlEOzdtqsy/ChMzUcTbg+zE
-         MlYQoer3Gnx2r5msXaN2SXxxgRIX6lWGwE4j4IOu7uKTGaSDgzOxCR73RwqXYSUSo+EV
-         oGdNfAteZf2MxUIaE5asCzGWdkZOrSoX4gwpuXFn/wCVY+ecGGzk31Qsf6LkHDOFHxeB
-         zEhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Mimd8L0KkuEU3z0SotImD5hnuEckWKEuDddwOjBPweo=;
-        b=lwcuMVrx56LR4Xa413K+yJcPSMrIfmHBipSsAia2yZgPDjE2FTtZFi/ds2wFZalzjt
-         QNhcZjq27KRP4gnolZ9IzL8QiwFHYsDNv38O3188itWhvdNAXdTPo3Ub+vJuUw4CSdip
-         8V9dsdm0skrhW6kEZT5Fv25mh7+2Dj9KrGSK1VV5svZkXk9q3L0Y1PJ4mpEwMGnMogBr
-         ZmxmYYxeI4EqN0QNzsTzpuDwbv/1ZEzN4/dB2JUouKLGY8z6BdgOxtKShTvaNA+nrOcT
-         0kr56CMDpjTMTSs+ehsX//WOTTNmjoFNjvObIYsogevK1mpt6DWPw8evZRejSUyRbK3y
-         eWgQ==
-X-Gm-Message-State: ANhLgQ2LxoCe9CdD3/1xYo3aDDekbTZVFHtGE+N39cFj/I8HxLB6+GmM
-        TGjjUehSW78LWM2CpkPG8Rn6+WKxN4Y=
-X-Google-Smtp-Source: ADFU+vtRSmzvVppFbky+IP0O5uIEaF2zwuYdCebEmTKJg+sSXwxFIwVfettFZlUJXjbAjb5qNYD67Q==
-X-Received: by 2002:a17:90a:3364:: with SMTP id m91mr48721pjb.112.1583170822136;
-        Mon, 02 Mar 2020 09:40:22 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id k24sm20738947pgf.59.2020.03.02.09.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 09:40:21 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Peter Griffin <peter.griffin@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v2] reset: hi6220: Add support for AO reset controller
-Date:   Mon,  2 Mar 2020 17:40:15 +0000
-Message-Id: <20200302174015.52363-1-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727459AbgCBRku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 12:40:50 -0500
+Received: from mga01.intel.com ([192.55.52.88]:7421 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727159AbgCBRks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 12:40:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 09:40:48 -0800
+X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
+   d="scan'208";a="319136975"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 09:40:48 -0800
+Message-ID: <abac569d8d1978aebadf71b65cdeb240a6256ad2.camel@linux.intel.com>
+Subject: Re: [PATCH v1 06/11] mm: Allow to offline unmovable PageOffline()
+ pages via MEM_GOING_OFFLINE
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, virtio-dev@lists.oasis-open.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Qian Cai <cai@lca.pw>, Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 02 Mar 2020 09:40:47 -0800
+In-Reply-To: <20200302134941.315212-7-david@redhat.com>
+References: <20200302134941.315212-1-david@redhat.com>
+         <20200302134941.315212-7-david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Griffin <peter.griffin@linaro.org>
+On Mon, 2020-03-02 at 14:49 +0100, David Hildenbrand wrote:
+> virtio-mem wants to allow to offline memory blocks of which some parts
+> were unplugged (allocated via alloc_contig_range()), especially, to later
+> offline and remove completely unplugged memory blocks. The important part
+> is that PageOffline() has to remain set until the section is offline, so
+> these pages will never get accessed (e.g., when dumping). The pages should
+> not be handed back to the buddy (which would require clearing PageOffline()
+> and result in issues if offlining fails and the pages are suddenly in the
+> buddy).
+> 
+> Let's allow to do that by allowing to isolate any PageOffline() page
+> when offlining. This way, we can reach the memory hotplug notifier
+> MEM_GOING_OFFLINE, where the driver can signal that he is fine with
+> offlining this page by dropping its reference count. PageOffline() pages
+> with a reference count of 0 can then be skipped when offlining the
+> pages (like if they were free, however they are not in the buddy).
+> 
+> Anybody who uses PageOffline() pages and does not agree to offline them
+> (e.g., Hyper-V balloon, XEN balloon, VMWare balloon for 2MB pages) will not
+> decrement the reference count and make offlining fail when trying to
+> migrate such an unmovable page. So there should be no observable change.
+> Same applies to balloon compaction users (movable PageOffline() pages), the
+> pages will simply be migrated.
+> 
+> Note 1: If offlining fails, a driver has to increment the reference
+> 	count again in MEM_CANCEL_OFFLINE.
+> 
+> Note 2: A driver that makes use of this has to be aware that re-onlining
+> 	the memory block has to be handled by hooking into onlining code
+> 	(online_page_callback_t), resetting the page PageOffline() and
+> 	not giving them to the buddy.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: Mike Rapoport <rppt@linux.ibm.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> Cc: Qian Cai <cai@lca.pw>
+> Cc: Pingfan Liu <kernelfans@gmail.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-This is required to bring Mali450 gpu out of reset.
+This addresses the core concerns I had with the patch.
 
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Peter Griffin <peter.griffin@linaro.org>
-Cc: Enrico Weigelt <info@metux.net>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v2:
-* Updated to v2 of Peter's patch from here:
-    https://lkml.org/lkml/2019/4/19/253
-* Added a comment to explain ordering question brought
-  up on the list.
----
- drivers/reset/hisilicon/hi6220_reset.c | 71 +++++++++++++++++++++++++-
- 1 file changed, 70 insertions(+), 1 deletion(-)
+Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-diff --git a/drivers/reset/hisilicon/hi6220_reset.c b/drivers/reset/hisilicon/hi6220_reset.c
-index 24e6d420b26b..a85ed276ab83 100644
---- a/drivers/reset/hisilicon/hi6220_reset.c
-+++ b/drivers/reset/hisilicon/hi6220_reset.c
-@@ -33,6 +33,7 @@
- enum hi6220_reset_ctrl_type {
- 	PERIPHERAL,
- 	MEDIA,
-+	AO,
- };
- 
- struct hi6220_reset_data {
-@@ -92,6 +93,67 @@ static const struct reset_control_ops hi6220_media_reset_ops = {
- 	.deassert = hi6220_media_deassert,
- };
- 
-+#define AO_SCTRL_SC_PW_CLKEN0     0x800
-+#define AO_SCTRL_SC_PW_CLKDIS0    0x804
-+
-+#define AO_SCTRL_SC_PW_RSTEN0     0x810
-+#define AO_SCTRL_SC_PW_RSTDIS0    0x814
-+
-+#define AO_SCTRL_SC_PW_ISOEN0     0x820
-+#define AO_SCTRL_SC_PW_ISODIS0    0x824
-+#define AO_MAX_INDEX              12
-+
-+static int hi6220_ao_assert(struct reset_controller_dev *rc_dev,
-+			       unsigned long idx)
-+{
-+	struct hi6220_reset_data *data = to_reset_data(rc_dev);
-+	struct regmap *regmap = data->regmap;
-+	int ret;
-+
-+	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTEN0, BIT(idx));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(regmap, AO_SCTRL_SC_PW_ISOEN0, BIT(idx));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(regmap, AO_SCTRL_SC_PW_CLKDIS0, BIT(idx));
-+	if (ret)
-+		return ret;
-+}
-+
-+static int hi6220_ao_deassert(struct reset_controller_dev *rc_dev,
-+				 unsigned long idx)
-+{
-+	struct hi6220_reset_data *data = to_reset_data(rc_dev);
-+	struct regmap *regmap = data->regmap;
-+	int ret;
-+
-+	/*
-+	 * It was suggested to disable isolation before enabling
-+	 * the clocks and deasserting reset, to avoid glitches.
-+	 * But this order is preserved to keep it matching the
-+	 * vendor code.
-+	 */
-+	ret = regmap_write(regmap, AO_SCTRL_SC_PW_RSTDIS0, BIT(idx));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(regmap, AO_SCTRL_SC_PW_ISODIS0, BIT(idx));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(regmap, AO_SCTRL_SC_PW_CLKEN0, BIT(idx));
-+	if (ret)
-+		return ret;
-+}
-+
-+static const struct reset_control_ops hi6220_ao_reset_ops = {
-+	.assert = hi6220_ao_assert,
-+	.deassert = hi6220_ao_deassert,
-+};
-+
- static int hi6220_reset_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -117,9 +179,12 @@ static int hi6220_reset_probe(struct platform_device *pdev)
- 	if (type == MEDIA) {
- 		data->rc_dev.ops = &hi6220_media_reset_ops;
- 		data->rc_dev.nr_resets = MEDIA_MAX_INDEX;
--	} else {
-+	} else if (type == PERIPHERAL) {
- 		data->rc_dev.ops = &hi6220_peripheral_reset_ops;
- 		data->rc_dev.nr_resets = PERIPH_MAX_INDEX;
-+	} else {
-+		data->rc_dev.ops = &hi6220_ao_reset_ops;
-+		data->rc_dev.nr_resets = AO_MAX_INDEX;
- 	}
- 
- 	return reset_controller_register(&data->rc_dev);
-@@ -134,6 +199,10 @@ static const struct of_device_id hi6220_reset_match[] = {
- 		.compatible = "hisilicon,hi6220-mediactrl",
- 		.data = (void *)MEDIA,
- 	},
-+	{
-+		.compatible = "hisilicon,hi6220-aoctrl",
-+		.data = (void *)AO,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, hi6220_reset_match);
--- 
-2.17.1
 
