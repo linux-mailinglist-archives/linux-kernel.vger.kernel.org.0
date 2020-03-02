@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B680F1755D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3E317559D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbgCBITD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:19:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57094 "EHLO mail.kernel.org"
+        id S1727742AbgCBIR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:17:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbgCBIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:20 -0500
+        id S1727222AbgCBIQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:22 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 401E2246D5;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F54E246D4;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=GLxZsUQq+Lij8M5TFkR1baqj1S8OGH1zk8esZJ1wNcg=;
+        bh=XyjwF2ioxjiZ5JUZ0SraExulaBFZymyuvfekf1/i9Ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ds7nPUvsI4F0Celyc8rzVkvLv8/pNwQpo5zgezjJtGA1lFPoCD58AHPo7Bct/N2Ne
-         4h2apFBDolOWigUnJXUPUQ+hb4zRJR1NNQNEDFr0ikYPcqgxI2gXOWuhml5NTjpmJK
-         7apaLpK13kNjRc/cnZSp4VRwuest8tfUGdgdMhHc=
+        b=kMvBRIm+FMBnKOiFudW5uAPkV9FCcAmZKaQt5VG+W9sLSxV5NSzVTeT6dNTf4fBlf
+         FoIKotbzPsl20AWmsCLmOnRn7Mb3RIxO/LOGvSEE7cfLkwoEhPhogXjZR9ivelv9bk
+         J5V9Y+8hNmJUvnlkObIj6lF6VVbcvC+cRok3Ze1Q=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003xe-C0; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003xk-Cq; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
         linux-scsi@vger.kernel.org
-Subject: [PATCH 14/42] docs: scsi: convert dpti.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:47 +0100
-Message-Id: <212fd7961c134c5bd73d87cd818bcddc30270804.1583136624.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 15/42] docs: scsi: convert FlashPoint.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:48 +0100
+Message-Id: <e755b9644047eed6be69fcc77eb797f0801fcb99.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -49,266 +48,316 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/dpti.rst   | 92 +++++++++++++++++++++++++++++++++++
- Documentation/scsi/dpti.txt   | 83 -------------------------------
- Documentation/scsi/index.rst  |  1 +
- drivers/scsi/Kconfig          |  2 +-
- drivers/scsi/dpt/dpti_ioctl.h |  2 +-
- drivers/scsi/dpt_i2o.c        |  2 +-
- drivers/scsi/dpti.h           |  2 +-
- 7 files changed, 97 insertions(+), 87 deletions(-)
- create mode 100644 Documentation/scsi/dpti.rst
- delete mode 100644 Documentation/scsi/dpti.txt
+ .../scsi/{FlashPoint.txt => FlashPoint.rst}   | 225 +++++++++---------
+ Documentation/scsi/index.rst                  |   1 +
+ drivers/scsi/Kconfig                          |   2 +-
+ 3 files changed, 121 insertions(+), 107 deletions(-)
+ rename Documentation/scsi/{FlashPoint.txt => FlashPoint.rst} (21%)
 
-diff --git a/Documentation/scsi/dpti.rst b/Documentation/scsi/dpti.rst
-new file mode 100644
-index 000000000000..0496919d87d3
---- /dev/null
-+++ b/Documentation/scsi/dpti.rst
-@@ -0,0 +1,92 @@
+diff --git a/Documentation/scsi/FlashPoint.txt b/Documentation/scsi/FlashPoint.rst
+similarity index 21%
+rename from Documentation/scsi/FlashPoint.txt
+rename to Documentation/scsi/FlashPoint.rst
+index 5b5f29cb9f8b..ef3c07e94ad6 100644
+--- a/Documentation/scsi/FlashPoint.txt
++++ b/Documentation/scsi/FlashPoint.rst
+@@ -1,27 +1,34 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+===================
-+Adaptec dpti driver
-+===================
++===================================
++The BusLogic FlashPoint SCSI Driver
++===================================
 +
-+Redistribution and use in source form, with or without modification, are
-+permitted provided that redistributions of source code must retain the
-+above copyright notice, this list of conditions and the following disclaimer.
-+
-+This software is provided ``as is`` by Adaptec and
-+any express or implied warranties, including, but not limited to, the
-+implied warranties of merchantability and fitness for a particular purpose,
-+are disclaimed. In no event shall Adaptec be
-+liable for any direct, indirect, incidental, special, exemplary or
-+consequential damages (including, but not limited to, procurement of
-+substitute goods or services; loss of use, data, or profits; or business
-+interruptions) however caused and on any theory of liability, whether in
-+contract, strict liability, or tort (including negligence or otherwise)
-+arising in any way out of the use of this driver software, even if advised
-+of the possibility of such damage.
-+
-+This driver supports the Adaptec I2O RAID and DPT SmartRAID V I2O boards.
-+
-+Credits
-+=======
-+
-+The original linux driver was ported to Linux by Karen White while at
-+Dell Computer.  It was ported from Bob Pasteur's (of DPT) original
-+non-Linux driver.  Mark Salyzyn and Bob Pasteur consulted on the original
-+driver.
-+
-+2.0 version of the driver by Deanna Bonds and Mark Salyzyn.
-+
-+History
-+=======
-+
-+The driver was originally ported to linux version 2.0.34
-+
-+==== ==========================================================================
-+V2.0 Rewrite of driver.  Re-architectured based on i2o subsystem.
-+     This was the first full GPL version since the last version used
-+     i2osig headers which were not GPL.  Developer Testing version.
-+V2.1 Internal testing
-+V2.2 First released version
-+
-+V2.3 Changes:
-+
-+     - Added Raptor Support
-+     - Fixed bug causing system to hang under extreme load with
-+     - management utilities running (removed GFP_DMA from kmalloc flags)
-+
-+V2.4 First version ready to be submitted to be embedded in the kernel
-+
-+     Changes:
-+
-+     - Implemented suggestions from Alan Cox
-+     - Added calculation of resid for sg layer
-+     - Better error handling
-+     - Added checking underflow conditions
-+     - Added DATAPROTECT checking
-+     - Changed error return codes
-+     - Fixed pointer bug in bus reset routine
-+     - Enabled hba reset from ioctls (allows a FW flash to reboot and use
-+       the new FW without having to reboot)
-+     - Changed proc output
-+==== ==========================================================================
-+
-+TODO
-+====
-+- Add 64 bit Scatter Gather when compiled on 64 bit architectures
-+- Add sparse lun scanning
-+- Add code that checks if a device that had been taken offline is
-+  now online (at the FW level) when test unit ready or inquiry
-+  command from scsi-core
-+- Add proc read interface
-+- busrescan command
-+- rescan command
-+- Add code to rescan routine that notifies scsi-core about new devices
-+- Add support for C-PCI (hotplug stuff)
-+- Add ioctl passthru error recovery
-+
-+Notes
-+=====
-+The DPT card optimizes the order of processing commands.  Consequently,
-+a command may take up to 6 minutes to complete after it has been sent
-+to the board.
-+
-+The files dpti_ioctl.h dptsig.h osd_defs.h osd_util.h sys_info.h are part of the
-+interface files for Adaptec's management routines.  These define the structures used
-+in the ioctls.  They are written to be portable.  They are hard to read, but I need
-+to use them 'as is' or I can miss changes in the interface.
-diff --git a/Documentation/scsi/dpti.txt b/Documentation/scsi/dpti.txt
-deleted file mode 100644
-index f36dc0e7c8da..000000000000
---- a/Documentation/scsi/dpti.txt
-+++ /dev/null
-@@ -1,83 +0,0 @@
-- /* TERMS AND CONDITIONS OF USE
-- * 
-- * Redistribution and use in source form, with or without modification, are
-- * permitted provided that redistributions of source code must retain the
-- * above copyright notice, this list of conditions and the following disclaimer.
-- * 
-- * This software is provided `as is' by Adaptec and
-- * any express or implied warranties, including, but not limited to, the
-- * implied warranties of merchantability and fitness for a particular purpose,
-- * are disclaimed. In no event shall Adaptec be
-- * liable for any direct, indirect, incidental, special, exemplary or
-- * consequential damages (including, but not limited to, procurement of
-- * substitute goods or services; loss of use, data, or profits; or business
-- * interruptions) however caused and on any theory of liability, whether in
-- * contract, strict liability, or tort (including negligence or otherwise)
-- * arising in any way out of the use of this driver software, even if advised
-- * of the possibility of such damage.
-- * 
-- ****************************************************************
-- * This driver supports the Adaptec I2O RAID and DPT SmartRAID V I2O boards.
-- *
-- * CREDITS:
-- * The original linux driver was ported to Linux by Karen White while at 
-- * Dell Computer.  It was ported from Bob Pasteur's (of DPT) original 
-- * non-Linux driver.  Mark Salyzyn and Bob Pasteur consulted on the original
-- * driver. 
-- * 
-- * 2.0 version of the driver by Deanna Bonds and Mark Salyzyn.
-- *
-- * HISTORY:
-- * The driver was originally ported to linux version 2.0.34 
-- *
-- * V2.0 Rewrite of driver.  Re-architectured based on i2o subsystem.
-- *   This was the first full GPL version since the last version used
-- *   i2osig headers which were not GPL.  Developer Testing version.
-- * V2.1 Internal testing
-- * V2.2 First released version
-- *
-- * V2.3 
-- *   Changes:
-- *      Added Raptor Support
-- *      Fixed bug causing system to hang under extreme load with 
-- *         management utilities running (removed GFP_DMA from kmalloc flags)
-- *
-- *
-- * V2.4 First version ready to be submitted to be embedded in the kernel
-- *   Changes: 
-- *      Implemented suggestions from Alan Cox
-- *      Added calculation of resid for sg layer
-- *      Better error handling
-- *         Added checking underflow conditions 
-- *         Added DATAPROTECT checking
-- *         Changed error return codes
-- *         Fixed pointer bug in bus reset routine
-- *      Enabled hba reset from ioctls (allows a FW flash to reboot and use the new
-- *         FW without having to reboot)
-- *      Changed proc output
-- *
-- * TODO:
-- *      Add 64 bit Scatter Gather when compiled on 64 bit architectures
-- *      Add sparse lun scanning 
-- *      Add code that checks if a device that had been taken offline is
-- *         now online (at the FW level) when test unit ready or inquiry 
-- *         command from scsi-core
-- *      Add proc read interface
-- *         busrescan command
-- *         rescan command
-- *      Add code to rescan routine that notifies scsi-core about new devices
-- *      Add support for C-PCI (hotplug stuff)
-- *      Add ioctl passthru error recovery
-- *
-- * NOTES:
-- * The DPT card optimizes the order of processing commands.  Consequently,
-- * a command may take up to 6 minutes to complete after it has been sent
-- * to the board.  
-- *
-- * The files dpti_ioctl.h dptsig.h osd_defs.h osd_util.h sys_info.h are part of the
-- * interface files for Adaptec's management routines.  These define the structures used
-- * in the ioctls.  They are written to be portable.  They are hard to read, but I need
-- * to use them 'as is' or I can miss changes in the interface.
-- *
-- */
+ The BusLogic FlashPoint SCSI Host Adapters are now fully supported on Linux.
+ The upgrade program described below has been officially terminated effective
+ 31 March 1997 since it is no longer needed.
+ 
++::
+ 
++  	  MYLEX INTRODUCES LINUX OPERATING SYSTEM SUPPORT FOR ITS
++  	      BUSLOGIC FLASHPOINT LINE OF SCSI HOST ADAPTERS
+ 
+-	  MYLEX INTRODUCES LINUX OPERATING SYSTEM SUPPORT FOR ITS
+-	      BUSLOGIC FLASHPOINT LINE OF SCSI HOST ADAPTERS
+ 
++  FREMONT, CA, -- October 8, 1996 -- Mylex Corporation has expanded Linux
++  operating system support to its BusLogic brand of FlashPoint Ultra SCSI
++  host adapters.  All of BusLogic's other SCSI host adapters, including the
++  MultiMaster line, currently support the Linux operating system.  Linux
++  drivers and information will be available on October 15th at
++  http://sourceforge.net/projects/dandelion/.
+ 
+-FREMONT, CA, -- October 8, 1996 -- Mylex Corporation has expanded Linux
+-operating system support to its BusLogic brand of FlashPoint Ultra SCSI
+-host adapters.  All of BusLogic's other SCSI host adapters, including the
+-MultiMaster line, currently support the Linux operating system.  Linux
+-drivers and information will be available on October 15th at
+-http://sourceforge.net/projects/dandelion/.
 -
+-"Mylex is committed to supporting the Linux community," says Peter Shambora,
+-vice president of marketing for Mylex.  "We have supported Linux driver
+-development and provided technical support for our host adapters for several
+-years, and are pleased to now make our FlashPoint products available to this
+-user base."
++  "Mylex is committed to supporting the Linux community," says Peter Shambora,
++  vice president of marketing for Mylex.  "We have supported Linux driver
++  development and provided technical support for our host adapters for several
++  years, and are pleased to now make our FlashPoint products available to this
++  user base."
+ 
+ The Linux Operating System
++==========================
+ 
+ Linux is a freely-distributed implementation of UNIX for Intel x86, Sun
+ SPARC, SGI MIPS, Motorola 68k, Digital Alpha AXP and Motorola PowerPC
+@@ -30,6 +37,7 @@ System, Emacs, and TCP/IP networking.  Further information is available at
+ http://www.linux.org and http://www.ssc.com/.
+ 
+ FlashPoint Host Adapters
++========================
+ 
+ The FlashPoint family of Ultra SCSI host adapters, designed for workstation
+ and file server environments, are available in narrow, wide, dual channel,
+@@ -38,6 +46,7 @@ automation technology, which minimizes SCSI command overhead and reduces
+ the number of interrupts generated to the CPU.
+ 
+ About Mylex
++===========
+ 
+ Mylex Corporation (NASDAQ/NM SYMBOL: MYLX), founded in 1983, is a leading
+ producer of RAID technology and network management products.  The company
+@@ -51,16 +60,20 @@ and availability.  Products are sold globally through a network of OEMs,
+ major distributors, VARs, and system integrators.  Mylex Corporation is
+ headquartered at 34551 Ardenwood Blvd., Fremont, CA.
+ 
+-				   ####
+-
+ Contact:
++========
++
++::
++
++  Peter Shambora
++  Vice President of Marketing
++  Mylex Corp.
++  510/796-6100
++  peters@mylex.com
++
++
++::
+ 
+-Peter Shambora
+-Vice President of Marketing
+-Mylex Corp.
+-510/796-6100
+-peters@mylex.com
+-
+ 			       ANNOUNCEMENT
+ 	       BusLogic FlashPoint LT/BT-948 Upgrade Program
+ 			      1 February 1996
+@@ -69,95 +82,95 @@ peters@mylex.com
+ 	       BusLogic FlashPoint LW/BT-958 Upgrade Program
+ 			       14 June 1996
+ 
+-Ever since its introduction last October, the BusLogic FlashPoint LT has
+-been problematic for members of the Linux community, in that no Linux
+-drivers have been available for this new Ultra SCSI product.  Despite its
+-officially being positioned as a desktop workstation product, and not being
+-particularly well suited for a high performance multitasking operating
+-system like Linux, the FlashPoint LT has been touted by computer system
+-vendors as the latest thing, and has been sold even on many of their high
+-end systems, to the exclusion of the older MultiMaster products.  This has
+-caused grief for many people who inadvertently purchased a system expecting
+-that all BusLogic SCSI Host Adapters were supported by Linux, only to
+-discover that the FlashPoint was not supported and would not be for quite
+-some time, if ever.
++  Ever since its introduction last October, the BusLogic FlashPoint LT has
++  been problematic for members of the Linux community, in that no Linux
++  drivers have been available for this new Ultra SCSI product.  Despite its
++  officially being positioned as a desktop workstation product, and not being
++  particularly well suited for a high performance multitasking operating
++  system like Linux, the FlashPoint LT has been touted by computer system
++  vendors as the latest thing, and has been sold even on many of their high
++  end systems, to the exclusion of the older MultiMaster products.  This has
++  caused grief for many people who inadvertently purchased a system expecting
++  that all BusLogic SCSI Host Adapters were supported by Linux, only to
++  discover that the FlashPoint was not supported and would not be for quite
++  some time, if ever.
+ 
+-After this problem was identified, BusLogic contacted its major OEM
+-customers to make sure the BT-946C/956C MultiMaster cards would still be
+-made available, and that Linux users who mistakenly ordered systems with
+-the FlashPoint would be able to upgrade to the BT-946C.  While this helped
+-many purchasers of new systems, it was only a partial solution to the
+-overall problem of FlashPoint support for Linux users.  It did nothing to
+-assist the people who initially purchased a FlashPoint for a supported
+-operating system and then later decided to run Linux, or those who had
+-ended up with a FlashPoint LT, believing it was supported, and were unable
+-to return it.
++  After this problem was identified, BusLogic contacted its major OEM
++  customers to make sure the BT-946C/956C MultiMaster cards would still be
++  made available, and that Linux users who mistakenly ordered systems with
++  the FlashPoint would be able to upgrade to the BT-946C.  While this helped
++  many purchasers of new systems, it was only a partial solution to the
++  overall problem of FlashPoint support for Linux users.  It did nothing to
++  assist the people who initially purchased a FlashPoint for a supported
++  operating system and then later decided to run Linux, or those who had
++  ended up with a FlashPoint LT, believing it was supported, and were unable
++  to return it.
+ 
+-In the middle of December, I asked to meet with BusLogic's senior
+-management to discuss the issues related to Linux and free software support
+-for the FlashPoint.  Rumors of varying accuracy had been circulating
+-publicly about BusLogic's attitude toward the Linux community, and I felt
+-it was best that these issues be addressed directly.  I sent an email
+-message after 11pm one evening, and the meeting took place the next
+-afternoon.  Unfortunately, corporate wheels sometimes grind slowly,
+-especially when a company is being acquired, and so it's taken until now
+-before the details were completely determined and a public statement could
+-be made.
++  In the middle of December, I asked to meet with BusLogic's senior
++  management to discuss the issues related to Linux and free software support
++  for the FlashPoint.  Rumors of varying accuracy had been circulating
++  publicly about BusLogic's attitude toward the Linux community, and I felt
++  it was best that these issues be addressed directly.  I sent an email
++  message after 11pm one evening, and the meeting took place the next
++  afternoon.  Unfortunately, corporate wheels sometimes grind slowly,
++  especially when a company is being acquired, and so it's taken until now
++  before the details were completely determined and a public statement could
++  be made.
+ 
+-BusLogic is not prepared at this time to release the information necessary
+-for third parties to write drivers for the FlashPoint.  The only existing
+-FlashPoint drivers have been written directly by BusLogic Engineering, and
+-there is no FlashPoint documentation sufficiently detailed to allow outside
+-developers to write a driver without substantial assistance.  While there
+-are people at BusLogic who would rather not release the details of the
+-FlashPoint architecture at all, that debate has not yet been settled either
+-way.  In any event, even if documentation were available today it would
+-take quite a while for a usable driver to be written, especially since I'm
+-not convinced that the effort required would be worthwhile.
++  BusLogic is not prepared at this time to release the information necessary
++  for third parties to write drivers for the FlashPoint.  The only existing
++  FlashPoint drivers have been written directly by BusLogic Engineering, and
++  there is no FlashPoint documentation sufficiently detailed to allow outside
++  developers to write a driver without substantial assistance.  While there
++  are people at BusLogic who would rather not release the details of the
++  FlashPoint architecture at all, that debate has not yet been settled either
++  way.  In any event, even if documentation were available today it would
++  take quite a while for a usable driver to be written, especially since I'm
++  not convinced that the effort required would be worthwhile.
+ 
+-However, BusLogic does remain committed to providing a high performance
+-SCSI solution for the Linux community, and does not want to see anyone left
+-unable to run Linux because they have a Flashpoint LT.  Therefore, BusLogic
+-has put in place a direct upgrade program to allow any Linux user worldwide
+-to trade in their FlashPoint LT for the new BT-948 MultiMaster PCI Ultra
+-SCSI Host Adapter.  The BT-948 is the Ultra SCSI successor to the BT-946C
+-and has all the best features of both the BT-946C and FlashPoint LT,
+-including smart termination and a flash PROM for easy firmware updates, and
+-is of course compatible with the present Linux driver.  The price for this
+-upgrade has been set at US $45 plus shipping and handling, and the upgrade
+-program will be administered through BusLogic Technical Support, which can
+-be reached by electronic mail at techsup@buslogic.com, by Voice at +1 408
+-654-0760, or by FAX at +1 408 492-1542.
++  However, BusLogic does remain committed to providing a high performance
++  SCSI solution for the Linux community, and does not want to see anyone left
++  unable to run Linux because they have a Flashpoint LT.  Therefore, BusLogic
++  has put in place a direct upgrade program to allow any Linux user worldwide
++  to trade in their FlashPoint LT for the new BT-948 MultiMaster PCI Ultra
++  SCSI Host Adapter.  The BT-948 is the Ultra SCSI successor to the BT-946C
++  and has all the best features of both the BT-946C and FlashPoint LT,
++  including smart termination and a flash PROM for easy firmware updates, and
++  is of course compatible with the present Linux driver.  The price for this
++  upgrade has been set at US $45 plus shipping and handling, and the upgrade
++  program will be administered through BusLogic Technical Support, which can
++  be reached by electronic mail at techsup@buslogic.com, by Voice at +1 408
++  654-0760, or by FAX at +1 408 492-1542.
+ 
+-As of 14 June 1996, the original BusLogic FlashPoint LT to BT-948 upgrade
+-program has now been extended to encompass the FlashPoint LW Wide Ultra
+-SCSI Host Adapter.  Any Linux user worldwide may trade in their FlashPoint
+-LW (BT-950) for a BT-958 MultiMaster PCI Ultra SCSI Host Adapter.  The
+-price for this upgrade has been set at US $65 plus shipping and handling.
++  As of 14 June 1996, the original BusLogic FlashPoint LT to BT-948 upgrade
++  program has now been extended to encompass the FlashPoint LW Wide Ultra
++  SCSI Host Adapter.  Any Linux user worldwide may trade in their FlashPoint
++  LW (BT-950) for a BT-958 MultiMaster PCI Ultra SCSI Host Adapter.  The
++  price for this upgrade has been set at US $65 plus shipping and handling.
+ 
+-I was a beta test site for the BT-948/958, and versions 1.2.1 and 1.3.1 of
+-my BusLogic driver already included latent support for the BT-948/958.
+-Additional cosmetic support for the Ultra SCSI MultiMaster cards was added
+-subsequent releases.  As a result of this cooperative testing process,
+-several firmware bugs were found and corrected.  My heavily loaded Linux
+-test system provided an ideal environment for testing error recovery
+-processes that are much more rarely exercised in production systems, but
+-are crucial to overall system stability.  It was especially convenient
+-being able to work directly with their firmware engineer in demonstrating
+-the problems under control of the firmware debugging environment; things
+-sure have come a long way since the last time I worked on firmware for an
+-embedded system.  I am presently working on some performance testing and
+-expect to have some data to report in the not too distant future.
++  I was a beta test site for the BT-948/958, and versions 1.2.1 and 1.3.1 of
++  my BusLogic driver already included latent support for the BT-948/958.
++  Additional cosmetic support for the Ultra SCSI MultiMaster cards was added
++  subsequent releases.  As a result of this cooperative testing process,
++  several firmware bugs were found and corrected.  My heavily loaded Linux
++  test system provided an ideal environment for testing error recovery
++  processes that are much more rarely exercised in production systems, but
++  are crucial to overall system stability.  It was especially convenient
++  being able to work directly with their firmware engineer in demonstrating
++  the problems under control of the firmware debugging environment; things
++  sure have come a long way since the last time I worked on firmware for an
++  embedded system.  I am presently working on some performance testing and
++  expect to have some data to report in the not too distant future.
+ 
+-BusLogic asked me to send this announcement since a large percentage of the
+-questions regarding support for the FlashPoint have either been sent to me
+-directly via email, or have appeared in the Linux newsgroups in which I
+-participate.  To summarize, BusLogic is offering Linux users an upgrade
+-from the unsupported FlashPoint LT (BT-930) to the supported BT-948 for US
+-$45 plus shipping and handling, or from the unsupported FlashPoint LW
+-(BT-950) to the supported BT-958 for $65 plus shipping and handling.
+-Contact BusLogic Technical Support at techsup@buslogic.com or +1 408
+-654-0760 to take advantage of their offer.
++  BusLogic asked me to send this announcement since a large percentage of the
++  questions regarding support for the FlashPoint have either been sent to me
++  directly via email, or have appeared in the Linux newsgroups in which I
++  participate.  To summarize, BusLogic is offering Linux users an upgrade
++  from the unsupported FlashPoint LT (BT-930) to the supported BT-948 for US
++  $45 plus shipping and handling, or from the unsupported FlashPoint LW
++  (BT-950) to the supported BT-958 for $65 plus shipping and handling.
++  Contact BusLogic Technical Support at techsup@buslogic.com or +1 408
++  654-0760 to take advantage of their offer.
+ 
+-		Leonard N. Zubkoff
+-		lnz@dandelion.com
++  		Leonard N. Zubkoff
++  		lnz@dandelion.com
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 6fe00709cbce..b553dd9904bf 100644
+index b553dd9904bf..aad8359357e6 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -18,5 +18,6 @@ Linux SCSI Subsystem
-    BusLogic
+@@ -19,5 +19,6 @@ Linux SCSI Subsystem
     cxgb3i
     dc395x
-+   dpti
+    dpti
++   FlashPoint
  
     scsi_transport_srp/figures
 diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 9f5b2ddec6e0..5e834fba7934 100644
+index 5e834fba7934..e47498f7627e 100644
 --- a/drivers/scsi/Kconfig
 +++ b/drivers/scsi/Kconfig
-@@ -448,7 +448,7 @@ config SCSI_DPT_I2O
- 	help
- 	  This driver supports all of Adaptec's I2O based RAID controllers as 
- 	  well as the DPT SmartRaid V cards.  This is an Adaptec maintained
--	  driver by Deanna Bonds.  See <file:Documentation/scsi/dpti.txt>.
-+	  driver by Deanna Bonds.  See <file:Documentation/scsi/dpti.rst>.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called dpt_i2o.
-diff --git a/drivers/scsi/dpt/dpti_ioctl.h b/drivers/scsi/dpt/dpti_ioctl.h
-index 6bc33f4f020d..25e9251f8c78 100644
---- a/drivers/scsi/dpt/dpti_ioctl.h
-+++ b/drivers/scsi/dpt/dpti_ioctl.h
-@@ -5,7 +5,7 @@
-     begin                : Thu Sep 7 2000
-     copyright            : (C) 2001 by Adaptec
- 
--    See Documentation/scsi/dpti.txt for history, notes, license info
-+    See Documentation/scsi/dpti.rst for history, notes, license info
-     and credits
-  ***************************************************************************/
- 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index abc74fd474dc..5362fb0b96a7 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -8,7 +8,7 @@
- 			   July 30, 2001 First version being submitted
- 			   for inclusion in the kernel.  V2.4
- 
--    See Documentation/scsi/dpti.txt for history, notes, license info
-+    See Documentation/scsi/dpti.rst for history, notes, license info
-     and credits
-  ***************************************************************************/
- 
-diff --git a/drivers/scsi/dpti.h b/drivers/scsi/dpti.h
-index 42b1e28b5884..6da9ab1fcfe8 100644
---- a/drivers/scsi/dpti.h
-+++ b/drivers/scsi/dpti.h
-@@ -5,7 +5,7 @@
-     begin                : Thu Sep 7 2000
-     copyright            : (C) 2001 by Adaptec
- 
--    See Documentation/scsi/dpti.txt for history, notes, license info
-+    See Documentation/scsi/dpti.rst for history, notes, license info
-     and credits
-  ***************************************************************************/
+@@ -503,7 +503,7 @@ config SCSI_BUSLOGIC
+ 	  Adapters. Consult the SCSI-HOWTO, available from
+ 	  <http://www.tldp.org/docs.html#howto>, and the files
+ 	  <file:Documentation/scsi/BusLogic.rst> and
+-	  <file:Documentation/scsi/FlashPoint.txt> for more information.
++	  <file:Documentation/scsi/FlashPoint.rst> for more information.
+ 	  Note that support for FlashPoint is only available for 32-bit
+ 	  x86 configurations.
  
 -- 
 2.21.1
