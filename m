@@ -2,84 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDCE1751C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 03:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 315651751CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 03:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgCBC26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 21:28:58 -0500
-Received: from mail-io1-f47.google.com ([209.85.166.47]:45460 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgCBC26 (ORCPT
+        id S1726845AbgCBCaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 21:30:55 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40008 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbgCBCaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 21:28:58 -0500
-Received: by mail-io1-f47.google.com with SMTP id w9so9801102iob.12
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 18:28:57 -0800 (PST)
+        Sun, 1 Mar 2020 21:30:55 -0500
+Received: by mail-vs1-f67.google.com with SMTP id c18so5560592vsq.7;
+        Sun, 01 Mar 2020 18:30:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=J0980YMlHpI5mQNZ0x9GeM8jDUtERfj40WG6yxOZ0aY=;
-        b=ZVPuK9Cy6YB7vebkLEbrOwTXVyBu8gFrwE59AamU37CWWkff8x7Nz9OrLpABRZvRNu
-         Pb3hTyOmquoMqg6fYDpLXzZKIS18EIsVBNlw4w7e1jVMxzPPHxUUx5BY/tB1haEkdx5A
-         C9Lyn+MwiksraxbOYHCeQVmEzRn0gHrj8/KYmTGgZwh21HwBhvOqvmvRp4tpJcZ1CLtt
-         3Jie6KMQMVIHJ5Y3QRs3VB5kSNfEx35KSrmecdXlsjQYt8MIBcn162INGDu613w1S4Yg
-         CCN3yakBD1jF+fjRyKiMsxr3FPLX0jVTkVX1SDFTbag3JMWExvs4Yegfsb3az/rs58JF
-         u+ww==
+        bh=E5izDK+ngTpxKB1eZlc5Bj7076Z0jg6Dz5NVL5cyc4Q=;
+        b=fd6faAnGV6OhSlJ5ayDDMImjvxfA5IoSETnMfdzNVu2vkMjOmv39gAgWgYGAqAK4BT
+         9SA9Q8f8MBHxLF8aoXaNs4/Um40ycdponp+GL+31CmgpcnufX0BWYLdjMndwuRqieGd/
+         aXWSaEkLLSCJVMXQ2V7A3YkQEreI0zQo22a4fAQX3iRJ2bH3q2w+ndS5iKH156DrtAHJ
+         lN75iqIJQzjWQkffEuO2leCN1+ZlsAQICJYDrtBrPH6/sRttjrj0ewdPgtlKBdyM/Y5A
+         Ar96uIIycaOawKIUZ4E/JRPe5CgCOXQDIjZzIkHDyC70/Cl76GpnsjCwm0VYMphL9lAB
+         FQsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J0980YMlHpI5mQNZ0x9GeM8jDUtERfj40WG6yxOZ0aY=;
-        b=FAsw66oaOUgzf41ux0vuCml729DBxZ+gamLjv6RfABvD/d3eOvUYPFC5rpqHisyo9s
-         AdsmSbaPG+ZULLcj6WiJ/S76bkD63rcUbnyO5ePaacYBedbGRwC54DlDtyVYQxM8ejox
-         EKysYHzQ6AuaN7ithx7CF9tTHiY0sKPtEMENEtmcCDjgRBM7Z78cGnQo7bBysS9QJRvi
-         BVb3wUonAyyhb8Hocz2thgGx5gWTmeLU5sKOlJ+RO4y31XaBjQq/3+FglF4x9QRbDlQu
-         7QFhb2KhuuW1du6W3TkJmpaSvcNRbEVceVJGdSUuqAuAjn+BYLnxcz5PykEpD4orsjTA
-         G5hA==
-X-Gm-Message-State: APjAAAXx2FqJnlyTLR4qlnhVvGKtPoVgT2QjTBlOUMF/MF8coRewJoYq
-        I+LKIAqW2g6C29aJlmlJngMQ9k/2h7NlRCjBfw==
-X-Google-Smtp-Source: APXvYqwsPpzc21trMG0QKeGzBsTS1cZD0vaNdLT/wd0/aNF6rYH9AQ2YuIQHTk97BmbShE1c237Q2qHWcKrh6dppAAY=
-X-Received: by 2002:a6b:3103:: with SMTP id j3mr9726379ioa.39.1583116137647;
- Sun, 01 Mar 2020 18:28:57 -0800 (PST)
+        bh=E5izDK+ngTpxKB1eZlc5Bj7076Z0jg6Dz5NVL5cyc4Q=;
+        b=K1Ik7YMJOVMTIsMBtRrJ9fWLobgg8XDV8ozFDrnobz4VlyHRyetJm+lGOxPErcd+qy
+         keQifAH9+FOW9P6aOoIxUDIW+NrTdAwpYNFXSW++vyWkPy9Tvp0HXbgS3nDsgufaqYm2
+         +RKRknR98gXt7ELmuTX1gFNXFff1yzbfvxpSprksQ9XfxfuU4G7CUWGpQap42hZOAkfj
+         3inw+/c81vhYitKm04CGzuIF2/gYTZRTz5yGJfmGDjvAjS4D+cev34UbjwpDkgYJx6Fa
+         goka89AfPKHG+VDqZivSFP310Ml/0vO6SZrtlcL5KdWrHcmZQ/YW0TvK3sezyVYjlXCp
+         30tQ==
+X-Gm-Message-State: ANhLgQ0lF4JleezDTOMK+bTW8Kt5pRRpfinalu+Yn6aRct7i0dWAOe75
+        DKw+WjE9ASsWIG5KJJXJfaEPyD/VeO7700XnoqY=
+X-Google-Smtp-Source: ADFU+vt12FaHT8Yae6lu5GUHnSThmSMUv+EVvSHdPQpR1BpZ+X2tFDWNyeyj251p0jfKZZf5Nxw6Y+77BolOXwD28HQ=
+X-Received: by 2002:a05:6102:103:: with SMTP id z3mr8360212vsq.23.1583116253401;
+ Sun, 01 Mar 2020 18:30:53 -0800 (PST)
 MIME-Version: 1.0
-References: <1582889550-9101-1-git-send-email-kernelfans@gmail.com>
- <1582889550-9101-3-git-send-email-kernelfans@gmail.com> <20200228223446.GA4658@iweiny-DESK2.sc.intel.com>
-In-Reply-To: <20200228223446.GA4658@iweiny-DESK2.sc.intel.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Mon, 2 Mar 2020 10:28:45 +0800
-Message-ID: <CAFgQCTuK5nTrm_ijohhCJyvUmiVXueGrxbqqM381ViZyx0_MxA@mail.gmail.com>
-Subject: Re: [PATCHv5 2/3] mm/gup: fix omission of check on FOLL_LONGTERM in
- gup fast path
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
+ <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com> <CAOi1vP_opdc=OP70T2eiamMWa-o71nU8t_LYyTCytqT5BT8gdQ@mail.gmail.com>
+In-Reply-To: <CAOi1vP_opdc=OP70T2eiamMWa-o71nU8t_LYyTCytqT5BT8gdQ@mail.gmail.com>
+From:   Yanhu Cao <gmayyyha@gmail.com>
+Date:   Mon, 2 Mar 2020 10:30:42 +0800
+Message-ID: <CAB9OAC08TGgXGFJsZCNpMzqnorn=jw1S_i8Ux2euaG=4-=JGwg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 29, 2020 at 6:34 AM Ira Weiny <ira.weiny@intel.com> wrote:
+On Fri, Feb 28, 2020 at 10:02 PM Ilya Dryomov <idryomov@gmail.com> wrote:
 >
-> On Fri, Feb 28, 2020 at 07:32:29PM +0800, Pingfan Liu wrote:
-> > FOLL_LONGTERM suggests a pin which is going to be given to hardware and
-> > can't move. It would truncate CMA permanently and should be excluded.
+> On Fri, Feb 28, 2020 at 12:41 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> >
+> > On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > >
+> > > On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> > > >
+> > > > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
+> > > >
+> > > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > > > ---
+> > > >  fs/ceph/file.c                  |  6 ++++--
+> > > >  include/linux/ceph/osd_client.h |  2 ++
+> > > >  include/linux/ceph/osdmap.h     |  3 ++-
+> > > >  net/ceph/osd_client.c           | 23 +++++++++++++----------
+> > > >  4 files changed, 21 insertions(+), 13 deletions(-)
+> > > >
+> > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > > index 7e0190b1f821..60ea1eed1b84 100644
+> > > > --- a/fs/ceph/file.c
+> > > > +++ b/fs/ceph/file.c
+> > > > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > > >         }
+> > > >
+> > > >         /* FIXME: not complete since it doesn't account for being at quota */
+> > > > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
+> > > > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > > > +                               CEPH_POOL_FLAG_FULL)) {
+> > > >                 err = -ENOSPC;
+> > > >                 goto out;
+> > > >         }
+> > > > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > > >         }
+> > > >
+> > > >         if (written >= 0) {
+> > > > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> > > > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > > > +                                       CEPH_POOL_FLAG_NEARFULL))
+> > >
+> > > Hi Yanhu,
+> > >
+> > > Have you considered pre-mimic clusters here?  They are still supported
+> > > (and will continue to be supported for the foreseeable future).
+> > >
+> > > Thanks,
+> > >
+> > >                 Ilya
+> >
+> > I have tested it work on Luminous, I think it work too since
+> > ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
+> > alread have pool FLAG_FULL.
 >
-> I don't understand what is 'truncated' here?
-a pinned page will truncate a continuous area, and prevent CMA to
-reclaim the continuous area.
->
-> I generally agree with Jason that this is going to be confusing to the user.
-Please see the reply in anothe mail.
+> But not FLAG_NEARFULL, which appeared in mimic.
+FLAG_NEARFULL appeared in Luminous.
 
-Thanks,
-Pingfan
-[...]
+>
+> >
+> > CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
+> > used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
+>
+> I'm not sure I follow.
+>
+> -    if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> +    if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> +                            CEPH_POOL_FLAG_NEARFULL))
+>
+> AFAICT this change would effectively disable this branch for pre-mimic
+> clusters.  Are you saying this branch is already broken?
+>
+> Thanks,
+>
+>                 Ilya
+CEPH_OSDMAP_NEARFULL is not set in Jewel, so it has no effect. And in
+Luminous version, this flag is cleared as a legacy and has no effect
+too.
