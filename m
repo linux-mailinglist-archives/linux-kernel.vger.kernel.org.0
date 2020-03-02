@@ -2,123 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 634CE17521D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 04:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C26C17522B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 04:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgCBD07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 22:26:59 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39212 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbgCBD0z (ORCPT
+        id S1726872AbgCBDa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 22:30:56 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:56462 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbgCBDa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 22:26:55 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s2so3838968pgv.6
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 19:26:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2IJ6v+vBNAPNbMMvS1O0Ku5Q+LCCSOnxCLcdXHEwvh4=;
-        b=RqwOLPE/Bcg/5dpKgcIGb0cBoPI1lDtuMOdwJkQBykhfwHqDhUqvi++NUZKQQfGN2n
-         CUOdspMkhrJYrkI4672F7G/e0wEZ40nxUi17EbG4EQur6NgQyOmPM8csIp+SSAF5yMuy
-         rJTkL88qe+XYlD5akQ28h4/xvz45WmaU+jwnqlBnElSUp7zLNOaYAgnVefgB9goN+ima
-         eJTY6BtxLfyI0nxO+g2OAClpjYJ9clmQSa8rRE1XgWIC4qrW7SRDdBF5zIlJq66CtkOM
-         YuOyj1YPcT+vejzqjOyM0/c1p59hAvsoDgsf67p9ySttKgq+myv1dOUPVSYrdB4VXTgQ
-         Wfzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2IJ6v+vBNAPNbMMvS1O0Ku5Q+LCCSOnxCLcdXHEwvh4=;
-        b=qLSG+OeraIIfvbEsiRTUMbQeiSq8y1WwJrv7a4BWnahUV+b3y2RhUGpKWgUp0ODkPl
-         Z43v8gLZ6TZ8B6uTbHsx0UH2h8z8rBgKTAS3zlxFvqHzkVWSa/jtezOYZmNiwNKz7YLs
-         rXSWOVDgy3a/aFo3/s4kh2VkEoYtyUO+3f4RSKtChl/WCftnPXmh5uqEHmwRfIayD9S1
-         2VFCFdEvOh1ml978CI1CatDR6xEpceNYf+CZfDRa6Kjkl2wJP/kuK3tW6JNcAhhc3zOp
-         xIyBNKrL+B+Pvf0RELFNA7o9tFj225MXJYiUfYfkAsXIRzpy409W3esoGUxX85/AtQ4f
-         S89A==
-X-Gm-Message-State: ANhLgQ3HVJp8YUlpIg8uwcVPnKJlvEvZ49E3BrKg2Lup7dIrGvIohHcY
-        oKNsxgJ1JHSbDfIfHC8jHnBCzA==
-X-Google-Smtp-Source: ADFU+vsXk1eNu6nmXqw059tsROHTcg802qKJUw3BfLPuhaRNKqHg8tl6eNtdCUaTd4boNQ0QmypMmA==
-X-Received: by 2002:a63:c850:: with SMTP id l16mr4109458pgi.290.1583119614697;
-        Sun, 01 Mar 2020 19:26:54 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b133sm18435739pga.43.2020.03.01.19.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 19:26:54 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH 2/2] net: qrtr: Fix FIXME related to qrtr_ns_init()
-Date:   Sun,  1 Mar 2020 19:25:27 -0800
-Message-Id: <20200302032527.552916-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200302032527.552916-1-bjorn.andersson@linaro.org>
-References: <20200302032527.552916-1-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
+        Sun, 1 Mar 2020 22:30:56 -0500
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1j8bgX-0000KG-Ui; Sun, 01 Mar 2020 21:24:02 -0600
+Message-ID: <31b5966ba579ef246176a7d8ad18c2c02788dd27.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Jason Yan <yanaijie@huawei.com>, Daniel Axtens <dja@axtens.net>,
+        mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
+        diana.craciun@nxp.com, christophe.leroy@c-s.fr,
+        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
+        keescook@chromium.org, kernel-hardening@lists.openwall.com,
+        me@tobin.cc
+Cc:     linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
+Date:   Sun, 01 Mar 2020 21:24:00 -0600
+In-Reply-To: <35e6c660-3896-bdb8-45f3-c1504aa2171f@huawei.com>
+References: <20200206025825.22934-1-yanaijie@huawei.com>
+         <87tv3drf79.fsf@dja-thinkpad.axtens.net>
+         <8171d326-5138-4f5c-cff6-ad3ee606f0c2@huawei.com>
+         <e8cd8f287934954cfa07dcf76ac73492e2d49a5b.camel@buserror.net>
+         <dd8db870-b607-3f74-d3bc-a8d9f33f9852@huawei.com>
+         <4c0e7fec63dbc7b91fa6c24692c73c256c131f51.camel@buserror.net>
+         <188971ed-f1c4-39b3-c07e-89cc593d88d7@huawei.com>
+         <530c49dfd97c811dc53ffc78c594d7133f7eb1e9.camel@buserror.net>
+         <35e6c660-3896-bdb8-45f3-c1504aa2171f@huawei.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: yanaijie@huawei.com, dja@axtens.net, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com, christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, keescook@chromium.org, kernel-hardening@lists.openwall.com, me@tobin.cc, linux-kernel@vger.kernel.org, zhaohongjiang@huawei.com
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
+        *      this recipient and sender
+Subject: Re: [PATCH v3 0/6] implement KASLR for powerpc/fsl_booke/64
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 2 second delay before calling qrtr_ns_init() meant that the remote
-processors would register as endpoints in qrtr and the say_hello() call
-would therefor broadcast the outgoing HELLO to them. With the HELLO
-handshake corrected this delay is no longer needed.
+On Mon, 2020-03-02 at 10:17 +0800, Jason Yan wrote:
+> 
+> 在 2020/3/1 6:54, Scott Wood 写道:
+> > On Sat, 2020-02-29 at 15:27 +0800, Jason Yan wrote:
+> > > 
+> > > Turnning to %p may not be a good idea in this situation. So
+> > > for the REG logs printed when dumping stack, we can disable it when
+> > > KASLR is open. For the REG logs in other places like show_regs(), only
+> > > privileged can trigger it, and they are not combind with a symbol, so
+> > > I think it's ok to keep them.
+> > > 
+> > > diff --git a/arch/powerpc/kernel/process.c
+> > > b/arch/powerpc/kernel/process.c
+> > > index fad50db9dcf2..659c51f0739a 100644
+> > > --- a/arch/powerpc/kernel/process.c
+> > > +++ b/arch/powerpc/kernel/process.c
+> > > @@ -2068,7 +2068,10 @@ void show_stack(struct task_struct *tsk, unsigned
+> > > long *stack)
+> > >                   newsp = stack[0];
+> > >                   ip = stack[STACK_FRAME_LR_SAVE];
+> > >                   if (!firstframe || ip != lr) {
+> > > -                       printk("["REG"] ["REG"] %pS", sp, ip, (void
+> > > *)ip);
+> > > +                       if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+> > > +                               printk("%pS", (void *)ip);
+> > > +                       else
+> > > +                               printk("["REG"] ["REG"] %pS", sp, ip,
+> > > (void *)ip);
+> > 
+> > This doesn't deal with "nokaslr" on the kernel command line.  It also
+> > doesn't
+> > seem like something that every callsite should have to opencode, versus
+> > having
+> > an appropriate format specifier behaves as I described above (and I still
+> > don't see why that format specifier should not be "%p").
+> > 
+> 
+> Actually I still do not understand why we should print the raw value 
+> here. When KALLSYMS is enabled we have symbol name  and  offset like 
+> put_cred_rcu+0x108/0x110, and when KALLSYMS is disabled we have the raw 
+> address.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- net/qrtr/ns.c   | 2 +-
- net/qrtr/qrtr.c | 6 +-----
- net/qrtr/qrtr.h | 2 +-
- 3 files changed, 3 insertions(+), 7 deletions(-)
+I'm more concerned about the stack address for wading through a raw stack dump
+(to find function call arguments, etc).  The return address does help confirm
+that I'm on the right stack frame though, and also makes looking up a line
+number slightly easier than having to look up a symbol address and then add
+the offset (at least for non-module addresses).
 
-diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-index e3f11052b5f6..cfd4bd07a62b 100644
---- a/net/qrtr/ns.c
-+++ b/net/qrtr/ns.c
-@@ -693,7 +693,7 @@ static void qrtr_ns_data_ready(struct sock *sk)
- 	queue_work(qrtr_ns.workqueue, &qrtr_ns.work);
- }
- 
--void qrtr_ns_init(struct work_struct *work)
-+void qrtr_ns_init(void)
- {
- 	struct sockaddr_qrtr sq;
- 	int ret;
-diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index 423310896285..313d3194018a 100644
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -1263,11 +1263,7 @@ static int __init qrtr_proto_init(void)
- 		return rc;
- 	}
- 
--	/* FIXME: Currently, this 2s delay is required to catch the NEW_SERVER
--	 * messages from routers. But the fix could be somewhere else.
--	 */
--	INIT_DELAYED_WORK(&qrtr_ns_work, qrtr_ns_init);
--	schedule_delayed_work(&qrtr_ns_work, msecs_to_jiffies(2000));
-+	qrtr_ns_init();
- 
- 	return rc;
- }
-diff --git a/net/qrtr/qrtr.h b/net/qrtr/qrtr.h
-index 53a237a28971..dc2b67f17927 100644
---- a/net/qrtr/qrtr.h
-+++ b/net/qrtr/qrtr.h
-@@ -29,7 +29,7 @@ void qrtr_endpoint_unregister(struct qrtr_endpoint *ep);
- 
- int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len);
- 
--void qrtr_ns_init(struct work_struct *work);
-+void qrtr_ns_init(void);
- 
- void qrtr_ns_remove(void);
- 
--- 
-2.24.0
+As a random aside, the mismatch between Linux printing a hex offset and GDB
+using decimal in disassembly is annoying...
+
+-Scott
+
 
