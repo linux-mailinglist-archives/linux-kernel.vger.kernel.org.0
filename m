@@ -2,298 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FAB317535B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 06:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A17517536D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 06:48:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbgCBFez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 00:34:55 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7138 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725446AbgCBFez (ORCPT
+        id S1726263AbgCBFrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 00:47:49 -0500
+Received: from m17618.mail.qiye.163.com ([59.111.176.18]:1126 "EHLO
+        m17618.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgCBFrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 00:34:55 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0225YsFp012268
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Mar 2020 00:34:54 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfm50usx9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 00:34:54 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
-        Mon, 2 Mar 2020 05:34:39 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Mar 2020 05:34:31 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0225YUBS55115938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 05:34:30 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 628A111C052;
-        Mon,  2 Mar 2020 05:34:30 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAB9411C05B;
-        Mon,  2 Mar 2020 05:34:29 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Mar 2020 05:34:29 +0000 (GMT)
-Received: from [9.102.43.192] (unknown [9.102.43.192])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 7CC49A00BE;
-        Mon,  2 Mar 2020 16:34:21 +1100 (AEDT)
-Subject: Re: [PATCH v3 16/27] powerpc/powernv/pmem: Register a character
- device for userspace to interact with
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Mon, 2 Mar 2020 00:47:49 -0500
+X-Greylist: delayed 553 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 00:47:46 EST
+Received: from ubuntu.localdomain (unknown [58.251.74.227])
+        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id DA66B4E14F3;
+        Mon,  2 Mar 2020 13:38:26 +0800 (CST)
+From:   WANG Wenhu <wenhu.wang@vivo.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-17-alastair@au1.ibm.com>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Date:   Mon, 2 Mar 2020 16:34:23 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        wangwenhu <wenhu.wang@vivo.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Cc:     trivial@kernel.org, wenhu.pku@gmail.com
+Subject: [PATCH] powerpc/sysdev: fix compile errors
+Date:   Sun,  1 Mar 2020 21:37:59 -0800
+Message-Id: <20200302053801.26027-1-wenhu.wang@vivo.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20200221032720.33893-17-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030205-0012-0000-0000-0000038C0E32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030205-0013-0000-0000-000021C8BFB4
-Message-Id: <1e980dc7-109a-d96f-1329-1c38918e2bba@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_01:2020-02-28,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxscore=0
- clxscore=1015 bulkscore=0 spamscore=0 mlxlogscore=999 suspectscore=2
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003020041
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVOS0tCQkJCSUxOSUtMTllXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PE06ODo4Ejg1IUIOVgk9HB1P
+        CDBPCRZVSlVKTkNISklMTktCTk5KVTMWGhIXVQweFRMOVQwaFRw7DRINFFUYFBZFWVdZEgtZQVlO
+        Q1VJTkpVTE9VSUlMWVdZCAFZQUhKSks3Bg++
+X-HM-Tid: 0a7099c0b1c19376kuwsda66b4e14f3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/2/20 2:27 pm, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> This patch introduces a character device (/dev/ocxl-scmX) which further
-> patches will use to interact with userspace.
+Include linux/io.h into fsl_85xx_cache_sram.c to fix the
+implicit-declaration compile errors when building Cache-Sram.
 
-As with the comments on other patches in this series, this commit 
-message is lacking in explanation. What's the purpose of this device?
+arch/powerpc/sysdev/fsl_85xx_cache_sram.c: In function ‘instantiate_cache_sram’:
+arch/powerpc/sysdev/fsl_85xx_cache_sram.c:97:26: error: implicit declaration of function ‘ioremap_coherent’; did you mean ‘bitmap_complement’? [-Werror=implicit-function-declaration]
+  cache_sram->base_virt = ioremap_coherent(cache_sram->base_phys,
+                          ^~~~~~~~~~~~~~~~
+                          bitmap_complement
+arch/powerpc/sysdev/fsl_85xx_cache_sram.c:97:24: error: assignment makes pointer from integer without a cast [-Werror=int-conversion]
+  cache_sram->base_virt = ioremap_coherent(cache_sram->base_phys,
+                        ^
+arch/powerpc/sysdev/fsl_85xx_cache_sram.c:123:2: error: implicit declaration of function ‘iounmap’; did you mean ‘roundup’? [-Werror=implicit-function-declaration]
+  iounmap(cache_sram->base_virt);
+  ^~~~~~~
+  roundup
+cc1: all warnings being treated as errors
 
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->   arch/powerpc/platforms/powernv/pmem/ocxl.c    | 116 +++++++++++++++++-
->   .../platforms/powernv/pmem/ocxl_internal.h    |   2 +
->   2 files changed, 116 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> index b8bd7e703b19..63109a870d2c 100644
-> --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> @@ -10,6 +10,7 @@
->   #include <misc/ocxl.h>
->   #include <linux/delay.h>
->   #include <linux/ndctl.h>
-> +#include <linux/fs.h>
->   #include <linux/mm_types.h>
->   #include <linux/memory_hotplug.h>
->   #include "ocxl_internal.h"
-> @@ -339,6 +340,9 @@ static void free_ocxlpmem(struct ocxlpmem *ocxlpmem)
->   
->   	free_minor(ocxlpmem);
->   
-> +	if (ocxlpmem->cdev.owner)
-> +		cdev_del(&ocxlpmem->cdev);
-> +
->   	if (ocxlpmem->metadata_addr)
->   		devm_memunmap(&ocxlpmem->dev, ocxlpmem->metadata_addr);
->   
-> @@ -396,6 +400,70 @@ static int ocxlpmem_register(struct ocxlpmem *ocxlpmem)
->   	return device_register(&ocxlpmem->dev);
->   }
->   
-> +static void ocxlpmem_put(struct ocxlpmem *ocxlpmem)
-> +{
-> +	put_device(&ocxlpmem->dev);
-> +}
-> +
-> +static struct ocxlpmem *ocxlpmem_get(struct ocxlpmem *ocxlpmem)
-> +{
-> +	return (get_device(&ocxlpmem->dev) == NULL) ? NULL : ocxlpmem;
-> +}
-> +
-> +static struct ocxlpmem *find_and_get_ocxlpmem(dev_t devno)
-> +{
-> +	struct ocxlpmem *ocxlpmem;
-> +	int minor = MINOR(devno);
-> +	/*
-> +	 * We don't declare an RCU critical section here, as our AFU
-> +	 * is protected by a re0ference counter on the device. By the time the
-> +	 * minor number of a device is removed from the idr, the ref count of
-> +	 * the device is already at 0, so no user API will access that AFU and
-> +	 * this function can't return it.
-> +	 */
-> +	ocxlpmem = idr_find(&minors_idr, minor);
-> +	if (ocxlpmem)
-> +		ocxlpmem_get(ocxlpmem);
-> +	return ocxlpmem;
-> +}
-> +
-> +static int file_open(struct inode *inode, struct file *file)
-> +{
-> +	struct ocxlpmem *ocxlpmem;
-> +
-> +	ocxlpmem = find_and_get_ocxlpmem(inode->i_rdev);
-> +	if (!ocxlpmem)
-> +		return -ENODEV;
-> +
-> +	file->private_data = ocxlpmem;
-> +	return 0;
-> +}
-> +
-> +static int file_release(struct inode *inode, struct file *file)
-> +{
-> +	struct ocxlpmem *ocxlpmem = file->private_data;
-> +
-> +	ocxlpmem_put(ocxlpmem);
-> +	return 0;
-> +}
-> +
-> +static const struct file_operations fops = {
-> +	.owner		= THIS_MODULE,
-> +	.open		= file_open,
-> +	.release	= file_release,
-> +};
-> +
-> +/**
-> + * create_cdev() - Create the chardev in /dev for the device
-> + * @ocxlpmem: the SCM metadata
-> + * Return: 0 on success, negative on failure
-> + */
-> +static int create_cdev(struct ocxlpmem *ocxlpmem)
-> +{
-> +	cdev_init(&ocxlpmem->cdev, &fops);
-> +	return cdev_add(&ocxlpmem->cdev, ocxlpmem->dev.devt, 1);
-> +}
-> +
->   /**
->    * ocxlpmem_remove() - Free an OpenCAPI persistent memory device
->    * @pdev: the PCI device information struct
-> @@ -572,6 +640,11 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   		goto err;
->   	}
->   
-> +	if (create_cdev(ocxlpmem)) {
-> +		dev_err(&pdev->dev, "Could not create character device\n");
-> +		goto err;
-> +	}
-> +
->   	elapsed = 0;
->   	timeout = ocxlpmem->readiness_timeout + ocxlpmem->memory_available_timeout;
->   	while (!is_usable(ocxlpmem, false)) {
-> @@ -613,20 +686,59 @@ static struct pci_driver pci_driver = {
->   	.shutdown = ocxlpmem_remove,
->   };
->   
-> +static int file_init(void)
-> +{
-> +	int rc;
-> +
-> +	mutex_init(&minors_idr_lock);
-> +	idr_init(&minors_idr);
-> +
-> +	rc = alloc_chrdev_region(&ocxlpmem_dev, 0, NUM_MINORS, "ocxl-pmem");
+Fixed: commit 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
+Signed-off-by: WANG Wenhu <wenhu.wang@vivo.com>
+---
+ arch/powerpc/sysdev/fsl_85xx_cache_sram.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If the driver is going to be called "ocxlpmem" can we standardise on 
-that without the extra hyphen?
-
-> +	if (rc) {
-> +		idr_destroy(&minors_idr);
-> +		pr_err("Unable to allocate OpenCAPI persistent memory major number: %d\n", rc);
-> +		return rc;
-> +	}
-> +
-> +	ocxlpmem_class = class_create(THIS_MODULE, "ocxl-pmem");
-> +	if (IS_ERR(ocxlpmem_class)) {
-> +		idr_destroy(&minors_idr);
-> +		pr_err("Unable to create ocxl-pmem class\n");
-> +		unregister_chrdev_region(ocxlpmem_dev, NUM_MINORS);
-> +		return PTR_ERR(ocxlpmem_class);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void file_exit(void)
-> +{
-> +	class_destroy(ocxlpmem_class);
-> +	unregister_chrdev_region(ocxlpmem_dev, NUM_MINORS);
-> +	idr_destroy(&minors_idr);
-> +}
-> +
->   static int __init ocxlpmem_init(void)
->   {
-> -	int rc = 0;
-> +	int rc;
->   
-> -	rc = pci_register_driver(&pci_driver);
-> +	rc = file_init();
->   	if (rc)
->   		return rc;
->   
-> +	rc = pci_register_driver(&pci_driver);
-> +	if (rc) {
-> +		file_exit();
-> +		return rc;
-> +	}
-> +
->   	return 0;
->   }
->   
->   static void ocxlpmem_exit(void)
->   {
->   	pci_unregister_driver(&pci_driver);
-> +	file_exit();
->   }
->   
->   module_init(ocxlpmem_init);
+diff --git a/arch/powerpc/sysdev/fsl_85xx_cache_sram.c b/arch/powerpc/sysdev/fsl_85xx_cache_sram.c
+index f6c665dac725..be3aef4229d7 100644
+--- a/arch/powerpc/sysdev/fsl_85xx_cache_sram.c
++++ b/arch/powerpc/sysdev/fsl_85xx_cache_sram.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_platform.h>
+ #include <asm/pgtable.h>
+ #include <asm/fsl_85xx_cache_sram.h>
++#include <linux/io.h>
+ 
+ #include "fsl_85xx_cache_ctlr.h"
+ 
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+2.17.1
 
