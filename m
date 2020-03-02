@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8469D1755B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A3401755BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbgCBISl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:18:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57142 "EHLO mail.kernel.org"
+        id S1727593AbgCBISo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:18:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727173AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727198AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 03:16:21 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C9FF246D7;
+        by mail.kernel.org (Postfix) with ESMTPSA id 56241246DE;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=TYe3QSV9TWPID/dPwasRZ4lyd48T/A8F4VzFpXM3i6o=;
+        bh=2ystwVh1h2eU6vurRedIUhhyG4BGvNNF9noJpwOCuJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VJ86OOo30dwmnFplL+Ics9T+Z9MTzZ/iVuVgUe1m20X1ST2a4jvzE2nv9U9HcfrAS
-         g9hGOI4JXHz/tHydaC52h0kCOvtwst0/mdAFs18Do+dQ/leH2iFdCvr6qf9UeQ8oDZ
-         sik0La4WyfkLrULb3VucSBdlevK2eDf20QtRrX/0=
+        b=qRkpokPuX+U1d8fA5kDkGJp+0v37w2ntFUv/0eT0rx/Ko0SOXlbDMPHEPtMr7mhKO
+         qOgwSU8buBEAM51ScROP2g946QBPC/su2j1TtKw2Aco9GC3zIRL+Uhup1I/XUEtN3b
+         ZF6vghx9aSp7Vbql/WKvKMVxNTBqEgb1VsCIdVKM=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003xv-F3; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003y0-Fy; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Don Brace <don.brace@microsemi.com>,
-        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org
-Subject: [PATCH 17/42] docs: scsi: convert hpsa.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:50 +0100
-Message-Id: <ea58e04176d43fb7194615b145060aa04c9cf3ad.1583136624.git.mchehab+huawei@kernel.org>
+        HighPoint Linux Team <linux@highpoint-tech.com>
+Subject: [PATCH 18/42] docs: scsi: convert hptiop.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:51 +0100
+Message-Id: <d189a339bb360b7b397914ee3ddeb75d9a7fd788.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -47,187 +46,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/{hpsa.txt => hpsa.rst} | 79 +++++++++++------------
- Documentation/scsi/index.rst              |  1 +
- MAINTAINERS                               |  2 +-
- 3 files changed, 41 insertions(+), 41 deletions(-)
- rename Documentation/scsi/{hpsa.txt => hpsa.rst} (77%)
+ Documentation/scsi/{hptiop.txt => hptiop.rst} | 45 ++++++++++++++++---
+ Documentation/scsi/index.rst                  |  1 +
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 40 insertions(+), 8 deletions(-)
+ rename Documentation/scsi/{hptiop.txt => hptiop.rst} (78%)
 
-diff --git a/Documentation/scsi/hpsa.txt b/Documentation/scsi/hpsa.rst
-similarity index 77%
-rename from Documentation/scsi/hpsa.txt
-rename to Documentation/scsi/hpsa.rst
-index 891435a72fce..340e10c6e35f 100644
---- a/Documentation/scsi/hpsa.txt
-+++ b/Documentation/scsi/hpsa.rst
-@@ -1,6 +1,8 @@
+diff --git a/Documentation/scsi/hptiop.txt b/Documentation/scsi/hptiop.rst
+similarity index 78%
+rename from Documentation/scsi/hptiop.txt
+rename to Documentation/scsi/hptiop.rst
+index 12ecfd308e55..23ae7ae36971 100644
+--- a/Documentation/scsi/hptiop.txt
++++ b/Documentation/scsi/hptiop.rst
+@@ -1,15 +1,25 @@
+-HIGHPOINT ROCKETRAID 3xxx/4xxx ADAPTER DRIVER (hptiop)
 +.. SPDX-License-Identifier: GPL-2.0
- 
-+=========================================
- HPSA - Hewlett Packard Smart Array driver
-------------------------------------------
-+=========================================
- 
- This file describes the hpsa SCSI driver for HP Smart Array controllers.
- The hpsa driver is intended to supplant the cciss driver for newer
-@@ -11,17 +13,17 @@ driver (for logical drives) AND a SCSI driver (for tape drives). This
- complexity and eliminating that complexity is one of the reasons
- for hpsa to exist.
- 
--Supported devices:
--------------------
-+Supported devices
-+=================
- 
--Smart Array P212
--Smart Array P410
--Smart Array P410i
--Smart Array P411
--Smart Array P812
--Smart Array P712m
--Smart Array P711m
--StorageWorks P1210m
-+- Smart Array P212
-+- Smart Array P410
-+- Smart Array P410i
-+- Smart Array P411
-+- Smart Array P812
-+- Smart Array P712m
-+- Smart Array P711m
-+- StorageWorks P1210m
- 
- Additionally, older Smart Arrays may work with the hpsa driver if the kernel
- boot parameter "hpsa_allow_any=1" is specified, however these are not tested
-@@ -35,18 +37,20 @@ mode, each command completion requires an interrupt, while with "performant mode
- command completions indicated by a single interrupt.
- 
- HPSA specific entries in /sys
-------------------------------
-+=============================
- 
-   In addition to the generic SCSI attributes available in /sys, hpsa supports
-   the following attributes:
- 
--  HPSA specific host attributes:
--  ------------------------------
-+HPSA specific host attributes
-+=============================
- 
--  /sys/class/scsi_host/host*/rescan
--  /sys/class/scsi_host/host*/firmware_revision
--  /sys/class/scsi_host/host*/resettable
--  /sys/class/scsi_host/host*/transport_mode
-+  ::
++.. include:: <isonum.txt>
 +
-+    /sys/class/scsi_host/host*/rescan
-+    /sys/class/scsi_host/host*/firmware_revision
-+    /sys/class/scsi_host/host*/resettable
-+    /sys/class/scsi_host/host*/transport_mode
++======================================================
++Highpoint RocketRAID 3xxx/4xxx Adapter Driver (hptiop)
++======================================================
  
-   the host "rescan" attribute is a write only attribute.  Writing to this
-   attribute will cause the driver to scan for new, changed, or removed devices
-@@ -58,7 +62,7 @@ HPSA specific entries in /sys
-   tape drives, or entire storage boxes containing pre-configured logical drives.
+ Controller Register Map
+--------------------------
++-----------------------
  
-   The "firmware_revision" attribute contains the firmware version of the Smart Array.
--  For example:
-+  For example::
+-For RR44xx Intel IOP based adapters, the controller IOP is accessed via PCI BAR0 and BAR2:
++For RR44xx Intel IOP based adapters, the controller IOP is accessed via PCI BAR0 and BAR2
  
- 	root@host:/sys/class/scsi_host/host4# cat firmware_revision
- 	7.14
-@@ -78,16 +82,18 @@ HPSA specific entries in /sys
-   kexec tools to warn the user if they attempt to designate a device which is
-   unable to honor the reset_devices kernel parameter as a dump device.
++     ============== ==================================
+      BAR0 offset    Register
++     ============== ==================================
+             0x11C5C Link Interface IRQ Set
+             0x11C60 Link Interface IRQ Clear
++     ============== ==================================
  
--  HPSA specific disk attributes:
--  ------------------------------
-+HPSA specific disk attributes
-+-----------------------------
++     ============== ==================================
+      BAR2 offset    Register
++     ============== ==================================
+             0x10    Inbound Message Register 0
+             0x14    Inbound Message Register 1
+             0x18    Outbound Message Register 0
+@@ -21,10 +31,13 @@ For RR44xx Intel IOP based adapters, the controller IOP is accessed via PCI BAR0
+             0x34    Outbound Interrupt Mask Register
+             0x40    Inbound Queue Port
+             0x44    Outbound Queue Port
++     ============== ==================================
  
--  /sys/class/scsi_disk/c:b:t:l/device/unique_id
--  /sys/class/scsi_disk/c:b:t:l/device/raid_level
--  /sys/class/scsi_disk/c:b:t:l/device/lunid
-+  ::
+ For Intel IOP based adapters, the controller IOP is accessed via PCI BAR0:
+ 
++     ============== ==================================
+      BAR0 offset    Register
++     ============== ==================================
+             0x10    Inbound Message Register 0
+             0x14    Inbound Message Register 1
+             0x18    Outbound Message Register 0
+@@ -36,16 +49,22 @@ For Intel IOP based adapters, the controller IOP is accessed via PCI BAR0:
+             0x34    Outbound Interrupt Mask Register
+             0x40    Inbound Queue Port
+             0x44    Outbound Queue Port
++     ============== ==================================
+ 
+ For Marvell not Frey IOP based adapters, the IOP is accessed via PCI BAR0 and BAR1:
+ 
++     ============== ==================================
+      BAR0 offset    Register
++     ============== ==================================
+          0x20400    Inbound Doorbell Register
+          0x20404    Inbound Interrupt Mask Register
+          0x20408    Outbound Doorbell Register
+          0x2040C    Outbound Interrupt Mask Register
++     ============== ==================================
+ 
++     ============== ==================================
+      BAR1 offset    Register
++     ============== ==================================
+              0x0    Inbound Queue Head Pointer
+              0x4    Inbound Queue Tail Pointer
+              0x8    Outbound Queue Head Pointer
+@@ -53,14 +72,20 @@ For Marvell not Frey IOP based adapters, the IOP is accessed via PCI BAR0 and BA
+             0x10    Inbound Message Register
+             0x14    Outbound Message Register
+      0x40-0x1040    Inbound Queue
+-   0x1040-0x2040    Outbound Queue
++     0x1040-0x2040  Outbound Queue
++     ============== ==================================
+ 
+ For Marvell Frey IOP based adapters, the IOP is accessed via PCI BAR0 and BAR1:
+ 
++     ============== ==================================
+      BAR0 offset    Register
++     ============== ==================================
+              0x0    IOP configuration information.
++     ============== ==================================
+ 
++     ============== ===================================================
+      BAR1 offset    Register
++     ============== ===================================================
+           0x4000    Inbound List Base Address Low
+           0x4004    Inbound List Base Address High
+           0x4018    Inbound List Write Pointer
+@@ -76,10 +101,11 @@ For Marvell Frey IOP based adapters, the IOP is accessed via PCI BAR0 and BAR1:
+          0x10420    CPU to PCIe Function 0 Message A
+          0x10480    CPU to PCIe Function 0 Doorbell
+          0x10484    CPU to PCIe Function 0 Doorbell Enable
++     ============== ===================================================
+ 
+ 
+ I/O Request Workflow of Not Marvell Frey
+-------------------------------------------
++----------------------------------------
+ 
+ All queued requests are handled via inbound/outbound queue port.
+ A request packet can be allocated in either IOP or host memory.
+@@ -124,7 +150,7 @@ of an inbound message.
+ 
+ 
+ I/O Request Workflow of Marvell Frey
+---------------------------------------
++------------------------------------
+ 
+ All queued requests are handled via inbound/outbound list.
+ 
+@@ -167,13 +193,17 @@ User-level Interface
+ 
+ The driver exposes following sysfs attributes:
+ 
++     ==================   ===    ========================
+      NAME                 R/W    Description
++     ==================   ===    ========================
+      driver-version        R     driver version string
+      firmware-version      R     firmware version string
++     ==================   ===    ========================
+ 
+ 
+ -----------------------------------------------------------------------------
+-Copyright (C) 2006-2012 HighPoint Technologies, Inc. All Rights Reserved.
 +
-+    /sys/class/scsi_disk/c:b:t:l/device/unique_id
-+    /sys/class/scsi_disk/c:b:t:l/device/raid_level
-+    /sys/class/scsi_disk/c:b:t:l/device/lunid
++Copyright |copy| 2006-2012 HighPoint Technologies, Inc. All Rights Reserved.
  
-   (where c:b:t:l are the controller, bus, target and lun of the device)
+   This file is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+@@ -181,4 +211,5 @@ Copyright (C) 2006-2012 HighPoint Technologies, Inc. All Rights Reserved.
+   GNU General Public License for more details.
  
--  For example:
-+  For example::
- 
- 	root@host:/sys/class/scsi_disk/4:0:0:0/device# cat unique_id
- 	600508B1001044395355323037570F77
-@@ -96,35 +102,28 @@ HPSA specific entries in /sys
- 	root@host:/sys/class/scsi_disk/4:0:0:0/device# cat raid_level
- 	RAID 0
- 
--HPSA specific ioctls:
-----------------------
-+HPSA specific ioctls
-+====================
- 
-   For compatibility with applications written for the cciss driver, many, but
-   not all of the ioctls supported by the cciss driver are also supported by the
-   hpsa driver.  The data structures used by these are described in
-   include/linux/cciss_ioctl.h
- 
--  CCISS_DEREGDISK
--  CCISS_REGNEWDISK
--  CCISS_REGNEWD
--
--  The above three ioctls all do exactly the same thing, which is to cause the driver
--  to rescan for new devices.  This does exactly the same thing as writing to the
--  hpsa specific host "rescan" attribute.
-+  CCISS_DEREGDISK, CCISS_REGNEWDISK, CCISS_REGNEWD
-+	The above three ioctls all do exactly the same thing, which is to cause the driver
-+	to rescan for new devices.  This does exactly the same thing as writing to the
-+	hpsa specific host "rescan" attribute.
- 
-   CCISS_GETPCIINFO
--
- 	Returns PCI domain, bus, device and function and "board ID" (PCI subsystem ID).
- 
-   CCISS_GETDRIVVER
-+	Returns driver version in three bytes encoded as::
- 
--	Returns driver version in three bytes encoded as:
- 		(major_version << 16) | (minor_version << 8) | (subminor_version)
- 
--  CCISS_PASSTHRU
--  CCISS_BIG_PASSTHRU
--
-+  CCISS_PASSTHRU, CCISS_BIG_PASSTHRU
- 	Allows "BMIC" and "CISS" commands to be passed through to the Smart Array.
- 	These are used extensively by the HP Array Configuration Utility, SNMP storage
- 	agents, etc.  See cciss_vol_status at http://cciss.sf.net for some examples.
--
+   linux@highpoint-tech.com
++
+   http://www.highpoint-tech.com
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 4b577c9e804e..b16f348bd31b 100644
+index b16f348bd31b..b13df9c1810a 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -21,5 +21,6 @@ Linux SCSI Subsystem
-    dpti
+@@ -22,5 +22,6 @@ Linux SCSI Subsystem
     FlashPoint
     g_NCR5380
-+   hpsa
+    hpsa
++   hptiop
  
     scsi_transport_srp/figures
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 451a3f67d23a..39767eca07d9 100644
+index 39767eca07d9..e2bd7911baa9 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -7456,7 +7456,7 @@ M:	Don Brace <don.brace@microsemi.com>
- L:	esc.storagedev@microsemi.com
- L:	linux-scsi@vger.kernel.org
+@@ -7545,7 +7545,7 @@ HIGHPOINT ROCKETRAID 3xxx RAID DRIVER
+ M:	HighPoint Linux Team <linux@highpoint-tech.com>
+ W:	http://www.highpoint-tech.com
  S:	Supported
--F:	Documentation/scsi/hpsa.txt
-+F:	Documentation/scsi/hpsa.rst
- F:	drivers/scsi/hpsa*.[ch]
- F:	include/linux/cciss*.h
- F:	include/uapi/linux/cciss*.h
+-F:	Documentation/scsi/hptiop.txt
++F:	Documentation/scsi/hptiop.rst
+ F:	drivers/scsi/hptiop.c
+ 
+ HIPPI
 -- 
 2.21.1
 
