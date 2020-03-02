@@ -2,104 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B61B7175B4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:10:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BECB3175B54
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbgCBNKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:10:15 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39766 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbgCBNKO (ORCPT
+        id S1727883AbgCBNLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:11:32 -0500
+Received: from smtprelay0141.hostedemail.com ([216.40.44.141]:45496 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727334AbgCBNLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:10:14 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 022D9qUE083398;
-        Mon, 2 Mar 2020 07:09:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583154592;
-        bh=11HsLWbFStWilV1up7DnDRIW9Ds4GdB+p7Dg78Jjr0Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aBJXGgMqsj9ehTD8BJx2ncVfLNNUGEDuJgulW0QzFCq5JSGijD99JFq4pNjDhQJdA
-         LfgVV6SU+mIiolaSwgxJodgVG5YkfrNIJ4u9mI14MCVCtnwx/8Aa0QkNfW8ed2UgvS
-         ENTcdFXYHeqUW5J6zRr7oQQ8vg3g8xoC1gufCqUI=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 022D9qgS052102
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Mar 2020 07:09:52 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Mar
- 2020 07:09:52 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 2 Mar 2020 07:09:51 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 022D9oGD121273;
-        Mon, 2 Mar 2020 07:09:51 -0600
-Subject: Re: [PATCH 2/4] watchdog: add support for resetting keepalive timers
- at start
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     <wim@linux-watchdog.org>, <linux-watchdog@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200228142331.13716-1-t-kristo@ti.com>
- <20200228142331.13716-3-t-kristo@ti.com>
- <20200228171314.GA14594@roeck-us.net>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <ff925a60-869e-e0a4-b60d-6a4f2fc93281@ti.com>
-Date:   Mon, 2 Mar 2020 15:09:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 2 Mar 2020 08:11:32 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id E6E32B2BE;
+        Mon,  2 Mar 2020 13:11:30 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3870:3872:4321:5007:7903:10004:10400:10848:11026:11232:11473:11658:11914:12048:12296:12297:12438:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21611:21627:21990:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: teeth95_644aa53c30800
+X-Filterd-Recvd-Size: 2034
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  2 Mar 2020 13:11:29 +0000 (UTC)
+Message-ID: <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
+Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
+ copy_from_user()
+From:   Joe Perches <joe@perches.com>
+To:     glider@google.com, tkjos@google.com, keescook@chromium.org,
+        gregkh@linuxfoundation.org, arve@android.com, mingo@redhat.com
+Cc:     dvyukov@google.com, jannh@google.com, devel@driverdev.osuosl.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Date:   Mon, 02 Mar 2020 05:09:58 -0800
+In-Reply-To: <20200302130430.201037-2-glider@google.com>
+References: <20200302130430.201037-1-glider@google.com>
+         <20200302130430.201037-2-glider@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20200228171314.GA14594@roeck-us.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/02/2020 19:13, Guenter Roeck wrote:
-> On Fri, Feb 28, 2020 at 04:23:29PM +0200, Tero Kristo wrote:
->> Current watchdog core pets the timer always after the initial keepalive
->> time has expired from boot-up. This is incorrect for certain timers that
->> don't like to be petted immediately when they are started, if they have
->> not been running over the boot.
->>
->> To allow drivers to reset their keepalive timers during startup, add
->> a new watchdog flag to the api, WDOG_RESET_KEEPALIVE.
->>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> ---
->>   drivers/watchdog/watchdog_dev.c | 2 ++
->>   include/linux/watchdog.h        | 1 +
->>   2 files changed, 3 insertions(+)
->>
->> diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
->> index 8b5c742f24e8..131e40c21703 100644
->> --- a/drivers/watchdog/watchdog_dev.c
->> +++ b/drivers/watchdog/watchdog_dev.c
->> @@ -283,6 +283,8 @@ static int watchdog_start(struct watchdog_device *wdd)
->>   		set_bit(WDOG_ACTIVE, &wdd->status);
->>   		wd_data->last_keepalive = started_at;
->>   		watchdog_update_worker(wdd);
->> +		if (test_bit(WDOG_RESET_KEEPALIVE, &wdd->status))
->> +			wd_data->last_hw_keepalive = started_at;
-> 
-> I don't think the additional flag is needed. The code should just set
-> last_hw_keepalive. After all, it already sets last_keepalive, which
-> determines when the next internal keepalive will be sent. It makes sense
-> to also set last_hw_keepalive to prevent the next keepalive from being
-> sent too early.
+On Mon, 2020-03-02 at 14:04 +0100, glider@google.com wrote:
+> Certain copy_from_user() invocations in binder.c are known to
+> unconditionally initialize locals before their first use, like e.g. in
+> the following case:
+[]
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+[]
+> @@ -3788,7 +3788,7 @@ static int binder_thread_write(struct binder_proc *proc,
+>  
+>  		case BC_TRANSACTION_SG:
+>  		case BC_REPLY_SG: {
+> -			struct binder_transaction_data_sg tr;
+> +			struct binder_transaction_data_sg tr __no_initialize;
+>  
+>  			if (copy_from_user(&tr, ptr, sizeof(tr)))
 
-Ok, I can modify this patch to tweak the last_hw_keepalive 
-unconditionally if you think that is safe to do. I did it like this as 
-there might be some cases where the existing implementations actually 
-expect the ping to happen immediately for some reason (but I guess in 
-those cases the corresponding watchdog drivers would need to be modified.)
+I fail to see any value in marking tr with __no_initialize
+when it's immediately written to by copy_from_user.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>  				return -EFAULT;
+> @@ -3799,7 +3799,7 @@ static int binder_thread_write(struct binder_proc *proc,
+>  		}
+>  		case BC_TRANSACTION:
+>  		case BC_REPLY: {
+> -			struct binder_transaction_data tr;
+> +			struct binder_transaction_data tr __no_initialize;
+>  
+>  			if (copy_from_user(&tr, ptr, sizeof(tr)))
+
+etc...
+
+
