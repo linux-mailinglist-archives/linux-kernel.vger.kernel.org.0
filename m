@@ -2,108 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A152F1767E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:12:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1301767F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:13:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbgCBXMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:12:51 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34082 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgCBXMv (ORCPT
+        id S1726998AbgCBXNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:13:47 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:55080 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbgCBXNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:12:51 -0500
-Received: by mail-pg1-f194.google.com with SMTP id t3so570615pgn.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:12:50 -0800 (PST)
+        Mon, 2 Mar 2020 18:13:47 -0500
+Received: by mail-pj1-f66.google.com with SMTP id dw13so458143pjb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:13:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PGCq0Yxy6j7pG4Hgd2v0OpuTunQST9E5OQ5veDQNTCg=;
-        b=KrHXnZUYAhKGPwUXQ7QATo42DDOE+114Ge1Ieb8g15n1qqbGcfEQwltwgTA1D+lH4i
-         qfQy1RhrgyxdN+HTFUf3qDSoXHXfu8vYjFhMoDhQMxk+YqtkRWevbLTtfzKzomvfD0YB
-         C4X5GhQz/J7LzuG7cXtkEwTxChsQQOsT2S8I5VMuV3v6PRduAmACWb2VicfhPJw3Revt
-         YFl82Ix73WEG5QlH/JbydfuKSEd/fTMpVQg5FCC6hhq478J28Uy34XkiG7Bpf90cOOll
-         ySatTnIc6JtVrvtvOJilc7o8YsGC/x30Ee3su3mO/6r1+5fbQdoCcZlS6ou+gup3KZ91
-         VSyw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=VnjZ0Ovav8ThhXJbqB/J6Alq9KHUGhvFu8W6iODhPtE=;
+        b=isjU/5nbZlZNuN0fg1k/tEp5bCxt83Xe5D3f3bYYgKBRkH2drx7YC8+On/HxTBl04m
+         APyz2XsIxjS/zhADo0WQkJVVu3ypfPp71FZtpdXRtEwQ2UK9SdL7rUO9zd5UBxAkx06x
+         x8X2VbTJ1mfblaoiGrX2BIlwTseyEYDj2DQ28J3KLvvwD5fhYRzirz8i6o17ZYJWBHQE
+         lPe+kIPTgm5+PfZeWjDcrwO+0+PVo/XpdwVS/APWBzb6tNkacOy8em0KlRSXiY8x1VpX
+         bbIMAbzjoAOWZUD25viq0KyXxhT9ik2QuzSp961xCHCA1nvzxzzOmDfgs5/LPIt0uoWl
+         7SIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PGCq0Yxy6j7pG4Hgd2v0OpuTunQST9E5OQ5veDQNTCg=;
-        b=QeL+IFMCE7Doau7rBhC+cM4EZ+Jv32Di97eJdJpVRt2G/cEOyHAfWTbniyhHWcfI8O
-         lF7Xip8A1W3CbpMTGnXHtwioX12JTVAYipZaBOFJIdYTZpXb5d1bPjqaPYpljamyTYNb
-         jybbpVOGY0nQ0FQA1XkZBJJ9IAOGiUOHdi2v2YIl06l80DEpmZvVyfNAWeg2R8eZr2hj
-         CmXZ47h6G66RSpWpQLf1VMfZku6ihHo36JTXQYSp7XJG1Uk1uoXLH8jeKksxfMddMhWj
-         SxrYO/3x5O85ZVc1b5d1GTZKQ6ZdWo9vq6epDsKxN4gSHGwK5gAQFcUZNiLxXL8O7ByK
-         WI4w==
-X-Gm-Message-State: ANhLgQ3JM25N16KUB/KSXuZ9fKWvkrdwVvjIT2xABUQz3vlKa/cOq5dE
-        F5UsjWnGcSdq25/rNwQcVv8r9Q==
-X-Google-Smtp-Source: ADFU+vtJmj/Ml44U7waVC2V86PxWEvYlH6wIHLS8TEXnapOegAfQw93a0gQzrYPIzBamNk82KXK6Lw==
-X-Received: by 2002:a63:aa07:: with SMTP id e7mr1193941pgf.90.1583190770018;
-        Mon, 02 Mar 2020 15:12:50 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id k5sm6476833pfp.66.2020.03.02.15.12.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2020 15:12:49 -0800 (PST)
-Subject: Re: [PATCH -next] io_uring: Ensure mask is initialized in
- io_arm_poll_handler
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-References: <20200302230118.12060-1-natechancellor@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <afe86a1d-dcc4-856e-48ea-f12761036e98@kernel.dk>
-Date:   Mon, 2 Mar 2020 16:12:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VnjZ0Ovav8ThhXJbqB/J6Alq9KHUGhvFu8W6iODhPtE=;
+        b=POY51jJnqa2SoJ6K9f5gEwSorH/JBoGkvICQE78/AqaPCIr4kVM9U4MvrlIR3iVxfj
+         LKrC0KphJhPAlnqG7RRJqh4nkqcEv/KNBZ9PoTXvcoLDdpSJe3nhlUvAk1GdFBh+Ytt5
+         xVmJjywzitP+uU5R1R6JnU0EXXDRwaTda/Lkpwf0NIt6eVnXpb+WfWD+QEpqwWUsV+zb
+         5xcRYh6wnh8HgHh0Vh/uC3KJiVHc6W5QRFj6MJIO9Q0/KzvU9KVthjG7UVkOJ0pCDj5h
+         VfVadzKhVwqB1dyZUW2Nzfyvy/oE6Zibu24cMPEmF10fNvMKeGwDC0Gf+eylDztUX1O/
+         d0BA==
+X-Gm-Message-State: ANhLgQ3huzRHFDMKVXhIa7aK4VdY8bVO24SHvAnlnIe6W5L0DHWHzFB9
+        Awze3w1Jrj8CM8qOt1NU/SPYDg==
+X-Google-Smtp-Source: ADFU+vvwgZGBSGTSJS7sOaaK6KTefrZb5fJNWL/VfguLMXiwHxst0TaMhTqCP1i2MHKKY4X1QBWHqw==
+X-Received: by 2002:a17:90a:a48:: with SMTP id o66mr924389pjo.66.1583190826077;
+        Mon, 02 Mar 2020 15:13:46 -0800 (PST)
+Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id h5sm21413117pgi.28.2020.03.02.15.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 15:13:45 -0800 (PST)
+Date:   Mon, 2 Mar 2020 15:13:42 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Clement Leger <cleger@kalray.eu>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-remoteproc@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v5 5/8] remoteproc: Rename rproc_elf_sanity_check for
+ elf32
+Message-ID: <20200302231342.GE262924@yoga>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-6-cleger@kalray.eu>
 MIME-Version: 1.0
-In-Reply-To: <20200302230118.12060-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302093902.27849-6-cleger@kalray.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/20 4:01 PM, Nathan Chancellor wrote:
-> Clang warns:
+On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
+
+> Since this function will be modified to support both elf32 and elf64,
+> rename the existing one to elf32 (which is the only supported format
+> at the moment). This will allow not to introduce possible side effect
+> when adding elf64 support (ie: all backends will still support only
+> elf32 if not requested explicitely using rproc_elf_sanity_check).
 > 
-> fs/io_uring.c:4178:6: warning: variable 'mask' is used uninitialized
-> whenever 'if' condition is false [-Wsometimes-uninitialized]
->         if (def->pollin)
->             ^~~~~~~~~~~
-> fs/io_uring.c:4182:2: note: uninitialized use occurs here
->         mask |= POLLERR | POLLPRI;
->         ^~~~
-> fs/io_uring.c:4178:2: note: remove the 'if' if its condition is always
-> true
->         if (def->pollin)
->         ^~~~~~~~~~~~~~~~
-> fs/io_uring.c:4154:15: note: initialize the variable 'mask' to silence
-> this warning
->         __poll_t mask, ret;
->                      ^
->                       = 0
-> 1 warning generated.
-> 
-> io_op_defs has many definitions where pollin is not set so mask indeed
-> might be uninitialized. Initialize it to zero and change the next
-> assignment to |=, in case further masks are added in the future to avoid
-> missing changing the assignment then.
-> 
-> Fixes: d7718a9d25a6 ("io_uring: use poll driven retry for files that support it")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/916
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+
+Is there a reason for preventing ELF64 binaries be loaded?
+
+Regards,
+Bjorn
+
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 > ---
+>  drivers/remoteproc/remoteproc_core.c       | 2 +-
+>  drivers/remoteproc/remoteproc_elf_loader.c | 6 +++---
+>  drivers/remoteproc/remoteproc_internal.h   | 2 +-
+>  drivers/remoteproc/st_remoteproc.c         | 2 +-
+>  drivers/remoteproc/st_slim_rproc.c         | 2 +-
+>  drivers/remoteproc/stm32_rproc.c           | 2 +-
+>  6 files changed, 8 insertions(+), 8 deletions(-)
 > 
-> I noticed that for-next has been force pushed; if you want to squash
-> this into the commit that it fixes (or fix it in a different way), feel
-> free.
-
-Great thanks, applied. I wonder why gcc doesn't warn about that...
-
--- 
-Jens Axboe
-
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 4bfaf4a3c4a3..99f0b796fbc7 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2055,7 +2055,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  		rproc->ops->load = rproc_elf_load_segments;
+>  		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+>  		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+> -		rproc->ops->sanity_check = rproc_elf_sanity_check;
+> +		rproc->ops->sanity_check = rproc_elf32_sanity_check;
+>  		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+>  	}
+>  
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index c2a9783cfb9a..5a67745f2638 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -25,13 +25,13 @@
+>  #include "remoteproc_internal.h"
+>  
+>  /**
+> - * rproc_elf_sanity_check() - Sanity Check ELF firmware image
+> + * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
+>   * @rproc: the remote processor handle
+>   * @fw: the ELF firmware image
+>   *
+>   * Make sure this fw image is sane.
+>   */
+> -int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+> +int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	const char *name = rproc->firmware;
+>  	struct device *dev = &rproc->dev;
+> @@ -89,7 +89,7 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(rproc_elf_sanity_check);
+> +EXPORT_SYMBOL(rproc_elf32_sanity_check);
+>  
+>  /**
+>   * rproc_elf_get_boot_addr() - Get rproc's boot address.
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 0deae5f237b8..28639c588d58 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -54,7 +54,7 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
+>  phys_addr_t rproc_va_to_pa(void *cpu_addr);
+>  int rproc_trigger_recovery(struct rproc *rproc);
+>  
+> -int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+> +int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
+>  u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+>  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
+> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+> index a3268d95a50e..a6cbfa452764 100644
+> --- a/drivers/remoteproc/st_remoteproc.c
+> +++ b/drivers/remoteproc/st_remoteproc.c
+> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
+>  	.parse_fw		= st_rproc_parse_fw,
+>  	.load			= rproc_elf_load_segments,
+>  	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
+> -	.sanity_check		= rproc_elf_sanity_check,
+> +	.sanity_check		= rproc_elf32_sanity_check,
+>  	.get_boot_addr		= rproc_elf_get_boot_addr,
+>  };
+>  
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index 09bcb4d8b9e0..3cca8b65a8db 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
+>  	.da_to_va       = slim_rproc_da_to_va,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>  	.load		= rproc_elf_load_segments,
+> -	.sanity_check	= rproc_elf_sanity_check,
+> +	.sanity_check	= rproc_elf32_sanity_check,
+>  };
+>  
+>  /**
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index a18f88044111..9a8b5f5e2572 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
+>  	.load		= rproc_elf_load_segments,
+>  	.parse_fw	= stm32_rproc_parse_fw,
+>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> -	.sanity_check	= rproc_elf_sanity_check,
+> +	.sanity_check	= rproc_elf32_sanity_check,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>  };
+>  
+> -- 
+> 2.15.0.276.g89ea799
+> 
