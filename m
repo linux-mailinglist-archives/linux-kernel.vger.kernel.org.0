@@ -2,118 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A91251767C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F051767BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbgCBXCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:02:55 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41755 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbgCBXCz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:02:55 -0500
-Received: by mail-ot1-f67.google.com with SMTP id v19so1069331ote.8;
-        Mon, 02 Mar 2020 15:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TQJUvsCfdhXZTMuK5P/1s7YDv4YpFHdf94n7B4huL1w=;
-        b=TeAa4GF1Uo6zEiC8wTfqSOdSDq+sIm2r7mCILqG9rM1RSOusW87Nsqi4KFuFyqI6vl
-         L/6lC0DVayS+mWxkMhRUVIz1IQM7m47N9X5Wf0BSlohxkF+FuDUUZZuNlEsA0xy58pIW
-         sUrKv9E+nU9x6wkIvrTvK/60H4W9/0TMM4y8VR0BUnmT/TnYVpB3fkr+inR+O/U4/tUe
-         zspe0kB15glmsBQRwzBtjcjedPuqbP6U7mpCMGBODv8LbQrSHhsgcF6wb5M96ZpFpkvG
-         NZJ14VcRepgy03TaDNOr1ggNuwqrGJS91UavFhd8UuiWEd/Cri3ZJq3qg1hg4/ltQcpk
-         INkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TQJUvsCfdhXZTMuK5P/1s7YDv4YpFHdf94n7B4huL1w=;
-        b=Yk3Tio7HN+7GWktpKA4Q568sZYAY1eVNVSEZCnx3DRWHO4NkuRVQP+I95Cg3H40x2Y
-         Kkg/dc1egLd7yGG4RNf5BW5mzCiYLRdsJ9zK8w05YfubSpMUL2LMWOeGjXL5Ij9KvOcp
-         7bNv5sT+33Xrs2fArN395lJoR4g31LO3xEf5zgtYtn6eRj2HPP7UDGK1cqk9kLAx+3pw
-         fBdfS0Rq5kTAf1jAy+M5dfuaZMtK+6fkThMBqwacAZiObVbDQHxdqWz3HavXwvcbDQJj
-         a9qBhtW+deWu+wpVMS3OMzt+qCMXib649KMMDjZl2lDcyXQHF0UFwAQpSdIvr2+s2mZt
-         jCdw==
-X-Gm-Message-State: ANhLgQ2xi3uTjXNycCFTyYjyTgLcCk8bqllTF+RAnjSCR4zvka0XWVuC
-        YhKyf1FSujyIFvWo6fMVzb4=
-X-Google-Smtp-Source: ADFU+vtT/VAYIDqCROuLs8VdcZOa2gBOUF2LQnnMwdX+01+Q4urmJWJJdPh+mhZ/DkVLtSS0Qo/1RQ==
-X-Received: by 2002:a9d:3c1:: with SMTP id f59mr1248078otf.170.1583190174381;
-        Mon, 02 Mar 2020 15:02:54 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id n9sm3317261otq.73.2020.03.02.15.02.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 15:02:53 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH -next] io_uring: Ensure mask is initialized in io_arm_poll_handler
-Date:   Mon,  2 Mar 2020 16:01:19 -0700
-Message-Id: <20200302230118.12060-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726901AbgCBXAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:00:48 -0500
+Received: from mga09.intel.com ([134.134.136.24]:3395 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726744AbgCBXAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 18:00:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:00:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,508,1574150400"; 
+   d="scan'208";a="258130650"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.159.39])
+  by orsmga002.jf.intel.com with ESMTP; 02 Mar 2020 15:00:45 -0800
+Date:   Tue, 3 Mar 2020 07:01:28 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [kbuild-all] Re: [PATCH 3/3] proc: Remove the now unnecessary
+ internal mount of proc
+Message-ID: <20200302230128.GE5513@intel.com>
+References: <87r1yeqxbp.fsf_-_@x220.int.ebiederm.org>
+ <202002291137.px8YXKJI%lkp@intel.com>
+ <8736auov5g.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8736auov5g.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+On Fri, Feb 28, 2020 at 10:49:15PM -0600, Eric W. Biederman wrote:
+> kbuild test robot <lkp@intel.com> writes:
+> 
+> > Hi "Eric,
+> >
+> > Thank you for the patch! Yet something to improve:
+> 
+> Dear kbuild robot,
+> 
+> Yep. You got it the wrong base.  I will see about using --base
+thanks for the feedback, we will also take a look to see
+how to better identify the base automatically.
 
-fs/io_uring.c:4178:6: warning: variable 'mask' is used uninitialized
-whenever 'if' condition is false [-Wsometimes-uninitialized]
-        if (def->pollin)
-            ^~~~~~~~~~~
-fs/io_uring.c:4182:2: note: uninitialized use occurs here
-        mask |= POLLERR | POLLPRI;
-        ^~~~
-fs/io_uring.c:4178:2: note: remove the 'if' if its condition is always
-true
-        if (def->pollin)
-        ^~~~~~~~~~~~~~~~
-fs/io_uring.c:4154:15: note: initialize the variable 'mask' to silence
-this warning
-        __poll_t mask, ret;
-                     ^
-                      = 0
-1 warning generated.
-
-io_op_defs has many definitions where pollin is not set so mask indeed
-might be uninitialized. Initialize it to zero and change the next
-assignment to |=, in case further masks are added in the future to avoid
-missing changing the assignment then.
-
-Fixes: d7718a9d25a6 ("io_uring: use poll driven retry for files that support it")
-Link: https://github.com/ClangBuiltLinux/linux/issues/916
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-I noticed that for-next has been force pushed; if you want to squash
-this into the commit that it fixes (or fix it in a different way), feel
-free.
-
- fs/io_uring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 8cdd3870cd4e..70e4624af3c2 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3738,8 +3738,9 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
- 	req->apoll = apoll;
- 	INIT_HLIST_NODE(&req->hash_node);
- 
-+	mask = 0;
- 	if (def->pollin)
--		mask = POLLIN | POLLRDNORM;
-+		mask |= POLLIN | POLLRDNORM;
- 	if (def->pollout)
- 		mask |= POLLOUT | POLLWRNORM;
- 	mask |= POLLERR | POLLPRI;
--- 
-2.25.1
-
+> if I repost, or have another patchset that so clearly needs
+> to be applied on top of a non-default base.
+> 
+> Thank you for writing me how to do that.
+> 
+> Eric
+> 
+> 
+> > [auto build test ERROR on uml/linux-next]
+> > [also build test ERROR on linux/master kees/for-next/pstore linus/master v5.6-rc3 next-20200228]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help
+> > improve the system. BTW, we also suggest to use '--base' option to specify the
+> > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> >
+> > url:    https://github.com/0day-ci/linux/commits/Eric-W-Biederman/proc-Actually-honor-the-mount-options/20200229-100926
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git linux-next
+> > config: x86_64-defconfig (attached as .config)
+> > compiler: gcc-7 (Debian 7.5.0-5) 7.5.0
+> > reproduce:
+> >         # save the attached .config to linux build tree
+> >         make ARCH=x86_64 
+> >
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    fs/proc/base.c: In function 'proc_flush_task':
+> >>> fs/proc/base.c:3217:33: error: 'struct pid_namespace' has no member named 'proc_mnt'; did you mean 'proc_self'?
+> >       proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
+> >                                     ^~~~~~~~
+> >                                     proc_self
+> >
+> > vim +3217 fs/proc/base.c
+> >
+> > ^1da177e4c3f41 Linus Torvalds    2005-04-16  3180  
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3181  /**
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3182   * proc_flush_task -  Remove dcache entries for @task from the /proc dcache.
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3183   * @task: task that should be flushed.
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3184   *
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3185   * When flushing dentries from proc, one needs to flush them from global
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3186   * proc (proc_mnt) and from all the namespaces' procs this task was seen
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3187   * in. This call is supposed to do all of this job.
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3188   *
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3189   * Looks in the dcache for
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3190   * /proc/@pid
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3191   * /proc/@tgid/task/@pid
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3192   * if either directory is present flushes it and all of it'ts children
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3193   * from the dcache.
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3194   *
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3195   * It is safe and reasonable to cache /proc entries for a task until
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3196   * that task exits.  After that they just clog up the dcache with
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3197   * useless entries, possibly causing useful dcache entries to be
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3198   * flushed instead.  This routine is proved to flush those useless
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3199   * dcache entries at process exit time.
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3200   *
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3201   * NOTE: This routine is just an optimization so it does not guarantee
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3202   *       that no dcache entries will exist at process exit time it
+> > 0895e91d60ef9b Randy Dunlap      2007-10-21  3203   *       just makes it very unlikely that any will persist.
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3204   */
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3205  
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3206  void proc_flush_task(struct task_struct *task)
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3207  {
+> > 9fcc2d15b14894 Eric W. Biederman 2007-11-14  3208  	int i;
+> > 9b4d1cbef8f41a Oleg Nesterov     2009-09-22  3209  	struct pid *pid, *tgid;
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18  3210  	struct upid *upid;
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18  3211  
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18  3212  	pid = task_pid(task);
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18  3213  	tgid = task_tgid(task);
+> > 9fcc2d15b14894 Eric W. Biederman 2007-11-14  3214  
+> > 9fcc2d15b14894 Eric W. Biederman 2007-11-14  3215  	for (i = 0; i <= pid->level; i++) {
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18  3216  		upid = &pid->numbers[i];
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18 @3217  		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
+> > 9b4d1cbef8f41a Oleg Nesterov     2009-09-22  3218  					tgid->numbers[i].nr);
+> > 130f77ecb2e7d5 Pavel Emelyanov   2007-10-18  3219  	}
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3220  }
+> > 60347f6716aa49 Pavel Emelyanov   2007-10-18  3221  
+> >
+> > :::::: The code at line 3217 was first introduced by commit
+> > :::::: 130f77ecb2e7d5ac3e53e620f55e374f4a406b20 pid namespaces: make proc_flush_task() actually from entries from multiple namespaces
+> >
+> > :::::: TO: Pavel Emelyanov <xemul@openvz.org>
+> > :::::: CC: Linus Torvalds <torvalds@woody.linux-foundation.org>
+> >
+> > ---
+> > 0-DAY CI Kernel Test Service, Intel Corporation
+> > https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> _______________________________________________
+> kbuild-all mailing list -- kbuild-all@lists.01.org
+> To unsubscribe send an email to kbuild-all-leave@lists.01.org
