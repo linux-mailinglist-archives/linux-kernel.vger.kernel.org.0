@@ -2,97 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32519175B21
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB6AF175B29
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgCBNEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:04:42 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38890 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgCBNEl (ORCPT
+        id S1727859AbgCBNGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:06:37 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45029 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727627AbgCBNGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:04:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=h7Dlk8HTPTSVAH8l+fXGmBYGiCphbtgSfwxH7p35WlE=; b=T0UYuvCsXe+47/Zj+UHMbQjXgv
-        1TqJL1MkEsVpu0U9tI6nQDe8t9UGE2oz0dNEGaTRiszh5QO1hBDKoADwNMyi8LqHDyLKd0+PHAKtq
-        9tNFpZVlCLkpgQ9Sv/+rxEEPAq7EbTK5ic8S+PXJ8qiXyb+oN0SYvJ8cKBIybsL94mbTC66Cffxsg
-        i8PXW2FAbLHZX3waC79V8zK3hGBUYJW0ns0thoWLuA1DLHOjHWg60IsnLSBKwOuZtWZ3jyIPVXgbp
-        biDay5U3p673YDbaXYR4qCluefMeBKiX//ejNPv8t0d0PsMuZQeDqcZNlodwJYYJBxZvUTf/X7sjH
-        9balArFw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j8kkL-0005pQ-Eb; Mon, 02 Mar 2020 13:04:33 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8F0733012C3;
-        Mon,  2 Mar 2020 14:02:33 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 40F3D20CB1522; Mon,  2 Mar 2020 14:04:31 +0100 (CET)
-Date:   Mon, 2 Mar 2020 14:04:31 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] perf: Replace zero-length array with
- flexible-array member
-Message-ID: <20200302130431.GA2562@hirez.programming.kicks-ass.net>
-References: <20200302124832.GA7504@embeddedor>
+        Mon, 2 Mar 2020 08:06:36 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v22so5053494otq.11
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:06:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pD/gxf0uYDpfv1NMd5/waLUhIiVjzlBFv8IcmQrTdcE=;
+        b=mg/CO/Mh1z97WyRAh3G7ze2FpgB9K+haWIJAA/2o2dC08vQNxDhx/MY9XmKnjRC+KZ
+         dyJbkcVNnNxEgj1ZKlScAECq+iSG+hQNCAkAd+yEgm3ZUt7dBbCzDUHmmVsbY7PfJ4r+
+         GauYsUNCqbX2SO66HEx1L5Vhhog/P+Vi5QiHumRzdQh3JztX84UOZWuB6ZnnpvtDausA
+         7JlRxnaoNDWPOhonJpzPTiJEl90Kq9W85gRKASUlfB1HGObSquIYujOOPL4WtikLGKzd
+         n+ZbzTrwx36nYpWbk21sJWindpGAHDCmDGvnZNW087Qu/9sIQwY/QcoLrCZTPYGDoBax
+         AQsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pD/gxf0uYDpfv1NMd5/waLUhIiVjzlBFv8IcmQrTdcE=;
+        b=aqkFMhjNBcsJxX+IBuoILzTBP27XwQ9W+/iXAtWM3QJOIwwLqFa4fsB5EkkLCo+NC4
+         oaBhvn4imvh6e1r2dLtzq/B+F2VPfcpkQOvvC4WAwfU9EtHLlE1Vx2bA/V/K6XjTsJz+
+         kXGJFe9pJ70ZIkfxdaD/9eLQiDPPgpdPRRRYvBlvzkILB+b2TZZiSVdDOcWwhUNiZGuF
+         TCRtpj7/uMzehkuktAzB2bRH0gNrc3WLPWDt6gJzWdcHWAdZfLZzVB8I1cZN55wx9DV/
+         o+GpVKe71UGOiqDO9kBrfdGTsI/xlKXtrX3xGvMUeY7kAHK8p1k3wP5lrTgN1fCF8mCS
+         8iaw==
+X-Gm-Message-State: ANhLgQ2oRV3js7cgN69DGEl9RvuOCqyaJ0OUcGeh6+hem4R/hABUCrbt
+        YuR8gk+JStkeDMRYyMjjlMCWo+cWWX5yi6xczayUYw==
+X-Google-Smtp-Source: ADFU+vsEtDWpu3CBbW2P4D6BNQQyNyFaj2yT+Fnw3axxVc8I4eTTD3DAN6BYP5Fm0m5y/xAWzQqSHqGF6t1ux27xO5U=
+X-Received: by 2002:a05:6830:11a:: with SMTP id i26mr2892609otp.180.1583154395616;
+ Mon, 02 Mar 2020 05:06:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302124832.GA7504@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191121115902.2551-1-will@kernel.org> <20191121115902.2551-6-will@kernel.org>
+ <CAG48ez0CoY2fuxNkdAn_Jx+hffQ1eyM_V++5q6Q5nra+_tE9hQ@mail.gmail.com> <20200228104332.GB2395@willie-the-truck>
+In-Reply-To: <20200228104332.GB2395@willie-the-truck>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 2 Mar 2020 14:06:09 +0100
+Message-ID: <CAG48ez3n+tNwm8ZCgrRj_L8eWu7vF6-v9EB7hsW09bv5TG6kPg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v4 05/10] lib/refcount: Improve performance of
+ generic REFCOUNT_FULL code
+To:     Will Deacon <will@kernel.org>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 06:48:32AM -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
+On Fri, Feb 28, 2020 at 11:43 AM Will Deacon <will@kernel.org> wrote:
+> On Wed, Feb 26, 2020 at 05:10:46AM +0100, Jann Horn wrote:
+> > On Thu, Nov 21, 2019 at 12:58 PM Will Deacon <will@kernel.org> wrote:
+> > > + * If another thread also performs a refcount_inc() operation between the two
+> > > + * atomic operations, then the count will continue to edge closer to 0. If it
+> > > + * reaches a value of 1 before /any/ of the threads reset it to the saturated
+> > > + * value, then a concurrent refcount_dec_and_test() may erroneously free the
+> > > + * underlying object. Given the precise timing details involved with the
+> > > + * round-robin scheduling of each thread manipulating the refcount and the need
+> > > + * to hit the race multiple times in succession, there doesn't appear to be a
+> > > + * practical avenue of attack even if using refcount_add() operations with
+> > > + * larger increments.
+> >
+> > On top of that, the number of threads that can actually be running at
+> > a given time is capped. See include/linux/threads.h, where it is
+> > capped to pow(2, 22):
+> >
+> >     /*
+> >      * A maximum of 4 million PIDs should be enough for a while.
+> >      * [NOTE: PID/TIDs are limited to 2^29 ~= 500+ million, see futex.h.]
+> >      */
+> >     #define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
+> >             (sizeof(long) > 4 ? 4 * 1024 * 1024 : PID_MAX_DEFAULT))
+> >
+> > And in the futex UAPI header, we have this, baking a TID limit into
+> > the userspace API (note that this is pow(2,30), not pow(2,29) as the
+> > comment in threads.h claims - I'm not sure where that difference comes
+> > from):
+> >
+> >     /*
+> >      * The rest of the robust-futex field is for the TID:
+> >      */
+> >     #define FUTEX_TID_MASK 0x3fffffff
+> >
+> > So AFAICS, with the current PID_MAX_LIMIT, if you assume that all
+> > participating refcount operations are non-batched (delta 1) and the
+> > attacker can't cause the threads to oops in the middle of the refcount
+> > operation (maybe that would be possible if you managed to find
+> > something like a NULL pointer dereference in perf software event code
+> > and had perf paranoia at <=1 , or something like that? - I'm not
+> > sure), then even in a theoretical scenario where an attacker spawns
+> > the maximum number of tasks possible and manages to get all of them to
+> > sequentially preempt while being in the middle of increment operations
+> > in several nested contexts (I'm not sure whether that can even happen
+> > - you're not going to take typical sleeping exceptions like page
+> > faults in the middle of a refcount op), the attacker will stay
+> > comfortably inside the saturated range. Even if the PID_MAX_LIMIT is
+> > at some point raised to the maximum permitted by the futex UAPI, this
+> > still holds as long as you assume no nesting. Hm, should I send a
+> > patch to add something like this to the explanatory comment?
+>
+> Sure, I'd be happy to improve the document by adding this -- please send
+> out a patch for review. It's probably also worth mentioning the batching
+> use-cases, although I struggle to reason about the window between the
+> {under,over}flow occuring and saturation.
 
-> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> index 397cfd65b3fe..d71023c46058 100644
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -453,7 +453,7 @@ struct perf_event_query_bpf {
->  	/*
->  	 * User provided buffer to store program ids
->  	 */
-> -	__u32	ids[0];
-> +	__u32	ids[];
->  };
->  
->  /*
+In the overflow case, it's fine, right? If you briefly crossed into
+the saturation range and then went back down, using some tasks with
+half-completed refcounting operations, then the refcount is still
+behaving as a correct non-saturating refcount. (And it can't cross
+over to the other end of the saturation range, because that's twice as
+much distance as you'd need to unpin a saturated refcount.)
 
-Just to be absolutely sure; there is no ABI difference (or any actual
-difference in generated code), right?
+And in the underflow case, we can't deterministically protect anyway
+without some external mechanism to protect the object's lifetime while
+someone is already freeing it - so that's pretty much just a
+best-effort thing anyway.
+
+> > Of course, if someone uses refcount batching with sufficiently large
+> > values, those guarantees go out of the window - if we wanted to be
+> > perfectionist about this, we could make the batched operations do slow
+> > cmpxchg stuff while letting the much more performance-critical
+> > single-reference case continue to use the fast saturation scheme.
+> > OTOH, the networking folks would probably hate that, since they're
+> > using the batched ops for ->sk_wmem_alloc stuff, where they count
+> > bytes as references? So I guess maybe we should leave it as-is.
+>
+> Agreed. If we hamper the performance here, then people will either look
+> to disable the checking or they will switch to atomic_t, which puts us
+> back to square one. Perfection is the enemy of the good and all that.
+>
+> Having said that, I'd still be keen to learn about any practical attacks
+> on this in case there is something smart we can do to mitigate them
+> without cmpxchg(). For example, one silly approach might be to bound the
+> maximum increment and split larger ones up using a loop.
+
+I guess that'd do the job. I don't know whether it's worth the trouble
+in practice though.
