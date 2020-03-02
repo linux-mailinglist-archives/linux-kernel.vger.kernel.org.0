@@ -2,330 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FF3176150
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B966D176158
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbgCBRlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 12:41:52 -0500
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:37985 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbgCBRlv (ORCPT
+        id S1727030AbgCBRnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 12:43:04 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52697 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727366AbgCBRnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 12:41:51 -0500
-Received: by mail-oi1-f173.google.com with SMTP id 2so50539oiz.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 09:41:50 -0800 (PST)
+        Mon, 2 Mar 2020 12:43:03 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p9so209690wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 09:43:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zzywysm.com; s=google;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :to;
-        bh=pGEDNg9R3GdB2T1XjdxsXxmg8kulRQ7/yI1wNxH8hx4=;
-        b=EdNN1/xGpaYMau6oBYHzvLs8e5yWihTuyLuTdet3u2kuAgLcoX9J22Y/lu8sF1r6XO
-         Q+sEXAWavzmz3QceSi54v4yfwDke+zoWQHzXURbgZC5v4jgNpmrmck3/N09SB3CLfG98
-         d6XNTARK1tlmS1x9rqSAjoNE55RbVIIKqXvkbTFDaDUa7De20PEYYG4egkmTsAn/cYju
-         2CnqJkJbCHB7D59uz/SC19zbTIrnnMV5+otH+sTwPy905mMfulEz6ge9jiuQ1SE9RlqB
-         vqm4rZDxSpr65JDBZBz1g7zIpWhR/Hq4v7FqFx/KfgIq6akjd7PWGtv3rkGqw+s/shQg
-         ajrA==
+        d=brauner.io; s=google;
+        h=message-id:from:date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc;
+        bh=I9QbkrVVYHhIoSifcadeu1EkGLpO8eHQFkfllDR/K2c=;
+        b=f0oD/nK5puQRTMWphzAe+fUjcl+QhqrVxCo/yA6SLJElb5NXYz9gSyZUxWwCdooL64
+         EL9J2cXo3+/hyx+w009TNArcZCCZ2lAmyKO8ssx5+yngWIyAUI0rHXMm2qy5M9qUEQVY
+         p88BcddFHbuYjhgn96fRgpAxgjHaSRGOtQdU0BA81I9V+CnwPR4dQFRDP93fj+JW/Cbf
+         Bb1bhdKCnBU4zukfA4g4ab5SJssq/TYd/QkgYUbGPABaMxgCBhErzfKfrYri+hXVP4HR
+         ZgGcaDMuaaLq1HX1ZF8eeApGXLdzfZgDWEGnb0ySJ77RCGpErepUZ1dPfgVzr2NhlJ7/
+         DZAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:to;
-        bh=pGEDNg9R3GdB2T1XjdxsXxmg8kulRQ7/yI1wNxH8hx4=;
-        b=iX3XPHzaOAbOjaurEsPloza0ZEqV9NlWgk+OwMTszcwDkjUxe2wuI/Zyvtzg59MTOh
-         wfpcsmkB5m7sTVgVVFgsfqztdQjBqiPM7GaohfbsietuqB/Q0cTafQrhhezP5hFT0DAS
-         RMsgoZSrvyhRtfnkcznShZy4qCI3Ug6gSr26ud/wbxIfSkrwWGeDGYx6D4PPQqPf6krc
-         72oShsZAFby5jmcEJR215tmAGonZmRfzMFg+qxtLwmqnHkjpJt+Z3LsQkZCVVhgX3s8n
-         PXb00XPEAWgBvJ0mL4+xFxblBXjweYh0Hv9g+xOMsr5RwnLZrk6yTj3WI4rwd8mA19Yf
-         qBdA==
-X-Gm-Message-State: ANhLgQ3EiikGuI4+Lve6oBX++Ulkmp/WsHBMZIxtXx5qdAqBjXjJwMO1
-        CEQIScvEr6+5soQYc1gk1s9LHAA1LWs=
-X-Google-Smtp-Source: ADFU+vuCLRcbANUD635mQ5qdPFQ/dm+VZN9VVnEQAOy9975z8l8tPp56x6/p0phdkw+3lAEi+17n3Q==
-X-Received: by 2002:aca:fd94:: with SMTP id b142mr156171oii.11.1583170909760;
-        Mon, 02 Mar 2020 09:41:49 -0800 (PST)
-Received: from [10.19.49.2] (ec2-3-17-74-181.us-east-2.compute.amazonaws.com. [3.17.74.181])
-        by smtp.gmail.com with ESMTPSA id l1sm6583126oic.22.2020.03.02.09.41.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Mar 2020 09:41:49 -0800 (PST)
-From:   Zzy Wysm <zzy@zzywysm.com>
+        h=x-gm-message-state:message-id:from:date:user-agent:in-reply-to
+         :references:mime-version:content-transfer-encoding:subject:to:cc;
+        bh=I9QbkrVVYHhIoSifcadeu1EkGLpO8eHQFkfllDR/K2c=;
+        b=I9sNsbn3PukuuFCX+o3KzDUMFIQ4w+ErZA5MbZKPkhGbFUMhF7hjEjM1/ASSGlMWeV
+         ReNJcm3aqqlq+VUAT6o3iqtp4OBC5fp/mM8v9ouYiV04Uy4nAaTRao6GsRKxKHI6k2Qn
+         GcCHlI25OUZLTZaTXtDXi/n3W+1Wud2ezvnHY201cp/KUKFZM6Aa1uHqN4jsA6u8VaxG
+         UFzXLltdAQvRMFWq3LjGOmISfBIV+DR1jBlaywXz9mHSOUtuxL9CGBGArnbiaSie/CBB
+         k/PlDzQc0shoMNG/bW/3TkkfdL0OwH8TKlp9TMtAC1UV3Dznf1Epu+FrnZEjc8ZPyfu3
+         3zig==
+X-Gm-Message-State: ANhLgQ1R0IxYe+HYMR4ZthSSMBGydt91ppaG+uZOVCI3Cl9bPnMF+i+W
+        inu3HyrfsdXOh4lYogTuFk6eLA==
+X-Google-Smtp-Source: ADFU+vuS7wyTTj+q9BrEadAA7WBI95PRV87TDlze0qES8p6CzMOXqclt96Kjx7Zix17kmY7TxiR3Fw==
+X-Received: by 2002:a1c:c2c5:: with SMTP id s188mr186830wmf.162.1583170980356;
+        Mon, 02 Mar 2020 09:43:00 -0800 (PST)
+Received: from Google-Pixel-3a.fritz.box (ip5f5bf7ec.dynamic.kabel-deutschland.de. [95.91.247.236])
+        by smtp.gmail.com with ESMTPSA id z19sm120954wmi.43.2020.03.02.09.42.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 09:42:59 -0800 (PST)
+Message-ID: <5e5d45a3.1c69fb81.f99ac.0806@mx.google.com>
+From:   christian@brauner.io
+Date:   Mon, 02 Mar 2020 18:42:57 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAG48ez1jj_J3PtENWvu8piFGsik6RvuyD38ie48TYr2k1Rbf3A@mail.gmail.com>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com> <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com> <20200301185244.zkofjus6xtgkx4s3@wittgenstein> <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com> <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com> <87a74zmfc9.fsf@x220.int.ebiederm.org> <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com> <87k142lpfz.fsf@x220.int.ebiederm.org> <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com> <875zfmloir.fsf@x220.int.ebiederm.org> <CAG48ez0iXMD0mduKWHG6GZZoR+s2jXy776zwiRd+tFADCEiBEw@mail.gmail.com> <AM6PR03MB5170BD130F15CE1909F59B55E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com> <CAG48ez1jj_J3PtENWvu8piFGsik6RvuyD38ie48TYr2k1Rbf3A@mail.gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain;
-        charset=utf-8
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Linux Warning Report - 5.6-rc4
-Message-Id: <8F0DCA86-7B91-409C-83D7-06E334B8845B@zzywysm.com>
-Date:   Mon, 2 Mar 2020 11:41:47 -0600
-To:     linux-kernel@vger.kernel.org
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+To:     Jann Horn <jannh@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>, linux-doc@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Another week, another release candidate.
+<linux-doc@vger.kernel.org>,"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,"linux-mm@kvack.org" <linux-mm@kvack.org>,"stable@vger.kernel.org" <stable@vger.kernel.org>,linux-security-module <linux-security-module@vger.kernel.org>
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Message-ID: <9C3BF644-0F82-48C9-9116-8554204FB57D@ubuntu.com>
 
-This week a warning was fixed by Adam Williamson in commit=20
-03264ddde2453f6877a7d637d84068079632a3c5.  Thanks Adam!
-
-We are down to 32 warnings in the defconfig.
-
-zzy
-
-
-zzy@esquivalience:~/linux-5.6-rc4$ make -j4 KCFLAGS=3D"-Wall -Wextra =
--Wno-unused-parameter -Wno-missing-field-initializers" > =
-build_log_5.6-rc4
-kernel/time/hrtimer.c:120:21: warning: initialized field overwritten =
-[-Woverride-init]
-  120 |  [CLOCK_REALTIME] =3D HRTIMER_BASE_REALTIME,
-      |                     ^~~~~~~~~~~~~~~~~~~~~
-kernel/time/hrtimer.c:120:21: note: (near initialization for =
-=E2=80=98hrtimer_clock_to_base_table[0]=E2=80=99)
-kernel/time/hrtimer.c:121:22: warning: initialized field overwritten =
-[-Woverride-init]
-  121 |  [CLOCK_MONOTONIC] =3D HRTIMER_BASE_MONOTONIC,
-      |                      ^~~~~~~~~~~~~~~~~~~~~~
-kernel/time/hrtimer.c:121:22: note: (near initialization for =
-=E2=80=98hrtimer_clock_to_base_table[1]=E2=80=99)
-kernel/time/hrtimer.c:122:21: warning: initialized field overwritten =
-[-Woverride-init]
-  122 |  [CLOCK_BOOTTIME] =3D HRTIMER_BASE_BOOTTIME,
-      |                     ^~~~~~~~~~~~~~~~~~~~~
-kernel/time/hrtimer.c:122:21: note: (near initialization for =
-=E2=80=98hrtimer_clock_to_base_table[7]=E2=80=99)
-kernel/time/hrtimer.c:123:17: warning: initialized field overwritten =
-[-Woverride-init]
-  123 |  [CLOCK_TAI]  =3D HRTIMER_BASE_TAI,
-      |                 ^~~~~~~~~~~~~~~~
-kernel/time/hrtimer.c:123:17: note: (near initialization for =
-=E2=80=98hrtimer_clock_to_base_table[11]=E2=80=99)
-arch/x86/kernel/jump_label.c:61:1: warning: =E2=80=98inline=E2=80=99 is =
-not at beginning of declaration [-Wold-style-declaration]
-   61 | static void inline __jump_label_transform(struct jump_entry =
-*entry,
-      | ^~~~~~
-kernel/trace/blktrace.c: In function =E2=80=98__trace_note_message=E2=80=99=
+On March 2, 2020 6:37:27 PM GMT+01:00, Jann Horn <jannh@google=2Ecom> wrote=
 :
-kernel/trace/blktrace.c:145:63: warning: parameter =E2=80=98blkcg=E2=80=99=
- set but not used [-Wunused-but-set-parameter]
-  145 | void __trace_note_message(struct blk_trace *bt, struct blkcg =
-*blkcg,
-      |                                                 =
-~~~~~~~~~~~~~~^~~~~
-In file included from kernel/bpf/core.c:21:
-kernel/bpf/core.c: In function =E2=80=98___bpf_prog_run=E2=80=99:
-./include/linux/filter.h:863:3: warning: cast between incompatible =
-function types from =E2=80=98u64 (*)(u64,  u64,  u64,  u64,  u64)=E2=80=99=
- {aka =E2=80=98long long unsigned int (*)(long long unsigned int,  long =
-long unsigned int,  long long unsigned int,  long long unsigned int,  =
-long long unsigned int)=E2=80=99} to =E2=80=98u64 (*)(u64,  u64,  u64,  =
-u64,  u64,  const struct bpf_insn *)=E2=80=99 {aka =E2=80=98long long =
-unsigned int (*)(long long unsigned int,  long long unsigned int,  long =
-long unsigned int,  long long unsigned int,  long long unsigned int,  =
-const struct bpf_insn *)=E2=80=99} [-Wcast-function-type]
-  863 |  ((u64 (*)(u64, u64, u64, u64, u64, const struct bpf_insn *)) \
-      |   ^
-kernel/bpf/core.c:1513:13: note: in expansion of macro =
-=E2=80=98__bpf_call_base_args=E2=80=99
- 1513 |   BPF_R0 =3D (__bpf_call_base_args + insn->imm)(BPF_R1, BPF_R2,
-      |             ^~~~~~~~~~~~~~~~~~~~
-kernel/bpf/core.c: In function =E2=80=98bpf_patch_call_args=E2=80=99:
-./include/linux/filter.h:863:3: warning: cast between incompatible =
-function types from =E2=80=98u64 (*)(u64,  u64,  u64,  u64,  u64)=E2=80=99=
- {aka =E2=80=98long long unsigned int (*)(long long unsigned int,  long =
-long unsigned int,  long long unsigned int,  long long unsigned int,  =
-long long unsigned int)=E2=80=99} to =E2=80=98u64 (*)(u64,  u64,  u64,  =
-u64,  u64,  const struct bpf_insn *)=E2=80=99 {aka =E2=80=98long long =
-unsigned int (*)(long long unsigned int,  long long unsigned int,  long =
-long unsigned int,  long long unsigned int,  long long unsigned int,  =
-const struct bpf_insn *)=E2=80=99} [-Wcast-function-type]
-  863 |  ((u64 (*)(u64, u64, u64, u64, u64, const struct bpf_insn *)) \
-      |   ^
-kernel/bpf/core.c:1704:3: note: in expansion of macro =
-=E2=80=98__bpf_call_base_args=E2=80=99
- 1704 |   __bpf_call_base_args;
-      |   ^~~~~~~~~~~~~~~~~~~~
-In file included from ./include/linux/capability.h:16,
-                 from security/commoncap.c:5:
-security/commoncap.c: In function =E2=80=98cap_prctl_drop=E2=80=99:
-./include/uapi/linux/capability.h:373:27: warning: comparison of =
-unsigned expression >=3D 0 is always true [-Wtype-limits]
-  373 | #define cap_valid(x) ((x) >=3D 0 && (x) <=3D CAP_LAST_CAP)
-      |                           ^~
-security/commoncap.c:1145:7: note: in expansion of macro =E2=80=98cap_vali=
-d=E2=80=99
- 1145 |  if (!cap_valid(cap))
-      |       ^~~~~~~~~
-security/commoncap.c: In function =E2=80=98cap_task_prctl=E2=80=99:
-./include/uapi/linux/capability.h:373:27: warning: comparison of =
-unsigned expression >=3D 0 is always true [-Wtype-limits]
-  373 | #define cap_valid(x) ((x) >=3D 0 && (x) <=3D CAP_LAST_CAP)
-      |                           ^~
-security/commoncap.c:1175:8: note: in expansion of macro =E2=80=98cap_vali=
-d=E2=80=99
- 1175 |   if (!cap_valid(arg2))
-      |        ^~~~~~~~~
-./include/uapi/linux/capability.h:373:27: warning: comparison of =
-unsigned expression >=3D 0 is always true [-Wtype-limits]
-  373 | #define cap_valid(x) ((x) >=3D 0 && (x) <=3D CAP_LAST_CAP)
-      |                           ^~
-security/commoncap.c:1260:10: note: in expansion of macro =
-=E2=80=98cap_valid=E2=80=99
- 1260 |   if (((!cap_valid(arg3)) | arg4 | arg5))
-      |          ^~~~~~~~~
-drivers/video/fbdev/core/fbmon.c: In function =E2=80=98get_monspecs=E2=80=99=
-:
-drivers/video/fbdev/core/fbmon.c:812:47: warning: suggest braces around =
-empty body in an =E2=80=98if=E2=80=99 statement [-Wempty-body]
-  812 |   DPRINTK("      Configurable signal level\n");
-      |                                               ^
-drivers/video/fbdev/core/fbmon.c:842:24: warning: suggest braces around =
-empty body in an =E2=80=98else=E2=80=99 statement [-Wempty-body]
-  842 |   DPRINTK("variable\n");
-      |                        ^
-drivers/video/fbdev/core/fbmon.c:847:24: warning: suggest braces around =
-empty body in an =E2=80=98else=E2=80=99 statement [-Wempty-body]
-  847 |   DPRINTK("variable\n");
-      |                        ^
-fs/posix_acl.c: In function =E2=80=98get_acl=E2=80=99:
-fs/posix_acl.c:127:22: warning: suggest braces around empty body in an =
-=E2=80=98if=E2=80=99 statement [-Wempty-body]
-  127 |   /* fall through */ ;
-      |                      ^
-drivers/tty/vt/keyboard.c: In function =E2=80=98k_fn=E2=80=99:
-drivers/tty/vt/keyboard.c:740:22: warning: comparison is always true due =
-to limited range of data type [-Wtype-limits]
-  740 |  if ((unsigned)value < ARRAY_SIZE(func_table)) {
-      |                      ^
-drivers/acpi/scan.c: In function =E2=80=98acpi_bus_get_wakeup_device_flags=
-=E2=80=99:
-drivers/acpi/scan.c:903:43: warning: suggest braces around empty body in =
-an =E2=80=98if=E2=80=99 statement [-Wempty-body]
-  903 |     "error in _DSW or _PSW evaluation\n"));
-      |                                           ^
-drivers/acpi/acpi_processor.c: In function =
-=E2=80=98acpi_processor_errata_piix4=E2=80=99:
-drivers/acpi/acpi_processor.c:133:67: warning: suggest braces around =
-empty body in an =E2=80=98if=E2=80=99 statement [-Wempty-body]
-  133 |       "Bus master activity detection (BM-IDE) erratum =
-enabled\n"));
-      |                                                                  =
- ^
-drivers/acpi/acpi_processor.c:136:54: warning: suggest braces around =
-empty body in an =E2=80=98if=E2=80=99 statement [-Wempty-body]
-  136 |       "Type-F DMA livelock erratum (C3 disabled)\n"));
-      |                                                      ^
-drivers/acpi/acpi_processor.c: In function =
-=E2=80=98acpi_processor_get_info=E2=80=99:
-drivers/acpi/acpi_processor.c:251:49: warning: suggest braces around =
-empty body in an =E2=80=98else=E2=80=99 statement [-Wempty-body]
-  251 |       "No bus mastering arbitration control\n"));
-      |                                                 ^
-drivers/acpi/processor_pdc.c: In function =E2=80=98acpi_processor_eval_pdc=
-=E2=80=99:
-drivers/acpi/processor_pdc.c:136:65: warning: suggest braces around =
-empty body in an =E2=80=98if=E2=80=99 statement [-Wempty-body]
-  136 |       "Could not evaluate _PDC, using legacy perf. =
-control.\n"));
-      |                                                                 =
-^
-In file included from drivers/ata/ahci.c:35:
-drivers/ata/ahci.h:384:16: warning: initialized field overwritten =
-[-Woverride-init]
-  384 |  .can_queue  =3D AHCI_MAX_CMDS,   \
-      |                ^~~~~~~~~~~~~
-drivers/ata/ahci.c:103:2: note: in expansion of macro =E2=80=98AHCI_SHT=E2=
-=80=99
-  103 |  AHCI_SHT("ahci"),
-      |  ^~~~~~~~
-drivers/ata/ahci.h:384:16: note: (near initialization for =
-=E2=80=98ahci_sht.can_queue=E2=80=99)
-  384 |  .can_queue  =3D AHCI_MAX_CMDS,   \
-      |                ^~~~~~~~~~~~~
-drivers/ata/ahci.c:103:2: note: in expansion of macro =E2=80=98AHCI_SHT=E2=
-=80=99
-  103 |  AHCI_SHT("ahci"),
-      |  ^~~~~~~~
-drivers/ata/ahci.h:388:17: warning: initialized field overwritten =
-[-Woverride-init]
-  388 |  .sdev_attrs  =3D ahci_sdev_attrs
-      |                 ^~~~~~~~~~~~~~~
-drivers/ata/ahci.c:103:2: note: in expansion of macro =E2=80=98AHCI_SHT=E2=
-=80=99
-  103 |  AHCI_SHT("ahci"),
-      |  ^~~~~~~~
-drivers/ata/ahci.h:388:17: note: (near initialization for =
-=E2=80=98ahci_sht.sdev_attrs=E2=80=99)
-  388 |  .sdev_attrs  =3D ahci_sdev_attrs
-      |                 ^~~~~~~~~~~~~~~
-drivers/ata/ahci.c:103:2: note: in expansion of macro =E2=80=98AHCI_SHT=E2=
-=80=99
-  103 |  AHCI_SHT("ahci"),
-      |  ^~~~~~~~
-drivers/usb/core/sysfs.c: In function =E2=80=98usb_create_sysfs_intf_files=
-=E2=80=99:
-drivers/usb/core/sysfs.c:1266:3: warning: suggest braces around empty =
-body in an =E2=80=98if=E2=80=99 statement [-Wempty-body]
- 1266 |   ; /* We don't actually care if the function fails. */
-      |   ^
-drivers/input/mouse/synaptics.c: In function =
-=E2=80=98synaptics_process_packet=E2=80=99:
-drivers/input/mouse/synaptics.c:1105:6: warning: suggest braces around =
-empty body in an =E2=80=98if=E2=80=99 statement [-Wempty-body]
- 1105 |      ;   /* Nothing, treat a pen as a single finger */
-      |      ^
-drivers/md/md.c: In function =E2=80=98bind_rdev_to_array=E2=80=99:
-drivers/md/md.c:2438:27: warning: suggest braces around empty body in an =
-=E2=80=98if=E2=80=99 statement [-Wempty-body]
- 2438 |   /* failure here is OK */;
-      |                           ^
-drivers/md/md.c: In function =E2=80=98slot_store=E2=80=99:
-drivers/md/md.c:3200:28: warning: suggest braces around empty body in an =
-=E2=80=98if=E2=80=99 statement [-Wempty-body]
- 3200 |    /* failure here is OK */;
-      |                            ^
-drivers/md/md.c: In function =E2=80=98remove_and_add_spares=E2=80=99:
-drivers/md/md.c:9045:29: warning: suggest braces around empty body in an =
-=E2=80=98if=E2=80=99 statement [-Wempty-body]
- 9045 |     /* failure here is OK */;
-      |                             ^
-drivers/hid/hid-lgff.c: In function =E2=80=98hid_lgff_play=E2=80=99:
-drivers/hid/hid-lgff.c:65:24: warning: comparison of unsigned expression =
-< 0 is always false [-Wtype-limits]
-   65 | #define CLAMP(x) if (x < 0) x =3D 0; if (x > 0xff) x =3D 0xff
-      |                        ^
-drivers/hid/hid-lgff.c:86:3: note: in expansion of macro =E2=80=98CLAMP=E2=
-=80=99
-   86 |   CLAMP(left);
-      |   ^~~~~
-drivers/hid/hid-lgff.c:65:24: warning: comparison of unsigned expression =
-< 0 is always false [-Wtype-limits]
-   65 | #define CLAMP(x) if (x < 0) x =3D 0; if (x > 0xff) x =3D 0xff
-      |                        ^
-drivers/hid/hid-lgff.c:87:3: note: in expansion of macro =E2=80=98CLAMP=E2=
-=80=99
-   87 |   CLAMP(right);
-      |   ^~~~~
-lib/errname.c:15:67: warning: initialized field overwritten =
-[-Woverride-init]
-   15 | #define E(err) [err + BUILD_BUG_ON_ZERO(err <=3D 0 || err > =
-300)] =3D "-" #err
-      |                                                                  =
- ^~~
-lib/errname.c:172:2: note: in expansion of macro =E2=80=98E=E2=80=99
-  172 |  E(EDEADLK), /* EDEADLOCK */
-      |  ^
-lib/errname.c:15:67: note: (near initialization for =E2=80=98names_0[35]=E2=
-=80=99)
-   15 | #define E(err) [err + BUILD_BUG_ON_ZERO(err <=3D 0 || err > =
-300)] =3D "-" #err
-      |                                                                  =
- ^~~
-lib/errname.c:172:2: note: in expansion of macro =E2=80=98E=E2=80=99
-  172 |  E(EDEADLK), /* EDEADLOCK */
-      |  ^
-lib/radix-tree.c: In function =E2=80=98set_iter_tags=E2=80=99:
-lib/radix-tree.c:1134:15: warning: comparison is always false due to =
-limited range of data type [-Wtype-limits]
- 1134 |  if (tag_long < RADIX_TREE_TAG_LONGS - 1) {
-      |               ^
+>On Mon, Mar 2, 2020 at 6:01 PM Bernd Edlinger
+><bernd=2Eedlinger@hotmail=2Ede> wrote:
+>> On 3/2/20 5:43 PM, Jann Horn wrote:
+>> > On Mon, Mar 2, 2020 at 5:19 PM Eric W=2E Biederman
+><ebiederm@xmission=2Ecom> wrote:
+>> >>
+>> >> Bernd Edlinger <bernd=2Eedlinger@hotmail=2Ede> writes:
+>> >>
+>> >>> On 3/2/20 4:57 PM, Eric W=2E Biederman wrote:
+>> >>>> Bernd Edlinger <bernd=2Eedlinger@hotmail=2Ede> writes:
+>> >>>>
+>> >>>>>
+>> >>>>> I tried this with s/EACCESS/EACCES/=2E
+>> >>>>>
+>> >>>>> The test case in this patch is not fixed, but strace does not
+>freeze,
+>> >>>>> at least with my setup where it did freeze repeatable=2E
+>> >>>>
+>> >>>> Thanks, That is what I was aiming at=2E
+>> >>>>
+>> >>>> So we have one method we can pursue to fix this in practice=2E
+>> >>>>
+>> >>>>> That is
+>> >>>>> obviously because it bypasses the cred_guard_mutex=2E  But all
+>other
+>> >>>>> process that access this file still freeze, and cannot be
+>> >>>>> interrupted except with kill -9=2E
+>> >>>>>
+>> >>>>> However that smells like a denial of service, that this
+>> >>>>> simple test case which can be executed by guest, creates a
+>/proc/$pid/mem
+>> >>>>> that freezes any process, even root, when it looks at it=2E
+>> >>>>> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb=2E
+>> >>>>
+>> >>>> Yes=2E  Your the test case in your patch a variant of the original
+>> >>>> problem=2E
+>> >>>>
+>> >>>>
+>> >>>> I have been staring at this trying to understand the
+>fundamentals of the
+>> >>>> original deeper problem=2E
+>> >>>>
+>> >>>> The current scope of cred_guard_mutex in exec is because being
+>ptraced
+>> >>>> causes suid exec to act differently=2E  So we need to know early
+>if we are
+>> >>>> ptraced=2E
+>> >>>>
+>> >>>
+>> >>> It has a second use, that it prevents two threads entering
+>execve,
+>> >>> which would probably result in disaster=2E
+>> >>
+>> >> Exec can fail with an error code up until de_thread=2E  de_thread
+>causes
+>> >> exec to fail with the error code -EAGAIN for the second thread to
+>get
+>> >> into de_thread=2E
+>> >>
+>> >> So no=2E  The cred_guard_mutex is not needed for that case at all=2E
+>> >>
+>> >>>> If that case did not exist we could reduce the scope of the
+>> >>>> cred_guard_mutex in exec to where your patch puts the
+>cred_change_mutex=2E
+>> >>>>
+>> >>>> I am starting to think reworking how we deal with ptrace and
+>exec is the
+>> >>>> way to solve this problem=2E
+>> >>
+>> >>
+>> >> I am 99% convinced that the fix is to move cred_guard_mutex down=2E
+>> >
+>> > "move cred_guard_mutex down" as in "take it once we've already set
+>up
+>> > the new process, past the point of no return"?
+>> >
+>> >> Then right after we take cred_guard_mutex do:
+>> >>         if (ptraced) {
+>> >>                 use_original_creds();
+>> >>         }
+>> >>
+>> >> And call it a day=2E
+>> >>
+>> >> The details suck but I am 99% certain that would solve everyones
+>> >> problems, and not be too bad to audit either=2E
+>> >
+>> > Ah, hmm, that sounds like it'll work fine at least when no LSMs are
+>involved=2E
+>> >
+>> > SELinux normally doesn't do the execution-degrading thing, it just
+>> > blocks the execution completely - see their
+>selinux_bprm_set_creds()
+>> > hook=2E So I think they'd still need to set some state on the task
+>that
+>> > says "we're currently in the middle of an execution where the
+>target
+>> > task will run in context X", and then check against that in the
+>> > ptrace_may_access hook=2E Or I suppose they could just kill the task
+>> > near the end of execve, although that'd be kinda ugly=2E
+>> >
+>>
+>> We have current->in_execve for that, right?
+>> I think when the cred_guard_mutex is taken only in the critical
+>section,
+>> then PTRACE_ATTACH could take the guard_mutex, and look at
+>current->in_execve,
+>> and just return -EAGAIN in that case, right, everybody happy :)
+>
+>It's probably going to mean that things like strace will just randomly
+>fail to attach to processes if they happen to be in the middle of
+>execve=2E=2E=2E but I guess that works?
 
+That sounds like an acceptable outcome=2E
+We can at least risk it and if we regress
+revert or come up with the more complex
+solution suggested in another mail here?
