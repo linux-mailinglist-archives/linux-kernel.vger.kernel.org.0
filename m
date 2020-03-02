@@ -2,48 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5376E175B20
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32027175B22
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:04:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgCBNEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:04:38 -0500
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:41013 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgCBNEh (ORCPT
+        id S1727952AbgCBNEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:04:46 -0500
+Received: from mail-wr1-f73.google.com ([209.85.221.73]:52712 "EHLO
+        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbgCBNEp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:04:37 -0500
-Received: by mail-wm1-f74.google.com with SMTP id f207so2871528wme.6
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:04:36 -0800 (PST)
+        Mon, 2 Mar 2020 08:04:45 -0500
+Received: by mail-wr1-f73.google.com with SMTP id n12so5758472wrp.19
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:04:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Wr2Qj05MN+2+uObWO7o5CaCL9JBE9M/aEcqw3hihs/Y=;
-        b=JsMLy1LwqBPNhCZ8C0SkN0ibFV2jvFW7MLh2FiV+2/se6TT5NzZZoAm/skX7PxHnTP
-         QDLYP+vYyGE+Z79s0Eycc7aeC7/ucskvy5rO4qJFgiHSEBeClC68CULVEOj/7z90Ugxi
-         1CMfCA6Dk+tP+GESoBVRt/nEtS/b2zkiUWErzLsqm3cO18Jq7wjCxWmkXivrEWcv5BkT
-         RBqWZOvPZIgt/B3+mTn1xdgIMAS9q+Ke5m3Lp4iLhMhTtHf/Gt91xDyQf0u6Iyy0gMrq
-         9vcuL5GXPGvsuNHVWmrSGcFOhUkouHWb/CFhz/WwWJrhIap3S/1lDf9bsY+I2sfB1/7T
-         96EQ==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=JEYVQ/93cUIIc6BO5V/NQlPPY1ArQwYADsRJbFdijd8=;
+        b=ifY/Bd7g+2OhtayWGvfN9k47hFCAyCdcGk5ycHkoHFt8uMYtYWW/iEampGrQfd00jA
+         NhMrguaHSkQJVtHIyOtncYN4AdA6RkzmuDiqALK2XONIpaXftSzaORyPsma/X0e67210
+         2dp05VBpxYq6vTcF0b1otLbf7BCFz9tusGS262gHtr0F/jJohXRbyDV4UjhwEi8yQLym
+         vy/+nvRVT/VDr3kOvQvqK7WXNln1+VG7JUtD4IYmrtd+F2GzFBp2099skMDQBOZBaCnR
+         c7Z3ayvTiUb+Azio8W+ZoGneaD7wE3R3dm0UcEJD5Ab5vt3Cd9s+PflF5vkgxSCgRqk2
+         R2Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Wr2Qj05MN+2+uObWO7o5CaCL9JBE9M/aEcqw3hihs/Y=;
-        b=SnGjbXSr9fWaNxFoysHfskNFwfFm7ZEAvVg8Eq0dS+6BxKjxRzzj9mFFopcCyMunKt
-         0pTVbLLiLmV5VnzSTAUHglbaVy4RUhZDlK+vrwoSo85PDg+nc9Wc7kYYSGRUCne1jxa+
-         2zx9zIe3p8imuPbO3vPVqL/weHgaG7REhz8w0Nrs0Ij9DptyELInDietIsHGzrWynaEA
-         Av1vNCbRSCR7f5z4E8n7RtrLjsd8rYZo+YVbtpz45FdUi8uDVyms98tYppSaW4nGZpOp
-         EgosIwnu4eJUqU65M2k37E4SU/T4PeUfHtlOyPcKgIvPl3gKHeQiLGLPoxTkRUzPG8bR
-         xUxg==
-X-Gm-Message-State: APjAAAXUWPMotZGx9fj/o+P0dRMZPJibrx15ii+jzn1OwYWBaaIriHlf
-        2PS/AVQtoLaJDHH4G3KGu0kItUipU9E=
-X-Google-Smtp-Source: APXvYqyg/8mpbpxuymg0ej9yeLWFMIm+QfXj5o/7rTcNntG02buymV/bnHtZ2K4XoI3xMButacyfTjszFa0=
-X-Received: by 2002:a5d:4807:: with SMTP id l7mr22350075wrq.250.1583154275704;
- Mon, 02 Mar 2020 05:04:35 -0800 (PST)
-Date:   Mon,  2 Mar 2020 14:04:28 +0100
-Message-Id: <20200302130430.201037-1-glider@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=JEYVQ/93cUIIc6BO5V/NQlPPY1ArQwYADsRJbFdijd8=;
+        b=X9F9glRE/6R7FxDWEPqHfwnTQA906EivAJwv4GX+aV3WvxGS5u3QM6NR36rx2Fg4nm
+         kTwUflhvSmgra+IrwOPTbMsM9LuRshenlf5eiJ2DMK+4hWyYVNHJKElO5fOX0TYBUB7+
+         qnEyAdkERz85EF256o9qCGHJX66s6df98paTJIdxYxYlA7aRGt3uxyqlmPdIzBiaO5k9
+         u8eMC7SNGu6NXJss0wjeT4wa/8FTKVNQeN6X/pCRp5eoqu9OgbGA+C5sEoczcg/ll/Rv
+         iA6RTFgN4cVsRYUnOWnsLH808CL+E2gN0LcI/WJ19SMxbMS3Fe6KLnKLbHDIML1MQajh
+         buLw==
+X-Gm-Message-State: APjAAAUd6iSyTpYU/E9F1XYFxab8kXSdDh16mD0HBEFv0gQDAd0huh+V
+        amGk3QII7wAZTD1N8giOkNq/Rh8mXjQ=
+X-Google-Smtp-Source: APXvYqylIVXtOKiOFEzyHNHRqhYhFLw9Oy4b+pL2He/Fq3tNdkrsSiy4aLsLJ5pp9R9QUaRQhrSKuXkn2FM=
+X-Received: by 2002:a5d:5286:: with SMTP id c6mr15916314wrv.418.1583154283684;
+ Mon, 02 Mar 2020 05:04:43 -0800 (PST)
+Date:   Mon,  2 Mar 2020 14:04:29 +0100
+In-Reply-To: <20200302130430.201037-1-glider@google.com>
+Message-Id: <20200302130430.201037-2-glider@google.com>
 Mime-Version: 1.0
+References: <20200302130430.201037-1-glider@google.com>
 X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v2 1/3] compiler.h: define __no_initialize
+Subject: [PATCH v2 2/3] binder: do not initialize locals passed to copy_from_user()
 From:   glider@google.com
 To:     tkjos@google.com, keescook@chromium.org,
         gregkh@linuxfoundation.org, arve@android.com, mingo@redhat.com
@@ -56,63 +60,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For CONFIG_INIT_STACK_ALL it's sometimes handy to disable
-force-initialization for a local variable, if it is known to be initialized
-later on before the first use. This can be done by using the
-__no_initialize macro.
+Certain copy_from_user() invocations in binder.c are known to
+unconditionally initialize locals before their first use, like e.g. in
+the following case:
 
-__no_initialize should be applied carefully, as future changes to
-the code around the local variable may introduce paths on which the
-variable remains uninitialized before the use.
+	struct binder_transaction_data tr;
+	if (copy_from_user(&tr, ptr, sizeof(tr)))
+		return -EFAULT;
 
+In such cases enabling CONFIG_INIT_STACK_ALL leads to insertion of
+redundant locals initialization that the compiler fails to remove.
+To work around this problem till Clang can deal with it, we apply
+__no_initialize to local Binder structures.
+
+This patch was generated using the following Coccinelle script:
+
+  @match@
+  type T;
+  identifier var;
+  position p0, p1;
+  @@
+  T var@p0;
+  ...
+  copy_from_user(&var,..., sizeof(var))@p1
+
+  @escapes depends on match@
+  type match.T;
+  identifier match.var;
+  position match.p0,match.p1;
+  @@
+  T var@p0;
+  ... var ...
+  copy_from_user(&var,..., sizeof(var))@p1
+
+  @local_inited_by_cfu depends on !escapes@
+  type T;
+  identifier var;
+  position match.p0,match.p1;
+  fresh identifier var_noinit = var##" __no_initialize";
+  @@
+  -T var@p0;
+  +T var_noinit;
+  ...
+  copy_from_user(&var,..., sizeof(var))@p1
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Alexander Potapenko <glider@google.com>
 
 ---
-
-v2:
- - changed __do_not_initialize to __no_initialize as requested by Kees
-   Cook
+ v2:
+  - changed __do_not_initialize to __no_initialize as requested by Kees
+    Cook
+  - wrote a Coccinelle script to generate the patch
 ---
- include/linux/compiler-clang.h | 10 ++++++++++
- include/linux/compiler_types.h |  4 ++++
- 2 files changed, 14 insertions(+)
+ drivers/android/binder.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index 333a6695a918c..27f774b27b061 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -24,6 +24,16 @@
- #define __no_sanitize_address
- #endif
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index a6b2082c24f8f..a59871532ff6b 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3788,7 +3788,7 @@ static int binder_thread_write(struct binder_proc *proc,
  
-+/*
-+ * Disable initialization of a local variable when building with
-+ * CONFIG_INIT_STACK_ALL.
-+ */
-+#ifdef CONFIG_INIT_STACK_ALL
-+#define __no_initialize __attribute__((uninitialized))
-+#else
-+#define __no_initialize
-+#endif
-+
- /*
-  * Not all versions of clang implement the the type-generic versions
-  * of the builtin overflow checkers. Fortunately, clang implements
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 72393a8c1a6c5..0208699c855af 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -216,6 +216,10 @@ struct ftrace_likely_data {
- # define __no_fgcse
- #endif
+ 		case BC_TRANSACTION_SG:
+ 		case BC_REPLY_SG: {
+-			struct binder_transaction_data_sg tr;
++			struct binder_transaction_data_sg tr __no_initialize;
  
-+#ifndef __no_initialize
-+#define __no_initialize
-+#endif
-+
- /* Are two types/vars the same type (ignoring qualifiers)? */
- #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+ 			if (copy_from_user(&tr, ptr, sizeof(tr)))
+ 				return -EFAULT;
+@@ -3799,7 +3799,7 @@ static int binder_thread_write(struct binder_proc *proc,
+ 		}
+ 		case BC_TRANSACTION:
+ 		case BC_REPLY: {
+-			struct binder_transaction_data tr;
++			struct binder_transaction_data tr __no_initialize;
  
+ 			if (copy_from_user(&tr, ptr, sizeof(tr)))
+ 				return -EFAULT;
+@@ -4827,7 +4827,7 @@ static int binder_ioctl_write_read(struct file *filp,
+ 	struct binder_proc *proc = filp->private_data;
+ 	unsigned int size = _IOC_SIZE(cmd);
+ 	void __user *ubuf = (void __user *)arg;
+-	struct binder_write_read bwr;
++	struct binder_write_read bwr __no_initialize;
+ 
+ 	if (size != sizeof(struct binder_write_read)) {
+ 		ret = -EINVAL;
+@@ -5039,7 +5039,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
+ 	case BINDER_SET_CONTEXT_MGR_EXT: {
+-		struct flat_binder_object fbo;
++		struct flat_binder_object fbo __no_initialize;
+ 
+ 		if (copy_from_user(&fbo, ubuf, sizeof(fbo))) {
+ 			ret = -EINVAL;
+@@ -5076,7 +5076,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
+ 	case BINDER_GET_NODE_INFO_FOR_REF: {
+-		struct binder_node_info_for_ref info;
++		struct binder_node_info_for_ref info __no_initialize;
+ 
+ 		if (copy_from_user(&info, ubuf, sizeof(info))) {
+ 			ret = -EFAULT;
+@@ -5095,7 +5095,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
+ 	case BINDER_GET_NODE_DEBUG_INFO: {
+-		struct binder_node_debug_info info;
++		struct binder_node_debug_info info __no_initialize;
+ 
+ 		if (copy_from_user(&info, ubuf, sizeof(info))) {
+ 			ret = -EFAULT;
 -- 
 2.25.0.265.gbab2e86ba0-goog
 
