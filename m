@@ -2,181 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 007E1175B02
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC41175B0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:58:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbgCBM4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:56:32 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51444 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727734AbgCBM4b (ORCPT
+        id S1727857AbgCBM6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:58:42 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47328 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727595AbgCBM6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:56:31 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022Crv3c009358;
-        Mon, 2 Mar 2020 13:55:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=QR9by0y6+s6+BJpgqoy6IRatITNZ3Ur80DMO1uUZ41M=;
- b=udVb852b0hDrg3p/dn9+nGQdHGcCd+sQ/u+zWH5tTiem3bP4pQ/Dz1kcSHf6jfNz1U4Q
- gss/aU0aepwbZU7POktDo6iD4CdBUcO7Gcay8Arrs4FWFMpls69Emjn6S6WwFwDXJSUe
- GbjImbWXnUBP25+7rqWmPSRy19hO9Wq2dcwJjiJwirXc6sQF2Vylm3zB/rB+nyn6dx8t
- T/fG/dPwI3Qynrjo25rtRCTYNP1GvrvcUlA2E6WamgkAcwfFBWPNjPWQDMi4zQGD/AQR
- iLcHXLmjWBnuzPu6OwCrM97qF/u5d2hxP/b6sAugV4lxl5uInewdzRHiP3NcjlrhQFZg vw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yffqpkfrc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 13:55:59 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F27E9100038;
-        Mon,  2 Mar 2020 13:55:56 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DC7B52D3777;
-        Mon,  2 Mar 2020 13:55:56 +0100 (CET)
-Received: from lmecxl0912.lme.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 2 Mar
- 2020 13:55:55 +0100
-Subject: Re: [RFC PATCH v2 0/4] Add device tree build information
-To:     Frank Rowand <frowand.list@gmail.com>, <robh+dt@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        <david@gibson.dropbear.id.au>, <sjg@chromium.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kbuild@vger.kernel.org>,
-        <devicetree-compiler@vger.kernel.org>, Ian Lepore <ian@freebsd.org>
-References: <20200221161418.20225-1-alexandre.torgue@st.com>
- <1b946fcf-47a9-012d-1b04-f4bbd2682607@gmail.com>
- <67d75f0c-7478-23b0-8619-746cf83cedb5@gmail.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <dba17be2-067f-8221-f313-7a3edcf61511@st.com>
-Date:   Mon, 2 Mar 2020 13:55:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 2 Mar 2020 07:58:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583153920;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LTxEf2HmtzFDT3ha5LPaBAQb1RviQ7eD1aAzs0lLt8U=;
+        b=QIqvcU5KgQTGiCf6R2i20AVZilT7hmhMFLfVCjAxG8nyFjdXCiZtHq0gJ8W6SVfYiIkqZb
+        +KOXYpJAnDsygPv5yKrlb8j4tpfl2ADKOyM3GDVYUObi1NhbX0SqQETvhh8eG1zk+6KOmd
+        ypeycTBFGIySkFvmshlQynQ2Ya6RMNg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-94-sSzsPTQ8OfSI0JAbas9ugg-1; Mon, 02 Mar 2020 07:58:38 -0500
+X-MC-Unique: sSzsPTQ8OfSI0JAbas9ugg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1CA5B8017DF;
+        Mon,  2 Mar 2020 12:58:37 +0000 (UTC)
+Received: from krava (ovpn-205-46.brq.redhat.com [10.40.205.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2751519C4F;
+        Mon,  2 Mar 2020 12:58:07 +0000 (UTC)
+Date:   Mon, 2 Mar 2020 13:58:05 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: Fix realloc() use in fdarray__grow()
+Message-ID: <20200302125805.GB204976@krava>
+References: <20200229162607.6000-1-jannh@google.com>
 MIME-Version: 1.0
-In-Reply-To: <67d75f0c-7478-23b0-8619-746cf83cedb5@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_04:2020-03-02,2020-03-02 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200229162607.6000-1-jannh@google.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Franck
-
-On 2/28/20 6:47 PM, Frank Rowand wrote:
-> Hi Alexandred,
+On Sat, Feb 29, 2020 at 05:26:07PM +0100, Jann Horn wrote:
+> If `entries != NULL`, then `fda->entries` has been freed, so whatever
+> happens afterwards, we must store `entries` in `fda->entries`.
+> If we bail out at the second realloc(), the new allocation will be bigger
+> than what fda->nr_alloc says, but that's fine.
 > 
-> Ping.
+> Fixes: 2171a9256862 ("tools lib fd array: Allow associating an integer cookie with each entry")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> To the maintainer:
+> I'm not sure about the etiquette for using CC stable in
+> patches for somewhat theoretical issues in userland tools;
+> feel free to tack a CC stable onto this if you think it
+> should go into stable.
+> 
+>  tools/lib/api/fd/array.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/lib/api/fd/array.c b/tools/lib/api/fd/array.c
+> index 58d44d5eee31..acf8eca1a94a 100644
+> --- a/tools/lib/api/fd/array.c
+> +++ b/tools/lib/api/fd/array.c
+> @@ -27,15 +27,13 @@ int fdarray__grow(struct fdarray *fda, int nr)
+>  
+>  	if (entries == NULL)
+>  		return -ENOMEM;
+> +	fda->entries = entries;
+>  
+>  	priv = realloc(fda->priv, psize);
+> -	if (priv == NULL) {
+> -		free(entries);
+
+so we are sure we always call fdarray__exit even
+if we fail in here?  if that's the case then
+
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+
+thanks,
+jirka
+
+> +	if (priv == NULL)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	fda->nr_alloc = nr_alloc;
+> -	fda->entries  = entries;
+>  	fda->priv     = priv;
+>  	return 0;
+>  }
+> -- 
+> 2.25.0
 > 
 
-Sorry I was off last week.
-
-> -Frank
-> 
-> 
-> On 2/21/20 11:47 AM, Frank Rowand wrote:
->> On 2/21/20 10:14 AM, Alexandre Torgue wrote:
->>> (with title it's better ;)
->>>
->>> Hi,
->>>
->>> The goal of this series is to add device tree build information in dtb.
->>> This information can be dtb build date, where devicetree files come from,
->>> who built the dtb ... Actually, same kind of information that you can find
->>> in the Linux banner which is printout during kernel boot. Having the same
->>> kind of information for device tree is useful for debugging and maintenance.
->>>
->>> A file (dtb-build.txt) containing a string with build information (e.g.,
->>> >From Linux 5.5.0-rc1 by alex the Mon Jan 13 18:25:38 CET 2020) is generated by
->>> "gen_dtb_build_info.sh" script.
->>>
->>> This file has to be included manually in each dts file that would like to use
->>> this build information.
->>
->> In the RFC series, you said:
->>
->>    "I gonna prepare a V2 with David proposition (to use overlay format) by
->>     keeping in mind not to modify existing dts(i) files."
->>
->>     https://lore.kernel.org/linux-devicetree/9d83a36c-78c5-3452-bb48-209d68c46038@st.com/
->>
->> But here in v2 instead requires including dtb-build.txt.
->>
->> This would require modifying every single main .dts file to get the build info
->> I would prefer the method that Ian and David came up with (sorry, no lore link,
->> it did not go to lkml).  Extract from David's email:
->>
->>     Date:   Tue, 21 Jan 2020 13:05:25 +1100
->>     From:   David Gibson <david@gibson.dropbear.id.au>
->>     Subject: Re: [RFC PATCH 1/3] dtc: Add dtb build information option
->>
->>     > Given that dts files are run through the C preprocessor before being
->>     > fed to dtc, the build script could use the '-include' flag to force-
->>     > include a fragment containing generated build info without any need to
->>     > modify existing dts files.
->>
->>     Uh... maybe.  -include will essentially prepend the forced file, which
->>     is a bit awkward for our purposes.  It means that the prepended file
->>     would need the /dts-v1/ tag, and we couldn't have it in the main files
->>     which would be a bit confusing.  I think it would also cause problems
->>     with any /memreserve/ tags and means that the main tree could in
->>     theory overwrite the build information which we don't necessarily
->>     want.
->>
->>     I guess we could build things the other way around: have the main .dts
->>     file specified with -include and have the dts on the dtc commandline
->>     be a fixed one with the build information.  It'd be a little weird,
->>     though.
->>
->> -Frank
-
-Yes. I try briefly this idea but I got issues with dts-v1 tag. I agree, 
-it is cleaner to not modify input dts file. I can rework int this way.
-
-regards
-Alex
-
->>
->>>
->>> of/fdt.c is modified to printout "build-info" property during Kernel boot and
->>> scripts/Makefile.lib is modified to call "gen_dtb_build_info.sh" script.
->>>
->>> Patch 1 & 2 script and of/fdt.c updates
->>> Patch 3 is an example of use in stm32mp157c-dk2.dts file.
->>> Patch 4 is a tentative to make it automatic (not yet 100% functional).
->>>
->>> regards
->>> Alex
->>>
->>> Changes since v1;
->>>   - Remove modification in dtc (no more -B option)
->>>   - Generate a file containing build info which is directly included in dts
->>>     file.
->>>
->>>
->>> Regards
->>> Alex
->>>
->>> Alexandre Torgue (4):
->>>    scripts: Add script to generate dtb build information
->>>    of: fdt: print dtb build information
->>>    ARM: dts: stm32: Add dtb build information entry for stm32mp157c-dk2
->>>    script: make automatic dtb build info generation
->>>
->>>   arch/arm/boot/dts/stm32mp157c-dk2.dts |  1 +
->>>   drivers/of/fdt.c                      |  9 +++++++++
->>>   scripts/Makefile.lib                  |  3 +++
->>>   scripts/gen_dtb_build_info.sh         | 12 ++++++++++++
->>>   4 files changed, 25 insertions(+)
->>>   create mode 100755 scripts/gen_dtb_build_info.sh
->>>
->>
->>
-> 
