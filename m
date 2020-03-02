@@ -2,469 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57C73176234
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9799F176246
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 19:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbgCBSPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 13:15:44 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50439 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727126AbgCBSPn (ORCPT
+        id S1727433AbgCBSR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 13:17:28 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:60683 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbgCBSR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 13:15:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583172941;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=K5tYutS5LyyCEQewOnTkc4sNJgGJUnwQiq/O+gz1xUU=;
-        b=bKw8AbXxmTMlIB5qm2nG8kCMCDtxw+LrdbpZg2n31ofN1zCbJdll5E2iRvyPk86XQ0VXpK
-        unruAvQbu5fwA+FEcmn9TMTyyMmS4NdmEfL5nGKSw8B5gBdwrgNPZ8XS2U21+YExvRFzCf
-        GQhr3a2ZCkP0aHOKKikWGairmbkREkw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-160-tvOQceu-NwairZLijYS2oQ-1; Mon, 02 Mar 2020 13:15:35 -0500
-X-MC-Unique: tvOQceu-NwairZLijYS2oQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3C12718B9F80;
-        Mon,  2 Mar 2020 18:15:30 +0000 (UTC)
-Received: from [10.36.116.60] (ovpn-116-60.ams2.redhat.com [10.36.116.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B99E19C7F;
-        Mon,  2 Mar 2020 18:15:10 +0000 (UTC)
-Subject: Re: [PATCH v1 00/11] virtio-mem: paravirtualized memory
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, virtio-dev@lists.oasis-open.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Sebastien Boeuf <sebastien.boeuf@intel.com>,
-        Samuel Ortiz <samuel.ortiz@intel.com>,
-        Robert Bradford <robert.bradford@intel.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-        teawater <teawaterz@linux.alibaba.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Alexander Potapenko <glider@google.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Len Brown <lenb@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>
-References: <20200302134941.315212-1-david@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <7f8a9225-99f2-b00d-241f-ef934395c667@redhat.com>
-Date:   Mon, 2 Mar 2020 19:15:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 2 Mar 2020 13:17:28 -0500
+Received: from methusalix.internal.home.lespocky.de ([109.250.99.45]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MhCq4-1jeKsj2SoM-00eP3P; Mon, 02 Mar 2020 19:16:51 +0100
+Received: from lemmy.internal.home.lespocky.de ([192.168.243.175] helo=lemmy.home.lespocky.de)
+        by methusalix.internal.home.lespocky.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <alex@home.lespocky.de>)
+        id 1j8pcV-00019g-Di; Mon, 02 Mar 2020 19:16:48 +0100
+Received: (nullmailer pid 21156 invoked by uid 2001);
+        Mon, 02 Mar 2020 18:16:47 -0000
+From:   Alexander Dahl <post@lespocky.de>
+To:     x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        Alexander Dahl <post@lespocky.de>
+Subject: [PATCH] dma: Fix max PFN arithmetic overflow on 32 bit systems
+Date:   Mon,  2 Mar 2020 19:16:12 +0100
+Message-Id: <20200302181612.20597-1-post@lespocky.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200302134941.315212-1-david@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scan-Signature: 7719f4cb0a203ae1a5f64d3866c1573d
+X-Spam-Score: -2.6 (--)
+X-Provags-ID: V03:K1:8B37tE9F2d8izwA/UGPTWbhBuKeo+jRutJy6I7/WLDKVHQsW/DV
+ iO1kegFF2RaNOdoRni9TU0dRHbMUJ+9k6MAoADpjWanR5E/IJ3yKmUSHB9nQTMtU4j0mFzk
+ Kj8TCvHP9wnYrUG2gIITeaGUAaDG8HcLt0iTCr9RT+VCz1KwuWOtQRu4sWCTBRz3y/XCza/
+ qxffYem9wHCi6lbSMMYnw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rnpPttj3NGg=:Mr3Pecror39pfDvFqmoom6
+ luO0uKV28oTDMnPJSsBAGB6ck0JCdKr5UsxhuAhfrqHP8/Ug4fx7fqLE5I5PoXIxdyk4RBb4c
+ sQ2g/vb2dfNGjVE8ZC1t9xzDrh8/jrwleIt2J8gr088eHfFLye226Fq3w8Xp7mz2eaOpcTxlz
+ Q/7+dkqhvlpIY0shFQoHk8BzhH+5/+jHwd9BWqjEW/C7VPEtjET5eTkI6khDzaNRwZERw7Lwh
+ FF+zjsG8pZm76Ki0+FEPvI2TZnAms6OM6McQ0Td7zlZr+ozp7DkQWOCQohhNtAYo51vclvD5v
+ ESj38IweKQtfRghLkHZtKHDt9wiyxmtGa/pIBD4U2WyFkGP3gNveyWXfZ+3XBJRFQduYCuSBM
+ T73MSBcA9NBpWeftQEz/Yf0Pu+C+O5vsaFWCuwosgjKBjSb0Dmsel7T3LBdVRV4jI1WPMwqxF
+ ZXWjR9XFv61ZvTFccun7Km7XC7Jm5A7iGijSCveg7c+NpTiqKHM1uqBuUKcZSMCg/HBG7cC+W
+ QDk32pSh6sM5Vxe8G6PxhIYwZbqGyARzNKX/pvs0R9YtsgfIHwKoEpC+3N4ruinC0la02SI7A
+ Ng2Ro1Wels0uTkLmkWgpX7hYRSdU/i43v7ChE/yl5VTqgxRBQXZNZ1Af036uMCOXWDPuU8uQu
+ 2JdIoizWvntYOa8xWQVaT7FN09C2J02b3j17NqZoTBwaaS6CMAcKfIGToJHvqPqm+SFgss/Ik
+ VBFsKxx7gP+ay2uZiKOPIxuGq1XxWGUVP0C99d5S03q7Rh84neRUdnC2TNIM4QGZmhZYyVq/t
+ V8AfUmMEM4wOJWXSyk74gM/NaPHKfuHJkhWwq0pXUDcPRB+duFXq14rYhuMjnjDksthzBLq
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.03.20 14:49, David Hildenbrand wrote:
-> This series is based on latest linux-next. The patches are located at:
->     https://github.com/davidhildenbrand/linux.git virtio-mem-v1
-> 
-> The basic idea of virtio-mem is to provide a flexible,
-> cross-architecture memory hot(un)plug solution that avoids many limitations
-> imposed by existing technologies, architectures, and interfaces. More
-> details can be found below and in linked material.
-> 
-> It's currently only enabled for x86-64, however, should theoretically work
-> on any architecture that supports virtio and implements memory hot(un)plug
-> under Linux - like s390x, powerpc64, and arm64. On x86-64, it is currently
-> possible to add/remove memory to the system in >= 4MB granularity.
-> Memory hotplug works very reliably. For memory unplug, there are no
-> guarantees how much memory can actually get unplugged, it depends on the
-> setup (especially: fragmentation of physical memory).
-> 
-> I am currently getting the QEMU side into shape (which will be posted as
-> RFC soon, see below for a link to the current state). Experimental Kata
-> support is in the works [4]. Also, a cloud-hypervisor implementation is
-> under discussion [5].
-> 
-> --------------------------------------------------------------------------
-> 1. virtio-mem
-> --------------------------------------------------------------------------
-> 
-> The basic idea behind virtio-mem was presented at KVM Forum 2018. The
-> slides can be found at [1]. The previous RFC can be found at [2]. The
-> first RFC can be found at [3]. However, the concept evolved over time. The
-> KVM Forum slides roughly match the current design.
-> 
-> Patch #2 ("virtio-mem: Paravirtualized memory hotplug") contains quite some
-> information, especially in "include/uapi/linux/virtio_mem.h":
-> 
->     Each virtio-mem device manages a dedicated region in physical address
->     space. Each device can belong to a single NUMA node, multiple devices
->     for a single NUMA node are possible. A virtio-mem device is like a
->     "resizable DIMM" consisting of small memory blocks that can be plugged
->     or unplugged. The device driver is responsible for (un)plugging memory
->     blocks on demand.
-> 
->     Virtio-mem devices can only operate on their assigned memory region in
->     order to (un)plug memory. A device cannot (un)plug memory belonging to
->     other devices.
-> 
->     The "region_size" corresponds to the maximum amount of memory that can
->     be provided by a device. The "size" corresponds to the amount of memory
->     that is currently plugged. "requested_size" corresponds to a request
->     from the device to the device driver to (un)plug blocks. The
->     device driver should try to (un)plug blocks in order to reach the
->     "requested_size". It is impossible to plug more memory than requested.
-> 
->     The "usable_region_size" represents the memory region that can actually
->     be used to (un)plug memory. It is always at least as big as the
->     "requested_size" and will grow dynamically. It will only shrink when
->     explicitly triggered (VIRTIO_MEM_REQ_UNPLUG).
-> 
->     There are no guarantees what will happen if unplugged memory is
->     read/written. Such memory should, in general, not be touched. E.g.,
->     even writing might succeed, but the values will simply be discarded at
->     random points in time.
-> 
->     It can happen that the device cannot process a request, because it is
->     busy. The device driver has to retry later.
-> 
->     Usually, during system resets all memory will get unplugged, so the
->     device driver can start with a clean state. However, in specific
->     scenarios (if the device is busy) it can happen that the device still
->     has memory plugged. The device driver can request to unplug all memory
->     (VIRTIO_MEM_REQ_UNPLUG) - which might take a while to succeed if the
->     device is busy.
-> 
-> --------------------------------------------------------------------------
-> 2. Linux Implementation
-> --------------------------------------------------------------------------
-> 
-> Memory blocks (e.g., 128MB) are added/removed on demand. Within these
-> memory blocks, subblocks (e.g., 4MB) are plugged/unplugged. The sizes
-> depend on the target architecture, MAX_ORDER, pageblock_order, and
-> the block size of a virtio-mem device.
-> 
-> add_memory()/try_remove_memory() is used to add/remove memory blocks.
-> virtio-mem will not online memory blocks itself. This has to be done by
-> user space, or configured into the kernel
-> (CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE). virtio-mem will only unplug memory
-> that was online to the ZONE_NORMAL. Memory is suggested to be onlined to
-> the ZONE_NORMAL for now.
-> 
-> The memory hotplug notifier is used to properly synchronize against
-> onlining/offlining of memory blocks and to track the states of memory
-> blocks (including the zone memory blocks are onlined to).
-> 
-> The set_online_page() callback is used to keep unplugged subblocks
-> of a memory block fake-offline when onlining the memory block.
-> generic_online_page() is used to fake-online plugged subblocks. This
-> handling is similar to the Hyper-V balloon driver.
-> 
-> PG_offline is used to mark unplugged subblocks as offline, so e.g.,
-> dumping tools (makedumpfile) will skip these pages. This is similar to
-> other balloon drivers like virtio-balloon and Hyper-V.
-> 
-> Memory offlining code is extended to allow drivers to drop their reference
-> to PG_offline pages when MEM_GOING_OFFLINE, so these pages can be skipped
-> when offlining memory blocks. This allows to offline memory blocks that
-> have partially unplugged (allocated e.g., via alloc_contig_range())
-> subblocks - or are completely unplugged.
-> 
-> alloc_contig_range()/free_contig_range() [now exposed] is used to
-> unplug/plug subblocks of memory blocks the are already exposed to Linux.
-> 
-> offline_and_remove_memory() [new] is used to offline a fully unplugged
-> memory block and remove it from Linux.
-> 
-> --------------------------------------------------------------------------
-> 3. Changes RFC v4 -> v1
-> --------------------------------------------------------------------------
-> 
-> Only minor things changed, especially, nothing on the virtio side.
-> - "virtio-mem: Paravirtualized memory hotplug"
-> -- Fix compilation without CONFIG_ACPI_NUMA
-> -- Minor code simplifications
-> -- Better lockdep handling
-> -- Fix retry handling when getting a config update while processing work
-> - "virtio-mem: Paravirtualized memory hotunplug part 1"
-> - "virtio-mem: Paravirtualized memory hotunplug part 2"
-> -- Unplug memory from highest to lowest, as we plug from lowest to highest
-> - "mm: Allow to offline unmovable PageOffline() pages via
->    MEM_GOING_OFFLINE"
-> -- Optimized comments/description
-> - "mm/memory_hotplug: Introduce offline_and_remove_memory()"
-> -- Rephrased description
-> - Drop the drop_slab() functionality for now
-> - Added "MAINTAINERS: Add myself as virtio-mem maintainer"
-> - Fixed many spelling issues. checkpatch mostly complains about BUG_ONs
->   and two macros, which is fine.
-> 
-> --------------------------------------------------------------------------
-> 4. Future work
-> --------------------------------------------------------------------------
-> 
-> virtio-mem extensions (via new feature flags):
-> - Indicate the guest status (e.g., initialized, working, all memory is
->   busy when unplugging, too many memory blocks are offline when plugging,
->   etc.)
-> - Guest-triggered shrinking of the usable region (e.g., whenever the
->   highest memory block is removed).
-> - Exchange of plugged<->unplugged block for defragmentation.
-> 
-> Memory hotplug:
-> - Reduce the amount of memory resources if that tunes out to be an
->   issue. Or try to speed up relevant code paths to deal with many
->   resources.
-> - Allocate vmemmap from added memory.
-> 
-> Memory hotunplug:
-> - Performance improvements:
-> -- Sense (lockless) if it make sense to try alloc_contig_range() at all
->    before directly trying to isolate and taking locks.
-> -- Try to unplug bigger chunks within a memory block first.
-> - Make unplug more likely to succeed:
-> -- There are various idea to limit fragmentation on memory block
->    granularity. (e.g., ZONE_PREFER_MOVABLE and smart balancing)
-> -- Allocate vmemmap from added memory.
-> - OOM handling, e.g., via an OOM handler.
-> - Defragmentation
-> 
-> --------------------------------------------------------------------------
-> 5. Example Usage
-> --------------------------------------------------------------------------
-> 
-> A QEMU implementation (without protection of unplugged memory, but with
-> resizable memory regions and optimized migration) is available at (kept
-> updated):
->     https://github.com/davidhildenbrand/qemu.git virtio-mem
-> 
-> Start QEMU with two virtio-mem devices (one per NUMA node):
->  $ qemu-system-x86_64 -m 4G,maxmem=204G \
->   -smp sockets=2,cores=2 \
->   -numa node,nodeid=0,cpus=0-1 -numa node,nodeid=1,cpus=2-3 \
->   [...]
->   -object memory-backend-ram,id=mem0,size=100G,managed-size=on \
->   -device virtio-mem-pci,id=vm0,memdev=mem0,node=0,requested-size=0M \
->   -object memory-backend-ram,id=mem1,size=100G,managed-size=on \
->   -device virtio-mem-pci,id=vm1,memdev=mem1,node=1,requested-size=1G
-> 
-> Query the configuration:
->  QEMU 4.2.50 monitor - type 'help' for more information
->  (qemu) info memory-devices
->  Memory device [virtio-mem]: "vm0"
->    memaddr: 0x140000000
->    node: 0
->    requested-size: 0
->    size: 0
->    max-size: 107374182400
->    block-size: 2097152
->    memdev: /objects/mem0
->  Memory device [virtio-mem]: "vm1"
->    memaddr: 0x1a40000000
->    node: 1
->    requested-size: 1073741824
->    size: 1073741824
->    max-size: 107374182400
->    block-size: 2097152
->    memdev: /objects/mem1
-> 
-> Add some memory to node 0:
->  QEMU 4.2.50 monitor - type 'help' for more information
->  (qemu) qom-set vm0 requested-size 1G
-> 
-> Remove some memory from node 1:
->  QEMU 4.2.50 monitor - type 'help' for more information
->  (qemu) qom-set vm1 requested-size 64M
-> 
-> Query the configuration again:
->  QEMU 4.2.50 monitor - type 'help' for more information
->  (qemu) info memory-devices
->  Memory device [virtio-mem]: "vm0"
->    memaddr: 0x140000000
->    node: 0
->    requested-size: 1073741824
->    size: 1073741824
->    max-size: 107374182400
->    block-size: 2097152
->    memdev: /objects/mem0
->  Memory device [virtio-mem]: "vm1"
->    memaddr: 0x1a40000000
->    node: 1
->    requested-size: 67108864
->    size: 67108864
->    max-size: 107374182400
->    block-size: 2097152
->    memdev: /objects/mem1
-> 
-> --------------------------------------------------------------------------
-> 6. Q/A
-> --------------------------------------------------------------------------
-> 
-> Q: Why add/remove parts ("subblocks") of memory blocks/sections?
-> A: Flexibility (section size depends on the architecture) - e.g., some
->    architectures have a section size of 2GB. Also, the memory block size
->    is variable (e.g., on x86-64). I want to avoid any such restrictions.
->    Some use cases want to add/remove memory in smaller granularity to a
->    VM (e.g., the Hyper-V balloon also implements this) - especially smaller
->    VMs like used for kata containers. Also, on memory unplug, it is more
->    reliable to free-up and unplug multiple small chunks instead
->    of one big chunk. E.g., if one page of a DIMM is either unmovable or
->    pinned, the DIMM can't get unplugged. This approach is basically a
->    compromise between DIMM-based memory hot(un)plug and balloon
->    inflation/deflation, which works mostly on page granularity.
-> 
-> Q: Why care about memory blocks?
-> A: They are the way to tell user space about new memory. This way,
->    memory can get onlined/offlined by user space. Also, e.g., kdump
->    relies on udev events to reload kexec when memory blocks are
->    onlined/offlined. Memory blocks are the "real" memory hot(un)plug
->    granularity. Everything that's smaller has to be emulated "on top".
-> 
-> Q: Won't memory unplug of subblocks fragment memory?
-> A: Yes and no. Unplugging e.g., >=4MB subblocks on x86-64 will not really
->    fragment memory like unplugging random pages like a balloon driver does.
->    Buddy merging will not be limited. However, any allocation that requires
->    bigger consecutive memory chunks (e.g., gigantic pages) might observe
->    the fragmentation. Possible solutions: Allocate gigantic huge pages
->    before unplugging memory, don't unplug memory, combine virtio-mem with
->    DIMM based memory or bigger initial memory. Remember, a virtio-mem
->    device will only unplug on the memory range it manages, not on other
->    DIMMs. Unplug of single memory blocks will result in similar
->    fragmentation in respect to gigantic huge pages.
-> 
-> Q: How reliable is memory unplug?
-> A: There are no guarantees on how much memory can get unplugged
->    again. However, it is more likely to find 4MB chunks to unplug than
->    e.g., 128MB chunks. If memory is terribly fragmented, there is nothing
->    we can do - for now. I consider memory hotplug the first primary use
->    of virtio-mem. Memory unplug might usually work, but we want to improve
->    the performance and the amount of memory we can actually unplug later.
-> 
-> Q: Why not unplug from the ZONE_MOVABLE?
-> A: Unplugged memory chunks are unmovable. Unmovable data must not end up
->    on the ZONE_MOVABLE - similar to gigantic pages - they will never be
->    allocated from ZONE_MOVABLE. virtio-mem added memory can be onlined
->    to the ZONE_MOVABLE, but subblocks will not get unplugged from it.
-> 
-> Q: How big should the initial (!virtio-mem) memory of a VM be?
-> A: virtio-mem memory will not go to the DMA zones. So to avoid running out
->    of DMA memory, I suggest something like 2-3GB on x86-64. But many
->    VMs can most probably deal with less DMA memory - depends on the use
->    case.
-> 
-> [1] https://events.linuxfoundation.org/wp-content/uploads/2017/12/virtio-mem-Paravirtualized-Memory-David-Hildenbrand-Red-Hat-1.pdf
-> [2] https://lkml.kernel.org/r/20190919142228.5483-1-david@redhat.com
-> [3] https://lkml.kernel.org/r/547865a9-d6c2-7140-47e2-5af01e7d761d@redhat.com
-> [4] https://github.com/kata-containers/documentation/pull/592
-> [5] https://github.com/cloud-hypervisor/cloud-hypervisor/pull/837
-> 
-> Cc: Sebastien Boeuf <sebastien.boeuf@intel.com>
-> Cc: Samuel Ortiz <samuel.ortiz@intel.com>
-> Cc: Robert Bradford <robert.bradford@intel.com>
-> Cc: Luiz Capitulino <lcapitulino@redhat.com>
-> Cc: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-> Cc: teawater <teawaterz@linux.alibaba.com>
-> Cc: Igor Mammedov <imammedo@redhat.com>
-> Cc: Dr. David Alan Gilbert <dgilbert@redhat.com>
-> 
-> David Hildenbrand (11):
->   ACPI: NUMA: export pxm_to_node
->   virtio-mem: Paravirtualized memory hotplug
->   virtio-mem: Paravirtualized memory hotunplug part 1
->   mm: Export alloc_contig_range() / free_contig_range()
->   virtio-mem: Paravirtualized memory hotunplug part 2
->   mm: Allow to offline unmovable PageOffline() pages via
->     MEM_GOING_OFFLINE
->   virtio-mem: Allow to offline partially unplugged memory blocks
->   mm/memory_hotplug: Introduce offline_and_remove_memory()
->   virtio-mem: Offline and remove completely unplugged memory blocks
->   virtio-mem: Better retry handling
->   MAINTAINERS: Add myself as virtio-mem maintainer
+For ARCH=x86 (32 bit) when you set CONFIG_IOMMU_INTEL since c5a5dc4cbbf4
+("iommu/vt-d: Don't switch off swiotlb if bounce page is used") there's
+a dependency on CONFIG_SWIOTLB, which was not necessarily active before.
 
-As requested by Michal, I will squash some patches.
+The init code for swiotlb in 'pci_swiotlb_detect_4gb()' compares
+something against MAX_DMA32_PFN to decide if it should be active.
+However that define suffers from an arithmetic overflow since
+1b7e03ef7570 ("x86, NUMA: Enable emulation on 32bit too") when it was
+first made visible to x86_32.
 
-I'll pull out the NID thingies from "virtio-mem: Paravirtualized memory
-hotplug" and squash "ACPI: NUMA: export pxm_to_node" into that change.
+The effect is at boot time 64 MiB (default size) were allocated for
+bounce buffers now, which is a noticeable amount of memory on small
+systems. We noticed this effect on the fli4l Linux distribution when
+migrating from kernel v4.19 (LTS) to v5.4 (LTS) on boards like pcengines
+ALIX 2D3 with 256 MiB memory for example:
 
-Also, I'll squash "mm: Export alloc_contig_range() /
-free_contig_range()" into "virtio-mem: Paravirtualized memory hotunplug
-part 2". I'll not squash the other, more involved, MM patches.
+  Linux version 5.4.22 (buildroot@buildroot) (gcc version 7.3.0 (Buildroot 2018.02.8)) #1 SMP Mon Nov 26 23:40:00 CET 2018
+  …
+  Memory: 183484K/261756K available (4594K kernel code, 393K rwdata, 1660K rodata, 536K init, 456K bss , 78272K reserved, 0K cma-reserved, 0K highmem)
+  …
+  PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+  software IO TLB: mapped [mem 0x0bb78000-0x0fb78000] (64MB)
 
-Thanks!
+The initial analysis and the suggested fix was done by user 'sourcejedi'
+at stackoverflow and explicitly marked as GPLv2 for inclusion in the
+Linux kernel:
 
+  https://unix.stackexchange.com/a/520525/50007
+
+Fixes: https://web.nettworks.org/bugs/browse/FFL-2560
+Fixes: https://unix.stackexchange.com/q/520065/50007
+Suggested-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Signed-off-by: Alexander Dahl <post@lespocky.de>
+---
+We tested this in qemu and on real hardware with fli4l on top of v5.4,
+v5.5, and v5.6-rc kernels, but only as far as the reserved memory goes.
+The patch itself is based on v5.6-rc3 (IIRC).
+
+A quick grep over the kernel code showed me this define MAX_DMA32_PFN is
+used in other places as well. I would appreciate feedback on this,
+because I can not oversee all side effects this might have?!
+
+Thanks again to Alan who proposed the fix, and for his permission to
+send it upstream.
+
+Greets
+Alex
+---
+ arch/x86/include/asm/dma.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/dma.h b/arch/x86/include/asm/dma.h
+index 00f7cf45e699..e25514eca8d6 100644
+--- a/arch/x86/include/asm/dma.h
++++ b/arch/x86/include/asm/dma.h
+@@ -74,7 +74,7 @@
+ #define MAX_DMA_PFN   ((16UL * 1024 * 1024) >> PAGE_SHIFT)
+ 
+ /* 4GB broken PCI/AGP hardware bus master zone */
+-#define MAX_DMA32_PFN ((4UL * 1024 * 1024 * 1024) >> PAGE_SHIFT)
++#define MAX_DMA32_PFN (4UL * ((1024 * 1024 * 1024) >> PAGE_SHIFT))
+ 
+ #ifdef CONFIG_X86_32
+ /* The maximum address that we can perform a DMA transfer to on this platform */
 -- 
-Thanks,
-
-David / dhildenb
+2.20.1
 
