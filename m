@@ -2,89 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9338175711
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 10:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E91175706
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 10:28:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgCBJ2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 04:28:22 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50494 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbgCBJ2O (ORCPT
+        id S1727361AbgCBJ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 04:28:09 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54547 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbgCBJ2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 04:28:14 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 178FE54A;
-        Mon,  2 Mar 2020 10:28:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1583141292;
-        bh=9ZqrQgN1kicNCFdvQnafSQx8lmmfNjFur/cYDbP3rDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=skswSqAQuA8w3fEw57iweTsG5i9uxgyuyyKNg3OiEsiYEb0M3CjsQQczW9udnAGEr
-         T2HSEz9s35KdPJUtHRFZ5Wm2YwCWHcLEITfyn+nNW7CqkZe5EGYbEb/hiEAjsId6bv
-         HuOSO3bAcOeA8l0Ibo4SK095T1jkIsyXt2Q/ZZ08=
-Date:   Mon, 2 Mar 2020 11:27:48 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     a.hajda@samsung.com, narmstrong@baylibre.com, jonas@kwiboo.se,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] drm/bridge: dw-hdmi: Fix color space conversion
- detection
-Message-ID: <20200302092748.GE11960@pendragon.ideasonboard.com>
-References: <20200229163043.158262-1-jernej.skrabec@siol.net>
- <20200229163043.158262-3-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200229163043.158262-3-jernej.skrabec@siol.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 2 Mar 2020 04:28:09 -0500
+Received: by mail-wm1-f66.google.com with SMTP id z12so10207901wmi.4;
+        Mon, 02 Mar 2020 01:28:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=sR0FhEsXSKCCDrYRRwKUYpG9davzGH2FG45Vb4rPVY0=;
+        b=pe2NDbzEDUeJVBuGPCC0zHwwRrT2VgikGLIph0jn/amj7jKusxj8bBgx6xhWEh6+ys
+         Dln/FDJbTM2pAwgFnMu6mLaqxZhH0Yf5kWOKxv9iy+uma5UlYkOXrR22t6SwSiz9YmFV
+         UE/qvfBMjf/GMqsq0UAB87X4ysYD5sCn6f7kLR8Wz+sJUEB7wB3a2kZsp4aVYOKe2Mx+
+         p5t+Ma3TwPiW0J+Rm0rW6VJbOf5DkjNDnF31IJeIgEvLUjH9qjyl3oJad8gznYQCXP5i
+         rBYftUrErtUSpYZCizAtnye+vXYI7TIWm/UMZe4G2vT6nC3rxFIUAa5fSrjSc0zuAqjg
+         9s6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sR0FhEsXSKCCDrYRRwKUYpG9davzGH2FG45Vb4rPVY0=;
+        b=g22vXuAdPhRlttJgSsf2Fqp7W3uTH2D6OrDoAlCuAGCqQ79W9c3Orw1QQJy4Oy7zqR
+         0IHKnNz1Bg1/8jIYCbKgpRjmt9tHfxUJcyVoM2swcOjBGYsQLR6pYVwipCBix0VTH3OC
+         +nbe3plNETaipCtL5zWUej0pRibmVfzQ3BBudEbjvvtd1hIiqj3f283dG0m5A1eQztHa
+         ZyhBVVOUzv54b6u5Hq9UTHoACLkaSW2fpZHjkcH7vae3sXDb59/vwPj9Mn5voSC3y3Rt
+         ncHe3CvXh5dngQMxDlPTjiq0tG9aXt2HCQvxphkUZgwqTvAxVPez/D7G4VBhb7xXBgnl
+         dUyA==
+X-Gm-Message-State: APjAAAUELGTFcacTPd12Rd1KrLulHu/3XnQd7K2AWSzFViPH2eM24Mii
+        AL+ygGtP5WSdooOL9aZv4rM=
+X-Google-Smtp-Source: APXvYqy8B+IgcMqy+8qba2hEueNLMFC5ir1xC35q040W4SL8MWxcVg98fLxouNiejPKaNx3J23vsNw==
+X-Received: by 2002:a1c:7419:: with SMTP id p25mr18094748wmc.129.1583141287239;
+        Mon, 02 Mar 2020 01:28:07 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id m3sm6409586wrx.9.2020.03.02.01.28.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Mar 2020 01:28:06 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] dt-bindings: arm: fix Rockchip Kylin board bindings
+Date:   Mon,  2 Mar 2020 10:27:57 +0100
+Message-Id: <20200302092759.3291-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jernej,
+A test with the command below gives this error:
 
-Thank you for the patch.
+arch/arm/boot/dts/rk3036-kylin.dt.yaml: /: compatible:
+['rockchip,rk3036-kylin', 'rockchip,rk3036']
+is not valid under any of the given schemas
 
-On Sat, Feb 29, 2020 at 05:30:41PM +0100, Jernej Skrabec wrote:
-> Currently, is_color_space_conversion() compares not only color spaces
-> but also formats. For example, function would return true if YCbCr 4:4:4
-> and YCbCr 4:2:2 would be set. Obviously in that case color spaces are
-> the same.
-> 
-> Fix that by comparing if both values represent RGB color space.
-> 
-> Fixes: b21f4b658df8 ("drm: imx: imx-hdmi: move imx-hdmi to bridge/dw_hdmi")
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Normally the dt-binding is the authoritative part, so boards should follow
+the binding, but in the kylin-case the compatible from the .dts is used for
+years in the field now, so fix the binding, as otherwise
+we would break old users.
 
-This isn't implemented today, but could the CSC be used to convert
-between different YCbCr encodings ?
+Fix this error by changing 'rockchip,kylin-rk3036' to
+'rockchip,rk3036-kylin' in rockchip.yaml.
 
-In any case the patch is correct based on the current implementation, so
+make ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/rockchip.yaml
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 24965e53d351..9d7bfb1cb213 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -956,7 +956,8 @@ static void hdmi_video_sample(struct dw_hdmi *hdmi)
->  
->  static int is_color_space_conversion(struct dw_hdmi *hdmi)
->  {
-> -	return hdmi->hdmi_data.enc_in_bus_format != hdmi->hdmi_data.enc_out_bus_format;
-> +	return hdmi_bus_fmt_is_rgb(hdmi->hdmi_data.enc_in_bus_format) !=
-> +		hdmi_bus_fmt_is_rgb(hdmi->hdmi_data.enc_out_bus_format);
->  }
->  
->  static int is_color_space_decimation(struct dw_hdmi *hdmi)
-
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 874b0eaa2..203158038 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -443,7 +443,7 @@ properties:
+ 
+       - description: Rockchip Kylin
+         items:
+-          - const: rockchip,kylin-rk3036
++          - const: rockchip,rk3036-kylin
+           - const: rockchip,rk3036
+ 
+       - description: Rockchip PX3 Evaluation board
 -- 
-Regards,
+2.11.0
 
-Laurent Pinchart
