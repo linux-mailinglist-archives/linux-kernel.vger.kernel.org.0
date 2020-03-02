@@ -2,109 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F6CA1754EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CBF81754FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:00:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbgCBHzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 02:55:16 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23645 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725446AbgCBHzP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 02:55:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583135713;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ubCgVO4Lxh7R5ahjK5aJcWi1Y58omxPT4I8Zt2yPA3o=;
-        b=euQiBR/3e898OxOMLDHoxU94XIXDKd3zSrhnRTkubO8F2Mlz3pJKHsFW5iTsEb5CWrtW1M
-        7zUCmQSwshdfwR0nmIy4Kzb2mbgfIzD0WBczlv8AHEEb8hvJsqzlY2XQ/Dp4UA7y42+Eu1
-        tzNg/L6u4wfUnbwQovpyQ5e6EAah5fI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-30-g1gcM6Y7OzmbupmhEfcDqA-1; Mon, 02 Mar 2020 02:55:12 -0500
-X-MC-Unique: g1gcM6Y7OzmbupmhEfcDqA-1
-Received: by mail-wr1-f71.google.com with SMTP id t14so5396319wrs.12
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 23:55:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ubCgVO4Lxh7R5ahjK5aJcWi1Y58omxPT4I8Zt2yPA3o=;
-        b=rxUR0Fz5THcSXAYLcTTSLGSvU1cpbv4xz73hdUPdBNyKWVj0EI8evOjB0Y3po26LfT
-         tAsHqf/KpXM8J8OaiG2m7s+JmcmJM8hp+PHR5E9dWA3sULTPHlHP6RrJIKnXIvA8CkEA
-         cakhoTCXg0rM5nWnfuF3j7uBV+byKtCXbP9IWYyQ4ewqdf3jm5kyrQJIED7qmg7C9NeD
-         KYVDXcBMu510lpeRInR/XvP9aAWj78t88lIscM9/qBbjT0KGwxuTdSVX7a290655ayOw
-         9LriHUojAedBqq7hXt44B14ZVjQF016InZQuyOC0gzU/nnRLxQIQ75e/feJfhBQTNNOp
-         Xu6g==
-X-Gm-Message-State: APjAAAV9KUar+99ykQ+vEUoK08UoK3CAcdmWnXWUIDDY1Ap8C83YggWQ
-        fXm3PhdvYT4KohdIHbUu4FwPE6yAgYqYnA2EDpl1rvRGBOOJjAOO1FbnxSuW2aXwpcmbzOsgkPr
-        A4mH9PQmMrDJHGsZ2vUf+0LgO
-X-Received: by 2002:adf:ee85:: with SMTP id b5mr20833472wro.34.1583135710884;
-        Sun, 01 Mar 2020 23:55:10 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzi7AJ0SCNECQ6RasXRLX+a+kCxziJZWsPeuxvUu88m1MymLtvAU6clgSwEuFCyVcKi5xdimg==
-X-Received: by 2002:adf:ee85:: with SMTP id b5mr20833430wro.34.1583135710566;
-        Sun, 01 Mar 2020 23:55:10 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:e1d9:d940:4798:2d81? ([2001:b07:6468:f312:e1d9:d940:4798:2d81])
-        by smtp.gmail.com with ESMTPSA id t124sm16043823wmg.13.2020.03.01.23.55.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Mar 2020 23:55:09 -0800 (PST)
-Subject: Re: [PATCH] KVM: X86: Fix dereference null cpufreq policy
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-References: <1583133336-7832-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <ab51f6c9-a67d-0107-772a-7fe57a2319cf@redhat.com>
-Date:   Mon, 2 Mar 2020 08:55:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727299AbgCBH7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 02:59:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbgCBH7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 02:59:42 -0500
+Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57CC1246BE;
+        Mon,  2 Mar 2020 07:59:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583135981;
+        bh=BvAP2+Ac5CWWQg9jSEg7U2i0Y3l0kjbn/dseft/RE1E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qkiVT40kBDYyGK6jVNqv49p+9wIidRO/I78aXwpVI+57QAT5jitPaOEYJjfY3zjon
+         sNwEo6Ecr9Q37bIEksSsNpUPBHtCGnZoUFHBssotyXeQ67VdJVpxsj9t3eiQE75RSt
+         JpP4scvPdEBHgyrmCEZvddHgRg5NusLIXyMxNibg=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1j8fzH-0003gN-0u; Mon, 02 Mar 2020 08:59:39 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v2 01/12] docs: dt: add an index.rst file for devicetree
+Date:   Mon,  2 Mar 2020 08:59:26 +0100
+Message-Id: <535a508f48d223b4e9632117e96db18265ab6c7b.1583135507.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <cover.1583135507.git.mchehab+huawei@kernel.org>
+References: <cover.1583135507.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1583133336-7832-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/20 08:15, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> cpufreq policy which is get by cpufreq_cpu_get() can be NULL if it is failure,
-> this patch takes care of it.
-> 
-> Fixes: aaec7c03de (KVM: x86: avoid useless copy of cpufreq policy)
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+There are some device tree documentation under
+Documentation/devicetree. Add a top index file for it and
+add the already-existing ReST file on it.
 
-My bad, I checked kobject_put but didn't check that kobj is first in
-struct cpufreq_policy.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/devicetree/index.rst | 10 ++++++++++
+ Documentation/index.rst            |  3 +++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 Documentation/devicetree/index.rst
 
-I think we should do this in cpufreq_cpu_put or, even better, move the
-kobject struct first in struct cpufreq_policy.  Rafael, Viresh, any
-objection?
-
-Paolo
-
->  		policy = cpufreq_cpu_get(cpu);
-> -		if (policy && policy->cpuinfo.max_freq)
-> -			max_tsc_khz = policy->cpuinfo.max_freq;
-> +		if (policy) {
-> +			if (policy->cpuinfo.max_freq)
-> +				max_tsc_khz = policy->cpuinfo.max_freq;
-> +			cpufreq_cpu_put(policy);
-> +		}
+diff --git a/Documentation/devicetree/index.rst b/Documentation/devicetree/index.rst
+new file mode 100644
+index 000000000000..a11efe26f205
+--- /dev/null
++++ b/Documentation/devicetree/index.rst
+@@ -0,0 +1,10 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=============================
++Open Firmware and Device Tree
++=============================
++
++.. toctree::
++   :maxdepth: 1
++
++   writing-schema
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index e99d0bd2589d..b63d117aea15 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -1,3 +1,5 @@
++.. SPDX-License-Identifier: GPL-2.0
++
+ 
+ .. The Linux Kernel documentation master file, created by
+    sphinx-quickstart on Fri Feb 12 13:51:46 2016.
+@@ -46,6 +48,7 @@ platform firmwares.
+    :maxdepth: 2
+ 
+    firmware-guide/index
++   devicetree/index
+ 
+ Application-developer documentation
+ -----------------------------------
+-- 
+2.21.1
 
