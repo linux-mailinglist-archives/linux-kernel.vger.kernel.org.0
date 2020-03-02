@@ -2,121 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C362B175A4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC6B175A1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbgCBMTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:19:13 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.79]:14642 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725802AbgCBMTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:19:12 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 753DA27DD7
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 06:10:06 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8jtejS8tdRP4z8jtejq1h4; Mon, 02 Mar 2020 06:10:06 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SI9L7t5+PJPUj9nJSrkM4IY5Y4jla0GxFqwLN6bviuM=; b=c5+T4h6ffuTf0aWn7ux1BWA2Yr
-        hXkYlM9AjdbBIi5V8XZ/z7/oJTlLFZD3hICBaLLQxSZsxdNO2l2p9fTi6H/tkYjDOVu27Vb1N3PVG
-        rR/bFcR6cy/wJSWeRqkqD/6hzBKvr6B4R/ri4yqKX6FDWzDi1IeijJ0ZEW3y3RkCU6S6+STp3nxzk
-        oLWU6DHq5LzuRD38CkYfEPOR8XA8iH8FsVTSkU4ThnNUsYHSilhei9giFG+PueTQHtpbXUaISmIf+
-        9wJrUdx5mzYFXYPT0RE6/tYIOi5shFMXPYpxwaRf+Nx8ZmJgGHjxNEy78a2JYwmBtaH4acM0wTp0R
-        AzhRR0Ew==;
-Received: from [201.166.157.38] (port=42262 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j8jrV-003wUT-JF; Mon, 02 Mar 2020 06:07:54 -0600
-Date:   Mon, 2 Mar 2020 06:10:51 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Rasesh Mody <rmody@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        "GR-Linux-NIC-Dev@marvell.com David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] bna: bnad: Replace zero-length array with
- flexible-array member
-Message-ID: <20200302121051.GA28820@embeddedor>
+        id S1727519AbgCBMMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:12:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60450 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbgCBMMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 07:12:49 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AD112173E;
+        Mon,  2 Mar 2020 12:12:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583151168;
+        bh=Lymq4yucP910jG3yAZt3+nbi5KerTQ3U6G6bpUjy4to=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dzgfqg0/uVS23vSco9JoTIf3WbWIp+BhFrKQRBlscAYzmJYe1JdXz3LW0em6JDra0
+         tHlUlPG/PDhJIX9GqwoQxKCaqE0RTbt1LDJzflgr3/znEysTywuYph/kfJ5dwTwg0Y
+         onrCNZAOCAvxq/Pfy0xNMTkNhDf65AnnCIt5R2bQ=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1j8jwE-009N9H-TY; Mon, 02 Mar 2020 12:12:47 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.157.38
-X-Source-L: No
-X-Exim-ID: 1j8jrV-003wUT-JF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.157.38]:42262
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 02 Mar 2020 12:12:46 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        tglx@linutronix.de, jason@lakedaemon.net,
+        wanghaibin.wang@huawei.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] irqchip/gic-v4.1: Wait for completion of redistributor's
+ INVALL operation
+In-Reply-To: <20200302092145.899-1-yuzenghui@huawei.com>
+References: <20200302092145.899-1-yuzenghui@huawei.com>
+Message-ID: <c46464a4c570e4aa12231bbd5ddefc07@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu, tglx@linutronix.de, jason@lakedaemon.net, wanghaibin.wang@huawei.com, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 2020-03-02 09:21, Zenghui Yu wrote:
+> In GICv4.1, we emulate a guest-issued INVALL command by a direct write
+> to GICR_INVALLR.  Before we finish the emulation and go back to guest,
+> let's make sure the physical invalidate operation is actually completed
+> and no stale data will be left in redistributor. Per the specification,
+> this can be achieved by polling the GICR_SYNCR.Busy bit (to zero).
+> 
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+> b/drivers/irqchip/irq-gic-v3-its.c
+> index 83b1186ffcad..fc8c2970cee4 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -3784,6 +3784,8 @@ static void its_vpe_4_1_invall(struct its_vpe 
+> *vpe)
+>  	/* Target the redistributor this vPE is currently known on */
+>  	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+>  	gic_write_lpir(val, rdbase + GICR_INVALLR);
+> +
+> +	wait_for_syncr(rdbase);
+>  }
+> 
+>  static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void 
+> *vcpu_info)
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Yup, well spotted. I'll add that to the series.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Thanks,
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/brocade/bna/bnad.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/brocade/bna/bnad.h b/drivers/net/ethernet/brocade/bna/bnad.h
-index 492a02d54f14..bfa58b40dc3f 100644
---- a/drivers/net/ethernet/brocade/bna/bnad.h
-+++ b/drivers/net/ethernet/brocade/bna/bnad.h
-@@ -253,7 +253,7 @@ struct bnad_rx_unmap_q {
- 	int			alloc_order;
- 	u32			map_size;
- 	enum bnad_rxbuf_type	type;
--	struct bnad_rx_unmap	unmap[0] ____cacheline_aligned;
-+	struct bnad_rx_unmap	unmap[] ____cacheline_aligned;
- };
- 
- #define BNAD_PCI_DEV_IS_CAT2(_bnad) \
+         M.
 -- 
-2.25.0
-
+Jazz is not dead. It just smells funny...
