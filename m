@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BEF21755D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C06417554E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgCBITW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:19:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56678 "EHLO mail.kernel.org"
+        id S1727305AbgCBIQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:16:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbgCBIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727076AbgCBIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 03:16:20 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E937E246B9;
+        by mail.kernel.org (Postfix) with ESMTPSA id EA6E6246BB;
         Mon,  2 Mar 2020 08:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=IfRS/R6H+Szpiwi72smGycLsGnORNH/i9azDqozRPuI=;
+        bh=UUeqA613VDXAuLWp1j8Y80aqjpOlSA5wseX1Ou+T7Z0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CzV9VHYdj2Md+uBvKwr2W8pqXFNMC0teiREa9ZEjgsuqNdPGQLiPuip47nIgxChct
-         YOJTFKADMnjkpNLRKORFD88zSBtOS9dyjiXI1KKY20SfOcD7zdxoOZYuoXWDPEztMK
-         mG+wRybjS9E+RUyV/YOhcl9xvwbb/fIAbGuJW72s=
+        b=VFfLmWAuNkxCRk0ytGY3SHL/IW+vg1V+FMLE8AgbyKFzRi7NvlXSwTuAq2Vtilseo
+         q72t32u7cmavmP8Z1bC1zVz9y81qWAUgzveCT4G5vFrkBsTiL5GF0F+zLEUT5AutNO
+         2n47tDr8tLh81JtUsk+ZvNamiCXLHGaB2fTtidjQ=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003wv-2Y; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003wz-3J; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH 04/42] docs: scsi: convert aacraid.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:37 +0100
-Message-Id: <67c60ad88777c91937d49771e2a3f48cbf353e4c.1583136624.git.mchehab+huawei@kernel.org>
+        Matthew Wilcox <willy@infradead.org>,
+        Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org
+Subject: [PATCH 05/42] docs: scsi: convert advansys.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:38 +0100
+Message-Id: <3c697a046e641c81cdfd0784f037d41d54766931.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -49,152 +47,257 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../scsi/{aacraid.txt => aacraid.rst}         | 59 ++++++++++++++-----
- Documentation/scsi/index.rst                  |  1 +
- MAINTAINERS                                   |  2 +-
- drivers/scsi/Kconfig                          |  2 +-
- 4 files changed, 46 insertions(+), 18 deletions(-)
- rename Documentation/scsi/{aacraid.txt => aacraid.rst} (83%)
+ .../scsi/{advansys.txt => advansys.rst}       | 129 +++++++++++-------
+ Documentation/scsi/index.rst                  |   1 +
+ MAINTAINERS                                   |   2 +-
+ 3 files changed, 81 insertions(+), 51 deletions(-)
+ rename Documentation/scsi/{advansys.txt => advansys.rst} (73%)
 
-diff --git a/Documentation/scsi/aacraid.txt b/Documentation/scsi/aacraid.rst
-similarity index 83%
-rename from Documentation/scsi/aacraid.txt
-rename to Documentation/scsi/aacraid.rst
-index 30f643f611b2..1904674b94f3 100644
---- a/Documentation/scsi/aacraid.txt
-+++ b/Documentation/scsi/aacraid.rst
-@@ -1,7 +1,11 @@
+diff --git a/Documentation/scsi/advansys.txt b/Documentation/scsi/advansys.rst
+similarity index 73%
+rename from Documentation/scsi/advansys.txt
+rename to Documentation/scsi/advansys.rst
+index 4a3db62b7424..e0367e179696 100644
+--- a/Documentation/scsi/advansys.txt
++++ b/Documentation/scsi/advansys.rst
+@@ -1,3 +1,9 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+===================================
- AACRAID Driver for Linux (take two)
-+===================================
++=====================
++AdvanSys Driver Notes
++=====================
++
+ AdvanSys (Advanced System Products, Inc.) manufactures the following
+ RISC-based, Bus-Mastering, Fast (10 Mhz) and Ultra (20 Mhz) Narrow
+ (8-bit transfer) SCSI Host Adapters for the ISA, EISA, VL, and PCI
+@@ -12,50 +18,51 @@ adapter detected. The number of CDBs used by the driver can be
+ lowered in the BIOS by changing the 'Host Queue Size' adapter setting.
  
- Introduction
---------------------------
-+============
- The aacraid driver adds support for Adaptec (http://www.adaptec.com)
- RAID controllers. This is a major rewrite from the original
- Adaptec supplied driver. It has significantly cleaned up both the code
-@@ -9,8 +13,11 @@ and the running binary size (the module is less than half the size of
- the original).
+ Laptop Products:
+-   ABP-480 - Bus-Master CardBus (16 CDB)
++  - ABP-480 - Bus-Master CardBus (16 CDB)
  
- Supported Cards/Chipsets
---------------------------
-+========================
-+
-+	===================	=======	=======================================
- 	PCI ID (pci.ids)	OEM	Product
-+	===================	=======	=======================================
- 	9005:0285:9005:0285	Adaptec	2200S (Vulcan)
- 	9005:0285:9005:0286	Adaptec	2120S (Crusader)
- 	9005:0285:9005:0287	Adaptec	2200S (Vulcan-2m)
-@@ -117,34 +124,54 @@ Supported Cards/Chipsets
- 	9005:0285:108e:0286	SUN	STK RAID INT (Cougar)
- 	9005:0285:108e:0287	SUN	STK RAID EXT (Prometheus)
- 	9005:0285:108e:7aae	SUN	STK RAID EM (Narvi)
-+	===================	=======	=======================================
+ Connectivity Products:
+-   ABP510/5150 - Bus-Master ISA (240 CDB)
+-   ABP5140 - Bus-Master ISA PnP (16 CDB)
+-   ABP5142 - Bus-Master ISA PnP with floppy (16 CDB)
+-   ABP902/3902 - Bus-Master PCI (16 CDB)
+-   ABP3905 - Bus-Master PCI (16 CDB)
+-   ABP915 - Bus-Master PCI (16 CDB)
+-   ABP920 - Bus-Master PCI (16 CDB)
+-   ABP3922 - Bus-Master PCI (16 CDB)
+-   ABP3925 - Bus-Master PCI (16 CDB)
+-   ABP930 - Bus-Master PCI (16 CDB)
+-   ABP930U - Bus-Master PCI Ultra (16 CDB)
+-   ABP930UA - Bus-Master PCI Ultra (16 CDB)
+-   ABP960 - Bus-Master PCI MAC/PC (16 CDB)
+-   ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)
++   - ABP510/5150 - Bus-Master ISA (240 CDB)
++   - ABP5140 - Bus-Master ISA PnP (16 CDB)
++   - ABP5142 - Bus-Master ISA PnP with floppy (16 CDB)
++   - ABP902/3902 - Bus-Master PCI (16 CDB)
++   - ABP3905 - Bus-Master PCI (16 CDB)
++   - ABP915 - Bus-Master PCI (16 CDB)
++   - ABP920 - Bus-Master PCI (16 CDB)
++   - ABP3922 - Bus-Master PCI (16 CDB)
++   - ABP3925 - Bus-Master PCI (16 CDB)
++   - ABP930 - Bus-Master PCI (16 CDB)
++   - ABP930U - Bus-Master PCI Ultra (16 CDB)
++   - ABP930UA - Bus-Master PCI Ultra (16 CDB)
++   - ABP960 - Bus-Master PCI MAC/PC (16 CDB)
++   - ABP960U - Bus-Master PCI MAC/PC Ultra (16 CDB)
  
- People
---------------------------
-+======
-+
- Alan Cox <alan@lxorguk.ukuu.org.uk>
--Christoph Hellwig <hch@infradead.org>	(updates for new-style PCI probing and SCSI host registration,
--					 small cleanups/fixes)
--Matt Domsch <matt_domsch@dell.com>	(revision ioctl, adapter messages)
--Deanna Bonds                            (non-DASD support, PAE fibs and 64 bit, added new adaptec controllers
--					 added new ioctls, changed scsi interface to use new error handler,
--					 increased the number of fibs and outstanding commands to a container)
--
--					(fixed 64bit and 64G memory model, changed confusing naming convention
--					 where fibs that go to the hardware are consistently called hw_fibs and
--					 not just fibs like the name of the driver tracking structure)
--Mark Salyzyn <Mark_Salyzyn@adaptec.com> Fixed panic issues and added some new product ids for upcoming hbas. Performance tuning, card failover and bug mitigations.
-+
-+Christoph Hellwig <hch@infradead.org>
-+
-+- updates for new-style PCI probing and SCSI host registration,
-+  small cleanups/fixes
-+
-+Matt Domsch <matt_domsch@dell.com>
-+
-+- revision ioctl, adapter messages
-+
-+Deanna Bonds
-+
-+- non-DASD support, PAE fibs and 64 bit, added new adaptec controllers
-+  added new ioctls, changed scsi interface to use new error handler,
-+  increased the number of fibs and outstanding commands to a container
-+- fixed 64bit and 64G memory model, changed confusing naming convention
-+  where fibs that go to the hardware are consistently called hw_fibs and
-+  not just fibs like the name of the driver tracking structure
-+
-+Mark Salyzyn <Mark_Salyzyn@adaptec.com>
-+
-+- Fixed panic issues and added some new product ids for upcoming hbas.
-+- Performance tuning, card failover and bug mitigations.
-+
- Achim Leubner <Achim_Leubner@adaptec.com>
+ Single Channel Products:
+-   ABP542 - Bus-Master ISA with floppy (240 CDB)
+-   ABP742 - Bus-Master EISA (240 CDB)
+-   ABP842 - Bus-Master VL (240 CDB)
+-   ABP940 - Bus-Master PCI (240 CDB)
+-   ABP940U - Bus-Master PCI Ultra (240 CDB)
+-   ABP940UA/3940UA - Bus-Master PCI Ultra (240 CDB)
+-   ABP970 - Bus-Master PCI MAC/PC (240 CDB)
+-   ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)
+-   ABP3960UA - Bus-Master PCI MAC/PC Ultra (240 CDB)
+-   ABP940UW/3940UW - Bus-Master PCI Ultra-Wide (253 CDB)
+-   ABP970UW - Bus-Master PCI MAC/PC Ultra-Wide (253 CDB)
+-   ABP3940U2W - Bus-Master PCI LVD/Ultra2-Wide (253 CDB)
++   - ABP542 - Bus-Master ISA with floppy (240 CDB)
++   - ABP742 - Bus-Master EISA (240 CDB)
++   - ABP842 - Bus-Master VL (240 CDB)
++   - ABP940 - Bus-Master PCI (240 CDB)
++   - ABP940U - Bus-Master PCI Ultra (240 CDB)
++   - ABP940UA/3940UA - Bus-Master PCI Ultra (240 CDB)
++   - ABP970 - Bus-Master PCI MAC/PC (240 CDB)
++   - ABP970U - Bus-Master PCI MAC/PC Ultra (240 CDB)
++   - ABP3960UA - Bus-Master PCI MAC/PC Ultra (240 CDB)
++   - ABP940UW/3940UW - Bus-Master PCI Ultra-Wide (253 CDB)
++   - ABP970UW - Bus-Master PCI MAC/PC Ultra-Wide (253 CDB)
++   - ABP3940U2W - Bus-Master PCI LVD/Ultra2-Wide (253 CDB)
  
--Original Driver
-+- Original Driver
-+
- -------------------------
-+
- Adaptec Unix OEM Product Group
+ Multi-Channel Products:
+-   ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)
+-   ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)
+-   ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)
+-   ABP950UW - Dual Channel Bus-Master PCI Ultra-Wide (253 CDB Per Channel)
+-   ABP980 - Four Channel Bus-Master PCI (240 CDB Per Channel)
+-   ABP980U - Four Channel Bus-Master PCI Ultra (240 CDB Per Channel)
+-   ABP980UA/3980UA - Four Channel Bus-Master PCI Ultra (16 CDB Per Chan.)
+-   ABP3950U2W - Bus-Master PCI LVD/Ultra2-Wide and Ultra-Wide (253 CDB)
+-   ABP3950U3W - Bus-Master PCI Dual LVD2/Ultra3-Wide (253 CDB)
++   - ABP752 - Dual Channel Bus-Master EISA (240 CDB Per Channel)
++   - ABP852 - Dual Channel Bus-Master VL (240 CDB Per Channel)
++   - ABP950 - Dual Channel Bus-Master PCI (240 CDB Per Channel)
++   - ABP950UW - Dual Channel Bus-Master PCI Ultra-Wide (253 CDB Per Channel)
++   - ABP980 - Four Channel Bus-Master PCI (240 CDB Per Channel)
++   - ABP980U - Four Channel Bus-Master PCI Ultra (240 CDB Per Channel)
++   - ABP980UA/3980UA - Four Channel Bus-Master PCI Ultra (16 CDB Per Chan.)
++   - ABP3950U2W - Bus-Master PCI LVD/Ultra2-Wide and Ultra-Wide (253 CDB)
++   - ABP3950U3W - Bus-Master PCI Dual LVD2/Ultra3-Wide (253 CDB)
  
- Mailing List
---------------------------
-+============
-+
- linux-scsi@vger.kernel.org (Interested parties troll here)
- Also note this is very different to Brian's original driver
- so don't expect him to support it.
-+
- Adaptec does support this driver.  Contact Adaptec tech support or
- aacraid@adaptec.com
+ Driver Compile Time Options and Debugging
++=========================================
  
- Original by Brian Boerner February 2001
+ The following constants can be defined in the source file.
+ 
+@@ -88,26 +95,30 @@ The following constants can be defined in the source file.
+    first three hex digits of the pseudo I/O Port must be set to
+    'deb' and the fourth hex digit specifies the debug level: 0 - F.
+    The following command line will look for an adapter at 0x330
+-   and set the debug level to 2.
++   and set the debug level to 2::
+ 
+       linux advansys=0x330,0,0,0,0xdeb2
+ 
+    If the driver is built as a loadable module this variable can be
+    defined when the driver is loaded. The following insmod command
+-   will set the debug level to one.
++   will set the debug level to one::
+ 
+       insmod advansys.o asc_dbglvl=1
+ 
+    Debugging Message Levels:
+-      0: Errors Only
+-      1: High-Level Tracing
+-      2-N: Verbose Tracing
 +
- Rewritten by Alan Cox, November 2001
++
++      ==== ==================
++      0    Errors Only
++      1    High-Level Tracing
++      2-N  Verbose Tracing
++      ==== ==================
+ 
+    To enable debug output to console, please make sure that:
+ 
+    a. System and kernel logging is enabled (syslogd, klogd running).
+    b. Kernel messages are routed to console output. Check
+-      /etc/syslog.conf for an entry similar to this:
++      /etc/syslog.conf for an entry similar to this::
+ 
+            kern.*                  /dev/console
+ 
+@@ -120,8 +131,11 @@ The following constants can be defined in the source file.
+ 
+    Alternatively you can enable printk() to console with this
+    program. However, this is not the 'official' way to do this.
++
+    Debug output is logged in /var/log/messages.
+ 
++   ::
++
+      main()
+      {
+              syscall(103, 7, 0, 0);
+@@ -144,11 +158,11 @@ The following constants can be defined in the source file.
+    Statistics are only available for kernels greater than or equal
+    to v1.3.0 with the CONFIG_PROC_FS (/proc) file system configured.
+ 
+-   AdvanSys SCSI adapter files have the following path name format:
++   AdvanSys SCSI adapter files have the following path name format::
+ 
+       /proc/scsi/advansys/{0,1,2,3,...}
+ 
+-   This information can be displayed with cat. For example:
++   This information can be displayed with cat. For example::
+ 
+       cat /proc/scsi/advansys/0
+ 
+@@ -156,6 +170,7 @@ The following constants can be defined in the source file.
+    contain adapter and device configuration information.
+ 
+ Driver LILO Option
++==================
+ 
+ If init/main.c is modified as described in the 'Directions for Adding
+ the AdvanSys Driver to Linux' section (B.4.) above, the driver will
+@@ -167,17 +182,30 @@ affects searching for ISA and VL boards.
+ 
+ Examples:
+   1. Eliminate I/O port scanning:
+-       boot: linux advansys=
+-         or
+-       boot: linux advansys=0x0
++
++     boot::
++
++	linux advansys=
++
++     or::
++
++	boot: linux advansys=0x0
++
+   2. Limit I/O port scanning to one I/O port:
+-       boot: linux advansys=0x110
++
++     boot::
++
++	linux advansys=0x110
++
+   3. Limit I/O port scanning to four I/O ports:
+-       boot: linux advansys=0x110,0x210,0x230,0x330
++
++     boot::
++
++	linux advansys=0x110,0x210,0x230,0x330
+ 
+ For a loadable module the same effect can be achieved by setting
+ the 'asc_iopflag' variable and 'asc_ioport' array when loading
+-the driver, e.g.
++the driver, e.g.::
+ 
+       insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330
+ 
+@@ -187,6 +215,7 @@ the 'Driver Compile Time Options and Debugging' section above for
+ more information.
+ 
+ Credits (Chronological Order)
++=============================
+ 
+ Bob Frey <bfrey@turbolinux.com.cn> wrote the AdvanSys SCSI driver
+ and maintained it up to 3.3F. He continues to answer questions
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index 99efc77c3ac2..2e0429d1a7a5 100644
+index 2e0429d1a7a5..df526a0ceccf 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -8,5 +8,6 @@ Linux SCSI Subsystem
-    :maxdepth: 1
+@@ -9,5 +9,6 @@ Linux SCSI Subsystem
  
     53c700
-+   aacraid
+    aacraid
++   advansys
  
     scsi_transport_srp/figures
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1552db209e69..cb6ecdbc96da 100644
+index cb6ecdbc96da..aac8ef48dc08 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -236,7 +236,7 @@ M:	Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+@@ -540,7 +540,7 @@ M:	Matthew Wilcox <willy@infradead.org>
+ M:	Hannes Reinecke <hare@suse.com>
  L:	linux-scsi@vger.kernel.org
- W:	http://www.adaptec.com/
- S:	Supported
--F:	Documentation/scsi/aacraid.txt
-+F:	Documentation/scsi/aacraid.rst
- F:	drivers/scsi/aacraid/
+ S:	Maintained
+-F:	Documentation/scsi/advansys.txt
++F:	Documentation/scsi/advansys.rst
+ F:	drivers/scsi/advansys.c
  
- ABI/API
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 2b882b96e0d4..a153444318fb 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -421,7 +421,7 @@ config SCSI_AACRAID
- 	help
- 	  This driver supports a variety of Dell, HP, Adaptec, IBM and
- 	  ICP storage products. For a list of supported products, refer
--	  to <file:Documentation/scsi/aacraid.txt>.
-+	  to <file:Documentation/scsi/aacraid.rst>.
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called aacraid.
+ ADXL34X THREE-AXIS DIGITAL ACCELEROMETER DRIVER (ADXL345/ADXL346)
 -- 
 2.21.1
 
