@@ -2,154 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 668EA176409
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F64317640B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbgCBTe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:34:29 -0500
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:36504 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727624AbgCBTe2 (ORCPT
+        id S1727631AbgCBTfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:35:39 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:48898 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727372AbgCBTfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:34:28 -0500
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 02 Mar 2020 11:34:27 -0800
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg02-sd.qualcomm.com with ESMTP; 02 Mar 2020 11:34:27 -0800
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id 559C14B04; Mon,  2 Mar 2020 11:34:27 -0800 (PST)
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     linux-pwm@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Guru Das Srinagesh <gurus@codeaurora.org>
-Subject: [RESEND v6 2/2] pwm: core: Convert period and duty cycle to u64
-Date:   Mon,  2 Mar 2020 11:34:23 -0800
-Message-Id: <2458595b274728b7ab46d4e397040f9d4d10fabc.1583177501.git.gurus@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1583177501.git.gurus@codeaurora.org>
-References: <cover.1583177501.git.gurus@codeaurora.org>
-In-Reply-To: <cover.1583177501.git.gurus@codeaurora.org>
-References: <cover.1583177501.git.gurus@codeaurora.org>
+        Mon, 2 Mar 2020 14:35:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1583177736; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DGfSMIikOY3kreg6w/PuWqLAcsa2i58iD5RE/ITwXCY=;
+        b=g09F7/at4RhFLxEG/sswSLYFCPUn929KYVnYN8sQRSeEB0Pdtvcon4Ttu3ACgx7WFWbv84
+        ibS5uRHTmcIoVZ7kOPe1LZVUAKR5NxNKUaaDPU7xtMpX7+Z0LUOXn5HOmX4hxHmPV42byW
+        jkOTjhHZ8kYe5bKuVTU7tcx7T8WL3Gg=
+Date:   Mon, 02 Mar 2020 16:35:20 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 1/1] dt-bindings: timer: Convert ingenic,tcu.txt to YAML
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?b?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>, od@zcrc.me,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Message-Id: <1583177720.3.6@crapouillou.net>
+In-Reply-To: <CAL_JsqL7b8mwtg3XyNS2fdA4fxaFdUpsfqTPx521pW5xqSPneg@mail.gmail.com>
+References: <20200301174636.63446-1-paul@crapouillou.net>
+        <20200301174636.63446-2-paul@crapouillou.net>
+        <CAL_JsqKGzxdMj4_+i4ycKj6ZjiuGMY8F+yBzVPt_b2CLhrcdKg@mail.gmail.com>
+        <1583173481.3.0@crapouillou.net>
+        <CAL_JsqL7b8mwtg3XyNS2fdA4fxaFdUpsfqTPx521pW5xqSPneg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because period and duty cycle are defined as ints with units of
-nanoseconds, the maximum time duration that can be set is limited to
-~2.147 seconds. Change their definitions to u64 in the structs of the
-PWM framework so that higher durations may be set.
 
-Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
----
- drivers/pwm/core.c  |  4 ++--
- drivers/pwm/sysfs.c |  8 ++++----
- include/linux/pwm.h | 12 ++++++------
- 3 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 5a7f659..81aa3c2 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -1163,8 +1163,8 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		if (state.enabled)
- 			seq_puts(s, " enabled");
- 
--		seq_printf(s, " period: %u ns", state.period);
--		seq_printf(s, " duty: %u ns", state.duty_cycle);
-+		seq_printf(s, " period: %llu ns", state.period);
-+		seq_printf(s, " duty: %llu ns", state.duty_cycle);
- 		seq_printf(s, " polarity: %s",
- 			   state.polarity ? "inverse" : "normal");
- 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 2389b86..449dbc0 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -42,7 +42,7 @@ static ssize_t period_show(struct device *child,
- 
- 	pwm_get_state(pwm, &state);
- 
--	return sprintf(buf, "%u\n", state.period);
-+	return sprintf(buf, "%llu\n", state.period);
- }
- 
- static ssize_t period_store(struct device *child,
-@@ -52,10 +52,10 @@ static ssize_t period_store(struct device *child,
- 	struct pwm_export *export = child_to_pwm_export(child);
- 	struct pwm_device *pwm = export->pwm;
- 	struct pwm_state state;
--	unsigned int val;
-+	u64 val;
- 	int ret;
- 
--	ret = kstrtouint(buf, 0, &val);
-+	ret = kstrtou64(buf, 0, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -77,7 +77,7 @@ static ssize_t duty_cycle_show(struct device *child,
- 
- 	pwm_get_state(pwm, &state);
- 
--	return sprintf(buf, "%u\n", state.duty_cycle);
-+	return sprintf(buf, "%llu\n", state.duty_cycle);
- }
- 
- static ssize_t duty_cycle_store(struct device *child,
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 0ef808d..b53f13d 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -39,7 +39,7 @@ enum pwm_polarity {
-  * current PWM hardware state.
-  */
- struct pwm_args {
--	unsigned int period;
-+	u64 period;
- 	enum pwm_polarity polarity;
- };
- 
-@@ -56,8 +56,8 @@ enum {
-  * @enabled: PWM enabled status
-  */
- struct pwm_state {
--	unsigned int period;
--	unsigned int duty_cycle;
-+	u64 period;
-+	u64 duty_cycle;
- 	enum pwm_polarity polarity;
- 	bool enabled;
- };
-@@ -105,13 +105,13 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- 	return state.enabled;
- }
- 
--static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
-+static inline void pwm_set_period(struct pwm_device *pwm, u64 period)
- {
- 	if (pwm)
- 		pwm->state.period = period;
- }
- 
--static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
-+static inline u64 pwm_get_period(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
-@@ -126,7 +126,7 @@ static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
- 		pwm->state.duty_cycle = duty;
- }
- 
--static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
-+static inline u64 pwm_get_duty_cycle(const struct pwm_device *pwm)
- {
- 	struct pwm_state state;
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Le lun., mars 2, 2020 at 13:07, Rob Herring <robh+dt@kernel.org> a=20
+=E9crit :
+> On Mon, Mar 2, 2020 at 12:25 PM Paul Cercueil <paul@crapouillou.net>=20
+> wrote:
+>>=20
+>>  Hi Rob,
+>>=20
+>>=20
+>>  Le lun., mars 2, 2020 at 11:06, Rob Herring <robh+dt@kernel.org> a
+>>  =E9crit :
+>>  > On Sun, Mar 1, 2020 at 11:47 AM Paul Cercueil=20
+>> <paul@crapouillou.net>
+>>  > wrote:
+>>  >>
+>>  >
+>>  > Well, this flew into linux-next quickly and breaks 'make
+>>  > dt_binding_check'... Please drop, revert or fix quickly.
+>>=20
+>>  For my defense I said to merge "provided Rob acks it" ;)
+>>=20
+>>  >>  Convert the ingenic,tcu.txt file to YAML.
+>>  >>
+>>  >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  >>  ---
+>>  >>   .../devicetree/bindings/timer/ingenic,tcu.txt | 138 ----------
+>>  >>   .../bindings/timer/ingenic,tcu.yaml           | 235
+>>  >> ++++++++++++++++++
+>>  >>   2 files changed, 235 insertions(+), 138 deletions(-)
+>>  >>   delete mode 100644
+>>  >> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>  >>   create mode 100644
+>>  >> Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
+>>  >
+>>  >
+>>  >>  diff --git
+>>  >> a/Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
+>>  >> b/Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
+>>  >>  new file mode 100644
+>>  >>  index 000000000000..1ded3b4762bb
+>>  >>  --- /dev/null
+>>  >>  +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
+>>  >>  @@ -0,0 +1,235 @@
+>>  >>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>  >>  +%YAML 1.2
+>>  >>  +---
+>>  >>  +$id: http://devicetree.org/schemas/timer/ingenic,tcu.yaml#
+>>  >>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>  >>  +
+>>  >>  +title: Ingenic SoCs Timer/Counter Unit (TCU) devicetree=20
+>> bindings
+>>  >>  +
+>>  >>  +description: |
+>>  >>  +  For a description of the TCU hardware and drivers, have a=20
+>> look at
+>>  >>  +  Documentation/mips/ingenic-tcu.rst.
+>>  >>  +
+>>  >>  +maintainers:
+>>  >>  +  - Paul Cercueil <paul@crapouillou.net>
+>>  >>  +
+>>  >>  +properties:
+>>  >>  +  $nodename:
+>>  >>  +    pattern: "^timer@.*"
+>>  >
+>>  > '.*' is redundant.
+>>  >
+>>  >>  +
+>>  >>  +  "#address-cells":
+>>  >>  +    const: 1
+>>  >>  +
+>>  >>  +  "#size-cells":
+>>  >>  +    const: 1
+>>  >>  +
+>>  >>  +  "#clock-cells":
+>>  >>  +    const: 1
+>>  >>  +
+>>  >>  +  "#interrupt-cells":
+>>  >>  +    const: 1
+>>  >>  +
+>>  >>  +  interrupt-controller: true
+>>  >>  +
+>>  >>  +  ranges: true
+>>  >>  +
+>>  >>  +  compatible:
+>>  >>  +    items:
+>>  >>  +      - enum:
+>>  >>  +        - ingenic,jz4740-tcu
+>>  >>  +        - ingenic,jz4725b-tcu
+>>  >>  +        - ingenic,jz4770-tcu
+>>  >>  +        - ingenic,x1000-tcu
+>>  >>  +      - const: simple-mfd
+>>  >
+>>  > This breaks several examples in dt_binding_check because this=20
+>> schema
+>>  > will be applied to every 'simple-mfd' node. You need a custom=20
+>> select
+>>  > entry that excludes 'simple-mfd'. There should be several=20
+>> examples in
+>>  > tree to copy.
+>>=20
+>>  Why would it be applied to all 'single-mfd' nodes?
+>=20
+> single-mfd?
+
+simple-mfd* of course, sorry.
+
+> The way the tool decides to apply a schema or not is my matching on
+> any of the compatible strings (or node name if no compatible
+> specified). You can override this with 'select'.
+>=20
+>>  Doesn't what I wrote
+>>  specify that it needs one of ingenic,*-tcu _and_ simple-mfd?
+>=20
+> Yes, but matching is on any of them. You need to add:
+
+Alright, will do. Is there a reason why it's done that way? It sounds a=20
+bit counter-intuitive.
+
+> select:
+>   properties:
+>     compatible:
+>       contains:
+>         enum:
+>           - ingenic,jz4740-tcu
+>           - ingenic,jz4725b-tcu
+>           - ingenic,jz4770-tcu
+>           - ingenic,x1000-tcu
+>   required:
+>     - compatible
+>=20
+>>  I'm not sure I understand what you mean.
+>>=20
+>>  I did grep for 'single-mfd' in all YAML files in Documentation/ and
+>>  nothing really stands out.
+>=20
+> I guess even without the typo it was harder to find an example than I=20
+> thought.
+>=20
+> Note that I think I'll make the tool exclude 'simple-mfd', but it will
+> take some time for users to update so you still need to fix this.
+
+Alright, thanks for the help.
+
+-Paul
+
+=
 
