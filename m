@@ -2,183 +2,605 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C07F91753B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 07:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 413851753A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 07:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgCBG0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 01:26:51 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:22912 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbgCBG0d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 01:26:33 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200302062631epoutp02154e254f67b9f89a5a45b4f3d2052ab1~4aLQd-Eb50078800788epoutp02F
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 06:26:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200302062631epoutp02154e254f67b9f89a5a45b4f3d2052ab1~4aLQd-Eb50078800788epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583130391;
-        bh=A7hoCWZILD9/XnFYmjNAsppFTlAIG/m51nOnZFyHrcE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XDaS/DP9inY7PhMguSKCACPWnZ5CEy4HJlpCr/FCtHbnENfNKz9pi1oaNr/jcCE+O
-         99x4AmDDSf+hbLtKrgO9pSVB1KpC8kCiwTgPZHM7sfG+fiwNWpAQ7HGIVcH4sLF3nr
-         D5ao6S1Fgk2v5qIrsD+IL8j8TRy9eZmc9mTEMXDQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200302062631epcas1p40efe12f9a5e0af679353164e0f97df59~4aLQDOQyz2317423174epcas1p4k;
-        Mon,  2 Mar 2020 06:26:31 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48W9CB1BDhzMqYkq; Mon,  2 Mar
-        2020 06:26:30 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        65.08.52419.617AC5E5; Mon,  2 Mar 2020 15:26:30 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200302062629epcas1p46967161019cd142c17a9ee7d33ae9265~4aLOnu5cr2317423174epcas1p4b;
-        Mon,  2 Mar 2020 06:26:29 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200302062629epsmtrp127e3c15a0661caef7838df2478a50fee~4aLOm_F4o1431214312epsmtrp1m;
-        Mon,  2 Mar 2020 06:26:29 +0000 (GMT)
-X-AuditID: b6c32a37-5b7ff7000001ccc3-21-5e5ca7164cd5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        19.49.10238.517AC5E5; Mon,  2 Mar 2020 15:26:29 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200302062629epsmtip21e9bcc1b9908f5912f7e9fd707162b28~4aLOdIqq-1396013960epsmtip2d;
-        Mon,  2 Mar 2020 06:26:29 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, pali.rohar@gmail.com, arnd@arndb.de,
-        linkinjeon@gmail.com
-Subject: [PATCH v14 14/14] exfat: update file system parameter handling
-Date:   Mon,  2 Mar 2020 15:21:45 +0900
-Message-Id: <20200302062145.1719-15-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200302062145.1719-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdlhTV1dseUycQccnZou/k46xWzQvXs9m
-        sXL1USaL63dvMVvs2XuSxeLyrjlsFhNP/2ay2PLvCKvFpfcfWCzO/z3O6sDl8fvXJEaPnbPu
-        snvsn7uG3WP3zQY2j74tqxg9Pm+S8zi0/Q2bx6Ynb5kCOKJybDJSE1NSixRS85LzUzLz0m2V
-        vIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAjlRSKEvMKQUKBSQWFyvp29kU5ZeWpCpk
-        5BeX2CqlFqTkFBgaFOgVJ+YWl+al6yXn51oZGhgYmQJVJuRkHFxynKXgskjFldaj7A2MPYJd
-        jJwcEgImEhObVjJ2MXJxCAnsYJSY1PWQBcL5xCix+Ms3VgjnG6PE3dv72GBa1r7sZ4NI7GWU
-        2LlxBhtcy6Nvd5i7GDk42AS0Jf5sEQVpEBGQljjTf4kJpIZZ4CajxMHFm5lBEsIC7hLTPm1n
-        AbFZBFQldhxeCxbnFbCR6F/ZzgqxTV5i9YYDYHFOoPidXRcYIeJn2CReX1eHsF0k1hzthaoX
-        lnh1fAs7hC0l8bK/jR3kHgmBaomP+5khwh2MEi++20LYxhI3129gBSlhFtCUWL9LHyKsKLHz
-        91ywTcwCfBLvvvawQkzhlehoE4IoUZXou3SYCcKWluhq/wC11ENiw7fH0EDsZ5R4v62NbQKj
-        3CyEDQsYGVcxiqUWFOempxYbFhgjR9gmRnAi1DLfwbjhnM8hRgEORiUe3h3Po+OEWBPLiitz
-        DzFKcDArifD6cgKFeFMSK6tSi/Lji0pzUosPMZoCw3Eis5Rocj4wSeeVxBuaGhkbG1uYmJmb
-        mRorifM+jNSMExJITyxJzU5NLUgtgulj4uCUamDkDpX4PVVE41P9tbAYpXobzTfughse3Z0i
-        /cT6SvLqfbwpT6aa7dhjZcc194j9hG6x+Pcek2Y7To5W4vP7f+UK+0+lXW5KU5VuHL6m8eBF
-        sqPH8R5+bg29fokj0+r2hwWfK3cK42Se++TEyQ0RXWcd33yb1aLwVvbyFwZ3zw8nTS1vTNVQ
-        eVaqxFKckWioxVxUnAgA8nqlI5oDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSvK7o8pg4g1eP9Sz+TjrGbtG8eD2b
-        xcrVR5ksrt+9xWyxZ+9JFovLu+awWUw8/ZvJYsu/I6wWl95/YLE4//c4qwOXx+9fkxg9ds66
-        y+6xf+4ado/dNxvYPPq2rGL0+LxJzuPQ9jdsHpuevGUK4IjisklJzcksSy3St0vgyji45DhL
-        wWWRiiutR9kbGHsEuxg5OSQETCTWvuxn62Lk4hAS2M0o0X/gGAtEQlri2IkzzF2MHEC2sMTh
-        w8UQNR8YJSYs28cOEmcT0Jb4s0UUpFwEqPxM/yUmkBpmgceMEjN+fGEDSQgLuEtM+7QdbCaL
-        gKrEjsNrmUFsXgEbif6V7awQu+QlVm84ABbnBIrf2XWBEcQWErCWePriLvMERr4FjAyrGCVT
-        C4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCA1ZLcwfj5SXxhxgFOBiVeHh3Po+OE2JNLCuu
-        zD3EKMHBrCTC68sJFOJNSaysSi3Kjy8qzUktPsQozcGiJM77NO9YpJBAemJJanZqakFqEUyW
-        iYNTqoFRXK/huU9W6Ny44lgHx4Q53Cbip9KfTrz3UKwgwHt5w17zVRwlKTP/aL7gmeu11jr9
-        dfYB1qfz+Wb2bn2csUfL9ETDJZ7CJawxUws23VAMnX9vTfyl0+f5vlxfduCpoUHSVf8nK5tf
-        Ohqyi4tdX3Fgm39eZqr/9ast2sYvhY3knYLqd29vZ/uoxFKckWioxVxUnAgA/EaA4VQCAAA=
-X-CMS-MailID: 20200302062629epcas1p46967161019cd142c17a9ee7d33ae9265
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200302062629epcas1p46967161019cd142c17a9ee7d33ae9265
-References: <20200302062145.1719-1-namjae.jeon@samsung.com>
-        <CGME20200302062629epcas1p46967161019cd142c17a9ee7d33ae9265@epcas1p4.samsung.com>
+        id S1726545AbgCBGXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 01:23:13 -0500
+Received: from mail-am6eur05on2085.outbound.protection.outlook.com ([40.107.22.85]:14528
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725446AbgCBGXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 01:23:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jb9e1mB2VxqUt2Ub4wZBuglQKU5K5ftlBL56GlzJKiuJFJFRmMwl1qYHxRhCQpx7b9GjxtneUvN01NdTTZTt039UgCwQ+0/7Scu0WvfghCL/gPQycCCzMKIKaCJ6lG/Mpek0vFmV2u8TkjPN/i1imQR0VBjUTR+03TwDuYcu5iW067DHXTAUMhoYBJRYzewlmY7zQow8vyXzT8/RRSEToYE2LXx797w2R2VOHRwuNkIHitohuUK1TBLSdXLiCpmAvhGJ6CZmecPZVxD5Uech+PLlLJWgoBI2GFNRw4b2OgoI6qm7iYHWUC33O+b0EFxeTWDmsZM6PmP1LMHcLoe3/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4jPxNFYhTT4p+/NfHKHWgV7WkTm/ewjgN27jokgnRyM=;
+ b=F89MUdlN7FzPCOZmRKEfeZBEmZxIo3aqpqbdz8C4azjv/3AE4q5aPq+CeiUFxqrG5l2fTagQ2vE/TbMNl/b78NOXmt1PQuUPxYUGJK9AE7c+aevLAN0zQnaaAdiCG9zBM2AeB6EPIycI5kexQctesDGGUsHXjlMWKfGFfznx7E4nFAr8T26wH/HvZWS3qHtgIIda2la6bsLg/7nKuXmMdH9qrRJJYJlzIGaPeqa1nfXFAa5buCCQ4TYxc6PL5XLSBdpDSRsVtUf34wnWWnTmsRWelSU9/BS/cytHUU07ir6rgc4UO5ncUfHiv7btBZm7MZK4BXkoJARR+leCgHzVlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4jPxNFYhTT4p+/NfHKHWgV7WkTm/ewjgN27jokgnRyM=;
+ b=HPibBbl2kHsak8f9JDZfpEQswPLbCM4PWEgCj+yBbtq4ZG5ww6Erc8gFOuBxedFJlS8MnUMq9GokMLpvzSVia0YUqxYD+B6Z0LWQjfAXWmIbSHU37Z6rilpv2FRdfLlEBwYLO+rT9M5RCCC5xh4MO2MNCdKO+D6zOpyu3AGtEqo=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
+ VI1PR04MB5584.eurprd04.prod.outlook.com (20.178.123.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15; Mon, 2 Mar 2020 06:23:00 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::9547:9dfa:76b8:71b1]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::9547:9dfa:76b8:71b1%7]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 06:23:00 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benson Leung <bleung@chromium.org>,
+        Prashant Malani <pmalani@chromium.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Bin Liu <b-liu@ti.com>
+Subject: Re: [PATCH v2 5/9] usb: roles: Provide the switch drivers handle to
+ the switch in the API
+Thread-Topic: [PATCH v2 5/9] usb: roles: Provide the switch drivers handle to
+ the switch in the API
+Thread-Index: AQHV6wvzIyZpbIaiske1bsSyj2bnlKgqUqgAgAqNTQA=
+Date:   Mon, 2 Mar 2020 06:22:59 +0000
+Message-ID: <20200302062302.GE3834@b29397-desktop>
+References: <20200224121406.2419-1-heikki.krogerus@linux.intel.com>
+ <20200224121406.2419-6-heikki.krogerus@linux.intel.com>
+ <20200224131442.GA5365@b29397-desktop>
+In-Reply-To: <20200224131442.GA5365@b29397-desktop>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bf29f759-c03f-4c08-c91f-08d7be7227e9
+x-ms-traffictypediagnostic: VI1PR04MB5584:
+x-microsoft-antispam-prvs: <VI1PR04MB55848DF2213DF9171B55B0D88BE70@VI1PR04MB5584.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 033054F29A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(376002)(39860400002)(366004)(346002)(396003)(136003)(189003)(199004)(478600001)(33716001)(86362001)(5660300002)(4326008)(54906003)(6916009)(1076003)(316002)(6486002)(44832011)(2906002)(8936002)(81166006)(81156014)(8676002)(7416002)(30864003)(91956017)(9686003)(6512007)(66476007)(76116006)(66556008)(64756008)(66446008)(33656002)(66946007)(71200400001)(53546011)(6506007)(186003)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5584;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: L58h7UHSyXlhCzIqTDL4YQ0iJ/Nt1i+4TPBqTJwPE04dVfX7CVJlztiYAQMTp3OgzNc+aVATzVTCc09avBl3FUYqF3eO3gRG4dmDcE46ZGbCVKG+vKKg0g4uNTpqLCD3ciaPrRe3jEUMGvijSVUmSMxdRut7XtSzyxSgeRa0yIQX1OncTtpW24n/uYELIY2kPhVrFU9oLtTLyBroAdkuPR/7yW31qC4lgbaTdN5Yp+8hDz3zPjkNEixbin3wfdeu6xPm3UMEzw57AYPZoNmJxmOB3P/j8/vs5A+Idh0kShgP/AVyT4W1xq0COg3tx/oDqfc2HlYPD3Jfo8d09rsBp7zqGPE/fCgvDMsMdT5QDUcNocmpLhoAFNFKd4nJwfYOTqsKHcgvFaFpM5zz1mIqPmoY6pwm5mS/G4GLui5Wlelqv8sGGC98w+8pV103mwan
+x-ms-exchange-antispam-messagedata: UeX/N3LqpRXFVU2fY6PvOJvooA4TgugWDkzhaMlz+3fcpE8ryVKcUZDOYIv/C2SPMI3WzLX8MR0pOyMl0yxkfArJwrusV5fZ9601okraHpE863n8zl13TlkbyOfWeK2GjVknC7/+YJCpMwb5SLBXyA==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <312AC97287933D489033348D2102CB83@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf29f759-c03f-4c08-c91f-08d7be7227e9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 06:22:59.9997
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EiZNUVSioTZimg/Vj42oKYoaM2Tg24RSiGHPvKubSo2SeiVfH8UYXv/Wo8wKVoO/VRkhWUEOXIPvZBIQgrmwFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5584
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+On 20-02-24 13:14:40, Peter Chen wrote:
+> >   */
+> > -static int cdns3_role_set(struct device *dev, enum usb_role role)
+> > +static int cdns3_role_set(struct usb_role_switch *sw, enum usb_role ro=
+le)
+> >  {
+> > -	struct cdns3 *cdns =3D dev_get_drvdata(dev);
+> > +	struct cdns3 *cdns =3D usb_role_switch_get_drvdata(sw);
+> >  	int ret =3D 0;
+> > =20
+> >  	pm_runtime_get_sync(cdns->dev);
+> > @@ -423,12 +423,6 @@ static int cdns3_role_set(struct device *dev, enum=
+ usb_role role)
+> >  	return ret;
+> >  }
+> > =20
+> > -static const struct usb_role_switch_desc cdns3_switch_desc =3D {
+> > -	.set =3D cdns3_role_set,
+> > -	.get =3D cdns3_role_get,
+> > -	.allow_userspace_control =3D true,
+> > -};
+> > -
+> >  /**
+> >   * cdns3_probe - probe for cdns3 core device
+> >   * @pdev: Pointer to cdns3 core platform device
+> > @@ -437,6 +431,7 @@ static const struct usb_role_switch_desc cdns3_swit=
+ch_desc =3D {
+> >   */
+> >  static int cdns3_probe(struct platform_device *pdev)
+> >  {
+> > +	struct usb_role_switch_desc sw_desc =3D { };
+> >  	struct device *dev =3D &pdev->dev;
+> >  	struct resource	*res;
+> >  	struct cdns3 *cdns;
+> > @@ -529,7 +524,12 @@ static int cdns3_probe(struct platform_device *pde=
+v)
+> >  	if (ret)
+> >  		goto err3;
+> > =20
+> > -	cdns->role_sw =3D usb_role_switch_register(dev, &cdns3_switch_desc);
+> > +	sw_desc.set =3D cdns3_role_set,
+> > +	sw_desc.get =3D cdns3_role_get,
+> > +	sw_desc.allow_userspace_control =3D true,
 
-Al Viro recently reworked the way file system parameters are handled
-Update super.c to work with it in linux-next 20200203.
+Heikki, when I try to apply above, and compile, I find above issue,
+the end of code should be ";", but not ",".
 
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Namjae Jeon <namjae.jeon@samsung.com>
----
- fs/exfat/super.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+> > +	sw_desc.driver_data =3D cdns;
+> > +
+> > +	cdns->role_sw =3D usb_role_switch_register(dev, &sw_desc);
+> >  	if (IS_ERR(cdns->role_sw)) {
+> >  		ret =3D PTR_ERR(cdns->role_sw);
+> >  		dev_warn(dev, "Unable to register Role Switch\n");
+> > diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+> > index 52139c2a9924..ae0bdc036464 100644
+> > --- a/drivers/usb/chipidea/core.c
+> > +++ b/drivers/usb/chipidea/core.c
+> > @@ -600,9 +600,9 @@ static int ci_cable_notifier(struct notifier_block =
+*nb, unsigned long event,
+> >  	return NOTIFY_DONE;
+> >  }
+> > =20
+> > -static enum usb_role ci_usb_role_switch_get(struct device *dev)
+> > +static enum usb_role ci_usb_role_switch_get(struct usb_role_switch *sw=
+)
+> >  {
+> > -	struct ci_hdrc *ci =3D dev_get_drvdata(dev);
+> > +	struct ci_hdrc *ci =3D usb_role_switch_get_drvdata(sw);
+> >  	enum usb_role role;
+> >  	unsigned long flags;
+> > =20
+> > @@ -613,9 +613,10 @@ static enum usb_role ci_usb_role_switch_get(struct=
+ device *dev)
+> >  	return role;
+> >  }
+> > =20
+> > -static int ci_usb_role_switch_set(struct device *dev, enum usb_role ro=
+le)
+> > +static int ci_usb_role_switch_set(struct usb_role_switch *sw,
+> > +				  enum usb_role role)
+> >  {
+> > -	struct ci_hdrc *ci =3D dev_get_drvdata(dev);
+> > +	struct ci_hdrc *ci =3D usb_role_switch_get_drvdata(sw);
+> >  	struct ci_hdrc_cable *cable =3D NULL;
+> >  	enum usb_role current_role =3D ci_role_to_usb_role(ci);
+> >  	enum ci_role ci_role =3D usb_role_to_ci_role(role);
+> > @@ -1118,6 +1119,7 @@ static int ci_hdrc_probe(struct platform_device *=
+pdev)
+> >  	}
+> > =20
+> >  	if (ci_role_switch.fwnode) {
+> > +		ci_role_switch.driver_data =3D ci;
 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index f06e0b53e393..16ed202ef527 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -214,7 +214,14 @@ enum {
- 	Opt_time_offset,
- };
- 
--static const struct fs_parameter_spec exfat_param_specs[] = {
-+static const struct constant_table exfat_param_enums[] = {
-+	{ "continue",		EXFAT_ERRORS_CONT },
-+	{ "panic",		EXFAT_ERRORS_PANIC },
-+	{ "remount-ro",		EXFAT_ERRORS_RO },
-+	{}
-+};
-+
-+static const struct fs_parameter_spec exfat_parameters[] = {
- 	fsparam_u32("uid",			Opt_uid),
- 	fsparam_u32("gid",			Opt_gid),
- 	fsparam_u32oct("umask",			Opt_umask),
-@@ -222,25 +229,12 @@ static const struct fs_parameter_spec exfat_param_specs[] = {
- 	fsparam_u32oct("fmask",			Opt_fmask),
- 	fsparam_u32oct("allow_utime",		Opt_allow_utime),
- 	fsparam_string("iocharset",		Opt_charset),
--	fsparam_enum("errors",			Opt_errors),
-+	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
- 	fsparam_flag("discard",			Opt_discard),
- 	fsparam_s32("time_offset",		Opt_time_offset),
- 	{}
- };
- 
--static const struct fs_parameter_enum exfat_param_enums[] = {
--	{ Opt_errors,	"continue",		EXFAT_ERRORS_CONT },
--	{ Opt_errors,	"panic",		EXFAT_ERRORS_PANIC },
--	{ Opt_errors,	"remount-ro",		EXFAT_ERRORS_RO },
--	{}
--};
--
--static const struct fs_parameter_description exfat_parameters = {
--	.name		= "exfat",
--	.specs		= exfat_param_specs,
--	.enums		= exfat_param_enums,
--};
--
- static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct exfat_sb_info *sbi = fc->s_fs_info;
-@@ -248,7 +242,7 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	struct fs_parse_result result;
- 	int opt;
- 
--	opt = fs_parse(fc, &exfat_parameters, param, &result);
-+	opt = fs_parse(fc, exfat_parameters, param, &result);
- 	if (opt < 0)
- 		return opt;
- 
-@@ -665,7 +659,7 @@ static struct file_system_type exfat_fs_type = {
- 	.owner			= THIS_MODULE,
- 	.name			= "exfat",
- 	.init_fs_context	= exfat_init_fs_context,
--	.parameters		= &exfat_parameters,
-+	.parameters		= exfat_parameters,
- 	.kill_sb		= kill_block_super,
- 	.fs_flags		= FS_REQUIRES_DEV,
- };
--- 
-2.17.1
+And chipidea code, better change it like cdns3's, otherwise, the
+switch desc for all controllers have the same driver_data.
 
+Peter
+> >  		ci->role_switch =3D usb_role_switch_register(dev,
+> >  					&ci_role_switch);
+> >  		if (IS_ERR(ci->role_switch)) {
+> > diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3=
+-meson-g12a.c
+> > index 8a3ec1a951fe..3309ce90ca14 100644
+> > --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
+> > +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+> > @@ -321,9 +321,10 @@ static int dwc3_meson_g12a_otg_mode_set(struct dwc=
+3_meson_g12a *priv,
+> >  	return 0;
+> >  }
+> > =20
+> > -static int dwc3_meson_g12a_role_set(struct device *dev, enum usb_role =
+role)
+> > +static int dwc3_meson_g12a_role_set(struct usb_role_switch *sw,
+> > +				    enum usb_role role)
+> >  {
+> > -	struct dwc3_meson_g12a *priv =3D dev_get_drvdata(dev);
+> > +	struct dwc3_meson_g12a *priv =3D usb_role_switch_get_drvdata(sw);
+> >  	enum phy_mode mode;
+> > =20
+> >  	if (role =3D=3D USB_ROLE_NONE)
+> > @@ -338,9 +339,9 @@ static int dwc3_meson_g12a_role_set(struct device *=
+dev, enum usb_role role)
+> >  	return dwc3_meson_g12a_otg_mode_set(priv, mode);
+> >  }
+> > =20
+> > -static enum usb_role dwc3_meson_g12a_role_get(struct device *dev)
+> > +static enum usb_role dwc3_meson_g12a_role_get(struct usb_role_switch *=
+sw)
+> >  {
+> > -	struct dwc3_meson_g12a *priv =3D dev_get_drvdata(dev);
+> > +	struct dwc3_meson_g12a *priv =3D usb_role_switch_get_drvdata(sw);
+> > =20
+> >  	return priv->otg_phy_mode =3D=3D PHY_MODE_USB_HOST ?
+> >  		USB_ROLE_HOST : USB_ROLE_DEVICE;
+> > @@ -499,6 +500,7 @@ static int dwc3_meson_g12a_probe(struct platform_de=
+vice *pdev)
+> >  	priv->switch_desc.allow_userspace_control =3D true;
+> >  	priv->switch_desc.set =3D dwc3_meson_g12a_role_set;
+> >  	priv->switch_desc.get =3D dwc3_meson_g12a_role_get;
+> > +	priv->switch_desc.driver_data =3D priv;
+> > =20
+> >  	priv->role_switch =3D usb_role_switch_register(dev, &priv->switch_des=
+c);
+> >  	if (IS_ERR(priv->role_switch))
+> > diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget=
+/udc/renesas_usb3.c
+> > index c5c3c14df67a..4da90160b400 100644
+> > --- a/drivers/usb/gadget/udc/renesas_usb3.c
+> > +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+> > @@ -2355,14 +2355,14 @@ static const struct usb_gadget_ops renesas_usb3=
+_gadget_ops =3D {
+> >  	.set_selfpowered	=3D renesas_usb3_set_selfpowered,
+> >  };
+> > =20
+> > -static enum usb_role renesas_usb3_role_switch_get(struct device *dev)
+> > +static enum usb_role renesas_usb3_role_switch_get(struct usb_role_swit=
+ch *sw)
+> >  {
+> > -	struct renesas_usb3 *usb3 =3D dev_get_drvdata(dev);
+> > +	struct renesas_usb3 *usb3 =3D usb_role_switch_get_drvdata(sw);
+> >  	enum usb_role cur_role;
+> > =20
+> > -	pm_runtime_get_sync(dev);
+> > +	pm_runtime_get_sync(usb3_to_dev(usb3));
+> >  	cur_role =3D usb3_is_host(usb3) ? USB_ROLE_HOST : USB_ROLE_DEVICE;
+> > -	pm_runtime_put(dev);
+> > +	pm_runtime_put(usb3_to_dev(usb3));
+> > =20
+> >  	return cur_role;
+> >  }
+> > @@ -2372,7 +2372,7 @@ static void handle_ext_role_switch_states(struct =
+device *dev,
+> >  {
+> >  	struct renesas_usb3 *usb3 =3D dev_get_drvdata(dev);
+> >  	struct device *host =3D usb3->host_dev;
+> > -	enum usb_role cur_role =3D renesas_usb3_role_switch_get(dev);
+> > +	enum usb_role cur_role =3D renesas_usb3_role_switch_get(usb3->role_sw=
+);
+> > =20
+> >  	switch (role) {
+> >  	case USB_ROLE_NONE:
+> > @@ -2424,7 +2424,7 @@ static void handle_role_switch_states(struct devi=
+ce *dev,
+> >  {
+> >  	struct renesas_usb3 *usb3 =3D dev_get_drvdata(dev);
+> >  	struct device *host =3D usb3->host_dev;
+> > -	enum usb_role cur_role =3D renesas_usb3_role_switch_get(dev);
+> > +	enum usb_role cur_role =3D renesas_usb3_role_switch_get(usb3->role_sw=
+);
+> > =20
+> >  	if (cur_role =3D=3D USB_ROLE_HOST && role =3D=3D USB_ROLE_DEVICE) {
+> >  		device_release_driver(host);
+> > @@ -2438,19 +2438,19 @@ static void handle_role_switch_states(struct de=
+vice *dev,
+> >  	}
+> >  }
+> > =20
+> > -static int renesas_usb3_role_switch_set(struct device *dev,
+> > +static int renesas_usb3_role_switch_set(struct usb_role_switch *sw,
+> >  					enum usb_role role)
+> >  {
+> > -	struct renesas_usb3 *usb3 =3D dev_get_drvdata(dev);
+> > +	struct renesas_usb3 *usb3 =3D usb_role_switch_get_drvdata(sw);
+> > =20
+> > -	pm_runtime_get_sync(dev);
+> > +	pm_runtime_get_sync(usb3_to_dev(usb3));
+> > =20
+> >  	if (usb3->role_sw_by_connector)
+> > -		handle_ext_role_switch_states(dev, role);
+> > +		handle_ext_role_switch_states(usb3_to_dev(usb3), role);
+> >  	else
+> > -		handle_role_switch_states(dev, role);
+> > +		handle_role_switch_states(usb3_to_dev(usb3), role);
+> > =20
+> > -	pm_runtime_put(dev);
+> > +	pm_runtime_put(usb3_to_dev(usb3));
+> > =20
+> >  	return 0;
+> >  }
+> > @@ -2831,6 +2831,8 @@ static int renesas_usb3_probe(struct platform_dev=
+ice *pdev)
+> >  		renesas_usb3_role_switch_desc.fwnode =3D dev_fwnode(&pdev->dev);
+> >  	}
+> > =20
+> > +	renesas_usb3_role_switch_desc.driver_data =3D usb3;
+> > +
+> >  	INIT_WORK(&usb3->role_work, renesas_usb3_role_work);
+> >  	usb3->role_sw =3D usb_role_switch_register(&pdev->dev,
+> >  					&renesas_usb3_role_switch_desc);
+> > diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/u=
+dc/tegra-xudc.c
+> > index 634c2c19a176..b9df6369d56d 100644
+> > --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> > +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> > @@ -676,12 +676,13 @@ static void tegra_xudc_usb_role_sw_work(struct wo=
+rk_struct *work)
+> > =20
+> >  }
+> > =20
+> > -static int tegra_xudc_usb_role_sw_set(struct device *dev, enum usb_rol=
+e role)
+> > +static int tegra_xudc_usb_role_sw_set(struct usb_role_switch *sw,
+> > +				      enum usb_role role)
+> >  {
+> > -	struct tegra_xudc *xudc =3D dev_get_drvdata(dev);
+> > +	struct tegra_xudc *xudc =3D usb_role_switch_get_drvdata(sw);
+> >  	unsigned long flags;
+> > =20
+> > -	dev_dbg(dev, "%s role is %d\n", __func__, role);
+> > +	dev_dbg(xudc->dev, "%s role is %d\n", __func__, role);
+> > =20
+> >  	spin_lock_irqsave(&xudc->lock, flags);
+> > =20
+> > @@ -3590,6 +3591,7 @@ static int tegra_xudc_probe(struct platform_devic=
+e *pdev)
+> >  	if (of_property_read_bool(xudc->dev->of_node, "usb-role-switch")) {
+> >  		role_sx_desc.set =3D tegra_xudc_usb_role_sw_set;
+> >  		role_sx_desc.fwnode =3D dev_fwnode(xudc->dev);
+> > +		role_sx_desc.driver_data =3D xudc;
+> > =20
+> >  		xudc->usb_role_sw =3D usb_role_switch_register(xudc->dev,
+> >  							&role_sx_desc);
+> > diff --git a/drivers/usb/mtu3/mtu3_dr.c b/drivers/usb/mtu3/mtu3_dr.c
+> > index 08e18448e8b8..04f666e85731 100644
+> > --- a/drivers/usb/mtu3/mtu3_dr.c
+> > +++ b/drivers/usb/mtu3/mtu3_dr.c
+> > @@ -320,9 +320,9 @@ void ssusb_set_force_mode(struct ssusb_mtk *ssusb,
+> >  	mtu3_writel(ssusb->ippc_base, SSUSB_U2_CTRL(0), value);
+> >  }
+> > =20
+> > -static int ssusb_role_sw_set(struct device *dev, enum usb_role role)
+> > +static int ssusb_role_sw_set(struct usb_role_switch *sw, enum usb_role=
+ role)
+> >  {
+> > -	struct ssusb_mtk *ssusb =3D dev_get_drvdata(dev);
+> > +	struct ssusb_mtk *ssusb =3D usb_role_switch_get_drvdata(sw);
+> >  	bool to_host =3D false;
+> > =20
+> >  	if (role =3D=3D USB_ROLE_HOST)
+> > @@ -334,9 +334,9 @@ static int ssusb_role_sw_set(struct device *dev, en=
+um usb_role role)
+> >  	return 0;
+> >  }
+> > =20
+> > -static enum usb_role ssusb_role_sw_get(struct device *dev)
+> > +static enum usb_role ssusb_role_sw_get(struct usb_role_switch *sw)
+> >  {
+> > -	struct ssusb_mtk *ssusb =3D dev_get_drvdata(dev);
+> > +	struct ssusb_mtk *ssusb =3D usb_role_switch_get_drvdata(sw);
+> >  	enum usb_role role;
+> > =20
+> >  	role =3D ssusb->is_host ? USB_ROLE_HOST : USB_ROLE_DEVICE;
+> > @@ -356,6 +356,7 @@ static int ssusb_role_sw_register(struct otg_switch=
+_mtk *otg_sx)
+> >  	role_sx_desc.set =3D ssusb_role_sw_set;
+> >  	role_sx_desc.get =3D ssusb_role_sw_get;
+> >  	role_sx_desc.fwnode =3D dev_fwnode(ssusb->dev);
+> > +	role_sx_desc.driver_data =3D ssusb;
+> >  	otg_sx->role_sw =3D usb_role_switch_register(ssusb->dev, &role_sx_des=
+c);
+> > =20
+> >  	return PTR_ERR_OR_ZERO(otg_sx->role_sw);
+> > diff --git a/drivers/usb/musb/mediatek.c b/drivers/usb/musb/mediatek.c
+> > index 6b88c2f5d970..a627f4133d6b 100644
+> > --- a/drivers/usb/musb/mediatek.c
+> > +++ b/drivers/usb/musb/mediatek.c
+> > @@ -115,9 +115,8 @@ static void mtk_musb_clks_disable(struct mtk_glue *=
+glue)
+> >  	clk_disable_unprepare(glue->main);
+> >  }
+> > =20
+> > -static int musb_usb_role_sx_set(struct device *dev, enum usb_role role=
+)
+> > +static int mtk_otg_switch_set(struct mtk_glue *glue, enum usb_role rol=
+e)
+> >  {
+> > -	struct mtk_glue *glue =3D dev_get_drvdata(dev);
+> >  	struct musb *musb =3D glue->musb;
+> >  	u8 devctl =3D readb(musb->mregs + MUSB_DEVCTL);
+> >  	enum usb_role new_role;
+> > @@ -168,9 +167,14 @@ static int musb_usb_role_sx_set(struct device *dev=
+, enum usb_role role)
+> >  	return 0;
+> >  }
+> > =20
+> > -static enum usb_role musb_usb_role_sx_get(struct device *dev)
+> > +static int musb_usb_role_sx_set(struct usb_role_switch *sw, enum usb_r=
+ole role)
+> >  {
+> > -	struct mtk_glue *glue =3D dev_get_drvdata(dev);
+> > +	return mtk_otg_switch_set(usb_role_switch_get_drvdata(sw), role);
+> > +}
+> > +
+> > +static enum usb_role musb_usb_role_sx_get(struct usb_role_switch *sw)
+> > +{
+> > +	struct mtk_glue *glue =3D usb_role_switch_get_drvdata(sw);
+> > =20
+> >  	return glue->role;
+> >  }
+> > @@ -182,6 +186,7 @@ static int mtk_otg_switch_init(struct mtk_glue *glu=
+e)
+> >  	role_sx_desc.set =3D musb_usb_role_sx_set;
+> >  	role_sx_desc.get =3D musb_usb_role_sx_get;
+> >  	role_sx_desc.fwnode =3D dev_fwnode(glue->dev);
+> > +	role_sx_desc.driver_data =3D glue;
+> >  	glue->role_sw =3D usb_role_switch_register(glue->dev, &role_sx_desc);
+> > =20
+> >  	return PTR_ERR_OR_ZERO(glue->role_sw);
+> > @@ -288,8 +293,7 @@ static int mtk_musb_set_mode(struct musb *musb, u8 =
+mode)
+> >  		return -EINVAL;
+> >  	}
+> > =20
+> > -	glue->role =3D new_role;
+> > -	musb_usb_role_sx_set(dev, glue->role);
+> > +	mtk_otg_switch_set(glue, new_role);
+> >  	return 0;
+> >  }
+> > =20
+> > diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+> > index 49511d446410..11e49213176f 100644
+> > --- a/drivers/usb/roles/class.c
+> > +++ b/drivers/usb/roles/class.c
+> > @@ -48,7 +48,7 @@ int usb_role_switch_set_role(struct usb_role_switch *=
+sw, enum usb_role role)
+> > =20
+> >  	mutex_lock(&sw->lock);
+> > =20
+> > -	ret =3D sw->set(sw->dev.parent, role);
+> > +	ret =3D sw->set(sw, role);
+> >  	if (!ret)
+> >  		sw->role =3D role;
+> > =20
+> > @@ -75,7 +75,7 @@ enum usb_role usb_role_switch_get_role(struct usb_rol=
+e_switch *sw)
+> >  	mutex_lock(&sw->lock);
+> > =20
+> >  	if (sw->get)
+> > -		role =3D sw->get(sw->dev.parent);
+> > +		role =3D sw->get(sw);
+> >  	else
+> >  		role =3D sw->role;
+> > =20
+> > diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/u=
+sb/roles/intel-xhci-usb-role-switch.c
+> > index 80d6559bbcb2..5c96e929acea 100644
+> > --- a/drivers/usb/roles/intel-xhci-usb-role-switch.c
+> > +++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+> > @@ -42,6 +42,7 @@
+> >  #define DRV_NAME			"intel_xhci_usb_sw"
+> > =20
+> >  struct intel_xhci_usb_data {
+> > +	struct device *dev;
+> >  	struct usb_role_switch *role_sw;
+> >  	void __iomem *base;
+> >  	bool enable_sw_switch;
+> > @@ -51,9 +52,10 @@ static const struct software_node intel_xhci_usb_nod=
+e =3D {
+> >  	"intel-xhci-usb-sw",
+> >  };
+> > =20
+> > -static int intel_xhci_usb_set_role(struct device *dev, enum usb_role r=
+ole)
+> > +static int intel_xhci_usb_set_role(struct usb_role_switch *sw,
+> > +				   enum usb_role role)
+> >  {
+> > -	struct intel_xhci_usb_data *data =3D dev_get_drvdata(dev);
+> > +	struct intel_xhci_usb_data *data =3D usb_role_switch_get_drvdata(sw);
+> >  	unsigned long timeout;
+> >  	acpi_status status;
+> >  	u32 glk, val;
+> > @@ -66,11 +68,11 @@ static int intel_xhci_usb_set_role(struct device *d=
+ev, enum usb_role role)
+> >  	 */
+> >  	status =3D acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
+> >  	if (ACPI_FAILURE(status) && status !=3D AE_NOT_CONFIGURED) {
+> > -		dev_err(dev, "Error could not acquire lock\n");
+> > +		dev_err(data->dev, "Error could not acquire lock\n");
+> >  		return -EIO;
+> >  	}
+> > =20
+> > -	pm_runtime_get_sync(dev);
+> > +	pm_runtime_get_sync(data->dev);
+> > =20
+> >  	/*
+> >  	 * Set idpin value as requested.
+> > @@ -112,7 +114,7 @@ static int intel_xhci_usb_set_role(struct device *d=
+ev, enum usb_role role)
+> >  	do {
+> >  		val =3D readl(data->base + DUAL_ROLE_CFG1);
+> >  		if (!!(val & HOST_MODE) =3D=3D (role =3D=3D USB_ROLE_HOST)) {
+> > -			pm_runtime_put(dev);
+> > +			pm_runtime_put(data->dev);
+> >  			return 0;
+> >  		}
+> > =20
+> > @@ -120,21 +122,21 @@ static int intel_xhci_usb_set_role(struct device =
+*dev, enum usb_role role)
+> >  		usleep_range(5000, 10000);
+> >  	} while (time_before(jiffies, timeout));
+> > =20
+> > -	pm_runtime_put(dev);
+> > +	pm_runtime_put(data->dev);
+> > =20
+> > -	dev_warn(dev, "Timeout waiting for role-switch\n");
+> > +	dev_warn(data->dev, "Timeout waiting for role-switch\n");
+> >  	return -ETIMEDOUT;
+> >  }
+> > =20
+> > -static enum usb_role intel_xhci_usb_get_role(struct device *dev)
+> > +static enum usb_role intel_xhci_usb_get_role(struct usb_role_switch *s=
+w)
+> >  {
+> > -	struct intel_xhci_usb_data *data =3D dev_get_drvdata(dev);
+> > +	struct intel_xhci_usb_data *data =3D usb_role_switch_get_drvdata(sw);
+> >  	enum usb_role role;
+> >  	u32 val;
+> > =20
+> > -	pm_runtime_get_sync(dev);
+> > +	pm_runtime_get_sync(data->dev);
+> >  	val =3D readl(data->base + DUAL_ROLE_CFG0);
+> > -	pm_runtime_put(dev);
+> > +	pm_runtime_put(data->dev);
+> > =20
+> >  	if (!(val & SW_IDPIN))
+> >  		role =3D USB_ROLE_HOST;
+> > @@ -175,7 +177,9 @@ static int intel_xhci_usb_probe(struct platform_dev=
+ice *pdev)
+> >  	sw_desc.get =3D intel_xhci_usb_get_role,
+> >  	sw_desc.allow_userspace_control =3D true,
+> >  	sw_desc.fwnode =3D software_node_fwnode(&intel_xhci_usb_node);
+> > +	sw_desc.driver_data =3D data;
+> > =20
+> > +	data->dev =3D dev;
+> >  	data->enable_sw_switch =3D !device_property_read_bool(dev,
+> >  						"sw_switch_disable");
+> > =20
+> > diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+> > index 02dae936cebd..c028ba8029ad 100644
+> > --- a/include/linux/usb/role.h
+> > +++ b/include/linux/usb/role.h
+> > @@ -13,8 +13,9 @@ enum usb_role {
+> >  	USB_ROLE_DEVICE,
+> >  };
+> > =20
+> > -typedef int (*usb_role_switch_set_t)(struct device *dev, enum usb_role=
+ role);
+> > -typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
+> > +typedef int (*usb_role_switch_set_t)(struct usb_role_switch *sw,
+> > +				     enum usb_role role);
+> > +typedef enum usb_role (*usb_role_switch_get_t)(struct usb_role_switch =
+*sw);
+> > =20
+> >  /**
+> >   * struct usb_role_switch_desc - USB Role Switch Descriptor
+> > --=20
+> > 2.25.0
+> >=20
+>=20
+> --=20
+>=20
+> Thanks,
+> Peter Chen
+
+--=20
+
+Thanks,
+Peter Chen=
