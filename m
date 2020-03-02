@@ -2,130 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F0B7176682
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 677B717668C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:01:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgCBV7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 16:59:22 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39387 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbgCBV7W (ORCPT
+        id S1726958AbgCBWBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 17:01:05 -0500
+Received: from gateway30.websitewelcome.com ([192.185.179.30]:43925 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725781AbgCBWBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 16:59:22 -0500
-Received: by mail-io1-f66.google.com with SMTP id h3so1206154ioj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 13:59:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k79f6FSLIZMoPc6ba/k7bGFDErimuhlDt9Pf9L3xddw=;
-        b=AZL9JD7p/YDPrHNM8z4E+K7pT5oQq2DJHAiq9En9MJZm57Dr7Lf00dy+CUARCwkWPC
-         LqpiTVpMTnHiWg4VNCRtcpVa3PKtBU6BxPT2X8j+BDZwaOyK0pkBQUFGGuovoV/HB8pP
-         QakYbpf69Sa5ABiWu989LcKKAU4y1rjuT5me69XwvuHXSQVfLxrSx25twnuJq1mZgTzS
-         id3f5w5VE2a3wbGiZIGD9FAR6n8OOkRoBWRio/Gs13Dp4agBJfR9OqjbdyD7m2M2521o
-         AIEF/dna5OPNo1DT3SJ9c7UBL3XIdAQVU1l6HO426pkTwVgJsWrE29lVktyBa8xNGNHU
-         r+Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k79f6FSLIZMoPc6ba/k7bGFDErimuhlDt9Pf9L3xddw=;
-        b=OEYQ7kNgCLmAos4jcWt7LngXIM86J2yTctZey97f1wfoSr7p9c+MW/GpD+HxoD9nKJ
-         g2SP5JRWljNLjcWt5MK1IGM3sRB9+zgSp0IbP8KDQfD/iGq0VbF+JaTTVLBTyy8/IWQy
-         VMyhndezv1vnv6aDwwxp4ABJcbTyZdAkBd9k+QlIeWQREQiIzHTtROXXmmBPNi8Hxrzs
-         FrCmyXThu06/hzQ6O9bVVVrPSWaTwBUIeJGmCSXuiqOmQamC5QpjYzC2KXfQj8ByN+e4
-         tXM91fb9Vk2mVLtAMABbVBdWrUchb/i8hYRAu8R4RVRYCLqegiM3m18f9l5fwBAWylpQ
-         Iziw==
-X-Gm-Message-State: ANhLgQ3U8sX+T+TCZB+6wZXVOB74MntMOTEKzSvkdAkYxFn6k0yWhVnQ
-        LdTUF6wyB6vq6Rp1CSA7AS/EPVRNU7xSWtYKtYP8fg==
-X-Google-Smtp-Source: ADFU+vs8yfYVMZQ3ZOiil6p4tNPAfESDiP+gRF625VzibXWQpYgian9xw8Xj/DKzO4rXQgRZHtkyGTpuKnlOnni7tUw=
-X-Received: by 2002:a02:cf0f:: with SMTP id q15mr1188331jar.48.1583186361160;
- Mon, 02 Mar 2020 13:59:21 -0800 (PST)
+        Mon, 2 Mar 2020 17:01:04 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 49BA6451EE8
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 14:02:43 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8rH1jjnu3AGTX8rH1js9Z3; Mon, 02 Mar 2020 14:02:43 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NryDNxu/ODoeBsi1LY9dVerLlUdhHrWu4vysD9oZ7G0=; b=MBl9lRa2uQdQRhFCMyAYyQi7Eu
+        nnvWFpcQylvlPU55gp9C1kURKOBDzpVGjkuh0XLZ/BWjLcBbbs4WDMhqaA1Jtv+CVdwoDQ94ZIPsb
+        8LJx5Vaz5NTeknNadIfgzrrme1o+1i6gpiGjCKtKCBMT8CkUk+fzq7yjFEJqUAKjf7cltIszsICfT
+        xXShumusMdWQiwl02Z2/ndc9TaKK1jlUsFSzYBYsOvr9f1SNeV+hG7D2qcrzQIfyERqG9K17/uY5J
+        qgQYyrIuJvVh5k/RDDJZLiZV9TD9Mx4fWn7EA0FAtx9U2zH0ZRsubRmSJULpN/iT5v7zMLAo3wAa+
+        CKF7lQ8A==;
+Received: from [201.166.169.19] (port=30074 helo=[192.168.43.132])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j8rH0-003xYk-7z; Mon, 02 Mar 2020 14:02:42 -0600
+Subject: Re: [PATCH][next] sunrpc: Replace zero-length array with
+ flexible-array member
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200228132323.GA20181@embeddedor>
+ <20200302195829.GD1149@fieldses.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <ae7a3879-3344-b50e-6187-3ee898026ec5@embeddedor.com>
+Date:   Mon, 2 Mar 2020 14:05:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200302195736.24777-1-sean.j.christopherson@intel.com> <20200302195736.24777-3-sean.j.christopherson@intel.com>
-In-Reply-To: <20200302195736.24777-3-sean.j.christopherson@intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 2 Mar 2020 13:59:10 -0800
-Message-ID: <CALMp9eTNY0Wd=Wc=b8xzg0xRYE-ht5m=+cZeEb7nZup6EdYhCg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] KVM: x86: Fix CPUID range check for Centaur and
- Hypervisor ranges
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200302195829.GD1149@fieldses.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.169.19
+X-Source-L: No
+X-Exim-ID: 1j8rH0-003xYk-7z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.132]) [201.166.169.19]:30074
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 11:57 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> Extend the mask in cpuid_function_in_range() for finding the "class" of
-> the function to 0xfffffff00.  While there is no official definition of
-> what constitutes a class, e.g. arguably bits 31:16 should be the class
-> and bits 15:0 the functions within that class, the Hypervisor logic
-> effectively uses bits 31:8 as the class by virtue of checking for
-> different bases in increments of 0x100, e.g. KVM advertises its CPUID
-> functions starting at 0x40000100 when HyperV features are advertised at
-> the default base of 0x40000000.
 
-This convention deserves explicit documentation outside of the commit message.
 
-> Masking against 0x80000000 only handles basic and extended leafs, which
-> results in Centaur and Hypervisor range checks being performed against
-> the basic CPUID range, e.g. if CPUID.0x40000000.EAX=0x4000000A and there
-> is no entry for CPUID.0x40000006, then function 0x40000006 would be
-> incorrectly reported as out of bounds.
->
-> The bad range check doesn't cause function problems for any known VMM
-> because out-of-range semantics only come into play if the exact entry
-> isn't found, and VMMs either support a very limited Hypervisor range,
-> e.g. the official KVM range is 0x40000000-0x40000001 (effectively no
-> room for undefined leafs) or explicitly defines gaps to be zero, e.g.
-> Qemu explicitly creates zeroed entries up to the Cenatur and Hypervisor
-> limits (the latter comes into play when providing HyperV features).
+On 3/2/20 13:58, J. Bruce Fields wrote:
+> On Fri, Feb 28, 2020 at 07:23:23AM -0600, Gustavo A. R. Silva wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
+>>
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertently introduced[3] to the codebase from now on.
+>>
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>>
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> I don't understand the quoted sentences at all.  But I assume you're
+> telling me that sizeof(struct svc_deferred_req) won't be changed by this
+> patch, so, good, applied.  Thanks!
+> 
 
-Does Centaur implement the bizarre Intel behavior for out-of-bound
-entries? It seems that if there are Centaur leaves defined, the CPUD
-semantics should be those specified by Centaur.
+Correct! :)
 
-> The bad behavior can be visually confirmed by dumping CPUID output in
-> the guest when running Qemu with a stable TSC, as Qemu extends the limit
-> of range 0x40000000 to 0x40000010 to advertise VMware's cpuid_freq,
-> without defining zeroed entries for 0x40000002 - 0x4000000f.
->
-> Fixes: 43561123ab37 ("kvm: x86: Improve emulation of CPUID leaves 0BH and 1FH")
-> Cc: Jim Mattson <jmattson@google.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/cpuid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 6be012937eba..c320126e0118 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -993,7 +993,7 @@ static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
->  {
->         struct kvm_cpuid_entry2 *max;
->
-> -       max = kvm_find_cpuid_entry(vcpu, function & 0x80000000, 0);
-> +       max = kvm_find_cpuid_entry(vcpu, function & 0xffffff00u, 0);
+Thanks
+--
+Gustavo
 
-This assumes that CPUID.(function & 0xffffff00):EAX always contains
-the maximum input value for the 256-entry range sharing the high 24
-bits. I don't believe that convention has ever been established or
-documented.
-
->         return max && function <= max->eax;
->  }
->
-> --
-> 2.24.1
->
+> --b.
+> 
+>>
+>> This issue was found with the help of Coccinelle.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  include/linux/sunrpc/svc.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
+>> index 1afe38eb33f7..7f0a83451bc0 100644
+>> --- a/include/linux/sunrpc/svc.h
+>> +++ b/include/linux/sunrpc/svc.h
+>> @@ -380,7 +380,7 @@ struct svc_deferred_req {
+>>  	struct cache_deferred_req handle;
+>>  	size_t			xprt_hlen;
+>>  	int			argslen;
+>> -	__be32			args[0];
+>> +	__be32			args[];
+>>  };
+>>  
+>>  struct svc_process_info {
+>> -- 
+>> 2.25.0
