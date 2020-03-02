@@ -2,220 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 570D91752A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 05:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C9EA17529C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 05:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbgCBEXd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 23:23:33 -0500
-Received: from mail-am6eur05on2077.outbound.protection.outlook.com ([40.107.22.77]:28893
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        id S1726887AbgCBEVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 23:21:40 -0500
+Received: from mail-eopbgr20051.outbound.protection.outlook.com ([40.107.2.51]:13282
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726874AbgCBEXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 23:23:33 -0500
+        id S1726860AbgCBEVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 23:21:40 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=h6MOPB0/CLxlg8zum9zhklVdGiyCtsMmwpO72ZNpP3YDq5gZz2wRbEei7Nro72QPE04mv0PxNBB9raqFFmdbmTaI5mw/v3eV8HdygOPlf/lSmLDS/EynOxlCm3Yh8AeRKQVZlI4TG95oKxKw1fBmSpl2TsaJp04+0aGaCKCBEal3fwNumZkZMChujAVgqLbZusz9cnMrd7haBkimsR+wxjwpYcV9ETmKFH3puPNaFXfgWn0/UY7uGr0KpAMhdO81oDea+1RaGIBSSft/SVArQ+Z2qEZrFUzH5JPQyMBKwdhxQgf1NZv4clvQuOidePq6XhtastOnv8DP5OYsAHzDFQ==
+ b=cXkNo1VTKwjyZ8GE9kqEM2BZ6eyaiFQqlw30VF5akIytT0udjbV+7ZLCBEtCrrNMt9Chcysm5m4QhfSq75CoDeNZCMiaA808mW7hK2hsRjNd7S7du9gJJSg9P7XgCVR9Wsv0NsAY2Pb9XGE+/X6h22567KHqOm2zCtLSBgcmDntaPqnsyBvgxc2XtuLTqFKk7t0EsslK9jSkz591urgSzIJUrKeRJqW/FtYCqRVSacpaEs2Boj65Cgcwq6cFGai3V2mnwiMFcO94SyH8834qbbIHc+s6dKUSw0KrQSKj6AXHrxViw7sxFAg04PX8xw3Gp7laUCqAR38bS6blcUtdNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MIT5S1vi1eXu2LprjWbHJlmBiSDLmFELvL6go9yU6P8=;
- b=oQ4iovunAJ81oz6KKmeoR3zxTJohwirje1hAoyXHO0EH44VhJRY9Yg89vrkq9yQWqPgGywd9nDoSXnlVFCM38ZPD38bPlDxAaUig9AHuGzvJ4lvMEZxDl/lPDp8OKg1JbeI9QKB7wlTWLPEK/S90xnmgCvHAnKIN0tSSJtI72OKnQgnff6PkqZMOEfjgP5b64ArqUYd/0FGsWpANVy8nnNxkMYUU4tUPuiaSSaWh4a+yRxP4EHlCSCTceYnkgLKW63Q/MJiyK1sjkIL/N686RxOB5k0osIVzhs10DNMufTm5M8hMHN1BIyj0GdIciHtb/Zyf1p9FpFdnLcwlo1H+aA==
+ bh=9gwUmaRoUcE1kqxfagjjMP2lKMaphw7ZFFyClxHfKGg=;
+ b=WPLJS1/oP6KzudlAQTo3DkAknpvVyGH+CaVYWAvWPgR3BeOUNYibQPC3pjbl8K+ebA8Dhg+naBuPDrkEfS664wg2200hvK439aRlCi5fAa4Y1rs3Wjj/Zg+MrKO/ovljEih5ds/+C4Vq5U5O7KIROVJ5/Lh0SgmSBlnnxVqbv51CkWFGWT/KOwv1mtehsBUx8Y4Wg2HGrJYEND9R7gsT5UbT0xgqMSqaGwTf65wMb6ASjpP+81T3oEBrJGxfrhv3mwMI2+zCNwpBOLBIGVCtC2lj9rYcD7CoAtBXFZeTSLjfyiAVad7yjg38h7NPiVwJTRLuNKV1y6pOgJp9YR2Sow==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=nextfour.com; dmarc=pass action=none header.from=nextfour.com;
+ dkim=pass header.d=nextfour.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=NextfourGroupOy.onmicrosoft.com;
+ s=selector2-NextfourGroupOy-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MIT5S1vi1eXu2LprjWbHJlmBiSDLmFELvL6go9yU6P8=;
- b=OoDKDM29IG1Cnu4tKuRHMC+qC/ru0KvVJigrJWvnGdYcmfYrACeXt6ekwuxmHE4LiVZXif6DHxSXOCkAq5ptxfI5aJ3JGCdq9jsYHDjB1Eol+f+tyydlb3ygmaVefhF/OSTkkPQWHkUam3GUt5WBh2cz5k1yjfnUMKLn0TwxRxQ=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-Received: from DB8PR04MB6747.eurprd04.prod.outlook.com (20.179.250.159) by
- DB8PR04MB7180.eurprd04.prod.outlook.com (52.135.62.206) with Microsoft SMTP
+ bh=9gwUmaRoUcE1kqxfagjjMP2lKMaphw7ZFFyClxHfKGg=;
+ b=GZ9HS+FGkjLE7I/dgJj2Vtd+/s/8SYOfi3c9o/L2usteu8+lFWi1ONHdjnixjbfWPBOOqyT3zjsVDYaDFmN/x1flanK2GPp84gcZ4Lx0GfHCII8W6fp3KbRLDPPrLw8GJ9gru4wUkIv4hD0d6VS0CTGPTI8ZgUrq2HJsSUOjWHI=
+Received: from VI1PR03MB3775.eurprd03.prod.outlook.com (52.134.21.155) by
+ VI1PR03MB4142.eurprd03.prod.outlook.com (20.177.55.91) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15; Mon, 2 Mar 2020 04:23:29 +0000
-Received: from DB8PR04MB6747.eurprd04.prod.outlook.com
- ([fe80::104b:e88b:b0d3:cdaa]) by DB8PR04MB6747.eurprd04.prod.outlook.com
- ([fe80::104b:e88b:b0d3:cdaa%4]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
- 04:23:29 +0000
-From:   Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, shawnguo@kernel.org
-Cc:     leoyang.li@nxp.com, laurentiu.tudor@nxp.com, Xiaowei.Bao@nxp.com,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Subject: [PATCHv2] arm64: dts: layerscape: add iommu-map property to pci nodes
-Date:   Mon,  2 Mar 2020 12:20:27 +0800
-Message-Id: <20200302042027.15589-1-Zhiqiang.Hou@nxp.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0044.apcprd02.prod.outlook.com
- (2603:1096:3:18::32) To DB8PR04MB6747.eurprd04.prod.outlook.com
- (2603:10a6:10:10b::31)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.73) by SG2PR02CA0044.apcprd02.prod.outlook.com (2603:1096:3:18::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18 via Frontend Transport; Mon, 2 Mar 2020 04:23:26 +0000
-X-Mailer: git-send-email 2.17.1
-X-Originating-IP: [119.31.174.73]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 605f0f23-2da0-4713-0e1a-08d7be617586
-X-MS-TrafficTypeDiagnostic: DB8PR04MB7180:|DB8PR04MB7180:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB8PR04MB7180AD195BA21E793D6E5A1184E70@DB8PR04MB7180.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
-X-Forefront-PRVS: 033054F29A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(136003)(366004)(39860400002)(189003)(199004)(6512007)(2906002)(66476007)(66556008)(52116002)(316002)(66946007)(69590400007)(6506007)(956004)(86362001)(5660300002)(6486002)(2616005)(1076003)(478600001)(16526019)(26005)(186003)(36756003)(4326008)(81156014)(81166006)(8936002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR04MB7180;H:DB8PR04MB6747.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ 15.20.2772.18; Mon, 2 Mar 2020 04:21:30 +0000
+Received: from VI1PR03MB3775.eurprd03.prod.outlook.com
+ ([fe80::ed88:2188:604c:bfcc]) by VI1PR03MB3775.eurprd03.prod.outlook.com
+ ([fe80::ed88:2188:604c:bfcc%7]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 04:21:30 +0000
+Received: from [10.10.10.144] (194.157.170.35) by HE1P195CA0011.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Mon, 2 Mar 2020 04:21:29 +0000
+From:   =?utf-8?B?TWlrYSBQZW50dGlsw6Q=?= <mika.penttila@nextfour.com>
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Ard Biesheuvel <ardb@kernel.org>
+CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] efi/x86: Remove extra headroom for setup block
+Thread-Topic: [PATCH 4/5] efi/x86: Remove extra headroom for setup block
+Thread-Index: AQHV8B30/Z1XsdfJrEypETFXyJJ1Zag0s9cA
+Date:   Mon, 2 Mar 2020 04:21:30 +0000
+Message-ID: <db83f5a1-b827-2a31-0ca9-a04df8257324@nextfour.com>
+References: <20200301230537.2247550-1-nivedita@alum.mit.edu>
+ <20200301230537.2247550-5-nivedita@alum.mit.edu>
+In-Reply-To: <20200301230537.2247550-5-nivedita@alum.mit.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1P195CA0011.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::21)
+ To VI1PR03MB3775.eurprd03.prod.outlook.com (2603:10a6:803:2b::27)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mika.penttila@nextfour.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-pep-version: 2.0
+x-originating-ip: [194.157.170.35]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7e7b5073-216b-4e14-0a05-08d7be612e92
+x-ms-traffictypediagnostic: VI1PR03MB4142:
+x-microsoft-antispam-prvs: <VI1PR03MB414287A3234263E6FFF30AD183E70@VI1PR03MB4142.eurprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:152;
+x-forefront-prvs: 033054F29A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39830400003)(366004)(199004)(189003)(16576012)(316002)(66946007)(110136005)(54906003)(81156014)(81166006)(5660300002)(2906002)(8936002)(2616005)(31686004)(8676002)(956004)(6486002)(52116002)(508600001)(66556008)(66476007)(66446008)(36756003)(64756008)(85182001)(186003)(16526019)(26005)(66616009)(71200400001)(31696002)(4326008)(6666004)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR03MB4142;H:VI1PR03MB3775.eurprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nextfour.com does not designate
  permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: s9UZuYQoqozSRIhhk55cwJKe4RCc2KwIW6asHpA41/f6nvYwsMobu6x8nVa/H1AOoaUxkdVOdXz7d9dlnbtLuTfELNZnT5SIRU5t8aNHEKGf3nRe79gy17/PpiL3+OGbung4N2JU5m/0pRHEbpKR+90UWJmvqQ2oGK1dGyLCEOtfVqgqFL3+P497dMpJ4QeBWIAduLK4OLEqP/iiZxTAZid4z3kGcsq7G/jpquQGZmHnFAQ0Fn1ve/mfAAvx0KJV90F8/nyOLO6ehW9Jli+ckA4mb2h/RM98d6pmfYoK0XU4iOjS8mtOpeATlh6+2ycFMLp86srP9PZjNvlSUFhY9DDXBuqkE3j0zhuMJ/UmW/8ebt/JELESK/p4ZgrF0gigBdH4GPzTw+t8wElUY0q9cu/FMnaLLYbyMeuYAQP63EcD90JzIJ9wJ78Nzb4dsrZENXU6kZIYt+FqZ5bLJJ0CVVLPrzRkvsJg3vKVMENpcUzPi1CN913rrB9g/WPb2VGV
-X-MS-Exchange-AntiSpam-MessageData: E9Wu+NaZIjdXq3b0ap22QLY6sOOABJ7TEbckVcz4jn3u1oKXtCpcJAiysgk37uoAaU3cMKBWKDOiRmrsJ9RX4eo9LA5ioTbrASnTB2cP+d+7a5u8C9andzPA0SlNnSMO9iTyT+t0LtaDkY978AIcug==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 605f0f23-2da0-4713-0e1a-08d7be617586
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2020 04:23:29.1717
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: LTwIAagnE0YsnT4wVq5bj+Fn4+wSgiFpEXvVJt4psmkC78+LSVgu9NtCKLL3jf2X0ngShMzHKqWwTrkFAFu/H8a2MGQsDNyL7sLn4ijGqOlqKiC2+Y/pOAOvuLw3OCJhNEbdA9r9S5YAENp3/G/q5/hk0YMSPjZqBNWS1S8w+0ueHNWVvF6OTKqW0xR2UsxwoiIm29vHJtywDBjzhqmWrltcaaKia0h1p/+qFR3nCuPwtVkqr9ii+20MEMnfdb4k5Ge6I9DsMq/jIBU/ZEJueIyTEJCy/JU568+doHFGMHWzBKBdmHngCDaZV2WgaSA4L8OZPAA9xPH4Ct0VQdTVF2jEtCLDovEybcf+9mKK0P83BgXUm3QYucwYAdlGdGgdjG2w6XRBKxXWxVOy9rwQ8sED3HeyqI6egyC6QgOd/qpunP10Dz8ILWsfYYvjqEUM
+x-ms-exchange-antispam-messagedata: HiOXLX5E0RPwmYU79bE/bC3OagFZs5BR8mE/JXsJSe8dBrhDgFHGZ0if/gYLmMpS7Fk7bdcdTQ5q8iOlWeFmfgDXKkLBeeHLcqdJvCQKoi8gotPkU/0LNsEz4mp96Eb68Id7xybq1q6ibu/PstyfTA==
+x-ms-exchange-transport-forked: True
+Content-Type: multipart/mixed;
+        boundary="_002_db83f5a1b8272a310ca9a04df8257324nextfourcom_"
+MIME-Version: 1.0
+X-OriginatorOrg: nextfour.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e7b5073-216b-4e14-0a05-08d7be612e92
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 04:21:30.0821
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p0BEvW4LMZ7fNwnMGVON/XiPqp2g5Ntsy7kcG/9y4F4yqIlqNcH7m2zpKv3jwpbV+qYktYEOM2wy6WZIi0VnPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7180
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 972e95c2-9290-4a02-8705-4014700ea294
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: N36P7f+rvY2aFsWjcB4/IRsSaIeZ7KIhaG1Wyht5PJySY1lNvlDgK5aJO3/c8CdQcBKLxf3jeVr+zD8EkShcxYIkb1lfrVj2bvuNYnSshmo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR03MB4142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+--_002_db83f5a1b8272a310ca9a04df8257324nextfourcom_
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B43568D38D73A449970690EF0BB2678D@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 
-Add the iommu-map property to the pci nodes so that the firmware
-fixes it up with the required values thus enabling iommu for
-devices connected over pci.
+DQoNCk9uIDIuMy4yMDIwIDEuMDUsIEFydmluZCBTYW5rYXIgd3JvdGU6DQo+IGNvbW1pdCAyMjNl
+M2VlNTZmNzcgKCJlZmkveDg2OiBhZGQgaGVhZHJvb20gdG8gZGVjb21wcmVzc29yIEJTUyB0bw0K
+PiBhY2NvdW50IGZvciBzZXR1cCBibG9jayIpIGFkZGVkIGhlYWRyb29tIHRvIHRoZSBQRSBpbWFn
+ZSB0byBhY2NvdW50IGZvcg0KPiB0aGUgc2V0dXAgYmxvY2ssIHdoaWNoIHdhc24ndCB1c2VkIGZv
+ciB0aGUgZGVjb21wcmVzc2lvbiBidWZmZXIuDQo+DQo+IE5vdyB0aGF0IHdlIGRlY29tcHJlc3Mg
+ZnJvbSB0aGUgc3RhcnQgb2YgdGhlIGltYWdlLCB0aGlzIGlzIG5vIGxvbmdlcg0KPiByZXF1aXJl
+ZC4NCj4NCj4gQWRkIGEgY2hlY2sgdG8gbWFrZSBzdXJlIHRoYXQgdGhlIGhlYWQgc2VjdGlvbiBv
+ZiB0aGUgY29tcHJlc3NlZCBrZXJuZWwNCj4gd29uJ3Qgb3ZlcndyaXRlIGl0c2VsZiB3aGlsZSBy
+ZWxvY2F0aW5nLiBUaGlzIGlzIG9ubHkgZm9yDQo+IGZ1dHVyZS1wcm9vZmluZyBhcyB3aXRoIGN1
+cnJlbnQgbGltaXRzIG9uIHRoZSBzZXR1cCBhbmQgdGhlIGFjdHVhbCBzaXplDQo+IG9mIHRoZSBo
+ZWFkIHNlY3Rpb24sIHRoaXMgY2FuIG5ldmVyIGhhcHBlbi4NCj4NCj4gU2lnbmVkLW9mZi1ieTog
+QXJ2aW5kIFNhbmthciA8bml2ZWRpdGFAYWx1bS5taXQuZWR1Pg0KDQpUbyBtYWtlIGNsZWFyLCB0
+aGUga2VybmVsIChoZWFkXzMyLnMgYW5kIGhlYWRfNjQucykgc3RpbGwgcmVsb2NhdGVzDQppdHNl
+bGYgdG8gdGhlIGVuZCBvZiB0aGUgYnVmZmVyIGFuZCBkb2VzIGluLXBsYWNlIGRlY29tcHJlc3Np
+b24uIFNvIHRoaXMNCmlzIGp1c3QgdG8gbWFrZSBpbml0IHN6IHNtYWxsZXIuDQoNCg0KPiAtLS0N
+Cj4gIGFyY2gveDg2L2Jvb3QvdG9vbHMvYnVpbGQuYyB8IDI4ICsrKysrKysrKysrKysrKysrKysr
+KysrKysrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyNiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
+cygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvYm9vdC90b29scy9idWlsZC5jIGIvYXJj
+aC94ODYvYm9vdC90b29scy9idWlsZC5jDQo+IGluZGV4IDkwZDQwM2RmZWM4MC4uM2QwM2FkNzUz
+ZWQ1IDEwMDY0NA0KPiAtLS0gYS9hcmNoL3g4Ni9ib290L3Rvb2xzL2J1aWxkLmMNCj4gKysrIGIv
+YXJjaC94ODYvYm9vdC90b29scy9idWlsZC5jDQo+IEBAIC02NSw2ICs2NSw4IEBAIHVuc2lnbmVk
+IGxvbmcgZWZpX3BlX2VudHJ5Ow0KPiAgdW5zaWduZWQgbG9uZyBlZmkzMl9wZV9lbnRyeTsNCj4g
+IHVuc2lnbmVkIGxvbmcga2VybmVsX2luZm87DQo+ICB1bnNpZ25lZCBsb25nIHN0YXJ0dXBfNjQ7
+DQo+ICt1bnNpZ25lZCBsb25nIF9laGVhZDsNCj4gK3Vuc2lnbmVkIGxvbmcgX2VuZDsNCj4gIA0K
+PiAgLyotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tKi8NCj4gIA0KPiBAQCAtMjMyLDcgKzIzNCw3IEBAIHN0YXRpYyB2
+b2lkIHVwZGF0ZV9wZWNvZmZfdGV4dCh1bnNpZ25lZCBpbnQgdGV4dF9zdGFydCwgdW5zaWduZWQg
+aW50IGZpbGVfc3osDQo+ICB7DQo+ICAJdW5zaWduZWQgaW50IHBlX2hlYWRlcjsNCj4gIAl1bnNp
+Z25lZCBpbnQgdGV4dF9zeiA9IGZpbGVfc3ogLSB0ZXh0X3N0YXJ0Ow0KPiAtCXVuc2lnbmVkIGlu
+dCBic3Nfc3ogPSBpbml0X3N6ICsgdGV4dF9zdGFydCAtIGZpbGVfc3o7DQo+ICsJdW5zaWduZWQg
+aW50IGJzc19zeiA9IGluaXRfc3ogLSBmaWxlX3N6Ow0KPiAgDQo+ICAJcGVfaGVhZGVyID0gZ2V0
+X3VuYWxpZ25lZF9sZTMyKCZidWZbMHgzY10pOw0KPiAgDQo+IEBAIC0yNTksNyArMjYxLDcgQEAg
+c3RhdGljIHZvaWQgdXBkYXRlX3BlY29mZl90ZXh0KHVuc2lnbmVkIGludCB0ZXh0X3N0YXJ0LCB1
+bnNpZ25lZCBpbnQgZmlsZV9zeiwNCj4gIAlwdXRfdW5hbGlnbmVkX2xlMzIoZmlsZV9zeiAtIDUx
+MiArIGJzc19zeiwgJmJ1ZltwZV9oZWFkZXIgKyAweDFjXSk7DQo+ICANCj4gIAkvKiBTaXplIG9m
+IGltYWdlICovDQo+IC0JcHV0X3VuYWxpZ25lZF9sZTMyKGluaXRfc3ogKyB0ZXh0X3N0YXJ0LCAm
+YnVmW3BlX2hlYWRlciArIDB4NTBdKTsNCj4gKwlwdXRfdW5hbGlnbmVkX2xlMzIoaW5pdF9zeiwg
+JmJ1ZltwZV9oZWFkZXIgKyAweDUwXSk7DQo+ICANCj4gIAkvKg0KPiAgCSAqIEFkZHJlc3Mgb2Yg
+ZW50cnkgcG9pbnQgZm9yIFBFL0NPRkYgZXhlY3V0YWJsZQ0KPiBAQCAtMzYwLDYgKzM2Miw4IEBA
+IHN0YXRpYyB2b2lkIHBhcnNlX3pvZmZzZXQoY2hhciAqZm5hbWUpDQo+ICAJCVBBUlNFX1pPRlMo
+cCwgZWZpMzJfcGVfZW50cnkpOw0KPiAgCQlQQVJTRV9aT0ZTKHAsIGtlcm5lbF9pbmZvKTsNCj4g
+IAkJUEFSU0VfWk9GUyhwLCBzdGFydHVwXzY0KTsNCj4gKwkJUEFSU0VfWk9GUyhwLCBfZWhlYWQp
+Ow0KPiArCQlQQVJTRV9aT0ZTKHAsIF9lbmQpOw0KPiAgDQo+ICAJCXAgPSBzdHJjaHIocCwgJ1xu
+Jyk7DQo+ICAJCXdoaWxlIChwICYmICgqcCA9PSAnXHInIHx8ICpwID09ICdcbicpKQ0KPiBAQCAt
+NDQ0LDYgKzQ0OCwyNiBAQCBpbnQgbWFpbihpbnQgYXJnYywgY2hhciAqKiBhcmd2KQ0KPiAgCXB1
+dF91bmFsaWduZWRfbGUzMihzeXNfc2l6ZSwgJmJ1ZlsweDFmNF0pOw0KPiAgDQo+ICAJaW5pdF9z
+eiA9IGdldF91bmFsaWduZWRfbGUzMigmYnVmWzB4MjYwXSk7DQo+ICsjaWZkZWYgQ09ORklHX0VG
+SV9TVFVCDQo+ICsJLyoNCj4gKwkgKiBUaGUgZGVjb21wcmVzc2lvbiBidWZmZXIgd2lsbCBzdGFy
+dCBhdCBJbWFnZUJhc2UuIFdoZW4gcmVsb2NhdGluZw0KPiArCSAqIHRoZSBjb21wcmVzc2VkIGtl
+cm5lbCB0byBpdHMgZW5kLCB3ZSBtdXN0IGVuc3VyZSB0aGF0IHRoZSBoZWFkDQo+ICsJICogc2Vj
+dGlvbiBkb2VzIG5vdCBnZXQgb3ZlcndyaXR0ZW4uICBUaGUgaGVhZCBzZWN0aW9uIG9jY3VwaWVz
+DQo+ICsJICogW2ksIGkgKyBfZWhlYWQpLCBhbmQgdGhlIGRlc3RpbmF0aW9uIGlzIFtpbml0X3N6
+IC0gX2VuZCwgaW5pdF9zeikuDQo+ICsJICoNCj4gKwkgKiBBdCBwcmVzZW50IHRoZXNlIHNob3Vs
+ZCBuZXZlciBvdmVybGFwLCBiZWNhdXNlIGkgaXMgYXQgbW9zdCAzMmsNCj4gKwkgKiBiZWNhdXNl
+IG9mIFNFVFVQX1NFQ1RfTUFYLCBfZWhlYWQgaXMgbGVzcyB0aGFuIDFrLCBhbmQgdGhlDQo+ICsJ
+ICogY2FsY3VsYXRpb24gb2YgSU5JVF9TSVpFIGluIGJvb3QvaGVhZGVyLlMgZW5zdXJlcyB0aGF0
+DQo+ICsJICogaW5pdF9zeiAtIF9lbmQgaXMgYXQgbGVhc3QgNjRrLg0KPiArCSAqDQo+ICsJICog
+Rm9yIGZ1dHVyZS1wcm9vZmluZywgaW5jcmVhc2UgaW5pdF9zeiBpZiBuZWNlc3NhcnkuDQo+ICsJ
+ICovDQo+ICsNCj4gKwlpZiAoaW5pdF9zeiAtIF9lbmQgPCBpICsgX2VoZWFkKSB7DQo+ICsJCWlu
+aXRfc3ogPSAoaSArIF9laGVhZCArIF9lbmQgKyA0MDk1KSAmIH40MDk1Ow0KPiArCQlwdXRfdW5h
+bGlnbmVkX2xlMzIoaW5pdF9zeiwgJmJ1ZlsweDI2MF0pOw0KPiArCX0NCj4gKyNlbmRpZg0KPiAg
+CXVwZGF0ZV9wZWNvZmZfdGV4dChzZXR1cF9zZWN0b3JzICogNTEyLCBpICsgKHN5c19zaXplICog
+MTYpLCBpbml0X3N6KTsNCj4gIA0KPiAgCWVmaV9zdHViX2VudHJ5X3VwZGF0ZSgpOw0KDQo=
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
----
-V2:
- - Removed the 'iommu-map' from ls1012a/ls1043a/ls1046a due to
-   lack of SMMU node in upstream currently.
+--_002_db83f5a1b8272a310ca9a04df8257324nextfourcom_
+Content-Type: application/pgp-keys; name="pEpkey.asc"
+Content-Description: pEpkey.asc
+Content-Disposition: attachment; filename="pEpkey.asc"; size=3157;
+	creation-date="Mon, 02 Mar 2020 04:21:29 GMT";
+	modification-date="Mon, 02 Mar 2020 04:21:29 GMT"
+Content-ID: <1C4F99DB8E14184489F8E3A8D40D5F26@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 3 +++
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 4 ++++
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 6 ++++++
- 3 files changed, 13 insertions(+)
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tDQoNCm1RR05CRnZYMjBRQkRBREhm
+U1VzR2tvY2JsMCt0T1R5TXYyYnQxdVZnWVNDN09QQTE5d3FwWXZhTk9ZdjN1d0UNCnUxRmo0QUl3
+Tkp1cjZHZWlETzhheXZ0NHlMSzErUnQraGUxQzNlQmJvbnlPNGVIVml5QmdoYkdoN0JsM0xqemEN
+CndONVo2WmR0alBzZFVrUTROWGhoWXJDL041QXAwWi80U1VIOWwwMS9LdkgyTy9ERUZwUWVGekFY
+TG9DYVBFTnQNCmJ6bnNmdTlGN2VWV3FUa0ZtdTVLNkR3MFJaMzRHNlJQaGtFUG5Uc0VPWkZLbENT
+WkJUNFhXZWQ3dys3Y0d1R2YNCmJSVmNzQ3QwSThXNzlEQU12WTl0Qk4wOGVtUXZUeWsrWnF5SUNN
+UVFIR0dyVGhpcWVRbVZhNEcxYzBuaW5YWG0NCkNXaHZ4MUxiYUxlOFhuVG4rODV2SndTb092N2NH
+R00yUXJGY2sza1A4cGdsbEd1c0hsU0JNUkVwQWEvZmFKVk4NCmJXL1c1TS8yVGtuS3I0YjZjYWNq
+NjduOGVTalIxb0VsOVMxR09CM0xSYWRmYlJ2NDhVNXRsRFhtSlEwMHdURlcNCjZNZE5Oc0Q5dnRP
+OXJ6UkEyWlhNUnJxTTkxV0RReHdFYW9mTDc5RjU1a3E2eW5FQmJWNEdKbG11TTdHS1h4RWkNCjZw
+ZWIvVGNVeUN0YzBzRUFFUUVBQWJRclRXbHJZU0JRWlc1MGRHbHN3NlFnUEcxcGEyRXVjR1Z1ZEhS
+cGJHRkENCmJtVjRkR1p2ZFhJdVkyOXRQb2tCMUFRVEFRZ0FQZ0liQXdVTENRZ0hBZ1lWQ2drSUN3
+SUVGZ0lEQVFJZUFRSVgNCmdCWWhCRmF0YTJrVEl4ZWtsTWhPWU1RR2VjZnoyd3pGQlFKZHI5Z1VC
+UWtEdVc3TUFBb0pFTVFHZWNmejJ3ekYNCmZxME1BS1N1M2hIc1ZOZG1BaUEreDhYU3o4SEhVTnFo
+ZVEyM053U2MwZEJleDZibytGdVUwT1hLTmZhODRUZTgNCnpwQ2V5OU80bWY0L0ZyQ09temF5U2xh
+a2ZrRFZhQy9lSm5ETTV1Ny9yVy9pZnJ6a1pRMWdjcXpKcTJud1lTUzANCittbDZBcVpOYU9SWEFz
+bjlRNkZWZVlFR1BremNNK0pLcGxqQllwTUN0ckhqOG1JSCsxL0JOcGR4VGplVThPTSsNCmpKbTQy
+R1RtRXVDZGI3a1M1WXdFcTNTajZ3bXdnOFI3RFpnQTlraG9GMHcyUFdCYi9LNk1NMHZQZjZvTE9o
+RFANCk1KTXlaSjQzMUpJQ0FlTFl6V3ZCQitCdCtDYkRqQkpUcFBPYmRhYTd1VnVuOGlUVUJYZEc2
+RVNBY3VPUzlTMlENCnBRMkhVV3A1WkZxbWpmb0lCcklWTTFXSnVRZmgrSXBsWTc0MHhVUWVvd2VZ
+TVVndVFEekVFSVlPT3ZXNzVrMFANCkdUYUcxSjdJVktuRjcrRHIzcWxUd29vMWVpeVMzakxuYVlH
+VWRvS1h5dDVXcythU2liYWlIV1pUUkFQM3R6MWUNClFCUmU0Mml3aVBOUFlVOWNyaTNlMHkxT0VN
+M0Rqd0ErMmJGbm05aFEyaGVMQUV6ZkswWTBHMmJ6R00ydWJSN0INCnY2WnBBb2tCMUFRVEFRZ0FQ
+aFloQkZhdGEya1RJeGVrbE1oT1lNUUdlY2Z6Mnd6RkJRSmIxOXVMQWhzREJRa0INCjRUT0FCUXNK
+Q0FjQ0JoVUtDUWdMQWdRV0FnTUJBaDRCQWhlQUFBb0pFTVFHZWNmejJ3ekZWandMLzM1UzU0dEkN
+CmRXT0xGZXUzcHdUT3ZjKzY1SzR4V1l4cE5aMVRxWVltWW9pUG9IUERTT1pnUDlQeEV2eFk3ODZ1
+OTV4M0dPekkNCk9WbkFWRkxtYTZPeDdnbEVISThwYkNUZEs0ZTdZb2o0NHdqcWcyeTFoMWl4N2d4
+Ny94MEpyU2dadG9oMEJCeG0NCjM4UENTamg1QUtwTGt5ZmlhWktpblJUWE1SejROL0VPSHBKQlJv
+eHN5V2U4aFNsUFdGbXpRVE81SGJ5NzdNZ1ENCnAzajRLV1ZNYnUxdWVUQi9HZzgxN2hLTUViWFo5
+SnlMYVhmdDIxUjFvYU8zUDdwajhPWk9RN0F5OFBwWTlxbTgNCkVKZHo4R2VIUVZQMEhadHdJMXdZ
+YWFYS1FuMzVWRThVU21MNndUZmVtRW55bVFEMWUyYU9nVGNIb1NOR001a3gNCnNuQUd4VjcrK0pr
+Njh6K2hBVHpoajJ4SmpKNjRHdGoySlJFNU52T011RG4yM2QrcnlHblZjZmQwcHdTMU9UUEoNCmVK
+V3lZb0xCNm1sRUliT2NoUmhaeVFweGNNZktkdkJhTURNK0l2YXo0aWFldDhiWHlVdVhhMXBzR0o2
+NGpycUMNCnFiUDBzK2xBLzBPVTBidHNoTjNNWjZCSGxrR3A0WFBhSFFaVVc2dDlPSitrQnhaaXpl
+WjRvOTdRWUxrQmpRUmINCjE5dEpBUXdBcmJUTW8wbGFTaG1WODJXV1lBM1NjRmYzT3NyYmt2aTVN
+VGxyTkpTUTRjZGhNVmZHeVU2cmlOM2INCjU0OTVFQm1BQ21FRTduWjduQVJyYllUN0E1UENKUFpz
+YUU0Mnp3cTNBWjg5MEFvRWpqTEYrU2x1VUJHWmtaeisNCmxMQnhwTHh5aGxxQ2gwaUkyR3JnRVZG
+aGtlRExNSkZRT2ZUdm1HeVFRWXUzRllJMlpvNG9CcHFtaXd5WlZOaTgNCllKbUNZSksrMTFZT1I4
+U21SVC9nN3c1cG95Mldla3RIZmhJbUdwZE1FUmtUTnp6U3g5cmUra1NmRUlLRWxlQ2ENClhDZjNK
+VW4wWU1ZYlY3Z2lnV2RqR0tFYmZIODJYbm1qejFkd2pjcVBoRitUbHhsaHNvTDF3ZGh1eUJCTGpm
+SE8NCjEzLzh3YUQwRGxtdFpibmdCSW5kVkJDQmV0Qzl3cDk3MkdQamN5VkFQTHlHUWE5cGs1SklP
+Z0lVRWRNcjV0VG8NClkyZ0hqS2pKMzFrUk9FbDhWRnppdGt1K2ZzSXNaYmRQZnFwMmdPVW9xZ1ZF
+RGt5M0hZRmlhWnVsek5QVW1ZUlkNCkovR0hvOEFMVThoNE5TdkNkazk3Q3pIdmRrQjEvRThIMTlL
+dmswYVpIekZRY0JuaGt6cStuMFpiU2FUSlM3TTQNCmFxUmFJOGY3QUJFQkFBR0pBYndFR0FFSUFD
+WUNHd3dXSVFSV3JXdHBFeU1YcEpUSVRtREVCbm5IODlzTXhRVUMNClhhL1lGQVVKQTdsdXh3QUtD
+UkRFQm5uSDg5c014WUx4Qy85THUxeGpkVVRkbWQxMC81RXpBMWkwYmROQm9qQlkNCjNQSjRPNGJo
+R3BiOUtHbnhzaFRPRVduY05teXk0MHM4YUhMYmRyZ0VWS0N0a1Mra3dBcm1URmptazQ5R3pRaWUN
+CnJSTzJjTlUwV2tVZXBjWDl3cjUxcUtTYnJuZDdFMHJ6MHlNbXVXdlJIalJ0ejErRDhkUi9HSmhK
+ZFlyRUtxbmwNCnZQVm5yT05qNVp4WFc4d2pzZ1FtczVpTHVWUXp1eVJ5WDRROHhiSFJiYWlsWEVE
+TlUrSFRXUjU4YUFtdzRpeWwNCjI4N0x0RHd5VS9JU2M3T3FNMkVzVFBPaFNlWWpPbkxIWnZvdCt1
+ZnU2cU9HS2tBaUthTm53TjZwUkprVzF6S1kNCnFuUVJZMEhKNmt5cmoxWmFKdzFONEMzVm9wQkxq
+Qy9Qbm44dldBekgzNVJMKzJvaGs0MTY4ZEhhQXJVYVJOV0sNCnF1REFWK3psOGRsR0wySDVVMHlu
+cUxCNWtvU0NINHpnUURtY0gycHQyN3pCcXVxNE1ySzNwTC85emduWE9VeWENClZuUGVjTGRHakhS
+YTIyS2xkb05WT2Y0MWtJQ2wxTFo2ZllXcXhWWEl2ZUE2N0hTcWlmZHVjVVA5bjUwYVdUeWcNCkZx
+L1JFbVVlcmFVV2NZeWRFK0IrNFh0NXlJRi9WL1p3bTBvPQ0KPVoyVkoNCi0tLS0tRU5EIFBHUCBQ
+VUJMSUMgS0VZIEJMT0NLLS0tLS0NCg==
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index ec6013a8137d..36a799554620 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -494,6 +494,7 @@
- 					<0000 0 0 2 &gic 0 0 0 110 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 0 111 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 0 112 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -519,6 +520,7 @@
- 					<0000 0 0 2 &gic 0 0 0 115 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 0 116 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 0 117 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -544,6 +546,7 @@
- 					<0000 0 0 2 &gic 0 0 0 120 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 0 121 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 0 122 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-index f96d06da96be..3944ef16ec60 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -648,6 +648,7 @@
- 					<0000 0 0 2 &gic 0 0 0 110 4>,
- 					<0000 0 0 3 &gic 0 0 0 111 4>,
- 					<0000 0 0 4 &gic 0 0 0 112 4>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -669,6 +670,7 @@
- 					<0000 0 0 2 &gic 0 0 0 115 4>,
- 					<0000 0 0 3 &gic 0 0 0 116 4>,
- 					<0000 0 0 4 &gic 0 0 0 117 4>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -690,6 +692,7 @@
- 					<0000 0 0 2 &gic 0 0 0 120 4>,
- 					<0000 0 0 3 &gic 0 0 0 121 4>,
- 					<0000 0 0 4 &gic 0 0 0 122 4>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -711,6 +714,7 @@
- 					<0000 0 0 2 &gic 0 0 0 125 4>,
- 					<0000 0 0 3 &gic 0 0 0 126 4>,
- 					<0000 0 0 4 &gic 0 0 0 127 4>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-index 98a8f6def55e..ae1b113ab162 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -858,6 +858,7 @@
- 					<0000 0 0 2 &gic 0 0 GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -885,6 +886,7 @@
- 					<0000 0 0 2 &gic 0 0 GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -912,6 +914,7 @@
- 					<0000 0 0 2 &gic 0 0 GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -939,6 +942,7 @@
- 					<0000 0 0 2 &gic 0 0 GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -966,6 +970,7 @@
- 					<0000 0 0 2 &gic 0 0 GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
-@@ -993,6 +998,7 @@
- 					<0000 0 0 2 &gic 0 0 GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 3 &gic 0 0 GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
- 					<0000 0 0 4 &gic 0 0 GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootloader */
- 			status = "disabled";
- 		};
- 
--- 
-2.17.1
-
+--_002_db83f5a1b8272a310ca9a04df8257324nextfourcom_--
