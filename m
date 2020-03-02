@@ -2,137 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A94F176638
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64689176649
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 22:44:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgCBVnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 16:43:22 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42982 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgCBVnW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 16:43:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id f5so344558pfk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 13:43:21 -0800 (PST)
+        id S1726901AbgCBVn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 16:43:56 -0500
+Received: from mail-dm6nam12on2083.outbound.protection.outlook.com ([40.107.243.83]:1600
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726740AbgCBVnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 16:43:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S4E5l0ybgyDjuXRdKZV/UvNKXYTmbru78/5q2l7JTj17SwBnUi5LJH7bhSJ5xtBSQI+FlpnucoZixqOQpApi4Kih7jPCZ98MJ0ENWskb7ugQMgI07SG+y1NtAtGRQqyKFY52j9/SXHxn9otEhJ1WuAHBrlHEOIzh02g2uBzSacmyINHEdvMpWVXi6eU/iNai9zN40nfCsUH6DnCH97NBuiFjJlUfgJ8u6YqxtWKOsqj7Xgg9rtGWnpJtAXEvPRl4NGtUlXuPk4XV4HnkqQBsAZgxvrLRw+gPDGNxlRwder/HUlIoIDD5+UweM8CI+dPTS7L3XHPDfiI0z6//GcKoBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aKguYXdmTR0W6sNGc8gK3q5BRscRZZWMCQvEaWccbXc=;
+ b=BbxCcp1hXpeVl087mEhTwePfL1eo0JlOESD67BrLhmJ3eZH7/NUcics6XrErAA7/0H08LIdYuxWLyldaZtBy+rJ1ELPXmloYcXdcJyBww/tQn/yL0rdukKxpAELghg8TMs9wcDZhaccdKIhv/z0LeZBn81O0t8Y8EaAL7/EltCjWH/7Oa+oLavmsCm2/KP3DEAbstoME0g4jITPW+qyIKEs10cdilptAgVfCaIM2h1eR+tYUBWMfO0KnyTzArwQRM0Pk8CQn5Wow58cmF6KUPMD1JmVPyiz42yzQPa5CHP4QMM22ZyrJ64W4DXG7l9fs5u9niIsdsFlRsJd3YDZlIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4dlwidJa8gDEE3TMB16QWBVQS+uPEhVk5tCpDd5ZLJM=;
-        b=vEXELDoob+J8VQsf8H5NR7WHeynlggYFMF78SSlMvgD2RMO3pCCAnjZ3ehbZ0aldd5
-         dvf/XYY1VurmRTOGDqrCs5Ogc4X3lhwKDoyakd25opm8rk2WQu/n3OVQmXgFFXpRzAqm
-         +dfu3sriNNRUBMscl3Wkk6oEhhSCH4rNiD0wvwA7kcGQyNILwyp+ZryAv146IdGKnkag
-         3EGku1T/MjyHVFIoP/tJUePzmBZb1HpgqR8OE5hqsOBz0N3SMhpLwySFMHBZLjrBZjCW
-         DqdDnDcev7344FrO0mGzQ3J0ow2S6Et9x5hDZFr+bHFGvsTWU22EoCVmuaq2YYQTzRrQ
-         esMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4dlwidJa8gDEE3TMB16QWBVQS+uPEhVk5tCpDd5ZLJM=;
-        b=TDfZQVvCE6oPVHHuUOpkC0hSSSNpWllAYFCz5623H2+8E4RzsemuimEJj7Vwo62/7b
-         sKsG7UX9o60ImekzoN8mM9F05kTCR69bh99Acb7uakk2uYo0kFXfnQTpAW1ax6Dpbi6k
-         ZWj2ltQmAdkJ/VeJymdpK3Q/UarCMFnIkdIQ6fjPoGMQDHgDa60WQA0uL1laXdyBvn8m
-         X7odKiuGe82TaiROQerDVTkK2JL0rDXFOUt5MDoDJAeQyXMXROvqw2UqmaQLv306raE/
-         rlQQWbXoZTx82FAob7cXhdaEkNBT0Ho6QE+DF9b3gF4Ihn1/OThhWy0seqtnuAN0SIJM
-         3nGA==
-X-Gm-Message-State: ANhLgQ2TiJ2w7YMAspeE5V91dWMOYMQ2FX18aaH9ML8wKEqjtuHqSxz5
-        le7LhnEl8iciUiQvqNOz+9a+PA==
-X-Google-Smtp-Source: ADFU+vtQXMul1hNQtsoN7QrNSj8GdpelOfLhaSfk0E4yO0oVxkQ4ZreXZEDUg5eQKHQcTUxVkdhiBg==
-X-Received: by 2002:a63:9549:: with SMTP id t9mr876417pgn.346.1583185401237;
-        Mon, 02 Mar 2020 13:43:21 -0800 (PST)
-Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id y197sm23281150pfc.79.2020.03.02.13.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 13:43:20 -0800 (PST)
-Date:   Mon, 2 Mar 2020 13:43:17 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     nikita.shubin@maquefel.me, Nikita Shubin <NShubin@topcon.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: error on kick missing
-Message-ID: <20200302214317.GI210720@yoga>
-References: <20200228110804.25822-1-nikita.shubin@maquefel.me>
- <CANLsYkyDsJaxO_37qTjEP+aeQju8W2+jhHFRF7+oifBMqJqyng@mail.gmail.com>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aKguYXdmTR0W6sNGc8gK3q5BRscRZZWMCQvEaWccbXc=;
+ b=YQIzrUSSvmCra/d/v+EOvVUx0D+lkMDyQmr/RA+QQfa2L9o5oDLqqtSCtCj9oH7jZg1QImL6Mwbc/LHqMah+1R29ZFCz7UKgIxSJggE9TbD9igPvULcSj6RMiHzi6L95sXn8ZgoLFFAhMDnIvvzMXC0SEkcyDbU4MjQzv0TeecI=
+Received: from CY4PR21CA0015.namprd21.prod.outlook.com (2603:10b6:903:dd::25)
+ by SN6PR02MB4432.namprd02.prod.outlook.com (2603:10b6:805:a5::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14; Mon, 2 Mar
+ 2020 21:43:53 +0000
+Received: from CY1NAM02FT006.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:903:dd::4) by CY4PR21CA0015.outlook.office365.com
+ (2603:10b6:903:dd::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.4 via Frontend
+ Transport; Mon, 2 Mar 2020 21:43:53 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT006.mail.protection.outlook.com (10.152.74.104) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2772.15
+ via Frontend Transport; Mon, 2 Mar 2020 21:43:52 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1j8squ-00020C-8M; Mon, 02 Mar 2020 13:43:52 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1j8sqp-00033f-5B; Mon, 02 Mar 2020 13:43:47 -0800
+Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 022LhiBa006053;
+        Mon, 2 Mar 2020 13:43:44 -0800
+Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1j8sqm-00032V-Kq; Mon, 02 Mar 2020 13:43:44 -0800
+From:   Jolly Shah <jolly.shah@xilinx.com>
+To:     olof@lixom.net, mturquette@baylibre.com, sboyd@kernel.org,
+        michal.simek@xilinx.com, arm@kernel.org, linux-clk@vger.kernel.org
+Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jolly Shah <jolly.shah@xilinx.com>
+Subject: [PATCH 0/4] Clock driver fixes
+Date:   Mon,  2 Mar 2020 13:43:30 -0800
+Message-Id: <1583185414-20106-1-git-send-email-jolly.shah@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(396003)(346002)(199004)(189003)(8676002)(4744005)(81166006)(26005)(81156014)(2616005)(2906002)(7696005)(426003)(8936002)(336012)(6666004)(356004)(9786002)(186003)(44832011)(36756003)(5660300002)(70586007)(107886003)(70206006)(4326008)(316002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4432;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANLsYkyDsJaxO_37qTjEP+aeQju8W2+jhHFRF7+oifBMqJqyng@mail.gmail.com>
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 68a12ae4-d2fa-4c76-81b7-08d7bef2cd13
+X-MS-TrafficTypeDiagnostic: SN6PR02MB4432:
+X-Microsoft-Antispam-PRVS: <SN6PR02MB4432EF31D00D5C4E7CA013F5B8E70@SN6PR02MB4432.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:2958;
+X-Forefront-PRVS: 033054F29A
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yasSRkDke6YFyEEFTgzHqNCJUwpHu6ombDDK4pYdrEQhmPb2z5yPbIjwfHPPWu5ZsqYBjlAkys0WqEi4ydNRWpC3v8qXJGaVJtdwsEA14Df+V1+xvptdSKp3iuv0UipeeVrFfyrkire4j5JiEOzMQp0w+uKPjcEDcK6Gc1Q+AtoQZ49TIDc/GWHPY4iSwURdzlz2vSehnJbp97JLwyDLN838GkirEYiX+g2Sj/jhbL+goRkU3ydWMUMFiccuDNMnko/bmvMyJfoefP31r3xxgD/9L/C0ymjDFeZzsXkzJ69FV89LHpRn356cULoO6+/nMbqlwtmrEcTu6h4vi+A8UaiQWa4/irPXCmOMSpQrK3nZMbFt/jvUryIhyu444wL84UTIxyzreXVcAH9bGjzVfMITPLvKfXq2OIpWszbKMlNnRQF/hvZ1zk1nL+w0bqo3
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2020 21:43:52.6894
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68a12ae4-d2fa-4c76-81b7-08d7bef2cd13
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4432
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02 Mar 09:44 PST 2020, Mathieu Poirier wrote:
+This patchset includes below fixes for clock driver
+1> Fix Divider2 calculation 
+2> Memory leak in clock registration
+3> Fix invalid name queries
+4> Limit bestdiv with maxdiv
 
-> Hi Nikita,
-> 
-> On Fri, 28 Feb 2020 at 04:07, <nikita.shubin@maquefel.me> wrote:
-> >
-> > From: Nikita Shubin <NShubin@topcon.com>
-> >
-> > .kick method not set in rproc_ops will result in:
-> >
-> > 8<--- cut here ---
-> > Unable to handle kernel NULL pointer dereference
-> >
-> > in rproc_virtio_notify, after firmware loading.
-> 
-> There wasn't any kernel stack trace?  What platform was this observed
-> on? I'm afraid we won't be able to move forward with this patch
-> without one, or more information on what is happening.
-> 
-> >
-> > refuse to register an rproc-induced virtio device if no kick method was
-> > defined for rproc.
-> >
-> > Signed-off-by: Nikita Shubin <NShubin@topcon.com>
-> > ---
+Quanyang Wang (1):
+  clk: zynqmp: fix memory leak in zynqmp_register_clocks
 
-Nikita, please include "v2" in the subject and add here (below the ---)
-short summary of what changes since v1.
+Rajan Vaja (2):
+  clk: zynqmp: Limit bestdiv with maxdiv
+  drivers: clk: Fix invalid clock name queries
 
-> >  drivers/remoteproc/remoteproc_virtio.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> > index 8c07cb2ca8ba..31a62a0b470e 100644
-> > --- a/drivers/remoteproc/remoteproc_virtio.c
-> > +++ b/drivers/remoteproc/remoteproc_virtio.c
-> > @@ -334,6 +334,13 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
-> >         struct rproc_mem_entry *mem;
-> >         int ret;
-> >
-> > +       if (rproc->ops->kick == NULL) {
-> > +               ret = -EINVAL;
-> > +               dev_err(dev, ".kick method not defined for %s",
-> > +                               rproc->name);
-> > +               goto out;
-> > +       }
-> 
-> I think it would be better to use WARN_ONCE() in rproc_virtio_notify()
-> than prevent a virtio device from being added.  But again I will need
-> more information on this case to know for sure.
-> 
+Tejas Patel (1):
+  drivers: clk: zynqmp: Fix divider2 calculation
 
-I reviewed v1 and afaict there's no way rproc->ops->kick would change
-and that things wouldn't work without a kick.
+ drivers/clk/zynqmp/clkc.c    | 20 ++++++++++++++------
+ drivers/clk/zynqmp/divider.c | 19 ++++++++++++++-----
+ 2 files changed, 28 insertions(+), 11 deletions(-)
 
-So I requested that it should be checked during initialization instead.
-Please let me know if I missed some case.
+-- 
+2.7.4
 
-Regards,
-Bjorn
-
-> Thanks,
-> Mathieu
-> 
-> > +
-> >         /* Try to find dedicated vdev buffer carveout */
-> >         mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
-> >         if (mem) {
-> > --
-> > 2.24.1
-> >
