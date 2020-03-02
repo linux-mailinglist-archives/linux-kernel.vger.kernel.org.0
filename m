@@ -2,292 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A73175F53
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:15:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D09A175F63
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbgCBQPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 11:15:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21150 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726621AbgCBQPb (ORCPT
+        id S1727250AbgCBQTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 11:19:46 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:33604 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbgCBQTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 11:15:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583165730;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mmvLYV8uSGKamG5bn2woan+DsvrYgigNBwpjj5pYtP4=;
-        b=EOe5Q1Ui9U0fPNriM4iABmpmsnggs0woQ7J+hlOO88tX/NfvDKe14HvxzUj+hVTqv9EoIe
-        ePon2HhBehlkmB2v0GFIooYrN+LAl2kbalM1dNvGBbw8KPUICclDNndIhcCrIK0Z+HB23a
-        zBB/tclu50fhzbEEbMFrcJkJhEotqUk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-5yzTkBaBMPuGoPKZwvttvg-1; Mon, 02 Mar 2020 11:15:28 -0500
-X-MC-Unique: 5yzTkBaBMPuGoPKZwvttvg-1
-Received: by mail-wr1-f70.google.com with SMTP id w11so1817825wrp.20
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 08:15:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mmvLYV8uSGKamG5bn2woan+DsvrYgigNBwpjj5pYtP4=;
-        b=dQHnQG+7/hDVfxenW6LC7c+wZbbvvu82umNjirrzln2YRF2uBcMVeVyyOp802Kzo0p
-         Cwb9u30nRKwtnkSw4DsEWGD2VZTzhGdshSfO7AwjkoDGcQsGATq8bRNOXu9SSAEq+sbs
-         3OuIeI6vl+oLMbLbs84evNpa22tBAQAUg6Nky2vv47CjBC83GJ+D19g/cAezgSJEckF/
-         3ZuDI5MBcGcQu3m31Vl7Wov9A2GWf5Q6J7FR63xuVh5uXHBDg9eTHjafmr1f3uEsf4e3
-         oLdNGEPB9dk2qcpT9QzdwGBFYuAeO9sHz4S/6JxXiPZTKLWx1JCW7rjAR9E6Ehx70LVp
-         ROpA==
-X-Gm-Message-State: ANhLgQ3c4eTVR6omWcvJZYMCogcxzicj56F2L0+nIKOBsVk1a1PYzYHh
-        UgoEH/IitTIgcPxqFKt6aaBMYVKKNkbEhKhuV1nTaGwI53P8ZBeMSEMycohbxI4dO82uRfwjr4H
-        TYdd3umo9gWZ0Vk+GgQDapoZb
-X-Received: by 2002:a5d:5303:: with SMTP id e3mr344176wrv.274.1583165727168;
-        Mon, 02 Mar 2020 08:15:27 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vuZcTc1H12c5GWZ/vC0FhpVFV4kZ8UauvtLtPuaHd1TfxD7u0doqtcC+cwc3WdkGewCKmPeGQ==
-X-Received: by 2002:a5d:5303:: with SMTP id e3mr344158wrv.274.1583165726844;
-        Mon, 02 Mar 2020 08:15:26 -0800 (PST)
-Received: from [192.168.178.40] ([151.30.85.6])
-        by smtp.gmail.com with ESMTPSA id b24sm5726409wmj.13.2020.03.02.08.15.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2020 08:15:26 -0800 (PST)
-Subject: Re: [PATCH v2] KVM: Remove unnecessary asm/kvm_host.h includes
-To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     jianjay.zhou@huawei.com,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20200228183020.398692-1-peterx@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <4c7c323e-5e5d-01b6-fb94-74390a813ff1@redhat.com>
-Date:   Mon, 2 Mar 2020 17:15:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 2 Mar 2020 11:19:46 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j8nnD-0001jz-MG; Mon, 02 Mar 2020 09:19:43 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j8nnC-0000UA-Vb; Mon, 02 Mar 2020 09:19:43 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+        <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
+        <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+        <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74zmfc9.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87k142lpfz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Mon, 02 Mar 2020 10:17:32 -0600
+In-Reply-To: <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        (Bernd Edlinger's message of "Mon, 2 Mar 2020 16:02:46 +0000")
+Message-ID: <875zfmloir.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200228183020.398692-1-peterx@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1j8nnC-0000UA-Vb;;;mid=<875zfmloir.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/rDgyLYZJLEvddAZC2RnTuV8ERN149vpA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4839]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 306 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 3.9 (1.3%), b_tie_ro: 2.7 (0.9%), parse: 1.68
+        (0.5%), extract_message_metadata: 15 (5.1%), get_uri_detail_list: 1.98
+        (0.6%), tests_pri_-1000: 16 (5.4%), tests_pri_-950: 1.46 (0.5%),
+        tests_pri_-900: 1.26 (0.4%), tests_pri_-90: 33 (10.9%), check_bayes:
+        32 (10.3%), b_tokenize: 10 (3.4%), b_tok_get_all: 10 (3.3%),
+        b_comp_prob: 2.8 (0.9%), b_tok_touch_all: 4.3 (1.4%), b_finish: 0.85
+        (0.3%), tests_pri_0: 220 (72.0%), check_dkim_signature: 0.49 (0.2%),
+        check_dkim_adsp: 2.5 (0.8%), poll_dns_idle: 0.63 (0.2%), tests_pri_10:
+        2.0 (0.7%), tests_pri_500: 6 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/02/20 19:30, Peter Xu wrote:
-> Remove includes of asm/kvm_host.h from files that already include
-> linux/kvm_host.h to make it more obvious that there is no ordering issue
-> between the two headers.  linux/kvm_host.h includes asm/kvm_host.h to
-> pick up architecture specific settings, and this will never change, i.e.
-> including asm/kvm_host.h after linux/kvm_host.h may seem problematic,
-> but in practice is simply redundant.
-> 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
-> v2:
-> - s/unecessary/unnecessary/
-> - use Sean's suggested commit message
-> ---
->  arch/arm/kvm/coproc.c                | 1 -
->  arch/arm64/kvm/fpsimd.c              | 1 -
->  arch/arm64/kvm/guest.c               | 1 -
->  arch/arm64/kvm/hyp/switch.c          | 1 -
->  arch/arm64/kvm/sys_regs.c            | 1 -
->  arch/arm64/kvm/sys_regs_generic_v8.c | 1 -
->  arch/powerpc/kvm/book3s_64_vio.c     | 1 -
->  arch/powerpc/kvm/book3s_64_vio_hv.c  | 1 -
->  arch/powerpc/kvm/book3s_hv.c         | 1 -
->  arch/powerpc/kvm/mpic.c              | 1 -
->  arch/powerpc/kvm/powerpc.c           | 1 -
->  arch/powerpc/kvm/timing.h            | 1 -
->  arch/s390/kvm/intercept.c            | 1 -
->  arch/x86/kvm/mmu/page_track.c        | 1 -
->  virt/kvm/arm/psci.c                  | 1 -
->  15 files changed, 15 deletions(-)
-> 
-> diff --git a/arch/arm/kvm/coproc.c b/arch/arm/kvm/coproc.c
-> index 07745ee022a1..f0c09049ee99 100644
-> --- a/arch/arm/kvm/coproc.c
-> +++ b/arch/arm/kvm/coproc.c
-> @@ -10,7 +10,6 @@
->  #include <linux/kvm_host.h>
->  #include <linux/uaccess.h>
->  #include <asm/kvm_arm.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_emulate.h>
->  #include <asm/kvm_coproc.h>
->  #include <asm/kvm_mmu.h>
-> diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
-> index 525010504f9d..e329a36b2bee 100644
-> --- a/arch/arm64/kvm/fpsimd.c
-> +++ b/arch/arm64/kvm/fpsimd.c
-> @@ -11,7 +11,6 @@
->  #include <linux/kvm_host.h>
->  #include <asm/fpsimd.h>
->  #include <asm/kvm_asm.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_mmu.h>
->  #include <asm/sysreg.h>
->  
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> index 2bd92301d32f..23ebe51410f0 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -25,7 +25,6 @@
->  #include <asm/kvm.h>
->  #include <asm/kvm_emulate.h>
->  #include <asm/kvm_coproc.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/sigcontext.h>
->  
->  #include "trace.h"
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index dfe8dd172512..f3e0ab961565 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -17,7 +17,6 @@
->  #include <asm/kprobes.h>
->  #include <asm/kvm_asm.h>
->  #include <asm/kvm_emulate.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_hyp.h>
->  #include <asm/kvm_mmu.h>
->  #include <asm/fpsimd.h>
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 3e909b117f0c..b95f7b7743c8 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -22,7 +22,6 @@
->  #include <asm/kvm_arm.h>
->  #include <asm/kvm_coproc.h>
->  #include <asm/kvm_emulate.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_hyp.h>
->  #include <asm/kvm_mmu.h>
->  #include <asm/perf_event.h>
-> diff --git a/arch/arm64/kvm/sys_regs_generic_v8.c b/arch/arm64/kvm/sys_regs_generic_v8.c
-> index 2b4a3e2d1b89..9cb6b4c8355a 100644
-> --- a/arch/arm64/kvm/sys_regs_generic_v8.c
-> +++ b/arch/arm64/kvm/sys_regs_generic_v8.c
-> @@ -12,7 +12,6 @@
->  #include <asm/cputype.h>
->  #include <asm/kvm_arm.h>
->  #include <asm/kvm_asm.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_emulate.h>
->  #include <asm/kvm_coproc.h>
->  #include <asm/sysreg.h>
-> diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
-> index ee6c103bb7d5..50555ad1db93 100644
-> --- a/arch/powerpc/kvm/book3s_64_vio.c
-> +++ b/arch/powerpc/kvm/book3s_64_vio.c
-> @@ -27,7 +27,6 @@
->  #include <asm/hvcall.h>
->  #include <asm/synch.h>
->  #include <asm/ppc-opcode.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/udbg.h>
->  #include <asm/iommu.h>
->  #include <asm/tce.h>
-> diff --git a/arch/powerpc/kvm/book3s_64_vio_hv.c b/arch/powerpc/kvm/book3s_64_vio_hv.c
-> index ab6eeb8e753e..6fcaf1fa8e02 100644
-> --- a/arch/powerpc/kvm/book3s_64_vio_hv.c
-> +++ b/arch/powerpc/kvm/book3s_64_vio_hv.c
-> @@ -24,7 +24,6 @@
->  #include <asm/hvcall.h>
->  #include <asm/synch.h>
->  #include <asm/ppc-opcode.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/udbg.h>
->  #include <asm/iommu.h>
->  #include <asm/tce.h>
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 2cefd071b848..f065d6956342 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -72,7 +72,6 @@
->  #include <asm/xics.h>
->  #include <asm/xive.h>
->  #include <asm/hw_breakpoint.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_book3s_uvmem.h>
->  #include <asm/ultravisor.h>
->  
-> diff --git a/arch/powerpc/kvm/mpic.c b/arch/powerpc/kvm/mpic.c
-> index fe312c160d97..23e9c2bd9f27 100644
-> --- a/arch/powerpc/kvm/mpic.c
-> +++ b/arch/powerpc/kvm/mpic.c
-> @@ -32,7 +32,6 @@
->  #include <linux/uaccess.h>
->  #include <asm/mpic.h>
->  #include <asm/kvm_para.h>
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_ppc.h>
->  #include <kvm/iodev.h>
->  
-> diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-> index 1af96fb5dc6f..c1f23cb4206c 100644
-> --- a/arch/powerpc/kvm/powerpc.c
-> +++ b/arch/powerpc/kvm/powerpc.c
-> @@ -32,7 +32,6 @@
->  #include <asm/plpar_wrappers.h>
->  #endif
->  #include <asm/ultravisor.h>
-> -#include <asm/kvm_host.h>
->  
->  #include "timing.h"
->  #include "irq.h"
-> diff --git a/arch/powerpc/kvm/timing.h b/arch/powerpc/kvm/timing.h
-> index ace65f9fed30..feef7885ba82 100644
-> --- a/arch/powerpc/kvm/timing.h
-> +++ b/arch/powerpc/kvm/timing.h
-> @@ -10,7 +10,6 @@
->  #define __POWERPC_KVM_EXITTIMING_H__
->  
->  #include <linux/kvm_host.h>
-> -#include <asm/kvm_host.h>
->  
->  #ifdef CONFIG_KVM_EXIT_TIMING
->  void kvmppc_init_timing_stats(struct kvm_vcpu *vcpu);
-> diff --git a/arch/s390/kvm/intercept.c b/arch/s390/kvm/intercept.c
-> index a389fa85cca2..3655196f1c03 100644
-> --- a/arch/s390/kvm/intercept.c
-> +++ b/arch/s390/kvm/intercept.c
-> @@ -12,7 +12,6 @@
->  #include <linux/errno.h>
->  #include <linux/pagemap.h>
->  
-> -#include <asm/kvm_host.h>
->  #include <asm/asm-offsets.h>
->  #include <asm/irq.h>
->  #include <asm/sysinfo.h>
-> diff --git a/arch/x86/kvm/mmu/page_track.c b/arch/x86/kvm/mmu/page_track.c
-> index 3521e2d176f2..0713778b8e12 100644
-> --- a/arch/x86/kvm/mmu/page_track.c
-> +++ b/arch/x86/kvm/mmu/page_track.c
-> @@ -14,7 +14,6 @@
->  #include <linux/kvm_host.h>
->  #include <linux/rculist.h>
->  
-> -#include <asm/kvm_host.h>
->  #include <asm/kvm_page_track.h>
->  
->  #include "mmu.h"
-> diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
-> index 17e2bdd4b76f..14a162e295a9 100644
-> --- a/virt/kvm/arm/psci.c
-> +++ b/virt/kvm/arm/psci.c
-> @@ -12,7 +12,6 @@
->  
->  #include <asm/cputype.h>
->  #include <asm/kvm_emulate.h>
-> -#include <asm/kvm_host.h>
->  
->  #include <kvm/arm_psci.h>
->  #include <kvm/arm_hypercalls.h>
-> 
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
-Queued, thanks.
+> On 3/2/20 4:57 PM, Eric W. Biederman wrote:
+>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>> 
+>>>
+>>> I tried this with s/EACCESS/EACCES/.
+>>>
+>>> The test case in this patch is not fixed, but strace does not freeze,
+>>> at least with my setup where it did freeze repeatable.
+>> 
+>> Thanks, That is what I was aiming at.
+>> 
+>> So we have one method we can pursue to fix this in practice.
+>> 
+>>> That is
+>>> obviously because it bypasses the cred_guard_mutex.  But all other
+>>> process that access this file still freeze, and cannot be
+>>> interrupted except with kill -9.
+>>>
+>>> However that smells like a denial of service, that this
+>>> simple test case which can be executed by guest, creates a /proc/$pid/mem
+>>> that freezes any process, even root, when it looks at it.
+>>> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb.
+>> 
+>> Yes.  Your the test case in your patch a variant of the original
+>> problem.
+>> 
+>> 
+>> I have been staring at this trying to understand the fundamentals of the
+>> original deeper problem.
+>> 
+>> The current scope of cred_guard_mutex in exec is because being ptraced
+>> causes suid exec to act differently.  So we need to know early if we are
+>> ptraced.
+>> 
+>
+> It has a second use, that it prevents two threads entering execve,
+> which would probably result in disaster.
 
-Paolo
+Exec can fail with an error code up until de_thread.  de_thread causes
+exec to fail with the error code -EAGAIN for the second thread to get
+into de_thread.
 
+So no.  The cred_guard_mutex is not needed for that case at all.
+
+>> If that case did not exist we could reduce the scope of the
+>> cred_guard_mutex in exec to where your patch puts the cred_change_mutex.
+>> 
+>> I am starting to think reworking how we deal with ptrace and exec is the
+>> way to solve this problem.
+
+
+I am 99% convinced that the fix is to move cred_guard_mutex down.
+
+Then right after we take cred_guard_mutex do:
+	if (ptraced) {
+		use_original_creds();
+	}
+
+And call it a day.
+
+The details suck but I am 99% certain that would solve everyones
+problems, and not be too bad to audit either.
+
+Eric
