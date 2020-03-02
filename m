@@ -2,101 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF8E8175C2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D966175C49
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:53:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbgCBNvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:51:41 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38754 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbgCBNvk (ORCPT
+        id S1727389AbgCBNx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:53:26 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:44758 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbgCBNx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:51:40 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u9so4857841wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:51:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R2BZu+imcykNACPLPvIynfptCCeFQHdJvvg/T84qCP8=;
-        b=mmLGIQqLs40/1JctkJUW6fbnrI0wxyktW/MCLs1VqwiTzd4SDvBGmvOxVfPkG5rZh5
-         uJOIAYDexjxz0yNhBvg09cLZfbwPNB0bBkJHNv+3WEvizQvZfuZ3AU4SRlzG1g5mk2B6
-         6llx37T3S+hlKdpV+y2jbBUJ79l3tlddWzm2s2FedCGfwWzUs47UvEOu5PBCppwg5+xW
-         ac+OsYujE/Xtu1/oDlh3eYFUeABe6ORlhnB3CGOPTXr3M6HT0acqwrAzGalKO74ZEZj4
-         gRVXWMijclJLyTIZqs4CpiEVANmMCGVLWD1imqMswpQ8LNtWQ4dgW9ezZEmblkQfjK8s
-         WFTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R2BZu+imcykNACPLPvIynfptCCeFQHdJvvg/T84qCP8=;
-        b=hrFKGrnjikI5qqpSdHoH934GxPVp2ED1sBJgLTjzG9lrAAt8kmoo6hrksMnBE7qxX6
-         xdOr/ieiCEhXZR8p7CaAD9t7jp2YIEjvIdq51YqnLTuOvlmxqmLrXDgvAWGgsG1q1vTP
-         +A7CWzuPObNklaSl0pjwvl3dFo5S4bCm2JXMIjawX6CsSW7zOjtICcXRIQ3+FOQbLrXa
-         ERln3r8QP3Dy6p8xyRuJkX4y9ALDpYX2BisaTR58ZWLQj1owmR+yTENPW6klwDv55832
-         l8i8jnblL8jpVcPdQFfeS/WHa/pTNCEi06J12553TL6JpKr9XXtxQqRXq/liWy6hoti5
-         BN0w==
-X-Gm-Message-State: ANhLgQ2T8L4W9e+TKtDPed9Ww07VperSb8lahU3y4S6KMhVkjQKyILJ9
-        ooltZmp3g7vfWSFJCJANVfw=
-X-Google-Smtp-Source: ADFU+vt/Vy32uNCBI4Sk9lNPXzlHfMBJTlaslZWI9ZLyr6KXc2/mDivaYthY+LJV4eqjQSkIGmYZCQ==
-X-Received: by 2002:a05:600c:351:: with SMTP id u17mr6467430wmd.22.1583157098661;
-        Mon, 02 Mar 2020 05:51:38 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id l17sm7530089wmi.10.2020.03.02.05.51.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Mar 2020 05:51:37 -0800 (PST)
-Date:   Mon, 2 Mar 2020 13:51:37 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     mateusznosek0@gmail.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH] mm/mm_init.c: Clean code. Use BUILD_BUG_ON when
- comparing compile time constant
-Message-ID: <20200302135137.lm5syk7r2thohs54@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20200228224617.11343-1-mateusznosek0@gmail.com>
+        Mon, 2 Mar 2020 08:53:26 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 022Dbu4C031928;
+        Mon, 2 Mar 2020 13:53:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=h1eCHVy/pMUEf9B7gboazc7d0KQ49jfH5mCfHZatf7Q=;
+ b=eV7BHwUe7VvQ7Kt+hr/ElSezfJ0lEMwJtDSugJlmszKeqpUnnyZ8g9swTlyZVhGCXprC
+ Ofr7NK0d4GtKEqJW7VxZJqE1SjK/wi5uiFtCF4sgDWCvYtHj0SedY633JzjUInixTIai
+ jrTUq4dNMYeJwELiatworTsn31COSuFInJOwaP1PHjk7Pbwir5DjQIsm7R86b3CLdq+/
+ /L9WEwO6jZjY9/2EhF7xE/MDeJEklbivyhGPRJ13k0MIFO+EYf/hPkb6WjX9CMa45kpI
+ eYSuVFOYU0vMiV35noZnLMKMypRhdvIuGDqTOFjcbNs59umOh05i8to2GgOmmvYPyvun ZQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2yffwqftev-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Mar 2020 13:53:07 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 022DqxgM100444;
+        Mon, 2 Mar 2020 13:53:07 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2yg1gv50s2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Mar 2020 13:53:07 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 022Dr35C022595;
+        Mon, 2 Mar 2020 13:53:03 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Mar 2020 05:53:03 -0800
+Date:   Mon, 2 Mar 2020 16:52:51 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Joe Perches <joe@perches.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
+ copy_from_user()
+Message-ID: <20200302135251.GA24372@kadam>
+References: <20200302130430.201037-1-glider@google.com>
+ <20200302130430.201037-2-glider@google.com>
+ <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
+ <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200228224617.11343-1-mateusznosek0@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9547 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020102
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9547 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ phishscore=0 clxscore=1011 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003020101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 11:46:17PM +0100, mateusznosek0@gmail.com wrote:
->From: Mateusz Nosek <mateusznosek0@gmail.com>
->
->MAX_ZONELISTS is compile time constant,
->so it should be compared using BUILD_BUG_ON not BUG_ON.
->
->Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
-
-Sounds you are right.
-
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-
->---
-> mm/mm_init.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/mm/mm_init.c b/mm/mm_init.c
->index 5c918388de99..7da6991d9435 100644
->--- a/mm/mm_init.c
->+++ b/mm/mm_init.c
->@@ -37,7 +37,7 @@ void __init mminit_verify_zonelist(void)
-> 		struct zonelist *zonelist;
-> 		int i, listid, zoneid;
+On Mon, Mar 02, 2020 at 02:25:51PM +0100, Alexander Potapenko wrote:
+> On Mon, Mar 2, 2020 at 2:11 PM Joe Perches <joe@perches.com> wrote:
+> >
+> > On Mon, 2020-03-02 at 14:04 +0100, glider@google.com wrote:
+> > > Certain copy_from_user() invocations in binder.c are known to
+> > > unconditionally initialize locals before their first use, like e.g. in
+> > > the following case:
+> > []
+> > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > []
+> > > @@ -3788,7 +3788,7 @@ static int binder_thread_write(struct binder_proc *proc,
+> > >
+> > >               case BC_TRANSACTION_SG:
+> > >               case BC_REPLY_SG: {
+> > > -                     struct binder_transaction_data_sg tr;
+> > > +                     struct binder_transaction_data_sg tr __no_initialize;
+> > >
+> > >                       if (copy_from_user(&tr, ptr, sizeof(tr)))
+> >
+> > I fail to see any value in marking tr with __no_initialize
+> > when it's immediately written to by copy_from_user.
 > 
->-		BUG_ON(MAX_ZONELISTS > 2);
->+		BUILD_BUG_ON(MAX_ZONELISTS > 2);
-> 		for (i = 0; i < MAX_ZONELISTS * MAX_NR_ZONES; i++) {
-> 
-> 			/* Identify the zone and nodelist */
->-- 
->2.17.1
+> This is being done exactly because it's immediately written to by copy_to_user()
+> Clang is currently unable to figure out that copy_to_user() initializes memory.
+                                                    ^^
+typo s/to/from/.
 
--- 
-Wei Yang
-Help you, Help me
+It feels more useful to annotate copy_from_user().  That would be useful
+for Smatch as well.
+
+regards,
+dan carpenter
+
