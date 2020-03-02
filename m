@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2775D175489
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5D951754AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbgCBHiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 02:38:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44752 "EHLO mail.kernel.org"
+        id S1727357AbgCBHjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 02:39:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbgCBHiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 02:38:16 -0500
+        id S1726426AbgCBHiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 02:38:15 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73812246C2;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ED26246A1;
         Mon,  2 Mar 2020 07:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583134694;
-        bh=4eNStRkuUGNNVk6etOXpQBq5Qk+WOYvFVm7Jt3wI6kw=;
+        bh=f6i/xaLRU1T6rTh9TlFkJDoYWjgK7JZpOPbZpK+IlBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f0c995f+hbAfvxnVZ2D7JqheOs8Lvlvc75bZudFN5q/3sBDxrKXFbql0QVEGExBrr
-         nDZAj1V1RLdJm816GhGh3UUAFXxIv+YIJvPjGIifvC+ZjT51j5tMawIUlvXvQFduGI
-         R7ODty7X0xtKYzYjA1ARyLJJfDqfOC5DSXmQhNYc=
+        b=ZC0gx/EyTodst0I9AllFHWhXSLSBkmq8KkXp102rfVUmO6T0D6BYLbJQGR1OQqetT
+         xkGhSk/y5ANztZ5UPr1E0WpnHk3p7TNtBMUnIW667jSBS+pfWj6WofAs92j5ZmfH7+
+         ocCo81f4216vRBgrWURagHldax0zrKZZqCNfIxhs=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8feV-0003Vi-TS; Mon, 02 Mar 2020 08:38:11 +0100
+        id 1j8feV-0003Vm-UQ; Mon, 02 Mar 2020 08:38:11 +0100
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 05/12] docs: dt: convert changesets to ReST
-Date:   Mon,  2 Mar 2020 08:38:00 +0100
-Message-Id: <b03ed74ccc14d1a9710702fda9b9a6d7d0a7d136.1583134242.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 06/12] docs: dt: convert dynamic-resolution-notes.txt to ReST
+Date:   Mon,  2 Mar 2020 08:38:01 +0100
+Message-Id: <959df4057c4b09f73924c9ee5bafd4ad8c861f99.1583134242.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583134242.git.mchehab+samsung@kernel.org>
 References: <cover.1583134242.git.mchehab+samsung@kernel.org>
@@ -48,71 +50,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
 - Add a SPDX header;
-- Add a document title;
-- Some whitespace fixes and new line breaks;
+- Adjust document title;
 - Add it to devicetree/index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{changesets.txt => changesets.rst}        | 24 ++++++++++++-------
- Documentation/devicetree/index.rst            |  1 +
- 2 files changed, 16 insertions(+), 9 deletions(-)
- rename Documentation/devicetree/{changesets.txt => changesets.rst} (59%)
+ ...mic-resolution-notes.txt => dynamic-resolution-notes.rst} | 5 ++++-
+ Documentation/devicetree/index.rst                           | 1 +
+ Documentation/devicetree/overlay-notes.txt                   | 2 +-
+ MAINTAINERS                                                  | 2 +-
+ 4 files changed, 7 insertions(+), 3 deletions(-)
+ rename Documentation/devicetree/{dynamic-resolution-notes.txt => dynamic-resolution-notes.rst} (90%)
 
-diff --git a/Documentation/devicetree/changesets.txt b/Documentation/devicetree/changesets.rst
-similarity index 59%
-rename from Documentation/devicetree/changesets.txt
-rename to Documentation/devicetree/changesets.rst
-index cb488eeb6353..c7fd8cd6a270 100644
---- a/Documentation/devicetree/changesets.txt
-+++ b/Documentation/devicetree/changesets.rst
-@@ -1,3 +1,9 @@
+diff --git a/Documentation/devicetree/dynamic-resolution-notes.txt b/Documentation/devicetree/dynamic-resolution-notes.rst
+similarity index 90%
+rename from Documentation/devicetree/dynamic-resolution-notes.txt
+rename to Documentation/devicetree/dynamic-resolution-notes.rst
+index c24ec366c5dc..570b7e1f39eb 100644
+--- a/Documentation/devicetree/dynamic-resolution-notes.txt
++++ b/Documentation/devicetree/dynamic-resolution-notes.rst
+@@ -1,5 +1,8 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+=============
-+DT Changesets
-+=============
-+
- A DT changeset is a method which allows one to apply changes
- in the live tree in such a way that either the full set of changes
- will be applied, or none of them will be. If an error occurs partway
-@@ -15,17 +21,17 @@ The sequence of a changeset is as follows.
- 1. of_changeset_init() - initializes a changeset
++==================================
+ Device Tree Dynamic Resolver Notes
+-----------------------------------
++==================================
  
- 2. A number of DT tree change calls, of_changeset_attach_node(),
--of_changeset_detach_node(), of_changeset_add_property(),
--of_changeset_remove_property, of_changeset_update_property() to prepare
--a set of changes. No changes to the active tree are made at this point.
--All the change operations are recorded in the of_changeset 'entries'
--list.
-+   of_changeset_detach_node(), of_changeset_add_property(),
-+   of_changeset_remove_property, of_changeset_update_property() to prepare
-+   a set of changes. No changes to the active tree are made at this point.
-+   All the change operations are recorded in the of_changeset 'entries'
-+   list.
- 
- 3. of_changeset_apply() - Apply the changes to the tree. Either the
--entire changeset will get applied, or if there is an error the tree will
--be restored to the previous state. The core ensures proper serialization
--through locking. An unlocked version __of_changeset_apply is available,
--if needed.
-+   entire changeset will get applied, or if there is an error the tree will
-+   be restored to the previous state. The core ensures proper serialization
-+   through locking. An unlocked version __of_changeset_apply is available,
-+   if needed.
- 
- If a successfully applied changeset needs to be removed, it can be done
- with of_changeset_revert().
+ This document describes the implementation of the in-kernel
+ Device Tree resolver, residing in drivers/of/resolver.c
 diff --git a/Documentation/devicetree/index.rst b/Documentation/devicetree/index.rst
-index 6b4daf252375..64c78c3ffea6 100644
+index 64c78c3ffea6..308cac9d7021 100644
 --- a/Documentation/devicetree/index.rst
 +++ b/Documentation/devicetree/index.rst
-@@ -10,3 +10,4 @@ Open Firmware and Device Tree
-    usage-model
+@@ -11,3 +11,4 @@ Open Firmware and Device Tree
     writing-schema
     booting-without-of
-+   changesets
+    changesets
++   dynamic-resolution-notes
+diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.txt
+index 725fb8d255c1..3f20a39e4bc2 100644
+--- a/Documentation/devicetree/overlay-notes.txt
++++ b/Documentation/devicetree/overlay-notes.txt
+@@ -3,7 +3,7 @@ Device Tree Overlay Notes
+ 
+ This document describes the implementation of the in-kernel
+ device tree overlay functionality residing in drivers/of/overlay.c and is a
+-companion document to Documentation/devicetree/dynamic-resolution-notes.txt[1]
++companion document to Documentation/devicetree/dynamic-resolution-notes.rst[1]
+ 
+ How overlays work
+ -----------------
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 09b04505e7c3..1380b1ed69a2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12458,7 +12458,7 @@ M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+ M:	Frank Rowand <frowand.list@gmail.com>
+ L:	devicetree@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/dynamic-resolution-notes.txt
++F:	Documentation/devicetree/dynamic-resolution-notes.rst
+ F:	Documentation/devicetree/overlay-notes.txt
+ F:	drivers/of/overlay.c
+ F:	drivers/of/resolver.c
 -- 
 2.21.1
 
