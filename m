@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C1E17678B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D104817678F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:40:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgCBWkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 17:40:10 -0500
-Received: from ms.lwn.net ([45.79.88.28]:59674 "EHLO ms.lwn.net"
+        id S1727052AbgCBWkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 17:40:17 -0500
+Received: from ms.lwn.net ([45.79.88.28]:59688 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbgCBWkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 17:40:09 -0500
+        id S1726755AbgCBWkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 17:40:10 -0500
 Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id B77912E4;
-        Mon,  2 Mar 2020 22:40:08 +0000 (UTC)
+        by ms.lwn.net (Postfix) with ESMTPA id 20EF199C;
+        Mon,  2 Mar 2020 22:40:09 +0000 (UTC)
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
         Masahiro Yamada <masahiroy@kernel.org>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 1/3] docs: Organize core-api/index.rst
-Date:   Mon,  2 Mar 2020 15:39:55 -0700
-Message-Id: <20200302223957.905473-2-corbet@lwn.net>
+Subject: [PATCH 2/3] docs: move gcc-plugins to the kbuild manual
+Date:   Mon,  2 Mar 2020 15:39:56 -0700
+Message-Id: <20200302223957.905473-3-corbet@lwn.net>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200302223957.905473-1-corbet@lwn.net>
 References: <20200302223957.905473-1-corbet@lwn.net>
@@ -33,142 +33,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The core-api manual has become a big, disorganized mess.  Try to bring a
-small amount of order to it by organizing the documents into
-subcategories.
+Information about GCC plugins is relevant to kernel building, so move this
+document to the kbuild manual.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/core-api/index.rst | 95 ++++++++++++++++++++++++--------
- 1 file changed, 73 insertions(+), 22 deletions(-)
+ Documentation/core-api/index.rst                   | 1 -
+ Documentation/{core-api => kbuild}/gcc-plugins.rst | 0
+ Documentation/kbuild/index.rst                     | 1 +
+ MAINTAINERS                                        | 2 +-
+ scripts/gcc-plugins/Kconfig                        | 2 +-
+ 5 files changed, 3 insertions(+), 3 deletions(-)
+ rename Documentation/{core-api => kbuild}/gcc-plugins.rst (100%)
 
 diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index d02b26917931..b39dae276b57 100644
+index b39dae276b57..9836a0ac09a3 100644
 --- a/Documentation/core-api/index.rst
 +++ b/Documentation/core-api/index.rst
-@@ -8,42 +8,81 @@ This is the beginning of a manual for core kernel APIs.  The conversion
- Core utilities
- ==============
- 
-+This section has general and "core core" documentation.  The first is a
-+massive grab-bag of kerneldoc info left over from the docbook days; it
-+should really be broken up someday when somebody finds the energy to do
-+it.
-+
- .. toctree::
+@@ -102,7 +102,6 @@ Documents that don't fit elsewhere or which have yet to be categorized.
     :maxdepth: 1
  
-    kernel-api
-+   workqueue
-+   printk-formats
-+   symbol-namespaces
-+
-+Data structures and low-level utilities
-+=======================================
-+
-+Library functionality that is used throughout the kernel.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    kobject
-    assoc_array
-+   xarray
-+   idr
-+   circular-buffers
-+   generic-radix-tree
-+   packing
-+   timekeeping
-+   errseq
-+
-+Concurrency primitives
-+======================
-+
-+How Linux keeps everything from happening at the same time.  See
-+:doc:`/locking/index` for more related documentation.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    atomic_ops
--   cachetlb
-    refcount-vs-atomic
--   cpu_hotplug
--   idr
-    local_ops
--   workqueue
-+   padata
-+   ../RCU/index
-+
-+Low-level hardware management
-+=============================
-+
-+Cache management, managing CPU hotplug, etc.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   cachetlb
-+   cpu_hotplug
-+   memory-hotplug
-    genericirq
--   xarray
--   librs
--   genalloc
--   errseq
--   packing
--   printk-formats
--   circular-buffers
--   generic-radix-tree
-+   protection-keys
-+
-+Memory management
-+=================
-+
-+How to allocate and use memory in the kernel.  Note that there is a lot
-+more memory-management documentation in :doc:`/vm/index`.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-    memory-allocation
-    mm-api
-+   genalloc
-    pin_user_pages
--   gfp_mask-from-fs-io
--   timekeeping
-    boot-time-mm
--   memory-hotplug
--   protection-keys
--   ../RCU/index
+    librs
 -   gcc-plugins
--   symbol-namespaces
--   padata
--   ioctl
--
-+   gfp_mask-from-fs-io
+    ioctl
  
- Interfaces for kernel debugging
- ===============================
-@@ -54,6 +93,18 @@ Interfaces for kernel debugging
-    debug-objects
-    tracepoint
- 
-+Everything else
-+===============
-+
-+Documents that don't fit elsewhere or which have yet to be categorized.
-+
-+.. toctree::
-+   :maxdepth: 1
-+
-+   librs
-+   gcc-plugins
-+   ioctl
-+
  .. only:: subproject and html
+diff --git a/Documentation/core-api/gcc-plugins.rst b/Documentation/kbuild/gcc-plugins.rst
+similarity index 100%
+rename from Documentation/core-api/gcc-plugins.rst
+rename to Documentation/kbuild/gcc-plugins.rst
+diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
+index 0f144fad99a6..82daf2efcb73 100644
+--- a/Documentation/kbuild/index.rst
++++ b/Documentation/kbuild/index.rst
+@@ -19,6 +19,7 @@ Kernel Build System
  
-    Indices
+     issues
+     reproducible-builds
++    gcc-plugins
+ 
+ .. only::  subproject and html
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 38fe2f3f7b6f..f508f6c783d6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6934,7 +6934,7 @@ S:	Maintained
+ F:	scripts/gcc-plugins/
+ F:	scripts/gcc-plugin.sh
+ F:	scripts/Makefile.gcc-plugins
+-F:	Documentation/core-api/gcc-plugins.rst
++F:	Documentation/kbuild/gcc-plugins.rst
+ 
+ GASKET DRIVER FRAMEWORK
+ M:	Rob Springer <rspringer@google.com>
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index e3569543bdac..f8ca236d6165 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -23,7 +23,7 @@ menuconfig GCC_PLUGINS
+ 	  GCC plugins are loadable modules that provide extra features to the
+ 	  compiler. They are useful for runtime instrumentation and static analysis.
+ 
+-	  See Documentation/core-api/gcc-plugins.rst for details.
++	  See Documentation/kbuild/gcc-plugins.rst for details.
+ 
+ if GCC_PLUGINS
+ 
 -- 
 2.24.1
 
