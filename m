@@ -2,109 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 128E3175B92
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:28:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19474175B99
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:28:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbgCBN1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:27:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:60918 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728022AbgCBN1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:27:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B51F111FB;
-        Mon,  2 Mar 2020 05:27:45 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BEED3F534;
-        Mon,  2 Mar 2020 05:27:44 -0800 (PST)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org, Qais Yousef <qais.yousef@arm.com>
-Subject: [PATCH v3 6/6] sched/rt: Fix pushing unfit tasks to a better CPU
-Date:   Mon,  2 Mar 2020 13:27:21 +0000
-Message-Id: <20200302132721.8353-7-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200302132721.8353-1-qais.yousef@arm.com>
-References: <20200302132721.8353-1-qais.yousef@arm.com>
+        id S1727939AbgCBN2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:28:52 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:44811 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727361AbgCBN2v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 08:28:51 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583155731; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=ozhUO+ck04N8Btq8fadMc/XxQ0L2TIhqsxidXm/rFPs=; b=bOdvcCbM+gBGq2wT227NLU4bMJH1bUxpK9oNU5xl4pwdpmnAk7Yw8RqXfA8HTkh1ik7okjV8
+ cBjXjcH1IIppkg0wwX8JIQ7nsMDoiRlrNFl0H+I0fQbba1n5AzKcCncYVf1WsskMa9n97o9n
+ VJme2RTHQ+4C+8GAAStANmsGMyQ=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e5d0a04.7f5dbf6d93b0-smtp-out-n02;
+ Mon, 02 Mar 2020 13:28:36 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B37C2C447A0; Mon,  2 Mar 2020 13:28:35 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3EAE7C43383;
+        Mon,  2 Mar 2020 13:28:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3EAE7C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] wireless: realtek: Replace zero-length array with flexible-array member
+References: <20200225002746.GA26789@embeddedor>
+Date:   Mon, 02 Mar 2020 15:28:30 +0200
+In-Reply-To: <20200225002746.GA26789@embeddedor> (Gustavo A. R. Silva's
+        message of "Mon, 24 Feb 2020 18:27:46 -0600")
+Message-ID: <87lfoi7uo1.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a task was running on unfit CPU we could ignore migrating if the
-priority level of the new fitting CPU is the *same* as the unfit one.
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
 
-Add an extra check to select_task_rq_rt() to allow the push in case:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+>
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+>
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
 
-	* p->prio == new_cpu.highest_priority
-	* task_fits(p, new_cpu)
+Preferred by who exactly?
 
-Fixes: 804d402fb6f6 ("sched/rt: Make RT capacity-aware")
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
----
- kernel/sched/rt.c | 41 ++++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index ce230bec6847..8aaa442e4867 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1474,20 +1474,35 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 	if (test || !rt_task_fits_capacity(p, cpu)) {
- 		int target = find_lowest_rq(p);
- 
--		/*
--		 * Bail out if we were forcing a migration to find a better
--		 * fitting CPU but our search failed.
--		 */
--		if (!test && target != -1 && !rt_task_fits_capacity(p, target))
--			goto out_unlock;
-+		if (target != -1) {
-+			bool fit_target = rt_task_fits_capacity(p, target);
- 
--		/*
--		 * Don't bother moving it if the destination CPU is
--		 * not running a lower priority task.
--		 */
--		if (target != -1 &&
--		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
--			cpu = target;
-+			/*
-+			 * Bail out if we were forcing a migration to find a
-+			 * better fitting CPU but our search failed.
-+			 */
-+			if (!test && !fit_target)
-+				goto out_unlock;
-+
-+			/*
-+			 * Don't bother moving it if the destination CPU is
-+			 * not running a lower priority task.
-+			 */
-+			if (p->prio < cpu_rq(target)->rt.highest_prio.curr) {
-+
-+				cpu = target;
-+
-+			} else if (p->prio == cpu_rq(target)->rt.highest_prio.curr) {
-+
-+				/*
-+				 * If the priority is the same and the new CPU
-+				 * is a better fit, then move, otherwise don't
-+				 * bother here either.
-+				 */
-+				if (fit_target)
-+					cpu = target;
-+			}
-+		}
- 	}
- 
- out_unlock:
 -- 
-2.17.1
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
