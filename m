@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FEFC1755B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB761755AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbgCBISg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:18:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57202 "EHLO mail.kernel.org"
+        id S1727817AbgCBISW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:18:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727194AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727226AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Mar 2020 03:16:21 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C319246E2;
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7DE246E6;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=Wsekl1TItVvD3INJBbJmeaHL8C61RFnhJoja63XF3zA=;
+        bh=GvP4vju05kdmGtfnW2lQXLeHqLhoRjSRhWQZFPyQmYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=baLPp7dUT1VRau+gkYzv1kLgn4sFkgTEX0DN9u/QE7zuFzE9uiOh1k4orY3yFtVwn
-         g0Xo3geIpWNq+a9qh9rxu+poUVIidpmVJy/PDGZnsh877k3RRRiWQ9difIIcPuKnQO
-         pL/AgIQjTM4fPBkGt8exOR80Nxbn0Lhl0FB1OtTQ=
+        b=YZN5X21zTEIKDTB/Y9m+GsTynkhbbdJlzCYIekaDakbOwT+y28iFIkUAeJvZwCRu1
+         zhrvOQ1QXXNiXrpo0VgbqNIU7NNPsBtkCmlhmwgASD9SpxuVUzcJ5rgODrXjoW1hcJ
+         OlnPXLS1qdhPmRgM1woOYoXpf5bdlv8bEJ5Q8DzI=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003yD-IS; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003yI-JF; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 21/42] docs: scsi: convert lpfc.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:54 +0100
-Message-Id: <48c13184b77ba61ed4fd7c235816fdb8e7530664.1583136624.git.mchehab+huawei@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH 22/42] docs: scsi: convert megaraid.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:55 +0100
+Message-Id: <b7ee59230c5a33ff6d60edba0d0bcf3e2aeaa88f.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -45,72 +49,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/index.rst              |  1 +
- Documentation/scsi/{lpfc.txt => lpfc.rst} | 16 +++++++---------
- 2 files changed, 8 insertions(+), 9 deletions(-)
- rename Documentation/scsi/{lpfc.txt => lpfc.rst} (93%)
+ Documentation/scsi/index.rst                  |  1 +
+ .../scsi/{megaraid.txt => megaraid.rst}       | 47 +++++++++++--------
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 29 insertions(+), 21 deletions(-)
+ rename Documentation/scsi/{megaraid.txt => megaraid.rst} (66%)
 
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index c40050ac3b32..22427511e227 100644
+index 22427511e227..37be1fc9d128 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -25,5 +25,6 @@ Linux SCSI Subsystem
-    hptiop
+@@ -26,5 +26,6 @@ Linux SCSI Subsystem
     libsas
     link_power_management_policy
-+   lpfc
+    lpfc
++   megaraid
  
     scsi_transport_srp/figures
-diff --git a/Documentation/scsi/lpfc.txt b/Documentation/scsi/lpfc.rst
-similarity index 93%
-rename from Documentation/scsi/lpfc.txt
-rename to Documentation/scsi/lpfc.rst
-index 5741ea8aa88a..6e217e82b9b9 100644
---- a/Documentation/scsi/lpfc.txt
-+++ b/Documentation/scsi/lpfc.rst
-@@ -1,10 +1,11 @@
+diff --git a/Documentation/scsi/megaraid.txt b/Documentation/scsi/megaraid.rst
+similarity index 66%
+rename from Documentation/scsi/megaraid.txt
+rename to Documentation/scsi/megaraid.rst
+index 3c7cea51e687..22b75a86ba72 100644
+--- a/Documentation/scsi/megaraid.txt
++++ b/Documentation/scsi/megaraid.rst
+@@ -1,7 +1,10 @@
+-			Notes on Management Module
+-			~~~~~~~~~~~~~~~~~~~~~~~~~~
 +.. SPDX-License-Identifier: GPL-2.0
  
--LPFC Driver Release Notes:
-+=========================
-+LPFC Driver Release Notes
-+=========================
+-Overview:
++==========================
++Notes on Management Module
++==========================
++
++Overview
+ --------
  
--=============================================================================
+ Different classes of controllers from LSI Logic accept and respond to the
+@@ -25,28 +28,32 @@ ioctl commands. But this module is envisioned to handle all user space level
+ interactions. So any 'proc', 'sysfs' implementations will be localized in this
+ common module.
  
--
--                               IMPORTANT:
-+.. important::
+-Credits:
++Credits
+ -------
  
-   Starting in the 8.0.17 release, the driver began to be targeted strictly
-   toward the upstream kernel. As such, we removed #ifdefs for older kernels
-@@ -22,9 +23,6 @@ LPFC Driver Release Notes:
-   Please heed these dependencies....
+-"Shared code in a third module, a "library module", is an acceptable
+-solution. modprobe automatically loads dependent modules, so users
+-running "modprobe driver1" or "modprobe driver2" would automatically
+-load the shared library module."
++::
  
+-		- Jeff Garzik (jgarzik@pobox.com), 02.25.2004 LKML
++	"Shared code in a third module, a "library module", is an acceptable
++	solution. modprobe automatically loads dependent modules, so users
++	running "modprobe driver1" or "modprobe driver2" would automatically
++	load the shared library module."
  
--   ********************************************************************
--
--
- The following information is provided for additional background on the
- history of the driver as we push for upstream acceptance.
+-"As Jeff hinted, if your userspace<->driver API is consistent between
+-your new MPT-based RAID controllers and your existing megaraid driver,
+-then perhaps you need a single small helper module (lsiioctl or some
+-better name), loaded by both mptraid and megaraid automatically, which
+-handles registering the /dev/megaraid node dynamically. In this case,
+-both mptraid and megaraid would register with lsiioctl for each
+-adapter discovered, and lsiioctl would essentially be a switch,
+-redirecting userspace tool ioctls to the appropriate driver."
++- Jeff Garzik (jgarzik@pobox.com), 02.25.2004 LKML
  
-@@ -64,6 +62,7 @@ Cable pull and temporary device Loss:
+-		- Matt Domsch, (Matt_Domsch@dell.com), 02.25.2004 LKML
++::
  
+-Design:
++	"As Jeff hinted, if your userspace<->driver API is consistent between
++	your new MPT-based RAID controllers and your existing megaraid driver,
++	then perhaps you need a single small helper module (lsiioctl or some
++	better name), loaded by both mptraid and megaraid automatically, which
++	handles registering the /dev/megaraid node dynamically. In this case,
++	both mptraid and megaraid would register with lsiioctl for each
++	adapter discovered, and lsiioctl would essentially be a switch,
++	redirecting userspace tool ioctls to the appropriate driver."
++
++- Matt Domsch, (Matt_Domsch@dell.com), 02.25.2004 LKML
++
++Design
+ ------
  
- Kernel Support
-+==============
+ The Common Management Module is implemented in megaraid_mm.[ch] files. This
+@@ -61,7 +68,7 @@ uioc_t. The management module converts the older ioctl packets from the older
+ applications into uioc_t. After driver handles the uioc_t, the common module
+ will convert that back into the old format before returning to applications.
  
-   This source package is targeted for the upstream kernel only. (See notes
-   at the top of this file). It relies on interfaces that are slowing
-@@ -77,7 +76,6 @@ Kernel Support
+-As new applications evolve and replace the old ones, the old packet format 
++As new applications evolve and replace the old ones, the old packet format
+ will be retired.
  
+ Common module dedicates one uioc_t packet to each controller registered. This
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e2bd7911baa9..6d28bfc72259 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10699,7 +10699,7 @@ L:	megaraidlinux.pdl@broadcom.com
+ L:	linux-scsi@vger.kernel.org
+ W:	http://www.avagotech.com/support/
+ S:	Maintained
+-F:	Documentation/scsi/megaraid.txt
++F:	Documentation/scsi/megaraid.rst
+ F:	drivers/scsi/megaraid.*
+ F:	drivers/scsi/megaraid/
  
- Patches
-+=======
- 
-   Thankfully, at this time, patches are not needed.
--
--
 -- 
 2.21.1
 
