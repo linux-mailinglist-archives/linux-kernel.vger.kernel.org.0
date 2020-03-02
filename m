@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E3E317559D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF3B91755BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgCBIR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:17:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57208 "EHLO mail.kernel.org"
+        id S1727865AbgCBISj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:18:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727222AbgCBIQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:22 -0500
+        id S1727201AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:21 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F54E246D4;
+        by mail.kernel.org (Postfix) with ESMTPSA id 62B3E246E4;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=XyjwF2ioxjiZ5JUZ0SraExulaBFZymyuvfekf1/i9Ao=;
+        bh=38vWwY8WDeo4wWGBmnlve3hnkekL6KaGDbK0Cb1AvEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kMvBRIm+FMBnKOiFudW5uAPkV9FCcAmZKaQt5VG+W9sLSxV5NSzVTeT6dNTf4fBlf
-         FoIKotbzPsl20AWmsCLmOnRn7Mb3RIxO/LOGvSEE7cfLkwoEhPhogXjZR9ivelv9bk
-         J5V9Y+8hNmJUvnlkObIj6lF6VVbcvC+cRok3Ze1Q=
+        b=XhVdc3SnAxRviRnL4o/a7J5QsaARF1FI+uv+cGiwwWrBPYEn9RndBbhiglEB2hq4G
+         e1nSLvk/ewT9/C37jl6YKjgad+nNc9hGCnr+c8Oe5WtIZ6rLuaLdS8l6WjA1k60t91
+         +ubEDEPEwvNVqMMNaWFkIFXySLhLgevjmrblLC64=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003xk-Cq; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003xp-Di; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org
-Subject: [PATCH 15/42] docs: scsi: convert FlashPoint.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:48 +0100
-Message-Id: <e755b9644047eed6be69fcc77eb797f0801fcb99.1583136624.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 16/42] docs: scsi: convert g_NCR5380.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:49 +0100
+Message-Id: <a66e9ea704be6a7aa81b9864ad66a32b75ab808d.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -48,317 +50,188 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../scsi/{FlashPoint.txt => FlashPoint.rst}   | 225 +++++++++---------
- Documentation/scsi/index.rst                  |   1 +
- drivers/scsi/Kconfig                          |   2 +-
- 3 files changed, 121 insertions(+), 107 deletions(-)
- rename Documentation/scsi/{FlashPoint.txt => FlashPoint.rst} (21%)
+ .../scsi/{g_NCR5380.txt => g_NCR5380.rst}     | 89 ++++++++++++-------
+ Documentation/scsi/index.rst                  |  1 +
+ Documentation/scsi/scsi-parameters.txt        |  6 +-
+ MAINTAINERS                                   |  2 +-
+ drivers/scsi/g_NCR5380.c                      |  2 +-
+ 5 files changed, 63 insertions(+), 37 deletions(-)
+ rename Documentation/scsi/{g_NCR5380.txt => g_NCR5380.rst} (41%)
 
-diff --git a/Documentation/scsi/FlashPoint.txt b/Documentation/scsi/FlashPoint.rst
-similarity index 21%
-rename from Documentation/scsi/FlashPoint.txt
-rename to Documentation/scsi/FlashPoint.rst
-index 5b5f29cb9f8b..ef3c07e94ad6 100644
---- a/Documentation/scsi/FlashPoint.txt
-+++ b/Documentation/scsi/FlashPoint.rst
-@@ -1,27 +1,34 @@
+diff --git a/Documentation/scsi/g_NCR5380.txt b/Documentation/scsi/g_NCR5380.rst
+similarity index 41%
+rename from Documentation/scsi/g_NCR5380.txt
+rename to Documentation/scsi/g_NCR5380.rst
+index 37b1967a00a9..a282059fec43 100644
+--- a/Documentation/scsi/g_NCR5380.txt
++++ b/Documentation/scsi/g_NCR5380.rst
+@@ -1,7 +1,13 @@
+-README file for the Linux g_NCR5380 driver.
 +.. SPDX-License-Identifier: GPL-2.0
++.. include:: <isonum.txt>
+ 
+-(c) 1993 Drew Eckhard
+-NCR53c400 extensions (c) 1994,1995,1996 Kevin Lentin
++==========================================
++README file for the Linux g_NCR5380 driver
++==========================================
 +
-+===================================
-+The BusLogic FlashPoint SCSI Driver
-+===================================
++Copyright |copy| 1993 Drew Eckhard
 +
- The BusLogic FlashPoint SCSI Host Adapters are now fully supported on Linux.
- The upgrade program described below has been officially terminated effective
- 31 March 1997 since it is no longer needed.
++NCR53c400 extensions Copyright |copy| 1994,1995,1996 Kevin Lentin
  
-+::
+ This file documents the NCR53c400 extensions by Kevin Lentin and some
+ enhancements to the NCR5380 core.
+@@ -26,43 +32,62 @@ time. More info to come in the future.
+ This driver works as a module.
+ When included as a module, parameters can be passed on the insmod/modprobe
+ command line:
++
++  ============= ===============================================================
+   irq=xx[,...]	the interrupt(s)
+   base=xx[,...]	the port or base address(es) (for port or memory mapped, resp.)
+   card=xx[,...]	card type(s):
+-		0 = NCR5380,
+-		1 = NCR53C400,
+-		2 = NCR53C400A,
+-		3 = Domex Technology Corp 3181E (DTC3181E)
+-		4 = Hewlett Packard C2502
++
++		==  ======================================
++		0   NCR5380,
++		1   NCR53C400,
++		2   NCR53C400A,
++		3   Domex Technology Corp 3181E (DTC3181E)
++		4   Hewlett Packard C2502
++		==  ======================================
++  ============= ===============================================================
  
-+  	  MYLEX INTRODUCES LINUX OPERATING SYSTEM SUPPORT FOR ITS
-+  	      BUSLOGIC FLASHPOINT LINE OF SCSI HOST ADAPTERS
- 
--	  MYLEX INTRODUCES LINUX OPERATING SYSTEM SUPPORT FOR ITS
--	      BUSLOGIC FLASHPOINT LINE OF SCSI HOST ADAPTERS
- 
-+  FREMONT, CA, -- October 8, 1996 -- Mylex Corporation has expanded Linux
-+  operating system support to its BusLogic brand of FlashPoint Ultra SCSI
-+  host adapters.  All of BusLogic's other SCSI host adapters, including the
-+  MultiMaster line, currently support the Linux operating system.  Linux
-+  drivers and information will be available on October 15th at
-+  http://sourceforge.net/projects/dandelion/.
- 
--FREMONT, CA, -- October 8, 1996 -- Mylex Corporation has expanded Linux
--operating system support to its BusLogic brand of FlashPoint Ultra SCSI
--host adapters.  All of BusLogic's other SCSI host adapters, including the
--MultiMaster line, currently support the Linux operating system.  Linux
--drivers and information will be available on October 15th at
--http://sourceforge.net/projects/dandelion/.
+ These old-style parameters can support only one card:
+-  ncr_irq=xx   the interrupt
+-  ncr_addr=xx  the port or base address (for port or memory
+-               mapped, resp.)
+-  ncr_5380=1   to set up for a NCR5380 board
+-  ncr_53c400=1 to set up for a NCR53C400 board
++
++  ============= =================================================
++  ncr_irq=xx    the interrupt
++  ncr_addr=xx   the port or base address (for port or memory
++                mapped, resp.)
++  ncr_5380=1    to set up for a NCR5380 board
++  ncr_53c400=1  to set up for a NCR53C400 board
+   ncr_53c400a=1 to set up for a NCR53C400A board
+-  dtc_3181e=1  to set up for a Domex Technology Corp 3181E board
+-  hp_c2502=1   to set up for a Hewlett Packard C2502 board
 -
--"Mylex is committed to supporting the Linux community," says Peter Shambora,
--vice president of marketing for Mylex.  "We have supported Linux driver
--development and provided technical support for our host adapters for several
--years, and are pleased to now make our FlashPoint products available to this
--user base."
-+  "Mylex is committed to supporting the Linux community," says Peter Shambora,
-+  vice president of marketing for Mylex.  "We have supported Linux driver
-+  development and provided technical support for our host adapters for several
-+  years, and are pleased to now make our FlashPoint products available to this
-+  user base."
- 
- The Linux Operating System
-+==========================
- 
- Linux is a freely-distributed implementation of UNIX for Intel x86, Sun
- SPARC, SGI MIPS, Motorola 68k, Digital Alpha AXP and Motorola PowerPC
-@@ -30,6 +37,7 @@ System, Emacs, and TCP/IP networking.  Further information is available at
- http://www.linux.org and http://www.ssc.com/.
- 
- FlashPoint Host Adapters
-+========================
- 
- The FlashPoint family of Ultra SCSI host adapters, designed for workstation
- and file server environments, are available in narrow, wide, dual channel,
-@@ -38,6 +46,7 @@ automation technology, which minimizes SCSI command overhead and reduces
- the number of interrupts generated to the CPU.
- 
- About Mylex
-+===========
- 
- Mylex Corporation (NASDAQ/NM SYMBOL: MYLX), founded in 1983, is a leading
- producer of RAID technology and network management products.  The company
-@@ -51,16 +60,20 @@ and availability.  Products are sold globally through a network of OEMs,
- major distributors, VARs, and system integrators.  Mylex Corporation is
- headquartered at 34551 Ardenwood Blvd., Fremont, CA.
- 
--				   ####
+-E.g. Trantor T130B in its default configuration:
+-modprobe g_NCR5380 irq=5 base=0x350 card=1
+-or alternatively, using the old syntax,
+-modprobe g_NCR5380 ncr_irq=5 ncr_addr=0x350 ncr_53c400=1
 -
- Contact:
-+========
+-E.g. a port mapped NCR5380 board, driver to probe for IRQ:
+-modprobe g_NCR5380 base=0x350 card=0
+-or alternatively,
+-modprobe g_NCR5380 ncr_addr=0x350 ncr_5380=1
+-
+-E.g. a memory mapped NCR53C400 board with no IRQ:
+-modprobe g_NCR5380 irq=255 base=0xc8000 card=1
+-or alternatively,
+-modprobe g_NCR5380 ncr_irq=255 ncr_addr=0xc8000 ncr_53c400=1
++  dtc_3181e=1   to set up for a Domex Technology Corp 3181E board
++  hp_c2502=1    to set up for a Hewlett Packard C2502 board
++  ============= =================================================
 +
-+::
++E.g. Trantor T130B in its default configuration::
 +
-+  Peter Shambora
-+  Vice President of Marketing
-+  Mylex Corp.
-+  510/796-6100
-+  peters@mylex.com
++	modprobe g_NCR5380 irq=5 base=0x350 card=1
 +
++or alternatively, using the old syntax::
 +
-+::
++	modprobe g_NCR5380 ncr_irq=5 ncr_addr=0x350 ncr_53c400=1
++
++E.g. a port mapped NCR5380 board, driver to probe for IRQ::
++
++	modprobe g_NCR5380 base=0x350 card=0
++
++or alternatively::
++
++	modprobe g_NCR5380 ncr_addr=0x350 ncr_5380=1
++
++E.g. a memory mapped NCR53C400 board with no IRQ::
++
++	modprobe g_NCR5380 irq=255 base=0xc8000 card=1
++
++or alternatively::
++
++	modprobe g_NCR5380 ncr_irq=255 ncr_addr=0xc8000 ncr_53c400=1
  
--Peter Shambora
--Vice President of Marketing
--Mylex Corp.
--510/796-6100
--peters@mylex.com
--
- 			       ANNOUNCEMENT
- 	       BusLogic FlashPoint LT/BT-948 Upgrade Program
- 			      1 February 1996
-@@ -69,95 +82,95 @@ peters@mylex.com
- 	       BusLogic FlashPoint LW/BT-958 Upgrade Program
- 			       14 June 1996
+ E.g. two cards, DTC3181 (in non-PnP mode) at 0x240 with no IRQ
+-and HP C2502 at 0x300 with IRQ 7:
+-modprobe g_NCR5380 irq=0,7 base=0x240,0x300 card=3,4
++and HP C2502 at 0x300 with IRQ 7::
++
++	modprobe g_NCR5380 irq=0,7 base=0x240,0x300 card=3,4
  
--Ever since its introduction last October, the BusLogic FlashPoint LT has
--been problematic for members of the Linux community, in that no Linux
--drivers have been available for this new Ultra SCSI product.  Despite its
--officially being positioned as a desktop workstation product, and not being
--particularly well suited for a high performance multitasking operating
--system like Linux, the FlashPoint LT has been touted by computer system
--vendors as the latest thing, and has been sold even on many of their high
--end systems, to the exclusion of the older MultiMaster products.  This has
--caused grief for many people who inadvertently purchased a system expecting
--that all BusLogic SCSI Host Adapters were supported by Linux, only to
--discover that the FlashPoint was not supported and would not be for quite
--some time, if ever.
-+  Ever since its introduction last October, the BusLogic FlashPoint LT has
-+  been problematic for members of the Linux community, in that no Linux
-+  drivers have been available for this new Ultra SCSI product.  Despite its
-+  officially being positioned as a desktop workstation product, and not being
-+  particularly well suited for a high performance multitasking operating
-+  system like Linux, the FlashPoint LT has been touted by computer system
-+  vendors as the latest thing, and has been sold even on many of their high
-+  end systems, to the exclusion of the older MultiMaster products.  This has
-+  caused grief for many people who inadvertently purchased a system expecting
-+  that all BusLogic SCSI Host Adapters were supported by Linux, only to
-+  discover that the FlashPoint was not supported and would not be for quite
-+  some time, if ever.
- 
--After this problem was identified, BusLogic contacted its major OEM
--customers to make sure the BT-946C/956C MultiMaster cards would still be
--made available, and that Linux users who mistakenly ordered systems with
--the FlashPoint would be able to upgrade to the BT-946C.  While this helped
--many purchasers of new systems, it was only a partial solution to the
--overall problem of FlashPoint support for Linux users.  It did nothing to
--assist the people who initially purchased a FlashPoint for a supported
--operating system and then later decided to run Linux, or those who had
--ended up with a FlashPoint LT, believing it was supported, and were unable
--to return it.
-+  After this problem was identified, BusLogic contacted its major OEM
-+  customers to make sure the BT-946C/956C MultiMaster cards would still be
-+  made available, and that Linux users who mistakenly ordered systems with
-+  the FlashPoint would be able to upgrade to the BT-946C.  While this helped
-+  many purchasers of new systems, it was only a partial solution to the
-+  overall problem of FlashPoint support for Linux users.  It did nothing to
-+  assist the people who initially purchased a FlashPoint for a supported
-+  operating system and then later decided to run Linux, or those who had
-+  ended up with a FlashPoint LT, believing it was supported, and were unable
-+  to return it.
- 
--In the middle of December, I asked to meet with BusLogic's senior
--management to discuss the issues related to Linux and free software support
--for the FlashPoint.  Rumors of varying accuracy had been circulating
--publicly about BusLogic's attitude toward the Linux community, and I felt
--it was best that these issues be addressed directly.  I sent an email
--message after 11pm one evening, and the meeting took place the next
--afternoon.  Unfortunately, corporate wheels sometimes grind slowly,
--especially when a company is being acquired, and so it's taken until now
--before the details were completely determined and a public statement could
--be made.
-+  In the middle of December, I asked to meet with BusLogic's senior
-+  management to discuss the issues related to Linux and free software support
-+  for the FlashPoint.  Rumors of varying accuracy had been circulating
-+  publicly about BusLogic's attitude toward the Linux community, and I felt
-+  it was best that these issues be addressed directly.  I sent an email
-+  message after 11pm one evening, and the meeting took place the next
-+  afternoon.  Unfortunately, corporate wheels sometimes grind slowly,
-+  especially when a company is being acquired, and so it's taken until now
-+  before the details were completely determined and a public statement could
-+  be made.
- 
--BusLogic is not prepared at this time to release the information necessary
--for third parties to write drivers for the FlashPoint.  The only existing
--FlashPoint drivers have been written directly by BusLogic Engineering, and
--there is no FlashPoint documentation sufficiently detailed to allow outside
--developers to write a driver without substantial assistance.  While there
--are people at BusLogic who would rather not release the details of the
--FlashPoint architecture at all, that debate has not yet been settled either
--way.  In any event, even if documentation were available today it would
--take quite a while for a usable driver to be written, especially since I'm
--not convinced that the effort required would be worthwhile.
-+  BusLogic is not prepared at this time to release the information necessary
-+  for third parties to write drivers for the FlashPoint.  The only existing
-+  FlashPoint drivers have been written directly by BusLogic Engineering, and
-+  there is no FlashPoint documentation sufficiently detailed to allow outside
-+  developers to write a driver without substantial assistance.  While there
-+  are people at BusLogic who would rather not release the details of the
-+  FlashPoint architecture at all, that debate has not yet been settled either
-+  way.  In any event, even if documentation were available today it would
-+  take quite a while for a usable driver to be written, especially since I'm
-+  not convinced that the effort required would be worthwhile.
- 
--However, BusLogic does remain committed to providing a high performance
--SCSI solution for the Linux community, and does not want to see anyone left
--unable to run Linux because they have a Flashpoint LT.  Therefore, BusLogic
--has put in place a direct upgrade program to allow any Linux user worldwide
--to trade in their FlashPoint LT for the new BT-948 MultiMaster PCI Ultra
--SCSI Host Adapter.  The BT-948 is the Ultra SCSI successor to the BT-946C
--and has all the best features of both the BT-946C and FlashPoint LT,
--including smart termination and a flash PROM for easy firmware updates, and
--is of course compatible with the present Linux driver.  The price for this
--upgrade has been set at US $45 plus shipping and handling, and the upgrade
--program will be administered through BusLogic Technical Support, which can
--be reached by electronic mail at techsup@buslogic.com, by Voice at +1 408
--654-0760, or by FAX at +1 408 492-1542.
-+  However, BusLogic does remain committed to providing a high performance
-+  SCSI solution for the Linux community, and does not want to see anyone left
-+  unable to run Linux because they have a Flashpoint LT.  Therefore, BusLogic
-+  has put in place a direct upgrade program to allow any Linux user worldwide
-+  to trade in their FlashPoint LT for the new BT-948 MultiMaster PCI Ultra
-+  SCSI Host Adapter.  The BT-948 is the Ultra SCSI successor to the BT-946C
-+  and has all the best features of both the BT-946C and FlashPoint LT,
-+  including smart termination and a flash PROM for easy firmware updates, and
-+  is of course compatible with the present Linux driver.  The price for this
-+  upgrade has been set at US $45 plus shipping and handling, and the upgrade
-+  program will be administered through BusLogic Technical Support, which can
-+  be reached by electronic mail at techsup@buslogic.com, by Voice at +1 408
-+  654-0760, or by FAX at +1 408 492-1542.
- 
--As of 14 June 1996, the original BusLogic FlashPoint LT to BT-948 upgrade
--program has now been extended to encompass the FlashPoint LW Wide Ultra
--SCSI Host Adapter.  Any Linux user worldwide may trade in their FlashPoint
--LW (BT-950) for a BT-958 MultiMaster PCI Ultra SCSI Host Adapter.  The
--price for this upgrade has been set at US $65 plus shipping and handling.
-+  As of 14 June 1996, the original BusLogic FlashPoint LT to BT-948 upgrade
-+  program has now been extended to encompass the FlashPoint LW Wide Ultra
-+  SCSI Host Adapter.  Any Linux user worldwide may trade in their FlashPoint
-+  LW (BT-950) for a BT-958 MultiMaster PCI Ultra SCSI Host Adapter.  The
-+  price for this upgrade has been set at US $65 plus shipping and handling.
- 
--I was a beta test site for the BT-948/958, and versions 1.2.1 and 1.3.1 of
--my BusLogic driver already included latent support for the BT-948/958.
--Additional cosmetic support for the Ultra SCSI MultiMaster cards was added
--subsequent releases.  As a result of this cooperative testing process,
--several firmware bugs were found and corrected.  My heavily loaded Linux
--test system provided an ideal environment for testing error recovery
--processes that are much more rarely exercised in production systems, but
--are crucial to overall system stability.  It was especially convenient
--being able to work directly with their firmware engineer in demonstrating
--the problems under control of the firmware debugging environment; things
--sure have come a long way since the last time I worked on firmware for an
--embedded system.  I am presently working on some performance testing and
--expect to have some data to report in the not too distant future.
-+  I was a beta test site for the BT-948/958, and versions 1.2.1 and 1.3.1 of
-+  my BusLogic driver already included latent support for the BT-948/958.
-+  Additional cosmetic support for the Ultra SCSI MultiMaster cards was added
-+  subsequent releases.  As a result of this cooperative testing process,
-+  several firmware bugs were found and corrected.  My heavily loaded Linux
-+  test system provided an ideal environment for testing error recovery
-+  processes that are much more rarely exercised in production systems, but
-+  are crucial to overall system stability.  It was especially convenient
-+  being able to work directly with their firmware engineer in demonstrating
-+  the problems under control of the firmware debugging environment; things
-+  sure have come a long way since the last time I worked on firmware for an
-+  embedded system.  I am presently working on some performance testing and
-+  expect to have some data to report in the not too distant future.
- 
--BusLogic asked me to send this announcement since a large percentage of the
--questions regarding support for the FlashPoint have either been sent to me
--directly via email, or have appeared in the Linux newsgroups in which I
--participate.  To summarize, BusLogic is offering Linux users an upgrade
--from the unsupported FlashPoint LT (BT-930) to the supported BT-948 for US
--$45 plus shipping and handling, or from the unsupported FlashPoint LW
--(BT-950) to the supported BT-958 for $65 plus shipping and handling.
--Contact BusLogic Technical Support at techsup@buslogic.com or +1 408
--654-0760 to take advantage of their offer.
-+  BusLogic asked me to send this announcement since a large percentage of the
-+  questions regarding support for the FlashPoint have either been sent to me
-+  directly via email, or have appeared in the Linux newsgroups in which I
-+  participate.  To summarize, BusLogic is offering Linux users an upgrade
-+  from the unsupported FlashPoint LT (BT-930) to the supported BT-948 for US
-+  $45 plus shipping and handling, or from the unsupported FlashPoint LW
-+  (BT-950) to the supported BT-958 for $65 plus shipping and handling.
-+  Contact BusLogic Technical Support at techsup@buslogic.com or +1 408
-+  654-0760 to take advantage of their offer.
- 
--		Leonard N. Zubkoff
--		lnz@dandelion.com
-+  		Leonard N. Zubkoff
-+  		lnz@dandelion.com
+ Kevin Lentin
+ K.Lentin@cs.monash.edu.au
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index b553dd9904bf..aad8359357e6 100644
+index aad8359357e6..4b577c9e804e 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -19,5 +19,6 @@ Linux SCSI Subsystem
-    cxgb3i
+@@ -20,5 +20,6 @@ Linux SCSI Subsystem
     dc395x
     dpti
-+   FlashPoint
+    FlashPoint
++   g_NCR5380
  
     scsi_transport_srp/figures
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 5e834fba7934..e47498f7627e 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -503,7 +503,7 @@ config SCSI_BUSLOGIC
- 	  Adapters. Consult the SCSI-HOWTO, available from
- 	  <http://www.tldp.org/docs.html#howto>, and the files
- 	  <file:Documentation/scsi/BusLogic.rst> and
--	  <file:Documentation/scsi/FlashPoint.txt> for more information.
-+	  <file:Documentation/scsi/FlashPoint.rst> for more information.
- 	  Note that support for FlashPoint is only available for 32-bit
- 	  x86 configurations.
+diff --git a/Documentation/scsi/scsi-parameters.txt b/Documentation/scsi/scsi-parameters.txt
+index 266fd3b2398a..864bbf7f737b 100644
+--- a/Documentation/scsi/scsi-parameters.txt
++++ b/Documentation/scsi/scsi-parameters.txt
+@@ -57,13 +57,13 @@ parameters may be changed at runtime by the command
+ 			See header of drivers/scsi/NCR_D700.c.
  
+ 	ncr5380=	[HW,SCSI]
+-			See Documentation/scsi/g_NCR5380.txt.
++			See Documentation/scsi/g_NCR5380.rst.
+ 
+ 	ncr53c400=	[HW,SCSI]
+-			See Documentation/scsi/g_NCR5380.txt.
++			See Documentation/scsi/g_NCR5380.rst.
+ 
+ 	ncr53c400a=	[HW,SCSI]
+-			See Documentation/scsi/g_NCR5380.txt.
++			See Documentation/scsi/g_NCR5380.rst.
+ 
+ 	ncr53c8xx=	[HW,SCSI]
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e2ab816fe66..451a3f67d23a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11533,7 +11533,7 @@ M:	Finn Thain <fthain@telegraphics.com.au>
+ M:	Michael Schmitz <schmitzmic@gmail.com>
+ L:	linux-scsi@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/scsi/g_NCR5380.txt
++F:	Documentation/scsi/g_NCR5380.rst
+ F:	drivers/scsi/NCR5380.*
+ F:	drivers/scsi/arm/cumana_1.c
+ F:	drivers/scsi/arm/oak.c
+diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
+index 2ab774e62e40..2cc676e3df6a 100644
+--- a/drivers/scsi/g_NCR5380.c
++++ b/drivers/scsi/g_NCR5380.c
+@@ -20,7 +20,7 @@
+  * Added ISAPNP support for DTC436 adapters,
+  * Thomas Sailer, sailer@ife.ee.ethz.ch
+  *
+- * See Documentation/scsi/g_NCR5380.txt for more info.
++ * See Documentation/scsi/g_NCR5380.rst for more info.
+  */
+ 
+ #include <asm/io.h>
 -- 
 2.21.1
 
