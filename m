@@ -2,332 +2,305 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F466175396
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 07:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8811753AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 07:26:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgCBGPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 01:15:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57924 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725446AbgCBGPI (ORCPT
+        id S1726859AbgCBG0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 01:26:19 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:63686 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgCBG0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 01:15:08 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02269Sgn056544;
-        Mon, 2 Mar 2020 01:14:59 -0500
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfjf3dyy2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 01:14:59 -0500
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 0226EuIP004680;
-        Mon, 2 Mar 2020 06:14:58 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma02dal.us.ibm.com with ESMTP id 2yffk6bfnh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 06:14:58 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0226Eu6g48497136
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 06:14:56 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F82FC6057;
-        Mon,  2 Mar 2020 06:14:56 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 004F9C6055;
-        Mon,  2 Mar 2020 06:14:52 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.31.186])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Mar 2020 06:14:52 +0000 (GMT)
-Subject: Re: [PATCH v4] tools/perf/metricgroup: Fix printing event names of
- metric group with multiple events incase of overlapping events
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
-        "acme@kernel.org" <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20200212054102.9259-1-kjain@linux.ibm.com>
- <DB7PR04MB46186AB5557F4D04FD5C4FEAE6160@DB7PR04MB4618.eurprd04.prod.outlook.com>
- <be86ba99-ab5a-c845-46b6-8081edee00ca@linux.ibm.com>
- <DB7PR04MB461807389FDF9629ACA04533E6130@DB7PR04MB4618.eurprd04.prod.outlook.com>
-From:   kajoljain <kjain@linux.ibm.com>
-Message-ID: <cb9b353b-c18a-0064-eb72-a6c91d5fdec9@linux.ibm.com>
-Date:   Mon, 2 Mar 2020 11:44:51 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <DB7PR04MB461807389FDF9629ACA04533E6130@DB7PR04MB4618.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_01:2020-02-28,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 impostorscore=0 spamscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003020047
+        Mon, 2 Mar 2020 01:26:19 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200302062616epoutp016f1c48be40b509a25611172f98e45c9a~4aLBw2gzf2122921229epoutp01W
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 06:26:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200302062616epoutp016f1c48be40b509a25611172f98e45c9a~4aLBw2gzf2122921229epoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1583130376;
+        bh=1JassymyZWgXEYwox6M2rkXySq4efOfNw2fYegjjaOA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=EKe/my2m5lD68tdhCoEaL/XXFSg0VBWv9UiTN0PsLwTPY3Fz9P+qZy94kLgrsK4s6
+         +SqyB0+gRJIlv7uEtXpNHWzqhWx8l+HHtpLICDRYhlpQDlG0L1gbRJD8VepMY8Er2J
+         /9Cv8UFTGTEzwdXtFSkg/y4B5cqM8xSSvkT8cUMk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200302062615epcas1p2ec79b5b0f16a34d49e14be3c7f8a03a8~4aLBWwc3s2684626846epcas1p2G;
+        Mon,  2 Mar 2020 06:26:15 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.164]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 48W9Bt1bRXzMqYkl; Mon,  2 Mar
+        2020 06:26:14 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.E7.52419.607AC5E5; Mon,  2 Mar 2020 15:26:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200302062613epcas1p2969203b10bc3b7c41e0d4ffe9a08a3e9~4aK-rHJmi2684626846epcas1p29;
+        Mon,  2 Mar 2020 06:26:13 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200302062613epsmtrp1cc70a01f3b9c6ab283936b4a0876cafb~4aK-qT4H31398513985epsmtrp1n;
+        Mon,  2 Mar 2020 06:26:13 +0000 (GMT)
+X-AuditID: b6c32a37-59fff7000001ccc3-b6-5e5ca706eae3
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        65.EA.06569.507AC5E5; Mon,  2 Mar 2020 15:26:13 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.88.103.87]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200302062613epsmtip2679ebaabdd72de19642449fd98eaa527~4aK-hW0gL2393223932epsmtip2V;
+        Mon,  2 Mar 2020 06:26:13 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, pali.rohar@gmail.com, arnd@arndb.de,
+        linkinjeon@gmail.com, Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v14 00/14] add the latest exfat driver
+Date:   Mon,  2 Mar 2020 15:21:31 +0900
+Message-Id: <20200302062145.1719-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmri7b8pg4g7tf2S3+TjrGbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyYXm8x8fRvJost/46wWlx6/4HF4vzf46wO3B6/f01i
+        9Ng56y67x/65a9g9dt9sYPPo27KK0ePzJjmPQ9vfsHlsevKWKYAjKscmIzUxJbVIITUvOT8l
+        My/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hQJYWyxJxSoFBAYnGxkr6dTVF+
+        aUmqQkZ+cYmtUmpBSk6BoUGBXnFibnFpXrpecn6ulaGBgZEpUGVCTsb3G9PYC1baV3T8ncTa
+        wHjXsIuRk0NCwETi9LPpTF2MXBxCAjsYJV7PvMkG4XxilLhw8SNU5hujxL3GvWwwLX3nnjFD
+        JPYySjycfZMZruXwr0tALRwcbALaEn+2iII0iAhIS5zpvwQ2iVmggUmi+UATO0hCWMBMonFR
+        IzOIzSKgKvFl6z8WEJtXwFpi+eMrzBDb5CVWbzgAtkBCYAebxLI9W6ESLhIXW3czQtjCEq+O
+        b2GHsKUkXva3sYMcISFQLfFxP1R5B6PEi++2ELaxxM31G1hBSpgFNCXW79KHCCtK7Pw9F2wi
+        swCfxLuvPawQU3glOtqEIEpUJfouHWaCsKUluto/QC31kPh+sAUcPkICsRKT5rezTWCUnYWw
+        YAEj4ypGsdSC4tz01GLDAmPkSNrECE58WuY7GDec8znEKMDBqMTDu+N5dJwQa2JZcWXuIUYJ
+        DmYlEV5fTqAQb0piZVVqUX58UWlOavEhRlNg2E1klhJNzgcm5bySeENTI2NjYwsTM3MzU2Ml
+        cd6HkZpxQgLpiSWp2ampBalFMH1MHJxSDYzT2oPjtM9st/90yZsp6aQI0+vrB6LTv/Fv3Lnu
+        rfqEOWcbf/6//WQZe/T52fc1Hrzae/91ndpnhneVB1amhl40aN8SoHDX329J9E2nhU6TdR9+
+        fr1Z2WaiwNY5XdwGEQvvFG731asumb527pT7FfvMavJiYjYH/fzQ9eH/4b+paf+Onwuxvqi0
+        WYmlOCPRUIu5qDgRAMMl6UqSAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsWy7bCSvC7r8pg4gwsLdC3+TjrGbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyYXm8x8fRvJost/46wWlx6/4HF4vzf46wO3B6/f01i
+        9Ng56y67x/65a9g9dt9sYPPo27KK0ePzJjmPQ9vfsHlsevKWKYAjissmJTUnsyy1SN8ugSvj
+        +41p7AUr7Ss6/k5ibWC8a9jFyMkhIWAi0XfuGXMXIxeHkMBuRom5rR1sEAlpiWMnzgAlOIBs
+        YYnDh4shaj4wSnxb/IwNJM4moC3xZ4soSLkIUPmZ/ktMIDXMAj1MEp+nLGYCSQgLmEk0Lmpk
+        BrFZBFQlvmz9xwJi8wpYSyx/fIUZYpe8xOoNB5gnMPIsYGRYxSiZWlCcm55bbFhglJdarlec
+        mFtcmpeul5yfu4kRHIhaWjsYT5yIP8QowMGoxMO743l0nBBrYllxZe4hRgkOZiURXl9OoBBv
+        SmJlVWpRfnxRaU5q8SFGaQ4WJXFe+fxjkUIC6YklqdmpqQWpRTBZJg5OqQZG32WKR87ZzVrV
+        Nv2kQ8bEvVzTtJIMDPP1lN9XaXD9Wbv+FTPfJVuR6lXpK36yvNre+8/rOsdte4Y6UcZ/s1Zy
+        rmbl2MtqfiGopfL7G5WS+V/93jyQ7ko9Vq6V3jk5ZQmbya+as/GLlkQahPhsEym6Uc8Tf/rD
+        5uNmi4WOL4mfZJYVatm5SEhciaU4I9FQi7moOBEAXktvUUACAAA=
+X-CMS-MailID: 20200302062613epcas1p2969203b10bc3b7c41e0d4ffe9a08a3e9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200302062613epcas1p2969203b10bc3b7c41e0d4ffe9a08a3e9
+References: <CGME20200302062613epcas1p2969203b10bc3b7c41e0d4ffe9a08a3e9@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds the latest Samsung exfat driver to fs/exfat. This is an
+implementation of the Microsoft exFAT specification. Previous versions
+of this shipped with millions of Android phones, and a random previous
+snaphot has been merged in drivers/staging/.
 
+Compared to the sdfat driver shipped on the phones the following changes
+have been made:
 
-On 2/20/20 4:06 PM, Joakim Zhang wrote:
-> 
->> -----Original Message-----
->> From: kajoljain <kjain@linux.ibm.com>
->> Sent: 2020年2月20日 17:54
->> To: Joakim Zhang <qiangqing.zhang@nxp.com>; acme@kernel.org
->> Cc: linux-kernel@vger.kernel.org; linux-perf-users@vger.kernel.org; Jiri Olsa
->> <jolsa@kernel.org>; Alexander Shishkin <alexander.shishkin@linux.intel.com>;
->> Andi Kleen <ak@linux.intel.com>; Kan Liang <kan.liang@linux.intel.com>; Peter
->> Zijlstra <peterz@infradead.org>; Jin Yao <yao.jin@linux.intel.com>; Madhavan
->> Srinivasan <maddy@linux.vnet.ibm.com>; Anju T Sudhakar
->> <anju@linux.vnet.ibm.com>; Ravi Bangoria <ravi.bangoria@linux.ibm.com>
->> Subject: Re: [PATCH v4] tools/perf/metricgroup: Fix printing event names of
->> metric group with multiple events incase of overlapping events
->>
->>
->>
->> On 2/17/20 8:41 AM, Joakim Zhang wrote:
->>>
->>>> -----Original Message-----
->>>> From: linux-perf-users-owner@vger.kernel.org
->>>> <linux-perf-users-owner@vger.kernel.org> On Behalf Of Kajol Jain
->>>> Sent: 2020年2月12日 13:41
->>>> To: acme@kernel.org
->>>> Cc: linux-kernel@vger.kernel.org; linux-perf-users@vger.kernel.org;
->>>> kjain@linux.ibm.com; Jiri Olsa <jolsa@kernel.org>; Alexander Shishkin
->>>> <alexander.shishkin@linux.intel.com>; Andi Kleen
->>>> <ak@linux.intel.com>; Kan Liang <kan.liang@linux.intel.com>; Peter
->>>> Zijlstra <peterz@infradead.org>; Jin Yao <yao.jin@linux.intel.com>;
->>>> Madhavan Srinivasan <maddy@linux.vnet.ibm.com>; Anju T Sudhakar
->>>> <anju@linux.vnet.ibm.com>; Ravi Bangoria
->>>> <ravi.bangoria@linux.ibm.com>
->>>> Subject: [PATCH v4] tools/perf/metricgroup: Fix printing event names
->>>> of metric group with multiple events incase of overlapping events
->>>>
->>>> Commit f01642e4912b ("perf metricgroup: Support multiple events for
->>>> metricgroup") introduced support for multiple events in a metric
->>>> group. But with the current upstream, metric events names are not
->>>> printed properly incase we try to run multiple metric groups with
->> overlapping event.
->>>>
->>>> With current upstream version, incase of overlapping metric events
->>>> issue is, we always start our comparision logic from start.
->>>> So, the events which already matched with some metric group also take
->>>> part in comparision logic. Because of that when we have overlapping
->>>> events, we end up matching current metric group event with already
->> matched one.
->>>>
->>>> For example, in skylake machine we have metric event CoreIPC and
->>>> Instructions. Both of them need 'inst_retired.any' event value.
->>>> As events in Instructions is subset of events in CoreIPC, they endup
->>>> in pointing to same 'inst_retired.any' value.
->>>>
->>>> In skylake platform:
->>>>
->>>> command:# ./perf stat -M CoreIPC,Instructions  -C 0 sleep 1
->>>>
->>>>  Performance counter stats for 'CPU(s) 0':
->>>>
->>>>      1,254,992,790      inst_retired.any          # 1254992790.0
->>>>
->> Instructions
->>>>                                                   #      1.3
->>>> CoreIPC
->>>>        977,172,805      cycles
->>>>      1,254,992,756      inst_retired.any
->>>>
->>>>        1.000802596 seconds time elapsed
->>>>
->>>> command:# sudo ./perf stat -M UPI,IPC sleep 1
->>>>
->>>>    Performance counter stats for 'sleep 1':
->>>>
->>>>            948,650      uops_retired.retire_slots
->>>>            866,182      inst_retired.any          #      0.7 IPC
->>>>            866,182      inst_retired.any
->>>>          1,175,671      cpu_clk_unhalted.thread
->>>>
->>>> Patch fixes the issue by adding a new bool pointer 'evlist_used' to
->>>> keep track of events which already matched with some group by setting it
->> true.
->>>> So, we skip all used events in list when we start comparision logic.
->>>> Patch also make some changes in comparision logic, incase we get a
->>>> match miss, we discard the whole match and start again with first
->>>> event id in metric event.
->>>>
->>>> With this patch:
->>>> In skylake platform:
->>>>
->>>> command:# ./perf stat -M CoreIPC,Instructions  -C 0 sleep 1
->>>>
->>>>  Performance counter stats for 'CPU(s) 0':
->>>>
->>>>          3,348,415      inst_retired.any          #      0.3
->> CoreIPC
->>>>         11,779,026      cycles
->>>>          3,348,381      inst_retired.any          # 3348381.0
->>>>
->> Instructions
->>>>
->>>>        1.001649056 seconds time elapsed
->>>>
->>>> command:# ./perf stat -M UPI,IPC sleep 1
->>>>
->>>>  Performance counter stats for 'sleep 1':
->>>>
->>>>          1,023,148      uops_retired.retire_slots #      1.1 UPI
->>>>            924,976      inst_retired.any
->>>>            924,976      inst_retired.any          #      0.6 IPC
->>>>          1,489,414      cpu_clk_unhalted.thread
->>>>
->>>>        1.003064672 seconds time elapsed
->>>>
->>>> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
->>>> Cc: Jiri Olsa <jolsa@kernel.org>
->>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>>> Cc: Andi Kleen <ak@linux.intel.com>
->>>> Cc: Kan Liang <kan.liang@linux.intel.com>
->>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>> Cc: Jin Yao <yao.jin@linux.intel.com>
->>>> Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
->>>> Cc: Anju T Sudhakar <anju@linux.vnet.ibm.com>
->>>> Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
->>>> ---
->>>>  tools/perf/util/metricgroup.c | 50
->>>> ++++++++++++++++++++++-------------
->>>>  1 file changed, 31 insertions(+), 19 deletions(-)
->>>
->>> Hi Kajol,
->>>
->>> I am not sure if it is good to ask a question here :-)
->>>
->>> I encountered a perf metricgroup issue, the result is incorrect when the
->> metric includes more than 2 events.
->>>
->>> git log --oneline tools/perf/util/metricgroup.c
->>> 3635b27cc058 perf metricgroup: Fix printing event names of metric
->>> group with multiple events f01642e4912b perf metricgroup: Support
->>> multiple events for metricgroup
->>> 287f2649f791 perf metricgroup: Scale the metric result
->>>
->>> I did a simple test, below is the JSON file and result.
->>> [
->>>         {
->>>              "PublicDescription": "Calculate DDR0 bus actual utilization
->> which vary from DDR0 controller clock frequency",
->>>              "BriefDescription": "imx8qm: ddr0 bus actual utilization",
->>>              "MetricName": "imx8qm-ddr0-bus-util",
->>>              "MetricExpr": "( imx8_ddr0\\/read\\-cycles\\/ +
->> imx8_ddr0\\/write\\-cycles\\/ )",
->>>              "MetricGroup": "i.MX8QM_DDR0_BUS_UTIL"
->>>         }
->>> ]
->>> ./perf stat -I 1000 -M imx8qm-ddr0-bus-util
->>> #           time             counts unit events
->>>      1.000104250              16720      imx8_ddr0/read-cycles/
->> #  22921.0 imx8qm-ddr0-bus-util
->>>      1.000104250               6201      imx8_ddr0/write-cycles/
->>>      2.000525625               8316      imx8_ddr0/read-cycles/
->> #  12785.5 imx8qm-ddr0-bus-util
->>>      2.000525625               2738      imx8_ddr0/write-cycles/
->>>      3.000819125               1056      imx8_ddr0/read-cycles/
->> #   4136.7 imx8qm-ddr0-bus-util
->>>      3.000819125                303      imx8_ddr0/write-cycles/
->>>      4.001103750               6260      imx8_ddr0/read-cycles/
->> #   9149.8 imx8qm-ddr0-bus-util
->>>      4.001103750               2317      imx8_ddr0/write-cycles/
->>>      5.001392750               2084      imx8_ddr0/read-cycles/
->> #   4516.0 imx8qm-ddr0-bus-util
->>>      5.001392750                601      imx8_ddr0/write-cycles/
->>>
->>> You can see that only the first result is correct, could this be reproduced at
->> you side?
->>
->> Hi Joakim,
->>         Will try to look into it from my side.
-> 
+ - the support for vfat has been removed as that is already supported
+   by fs/fat
+ - driver has been renamed to exfat
+ - the code has been refactored and clean up to fully integrate into
+   the upstream Linux version and follow the Linux coding style
+ - metadata operations like create, lookup and readdir have been further
+   optimized
+ - various major and minor bugs have been fixed
 
-> Thanks Kajol for your help, I look into this issue, but don't know how to fix it.
-> 
-> The results are always correct if signal event used in "MetricExpr" with "-I" parameters, but the results are incorrect when more than one events used in "MetricExpr".
-> 
+We plan to treat this version as the future upstream for the code base
+once merged, and all new features and bug fixes will go upstream first.
 
-Hi Joakim,
-    So, I try to look into this issue and understand the flow. From my understanding, whenever we do
-    calculation of metric expression we don't use exact count we are getting.
-    Basically we use mean value of each event in the calculation of metric expression.
+v14:
+ - update file system parameter handling. 
 
-So, I am taking same example you refer.
+v13:
+ - rcu-delay unloading nls, freeing upcase table and sbi.
+ - Switch to ->free_inode().
+ - Push rcu_barrier() from deactivate_locked_super() to filesystems.
+ - Remove unused variables in exfat_sb_info structure.
 
-Metric Event: imx8qm-ddr0-bus-util
-MetricExpr": "( imx8_ddr0\\/read\\-cycles\\/ + imx8_ddr0\\/write\\-cycles\\/ )"
+v12:
+ - Merge the #12 patch into the #11 patch.
+ - Remove an incorrect comment about time_offset mount option.
 
-command#: ./perf stat -I 1000 -M imx8qm-ddr0-bus-util
+v11:
+ - Use current_time instead of ktime_get_real_ts64.
+ - Add i_crtime in exfat inode.
+ - Drop the clamping min/max timestamp.
+ - Merge exfat_init_file_entry into exfat_init_dir_entry.
+ - Initialize the msec fields in exfat_init_dir_entry.
+ - Change timestamps written to disk always get stored in UTC instead of
+   active timezone.
+ - Update EXFAT_DEFAULT_IOCHARSET description in Kconfig.
+ - exfat_get/set_entry_time() take a time_ms argument.
 
-#           time             counts unit events
-     1.000104250              16720      imx8_ddr0/read-cycles/    #  22921.0 imx8qm-ddr0-bus-util
-     1.000104250               6201      imx8_ddr0/write-cycles/
-     2.000525625               8316      imx8_ddr0/read-cycles/    #  12785.5 imx8qm-ddr0-bus-util
-     2.000525625               2738      imx8_ddr0/write-cycles/
-     3.000819125               1056      imx8_ddr0/read-cycles/    #   4136.7 imx8qm-ddr0-bus-util
-     3.000819125                303      imx8_ddr0/write-cycles/
-     4.001103750               6260      imx8_ddr0/read-cycles/    #   9149.8 imx8qm-ddr0-bus-util
-     4.001103750               2317      imx8_ddr0/write-cycles/
-     5.001392750               2084      imx8_ddr0/read-cycles/    #   4516.0 imx8qm-ddr0-bus-util
-     5.001392750                601      imx8_ddr0/write-cycles/
+v10:
+ - Make PBR structures as packed structure.
+ - Fix build error on 32 bit system.
+ - Change L suffix of UNIX_SECS_2108 macro with LL suffix to work
+   on both 32/64bit system.
+ - Rework exfat time handling.
+ - Don't warp exfat specification URLs.
+ - Add _FS suffix to config name.
+ - Remove case_sensitive mount option.
+ - iocharset=utf8 mount option work as utf8 option.
+ - Rename the misleading nls names to corresponding ones.
+ - Fix wrong header guard name of exfat_fs.h.
+ - Remove the unneeded braces of macros in exfat_fs.h.
+ - Move the ondisk values to exfat_raw.h
+ - Put the operators at the previous line in exfat_cluster_to_sector().
+ - Braces of EXFAT_DELETE macro would outside the ~.
+ - Directly use exfat dentry field name.
+ - Add EXFAT_CLUSTERS_UNTRACKED macro.
+ - Remove both sets of inner braces in exfat_set_vol_flags().
+ - Replace is_reserved_cluster() with an explicit check
+   for EXFAT_EOF_CLUSTER.
+ - Initialize superblock s_time_gran/max/min.
+ - Clean-up exfat_bmap and exfat_get_block().
+ - Fix wrong boundlen to avoid potential buffer overflow
+   in exfat_convert_char_to_ucs2().
+ - Process length value as 1 when conversion is failed.
+ - Replace union exfat_timezone with masking the valid bit.
+ - Change exfat_cmp_uniname() with exfat_uniname_ncmp().
+ - Remove struct exfat_timestamp.
+ - Add atime update support.
+ - Add time_offset mount option.
+ - Remove unneeded CLUSTER_32 macro.
+ - Process utf16 surrogate pair as one character.
+ - Rename MUST_ZERO_LEN to PBR64_RESERVED_LEN.
+ - Simplify is_exfat function by just using memchr_inv().
+ - Remove __exfat_init_name_hash.
+ - Remove exfat_striptail_len.
+ - Split dentry ops for the utf8 vs non-utf8 cases.
 
-If you see we have a function called 'update_stats' in file util/stat.c where we do this calculation
-and updating stats->mean value. And this mean value is what we are using actually in our
-metric expression calculation.
+v9:
+ - Add support time zone.
+ - Fix data past EOF resulting from fsx testsuite.
+ - Remove obsolete comments in __exfat_resolve_path().
+ - Remove unused file attributes macros.
+ - Remove unneeded #if BITS_PER_LONG.
 
-We call this function in each iteration where we update stats->mean and stats->n for each event.
-But one weird issue is, for very first event, stat->n is always 1 that is why we are getting 
-mean same as count.
-So this is the reason for single event you get exact aggregate of metric expression.
-So doesn't matter how many events you have in your metric expression, every time
-you take exact count for first one and normalized value for rest which is weird.
+v8:
+ - Rearrange the function grouping in exfat_fs.h
+   (exfat_count_dir_entries, exfat_get_dentry, exfat_get_dentry_set,
+    exfat_find_location).
+ - Mark exfat_extract_uni_name(), exfat_get_uniname_from_ext_entry() and
+   exfat_mirror_bh() as static.
 
-According to update_stats function:  We are updating mean as:
+v7:
+ - Add the helpers macros for bitmap and fat entry to improve readability.
+ - Rename exfat_test_bitmap to exfat_find_free_bitmap.
+ - Merge exfat_get_num_entries into exfat_calc_num_entries.
+ - Add EXFAT_DATA_CLUSTERS and EXFAT_RESERVED_CLUSTERS macro.
+ - Add the macros for EXFAT BIOS block(JUMP_BOOT_LEN, OEM_NAME_LEN,
+   MUST_BE_ZERO_LEN).
+ - Add the macros for EXFAT entry type (IS_EXFAT_CRITICAL_PRI,
+   IS_EXFAT_BENIGN_PRI, IS_EXFAT_CRITICAL_SEC).
+ - Add EXFAT_FILE_NAME_LEN macro.
+ - Change the data type of is_dir with bool in __exfat_write_inode().
+ - Change the data type of sync with bool in exfat_set_vol_flags().
+ - Merge __exfat_set_vol_flags into exfat_set_vol_flags.
+ - Fix wrong statfs->f_namelen.
 
-stats->mean += delta / stats->n where,  delta = val - stats->mean. 
+v6:
+ - Fix always false comparison due to limited range of allow_utime's data
+   type.
+ - Move bh into loop in exfat_find_dir_entry().
+ - Move entry_uniname and unichar variables into
+   an if "entry_type == TYPE_EXTEND" branch.
 
-If we take write-cycles here. Initially mean = 0 and n = 1.
+v5:
+ - Remove a blank line between the message and the error code in
+   exfat_load_upcase_table.
+ - Move brelse to the end of the while loop and rename release_bh label
+   to free_table in exfat_load_upcase_table.
+ - Move an error code assignment after a failed function call.
+ - Rename labels and directly return instead of goto.
+ - Improve the exception handling in exfat_get_dentry_set().
+ - Remove ->d_time leftover.
+ - fix boolreturn.cocci warnings.
 
-1st iteration: n=1, write cycle : 6201 and mean = 6201  (Final agg value: 16720 + 6201 = 22921)
-2nd iteration: n=2, write cycles:  6201 + (2738 - 6201)/2 =  4469.5  (Final aggr value: 8316 + 4469.5 = 12785.5)
-3rd iteration: n=3, write cycles: 4469.5 + (303 - 4469.5)/3 = 3080.6667 (Final aggr value: 1056 + 3080.6667 = 4136.7)
+v4:
+ - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
+ - Rename labels with proper name.
+ - Remove blank lines.
+ - Remove pointer check for bh.
+ - Move ep into loop in exfat_load_bitmap().
+ - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
+ - Change exfat_allow_set_time return type with bool.
 
-Andi and Jiri, I am not sure if its expected behavior. I mean shouldn't we either take mean value of each event 
-or take n as 1 for each event. And one more question, Should we add an option to say whether user want exact aggregate or
-this normalize aggregate to remove the confusion? I try to find it out if we already have one but didn't get.
-Please let me know if my understanding is fine.
+v3:
+ - fix wrong sbi->s_dirt set.
 
-Thanks,
-Kajol
+v2:
+ - Check the bitmap count up to the total clusters.
+ - Rename goto labels in several places.
+ - Change time mode type with enumeration.
+ - Directly return error instead of goto at first error check.
+ - Combine seq_printf calls into a single one.
 
+Namjae Jeon (13):
+  exfat: add in-memory and on-disk structures and headers
+  exfat: add super block operations
+  exfat: add inode operations
+  exfat: add directory operations
+  exfat: add file operations
+  exfat: add fat entry operations
+  exfat: add bitmap operations
+  exfat: add exfat cache
+  exfat: add misc operations
+  exfat: add nls operations
+  exfat: add Kconfig and Makefile
+  MAINTAINERS: add exfat filesystem
+  staging: exfat: make staging/exfat and fs/exfat mutually exclusive
 
-> Hope you can find the root cause :-)
-> 
-> Best Regards,
-> Joakim Zhang
->> Thanks,
->> Kajol
->>>
->>> Thanks a lot!
->>>
->>> Best Regards,
->>> Joakim Zhang
->>>
+Valdis Kletnieks (1):
+  exfat: update file system parameter handling
+
+ MAINTAINERS                   |    7 +
+ drivers/staging/exfat/Kconfig |    2 +-
+ fs/Kconfig                    |    3 +-
+ fs/Makefile                   |    1 +
+ fs/exfat/Kconfig              |   21 +
+ fs/exfat/Makefile             |    8 +
+ fs/exfat/balloc.c             |  280 +++++++
+ fs/exfat/cache.c              |  325 ++++++++
+ fs/exfat/dir.c                | 1238 ++++++++++++++++++++++++++++
+ fs/exfat/exfat_fs.h           |  519 ++++++++++++
+ fs/exfat/exfat_raw.h          |  184 +++++
+ fs/exfat/fatent.c             |  463 +++++++++++
+ fs/exfat/file.c               |  360 ++++++++
+ fs/exfat/inode.c              |  671 +++++++++++++++
+ fs/exfat/misc.c               |  163 ++++
+ fs/exfat/namei.c              | 1448 +++++++++++++++++++++++++++++++++
+ fs/exfat/nls.c                |  831 +++++++++++++++++++
+ fs/exfat/super.c              |  722 ++++++++++++++++
+ 18 files changed, 7244 insertions(+), 2 deletions(-)
+ create mode 100644 fs/exfat/Kconfig
+ create mode 100644 fs/exfat/Makefile
+ create mode 100644 fs/exfat/balloc.c
+ create mode 100644 fs/exfat/cache.c
+ create mode 100644 fs/exfat/dir.c
+ create mode 100644 fs/exfat/exfat_fs.h
+ create mode 100644 fs/exfat/exfat_raw.h
+ create mode 100644 fs/exfat/fatent.c
+ create mode 100644 fs/exfat/file.c
+ create mode 100644 fs/exfat/inode.c
+ create mode 100644 fs/exfat/misc.c
+ create mode 100644 fs/exfat/namei.c
+ create mode 100644 fs/exfat/nls.c
+ create mode 100644 fs/exfat/super.c
+
+-- 
+2.17.1
+
