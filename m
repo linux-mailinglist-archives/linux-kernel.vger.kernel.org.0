@@ -2,129 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9C21759F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CA1175A62
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:22:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgCBMDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:03:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52558 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727492AbgCBMDP (ORCPT
+        id S1727857AbgCBMWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:22:46 -0500
+Received: from gateway20.websitewelcome.com ([192.185.63.14]:29495 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725802AbgCBMWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:03:15 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022BxiAc028824;
-        Mon, 2 Mar 2020 07:03:09 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfmwv5654-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 07:03:09 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 022C14Vg016200;
-        Mon, 2 Mar 2020 12:03:07 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02wdc.us.ibm.com with ESMTP id 2yffk69qgd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 Mar 2020 12:03:07 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022C36mI49021324
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 12:03:06 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9259BBE059;
-        Mon,  2 Mar 2020 12:03:06 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF9BCBE056;
-        Mon,  2 Mar 2020 12:03:01 +0000 (GMT)
-Received: from skywalker.linux.ibm.com (unknown [9.102.1.4])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Mar 2020 12:02:58 +0000 (GMT)
-X-Mailer: emacs 27.0.90 (via feedmail 11-beta-1 I)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 2/5] libnvdimm/pfn: Prevent raw mode fallback if
- pfn-infoblock valid
-In-Reply-To: <158291747661.1609624.13504407869218712107.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <158291746615.1609624.7591692546429050845.stgit@dwillia2-desk3.amr.corp.intel.com>
- <158291747661.1609624.13504407869218712107.stgit@dwillia2-desk3.amr.corp.intel.com>
-Date:   Mon, 02 Mar 2020 17:32:50 +0530
-Message-ID: <87imjnrml1.fsf@linux.ibm.com>
+        Mon, 2 Mar 2020 07:22:46 -0500
+X-Greylist: delayed 1307 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 07:22:45 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 5480C400D7F5D
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 04:46:23 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8jknjSdrgvBMd8jkojNY46; Mon, 02 Mar 2020 06:00:58 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=GsVRQOnb9R+wqSrh14nCUTJamDpoQJdhIGejpnhlXaA=; b=tmiFV/pSqdqUxQvzZwfKRvcuQS
+        nrNndKakapvjXA0g0gKntJ6AhvL1DnrIFbwCsXPy8l/ryCB9TlAFLAV7Y0VW7B1NZyXdwYNLS8iXg
+        u1y6y+ZHIiWqVKuijfVp/svaWo1s1gXhwElBBfXD0LSBaF0ip4pA/kLD3s10PYe9ffCtSZ3o6zuTi
+        u4UezfLVleRxobvznz19V01GnExwJe6m6OZPvd4fpRoUkB7LEBO7a5G0MCcqMK6WxU4mdkdMD/Vz/
+        TpfgwLB2WL8n4nj8pBN5DeTT04e3m5I80ya8RkEc/eCGzFCZdxbXnNhX612LRN5AkUfmOKehs+QJg
+        6vzz+BiQ==;
+Received: from [201.166.157.55] (port=42220 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j8jkl-003r5x-Ct; Mon, 02 Mar 2020 06:00:56 -0600
+Date:   Mon, 2 Mar 2020 06:03:52 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] net: ip_fib: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200302120352.GA15843@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_03:2020-03-02,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
- clxscore=1015 suspectscore=2 malwarescore=0 adultscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003020091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.157.55
+X-Source-L: No
+X-Exim-ID: 1j8jkl-003r5x-Ct
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.157.55]:42220
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-> The EOPNOTSUPP return code from the pmem driver indicates that the
-> namespace has a configuration that may be valid, but the current kernel
-> does not support it. Expand this to all of the nd_pfn_validate() error
-> conditions after the infoblock has been verified as self consistent.
->
-> This prevents exposing the namespace to I/O when the infoblock needs to
-> be corrected, or the system needs to be put into a different
-> configuration (like changing the page size on PowerPC).
->
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Cc: Jeff Moyer <jmoyer@redhat.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/nvdimm/pfn_devs.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> index a5c25cb87116..79fe02d6f657 100644
-> --- a/drivers/nvdimm/pfn_devs.c
-> +++ b/drivers/nvdimm/pfn_devs.c
-> @@ -561,14 +561,14 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
->  			dev_dbg(&nd_pfn->dev, "align: %lx:%lx mode: %d:%d\n",
->  					nd_pfn->align, align, nd_pfn->mode,
->  					mode);
-> -			return -EINVAL;
-> +			return -EOPNOTSUPP;
->  		}
->  	}
->  
->  	if (align > nvdimm_namespace_capacity(ndns)) {
->  		dev_err(&nd_pfn->dev, "alignment: %lx exceeds capacity %llx\n",
->  				align, nvdimm_namespace_capacity(ndns));
-> -		return -EINVAL;
-> +		return -EOPNOTSUPP;
->  	}
->  
->  	/*
-> @@ -581,7 +581,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
->  	if (offset >= resource_size(&nsio->res)) {
->  		dev_err(&nd_pfn->dev, "pfn array size exceeds capacity of %s\n",
->  				dev_name(&ndns->dev));
-> -		return -EBUSY;
-> +		return -EOPNOTSUPP;
->  	}
->  
->  	if ((align && !IS_ALIGNED(nsio->res.start + offset + start_pad, align))
-> @@ -589,7 +589,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
->  		dev_err(&nd_pfn->dev,
->  				"bad offset: %#llx dax disabled align: %#lx\n",
->  				offset, align);
-> -		return -ENXIO;
-> +		return -EOPNOTSUPP;
->  	}
->  
->  	return 0;
-> _______________________________________________
-> Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
-> To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ include/net/ip_fib.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/ip_fib.h b/include/net/ip_fib.h
+index 6a1ae49809de..dabe398bee4c 100644
+--- a/include/net/ip_fib.h
++++ b/include/net/ip_fib.h
+@@ -153,7 +153,7 @@ struct fib_info {
+ 	bool			nh_updated;
+ 	struct nexthop		*nh;
+ 	struct rcu_head		rcu;
+-	struct fib_nh		fib_nh[0];
++	struct fib_nh		fib_nh[];
+ };
+ 
+ 
+@@ -250,7 +250,7 @@ struct fib_table {
+ 	int			tb_num_default;
+ 	struct rcu_head		rcu;
+ 	unsigned long 		*tb_data;
+-	unsigned long		__data[0];
++	unsigned long		__data[];
+ };
+ 
+ struct fib_dump_filter {
+-- 
+2.25.0
+
