@@ -2,90 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AED72175DE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE68175DE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:09:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbgCBPI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:08:58 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39127 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbgCBPI6 (ORCPT
+        id S1727439AbgCBPJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:09:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38063 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727070AbgCBPJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:08:58 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n30so8370740lfh.6;
-        Mon, 02 Mar 2020 07:08:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=sfUf1waMQYKph0mACgZyY9wVCX/jwqNxyvaWkVwoqfY=;
-        b=sa2zSwuSAKZAU7PqaPC4vxnxtSZXckB1JTWR3UdITGxBXX6cJw0hwGma9voKKWeYpR
-         b8CZPncsjhqSY+En+2BMiy+SC3o431Y29TdlBTK97xni0DUgco5Ajwxh3EFHfKQaXJBl
-         LkBwLu0a/QF19HGrY7doo1zhAZvOWO0o+lwMEj1k/GwaaqMsK0eN10cyi1d65op0K1yq
-         r9joBKkgI/Bf0U/8rydAdKFz6FrLx7RinDwxnfDmF9onV8kB/AyBJd1LQCYCzaafdmOJ
-         Ptiz46Mjs+09uIDKOX/ZTgVBf7ip1AtRURe+MFeFT/LYUFmElP9O1a4HbltyGO5tPFul
-         C9oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sfUf1waMQYKph0mACgZyY9wVCX/jwqNxyvaWkVwoqfY=;
-        b=ftgEl6KMYbadgksKxbZ+itfdzqgTvTL2QW1Becv6zWrfQZbp0s3e2uu7lXMseQ0iiV
-         z2FACkZA5dnFaXDN3LHR3N6/mPXR0yw7E/rLd14MWvXu1aOMzSSrgHSzlG6K1q4pJxL8
-         5LAvEgg4iYdv1jmMck4+9dde+DPuZTUZbv+6hkR7zxHdG/c6ACxkzBRDANq/k2OOoZLg
-         YEtrXCn9B1yXKd0BYgWfAg+q62jIMtt5EF7I6J6DzpYDhTRT9lxkWOEcUwqdunIKdKXp
-         8Xn9zs/cQzaqwDhxkAhRPBpJeWKt5SCTwO57Ka+nxtKYVardCvpYZc3QQXRRgDfcFwE4
-         Xuqg==
-X-Gm-Message-State: ANhLgQ0dJkOzmldL9qpcKbql48LyTA39ZfLZ84QbHj4xsb1P2s3qhiju
-        TQ1ed0rxCOdLf0ziNwrDWkeyMVLbOLE=
-X-Google-Smtp-Source: ADFU+vsJgs9RmQXV6kOAxM20AZAwdaBWyBkoJh9YrvZ0ip/Nkmc79bnso1cJO6v9VHpFqzjs+7ZUMA==
-X-Received: by 2002:ac2:4857:: with SMTP id 23mr11027243lfy.200.1583161735860;
-        Mon, 02 Mar 2020 07:08:55 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id s1sm546922ljj.86.2020.03.02.07.08.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2020 07:08:55 -0800 (PST)
-Subject: Re: [PATCH 9/9] io_uring: pass submission ref to async
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1583078091.git.asml.silence@gmail.com>
- <29efa25e63ea86b9b038fff202a5f7423b5482c8.1583078091.git.asml.silence@gmail.com>
- <fb27a289-717c-b911-7981-db72cbc51c26@gmail.com>
-Message-ID: <fab1f954-98f0-3576-9142-966982988bc0@gmail.com>
-Date:   Mon, 2 Mar 2020 18:08:54 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 2 Mar 2020 10:09:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583161762;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KN1fqfQyEbwXImklW+2ThcI2BflCcy0zp7lyoZJOx4k=;
+        b=PhLRf+jp5XK2F3uLRpWmFRiCXsqdl3YeL9bsb36eGqig+KHyFT80v5PxTzsRqWbBjzqG0q
+        SktH0VrLyRppA3Z3W91QYVDRSBiafyfPUFxQ9iCJtNtwJ8xDNIl9RL0fgmrqsGJJzer0hO
+        aA3hsUFpaSOdBqO6OQs0EWboOqlwNNg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-160-3hkzKmMsNLKPX4c2s3YGhg-1; Mon, 02 Mar 2020 10:09:18 -0500
+X-MC-Unique: 3hkzKmMsNLKPX4c2s3YGhg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 39933801E76;
+        Mon,  2 Mar 2020 15:09:15 +0000 (UTC)
+Received: from krava (ovpn-205-46.brq.redhat.com [10.40.205.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D4F39CA3;
+        Mon,  2 Mar 2020 15:09:06 +0000 (UTC)
+Date:   Mon, 2 Mar 2020 16:09:03 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Kajol Jain <kjain@linux.ibm.com>
+Cc:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, anju@linux.vnet.ibm.com,
+        maddy@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
+        peterz@infradead.org, yao.jin@linux.intel.com, ak@linux.intel.com,
+        jolsa@kernel.org, kan.liang@linux.intel.com, jmario@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
+        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
+        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v3 6/8] perf/tools: Enhance JSON/metric infrastructure to
+ handle "?"
+Message-ID: <20200302150903.GC259142@krava>
+References: <20200229094159.25573-1-kjain@linux.ibm.com>
+ <20200229094159.25573-7-kjain@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <fb27a289-717c-b911-7981-db72cbc51c26@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200229094159.25573-7-kjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/2020 12:39 AM, Pavel Begunkov wrote:
-> On 01/03/2020 19:18, Pavel Begunkov wrote:
->> Currenlty, every async work handler accepts a submission reference,
->> which it should put. Also there is a reference grabbed in io_get_work()
->> and dropped in io_put_work(). This patch merge them together.
->>
->> - So, ownership of the submission reference passed to io-wq, and it'll
->> be put in io_put_work().
->> - io_get_put() doesn't take a ref now and so deleted.
->> - async handlers don't put the submission ref anymore.
->> - make cancellation bits of io-wq to call {get,put}_work() handlers
-> 
-> Hmm, it makes them more like {init,fini}_work() and unbalanced/unpaired. May be
-> no a desirable thing.
+On Sat, Feb 29, 2020 at 03:11:57PM +0530, Kajol Jain wrote:
 
-Any objections against replacing {get,put}_work() with
-io_finilise_work()? It will be called once and only once, and a work
-must not go away until it happened. It will be enough for now, but not
-sure whether you have some plans for this get/put pinning.
+SNIP
 
--- 
-Pavel Begunkov
+> +					*dst++ = paramval[i++];
+> +				free(paramval);
+> +			}
+> +		}
+>  		else
+>  			*dst++ = *str;
+>  		str++;
+> @@ -72,8 +86,8 @@ number		[0-9]+
+>  
+>  sch		[-,=]
+>  spec		\\{sch}
+> -sym		[0-9a-zA-Z_\.:@]+
+> -symbol		{spec}*{sym}*{spec}*{sym}*
+> +sym            [0-9a-zA-Z_\.:@?]+
+> +symbol         {spec}*{sym}*{spec}*{sym}*{spec}*{sym}
+>  
+>  %%
+>  	{
+> diff --git a/tools/perf/util/expr.y b/tools/perf/util/expr.y
+> index 4720cbe79357..0f3ef0f37bf4 100644
+> --- a/tools/perf/util/expr.y
+> +++ b/tools/perf/util/expr.y
+> @@ -38,6 +38,8 @@
+>  %type <num> expr if_expr
+>  
+>  %{
+> +int expr__runtimeparam;
+
+we don't like global variables.. could this be part of the
+contaxt struct?
+
+jirka
+
