@@ -2,103 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C8A175AE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FD5A175AF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgCBMy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:54:29 -0500
-Received: from mga17.intel.com ([192.55.52.151]:52574 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727497AbgCBMy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:54:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 04:54:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
-   d="scan'208";a="286613230"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Mar 2020 04:54:25 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1j8kaZ-0068Np-Vd; Mon, 02 Mar 2020 14:54:27 +0200
-Date:   Mon, 2 Mar 2020 14:54:27 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Gayatri Kammela <gayatri.kammela@intel.com>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vishwanath.somayaji@intel.com, dvhart@infradead.org,
-        mika.westerberg@intel.com, peterz@infradead.org,
-        charles.d.prestopine@intel.com, Chen Zhou <chenzhou10@huawei.com>,
-        David Box <david.e.box@intel.com>
-Subject: Re: [PATCH v3 0/5] platform/x86: intel_pmc_core: Add bug fixes or
- code
-Message-ID: <20200302125427.GV1224808@smile.fi.intel.com>
-References: <cover.1583093898.git.gayatri.kammela@intel.com>
+        id S1727883AbgCBMze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:55:34 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56364 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbgCBMze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 07:55:34 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j8kbc-0005MT-1m; Mon, 02 Mar 2020 12:55:32 +0000
+Date:   Mon, 2 Mar 2020 13:55:31 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        viro@zeniv.linux.org.uk, metze@samba.org,
+        torvalds@linux-foundation.org, cyphar@cyphar.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+Message-ID: <20200302125531.7z2viveb3zxhqkuj@wittgenstein>
+References: <96563.1582901612@warthog.procyon.org.uk>
+ <20200228152427.rv3crd7akwdhta2r@wittgenstein>
+ <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+ <20200302115239.pcxvej3szmricxzu@wittgenstein>
+ <8736arnel9.fsf@oldenburg2.str.redhat.com>
+ <20200302121959.it3iophjavbhtoyp@wittgenstein>
+ <20200302123510.bm3a2zssohwvkaa4@wittgenstein>
+ <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1583093898.git.gayatri.kammela@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 12:44:21PM -0800, Gayatri Kammela wrote:
-> Hi,
+On Mon, Mar 02, 2020 at 01:42:50PM +0100, Florian Weimer wrote:
+> * Christian Brauner:
 > 
-> This patch series consists of bug fixes and code optimization for the
-> series https://patchwork.kernel.org/patch/11365325/
+> > One difference to openat() is that openat2() doesn't silently ignore
+> > unknown flags. But I'm not sure that would matter for iplementing
+> > openat() via openat2() since there are no flags that openat() knows about
+> > that openat2() doesn't know about afaict. So the only risks would be
+> > programs that accidently have a bit set that isn't used yet.
 > 
+> Will there be any new flags for openat in the future?  If not, we can
+> just use a constant mask in an openat2-based implementation of openat.
 
-I had applied first four, the fifth requires additional work.
-When send a new version, do it only for last one.
+From past experiences with other syscalls I would expect that any new
+features would only be available through openat2().
+The way I see it in general is that a revised version of a syscall
+basically deprecates the old syscall _wrt to new features_, i.e. new
+features will only be available through the revised version unless there
+are very strong reasons to also allow it in the old version (security
+bug or whatever).
+(But I don't want to be presumptuous here and pretend I can make any
+definiteve statement. Ultimately it's up to the community, I guess. :))
 
-> Patch 1: Relocate both pmc_core_slps0_display() and pmc_core_lpm_display()
-> Patch 2: Remove the duplicate if() condition to create debugfs entry
-> Patch 3: Add back slp_s0_offset attribute back to tgl_reg_map
-> Patch 4: Make pmc_core_substate_res_show() generic
-> Patch 5: Make pmc_core_lpm_display() generic
-> 
-> Changes since v1:
-> 1) Changed the order of the patches i.e., patch 2 in v1 is made first in
->    the order for v2.
-> 2) Fixed the warnings reported by kbuild test robot.
-> 
-> Changes since v2:
-> 1) Add "Make pmc_core_substate_res_show() generic" patch to v3.
-> 2) Fixed the memory leak issue in pmc_core_lpm_display().
-> 3) Moved patch 2 in v2 to the last in the series in v3.
-> 
-> Gayatri Kammela (5):
->   platform/x86: intel_pmc_core: fix: Relocate pmc_core_slps0_display()
->     and pmc_core_lpm_display() to outside of CONFIG_DEBUG_FS
->   platform/x86: intel_pmc_core: fix: Remove the duplicate if() to create
->     debugfs entry for substate_live_status_registers
->   platform/x86: intel_pmc_core: fix: Add slp_s0_offset attribute back to
->     tgl_reg_map
->   platform/x86: intel_pmc_core: Make pmc_core_substate_res_show()
->     generic
->   platform/x86: intel_pmc_core: fix: Make pmc_core_lpm_display() generic
->     for platforms that support sub-states
-> 
->  drivers/platform/x86/intel_pmc_core.c | 148 +++++++++++++++-----------
->  drivers/platform/x86/intel_pmc_core.h |   3 +-
->  2 files changed, 85 insertions(+), 66 deletions(-)
-> 
-> base-commit: 7adb1e8aeeb5d4d88012568b2049599c1a247cf2
-> 
-> Cc: Chen Zhou <chenzhou10@huawei.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: David Box <david.e.box@intel.com>
-> -- 
-> 2.17.1
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Christian
