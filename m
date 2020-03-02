@@ -2,65 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A3601764CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 21:19:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 474AE1764D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 21:21:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgCBUTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 15:19:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39494 "EHLO mail.kernel.org"
+        id S1726880AbgCBUVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 15:21:24 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:36338 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgCBUTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 15:19:42 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D075214DB;
-        Mon,  2 Mar 2020 20:19:41 +0000 (UTC)
-Date:   Mon, 2 Mar 2020 15:19:39 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH v3] Documentation: bootconfig: Update boot configuration
- documentation
-Message-ID: <20200302151939.1a83a5ed@gandalf.local.home>
-In-Reply-To: <20200302131351.1b51a58e@lwn.net>
-References: <158313621831.3082.9886161529613724376.stgit@devnote2>
-        <158313622831.3082.8237132211731864948.stgit@devnote2>
-        <20200302125033.4a62e88e@lwn.net>
-        <20200302150802.348b814e@gandalf.local.home>
-        <20200302131351.1b51a58e@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726700AbgCBUVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 15:21:23 -0500
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 022KKr7x020818
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 21:20:53 +0100
+Received: from [139.25.68.37] ([139.25.68.37])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 022KKqOB014549;
+        Mon, 2 Mar 2020 21:20:52 +0100
+Subject: Re: [PATCH 5/6] KVM: x86: Rename "found" variable in kvm_cpuid() to
+ "exact_entry_exists"
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
+ <20200302195736.24777-6-sean.j.christopherson@intel.com>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <680d85ee-948c-6968-2d1a-d563d4863140@siemens.com>
+Date:   Mon, 2 Mar 2020 21:20:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200302195736.24777-6-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Mar 2020 13:13:51 -0700
-Jonathan Corbet <corbet@lwn.net> wrote:
-
-> On Mon, 2 Mar 2020 15:08:02 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On 02.03.20 20:57, Sean Christopherson wrote:
+> Rename "found" in kvm_cpuid() to "exact_entry_exists" to better convey
+> that the intent of the tracepoint's "found/not found" output is to trace
+> whether the output values are for the actual requested leaf or for some
+> other (likely unrelated) leaf that was found while processing entries to
+> emulate funky CPU behavior, e.g. the max basic leaf on Intel CPUs when
+> the requested CPUID leaf is out of range.
 > 
-> > > So I tried to apply this but failed - it's built on other changes to
-> > > bootconfig.rst that went into linux-next via Steve's tree.  So Steve,
-> > > would you like to take this one too?    
-> > 
-> > All my changes in linux-next have already hit Linus's tree. I haven't
-> > started pushing my next merge window changes yet. Are you up to date with
-> > Linus?  
+> Suggested-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/kvm/cpuid.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> I try not to do too many backmerges with mainline, so no.  I can pull
-> forward if I have to, I guess.
->
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 869526930cf7..b0a4f3c17932 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -1002,10 +1002,10 @@ void kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+>   {
+>   	const u32 function = *eax, index = *ecx;
+>   	struct kvm_cpuid_entry2 *entry;
+> -	bool found;
+> +	bool exact_entry_exists;
+>   
+>   	entry = kvm_find_cpuid_entry(vcpu, function, index);
+> -	found = entry;
+> +	exact_entry_exists = !!entry;
+>   	/*
+>   	 * Intel CPUID semantics treats any query for an out-of-range
+>   	 * leaf as if the highest basic leaf (i.e. CPUID.0H:EAX) were
+> @@ -1047,7 +1047,7 @@ void kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+>   			}
+>   		}
+>   	}
+> -	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, found);
+> +	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, exact_entry_exists);
 
-I can add it to my tree, but I may not send it to Linus unless I have
-another urgent request to send to him. So it may not make it till the next
-merge window.
+Actually, I think we also what to change output in the tracepoint.
 
--- Steve
+Jan
+
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_cpuid);
+>   
+> 
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
