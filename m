@@ -2,116 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC901755F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:24:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D611755AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbgCBIYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:24:39 -0500
-Received: from emcscan.emc.com.tw ([192.72.220.5]:40493 "EHLO
-        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbgCBIYj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:24:39 -0500
-X-Greylist: delayed 583 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 03:24:38 EST
-X-IronPort-AV: E=Sophos;i="5.56,253,1539619200"; 
-   d="scan'208";a="34654534"
-Received: from unknown (HELO webmail.emc.com.tw) ([192.168.10.1])
-  by emcscan.emc.com.tw with ESMTP; 02 Mar 2020 16:14:54 +0800
-Received: from 192.168.10.23
-        by webmail.emc.com.tw with MailAudit ESMTP Server V5.0(2834:0:AUTH_RELAY)
-        (envelope-from <johnny.chuang@emc.com.tw>); Mon, 02 Mar 2020 16:14:56 +0800 (CST)
-Received: from 192.168.55.71
-        by webmail.emc.com.tw with Mail2000 ESMTPA Server V7.00(2486:0:AUTH_LOGIN)
-        (envelope-from <johnny.chuang@emc.com.tw>); Mon, 02 Mar 2020 16:14:55 +0800 (CST)
-From:   "Johnny.Chuang" <johnny.chuang@emc.com.tw>
-To:     "'Peter Hutterer'" <peter.hutterer@who-t.net>,
-        "'Johnny Chuang'" <johnny.chuang.emc@gmail.com>
-Cc:     "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>,
-        "'Benjamin Tissoires'" <benjamin.tissoires@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        "'Jennifer Tsai'" <jennifer.tsai@emc.com.tw>,
-        "'James Chen'" <james.chen@emc.com.tw>,
-        "'Paul Liang'" <paul.liang@emc.com.tw>,
-        "'Jeff Chuang'" <jeff.chuang@emc.com.tw>
-References: <1582766000-23023-1-git-send-email-johnny.chuang.emc@gmail.com> <20200227223608.GB1087116@jelly>
-In-Reply-To: <20200227223608.GB1087116@jelly>
-Subject: RE: [PATCH] Input: elants_i2c - Report resolution information for touch major
-Date:   Mon, 2 Mar 2020 16:14:51 +0800
-Message-ID: <007201d5f06a$a5f341c0$f1d9c540$@emc.com.tw>
+        id S1727827AbgCBISY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:18:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727209AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:21 -0500
+Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 893B0246EB;
+        Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583136979;
+        bh=j+CiTWabGq3FXlueQMbmSeaj+tQF9Be/P6X1HTLA8n0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=x5jd/QTE93lIkxJfUM+jb34xeZrMlv/yIiMdt8EhqpuW6Ei6D0jFaJXgsUjqpKRjp
+         5+jxbPQ01NnYDKXNH6g7hBQZjQxNa24LhZSDLG5mEnOB1BfyZVi80j3vHcBdMzHZV7
+         9Pwx7QA3BzGzBWRqzJVve1WOSw7I6wr+ugQscbEg=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1j8gFM-0003wg-VK; Mon, 02 Mar 2020 09:16:16 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+        linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
+        megaraidlinux.pdl@broadcom.com,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        esc.storagedev@microsemi.com, Doug Gilbert <dgilbert@interlog.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        HighPoint Linux Team <linux@highpoint-tech.com>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Hannes Reinecke <hare@suse.com>, dc395x@twibble.org,
+        Oliver Neukum <oliver@neukum.org>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Juergen E. Fischer" <fischer@norbit.de>,
+        Khalid Aziz <khalid@gonehiking.org>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        Ali Akcaagac <aliakc@web.de>,
+        Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Avri Altman <avri.altman@wdc.com>,
+        GOTO Masanori <gotom@debian.or.jp>
+Subject: [PATCH 00/42] Manually convert SCSI documentation to ReST format
+Date:   Mon,  2 Mar 2020 09:15:33 +0100
+Message-Id: <cover.1583136624.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQKWH33oxoD7nuWwmg1Q/5rISp31bAHeLyTrpqWIE/A=
-Content-Language: zh-tw
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMDUwMTBcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy1lMGYxMjliOS01YzVkLTExZWEtODUyMC03YzVjZjg3NDk0NzhcYW1lLXRlc3RcZTBmMTI5YmItNWM1ZC0xMWVhLTg1MjAtN2M1Y2Y4NzQ5NDc4Ym9keS50eHQiIHN6PSIyMjc3IiB0PSIxMzIyNzYxMDQ5MTI5NDI1OTkiIGg9Ik9jTEovN3VSbFA2eE5CRjlCK3J2Z2J6WXZvcz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: true
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Peter Hutterer [mailto:peter.hutterer@who-t.net]
-> Sent: Friday, February 28, 2020 6:36 AM
-> To: Johnny Chuang
-> Cc: Dmitry Torokhov; Benjamin Tissoires; linux-kernel@vger.kernel.org;
-> linux-input@vger.kernel.org; Johnny Chuang; Jennifer Tsai; James Chen;
-Paul
-> Liang; Jeff Chuang
-> Subject: Re: [PATCH] Input: elants_i2c - Report resolution information for
-touch
-> major
-> 
-> On Thu, Feb 27, 2020 at 09:13:20AM +0800, Johnny Chuang wrote:
-> > From: Johnny Chuang <johnny.chuang@emc.com.tw>
-> >
-> > This patch supports reporting resolution for ABS_MT_TOUCH_MAJOR event.
-> > This information is needed in showing pressure/width radius.
-> >
-> > Signed-off-by: Johnny Chuang <johnny.chuang@emc.com.tw>
-> > ---
-> >  drivers/input/touchscreen/elants_i2c.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/input/touchscreen/elants_i2c.c
-> b/drivers/input/touchscreen/elants_i2c.c
-> > index 4911799..14c577c 100644
-> > --- a/drivers/input/touchscreen/elants_i2c.c
-> > +++ b/drivers/input/touchscreen/elants_i2c.c
-> > @@ -1309,6 +1309,7 @@ static int elants_i2c_probe(struct i2c_client
-> *client,
-> >  	input_set_abs_params(ts->input, ABS_MT_PRESSURE, 0, 255, 0, 0);
-> >  	input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
-> >  	input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
-> > +	input_abs_set_res(ts->input, ABS_MT_TOUCH_MAJOR, 1);
-> 
-> official resolution for absinfo is "units per mm", so a value of 3 would
-> mean 3mm, is that correct?
+This patch series manually convert all SCSI documentation files to ReST.
 
-Correct.
-This resolution (1 unit/mm) is for all elan I2C touchscreen devices, 
-including the touchscreen devices in the future.
-This information is from our firmware members.
+This is part of a bigger series that finaly finishes the migration to ReST.
+After that, we can focus on more interesting tasks from the documentation
+PoV, like cleaning obsolete stuff and filling the gaps.
 
-> 
-> Not that it matters too much, since touch major is already all over the
-> place and needs userspace overrides for every device but it'd be nice to
-at
-> least make this useful out of the box on one device class.
-> 
-> Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-> 
-> otherwise
-> 
-> Cheers,
->    Peter
-> 
-> >
-> >  	error = input_register_device(ts->input);
-> >  	if (error) {
-> > --
-> > 2.7.4
-> >
+If you want to see how this would show at the documentation body,
+a sneak peak of this series (together with the other pending
+doc patches from me) is available at:
+
+        https://www.infradead.org/~mchehab/kernel_docs/scsi/index.html
+
+This series is available on this devel branch:
+
+        https://git.linuxtv.org/mchehab/experimental.git/log/?h=scsi_docs_20200228
+
+and it is based on next-20200228
+
+
+Mauro Carvalho Chehab (42):
+  Add an empty index file for SCSI documents
+  docs: scsi: include SCSI Transport SRP diagram at the doc body
+  docs: scsi: convert 53c700.txt to ReST
+  docs: scsi: convert aacraid.txt to ReST
+  docs: scsi: convert advansys.txt to ReST
+  docs: scsi: convert aha152x.txt to ReST
+  docs: scsi: convert aic79xx.txt to ReST
+  docs: scsi: convert aic7xxx.txt to ReST
+  docs: scsi: convert bfa.txt to ReST
+  docs: scsi: convert bnx2fc.txt to ReST
+  docs: scsi: convert BusLogic.txt to ReST
+  docs: scsi: convert cxgb3i.txt to ReST
+  docs: scsi: convert dc395x.txt to ReST
+  docs: scsi: convert dpti.txt to ReST
+  docs: scsi: convert FlashPoint.txt to ReST
+  docs: scsi: convert g_NCR5380.txt to ReST
+  docs: scsi: convert hpsa.txt to ReST
+  docs: scsi: convert hptiop.txt to ReST
+  docs: scsi: convert libsas.txt to ReST
+  docs: scsi: convert link_power_management_policy.txt to ReST
+  docs: scsi: convert lpfc.txt to ReST
+  docs: scsi: convert megaraid.txt to ReST
+  docs: scsi: convert ncr53c8xx.txt to ReST
+  docs: scsi: convert NinjaSCSI.txt to ReST
+  docs: scsi: convert ppa.txt to ReST
+  docs: scsi: convert qlogicfas.txt to ReST
+  docs: scsi: convert scsi-changer.txt to ReST
+  docs: scsi: convert scsi_eh.txt to ReST
+  docs: scsi: convert scsi_fc_transport.txt to ReST
+  docs: scsi: convert scsi-generic.txt to ReST
+  docs: scsi: convert scsi_mid_low_api.txt to ReST
+  docs: scsi: convert scsi-parameters.txt to ReST
+  docs: scsi: convert scsi.txt to ReST
+  docs: scsi: convert sd-parameters.txt to ReST
+  docs: scsi: convert smartpqi.txt to ReST
+  docs: scsi: convert st.txt to ReST
+  docs: scsi: convert sym53c500_cs.txt to ReST
+  docs: scsi: convert sym53c8xx_2.txt to ReST
+  docs: scsi: convert tcm_qla2xxx.txt to ReST
+  docs: scsi: convert ufs.txt to ReST
+  docs: scsi: convert wd719x.txt to ReST
+  docs: scsi: convert arcmsr_spec.txt to ReST
+
+ Documentation/driver-api/libata.rst           |    2 +-
+ Documentation/index.rst                       |    1 +
+ Documentation/scsi/{53c700.txt => 53c700.rst} |   61 +-
+ .../scsi/{BusLogic.txt => BusLogic.rst}       |   89 +-
+ .../scsi/{FlashPoint.txt => FlashPoint.rst}   |  225 +-
+ .../scsi/{NinjaSCSI.txt => NinjaSCSI.rst}     |  198 +-
+ .../scsi/{aacraid.txt => aacraid.rst}         |   59 +-
+ .../scsi/{advansys.txt => advansys.rst}       |  129 +-
+ .../scsi/{aha152x.txt => aha152x.rst}         |   73 +-
+ .../scsi/{aic79xx.txt => aic79xx.rst}         |  586 +++---
+ .../scsi/{aic7xxx.txt => aic7xxx.rst}         |  446 ++--
+ Documentation/scsi/arcmsr_spec.rst            |  907 ++++++++
+ Documentation/scsi/arcmsr_spec.txt            |  574 -----
+ Documentation/scsi/{bfa.txt => bfa.rst}       |   28 +-
+ Documentation/scsi/{bnx2fc.txt => bnx2fc.rst} |   18 +-
+ Documentation/scsi/{cxgb3i.txt => cxgb3i.rst} |   22 +-
+ Documentation/scsi/{dc395x.txt => dc395x.rst} |   75 +-
+ Documentation/scsi/dpti.rst                   |   92 +
+ Documentation/scsi/dpti.txt                   |   83 -
+ .../scsi/{g_NCR5380.txt => g_NCR5380.rst}     |   89 +-
+ Documentation/scsi/{hpsa.txt => hpsa.rst}     |   79 +-
+ Documentation/scsi/{hptiop.txt => hptiop.rst} |   45 +-
+ Documentation/scsi/index.rst                  |   51 +
+ Documentation/scsi/{libsas.txt => libsas.rst} |  364 ++--
+ ...y.txt => link_power_management_policy.rst} |   12 +-
+ Documentation/scsi/{lpfc.txt => lpfc.rst}     |   16 +-
+ .../scsi/{megaraid.txt => megaraid.rst}       |   47 +-
+ .../scsi/{ncr53c8xx.txt => ncr53c8xx.rst}     | 1865 ++++++++++-------
+ Documentation/scsi/{ppa.txt => ppa.rst}       |   12 +-
+ .../scsi/{qlogicfas.txt => qlogicfas.rst}     |   17 +-
+ .../{scsi-changer.txt => scsi-changer.rst}    |   36 +-
+ .../{scsi-generic.txt => scsi-generic.rst}    |   75 +-
+ ...csi-parameters.txt => scsi-parameters.rst} |   28 +-
+ Documentation/scsi/{scsi.txt => scsi.rst}     |   31 +-
+ .../scsi/{scsi_eh.txt => scsi_eh.rst}         |  217 +-
+ ...fc_transport.txt => scsi_fc_transport.rst} |  236 ++-
+ ...i_mid_low_api.txt => scsi_mid_low_api.rst} | 1730 +++++++--------
+ .../{Makefile => figures.rst}                 |    9 +-
+ .../{sd-parameters.txt => sd-parameters.rst}  |   21 +-
+ .../scsi/{smartpqi.txt => smartpqi.rst}       |   52 +-
+ Documentation/scsi/{st.txt => st.rst}         |  301 ++-
+ .../{sym53c500_cs.txt => sym53c500_cs.rst}    |    8 +-
+ .../scsi/{sym53c8xx_2.txt => sym53c8xx_2.rst} | 1109 +++++-----
+ .../scsi/{tcm_qla2xxx.txt => tcm_qla2xxx.rst} |   26 +-
+ Documentation/scsi/{ufs.txt => ufs.rst}       |   84 +-
+ Documentation/scsi/{wd719x.txt => wd719x.rst} |   23 +-
+ MAINTAINERS                                   |   28 +-
+ drivers/scsi/BusLogic.c                       |    2 +-
+ drivers/scsi/Kconfig                          |   42 +-
+ drivers/scsi/aha152x.c                        |    4 +-
+ drivers/scsi/aic7xxx/Kconfig.aic79xx          |    2 +-
+ drivers/scsi/aic7xxx/Kconfig.aic7xxx          |    2 +-
+ drivers/scsi/arcmsr/arcmsr_attr.c             |    2 +-
+ drivers/scsi/arcmsr/arcmsr_hba.c              |    2 +-
+ drivers/scsi/dpt/dpti_ioctl.h                 |    2 +-
+ drivers/scsi/dpt_i2o.c                        |    2 +-
+ drivers/scsi/dpti.h                           |    2 +-
+ drivers/scsi/g_NCR5380.c                      |    2 +-
+ drivers/scsi/ncr53c8xx.c                      |    2 +-
+ drivers/scsi/pcmcia/Kconfig                   |    2 +-
+ drivers/scsi/smartpqi/Kconfig                 |    2 +-
+ drivers/scsi/st.c                             |    2 +-
+ drivers/scsi/ufs/Kconfig                      |    2 +-
+ include/scsi/sg.h                             |    2 +-
+ scripts/documentation-file-ref-check          |    2 +-
+ 65 files changed, 6040 insertions(+), 4317 deletions(-)
+ rename Documentation/scsi/{53c700.txt => 53c700.rst} (75%)
+ rename Documentation/scsi/{BusLogic.txt => BusLogic.rst} (93%)
+ rename Documentation/scsi/{FlashPoint.txt => FlashPoint.rst} (21%)
+ rename Documentation/scsi/{NinjaSCSI.txt => NinjaSCSI.rst} (28%)
+ rename Documentation/scsi/{aacraid.txt => aacraid.rst} (83%)
+ rename Documentation/scsi/{advansys.txt => advansys.rst} (73%)
+ rename Documentation/scsi/{aha152x.txt => aha152x.rst} (76%)
+ rename Documentation/scsi/{aic79xx.txt => aic79xx.rst} (48%)
+ rename Documentation/scsi/{aic7xxx.txt => aic7xxx.rst} (49%)
+ create mode 100644 Documentation/scsi/arcmsr_spec.rst
+ delete mode 100644 Documentation/scsi/arcmsr_spec.txt
+ rename Documentation/scsi/{bfa.txt => bfa.rst} (72%)
+ rename Documentation/scsi/{bnx2fc.txt => bnx2fc.rst} (91%)
+ rename Documentation/scsi/{cxgb3i.txt => cxgb3i.rst} (86%)
+ rename Documentation/scsi/{dc395x.txt => dc395x.rst} (64%)
+ create mode 100644 Documentation/scsi/dpti.rst
+ delete mode 100644 Documentation/scsi/dpti.txt
+ rename Documentation/scsi/{g_NCR5380.txt => g_NCR5380.rst} (41%)
+ rename Documentation/scsi/{hpsa.txt => hpsa.rst} (77%)
+ rename Documentation/scsi/{hptiop.txt => hptiop.rst} (78%)
+ create mode 100644 Documentation/scsi/index.rst
+ rename Documentation/scsi/{libsas.txt => libsas.rst} (57%)
+ rename Documentation/scsi/{link_power_management_policy.txt => link_power_management_policy.rst} (65%)
+ rename Documentation/scsi/{lpfc.txt => lpfc.rst} (93%)
+ rename Documentation/scsi/{megaraid.txt => megaraid.rst} (66%)
+ rename Documentation/scsi/{ncr53c8xx.txt => ncr53c8xx.rst} (55%)
+ rename Documentation/scsi/{ppa.txt => ppa.rst} (32%)
+ rename Documentation/scsi/{qlogicfas.txt => qlogicfas.rst} (92%)
+ rename Documentation/scsi/{scsi-changer.txt => scsi-changer.rst} (87%)
+ rename Documentation/scsi/{scsi-generic.txt => scsi-generic.rst} (70%)
+ rename Documentation/scsi/{scsi-parameters.txt => scsi-parameters.rst} (81%)
+ rename Documentation/scsi/{scsi.txt => scsi.rst} (82%)
+ rename Documentation/scsi/{scsi_eh.txt => scsi_eh.rst} (73%)
+ rename Documentation/scsi/{scsi_fc_transport.txt => scsi_fc_transport.rst} (74%)
+ rename Documentation/scsi/{scsi_mid_low_api.txt => scsi_mid_low_api.rst} (39%)
+ rename Documentation/scsi/scsi_transport_srp/{Makefile => figures.rst} (1%)
+ rename Documentation/scsi/{sd-parameters.txt => sd-parameters.rst} (37%)
+ rename Documentation/scsi/{smartpqi.txt => smartpqi.rst} (67%)
+ rename Documentation/scsi/{st.txt => st.rst} (79%)
+ rename Documentation/scsi/{sym53c500_cs.txt => sym53c500_cs.rst} (89%)
+ rename Documentation/scsi/{sym53c8xx_2.txt => sym53c8xx_2.rst} (53%)
+ rename Documentation/scsi/{tcm_qla2xxx.txt => tcm_qla2xxx.rst} (57%)
+ rename Documentation/scsi/{ufs.txt => ufs.rst} (79%)
+ rename Documentation/scsi/{wd719x.txt => wd719x.rst} (46%)
+
+-- 
+2.21.1
+
 
