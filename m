@@ -2,113 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D8AA17548A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B79A1754AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbgCBHiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 02:38:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727032AbgCBHiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 02:38:17 -0500
-Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E87D246BF;
-        Mon,  2 Mar 2020 07:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583134696;
-        bh=bQRwx5N1oMLXQUYzamAbbIdg3iVXNtnWVf4W1C9hQYM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XfLrHLjXrkIM7eQBCCeL+qHVgyG/Gy2SZ8JbcLR9/CSIIblyRHnFBz1NKwe+m8xhB
-         +djCBge5zD/6eTZJYYpOmgcNvCOvpHDd9NosavfqLoSoO22DkXr/LtaF8eGiIPtQ6i
-         0WaKDxNLAiQvAz1genTg6GluUq0oq7bZJSCxSdLo=
-Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
-        (envelope-from <mchehab@kernel.org>)
-        id 1j8feW-0003WA-2y; Mon, 02 Mar 2020 08:38:12 +0100
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 12/12] docs: dt: convert writing-bindings.txt to ReST
-Date:   Mon,  2 Mar 2020 08:38:07 +0100
-Message-Id: <00ea462a2db1a9b4fd188e0100c52fdf0d68aaf0.1583134242.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <cover.1583134242.git.mchehab+samsung@kernel.org>
-References: <cover.1583134242.git.mchehab+samsung@kernel.org>
+        id S1727085AbgCBHkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 02:40:07 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40277 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbgCBHkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 02:40:07 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j8fgG-0001hP-PY; Mon, 02 Mar 2020 08:40:00 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1j8fgC-00006c-3J; Mon, 02 Mar 2020 08:39:56 +0100
+Date:   Mon, 2 Mar 2020 08:39:56 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] thermal: imx_thermal: Use __maybe_unused instead of
+ CONFIG_PM_SLEEP
+Message-ID: <20200302073956.dyjphjfpoqkq4w2j@pengutronix.de>
+References: <1583073056-32297-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1583073056-32297-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+On Sun, Mar 01, 2020 at 10:30:56PM +0800, Anson Huang wrote:
+> Use __maybe_unused for power management related functions instead
+> of #if CONFIG_PM_SLEEP to simply the code.
 
-- Add a SPDX header;
-- Adjust document and section titles;
-- Mark literal blocks as such;
-- Add it to bindings/index.rst.
+s/simply/simplify/
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/devicetree/bindings/index.rst                | 1 +
- .../{writing-bindings.txt => writing-bindings.rst}         | 7 +++++++
- 2 files changed, 8 insertions(+)
- rename Documentation/devicetree/bindings/{writing-bindings.txt => writing-bindings.rst} (92%)
+Other than that looks good to me.
 
-diff --git a/Documentation/devicetree/bindings/index.rst b/Documentation/devicetree/bindings/index.rst
-index 6b87875a049c..3837b17c234f 100644
---- a/Documentation/devicetree/bindings/index.rst
-+++ b/Documentation/devicetree/bindings/index.rst
-@@ -9,3 +9,4 @@ Device Tree
- 
-    ABI
-    submitting-patches
-+   writing-bindings
-diff --git a/Documentation/devicetree/bindings/writing-bindings.txt b/Documentation/devicetree/bindings/writing-bindings.rst
-similarity index 92%
-rename from Documentation/devicetree/bindings/writing-bindings.txt
-rename to Documentation/devicetree/bindings/writing-bindings.rst
-index ca024b9c7433..45ff426d0019 100644
---- a/Documentation/devicetree/bindings/writing-bindings.txt
-+++ b/Documentation/devicetree/bindings/writing-bindings.rst
-@@ -1,4 +1,8 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============================================================
- DOs and DON'Ts for designing and writing Devicetree bindings
-+============================================================
- 
- This is a list of common review feedback items focused on binding design. With
- every rule, there are exceptions and bindings have many gray areas.
-@@ -8,6 +12,7 @@ Documentation/devicetree/bindings/submitting-patches.rst
- 
- 
- Overall design
-+==============
- 
- - DO attempt to make bindings complete even if a driver doesn't support some
-   features. For example, if a device has an interrupt, then include the
-@@ -32,6 +37,7 @@ Overall design
- 
- 
- Properties
-+==========
- 
- - DO make 'compatible' properties specific. DON'T use wildcards in compatible
-   strings. DO use fallback compatibles when devices are the same as or a subset
-@@ -53,6 +59,7 @@ Properties
- 
- 
- Board/SoC .dts Files
-+====================
- 
- - DO put all MMIO devices under a bus node and not at the top-level.
- 
+Best regards
+Uwe
+
 -- 
-2.21.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
