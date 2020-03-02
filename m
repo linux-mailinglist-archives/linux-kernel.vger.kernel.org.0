@@ -2,61 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84CE6175605
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BAA1175613
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbgCBIcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:32:22 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:38532 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbgCBIcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:32:21 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 046361A0F79;
-        Mon,  2 Mar 2020 09:32:20 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 55B6C1A0F83;
-        Mon,  2 Mar 2020 09:32:14 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B3F78402A7;
-        Mon,  2 Mar 2020 16:32:07 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     dmitry.torokhov@gmail.com, m.felsch@pengutronix.de,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, robh@kernel.org,
-        ping.bai@nxp.com, ronald@innovation.ch, krzk@kernel.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] input: keyboard: imx_keypad: add COMPILE_TEST support
-Date:   Mon,  2 Mar 2020 16:26:13 +0800
-Message-Id: <1583137573-16628-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727196AbgCBIiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:38:07 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:12998 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbgCBIiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:38:07 -0500
+X-Greylist: delayed 351 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 03:38:06 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583138286;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:References:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=dyg4AOlIJyThsXs5J5Vubyx8MvOEPr/tJdn+Z7Tzl30=;
+        b=dMnWkR7W9G9pQOsssqo1hdl0VcUddhnY2J0bEerrmUgpcMi3gl+reWuiLUmvKJLMbu
+        GAZJw4YGzRx0aR3NPLHxbdbHJ7UN38B9Nz6rqhaRf/jXobPIEVh3Z4r/JXFnfLUVgpsp
+        gXWiofM6pdO5arkJbUOjb5+83TDB/gJjgrHzcKqCRwHP553dsc0rn5UrbdCXCz57MXXC
+        wX6e3g/bOOv3pvnMKMGwxSNp/484VYy+QAnVdHGmfI2Ll67UeRaBSi3g+avK0WcOivaU
+        lYldXlqfm7KSY2kjZToh+pBHWXk43xABEa5TZU+BDaHQK10RJ1fiL5Aqm6MAyx511G1i
+        lt7Q==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3PMaViOoLMJVMh6kEtw"
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.1.177]
+        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
+        with ESMTPSA id e0a4ffw228W255z
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Mon, 2 Mar 2020 09:32:02 +0100 (CET)
+Subject: Re: KASAN: use-after-free Read in slcan_open
+To:     syzbot <syzbot+b5ec6fd05ab552a78532@syzkaller.appspotmail.com>,
+        davem@davemloft.net, dvyukov@google.com, jouni.hogander@unikie.com,
+        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mkl@pengutronix.de, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, wg@grandegger.com
+References: <00000000000099fb63059fd95165@google.com>
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <2f8c5b49-ae02-e269-97cf-b4a979f950ac@hartkopp.net>
+Date:   Mon, 2 Mar 2020 09:31:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <00000000000099fb63059fd95165@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add COMPILE_TEST support to imx_keypad driver for better compile
-testing coverage.
+#sys fix: can: slcan: Fix use-after-free Read in slcan_open
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/input/keyboard/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/net/can/slcan.c?id=9ebd796e24008f33f06ebea5a5e6aceb68b51794
 
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 4706ff0..9709137 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -457,7 +457,7 @@ config KEYBOARD_SNVS_PWRKEY
- 
- config KEYBOARD_IMX
- 	tristate "IMX keypad support"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select INPUT_MATRIXKMAP
- 	help
- 	  Enable support for IMX keypad port.
--- 
-2.7.4
+Thanks,
+Oliver
 
+On 02/03/2020 07.30, syzbot wrote:
+> This bug is marked as fixed by commit:
+> slcan: Fix use-after-free Read in slcan_open
+> But I can't find it in any tested tree for more than 90 days.
+> Is it a correct commit? Please update it by replying:
+> #syz fix: exact-commit-title
+> Until then the bug is still considered open and
+> new crashes with the same signature are ignored.
+> 
