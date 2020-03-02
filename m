@@ -2,118 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F57175F5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D7A8175F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:20:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbgCBQTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 11:19:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:34872 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726988AbgCBQTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 11:19:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 771D72F;
-        Mon,  2 Mar 2020 08:19:35 -0800 (PST)
-Received: from C02TF0J2HF1T.cambridge.arm.com (C02TF0J2HF1T.cambridge.arm.com [10.1.38.135])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFD083F534;
-        Mon,  2 Mar 2020 08:19:31 -0800 (PST)
-Date:   Mon, 2 Mar 2020 16:19:29 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Macpaul Lin <macpaul.lin@mediatek.com>
-Cc:     Sasha Levin <sashal@kernel.org>, Shen Jing <jingx.shen@intel.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        Jerry Zhang <zhangjerry@google.com>, andreyknvl@google.com,
-        linux-usb@vger.kernel.org, Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Miles Chen <miles.chen@mediatek.com>, eugenis@google.com,
-        John Stultz <john.stultz@linaro.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Vincent Pelletier <plr.vincent@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4] usb: gadget: f_fs: try to fix AIO issue under ARM 64
- bit TAGGED mode
-Message-ID: <20200302161929.GA48767@C02TF0J2HF1T.cambridge.arm.com>
-References: <1582627315-21123-1-git-send-email-macpaul.lin@mediatek.com>
- <1582718512-28923-1-git-send-email-macpaul.lin@mediatek.com>
- <20200228164848.GH4019108@arrakis.emea.arm.com>
- <1583032843.12083.24.camel@mtkswgap22>
+        id S1727308AbgCBQUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 11:20:19 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44530 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726661AbgCBQUS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 11:20:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583166018;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dy2VYWwVWhSvzuqB6gToR7pJSPiAWRfT7pUZn4SEGOw=;
+        b=d8tjR1BqFfdPiwtqFkescCL3KPqDlrOTV81uLA63qcSU/lB+AkmyaPNRJvXIJjMr4vOdZl
+        6Gno1c3VcOIaTxgp04uhGqvBIY6OmlIxss9j2jaVey3HyL54kJcvbU/plqMnE45wnK5gD6
+        WffpSiFBt4ihnVZynyPijNiVA6hxo5M=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-437-mJTb85PRM8SVgcXVQ_gvUQ-1; Mon, 02 Mar 2020 11:20:16 -0500
+X-MC-Unique: mJTb85PRM8SVgcXVQ_gvUQ-1
+Received: by mail-wr1-f72.google.com with SMTP id c6so5979327wrm.18
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 08:20:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dy2VYWwVWhSvzuqB6gToR7pJSPiAWRfT7pUZn4SEGOw=;
+        b=NOdP8bkitOw6ig4YTrUHvvW0ov8ncugY4vmscEDqzrTCCHslxSuDhYgmTs/sRa1DMW
+         FvHvYsls5wuc0yhe/pFLyuwA10w59LW3Nn+a7cJwF/hqDXJ1n02kxDMhq5FM/rr+SK8h
+         fzuBBy5KC6NztoIS+mkuoT87Wld4xlxp+cWOa3OpzzBkiFh5Bew2aBwSahUD2ENAA7Ev
+         od+azrasSkxkvrI6kuo4j1CwpW22BCjVtVnm3H39tbiqnFqz6v0gDGa5uGa/LQkpGrh8
+         cI3wWXJ398Hk4lEYYGibTBcTWoIl6gGNy/N7Xf9cCHIducOKil/RRebSePSbwFQ4EA80
+         EL5A==
+X-Gm-Message-State: ANhLgQ03JaXNbmnW+0k54lTVkdVDfI2KfSKTMYrWRqL+WCsHjjmTEe9z
+        U6e3x1lFdcdeJEu4aNAnnMiZO99OoTd6gNDoblT9WgoNzdHSu+TZKb3v1HslMy1kO4jnnXsLDkU
+        wLgX0wGmkMw0u8ABbbCPbeySD
+X-Received: by 2002:adf:e74a:: with SMTP id c10mr341818wrn.113.1583166014975;
+        Mon, 02 Mar 2020 08:20:14 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vsFba2ap/3M2C8V1ZLS9AbnIszACse8Qml7+E+3tl18MRaCrS1ooNkZd4X3DTQzJig9UjS+Jw==
+X-Received: by 2002:adf:e74a:: with SMTP id c10mr341803wrn.113.1583166014808;
+        Mon, 02 Mar 2020 08:20:14 -0800 (PST)
+Received: from [192.168.178.40] ([151.30.85.6])
+        by smtp.gmail.com with ESMTPSA id z14sm29021610wru.31.2020.03.02.08.20.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 08:20:14 -0800 (PST)
+Subject: Re: [PATCH 0/2] KVM: x86/mmu: Fast CR3 switch improvements
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200228225240.8646-1-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <d930b38e-4306-4b1c-3bf9-20d1384b6788@redhat.com>
+Date:   Mon, 2 Mar 2020 17:20:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583032843.12083.24.camel@mtkswgap22>
+In-Reply-To: <20200228225240.8646-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 11:20:43AM +0800, Macpaul Lin wrote:
-> On Fri, 2020-02-28 at 16:48 +0000, Catalin Marinas wrote:
-> > On Wed, Feb 26, 2020 at 08:01:52PM +0800, Macpaul Lin wrote:
-> > > diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> > > index ce1d023..192935f 100644
-> > > --- a/drivers/usb/gadget/function/f_fs.c
-> > > +++ b/drivers/usb/gadget/function/f_fs.c
-> > > @@ -715,7 +715,20 @@ static void ffs_epfile_io_complete(struct usb_ep *_ep, struct usb_request *req)
-> > >  
-> > >  static ssize_t ffs_copy_to_iter(void *data, int data_len, struct iov_iter *iter)
-> > >  {
-> > > -	ssize_t ret = copy_to_iter(data, data_len, iter);
-> > > +	ssize_t ret;
-> > > +
-> > > +#if defined(CONFIG_ARM64)
-> > > +	/*
-> > > +	 * Replace tagged address passed by user space application before
-> > > +	 * copying.
-> > > +	 */
-> > > +	if (IS_ENABLED(CONFIG_ARM64_TAGGED_ADDR_ABI) &&
-> > > +		(iter->type == ITER_IOVEC)) {
-> > > +		*(unsigned long *)&iter->iov->iov_base =
-> > > +			(unsigned long)untagged_addr(iter->iov->iov_base);
-> > > +	}
-> > > +#endif
-> > > +	ret = copy_to_iter(data, data_len, iter);
-> > >  	if (likely(ret == data_len))
-> > >  		return ret;
-> > 
-> > I had forgotten that we discussed a similar case already a few months
-> > ago (thanks to Evgenii for pointing out). Do you have this commit
-> > applied to your tree: df325e05a682 ("arm64: Validate tagged addresses in
-> > access_ok() called from kernel threads")?
-> > 
+On 28/02/20 23:52, Sean Christopherson wrote:
+> Two improvements for fast CR3 switch, implemented with nested VMX in mind,
+> but they should be helpful in general.
 > 
-> Yes! We have that patch. I've also got Google's reply about referencing
-> this patch in android kernel tree.
-> https://android-review.googlesource.com/c/kernel/common/+/1186615
+> Sean Christopherson (2):
+>   KVM: x86/mmu: Ignore guest CR3 on fast root switch for direct MMU
+>   KVM: x86/mmu: Reuse the current root if possible for fast switch
 > 
-> However, during my debugging process, I've dumped specific length (e.g.,
-> 24 bytes for the first request) AIO request buffer address both in adbd
-> and in __range_ok(). Then I've found __range_ok() still always return
-> false on address begin with "0x3c". Since untagged_addr() already called
-> in __range_ok(), to set "TIF_TAGGED_ADDR" with adbd's user space buffer
-> should be the possible solution. Hence I've send the v3 patch.
+>  arch/x86/kvm/mmu/mmu.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
 
-ffs_copy_to_iter() is called from a workqueue (ffs_user_copy_worker()).
-That's still in a kernel thread context but it doesn't have PF_KTHREAD
-set, hence __range_ok() rejects the tagged address. Can you try the diff
-below:
+Queued, thanks.
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 32fc8061aa76..2803143cad1f 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -68,7 +68,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
- 	 * the user address before checking.
- 	 */
- 	if (IS_ENABLED(CONFIG_ARM64_TAGGED_ADDR_ABI) &&
--	    (current->flags & PF_KTHREAD || test_thread_flag(TIF_TAGGED_ADDR)))
-+	    (current->flags & (PF_KTHREAD | PF_WQ_WORKER) ||
-+	     test_thread_flag(TIF_TAGGED_ADDR)))
- 		addr = untagged_addr(addr);
- 
- 	__chk_user_ptr(addr);
--
+Paolo
+
