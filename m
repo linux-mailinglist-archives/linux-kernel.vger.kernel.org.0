@@ -2,79 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A20B1763B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A28CA1763BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgCBTT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:19:56 -0500
-Received: from mga07.intel.com ([134.134.136.100]:7782 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727536AbgCBTT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:19:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 11:19:55 -0800
-X-IronPort-AV: E=Sophos;i="5.70,508,1574150400"; 
-   d="scan'208";a="228570400"
-Received: from kcaccard-mobl.amr.corp.intel.com (HELO kcaccard-mobl1.jf.intel.com) ([10.24.8.183])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 11:19:55 -0800
-Message-ID: <66d6506278121f22c4360110c38ee3653e4fb1c6.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 09/11] kallsyms: hide layout and expose seed
-From:   Kristen Carlson Accardi <kristen@linux.intel.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Date:   Mon, 02 Mar 2020 11:19:55 -0800
-In-Reply-To: <202003021107.38017F90@keescook>
-References: <20200205223950.1212394-1-kristen@linux.intel.com>
-         <20200205223950.1212394-10-kristen@linux.intel.com>
-         <202002060428.08B14F1@keescook>
-         <a915e1eb131551aa766fde4c14de5a3e825af667.camel@linux.intel.com>
-         <CAG48ez2SucOZORUhHNxt-9juzqcWjTZRD9E_PhP51LpH1UqeLg@mail.gmail.com>
-         <41d7049cb704007b3cd30a3f48198eebb8a31783.camel@linux.intel.com>
-         <202003021107.38017F90@keescook>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1727668AbgCBTUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:20:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53541 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727526AbgCBTUV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 14:20:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583176819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nN5b0eOb5d9AS1df7QP1NTDW5BtLlM0vcmSTXw9KGzQ=;
+        b=N0qXkrXzo0ftsUVhFscZNLni3VfwJPFh0KQ/e3PYKdw5C7yA8RYNoDjj3UzIEX5uNPYmkL
+        9M1PqTNtkh/fH0Vt4yprnidhYtHtmW7seU/p3+kM/E+zl+vFUBxInXT11PaftYPC6lVlWg
+        2hQCHhtVnHXp6hlLRZdEbB1rEAH6mnQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-275-Y89D0tjSNuaLVG0mZ9Knmg-1; Mon, 02 Mar 2020 14:20:15 -0500
+X-MC-Unique: Y89D0tjSNuaLVG0mZ9Knmg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DD5A3B0568;
+        Mon,  2 Mar 2020 19:20:13 +0000 (UTC)
+Received: from krava (ovpn-205-46.brq.redhat.com [10.40.205.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6647439E;
+        Mon,  2 Mar 2020 19:20:11 +0000 (UTC)
+Date:   Mon, 2 Mar 2020 20:20:08 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Kim Phillips <kim.phillips@amd.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf symbols: Don't try to find a vmlinux file when
+ looking for kernel modules
+Message-ID: <20200302192008.GB263077@krava>
+References: <20200302191007.GD10335@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302191007.GD10335@kernel.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-03-02 at 11:08 -0800, Kees Cook wrote:
-> On Mon, Mar 02, 2020 at 11:01:56AM -0800, Kristen Carlson Accardi
-> wrote:
-> > On Thu, 2020-02-06 at 20:27 +0100, Jann Horn wrote:
-> > > https://codesearch.debian.net/search?q=%2Fproc%2Fkallsyms&literal=1
-> > 
-> > I looked through some of these packages as Jann suggested, and it
-> > seems
-> > like there are several that are using /proc/kallsyms to look for
-> > specific symbol names to determine whether some feature has been
-> > compiled into the kernel. This practice seems dubious to me,
-> > knowing
-> > that many kernel symbol names can be changed at any time, but
-> > regardless seems to be fairly common.
+On Mon, Mar 02, 2020 at 04:10:07PM -0300, Arnaldo Carvalho de Melo wrote:
+> The dso->kernel value is now set to everything that is in
+> machine->kmaps, but that was being used to decide if vmlinux lookup is
+> needed, which ended up making that lookup be made for kernel modules,
+> that now have dso->kernel set, leading to these kinds of warnings when
+> running on a machine with compressed kernel modules, like fedora:31:
+>     
+>   [root@five ~]# perf record -F 10000 -a sleep 2
+>   [ perf record: Woken up 1 times to write data ]
+>   lzma: fopen failed on vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
+>   lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
+>   lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
+>   [ perf record: Captured and wrote 1.024 MB perf.data (1366 samples) ]
+>   [root@five ~]#
 > 
-> Cool, so a sorted censored list is fine for non-root. Would root
-> users
-> break on a symbol-name-sorted view? (i.e. are two lists needed or can
-> we
-> stick to one?)
+> This happens when collecting the buildid, when we find samples for
+> kernel modules, fix it by checking if the looked up DSO is a kernel
+> module by other means.
+
+cool, I just saw your other email and was going to check on it ;-)
+ging to check on this and review
+
+jirka
+
 > 
-
-Internally of course we'll always have to have 2 lists. I couldn't find
-any examples of even root users needing the list to be in order by
-address. At the same time, it feels like a less risky thing to do to
-leave root users with the same thing they've always had and only muck
-with non-root users.
-
+> Fixes: 02213cec64bb ("perf maps: Mark module DSOs with kernel type")
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kim Phillips <kim.phillips@amd.com>
+> Cc: Michael Petlan <mpetlan@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ---
+> 
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 1077013d8ce2..26bc6a0096ce 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -1622,7 +1622,12 @@ int dso__load(struct dso *dso, struct map *map)
+>  		goto out;
+>  	}
+>  
+> -	if (dso->kernel) {
+> +	kmod = dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE ||
+> +		dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE_COMP ||
+> +		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE ||
+> +		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE_COMP;
+> +
+> +	if (dso->kernel && !kmod) {
+>  		if (dso->kernel == DSO_TYPE_KERNEL)
+>  			ret = dso__load_kernel_sym(dso, map);
+>  		else if (dso->kernel == DSO_TYPE_GUEST_KERNEL)
+> @@ -1650,12 +1655,6 @@ int dso__load(struct dso *dso, struct map *map)
+>  	if (!name)
+>  		goto out;
+>  
+> -	kmod = dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE ||
+> -		dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE_COMP ||
+> -		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE ||
+> -		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE_COMP;
+> -
+> -
+>  	/*
+>  	 * Read the build id if possible. This is required for
+>  	 * DSO_BINARY_TYPE__BUILDID_DEBUGINFO to work
+> 
 
