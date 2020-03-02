@@ -2,66 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D1D17612F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14E9F176135
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbgCBRiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 12:38:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727104AbgCBRiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 12:38:55 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54603222C4;
-        Mon,  2 Mar 2020 17:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583170734;
-        bh=E8B3jpue7UHu45EE/SwSFmn12bB9ltxToTRi5uWnKlc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y/9ULXogQDQQYKVRJCmyzpVxPcYYcMwtSdtUoZtzhGdb1MZ3n0P8PBz6qjj5ftoU9
-         WFSvpR7dQ9klBJs1jPIM2NL57FMAKmtx4SjoeVPMkCnLCWgGp2R+8yUdn8dcHKgg0U
-         kJMUopP2Q6riXnHGBbDpAkTypiTLvr7qOm3qbosI=
-Date:   Mon, 2 Mar 2020 18:38:52 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     glider@google.com
-Cc:     tkjos@google.com, keescook@chromium.org, arve@android.com,
-        mingo@redhat.com, dvyukov@google.com, jannh@google.com,
-        devel@driverdev.osuosl.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
- copy_from_user()
-Message-ID: <20200302173852.GB109022@kroah.com>
-References: <20200302130430.201037-1-glider@google.com>
- <20200302130430.201037-2-glider@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302130430.201037-2-glider@google.com>
+        id S1727360AbgCBRkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 12:40:05 -0500
+Received: from mail-pg1-f179.google.com ([209.85.215.179]:33007 "EHLO
+        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbgCBRkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 12:40:05 -0500
+Received: by mail-pg1-f179.google.com with SMTP id m5so170690pgg.0;
+        Mon, 02 Mar 2020 09:40:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ccLgGlXJeyfNwA0nueYiFsMbc5nyvrsM97a1+xIUUac=;
+        b=W7fj8X3a8gokG5mZbNte3SvQJzMLyc6ZsZ3I18q1+2Qnam52farx0iNFiqbPc5+HxP
+         kJqiJEsRLC7eaogsdWtKTTkETP+UqktTIdofxDvV8J0WE8RmxhwxTk0dCADgqzImBe4l
+         jGDig8SgkU82S1wb93DXjj1hGpbSm+o1w0WuHdybfxaIoIE6I+tLhWOv69paXjU0w/3O
+         hPdgjlViSZdNcxbYiXUKUEy9EGlDS+84Dj5xOMt9yEGKBlEIwYy0BBaV5fX8UIuorLcD
+         YCuSfHRae8WrrTT2YFHLY1dJ59s3tN1dDGPnj9bl+337a/0xutqLOgpThGS2Uoo073ZM
+         fU2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ccLgGlXJeyfNwA0nueYiFsMbc5nyvrsM97a1+xIUUac=;
+        b=RrDA/lWJWvXsyqW96ktmN5wGPKRGJMyM+Wmj3QYLq9V6SK/suGDjc039Wz1BKvStvp
+         gZsDHHPU5IpOcJJl9yJVcQzOdqr3ewgsIHLRMts90+ZvMoDhb9Tav4i1QPK2X6evm3PK
+         NKnCVXMGcg1zFqWeE7/2q9l+Naci6YbSPUSlOIqNzy0XWMGs366FfmTyy1C4bDjhvkgl
+         1cN9tB5W4MHX4DgMpkvTs76Pl6aXvM1uhCVIR6BOfoL64UvBSkIPc8m6S347xEsePEA9
+         7Y4A8KDBu1ptrxY22OrtEEZI9aMngeJkcmZvxAxLz/DSiKqFjozGHx3ccWMbaPid++BM
+         XHaA==
+X-Gm-Message-State: ANhLgQ1J5r7iYg66GpfbpJOE1wXwTxPOoL2/5LzPbKaTJd29MkYa1JmE
+        bwuLkcfHRMR5ExLTyGVioVg04nSx74tIPg==
+X-Google-Smtp-Source: ADFU+vsmcgwBaN2ggQ2yDntxSGZzld20AoSwZIazsRFr8GSGi0fFrYx982ZdTaikc8pnRwYPy0tVLQ==
+X-Received: by 2002:aa7:8b17:: with SMTP id f23mr149223pfd.197.1583170804359;
+        Mon, 02 Mar 2020 09:40:04 -0800 (PST)
+Received: from localhost.localdomain ([2405:204:800a:15c3:b0b0:78ba:d728:349e])
+        by smtp.gmail.com with ESMTPSA id c184sm21764462pfa.39.2020.03.02.09.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 09:40:03 -0800 (PST)
+From:   Pragat Pandya <pragat.pandya@gmail.com>
+To:     corbet@lwn.net
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skhan@linuxfoundation.org, Pragat Pandya <pragat.pandya@gmail.com>
+Subject: [PATCH 0/2] Documentation: Add two new rst files
+Date:   Mon,  2 Mar 2020 23:09:18 +0530
+Message-Id: <20200302173920.24626-1-pragat.pandya@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 02:04:29PM +0100, glider@google.com wrote:
-> Certain copy_from_user() invocations in binder.c are known to
-> unconditionally initialize locals before their first use, like e.g. in
-> the following case:
-> 
-> 	struct binder_transaction_data tr;
-> 	if (copy_from_user(&tr, ptr, sizeof(tr)))
-> 		return -EFAULT;
-> 
-> In such cases enabling CONFIG_INIT_STACK_ALL leads to insertion of
-> redundant locals initialization that the compiler fails to remove.
-> To work around this problem till Clang can deal with it, we apply
-> __no_initialize to local Binder structures.
+This patchset adds following two rst files to the Documentation and
+references the newly added rst files into TOCTree of index.rst
+ -io_mapping.rst 
+ -io_ordering.rst
 
-I would like to see actual benchmark numbers showing this is
-needed/useful otherwise it's going to just be random people adding this
-marking to random places with no real reason.
+Pragat Pandya (2):
+  Documentation: Add a new .rst file under Documentation
+  Documentation: Add a new .rst file under Documentation
 
-thanks,
+ Documentation/index.rst                       |  1 +
+ .../{io-mapping.txt => io_mapping.rst}        |  0
+ .../{io_ordering.txt => io_ordering.rst}      |  0
+ doc_make.log                                  | 35 +++++++++++++++++++
+ 4 files changed, 36 insertions(+)
+ rename Documentation/{io-mapping.txt => io_mapping.rst} (100%)
+ rename Documentation/{io_ordering.txt => io_ordering.rst} (100%)
+ create mode 100644 doc_make.log
 
-greg k-h
+-- 
+2.17.1
+
