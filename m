@@ -2,190 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ADFC175372
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 06:51:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E97175376
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 06:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbgCBFuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 00:50:35 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:37551 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgCBFue (ORCPT
+        id S1726426AbgCBFyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 00:54:00 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:11339 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725446AbgCBFx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 00:50:34 -0500
-Received: by mail-pj1-f65.google.com with SMTP id o2so2029690pjp.2
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 21:50:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fz5Kp2VdKawxBoU+hLFXNYu1dVA8dYreDgpbY7UrLKU=;
-        b=GprpfjrSdJhCqLS8OT2NzuXi3BUcWXA15xKQGZWWf3YBBrmEtOfkB4VEjsKmem7ym3
-         LLvS0HCmO+ZEdOzOFWgZiVBeBx4fRFeO/d6+MyybU/aWj7k6UoeG+/2w1nbl+6W/f/hY
-         TomsHDeKCmY79m/MlbtQJy0LRRWOj+LHkkmRKkcemXRhES/3Bf/Dwmll/mu0WoxcbxCa
-         gaCZNaxYJcToEnXFIXhe35fZ46yTfJMWcWIG6qEu4Zl1H1IeC7JPNgAV6myBvICL/3Sv
-         jsMprZqkePz0L0voDSWOS9M7YIn9Tt4nourI+tjistiQuxTr+nMw7Id1fnpXoZlroaKW
-         8vKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fz5Kp2VdKawxBoU+hLFXNYu1dVA8dYreDgpbY7UrLKU=;
-        b=K9jr2sW6OHzc25iBg0CPxdaleW+neydgLW7gPoK0lyZ1mJ1dzV6GwtBh3GhihiVrSr
-         8cGx5aKkD2QAS5YejeP2xGoKywMBDlzJZgwxz3QRuLLmvh8SMhD/caBkxqy3DDcsauYN
-         PGqah0J9IvxHguZrGfmRZxtumHCNmY+JHsApvP09Otl+C7UXmyLj3EPILYoxB+6iXr7B
-         b4+L1iXeuHv3HYJX+2mCW9clh0nb8Si6WKvig8ZrWE9Xztt59+SUzSgmQTK0Sp+bTqa5
-         BKRU3rP2E6PWGosldflfvetMYoLpLIINRS0ih+Y2HvkY+I0Md8UwU4SSvPx6PgLji4sv
-         nKsQ==
-X-Gm-Message-State: APjAAAWhVUv+hvx5nI1cvYG21zLbnD/ExkwmNTplCy0/T/oaMLNyNgOt
-        jkWQ1DkCHvNu4228VYNjaUeo
-X-Google-Smtp-Source: APXvYqwf0p2Ihc98F61cK6cnafM3qoNT3H/Dan2meJyAD3Tp1BSClvBwEBDewnQQ/ew1M66WYi9faQ==
-X-Received: by 2002:a17:902:b28a:: with SMTP id u10mr16846102plr.1.1583128233500;
-        Sun, 01 Mar 2020 21:50:33 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:683:b69c:15d:29bf:12ee:d853])
-        by smtp.gmail.com with ESMTPSA id w81sm5179222pff.22.2020.03.01.21.50.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 01 Mar 2020 21:50:32 -0800 (PST)
-Date:   Mon, 2 Mar 2020 11:20:25 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: qrtr: Respond to HELLO message
-Message-ID: <20200302055025.GA23607@Mani-XPS-13-9360>
-References: <20200302032527.552916-1-bjorn.andersson@linaro.org>
- <20200302032527.552916-2-bjorn.andersson@linaro.org>
+        Mon, 2 Mar 2020 00:53:59 -0500
+X-UUID: da4ad93e0dab4b2f8cc91e498331ea9c-20200302
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=t4He3J1fTTd1ShvzHhVtQAeAmIgLfyTFftjbZWTdLIo=;
+        b=oG436vtj99R9yR9HMOop9/lWBcqrx9FlOlgs4SH1S7PLeSKHjd+FyV+i3TPawFSoLd3aiJcyxAGPdZ7+9lAXb8yqEreONqg+AMxjEaJS3fWhXq1SiKFqh2MHQfJH4DxzL4jghxgyV1Wxz5nHgrQmtQ1JpFzHfMT131lxeKSQVFA=;
+X-UUID: da4ad93e0dab4b2f8cc91e498331ea9c-20200302
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <wen.su@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1626716386; Mon, 02 Mar 2020 13:53:54 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 2 Mar 2020 13:51:13 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 2 Mar 2020 13:51:25 +0800
+Message-ID: <1583128432.18202.3.camel@mtkswgap22>
+Subject: Re: Applied "regulator: mt6359: Add support for MT6359 regulator"
+ to the regulator tree
+From:   Wen Su <Wen.Su@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>
+Date:   Mon, 2 Mar 2020 13:53:52 +0800
+In-Reply-To: <20200226114706.GE4136@sirena.org.uk>
+References: <20200226114706.GE4136@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302032527.552916-2-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-SNTS-SMTP: 942391240DD208876DE14664B578D3ED6A5B0C160211EB22242DAAFE98F653942000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+SGkgTWFyaywgDQoNCk9uIFdlZCwgMjAyMC0wMi0yNiBhdCAxMTo0NyArMDAwMCwgTWFyayBCcm93
+biB3cm90ZToNCj4gT24gVHVlLCBGZWIgMjUsIDIwMjAgYXQgMDE6MjQ6MTFQTSArMDAwMCwgTWFy
+ayBCcm93biB3cm90ZToNCj4gPiBUaGUgcGF0Y2gNCj4gPiANCj4gPiAgICByZWd1bGF0b3I6IG10
+NjM1OTogQWRkIHN1cHBvcnQgZm9yIE1UNjM1OSByZWd1bGF0b3INCj4gPiANCj4gPiBoYXMgYmVl
+biBhcHBsaWVkIHRvIHRoZSByZWd1bGF0b3IgdHJlZSBhdA0KPiANCj4gLi4uYW5kIGRyb3BwZWQg
+YmVjYXVzZSB0aGUgTUZEIGRlcGVuZGVuY3kgaXNuJ3Qgb24gYSBuZXdseSBhZGRlZCBkcml2ZXIN
+Cj4gbGlrZSBpdCBhcHBlYXJlZC4NCg0KSSBhbSBzb3JyeSB0byBib3RoZXIgeW91LiBIb3cgc2hv
+dWxkIEkgcHJvY2VlZCBmb3IgdGhpcyBwYXRjaCBzZXQgd2hpY2gNCmluY2x1ZGluZyByZWd1bGF0
+b3IgZHJpdmVyIGFuZCBNRkQgaGVhZGVyIGZpbGUgPyBQbGVhc2UgZ2l2ZSBhZHZpY2UuDQoNClRo
+YW5rIHlvdS4NCg0K
 
-Thanks for the fix. I have tested this and it works perfectly!
-
-On Sun, Mar 01, 2020 at 07:25:26PM -0800, Bjorn Andersson wrote:
-> Lost in the translation from the user space implementation was the
-> detail that HELLO mesages must be exchanged between each node pair.  As
-> such the incoming HELLO must be replied to.
-> 
-
-Err. I thought the say_hello() part in ctrl_cmd_hello() was redundant, so
-removed it :P
-
-Sorry for that.
-
-> Similar to the previous implementation no effort is made to prevent two
-> Linux boxes from continuously sending HELLO messages back and forth,
-> this is left to a follow up patch.
-> 
-> say_hello() is moved, to facilitate the new call site.
-> 
-> Fixes: 0c2204a4ad71 ("net: qrtr: Migrate nameservice to kernel from userspace")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  net/qrtr/ns.c | 54 ++++++++++++++++++++++++++++-----------------------
->  1 file changed, 30 insertions(+), 24 deletions(-)
-> 
-> diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-> index 7bfde01f4e8a..e3f11052b5f6 100644
-> --- a/net/qrtr/ns.c
-> +++ b/net/qrtr/ns.c
-> @@ -286,9 +286,38 @@ static int server_del(struct qrtr_node *node, unsigned int port)
->  	return 0;
->  }
->  
-> +static int say_hello(struct sockaddr_qrtr *dest)
-> +{
-> +	struct qrtr_ctrl_pkt pkt;
-> +	struct msghdr msg = { };
-> +	struct kvec iv;
-> +	int ret;
-> +
-> +	iv.iov_base = &pkt;
-> +	iv.iov_len = sizeof(pkt);
-> +
-> +	memset(&pkt, 0, sizeof(pkt));
-> +	pkt.cmd = cpu_to_le32(QRTR_TYPE_HELLO);
-> +
-> +	msg.msg_name = (struct sockaddr *)dest;
-> +	msg.msg_namelen = sizeof(*dest);
-> +
-> +	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
-> +	if (ret < 0)
-> +		pr_err("failed to send hello msg\n");
-> +
-> +	return ret;
-> +}
-> +
->  /* Announce the list of servers registered on the local node */
->  static int ctrl_cmd_hello(struct sockaddr_qrtr *sq)
->  {
-> +	int ret;
-> +
-> +	ret = say_hello(sq);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	return announce_servers(sq);
->  }
->  
-> @@ -566,29 +595,6 @@ static void ctrl_cmd_del_lookup(struct sockaddr_qrtr *from,
->  	}
->  }
->  
-> -static int say_hello(void)
-> -{
-> -	struct qrtr_ctrl_pkt pkt;
-> -	struct msghdr msg = { };
-> -	struct kvec iv;
-> -	int ret;
-> -
-> -	iv.iov_base = &pkt;
-> -	iv.iov_len = sizeof(pkt);
-> -
-> -	memset(&pkt, 0, sizeof(pkt));
-> -	pkt.cmd = cpu_to_le32(QRTR_TYPE_HELLO);
-> -
-> -	msg.msg_name = (struct sockaddr *)&qrtr_ns.bcast_sq;
-> -	msg.msg_namelen = sizeof(qrtr_ns.bcast_sq);
-> -
-> -	ret = kernel_sendmsg(qrtr_ns.sock, &msg, &iv, 1, sizeof(pkt));
-> -	if (ret < 0)
-> -		pr_err("failed to send hello msg\n");
-> -
-> -	return ret;
-> -}
-> -
->  static void qrtr_ns_worker(struct work_struct *work)
->  {
->  	const struct qrtr_ctrl_pkt *pkt;
-> @@ -725,7 +731,7 @@ void qrtr_ns_init(struct work_struct *work)
->  	if (!qrtr_ns.workqueue)
->  		goto err_sock;
->  
-> -	ret = say_hello();
-> +	ret = say_hello(&qrtr_ns.bcast_sq);
-
-Why do you want to pass a global variable here? Why can't it be used directly
-in say_hello() as done before?
-
-Other than that,
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Thanks,
-Mani
-
->  	if (ret < 0)
->  		goto err_wq;
->  
-> -- 
-> 2.24.0
-> 
