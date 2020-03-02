@@ -2,53 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 128A61758B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 11:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 806F21758B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 11:52:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbgCBKv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 05:51:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39056 "EHLO mail.kernel.org"
+        id S1727721AbgCBKwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 05:52:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727689AbgCBKv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 05:51:56 -0500
+        id S1727027AbgCBKwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 05:52:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BD6B22B48;
-        Mon,  2 Mar 2020 10:51:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A0452166E;
+        Mon,  2 Mar 2020 10:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583146316;
-        bh=QhrSpr4F/VHir8Gjk0KuUg34z4MvdyKSC/6orAOEeT8=;
+        s=default; t=1583146330;
+        bh=WsMtWJf8fHtIkltd+06wePwQrfCiklsvt06eqYB2nLk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CSJj0LAt/6zmv+NRxBy9coFYVpN96bhoJ+2Yd8MYlWYa6093en9efrbDhXwq228wX
-         k8G5YKkALFqlkUK+sFLVMRsycZsvWifAFOLTLkAVhWyl/uashoPabfUMFzCptaj7XC
-         82IK5hOm5BD2ha/Gd1M9+8DRjhOxVGLdehNZtQzo=
-Date:   Mon, 2 Mar 2020 11:51:53 +0100
+        b=UWBRIKqd6cs+yR1Un7N/DsDL34/9Nzu4ENAOKwza2+71/YwKex9wLJ2VV/hecGwzj
+         HolYStWB5PBPMcj9SpxfKeMxdx8gLFvkHnQIbYz6ybQICOQ8WKNNCGXbg87a01amFP
+         JlDyKS/7qMGC0pc2jTHtsD6CPJjmL4T62/24Q5nc=
+Date:   Mon, 2 Mar 2020 11:52:07 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Tobias Klauser <tklauser@distanz.ch>
 Cc:     Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] pty: define and set show_fdinfo only if procfs is
+Subject: Re: [PATCH 2/2] tty: define and set show_fdinfo only if procfs is
  enabled
-Message-ID: <20200302105153.GA39968@kroah.com>
+Message-ID: <20200302105207.GB39968@kroah.com>
 References: <20200302104954.2812-1-tklauser@distanz.ch>
+ <20200302104954.2812-2-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200302104954.2812-1-tklauser@distanz.ch>
+In-Reply-To: <20200302104954.2812-2-tklauser@distanz.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 11:49:53AM +0100, Tobias Klauser wrote:
+On Mon, Mar 02, 2020 at 11:49:54AM +0100, Tobias Klauser wrote:
 > Follow the pattern used with other *_show_fdinfo functions and only
-> define and use pty_show_fdinfo if CONFIG_PROC_FS is set.
+> define and use tty_show_fdinfo if CONFIG_PROC_FS is set.
+> 
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+> ---
+>  drivers/tty/tty_io.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-if proc_fs is not set, it will not be used anyway, right?
-
-I'd rather keep #ifdef out of the .c files than add this.  How much
-memory does it save, and are you using a system without procfs that
-needs this savings?
+Same comments here as I made on patch 1/2.
 
 thanks,
 
