@@ -2,117 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D966175C49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:53:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27305175C50
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:54:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbgCBNx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:53:26 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:44758 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbgCBNx0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:53:26 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 022Dbu4C031928;
-        Mon, 2 Mar 2020 13:53:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=h1eCHVy/pMUEf9B7gboazc7d0KQ49jfH5mCfHZatf7Q=;
- b=eV7BHwUe7VvQ7Kt+hr/ElSezfJ0lEMwJtDSugJlmszKeqpUnnyZ8g9swTlyZVhGCXprC
- Ofr7NK0d4GtKEqJW7VxZJqE1SjK/wi5uiFtCF4sgDWCvYtHj0SedY633JzjUInixTIai
- jrTUq4dNMYeJwELiatworTsn31COSuFInJOwaP1PHjk7Pbwir5DjQIsm7R86b3CLdq+/
- /L9WEwO6jZjY9/2EhF7xE/MDeJEklbivyhGPRJ13k0MIFO+EYf/hPkb6WjX9CMa45kpI
- eYSuVFOYU0vMiV35noZnLMKMypRhdvIuGDqTOFjcbNs59umOh05i8to2GgOmmvYPyvun ZQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2yffwqftev-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 02 Mar 2020 13:53:07 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 022DqxgM100444;
-        Mon, 2 Mar 2020 13:53:07 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2yg1gv50s2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 02 Mar 2020 13:53:07 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 022Dr35C022595;
-        Mon, 2 Mar 2020 13:53:03 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 02 Mar 2020 05:53:03 -0800
-Date:   Mon, 2 Mar 2020 16:52:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Joe Perches <joe@perches.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
- copy_from_user()
-Message-ID: <20200302135251.GA24372@kadam>
-References: <20200302130430.201037-1-glider@google.com>
- <20200302130430.201037-2-glider@google.com>
- <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
- <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
+        id S1727430AbgCBNx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:53:57 -0500
+Received: from mga11.intel.com ([192.55.52.93]:22884 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727083AbgCBNx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 08:53:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 05:53:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
+   d="scan'208";a="351544499"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Mar 2020 05:53:54 -0800
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Prashant Malani <pmalani@chromium.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH v3 0/9] usb: typec: Driver for Intel PMC Mux-Agent
+Date:   Mon,  2 Mar 2020 16:53:44 +0300
+Message-Id: <20200302135353.56659-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9547 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003020102
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9547 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- phishscore=0 clxscore=1011 bulkscore=0 adultscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003020101
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 02:25:51PM +0100, Alexander Potapenko wrote:
-> On Mon, Mar 2, 2020 at 2:11 PM Joe Perches <joe@perches.com> wrote:
-> >
-> > On Mon, 2020-03-02 at 14:04 +0100, glider@google.com wrote:
-> > > Certain copy_from_user() invocations in binder.c are known to
-> > > unconditionally initialize locals before their first use, like e.g. in
-> > > the following case:
-> > []
-> > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > []
-> > > @@ -3788,7 +3788,7 @@ static int binder_thread_write(struct binder_proc *proc,
-> > >
-> > >               case BC_TRANSACTION_SG:
-> > >               case BC_REPLY_SG: {
-> > > -                     struct binder_transaction_data_sg tr;
-> > > +                     struct binder_transaction_data_sg tr __no_initialize;
-> > >
-> > >                       if (copy_from_user(&tr, ptr, sizeof(tr)))
-> >
-> > I fail to see any value in marking tr with __no_initialize
-> > when it's immediately written to by copy_from_user.
-> 
-> This is being done exactly because it's immediately written to by copy_to_user()
-> Clang is currently unable to figure out that copy_to_user() initializes memory.
-                                                    ^^
-typo s/to/from/.
+Hi,
 
-It feels more useful to annotate copy_from_user().  That would be useful
-for Smatch as well.
+The statements were ended incorrectly with comma instead of semicolon
+in drivers/usb/cdns3/core.c (PATCH 5/9) as pointed out by Peter. I've
+fixed that in this version. There are no other changes.
 
-regards,
-dan carpenter
+v2 commit message:
+
+I've unified the driver data handling in all drivers in patch 5/9 as
+requested by Peter, and also now using consistently dev_set_drvdata()
+in patch 4/9 as requested by Chunfeng Yun. Those were the only
+changes in this version.
+
+The original (v1) commit message:
+
+The Intel PMC (Power Management Controller) microcontroller, which is
+available on most SOCs from Intel, has a function called mux-agent.
+The mux-agent, when visible to the operating system, makes it possible
+to control the various USB muxes on the system.
+
+In practice the mux-agent is a device that controls multiple muxes.
+Unfortunately both the USB Type-C Class and the USB Role Class don't
+have proper support for that kind of devices that handle multiple
+muxes, which is why I had to tweak the APIs a bit.
+
+On top of the API changes, and the driver of course, I'm adding a
+header for the Thunderbolt 3 alt mode since the "mux-agent" supports
+it.
+
+thanks,
+
+
+Heikki Krogerus (9):
+  usb: typec: mux: Allow the muxes to be named
+  usb: typec: mux: Add helpers for setting the mux state
+  usb: typec: mux: Allow the mux handles to be requested with fwnode
+  usb: roles: Leave the private driver data pointer to the drivers
+  usb: roles: Provide the switch drivers handle to the switch in the API
+  usb: roles: Allow the role switches to be named
+  device property: Export fwnode_get_name()
+  usb: typec: Add definitions for Thunderbolt 3 Alternate Mode
+  usb: typec: driver for Intel PMC mux control
+
+ drivers/base/property.c                       |   1 +
+ drivers/usb/cdns3/core.c                      |  22 +-
+ drivers/usb/chipidea/core.c                   |  10 +-
+ drivers/usb/dwc3/dwc3-meson-g12a.c            |  10 +-
+ drivers/usb/gadget/udc/renesas_usb3.c         |  26 +-
+ drivers/usb/gadget/udc/tegra-xudc.c           |   8 +-
+ drivers/usb/mtu3/mtu3_dr.c                    |   9 +-
+ drivers/usb/musb/mediatek.c                   |  16 +-
+ drivers/usb/roles/class.c                     |  29 +-
+ .../usb/roles/intel-xhci-usb-role-switch.c    |  26 +-
+ drivers/usb/typec/class.c                     |  10 +-
+ drivers/usb/typec/mux.c                       |  47 +-
+ drivers/usb/typec/mux/Kconfig                 |   9 +
+ drivers/usb/typec/mux/Makefile                |   1 +
+ drivers/usb/typec/mux/intel_pmc_mux.c         | 434 ++++++++++++++++++
+ include/linux/usb/role.h                      |  23 +-
+ include/linux/usb/typec_mux.h                 |  25 +-
+ include/linux/usb/typec_tbt.h                 |  53 +++
+ 18 files changed, 677 insertions(+), 82 deletions(-)
+ create mode 100644 drivers/usb/typec/mux/intel_pmc_mux.c
+ create mode 100644 include/linux/usb/typec_tbt.h
+
+-- 
+2.25.0
 
