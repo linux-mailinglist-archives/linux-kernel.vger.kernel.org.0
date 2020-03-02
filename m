@@ -2,52 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2531A1767B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF30A1767B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 23:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgCBWyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 17:54:44 -0500
-Received: from gfdefer006.mail.goo.jp ([153.149.229.136]:35223 "EHLO
-        gfdefer006.mail.goo.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbgCBWyo (ORCPT
+        id S1726890AbgCBW7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 17:59:46 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:50412 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbgCBW7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 17:54:44 -0500
-Received: from gogw0339.mail.goo.jp (gogw0339.mail.goo.jp [153.153.64.40])
-        by gfdefer006.mail.goo.jp (Postfix) with ESMTP id ABCA290024E;
-        Tue,  3 Mar 2020 07:54:42 +0900 (JST)
-Received: from mas-vc-mts-102c1.ocn.ad.jp (mas-vc-mts-102c1.ocn.ad.jp [153.138.237.87])
-        by gogw0339.mail.goo.jp (Postfix) with ESMTP id 9FB96900531;
-        Tue,  3 Mar 2020 07:54:39 +0900 (JST)
-Received: from vcwebmail.mail.goo.jp ([153.149.140.98])
-        by mas-vc-mts-102c1.ocn.ad.jp with ESMTP
-        id 8txNj6u68eCSj8txNjyyxh; Tue, 03 Mar 2020 07:54:39 +0900
-Received: from md-app-cb006.noc-chibaminato.ocn.ad.jp (md-app-cb006.ocn.ad.jp [153.138.211.202])
-        by vcwebmail.mail.goo.jp (Postfix) with ESMTP;
-        Tue,  3 Mar 2020 07:54:37 +0900 (JST)
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 2 Mar 2020 17:59:45 -0500
+Received: by mail-pj1-f65.google.com with SMTP id nm6so37637pjb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 14:59:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3y8oGhwwn7h1smMOkH+HeKModpN/iPLNwqgLaZBDC1E=;
+        b=bOcmttTEv2j0nh2i8mKInrg32fEJTW3TB8cREMdc4rSJYyrfFHfvzi6z6lw6TzvsHu
+         eQyoNfByjgLjSIo5EBhJueSVqTcGZ5Zo8/3CQRcfW1PSrdcYtsvCmRlaA2Z6agovL+3N
+         xgoOOZnzugJjbXf4qjU8AIyNZHXpfSqiY6T/c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3y8oGhwwn7h1smMOkH+HeKModpN/iPLNwqgLaZBDC1E=;
+        b=Etbg71088cPvF+g72s7ZdrISykG8I98PYtpb2FVlx7I8bvuJw0d5rgVM84b/Qbu+Am
+         xQqydCj5O0hLAp+e5p4QQ3JXZ3iXVI6363QO5AIAiigesaYVt8m/dtgOlSKuzsZ3IOQe
+         5S93oClp03tBeAm7WOkgZGt0SJpJjRHUf33OztoCE2RVFt53hQSGFQSopn1Le+Fofjrv
+         miT6EOjlCML3MenSnSA8NCXZz+TTPtG3uME95E+s01o3DrMgwOGuA7xMl/GhvFtD7vxp
+         8eFHRWRCkv6SCVJV5Ev0FKMz5/oKNH2DuE27gCyj+umNasMFs16AXW882t9LDLtXh0/W
+         vYHg==
+X-Gm-Message-State: ANhLgQ0O2RcodKSX8mjR9XT3fOf2aBtWwMgRRUISScKcveSV2INpmmO/
+        YHrJL/Hm0c5XVsQ1l0EdhFYtZQ==
+X-Google-Smtp-Source: ADFU+vtNhg6nDtNo99bJ4y/4I5aW36azvtouUPnDEfK/uZsT+45FzUc4fJ2YlXeRfiZe7rP20nhIAg==
+X-Received: by 2002:a17:90a:348a:: with SMTP id p10mr859061pjb.120.1583189984731;
+        Mon, 02 Mar 2020 14:59:44 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u126sm21801657pfu.182.2020.03.02.14.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 14:59:44 -0800 (PST)
+Date:   Mon, 2 Mar 2020 14:59:43 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/3] Better organize the core-api manual
+Message-ID: <202003021456.F173F9DFC7@keescook>
+References: <20200302223957.905473-1-corbet@lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-To:     undisclosed-recipients:;
-Subject: BUSINESS PARTNERSHIP PROPOSAL
-From:   Richard Benson <hanahana_87310_happ@mail.goo.ne.jp>
-Reply-To: Richard Benson <pinrichardrich22@gmail.com>
-Message-ID: <158318967674.51446.9129684080062677594@mail.goo.ne.jp>
-X-Originating-IP: [173.225.102.174]
-Date:   Tue, 03 Mar 2020 07:54:37 +0900
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302223957.905473-1-corbet@lwn.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+On Mon, Mar 02, 2020 at 03:39:54PM -0700, Jonathan Corbet wrote:
+> This is a brief series trying to create some order in the core-api manual.
+> The first patch organizes the contents into subsections, hopefully
+> straightening things out a bit.  The other two then move a couple of
+> documents to more suitable homes.
+> 
+> Jonathan Corbet (3):
+>   docs: Organize core-api/index.rst
+>   docs: move gcc-plugins to the kbuild manual
+>   docs: move core-api/ioctl.rst to driver-api/
 
-RE: INVESTMENT / BUSINESS PARTNERSHIP PROPOSAL.
+This looks good; thanks! Random thought while looking through it: there's
+stuff in the driver-api that seems like maybe it should move into the
+core (e.g. Documentation/driver-api/basics.rst) but I'm not sure what
+the line between "core" and "driver" is. I would think the "driver API"
+docs should be driver-specific, in which case much of basics.rst should
+be moved into "core". Regardless, this series seems like a good step in
+the right direction.
 
-I represent an international business/project funding company based in the Kingdom of Bahrain. We have a huge fund available for immediate investment on any VIABLE project/business. If you have good business/project that requires funding or expansion. HARD LOAN FUNDING CAN ALSO BE CONSIDERED. We are also interested in start up projects with AROI of 5% and above.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-I await for your timely response to discuss this opportunity further with you.
+-Kees
 
-Sincerely,
-Richard Benson
-P.O.Box: 100116, Manama
-Kingdom of Bahrain
+> 
+>  Documentation/core-api/index.rst              | 93 ++++++++++++++-----
+>  Documentation/driver-api/index.rst            |  1 +
+>  .../{core-api => driver-api}/ioctl.rst        |  0
+>  .../{core-api => kbuild}/gcc-plugins.rst      |  0
+>  Documentation/kbuild/index.rst                |  1 +
+>  MAINTAINERS                                   |  2 +-
+>  scripts/gcc-plugins/Kconfig                   |  2 +-
+>  7 files changed, 75 insertions(+), 24 deletions(-)
+>  rename Documentation/{core-api => driver-api}/ioctl.rst (100%)
+>  rename Documentation/{core-api => kbuild}/gcc-plugins.rst (100%)
+> 
+> -- 
+> 2.24.1
+> 
+
+-- 
+Kees Cook
