@@ -2,75 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E18A8175EB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:52:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B31C175EBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbgCBPwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:52:49 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40911 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727000AbgCBPwt (ORCPT
+        id S1727305AbgCBPy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:54:28 -0500
+Received: from mail-sh.amlogic.com ([58.32.228.43]:36655 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbgCBPy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:52:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583164368;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rc7S3GfEURPABvAMtPoo3IHj2IzyHVgUsHYiM/6+E1M=;
-        b=ZqoGx7Mnwyv1xuye10sCZmzvP561NT0GSQERIVhLKvqpIc/L9G2B4sTI/d/6z/N4WdyM7a
-        X0OiC++acdusO0VEpwUhkzyMYg5Qr3OA4/GbA6BtDnpt25d39VdPG8Op3TcKcS+V/X28j1
-        3WggVa1ErET5gTUKDS9ie0HfSeHVPzw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-48mENsD5NPCdcw6bZPT7Mg-1; Mon, 02 Mar 2020 10:52:44 -0500
-X-MC-Unique: 48mENsD5NPCdcw6bZPT7Mg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D67D0801A01;
-        Mon,  2 Mar 2020 15:52:42 +0000 (UTC)
-Received: from treble (ovpn-123-162.rdu2.redhat.com [10.10.123.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C88FA73884;
-        Mon,  2 Mar 2020 15:52:41 +0000 (UTC)
-Date:   Mon, 2 Mar 2020 09:52:40 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: x86 entry perf unwinding failure (missing IRET_REGS annotation
- on stack switch?)
-Message-ID: <20200302155239.7ww7jfeu4yeevpkb@treble>
-References: <CAG48ez1rkN0YU-ieBaUZDKFYG5XFnd7dhDjSDdRmVfWyQzsA5g@mail.gmail.com>
- <20200302151829.brlkedossh7qs47s@treble>
+        Mon, 2 Mar 2020 10:54:27 -0500
+Received: from droid13.amlogic.com (45.146.122.89) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Mon, 2 Mar 2020
+ 23:54:45 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>, SoC Team <soc@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2] dt-bindings: power: Fix dt_binding_check error
+Date:   Mon, 2 Mar 2020 23:54:08 +0800
+Message-ID: <1583164448-83438-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200302151829.brlkedossh7qs47s@treble>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
+X-Originating-IP: [45.146.122.89]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 09:18:29AM -0600, Josh Poimboeuf wrote:
-> > So I think on machines without X86_FEATURE_SMAP, trying to unwind from
-> > the two NOPs at f41 and f42 will cause the unwinder to report an
-> > error? Looking at unwind_next_frame(), "sp:(und)" without the "end:1"
-> > marker seems to be reserved for errors.
+Missing ';' in the end of secure-monitor example node.
 
-I think we can blame this one on Peter ;-)
+Fixes: 165b5fb294e8 ("dt-bindings: power: add Amlogic secure power domains bindings")
+Reported-by: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+---
+ Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  764eef4b109a ("objtool: Rewrite alt->skip_orig")
-
-With X86_FEATURE_SMAP, alt->skip_orig gets set, which tells objtool to
-skip validation of the NOPs.  That has the side effect of not
-propagating the ORC state to the NOPs as well.
-
+diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+index af32209..bc4e037 100644
+--- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
++++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+@@ -36,5 +36,5 @@ examples:
+             compatible = "amlogic,meson-a1-pwrc";
+             #power-domain-cells = <1>;
+         };
+-    }
++    };
+ 
 -- 
-Josh
+2.7.4
 
