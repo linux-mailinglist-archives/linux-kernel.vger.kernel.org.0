@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC3B175567
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A7E1755CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 09:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbgCBIQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 03:16:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56974 "EHLO mail.kernel.org"
+        id S1727632AbgCBITA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 03:19:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727103AbgCBIQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:16:20 -0500
+        id S1727107AbgCBIQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 03:16:21 -0500
 Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09237246BE;
+        by mail.kernel.org (Postfix) with ESMTPSA id 13427246C0;
         Mon,  2 Mar 2020 08:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583136979;
-        bh=4a4S5kJaWHjHlpmrc68T5FTFIJzAj8bHB4TYgHYD3iY=;
+        bh=khNZpal75NB7bd/Ewap9EUE1W9d//7akeZ11lNiLq5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BK9G92s16vEfR45VhMUPyHZnzmSf9It/HN6BriRW01xol4KQp99jyDIArgmC9J6Gs
-         VZaOSFginfpEiMuuSuK7Gnq1L5UigoN1BkDG991V1aGgIRDG2c7L7T1YtPxshQjiXz
-         Dn3fgyTbf34ySeKvvvWc3sszVLvuALtPxdx/csLY=
+        b=2YieucKMziE6b1vfxm9geXU65A/CBsvKUI0ejtYzB9Sf8GYcrodXqISiRoY0kNeci
+         Uzx+d6KoHBXlo3g+W7yNpmQzmPR2JsLQuqmwqRw0Cf9au+69S+6uQekGl/echeUCd+
+         xJ+lLovMpHD+ItajKEyVKP116qW0T1Bxwo+rFO9Q=
 Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
         (envelope-from <mchehab@kernel.org>)
-        id 1j8gFN-0003xI-7p; Mon, 02 Mar 2020 09:16:17 +0100
+        id 1j8gFN-0003xM-8c; Mon, 02 Mar 2020 09:16:17 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 09/42] docs: scsi: convert bfa.txt to ReST
-Date:   Mon,  2 Mar 2020 09:15:42 +0100
-Message-Id: <6660d0f83ddae2ab8efb31c39f9c220fc132e9d4.1583136624.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 10/42] docs: scsi: convert bnx2fc.txt to ReST
+Date:   Mon,  2 Mar 2020 09:15:43 +0100
+Message-Id: <f239116bd2c36f6fc8deb62e325bb8161da04270.1583136624.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <cover.1583136624.git.mchehab+huawei@kernel.org>
 References: <cover.1583136624.git.mchehab+huawei@kernel.org>
@@ -45,99 +45,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/scsi/{bfa.txt => bfa.rst} | 28 +++++++++++++++++--------
- Documentation/scsi/index.rst            |  1 +
- 2 files changed, 20 insertions(+), 9 deletions(-)
- rename Documentation/scsi/{bfa.txt => bfa.rst} (72%)
+ Documentation/scsi/{bnx2fc.txt => bnx2fc.rst} | 18 ++++++++++++------
+ Documentation/scsi/index.rst                  |  1 +
+ 2 files changed, 13 insertions(+), 6 deletions(-)
+ rename Documentation/scsi/{bnx2fc.txt => bnx2fc.rst} (91%)
 
-diff --git a/Documentation/scsi/bfa.txt b/Documentation/scsi/bfa.rst
-similarity index 72%
-rename from Documentation/scsi/bfa.txt
-rename to Documentation/scsi/bfa.rst
-index 3cc4d80d6092..3abc0411857d 100644
---- a/Documentation/scsi/bfa.txt
-+++ b/Documentation/scsi/bfa.rst
-@@ -1,5 +1,8 @@
+diff --git a/Documentation/scsi/bnx2fc.txt b/Documentation/scsi/bnx2fc.rst
+similarity index 91%
+rename from Documentation/scsi/bnx2fc.txt
+rename to Documentation/scsi/bnx2fc.rst
+index 80823556d62f..2fef2dff80c7 100644
+--- a/Documentation/scsi/bnx2fc.txt
++++ b/Documentation/scsi/bnx2fc.rst
+@@ -1,3 +1,6 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+=========================================
- Linux driver for Brocade FC/FCOE adapters
--
-+=========================================
++===========================
+ Operating FCoE using bnx2fc
+ ===========================
+ Broadcom FCoE offload through bnx2fc is full stateful hardware offload that
+@@ -24,6 +27,7 @@ Driver Usage Model:
  
- Supported Hardware
- ------------------
-@@ -7,8 +10,9 @@ Supported Hardware
- bfa 3.0.2.2 driver supports all Brocade FC/FCOE adapters. Below is a list of
- adapter models with corresponding PCIIDs.
+ 2. Configure the interfaces on which bnx2fc driver has to operate on.
+ Here are the steps to configure:
++
+ 	a. cd /etc/fcoe
+ 	b. copy cfg-ethx to cfg-eth5 if FCoE has to be enabled on eth5.
+ 	c. Repeat this for all the interfaces where FCoE has to be enabled.
+@@ -39,8 +43,10 @@ discovery and log into the targets.
  
--	PCIID		  	Model
--
-+	===================	===========================================
-+	PCIID			Model
-+	===================	===========================================
- 	1657:0013:1657:0014	425 4Gbps dual port FC HBA
- 	1657:0013:1657:0014	825 8Gbps PCIe dual port FC HBA
- 	1657:0013:103c:1742	HP 82B 8Gbps PCIedual port FC HBA
-@@ -26,6 +30,7 @@ adapter models with corresponding PCIIDs.
+ 5. "Symbolic Name" in 'fcoeadm -i' output would display if bnx2fc has claimed
+ the interface.
+-Eg:
+-[root@bh2 ~]# fcoeadm -i
++
++Eg::
++
++ [root@bh2 ~]# fcoeadm -i
+     Description:      NetXtreme II BCM57712 10 Gigabit Ethernet
+     Revision:         01
+     Manufacturer:     Broadcom Corporation
+@@ -60,16 +66,16 @@ Eg:
+         State:             Online
  
- 	1657:0022:1657:0024	1860 16Gbps FC HBA
- 	1657:0022:1657:0022	1860 10Gbps CNA - FCOE
-+	===================	===========================================
+ 6. Verify the vlan discovery is performed by running ifconfig and notice
+-<INTERFACE>.<VLAN>-fcoe interfaces are automatically created.
++   <INTERFACE>.<VLAN>-fcoe interfaces are automatically created.
  
+ Refer to fcoeadm manpage for more information on fcoeadm operations to
+ create/destroy interfaces or to display lun/target information.
  
- Firmware download
-@@ -37,9 +42,11 @@ http://www.brocade.com/services-support/drivers-downloads/adapters/Linux.page
+-NOTE:
++NOTE
+ ====
+ ** Broadcom FCoE capable devices implement a DCBX/LLDP client on-chip. Only one
+ LLDP client is allowed per interface. For proper operation all host software
+ based DCBX/LLDP clients (e.g. lldpad) must be disabled. To disable lldpad on a
+-given interface, run the following command:
++given interface, run the following command::
  
- and then click following respective util package link:
- 
--	Version			Link
--
-+	=========	=======================================================
-+	Version		Link
-+	=========	=======================================================
- 	v3.0.0.0	Linux Adapter Firmware package for RHEL 6.2, SLES 11SP2
-+	=========	=======================================================
- 
- 
- Configuration & Management utility download
-@@ -52,9 +59,11 @@ http://www.brocade.com/services-support/drivers-downloads/adapters/Linux.page
- 
- and then click following respective util package link
- 
--	Version			Link
--
-+	=========	=======================================================
-+	Version		Link
-+	=========	=======================================================
- 	v3.0.2.0	Linux Adapter Firmware package for RHEL 6.2, SLES 11SP2
-+	=========	=======================================================
- 
- 
- Documentation
-@@ -69,10 +78,11 @@ http://www.brocade.com/services-support/drivers-downloads/adapters/Linux.page
- and use the following inbox and out-of-box driver version mapping to find
- the corresponding documentation:
- 
-+	=============		==================
- 	Inbox Version		Out-of-box Version
--
-+	=============		==================
- 	v3.0.2.2		v3.0.0.0
--
-+	=============		==================
- 
- Support
- -------
+-lldptool set-lldp -i <interface_name> adminStatus=disabled
++	lldptool set-lldp -i <interface_name> adminStatus=disabled
 diff --git a/Documentation/scsi/index.rst b/Documentation/scsi/index.rst
-index c0b66763515f..1e37227f3536 100644
+index 1e37227f3536..d453fb3f1f7d 100644
 --- a/Documentation/scsi/index.rst
 +++ b/Documentation/scsi/index.rst
-@@ -13,5 +13,6 @@ Linux SCSI Subsystem
-    aha152x
+@@ -14,5 +14,6 @@ Linux SCSI Subsystem
     aic79xx
     aic7xxx
-+   bfa
+    bfa
++   bnx2fc
  
     scsi_transport_srp/figures
 -- 
