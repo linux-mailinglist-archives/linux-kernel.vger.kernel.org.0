@@ -2,99 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F4321751D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 03:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAFEB1751D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 03:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgCBCfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 21:35:46 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:39725 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbgCBCfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 21:35:46 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48W44w2LJzz9sSM;
-        Mon,  2 Mar 2020 13:35:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583116544;
-        bh=PTyADRT7rNDTfnhYJBz0UBmQ9vp9yqGXCN/gxmgFYYY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Z5WUg+NWXsULcuLtqVQ5FKIlzQMcN7LFJXQHc29M3Cb+UOLZCZAlv4r+4HzCCaCtd
-         a/afPKUfyf3/IAv874pWbf7qyDuoQWql1xitPF15vPjDPYBW7nIwHPgPWoekKnkp6s
-         YI3VrYYFm8Watd8MNibDuE1XB1jNWt43xCqElKdcX8mQTHoMDB4MBakKDARtldSTK3
-         FbpbKN0S/b5zCYPQcPBMbeUX1wXRIU/BCRGvtRFShHg1wsoln2jgu6XNJAv7XoAyPl
-         fnwbwGuKu2B67/nIGBahUFy0GtC6SpUUMFbJpu97u8vUtQ0/KGUVTePWJceKdA5rl3
-         LSkFRSv2LrIbg==
-Date:   Mon, 2 Mar 2020 13:35:43 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Brian King <brking@linux.vnet.ibm.com>
-Subject: linux-next: build warning after merge of the scsi-mkp tree
-Message-ID: <20200302133543.7052d654@canb.auug.org.au>
+        id S1726860AbgCBChR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 21:37:17 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10707 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726690AbgCBChR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Mar 2020 21:37:17 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5F3EF347FFB24DD8ACBA;
+        Mon,  2 Mar 2020 10:37:14 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 2 Mar 2020
+ 10:37:05 +0800
+From:   Ye Bin <yebin10@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yebin10@huawei.com>
+Subject: [PATCH] vt: fix CVE-2020-8647
+Date:   Mon, 2 Mar 2020 10:35:53 +0800
+Message-ID: <20200302023553.44792-1-yebin10@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9M8=f.JwJs.X_ACgpTY9PBZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9M8=f.JwJs.X_ACgpTY9PBZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+We must calculate origin buffer end before update "old_origin", or it
+will lead to access illegal memory.
 
-Hi all,
+BUG: KASan: use after free in vc_do_resize+0x49e/0xb30 at addr ffff88000016b9c0
+Read of size 2 by task syz-executor.3/24164
+page:ffffea0000005ac0 count:0 mapcount:0 mapping:          (null) index:0x0
+page flags: 0xfffff00000000()
+page dumped because: kasan: bad access detected
+CPU: 0 PID: 24164 Comm: syz-executor.3 Not tainted 3.10.0-862.14.2.1.x86_64+ #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+ [<ffffffffb059f309>] dump_stack+0x1e/0x20
+ [<ffffffffaf8af957>] kasan_report+0x577/0x950
+ [<ffffffffaf8ae652>] __asan_load2+0x62/0x80
+ [<ffffffffafe3728e>] vc_do_resize+0x49e/0xb30
+ [<ffffffffafe3795c>] vc_resize+0x3c/0x60
+ [<ffffffffafe1d80d>] vt_ioctl+0x16ed/0x2670
+ [<ffffffffafe0089a>] tty_ioctl+0x46a/0x1a10
+ [<ffffffffaf92db3d>] do_vfs_ioctl+0x5bd/0xc40
+ [<ffffffffaf92e2f2>] SyS_ioctl+0x132/0x170
+ [<ffffffffb05c9b1b>] system_call_fastpath+0x22/0x27
 
-After merging the scsi-mkp tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ drivers/tty/vt/vt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In file included from include/uapi/linux/posix_types.h:5,
-                 from include/uapi/linux/types.h:14,
-                 from include/linux/types.h:6,
-                 from include/linux/list.h:5,
-                 from include/linux/module.h:12,
-                 from drivers/scsi/ibmvscsi/ibmvfc.c:10:
-drivers/scsi/ibmvscsi/ibmvfc.c: In function 'ibmvfc_tgt_implicit_logout_and=
-_del':
-include/linux/stddef.h:8:14: warning: 'return' with a value, in function re=
-turning void [-Wreturn-type]
-    8 | #define NULL ((void *)0)
-      |              ^
-drivers/scsi/ibmvscsi/ibmvfc.c:3644:10: note: in expansion of macro 'NULL'
- 3644 |   return NULL;
-      |          ^~~~
-drivers/scsi/ibmvscsi/ibmvfc.c:3638:13: note: declared here
- 3638 | static void ibmvfc_tgt_implicit_logout_and_del(struct ibmvfc_target=
- *tgt)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 8fa059ec6cc8..1d7217bef678 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1231,6 +1231,7 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ 	old_origin = vc->vc_origin;
+ 	new_origin = (long) newscreen;
+ 	new_scr_end = new_origin + new_screen_size;
++	end = old_origin + old_row_size * min(old_rows, new_rows);
+ 
+ 	if (vc->vc_y > new_rows) {
+ 		if (old_rows - vc->vc_y < new_rows) {
+@@ -1249,7 +1250,6 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ 		old_origin += first_copied_row * old_row_size;
+ 	} else
+ 		first_copied_row = 0;
+-	end = old_origin + old_row_size * min(old_rows, new_rows);
+ 
+ 	vc_uniscr_copy_area(new_uniscr, new_cols, new_rows,
+ 			    get_vc_uniscr(vc), rlth/2, first_copied_row,
+-- 
+2.17.2
 
-Introduced by commit
-
-  54b04c99d02e ("scsi: ibmvfc: Avoid loss of all paths during SVC node rebo=
-ot")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9M8=f.JwJs.X_ACgpTY9PBZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5ccP8ACgkQAVBC80lX
-0GyiBgf+Ln6FCnnNflgek2G/vI0p5CeztpNHPP0z7JKvne4vt0g+Bwt48+3GhojJ
-nAaIdWnpAaRusttbKHKuwJsLkehrtmlczDb/7bLz8asuEp3IRjwVbFInSqJl9JEu
-mOEZv8IE40pZB+Zm0vObNTFUHfFl7QVHA8bim5qoCpOhJVq8DnGIkenzpa4tR/Zz
-K/UbAKyjxeD/+7pS+mwHKOV1va6YiMOiG8cyduoTd37jCBgeAyoXCs//LArAQJRm
-eGmL8osvYW7njB3/qf79xnoTNBPf0mnnn6G+DonzPwC12qFyxYxBSjfzhwIvZZFq
-NIAgR2yz4XJDJK10ADCe7jLDUwKsug==
-=opuZ
------END PGP SIGNATURE-----
-
---Sig_/9M8=f.JwJs.X_ACgpTY9PBZ--
