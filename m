@@ -2,132 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10CA1175A62
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB6E91759F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgCBMWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:22:46 -0500
-Received: from gateway20.websitewelcome.com ([192.185.63.14]:29495 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725802AbgCBMWq (ORCPT
+        id S1727927AbgCBMFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:05:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55059 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbgCBMFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:22:46 -0500
-X-Greylist: delayed 1307 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 07:22:45 EST
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 5480C400D7F5D
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 04:46:23 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8jknjSdrgvBMd8jkojNY46; Mon, 02 Mar 2020 06:00:58 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GsVRQOnb9R+wqSrh14nCUTJamDpoQJdhIGejpnhlXaA=; b=tmiFV/pSqdqUxQvzZwfKRvcuQS
-        nrNndKakapvjXA0g0gKntJ6AhvL1DnrIFbwCsXPy8l/ryCB9TlAFLAV7Y0VW7B1NZyXdwYNLS8iXg
-        u1y6y+ZHIiWqVKuijfVp/svaWo1s1gXhwElBBfXD0LSBaF0ip4pA/kLD3s10PYe9ffCtSZ3o6zuTi
-        u4UezfLVleRxobvznz19V01GnExwJe6m6OZPvd4fpRoUkB7LEBO7a5G0MCcqMK6WxU4mdkdMD/Vz/
-        TpfgwLB2WL8n4nj8pBN5DeTT04e3m5I80ya8RkEc/eCGzFCZdxbXnNhX612LRN5AkUfmOKehs+QJg
-        6vzz+BiQ==;
-Received: from [201.166.157.55] (port=42220 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j8jkl-003r5x-Ct; Mon, 02 Mar 2020 06:00:56 -0600
-Date:   Mon, 2 Mar 2020 06:03:52 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] net: ip_fib: Replace zero-length array with
- flexible-array member
-Message-ID: <20200302120352.GA15843@embeddedor>
+        Mon, 2 Mar 2020 07:05:07 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j8jol-0001z4-W6; Mon, 02 Mar 2020 12:05:04 +0000
+Date:   Mon, 2 Mar 2020 13:05:03 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        viro@zeniv.linux.org.uk, metze@samba.org,
+        torvalds@linux-foundation.org, cyphar@cyphar.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+Message-ID: <20200302120503.g5pt4ky3uvb2ly63@wittgenstein>
+References: <96563.1582901612@warthog.procyon.org.uk>
+ <20200228152427.rv3crd7akwdhta2r@wittgenstein>
+ <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+ <20200302115239.pcxvej3szmricxzu@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.157.55
-X-Source-L: No
-X-Exim-ID: 1j8jkl-003r5x-Ct
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.157.55]:42220
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200302115239.pcxvej3szmricxzu@wittgenstein>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Mon, Mar 02, 2020 at 12:52:39PM +0100, Christian Brauner wrote:
+> On Mon, Mar 02, 2020 at 12:30:47PM +0100, Florian Weimer wrote:
+> > * Christian Brauner:
+> > 
+> > > [Cc Florian since that ends up on libc's table sooner or later...]
+> > 
+> > I'm not sure what you are after here …
+> 
+> Exactly what you've commented below. Input on whether any of these
+> changes would be either problematic if you e.g. were to implement
+> openat() on top of openat2() in the future or if it would be problematic
+> if we e.g. were to really deprecate AT_* flags for new syscalls.
+> 
+> > 
+> > > On Fri, Feb 28, 2020 at 02:53:32PM +0000, David Howells wrote:
+> > >> 	
+> > >> I've been told that RESOLVE_* flags, which can be found in linux/openat2.h,
+> > >> should be used instead of the equivalent AT_* flags for new system calls.  Is
+> > >> this the case?
+> > >
+> > > Imho, it would make sense to use RESOLVE_* flags for new system calls
+> > > and afair this was the original intention.
+> > > The alternative is that RESOLVE_* flags are special to openat2(). But
+> > > that seems strange, imho. The semantics openat2() has might be very
+> > > useful for new system calls as well which might also want to support
+> > > parts of AT_* flags (see fsinfo()). So we either end up adding new AT_*
+> > > flags mirroring the new RESOLVE_* flags or we end up adding new
+> > > RESOLVE_* flags mirroring parts of AT_* flags. And if that's a
+> > > possibility I vote for RESOLVE_* flags going forward. The have better
+> > > naming too imho.
+> > >
+> > > An argument against this could be that we might end up causing more
+> > > confusion for userspace due to yet another set of flags. But maybe this
+> > > isn't an issue as long as we restrict RESOLVE_* flags to new syscalls.
+> > > When we introduce a new syscall userspace will have to add support for
+> > > it anyway.
+> > 
+> > I missed the start of the dicussion and what this is about, sorry.
+> > 
+> > Regarding open flags, I think the key point for future APIs is to avoid
+> > using the set of flags for both control of the operation itself
+> > (O_NOFOLLOW/AT_SYMLINK_NOFOLLOW, O_NOCTTY) and properaties of the
+> > resulting descriptor (O_RDWR, O_SYNC).  I expect that doing that would
 
-struct foo {
-        int stuff;
-        struct boo array[];
+Yeah, we have touched on that already and we have other APIs having
+related problems. A clean way to avoid this problem is to require new
+syscalls to either have two flag arguments, or - if appropriate -
+suggest they make use of struct open_how that was implemented for
+openat2().
+
+ * @flags: O_* flags.
+ * @mode: O_CREAT/O_TMPFILE file mode.
+ * @resolve: RESOLVE_* flags.
+ */
+struct open_how {
+	__u64 flags;
+	__u64 mode;
+	__u64 resolve;
 };
-
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/net/ip_fib.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/net/ip_fib.h b/include/net/ip_fib.h
-index 6a1ae49809de..dabe398bee4c 100644
---- a/include/net/ip_fib.h
-+++ b/include/net/ip_fib.h
-@@ -153,7 +153,7 @@ struct fib_info {
- 	bool			nh_updated;
- 	struct nexthop		*nh;
- 	struct rcu_head		rcu;
--	struct fib_nh		fib_nh[0];
-+	struct fib_nh		fib_nh[];
- };
- 
- 
-@@ -250,7 +250,7 @@ struct fib_table {
- 	int			tb_num_default;
- 	struct rcu_head		rcu;
- 	unsigned long 		*tb_data;
--	unsigned long		__data[0];
-+	unsigned long		__data[];
- };
- 
- struct fib_dump_filter {
--- 
-2.25.0
-
