@@ -2,159 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C841767DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 302AD1767F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:13:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgCBXIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:08:20 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:50782 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgCBXIU (ORCPT
+        id S1727067AbgCBXNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:13:52 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:21108 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbgCBXNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:08:20 -0500
-Received: by mail-pj1-f66.google.com with SMTP id nm6so46092pjb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:08:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bHCVavkwu6zfqNW43fiKG14XiAueMcaZslslsOZ/218=;
-        b=ydM6de292BVaEG4QIuyq3YDVMoEUXf/csuA62Efwp3SSERMdRa78DTYxPii0GhrquH
-         ISL5cY5PnKvvgsRwpvwPaI7vfbfzJRRffct/nD7NxWwzR5+nM5zXinq7KnqGZ6IXRQ0a
-         oc6KW7Dm8G/R+weAy54bB+Jxgl2/2PE2CimSIockQWJAFk6q7ZWhhb2y9G0cGsaZQBON
-         jzosmItoJcleMLSIQDULAkmSSKVBi4F1legP3yobRaXw6QIUtUx8/QLvUzOBvdLuhxec
-         JlIVk7m0qsebia9QlP3xo1u+DZYQyvO4TS9/u4XLRK2D0zuABuQfYiyrBrjveBgHGgoz
-         CgMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bHCVavkwu6zfqNW43fiKG14XiAueMcaZslslsOZ/218=;
-        b=DPFCiC+fSzHGOENHdDOmgFrl+Ok0aofI3x1DkhVEFxOr4aWXR4hzb2ACq+V/Ly9wbd
-         30fyP49MEaNpjHan40ZtvMhYWTdLuDsv3QLfVUKky3URkcAWl1hK4X6DOGYXkVFbXn7n
-         SWjTJUnLZivKP+W8BgFDCv8bkOJGyfW7EbXmNkciQd6/BvaEhbOMbqxvrMBcPaoupXkm
-         KMQzN+DZt99CbiIDugyOf0ZJH1+dxpY7eFwGfc8lmHforgtFh/mL9wp0ug/OJXbUUuoQ
-         Qp9mX4kwUZdmoXRZXFHMn7y5hIrqW81Y0xAiTgqArwaIL6w3jFyXpsrtmhbI8kxTQ6Q9
-         mG2g==
-X-Gm-Message-State: ANhLgQ0Dhh4HD2/KQq/nUFCTBESgFs/USiLwXE8XJCy/OajjL7sSzjDb
-        ejLNsIRdLMcu1z18SexcHPgpbA==
-X-Google-Smtp-Source: ADFU+vu5Fn9LjuEv0zkVceFz7t9zzw21FhNfEeY+oO2Z6PSUfUEvK0xhiSdQzKkCOH96zHvBaDxllg==
-X-Received: by 2002:a17:902:b7ca:: with SMTP id v10mr1336548plz.308.1583190497213;
-        Mon, 02 Mar 2020 15:08:17 -0800 (PST)
-Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id t11sm256202pjo.21.2020.03.02.15.08.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 15:08:16 -0800 (PST)
-Date:   Mon, 2 Mar 2020 15:08:14 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Clement Leger <cleger@kalray.eu>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-remoteproc@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v5 3/8] remoteproc: Use u64 type for boot_addr
-Message-ID: <20200302230814.GC262924@yoga>
-References: <20200210162209.23149-1-cleger@kalray.eu>
- <20200302093902.27849-1-cleger@kalray.eu>
- <20200302093902.27849-4-cleger@kalray.eu>
+        Mon, 2 Mar 2020 18:13:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1583190831; x=1614726831;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AGqPkTKe6UEXeLLRbH5vhOJ55qI3COFWkFGnJ1Hvl2A=;
+  b=IZRJrLu6Qx2qiqH93EvjvS4g7N2dYCazcw7uCyLv2smRqy136r8FMVH0
+   gksEfJwjLTLg+TQ8pSlvSMtftFPIzS5MAZn3xEEKWXV5sgK2cuCL1i1cS
+   mY2jlu2lnzvH7klyMjPV1oPaTwYuw6B1vd2sqzpzyw1ZbxB77/jAxkqBO
+   3i6Ko7eybuC+pmeocjgTAKtNiZVqnEbY/vm/65Bhj4sZ3/IcHCt0WlWkM
+   g83Q6p8Jo/02eY+CPboQc1Pq946JvFmKkttus4ZQW92d0WtBgIMBJ40yb
+   LLB09N7cbK3KEkJtAVXDiLbcD8wEghWE8209HX0ifNpts6pxHN/Hu99QE
+   A==;
+IronPort-SDR: Yny6UzCsnE6h1MVKxLbhRe3keIcYm+bNAEL2+qI3UhSQFTnAVQiMu9xHXmdCZL1Cr7mqnZMKyM
+ 9PcQzeMMyG3UxZDyWKuAPlSCXmYwGVseqULIi/N/DZfQPWm6e5yiZzBjCS7ySbsX5kH/IoZyoX
+ iXkNhOIDppBy832NCGwjvrUpbKcofNOb5Iv57z9y10gbOJ++H5QadwYaCaIVc1hOXV5qRSbIor
+ BY+NLtzMNUNp1ksR6rMFf2v3Bepepa/1wZcQC4wfUYN1C70aG+/AnHMaM+fKmm8hME3cQFI4CS
+ RS8=
+X-IronPort-AV: E=Sophos;i="5.70,508,1574092800"; 
+   d="scan'208";a="131708407"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Mar 2020 07:13:51 +0800
+IronPort-SDR: FVvFnga86vJNAg52eJOm3LTAnn5MUOzMeNRjDodCZI4doFRajTKZxSbfKfZ5Iy7zUw6pjeQ/S+
+ ShFOhIafI8Pk+ng8q6uGeni7YSwZqi9ig1HhYvZOb/SNGg4KtSKn4i3DbLD86YW+7E0+KW7MHI
+ HQNwG+3EVfstYiz6VSYEwbhwp/jo4aEDIXmmSLJLifYfsovYrPyEf7/pf/+AjFxrXnB+dGNZ7w
+ Hb10XlAcaxKHgmiXV8KRNxhFC54mnHeOOhidNFGhJCqRAIZ30/qLa2jP0VV3GaOSetukOM4WtT
+ EvpvVNfoBtb2IFmJRVHe7DtD
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 15:06:07 -0800
+IronPort-SDR: mqEq2MevqO9o2882QUhs/dzrhYoOweLKrDEouviGDeX58NS0lglPclveQfXS8xGa6YXGvbVHUZ
+ zxP+yo1cwYQ+nPhMAV6yFGR0XyfQpIj6w5qDvOlEO1D0LX/SDgbD82HVbbtuaMOa53kloIOXJX
+ 6ogck5Fykqyf3IcDZnOwewDaHdh7BzumvbmJMf0J6Jh2xnyBBnP8I8maHNnG5hw5QNdDGiX5oi
+ T0ACYnWkjRfufF5RfRuz0DMK4/Z1skuqR403z8YKDQHLEIkWXonZ0RViKQMSLdgolxfg1WC+31
+ Tp0=
+WDCIronportException: Internal
+Received: from usa002267.ad.shared (HELO yoda.hgst.com) ([10.86.54.35])
+  by uls-op-cesaip02.wdc.com with ESMTP; 02 Mar 2020 15:13:50 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Anup Patel <anup.patel@wdc.com>, Borislav Petkov <bp@suse.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morse <james.morse@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-riscv@lists.infradead.org, Marc Zyngier <maz@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Steven Price <steven.price@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vincent Chen <vincent.chen@sifive.com>
+Subject: [PATCH v3 0/2] Improve PLIC functionality
+Date:   Mon,  2 Mar 2020 15:11:44 -0800
+Message-Id: <20200302231146.15530-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302093902.27849-4-cleger@kalray.eu>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
+This series adds following PLIC functionalities
 
-> elf64 entry is defined as a u64. Since boot_addr is used to store the
-> elf entry point, change boot_addr type to u64 to support both elf32
-> and elf64. In the same time, fix users that were using this variable.
-> 
-> Signed-off-by: Clement Leger <cleger@kalray.eu>
+1. Enable/disable interrupts only on cpu online/offline events.
+2. Support multiple PLIC nodes in the device tree. This is required
+for multi-socket platforms such as OmniXtend.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The 1st patch was originally part of the CPU hotplug series[1]. It is added to
+this series now to keep all the PLIC related changes together.
 
-> ---
->  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->  drivers/remoteproc/remoteproc_internal.h   | 2 +-
->  drivers/remoteproc/st_remoteproc.c         | 2 +-
->  include/linux/remoteproc.h                 | 4 ++--
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index 606aae166eba..c2a9783cfb9a 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -102,7 +102,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
->   * Note that the boot address is not a configurable property of all remote
->   * processors. Some will always boot at a specific hard-coded address.
->   */
-> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
->  {
->  	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
->  
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 58580210575c..0deae5f237b8 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -55,7 +55,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
->  int rproc_trigger_recovery(struct rproc *rproc);
->  
->  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
->  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index ee13d23b43a9..a3268d95a50e 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -190,7 +190,7 @@ static int st_rproc_start(struct rproc *rproc)
->  		}
->  	}
->  
-> -	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-> +	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
->  
->  	return 0;
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index bee559330204..1683d6c386a6 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -382,7 +382,7 @@ struct rproc_ops {
->  				struct rproc *rproc, const struct firmware *fw);
->  	int (*load)(struct rproc *rproc, const struct firmware *fw);
->  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
-> -	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> +	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->  };
->  
->  /**
-> @@ -498,7 +498,7 @@ struct rproc {
->  	int num_traces;
->  	struct list_head carveouts;
->  	struct list_head mappings;
-> -	u32 bootaddr;
-> +	u64 bootaddr;
->  	struct list_head rvdevs;
->  	struct list_head subdevs;
->  	struct idr notifyids;
-> -- 
-> 2.15.0.276.g89ea799
-> 
+Rebased on top of 5.6-rc4.
+ 
+[1] https://patchwork.kernel.org/patch/11407379/
+
+Atish Patra (2):
+irqchip/sifive-plic: Enable/Disable external interrupts upon cpu
+online/offline
+irqchip/sifive-plic: Add support for multiple PLICs
+
+arch/riscv/kernel/traps.c         |   2 +-
+drivers/irqchip/irq-sifive-plic.c | 119 +++++++++++++++++++++---------
+include/linux/cpuhotplug.h        |   1 +
+3 files changed, 87 insertions(+), 35 deletions(-)
+
+--
+2.25.0
+
