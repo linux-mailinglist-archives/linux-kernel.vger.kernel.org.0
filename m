@@ -2,174 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3EEF1752F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 06:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 708F71752FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 06:11:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgCBFKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 00:10:45 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38538 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbgCBFKp (ORCPT
+        id S1726884AbgCBFLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 00:11:13 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:38685 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCBFLN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 00:10:45 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i14so1365706otp.5
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 21:10:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T8fgcUH96BtI1H4QvYoKauEYCCbRMy2bktXV5r5B2T4=;
-        b=QaJHEa7WwsDkL2etKS7IPadbk8f4FqA3kbit3B9bY33vjeh3eAINHg2MLv0amQTmC9
-         xZMiFgmf+p7o+uUto9g6K+OSRsc/7oP1M4F+rXmwPOdtSkRDN9S4axCsPlQj4Z7s9agA
-         yHKHpjQLitl/Z/WzHOOSS5pDeNKwmhVerixSYChL3mbb3eyotwjtK54Js0830rFMwegq
-         D5EyfQY3LN+SvtuChAlP3cSkynBduh6tC+5seRLyqm4UGx0F7G/Pt0862RC3KYPsL27G
-         B3UnTjPus9iARdZS3jKqnvcc1M1Ia1CEVMYCJJCOB6/aruyf+RFO9z5gk9IEnPQ+3IhJ
-         wBZA==
+        Mon, 2 Mar 2020 00:11:13 -0500
+Received: by mail-il1-f199.google.com with SMTP id i67so10114587ilf.5
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 21:11:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T8fgcUH96BtI1H4QvYoKauEYCCbRMy2bktXV5r5B2T4=;
-        b=O25UQCmcBwmgJOoiUTzhJgGE1OSZccQV1J21Ce4lGjJs/jkObP1CV9hwldsn3zIyrt
-         Y4pt/vlb7Arw+xE488a/33zBKZm3+njTbQyutqQ54Pnt78Nfq4b+ejLb8u+OAMvZUhes
-         qEJAN9Fvm648G3ovrWnXKo5MDJLWaQE4mTL6s0jxN/GpcEwkPAhxKLbitTCtHP2V2PBS
-         f8J8RS2/uGuNEnAaSeGsP+ePNqklDvxg/LYWki29pU6b0k/2GWzgbmwz5zOb2ve6JnEV
-         n/Rm1cOD2KsSpp44kVF9QJk9Lg4xlKVrGMSS/mo5AAEfY8xOE1zs9b73VONw5G0wk43P
-         uRtA==
-X-Gm-Message-State: APjAAAV95kblwjaM/zvxinmc4XnLtFJH7VsTNt2G7rjFLRzy3QeC8tdl
-        +f5lSdcqhuMYt1w4SS0loKQXLOG6
-X-Google-Smtp-Source: APXvYqw2j9Luo/Ga8ZCam3NqsJfwhFS/VC3jxlVOrydK3IGH45IENGS6hFBNqmCX0nWEMBcD2AIF3A==
-X-Received: by 2002:a9d:34c:: with SMTP id 70mr11221277otv.174.1583125844002;
-        Sun, 01 Mar 2020 21:10:44 -0800 (PST)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id d17sm443969otf.77.2020.03.01.21.10.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 01 Mar 2020 21:10:43 -0800 (PST)
-Date:   Sun, 1 Mar 2020 22:10:41 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [GIT PULL] Second batch of KVM changes for Linux 5.6-rc4 (or rc5)
-Message-ID: <20200302051041.GA2698@ubuntu-m2-xlarge-x86>
-References: <1583089390-36084-1-git-send-email-pbonzini@redhat.com>
- <CAHk-=wiin_LkqP2Cm5iPc5snUXYqZVoMFawZ-rjhZnawven8SA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=rVXWG6I2Docu/l6TEelQQ6kA2g+m3kqyIZlYlybmkwo=;
+        b=TPFf4GiQuu2dx6/OEdJi6wOFTRmdab2y3QvitpA76jclOAth6y4Pix6ptNM3G0789N
+         NMI7IB76iNiy6VzsjAiuKxwC+Vgpm8cEIc4DNO7U6d1IKULe25ja5+mOMhvXSDFQPfk/
+         ONuB4sWFXnFB5Q4pSeVhlHBoLRvQhNUgkNjJORyFLrjQJpgUj4e8yQC+AAiGqc0SwOr+
+         ESCFKHliBqxVJPw+ZRnltPRRG1CcU+21XkRoLXOQ2lWXcgECh9gqmYT2LziXvXcmt4Ja
+         VbBDDxm3cCpFUYq51yfU7r09esgsrF9Lnp4smX2eN0XLDVaJqwOxOUKFLU8Blup165jA
+         R7JA==
+X-Gm-Message-State: APjAAAW20ZEdJRimgr58/XbNNPKxY+ahS7rlMJF8l/naQSSoOeaHDoJt
+        +/m1b/b8uG57WaRoOREotPlkLkEfeHDdmIN9oAM6i5u/DBNP
+X-Google-Smtp-Source: APXvYqzSc8GFjXA/MA2ZmJf4WdSfc+oPzmo1obgWuI1E/TAeLQhVwX4Lovym2prkbzqMESaqM5uZyT9kuTbPIiV1PcLWyrdKBa6F
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiin_LkqP2Cm5iPc5snUXYqZVoMFawZ-rjhZnawven8SA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a92:798d:: with SMTP id u135mr15743801ilc.49.1583125872396;
+ Sun, 01 Mar 2020 21:11:12 -0800 (PST)
+Date:   Sun, 01 Mar 2020 21:11:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004251e4059fd83720@google.com>
+Subject: WARNING: ODEBUG bug in smc_ib_remove_dev
+From:   syzbot <syzbot+b297c6825752e7a07272@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kgraul@linux.ibm.com, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        ubraun@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ CBL mailing list, my two cents below.
+Hello,
 
-On Sun, Mar 01, 2020 at 03:33:48PM -0600, Linus Torvalds wrote:
-> On Sun, Mar 1, 2020 at 1:03 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> >
-> > Paolo Bonzini (4):
-> >       KVM: allow disabling -Werror
-> 
-> Honestly, this is just badly done.
-> 
-> You've basically made it enable -Werror only for very random
-> configurations - and apparently the one you test.
-> 
-> Doing things like COMPILE_TEST disables it, but so does not having
-> EXPERT enabled.
-> 
-> So it looks entirely ad-hoc and makes very little sense. At least the
-> "with KASAN, disable this" part makes sense, since that's a known
-> source or warnings. But everything else looks very random.
-> 
-> I've merged this, but I wonder why you couldn't just do what I
-> suggested originally?
-> 
-> Seriously, if you script your build tests, and don't even look at the
-> results, then you might as well use
-> 
->    make KCFLAGS=-Werror
-> 
-> instead of having this kind of completely random option that has
-> almost no logic to it at all.
-> 
-> And if you depend entirely on random build infrastructure like the
-> 0day bot etc, this likely _is_ going to break when it starts using a
-> new gcc version, or when it starts testing using clang, or whatever.
-> So then we end up with another odd random situation where now kvm (and
-> only kvm) will fail those builds just because they are automated.
+syzbot found the following crash on:
 
-Just FYI, 0day clang builds are live now. I have not seen anything from
-KVM yet but I do not know how many configurations are being tested and
-such:
+HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12873645e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
+dashboard link: https://syzkaller.appspot.com/bug?extid=b297c6825752e7a07272
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-https://lore.kernel.org/lkml/CAKwvOdn9mpsjpAbVQbS0LC9iPtNrCZU+Pbh2Bt7kSXa4S8KQEg@mail.gmail.com/
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> Yes, as I said in that original thread, I'd love to do -Werror in
-> general, at which point it wouldn't be some random ad-hoc kvm special
-> case for some random option. But the "now it causes problems for
-> random compiler versions" is a real issue again - but at least it
-> wouldn't be a random kernel subsystem that happens to trigger it, it
-> would be a _generic_ issue, and we'd have everybody involved when a
-> compiler change introduces a new warning.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b297c6825752e7a07272@syzkaller.appspotmail.com
 
-Indeed; our CI for clang builds is all done with the master versions of
-clang available from apt.llvm.org so we can catch issues as soon as
-possible and having -Werror would mean a potentially benign issue (like
-one we are currently dealing with where clang's -Wvoid-pointer-to-int-cast
-warns when casting to an enum where gcc does not:
-https://reviews.llvm.org/D72231#1878528) would cause our CI to go
-instantly red across the board and not catch other issues.
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object type: work_struct hint: smc_ib_port_event_work+0x0/0x350 net/smc/smc_ib.c:312
+WARNING: CPU: 0 PID: 14236 at lib/debugobjects.c:485 debug_print_object+0x168/0x250 lib/debugobjects.c:485
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 14236 Comm: kworker/u4:10 Not tainted 5.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound ib_unregister_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ panic+0x2e3/0x75c kernel/panic.c:221
+ __warn.cold+0x2f/0x3e kernel/panic.c:582
+ report_bug+0x289/0x300 lib/bug.c:195
+ fixup_bug arch/x86/kernel/traps.c:174 [inline]
+ fixup_bug arch/x86/kernel/traps.c:169 [inline]
+ do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+ do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+ invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:debug_print_object+0x168/0x250 lib/debugobjects.c:485
+Code: dd 00 e7 91 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b5 00 00 00 48 8b 14 dd 00 e7 91 88 48 c7 c7 60 dc 91 88 e8 07 6e 9f fd <0f> 0b 83 05 03 6c ff 06 01 48 83 c4 20 5b 41 5c 41 5d 41 5e 5d c3
+RSP: 0018:ffffc90001807ae0 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815ebe46 RDI: fffff52000300f4e
+RBP: ffffc90001807b20 R08: ffff8880485a61c0 R09: ffffed1015d045c9
+R10: ffffed1015d045c8 R11: ffff8880ae822e43 R12: 0000000000000001
+R13: ffffffff89b7a220 R14: ffffffff814c8610 R15: ffff88806058e348
+ __debug_check_no_obj_freed lib/debugobjects.c:967 [inline]
+ debug_check_no_obj_freed+0x2d6/0x441 lib/debugobjects.c:998
+ kfree+0xf8/0x2c0 mm/slab.c:3756
+ smc_ib_remove_dev+0x1a9/0x2e0 net/smc/smc_ib.c:583
+ remove_client_context+0xc7/0x120 drivers/infiniband/core/device.c:724
+ disable_device+0x14c/0x230 drivers/infiniband/core/device.c:1268
+ __ib_unregister_device+0x9c/0x190 drivers/infiniband/core/device.c:1435
+ ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1545
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-I would say a CONFIG_CC_WERROR or something of that nature would not
-necessarily be a bad thing since we could just disable it for our CI (or
-have it be default disabled) but I think if someone cares about -Werror,
-they should just use the KCFLAGS trick at the point, since I would think
-that would be easier than maintaining a separate config option.
 
-> I've pulled this for now, but I really think it's a horrible hack, and
-> it's just done entirely wrong.
-> 
-> Adding the powerpc people, since they have more history with their
-> somewhat less hacky one. Except that one automatically gets disabled
-> by "make allmodconfig" and friends, which is also kind of pointless.
-> 
-> Michael, what tends to be the triggers for people using
-> PPC_DISABLE_WERROR? Do you have reports for it? Could we have a
-> _generic_ option that just gets enabled by default, except it gets
-> disabled by _known_ issues (like KASAN).
-> 
-> Being disabled for "make allmodconfig" is kind of against one of the
-> _points_ of "the build should be warning-free".
-> 
->                Linus
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-FWIW, our clang powerpc builds were broken for 4 months because of
-arch/powerpc using -Werror:
-
-https://github.com/ClangBuiltLinux/linux/issues/625
-
-We have infrastructure in place to carry out of tree patches if
-absolutely necessary, which we had to use for a while:
-
-https://github.com/ClangBuiltLinux/continuous-integration/commit/4d1b3c74bcb3ed0090073c9d9e6ae303425d4adc
-https://github.com/ClangBuiltLinux/continuous-integration/commit/0c3885049e2a6e28c72be13f5b05fb25ff79904b
-https://github.com/ClangBuiltLinux/continuous-integration/commit/533fcec33fdb8526333a6fd91d24534eeb96bed5
-
-Even now, there is a warning in the RDMA subsystem that points to a very
-clear bug that has still not been merged into your tree:
-
-https://git.kernel.org/rdma/rdma/c/4ca501d6aaf21de31541deac35128bbea8427aa6
-
-I am not blaming anyone for that, I get that every maintainer has their
-own test suite and pull request schedule but I believe that it shows
-the general apathy towards warning fixes from maintainers (at least,
-from the perspective of someone who sends a large amount of warning
-fixes). I would argue this should change before -Werror could even
-begin to be considered as a default option.
-
-Cheers,
-Nathan
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
