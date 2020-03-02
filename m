@@ -2,89 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6B51763B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 912731763B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 20:20:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbgCBTTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 14:19:42 -0500
-Received: from mga17.intel.com ([192.55.52.151]:18572 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbgCBTTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 14:19:41 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 11:19:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,508,1574150400"; 
-   d="scan'208";a="412415599"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga005.jf.intel.com with ESMTP; 02 Mar 2020 11:19:41 -0800
-Date:   Mon, 2 Mar 2020 11:19:41 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/13] KVM: x86: Shrink the usercopy region of the
- emulation context
-Message-ID: <20200302191940.GD6244@linux.intel.com>
-References: <20200218232953.5724-1-sean.j.christopherson@intel.com>
- <20200218232953.5724-11-sean.j.christopherson@intel.com>
- <87r1yhi6ex.fsf@vitty.brq.redhat.com>
- <727b8d16-2bab-6621-1f20-dc024ee65f10@redhat.com>
+        id S1727632AbgCBTUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 14:20:17 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:35682 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbgCBTUQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 14:20:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1583176813; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9b0Z/Qba7LUP/RrSMDKMHs9SQ88poHoZJgYnVCQFASA=;
+        b=d0MKOFwQvBM6ClQa3yJHcMLwqnFovSbXy6cAQd+XKMeESguGlK4NDxP3myaRBaTVDvLJpD
+        mPGCFhxHF+bJlFt69p4zpUGcDFAXl7UCG36KcDmYg19DagklpthXmJ9fWu8kzJMlrsTQJJ
+        2yrP7XgiI383KknSTRt8OErBlYnXfLg=
+Date:   Mon, 02 Mar 2020 16:19:47 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [RFC v2 2/8] dt-bindings: display: add ingenic-jz4780-hdmi DT
+ Schema
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Paul Boddie <paul@boddie.org.uk>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, Sam Ravnborg <sam@ravnborg.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Rob Herring <robh@kernel.org>
+Message-Id: <1583176788.3.3@crapouillou.net>
+In-Reply-To: <0fb2f39437ea04fb4de889aac001b44f4b0a77e8.1582913973.git.hns@goldelico.com>
+References: <cover.1582913973.git.hns@goldelico.com>
+        <0fb2f39437ea04fb4de889aac001b44f4b0a77e8.1582913973.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <727b8d16-2bab-6621-1f20-dc024ee65f10@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 07:40:27PM +0100, Paolo Bonzini wrote:
-> On 26/02/20 18:51, Vitaly Kuznetsov wrote:
-> >> +
-> >> +	/* Here begins the usercopy section. */
-> >> +	struct operand src;
-> >> +	struct operand src2;
-> >> +	struct operand dst;
-> > Out of pure curiosity, how certain are we that this is going to be
-> > enough for userspaces?
-> > 
-> 
-> And also, where exactly are the user copies done?
-
-Anything that funnels into ctxt->ops->read_std() or ctxt->ops->write_std(),
-e.g.
-
-	if (ctxt->src2.type == OP_MEM) {
-		rc = segmented_read(ctxt, ctxt->src2.addr.mem,
-				    &ctxt->src2.val, ctxt->src2.bytes);
-		if (rc != X86EMUL_CONTINUE)
-			goto done;
-	}
+Hi Nikolaus,
 
 
-segmented_read() : @data = &ctxt->src2.val
-|
-|-> read_emulated()
-    |
-    |-> ctxt->ops->read_emulated() / emulator_read_emulated()
-        |
-        |-> emulator_read_write()
-            |
-            |-> emulator_read_write_onepage()
-                |
-                |-> ops->read_write_emulate() / read_emulate()
-                    |
-                    |-> kvm_vcpu_read_guest()
-                        |
-                        ...
-                          |-> __kvm_read_guest_page()
-                              |
-                              |-> __copy_from_user(data, ...)
+Le ven., f=E9vr. 28, 2020 at 19:19, H. Nikolaus Schaller=20
+<hns@goldelico.com> a =E9crit :
+> From: Sam Ravnborg <sam@ravnborg.org>
+>=20
+> Add DT bindings for the hdmi driver for the Ingenic JZ4780 SoC.
+> Based on .txt binding from Zubair Lutfullah Kakakhel
+>=20
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+> Cc: H. Nikolaus Schaller <hns@goldelico.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  .../bindings/display/ingenic-jz4780-hdmi.yaml | 83=20
+> +++++++++++++++++++
+>  1 file changed, 83 insertions(+)
+>  create mode 100644=20
+> Documentation/devicetree/bindings/display/ingenic-jz4780-hdmi.yaml
+>=20
+> diff --git=20
+> a/Documentation/devicetree/bindings/display/ingenic-jz4780-hdmi.yaml=20
+> b/Documentation/devicetree/bindings/display/ingenic-jz4780-hdmi.yaml
+> new file mode 100644
+> index 000000000000..9b71c427bd69
+> --- /dev/null
+> +++=20
+> b/Documentation/devicetree/bindings/display/ingenic-jz4780-hdmi.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/ingenic-jz4780-hdmi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bindings for Ingenic JZ4780 HDMI Transmitter
+> +
+> +maintainers:
+> +  - Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+> +  - H. Nikolaus Schaller <hns@goldelico.com>
+
+Did Zubair write this glue driver? He's been MIA for a while, doesn't=20
+work at ImgTec anymore, and this email doesn't work.
+
+> +
+> +description: |
+> +  The HDMI Transmitter in the Ingenic JZ4780 is a Synopsys=20
+> DesignWare HDMI 1.4
+> +  TX controller IP with accompanying PHY IP.
+> +
+> +allOf:
+> +  - $ref: panel/panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: ingenic,jz4780-hdmi
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: the address & size of the LCD controller registers
+
+Remove the description here,
+
+> +
+> +  reg-io-width:
+> +    const: 4
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: Specifies the interrupt provided by parent
+
+and here.
+
+The rule is that if there is only one "reg", "interrupts" or "clocks"=20
+entry then a description is not needed as it's pretty obvious what it's=20
+for.
+
+> +
+> +  clocks:
+> +    maxItems: 2
+> +    description: Clock specifiers for isrf and iahb clocks
+
+You need two 'description:' like this:
+
+clocks:
+  items:
+    - description: ISRF clock
+    - description: IAHB clock
+
+Cheers,
+-Paul
+
+> +
+> +  clock-names:
+> +    items:
+> +      - const: isfr
+> +      - const: iahb
+> +
+> +  ddc-i2c-bus: true
+> +  ports: true
+> +
+> +required:
+> +    - compatible
+> +    - clocks
+> +    - clock-names
+> +    - ports
+> +    - reg-io-width
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/jz4780-cgu.h>
+> +
+> +    hdmi: hdmi@10180000 {
+> +        compatible =3D "ingenic,jz4780-hdmi";
+> +        reg =3D <0x10180000 0x8000>;
+> +        reg-io-width =3D <4>;
+> +        ddc-i2c-bus =3D <&i2c4>;
+> +        interrupt-parent =3D <&intc>;
+> +        interrupts =3D <3>;
+> +        clocks =3D <&cgu JZ4780_CLK_HDMI>, <&cgu JZ4780_CLK_AHB0>;
+> +        clock-names =3D "isfr", "iahb";
+> +
+> +        ports {
+> +            hdmi_in: port {
+> +                #address-cells =3D <1>;
+> +                #size-cells =3D <0>;
+> +                hdmi_in_lcd: endpoint@0 {
+> +                    reg =3D <0>;
+> +                    remote-endpoint =3D <&jz4780_out_hdmi>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> --
+> 2.23.0
+>=20
+
+=
+
