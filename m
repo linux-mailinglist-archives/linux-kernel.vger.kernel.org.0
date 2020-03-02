@@ -2,109 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B0F175AEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C6D175ADE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 13:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbgCBMyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 07:54:38 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35394 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbgCBMyh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:54:37 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 7so5404573pgr.2;
-        Mon, 02 Mar 2020 04:54:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HEh7CqSCXgWfailCBb8Rs+qB5N+bl/4veud+2lfhJ3c=;
-        b=kAB4d29/ko/klMw//ZuCCDjxlWJmKBj6aYjBLaaWpXUGa2HrPYNP995nR9WGuqSzEH
-         fluQ71pG7wsJkuGZvSsfu9JFGjGYfuE2cE151OiwrNC8PZl9x7XioTn+VbgU4RWQ6Ufw
-         GgU3QbFS+76CeEIMQMe0lV0COD1vE8CdUdiRrVXjRz3FrXNwnmW8+QUQN8L4Lafo/5fJ
-         BWFDW81BAltxPyU7ZV8VjT9u6VvUnvAjS5i2hgMj2ydh4iKsv9v1Vlqq5jEN1vpvIg0Y
-         QdIRXqAXYtyUBZ0QuRW7az7jsrlAdBclNrfA1UDgOlJbuZRMexRIy58eiuYpgu1KVA7m
-         xv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HEh7CqSCXgWfailCBb8Rs+qB5N+bl/4veud+2lfhJ3c=;
-        b=dXv9KOnIxOcWCKz7Gd8sUyldUQGxv9VgaZMePu6gf08O+oPScLPsiji1qtOzim/Kpl
-         FQXr43HpOpkE6t7BT9mFG13M6JUNiHSt2Ce9aIrnpT4wFNTLogRJjM6hQ3317AItqyfO
-         XmwfPCmwixtkK6Hi4/Ntpe3auGx8m4EH73HKYqXGZpOF27vy+R7urty/3v3MioZmU1de
-         KrZnTO6ybvSUVt+x0XaX+hJkLMR+vuoX3JD0aYvwoUBpE+h9s8VR49l8WGafW/KTX7Iv
-         VRruhFTXvl3EzQb70EraJePLe6iU8jJnwi+tTsbtX/Y68RTNln34z9PTasEQvXXMH8mx
-         chrQ==
-X-Gm-Message-State: APjAAAUCvUiXgFaT97Hk2rlEtoIwmizrnaUkqydDXLQjgaZvYSyIU7g9
-        FVqyIWY6r7oGtKaXX/YzIFI=
-X-Google-Smtp-Source: APXvYqzvXVSEfr6bpf3GIPRYKUv7jKl6r8NlwZCenHEBeS4uW+3WkXAE27vkYrNhhLNvUn6R77Ka4w==
-X-Received: by 2002:aa7:8299:: with SMTP id s25mr17299604pfm.261.1583153675622;
-        Mon, 02 Mar 2020 04:54:35 -0800 (PST)
-Received: from localhost.localdomain ([103.51.74.208])
-        by smtp.gmail.com with ESMTPSA id p2sm2138238pfb.41.2020.03.02.04.54.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 04:54:35 -0800 (PST)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCHv2 2/2] clk: meson: g12a: set cpub_clk flags to CLK_IS_CRITICAL
-Date:   Mon,  2 Mar 2020 12:53:09 +0000
-Message-Id: <20200302125310.742-3-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200302125310.742-1-linux.amoon@gmail.com>
-References: <20200302125310.742-1-linux.amoon@gmail.com>
+        id S1727907AbgCBMxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 07:53:44 -0500
+Received: from mga02.intel.com ([134.134.136.20]:44317 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727595AbgCBMxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 07:53:44 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 04:53:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,507,1574150400"; 
+   d="scan'208";a="257943869"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga002.jf.intel.com with ESMTP; 02 Mar 2020 04:53:41 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1j8kZr-0068NG-6Y; Mon, 02 Mar 2020 14:53:43 +0200
+Date:   Mon, 2 Mar 2020 14:53:43 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Gayatri Kammela <gayatri.kammela@intel.com>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vishwanath.somayaji@intel.com, dvhart@infradead.org,
+        mika.westerberg@intel.com, peterz@infradead.org,
+        charles.d.prestopine@intel.com, Chen Zhou <chenzhou10@huawei.com>,
+        "David E . Box" <david.e.box@intel.com>
+Subject: Re: [PATCH v3 5/5] platform/x86: intel_pmc_core: fix: Make
+ pmc_core_lpm_display() generic for platforms that support sub-states
+Message-ID: <20200302125343.GU1224808@smile.fi.intel.com>
+References: <cover.1583093898.git.gayatri.kammela@intel.com>
+ <5e28f488a6cc8b7c1e08b536868844b586a1eaf1.1583093898.git.gayatri.kammela@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e28f488a6cc8b7c1e08b536868844b586a1eaf1.1583093898.git.gayatri.kammela@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Odroid n2, cpub_clk is not geting enable, which lead the stalling
-at booting of the device, updating flags to CLK_IS_CRITICAL which help
-enable all the parent for cpub_clk.
+On Sun, Mar 01, 2020 at 12:44:26PM -0800, Gayatri Kammela wrote:
+> Currently pmc_core_lpm_display() uses array of struct pointers i.e.,
+> tgl_lpm_maps for Tiger Lake directly to iterate through and to get the
+> number of status/live status registers which is hardcoded and cannot
+> be re-used for future platforms that support sub-states. To maintain
+> readability, make pmc_core_lpm_display() generic, so that it can re-used
+> for future platforms.
 
-Fixes: ffae8475b90c (clk: meson: g12a: add notifiers to handle cpu clock change);
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Suggested-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Previous changes
-	fix the commit $subject and $message as previously I was
-        wrong on the my findings.
-        Added the Fixed tags to the commit.
+My comments below.
 
-Following Neil's suggestion, I have prepared this patch.
-https://patchwork.kernel.org/patch/11177441/#22964889
----
- drivers/clk/meson/g12a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d2760a021301..7237d08b4112 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -681,7 +681,7 @@ static struct clk_regmap g12b_cpub_clk = {
- 			&g12a_sys_pll.hw
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 	},
- };
- 
+> +static int pmc_core_lpm_get_arr_size(const struct pmc_bit_map **maps)
+> +{
+> +	int idx, arr_size = 0;
+
+And why do you need arr_size variable at all?
+
+> +
+> +	for (idx = 0; maps[idx]; idx++)
+> +		arr_size++;
+> +
+> +	return arr_size;
+> +}
+
+...
+
+> -	int index, idx, len = 32, bit_mask;
+> +	int index, idx, bit_mask, len = 32;
+
+What's the point of shuffling this?
+
+> +	int arr_size = pmc_core_lpm_get_arr_size(maps);
+
+This would be better in a split manner, i.e.
+
+	int arr_size;
+
+	...
+
+	arr_size = ...;
+
+...
+
+> +	lpm_regs = kmalloc_array(arr_size, sizeof(*lpm_regs), GFP_KERNEL);
+> +	if(!lpm_regs)
+
+> +		goto err;
+
+There is no point to have the label. Simple return will work.
+
+> -	for (index = 0; tgl_lpm_maps[index]; index++) {
+> +	for (index = 0; maps[index]; index++) {
+
+Why not to reuse arr_size here?
+
+>  		lpm_regs[index] = pmc_core_reg_read(pmcdev, offset);
+>  		offset += 4;
+>  	}
+
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
