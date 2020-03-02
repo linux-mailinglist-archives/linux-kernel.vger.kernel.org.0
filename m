@@ -2,143 +2,337 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A73B317618D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86DA6176198
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 18:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbgCBRuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 12:50:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727030AbgCBRuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 12:50:16 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB0DE214DB;
-        Mon,  2 Mar 2020 17:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583171416;
-        bh=6k85wi2JdoMHglj+WpaRbnb+L0nNsUt9jd/nKM6n8H4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XAx9vtyE2Nf9ytTuEaFKQIrVapER7/q84E+ugRqoRoWvIpNsZGCEN/5TR9LsKwUgQ
-         vpH19g2uv2ZFc40IwwJ6E4PxKM4ABmefg98Xf3Ve9EXrT6V4iVSNR98TUTPxok+X0s
-         sUGDcJfYg0F/LmQhiSw4ev4u+c9jyxx8GkU4FTZk=
-Date:   Mon, 2 Mar 2020 09:50:14 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH] f2fs: compress: support zstd compress algorithm
-Message-ID: <20200302175014.GA98133@gmail.com>
-References: <20200228111456.11311-1-yuchao0@huawei.com>
+        id S1727479AbgCBRvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 12:51:54 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18316 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727196AbgCBRvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 12:51:52 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022HpmEA021166
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Mar 2020 12:51:51 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfnbf2a28-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 12:51:50 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Mon, 2 Mar 2020 17:51:17 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Mar 2020 17:51:10 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 022Hp8EA36372512
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Mar 2020 17:51:08 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8B71B4C04E;
+        Mon,  2 Mar 2020 17:51:08 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F86F4C046;
+        Mon,  2 Mar 2020 17:51:07 +0000 (GMT)
+Received: from pic2.home (unknown [9.145.49.157])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Mar 2020 17:51:07 +0000 (GMT)
+Subject: Re: [PATCH v3 13/27] powerpc/powernv/pmem: Read the capability
+ registers & wait for device ready
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+ <20200221032720.33893-14-alastair@au1.ibm.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Mon, 2 Mar 2020 18:51:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228111456.11311-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200221032720.33893-14-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20030217-0028-0000-0000-000003E01506
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030217-0029-0000-0000-000024A53ED2
+Message-Id: <3d2de7c1-ee95-ed6c-0346-4a1d20a0b75e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_06:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ clxscore=1015 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 07:14:56PM +0800, Chao Yu wrote:
-> Add zstd compress algorithm support, use "compress_algorithm=zstd"
-> mountoption to enable it.
+
+
+Le 21/02/2020 à 04:27, Alastair D'Silva a écrit :
+> From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> This patch reads timeouts & firmware version from the controller, and
+> uses those timeouts to wait for the controller to report that it is ready
+> before handing the memory over to libnvdimm.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 > ---
->  Documentation/filesystems/f2fs.txt |   4 +-
->  fs/f2fs/Kconfig                    |   9 ++
->  fs/f2fs/compress.c                 | 151 +++++++++++++++++++++++++++++
->  fs/f2fs/f2fs.h                     |   2 +
->  fs/f2fs/super.c                    |   7 ++
->  include/trace/events/f2fs.h        |   3 +-
->  6 files changed, 173 insertions(+), 3 deletions(-)
+>   arch/powerpc/platforms/powernv/pmem/Makefile  |  2 +-
+>   arch/powerpc/platforms/powernv/pmem/ocxl.c    | 92 +++++++++++++++++++
+>   .../platforms/powernv/pmem/ocxl_internal.c    | 19 ++++
+>   .../platforms/powernv/pmem/ocxl_internal.h    | 24 +++++
+>   4 files changed, 136 insertions(+), 1 deletion(-)
+>   create mode 100644 arch/powerpc/platforms/powernv/pmem/ocxl_internal.c
 > 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index 4eb3e2ddd00e..b1a66cf0e967 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -235,8 +235,8 @@ checkpoint=%s[:%u[%]]     Set to "disable" to turn off checkpointing. Set to "en
->                         hide up to all remaining free space. The actual space that
->                         would be unusable can be viewed at /sys/fs/f2fs/<disk>/unusable
->                         This space is reclaimed once checkpoint=enable.
-> -compress_algorithm=%s  Control compress algorithm, currently f2fs supports "lzo"
-> -                       and "lz4" algorithm.
-> +compress_algorithm=%s  Control compress algorithm, currently f2fs supports "lzo",
-> +                       "lz4" and "zstd" algorithm.
->  compress_log_size=%u   Support configuring compress cluster size, the size will
->                         be 4KB * (1 << %u), 16KB is minimum size, also it's
->                         default size.
-> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-> index f0faada30f30..bb68d21e1f8c 100644
-> --- a/fs/f2fs/Kconfig
-> +++ b/fs/f2fs/Kconfig
-> @@ -118,3 +118,12 @@ config F2FS_FS_LZ4
->  	default y
->  	help
->  	  Support LZ4 compress algorithm, if unsure, say Y.
-> +
-> +config F2FS_FS_ZSTD
-> +	bool "ZSTD compression support"
-> +	depends on F2FS_FS_COMPRESSION
-> +	select ZSTD_COMPRESS
-> +	select ZSTD_DECOMPRESS
-> +	default y
-> +	help
-> +	  Support ZSTD compress algorithm, if unsure, say Y.
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index bd3ea01db448..c8e1175eaf4e 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -11,6 +11,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/lzo.h>
->  #include <linux/lz4.h>
-> +#include <linux/zstd.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -291,6 +292,151 @@ static const struct f2fs_compress_ops f2fs_lz4_ops = {
->  };
->  #endif
->  
-> +#ifdef CONFIG_F2FS_FS_ZSTD
-> +#define F2FS_ZSTD_DEFAULT_CLEVEL	1
-> +
-> +static int zstd_init_compress_ctx(struct compress_ctx *cc)
+> diff --git a/arch/powerpc/platforms/powernv/pmem/Makefile b/arch/powerpc/platforms/powernv/pmem/Makefile
+> index 1c55c4193175..4ceda25907d4 100644
+> --- a/arch/powerpc/platforms/powernv/pmem/Makefile
+> +++ b/arch/powerpc/platforms/powernv/pmem/Makefile
+> @@ -4,4 +4,4 @@ ccflags-$(CONFIG_PPC_WERROR)	+= -Werror
+>   
+>   obj-$(CONFIG_OCXL_PMEM) += ocxlpmem.o
+>   
+> -ocxlpmem-y := ocxl.o
+> +ocxlpmem-y := ocxl.o ocxl_internal.o
+> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> index 3c4eeb5dcc0f..431212c9f0cc 100644
+> --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> @@ -8,6 +8,7 @@
+>   
+>   #include <linux/module.h>
+>   #include <misc/ocxl.h>
+> +#include <linux/delay.h>
+>   #include <linux/ndctl.h>
+>   #include <linux/mm_types.h>
+>   #include <linux/memory_hotplug.h>
+> @@ -215,6 +216,36 @@ static int register_lpc_mem(struct ocxlpmem *ocxlpmem)
+>   	return 0;
+>   }
+>   
+> +/**
+> + * is_usable() - Is a controller usable?
+> + * @ocxlpmem: the device metadata
+> + * @verbose: True to log errors
+> + * Return: true if the controller is usable
+> + */
+> +static bool is_usable(const struct ocxlpmem *ocxlpmem, bool verbose)
 > +{
+> +	u64 chi = 0;
+> +	int rc = ocxlpmem_chi(ocxlpmem, &chi);
+> +
+> +	if (rc < 0)
+> +		return false;
+> +
+> +	if (!(chi & GLOBAL_MMIO_CHI_CRDY)) {
+> +		if (verbose)
+> +			dev_err(&ocxlpmem->dev, "controller is not ready.\n");
+> +		return false;
+> +	}
+> +
+> +	if (!(chi & GLOBAL_MMIO_CHI_MA)) {
+> +		if (verbose)
+> +			dev_err(&ocxlpmem->dev,
+> +				"controller does not have memory available.\n");
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>   /**
+>    * allocate_minor() - Allocate a minor number to use for an OpenCAPI pmem device
+>    * @ocxlpmem: the device metadata
+> @@ -328,6 +359,48 @@ static void ocxlpmem_remove(struct pci_dev *pdev)
+>   	}
+>   }
+>   
+> +/**
+> + * read_device_metadata() - Retrieve config information from the AFU and save it for future use
+> + * @ocxlpmem: the device metadata
+> + * Return: 0 on success, negative on failure
+> + */
+> +static int read_device_metadata(struct ocxlpmem *ocxlpmem)
+> +{
+> +	u64 val;
+> +	int rc;
+> +
+> +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CCAP0,
+> +				     OCXL_LITTLE_ENDIAN, &val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	ocxlpmem->scm_revision = val & 0xFFFF;
+> +	ocxlpmem->read_latency = (val >> 32) & 0xFF;
+> +	ocxlpmem->readiness_timeout = (val >> 48) & 0x0F;
+> +	ocxlpmem->memory_available_timeout = val >> 52;
+> +
+> +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CCAP1,
+> +				     OCXL_LITTLE_ENDIAN, &val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	ocxlpmem->max_controller_dump_size = val & 0xFFFFFFFF;
+> +
+> +	// Extract firmware version text
+> +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_FWVER,
+> +				     OCXL_HOST_ENDIAN, (u64 *)ocxlpmem->fw_version);
+> +	if (rc)
+> +		return rc;
+> +
+> +	ocxlpmem->fw_version[8] = '\0';
+> +
+> +	dev_info(&ocxlpmem->dev,
+> +		 "Firmware version '%s' SCM revision %d:%d\n", ocxlpmem->fw_version,
+> +		 ocxlpmem->scm_revision >> 4, ocxlpmem->scm_revision & 0x0F);
+> +
 > +	return 0;
 > +}
 > +
-> +static void zstd_destroy_compress_ctx(struct compress_ctx *cc)
+>   /**
+>    * probe_function0() - Set up function 0 for an OpenCAPI persistent memory device
+>    * This is important as it enables templates higher than 0 across all other functions,
+> @@ -368,6 +441,7 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   {
+>   	struct ocxlpmem *ocxlpmem;
+>   	int rc;
+> +	u16 elapsed, timeout;
+>   
+>   	if (PCI_FUNC(pdev->devfn) == 0)
+>   		return probe_function0(pdev);
+> @@ -422,6 +496,24 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   		goto err;
+>   	}
+>   
+> +	if (read_device_metadata(ocxlpmem)) {
+> +		dev_err(&pdev->dev, "Could not read metadata\n");
+
+
+
+Need to set rc
+
+
+
+> +		goto err;
+> +	}
+> +
+> +	elapsed = 0;
+> +	timeout = ocxlpmem->readiness_timeout + ocxlpmem->memory_available_timeout;
+> +	while (!is_usable(ocxlpmem, false)) {
+> +		if (elapsed++ > timeout) {
+> +			dev_warn(&ocxlpmem->dev, "OpenCAPI Persistent Memory ready timeout.\n");
+> +			(void)is_usable(ocxlpmem, true);
+
+
+I guess that extra call to is_usable() is just to log the cause of the 
+error. However, with some bad luck, the call could now succeed.
+
+
+   Fred
+
+
+> +			rc = -ENXIO;
+> +			goto err;
+> +		}
+> +
+> +		msleep(1000);
+> +	}
+> +
+>   	rc = register_lpc_mem(ocxlpmem);
+>   	if (rc) {
+>   		dev_err(&pdev->dev, "Could not register OpenCAPI persistent memory with libnvdimm\n");
+> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.c b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.c
+> new file mode 100644
+> index 000000000000..617ca943b1b8
+> --- /dev/null
+> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.c
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Copyright 2019 IBM Corp.
+> +
+> +#include <misc/ocxl.h>
+> +#include <linux/delay.h>
+> +#include "ocxl_internal.h"
+> +
+> +int ocxlpmem_chi(const struct ocxlpmem *ocxlpmem, u64 *chi)
 > +{
+> +	u64 val;
+> +	int rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CHI,
+> +					 OCXL_LITTLE_ENDIAN, &val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	*chi = val;
+> +
+> +	return 0;
 > +}
+> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> index 9cf3e42750e7..ba0301533d00 100644
+> --- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> @@ -97,4 +97,28 @@ struct ocxlpmem {
+>   	void *metadata_addr;
+>   	struct resource pmem_res;
+>   	struct nd_region *nd_region;
+> +	char fw_version[8+1];
 > +
-> +static int zstd_compress_pages(struct compress_ctx *cc)
-> +{
-> +	ZSTD_parameters params;
-> +	ZSTD_CStream *stream;
-> +	ZSTD_inBuffer inbuf;
-> +	ZSTD_outBuffer outbuf;
-> +	void *workspace;
-> +	unsigned int workspace_size;
-> +	int src_size = cc->rlen;
-> +	int dst_size = src_size - PAGE_SIZE - COMPRESS_HEADER_SIZE;
-> +	int ret;
+> +	u32 max_controller_dump_size;
+> +	u16 scm_revision; // major/minor
+> +	u8 readiness_timeout;  /* The worst case time (in seconds) that the host shall
+> +				* wait for the controller to become operational following a reset (CHI.CRDY).
+> +				*/
+> +	u8 memory_available_timeout;   /* The worst case time (in seconds) that the host shall
+> +					* wait for memory to become available following a reset (CHI.MA).
+> +					*/
 > +
-> +	params = ZSTD_getParams(F2FS_ZSTD_DEFAULT_CLEVEL, src_size, 0);
-> +	workspace_size = ZSTD_CStreamWorkspaceBound(params.cParams);
+> +	u16 read_latency; /* The nominal measure of latency (in nanoseconds)
+> +			   * associated with an unassisted read of a memory block.
+> +			   * This represents the capability of the raw media technology without assistance
+> +			   */
+>   };
 > +
-> +	workspace = f2fs_kvmalloc(F2FS_I_SB(cc->inode),
-> +					workspace_size, GFP_NOFS);
-> +	if (!workspace)
-> +		return -ENOMEM;
-> +
-> +	stream = ZSTD_initCStream(params, 0,
-> +					workspace, workspace_size);
+> +/**
+> + * ocxlpmem_chi() - Get the value of the CHI register
+> + * @ocxlpmem: the device metadata
+> + * @chi: returns the CHI value
+> + *
+> + * Returns 0 on success, negative on error
+> + */
+> +int ocxlpmem_chi(const struct ocxlpmem *ocxlpmem, u64 *chi);
+> 
 
-Why is this allocating the memory for every compression operation, instead of
-ahead of time in ->init_compress_ctx()?
-
-- Eric
