@@ -2,278 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFA7175C29
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF8E8175C2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 14:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbgCBNvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 08:51:17 -0500
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:50556 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726969AbgCBNvQ (ORCPT
+        id S1727261AbgCBNvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 08:51:41 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38754 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgCBNvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:51:16 -0500
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 977102E15DF;
-        Mon,  2 Mar 2020 16:51:13 +0300 (MSK)
-Received: from vla1-5a8b76e65344.qloud-c.yandex.net (vla1-5a8b76e65344.qloud-c.yandex.net [2a02:6b8:c0d:3183:0:640:5a8b:76e6])
-        by mxbackcorp2j.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id JSAbmXMoJM-pDDe8Yw0;
-        Mon, 02 Mar 2020 16:51:13 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1583157073; bh=wktUfavwfLnvfoMtc7ILBXstgqnlxp/m6Im5xGOv+VM=;
-        h=In-Reply-To:Message-ID:Date:References:To:From:Subject:Cc;
-        b=V+LYYpn+jJgw2yMh2gLWtctTnF0zFdYROQ4Cy64V+vCb3uQ2Tqu5ZlqITCHZW7daV
-         ZebzAJTirz0pt75/023MjBEu5Iv0M+DJQOCne4OcwvCy6Xj6ahixduqNBhXcnke4kF
-         IaHPaP1I5xQd/Pgt/n4Sk5BLY4qD87fw1QG4wwVI=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:7cd4:25a8:c7e3:39e2])
-        by vla1-5a8b76e65344.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 67CYjl57Ra-pD3qM2Jp;
-        Mon, 02 Mar 2020 16:51:13 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH 2/3] block/diskstats: accumulate all per-cpu counters in
- one pass
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-References: <158314549775.1788.6529015932237292177.stgit@buzz>
- <158314549980.1788.322398190605021664.stgit@buzz>
-Message-ID: <6fd92550-9252-a3ca-90b7-f55d6e39b63c@yandex-team.ru>
-Date:   Mon, 2 Mar 2020 16:51:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 2 Mar 2020 08:51:40 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u9so4857841wml.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 05:51:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R2BZu+imcykNACPLPvIynfptCCeFQHdJvvg/T84qCP8=;
+        b=mmLGIQqLs40/1JctkJUW6fbnrI0wxyktW/MCLs1VqwiTzd4SDvBGmvOxVfPkG5rZh5
+         uJOIAYDexjxz0yNhBvg09cLZfbwPNB0bBkJHNv+3WEvizQvZfuZ3AU4SRlzG1g5mk2B6
+         6llx37T3S+hlKdpV+y2jbBUJ79l3tlddWzm2s2FedCGfwWzUs47UvEOu5PBCppwg5+xW
+         ac+OsYujE/Xtu1/oDlh3eYFUeABe6ORlhnB3CGOPTXr3M6HT0acqwrAzGalKO74ZEZj4
+         gRVXWMijclJLyTIZqs4CpiEVANmMCGVLWD1imqMswpQ8LNtWQ4dgW9ezZEmblkQfjK8s
+         WFTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R2BZu+imcykNACPLPvIynfptCCeFQHdJvvg/T84qCP8=;
+        b=hrFKGrnjikI5qqpSdHoH934GxPVp2ED1sBJgLTjzG9lrAAt8kmoo6hrksMnBE7qxX6
+         xdOr/ieiCEhXZR8p7CaAD9t7jp2YIEjvIdq51YqnLTuOvlmxqmLrXDgvAWGgsG1q1vTP
+         +A7CWzuPObNklaSl0pjwvl3dFo5S4bCm2JXMIjawX6CsSW7zOjtICcXRIQ3+FOQbLrXa
+         ERln3r8QP3Dy6p8xyRuJkX4y9ALDpYX2BisaTR58ZWLQj1owmR+yTENPW6klwDv55832
+         l8i8jnblL8jpVcPdQFfeS/WHa/pTNCEi06J12553TL6JpKr9XXtxQqRXq/liWy6hoti5
+         BN0w==
+X-Gm-Message-State: ANhLgQ2T8L4W9e+TKtDPed9Ww07VperSb8lahU3y4S6KMhVkjQKyILJ9
+        ooltZmp3g7vfWSFJCJANVfw=
+X-Google-Smtp-Source: ADFU+vt/Vy32uNCBI4Sk9lNPXzlHfMBJTlaslZWI9ZLyr6KXc2/mDivaYthY+LJV4eqjQSkIGmYZCQ==
+X-Received: by 2002:a05:600c:351:: with SMTP id u17mr6467430wmd.22.1583157098661;
+        Mon, 02 Mar 2020 05:51:38 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id l17sm7530089wmi.10.2020.03.02.05.51.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Mar 2020 05:51:37 -0800 (PST)
+Date:   Mon, 2 Mar 2020 13:51:37 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     mateusznosek0@gmail.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] mm/mm_init.c: Clean code. Use BUILD_BUG_ON when
+ comparing compile time constant
+Message-ID: <20200302135137.lm5syk7r2thohs54@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20200228224617.11343-1-mateusznosek0@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <158314549980.1788.322398190605021664.stgit@buzz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228224617.11343-1-mateusznosek0@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 28, 2020 at 11:46:17PM +0100, mateusznosek0@gmail.com wrote:
+>From: Mateusz Nosek <mateusznosek0@gmail.com>
+>
+>MAX_ZONELISTS is compile time constant,
+>so it should be compared using BUILD_BUG_ON not BUG_ON.
+>
+>Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
 
+Sounds you are right.
 
-On 02/03/2020 13.38, Konstantin Khlebnikov wrote:
-> Reading /proc/diskstats iterates over all cpus for summing each field.
-> It's faster to sum all fields in one pass.
-> 
-> Hammering /proc/diskstats with fio shows 2x performance improvement:
-> 
-> fio --name=test --numjobs=$JOBS --filename=/proc/diskstats \
->      --size=1k --bs=1k --fallocate=none --create_on_open=1 \
->      --time_based=1 --runtime=10 --invalidate=0 --group_report
-> 
-> 	  JOBS=1	JOBS=10
-> Before:	  7k iops	64k iops
-> After:	 18k iops      120k iops
-> 
-> Also this way code is more compact:
-> 
-> add/remove: 1/0 grow/shrink: 0/2 up/down: 194/-1540 (-1346)
-> Function                                     old     new   delta
-> part_stat_read_all                             -     194    +194
-> diskstats_show                              1344     631    -713
-> part_stat_show                              1219     392    -827
-> Total: Before=14966947, After=14965601, chg -0.01%
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> ---
->   block/genhd.c             |   62 +++++++++++++++++++++++++++++++++------------
->   block/partition-generic.c |   35 ++++++++++++++-----------
->   include/linux/genhd.h     |   10 +++++--
->   3 files changed, 72 insertions(+), 35 deletions(-)
-> 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index ff6268970ddc..fcc597c243f7 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -46,6 +46,29 @@ static void disk_add_events(struct gendisk *disk);
->   static void disk_del_events(struct gendisk *disk);
->   static void disk_release_events(struct gendisk *disk);
->   
-> +#ifdef CONFIG_SMP
-> +void part_stat_read_all(struct hd_struct *part, struct disk_stats *stat)
-> +{
-> +	int cpu;
-> +
-> +	memset(stat, 0, sizeof(struct disk_stats));
-> +	for_each_possible_cpu(cpu) {
-> +		struct disk_stats *ptr = per_cpu_ptr(part->dkstats, cpu);
-> +		int group;
-> +
-> +		for (group = 0; group < NR_STAT_GROUPS; group++) {
-> +			stat->nsecs[group] += ptr->nsecs[group];
-> +			stat->sectors[group] += ptr->sectors[group];
-> +			stat->ios[group] += ptr->ios[group];
-> +			stat->merges[group] += ptr->merges[group];
-> +		}
-> +
-> +		stat->io_ticks += ptr->io_ticks;
-> +		stat->time_in_queue += ptr->time_in_queue;
-> +	}
-> +}
-> +#endif /* CONFIG_SMP */
-> +
->   void part_inc_in_flight(struct request_queue *q, struct hd_struct *part, int rw)
->   {
->   	if (queue_is_mq(q))
-> @@ -1369,6 +1392,7 @@ static int diskstats_show(struct seq_file *seqf, void *v)
->   	struct hd_struct *hd;
->   	char buf[BDEVNAME_SIZE];
->   	unsigned int inflight;
-> +	struct disk_stats stat;
->   
->   	/*
->   	if (&disk_to_dev(gp)->kobj.entry == block_class.devices.next)
-> @@ -1380,7 +1404,9 @@ static int diskstats_show(struct seq_file *seqf, void *v)
->   
->   	disk_part_iter_init(&piter, gp, DISK_PITER_INCL_EMPTY_PART0);
->   	while ((hd = disk_part_iter_next(&piter))) {
-> +		part_stat_read_all(hd, &stat);
->   		inflight = part_in_flight(gp->queue, hd);
-> +
->   		seq_printf(seqf, "%4d %7d %s "
->   			   "%lu %lu %lu %u "
->   			   "%lu %lu %lu %u "
-> @@ -1390,23 +1416,27 @@ static int diskstats_show(struct seq_file *seqf, void *v)
->   			   "\n",
->   			   MAJOR(part_devt(hd)), MINOR(part_devt(hd)),
->   			   disk_name(gp, hd->partno, buf),
-> -			   part_stat_read(hd, ios[STAT_READ]),
-> -			   part_stat_read(hd, merges[STAT_READ]),
-> -			   part_stat_read(hd, sectors[STAT_READ]),
-> -			   (unsigned int)part_stat_read_msecs(hd, STAT_READ),
-> -			   part_stat_read(hd, ios[STAT_WRITE]),
-> -			   part_stat_read(hd, merges[STAT_WRITE]),
-> -			   part_stat_read(hd, sectors[STAT_WRITE]),
-> -			   (unsigned int)part_stat_read_msecs(hd, STAT_WRITE),
-> +			   stat.ios[STAT_READ],
-> +			   stat.merges[STAT_READ],
-> +			   stat.sectors[STAT_READ],
-> +			   (unsigned int)div_u64(stat.nsecs[STAT_READ],
-> +							NSEC_PER_MSEC),
-> +			   stat.ios[STAT_WRITE],
-> +			   stat.merges[STAT_WRITE],
-> +			   stat.sectors[STAT_WRITE],
-> +			   (unsigned int)div_u64(stat.nsecs[STAT_WRITE],
-> +							NSEC_PER_MSEC),
->   			   inflight,
-> -			   jiffies_to_msecs(part_stat_read(hd, io_ticks)),
-> -			   jiffies_to_msecs(part_stat_read(hd, time_in_queue)),
-> -			   part_stat_read(hd, ios[STAT_DISCARD]),
-> -			   part_stat_read(hd, merges[STAT_DISCARD]),
-> -			   part_stat_read(hd, sectors[STAT_DISCARD]),
-> -			   (unsigned int)part_stat_read_msecs(hd, STAT_DISCARD),
-> -			   part_stat_read(hd, ios[STAT_FLUSH]),
-> -			   (unsigned int)part_stat_read_msecs(hd, STAT_FLUSH)
-> +			   jiffies_to_msecs(stat.io_ticks),
-> +			   jiffies_to_msecs(stat.time_in_queue),
-> +			   stat.ios[STAT_DISCARD],
-> +			   stat.merges[STAT_DISCARD],
-> +			   stat.sectors[STAT_DISCARD],
-> +			   (unsigned int)div_u64(stat.nsecs[STAT_DISCARD],
-> +						 NSEC_PER_MSEC),
-> +			   stat.ios[STAT_FLUSH],
-> +			   (unsigned int)div_u64(stat.nsecs[STAT_FLUSH],
-> +						 NSEC_PER_MSEC)
->   			);
->   	}
->   	disk_part_iter_exit(&piter);
-> diff --git a/block/partition-generic.c b/block/partition-generic.c
-> index 564fae77711d..6d3fcb5187cb 100644
-> --- a/block/partition-generic.c
-> +++ b/block/partition-generic.c
-> @@ -120,9 +120,12 @@ ssize_t part_stat_show(struct device *dev,
->   {
->   	struct hd_struct *p = dev_to_part(dev);
->   	struct request_queue *q = part_to_disk(p)->queue;
-> +	struct disk_stats stat;
->   	unsigned int inflight;
->   
-> +	part_stat_read_all(p, &stat);
->   	inflight = part_in_flight(q, p);
-> +
->   	return sprintf(buf,
->   		"%8lu %8lu %8llu %8u "
->   		"%8lu %8lu %8llu %8u "
-> @@ -130,23 +133,23 @@ ssize_t part_stat_show(struct device *dev,
->   		"%8lu %8lu %8llu %8u "
->   		"%8lu %8u"
->   		"\n",
-> -		part_stat_read(p, ios[STAT_READ]),
-> -		part_stat_read(p, merges[STAT_READ]),
-> -		(unsigned long long)part_stat_read(p, sectors[STAT_READ]),
-> -		(unsigned int)part_stat_read_msecs(p, STAT_READ),
-> -		part_stat_read(p, ios[STAT_WRITE]),
-> -		part_stat_read(p, merges[STAT_WRITE]),
-> -		(unsigned long long)part_stat_read(p, sectors[STAT_WRITE]),
-> -		(unsigned int)part_stat_read_msecs(p, STAT_WRITE),
-> +		stat.ios[STAT_READ],
-> +		stat.merges[STAT_READ],
-> +		(unsigned long long)stat.sectors[STAT_READ],
-> +		(unsigned int)div_u64(stat.nsecs[STAT_READ], NSEC_PER_MSEC),
-> +		stat.ios[STAT_WRITE],
-> +		stat.merges[STAT_WRITE],
-> +		(unsigned long long)stat.sectors[STAT_WRITE],
-> +		(unsigned int)div_u64(stat.nsecs[STAT_WRITE], NSEC_PER_MSEC),
->   		inflight,
-> -		jiffies_to_msecs(part_stat_read(p, io_ticks)),
-> -		jiffies_to_msecs(part_stat_read(p, time_in_queue)),
-> -		part_stat_read(p, ios[STAT_DISCARD]),
-> -		part_stat_read(p, merges[STAT_DISCARD]),
-> -		(unsigned long long)part_stat_read(p, sectors[STAT_DISCARD]),
-> -		(unsigned int)part_stat_read_msecs(p, STAT_DISCARD),
-> -		part_stat_read(p, ios[STAT_FLUSH]),
-> -		(unsigned int)part_stat_read_msecs(p, STAT_FLUSH));
-> +		jiffies_to_msecs(stat.io_ticks),
-> +		jiffies_to_msecs(stat.time_in_queue),
-> +		stat.ios[STAT_DISCARD],
-> +		stat.merges[STAT_DISCARD],
-> +		(unsigned long long)stat.sectors[STAT_DISCARD],
-> +		(unsigned int)div_u64(stat.nsecs[STAT_DISCARD], NSEC_PER_MSEC),
-> +		stat.ios[STAT_FLUSH],
-> +		(unsigned int)div_u64(stat.nsecs[STAT_FLUSH], NSEC_PER_MSEC));
->   }
->   
->   ssize_t part_inflight_show(struct device *dev, struct device_attribute *attr,
-> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-> index d5ff7023daa8..f1fca2c57092 100644
-> --- a/include/linux/genhd.h
-> +++ b/include/linux/genhd.h
-> @@ -339,6 +339,8 @@ static inline void part_stat_set_all(struct hd_struct *part, int value)
->   				sizeof(struct disk_stats));
->   }
->   
-> +void part_stat_read_all(struct hd_struct *part, struct disk_stats *stat);
-> +
->   static inline int init_part_stats(struct hd_struct *part)
->   {
->   	part->dkstats = alloc_percpu(struct disk_stats);
-> @@ -365,6 +367,11 @@ static inline void part_stat_set_all(struct hd_struct *part, int value)
->   	memset(&part->dkstats, value, sizeof(struct disk_stats));
->   }
->   
-> +void part_stat_read_all(struct hd_struct *part, struct disk_stats *stat)
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-^-- forgot "static inline" here
-
-> +{
-> +	memcpy(stat, &part->dkstats, sizeof(struct disk_stats));
-> +}
-> +
->   static inline int init_part_stats(struct hd_struct *part)
->   {
->   	return 1;
-> @@ -376,9 +383,6 @@ static inline void free_part_stats(struct hd_struct *part)
->   
->   #endif /* CONFIG_SMP */
->   
-> -#define part_stat_read_msecs(part, which)				\
-> -	div_u64(part_stat_read(part, nsecs[which]), NSEC_PER_MSEC)
-> -
->   #define part_stat_read_accum(part, field)				\
->   	(part_stat_read(part, field[STAT_READ]) +			\
->   	 part_stat_read(part, field[STAT_WRITE]) +			\
+>---
+> mm/mm_init.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/mm/mm_init.c b/mm/mm_init.c
+>index 5c918388de99..7da6991d9435 100644
+>--- a/mm/mm_init.c
+>+++ b/mm/mm_init.c
+>@@ -37,7 +37,7 @@ void __init mminit_verify_zonelist(void)
+> 		struct zonelist *zonelist;
+> 		int i, listid, zoneid;
 > 
+>-		BUG_ON(MAX_ZONELISTS > 2);
+>+		BUILD_BUG_ON(MAX_ZONELISTS > 2);
+> 		for (i = 0; i < MAX_ZONELISTS * MAX_NR_ZONES; i++) {
+> 
+> 			/* Identify the zone and nodelist */
+>-- 
+>2.17.1
+
+-- 
+Wei Yang
+Help you, Help me
