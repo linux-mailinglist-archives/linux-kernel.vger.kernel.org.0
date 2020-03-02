@@ -2,212 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 015BB1751D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 03:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB0AD1751D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 03:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbgCBCg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 21:36:58 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40128 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbgCBCg5 (ORCPT
+        id S1726905AbgCBCil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 21:38:41 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:37372 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbgCBCij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 21:36:57 -0500
-Received: by mail-qk1-f193.google.com with SMTP id m2so8681714qka.7
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 18:36:55 -0800 (PST)
+        Sun, 1 Mar 2020 21:38:39 -0500
+Received: by mail-il1-f195.google.com with SMTP id a6so7997995ilc.4
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 18:38:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=qcPTQG2KnQofromzd4MmbJcnvlIptZhM3yjyeDq9A8k=;
-        b=g3UURMjSPzN4HUfsWShr2L691CVYAHoPjm0L82y9CeVu62/q3SSn9CT3wwdFgEmSpJ
-         xFutzcjB4aC44zY/s8qQ+8CQu8yXpWNwO2yTOGzUzv3qGVTbIl553/vVyLPoR1SokBqM
-         GzrbgFacmVIgMS5adEdd2qCZ+/iAS9WbweYj4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hMBtZKtRWZnuY7I2gHV8O0aP4O5vGYjUt387++HUGg0=;
+        b=GoJ/hSIhtzmyK1XJGrqO7MByCX/BqrUWQv4z+ueuUJNbrzqFtG8bW4JIDPsvIncAeW
+         3EjWVRw8A9l0UnxL4ahWx2hqUN45nEZCU0OrNvHP2Rmr4yAczOyEco3SmvhCzIRTEWzg
+         2nWiizNIf/13Mdewd0VigJmlCLnX6T+A19iPEjrGeXSjp7R2r5tku7Dy/mIQmD3Q0e4n
+         HaNXKT9TAXhpb4zovKnrtzB7MwPxHau+Ie8umdopdU79mjJCMTI+uorDlbTVm/jKs0Ys
+         bcuX6zU2BaabHoKiplMLkDK99a906rlv7NDo0MsARJNMPSPQKdDvsr+/KYWm0yH4Avn/
+         dzWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=qcPTQG2KnQofromzd4MmbJcnvlIptZhM3yjyeDq9A8k=;
-        b=AZmujImad69Ketk1lWtc4aMEp0VtW1NVWZs9l8S33YFaG/GHPZtmfleNg5uYfZlrQV
-         if/0k7Ytm1zxBicQZDgKXR79xip6gmZ9f/Tx8bQ2qlQ5rC4am/w3ZvBFOyszOoDAK69n
-         Cb5UJvBAEIJ90/YPvyYcMoe5xTz+vLPJxd3a0Aqsr/hRHCMsrawTtGCqm4848aC6ic+x
-         lTN5obfO9wMFl8lp8ZI+LksqvbdMjZ0wkkj2/WCSFeJdhMQuuP8Lmao7ceKsYOsL+9RS
-         b+h8GasBVfxK0byB92Up2/+TDDriKGETHyHYg1J5Bjqw4GZeCCYYwP5uDlxiPt62PPbU
-         msMw==
-X-Gm-Message-State: ANhLgQ1RpHxTtmqDzYC5zhe148ai4vYihhNvz2ikhaHsbwuJBxGtQVR9
-        GYGq/i9TYcxoblLEg7DIMvgGDQ==
-X-Google-Smtp-Source: ADFU+vta+w6HnSBVFNxaegb3NR8qV4ALQ3m8rNtJlhSrec6y42dc+sCTAYnggReEDXL+SPEKGokjGg==
-X-Received: by 2002:a05:620a:806:: with SMTP id s6mr5948549qks.235.1583116614988;
-        Sun, 01 Mar 2020 18:36:54 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 11sm9558974qkr.101.2020.03.01.18.36.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 18:36:54 -0800 (PST)
-Date:   Sun, 1 Mar 2020 21:36:54 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <JGross@suse.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [patch 4/8] x86/entry: Move irq tracing on syscall entry to
- C-code
-Message-ID: <20200302023654.GA211042@google.com>
-References: <20200302011018.GA161499@google.com>
- <DC74BDD5-C71D-4083-A13C-BA066C8C56F8@amacapital.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hMBtZKtRWZnuY7I2gHV8O0aP4O5vGYjUt387++HUGg0=;
+        b=YNFxdzXHMlOahUFS4twPy8MUBZ1knC5F3HfXtW5JPIZWUPdiD1ZK17pdotZ5tOSYcd
+         SsWd8JhHGiByNNz5/tdoTtQ+CcfZMXziWCFpRpbwIBouUpF2lRTNnNrvxOC871WULqT3
+         Hic4Cx/bL1hDH8MiM02KcV/pdbO/b2CbEBWCsrnZWdBNVeMRRX7udG25BE16pj25PCRV
+         aUKosbk+dNwprE/w5N9YcNYxVl8Q8vJY/Hyixv4Kf7XVcb9Q5TMho0nzkurFXb9hHeZ4
+         SszaaI3hNil8sdp6PwI7YdUQW8gpRbqC8Y2OPE3TbG3CAW0TU4ucGVXZlu2Q8ioWDp8u
+         6OxQ==
+X-Gm-Message-State: APjAAAU7proOACj19+/bebz0RHmhhwTwLZbktoJAl+fiBD6j4nfEsv6f
+        IzQFu8wdkkgCCqOF8UnUFC59xfgJtVJCNNUXcQ==
+X-Google-Smtp-Source: APXvYqwDyaP6Qn0pUWmDTtkqgW8emavOCeHLkeDP9XbwTbCJicqdnj0l+jIsvnqly0DAdgsCYBkmoZe1/psRu3keFaE=
+X-Received: by 2002:a92:194c:: with SMTP id e12mr13324399ilm.12.1583116718718;
+ Sun, 01 Mar 2020 18:38:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DC74BDD5-C71D-4083-A13C-BA066C8C56F8@amacapital.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <1582889550-9101-1-git-send-email-kernelfans@gmail.com>
+ <1582889550-9101-4-git-send-email-kernelfans@gmail.com> <CAKgT0Uc5cqJ5yhdi7HkyFTuiYQiPt9rGFPd42qAGSa7+d9ZQgQ@mail.gmail.com>
+In-Reply-To: <CAKgT0Uc5cqJ5yhdi7HkyFTuiYQiPt9rGFPd42qAGSa7+d9ZQgQ@mail.gmail.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 2 Mar 2020 10:38:27 +0800
+Message-ID: <CAFgQCTtQL7Dub8csVn-EDs8EBtsSSjsRobJLnXrrosTDnZhj4w@mail.gmail.com>
+Subject: Re: [PATCHv5 3/3] mm/gup_benchemark: add LONGTERM_BENCHMARK test in
+ gup fast path
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     linux-mm <linux-mm@kvack.org>, Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shuah Khan <shuah@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 06:18:51PM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Mar 1, 2020, at 5:10 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > 
-> > ﻿On Sun, Mar 01, 2020 at 10:54:23AM -0800, Andy Lutomirski wrote:
-> >>> On Sun, Mar 1, 2020 at 10:26 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >>> 
-> >>> On Sun, Mar 01, 2020 at 07:12:25PM +0100, Thomas Gleixner wrote:
-> >>>> Andy Lutomirski <luto@kernel.org> writes:
-> >>>>> On Sun, Mar 1, 2020 at 7:21 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >>>>>> Andy Lutomirski <luto@amacapital.net> writes:
-> >>>>>>>> On Mar 1, 2020, at 2:16 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >>>>>>>> Ok, but for the time being anything before/after CONTEXT_KERNEL is unsafe
-> >>>>>>>> except trace_hardirq_off/on() as those trace functions do not allow to
-> >>>>>>>> attach anything AFAICT.
-> >>>>>>> 
-> >>>>>>> Can you point to whatever makes those particular functions special?  I
-> >>>>>>> failed to follow the macro maze.
-> >>>>>> 
-> >>>>>> Those are not tracepoints and not going through the macro maze. See
-> >>>>>> kernel/trace/trace_preemptirq.c
-> >>>>> 
-> >>>>> That has:
-> >>>>> 
-> >>>>> void trace_hardirqs_on(void)
-> >>>>> {
-> >>>>>        if (this_cpu_read(tracing_irq_cpu)) {
-> >>>>>                if (!in_nmi())
-> >>>>>                        trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> >>>>>                tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
-> >>>>>                this_cpu_write(tracing_irq_cpu, 0);
-> >>>>>        }
-> >>>>> 
-> >>>>>        lockdep_hardirqs_on(CALLER_ADDR0);
-> >>>>> }
-> >>>>> EXPORT_SYMBOL(trace_hardirqs_on);
-> >>>>> NOKPROBE_SYMBOL(trace_hardirqs_on);
-> >>>>> 
-> >>>>> But this calls trace_irq_enable_rcuidle(), and that's the part of the
-> >>>>> macro maze I got lost in.  I found:
-> >>>>> 
-> >>>>> #ifdef CONFIG_TRACE_IRQFLAGS
-> >>>>> DEFINE_EVENT(preemptirq_template, irq_disable,
-> >>>>>             TP_PROTO(unsigned long ip, unsigned long parent_ip),
-> >>>>>             TP_ARGS(ip, parent_ip));
-> >>>>> 
-> >>>>> DEFINE_EVENT(preemptirq_template, irq_enable,
-> >>>>>             TP_PROTO(unsigned long ip, unsigned long parent_ip),
-> >>>>>             TP_ARGS(ip, parent_ip));
-> >>>>> #else
-> >>>>> #define trace_irq_enable(...)
-> >>>>> #define trace_irq_disable(...)
-> >>>>> #define trace_irq_enable_rcuidle(...)
-> >>>>> #define trace_irq_disable_rcuidle(...)
-> >>>>> #endif
-> >>>>> 
-> >>>>> But the DEFINE_EVENT doesn't have the "_rcuidle" part.  And that's
-> >>>>> where I got lost in the macro maze.  I looked at the gcc asm output,
-> >>>>> and there is, indeed:
-> >>>> 
-> >>>> DEFINE_EVENT
-> >>>>  DECLARE_TRACE
-> >>>>    __DECLARE_TRACE
-> >>>>       __DECLARE_TRACE_RCU
-> >>>>         static inline void trace_##name##_rcuidle(proto)
-> >>>>            __DO_TRACE
-> >>>>               if (rcuidle)
-> >>>>                  ....
-> >>>> 
-> >>>>> But I also don't see why this is any different from any other tracepoint.
-> >>>> 
-> >>>> Indeed. I took a wrong turn at some point in the macro jungle :)
-> >>>> 
-> >>>> So tracing itself is fine, but then if you have probes or bpf programs
-> >>>> attached to a tracepoint these use rcu_read_lock()/unlock() which is
-> >>>> obviosly wrong in rcuidle context.
-> >>> 
-> >>> Definitely, any such code needs to use tricks similar to that of the
-> >>> tracing code.  Or instead use something like SRCU, which is OK with
-> >>> readers from idle.  Or use something like Steve Rostedt's workqueue-based
-> >>> approach, though please be very careful with this latter, lest the
-> >>> battery-powered embedded guys come after you for waking up idle CPUs
-> >>> too often.  ;-)
-> >>> 
-> >> 
-> >> Are we okay if we somehow ensure that all the entry code before
-> >> enter_from_user_mode() only does rcuidle tracing variants and has
-> >> kprobes off?  Including for BPF use cases?
-> >> 
-> >> It would be *really* nice if we could statically verify this, as has
-> >> been mentioned elsewhere in the thread.  It would also probably be
-> >> good enough if we could do it at runtime.  Maybe with lockdep on, we
-> >> verify rcu state in tracepoints even if the tracepoint isn't active?
-> >> And we could plausibly have some widget that could inject something
-> >> into *every* kprobeable function to check rcu state.
-> > 
-> > You are talking about verifying that a non-rcuidle tracepoint is not called
-> > into when RCU is not watching right? I think that's fine, though I feel
-> > lockdep kernels should not be slowed down any more than they already are. I
-> > feel over time if we add too many checks to lockdep enabled kernels, then it
-> > becomes too slow even for "debug" kernels. May be it is time for a
-> > CONFIG_LOCKDEP_SLOW or some such? And then anyone who wants to go crazy on
-> > runtime checking can do so. I myself want to add a few.
-> > 
-> > Note that the checking is being added into "non rcu-idle" tracepoints many of
-> > which are probably always called when RCU is watching, making such checking
-> > useless for those tracepoints (and slowing them down however less).
-> > 
-> 
-> Indeed. Static analysis would help a lot here.
-> 
-> > Also another note would be that the whole reason we are getting rid of the
-> > "make RCU watch when rcuidle" logic in DO_TRACE is because it is slow for
-> > tracepoints that are frequently called into. Another reason to do it is
-> > because tracepoint callbacks are expected to know what they are doing and
-> > turn on RCU watching as appropriate (as consensus on the matter suggests).
-> 
-> Whoa there. We arch people need crystal clear rules as to what tracepoints
-> can be called in what contexts and what is the responsibility of the
-> callbacks.
-> 
+On Fri, Feb 28, 2020 at 11:43 PM Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+>
+> On Fri, Feb 28, 2020 at 3:35 AM Pingfan Liu <kernelfans@gmail.com> wrote:
+> >
+> > Introduce a GUP_LONGTERM_BENCHMARK ioctl to test longterm pin in gup fast
+> > path.
+>
+> The title of the patch has a typo in it. There is only one 'e' in "benchmark".
+Yes, it should be GUP_FAST_LONGTERM_BENCHMARK
+>
+> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > Cc: Ira Weiny <ira.weiny@intel.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Mike Rapoport <rppt@linux.ibm.com>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: John Hubbard <jhubbard@nvidia.com>
+> > Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> > Cc: Keith Busch <keith.busch@intel.com>
+> > Cc: Christoph Hellwig <hch@infradead.org>
+> > Cc: Shuah Khan <shuah@kernel.org>
+> > To: linux-mm@kvack.org
+> > Cc: linux-kernel@vger.kernel.org
+> > ---
+> >  mm/gup_benchmark.c                         | 7 +++++++
+> >  tools/testing/selftests/vm/gup_benchmark.c | 6 +++++-
+> >  2 files changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+> > index 8dba38e..bf61e7a 100644
+> > --- a/mm/gup_benchmark.c
+> > +++ b/mm/gup_benchmark.c
+> > @@ -8,6 +8,7 @@
+> >  #define GUP_FAST_BENCHMARK     _IOWR('g', 1, struct gup_benchmark)
+> >  #define GUP_LONGTERM_BENCHMARK _IOWR('g', 2, struct gup_benchmark)
+> >  #define GUP_BENCHMARK          _IOWR('g', 3, struct gup_benchmark)
+> > +#define GUP_FAST_LONGTERM_BENCHMARK    _IOWR('g', 4, struct gup_benchmark)
+> >
+> >  struct gup_benchmark {
+> >         __u64 get_delta_usec;
+> > @@ -57,6 +58,11 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+> >                         nr = get_user_pages_fast(addr, nr, gup->flags,
+> >                                                  pages + i);
+> >                         break;
+> > +               case GUP_FAST_LONGTERM_BENCHMARK:
+> > +                       nr = get_user_pages_fast(addr, nr,
+> > +                                       (gup->flags & 1) | FOLL_LONGTERM,
+> > +                                        pages + i);
+> > +                       break;
+>
+> If I am not mistaken the mask of gup->flags is redundant. It is
+> already masked by FOLL_WRITE several lines before this switch
+> statement.
+Yes, you are right. Thanks for your kind review.
 
-The direction that Peter, Mathieu and Steve are going is that callbacks
-registered on "rcu idle" tracepoints need to turn on "RCU watching"
-themselves. Such as perf. Turning on "RCU watching" is non-free as I tested
-in 2017 and we removed it back then, but it was added right back when perf
-started splatting. Now it is being removed again, and the turning on of RCU's
-eyes happens in the perf callback itself since perf uses RCU.
-
-If you are calling trace_.._rcuidle(), can you not ensure that RCU is
-watching by calling the appropriate RCU APIs in your callbacks? Or did I miss
-the point?
-
-thanks,
-
- - Joel
-
+Regards,
+Pingfan
