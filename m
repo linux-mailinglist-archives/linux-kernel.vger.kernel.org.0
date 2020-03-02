@@ -2,146 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB07175E04
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59BF0175E11
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgCBPSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:18:51 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36124 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbgCBPSv (ORCPT
+        id S1727311AbgCBPWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:22:38 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36374 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726390AbgCBPWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:18:51 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g83so8827567wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 07:18:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=FfGCzyuM1FF4tXwyg52CuI8TXntOiqploqh0HUEy4NI=;
-        b=oOewtFw6V0G8S5MMSYcosVIQLSvrp3qra6NujycuyjHpNha1tBZQVpBUHqld1x+246
-         NydllS1/71Y0ECUD9b2V9TY0j6r+WK+qsc66ywF2HZqorS6zRzM7RZnA8rgojs1v5h9p
-         /9nEDscV+WDvV01CBokIGxLmi0mjpY14TCr8XSC8UTCqGX9j2k4VOVPFuJ8GlNhK3FBd
-         bR6d1WPlPFMb9VOdvYIexSHW3CSs/MxLeYo0KgT+YINYC4jSp9k76yKJBO/PRXVlWK3K
-         c+0z80jbJ3cww/W5tIAw48YscF9LqznT9oBbCFB+fPuWCmidPbeVPdN/j08TQ4urmaRY
-         cbbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=FfGCzyuM1FF4tXwyg52CuI8TXntOiqploqh0HUEy4NI=;
-        b=g9hIJt1tlfPRF0CiFo6wwmIdHIsW36Tju2OVzFEBbptUpxsAsOVzWXZFWAeJt8l/tu
-         28Csh7+gvKHehjjYYQkMc9YdWcsz8777UmJ9n8GtechpsCAul6Yiu2RM/zMAhhsHOxvD
-         ge/iD2eBUeHMYmR4D4zIPiMUtbUOo1T/WMJeC0ri6uWPz5ThsQbfBx+jhH72qv6gTq64
-         SXgu+pbJvayKwFrFcTvlMm7gydMGE8X64GdWelPsCTZ69dMATat15aojuHEQRygTCqpI
-         xVoi7dc8fJzQXDuwDfWAYIInE4Q0PPxJJLF5L+ahDNgyLQAkztCOO25NblCR5SNxbF0I
-         y4HA==
-X-Gm-Message-State: ANhLgQ3m0CFlqt4N3Kce3BGDs31Uat3Tc1eIwZY9zDs7uC2PBXuk2MHs
-        K0UhwMsDyHYa7b8aXIW6z1ZiGw==
-X-Google-Smtp-Source: ADFU+vubFBZ38Hl4t+bQp7qMPsZlMtvLHJ5es54H4Ae86JjLqb6AYOoYNbKi5zGROrIxX6nKRM8xRA==
-X-Received: by 2002:a1c:791a:: with SMTP id l26mr3876wme.58.1583162329063;
-        Mon, 02 Mar 2020 07:18:49 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id o16sm13600468wrj.5.2020.03.02.07.18.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 07:18:48 -0800 (PST)
-Date:   Mon, 2 Mar 2020 15:19:24 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/19] platform/x86: Rework intel_scu_ipc and
- intel_pmc_ipc drivers
-Message-ID: <20200302151924.GC3494@dell>
-References: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
- <20200302142621.GB3494@dell>
- <20200302143803.GI2667@lahna.fi.intel.com>
+        Mon, 2 Mar 2020 10:22:38 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 022Evu5U086099;
+        Mon, 2 Mar 2020 15:22:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=G/kvItGwy0v2Fs3ftwbEd0rVlgOOyAgL4aj7wJ7qNZM=;
+ b=EIMWrRJPFCTSlxyodnP+JR3GxBOUIuWyd7a2GHh2qEZGyIOK7tm6Es2IRnu9+UxIr0/W
+ BgUDOve59skYLmTgSRy8qJCz3QhHJhtuHbJEw09tVHV5EpjjCiNAUu/k7jFlFIngxAN1
+ 7/w0Zd9Jegr7vONcmgo5Y7tPkFkJPZcl9dhAFNh2EphBQ4Upnp7awxmdBagwPOAXLt89
+ vOwvyZ8ZZrtoBxNaSNVinZaQDGSVUNczekNjAE68JjpLr3Eb8P0MF+2zASrFZbbkF5cK
+ PR/RNoBxs/qsmBlDZ0WF4qx5xYr0yfFxV2T5P+gZkGPIAl30ACTI8T6ZU0AhmaR5nbsE Qw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2yffwqgbv0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Mar 2020 15:22:30 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 022FKxk9001574;
+        Mon, 2 Mar 2020 15:22:29 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2yg1eh83un-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Mar 2020 15:22:29 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 022FMRdO021370;
+        Mon, 2 Mar 2020 15:22:27 GMT
+Received: from kadam (/129.205.23.165) by default (Oracle Beehive Gateway
+ v4.0) with ESMTP ; Mon, 02 Mar 2020 07:21:23 -0800
+USER-AGENT: Mutt/1.9.4 (2018-02-28)
 MIME-Version: 1.0
+Message-ID: <20200302152058.GB24372@kadam>
+Date:   Mon, 2 Mar 2020 07:20:58 -0800 (PST)
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH v1] media: staging: tegra-vde: Use
+ devm_platform_ioremap_resource_byname()
+References: <20200227180915.9541-1-digetx@gmail.com>
+ <20200302080456.GD4140@kadam>
+ <d748bf2c-e38c-dabb-59ad-39e14813e40a@gmail.com>
+In-Reply-To: <d748bf2c-e38c-dabb-59ad-39e14813e40a@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200302143803.GI2667@lahna.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9547 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003020110
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9547 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ phishscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003020110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 02 Mar 2020, Mika Westerberg wrote:
-
-> On Mon, Mar 02, 2020 at 02:26:21PM +0000, Lee Jones wrote:
-> > On Mon, 02 Mar 2020, Mika Westerberg wrote:
+On Mon, Mar 02, 2020 at 06:04:20PM +0300, Dmitry Osipenko wrote:
+> 02.03.2020 11:04, Dan Carpenter пишет:
+> > On Thu, Feb 27, 2020 at 09:09:15PM +0300, Dmitry Osipenko wrote:
+> >> This helps to make code cleaner a tad.
 > > 
-> > > Hi all,
-> > > 
-> > > Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
-> > > IPC communications with minor differences. This duplication does not make
-> > > much sense so this series reworks the two drivers so that there is only a
-> > > single implementation of the SCU IPC. In addition to that the API will be
-> > > updated to take SCU instance pointer as an argument, and most of the
-> > > callers will be converted to this new API. The old API is left there but
-> > > the plan is to get rid the callers and then the old API as well (this is
-> > > something we are working with Andy Shevchenko).
-> > > 
-> > > The intel_pmc_ipc.c is then moved under MFD which suits better for this
-> > > kind of a driver that pretty much sets up the SCU IPC and then creates a
-> > > bunch of platform devices for the things sitting behind the PMC. The driver
-> > > is renamed to intel_pmc_bxt.c which should follow the existing conventions
-> > > under drivers/mfd (and it is only meant for Intel Broxton derivatives).
-> > > 
-> > > This is on top of platform-driver-x86.git/for-next branch because there is
-> > > already some cleanup work queued that re-organizes Kconfig and Makefile
-> > > entries.
-> > > 
-> > > I have tested this on Intel Joule (Broxton-M) board.
-> > > 
-> > > Changes from v6:
-> > > 
-> > >   * Added Reviewed-by tag from Andy
-> > >   * Expanded PMC, IPC and IA acronyms
-> > >   * Drop TCO_DEVICE_NAME, PUNIT_DEVICE_NAME and TELEMETRY_DEVICE_NAME
-> > >   * Move struct intel_pmc_dev into include/linux/mfd/intel_pmc_bxt.h
-> > >   * Add PMC_DEVICE_MAX to the enum and use it
-> > >   * Add kernel-docs for simplecmd_store() and northpeak_store()
-> > >   * Use if (ret) return ret; over the ternary operator
-> > >   * Drop "This is index X" from comments
-> > >   * Use acpi_has_watchdog() to determine whether iTCO_wdt is added or not.
-> > >   * Rename intel_scu_ipc_pdata -> intel_scu_ipc_data to make it less
-> > >     confusing wrt. platform data for platform drivers.
+> > Please don't start the commit message in the middle of a sentence.
+> 
+> Could you please clarify what do you mean by the "middle of a sentence"?
+> The commit's message doesn't sound "middle" to me at all.
+> 
+> > It looks like this for some of us:
 > > 
-> > Any reason why you've dropped all my tags?
+> > https://marc.info/?l=linux-driver-devel&m=158282701430176&w=2
 > 
-> You mean these?
+> This link points to this patch, I don't quite understand what you're
+> trying to convey here.
 > 
-> For my own reference:                                                                                                                                                                       
->   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> > I generally read the subject or the full commit message but seldom
+> > both.
 > 
-> I wasn't really sure what to do with them. They are not in the normal
-> tag format I've seen so I thought you use them yourself somehow to
-> manage your mailboxes. I can add them back if needed.
+> The commit's title describes the change briefly, while the message gives
+> a rational for the change. Usually reviewer should consult the code
+> changes themselves for more details.
+> 
+> Do you have some kind of a email filter that shows only the commit's
+> message? Otherwise I'm not sure what's the problem.
 
-Yes, please add them, so I can track them.
 
-It normally means that I plan to take the set through MFD and
-subsequently send an immutable pull-request out to the other
-Maintainers once all the other Acks have been provided.
+The commit message just says "This helps to make code cleaner a tad."
+but it doesn't mention devm_platform_ioremap_resource_byname().  That
+information is there in the subject but not in the commit message itself.
+Take a look at the link I sent you and try to find the subject.  It's
+far away from the commit message.
 
-MFD handles these kinds of cross-subsystem patch-sets often.
+regards,
+dan carpenter
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
