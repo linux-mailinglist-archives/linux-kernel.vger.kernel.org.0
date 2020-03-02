@@ -2,90 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 058F91756C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 10:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53F691756C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 10:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbgCBJRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 04:17:43 -0500
-Received: from mga14.intel.com ([192.55.52.115]:47928 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbgCBJRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 04:17:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 01:17:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,506,1574150400"; 
-   d="scan'208";a="351500767"
-Received: from kuha.fi.intel.com ([10.237.72.53])
-  by fmsmga001.fm.intel.com with SMTP; 02 Mar 2020 01:17:39 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 02 Mar 2020 11:17:38 +0200
-Date:   Mon, 2 Mar 2020 11:17:38 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Peter Chen <peter.chen@nxp.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benson Leung <bleung@chromium.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: Re: [PATCH v2 5/9] usb: roles: Provide the switch drivers handle to
- the switch in the API
-Message-ID: <20200302091738.GB22243@kuha.fi.intel.com>
-References: <20200224121406.2419-1-heikki.krogerus@linux.intel.com>
- <20200224121406.2419-6-heikki.krogerus@linux.intel.com>
- <20200224131442.GA5365@b29397-desktop>
- <20200302062302.GE3834@b29397-desktop>
+        id S1727210AbgCBJSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 04:18:46 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50250 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbgCBJSq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 04:18:46 -0500
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0614654A;
+        Mon,  2 Mar 2020 10:18:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1583140724;
+        bh=bWSWnRlEnxgw/Jwkv+DDpLesF0UhMGYrILmgH0Qtapw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Zt/3yA7PpTzJsecJt56a6UHocBjCjfwDIIKR7c4qy2MfGDvzcZF/wB9G70unntQtS
+         /KwBMmScCjYDFPEGhg2ub76ouw7LxQKPHZgdFroo6oYpsj1WcpDhP6iet5OkrVa8cY
+         aaWRFDWDjOyXhQkzHqbeWdgP2xatlV4C0knL0oiQ=
+Date:   Mon, 2 Mar 2020 11:18:18 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        a.hajda@samsung.com, jonas@kwiboo.se,
+        boris.brezillon@collabora.com, linux-amlogic@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v4 02/11] drm/bridge: dw-hdmi: add max bpc connector
+ property
+Message-ID: <20200302091818.GC11960@pendragon.ideasonboard.com>
+References: <20200206191834.6125-1-narmstrong@baylibre.com>
+ <20200206191834.6125-3-narmstrong@baylibre.com>
+ <11463907.O9o76ZdvQC@jernej-laptop>
+ <09d315b8-22f3-a25a-1aea-9c5d50c634d6@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200302062302.GE3834@b29397-desktop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <09d315b8-22f3-a25a-1aea-9c5d50c634d6@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 06:22:59AM +0000, Peter Chen wrote:
-> > > @@ -613,9 +613,10 @@ static enum usb_role ci_usb_role_switch_get(struct device *dev)
-> > >  	return role;
-> > >  }
-> > >  
-> > > -static int ci_usb_role_switch_set(struct device *dev, enum usb_role role)
-> > > +static int ci_usb_role_switch_set(struct usb_role_switch *sw,
-> > > +				  enum usb_role role)
-> > >  {
-> > > -	struct ci_hdrc *ci = dev_get_drvdata(dev);
-> > > +	struct ci_hdrc *ci = usb_role_switch_get_drvdata(sw);
-> > >  	struct ci_hdrc_cable *cable = NULL;
-> > >  	enum usb_role current_role = ci_role_to_usb_role(ci);
-> > >  	enum ci_role ci_role = usb_role_to_ci_role(role);
-> > > @@ -1118,6 +1119,7 @@ static int ci_hdrc_probe(struct platform_device *pdev)
-> > >  	}
-> > >  
-> > >  	if (ci_role_switch.fwnode) {
-> > > +		ci_role_switch.driver_data = ci;
+Hi Neil and Jonas,
+
+(CC'ing Daniel for a framework question)
+
+Thank you for the patch.
+
+On Fri, Feb 21, 2020 at 09:50:18AM +0100, Neil Armstrong wrote:
+> On 17/02/2020 07:38, Jernej Škrabec wrote:
+> > Dne četrtek, 06. februar 2020 ob 20:18:25 CET je Neil Armstrong napisal(a):
+> >> From: Jonas Karlman <jonas@kwiboo.se>
+> >>
+> >> Add the max_bpc property to the dw-hdmi connector to prepare support
+> >> for 10, 12 & 16bit output support.
+> >>
+> >> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> >> ---
+> >>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> >> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> >> 9e0927d22db6..051001f77dd4 100644
+> >> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> >> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> >> @@ -2406,6 +2406,10 @@ static int dw_hdmi_bridge_attach(struct drm_bridge
+> >> *bridge) DRM_MODE_CONNECTOR_HDMIA,
+> >>  				    hdmi->ddc);
+> >>
+> >> +	drm_atomic_helper_connector_reset(connector);
+> > 
+> > Why is this reset needed?
 > 
-> And chipidea code, better change it like cdns3's, otherwise, the
-> switch desc for all controllers have the same driver_data.
+> I assume it's to allocate a new connector state to attach a the bpc propery.
+> 
+> But indeed, this helper is never used here, but only as callback to the drm_connector_funcs->reset.
+> 
+> But, amdgpu calls :
+> 	/*
+> 	 * Some of the properties below require access to state, like bpc.
+> 	 * Allocate some default initial connector state with our reset helper.
+> 	 */
+> 	if (aconnector->base.funcs->reset)
+> 		aconnector->base.funcs->reset(&aconnector->base);
+> 
+> which is the same.
 
-That I'll skip after all...
+A comment would be useful:
 
-Note that since the context of the switch descriptor is always copied
-during registration, the driver_data is not going to be the same for
-every switch.
+	/*
+	 * drm_connector_attach_max_bpc_property() requires the
+	 * connector to have a state.
+	 */
+	drm_atomic_helper_connector_reset(connector);
 
-The structure is actually filled in two separate functions, so the
-change is not straightforward. We can still change that of course, but
-it's out side the scope of this series, so it needs to be done
-separately.
+	drm_connector_attach_max_bpc_property(connector, 8, 16);
 
+I don't like this much though, it feels like the initial reset performed
+by drm_mode_config_reset() should set default values for all state
+members that are related to properties. Daniel, what's the rationale
+behind the current implementation ?
 
-thanks,
+This is a DRM core issue that shouldn't block this patch though, so
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> >> +
+> >> +	drm_connector_attach_max_bpc_property(connector, 8, 16);
+> >> +
+> >>  	if (hdmi->version >= 0x200a && hdmi->plat_data->use_drm_infoframe)
+> >>  		drm_object_attach_property(&connector->base,
+> >>  			connector->dev-
+> >> mode_config.hdr_output_metadata_property, 0);
 
 -- 
-heikki
+Regards,
+
+Laurent Pinchart
