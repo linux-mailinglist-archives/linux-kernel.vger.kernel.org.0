@@ -2,132 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 499C117515A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 01:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E487817515F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 01:31:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgCBAUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Mar 2020 19:20:32 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33313 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726688AbgCBAUR (ORCPT
+        id S1726752AbgCBAbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Mar 2020 19:31:45 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:38362 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbgCBAbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Mar 2020 19:20:17 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x7so10373971wrr.0;
-        Sun, 01 Mar 2020 16:20:16 -0800 (PST)
+        Sun, 1 Mar 2020 19:31:44 -0500
+Received: by mail-yw1-f67.google.com with SMTP id 10so9623124ywv.5
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 16:31:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OpaKrDoeUk2RJ12slgA8fUGlWxUuM6afstpoyn/uPGg=;
-        b=NBkqHx1vHzaqb/+7HdnVMCM71Jo6uxThzQyLbrk9qz3EyFh5XxqpgqM73XK6V8+GpQ
-         wqsO/0uuA/o0f5JsHHjmtEp7EPF5IFQyki128BnDF144jNBNseLuu/mh1IGv2f+VbAiP
-         pOlTJ2SFnxZZPPLZ3qINphuZkD8fEAEhHmovTyJpdChpa6s2UqVTBKGjUJEp5xwDLnom
-         rid9758M40svjaxPzgn+bAk9PURGm9dsTU3iWpzzsiFc7DTTE30Fpu0xeQtcSbiSPwoB
-         AB3qDScJM0l0dsnK0xxvE3Zo4kpDxQVN2NpCfnxvb5cXS/FtMLblHzb78ZSv+YBtFnve
-         Vd/w==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=rfCI3MmNMKhIWwdq7waZHHOt5wHpRU9+ke91xb3DAzE=;
+        b=N79dPWyhynpiedQkXTz4oZj7EhxzmiHKmiBru8SqQjsrDrbzRNnBlpzVody8KGJzh2
+         3INnRptoZurM5M9ud+eRpi8OoBwTzo9MoPW4V5DWLWpWr6emjJFF2ExKAM/E/cHtns9v
+         jtBKRL8D7zAKdKUVuDis0ot7VnYQvlTtEPxY4V8KuMGRgR2OZ09zM50AstlyXU6P8WpW
+         eRNZIaEtOsD4rtE+PGr4vD8goatsTTnvwXwPT0I4UqYJm9L2ZCNSYvQcXl7OYbshBEGu
+         QPlOw0J7UgiTY63F+tWHgIh4D2/EY7y6RlBbmivM+u7XK6jbhQGr3SKGJFV+EFmzR+FB
+         0yAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OpaKrDoeUk2RJ12slgA8fUGlWxUuM6afstpoyn/uPGg=;
-        b=S64yafSf9jGdNXEeyglqQpCnovZm26WuZHETMqy1WvzCZmPrRZo4hobRH6kSRlV9FR
-         8bfPe0VowS8+EmMibuKQPYOdiXpaLYDTOGOR1a1fJsmqmPFIVRToZ6/zSwtRIYsMjTK2
-         tbT46CGFuQRXsajhmthSdeYuNWTUaYEDelusL6Pzhlx5vB4G6mWjUsIpWRRGTPEuuKvi
-         u92Kxo2LIULuaCHQKfJfSjT70Zpi/u1nHCzV+mqcEoI9zqs2R1HT7hZER4evHPVTMr7l
-         3YHwH08eBhzv+M68uthharZ+dWnjhFunOuD/NqwIvPSJAIFLSJOIij26rCkyQ55J9Ih1
-         GvCA==
-X-Gm-Message-State: APjAAAWkjlVySKhWsxMcsFBbCOenz/JMO2LVtyxZ7zvwnLuSsn+WViIJ
-        3/EfVnQI3miOlJz+6Dygf5U=
-X-Google-Smtp-Source: APXvYqxxhdIQTQNMdIrAMRWM1vH31jBETpsphfpExLQu3aTIpTz9KwOzVl6OMEpRvwMM8nLF1O1Xpw==
-X-Received: by 2002:adf:94a3:: with SMTP id 32mr19680451wrr.276.1583108415535;
-        Sun, 01 Mar 2020 16:20:15 -0800 (PST)
-Received: from localhost.localdomain ([79.115.60.40])
-        by smtp.gmail.com with ESMTPSA id k16sm25428417wrd.17.2020.03.01.16.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 16:20:15 -0800 (PST)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] spi: spi-fsl-dspi: Convert the instantiations that support it to DMA
-Date:   Mon,  2 Mar 2020 02:19:58 +0200
-Message-Id: <20200302001958.11105-7-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200302001958.11105-1-olteanv@gmail.com>
-References: <20200302001958.11105-1-olteanv@gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=rfCI3MmNMKhIWwdq7waZHHOt5wHpRU9+ke91xb3DAzE=;
+        b=KzXjL3M5y5xGmJj1IL3Q6vg1WTlH4MQcdcdcOSXns1mt2fPUVAdXpTBUSTTKD7NhjH
+         IC+RRPz/J0i/vhXJXQaWH+g72sU61qs1WsysgwcOydpGQywqwU0O3D2BlMBi/BWXZicX
+         L8hwz3wr7lDPCmItDngIAStv173of40bNFghJLwk0w5PADtt2PmV5SDLa/zSo8cCTDv1
+         YAn/C5jd2/zK24i8+zic/JnlHGaC2xUd7zFS7zb0OmgfBA9LxqXoNc5Ss6+pPi5nvslw
+         i6HIbIBShDdiwcN7AL98kE59JbkUNust4GtYSeYuPAk+AWOvVdV9Q77O+mzF3F5FdcS9
+         3ppg==
+X-Gm-Message-State: ANhLgQ0NfhFZavJsxlkzEag2nu6SX6eYRYwUHWO5OYTkXJkM0YtHatZx
+        GstlKIObHe33v6fAuUXqYfj5Thq8khy/VOC/k98=
+X-Google-Smtp-Source: ADFU+vvkDEg7GoFTp1KbR0vNoyONgm4uS0r/Xo4uVqvRqssTDaU0v6L2hSFZerVLSWcItw9fY3nDYmXg/+/4bthJRcw=
+X-Received: by 2002:a25:ec0d:: with SMTP id j13mr6957358ybh.518.1583109102188;
+ Sun, 01 Mar 2020 16:31:42 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a25:38d:0:0:0:0:0 with HTTP; Sun, 1 Mar 2020 16:31:41 -0800 (PST)
+Reply-To: fatimabanneth12@gmail.com
+From:   Mrs Fatima Banneth <fatimamuhamed07@gmail.com>
+Date:   Sun, 1 Mar 2020 16:31:41 -0800
+Message-ID: <CA+A6izHpQ-cFd9U43Av++dAO9ro_VYRjTKck7f=fGo+aHF0p8g@mail.gmail.com>
+Subject: Dear friend.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+Dear friend.
 
-The A-011218 eDMA/DSPI erratum affects most of the older Layerscape SoCs
-with DSPI, and its workaround is a bit intrusive.
+It's my pleasure to have contact with you, based on the critical
+condition I find myself, though, it's not financial problem, but my
+health, you might have know that cancer is not what to talk  about at
+home I have been in the hospital for 5 months now I am married to Mr.
+Abaulkarim Banneth who worked with Tunisia embassy in Burkina Faso for
+nine years before he died in the year 2008.We were married for eleven
+years without a child. He died after a brief illness that lasted for
+five days.
 
-After this patch, there are no users of TCFQ mode that don't also
-support XSPI (previously there was LS2085A).
+Since his death I decided not to remarry because of the attitude of
+his younger Brother who is just after properties. When my late husband
+was alive he deposited the sum of US$ 8.2million ( Eight million two
+hundred thousand dollars) in a bank in Burkina Faso for me, Presently
+this money is still in bank.
 
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/spi/spi-fsl-dspi.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+And My Doctors told me that I don't have much time to live because of
+the cancer problem and i dont want to live this money in the bank for
+Government instead I decided to use it for Old people who cannot work
+again and Orphans who have nothing to eat because my Husband family
+people are very wicked, Having known my condition I decided to hand
+over this fund to a responsible person that have fear of God to take
+care of less-privileged people with this fund , please utilize this
+money the way I am going to instruct here I want you to take 30%
+Percent of the total money for yourself While 70% of the money will go
+to charity works and helping the Old people who have nothing to eat.
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index c26a42f8ecbc..c357c3247232 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -147,42 +147,49 @@ static const struct fsl_dspi_devtype_data devtype_data[] = {
- 		.fifo_size		= 4,
- 	},
- 	[LS1021A] = {
-+		/* Has A-011218 DMA erratum */
- 		.trans_mode		= DSPI_TCFQ_MODE,
- 		.max_clock_factor	= 8,
- 		.xspi_mode		= true,
- 		.fifo_size		= 4,
- 	},
- 	[LS1012A] = {
-+		/* Has A-011218 DMA erratum */
- 		.trans_mode		= DSPI_TCFQ_MODE,
- 		.max_clock_factor	= 8,
- 		.xspi_mode		= true,
- 		.fifo_size		= 16,
- 	},
- 	[LS1043A] = {
-+		/* Has A-011218 DMA erratum */
- 		.trans_mode		= DSPI_TCFQ_MODE,
- 		.max_clock_factor	= 8,
- 		.xspi_mode		= true,
- 		.fifo_size		= 16,
- 	},
- 	[LS1046A] = {
-+		/* Has A-011218 DMA erratum */
- 		.trans_mode		= DSPI_TCFQ_MODE,
- 		.max_clock_factor	= 8,
- 		.xspi_mode		= true,
- 		.fifo_size		= 16,
- 	},
- 	[LS2080A] = {
--		.trans_mode		= DSPI_TCFQ_MODE,
-+		.trans_mode		= DSPI_DMA_MODE,
-+		.dma_bufsize		= 8,
- 		.max_clock_factor	= 8,
- 		.xspi_mode		= true,
- 		.fifo_size		= 4,
- 	},
- 	[LS2085A] = {
--		.trans_mode		= DSPI_TCFQ_MODE,
-+		.trans_mode		= DSPI_DMA_MODE,
-+		.dma_bufsize		= 8,
- 		.max_clock_factor	= 8,
- 		.fifo_size		= 4,
- 	},
- 	[LX2160A] = {
--		.trans_mode		= DSPI_TCFQ_MODE,
-+		.trans_mode		= DSPI_DMA_MODE,
-+		.dma_bufsize		= 8,
- 		.max_clock_factor	= 8,
- 		.xspi_mode		= true,
- 		.fifo_size		= 4,
--- 
-2.17.1
+I don't want my husband's efforts to be used by the Government and I
+dont want my Husband people to know about this money. I grew up as an
+Orphan and I don't have anybody as my family member, if you are really
+interested to help me please do not hesitate to indicate your interest
+to me. I will be very happy if you can write me through my private
+email addre(fatimabanneth017@gmail.com) for easy communication
 
+
+I wait for your response.
+My regards,
+Mrs Fatima Banneth
+written from Hospital
