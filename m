@@ -2,178 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04456176062
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8365817607D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 17:54:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbgCBQvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 11:51:24 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:46084 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbgCBQvY (ORCPT
+        id S1727398AbgCBQy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 11:54:26 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41792 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727366AbgCBQyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 11:51:24 -0500
-Received: by mail-ua1-f68.google.com with SMTP id h22so1817052uap.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 08:51:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FwQQQHxuz3c6VL7U4BBPixCOrvkb1+9h0SeP1AGJNyU=;
-        b=x0ReNb3YU4Sguq0VaQfFbFXH0kpNCmamyKbSHMsHnjWCLKswOZajP3kZVsS4iIuPTP
-         EV/thxYeCx0pzmVnY0G6ynukRR8GkHvBh0a9wq+5rgPWkbqw1aGH5erQeMcK7gVnt8lj
-         SdcZrdo+KyXM7dD7+P/KC3hNHdPQl0TpJoPaR47UX1Z31aXiaU15E8lmRdJhURyJmlMx
-         qS1sx5LmQB/6C0MPKqLQ3bVOvPOTt7cBhj9zuzvNYnckFu8Qd6Mpperu6t9faSHWGA/W
-         sjqClCrQxfSJGGIWO/9e7weyeDQJeg6/uFpUAsmR4Ly1l92n9mcAuBFyXlARpHwuc4ho
-         B/vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FwQQQHxuz3c6VL7U4BBPixCOrvkb1+9h0SeP1AGJNyU=;
-        b=ie+W/HUpYnm2WTLVTDYOXRAukp9xF3JDYWRvN1BgCW82BTlr0aXSA/nB9iQgBAKG3E
-         XSw5g+tNF12gEu+UbbkwWOy0Of8R/PUfkeJadXLzaN2mWnoXKyALTfn+xXu/doTIRlZD
-         IPEFfHW/K4Wn8plJF2fEpzWW5sTO9OGLkSGPlbA/C9PACcOrOVJlZcYnyS5PXI8O4GwA
-         BoWaD8f2UaBwM29Dyf9N+yEGhDyAz2pTAU9s9gNR8Jk82zIoQID2UY+3YfBxI5etBks2
-         x0MFQ+JV2jafMmU0Mm0h6ybFkK1I1fegphjlvRLtKVKRJ1batMCJwQcwHNJv3cckJ/eS
-         uN+g==
-X-Gm-Message-State: ANhLgQ1eNwwjcS1g/qszLFRZQfU3zkxYRK1LV9Z/pQPE/evyuPQd0zi+
-        9OK8daChFT8W1bw+lMCdxMLd0nl7GbujZjJEBOwVuw==
-X-Google-Smtp-Source: ADFU+vvrmUEP7ncpThWE2+Q3Zvb4NoLX1dYm8tNxgvi/NpPadyBWiI8XbxTF/lHfu9Z/liBwGp9FJkruarN9m3rtA9k=
-X-Received: by 2002:ab0:7802:: with SMTP id x2mr384034uaq.100.1583167881874;
- Mon, 02 Mar 2020 08:51:21 -0800 (PST)
+        Mon, 2 Mar 2020 11:54:24 -0500
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 022GrV8p019763;
+        Mon, 2 Mar 2020 08:53:37 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=6GrNg9i1YqRPzEEyPjUgEb5cDEPYnvaI57FJcWEvnSw=;
+ b=ZNgnTEB+gN/WxsS6aWcUaQ1DeaaVCAqYC1JJBRl0UrNpSVOo2OyOJt3pt0KToDulRZyx
+ DS51tZBEFYMx1dC15nn7+Kz1ciKyAT1t9GlsvZDmudYX7H5IDqK3Jp8cexgedz4b4juJ
+ MDkDgqpOo22kF/1euNB7CaC/14Z1s66CSD0= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2yfpnqrjuj-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 02 Mar 2020 08:53:37 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 2 Mar 2020 08:53:36 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CQo0JljSDcQP+KCHad1iSo3X00hJmujnPBDp6Rytj/bBJFjEDuMqzzLK+zUzhtydzPiQwvus02YRXu7G0nBtHQtYeyFWfSyeJGB02ukpevt0l1dC9/B4JbHbUSCwxhfEe0WQMpsYO7B2BpDsWJRe4Xm2BmHkLs6Qsjy1NXoPbJY1IQSP777fl2rBs3QrCJdS2Qhz4RD8OAG+2HpgKek0A1sb+1dwCjnDaNBSxihya3swSyirNp0fDS+oDBlhomBTUBe/SJ3TlIecQkDHlnI4p8vAS51tw3DUBgNTZN6lM2yY2/xvQ9UDWwQAyoc4Trh3rF3gDqCJgk7ttYvDFFwaFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6GrNg9i1YqRPzEEyPjUgEb5cDEPYnvaI57FJcWEvnSw=;
+ b=WdKUdtWkkrJp/J5IXnVU4/T6qPMo1wgt7T9yUovBfVoChzvkFcg5vqE92dV2pHJ4o6RtQ7MuNgp+Q5f3qDk5MgvsdqTyhQRlut6uvrusyw0rkjkFVrZbClHRPQpjrhtOL/+jrkSFS7gdIrxG/y3QDCq/AhBRMbvZ8ASvfhWWkLVWqpcWv7V0kZcBMOpJ9agRsMtxOeGpX0MfweSIqxx5xigJieP+Kl77XEyVW1wja06vqa/uKVfAyTC17f5yTV07H7Z00LRGgzh4dF5EO/QamkMGHP/6pVHAt3fYwc9P/bdvLrAfAtjhpw7QmJ7enoC0Dny34GamyeMmb9KNIYWlcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6GrNg9i1YqRPzEEyPjUgEb5cDEPYnvaI57FJcWEvnSw=;
+ b=lGZ+GZtdaGGXcII/1E3OcFE9XMze4bCJtlMv3IV2JXe+S6yruLKgSYBjY+wX7Vr0j/k7HxVXkXhRyJp4CV8l62kqs9qk4o1AA0wqTyJ3OiQmPU74lD6gwetk0L5JX2J/0jFofGgcbMoGMgR1itTaa3Z02/EkyKRjdTuSm/PotzQ=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (2603:10b6:a03:150::19)
+ by BYAPR15MB2232.namprd15.prod.outlook.com (2603:10b6:a02:89::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18; Mon, 2 Mar
+ 2020 16:53:34 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ccb6:a331:77d8:d308%7]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 16:53:34 +0000
+Date:   Mon, 2 Mar 2020 08:53:30 -0800
+From:   Roman Gushchin <guro@fb.com>
+To:     Marco Ballesio <balejs@google.com>
+CC:     <tj@kernel.org>, <cgroups@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizefan@huawei.com>,
+        <hannes@cmpxchg.org>, <corbet@lwn.net>, <rjw@rjwysocki.net>,
+        <pavel@ucw.cz>, <len.brown@intel.com>, <linux-doc@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <minchan@google.com>,
+        <surenb@google.com>, <dancol@google.com>
+Subject: Re: [PATCH] cgroup-v1: freezer: optionally killable freezer
+Message-ID: <20200302165330.GA505299@carbon.DHCP.thefacebook.com>
+References: <20200219183231.50985-1-balejs@google.com>
+ <20200229005131.GB9813@google.com>
+ <20200229184300.GA484762@carbon.DHCP.thefacebook.com>
+ <20200301162003.GA186618@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200301162003.GA186618@google.com>
+X-ClientProxiedBy: MWHPR13CA0031.namprd13.prod.outlook.com
+ (2603:10b6:300:95::17) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:150::19)
 MIME-Version: 1.0
-References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
- <CAPDyKFqqhxC-pmV_j8PLY-D=AbqCAbiipAAHXLpJ4N_BiYYOFw@mail.gmail.com>
- <CA+G9fYugQuAERqp3VXUFG-3QxXoF8bz7OSMh6WGSZcrGkbfDSQ@mail.gmail.com>
- <CAPDyKFo-vEO7zN_F+NqcKtnKmAo_deOZx3gYNiks3yTAQAjv-Q@mail.gmail.com>
- <a602a27a-b960-ce56-c541-3b4b95f5dce2@nvidia.com> <CAPDyKFrXQgtHa4gLaKUi_F0rs4FMBai3Y_+TcHZR_zpkb0B4QQ@mail.gmail.com>
- <6523119a-50ac-973a-d1cd-ab1569259411@nvidia.com> <f960aa98-5508-36fd-166d-7f41c7d85154@nvidia.com>
- <CAPDyKFokE6x0mn+v5B9=so-SyrdTn0JBU8Mrp3Zdu6kSaCie2g@mail.gmail.com>
- <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com> <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
- <34fd84d7-387b-b6f3-7fb3-aa490909e205@ti.com>
-In-Reply-To: <34fd84d7-387b-b6f3-7fb3-aa490909e205@ti.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 2 Mar 2020 17:50:45 +0100
-Message-ID: <CAPDyKFrrO4noYqdxWL9Y8Nx75LopbDudKGMotkGbGcAF1oq==w@mail.gmail.com>
-Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kishon <kishon@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:500::4:72a0) by MWHPR13CA0031.namprd13.prod.outlook.com (2603:10b6:300:95::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.5 via Frontend Transport; Mon, 2 Mar 2020 16:53:33 +0000
+X-Originating-IP: [2620:10d:c090:500::4:72a0]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 48ac0544-d49f-4d35-fb51-08d7beca3ed0
+X-MS-TrafficTypeDiagnostic: BYAPR15MB2232:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB2232A59EBBFBCFE995CB7E33BEE70@BYAPR15MB2232.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 033054F29A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(376002)(346002)(39860400002)(199004)(189003)(7416002)(55016002)(7696005)(52116002)(9686003)(8936002)(6916009)(8676002)(66476007)(66556008)(66946007)(1076003)(5660300002)(81166006)(81156014)(478600001)(33656002)(316002)(4326008)(2906002)(86362001)(186003)(16526019)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2232;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: csD4XrqW/RGxmeo5K8/emgIp6107ESLRfYmbtcl4RKL5a2PsWYNzYUgeVOR9Txe44t0AAHx4UiJ9wlb46jQyqwK90O1o0YTMbNt5yDSTRPH0NVMQY2dxYQHfvcePraUBhIr16vTa8OdQQAVOMOpAGHOtGze+19BP/fQhhC4BnjIGtvaq9tqg1D4tJskjbpOTmx/XifdT5pBByjnAKsha/vt+73hKqGYz7K5WGN/+9QCHBB5vOS3rrtGyVAnJXfTthRMTM2Ld6DYZrNHI78BAgqFaDk+syI6c7Jok3UcB0bvI7WHUErOu9nbY7Cb4mZfeiK6/Zt6sRCg0lfIlZ/4KwaZu7mwEDubUzCevRCCYjzzMtYbA20HVXz8RIuVw+ylCrQ68QYViwaIN5AbWTlibOC3j17+qoBO3KDCr2p3XIJkZy24CS0t3sUgZadk+mTFi
+X-MS-Exchange-AntiSpam-MessageData: UxWQtQESyzV+Soul0q+DbzRjU/D51xlL3MWkpqjTg9XzoUQd9UsyZB5mjPepQDnJenj+z3M69eRDW21dwUR24DC/LvPH8umiQ/4pAD4SLV34Zh4FZmbRugvPNHUZZe1gJXbTywtEU1n67Ol9ReiRjtDKTvQIinEv5abMw2aGCHzKXbxwqW0Ofm+pzMeFjpgo
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48ac0544-d49f-4d35-fb51-08d7beca3ed0
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2020 16:53:34.5767
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DXrepyIFuj/Fealv/vrkqipYhpTViRx8QxIvtxMYvIfE8Qdo70CaPgoCWhzrrKPb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2232
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_06:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 priorityscore=1501 suspectscore=1 spamscore=0
+ malwarescore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003020115
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Mar 2020 at 14:11, Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Uffe,
->
-> On 26/02/20 8:51 pm, Ulf Hansson wrote:
-> > + Anders, Kishon
-> >
-> > On Tue, 25 Feb 2020 at 17:24, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >>
-> >> On 25/02/2020 14:26, Ulf Hansson wrote:
-> >>
-> >> ...
-> >>
-> >>> However, from the core point of view, the response is still requested,
-> >>> only that we don't want the driver to wait for the card to stop
-> >>> signaling busy. Instead we want to deal with that via "polling" from
-> >>> the core.
-> >>>
-> >>> This is a rather worrying behaviour, as it seems like the host driver
-> >>> doesn't really follow this expectations from the core point of view.
-> >>> And mmc_flush_cache() is not the only case, as we have erase, bkops,
-> >>> sanitize, etc. Are all these working or not really well tested?
-> >>
-> >> I don't believe that they are well tested. We have a simple test to
-> >> mount an eMMC partition, create a file, check the contents, remove the
-> >> file and unmount. The timeouts always occur during unmounting.
-> >>
-> >>> Earlier, before my three patches, if the provided timeout_ms parameter
-> >>> to __mmc_switch() was zero, which was the case for
-> >>> mmc_mmc_flush_cache() - this lead to that __mmc_switch() simply
-> >>> ignored validating host->max_busy_timeout, which was wrong. In any
-> >>> case, this also meant that an R1B response was always used for
-> >>> mmc_flush_cache(), as you also indicated above. Perhaps this is the
-> >>> critical part where things can go wrong.
-> >>>
-> >>> BTW, have you tried erase commands for sdhci tegra driver? If those
-> >>> are working fine, do you have any special treatments for these?
-> >>
-> >> That I am not sure, but I will check.
-> >
-> > Great, thanks. Looking forward to your report.
-> >
-> > So, from my side, me and Anders Roxell, have been collaborating on
-> > testing the behaviour on a TI Beagleboard x15 (remotely with limited
-> > debug options), which is using the sdhci-omap variant. I am trying to
-> > get hold of an Nvidia jetson-TX2, but not found one yet. These are the
-> > conclusions from the observed behaviour on the Beagleboard for the
-> > CMD6 cache flush command.
-> >
-> > First, the reported host->max_busy_timeout is 2581 (ms) for the
-> > sdhci-omap driver in this configuration.
-> >
-> > 1. As we all know by now, the cache flush command (CMD6) fails with
-> > -110 currently. This is when MMC_CACHE_FLUSH_TIMEOUT_MS is set to 30 *
-> > 1000 (30s), which means __mmc_switch() drops the MMC_RSP_BUSY flag
-> > from the command.
-> >
-> > 2. Changing the MMC_CACHE_FLUSH_TIMEOUT_MS to 2000 (2s), means that
-> > the MMC_RSP_BUSY flag becomes set by __mmc_switch, because of the
-> > timeout_ms parameter is less than max_busy_timeout (2000 <  2581).
-> > Then everything works fine.
-> >
-> > 3. Updating the code to again use 30s as the
-> > MMC_CACHE_FLUSH_TIMEOUT_MS, but instead forcing the MMC_RSP_BUSY to be
-> > set, even when the timeout_ms becomes greater than max_busy_timeout.
-> > This also works fine.
-> >
-> > Clearly this indicates a problem that I think needs to be addressed in
-> > the sdhci driver. However, of course I can revert the three discussed
-> > patches to fix the problem, but that would only hide the issues and I
-> > am sure we would then get back to this issue, sooner or later.
-> >
-> > To fix the problem in the sdhci driver, I would appreciate if someone
-> > from TI and Nvidia can step in to help, as I don't have the HW on my
-> > desk.
-> >
-> > Comments or other ideas of how to move forward?
-> >
->
-> Sorry I missed this earlier.
->
-> I don't have an X15 with me here but I'm trying to set one up in our
-> remote farm. In the meantime, I tried to reproduce this issue on two
-> platforms (dra72-evm and am57xx-evm) and wasn't able to see the issue
-> because those eMMC's don't even have a cache. I will keep you updated
-> when I do get a board with a eMMC that has a cache.
->
-> Is there a way to reproduce this CMD6 issue with another operation?
+On Sun, Mar 01, 2020 at 08:20:03AM -0800, Marco Ballesio wrote:
+> On Sat, Feb 29, 2020 at 10:43:00AM -0800, Roman Gushchin wrote:
+> > On Fri, Feb 28, 2020 at 04:51:31PM -0800, Marco Ballesio wrote:
+> > > Hi all,
+> > > 
+> > > did anyone have time to look into my proposal and, in case, are there
+> > > any suggestions, ideas or comments about it?
+> > 
+> > Hello, Marco!
+> > 
+> > I'm sorry, somehow I missed the original letter.
+> > 
+> > In general the cgroup v1 interface is considered frozen. Are there any particular
+> > reasons why you want to extend the v1 freezer rather than use the v2 version of it?
+> > 
+> > You don't even need to fully convert to cgroup v2 in order to do it, some v1
+> > controllers can still be used.
+> > 
+> > Thanks!
+> > 
+> > Roman
+> 
+> Hi Roman,
+> 
+> When compared with backports of v2 features and their dependency chains, this
+> patch would be easier to carry in Android common. The potential is to have
+> killability for frozen processes on hw currently in use.
 
-Yes, most definitely.
+I see...
 
-Let me cook a debug patch for you that should trigger the problem for
-another CMD6 operation. I will post something later this evening or in
-the mornings (Swedish timezone).
+The implementation looks good to me, but I really not sure if adding new control files
+to cgroup v1 is a good idea at this point. Are there any plans in the Android world
+to move forward to cgroup v2? If not, why not?
+If there are any specific issues/dependencies, let's discuss and resolve them.
 
-Kind regards
-Uffe
+Thanks!
+
+Roman
