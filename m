@@ -2,155 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A4A17543B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:04:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C12C175441
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 08:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgCBHEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 02:04:39 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38575 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbgCBHEf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 02:04:35 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p7so3833346pli.5
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Mar 2020 23:04:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9M9jM0oFamI1cSDzHh+fj7Bd6QrDeIt5TA9kTaFKmIk=;
-        b=Oc9ZJ1DCGMymWi40UBVMVgLIKFegujZrTwU1vekyLOVgvi9ufi9lgicsHrFncgz57c
-         WJBNuaWQDRRM2I74chmgH39ujFkAh0uD5TLr/WBdU7ToNJM6RJ8dBAYUOVS2/LH/RXeh
-         f+DvS+lU1InV13FdPPvIo4qvuPQcHnDgdzQZk9NfeTtzIXsizMwHEDxRmA64pc9imvHw
-         b9mBEIfRUC/6ju9c3oelDNVewofLzzo8pt7NKiPwrgkkIodLsN8qdtiFlOhaECnBnCXz
-         uAxu4bJ1q4FfRx25Mabc51/W8Zi8Ej2Gl127396HT+IlweiY5AsWxdYCzWuOaGuPrSQJ
-         ckMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9M9jM0oFamI1cSDzHh+fj7Bd6QrDeIt5TA9kTaFKmIk=;
-        b=ElUds0/x5G/bpIobK4P0ucM1Kl3OYHiqOzG6treTnLtN9NQWop6dvRHN+CXH9t2BhW
-         WmjLgT3h9H5MnJZ3XWrYMOG2jX2KUGicF2wP+ATU+BZm745G4PgXU9NGO57cADN/JbOt
-         bCxeBVji6revV51iXe6yQiXMKZIBr23aVHEC8yvPqE3f0Jejt2o1/Dq4Pz071YsEaIo+
-         epP1BlDFwBWaCZ+6sRT3/sfpramGeNElzqEVivuC4mnGA58KyCrDD71AFExhiSVKdH/g
-         qCJk3BGOu6OqMPFXeSUa9usH+bf+Ps7I4tGy3Hd0/xiGQpVOFSJB+4d2y1rG/k9MruFb
-         nHKA==
-X-Gm-Message-State: APjAAAX9qrpTjre9EU+rcrYjcoqszwtUXjCzG4IvOEHHy+T470rXjgMa
-        z86sskJaO1wdmriqkBXMH63a2g==
-X-Google-Smtp-Source: APXvYqyFZxrijhdE9RQs8BTA+6h7lNVQj7NlFFGdvJkgFm5Lj0WwNMhRAFLgXdw+jQk7zjcRynSakg==
-X-Received: by 2002:a17:902:864c:: with SMTP id y12mr16539924plt.8.1583132673691;
-        Sun, 01 Mar 2020 23:04:33 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b3sm19969551pft.73.2020.03.01.23.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Mar 2020 23:04:33 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 2/2] net: qrtr: Fix FIXME related to qrtr_ns_init()
-Date:   Sun,  1 Mar 2020 23:03:05 -0800
-Message-Id: <20200302070305.612067-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200302070305.612067-1-bjorn.andersson@linaro.org>
-References: <20200302070305.612067-1-bjorn.andersson@linaro.org>
+        id S1727030AbgCBHFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 02:05:53 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54840 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726144AbgCBHFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 02:05:53 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 508DB282C5065C29DD9C;
+        Mon,  2 Mar 2020 15:05:44 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Mon, 2 Mar 2020
+ 15:05:29 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <oder_chiou@realtek.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <jack.yu@realtek.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: rt1015: set snd_soc_dai_ops in rt1015_dai driver
+Date:   Mon, 2 Mar 2020 15:05:22 +0800
+Message-ID: <20200302070522.48104-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 2 second delay before calling qrtr_ns_init() meant that the remote
-processors would register as endpoints in qrtr and the say_hello() call
-would therefor broadcast the outgoing HELLO to them. With the HELLO
-handshake corrected this delay is no longer needed.
+snd_soc_dai_driver should set ops in rt1015_dai driver.
+Also make the two variable static to fix sparse warnings.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: df31007400c3 ("ASoC: rt1015: add rt1015 amplifier driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
+ sound/soc/codecs/rt1015.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Changes since v1:
-- Cleaned up remaining work queue pieces
-- Picked up Mani's r-b and t-b
-
- net/qrtr/ns.c   |  2 +-
- net/qrtr/qrtr.c | 10 +---------
- net/qrtr/qrtr.h |  2 +-
- 3 files changed, 3 insertions(+), 11 deletions(-)
-
-diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-index e3f11052b5f6..cfd4bd07a62b 100644
---- a/net/qrtr/ns.c
-+++ b/net/qrtr/ns.c
-@@ -693,7 +693,7 @@ static void qrtr_ns_data_ready(struct sock *sk)
- 	queue_work(qrtr_ns.workqueue, &qrtr_ns.work);
- }
+diff --git a/sound/soc/codecs/rt1015.c b/sound/soc/codecs/rt1015.c
+index d300b41..100b8c8 100644
+--- a/sound/soc/codecs/rt1015.c
++++ b/sound/soc/codecs/rt1015.c
+@@ -841,12 +841,12 @@ static void rt1015_remove(struct snd_soc_component *component)
+ #define RT1015_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE | \
+ 			SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S8)
  
--void qrtr_ns_init(struct work_struct *work)
-+void qrtr_ns_init(void)
- {
- 	struct sockaddr_qrtr sq;
- 	int ret;
-diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index 423310896285..e22092e4a783 100644
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -9,7 +9,6 @@
- #include <linux/termios.h>	/* For TIOCINQ/OUTQ */
- #include <linux/spinlock.h>
- #include <linux/wait.h>
--#include <linux/workqueue.h>
+-struct snd_soc_dai_ops rt1015_aif_dai_ops = {
++static struct snd_soc_dai_ops rt1015_aif_dai_ops = {
+ 	.hw_params = rt1015_hw_params,
+ 	.set_fmt = rt1015_set_dai_fmt,
+ };
  
- #include <net/sock.h>
- 
-@@ -110,8 +109,6 @@ static DEFINE_MUTEX(qrtr_node_lock);
- static DEFINE_IDR(qrtr_ports);
- static DEFINE_MUTEX(qrtr_port_lock);
- 
--static struct delayed_work qrtr_ns_work;
--
- /**
-  * struct qrtr_node - endpoint node
-  * @ep_lock: lock for endpoint management and callbacks
-@@ -1263,11 +1260,7 @@ static int __init qrtr_proto_init(void)
- 		return rc;
+-struct snd_soc_dai_driver rt1015_dai[] = {
++static struct snd_soc_dai_driver rt1015_dai[] = {
+ 	{
+ 		.name = "rt1015-aif",
+ 		.id = 0,
+@@ -857,6 +857,7 @@ struct snd_soc_dai_driver rt1015_dai[] = {
+ 			.rates = RT1015_STEREO_RATES,
+ 			.formats = RT1015_FORMATS,
+ 		},
++		.ops    = &rt1015_aif_dai_ops,
  	}
- 
--	/* FIXME: Currently, this 2s delay is required to catch the NEW_SERVER
--	 * messages from routers. But the fix could be somewhere else.
--	 */
--	INIT_DELAYED_WORK(&qrtr_ns_work, qrtr_ns_init);
--	schedule_delayed_work(&qrtr_ns_work, msecs_to_jiffies(2000));
-+	qrtr_ns_init();
- 
- 	return rc;
- }
-@@ -1275,7 +1268,6 @@ postcore_initcall(qrtr_proto_init);
- 
- static void __exit qrtr_proto_fini(void)
- {
--	cancel_delayed_work_sync(&qrtr_ns_work);
- 	qrtr_ns_remove();
- 	sock_unregister(qrtr_family.family);
- 	proto_unregister(&qrtr_proto);
-diff --git a/net/qrtr/qrtr.h b/net/qrtr/qrtr.h
-index 53a237a28971..dc2b67f17927 100644
---- a/net/qrtr/qrtr.h
-+++ b/net/qrtr/qrtr.h
-@@ -29,7 +29,7 @@ void qrtr_endpoint_unregister(struct qrtr_endpoint *ep);
- 
- int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len);
- 
--void qrtr_ns_init(struct work_struct *work);
-+void qrtr_ns_init(void);
- 
- void qrtr_ns_remove(void);
+ };
  
 -- 
-2.24.0
+2.7.4
+
 
