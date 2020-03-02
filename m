@@ -2,157 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869F2175EC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:55:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC140175ED2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbgCBPzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:55:53 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54999 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbgCBPzx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:55:53 -0500
-Received: by mail-wm1-f68.google.com with SMTP id z12so11786819wmi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 07:55:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:autocrypt:organization:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BjYlKL9o7TZbQsWc9K6QzEeYeYL9pKOO2B0dVZhGMgI=;
-        b=E3EW7bKsyRG3EAHqjwmwW9yEzLFHZ1Zm9ZA/LseFov8UVcQejVpj55bEMr/2EM/2ZO
-         YG32xnXA4AY9KhV5CkmUgqTQ1tOWULDOiiaJo1kVmuMGHqIQkyCBiGQBwR4j0jetKvGq
-         cntxwjyDo7avX0Np692/7MQfD5vH3JJax4mq5Z63KCD7u0eLQjNTpckWa/Nb9A+grmxZ
-         knnLm8dSDK1ZHsindY6ZoNfah7wDLVU2WeS0znidHeu/9uUwBoPrDoTXAuaFxYfLHLkk
-         vJEleCU4p8kjDrjgg93nVcHO+oVf3ZElg0XNcETlsZ8ssTlrCW3AC/Y2r+YJz5DNFrc+
-         hmOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=BjYlKL9o7TZbQsWc9K6QzEeYeYL9pKOO2B0dVZhGMgI=;
-        b=gXrnh2I0n8esbjuoA2yPhSr5ODclJpeWu/E2XFHxV/CTNh7NoenITNdoethNuXW8g2
-         N9tEhpgQl4/rC3FYRGO62dqLOySSxP6+HBr7FmXJeTzBUHhi87ojKBA1VEmNqbxnfVNQ
-         j2jiEERvYo8E+aTWV1g7SWaGcymMZWTEZI5bNGwzdXC1eOSuES3hQk/4D/KlXxYoceAT
-         ovLVmrtep7TaukrBxrff8hTAGinBmIW2UDtbOzeVSqYvIkLMH7iO6X61YIcbjqBNYeoT
-         2RTB6DfunJ9fILEqcYECCUarGADggxndhmzJyeUqSDTceL/fVj6MhaZph33XJ2W8jZQ1
-         Yl6Q==
-X-Gm-Message-State: ANhLgQ14FBeDj5S0De4mnxtzm7uKv25y6oLgYLCLnfeQy4ZimjV57I6Q
-        qJXnd6q/ZAB7FbMUvFIH+W6iymlDId/xZA==
-X-Google-Smtp-Source: ADFU+vutkqJro4J9wP34hv34vDjOhrgg/OZVjaaFWfss+KCr9LUev0wqJ6uKuztVCwzyYydvMm6yOA==
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr97464wmi.166.1583164550931;
-        Mon, 02 Mar 2020 07:55:50 -0800 (PST)
-Received: from [10.1.3.173] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l17sm28503407wro.77.2020.03.02.07.55.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2020 07:55:50 -0800 (PST)
-Subject: Re: [PATCH v4 03/11] drm/bridge: dw-hdmi: Plug atomic state hooks to
- the default implementation
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     a.hajda@samsung.com, jonas@kwiboo.se, jernej.skrabec@siol.net,
-        boris.brezillon@collabora.com, linux-amlogic@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20200206191834.6125-1-narmstrong@baylibre.com>
- <20200206191834.6125-4-narmstrong@baylibre.com>
- <20200302095608.GH11960@pendragon.ideasonboard.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- BSwxi7g3Mu7u5kUByanqHyA=
-Organization: Baylibre
-Message-ID: <a11dd614-7a20-a711-7b18-09ae4b9fde49@baylibre.com>
-Date:   Mon, 2 Mar 2020 16:55:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200302095608.GH11960@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727471AbgCBP4P convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 10:56:15 -0500
+Received: from mail-oln040092064094.outbound.protection.outlook.com ([40.92.64.94]:12774
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727401AbgCBP4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 10:56:11 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l2r3lvduDL96KS0h0EN+7YkSAgje1jk+5tNPueNh3896BYDWWc5Euj89wNeorAf+i+XQ4oAcQE5FLJ1MT1c9UXTxXVeXf8HhgoiQxlDsuaPWwiWI4Wsv/BRUja8QhjUaEW26tHDP5DFU9fnrg6fU9YKfvy9aP/prZqb/k79qFZjYyVO5Gpc2uRM4n8tPsZNtC7T0MuOFyj17VZ6MXq1Ig+mVPiJpysZz0893ZAKGaTmpWpMVJ58sXFU8iA99gZKshoXcsKxfg8RonimPSg1ol882GyiFB55K8G3hqt5pQ/vP54SII9CtkHoWBT80M+UOJ0uXHVQ49XOBtjKg01EI4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D+Kd81xLm1x3TxoEszHoxLRpj/1LPM1dSZ2/tf9dSgw=;
+ b=PmJA18Lywan1RnlRmim+xy+Px27lFm8eH6q8ZWG8aNfsHhYqeD/JL43NlVaV2Uqkx5OqqAEc6R+C4x3FJ6FSrjuDC2uA6P7aY9sb6B7etQBMWAwevGa+rkPo802JZJFFQI9/sB3J1qurcCH1ByhPxaiAYsCdK3V4tgPZHe+Jgjug3qkijLkw1OGE75A89/JHUVFlntbqBskbfGdSHQKOyTT++CdHNZeQzRJQ6Toq/ZNlWDBY6tVbIG78xZp8z9A4J3rP5HUcWM8jlxelfVCo5vgtOY3sxazEPhk55dJNnnwOyqVJq/Shux9dcnBYxD0iUNM6uo7ltWk8oZTAZVNxaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from VE1EUR01FT020.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:e400:7e19::39) by
+ VE1EUR01HT123.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e19::346)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Mon, 2 Mar
+ 2020 15:56:07 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.2.58) by
+ VE1EUR01FT020.mail.protection.outlook.com (10.152.2.234) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.14 via Frontend Transport; Mon, 2 Mar 2020 15:56:05 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 15:56:04 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR06CA0075.eurprd06.prod.outlook.com (2603:10a6:208:fa::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.19 via Frontend Transport; Mon, 2 Mar 2020 15:56:03 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     Oleg Nesterov <oleg@redhat.com>
+CC:     Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+Thread-Topic: [PATCHv2] exec: Fix a deadlock in ptrace
+Thread-Index: AQHV8AjGwZG4WijWc0+aQpdADP+q6qg1PBaAgAA5/QA=
+Date:   Mon, 2 Mar 2020 15:56:04 +0000
+Message-ID: <AM6PR03MB51706D69E3F0126237DDD110E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+ <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
+ <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <20200302122828.GA9769@redhat.com>
+In-Reply-To: <20200302122828.GA9769@redhat.com>
+Accept-Language: en-US, en-GB, de-DE
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR06CA0075.eurprd06.prod.outlook.com
+ (2603:10a6:208:fa::16) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:3859E16BF71A8EC6423EB232D80AE29A1E09FEE95B4D7450D9F8D23EAC84772D;UpperCasedChecksum:B223ECFEDCD92A9F2C1781AAC90A39F9E0AA91ECCB1C8618827A1BBCB80C5D95;SizeAsReceived:9182;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [RgRM/hymeKlspWJoHmyR0Ulb73pdTH9g]
+x-microsoft-original-message-id: <a3723c53-2c41-ed50-309f-ba0d8555f67b@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: b61d0c25-2554-4b5a-1def-08d7bec23679
+x-ms-traffictypediagnostic: VE1EUR01HT123:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: zGFfTOXtwopFCtyvp7ptFwafemwNiCw/uWpTmVi+SLPvY/6zuwibbsn8jTFPu/q2u2H6q8coBRQSeCgdgFDYwHrY3rtF5IsrQXElOAMtsrgIiN5EHlgln0I7tWBp6pwuZO7kOf9/huDfs3VB5dZWQAnep8rzczUeg+2gWknmc1KDpBTdjEbspnnS2QTbrGb2lvk4zzlDGbQQ27IB//zFxqMUM5tkCXNn1q4/dbz4gEE=
+x-ms-exchange-antispam-messagedata: 5b5OpsuSrxieJKpRNkYaSOPnTdNv+Phjlo/8abt2jrLPA/WxuhhMsDmFiKcLHzV+6jKJLoxI6QI9LkQJHYJcQn0kl/B+AwkcAN4XXQUap6t+GL3Qw5sqxWNdwePFmm7WZmHpszbmMt79ctrvP8Wu2w==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <AF6DD11A35CDD44D93462FA5182F8F18@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b61d0c25-2554-4b5a-1def-08d7bec23679
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 15:56:04.6412
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR01HT123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/2020 10:56, Laurent Pinchart wrote:
-> Hi Neil,
-> 
-> Thank you for the patch.
-> 
-> On Thu, Feb 06, 2020 at 08:18:26PM +0100, Neil Armstrong wrote:
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> How about adding a commit message ?
 
-Done, thanks
 
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
->> ---
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 +++
->>  1 file changed, 3 insertions(+)
+On 3/2/20 1:28 PM, Oleg Nesterov wrote:
+> On 03/01, Bernd Edlinger wrote:
 >>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> index 051001f77dd4..fec4a4bcd1fe 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -2494,6 +2494,9 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
->>  }
->>  
->>  static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
->> +	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->> +	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->> +	.atomic_reset = drm_atomic_helper_bridge_reset,
->>  	.attach = dw_hdmi_bridge_attach,
->>  	.detach = dw_hdmi_bridge_detach,
->>  	.enable = dw_hdmi_bridge_enable,
+>> This fixes a deadlock in the tracer when tracing a multi-threaded
+>> application that calls execve while more than one thread are running.
 > 
+> Heh. Yes, known problem. See my attempt to fix it:
+> https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+> 
+>> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>>  	struct mm_struct *mm;
+>>  	int err;
+>>  
+>> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
+>> +	err =  mutex_lock_killable(&task->signal->cred_change_mutex);
+> 
+> So if I understand correctly your patch doesn't fix other problems
+> with debugger waiting for cred_guard_mutex.
+> 
+
+No, but I see this just as a first step.
+
+> I too do not think this can justify the new mutex in signal_struct...
+> 
+
+I think for the vm_access the semantic of this mutex is clear, that it
+prevents the credentials to change while it is held by vm_access,
+and probably other places can take advantage of this mutex as well.
+
+While on the other hand, the cred_guard_mutex is needed to avoid two
+threads calling execve at the same time.  So that is needed as well.
+
+What remains is probably making PTHREAD_ATTACH detect that the process
+is currently in execve, and make that call fail in that situation.
+I have not thought in depth about that problem, but it will probably
+just need the right mutex to access current->in_execve.
+
+
+That's at least how I see it.
+
+
+Thanks
+Bernd.
+
+
 
