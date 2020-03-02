@@ -2,161 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF6B0175EDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:56:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 295E2175EEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Mar 2020 16:58:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbgCBP4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 10:56:45 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55128 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbgCBP4p (ORCPT
+        id S1727413AbgCBP56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 10:57:58 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46177 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbgCBP56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:56:45 -0500
-Received: by mail-wm1-f65.google.com with SMTP id z12so11790741wmi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 07:56:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=b3t9aJpKXeK1YZcEru2kIhftxfshYeOnQjG1qownOxY=;
-        b=ZCsQqhund0Bl0vrZ/HLmfGsxW+P97mm6Y+YzcAOyx3EZrWRw4XooGbDN+QpGa1Ff+t
-         rOU1jPTnvzhZJpv8mVleUEAlwCumB5yvqkGKBZ+Reqzf2gjtxfN6p4nLZdAejZsEFZi8
-         J42O9Dz4ZbEEvFyfXMZB6YRvFfnbL6WDvEX/gJZzYq3HkjXK6UTterIVApuC45TkTFdc
-         RnsE9Gln2hTWvPcFWyUFAyuuuTZvCMALA2vcVfGRaOrMTYGUJ8nyYCpQmE+oX/mucTzO
-         b2IksTI3UbgY1wNEuHSOrKHpUmWNsZxzwSPRmbThfD5UAZjbNkckm3sBD6yAu0gjFWyw
-         D4Ww==
+        Mon, 2 Mar 2020 10:57:58 -0500
+Received: by mail-ot1-f65.google.com with SMTP id g96so10156336otb.13;
+        Mon, 02 Mar 2020 07:57:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=b3t9aJpKXeK1YZcEru2kIhftxfshYeOnQjG1qownOxY=;
-        b=E0uYiKNp1XMgbXCG5thpr40szbr5A7YcSlyZYrlnMRPONwrl3RGL1ypp+JB5diYiPS
-         CgoLOpX1wi/trXLeEYnGs6CwGqVNzhELcATxhSd/12IkaPCSu/4mFoygVWE2szaQdWKF
-         II3LG8J/yuBuJ0K2u7eLT8TjwXHAwNPCcyDIG0bPCfFa12aXfueM/mgOSp+5Pt+524G4
-         7SBAa6/l85oFVD/sDyqZehClAk1NtTz+PbECvcSDaXrBE0boSda+zUC22dbSvC/zvRrU
-         Re5ByFEAOqhMMBytGDCx/2nBVA4uDV3FWbfJUPAd9KT/eFK2YIqVmK5PwqRMqj5hgKUX
-         FkBA==
-X-Gm-Message-State: ANhLgQ0r6t1AmgvxUBkbic2yf8iYMVfD/qYrUDmeFRIvQ8seFJX9UiXf
-        SkpcyBUNeGkqYFTEgSCaW/1aJw==
-X-Google-Smtp-Source: ADFU+vu0GIhLzLXDBquuqbkjLhURd3FsUF9wGfdQaK+BZVVoyVOi2JRI+GBMEtGns797d/283FHtkA==
-X-Received: by 2002:a1c:5f41:: with SMTP id t62mr128259wmb.42.1583164601025;
-        Mon, 02 Mar 2020 07:56:41 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id o24sm15918154wmh.28.2020.03.02.07.56.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 07:56:40 -0800 (PST)
-Date:   Mon, 2 Mar 2020 15:57:16 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/19] platform/x86: Rework intel_scu_ipc and
- intel_pmc_ipc drivers
-Message-ID: <20200302155716.GD3494@dell>
-References: <20200302133327.55929-1-mika.westerberg@linux.intel.com>
- <20200302142621.GB3494@dell>
- <20200302143803.GI2667@lahna.fi.intel.com>
- <20200302151924.GC3494@dell>
- <20200302154205.GF1224808@smile.fi.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nito/nrZsWtOKekEZGAYljgXMNzrk2/5S3aE/Pp6hpw=;
+        b=TQLDPo0hedRA5ly3wzJN2d18s/slzog7hkmx7qYItkl/maRDpnuKo4J0W3wo+or3FW
+         evEeS6hQ9Q123MkMH/YRvnKefV1Y7CkQPtJ8X987sU9OSqXOiiciSM+fzkY8qMI4h3gd
+         hkAUt2yLG0zBY40MQhjKup6vcc2lpNYEyqJjFncXGzMD/020tEGEAVE14BQ3DOXL+3Fh
+         ivjYXgxCeeb31BkG9I0nLeh8IPJ2IuuABltmj2GGSNt8eRr3R9CgVphM2A3p7xBn2j+C
+         1UD5iyU9DrRSElnh1Lgkb4n6Cu39j0jPHmEAbyYcamSkohju8T9yjmsbOxq5dpFw3DW0
+         b4UA==
+X-Gm-Message-State: APjAAAXjn+kAZeIbZmOuwKJfZevDQKf9wgDQm554a3J5y7BAfE4DC5PF
+        E05vLcKvnyB5QmGK2bAPppGtQrC+jTK86++fpcQ=
+X-Google-Smtp-Source: APXvYqxZfeCMUCmPDo150isft8U19jV/qbujmuP/cdQANvFKK6654BGfmN/KgnrbsmahhA2IQQrudvzS3H3CA0ko0Eg=
+X-Received: by 2002:a05:6830:100e:: with SMTP id a14mr13887882otp.297.1583164677024;
+ Mon, 02 Mar 2020 07:57:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200302154205.GF1224808@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200228170210.18252-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200228170210.18252-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 2 Mar 2020 16:57:35 +0100
+Message-ID: <CAMuHMdUn9njDRWZPcSD87YuejmhNvDK3pUqL5kXNX6KA-8Y72g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0-cat874: Add support for
+ AISTARVISION MIPI Adapter V2.1
+To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 02 Mar 2020, Andy Shevchenko wrote:
+Hi Lad,
 
-> On Mon, Mar 02, 2020 at 03:19:24PM +0000, Lee Jones wrote:
-> > On Mon, 02 Mar 2020, Mika Westerberg wrote:
-> > > On Mon, Mar 02, 2020 at 02:26:21PM +0000, Lee Jones wrote:
-> > > > On Mon, 02 Mar 2020, Mika Westerberg wrote:
-> 
-> > > > > Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
-> > > > > IPC communications with minor differences. This duplication does not make
-> > > > > much sense so this series reworks the two drivers so that there is only a
-> > > > > single implementation of the SCU IPC. In addition to that the API will be
-> > > > > updated to take SCU instance pointer as an argument, and most of the
-> > > > > callers will be converted to this new API. The old API is left there but
-> > > > > the plan is to get rid the callers and then the old API as well (this is
-> > > > > something we are working with Andy Shevchenko).
-> > > > > 
-> > > > > The intel_pmc_ipc.c is then moved under MFD which suits better for this
-> > > > > kind of a driver that pretty much sets up the SCU IPC and then creates a
-> > > > > bunch of platform devices for the things sitting behind the PMC. The driver
-> > > > > is renamed to intel_pmc_bxt.c which should follow the existing conventions
-> > > > > under drivers/mfd (and it is only meant for Intel Broxton derivatives).
-> > > > > 
-> > > > > This is on top of platform-driver-x86.git/for-next branch because there is
-> > > > > already some cleanup work queued that re-organizes Kconfig and Makefile
-> > > > > entries.
-> > > > > 
-> > > > > I have tested this on Intel Joule (Broxton-M) board.
-> > > > > 
-> > > > > Changes from v6:
-> > > > > 
-> > > > >   * Added Reviewed-by tag from Andy
-> > > > >   * Expanded PMC, IPC and IA acronyms
-> > > > >   * Drop TCO_DEVICE_NAME, PUNIT_DEVICE_NAME and TELEMETRY_DEVICE_NAME
-> > > > >   * Move struct intel_pmc_dev into include/linux/mfd/intel_pmc_bxt.h
-> > > > >   * Add PMC_DEVICE_MAX to the enum and use it
-> > > > >   * Add kernel-docs for simplecmd_store() and northpeak_store()
-> > > > >   * Use if (ret) return ret; over the ternary operator
-> > > > >   * Drop "This is index X" from comments
-> > > > >   * Use acpi_has_watchdog() to determine whether iTCO_wdt is added or not.
-> > > > >   * Rename intel_scu_ipc_pdata -> intel_scu_ipc_data to make it less
-> > > > >     confusing wrt. platform data for platform drivers.
-> > > > 
-> > > > Any reason why you've dropped all my tags?
-> > > 
-> > > You mean these?
-> > > 
-> > > For my own reference:
-> > >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > > 
-> > > I wasn't really sure what to do with them. They are not in the normal
-> > > tag format I've seen so I thought you use them yourself somehow to
-> > > manage your mailboxes. I can add them back if needed.
-> > 
-> > Yes, please add them, so I can track them.
-> > 
-> > It normally means that I plan to take the set through MFD and
-> > subsequently send an immutable pull-request out to the other
-> > Maintainers once all the other Acks have been provided.
-> > 
-> > MFD handles these kinds of cross-subsystem patch-sets often.
-> 
-> This series has dependencies to PDx86 (as mentioned in cover letter).
-> 
-> What do you prefer then, me to:
-> a) prepare ib from what I have, then you take it followed by me taking your ib, or
-> b) take everything and prepare ib for you?
+CC linux-media
 
-Either would be fine by me.
+On Fri, Feb 28, 2020 at 6:02 PM Lad Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> This patch adds support AISTARVISION MIPI Adapter V2.1 board connected
+> to G2E board. Common file aistarvision-mipi-adapter-2.1.dtsi is created
+> which have the camera endpoint nodes with disabled status and in
+> r8a774c0-ek874-mipi-2.1.dts file VIN/CSI nodes are enabled. By default
+> imx219 endpoint is tied with CSI2.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-What kind of dependencies are they?  Are they protected by Kconfig
-options?  Another way of asking that would be to say, would this set
-throw build errors if I tried to apply and build it or would it just
-refuse to compile?
+Thanks for your patch!
+
+> Geert/Rob since the imx219 driver is yet to make into mainline
+> but has been merged into media-subsystem I would like to take
+> this patch via media-tree.
+
+Usually DTS patches are merged through renesas-devel and arm-soc, not
+through a driver's subsystems tree.  This is done to avoid merge
+conflicts.  I prefer not to deviate from that, unless there is a very
+good reason to do so.
+
+Is there any dependency on the code in the media tree that I'm missing?
+Once DT bindings have been accepted in a subsystem maintainer's tree,
+you can start using them in DTS files.
+
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the AISTARVISION MIPI Adapter V2.1
+> + *
+> + * Copyright (C) 2020 Renesas Electronics Corp.
+> + */
+> +
+> +/ {
+> +       ov5645_vdddo_1v8: 1p8v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "camera_vdddo";
+> +               regulator-min-microvolt = <1800000>;
+> +               regulator-max-microvolt = <1800000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       ov5645_vdda_2v8: 2p8v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "camera_vdda";
+> +               regulator-min-microvolt = <2800000>;
+> +               regulator-max-microvolt = <2800000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       ov5645_vddd_1v5: 1p5v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "camera_vddd";
+> +               regulator-min-microvolt = <1500000>;
+> +               regulator-max-microvolt = <1500000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       imx219_vana_2v8: 2p8v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "camera_vana";
+> +               regulator-min-microvolt = <2800000>;
+> +               regulator-max-microvolt = <2800000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       imx219_vdig_1v8: 1p8v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "camera_vdig";
+> +               regulator-min-microvolt = <1500000>;
+> +               regulator-max-microvolt = <1500000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       imx219_vddl_1v2: 1p2v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "camera_vddl";
+> +               regulator-min-microvolt = <1200000>;
+> +               regulator-max-microvolt = <1200000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       imx219_clk: imx219_clk {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <24000000>;
+> +       };
+> +};
+> +
+> +&MIPI_PARENT_I2C {
+> +       ov5645: ov5645@3c {
+> +               compatible = "ovti,ov5645";
+> +               reg = <0x3c>;
+> +               status = "disabled";
+
+Is there any real need to disable this node here?
+Do you envision anyone including this .dtsi file, and not enabling this
+node?
+
+> +
+> +               clock-names = "xclk";
+> +
+> +               vdddo-supply = <&ov5645_vdddo_1v8>;
+> +               vdda-supply = <&ov5645_vdda_2v8>;
+> +               vddd-supply = <&ov5645_vddd_1v5>;
+> +
+> +               port@0 {
+
+DT bindings say "port", without unit-address.
+
+> +                       ov5645_ep: endpoint {
+> +                       };
+> +               };
+> +       };
+> +
+> +       rpi_v2_camera: imx219@10 {
+> +               compatible = "sony,imx219";
+> +               reg = <0x10>;
+> +               status = "disabled";
+
+Likewise.
+
+> +
+> +               VANA-supply = <&imx219_vana_2v8>;
+> +               VDIG-supply = <&imx219_vdig_1v8>;
+> +               VDDL-supply = <&imx219_vddl_1v2>;
+> +               clocks = <&imx219_clk>;
+> +
+> +               port@0 {
+
+DT bindings say "port", without unit-address...
+
+> +                       reg = <0>;
+
+... and thus no "reg" property.
+
+> +                       imx219_ep0: endpoint {
+> +                       };
+> +               };
+> +       };
+> +};
+> diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+> new file mode 100644
+> index 000000000000..435b7f62d88d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the Silicon Linux RZ/G2E 96board platform (CAT874)
+> + * connected with aistarvision-mipi-v2-adapter board
+> + *
+> + * Copyright (C) 2020 Renesas Electronics Corp.
+> + */
+> +
+> +/dts-v1/;
+> +#include "r8a774c0-ek874.dts"
+> +#define MIPI_PARENT_I2C i2c3
+> +#include "aistarvision-mipi-adapter-2.1.dtsi"
+> +
+> +/ {
+> +       model = "Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) with aistarvision-mipi-v2-adapter board";
+> +       compatible = "si-linux,cat875", "si-linux,cat874", "renesas,r8a774c0";
+> +};
+> +
+> +&i2c3 {
+> +       status = "okay";
+> +};
+> +
+> +&vin4 {
+> +       status = "okay";
+> +};
+> +
+> +&vin5 {
+> +       status = "okay";
+> +};
+> +
+> +&csi40 {
+> +       status = "okay";
+> +
+> +       ports {
+> +               port@0 {
+> +                       reg = <0>;
+> +
+> +                       csi40_in: endpoint {
+> +                               clock-lanes = <0>;
+> +                               data-lanes = <1 2>;
+> +                               remote-endpoint = <&imx219_ep0>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&ov5645 {
+> +       /* uncomment status and remote-endpoint properties to tie ov5645
+> +        * to CSI2 also make sure remote-endpoint for imx219 camera is
+> +        * commented and remote endpoint in csi40_in is ov5645_ep
+> +        */
+> +       /* status = "okay"; */
+> +
+> +       #address-cells = <1>;
+> +       #size-cells = <0>;
+
+#{address,size}-cells not needed.
+
+> +       enable-gpios = <&gpio5 5 GPIO_ACTIVE_HIGH>;
+> +       reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
+> +
+> +       clocks = <&cpg CPG_MOD 716>;
+> +       clock-frequency = <24000000>;
+
+I know this is dictated by the DT bindings for the ov5645 camera, but
+specifying a clock rate is usually done through assigned-clock-rates,
+cfr.  Documentation/devicetree/bindings/clock/clock-bindings.txt.
+
+> +
+> +       port@0 {
+
+port {
+
+> +               ov5645_ep: endpoint {
+> +                       clock-lanes = <0>;
+> +                       data-lanes = <1 2>;
+> +                       /* remote-endpoint = <&csi40_in>; */
+> +               };
+> +       };
+> +};
+> +
+> +&rpi_v2_camera {
+> +       status = "okay";
+> +
+> +       #address-cells = <1>;
+> +       #size-cells = <0>;
+> +
+> +       port@0 {
+> +               reg = <0>;
+
+port {
+
+> +               imx219_ep0: endpoint {
+> +                       clock-lanes = <0>;
+> +                       data-lanes = <1 2>;
+> +                       remote-endpoint = <&csi40_in>;
+> +                       link-frequencies = /bits/ 64 <456000000>;
+> +               };
+> +       };
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
