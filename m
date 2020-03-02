@@ -2,103 +2,323 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C6C1767BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F161767CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 00:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgCBXCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 18:02:10 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38266 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgCBXCJ (ORCPT
+        id S1726942AbgCBXGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 18:06:31 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:54095 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbgCBXGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 18:02:09 -0500
-Received: by mail-pg1-f196.google.com with SMTP id x7so549593pgh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:02:07 -0800 (PST)
+        Mon, 2 Mar 2020 18:06:30 -0500
+Received: by mail-pj1-f66.google.com with SMTP id cx7so452358pjb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 15:06:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=alU+BgvFGo59yM0O+ldee5pOjl7Ty1NQ+17QZiMtzMo=;
-        b=FPSeLrB7GcxGD/0n0DkgZRMYdBUiZeQ+laPMlp2Pb3icU44iK9eIgS7nJheSVzUk4x
-         XzQrD4vw1cKLDfSG7T4p+rZUN5/fWPWf5odYIvQHZz0B3JCIvnVMia0pRtb1FtCenogk
-         e82T6ScsKsm8DbFN0db3OAll3/2xdOIMdHVxU=
+        bh=XO6JGw83U5CkKd8cGXLECqKNNR8rYCcvmbE8i6nEu+U=;
+        b=pQd3TTVcuglvG6TY1SI80ABdKtkem3lObcwmKjby4QigaEuhh64S37ql/uiNoD/2Tr
+         gDMiWeoclcLBjMVgTlZqi3UgUJF1eXfEeBmdKYb2kEDUUYf1qWVdecbmcZsT8rmgje7f
+         z0zBnC4u87pEhTTJA4iH55XwaX/Ks7YRIZb+4opDaSyhISk47lQX3758Kcq0EPhdG1qj
+         txg3S1d38qdt4qj5aZUIcq5MmPFzPUwK/hOrdx6ShNlWkuZwXpJ1g7aBtlU69biBUTB5
+         sMyBlcVHvsZbH388D4vg8U82gIKcknZjRt5V5+627+pmF2QM8KpjgA/E5zi/b8ZKo83N
+         AJhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=alU+BgvFGo59yM0O+ldee5pOjl7Ty1NQ+17QZiMtzMo=;
-        b=Z6/SnCLYs3K5mJbtOMyfL3ezwiABs5aDkakDLA9hlpHFv3ZLoQEtjh3mUCkg5MFypA
-         eY8CbbLMJOp8/SStqt2HHaDS63Q1HgBzq8GJ7tLuYVrWPSpPs8Gt1LFljzKxWkBMW5xD
-         wJJFEqdZ9D5evg4jucxpHCKRYprwPXcTg/PUOmgV1MvjJ5Fyokya5FRuxBZdpV7eVbGz
-         gxxZYY+ZLCORrizFXAOnUBmhTe0F3rZ9lIXIc7XnRA4KVI5qG3H7QbDkv6X3BpdVi7nu
-         qPUSBBAnpmUy00Us20olaoDkakx20Oi8NndA0r05d0K4hfmgZy54jNhYJvOYl8v6FpLl
-         a8hw==
-X-Gm-Message-State: ANhLgQ3rfL9CqKzgca/xq9dKARhwIDEZ3haiTjr9nkiX5HKBYXxezIqy
-        XAX/n81OPUQOsRj72dU3NwTjuw==
-X-Google-Smtp-Source: ADFU+vvaMShTu4H+Bx5ShEjs077RseA1NzW7/myf8UYsI/g5oF2fIvhSkSOhJhD1EMHTIgkyXbQ4Ug==
-X-Received: by 2002:aa7:8bc1:: with SMTP id s1mr1226128pfd.215.1583190127144;
-        Mon, 02 Mar 2020 15:02:07 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id v29sm22024356pgc.72.2020.03.02.15.02.05
+        bh=XO6JGw83U5CkKd8cGXLECqKNNR8rYCcvmbE8i6nEu+U=;
+        b=K82rHzlkOcYzX77lxHJ8X2Y8I7BlhFWPZaI6LSE+KMDccY4LC7oRamhEy5aKni8ryf
+         4lP095Ot+G/LlsTtaPB0wYdAg8P4yQF70dGVEovebX79Oq0TWSnnI3/R+tPKTusAS4CD
+         rlwsAcmmPW2t8WRHcjIuK140psRSAu5/kXrn+Iju/fdFAkJqN0+wlhLqQuZG3kR0lHT9
+         MZRKFm2Y5f+KRP8wL8YQM+BzKKxnGYOUKDH+nPoNF2K9o3uLqUv3g0yrm8PmwWbZ6Sj9
+         v1imgymtKkOLlChkiElvYsT7UEETF5HGycd/zkIBR0Jh3fyg9b2NntB1HKDKrZVuGdJC
+         MaDw==
+X-Gm-Message-State: ANhLgQ03EGbmi3r1yz7ww52BLyME2zXcS6PlOGFtndxQgHmv/7B1Qpn9
+        HObpINPMJGiN8rgunv2eUmeqQg==
+X-Google-Smtp-Source: ADFU+vvTMeEEOpoL/4D2rdOc5U9tJ59Ij4qQQegmRoXugU1NEMYq/AxoVSr4pm/xhYoynzB3g/UDIQ==
+X-Received: by 2002:a17:902:ab81:: with SMTP id f1mr1395152plr.5.1583190387359;
+        Mon, 02 Mar 2020 15:06:27 -0800 (PST)
+Received: from yoga (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id c15sm21095020pgk.66.2020.03.02.15.06.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 15:02:06 -0800 (PST)
-Date:   Mon, 2 Mar 2020 15:02:05 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Patricia Alfonso <trishalfonso@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        David Gow <davidgow@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>
-Subject: Re: [RFC PATCH 1/2] Port KASAN Tests to KUnit
-Message-ID: <202003021500.9E0FEE1BEF@keescook>
-References: <20200227024301.217042-1-trishalfonso@google.com>
- <CACT4Y+Z_fGz2zVpco4kuGOVeCK=jv4zH0q9Uj5Hv5TAFxY3yRg@mail.gmail.com>
- <CAKFsvULZqJT3-NxYLsCaHpxemBCdyZN7nFTuQM40096UGqVzgQ@mail.gmail.com>
- <CACT4Y+YTNZRfKLH1=FibrtGj34MY=naDJY6GWVnpMvgShSLFhg@mail.gmail.com>
- <CAGXu5jKbpbH4sm4sv-74iHa+VzWuvF5v3ci7R-KVt+StRpMESg@mail.gmail.com>
- <CAFd5g47OHZ-6Fao+JOMES+aPd2vyWXSS0zKCkSwL6XczN4R7aQ@mail.gmail.com>
+        Mon, 02 Mar 2020 15:06:26 -0800 (PST)
+Date:   Mon, 2 Mar 2020 15:06:24 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Clement Leger <cleger@kalray.eu>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-remoteproc@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v5 1/8] remoteproc: Use size_t type for len in da_to_va
+Message-ID: <20200302230624.GA262924@yoga>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-2-cleger@kalray.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFd5g47OHZ-6Fao+JOMES+aPd2vyWXSS0zKCkSwL6XczN4R7aQ@mail.gmail.com>
+In-Reply-To: <20200302093902.27849-2-cleger@kalray.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 02:36:48PM -0800, Brendan Higgins wrote:
-> On Mon, Mar 2, 2020 at 9:52 AM Kees Cook <keescook@chromium.org> wrote:
-> > I'm all for unittests (I have earlier kind-of-unit-tests in
-> > lib/test_user_copy.c lib/test_overflow.c etc), but most of LKDTM is
-> 
-> <Minor tangent (sorry)>
-> 
-> I took a brief look at lib/test_user_copy.c, it looks like it doesn't
-> use TAP formatted output. How do you feel about someone converting
-> them over to use KUnit? If nothing else, it would be good getting all
-> the unit-ish tests to output in the same format.
-> 
-> I proposed converting over some of the runtime tests over to KUnit as
-> a LKMP project (Linux Kernel Mentorship Program) here:
-> 
-> https://wiki.linuxfoundation.org/lkmp/lkmp_project_list#convert_runtime_tests_to_kunit_tests
-> 
-> I am curious what you think about this.
-> 
-> </Minor tangent>
+On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
 
-Yes please! Anything that helps these tests get more exposure/wider
-testing is good. (That said, I don't want to lose any of the existing
-diagnostic messages -- _adding_ TAP would be lovely.)
+> With upcoming changes in elf loader for elf64 support, section size will
+> be a u64. When used with da_to_va, this will potentially lead to
+> overflow if using the current "int" type for len argument. Change
+> da_to_va prototype to use a size_t for len and fix all users of this
+> function.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 
--- 
-Kees Cook
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+>  drivers/remoteproc/imx_rproc.c           | 11 ++++++-----
+>  drivers/remoteproc/keystone_remoteproc.c |  4 ++--
+>  drivers/remoteproc/qcom_q6v5_adsp.c      |  2 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c       |  2 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c       |  2 +-
+>  drivers/remoteproc/qcom_q6v5_wcss.c      |  2 +-
+>  drivers/remoteproc/qcom_wcnss.c          |  2 +-
+>  drivers/remoteproc/remoteproc_core.c     |  2 +-
+>  drivers/remoteproc/remoteproc_internal.h |  2 +-
+>  drivers/remoteproc/st_slim_rproc.c       |  4 ++--
+>  drivers/remoteproc/wkup_m3_rproc.c       |  4 ++--
+>  include/linux/remoteproc.h               |  2 +-
+>  12 files changed, 20 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 3e72b6f38d4b..8957ed271d20 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -186,7 +186,7 @@ static int imx_rproc_stop(struct rproc *rproc)
+>  }
+>  
+>  static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+> -			       int len, u64 *sys)
+> +			       size_t len, u64 *sys)
+>  {
+>  	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+>  	int i;
+> @@ -203,19 +203,19 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+>  		}
+>  	}
+>  
+> -	dev_warn(priv->dev, "Translation failed: da = 0x%llx len = 0x%x\n",
+> +	dev_warn(priv->dev, "Translation failed: da = 0x%llx len = 0x%zx\n",
+>  		 da, len);
+>  	return -ENOENT;
+>  }
+>  
+> -static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct imx_rproc *priv = rproc->priv;
+>  	void *va = NULL;
+>  	u64 sys;
+>  	int i;
+>  
+> -	if (len <= 0)
+> +	if (len == 0)
+>  		return NULL;
+>  
+>  	/*
+> @@ -235,7 +235,8 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  		}
+>  	}
+>  
+> -	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%x va = 0x%p\n", da, len, va);
+> +	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%zx va = 0x%p\n",
+> +		da, len, va);
+>  
+>  	return va;
+>  }
+> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> index 5c4658f00b3d..cd266163a65f 100644
+> --- a/drivers/remoteproc/keystone_remoteproc.c
+> +++ b/drivers/remoteproc/keystone_remoteproc.c
+> @@ -246,7 +246,7 @@ static void keystone_rproc_kick(struct rproc *rproc, int vqid)
+>   * can be used either by the remoteproc core for loading (when using kernel
+>   * remoteproc loader), or by any rpmsg bus drivers.
+>   */
+> -static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct keystone_rproc *ksproc = rproc->priv;
+>  	void __iomem *va = NULL;
+> @@ -255,7 +255,7 @@ static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  	size_t size;
+>  	int i;
+>  
+> -	if (len <= 0)
+> +	if (len == 0)
+>  		return NULL;
+>  
+>  	for (i = 0; i < ksproc->num_mems; i++) {
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index e953886b2eb7..2b01f2282062 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -270,7 +270,7 @@ static int adsp_stop(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 471128a2e723..3401a17f8ce6 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1148,7 +1148,7 @@ static int q6v5_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *q6v5_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct q6v5 *qproc = rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index db4b3c4bacd7..4e89d04673a4 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -159,7 +159,7 @@ static int adsp_stop(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index f93e1e4a1cc0..f1924b740a10 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -406,7 +406,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *q6v5_wcss_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *q6v5_wcss_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct q6v5_wcss *wcss = rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index dc135754bb9c..0c7afd038f0d 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -287,7 +287,7 @@ static int wcnss_stop(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *wcnss_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 307df98347ba..5ab094fc1b55 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -185,7 +185,7 @@ EXPORT_SYMBOL(rproc_va_to_pa);
+>   * here the output of the DMA API for the carveouts, which should be more
+>   * correct.
+>   */
+> -void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct rproc_mem_entry *carveout;
+>  	void *ptr = NULL;
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 493ef9262411..58580210575c 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -50,7 +50,7 @@ void rproc_exit_sysfs(void);
+>  void rproc_free_vring(struct rproc_vring *rvring);
+>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>  
+> -void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
+> +void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
+>  phys_addr_t rproc_va_to_pa(void *cpu_addr);
+>  int rproc_trigger_recovery(struct rproc *rproc);
+>  
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index 04492fead3c8..09bcb4d8b9e0 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -174,7 +174,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct st_slim_rproc *slim_rproc = rproc->priv;
+>  	void *va = NULL;
+> @@ -191,7 +191,7 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  		}
+>  	}
+>  
+> -	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%x va = 0x%pK\n",
+> +	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%zx va = 0x%pK\n",
+>  		da, len, va);
+>  
+>  	return va;
+> diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+> index 3984e585c847..b9349d684258 100644
+> --- a/drivers/remoteproc/wkup_m3_rproc.c
+> +++ b/drivers/remoteproc/wkup_m3_rproc.c
+> @@ -80,14 +80,14 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  {
+>  	struct wkup_m3_rproc *wkupm3 = rproc->priv;
+>  	void *va = NULL;
+>  	int i;
+>  	u32 offset;
+>  
+> -	if (len <= 0)
+> +	if (len == 0)
+>  		return NULL;
+>  
+>  	for (i = 0; i < WKUPM3_MEM_MAX; i++) {
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..89215798eaea 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -374,7 +374,7 @@ struct rproc_ops {
+>  	int (*start)(struct rproc *rproc);
+>  	int (*stop)(struct rproc *rproc);
+>  	void (*kick)(struct rproc *rproc, int vqid);
+> -	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+> +	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len);
+>  	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+>  	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
+>  			  int offset, int avail);
+> -- 
+> 2.15.0.276.g89ea799
+> 
