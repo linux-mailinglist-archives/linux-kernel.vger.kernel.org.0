@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F46177F93
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21135177F9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730830AbgCCRvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:51:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59798 "EHLO mail.kernel.org"
+        id S1732068AbgCCRvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:51:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732022AbgCCRvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:51:39 -0500
+        id S1732060AbgCCRvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:51:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C32EE2146E;
-        Tue,  3 Mar 2020 17:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C884206D5;
+        Tue,  3 Mar 2020 17:51:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257899;
-        bh=Y4W9atvGmn4hDWb8DGFHdTnSI/IULFfUCaj1/x46eFo=;
+        s=default; t=1583257912;
+        bh=2o5tI0QQbtYWwGNX7U5m4+4KDXD+MHoW19fv1Xr8ZPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u3RFpG3WtU7x8CiiMx1/lWZvIj24ICCaSdWs/3Vx3HrnsLm9E65SabV6GRDwjIwph
-         HcdFIZLIqRa/aG1kotleMWUaSqVdlGZLg6ZAtLn6GIfbxD+6mn4hvkZ4W4b8IznTMh
-         ZXPEVrn5kfRIexH3z0zNEU/62hSDv4OjrYLgln7A=
+        b=Pr8r3JTOZMC823rQ6LolZENUnluQWVB0fm3uCke0cMOJBD/SVR+aiOZsJVyqMWxaO
+         s01PGzJZz/u/XVF4uvf1z7Px4yAxHfPk+5RN/96u+v0iIq0mIEC65JWmfEmEKcUe4x
+         qfAfzCmfYUqmWDkYmCtNG36wdqmW+CWo7mnS8cjk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Simon Horman <simon.horman@netronome.com>,
+        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.5 164/176] netfilter: nft_tunnel: no need to call htons() when dumping ports
-Date:   Tue,  3 Mar 2020 18:43:48 +0100
-Message-Id: <20200303174323.157054013@linuxfoundation.org>
+Subject: [PATCH 5.5 165/176] netfilter: nf_flowtable: fix documentation
+Date:   Tue,  3 Mar 2020 18:43:49 +0100
+Message-Id: <20200303174323.235372209@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
 References: <20200303174304.593872177@linuxfoundation.org>
@@ -44,35 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Matteo Croce <mcroce@redhat.com>
 
-commit cf3e204a1ca5442190018a317d9ec181b4639bd6 upstream.
+commit 78e06cf430934fc3768c342cbebdd1013dcd6fa7 upstream.
 
-info->key.tp_src and tp_dst are __be16, when using nla_put_be16()
-to dump them, htons() is not needed, so remove it in this patch.
+In the flowtable documentation there is a missing semicolon, the command
+as is would give this error:
 
-Fixes: af308b94a2a4 ("netfilter: nf_tables: add tunnel support")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
+    nftables.conf:5:27-33: Error: syntax error, unexpected devices, expecting newline or semicolon
+                    hook ingress priority 0 devices = { br0, pppoe-data };
+                                            ^^^^^^^
+    nftables.conf:4:12-13: Error: invalid hook (null)
+            flowtable ft {
+                      ^^
+
+Fixes: 19b351f16fd9 ("netfilter: add flowtable documentation")
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_tunnel.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/networking/nf_flowtable.txt |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nft_tunnel.c
-+++ b/net/netfilter/nft_tunnel.c
-@@ -505,8 +505,8 @@ static int nft_tunnel_opts_dump(struct s
- static int nft_tunnel_ports_dump(struct sk_buff *skb,
- 				 struct ip_tunnel_info *info)
- {
--	if (nla_put_be16(skb, NFTA_TUNNEL_KEY_SPORT, htons(info->key.tp_src)) < 0 ||
--	    nla_put_be16(skb, NFTA_TUNNEL_KEY_DPORT, htons(info->key.tp_dst)) < 0)
-+	if (nla_put_be16(skb, NFTA_TUNNEL_KEY_SPORT, info->key.tp_src) < 0 ||
-+	    nla_put_be16(skb, NFTA_TUNNEL_KEY_DPORT, info->key.tp_dst) < 0)
- 		return -1;
+--- a/Documentation/networking/nf_flowtable.txt
++++ b/Documentation/networking/nf_flowtable.txt
+@@ -76,7 +76,7 @@ flowtable and add one rule to your forwa
  
- 	return 0;
+         table inet x {
+ 		flowtable f {
+-			hook ingress priority 0 devices = { eth0, eth1 };
++			hook ingress priority 0; devices = { eth0, eth1 };
+ 		}
+                 chain y {
+                         type filter hook forward priority 0; policy accept;
 
 
