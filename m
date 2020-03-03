@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C4A177F52
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3C3177F58
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731846AbgCCRuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:50:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
+        id S1730871AbgCCRuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:50:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730851AbgCCRt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:49:59 -0500
+        id S1731208AbgCCRuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:50:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB58F20CC7;
-        Tue,  3 Mar 2020 17:49:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99C7220870;
+        Tue,  3 Mar 2020 17:50:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257799;
-        bh=EJaw7nSihU84X6HW/kSe1Dq4ngkgNCk0RFoO+OkqYWU=;
+        s=default; t=1583257802;
+        bh=MHH9f6Sl1J/Q2oNgbCemXFSvYVS6iwJBMMPs+2grVhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kAHp2XMxl04S7Zt/CMH35SBEGwQ+/cbibptKRgSJgPL63E3ZspPQip95WkAP0AqW9
-         TuWIrcnkA8zbr0VvBYFkRxgUalJh3udCZbCMvfSFGgYzIQ4/vSUUwlhtAl7LXeWTjA
-         jNA0Qlu6BqITA/ZqJkJVAyfj2gzniZikorzSEuwA=
+        b=Jr8zAl9K3kPLhR6aj4EEUNr7+S6P7697z8B5r1KiFTrcrdMJ17RbdKXX6kFktjD81
+         dkLE5q98Ev0ZwxFf1/MGs2PDfH0F7+ei4Apys1Yovdf96YAxQc/6m7zSIOXNyXUdRs
+         6DXnAn+LqUHYWiAtdQcCXLsnJ7BfpyW+6ucskIq4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f2a62d07a5198c819c7b@syzkaller.appspotmail.com,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 104/176] vhost: Check docket sk_family instead of call getname
-Date:   Tue,  3 Mar 2020 18:42:48 +0100
-Message-Id: <20200303174316.875453851@linuxfoundation.org>
+        syzbot+6a86565c74ebe30aea18@syzkaller.appspotmail.com,
+        Jozsef Kadlecsik <kadlec@netfilter.org>
+Subject: [PATCH 5.5 105/176] netfilter: ipset: Fix forceadd evaluation path
+Date:   Tue,  3 Mar 2020 18:42:49 +0100
+Message-Id: <20200303174316.991143238@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
 References: <20200303174304.593872177@linuxfoundation.org>
@@ -46,54 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugenio Pérez <eperezma@redhat.com>
+From: Jozsef Kadlecsik <kadlec@netfilter.org>
 
-commit 42d84c8490f9f0931786f1623191fcab397c3d64 upstream.
+commit 8af1c6fbd9239877998c7f5a591cb2c88d41fb66 upstream.
 
-Doing so, we save one call to get data we already have in the struct.
+When the forceadd option is enabled, the hash:* types should find and replace
+the first entry in the bucket with the new one if there are no reuseable
+(deleted or timed out) entries. However, the position index was just not set
+to zero and remained the invalid -1 if there were no reuseable entries.
 
-Also, since there is no guarantee that getname use sockaddr_ll
-parameter beyond its size, we add a little bit of security here.
-It should do not do beyond MAX_ADDR_LEN, but syzbot found that
-ax25_getname writes more (72 bytes, the size of full_sockaddr_ax25,
-versus 20 + 32 bytes of sockaddr_ll + MAX_ADDR_LEN in syzbot repro).
-
-Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
-Reported-by: syzbot+f2a62d07a5198c819c7b@syzkaller.appspotmail.com
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+6a86565c74ebe30aea18@syzkaller.appspotmail.com
+Fixes: 23c42a403a9c ("netfilter: ipset: Introduction of new commands and protocol version 7")
+Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/net.c |   10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ net/netfilter/ipset/ip_set_hash_gen.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1414,10 +1414,6 @@ static int vhost_net_release(struct inod
- 
- static struct socket *get_raw_socket(int fd)
- {
--	struct {
--		struct sockaddr_ll sa;
--		char  buf[MAX_ADDR_LEN];
--	} uaddr;
- 	int r;
- 	struct socket *sock = sockfd_lookup(fd, &r);
- 
-@@ -1430,11 +1426,7 @@ static struct socket *get_raw_socket(int
- 		goto err;
+--- a/net/netfilter/ipset/ip_set_hash_gen.h
++++ b/net/netfilter/ipset/ip_set_hash_gen.h
+@@ -931,6 +931,8 @@ mtype_add(struct ip_set *set, void *valu
+ 		}
  	}
- 
--	r = sock->ops->getname(sock, (struct sockaddr *)&uaddr.sa, 0);
--	if (r < 0)
--		goto err;
--
--	if (uaddr.sa.sll_family != AF_PACKET) {
-+	if (sock->sk->sk_family != AF_PACKET) {
- 		r = -EPFNOSUPPORT;
- 		goto err;
- 	}
+ 	if (reuse || forceadd) {
++		if (j == -1)
++			j = 0;
+ 		data = ahash_data(n, j, set->dsize);
+ 		if (!deleted) {
+ #ifdef IP_SET_HASH_WITH_NETS
 
 
