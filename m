@@ -2,121 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6AD178217
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A752D178263
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388368AbgCCSIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:08:50 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45434 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388340AbgCCSIs (ORCPT
+        id S2388289AbgCCSKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:10:41 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:37051 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732069AbgCCSKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:08:48 -0500
-Received: by mail-io1-f68.google.com with SMTP id w9so4590545iob.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 10:08:48 -0800 (PST)
+        Tue, 3 Mar 2020 13:10:37 -0500
+Received: by mail-vs1-f66.google.com with SMTP id h5so3037642vsc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 10:10:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bf0F9jShQ+1SAJ86EUg24NgoBWAimsu/bT/Rh5FZG1s=;
-        b=CuwQcN7zp2rH8kV+uXmvxUI3vOrGBbokokTvMGaXk2y43oL3dTQDTUuv1z5mN3c5ND
-         OooyyZhHmEZvJQyA+4IQacdQJEFpkr6bBiK4NUl9k6wW85p3AlIir3ibFMmMtY6Qq9TD
-         fqESkINb02EOI4DRbF1ngP014GhCRPZbkXT/qwU80zXE1dPrV9JErVfnk+031gOZdgsK
-         QRNnTMsLgxL7szlQe0aB9Eaa89Y4rxak0iTnEtWM9Izz5KWxI73nxblN5DgWTLBv0L4z
-         amz6EmCibPpY+0h/AZaFzFcjGrMUBZG0cIsit1uvIT/NqO6tdRFUDS4UWqge63nz8lnN
-         uOqg==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=42VRx4KA+cD1ZZnhz/34yl/kjJSKnU+ahvHX6e7S6BM=;
+        b=QgZ4x7PUdJhcFxdGWxh4RMwvEJmeyeUD6keuap/gp+PwzmAgU26fGsg0okAGhB9RBw
+         u9HURaooHBL0Sv1XuCDTpyenkb4Q/klxbcgfM4FAkQyxXBhtAbr7hOFvaCTaHn8FPYNh
+         Mkm+rCw00LbI88EnG4Zid+qOnSUQhMwja4aG9nlwin+kJdRGuRR8NSzP4OYXPmJrXi5e
+         xEOFCEpv0QnSabO5dkMuNWC8Vj7ofkyu7TLr+6dp9FCB6AwCbg5MLH4sOWFvqnLlnpf5
+         iBL7xpfRup3b2Fj/b5GTjFIK4lE9dy0LTiKDtPB4hUojqycTnum445mgvFqqbe8Kn8RY
+         LJ0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bf0F9jShQ+1SAJ86EUg24NgoBWAimsu/bT/Rh5FZG1s=;
-        b=MRWRkdoBmvwKY+bOJC46fUQqrnGmny+p0axG+D8wSNgWeJ4LTVHvAjO50H1uxaiE4B
-         gzt/Txg09GwQbmqd6EI3fPxFxetyLPyWjKgQfBYVmfbl+0WIJz12mzTbxOXIpwKl5xvA
-         eSkSvQzZalAIAQVZGB1yJ1OJSc8eEMDaKSp1umcydlP3+DHiDraG+bk+ivChIYlrGlIb
-         XkqG/A8Cex4zRwNhrp7kX+T7UCciLKms6A7SvEZw/c71lYP+1ftIrAiAGfPCIgrpS7Pp
-         7UEAQatdqoiA6wp1FwCmy+HZ53ql/dn+CL0jAixUdscq8XunTN91u4M7w6XvTRXrgm3r
-         8JXg==
-X-Gm-Message-State: ANhLgQ2tyvJ8EyIBn8BgNN8vWeeQFNarYSD8K4LePNaKApjK3hQE0klX
-        mJTPl5sgbDomKqLZm3xNfdhqV25M8G0i1riwmE6fDA==
-X-Google-Smtp-Source: ADFU+vsDQKW3R25VEwr3nSycpnRKEuPn9Ka8m2GJ4Ff+Y0C3ACVegdgxU99TJEZiTKPoBSL+tFKcVLL9KbINqFJnp/M=
-X-Received: by 2002:a6b:4e15:: with SMTP id c21mr4776187iob.119.1583258927645;
- Tue, 03 Mar 2020 10:08:47 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=42VRx4KA+cD1ZZnhz/34yl/kjJSKnU+ahvHX6e7S6BM=;
+        b=epS3/3KrDlH8qFmBHMgJvd1vpwMdHHOqjDgR/nr2cHGaUuPgbioX7IpGSQNN4gq9HI
+         YTglvxEMCLFdWhxHpJa1Tf5QnJ58b0Rddz6YsRboA4oivyDMPFqfjg5/FD6qJCv+mUyY
+         rcWtY+QCTmSaPD85XnEwrBPFKTc88TyEtpE8yNmPLc28zxHcyeTCxRUEQBfAQ9oxXF4J
+         8RhYZqE83P/xN8yNMZtBaCxNXVzTYhJc3Z9ZR3FvaUx8O6hVKaoNYoKD89dZpMD+V2Dd
+         U1AfP6YxGeWuFLgK6OssTjNE2MYyJOrlX9DVT/hbOr/rzBn0W7GqQ33MpIm8WkZniYQQ
+         3fQw==
+X-Gm-Message-State: ANhLgQ3hPSslz8SwVJ/kZGziYI5Bi+SAgETWUaV+n1G6mChgn6uS9/8O
+        eGrJGFxRGdsv8nInxLbHI+v0lNF3tfFZ1pWsOWw=
+X-Google-Smtp-Source: ADFU+vuAiA7TM8Z089v799AMLs03xboD3MQMi8U8VH4beI28hatwiwdCtvi16KzveHKYP5OCPAZme71JCk4ifTuHwz8=
+X-Received: by 2002:a05:6102:2268:: with SMTP id v8mr1783717vsd.90.1583259036519;
+ Tue, 03 Mar 2020 10:10:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
- <20200302195736.24777-3-sean.j.christopherson@intel.com> <CALMp9eThBnN3ktAfwhNs7L-O031JDFqjb67OMPooGvmkcdhK4A@mail.gmail.com>
- <CALMp9eR0Mw8iPv_Z43gfCEbErHQ6EXX8oghJJb5Xge+47ZU9yQ@mail.gmail.com>
- <20200303045838.GF27842@linux.intel.com> <CALMp9eSYZKUBko4ZViNbasRGJs2bAO2fREHX9maDbLrYj8yDhQ@mail.gmail.com>
- <20200303180122.GO1439@linux.intel.com>
-In-Reply-To: <20200303180122.GO1439@linux.intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Tue, 3 Mar 2020 10:08:36 -0800
-Message-ID: <CALMp9eRUPP_89mNwRTMpm6vg2jcaYNvj7R5yLK6HhLrub-iAEg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] KVM: x86: Fix CPUID range check for Centaur and
- Hypervisor ranges
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>
+Received: by 2002:ab0:2a59:0:0:0:0:0 with HTTP; Tue, 3 Mar 2020 10:10:34 -0800 (PST)
+Reply-To: dr.challynoah@gmail.com
+From:   DR CHALLY NOAH <official.dhlexpress@gmail.com>
+Date:   Tue, 3 Mar 2020 19:10:34 +0100
+Message-ID: <CAJ-5BZF=yupAt--dinnuyRosfGk2tZ_5Q1t-FwOUrdQ+XUXafg@mail.gmail.com>
+Subject: Hello Dear
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 10:01 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Tue, Mar 03, 2020 at 09:42:42AM -0800, Jim Mattson wrote:
-> > Unfathomable was the wrong word.
->
-> I dunno, one could argue that the behavior of Intel CPUs for CPUID is
-> unfathomable and I was just trying to follow suit :-D
->
-> >  I can see what you're trying to do. I
-> > just don't think it's defensible. I suspect that Intel CPU architects
-> > will be surprised and disappointed to find that the maximum effective
-> > value of CPUID.0H:EAX is now 255, and that they have to define
-> > CPUID.100H:EAX as the "maximum leaf between 100H and 1FFH" if they
-> > want to define any leaves between 100H and 1FFH.
->
-> Hmm, ya, I agree that applying a 0xffffff00 mask to all classes of CPUID
-> ranges is straight up wrong.
->
-> > Furthermore, AMD has only ceded 4000_0000h through 4000_00FFh to
-> > hypervisors, so kvm's use of 40000100H through 400001FFH appears to be
-> > a land grab, akin to VIA's unilateral grab of the C0000000H leaves.
-> > Admittedly, one could argue that the 40000000H leaves are not AMD's to
-> > apportion, since AMD and Intel appear to have reached a detente by
-> > splitting the available space down the middle. Intel, who seems to be
-> > the recognized authority for this range, declares the entire range
-> > from 40000000H through 4FFFFFFFH to be invalid. Make of that what you
-> > will.
-> >
-> > In any event, no one has ever documented what's supposed to happen if
-> > you leave gaps in the 4xxxxxxxH range when defining synthesized CPUID
-> > leaves under kvm.
->
-> Probably stating the obvious, but for me, the least suprising thing is for
-> such leafs to output zeros.  It also feels safer, e.g. a guest that's
-> querying hypervisor support is less likely to be led astray by all zeros
-> than by a random feature bits being set.
->
-> What about something like this?  Along with a comment and documentation...
->
-> static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
-> {
->         struct kvm_cpuid_entry2 *max;
->
->         if (function >= 0x40000000 && function <= 0x4fffffff)
->                 max = kvm_find_cpuid_entry(vcpu, function & 0xffffff00, 0);
->         else
->                 max = kvm_find_cpuid_entry(vcpu, function & 0x80000000, 0);
->         return max && function <= max->eax;
-> }
-
-I can get behind that. The behavior of the 4xxxxxxxH leaves under kvm
-is arguably up to kvm (though AMD may disagree).
+Hello Dear,
+What Have Kept You Waiting To Claim Your $600,000.00 USD Compensation Award?
+This said fund was issued out by the UNITED NATIONS To compensate
+you.Please If You Have Not Claim Your Fund (Award),Kindly contact me
+at   DR.CHALLYNOAH@GMAIL.COM   for further details on how to proceed your
+fund (award)release to you or better still reply back Immediately You
+Receive This Information For An Urgent Confirmation And Release Of Your
+Fund To You Without Delays, as your email was listed among those to be
+compensated this year.Congratulations..
+Best Regards,
+Dr Chally Noah.
+Minister Of Finance On Foreign Remittance:
