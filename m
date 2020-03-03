@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C67E17813A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 625B41780C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387956AbgCCSBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:01:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45416 "EHLO mail.kernel.org"
+        id S2387465AbgCCR6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:58:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387627AbgCCSBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:01:18 -0500
+        id S1732914AbgCCR6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:58:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2A64214D8;
-        Tue,  3 Mar 2020 18:01:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06860206D5;
+        Tue,  3 Mar 2020 17:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258478;
-        bh=hPq/Z75x+CgdvVjSkwVvKor8npYi0Xg4dg9rQ4+tPlI=;
+        s=default; t=1583258324;
+        bh=q9ncxq94EGXOCTEZx6k1DLyeoq/IGMKBwAr6s2YL1N4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ifo5ENN/IJFIEmS5ecfBlWsMkA+FOTOG9Keoed1SNY5EOXyr5mYR2rV9YDFGcv3Kf
-         NSofduBB/g3fXA417Lr8/Mrm4M/24rhBRI6/A7K/3vwFXzzNy4DHvgR3hzYffXAoBC
-         B8ialAh447M6ZHk5mCwJi1PILRSI5SwQJzdnhGP8=
+        b=XVz+K3OGeVXijX7TebxEVpmtMy6iNBkAzjTSYljPKQWJWvpyadj6RE+EcrNKXUJa3
+         fCKn5VHkWA1IBu8LgzfGQsLmX3Oz+OiMVqnDm0q35VbiMdJu7yhns2jqRTDGyw98+D
+         Qc+unNRVCWkwnKLANLjaJ+2NnOqAAjhb/gsS/+DU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe Vu-Brugier <cvubrugier@fastmail.fm>,
-        Igor Russkikh <irusskikh@marvell.com>,
-        Pavel Belous <pbelous@marvell.com>,
-        Dmitry Bogdanov <dbogdanov@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 63/87] net: atlantic: fix use after free kasan warn
-Date:   Tue,  3 Mar 2020 18:43:54 +0100
-Message-Id: <20200303174356.002654266@linuxfoundation.org>
+        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH 5.4 137/152] rcu: Allow only one expedited GP to run concurrently with wakeups
+Date:   Tue,  3 Mar 2020 18:43:55 +0100
+Message-Id: <20200303174318.383328773@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,62 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Belous <pbelous@marvell.com>
+From: Neeraj Upadhyay <neeraju@codeaurora.org>
 
-commit a4980919ad6a7be548d499bc5338015e1a9191c6 upstream.
+commit 4bc6b745e5cbefed92c48071e28a5f41246d0470 upstream.
 
-skb->len is used to calculate statistics after xmit invocation.
+The current expedited RCU grace-period code expects that a task
+requesting an expedited grace period cannot awaken until that grace
+period has reached the wakeup phase.  However, it is possible for a long
+preemption to result in the waiting task never sleeping.  For example,
+consider the following sequence of events:
 
-Under a stress load it may happen that skb will be xmited,
-rx interrupt will come and skb will be freed, all before xmit function
-is even returned.
+1.	Task A starts an expedited grace period by invoking
+	synchronize_rcu_expedited().  It proceeds normally up to the
+	wait_event() near the end of that function, and is then preempted
+	(or interrupted or whatever).
 
-Eventually, skb->len will access unallocated area.
+2.	The expedited grace period completes, and a kworker task starts
+	the awaken phase, having incremented the counter and acquired
+	the rcu_state structure's .exp_wake_mutex.  This kworker task
+	is then preempted or interrupted or whatever.
 
-Moving stats calculation into tx_clean routine.
+3.	Task A resumes and enters wait_event(), which notes that the
+	expedited grace period has completed, and thus doesn't sleep.
 
-Fixes: 018423e90bee ("net: ethernet: aquantia: Add ring support code")
-Reported-by: Christophe Vu-Brugier <cvubrugier@fastmail.fm>
-Signed-off-by: Igor Russkikh <irusskikh@marvell.com>
-Signed-off-by: Pavel Belous <pbelous@marvell.com>
-Signed-off-by: Dmitry Bogdanov <dbogdanov@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+4.	Task B starts an expedited grace period exactly as did Task A,
+	complete with the preemption (or whatever delay) just before
+	the call to wait_event().
+
+5.	The expedited grace period completes, and another kworker
+	task starts the awaken phase, having incremented the counter.
+	However, it blocks when attempting to acquire the rcu_state
+	structure's .exp_wake_mutex because step 2's kworker task has
+	not yet released it.
+
+6.	Steps 4 and 5 repeat, resulting in overflow of the rcu_node
+	structure's ->exp_wq[] array.
+
+In theory, this is harmless.  Tasks waiting on the various ->exp_wq[]
+array will just be spuriously awakened, but they will just sleep again
+on noting that the rcu_state structure's ->expedited_sequence value has
+not advanced far enough.
+
+In practice, this wastes CPU time and is an accident waiting to happen.
+This commit therefore moves the rcu_exp_gp_seq_end() call that officially
+ends the expedited grace period (along with associate tracing) until
+after the ->exp_wake_mutex has been acquired.  This prevents Task A from
+awakening prematurely, thus preventing more than one expedited grace
+period from being in flight during a previous expedited grace period's
+wakeup phase.
+
+Fixes: 3b5f668e715b ("rcu: Overlap wakeups with next expedited grace period")
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+[ paulmck: Added updated comment. ]
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c  |    4 ----
- drivers/net/ethernet/aquantia/atlantic/aq_ring.c |    7 +++++--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ kernel/rcu/tree_exp.h |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -530,10 +530,6 @@ int aq_nic_xmit(struct aq_nic_s *self, s
- 	if (likely(frags)) {
- 		err = self->aq_hw_ops->hw_ring_tx_xmit(self->aq_hw,
- 						       ring, frags);
--		if (err >= 0) {
--			++ring->stats.tx.packets;
--			ring->stats.tx.bytes += skb->len;
--		}
- 	} else {
- 		err = NETDEV_TX_BUSY;
- 	}
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-@@ -162,9 +162,12 @@ bool aq_ring_tx_clean(struct aq_ring_s *
- 			}
- 		}
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -540,14 +540,13 @@ static void rcu_exp_wait_wake(unsigned l
+ 	struct rcu_node *rnp;
  
--		if (unlikely(buff->is_eop))
--			dev_kfree_skb_any(buff->skb);
-+		if (unlikely(buff->is_eop)) {
-+			++self->stats.rx.packets;
-+			self->stats.tx.bytes += buff->skb->len;
+ 	synchronize_sched_expedited_wait();
+-	rcu_exp_gp_seq_end();
+-	trace_rcu_exp_grace_period(rcu_state.name, s, TPS("end"));
  
-+			dev_kfree_skb_any(buff->skb);
-+		}
- 		buff->pa = 0U;
- 		buff->eop_index = 0xffffU;
- 		self->sw_head = aq_ring_next_dx(self, self->sw_head);
+-	/*
+-	 * Switch over to wakeup mode, allowing the next GP, but -only- the
+-	 * next GP, to proceed.
+-	 */
++	// Switch over to wakeup mode, allowing the next GP to proceed.
++	// End the previous grace period only after acquiring the mutex
++	// to ensure that only one GP runs concurrently with wakeups.
+ 	mutex_lock(&rcu_state.exp_wake_mutex);
++	rcu_exp_gp_seq_end();
++	trace_rcu_exp_grace_period(rcu_state.name, s, TPS("end"));
+ 
+ 	rcu_for_each_node_breadth_first(rnp) {
+ 		if (ULONG_CMP_LT(READ_ONCE(rnp->exp_seq_rq), s)) {
 
 
