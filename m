@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF38178235
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF9A17812F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732854AbgCCSJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:09:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60538 "EHLO mail.kernel.org"
+        id S2387903AbgCCSBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:01:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730562AbgCCRwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:52:14 -0500
+        id S2387871AbgCCSBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:01:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AA4120CC7;
-        Tue,  3 Mar 2020 17:52:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D23CD206D5;
+        Tue,  3 Mar 2020 18:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257932;
-        bh=nSQ2JwEEUlpH+KtDNU/5jZzofFq9d1NFcnnlpJQLjAI=;
+        s=default; t=1583258463;
+        bh=mS3NzTj/wGe/utVr3qRFvWIQqqxdgLTCV8BCqRPCDtA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lHootr17igh5pkxxq6dbgJ78HSWt2vWf7YIVrjkeDwKYsC/K6jQyn94raJzWNGnaj
-         IFXJEJz11uCYNtgUh1UmVTLIs3Bwipl/RxfTeya3yFsdKDKRc9ZK/6y+zQ1+LHSImQ
-         HSxsQ6/UQo4/bRcq0a6CblvtkW7HJIa1juOFg+YM=
+        b=Cw3R4cj9JCtnesdL4zIU56dXEwjG6UKzu/qx8pkGC37HvLf9i2sjv5YU06srrviEW
+         weWFd3B5iX/SNFG4KUOakS1lzMayVM/RQiW1dKQWUKwqv/zFasoDLGXP3jpZNhPIwG
+         wJ91EkwiVh2L6kOqczwx0J24tLxYJwUKrgqmBpqU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 5.5 163/176] thermal: brcmstb_thermal: Do not use DT coefficients
-Date:   Tue,  3 Mar 2020 18:43:47 +0100
-Message-Id: <20200303174323.076645343@linuxfoundation.org>
+        stable@vger.kernel.org, Tina Zhang <tina.zhang@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: [PATCH 4.19 57/87] drm/i915/gvt: Fix orphan vgpu dmabuf_objs lifetime
+Date:   Tue,  3 Mar 2020 18:43:48 +0100
+Message-Id: <20200303174355.470594194@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
+References: <20200303174349.075101355@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,100 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Tina Zhang <tina.zhang@intel.com>
 
-commit e1ff6fc22f19e2af8adbad618526b80067911d40 upstream.
+commit b549c252b1292aea959cd9b83537fcb9384a6112 upstream.
 
-At the time the brcmstb_thermal driver and its binding were merged, the
-DT binding did not make the coefficients properties a mandatory one,
-therefore all users of the brcmstb_thermal driver out there have a non
-functional implementation with zero coefficients. Even if these
-properties were provided, the formula used for computation is incorrect.
+Deleting dmabuf item's list head after releasing its container can lead
+to KASAN-reported issue:
 
-The coefficients are entirely process specific (right now, only 28nm is
-supported) and not board or SoC specific, it is therefore appropriate to
-hard code them in the driver given the compatibility string we are
-probed with which has to be updated whenever a new process is
-introduced.
+  BUG: KASAN: use-after-free in __list_del_entry_valid+0x15/0xf0
+  Read of size 8 at addr ffff88818a4598a8 by task kworker/u8:3/13119
 
-We remove the existing coefficients definition since subsequent patches
-are going to add support for a new process and will introduce new
-coefficients as well.
+So fix this issue by puting deleting dmabuf_objs ahead of releasing its
+container.
 
-Fixes: 9e03cf1b2dd5 ("thermal: add brcmstb AVS TMON driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20200114190607.29339-2-f.fainelli@gmail.com
+Fixes: dfb6ae4e14bd6 ("drm/i915/gvt: Handle orphan dmabuf_objs")
+Signed-off-by: Tina Zhang <tina.zhang@intel.com>
+Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20200225053527.8336-2-tina.zhang@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thermal/broadcom/brcmstb_thermal.c |   31 ++++++++---------------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/i915/gvt/dmabuf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/thermal/broadcom/brcmstb_thermal.c
-+++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-@@ -49,7 +49,7 @@
- #define AVS_TMON_TP_TEST_ENABLE		0x20
- 
- /* Default coefficients */
--#define AVS_TMON_TEMP_SLOPE		-487
-+#define AVS_TMON_TEMP_SLOPE		487
- #define AVS_TMON_TEMP_OFFSET		410040
- 
- /* HW related temperature constants */
-@@ -108,23 +108,12 @@ struct brcmstb_thermal_priv {
- 	struct thermal_zone_device *thermal;
- };
- 
--static void avs_tmon_get_coeffs(struct thermal_zone_device *tz, int *slope,
--				int *offset)
--{
--	*slope = thermal_zone_get_slope(tz);
--	*offset = thermal_zone_get_offset(tz);
--}
--
- /* Convert a HW code to a temperature reading (millidegree celsius) */
- static inline int avs_tmon_code_to_temp(struct thermal_zone_device *tz,
- 					u32 code)
- {
--	const int val = code & AVS_TMON_TEMP_MASK;
--	int slope, offset;
--
--	avs_tmon_get_coeffs(tz, &slope, &offset);
--
--	return slope * val + offset;
-+	return (AVS_TMON_TEMP_OFFSET -
-+		(int)((code & AVS_TMON_TEMP_MAX) * AVS_TMON_TEMP_SLOPE));
- }
- 
- /*
-@@ -136,20 +125,18 @@ static inline int avs_tmon_code_to_temp(
- static inline u32 avs_tmon_temp_to_code(struct thermal_zone_device *tz,
- 					int temp, bool low)
- {
--	int slope, offset;
--
- 	if (temp < AVS_TMON_TEMP_MIN)
--		return AVS_TMON_TEMP_MAX; /* Maximum code value */
--
--	avs_tmon_get_coeffs(tz, &slope, &offset);
-+		return AVS_TMON_TEMP_MAX;	/* Maximum code value */
- 
--	if (temp >= offset)
-+	if (temp >= AVS_TMON_TEMP_OFFSET)
- 		return 0;	/* Minimum code value */
- 
- 	if (low)
--		return (u32)(DIV_ROUND_UP(offset - temp, abs(slope)));
-+		return (u32)(DIV_ROUND_UP(AVS_TMON_TEMP_OFFSET - temp,
-+					  AVS_TMON_TEMP_SLOPE));
- 	else
--		return (u32)((offset - temp) / abs(slope));
-+		return (u32)((AVS_TMON_TEMP_OFFSET - temp) /
-+			      AVS_TMON_TEMP_SLOPE);
- }
- 
- static int brcmstb_get_temp(void *data, int *temp)
+--- a/drivers/gpu/drm/i915/gvt/dmabuf.c
++++ b/drivers/gpu/drm/i915/gvt/dmabuf.c
+@@ -95,12 +95,12 @@ static void dmabuf_gem_object_free(struc
+ 			dmabuf_obj = container_of(pos,
+ 					struct intel_vgpu_dmabuf_obj, list);
+ 			if (dmabuf_obj == obj) {
++				list_del(pos);
+ 				intel_gvt_hypervisor_put_vfio_device(vgpu);
+ 				idr_remove(&vgpu->object_idr,
+ 					   dmabuf_obj->dmabuf_id);
+ 				kfree(dmabuf_obj->info);
+ 				kfree(dmabuf_obj);
+-				list_del(pos);
+ 				break;
+ 			}
+ 		}
 
 
