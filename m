@@ -2,91 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B516176EDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 06:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E45176EE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 06:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgCCFkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 00:40:42 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:34609 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725818AbgCCFkm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 00:40:42 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583214042; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=qr3JVYtKfOWIi/bSPDEd0ztBd3h/rs+zEN/13ZtS5I8=; b=Qmu1JV0LwxyGVJI8HoR7EiviexiL4ZItHmNeRWFPFYUkPOi1ur7XRky+3vYkXbwfBCnKF2kp
- /A3s10QU+F9qA753FeysnZmQKAP4bXR2V+MoXp+IZC/LXiOtDw7R6YLZYob80cs2T+1h0OuK
- pcbgAy2/VrcMWnxCPb/yUI2bSV8=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e5dedd2.7ff80c9b47a0-smtp-out-n03;
- Tue, 03 Mar 2020 05:40:34 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 22058C4479C; Tue,  3 Mar 2020 05:40:33 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from tynnyri.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        id S1727437AbgCCFlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 00:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbgCCFlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 00:41:42 -0500
+Received: from localhost (unknown [122.167.124.166])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 70B65C43383;
-        Tue,  3 Mar 2020 05:40:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 70B65C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Leho Kraav <leho@kraav.com>
-Cc:     "Jan Alexander Steffens \(heftig\)" <jan.steffens@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iwlwifi: pcie: restore support for Killer Qu C0 NICs
-References: <20191224051639.6904-1-jan.steffens@gmail.com>
-        <20200221121135.GA9056@papaya>
-Date:   Tue, 03 Mar 2020 07:40:26 +0200
-In-Reply-To: <20200221121135.GA9056@papaya> (Leho Kraav's message of "Fri, 21
-        Feb 2020 14:11:35 +0200")
-Message-ID: <871rqauhbp.fsf@tynnyri.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1761720716;
+        Tue,  3 Mar 2020 05:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583214101;
+        bh=FoOnISOYxj68az4BRqF5w4nPomNjU2jFbopVQmrVCac=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D9TgJXF1i5zvh4ObUAk7O9iuSsZdlCZWGa5jVoFyHlKXRdQN5VyEKe6ih1JIq221j
+         5XJ2ype27chgjTB4FBz9VF2Qz3jbYttOUGbRmtWEMgwsBvOc49bFoqLOWFRhEDEa4r
+         /+ZyJ7tuvHA2Dxr23DFhRhDz3SSgV+WJ30oL9lcM=
+Date:   Tue, 3 Mar 2020 11:11:36 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [PATCH 1/8] soundwire: bus_type: add master_device/driver support
+Message-ID: <20200303054136.GP4148@vkoul-mobl>
+References: <20200227223206.5020-1-pierre-louis.bossart@linux.intel.com>
+ <20200227223206.5020-2-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200227223206.5020-2-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Leho Kraav <leho@kraav.com> writes:
+On 27-02-20, 16:31, Pierre-Louis Bossart wrote:
+> In the existing SoundWire code, Master Devices are not explicitly
+> represented - only SoundWire Slave Devices are exposed (the use of
+> capital letters follows the SoundWire specification conventions).
+> 
+> The SoundWire Master Device provides the clock, synchronization
+> information and command/control channels. When multiple links are
+> supported, a Controller may expose more than one Master Device; they
+> are typically embedded inside a larger audio cluster (be it in an
+> SOC/chipset or an external audio codec), and we need to describe it
+> using the Linux device and driver model.  This will allow for
+> configuration functions to account for external dependencies such as
+> power rails, clock sources or wake-up mechanisms. This transition will
 
-> On Tue, Dec 24, 2019 at 06:16:39AM +0100, Jan Alexander Steffens (heftig) wrote:
->> Commit 809805a820c6 ("iwlwifi: pcie: move some cfg mangling from
->> trans_pcie_alloc to probe") refactored the cfg mangling. Unfortunately,
->> in this process the lines which picked the right cfg for Killer Qu C0
->> NICs after C0 detection were lost. These lines were added by commit
->> b9500577d361 ("iwlwifi: pcie: handle switching killer Qu B0 NICs to
->> C0").
->> 
->> I suspect this is more of the "merge damage" which commit 7cded5658329
->> ("iwlwifi: pcie: fix merge damage on making QnJ exclusive") talks about.
->> 
->> Restore the missing lines so the driver loads the right firmware for
->> these NICs.
->
-> This seems real, as upgrading 5.5.0 -> 5.5.5 just broke my iwlwifi on XPS 7390.
-> How come?
+I dont not see that as a soundwire issue. The external dependencies
+should be handled as any device would do in Linux kernel with subsystem
+specific things for soundwire mechanisms like wake-up
 
-Luca, should I apply this to wireless-drivers?
 
-https://patchwork.kernel.org/patch/11309095/
+Intel has a big controller with HDA, DSP and Soundwire clubbed together,
+I dont think we should burden the susbstem due to hw design
 
+> also allow for better sysfs support without the reference count issues
+> mentioned in the initial reviews.
+> 
+> In this patch, we convert the existing code to use an explicit
+> sdw_slave_type, then define new objects (sdw_master_device and
+> sdw_master_driver).
+
+Thanks for sdw_master_device, that is required and fully agreed upon.
+What is not agreed is the sdw_master_driver. We do not need that.
+
+As we have discussed your proposal with Greg and aligned (quoting that
+here) on following device model for Intel and ARM:
+
+>  - For DT cases we will have:
+>         -> soundwire DT device (soundwire DT driver)
+>            -> soundwire master device
+>               -> soundwire slave device (slave drivers)
+>  - For Intel case, you would have:
+>         -> HDA PCI device (SOF driver + soundwire module)
+>            -> soundwire master device
+>               -> soundwire slave device (slave drivers)
+
+But you have gone ahead and kept the sdw_master_driver which does not fit
+into rest of the world except Intel.
+
+I think I am okay with rest of proposal, except this one, so can you
+remove this and we can make progress. This issue is lingering since Oct!
+
+> A parent (such as the Intel audio controller or its equivalent on
+> Qualcomm devices) would use sdw_master_device_add() to create the
+> device, passing a driver name as a parameter. The master device would
+> be released when device_unregister() is invoked by the parent.
+
+We already have a DT driver for soundwire master! We dont need another
+layer which does not add value!
+
+> Note that since there is no standard for the Master host-facing
+> interface, so the bus matching relies on a simple string matching (as
+> previously done with platform devices).
+> 
+> The 'Master Device' driver exposes callbacks for
+> probe/startup/shutdown/remove/process_wake. The startup and process
+> wake need to be called by the parent directly (using wrappers), while
+> the probe/shutdown/remove are handled by the SoundWire bus core upon
+> device creation and release.
+
+these are added to handle intel DSP and sequencing issue, rest of the
+world does not have these issues and does not needs them!
+
+> Additional callbacks will be added in the future for e.g. autonomous
+> clock stop modes.
+
+Yes these would be required, these can be added in sdw_master_device
+too, I dont see them requiring a dummy driver layer..
+
+> @@ -113,8 +152,6 @@ static int sdw_drv_probe(struct device *dev)
+>  	slave->probed = true;
+>  	complete(&slave->probe_complete);
+>  
+> -	dev_dbg(dev, "probe complete\n");
+> -
+
+This does not seem to belong to this patch.
+
+> +struct device_type sdw_master_type = {
+> +	.name =		"soundwire_master",
+> +	.release =	sdw_master_device_release,
+> +};
+> +
+> +struct sdw_master_device
+> +*sdw_master_device_add(const char *master_name,
+> +		       struct device *parent,
+> +		       struct fwnode_handle *fwnode,
+> +		       int link_id,
+> +		       void *pdata)
+> +{
+> +	struct sdw_master_device *md;
+> +	int ret;
+> +
+> +	md = kzalloc(sizeof(*md), GFP_KERNEL);
+> +	if (!md)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	md->link_id = link_id;
+> +	md->pdata = pdata;
+> +	md->master_name = master_name;
+
+should we not allocate the memory here for master_name?
+
+> +
+> +	init_completion(&md->probe_complete);
+> +
+> +	md->dev.parent = parent;
+> +	md->dev.fwnode = fwnode;
+> +	md->dev.bus = &sdw_bus_type;
+> +	md->dev.type = &sdw_master_type;
+> +	md->dev.dma_mask = md->dev.parent->dma_mask;
+> +	dev_set_name(&md->dev, "sdw-master-%d", md->link_id);
+
+why do we need master_name if we are setting this here?
+
+> +
+> +	ret = device_register(&md->dev);
+> +	if (ret) {
+> +		dev_err(parent, "Failed to add master: ret %d\n", ret);
+> +		/*
+> +		 * On err, don't free but drop ref as this will be freed
+> +		 * when release method is invoked.
+> +		 */
+> +		put_device(&md->dev);
+> +		return ERR_PTR(-ENOMEM);
+
+ENOMEM?
+
+> +int sdw_master_device_startup(struct sdw_master_device *md)
+> +{
+> +	struct sdw_master_driver *mdrv;
+> +	struct device *dev;
+> +	int ret = 0;
+> +
+> +	if (IS_ERR_OR_NULL(md))
+> +		return -EINVAL;
+> +
+> +	dev = &md->dev;
+> +	mdrv = drv_to_sdw_master_driver(dev->driver);
+> +
+> +	if (mdrv && mdrv->startup)
+> +		ret = mdrv->startup(md);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(sdw_master_device_startup);
+
+who invokes this and when, can you add kernel-doc style documentation to
+all APIs exported
+
+> +int sdw_master_device_process_wake_event(struct sdw_master_device *md)
+> +{
+> +	struct sdw_master_driver *mdrv;
+> +	struct device *dev;
+> +	int ret = 0;
+> +
+> +	if (IS_ERR_OR_NULL(md))
+> +		return -EINVAL;
+> +
+> +	dev = &md->dev;
+> +	mdrv = drv_to_sdw_master_driver(dev->driver);
+> +
+> +	if (mdrv && mdrv->process_wake_event)
+> +		ret = mdrv->process_wake_event(md);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(sdw_master_device_process_wake_event);
+
+Documentation required
+
+> +/**
+> + * struct sdw_master_device - SoundWire 'Master Device' representation
+> + *
+> + * @dev: Linux device for this Master
+> + * @master_name: Linux driver name
+> + * @driver: Linux driver for this Master (set by SoundWire core during probe)
+> + * @probe_complete: used by parent if synchronous probe behavior is needed
+> + * @link_id: link index as defined by MIPI DisCo specification
+> + * @pm_runtime_suspended: flag to restore pm_runtime state after system resume
+> + * @pdata: private data typically provided with sdw_master_device_add()
+> + */
+> +
+> +struct sdw_master_device {
+> +	struct device dev;
+> +	const char *master_name;
+> +	struct sdw_master_driver *driver;
+> +	struct completion probe_complete;
+> +	int link_id;
+> +	bool pm_runtime_suspended;
+
+why not use runtime_pm apis like pm_runtime_suspended()
+
+> +/**
+> + * sdw_master_device_add() - create a Linux Master Device representation.
+> + *
+> + * @master_name: Linux driver name
+> + * @parent: the parent Linux device (e.g. a PCI device)
+> + * @fwnode: the parent fwnode (e.g. an ACPI companion device to the parent)
+> + * @link_id: link index as defined by MIPI DisCo specification
+> + * @pdata: private data (e.g. register base, offsets, platform quirks, etc).
+> + */
+> +struct sdw_master_device
+> +*sdw_master_device_add(const char *master_name,
+> +		       struct device *parent,
+> +		       struct fwnode_handle *fwnode,
+> +		       int link_id,
+> +		       void *pdata);
+> +
+> +/**
+> + * sdw_master_device_startup() - startup hardware
+> + *
+> + * @md: Linux Soundwire master device
+
+Please add more useful comments like when this API would be invoked and
+what shall be expected outcome
+
+> + */
+> +int sdw_master_device_startup(struct sdw_master_device *md);
+> +
+> +/**
+> + * sdw_master_device_process_wake_event() - handle external wake
+> + * event, e.g. handled at the PCI level
+> + *
+> + * @md: Linux Soundwire master device
+> + */
+> +int sdw_master_device_process_wake_event(struct sdw_master_device *md);
+> +
+
+If you look at existing headers the documentation is in C files for
+APIs, so can you move them over.
+
+When adding stuff please look at the rest of the code as an example.
 -- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+~Vinod
