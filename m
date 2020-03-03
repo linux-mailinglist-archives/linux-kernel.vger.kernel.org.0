@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF4C9177DDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5AFB177DFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbgCCRob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:44:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50044 "EHLO mail.kernel.org"
+        id S1730953AbgCCRpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:45:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726988AbgCCRob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:44:31 -0500
+        id S1730935AbgCCRpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:45:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AD1C20870;
-        Tue,  3 Mar 2020 17:44:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3C1A208C3;
+        Tue,  3 Mar 2020 17:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257470;
-        bh=xJaPOEMtNwqvbSQdzQQceUOZ4lUwtok76L2WrtwFr6o=;
+        s=default; t=1583257530;
+        bh=Rqp/ARyYPO2zu40G6KAp2PLfdRwHjZ7O81/4Wjtotyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cNTc93C9ESTHapz8tgC8R1CPQNusxIRcAqTvfgpcAY7XffBbTJGzaGwxShiuae+NU
-         disn7pWHbeBIfWjmaB82av2PJRV4tIDGC9GEW7tQUYRcSMdXRkE6NYtIIlghBd9fR8
-         9J6sJhvrLpKV9q1mEzL0tLqtzgAZnaICTA8aQV3M=
+        b=H78A7KgTSyLwzX1XPWrprnqSGRg+T+DlDTrXuR7lJRMVQHNUhKTAbP3ypijE8kPlh
+         UH/aMWatdOVSyDdFgQoTgAFv6+rW4X+WIu5qfd9Iqs1BuXVb0ldwi6afKvRS4Pg0+q
+         ZbsJvdSNJCo5ygNm3jsNNCjnUGrqhsVmWU9d0734=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 001/176] EDAC: skx_common: downgrade message importance on missing PCI device
-Date:   Tue,  3 Mar 2020 18:41:05 +0100
-Message-Id: <20200303174304.758365569@linuxfoundation.org>
+        stable@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 003/176] net: fib_rules: Correctly set table field when table number exceeds 8 bits
+Date:   Tue,  3 Mar 2020 18:41:07 +0100
+Message-Id: <20200303174304.979054909@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
 References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,42 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aristeu Rozanski <aris@redhat.com>
+From: Jethro Beekman <jethro@fortanix.com>
 
-[ Upstream commit 854bb48018d5da261d438b2232fa683bdb553979 ]
+[ Upstream commit 540e585a79e9d643ede077b73bcc7aa2d7b4d919 ]
 
-Both skx_edac and i10nm_edac drivers are loaded based on the matching CPU being
-available which leads the module to be automatically loaded in virtual machines
-as well. That will fail due the missing PCI devices. In both drivers the first
-function to make use of the PCI devices is skx_get_hi_lo() will simply print
+In 709772e6e06564ed94ba740de70185ac3d792773, RT_TABLE_COMPAT was added to
+allow legacy software to deal with routing table numbers >= 256, but the
+same change to FIB rule queries was overlooked.
 
-	EDAC skx: Can't get tolm/tohm
-
-for each CPU core, which is noisy. This patch makes it a debug message.
-
-Signed-off-by: Aristeu Rozanski <aris@redhat.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Link: https://lore.kernel.org/r/20191204212325.c4k47p5hrnn3vpb5@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jethro Beekman <jethro@fortanix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/edac/skx_common.c | 2 +-
+ net/core/fib_rules.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 95662a4ff4c4f..99bbaf629b8d9 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -256,7 +256,7 @@ int skx_get_hi_lo(unsigned int did, int off[], u64 *tolm, u64 *tohm)
+--- a/net/core/fib_rules.c
++++ b/net/core/fib_rules.c
+@@ -974,7 +974,7 @@ static int fib_nl_fill_rule(struct sk_bu
  
- 	pdev = pci_get_device(PCI_VENDOR_ID_INTEL, did, NULL);
- 	if (!pdev) {
--		skx_printk(KERN_ERR, "Can't get tolm/tohm\n");
-+		edac_dbg(2, "Can't get tolm/tohm\n");
- 		return -ENODEV;
- 	}
- 
--- 
-2.20.1
-
+ 	frh = nlmsg_data(nlh);
+ 	frh->family = ops->family;
+-	frh->table = rule->table;
++	frh->table = rule->table < 256 ? rule->table : RT_TABLE_COMPAT;
+ 	if (nla_put_u32(skb, FRA_TABLE, rule->table))
+ 		goto nla_put_failure;
+ 	if (nla_put_u32(skb, FRA_SUPPRESS_PREFIXLEN, rule->suppress_prefixlen))
 
 
