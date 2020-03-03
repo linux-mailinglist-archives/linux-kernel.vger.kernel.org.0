@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3D2178169
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C251780B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388182AbgCCSCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:02:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
+        id S1733278AbgCCR6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:58:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387746AbgCCSCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:02:16 -0500
+        id S1733202AbgCCR6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:58:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49619206D5;
-        Tue,  3 Mar 2020 18:02:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E0982072D;
+        Tue,  3 Mar 2020 17:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258535;
-        bh=wtzmxt4IUQZwQeiPQbCPbGhcqVFoVsKHdba80U9RxoQ=;
+        s=default; t=1583258283;
+        bh=x8n96SRLqp4fokeJXdqU687T8MK3HtqEw58DRydIEiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJ9v/pq6NAUHsx+zsT6O7F9b21XinBBxZRR67Oi8kC/g1M4a0Z9HFwUwqeC1ZDrl4
-         WYaBbDkWL/c2qnDo/XkcjSwUszvpzmGNJkWmjybwQRIRiSAOX/7CrWO8WOHcJpNWw1
-         TFXgnpoNHxkr+wwmZ7aEPbRCxzOPkSXRbmVgqQbA=
+        b=P1n7OChDvilBT+PbKfLxzWAowA959mmLkIYebrGQZe/U0QkgypvEkfDOyXMYiWHD1
+         +QKgNzpv+DZkWatMYRcikyCKuB1cbAgdvBhK0PtiDx3j6h5FqP8zWkM4IuprdNndHU
+         jLsHCEgMkvO7v4lrhh4AE8SYGQyt7lPZJpfLl9YY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 69/87] mwifiex: delete unused mwifiex_get_intf_num()
-Date:   Tue,  3 Mar 2020 18:44:00 +0100
-Message-Id: <20200303174356.492876271@linuxfoundation.org>
+        stable@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 5.4 143/152] bus: tegra-aconnect: Remove PM_CLK dependency
+Date:   Tue,  3 Mar 2020 18:44:01 +0100
+Message-Id: <20200303174319.044754943@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Sameer Pujar <spujar@nvidia.com>
 
-commit 1c9f329b084b7b8ea6d60d91a202e884cdcf6aae upstream.
+commit 2f56acf818a08a9187ac8ec6e3d994fc13dc368d upstream.
 
-Commit 7afb94da3cd8 ("mwifiex: update set_mac_address logic") fixed the
-only user of this function, partly because the author seems to have
-noticed that, as written, it's on the borderline between highly
-misleading and buggy.
+The ACONNECT bus driver does not use pm-clk interface anymore and hence
+the dependency can be removed from its Kconfig option.
 
-Anyway, no sense in keeping dead code around: let's drop it.
-
-Fixes: 7afb94da3cd8 ("mwifiex: update set_mac_address logic")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 0d7dab926130 ("bus: tegra-aconnect: use devm_clk_*() helpers")
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/main.h |   13 -------------
- 1 file changed, 13 deletions(-)
+ drivers/bus/Kconfig |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1294,19 +1294,6 @@ mwifiex_copy_rates(u8 *dest, u32 pos, u8
- 	return pos;
- }
- 
--/* This function return interface number with the same bss_type.
-- */
--static inline u8
--mwifiex_get_intf_num(struct mwifiex_adapter *adapter, u8 bss_type)
--{
--	u8 i, num = 0;
--
--	for (i = 0; i < adapter->priv_num; i++)
--		if (adapter->priv[i] && adapter->priv[i]->bss_type == bss_type)
--			num++;
--	return num;
--}
--
- /*
-  * This function returns the correct private structure pointer based
-  * upon the BSS type and BSS number.
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -138,7 +138,6 @@ config TEGRA_ACONNECT
+ 	tristate "Tegra ACONNECT Bus Driver"
+ 	depends on ARCH_TEGRA_210_SOC
+ 	depends on OF && PM
+-	select PM_CLK
+ 	help
+ 	  Driver for the Tegra ACONNECT bus which is used to interface with
+ 	  the devices inside the Audio Processing Engine (APE) for Tegra210.
 
 
