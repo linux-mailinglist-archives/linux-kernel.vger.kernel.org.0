@@ -2,147 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2B9177C9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:01:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32285177CA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:02:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbgCCRBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:01:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57274 "EHLO mail.kernel.org"
+        id S1730494AbgCCRBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:01:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:49824 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgCCRBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:01:15 -0500
-Received: from onda.lan (ip-109-40-2-133.web.vodafone.de [109.40.2.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D98C42073B;
-        Tue,  3 Mar 2020 17:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583254874;
-        bh=M8qxYvgQXX14YLcGf+b9l7zWzEL047vLx9YwgV80qkY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ij4l8jdmw3wvTqvzDeg4XCG0yQ/8CNU3l6XB0WknejV9BHw7CN7/PryP49fNkSByc
-         QJHqbfwsD+82fRjGFSui6SLFqGTUmMa9y3MSTYCX/5Xt+qEnNVOM9zpjk2JcERiD6d
-         7jJ8XMod4+mmrSYonMkS+j+q23vqR3BUsH1n+wEk=
-Date:   Tue, 3 Mar 2020 18:01:09 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] Convert some DT documentation files to ReST
-Message-ID: <20200303180109.670ad7f8@onda.lan>
-In-Reply-To: <CAL_JsqKsZNFDSsZJ+wzgD1Eaf0fBwZ7BeUv=32jAuE29TeRfnA@mail.gmail.com>
-References: <cover.1583135507.git.mchehab+huawei@kernel.org>
-        <20200302123554.08ac0c34@lwn.net>
-        <20200303080947.5f381004@onda.lan>
-        <CAL_JsqKsZNFDSsZJ+wzgD1Eaf0fBwZ7BeUv=32jAuE29TeRfnA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727175AbgCCRBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:01:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C5CE2F;
+        Tue,  3 Mar 2020 09:01:32 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B8393F534;
+        Tue,  3 Mar 2020 09:01:30 -0800 (PST)
+Date:   Tue, 3 Mar 2020 17:01:16 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com,
+        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4 0/5] Add support for PCIe endpoint mode in Tegra194
+Message-ID: <20200303170103.GA9641@e121166-lin.cambridge.arm.com>
+References: <20200303105418.2840-1-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303105418.2840-1-vidyas@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, 3 Mar 2020 10:20:25 -0600
-Rob Herring <robh@kernel.org> escreveu:
+On Tue, Mar 03, 2020 at 04:24:13PM +0530, Vidya Sagar wrote:
+> Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
+> either in root port mode or in end point mode but only in one mode at a time.
+> Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
+> patch series adds support for PCIe endpoint mode in both the driver as well as
+> in DT.
+> This patch series depends on the changes made for Synopsys DesignWare endpoint
+> mode subsystem that are recently accepted.
+> @ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
+> which in turn depends on the patch made by Kishon
+> @ https://patchwork.kernel.org/patch/10975123/
+> which is also under review.
+> 
+> V4:
+> * Started using threaded irqs instead of kthreads
 
-> On Tue, Mar 3, 2020 at 1:09 AM Mauro Carvalho Chehab
-> <mchehab+huawei@kernel.org> wrote:
-> >
-> > Em Mon, 2 Mar 2020 12:35:54 -0700
-> > Jonathan Corbet <corbet@lwn.net> escreveu:
-> >  
-> > > On Mon,  2 Mar 2020 08:59:25 +0100
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >  
-> > > > While most of the devicetree stuff has its own format (with is now being
-> > > > converted to YAML format), some documents there are actually
-> > > > describing the DT concepts and how to contribute to it.
-> > > >
-> > > > IMHO, those documents would fit perfectly as part of the documentation
-> > > > body, as part of the firmare documents set.
-> > > >
-> > > > This patch series manually converts some DT documents that, on my
-> > > > opinion, would belong to it.  
-> > >
-> > > Did you consider putting this stuff into the firmware-guide while you were
-> > > at it?  It's not a perfect fit, I guess, but it doesn't seem too awkward
-> > > either.  
-> >
-> > I placed it just below the firmware-guide at the main index file.
-> >
-> > I have split thoughts about moving the files to there, though. From
-> > one side, it may fit better from the PoV of organizing the documentation.
-> >
-> > From other side, newcomers working with DT may expect looking at the
-> > text files inside Documentation/devicetree/.
-> >
-> > Maybe I could add an extra patch at the end of this series with the
-> > move, adding a "RFC" on his title. This way, we can better discuss it,
-> > and either merge the last one or not depending on the comments.  
-> 
-> Keep in mind that we generate a standalone DT only tree[1] with the
-> documentation, dts files and headers. So things should be structured
-> such that all the DT documentation could be built by itself without
-> dependencies on the 'kernel documentation'. I'm not asking for that to
-> be done in this series, but just don't do anything to make that
-> harder. I don't *think* have, but just want to make sure that's clear.
+Hi Vidya,
 
-So, I guess it is better to keep the .rst files under Documentation/devicetree,
-instead of moving them to Documentation/firmware-guide.
+sorry for the bother, may I ask you to rebase the series (after
+answering Thierry's query) on top of my pci/endpoint branch please ?
 
-Well, if moved, I guess it would be easy to modify the scripts that produce
-the documentation to also parse something a new directory inside
-Documentation/firmware-guide.
+Please resend it and I will merge patches {1,2,5} then.
 
-> 
-> > > It also seems like it would be good to CC the devicetree folks, or at
-> > > least the devicetree mailing list?  
-> 
-> I was wondering what happened to the cover letter on v2...
-> 
-> > Yeah, that would make sense. I'm using get-maintainers script to
-> > prepare the c/c list, as it is simply too much work to find the
-> > right maintainers by hand, for every single patch.
-> >
-> > I just noticed today that there's just *one entry* at MAINTAINERS
-> > file for Documentation/devicetree, and that points to you:
-> >
-> >         DOCUMENTATION
-> >         M:      Jonathan Corbet <corbet@lwn.net>
-> >         L:      linux-doc@vger.kernel.org
-> >         S:      Maintained
-> >         F:      Documentation/
-> >         F:      scripts/documentation-file-ref-check
-> >         F:      scripts/kernel-doc
-> >         F:      scripts/sphinx-pre-install
-> >         X:      Documentation/ABI/
-> >         X:      Documentation/firmware-guide/acpi/
-> >         X:      Documentation/devicetree/  
-> 
-> You mean doesn't point to Jon as 'X' is exclude. You missed this entry:
-> 
-> OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-> M:      Rob Herring <robh+dt@kernel.org>
-> M:      Mark Rutland <mark.rutland@arm.com>
-> L:      devicetree@vger.kernel.org
-> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-> Q:      http://patchwork.ozlabs.org/project/devicetree-bindings/list/
-> S:      Maintained
-> F:      Documentation/devicetree/
-> F:      arch/*/boot/dts/
-> F:      include/dt-bindings/
+Thanks,
+Lorenzo
 
-Yeah, I remember I saw something like the above in the past. However,
-I'm not seeing this entry at the MAINTAINERS file at next-20200303 anymore.
-
-Did someone removed such entry?
-
+> V3:
+> * Re-ordered patches in the series to make the driver change as the last patch
+> * Took care of Thierry's review comments
 > 
+> V2:
+> * Addressed Thierry & Bjorn's review comments
+> * Added EP mode specific binding documentation to already existing binding documentation file
+> * Removed patch that enables GPIO controller nodes explicitly as they are enabled already
 > 
-> Rob
+> Vidya Sagar (5):
+>   soc/tegra: bpmp: Update ABI header
+>   dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
+>   arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
+>   arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
+>     platform
+>   PCI: tegra: Add support for PCIe endpoint mode in Tegra194
 > 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/devicetree/devicetree-rebasing.git/
+>  .../bindings/pci/nvidia,tegra194-pcie.txt     | 125 +++-
+>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  18 +
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
+>  drivers/pci/controller/dwc/Kconfig            |  30 +-
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 681 +++++++++++++++++-
+>  include/soc/tegra/bpmp-abi.h                  |  10 +-
+>  6 files changed, 918 insertions(+), 45 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
