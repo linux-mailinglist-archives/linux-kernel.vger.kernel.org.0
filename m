@@ -2,69 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D793E1775E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 13:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01841775EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 13:32:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgCCMaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 07:30:13 -0500
-Received: from foss.arm.com ([217.140.110.172]:46372 "EHLO foss.arm.com"
+        id S1729292AbgCCMcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 07:32:35 -0500
+Received: from elvis.franken.de ([193.175.24.41]:49595 "EHLO elvis.franken.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbgCCMaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 07:30:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81713FEC;
-        Tue,  3 Mar 2020 04:30:12 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 066563F534;
-        Tue,  3 Mar 2020 04:30:11 -0800 (PST)
-Date:   Tue, 3 Mar 2020 12:30:10 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH] regulator: anatop: Drop error message for -EPROBE_DEFER
-Message-ID: <20200303123010.GB3866@sirena.org.uk>
-References: <1583205261-1994-1-git-send-email-Anson.Huang@nxp.com>
+        id S1727121AbgCCMcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 07:32:35 -0500
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1j96iu-0003ir-00; Tue, 03 Mar 2020 13:32:32 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 43958C0EC5; Tue,  3 Mar 2020 13:32:14 +0100 (CET)
+Date:   Tue, 3 Mar 2020 13:32:14 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v5 2/5] MIPS: DTS: CI20: fix PMU definitions for ACT8600
+Message-ID: <20200303123214.GA15333@alpha.franken.de>
+References: <cover.1583005548.git.hns@goldelico.com>
+ <02f18080fa0e0c214b40431749ca1ce514c53d37.1583005548.git.hns@goldelico.com>
+ <20200303101818.GA12103@alpha.franken.de>
+ <85F9D066-EAF6-4840-8F54-24E6D8A534DC@goldelico.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1583205261-1994-1-git-send-email-Anson.Huang@nxp.com>
-X-Cookie: Drilling for oil is boring.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <85F9D066-EAF6-4840-8F54-24E6D8A534DC@goldelico.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 03, 2020 at 01:10:22PM +0100, H. Nikolaus Schaller wrote:
+> > And please seperate fixes from improvments, thank you.
+> 
+> What do you mean by "separate"? Two separate patches?
+> This patch only contains fixes (which I would consider
+> all of them to be improvements).
 
---xgyAXRrhYN0wYx8y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There are two patches with Fixes tag, which IMHO should go
+into 5.6 via mips-fixes branch. All others are going
+via mips-next into 5.7. So it helps me, if they come in different
+patch series (or as single patches).
 
-On Tue, Mar 03, 2020 at 11:14:21AM +0800, Anson Huang wrote:
-> devm_regulator_register() could return -EPROBE_DEFER when trying to
-> get init data and NOT all resources are available at that time, for
-> this case, error message should NOT be present, the driver will call
-> probe again later, so drop error message for -EPROBE_DEFER.
+I see other DT changes in your other patch series. Are the changes
+there independent from each other or do they require correct order
+when appling them ?
 
-No, this is not good - it means that if there is some problem the user
-will not get any information about why the driver is not instantiating
-and how to fix it.  At most lower the message to dev_dbg().
+Thomas.
 
---xgyAXRrhYN0wYx8y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5eTdEACgkQJNaLcl1U
-h9DP0Af9EBo3Ed3IWJcDJkDD8qmTx/jmBM6AWA11STYC8A1vzwM+VrL+y/SLXSFV
-fp7s2QPZtWc/ZAb6hXnj6CzYr2T2iOxWvNf23G6lqMrUzMkLWwrUo3RPh9LrHdoU
-2ogfGwxtr58v1TlXuQlNzztjl3NDkybE0eTyCmvBX3RGwuStrcoMiSeYfA4NF4sq
-ybruAa0kXwn+WCOw6VMvNdfv9XI9Gjav4mPVu2GqNNI1oOIbbvFqLDzLLvpbPsJt
-bmCuQrC59gbvM/Nj7XdVJSQN5PTMDeRlMB2mWPkv66Te3T1MVr7QfKrQf1RSbgvf
-gvXkLlRfaNgldAl14nclxqggLmFDxQ==
-=oY7L
------END PGP SIGNATURE-----
-
---xgyAXRrhYN0wYx8y--
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
