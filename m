@@ -2,196 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9683A176C66
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9380176C60
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbgCCC4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:56:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728488AbgCCCsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:48:41 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5918324680;
-        Tue,  3 Mar 2020 02:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203720;
-        bh=cDrG6eBvBexdJXtqq7vBX8LWzWqJNBH8R4xqScia/FM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u08PQwLzLpZqYSFQ48MhILMkzLP4JRTop7GfQPkZwf+22DTDe+JYD+TgxUIfSF242
-         wmV7THTshV+bJbIWcKIqpy3WeMpaQ/p03H98CRdPlcy0yOxM3w+2ATIcDBDYBvPsFa
-         1AaiwGZX3DqMaHoXBrEb5k7pehJoETmjJDLcf32I=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tim Harvey <tharvey@gateworks.com>,
-        Robert Jones <rjones@gateworks.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 49/58] net: thunderx: workaround BGX TX Underflow issue
-Date:   Mon,  2 Mar 2020 21:47:31 -0500
-Message-Id: <20200303024740.9511-49-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200303024740.9511-1-sashal@kernel.org>
-References: <20200303024740.9511-1-sashal@kernel.org>
+        id S1728532AbgCCCso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:48:44 -0500
+Received: from us-smtp-delivery-172.mimecast.com ([216.205.24.172]:49124 "EHLO
+        us-smtp-delivery-172.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728436AbgCCCsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:48:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valvesoftware.com;
+        s=mc20150811; t=1583203708;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bvE9T2Bz+JTtEMUGdn6Ryihpl6seEYU5FEn8O251FgY=;
+        b=QmUZ2fOO+dnW6XKENjaKQG+wwQ2wR22vzzP/nCCKwtvAVZxUDcWLjhbxhOfzCzMKJ1ofgp
+        pJEARf0pA35zzqlgAsxFRaMzoda8gOyLDabBO1+Jj5inhmHxXtCwa0HSwHB9D5PWSIvjqk
+        a+9vFXMazst2SF/KGxnZhU9KG5xIaNw=
+Received: from smtp02.valvesoftware.com (smtp02.valvesoftware.com
+ [208.64.203.182]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-100-rxXDkuBvOYCkL6LbzZeo5Q-1; Mon, 02 Mar 2020 21:47:22 -0500
+X-MC-Unique: rxXDkuBvOYCkL6LbzZeo5Q-1
+Received: from [172.16.1.107] (helo=antispam.valve.org)
+        by smtp02.valvesoftware.com with esmtp (Exim 4.86_2)
+        (envelope-from <pgriffais@valvesoftware.com>)
+        id 1j8xab-0001dp-KK; Mon, 02 Mar 2020 18:47:21 -0800
+Received: from antispam.valve.org (127.0.0.1) id hbn2ji0171sl; Mon, 2 Mar 2020 18:47:21 -0800 (envelope-from <pgriffais@valvesoftware.com>)
+Received: from mail1.valvemail.org ([172.16.144.22])
+        by antispam.valve.org ([172.16.1.107]) (SonicWALL 9.0.5.2081 )
+        with ESMTP id o202003030247210012484-5; Mon, 02 Mar 2020 18:47:21 -0800
+Received: from [172.18.21.27] (172.18.21.27) by mail1.valvemail.org
+ (172.16.144.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1913.5; Mon, 2 Mar 2020
+ 18:47:21 -0800
+Subject: Re: [PATCH v3 1/4] futex: Implement mechanism to wait on any of
+ several futexes
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel@collabora.com>,
+        <krisman@collabora.com>, <shuah@kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <rostedt@goodmis.org>,
+        <ryao@gentoo.org>, <dvhart@infradead.org>, <mingo@redhat.com>,
+        <z.figura12@gmail.com>, <steven@valvesoftware.com>,
+        <steven@liquorix.net>, <malteskarupke@web.de>
+References: <20200213214525.183689-1-andrealmeid@collabora.com>
+ <20200213214525.183689-2-andrealmeid@collabora.com>
+ <20200228190717.GM18400@hirez.programming.kicks-ass.net>
+ <20200228194958.GO14946@hirez.programming.kicks-ass.net>
+ <87tv3aflqm.fsf@nanos.tec.linutronix.de>
+ <967d5047-2cb6-d6d8-6107-edb99a4c9696@valvesoftware.com>
+ <87o8thg031.fsf@nanos.tec.linutronix.de>
+From:   "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
+Message-ID: <beb82055-96fa-cb64-a06e-9d7a0946587b@valvesoftware.com>
+Date:   Mon, 2 Mar 2020 18:47:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87o8thg031.fsf@nanos.tec.linutronix.de>
+Content-Language: en-US
+X-ClientProxiedBy: mail1.valvemail.org (172.16.144.22) To mail1.valvemail.org
+ (172.16.144.22)
+X-EXCLAIMER-MD-CONFIG: fe5cb8ea-1338-4c54-81e0-ad323678e037
+X-C2ProcessedOrg: d7674bc1-f4dc-4fad-9e9e-e896f8a3f31b
+X-Mlf-CnxnMgmt-Allow: 172.16.144.22
+X-Mlf-Version: 9.0.5.2081
+X-Mlf-License: BSVKCAP__
+X-Mlf-UniqueId: o202003030247210012484
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: valvesoftware.com
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tim Harvey <tharvey@gateworks.com>
 
-[ Upstream commit 971617c3b761c876d686a2188220a33898c90e99 ]
 
-While it is not yet understood why a TX underflow can easily occur
-for SGMII interfaces resulting in a TX wedge. It has been found that
-disabling/re-enabling the LMAC resolves the issue.
+On 2/29/20 2:27 AM, Thomas Gleixner wrote:
+> "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com> writes:
+>> On 2/28/20 1:25 PM, Thomas Gleixner wrote:
+>>> Peter Zijlstra <peterz@infradead.org> writes:
+>>>> Thomas mentioned something like that, the problem is, ofcourse, that w=
+e
+>>>> then want to fix a whole bunch of historical ills, and the probmem
+>>>> becomes much bigger.
+>>>
+>>> We keep piling features on top of an interface and mechanism which is
+>>> fragile as hell and horrible to maintain. Adding vectoring, multi size
+>>> and whatever is not making it any better.
+>>>
+>>> There is also the long standing issue with NUMA, which we can't address
+>>> with the current pile at all.
+>>>
+>>> So I'm really advocating that all involved parties sit down ASAP and
+>>> hash out a new and less convoluted mechanism where all the magic new
+>>> features can be addressed in a sane way so that the 'F' in Futex really
+>>> only means Fast and not some other word starting with 'F'.
+>>
+>> Are you specifically talking about the interface, or the mechanism
+>> itself? Would you be OK with a new syscall that calls into the same code
+>> as this patch? It does seem like that's what we want, so if we rewrote a
+>> mechanism I'm not convinced it would come out any different. But, the
+>> interface itself seems fair-game to rewrite, as the current futex
+>> syscall is turning into an ioctl of sorts.
+>=20
+> No, you are misreading what I said. How does a new syscall make any
+> difference? It still adds new crap to a maze which is already in a state
+> of dubious maintainability.
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-Reviewed-by: Robert Jones <rjones@gateworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- .../net/ethernet/cavium/thunder/thunder_bgx.c | 62 ++++++++++++++++++-
- .../net/ethernet/cavium/thunder/thunder_bgx.h |  9 +++
- 2 files changed, 68 insertions(+), 3 deletions(-)
+I was just going by the context added by Peter, which seemed to imply=20
+your concerns were mostly around the interface, because I couldn't=20
+understand a clear course of action to follow just from your email. And=20
+frankly, still can't, but hopefully you can help us get there.
 
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index 6cc100e7d5c07..76ff42ec3ae5e 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -410,10 +410,19 @@ void bgx_lmac_rx_tx_enable(int node, int bgx_idx, int lmacid, bool enable)
- 	lmac = &bgx->lmac[lmacid];
- 
- 	cfg = bgx_reg_read(bgx, lmacid, BGX_CMRX_CFG);
--	if (enable)
-+	if (enable) {
- 		cfg |= CMR_PKT_RX_EN | CMR_PKT_TX_EN;
--	else
-+
-+		/* enable TX FIFO Underflow interrupt */
-+		bgx_reg_modify(bgx, lmacid, BGX_GMP_GMI_TXX_INT_ENA_W1S,
-+			       GMI_TXX_INT_UNDFLW);
-+	} else {
- 		cfg &= ~(CMR_PKT_RX_EN | CMR_PKT_TX_EN);
-+
-+		/* Disable TX FIFO Underflow interrupt */
-+		bgx_reg_modify(bgx, lmacid, BGX_GMP_GMI_TXX_INT_ENA_W1C,
-+			       GMI_TXX_INT_UNDFLW);
-+	}
- 	bgx_reg_write(bgx, lmacid, BGX_CMRX_CFG, cfg);
- 
- 	if (bgx->is_rgx)
-@@ -1535,6 +1544,48 @@ static int bgx_init_phy(struct bgx *bgx)
- 	return bgx_init_of_phy(bgx);
- }
- 
-+static irqreturn_t bgx_intr_handler(int irq, void *data)
-+{
-+	struct bgx *bgx = (struct bgx *)data;
-+	u64 status, val;
-+	int lmac;
-+
-+	for (lmac = 0; lmac < bgx->lmac_count; lmac++) {
-+		status = bgx_reg_read(bgx, lmac, BGX_GMP_GMI_TXX_INT);
-+		if (status & GMI_TXX_INT_UNDFLW) {
-+			pci_err(bgx->pdev, "BGX%d lmac%d UNDFLW\n",
-+				bgx->bgx_id, lmac);
-+			val = bgx_reg_read(bgx, lmac, BGX_CMRX_CFG);
-+			val &= ~CMR_EN;
-+			bgx_reg_write(bgx, lmac, BGX_CMRX_CFG, val);
-+			val |= CMR_EN;
-+			bgx_reg_write(bgx, lmac, BGX_CMRX_CFG, val);
-+		}
-+		/* clear interrupts */
-+		bgx_reg_write(bgx, lmac, BGX_GMP_GMI_TXX_INT, status);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void bgx_register_intr(struct pci_dev *pdev)
-+{
-+	struct bgx *bgx = pci_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = pci_alloc_irq_vectors(pdev, BGX_LMAC_VEC_OFFSET,
-+				    BGX_LMAC_VEC_OFFSET, PCI_IRQ_ALL_TYPES);
-+	if (ret < 0) {
-+		pci_err(pdev, "Req for #%d msix vectors failed\n",
-+			BGX_LMAC_VEC_OFFSET);
-+		return;
-+	}
-+	ret = pci_request_irq(pdev, GMPX_GMI_TX_INT, bgx_intr_handler, NULL,
-+			      bgx, "BGX%d", bgx->bgx_id);
-+	if (ret)
-+		pci_free_irq(pdev, GMPX_GMI_TX_INT, bgx);
-+}
-+
- static int bgx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	int err;
-@@ -1550,7 +1601,7 @@ static int bgx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	pci_set_drvdata(pdev, bgx);
- 
--	err = pci_enable_device(pdev);
-+	err = pcim_enable_device(pdev);
- 	if (err) {
- 		dev_err(dev, "Failed to enable PCI device\n");
- 		pci_set_drvdata(pdev, NULL);
-@@ -1604,6 +1655,8 @@ static int bgx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	bgx_init_hw(bgx);
- 
-+	bgx_register_intr(pdev);
-+
- 	/* Enable all LMACs */
- 	for (lmac = 0; lmac < bgx->lmac_count; lmac++) {
- 		err = bgx_lmac_enable(bgx, lmac);
-@@ -1620,6 +1673,7 @@ static int bgx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- err_enable:
- 	bgx_vnic[bgx->bgx_id] = NULL;
-+	pci_free_irq(pdev, GMPX_GMI_TX_INT, bgx);
- err_release_regions:
- 	pci_release_regions(pdev);
- err_disable_device:
-@@ -1637,6 +1691,8 @@ static void bgx_remove(struct pci_dev *pdev)
- 	for (lmac = 0; lmac < bgx->lmac_count; lmac++)
- 		bgx_lmac_disable(bgx, lmac);
- 
-+	pci_free_irq(pdev, GMPX_GMI_TX_INT, bgx);
-+
- 	bgx_vnic[bgx->bgx_id] = NULL;
- 	pci_release_regions(pdev);
- 	pci_disable_device(pdev);
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.h b/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
-index 25888706bdcd1..cdea493921857 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
-@@ -180,6 +180,15 @@
- #define BGX_GMP_GMI_TXX_BURST		0x38228
- #define BGX_GMP_GMI_TXX_MIN_PKT		0x38240
- #define BGX_GMP_GMI_TXX_SGMII_CTL	0x38300
-+#define BGX_GMP_GMI_TXX_INT		0x38500
-+#define BGX_GMP_GMI_TXX_INT_W1S		0x38508
-+#define BGX_GMP_GMI_TXX_INT_ENA_W1C	0x38510
-+#define BGX_GMP_GMI_TXX_INT_ENA_W1S	0x38518
-+#define  GMI_TXX_INT_PTP_LOST			BIT_ULL(4)
-+#define  GMI_TXX_INT_LATE_COL			BIT_ULL(3)
-+#define  GMI_TXX_INT_XSDEF			BIT_ULL(2)
-+#define  GMI_TXX_INT_XSCOL			BIT_ULL(1)
-+#define  GMI_TXX_INT_UNDFLW			BIT_ULL(0)
- 
- #define BGX_MSIX_VEC_0_29_ADDR		0x400000 /* +(0..29) << 4 */
- #define BGX_MSIX_VEC_0_29_CTL		0x400008
--- 
-2.20.1
+>=20
+>> This solves a real problem with a real usecase; so I'd like to stay
+>> practical and not go into deeper issues like solving NUMA support for
+>> all of futex in the interest of users waiting at the other end. Can you
+>> point us to your preferred approach just for the scope of what we're
+>> trying to accomplish?
+>=20
+> If we go by the argument that something solves a real use case and take
+> this as justification to proliferate existing crap, then we never get to
+> the point where things get redesigned from ground up. Quite the
+> contrary, we are going to duct tape it to death.
+>=20
+> It does not matter at all whether the syscall is multiplexing or split
+> up into 5 different ones. That's a pure cosmetic exercise.
+>=20
+> While all the currently proposed extensions (multiple wait, variable
+> size) make sense conceptually, I'm really uncomfortable to just cram
+> them into the existing code. They create an ABI which we have to
+> maintain forever.
+>=20
+>  From experience I just know that every time we extended the futex
+> interface we opened another can of worms which hunted us for years if
+> not for more then a decade. Guess who has to deal with that. Surely not
+> the people who drive by and solve their real world usecases. Just go and
+> read the changelog history of futexes very carefully and you might
+> understand what kind of complex beasts they are.
+>=20
+> At some point we simply have to say stop, sit down and figure out which
+> kind of functionality we really need in order to solve real world user
+> space problems and which of the gazillion futex (mis)features are just
+> there as historical ballast and do not have to be supported in a new
+> implementation, REQUEUE is just the most obvious example.
+>=20
+> I completely understand that you want to stay practical and just want to
+> solve your particular itch, but please understand that the people who
+> have to deal with the fallout and have dealt with it for 15+ years have
+> very practical reasons to say no.
+
+Note that it would have been nice to get that high-level feedback on the=20
+first version; instead we just received back specific feedback on the=20
+implementation itself, and questions about usecase/motivation that we=20
+tried to address, but that didn't elicit any follow-ups.
+
+Please bear with me for a second in case you thought you were obviously=20
+very clear about the path forward, but are you saying that:
+
+  1. Our usecase is valid, but we're not correct about futex being the=20
+right fit for it, and we should design an implement a new primitive to=20
+handle it?
+
+  2. Our usecase is valid, and our research showing that futex is the=20
+optimal right fit for it might be correct, but futex has to be=20
+significantly refactored before accepting this new feature. (or any new=20
+feature?)
+
+If it was 1., I think our new solution would either end up looking more=20
+or less exactly like futex, just with some of the more exotic=20
+functionality removed (although even that is arguable, since I wouldn't=20
+be surprised if we ended up using eg. requeue for some of the more=20
+complex migration scenarios). In which case I assume someone else would=20
+ask the question on why we're doing this new thing instead of adding to=20
+futex. OR, if intentionally made not futex-like, would end up not being=20
+optimal, which would make it not the right solution and a non-started to=20
+begin with. There's a reason we moved away from eventfd, even ignoring=20
+the fd exhaustion problem that some problematic apps fall victim to.
+
+If it's 2., then we'd be hard-pressed to proceed forward without your=20
+guidance.
+
+Conceptually it seems like multiple wait is an important missing feature=20
+in futex compared to core threading primitives of other platforms. It=20
+isn't the first time that the lack of it has come up for us and other=20
+game developers. Due to futex being so central and important, I=20
+completely understand it is tricky to get right and might be hard to=20
+maintain if not done correctly. It seems worthwhile to undertake, at=20
+least from our limited perspective. We'd be glad to help upstream get=20
+there, if possible.
+
+Thanks,
+  - Pierre-Loup
+
+
+>=20
+> Thanks,
+>=20
+>          tglx
+>=20
 
