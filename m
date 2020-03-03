@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C49177F60
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F077B17806D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbgCCRuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:50:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57992 "EHLO mail.kernel.org"
+        id S1732951AbgCCR4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:56:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731877AbgCCRuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:50:21 -0500
+        id S1732942AbgCCR4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:56:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4426F20870;
-        Tue,  3 Mar 2020 17:50:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48EF520728;
+        Tue,  3 Mar 2020 17:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257820;
-        bh=l9CFylLqPON1mile2tiWuTqeLDK0DsuxtM5g8bUvRt4=;
+        s=default; t=1583258199;
+        bh=6baVSeaPeZngpOF0zDPEwvISGo1cuZHYG8DXixry+zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ccj2JU3ygEuH2UKaoKJbjJ3qmPkXAev9TM/ebZMf+xTRG31qe2l6rQ0YS3wdzkk+p
-         iqbdorihLec98qkdk5BNL0J/B7RccvS1WTLHhDBsqt4r9rgKDPb3kas4x4mpzmbiPK
-         BlVKv7CPDGT4cYrpflUEOtObTa1T7QohDQoMZlkA=
+        b=u72DMeE5ADaJ94R2neJvGyhBAvYGfmCFcyHp6Htzwo98BEZGYLkCLoeRUTQRT1MLo
+         TvANQ8i6nwmhQdcAEz9abuAg7ceR+brkSRXh9VmPlT2iG0PuTz+UEzRqioBi2WrxFs
+         P3WH2sGLeG14y31IvnvdWF6wHZTKDoekfH7ABNiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Andrew Honig <ahonig@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.5 142/176] KVM: Check for a bad hva before dropping into the ghc slow path
-Date:   Tue,  3 Mar 2020 18:43:26 +0100
-Message-Id: <20200303174321.201234613@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Dmitry Bogdanov <dbogdanov@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 109/152] net: atlantic: fix out of range usage of active_vlans array
+Date:   Tue,  3 Mar 2020 18:43:27 +0100
+Message-Id: <20200303174315.082944131@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,77 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Dmitry Bogdanov <dbogdanov@marvell.com>
 
-commit fcfbc617547fc6d9552cb6c1c563b6a90ee98085 upstream.
+commit 5a292c89a84d49b598f8978f154bdda48b1072c0 upstream.
 
-When reading/writing using the guest/host cache, check for a bad hva
-before checking for a NULL memslot, which triggers the slow path for
-handing cross-page accesses.  Because the memslot is nullified on error
-by __kvm_gfn_to_hva_cache_init(), if the bad hva is encountered after
-crossing into a new page, then the kvm_{read,write}_guest() slow path
-could potentially write/access the first chunk prior to detecting the
-bad hva.
+fix static checker warning:
+ drivers/net/ethernet/aquantia/atlantic/aq_filters.c:166 aq_check_approve_fvlan()
+ error: passing untrusted data to 'test_bit()'
 
-Arguably, performing a partial access is semantically correct from an
-architectural perspective, but that behavior is certainly not intended.
-In the original implementation, memslot was not explicitly nullified
-and therefore the partial access behavior varied based on whether the
-memslot itself was null, or if the hva was simply bad.  The current
-behavior was introduced as a seemingly unintentional side effect in
-commit f1b9dd5eb86c ("kvm: Disallow wraparound in
-kvm_gfn_to_hva_cache_init"), which justified the change with "since some
-callers don't check the return code from this function, it sit seems
-prudent to clear ghc->memslot in the event of an error".
-
-Regardless of intent, the partial access is dependent on _not_ checking
-the result of the cache initialization, which is arguably a bug in its
-own right, at best simply weird.
-
-Fixes: 8f964525a121 ("KVM: Allow cross page reads and writes from cached translations.")
-Cc: Jim Mattson <jmattson@google.com>
-Cc: Andrew Honig <ahonig@google.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 7975d2aff5af: ("net: aquantia: add support of rx-vlan-filter offload")
+Signed-off-by: Dmitry Bogdanov <dbogdanov@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/kvm_main.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_filters.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2287,12 +2287,12 @@ int kvm_write_guest_offset_cached(struct
- 	if (slots->generation != ghc->generation)
- 		__kvm_gfn_to_hva_cache_init(slots, ghc, ghc->gpa, ghc->len);
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
+@@ -158,7 +158,7 @@ aq_check_approve_fvlan(struct aq_nic_s *
+ 	}
  
--	if (unlikely(!ghc->memslot))
--		return kvm_write_guest(kvm, gpa, data, len);
--
- 	if (kvm_is_error_hva(ghc->hva))
- 		return -EFAULT;
- 
-+	if (unlikely(!ghc->memslot))
-+		return kvm_write_guest(kvm, gpa, data, len);
-+
- 	r = __copy_to_user((void __user *)ghc->hva + offset, data, len);
- 	if (r)
- 		return -EFAULT;
-@@ -2320,12 +2320,12 @@ int kvm_read_guest_cached(struct kvm *kv
- 	if (slots->generation != ghc->generation)
- 		__kvm_gfn_to_hva_cache_init(slots, ghc, ghc->gpa, ghc->len);
- 
--	if (unlikely(!ghc->memslot))
--		return kvm_read_guest(kvm, ghc->gpa, data, len);
--
- 	if (kvm_is_error_hva(ghc->hva))
- 		return -EFAULT;
- 
-+	if (unlikely(!ghc->memslot))
-+		return kvm_read_guest(kvm, ghc->gpa, data, len);
-+
- 	r = __copy_from_user(data, (void __user *)ghc->hva, len);
- 	if (r)
- 		return -EFAULT;
+ 	if ((aq_nic->ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) &&
+-	    (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci),
++	    (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci) & VLAN_VID_MASK,
+ 		       aq_nic->active_vlans))) {
+ 		netdev_err(aq_nic->ndev,
+ 			   "ethtool: unknown vlan-id specified");
 
 
