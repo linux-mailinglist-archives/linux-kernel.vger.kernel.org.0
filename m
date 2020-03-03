@@ -2,104 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D318176CC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B37176CD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:59:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgCCC7B convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 21:59:01 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2595 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727522AbgCCC6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:58:54 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id F17EE5C380FB2F4A8F10;
-        Tue,  3 Mar 2020 10:58:51 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.227]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0439.000;
- Tue, 3 Mar 2020 10:58:42 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-CC:     Linuxarm <linuxarm@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] cpu-topology: Fix the potential data corruption
-Thread-Topic: [PATCH] cpu-topology: Fix the potential data corruption
-Thread-Index: AQHV7hK2ERrnxNGKY0yF2wIuAuh2Hqgv5MEAgAGAuLCAAz7DgIABi9aQ
-Date:   Tue, 3 Mar 2020 02:58:41 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED342092EE@dggemm526-mbx.china.huawei.com>
-References: <1582878945-50415-1-git-send-email-prime.zeng@hisilicon.com>
- <20200228104034.GB26973@bogus>
- <678F3D1BB717D949B966B68EAEB446ED341F2AE2@DGGEMM506-MBS.china.huawei.com>
- <20200302111038.GA16218@e107533-lin.cambridge.arm.com>
-In-Reply-To: <20200302111038.GA16218@e107533-lin.cambridge.arm.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.74.221.187]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727076AbgCCC7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:59:19 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37555 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728550AbgCCC7L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:59:11 -0500
+Received: by mail-pf1-f195.google.com with SMTP id p14so705146pfn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 18:59:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TKO0L3z/J7Uevo3j6Cjbfw67QzjwRhKOacKqgs2izaw=;
+        b=ogqzViFeXGao56AivP/vc0QdZ44N/zp3LPAu9t7auJ6D5w4BYt32BdcsGMVwKMJMLX
+         V17HhvkBFQuG/pXjAeSdKXMWBIETLu5a09qRe6As23S2FzKG8qNZn7G649/7kIe3bLZI
+         rvSZ5EvCIjyaeqwp71KKRZAe+yN/wPQNTbgyxc+SvzIuGf1KyC5SJpWDuNtq+1EdkgR4
+         ArbPJcGMikx2+KnUS5KbPa361UGsUE+oCIpKZ/c2JbYcp4vWUnfG/AJk1yT3ArzQFxZR
+         k/5X/Uq/EHXpgB3JoiIVdklAEamobQMFUfx4YwjR7hf5rq+HPAXBqQ/K2ZcORZ6n+waK
+         ZMOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TKO0L3z/J7Uevo3j6Cjbfw67QzjwRhKOacKqgs2izaw=;
+        b=rR/76ErrKHdgh4lKJcFQtgsI2cdGHl1w8yYDeZ6lNEoiFov2LPbQpPCAFFkGgql1fG
+         61xBYiPMNvzS9tNoCN3CM+Rtd2wj4mxhS0NdKmppZW/63jloHbM/EESM8f62yEqEQJa2
+         AT8+tRb/3+vELWvzs9CkeeJdxPjZvDO68AFlOh1iTreOnlJZoiFur/ul6qAWBiHl2Ppr
+         uUbAR6DmCmcqkXFuxsDpwkb8cupxylu/M+p1cxbX2PAvc70lfwKX/T8yAc8Vy55F949q
+         E713XvbGKzmQGVwEAwoFFzUUALd4RffZYRKfOpSYMhKpDaePu2N+3eTqOaLaHVfMzDLp
+         5xnw==
+X-Gm-Message-State: ANhLgQ14pqs11AlpX5HrqbNYXmngjqeaXMKSAu2xOaILpG6tTdw4ikdk
+        +uDe+VgWagNqmQRI5Vpba1f/CHz4qgI=
+X-Google-Smtp-Source: ADFU+vvAe42HEiTPq5z1cVZS5f+hW7AQAx29DDs4d+zaE0yVL/aZyCp8qfPq7TSX5al2Gq0NZRN78A==
+X-Received: by 2002:aa7:82ce:: with SMTP id f14mr2028100pfn.167.1583204349805;
+        Mon, 02 Mar 2020 18:59:09 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id w76sm3982670pfc.154.2020.03.02.18.59.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 18:59:09 -0800 (PST)
+Subject: Re: linux-next: build warnings after merge of the block tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200303124133.13309249@canb.auug.org.au>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ab8305a0-dda4-7b5d-2dec-00032410d6a3@kernel.dk>
+Date:   Mon, 2 Mar 2020 19:59:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200303124133.13309249@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Sudeep Holla [mailto:sudeep.holla@arm.com]
-> Sent: Monday, March 02, 2020 7:11 PM
-> To: Zengtao (B)
-> Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
-> linux-kernel@vger.kernel.org; Sudeep Holla
-> Subject: Re: [PATCH] cpu-topology: Fix the potential data corruption
+On 3/2/20 6:41 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Sat, Feb 29, 2020 at 01:41:47AM +0000, Zengtao (B) wrote:
-> > > -----Original Message-----
-> > > From: Sudeep Holla [mailto:sudeep.holla@arm.com]
-> > > Sent: Friday, February 28, 2020 6:41 PM
-> > > To: Zengtao (B)
-> > > Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
-> > > linux-kernel@vger.kernel.org; Sudeep Holla
-> > > Subject: Re: [PATCH] cpu-topology: Fix the potential data corruption
-> > >
-> > > On Fri, Feb 28, 2020 at 04:35:45PM +0800, Zeng Tao wrote:
-> > > > Currently there are only 10 bytes to store the cpu-topology info.
-> > > > That is:
-> > > > snprintf(buffer, 10, "cluster%d",i);
-> > > > snprintf(buffer, 10, "thread%d",i);
-> > > > snprintf(buffer, 10, "core%d",i);
-> > > >
-> > > > In the boundary test, if the cluster number exceeds 100, there will
-> be a
-> > >
-> > > I don't understand you mention of 100 in particular above. I can see
-> > > issue
-> > > if there are cluster with more than 2-digit id. Though highly unlikely
-> for
-> > > now, but I don't have objection to the patch.
-> > >
-> >
-> > The same meaning, more than 2-digit id equals to more than 100,
-> right?
+> After merging the block tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
 > 
-> Yes. May be it is obvious but I prefer to word the commit message
-> accordingly.
-> Mention of 100 specifically makes at-least me think something very
-> specific
-> to 100 and not applicable for any more than 2-digit number.
+> fs/io_uring.c: In function 'io_put_kbuf':
+> fs/io_uring.c:1651:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>  1651 |  struct io_buffer *kbuf = (struct io_buffer *) req->rw.addr;
+>       |                           ^
+> fs/io_uring.c: In function 'io_rw_buffer_select':
+> fs/io_uring.c:2209:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>  2209 |  struct io_buffer *kbuf = (struct io_buffer *) req->rw.addr;
+>       |                           ^
+> fs/io_uring.c:2216:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+>  2216 |  req->rw.addr = (u64) kbuf;
+>       |                 ^
+> fs/io_uring.c: In function 'io_cleanup_req':
+> fs/io_uring.c:4897:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>  4897 |    kfree((void *)req->rw.addr);
+>       |          ^
 > 
+> Introduced by commits
+> 
+>   7efcbb97deab ("io_uring: support buffer selection for OP_READ and OP_RECV")
+>   8cab19f460b6 ("io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_READV")
 
-Do you think I need to update the commit message and resend the patch?
-And I don't mind if you can help modify the commit message since both
-are fine for me, and it's a very trivial change. 
+Thanks Stephen, I added a fixup patch. I wish we had u64_to_ptr() and
+ptr_to_u64(), but that's only for the __user pointers...
 
-> > Here 100 is for from tester/user perspective.
-> > And we found this issue when test with QEMU.
-> 
-> OK.
-> 
-> --
-> Regards,
-> Sudeep
+-- 
+Jens Axboe
+
