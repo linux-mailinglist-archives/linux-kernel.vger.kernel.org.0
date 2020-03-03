@@ -2,184 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740141770E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 983C61770AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:02:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgCCIMV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 3 Mar 2020 03:12:21 -0500
-Received: from smtp.h3c.com ([60.191.123.50]:46505 "EHLO h3cspam02-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbgCCIMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:12:21 -0500
-X-Greylist: delayed 2910 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 03:12:20 EST
-Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
-        by h3cspam02-ex.h3c.com with ESMTP id 0237NmGj082844
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Mar 2020 15:23:48 +0800 (GMT-8)
-        (envelope-from tian.xianting@h3c.com)
-Received: from DAG2EX10-IDC.srv.huawei-3com.com ([10.8.0.73])
-        by h3cspam02-ex.h3c.com with ESMTPS id 0237N2TO081943
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Mar 2020 15:23:02 +0800 (GMT-8)
-        (envelope-from tian.xianting@h3c.com)
-Received: from DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) by
- DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 3 Mar 2020 15:23:04 +0800
-Received: from BJHUB02-EX.srv.huawei-3com.com (10.63.20.170) by
- DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) with Microsoft SMTP Server
- (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.1.1713.5
- via Frontend Transport; Tue, 3 Mar 2020 15:23:04 +0800
-Received: from localhost.localdomain (10.99.212.201) by rndsmtp.h3c.com
- (10.63.20.175) with Microsoft SMTP Server id 14.3.408.0; Tue, 3 Mar 2020
- 15:22:57 +0800
-From:   Xianting Tian <tian.xianting@h3c.com>
-To:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-CC:     <yubin@h3c.com>, Xianting Tian <tian.xianting@h3c.com>
-Subject: [PATCH] mm/filemap.c: clear page error before actual read
-Date:   Tue, 3 Mar 2020 15:18:56 +0800
-Message-ID: <20200303071856.46182-1-tian.xianting@h3c.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727637AbgCCICk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:02:40 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7943 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbgCCICj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 03:02:39 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e5e0ef50000>; Tue, 03 Mar 2020 00:01:57 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 03 Mar 2020 00:02:37 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 03 Mar 2020 00:02:37 -0800
+Received: from [10.2.160.177] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Mar
+ 2020 08:02:37 +0000
+Subject: Re: [PATCH v2 2/2] mm/gup/writeback: add callbacks for inaccessible
+ pages
+To:     Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        <linux-next@vger.kernel.org>, <akpm@linux-foundation.org>,
+        <jack@suse.cz>, <kirill@shutemov.name>
+CC:     <borntraeger@de.ibm.com>, <david@redhat.com>,
+        <aarcange@redhat.com>, <linux-mm@kvack.org>,
+        <frankja@linux.ibm.com>, <sfr@canb.auug.org.au>,
+        <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        Will Deacon <will@kernel.org>
+References: <20200303002506.173957-1-imbrenda@linux.ibm.com>
+ <20200303002506.173957-3-imbrenda@linux.ibm.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <99903e77-7720-678e-35c5-6eb9e35e7fcb@nvidia.com>
+Date:   Mon, 2 Mar 2020 23:59:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.99.212.201]
-Content-Transfer-Encoding: 8BIT
-X-DNSRBL: 
-X-MAIL: h3cspam02-ex.h3c.com 0237N2TO081943
+In-Reply-To: <20200303002506.173957-3-imbrenda@linux.ibm.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1583222517; bh=1iSbjST0XUCdE0peAn1uo5SihBMXldFyp2pYk6xzoPw=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=I+swJmrz555GiMwUtMsejt//bN6PjQVEusk2hVU5+0QN6bb0Wk1vudXwxLP/Ml7fi
+         v5mVXZ0iDl36dU94E95yZA6CFrjauEgYjZttCFtAZa5vHBgFm4NvYR3QOnzI7vsnw7
+         nnXockUGygUl6fqTmLWbghOWgQSHuYn0dR1rwhO/J6uIVeS5UlKjhbygj28KhIMTTA
+         fN9rLOepuaFAkyxhK+OmLufBPdALeLuSgB6rfYEO9DmxH0XPFEnVrYNTPegFCMi/vM
+         bvzcQytHqKkmlAlGAISTcptf5WoNzNlL2HLzcJnwB4SdXyfhcUetyoQdmLQaO7+VXM
+         86kTOh2b+eAjQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mount failure issue happens under the scenario:
-Application totally forked dozens of threads to mount the same
-number of cramfs images separately in docker, but several mounts
-failed with high probability.
-Mount failed due to the checking result of the page
-(read from the superblock of loop dev) is not uptodate after
-wait_on_page_locked(page) returned in function cramfs_read:
-   wait_on_page_locked(page);
-   if (!PageUptodate(page)) {
-      ...
-   }
+On 3/2/20 4:25 PM, Claudio Imbrenda wrote:
+> With the introduction of protected KVM guests on s390 there is now a
+> concept of inaccessible pages. These pages need to be made accessible
+> before the host can access them.
+> 
+> While cpu accesses will trigger a fault that can be resolved, I/O
+> accesses will just fail.  We need to add a callback into architecture
+> code for places that will do I/O, namely when writeback is started or
+> when a page reference is taken.
+> 
+> This is not only to enable paging, file backing etc, it is also
+> necessary to protect the host against a malicious user space.  For
+> example a bad QEMU could simply start direct I/O on such protected
+> memory.  We do not want userspace to be able to trigger I/O errors and
+> thus the logic is "whenever somebody accesses that page (gup) or does
+> I/O, make sure that this page can be accessed".  When the guest tries
+> to access that page we will wait in the page fault handler for
+> writeback to have finished and for the page_ref to be the expected
+> value.
+> 
+> On s390x the function is not supposed to fail, so it is ok to use a
+> WARN_ON on failure. If we ever need some more finegrained handling
+> we can tackle this when we know the details.
+> 
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Acked-by: Will Deacon <will@kernel.org>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>   include/linux/gfp.h |  6 ++++++
+>   mm/gup.c            | 27 ++++++++++++++++++++++++---
+>   mm/page-writeback.c |  5 +++++
+>   3 files changed, 35 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index e5b817cb86e7..be2754841369 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -485,6 +485,12 @@ static inline void arch_free_page(struct page *page, int order) { }
+>   #ifndef HAVE_ARCH_ALLOC_PAGE
+>   static inline void arch_alloc_page(struct page *page, int order) { }
+>   #endif
+> +#ifndef HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
+> +static inline int arch_make_page_accessible(struct page *page)
+> +{
+> +	return 0;
+> +}
+> +#endif
+>   
+>   struct page *
+>   __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 81a95fbe9901..15c47e0e86f8 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -413,6 +413,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>   	struct page *page;
+>   	spinlock_t *ptl;
+>   	pte_t *ptep, pte;
+> +	int ret;
+>   
+>   	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
+>   	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
+> @@ -471,8 +472,6 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>   		if (is_zero_pfn(pte_pfn(pte))) {
+>   			page = pte_page(pte);
+>   		} else {
+> -			int ret;
+> -
+>   			ret = follow_pfn_pte(vma, address, ptep, flags);
+>   			page = ERR_PTR(ret);
+>   			goto out;
+> @@ -480,7 +479,6 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>   	}
+>   
+>   	if (flags & FOLL_SPLIT && PageTransCompound(page)) {
+> -		int ret;
+>   		get_page(page);
+>   		pte_unmap_unlock(ptep, ptl);
+>   		lock_page(page);
+> @@ -497,6 +495,19 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>   		page = ERR_PTR(-ENOMEM);
+>   		goto out;
+>   	}
+> +	/*
+> +	 * We need to make the page accessible if we are actually going to
+> +	 * poke at its content (pin), otherwise we can leave it inaccessible.
+> +	 * If we cannot make the page accessible, fail.
+> +	 */
+> +	if (flags & FOLL_PIN) {
+> +		ret = arch_make_page_accessible(page);
+> +		if (ret) {
+> +			unpin_user_page(page);
+> +			page = ERR_PTR(ret);
+> +			goto out;
+> +		}
+> +	}
 
-The reason of the checking result of the page not uptodate:
-systemd-udevd read the loopX dev before mount, because the status
-of loopX is Lo_unbound at this time, so loop_make_request directly
-trigger the calling of io_end handler end_buffer_async_read, which
-called SetPageError(page). So It caused the page can't be set to
-uptodate in function end_buffer_async_read:
-   if(page_uptodate && !PageError(page)) {
-      SetPageUptodate(page);
-   }
-Then mount operation is performed, it used the same page which is
-just accessed by systemd-udevd above, Because this page is not
-uptodate, it will launch a actual read via submit_bh, then wait on
-this page by calling wait_on_page_locked(page). When the I/O of the
-page done, io_end handler end_buffer_async_read is called, because
-no one cleared the page error(during the whole read path of mount),
-which is caused by systemd-udevd, so this page is still in "PageError"
-status, which is can't be set to uptodate in function
-end_buffer_async_read, then caused mount failure.
 
-But sometimes mount succeed even through systemd-udeved read loop
-dev just before, The reason is systemd-udevd launched other loopX
-read just between step 3.1 and 3.2, the steps as below:
-1, loopX dev default status is Lo_unbound;
-2, systemd-udved read loopX dev (page is set to PageError);
-3, mount operation
-   1) set loopX status to Lo_bound;
-    ==>systemd-udevd read loopX dev<==
-   2) read loopX dev(page has no error)
-   3) mount succeed
-As the loopX dev status is set to Lo_bound after step 3.1, so the
-other loopX dev read by systemd-udevd will go through the whole I/O
-stack, part of the call trace as below:
-   SYS_read
-      vfs_read
-          do_sync_read
-              blkdev_aio_read
-                 generic_file_aio_read
-                     do_generic_file_read:
-                         ClearPageError(page);
-                         mapping->a_ops->readpage(filp, page);
-here, mapping->a_ops->readpage() is blkdev_readpage.
-In latest kernel, some function name changed, the call trace as
-below:
-   blkdev_read_iter
-      generic_file_read_iter
-         generic_file_buffered_read:
-            /*
-             * A previous I/O error may have been due to temporary
-             * failures, eg. multipath errors.
-             * PG_error will be set again if readpage fails.
-             */
-            ClearPageError(page);
-            /* Start the actual read.The read will unlock the page*/
-            error = mapping->a_ops->readpage(filp, page);
+That looks good.
 
-We can see ClearPageError(page) is called before the actual read,
-then the read in step 3.2 succeed, page has no error.
 
-The patch is to add the calling of ClearPageError just before the
-actual read of mount read path. Without the patch, the call trace
-as below when performing mount:
-  Do_mount
-     ramfs_read
-       cramfs_blkdev_read
-          read_mapping_page
-             read_cache_page
-                 do_read_cache_page:
-                    filler(data, page);
-                    or mapping->a_ops->readpage(data, page);
-With the patch, the call trace as below when performing mount:
-  Do_mount
-     cramfs_read
-        cramfs_blkdev_read
-           read_mapping_page
-              read_cache_page
-                 do_read_cache_page:
-                    ClearPageError(page); <==new add
-                    filler(data, page);
-                    or mapping->a_ops->readpage(data, page);
+>   	if (flags & FOLL_TOUCH) {
+>   		if ((flags & FOLL_WRITE) &&
+>   		    !pte_dirty(pte) && !PageDirty(page))
+> @@ -2162,6 +2173,16 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+>   
+>   		VM_BUG_ON_PAGE(compound_head(page) != head, page);
+>   
+> +		/*
+> +		 * We need to make the page accessible if we are actually
+> +		 * going to poke at its content (pin), otherwise we can
+> +		 * leave it inaccessible. If the page cannot be made
+> +		 * accessible, fail.
+> +		 */
 
-With the patch, mount operation trigger the calling of
-ClearPageError(page) before the actual read, the page has no
-error if no additional page error happen when I/O done.
 
-Signed-off-by: Xianting Tian <tian.xianting@h3c.com>
----
- mm/filemap.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+This part looks good, so these two points are just nits:
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 178447827..d65428f26 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2755,6 +2755,13 @@ static struct page *do_read_cache_page(struct address_space *mapping,
-                }
+That's a little bit of repeating what the code does, in the comments. How about:
 
- filler:
-+               /*
-+                * A previous I/O error may have been due to temporary
-+                * failures.
-+                * Clear page error before actual read, PG_error will be
-+                * set again if read page fails.
-+                */
-+               ClearPageError(page);
-                if (filler)
-                        err = filler(data, page);
-                else
---
-2.17.1
+		/*
+		 * We need to make the page accessible if and only if we are
+		 * going to access its content (the FOLL_PIN case). Please see
+		 * Documentation/core-api/pin_user_pages.rst for details.
+		 */
 
--------------------------------------------------------------------------------------------------------------------------------------
-本邮件及其附件含有新华三集团的保密信息，仅限于发送给上面地址中列出
-的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、
-或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本
-邮件！
-This e-mail and its attachments contain confidential information from New H3C, which is
-intended only for the person or entity whose address is listed above. Any use of the
-information contained herein in any way (including, but not limited to, total or partial
-disclosure, reproduction, or dissemination) by persons other than the intended
-recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender
-by phone or email immediately and delete it!
+
+> +		if ((flags & FOLL_PIN) && arch_make_page_accessible(page)) {
+> +			unpin_user_page(page);
+> +			goto pte_unmap;
+> +		}
+
+
+Your style earlier in the patch was easier on the reader, why not stay consistent
+with that (and with this file, which tends also to do this), so:
+
+		if (flags & FOLL_PIN) {
+			ret = arch_make_page_accessible(page);
+			if (ret) {
+				unpin_user_page(page);
+				goto pte_unmap;
+			}
+		}
+
+
+
+
+>   		SetPageReferenced(page);
+>   		pages[*nr] = page;
+>   		(*nr)++;
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index ab5a3cee8ad3..8384be5a2758 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2807,6 +2807,11 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+>   		inc_zone_page_state(page, NR_ZONE_WRITE_PENDING);
+>   	}
+>   	unlock_page_memcg(page);
+> +	/*
+> +	 * If writeback has been triggered on a page that cannot be made
+> +	 * accessible, it is too late.
+> +	 */
+> +	WARN_ON(arch_make_page_accessible(page));
+
+
+I'm not deep enough into this area to know if a) this is correct, and b) if there are any
+other places that need arch_make_page_accessible() calls. So I'll rely on other
+reviewers to help check on that.
+
+
+>   	return ret;
+>   
+>   }
+> 
+
+Anyway, I don't see any problems, and as I said, those documentation and style points are
+just nitpicks, not bugs.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
