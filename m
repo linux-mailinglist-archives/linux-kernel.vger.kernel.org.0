@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD881178138
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 735B81780C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387947AbgCCSBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:01:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45344 "EHLO mail.kernel.org"
+        id S2387455AbgCCR6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:58:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387935AbgCCSBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:01:16 -0500
+        id S2387427AbgCCR6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:58:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BABF20866;
-        Tue,  3 Mar 2020 18:01:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC75E20870;
+        Tue,  3 Mar 2020 17:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258475;
-        bh=4HlcNQ/u8dWefz42EWicmru3mNA3W0RTIiIe9h0A0Kk=;
+        s=default; t=1583258321;
+        bh=4fsMTC2zoau3tmshDp1FeSKoSeLg8PUslqdTX2Jfq60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nPlhYatJ6Twl+9446//8K8RP+euM2SE7v+FpfkYjaAJx7xJp7VisaRRJjbata6yZd
-         PXD1SW5uREDMwum1rrWKVq0yPcmjCMbtekg/T0DjSFs4oU+x6D0TnyNikTq+WG98Gn
-         iolVcMZxTicyfEq4OyMHPq9H2tVFs80KKFm4788s=
+        b=Vko2aedjErbloNX1dZA4zc3gs2oZ26+uGcW1wJqF0fI48lrzF+72YzQR347kSCCOx
+         DfAAvUnITZqyzu8lMwNIa9r+OK3yHJO35+vDbrphiNSMr6b2Qdfbj/G1p26yhAU3BY
+         hKA613N1unEu4WeXGnST9Qq5ftX454kpa+JEQKZs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        "Erhard F." <erhard_f@mailbox.org>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 62/87] net: netlink: cap max groups which will be considered in netlink_bind()
-Date:   Tue,  3 Mar 2020 18:43:53 +0100
-Message-Id: <20200303174355.918762979@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.4 136/152] KVM: x86: Remove spurious clearing of async #PF MSR
+Date:   Tue,  3 Mar 2020 18:43:54 +0100
+Message-Id: <20200303174318.268582741@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 3a20773beeeeadec41477a5ba872175b778ff752 upstream.
+commit 208050dac5ef4de5cb83ffcafa78499c94d0b5ad upstream.
 
-Since nl_groups is a u32 we can't bind more groups via ->bind
-(netlink_bind) call, but netlink has supported more groups via
-setsockopt() for a long time and thus nlk->ngroups could be over 32.
-Recently I added support for per-vlan notifications and increased the
-groups to 33 for NETLINK_ROUTE which exposed an old bug in the
-netlink_bind() code causing out-of-bounds access on archs where unsigned
-long is 32 bits via test_bit() on a local variable. Fix this by capping the
-maximum groups in netlink_bind() to BITS_PER_TYPE(u32), effectively
-capping them at 32 which is the minimum of allocated groups and the
-maximum groups which can be bound via netlink_bind().
+Remove a bogus clearing of apf.msr_val from kvm_arch_vcpu_destroy().
 
-CC: Christophe Leroy <christophe.leroy@c-s.fr>
-CC: Richard Guy Briggs <rgb@redhat.com>
-Fixes: 4f520900522f ("netlink: have netlink per-protocol bind function return an error code.")
-Reported-by: Erhard F. <erhard_f@mailbox.org>
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+apf.msr_val is only set to a non-zero value by kvm_pv_enable_async_pf(),
+which is only reachable by kvm_set_msr_common(), i.e. by writing
+MSR_KVM_ASYNC_PF_EN.  KVM does not autonomously write said MSR, i.e.
+can only be written via KVM_SET_MSRS or KVM_RUN.  Since KVM_SET_MSRS and
+KVM_RUN are vcpu ioctls, they require a valid vcpu file descriptor.
+kvm_arch_vcpu_destroy() is only called if KVM_CREATE_VCPU fails, and KVM
+declares KVM_CREATE_VCPU successful once the vcpu fd is installed and
+thus visible to userspace.  Ergo, apf.msr_val cannot be non-zero when
+kvm_arch_vcpu_destroy() is called.
+
+Fixes: 344d9588a9df0 ("KVM: Add PV MSR to enable asynchronous page faults delivery.")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netlink/af_netlink.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -1029,7 +1029,8 @@ static int netlink_bind(struct socket *s
- 	if (nlk->netlink_bind && groups) {
- 		int group;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9192,8 +9192,6 @@ void kvm_arch_vcpu_postcreate(struct kvm
  
--		for (group = 0; group < nlk->ngroups; group++) {
-+		/* nl_groups is a u32, so cap the maximum groups we can bind */
-+		for (group = 0; group < BITS_PER_TYPE(u32); group++) {
- 			if (!test_bit(group, &groups))
- 				continue;
- 			err = nlk->netlink_bind(net, group + 1);
-@@ -1048,7 +1049,7 @@ static int netlink_bind(struct socket *s
- 			netlink_insert(sk, nladdr->nl_pid) :
- 			netlink_autobind(sock);
- 		if (err) {
--			netlink_undo_bind(nlk->ngroups, groups, sk);
-+			netlink_undo_bind(BITS_PER_TYPE(u32), groups, sk);
- 			goto unlock;
- 		}
- 	}
+ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+ {
+-	vcpu->arch.apf.msr_val = 0;
+-
+ 	kvm_arch_vcpu_free(vcpu);
+ }
+ 
 
 
