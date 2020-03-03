@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 823A2177F44
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADBF617807E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbgCCRtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56950 "EHLO mail.kernel.org"
+        id S1733025AbgCCR5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731796AbgCCRth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:49:37 -0500
+        id S1733002AbgCCR5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:57:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60D0820CC7;
-        Tue,  3 Mar 2020 17:49:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF39420656;
+        Tue,  3 Mar 2020 17:57:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257775;
-        bh=i3RE9DoqeuTrvtoJD17oadaBmZeIBy8aamchigfCcwI=;
+        s=default; t=1583258223;
+        bh=eroNwEbXR2gs16J1JOIuR9JCnEkWWNCI256UXJQXHsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uB7/BlhcT/lpYPyodnN4HwEtgZRks/+o2u3c3F6k/ubPSI36vcCimJqjU3E7GCAXq
-         fF0PweUc0Oavtx9UIHXMmF8MZ7FnzBdI5BXI13YQDWu64Z95JIs3A6XzLk6mIZa23p
-         /M/TxKYfQthoYaGF1MeKzJS6lB8SQLJCJw27Fhsk=
+        b=Ta+EQeID1Ea04OZ0GUuQx7SNHEn1vo6eXsfhwVtTEL+YY9dbQhiErjfUUb1kYyVu7
+         fm2QVQGsNhVQYiFMktbVuFcezR5oPZXRuyZs+7W3YgglwAqYWeH6GyL0XeFlJKJkt8
+         7JkJA7YI5oYP7GalT46vqpvTmISdDdB+rUhbG0w4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 124/176] s390/qeth: vnicc Fix EOPNOTSUPP precedence
-Date:   Tue,  3 Mar 2020 18:43:08 +0100
-Message-Id: <20200303174319.138458807@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzbot+adf6c6c2be1c3a718121@syzkaller.appspotmail.com
+Subject: [PATCH 5.4 091/152] netfilter: xt_hashlimit: reduce hashlimit_mutex scope for htable_put()
+Date:   Tue,  3 Mar 2020 18:43:09 +0100
+Message-Id: <20200303174312.916450565@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,106 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandra Winter <wintera@linux.ibm.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 6f3846f0955308b6d1b219419da42b8de2c08845 upstream.
+commit c4a3922d2d20c710f827d3a115ee338e8d0467df upstream.
 
-When getting or setting VNICC parameters, the error code EOPNOTSUPP
-should have precedence over EBUSY.
+It is unnecessary to hold hashlimit_mutex for htable_destroy()
+as it is already removed from the global hashtable and its
+refcount is already zero.
 
-EBUSY is used because vnicc feature and bridgeport feature are mutually
-exclusive, which is a temporary condition.
-Whereas EOPNOTSUPP indicates that the HW does not support all or parts of
-the vnicc feature.
-This issue causes the vnicc sysfs params to show 'blocked by bridgeport'
-for HW that does not support VNICC at all.
+Also, switch hinfo->use to refcount_t so that we don't have
+to hold the mutex until it reaches zero in htable_put().
 
-Fixes: caa1f0b10d18 ("s390/qeth: add VNICC enable/disable support")
-Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-and-tested-by: syzbot+adf6c6c2be1c3a718121@syzkaller.appspotmail.com
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/net/qeth_l2_main.c |   29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+ net/netfilter/xt_hashlimit.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -1815,15 +1815,14 @@ int qeth_l2_vnicc_set_state(struct qeth_
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -36,6 +36,7 @@
+ #include <linux/netfilter_ipv6/ip6_tables.h>
+ #include <linux/mutex.h>
+ #include <linux/kernel.h>
++#include <linux/refcount.h>
+ #include <uapi/linux/netfilter/xt_hashlimit.h>
  
- 	QETH_CARD_TEXT(card, 2, "vniccsch");
+ #define XT_HASHLIMIT_ALL (XT_HASHLIMIT_HASH_DIP | XT_HASHLIMIT_HASH_DPT | \
+@@ -114,7 +115,7 @@ struct dsthash_ent {
  
--	/* do not change anything if BridgePort is enabled */
--	if (qeth_bridgeport_is_in_use(card))
--		return -EBUSY;
--
- 	/* check if characteristic and enable/disable are supported */
- 	if (!(card->options.vnicc.sup_chars & vnicc) ||
- 	    !(card->options.vnicc.set_char_sup & vnicc))
- 		return -EOPNOTSUPP;
+ struct xt_hashlimit_htable {
+ 	struct hlist_node node;		/* global list of all htables */
+-	int use;
++	refcount_t use;
+ 	u_int8_t family;
+ 	bool rnd_initialized;
  
-+	if (qeth_bridgeport_is_in_use(card))
-+		return -EBUSY;
-+
- 	/* set enable/disable command and store wanted characteristic */
- 	if (state) {
- 		cmd = IPA_VNICC_ENABLE;
-@@ -1869,14 +1868,13 @@ int qeth_l2_vnicc_get_state(struct qeth_
+@@ -315,7 +316,7 @@ static int htable_create(struct net *net
+ 	for (i = 0; i < hinfo->cfg.size; i++)
+ 		INIT_HLIST_HEAD(&hinfo->hash[i]);
  
- 	QETH_CARD_TEXT(card, 2, "vniccgch");
+-	hinfo->use = 1;
++	refcount_set(&hinfo->use, 1);
+ 	hinfo->count = 0;
+ 	hinfo->family = family;
+ 	hinfo->rnd_initialized = false;
+@@ -434,7 +435,7 @@ static struct xt_hashlimit_htable *htabl
+ 	hlist_for_each_entry(hinfo, &hashlimit_net->htables, node) {
+ 		if (!strcmp(name, hinfo->name) &&
+ 		    hinfo->family == family) {
+-			hinfo->use++;
++			refcount_inc(&hinfo->use);
+ 			return hinfo;
+ 		}
+ 	}
+@@ -443,12 +444,11 @@ static struct xt_hashlimit_htable *htabl
  
--	/* do not get anything if BridgePort is enabled */
--	if (qeth_bridgeport_is_in_use(card))
--		return -EBUSY;
--
- 	/* check if characteristic is supported */
- 	if (!(card->options.vnicc.sup_chars & vnicc))
- 		return -EOPNOTSUPP;
+ static void htable_put(struct xt_hashlimit_htable *hinfo)
+ {
+-	mutex_lock(&hashlimit_mutex);
+-	if (--hinfo->use == 0) {
++	if (refcount_dec_and_mutex_lock(&hinfo->use, &hashlimit_mutex)) {
+ 		hlist_del(&hinfo->node);
++		mutex_unlock(&hashlimit_mutex);
+ 		htable_destroy(hinfo);
+ 	}
+-	mutex_unlock(&hashlimit_mutex);
+ }
  
-+	if (qeth_bridgeport_is_in_use(card))
-+		return -EBUSY;
-+
- 	/* if card is ready, query current VNICC state */
- 	if (qeth_card_hw_is_reachable(card))
- 		rc = qeth_l2_vnicc_query_chars(card);
-@@ -1894,15 +1892,14 @@ int qeth_l2_vnicc_set_timeout(struct qet
- 
- 	QETH_CARD_TEXT(card, 2, "vniccsto");
- 
--	/* do not change anything if BridgePort is enabled */
--	if (qeth_bridgeport_is_in_use(card))
--		return -EBUSY;
--
- 	/* check if characteristic and set_timeout are supported */
- 	if (!(card->options.vnicc.sup_chars & QETH_VNICC_LEARNING) ||
- 	    !(card->options.vnicc.getset_timeout_sup & QETH_VNICC_LEARNING))
- 		return -EOPNOTSUPP;
- 
-+	if (qeth_bridgeport_is_in_use(card))
-+		return -EBUSY;
-+
- 	/* do we need to do anything? */
- 	if (card->options.vnicc.learning_timeout == timeout)
- 		return rc;
-@@ -1931,14 +1928,14 @@ int qeth_l2_vnicc_get_timeout(struct qet
- 
- 	QETH_CARD_TEXT(card, 2, "vniccgto");
- 
--	/* do not get anything if BridgePort is enabled */
--	if (qeth_bridgeport_is_in_use(card))
--		return -EBUSY;
--
- 	/* check if characteristic and get_timeout are supported */
- 	if (!(card->options.vnicc.sup_chars & QETH_VNICC_LEARNING) ||
- 	    !(card->options.vnicc.getset_timeout_sup & QETH_VNICC_LEARNING))
- 		return -EOPNOTSUPP;
-+
-+	if (qeth_bridgeport_is_in_use(card))
-+		return -EBUSY;
-+
- 	/* if card is ready, get timeout. Otherwise, just return stored value */
- 	*timeout = card->options.vnicc.learning_timeout;
- 	if (qeth_card_hw_is_reachable(card))
+ /* The algorithm used is the Simple Token Bucket Filter (TBF)
 
 
