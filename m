@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C8C177F62
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DDD917806E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731906AbgCCRu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:50:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58020 "EHLO mail.kernel.org"
+        id S1732961AbgCCR4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:56:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731893AbgCCRuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:50:23 -0500
+        id S1732949AbgCCR4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:56:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE641208C3;
-        Tue,  3 Mar 2020 17:50:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8AC4206D5;
+        Tue,  3 Mar 2020 17:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257823;
-        bh=mUqj1wUk/cnaZs6KUcmNgyIVNiPw2nm7mH9rZ9Vfw/Q=;
+        s=default; t=1583258202;
+        bh=mCggJkKA8cUpf3SzAiuVzOPs82bmMMhiDIGPL/xGvEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FlxDtlVFjVZ/4bzJUVOzeqs+2W1UVhocl32KPCSWDLIlTHnfiA2s7cGniby0SgYXc
-         p7hJDi9DQRcDDGYVNqcBovWDgKnPAgbyEYP/Zvz0M/8Ses6bfTFA4ppQL8/sC5r5JO
-         jIj7yeJ6FKlx8i59EjwTrwe02Ci4urtGePiRpIu4=
+        b=MTu6LJFrYYPwig9NkMjzE4lGsiYtsIfiobc4xNmLSiDjUelELBW+6VY/4uZMPbYGv
+         fFa1cdp9omypGo9BQdS9s1MJqZmm09974Znw8I9LU4IrITsE76AUTfiHhVwUuv6l2a
+         3bUqYMqiCppqL2g5SbgQizRQolr2iiJmU7kd7DmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cheng Jian <cj.chengjian@huawei.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: [PATCH 5.5 143/176] sched/fair: Optimize select_idle_cpu
-Date:   Tue,  3 Mar 2020 18:43:27 +0100
-Message-Id: <20200303174321.300181988@linuxfoundation.org>
+        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 110/152] net/smc: no peer ID in CLC decline for SMCD
+Date:   Tue,  3 Mar 2020 18:43:28 +0100
+Message-Id: <20200303174315.233505136@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,62 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng Jian <cj.chengjian@huawei.com>
+From: Ursula Braun <ubraun@linux.ibm.com>
 
-commit 60588bfa223ff675b95f866249f90616613fbe31 upstream.
+commit 369537c97024dca99303a8d4d6ab38b4f54d3909 upstream.
 
-select_idle_cpu() will scan the LLC domain for idle CPUs,
-it's always expensive. so the next commit :
+Just SMCR requires a CLC Peer ID, but not SMCD. The field should be
+zero for SMCD.
 
-	1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-
-introduces a way to limit how many CPUs we scan.
-
-But it consume some CPUs out of 'nr' that are not allowed
-for the task and thus waste our attempts. The function
-always return nr_cpumask_bits, and we can't find a CPU
-which our task is allowed to run.
-
-Cpumask may be too big, similar to select_idle_core(), use
-per_cpu_ptr 'select_idle_mask' to prevent stack overflow.
-
-Fixes: 1ad3aaf3fcd2 ("sched/core: Implement new approach to scale select_idle_cpu()")
-Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
-Link: https://lkml.kernel.org/r/20191213024530.28052-1-cj.chengjian@huawei.com
+Fixes: c758dfddc1b5 ("net/smc: add SMC-D support in CLC messages")
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/fair.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/smc/smc_clc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5828,6 +5828,7 @@ static inline int select_idle_smt(struct
-  */
- static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int target)
- {
-+	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
- 	struct sched_domain *this_sd;
- 	u64 avg_cost, avg_idle;
- 	u64 time, cost;
-@@ -5859,11 +5860,11 @@ static int select_idle_cpu(struct task_s
+--- a/net/smc/smc_clc.c
++++ b/net/smc/smc_clc.c
+@@ -372,7 +372,9 @@ int smc_clc_send_decline(struct smc_sock
+ 	dclc.hdr.length = htons(sizeof(struct smc_clc_msg_decline));
+ 	dclc.hdr.version = SMC_CLC_V1;
+ 	dclc.hdr.flag = (peer_diag_info == SMC_CLC_DECL_SYNCERR) ? 1 : 0;
+-	memcpy(dclc.id_for_peer, local_systemid, sizeof(local_systemid));
++	if (smc->conn.lgr && !smc->conn.lgr->is_smcd)
++		memcpy(dclc.id_for_peer, local_systemid,
++		       sizeof(local_systemid));
+ 	dclc.peer_diagnosis = htonl(peer_diag_info);
+ 	memcpy(dclc.trl.eyecatcher, SMC_EYECATCHER, sizeof(SMC_EYECATCHER));
  
- 	time = cpu_clock(this);
- 
--	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
-+	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
-+
-+	for_each_cpu_wrap(cpu, cpus, target) {
- 		if (!--nr)
- 			return si_cpu;
--		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
--			continue;
- 		if (available_idle_cpu(cpu))
- 			break;
- 		if (si_cpu == -1 && sched_idle_cpu(cpu))
 
 
