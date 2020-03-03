@@ -2,108 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B42C1772DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:46:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4636A1772E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:48:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727908AbgCCJqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 04:46:25 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39771 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbgCCJqZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:46:25 -0500
-Received: by mail-ed1-f65.google.com with SMTP id m13so3490100edb.6;
-        Tue, 03 Mar 2020 01:46:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kH1X2D2b4dxEsrD1WLS0yi7/4Un3F5auBBafyxkyk3E=;
-        b=H4vK3b2vCIkW0nESLucSGpVLVGDFKIcr270Yif5KPhipYdwyFneoap0sQ615V9nHGe
-         u8pBJ+Z6ER1k7axQ0J3Qn2fGi0h0i+eiNV6f8DhIe7PDOmqkxgcdsgli4PcSdYS4lySi
-         P8o9cR2MuLy7/9wsoLh+ycmu2VKKnvJRhlzdC6lniy9Jy+1/1F3Bkm2Ox0FLXNZnzCWu
-         4qwR+32rZgeBwTJiB1GLM5tK5vQkw6jtHmxfL1KD/aGJpT0AXmfJ+XOdSoaqV9gWWx0y
-         Jd+rINagOzwj6vQPZmoS0y9HBJcl+xnJTSBcUfXlYG6DzwY0tWTehrGQYFvwF3gT8PpP
-         OMcg==
-X-Gm-Message-State: ANhLgQ0JgHrnW4psk2uEW4vaG7CAQg4yFD5N27zISZBBZNYx/v+i+JSF
-        G/f4cOxFBjTQBD4KS0gC3rM=
-X-Google-Smtp-Source: ADFU+vtIFkJ0Ojpmt4sIzlMtbbpQ2p7WqilCvmNNEM5/2XzXv5agArQPt5qR3v51ebMmhc9eIYM6zw==
-X-Received: by 2002:a17:906:c345:: with SMTP id ci5mr3170236ejb.132.1583228782674;
-        Tue, 03 Mar 2020 01:46:22 -0800 (PST)
-Received: from pi3 ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id r26sm657866edw.46.2020.03.03.01.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 01:46:21 -0800 (PST)
-Date:   Tue, 3 Mar 2020 10:46:19 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        id S1727945AbgCCJsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 04:48:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52092 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727818AbgCCJsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 04:48:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D5375AD33;
+        Tue,  3 Mar 2020 09:47:58 +0000 (UTC)
+Date:   Tue, 3 Mar 2020 10:47:58 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/3] devicetree: bindings: exynos: Add new compatible
- for Exynos5420 dwc3 clocks support
-Message-ID: <20200303094619.GA20181@pi3>
-References: <20200301212019.2248-1-linux.amoon@gmail.com>
- <20200301212019.2248-2-linux.amoon@gmail.com>
+        Andrea Parri <parri.andrea@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: misc nits Re: [PATCH 1/2] printk: add lockless buffer
+Message-ID: <20200303094758.ubylqjqns7zbg6gb@pathway.suse.cz>
+References: <20200128161948.8524-1-john.ogness@linutronix.de>
+ <20200128161948.8524-2-john.ogness@linutronix.de>
+ <20200221120557.lxpeoy6xuuqxzu5w@pathway.suse.cz>
+ <87r1ybujm5.fsf@linutronix.de>
+ <20200302123249.6khdqpneu7t6l35s@pathway.suse.cz>
+ <87a74yrhwy.fsf@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200301212019.2248-2-linux.amoon@gmail.com>
+In-Reply-To: <87a74yrhwy.fsf@linutronix.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 09:20:16PM +0000, Anand Moon wrote:
-> This patch adds the new compatible string for Exynos5422 DWC3
-> to support enable/disable of core and suspend clk by DWC3 driver.
-> Also updated the clock names for compatible samsung,exynos5420-dwusb3.
-
-Some time ago I mentioned this... so once more:
-Do not use "This patch adds" but simple "Add".
-https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst#L151
-
-Best regards,
-Krzysztof
-
+On Mon 2020-03-02 14:43:41, John Ogness wrote:
+> On 2020-03-02, Petr Mladek <pmladek@suse.com> wrote:
+> >>>> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> >>>> new file mode 100644
+> >>>> index 000000000000..796257f226ee
+> >>>> --- /dev/null
+> >>>> +++ b/kernel/printk/printk_ringbuffer.c
+> >>>> +/*
+> >>>> + * Read the record @id and verify that it is committed and has the sequence
+> >>>> + * number @seq. On success, 0 is returned.
+> >>>> + *
+> >>>> + * Error return values:
+> >>>> + * -EINVAL: A committed record @seq does not exist.
+> >>>> + * -ENOENT: The record @seq exists, but its data is not available. This is a
+> >>>> + *          valid record, so readers should continue with the next seq.
+> >>>> + */
+> >>>> +static int desc_read_committed(struct prb_desc_ring *desc_ring,
+> >>>> +			       unsigned long id, u64 seq,
+> >>>> +			       struct prb_desc *desc)
+> >>>> +{
+> >
+> > OK, what about having desc_read_by_seq() instead?
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> Previous changes:
-> 	Added the missing clock name for Exynos5420 complatible
-> ---
->  Documentation/devicetree/bindings/usb/exynos-usb.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> Well, it isn't actually "reading by seq". @seq is there for additional
+> verification. Yes, prb_read() is deriving @id from @seq. But it only
+> does this once and uses that value for both calls.
+
+I do not want to nitpick about words. If I get it properly,
+the "id" is not important here. Any "id" is fine as long as
+"seq" matches. Reading "id" once is just an optimization.
+
+I do not resist on the change. It was just an idea how to
+avoid confusion. I was confused more than once. But I might
+be the only one. The more strightforward code looked more
+important to me than the optimization.
+
+
+> > Also there is a bug in current desc_read_commited().
+> > desc->info.seq might contain a garbage when d_state is desc_miss
+> > or desc_reserved.
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> index 6aae1544f240..220f729ac8eb 100644
-> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -69,7 +69,9 @@ DWC3
->  Required properties:
->   - compatible: should be one of the following -
->  	       "samsung,exynos5250-dwusb3": for USB 3.0 DWC3 controller on
-> -					    Exynos5250/5420.
-> +					    Exynos5250.
-> +	       "samsung,exynos5420-dwusb3": for USB 3.0 DWC3 controller on
-> +					    Exynos5420.
->  	       "samsung,exynos5433-dwusb3": for USB 3.0 DWC3 controller on
->  					    Exynos5433.
->  	       "samsung,exynos7-dwusb3": for USB 3.0 DWC3 controller on Exynos7.
-> @@ -82,6 +84,7 @@ Required properties:
->                  Following clock names shall be provided for different
->                  compatibles:
->                   - samsung,exynos5250-dwusb3: "usbdrd30",
-> +                 - samsung,exynos5420-dwusb3: "usbdrd30", "usbdrd30_susp_clk",
->                   - samsung,exynos5433-dwusb3: "aclk", "susp_clk", "pipe_pclk",
->                                                "phyclk",
->                   - samsung,exynos7-dwusb3: "usbdrd30", "usbdrd30_susp_clk",
-> -- 
-> 2.25.1
+> It is not a bug. In both of those cases, -EINVAL is the correct return
+> value.
+
+No, it is a bug. If info is not read and contains garbage then the
+following check may pass by chance:
+
+	if (desc->info.seq != seq)
+		return -EINVAL;
+
+Then the function would return 0 even when desc_read() returned
+desc_miss or desc_reserved.
+
+
+> > I would change it to:
+> >
+> > static enum desc_state
+> > desc_read_by_seq(struct prb_desc_ring *desc_ring,
+> > 		 u64 seq, struct prb_desc *desc)
+> > {
+> > 	struct prb_desc *rdesc = to_desc(desc_ring, seq);
+> > 	atomic_long_t *state_var = &rdesc->state_var;
+> > 	id = DESC_ID(atomic_long_read(state_var));
 > 
+> I think it is error-prone to re-read @state_var here. It is lockless
+> shared data. desc_read_committed() is called twice in prb_read() and it
+> is expected that both calls are using the same @id.
+
+It is not error prone. If "id" changes then "seq" will not match.
+
+> > 	enum desc_state d_state;
+> >
+> > 	d_state = desc_read(desc_ring, id, desc);
+> > 	if (d_state == desc_miss ||
+> > 	    d_state == desc_reserved ||
+> > 	    desc->info.seq != seq)
+> > 		return -EINVAL;
+> >
+> > 	if (d_state == desc_reusable)
+> > 		return -ENOENT;
+> 
+> I can use this refactoring.
+
+Yes please, "else" is not needed.
+
+> >
+> > 	if (d_state != desc_committed)
+> > 		return -EINVAL;
+> 
+> I suppose you meant to remove this check and leave in the @blk_lpos
+> check instead.
+
+Good catch, this check is superfluous.
+
+> If we're trying to minimize lines of code, the @blk_lpos
+> check could be combined with the "== desc_reusable" check as well.
+
+Minimizing the lines of code was not my primary goal. I was just
+confused by the function name. Also the fact that "seq" was the
+important thing was well hidden.
+
+Best Regards,
+Petr
+
+PS: I dived into the barriers and got lost. I hope that I will
+be able to send something sensible in the end ;-)
