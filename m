@@ -2,38 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E02AE178078
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED78177F6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733006AbgCCR5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:57:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
+        id S1731579AbgCCRuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:50:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732684AbgCCR4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:56:53 -0500
+        id S1731540AbgCCRuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:50:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46BC3206D5;
-        Tue,  3 Mar 2020 17:56:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03F6220870;
+        Tue,  3 Mar 2020 17:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258212;
-        bh=9FKswDVtYEDyso0kvaoRSlcSlgbB0d/jtyAbq574GS4=;
+        s=default; t=1583257839;
+        bh=v7LP2winjKetF0qZfTiptQyPeagnjzB8CG1jVUdNI6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R5UBDYbGjUzJggUvaQxV2MA/uWdOK0m+SWS0YZC2oBv0HggTKY0gzjxnr3+bm7sVA
-         4ycSEqXQORo1VDy6LDdZFMsSt7cAgUvGz569JhCgqkirDb/XOqHYJl+STtqIupFrAb
-         vKyKXTkR36kDngWEntSTfWSYLqSwPlWAih0k2Ifg=
+        b=WlozodSvIIxDKA6ubcKLT6ra7jddrshoW5b02EnGNUZHlz1oAlfuCvx+j0UJb3CmF
+         QGlQy7z90zKhwrydxyoAB7Pftpbhq1D36VJ9cG3b8Ael02yiaaxUR3SfHFNiv5rbN5
+         vlPOBkWlhasNlpG/860OdJOmD2Jey8Y2ukdYcjD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 5.4 114/152] kbuild: move headers_check rule to usr/include/Makefile
-Date:   Tue,  3 Mar 2020 18:43:32 +0100
-Message-Id: <20200303174315.704945660@linuxfoundation.org>
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 5.5 149/176] kprobes: Set unoptimized flag after unoptimizing code
+Date:   Tue,  3 Mar 2020 18:43:33 +0100
+Message-Id: <20200303174321.922319806@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,135 +50,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 7ecaf069da52e472d393f03e79d721aabd724166 upstream.
+commit f66c0447cca1281116224d474cdb37d6a18e4b5b upstream.
 
-Currently, some sanity checks for uapi headers are done by
-scripts/headers_check.pl, which is wired up to the 'headers_check'
-target in the top Makefile.
+Set the unoptimized flag after confirming the code is completely
+unoptimized. Without this fix, when a kprobe hits the intermediate
+modified instruction (the first byte is replaced by an INT3, but
+later bytes can still be a jump address operand) while unoptimizing,
+it can return to the middle byte of the modified code, which causes
+an invalid instruction exception in the kernel.
 
-It is true compiling headers has better test coverage, but there
-are still several headers excluded from the compile test. I like
-to keep headers_check.pl for a while, but we can delete a lot of
-code by moving the build rule to usr/include/Makefile.
+Usually, this is a rare case, but if we put a probe on the function
+call while text patching, it always causes a kernel panic as below:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+ # echo p text_poke+5 > kprobe_events
+ # echo 1 > events/kprobes/enable
+ # echo 0 > events/kprobes/enable
+
+invalid opcode: 0000 [#1] PREEMPT SMP PTI
+ RIP: 0010:text_poke+0x9/0x50
+ Call Trace:
+  arch_unoptimize_kprobe+0x22/0x28
+  arch_unoptimize_kprobes+0x39/0x87
+  kprobe_optimizer+0x6e/0x290
+  process_one_work+0x2a0/0x610
+  worker_thread+0x28/0x3d0
+  ? process_one_work+0x610/0x610
+  kthread+0x10d/0x130
+  ? kthread_park+0x80/0x80
+  ret_from_fork+0x3a/0x50
+
+text_poke() is used for patching the code in optprobes.
+
+This can happen even if we blacklist text_poke() and other functions,
+because there is a small time window during which we show the intermediate
+code to other CPUs.
+
+ [ mingo: Edited the changelog. ]
+
+Tested-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bristot@redhat.com
+Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
+Link: https://lkml.kernel.org/r/157483422375.25881.13508326028469515760.stgit@devnote2
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile                     |   11 +++--------
- lib/Kconfig.debug            |   11 -----------
- scripts/Makefile.headersinst |   18 ------------------
- usr/include/Makefile         |    9 ++++++---
- 4 files changed, 9 insertions(+), 40 deletions(-)
+ kernel/kprobes.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -1195,19 +1195,15 @@ headers: $(version_h) scripts_unifdef ua
- 	$(Q)$(MAKE) $(hdr-inst)=include/uapi
- 	$(Q)$(MAKE) $(hdr-inst)=arch/$(SRCARCH)/include/uapi
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -510,6 +510,8 @@ static void do_unoptimize_kprobes(void)
+ 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
+ 	/* Loop free_list for disarming */
+ 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
++		/* Switching from detour code to origin */
++		op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 		/* Disarm probes if marked disabled */
+ 		if (kprobe_disabled(&op->kp))
+ 			arch_disarm_kprobe(&op->kp);
+@@ -665,6 +667,7 @@ static void force_unoptimize_kprobe(stru
+ {
+ 	lockdep_assert_cpus_held();
+ 	arch_unoptimize_kprobe(op);
++	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 	if (kprobe_disabled(&op->kp))
+ 		arch_disarm_kprobe(&op->kp);
+ }
+@@ -681,7 +684,6 @@ static void unoptimize_kprobe(struct kpr
+ 	if (!kprobe_optimized(p))
+ 		return;
  
-+# Deprecated. It is no-op now.
- PHONY += headers_check
--headers_check: headers
--	$(Q)$(MAKE) $(hdr-inst)=include/uapi HDRCHECK=1
--	$(Q)$(MAKE) $(hdr-inst)=arch/$(SRCARCH)/include/uapi HDRCHECK=1
-+headers_check:
-+	@:
- 
- ifdef CONFIG_HEADERS_INSTALL
- prepare: headers
- endif
- 
--ifdef CONFIG_HEADERS_CHECK
--all: headers_check
--endif
--
- PHONY += scripts_unifdef
- scripts_unifdef: scripts_basic
- 	$(Q)$(MAKE) $(build)=scripts scripts/unifdef
-@@ -1475,7 +1471,6 @@ help:
- 	@echo  '  versioncheck    - Sanity check on version.h usage'
- 	@echo  '  includecheck    - Check for duplicate included header files'
- 	@echo  '  export_report   - List the usages of all exported symbols'
--	@echo  '  headers_check   - Sanity check on exported headers'
- 	@echo  '  headerdep       - Detect inclusion cycles in headers'
- 	@echo  '  coccicheck      - Check with Coccinelle'
- 	@echo  ''
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -299,17 +299,6 @@ config HEADERS_INSTALL
- 	  user-space program samples. It is also needed by some features such
- 	  as uapi header sanity checks.
- 
--config HEADERS_CHECK
--	bool "Run sanity checks on uapi headers when building 'all'"
--	depends on HEADERS_INSTALL
--	help
--	  This option will run basic sanity checks on uapi headers when
--	  building the 'all' target, for example, ensure that they do not
--	  attempt to include files which were not exported, etc.
--
--	  If you're making modifications to header files which are
--	  relevant for userspace, say 'Y'.
--
- config OPTIMIZE_INLINING
- 	def_bool y
- 	help
---- a/scripts/Makefile.headersinst
-+++ b/scripts/Makefile.headersinst
-@@ -56,9 +56,6 @@ new-dirs      := $(filter-out $(existing
- $(if $(new-dirs), $(shell mkdir -p $(new-dirs)))
- 
- # Rules
--
--ifndef HDRCHECK
--
- quiet_cmd_install = HDRINST $@
-       cmd_install = $(CONFIG_SHELL) $(srctree)/scripts/headers_install.sh $< $@
- 
-@@ -81,21 +78,6 @@ existing-headers := $(filter $(old-heade
- 
- -include $(foreach f,$(existing-headers),$(dir $(f)).$(notdir $(f)).cmd)
- 
--else
--
--quiet_cmd_check = HDRCHK  $<
--      cmd_check = $(PERL) $(srctree)/scripts/headers_check.pl $(dst) $(SRCARCH) $<; touch $@
--
--check-files := $(addsuffix .chk, $(all-headers))
--
--$(check-files): $(dst)/%.chk : $(dst)/% $(srctree)/scripts/headers_check.pl
--	$(call cmd,check)
--
--__headers: $(check-files)
--	@:
--
--endif
--
- PHONY += FORCE
- FORCE:
- 
---- a/usr/include/Makefile
-+++ b/usr/include/Makefile
-@@ -99,11 +99,14 @@ endif
- # asm-generic/*.h is used by asm/*.h, and should not be included directly
- header-test- += asm-generic/%
- 
--extra-y := $(patsubst %.h,%.hdrtest, $(filter-out $(header-test-), \
--		$(patsubst $(obj)/%,%, $(shell find $(obj) -name '*.h'))))
-+extra-y := $(patsubst $(obj)/%.h,%.hdrtest, $(shell find $(obj) -name '*.h'))
- 
- quiet_cmd_hdrtest = HDRTEST $<
--      cmd_hdrtest = $(CC) $(c_flags) -S -o /dev/null -x c /dev/null -include $<; touch $@
-+      cmd_hdrtest = \
-+		$(CC) $(c_flags) -S -o /dev/null -x c /dev/null \
-+			$(if $(filter-out $(header-test-), $*.h), -include $<); \
-+		$(PERL) $(srctree)/scripts/headers_check.pl $(obj) $(SRCARCH) $<; \
-+		touch $@
- 
- $(obj)/%.hdrtest: $(obj)/%.h FORCE
- 	$(call if_changed_dep,hdrtest)
+-	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 	if (!list_empty(&op->list)) {
+ 		if (optprobe_queued_unopt(op)) {
+ 			/* Queued in unoptimizing queue */
 
 
