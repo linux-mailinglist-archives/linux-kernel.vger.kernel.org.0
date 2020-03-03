@@ -2,250 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 983C61770AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B23417709F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgCCICk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 03:02:40 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7943 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgCCICj (ORCPT
+        id S1727667AbgCCIBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:01:24 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51068 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727565AbgCCIBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:02:39 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e5e0ef50000>; Tue, 03 Mar 2020 00:01:57 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 03 Mar 2020 00:02:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 03 Mar 2020 00:02:37 -0800
-Received: from [10.2.160.177] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Mar
- 2020 08:02:37 +0000
-Subject: Re: [PATCH v2 2/2] mm/gup/writeback: add callbacks for inaccessible
- pages
-To:     Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        <linux-next@vger.kernel.org>, <akpm@linux-foundation.org>,
-        <jack@suse.cz>, <kirill@shutemov.name>
-CC:     <borntraeger@de.ibm.com>, <david@redhat.com>,
-        <aarcange@redhat.com>, <linux-mm@kvack.org>,
-        <frankja@linux.ibm.com>, <sfr@canb.auug.org.au>,
-        <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-        Will Deacon <will@kernel.org>
-References: <20200303002506.173957-1-imbrenda@linux.ibm.com>
- <20200303002506.173957-3-imbrenda@linux.ibm.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <99903e77-7720-678e-35c5-6eb9e35e7fcb@nvidia.com>
-Date:   Mon, 2 Mar 2020 23:59:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 3 Mar 2020 03:01:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a5so1954100wmb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 00:01:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1KFVCRDxDtzub9zZu4H3xTogihEXNQAo7KqjGf/X5ds=;
+        b=EIYNgH7ltAnh/xuunt1NPohmKiypqOkqB+g7AB19td4meB3xEI9LzjrtpsSEUoFA5m
+         k93KAhkLIKXtXdu7WekEm5Ofn7EhY8huVn18GNJ8633kgdpWpBuy6oHiZ1K+n5AqYgQR
+         r7BvnXMo2/BIDIYw95KSNU/+OQ60UQ5SnAwOZjrN0WTKL/2dE1yBSMn/wJTVX4Uk9wcx
+         dxXcZtrLUfz1BbCJLrvANf3UVMyKyjWC7UMrixWttACi937C0WGvGAFkZ1tZ/vTI8IeT
+         XULbHPuvRIn69wpxyQ/CKRMwi4sR1bIN8ikjjR57ijE3aQMmVAlYzj8Sf7nJk7v+ZNXA
+         grqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1KFVCRDxDtzub9zZu4H3xTogihEXNQAo7KqjGf/X5ds=;
+        b=PVSFn1PNIlCjZZKZKujZgiS3my+EWrdHvXiREz02e/MM4OTQ0wai2tXBJ32ehqF0sK
+         JIwrBBMeUHzurOaWgAGEHXpOcu28YbvEcI2l6+9VS/MvgQdGTL/At0WOHIwnVGDDAphp
+         JlFrZ8CIMKVl02r7yqgQ8LECFi9Y2v9aU5vdshNvcfBDWxNtgurgn+ipQS72ZHcrrDYw
+         SGrUW+GOBuLzw56CtstMEGMDmeiJEfiGnkBg3LBmBVGLooOON2XMqFYvA+4ZYPxAbiBZ
+         J8jXsm2QLa3NtJ0qHV1AG1npKB3lfeQIFftuM6KoZ/Vtk5kSnAdxnRxCeaCUvHzeE1/N
+         mTCw==
+X-Gm-Message-State: ANhLgQ3A61OXJeZ5dd35gsl5FcWTMhYMhgXcO7SkkpGuPuf04UN/rw9w
+        0Neiyqprxj7xw9VkF+9xXWjxRIjWBTgqVZF1iwLgjw==
+X-Google-Smtp-Source: ADFU+vtMD9Hn+PWCo8WlKQENvA+VrRYcQgo1HZGruvYLZljw/sATAP3ygGaVLtX5UMG/zzD28ojIn4NQgBpDcfFk/dI=
+X-Received: by 2002:a05:600c:24b:: with SMTP id 11mr2902120wmj.1.1583222480788;
+ Tue, 03 Mar 2020 00:01:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200303002506.173957-3-imbrenda@linux.ibm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1583222517; bh=1iSbjST0XUCdE0peAn1uo5SihBMXldFyp2pYk6xzoPw=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=I+swJmrz555GiMwUtMsejt//bN6PjQVEusk2hVU5+0QN6bb0Wk1vudXwxLP/Ml7fi
-         v5mVXZ0iDl36dU94E95yZA6CFrjauEgYjZttCFtAZa5vHBgFm4NvYR3QOnzI7vsnw7
-         nnXockUGygUl6fqTmLWbghOWgQSHuYn0dR1rwhO/J6uIVeS5UlKjhbygj28KhIMTTA
-         fN9rLOepuaFAkyxhK+OmLufBPdALeLuSgB6rfYEO9DmxH0XPFEnVrYNTPegFCMi/vM
-         bvzcQytHqKkmlAlGAISTcptf5WoNzNlL2HLzcJnwB4SdXyfhcUetyoQdmLQaO7+VXM
-         86kTOh2b+eAjQ==
+References: <158318759687.2216124.4684754859068906007.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <158318760967.2216124.7838939599184768260.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <158318760967.2216124.7838939599184768260.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 3 Mar 2020 09:01:09 +0100
+Message-ID: <CAKv+Gu_Erea9q4Ay2wmq70EQ8844baBtvVQsv0T1DM8U8eHY6Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] efi/fake_mem: Arrange for a resource entry per
+ efi_fake_mem instance
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/20 4:25 PM, Claudio Imbrenda wrote:
-> With the introduction of protected KVM guests on s390 there is now a
-> concept of inaccessible pages. These pages need to be made accessible
-> before the host can access them.
-> 
-> While cpu accesses will trigger a fault that can be resolved, I/O
-> accesses will just fail.  We need to add a callback into architecture
-> code for places that will do I/O, namely when writeback is started or
-> when a page reference is taken.
-> 
-> This is not only to enable paging, file backing etc, it is also
-> necessary to protect the host against a malicious user space.  For
-> example a bad QEMU could simply start direct I/O on such protected
-> memory.  We do not want userspace to be able to trigger I/O errors and
-> thus the logic is "whenever somebody accesses that page (gup) or does
-> I/O, make sure that this page can be accessed".  When the guest tries
-> to access that page we will wait in the page fault handler for
-> writeback to have finished and for the page_ref to be the expected
-> value.
-> 
-> On s390x the function is not supposed to fail, so it is ok to use a
-> WARN_ON on failure. If we ever need some more finegrained handling
-> we can tackle this when we know the details.
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Acked-by: Will Deacon <will@kernel.org>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+On Mon, 2 Mar 2020 at 23:36, Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> In preparation for attaching a platform device per iomem resource teach
+> the efi_fake_mem code to create an e820 entry per instance. Similar to
+> E820_TYPE_PRAM, bypass merging resource when the e820 map is sanitized.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+
 > ---
->   include/linux/gfp.h |  6 ++++++
->   mm/gup.c            | 27 ++++++++++++++++++++++++---
->   mm/page-writeback.c |  5 +++++
->   3 files changed, 35 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index e5b817cb86e7..be2754841369 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -485,6 +485,12 @@ static inline void arch_free_page(struct page *page, int order) { }
->   #ifndef HAVE_ARCH_ALLOC_PAGE
->   static inline void arch_alloc_page(struct page *page, int order) { }
->   #endif
-> +#ifndef HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
-> +static inline int arch_make_page_accessible(struct page *page)
+>  arch/x86/kernel/e820.c              |   16 +++++++++++++++-
+>  drivers/firmware/efi/x86_fake_mem.c |   12 +++++++++---
+>  2 files changed, 24 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> index c5399e80c59c..96babb3a6629 100644
+> --- a/arch/x86/kernel/e820.c
+> +++ b/arch/x86/kernel/e820.c
+> @@ -305,6 +305,20 @@ static int __init cpcompare(const void *a, const void *b)
+>         return (ap->addr != ap->entry->addr) - (bp->addr != bp->entry->addr);
+>  }
+>
+> +static bool e820_nomerge(enum e820_type type)
 > +{
-> +	return 0;
+> +       /*
+> +        * These types may indicate distinct platform ranges aligned to
+> +        * numa node, protection domain, performance domain, or other
+> +        * boundaries. Do not merge them.
+> +        */
+> +       if (type == E820_TYPE_PRAM)
+> +               return true;
+> +       if (type == E820_TYPE_SOFT_RESERVED)
+> +               return true;
+> +       return false;
 > +}
-> +#endif
->   
->   struct page *
->   __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 81a95fbe9901..15c47e0e86f8 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -413,6 +413,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->   	struct page *page;
->   	spinlock_t *ptl;
->   	pte_t *ptep, pte;
-> +	int ret;
->   
->   	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
->   	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
-> @@ -471,8 +472,6 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->   		if (is_zero_pfn(pte_pfn(pte))) {
->   			page = pte_page(pte);
->   		} else {
-> -			int ret;
-> -
->   			ret = follow_pfn_pte(vma, address, ptep, flags);
->   			page = ERR_PTR(ret);
->   			goto out;
-> @@ -480,7 +479,6 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->   	}
->   
->   	if (flags & FOLL_SPLIT && PageTransCompound(page)) {
-> -		int ret;
->   		get_page(page);
->   		pte_unmap_unlock(ptep, ptl);
->   		lock_page(page);
-> @@ -497,6 +495,19 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->   		page = ERR_PTR(-ENOMEM);
->   		goto out;
->   	}
-> +	/*
-> +	 * We need to make the page accessible if we are actually going to
-> +	 * poke at its content (pin), otherwise we can leave it inaccessible.
-> +	 * If we cannot make the page accessible, fail.
-> +	 */
-> +	if (flags & FOLL_PIN) {
-> +		ret = arch_make_page_accessible(page);
-> +		if (ret) {
-> +			unpin_user_page(page);
-> +			page = ERR_PTR(ret);
-> +			goto out;
-> +		}
-> +	}
-
-
-That looks good.
-
-
->   	if (flags & FOLL_TOUCH) {
->   		if ((flags & FOLL_WRITE) &&
->   		    !pte_dirty(pte) && !PageDirty(page))
-> @@ -2162,6 +2173,16 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->   
->   		VM_BUG_ON_PAGE(compound_head(page) != head, page);
->   
-> +		/*
-> +		 * We need to make the page accessible if we are actually
-> +		 * going to poke at its content (pin), otherwise we can
-> +		 * leave it inaccessible. If the page cannot be made
-> +		 * accessible, fail.
-> +		 */
-
-
-This part looks good, so these two points are just nits:
-
-That's a little bit of repeating what the code does, in the comments. How about:
-
-		/*
-		 * We need to make the page accessible if and only if we are
-		 * going to access its content (the FOLL_PIN case). Please see
-		 * Documentation/core-api/pin_user_pages.rst for details.
-		 */
-
-
-> +		if ((flags & FOLL_PIN) && arch_make_page_accessible(page)) {
-> +			unpin_user_page(page);
-> +			goto pte_unmap;
-> +		}
-
-
-Your style earlier in the patch was easier on the reader, why not stay consistent
-with that (and with this file, which tends also to do this), so:
-
-		if (flags & FOLL_PIN) {
-			ret = arch_make_page_accessible(page);
-			if (ret) {
-				unpin_user_page(page);
-				goto pte_unmap;
-			}
-		}
-
-
-
-
->   		SetPageReferenced(page);
->   		pages[*nr] = page;
->   		(*nr)++;
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index ab5a3cee8ad3..8384be5a2758 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2807,6 +2807,11 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
->   		inc_zone_page_state(page, NR_ZONE_WRITE_PENDING);
->   	}
->   	unlock_page_memcg(page);
-> +	/*
-> +	 * If writeback has been triggered on a page that cannot be made
-> +	 * accessible, it is too late.
-> +	 */
-> +	WARN_ON(arch_make_page_accessible(page));
-
-
-I'm not deep enough into this area to know if a) this is correct, and b) if there are any
-other places that need arch_make_page_accessible() calls. So I'll rely on other
-reviewers to help check on that.
-
-
->   	return ret;
->   
->   }
-> 
-
-Anyway, I don't see any problems, and as I said, those documentation and style points are
-just nitpicks, not bugs.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+> +
+>  int __init e820__update_table(struct e820_table *table)
+>  {
+>         struct e820_entry *entries = table->entries;
+> @@ -380,7 +394,7 @@ int __init e820__update_table(struct e820_table *table)
+>                 }
+>
+>                 /* Continue building up new map based on this information: */
+> -               if (current_type != last_type || current_type == E820_TYPE_PRAM) {
+> +               if (current_type != last_type || e820_nomerge(current_type)) {
+>                         if (last_type != 0)      {
+>                                 new_entries[new_nr_entries].size = change_point[chg_idx]->addr - last_addr;
+>                                 /* Move forward only if the new size was non-zero: */
+> diff --git a/drivers/firmware/efi/x86_fake_mem.c b/drivers/firmware/efi/x86_fake_mem.c
+> index e5d6d5a1b240..0bafcc1bb0f6 100644
+> --- a/drivers/firmware/efi/x86_fake_mem.c
+> +++ b/drivers/firmware/efi/x86_fake_mem.c
+> @@ -38,7 +38,7 @@ void __init efi_fake_memmap_early(void)
+>                 m_start = mem->range.start;
+>                 m_end = mem->range.end;
+>                 for_each_efi_memory_desc(md) {
+> -                       u64 start, end;
+> +                       u64 start, end, size;
+>
+>                         if (md->type != EFI_CONVENTIONAL_MEMORY)
+>                                 continue;
+> @@ -58,11 +58,17 @@ void __init efi_fake_memmap_early(void)
+>                          */
+>                         start = max(start, m_start);
+>                         end = min(end, m_end);
+> +                       size = end - start + 1;
+>
+>                         if (end <= start)
+>                                 continue;
+> -                       e820__range_update(start, end - start + 1, E820_TYPE_RAM,
+> -                                       E820_TYPE_SOFT_RESERVED);
+> +
+> +                       /*
+> +                        * Ensure each efi_fake_mem instance results in
+> +                        * a unique e820 resource
+> +                        */
+> +                       e820__range_remove(start, size, E820_TYPE_RAM, 1);
+> +                       e820__range_add(start, size, E820_TYPE_SOFT_RESERVED);
+>                         e820__update_table(e820_table);
+>                 }
+>         }
+>
