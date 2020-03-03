@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F6D176C71
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A63176CBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:59:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbgCCC4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:56:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52796 "EHLO mail.kernel.org"
+        id S1728885AbgCCC6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:58:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728207AbgCCC4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:56:38 -0500
+        id S1728516AbgCCC6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:58:44 -0500
 Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7344B24673;
-        Tue,  3 Mar 2020 02:56:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF1062166E;
+        Tue,  3 Mar 2020 02:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583204198;
-        bh=90SSNhpwGdtCb5Wj/SwJPwxBnOiLghvSP5V9od1z4d0=;
+        s=default; t=1583204323;
+        bh=f9xV/eWY/rwskCqYR2yqEJNGHdDtaNPeUxuxL49T+Ac=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GYIoBi1kbTh+Lde/77f7UJjW0iBtYOskQCEEyvLJMjhIzHQAxIpOTbFv03ssoBjae
-         jr6DcwUqUITJ6oIlarqn3ci5qCCMQ9aOkmLDfMB+PppHU8vHLqcSbASTYlil41FYaf
-         4vJH+pfgTWp31z1Xi55rxy6i4ukv6geXFNucKKHQ=
-Date:   Tue, 3 Mar 2020 11:56:33 +0900
+        b=dNoPxFpKJBE86vFwZdoo3a4tx3MuutdydtjpGxdR/ztdb8DTREfm5hDI/2zN53xnC
+         tIA36GrORZFqkWxzPf3YyZIEv/rr64M3R3vBZgJypfKzRULNAC7RertavLryoHe6Mu
+         MeAnejynMcszJqiRmhIluUqXpKN28I++7cwyW1Jg=
+Date:   Tue, 3 Mar 2020 11:58:39 +0900
 From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Markus Elfring <Markus.Elfring@web.de>
 Subject: Re: [PATCH v3] Documentation: bootconfig: Update boot configuration
  documentation
-Message-Id: <20200303115633.3db043ce643c5bc55915a57c@kernel.org>
-In-Reply-To: <8c032093-c652-5e33-36ad-732f73beabab@infradead.org>
+Message-Id: <20200303115839.4a18738d5d0d5899c6e1cf32@kernel.org>
+In-Reply-To: <20200302151939.1a83a5ed@gandalf.local.home>
 References: <158313621831.3082.9886161529613724376.stgit@devnote2>
         <158313622831.3082.8237132211731864948.stgit@devnote2>
-        <8c032093-c652-5e33-36ad-732f73beabab@infradead.org>
+        <20200302125033.4a62e88e@lwn.net>
+        <20200302150802.348b814e@gandalf.local.home>
+        <20200302131351.1b51a58e@lwn.net>
+        <20200302151939.1a83a5ed@gandalf.local.home>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -46,62 +50,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Mar 2020 17:52:36 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+On Mon, 2 Mar 2020 15:19:39 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On 3/2/20 12:03 AM, Masami Hiramatsu wrote:
-> > Update boot configuration documentation.
+> On Mon, 2 Mar 2020 13:13:51 -0700
+> Jonathan Corbet <corbet@lwn.net> wrote:
+> 
+> > On Mon, 2 Mar 2020 15:08:02 -0500
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
 > > 
-> >  - Not using "config" abbreviation but configuration or description.
-> >  - Rewrite descriptions of node and its maxinum number.
-> >  - Add a section of use cases of boot configuration.
-> >  - Move how to use bootconfig to earlier section.
-> >  - Fix some typos, indents and format mistakes.
+> > > > So I tried to apply this but failed - it's built on other changes to
+> > > > bootconfig.rst that went into linux-next via Steve's tree.  So Steve,
+> > > > would you like to take this one too?    
+> > > 
+> > > All my changes in linux-next have already hit Linus's tree. I haven't
+> > > started pushing my next merge window changes yet. Are you up to date with
+> > > Linus?  
 > > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> > Changes in v3:
-> >  - Specify that comments also count in size.
-> >  - Fix a confusing sentence.
-> >  - Add O=<builddir> to make command.
+> > I try not to do too many backmerges with mainline, so no.  I can pull
+> > forward if I have to, I guess.
+> >
 > 
-> 
-> Hi Masami-san,
-> 
-> I think that you misunderstood me.  I am asking that you
-> make "make O=builddir -C tools/bootconfig" work properly, i.e.,
-> the bootconfig binary should be built in the <builddir>.
-> 
-> Presently when I enter that command, the bootconfig binary
-> is still built in the kernel source tree.
+> I can add it to my tree, but I may not send it to Linus unless I have
+> another urgent request to send to him. So it may not make it till the next
+> merge window.
 
-Oops, that's my mistake! It needs to be fixed soon.
-Thank you for reporting it!
-
-(Also, I misunderstood what O= option means for tools...)
-
-> 
-> > Changes in v2:
-> >  - Fixes additional typos (Thanks Markus and Randy!)
-> >  - Change a section title to "Tree Structured Key".
-> > ---
-> >  Documentation/admin-guide/bootconfig.rst |  181 +++++++++++++++++++-----------
-> >  Documentation/trace/boottime-trace.rst   |    2 
-> >  2 files changed, 117 insertions(+), 66 deletions(-)
-> > 
-> 
-> 
-> All of the other changes look good to me.
+OK, then I'll wait for the next window. Anyway, I found a mistake and
+it needs to be updated (again).
 
 Thank you!
-
-
-
-> 
-> thanks.
-> -- 
-> ~Randy
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
 
 
 -- 
