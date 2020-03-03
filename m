@@ -2,120 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCD9177059
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 038D4177067
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:50:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbgCCHtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:49:16 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:34818 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbgCCHtN (ORCPT
+        id S1727673AbgCCHuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:50:19 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:50304 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbgCCHuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:49:13 -0500
-Received: by mail-io1-f69.google.com with SMTP id w16so1741742iot.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 23:49:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ZGg9d9RlpkSp9tiCdOBj7hjE3h8DLuUCRNUsn/fFdXk=;
-        b=U7cdaeAMetpt/9C3/bDwioJOanM/Ca4qk1Yn68dK8VoN2mBgfHR/4YhH8BiXch1T34
-         eZqQ18r9JTI6CcLxCEiOO49BtlW7BRnvL7zuZhmgI53VPvQaSlZmsgKcRqvIdbi4t6x/
-         nl+9Hg96DVIaeqd+Xwb7jZ4SC6Q1ZKCViOA81Vn8dqlY3AggMMsBuP5+tY0061CP6RBT
-         V3p6/Om+e7U0sFzrG+2bBsYVWXzU6g7f+BOlq+UfOUaFUEFsbuW1ewWKUOkH6/ivR23q
-         z8hzbTkotUphy+kYlJ0TtcsM0/l/y2EKLzjamTVZrnzndSspns6vz5Bdg2r/S0oSMadL
-         5PlA==
-X-Gm-Message-State: ANhLgQ3MAqKVQIXdwNXfTAPRxTZqYNORjTS7C7k/giRNctheL4PlqdpX
-        c/bD6bhQsdcXhFqI49wITBi6/Z5koFi9h24zAvv2QE81LZ2W
-X-Google-Smtp-Source: ADFU+vtq+Z0tEgLDgWc5E+/2DcRrLjUJQjPO+lwYFDXxBFzQQa9nltg2I6T05x3FDEkDFpd29Ba1cz1kElMF5vTpjV48wKj1xo52
+        Tue, 3 Mar 2020 02:50:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1583221818; x=1614757818;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=NlOSpDkjdSJVMNz7NFEhP+weptJrJ09zSvzxJC+0DoE=;
+  b=G0It2nug2lMaSPwabN8vIb/gGZctLCG4U1gmCMBoaQUwbsYJQAfDInFi
+   4axTd6A7JP1j0cmEvbMHf6VIKIXgPZla5VpfwdjqxIVlewMNfRIdjVgU1
+   5tlxduES7e4seza1d8b/E47kqou98dEusE34wtmS+i772uha6ZK1EAPMV
+   iA+cAw9xJwoJi1OsTLg3zM6TX2wzMcQK24vG1QIa8yUBHBgHp/LamY+I1
+   TGnrxHiQwnlmAWkPKZ14VT4KWDp5Moi3TydiAXVLRJzKxQpFjwbXKzz+2
+   9Pt30umG2J1ZravxJdeDKMwDKcNuH87THTPxPlCPNZ2jLog8b1J4TcbRr
+   g==;
+IronPort-SDR: FFuONEQx9Cl+iPT4OGiaLWhxewuB92qYiiu50pcbvlBoDHvtrhQ1f0GfcGqqeOJHXNj23lHiQU
+ KwmDvfmfQXsSw2ELcqXRXez5i/9QKeLTPwpMfrClHbhcXocZtq2MgRDYR8sUQt+IOXElGJ6UeA
+ zbdU3tFTk3rNtpyprDTeqQmArV1NLCHY12A3LhxmhCZ1zzHb8t9GGdmq4lrE1A/d7JKgyK31/D
+ uqO+v9PmQ0sxVkgY8rcV/xrd9Lp0mi0P1SsxBvXPlFJnrifq+zF12Lt8WiHabxu/HpJm+JOduE
+ 0Ns=
+X-IronPort-AV: E=Sophos;i="5.70,510,1574092800"; 
+   d="scan'208";a="131229515"
+Received: from mail-mw2nam12lp2044.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.44])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Mar 2020 15:50:15 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jPnvTaKJGnKBDiRahMI9uRdzJeMoVPE4e7QSDIAaKb8hcsLjiI6fOcV7pLO3buI4y4FxBBAwnEziDVRatHaEOneyyCVFqNsmA556iqgU45+2f/mU0UTdowKYGTyyYRh6Ms/bpePW80G0WT3e8cXp0XZQNUatAH/LVKEKff+S3CF8hk4Y2S2CavuamvtKkqf/86dtqDv+r5cKnayO3+xObXLgqCu6eou9U+soXhlyQgAp6kOiCvithT1793XKeqj67qX+PR/WCFDtti73/13tIJ9J5z2SblCGq/VJthXbzskXiM26hSlZXQttj8b/5NNUdIc8Hf0jos1Mrh0r17/zCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M1QZm9wfN5xfPgmYIvpp5WXK/68HtkNBVYRx0hTUy5k=;
+ b=F3wRhakffA9pbW/waqu4SCeQSXIgA4VRk20FSIvrBWYczcIAv91nFUT0nWTh3kKbkak6hwkz9gWKmIJ/L2xLTTe6XVaMu+CTl4fvhEBCyOz7oi1Y3YfMZ38NMpkKol4jkj0wwNPfiLezTha24hFuUcD1U91sVnk12+VpIcQ9z73f/DlDBDoVyztyrU9BRC9KR4BV6CftfbljKzfG3tXnIOPL0IdjsYlStkERNZ1YfLNek/d6qLQso5ihRVNCxZiUnghrRbiSAs3H920ZcKbY20FdSQXZf0e5kjhSP6k7pBFsgNONqtfuXT1HTsexMSaiv7pxjKtCXZExC8o8bbHnkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M1QZm9wfN5xfPgmYIvpp5WXK/68HtkNBVYRx0hTUy5k=;
+ b=tyEWNc9jrmKd+RlGMq7nVQqkwVJRiIoTN129lUYWenujBm4F6jmYNFy3rS67/dBr9ZyxLXp1oiiqmeV54RfvoL7J9//RBwmtqrSmCCXBNa1IbzvG9gsjdEu/yKUOWecWPiyTQal5s1mF1CAdNvpWO5lvBXRuoNsk97aDXvjHUIU=
+Received: from MN2PR04MB6991.namprd04.prod.outlook.com (2603:10b6:208:1e1::17)
+ by MN2PR04MB6654.namprd04.prod.outlook.com (2603:10b6:208:1f1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Tue, 3 Mar
+ 2020 07:50:15 +0000
+Received: from MN2PR04MB6991.namprd04.prod.outlook.com
+ ([fe80::3885:5fac:44af:5de7]) by MN2PR04MB6991.namprd04.prod.outlook.com
+ ([fe80::3885:5fac:44af:5de7%7]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 07:50:15 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Stanley Chu <stanley.chu@mediatek.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>
+CC:     "beanhuo@micron.com" <beanhuo@micron.com>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kuohong.wang@mediatek.com" <kuohong.wang@mediatek.com>,
+        "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
+        "chun-hung.wu@mediatek.com" <chun-hung.wu@mediatek.com>,
+        "andy.teng@mediatek.com" <andy.teng@mediatek.com>
+Subject: RE: [PATCH v1] scsi: ufs-mediatek: fix HOST_PA_TACTIVATE quirk for
+ Samsung UFS Devices
+Thread-Topic: [PATCH v1] scsi: ufs-mediatek: fix HOST_PA_TACTIVATE quirk for
+ Samsung UFS Devices
+Thread-Index: AQHV8JoHZrCjeCNY/kOFC1Lcztl966g2f1oQ
+Date:   Tue, 3 Mar 2020 07:50:14 +0000
+Message-ID: <MN2PR04MB6991B5FF18C846FC47B34B70FCE40@MN2PR04MB6991.namprd04.prod.outlook.com>
+References: <20200302135346.16797-1-stanley.chu@mediatek.com>
+In-Reply-To: <20200302135346.16797-1-stanley.chu@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7a08b2ab-f551-408f-db98-08d7bf47829b
+x-ms-traffictypediagnostic: MN2PR04MB6654:
+x-microsoft-antispam-prvs: <MN2PR04MB66549AF2CE48AA59F05D9E96FCE40@MN2PR04MB6654.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-forefront-prvs: 03319F6FEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(7416002)(2906002)(64756008)(66556008)(66446008)(66476007)(55016002)(54906003)(8676002)(110136005)(9686003)(8936002)(81166006)(81156014)(26005)(76116006)(66946007)(4326008)(52536014)(5660300002)(33656002)(86362001)(478600001)(316002)(7696005)(186003)(71200400001)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6654;H:MN2PR04MB6991.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: iNlVIVgA94bPPz47njPXhJEJLl3v3KKOK1DYj+hsdY94RiXnBV971frNI1VsC9mpCXtuuxjbtPbVZ24XAj/bsPCxp0PvDrmo4k7kHXQN5wg5s1ZaeOZv6CiYgkNCkfTyQRrJWOLHGY/CpklkYEG99bKO4aDPtpOok1jGpdk4r2lEVC7O+bJFoceEEIxiQWVR1A7SscmnuK1+GtsoSyHUkSzN37W8rtt9DQAn3VyAUq+ihbHxF1Iu8mbI8fPktTB0xwc4xFiUL3eJ6ddIzNnfT0OeYpsJj3wO9Ld5IlPHozr90C8+xPkV1juE6lBD0F5ASMEzwBZ7JJc6yQ8Cd23q/4QBARjiCQAwI9cAbDP+hCXMajUjJqYj2v+4sYZ9YnWYcGKOnWUKQib/A/YGPXXeLhFDIdHuNOtYASGU9lEmlnMYfcH+NEBfpNIx4+AOf3mT
+x-ms-exchange-antispam-messagedata: g8f/jogaibEUJzxDMji2b1JV006kWXJChosxeFJD12YnpYybapILCWIiq5oOs6f0ySs6raarQYRlIONLBi0IRaTAs6FRN0LkhqHgJVmeLIwnfNABH/JdWyOSoNCA4liAj+fQXmTBqTq3YypyzXZecQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a6b:2c0c:: with SMTP id s12mr2801014ios.91.1583221752863;
- Mon, 02 Mar 2020 23:49:12 -0800 (PST)
-Date:   Mon, 02 Mar 2020 23:49:12 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002e20b9059fee8a94@google.com>
-Subject: WARNING in idr_destroy
-From:   syzbot <syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com>
-To:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a08b2ab-f551-408f-db98-08d7bf47829b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 07:50:14.9417
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: B99//8jVKzxgeHnKiewMI3KnVEFGkoPNyt3KaGfGa8XJW9EmuKaXl4WNW8eyLyClav7EWrAMUv+VZsch6/bttw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6654
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+=20
+>=20
+> Device quirk "UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE" is enabled for all
+> Samsung devices by default currently.
+>=20
+> However MediaTek UFS host requires different host's PA_TACTIVATE
+> configuration. Hence clear this quirk first and then apply vendor-specifi=
+c
+> value in vops callback.
+>=20
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
 
-syzbot found the following crash on:
-
-HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e978e3e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d2e033af114153f
-dashboard link: https://syzkaller.appspot.com/bug?extid=05835159fe322770fe3d
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e978e3e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b1a819e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
-
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
-R13: 00007fc6b3362d90 R14: 0000000000000004 R15: 000000000000002d
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 12260 at lib/radix-tree.c:682 radix_tree_free_nodes lib/radix-tree.c:682 [inline]
-WARNING: CPU: 0 PID: 12260 at lib/radix-tree.c:682 idr_destroy+0x1ae/0x260 lib/radix-tree.c:1572
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 12260 Comm: syz-executor386 Not tainted 5.6.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1fb/0x318 lib/dump_stack.c:118
- panic+0x264/0x7a9 kernel/panic.c:221
- __warn+0x209/0x210 kernel/panic.c:582
- report_bug+0x1b6/0x2f0 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- do_error_trap+0xcf/0x1c0 arch/x86/kernel/traps.c:267
- do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:radix_tree_free_nodes lib/radix-tree.c:682 [inline]
-RIP: 0010:idr_destroy+0x1ae/0x260 lib/radix-tree.c:1572
-Code: b5 63 f9 48 89 df 48 c7 c6 c0 0a 13 88 e8 6a ce 50 f9 4c 3b 65 b8 74 57 e8 cf b5 63 f9 4d 89 fc e9 67 ff ff ff e8 c2 b5 63 f9 <0f> 0b eb d5 89 f9 80 e1 07 38 c1 7c 84 e8 c0 de a0 f9 e9 7a ff ff
-RSP: 0018:ffffc90005107ba0 EFLAGS: 00010293
-RAX: ffffffff881363be RBX: ffff888087dba998 RCX: ffff888094062300
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff888087dba988
-RBP: ffffc90005107be8 R08: ffffffff88136330 R09: ffffed1012a78181
-R10: ffffed1012a78181 R11: 0000000000000000 R12: ffff888087dba980
-R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
- drm_mode_create_lease_ioctl+0x1347/0x1860 drivers/gpu/drm/drm_lease.c:583
- drm_ioctl_kernel+0x2cf/0x410 drivers/gpu/drm/drm_ioctl.c:786
- drm_ioctl+0x52f/0x890 drivers/gpu/drm/drm_ioctl.c:886
- vfs_ioctl fs/ioctl.c:47 [inline]
- ksys_ioctl fs/ioctl.c:763 [inline]
- __do_sys_ioctl fs/ioctl.c:772 [inline]
- __se_sys_ioctl+0x113/0x190 fs/ioctl.c:770
- __x64_sys_ioctl+0x7b/0x90 fs/ioctl.c:770
- do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x44a4b9
-Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 9b cc fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc6b3362d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a4b9
-RDX: 0000000020000040 RSI: ffffffffffffffc6 RDI: 0000000000000003
-RBP: 00000000006dbc20 R08: 0000000000000001 R09: 0000000000000039
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
-R13: 00007fc6b3362d90 R14: 0000000000000004 R15: 000000000000002d
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> ---
+>  drivers/scsi/ufs/ufs-mediatek.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/scsi/ufs/ufs-mediatek.c b/drivers/scsi/ufs/ufs-media=
+tek.c
+> index de650822c9d9..3b0e575d7460 100644
+> --- a/drivers/scsi/ufs/ufs-mediatek.c
+> +++ b/drivers/scsi/ufs/ufs-mediatek.c
+> @@ -533,8 +533,10 @@ static int ufs_mtk_apply_dev_quirks(struct ufs_hba
+> *hba)
+>         struct ufs_dev_info *dev_info =3D &hba->dev_info;
+>         u16 mid =3D dev_info->wmanufacturerid;
+>=20
+> -       if (mid =3D=3D UFS_VENDOR_SAMSUNG)
+> +       if (mid =3D=3D UFS_VENDOR_SAMSUNG) {
+> +               hba->dev_quirks &=3D ~UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE;
+>                 ufshcd_dme_set(hba, UIC_ARG_MIB(PA_TACTIVATE), 6);
+> +       }
+>=20
+>         /*
+>          * Decide waiting time before gating reference clock and
+> --
+> 2.18.0
