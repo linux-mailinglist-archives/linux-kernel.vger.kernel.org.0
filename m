@@ -2,104 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BD3017735D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E90E17736D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbgCCKCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 05:02:35 -0500
-Received: from mga04.intel.com ([192.55.52.120]:53097 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbgCCKCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 05:02:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 02:02:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,510,1574150400"; 
-   d="scan'208";a="412691972"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005.jf.intel.com with ESMTP; 03 Mar 2020 02:02:27 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1j94Ng-006W6Q-A9; Tue, 03 Mar 2020 12:02:28 +0200
-Date:   Tue, 3 Mar 2020 12:02:28 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Luke Nelson <lukenels@cs.washington.edu>
-Cc:     bpf@vger.kernel.org, Luke Nelson <luke.r.nels@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@gmail.com>,
-        Xi Wang <xi.wang@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH bpf-next v4 4/4] MAINTAINERS: Add entry for RV32G BPF JIT
-Message-ID: <20200303100228.GJ1224808@smile.fi.intel.com>
-References: <20200303005035.13814-1-luke.r.nels@gmail.com>
- <20200303005035.13814-5-luke.r.nels@gmail.com>
+        id S1728316AbgCCKD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 05:03:26 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54898 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727798AbgCCKDZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 05:03:25 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 216422955E8
+Subject: Re: [PATCH] platform/chrome: cros_ec_rpmsg: Fix race with host event.
+To:     Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20200214082638.92070-1-pihsun@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <b8de9c57-8eae-f1a7-ae25-728f0dd16176@collabora.com>
+Date:   Tue, 3 Mar 2020 11:03:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200303005035.13814-5-luke.r.nels@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200214082638.92070-1-pihsun@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 04:50:35PM -0800, Luke Nelson wrote:
+Hi Pi-Hsun,
 
-Commit message?
+On 14/2/20 9:26, Pi-Hsun Shih wrote:
+> Host event can be sent by remoteproc by any time, and
+> cros_ec_rpmsg_callback would be called after cros_ec_rpmsg_create_ept.
+> But the cros_ec_device is initialized after that, which cause host event
+> handler to use cros_ec_device that are not initialized properly yet.
+> 
+> Fix this by don't schedule host event handler before cros_ec_register
+> returns. Instead, remember that we have a pending host event, and
+> schedule host event handler after cros_ec_register.
+> 
+> Fixes: 71cddb7097e2 ("platform/chrome: cros_ec_rpmsg: Fix race with host command when probe failed.")
+> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+> ---
 
-> Cc: Björn Töpel <bjorn.topel@gmail.com>
-> Signed-off-by: Xi Wang <xi.wang@gmail.com>
-> Signed-off-by: Luke Nelson <luke.r.nels@gmail.com>
+Applied for 5.7
 
-> @@ -3213,11 +3213,20 @@ L:	bpf@vger.kernel.org
->  S:	Maintained
->  F:	arch/powerpc/net/
+>  drivers/platform/chrome/cros_ec_rpmsg.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+> index dbc3f5523b83..7e8629e3db74 100644
+> --- a/drivers/platform/chrome/cros_ec_rpmsg.c
+> +++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+> @@ -44,6 +44,8 @@ struct cros_ec_rpmsg {
+>  	struct completion xfer_ack;
+>  	struct work_struct host_event_work;
+>  	struct rpmsg_endpoint *ept;
+> +	bool has_pending_host_event;
+> +	bool probe_done;
+>  };
 >  
-> -BPF JIT for RISC-V (RV64G)
-> +BPF JIT for 32-bit RISC-V (RV32G)
-> +M:	Luke Nelson <luke.r.nels@gmail.com>
-> +M:	Xi Wang <xi.wang@gmail.com>
-> +L:	bpf@vger.kernel.org
-> +S:	Maintained
-> +F:	arch/riscv/net/
-> +X:	arch/riscv/net/bpf_jit_comp.c
+>  /**
+> @@ -177,7 +179,14 @@ static int cros_ec_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
+>  		memcpy(ec_dev->din, resp->data, len);
+>  		complete(&ec_rpmsg->xfer_ack);
+>  	} else if (resp->type == HOST_EVENT_MARK) {
+> -		schedule_work(&ec_rpmsg->host_event_work);
+> +		/*
+> +		 * If the host event is sent before cros_ec_register is
+> +		 * finished, queue the host event.
+> +		 */
+> +		if (ec_rpmsg->probe_done)
+> +			schedule_work(&ec_rpmsg->host_event_work);
+> +		else
+> +			ec_rpmsg->has_pending_host_event = true;
+>  	} else {
+>  		dev_warn(ec_dev->dev, "rpmsg received invalid type = %d",
+>  			 resp->type);
+> @@ -240,6 +249,11 @@ static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
+>  		return ret;
+>  	}
+>  
+> +	ec_rpmsg->probe_done = true;
 > +
-> +BPF JIT for 64-bit RISC-V (RV64G)
->  M:	Björn Töpel <bjorn.topel@gmail.com>
-> -L:	netdev@vger.kernel.org
-> +L:	bpf@vger.kernel.org
->  S:	Maintained
->  F:	arch/riscv/net/
-> +X:	arch/riscv/net/bpf_jit_comp32.c
-
-Obviously this breaks an order. Please, fix.
-Hint: run parse-maintainers.pl after the change.
-
->  BPF JIT for S390
->  M:	Ilya Leoshkevich <iii@linux.ibm.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> +	if (ec_rpmsg->has_pending_host_event)
+> +		schedule_work(&ec_rpmsg->host_event_work);
+> +
+>  	return 0;
+>  }
+>  
+> 
+> base-commit: b19e8c68470385dd2c5440876591fddb02c8c402
+> 
