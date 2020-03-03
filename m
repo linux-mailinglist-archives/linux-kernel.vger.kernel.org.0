@@ -2,67 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DFFE1771B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9995177181
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgCCJAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 04:00:20 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:56716 "EHLO inva020.nxp.com"
+        id S1727761AbgCCIsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:48:00 -0500
+Received: from mga18.intel.com ([134.134.136.126]:50095 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbgCCJAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:00:19 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 19C841A14EF;
-        Tue,  3 Mar 2020 10:00:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B0B261A157D;
-        Tue,  3 Mar 2020 10:00:14 +0100 (CET)
-Received: from titan.ap.freescale.net (titan.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7819A40338;
-        Tue,  3 Mar 2020 17:00:05 +0800 (SGT)
-From:   andy.tang@nxp.com
-To:     rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH v2] thermal: qoriq: fix a compiling issue
-Date:   Tue,  3 Mar 2020 16:46:41 +0800
-Message-Id: <20200303084641.35687-1-andy.tang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727322AbgCCIr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 03:47:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 00:47:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,510,1574150400"; 
+   d="scan'208";a="233551170"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.23])
+  by orsmga008.jf.intel.com with ESMTP; 03 Mar 2020 00:47:55 -0800
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mel Gorman <mgorman@suse.de>, David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
+References: <20200228033819.3857058-1-ying.huang@intel.com>
+        <20200228034248.GE29971@bombadil.infradead.org>
+        <87a7538977.fsf@yhuang-dev.intel.com>
+        <edae2736-3239-0bdc-499c-560fc234c974@redhat.com>
+        <871rqf850z.fsf@yhuang-dev.intel.com> <20200228094954.GB3772@suse.de>
+        <87h7z76lwf.fsf@yhuang-dev.intel.com> <20200302151607.GC3772@suse.de>
+        <87zhcy5hoj.fsf@yhuang-dev.intel.com>
+        <20200303080945.GX4380@dhcp22.suse.cz>
+Date:   Tue, 03 Mar 2020 16:47:54 +0800
+In-Reply-To: <20200303080945.GX4380@dhcp22.suse.cz> (Michal Hocko's message of
+        "Tue, 3 Mar 2020 09:09:45 +0100")
+Message-ID: <87o8td4yf9.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuantian Tang <andy.tang@nxp.com>
+Michal Hocko <mhocko@kernel.org> writes:
 
-Qoriq thermal driver is used by both PowerPC and ARM architecture.
-When built for PowerPC architecture, it reports error:
-undefined reference to `.__devm_regmap_init_mmio_clk'
-To fix it, select config REGMAP_MMIO.
+> On Tue 03-03-20 09:51:56, Huang, Ying wrote:
+>> Mel Gorman <mgorman@suse.de> writes:
+>> > On Mon, Mar 02, 2020 at 07:23:12PM +0800, Huang, Ying wrote:
+>> >> If some applications cannot tolerate the latency incurred by the memory
+>> >> allocation and zeroing.  Then we cannot discard instead of migrate
+>> >> always.  While in some situations, less memory pressure can help.  So
+>> >> it's better to let the administrator and the application choose the
+>> >> right behavior in the specific situation?
+>> >> 
+>> >
+>> > Is there an application you have in mind that benefits from discarding
+>> > MADV_FREE pages instead of migrating them?
+>> >
+>> > Allowing the administrator or application to tune this would be very
+>> > problematic. An application would require an update to the system call
+>> > to take advantage of it and then detect if the running kernel supports
+>> > it. An administrator would have to detect that MADV_FREE pages are being
+>> > prematurely discarded leading to a slowdown and that is hard to detect.
+>> > It could be inferred from monitoring compaction stats and checking
+>> > if compaction activity is correlated with higher minor faults in the
+>> > target application. Proving the correlation would require using the perf
+>> > software event PERF_COUNT_SW_PAGE_FAULTS_MIN and matching the addresses
+>> > to MADV_FREE regions that were freed prematurely. That is not an obvious
+>> > debugging step to take when an application detects latency spikes.
+>> >
+>> > Now, you could add a counter specifically for MADV_FREE pages freed for
+>> > reasons other than memory pressure and hope the administrator knows about
+>> > the counter and what it means. That type of knowledge could take a long
+>> > time to spread so it's really very important that there is evidence of
+>> > an application that suffers due to the current MADV_FREE and migration
+>> > behaviour.
+>> 
+>> OK.  I understand that this patchset isn't a universal win, so we need
+>> some way to justify it.  I will try to find some application for that.
+>> 
+>> Another thought, as proposed by David Hildenbrand, it's may be a
+>> universal win to discard clean MADV_FREE pages when migrating if there are
+>> already memory pressure on the target node.  For example, if the free
+>> memory on the target node is lower than high watermark?
+>
+> This is already happening because if the target node is short on memory
+> it will start to reclaim and if MADV_FREE pages are at the tail of
+> inactive file LRU list then they will be dropped. Please note how that
+> follows proper aging and doesn't introduce any special casing. Really
+> MADV_FREE is an inactive cache for anonymous memory and we treat it like
+> inactive page cache. This is not carved in stone of course but it really
+> requires very good justification to change.
 
-Fixes: 4316237bd627 (thermal: qoriq: Convert driver to use regmap API)
+If my understanding were correct, the newly migrated clean MADV_FREE
+pages will be put at the head of inactive file LRU list instead of the
+tail.  So it's possible that some useful file cache pages will be
+reclaimed.
 
-Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
----
-v2:
-	- add Fixes tag
-
- drivers/thermal/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 5a05db5438d6..5a0df0e54ce3 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -265,6 +265,7 @@ config QORIQ_THERMAL
- 	tristate "QorIQ Thermal Monitoring Unit"
- 	depends on THERMAL_OF
- 	depends on HAS_IOMEM
-+	select REGMAP_MMIO
- 	help
- 	  Support for Thermal Monitoring Unit (TMU) found on QorIQ platforms.
- 	  It supports one critical trip point and one passive trip point. The
---
-2.17.1
-
+Best Regards,
+Huang, Ying
