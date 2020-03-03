@@ -2,98 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9674D1781AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C22417813E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388197AbgCCSFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:05:16 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46956 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387409AbgCCR6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:58:31 -0500
-Received: by mail-il1-f195.google.com with SMTP id e8so3518245ilc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=G5nat7TjfwsYKukhiu6yJ6peKaEgkq8tBpj9OwyiAts=;
-        b=1BVMSz5op5aH4SjFm/0AsfcMaTUcTjYDE6RYQdIeeh6bJpDEvM4lczmgOBYIgehYU6
-         3wROaS6Xl/bSaiSQf1ruWmaWuuF7FyuSv7ZRENnxDrZxheVkOjHnLQ/GNJEQR6lM2VMp
-         koVVCUE6aU9BJMHhq9kh3VRjDq/M2GUjetqQFWni8tEoSBPcIpKb/zSSIGmjFAU8NrFZ
-         k9n15D7kPTkUMdfLUV+6X4ZmzIunA0Bdsim+Bap2Su7dPEHZWa8OxFn7XfKDdc1KYiFZ
-         W681UKO6qansKW5nNWQcDpAYHf2w6E0cACcLMNMmocdS+Fkal/VR09QiiT4H4Y3s67uc
-         vMJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G5nat7TjfwsYKukhiu6yJ6peKaEgkq8tBpj9OwyiAts=;
-        b=bbdRqlV2XtttjWG9s/pXgJhWT2irF70MCoWv+KcZ7ov+lfvIX4i93yqsH+Gl0P8/nG
-         /3q8qiB649Wdefy7EOqolWIe5KsLoWVHLTqGvgzVoBw5hcV70kZW91BQMFnzU23tWVww
-         QgtMZoCPu0lqOJzFUhtJbP+Gms3/HT/GFIFGcdkfvsmtqsVJ32VFFCy++jKQQjVl8IDS
-         rrBZDbVznSkZxQvmALGVuCSUnY1yBonMaLivvOHZk+Xb2C1zlbTxNngd8cd1cyq2qywa
-         Qcn4jRmuWMoUFxIyKgwIKQMxmb2b8M6MysKC5WtNsVl61bi+UZKGUhmxnkSY8GPAjsES
-         YKpA==
-X-Gm-Message-State: ANhLgQ3sZIyXmG2OysGETqQzfQfuin0x+YDsk8xDs/IEtonUX+ukujR5
-        LAactQtc0yl6hc9dHKVGwtDDTA==
-X-Google-Smtp-Source: ADFU+vtV+apP8mi6vB9ANWxLbJfeoFiJDA7yX1gYyG13Gfv6reOP037TkZVssoM3D1a1NrpJRw0hBA==
-X-Received: by 2002:a92:de03:: with SMTP id x3mr5968538ilm.146.1583258310639;
-        Tue, 03 Mar 2020 09:58:30 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k16sm8140521ili.35.2020.03.03.09.58.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 09:58:30 -0800 (PST)
-Subject: Re: [PATCH 5.5 072/176] bcache: ignore pending signals when creating
- gc and allocator thread
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-References: <20200303174304.593872177@linuxfoundation.org>
- <20200303174312.994115258@linuxfoundation.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <24e19cd9-8eea-a41a-27f7-84ffcd872977@kernel.dk>
-Date:   Tue, 3 Mar 2020 10:58:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S2387991AbgCCSB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:01:28 -0500
+Received: from mga18.intel.com ([134.134.136.126]:23690 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731827AbgCCSB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:01:26 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 10:01:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="440678485"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga006.fm.intel.com with ESMTP; 03 Mar 2020 10:01:22 -0800
+Date:   Tue, 3 Mar 2020 10:01:22 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH 2/6] KVM: x86: Fix CPUID range check for Centaur and
+ Hypervisor ranges
+Message-ID: <20200303180122.GO1439@linux.intel.com>
+References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
+ <20200302195736.24777-3-sean.j.christopherson@intel.com>
+ <CALMp9eThBnN3ktAfwhNs7L-O031JDFqjb67OMPooGvmkcdhK4A@mail.gmail.com>
+ <CALMp9eR0Mw8iPv_Z43gfCEbErHQ6EXX8oghJJb5Xge+47ZU9yQ@mail.gmail.com>
+ <20200303045838.GF27842@linux.intel.com>
+ <CALMp9eSYZKUBko4ZViNbasRGJs2bAO2fREHX9maDbLrYj8yDhQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200303174312.994115258@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eSYZKUBko4ZViNbasRGJs2bAO2fREHX9maDbLrYj8yDhQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/3/20 10:42 AM, Greg Kroah-Hartman wrote:
-> From: Coly Li <colyli@suse.de>
+On Tue, Mar 03, 2020 at 09:42:42AM -0800, Jim Mattson wrote:
+> Unfathomable was the wrong word.
+
+I dunno, one could argue that the behavior of Intel CPUs for CPUID is
+unfathomable and I was just trying to follow suit :-D
+
+>  I can see what you're trying to do. I
+> just don't think it's defensible. I suspect that Intel CPU architects
+> will be surprised and disappointed to find that the maximum effective
+> value of CPUID.0H:EAX is now 255, and that they have to define
+> CPUID.100H:EAX as the "maximum leaf between 100H and 1FFH" if they
+> want to define any leaves between 100H and 1FFH.
+
+Hmm, ya, I agree that applying a 0xffffff00 mask to all classes of CPUID
+ranges is straight up wrong.
+
+> Furthermore, AMD has only ceded 4000_0000h through 4000_00FFh to
+> hypervisors, so kvm's use of 40000100H through 400001FFH appears to be
+> a land grab, akin to VIA's unilateral grab of the C0000000H leaves.
+> Admittedly, one could argue that the 40000000H leaves are not AMD's to
+> apportion, since AMD and Intel appear to have reached a detente by
+> splitting the available space down the middle. Intel, who seems to be
+> the recognized authority for this range, declares the entire range
+> from 40000000H through 4FFFFFFFH to be invalid. Make of that what you
+> will.
 > 
-> [ Upstream commit 0b96da639a4874311e9b5156405f69ef9fc3bef8 ]
-> 
-> When run a cache set, all the bcache btree node of this cache set will
-> be checked by bch_btree_check(). If the bcache btree is very large,
-> iterating all the btree nodes will occupy too much system memory and
-> the bcache registering process might be selected and killed by system
-> OOM killer. kthread_run() will fail if current process has pending
-> signal, therefore the kthread creating in run_cache_set() for gc and
-> allocator kernel threads are very probably failed for a very large
-> bcache btree.
-> 
-> Indeed such OOM is safe and the registering process will exit after
-> the registration done. Therefore this patch flushes pending signals
-> during the cache set start up, specificly in bch_cache_allocator_start()
-> and bch_gc_thread_start(), to make sure run_cache_set() won't fail for
-> large cahced data set.
+> In any event, no one has ever documented what's supposed to happen if
+> you leave gaps in the 4xxxxxxxH range when defining synthesized CPUID
+> leaves under kvm.
 
-Ditto this one, of course.
+Probably stating the obvious, but for me, the least suprising thing is for
+such leafs to output zeros.  It also feels safer, e.g. a guest that's
+querying hypervisor support is less likely to be led astray by all zeros
+than by a random feature bits being set.
 
-Did someone send this in for stable? It's not marked stable in the
-original commit.
+What about something like this?  Along with a comment and documentation...
 
--- 
-Jens Axboe
+static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
+{
+	struct kvm_cpuid_entry2 *max;
 
+	if (function >= 0x40000000 && function <= 0x4fffffff)
+		max = kvm_find_cpuid_entry(vcpu, function & 0xffffff00, 0);
+	else
+		max = kvm_find_cpuid_entry(vcpu, function & 0x80000000, 0);
+	return max && function <= max->eax;
+}
+
+> On Mon, Mar 2, 2020 at 8:58 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Mon, Mar 02, 2020 at 08:25:31PM -0800, Jim Mattson wrote:
+> > > On Mon, Mar 2, 2020 at 7:25 PM Jim Mattson <jmattson@google.com> wrote:
+> > > >
+> > > > On Mon, Mar 2, 2020 at 11:57 AM Sean Christopherson
+> > > > <sean.j.christopherson@intel.com> wrote:
+> > > >
+> > > > > The bad behavior can be visually confirmed by dumping CPUID output in
+> > > > > the guest when running Qemu with a stable TSC, as Qemu extends the limit
+> > > > > of range 0x40000000 to 0x40000010 to advertise VMware's cpuid_freq,
+> > > > > without defining zeroed entries for 0x40000002 - 0x4000000f.
+> > > >
+> > > > I think it could be reasonably argued that this is a userspace bug.
+> > > > Clearly, when userspace explicitly supplies the results for a leaf,
+> > > > those results override the default CPUID values for that leaf. But I
+> > > > haven't seen it documented anywhere that leaves *not* explicitly
+> > > > supplied by userspace will override the default CPUID values, just
+> > > > because they happen to appear in some magic range.
+> > >
+> > > In fact, the more I think about it, the original change is correct, at
+> > > least in this regard. Your "fix" introduces undocumented and
+> > > unfathomable behavior.
+> >
+> > Heh, the takeaway from this is that whatever we decide on needs to be
+> > documented somewhere :-)
+> >
+> > I wouldn't say it's unfathomable, conceptually it seems like the intent
+> > of the hypervisor range was to mimic the basic and extended ranges.  The
+> > whole thing is arbitrary behavior.  Of course if Intel CPUs would just
+> > return 0s on undefined leafs it would be a lot less arbitrary :-)
+> >
+> > Anyways, I don't have a strong opinion on whether this patch stays or goes.
