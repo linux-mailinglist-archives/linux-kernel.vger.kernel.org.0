@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 735F11780B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC32178177
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733265AbgCCR6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:58:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40920 "EHLO mail.kernel.org"
+        id S2388239AbgCCSCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:02:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732661AbgCCR6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:58:11 -0500
+        id S2388227AbgCCSCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:02:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C29C020656;
-        Tue,  3 Mar 2020 17:58:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA0E02072D;
+        Tue,  3 Mar 2020 18:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258291;
-        bh=cnid36DS5aI6TzXGB8aHNni9i5ItBK61vhrHUwmm3Cc=;
+        s=default; t=1583258550;
+        bh=csGExRBkwGzlCGWjK4cPPFMFAbs96bjnmP6x1pCqZ8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L+6QXM8JW/PKvuo9ImyMst5zg26XL/96qB2opFPL27xMatBUYrKZpF0hw+ryr6Ji8
-         Fxfv1T+2I6Bxxasfks1XUtWklRu5vw2LS29k36qFbXmA4kaE0CFAe/t05fuZ6ufkx9
-         fUkNsUdtQIKwqPoLvJT7osAWqWCj7vji70qk3S4w=
+        b=XAbmRgh8kkXq6H7vq7rYhZ6ZFC1ETFYmbDI4r2u93oZSAOqUbEsPMSCDEb4IAwVT/
+         LZUIu0Wu98tN/lQXhsAHOZbTbCsyJm+gGS8HvQwFGTO62MP4EnBtDiloei7gDU1iF5
+         R/GNG1y8gEkzYYpgGrtHqU4bZ9UPD4f/3Aiteqjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH 5.4 146/152] locking/lockdep: Fix lockdep_stats indentation problem
-Date:   Tue,  3 Mar 2020 18:44:04 +0100
-Message-Id: <20200303174319.397527559@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Anton Blanchard <anton@samba.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        yuzhoujian@didichuxing.com,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Tommi Rantala <tommi.t.rantala@nokia.com>
+Subject: [PATCH 4.19 74/87] perf stat: Use perf_evsel__is_clocki() for clock events
+Date:   Tue,  3 Mar 2020 18:44:05 +0100
+Message-Id: <20200303174356.909524760@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
+References: <20200303174349.075101355@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +52,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-commit a030f9767da1a6bbcec840fc54770eb11c2414b6 upstream.
+commit eb08d006054e7e374592068919e32579988602d4 upstream.
 
-It was found that two lines in the output of /proc/lockdep_stats have
-indentation problem:
+We already have function to check if a given event is either
+SW_CPU_CLOCK or SW_TASK_CLOCK. Utilize it.
 
-  # cat /proc/lockdep_stats
-     :
-   in-process chains:                   25057
-   stack-trace entries:                137827 [max: 524288]
-   number of stack traces:        7973
-   number of stack hash chains:   6355
-   combined max dependencies:      1356414598
-   hardirq-safe locks:                     57
-   hardirq-unsafe locks:                 1286
-     :
-
-All the numbers displayed in /proc/lockdep_stats except the two stack
-trace numbers are formatted with a field with of 11. To properly align
-all the numbers, a field width of 11 is now added to the two stack
-trace numbers.
-
-Fixes: 8c779229d0f4 ("locking/lockdep: Report more stack trace statistics")
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Link: https://lkml.kernel.org/r/20191211213139.29934-1-longman@redhat.com
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Anton Blanchard <anton@samba.org>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: yuzhoujian@didichuxing.com
+Link: http://lkml.kernel.org/r/20181115095533.16930-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Tommi Rantala <tommi.t.rantala@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/locking/lockdep_proc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/stat-shadow.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -286,9 +286,9 @@ static int lockdep_stats_show(struct seq
- 	seq_printf(m, " stack-trace entries:           %11lu [max: %lu]\n",
- 			nr_stack_trace_entries, MAX_STACK_TRACE_ENTRIES);
- #if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
--	seq_printf(m, " number of stack traces:        %llu\n",
-+	seq_printf(m, " number of stack traces:        %11llu\n",
- 		   lockdep_stack_trace_count());
--	seq_printf(m, " number of stack hash chains:   %llu\n",
-+	seq_printf(m, " number of stack hash chains:   %11llu\n",
- 		   lockdep_stack_hash_count());
- #endif
- 	seq_printf(m, " combined max dependencies:     %11u\n",
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -212,8 +212,7 @@ void perf_stat__update_shadow_stats(stru
+ 
+ 	count *= counter->scale;
+ 
+-	if (perf_evsel__match(counter, SOFTWARE, SW_TASK_CLOCK) ||
+-	    perf_evsel__match(counter, SOFTWARE, SW_CPU_CLOCK))
++	if (perf_evsel__is_clock(counter))
+ 		update_runtime_stat(st, STAT_NSECS, 0, cpu, count);
+ 	else if (perf_evsel__match(counter, HARDWARE, HW_CPU_CYCLES))
+ 		update_runtime_stat(st, STAT_CYCLES, ctx, cpu, count);
 
 
