@@ -2,119 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A1C4177C65
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:52:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E150177C5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:52:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbgCCQvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 11:51:21 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49178 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730115AbgCCQvU (ORCPT
+        id S1730412AbgCCQvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 11:51:08 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33418 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730216AbgCCQvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 11:51:20 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j9Akd-0004ZP-Kd; Tue, 03 Mar 2020 16:50:35 +0000
-Date:   Tue, 3 Mar 2020 17:50:34 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCHv5] exec: Fix a deadlock in ptrace
-Message-ID: <20200303165034.5w76hbatbnr64pkd@wittgenstein>
-References: <87k142lpfz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <875zfmloir.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nmjulm.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <202003021531.C77EF10@keescook>
- <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
- <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nlii0b.fsf@x220.int.ebiederm.org>
+        Tue, 3 Mar 2020 11:51:07 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a20so3708897otl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 08:51:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qHOn5vqQErDHAkJzL6biRHoTSOSlgdzSHmMDR1rwOSw=;
+        b=PrhC/74bze2iem1KsYtIHMvUu/v2Av2MYk8EydsyRsT6ErJ1YQjmNh0R/wDKNLwWyQ
+         giq1Pswj3xm3xsbBxVlb00LD6jgh8VspNAcUdojVVHgzs6YNMORKfgfiLcxXKihiD2U4
+         VPumlwmRJK94sUJBBlqZZYGZUQDwIbA2T5iHVgWPvH96kjWeV0LugsEESIk6ALCIRDQm
+         RBXbpHeIFbrG+TdqIZuAbNbugBhyCIMZGQaFYAf3mlAz6FH7d7jAZcPCS1yweB7G38bo
+         a3New9pxIAHaKb1Yr5Al4Jz6nhSG737F7DafcGI95pWkYx4GRRGQsLd7Cs4k3E6agMnj
+         8xSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qHOn5vqQErDHAkJzL6biRHoTSOSlgdzSHmMDR1rwOSw=;
+        b=cLSZD0VxFIWYo543C6ebYzAr5HIPJAJGacgecQMaGOtPQB67NW8mC42ZMpfb8OdnTG
+         6s72u4l9z4671PjwBU78bYABOtp0oMDZv9k6mJZsUjPDAcbYnQfL2Xzngg4N9XSmqTlv
+         XSxiUd7JqQzSAehIgbCC0cDxkT3kLXgXeiIAcfUWZvjmW+/1C8SGixF5A/TSQO61WtDC
+         scFESQ5oFCvlANt/hKCG6PWUAXKkSUM5mQHFWE+4KJg2//4Z7xoGMDK9ASp+U/gwFAgY
+         KAoXSzx41eolp4KVge4NIIhm6AbrffAHLsUGCAwESfTccIiMnjAICUeF45wpaGk8/yd5
+         xgRg==
+X-Gm-Message-State: ANhLgQ2oCLKUW3jVWXjAdjcdl5W9Xrs074QHCmmktlohwlaiHy5A+O7J
+        QXNilQFDXolb6pg/7zIrJYLGVnDY5k0kSXzzn8G0RQ==
+X-Google-Smtp-Source: ADFU+vs5bHTlzYDWcHBa7hol10zll+6LrbecnEkuqNf6A/g6QQbYC6octS5rirZT91tqzWiEaJRDmLwA3XoTOV7oDBs=
+X-Received: by 2002:a05:6830:118c:: with SMTP id u12mr3866768otq.124.1583254265433;
+ Tue, 03 Mar 2020 08:51:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+References: <20200303013901.32150-1-dxu@dxuuu.xyz>
+In-Reply-To: <20200303013901.32150-1-dxu@dxuuu.xyz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 3 Mar 2020 08:50:54 -0800
+Message-ID: <CALvZod5m3otRRqcLBebbgiZbhoYWAMbMg+ESkacJuj64OP=H4Q@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Support user xattrs in cgroupfs
+To:     Daniel Xu <dxu@dxuuu.xyz>
+Cc:     Cgroups <cgroups@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 09:18:44AM -0600, Eric W. Biederman wrote:
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-> 
-> > This fixes a deadlock in the tracer when tracing a multi-threaded
-> > application that calls execve while more than one thread are running.
-> >
-> > I observed that when running strace on the gcc test suite, it always
-> > blocks after a while, when expect calls execve, because other threads
-> > have to be terminated.  They send ptrace events, but the strace is no
-> > longer able to respond, since it is blocked in vm_access.
-> >
-> > The deadlock is always happening when strace needs to access the
-> > tracees process mmap, while another thread in the tracee starts to
-> > execve a child process, but that cannot continue until the
-> > PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
-> 
-> A couple of things.
-> 
-> Why do we think it is safe to change the behavior exposed to userspace?
-> Not the deadlock but all of the times the current code would not
-> deadlock?
-> 
-> Especially given that this is a small window it might be hard for people
-> to track down and report so we need a strong argument that this won't
-> break existing userspace before we just change things.
-> 
-> Usually surveying all of the users of a system call that we can find
-> and checking to see if they might be affected by the change in behavior
-> is difficult enough that we usually opt for not being lazy and
-> preserving the behavior.
-> 
-> This patch is up to two changes in behavior now, that could potentially
-> affect a whole array of programs.  Adding linux-api so that this change
-> in behavior can be documented if/when this change goes through.
-> 
-> If you can split the documentation and test fixes out into separate
-> patches that would help reviewing this code, or please make it explicit
-> that the your are changing documentation about behavior that is changing
-> with this patch.
+Hi Daniel,
 
-Agreed. I think it'd be good to do it in three patches:
-1. unrelated documentation update
-2. fix + documentation changes specific to the fix
-3. test(s)
+On Mon, Mar 2, 2020 at 5:42 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+>
+> User extended attributes are useful as metadata storage for kernfs
+> consumers like cgroups. Especially in the case of cgroups, it is useful
+> to have a central metadata store that multiple processes/services can
+> use to coordinate actions.
+>
+> A concrete example is for userspace out of memory killers. We want to
+> let delegated cgroup subtree owners (running as non-root) to be able to
+> say "please avoid killing this cgroup". In server environments this is
+> less important as everyone is running as root.
 
-Christian
+I would recommend removing the "everyone is running as root" statement
+as it is not generally true.
+
+Shakeel
