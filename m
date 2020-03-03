@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 342EB17753C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 12:24:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB0817753D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 12:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbgCCLYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 06:24:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55358 "EHLO mail.kernel.org"
+        id S1729003AbgCCLYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 06:24:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728928AbgCCLYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 06:24:35 -0500
+        id S1728994AbgCCLYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 06:24:45 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B3C820836;
-        Tue,  3 Mar 2020 11:24:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B57E20848;
+        Tue,  3 Mar 2020 11:24:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583234674;
-        bh=rv9OqmSphTP2/Bi7sPUwcbWh5FMkNeF2by0BEe7Sn6I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Dbun/+OzK23dwpHsIUxgDaAJRJUj5UO9FayvErqiPSef/P3JjiLBcHvE8/sAP2rMo
-         /O+Wq1G7CD+KM7gndunf+WR+f5k/2Ae5jzGsV7FfZEIYpVjrVsDOiYidFnl6Sbsjjz
-         dxVrVXXJKI0m+V4hwGyYkeoncU2VaxqTBtKA6cn4=
+        s=default; t=1583234684;
+        bh=+nisL3WkJoq2bdo0p9sfNAiw3XpbUL4JalkI9nbycXo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MaShO6zq1GhVFCEKpYY1q7sCxR0DWQCuDjKX2B5ETfjtp+i2UfqGbZZKR7dt6ALEA
+         nwK1p9nTZ12BGZ3y3MFVLqNYBcSnCy8VZfef85xUVrM7JQlrJNk2Ston7RVYiZrwnR
+         Ae81+hqvVtlIK/+stChYw9hbgxgOAQ36GBBio458=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -33,10 +33,12 @@ Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 0/2] tools/bootconfig: Add O= option and enhance error message
-Date:   Tue,  3 Mar 2020 20:24:30 +0900
-Message-Id: <158323467008.10560.4307464503748340855.stgit@devnote2>
+Subject: [PATCH 1/2] bootconfig: Support O=<builddir> option
+Date:   Tue,  3 Mar 2020 20:24:40 +0900
+Message-Id: <158323468033.10560.14661631369326294355.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <158323467008.10560.4307464503748340855.stgit@devnote2>
+References: <158323467008.10560.4307464503748340855.stgit@devnote2>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -46,28 +48,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Support O=<builddir> option to build bootconfig tool in
+the other directory. As same as other tools, if you specify
+O=<builddir>, bootconfig command is build under <builddir>.
 
-Here are patches to update tools/bootconfig to add O= option
-support and enhance error message so that user can easily
-locate the error position.
-
-Thank you,
-
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
-
-Masami Hiramatsu (2):
-      bootconfig: Support O=<builddir> option
-      tools/bootconfig: Show line and column in parse error
-
-
- include/linux/bootconfig.h          |    3 ++-
- init/main.c                         |   14 ++++++++++----
- lib/bootconfig.c                    |   35 ++++++++++++++++++++++++++---------
  tools/bootconfig/Makefile           |   27 +++++++++++++++++----------
- tools/bootconfig/main.c             |   35 +++++++++++++++++++++++++++++++----
  tools/bootconfig/test-bootconfig.sh |   14 ++++++++++----
- 6 files changed, 96 insertions(+), 32 deletions(-)
+ 2 files changed, 27 insertions(+), 14 deletions(-)
 
---
-Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+diff --git a/tools/bootconfig/Makefile b/tools/bootconfig/Makefile
+index a6146ac64458..da5975775337 100644
+--- a/tools/bootconfig/Makefile
++++ b/tools/bootconfig/Makefile
+@@ -1,23 +1,30 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for bootconfig command
++include ../scripts/Makefile.include
+ 
+ bindir ?= /usr/bin
+ 
+-HEADER = include/linux/bootconfig.h
+-CFLAGS = -Wall -g -I./include
++ifeq ($(srctree),)
++srctree := $(patsubst %/,%,$(dir $(CURDIR)))
++srctree := $(patsubst %/,%,$(dir $(srctree)))
++endif
+ 
+-PROGS = bootconfig
++LIBSRC = $(srctree)/lib/bootconfig.c $(srctree)/include/linux/bootconfig.h
++CFLAGS = -Wall -g -I$(CURDIR)/include
+ 
+-all: $(PROGS)
++ALL_TARGETS := bootconfig
++ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+ 
+-bootconfig: ../../lib/bootconfig.c main.c $(HEADER)
++all: $(ALL_PROGRAMS)
++
++$(OUTPUT)bootconfig: main.c $(LIBSRC)
+ 	$(CC) $(filter %.c,$^) $(CFLAGS) -o $@
+ 
+-install: $(PROGS)
+-	install bootconfig $(DESTDIR)$(bindir)
++test: $(ALL_PROGRAMS) test-bootconfig.sh
++	./test-bootconfig.sh $(OUTPUT)
+ 
+-test: bootconfig
+-	./test-bootconfig.sh
++install: $(ALL_PROGRAMS)
++	install $(OUTPUT)bootconfig $(DESTDIR)$(bindir)
+ 
+ clean:
+-	$(RM) -f *.o bootconfig
++	$(RM) -f $(OUTPUT)*.o $(ALL_PROGRAMS)
+diff --git a/tools/bootconfig/test-bootconfig.sh b/tools/bootconfig/test-bootconfig.sh
+index 1411f4c3454f..81b350ffd03f 100755
+--- a/tools/bootconfig/test-bootconfig.sh
++++ b/tools/bootconfig/test-bootconfig.sh
+@@ -3,9 +3,16 @@
+ 
+ echo "Boot config test script"
+ 
+-BOOTCONF=./bootconfig
+-INITRD=`mktemp initrd-XXXX`
+-TEMPCONF=`mktemp temp-XXXX.bconf`
++if [ -d "$1" ]; then
++  TESTDIR=$1
++else
++  TESTDIR=.
++fi
++BOOTCONF=${TESTDIR}/bootconfig
++
++INITRD=`mktemp ${TESTDIR}/initrd-XXXX`
++TEMPCONF=`mktemp ${TESTDIR}/temp-XXXX.bconf`
++OUTFILE=`mktemp ${TESTDIR}/tempout-XXXX`
+ NG=0
+ 
+ cleanup() {
+@@ -65,7 +72,6 @@ new_size=$(stat -c %s $INITRD)
+ xpass test $new_size -eq $initrd_size
+ 
+ echo "No error messge while applying"
+-OUTFILE=`mktemp tempout-XXXX`
+ dd if=/dev/zero of=$INITRD bs=4096 count=1
+ printf " \0\0\0 \0\0\0" >> $INITRD
+ $BOOTCONF -a $TEMPCONF $INITRD > $OUTFILE 2>&1
+
