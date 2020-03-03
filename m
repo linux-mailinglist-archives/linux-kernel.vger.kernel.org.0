@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B37176F3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01890176F41
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:24:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbgCCGX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 01:23:57 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:51841 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbgCCGXy (ORCPT
+        id S1727572AbgCCGX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 01:23:58 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39216 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbgCCGX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 01:23:54 -0500
-Received: by mail-pj1-f65.google.com with SMTP id l8so888460pjy.1;
-        Mon, 02 Mar 2020 22:23:53 -0800 (PST)
+        Tue, 3 Mar 2020 01:23:56 -0500
+Received: by mail-pj1-f68.google.com with SMTP id o5so863676pjs.4;
+        Mon, 02 Mar 2020 22:23:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AJWVhyWnEHa+16Vui1urxy6sASoDRCYbuAsm+q77gXs=;
-        b=APn8RafPWLC33RJLX6TCTiGRb/43wtYEQOud3T6k/8l5hLjc08tRx5C2qRpMKAeAnA
-         ZPB2XlcQcSz9uRgyvmkWsVWp0jwp1wCNBPnad6vFVDVgsCX7qWcBNGDtydlsYjgG13Q+
-         JPV+xK6HbibTroJ3PMREqbZCjC2J3dM2lgB5dIEzYSPexKJsny6YxFQDl4qg4QY8BST3
-         rHz4Oc+wu/2kDQkW2NZYRd2BfOC2YUuymHLrN3DmnonUFyvtJXl59/oS/JHfUjlQE7xS
-         mNtZFeAbRKyTFr7R2IqrYDyjfq/sqh8R3AhV/pFlCnjw23rnbfifPejKh/05DDLnH7v+
-         WkjA==
+        bh=TI3Z8YY503FP0KWJnGcP8fCbF2AkQr8pkKXqhxZsBmc=;
+        b=EAYDCY7S4bhB2WRC9nvVwFPyK5XgymtItdht/AXBXjWl4G4vRkAEs0a89EbW9UXGJK
+         4AMHFHAVVrfXI6FGDnx3vHen7TN5/Bm2Nb0g3b3G83Dm5Yba+V9doMYTV2kSoU0LcqSV
+         xcX2Os7LGLf/Um4io/wG7mTQVJVlazLWmGGyJIw5Yyk/N5LrLZ7QB1B4VGhb4lViumw3
+         UZa0wiEtq3EuGyFUBCQ6rsGYCpdkivrV2VtUz+Uxkh47VVeKg7EwReRulojx6iBgrnb3
+         pSrVqaGSdo5F0T7KirZrS113pbsX+uxXRBVqy0ZVgnqvKvY5B9RDlEJjcdfYJ2x7axJ0
+         /2rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AJWVhyWnEHa+16Vui1urxy6sASoDRCYbuAsm+q77gXs=;
-        b=O6eoARwEra95LI3POqrSevGCQBfR+Gtt8s3oR1aRlBZyPSdDiVo5SFrGwgMfDw48js
-         /XrXDmRpOOgB/ei7wy1AbKLXyDf95R1Q6cU3mYuwVgHzyMildV5uZ6Lm9woUduohOKIs
-         ZI/hkRdAaPYma7He+s3ykshc6i+ohAqlUbZyvduIIV3JnF8JuDrWzlFlJyj2bN8GBvqZ
-         lNsPYIjNbFLSRgZ9YsQDDEFiFGwhB4/3U0ewuKyHsyhVtQKOsgXxSuTaJWTK7KYv6GQu
-         8yQx1Ytnj8jdrJOnyhYfWcB0v3wwr4TD/l3ejcfQ8rfnWZsEzBb0yB27jLrsVdFHVDk2
-         4EVw==
-X-Gm-Message-State: ANhLgQ3amvWJFtWA+KBX1mKxrng5YXyHCq6vEglFRJbwTwlPA5/0SpJs
-        MVxeRqHVnOuQsx59UnbSIH8=
-X-Google-Smtp-Source: ADFU+vu9XHZAPJ11uio30zd0ulJFBhMoXCNmPsvqw6amAMfXgqEAt3txRdMXOBF/hDXaXINhU1En/w==
-X-Received: by 2002:a17:90a:fb4d:: with SMTP id iq13mr2332424pjb.165.1583216632735;
-        Mon, 02 Mar 2020 22:23:52 -0800 (PST)
+        bh=TI3Z8YY503FP0KWJnGcP8fCbF2AkQr8pkKXqhxZsBmc=;
+        b=IugeofG7XvzOj4U5OR81SQHwruPS7XRAj9e7YaT2qhZKMy4aAs0ArbohewL9n7EbIe
+         RjJ122SQCGoZu4fOCYloq9ScWPkTErXgzJRXsrGDJVq+AzVCOXEVPN20Qc6tRmcAto/w
+         9JTQxjKYMt896g2QhSEQCODI3Tv6adLH/N/Rvv0JM5QnWeuLZWxoNSHdOlYMY/PXIxN6
+         TcEu0o5OgIHgfDjG3N4W/dGNf01TIVmEinA1WZdokanN6QqPE+YkQPlHvK3xheteYITc
+         NLhxgY/a6Z5F1mgaQPFuMRQUdPLk2QnIdXPUzIHUvGcpaCPKo5vyDGMuwa3kjiPIemMU
+         JQlQ==
+X-Gm-Message-State: ANhLgQ1NizDGAeA1CgwHfD7Zuzxe4j+EdE1/0jPQLoojdfeYV+l6QloT
+        fC5+SU071TcO8Eodr39n7XQ=
+X-Google-Smtp-Source: ADFU+vt9tRuqC9HtMQlJWQEOzdX43o3XQH7276qTwTP1ViurSta8NASB80y6m5uKUP303TtRaWHTww==
+X-Received: by 2002:a17:90a:f009:: with SMTP id bt9mr2411146pjb.150.1583216634072;
+        Mon, 02 Mar 2020 22:23:54 -0800 (PST)
 Received: from taoren-ubuntu-R90MNF91.thefacebook.com (c-24-4-25-55.hsd1.ca.comcast.net. [24.4.25.55])
-        by smtp.gmail.com with ESMTPSA id k5sm7453526pfp.66.2020.03.02.22.23.51
+        by smtp.gmail.com with ESMTPSA id k5sm7453526pfp.66.2020.03.02.22.23.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 22:23:52 -0800 (PST)
+        Mon, 02 Mar 2020 22:23:53 -0800 (PST)
 From:   rentao.bupt@gmail.com
 To:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ To:     Felipe Balbi <balbi@kernel.org>,
         linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
         taoren@fb.com
 Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v7 5/7] ARM: dts: aspeed-g5: add vhub port and endpoint properties
-Date:   Mon,  2 Mar 2020 22:23:34 -0800
-Message-Id: <20200303062336.7361-6-rentao.bupt@gmail.com>
+Subject: [PATCH v7 6/7] ARM: dts: aspeed-g4: add vhub port and endpoint properties
+Date:   Mon,  2 Mar 2020 22:23:35 -0800
+Message-Id: <20200303062336.7361-7-rentao.bupt@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200303062336.7361-1-rentao.bupt@gmail.com>
 References: <20200303062336.7361-1-rentao.bupt@gmail.com>
@@ -83,21 +83,21 @@ Reviewed-by: Joel Stanley <joel@jms.id.au>
  No change in v2/v3/v4/v5/v6/v7.
    - It's given v7 to align with the version of the patch series.
 
- arch/arm/boot/dts/aspeed-g5.dtsi | 2 ++
+ arch/arm/boot/dts/aspeed-g4.dtsi | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-index ebec0fa8baa7..f12ec04d3cbc 100644
---- a/arch/arm/boot/dts/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -195,6 +195,8 @@
+diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+index 807a0fc20670..8e04303e8514 100644
+--- a/arch/arm/boot/dts/aspeed-g4.dtsi
++++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+@@ -164,6 +164,8 @@
  			reg = <0x1e6a0000 0x300>;
  			interrupts = <5>;
  			clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
 +			aspeed,vhub-downstream-ports = <5>;
 +			aspeed,vhub-generic-endpoints = <15>;
  			pinctrl-names = "default";
- 			pinctrl-0 = <&pinctrl_usb2ad_default>;
+ 			pinctrl-0 = <&pinctrl_usb2d_default>;
  			status = "disabled";
 -- 
 2.17.1
