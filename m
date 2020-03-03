@@ -2,268 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80056176DD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 05:04:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A63C3176DD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 05:08:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgCCEEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 23:04:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:42104 "EHLO foss.arm.com"
+        id S1727125AbgCCEIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 23:08:52 -0500
+Received: from mga04.intel.com ([192.55.52.120]:29628 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726942AbgCCEEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 23:04:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B14F32F;
-        Mon,  2 Mar 2020 20:04:51 -0800 (PST)
-Received: from [10.162.16.51] (p8cg001049571a15.blr.arm.com [10.162.16.51])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E2853F6CF;
-        Mon,  2 Mar 2020 20:04:48 -0800 (PST)
-Subject: Re: Linux-next-20200302: arm64 build failed
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        suzuki.poulose@arm.com, Anders Roxell <anders.roxell@linaro.org>
-References: <CA+G9fYtAM-m0jygud+i0ymU+XknV9_GcAbDQChiD2NZjvQ+D3w@mail.gmail.com>
- <20200302104726.GA7995@willie-the-truck>
- <20200302135443.GA24831@linux.ibm.com>
- <20200302174553.GC4166275@arrakis.emea.arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <c4c6b363-62a8-db27-6ab3-ca2f2d4d082c@arm.com>
-Date:   Tue, 3 Mar 2020 09:34:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726990AbgCCEIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 23:08:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 20:08:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,510,1574150400"; 
+   d="scan'208";a="412600501"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga005.jf.intel.com with ESMTP; 02 Mar 2020 20:08:51 -0800
+Date:   Mon, 2 Mar 2020 20:08:51 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [PATCH 1/6] KVM: x86: Fix tracing of CPUID.function when
+ function is out-of-range
+Message-ID: <20200303040851.GD27842@linux.intel.com>
+References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
+ <20200302195736.24777-2-sean.j.christopherson@intel.com>
+ <6b41fc5c-f7f4-b20d-cfb5-95bf13cc7534@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200302174553.GC4166275@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b41fc5c-f7f4-b20d-cfb5-95bf13cc7534@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 03/02/2020 11:15 PM, Catalin Marinas wrote:
-> On Mon, Mar 02, 2020 at 03:54:43PM +0200, Mike Rapoport wrote:
->> On Mon, Mar 02, 2020 at 10:47:27AM +0000, Will Deacon wrote:
->>> [+Anshuman and Catalin]
->>>
->>> On Mon, Mar 02, 2020 at 01:58:26PM +0530, Naresh Kamboju wrote:
->>>> Linux-Next 20200302 arm64 build failed due to below errors,
->>>> Suspecting patch causing this build break.
->>>>
->>>> 87d900aef3e2  arm/arm64: add support for folded p4d page tables
->>>>
->>>> Error log,
->>>> -------------
->>>> arch/arm64/mm/mmu.c: In function 'unmap_hotplug_pud_range':
->>>> include/linux/compiler.h:284:1: error: incompatible type for argument
->>>> 1 of 'p4d_page_paddr'
->>>>  ({         \
->>>>  ^
->>>> arch/arm64/include/asm/memory.h:270:45: note: in definition of macro
->>>> '__phys_to_virt'
->>>>  #define __phys_to_virt(x) ((unsigned long)((x) - physvirt_offset))
->>>>                                              ^
->>>> arch/arm64/include/asm/pgtable.h:629:42: note: in expansion of macro '__va'
->>>>  #define pud_offset(dir, addr)  ((pud_t *)__va(pud_offset_phys((dir), (addr))))
->>>>                                           ^~~~
->>>> include/linux/compiler.h:293:22: note: in expansion of macro '__READ_ONCE'
->>>>  #define READ_ONCE(x) __READ_ONCE(x, 1)
->>>>                       ^~~~~~~~~~~
->>>> arch/arm64/include/asm/pgtable.h:628:52: note: in expansion of macro 'READ_ONCE'
->>>>  #define pud_offset_phys(dir, addr) (p4d_page_paddr(READ_ONCE(*(dir)))
->>>> + pud_index(addr) * sizeof(pud_t))
->>>>                                                     ^~~~~~~~~
->>>> arch/arm64/include/asm/pgtable.h:629:47: note: in expansion of macro
->>>> 'pud_offset_phys'
->>>>  #define pud_offset(dir, addr)  ((pud_t *)__va(pud_offset_phys((dir), (addr))))
->>>>                                                ^~~~~~~~~~~~~~~
->>>> arch/arm64/mm/mmu.c:827:10: note: in expansion of macro 'pud_offset'
->>>>    pudp = pud_offset(pgdp, addr);
->>>>           ^~~~~~~~~~
->>>
->>> Looks like we need an implementation of unmap_hotplug_p4d_range() to
->>> walk the dummy p4d level. Unfortunately, we don't have the folded p4d
->>> patches in the arm64 tree so we'll either need a common branch or the
->>> hotplug patches will need to be dropped for the moment.
->>
->> unmap_hotplug_p4d_range() is easy :)
->>
->> From c7a5d08ff51ca2057b6b0289c4423bdfd7643518 Mon Sep 17 00:00:00 2001
->> From: Mike Rapoport <rppt@linux.ibm.com>
->> Date: Mon, 2 Mar 2020 15:53:17 +0200
->> Subject: [PATCH] arm64/mm: implement unmap_hotplug_p4d_range
->>
->> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
->> ---
->>  arch/arm64/mm/mmu.c | 20 +++++++++++++++++++-
->>  1 file changed, 19 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index 05ec8e5f1436..c76b11577558 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -840,6 +840,24 @@ static void unmap_hotplug_pud_range(pgd_t *pgdp, unsigned long addr,
->>  	} while (addr = next, addr < end);
->>  }
->>  
->> +static void unmap_hotplug_p4d_range(pgd_t *pgd, unsigned long addr,
->> +				unsigned long end, bool free_mapped)
->> +{
->> +	unsigned long next;
->> +	pgd_t *p4dp, p4d;
->> +
->> +	do {
->> +		next = p4d_addr_end(addr, end);
->> +		p4dp = p4d_offset(pgd, addr);
->> +		p4d = READ_ONCE(*p4dp);
->> +		if (p4d_none(p4d))
->> +			continue;
->> +
->> +		WARN_ON(!p4d_present(p4d));
->> +		unmap_hotplug_pud_range(p4dp, addr, next, free_mapped);
->> +	} while (addr = next, addr < end);
->> +}
->> +
->>  static void unmap_hotplug_range(unsigned long addr, unsigned long end,
->>  				bool free_mapped)
->>  {
->> @@ -854,7 +872,7 @@ static void unmap_hotplug_range(unsigned long addr, unsigned long end,
->>  			continue;
->>  
->>  		WARN_ON(!pgd_present(pgd));
->> -		unmap_hotplug_pud_range(pgdp, addr, next, free_mapped);
->> +		unmap_hotplug_p4d_range(pgdp, addr, next, free_mapped);
->>  	} while (addr = next, addr < end);
->>  }
+On Tue, Mar 03, 2020 at 10:50:03AM +0800, Xiaoyao Li wrote:
+> On 3/3/2020 3:57 AM, Sean Christopherson wrote:
+> >Rework kvm_cpuid() to query entry->function when adjusting the output
+> >values so that the original function (in the aptly named "function") is
+> >preserved for tracing.  This fixes a bug where trace_kvm_cpuid() will
+> >trace the max function for a range instead of the requested function if
+> >the requested function is out-of-range and an entry for the max function
+> >exists.
+> >
+> >Fixes: 43561123ab37 ("kvm: x86: Improve emulation of CPUID leaves 0BH and 1FH")
+> >Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
+> >Cc: Jim Mattson <jmattson@google.com>
+> >Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+> >Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >---
+> >  arch/x86/kvm/cpuid.c | 15 +++++++--------
+> >  1 file changed, 7 insertions(+), 8 deletions(-)
+> >
+> >diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> >index b1c469446b07..6be012937eba 100644
+> >--- a/arch/x86/kvm/cpuid.c
+> >+++ b/arch/x86/kvm/cpuid.c
+> >@@ -997,12 +997,12 @@ static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
+> >  	return max && function <= max->eax;
+> >  }
+> >+/* Returns true if the requested leaf/function exists in guest CPUID. */
+> >  bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+> >  	       u32 *ecx, u32 *edx, bool check_limit)
+> >  {
+> >-	u32 function = *eax, index = *ecx;
+> >+	const u32 function = *eax, index = *ecx;
+> >  	struct kvm_cpuid_entry2 *entry;
+> >-	struct kvm_cpuid_entry2 *max;
+> >  	bool found;
+> >  	entry = kvm_find_cpuid_entry(vcpu, function, index);
+> >@@ -1015,18 +1015,17 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+> >  	 */
+> >  	if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
+> >  	    !cpuid_function_in_range(vcpu, function)) {
+> >-		max = kvm_find_cpuid_entry(vcpu, 0, 0);
+> >-		if (max) {
+> >-			function = max->eax;
+> >-			entry = kvm_find_cpuid_entry(vcpu, function, index);
+> >-		}
+> >+		entry = kvm_find_cpuid_entry(vcpu, 0, 0);
+> >+		if (entry)
+> >+			entry = kvm_find_cpuid_entry(vcpu, entry->eax, index);
 > 
-> Thanks Mike. With the additional diff below, I can get it to build with
-> and without the p4d clean-up patches in -next. If Anshuman confirms that
-> they work, I can add them on top of the arm64 for-next/memory-hotremove
-> branch.
-
-These two patches applied on next-20200302 works fine for hot-remove. As the
-second patch also fixes the first one, IMHO both should be folded into a
-single one instead. Just wondering if this combined patch which enables P4D
-page table should be posted on the list or do I need to respin original hot
-remove patches again.
-
-- Anshuman
-
+> There is a problem.
 > 
-> ----------8<------------------------
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 56bd9227937f..2faf11860097 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -816,7 +816,7 @@ static void unmap_hotplug_pmd_range(pud_t *pudp, unsigned long addr,
->  	} while (addr = next, addr < end);
->  }
->  
-> -static void unmap_hotplug_pud_range(pgd_t *pgdp, unsigned long addr,
-> +static void unmap_hotplug_pud_range(p4d_t *p4dp, unsigned long addr,
->  				    unsigned long end, bool free_mapped)
->  {
->  	unsigned long next;
-> @@ -824,7 +824,7 @@ static void unmap_hotplug_pud_range(pgd_t *pgdp, unsigned long addr,
->  
->  	do {
->  		next = pud_addr_end(addr, end);
-> -		pudp = pud_offset(pgdp, addr);
-> +		pudp = pud_offset(p4dp, addr);
->  		pud = READ_ONCE(*pudp);
->  		if (pud_none(pud))
->  			continue;
-> @@ -848,15 +848,15 @@ static void unmap_hotplug_pud_range(pgd_t *pgdp, unsigned long addr,
->  	} while (addr = next, addr < end);
->  }
->  
-> -static void unmap_hotplug_p4d_range(pgd_t *pgd, unsigned long addr,
-> -				unsigned long end, bool free_mapped)
-> +static void unmap_hotplug_p4d_range(pgd_t *pgdp, unsigned long addr,
-> +				    unsigned long end, bool free_mapped)
->  {
->  	unsigned long next;
-> -	pgd_t *p4dp, p4d;
-> +	p4d_t *p4dp, p4d;
->  
->  	do {
->  		next = p4d_addr_end(addr, end);
-> -		p4dp = p4d_offset(pgd, addr);
-> +		p4dp = p4d_offset(pgdp, addr);
->  		p4d = READ_ONCE(*p4dp);
->  		if (p4d_none(p4d))
->  			continue;
-> @@ -961,7 +961,7 @@ static void free_empty_pmd_table(pud_t *pudp, unsigned long addr,
->  	free_hotplug_pgtable_page(virt_to_page(pmdp));
->  }
->  
-> -static void free_empty_pud_table(pgd_t *pgdp, unsigned long addr,
-> +static void free_empty_pud_table(p4d_t *p4dp, unsigned long addr,
->  				 unsigned long end, unsigned long floor,
->  				 unsigned long ceiling)
->  {
-> @@ -970,7 +970,7 @@ static void free_empty_pud_table(pgd_t *pgdp, unsigned long addr,
->  
->  	do {
->  		next = pud_addr_end(addr, end);
-> -		pudp = pud_offset(pgdp, addr);
-> +		pudp = pud_offset(p4dp, addr);
->  		pud = READ_ONCE(*pudp);
->  		if (pud_none(pud))
->  			continue;
-> @@ -990,17 +990,36 @@ static void free_empty_pud_table(pgd_t *pgdp, unsigned long addr,
->  	 * entries are empty. Overlap with other regions have been
->  	 * handled by the floor/ceiling check.
->  	 */
-> -	pudp = pud_offset(pgdp, 0UL);
-> +	pudp = pud_offset(p4dp, 0UL);
->  	for (i = 0; i < PTRS_PER_PUD; i++) {
->  		if (!pud_none(READ_ONCE(pudp[i])))
->  			return;
->  	}
->  
-> -	pgd_clear(pgdp);
-> +	p4d_clear(p4dp);
->  	__flush_tlb_kernel_pgtable(start);
->  	free_hotplug_pgtable_page(virt_to_page(pudp));
->  }
->  
-> +static void free_empty_p4d_table(pgd_t *pgdp, unsigned long addr,
-> +				 unsigned long end, unsigned long floor,
-> +				 unsigned long ceiling)
-> +{
-> +	p4d_t *p4dp, p4d;
-> +	unsigned long next;
-> +
-> +	do {
-> +		next = p4d_addr_end(addr, end);
-> +		p4dp = p4d_offset(pgdp, addr);
-> +		p4d = READ_ONCE(*p4dp);
-> +		if (p4d_none(p4d))
-> +			continue;
-> +
-> +		WARN_ON(!p4d_present(p4d));
-> +		free_empty_pud_table(p4dp, addr, next, floor, ceiling);
-> +	} while (addr = next, addr < end);
-> +}
-> +
->  static void free_empty_tables(unsigned long addr, unsigned long end,
->  			      unsigned long floor, unsigned long ceiling)
->  {
-> @@ -1015,7 +1034,7 @@ static void free_empty_tables(unsigned long addr, unsigned long end,
->  			continue;
->  
->  		WARN_ON(!pgd_present(pgd));
-> -		free_empty_pud_table(pgdp, addr, next, floor, ceiling);
-> +		free_empty_p4d_table(pgdp, addr, next, floor, ceiling);
->  	} while (addr = next, addr < end);
->  }
->  #endif
+> when queried leaf is out of range on Intel CPU, it returns the maximum basic
+> leaf, and any dependence on input ECX (i.e., subleaf) value in the basic
+> leaf is honored. As disclaimed in SDM of CPUID instruction.
+
+That's what the code above does.
+
+> The ECX should be honored if and only the leaf has a significant index.
+> If the leaf doesn't has a significant index, it just ignores the EDX input
+
+s/EDX/ECX
+
+> in bare metal.
+>
+> So it should be something like:
+> 
+> if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
+> 	!cpuid_function_in_range(vcpu, function)) {
+> 	entry = kvm_find_cpuid_entry(vcpu, 0, 0);
+> 	if (entry) {
+> 		entry = kvm_find_cpuid_entry(vcpu, entry->eax, 0);
+> 		if (entry &&
+> 		    entry->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX ) {
+
+This is unnecessary IMO.  The only scenario where SIGNFICANT_INDEX is 0
+and cpuid_entry(entry->eax, 0) != cpuid_entry(entry->eax, index) is if
+userspace created a cpuid entry for index>0 with SIGNFICANT_INDEX.  That's
+a busted model, e.g. it'd be the SDM equivalent of an Intel CPU having
+different output for CPUID.0x16.0 and CPUID.16.5 despite the SDM stating
+that the CPUID.0x16 ignores the index.
+
+E.g. on my system with a max basic leaf of 0x16
+
+$ cpuid -1 -r
+CPU:
+   0x00000000 0x00: eax=0x00000016 ebx=0x756e6547 ecx=0x6c65746e edx=0x49656e69
+...
+   0x00000016 0x00: eax=0x00000e74 ebx=0x0000125c ecx=0x00000064 edx=0x00000000
+
+$ cpuid -1 -r -l 0x16
+CPU:
+   0x00000016 0x00: eax=0x00000e74 ebx=0x0000125c ecx=0x00000064 edx=0x00000000
+~ $ cpuid -1 -r -l 0x16 -s 4
+CPU:
+   0x00000016 0x04: eax=0x00000e74 ebx=0x0000125c ecx=0x00000064 edx=0x00000000
+~ $ cpuid -1 -r -l 0x16 -s 466
+CPU:
+   0x00000016 0x1d2: eax=0x00000e74 ebx=0x0000125c ecx=0x00000064 edx=0x00000000
+
+
+If it returned anything else for CPUID.0x16.0x4 then it'd be a CPU bug.
+Same thing here, it's a userspace bug if it creates a CPUID entry that
+shouldn't exist.  E.g. ignoring Intel's silly "max basic leaf" behavior
+for the moment, if userspace created a entry for CPUID.0x0.N it would
+break the Linux kernel's cpu_detect(), as it doesn't initialize ECX when
+doing CPUID.0x0.
+
+> 			entry = kvm_find_cpuid_entry(vcpu, entry->eax,
+> 						     index);
+> 		}
+> 	}
+> }
+> 
+> >  	}
+> >  	if (entry) {
+> >  		*eax = entry->eax;
+> >  		*ebx = entry->ebx;
+> >  		*ecx = entry->ecx;
+> >  		*edx = entry->edx;
+> >-		if (function == 7 && index == 0) {
+> >+
+> >+		if (entry->function == 7 && index == 0) {
+> >  			u64 data;
+> >  		        if (!__kvm_get_msr(vcpu, MSR_IA32_TSX_CTRL, &data, true) &&
+> >  			    (data & TSX_CTRL_CPUID_CLEAR))
+> >
 > 
