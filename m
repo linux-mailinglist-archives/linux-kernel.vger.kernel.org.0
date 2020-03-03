@@ -2,108 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ECCD1778F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:31:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25EF41778ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:31:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbgCCObG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 09:31:06 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:64110 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729432AbgCCObF (ORCPT
+        id S1729423AbgCCOaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 09:30:46 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35411 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727199AbgCCOaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:31:05 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583245865; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=18e/D4/+MM+g0dJtKJ/+1YUnc9WxGhoPmwqIBBQ28ds=; b=MvcO4R7VI4VJkhAvRDwR1MEkus5FHihQ0o+QyOZ2KgWUKQQAz6nExrUA4AogMo9nfgf8Wo/J
- FcwUxSKk02nl1tg6i/Eev2kUm0dHP8cRoIVodYtlCgBK+ejU0fmgdvUi09uLjYB7YxgZlacc
- pu+bH7T6dHeCO2svNpHG4xlZ0Fo=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e5e6a26.7fb7b2553f80-smtp-out-n02;
- Tue, 03 Mar 2020 14:31:02 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C3926C4479C; Tue,  3 Mar 2020 14:31:02 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44DE0C433A2;
-        Tue,  3 Mar 2020 14:30:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44DE0C433A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/2] f2fs: Add a new CP flag to help fsck fix resize SPO issues
-Date:   Tue,  3 Mar 2020 19:59:26 +0530
-Message-Id: <1583245766-3351-2-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1583245766-3351-1-git-send-email-stummala@codeaurora.org>
-References: <1583245766-3351-1-git-send-email-stummala@codeaurora.org>
+        Tue, 3 Mar 2020 09:30:46 -0500
+Received: by mail-oi1-f194.google.com with SMTP id c1so1755745oiy.2;
+        Tue, 03 Mar 2020 06:30:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3giDTcmis7xuoYSVjRPJHKbcsBkDsi3FIKg6I//oj2U=;
+        b=dW8vDaxSvu/x3DaxFVVsdgIzXFy7oRACP6jVk1NIT6YiAdMLQTs7oam2plcLLJHjV1
+         UwYS/8V+6CVJaGhzkq8sc0wG5SdzQc6mNz9j5m3yTqf257yrZd3G9np2knyfMi8iZ3dY
+         tOKAGLzulU7SoJU2C7ljbdEEZYmH70cWyCY+U5u9Evv3dOPns9pfxQb4SuUfnx8bs3ep
+         BLRcSzzEWe39h0PWGXeU3Hr0OzqvsuUFhq0dVdtDZLDElSPQdpwzHpTeXWN1rMHD6VTV
+         z6Et1oS4oQYFDPtwBWRzWFomyp0u/DFIRz+BteqjqAgs6iGjiOcSIwzBsSY55HOpgHSE
+         7uvw==
+X-Gm-Message-State: ANhLgQ0xtN6Uod5BzK6wkf+1dhldkKIbxHUkckE0PzRtKbXtn2nuQFiK
+        Ao/X04r14l3Ajcrbg8fRTw==
+X-Google-Smtp-Source: ADFU+vvfMW/0Fosxapnoh/aFQ3fRu6XOd3zB5JsdxNtRlGdL+ltkBAIjvhbLwLVfbP36SKvU92NEtw==
+X-Received: by 2002:aca:4c91:: with SMTP id z139mr2568648oia.150.1583245845284;
+        Tue, 03 Mar 2020 06:30:45 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y193sm6613292oia.38.2020.03.03.06.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 06:30:44 -0800 (PST)
+Received: (nullmailer pid 24203 invoked by uid 1000);
+        Tue, 03 Mar 2020 14:30:43 -0000
+Date:   Tue, 3 Mar 2020 08:30:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: add vendor prefix for Linux Automation
+ GmbH
+Message-ID: <20200303143043.GA24147@bogus>
+References: <20200226143826.1146-1-a.fatoum@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226143826.1146-1-a.fatoum@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add and set a new CP flag CP_RESIZEFS_FLAG during
-online resize FS to help fsck fix the metadata mismatch
-that may happen due to SPO during resize, where SB
-got updated but CP data couldn't be written yet.
+On Wed, 26 Feb 2020 15:38:23 +0100, Ahmad Fatoum wrote:
+> Linux Automation GmbH[0] was founded in 2019 in order to develop
+> electronics for embedded Linux. Add its vendor prefix so it may be used
+> in future board and device compatibles.
+> 
+> [0]: https://www.linux-automation.com
+> 
+> Signed-off-by: Robert Schwebel <rsc@linux-automation.com>
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-fsck errors -
-Info: CKPT version = 6ed7bccb
-        Wrong user_block_count(2233856)
-[f2fs_do_mount:3365] Checkpoint is polluted
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/checkpoint.c    | 8 ++++++--
- include/linux/f2fs_fs.h | 1 +
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index fdd7f3d..0bd4cdb 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1301,10 +1301,14 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	else
- 		__clear_ckpt_flags(ckpt, CP_ORPHAN_PRESENT_FLAG);
- 
--	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
--		is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
-+	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
- 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
- 
-+	if (is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
-+		__set_ckpt_flags(ckpt, CP_RESIZEFS_FLAG);
-+	else
-+		__clear_ckpt_flags(ckpt, CP_RESIZEFS_FLAG);
-+
- 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
- 		__set_ckpt_flags(ckpt, CP_DISABLED_FLAG);
- 	else
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index ac3f488..3c383dd 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -125,6 +125,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_RESIZEFS_FLAG		0x00004000
- #define CP_DISABLED_QUICK_FLAG		0x00002000
- #define CP_DISABLED_FLAG		0x00001000
- #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Acked-by: Rob Herring <robh@kernel.org>
