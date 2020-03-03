@@ -2,117 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BF29178671
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC14717866B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:36:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbgCCXg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 18:36:59 -0500
-Received: from mga17.intel.com ([192.55.52.151]:9801 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbgCCXg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 18:36:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 15:36:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="229117031"
-Received: from kwasilew-mobl.ger.corp.intel.com (HELO localhost) ([10.251.88.57])
-  by orsmga007.jf.intel.com with ESMTP; 03 Mar 2020 15:36:50 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v28 03/22] x86/cpufeatures: x86/msr: Intel SGX Launch Control hardware bits
-Date:   Wed,  4 Mar 2020 01:35:50 +0200
-Message-Id: <20200303233609.713348-4-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+        id S1728612AbgCCXgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 18:36:03 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:28352 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727942AbgCCXgC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 18:36:02 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 023NSvXY032631
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Mar 2020 15:36:01 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=v54f4hvtEpOMZZj7Wq4+S30Pdqx6OVy19TrOKQ69H14=;
+ b=ZLUPAVrVrvWOH07Sei5a8edivsFuryHz/mhmicFdCuYVrgEFGEAv1Bq9Y5CgWrF9qdIX
+ 3dB4VtAD0jC46moXjUuSGBtdKnWX3hCKSrhp8L/uuf8SR2tiNb9z7Ou50fgWt1oex0CO
+ zxOxx13KFNf01gbbyi1P3olovII8Feslg8Q= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 2yhpfwkttv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 15:36:01 -0800
+Received: from intmgw001.06.prn3.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 3 Mar 2020 15:36:01 -0800
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id 971CA2FA13176; Tue,  3 Mar 2020 15:35:51 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, <linux-mm@kvack.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
+        Bharata B Rao <bharata@linux.ibm.com>,
+        Roman Gushchin <guro@fb.com>, <stable@vger.kernel.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH] mm: fork: fix kernel_stack memcg stats for various stack implementations
+Date:   Tue, 3 Mar 2020 15:35:50 -0800
+Message-ID: <20200303233550.251375-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-03_08:2020-03-03,2020-03-03 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
+ mlxscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003030154
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Depending on CONFIG_VMAP_STACK and the THREAD_SIZE / PAGE_SIZE ratio
+the space for task stacks can be allocated using __vmalloc_node_range(),
+alloc_pages_node() and kmem_cache_alloc_node(). In the first and the
+second cases page->mem_cgroup pointer is set, but in the third it's
+not: memcg membership of a slab page should be determined using the
+memcg_from_slab_page() function, which looks at
+page->slab_cache->memcg_params.memcg . In this case, using
+mod_memcg_page_state() (as in account_kernel_stack()) is incorrect:
+page->mem_cgroup pointer is NULL even for pages charged to a non-root
+memory cgroup.
 
-Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-Launch Control.
+It can lead to kernel_stack per-memcg counters permanently showing 0
+on some architectures (depending on the configuration).
 
-Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-called enclaves, are always signed. All enclaves signed with the public key
-are unconditionally allowed to initialize. [1]
+In order to fix it, let's introduce a mod_memcg_obj_state() helper,
+which takes a pointer to a kernel object as a first argument, uses
+mem_cgroup_from_obj() to get a RCU-protected memcg pointer and
+calls mod_memcg_state(). It allows to handle all possible
+configurations (CONFIG_VMAP_STACK and various THREAD_SIZE/PAGE_SIZE
+values) without spilling any memcg/kmem specifics into fork.c .
 
-Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
-whether the formentioned MSRs are writable or not. If the bit is off, the
-public key MSRs are read-only for the OS.
+Note: this patch has been first posted as a part of the new slab
+controller patchset. This is a slightly updated version: the fixes
+tag has been added and the commit log was extended by the advice
+of Johannes Weiner. Because it's a fix that makes sense by itself,
+I'm re-posting it as a standalone patch.
 
-If the MSRs are read-only, the platform must provide a launch enclave (LE).
-LE can create cryptographic tokens for other enclaves that they can pass
-together with their signature to the ENCLS(EINIT) opcode, which is used
-to initialize enclaves.
-
-Linux is unlikely to support the locked configuration because it takes away
-the control of the launch decisions from the kernel.
-
-[1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: stable@vger.kernel.org
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/include/asm/msr-index.h   | 7 +++++++
- 2 files changed, 8 insertions(+)
+ include/linux/memcontrol.h |  5 +++++
+ kernel/fork.c              |  4 ++--
+ mm/memcontrol.c            | 11 +++++++++++
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 42ae9fb06987..bc5ad93cbeb6 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -350,6 +350,7 @@
- #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
- #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
- #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
-+#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 3253d5de8243..817ea1d93e0e 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -695,6 +695,7 @@ static inline unsigned long lruvec_page_state_local(struct lruvec *lruvec,
+ void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
+ 			int val);
+ void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val);
++void mod_memcg_obj_state(void *p, int idx, int val);
  
- /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
- #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index e190293c8923..bae17ea2c8fe 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -566,6 +566,7 @@
- #define FEAT_CTL_LOCKED				BIT(0)
- #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
- #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
-+#define FEAT_CTL_SGX_LC_ENABLED			BIT(17)
- #define FEAT_CTL_SGX_ENABLED			BIT(18)
- #define FEAT_CTL_LMCE_ENABLED			BIT(20)
+ static inline void mod_lruvec_state(struct lruvec *lruvec,
+ 				    enum node_stat_item idx, int val)
+@@ -1129,6 +1130,10 @@ static inline void __mod_lruvec_slab_state(void *p, enum node_stat_item idx,
+ 	__mod_node_page_state(page_pgdat(page), idx, val);
+ }
  
-@@ -586,6 +587,12 @@
- #define MSR_IA32_UCODE_WRITE		0x00000079
- #define MSR_IA32_UCODE_REV		0x0000008b
- 
-+/* Intel SGX Launch Enclave Public Key Hash MSRs */
-+#define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
-+#define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-+#define MSR_IA32_SGXLEPUBKEYHASH2	0x0000008E
-+#define MSR_IA32_SGXLEPUBKEYHASH3	0x0000008F
++static inline void mod_memcg_obj_state(void *p, int idx, int val)
++{
++}
 +
- #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
- #define MSR_IA32_SMBASE			0x0000009e
+ static inline
+ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+ 					    gfp_t gfp_mask,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index a1f2f5205a61..bdc5004effa4 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -404,8 +404,8 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
+ 		mod_zone_page_state(page_zone(first_page), NR_KERNEL_STACK_KB,
+ 				    THREAD_SIZE / 1024 * account);
  
+-		mod_memcg_page_state(first_page, MEMCG_KERNEL_STACK_KB,
+-				     account * (THREAD_SIZE / 1024));
++		mod_memcg_obj_state(stack, MEMCG_KERNEL_STACK_KB,
++				    account * (THREAD_SIZE / 1024));
+ 	}
+ }
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index d1ae46838af1..6514df549433 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -776,6 +776,17 @@ void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val)
+ 	rcu_read_unlock();
+ }
+ 
++void mod_memcg_obj_state(void *p, int idx, int val)
++{
++	struct mem_cgroup *memcg;
++
++	rcu_read_lock();
++	memcg = mem_cgroup_from_obj(p);
++	if (memcg)
++		mod_memcg_state(memcg, idx, val);
++	rcu_read_unlock();
++}
++
+ /**
+  * __count_memcg_events - account VM events in a cgroup
+  * @memcg: the memory cgroup
 -- 
-2.25.0
+2.24.1
 
