@@ -2,99 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BFF5177335
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:57:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B65417733B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:58:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgCCJ5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 04:57:32 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40736 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbgCCJ5b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:57:31 -0500
-Received: by mail-oi1-f193.google.com with SMTP id j80so2394692oih.7
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 01:57:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9YqxdQa1ilWOSiLraQPjm7TPTEifD+tyJWNIlA8bYpk=;
-        b=CY7XhQM8JmaGloS6gAyGBhpxfdZvfce80R8NlxmP+amLJfTKUtc9xsjd/HkPXN6dl4
-         SyinhiQ77Amdly//I8XTNns7hk1E1x9EIj13l0F1gxmHRybSd4z7EinSP+bbnM6Sj7V8
-         beqJruZD+F1Wbd+yaLsHqRUGTTSCx2MlluzKtmhbtAG3n+7rwZo57FZadiOBeF+U0CPJ
-         uIfJuCb+jHLCR+DPWZtP8BYLiVOivkZMNSrdc/c5wRfBukK16WyqOt10/3jW2JDBCjio
-         JW9XlmkR80Y8bpIc0dJKbkhe70JLLq3BsroJE2PIJ+i2dApVkhSbqtNo8G9SLL5Lv0Ak
-         nOCg==
-X-Gm-Message-State: ANhLgQ3gJ2vqgwRQXIN/xeNYKMdBTdbxpaVAlZoIEpXCEKOf+MeQPI8b
-        crmXUDjkgAfUfFCAih2lZ5qkw75wFVuNj1vaIrrBYQ==
-X-Google-Smtp-Source: ADFU+vs9z4mBtCuZweCHY2/aqnLaygT4ej9HMxCl8wm4hVja8W8jGcq442xFYlOU/W0oazaGHEEdSqsMhYOZ6MqTl2M=
-X-Received: by 2002:aca:cdd1:: with SMTP id d200mr1781294oig.153.1583229450514;
- Tue, 03 Mar 2020 01:57:30 -0800 (PST)
+        id S1728381AbgCCJ6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 04:58:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727818AbgCCJ6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 04:58:55 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C103020866;
+        Tue,  3 Mar 2020 09:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583229533;
+        bh=4mY+eBzqEAqUVgHJBB+37VWPwTk5qHToh5K0kzSRiGQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RvLaQssSdeUj4EIJz4bsPbTB5s6RWxPx2KmQIq3H4ZfSpkCu4UU8sXwU5FecLG1jM
+         LwRTmFo5dE5dQuvB90IyP711StWZRPZbaOQrDHv1KcqLYhQ8MVM7ycOqXZgJvmQ+2T
+         if72tEA5TIdvg5XYBmUAu5z0dyfPhVTEm/UajgPk=
+Date:   Tue, 3 Mar 2020 10:58:49 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        kvm-ppc@vger.kernel.org
+Subject: Re: [PATCH 2/6] powerpc: kvm: no need to check return value of
+ debugfs_create functions
+Message-ID: <20200303095849.GA1399072@kroah.com>
+References: <20200209105901.1620958-1-gregkh@linuxfoundation.org>
+ <20200209105901.1620958-2-gregkh@linuxfoundation.org>
+ <87imjlswxc.fsf@mpe.ellerman.id.au>
+ <20200303085039.GA1323622@kroah.com>
+ <87d09tsrf0.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-References: <20200227183748.GA31018@embeddedor>
-In-Reply-To: <20200227183748.GA31018@embeddedor>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Mar 2020 10:57:19 +0100
-Message-ID: <CAMuHMdXCWtgGKM1Uqtps4CYbGsfBZtoQ8e4t8VrMoL29nP4V3w@mail.gmail.com>
-Subject: Re: [PATCH] zorro: Replace zero-length array with flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d09tsrf0.fsf@mpe.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Tue, Mar 03, 2020 at 08:45:23PM +1100, Michael Ellerman wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> > On Tue, Mar 03, 2020 at 06:46:23PM +1100, Michael Ellerman wrote:
+> >> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> >> > When calling debugfs functions, there is no need to ever check the
+> >> > return value.  The function can work or not, but the code logic should
+> >> > never do something different based on this.
+> >> 
+> >> Except it does need to do something different, if the file was created
+> >> it needs to be removed in the remove path.
+> >> 
+> >> > diff --git a/arch/powerpc/kvm/timing.c b/arch/powerpc/kvm/timing.c
+> >> > index bfe4f106cffc..8e4791c6f2af 100644
+> >> > --- a/arch/powerpc/kvm/timing.c
+> >> > +++ b/arch/powerpc/kvm/timing.c
+> >> > @@ -207,19 +207,12 @@ static const struct file_operations kvmppc_exit_timing_fops = {
+> >> >  void kvmppc_create_vcpu_debugfs(struct kvm_vcpu *vcpu, unsigned int id)
+> >> >  {
+> >> >  	static char dbg_fname[50];
+> >> > -	struct dentry *debugfs_file;
+> >> >  
+> >> >  	snprintf(dbg_fname, sizeof(dbg_fname), "vm%u_vcpu%u_timing",
+> >> >  		 current->pid, id);
+> >> > -	debugfs_file = debugfs_create_file(dbg_fname, 0666,
+> >> > -					kvm_debugfs_dir, vcpu,
+> >> > -					&kvmppc_exit_timing_fops);
+> >> > -
+> >> > -	if (!debugfs_file) {
+> >> > -		printk(KERN_ERR"%s: error creating debugfs file %s\n",
+> >> > -			__func__, dbg_fname);
+> >> > -		return;
+> >> > -	}
+> >> > +	debugfs_create_file(dbg_fname, 0666, kvm_debugfs_dir, vcpu,
+> >> > +			    &kvmppc_exit_timing_fops);
+> >> > +
+> >> >  
+> >> >  	vcpu->arch.debugfs_exit_timing = debugfs_file;
+> >
+> > Ugh, you are right, how did I miss that?  How is 0-day missing this?
+> > It's been in my tree for a long time, odd.
+> 
+> This code isn't enabled by default, or in any defconfig. So it's only
+> allmodconfig that would trip it, I guess 0-day isn't doing powerpc
+> allmodconfig builds.
+> 
+> >> I squashed this in, which seems to work:
+> ...
+> >>  
+> >>  void kvmppc_remove_vcpu_debugfs(struct kvm_vcpu *vcpu)
+> >>  {
+> >> -       if (vcpu->arch.debugfs_exit_timing) {
+> >> +       if (!IS_ERR_OR_NULL(vcpu->arch.debugfs_exit_timing)) {
+> >>                 debugfs_remove(vcpu->arch.debugfs_exit_timing);
+> >>                 vcpu->arch.debugfs_exit_timing = NULL;
+> >>         }
+> >
+> > No, this can just be:
+> > 	debugfs_remove(vcpu->arch.debugfs_exit_timing);
+> >
+> > No need to check anything, just call it and the debugfs code can handle
+> > it just fine.
+> 
+> Oh duh, of course, I should have checked.
+> 
+> I'd still like to NULL out the debugfs_exit_timing member, so I'll do:
+> 
+> void kvmppc_remove_vcpu_debugfs(struct kvm_vcpu *vcpu)
+> {
+> 	debugfs_remove(vcpu->arch.debugfs_exit_timing);
+> 	vcpu->arch.debugfs_exit_timing = NULL;
+> }
 
-Thanks for your patch!
+Fair enough, but I doubt it ever matters :)
 
-On Thu, Feb 27, 2020 at 7:35 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
->
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
->
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+Thanks for the fixups, sorry for sending a broken patch, my fault.
 
-Note that in practice, this "undefined behavior" may lead to corrupting
-the next member, when the zero-length array is written to.
-
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-i.e. will queue in the m68k for-v5.7 branch.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
