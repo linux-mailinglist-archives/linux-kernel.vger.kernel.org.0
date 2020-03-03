@@ -2,125 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB0B177D30
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 152EF177D38
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbgCCRQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:16:21 -0500
-Received: from onstation.org ([52.200.56.107]:54054 "EHLO onstation.org"
+        id S1729667AbgCCRT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:19:27 -0500
+Received: from foss.arm.com ([217.140.110.172]:50112 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728783AbgCCRQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:16:21 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id DA9123E8F4;
-        Tue,  3 Mar 2020 17:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1583255780;
-        bh=29MHpfV8HM+m/8mEKfdKSt2XIMIPWgMiQS70SJOaT7c=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=eTrzME+buJDC+JQ2iOWHK8a21j41LZUAzuAoD6PU+ExzLiLW0D02gLFI+rEugFT5d
-         qLtSTAP3J8bZ05tZbtTjIix7XtqpPn8DcnG7WEpi9HA0bgAIilMhxpW/g18txdK9Pg
-         oSk6hHunH/xQXWS3OpHcF+4kXqceEaQ3dhsS2yPo=
-Date:   Tue, 3 Mar 2020 12:16:19 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
-        DTML <devicetree@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        id S1728533AbgCCRT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:19:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED91F2F;
+        Tue,  3 Mar 2020 09:19:25 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 470403F534;
+        Tue,  3 Mar 2020 09:19:24 -0800 (PST)
+Date:   Tue, 3 Mar 2020 17:19:21 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Remi Pommarel <repk@triplefau.lt>,
+        Neil Armstrong <narmstrong@baylibre.com>, kishon@ti.com
+Cc:     Yue Wang <yue.wang@Amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Subject: Re: [Freedreno] [PATCH v3 1/2] dt-bindings: display: msm: Convert
- GMU bindings to YAML
-Message-ID: <20200303171619.GB11841@onstation.org>
-References: <1583173424-21832-1-git-send-email-jcrouse@codeaurora.org>
- <1583173424-21832-2-git-send-email-jcrouse@codeaurora.org>
- <20200302204906.GA32123@ravnborg.org>
- <20200303154321.GA24212@jcrouse1-lnx.qualcomm.com>
- <CAOCk7NpP8chviZ0eM_4Fm3b2Jn+ngtVq=EYB=7yMK0H7rnfWMg@mail.gmail.com>
- <20200303155405.GA11841@onstation.org>
- <20200303170159.GA13109@jcrouse1-lnx.qualcomm.com>
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 5/7] phy: amlogic: Add Amlogic AXG MIPI/PCIE analog
+ PHY Driver
+Message-ID: <20200303171921.GB9641@e121166-lin.cambridge.arm.com>
+References: <20200123232943.10229-1-repk@triplefau.lt>
+ <20200123232943.10229-6-repk@triplefau.lt>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303170159.GA13109@jcrouse1-lnx.qualcomm.com>
+In-Reply-To: <20200123232943.10229-6-repk@triplefau.lt>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 10:01:59AM -0700, Jordan Crouse wrote:
-> On Tue, Mar 03, 2020 at 10:54:05AM -0500, Brian Masney wrote:
-> > On Tue, Mar 03, 2020 at 08:50:28AM -0700, Jeffrey Hugo wrote:
-> > > On Tue, Mar 3, 2020 at 8:43 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
-> > > >
-> > > > On Mon, Mar 02, 2020 at 09:49:06PM +0100, Sam Ravnborg wrote:
-> > > > > Hi Jordan.
-> > > > >
-> > > > > On Mon, Mar 02, 2020 at 11:23:43AM -0700, Jordan Crouse wrote:
-> > > > > > Convert display/msm/gmu.txt to display/msm/gmu.yaml and remove the old
-> > > > > > text bindings.
-> > > > > >
-> > > > > > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > > > > > ---
-> > > > > >
-> > > > > >  .../devicetree/bindings/display/msm/gmu.txt        | 116 -------------------
-> > > > > > -
-> > > > > > -Required properties:
-> > > > > > -- compatible: "qcom,adreno-gmu-XYZ.W", "qcom,adreno-gmu"
-> > > > > > -    for example: "qcom,adreno-gmu-630.2", "qcom,adreno-gmu"
-> > > > > > -  Note that you need to list the less specific "qcom,adreno-gmu"
-> > > > > > -  for generic matches and the more specific identifier to identify
-> > > > > > -  the specific device.
-> > > > > > -- reg: Physical base address and length of the GMU registers.
-> > > > > > -- reg-names: Matching names for the register regions
-> > > > > > -  * "gmu"
-> > > > > > -  * "gmu_pdc"
-> > > > > > -  * "gmu_pdc_seg"
-> > > > > > -- interrupts: The interrupt signals from the GMU.
-> > > > > > -- interrupt-names: Matching names for the interrupts
-> > > > > > -  * "hfi"
-> > > > > > -  * "gmu"
-> > > > > > -- clocks: phandles to the device clocks
-> > > > > > -- clock-names: Matching names for the clocks
-> > > > > > -   * "gmu"
-> > > > > > -   * "cxo"
-> > > > > > -   * "axi"
-> > > > > > -   * "mnoc"
-> > > > > The new binding - and arch/arm64/boot/dts/qcom/sdm845.dtsi agrees that
-> > > > > "mnoc" is wrong.
-> > > > >
-> > > > > > -- power-domains: should be:
-> > > > > > -   <&clock_gpucc GPU_CX_GDSC>
-> > > > > > -   <&clock_gpucc GPU_GX_GDSC>
-> > > > > > -- power-domain-names: Matching names for the power domains
-> > > > > > -- iommus: phandle to the adreno iommu
-> > > > > > -- operating-points-v2: phandle to the OPP operating points
-> > > > > > -
-> > > > > > -Optional properties:
-> > > > > > -- sram: phandle to the On Chip Memory (OCMEM) that's present on some Snapdragon
-> > > > > > -        SoCs. See Documentation/devicetree/bindings/sram/qcom,ocmem.yaml.
-> > > > > This property is not included in the new binding.
-> > > >
-> > > > Yeah, that guy shouldn't be here. I'm not sure how it got there in the first
-> > > > place but I'll update the commit log. Thanks for the poke.
-> > > 
-> > > I thought this was something Brian M added for older targets (A4XX?).
-> > > Perhaps he should chime in?
-> > 
-> > Yes, this is needed for older systems with a3xx and a4xx GPUs.
+On Fri, Jan 24, 2020 at 12:29:41AM +0100, Remi Pommarel wrote:
+> This adds support for the MIPI analog PHY which is also used for PCIE
+> found in the Amlogic AXG SoC Family.
 > 
-> Okay, this got added to the wrong place.  The GMU is a specific entity only
-> valid for a6xx targets. From the looks of the example the sram should be in the
-> GPU definition. Do you want to submit a patch to move it or should I (and lets
-> hope Rob doesn't insist on converting GPU to YAML).
+> MIPI or PCIE selection is done by the #phy-cells, making the mode
+> static and exclusive.
+> 
+> For now only PCIE fonctionality is supported.
+> 
+> This PHY will be used to replace the mipi_enable clock gating logic
+> which was mistakenly added in the clock subsystem. This also activate
+> a non documented band gap bit in those registers that allows reliable
+> PCIE clock signal generation on AXG platforms.
+> 
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> ---
+>  drivers/phy/amlogic/Kconfig                   |  11 +
+>  drivers/phy/amlogic/Makefile                  |  11 +-
+>  .../amlogic/phy-meson-axg-mipi-pcie-analog.c  | 188 ++++++++++++++++++
+>  3 files changed, 205 insertions(+), 5 deletions(-)
+>  create mode 100644 drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
 
-I can take care of cleaning this up. I'll do that in a few days.
+Kishon, Neil,
 
-Brian
+can you please review/ack this patch and patch 6 ?
+
+I would like to queue the series shortly, thanks.
+
+Lorenzo
+
+> diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
+> index af774ac2b934..8c9cf2403591 100644
+> --- a/drivers/phy/amlogic/Kconfig
+> +++ b/drivers/phy/amlogic/Kconfig
+> @@ -59,3 +59,14 @@ config PHY_MESON_G12A_USB3_PCIE
+>  	  Enable this to support the Meson USB3 + PCIE Combo PHY found
+>  	  in Meson G12A SoCs.
+>  	  If unsure, say N.
+> +
+> +config PHY_MESON_AXG_MIPI_PCIE_ANALOG
+> +	tristate "Meson AXG MIPI + PCIE analog PHY driver"
+> +	default ARCH_MESON
+> +	depends on OF && (ARCH_MESON || COMPILE_TEST)
+> +	select GENERIC_PHY
+> +	select REGMAP_MMIO
+> +	help
+> +	  Enable this to support the Meson MIPI + PCIE analog PHY
+> +	  found in Meson AXG SoCs.
+> +	  If unsure, say N.
+> diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
+> index 11d1c42ac2be..0aecf92d796a 100644
+> --- a/drivers/phy/amlogic/Makefile
+> +++ b/drivers/phy/amlogic/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -obj-$(CONFIG_PHY_MESON8B_USB2)		+= phy-meson8b-usb2.o
+> -obj-$(CONFIG_PHY_MESON_GXL_USB2)	+= phy-meson-gxl-usb2.o
+> -obj-$(CONFIG_PHY_MESON_G12A_USB2)	+= phy-meson-g12a-usb2.o
+> -obj-$(CONFIG_PHY_MESON_GXL_USB3)	+= phy-meson-gxl-usb3.o
+> -obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)	+= phy-meson-g12a-usb3-pcie.o
+> +obj-$(CONFIG_PHY_MESON8B_USB2)			+= phy-meson8b-usb2.o
+> +obj-$(CONFIG_PHY_MESON_GXL_USB2)		+= phy-meson-gxl-usb2.o
+> +obj-$(CONFIG_PHY_MESON_G12A_USB2)		+= phy-meson-g12a-usb2.o
+> +obj-$(CONFIG_PHY_MESON_GXL_USB3)		+= phy-meson-gxl-usb3.o
+> +obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)		+= phy-meson-g12a-usb3-pcie.o
+> +obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE_ANALOG)	+= phy-meson-axg-mipi-pcie-analog.o
+> diff --git a/drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c b/drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
+> new file mode 100644
+> index 000000000000..1431cbf885e1
+> --- /dev/null
+> +++ b/drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
+> @@ -0,0 +1,188 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Amlogic AXG MIPI + PCIE analog PHY driver
+> + *
+> + * Copyright (C) 2019 Remi Pommarel <repk@triplefau.lt>
+> + */
+> +#include <linux/module.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/regmap.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/phy/phy.h>
+> +
+> +#define HHI_MIPI_CNTL0 0x00
+> +#define		HHI_MIPI_CNTL0_COMMON_BLOCK	GENMASK(31, 28)
+> +#define		HHI_MIPI_CNTL0_ENABLE		BIT(29)
+> +#define		HHI_MIPI_CNTL0_BANDGAP		BIT(26)
+> +#define		HHI_MIPI_CNTL0_DECODE_TO_RTERM	GENMASK(15, 12)
+> +#define		HHI_MIPI_CNTL0_OUTPUT_EN	BIT(3)
+> +
+> +#define HHI_MIPI_CNTL1 0x01
+> +#define		HHI_MIPI_CNTL1_CH0_CML_PDR_EN	BIT(12)
+> +#define		HHI_MIPI_CNTL1_LP_ABILITY	GENMASK(5, 4)
+> +#define		HHI_MIPI_CNTL1_LP_RESISTER	BIT(3)
+> +#define		HHI_MIPI_CNTL1_INPUT_SETTING	BIT(2)
+> +#define		HHI_MIPI_CNTL1_INPUT_SEL	BIT(1)
+> +#define		HHI_MIPI_CNTL1_PRBS7_EN		BIT(0)
+> +
+> +#define HHI_MIPI_CNTL2 0x02
+> +#define		HHI_MIPI_CNTL2_CH_PU		GENMASK(31, 25)
+> +#define		HHI_MIPI_CNTL2_CH_CTL		GENMASK(24, 19)
+> +#define		HHI_MIPI_CNTL2_CH0_DIGDR_EN	BIT(18)
+> +#define		HHI_MIPI_CNTL2_CH_DIGDR_EN	BIT(17)
+> +#define		HHI_MIPI_CNTL2_LPULPS_EN	BIT(16)
+> +#define		HHI_MIPI_CNTL2_CH_EN(n)		BIT(15 - (n))
+> +#define		HHI_MIPI_CNTL2_CH0_LP_CTL	GENMASK(10, 1)
+> +
+> +struct phy_axg_mipi_pcie_analog_priv {
+> +	struct phy *phy;
+> +	unsigned int mode;
+> +	struct regmap *regmap;
+> +};
+> +
+> +static const struct regmap_config phy_axg_mipi_pcie_analog_regmap_conf = {
+> +	.reg_bits = 8,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.max_register = HHI_MIPI_CNTL2,
+> +};
+> +
+> +static int phy_axg_mipi_pcie_analog_power_on(struct phy *phy)
+> +{
+> +	struct phy_axg_mipi_pcie_analog_priv *priv = phy_get_drvdata(phy);
+> +
+> +	/* MIPI not supported yet */
+> +	if (priv->mode != PHY_TYPE_PCIE)
+> +		return -EINVAL;
+> +
+> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> +			   HHI_MIPI_CNTL0_BANDGAP, HHI_MIPI_CNTL0_BANDGAP);
+> +
+> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> +			   HHI_MIPI_CNTL0_ENABLE, HHI_MIPI_CNTL0_ENABLE);
+> +	return 0;
+> +}
+> +
+> +static int phy_axg_mipi_pcie_analog_power_off(struct phy *phy)
+> +{
+> +	struct phy_axg_mipi_pcie_analog_priv *priv = phy_get_drvdata(phy);
+> +
+> +	/* MIPI not supported yet */
+> +	if (priv->mode != PHY_TYPE_PCIE)
+> +		return -EINVAL;
+> +
+> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> +			   HHI_MIPI_CNTL0_BANDGAP, 0);
+> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> +			   HHI_MIPI_CNTL0_ENABLE, 0);
+> +	return 0;
+> +}
+> +
+> +static int phy_axg_mipi_pcie_analog_init(struct phy *phy)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int phy_axg_mipi_pcie_analog_exit(struct phy *phy)
+> +{
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops phy_axg_mipi_pcie_analog_ops = {
+> +	.init = phy_axg_mipi_pcie_analog_init,
+> +	.exit = phy_axg_mipi_pcie_analog_exit,
+> +	.power_on = phy_axg_mipi_pcie_analog_power_on,
+> +	.power_off = phy_axg_mipi_pcie_analog_power_off,
+> +	.owner = THIS_MODULE,
+> +};
+> +
+> +static struct phy *phy_axg_mipi_pcie_analog_xlate(struct device *dev,
+> +						  struct of_phandle_args *args)
+> +{
+> +	struct phy_axg_mipi_pcie_analog_priv *priv = dev_get_drvdata(dev);
+> +	unsigned int mode;
+> +
+> +	if (args->args_count != 1) {
+> +		dev_err(dev, "invalid number of arguments\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	mode = args->args[0];
+> +
+> +	/* MIPI mode is not supported yet */
+> +	if (mode != PHY_TYPE_PCIE) {
+> +		dev_err(dev, "invalid phy mode select argument\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	priv->mode = mode;
+> +	return priv->phy;
+> +}
+> +
+> +static int phy_axg_mipi_pcie_analog_probe(struct platform_device *pdev)
+> +{
+> +	struct phy_provider *phy;
+> +	struct device *dev = &pdev->dev;
+> +	struct phy_axg_mipi_pcie_analog_priv *priv;
+> +	struct device_node *np = dev->of_node;
+> +	struct regmap *map;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base)) {
+> +		dev_err(dev, "failed to get regmap base\n");
+> +		return PTR_ERR(base);
+> +	}
+> +
+> +	map = devm_regmap_init_mmio(dev, base,
+> +				    &phy_axg_mipi_pcie_analog_regmap_conf);
+> +	if (IS_ERR(map)) {
+> +		dev_err(dev, "failed to get HHI regmap\n");
+> +		return PTR_ERR(map);
+> +	}
+> +	priv->regmap = map;
+> +
+> +	priv->phy = devm_phy_create(dev, np, &phy_axg_mipi_pcie_analog_ops);
+> +	if (IS_ERR(priv->phy)) {
+> +		ret = PTR_ERR(priv->phy);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to create PHY\n");
+> +		return ret;
+> +	}
+> +
+> +	phy_set_drvdata(priv->phy, priv);
+> +	dev_set_drvdata(dev, priv);
+> +
+> +	phy = devm_of_phy_provider_register(dev,
+> +					    phy_axg_mipi_pcie_analog_xlate);
+> +
+> +	return PTR_ERR_OR_ZERO(phy);
+> +}
+> +
+> +static const struct of_device_id phy_axg_mipi_pcie_analog_of_match[] = {
+> +	{
+> +		.compatible = "amlogic,axg-mipi-pcie-analog-phy",
+> +	},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, phy_axg_mipi_pcie_analog_of_match);
+> +
+> +static struct platform_driver phy_axg_mipi_pcie_analog_driver = {
+> +	.probe = phy_axg_mipi_pcie_analog_probe,
+> +	.driver = {
+> +		.name = "phy-axg-mipi-pcie-analog",
+> +		.of_match_table = phy_axg_mipi_pcie_analog_of_match,
+> +	},
+> +};
+> +module_platform_driver(phy_axg_mipi_pcie_analog_driver);
+> +
+> +MODULE_AUTHOR("Remi Pommarel <repk@triplefau.lt>");
+> +MODULE_DESCRIPTION("Amlogic AXG MIPI + PCIE analog PHY driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.24.1
+> 
