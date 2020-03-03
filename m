@@ -2,209 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B611770A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B7CD1770B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbgCCICf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 3 Mar 2020 03:02:35 -0500
-Received: from zimbra2.kalray.eu ([92.103.151.219]:40480 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgCCICe (ORCPT
+        id S1727695AbgCCIEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:04:16 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:48760 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbgCCIEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:02:34 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id E6C6D27E094B;
-        Tue,  3 Mar 2020 09:02:32 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id gRGKKHAauRNX; Tue,  3 Mar 2020 09:02:32 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 60A3E27E097E;
-        Tue,  3 Mar 2020 09:02:32 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Ne9rJroH1Pl5; Tue,  3 Mar 2020 09:02:32 +0100 (CET)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 42FC827E094B;
-        Tue,  3 Mar 2020 09:02:32 +0100 (CET)
-Date:   Tue, 3 Mar 2020 09:02:31 +0100 (CET)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalrayinc.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Message-ID: <482678048.7666348.1583222551942.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <20200302231342.GE262924@yoga>
-References: <20200210162209.23149-1-cleger@kalray.eu> <20200302093902.27849-1-cleger@kalray.eu> <20200302093902.27849-6-cleger@kalray.eu> <20200302231342.GE262924@yoga>
-Subject: Re: [PATCH v5 5/8] remoteproc: Rename rproc_elf_sanity_check for
- elf32
+        Tue, 3 Mar 2020 03:04:15 -0500
+X-AuditID: c0a8fbf4-473ff70000004419-ca-5e5e0f7e1834
+Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 57.74.17433.E7F0E5E5; Tue,  3 Mar 2020 09:04:14 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
+ 14.03.0487.000; Tue, 3 Mar 2020 09:04:09 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v3 5/8] regulator: use linear_ranges helper
+Thread-Topic: [RFC PATCH v3 5/8] regulator: use linear_ranges helper
+Thread-Index: AQHV58CCun7qdt/zDkaUtOc73neHtagqMwKAgAE06ACAAJmVgIAKguIA
+Date:   Tue, 3 Mar 2020 08:04:08 +0000
+Message-ID: <13a6781b02f847669d4923b1cbd069d112105070.camel@fi.rohmeurope.com>
+References: <cover.1582182989.git.matti.vaittinen@fi.rohmeurope.com>
+         <ba2eb2d7363b386136a546a769a6e2d077558094.1582182989.git.matti.vaittinen@fi.rohmeurope.com>
+         <20200224115751.GE6215@sirena.org.uk>
+         <d5e63ea6935991d855e2ae12915b3b4614e8f3aa.camel@fi.rohmeurope.com>
+         <20200225153309.GE4633@sirena.org.uk>
+In-Reply-To: <20200225153309.GE4633@sirena.org.uk>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.78.225.252]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <994A4A7EC2E7C440AB179A6703ECBB61@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - GC75 (Linux)/8.8.15_GA_3895)
-Thread-Topic: remoteproc: Rename rproc_elf_sanity_check for elf32
-Thread-Index: J1/AEqDg9YgPl+SVOgly/5r9Nw/vWg==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsVyYMXvTbp1/HFxBlsn81lMffiEzWL+kXOs
+        Fs2L17NZfLvSwWRxedccNovPvUcYLZZev8hkMWfpCRaLuV+mMlu07j3CbnF6d4kDt8eaeWsY
+        PXbOusvusWlVJ5vH/rlr2D0+b5ILYI3itklKLCkLzkzP07dL4M74/W0zS8Ey7orjZ++yNTA2
+        cHcxcnJICJhIzLh8k6WLkYtDSOAqo8SGK63sEM5xRonZx78BORwcbAI2El032UEaRAR0Jab+
+        WswGUsMs8I5F4k7bQlaQGmEBZ4kdJ+whalwkXu1tYoWw3STWfp/PBmKzCKhI7Hz2DMzmFfCT
+        OLr8DBPErt1MElO/TQdbwClgJHH21xomEJtRQFais+EdmM0sIC6x6dl3VoirBSSW7DnPDGGL
+        Srx8/A8qriix/fs6FpB7mAU0Jdbv0ododZA4cPkFG4StKDGl+yE7xA2CEidnPmGZwCg2C8mG
+        WQjds5B0z0LSPQtJ9wJG1lWMErmJmTnpiSWphnpFqaV6RfkZuUAqOT93EyMkor/sYPx/yPMQ
+        IxMH4yFGSQ4mJVHeD/6xcUJ8SfkplRmJxRnxRaU5qcWHGCU4mJVEeH05o+OEeFMSK6tSi/Jh
+        UtIcLErivOoPJ8YKCYDsyk5NLUgtgsnKcHAoSfBy8MXFCQkWpaanVqRl5pQgpJk4OEGGc0mJ
+        FKfmpaQWJZaWZMSD0kd8MTCBgKR4gPaa8QC18xYXJOYCRSFaTzFqc0x4OXcRM8eRuUsXMQux
+        5OXnpUqJ817mBioVACnNKM2DW/SKUZyDUUmYdyIvUJYHmNrh5rwCWsEEtKLnOchrxSWJCCmp
+        BkaTHWuvbvj//6lS9PfNr7rynrKU67vJRoZcSY8TiIw2LuOVasl4M1Px6n37L28dGg/WV4Sn
+        dTO8dZE12tBX/qsiqlW75bXuy9ofpx+1fTh4eucDxeQ5Myy3byjO//ijaWr2gjN2h0viSvY2
+        RzwUTrizbPqMXWvNjuxl59j1RjvnX7PtTYOVS+SVWIozEg21mIuKEwGLqjrGqgMAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn, 
-
------ On 3 Mar, 2020, at 00:13, Bjorn Andersson bjorn.andersson@linaro.org wrote:
-
-> On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
-> 
->> Since this function will be modified to support both elf32 and elf64,
->> rename the existing one to elf32 (which is the only supported format
->> at the moment). This will allow not to introduce possible side effect
->> when adding elf64 support (ie: all backends will still support only
->> elf32 if not requested explicitely using rproc_elf_sanity_check).
->> 
-> 
-> Is there a reason for preventing ELF64 binaries be loaded?
-
-I decided to go this way to let driver maintainer decide if they want
-to support elf64 to avoid problems with 64bits addresses/sizes which do
-not fit in their native type (size_t for instance). This is probably
-not going to happen and there are additionnal checks before calling
-rproc_da_to_va. And addresses should be filtered by rproc_da_to_va.
-So, actually it seems there is no reason to forbid supporting elf32/64
-for all drivers.
-
-Regards,
-
-Clément
-
-> 
-> Regards,
-> Bjorn
-> 
->> Signed-off-by: Clement Leger <cleger@kalray.eu>
->> ---
->>  drivers/remoteproc/remoteproc_core.c       | 2 +-
->>  drivers/remoteproc/remoteproc_elf_loader.c | 6 +++---
->>  drivers/remoteproc/remoteproc_internal.h   | 2 +-
->>  drivers/remoteproc/st_remoteproc.c         | 2 +-
->>  drivers/remoteproc/st_slim_rproc.c         | 2 +-
->>  drivers/remoteproc/stm32_rproc.c           | 2 +-
->>  6 files changed, 8 insertions(+), 8 deletions(-)
->> 
->> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->> index 4bfaf4a3c4a3..99f0b796fbc7 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -2055,7 +2055,7 @@ struct rproc *rproc_alloc(struct device *dev, const char
->> *name,
->>  		rproc->ops->load = rproc_elf_load_segments;
->>  		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
->>  		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
->> -		rproc->ops->sanity_check = rproc_elf_sanity_check;
->> +		rproc->ops->sanity_check = rproc_elf32_sanity_check;
->>  		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
->>  	}
->>  
->> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
->> b/drivers/remoteproc/remoteproc_elf_loader.c
->> index c2a9783cfb9a..5a67745f2638 100644
->> --- a/drivers/remoteproc/remoteproc_elf_loader.c
->> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
->> @@ -25,13 +25,13 @@
->>  #include "remoteproc_internal.h"
->>  
->>  /**
->> - * rproc_elf_sanity_check() - Sanity Check ELF firmware image
->> + * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
->>   * @rproc: the remote processor handle
->>   * @fw: the ELF firmware image
->>   *
->>   * Make sure this fw image is sane.
->>   */
->> -int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
->> +int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
->>  {
->>  	const char *name = rproc->firmware;
->>  	struct device *dev = &rproc->dev;
->> @@ -89,7 +89,7 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct
->> firmware *fw)
->>  
->>  	return 0;
->>  }
->> -EXPORT_SYMBOL(rproc_elf_sanity_check);
->> +EXPORT_SYMBOL(rproc_elf32_sanity_check);
->>  
->>  /**
->>   * rproc_elf_get_boot_addr() - Get rproc's boot address.
->> diff --git a/drivers/remoteproc/remoteproc_internal.h
->> b/drivers/remoteproc/remoteproc_internal.h
->> index 0deae5f237b8..28639c588d58 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -54,7 +54,7 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
->>  phys_addr_t rproc_va_to_pa(void *cpu_addr);
->>  int rproc_trigger_recovery(struct rproc *rproc);
->>  
->> -int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
->> +int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
->>  u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
->>  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
->>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
->> diff --git a/drivers/remoteproc/st_remoteproc.c
->> b/drivers/remoteproc/st_remoteproc.c
->> index a3268d95a50e..a6cbfa452764 100644
->> --- a/drivers/remoteproc/st_remoteproc.c
->> +++ b/drivers/remoteproc/st_remoteproc.c
->> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
->>  	.parse_fw		= st_rproc_parse_fw,
->>  	.load			= rproc_elf_load_segments,
->>  	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
->> -	.sanity_check		= rproc_elf_sanity_check,
->> +	.sanity_check		= rproc_elf32_sanity_check,
->>  	.get_boot_addr		= rproc_elf_get_boot_addr,
->>  };
->>  
->> diff --git a/drivers/remoteproc/st_slim_rproc.c
->> b/drivers/remoteproc/st_slim_rproc.c
->> index 09bcb4d8b9e0..3cca8b65a8db 100644
->> --- a/drivers/remoteproc/st_slim_rproc.c
->> +++ b/drivers/remoteproc/st_slim_rproc.c
->> @@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
->>  	.da_to_va       = slim_rproc_da_to_va,
->>  	.get_boot_addr	= rproc_elf_get_boot_addr,
->>  	.load		= rproc_elf_load_segments,
->> -	.sanity_check	= rproc_elf_sanity_check,
->> +	.sanity_check	= rproc_elf32_sanity_check,
->>  };
->>  
->>  /**
->> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
->> index a18f88044111..9a8b5f5e2572 100644
->> --- a/drivers/remoteproc/stm32_rproc.c
->> +++ b/drivers/remoteproc/stm32_rproc.c
->> @@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
->>  	.load		= rproc_elf_load_segments,
->>  	.parse_fw	= stm32_rproc_parse_fw,
->>  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->> -	.sanity_check	= rproc_elf_sanity_check,
->> +	.sanity_check	= rproc_elf32_sanity_check,
->>  	.get_boot_addr	= rproc_elf_get_boot_addr,
->>  };
->>  
->> --
->> 2.15.0.276.g89ea799
+SGVsbG8gTWFyaywNCg0KT24gVHVlLCAyMDIwLTAyLTI1IGF0IDE1OjMzICswMDAwLCBNYXJrIEJy
+b3duIHdyb3RlOg0KPiBPbiBUdWUsIEZlYiAyNSwgMjAyMCBhdCAwNjoyMzozMUFNICswMDAwLCBW
+YWl0dGluZW4sIE1hdHRpIHdyb3RlOg0KPiANCj4gPiBPbmx5IGNoYW5nZSByZXF1aXJlZCBvbiBp
+bmRpdmlkdWFsIHJlZ3VsYXRvciBkcml2ZXJzIHNob3VsZCBiZQ0KPiA+IHJlbmFtaW5nDQo+ID4g
+dGhlIHN0cnVjdCByZWd1bGF0b3JfbGluZWFyX3JhbmdlIHRvIGxpbmVhcl9yYW5nZS4gUmVzdCBv
+ZiB0aGUNCj4gPiBjaGFuZ2VzDQo+ID4gc2hvdWxkIGJlIGludGVybmFsIHRvIHJlZ3VsYXRvciBm
+cmFtZXdvcmssIHJpZ2h0Pw0KPiANCj4gUmlnaHQsIGl0J3MgdGhhdCB0eXBlIHJlcGxhY2VtZW50
+IHRoYXQgc2hvdWxkIGJlIGRvbmUgYXRvbWljYWxseS4NCg0KWWVzLiBBbmQgdGhlIHR5cGUgcmVw
+bGFjZW1lbnQgaXMgZG9uZSBvbmx5IGluIHRoaXMgcGF0Y2ggd2hlcmUgdGhlDQpzdHJ1Y3QgaXMg
+cmVtb3ZlZCBmcm9tIHJlZ3VsYXRvciBkcml2ZXIuaCBoZWFkZXIgLSBhbmQgdGhlIGxpbmVhcl9y
+YW5nZQ0KaGVhZGVyIHByb3ZpZGluZyB0aGlzIG5ldyBzdHJ1Y3QgaXMgaW5jbHVkZWQuIFByZXZp
+b3VzIHBhdGNoIGRpZCBub3QNCmNoYW5nZSB0aGUgdHlwZSAtIGp1c3QgcmVuYW1lZCB0aGUgc3Ry
+dWN0Lg0KDQpBbnl3YXlzLCBJIGRpZCBjb21waWxlIHRlc3QgdGhlIHBhdGNoIHY0IGZvciB0aGVz
+ZSBjb21taXRzIGFuZCB0aGVyZQ0Kd2VyZSBubyBwcm9ibGVtcyBpbiByZWd1bGF0b3IgZHJpdmVy
+cy4gVGhlIEJENzA1MjggY2hhcmdlciBkcml2ZXIgaGFkDQphbiBpc3N1ZSBhcyB0aGUgbGluZWFy
+X3JhbmdlIHN0cnVjdCB3YXMgZHVibGljYXRlZCB0aGVyZSAtIGJ1dCB0aGlzDQpzaG91bGQgYmUg
+Zml4ZWQgYnkgdGhlIHY0IHdoZXJlIEkgYWRkZWQgb25lIGV4dHJhIHBhdGNoIGRvaW5nIHJlbmFt
+aW5nDQpmb3IgdGhpcyBCRDcwNTI4IGNoYXJnZXIgaW50ZXJuYWwgc3RydWN0dXJlLg0KDQpCZXN0
+IFJlZ2FyZHMNCglNYXR0aSBWYWl0dGluZW4NCg==
