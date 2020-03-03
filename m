@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1730A1780DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 264B2178202
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387579AbgCCR7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:59:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42438 "EHLO mail.kernel.org"
+        id S2388398AbgCCSLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:11:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387565AbgCCR7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:59:16 -0500
+        id S1730965AbgCCRtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:49:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6450D20CC7;
-        Tue,  3 Mar 2020 17:59:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 290882146E;
+        Tue,  3 Mar 2020 17:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258354;
-        bh=YVHRK6DjXynL+Gn59BM0qKem9iDDoYFReit3E4PXr2M=;
+        s=default; t=1583257778;
+        bh=NN0i0tHCtLVZSlnyj+Teiw6WyrGw6A0NhfaNQrUwBjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sGgdm3E4KOhiifQ4FWYBsCq1l7Nz52R1dB77HAFzhsnxuESFj1T0Li10NOz6qKDao
-         r2dPexbbsFZtrd4KMl3R5hSo8rmVCD7C4HtaXu7TTIkJ6a9NynmxrA+6xWSNlMwzWT
-         Lz3ekPSyWiC4LWcYgxo6arcirJ7YxTYcDcbkpzJ0=
+        b=uT2SXvC3mKxjyqZg0mgUbSnbyD2+ABto4JooICRCzRQ72m9pil/QEVM6Keqq7R73z
+         B+9ZhKfCQYLthv3XEXsRtURM7bXeIg3c86EHut1VqFfTzcZTx9l2j73nDcY62iG43n
+         2EsPfq39qz3Z/RDJ8OzOSubpHis1koe40HdwHgXM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 18/87] net: ena: fix incorrect default RSS key
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 125/176] s390/qeth: fix off-by-one in RX copybreak check
 Date:   Tue,  3 Mar 2020 18:43:09 +0100
-Message-Id: <20200303174351.684246912@linuxfoundation.org>
+Message-Id: <20200303174319.243619643@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 0d1c3de7b8c78a5e44b74b62ede4a63629f5d811 ]
+commit 54a61fbc020fd2e305680871c453abcf7fc0339b upstream.
 
-Bug description:
-When running "ethtool -x <if_name>" the key shows up as all zeros.
+The RX copybreak is intended as the _max_ value where the frame's data
+should be copied. So for frame_len == copybreak, don't build an SG skb.
 
-When we use "ethtool -X <if_name> hfunc toeplitz hkey <some:random:key>" to
-set the key and then try to retrieve it using "ethtool -x <if_name>" then
-we return the correct key because we return the one we saved.
-
-Bug cause:
-We don't fetch the key from the device but instead return the key
-that we have saved internally which is by default set to zero upon
-allocation.
-
-Fix:
-This commit fixes the issue by initializing the key to a random value
-using netdev_rss_key_fill().
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Fixes: 4a71df50047f ("qeth: new qeth device driver")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c | 15 +++++++++++++++
- drivers/net/ethernet/amazon/ena/ena_com.h |  1 +
- 2 files changed, 16 insertions(+)
+ drivers/s390/net/qeth_core_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index c9b21306cf6c4..ebc36d15441ce 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -842,6 +842,19 @@ static int ena_com_get_feature(struct ena_com_dev *ena_dev,
- 				      0);
- }
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -5142,7 +5142,7 @@ next_packet:
+ 	}
  
-+static void ena_com_hash_key_fill_default_key(struct ena_com_dev *ena_dev)
-+{
-+	struct ena_admin_feature_rss_flow_hash_control *hash_key =
-+		(ena_dev->rss).hash_key;
-+
-+	netdev_rss_key_fill(&hash_key->key, sizeof(hash_key->key));
-+	/* The key is stored in the device in u32 array
-+	 * as well as the API requires the key to be passed in this
-+	 * format. Thus the size of our array should be divided by 4
-+	 */
-+	hash_key->keys_num = sizeof(hash_key->key) / sizeof(u32);
-+}
-+
- static int ena_com_hash_key_allocate(struct ena_com_dev *ena_dev)
- {
- 	struct ena_rss *rss = &ena_dev->rss;
-@@ -2409,6 +2422,8 @@ int ena_com_rss_init(struct ena_com_dev *ena_dev, u16 indr_tbl_log_size)
- 	if (unlikely(rc))
- 		goto err_hash_key;
+ 	use_rx_sg = (card->options.cq == QETH_CQ_ENABLED) ||
+-		    ((skb_len >= card->options.rx_sg_cb) &&
++		    (skb_len > card->options.rx_sg_cb &&
+ 		     !atomic_read(&card->force_alloc_skb) &&
+ 		     !IS_OSN(card));
  
-+	ena_com_hash_key_fill_default_key(ena_dev);
-+
- 	rc = ena_com_hash_ctrl_init(ena_dev);
- 	if (unlikely(rc))
- 		goto err_hash_ctrl;
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h b/drivers/net/ethernet/amazon/ena/ena_com.h
-index 7b784f8a06a66..90fce5c0ca48a 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.h
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.h
-@@ -42,6 +42,7 @@
- #include <linux/spinlock.h>
- #include <linux/types.h>
- #include <linux/wait.h>
-+#include <linux/netdevice.h>
- 
- #include "ena_common_defs.h"
- #include "ena_admin_defs.h"
--- 
-2.20.1
-
 
 
