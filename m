@@ -2,96 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF20177391
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CEC4177397
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:13:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbgCCKME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 05:12:04 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40527 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbgCCKMD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 05:12:03 -0500
-Received: by mail-ed1-f67.google.com with SMTP id p3so3593896edx.7
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 02:12:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QFxG9RCA40BrkjxxC1U2JfSdDk/sXGRl4lMZI+3OtTI=;
-        b=O3/YTyt61C3Z9YYiUKN2u/7coX7iu23nwTHvU6CcU/XmNl56JSNKteQGqwkzUovKF0
-         NefUssP8KNC98fpS+/VehkaYdG9A7xUjOxrALLQoxL6ZmCI352nNi7+UIWNh03KD9FGn
-         tB4ilL5QmIdYl/nutenu28RGJaF+41d27IzaKzDOQIs79cikyhMPmfZ00vHsE+sMFQ3s
-         gc8BjRsWsf0hXfktvwiphbocqXoxZgXw69TcZnMRDau7udIW7ZSnC4WYOOBANOifsyAn
-         ws3sJzPBzJ1CN/6LxN1b9R2S58904q3elGuaHBYLyG4NPaK7GGMl343ACYAsJ+lDXARp
-         Zs6w==
-X-Gm-Message-State: ANhLgQ36r7/vlvM0yrNXO9UjZ/cpCARUAW4C27ZZecqaR3iysjBkDTKV
-        pEfeHuZWDEQ57fhgR4XHFCE=
-X-Google-Smtp-Source: ADFU+vv1ScCTAYe2G90HyG56h26u7ytSes9n9XZ4/8Se5c6R9tx9vXtqxhfkY00XY6UOqxDWzuhJPQ==
-X-Received: by 2002:a50:ec89:: with SMTP id e9mr3297178edr.123.1583230321762;
-        Tue, 03 Mar 2020 02:12:01 -0800 (PST)
-Received: from a483e7b01a66.ant.amazon.com (54-240-197-230.amazon.com. [54.240.197.230])
-        by smtp.gmail.com with ESMTPSA id by19sm635002ejc.85.2020.03.03.02.12.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 02:12:00 -0800 (PST)
-Subject: Re: [Xen-devel] [PATCH 2/2] xenbus: req->err should be updated before
- req->state
-To:     Dongli Zhang <dongli.zhang@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     jgross@suse.com, boris.ostrovsky@oracle.com,
-        sstabellini@kernel.org, joe.jin@oracle.com
-References: <20200303015859.18813-1-dongli.zhang@oracle.com>
- <20200303015859.18813-2-dongli.zhang@oracle.com>
-From:   Julien Grall <julien@xen.org>
-Message-ID: <4c2594c8-9146-fbd9-6074-9c8366afb391@xen.org>
-Date:   Tue, 3 Mar 2020 10:11:59 +0000
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        id S1728441AbgCCKNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 05:13:40 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2501 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728102AbgCCKNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 05:13:40 -0500
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 1BD9D9119670BA0EB938;
+        Tue,  3 Mar 2020 10:13:38 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML714-CAH.china.huawei.com (10.201.108.37) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 3 Mar 2020 10:13:37 +0000
+Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 3 Mar 2020
+ 10:13:37 +0000
+Subject: Re: LPC Bus Driver
+To:     Luis Tanica <luis.f.tanica@seagate.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-fpga@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <6daf1bb266a24c239aed34d8661fc5eaMW2PR20MB210660F6B17CB90ACD0B6E7CA0E70@MW2PR20MB2106.namprd20.prod.outlook.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <797cec65-5504-ee85-3fe4-fe2b4c90991f@huawei.com>
+Date:   Tue, 3 Mar 2020 10:13:36 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <20200303015859.18813-2-dongli.zhang@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <6daf1bb266a24c239aed34d8661fc5eaMW2PR20MB210660F6B17CB90ACD0B6E7CA0E70@MW2PR20MB2106.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-ClientProxiedBy: lhreml725-chm.china.huawei.com (10.201.108.76) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
++ add fpga list and Greg+Arnd for misc drivers
 
-On 03/03/2020 01:58, Dongli Zhang wrote:
-> This patch adds the barrier to guarantee that req->err is always updated
-> before req->state.
-> 
-> Otherwise, read_reply() would not return ERR_PTR(req->err) but
-> req->body, when process_writes()->xb_write() is failed.
-
-The memory barrier below looks good. However, as mentionned in patch #1, 
-barrier() is not the correct barrier to pair with virt_wmb().
+Hi Luis,
 
 > 
-> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-> ---
->   drivers/xen/xenbus/xenbus_comms.c | 2 ++
->   1 file changed, 2 insertions(+)
+> We have this board with our own SoC, which is connected to an external CPLD (FPGA) via LPC (low pin count) bus.
+> I've been doing some research to see what the best way of designing the drivers for it would be, and came across the Hisilicon LPC driver stuff (which I believe you're the maintainer for).
 > 
-> diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
-> index 852ed161fc2a..eb5151fc8efa 100644
-> --- a/drivers/xen/xenbus/xenbus_comms.c
-> +++ b/drivers/xen/xenbus/xenbus_comms.c
-> @@ -397,6 +397,8 @@ static int process_writes(void)
->   	if (state.req->state == xb_req_state_aborted)
->   		kfree(state.req);
->   	else {
-> +		/* write err, then update state */
-> +		virt_wmb();
->   		state.req->state = xb_req_state_got_reply;
->   		wake_up(&state.req->wq);
->   	}
+> Just a little background. Let's say our host (ARM) has a custom LPC controller. The LPC controller let's us perform reads/writes of CPLD registers via LPC bus. This CPLD is the only slave device attached to that bus and we only use it for reading/writing certain
+>   registers (e.g., we use it to access some system information and for resetting the ARM during reboot).
 > 
+> I was looking at the regmap framework and that seemed a good way to go. 
 
-Cheers,
+I thought that regmap only allows mapping in MMIO regions for 
+multiplexing access from multiple drivers or accessing registers outside 
+the device HW registers, but you seem to need to manually generate the 
+LPC bus accesses to access registers on the slave device.
 
--- 
-Julien Grall
+If this FPGA is the only device which will ever be on this LPC bus, then 
+could you encode the LPC accesses directly in the FPGA driver?
+
+ > But then I saw the logic_pio stuff as well and now I'm not sure what 
+the best approach would be anymore
+
+Logic PIO is for IO Port accesses. It could serve your purpose, but you 
+would need to use IO port accesses for your slave driver, like inb and outb.
+
+As another alternative, it might be worth considering writing an I2C 
+controller driver for your LPC host, i.e. model as an I2C bus, and have 
+an I2C client driver for the LPC slave (FPGA). I think that there are 
+examples of this in the kernel.
+
+All the best,
+john
