@@ -2,92 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79310176FDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E565176FE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:17:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbgCCHPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:15:44 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43363 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727647AbgCCHPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:15:43 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v22so2049933qtp.10
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 23:15:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ypYkPGQ+tuqNht2BOkSbdXQNq89bA72Qai2EXZj0f5o=;
-        b=gXPMEWnOC5Cy3ZPGY+FzhF5FeyaaKpTZhjCaytHjaH7R5bIJ+NeoX29usAxajcmFWD
-         0osf+xGKl8I1Rk25X70aOLLAx066ylCSu2IiUw76f42PjizbAasiLLQU6eaWVZ08Ecla
-         Nphech8ot3kQYbTOsW3KbZ+gn5bvdm8A5nHQo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ypYkPGQ+tuqNht2BOkSbdXQNq89bA72Qai2EXZj0f5o=;
-        b=jdZLcVoVFEwfPYa/hRoLjF3hqW8OdifXcF9G2IzUC6/LERFFnthGhwPKAhy5c1wuUx
-         tft+oCHcNBFfLBDx9gmDmJaq+nUCRHl8CAgwxx3UTObfBgIZn4bV7crMHwN5u717ueJ4
-         0LcGOCWixcf1cF4BnYSTzOULqglMiVou1Cvb3NP64CcTnCbTg5mm+Uf3aMDaF+kXvOst
-         2nPlQA1Jif6GOoHhW4Gv6lf7cuIzg3Y4QTA35VP+4zX2ffbRXA0YJKRCxZvN9TvHtXTM
-         WWGIriJhA+3YTt0AAos6f7PQn6e0LS1dKp2z9fsSk1mT1L4aU+BuqrOPYGmBuh2tjqd/
-         fiCg==
-X-Gm-Message-State: ANhLgQ2qphF9INQwI2YZDLeazXW/ZMlTMSHBOQrDABjvw+nUas9yS+77
-        KZg8xPW8tUdO3B/iq07N04ylxK6TACCB2LLUfsM=
-X-Google-Smtp-Source: ADFU+vvpPdIPrOMla3lHMKsvtgOsYhvOly+EDWJuxYHMS9CAj7ketuc9MhtRLZmEt1grmksChe08v/qQPfdfCEzGbUE=
-X-Received: by 2002:aed:3841:: with SMTP id j59mr3274883qte.220.1583219742473;
- Mon, 02 Mar 2020 23:15:42 -0800 (PST)
+        id S1727592AbgCCHRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:17:55 -0500
+Received: from mga14.intel.com ([192.55.52.115]:7876 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbgCCHRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 02:17:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 23:17:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,510,1574150400"; 
+   d="scan'208";a="412643638"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 02 Mar 2020 23:17:51 -0800
+Subject: Re: [PATCH] x86: perf: insn: Tweak opcode map for Intel CET
+ instructions
+To:     Mingbo Zhang <whensungoes@gmail.com>, x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        linux-kernel@vger.kernel.org, Yu-cheng Yu <yu-cheng.yu@intel.com>
+References: <20200303045033.6137-1-whensungoes@gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <931d8779-8b77-b75f-bb3a-ee2f9d75f149@intel.com>
+Date:   Tue, 3 Mar 2020 09:17:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200302180730.1886678-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20200302180730.1886678-1-tudor.ambarus@microchip.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 3 Mar 2020 07:15:31 +0000
-Message-ID: <CACPK8Xcvf2wSE5Y4E8Lbs6R9mHhztvNsr8vNrYaPX+kMMUhZvA@mail.gmail.com>
-Subject: Re: [PATCH 00/23] mtd: spi-nor: Move manufacturer/SFDP code out of
- the core
-To:     Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic.Desroches@microchip.com,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Michal Simek <michal.simek@xilinx.com>, ludovic.barre@st.com,
-        john.garry@huawei.com, Thomas Gleixner <tglx@linutronix.de>,
-        nishkadg.linux@gmail.com, Michael Walle <michael@walle.cc>,
-        dinguyen@kernel.org, thor.thayer@linux.intel.com,
-        Stephen Boyd <swboyd@chromium.org>, opensource@jilayne.com,
-        mika.westerberg@linux.intel.com,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        allison@lohutok.net, jethro@fortanix.com, info@metux.net,
-        alexander.sverdlin@nokia.com, rfontana@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200303045033.6137-1-whensungoes@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tudor,
+On 3/03/20 6:50 am, Mingbo Zhang wrote:
+> Intel CET instructions are not described in the Intel SDM. When trying to
+> get the instruction length, the following instructions get wrong (missing
+> ModR/M byte).
+> 
+> RDSSPD r32
+> RSDDPQ r64
+> ENDBR32
+> ENDBR64
+> WRSSD r/m32, r32
+> WRSSQ r/m64, r64
+> 
+> RDSSPD/Q and ENDBR32/64 use the same opcode (f3 0f 1e) slot, which is
+> described in SDM as Reserved-NOP with no encoding characters, and got an
+> empty slot in the opcode map. WRSSD/Q (0f 38 f6) also got an empty slot.
 
-On Mon, 2 Mar 2020 at 18:07, <Tudor.Ambarus@microchip.com> wrote:
->
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
->
-> Hello,
->
-> This patch series is an attempt at getting all manufacturer specific
-> quirks/code out of the core to make the core logic more readable and
-> thus ease maintainance.
+We have patches for that:
 
-I tried to apply this to linus' tree (5.6-rc4) but it had a bunch of
-conflicts. What did you base this on?
+	https://lore.kernel.org/lkml/20200204171425.28073-1-yu-cheng.yu@intel.com/
+
+But they have not yet been applied.  Arnaldo, could you take them?
