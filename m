@@ -2,82 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8004C177C27
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3151E177C2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:43:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730264AbgCCQmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 11:42:18 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39243 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbgCCQmS (ORCPT
+        id S1730381AbgCCQnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 11:43:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44426 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729335AbgCCQnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 11:42:18 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so1553790plp.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 08:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=XhGFUrx1v6eQV+qctC2ZOoxV4HtnB/sPU/5rxwGHIJ8=;
-        b=sxQlJoDbSlbju8kAXlj03S3FItr9OTowlKd8NRmEFACViq4nO3qgLOv9p4Ulyev23X
-         vRZERcYQvD4ZWlbBFvMBIpbS5tnebQMhNibSsLceR5tNKSsJiQfmXgVjDp+3uFGc3XbG
-         IFojHEsbtzJ58RG2ZHyF99Gxae72FPN3fOEFmgQZLvRdGOOoGwNcaui7Ajjv57maNx2v
-         z2bWB8//MFTgOY/zW01WYlPbUtkAGFIOFj+TuRdlhULBoEc6Fj/pA30nBI+NTvcx9oVe
-         tGwOJ+pOmdLjsRe3HZ326pZXijx7f8gPIvFU3d1Kq2UgP7bFJbVBAd3iN0ou6u22Koot
-         SrdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XhGFUrx1v6eQV+qctC2ZOoxV4HtnB/sPU/5rxwGHIJ8=;
-        b=HCM7yv/ZjIBcyFCLswNVoRjtxZDq63SjZZ74n7jEMxqwCIHagQbcIw/qRLKDkzLXXb
-         SZf794KlRpKYFoeZ0BDZfjXPSIJfPfwDDqzHFwKYjOE+mkq4h9zHZ96fUaGCBJzTIWsu
-         f/0C4bX7WLnd3lX4k02pqgfZhnhQMIVk3VdtDWeolzCqBra1VgN3RD6s/c/V5aIDO19F
-         EjPs2yMmM8fTbv9FQHs11S1Hz3d6EW9FobGpyqWiBHNTvIjQx6jk8XVOtlT4VHu01CoD
-         zg+Boq0GF28xCiftGdKzNUWOZsTE3XSjy9IHJs2I2KKBZ4VbAhk0F1J++wIfI7L6dMaJ
-         d+QQ==
-X-Gm-Message-State: ANhLgQ3wCO+iD/+F3omUGGjDW687Lu4uFA4McXB7A2/tofXnasGY1GEo
-        8tRe4fS/kfULV4x/Eh/lioY=
-X-Google-Smtp-Source: ADFU+vtGNyK1+zGHYNxi1/B2InSOJARhXWM2xnyRr/zjkbwpqKLeXBb08gR4H2rgWv5RDuBjOBWo6w==
-X-Received: by 2002:a17:90b:3581:: with SMTP id mm1mr4728583pjb.169.1583253737264;
-        Tue, 03 Mar 2020 08:42:17 -0800 (PST)
-Received: from VM_0_35_centos.localdomain ([150.109.62.251])
-        by smtp.gmail.com with ESMTPSA id 193sm2916138pfu.181.2020.03.03.08.42.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Mar 2020 08:42:16 -0800 (PST)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     tglx@linutronix.de, peterz@infradead.org
-Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, ast@kernel.org,
-        mhiramat@kernel.org, rick.p.edgecombe@intel.com, namit@vmware.com,
-        bristot@redhat.com, linux-kernel@vger.kernel.org,
-        Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH] x86/alternatives: Mark text_poke_loc_init static
-Date:   Wed,  4 Mar 2020 00:42:12 +0800
-Message-Id: <1583253732-18988-1-git-send-email-hqjagain@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 3 Mar 2020 11:43:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4K9teVxOkEOyXTtctAJbU/3WG4+bePUoiy0aSqM/mWU=; b=XQRYOUtgm8kvEdVHlc1iBpqnQx
+        PPZB66OYtNnUCx6VAayoHbugBVopjwjmJRyIWDt4ENOWPeGrnb1Mf2+OccRa8J1rTnSCN/1mJNMvy
+        LvrcncqktSCcKShlZOUmuKGdq108N5rThd6u/eIkk083kcy3/t9H5Um+wuXYloHugBs3uAxzgEOsK
+        RjrUNJet8auOJqYuj7h9idaev8q9TeM7SsVam+Ib8oas1xNH1DwRXmOHuHn6YaXKz2i9xDjeJw6sJ
+        BuA/Hmyka/TibjoGPrzbcHwHK4UJIysq3IKojCyrETM4thyGT1dWk0w2wPq43kCCpSF7iyHDBH5dy
+        98zWm44g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9AdZ-00012M-Ci; Tue, 03 Mar 2020 16:43:17 +0000
+Date:   Tue, 3 Mar 2020 08:43:17 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Xianting Tian <xianting_tian@126.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap.c: clear page error before actual read
+Message-ID: <20200303164317.GS29971@bombadil.infradead.org>
+References: <1583248190-18123-1-git-send-email-xianting_tian@126.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583248190-18123-1-git-send-email-xianting_tian@126.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, the function is only used in this file, so mark it with 'static'.
+On Tue, Mar 03, 2020 at 10:09:50AM -0500, Xianting Tian wrote:
+> This patch is to add the calling of ClearPageError just before the
+> actual read of read path of cramfs mount.
 
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
----
- arch/x86/kernel/alternative.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for your patch and your analysis.  I concur; an error set
+on a page will not be cleared by doing a subsequent read.  This is
+probably an oversight; in generic_file_buffered_read(), we do:
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 15ac0d5..600da3cb 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1167,7 +1167,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
- 		atomic_cond_read_acquire(&desc.refs, !VAL);
- }
- 
--void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
-+static void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
- 			const void *opcode, size_t len, const void *emulate)
- {
- 	struct insn insn;
--- 
-1.8.3.1
+                ClearPageError(page);
+                /* Start the actual read. The read will unlock the page. */
+                error = mapping->a_ops->readpage(filp, page);
+
+and also in filemap_fault:
+
+        ClearPageError(page);
+        fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+        error = mapping->a_ops->readpage(file, page);
+
+That said, a freshly allocated page will not have PageError set on
+it, so I would prefer to see this:
+
+        /* Someone else locked and filled the page in a very small window */
+        if (PageUptodate(page)) {
+                unlock_page(page);
+                goto out;
+        }
++	ClearPageError(page);
+        goto filler;
 
