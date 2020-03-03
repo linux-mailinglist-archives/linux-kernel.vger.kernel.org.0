@@ -2,95 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615B917802E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1EBB178031
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732665AbgCCRzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:55:11 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39906 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732645AbgCCRzH (ORCPT
+        id S1732682AbgCCRzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:55:18 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:55687 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732666AbgCCRzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:55:07 -0500
-Received: by mail-il1-f194.google.com with SMTP id w69so3550949ilk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:55:06 -0800 (PST)
+        Tue, 3 Mar 2020 12:55:12 -0500
+Received: by mail-pj1-f68.google.com with SMTP id a18so1671184pjs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:55:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ayIxKKAwCnNFCQ+lZzklsRs5rXYB11mGFHyYGI5wUqQ=;
-        b=gDBM/cKDaAMh9NyfxfoObozsG9BZGD80+G1UGm/xV8TRxMqdcxd3lkS7Tjc2EZIK5k
-         O23wx5QTaZLVh2TUQMR/TRMtGrzlj3bIrack/HPTGO10ixgYa7tKMJ096FUlVlKSpVlk
-         4T4h8gnuTVFX1A/hBPx1SunMMPdgrCbXi4uVHq95icV0U4T5UQyhYuUIg4plkkEWhLtK
-         iY/tQv5MsboKHbHaXcPeN6P1iYXGkLhHrJcXbFJGYOaBrXt/zh7Z9xLjhLQSofkYiJbd
-         L7hD+kdiIc4k3EkxMC+O1Z2XYNe5g1WwxJxZxyKY6/WHpQcxhJwpXpYZ9S8bMjc/4KH3
-         aUmw==
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZYyTe7dD0f8CvlodvaFSBY4T+0LuLzAx2lyOiyIeWAw=;
+        b=zRtJA3wm3MQ5pRqwalHG6UtXT02ioF+mHErjs1nXkOOTCon8efC0VtPdPekDH394g3
+         IbEJf1wprR8XvNcei9K8haA1y9XeSij7hI8HHG60QqBGr28noC7dKjg4tZFJLJ+jJ7lY
+         jjHYVUkj/Yzs5AL2pLcjTQLfCQOycNWS2JaDGgSblDhqKaGmwfPMX+WC6x4lErGMSj2e
+         uPgbgk74XxEsB0Uj+adZG8AvG6MeBPvHRmgZMQwvgCGgi8SghaSm5KrhZyQhh9EBIutE
+         76XDWLhiC5MJ2syoI5A8RM35CnmyXnh0ioD8WrhoCGDFQZE4TEgVgnPOGrTDBRyyV/ne
+         omSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ayIxKKAwCnNFCQ+lZzklsRs5rXYB11mGFHyYGI5wUqQ=;
-        b=VsXf3hSeLNPd0Jr7nkPEBN11iMpwXKRmdnCLD6K9XO5iQ0mlLkYqMnaeXBW68gIjjy
-         A4Z8rLYTyqpi6V250M2u0TZI0oD3qVpKskADsgppU+i+dBQxeahjsZ0rrGn9aPjLCtgD
-         VZ9qXbb73PKZr93mtjzisnmsLEm6YRSDzC2KpbLqfd7dW+A+pa/OX+kPr7M7qbD7eJBd
-         aGpkkth/NxlX+yhEdxqHRO+cWBKX18NYIwI4wIDn4WsDNautfxXPuV6y+9TG0h4p6r8z
-         4iRzVJ3pJauukjX9NKQ8AzqmaFFp784lQ2IbivOjyzc2O7BAqFOefulgvVEH8EWHdeql
-         vDcg==
-X-Gm-Message-State: ANhLgQ0Geu+08JTZmS8fASmEVYVM97jXEoHYXZyCf+2bLTQ8gllHxBvS
-        web7fp/EkNX9Jlv1DY1M/9RuLw==
-X-Google-Smtp-Source: ADFU+vswN1+JEsE23FDapwuSVGGnBVQIgUF2nTXa5raP7vGWLMOlfTYLzjaimZzTkgwmW/1PXcHyyw==
-X-Received: by 2002:a92:8f46:: with SMTP id j67mr5772317ild.125.1583258106150;
-        Tue, 03 Mar 2020 09:55:06 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h14sm1061362iow.23.2020.03.03.09.55.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 09:55:05 -0800 (PST)
-Subject: Re: [PATCH 5.4 062/152] bcache: ignore pending signals when creating
- gc and allocator thread
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-References: <20200303174302.523080016@linuxfoundation.org>
- <20200303174309.501274295@linuxfoundation.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <db776832-64ff-6757-de09-ced1ea8b368f@kernel.dk>
-Date:   Tue, 3 Mar 2020 10:55:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200303174309.501274295@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ZYyTe7dD0f8CvlodvaFSBY4T+0LuLzAx2lyOiyIeWAw=;
+        b=tEa40zziYuQjPFYeQwIHtYMvS6K1dhg5i2ngL42Qzqs/vOo91VHgAPfR/RN+MVIV+z
+         IhMpzYtC6ZpUlAueK8dadcvT14yV0Qq4yYFQBlbszQVm0KgB9diEORlLZoLJXFQI6czg
+         9QtPBMww+ljVh7MYd5SVCWt7TNUTl+IWEQ+KYc0AWBxN3yHt+/DZTpVRuyb+EsB99MWP
+         xF2tuj7YwObvGt7UuVKdkagZq0RFo+4Qg8wEgdTr4cZe0q/TudWC5EKC39wAifFdyiip
+         EwYOPB28hatqDoNRpFKhoIktEM20/sYCDUEVBj2rD7pjZteYJix3NBRKNBdqn2mCXFFq
+         biZg==
+X-Gm-Message-State: ANhLgQ3LeeGiqVS/C9gHCuQxvImKUbm/MFGHketaouvO7StRpndfdzC5
+        y/0cuDU4gs4nBQJzydwP++kIuQ==
+X-Google-Smtp-Source: ADFU+vuKc3jVLGpaNwoGxZ4r38rovpZ+mHwCyyZycowdPXRgzjM6iaIQymbENr48CbA9H+HKPHnJ4A==
+X-Received: by 2002:a17:90a:3701:: with SMTP id u1mr5049507pjb.25.1583258111018;
+        Tue, 03 Mar 2020 09:55:11 -0800 (PST)
+Received: from localhost ([2620:0:1000:2514:23a5:d584:6a92:3e3c])
+        by smtp.gmail.com with ESMTPSA id u6sm24584506pgj.7.2020.03.03.09.55.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 09:55:10 -0800 (PST)
+Date:   Tue, 03 Mar 2020 09:55:10 -0800 (PST)
+X-Google-Original-Date: Tue, 03 Mar 2020 09:55:07 PST (-0800)
+Subject:     Re: [PATCH] riscv: fix seccomp reject syscall code path
+In-Reply-To: <202003022042.2A99B9B0@keescook>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        david.abdurachmanov@gmail.com, luto@amacapital.net,
+        oleg@redhat.com, aou@eecs.berkeley.edu, keith.packard@sifive.com,
+        tycho@tycho.ws
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     keescook@chromium.org
+Message-ID: <mhng-f926452f-8491-4deb-9721-a52487de676d@palmerdabbelt-glaptop1>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/3/20 10:42 AM, Greg Kroah-Hartman wrote:
-> From: Coly Li <colyli@suse.de>
-> 
-> [ Upstream commit 0b96da639a4874311e9b5156405f69ef9fc3bef8 ]
-> 
-> When run a cache set, all the bcache btree node of this cache set will
-> be checked by bch_btree_check(). If the bcache btree is very large,
-> iterating all the btree nodes will occupy too much system memory and
-> the bcache registering process might be selected and killed by system
-> OOM killer. kthread_run() will fail if current process has pending
-> signal, therefore the kthread creating in run_cache_set() for gc and
-> allocator kernel threads are very probably failed for a very large
-> bcache btree.
-> 
-> Indeed such OOM is safe and the registering process will exit after
-> the registration done. Therefore this patch flushes pending signals
-> during the cache set start up, specificly in bch_cache_allocator_start()
-> and bch_gc_thread_start(), to make sure run_cache_set() won't fail for
-> large cahced data set.
+On Mon, 02 Mar 2020 20:46:46 PST (-0800), keescook@chromium.org wrote:
+> On Sun, Feb 23, 2020 at 10:17:57AM -0700, Tycho Andersen wrote:
+>> On Sat, Feb 08, 2020 at 08:18:17AM -0700, Tycho Andersen wrote:
+>> > ...
+>>
+>> Ping, any risc-v people have thoughts on this?
+>>
+>> Tycho
+>
+> Re-ping. :) Can someone please pick this up? Original patch here:
+> https://lore.kernel.org/lkml/20200208151817.12383-1-tycho@tycho.ws/
 
-Please drop this one, it's being reverted in mainline.
-
--- 
-Jens Axboe
-
+Sorry, the other messages didn't end up in my inbox.  I'll take a look, as this
+seems like a good candidate for rc5.
