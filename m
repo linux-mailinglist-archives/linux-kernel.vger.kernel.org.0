@@ -2,148 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 478B7178466
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 21:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C673D17846C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 21:57:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732139AbgCCUyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 15:54:54 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:45477 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731387AbgCCUyu (ORCPT
+        id S1732030AbgCCU5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 15:57:50 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:58545 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730925AbgCCU5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 15:54:50 -0500
-Received: by mail-qv1-f65.google.com with SMTP id r8so2336654qvs.12;
-        Tue, 03 Mar 2020 12:54:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LpQl3QOx5Q+iwwtomiSeHz+aE8G4tQSvo7FgTI9tPuc=;
-        b=PSqdvhd2W9ItnvxRDhJ7TffR6b8U5YbwMkn+rJNsf8NU4SnVlI7b+KD5hP8EbADXuy
-         rrGLg2bM1vUkll2IIUDRT5+ZkiXOt9nNBtLP90Y3++sJj0t7qTi5G2UHBR3MBgKnH/8S
-         tPQ0FLGFcaK0Oa9hVquZwuYpvpugUO5zHvZOqwBsc+phzSRthRwyrqhfJ95GXPCoY0Ag
-         u1nvy7hscs18G8OMTzXYBWnGybSu5C2t2J5Mj3BVZuoOGNK4jrzTAJpLnzMw1oX68CH0
-         ZXDk8xlWL3mUjCEazRLF88ByEJ8YueK9SBOH3E9jmUSP+7XPBjjhsg9kw2eAhIc7Xki+
-         K0JA==
-X-Gm-Message-State: ANhLgQ0u7ed+cMU3Se7L4UNTudW8qUYo/Wi0Pl9zjZxZezRBBqGjKP+p
-        3jmIRKnGKrjKFABDKNEOFl0=
-X-Google-Smtp-Source: ADFU+vsZniQDhGjqLlXxME0EXoL4+0fXjheAns0z7Q7Ng0aBa8/DycAE2U+TOxoyv1vKlgUcFXZ4GA==
-X-Received: by 2002:a05:6214:381:: with SMTP id l1mr5780954qvy.178.1583268889854;
-        Tue, 03 Mar 2020 12:54:49 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id v12sm11473041qti.84.2020.03.03.12.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 12:54:49 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] x86/mm/pat: Make num_pages consistent in populate_{pte,pud,pgd}
-Date:   Tue,  3 Mar 2020 15:54:45 -0500
-Message-Id: <20200303205445.3965393-5-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200303205445.3965393-1-nivedita@alum.mit.edu>
-References: <20200303205445.3965393-1-nivedita@alum.mit.edu>
+        Tue, 3 Mar 2020 15:57:49 -0500
+Received: from [IPv6:2a03:2260:3009:300:402e:ee34:440:98b9] (unknown [IPv6:2a03:2260:3009:300:402e:ee34:440:98b9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 9D9C8231D9;
+        Tue,  3 Mar 2020 21:57:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1583269066;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PtQAp1jd9bV2ryiqqYe14ChtIVkk/SPZAu261A3lfB8=;
+        b=Tlbxpxb2wPtvw/8v3cyp4HREFGsBcixG0xBHoPu9M0emxm/F2EnXALLqn2NyF2dhf8Ue4X
+        M+y7zm4viI68KD2kplXWo98NwYd11nyaoA4iB135C7ALIUCslb2E9OrglPclYZzsZw+phE
+        QbHIebUEgOk+/TUoxoLfK6zHc+iRArk=
+Date:   Tue, 03 Mar 2020 21:57:42 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20200303184737.GD26191@bogus>
+References: <20200303174306.6015-1-michael@walle.cc> <20200303174306.6015-4-michael@walle.cc> <20200303184737.GD26191@bogus>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 3/9] tty: serial: fsl_lpuart: handle EPROBE_DEFER for DMA
+To:     Rob Herring <robh@kernel.org>
+CC:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Yuan Yao <yao.yuan@nxp.com>
+From:   Michael Walle <michael@walle.cc>
+Message-ID: <8DA9ACF0-755C-4AA7-A292-C00FA025B30B@walle.cc>
+X-Spamd-Bar: /
+X-Spam-Status: No, score=-0.10
+X-Rspamd-Server: web
+X-Spam-Score: -0.10
+X-Rspamd-Queue-Id: 9D9C8231D9
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[13];
+         NEURAL_HAM(-0.00)[-0.511];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:201701, ipnet:2a03:2260:3000::/36, country:DE];
+         MID_RHS_MATCH_FROM(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of pages is currently all of int, unsigned int, long and
-unsigned long in different places.
+Am 3=2E M=C3=A4rz 2020 19:47:37 MEZ schrieb Rob Herring <robh@kernel=2Eorg>=
+:
+>On Tue, Mar 03, 2020 at 06:43:00PM +0100, Michael Walle wrote:
+>> The DMA channel might not be available at probe time=2E This is esp=2E
+>the
+>> case if the DMA controller has an IOMMU mapping=2E
+>
+>The subject should be updated as this doesn't involve deferred probe
+>any more=2E=20
 
-Change it to be consistently unsigned long.
+ok
 
-Remove the unnecessary min(num_pages, cur_pages), since pre_end has
-already been min'd with start + num_pages << PAGE_SHIFT. This gets rid
-of two conversions to int/unsigned int.
+>
+>> There is also another caveat=2E If there is no DMA controller at all,
+>> dma_request_chan() will also return -EPROBE_DEFER=2E Thus we cannot
+>test
+>> for -EPROBE_DEFER in probe()=2E Otherwise the lpuart driver will fail
+>to
+>> probe if, for example, the DMA driver is not enabled in the kernel
+>> configuration=2E
+>>=20
+>> To workaround this, we request the DMA channel in _startup()=2E Other
+>> serial drivers do it the same way=2E
+>>=20
+>> Signed-off-by: Michael Walle <michael@walle=2Ecc>
+>> ---
+>>  drivers/tty/serial/fsl_lpuart=2Ec | 84
+>+++++++++++++++++++++------------
+>>  1 file changed, 53 insertions(+), 31 deletions(-)
+>>=20
+>> diff --git a/drivers/tty/serial/fsl_lpuart=2Ec
+>b/drivers/tty/serial/fsl_lpuart=2Ec
+>> index c31b8f3db6bf=2E=2E0b8c477b32a3 100644
+>> --- a/drivers/tty/serial/fsl_lpuart=2Ec
+>> +++ b/drivers/tty/serial/fsl_lpuart=2Ec
+>> @@ -1493,36 +1493,63 @@ static void rx_dma_timer_init(struct
+>lpuart_port *sport)
+>>  static void lpuart_tx_dma_startup(struct lpuart_port *sport)
+>>  {
+>>  	u32 uartbaud;
+>> +	int ret;
+>> =20
+>> -	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
+>> -		init_waitqueue_head(&sport->dma_wait);
+>> -		sport->lpuart_dma_tx_use =3D true;
+>> -		if (lpuart_is_32(sport)) {
+>> -			uartbaud =3D lpuart32_read(&sport->port, UARTBAUD);
+>> -			lpuart32_write(&sport->port,
+>> -				       uartbaud | UARTBAUD_TDMAE, UARTBAUD);
+>> -		} else {
+>> -			writeb(readb(sport->port=2Emembase + UARTCR5) |
+>> -				UARTCR5_TDMAS, sport->port=2Emembase + UARTCR5);
+>> -		}
+>> +	sport->dma_tx_chan =3D dma_request_slave_channel(sport->port=2Edev,
+>"tx");
+>> +	if (!sport->dma_tx_chan) {
+>> +		dev_info_once(sport->port=2Edev,
+>> +			      "DMA tx channel request failed, operating without tx
+>DMA\n");
+>
+>Might be useful to print the errno too=2E
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- arch/x86/include/asm/pgtable_types.h |  2 +-
- arch/x86/mm/pat/set_memory.c         | 13 ++++++-------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+I didn't want to change the original error message=2E But I can change tha=
+t when I update the subject=2E=20
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 0239998d8cdc..894569255a95 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -574,7 +574,7 @@ extern pmd_t *lookup_pmd_address(unsigned long address);
- extern phys_addr_t slow_virt_to_phys(void *__address);
- extern int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn,
- 					  unsigned long address,
--					  unsigned numpages,
-+					  unsigned long numpages,
- 					  unsigned long page_flags);
- extern int __init kernel_unmap_pages_in_pgd(pgd_t *pgd, unsigned long address,
- 					    unsigned long numpages);
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 2f98423ef69a..51b64937cc16 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -1230,7 +1230,7 @@ static int alloc_pmd_page(pud_t *pud)
- 
- static void populate_pte(struct cpa_data *cpa,
- 			 unsigned long start, unsigned long end,
--			 unsigned num_pages, pmd_t *pmd, pgprot_t pgprot)
-+			 unsigned long num_pages, pmd_t *pmd, pgprot_t pgprot)
- {
- 	pte_t *pte;
- 
-@@ -1249,9 +1249,9 @@ static void populate_pte(struct cpa_data *cpa,
- 
- static int populate_pmd(struct cpa_data *cpa,
- 			unsigned long start, unsigned long end,
--			unsigned num_pages, pud_t *pud, pgprot_t pgprot)
-+			unsigned long num_pages, pud_t *pud, pgprot_t pgprot)
- {
--	long cur_pages = 0;
-+	unsigned long cur_pages = 0;
- 	pmd_t *pmd;
- 	pgprot_t pmd_pgprot;
- 
-@@ -1264,7 +1264,6 @@ static int populate_pmd(struct cpa_data *cpa,
- 
- 		pre_end   = min_t(unsigned long, pre_end, next_page);
- 		cur_pages = (pre_end - start) >> PAGE_SHIFT;
--		cur_pages = min_t(unsigned int, num_pages, cur_pages);
- 
- 		/*
- 		 * Need a PTE page?
-@@ -1326,7 +1325,7 @@ static int populate_pud(struct cpa_data *cpa, unsigned long start, p4d_t *p4d,
- {
- 	pud_t *pud;
- 	unsigned long end;
--	long cur_pages = 0;
-+	unsigned long cur_pages = 0;
- 	pgprot_t pud_pgprot;
- 	int ret;
- 
-@@ -1342,7 +1341,6 @@ static int populate_pud(struct cpa_data *cpa, unsigned long start, p4d_t *p4d,
- 
- 		pre_end   = min_t(unsigned long, end, next_page);
- 		cur_pages = (pre_end - start) >> PAGE_SHIFT;
--		cur_pages = min_t(int, (int)cpa->numpages, cur_pages);
- 
- 		pud = pud_offset(p4d, start);
- 
-@@ -2231,7 +2229,8 @@ bool kernel_page_present(struct page *page)
- #endif /* CONFIG_HIBERNATION */
- 
- int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
--				   unsigned numpages, unsigned long page_flags)
-+				   unsigned long numpages,
-+				   unsigned long page_flags)
- {
- 	int retval = -EINVAL;
- 
--- 
-2.24.1
+-michael
 
