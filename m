@@ -2,118 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 077341777B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C2C1777AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:49:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbgCCNrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:47:39 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:53762 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbgCCNri (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:47:38 -0500
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 023DlOow025241;
-        Tue, 3 Mar 2020 22:47:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 023DlOow025241
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1583243245;
-        bh=Im1aXfaJVOP8AAV34lGGh2aGYo+2cFWGzTI+un3OZe0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=paWEy8D44ttfQy8HYItnWwlVc0cBqa4WcjSr1xQrR43jKDiK3jnrjgYKxHnh8b1Lm
-         nkuFC5T8hDGKbnIfT/TJzYuw/HG2PVVXIJiYRzfeuVOr108zIkkLi4FSG/8xwVP4Gl
-         gFO6qLxhYjY58tJHJt9bR12UIQHCboaMYQrl2DksQszYwxXUh/kFXLmGm8SP6H7HNO
-         KFGFXHTT/IxguJRVENcpDNmlRzbWj+7809KsufpF7Kn9GqMm0rGlcCRNAn8HPgr6ty
-         q3sZIa8N1+4IdgNYXi+sJYOygSrFC5zKIDeTqW2lBrNla5O0q8tvOgO7QRH+9b1ObP
-         2yHrI0ameJMMg==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id n27so2400639vsa.0;
-        Tue, 03 Mar 2020 05:47:24 -0800 (PST)
-X-Gm-Message-State: ANhLgQ3UZdIXS51PD4gp6YV37KKsMrNCYvqZA+0YucBT2IKYT6Vu63lU
-        vWM6INbZSE62/XAf6hEb807lDk1PVLk4DMZZXzU=
-X-Google-Smtp-Source: ADFU+vsOnczoGMXk0HGb7/YYFGR+pKutemWYtSXfgQEgdoEncfX8976RLmzzapPsqlF+H5ZWaIyvjYzI8co1XX5TRnY=
-X-Received: by 2002:a67:2ed8:: with SMTP id u207mr2447716vsu.54.1583243243860;
- Tue, 03 Mar 2020 05:47:23 -0800 (PST)
+        id S1728976AbgCCNrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:47:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:47272 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728877AbgCCNrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:47:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DC8CFEC;
+        Tue,  3 Mar 2020 05:47:04 -0800 (PST)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4043D3F6C4;
+        Tue,  3 Mar 2020 05:47:03 -0800 (PST)
+Subject: Re: sunxi: a83t: does not boot anymore in BigEndian
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>, maz@kernel.org,
+        wens@csie.org, mripard@kernel.org
+Cc:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux@armlinux.org.uk
+References: <20200303074326.GA9935@Red>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <65498b8e-a6c3-9edb-873f-6c011582a2eb@arm.com>
+Date:   Tue, 3 Mar 2020 13:47:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200228034640.25247-1-masahiroy@kernel.org> <CAK7LNAS9uWyvFeVkxtbkuBrnqumYzzLfcsUrVByHHyons4m8hA@mail.gmail.com>
-In-Reply-To: <CAK7LNAS9uWyvFeVkxtbkuBrnqumYzzLfcsUrVByHHyons4m8hA@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 3 Mar 2020 22:46:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATyuyU46qXngDr80d51cs0-J=00jkgL1rdASUMfgmfKOw@mail.gmail.com>
-Message-ID: <CAK7LNATyuyU46qXngDr80d51cs0-J=00jkgL1rdASUMfgmfKOw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: use KBUILD_DEFCONFIG as the fallback for DEFCONFIG_LIST
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, linux-um@lists.infradead.org,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200303074326.GA9935@Red>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 12:48 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> On Fri, Feb 28, 2020 at 12:47 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> >
-> > Most of the Kconfig commands (except defconfig and all*config) read
-> > the .config file as a base set of CONFIG options.
-> >
-> > When it does not exist, the files in DEFCONFIG_LIST are searched in
-> > this order and loaded if found.
-> >
-> > I do not see much sense in the last two lines in DEFCONFIG_LIST.
-> >
-> > [1] ARCH_DEFCONFIG
-> >
-> > The entry for DEFCONFIG_LIST is guarded by 'depends on !UML'. So, the
-> > ARCH_DEFCONFIG definition in arch/x86/um/Kconfig is meaningless.
-> >
-> > arch/{sh,sparc,x86}/Kconfig define ARCH_DEFCONFIG depending on 32 or
-> > 64 bit variant symbols. This is a little bit strange; ARCH_DEFCONFIG
-> > should be a fixed string because the base config file is loaded before
-> > the symbol evaluation stage.
-> >
-> > Using KBUILD_DEFCONFIG makes more sense because it is fixed before
-> > Kconfig is invoked. Fortunately, arch/{sh,sparc,x86}/Makefile define it
-> > in the same way, and it works as expected. Hence, replace ARCH_DEFCONFIG
-> > with "arch/$(SRCARCH)/configs/$(KBUILD_DEFCONFIG)".
-> >
-> > [2] arch/$(ARCH)/defconfig
-> >
-> > This file path is no longer valid. The defconfig files are always located
-> > in the arch configs/ directories.
-> >
-> >   $ find arch -name defconfig | sort
-> >   arch/alpha/configs/defconfig
-> >   arch/arm64/configs/defconfig
-> >   arch/csky/configs/defconfig
-> >   arch/nds32/configs/defconfig
-> >   arch/riscv/configs/defconfig
-> >   arch/s390/configs/defconfig
-> >   arch/unicore32/configs/defconfig
-> >
-> > The path arch/*/configs/defconfig is already covered by
-> > "arch/$(SRCARCH)/configs/$(KBUILD_DEFCONFIG)". So, this file path is
-> > not necessary.
-> >
-> > I moved the default KBUILD_DEFCONFIG to the top Makefile. Otherwise,
-> > the 7 architectures listed above would end up with endless loop of
-> > syncconfig.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->
->
-> I forgot to say this.
-> This is v2.
->
-> Changes in v2:
->   - Move KBUILD_DEFCONFIG to fix endless loop of syncconfig
->
->
+On 03/03/2020 7:43 am, Corentin Labbe wrote:
+> Hello
+> 
+> My sun8i-a83t-bananapi-m3 does not boot anymore in BE.
+> Others sunxi platform I have seems not affected (a10, a20, a64, h3, h5, h6)
+> 
+> I have bisected this problem:
+> git bisect start
+> # bad: [98d54f81e36ba3bf92172791eba5ca5bd813989b] Linux 5.6-rc4
+> git bisect bad 98d54f81e36ba3bf92172791eba5ca5bd813989b
+> # bad: [d5226fa6dbae0569ee43ecfc08bdcd6770fc4755] Linux 5.5
+> git bisect bad d5226fa6dbae0569ee43ecfc08bdcd6770fc4755
+> # good: [219d54332a09e8d8741c1e1982f5eae56099de85] Linux 5.4
+> git bisect good 219d54332a09e8d8741c1e1982f5eae56099de85
+> # bad: [8c39f71ee2019e77ee14f88b1321b2348db51820] Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+> git bisect bad 8c39f71ee2019e77ee14f88b1321b2348db51820
+> # bad: [3b397c7ccafe0624018cb09fc96729f8f6165573] Merge tag 'regmap-v5.5' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap
+> git bisect bad 3b397c7ccafe0624018cb09fc96729f8f6165573
+> # good: [924ea58dadea23cc28b60d02b9c0896b7b168a6f] Merge tag 'mt76-for-kvalo-2019-11-20' of https://github.com/nbd168/wireless
+> git bisect good 924ea58dadea23cc28b60d02b9c0896b7b168a6f
+> # good: [3f3c8be973af10875cfa1e7b85a535b6ba76b44f] Merge tag 'for-linus-5.5a-rc1-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip
+> git bisect good 3f3c8be973af10875cfa1e7b85a535b6ba76b44f
+> # bad: [642356cb5f4a8c82b5ca5ebac288c327d10df236] Merge git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
+> git bisect bad 642356cb5f4a8c82b5ca5ebac288c327d10df236
+> # good: [57d8154f15e89f53dfb412f4ed32ebe3c3d755a0] crypto: atmel-aes - Change data type for "lastc" buffer
+> git bisect good 57d8154f15e89f53dfb412f4ed32ebe3c3d755a0
+> # bad: [752272f16dd18f2cac58a583a8673c8e2fb93abb] Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+> git bisect bad 752272f16dd18f2cac58a583a8673c8e2fb93abb
+> # good: [9477f4449b0b011ce1d058c09ec450bfcdaab784] KVM: VMX: Add helper to check reserved bits in IA32_PERF_GLOBAL_CTRL
+> git bisect good 9477f4449b0b011ce1d058c09ec450bfcdaab784
+> # bad: [cd7056ae34af0e9424da97bbc7d2b38246ba8a2c] Merge remote-tracking branch 'kvmarm/misc-5.5' into kvmarm/next
+> git bisect bad cd7056ae34af0e9424da97bbc7d2b38246ba8a2c
+> # bad: [c7892db5dd6afe921ead502aff7440a1e450d947] KVM: arm64: Select TASK_DELAY_ACCT+TASKSTATS rather than SCHEDSTATS
+> git bisect bad c7892db5dd6afe921ead502aff7440a1e450d947
+> # bad: [8564d6372a7d8a6d440441b8ed8020f97f744450] KVM: arm64: Support stolen time reporting via shared structure
+> git bisect bad 8564d6372a7d8a6d440441b8ed8020f97f744450
+> # bad: [55009c6ed2d24fc0f5521ab2482f145d269389ea] KVM: arm/arm64: Factor out hypercall handling from PSCI code
+> git bisect bad 55009c6ed2d24fc0f5521ab2482f145d269389ea
+> # bad: [6a7458485b390f48e481fcd4a0b20e6c5c843d2e] KVM: arm64: Document PV-time interface
+> git bisect bad 6a7458485b390f48e481fcd4a0b20e6c5c843d2e
+> # bad: [dcac930e9901d765234bc15004db4f7d4416db71] Merge remote-tracking branch 'arm64/for-next/smccc-conduit-cleanup' into kvm-arm64/stolen-time
+> git bisect bad dcac930e9901d765234bc15004db4f7d4416db71
+> # first bad commit: [dcac930e9901d765234bc15004db4f7d4416db71] Merge remote-tracking branch 'arm64/for-next/smccc-conduit-cleanup' into kvm-arm64/stolen-time
+> 
+> But bisect lead to a merge request.
 
-Applied to linux-kbuild.
+FWIW once you've bisected to a merge commit, you can always then try 
+bisecting down the merged branch itself (i.e. between 5.4-rc3 and 
+e6ea46511b1a in this case) to narrow things down further.
 
+Given that that branch is supposed to be a functionally-inert cleanup, 
+and (judging by the DTS) this platform apparently isn't using PSCI 
+anyway, it does seem a bit odd. Can you get any earlycon/earlyprintk 
+output to suggest what the actual cause of the boot failure is?
 
-Best Regards
-Masahiro Yamada
+Robin.
