@@ -2,311 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10EA17708A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:55:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 092A517708E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:55:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbgCCHz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:55:29 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36713 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgCCHz2 (ORCPT
+        id S1727731AbgCCHzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:55:54 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33283 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727531AbgCCHzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:55:28 -0500
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1j92Ol-00047R-Fo; Tue, 03 Mar 2020 08:55:27 +0100
-Subject: Re: [PATCH V5 2/4] mailbox: imx: restructure code to make easy for
- new MU
-To:     peng.fan@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        jassisinghbrar@gmail.com
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1583221359-9285-1-git-send-email-peng.fan@nxp.com>
- <1583221359-9285-3-git-send-email-peng.fan@nxp.com>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <5fef0bc5-368e-f777-2d41-3fb54f9527cb@pengutronix.de>
-Date:   Tue, 3 Mar 2020 08:55:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 3 Mar 2020 02:55:54 -0500
+Received: by mail-lf1-f68.google.com with SMTP id c20so1906212lfb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 23:55:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1lPF8zw0bXFqFlQLFPStlm5FHoYNBwBPM18zyUiNjIA=;
+        b=lAxDWi1+pqP/9qDvQilXYNucTAvjaes6a1BWSvxMFNN+3Lf1LQdW3q2rHh4Y6D21+I
+         2fflpfjG4j7t97ZZFhfV9Xzx55jJpeApk/0VsIIe/0y0zr/bOym4XSiRcK+Gjew3eaxX
+         AQ8rdWEQTkLQLJgtr3kYIHLac4tAILLe247A4xLz+511vTnO+ciLDqpkiELvyvVsLLvs
+         nNU1DSD3EyigBRd9aToPtgI4Tt+IMAdxFvmHi8mVgzyWrdouZlFZnN3b09IKGddGScyh
+         Y9gGQWtdXmdBQ5CCPS0XVqsKtr9hVcbhUKl0UqGQs6uReu3GM0BOxcgF8B2dP7MpOuW2
+         WniQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1lPF8zw0bXFqFlQLFPStlm5FHoYNBwBPM18zyUiNjIA=;
+        b=uNVhpLEsHVWSDrofksbeJYwRodmReo4jnDnm6IfKjZKWR+2lZKr/DNrZ1VaPnl4yZ2
+         7K33j71B2qk3Xuz2QN66pCFcIPIl0KGHzBp83mvMRrsNsYEmFctKJqu7MiS+aswpTGdf
+         AQqc0lWkvSph7qXN55LBv9yC0PCpf/beuLVp5cCanheBiNw0BxrTjaYX/tbaEnNZ9euM
+         ygHaeIunoj1zXyJYgubdEHG8AewgpkoY/MlvnMKnwwW03TXEt6mNcxcCms9cAhAlVOfS
+         dedfL8GcAL6g7fTzl8AyU/g04o8l8HNVAp1Zlvnz6C20/bJwXxfYyoYcf+90A+ZkxexP
+         SdAw==
+X-Gm-Message-State: ANhLgQ03Y65uWcpvgn1e1+IBG9qC2PhqqgYGicyO5dIIoBmVu7adW1v7
+        SHSs7Ugdnbxc7vm9m81lWu5iBKtSe3Wg0uBC6g23CA==
+X-Google-Smtp-Source: ADFU+vswLyz0rxpKgGKU1DFmKvHyDEx2iMLX3GZz/9lBIcgjX7HlFXOcBjEw7BdA1lv9hIxS0xiYUIKMbbOGHBVRnX8=
+X-Received: by 2002:a19:230d:: with SMTP id j13mr1964235lfj.189.1583222151895;
+ Mon, 02 Mar 2020 23:55:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1583221359-9285-3-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <ace7327f-0fd6-4f36-39ae-a8d7d1c7f06b@de.ibm.com>
+ <afacbbd1-3d6b-c537-34e2-5b455e1c2267@de.ibm.com> <CAKfTPtBikHzpHY-NdRJFfOFxx+S3=4Y0aPM5s0jpHs40+9BaGA@mail.gmail.com>
+ <b073a50e-4b86-56db-3fbd-6869b2716b34@de.ibm.com> <1a607a98-f12a-77bd-2062-c3e599614331@de.ibm.com>
+ <CAKfTPtBZ2X8i6zMgrA1gNJmwoSnyRc76yXmLZEwboJmF-R9QVg@mail.gmail.com>
+ <b664f050-72d6-a483-be0a-8504f687f225@de.ibm.com> <20200228163545.GA18662@vingu-book>
+ <be45b190-d96c-1893-3ef0-f574eb595256@de.ibm.com> <49a2ebb7-c80b-9e2b-4482-7f9ff938417d@de.ibm.com>
+ <ad0f263a-6837-e793-5761-fda3264fd8ad@de.ibm.com>
+In-Reply-To: <ad0f263a-6837-e793-5761-fda3264fd8ad@de.ibm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 3 Mar 2020 08:55:40 +0100
+Message-ID: <CAKfTPtCX4padfJm8aLrP9+b5KVgp-ff76=teu7MzMZJBYrc-7w@mail.gmail.com>
+Subject: Re: 5.6-rc3: WARNING: CPU: 48 PID: 17435 at kernel/sched/fair.c:380 enqueue_task_fair+0x328/0x440
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 3 Mar 2020 at 08:37, Christian Borntraeger
+<borntraeger@de.ibm.com> wrote:
+>
+>
+>
+> On 02.03.20 19:17, Christian Borntraeger wrote:
+> > On 02.03.20 12:16, Christian Borntraeger wrote:
+> >>
+> >>
+> >> On 28.02.20 17:35, Vincent Guittot wrote:
+> >>> Le vendredi 28 f=C3=A9vr. 2020 =C3=A0 16:42:27 (+0100), Christian Bor=
+ntraeger a =C3=A9crit :
+> >>>>
+> >>>>
+> >>>> On 28.02.20 16:37, Vincent Guittot wrote:
+> >>>>> On Fri, 28 Feb 2020 at 16:08, Christian Borntraeger
+> >>>>> <borntraeger@de.ibm.com> wrote:
+> >>>>>>
+> >>>>>> Also happened with 5.4:
+> >>>>>> Seems that I just happen to have an interesting test workload/syst=
+em size interaction
+> >>>>>> on a newly installed system that triggers this.
+> >>>>>
+> >>>>> you will probably go back to 5.1 which is the version where we put
+> >>>>> back the deletion of unused cfs_rq from the list which can trigger =
+the
+> >>>>> warning:
+> >>>>> commit 039ae8bcf7a5 : (Fix O(nr_cgroups) in the load balancing path=
+)
+> >>>>>
+> >>>>> AFAICT, we haven't changed this since
+> >>>>
+> >>>> So you do know what is the problem? If not is there any debug option=
+ or
+> >>>> patch that I could apply to give you more information?
+> >>>
+> >>> No I don't know what is happening. Your test probably goes through an=
+ unexpected path
+> >>>
+> >>> Would it be difficult for me to reproduce your test env ?
+> >>
+> >> Not sure. Its a 32CPU (SMT2 -> 64) host. I have about 10 KVM guests ru=
+nning doing different
+> >> things.
+> >>
+> >>>
+> >>> There is an optimization in the code which could generate problem if =
+assumption is not
+> >>> true. Could you try the patch below ?
+> >>>
+> >>> ---
+> >>>  kernel/sched/fair.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> >>> index 3c8a379c357e..beb773c23e7d 100644
+> >>> --- a/kernel/sched/fair.c
+> >>> +++ b/kernel/sched/fair.c
+> >>> @@ -4035,8 +4035,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sc=
+hed_entity *se, int flags)
+> >>>             __enqueue_entity(cfs_rq, se);
+> >>>     se->on_rq =3D 1;
+> >>>
+> >>> +   list_add_leaf_cfs_rq(cfs_rq);
+> >>>     if (cfs_rq->nr_running =3D=3D 1) {
+> >>> -           list_add_leaf_cfs_rq(cfs_rq);
+> >>>             check_enqueue_throttle(cfs_rq);
+> >>>     }
+> >>>  }
+> >>
+> >> Now running for 3 hours. I have not seen the issue yet. I can tell tom=
+orrow if this fixes
+> >> the issue.
+> >
+> >
+> > Still running fine. I can tell for sure tomorrow, but I have the impres=
+sion that this makes the
+> > WARN_ON go away.
+>
+> So I guess this change "fixed" the issue. If you want me to test addition=
+al patches, let me know.
 
+Thanks for the test. For now, I don't have any other patch to test. I
+have to look more deeply how the situation happens.
+I will let you know if I have other patch to test
 
-On 03.03.20 08:42, peng.fan@nxp.com wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Add imx_mu_generic_tx for data send and imx_mu_generic_rx for interrupt
-> data receive.
-> 
-> Pack original mu chans related code into imx_mu_init_generic
-> 
-> Add tx/rx/init hooks into imx_mu_dcfg
-> 
-> With these, it will be a bit easy to introduce i.MX8/8X SCU type
-> MU dedicated to communicate with SCU.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-
-> ---
-> V5:
->   imx_mu_dcfg moved to below imx_mu_priv
->   Add init hooks
-> 
-> V4:
->   Pack MU chans init to imx_mu_init_generic
-> V3:
->   New patch, restructure code.
-> 
->   drivers/mailbox/imx-mailbox.c | 137 +++++++++++++++++++++++++-----------------
->   1 file changed, 83 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-> index 2cdcdc5f1119..df6c4ecd913c 100644
-> --- a/drivers/mailbox/imx-mailbox.c
-> +++ b/drivers/mailbox/imx-mailbox.c
-> @@ -36,13 +36,6 @@ enum imx_mu_chan_type {
->   	IMX_MU_TYPE_RXDB,	/* Rx doorbell */
->   };
->   
-> -struct imx_mu_dcfg {
-> -	u32	xTR[4];		/* Transmit Registers */
-> -	u32	xRR[4];		/* Receive Registers */
-> -	u32	xSR;		/* Status Register */
-> -	u32	xCR;		/* Control Register */
-> -};
-> -
->   struct imx_mu_con_priv {
->   	unsigned int		idx;
->   	char			irq_desc[IMX_MU_CHAN_NAME_SIZE];
-> @@ -67,18 +60,14 @@ struct imx_mu_priv {
->   	bool			side_b;
->   };
->   
-> -static const struct imx_mu_dcfg imx_mu_cfg_imx6sx = {
-> -	.xTR	= {0x0, 0x4, 0x8, 0xc},
-> -	.xRR	= {0x10, 0x14, 0x18, 0x1c},
-> -	.xSR	= 0x20,
-> -	.xCR	= 0x24,
-> -};
-> -
-> -static const struct imx_mu_dcfg imx_mu_cfg_imx7ulp = {
-> -	.xTR	= {0x20, 0x24, 0x28, 0x2c},
-> -	.xRR	= {0x40, 0x44, 0x48, 0x4c},
-> -	.xSR	= 0x60,
-> -	.xCR	= 0x64,
-> +struct imx_mu_dcfg {
-> +	int (*tx)(struct imx_mu_priv *priv, struct imx_mu_con_priv *cp, void *data);
-> +	int (*rx)(struct imx_mu_priv *priv, struct imx_mu_con_priv *cp);
-> +	void (*init)(struct imx_mu_priv *priv);
-> +	u32	xTR[4];		/* Transmit Registers */
-> +	u32	xRR[4];		/* Receive Registers */
-> +	u32	xSR;		/* Status Register */
-> +	u32	xCR;		/* Control Register */
->   };
->   
->   static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller *mbox)
-> @@ -111,6 +100,40 @@ static u32 imx_mu_xcr_rmw(struct imx_mu_priv *priv, u32 set, u32 clr)
->   	return val;
->   }
->   
-> +static int imx_mu_generic_tx(struct imx_mu_priv *priv,
-> +			     struct imx_mu_con_priv *cp,
-> +			     void *data)
-> +{
-> +	u32 *arg = data;
-> +
-> +	switch (cp->type) {
-> +	case IMX_MU_TYPE_TX:
-> +		imx_mu_write(priv, *arg, priv->dcfg->xTR[cp->idx]);
-> +		imx_mu_xcr_rmw(priv, IMX_MU_xCR_TIEn(cp->idx), 0);
-> +		break;
-> +	case IMX_MU_TYPE_TXDB:
-> +		imx_mu_xcr_rmw(priv, IMX_MU_xCR_GIRn(cp->idx), 0);
-> +		tasklet_schedule(&cp->txdb_tasklet);
-> +		break;
-> +	default:
-> +		dev_warn_ratelimited(priv->dev, "Send data on wrong channel type: %d\n", cp->type);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_mu_generic_rx(struct imx_mu_priv *priv,
-> +			     struct imx_mu_con_priv *cp)
-> +{
-> +	u32 dat;
-> +
-> +	dat = imx_mu_read(priv, priv->dcfg->xRR[cp->idx]);
-> +	mbox_chan_received_data(cp->chan, (void *)&dat);
-> +
-> +	return 0;
-> +}
-> +
->   static void imx_mu_txdb_tasklet(unsigned long data)
->   {
->   	struct imx_mu_con_priv *cp = (struct imx_mu_con_priv *)data;
-> @@ -123,7 +146,7 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
->   	struct mbox_chan *chan = p;
->   	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
->   	struct imx_mu_con_priv *cp = chan->con_priv;
-> -	u32 val, ctrl, dat;
-> +	u32 val, ctrl;
->   
->   	ctrl = imx_mu_read(priv, priv->dcfg->xCR);
->   	val = imx_mu_read(priv, priv->dcfg->xSR);
-> @@ -152,8 +175,7 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
->   		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx));
->   		mbox_chan_txdone(chan, 0);
->   	} else if (val == IMX_MU_xSR_RFn(cp->idx)) {
-> -		dat = imx_mu_read(priv, priv->dcfg->xRR[cp->idx]);
-> -		mbox_chan_received_data(chan, (void *)&dat);
-> +		priv->dcfg->rx(priv, cp);
->   	} else if (val == IMX_MU_xSR_GIPn(cp->idx)) {
->   		imx_mu_write(priv, IMX_MU_xSR_GIPn(cp->idx), priv->dcfg->xSR);
->   		mbox_chan_received_data(chan, NULL);
-> @@ -169,23 +191,8 @@ static int imx_mu_send_data(struct mbox_chan *chan, void *data)
->   {
->   	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
->   	struct imx_mu_con_priv *cp = chan->con_priv;
-> -	u32 *arg = data;
-> -
-> -	switch (cp->type) {
-> -	case IMX_MU_TYPE_TX:
-> -		imx_mu_write(priv, *arg, priv->dcfg->xTR[cp->idx]);
-> -		imx_mu_xcr_rmw(priv, IMX_MU_xCR_TIEn(cp->idx), 0);
-> -		break;
-> -	case IMX_MU_TYPE_TXDB:
-> -		imx_mu_xcr_rmw(priv, IMX_MU_xCR_GIRn(cp->idx), 0);
-> -		tasklet_schedule(&cp->txdb_tasklet);
-> -		break;
-> -	default:
-> -		dev_warn_ratelimited(priv->dev, "Send data on wrong channel type: %d\n", cp->type);
-> -		return -EINVAL;
-> -	}
->   
-> -	return 0;
-> +	return priv->dcfg->tx(priv, cp, data);
->   }
->   
->   static int imx_mu_startup(struct mbox_chan *chan)
-> @@ -280,6 +287,22 @@ static struct mbox_chan * imx_mu_xlate(struct mbox_controller *mbox,
->   
->   static void imx_mu_init_generic(struct imx_mu_priv *priv)
->   {
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < IMX_MU_CHANS; i++) {
-> +		struct imx_mu_con_priv *cp = &priv->con_priv[i];
-> +
-> +		cp->idx = i % 4;
-> +		cp->type = i >> 2;
-> +		cp->chan = &priv->mbox_chans[i];
-> +		priv->mbox_chans[i].con_priv = cp;
-> +		snprintf(cp->irq_desc, sizeof(cp->irq_desc),
-> +			 "imx_mu_chan[%i-%i]", cp->type, cp->idx);
-> +	}
-> +
-> +	priv->mbox.num_chans = IMX_MU_CHANS;
-> +	priv->mbox.of_xlate = imx_mu_xlate;
-> +
->   	if (priv->side_b)
->   		return;
->   
-> @@ -293,7 +316,6 @@ static int imx_mu_probe(struct platform_device *pdev)
->   	struct device_node *np = dev->of_node;
->   	struct imx_mu_priv *priv;
->   	const struct imx_mu_dcfg *dcfg;
-> -	unsigned int i;
->   	int ret;
->   
->   	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> @@ -329,32 +351,19 @@ static int imx_mu_probe(struct platform_device *pdev)
->   		return ret;
->   	}
->   
-> -	for (i = 0; i < IMX_MU_CHANS; i++) {
-> -		struct imx_mu_con_priv *cp = &priv->con_priv[i];
-> -
-> -		cp->idx = i % 4;
-> -		cp->type = i >> 2;
-> -		cp->chan = &priv->mbox_chans[i];
-> -		priv->mbox_chans[i].con_priv = cp;
-> -		snprintf(cp->irq_desc, sizeof(cp->irq_desc),
-> -			 "imx_mu_chan[%i-%i]", cp->type, cp->idx);
-> -	}
-> -
->   	priv->side_b = of_property_read_bool(np, "fsl,mu-side-b");
->   
-> +	priv->dcfg->init(priv);
-> +
->   	spin_lock_init(&priv->xcr_lock);
->   
->   	priv->mbox.dev = dev;
->   	priv->mbox.ops = &imx_mu_ops;
->   	priv->mbox.chans = priv->mbox_chans;
-> -	priv->mbox.num_chans = IMX_MU_CHANS;
-> -	priv->mbox.of_xlate = imx_mu_xlate;
->   	priv->mbox.txdone_irq = true;
->   
->   	platform_set_drvdata(pdev, priv);
->   
-> -	imx_mu_init_generic(priv);
-> -
->   	return devm_mbox_controller_register(dev, &priv->mbox);
->   }
->   
-> @@ -367,6 +376,26 @@ static int imx_mu_remove(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> +static const struct imx_mu_dcfg imx_mu_cfg_imx6sx = {
-> +	.tx	= imx_mu_generic_tx,
-> +	.rx	= imx_mu_generic_rx,
-> +	.init	= imx_mu_init_generic,
-> +	.xTR	= {0x0, 0x4, 0x8, 0xc},
-> +	.xRR	= {0x10, 0x14, 0x18, 0x1c},
-> +	.xSR	= 0x20,
-> +	.xCR	= 0x24,
-> +};
-> +
-> +static const struct imx_mu_dcfg imx_mu_cfg_imx7ulp = {
-> +	.tx	= imx_mu_generic_tx,
-> +	.rx	= imx_mu_generic_rx,
-> +	.init	= imx_mu_init_generic,
-> +	.xTR	= {0x20, 0x24, 0x28, 0x2c},
-> +	.xRR	= {0x40, 0x44, 0x48, 0x4c},
-> +	.xSR	= 0x60,
-> +	.xCR	= 0x64,
-> +};
-> +
->   static const struct of_device_id imx_mu_dt_ids[] = {
->   	{ .compatible = "fsl,imx7ulp-mu", .data = &imx_mu_cfg_imx7ulp },
->   	{ .compatible = "fsl,imx6sx-mu", .data = &imx_mu_cfg_imx6sx },
-> 
-
-Kind regards,
-Oleksij Rempel
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>
