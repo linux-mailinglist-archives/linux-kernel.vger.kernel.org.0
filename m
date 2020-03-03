@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27141177EEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F48E177EB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731405AbgCCRrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:47:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54554 "EHLO mail.kernel.org"
+        id S1731099AbgCCRqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:46:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731386AbgCCRri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:47:38 -0500
+        id S1729854AbgCCRqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:46:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86B51208C3;
-        Tue,  3 Mar 2020 17:47:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBD6820842;
+        Tue,  3 Mar 2020 17:46:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257657;
-        bh=debaHDpQh9zHC+jRrxSqoxKPc5OHTt1KzMpfkCF+MGE=;
+        s=default; t=1583257573;
+        bh=r4h0h0vNmAe26MlCqgqj9TQfWY49lPNNCtdDgv9Pe6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wmmUOsSWa2xjA1Y8TWXRHQNkkjbWGDByvcaPFwkyWlMIbghISXJGpDorVRwIVo39b
-         1TF9Xl0DlbnfI3t9eDgANUXKz5K0bzm3swgr0ZVOhM+G1LFq7YjLSebWiP9UXlYBZw
-         NvjACTdSynx3P/mtlSdqZ4rrMqmW8WEBitopBwwQ=
+        b=Y2JkjPpmkgAhZvtL+8F7ICZDCmNg2O+21Tg/e16wJajr2kXvgx1EZSB7KbbAnrODM
+         p+oet5HqYdszW34DiSa/RZCKsgwCdM1MWDjj1vG2C6giX28bfQLgBDH3cMuZT2Cn48
+         OvAHoohhCh7EDnIulPokzImx+p5DaQDgoFgHgEhI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Krishnamraju Eraparaju <krishna2@chelsio.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Aric Cyr <aric.cyr@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 046/176] RDMA/siw: Remove unwanted WARN_ON in siw_cm_llp_data_ready()
-Date:   Tue,  3 Mar 2020 18:41:50 +0100
-Message-Id: <20200303174309.885892242@linuxfoundation.org>
+Subject: [PATCH 5.5 047/176] drm/amd/display: Check engine is not NULL before acquiring
+Date:   Tue,  3 Mar 2020 18:41:51 +0100
+Message-Id: <20200303174309.993512910@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
 References: <20200303174304.593872177@linuxfoundation.org>
@@ -45,63 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krishnamraju Eraparaju <krishna2@chelsio.com>
+From: Aric Cyr <aric.cyr@amd.com>
 
-[ Upstream commit 663218a3e715fd9339d143a3e10088316b180f4f ]
+[ Upstream commit 2b63d0ec0daf79ba503fa8bfa25e07dc3da274f3 ]
 
-Warnings like below can fill up the dmesg while disconnecting RDMA
-connections.
-Hence, remove the unwanted WARN_ON.
+[Why]
+Engine can be NULL in some cases, so we must not acquire it.
 
-  WARNING: CPU: 6 PID: 0 at drivers/infiniband/sw/siw/siw_cm.c:1229 siw_cm_llp_data_ready+0xc1/0xd0 [siw]
-  RIP: 0010:siw_cm_llp_data_ready+0xc1/0xd0 [siw]
-  Call Trace:
-   <IRQ>
-   tcp_data_queue+0x226/0xb40
-   tcp_rcv_established+0x220/0x620
-   tcp_v4_do_rcv+0x12a/0x1e0
-   tcp_v4_rcv+0xb05/0xc00
-   ip_local_deliver_finish+0x69/0x210
-   ip_local_deliver+0x6b/0xe0
-   ip_rcv+0x273/0x362
-   __netif_receive_skb_core+0xb35/0xc30
-   netif_receive_skb_internal+0x3d/0xb0
-   napi_gro_frags+0x13b/0x200
-   t4_ethrx_handler+0x433/0x7d0 [cxgb4]
-   process_responses+0x318/0x580 [cxgb4]
-   napi_rx_handler+0x14/0x100 [cxgb4]
-   net_rx_action+0x149/0x3b0
-   __do_softirq+0xe3/0x30a
-   irq_exit+0x100/0x110
-   do_IRQ+0x7f/0xe0
-   common_interrupt+0xf/0xf
-   </IRQ>
+[How]
+Check for NULL engine before acquiring.
 
-Link: https://lore.kernel.org/r/20200207141429.27927-1-krishna2@chelsio.com
-Signed-off-by: Krishnamraju Eraparaju <krishna2@chelsio.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Aric Cyr <aric.cyr@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/siw/siw_cm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_aux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
-index 3bccfef40e7e1..ac86363ce1a24 100644
---- a/drivers/infiniband/sw/siw/siw_cm.c
-+++ b/drivers/infiniband/sw/siw/siw_cm.c
-@@ -1225,10 +1225,9 @@ static void siw_cm_llp_data_ready(struct sock *sk)
- 	read_lock(&sk->sk_callback_lock);
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+index 793c0cec407f9..5fcffb29317e3 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
+@@ -398,7 +398,7 @@ static bool acquire(
+ {
+ 	enum gpio_result result;
  
- 	cep = sk_to_cep(sk);
--	if (!cep) {
--		WARN_ON(1);
-+	if (!cep)
- 		goto out;
--	}
-+
- 	siw_dbg_cep(cep, "state: %d\n", cep->state);
+-	if (!is_engine_available(engine))
++	if ((engine == NULL) || !is_engine_available(engine))
+ 		return false;
  
- 	switch (cep->state) {
+ 	result = dal_ddc_open(ddc, GPIO_MODE_HARDWARE,
 -- 
 2.20.1
 
