@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A411B176D59
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 746F6176D70
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:03:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbgCCCqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:46:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40550 "EHLO mail.kernel.org"
+        id S1727714AbgCCDDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 22:03:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbgCCCqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:46:18 -0500
+        id S1727228AbgCCCqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:46:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D92B52465E;
-        Tue,  3 Mar 2020 02:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D3C424681;
+        Tue,  3 Mar 2020 02:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203577;
-        bh=8zSyvj3eyDdfA65LUCwZBtK20UW9f3gErYuT4Yv70vQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xKzP7lUJ5Q4ZJdEW7E5cni6VrppR42ewt3/qKqoXwT6DGq6xoscUTWCvgZeMH44q/
-         5BUJHWG0K8eZRvP8z8sk6myUOzS6gkIHIMt6ywtclce/WfBGvtH5Y2p+zyyI1SpYOu
-         WwHtaw58b+aRxWfoPY5zJktEFPjueFkzOFPCOWEM=
+        s=default; t=1583203581;
+        bh=3TigfwXrdUcwuJtxDdM91sunQiw06FIrpMZszuW3/3k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Z6oaT39MqzyUR6VPTFxGStwF3cqMdBRHE620C2HV8khFPWh9PSEfWNXlIEjCFID+K
+         fyk3hTQXMOgMjjkOFVslw9nRLHwzygwO7/IUeu8mAk0f5PWdjJ21uWCPItVNmZV95S
+         Wm8qdN3rK+aHBL0KsTpOykNH+lQtI5SOogVVRoXk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 5.5 01/66] ALSA: hda: do not override bus codec_mask in link_get()
-Date:   Mon,  2 Mar 2020 21:45:10 -0500
-Message-Id: <20200303024615.8889-1-sashal@kernel.org>
+Cc:     Nikita Sobolev <Nikita.Sobolev@synopsys.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 04/66] Kernel selftests: tpm2: check for tpm support
+Date:   Mon,  2 Mar 2020 21:45:13 -0500
+Message-Id: <20200303024615.8889-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200303024615.8889-1-sashal@kernel.org>
+References: <20200303024615.8889-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,59 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+From: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
 
-[ Upstream commit 43bcb1c0507858cdc95e425017dcc33f8105df39 ]
+[ Upstream commit b32694cd0724d4ceca2c62cc7c3d3a8d1ffa11fc ]
 
-snd_hdac_ext_bus_link_get() does not work correctly in case
-there are multiple codecs on the bus. It unconditionally
-resets the bus->codec_mask value. As per documentation in
-hdaudio.h and existing use in client code, this field should
-be used to store bit flag of detected codecs on the bus.
+tpm2 tests set fails if there is no /dev/tpm0 and /dev/tpmrm0
+supported. Check if these files exist before run and mark test as
+skipped in case of absence.
 
-By overwriting value of the codec_mask, information on all
-detected codecs is lost. No current user of hdac is impacted,
-but use of bus->codec_mask is planned in future patches
-for SOF.
-
-Signed-off-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Link: https://lore.kernel.org/r/20200206200223.7715-1-kai.vehmanen@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/hda/ext/hdac_ext_controller.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/testing/selftests/tpm2/test_smoke.sh | 13 +++++++++++--
+ tools/testing/selftests/tpm2/test_space.sh |  9 ++++++++-
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/sound/hda/ext/hdac_ext_controller.c b/sound/hda/ext/hdac_ext_controller.c
-index cfab60d88c921..09ff209df4a30 100644
---- a/sound/hda/ext/hdac_ext_controller.c
-+++ b/sound/hda/ext/hdac_ext_controller.c
-@@ -254,6 +254,7 @@ EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_link_power_down_all);
- int snd_hdac_ext_bus_link_get(struct hdac_bus *bus,
- 				struct hdac_ext_link *link)
- {
-+	unsigned long codec_mask;
- 	int ret = 0;
+diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
+index 8155c2ea7ccbb..b630c7b5950a9 100755
+--- a/tools/testing/selftests/tpm2/test_smoke.sh
++++ b/tools/testing/selftests/tpm2/test_smoke.sh
+@@ -1,8 +1,17 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++self.flags = flags
  
- 	mutex_lock(&bus->lock);
-@@ -280,9 +281,11 @@ int snd_hdac_ext_bus_link_get(struct hdac_bus *bus,
- 		 *  HDA spec section 4.3 - Codec Discovery
- 		 */
- 		udelay(521);
--		bus->codec_mask = snd_hdac_chip_readw(bus, STATESTS);
--		dev_dbg(bus->dev, "codec_mask = 0x%lx\n", bus->codec_mask);
--		snd_hdac_chip_writew(bus, STATESTS, bus->codec_mask);
-+		codec_mask = snd_hdac_chip_readw(bus, STATESTS);
-+		dev_dbg(bus->dev, "codec_mask = 0x%lx\n", codec_mask);
-+		snd_hdac_chip_writew(bus, STATESTS, codec_mask);
-+		if (!bus->codec_mask)
-+			bus->codec_mask = codec_mask;
- 	}
+-python -m unittest -v tpm2_tests.SmokeTest
+-python -m unittest -v tpm2_tests.AsyncTest
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++
++if [ -f /dev/tpm0 ] ; then
++	python -m unittest -v tpm2_tests.SmokeTest
++	python -m unittest -v tpm2_tests.AsyncTest
++else
++	exit $ksft_skip
++fi
  
- 	mutex_unlock(&bus->lock);
+ CLEAR_CMD=$(which tpm2_clear)
+ if [ -n $CLEAR_CMD ]; then
+diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
+index a6f5e346635e5..180b469c53b47 100755
+--- a/tools/testing/selftests/tpm2/test_space.sh
++++ b/tools/testing/selftests/tpm2/test_space.sh
+@@ -1,4 +1,11 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+ 
+-python -m unittest -v tpm2_tests.SpaceTest
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++if [ -f /dev/tpmrm0 ] ; then
++	python -m unittest -v tpm2_tests.SpaceTest
++else
++	exit $ksft_skip
++fi
 -- 
 2.20.1
 
