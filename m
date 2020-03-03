@@ -2,60 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70314176D96
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:37:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01098176D8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:32:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbgCCDhq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 22:37:46 -0500
-Received: from atlantico.unifap.br ([200.139.21.37]:54222 "EHLO
-        atlantico.unifap.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgCCDhq (ORCPT
+        id S1727018AbgCCDc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 22:32:26 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:55304 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbgCCDc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 22:37:46 -0500
-X-Greylist: delayed 2431 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 22:37:45 EST
-Received: from localhost (localhost [127.0.0.1])
-        by atlantico.unifap.br (Postfix) with ESMTP id E24823C90EE6;
-        Mon,  2 Mar 2020 23:24:50 -0300 (-03)
-Received: from atlantico.unifap.br ([127.0.0.1])
-        by localhost (atlantico.unifap.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id qHGqnwB-iH90; Mon,  2 Mar 2020 23:24:50 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by atlantico.unifap.br (Postfix) with ESMTP id 4AAA93C91347;
-        Mon,  2 Mar 2020 23:24:49 -0300 (-03)
-X-Virus-Scanned: amavisd-new at unifap.br
-Received: from atlantico.unifap.br ([127.0.0.1])
-        by localhost (atlantico.unifap.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id iXmkTyCVEKTn; Mon,  2 Mar 2020 23:24:49 -0300 (-03)
-Received: from atlantico.unifap.br (atlantico.unifap.br [200.139.21.37])
-        by atlantico.unifap.br (Postfix) with ESMTP id 5FE7C3C90EDB;
-        Mon,  2 Mar 2020 23:24:47 -0300 (-03)
-Date:   Mon, 2 Mar 2020 23:24:47 -0300 (BRT)
-From:   Trust Online Credit Bvba <rute@unifap.br>
-Reply-To: "info@trustonlinecreditbvba.com" <info@trustonlinecreditbvba.com>
-Message-ID: <953401153.773874.1583202287349.JavaMail.zimbra@unifap.br>
-Subject: lening
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [200.139.21.37]
-X-Mailer: Zimbra 8.8.12_GA_3807 (zclient/8.8.12_GA_3807)
-Thread-Index: YCz+CGTMFhxgibhuBIZTvxQGl4p66A==
-Thread-Topic: lening
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 2 Mar 2020 22:32:26 -0500
+Received: by mail-pj1-f65.google.com with SMTP id a18so700287pjs.5;
+        Mon, 02 Mar 2020 19:32:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lAJWYCHPBwbTZmy3CiLGkMtDA8pTL5n25oGIItGeMNY=;
+        b=ku+HgPVxDA+o9Bbry1KSvBM5GvloyefWo5xjpCjFE4hhNhcMujErT+uE7rUw26W6sw
+         r3KUouVZo2G1fqyRz6CFCJ3MUQYnL+lTJdz6IoBMNTNmQc5FdmAX6XLG4kyNwCdEgikw
+         fz9D6ImwTBdBuQiDL2pBa/H0C7DSzrzpv+mkiQtnsc6RwpwqvfUVOYjP5zBargbW1ehs
+         PRUqOyqKsH8crBsRoBp7sSteit0FMjG6BGuI8pkyI1bpKhY+QxHpMtA0yx9d44vEIa7V
+         J/3HPjHLPXpVFJx4gzePGVVOj9qNG7P9IiOuRvDXipj0VuYehEs4Z2Yz/oF8I9T9X0Ze
+         DwTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lAJWYCHPBwbTZmy3CiLGkMtDA8pTL5n25oGIItGeMNY=;
+        b=b3EdVhtmzCTBCtCw+You1XGLxbOKKdak/M+krlWC9zDiMr220zMBA3QlJx3SmyXkBc
+         URCx2AwkjvF0VUUJI3Uqg82fZLiATH0WwpYDDaOx8Mhojp9zAgOFMmTO7idE0TqAiovS
+         45RNhcppAoNDLziCxnW09GsKPCKwH00NVXrLfzPbrux33mq8wG/Tpnt8TDl/eWl0OFAE
+         +p9PQ8yGEbx6CkgENcc8kNSAADyuvFOPdcZ7OBgxu10dtn2NMx3MqXePzeX47QpbMi8w
+         0jthHT/Loeo0IC6I5Vi2QOWG4dExmJH7eb8sAYnL4sMvs9zBOyr/mJLHXNWJK4oehPoQ
+         Wrkw==
+X-Gm-Message-State: ANhLgQ0MPznX7eEzMhZ5gXd4H6KqXu+oPLxUdlI05mkzFILpMMf7UJr0
+        tolcf1G9pQjHRVff/ll3yrk=
+X-Google-Smtp-Source: ADFU+vtn8ib+G38fQML2jOCEFGVkNU/EFpfxLPffDUyi+Y6XsnNWcHHfrxaWEtuVaQSAeJDZWx5SOA==
+X-Received: by 2002:a17:902:d394:: with SMTP id e20mr2240529pld.239.1583206344690;
+        Mon, 02 Mar 2020 19:32:24 -0800 (PST)
+Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id d77sm9344494pfd.109.2020.03.02.19.32.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Mar 2020 19:32:24 -0800 (PST)
+From:   Baolin Wang <baolin.wang7@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     rdunlap@infradead.org, orsonzhai@gmail.com, zhang.lyra@gmail.com,
+        baolin.wang7@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: sprd: Fix the kconfig warning
+Date:   Tue,  3 Mar 2020 11:32:15 +0800
+Message-Id: <eeb12d7843fb06f80e19f98eb25711231c3b610f.1583205650.git.baolin.wang7@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Goedendag,
-      Dit is Trust Online Credit Bvba, wij werken onder een korte, duidelijke en begrijpelijke voorwaarden Wij verstrekken leningen tegen een lage rente Gewoonlijk vanaf 3%. Merk op dat dit aanbod is voor serieus ingestelde personen, bedrijven en bedrijven. Ontvang uw lening om uw financiële problemen op te lossen, zoals rekeningen afbetalen, nieuwe bedrijven oprichten, oude bedrijven opnieuw vestigen
+On X86 plaform, if the CONFIG_OF is not selected, and set the
+CONFIG_SPRD_SC9860 as 'm', that will cause below waring:
 
-Jullie namen:
-Benodigde leningbedrag:
-Looptijd:
+WARNING: unmet direct dependencies detected for PINCTRL_SPRD
+  Depends on [n]: PINCTRL [=y] && OF [=n] && (ARCH_SPRD || COMPILE_TEST [=y])
+  Selected by [m]:
+  - PINCTRL_SPRD_SC9860 [=m] && PINCTRL [=y]
 
-Trust Online Credit Bvba
-E-mail: info@trustonlinecreditbvba.com
-Website: https://trustonlinecreditbvba.com/
-Bericht op WhatsApp +44 7480 726469
-Telefoonnummer: +44 7723 723485
+Thus move the configuration dependency under CONFIG_PINCTRL_SPRD_SC9860
+to fix the warning.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+---
+ drivers/pinctrl/sprd/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/sprd/Kconfig b/drivers/pinctrl/sprd/Kconfig
+index c9e7f0b..eef35d0 100644
+--- a/drivers/pinctrl/sprd/Kconfig
++++ b/drivers/pinctrl/sprd/Kconfig
+@@ -4,9 +4,7 @@
+ #
+ 
+ config PINCTRL_SPRD
+-	tristate "Spreadtrum pinctrl driver"
+-	depends on OF
+-	depends on ARCH_SPRD || COMPILE_TEST
++	tristate
+ 	select PINMUX
+ 	select PINCONF
+ 	select GENERIC_PINCONF
+@@ -16,6 +14,8 @@ config PINCTRL_SPRD
+ 
+ config PINCTRL_SPRD_SC9860
+ 	tristate "Spreadtrum SC9860 pinctrl driver"
++	depends on OF
++	depends on ARCH_SPRD || COMPILE_TEST
+ 	select PINCTRL_SPRD
+ 	help
+ 	  Say Y here to enable Spreadtrum SC9860 pinctrl driver
+-- 
+1.9.1
+
