@@ -2,82 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2A2F176B91
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EACE6176B6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbgCCCud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:50:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47160 "EHLO mail.kernel.org"
+        id S1729130AbgCCCuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:50:19 -0500
+Received: from mga17.intel.com ([192.55.52.151]:48417 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728528AbgCCCuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:50:21 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB4C7246E7;
-        Tue,  3 Mar 2020 02:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203820;
-        bh=QtzMFVaHtxpE8ylLuoAKfAcoSpCasm32Oud+7bDT11U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WpD1c3BFZMOV983xHGRLbw6C/6TwMNUyylENhNLiUwZ8tSJSFBY/oxyw+DqISyuMy
-         DKaN9OVH/JgHMcxMrt/0mSYLKy9Uvdbi3/TiKSJ6W3YUVaUT02k4dPeQe1l/XJxwkk
-         xpvPKullfR3q3hTZEZSUhd45+9ns95zO56KTLrfo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "H.J. Lu" <hjl.tools@gmail.com>, Borislav Petkov <bp@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 13/13] x86/boot/compressed: Don't declare __force_order in kaslr_64.c
-Date:   Mon,  2 Mar 2020 21:50:02 -0500
-Message-Id: <20200303025002.10600-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200303025002.10600-1-sashal@kernel.org>
-References: <20200303025002.10600-1-sashal@kernel.org>
+        id S1729082AbgCCCuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:50:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 18:50:08 -0800
+X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
+   d="scan'208";a="233439160"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.30.67]) ([10.255.30.67])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 02 Mar 2020 18:50:05 -0800
+Subject: Re: [PATCH 1/6] KVM: x86: Fix tracing of CPUID.function when function
+ is out-of-range
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>
+References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
+ <20200302195736.24777-2-sean.j.christopherson@intel.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <6b41fc5c-f7f4-b20d-cfb5-95bf13cc7534@intel.com>
+Date:   Tue, 3 Mar 2020 10:50:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200302195736.24777-2-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H.J. Lu" <hjl.tools@gmail.com>
+On 3/3/2020 3:57 AM, Sean Christopherson wrote:
+> Rework kvm_cpuid() to query entry->function when adjusting the output
+> values so that the original function (in the aptly named "function") is
+> preserved for tracing.  This fixes a bug where trace_kvm_cpuid() will
+> trace the max function for a range instead of the requested function if
+> the requested function is out-of-range and an entry for the max function
+> exists.
+> 
+> Fixes: 43561123ab37 ("kvm: x86: Improve emulation of CPUID leaves 0BH and 1FH")
+> Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Cc: Jim Mattson <jmattson@google.com>
+> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/kvm/cpuid.c | 15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index b1c469446b07..6be012937eba 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -997,12 +997,12 @@ static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
+>   	return max && function <= max->eax;
+>   }
+>   
+> +/* Returns true if the requested leaf/function exists in guest CPUID. */
+>   bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+>   	       u32 *ecx, u32 *edx, bool check_limit)
+>   {
+> -	u32 function = *eax, index = *ecx;
+> +	const u32 function = *eax, index = *ecx;
+>   	struct kvm_cpuid_entry2 *entry;
+> -	struct kvm_cpuid_entry2 *max;
+>   	bool found;
+>   
+>   	entry = kvm_find_cpuid_entry(vcpu, function, index);
+> @@ -1015,18 +1015,17 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+>   	 */
+>   	if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
+>   	    !cpuid_function_in_range(vcpu, function)) {
+> -		max = kvm_find_cpuid_entry(vcpu, 0, 0);
+> -		if (max) {
+> -			function = max->eax;
+> -			entry = kvm_find_cpuid_entry(vcpu, function, index);
+> -		}
+> +		entry = kvm_find_cpuid_entry(vcpu, 0, 0);
+> +		if (entry)
+> +			entry = kvm_find_cpuid_entry(vcpu, entry->eax, index);
 
-[ Upstream commit df6d4f9db79c1a5d6f48b59db35ccd1e9ff9adfc ]
+There is a problem.
 
-GCC 10 changed the default to -fno-common, which leads to
+when queried leaf is out of range on Intel CPU, it returns the maximum 
+basic leaf, and any dependence on input ECX (i.e., subleaf) value in the 
+basic leaf is honored. As disclaimed in SDM of CPUID instruction.
 
-    LD      arch/x86/boot/compressed/vmlinux
-  ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; \
-    arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
-  make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
+The ECX should be honored if and only the leaf has a significant index.
+If the leaf doesn't has a significant index, it just ignores the EDX 
+input in bare metal.
 
-Since __force_order is already provided in pgtable_64.c, there is no
-need to declare __force_order in kaslr_64.c.
+So it should be something like:
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200124181811.4780-1-hjl.tools@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/boot/compressed/pagetable.c | 3 ---
- 1 file changed, 3 deletions(-)
+if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
+	!cpuid_function_in_range(vcpu, function)) {
+	entry = kvm_find_cpuid_entry(vcpu, 0, 0);
+	if (entry) {
+		entry = kvm_find_cpuid_entry(vcpu, entry->eax, 0);
+		if (entry &&
+		    entry->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX ) {
+			entry = kvm_find_cpuid_entry(vcpu, entry->eax,
+						     index);
+		}
+	}
+}
 
-diff --git a/arch/x86/boot/compressed/pagetable.c b/arch/x86/boot/compressed/pagetable.c
-index 56589d0a804b1..2591f8f6d45f2 100644
---- a/arch/x86/boot/compressed/pagetable.c
-+++ b/arch/x86/boot/compressed/pagetable.c
-@@ -25,9 +25,6 @@
- #define __PAGE_OFFSET __PAGE_OFFSET_BASE
- #include "../../mm/ident_map.c"
- 
--/* Used by pgtable.h asm code to force instruction serialization. */
--unsigned long __force_order;
--
- /* Used to track our page table allocation area. */
- struct alloc_pgt_data {
- 	unsigned char *pgt_buf;
--- 
-2.20.1
+>   	}
+>   	if (entry) {
+>   		*eax = entry->eax;
+>   		*ebx = entry->ebx;
+>   		*ecx = entry->ecx;
+>   		*edx = entry->edx;
+> -		if (function == 7 && index == 0) {
+> +
+> +		if (entry->function == 7 && index == 0) {
+>   			u64 data;
+>   		        if (!__kvm_get_msr(vcpu, MSR_IA32_TSX_CTRL, &data, true) &&
+>   			    (data & TSX_CTRL_CPUID_CLEAR))
+> 
 
