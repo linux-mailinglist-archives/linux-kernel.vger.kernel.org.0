@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B75FE177ECB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A86D177FDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbgCCRrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:47:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53668 "EHLO mail.kernel.org"
+        id S1732364AbgCCRxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:53:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731258AbgCCRqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:46:55 -0500
+        id S1731538AbgCCRxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:53:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1399C2146E;
-        Tue,  3 Mar 2020 17:46:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 159C32072D;
+        Tue,  3 Mar 2020 17:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257614;
-        bh=kAmeCMn1hi+tsY9/6rwz8rAJRjGcHO2DvZ5YLO9aTio=;
+        s=default; t=1583257990;
+        bh=9O5ymUWpNt3jhqdPiucuIYgwSShPohd5ByDTUrD1C6E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CZrW4osmq7leyYFsC8Xe3F+SoHiGFm89M0ppSa9qvw83m9sqqqTXH62tfRqZGm/SG
-         gDrG9IzE7zfESPAMZTGEeX0aOc2LnkcnMPs8MRtRmmwM0W7yggksvyH6ekBadyYOYf
-         3vxsa3+smP7qZz4dGjBVevVcZhyMi+tH2hKtR8Mc=
+        b=CP15yh+NlENCcMclL9fGwJW0pnKY0889YzsuR+d2hXwAR5I+A5MvIPwQHPQFlgcy7
+         uJMtpOr21Ci/QDUweaZAzNiEClKwAPhSnpt1R2uR8xZ7K2hvSdLdGrEH2cFYiD5dRH
+         rhG4VMRs7w8sjF02W4DxCtoLcWuPP6L/CpQdWydM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 062/176] net: ena: ethtool: use correct value for crc32 hash
-Date:   Tue,  3 Mar 2020 18:42:06 +0100
-Message-Id: <20200303174311.798500355@linuxfoundation.org>
+Subject: [PATCH 5.4 029/152] cfg80211: check wiphy driver existence for drvinfo report
+Date:   Tue,  3 Mar 2020 18:42:07 +0100
+Message-Id: <20200303174305.743317858@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sameeh Jubran <sameehj@amazon.com>
+From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-[ Upstream commit 886d2089276e40d460731765083a741c5c762461 ]
+[ Upstream commit bfb7bac3a8f47100ebe7961bd14e924c96e21ca7 ]
 
-Up till kernel 4.11 there was no enum defined for crc32 hash in ethtool,
-thus the xor enum was used for supporting crc32.
+When preparing ethtool drvinfo, check if wiphy driver is defined
+before dereferencing it. Driver may not exist, e.g. if wiphy is
+attached to a virtual platform device.
 
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Link: https://lore.kernel.org/r/20200203105644.28875-1-sergey.matyukevich.os@quantenna.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_ethtool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/ethtool.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-index 610a7c63e1742..4ad69066e7846 100644
---- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-@@ -693,7 +693,7 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
- 		func = ETH_RSS_HASH_TOP;
- 		break;
- 	case ENA_ADMIN_CRC32:
--		func = ETH_RSS_HASH_XOR;
-+		func = ETH_RSS_HASH_CRC32;
- 		break;
- 	default:
- 		netif_err(adapter, drv, netdev,
-@@ -739,7 +739,7 @@ static int ena_set_rxfh(struct net_device *netdev, const u32 *indir,
- 	case ETH_RSS_HASH_TOP:
- 		func = ENA_ADMIN_TOEPLITZ;
- 		break;
--	case ETH_RSS_HASH_XOR:
-+	case ETH_RSS_HASH_CRC32:
- 		func = ENA_ADMIN_CRC32;
- 		break;
- 	default:
+diff --git a/net/wireless/ethtool.c b/net/wireless/ethtool.c
+index a9c0f368db5d2..24e18405cdb48 100644
+--- a/net/wireless/ethtool.c
++++ b/net/wireless/ethtool.c
+@@ -7,9 +7,13 @@
+ void cfg80211_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info)
+ {
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
++	struct device *pdev = wiphy_dev(wdev->wiphy);
+ 
+-	strlcpy(info->driver, wiphy_dev(wdev->wiphy)->driver->name,
+-		sizeof(info->driver));
++	if (pdev->driver)
++		strlcpy(info->driver, pdev->driver->name,
++			sizeof(info->driver));
++	else
++		strlcpy(info->driver, "N/A", sizeof(info->driver));
+ 
+ 	strlcpy(info->version, init_utsname()->release, sizeof(info->version));
+ 
 -- 
 2.20.1
 
