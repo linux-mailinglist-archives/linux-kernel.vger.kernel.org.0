@@ -2,140 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F809177254
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:26:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D52177263
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:30:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbgCCJ0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 04:26:33 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37669 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbgCCJ0d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:26:33 -0500
-Received: by mail-il1-f193.google.com with SMTP id a6so2162377ilc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 01:26:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q9Z8EsyPHV9U0NaiC6B9M0rvBM6gtbnKLyzu2j7BTPk=;
-        b=jTYYh8x31RkzNU33Z6lQeUgOoxxpnukS+yid4FC8FJzzyyH0SDDGWJ7wmGFqxzt1U3
-         ifsrEQ7nwWxkNrLVlPAYrCXiE7lSYj+WiO72qZu3u+/Oo03L4Xpoloy0eSa5/wZjMVQH
-         faFgkLebRgrbn85uVDC/g5bh+gX1xho/fGSc0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q9Z8EsyPHV9U0NaiC6B9M0rvBM6gtbnKLyzu2j7BTPk=;
-        b=rrvV7sv8DSnqbWS6OJhcuaOigYtkteEq0Ck0azDF/dd7j/dsl7xH93Mrt/Kcq6dOZv
-         dZ4WNhV2SYcwFhcT8zsTNeUTDqlD/Gd8iAklFtq++75NwDVTAAGOsptQXgmbtwZm7NN5
-         WQm+wfWH0fJxo8YnLntsEDOTfkwKBvw01vhbiJfSDJNujyxy3+O8/iDL27MHhrnK63A3
-         gZaf99Kr3TNND4+h2DKWoQbSoZSnEjgzwO2ahxo2r9+6+D3lW1dTydZigt6oFvqYRixr
-         15NxWyBjTWFIb2eiItjL1nXYl1k92U2JC5qPfAgydeFSLVO66vk9jZzh1RhCfR2TxdLt
-         TUmA==
-X-Gm-Message-State: ANhLgQ0J7+UmSWA25Ljg2lZZA3ga2bqthl2+wwtQUGZ+rqjbKqfvMQlw
-        ZidxKWUyJq+TgpQj8wdjJ3fXte8wfQe/th6s9oydKg==
-X-Google-Smtp-Source: ADFU+vskIDQQ4v2+q55l4lXqoUZZbVj8UY7SarjpCJCCHM9M7LqyjVaTqkIaH0IvB20GTwnkNr3zZG8eQdj4RMYQWMA=
-X-Received: by 2002:a92:8d41:: with SMTP id s62mr3559102ild.63.1583227592332;
- Tue, 03 Mar 2020 01:26:32 -0800 (PST)
+        id S1728169AbgCCJa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 04:30:26 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10715 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727870AbgCCJa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 04:30:26 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 63E242D7F5A184E362CF;
+        Tue,  3 Mar 2020 17:30:22 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 3 Mar 2020
+ 17:30:15 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <hverkuil@xs4all.nl>, <mchehab@kernel.org>,
+        <gregkh@linuxfoundation.org>, <yuehaibing@huawei.com>,
+        <tglx@linutronix.de>
+CC:     <linux-media@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] staging: media: usbvision: Add missing MEDIA_USB_SUPPORT dependency
+Date:   Tue, 3 Mar 2020 17:27:47 +0800
+Message-ID: <20200303092747.28360-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com> <1509948.1583226773@warthog.procyon.org.uk>
-In-Reply-To: <1509948.1583226773@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 3 Mar 2020 10:26:21 +0100
-Message-ID: <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 10:13 AM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > I'm doing a patch.   Let's see how it fares in the face of all these
-> > preconceptions.
->
-> Don't forget the efficiency criterion.  One reason for going with fsinfo(2) is
-> that scanning /proc/mounts when there are a lot of mounts in the system is
-> slow (not to mention the global lock that is held during the read).
->
-> Now, going with sysfs files on top of procfs links might avoid the global
-> lock, and you can avoid rereading the options string if you export a change
-> notification, but you're going to end up injecting a whole lot of pathwalk
-> latency into the system.
+VIDEO_USBVISION driver depends on MEDIA_USB_SUPPORT
 
-Completely irrelevant.  Cached lookup is so much optimized, that you
-won't be able to see any of it.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 8fb12ce2ec9d ("media: usbvision: deprecate driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/media/usbvision/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No, I don't think this is going to be a performance issue at all, but
-if anything we could introduce a syscall
+diff --git a/drivers/staging/media/usbvision/Kconfig b/drivers/staging/media/usbvision/Kconfig
+index 7903f55..c6e1afb 100644
+--- a/drivers/staging/media/usbvision/Kconfig
++++ b/drivers/staging/media/usbvision/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config VIDEO_USBVISION
+ 	tristate "USB video devices based on Nogatech NT1003/1004/1005 (Deprecated)"
+-	depends on I2C && VIDEO_V4L2
++	depends on MEDIA_USB_SUPPORT && I2C && VIDEO_V4L2
+ 	select VIDEO_TUNER
+ 	select VIDEO_SAA711X if MEDIA_SUBDRV_AUTOSELECT
+ 	help
+-- 
+2.7.4
 
-  ssize_t readfile(int dfd, const char *path, char *buf, size_t
-bufsize, int flags);
 
-that is basically the equivalent of open + read + close, or even a
-vectored variant that reads multiple files.  But that's off topic
-again, since I don't think there's going to be any performance issue
-even with plain I/O syscalls.
-
->
-> On top of that, it isn't going to help with the case that I'm working towards
-> implementing where a container manager can monitor for mounts taking place
-> inside the container and supervise them.  What I'm proposing is that during
-> the action phase (eg. FSCONFIG_CMD_CREATE), fsconfig() would hand an fd
-> referring to the context under construction to the manager, which would then
-> be able to call fsinfo() to query it and fsconfig() to adjust it, reject it or
-> permit it.  Something like:
->
->         fd = receive_context_to_supervise();
->         struct fsinfo_params params = {
->                 .flags          = FSINFO_FLAGS_QUERY_FSCONTEXT,
->                 .request        = FSINFO_ATTR_SB_OPTIONS,
->         };
->         fsinfo(fd, NULL, &params, sizeof(params), buffer, sizeof(buffer));
->         supervise_parameters(buffer);
->         fsconfig(fd, FSCONFIG_SET_FLAG, "hard", NULL, 0);
->         fsconfig(fd, FSCONFIG_SET_STRING, "vers", "4.2", 0);
->         fsconfig(fd, FSCONFIG_CMD_SUPERVISE_CREATE, NULL, NULL, 0);
->         struct fsinfo_params params = {
->                 .flags          = FSINFO_FLAGS_QUERY_FSCONTEXT,
->                 .request        = FSINFO_ATTR_SB_NOTIFICATIONS,
->         };
->         struct fsinfo_sb_notifications sbnotify;
->         fsinfo(fd, NULL, &params, sizeof(params), &sbnotify, sizeof(sbnotify));
->         watch_super(fd, "", AT_EMPTY_PATH, watch_fd, 0x03);
->         fsconfig(fd, FSCONFIG_CMD_SUPERVISE_PERMIT, NULL, NULL, 0);
->         close(fd);
->
-> However, the supervised mount may be happening in a completely different set
-> of namespaces, in which case the supervisor presumably wouldn't be able to see
-> the links in procfs and the relevant portions of sysfs.
-
-It would be a "jump" link to the otherwise invisible directory.
-
-Thanks,
-Miklos
