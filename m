@@ -2,62 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9B43176F7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 936BA176F82
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgCCGbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 01:31:34 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36265 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgCCGbe (ORCPT
+        id S1727423AbgCCGeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 01:34:05 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:42662 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbgCCGeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 01:31:34 -0500
-Received: by mail-io1-f65.google.com with SMTP id d15so2350320iog.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 22:31:34 -0800 (PST)
+        Tue, 3 Mar 2020 01:34:04 -0500
+Received: by mail-ot1-f44.google.com with SMTP id 66so1905720otd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 22:34:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=VQgRiL13w2lnC5yZKNcbg2HiB3UGZa2RAJWpzb90ZSA=;
-        b=Fwcz0OnvVgiOVDe5s5GvTfFgx9j6eF3GzPK/tq/GwS1ybU09Y+Z5xM9fM+EwQGxcry
-         csDCsYclcey7u1pOR8G2IHXBqYttSO7wPnnNwVOoYIb9km01RDvGOBBcxEu6VOYTvqPE
-         4PNQk15v9LV7gf7SGlRh+gQpJhyzyUryCUmrw0qgvpo42e6QMK3L0EoO+IA/ulxaCDBb
-         0r5p49toHt0M7WomS2XY8PYkxChxZN4J8TlAf3I6uNdRGh2Tts/bF/uBHWhb5ysDajQg
-         hCLt9+tTyPjVVf/vdTV8/XVzfZ43IR6/a72VCO4x4PIpfEmdVtv7vydzRVjBktGP6SyW
-         Glfw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=nd/TEeW4LQOvJMaEt1rZVabT2kTJB3dRDcejupbt5xY=;
+        b=RT+Kea4iOHlH9H/H9pNH1Sk5JZ4dns1gAbgYhpwbXqqZbzVX5jEh1et1qoLilG5wVs
+         oO2JK/0A0BWeTpwrk38qIZ6XZ4P3iBdLicT+oqLeMT/lp5vTN+FuRTu9OOkmhkC8cJca
+         VNnFYWcAPZnYcrYLsnEGl2OTcQKWgZgulNDfrJbAPifq7V9ST4c9TsnqL5L3xl31itA7
+         zTqGIMx5oodNwYKcTa39nYsVUZd9viLRjg7pyd6NoVpKZ1KakGNLr2ZMf2jo0YkKKo7G
+         qZSY6uQZE16aoTg0ZtnBdaWfz1YWULza/Pk+PtsfaW25hJEnjirgGc/h7Hl4hMWxRARM
+         8K9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=VQgRiL13w2lnC5yZKNcbg2HiB3UGZa2RAJWpzb90ZSA=;
-        b=d/V+uRY+xWuPoAVboJ3nVfy5m94ZKB2cYoFgPpiNcj/oB+6E3K2tf49t4s93/q+9+r
-         cnF4eOgh58VJRj24pEG+Amat8GM3+o3xm8RfeeG7O/ao4gLFjdzQJDRxlGVE3neCmfXy
-         yTx4lCLh9zUnUXkAmuzuOOmwPJ+AB9iCkO6UqX6+lBhNrInK5z2Uy6FxEDQR4Mzp4yMn
-         xbS+ZlBrrrKioQa1bdfx8/S6cQYM/XxCUTRV/pm+6WkaeQl/P2lVaLg2kKhQsIP3miYu
-         /0NXmK44yditpflZGMLftXCTMPurM561NHH8plnjZrAsW5kswhh7HchAjf4EMqThzIlP
-         ngQQ==
-X-Gm-Message-State: ANhLgQ2AdJ5yklovRh10Pr0OQT1dCqSZ3GSf5WaS+SUVlpu+R8j12bg4
-        6qRMQR2PcVRtg3wgjPJPu/u+Eqvi/8esGWESyHg=
-X-Google-Smtp-Source: ADFU+vtN/+P4vF5dzQt0asjJBA+xGlft6CTP3xUAq69VUQJnTZcY3j1Mojni5DQHZ1LcWrQuTfGqQsb776WxddOTh5c=
-X-Received: by 2002:a6b:b7cd:: with SMTP id h196mr2575101iof.123.1583217093389;
- Mon, 02 Mar 2020 22:31:33 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=nd/TEeW4LQOvJMaEt1rZVabT2kTJB3dRDcejupbt5xY=;
+        b=IqBv5BjWdGmOCnHTJNteBlgrHKpy4kv9Uu4bqWokC2OPmpRb0VQe1b0Wd2oRmwrKBU
+         phXPLfsKavhsjcizWoV79sd/IBAh9aOHqme6KpxFGnsY7h9tBd1OXtBDdzHhDRe7RS8F
+         zJ6qC1KroEcudBL/jfJBO5igDv0ksUT5FSkq6NhVsviikSpYZvizLt2mbCdkc3PdsOhB
+         Y6aNyCbreodsLae+3ZFcYyJB+ZdkMl/LxgnqknlKAEjAeHbTRTKiawsbv4LjZ037kXfs
+         GpQEMcHigwGGc6a4P8aodWxpxjkW/4FDVIvBrWJZ2hK2KIGImXnZyrEUqvJTYwzkluNX
+         3MdA==
+X-Gm-Message-State: ANhLgQ1LuP0Huv0nbT8mfvJoshPr63WuByloxSVzqvlPFEp80/HR1y+V
+        zm6VPzf44YWbR+9nZjXUB489Xw==
+X-Google-Smtp-Source: ADFU+vt+oiBRDRmtU/BlPEpanrfpTiCQDOW8t3tex0y3+5iv9DRGttD0LyFJlWuDDjetCc5tLiQDxw==
+X-Received: by 2002:a05:6830:1203:: with SMTP id r3mr2352162otp.230.1583217243235;
+        Mon, 02 Mar 2020 22:34:03 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id z10sm7243729oih.1.2020.03.02.22.34.01
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Mar 2020 22:34:02 -0800 (PST)
+Date:   Mon, 2 Mar 2020 22:34:00 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+cc:     linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Hugh Dickins <hughd@google.com>, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
+In-Reply-To: <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
+Message-ID: <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
+References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com> <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Received: by 2002:a05:6e02:507:0:0:0:0 with HTTP; Mon, 2 Mar 2020 22:31:32
- -0800 (PST)
-Reply-To: LishaHaman225@gmail.com
-From:   "Mrs. Lisha Haman" <mraliciakazaramaa@gmail.com>
-Date:   Tue, 3 Mar 2020 06:31:32 +0000
-Message-ID: <CAG4v1MNG32UpLTFxGLPj4yAs6dLmypROX=PhumwTAd1eL1AtoA@mail.gmail.com>
-Subject: Good day
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear
-my name is Lisha Haman, How are you today hope all is well with you,
-Please I will need your urgent attention regarding this important discussion
-Kindly write me back here: LishaHaman225@gmail.com  for more details.
-Thanks,
-Lisha Haman
+On Mon, 2 Mar 2020, Anshuman Khandual wrote:
+
+> This adds the following new VMA flag wrappers which will replace current
+> open encodings across various places. This should not have any functional
+> implications.
+> 
+> vma_is_dontdump()
+> vma_is_noreserve()
+> vma_is_special()
+> vma_is_locked()
+> vma_is_mergeable()
+> vma_is_softdirty()
+> vma_is_thp()
+> vma_is_nothp()
+
+Why?? Please don't. I am not at all keen on your 1/3 and 2/3 (some
+of us actually like to see what the VM_ flags are where they're used,
+without having to chase through scattered wrappers hiding them),
+but this 3/3 particularly upset me.
+
+There is a good reason for the (hideously named) is_vm_hugetlb_page(vma):
+to save "#ifdef CONFIG_HUGETLB_PAGE"s all over (though I suspect the
+same could have been achieved much more nicely by #define VM_HUGETLB 0);
+but hiding all flags in vma_is_whatever()s is counter-productive churn.
+
+Improved readability? Not to my eyes.
+
+Hugh
