@@ -2,147 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB20177053
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCD9177059
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbgCCHsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:48:24 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51483 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbgCCHsX (ORCPT
+        id S1727717AbgCCHtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:49:16 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:34818 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbgCCHtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:48:23 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a132so1909253wme.1;
-        Mon, 02 Mar 2020 23:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=S8P0LJ7u6TOFiOZkcDuJhkn/2H/OUG6d25AO7qTixAo=;
-        b=tMa+sriRSXr26gkkZ4JOU3NXaWVStazw6D0JzFbiDcrFlgTwuPRxVCf7o+qeIiZyTm
-         JBOi2SNBcUmyhgEJ/KaJJJNSWRxgysSYVcrsSC9jWhHBhms7GOR2TR1Kt2SOl3IVG7Bt
-         30Otju7A1JXFcA5EQqEs75Tk4uJPFn2Ir541JbO8i5abn7JysWqJiI29d5btGTaU+Vgq
-         s6EYCzVdxTEWSlTw/x6tWkL60zjp1D7iT+awm03HbsIaqGwnqAE+9Hxk/omN6XwmdlG/
-         K9nejPTIClizao5I2hVcpTxLE7R3s+H8x3/dxputV6u78wni6kFrPWq9R1H3xzwo+0xC
-         My6g==
+        Tue, 3 Mar 2020 02:49:13 -0500
+Received: by mail-io1-f69.google.com with SMTP id w16so1741742iot.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 23:49:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S8P0LJ7u6TOFiOZkcDuJhkn/2H/OUG6d25AO7qTixAo=;
-        b=nZFTEnGIeDnT0YuRwTNyYUYmsW+uWEjuJ4lEor6aOVViRYdWBJKGPdLcj7oIacZ5Sa
-         f4rFCmW3FD+/LAISBd0uTRSWgHw6WRzCBnnKpe4xjMKISN2DStDHdylc2eMfEpOeJs7k
-         fwf15M/Kg/my3KRNSt/32JgJYTfIvHbVwggbwbbvCAC00h8e1/qIHD1XWraA9T8SNr5E
-         ZSLpjfdaDMWf0agxQNjl0yutB9USAg/ivyuoIw3LgaIJ55YVbtGRTUR38lg4mcX/fu+/
-         bBLjxpQlkONFgOK2PhWAJ2fsnfrtEJx3Dm0SD2C0cobbFdoAEncTZJ2tetC8fao2TJuQ
-         dQ8w==
-X-Gm-Message-State: ANhLgQ2tk2fQdQTz+lbv34D505yZesZVbsJ1H4DPdo0ljhlkkjNRqS8z
-        mbwOUyxbjvUQN+Ovav8LnVY=
-X-Google-Smtp-Source: ADFU+vu8Gb4tXqwFBAViua1vl9+zS/LE0+lNqsDQ5GogCnCEm1+FqStbg/GYbA8hHXs7Zpj3rdrq3g==
-X-Received: by 2002:a1c:1fd0:: with SMTP id f199mr2833854wmf.168.1583221702071;
-        Mon, 02 Mar 2020 23:48:22 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id z64sm2537257wmg.35.2020.03.02.23.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 23:48:21 -0800 (PST)
-Date:   Tue, 3 Mar 2020 08:48:19 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Will Deacon <will@kernel.org>, tj@kernel.org,
-        jiangshanlai@gmail.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org
-Subject: Re: WARNING: at kernel/workqueue.c:1473 __queue_work+0x3b8/0x3d0
-Message-ID: <20200303074819.GB9935@Red>
-References: <20200217204803.GA13479@Red>
- <20200218163504.y5ofvaejleuf5tbh@ca-dmjordan1.us.oracle.com>
- <20200220090350.GA19858@Red>
- <20200221174223.r3y6tugavp3k5jdl@ca-dmjordan1.us.oracle.com>
- <20200228123311.GE3275@willie-the-truck>
- <20200228153331.uimy62rat2tdxxod@ca-dmjordan1.us.oracle.com>
- <20200301175351.GA11684@Red>
- <20200302172510.fspofleipqjcdxak@ca-dmjordan1.us.oracle.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ZGg9d9RlpkSp9tiCdOBj7hjE3h8DLuUCRNUsn/fFdXk=;
+        b=U7cdaeAMetpt/9C3/bDwioJOanM/Ca4qk1Yn68dK8VoN2mBgfHR/4YhH8BiXch1T34
+         eZqQ18r9JTI6CcLxCEiOO49BtlW7BRnvL7zuZhmgI53VPvQaSlZmsgKcRqvIdbi4t6x/
+         nl+9Hg96DVIaeqd+Xwb7jZ4SC6Q1ZKCViOA81Vn8dqlY3AggMMsBuP5+tY0061CP6RBT
+         V3p6/Om+e7U0sFzrG+2bBsYVWXzU6g7f+BOlq+UfOUaFUEFsbuW1ewWKUOkH6/ivR23q
+         z8hzbTkotUphy+kYlJ0TtcsM0/l/y2EKLzjamTVZrnzndSspns6vz5Bdg2r/S0oSMadL
+         5PlA==
+X-Gm-Message-State: ANhLgQ3MAqKVQIXdwNXfTAPRxTZqYNORjTS7C7k/giRNctheL4PlqdpX
+        c/bD6bhQsdcXhFqI49wITBi6/Z5koFi9h24zAvv2QE81LZ2W
+X-Google-Smtp-Source: ADFU+vtq+Z0tEgLDgWc5E+/2DcRrLjUJQjPO+lwYFDXxBFzQQa9nltg2I6T05x3FDEkDFpd29Ba1cz1kElMF5vTpjV48wKj1xo52
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302172510.fspofleipqjcdxak@ca-dmjordan1.us.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a6b:2c0c:: with SMTP id s12mr2801014ios.91.1583221752863;
+ Mon, 02 Mar 2020 23:49:12 -0800 (PST)
+Date:   Mon, 02 Mar 2020 23:49:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002e20b9059fee8a94@google.com>
+Subject: WARNING in idr_destroy
+From:   syzbot <syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com>
+To:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 12:25:10PM -0500, Daniel Jordan wrote:
-> On Sun, Mar 01, 2020 at 06:53:51PM +0100, Corentin Labbe wrote:
-> > I tried to bisect this problem, but the result is:
-> ...
-> > # first bad commit: [81ff5d2cba4f86cd850b9ee4a530cd221ee45aa3] Merge branch 'linus' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
-> > 
-> > The only interesting thing I see in this MR is: "Add fuzz testing to testmgr"
-> > 
-> > But this wont help.
-> 
-> Hm, that merge commit has only a couple lines of powerpc build change, so maybe
-> there's something nondeterministic going on.
-> 
-> Does this fix it?  I can't verify but figure it's worth trying the simplest
-> explanation first, which is that the work isn't initialized by the time it's
-> queued.
-> 
-> thanks,
-> daniel
-> 
-> ---8<---
-> 
-> Subject: [PATCH] module: statically initialize init section freeing data
-> 
-> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-> ---
->  kernel/module.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 33569a01d6e1..db0cda206167 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -88,8 +88,9 @@ EXPORT_SYMBOL_GPL(module_mutex);
->  static LIST_HEAD(modules);
->  
->  /* Work queue for freeing init sections in success case */
-> -static struct work_struct init_free_wq;
-> -static struct llist_head init_free_list;
-> +static void do_free_init(struct work_struct *w);
-> +static DECLARE_WORK(init_free_wq, do_free_init);
-> +static LLIST_HEAD(init_free_list);
->  
->  #ifdef CONFIG_MODULES_TREE_LOOKUP
->  
-> @@ -3501,14 +3502,6 @@ static void do_free_init(struct work_struct *w)
->  	}
->  }
->  
-> -static int __init modules_wq_init(void)
-> -{
-> -	INIT_WORK(&init_free_wq, do_free_init);
-> -	init_llist_head(&init_free_list);
-> -	return 0;
-> -}
-> -module_init(modules_wq_init);
-> -
->  /*
->   * This is where the real work happens.
->   *
+Hello,
 
-Hello
+syzbot found the following crash on:
 
-The patch fix the issue. Thanks!
+HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e978e3e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d2e033af114153f
+dashboard link: https://syzkaller.appspot.com/bug?extid=05835159fe322770fe3d
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e978e3e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b1a819e00000
 
-So you could add:
-Reported-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Tested-on: sun50i-h6-pine-h64
-Tested-on: imx8mn-ddr4-evk
-Tested-on: sun50i-a64-bananapi-m64
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+05835159fe322770fe3d@syzkaller.appspotmail.com
 
-Thanks again
-Regards
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007fc6b3362d90 R14: 0000000000000004 R15: 000000000000002d
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 12260 at lib/radix-tree.c:682 radix_tree_free_nodes lib/radix-tree.c:682 [inline]
+WARNING: CPU: 0 PID: 12260 at lib/radix-tree.c:682 idr_destroy+0x1ae/0x260 lib/radix-tree.c:1572
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 12260 Comm: syz-executor386 Not tainted 5.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+ panic+0x264/0x7a9 kernel/panic.c:221
+ __warn+0x209/0x210 kernel/panic.c:582
+ report_bug+0x1b6/0x2f0 lib/bug.c:195
+ fixup_bug arch/x86/kernel/traps.c:174 [inline]
+ do_error_trap+0xcf/0x1c0 arch/x86/kernel/traps.c:267
+ do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:286
+ invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:radix_tree_free_nodes lib/radix-tree.c:682 [inline]
+RIP: 0010:idr_destroy+0x1ae/0x260 lib/radix-tree.c:1572
+Code: b5 63 f9 48 89 df 48 c7 c6 c0 0a 13 88 e8 6a ce 50 f9 4c 3b 65 b8 74 57 e8 cf b5 63 f9 4d 89 fc e9 67 ff ff ff e8 c2 b5 63 f9 <0f> 0b eb d5 89 f9 80 e1 07 38 c1 7c 84 e8 c0 de a0 f9 e9 7a ff ff
+RSP: 0018:ffffc90005107ba0 EFLAGS: 00010293
+RAX: ffffffff881363be RBX: ffff888087dba998 RCX: ffff888094062300
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff888087dba988
+RBP: ffffc90005107be8 R08: ffffffff88136330 R09: ffffed1012a78181
+R10: ffffed1012a78181 R11: 0000000000000000 R12: ffff888087dba980
+R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
+ drm_mode_create_lease_ioctl+0x1347/0x1860 drivers/gpu/drm/drm_lease.c:583
+ drm_ioctl_kernel+0x2cf/0x410 drivers/gpu/drm/drm_ioctl.c:786
+ drm_ioctl+0x52f/0x890 drivers/gpu/drm/drm_ioctl.c:886
+ vfs_ioctl fs/ioctl.c:47 [inline]
+ ksys_ioctl fs/ioctl.c:763 [inline]
+ __do_sys_ioctl fs/ioctl.c:772 [inline]
+ __se_sys_ioctl+0x113/0x190 fs/ioctl.c:770
+ __x64_sys_ioctl+0x7b/0x90 fs/ioctl.c:770
+ do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44a4b9
+Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 9b cc fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc6b3362d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a4b9
+RDX: 0000000020000040 RSI: ffffffffffffffc6 RDI: 0000000000000003
+RBP: 00000000006dbc20 R08: 0000000000000001 R09: 0000000000000039
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007fc6b3362d90 R14: 0000000000000004 R15: 000000000000002d
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
