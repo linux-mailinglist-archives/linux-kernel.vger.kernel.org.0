@@ -2,77 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F879176A6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E945176A52
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:01:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbgCCCDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:03:37 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40631 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgCCCDg (ORCPT
+        id S1726946AbgCCCBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:01:49 -0500
+Received: from gateway30.websitewelcome.com ([192.185.179.30]:35206 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726773AbgCCCBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:03:36 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j80so1399901oih.7;
-        Mon, 02 Mar 2020 18:03:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/UbbCrQ4zJM1G4CgVmEuduvPdDUs8jqlAa46gDYcCCo=;
-        b=iFd4GvUkJZH+UaHL3ZUp5a7NdhAH9zZwORGmJKFU97YIovfmPYwIWArQohHgrewlW/
-         +ZpLpEJiPIPBmJJ9h6EtYtvxySsE72S35+EDW5+oB7iZ1qdcCds3Va1Xg3mP25WBqo4n
-         HG34ntobKFczEkgQYpnn4VjJMMMBmtXkuS62caAyjVi0ylOlOoaxPUzd4iEOeTcOHran
-         owQGx5duRlB16ZhHackMEebuDLDInlOOq5n70JSe6fRzgOw4JQpsPLDXe1fNWmedEka2
-         Uke94A+14Jf42DXDDAInntJj+u+YQ8UN01jY1LiQ7QIp0Xg9XSPiLh+0mcu3AVoqFw04
-         IPOA==
-X-Gm-Message-State: ANhLgQ2OanR06ysLfAYoDWNBUrZTZAX8XiI3XyDSCFVOuf+jdbZ3TbnF
-        gFuOsO+50BXpOK+/9F191A==
-X-Google-Smtp-Source: ADFU+vsTrN9e4+w5gxNDsk4u2uwXJbz5xUm56Q2btlvLSjXZ4AzZ/N9PS1Koa2Y58E6zkQ/klqwpJg==
-X-Received: by 2002:a05:6808:902:: with SMTP id w2mr971212oih.170.1583201015568;
-        Mon, 02 Mar 2020 18:03:35 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m2sm7016696oim.13.2020.03.02.18.03.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 18:03:35 -0800 (PST)
-Received: (nullmailer pid 24397 invoked by uid 1000);
-        Tue, 03 Mar 2020 02:03:34 -0000
-Date:   Mon, 2 Mar 2020 20:03:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, smasetty@codeaurora.org,
-        John Stultz <john.stultz@linaro.org>,
-        Sean Paul <sean@poorly.run>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v4 1/2] dt-bindings: display: msm: Convert GMU bindings
- to YAML
-Message-ID: <20200303020334.GA24316@bogus>
-References: <1583182067-16530-1-git-send-email-jcrouse@codeaurora.org>
- <1583182067-16530-2-git-send-email-jcrouse@codeaurora.org>
+        Mon, 2 Mar 2020 21:01:49 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 6D11418B94
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 20:01:47 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 8wsVjlBTuRP4z8wsVj8wOe; Mon, 02 Mar 2020 20:01:47 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=bJM0vW/jtRTxwCbz2zQ/yV7VRsUN7y2H/RPdljAId+g=; b=TG3dcPlhoN/1PUVLWQrp0t7XkB
+        bfGmGf5DdTsQ1VUZf3qg0qMzuofI/gWLd3PSQBToxdZhTjheml0F/WhtKfHjxcATl9usIlr4KWqfr
+        4ii8s3rGBwSmOUkOxWty9YwtdZoZFn31jocj1OFpzJ0r26GZY8rQwHFfFXWRs0wkgC4X3azXVbOId
+        poHV5fSoUsLwTX5C4C+6uWs/GzfAkWw7a0wXlIu2S5cjhQflHvEnaxFYtgMhUTk+diAhNXSWu10hJ
+        4QpEk1/JKgGVOMRB7fNqQLLkbXs6r0gb45aXO2k5cdf72EX3R58w8N0XnvKKVwvydDkjmAq8i4IvQ
+        8BTZzICA==;
+Received: from [201.162.167.16] (port=17582 helo=[192.168.43.132])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j8wsU-002Nhr-UO; Mon, 02 Mar 2020 20:01:47 -0600
+Subject: Re: [PATCH] ocfs2: Replace zero-length array with flexible-array
+ member
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+References: <20200213160244.GA6088@embeddedor>
+ <1b78acd5-2b5f-55f1-5571-73f45d3c87f7@embeddedor.com>
+ <30493b5f-752d-147f-3d64-95b1c59895ae@linux.alibaba.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <da617029-2f95-2cc5-4fdc-76af63ec1048@embeddedor.com>
+Date:   Mon, 2 Mar 2020 20:04:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583182067-16530-2-git-send-email-jcrouse@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <30493b5f-752d-147f-3d64-95b1c59895ae@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.167.16
+X-Source-L: No
+X-Exim-ID: 1j8wsU-002Nhr-UO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.132]) [201.162.167.16]:17582
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  2 Mar 2020 13:47:46 -0700, Jordan Crouse wrote:
-> Convert display/msm/gmu.txt to display/msm/gmu.yaml and remove the old
-> text bindings.
+
+
+On 3/2/20 19:17, Joseph Qi wrote:
+> Sorry for the late replay since I've missed the original mail.
+> This patch looks good to me.
 > 
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> ---
-> 
->  .../devicetree/bindings/display/msm/gmu.txt        | 116 -------------------
->  .../devicetree/bindings/display/msm/gmu.yaml       | 123 +++++++++++++++++++++
->  2 files changed, 123 insertions(+), 116 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/msm/gmu.txt
->  create mode 100644 Documentation/devicetree/bindings/display/msm/gmu.yaml
+> Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks, Joseph.
+--
+Gustavo
+
+> On 2020/3/3 07:57, Gustavo A. R. Silva wrote:
+>> Hi all,
+>>
+>> Friendly ping: Who can take this?
+>>
+>> Thanks
+>> --
+>> Gustavo
+>>
+>> On 2/13/20 10:02, Gustavo A. R. Silva wrote:
+>>> The current codebase makes use of the zero-length array language
+>>> extension to the C90 standard, but the preferred mechanism to declare
+>>> variable-length types such as these ones is a flexible array member[1][2],
+>>> introduced in C99:
+>>>
+>>> struct foo {
+>>>         int stuff;
+>>>         struct boo array[];
+>>> };
+>>>
+>>> By making use of the mechanism above, we will get a compiler warning
+>>> in case the flexible array does not occur last in the structure, which
+>>> will help us prevent some kind of undefined behavior bugs from being
+>>> inadvertently introduced[3] to the codebase from now on.
+>>>
+>>> Also, notice that, dynamic memory allocations won't be affected by
+>>> this change:
+>>>
+>>> "Flexible array members have incomplete type, and so the sizeof operator
+>>> may not be applied. As a quirk of the original implementation of
+>>> zero-length arrays, sizeof evaluates to zero."[1]
+>>>
+>>> This issue was found with the help of Coccinelle.
+>>>
+>>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>>> [2] https://github.com/KSPP/linux/issues/21
+>>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>>
+>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>> ---
+>>>  fs/ocfs2/journal.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+>>> index 68ba354cf361..b425f0b01dce 100644
+>>> --- a/fs/ocfs2/journal.c
+>>> +++ b/fs/ocfs2/journal.c
+>>> @@ -91,7 +91,7 @@ enum ocfs2_replay_state {
+>>>  struct ocfs2_replay_map {
+>>>  	unsigned int rm_slots;
+>>>  	enum ocfs2_replay_state rm_state;
+>>> -	unsigned char rm_replay_slots[0];
+>>> +	unsigned char rm_replay_slots[];
+>>>  };
+>>>  
+>>>  static void ocfs2_replay_map_set_state(struct ocfs2_super *osb, int state)
+>>>
