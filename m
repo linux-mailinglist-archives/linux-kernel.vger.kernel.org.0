@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81EFD177EFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0819D17804D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731475AbgCCRsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55026 "EHLO mail.kernel.org"
+        id S1732810AbgCCRz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:55:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbgCCRsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:48:02 -0500
+        id S1732791AbgCCRzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:55:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D000320CC7;
-        Tue,  3 Mar 2020 17:47:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCF2B20728;
+        Tue,  3 Mar 2020 17:55:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257680;
-        bh=KiKF8TsnroZnGB6+WEfKkZ89hpEo9HMRTUDu1XfFWu0=;
+        s=default; t=1583258153;
+        bh=0H7zd2fm3yBoPSOT5TXSvbCR26pgmFzavbvMTKWqxQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxT8/nN2ZTNLMXikibcMDCSI8p0rDUiJMHP/1zxfLPGj4yo2dsrIBzGkd+R6wrwOq
-         m7TYv3uOt2EjO1o6zCJDVjjIetJUsq8vs/3DCu6ZEL9/zIFp3G12PWUdKnzMZGrIUn
-         j2CtQKpG9uBSRgK94FJ2ksfCAG3f2P0mwLkrJ1i4=
+        b=EpdOOyKoIZ0Ms64nP0Kii3z6OO5wgzu87mEos/dLN+S/U6asak8lcRySgYoytzz5B
+         mx8/J+NlMbxCnnoi3gfYaqeOKoucSciJJCjrPii/8RExCB7FgcWVGhqAq1lm0FdgrX
+         sN0NtugYe2xgKeoHxzrrFWynpit3ExKifaSG19qA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.5 088/176] ACPI: watchdog: Fix gas->access_width usage
-Date:   Tue,  3 Mar 2020 18:42:32 +0100
-Message-Id: <20200303174314.939008701@linuxfoundation.org>
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 055/152] net: ena: rss: store hash function as values and not bits
+Date:   Tue,  3 Mar 2020 18:42:33 +0100
+Message-Id: <20200303174308.695700387@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-commit 2ba33a4e9e22ac4dda928d3e9b5978a3a2ded4e0 upstream.
+[ Upstream commit 4844470d472d660c26149ad764da2406adb13423 ]
 
-ACPI Generic Address Structure (GAS) access_width field is not in bytes
-as the driver seems to expect in few places so fix this by using the
-newly introduced macro ACPI_ACCESS_BYTE_WIDTH().
+The device receives, stores and retrieves the hash function value as bits
+and not as their enum value.
 
-Fixes: b1abf6fc4982 ("ACPI / watchdog: Fix off-by-one error at resource assignment")
-Fixes: 058dfc767008 ("ACPI / watchdog: Add support for WDAT hardware watchdog")
-Reported-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The bug:
+* In ena_com_set_hash_function() we set
+  cmd.u.flow_hash_func.selected_func to the bit value of rss->hash_func.
+ (1 << rss->hash_func)
+* In ena_com_get_hash_function() we retrieve the hash function and store
+  it's bit value in rss->hash_func. (Now the bit value of rss->hash_func
+  is stored in rss->hash_func instead of it's enum value)
 
+The fix:
+This commit fixes the issue by converting the retrieved hash function
+values from the device to the matching enum value of the set bit using
+ffs(). ffs() finds the first set bit's index in a word. Since the function
+returns 1 for the LSB's index, we need to subtract 1 from the returned
+value (note that BIT(0) is 1).
+
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_watchdog.c |    3 +--
- drivers/watchdog/wdat_wdt.c  |    2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/acpi_watchdog.c
-+++ b/drivers/acpi/acpi_watchdog.c
-@@ -126,12 +126,11 @@ void __init acpi_watchdog_init(void)
- 		gas = &entries[i].register_region;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index 6f758ece86f60..8ab192cb26b74 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -2370,7 +2370,11 @@ int ena_com_get_hash_function(struct ena_com_dev *ena_dev,
+ 	if (unlikely(rc))
+ 		return rc;
  
- 		res.start = gas->address;
-+		res.end = res.start + ACPI_ACCESS_BYTE_WIDTH(gas->access_width) - 1;
- 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
- 			res.flags = IORESOURCE_MEM;
--			res.end = res.start + ALIGN(gas->access_width, 4) - 1;
- 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
- 			res.flags = IORESOURCE_IO;
--			res.end = res.start + gas->access_width - 1;
- 		} else {
- 			pr_warn("Unsupported address space: %u\n",
- 				gas->space_id);
---- a/drivers/watchdog/wdat_wdt.c
-+++ b/drivers/watchdog/wdat_wdt.c
-@@ -389,7 +389,7 @@ static int wdat_wdt_probe(struct platfor
+-	rss->hash_func = get_resp.u.flow_hash_func.selected_func;
++	/* ffs() returns 1 in case the lsb is set */
++	rss->hash_func = ffs(get_resp.u.flow_hash_func.selected_func);
++	if (rss->hash_func)
++		rss->hash_func--;
++
+ 	if (func)
+ 		*func = rss->hash_func;
  
- 		memset(&r, 0, sizeof(r));
- 		r.start = gas->address;
--		r.end = r.start + gas->access_width - 1;
-+		r.end = r.start + ACPI_ACCESS_BYTE_WIDTH(gas->access_width) - 1;
- 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
- 			r.flags = IORESOURCE_MEM;
- 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
+-- 
+2.20.1
+
 
 
