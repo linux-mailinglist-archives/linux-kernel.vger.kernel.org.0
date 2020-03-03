@@ -2,346 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13F301777E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 974C71777F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbgCCNyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:54:36 -0500
-Received: from mga18.intel.com ([134.134.136.126]:4960 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727079AbgCCNyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:54:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 05:54:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="386790935"
-Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
-  by orsmga004.jf.intel.com with ESMTP; 03 Mar 2020 05:54:31 -0800
-From:   roman.sudarikov@linux.intel.com
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com
-Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
-Subject: [PATCH v7 3/3] =?UTF-8?q?perf=20x86:=20Exposing=20an=20Uncore=20u?= =?UTF-8?q?nit=20to=20PMON=20for=20Intel=20Xeon=C2=AE=20server=20platform?=
-Date:   Tue,  3 Mar 2020 16:54:18 +0300
-Message-Id: <20200303135418.9621-4-roman.sudarikov@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20200303135418.9621-1-roman.sudarikov@linux.intel.com>
-References: <20200303135418.9621-1-roman.sudarikov@linux.intel.com>
+        id S1729339AbgCCN62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:58:28 -0500
+Received: from smtprelay0155.hostedemail.com ([216.40.44.155]:58754 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725796AbgCCN62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:58:28 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 866DE18225DF6;
+        Tue,  3 Mar 2020 13:58:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1263:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1544:1593:1594:1605:1711:1730:1747:1777:1792:1801:2194:2198:2199:2200:2393:2525:2553:2560:2563:2682:2685:2692:2693:2828:2859:2918:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4117:4321:4470:4605:5007:6119:6691:7875:7903:7904:9025:9388:10004:10049:10848:11026:11232:11233:11473:11658:11914:12043:12295:12296:12297:12438:12555:12740:12760:12776:12895:13160:13161:13229:13439:14096:14097:14106:14107:14181:14659:14721:14849:21080:21220:21433:21611:21627:21740:21939:21990:30012:30051:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: yard67_83a1f2d77a221
+X-Filterd-Recvd-Size: 6456
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  3 Mar 2020 13:58:24 +0000 (UTC)
+Message-ID: <58c1f1bf6b30bd5c39184cd9c09f25a9b9d67a68.camel@perches.com>
+Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
+ copy_from_user()
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Alexander Potapenko <glider@google.com>
+Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Todd Kjos <tkjos@google.com>
+Date:   Tue, 03 Mar 2020 05:56:51 -0800
+In-Reply-To: <20200303093832.GD24372@kadam>
+References: <20200302130430.201037-1-glider@google.com>
+         <20200302130430.201037-2-glider@google.com>
+         <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
+         <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
+         <4cac10d3e2c03e4f21f1104405a0a62a853efb4e.camel@perches.com>
+         <CAG_fn=XOyPGau9m7x8eCLJHy3m-H=nbMODewWVJ1xb2e+BPdFw@mail.gmail.com>
+         <18b0d6ea5619c34ca4120a6151103dbe9bfa0cbe.camel@perches.com>
+         <CAG_fn=U2T--j_uhyppqzFvMO3w3yUA529pQrCpbhYvqcfh9Z1w@mail.gmail.com>
+         <20200303093832.GD24372@kadam>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+On Tue, 2020-03-03 at 12:38 +0300, Dan Carpenter wrote:
+> On Tue, Mar 03, 2020 at 10:14:18AM +0100, Alexander Potapenko wrote:
+> > On Mon, Mar 2, 2020 at 7:51 PM Joe Perches <joe@perches.com> wrote:
+> > > On Mon, 2020-03-02 at 19:17 +0100, Alexander Potapenko wrote:
+> > > > On Mon, Mar 2, 2020 at 3:00 PM Joe Perches <joe@perches.com> wrote:
+> > > > > On Mon, 2020-03-02 at 14:25 +0100, Alexander Potapenko wrote:
+> > > > > > On Mon, Mar 2, 2020 at 2:11 PM Joe Perches <joe@perches.com> wrote:
+> > > > > > > On Mon, 2020-03-02 at 14:04 +0100, glider@google.com wrote:
+> > > > > > > > Certain copy_from_user() invocations in binder.c are known to
+> > > > > > > > unconditionally initialize locals before their first use, like e.g. in
+> > > > > > > > the following case:
+> > > > > > > []
+> > > > > > > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > > > > > []
+> > > > > > > > @@ -3788,7 +3788,7 @@ static int binder_thread_write(struct binder_proc *proc,
+> > > > > > > > 
+> > > > > > > >               case BC_TRANSACTION_SG:
+> > > > > > > >               case BC_REPLY_SG: {
+> > > > > > > > -                     struct binder_transaction_data_sg tr;
+> > > > > > > > +                     struct binder_transaction_data_sg tr __no_initialize;
+> > > > > > > > 
+> > > > > > > >                       if (copy_from_user(&tr, ptr, sizeof(tr)))
+> > > > > > > 
+> > > > > > > I fail to see any value in marking tr with __no_initialize
+> > > > > > > when it's immediately written to by copy_from_user.
+> > > > > > 
+> > > > > > This is being done exactly because it's immediately written to by copy_to_user()
+> > > > > > Clang is currently unable to figure out that copy_to_user() initializes memory.
+> > > > > > So building the kernel with CONFIG_INIT_STACK_ALL=y basically leads to
+> > > > > > the following code:
+> > > > > > 
+> > > > > >   struct binder_transaction_data_sg tr;
+> > > > > >   memset(&tr, 0xAA, sizeof(tr));
+> > > > > >   if (copy_from_user(&tr, ptr, sizeof(tr))) {...}
+> > > > > > 
+> > > > > > This unnecessarily slows the code down, so we add __no_initialize to
+> > > > > > prevent the compiler from emitting the redundant initialization.
+> > > > > 
+> > > > > So?  CONFIG_INIT_STACK_ALL by design slows down code.
+> > > > Correct.
+> > > > 
+> > > > > This marking would likely need to be done for nearly all
+> > > > > 3000+ copy_from_user entries.
+> > > > Unfortunately, yes. I was just hoping to do so for a handful of hot
+> > > > cases that we encounter, but in the long-term a compiler solution must
+> > > > supersede them.
+> > > > 
+> > > > > Why not try to get something done on the compiler side
+> > > > > to mark the function itself rather than the uses?
+> > > > This is being worked on in the meantime as well (see
+> > > > http://lists.llvm.org/pipermail/cfe-dev/2020-February/064633.html)
+> > > > Do you have any particular requisitions about how this should look on
+> > > > the source level?
+> > > 
+> > > I presume something like the below when appropriate for
+> > > automatic variables when not already initialized or modified.
+> > > ---
+[]
+> > > diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+[]
+> > > @@ -138,7 +138,8 @@ _copy_to_user(void __user *, const void *, unsigned long);
+> > >  #endif
+> > > 
+> > >  static __always_inline unsigned long __must_check
+> > > -copy_from_user(void *to, const void __user *from, unsigned long n)
+> > > +copy_from_user(void __no_initialize *to, const void __user *from,
+> > > +              unsigned long n)
+> > 
+> > Shall this __no_initialize attribute denote that the whole object
+> > passed to it is initialized?
 
-Current version supports a server line starting Intel® Xeon® Processor
-Scalable Family and introduces mapping for IIO Uncore units only.
-Other units can be added on demand.
+My presumption is the compiler could determine that only if the
+accessed variable is a local automatic, it does not need to be
+initialized.
 
-IIO stack to PMON mapping is exposed through:
-    /sys/devices/uncore_iio_<pmu_idx>/dieX
-    where dieX is file which holds "Segment:Root Bus" for PCIe root port,
-    which can be monitored by that IIO PMON block.
+> > Or do we need to encode the length as well, as Jann suggests?
 
-Details are explained in Documentation/ABI/testing/sysfs-devices-mapping
+I think not.
 
-Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
-Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
-Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
----
- .../ABI/testing/sysfs-devices-mapping         |  33 +++
- arch/x86/events/intel/uncore.h                |   9 +
- arch/x86/events/intel/uncore_snbep.c          | 193 ++++++++++++++++++
- 3 files changed, 235 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-devices-mapping
+> > It's also interesting what should happen if *to is pointing _inside_ a
+> > local object - presumably it's unsafe to disable initialization for
+> > the whole object.
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-mapping b/Documentation/ABI/testing/sysfs-devices-mapping
-new file mode 100644
-index 000000000000..16f4e900be7b
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-devices-mapping
-@@ -0,0 +1,33 @@
-+What:           /sys/devices/uncore_iio_x/dieX
-+Date:           February 2020
-+Contact:        Roman Sudarikov <roman.sudarikov@linux.intel.com>
-+Description:
-+                Each IIO stack (PCIe root port) has its own IIO PMON block, so
-+                each dieX file (where X is die number) holds "Segment:Root Bus"
-+                for PCIe root port, which can be monitored by that IIO PMON
-+                block.
-+                For example, on 4-die Xeon platform with up to 6 IIO stacks per
-+                die and, therefore, 6 IIO PMON blocks per die, the mapping of
-+                IIO PMON block 0 exposes as the following:
-+
-+                $ ls /sys/devices/uncore_iio_0/die*
-+                -r--r--r-- /sys/devices/uncore_iio_0/die0
-+                -r--r--r-- /sys/devices/uncore_iio_0/die1
-+                -r--r--r-- /sys/devices/uncore_iio_0/die2
-+                -r--r--r-- /sys/devices/uncore_iio_0/die3
-+
-+                $ tail /sys/devices/uncore_iio_0/die*
-+                ==> /sys/devices/uncore_iio_0/die0 <==
-+                0000:00
-+                ==> /sys/devices/uncore_iio_0/die1 <==
-+                0000:40
-+                ==> /sys/devices/uncore_iio_0/die2 <==
-+                0000:80
-+                ==> /sys/devices/uncore_iio_0/die3 <==
-+                0000:c0
-+
-+                Which means:
-+                IIO PMU 0 on die 0 belongs to PCI RP on bus 0x00, domain 0x0000
-+                IIO PMU 0 on die 1 belongs to PCI RP on bus 0x40, domain 0x0000
-+                IIO PMU 0 on die 2 belongs to PCI RP on bus 0x80, domain 0x0000
-+                IIO PMU 0 on die 3 belongs to PCI RP on bus 0xc0, domain 0x0000
-\ No newline at end of file
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index c1da2b8218cd..eb93b8676f34 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -174,6 +174,15 @@ int uncore_pcibus_to_physid(struct pci_bus *bus);
- ssize_t uncore_event_show(struct kobject *kobj,
- 			  struct kobj_attribute *attr, char *buf);
- 
-+static inline struct intel_uncore_pmu *dev_to_uncore_pmu(struct device *dev)
-+{
-+	return container_of(dev_get_drvdata(dev), struct intel_uncore_pmu, pmu);
-+}
-+
-+#define to_device_attribute(n)	container_of(n, struct device_attribute, attr)
-+#define to_dev_ext_attribute(n)	container_of(n, struct dev_ext_attribute, attr)
-+#define attr_to_ext_attr(n)	to_dev_ext_attribute(to_device_attribute(n))
-+
- extern int __uncore_max_dies;
- #define uncore_max_dies()	(__uncore_max_dies)
- 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index ad20220af303..5e15425c5133 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -273,6 +273,30 @@
- #define SKX_CPUNODEID			0xc0
- #define SKX_GIDNIDMAP			0xd4
- 
-+/*
-+ * The CPU_BUS_NUMBER MSR returns the values of the respective CPUBUSNO CSR
-+ * that BIOS programmed. MSR has package scope.
-+ * |  Bit  |  Default  |  Description
-+ * | [63]  |    00h    | VALID - When set, indicates the CPU bus
-+ *                       numbers have been initialized. (RO)
-+ * |[62:48]|    ---    | Reserved
-+ * |[47:40]|    00h    | BUS_NUM_5 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(5). (RO)
-+ * |[39:32]|    00h    | BUS_NUM_4 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(4). (RO)
-+ * |[31:24]|    00h    | BUS_NUM_3 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(3). (RO)
-+ * |[23:16]|    00h    | BUS_NUM_2 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(2). (RO)
-+ * |[15:8] |    00h    | BUS_NUM_1 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(1). (RO)
-+ * | [7:0] |    00h    | BUS_NUM_0 — Return the bus number BIOS assigned
-+ *                       CPUBUSNO(0). (RO)
-+ */
-+#define SKX_MSR_CPU_BUS_NUMBER		0x300
-+#define SKX_MSR_CPU_BUS_VALID_BIT	(1ULL << 63)
-+#define BUS_NUM_STRIDE			8
-+
- /* SKX CHA */
- #define SKX_CHA_MSR_PMON_BOX_FILTER_TID		(0x1ffULL << 0)
- #define SKX_CHA_MSR_PMON_BOX_FILTER_LINK	(0xfULL << 9)
-@@ -3575,6 +3599,172 @@ static struct intel_uncore_ops skx_uncore_iio_ops = {
- 	.read_counter		= uncore_msr_read_counter,
- };
- 
-+static inline u8 skx_iio_stack(struct intel_uncore_pmu *pmu, int die)
-+{
-+	return pmu->type->topology[die] >> (pmu->pmu_idx * BUS_NUM_STRIDE);
-+}
-+
-+static umode_t
-+skx_iio_mapping_visible(struct kobject *kobj, struct attribute *attr, int die)
-+{
-+	struct intel_uncore_pmu *pmu = dev_to_uncore_pmu(kobj_to_dev(kobj));
-+
-+	// Root bus 0x00 is valid only for die 0 AND pmu_idx = 0.
-+	return (!skx_iio_stack(pmu, die) && pmu->pmu_idx) ? 0 : attr->mode;
-+}
-+
-+static ssize_t skx_iio_mapping_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct pci_bus *bus = pci_find_next_bus(NULL);
-+	struct intel_uncore_pmu *uncore_pmu = dev_to_uncore_pmu(dev);
-+	struct dev_ext_attribute *ea = to_dev_ext_attribute(attr);
-+	long die = (long)ea->var;
-+
-+	/*
-+	 * Current implementation is for single segment configuration hence it's
-+	 * safe to take the segment value from the first available root bus.
-+	 */
-+	return sprintf(buf, "%04x:%02x\n", pci_domain_nr(bus),
-+					   skx_iio_stack(uncore_pmu, die));
-+}
-+
-+static int skx_msr_cpu_bus_read(int cpu, u64 *topology)
-+{
-+	u64 msr_value;
-+
-+	if (rdmsrl_on_cpu(cpu, SKX_MSR_CPU_BUS_NUMBER, &msr_value) ||
-+			!(msr_value & SKX_MSR_CPU_BUS_VALID_BIT))
-+		return -ENXIO;
-+
-+	*topology = msr_value;
-+
-+	return 0;
-+}
-+
-+static int die_to_cpu(int die)
-+{
-+	int res = 0, cpu, current_die;
-+	/*
-+	 * Using cpus_read_lock() to ensure cpu is not going down between
-+	 * looking at cpu_online_mask.
-+	 */
-+	cpus_read_lock();
-+	for_each_online_cpu(cpu) {
-+		current_die = topology_logical_die_id(cpu);
-+		if (current_die == die) {
-+			res = cpu;
-+			break;
-+		}
-+	}
-+	cpus_read_unlock();
-+	return res;
-+}
-+
-+static int skx_iio_get_topology(struct intel_uncore_type *type)
-+{
-+	int i, ret;
-+	struct pci_bus *bus = NULL;
-+
-+	/*
-+	 * Verified single-segment environments only; disabled for multiple
-+	 * segment topologies for now except VMD domains.
-+	 * VMD domains start at 0x10000 to not clash with ACPI _SEG domains.
-+	 */
-+	while ((bus = pci_find_next_bus(bus))
-+		&& (!pci_domain_nr(bus) || pci_domain_nr(bus) > 0xffff))
-+		;
-+	if (bus)
-+		return -EPERM;
-+
-+	type->topology = kcalloc(uncore_max_dies(), sizeof(u64), GFP_KERNEL);
-+	if (!type->topology)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < uncore_max_dies(); i++) {
-+		ret = skx_msr_cpu_bus_read(die_to_cpu(i), &type->topology[i]);
-+		if (ret) {
-+			kfree(type->topology);
-+			type->topology = NULL;
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static struct attribute_group skx_iio_mapping_group = {
-+	.is_visible	= skx_iio_mapping_visible,
-+};
-+
-+const static struct attribute_group *skx_iio_attr_update[] = {
-+	&skx_iio_mapping_group,
-+	NULL,
-+};
-+
-+static int skx_iio_set_mapping(struct intel_uncore_type *type)
-+{
-+	char buf[64];
-+	int ret;
-+	long die = -1;
-+	struct attribute **attrs = NULL;
-+	struct dev_ext_attribute *eas = NULL;
-+
-+	ret = skx_iio_get_topology(type);
-+	if (ret)
-+		return ret;
-+
-+	// One more for NULL.
-+	attrs = kzalloc((uncore_max_dies() + 1) * sizeof(*attrs), GFP_KERNEL);
-+	if (!attrs) {
-+		kfree(type->topology);
-+		return -ENOMEM;
-+	}
-+
-+	eas = kzalloc(sizeof(*eas) * uncore_max_dies(), GFP_KERNEL);
-+	if (!eas)
-+		goto err;
-+
-+	for (die = 0; die < uncore_max_dies(); die++) {
-+		sprintf(buf, "die%ld", die);
-+		sysfs_attr_init(&eas[die].attr.attr);
-+		eas[die].attr.attr.name = kstrdup(buf, GFP_KERNEL);
-+		if (!eas[die].attr.attr.name)
-+			goto err;
-+		eas[die].attr.attr.mode = 0444;
-+		eas[die].attr.show = skx_iio_mapping_show;
-+		eas[die].attr.store = NULL;
-+		eas[die].var = (void *)die;
-+		attrs[die] = &eas[die].attr.attr;
-+	}
-+	skx_iio_mapping_group.attrs = attrs;
-+
-+	return 0;
-+err:
-+	for (; die >= 0; die--)
-+		kfree(eas[die].attr.attr.name);
-+	kfree(eas);
-+	kfree(attrs);
-+	kfree(type->topology);
-+	type->attr_update = NULL;
-+	return -ENOMEM;
-+}
-+
-+static void skx_iio_cleanup_mapping(struct intel_uncore_type *type)
-+{
-+	struct attribute **attr = skx_iio_mapping_group.attrs;
-+
-+	if (!attr)
-+		return;
-+
-+	for (; *attr; attr++)
-+		kfree((*attr)->name);
-+	kfree(attr_to_ext_attr(*skx_iio_mapping_group.attrs));
-+	kfree(skx_iio_mapping_group.attrs);
-+	skx_iio_mapping_group.attrs = NULL;
-+	kfree(type->topology);
-+}
-+
- static struct intel_uncore_type skx_uncore_iio = {
- 	.name			= "iio",
- 	.num_counters		= 4,
-@@ -3589,6 +3779,9 @@ static struct intel_uncore_type skx_uncore_iio = {
- 	.constraints		= skx_uncore_iio_constraints,
- 	.ops			= &skx_uncore_iio_ops,
- 	.format_group		= &skx_uncore_iio_format_group,
-+	.attr_update		= skx_iio_attr_update,
-+	.set_mapping		= skx_iio_set_mapping,
-+	.cleanup_mapping	= skx_iio_cleanup_mapping,
- };
- 
- enum perf_uncore_iio_freerunning_type_id {
--- 
-2.19.1
+Are you asking if for example:
+
+	struct foo {
+		...;
+	};
+
+	struct bar {
+		struct foo a;
+		...;
+	};
+
+	void func(void)
+	{
+		struct bar b;
+		...;
+		copy_from_user(&b.a, baz, len);
+		...;
+	}
+
+that the containing struct b would not be initialized?
+
+I presume a compiler would initialized all of b, but
+if it manages to initialize all of b but b.a, good on
+the compiler writer.
+
+> The real fix is to initialize everything manually, the automated
+> initialization is a hardenning feature which many people will disable.
+> So I don't think the hardenning needs to be perfect, it needs to simple
+> and fast.
+
+Dan, perhaps I don't understand you.
+Can you clarify what you mean?
 
