@@ -2,58 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713F9178626
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:12:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D77B617861F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:08:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgCCXMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 18:12:18 -0500
-Received: from zinan.dashjr.org ([192.3.11.21]:38348 "EHLO zinan.dashjr.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726766AbgCCXMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 18:12:18 -0500
-X-Greylist: delayed 460 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 18:12:17 EST
-Received: from ishibashi.lan (unknown [12.190.236.222])
-        (Authenticated sender: luke-jr)
-        by zinan.dashjr.org (Postfix) with ESMTPSA id 32F3E38A0DB8
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Mar 2020 23:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dashjr.org; s=zinan;
-        t=1583276676; bh=f6t72RQCwA5bUyp9woz4HWHvoHO3Yr/X++Pvw8U6VmA=;
-        h=From:To:Subject:Date;
-        b=vU3iV77sSMhn7VIyYaJbX6wDARFWiAr4R0CVkErEw8bLZUL8k5os9zDUdQQwiE8Z/
-         aUilKRAV7H65nD30lZml5hcitIeTvLIQOb5usscfjrATa0RDpv5SSsI1gGFP1ZbNiI
-         kBcA5UqrcF9q9t7nXNGUhovaU3tKcTreAM1GAW0w=
-X-Hashcash: 1:25:200303:linux-kernel@vger.kernel.org::QEc3e4TtDLfHZvPM:dySN=
-From:   Luke Dashjr <luke@dashjr.org>
-To:     linux-kernel@vger.kernel.org
-Subject: Bug? Non-privileged processes can in some cases spoof the wrong sending IP
-Date:   Tue, 3 Mar 2020 23:03:35 +0000
-User-Agent: KMail/1.9.10
+        id S1728057AbgCCXIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 18:08:31 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33473 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbgCCXIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 18:08:31 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x7so83625wrr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 15:08:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=md2BYb9P2sgTueQnTV1sot78Pxk1E9kFXfWpP8gF5yo=;
+        b=bL0rN4KffsmujAapE6Xq6kZfhV3VcTDZ1COtutwR9rNY5jr02zBrrfyq4rLaamlsrK
+         anI/WpzSSigQW0om+ZuLWr/FOvNb24KY18jxSmC0/GUllziMVhVnKxK/hF/s9VFZgq41
+         SBtIdJvZ3VscTtTGWXFp/gXuHhvCrHrX/wV6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=md2BYb9P2sgTueQnTV1sot78Pxk1E9kFXfWpP8gF5yo=;
+        b=WEaQkw3+SjxLgzTs1zRYDeITnn1AVIFdo7b81stIc9q38cqh4uM9NeSCZsB//DVCH0
+         zw8bphRsPCDJn4q5qIxIA44ZkGdqU0NpAjvzDQmm5o5bm0R8O2AJXjzh0I2pSZs2m7lu
+         FaMInLFuh9qPi6gXthKGQMscb4bzY7kEuN+xWZUFR/j3pesuI1dA6IPrO7mPMmBByyQu
+         KA7SQreUkDHQdruj9XL0uPlV0TsA6tkhn5dKC/FTBu14JA+CbZ2kpaiEEs9pcQVWMJNg
+         iJ7dafwZszDcgHZlRityaVQilN+MybaEx+Q+U+YQ6AQviNFt82PeVt+SESjkBdrLaTwI
+         ey4w==
+X-Gm-Message-State: ANhLgQ2h6ZZLD9RctNX7tLLFTKLKIxP6zXbgCrD4+GYJko7/I01iKiN4
+        uwymQe59zQcV/LjQMV5pmIzaWQ==
+X-Google-Smtp-Source: ADFU+vtiy568ut/PM6Ax80mYv/H0qjTHKi5cOB3MttmOmryIFYjfkTs5GQl/7KauydEk7nFMdkjE8Q==
+X-Received: by 2002:adf:f041:: with SMTP id t1mr309384wro.98.1583276909001;
+        Tue, 03 Mar 2020 15:08:29 -0800 (PST)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id t133sm994783wmf.31.2020.03.03.15.08.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 15:08:28 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Wed, 4 Mar 2020 00:08:26 +0100
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>
+Subject: Re: [PATCH bpf-next 1/7] bpf: Refactor trampoline update code
+Message-ID: <20200303230826.GA17103@chromium.org>
+References: <20200303140950.6355-1-kpsingh@chromium.org>
+ <20200303140950.6355-2-kpsingh@chromium.org>
+ <CAEf4BzZj1+G7D2eZ9Enp_FtmmNPEkX7f6BDj2q=iZ1D8ZxxTMQ@mail.gmail.com>
+ <20200303222433.GA3272@chromium.org>
+ <CAEf4BzZey65RjDtAWojvtnakQgNiids4x8R-Hak6pZW1BqUfaQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Message-Id: <202003032303.36017.luke@dashjr.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZey65RjDtAWojvtnakQgNiids4x8R-Hak6pZW1BqUfaQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems non-privileged processes can bind an IP on one interface, and then 
-send to addresses not routed through that interface, to spoof that IP on an 
-unrelated network (eg, the default route).
+On 03-Mär 15:03, Andrii Nakryiko wrote:
+> On Tue, Mar 3, 2020 at 2:24 PM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > On 03-Mär 14:12, Andrii Nakryiko wrote:
+> > > On Tue, Mar 3, 2020 at 6:13 AM KP Singh <kpsingh@chromium.org> wrote:
+> > > >
+> > > > From: KP Singh <kpsingh@google.com>
+> > > >
+> > > > As we need to introduce a third type of attachment for trampolines, the
+> > > > flattened signature of arch_prepare_bpf_trampoline gets even more
+> > > > complicated.
+> > > >
+> > > > Refactor the prog and count argument to arch_prepare_bpf_trampoline to
+> > > > use bpf_tramp_progs to simplify the addition and accounting for new
+> > > > attachment types.
+> > > >
+> > > > Signed-off-by: KP Singh <kpsingh@google.com>
+> > > > ---
+> > > >  arch/x86/net/bpf_jit_comp.c | 31 +++++++++---------
+> > > >  include/linux/bpf.h         | 13 ++++++--
+> > > >  kernel/bpf/bpf_struct_ops.c | 13 +++++++-
+> > > >  kernel/bpf/trampoline.c     | 63 +++++++++++++++++++++----------------
+> > > >  4 files changed, 75 insertions(+), 45 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+> > > > index 9ba08e9abc09..15c7d28bc05c 100644
+> > > > --- a/arch/x86/net/bpf_jit_comp.c
+> > > > +++ b/arch/x86/net/bpf_jit_comp.c
+> > > > @@ -1362,12 +1362,12 @@ static void restore_regs(const struct btf_func_model *m, u8 **prog, int nr_args,
+> > > >  }
+> > > >
+> > > >  static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
+> > > > -                     struct bpf_prog **progs, int prog_cnt, int stack_size)
+> > > > +                     struct bpf_tramp_progs *tp, int stack_size)
+> > >
+> > > nit: it's `tp` here, but `tprogs` in arch_prepare_bpf_trampoline. It's
+> > > minor, but would be nice to stick to consistent naming.
+> >
+> > I did this to ~distinguish~ that rather than being an array of
+> > tprogs it's a pointer to one of its members e.g.
+> > &tprogs[BPF_TRAMP_FEXIT]).
+> >
+> > I change it if you feel this is not a valuable disntinction.
+> 
+> I think it's important distinction, but naming doesn't really help
+> with it... Not sure how you can make it more clear, though.
 
-Shouldn't there be something to prevent this? Presumably it's not expected 
-behaviour, since you can't just bind to any arbitrary addresses...?
+I would prefer to keep the naming distinction. Hope that's okay with
+you.
 
-(FWIW I can see cases where this might be considered a security issue, but the 
-MAINTAINERS file explicitly said address leaks don't count...)
+> >
 
-Luke
+[...]
 
-P.S. I discovered this because Chromium's WebRTC implementation attempts to 
-send UDP from configured IPv4 address; and then Linux's MASQUERADE also 
-doesn't check that it have the correct return path, so it tried to NAT my WAN 
-to my WAN, which resulted in sending out from the origin IP instead of my 
-own, and triggered my modem to disconnect me. (I guess this scenario is a bit 
-too convoluted to be considered a general DoS risk)
+
+> > >
+> > count. Am I missing something :)
+> 
+> Ok, so it's setting entry 0 in bpf_tramp_progs->progs array, right?
+> Wouldn't it be less mind-bending and confusing written this way:
+> 
+> tprogs[BPF_TRAMP_FENTRY].progs[0] = prog;
+
+Definitely much cleaner/less mind bending :) Updated. Thanks!
+
+- KP
+
+> 
+> ?
+> 
+> Syntax you used treats fixed-length progs array as a pointer, which is
+> valid C, but not the best C either.
+> 
+
+[...]
+
+> >
+> > > [...]
