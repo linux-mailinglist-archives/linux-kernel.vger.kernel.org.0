@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C76A177FD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9941177EC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731925AbgCCRxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33358 "EHLO mail.kernel.org"
+        id S1731253AbgCCRqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:46:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732260AbgCCRxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:53:00 -0500
+        id S1731242AbgCCRqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:46:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32D4B206D5;
-        Tue,  3 Mar 2020 17:52:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08A312146E;
+        Tue,  3 Mar 2020 17:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257977;
-        bh=l50NZA9oJ0p6Gllzz/XT7sP8w5HvfBl6UrumDnSHawA=;
+        s=default; t=1583257609;
+        bh=9PwNu2g7oUKKYUVITgy4zOf2x0VPzKjJy7pC1BQMiC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HrOU7Bo9XnemMxeGwoAGqSmG0C2vcDvv2gVQGUvDNQyQGlezODw1wLmUKlrbLFwEN
-         HwtMYEOh5670jaKVJzMymv8HZN6fKDqyC752yFPd+1BsRHdcOby5SimOPfw7oOwGWH
-         t7ujIOZbLYE1OSGkYtDvokl4CDyBPM/eMVowKSlk=
+        b=wS+MDIk/mpvWqcNIGUsWaY4jzAMDz/Jv8DRDygxLVxvEIVMrqvATn8tOJIOqYEEcS
+         lJJ+hvhMqCf3MH0SFLR1q1/A1das4glYuf5nCH3mFvl7xAlO4IRu1y1ZJhh8+BhIu7
+         PvsrAn6g4WC+NQqIbTRMmvpfPUjUIWovBIPZgfkA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Scott Wood <swood@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 025/152] timers/nohz: Update NOHZ load in remote tick
-Date:   Tue,  3 Mar 2020 18:42:03 +0100
-Message-Id: <20200303174305.307542139@linuxfoundation.org>
+Subject: [PATCH 5.5 060/176] net: ena: fix incorrectly saving queue numbers when setting RSS indirection table
+Date:   Tue,  3 Mar 2020 18:42:04 +0100
+Message-Id: <20200303174311.530512580@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,148 +45,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra (Intel) <peterz@infradead.org>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit ebc0f83c78a2d26384401ecf2d2fa48063c0ee27 ]
+[ Upstream commit 92569fd27f5cb0ccbdf7c7d70044b690e89a0277 ]
 
-The way loadavg is tracked during nohz only pays attention to the load
-upon entering nohz.  This can be particularly noticeable if full nohz is
-entered while non-idle, and then the cpu goes idle and stays that way for
-a long time.
+The indirection table has the indices of the Rx queues. When we store it
+during set indirection operation, we convert the indices to our internal
+representation of the indices.
 
-Use the remote tick to ensure that full nohz cpus report their deltas
-within a reasonable time.
+Our internal representation of the indices is: even indices for Tx and
+uneven indices for Rx, where every Tx/Rx pair are in a consecutive order
+starting from 0. For example if the driver has 3 queues (3 for Tx and 3
+for Rx) then the indices are as follows:
+0  1  2  3  4  5
+Tx Rx Tx Rx Tx Rx
 
-[ swood: Added changelog and removed recheck of stopped tick. ]
+The BUG:
+The issue is that when we satisfy a get request for the indirection
+table, we don't convert the indices back to the original representation.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Scott Wood <swood@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/1578736419-14628-3-git-send-email-swood@redhat.com
+The FIX:
+Simply apply the inverse function for the indices of the indirection
+table after we set it.
+
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/sched/nohz.h |  2 ++
- kernel/sched/core.c        |  4 +++-
- kernel/sched/loadavg.c     | 33 +++++++++++++++++++++++----------
- 3 files changed, 28 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 24 ++++++++++++++++++-
+ drivers/net/ethernet/amazon/ena/ena_netdev.h  |  2 ++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
-index 1abe91ff6e4a2..6d67e9a5af6bb 100644
---- a/include/linux/sched/nohz.h
-+++ b/include/linux/sched/nohz.h
-@@ -15,9 +15,11 @@ static inline void nohz_balance_enter_idle(int cpu) { }
- 
- #ifdef CONFIG_NO_HZ_COMMON
- void calc_load_nohz_start(void);
-+void calc_load_nohz_remote(struct rq *rq);
- void calc_load_nohz_stop(void);
- #else
- static inline void calc_load_nohz_start(void) { }
-+static inline void calc_load_nohz_remote(struct rq *rq) { }
- static inline void calc_load_nohz_stop(void) { }
- #endif /* CONFIG_NO_HZ_COMMON */
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 067ac465a4b25..8c89c893078af 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3676,6 +3676,7 @@ static void sched_tick_remote(struct work_struct *work)
- 	if (cpu_is_offline(cpu))
- 		goto out_unlock;
- 
-+	curr = rq->curr;
- 	update_rq_clock(rq);
- 
- 	if (!is_idle_task(curr)) {
-@@ -3688,10 +3689,11 @@ static void sched_tick_remote(struct work_struct *work)
- 	}
- 	curr->sched_class->task_tick(rq, curr, 0);
- 
-+	calc_load_nohz_remote(rq);
- out_unlock:
- 	rq_unlock_irq(rq, &rf);
--
- out_requeue:
-+
- 	/*
- 	 * Run the remote tick once per second (1Hz). This arbitrary
- 	 * frequency is large enough to avoid overload but short enough
-diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
-index 28a516575c181..de22da666ac73 100644
---- a/kernel/sched/loadavg.c
-+++ b/kernel/sched/loadavg.c
-@@ -231,16 +231,11 @@ static inline int calc_load_read_idx(void)
- 	return calc_load_idx & 1;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+index 8be9df885bf4f..610a7c63e1742 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
++++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+@@ -636,6 +636,28 @@ static u32 ena_get_rxfh_key_size(struct net_device *netdev)
+ 	return ENA_HASH_KEY_SIZE;
  }
  
--void calc_load_nohz_start(void)
-+static void calc_load_nohz_fold(struct rq *rq)
- {
--	struct rq *this_rq = this_rq();
- 	long delta;
- 
--	/*
--	 * We're going into NO_HZ mode, if there's any pending delta, fold it
--	 * into the pending NO_HZ delta.
--	 */
--	delta = calc_load_fold_active(this_rq, 0);
-+	delta = calc_load_fold_active(rq, 0);
- 	if (delta) {
- 		int idx = calc_load_write_idx();
- 
-@@ -248,6 +243,24 @@ void calc_load_nohz_start(void)
- 	}
- }
- 
-+void calc_load_nohz_start(void)
++static int ena_indirection_table_get(struct ena_adapter *adapter, u32 *indir)
 +{
-+	/*
-+	 * We're going into NO_HZ mode, if there's any pending delta, fold it
-+	 * into the pending NO_HZ delta.
++	struct ena_com_dev *ena_dev = adapter->ena_dev;
++	int i, rc;
++
++	if (!indir)
++		return 0;
++
++	rc = ena_com_indirect_table_get(ena_dev, indir);
++	if (rc)
++		return rc;
++
++	/* Our internal representation of the indices is: even indices
++	 * for Tx and uneven indices for Rx. We need to convert the Rx
++	 * indices to be consecutive
 +	 */
-+	calc_load_nohz_fold(this_rq());
++	for (i = 0; i < ENA_RX_RSS_TABLE_SIZE; i++)
++		indir[i] = ENA_IO_RXQ_IDX_TO_COMBINED_IDX(indir[i]);
++
++	return rc;
 +}
 +
-+/*
-+ * Keep track of the load for NOHZ_FULL, must be called between
-+ * calc_load_nohz_{start,stop}().
-+ */
-+void calc_load_nohz_remote(struct rq *rq)
-+{
-+	calc_load_nohz_fold(rq);
-+}
-+
- void calc_load_nohz_stop(void)
+ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+ 			u8 *hfunc)
  {
- 	struct rq *this_rq = this_rq();
-@@ -268,7 +281,7 @@ void calc_load_nohz_stop(void)
- 		this_rq->calc_load_update += LOAD_FREQ;
- }
+@@ -644,7 +666,7 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+ 	u8 func;
+ 	int rc;
  
--static long calc_load_nohz_fold(void)
-+static long calc_load_nohz_read(void)
- {
- 	int idx = calc_load_read_idx();
- 	long delta = 0;
-@@ -323,7 +336,7 @@ static void calc_global_nohz(void)
- }
- #else /* !CONFIG_NO_HZ_COMMON */
+-	rc = ena_com_indirect_table_get(adapter->ena_dev, indir);
++	rc = ena_indirection_table_get(adapter, indir);
+ 	if (rc)
+ 		return rc;
  
--static inline long calc_load_nohz_fold(void) { return 0; }
-+static inline long calc_load_nohz_read(void) { return 0; }
- static inline void calc_global_nohz(void) { }
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.h b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+index bffd778f2ce34..2fe5eeea6b695 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.h
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+@@ -129,6 +129,8 @@
  
- #endif /* CONFIG_NO_HZ_COMMON */
-@@ -346,7 +359,7 @@ void calc_global_load(unsigned long ticks)
- 	/*
- 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
- 	 */
--	delta = calc_load_nohz_fold();
-+	delta = calc_load_nohz_read();
- 	if (delta)
- 		atomic_long_add(delta, &calc_load_tasks);
+ #define ENA_IO_TXQ_IDX(q)	(2 * (q))
+ #define ENA_IO_RXQ_IDX(q)	(2 * (q) + 1)
++#define ENA_IO_TXQ_IDX_TO_COMBINED_IDX(q)	((q) / 2)
++#define ENA_IO_RXQ_IDX_TO_COMBINED_IDX(q)	(((q) - 1) / 2)
  
+ #define ENA_MGMNT_IRQ_IDX		0
+ #define ENA_IO_IRQ_FIRST_IDX		1
 -- 
 2.20.1
 
