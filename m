@@ -2,192 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E945176A52
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E32C6176A79
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:13:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgCCCBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:01:49 -0500
-Received: from gateway30.websitewelcome.com ([192.185.179.30]:35206 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726773AbgCCCBt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:01:49 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 6D11418B94
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Mar 2020 20:01:47 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 8wsVjlBTuRP4z8wsVj8wOe; Mon, 02 Mar 2020 20:01:47 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bJM0vW/jtRTxwCbz2zQ/yV7VRsUN7y2H/RPdljAId+g=; b=TG3dcPlhoN/1PUVLWQrp0t7XkB
-        bfGmGf5DdTsQ1VUZf3qg0qMzuofI/gWLd3PSQBToxdZhTjheml0F/WhtKfHjxcATl9usIlr4KWqfr
-        4ii8s3rGBwSmOUkOxWty9YwtdZoZFn31jocj1OFpzJ0r26GZY8rQwHFfFXWRs0wkgC4X3azXVbOId
-        poHV5fSoUsLwTX5C4C+6uWs/GzfAkWw7a0wXlIu2S5cjhQflHvEnaxFYtgMhUTk+diAhNXSWu10hJ
-        4QpEk1/JKgGVOMRB7fNqQLLkbXs6r0gb45aXO2k5cdf72EX3R58w8N0XnvKKVwvydDkjmAq8i4IvQ
-        8BTZzICA==;
-Received: from [201.162.167.16] (port=17582 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j8wsU-002Nhr-UO; Mon, 02 Mar 2020 20:01:47 -0600
-Subject: Re: [PATCH] ocfs2: Replace zero-length array with flexible-array
- member
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-References: <20200213160244.GA6088@embeddedor>
- <1b78acd5-2b5f-55f1-5571-73f45d3c87f7@embeddedor.com>
- <30493b5f-752d-147f-3d64-95b1c59895ae@linux.alibaba.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <da617029-2f95-2cc5-4fdc-76af63ec1048@embeddedor.com>
-Date:   Mon, 2 Mar 2020 20:04:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727041AbgCCCNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:13:13 -0500
+Received: from mail-eopbgr20080.outbound.protection.outlook.com ([40.107.2.80]:8921
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726843AbgCCCNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:13:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Cw0ND9NNdGA4tiBhGwPhtsTjcMuwar/tLlBTdC8LPlLJo0BzYmtw0KFSLf44lsr6WAt7QC++g0tfAQ2rQN4UuVG8GqTDwgFrZshaDYXgGMgJwFZcZ3zSZ/p6u8Ve6SfYrSzOHQhw7YzN1tXAHtdu5hZ31zZaKP6M5o4qfaXVDQ3fB2OurAv+b3JWnlJyEemDMgN83Ha0dYnPpb5NXnTwCMJEhgCfhlaUfaCJE9DL/p0FS3RPDr4DObcRay0sX/EyVWa01tPU4sHcwwsfZlkmE9itKmtPAXVfSycD7fpIuQQVFr3nj4DBlwBWbtnPP6LITHaVhdTi9Vp3iRzxpcuc+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zq4lYBpflAjQoQtYSMowoG+qsf+axWyvbvZhFB/9rG8=;
+ b=Fi5VsvX+Q1hHsfoEc/gUqr0oYgs7HZ3CVU52mTkDGl0tdTdV67V9pIIp0saCbyuwxD2QyMgEmeUQjAA6dgyw9VceJbga7VuUPw67hCQEBwLp7k+T+6VsI9LymscmYGY1Utg2BkxqiOB5w3sPznFzjv89BgiSFob5/cfue4eRxvJ8du7S8PxLryX/fiQXkkUNy+XHJ1i+uojpV+wfCYwYPfyHsa823xbLkU/QWfLpo8zpvj93P6EgqIV+yuzhRymWS0GYGQRuXVlXHjgc2zOOLrdF7qI+zpFF+qBmsxdlhnoFi8NSp2NY6cms4Nk+SpCraX/ikDmSyw8cu9U4RTDZ0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zq4lYBpflAjQoQtYSMowoG+qsf+axWyvbvZhFB/9rG8=;
+ b=fiRcpny+Yz+q4ctolVhIW+sPIKpfJC5kwp2b7JM+vJtFjgsYFNPWWAwSeUucu98mRh/pigYQm3yKrQNJ5kV9pgKpEybCG5gWYWE/5euUbnKowPcGGBidsKOPX51ZXOO25HtAwvbbr8EqqKwyUMkUOEHu3WhGNgnNZaxTLLt90zo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6946.eurprd04.prod.outlook.com (52.132.214.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.16; Tue, 3 Mar 2020 02:13:09 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 02:13:09 +0000
+From:   peng.fan@nxp.com
+To:     sudeep.holla@arm.com, robh+dt@kernel.org
+Cc:     viresh.kumar@linaro.org, f.fainelli@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V4 0/2] firmware: arm_scmi: add smc/hvc transports support
+Date:   Tue,  3 Mar 2020 10:06:57 +0800
+Message-Id: <1583201219-15839-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0125.apcprd06.prod.outlook.com
+ (2603:1096:1:1d::27) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-In-Reply-To: <30493b5f-752d-147f-3d64-95b1c59895ae@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.167.16
-X-Source-L: No
-X-Exim-ID: 1j8wsU-002Nhr-UO
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [201.162.167.16]:17582
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0125.apcprd06.prod.outlook.com (2603:1096:1:1d::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2772.15 via Frontend Transport; Tue, 3 Mar 2020 02:13:06 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 605d27bc-e824-409e-aaf9-08d7bf186b04
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6946:|AM0PR04MB6946:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB6946A4CF9286048E18A464A788E40@AM0PR04MB6946.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-Forefront-PRVS: 03319F6FEF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(136003)(366004)(346002)(39860400002)(199004)(189003)(4326008)(6486002)(966005)(478600001)(36756003)(6506007)(52116002)(86362001)(2906002)(8936002)(69590400007)(8676002)(6666004)(81156014)(81166006)(26005)(6512007)(316002)(9686003)(5660300002)(66946007)(66556008)(66476007)(16526019)(186003)(956004)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6946;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +leFcetlNGNT7ZS+PI+nnZo399pysI8ajtX5cxuE0d50Hf7871VaANBi/ZUgJQP8kubjI+mGrx5TwGxa6mhYw/qxfillL7aUt8EcSMUuVa1sX6Gf6zPUunk/GpY4EJt3mDLbMTeAppk+cDfbTlL86TSY6Xmj8lAaH3UGkz4y4dojRTK5m2auiuGM8uUgB00fdkb/n4F0JCwhgW+fmL+BlZPPRO8arSkuZGyI8b2tm6eTue6TAjVrW2pv6tZeYcJGJpJ0P5hpkNGt5N31LTJBkNvq8TE5WGYMMLRAZNYOIKI9xOx4GkwcGdutcFGz3GPDJhJmey5DmPz+PJZdpeikJSK4NpjLR+tJAf/Z1tL8H2/GlMfXF2EjgyS7a65ih9fUVSzTzl7HU4n2fkgXRicDlCq4agAPsCECeM0u/0ZKemTmAzwGJ3gqUs0Rhn0auZPwFrsqJO/wipEp45P8IQH6k+B5ChRlPOfVWGybMKQWCtKuEgXhZMIk1oC4FF0Jsc6FUT3MJElEai2FFF70NgVyh50E0Th7A34r9/jy5iqaokU8TRi68cfsIDQVjN3sEIEcyhAUi0w1EtWi6n+OI41buw==
+X-MS-Exchange-AntiSpam-MessageData: vc9G6HGpxfgeDFhG0LSmwlN+R++ATpjbTfBkG4JY0f4E80hj1p6pwwoNmFn9NQebsdqZmW93YwlKDRsFHS9d4Xz4R9Sc+eXdnOr//QK9E4CGE/29uTYc3WR+KVH01aeS+W5alj2zwTkxEdsYpveryQ==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 605d27bc-e824-409e-aaf9-08d7bf186b04
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 02:13:09.3841
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8oAtluiFtYQmabYAFKj6mhChQNbHofxHyz5GRY4bTwBtdD8PkMz9yGaXePR9lp4f1i1+BC7xEA4g3oUovJ2gZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6946
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
+V4:
+ Drop prot_id in scmi_chan_info, since not used for now.
 
-On 3/2/20 19:17, Joseph Qi wrote:
-> Sorry for the late replay since I've missed the original mail.
-> This patch looks good to me.
-> 
-> Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> 
+V3:
+ Add back arm,scmi-smc compatible string
+ Change smc-id to arm,smc-id
+ Directly use arm_smccc_1_1_invoke
+ Add prot_id in scmi_chan_info for per protocol shmem usage.
 
-Thanks, Joseph.
---
-Gustavo
+V2:
+ patch 1/2: only add smc-id property
+ patch 2/2: Parse smc/hvc from psci node
+	    Use prot_id as 2nd arg when issue smc/hvc
+	    Differentiate tranports using mboxes or smc-id property
+https://lore.kernel.org/patchwork/cover/1193435/
 
-> On 2020/3/3 07:57, Gustavo A. R. Silva wrote:
->> Hi all,
->>
->> Friendly ping: Who can take this?
->>
->> Thanks
->> --
->> Gustavo
->>
->> On 2/13/20 10:02, Gustavo A. R. Silva wrote:
->>> The current codebase makes use of the zero-length array language
->>> extension to the C90 standard, but the preferred mechanism to declare
->>> variable-length types such as these ones is a flexible array member[1][2],
->>> introduced in C99:
->>>
->>> struct foo {
->>>         int stuff;
->>>         struct boo array[];
->>> };
->>>
->>> By making use of the mechanism above, we will get a compiler warning
->>> in case the flexible array does not occur last in the structure, which
->>> will help us prevent some kind of undefined behavior bugs from being
->>> inadvertently introduced[3] to the codebase from now on.
->>>
->>> Also, notice that, dynamic memory allocations won't be affected by
->>> this change:
->>>
->>> "Flexible array members have incomplete type, and so the sizeof operator
->>> may not be applied. As a quirk of the original implementation of
->>> zero-length arrays, sizeof evaluates to zero."[1]
->>>
->>> This issue was found with the help of Coccinelle.
->>>
->>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->>> [2] https://github.com/KSPP/linux/issues/21
->>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>  fs/ocfs2/journal.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
->>> index 68ba354cf361..b425f0b01dce 100644
->>> --- a/fs/ocfs2/journal.c
->>> +++ b/fs/ocfs2/journal.c
->>> @@ -91,7 +91,7 @@ enum ocfs2_replay_state {
->>>  struct ocfs2_replay_map {
->>>  	unsigned int rm_slots;
->>>  	enum ocfs2_replay_state rm_state;
->>> -	unsigned char rm_replay_slots[0];
->>> +	unsigned char rm_replay_slots[];
->>>  };
->>>  
->>>  static void ocfs2_replay_map_set_state(struct ocfs2_super *osb, int state)
->>>
+This is to add smc/hvc transports support, based on Viresh's v6.
+SCMI firmware could be implemented in EL3, S-EL1, NS-EL2 or other
+A core exception level. Then smc/hvc could be used. And for vendor
+specific firmware, a wrapper layer could added in EL3, S-EL1,
+NS-EL2 and etc to translate SCMI calls to vendor specific firmware calls.
+
+A new compatible string arm,scmi-smc is added. arm,scmi is still for
+mailbox transports.
+
+Per smc/hvc, only Tx supported.
+
+Peng Fan (2):
+  dt-bindings: arm: arm,scmi: add smc/hvc transport
+  firmware: arm_scmi: add smc/hvc transport
+
+ Documentation/devicetree/bindings/arm/arm,scmi.txt |   3 +-
+ drivers/firmware/arm_scmi/Makefile                 |   2 +-
+ drivers/firmware/arm_scmi/common.h                 |   1 +
+ drivers/firmware/arm_scmi/driver.c                 |   1 +
+ drivers/firmware/arm_scmi/smc.c                    | 145 +++++++++++++++++++++
+ 5 files changed, 150 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/firmware/arm_scmi/smc.c
+
+-- 
+2.16.4
+
