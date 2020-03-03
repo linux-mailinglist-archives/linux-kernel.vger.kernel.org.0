@@ -2,173 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F57177DCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E11F0177DDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbgCCRni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:43:38 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:46731 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730578AbgCCRn1 (ORCPT
+        id S1729911AbgCCRoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:44:20 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33025 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728321AbgCCRoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:43:27 -0500
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 02B1023EA8;
-        Tue,  3 Mar 2020 18:43:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1583257404;
+        Tue, 3 Mar 2020 12:44:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583257458;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=bZm6ZfNU9396+MJXOBRUscy8hxQ1AdgyZ3RSnP5KrZU=;
-        b=JCQRnvQ0RfsASdqbjilVtJFwBdG52LcArELQ5fRw6X6RI35xaH5MOfCLY04NM464eEflCl
-        RJUHJO0PKErB3whrtEKIVbLDTLN6dUOXB4BlXPEU215VZOm8a2KhPK4iKi0gXH4EyGX/Lz
-        /5MFvkVDye0iyd+U/JfhtkG4ROVv5pQ=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Yuan Yao <yao.yuan@nxp.com>, Michael Walle <michael@walle.cc>
-Subject: [PATCH v3 9/9] arm64: dts: ls1028a: add missing LPUART nodes
-Date:   Tue,  3 Mar 2020 18:43:06 +0100
-Message-Id: <20200303174306.6015-10-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200303174306.6015-1-michael@walle.cc>
-References: <20200303174306.6015-1-michael@walle.cc>
+        bh=+kDNjT2v7RCGN2/RZBTOd7SE7Zwpp1JBRccPdNRTagU=;
+        b=BerRdVguQkn/wVKsGfiu9xhV0/5S169JlwxlIW1vpqWB/3Pokvs0aN8YMnj74IHwdotpvC
+        jcilsBKotwU9dnY46bNOymrNQngmKDoB/I00LfPUDnX4t+COmp0naeZBkSagvDf957brSH
+        YuFmBp8y/zTbbED4mPgv0nk7iZMXi+8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-430-0AUSjgcfMAaw3JaNKnllaA-1; Tue, 03 Mar 2020 12:44:16 -0500
+X-MC-Unique: 0AUSjgcfMAaw3JaNKnllaA-1
+Received: by mail-wm1-f69.google.com with SMTP id f207so1404662wme.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:44:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+kDNjT2v7RCGN2/RZBTOd7SE7Zwpp1JBRccPdNRTagU=;
+        b=FHI8CvFWQ6j48p0F4N4W999Z1dmz6ahR23GETnzzovLsNIh10ZQXDhCHEt2ktzfaDG
+         /5ijNuPVotuoxhRAi6A2YrHL1xKIE385Ob8G930H9iqAiQyRoMomz68nA7Zvm3WGb/Hc
+         R8u0vvHEs76WWTpX1nM1JN8Txr6QwIjJ1F6+O42ejCGaaAGlX6WHjCZ1PpsZ15IbrqJB
+         cmjyKDdYldoJ3S1lW5lS2uczM+8iMkAhsanrZ0Sjd+x60d8Fdn+vdlshYnKYotCB2k9y
+         NKvKTAGgIHC/fenHLNaqXGkVBUxgBQ/vPutr6lnoK7p/4ULbjNBvvQtg/g/D8PNAeH8t
+         tu7w==
+X-Gm-Message-State: ANhLgQ1Kzz1T22Ukg+MWYncUmB4UulcyxGQWW4sct7hcHHAxPtUV866O
+        IxyT6gAg5E7Cm2odT3QcZNjTW8AO2ykrYEwYewZBgndoimY9YpTKa30W05vUzC7o1xITHTmcggR
+        Z7rTXWFz9wPE0+yHseSrGftuh
+X-Received: by 2002:a1c:1bd6:: with SMTP id b205mr5290792wmb.186.1583257455561;
+        Tue, 03 Mar 2020 09:44:15 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vs8FxJrSSORXThGbCXQ++IvZ7jOiUFQ+O7eaLn60+Ha62LSmPleWl6D5qSQA/eOUulgtPkXRQ==
+X-Received: by 2002:a1c:1bd6:: with SMTP id b205mr5290768wmb.186.1583257455198;
+        Tue, 03 Mar 2020 09:44:15 -0800 (PST)
+Received: from [192.168.178.40] ([151.20.254.94])
+        by smtp.gmail.com with ESMTPSA id b16sm30986279wrq.14.2020.03.03.09.44.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2020 09:44:14 -0800 (PST)
+Subject: Re: [PATCH v2 06/13] KVM: x86: Refactor emulate tracepoint to
+ explicitly take context
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200218232953.5724-1-sean.j.christopherson@intel.com>
+ <20200218232953.5724-7-sean.j.christopherson@intel.com>
+ <8736axjmte.fsf@vitty.brq.redhat.com> <20200303164813.GL1439@linux.intel.com>
+ <2f3f7aff-2bd0-fa62-4b66-9f90f125e44e@redhat.com>
+ <20200303174242.GN1439@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <c1ffb941-6232-7a35-a70c-4831f9632395@redhat.com>
+Date:   Tue, 3 Mar 2020 18:44:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Spam-Level: ******
-X-Rspamd-Server: web
-X-Spam-Status: Yes, score=6.40
-X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: 02B1023EA8
-X-Spamd-Result: default: False [6.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.479];
-         DKIM_SIGNED(0.00)[];
-         DBL_PROHIBIT(0.00)[0.34.163.48:email,0.34.124.32:email,0.34.241.80:email,0.34.202.64:email];
-         RCPT_COUNT_TWELVE(0.00)[14];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+In-Reply-To: <20200303174242.GN1439@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A has six LPUART controllers. Add the nodes.
+On 03/03/20 18:42, Sean Christopherson wrote:
+>> As long as we have one use of vcpu, I'd rather skip this patch and
+>> adjust patch 8 to use "->".  Even the other "explicitly take context"
+>> parts are kinda debatable since you still have to do emul_to_vcpu.
+>> Throwing a handful of
+>>
+>> - 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
+>> + 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
+>>
+>> into patch 8 is not bad at all and limits the churn.
+> Hmm, I'd prefer to explicitly pass @ctxt, even for the tracepoint.  I get
+> that it's technically unnecessary churn, but explicitly passing @ctxt means
+> that every funcition that grabs arch.emulate_ctxt (all three of 'em) checks
+> for a NULL ctxt.  That makes it trivial to visually audit that there's no
+> risk of a bad pointer dereference, and IMO having @ctxt in the prototype
+> is helpful to see "oh, this helper is called from within the emulator".
+> 
 
-This was tested on a custom board.
+That's a good rationale, but I believe this refactoring belongs more in
+the "disable emulator" part than this one.
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 0843cfbe7ae1..df51e81ebe84 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -333,6 +333,79 @@
- 			status = "disabled";
- 		};
- 
-+
-+		lpuart0: serial@2260000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2260000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 32>,
-+			       <&edma0 1 33>;
-+			status = "disabled";
-+		};
-+
-+		lpuart1: serial@2270000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2270000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 30>,
-+			       <&edma0 1 31>;
-+			status = "disabled";
-+		};
-+
-+		lpuart2: serial@2280000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2280000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 28>,
-+			       <&edma0 1 29>;
-+			status = "disabled";
-+		};
-+
-+		lpuart3: serial@2290000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2290000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 26>,
-+			       <&edma0 1 27>;
-+			status = "disabled";
-+		};
-+
-+		lpuart4: serial@22a0000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x22a0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 24>,
-+			       <&edma0 1 25>;
-+			status = "disabled";
-+		};
-+
-+		lpuart5: serial@22b0000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x22b0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 22>,
-+			       <&edma0 1 23>;
-+			status = "disabled";
-+		};
-+
- 		edma0: dma-controller@22c0000 {
- 			#dma-cells = <2>;
- 			compatible = "fsl,ls1028a-edma", "fsl,vf610-edma";
--- 
-2.20.1
+Paolo
 
