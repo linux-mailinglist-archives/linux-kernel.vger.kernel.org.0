@@ -2,237 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B8C217705D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:49:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5423A17703D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:43:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgCCHtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:49:33 -0500
-Received: from mail-db8eur05on2078.outbound.protection.outlook.com ([40.107.20.78]:6126
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727552AbgCCHtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:49:33 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KaeBM7ih6PD2wpxf6GHyGoRniTqB/xnjBxcPLAj6ZQU66hYmK8FQ4XpRXhgYM4U+zXn0tR5kIq07i934HMnZvQqNLoewLh9b0QftRMb/LMSW46NUHQhkfX7cL5PD8qJ3SHwl86dyvjQJvTw5yllnC3PxeSSBMNo7BHp2769gvqcGjNpyXlJEn9LI2mTbJ+ldN1MvX/fjAwtrevg5VtPhBcUSQvRleWmgLWDGS58mUij0MyixVVJJgHF9TabzPPbrJCwU914t78AYOTAx7c4XrRg0Qwl38WX/3gg3B2Y0nTX+ojftRDKhG5VlUCXBuFG6yZdhl+mMnIxZ+lpBKcjG/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iTh1fa/8iZntB+c8DdyJjM+yT5Mzn4MmJJ6QW5rB08w=;
- b=GIARLsriA4exJ/0EekhwBfqBnv8kIUixWyWofrCx/0CfpVY+130Sfz/eSwNImzbR8dTB5TLaNKUXps9S1mxzBEKuP1k3lEW1kwMAVhOjNcMKOIqiTOnZDbU+xUPMFjT0cd0EMQADRWvREpYzQB0mCPAt8vGsITyeBvXxf3JxfGRecREXdHqOhEXyOaajulcIP+m0QX2eNhlS65crp0dWhYPjO3HxjTDnHCfwttU8RA97mSq2j+TkPnVKQZoVl+1VtkaQ6MjbGjSbbu2rD5NyvI6p7A3tENzxIsseCpEBNK5nbvUOjSpTINNcSSAh+jJTI6SSQCiFE2Dh2zsuBNLEcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iTh1fa/8iZntB+c8DdyJjM+yT5Mzn4MmJJ6QW5rB08w=;
- b=ZSEvaURBzplglAlK/NQbVVveAzyGltMy4knQuKuXD+s0W6xUpkUbWYQfs2C8ilpKcLask7TpPenDLiG1IkZX2p2yKfrLPqtgTlQrRXDnSKU3oXn0vgZJ5GsIWtwk2B9XCw5qVuYD96PN6SF3k5i3l5jmFWMfxTUYTN0Jgt/CQkg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4114.eurprd04.prod.outlook.com (52.134.94.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.18; Tue, 3 Mar 2020 07:49:22 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
- 07:49:22 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
-        jassisinghbrar@gmail.com, o.rempel@pengutronix.de
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V5 4/4] firmware: imx-scu: Support one TX and one RX
-Date:   Tue,  3 Mar 2020 15:42:39 +0800
-Message-Id: <1583221359-9285-5-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583221359-9285-1-git-send-email-peng.fan@nxp.com>
-References: <1583221359-9285-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0250.apcprd06.prod.outlook.com
- (2603:1096:4:ac::34) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1727590AbgCCHnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:43:31 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53622 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbgCCHna (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 02:43:30 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g134so532932wme.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 23:43:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=19y8hOwEla5LQ3+q+f8D7McftSkNCumM9N4Er3lVr7E=;
+        b=qCaL00L+lgluqeD7V6Li2FtyeNm4SiJjl2I3OZo+ttzhqvUyXsu+W8M2GcGpzr5z1U
+         Js/ngQ7Uq4qVDuioB6r6A1dtezHGNWmjaxoEkddUzlLZbs9kfRyn11bccHe+1bAo2O6T
+         f47JDo8Chc156DXbObyfI6o6WmDtcgofD+v8e66DxWQAsFNi91ho7u9TjLS2LL8uzv8r
+         L3wtY0IZKM3GSNQiwTTWCi6cGh0EDwsZEPyDE1bcYSILnDT6raz8lKAPbFZbUJjUsg12
+         RBocHthCRJ370sbl4DLbaEPPYIEbWojWy1YCjZJ8ZgUVY/8C7Ws8vAbJ665D3yRCzamO
+         xzYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=19y8hOwEla5LQ3+q+f8D7McftSkNCumM9N4Er3lVr7E=;
+        b=kkEIk401V1g6O9RIntQlfVef863n/sfw9aZnpFZzCLpGLNjxteqagNQUKPXKvwXl4S
+         E1Nhkg+y8HiygcJte1HFiHHrsDP/EyQ8RaWlhW+9sgtzb9GQrQYzmlx5IrcCLvQCKeQs
+         1uVCLdgXvrZw18j8FjimVkTwh21+K+v/+PCEcIeixA9+gkWMw7i/FBI5VhuubTG2ePHp
+         Rvds3iDnIzqWDMYyLV22hQ6LgzYTBSy4DVSNPDWaOf2WojslMmyeZRTxNXWGiyQlmaLs
+         ywJrK9/4LgnGanCMPZVE9snkQbIzFzGvdy2FWmuqUYA8dnnrpCcnx2GKG0orpXId2bgB
+         ZVGg==
+X-Gm-Message-State: ANhLgQ1dx6mPqmomUaaVMh8oa6Lg2UeQ7xqOlIdyv3Py5kxEqEE48sMj
+        GmvXph175sPi45Fr5KOoDrE=
+X-Google-Smtp-Source: ADFU+vuw49wz51LirDGbH9qymWMVbsh0ZceIk1lUYnfagI/ccly8un3TZ7OYV+RRC94XY7n1OvtE5Q==
+X-Received: by 2002:a7b:c315:: with SMTP id k21mr2763832wmj.19.1583221409141;
+        Mon, 02 Mar 2020 23:43:29 -0800 (PST)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id g7sm32066854wrq.21.2020.03.02.23.43.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 23:43:28 -0800 (PST)
+Date:   Tue, 3 Mar 2020 08:43:26 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     maz@kernel.org, wens@csie.org, mripard@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com
+Subject: sunxi: a83t: does not boot anymore in BigEndian
+Message-ID: <20200303074326.GA9935@Red>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0250.apcprd06.prod.outlook.com (2603:1096:4:ac::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2772.15 via Frontend Transport; Tue, 3 Mar 2020 07:49:18 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8b54005e-cd5a-4a6d-36ee-08d7bf476322
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4114:|AM0PR04MB4114:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB4114395B1C58B437C6909CD988E40@AM0PR04MB4114.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
-X-Forefront-PRVS: 03319F6FEF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(39860400002)(366004)(199004)(189003)(8936002)(69590400007)(52116002)(9686003)(6486002)(5660300002)(6512007)(8676002)(66946007)(81166006)(66556008)(66476007)(81156014)(26005)(36756003)(6666004)(956004)(478600001)(86362001)(4326008)(2906002)(2616005)(316002)(16526019)(6506007)(186003)(83323001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4114;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gz9I8vCn3QstAUt8VuA19Q/9xLBMCs7YnZzgD8EHh4r+xdc86j40m7n4xFaAapzG7ToB3ko1OpSmdJibE0aAmBmY3ANjenCSnbDWjR4/Vp6emo1U6+wvb5hHD2eBsVYPG3E7oDTisoHbA3EGbd2wySwiSL03m9DlP1gXDNJ1Sr75ARMRPxyMuOrgldMUdwKvwKnwNJTI69HsfufuvU7qqMFiz7XPNckGd1Nnr39ayYq3rwtIdQnKPLCKu6Ri+k+NkjLQXsEKog4cUKz8qwlitowRXdLn+P00i+VktP2nhLHhfn/VLLu16iuZ0Osx/LcKsZ3dJhs0fCsp7hsO0Tqk9+D+4q7fX3uhznInybYxMKUBzz9d1mCJD9nazwtVvzh8dtAWEusYxc4TIUJBxkXw8pCFncobKq1E6OMF51i6z9eoZoGIoo9f+grc6wph+pV+PhA/i5YJ8d2BC0pYEMzpQjZSKTWk0b4CvyUokqBZ8fHX/LR1iTPXUVdFL4L8F9AGsAQpl6JWXhoZ/ubfM2a/9Q==
-X-MS-Exchange-AntiSpam-MessageData: BK2MOtM9yLWw3tcKUDAuVQHblGEx6plMnSqe0pdPDAdXBsLqHSYEbZVs9c2VkR0rgTqTBsQQGBaOt5noOIDo9t5EZ7JlGMRUSBIuYyCGXIKbV577wS6D0FowtbGWM775B6/utyMfgbApnCHXDcR9iw==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b54005e-cd5a-4a6d-36ee-08d7bf476322
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 07:49:22.5582
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kgzQwxPgVZePptcwG/Fp6Xbhk3aGa1nbOxGD6c+5FTan93+0yDJqwl+XTjryFZxcbuhiKYaBBAdJ6kY+c7Ma5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4114
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Hello
 
-Current imx-scu requires four TX and four RX to communicate with
-SCU. This is low efficient and causes lots of mailbox interrupts.
+My sun8i-a83t-bananapi-m3 does not boot anymore in BE.
+Others sunxi platform I have seems not affected (a10, a20, a64, h3, h5, h6)
 
-With imx-mailbox driver could support one TX to use all four transmit
-registers and one RX to use all four receive registers, imx-scu
-could use one TX and one RX.
+I have bisected this problem:
+git bisect start
+# bad: [98d54f81e36ba3bf92172791eba5ca5bd813989b] Linux 5.6-rc4
+git bisect bad 98d54f81e36ba3bf92172791eba5ca5bd813989b
+# bad: [d5226fa6dbae0569ee43ecfc08bdcd6770fc4755] Linux 5.5
+git bisect bad d5226fa6dbae0569ee43ecfc08bdcd6770fc4755
+# good: [219d54332a09e8d8741c1e1982f5eae56099de85] Linux 5.4
+git bisect good 219d54332a09e8d8741c1e1982f5eae56099de85
+# bad: [8c39f71ee2019e77ee14f88b1321b2348db51820] Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+git bisect bad 8c39f71ee2019e77ee14f88b1321b2348db51820
+# bad: [3b397c7ccafe0624018cb09fc96729f8f6165573] Merge tag 'regmap-v5.5' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap
+git bisect bad 3b397c7ccafe0624018cb09fc96729f8f6165573
+# good: [924ea58dadea23cc28b60d02b9c0896b7b168a6f] Merge tag 'mt76-for-kvalo-2019-11-20' of https://github.com/nbd168/wireless
+git bisect good 924ea58dadea23cc28b60d02b9c0896b7b168a6f
+# good: [3f3c8be973af10875cfa1e7b85a535b6ba76b44f] Merge tag 'for-linus-5.5a-rc1-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip
+git bisect good 3f3c8be973af10875cfa1e7b85a535b6ba76b44f
+# bad: [642356cb5f4a8c82b5ca5ebac288c327d10df236] Merge git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
+git bisect bad 642356cb5f4a8c82b5ca5ebac288c327d10df236
+# good: [57d8154f15e89f53dfb412f4ed32ebe3c3d755a0] crypto: atmel-aes - Change data type for "lastc" buffer
+git bisect good 57d8154f15e89f53dfb412f4ed32ebe3c3d755a0
+# bad: [752272f16dd18f2cac58a583a8673c8e2fb93abb] Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+git bisect bad 752272f16dd18f2cac58a583a8673c8e2fb93abb
+# good: [9477f4449b0b011ce1d058c09ec450bfcdaab784] KVM: VMX: Add helper to check reserved bits in IA32_PERF_GLOBAL_CTRL
+git bisect good 9477f4449b0b011ce1d058c09ec450bfcdaab784
+# bad: [cd7056ae34af0e9424da97bbc7d2b38246ba8a2c] Merge remote-tracking branch 'kvmarm/misc-5.5' into kvmarm/next
+git bisect bad cd7056ae34af0e9424da97bbc7d2b38246ba8a2c
+# bad: [c7892db5dd6afe921ead502aff7440a1e450d947] KVM: arm64: Select TASK_DELAY_ACCT+TASKSTATS rather than SCHEDSTATS
+git bisect bad c7892db5dd6afe921ead502aff7440a1e450d947
+# bad: [8564d6372a7d8a6d440441b8ed8020f97f744450] KVM: arm64: Support stolen time reporting via shared structure
+git bisect bad 8564d6372a7d8a6d440441b8ed8020f97f744450
+# bad: [55009c6ed2d24fc0f5521ab2482f145d269389ea] KVM: arm/arm64: Factor out hypercall handling from PSCI code
+git bisect bad 55009c6ed2d24fc0f5521ab2482f145d269389ea
+# bad: [6a7458485b390f48e481fcd4a0b20e6c5c843d2e] KVM: arm64: Document PV-time interface
+git bisect bad 6a7458485b390f48e481fcd4a0b20e6c5c843d2e
+# bad: [dcac930e9901d765234bc15004db4f7d4416db71] Merge remote-tracking branch 'arm64/for-next/smccc-conduit-cleanup' into kvm-arm64/stolen-time
+git bisect bad dcac930e9901d765234bc15004db4f7d4416db71
+# first bad commit: [dcac930e9901d765234bc15004db4f7d4416db71] Merge remote-tracking branch 'arm64/for-next/smccc-conduit-cleanup' into kvm-arm64/stolen-time
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-V5:
- None
-V4:
- None
-V3:
- Check mbox fsl,imx8-mu-scu for fast_ipc
+But bisect lead to a merge request.
 
- drivers/firmware/imx/imx-scu.c | 54 +++++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/firmware/imx/imx-scu.c b/drivers/firmware/imx/imx-scu.c
-index f71eaa5bf52d..e94a5585b698 100644
---- a/drivers/firmware/imx/imx-scu.c
-+++ b/drivers/firmware/imx/imx-scu.c
-@@ -38,6 +38,7 @@ struct imx_sc_ipc {
- 	struct device *dev;
- 	struct mutex lock;
- 	struct completion done;
-+	bool fast_ipc;
- 
- 	/* temporarily store the SCU msg */
- 	u32 *msg;
-@@ -115,6 +116,7 @@ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
- 	struct imx_sc_ipc *sc_ipc = sc_chan->sc_ipc;
- 	struct imx_sc_rpc_msg *hdr;
- 	u32 *data = msg;
-+	int i;
- 
- 	if (!sc_ipc->msg) {
- 		dev_warn(sc_ipc->dev, "unexpected rx idx %d 0x%08x, ignore!\n",
-@@ -122,6 +124,19 @@ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
- 		return;
- 	}
- 
-+	if (sc_ipc->fast_ipc) {
-+		hdr = msg;
-+		sc_ipc->rx_size = hdr->size;
-+		sc_ipc->msg[0] = *data++;
-+
-+		for (i = 1; i < sc_ipc->rx_size; i++)
-+			sc_ipc->msg[i] = *data++;
-+
-+		complete(&sc_ipc->done);
-+
-+		return;
-+	}
-+
- 	if (sc_chan->idx == 0) {
- 		hdr = msg;
- 		sc_ipc->rx_size = hdr->size;
-@@ -147,6 +162,7 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 	struct imx_sc_chan *sc_chan;
- 	u32 *data = msg;
- 	int ret;
-+	int size;
- 	int i;
- 
- 	/* Check size */
-@@ -156,7 +172,8 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 	dev_dbg(sc_ipc->dev, "RPC SVC %u FUNC %u SIZE %u\n", hdr->svc,
- 		hdr->func, hdr->size);
- 
--	for (i = 0; i < hdr->size; i++) {
-+	size = sc_ipc->fast_ipc ? 1 : hdr->size;
-+	for (i = 0; i < size; i++) {
- 		sc_chan = &sc_ipc->chans[i % 4];
- 
- 		/*
-@@ -168,8 +185,10 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 		 * Wait for tx_done before every send to ensure that no
- 		 * queueing happens at the mailbox channel level.
- 		 */
--		wait_for_completion(&sc_chan->tx_done);
--		reinit_completion(&sc_chan->tx_done);
-+		if (!sc_ipc->fast_ipc) {
-+			wait_for_completion(&sc_chan->tx_done);
-+			reinit_completion(&sc_chan->tx_done);
-+		}
- 
- 		ret = mbox_send_message(sc_chan->ch, &data[i]);
- 		if (ret < 0)
-@@ -246,6 +265,8 @@ static int imx_scu_probe(struct platform_device *pdev)
- 	struct imx_sc_chan *sc_chan;
- 	struct mbox_client *cl;
- 	char *chan_name;
-+	struct of_phandle_args args;
-+	int num_channel;
- 	int ret;
- 	int i;
- 
-@@ -253,11 +274,20 @@ static int imx_scu_probe(struct platform_device *pdev)
- 	if (!sc_ipc)
- 		return -ENOMEM;
- 
--	for (i = 0; i < SCU_MU_CHAN_NUM; i++) {
--		if (i < 4)
-+	ret = of_parse_phandle_with_args(pdev->dev.of_node, "mboxes",
-+					 "#mbox-cells", 0, &args);
-+	if (ret)
-+		return ret;
-+
-+	sc_ipc->fast_ipc = of_device_is_compatible(args.np, "fsl,imx8-mu-scu");
-+
-+	num_channel = sc_ipc->fast_ipc ? 2 : SCU_MU_CHAN_NUM;
-+	for (i = 0; i < num_channel; i++) {
-+		if (i < num_channel / 2)
- 			chan_name = kasprintf(GFP_KERNEL, "tx%d", i);
- 		else
--			chan_name = kasprintf(GFP_KERNEL, "rx%d", i - 4);
-+			chan_name = kasprintf(GFP_KERNEL, "rx%d",
-+					      i - num_channel / 2);
- 
- 		if (!chan_name)
- 			return -ENOMEM;
-@@ -269,13 +299,15 @@ static int imx_scu_probe(struct platform_device *pdev)
- 		cl->knows_txdone = true;
- 		cl->rx_callback = imx_scu_rx_callback;
- 
--		/* Initial tx_done completion as "done" */
--		cl->tx_done = imx_scu_tx_done;
--		init_completion(&sc_chan->tx_done);
--		complete(&sc_chan->tx_done);
-+		if (!sc_ipc->fast_ipc) {
-+			/* Initial tx_done completion as "done" */
-+			cl->tx_done = imx_scu_tx_done;
-+			init_completion(&sc_chan->tx_done);
-+			complete(&sc_chan->tx_done);
-+		}
- 
- 		sc_chan->sc_ipc = sc_ipc;
--		sc_chan->idx = i % 4;
-+		sc_chan->idx = i % (num_channel / 2);
- 		sc_chan->ch = mbox_request_channel_byname(cl, chan_name);
- 		if (IS_ERR(sc_chan->ch)) {
- 			ret = PTR_ERR(sc_chan->ch);
--- 
-2.16.4
-
+Regards
