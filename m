@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746F6176D70
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5AC5176D66
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:03:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbgCCDDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 22:03:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40596 "EHLO mail.kernel.org"
+        id S1727489AbgCCCqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:46:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbgCCCqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:46:21 -0500
+        id S1727425AbgCCCqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:46:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D3C424681;
-        Tue,  3 Mar 2020 02:46:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C703224682;
+        Tue,  3 Mar 2020 02:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203581;
-        bh=3TigfwXrdUcwuJtxDdM91sunQiw06FIrpMZszuW3/3k=;
+        s=default; t=1583203584;
+        bh=XPgDphCG7o8+2DsQtg+A8h+zRYGpfJPdC/2PvdX86VQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z6oaT39MqzyUR6VPTFxGStwF3cqMdBRHE620C2HV8khFPWh9PSEfWNXlIEjCFID+K
-         fyk3hTQXMOgMjjkOFVslw9nRLHwzygwO7/IUeu8mAk0f5PWdjJ21uWCPItVNmZV95S
-         Wm8qdN3rK+aHBL0KsTpOykNH+lQtI5SOogVVRoXk=
+        b=r7q6xY4pw2kjz4HuWXkBTGB+u1cqCDq4P7OFOpHAFlNvy3h28UAyRC0TIfmwL84Tl
+         FdnQzNrd1askHL+B5gg9T9bJUIvGdwXhyOKnibCrDziHZ6iSCe0u2KYAifKJf4DOAD
+         ZiaekaIKGXnZ/F3igxfCcZglnVJaf6AnmSAsiTwc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikita Sobolev <Nikita.Sobolev@synopsys.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 04/66] Kernel selftests: tpm2: check for tpm support
-Date:   Mon,  2 Mar 2020 21:45:13 -0500
-Message-Id: <20200303024615.8889-4-sashal@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 07/66] usb: gadget: ffs: ffs_aio_cancel(): Save/restore IRQ flags
+Date:   Mon,  2 Mar 2020 21:45:16 -0500
+Message-Id: <20200303024615.8889-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200303024615.8889-1-sashal@kernel.org>
 References: <20200303024615.8889-1-sashal@kernel.org>
@@ -44,63 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit b32694cd0724d4ceca2c62cc7c3d3a8d1ffa11fc ]
+[ Upstream commit 43d565727a3a6fd24e37c7c2116475106af71806 ]
 
-tpm2 tests set fails if there is no /dev/tpm0 and /dev/tpmrm0
-supported. Check if these files exist before run and mark test as
-skipped in case of absence.
+ffs_aio_cancel() can be called from both interrupt and thread context. Make
+sure that the current IRQ state is saved and restored by using
+spin_{un,}lock_irq{save,restore}().
 
-Signed-off-by: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Otherwise undefined behavior might occur.
+
+Acked-by: Michal Nazarewicz <mina86@mina86.com>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/tpm2/test_smoke.sh | 13 +++++++++++--
- tools/testing/selftests/tpm2/test_space.sh |  9 ++++++++-
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/function/f_fs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
-index 8155c2ea7ccbb..b630c7b5950a9 100755
---- a/tools/testing/selftests/tpm2/test_smoke.sh
-+++ b/tools/testing/selftests/tpm2/test_smoke.sh
-@@ -1,8 +1,17 @@
- #!/bin/bash
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+self.flags = flags
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index 6f8b67e617716..bdac92d3a8d0c 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1162,18 +1162,19 @@ static int ffs_aio_cancel(struct kiocb *kiocb)
+ {
+ 	struct ffs_io_data *io_data = kiocb->private;
+ 	struct ffs_epfile *epfile = kiocb->ki_filp->private_data;
++	unsigned long flags;
+ 	int value;
  
--python -m unittest -v tpm2_tests.SmokeTest
--python -m unittest -v tpm2_tests.AsyncTest
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+
-+if [ -f /dev/tpm0 ] ; then
-+	python -m unittest -v tpm2_tests.SmokeTest
-+	python -m unittest -v tpm2_tests.AsyncTest
-+else
-+	exit $ksft_skip
-+fi
+ 	ENTER();
  
- CLEAR_CMD=$(which tpm2_clear)
- if [ -n $CLEAR_CMD ]; then
-diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
-index a6f5e346635e5..180b469c53b47 100755
---- a/tools/testing/selftests/tpm2/test_space.sh
-+++ b/tools/testing/selftests/tpm2/test_space.sh
-@@ -1,4 +1,11 @@
- #!/bin/bash
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+-	spin_lock_irq(&epfile->ffs->eps_lock);
++	spin_lock_irqsave(&epfile->ffs->eps_lock, flags);
  
--python -m unittest -v tpm2_tests.SpaceTest
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+if [ -f /dev/tpmrm0 ] ; then
-+	python -m unittest -v tpm2_tests.SpaceTest
-+else
-+	exit $ksft_skip
-+fi
+ 	if (likely(io_data && io_data->ep && io_data->req))
+ 		value = usb_ep_dequeue(io_data->ep, io_data->req);
+ 	else
+ 		value = -EINVAL;
+ 
+-	spin_unlock_irq(&epfile->ffs->eps_lock);
++	spin_unlock_irqrestore(&epfile->ffs->eps_lock, flags);
+ 
+ 	return value;
+ }
 -- 
 2.20.1
 
