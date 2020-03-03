@@ -2,93 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06135176FE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE30F176FEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:21:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbgCCHRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:17:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49940 "EHLO mail.kernel.org"
+        id S1727563AbgCCHV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:21:26 -0500
+Received: from mga17.intel.com ([192.55.52.151]:1263 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbgCCHRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:17:44 -0500
-Received: from onda.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 396F2206D5;
-        Tue,  3 Mar 2020 07:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583219863;
-        bh=Fe9C3JO/6dFS4hMmkIV4wOTyNTtzIWd54ZQJ+OuoeBE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PmIQIKfAYsVQtKrR+L8fjIjigxaH0hJBHCPWaw5HpRAe0kWGc+1M0USf8JNT9m2hh
-         dnIKP2izDuwkI4ENVVJCa9LZqaBZVkk4qXcy7eGEHvBs4IsLZCdYBSULBIfD805mkQ
-         d0Iuo3sdXkTEXsufaQD2DKNNciWyXOV2ZOVdfEZM=
-Date:   Tue, 3 Mar 2020 08:17:39 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 08/12] docs: dt: convert overlay-notes.txt to ReST
- format
-Message-ID: <20200303081739.643dbe94@onda.lan>
-In-Reply-To: <3fac6196-e9c4-a23d-c5e3-f17367e5db91@gmail.com>
-References: <cover.1583135507.git.mchehab+huawei@kernel.org>
-        <1685e79f7b53c70c64e37841fb4df173094ebd17.1583135507.git.mchehab+huawei@kernel.org>
-        <3fac6196-e9c4-a23d-c5e3-f17367e5db91@gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727522AbgCCHVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 02:21:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 23:21:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,510,1574150400"; 
+   d="scan'208";a="412644822"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 02 Mar 2020 23:21:22 -0800
+Subject: Re: [PATCH] x86: perf: insn: Tweak opcode map for Intel CET
+ instructions
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Mingbo Zhang <whensungoes@gmail.com>, x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        linux-kernel@vger.kernel.org, Yu-cheng Yu <yu-cheng.yu@intel.com>
+References: <20200303045033.6137-1-whensungoes@gmail.com>
+ <931d8779-8b77-b75f-bb3a-ee2f9d75f149@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <a9039e7c-db8f-ddda-8298-b89b66b65408@intel.com>
+Date:   Tue, 3 Mar 2020 09:20:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <931d8779-8b77-b75f-bb3a-ee2f9d75f149@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 2 Mar 2020 15:13:21 -0600
-Frank Rowand <frowand.list@gmail.com> escreveu:
-
-> On 3/2/20 1:59 AM, Mauro Carvalho Chehab wrote:
-> > - Add a SPDX header;
-> > - Adjust document title;
-> > - Some whitespace fixes and new line breaks;
-> > - Mark literal blocks as such;
-> > - Add it to devicetree/index.rst.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  Documentation/devicetree/index.rst            |   1 +
-> >  .../{overlay-notes.txt => overlay-notes.rst}  | 141 +++++++++---------
-> >  MAINTAINERS                                   |   2 +-
-> >  3 files changed, 74 insertions(+), 70 deletions(-)
-> >  rename Documentation/devicetree/{overlay-notes.txt => overlay-notes.rst} (56%)
-> > 
-> > diff --git a/Documentation/devicetree/index.rst b/Documentation/devicetree/index.rst
-> > index ca83258fbba5..0669a53fc617 100644
-> > --- a/Documentation/devicetree/index.rst
-> > +++ b/Documentation/devicetree/index.rst
-> > @@ -13,3 +13,4 @@ Open Firmware and Device Tree
-> >     changesets
-> >     dynamic-resolution-notes
-> >     of_unittest
-> > +   overlay-notes
-> > diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.rst
-> > similarity index 56%
-> > rename from Documentation/devicetree/overlay-notes.txt
-> > rename to Documentation/devicetree/overlay-notes.rst
-> > index 3f20a39e4bc2..7e8e568f64a8 100644
-> > --- a/Documentation/devicetree/overlay-notes.txt
-> > +++ b/Documentation/devicetree/overlay-notes.rst  
+On 3/03/20 9:17 am, Adrian Hunter wrote:
+> On 3/03/20 6:50 am, Mingbo Zhang wrote:
+>> Intel CET instructions are not described in the Intel SDM. When trying to
+>> get the instruction length, the following instructions get wrong (missing
+>> ModR/M byte).
+>>
+>> RDSSPD r32
+>> RSDDPQ r64
+>> ENDBR32
+>> ENDBR64
+>> WRSSD r/m32, r32
+>> WRSSQ r/m64, r64
+>>
+>> RDSSPD/Q and ENDBR32/64 use the same opcode (f3 0f 1e) slot, which is
+>> described in SDM as Reserved-NOP with no encoding characters, and got an
+>> empty slot in the opcode map. WRSSD/Q (0f 38 f6) also got an empty slot.
 > 
-> There is a collision between 08/12 and a patch I sent a couple of days ago:
+> We have patches for that:
 > 
->    https://lore.kernel.org/r/1580171838-1770-1-git-send-email-frowand.list@gmail.com
+> 	https://lore.kernel.org/lkml/20200204171425.28073-1-yu-cheng.yu@intel.com/
+> 
+> But they have not yet been applied.  Arnaldo, could you take them?
+> 
 
-Thanks for pointing it! I'll rebase on the top of linux-next tomorrow
-and add your patch on my tree before my series, if not merged on -next
-before that.
+For reference:
 
-Regards,
-Mauro
+Subject: [PATCH 0/2] Introduce Control-flow Enforcement opcodes
+Date: Tue,  4 Feb 2020 09:14:23 -0800
+Message-ID: <20200204171425.28073-1-yu-cheng.yu@intel.com> (raw)
+
+Control-flow Enforcement (CET) introduces 10 new instructions [1].  Add
+them to the opcode map.  This series has been separated from the CET
+patches [2] for ease of review.
+
+[1] Detailed information on CET can be found in "Intel 64 and IA-32
+    Architectures Software Developer's Manual":
+
+    https://software.intel.com/en-us/download/intel-64-and-ia-32-
+    architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4
+
+[2] CET patches:
+
+    https://lkml.kernel.org/r/20190813205225.12032-1-yu-cheng.yu@intel.com/
+    https://lkml.kernel.org/r/20190813205359.12196-1-yu-cheng.yu@intel.com/
+
+Adrian Hunter (1):
+  x86/insn: perf tools: Add CET instructions to the new instructions
+    test
+
+Yu-cheng Yu (1):
+  x86/insn: Add Control-flow Enforcement (CET) instructions to the
+    opcode map
+
+ arch/x86/lib/x86-opcode-map.txt              |  17 +-
+ tools/arch/x86/lib/x86-opcode-map.txt        |  17 +-
+ tools/perf/arch/x86/tests/insn-x86-dat-32.c  | 112 +++++++++
+ tools/perf/arch/x86/tests/insn-x86-dat-64.c  | 196 +++++++++++++++
+ tools/perf/arch/x86/tests/insn-x86-dat-src.c | 236 +++++++++++++++++++
+ 5 files changed, 566 insertions(+), 12 deletions(-)
