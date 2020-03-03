@@ -2,92 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8354176A3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 02:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0DCD176A46
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 02:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbgCCBwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 20:52:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38708 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbgCCBwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 20:52:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=NSfLdsm5L9JTNJGf8ZM7w0TrSlZzxMgfaVEelZp4YqA=; b=qj2EFX/WYxnKXYE1pca5FuJSgX
-        iywR9Np684IGNBma4IquuP12AvVpkZ0F9A/o/eLXK6yS79LNgrQXP7cCDKzJo4YlI2YYwPQov18jF
-        Cw73pwtaykBx8dQ/8aPmI0/rKrcKGC5glWks+YtFUWDtzgt3VFQeG2fyo6fe0COfRV5zThdkLtgt/
-        bp2Thi5KrjiKfaIUrftLUvCdy/pxmw9nOthcf/J6lWYw0TinuPXYT/8MhNbmZsCdB0ZPauEQwKeC5
-        71LTUgNbum0dFS+K6IEwFk48BRGFNxJQxXpf8AIylbhVoVVOqnVARp4AlZHH6PFoaEQJg1DYpvKqr
-        32pNcUcQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j8wjd-0000f0-H0; Tue, 03 Mar 2020 01:52:37 +0000
-Subject: Re: [PATCH v3] Documentation: bootconfig: Update boot configuration
- documentation
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Markus Elfring <Markus.Elfring@web.de>
-References: <158313621831.3082.9886161529613724376.stgit@devnote2>
- <158313622831.3082.8237132211731864948.stgit@devnote2>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8c032093-c652-5e33-36ad-732f73beabab@infradead.org>
-Date:   Mon, 2 Mar 2020 17:52:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726971AbgCCB7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 20:59:22 -0500
+Received: from mail-eopbgr70075.outbound.protection.outlook.com ([40.107.7.75]:28645
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726773AbgCCB7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 20:59:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WWla2xcOgopgKVYUMU7f2u6hLFwCjBFjR1YzIOYBsnMaD1bqjfxlbFZ/uffPkGw5Hj8iMPMoo/KZ+x0m+7LYWResynbvyLZlE2YtGUX28skzG8LEhQ7Pl++Q60/6+jjCs7zevPCax96Jhc+lX7bcrcpax907SQUqRLjTs2OU19duwdjvBzcQzXKVrgXdwBGF5KiTts5XvXYKpTkziEXiaLWwkrh3vknLfgCG4DzlVmCFSdm6SYM1S1iD+NMy3+X3L1nrx3B761jinJJHbs9o4cfdnfR/rouQKk2EbC48VNKV1cZuRq06oh5Genb8O2IeWOmC9vE4jnjm4jYDjEUK5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YxfHwjlGJa4S3kYkNq1belQhIqSGjeSgMSncQBN3kOI=;
+ b=GicPcVwvAMt4neVaApRlSQkHRDIPB86jqjWOGgfAq9pChXY4H3CU8CQjWYdC6RoAFrYgl0Oxpvou3OA+MhIkT/Yl/0ZtJTcsUp1NduD2y9QdZ+38H7Sc1Z8y3pz+1EyxV1b5eQQ2Klag+XdpYPNLY472TuXEPVZ55V+MHs/o7n/7GE5kV5kVIpwFs0N1lzJAEt9KBsNAbcKmoEwtPsMBWxTSoKG30+g94KxUU331o4700VvucuNkS1TD81ftTTcJ6Nml0vg/84ucujQb+qG2EVF+99tsUtqqxq4Te00QWtcSLp6JBlURy7Y/eB1TQp9pNs2LPBRytn7XEcUDVI+aBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YxfHwjlGJa4S3kYkNq1belQhIqSGjeSgMSncQBN3kOI=;
+ b=Bcl5vj1BROiu/QnTQ9NJMtqWEMksBgvCrmdg9EAgVWvaQROLJYJNlYIkrlfc4/6Alt6YtvK87/Y8MhzOnKvhbq/befzj9CGiBS6adgJVMQHhZO6wtlKIgUJsUsntmxUpZsjRtA+cdok8S6DXmV6qok2vx/Hp6bV5cvmOTJS/Q94=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB7057.eurprd04.prod.outlook.com (10.186.131.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15; Tue, 3 Mar 2020 01:59:18 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 01:59:18 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
+        jassisinghbrar@gmail.com, o.rempel@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V4 0/4] mailbox/firmware: imx: support SCU channel type
+Date:   Tue,  3 Mar 2020 09:52:56 +0800
+Message-Id: <1583200380-15623-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR04CA0147.apcprd04.prod.outlook.com
+ (2603:1096:3:16::31) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-In-Reply-To: <158313622831.3082.8237132211731864948.stgit@devnote2>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR04CA0147.apcprd04.prod.outlook.com (2603:1096:3:16::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2772.18 via Frontend Transport; Tue, 3 Mar 2020 01:59:14 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 92ed0af8-a29c-49bc-1722-08d7bf167b6c
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7057:|AM0PR04MB7057:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB705792E82D4265CC689C1A3488E40@AM0PR04MB7057.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2657;
+X-Forefront-PRVS: 03319F6FEF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(136003)(346002)(396003)(376002)(189003)(199004)(9686003)(6512007)(2906002)(15650500001)(6666004)(6506007)(26005)(956004)(81156014)(81166006)(8936002)(52116002)(186003)(6486002)(2616005)(4326008)(16526019)(66946007)(66476007)(8676002)(478600001)(66556008)(86362001)(36756003)(316002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7057;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Wdr0md4Zob792u62iF9Jc77U5rOJCYMamZWCZuSCN/KPur7/c3zbjrhQRNKAAJNqz3b93CwKjqEZFNyu/yUShbrxcsWxo8iYDumDJqtKEX/4FdyXYZUv49xJor8H5pKQ7CZgoOK3NehOqtQBNrA5Z6kISBSxm8X3KnTFL1Yxowlw+FCwweDCgmT/5TIzKURKKJ7a1lswJ8rFgWtLF6Rix2siz8PGz3r47ftRrAfmJSkbQ4XszSgsbr2L/G8D/MOedwMhnLiRAAZy2E0URIxTB+c8AOV4govo1+sC3a2wTqHNOGYkXyqmJyhCg9r0Nv6UIgGwA8w/MMDHVQOhz72QfpskpX1OB8TVhBQ3YLoX3Bmmd7o0xC0TI+p46gG/lv0VGY58J2cyVArIhyBHDSQdcAgq1nu59Fy65NS4xX3jPag4m4wa9NHj6/XP/m9+Mipo
+X-MS-Exchange-AntiSpam-MessageData: yLfxkSl7du/DsmBtrU1PSnYgn/rICTUbqKuilmohkUSKU2M7nHOdK5jX/QpWnKbYvMdtMO7IE7enYpq3IfG3DpZH64/MinrYnvF5T4mPoi39NB28wB4oQRaUO9wk3WpyeRuGt90v9ieZce4+A2zgoQ==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92ed0af8-a29c-49bc-1722-08d7bf167b6c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 01:59:17.9280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /odMjZmTlrIdfE8+OfyFJHwz6Dk1rlSr9i3TJrk5uqOCzBSgWvBj/rm2OHqUaw+ZytcTAHu1CMVk5Xg44FyrzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/20 12:03 AM, Masami Hiramatsu wrote:
-> Update boot configuration documentation.
-> 
->  - Not using "config" abbreviation but configuration or description.
->  - Rewrite descriptions of node and its maxinum number.
->  - Add a section of use cases of boot configuration.
->  - Move how to use bootconfig to earlier section.
->  - Fix some typos, indents and format mistakes.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
-> Changes in v3:
->  - Specify that comments also count in size.
->  - Fix a confusing sentence.
->  - Add O=<builddir> to make command.
+From: Peng Fan <peng.fan@nxp.com>
 
 
-Hi Masami-san,
+V4:
+ Drop IMX_MU_TYPE_[GENERIC, SCU]
+ Pack MU chans init to separate function
+ Add separate function for SCU chans init and xlate
+ Add santity check to msg hdr.size
+ Limit SCU MU chans to 6, TX0/RX0/RXDB[0-3]
 
-I think that you misunderstood me.  I am asking that you
-make "make O=builddir -C tools/bootconfig" work properly, i.e.,
-the bootconfig binary should be built in the <builddir>.
+V3:
+ Rebase to Shawn's for-next
+ Include fsl,imx8-mu-scu compatible
+ Per Oleksij's comments, introduce generic tx/rx and added scu mu type
+ Check fsl,imx8-mu-scu in firmware driver for fast_ipc
 
-Presently when I enter that command, the bootconfig binary
-is still built in the kernel source tree.
+V2:
+ Drop patch 1/3 which added fsl,scu property
+ Force to use scu channel type when machine has node compatible "fsl,imx-scu"
+ Force imx-scu to use fast_ipc
 
-> Changes in v2:
->  - Fixes additional typos (Thanks Markus and Randy!)
->  - Change a section title to "Tree Structured Key".
-> ---
->  Documentation/admin-guide/bootconfig.rst |  181 +++++++++++++++++++-----------
->  Documentation/trace/boottime-trace.rst   |    2 
->  2 files changed, 117 insertions(+), 66 deletions(-)
-> 
+ I not found a generic method to make SCFW message generic enough, SCFW
+ message is not fixed length including TX and RX. And it use TR0/RR0
+ interrupt.
+
+V1:
+Sorry to bind the mailbox/firmware patch together. This is make it
+to understand what changed to support using 1 TX and 1 RX channel
+for SCFW message.
+
+Per i.MX8QXP Reference mannual, there are several message using
+examples. One of them is:
+Passing short messages: Transmit register(s) can be used to pass
+short messages from one to four words in length. For example,
+when a four-word message is desired, only one of the registers
+needs to have its corresponding interrupt enable bit set at the
+receiver side.
+
+This patchset is to using this for SCFW message to replace four TX
+and four RX method.
 
 
-All of the other changes look good to me.
+Peng Fan (4):
+  dt-bindings: mailbox: imx-mu: add SCU MU support
+  mailbox: imx: restructure code to make easy for new MU
+  mailbox: imx: add SCU MU support
+  firmware: imx-scu: Support one TX and one RX
 
-thanks.
+ .../devicetree/bindings/mailbox/fsl,mu.txt         |   2 +
+ drivers/firmware/imx/imx-scu.c                     |  54 ++++-
+ drivers/mailbox/imx-mailbox.c                      | 253 +++++++++++++++++----
+ 3 files changed, 249 insertions(+), 60 deletions(-)
+
+
+base-commit: 770fbb32d34e5d6298cc2be590c9d2fd6069aa17
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+2.16.4
+
