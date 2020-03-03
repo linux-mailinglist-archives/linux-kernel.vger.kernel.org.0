@@ -2,94 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20562176A6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3DA176A53
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbgCCCIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:08:16 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59516 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbgCCCIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:08:16 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02327h3I108607;
-        Tue, 3 Mar 2020 02:08:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=3sx1vwQWdvQ5Z2ZWTgaCbJGjCVKxUP31T5G8RYrSA9g=;
- b=SxIcil+TzhF+21mvM5EaqrspnmMG4eoA/3iVEixTBt1zn/oc3eCxghJSHWLe5NhaAK7G
- lQYNqgXVojp+VUqbW1wq7/A1p8Oq21OCwsK73ATtOLuALkLHkDrNI1sbq/mNmqB+SZR5
- TjH56yctfiI+B59WZTQhPyM5/yxMA8nC30IeC871clG11yIUfk1RU2i7HaA190dBW+Rf
- Np/bxzTWS9eodxNEh6P8q6RlNySHSKzuXu6xhAN0+WKWuHdkqdv65ndKCPj4HWPplSBA
- ZG4IheREbKyWr4YM9rNZR7D16jWg+eQgnphwyNG30JovaRJMK3zTy8gLj92N2DjUZz7I 4g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2yffcubv6q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Mar 2020 02:08:10 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023271G6135520;
-        Tue, 3 Mar 2020 02:08:10 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2yg1gwbdan-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Mar 2020 02:08:09 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 023288ms023929;
-        Tue, 3 Mar 2020 02:08:08 GMT
-Received: from localhost.localdomain (/10.211.9.80)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 02 Mar 2020 18:08:08 -0800
-From:   Dongli Zhang <dongli.zhang@oracle.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, joe.jin@oracle.com
-Subject: [PATCH 2/2] xenbus: req->err should be updated before req->state
-Date:   Mon,  2 Mar 2020 17:58:59 -0800
-Message-Id: <20200303015859.18813-2-dongli.zhang@oracle.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200303015859.18813-1-dongli.zhang@oracle.com>
-References: <20200303015859.18813-1-dongli.zhang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9548 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=976 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003030013
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9548 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003030013
+        id S1727018AbgCCCCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:02:04 -0500
+Received: from mga04.intel.com ([192.55.52.120]:22013 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726773AbgCCCCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:02:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 18:02:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
+   d="scan'208";a="274004683"
+Received: from wtczc53028gn.jf.intel.com (HELO skl-build) ([10.54.87.17])
+  by fmsmga002.fm.intel.com with ESMTP; 02 Mar 2020 18:02:02 -0800
+Date:   Mon, 2 Mar 2020 18:01:48 -0800
+From:   "Christopher S. Hall" <christopher.s.hall@intel.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@redhat.com,
+        x86@kernel.org, jacob.e.keller@intel.com, davem@davemloft.net,
+        sean.v.kelley@intel.com
+Subject: Re: [Intel PMC TGPIO Driver 0/5] Add support for Intel PMC Time GPIO
+ Driver with PHC interface changes to support additional H/W Features
+Message-ID: <20200303020148.GB15531@skl-build>
+References: <20191211214852.26317-1-christopher.s.hall@intel.com>
+ <20200203040838.GA5851@localhost>
+ <20200225233707.GA32079@skl-build>
+ <20200226024707.GA10271@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226024707.GA10271@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the barrier to guarantee that req->err is always updated
-before req->state.
+Hi Richard,
 
-Otherwise, read_reply() would not return ERR_PTR(req->err) but
-req->body, when process_writes()->xb_write() is failed.
+On Tue, Feb 25, 2020 at 06:47:07PM -0800, Richard Cochran wrote:
+> On Tue, Feb 25, 2020 at 03:37:07PM -0800, Christopher S. Hall wrote:
+> > On Sun, Feb 02, 2020 at 08:08:38PM -0800, Richard Cochran wrote:
+> > > The TGPIO input clock, the ART, is a free running counter, but you
+> > > want to support frequency adjustments.  Use a timecounter cyclecounter
+> > > pair.
+> > 
+> > I'm concerned about the complexity that the timecounter adds to
+> > the driver. Specifically, the complexity of dealing with any rate mismatches
+> > between the timecounter and the periodic output signal. The phase
+> > error between the output and timecounter needs to be zero.
+> 
+> If I understood correctly, the device's outputs are generated from a
+> non-adjustable counter.  So, no matter what, you will have the problem
+> of changing the pulse period in concert with the user changing the
+> desired frequency.
+> 
 
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
----
- drivers/xen/xenbus/xenbus_comms.c | 2 ++
- 1 file changed, 2 insertions(+)
+> > This leaves the PHC API behavior as it is currently and uses the frequency
+> > adjust API to adjust the output rate.
+> > 
+> > > Let the user dial a periodic output signal in the normal way.
+> > > 
+> > > Let the user change the frequency in the normal way, and during this
+> > > call, adjust the counter values accordingly.
+> > 
+> > Yes to both of the above.
+> 
+> So, why then do you need this?
+> 
+> +#define PTP_EVENT_COUNT_TSTAMP2 \
+> +       _IOWR(PTP_CLK_MAGIC, 19, struct ptp_event_count_tstamp)
+> 
+> If you can make the device work with the existing user space API,
+> 
+> 	ioctl(fd, PTP_PEROUT_REQUEST2, ...);
+> 	while (1) {
+> 		clock_adjtimex(FD_TO_CLOCKID(fd), ...);
+> 	}
+> 
+> that would be ideal.  But I will push back on anything like the
+> following.
+> 
+> 	ioctl(fd, PTP_PEROUT_REQUEST2, ...);
+> 	while (1) {
+> 		clock_adjtimex(FD_TO_CLOCKID(fd), ...);
+> 		ioctl(fd, PTP_EVENT_COUNT_TSTAMP, ...);
+> 	}
+> 
+> But maybe I misunderstood?
 
-diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
-index 852ed161fc2a..eb5151fc8efa 100644
---- a/drivers/xen/xenbus/xenbus_comms.c
-+++ b/drivers/xen/xenbus/xenbus_comms.c
-@@ -397,6 +397,8 @@ static int process_writes(void)
- 	if (state.req->state == xb_req_state_aborted)
- 		kfree(state.req);
- 	else {
-+		/* write err, then update state */
-+		virt_wmb();
- 		state.req->state = xb_req_state_got_reply;
- 		wake_up(&state.req->wq);
- 	}
--- 
-2.17.1
+Thank you for the feedback, but Thomas wants to see this as
+an extension of GPIO. I'll work on an RFC patch for that instead.
 
+> Thanks,
+> Richard
+
+Thanks,
+Christopher
