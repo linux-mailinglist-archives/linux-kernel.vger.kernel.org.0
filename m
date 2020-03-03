@@ -2,56 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2305177AF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 16:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0B8177AEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 16:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbgCCPsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 10:48:33 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:60421 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728291AbgCCPsd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 10:48:33 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TrZE6tq_1583250489;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TrZE6tq_1583250489)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 03 Mar 2020 23:48:10 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     giovanni.cabiddu@intel.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, ebiggers@kernel.org, pvanleeuwen@rambus.com,
-        zohar@linux.ibm.com
-Cc:     qat-linux@intel.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: qat - simplify the qat_crypto function
-Date:   Tue,  3 Mar 2020 23:48:09 +0800
-Message-Id: <20200303154809.81817-1-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730200AbgCCPsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 10:48:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728291AbgCCPsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 10:48:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA36520870;
+        Tue,  3 Mar 2020 15:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583250496;
+        bh=tqIdCK44HCwZ7SB3/ZCasst08E8YpC0L6JiNkZ/wwmA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rN6StGaaqkT2huHDDUKxU70wo/U2D5HKZH77SBmiRj02fYE9eA2JKLAeAE+o3sZtR
+         SjerAMpTIDxZhgK/iPQEwBUQRyJ6n3j27Laa6l2zQ4zjEUmVVjMfTNZQc4GWPjq0y6
+         g7hHpFUzXf717X8bwQkLscbNQlY0IP4wW/bWQF8Q=
+Date:   Tue, 3 Mar 2020 16:48:14 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "ravi.bangoria@linux.ibm.com" <ravi.bangoria@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: 4.19 "perf stat: Fix shadow stats for clock events"
+Message-ID: <20200303154814.GE372992@kroah.com>
+References: <191de78a6356926ed080b67be0b79398c5f57915.camel@nokia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <191de78a6356926ed080b67be0b79398c5f57915.camel@nokia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-simplify code to remove unnecessary constant string copies.
+On Fri, Feb 28, 2020 at 07:47:04AM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
+> Hi Greg, Sasha,
+> 
+> Can you please include this perf stat fix to 4.19?
+> These two commits needed:
+> 
+> 
+> commit eb08d006054e7e374592068919e32579988602d4
+> Author: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Date:   Thu Nov 15 15:25:32 2018 +0530
+> 
+>     perf stat: Use perf_evsel__is_clocki() for clock events
+> 
+> 
+> commit 57ddf09173c1e7d0511ead8924675c7198e56545
+> Author: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Date:   Fri Nov 16 09:58:43 2018 +0530
+> 
+>     perf stat: Fix shadow stats for clock events
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- drivers/crypto/qat/qat_common/qat_crypto.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Both now queued up, thanks.
 
-diff --git a/drivers/crypto/qat/qat_common/qat_crypto.c b/drivers/crypto/qat/qat_common/qat_crypto.c
-index 3852d31ce0a4..fb504cee0305 100644
---- a/drivers/crypto/qat/qat_common/qat_crypto.c
-+++ b/drivers/crypto/qat/qat_common/qat_crypto.c
-@@ -250,8 +250,7 @@ static int qat_crypto_create_instances(struct adf_accel_dev *accel_dev)
- 	char val[ADF_CFG_MAX_VAL_LEN_IN_BYTES];
- 
- 	INIT_LIST_HEAD(&accel_dev->crypto_list);
--	strlcpy(key, ADF_NUM_CY, sizeof(key));
--	if (adf_cfg_get_param_value(accel_dev, SEC, key, val))
-+	if (adf_cfg_get_param_value(accel_dev, SEC, ADF_NUM_CY, val))
- 		return -EFAULT;
- 
- 	if (kstrtoul(val, 0, &num_inst))
--- 
-2.17.1
-
+greg k-h
