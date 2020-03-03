@@ -2,63 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B658C177146
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB4617719D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:55:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbgCCIaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 03:30:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57648 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725440AbgCCIaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:30:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id ADABEB1FB;
-        Tue,  3 Mar 2020 08:30:17 +0000 (UTC)
-Subject: Re: [PATCH] xen: Use 'unsigned int' instead of 'unsigned'
-To:     Yan Yankovskyi <yyankovskyi@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20200229223035.GA28145@kbp1-lhp-F74019>
- <fba833c4-3173-0094-b4ec-53e9f42bfb3e@suse.com>
- <20200302221826.GA18206@kbp1-lhp-F74019>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <38739aa0-200e-fd46-ea38-c30a6aa69561@suse.com>
-Date:   Tue, 3 Mar 2020 09:30:17 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727889AbgCCIz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:55:26 -0500
+Received: from paleale.coelho.fi ([176.9.41.70]:60330 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726661AbgCCIz0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 03:55:26 -0500
+X-Greylist: delayed 1463 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 03:55:25 EST
+Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.2)
+        (envelope-from <luca@coelho.fi>)
+        id 1j92wh-0003yi-5b; Tue, 03 Mar 2020 10:30:37 +0200
+Message-ID: <c2de2c8548d47945d4d3708c6b1c6a992d9e8cc3.camel@coelho.fi>
+From:   Luca Coelho <luca@coelho.fi>
+To:     Kalle Valo <kvalo@codeaurora.org>, Leho Kraav <leho@kraav.com>
+Cc:     "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <871rqauhbp.fsf@tynnyri.adurom.net>
+References: <20191224051639.6904-1-jan.steffens@gmail.com>
+         <20200221121135.GA9056@papaya> <871rqauhbp.fsf@tynnyri.adurom.net>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <20200302221826.GA18206@kbp1-lhp-F74019>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Date:   Tue, 03 Mar 2020 10:17:07 +0200
+User-Agent: Evolution 3.34.1-4 
 Content-Transfer-Encoding: 7bit
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on farmhouse.coelho.fi
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        TVD_RCVD_IP,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: Re: [PATCH] iwlwifi: pcie: restore support for Killer Qu C0 NICs
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.03.2020 23:18, Yan Yankovskyi wrote:
-> On Mon, Mar 2, 2020 at 10:11 Jan Beulich wrote:
->> ... evtchn_port_t here and elsewhere.
+On Tue, 2020-03-03 at 07:40 +0200, Kalle Valo wrote:
+> Leho Kraav <leho@kraav.com> writes:
 > 
-> There are some interfaces with signed int as a type for port, e.g. in
-> include/xen/events.h.
-> Should I create additional patch to resolve inconsistency with evtchn
-> interface?
-> Or you suggest combining these changes into the existing patch?
+> > On Tue, Dec 24, 2019 at 06:16:39AM +0100, Jan Alexander Steffens (heftig) wrote:
+> > > Commit 809805a820c6 ("iwlwifi: pcie: move some cfg mangling from
+> > > trans_pcie_alloc to probe") refactored the cfg mangling. Unfortunately,
+> > > in this process the lines which picked the right cfg for Killer Qu C0
+> > > NICs after C0 detection were lost. These lines were added by commit
+> > > b9500577d361 ("iwlwifi: pcie: handle switching killer Qu B0 NICs to
+> > > C0").
+> > > 
+> > > I suspect this is more of the "merge damage" which commit 7cded5658329
+> > > ("iwlwifi: pcie: fix merge damage on making QnJ exclusive") talks about.
+> > > 
+> > > Restore the missing lines so the driver loads the right firmware for
+> > > these NICs.
+> > 
+> > This seems real, as upgrading 5.5.0 -> 5.5.5 just broke my iwlwifi on XPS 7390.
+> > How come?
+> 
+> Luca, should I apply this to wireless-drivers?
+> 
+> https://patchwork.kernel.org/patch/11309095/
 
-Signed <-> unsigned conversions would perhaps better go into a
-separate patch. But note I'm not the maintainer of this code.
+Yes, please take it to wireless-drivers.  I've reassigned it to you.
 
-> Also as I understand 'evtchn' and 'port' are essentially the same
-> entities from perspective of local domain, related to each other roughly
-> like connection and file descriptor pair. What do you think about
-> renaming all 'evtchn' arguments and variables to 'port'?
-> It will eliminate inconsistencies in the code, for example
-> in include/xen/interface/event_channel.h and include/xen/events.h.
+But please note that this will conflict with another patch that is
+already in v5.6-rc* that introduced this code again in a different way:
 
-I'd welcome this, but the maintainers will have the final say.
+https://patchwork.kernel.org/patch/11318849/
 
-Jan
+--
+Cheers,
+Luca.
+
