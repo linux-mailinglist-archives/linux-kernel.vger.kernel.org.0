@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F48E177EB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DA9178003
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731099AbgCCRqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:46:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52718 "EHLO mail.kernel.org"
+        id S1732490AbgCCRyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:54:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729854AbgCCRqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:46:13 -0500
+        id S1732478AbgCCRyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:54:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBD6820842;
-        Tue,  3 Mar 2020 17:46:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C2A62146E;
+        Tue,  3 Mar 2020 17:54:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257573;
-        bh=r4h0h0vNmAe26MlCqgqj9TQfWY49lPNNCtdDgv9Pe6k=;
+        s=default; t=1583258046;
+        bh=RBkE2p+p1wkYJ94iTvM47rJcXwsX+MC8/AcJdXC+qCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y2JkjPpmkgAhZvtL+8F7ICZDCmNg2O+21Tg/e16wJajr2kXvgx1EZSB7KbbAnrODM
-         p+oet5HqYdszW34DiSa/RZCKsgwCdM1MWDjj1vG2C6giX28bfQLgBDH3cMuZT2Cn48
-         OvAHoohhCh7EDnIulPokzImx+p5DaQDgoFgHgEhI=
+        b=rvfc2I6yxx6pAKIXUzAanC4HzDGz+Wqm8cAJlwlzFB5M0/nQ7KN/WX8haHPzHZoue
+         omTmJg0zBCsL4jJzNqyMBL7tNWapsBvLfiRsy8UexfKPqVmjCiyQmpmYX6J6KS4SMc
+         0m8TNsrBkmqH8/kN6GNcZ0fqD9gdAlP34pYGzmjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aric Cyr <aric.cyr@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 047/176] drm/amd/display: Check engine is not NULL before acquiring
+        stable@vger.kernel.org, Pavel Roskin <plroskin@gmail.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 013/152] udp: rehash on disconnect
 Date:   Tue,  3 Mar 2020 18:41:51 +0100
-Message-Id: <20200303174309.993512910@linuxfoundation.org>
+Message-Id: <20200303174304.011342222@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aric Cyr <aric.cyr@amd.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 2b63d0ec0daf79ba503fa8bfa25e07dc3da274f3 ]
+[ Upstream commit 303d0403b8c25e994e4a6e45389e173cf8706fb5 ]
 
-[Why]
-Engine can be NULL in some cases, so we must not acquire it.
+As of the below commit, udp sockets bound to a specific address can
+coexist with one bound to the any addr for the same port.
 
-[How]
-Check for NULL engine before acquiring.
+The commit also phased out the use of socket hashing based only on
+port (hslot), in favor of always hashing on {addr, port} (hslot2).
 
-Signed-off-by: Aric Cyr <aric.cyr@amd.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The change broke the following behavior with disconnect (AF_UNSPEC):
+
+    server binds to 0.0.0.0:1337
+    server connects to 127.0.0.1:80
+    server disconnects
+    client connects to 127.0.0.1:1337
+    client sends "hello"
+    server reads "hello"	// times out, packet did not find sk
+
+On connect the server acquires a specific source addr suitable for
+routing to its destination. On disconnect it reverts to the any addr.
+
+The connect call triggers a rehash to a different hslot2. On
+disconnect, add the same to return to the original hslot2.
+
+Skip this step if the socket is going to be unhashed completely.
+
+Fixes: 4cdeeee9252a ("net: udp: prefer listeners bound to an address")
+Reported-by: Pavel Roskin <plroskin@gmail.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce/dce_aux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/udp.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-index 793c0cec407f9..5fcffb29317e3 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-@@ -398,7 +398,7 @@ static bool acquire(
- {
- 	enum gpio_result result;
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1856,8 +1856,12 @@ int __udp_disconnect(struct sock *sk, in
+ 	inet->inet_dport = 0;
+ 	sock_rps_reset_rxhash(sk);
+ 	sk->sk_bound_dev_if = 0;
+-	if (!(sk->sk_userlocks & SOCK_BINDADDR_LOCK))
++	if (!(sk->sk_userlocks & SOCK_BINDADDR_LOCK)) {
+ 		inet_reset_saddr(sk);
++		if (sk->sk_prot->rehash &&
++		    (sk->sk_userlocks & SOCK_BINDPORT_LOCK))
++			sk->sk_prot->rehash(sk);
++	}
  
--	if (!is_engine_available(engine))
-+	if ((engine == NULL) || !is_engine_available(engine))
- 		return false;
- 
- 	result = dal_ddc_open(ddc, GPIO_MODE_HARDWARE,
--- 
-2.20.1
-
+ 	if (!(sk->sk_userlocks & SOCK_BINDPORT_LOCK)) {
+ 		sk->sk_prot->unhash(sk);
 
 
