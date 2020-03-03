@@ -2,167 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8CF4177B9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 608DC177BA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:12:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730152AbgCCQL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 11:11:27 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34625 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729384AbgCCQL1 (ORCPT
+        id S1730198AbgCCQMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 11:12:09 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:57844 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728714AbgCCQMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 11:11:27 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z15so5110852wrl.1;
-        Tue, 03 Mar 2020 08:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+SzpTWQT3Ru6kg4f8Uj442Z+FLl17Fjj2BOSrwBP2tA=;
-        b=JvMOlYXWMq0Xw1p+AMSLlLQea6qJWe/imSAwECDX0rMvjouX6tXhiTzi6l9PrEOKZH
-         mdkAi2TI7TwqRHeOSAeN4q9w+Mfvk/US67aBFw14KS0w9HiygV3cRD7xJ9z5VRS3PXBr
-         1jaA30b2hzUR0OE/6lXyX2IVnqwBLNuda+OJC4XozRGsax9OtpUhBPfs8c9xgxYWsIqA
-         VuTKw5sjUPmNkpaU06pgtELNoVNP1YKm/LPYmN5gz9+5lVtFmcvVqJxFf5crA986u4HC
-         RRz7ZOhDNXYl+enXW+x20gh545dfWhHil10Ywy6BIlDvrtAIwOqafQWOWpl3U18e7JhH
-         mXOg==
+        Tue, 3 Mar 2020 11:12:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583251928;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ewMDLFJs+pwUVCPxSOpuH/6W8SJZrs4NnUYkU/1nly8=;
+        b=GDLia4YlWwiv6C/cwqT16Xt42m/ApxCWxPZHxfZHGDhiNX9AUETbR/Gb0VJmA/v26yPFXd
+        d3ZEsAEaWiX6JtI2eWcHUKtvmTpPGLuvQv8wlzZeIEpKHrMnR5X/1q9tVRCQPCCdAjvNiP
+        S3Z1MEqDDyrecSVsqwoqVwP6gXXyiIA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-159-6EWraXSfN4aRgLSRUxbUUw-1; Tue, 03 Mar 2020 11:12:06 -0500
+X-MC-Unique: 6EWraXSfN4aRgLSRUxbUUw-1
+Received: by mail-wr1-f69.google.com with SMTP id w11so1423130wrp.20
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 08:12:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+SzpTWQT3Ru6kg4f8Uj442Z+FLl17Fjj2BOSrwBP2tA=;
-        b=HFOvzmfMPAd44Y/EP9xF5KFdE4WA+USwNtRHyiKzDfODsEds1EdgXDUvXol3Oye5Wu
-         CqZnBHwlyLkWmrgemRW8E+JfBpT9hNpaKITHRqOb376DXcoPIDaEv3yQl7mPSziXhlrt
-         cf6jFTQARLQyGIESqNYNqVetT0Q5piJZkFi4jmuKCh7MfXrbvVhO6+mMKTrNzJvu5xXV
-         ZhdkXn1Vcr3rFdyP+d0fhNsHclrrG0rDS8rdtRi4b6ZuXP7Jy64PshDHhkkDMMuKjJUj
-         PsNCSEpcP4OnFeRphIlkK1Gyx256uEyiiRKmXJzVQrB3dxudqsMJfejxROg7Qn2bhRUx
-         5ORQ==
-X-Gm-Message-State: ANhLgQ2mYYUxOsQNK5No6A8/+TjgZUCvB0t99Pqd93b+IwPVdk9bseZn
-        uM+kUBZ5ZNnr9UGJYYA1ijDwBLcb
-X-Google-Smtp-Source: ADFU+vsxfAPm/x+IV3Wuxbup+iavPIjBhYZz58QDdng5ipw9V1mPOt2TMllv6EsxNgKf3ODQBhebjg==
-X-Received: by 2002:a5d:5743:: with SMTP id q3mr6227104wrw.135.1583251884664;
-        Tue, 03 Mar 2020 08:11:24 -0800 (PST)
-Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id s5sm32669295wru.39.2020.03.03.08.11.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 08:11:23 -0800 (PST)
-Subject: Re: [PATCH v3 2/2] arm64: dts: rockchip: Add initial support for
- Pinebook Pro
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     Tobias Schramm <t.schramm@manjaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        Alexis Ballier <aballier@gentoo.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Nick Xie <nick@khadas.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Vivek Unune <npcomplete13@gmail.com>,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-References: <20200229144817.355678-1-t.schramm@manjaro.org>
- <20200229144817.355678-3-t.schramm@manjaro.org>
- <bcc2c8d4-a2cd-58c1-89af-e42439f8f344@gmail.com>
-Message-ID: <850e60b0-c260-c184-839f-93b064388e32@gmail.com>
-Date:   Tue, 3 Mar 2020 17:11:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=ewMDLFJs+pwUVCPxSOpuH/6W8SJZrs4NnUYkU/1nly8=;
+        b=dHQXm5mHZDytiyBMsuJR8OTfPE0AxLgjofMrdLhiGW9PbkxI2srQES1vmB4K1f23FA
+         IuYxAMrHqe20cGpXpkFh1okRiJeuNfLZJMPOh+vn5O9TKnFVxk2YPZ7gdcpYSy81htrU
+         hh3O3rj0YIgARdf1V7zvK7fZ3NNsCArYE/NUuEtqzqFpsQpbt2qXEsCr1jo8ryc3Mvdq
+         Y8NPDsjby8zAzuxQNDcvO7PbT8vhcbkX4rsvpEuTlCR7gagFalsgU80yQkDiMHxaNhhP
+         OxIuvcVBRUEYXYohdAodyeknUwJYUrSoe1DYYtbUVhrwNEH+ja7VwtPjphiC2BZMUFHv
+         k5Lg==
+X-Gm-Message-State: ANhLgQ1be16ZBo2f+aH+vN/VzelDM5BA3yPtarU7PE6IOLExMNV5RBbi
+        NkRFfHnl3ooeaZ+6NfUHnqaXlRVU8R8HGMLViq3pXW8HnNnlxUE165/HOhRCAeFP0bxidoxF9XS
+        waszwel/O8yH10bUEsK/A3aeu
+X-Received: by 2002:adf:b601:: with SMTP id f1mr6559895wre.103.1583251925507;
+        Tue, 03 Mar 2020 08:12:05 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vs+gmDGERMF3k74BHUSenOqjl0DQn34XjlBAm+4vP34zz/YQPtfXpqrGLsflVDYehy+Smec6A==
+X-Received: by 2002:adf:b601:: with SMTP id f1mr6559878wre.103.1583251925275;
+        Tue, 03 Mar 2020 08:12:05 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id l5sm4806923wml.3.2020.03.03.08.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 08:12:04 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH v2 64/66] KVM: nSVM: Expose SVM features to L1 iff nested is enabled
+In-Reply-To: <20200302235709.27467-65-sean.j.christopherson@intel.com>
+References: <20200302235709.27467-1-sean.j.christopherson@intel.com> <20200302235709.27467-65-sean.j.christopherson@intel.com>
+Date:   Tue, 03 Mar 2020 17:12:03 +0100
+Message-ID: <878skhfmek.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <bcc2c8d4-a2cd-58c1-89af-e42439f8f344@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Add more reg = <..>
+> Set SVM feature bits in KVM capabilities if and only if nested=true, KVM
+> shouldn't advertise features that realistically can't be used.  Use
+> kvm_cpu_cap_has(X86_FEATURE_SVM) to indirectly query "nested" in
+> svm_set_supported_cpuid() in anticipation of moving CPUID 0x8000000A
+> adjustments into common x86 code.
+>
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/svm.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index f32fc3c03667..8e39dcd3160d 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -1373,21 +1373,21 @@ static __init void svm_set_cpu_caps(void)
+>  	if (avic)
+>  		kvm_cpu_cap_clear(X86_FEATURE_X2APIC);
+>  
+> -	/* CPUID 0x80000001 */
+> -	if (nested)
+> +	/* CPUID 0x80000001 and 0x8000000A (SVM features) */
+> +	if (nested) {
+>  		kvm_cpu_cap_set(X86_FEATURE_SVM);
+>  
+> +		if (boot_cpu_has(X86_FEATURE_NRIPS))
+> +			kvm_cpu_cap_set(X86_FEATURE_NRIPS);
+> +
+> +		if (npt_enabled)
+> +			kvm_cpu_cap_set(X86_FEATURE_NPT);
+> +	}
+> +
+>  	/* CPUID 0x80000008 */
+>  	if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD) ||
+>  	    boot_cpu_has(X86_FEATURE_AMD_SSBD))
+>  		kvm_cpu_cap_set(X86_FEATURE_VIRT_SSBD);
+> -
+> -	/* CPUID 0x8000000A */
+> -	/* Support next_rip if host supports it */
+> -	kvm_cpu_cap_check_and_set(X86_FEATURE_NRIPS);
+> -
+> -	if (npt_enabled)
+> -		kvm_cpu_cap_set(X86_FEATURE_NPT);
+>  }
+>  
+>  static __init int svm_hardware_setup(void)
+> @@ -6051,6 +6051,10 @@ static void svm_set_supported_cpuid(struct kvm_cpuid_entry2 *entry)
+>  {
+>  	switch (entry->function) {
+>  	case 0x8000000A:
+> +		if (!kvm_cpu_cap_has(X86_FEATURE_SVM)) {
+> +			entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
+> +			break;
+> +		}
+>  		entry->eax = 1; /* SVM revision 1 */
+>  		entry->ebx = 8; /* Lets support 8 ASIDs in case we add proper
+>  				   ASID emulation to nested SVM */
 
-On 3/3/20 4:37 PM, Johan Jonker wrote:
-> Hi Tobias,
-> 
-> Some minor style issues.
-> This dts file contains a partition node.
-> Question for the maintainers (Heiko?):
-> Should that partition be included or not?
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[..]
-
->> +&i2c4 {
->> +	i2c-scl-falling-time-ns = <20>;
->> +	i2c-scl-rising-time-ns = <600>;
->> +	status = "okay";
->> +
->> +	fusb0: fusb30x@22 {
->> +		compatible = "fcs,fusb302";
->> +		reg = <0x22>;
->> +		fcs,int_n = <&gpio1 RK_PA2 GPIO_ACTIVE_HIGH>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&fusb0_int_gpio>;
-> 
->> +		status = "okay";
-> 
-> Remove or else status below.
-> New nodes are already okay I think.
-> If insure check compiled flat dts output to see if it is still there.
-> 
->> +		vbus-supply = <&vbus_typec>;
->> +
->> +		connector {
->> +			compatible = "usb-c-connector";
->> +			label = "USB-C";
->> +			op-sink-microwatt = <1000000>;
->> +			power-role = "dual";
->> +			sink-pdos =
->> +				<PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
->> +			source-pdos =
->> +				<PDO_FIXED(5000, 1400, PDO_FIXED_USB_COMM)>;
->> +			try-power-role = "sink";
->> +
->> +			ports {
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				port@0 {
-
-reg = <0>;
-
->> +					usbc_hs: endpoint {
->> +						remote-endpoint =
->> +							<&u2phy0_typec_hs>;
->> +					};
->> +				};
->> +
->> +				port@1 {
-
-reg = <1>;
-
->> +					usbc_ss: endpoint {
->> +						remote-endpoint =
->> +							<&tcphy0_typec_ss>;
->> +					};
->> +				};
->> +
->> +				port@2 {
-
-reg = <2>;
-
->> +					usbc_dp: endpoint {
->> +						remote-endpoint =
->> +							<&tcphy0_typec_dp>;
->> +					};
->> +				};
->> +			};
->> +		};
->> +	};
->> +};
+-- 
+Vitaly
 
