@@ -2,147 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11A37176ED3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 06:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CFC5176ECC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 06:36:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgCCFiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 00:38:12 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:25290 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725440AbgCCFiM (ORCPT
+        id S1725946AbgCCFf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 00:35:59 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:60435 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725440AbgCCFf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 00:38:12 -0500
-X-UUID: 79395d35588c4f32a77a5ebe27a7c98e-20200303
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=m2CcW1V41TM32eWWCi7FfNQYoqIdQyWhSRyF/aJpfA4=;
-        b=iL3BjG2oQ8RUXRl87N0Vi5mLolv6LduKYM7IbOQySXyoQWyFcH6xTlgXinBf6VC3N9grg/JyI2iyH4Hqje0GzFxLo70whh1V3birAfHBKMxI0jCpIJignZBXaDhKndSSrAi2ZXh18y2frHWWN1TqOtO2377RF2GwMzQg0McODFw=;
-X-UUID: 79395d35588c4f32a77a5ebe27a7c98e-20200303
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 216576827; Tue, 03 Mar 2020 13:28:03 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 3 Mar
- 2020 13:28:21 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Tue, 3 Mar 2020 13:28:22 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v12 4/6] dt-bindings: display: mediatek: convert the document format from txt to yaml
-Date:   Tue, 3 Mar 2020 13:27:20 +0800
-Message-ID: <20200303052722.94795-5-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200303052722.94795-1-jitao.shi@mediatek.com>
-References: <20200303052722.94795-1-jitao.shi@mediatek.com>
+        Tue, 3 Mar 2020 00:35:59 -0500
+X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 00:35:58 EST
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 63E5B787;
+        Tue,  3 Mar 2020 00:28:08 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 03 Mar 2020 00:28:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        tggywWKtWN6rOIFQkxL1pkuJH5gISL+DxeYq7A1sess=; b=BT76Yia40KWvlkva
+        zxMUOgQ2cGh1G4CgkSd9LSzdv6pa1NSdycnVvMLIAVXgY/qhSZv23Enfe5LwvSnP
+        EnOyOczk5IZPIJRHEDJkuzShBusCvGpFbRToi16x1NH36tS8pUdzBY1l+MY3l/hn
+        3FMSPuh2SfVOobkPUkwnGw/UccwiqHsKL4E9hDUsBQ0iLvArw7joxKkF16ZHoYv2
+        E2El88/+YeVWpdiv+bC97e7YkaCsEUXGNpEZTBNPOzuVRQDwQOeYnz/yCLphwOjh
+        LbUyx0HxZiXgrSsL8xISkG5XZw0P3tPw8lObQw3cHKcF94+LuBDHiJ2hJk5DLQjk
+        get+tg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=tggywWKtWN6rOIFQkxL1pkuJH5gISL+DxeYq7A1se
+        ss=; b=QYQzeOweAI6VXarA2WPokNZgWLn9+9ymb4ttoNqRCfHxTNHhxuA1BuqNe
+        xTzy0j8EY5psHGRl0hN3M9HQ75NBopgkUJe99IZ9mrMkMrDTVIKTN1fbqJnbwIsK
+        ZinT2nK5jeO/rgN9iP9tYYdgXipgMH6bd61QrW8MZs7aWgHrr6O6AhUcaEs6NMxJ
+        xMmh+N17h9gyHfggea6TB/h1iXycAMPYuCaV3AOoLb6/B9LjninTWgnJHHnJW79G
+        J+gJYgCH7vyGZUxIZN2kDUBkelGsy+vdobfXYqltBvRVI2itWDPNbqub+VVshRsp
+        SuGV0KQiaOgwoPizuH00f9zHo8JPg==
+X-ME-Sender: <xms:5-pdXob4_nYgt6Xv3olZHafeY_RAXl33XID-x9IQfj-50psJfCWBZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddthedgkedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
+    drudekkedruddufeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:5-pdXjtjPUhJpUrat2dtwXqjRd7o7dkdXYQl5BCmRTlhLtqRiA46mQ>
+    <xmx:5-pdXqklOYvRTdr_YfOo66U3N9UpaBO0MiXA2l2MTD-ORWFcBBWZ2w>
+    <xmx:5-pdXtSQKK-8LkAHPy4LgZi-xc-kfvOQfipkBj6UYVTlgBWOyS23AA>
+    <xmx:6OpdXmO82PQkDUhPw6K3YcoKRcEXvaxWUsOnkooWBiT2W0PMJfmVhAEzQgDBqNWa>
+Received: from mickey.themaw.net (unknown [118.208.188.113])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 76C9A328005A;
+        Tue,  3 Mar 2020 00:28:02 -0500 (EST)
+Message-ID: <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
+ [ver #17]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Tue, 03 Mar 2020 13:27:59 +0800
+In-Reply-To: <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+         <1582316494.3376.45.camel@HansenPartnership.com>
+         <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+         <1582556135.3384.4.camel@HansenPartnership.com>
+         <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+         <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
+         <1582644535.3361.8.camel@HansenPartnership.com>
+         <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
+         <107666.1582907766@warthog.procyon.org.uk>
+         <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 4EE687C2724234A765D419272ADE765BFF1D0D518E863FE5D1C5D83969F78B132000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-U2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlAbWVkaWF0ZWsuY29tPg0KLS0tDQog
-Li4uL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnR4dCAgICAgICAgIHwgNDUgLS0tLS0t
-LS0tDQogLi4uL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnlhbWwgICAgICAgIHwgOTIg
-KysrKysrKysrKysrKysrKysrKw0KIDIgZmlsZXMgY2hhbmdlZCwgOTIgaW5zZXJ0aW9ucygrKSwg
-NDUgZGVsZXRpb25zKC0pDQogZGVsZXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQNCiBjcmVhdGUg
-bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVk
-aWF0ZWsvbWVkaWF0ZWssZHBpLnlhbWwNCg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlhdGVrLGRwaS50eHQgYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxk
-cGkudHh0DQpkZWxldGVkIGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDRlZWVhZDFkMzlkYi4uMDAw
-MDAwMDAwMDAwDQotLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxh
-eS9tZWRpYXRlay9tZWRpYXRlayxkcGkudHh0DQorKysgL2Rldi9udWxsDQpAQCAtMSw0NSArMCww
-IEBADQotTWVkaWF0ZWsgRFBJIERldmljZQ0KLT09PT09PT09PT09PT09PT09PT0NCi0NCi1UaGUg
-TWVkaWF0ZWsgRFBJIGZ1bmN0aW9uIGJsb2NrIGlzIGEgc2luayBvZiB0aGUgZGlzcGxheSBzdWJz
-eXN0ZW0gYW5kDQotcHJvdmlkZXMgOC1iaXQgUkdCL1lVVjQ0NCBvciA4LzEwLzEwLWJpdCBZVVY0
-MjIgcGl4ZWwgZGF0YSBvbiBhIHBhcmFsbGVsDQotb3V0cHV0IGJ1cy4NCi0NCi1SZXF1aXJlZCBw
-cm9wZXJ0aWVzOg0KLS0gY29tcGF0aWJsZTogIm1lZGlhdGVrLDxjaGlwPi1kcGkiDQotICB0aGUg
-c3VwcG9ydGVkIGNoaXBzIGFyZSBtdDI3MDEgLCBtdDgxNzMgYW5kIG10ODE4My4NCi0tIHJlZzog
-UGh5c2ljYWwgYmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIGNvbnRyb2xsZXIncyByZWdp
-c3RlcnMNCi0tIGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgc2lnbmFsIGZyb20gdGhlIGZ1bmN0
-aW9uIGJsb2NrLg0KLS0gY2xvY2tzOiBkZXZpY2UgY2xvY2tzDQotICBTZWUgRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2Nsb2NrLWJpbmRpbmdzLnR4dCBmb3IgZGV0YWls
-cy4NCi0tIGNsb2NrLW5hbWVzOiBtdXN0IGNvbnRhaW4gInBpeGVsIiwgImVuZ2luZSIsIGFuZCAi
-cGxsIg0KLS0gcG9ydDogT3V0cHV0IHBvcnQgbm9kZSB3aXRoIGVuZHBvaW50IGRlZmluaXRpb25z
-IGFzIGRlc2NyaWJlZCBpbg0KLSAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dy
-YXBoLnR4dC4gVGhpcyBwb3J0IHNob3VsZCBiZSBjb25uZWN0ZWQNCi0gIHRvIHRoZSBpbnB1dCBw
-b3J0IG9mIGFuIGF0dGFjaGVkIEhETUkgb3IgTFZEUyBlbmNvZGVyIGNoaXAuDQotDQotT3B0aW9u
-YWwgcHJvcGVydGllczoNCi0tIHBpbmN0cmwtbmFtZXM6IENvbnRhaW4gImdwaW9tb2RlIiBhbmQg
-ImRwaW1vZGUiLg0KLSAgcGluY3RybC1uYW1lcyBzZWUgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL3BpbmN0cmwvcGluY3RybC1iaW5kaW5ncy50eHQNCi0tIHBjbGstc2FtcGxlOiBy
-ZWZlciBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvdmlkZW8taW50ZXJm
-YWNlcy50eHQuDQotDQotRXhhbXBsZToNCi0NCi1kcGkwOiBkcGlAMTQwMWQwMDAgew0KLQljb21w
-YXRpYmxlID0gIm1lZGlhdGVrLG10ODE3My1kcGkiOw0KLQlyZWcgPSA8MCAweDE0MDFkMDAwIDAg
-MHgxMDAwPjsNCi0JaW50ZXJydXB0cyA9IDxHSUNfU1BJIDE5NCBJUlFfVFlQRV9MRVZFTF9MT1c+
-Ow0KLQljbG9ja3MgPSA8Jm1tc3lzIENMS19NTV9EUElfUElYRUw+LA0KLQkJIDwmbW1zeXMgQ0xL
-X01NX0RQSV9FTkdJTkU+LA0KLQkJIDwmYXBtaXhlZHN5cyBDTEtfQVBNSVhFRF9UVkRQTEw+Ow0K
-LQljbG9jay1uYW1lcyA9ICJwaXhlbCIsICJlbmdpbmUiLCAicGxsIjsNCi0JcGluY3RybC1uYW1l
-cyA9ICJhY3RpdmUiLCAiaWRsZSI7DQotCXBpbmN0cmwtMCA9IDwmZHBpX3Bpbl9mdW5jPjsNCi0J
-cGluY3RybC0xID0gPCZkcGlfcGluX2lkbGU+Ow0KLQ0KLQlwb3J0IHsNCi0JCWRwaTBfb3V0OiBl
-bmRwb2ludCB7DQotCQkJcGNsay1zYW1wbGUgPSA8MD47DQotCQkJcmVtb3RlLWVuZHBvaW50ID0g
-PCZoZG1pMF9pbj47DQotCQl9Ow0KLQl9Ow0KLX07DQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHBpLnlhbWwg
-Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRp
-YXRlayxkcGkueWFtbA0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAwMDAwMC4u
-ZWIyYjBjYjVlYjVhDQotLS0gL2Rldi9udWxsDQorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkcGkueWFtbA0KQEAgLTAsMCAr
-MSw5MiBAQA0KKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCislWUFNTCAxLjIN
-CistLS0NCiskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2Rpc3BsYXkvbWVkaWF0
-ZWssZHBpLnlhbWwjDQorJHNjaGVtYTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1h
-cy9jb3JlLnlhbWwjDQorDQordGl0bGU6IG1lZGlhdGVrIERQSSBDb250cm9sbGVyIERldmljZSBU
-cmVlIEJpbmRpbmdzDQorDQorbWFpbnRhaW5lcnM6DQorICAtIENLIEh1IDxjay5odUBtZWRpYXRl
-ay5jb20+DQorICAtIEppdGFvIHNoaSA8aml0YW8uc2hpQG1lZGlhdGVrLmNvbT4NCisNCitkZXNj
-cmlwdGlvbjogfA0KKyAgVGhlIE1lZGlhdGVrIERQSSBmdW5jdGlvbiBibG9jayBpcyBhIHNpbmsg
-b2YgdGhlIGRpc3BsYXkgc3Vic3lzdGVtIGFuZA0KKyAgcHJvdmlkZXMgOC1iaXQgUkdCL1lVVjQ0
-NCBvciA4LzEwLzEwLWJpdCBZVVY0MjIgcGl4ZWwgZGF0YSBvbiBhIHBhcmFsbGVsDQorICBvdXRw
-dXQgYnVzLg0KKw0KK3Byb3BlcnRpZXM6DQorICBjb21wYXRpYmxlOg0KKyAgICBlbnVtOg0KKyAg
-ICAgIC0gbWVkaWF0ZWssbXQyNzAxLWRwaQ0KKyAgICAgIC0gbWVkaWF0ZWssbXQ4MTczLWRwaQ0K
-KyAgICAgIC0gbWVkaWF0ZWssbXQ4MTgzLWRwaQ0KKw0KKyAgcmVnOg0KKyAgICBtYXhJdGVtczog
-MQ0KKw0KKyAgaW50ZXJydXB0czoNCisgICAgbWF4SXRlbXM6IDENCisNCisgIGNsb2NrczoNCisg
-ICAgaXRlbXM6DQorICAgICAgLSBkZXNjcmlwdGlvbjogUGl4ZWwgQ2xvY2sNCisgICAgICAtIGRl
-c2NyaXB0aW9uOiBFbmdpbmUgQ2xvY2sNCisgICAgICAtIGRlc2NyaXB0aW9uOiBEUEkgUExMDQor
-DQorICBjbG9jay1uYW1lczoNCisgICAgaXRlbXM6DQorICAgICAgLSBjb25zdDogcGl4ZWwNCisg
-ICAgICAtIGNvbnN0OiBlbmdpbmUNCisgICAgICAtIGNvbnN0OiBwbGwNCisNCisgIHBpbmN0cmwt
-bmFtZXM6DQorICAgIGl0ZW1zOg0KKyAgICAgIC0gY29uc3Q6IGRlZmF1bHQNCisgICAgICAtIGNv
-bnN0OiBzbGVlcA0KKw0KKyAgcG9ydDoNCisgICAgdHlwZTogb2JqZWN0DQorICAgIGRlc2NyaXB0
-aW9uOg0KKyAgICAgIE91dHB1dCBwb3J0IG5vZGUgd2l0aCBlbmRwb2ludCBkZWZpbml0aW9ucyBh
-cyBkZXNjcmliZWQgaW4NCisgICAgICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-Z3JhcGgudHh0LiBUaGlzIHBvcnQgc2hvdWxkIGJlIGNvbm5lY3RlZA0KKyAgICAgIHRvIHRoZSBp
-bnB1dCBwb3J0IG9mIGFuIGF0dGFjaGVkIEhETUkgb3IgTFZEUyBlbmNvZGVyIGNoaXAuDQorDQor
-ICAgIHByb3BlcnRpZXM6DQorICAgICAgcGNsay1zYW1wbGU6DQorICAgICAgZGVzY3JpcHRpb246
-IHJlZmVyIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS92aWRlby1pbnRl
-cmZhY2VzLnR4dC4NCisNCityZXF1aXJlZDoNCisgIC0gY29tcGF0aWJsZQ0KKyAgLSByZWcNCisg
-IC0gaW50ZXJydXB0cw0KKyAgLSBjbG9ja3MNCisgIC0gY2xvY2stbmFtZXMNCisgIC0gcG9ydA0K
-Kw0KK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQ0KKw0KK2V4YW1wbGVzOg0KKyAgLSB8DQor
-ICAgIGRwaTA6IGRwaUAxNDAxZDAwMCB7DQorICAgICAgICBjb21wYXRpYmxlID0gIm1lZGlhdGVr
-LG10ODE3My1kcGkiOw0KKyAgICAgICAgcmVnID0gPDAgMHgxNDAxZDAwMCAwIDB4MTAwMD47DQor
-ICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMTk0IElSUV9UWVBFX0xFVkVMX0xPVz47DQor
-ICAgICAgICBjbG9ja3MgPSA8Jm1tc3lzIENMS19NTV9EUElfUElYRUw+LA0KKyAgICAgICAgICAg
-ICA8Jm1tc3lzIENMS19NTV9EUElfRU5HSU5FPiwNCisgICAgICAgICAgICAgPCZhcG1peGVkc3lz
-IENMS19BUE1JWEVEX1RWRFBMTD47DQorICAgICAgICBjbG9jay1uYW1lcyA9ICJwaXhlbCIsICJl
-bmdpbmUiLCAicGxsIjsNCisgICAgICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCIsICJzbGVl
-cCI7DQorICAgICAgICBwaW5jdHJsLTAgPSA8JmRwaV9waW5fZnVuYz47DQorICAgICAgICBwaW5j
-dHJsLTEgPSA8JmRwaV9waW5faWRsZT47DQorDQorICAgICAgICBwb3J0IHsNCisgICAgICAgICAg
-ICByZWcgPSA8MD47DQorICAgICAgICAgICAgZHBpMF9vdXQ6IGVuZHBvaW50IHsNCisgICAgICAg
-ICAgICAgICAgcGNsay1zYW1wbGUgPSA8MD47DQorICAgICAgICAgICAgICAgIHJlbW90ZS1lbmRw
-b2ludCA9IDwmaGRtaTBfaW4+Ow0KKyAgICAgICAgICAgIH07DQorICAgICAgICB9Ow0KKyAgICB9
-Ow0KKw0KKy4uLg0KLS0gDQoyLjIxLjANCg==
+On Mon, 2020-03-02 at 10:09 +0100, Miklos Szeredi wrote:
+> On Fri, Feb 28, 2020 at 5:36 PM David Howells <dhowells@redhat.com>
+> wrote:
+> > sysfs also has some other disadvantages for this:
+> > 
+> >  (1) There's a potential chicken-and-egg problem in that you have
+> > to create a
+> >      bunch of files and dirs in sysfs for every created mount and
+> > superblock
+> >      (possibly excluding special ones like the socket mount) - but
+> > this
+> >      includes sysfs itself.  This might work - provided you create
+> > sysfs
+> >      first.
+> 
+> Sysfs architecture looks something like this (I hope Greg will
+> correct
+> me if I'm wrong):
+> 
+> device driver -> kobj tree <- sysfs tree
+> 
+> The kobj tree is created by the device driver, and the dentry tree is
+> created on demand from the kobj tree.   Lifetime of kobjs is bound to
+> both the sysfs objects and the device but not the other way round.
+> I.e. device can go away while the sysfs object is still being
+> referenced, and sysfs can be freely mounted and unmounted
+> independently of device initialization.
+> 
+> So there's no ordering requirement between sysfs mounts and other
+> mounts.   I might be wrong on the details, since mounts are created
+> very early in the boot process...
+> 
+> >  (2) sysfs is memory intensive.  The directory structure has to be
+> > backed by
+> >      dentries and inodes that linger as long as the referenced
+> > object does
+> >      (procfs is more efficient in this regard for files that aren't
+> > being
+> >      accessed)
+> 
+> See above: I don't think dentries and inodes are pinned, only kobjs
+> and their associated cruft.  Which may be too heavy, depending on the
+> details of the kobj tree.
+> 
+> >  (3) It gives people extra, indirect ways to pin mount objects and
+> >      superblocks.
+> 
+> See above.
+> 
+> > For the moment, fsinfo() gives you three ways of referring to a
+> > filesystem
+> > object:
+> > 
+> >  (a) Directly by path.
+> 
+> A path is always representable by an O_PATH descriptor.
+> 
+> >  (b) By path associated with an fd.
+> 
+> See my proposal about linking from /proc/$PID/fdmount/$FD ->
+> /sys/devices/virtual/mounts/$MOUNT_ID.
+> 
+> >  (c) By mount ID (perm checked by working back up the tree).
+> 
+> Check that perm on lookup of /sys/devices/virtual/mounts/$MOUNT_ID.
+> The proc symlink would bypass the lookup check by directly jumping to
+> the mountinfo dir.
+> 
+> > but will need to add:
+> > 
+> >  (d) By fscontext fd (which is hard to find in sysfs).  Indeed, the
+> > superblock
+> >      may not even exist yet.
+> 
+> Proc symlink would work for that too.
+
+There's mounts enumeration too, ordering is required to identify the
+top (or bottom depending on terminology) with more than one mount on
+a mount point.
+
+> 
+> If sysfs is too heavy, this could be proc or a completely new
+> filesystem.  The implementation is much less relevant at this stage
+> of
+> the discussion than the interface.
+
+Ha, proc with the seq file interface, that's already proved to not
+work properly and looks difficult to fix.
+
+Ian
 
