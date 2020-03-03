@@ -2,299 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56EE2178327
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 882F2178331
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:37:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbgCCTaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 14:30:16 -0500
-Received: from mga02.intel.com ([134.134.136.20]:37803 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729690AbgCCTaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 14:30:15 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 11:30:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="438849637"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Mar 2020 11:30:12 -0800
-Date:   Tue, 3 Mar 2020 11:30:12 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, tony.luck@intel.com,
-        peterz@infradead.org, fenghua.yu@intel.com, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] x86: vmx: virtualize split lock detection
-Message-ID: <20200303193012.GV1439@linux.intel.com>
-References: <20200206070412.17400-1-xiaoyao.li@intel.com>
- <20200206070412.17400-9-xiaoyao.li@intel.com>
+        id S1730770AbgCCThF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 14:37:05 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35700 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730691AbgCCThE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 14:37:04 -0500
+Received: by mail-ed1-f68.google.com with SMTP id c7so5952063edu.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 11:37:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PBhHEEvkyvTqJUIeskr6E9PxwbWHltx4bOMIa0nWNlI=;
+        b=k0CN52kfaQSrU0vhHAsHAaeZKCT/mzcnizfqKi9Ww28fmClOjKMhv5QxYf0nhbSv5f
+         WsmJKV3XkebOq7gvuwlHq/ER1sJu2EM4SvpYnhuZ4QBLjTA6KIDTTj4XkfvOme7ta48F
+         rg9ITvUV5abS+JVxJAqqvCFmkZn+X4oAixtjGrfuVSmwfFESBySd1O7lQuHwMnVNUKws
+         PUupLqzTtMcVz7YESyLHUmDYBVgmeX3QPhPDo30FPww/nGyV3lsktqVfj/omYQKfOTHO
+         rYctsYn95+v5dcLaWR8CccBpSy4tr5Cfr0ZAF22phQjQuhnqfVbHQfAPMD3peSIzIj5Q
+         ITtw==
+X-Gm-Message-State: ANhLgQ2OD7aPTNT9rMLcQX17fGbHeIUkLYrGTf/rigBeNvkT4ireScEE
+        PyMp+dDB8cTZ9VXZqpOx740=
+X-Google-Smtp-Source: ADFU+vujWG4mhhwgFbY7jL5PWOYmiaZfGajGy7CqmtPLIEZCdmfdgCiolJp1Cq7fqRElIbD0or0rUQ==
+X-Received: by 2002:aa7:cfc6:: with SMTP id r6mr5340823edy.15.1583264223101;
+        Tue, 03 Mar 2020 11:37:03 -0800 (PST)
+Received: from a483e7b01a66.ant.amazon.com (54-240-197-230.amazon.com. [54.240.197.230])
+        by smtp.gmail.com with ESMTPSA id v25sm976168edx.89.2020.03.03.11.37.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2020 11:37:02 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] xenbus: req->body should be updated before
+ req->state
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, joe.jin@oracle.com
+References: <20200303184752.20821-1-dongli.zhang@oracle.com>
+From:   Julien Grall <julien@xen.org>
+Message-ID: <4ed129f9-ff23-f228-6833-77e37c2bb7b2@xen.org>
+Date:   Tue, 3 Mar 2020 19:37:01 +0000
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206070412.17400-9-xiaoyao.li@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200303184752.20821-1-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 03:04:12PM +0800, Xiaoyao Li wrote:
-> Due to the fact that MSR_TEST_CTRL is per-core scope, i.e., the sibling
-> threads in the same physical CPU core share the same MSR, only
-> advertising feature split lock detection to guest when SMT is disabled
-> or unsupported for simplicitly.
+Hi,
+
+On 03/03/2020 18:47, Dongli Zhang wrote:
+> The req->body should be updated before req->state is updated and the
+> order should be guaranteed by a barrier.
 > 
-> Below summarizing how guest behaves of different host configuration:
+> Otherwise, read_reply() might return req->body = NULL.
 > 
->   sld_fatal - MSR_TEST_CTL.SDL is forced on and is sticky from the guest's
->               perspective (so the guest can detect a forced fatal mode).
+> Below is sample callstack when the issue is reproduced on purpose by
+> reordering the updates of req->body and req->state and adding delay in
+> code between updates of req->state and req->body.
 > 
->   sld_warn - SLD is exposed to the guest.  MSR_TEST_CTRL.SLD is left on
->              until an #AC is intercepted with MSR_TEST_CTRL.SLD=0 in the
->              guest, at which point normal sld_warn rules apply.  If a vCPU
->              associated with the task does VM-Enter with
-> 	     MSR_TEST_CTRL.SLD=1, TIF_SLD is reset and the cycle begins
-> 	     anew.
+> [   22.356105] general protection fault: 0000 [#1] SMP PTI
+> [   22.361185] CPU: 2 PID: 52 Comm: xenwatch Not tainted 5.5.0xen+ #6
+> [   22.366727] Hardware name: Xen HVM domU, BIOS ...
+> [   22.372245] RIP: 0010:_parse_integer_fixup_radix+0x6/0x60
+> ... ...
+> [   22.392163] RSP: 0018:ffffb2d64023fdf0 EFLAGS: 00010246
+> [   22.395933] RAX: 0000000000000000 RBX: 75746e7562755f6d RCX: 0000000000000000
+> [   22.400871] RDX: 0000000000000000 RSI: ffffb2d64023fdfc RDI: 75746e7562755f6d
+> [   22.405874] RBP: 0000000000000000 R08: 00000000000001e8 R09: 0000000000cdcdcd
+> [   22.410945] R10: ffffb2d6402ffe00 R11: ffff9d95395eaeb0 R12: ffff9d9535935000
+> [   22.417613] R13: ffff9d9526d4a000 R14: ffff9d9526f4f340 R15: ffff9d9537654000
+> [   22.423726] FS:  0000000000000000(0000) GS:ffff9d953bc80000(0000) knlGS:0000000000000000
+> [   22.429898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   22.434342] CR2: 000000c4206a9000 CR3: 00000001ea3fc002 CR4: 00000000001606e0
+> [   22.439645] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   22.444941] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   22.450342] Call Trace:
+> [   22.452509]  simple_strtoull+0x27/0x70
+> [   22.455572]  xenbus_transaction_start+0x31/0x50
+> [   22.459104]  netback_changed+0x76c/0xcc1 [xen_netfront]
+> [   22.463279]  ? find_watch+0x40/0x40
+> [   22.466156]  xenwatch_thread+0xb4/0x150
+> [   22.469309]  ? wait_woken+0x80/0x80
+> [   22.472198]  kthread+0x10e/0x130
+> [   22.474925]  ? kthread_park+0x80/0x80
+> [   22.477946]  ret_from_fork+0x35/0x40
+> [   22.480968] Modules linked in: xen_kbdfront xen_fbfront(+) xen_netfront xen_blkfront
+> [   22.486783] ---[ end trace a9222030a747c3f7 ]---
+> [   22.490424] RIP: 0010:_parse_integer_fixup_radix+0x6/0x60
 > 
->   sld_off - When set by the guest, MSR_TEST_CTL.SLD is set on VM-Entry
->             and cleared on VM-Exit if guest enables SLD.
+> The barrier() in test_reply() is changed to virt_rmb(). The "while" is
+> changed to "do while" so that test_reply() is used as a read memory
+> barrier.
 > 
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 > ---
->  arch/x86/include/asm/cpu.h  |  2 ++
->  arch/x86/kernel/cpu/intel.c |  7 +++++
->  arch/x86/kvm/vmx/vmx.c      | 59 +++++++++++++++++++++++++++++++++++--
->  arch/x86/kvm/vmx/vmx.h      |  1 +
->  arch/x86/kvm/x86.c          | 14 +++++++--
->  5 files changed, 79 insertions(+), 4 deletions(-)
+> Changed since v1:
+>    - change "barrier()" to "virt_rmb()" in test_reply()
 > 
-> diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-> index f5172dbd3f01..2920de10e72c 100644
-> --- a/arch/x86/include/asm/cpu.h
-> +++ b/arch/x86/include/asm/cpu.h
-> @@ -46,6 +46,7 @@ unsigned int x86_stepping(unsigned int sig);
->  extern void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c);
->  extern void switch_to_sld(unsigned long tifn);
->  extern bool handle_user_split_lock(unsigned long ip);
-> +extern void sld_turn_back_on(void);
->  extern bool split_lock_detect_enabled(void);
->  extern bool split_lock_detect_fatal(void);
->  #else
-> @@ -55,6 +56,7 @@ static inline bool handle_user_split_lock(unsigned long ip)
->  {
->  	return false;
->  }
-> +static inline void sld_turn_back_on(void) {}
->  static inline bool split_lock_detect_enabled(void) { return false; }
->  static inline bool split_lock_detect_fatal(void) { return false; }
->  #endif
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index b67b46ea66df..28dc1141152b 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -1087,6 +1087,13 @@ bool handle_user_split_lock(unsigned long ip)
->  }
->  EXPORT_SYMBOL_GPL(handle_user_split_lock);
->  
-> +void sld_turn_back_on(void)
-> +{
-> +	__sld_msr_set(true);
-> +	clear_tsk_thread_flag(current, TIF_SLD);
-> +}
-> +EXPORT_SYMBOL_GPL(sld_turn_back_on);
-> +
->  /*
->   * This function is called only when switching between tasks with
->   * different split-lock detection modes. It sets the MSR for the
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 822211975e6c..8735bf0f3dfd 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1781,6 +1781,25 @@ static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
->  	}
->  }
->  
-> +/*
-> + * Note: for guest, feature split lock detection can only be enumerated through
-> + * MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT bit. The FMS enumeration is invalid.
-> + */
-> +static inline bool guest_has_feature_split_lock_detect(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu->arch.core_capabilities & MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT;
-> +}
-> +
-> +static inline u64 vmx_msr_test_ctrl_valid_bits(struct kvm_vcpu *vcpu)
-> +{
-> +	u64 valid_bits = 0;
-> +
-> +	if (guest_has_feature_split_lock_detect(vcpu))
-> +		valid_bits |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-> +
-> +	return valid_bits;
-> +}
-> +
->  /*
->   * Reads an msr value (of 'msr_index') into 'pdata'.
->   * Returns 0 on success, non-0 otherwise.
-> @@ -1793,6 +1812,12 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	u32 index;
->  
->  	switch (msr_info->index) {
-> +	case MSR_TEST_CTRL:
-> +		if (!msr_info->host_initiated &&
-> +		    !guest_has_feature_split_lock_detect(vcpu))
-> +			return 1;
-> +		msr_info->data = vmx->msr_test_ctrl;
-> +		break;
->  #ifdef CONFIG_X86_64
->  	case MSR_FS_BASE:
->  		msr_info->data = vmcs_readl(GUEST_FS_BASE);
-> @@ -1934,6 +1959,13 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  	u32 index;
->  
->  	switch (msr_index) {
-> +	case MSR_TEST_CTRL:
-> +		if (!msr_info->host_initiated &&
-
-Host initiated writes need to be validated against
-kvm_get_core_capabilities(), otherwise userspace can enable SLD when it's
-supported in hardware and the kernel, but can't be safely exposed to the
-guest due to SMT being on.
-
-> +		    (!guest_has_feature_split_lock_detect(vcpu) ||
-> +		     data & ~vmx_msr_test_ctrl_valid_bits(vcpu)))
-> +			return 1;
-> +		vmx->msr_test_ctrl = data;
-> +		break;
->  	case MSR_EFER:
->  		ret = kvm_set_msr_common(vcpu, msr_info);
->  		break;
-> @@ -4230,6 +4262,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
->  
->  	vmx->rmode.vm86_active = 0;
->  	vmx->spec_ctrl = 0;
-> +	vmx->msr_test_ctrl = 0;
->  
->  	vmx->msr_ia32_umwait_control = 0;
->  
-> @@ -4563,6 +4596,11 @@ static inline bool guest_cpu_alignment_check_enabled(struct kvm_vcpu *vcpu)
->  	       (kvm_get_rflags(vcpu) & X86_EFLAGS_AC);
->  }
->  
-> +static inline bool guest_cpu_split_lock_detect_enabled(struct vcpu_vmx *vmx)
-> +{
-> +	return vmx->msr_test_ctrl & MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
-> +}
-> +
->  static int handle_exception_nmi(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> @@ -4658,8 +4696,9 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
->  		break;
->  	case AC_VECTOR:
->  		/*
-> -		 * Inject #AC back to guest only when guest enables legacy
-> -		 * alignment check.
-> +		 * Inject #AC back to guest only when guest is expecting it,
-> +		 * i.e., guest enables legacy alignment check or split lock
-> +		 * detection.
->  		 * Otherwise, it must be an unexpected split lock #AC of guest
->  		 * since hardware SPLIT_LOCK_DETECT bit keeps unchanged set
->  		 * when vcpu is running. In this case, treat guest the same as
-> @@ -4670,6 +4709,7 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
->  		 *    similar as sending SIGBUS.
->  		 */
->  		if (!split_lock_detect_enabled() ||
-> +		    guest_cpu_split_lock_detect_enabled(vmx) ||
->  		    guest_cpu_alignment_check_enabled(vcpu)) {
->  			kvm_queue_exception_e(vcpu, AC_VECTOR, error_code);
->  			return 1;
-> @@ -6555,6 +6595,16 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
->  	 */
->  	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
->  
-> +	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
-> +	    guest_cpu_split_lock_detect_enabled(vmx)) {
-> +		if (test_thread_flag(TIF_SLD))
-> +			sld_turn_back_on();
-> +		else if (!split_lock_detect_enabled())
-> +			wrmsrl(MSR_TEST_CTRL,
-> +			       this_cpu_read(msr_test_ctrl_cache) |
-> +			       MSR_TEST_CTRL_SPLIT_LOCK_DETECT);
-> +	}
-> +
->  	/* L1D Flush includes CPU buffer clear to mitigate MDS */
->  	if (static_branch_unlikely(&vmx_l1d_should_flush))
->  		vmx_l1d_flush(vcpu);
-> @@ -6589,6 +6639,11 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
->  
->  	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
->  
-> +	if (static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
-> +	    guest_cpu_split_lock_detect_enabled(vmx) &&
-> +	    !split_lock_detect_enabled())
-> +		wrmsrl(MSR_TEST_CTRL, this_cpu_read(msr_test_ctrl_cache));
-> +
->  	/* All fields are clean at this point */
->  	if (static_branch_unlikely(&enable_evmcs))
->  		current_evmcs->hv_clean_fields |=
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index 7f42cf3dcd70..4cb8075e0b2a 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -222,6 +222,7 @@ struct vcpu_vmx {
->  #endif
->  
->  	u64		      spec_ctrl;
-> +	u64		      msr_test_ctrl;
->  	u32		      msr_ia32_umwait_control;
->  
->  	u32 secondary_exec_control;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index ed16644289a3..a3bb09319526 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1163,7 +1163,7 @@ static const u32 msrs_to_save_all[] = {
->  #endif
->  	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
->  	MSR_IA32_FEAT_CTL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
-> -	MSR_IA32_SPEC_CTRL,
-> +	MSR_IA32_SPEC_CTRL, MSR_TEST_CTRL,
->  	MSR_IA32_RTIT_CTL, MSR_IA32_RTIT_STATUS, MSR_IA32_RTIT_CR3_MATCH,
->  	MSR_IA32_RTIT_OUTPUT_BASE, MSR_IA32_RTIT_OUTPUT_MASK,
->  	MSR_IA32_RTIT_ADDR0_A, MSR_IA32_RTIT_ADDR0_B,
-> @@ -1345,7 +1345,12 @@ static u64 kvm_get_arch_capabilities(void)
->  
->  static u64 kvm_get_core_capabilities(void)
->  {
-> -	return 0;
-> +	u64 data = 0;
-> +
-> +	if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) && !cpu_smt_possible())
-> +		data |= MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT;
-> +
-> +	return data;
->  }
->  
->  static int kvm_get_msr_feature(struct kvm_msr_entry *msr)
-> @@ -5259,6 +5264,11 @@ static void kvm_init_msr_list(void)
->  		 * to the guests in some cases.
->  		 */
->  		switch (msrs_to_save_all[i]) {
-> +		case MSR_TEST_CTRL:
-> +			if (!(kvm_get_core_capabilities() &
-> +			      MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT))
-> +				continue;
-> +			break;
->  		case MSR_IA32_BNDCFGS:
->  			if (!kvm_mpx_supported())
->  				continue;
-> -- 
-> 2.23.0
+>   drivers/xen/xenbus/xenbus_comms.c |  2 ++
+>   drivers/xen/xenbus/xenbus_xs.c    | 11 +++++++----
+>   2 files changed, 9 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
+> index d239fc3c5e3d..852ed161fc2a 100644
+> --- a/drivers/xen/xenbus/xenbus_comms.c
+> +++ b/drivers/xen/xenbus/xenbus_comms.c
+> @@ -313,6 +313,8 @@ static int process_msg(void)
+>   			req->msg.type = state.msg.type;
+>   			req->msg.len = state.msg.len;
+>   			req->body = state.body;
+> +			/* write body, then update state */
+> +			virt_wmb();
+>   			req->state = xb_req_state_got_reply;
+>   			req->cb(req);
+>   		} else
+> diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+> index ddc18da61834..1e14c2118861 100644
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -194,15 +194,18 @@ static bool test_reply(struct xb_req_data *req)
+>   	if (req->state == xb_req_state_got_reply || !xenbus_ok())
+>   		return true;
+>   
+> -	/* Make sure to reread req->state each time. */
+> -	barrier();
+> +	/*
+> +	 * read req->state before other fields of struct xb_req_data
+> +	 * in the caller of test_reply(), e.g., read_reply()
+> +	 */
+> +	virt_rmb();
+
+Looking at the code again, I am afraid the barrier only happen in the 
+false case. Should not the new barrier added in the 'true' case?
+
+Cheers,
+
+-- 
+Julien Grall
