@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC83178012
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 011E9177F0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732538AbgCCRyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:54:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35638 "EHLO mail.kernel.org"
+        id S1731656AbgCCRs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:48:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732525AbgCCRyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:54:31 -0500
+        id S1730480AbgCCRsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:48:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F4C8206D5;
-        Tue,  3 Mar 2020 17:54:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23C2D20CC7;
+        Tue,  3 Mar 2020 17:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258069;
-        bh=eXXEwCxnzdfxbjn5nkEQ8AGAGP1DgqEPMJ10TE5Ql3M=;
+        s=default; t=1583257700;
+        bh=toAKJpVcK8AmIRqax8RohZ3VZLNcWfijpolDJB41s/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RQ3xYJbdPYsDG7JgkjbkeaiN0mU4G7FbANHzcwsaEBWgnxBzItOzgTvzRrjbXykvC
-         PhIpHxQ2w40WixyRtIOEgQt3GabTUcPPsNSt1eVhNP8yuBlIqrtX34NeFMuobeft7v
-         7RP2IAyT1Q4BRZDeUay1rsCRM9w/Vvmdi6tAeD5Q=
+        b=ICo6JoUBb5EyRM72kL+541cwCPinzK7VfzrJi1Ch4QHhrcF+VYqzdTRG6OdTeJbmS
+         YhDHQVADBgXsVcZ3CBjlYO6DuCQXWMw0hQeFXEyWnTZ57ghOABm1fFWRE2Yy3vXKBf
+         N4tJm63veI+cygQi0WUtMMoqBLMnlCbML0DZDtU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 060/152] ice: update Unit Load Status bitmask to check after reset
-Date:   Tue,  3 Mar 2020 18:42:38 +0100
-Message-Id: <20200303174309.281507217@linuxfoundation.org>
+        stable@vger.kernel.org, Erhard Furtner <erhard_f@mailbox.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org
+Subject: [PATCH 5.5 095/176] macintosh: therm_windtunnel: fix regression when instantiating devices
+Date:   Tue,  3 Mar 2020 18:42:39 +0100
+Message-Id: <20200303174315.807135274@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,83 +44,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bruce Allan <bruce.w.allan@intel.com>
+From: Wolfram Sang <wsa@the-dreams.de>
 
-[ Upstream commit cf8fc2a0863f9ff27ebd2efcdb1f7d378b9fb8a6 ]
+commit 38b17afb0ebb9ecd41418d3c08bcf9198af4349d upstream.
 
-After a reset the Unit Load Status bits in the GLNVM_ULD register to check
-for completion should be 0x7FF before continuing.  Update the mask to check
-(minus the three reserved bits that are always set).
+Removing attach_adapter from this driver caused a regression for at
+least some machines. Those machines had the sensors described in their
+DT, too, so they didn't need manual creation of the sensor devices. The
+old code worked, though, because manual creation came first. Creation of
+DT devices then failed later and caused error logs, but the sensors
+worked nonetheless because of the manually created devices.
 
-Signed-off-by: Bruce Allan <bruce.w.allan@intel.com>
-Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When removing attach_adaper, manual creation now comes later and loses
+the race. The sensor devices were already registered via DT, yet with
+another binding, so the driver could not be bound to it.
+
+This fix refactors the code to remove the race and only manually creates
+devices if there are no DT nodes present. Also, the DT binding is updated
+to match both, the DT and manually created devices. Because we don't
+know which device creation will be used at runtime, the code to start
+the kthread is moved to do_probe() which will be called by both methods.
+
+Fixes: 3e7bed52719d ("macintosh: therm_windtunnel: drop using attach_adapter")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201723
+Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+Tested-by: Erhard Furtner <erhard_f@mailbox.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org # v4.19+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/intel/ice/ice_common.c     | 17 ++++++++++++-----
- drivers/net/ethernet/intel/ice/ice_hw_autogen.h |  6 ++++++
- 2 files changed, 18 insertions(+), 5 deletions(-)
+ drivers/macintosh/therm_windtunnel.c |   52 ++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
-index 3a6b3950eb0e2..171f0b6254073 100644
---- a/drivers/net/ethernet/intel/ice/ice_common.c
-+++ b/drivers/net/ethernet/intel/ice/ice_common.c
-@@ -934,7 +934,7 @@ void ice_deinit_hw(struct ice_hw *hw)
-  */
- enum ice_status ice_check_reset(struct ice_hw *hw)
+--- a/drivers/macintosh/therm_windtunnel.c
++++ b/drivers/macintosh/therm_windtunnel.c
+@@ -300,9 +300,11 @@ static int control_loop(void *dummy)
+ /*	i2c probing and setup						*/
+ /************************************************************************/
+ 
+-static int
+-do_attach( struct i2c_adapter *adapter )
++static void do_attach(struct i2c_adapter *adapter)
  {
--	u32 cnt, reg = 0, grst_delay;
-+	u32 cnt, reg = 0, grst_delay, uld_mask;
- 
- 	/* Poll for Device Active state in case a recent CORER, GLOBR,
- 	 * or EMPR has occurred. The grst delay value is in 100ms units.
-@@ -956,13 +956,20 @@ enum ice_status ice_check_reset(struct ice_hw *hw)
- 		return ICE_ERR_RESET_FAILED;
- 	}
- 
--#define ICE_RESET_DONE_MASK	(GLNVM_ULD_CORER_DONE_M | \
--				 GLNVM_ULD_GLOBR_DONE_M)
-+#define ICE_RESET_DONE_MASK	(GLNVM_ULD_PCIER_DONE_M |\
-+				 GLNVM_ULD_PCIER_DONE_1_M |\
-+				 GLNVM_ULD_CORER_DONE_M |\
-+				 GLNVM_ULD_GLOBR_DONE_M |\
-+				 GLNVM_ULD_POR_DONE_M |\
-+				 GLNVM_ULD_POR_DONE_1_M |\
-+				 GLNVM_ULD_PCIER_DONE_2_M)
++	struct i2c_board_info info = { };
++	struct device_node *np;
 +
-+	uld_mask = ICE_RESET_DONE_MASK;
+ 	/* scan 0x48-0x4f (DS1775) and 0x2c-2x2f (ADM1030) */
+ 	static const unsigned short scan_ds1775[] = {
+ 		0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+@@ -313,25 +315,24 @@ do_attach( struct i2c_adapter *adapter )
+ 		I2C_CLIENT_END
+ 	};
  
- 	/* Device is Active; check Global Reset processes are done */
- 	for (cnt = 0; cnt < ICE_PF_RESET_WAIT_COUNT; cnt++) {
--		reg = rd32(hw, GLNVM_ULD) & ICE_RESET_DONE_MASK;
--		if (reg == ICE_RESET_DONE_MASK) {
-+		reg = rd32(hw, GLNVM_ULD) & uld_mask;
-+		if (reg == uld_mask) {
- 			ice_debug(hw, ICE_DBG_INIT,
- 				  "Global reset processes done. %d\n", cnt);
- 			break;
-diff --git a/drivers/net/ethernet/intel/ice/ice_hw_autogen.h b/drivers/net/ethernet/intel/ice/ice_hw_autogen.h
-index 152fbd556e9b4..9138b19de87e0 100644
---- a/drivers/net/ethernet/intel/ice/ice_hw_autogen.h
-+++ b/drivers/net/ethernet/intel/ice/ice_hw_autogen.h
-@@ -273,8 +273,14 @@
- #define GLNVM_GENS_SR_SIZE_S			5
- #define GLNVM_GENS_SR_SIZE_M			ICE_M(0x7, 5)
- #define GLNVM_ULD				0x000B6008
-+#define GLNVM_ULD_PCIER_DONE_M			BIT(0)
-+#define GLNVM_ULD_PCIER_DONE_1_M		BIT(1)
- #define GLNVM_ULD_CORER_DONE_M			BIT(3)
- #define GLNVM_ULD_GLOBR_DONE_M			BIT(4)
-+#define GLNVM_ULD_POR_DONE_M			BIT(5)
-+#define GLNVM_ULD_POR_DONE_1_M			BIT(8)
-+#define GLNVM_ULD_PCIER_DONE_2_M		BIT(9)
-+#define GLNVM_ULD_PE_DONE_M			BIT(10)
- #define GLPCI_CNF2				0x000BE004
- #define GLPCI_CNF2_CACHELINE_SIZE_M		BIT(1)
- #define PF_FUNC_RID				0x0009E880
--- 
-2.20.1
-
+-	if( strncmp(adapter->name, "uni-n", 5) )
+-		return 0;
+-
+-	if( !x.running ) {
+-		struct i2c_board_info info;
++	if (x.running || strncmp(adapter->name, "uni-n", 5))
++		return;
+ 
+-		memset(&info, 0, sizeof(struct i2c_board_info));
+-		strlcpy(info.type, "therm_ds1775", I2C_NAME_SIZE);
++	np = of_find_compatible_node(adapter->dev.of_node, NULL, "MAC,ds1775");
++	if (np) {
++		of_node_put(np);
++	} else {
++		strlcpy(info.type, "MAC,ds1775", I2C_NAME_SIZE);
+ 		i2c_new_probed_device(adapter, &info, scan_ds1775, NULL);
++	}
+ 
+-		strlcpy(info.type, "therm_adm1030", I2C_NAME_SIZE);
++	np = of_find_compatible_node(adapter->dev.of_node, NULL, "MAC,adm1030");
++	if (np) {
++		of_node_put(np);
++	} else {
++		strlcpy(info.type, "MAC,adm1030", I2C_NAME_SIZE);
+ 		i2c_new_probed_device(adapter, &info, scan_adm1030, NULL);
+-
+-		if( x.thermostat && x.fan ) {
+-			x.running = 1;
+-			x.poll_task = kthread_run(control_loop, NULL, "g4fand");
+-		}
+ 	}
+-	return 0;
+ }
+ 
+ static int
+@@ -404,8 +405,8 @@ out:
+ enum chip { ds1775, adm1030 };
+ 
+ static const struct i2c_device_id therm_windtunnel_id[] = {
+-	{ "therm_ds1775", ds1775 },
+-	{ "therm_adm1030", adm1030 },
++	{ "MAC,ds1775", ds1775 },
++	{ "MAC,adm1030", adm1030 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, therm_windtunnel_id);
+@@ -414,6 +415,7 @@ static int
+ do_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+ {
+ 	struct i2c_adapter *adapter = cl->adapter;
++	int ret = 0;
+ 
+ 	if( !i2c_check_functionality(adapter, I2C_FUNC_SMBUS_WORD_DATA
+ 				     | I2C_FUNC_SMBUS_WRITE_BYTE) )
+@@ -421,11 +423,19 @@ do_probe(struct i2c_client *cl, const st
+ 
+ 	switch (id->driver_data) {
+ 	case adm1030:
+-		return attach_fan( cl );
++		ret = attach_fan(cl);
++		break;
+ 	case ds1775:
+-		return attach_thermostat(cl);
++		ret = attach_thermostat(cl);
++		break;
+ 	}
+-	return 0;
++
++	if (!x.running && x.thermostat && x.fan) {
++		x.running = 1;
++		x.poll_task = kthread_run(control_loop, NULL, "g4fand");
++	}
++
++	return ret;
+ }
+ 
+ static struct i2c_driver g4fan_driver = {
 
 
