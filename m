@@ -2,94 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32285177CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:02:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A5E177CB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbgCCRBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:01:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:49824 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbgCCRBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:01:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C5CE2F;
-        Tue,  3 Mar 2020 09:01:32 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B8393F534;
-        Tue,  3 Mar 2020 09:01:30 -0800 (PST)
-Date:   Tue, 3 Mar 2020 17:01:16 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     bhelgaas@google.com, robh+dt@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, andrew.murray@arm.com, kishon@ti.com,
-        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4 0/5] Add support for PCIe endpoint mode in Tegra194
-Message-ID: <20200303170103.GA9641@e121166-lin.cambridge.arm.com>
-References: <20200303105418.2840-1-vidyas@nvidia.com>
+        id S1730520AbgCCRCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:02:50 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:18755 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729148AbgCCRCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:02:49 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583254969; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=t7pxhES6CtD8FX+tKI1sCtQUz5kRFPV7u657mPloMv4=; b=aMIrNTqKTzi5NkFiLcC5lx8qlkLzgITeI1ZWbSAKT4kTVM0irmR8/gJTXYzUjjRV5joAUHZe
+ 53NC8yAdTK1uKrhmj+DI+uZT/DstKIU6dXD/giYC+YDW5MrJQoBy2226oc5/hcelNNilKA1w
+ 8KtxMIJL5cJKxvb4cnv4KchTzIA=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e5e8d8c.7f5d3b7dece0-smtp-out-n01;
+ Tue, 03 Mar 2020 17:02:04 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7BD26C447A2; Tue,  3 Mar 2020 17:02:03 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 85D94C43383;
+        Tue,  3 Mar 2020 17:02:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85D94C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Tue, 3 Mar 2020 10:01:59 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
+        DTML <devicetree@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>
+Subject: Re: [Freedreno] [PATCH v3 1/2] dt-bindings: display: msm: Convert
+ GMU bindings to YAML
+Message-ID: <20200303170159.GA13109@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Brian Masney <masneyb@onstation.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
+        DTML <devicetree@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>
+References: <1583173424-21832-1-git-send-email-jcrouse@codeaurora.org>
+ <1583173424-21832-2-git-send-email-jcrouse@codeaurora.org>
+ <20200302204906.GA32123@ravnborg.org>
+ <20200303154321.GA24212@jcrouse1-lnx.qualcomm.com>
+ <CAOCk7NpP8chviZ0eM_4Fm3b2Jn+ngtVq=EYB=7yMK0H7rnfWMg@mail.gmail.com>
+ <20200303155405.GA11841@onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303105418.2840-1-vidyas@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200303155405.GA11841@onstation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 04:24:13PM +0530, Vidya Sagar wrote:
-> Tegra194 has three (C0, C4 & C5) dual mode PCIe controllers that can operate
-> either in root port mode or in end point mode but only in one mode at a time.
-> Platform P2972-0000 supports enabling endpoint mode for C5 controller. This
-> patch series adds support for PCIe endpoint mode in both the driver as well as
-> in DT.
-> This patch series depends on the changes made for Synopsys DesignWare endpoint
-> mode subsystem that are recently accepted.
-> @ https://patchwork.kernel.org/project/linux-pci/list/?series=202211
-> which in turn depends on the patch made by Kishon
-> @ https://patchwork.kernel.org/patch/10975123/
-> which is also under review.
+On Tue, Mar 03, 2020 at 10:54:05AM -0500, Brian Masney wrote:
+> On Tue, Mar 03, 2020 at 08:50:28AM -0700, Jeffrey Hugo wrote:
+> > On Tue, Mar 3, 2020 at 8:43 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> > >
+> > > On Mon, Mar 02, 2020 at 09:49:06PM +0100, Sam Ravnborg wrote:
+> > > > Hi Jordan.
+> > > >
+> > > > On Mon, Mar 02, 2020 at 11:23:43AM -0700, Jordan Crouse wrote:
+> > > > > Convert display/msm/gmu.txt to display/msm/gmu.yaml and remove the old
+> > > > > text bindings.
+> > > > >
+> > > > > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> > > > > ---
+> > > > >
+> > > > >  .../devicetree/bindings/display/msm/gmu.txt        | 116 -------------------
+> > > > > -
+> > > > > -Required properties:
+> > > > > -- compatible: "qcom,adreno-gmu-XYZ.W", "qcom,adreno-gmu"
+> > > > > -    for example: "qcom,adreno-gmu-630.2", "qcom,adreno-gmu"
+> > > > > -  Note that you need to list the less specific "qcom,adreno-gmu"
+> > > > > -  for generic matches and the more specific identifier to identify
+> > > > > -  the specific device.
+> > > > > -- reg: Physical base address and length of the GMU registers.
+> > > > > -- reg-names: Matching names for the register regions
+> > > > > -  * "gmu"
+> > > > > -  * "gmu_pdc"
+> > > > > -  * "gmu_pdc_seg"
+> > > > > -- interrupts: The interrupt signals from the GMU.
+> > > > > -- interrupt-names: Matching names for the interrupts
+> > > > > -  * "hfi"
+> > > > > -  * "gmu"
+> > > > > -- clocks: phandles to the device clocks
+> > > > > -- clock-names: Matching names for the clocks
+> > > > > -   * "gmu"
+> > > > > -   * "cxo"
+> > > > > -   * "axi"
+> > > > > -   * "mnoc"
+> > > > The new binding - and arch/arm64/boot/dts/qcom/sdm845.dtsi agrees that
+> > > > "mnoc" is wrong.
+> > > >
+> > > > > -- power-domains: should be:
+> > > > > -   <&clock_gpucc GPU_CX_GDSC>
+> > > > > -   <&clock_gpucc GPU_GX_GDSC>
+> > > > > -- power-domain-names: Matching names for the power domains
+> > > > > -- iommus: phandle to the adreno iommu
+> > > > > -- operating-points-v2: phandle to the OPP operating points
+> > > > > -
+> > > > > -Optional properties:
+> > > > > -- sram: phandle to the On Chip Memory (OCMEM) that's present on some Snapdragon
+> > > > > -        SoCs. See Documentation/devicetree/bindings/sram/qcom,ocmem.yaml.
+> > > > This property is not included in the new binding.
+> > >
+> > > Yeah, that guy shouldn't be here. I'm not sure how it got there in the first
+> > > place but I'll update the commit log. Thanks for the poke.
+> > 
+> > I thought this was something Brian M added for older targets (A4XX?).
+> > Perhaps he should chime in?
 > 
-> V4:
-> * Started using threaded irqs instead of kthreads
+> Yes, this is needed for older systems with a3xx and a4xx GPUs.
 
-Hi Vidya,
+Okay, this got added to the wrong place.  The GMU is a specific entity only
+valid for a6xx targets. From the looks of the example the sram should be in the
+GPU definition. Do you want to submit a patch to move it or should I (and lets
+hope Rob doesn't insist on converting GPU to YAML).
 
-sorry for the bother, may I ask you to rebase the series (after
-answering Thierry's query) on top of my pci/endpoint branch please ?
+Jordan
 
-Please resend it and I will merge patches {1,2,5} then.
+> Brian
 
-Thanks,
-Lorenzo
-
-> V3:
-> * Re-ordered patches in the series to make the driver change as the last patch
-> * Took care of Thierry's review comments
-> 
-> V2:
-> * Addressed Thierry & Bjorn's review comments
-> * Added EP mode specific binding documentation to already existing binding documentation file
-> * Removed patch that enables GPIO controller nodes explicitly as they are enabled already
-> 
-> Vidya Sagar (5):
->   soc/tegra: bpmp: Update ABI header
->   dt-bindings: PCI: tegra: Add DT support for PCIe EP nodes in Tegra194
->   arm64: tegra: Add PCIe endpoint controllers nodes for Tegra194
->   arm64: tegra: Add support for PCIe endpoint mode in P2972-0000
->     platform
->   PCI: tegra: Add support for PCIe endpoint mode in Tegra194
-> 
->  .../bindings/pci/nvidia,tegra194-pcie.txt     | 125 +++-
->  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  18 +
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  99 +++
->  drivers/pci/controller/dwc/Kconfig            |  30 +-
->  drivers/pci/controller/dwc/pcie-tegra194.c    | 681 +++++++++++++++++-
->  include/soc/tegra/bpmp-abi.h                  |  10 +-
->  6 files changed, 918 insertions(+), 45 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
