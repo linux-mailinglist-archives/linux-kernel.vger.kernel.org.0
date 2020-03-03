@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 933A7177EFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1975817804B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731468AbgCCRsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:48:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55000 "EHLO mail.kernel.org"
+        id S1732800AbgCCRz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:55:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729786AbgCCRr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:47:59 -0500
+        id S1732775AbgCCRzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:55:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67FA9208C3;
-        Tue,  3 Mar 2020 17:47:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F31E20728;
+        Tue,  3 Mar 2020 17:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257677;
-        bh=OR6SV+RZfA6Kg3yPJNOhpuudvHbA8yRXIsYbCOpjxIY=;
+        s=default; t=1583258150;
+        bh=XSfqdRlJCiHaWS/0DHgFpfH9F1yRENfouWsQPjTtI+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eUo8DvKOhWcFLNcBwVoWFo0g0TuO27VbcLK7VrgRFrBTKREkURAj0z3TLxMaHDRFt
-         9AosCWl+qdE8HCqlRc4AheaOsqbhNmI0yAJGbNEnq3YvDz2XHmCUkYoqDtCSpt5Cyz
-         1KSW1BqpHuDyzA0Zw6Ux6nAijFguMABbsuY6r1aY=
+        b=sGaoJz1AcNKaA05bKoHY5lMP5oTkwSXp7+Jkw7PjX+u1oHJWb3ayJ1UIUvOqGqXg+
+         ebw60bsO9YB8aqkGH7gYRxUbv4uTIOoLYokH+wnjMvMvZsLEVl+j6p3AOJYksqBoI0
+         eeD4u19+/QCrq3wobNqilXEeGbaGxqyVqt6qWqqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.5 087/176] ACPICA: Introduce ACPI_ACCESS_BYTE_WIDTH() macro
-Date:   Tue,  3 Mar 2020 18:42:31 +0100
-Message-Id: <20200303174314.785347810@linuxfoundation.org>
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 054/152] net: ena: rss: fix failure to get indirection table
+Date:   Tue,  3 Mar 2020 18:42:32 +0100
+Message-Id: <20200303174308.574274170@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Sameeh Jubran <sameehj@amazon.com>
 
-commit 1dade3a7048ccfc675650cd2cf13d578b095e5fb upstream.
+[ Upstream commit 0c8923c0a64fb5d14bebb9a9065d2dc25ac5e600 ]
 
-Sometimes it is useful to find the access_width field value in bytes and
-not in bits so add a helper that can be used for this purpose.
+On old hardware, getting / setting the hash function is not supported while
+gettting / setting the indirection table is.
 
-Suggested-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This commit enables us to still show the indirection table on older
+hardwares by setting the hash function and key to NULL.
 
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/acpi/actypes.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/include/acpi/actypes.h
-+++ b/include/acpi/actypes.h
-@@ -532,11 +532,12 @@ typedef u64 acpi_integer;
- 	 strnlen (a, ACPI_NAMESEG_SIZE) == ACPI_NAMESEG_SIZE)
+diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+index 4472e41bd7825..52a3decff34a4 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
++++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
+@@ -648,7 +648,21 @@ static int ena_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+ 	if (rc)
+ 		return rc;
  
- /*
-- * Algorithm to obtain access bit width.
-+ * Algorithm to obtain access bit or byte width.
-  * Can be used with access_width of struct acpi_generic_address and access_size of
-  * struct acpi_resource_generic_register.
-  */
- #define ACPI_ACCESS_BIT_WIDTH(size)     (1 << ((size) + 2))
-+#define ACPI_ACCESS_BYTE_WIDTH(size)    (1 << ((size) - 1))
++	/* We call this function in order to check if the device
++	 * supports getting/setting the hash function.
++	 */
+ 	rc = ena_com_get_hash_function(adapter->ena_dev, &ena_func, key);
++
++	if (rc) {
++		if (rc == -EOPNOTSUPP) {
++			key = NULL;
++			hfunc = NULL;
++			rc = 0;
++		}
++
++		return rc;
++	}
++
+ 	if (rc)
+ 		return rc;
  
- /*******************************************************************************
-  *
+-- 
+2.20.1
+
 
 
