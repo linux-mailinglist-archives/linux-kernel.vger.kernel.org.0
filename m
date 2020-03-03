@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E416F17753B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 12:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 342EB17753C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 12:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbgCCLYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 06:24:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55280 "EHLO mail.kernel.org"
+        id S1728989AbgCCLYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 06:24:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728928AbgCCLYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 06:24:04 -0500
+        id S1728928AbgCCLYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 06:24:35 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4AB20836;
-        Tue,  3 Mar 2020 11:24:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B3C820836;
+        Tue,  3 Mar 2020 11:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583234643;
+        s=default; t=1583234674;
         bh=rv9OqmSphTP2/Bi7sPUwcbWh5FMkNeF2by0BEe7Sn6I=;
         h=From:To:Cc:Subject:Date:From;
-        b=Iw0l0Q5N7eOJlHiQLaerZS0euSAAZaPI4e/yl+CD/ul+wOq/x+vFoB50BnOnnvxbO
-         1ckY9XlDS0DzBaOxr1qLbc767jfv16nkiZkLDa3O8t7QVKca8JMIIgP7SV1CwXC5Xx
-         DHhOldpn0L8bV8C5Evj/w9TqWSlcL99eWYw9Kdjs=
+        b=Dbun/+OzK23dwpHsIUxgDaAJRJUj5UO9FayvErqiPSef/P3JjiLBcHvE8/sAP2rMo
+         /O+Wq1G7CD+KM7gndunf+WR+f5k/2Ae5jzGsV7FfZEIYpVjrVsDOiYidFnl6Sbsjjz
+         dxVrVXXJKI0m+V4hwGyYkeoncU2VaxqTBtKA6cn4=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -34,8 +34,8 @@ Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
 Subject: [PATCH 0/2] tools/bootconfig: Add O= option and enhance error message
-Date:   Tue,  3 Mar 2020 20:23:59 +0900
-Message-Id: <158323463879.10281.9905975413630653620.stgit@devnote2>
+Date:   Tue,  3 Mar 2020 20:24:30 +0900
+Message-Id: <158323467008.10560.4307464503748340855.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
