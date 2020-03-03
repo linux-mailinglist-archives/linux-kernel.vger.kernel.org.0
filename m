@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC9B17811F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 375121781C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387837AbgCCSAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:00:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
+        id S2387548AbgCCSGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:06:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387814AbgCCSAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:00:44 -0500
+        id S1731677AbgCCR5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:57:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020C520728;
-        Tue,  3 Mar 2020 18:00:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDEBA206D5;
+        Tue,  3 Mar 2020 17:57:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258442;
-        bh=3ryFEtlntlKg+vwn0E7MjoOJhaVqI78X2ptaQGlLpGg=;
+        s=default; t=1583258240;
+        bh=UQDh8ZntkfNAHQeV7UZAuK3UDo3MuKy00totmTfFHLo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tsdQlersxdBgdUvsaOckn4MII6/7CKRfqfJv8ebhTsVbdvEr+K6BA9zvHVQ6XQg97
-         /p5QL3D1603QFkDiH8z1SztYanGb9h936hb5OUtAa8tMQgEuVAkwytGbhLynzKfTui
-         q2kdEj44pFbtIxvfk6T1QOuQivHOGzmjRGCYl0Vk=
+        b=kf/UoaWvSIRI1X7hYtAWzzzYH2/LZFohsAL+ATWU4EUZxB79e8Gguo9Gy71OCW/bG
+         dfyyDKU5DWpsHxs4G1uyKguhufh4foQ8oFWyCXCo819cVpKaRb2zDPZEKl2S56o4I9
+         9Je2pPNJx64Tmw8xAGvXyIJZDuwL3JzSbp/x0Ji8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Shirish S <shirish.s@amd.com>
-Subject: [PATCH 4.19 50/87] amdgpu/gmc_v9: save/restore sdpif regs during S3
-Date:   Tue,  3 Mar 2020 18:43:41 +0100
-Message-Id: <20200303174354.840811705@linuxfoundation.org>
+        stable@vger.kernel.org, Yixian Liu <liuyixian@huawei.com>,
+        Weihang Li <liweihang@hisilicon.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.4 124/152] RDMA/hns: Simplify the calculation and usage of wqe idx for post verbs
+Date:   Tue,  3 Mar 2020 18:43:42 +0100
+Message-Id: <20200303174316.896995520@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,114 +44,338 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shirish S <shirish.s@amd.com>
+From: Yixian Liu <liuyixian@huawei.com>
 
-commit a3ed353cf8015ba84a0407a5dc3ffee038166ab0 upstream.
+commit 4768820243d71d49f1044b3f911ac3d52bdb79af upstream.
 
-fixes S3 issue with IOMMU + S/G  enabled @ 64M VRAM.
+Currently, the wqe idx is calculated repeatly everywhere it is used.  This
+patch defines wqe_idx and calculated it only once, then just use it as
+needed.
 
-Suggested-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Shirish S <shirish.s@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes: 2d40788825ac ("RDMA/hns: Add support for processing send wr and receive wr")
+Link: https://lore.kernel.org/r/1575981902-5274-1-git-send-email-liweihang@hisilicon.com
+Signed-off-by: Yixian Liu <liuyixian@huawei.com>
+Signed-off-by: Weihang Li <liweihang@hisilicon.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h                    |    1 
- drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c                      |   37 ++++++++++++-
- drivers/gpu/drm/amd/include/asic_reg/dce/dce_12_0_offset.h |    2 
- 3 files changed, 39 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hns/hns_roce_device.h |    3 -
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c  |   37 ++++++++++--------------
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c  |   43 +++++++++++-----------------
+ 3 files changed, 35 insertions(+), 48 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h
-@@ -97,6 +97,7 @@ struct amdgpu_gmc {
- 	uint32_t                srbm_soft_reset;
- 	bool			prt_warning;
- 	uint64_t		stolen_size;
-+	uint32_t		sdpif_register;
- 	/* apertures */
- 	u64			shared_aperture_start;
- 	u64			shared_aperture_end;
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-@@ -993,6 +993,19 @@ static void gmc_v9_0_init_golden_registe
- }
+--- a/drivers/infiniband/hw/hns/hns_roce_device.h
++++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+@@ -425,7 +425,7 @@ struct hns_roce_mr_table {
+ struct hns_roce_wq {
+ 	u64		*wrid;     /* Work request ID */
+ 	spinlock_t	lock;
+-	int		wqe_cnt;  /* WQE num */
++	u32		wqe_cnt;  /* WQE num */
+ 	u32		max_post;
+ 	int		max_gs;
+ 	int		offset;
+@@ -658,7 +658,6 @@ struct hns_roce_qp {
+ 	u8			sdb_en;
+ 	u32			doorbell_qpn;
+ 	u32			sq_signal_bits;
+-	u32			sq_next_wqe;
+ 	struct hns_roce_wq	sq;
  
- /**
-+ * gmc_v9_0_restore_registers - restores regs
-+ *
-+ * @adev: amdgpu_device pointer
-+ *
-+ * This restores register values, saved at suspend.
-+ */
-+static void gmc_v9_0_restore_registers(struct amdgpu_device *adev)
-+{
-+	if (adev->asic_type == CHIP_RAVEN)
-+		WREG32(mmDCHUBBUB_SDPIF_MMIO_CNTRL_0, adev->gmc.sdpif_register);
-+}
+ 	struct ib_umem		*umem;
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -74,8 +74,8 @@ static int hns_roce_v1_post_send(struct
+ 	unsigned long flags = 0;
+ 	void *wqe = NULL;
+ 	__le32 doorbell[2];
++	u32 wqe_idx = 0;
+ 	int nreq = 0;
+-	u32 ind = 0;
+ 	int ret = 0;
+ 	u8 *smac;
+ 	int loopback;
+@@ -88,7 +88,7 @@ static int hns_roce_v1_post_send(struct
+ 	}
+ 
+ 	spin_lock_irqsave(&qp->sq.lock, flags);
+-	ind = qp->sq_next_wqe;
 +
-+/**
-  * gmc_v9_0_gart_enable - gart enable
-  *
-  * @adev: amdgpu_device pointer
-@@ -1081,6 +1094,20 @@ static int gmc_v9_0_hw_init(void *handle
- }
+ 	for (nreq = 0; wr; ++nreq, wr = wr->next) {
+ 		if (hns_roce_wq_overflow(&qp->sq, nreq, qp->ibqp.send_cq)) {
+ 			ret = -ENOMEM;
+@@ -96,6 +96,8 @@ static int hns_roce_v1_post_send(struct
+ 			goto out;
+ 		}
  
- /**
-+ * gmc_v9_0_save_registers - saves regs
-+ *
-+ * @adev: amdgpu_device pointer
-+ *
-+ * This saves potential register values that should be
-+ * restored upon resume
-+ */
-+static void gmc_v9_0_save_registers(struct amdgpu_device *adev)
-+{
-+	if (adev->asic_type == CHIP_RAVEN)
-+		adev->gmc.sdpif_register = RREG32(mmDCHUBBUB_SDPIF_MMIO_CNTRL_0);
-+}
++		wqe_idx = (qp->sq.head + nreq) & (qp->sq.wqe_cnt - 1);
 +
-+/**
-  * gmc_v9_0_gart_disable - gart disable
-  *
-  * @adev: amdgpu_device pointer
-@@ -1112,9 +1139,16 @@ static int gmc_v9_0_hw_fini(void *handle
+ 		if (unlikely(wr->num_sge > qp->sq.max_gs)) {
+ 			dev_err(dev, "num_sge=%d > qp->sq.max_gs=%d\n",
+ 				wr->num_sge, qp->sq.max_gs);
+@@ -104,9 +106,8 @@ static int hns_roce_v1_post_send(struct
+ 			goto out;
+ 		}
  
- static int gmc_v9_0_suspend(void *handle)
+-		wqe = get_send_wqe(qp, ind & (qp->sq.wqe_cnt - 1));
+-		qp->sq.wrid[(qp->sq.head + nreq) & (qp->sq.wqe_cnt - 1)] =
+-								      wr->wr_id;
++		wqe = get_send_wqe(qp, wqe_idx);
++		qp->sq.wrid[wqe_idx] = wr->wr_id;
+ 
+ 		/* Corresponding to the RC and RD type wqe process separately */
+ 		if (ibqp->qp_type == IB_QPT_GSI) {
+@@ -210,7 +211,6 @@ static int hns_roce_v1_post_send(struct
+ 				       cpu_to_le32((wr->sg_list[1].addr) >> 32);
+ 			ud_sq_wqe->l_key1 =
+ 				       cpu_to_le32(wr->sg_list[1].lkey);
+-			ind++;
+ 		} else if (ibqp->qp_type == IB_QPT_RC) {
+ 			u32 tmp_len = 0;
+ 
+@@ -308,7 +308,6 @@ static int hns_roce_v1_post_send(struct
+ 				ctrl->flag |= cpu_to_le32(wr->num_sge <<
+ 					      HNS_ROCE_WQE_SGE_NUM_BIT);
+ 			}
+-			ind++;
+ 		}
+ 	}
+ 
+@@ -336,7 +335,6 @@ out:
+ 		doorbell[1] = sq_db.u32_8;
+ 
+ 		hns_roce_write64_k(doorbell, qp->sq.db_reg_l);
+-		qp->sq_next_wqe = ind;
+ 	}
+ 
+ 	spin_unlock_irqrestore(&qp->sq.lock, flags);
+@@ -348,12 +346,6 @@ static int hns_roce_v1_post_recv(struct
+ 				 const struct ib_recv_wr *wr,
+ 				 const struct ib_recv_wr **bad_wr)
  {
-+	int r;
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+-	int ret = 0;
+-	int nreq = 0;
+-	int ind = 0;
+-	int i = 0;
+-	u32 reg_val;
+-	unsigned long flags = 0;
+ 	struct hns_roce_rq_wqe_ctrl *ctrl = NULL;
+ 	struct hns_roce_wqe_data_seg *scat = NULL;
+ 	struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
+@@ -361,9 +353,14 @@ static int hns_roce_v1_post_recv(struct
+ 	struct device *dev = &hr_dev->pdev->dev;
+ 	struct hns_roce_rq_db rq_db;
+ 	__le32 doorbell[2] = {0};
++	unsigned long flags = 0;
++	unsigned int wqe_idx;
++	int ret = 0;
++	int nreq = 0;
++	int i = 0;
++	u32 reg_val;
  
--	return gmc_v9_0_hw_fini(adev);
-+	r = gmc_v9_0_hw_fini(adev);
-+	if (r)
-+		return r;
+ 	spin_lock_irqsave(&hr_qp->rq.lock, flags);
+-	ind = hr_qp->rq.head & (hr_qp->rq.wqe_cnt - 1);
+ 
+ 	for (nreq = 0; wr; ++nreq, wr = wr->next) {
+ 		if (hns_roce_wq_overflow(&hr_qp->rq, nreq,
+@@ -373,6 +370,8 @@ static int hns_roce_v1_post_recv(struct
+ 			goto out;
+ 		}
+ 
++		wqe_idx = (hr_qp->rq.head + nreq) & (hr_qp->rq.wqe_cnt - 1);
 +
-+	gmc_v9_0_save_registers(adev);
+ 		if (unlikely(wr->num_sge > hr_qp->rq.max_gs)) {
+ 			dev_err(dev, "rq:num_sge=%d > qp->sq.max_gs=%d\n",
+ 				wr->num_sge, hr_qp->rq.max_gs);
+@@ -381,7 +380,7 @@ static int hns_roce_v1_post_recv(struct
+ 			goto out;
+ 		}
+ 
+-		ctrl = get_recv_wqe(hr_qp, ind);
++		ctrl = get_recv_wqe(hr_qp, wqe_idx);
+ 
+ 		roce_set_field(ctrl->rwqe_byte_12,
+ 			       RQ_WQE_CTRL_RWQE_BYTE_12_RWQE_SGE_NUM_M,
+@@ -393,9 +392,7 @@ static int hns_roce_v1_post_recv(struct
+ 		for (i = 0; i < wr->num_sge; i++)
+ 			set_data_seg(scat + i, wr->sg_list + i);
+ 
+-		hr_qp->rq.wrid[ind] = wr->wr_id;
+-
+-		ind = (ind + 1) & (hr_qp->rq.wqe_cnt - 1);
++		hr_qp->rq.wrid[wqe_idx] = wr->wr_id;
+ 	}
+ 
+ out:
+@@ -2702,7 +2699,6 @@ static int hns_roce_v1_m_sqp(struct ib_q
+ 		hr_qp->rq.tail = 0;
+ 		hr_qp->sq.head = 0;
+ 		hr_qp->sq.tail = 0;
+-		hr_qp->sq_next_wqe = 0;
+ 	}
+ 
+ 	kfree(context);
+@@ -3316,7 +3312,6 @@ static int hns_roce_v1_m_qp(struct ib_qp
+ 		hr_qp->rq.tail = 0;
+ 		hr_qp->sq.head = 0;
+ 		hr_qp->sq.tail = 0;
+-		hr_qp->sq_next_wqe = 0;
+ 	}
+ out:
+ 	kfree(context);
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -239,10 +239,10 @@ static int hns_roce_v2_post_send(struct
+ 	struct device *dev = hr_dev->dev;
+ 	struct hns_roce_v2_db sq_db;
+ 	struct ib_qp_attr attr;
+-	unsigned int sge_ind;
+ 	unsigned int owner_bit;
++	unsigned int sge_idx;
++	unsigned int wqe_idx;
+ 	unsigned long flags;
+-	unsigned int ind;
+ 	void *wqe = NULL;
+ 	bool loopback;
+ 	int attr_mask;
+@@ -269,8 +269,7 @@ static int hns_roce_v2_post_send(struct
+ 	}
+ 
+ 	spin_lock_irqsave(&qp->sq.lock, flags);
+-	ind = qp->sq_next_wqe;
+-	sge_ind = qp->next_sge;
++	sge_idx = qp->next_sge;
+ 
+ 	for (nreq = 0; wr; ++nreq, wr = wr->next) {
+ 		if (hns_roce_wq_overflow(&qp->sq, nreq, qp->ibqp.send_cq)) {
+@@ -279,6 +278,8 @@ static int hns_roce_v2_post_send(struct
+ 			goto out;
+ 		}
+ 
++		wqe_idx = (qp->sq.head + nreq) & (qp->sq.wqe_cnt - 1);
 +
-+	return 0;
- }
+ 		if (unlikely(wr->num_sge > qp->sq.max_gs)) {
+ 			dev_err(dev, "num_sge=%d > qp->sq.max_gs=%d\n",
+ 				wr->num_sge, qp->sq.max_gs);
+@@ -287,10 +288,8 @@ static int hns_roce_v2_post_send(struct
+ 			goto out;
+ 		}
  
- static int gmc_v9_0_resume(void *handle)
-@@ -1122,6 +1156,7 @@ static int gmc_v9_0_resume(void *handle)
- 	int r;
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+-		wqe = get_send_wqe(qp, ind & (qp->sq.wqe_cnt - 1));
+-		qp->sq.wrid[(qp->sq.head + nreq) & (qp->sq.wqe_cnt - 1)] =
+-								      wr->wr_id;
+-
++		wqe = get_send_wqe(qp, wqe_idx);
++		qp->sq.wrid[wqe_idx] = wr->wr_id;
+ 		owner_bit =
+ 		       ~(((qp->sq.head + nreq) >> ilog2(qp->sq.wqe_cnt)) & 0x1);
+ 		tmp_len = 0;
+@@ -373,7 +372,7 @@ static int hns_roce_v2_post_send(struct
+ 			roce_set_field(ud_sq_wqe->byte_20,
+ 				     V2_UD_SEND_WQE_BYTE_20_MSG_START_SGE_IDX_M,
+ 				     V2_UD_SEND_WQE_BYTE_20_MSG_START_SGE_IDX_S,
+-				     sge_ind & (qp->sge.sge_cnt - 1));
++				     sge_idx & (qp->sge.sge_cnt - 1));
  
-+	gmc_v9_0_restore_registers(adev);
- 	r = gmc_v9_0_hw_init(adev);
- 	if (r)
- 		return r;
---- a/drivers/gpu/drm/amd/include/asic_reg/dce/dce_12_0_offset.h
-+++ b/drivers/gpu/drm/amd/include/asic_reg/dce/dce_12_0_offset.h
-@@ -7376,6 +7376,8 @@
- #define mmCRTC4_CRTC_DRR_CONTROL                                                                       0x0f3e
- #define mmCRTC4_CRTC_DRR_CONTROL_BASE_IDX                                                              2
+ 			roce_set_field(ud_sq_wqe->byte_24,
+ 				       V2_UD_SEND_WQE_BYTE_24_UDPSPN_M,
+@@ -423,8 +422,7 @@ static int hns_roce_v2_post_send(struct
+ 			memcpy(&ud_sq_wqe->dgid[0], &ah->av.dgid[0],
+ 			       GID_LEN_V2);
  
-+#define mmDCHUBBUB_SDPIF_MMIO_CNTRL_0                                                                  0x395d
-+#define mmDCHUBBUB_SDPIF_MMIO_CNTRL_0_BASE_IDX                                                         2
+-			set_extend_sge(qp, wr, &sge_ind);
+-			ind++;
++			set_extend_sge(qp, wr, &sge_idx);
+ 		} else if (ibqp->qp_type == IB_QPT_RC) {
+ 			rc_sq_wqe = wqe;
+ 			memset(rc_sq_wqe, 0, sizeof(*rc_sq_wqe));
+@@ -553,12 +551,10 @@ static int hns_roce_v2_post_send(struct
+ 					       wr->num_sge);
+ 			} else if (wr->opcode != IB_WR_REG_MR) {
+ 				ret = set_rwqe_data_seg(ibqp, wr, rc_sq_wqe,
+-							wqe, &sge_ind, bad_wr);
++							wqe, &sge_idx, bad_wr);
+ 				if (ret)
+ 					goto out;
+ 			}
+-
+-			ind++;
+ 		} else {
+ 			dev_err(dev, "Illegal qp_type(0x%x)\n", ibqp->qp_type);
+ 			spin_unlock_irqrestore(&qp->sq.lock, flags);
+@@ -588,8 +584,7 @@ out:
  
- // addressBlock: dce_dc_fmt4_dispdec
- // base address: 0x2000
+ 		hns_roce_write64(hr_dev, (__le32 *)&sq_db, qp->sq.db_reg_l);
+ 
+-		qp->sq_next_wqe = ind;
+-		qp->next_sge = sge_ind;
++		qp->next_sge = sge_idx;
+ 
+ 		if (qp->state == IB_QPS_ERR) {
+ 			attr_mask = IB_QP_STATE;
+@@ -623,13 +618,12 @@ static int hns_roce_v2_post_recv(struct
+ 	unsigned long flags;
+ 	void *wqe = NULL;
+ 	int attr_mask;
++	u32 wqe_idx;
+ 	int ret = 0;
+ 	int nreq;
+-	int ind;
+ 	int i;
+ 
+ 	spin_lock_irqsave(&hr_qp->rq.lock, flags);
+-	ind = hr_qp->rq.head & (hr_qp->rq.wqe_cnt - 1);
+ 
+ 	if (hr_qp->state == IB_QPS_RESET) {
+ 		spin_unlock_irqrestore(&hr_qp->rq.lock, flags);
+@@ -645,6 +639,8 @@ static int hns_roce_v2_post_recv(struct
+ 			goto out;
+ 		}
+ 
++		wqe_idx = (hr_qp->rq.head + nreq) & (hr_qp->rq.wqe_cnt - 1);
++
+ 		if (unlikely(wr->num_sge > hr_qp->rq.max_gs)) {
+ 			dev_err(dev, "rq:num_sge=%d > qp->sq.max_gs=%d\n",
+ 				wr->num_sge, hr_qp->rq.max_gs);
+@@ -653,7 +649,7 @@ static int hns_roce_v2_post_recv(struct
+ 			goto out;
+ 		}
+ 
+-		wqe = get_recv_wqe(hr_qp, ind);
++		wqe = get_recv_wqe(hr_qp, wqe_idx);
+ 		dseg = (struct hns_roce_v2_wqe_data_seg *)wqe;
+ 		for (i = 0; i < wr->num_sge; i++) {
+ 			if (!wr->sg_list[i].length)
+@@ -669,8 +665,8 @@ static int hns_roce_v2_post_recv(struct
+ 
+ 		/* rq support inline data */
+ 		if (hr_dev->caps.flags & HNS_ROCE_CAP_FLAG_RQ_INLINE) {
+-			sge_list = hr_qp->rq_inl_buf.wqe_list[ind].sg_list;
+-			hr_qp->rq_inl_buf.wqe_list[ind].sge_cnt =
++			sge_list = hr_qp->rq_inl_buf.wqe_list[wqe_idx].sg_list;
++			hr_qp->rq_inl_buf.wqe_list[wqe_idx].sge_cnt =
+ 							       (u32)wr->num_sge;
+ 			for (i = 0; i < wr->num_sge; i++) {
+ 				sge_list[i].addr =
+@@ -679,9 +675,7 @@ static int hns_roce_v2_post_recv(struct
+ 			}
+ 		}
+ 
+-		hr_qp->rq.wrid[ind] = wr->wr_id;
+-
+-		ind = (ind + 1) & (hr_qp->rq.wqe_cnt - 1);
++		hr_qp->rq.wrid[wqe_idx] = wr->wr_id;
+ 	}
+ 
+ out:
+@@ -4465,7 +4459,6 @@ static int hns_roce_v2_modify_qp(struct
+ 		hr_qp->rq.tail = 0;
+ 		hr_qp->sq.head = 0;
+ 		hr_qp->sq.tail = 0;
+-		hr_qp->sq_next_wqe = 0;
+ 		hr_qp->next_sge = 0;
+ 		if (hr_qp->rq.wqe_cnt)
+ 			*hr_qp->rdb.db_record = 0;
 
 
