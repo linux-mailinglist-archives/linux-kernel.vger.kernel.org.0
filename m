@@ -2,103 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EAE176D31
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AB5C176D74
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:09:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgCCDBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 22:01:50 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38343 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727862AbgCCDBs (ORCPT
+        id S1727312AbgCCDI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 22:08:59 -0500
+Received: from mx04.melco.co.jp ([192.218.140.144]:47920 "EHLO
+        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbgCCDI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 22:01:48 -0500
-Received: by mail-vs1-f66.google.com with SMTP id r18so1437617vso.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 19:01:47 -0800 (PST)
+        Mon, 2 Mar 2020 22:08:59 -0500
+Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
+        by mx04.melco.co.jp (Postfix) with ESMTP id 846723A429F;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from mr04.melco.co.jp (unknown [127.0.0.1])
+        by mr04.imss (Postfix) with ESMTP id 48Whmn3Pb2zRkB6;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr04.melco.co.jp (Postfix) with ESMTP id 48Whmn35M4zRkB0;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48Whmn31wmzRkFV;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.57])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 48Whmn2rwKzRk8g;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BkyW5athoTX+RgLyX6ls4Xy0hulBZBBNOsMVHEScNcF0CcK5V09+Tv32EP1JdNq3L1mJ1hlP2e98zStWs4m+BhOPjcW6vozAl+G+T8IPPgDm2unq5G8hyifd/eCxGcHcoNyRh1SpKrWaL4qyFZVkHqv+Apv1lcgvYpDsEo7XSxD17vwElaKxJquFzA4m4rxfaElTO9eIb4j/CMtXT1fJ+3k7kqGTP2/1eBSWcZTPp62bMHYXGTXsiG6qocXyep/QmpHZH3pEwk+3UPV+0MiunJN6WJc6vC5nHKvkvljWcXwk39HyEjWzI/67CfptvnLFgb9ZIyTitBPmYjgLc5xfPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0yfKPKzdPJesgnDQAI0INMfNawCjAxxgZeZmOQlgnPg=;
+ b=AVWT9XGflOCTs/VN0k+78/Tj6ecQ1vG1kh6LzgmUTQIIngsePil3+tk0UjE4yz8uQVszugq90WZaSSI5zcmWnVduOrv3nSs/AIkQwUKhbo0EbfUuR8BeBCs9nRNBCSWEyLA/93xeAK4lod66fG2ewEamQqvhN89ne7HSHNzDD/HYJ4ZtjC/b7glJx6NcNhIWMM2GdCChmWXjHsPGRt0+PbQvxN1hZMj1S+5Zj3zbRjGCH/Bt6vXfgdEKyMSQPRxilz6Ryo4VrmMcNlAOvTPmjlikFrPBfq9HINS+BJC56LvIQJuGHD/pugoSIv0jZEjf8wBbGGjPM9rUr6wuEktftQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nSRU5sACea5+ppbDemV9Uic2wN/d3iE9zq0J+9WMWgc=;
-        b=GLB9O7C5VahYJhDYzkBxf2lKSD9pLzKz5Byom6tbN2F00apEFOoMKygPFRUL/Uj/9p
-         trrMj2G7knR6XcyNzJnegV3oqZFYXjOzksRSaS7EYqXLtBm73hjZhvPgh/oHzwaPaxK3
-         76NkpiHJoXM8Dn8fmYWtlTbgNorgHL9tKxZJyFtPTMNtqUHk0NviVgwyZkLagj68k+m2
-         eR3sQl4yLprO0JVwr10qiSju6vKn8TwNCARfi1ZmCrQ3QXiaMKxoMnt4pglC66DeYQJA
-         FO+hfumTHCsVe8b6U78fKr/EUZSkshYD2KuyX+9VNS+l4U99BqrSloNqlDPhi1J3nwwL
-         lNEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nSRU5sACea5+ppbDemV9Uic2wN/d3iE9zq0J+9WMWgc=;
-        b=ZofCyeMBgWo1yG0o8k+8h0/2zZZ9NOBuuUX8S15BCdDiRFoLDyLvAZb5nfdjGTrnzm
-         K1svhUP1ADDLZHNgRr4kXNn+ioQPovbmxVUCDtnG9uINh2eej/RzSRYHRFwCSGhdglPI
-         MGWq9oC6SKajOniq7PuhQ5V4lIZyNTxFenZCegRYiRIXQG8GPUZSll5v9z/IfQPXVJj9
-         1CtMwlpWxYGgXKPk9xdZkjR2bzYwwHksENbO9k2TfChbrjXj0PCZ/SoiUKD57YDZ32Br
-         qkkULom93IUwAVscMA2sgDKl2cvfUBFW86qCsV+MxhRSYf44S27y65O610gUdYcnvxIP
-         3iUw==
-X-Gm-Message-State: ANhLgQ0+TDn71NrcoJz1ts/TpCdb8FJkdnD4WEFhG7Z07BB3UcXhTTEC
-        z70zgi0PZZQq6uftHgn4XoT6fKenRHFMGl+pT3fXiA==
-X-Google-Smtp-Source: ADFU+vuC8mp7isBQqKtElWb2H5X02yPVK/KkJEjfK1X7c0jaRsY9KoO483bHWVY/z9yfC29IZdAch/0rT3wM1qaKiP0=
-X-Received: by 2002:a67:1601:: with SMTP id 1mr1197519vsw.176.1583204506731;
- Mon, 02 Mar 2020 19:01:46 -0800 (PST)
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0yfKPKzdPJesgnDQAI0INMfNawCjAxxgZeZmOQlgnPg=;
+ b=g/Y0M5hH34E9ewCBe4tIxSRGY0OwNAig92o/3LD6Q0s1017CGXJURMLRpxF9pKCxMnENhGPQHelSlFHmVQp+spTPZe+vr1S0pvhYMWhERCf36j8pCx8rEWI1ycGK0gZPzGuCq3jPimWWjzahTaY5gXZPqmWv37Ecw9TUfEvuwtk=
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com (52.133.161.22) by
+ TY2SPR01MB0005.jpnprd01.prod.outlook.com (20.177.79.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.14; Tue, 3 Mar 2020 03:08:57 +0000
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::1cea:e753:3a3b:8e1b]) by TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::1cea:e753:3a3b:8e1b%7]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 03:08:56 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     =?utf-8?B?J1ZhbGRpcyBLbMSTdG5pZWtzJw==?= <valdis.kletnieks@vt.edu>
+CC:     "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] staging: exfat: clean up d_entry rebuilding.
+Thread-Topic: [PATCH 1/2] staging: exfat: clean up d_entry rebuilding.
+Thread-Index: AQHV8Hj2ji1miSANjk6rmTkVPsyLB6g1GhQAgAESGHA=
+Date:   Tue, 3 Mar 2020 03:07:51 +0000
+Deferred-Delivery: Tue, 3 Mar 2020 03:08:50 +0000
+Message-ID: <TY1PR01MB1578983D124E99FB66FB707190E40@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <20200302095716.64155-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <240472.1583144994@turing-police>
+In-Reply-To: <240472.1583144994@turing-police>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.162]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7feadd93-8d99-4a43-3eb6-08d7bf203673
+x-ms-traffictypediagnostic: TY2SPR01MB0005:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY2SPR01MB000544A54401FE5B35B43C6B90E40@TY2SPR01MB0005.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 03319F6FEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(366004)(376002)(189003)(199004)(6916009)(316002)(186003)(2906002)(26005)(9686003)(8936002)(6666004)(71200400001)(55016002)(6506007)(5660300002)(33656002)(7696005)(54906003)(81156014)(8676002)(86362001)(81166006)(52536014)(66446008)(66946007)(4326008)(66556008)(64756008)(66476007)(478600001)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2SPR01MB0005;H:TY1PR01MB1578.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VwpV1P+QpRbZO4byViXe5aXYk2tRy7Y2ezVOh/TrDqo7ZQ1cNb6Uet3dtbAUG/rA6eobxX/F8nUM3vH6/0PJr+jNm+tZrOLZbEGvn4zhmSwOQgshebfcCFoJbyO16/lcySnHCv8hDTmZhpQPU0udBth4l9QJps+rJRV1GhJ+UzmNu/9dY29E89mnFafhQ1KyhaqGujfi9h7Sg+PN8FRBQvxRqXdtyL6ajW9lwr2qsJHBscD94vezIGcu/5mEOYgrDBk4I+NwswKv0iY6U8tYK7aeK3QouFTxGHHE9yoPvV3RaLipQFkJXEfdLmDWSyg998OdEec9abXasJk1TOzuNOehHxLkN+ddmjXyyxFV6EZKC1ZeYkEsxihrv243vXzwwEpsWopN9IHfcH1u7gn9qVQIn/aZMrIITKH6g8wRUrxQwVMtH/8O9QMZWell0lvG
+x-ms-exchange-antispam-messagedata: NdF1Hqo6PKYVG0iBhwXzbEqcAJQgGHG2wENIMHAk6sQRZqCtliWXIfWqI0zYdHrc5wLJNAYrfx05JgdQGGy2pvAPYCoEQOS+KiM0/yJpBscX8qYHECCVPU4uxnUPU37Mdm25HmuHCymM4eizbs5BFg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200228164126.17517-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAOMZO5AP65Upj8v=KaPLzS10DNdwrz20gJGbwbcJfCDqZBx71Q@mail.gmail.com>
- <CA+V-a8s_d3Atp9J5KM=x4z2z_iAY8+9vcSHFUTyQ3XZ9HCCS3g@mail.gmail.com> <CAOMZO5DP3BMmmL3eM5dmhy0YdMGvD9UW1mUXb1tYds9eVbE6LA@mail.gmail.com>
-In-Reply-To: <CAOMZO5DP3BMmmL3eM5dmhy0YdMGvD9UW1mUXb1tYds9eVbE6LA@mail.gmail.com>
-From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date:   Tue, 3 Mar 2020 00:01:34 -0300
-Message-ID: <CAAEAJfBmvGhMWCCh80Y+qG26OKg5Af5U+Zdtgrbt27cS9YgQug@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: ov5645: Add virtual_channel module parameter
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7feadd93-8d99-4a43-3eb6-08d7bf203673
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 03:08:56.8336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U7ok4QDb59CtKOB9RXZvrgn2RYeZCrOzc4gbRhExWDiOo5PaWj1PxHd7rSaxklUZuWvj0YTHe1id7KW9LsCz8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2SPR01MB0005
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Niklas and Jacopo,
-
-On Mon, Mar 2, 2020, 12:33 PM Fabio Estevam <festevam@gmail.com> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, Mar 2, 2020 at 4:19 AM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
->
-> > > Should this be a device tree property instead?
-> > I did give a thought about it, but making this as DT property would
-> > make it more stiff.
->
-> In case a system has two OV5645 and we want to operate each OV5645
-> with a different virtual channel, it will not be possible with the
-> module_param approach.
->
-> Using a device tree property would make it possible though, so I think
-> it makes more sense to use a device tree property for this.
->
-
-As often happens, driver parameter is probably the easiest and less
-invasive way to customize a driver, so I can imagine myself carrying
-something like this downstream if needed. Haven't we all?
-
-It's definitely not suitable upstream, as Fabio points out, but
-I don't think a devicetree approach is either.
-
-It seems Niklas and Jacopo have been working on adding
-proper support to route this, via some new ioctls.
-
-https://patchwork.linuxtv.org/patch/55300/
-
-Not sure what's the status of it.
-
-Hope it helps,
-Ezequiel
+VGhhbmtzIGZvciB5b3VyIGNvbW1lbnQuDQoNCj4gQXJlIHlvdSBzdXJlIHRoaXMgaXMgT0sgdG8g
+ZG8/IGV4ZmF0X2dldF9lbnRyeV90eXBlKCkgZG9lcyBhIGxvdCBvZiANCj4gbWFwcGluZyBiZXR3
+ZWVuIHZhbHVlcywgdXNpbmcgYSBmaWxlX2RlbnRyeV90LT50eXBlLCB3aGlsZQ0KPiBmaWQtPnR5
+cGUgaXMgYSBmaWxlX2lkX3QtPnR5cGUuDQoNClRoZSBmaWQgYXJndW1lbnQgb2YgZXhmYXRfcmVu
+YW1lX2ZpbGUoKS9tb3ZlX2ZpbGUoKWZyb20gb2xkX2RlbnRyeS0+ZmlkIG9mIGV4ZmF0X3JlbmFt
+ZSgpLg0KICogZXhmYXRfcmVuYW1lX2ZpbGUoKSA8LSBmZnNNb3ZlRmlsZSgpIDwtIGV4ZmF0X3Jl
+bmFtZSgpDQogKiBtb3ZlX2ZpbGUoKSA8LSBmZnNNb3ZlRmlsZSgpIDwtIGV4ZmF0X3JlbmFtZSgp
+DQoNClRoZSB2YWx1ZSB0aGF0IHZmcyBzZXRzIHRvIHRoZSBvbGRfZGVudHJ5IG9mIGV4ZmF0X3Jl
+bmFtZSgpIGlzIHRoZSBkZW50cnkgdmFsdWUgcmV0dXJuZWQgYnkgZXhmYXRfbG9va3VwKCksIGV4
+ZmF0X2NyZWF0ZSgpLCBhbmQgY3JlYXRlX2RpcigpLg0KSW4gZWFjaCBmdW5jdGlvbiwgdGhlIHZh
+bHVlIG9mIGRlbnRyeS0+ZmlkIGlzIGluaXRpYWxpemVkIHRvIGZpZC0+dHlwZSBhdCBjcmVhdGVf
+ZmlsZSgpLCBmZnNMb29rdXBGaWxlKCksIGFuZCBjcmVhdGVfZGlyKCkuDQoNCiAqIGNyZWF0ZV9m
+aWxlKCkgPC0gZmZzQ3JlYXRlRmlsZSgpIDwtZXhmYXRfY3JlYXRlKCkNCiAqIGZmc0xvb2t1cEZp
+bGUoKSA8LSBleGZhdF9maW5kKCkgPC1leGZhdF9sb29rdXAoKQ0KICogZXhmYXRfbWtkaXIoKSA8
+LSBmZnNDcmVhdGVEaXIoKSA8LWNyZWF0ZV9kaXIoKQ0KDQo+IGFuZCBhdCBmaXJzdCByZWFkIGl0
+J3Mgbm90IG9idmlvdXMgdG8gDQo+IGZpZC0+bWUgd2hldGhlciB0eXBlIGlzIGd1YXJhbnRlZWQg
+dG8gaGF2ZSB0aGUgY29ycmVjdCB2YWx1ZSBhbHJlYWR5Lg0KDQpBIHZhbGlkIHZhbHVlIGlzIHNl
+dCBpbiBmaWQtPnR5cGUgZm9yIGFsbCBwYXRocy4NCldoYXQgZG8geW91IHRoaW5rPw0KDQotLQ0K
+S29oYWRhIFRldHN1aGlybyA8S29oYWRhLlRldHN1aGlyb0BkYy5NaXRzdWJpc2hpRWxlY3RyaWMu
+Y28uanA+DQoNCg0K
