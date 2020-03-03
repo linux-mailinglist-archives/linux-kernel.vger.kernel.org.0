@@ -2,130 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531CE177B3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 16:58:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4F9177B42
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 16:58:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730048AbgCCP4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 10:56:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728924AbgCCP4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 10:56:43 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83EFE208C3;
-        Tue,  3 Mar 2020 15:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583251002;
-        bh=gelh1NGkQOPRlTtM5QPdCWRArMquE7h9JGEqGT/BtIg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iKtefuDpotChXyjoWCwDEvTn8CDplgrmfkdT7hs+QmXf9IhKySZXef+df0uW3ckZS
-         jOMP8RWpinumrhvbX8srMRKMADivPBHJRJYb+y6uX7c1D/ZLaOJUmKoXtTsTL1OlBJ
-         YLqsF7GOYoVSL5ofbROv0RT4fJI8HtTAXgGrCUuQ=
-Date:   Tue, 3 Mar 2020 16:56:39 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     zzyiwei@google.com, mingo@redhat.com, elder@kernel.org,
-        federico.vaga@cern.ch, tony.luck@intel.com, vilhelm.gray@gmail.com,
-        linus.walleij@linaro.org, tglx@linutronix.de,
-        yamada.masahiro@socionext.com, paul.walmsley@sifive.com,
-        bhelgaas@google.com, darekm@google.com, ndesaulniers@google.com,
-        joelaf@google.com, linux-kernel@vger.kernel.org,
-        prahladk@google.com, android-kernel@google.com
-Subject: Re: [PATCH v4] gpu/trace: add a gpu total memory usage tracepoint
-Message-ID: <20200303155639.GA437469@kroah.com>
-References: <CAKT=dDnFpj2hJd5z73pfcrhXXacDpPVyKzC7+K94tsX=+e_BHg@mail.gmail.com>
- <20200302235044.59163-1-zzyiwei@google.com>
- <20200303090703.32b2ad68@gandalf.local.home>
- <20200303141505.GA3405@kroah.com>
- <20200303093104.260b1946@gandalf.local.home>
+        id S1730311AbgCCP4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 10:56:53 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:35561 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730223AbgCCP4v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 10:56:51 -0500
+Received: by mail-il1-f195.google.com with SMTP id g126so3205407ilh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 07:56:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6yB7awomhhSLM8b43Luq3et8NngDIS5f4GAy/rRpWIU=;
+        b=ApyQXlpE8POx42t2ZK44WczRod93oLbrJoAUnYmysEi2A62FXsk5hY7jg6HAN3z7wd
+         5o+O8hWQzrApCc5V/Dc8fkFS/RZ4uoC7bfraBY1MPfaHoz6lKJGjeb/xORyr2D6nDQp2
+         e4raLMcI62LVufcwIsI7ZEuGx+Mp+CMWnjthVAxgwS7TAdeO83hm06RS3HphkYmreFf+
+         1poY1DTFBD8EAq9PJ7inPxcqRUIxmsWhnqSnlq6qRt4KZa5O8txC5pezaYc3AzthF5fb
+         q13MlRx3DZNCF/zy04POG0xYjaPo+VlkiQjxSTfeQt3hUNp3GIEOSz76w76C3AaTDseh
+         RKmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6yB7awomhhSLM8b43Luq3et8NngDIS5f4GAy/rRpWIU=;
+        b=gNPsKnOk1AqjxIjRaU88npRD9wcTdXmLD3oZLwCBwsV8To4MK3tlEVT7aGm5GJcuqP
+         LJ4YBjwuVO21HHZBTNMwS80PDLKkRx5U69CSmD9B9ifNw3J+NRvTEh7wwK/1rjwFu7+T
+         oWcdm6h5hBfDVkkTbJ479KwbuQi7OUp6uFMffyerajq+kbjl4aNO8iQYVEp6zcRlu3a4
+         eaROwQgxC5TAKlavU8sXf1tIzDA+FyCiWl07JRscMIL12fUS0+eA1xOYLZ6h/TF3n/ni
+         bYY+CTrKWqijhOpgAMwwtbOz27MyTNbcTG628cv0JxPksmpYMv8aKe8vcy7y7YB/d/Av
+         8+pg==
+X-Gm-Message-State: ANhLgQ2Ey3Xw4SNrCy99IXgcO7C1ya4+zGZ60V8EZZIsfcthu0EMEv8j
+        CKzXoVBBJYyGb2l3cDp0ulcDwh/BEX6y1ekLeS/f8Q==
+X-Google-Smtp-Source: ADFU+vsd00+POHP0vUwGObFVF7Hg36VaPsyjktz0Dqdy7JiLY0u7jDQTSATV6BuxiOeALgxUAQknocEntpuBDpekP3g=
+X-Received: by 2002:a92:6610:: with SMTP id a16mr3592900ilc.140.1583251010762;
+ Tue, 03 Mar 2020 07:56:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200303093104.260b1946@gandalf.local.home>
+References: <20200228110804.25822-1-nikita.shubin@maquefel.me>
+ <CANLsYkyDsJaxO_37qTjEP+aeQju8W2+jhHFRF7+oifBMqJqyng@mail.gmail.com> <20200302214317.GI210720@yoga>
+In-Reply-To: <20200302214317.GI210720@yoga>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 3 Mar 2020 08:56:40 -0700
+Message-ID: <CANLsYkwBxNecM4M2Ld_HFecOiQJ=S0FFWQY1KJTwY3VGLyr_FA@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: error on kick missing
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     nikita.shubin@maquefel.me, Nikita Shubin <NShubin@topcon.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 09:31:04AM -0500, Steven Rostedt wrote:
-> On Tue, 3 Mar 2020 15:15:05 +0100
-> Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Tue, Mar 03, 2020 at 09:07:03AM -0500, Steven Rostedt wrote:
-> > > 
-> > > Greg,
-> > > 
-> > > You acked this patch before, did you want to ack it again, and I'll take it
-> > > in my tree?  
-> > 
-> > Sure, but where did my ack go?  What changed from previous versions???
-> > 
-> > Anyway, the patch seems sane enough to me:
-> > 
-> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Your previous ack was was here:
-> 
->   https://lore.kernel.org/lkml/20200213004029.GA2500609@kroah.com/
+On Mon, 2 Mar 2020 at 14:43, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+>
+> On Mon 02 Mar 09:44 PST 2020, Mathieu Poirier wrote:
+>
+> > Hi Nikita,
+> >
+> > On Fri, 28 Feb 2020 at 04:07, <nikita.shubin@maquefel.me> wrote:
+> > >
+> > > From: Nikita Shubin <NShubin@topcon.com>
+> > >
+> > > .kick method not set in rproc_ops will result in:
+> > >
+> > > 8<--- cut here ---
+> > > Unable to handle kernel NULL pointer dereference
+> > >
+> > > in rproc_virtio_notify, after firmware loading.
+> >
+> > There wasn't any kernel stack trace?  What platform was this observed
+> > on? I'm afraid we won't be able to move forward with this patch
+> > without one, or more information on what is happening.
+> >
+> > >
+> > > refuse to register an rproc-induced virtio device if no kick method was
+> > > defined for rproc.
+> > >
+> > > Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> > > ---
+>
+> Nikita, please include "v2" in the subject and add here (below the ---)
+> short summary of what changes since v1.
+>
+> > >  drivers/remoteproc/remoteproc_virtio.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> > > index 8c07cb2ca8ba..31a62a0b470e 100644
+> > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > @@ -334,6 +334,13 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+> > >         struct rproc_mem_entry *mem;
+> > >         int ret;
+> > >
+> > > +       if (rproc->ops->kick == NULL) {
+> > > +               ret = -EINVAL;
+> > > +               dev_err(dev, ".kick method not defined for %s",
+> > > +                               rproc->name);
+> > > +               goto out;
+> > > +       }
+> >
+> > I think it would be better to use WARN_ONCE() in rproc_virtio_notify()
+> > than prevent a virtio device from being added.  But again I will need
+> > more information on this case to know for sure.
+> >
+>
+> I reviewed v1 and afaict there's no way rproc->ops->kick would change
+> and that things wouldn't work without a kick.
 
-Yeah, I remember that.
+Yes, a "v2" tag and a little bit of history would have helped.  We
+came to the same conclusion - I couldn't see either how things would
+work without a kick(), especially if an rvdev with virtio queues is
+used.
 
-> And the patch changed since then (although, only cosmetically), so your ack
-> was removed. The diff between this patch and the patch you acked is this:
-> 
-> -- Steve
-> 
-> diff --git a/include/trace/events/gpu_mem.h b/include/trace/events/gpu_mem.h
-> index 3b632a2b5100..1897822a9150 100644
-> --- a/include/trace/events/gpu_mem.h
-> +++ b/include/trace/events/gpu_mem.h
-> @@ -28,34 +28,27 @@
->   *
->   */
->  TRACE_EVENT(gpu_mem_total,
-> -	TP_PROTO(
-> -		uint32_t gpu_id,
-> -		uint32_t pid,
-> -		uint64_t size
-> -	),
-> -	TP_ARGS(
-> -		gpu_id,
-> -		pid,
-> -		size
-> -	),
-> +
-> +	TP_PROTO(uint32_t gpu_id, uint32_t pid, uint64_t size),
-> +
-> +	TP_ARGS(gpu_id, pid, size),
-> +
->  	TP_STRUCT__entry(
->  		__field(uint32_t, gpu_id)
->  		__field(uint32_t, pid)
->  		__field(uint64_t, size)
->  	),
-> +
->  	TP_fast_assign(
->  		__entry->gpu_id = gpu_id;
->  		__entry->pid = pid;
->  		__entry->size = size;
->  	),
-> -	TP_printk(
-> -		"gpu_id=%u "
-> -		"pid=%u "
-> -		"size=%llu",
-> +
-> +	TP_printk("gpu_id=%u pid=%u size=%llu",
->  		__entry->gpu_id,
->  		__entry->pid,
-> -		__entry->size
-> -	)
-> +		__entry->size)
->  );
->  
->  #endif /* _TRACE_GPU_MEM_H */
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-thanks for the diff, my ack still stands.
-
-greg k-h
+>
+> So I requested that it should be checked during initialization instead.
+> Please let me know if I missed some case.
+>
+> Regards,
+> Bjorn
+>
+> > Thanks,
+> > Mathieu
+> >
+> > > +
+> > >         /* Try to find dedicated vdev buffer carveout */
+> > >         mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
+> > >         if (mem) {
+> > > --
+> > > 2.24.1
+> > >
