@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E20176F4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B37176F3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbgCCGYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 01:24:12 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:55466 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727516AbgCCGXy (ORCPT
+        id S1727550AbgCCGX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 01:23:57 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51841 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbgCCGXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Mar 2020 01:23:54 -0500
-Received: by mail-pj1-f68.google.com with SMTP id a18so876991pjs.5;
-        Mon, 02 Mar 2020 22:23:52 -0800 (PST)
+Received: by mail-pj1-f65.google.com with SMTP id l8so888460pjy.1;
+        Mon, 02 Mar 2020 22:23:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W5ipZYCqarch+VFCrahnwIr0sUcrx3kRehbQUYG33BE=;
-        b=TYK3uZec7Gwsf+BtY9KIVxpawRiII17N9ErzrWeN4dBss1Hhc9KbZlIiCckDDM8rxN
-         DjLtncGeV5zar3nOteLiv6s4YTcZNkBp43WwEhnmVSP52LOUHY1pQZ7ADYhwg8Mo0asc
-         wKDYHwMapgEMzshWQkgGwqZJ0zkrsRQVccdvUOoXch+xMmIKhqlgilK6llqbrkbCGWlW
-         pqYCsvksjgGS6fahMz7hECyVwVOnxpv6kY20W8TB1s+qHkgaDIuYtyH/QsUXsutpIeei
-         mbUYJMA9PJSprDQnGgfG9YITOm96yheZXFRSnk+CgJaUMS7ajDLnWscImfgeqsf6PgMp
-         VyGA==
+        bh=AJWVhyWnEHa+16Vui1urxy6sASoDRCYbuAsm+q77gXs=;
+        b=APn8RafPWLC33RJLX6TCTiGRb/43wtYEQOud3T6k/8l5hLjc08tRx5C2qRpMKAeAnA
+         ZPB2XlcQcSz9uRgyvmkWsVWp0jwp1wCNBPnad6vFVDVgsCX7qWcBNGDtydlsYjgG13Q+
+         JPV+xK6HbibTroJ3PMREqbZCjC2J3dM2lgB5dIEzYSPexKJsny6YxFQDl4qg4QY8BST3
+         rHz4Oc+wu/2kDQkW2NZYRd2BfOC2YUuymHLrN3DmnonUFyvtJXl59/oS/JHfUjlQE7xS
+         mNtZFeAbRKyTFr7R2IqrYDyjfq/sqh8R3AhV/pFlCnjw23rnbfifPejKh/05DDLnH7v+
+         WkjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=W5ipZYCqarch+VFCrahnwIr0sUcrx3kRehbQUYG33BE=;
-        b=lJeTW80FF/ijGTGMzqXZib72IqH6ihKayL1Z1afdKGdO4M273u0jyYUhrm7Efp5JVb
-         i0fxV/LR2wxQJCySy7z2VxU8mjq7bObnW8YEwxeaMH+uhMMk6iVCW9JO8k7iF2NMuIFR
-         4amVN9jD26r05HuQR4p6Xc1J16+AuGggFTkKyDZ3RhNaSU4gpHXO6GmA30Ma+a3jtszM
-         JCPdzJmBXtX5OsztTiu0ZpTANCmrVZiiIZEcrL+g/vaD63IqzYBvnQT5dejAgLhMbCKI
-         9Zd0AtxJCXQGHO74cZDV4i/4BYk8ZLJ3T/wrdZPEClz4hs2TXsfVDNEf4eTAzQ7fiFe7
-         VnQQ==
-X-Gm-Message-State: ANhLgQ3x3BkR8P8r/uYeuqhF0NXXr61AgS5O8XaJeAeuXnOms1TzR9B7
-        QijMF8ByHV4egK1INLdlMG0=
-X-Google-Smtp-Source: ADFU+vtn2N7wyYr1zXGtibIMIBW9UWrBHiD3AoUltb0a1WvpOoZKu0iYGXLtVV+uJNbi7evtGORI8g==
-X-Received: by 2002:a17:90a:8502:: with SMTP id l2mr2357223pjn.163.1583216631462;
-        Mon, 02 Mar 2020 22:23:51 -0800 (PST)
+        bh=AJWVhyWnEHa+16Vui1urxy6sASoDRCYbuAsm+q77gXs=;
+        b=O6eoARwEra95LI3POqrSevGCQBfR+Gtt8s3oR1aRlBZyPSdDiVo5SFrGwgMfDw48js
+         /XrXDmRpOOgB/ei7wy1AbKLXyDf95R1Q6cU3mYuwVgHzyMildV5uZ6Lm9woUduohOKIs
+         ZI/hkRdAaPYma7He+s3ykshc6i+ohAqlUbZyvduIIV3JnF8JuDrWzlFlJyj2bN8GBvqZ
+         lNsPYIjNbFLSRgZ9YsQDDEFiFGwhB4/3U0ewuKyHsyhVtQKOsgXxSuTaJWTK7KYv6GQu
+         8yQx1Ytnj8jdrJOnyhYfWcB0v3wwr4TD/l3ejcfQ8rfnWZsEzBb0yB27jLrsVdFHVDk2
+         4EVw==
+X-Gm-Message-State: ANhLgQ3amvWJFtWA+KBX1mKxrng5YXyHCq6vEglFRJbwTwlPA5/0SpJs
+        MVxeRqHVnOuQsx59UnbSIH8=
+X-Google-Smtp-Source: ADFU+vu9XHZAPJ11uio30zd0ulJFBhMoXCNmPsvqw6amAMfXgqEAt3txRdMXOBF/hDXaXINhU1En/w==
+X-Received: by 2002:a17:90a:fb4d:: with SMTP id iq13mr2332424pjb.165.1583216632735;
+        Mon, 02 Mar 2020 22:23:52 -0800 (PST)
 Received: from taoren-ubuntu-R90MNF91.thefacebook.com (c-24-4-25-55.hsd1.ca.comcast.net. [24.4.25.55])
-        by smtp.gmail.com with ESMTPSA id k5sm7453526pfp.66.2020.03.02.22.23.50
+        by smtp.gmail.com with ESMTPSA id k5sm7453526pfp.66.2020.03.02.22.23.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 22:23:51 -0800 (PST)
+        Mon, 02 Mar 2020 22:23:52 -0800 (PST)
 From:   rentao.bupt@gmail.com
 To:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ To:     Felipe Balbi <balbi@kernel.org>,
         linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
         taoren@fb.com
 Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v7 4/7] ARM: dts: aspeed-g6: add usb functions
-Date:   Mon,  2 Mar 2020 22:23:33 -0800
-Message-Id: <20200303062336.7361-5-rentao.bupt@gmail.com>
+Subject: [PATCH v7 5/7] ARM: dts: aspeed-g5: add vhub port and endpoint properties
+Date:   Mon,  2 Mar 2020 22:23:34 -0800
+Message-Id: <20200303062336.7361-6-rentao.bupt@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200303062336.7361-1-rentao.bupt@gmail.com>
 References: <20200303062336.7361-1-rentao.bupt@gmail.com>
@@ -73,113 +73,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tao Ren <rentao.bupt@gmail.com>
 
-Add USB components and according pin groups in aspeed-g6 dtsi.
+Add "aspeed,vhub-downstream-ports" and "aspeed,vhub-generic-endpoints"
+properties to describe supported number of vhub ports and endpoints.
 
 Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Reviewed-by: Joel Stanley <joel@jms.id.au>
 ---
- No change in v3/v4/v5/v6/v7.
- Changes in v2:
-   - added port/endpoint properties for vhub dt node.
+ No change in v2/v3/v4/v5/v6/v7.
+   - It's given v7 to align with the version of the patch series.
 
- arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi | 25 +++++++++++++
- arch/arm/boot/dts/aspeed-g6.dtsi         | 45 ++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
+ arch/arm/boot/dts/aspeed-g5.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi b/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi
-index 045ce66ca876..7028e21bdd98 100644
---- a/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6-pinctrl.dtsi
-@@ -1112,6 +1112,31 @@
- 		groups = "UART9";
- 	};
- 
-+	pinctrl_usb2ah_default: usb2ah_default {
-+		function = "USB2AH";
-+		groups = "USBA";
-+	};
-+
-+	pinctrl_usb2ad_default: usb2ad_default {
-+		function = "USB2AD";
-+		groups = "USBA";
-+	};
-+
-+	pinctrl_usb2bh_default: usb2bh_default {
-+		function = "USB2BH";
-+		groups = "USBB";
-+	};
-+
-+	pinctrl_usb2bd_default: usb2bd_default {
-+		function = "USB2BD";
-+		groups = "USBB";
-+	};
-+
-+	pinctrl_usb11bhid_default: usb11bhid_default {
-+		function = "USB11BHID";
-+		groups = "USBB";
-+	};
-+
- 	pinctrl_vb_default: vb_default {
- 		function = "VB";
- 		groups = "VB";
-diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
-index 796976d275e1..0a29b3b57a9d 100644
---- a/arch/arm/boot/dts/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6.dtsi
-@@ -245,6 +245,51 @@
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index ebec0fa8baa7..f12ec04d3cbc 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -195,6 +195,8 @@
+ 			reg = <0x1e6a0000 0x300>;
+ 			interrupts = <5>;
+ 			clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
++			aspeed,vhub-downstream-ports = <5>;
++			aspeed,vhub-generic-endpoints = <15>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&pinctrl_usb2ad_default>;
  			status = "disabled";
- 		};
- 
-+		ehci0: usb@1e6a1000 {
-+			compatible = "aspeed,ast2600-ehci", "generic-ehci";
-+			reg = <0x1e6a1000 0x100>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb2ah_default>;
-+			status = "disabled";
-+		};
-+
-+		ehci1: usb@1e6a3000 {
-+			compatible = "aspeed,ast2600-ehci", "generic-ehci";
-+			reg = <0x1e6a3000 0x100>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBPORT2CLK>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb2bh_default>;
-+			status = "disabled";
-+		};
-+
-+		uhci: usb@1e6b0000 {
-+			compatible = "aspeed,ast2600-uhci", "generic-uhci";
-+			reg = <0x1e6b0000 0x100>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#ports = <2>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBUHCICLK>;
-+			status = "disabled";
-+			/*
-+			 * No default pinmux, it will follow EHCI, use an
-+			 * explicit pinmux override if EHCI is not enabled.
-+			 */
-+		};
-+
-+		vhub: usb-vhub@1e6a0000 {
-+			compatible = "aspeed,ast2600-usb-vhub";
-+			reg = <0x1e6a0000 0x350>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&syscon ASPEED_CLK_GATE_USBPORT1CLK>;
-+			aspeed,vhub-downstream-ports = <7>;
-+			aspeed,vhub-generic-endpoints = <21>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb2ad_default>;
-+			status = "disabled";
-+		};
-+
- 		apb {
- 			compatible = "simple-bus";
- 			#address-cells = <1>;
 -- 
 2.17.1
 
