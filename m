@@ -2,107 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7CD1774BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F2031774DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbgCCK6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 05:58:33 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23864 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727927AbgCCK6c (ORCPT
+        id S1728201AbgCCK6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 05:58:54 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:27651 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727830AbgCCK6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 05:58:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583233111;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/zXPTBF4JWqoYp8eI1kQcfpbOmowjFDH+kFOoB5ZRAY=;
-        b=ZuDNQiS8P0+bDBilQUX4lwpEwieTLIL98HW6mS8tNlfOO8JdGXzxtNMu2yBz/Z+GJkpXkY
-        7vKtSW8AMa2PhgR7Pzt8b2D28ieaq3M9Xp6WPUzZP9gM6J+AZTuJK07rszwVKlojXzofiG
-        4MAbjIHTx4UljWJWWw8gYSJlnPH+ZlA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-38-qtI-Mwh2N2iiofhnOuZEvQ-1; Tue, 03 Mar 2020 05:58:29 -0500
-X-MC-Unique: qtI-Mwh2N2iiofhnOuZEvQ-1
-Received: by mail-wm1-f72.google.com with SMTP id r19so927646wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 02:58:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/zXPTBF4JWqoYp8eI1kQcfpbOmowjFDH+kFOoB5ZRAY=;
-        b=F3aKQGKqedmmGUAd7CCQWpHiepIuWI27C5+Pi3Kky6Cmb37+Ce1BbCe3zG+vkDg8Wh
-         gRTXkSOz4y8zL1B22SzUjUjIufLnlVrC9GuTyj3oNz3CS+iJkbEVvwHIaQqWlmNrI0rx
-         N5oMupmxT9pZty8V5cENJuWg/M5tnDpI2h4ogWKCQvoqRPGSAoG5IhkmzTF0/7RhOebi
-         kjBm0ep5gNkPtlubJ8h/OVzyUB4yP/Xoora9xO/witzkNitIG/i+MnGUk4m5iwHUTJIx
-         6Fc8DtQJ7PE9f5tkoO1WeIRH0L+4A9jcW5Dfawff5h+avhw3AMIcHFlnTEm2AGvwAjRz
-         JkgQ==
-X-Gm-Message-State: ANhLgQ0WP/aPnCPXoFDdYdM4+Tnh7VzHU6/92fzIQGHnsf5gQv6IK2uT
-        +J/8JMHwMdtE3tP/Ic8ryqP22wddXgijzsWpKe5cXQeuBUCH3HiDIwXKjZxolMTg7mfgIc2gXyP
-        RYbrfXUurLD+Eo2JrcbAsuQx+
-X-Received: by 2002:a05:600c:104d:: with SMTP id 13mr3750724wmx.50.1583233107989;
-        Tue, 03 Mar 2020 02:58:27 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsd4BS7rp91JqsVP0DXSUT94e+JAinRKnGWMQ7Cvy39iLCGgQ+L61XcKLOC/AXfzKHmLi4C1w==
-X-Received: by 2002:a05:600c:104d:: with SMTP id 13mr3750709wmx.50.1583233107679;
-        Tue, 03 Mar 2020 02:58:27 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:9def:34a0:b68d:9993? ([2001:b07:6468:f312:9def:34a0:b68d:9993])
-        by smtp.gmail.com with ESMTPSA id e7sm13496617wrt.70.2020.03.03.02.58.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 02:58:27 -0800 (PST)
-Subject: Re: [GIT PULL] KVM changes for Linux 5.6-rc4
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Oliver Upton <oupton@google.com>
-References: <1582570669-45822-1-git-send-email-pbonzini@redhat.com>
- <87zhcyfvmk.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <8fbeb3c2-9627-bf41-d798-bafba22073e3@redhat.com>
-Date:   Tue, 3 Mar 2020 11:58:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 3 Mar 2020 05:58:54 -0500
+X-UUID: bc28cf9fb76044f1b8655af63dcb9bc2-20200303
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=6S4cmgY34o+0zFiuRZM1NT2lvbrUAigCkPYuDJM+qhg=;
+        b=O3NTT6X+p8kXyxJf5pOkkyAuMwLeqLk6RdsE5BK/hDCKcFQCFlbpiOCbfuInxqSBgnqUGygKUFrL7eqGDbhzzFeJqlUlw2k/MLYODRVr6KXsW/X2arN3/RuvUDmSlWNq8LKyVFEE4rNuqMVvSpfXEqOYdCVqEUoE9cM2jKS2m1c=;
+X-UUID: bc28cf9fb76044f1b8655af63dcb9bc2-20200303
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <dennis-yc.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1088778630; Tue, 03 Mar 2020 18:58:48 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 3 Mar 2020 18:57:47 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 3 Mar 2020 18:58:10 +0800
+From:   Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <dri-devel@lists.freedesktop.org>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        HS Liao <hs.liao@mediatek.com>
+Subject: [PATCH v4 00/13] support gce on mt6779 platform
+Date:   Tue, 3 Mar 2020 18:58:32 +0800
+Message-ID: <1583233125-7827-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <87zhcyfvmk.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/20 19:40, Vitaly Kuznetsov wrote:
-> 
->  qemu-system-x86-23579 [005] 22018.775584: kvm_exit:             reason EPT_VIOLATION rip 0xfffff802987d6169 info 181 0
->  qemu-system-x86-23579 [005] 22018.775584: kvm_nested_vmexit:    rip fffff802987d6169 reason EPT_VIOLATION info1 181 info2 0 int_info 0 int_info_err 0
->  qemu-system-x86-23579 [005] 22018.775585: kvm_page_fault:       address febd0000 error_code 181
->  qemu-system-x86-23579 [005] 22018.775592: kvm_emulate_insn:     0:fffff802987d6169: f3 a5
->  qemu-system-x86-23579 [005] 22018.775593: kvm_emulate_insn:     0:fffff802987d6169: f3 a5 FAIL
->  qemu-system-x86-23579 [005] 22018.775596: kvm_inj_exception:    #UD (0x0)
-> 
-> We probably need to re-enable instruction emulation for something...
-
-This is a rep movsw instruction, it shouldn't be intercepted.  I think
-we have a stale ctxt->intercept because the
-
-        /* Fields above regs are cleared together. */
-
-comment is not true anymore since
-
-    commit c44b4c6ab80eef3a9c52c7b3f0c632942e6489aa
-    Author: Bandan Das <bsd@redhat.com>
-    Date:   Wed Apr 16 12:46:12 2014 -0400
-
-    KVM: emulate: clean up initializations in init_decode_cache
-
-    A lot of initializations are unnecessary as they get set to
-    appropriate values before actually being used. Optimize
-    placement of fields in x86_emulate_ctxt
-
-    Signed-off-by: Bandan Das <bsd@redhat.com>
-    Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-
-Paolo
+VGhpcyBwYXRjaCBzdXBwb3J0IGdjZSBvbiBtdDY3NzkgcGxhdGZvcm0uDQoNCkNoYW5nZSBzaW5j
+ZSB2MzoNCi0gcmVmaW5lIGNvZGUgZm9yIGxvY2FsIHZhcmlhYmxlIHVzYWdlDQotIHVzZSBjbWRx
+IGVycm9yIGNvZGUgdG8gY29uc2lzdGVudCB3aXRoIGN1cnJlbnQgZGVzaWduDQotIHJldHVybiBl
+cnJvciBkaXJlY3RseSBhZnRlciBzZW5kIGlmIGVycm9yIGNvZGUgcmV0dXJuDQotIGFsc28gbW9k
+aWZ5IGRybSBkcml2ZXIgd2hpY2ggdXNlcyBjbWRxX3BrdF93ZmUgYXBpDQotIGFkZCBmaW5hbGl6
+ZSBpbiBkcm0gZHJpdmVyDQoNCkNoYW5nZSBzaW5jZSB2MjoNCi0gcmViYXNlIG9udG8gNS42LXJj
+MQ0KLSByZW1vdmUgdW5uZWNlc3NhcnkgZGVmaW5pdGlvbg0KLSBhZGQgY2xlYXIgcGFyYW1ldGVy
+IGluIHdmZSBhcGkNCi0gc2VwYXJhdGUgYXNzaWduIGFuZCB3cml0ZV9zIGFwaQ0KLSBhZGQganVt
+cCBhcGkgaW5zdGVhZCBvZiBmaW5hbGl6ZSBpbiBsb29wDQoNClsuLi4gc25pcCAuLi5dDQoNCg0K
+RGVubmlzIFlDIEhzaWVoICgxMyk6DQogIGR0LWJpbmRpbmc6IGdjZTogYWRkIGdjZSBoZWFkZXIg
+ZmlsZSBmb3IgbXQ2Nzc5DQogIG1haWxib3g6IGNtZHE6IHZhcmlhYmxpemUgYWRkcmVzcyBzaGlm
+dCBpbiBwbGF0Zm9ybQ0KICBtYWlsYm94OiBjbWRxOiBzdXBwb3J0IG10Njc3OSBnY2UgcGxhdGZv
+cm0gZGVmaW5pdGlvbg0KICBtYWlsYm94OiBtZWRpYXRlazogY21kcTogY2xlYXIgdGFzayBpbiBj
+aGFubmVsIGJlZm9yZSBzaHV0ZG93bg0KICBzb2M6IG1lZGlhdGVrOiBjbWRxOiByZXR1cm4gc2Vu
+ZCBtc2cgZXJyb3IgY29kZQ0KICBzb2M6IG1lZGlhdGVrOiBjbWRxOiBhZGQgYXNzaWduIGZ1bmN0
+aW9uDQogIHNvYzogbWVkaWF0ZWs6IGNtZHE6IGFkZCB3cml0ZV9zIGZ1bmN0aW9uDQogIHNvYzog
+bWVkaWF0ZWs6IGNtZHE6IGFkZCByZWFkX3MgZnVuY3Rpb24NCiAgc29jOiBtZWRpYXRlazogY21k
+cTogYWRkIHdyaXRlX3MgdmFsdWUgZnVuY3Rpb24NCiAgc29jOiBtZWRpYXRlazogY21kcTogZXhw
+b3J0IGZpbmFsaXplIGZ1bmN0aW9uDQogIHNvYzogbWVkaWF0ZWs6IGNtZHE6IGFkZCBqdW1wIGZ1
+bmN0aW9uDQogIHNvYzogbWVkaWF0ZWs6IGNtZHE6IGFkZCBjbGVhciBvcHRpb24gaW4gY21kcV9w
+a3Rfd2ZlIGFwaQ0KICBzb2M6IG1lZGlhdGVrOiBjbWRxOiBhZGQgc2V0IGV2ZW50IGZ1bmN0aW9u
+DQoNCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9tYWlsYm94L210ay1nY2UudHh0ICAgfCAgIDgg
+Ky0NCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgICAgICAgfCAgIDMg
+Ky0NCiBkcml2ZXJzL21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5jICAgICAgICAgICAgfCAxMDEg
+KysrKysrLS0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIuYyAgICAgICAg
+fCAxNDMgKysrKysrKysrKy0NCiBpbmNsdWRlL2R0LWJpbmRpbmdzL2djZS9tdDY3NzktZ2NlLmgg
+ICAgICAgICAgfCAyMjIgKysrKysrKysrKysrKysrKysrDQogaW5jbHVkZS9saW51eC9tYWlsYm94
+L210ay1jbWRxLW1haWxib3guaCAgICAgIHwgIDEwICstDQogaW5jbHVkZS9saW51eC9zb2MvbWVk
+aWF0ZWsvbXRrLWNtZHEuaCAgICAgICAgIHwgIDk0ICsrKysrKystDQogNyBmaWxlcyBjaGFuZ2Vk
+LCA1NDggaW5zZXJ0aW9ucygrKSwgMzMgZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IGluY2x1ZGUvZHQtYmluZGluZ3MvZ2NlL210Njc3OS1nY2UuaA0KDQotLSANCjIuMTguMA==
 
