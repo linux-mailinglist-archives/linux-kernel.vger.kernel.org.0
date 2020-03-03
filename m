@@ -2,84 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A63176CBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:59:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D318176CC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:59:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728885AbgCCC6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:58:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728516AbgCCC6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:58:44 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF1062166E;
-        Tue,  3 Mar 2020 02:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583204323;
-        bh=f9xV/eWY/rwskCqYR2yqEJNGHdDtaNPeUxuxL49T+Ac=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dNoPxFpKJBE86vFwZdoo3a4tx3MuutdydtjpGxdR/ztdb8DTREfm5hDI/2zN53xnC
-         tIA36GrORZFqkWxzPf3YyZIEv/rr64M3R3vBZgJypfKzRULNAC7RertavLryoHe6Mu
-         MeAnejynMcszJqiRmhIluUqXpKN28I++7cwyW1Jg=
-Date:   Tue, 3 Mar 2020 11:58:39 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH v3] Documentation: bootconfig: Update boot configuration
- documentation
-Message-Id: <20200303115839.4a18738d5d0d5899c6e1cf32@kernel.org>
-In-Reply-To: <20200302151939.1a83a5ed@gandalf.local.home>
-References: <158313621831.3082.9886161529613724376.stgit@devnote2>
-        <158313622831.3082.8237132211731864948.stgit@devnote2>
-        <20200302125033.4a62e88e@lwn.net>
-        <20200302150802.348b814e@gandalf.local.home>
-        <20200302131351.1b51a58e@lwn.net>
-        <20200302151939.1a83a5ed@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727513AbgCCC7B convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 21:59:01 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2595 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727522AbgCCC6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:58:54 -0500
+Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id F17EE5C380FB2F4A8F10;
+        Tue,  3 Mar 2020 10:58:51 +0800 (CST)
+Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.227]) by
+ DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0439.000;
+ Tue, 3 Mar 2020 10:58:42 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] cpu-topology: Fix the potential data corruption
+Thread-Topic: [PATCH] cpu-topology: Fix the potential data corruption
+Thread-Index: AQHV7hK2ERrnxNGKY0yF2wIuAuh2Hqgv5MEAgAGAuLCAAz7DgIABi9aQ
+Date:   Tue, 3 Mar 2020 02:58:41 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED342092EE@dggemm526-mbx.china.huawei.com>
+References: <1582878945-50415-1-git-send-email-prime.zeng@hisilicon.com>
+ <20200228104034.GB26973@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED341F2AE2@DGGEMM506-MBS.china.huawei.com>
+ <20200302111038.GA16218@e107533-lin.cambridge.arm.com>
+In-Reply-To: <20200302111038.GA16218@e107533-lin.cambridge.arm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.74.221.187]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Mar 2020 15:19:39 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Mon, 2 Mar 2020 13:13:51 -0700
-> Jonathan Corbet <corbet@lwn.net> wrote:
+> -----Original Message-----
+> From: Sudeep Holla [mailto:sudeep.holla@arm.com]
+> Sent: Monday, March 02, 2020 7:11 PM
+> To: Zengtao (B)
+> Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> linux-kernel@vger.kernel.org; Sudeep Holla
+> Subject: Re: [PATCH] cpu-topology: Fix the potential data corruption
 > 
-> > On Mon, 2 Mar 2020 15:08:02 -0500
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > > So I tried to apply this but failed - it's built on other changes to
-> > > > bootconfig.rst that went into linux-next via Steve's tree.  So Steve,
-> > > > would you like to take this one too?    
-> > > 
-> > > All my changes in linux-next have already hit Linus's tree. I haven't
-> > > started pushing my next merge window changes yet. Are you up to date with
-> > > Linus?  
-> > 
-> > I try not to do too many backmerges with mainline, so no.  I can pull
-> > forward if I have to, I guess.
+> On Sat, Feb 29, 2020 at 01:41:47AM +0000, Zengtao (B) wrote:
+> > > -----Original Message-----
+> > > From: Sudeep Holla [mailto:sudeep.holla@arm.com]
+> > > Sent: Friday, February 28, 2020 6:41 PM
+> > > To: Zengtao (B)
+> > > Cc: Linuxarm; Greg Kroah-Hartman; Rafael J. Wysocki;
+> > > linux-kernel@vger.kernel.org; Sudeep Holla
+> > > Subject: Re: [PATCH] cpu-topology: Fix the potential data corruption
+> > >
+> > > On Fri, Feb 28, 2020 at 04:35:45PM +0800, Zeng Tao wrote:
+> > > > Currently there are only 10 bytes to store the cpu-topology info.
+> > > > That is:
+> > > > snprintf(buffer, 10, "cluster%d",i);
+> > > > snprintf(buffer, 10, "thread%d",i);
+> > > > snprintf(buffer, 10, "core%d",i);
+> > > >
+> > > > In the boundary test, if the cluster number exceeds 100, there will
+> be a
+> > >
+> > > I don't understand you mention of 100 in particular above. I can see
+> > > issue
+> > > if there are cluster with more than 2-digit id. Though highly unlikely
+> for
+> > > now, but I don't have objection to the patch.
+> > >
 > >
+> > The same meaning, more than 2-digit id equals to more than 100,
+> right?
 > 
-> I can add it to my tree, but I may not send it to Linus unless I have
-> another urgent request to send to him. So it may not make it till the next
-> merge window.
+> Yes. May be it is obvious but I prefer to word the commit message
+> accordingly.
+> Mention of 100 specifically makes at-least me think something very
+> specific
+> to 100 and not applicable for any more than 2-digit number.
+> 
 
-OK, then I'll wait for the next window. Anyway, I found a mistake and
-it needs to be updated (again).
+Do you think I need to update the commit message and resend the patch?
+And I don't mind if you can help modify the commit message since both
+are fine for me, and it's a very trivial change. 
 
-Thank you!
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> > Here 100 is for from tester/user perspective.
+> > And we found this issue when test with QEMU.
+> 
+> OK.
+> 
+> --
+> Regards,
+> Sudeep
