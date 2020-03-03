@@ -2,129 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB97177D3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26EF5177D42
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729893AbgCCRVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:21:00 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44911 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729206AbgCCRVA (ORCPT
+        id S1730069AbgCCRV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:21:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50095 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729786AbgCCRV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:21:00 -0500
-Received: by mail-qt1-f193.google.com with SMTP id j23so3379999qtr.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:21:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=9+7wdl96+pcZ7KOZjzEhoq8+QQtDm+nRL0/PPEraqiQ=;
-        b=VwJiMCnWis/rcKy+sK37kLKIyxblOfMElqg6DvJH9xeK/nZUNJu5E2EhW7KF1ErhGa
-         JLNIlWs+bjd8XmyKfINU0iDzY2PDLC1M2Em69BpDIQiuJi8+2sqDOTv6duqzYhRToaZV
-         CbARpxT3JgbZHmrkGvfXTVZJWz7TfPy9jPF3IzxsdOvofOBa0NQxnzhtw7WesPsqHORl
-         DRsURMwm2c2BDLPJBdQiVW0W10J3+N/Zeh9iE41UZkVCQ+KJpOlX3ZpthLI7I4Tm/gY2
-         mJufyKsfnGIB7Ld/QtJ6uXwOPGYABB8sptg6B9AwBudDFOsUd71GbJJV1gVI3qz7d0qO
-         UwEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9+7wdl96+pcZ7KOZjzEhoq8+QQtDm+nRL0/PPEraqiQ=;
-        b=FnJPA0M9JiJwG3XsMDbxlPX9a2PWbDwgVoWc8vHN4U3/UcjwHKTlL2y1TwsnoR1HK+
-         viD//XTSJvGJtoh02fpnXly4lt7yQzlSreB/HjNRzfG2seO0+seaIn9wKQeQcBjuogxI
-         hnsNVA+bK+26+MWfF1PjO3ZfxfAYFplE6dKqOvkAdU/Obvb+d5mk40Egf7D32BpMVYov
-         aey5NNySBX18IGW6bPAKgjwtl9PUaLJxll6uyhPmlSbXTo51kvWsQzJEfLD1bKbRUg2m
-         imE5rZDHY93uSEYi+JN7gQdNt+WDbZAMCblc/8qn7XwfSsPoY3bIMW7fDPR/KteRflkg
-         IgYA==
-X-Gm-Message-State: ANhLgQ2JZYr0fsoRmV3zfQVtiQB72ArcuSwxGJmO+WxKX041k4lYn7Zp
-        daX910od4c/f5Ct8mtDvMpqlHsL6J+s=
-X-Google-Smtp-Source: ADFU+vsTKG3GlktHiGKjRL2YfaeKO87PdA2sn2nEz1WXCWIrHFmrD29IIuKNXuxLCpUtTqYeN1L8LA==
-X-Received: by 2002:ac8:3893:: with SMTP id f19mr5376802qtc.46.1583256059513;
-        Tue, 03 Mar 2020 09:20:59 -0800 (PST)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id o127sm12532383qke.92.2020.03.03.09.20.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Mar 2020 09:20:58 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     oleg@redhat.com, catalin.marinas@arm.com, elver@google.com,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] signal: annotate data races in sys_rt_sigaction
-Date:   Tue,  3 Mar 2020 12:20:49 -0500
-Message-Id: <1583256049-15497-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 3 Mar 2020 12:21:28 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j9BDx-0006cR-KJ; Tue, 03 Mar 2020 17:20:53 +0000
+Date:   Tue, 3 Mar 2020 18:20:52 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCHv5] exec: Fix a deadlock in ptrace
+Message-ID: <20200303172052.fvqk4r7vbtxwo3ig@wittgenstein>
+References: <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <20200303170109.y6q2acgydyzuh3mp@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200303170109.y6q2acgydyzuh3mp@wittgenstein>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kmemleak could scan task stacks while plain writes happens to those
-stack variables which could results in data races. For example, in
-sys_rt_sigaction and do_sigaction(), it could have plain writes in
-a 32-byte size. Since the kmemleak does not care about the actual values
-of a non-pointer and all do_sigaction() call sites only copy to stack
-variables, annotate them as intentional data races using the
-data_race() macro. The data races were reported by KCSAN,
+On Tue, Mar 03, 2020 at 06:01:11PM +0100, Christian Brauner wrote:
+> On Tue, Mar 03, 2020 at 04:48:01PM +0000, Bernd Edlinger wrote:
+> > On 3/3/20 4:18 PM, Eric W. Biederman wrote:
+> > > Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> > > 
+> > >> This fixes a deadlock in the tracer when tracing a multi-threaded
+> > >> application that calls execve while more than one thread are running.
+> > >>
+> > >> I observed that when running strace on the gcc test suite, it always
+> > >> blocks after a while, when expect calls execve, because other threads
+> > >> have to be terminated.  They send ptrace events, but the strace is no
+> > >> longer able to respond, since it is blocked in vm_access.
+> > >>
+> > >> The deadlock is always happening when strace needs to access the
+> > >> tracees process mmap, while another thread in the tracee starts to
+> > >> execve a child process, but that cannot continue until the
+> > >> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
+> > > 
+> > > A couple of things.
+> > > 
+> > > Why do we think it is safe to change the behavior exposed to userspace?
+> > > Not the deadlock but all of the times the current code would not
+> > > deadlock?
+> > > 
+> > > Especially given that this is a small window it might be hard for people
+> > > to track down and report so we need a strong argument that this won't
+> > > break existing userspace before we just change things.
+> > > 
+> > 
+> > Hmm, I tend to agree.
+> > 
+> > > Usually surveying all of the users of a system call that we can find
+> > > and checking to see if they might be affected by the change in behavior
+> > > is difficult enough that we usually opt for not being lazy and
+> > > preserving the behavior.
+> > > 
+> > > This patch is up to two changes in behavior now, that could potentially
+> > > affect a whole array of programs.  Adding linux-api so that this change
+> > > in behavior can be documented if/when this change goes through.
+> > > 
+> > 
+> > One is PTRACE_ACCESS possibly returning EAGAIN, yes.
+> > 
+> > We could try to restrict that behavior change to when any
+> > thread is ptraced when execve starts, can't be too complicated.
+> > 
+> > 
+> > But the other is only SYS_seccomp returning EAGAIN, when a different
+> > thread of the current process is calling execve at the same time.
+> > 
+> > I would consider it completely impossible to have any user-visual effect,
+> > since de_thread is just terminating all threads, including the thread
+> > where the -EAGAIN was returned, so we will never know what happened.
+> 
+> I think if we risk a user-space facing change we should try the simple
+> thing first before making the fix more convoluted? But it's a tough
+> call...
 
- BUG: KCSAN: data-race in _copy_from_user / scan_block
+Actually, to get a _rough_ estimate of the possible impact I would
+recommend you run the criu test suite (and possible the strace
+test-suite) on a kernel with and without your fix. That's what I tend to
+do when I touch code I fear will have impact on APIs that very deeply
+touch core kernel. Criu's test-suite makes heavy use of ptrace and
+usually runs into a bunch of interesting (exec) races too, and does have
+tests for handling zombies processes etc. pp.
 
- read to 0xffffb3074e61fe58 of 8 bytes by task 356 on cpu 19:
-  scan_block+0x6e/0x1a0
-  scan_block at mm/kmemleak.c:1251
-  kmemleak_scan+0xbea/0xd20
-  kmemleak_scan at mm/kmemleak.c:1482
-  kmemleak_scan_thread+0xcc/0xfa
-  kthread+0x1cd/0x1f0
-  ret_from_fork+0x3a/0x50
+Should be relatively simple: create a vm and then criu build-dependencies,
+git clone criu; cd criu; make; cd test; ./zdtm.py run -a --keep-going
+If your system doesn't support Selinux properly, you need to disable it
+when running the tests and you also need to make sure that you're using
+python3 or change the shebang in zdtm.py to python3.
 
- write to 0xffffb3074e61fe58 of 32 bytes by task 30208 on cpu 2:
-  _copy_from_user+0xb2/0xe0
-  copy_user_generic at arch/x86/include/asm/uaccess_64.h:37
-  (inlined by) raw_copy_from_user at arch/x86/include/asm/uaccess_64.h:71
-  (inlined by) _copy_from_user at lib/usercopy.c:15
-  __x64_sys_rt_sigaction+0x83/0x140
-  __do_sys_rt_sigaction at kernel/signal.c:4245
-  (inlined by) __se_sys_rt_sigaction at kernel/signal.c:4233
-  (inlined by) __x64_sys_rt_sigaction at kernel/signal.c:4233
-  do_syscall_64+0x91/0xb05
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Just a recommendation.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- kernel/signal.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 5b2396350dd1..bf39078c8be1 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3964,14 +3964,15 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
- 
- 	spin_lock_irq(&p->sighand->siglock);
- 	if (oact)
--		*oact = *k;
-+		/* Kmemleak could scan the task stack. */
-+		data_race(*oact = *k);
- 
- 	sigaction_compat_abi(act, oact);
- 
- 	if (act) {
- 		sigdelsetmask(&act->sa.sa_mask,
- 			      sigmask(SIGKILL) | sigmask(SIGSTOP));
--		*k = *act;
-+		data_race(*k = *act);
- 		/*
- 		 * POSIX 3.3.1.3:
- 		 *  "Setting a signal action to SIG_IGN for a signal that is
-@@ -4242,7 +4243,9 @@ int __compat_save_altstack(compat_stack_t __user *uss, unsigned long sp)
- 	if (sigsetsize != sizeof(sigset_t))
- 		return -EINVAL;
- 
--	if (act && copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)))
-+	if (act &&
-+	    /* Kmemleak could scan the task stack. */
-+	    data_race(copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa))))
- 		return -EFAULT;
- 
- 	ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
--- 
-1.8.3.1
-
+Christian
