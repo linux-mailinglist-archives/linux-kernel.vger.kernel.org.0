@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190B5176AEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0FF176AEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:47:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbgCCCrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:47:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
+        id S1728042AbgCCCr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:47:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbgCCCrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:47:17 -0500
+        id S1727982AbgCCCrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:47:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F832246A1;
-        Tue,  3 Mar 2020 02:47:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97CD8246BB;
+        Tue,  3 Mar 2020 02:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203637;
-        bh=Z4P8B6E5j2R2M+cwb0shV9MF1QTIbrPPwyYHmo6hRKc=;
+        s=default; t=1583203639;
+        bh=tp2fCcdN0ZhV5H5dt8E3ksW/Ztx4G+adWhpiLEC4ggg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AVo/NzPR5tepWfC+QxSxUmcmuqeLJSEgP5++D+JCsIMlVTnaL77vC9G5ueN+YDmI9
-         xpebFgJSwvKkM588y8PrnTSOPEllQi9RHiOKlRBSp3ubxoeSqN71gr86QiMCyCR8nu
-         zdoGXd6UUno5aZnWwa6jZ3TYeSi1IdFAcKaqqp+g=
+        b=wQUFwA5hLj8G/gzHUUxO54J1UmiwekqbnemUoqarrFPhQPvcuCtgRiPNX3UvdLeLH
+         BK95e6dSXkcwKV8s7Xm3JyzHzc1pEpXyQDWTy50h9nnPxFa2iU3sthGW+LXHJ8ncpN
+         yaw1KYycWHKxP9TsWDAsSR57PH8lqqj7ec9XKmfI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Keith Busch <kbusch@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 49/66] nvme: Fix uninitialized-variable warning
-Date:   Mon,  2 Mar 2020 21:45:58 -0500
-Message-Id: <20200303024615.8889-49-sashal@kernel.org>
+Cc:     Michal Swiatkowski <michal.swiatkowski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 51/66] ice: Don't tell the OS that link is going down
+Date:   Mon,  2 Mar 2020 21:46:00 -0500
+Message-Id: <20200303024615.8889-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200303024615.8889-1-sashal@kernel.org>
 References: <20200303024615.8889-1-sashal@kernel.org>
@@ -43,36 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
+From: Michal Swiatkowski <michal.swiatkowski@intel.com>
 
-[ Upstream commit 15755854d53b4bbb0bb37a0fce66f0156cfc8a17 ]
+[ Upstream commit 8a55c08d3bbc9ffc9639f69f742e59ebd99f913b ]
 
-gcc may detect a false positive on nvme using an unintialized variable
-if setting features fails. Since this is not a fast path, explicitly
-initialize this variable to suppress the warning.
+Remove code that tell the OS that link is going down when user
+change flow control via ethtool. When link is up it isn't certain
+that link goes down after 0x0605 aq command. If link doesn't go
+down, OS thinks that link is down, but physical link is up. To
+reset this state user have to take interface down and up.
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+If link goes down after 0x0605 command, FW send information
+about that and after that driver tells the OS that the link goes
+down. So this code in ethtool is unnecessary.
+
+Signed-off-by: Michal Swiatkowski <michal.swiatkowski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/ice/ice_ethtool.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 641c07347e8d8..187613beffcab 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1165,8 +1165,8 @@ static int nvme_identify_ns(struct nvme_ctrl *ctrl,
- static int nvme_features(struct nvme_ctrl *dev, u8 op, unsigned int fid,
- 		unsigned int dword11, void *buffer, size_t buflen, u32 *result)
- {
-+	union nvme_result res = { 0 };
- 	struct nvme_command c;
--	union nvme_result res;
- 	int ret;
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+index 9ebd93e79aeb6..9744fcd6662dd 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+@@ -2966,13 +2966,6 @@ ice_set_pauseparam(struct net_device *netdev, struct ethtool_pauseparam *pause)
+ 	else
+ 		return -EINVAL;
  
- 	memset(&c, 0, sizeof(c));
+-	/* Tell the OS link is going down, the link will go back up when fw
+-	 * says it is ready asynchronously
+-	 */
+-	ice_print_link_msg(vsi, false);
+-	netif_carrier_off(netdev);
+-	netif_tx_stop_all_queues(netdev);
+-
+ 	/* Set the FC mode and only restart AN if link is up */
+ 	status = ice_set_fc(pi, &aq_failures, link_up);
+ 
 -- 
 2.20.1
 
