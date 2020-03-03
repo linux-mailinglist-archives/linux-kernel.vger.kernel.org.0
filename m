@@ -2,76 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C2A176A65
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F879176A6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbgCCCDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:03:01 -0500
-Received: from mga05.intel.com ([192.55.52.43]:54064 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727306AbgCCCCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:02:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 18:02:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
-   d="scan'208";a="440384975"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga006.fm.intel.com with ESMTP; 02 Mar 2020 18:02:43 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/7] KVM: nVMX: Drop unnecessary check on ept caps for execute-only
-Date:   Mon,  2 Mar 2020 18:02:40 -0800
-Message-Id: <20200303020240.28494-8-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200303020240.28494-1-sean.j.christopherson@intel.com>
-References: <20200303020240.28494-1-sean.j.christopherson@intel.com>
+        id S1727484AbgCCCDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:03:37 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40631 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbgCCCDg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:03:36 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j80so1399901oih.7;
+        Mon, 02 Mar 2020 18:03:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/UbbCrQ4zJM1G4CgVmEuduvPdDUs8jqlAa46gDYcCCo=;
+        b=iFd4GvUkJZH+UaHL3ZUp5a7NdhAH9zZwORGmJKFU97YIovfmPYwIWArQohHgrewlW/
+         +ZpLpEJiPIPBmJJ9h6EtYtvxySsE72S35+EDW5+oB7iZ1qdcCds3Va1Xg3mP25WBqo4n
+         HG34ntobKFczEkgQYpnn4VjJMMMBmtXkuS62caAyjVi0ylOlOoaxPUzd4iEOeTcOHran
+         owQGx5duRlB16ZhHackMEebuDLDInlOOq5n70JSe6fRzgOw4JQpsPLDXe1fNWmedEka2
+         Uke94A+14Jf42DXDDAInntJj+u+YQ8UN01jY1LiQ7QIp0Xg9XSPiLh+0mcu3AVoqFw04
+         IPOA==
+X-Gm-Message-State: ANhLgQ2OanR06ysLfAYoDWNBUrZTZAX8XiI3XyDSCFVOuf+jdbZ3TbnF
+        gFuOsO+50BXpOK+/9F191A==
+X-Google-Smtp-Source: ADFU+vsTrN9e4+w5gxNDsk4u2uwXJbz5xUm56Q2btlvLSjXZ4AzZ/N9PS1Koa2Y58E6zkQ/klqwpJg==
+X-Received: by 2002:a05:6808:902:: with SMTP id w2mr971212oih.170.1583201015568;
+        Mon, 02 Mar 2020 18:03:35 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m2sm7016696oim.13.2020.03.02.18.03.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 18:03:35 -0800 (PST)
+Received: (nullmailer pid 24397 invoked by uid 1000);
+        Tue, 03 Mar 2020 02:03:34 -0000
+Date:   Mon, 2 Mar 2020 20:03:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jordan Crouse <jcrouse@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, smasetty@codeaurora.org,
+        John Stultz <john.stultz@linaro.org>,
+        Sean Paul <sean@poorly.run>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v4 1/2] dt-bindings: display: msm: Convert GMU bindings
+ to YAML
+Message-ID: <20200303020334.GA24316@bogus>
+References: <1583182067-16530-1-git-send-email-jcrouse@codeaurora.org>
+ <1583182067-16530-2-git-send-email-jcrouse@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583182067-16530-2-git-send-email-jcrouse@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the call to cpu_has_vmx_ept_execute_only() when calculating which
-EPT capabilities will be exposed to L1 for nested EPT.  The resulting
-configuration is immediately sanitized by the passed in @ept_caps, and
-except for the call from vmx_check_processor_compat(), @ept_caps is the
-capabilities that are queried by cpu_has_vmx_ept_execute_only().  For
-vmx_check_processor_compat(), KVM *wants* to ignore vmx_capability.ept
-so that a divergence in EPT capabilities between CPUs is detected.
+On Mon,  2 Mar 2020 13:47:46 -0700, Jordan Crouse wrote:
+> Convert display/msm/gmu.txt to display/msm/gmu.yaml and remove the old
+> text bindings.
+> 
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> ---
+> 
+>  .../devicetree/bindings/display/msm/gmu.txt        | 116 -------------------
+>  .../devicetree/bindings/display/msm/gmu.yaml       | 123 +++++++++++++++++++++
+>  2 files changed, 123 insertions(+), 116 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/display/msm/gmu.txt
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/gmu.yaml
+> 
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/vmx/nested.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index c6163f1b2517..5b87e8d3aec6 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -6143,10 +6143,9 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps)
- 			VMX_EPT_PAGE_WALK_4_BIT |
- 			VMX_EPT_PAGE_WALK_5_BIT |
- 			VMX_EPTP_WB_BIT |
--			VMX_EPT_INVEPT_BIT;
--		if (cpu_has_vmx_ept_execute_only())
--			msrs->ept_caps |=
--				VMX_EPT_EXECUTE_ONLY_BIT;
-+			VMX_EPT_INVEPT_BIT |
-+			VMX_EPT_EXECUTE_ONLY_BIT;
-+
- 		msrs->ept_caps &= ept_caps;
- 		msrs->ept_caps |= VMX_EPT_EXTENT_GLOBAL_BIT |
- 			VMX_EPT_EXTENT_CONTEXT_BIT | VMX_EPT_2MB_PAGE_BIT |
--- 
-2.24.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
