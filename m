@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61AA2178283
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C499917828C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730091AbgCCShV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:37:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54560 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbgCCShV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:37:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 79D8FAD2B;
-        Tue,  3 Mar 2020 18:37:19 +0000 (UTC)
-Message-ID: <03fcb1e2bc7f3ff389b6dfbf3964e159a93ae835.camel@suse.de>
-Subject: Re: [PATCH] ARM: dts: bcm283x: Use firmware PM driver for V3D
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        wahrenst@gmx.net
-Date:   Tue, 03 Mar 2020 19:37:17 +0100
-In-Reply-To: <736f0c59-352b-03b2-f77f-bfc22171b3fb@i2se.com>
-References: <20200303173217.3987-1-nsaenzjulienne@suse.de>
-         <736f0c59-352b-03b2-f77f-bfc22171b3fb@i2se.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-tHP4KAwhH9LsysulVrwU"
-User-Agent: Evolution 3.34.4 
+        id S1731438AbgCCSiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:38:46 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33709 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728787AbgCCSiq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:38:46 -0500
+Received: by mail-ed1-f66.google.com with SMTP id c62so5778253edf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 10:38:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=CLi37DjCw4fhgZkQNJ793RUVLESGUwQUPcyHEvSKPng=;
+        b=SusWeCjBhnB+QmjVggknULmgzJuE13jPDp8gf3fGFPFlZkEzaIrhZo+NvxCOfS559W
+         bGXGraHa1uE1U2enZUaS0k5i0Z2etWnlXhb+7/wu+UX31sk6gvTPsdws6PU4D0e/rRA3
+         mM9537naHMYWBVesmU5TKDOtxf3JK5NM6b8Q6uetQ45eZSw3EEcrhBElT7aL0SyoGOep
+         SHads3Fii2+aCJ/Wny9jEd7Ui7GRROsm9ATjDuq+dIF6dbdDgHahbiUxgZFbDV+GQH8G
+         L0nlIJ2+Rcgzq1Wareb/PiVX4IQtX+aNy51jjJWBjeR2oBI3facvwAnVx8Ug1eC4qFos
+         H84Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=CLi37DjCw4fhgZkQNJ793RUVLESGUwQUPcyHEvSKPng=;
+        b=ZSep3HdS0vC+eAXE60cDveoDaUQUJy++EUcXNIv4crY60et/IMB4D+9irgJBhLcWZA
+         ZVzdRjg/71EIBu2E9jmKCAJlbnWOwu3cvbP9MAqZ3CWc3Khhd1WHEpmgTmVrMulgza6a
+         RqRj8ew6p4ESQkALVaTUP/LojAkXpQ3ogG2wf5bmJtidZk5z2emOwb7ejQq05RJ6rzRi
+         guMSr9jh6di0xgtviZaywjJk9vUF10luaXpIomIqWn69GsLXZ4no//vrh36rxyRtPIS1
+         obbXhX8kWpFiSzGEeL7/ZmSYiyWTFjT0Lgj+qXcB4fGbiJcRdmS4Na+CIyACC1+qjklA
+         eB/Q==
+X-Gm-Message-State: ANhLgQ0dZvNkvI/mOzkfZyCI55LY8/6X8MdDNI1zwuXWfJqg9wd0TRb9
+        nmTA2ojcUQtlqbQd8yL+whfMH6//3q9tBQTNcfY=
+X-Google-Smtp-Source: ADFU+vtTAQTj3ondbZR1EmHHQzrcMMfbG5FF75nsB0q/uD66vKCkYOrXLzfOT8aZYvv5NJFC5skoDrT1kGdVUut0GGE=
+X-Received: by 2002:a50:d7c4:: with SMTP id m4mr5572842edj.89.1583260724291;
+ Tue, 03 Mar 2020 10:38:44 -0800 (PST)
 MIME-Version: 1.0
+Received: by 2002:a50:d0cb:0:0:0:0:0 with HTTP; Tue, 3 Mar 2020 10:38:42 -0800 (PST)
+Reply-To: davidabulatg@gmail.com
+From:   David Abula <agtdonnascottfbi1@gmail.com>
+Date:   Tue, 3 Mar 2020 18:38:42 +0000
+Message-ID: <CACBjiREap4ecMGdVYJG3ZVf-CptmOrZsv_RXG0ALSV3b3mB-5A@mail.gmail.com>
+Subject: re
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+Good day,
+Please accept my sincere congratulations and I know this message may
+come to you as a surprise, but I advise you to read with good
+understanding. I am Barrister David Abula, from Togo. Therefore, there
+is a certain amount of funds $ 11.7 million that was left by my late
+client, is a citizen of your country, who died a few years ago here in
+my country; can I trust you to work with you to transfer the total
+amount of $ 11.7 million into your account in your country? and after
+we will share the total fund 50 % to 50 %.Moreover, my wife is sick
+and I need to fly her to Hospital in Abroad, therefore, i want to get
+to success of this transaction so that i can go further with the
+treatment of my wife so If you are interested to cooperate with me, I
+will advise you to respond back to me in my email address or you
+provide to me your email address to enable me send you the full
+details about the transaction, so that you can read and come to a good
+understanding with me. Reply me on my email address
+(davidabulatg@gmail.com)
 
---=-tHP4KAwhH9LsysulVrwU
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thank you and I wait for your immediate response.
 
-On Tue, 2020-03-03 at 19:17 +0100, Stefan Wahren wrote:
-> Hi Nicolas,
->=20
-> Am 03.03.20 um 18:32 schrieb Nicolas Saenz Julienne:
-> > The register based driver turned out to be unstable, specially on RPi3a=
-+
-> > but not limited to it. While a fix is being worked on, we roll back to
-> > using firmware based scheme.
-> >=20
-> > Fixes: e1dc2b2e1bef ("ARM: bcm283x: Switch V3D over to using the PM dri=
-ver
-> > instead of firmware")
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > ---
-> >=20
-> > See https://github.com/raspberrypi/linux/issues/3046 for more reference=
-.
-> > Note: I tested this on RPi3b, RPi3a+ and RPi2b.
->=20
-> as i already wrote this prevent X to start on current Raspbian on my
-> Raspberry Pi 3A+ (multi_v7_defconfig, no u-boot). We must be careful here=
-.
->=20
-> I will take a look at the debug UART. Maybe there are more helpful
-> information.
-
-It seems we're seeing different things, I tested this on raspbian
-(multi_v7_defconfig) and on arm64. I'll try again from scratch tomorrow.
-
-
---=-tHP4KAwhH9LsysulVrwU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5eo90ACgkQlfZmHno8
-x/5ClAf/Y6uayh0bvAB8AF2/oSO5SZiz1HYrfdlv6YrywX0n/5HiTLxo6Lb774cF
-mjqltChaF50e0bgMBPtLi6e4AMookHQ3U4c3tuRAQiuFYqjKLSMPAIg3XHNQp4Ou
-QE1MRfaEtE9IgUzMWco3DNvWvY3kdpM/72D8irbh99xYLdebH/Z/Q1sNByOrgi9e
-uc4hUQKrEKwlKK7T3sPIeM7O2N9tPJ65c4flgEByrqvBUQZK4mEwL5LktvT28yL7
-tPWn3xWGf53oJORFG9qQ8M1943FLrn4RrRrwPq5AA+tpO3mhYYsbDt85X5ChfL2J
-pWQP1x6BbFFKCbxpemYLIGiMQQcllw==
-=LF3R
------END PGP SIGNATURE-----
-
---=-tHP4KAwhH9LsysulVrwU--
-
+Sincerely,
+Lawyer David Abula
+Phone: +22890712188
+davidabulatg@gmail.com
