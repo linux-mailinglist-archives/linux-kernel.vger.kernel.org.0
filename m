@@ -2,165 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12041776BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 681C41776C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbgCCNOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:14:20 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39734 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727121AbgCCNOT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:14:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583241258;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K6MYW0Cw8y8JjG5SoRIVtn0utAaLa/9boq4bliE04oQ=;
-        b=E/D9AxX5y6fo7WvBvhjKkXA/LWgv/w0wwgPBif8WCHPY8UD5RIQAkRzRrbyEnTLYZcEZJd
-        n35m9Y7j7aIyTPCesZqaNG44Kn/9wRfU1IqXHo/CM5mQ/NjGgPMV+lD7xyPG1o/y3FReRx
-        /vumSyD8XnuCWwfdidZGmVsMTuWH9D4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-180-hrEKN05ONsaAjIh7E5NlUA-1; Tue, 03 Mar 2020 08:14:14 -0500
-X-MC-Unique: hrEKN05ONsaAjIh7E5NlUA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729037AbgCCNOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:14:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727872AbgCCNOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:14:37 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B28A13E4;
-        Tue,  3 Mar 2020 13:14:11 +0000 (UTC)
-Received: from [10.36.116.59] (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 00884277A4;
-        Tue,  3 Mar 2020 13:14:02 +0000 (UTC)
-Subject: Re: [PATCH v9 00/11] SMMUv3 Nested Stage Setup (VFIO part)
-To:     zhangfei <zhangfei.gao@linaro.org>,
-        Tomasz Nowicki <tnowicki@marvell.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-Cc:     "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "vincent.stehle@arm.com" <vincent.stehle@arm.com>,
-        "zhangfei.gao@gmail.com" <zhangfei.gao@gmail.com>,
-        "tina.zhang@intel.com" <tina.zhang@intel.com>,
-        wangzhou1 <wangzhou1@hisilicon.com>,
-        Kenneth Lee <kenneth-lee-2012@foxmail.com>
-References: <20190711135625.20684-1-eric.auger@redhat.com>
- <a35234a6-e386-fc8e-fcc4-5db4601b00d2@marvell.com>
- <3741c034-08f1-9dbb-ab06-434f3a8bd782@redhat.com>
- <e0133df5-073b-13e1-8399-ff48bfaef5e5@linaro.org>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <f01c0690-4561-287f-a5c6-5eefc5be52b7@redhat.com>
-Date:   Tue, 3 Mar 2020 14:14:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DDB320842;
+        Tue,  3 Mar 2020 13:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583241277;
+        bh=U28fY8JhI6bCyYW5i7FnUHu0QsanuxLwZ73WPobV7tM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eBgTn54vhuoXwc2Fijp0ZPXdIVlth72dEuoUBHuO98Tt1c3mOCJGuZPVxIGH3k7cj
+         YDSguUeZHBnVrtox9b6f92pg+Di0lq1GYn5SeHgcKg3xbRTESFxU/YdG3ErowUr5e9
+         QkKhS9QtYFvlPZfoFLXn/9szhCR4vjX4/wPYPRm4=
+Date:   Tue, 3 Mar 2020 14:14:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Karel Zak <kzak@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
+ #17]
+Message-ID: <20200303131434.GA2373427@kroah.com>
+References: <1582644535.3361.8.camel@HansenPartnership.com>
+ <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
+ <107666.1582907766@warthog.procyon.org.uk>
+ <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+ <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+ <1509948.1583226773@warthog.procyon.org.uk>
+ <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+ <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+ <20200303130347.GA2302029@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <e0133df5-073b-13e1-8399-ff48bfaef5e5@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303130347.GA2302029@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhangfei,
+On Tue, Mar 03, 2020 at 02:03:47PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Mar 03, 2020 at 12:38:14PM +0100, Karel Zak wrote:
+> > On Tue, Mar 03, 2020 at 10:26:21AM +0100, Miklos Szeredi wrote:
+> > > No, I don't think this is going to be a performance issue at all, but
+> > > if anything we could introduce a syscall
+> > > 
+> > >   ssize_t readfile(int dfd, const char *path, char *buf, size_t
+> > > bufsize, int flags);
+> > 
+> > off-topic, but I'll buy you many many beers if you implement it ;-),
+> > because open + read + close is pretty common for /sys and /proc in
+> > many userspace tools; for example ps, top, lsblk, lsmem, lsns, udevd
+> > etc. is all about it.
+> 
+> Unlimited beers for a 21-line kernel patch?  Sign me up!
+> 
+> Totally untested, barely compiled patch below.
 
-On 3/3/20 1:57 PM, zhangfei wrote:
-> Hi, Eric
->=20
-> On 2019/11/20 =E4=B8=8B=E5=8D=886:18, Auger Eric wrote:
->>
->>>> This series brings the VFIO part of HW nested paging support
->>>> in the SMMUv3.
->>>>
->>>> The series depends on:
->>>> [PATCH v9 00/14] SMMUv3 Nested Stage Setup (IOMMU part)
->>>> (https://www.spinics.net/lists/kernel/msg3187714.html)
->>>>
->>>> 3 new IOCTLs are introduced that allow the userspace to
->>>> 1) pass the guest stage 1 configuration
->>>> 2) pass stage 1 MSI bindings
->>>> 3) invalidate stage 1 related caches
->>>>
->>>> They map onto the related new IOMMU API functions.
->>>>
->>>> We introduce the capability to register specific interrupt
->>>> indexes (see [1]). A new DMA_FAULT interrupt index allows to registe=
-r
->>>> an eventfd to be signaled whenever a stage 1 related fault
->>>> is detected at physical level. Also a specific region allows
->>>> to expose the fault records to the user space.
->>>>
->>>> Best Regards
->>>>
->>>> Eric
->>>>
->>>> This series can be found at:
->>>> https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9
->>> I think you have already tested on ThunderX2, but as a formality, for
->>> the whole series:
->>>
->>> Tested-by: Tomasz Nowicki <tnowicki@marvell.com>
->>> qemu: https://github.com/eauger/qemu/tree/v4.1.0-rc0-2stage-rfcv5
->>> kernel: https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9 +
->>> Shameer's fix patch
->>>
->>> In my test I assigned Intel 82574L NIC and perform iperf tests.
->> Thank you for your testing efforts.
->>> Other folks from Marvell claimed this to be important feature so I as=
-ked
->>> them to review and speak up on mailing list.
->> That's nice to read that!=C2=A0 So it is time for me to rebase both th=
-e iommu
->> and vfio parts. I will submit something quickly. Then I would encourag=
-e
->> the review efforts to focus first on the iommu part.
->>
->>
-> vSVA feature is also very important to us, it will be great if vSVA can
-> be supported in guest world.
->=20
-> We just submitted uacce for accelerator, which will be supporting SVA o=
-n
-> host, thanks to Jean's effort.
->=20
-> https://lkml.org/lkml/2020/2/11/54
->=20
->=20
-> However, supporting vSVA in guest is also a key component for accelerat=
-or.
->=20
-> Looking forward this going to be happen.
->=20
->=20
-> Any respin, I will be very happy to test.
-
-OK. Based on your interest and Marvell's interest too, I will respin
-both iommu & vfio series.
-
-Thanks
-
-Eric
->=20
->=20
-> Thanks
->=20
->=20
->=20
->=20
-
+Ok, that didn't even build, let me try this for real now...
