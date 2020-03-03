@@ -2,42 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98B79178090
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 871C81780A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733111AbgCCR5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:57:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40142 "EHLO mail.kernel.org"
+        id S1733179AbgCCR5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:57:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733100AbgCCR5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:57:34 -0500
+        id S1732862AbgCCR5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:57:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41D9720656;
-        Tue,  3 Mar 2020 17:57:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5F3C20656;
+        Tue,  3 Mar 2020 17:57:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258253;
-        bh=ul3BD1JVY1ikCvVn58M0Rw/k60t1PMUufy4IbsK5uNk=;
+        s=default; t=1583258271;
+        bh=mwvdgSaAumLLSTH4CcBe04nOPmVj/nufXabgBS1mi6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scKyqlXvfLj82FemR4G7sVoIguC1xPTxRiZhUhHdI8W9ltUL6MrvhVJepLzTIicNz
-         4ADHMR+V2WDMSvyCv0HBdUzazUCSijuRkX13TocJYrP0ouR2N3tQJgt0xTfAdMDWH+
-         eP/3MMlqpHCw+k4a7o1I0Ta1ZawgIKEkbG1MyRNo=
+        b=d0fO6Uur1YNBNPs9M32e3nuUXzdNNzsBUEBKTHYgqhg7tAQhybreW3M3qtOGpm6SP
+         /iWGtS/RMx+tz36xMajuz3OqfN+uQz8dN3fnSFwW+2U8f/djWgYz7NQIPfzkkD6NTw
+         WovNZVf+XLV7nu6lHdCaBWLvUYYr7LM+sQasGHpc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.4 128/152] kprobes: Set unoptimized flag after unoptimizing code
-Date:   Tue,  3 Mar 2020 18:43:46 +0100
-Message-Id: <20200303174317.356855024@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 5.4 130/152] lib/vdso: Update coarse timekeeper unconditionally
+Date:   Tue,  3 Mar 2020 18:43:48 +0100
+Message-Id: <20200303174317.580374810@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
 References: <20200303174302.523080016@linuxfoundation.org>
@@ -50,89 +42,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit f66c0447cca1281116224d474cdb37d6a18e4b5b upstream.
+commit 9f24c540f7f8eb3a981528da9a9a636a5bdf5987 upstream.
 
-Set the unoptimized flag after confirming the code is completely
-unoptimized. Without this fix, when a kprobe hits the intermediate
-modified instruction (the first byte is replaced by an INT3, but
-later bytes can still be a jump address operand) while unoptimizing,
-it can return to the middle byte of the modified code, which causes
-an invalid instruction exception in the kernel.
+The low resolution parts of the VDSO, i.e.:
 
-Usually, this is a rare case, but if we put a probe on the function
-call while text patching, it always causes a kernel panic as below:
+  clock_gettime(CLOCK_*_COARSE), clock_getres(), time()
 
- # echo p text_poke+5 > kprobe_events
- # echo 1 > events/kprobes/enable
- # echo 0 > events/kprobes/enable
+can be used even if there is no VDSO capable clocksource.
 
-invalid opcode: 0000 [#1] PREEMPT SMP PTI
- RIP: 0010:text_poke+0x9/0x50
- Call Trace:
-  arch_unoptimize_kprobe+0x22/0x28
-  arch_unoptimize_kprobes+0x39/0x87
-  kprobe_optimizer+0x6e/0x290
-  process_one_work+0x2a0/0x610
-  worker_thread+0x28/0x3d0
-  ? process_one_work+0x610/0x610
-  kthread+0x10d/0x130
-  ? kthread_park+0x80/0x80
-  ret_from_fork+0x3a/0x50
+But if an architecture opts out of the VDSO data update then this
+information becomes stale. This affects ARM when there is no architected
+timer available. The lack of update causes userspace to use stale data
+forever.
 
-text_poke() is used for patching the code in optprobes.
+Make the update of the low resolution parts unconditional and only skip
+the update of the high resolution parts if the architecture requests it.
 
-This can happen even if we blacklist text_poke() and other functions,
-because there is a small time window during which we show the intermediate
-code to other CPUs.
-
- [ mingo: Edited the changelog. ]
-
-Tested-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
-Link: https://lkml.kernel.org/r/157483422375.25881.13508326028469515760.stgit@devnote2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 44f57d788e7d ("timekeeping: Provide a generic update_vsyscall() implementation")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20200114185946.765577901@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/kprobes.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/time/vsyscall.c |   37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
 
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -510,6 +510,8 @@ static void do_unoptimize_kprobes(void)
- 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
- 	/* Loop free_list for disarming */
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-+		/* Switching from detour code to origin */
-+		op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 		/* Disarm probes if marked disabled */
- 		if (kprobe_disabled(&op->kp))
- 			arch_disarm_kprobe(&op->kp);
-@@ -649,6 +651,7 @@ static void force_unoptimize_kprobe(stru
- {
- 	lockdep_assert_cpus_held();
- 	arch_unoptimize_kprobe(op);
-+	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 	if (kprobe_disabled(&op->kp))
- 		arch_disarm_kprobe(&op->kp);
- }
-@@ -676,7 +679,6 @@ static void unoptimize_kprobe(struct kpr
- 		return;
- 	}
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -28,11 +28,6 @@ static inline void update_vdso_data(stru
+ 	vdata[CS_RAW].mult			= tk->tkr_raw.mult;
+ 	vdata[CS_RAW].shift			= tk->tkr_raw.shift;
  
--	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 	if (!list_empty(&op->list)) {
- 		/* Dequeue from the optimization queue */
- 		list_del_init(&op->list);
+-	/* CLOCK_REALTIME */
+-	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
+-	vdso_ts->sec	= tk->xtime_sec;
+-	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+-
+ 	/* CLOCK_MONOTONIC */
+ 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
+ 	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+@@ -70,12 +65,6 @@ static inline void update_vdso_data(stru
+ 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_TAI];
+ 	vdso_ts->sec	= tk->xtime_sec + (s64)tk->tai_offset;
+ 	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+-
+-	/*
+-	 * Read without the seqlock held by clock_getres().
+-	 * Note: No need to have a second copy.
+-	 */
+-	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
+ }
+ 
+ void update_vsyscall(struct timekeeper *tk)
+@@ -84,20 +73,17 @@ void update_vsyscall(struct timekeeper *
+ 	struct vdso_timestamp *vdso_ts;
+ 	u64 nsec;
+ 
+-	if (!__arch_update_vdso_data()) {
+-		/*
+-		 * Some architectures might want to skip the update of the
+-		 * data page.
+-		 */
+-		return;
+-	}
+-
+ 	/* copy vsyscall data */
+ 	vdso_write_begin(vdata);
+ 
+ 	vdata[CS_HRES_COARSE].clock_mode	= __arch_get_clock_mode(tk);
+ 	vdata[CS_RAW].clock_mode		= __arch_get_clock_mode(tk);
+ 
++	/* CLOCK_REALTIME also required for time() */
++	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
++	vdso_ts->sec	= tk->xtime_sec;
++	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
++
+ 	/* CLOCK_REALTIME_COARSE */
+ 	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
+ 	vdso_ts->sec	= tk->xtime_sec;
+@@ -110,7 +96,18 @@ void update_vsyscall(struct timekeeper *
+ 	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+ 	vdso_ts->sec	+= __iter_div_u64_rem(nsec, NSEC_PER_SEC, &vdso_ts->nsec);
+ 
+-	update_vdso_data(vdata, tk);
++	/*
++	 * Read without the seqlock held by clock_getres().
++	 * Note: No need to have a second copy.
++	 */
++	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
++
++	/*
++	 * Architectures can opt out of updating the high resolution part
++	 * of the VDSO.
++	 */
++	if (__arch_update_vdso_data())
++		update_vdso_data(vdata, tk);
+ 
+ 	__arch_update_vsyscall(vdata, tk);
+ 
 
 
