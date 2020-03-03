@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E1A3178131
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAF38178235
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733146AbgCCSBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:01:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44998 "EHLO mail.kernel.org"
+        id S1732854AbgCCSJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387879AbgCCSBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:01:00 -0500
+        id S1730562AbgCCRwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:52:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E9DD20870;
-        Tue,  3 Mar 2020 18:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AA4120CC7;
+        Tue,  3 Mar 2020 17:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258460;
-        bh=qd721I88vNXch3ZqPReQwf2cEtykqf23s69glri4oKA=;
+        s=default; t=1583257932;
+        bh=nSQ2JwEEUlpH+KtDNU/5jZzofFq9d1NFcnnlpJQLjAI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoaI3vGsA/MKYlHTE7x3ANS0CaZtiBAO0ojN17NwCFCqlzi6f8otFAL59Ib5NWrx0
-         l0Y7eBzl/EcdUkMQFAM/AQt5KMn7vv2zCcRHBBIIZi2UoCAcWrtKji18vY2SR3A3tG
-         50bhVTvJDE7MGL5fy+YMV6R5IMf8DEXEy1EQOKsA=
+        b=lHootr17igh5pkxxq6dbgJ78HSWt2vWf7YIVrjkeDwKYsC/K6jQyn94raJzWNGnaj
+         IFXJEJz11uCYNtgUh1UmVTLIs3Bwipl/RxfTeya3yFsdKDKRc9ZK/6y+zQ1+LHSImQ
+         HSxsQ6/UQo4/bRcq0a6CblvtkW7HJIa1juOFg+YM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.19 56/87] i2c: jz4780: silence log flood on txabrt
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 5.5 163/176] thermal: brcmstb_thermal: Do not use DT coefficients
 Date:   Tue,  3 Mar 2020 18:43:47 +0100
-Message-Id: <20200303174355.386521618@linuxfoundation.org>
+Message-Id: <20200303174323.076645343@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,76 +44,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa@the-dreams.de>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 9e661cedcc0a072d91a32cb88e0515ea26e35711 upstream.
+commit e1ff6fc22f19e2af8adbad618526b80067911d40 upstream.
 
-The printout for txabrt is way too talkative and is highly annoying with
-scanning programs like 'i2cdetect'. Reduce it to the minimum, the rest
-can be gained by I2C core debugging and datasheet information. Also,
-make it a debug printout, it won't help the regular user.
+At the time the brcmstb_thermal driver and its binding were merged, the
+DT binding did not make the coefficients properties a mandatory one,
+therefore all users of the brcmstb_thermal driver out there have a non
+functional implementation with zero coefficients. Even if these
+properties were provided, the formula used for computation is incorrect.
 
-Fixes: ba92222ed63a ("i2c: jz4780: Add i2c bus controller driver for Ingenic JZ4780")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+The coefficients are entirely process specific (right now, only 28nm is
+supported) and not board or SoC specific, it is therefore appropriate to
+hard code them in the driver given the compatibility string we are
+probed with which has to be updated whenever a new process is
+introduced.
+
+We remove the existing coefficients definition since subsequent patches
+are going to add support for a new process and will introduce new
+coefficients as well.
+
+Fixes: 9e03cf1b2dd5 ("thermal: add brcmstb AVS TMON driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20200114190607.29339-2-f.fainelli@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-jz4780.c |   36 ++----------------------------------
- 1 file changed, 2 insertions(+), 34 deletions(-)
+ drivers/thermal/broadcom/brcmstb_thermal.c |   31 ++++++++---------------------
+ 1 file changed, 9 insertions(+), 22 deletions(-)
 
---- a/drivers/i2c/busses/i2c-jz4780.c
-+++ b/drivers/i2c/busses/i2c-jz4780.c
-@@ -82,25 +82,6 @@
- #define JZ4780_I2C_STA_TFNF		BIT(1)
- #define JZ4780_I2C_STA_ACT		BIT(0)
+--- a/drivers/thermal/broadcom/brcmstb_thermal.c
++++ b/drivers/thermal/broadcom/brcmstb_thermal.c
+@@ -49,7 +49,7 @@
+ #define AVS_TMON_TP_TEST_ENABLE		0x20
  
--static const char * const jz4780_i2c_abrt_src[] = {
--	"ABRT_7B_ADDR_NOACK",
--	"ABRT_10ADDR1_NOACK",
--	"ABRT_10ADDR2_NOACK",
--	"ABRT_XDATA_NOACK",
--	"ABRT_GCALL_NOACK",
--	"ABRT_GCALL_READ",
--	"ABRT_HS_ACKD",
--	"SBYTE_ACKDET",
--	"ABRT_HS_NORSTRT",
--	"SBYTE_NORSTRT",
--	"ABRT_10B_RD_NORSTRT",
--	"ABRT_MASTER_DIS",
--	"ARB_LOST",
--	"SLVFLUSH_TXFIFO",
--	"SLV_ARBLOST",
--	"SLVRD_INTX",
--};
+ /* Default coefficients */
+-#define AVS_TMON_TEMP_SLOPE		-487
++#define AVS_TMON_TEMP_SLOPE		487
+ #define AVS_TMON_TEMP_OFFSET		410040
+ 
+ /* HW related temperature constants */
+@@ -108,23 +108,12 @@ struct brcmstb_thermal_priv {
+ 	struct thermal_zone_device *thermal;
+ };
+ 
+-static void avs_tmon_get_coeffs(struct thermal_zone_device *tz, int *slope,
+-				int *offset)
+-{
+-	*slope = thermal_zone_get_slope(tz);
+-	*offset = thermal_zone_get_offset(tz);
+-}
 -
- #define JZ4780_I2C_INTST_IGC		BIT(11)
- #define JZ4780_I2C_INTST_ISTT		BIT(10)
- #define JZ4780_I2C_INTST_ISTP		BIT(9)
-@@ -538,21 +519,8 @@ done:
- 
- static void jz4780_i2c_txabrt(struct jz4780_i2c *i2c, int src)
+ /* Convert a HW code to a temperature reading (millidegree celsius) */
+ static inline int avs_tmon_code_to_temp(struct thermal_zone_device *tz,
+ 					u32 code)
  {
--	int i;
+-	const int val = code & AVS_TMON_TEMP_MASK;
+-	int slope, offset;
 -
--	dev_err(&i2c->adap.dev, "txabrt: 0x%08x\n", src);
--	dev_err(&i2c->adap.dev, "device addr=%x\n",
--		jz4780_i2c_readw(i2c, JZ4780_I2C_TAR));
--	dev_err(&i2c->adap.dev, "send cmd count:%d  %d\n",
--		i2c->cmd, i2c->cmd_buf[i2c->cmd]);
--	dev_err(&i2c->adap.dev, "receive data count:%d  %d\n",
--		i2c->cmd, i2c->data_buf[i2c->cmd]);
+-	avs_tmon_get_coeffs(tz, &slope, &offset);
 -
--	for (i = 0; i < 16; i++) {
--		if (src & BIT(i))
--			dev_dbg(&i2c->adap.dev, "I2C TXABRT[%d]=%s\n",
--				i, jz4780_i2c_abrt_src[i]);
--	}
-+	dev_dbg(&i2c->adap.dev, "txabrt: 0x%08x, cmd: %d, send: %d, recv: %d\n",
-+		src, i2c->cmd, i2c->cmd_buf[i2c->cmd], i2c->data_buf[i2c->cmd]);
+-	return slope * val + offset;
++	return (AVS_TMON_TEMP_OFFSET -
++		(int)((code & AVS_TMON_TEMP_MAX) * AVS_TMON_TEMP_SLOPE));
  }
  
- static inline int jz4780_i2c_xfer_read(struct jz4780_i2c *i2c,
+ /*
+@@ -136,20 +125,18 @@ static inline int avs_tmon_code_to_temp(
+ static inline u32 avs_tmon_temp_to_code(struct thermal_zone_device *tz,
+ 					int temp, bool low)
+ {
+-	int slope, offset;
+-
+ 	if (temp < AVS_TMON_TEMP_MIN)
+-		return AVS_TMON_TEMP_MAX; /* Maximum code value */
+-
+-	avs_tmon_get_coeffs(tz, &slope, &offset);
++		return AVS_TMON_TEMP_MAX;	/* Maximum code value */
+ 
+-	if (temp >= offset)
++	if (temp >= AVS_TMON_TEMP_OFFSET)
+ 		return 0;	/* Minimum code value */
+ 
+ 	if (low)
+-		return (u32)(DIV_ROUND_UP(offset - temp, abs(slope)));
++		return (u32)(DIV_ROUND_UP(AVS_TMON_TEMP_OFFSET - temp,
++					  AVS_TMON_TEMP_SLOPE));
+ 	else
+-		return (u32)((offset - temp) / abs(slope));
++		return (u32)((AVS_TMON_TEMP_OFFSET - temp) /
++			      AVS_TMON_TEMP_SLOPE);
+ }
+ 
+ static int brcmstb_get_temp(void *data, int *temp)
 
 
