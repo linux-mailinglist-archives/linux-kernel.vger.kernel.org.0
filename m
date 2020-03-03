@@ -2,190 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0562E17786B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30865177870
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:12:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbgCCOKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 09:10:19 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34117 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729596AbgCCOKH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:10:07 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z15so4548530wrl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 06:10:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ppjTTRSxDkqsFonnJRiZqlBZgTzyFzr2NmtbUAK1iGY=;
-        b=IanPHeJbyBYiJPLkaKtGNuoBeFK0JAgtgDThLsxHwgetDpg7v7s8pzarRylOcFxTmb
-         B3AZ3le5Z1ZQ2Z8m5c1mbtsUj1gAGZtyhKNJfwWnys1eSxWAP6Eqs3dkQt33a9N+SYwP
-         R6C2t5vObT6dWQbeOjUldoxdVRhHwDVgtK3zwdZ0kQH4Nt1kXM3aGiX3owlMJeguO3pY
-         L3P5v3tUwsGryqDmN66zX2vm/eGoVy/6WZpRTEKA56NdIqXtiKUd+Xq/kZ6Ey3sM0ruj
-         dAgZwMDTPwz38kwhsM/I3HGJMp+VeeQolNGpnqpJjp7usEPbFHMtzdzeiDU6htp7lvjy
-         Ehyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ppjTTRSxDkqsFonnJRiZqlBZgTzyFzr2NmtbUAK1iGY=;
-        b=PVDdIkxhzkSZPWAeRzlz0zbDH6YdnbFs2XQaE8HKF5+QQ5mN4P+gMfCpz4Eevc0ZtX
-         HyMNGcj5S5BlIPLodWXmPqbFs09XHOv3k4LrzVdlFbO8/qkhMO1ERY+JzAZT1wFHBA4H
-         ARw7OUMudehC49knVYPTAunVIZQZo3dYX5e1KP1DX2c/RLmzGCxGO1t7UR93vETUXbL+
-         yQUuOPPVO+eC5p1h8PGWpfvUdQy5e3+3yM8rnv14RGNsvejmPfEjnnuM8MYnFroaOLjr
-         zq/72P2c7e/nkccF4dMmlfRzcxuSSq2LictFQMR2X3N7/fsbCbLrZZ7wra7dkW8Nx/WD
-         TKkw==
-X-Gm-Message-State: ANhLgQ1T+Xayj8h44CLuAGCNHaevzucjTUF3J5J61BgdDhBAjVO6kNyH
-        caPA0btZlb2LDARX0j0ETuwRaw==
-X-Google-Smtp-Source: ADFU+vuuNH3/Wba0Bee4G2gpwQ/0j++QuGFKFTe2brqTLKFz41qc8r3aEwGHFmdnVARg/E1ccjLMqg==
-X-Received: by 2002:adf:e9c2:: with SMTP id l2mr5487794wrn.86.1583244606299;
-        Tue, 03 Mar 2020 06:10:06 -0800 (PST)
-Received: from localhost ([85.163.43.78])
-        by smtp.gmail.com with ESMTPSA id o5sm4452752wmb.8.2020.03.03.06.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 06:10:05 -0800 (PST)
-Date:   Tue, 3 Mar 2020 15:10:04 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     syzbot <syzbot+eeca95faae43d590987b@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in team_port_change_check
-Message-ID: <20200303141004.GN2178@nanopsycho>
-References: <000000000000f44aca059fe3232d@google.com>
+        id S1729708AbgCCOKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 09:10:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728539AbgCCOKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 09:10:33 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D33D220848;
+        Tue,  3 Mar 2020 14:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583244632;
+        bh=9Jfg6HbsgoSWln6NNn9YML4X0iSDZRQBv27wug5xFB4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0Lvg4+Gpu+ht0zZ2A+IIL6k3suH/0xmPYguJPSvELQeVGX5ZJ4Ci4nR3cajkOc7kZ
+         TSprDYs0mDay4u0BKhL88vH5BZMCZEERLOKu6ufN7mHM+knwqPu57q2i/cy3dnFYxi
+         TCOmgtjx3zErfoIVtVeywP7qd4LiiB9zD5V87UzY=
+Date:   Tue, 3 Mar 2020 15:10:30 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Karel Zak <kzak@redhat.com>, David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
+ #17]
+Message-ID: <20200303141030.GA2811@kroah.com>
+References: <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+ <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+ <1509948.1583226773@warthog.procyon.org.uk>
+ <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+ <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+ <20200303130347.GA2302029@kroah.com>
+ <20200303131434.GA2373427@kroah.com>
+ <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
+ <20200303134316.GA2509660@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000f44aca059fe3232d@google.com>
+In-Reply-To: <20200303134316.GA2509660@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, Mar 02, 2020 at 07:13:13PM CET, syzbot+eeca95faae43d590987b@syzkaller.appspotmail.com wrote:
->Hello,
->
->syzbot found the following crash on:
->
->HEAD commit:    3b3e808c Merge tag 'mac80211-next-for-net-next-2020-02-24'..
->git tree:       net-next
->console output: https://syzkaller.appspot.com/x/log.txt?x=146c04f9e00000
->kernel config:  https://syzkaller.appspot.com/x/.config?x=6ec9623400ee72
->dashboard link: https://syzkaller.appspot.com/bug?extid=eeca95faae43d590987b
->compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
->Unfortunately, I don't have any reproducer for this crash yet.
->
->IMPORTANT: if you fix the bug, please add the following tag to the commit:
->Reported-by: syzbot+eeca95faae43d590987b@syzkaller.appspotmail.com
->
->device team_slave_1 left promiscuous mode
->device vlan2 left promiscuous mode
->device team_slave_0 left promiscuous mode
->bridge9: port 1(@) entered disabled state
+On Tue, Mar 03, 2020 at 02:43:16PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Mar 03, 2020 at 02:34:42PM +0100, Miklos Szeredi wrote:
+> > On Tue, Mar 3, 2020 at 2:14 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > 
+> > > > Unlimited beers for a 21-line kernel patch?  Sign me up!
+> > > >
+> > > > Totally untested, barely compiled patch below.
+> > >
+> > > Ok, that didn't even build, let me try this for real now...
+> > 
+> > Some comments on the interface:
+> 
+> Ok, hey, let's do this proper :)
 
-Interesting. Would be great to know the output of "ip link" here.
+Alright, how about this patch.
 
+Actually tested with some simple sysfs files.
 
->============================================
->WARNING: possible recursive locking detected
->5.6.0-rc2-syzkaller #0 Not tainted
->--------------------------------------------
->syz-executor.5/26255 is trying to acquire lock:
->ffff88805be96bf0 (team->team_lock_key#6){+.+.}, at: team_port_change_check+0x49/0x140 drivers/net/team/team.c:2962
->
->but task is already holding lock:
->ffff88805be96bf0 (team->team_lock_key#6){+.+.}, at: team_uninit+0x37/0x1c0 drivers/net/team/team.c:1665
->
->other info that might help us debug this:
-> Possible unsafe locking scenario:
->
->       CPU0
->       ----
->  lock(team->team_lock_key#6);
->  lock(team->team_lock_key#6);
->
-> *** DEADLOCK ***
->
-> May be due to missing lock nesting notation
->
->2 locks held by syz-executor.5/26255:
-> #0: ffffffff8a74d740 (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:72 [inline]
-> #0: ffffffff8a74d740 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x405/0xaf0 net/core/rtnetlink.c:5437
-> #1: ffff88805be96bf0 (team->team_lock_key#6){+.+.}, at: team_uninit+0x37/0x1c0 drivers/net/team/team.c:1665
->
->stack backtrace:
->CPU: 0 PID: 26255 Comm: syz-executor.5 Not tainted 5.6.0-rc2-syzkaller #0
->Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->Call Trace:
-> __dump_stack lib/dump_stack.c:77 [inline]
-> dump_stack+0x197/0x210 lib/dump_stack.c:118
-> print_deadlock_bug kernel/locking/lockdep.c:2370 [inline]
-> check_deadlock kernel/locking/lockdep.c:2411 [inline]
-> validate_chain kernel/locking/lockdep.c:2954 [inline]
-> __lock_acquire.cold+0x15d/0x385 kernel/locking/lockdep.c:3954
-> lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4484
-> __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-> __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-> mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-> team_port_change_check+0x49/0x140 drivers/net/team/team.c:2962
-> team_device_event+0x16a/0x420 drivers/net/team/team.c:2988
-> notifier_call_chain+0xc2/0x230 kernel/notifier.c:83
-> __raw_notifier_call_chain kernel/notifier.c:361 [inline]
-> raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:368
-> call_netdevice_notifiers_info net/core/dev.c:1948 [inline]
-> call_netdevice_notifiers_info+0xba/0x130 net/core/dev.c:1933
-> call_netdevice_notifiers_extack net/core/dev.c:1960 [inline]
-> call_netdevice_notifiers net/core/dev.c:1974 [inline]
-> dev_close_many+0x32a/0x6c0 net/core/dev.c:1549
-> vlan_device_event+0x9a9/0x2370 net/8021q/vlan.c:450
-> notifier_call_chain+0xc2/0x230 kernel/notifier.c:83
-> __raw_notifier_call_chain kernel/notifier.c:361 [inline]
-> raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:368
-> call_netdevice_notifiers_info net/core/dev.c:1948 [inline]
-> call_netdevice_notifiers_info+0xba/0x130 net/core/dev.c:1933
-> call_netdevice_notifiers_extack net/core/dev.c:1960 [inline]
-> call_netdevice_notifiers net/core/dev.c:1974 [inline]
-> dev_close_many+0x32a/0x6c0 net/core/dev.c:1549
-> dev_close.part.0+0x114/0x1e0 net/core/dev.c:1571
-> dev_close+0x63/0x80 net/core/dev.c:1574
-> team_port_del+0x35c/0x800 drivers/net/team/team.c:1345
-> team_uninit+0xc3/0x1c0 drivers/net/team/team.c:1667
-> rollback_registered_many+0xa06/0x1030 net/core/dev.c:8824
-> unregister_netdevice_many.part.0+0x1b/0x1f0 net/core/dev.c:9963
-> unregister_netdevice_many+0x3b/0x50 net/core/dev.c:9962
-> rtnl_delete_link+0xda/0x130 net/core/rtnetlink.c:2933
-> rtnl_dellink+0x341/0x9e0 net/core/rtnetlink.c:2985
-> rtnetlink_rcv_msg+0x45e/0xaf0 net/core/rtnetlink.c:5440
-> netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2478
-> rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5458
-> netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
-> netlink_unicast+0x59e/0x7e0 net/netlink/af_netlink.c:1329
-> netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1918
-> sock_sendmsg_nosec net/socket.c:652 [inline]
-> sock_sendmsg+0xd7/0x130 net/socket.c:672
-> ____sys_sendmsg+0x753/0x880 net/socket.c:2343
-> ___sys_sendmsg+0x100/0x170 net/socket.c:2397
-> __sys_sendmsg+0x105/0x1d0 net/socket.c:2430
-> __do_sys_sendmsg net/socket.c:2439 [inline]
-> __se_sys_sendmsg net/socket.c:2437 [inline]
-> __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2437
-> do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-> entry_SYSCALL_64_after_hwframe+0x49/0xbe
->RIP: 0033:0x45c479
->Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->RSP: 002b:00007f8bb9fd6c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->RAX: ffffffffffffffda RBX: 00007f8bb9fd76d4 RCX: 000000000045c479
->RDX: 0000000000000000 RSI: 00000000200002c0 RDI: 000000000000000a
->RBP: 000000000076c060 R08: 0000000000000000 R09: 0000000000000000
->R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
->R13: 00000000000009f9 R14: 00000000004cc71a R15: 000000000076c06c
->
->
->---
->This bug is generated by a bot. It may contain errors.
->See https://goo.gl/tpsmEJ for more information about syzbot.
->syzbot engineers can be reached at syzkaller@googlegroups.com.
->
->syzbot will keep track of this bug report. See:
->https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+If people don't strongly object, I'll add "real" tests to it, hook it up
+to all arches, write a manpage, and all the fun fluff a new syscall
+deserves and submit it "for real".
+
+It feels like I'm doing something wrong in that the actuall syscall
+logic is just so small.  Maybe I'll benchmark this thing to see if it
+makes any real difference...
+
+thanks,
+
+greg k-h
+
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] readfile: implement readfile syscall
+
+It's a tiny syscall, meant to allow a user to do a single "open this
+file, read into this buffer, and close the file" all in a single shot.
+
+Should be good for reading "tiny" files like sysfs, procfs, and other
+"small" files.
+
+There is no restarting the syscall, am trying to keep it simple.  At
+least for now.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ fs/open.c                              | 21 +++++++++++++++++++++
+ include/linux/syscalls.h               |  2 ++
+ include/uapi/asm-generic/unistd.h      |  4 +++-
+ 5 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index c17cb77eb150..a79cd025e72b 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -442,3 +442,4 @@
+ 435	i386	clone3			sys_clone3			__ia32_sys_clone3
+ 437	i386	openat2			sys_openat2			__ia32_sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd			__ia32_sys_pidfd_getfd
++439	i386	readfile		sys_readfile			__ia32_sys_readfile
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 44d510bc9b78..4f518f4e0e30 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -359,6 +359,7 @@
+ 435	common	clone3			__x64_sys_clone3/ptregs
+ 437	common	openat2			__x64_sys_openat2
+ 438	common	pidfd_getfd		__x64_sys_pidfd_getfd
++439	common	readfile		__x64_sys_readfile
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/open.c b/fs/open.c
+index 0788b3715731..109bad47d542 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1340,3 +1340,24 @@ int stream_open(struct inode *inode, struct file *filp)
+ }
+ 
+ EXPORT_SYMBOL(stream_open);
++
++SYSCALL_DEFINE5(readfile, int, dfd, const char __user *, filename,
++		char __user *, buffer, size_t, bufsize, int, flags)
++{
++	int retval;
++	int fd;
++
++	/* Mask off all O_ flags as we only want to read from the file */
++	flags &= ~(VALID_OPEN_FLAGS);
++	flags |= O_RDONLY | O_LARGEFILE;
++
++	fd = do_sys_open(dfd, filename, flags, 0000);
++	if (fd <= 0)
++		return fd;
++
++	retval = ksys_read(fd, buffer, bufsize);
++
++	__close_fd(current->files, fd);
++
++	return retval;
++}
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 1815065d52f3..3a636a913437 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1003,6 +1003,8 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+ 				       siginfo_t __user *info,
+ 				       unsigned int flags);
+ asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
++asmlinkage long sys_readfile(int dfd, const char __user *filename,
++			     char __user *buffer, size_t bufsize, int flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 3a3201e4618e..31f84500915d 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -855,9 +855,11 @@ __SYSCALL(__NR_clone3, sys_clone3)
+ __SYSCALL(__NR_openat2, sys_openat2)
+ #define __NR_pidfd_getfd 438
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
++#define __NR_readfile 439
++__SYSCALL(__NR_readfile, sys_readfile)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 439
++#define __NR_syscalls 440
+ 
+ /*
+  * 32 bit systems traditionally used different
+-- 
+2.25.1
+
