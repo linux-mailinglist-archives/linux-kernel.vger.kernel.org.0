@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCACE177FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB520177FB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732146AbgCCRwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:52:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60696 "EHLO mail.kernel.org"
+        id S1732159AbgCCRw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:52:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730992AbgCCRwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:52:21 -0500
+        id S1730992AbgCCRwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:52:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1974A206D5;
-        Tue,  3 Mar 2020 17:52:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FCA9206D5;
+        Tue,  3 Mar 2020 17:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257940;
-        bh=Qjyvv69TvJ2XwxB8JdC7/51eE9UYXSmJQHfW9d9906o=;
+        s=default; t=1583257944;
+        bh=J1t1EdGl5F0HfJrmlSG7rGwUQAIRvYNhBU8Kaz+zdVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWwjf1iR1K4kmsOb7EfHq1hSDQ1GudygyapqbozeWhjv5oD60d5VW21pf5dZ7I3tH
-         uW1wfNF9Kb8CYcI8u37KbmUpO9JoFapABtqk18FO8Vh9HSD5D2uoMaVjjSPxV/WvY6
-         MKgW1EDb+wI8TEay3cZFxmdc2FOc8xovBZO8H2Hw=
+        b=Ix+c/DMsXImSVCraFSrcUKi5THt+q/WCSsP9n3QpXAGZvG8sKNAr4O9+bFaUjqvh2
+         IB8f/2nbzzFyMAAFf8KmCIEVV690EequGXsSaTpc/dK8BLs5ff0RlYfwQ3SZ5B2p1O
+         H5sibDypzg+C2+sOUH7Cu2+rqeOtXN6G1UsBCLpw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Jethro Beekman <jethro@fortanix.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 003/152] net: dsa: b53: Ensure the default VID is untagged
-Date:   Tue,  3 Mar 2020 18:41:41 +0100
-Message-Id: <20200303174302.912933039@linuxfoundation.org>
+Subject: [PATCH 5.4 004/152] net: fib_rules: Correctly set table field when table number exceeds 8 bits
+Date:   Tue,  3 Mar 2020 18:41:42 +0100
+Message-Id: <20200303174303.011874108@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
 References: <20200303174302.523080016@linuxfoundation.org>
@@ -43,35 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Jethro Beekman <jethro@fortanix.com>
 
-[ Upstream commit d965a5432d4c3e6b9c3d2bc1d4a800013bbf76f6 ]
+[ Upstream commit 540e585a79e9d643ede077b73bcc7aa2d7b4d919 ]
 
-We need to ensure that the default VID is untagged otherwise the switch
-will be sending tagged frames and the results can be problematic. This
-is especially true with b53 switches that use VID 0 as their default
-VLAN since VID 0 has a special meaning.
+In 709772e6e06564ed94ba740de70185ac3d792773, RT_TABLE_COMPAT was added to
+allow legacy software to deal with routing table numbers >= 256, but the
+same change to FIB rule queries was overlooked.
 
-Fixes: fea83353177a ("net: dsa: b53: Fix default VLAN ID")
-Fixes: 061f6a505ac3 ("net: dsa: Add ndo_vlan_rx_{add, kill}_vid implementation")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/b53/b53_common.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/core/fib_rules.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -1353,6 +1353,9 @@ void b53_vlan_add(struct dsa_switch *ds,
+--- a/net/core/fib_rules.c
++++ b/net/core/fib_rules.c
+@@ -967,7 +967,7 @@ static int fib_nl_fill_rule(struct sk_bu
  
- 		b53_get_vlan_entry(dev, vid, vl);
- 
-+		if (vid == 0 && vid == b53_default_pvid(dev))
-+			untagged = true;
-+
- 		vl->members |= BIT(port);
- 		if (untagged && !dsa_is_cpu_port(ds, port))
- 			vl->untag |= BIT(port);
+ 	frh = nlmsg_data(nlh);
+ 	frh->family = ops->family;
+-	frh->table = rule->table;
++	frh->table = rule->table < 256 ? rule->table : RT_TABLE_COMPAT;
+ 	if (nla_put_u32(skb, FRA_TABLE, rule->table))
+ 		goto nla_put_failure;
+ 	if (nla_put_u32(skb, FRA_SUPPRESS_PREFIXLEN, rule->suppress_prefixlen))
 
 
