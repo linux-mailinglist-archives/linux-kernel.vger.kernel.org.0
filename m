@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81266177DD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B150177DC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730777AbgCCRn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:43:56 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:55853 "EHLO
+        id S1730628AbgCCRn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:43:26 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:46151 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729748AbgCCRnX (ORCPT
+        with ESMTP id S1729749AbgCCRnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:43:23 -0500
+        Tue, 3 Mar 2020 12:43:24 -0500
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id C4F5523E2C;
-        Tue,  3 Mar 2020 18:43:20 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 4385E23E3C;
+        Tue,  3 Mar 2020 18:43:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
         t=1583257401;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VX93nZn2AbWIOGGDfDdsClKAztru9C3qnY5D3he52bw=;
-        b=NR4qiscKZUDwQDviE1N9ER57qxAxZX5tWQuROndkUU9z1oBkjiPm9gR0mfr3FasiSbucDq
-        xE7PELfGe9uxGXq755rO+y8/Onh65xmQeGslOwc8019olRW+JITn15ak0CjA6fheEawiey
-        s8U71K4vXEUAeFvrqQLNZrUcvAMdsv0=
+        bh=f7edbb9NYjCc5JcnsjhmvglVnqgFDebCZY58E/z3h3A=;
+        b=spA1/oYxBwh9PYiH0WFfQjAlrEVieKI+N3GqamtiFsDlbFkZDsKXZqgySmq6V/wm6vVMwR
+        agoWnmW2xNj5DQ/pb5x9FewUK5/V0VrlTjqDVuSQbMqzVx7i/QStsz0D5rdrmFOPDAs6OA
+        HxCGTFIiuZXuWhaya7kPPUnQgJP6DmI=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -38,9 +38,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
         Vabhav Sharma <vabhav.sharma@nxp.com>,
         Yuan Yao <yao.yuan@nxp.com>, Michael Walle <michael@walle.cc>
-Subject: [PATCH v3 2/9] tty: serial: fsl_lpuart: free IDs allocated by IDA
-Date:   Tue,  3 Mar 2020 18:42:59 +0100
-Message-Id: <20200303174306.6015-3-michael@walle.cc>
+Subject: [PATCH v3 3/9] tty: serial: fsl_lpuart: handle EPROBE_DEFER for DMA
+Date:   Tue,  3 Mar 2020 18:43:00 +0100
+Message-Id: <20200303174306.6015-4-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200303174306.6015-1-michael@walle.cc>
 References: <20200303174306.6015-1-michael@walle.cc>
@@ -51,7 +51,7 @@ X-Spam-Level: ******
 X-Rspamd-Server: web
 X-Spam-Status: Yes, score=6.40
 X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: C4F5523E2C
+X-Rspamd-Queue-Id: 4385E23E3C
 X-Spamd-Result: default: False [6.40 / 15.00];
          FROM_HAS_DN(0.00)[];
          TO_DN_SOME(0.00)[];
@@ -60,7 +60,7 @@ X-Spamd-Result: default: False [6.40 / 15.00];
          TAGGED_RCPT(0.00)[dt];
          MIME_GOOD(-0.10)[text/plain];
          BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.504];
+         NEURAL_SPAM(0.00)[0.502];
          DKIM_SIGNED(0.00)[];
          RCPT_COUNT_TWELVE(0.00)[14];
          MID_CONTAINS_FROM(1.00)[];
@@ -75,103 +75,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 3bc3206e1c0f ("serial: fsl_lpuart: Remove the alias node
-dependence") the port line number can also be allocated by IDA, but in
-case of an error the ID will no be removed again. More importantly, any
-ID will be freed in remove(), even if it wasn't allocated but instead
-fetched by of_alias_get_id(). If it was not allocated by IDA there will
-be a warning:
-  WARN(1, "ida_free called for id=%d which is not allocated.\n", id);
+The DMA channel might not be available at probe time. This is esp. the
+case if the DMA controller has an IOMMU mapping.
 
-Move the ID allocation more to the end of the probe() so that we still
-can use plain return in the first error cases.
+There is also another caveat. If there is no DMA controller at all,
+dma_request_chan() will also return -EPROBE_DEFER. Thus we cannot test
+for -EPROBE_DEFER in probe(). Otherwise the lpuart driver will fail to
+probe if, for example, the DMA driver is not enabled in the kernel
+configuration.
 
-Fixes: 3bc3206e1c0f ("serial: fsl_lpuart: Remove the alias node dependence")
+To workaround this, we request the DMA channel in _startup(). Other
+serial drivers do it the same way.
+
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- drivers/tty/serial/fsl_lpuart.c | 39 ++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
+ drivers/tty/serial/fsl_lpuart.c | 84 +++++++++++++++++++++------------
+ 1 file changed, 53 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 27fdc131c352..c31b8f3db6bf 100644
+index c31b8f3db6bf..0b8c477b32a3 100644
 --- a/drivers/tty/serial/fsl_lpuart.c
 +++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -264,6 +264,7 @@ struct lpuart_port {
- 	int			rx_dma_rng_buf_len;
- 	unsigned int		dma_tx_nents;
- 	wait_queue_head_t	dma_wait;
-+	bool			id_allocated;
- };
+@@ -1493,36 +1493,63 @@ static void rx_dma_timer_init(struct lpuart_port *sport)
+ static void lpuart_tx_dma_startup(struct lpuart_port *sport)
+ {
+ 	u32 uartbaud;
++	int ret;
  
- struct lpuart_soc_data {
-@@ -2422,19 +2423,6 @@ static int lpuart_probe(struct platform_device *pdev)
- 	if (!sport)
- 		return -ENOMEM;
- 
--	ret = of_alias_get_id(np, "serial");
--	if (ret < 0) {
--		ret = ida_simple_get(&fsl_lpuart_ida, 0, UART_NR, GFP_KERNEL);
--		if (ret < 0) {
--			dev_err(&pdev->dev, "port line is full, add device failed\n");
--			return ret;
+-	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
+-		init_waitqueue_head(&sport->dma_wait);
+-		sport->lpuart_dma_tx_use = true;
+-		if (lpuart_is_32(sport)) {
+-			uartbaud = lpuart32_read(&sport->port, UARTBAUD);
+-			lpuart32_write(&sport->port,
+-				       uartbaud | UARTBAUD_TDMAE, UARTBAUD);
+-		} else {
+-			writeb(readb(sport->port.membase + UARTCR5) |
+-				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
 -		}
--	}
--	if (ret >= ARRAY_SIZE(lpuart_ports)) {
--		dev_err(&pdev->dev, "serial%d out of range\n", ret);
--		return -EINVAL;
--	}
--	sport->port.line = ret;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sport->port.membase = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(sport->port.membase))
-@@ -2479,9 +2467,25 @@ static int lpuart_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	ret = of_alias_get_id(np, "serial");
-+	if (ret < 0) {
-+		ret = ida_simple_get(&fsl_lpuart_ida, 0, UART_NR, GFP_KERNEL);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "port line is full, add device failed\n");
-+			return ret;
-+		}
-+		sport->id_allocated = true;
++	sport->dma_tx_chan = dma_request_slave_channel(sport->port.dev, "tx");
++	if (!sport->dma_tx_chan) {
++		dev_info_once(sport->port.dev,
++			      "DMA tx channel request failed, operating without tx DMA\n");
++		goto err;
 +	}
-+	if (ret >= ARRAY_SIZE(lpuart_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", ret);
-+		ret = -EINVAL;
-+		goto failed_out_of_range;
-+	}
-+	sport->port.line = ret;
 +
- 	ret = lpuart_enable_clks(sport);
- 	if (ret)
--		return ret;
-+		goto failed_clock_enable;
- 	sport->port.uartclk = lpuart_get_baud_clk_rate(sport);
- 
- 	lpuart_ports[sport->port.line] = sport;
-@@ -2531,6 +2535,10 @@ static int lpuart_probe(struct platform_device *pdev)
- failed_attach_port:
- failed_irq_request:
- 	lpuart_disable_clks(sport);
-+failed_clock_enable:
-+failed_out_of_range:
-+	if (sport->id_allocated)
-+		ida_simple_remove(&fsl_lpuart_ida, sport->port.line);
- 	return ret;
++	ret = lpuart_dma_tx_request(&sport->port);
++	if (!ret)
++		goto err;
++
++	init_waitqueue_head(&sport->dma_wait);
++	sport->lpuart_dma_tx_use = true;
++	if (lpuart_is_32(sport)) {
++		uartbaud = lpuart32_read(&sport->port, UARTBAUD);
++		lpuart32_write(&sport->port,
++			       uartbaud | UARTBAUD_TDMAE, UARTBAUD);
+ 	} else {
+-		sport->lpuart_dma_tx_use = false;
++		writeb(readb(sport->port.membase + UARTCR5) |
++		       UARTCR5_TDMAS, sport->port.membase + UARTCR5);
+ 	}
++
++	return;
++
++err:
++	sport->lpuart_dma_tx_use = false;
  }
  
-@@ -2540,7 +2548,8 @@ static int lpuart_remove(struct platform_device *pdev)
+ static void lpuart_rx_dma_startup(struct lpuart_port *sport)
+ {
+-	if (sport->dma_rx_chan && !lpuart_start_rx_dma(sport)) {
+-		/* set Rx DMA timeout */
+-		sport->dma_rx_timeout = msecs_to_jiffies(DMA_RX_TIMEOUT);
+-		if (!sport->dma_rx_timeout)
+-			sport->dma_rx_timeout = 1;
++	int ret;
  
- 	uart_remove_one_port(&lpuart_reg, &sport->port);
+-		sport->lpuart_dma_rx_use = true;
+-		rx_dma_timer_init(sport);
+-	} else {
+-		sport->lpuart_dma_rx_use = false;
++	sport->dma_rx_chan = dma_request_slave_channel(sport->port.dev, "rx");
++	if (!sport->dma_rx_chan) {
++		dev_info_once(sport->port.dev,
++			      "DMA rx channel request failed, operating without rx DMA\n");
++		goto err;
+ 	}
++
++	ret = lpuart_start_rx_dma(sport);
++	if (ret)
++		goto err;
++
++	/* set Rx DMA timeout */
++	sport->dma_rx_timeout = msecs_to_jiffies(DMA_RX_TIMEOUT);
++	if (!sport->dma_rx_timeout)
++		sport->dma_rx_timeout = 1;
++
++	sport->lpuart_dma_rx_use = true;
++	rx_dma_timer_init(sport);
++
++	return;
++
++err:
++	sport->lpuart_dma_rx_use = false;
+ }
  
--	ida_simple_remove(&fsl_lpuart_ida, sport->port.line);
-+	if (sport->id_allocated)
-+		ida_simple_remove(&fsl_lpuart_ida, sport->port.line);
+ static int lpuart_startup(struct uart_port *port)
+@@ -1615,6 +1642,11 @@ static void lpuart_dma_shutdown(struct lpuart_port *sport)
+ 			dmaengine_terminate_all(sport->dma_tx_chan);
+ 		}
+ 	}
++
++	if (sport->dma_tx_chan)
++		dma_release_channel(sport->dma_tx_chan);
++	if (sport->dma_rx_chan)
++		dma_release_channel(sport->dma_rx_chan);
+ }
  
- 	lpuart_disable_clks(sport);
+ static void lpuart_shutdown(struct uart_port *port)
+@@ -2520,16 +2552,6 @@ static int lpuart_probe(struct platform_device *pdev)
  
+ 	sport->port.rs485_config(&sport->port, &sport->port.rs485);
+ 
+-	sport->dma_tx_chan = dma_request_slave_channel(sport->port.dev, "tx");
+-	if (!sport->dma_tx_chan)
+-		dev_info(sport->port.dev, "DMA tx channel request failed, "
+-				"operating without tx DMA\n");
+-
+-	sport->dma_rx_chan = dma_request_slave_channel(sport->port.dev, "rx");
+-	if (!sport->dma_rx_chan)
+-		dev_info(sport->port.dev, "DMA rx channel request failed, "
+-				"operating without rx DMA\n");
+-
+ 	return 0;
+ 
+ failed_attach_port:
 -- 
 2.20.1
 
