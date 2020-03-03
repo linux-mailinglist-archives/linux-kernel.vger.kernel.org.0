@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D54E177F16
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09173177F19
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbgCCRsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:48:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55792 "EHLO mail.kernel.org"
+        id S1731623AbgCCRso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:48:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730586AbgCCRsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:48:37 -0500
+        id S1730586AbgCCRsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:48:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2834420CC7;
-        Tue,  3 Mar 2020 17:48:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0EE22146E;
+        Tue,  3 Mar 2020 17:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257716;
-        bh=gevy0Y7WUjal6/sURl3hPhZqxBEX4jIYewIp5CtAAmA=;
+        s=default; t=1583257719;
+        bh=61cMcrHpCmck7DJMugnV0iIAxMjsJLcZIVyODY/uwUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SuH8/5kykIWdsfCKwnt84zmstIHdc1YDbZmt9/eEfdPjT3vnwP/zrMcd5tw6Np2RM
-         g/0W7znOxuh+i8A7GZiUAm0n04X32b9okZ/Bcwe8lxke5+BO7S7ScmC2BsCPl1q2PF
-         tpRHDJuslZ6Dy5uI6N/iQiShUl07xC+yTN3O8ojs=
+        b=sPqpS7Xhfkq/qcOmLOd6WKUNSLhpZ1U/DS5nK+hgmf60p92bOx89OcOk6/x5F1ISt
+         mvfklErgL2BenTOQHW7CBfcBsKiDrV6YLl7ySJbPEsxZeHnzDkbuMzfGn3qqklXMEi
+         4svP0LJcZfE1D0Vh1toNgK8uJf6xG/CRmGajuZnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        stable@vger.kernel.org, Guangbin Huang <huangguangbin2@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 076/176] net: hns3: fix VF bandwidth does not take effect in some case
-Date:   Tue,  3 Mar 2020 18:42:20 +0100
-Message-Id: <20200303174313.420985834@linuxfoundation.org>
+Subject: [PATCH 5.5 077/176] net: hns3: fix a copying IPv6 address error in hclge_fd_get_flow_tuples()
+Date:   Tue,  3 Mar 2020 18:42:21 +0100
+Message-Id: <20200303174313.526363215@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
 References: <20200303174304.593872177@linuxfoundation.org>
@@ -45,39 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Guangbin Huang <huangguangbin2@huawei.com>
 
-[ Upstream commit 19eb1123b4e9337fe20b1763fec528f837ec6568 ]
+[ Upstream commit 47327c9315b2f3ae4ab659457977a26669631f20 ]
 
-When enabling 4 TC after setting the bandwidth of VF, the bandwidth
-of VF will resume to default value, because of the qset resources
-changed in this case.
+The IPv6 address defined in struct in6_addr is specified as
+big endian, but there is no specified endian in struct
+hclge_fd_rule_tuples, so it  will cause a problem if directly
+use memcpy() to copy ipv6 address between these two structures
+since this field in struct hclge_fd_rule_tuples is little endian.
 
-This patch fixes it by using a fixed VF's qset resources according to
-HNAE3_MAX_TC macro.
+This patch fixes this problem by using be32_to_cpu() to convert
+endian of IPv6 address of struct in6_addr before copying.
 
-Fixes: ee9e44248f52 ("net: hns3: add support for configuring bandwidth of VF on the host")
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Fixes: d93ed94fbeaf ("net: hns3: add aRFS support for PF")
+Signed-off-by: Guangbin Huang <huangguangbin2@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 180224eab1ca4..28db13253a5e7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -566,7 +566,7 @@ static void hclge_tm_vport_tc_info_update(struct hclge_vport *vport)
- 	 */
- 	kinfo->num_tc = vport->vport_id ? 1 :
- 			min_t(u16, vport->alloc_tqps, hdev->tm_info.num_tc);
--	vport->qs_offset = (vport->vport_id ? hdev->tm_info.num_tc : 0) +
-+	vport->qs_offset = (vport->vport_id ? HNAE3_MAX_TC : 0) +
- 				(vport->vport_id ? (vport->vport_id - 1) : 0);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index bfdb08572f0cc..5d74f5a60102a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -6106,6 +6106,9 @@ static int hclge_get_all_rules(struct hnae3_handle *handle,
+ static void hclge_fd_get_flow_tuples(const struct flow_keys *fkeys,
+ 				     struct hclge_fd_rule_tuples *tuples)
+ {
++#define flow_ip6_src fkeys->addrs.v6addrs.src.in6_u.u6_addr32
++#define flow_ip6_dst fkeys->addrs.v6addrs.dst.in6_u.u6_addr32
++
+ 	tuples->ether_proto = be16_to_cpu(fkeys->basic.n_proto);
+ 	tuples->ip_proto = fkeys->basic.ip_proto;
+ 	tuples->dst_port = be16_to_cpu(fkeys->ports.dst);
+@@ -6114,12 +6117,12 @@ static void hclge_fd_get_flow_tuples(const struct flow_keys *fkeys,
+ 		tuples->src_ip[3] = be32_to_cpu(fkeys->addrs.v4addrs.src);
+ 		tuples->dst_ip[3] = be32_to_cpu(fkeys->addrs.v4addrs.dst);
+ 	} else {
+-		memcpy(tuples->src_ip,
+-		       fkeys->addrs.v6addrs.src.in6_u.u6_addr32,
+-		       sizeof(tuples->src_ip));
+-		memcpy(tuples->dst_ip,
+-		       fkeys->addrs.v6addrs.dst.in6_u.u6_addr32,
+-		       sizeof(tuples->dst_ip));
++		int i;
++
++		for (i = 0; i < IPV6_SIZE; i++) {
++			tuples->src_ip[i] = be32_to_cpu(flow_ip6_src[i]);
++			tuples->dst_ip[i] = be32_to_cpu(flow_ip6_dst[i]);
++		}
+ 	}
+ }
  
- 	max_rss_size = min_t(u16, hdev->rss_size_max,
 -- 
 2.20.1
 
