@@ -2,184 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4572A177D6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87978177D45
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:22:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbgCCRZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:25:53 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59942 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbgCCRZx (ORCPT
+        id S1730115AbgCCRWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:22:12 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35948 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729570AbgCCRWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:25:53 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dafna)
-        with ESMTPSA id C35B928E664
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-To:     devicetree@vger.kernel.org
-Cc:     nick@shmanahar.org, dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        enric.balletbo@collabora.com, dafna.hirschfeld@collabora.com,
-        helen.koike@collabora.com, ezequiel@collabora.com,
-        kernel@collabora.com, dafna3@gmail.com
-Subject: [PATCH] dt-bindings: input: atmel_mxt_ts: convert atmel,maxtouch.txt to yaml
-Date:   Tue,  3 Mar 2020 19:25:33 +0200
-Message-Id: <20200303172533.30602-1-dafna.hirschfeld@collabora.com>
+        Tue, 3 Mar 2020 12:22:12 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 023HMBTi113154;
+        Tue, 3 Mar 2020 11:22:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583256131;
+        bh=SBRUU+j3XyFM6R2K8Qs7x9a1C38P7C+RT5tCbBFb0hI=;
+        h=From:To:CC:Subject:Date;
+        b=v7cg1KPn7IPdLZAVsY8/27/RR2l/nN/JHJRMrmyrf+EvYnjV8LHzuUAqDypAq5NQ+
+         U5M37Me3JuTQ+RqasRWnfiGIJJei/PY1n0I2SrZIT19bIbPQ0afRfGFO3Apd6e4KN/
+         oLSJ87u3nPajtUs3837qNK5DNjfYtJDlXqpYWiGs=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 023HMBKj077381
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Mar 2020 11:22:11 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 3 Mar
+ 2020 11:22:10 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 3 Mar 2020 11:22:10 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 023HMAq0014433;
+        Tue, 3 Mar 2020 11:22:10 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>,
+        <stable@vger.kernel.org>
+Subject: [Patch] media: ti-vpe: cal: fix a kernel oops when unloading module
+Date:   Tue, 3 Mar 2020 11:26:29 -0600
+Message-ID: <20200303172629.21339-1-bparrot@ti.com>
 X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the binding file atmel,maxtouch.txt to yaml format.
-Also change the file name in the MAINTAINERS file.
+After the switch to use v4l2_async_notifier_add_subdev() and
+v4l2_async_notifier_cleanup(), unloading the ti_cal module would casue a
+kernel oops.
 
-This was tested and verified on ARM and ARM64 with:
+This was root cause to the fact that v4l2_async_notifier_cleanup() tries
+to kfree the asd pointer passed into v4l2_async_notifier_add_subdev().
 
-make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
-make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+In our case the asd reference was from a statically allocated struct.
+So in effect v4l2_async_notifier_cleanup() was trying to free a pointer
+that was not kalloc.
 
-Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+So here we switch to using a kzalloc struct instead of a static one.
+
+Fixes: d079f94c9046 ("media: platform: Switch to v4l2_async_notifier_add_subdev")
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
 ---
- .../bindings/input/atmel,maxtouch.txt         | 41 ------------
- .../bindings/input/atmel,maxtouch.yaml        | 64 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 65 insertions(+), 42 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/atmel,maxtouch.txt
- create mode 100644 Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+ drivers/media/platform/ti-vpe/cal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-deleted file mode 100644
-index c88919480d37..000000000000
---- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--Atmel maXTouch touchscreen/touchpad
--
--Required properties:
--- compatible:
--    atmel,maxtouch
--
--    The following compatibles have been used in various products but are
--    deprecated:
--	atmel,qt602240_ts
--	atmel,atmel_mxt_ts
--	atmel,atmel_mxt_tp
--	atmel,mXT224
--
--- reg: The I2C address of the device
--
--- interrupts: The sink for the touchpad's IRQ output
--    See ../interrupt-controller/interrupts.txt
--
--Optional properties for main touchpad device:
--
--- linux,gpio-keymap: When enabled, the SPT_GPIOPWN_T19 object sends messages
--    on GPIO bit changes. An array of up to 8 entries can be provided
--    indicating the Linux keycode mapped to each bit of the status byte,
--    starting at the LSB. Linux keycodes are defined in
--    <dt-bindings/input/input.h>.
--
--    Note: the numbering of the GPIOs and the bit they start at varies between
--    maXTouch devices. You must either refer to the documentation, or
--    experiment to determine which bit corresponds to which input. Use
--    KEY_RESERVED for unused padding values.
--
--- reset-gpios: GPIO specifier for the touchscreen's reset pin (active low)
--
--Example:
--
--	touch@4b {
--		compatible = "atmel,maxtouch";
--		reg = <0x4b>;
--		interrupt-parent = <&gpio>;
--		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
--	};
-diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
-new file mode 100644
-index 000000000000..024dc4ded4f3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/atmel,maxtouch.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel maXTouch touchscreen/touchpad
-+
-+maintainers:
-+  - Nick Dyer <nick@shmanahar.org>
-+
-+description: |
-+  Atmel maXTouch touchscreen/touchpad
-+
-+properties:
-+  compatible:
-+    const: atmel,maxtouch
-+
-+  reg:
-+    description: The I2C address of the device
-+    maxItems: 1
-+
-+  interrupts:
-+    description: The sink for the touchpad's IRQ output
-+
-+  linux,gpio-keymap:
-+    description:
-+      When enabled, the SPT_GPIOPWN_T19 object sends messages
-+      on GPIO bit changes. An array of up to 8 entries can be provided
-+      indicating the Linux keycode mapped to each bit of the status byte,
-+      starting at the LSB. Linux keycodes are defined in
-+      <dt-bindings/input/input.h>.
-+      Note, the numbering of the GPIOs and the bit they start at varies between
-+      maXTouch devices. You must either refer to the documentation, or
-+      experiment to determine which bit corresponds to which input. Use
-+      KEY_RESERVED for unused padding values.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    maxItems: 8
-+
-+  reset-gpios:
-+    description: GPIO specifier for the touchscreen's reset pin (active low)
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/tegra-gpio.h>
-+    i2c {
-+          #address-cells = <1>;
-+          #size-cells = <0>;
-+          touch@4b {
-+                compatible = "atmel,maxtouch";
-+                reg = <0x4b>;
-+                interrupt-parent = <&gpio>;
-+                interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
-+          };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46fdb834d1fb..d553aa315734 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2877,7 +2877,7 @@ ATMEL MAXTOUCH DRIVER
- M:	Nick Dyer <nick@shmanahar.org>
- T:	git git://github.com/ndyer/linux.git
- S:	Maintained
--F:	Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-+F:	Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
- F:	drivers/input/touchscreen/atmel_mxt_ts.c
+diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+index 6d4cbb8782ed..18fe2cb9dd17 100644
+--- a/drivers/media/platform/ti-vpe/cal.c
++++ b/drivers/media/platform/ti-vpe/cal.c
+@@ -372,8 +372,6 @@ struct cal_ctx {
+ 	struct v4l2_subdev	*sensor;
+ 	struct v4l2_fwnode_endpoint	endpoint;
  
- ATMEL WIRELESS DRIVER
+-	struct v4l2_async_subdev asd;
+-
+ 	struct v4l2_fh		fh;
+ 	struct cal_dev		*dev;
+ 	struct cc_data		*cc;
+@@ -2032,7 +2030,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
+ 
+ 	parent = pdev->dev.of_node;
+ 
+-	asd = &ctx->asd;
+ 	endpoint = &ctx->endpoint;
+ 
+ 	ep_node = NULL;
+@@ -2040,6 +2037,10 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
+ 	sensor_node = NULL;
+ 	ret = -EINVAL;
+ 
++	asd = kzalloc(sizeof(*asd), GFP_KERNEL);
++	if (!asd)
++		goto cleanup_exit;
++
+ 	ctx_dbg(3, ctx, "Scanning Port node for csi2 port: %d\n", inst);
+ 	for (index = 0; index < CAL_NUM_CSI2_PORTS; index++) {
+ 		port = of_get_next_port(parent, port);
 -- 
 2.17.1
 
