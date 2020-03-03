@@ -2,83 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB4617719D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E001E177147
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:30:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgCCIz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 03:55:26 -0500
-Received: from paleale.coelho.fi ([176.9.41.70]:60330 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726661AbgCCIz0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:55:26 -0500
-X-Greylist: delayed 1463 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 03:55:25 EST
-Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa)
-        by farmhouse.coelho.fi with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.92.2)
-        (envelope-from <luca@coelho.fi>)
-        id 1j92wh-0003yi-5b; Tue, 03 Mar 2020 10:30:37 +0200
-Message-ID: <c2de2c8548d47945d4d3708c6b1c6a992d9e8cc3.camel@coelho.fi>
-From:   Luca Coelho <luca@coelho.fi>
-To:     Kalle Valo <kvalo@codeaurora.org>, Leho Kraav <leho@kraav.com>
-Cc:     "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <871rqauhbp.fsf@tynnyri.adurom.net>
-References: <20191224051639.6904-1-jan.steffens@gmail.com>
-         <20200221121135.GA9056@papaya> <871rqauhbp.fsf@tynnyri.adurom.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727722AbgCCIan convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 3 Mar 2020 03:30:43 -0500
+Received: from smtp.h3c.com ([60.191.123.56]:58557 "EHLO h3cspam01-ex.h3c.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbgCCIan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 03:30:43 -0500
+Received: from DAG2EX10-IDC.srv.huawei-3com.com ([10.8.0.73])
+        by h3cspam01-ex.h3c.com with ESMTPS id 0238TnnQ033014
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Mar 2020 16:29:49 +0800 (GMT-8)
+        (envelope-from tian.xianting@h3c.com)
+Received: from DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) by
+ DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 3 Mar 2020 16:29:51 +0800
+Received: from BJHUB02-EX.srv.huawei-3com.com (10.63.20.170) by
+ DAG2EX10-IDC.srv.huawei-3com.com (10.8.0.73) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.1.1713.5
+ via Frontend Transport; Tue, 3 Mar 2020 16:29:51 +0800
+Received: from localhost.localdomain (10.99.212.201) by rndsmtp.h3c.com
+ (10.63.20.175) with Microsoft SMTP Server id 14.3.408.0; Tue, 3 Mar 2020
+ 16:29:41 +0800
+From:   Xianting Tian <tian.xianting@h3c.com>
+To:     <akpm@linux-foundation.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Xianting Tian <tian.xianting@h3c.com>
+Subject: [PATCH] mm/filemap.c: clear page error before actual read
+Date:   Tue, 3 Mar 2020 16:25:41 +0800
+Message-ID: <20200303082541.33354-1-tian.xianting@h3c.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Date:   Tue, 03 Mar 2020 10:17:07 +0200
-User-Agent: Evolution 3.34.1-4 
-Content-Transfer-Encoding: 7bit
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on farmhouse.coelho.fi
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        TVD_RCVD_IP,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: Re: [PATCH] iwlwifi: pcie: restore support for Killer Qu C0 NICs
+Content-Type: text/plain
+X-Originating-IP: [10.99.212.201]
+Content-Transfer-Encoding: 8BIT
+X-DNSRBL: 
+X-MAIL: h3cspam01-ex.h3c.com 0238TnnQ033014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-03 at 07:40 +0200, Kalle Valo wrote:
-> Leho Kraav <leho@kraav.com> writes:
-> 
-> > On Tue, Dec 24, 2019 at 06:16:39AM +0100, Jan Alexander Steffens (heftig) wrote:
-> > > Commit 809805a820c6 ("iwlwifi: pcie: move some cfg mangling from
-> > > trans_pcie_alloc to probe") refactored the cfg mangling. Unfortunately,
-> > > in this process the lines which picked the right cfg for Killer Qu C0
-> > > NICs after C0 detection were lost. These lines were added by commit
-> > > b9500577d361 ("iwlwifi: pcie: handle switching killer Qu B0 NICs to
-> > > C0").
-> > > 
-> > > I suspect this is more of the "merge damage" which commit 7cded5658329
-> > > ("iwlwifi: pcie: fix merge damage on making QnJ exclusive") talks about.
-> > > 
-> > > Restore the missing lines so the driver loads the right firmware for
-> > > these NICs.
-> > 
-> > This seems real, as upgrading 5.5.0 -> 5.5.5 just broke my iwlwifi on XPS 7390.
-> > How come?
-> 
-> Luca, should I apply this to wireless-drivers?
-> 
-> https://patchwork.kernel.org/patch/11309095/
+Mount failure issue happens under the scenario:
+Application totally forked dozens of threads to mount the same
+number of cramfs images separately in docker, but several mounts
+failed with high probability.
+Mount failed due to the checking result of the page
+(read from the superblock of loop dev) is not uptodate after
+wait_on_page_locked(page) returned in function cramfs_read:
+   wait_on_page_locked(page);
+   if (!PageUptodate(page)) {
+      ...
+   }
 
-Yes, please take it to wireless-drivers.  I've reassigned it to you.
+The reason of the checking result of the page not uptodate:
+systemd-udevd read the loopX dev before mount, because the status
+of loopX is Lo_unbound at this time, so loop_make_request directly
+trigger the calling of io_end handler end_buffer_async_read, which
+called SetPageError(page). So It caused the page can't be set to
+uptodate in function end_buffer_async_read:
+   if(page_uptodate && !PageError(page)) {
+      SetPageUptodate(page);
+   }
+Then mount operation is performed, it used the same page which is
+just accessed by systemd-udevd above, Because this page is not
+uptodate, it will launch a actual read via submit_bh, then wait on
+this page by calling wait_on_page_locked(page). When the I/O of the
+page done, io_end handler end_buffer_async_read is called, because
+no one cleared the page error(during the whole read path of mount),
+which is caused by systemd-udevd, so this page is still in "PageError"
+status, which is can't be set to uptodate in function
+end_buffer_async_read, then caused mount failure.
 
-But please note that this will conflict with another patch that is
-already in v5.6-rc* that introduced this code again in a different way:
+But sometimes mount succeed even through systemd-udeved read loop
+dev just before, The reason is systemd-udevd launched other loopX
+read just between step 3.1 and 3.2, the steps as below:
+1, loopX dev default status is Lo_unbound;
+2, systemd-udved read loopX dev (page is set to PageError);
+3, mount operation
+   1) set loopX status to Lo_bound;
+    ==>systemd-udevd read loopX dev<==
+   2) read loopX dev(page has no error)
+   3) mount succeed
+As the loopX dev status is set to Lo_bound after step 3.1, so the
+other loopX dev read by systemd-udevd will go through the whole I/O
+stack, part of the call trace as below:
+   SYS_read
+      vfs_read
+          do_sync_read
+              blkdev_aio_read
+                 generic_file_aio_read
+                     do_generic_file_read:
+                         ClearPageError(page);
+                         mapping->a_ops->readpage(filp, page);
+here, mapping->a_ops->readpage() is blkdev_readpage.
+In latest kernel, some function name changed, the call trace as
+below:
+   blkdev_read_iter
+      generic_file_read_iter
+         generic_file_buffered_read:
+            /*
+             * A previous I/O error may have been due to temporary
+             * failures, eg. multipath errors.
+             * PG_error will be set again if readpage fails.
+             */
+            ClearPageError(page);
+            /* Start the actual read.The read will unlock the page*/
+            error = mapping->a_ops->readpage(filp, page);
 
-https://patchwork.kernel.org/patch/11318849/
+We can see ClearPageError(page) is called before the actual read,
+then the read in step 3.2 succeed, page has no error.
 
+The patch is to add the calling of ClearPageError just before the
+actual read of mount read path. Without the patch, the call trace
+as below when performing mount:
+  Do_mount
+     ramfs_read
+       cramfs_blkdev_read
+          read_mapping_page
+             read_cache_page
+                 do_read_cache_page:
+                    filler(data, page);
+                    or mapping->a_ops->readpage(data, page);
+With the patch, the call trace as below when performing mount:
+  Do_mount
+     cramfs_read
+        cramfs_blkdev_read
+           read_mapping_page
+              read_cache_page
+                 do_read_cache_page:
+                    ClearPageError(page); <==new add
+                    filler(data, page);
+                    or mapping->a_ops->readpage(data, page);
+
+With the patch, mount operation trigger the calling of
+ClearPageError(page) before the actual read, the page has no
+error if no additional page error happen when I/O done.
+
+Signed-off-by: Xianting Tian <tian.xianting@h3c.com>
+---
+ mm/filemap.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 178447827..d65428f26 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2755,6 +2755,13 @@ static struct page *do_read_cache_page(struct address_space *mapping,
+                }
+
+ filler:
++               /*
++                * A previous I/O error may have been due to temporary
++                * failures.
++                * Clear page error before actual read, PG_error will be
++                * set again if read page fails.
++                */
++               ClearPageError(page);
+                if (filler)
+                        err = filler(data, page);
+                else
 --
-Cheers,
-Luca.
+2.17.1
 
+-------------------------------------------------------------------------------------------------------------------------------------
+本邮件及其附件含有新华三集团的保密信息，仅限于发送给上面地址中列出
+的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、
+或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本
+邮件！
+This e-mail and its attachments contain confidential information from New H3C, which is
+intended only for the person or entity whose address is listed above. Any use of the
+information contained herein in any way (including, but not limited to, total or partial
+disclosure, reproduction, or dissemination) by persons other than the intended
+recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender
+by phone or email immediately and delete it!
