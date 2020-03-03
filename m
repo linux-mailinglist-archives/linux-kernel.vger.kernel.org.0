@@ -2,141 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28512177691
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DD74177698
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbgCCNDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:03:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58220 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729153AbgCCNDA (ORCPT
+        id S1729247AbgCCNDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:03:36 -0500
+Received: from us-smtp-delivery-148.mimecast.com ([216.205.24.148]:49871 "EHLO
+        us-smtp-delivery-148.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728488AbgCCNDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:03:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583240578;
+        Tue, 3 Mar 2020 08:03:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rambus.com;
+        s=mimecast20161209; t=1583240614;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fxyaJBCKdEug50sQ1sIk2q1FJ4yKhmLVJVdWUZZRTgs=;
-        b=QrppHo0ATY5vjVyun6UV2UEqgyLDU+QZ2u2AzubDepqbNYA9+w82OY/vhM3yJUg+gWJQXe
-        uVVMcKnB78+b0kmD2gnQsgIybPQWFVnsU6hzQVoBc0Cp4idAIQ1ytGiSHVoTX2TmiQB+4s
-        SFx3b8zPVEHYg2wMrJoFkN2zr4gF7iU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-9NbOYUycNtCOeJbhf3yb9g-1; Tue, 03 Mar 2020 08:02:57 -0500
-X-MC-Unique: 9NbOYUycNtCOeJbhf3yb9g-1
-Received: by mail-wr1-f70.google.com with SMTP id m18so1170238wro.22
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 05:02:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=fxyaJBCKdEug50sQ1sIk2q1FJ4yKhmLVJVdWUZZRTgs=;
-        b=T4VdG/+GwmL8e9Yd+Jr5mxHG45jAWswvMrfiY7mG9C8mPZ3heLuJP1Z/LjSpgCsxj+
-         dH1v41MgFNCqpy+6yezQ5asGAzFIQ5V81+VVH5MBsLOwyNyLVU/Yah9zvMBU5HKG48fT
-         Md/9uFNn25/eoEQs5yMgZ+BCcJyrsW8GiyGqGk27sEjiW8RRyV29JE+VVJTNlLsdF13o
-         r/EJE/wmOkGF1kB4BDCSDqln6tJLQZbTxQsYUPXyJhA4yuco4ly1C3QPNvWLMb2u4rqQ
-         Cy73R6vL23jMqa9y0DcJBX8rKp9PEYoCDIIDtULBIqx4TbaOgxfsb02jiqcQUywq82KI
-         ssnQ==
-X-Gm-Message-State: ANhLgQ309ScNTuXQqPbIca1+8VpIH8PzipGCJ6fUkUwoZn1lzvUllz0n
-        WsLT498uV2wRxkq0g1BRb9WGvfGkK+JIkH8B1oOaMgFgvuom8c9ZwHG4y6oGv9rQCZs6mo3bS7U
-        q4w+5B6IVYcRup0QQQMwckzxH
-X-Received: by 2002:adf:f84a:: with SMTP id d10mr5547887wrq.208.1583240576044;
-        Tue, 03 Mar 2020 05:02:56 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vu05HQ3OHj9N3aJ8iNGgT/jLI2sDvyFRtk26XLwFnJjSUTHXBpAo4czkkiEuXW6nhpwE+4fTg==
-X-Received: by 2002:adf:f84a:: with SMTP id d10mr5547859wrq.208.1583240575803;
-        Tue, 03 Mar 2020 05:02:55 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id a7sm34797870wrm.29.2020.03.03.05.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 05:02:55 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Oliver Upton <oupton@google.com>
-Subject: Re: [GIT PULL] KVM changes for Linux 5.6-rc4
-In-Reply-To: <8fbeb3c2-9627-bf41-d798-bafba22073e3@redhat.com>
-References: <1582570669-45822-1-git-send-email-pbonzini@redhat.com> <87zhcyfvmk.fsf@vitty.brq.redhat.com> <8fbeb3c2-9627-bf41-d798-bafba22073e3@redhat.com>
-Date:   Tue, 03 Mar 2020 14:02:54 +0100
-Message-ID: <87tv35fv5t.fsf@vitty.brq.redhat.com>
+        bh=xLV2zMe6hbN0+MRxExgy8pJsTWtxchwYRNVXwewA9vo=;
+        b=gANrYOsIwwtTZgwcBfQRgbpAS0+mZBTFli4d5pgKOixFiLuUeSOVPMqO1kbE3fR4FvRkQ/
+        BLWGVNffO4N6aHNfujsNXg6R2c8V7D/To1/gkhp11e/Wn828UbFABg01PtpQpCwHhDqrSe
+        ScvrJ/W16Hic80qcR6WxQ5hS8tCJZGs=
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12lp2042.outbound.protection.outlook.com [104.47.66.42]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ us-mta-301-64VPDK7RMMyxNWOqYB3gnA-1; Tue, 03 Mar 2020 08:03:32 -0500
+X-MC-Unique: 64VPDK7RMMyxNWOqYB3gnA-1
+Received: from CY4PR0401MB3652.namprd04.prod.outlook.com
+ (2603:10b6:910:8a::27) by CY4PR0401MB3617.namprd04.prod.outlook.com
+ (2603:10b6:910:8e::39) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.19; Tue, 3 Mar
+ 2020 13:03:29 +0000
+Received: from CY4PR0401MB3652.namprd04.prod.outlook.com
+ ([fe80::9486:c6fe:752d:5eda]) by CY4PR0401MB3652.namprd04.prod.outlook.com
+ ([fe80::9486:c6fe:752d:5eda%3]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 13:03:29 +0000
+From:   "Van Leeuwen, Pascal" <pvanleeuwen@rambus.com>
+To:     Milan Broz <gmazyland@gmail.com>,
+        Andrei Botila <andrei.botila@oss.nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC] crypto: xts - limit accepted key length
+Thread-Topic: [RFC] crypto: xts - limit accepted key length
+Thread-Index: AQHV8Gr7c7FFE6Bn/kS7vrAYuVJAN6g09vgAgAHYvYCAAAViQA==
+Date:   Tue, 3 Mar 2020 13:03:28 +0000
+Message-ID: <CY4PR0401MB3652AA8D2AC4190E8205C678C3E40@CY4PR0401MB3652.namprd04.prod.outlook.com>
+References: <b8c0cbbf0cb94e389bae5ae3da77596d@DM6PR20MB2762.namprd20.prod.outlook.com>
+ <CY4PR0401MB3652818432E5A28BC5089E15C3E70@CY4PR0401MB3652.namprd04.prod.outlook.com>
+ <72e1866a-9202-8d5b-f67b-8d9a63d888a7@gmail.com>
+In-Reply-To: <72e1866a-9202-8d5b-f67b-8d9a63d888a7@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [159.100.118.162]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ac3956bf-1fee-4d33-dd45-08d7bf7344c7
+x-ms-traffictypediagnostic: CY4PR0401MB3617:
+x-microsoft-antispam-prvs: <CY4PR0401MB3617D16D638292405ED83A4DC3E40@CY4PR0401MB3617.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 03319F6FEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39850400004)(346002)(376002)(366004)(189003)(199004)(9686003)(52536014)(55016002)(316002)(8936002)(71200400001)(478600001)(81156014)(81166006)(8676002)(66476007)(33656002)(76116006)(54906003)(110136005)(66446008)(66556008)(66946007)(64756008)(4326008)(26005)(186003)(86362001)(5660300002)(53546011)(7696005)(6506007)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR0401MB3617;H:CY4PR0401MB3652.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ULp57hQGO5ZRy0wX658sinqPJLeXVggFqXMVbTUWEDhhSSEQjuVHsVbik6fP9ohsm0eBEDmbvKPn9dJxsUNqfsmLsNuh4NVREZpm9PERbbJVwox0CylQnbgoklN/Wra1j5kMstfhtqF3rwPhF8kleCj0sA4HKtrNBwJr2soOokWmKpd8banTlsEDMn2OVVShgjTd3DpY9RMWrr+dVAUDjxClkq9XK4LDt81VTUXA2gFEmr+Fa4GgekShnT3AVupepvviYx0JT1L2eSjCm0rev4U+PDX+L4o0nQT28wy89fXiUebcbjLYw81ISx2VuMoGmxd40rWudBp//NrLe9klQFaPpCLlt7JMfBv7jgU+Ci5VXtnc299FyAESX/Ixv7pX1S/N4kCKjwLzygk8A43pdh127JfjuNIGiUXheMmygAFq48N6NhtxOwKcAmbVp1aQ
+x-ms-exchange-antispam-messagedata: jwW97GD9wZLfNzNVUtlASUUZh61am8yYNrDmkv+mkU00w8rIi5yjjG8rWDBUnnWjwc4UJKEurzqoKjnggvVMEwxVAN1/g+CzAY6hftQLLzl8GyvTMUdpgr2/yCFV7mO2e5Xytr45nglsbqlHadVGRw==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: rambus.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac3956bf-1fee-4d33-dd45-08d7bf7344c7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 13:03:29.0978
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bd0ba799-c2b9-413c-9c56-5d1731c4827c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6273Aob4xLUljLolhC2YhsJnEMIt7flCuAW0tjn3CVmbAsQPT7ZaTCy14uwo69Df6no3IMZkXV7l+Bj1tmbyvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0401MB3617
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: rambus.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
-
-> On 02/03/20 19:40, Vitaly Kuznetsov wrote:
->> 
->>  qemu-system-x86-23579 [005] 22018.775584: kvm_exit:             reason EPT_VIOLATION rip 0xfffff802987d6169 info 181 0
->>  qemu-system-x86-23579 [005] 22018.775584: kvm_nested_vmexit:    rip fffff802987d6169 reason EPT_VIOLATION info1 181 info2 0 int_info 0 int_info_err 0
->>  qemu-system-x86-23579 [005] 22018.775585: kvm_page_fault:       address febd0000 error_code 181
->>  qemu-system-x86-23579 [005] 22018.775592: kvm_emulate_insn:     0:fffff802987d6169: f3 a5
->>  qemu-system-x86-23579 [005] 22018.775593: kvm_emulate_insn:     0:fffff802987d6169: f3 a5 FAIL
->>  qemu-system-x86-23579 [005] 22018.775596: kvm_inj_exception:    #UD (0x0)
->> 
->> We probably need to re-enable instruction emulation for something...
->
-> This is a rep movsw instruction, it shouldn't be intercepted.  I think
-> we have a stale ctxt->intercept because the
->
->         /* Fields above regs are cleared together. */
->
-> comment is not true anymore since
->
->     commit c44b4c6ab80eef3a9c52c7b3f0c632942e6489aa
->     Author: Bandan Das <bsd@redhat.com>
->     Date:   Wed Apr 16 12:46:12 2014 -0400
->
->     KVM: emulate: clean up initializations in init_decode_cache
->
-
-Right you are,
-
-a big hammer like
-
-diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
-index 2a8f2bd..52c9bce 100644
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -324,14 +324,6 @@ struct x86_emulate_ctxt {
-         */
- 
-        /* current opcode length in bytes */
--       u8 opcode_len;
--       u8 b;
--       u8 intercept;
--       u8 op_bytes;
--       u8 ad_bytes;
--       struct operand src;
--       struct operand src2;
--       struct operand dst;
-        union {
-                int (*execute)(struct x86_emulate_ctxt *ctxt);
-                fastop_t fop;
-@@ -343,6 +335,14 @@ struct x86_emulate_ctxt {
-         * or elsewhere
-         */
-        bool rip_relative;
-+       u8 opcode_len;
-+       u8 b;
-+       u8 intercept;
-+       u8 op_bytes;
-+       u8 ad_bytes;
-+       struct operand src;
-+       struct operand src2;
-+       struct operand dst;
-        u8 rex_prefix;
-        u8 lock_prefix;
-        u8 rep_prefix;
-
-seems to make the issue go away. (For those wondering why fielf
-shuffling makes a difference: init_decode_cache() clears
-[rip_relative, modrm) range) How did this even work before...
-(I'm still looking at the code, stay tuned...)
-
--- 
-Vitaly
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNaWxhbiBCcm96IDxnbWF6eWxh
+bmRAZ21haWwuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBNYXJjaCAzLCAyMDIwIDE6MzYgUE0NCj4g
+VG86IFZhbiBMZWV1d2VuLCBQYXNjYWwgPHB2YW5sZWV1d2VuQHJhbWJ1cy5jb20+OyBBbmRyZWkg
+Qm90aWxhIDxhbmRyZWkuYm90aWxhQG9zcy5ueHAuY29tPjsgSGVyYmVydCBYdQ0KPiA8aGVyYmVy
+dEBnb25kb3IuYXBhbmEub3JnLmF1PjsgRGF2aWQgUy4gTWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQu
+bmV0Pg0KPiBDYzogbGludXgtY3J5cHRvQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1JGQ10gY3J5cHRvOiB4dHMgLSBsaW1pdCBh
+Y2NlcHRlZCBrZXkgbGVuZ3RoDQo+DQo+IDw8PCBFeHRlcm5hbCBFbWFpbCA+Pj4NCj4gT24gMDIv
+MDMvMjAyMCAwOTozMywgVmFuIExlZXV3ZW4sIFBhc2NhbCB3cm90ZToNCj4gPiBIbW0gLi4uIGlu
+IHByaW5jaXBsZSBJRUVFLTE2MTkgYWxzbyBkZWZpbmVzIFhUUyAqb25seSogZm9yIEFFUy4gU28g
+YnkgdGhhdCAgc2FtZQ0KPiA+IHJlYXNvbmluZywgeW91IHNob3VsZCBhbHNvIG5vdCBhbGxvdyBh
+bnkgdXNhZ2Ugb2YgWFRTIGJleW9uZCBBRVMuIFlldCBpdCBpcw0KPiA+IGFjdHVhbGx5IGJlaW5n
+IGFjdGl2ZWx5IHVzZWQoPykgd2l0aCBvdGhlciBjaXBoZXJzIGluIHRoZSBMaW51eCBrZXJuZWwu
+DQo+IEp1c3QgRllJIC0geWVzLCBpdCBpcyBhY3RpdmVseSB1c2VkIHdpdGggb3RoZXIgY2lwaGVy
+cy4NCj4NCj4gVGhlcmUgaXMgYSBsb3Qgb2YgTFVLUyBkZXZpY2VzIHRoYXQgdXNlIFNlcnBlbnQg
+b3IgVHdvZmlzaCB3aXRoIFhUUyBtb2RlLg0KPg0KPiBUaGUgc2FtZSBmb3IgVHJ1ZUNyeXB0L1Zl
+cmFDcnlwdCwgaGVyZSBzb21ldGltZXMgaXQgaXMgdXNlZCBhbHNvIGluIGNpcGhlciBjaGFpbg0K
+PiAoYm90aCBuYXRpdmUgYmluYXJpZXMgb3IgY3J5cHRzZXR1cCBjb2RlIHVzZSBkbS1jcnlwdCB3
+aXRoIGNyeXB0byBBUEkgaGVyZSkuDQo+DQo+IFhUUyBtb2RlIGlzIGRlc2lnbmVkIGZvciBzdG9y
+YWdlIGVuY3J5cHRpb24gb25seSAtIGFuZCBhdCBsZWFzdCBmb3IgZGlzayBlbmNyeXB0aW9uDQo+
+IEkgaGF2ZSBuZXZlciBzZWVuIHJlcXVlc3QgZm9yIDE5MmJpdCBrZXlzLi4uDQo+DQpNZSBuZWl0
+aGVyIC4uLiBidXQgSSB3YXMganVzdCBwb2ludGluZyBvdXQgdGhhdCByZWZlcnJpbmcgdG8gdGhl
+IElFRUUgc3BlYyAoZm9yIHN1cHBvcnRpbmcNCm9ubHkgMTI4IGFuZCAyNTYgYml0IGtleXMpIG1h
+a2VzIG5vIHNlbnNlIGlmIHlvdSBhbHNvIHN1cHBvcnQgb3RoZXIgYmxvY2tjaXBoZXJzIG5vdA0K
+bWVudGlvbmVkIGluIHRoYXQgc2FtZSBJRUVFIHNwZWMuDQoNClRoZSBtb2RlIGl0c2VsZiBjYW4g
+b2J2aW91c2x5IHdvcmsgd2l0aCBhbnkgMTI4IGJpdCBibG9ja2NpcGhlciwgd2l0aCBhbnkga2V5
+c2l6ZS4NClNvIGFueSBsaW1pdGF0aW9uIG9uIHRoYXQgd291bGQgYmUgcHVyZWx5IGFydGlmaWNp
+YWwgSU1ITy4NCg0KUmVnYXJkcywNClBhc2NhbCB2YW4gTGVldXdlbg0KU2lsaWNvbiBJUCBBcmNo
+aXRlY3QgTXVsdGktUHJvdG9jb2wgRW5naW5lcywgUmFtYnVzIFNlY3VyaXR5DQpSYW1idXMgUk9U
+VyBIb2xkaW5nIEJWDQorMzEtNzMgNjU4MTk1Mw0KDQpOb3RlOiBUaGUgSW5zaWRlIFNlY3VyZS9W
+ZXJpbWF0cml4IFNpbGljb24gSVAgdGVhbSB3YXMgcmVjZW50bHkgYWNxdWlyZWQgYnkgUmFtYnVz
+Lg0KUGxlYXNlIGJlIHNvIGtpbmQgdG8gdXBkYXRlIHlvdXIgZS1tYWlsIGFkZHJlc3MgYm9vayB3
+aXRoIG15IG5ldyBlLW1haWwgYWRkcmVzcy4NCg0KKiogVGhpcyBtZXNzYWdlIGFuZCBhbnkgYXR0
+YWNobWVudHMgYXJlIGZvciB0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChz
+KS4gSXQgbWF5IGNvbnRhaW4gaW5mb3JtYXRpb24gdGhhdCBpcyBjb25maWRlbnRpYWwgYW5kIHBy
+aXZpbGVnZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQgb2YgdGhpcyBt
+ZXNzYWdlLCB5b3UgYXJlIHByb2hpYml0ZWQgZnJvbSBwcmludGluZywgY29weWluZywgZm9yd2Fy
+ZGluZyBvciBzYXZpbmcgaXQuIFBsZWFzZSBkZWxldGUgdGhlIG1lc3NhZ2UgYW5kIGF0dGFjaG1l
+bnRzIGFuZCBub3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseS4gKioNCg0KUmFtYnVzIEluYy48
+aHR0cDovL3d3dy5yYW1idXMuY29tPg0K
 
