@@ -2,67 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C5EF177909
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:34:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00389177904
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729611AbgCCOd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 09:33:29 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36375 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729301AbgCCOd1 (ORCPT
+        id S1729535AbgCCOd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 09:33:26 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33349 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbgCCOdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:33:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583246006;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dxS31utg7cSHnx9gNHaxFkSn2ndxJH0EWB8zmNbHHaU=;
-        b=CqlaEXXoa2daZwG94Lcs8dINQMTVoirUW5iFDIs6fd7/oc0OBAEjJ9pzudBy9c5HgUV78z
-        lgb4OiA/5w5lJ3roLotr5DYmGQCcxwe+HEYhNQiJJeGuPrLNbm1kcDXywmHW4U49ISgGuU
-        4xXGif9hzQfkGqg5oegbL/RrKLTGVkA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-478-eovxoltzNCGDaJN_BDeZSg-1; Tue, 03 Mar 2020 09:33:22 -0500
-X-MC-Unique: eovxoltzNCGDaJN_BDeZSg-1
-Received: by mail-wr1-f69.google.com with SMTP id z16so1287785wrm.15
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 06:33:22 -0800 (PST)
+        Tue, 3 Mar 2020 09:33:25 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a25so2502372wmm.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 06:33:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1Txm+jnnHeSyIEheY5PKFsj5b6Ibs3tfTQZUICNb0WY=;
+        b=yHAKC8n1kD5WNtu2Pg+piF7kR9TmCIs7T/4W2Fd00VPZ/nDU605ZZhvmGVJQQxfu5C
+         gzsyPp3JWUhFCgXQM0dLMA6Ec3Y7gmmJhiEq7uxJdH9vX2xDYuJcFvPig480ZXXXm7g8
+         oIoRncfrUMV0FnyAJ96kHjiDs9GWhpfjO+2eLQeAmNEGomBnzhMFgBaDEct0V6nMr5Jo
+         MrM8B3jkeXR1OmpXCuueVlYivegin0aPfWnEEa6KZQRoU5x2zeDFLQtSHAGT9fN9Iow2
+         tZXbLgGGZeg3REiB9oIfNcoScbB+m59UZ05na/U53dV4g/LJaEgMpVJ/AVSr6rEWyQg7
+         StWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dxS31utg7cSHnx9gNHaxFkSn2ndxJH0EWB8zmNbHHaU=;
-        b=jKS4ErGAn4pgQSBxXfWg9Yjp508vaNQ6Mp3h63lQN89upThg1dPbvdeWdie6bPY+DQ
-         DAc/Hln0CPN0cYGciqD1hKQUSIWcEwhzP5RZD8wwjL+kH6CDBHmkM9uBC7FAcyo85ErF
-         ZK7vKNBiQr7ktNIZzZwdQ8choTm2EaDzmDIU4Kc4d+IVfh8sb2vnPvCYxxSzC27tJoh/
-         W9ZsRXX0gdXO4KLptmeAtg5WMNdGiUga0XiX6k0LRJ4/GxC3MszzW0W7Xiho8vGISW8G
-         v3YYa9+CjPLOCOR7i8q5QehXzOtQSMOcOm9+7krImJTTsvUW3rUdoWbut/ZsV56MSuRX
-         bayA==
-X-Gm-Message-State: ANhLgQ2wwphKkgclJmjQc6AHOH+Yiv2IpYEFcBrWs/pto58X44LpK5mR
-        xLiANomrhjEFIeFsj+mpKVJZCx4EHJUUQAsmFstHZ2mDHb28pm1uieTuKaPCjTVoQ5tUx7LgoRj
-        TlC0jAhb5lEFyeCDF91iK5eHr
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr4305708wmi.166.1583246001724;
-        Tue, 03 Mar 2020 06:33:21 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vuiwZKiPNPSbaEdU6EDWlISiPkShkWhFvcHlJsEDXIDIJkikpcwOOHzE0oUhcxilTPbMtZMXw==
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr4305694wmi.166.1583246001555;
-        Tue, 03 Mar 2020 06:33:21 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id s5sm32248504wru.39.2020.03.03.06.33.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1Txm+jnnHeSyIEheY5PKFsj5b6Ibs3tfTQZUICNb0WY=;
+        b=N3YetF+2Lzf37J3cYxJPA/BvVBaTF+EZJvuQ4/XQW6Iw4JwMaJxeTao0M27Vk0JBD8
+         4YabjMTSEy0r6h/pV3LszkNzV+tkjZp4zMCUKqjrBYFyeeRx2FUfCvR5RzmeyVvCMgR7
+         oKYRQ0oL4oaf5Si9XxOchm1Ka2xGDnzbtDqt7m+0hX8Q0QP3IA8Vgsh8lYVvqHTXt95R
+         /lOGRuCJcK2sgYYoJogelxEOhkZfRSz1dfI8RcCIo9hSRCTXrZUbISPyMA97/sgybklh
+         tO2afQ3tgOr1s5yxRS9gcX+mQr/fANsSrpwjL7vUFGxy2i3jryQkDDKCbi53O7a5Fo38
+         ZLvg==
+X-Gm-Message-State: ANhLgQ0h8CKEaDCG+VwEeqvQJMfTUdJKF80Da7/qq855SdvEMxroWW3u
+        QNiDGGR28ODsjdhJElhqAvCTFQ==
+X-Google-Smtp-Source: ADFU+vtp5TFkfO0POdnv6m3bxFIjXMXEA3o5q3QBcx66PiVhu25W3yVbgi8N971YkSdaK26sYlHkOw==
+X-Received: by 2002:a05:600c:230d:: with SMTP id 13mr4552664wmo.11.1583246003176;
+        Tue, 03 Mar 2020 06:33:23 -0800 (PST)
+Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g7sm30120065wrm.72.2020.03.03.06.33.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 06:33:20 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Cc:     Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Bandan Das <bsd@redhat.com>, Oliver Upton <oupton@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] KVM: x86: remove stale comment from struct x86_emulate_ctxt
+        Tue, 03 Mar 2020 06:33:22 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     mchehab@kernel.org, hans.verkuil@cisco.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/4] media: meson: vdec: Add compliant H264 support
 Date:   Tue,  3 Mar 2020 15:33:16 +0100
-Message-Id: <20200303143316.834912-3-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200303143316.834912-1-vkuznets@redhat.com>
-References: <20200303143316.834912-1-vkuznets@redhat.com>
+Message-Id: <20200303143320.32562-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -70,29 +61,205 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c44b4c6ab80e ("KVM: emulate: clean up initializations in
-init_decode_cache") did some field shuffling and instead of
-[opcode_len, _regs) started clearing [has_seg_override, modrm).
-The comment about clearing fields altogether is not true anymore.
+Hello,
 
-Fixes: c44b4c6ab80e ("KVM: emulate: clean up initializations in init_decode_cache")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/include/asm/kvm_emulate.h | 1 -
- 1 file changed, 1 deletion(-)
+This patch series aims to bring H.264 support as well as compliance update
+to the amlogic stateful video decoder driver.
 
-diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
-index 2a8f2bd2e5cf..c06e8353efd3 100644
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -360,7 +360,6 @@ struct x86_emulate_ctxt {
- 	u64 d;
- 	unsigned long _eip;
- 	struct operand memop;
--	/* Fields above regs are cleared together. */
- 	unsigned long _regs[NR_VCPU_REGS];
- 	struct operand *memopp;
- 	struct fetch_cache fetch;
+The issue in the V1 patchset at [1] is solved by patch #1 following comments
+and requirements from hans. It moves the full draining & stopped state tracking
+and handling from vicodec to core v4l2-mem2mem.
+
+The vicodec changes still passes the v4l2-utils "media-test" tests, log at [5]:
+[...]
+vicodec media controller compliance tests
+
+Thu Jan 16 13:00:56 UTC 2020
+v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+[...]
+Summary:
+
+Total for vicodec device /dev/media3: 7, Succeeded: 7, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video13: 51, Succeeded: 51, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video14: 51, Succeeded: 51, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video14: 51, Succeeded: 51, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video14: 51, Succeeded: 51, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video14: 51, Succeeded: 51, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video14: 51, Succeeded: 51, Failed: 0, Warnings: 0
+Total for vicodec device /dev/video14: 51, Succeeded: 51, Failed: 0, Warnings: 0
+
+Final Summary: 364, Succeeded: 364, Failed: 0, Warnings: 0
+Thu Jan 16 13:02:59 UTC 2020
+
+With this, it also passes vdec v4l2-compliance with H264 streaming on Amlogic G12A
+and Amlogic SM1 SoCs successfully.
+
+The compliance log is:
+# v4l2-compliance --stream-from-hdr test-25fps.h264.hdr -s
+v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+
+Compliance test for meson-vdec device /dev/video0:
+
+Driver Info:
+	Driver name      : meson-vdec
+	Card type        : Amlogic Video Decoder
+	Bus info         : platform:meson-vdec
+	Driver version   : 5.5.0
+	Capabilities     : 0x84204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+	Detected Stateful Decoder
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+	test second /dev/video19 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 2 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK (Not Supported)
+	test blocking wait: OK
+	Video Capture Multiplanar: Captured 60 buffers    
+	test MMAP (select): OK
+	Video Capture Multiplanar: Captured 60 buffers    
+	test MMAP (epoll): OK
+	test USERPTR (select): OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total for meson-vdec device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
+
+Changes since v6 at [7]:
+- Fixed sparse warning in codec_h264.c
+- No smatch issues reported
+
+Changes since v5 at [6]:
+- Changed name of v4l2_m2m_start/stop_streaming to v4l2_m2m_update_start/stop_streaming_state
+- Changed name of v4l2_mark_last_buf to v4l2_update_last_buf_state
+- Added comment in code to describe usage and use-case
+- Added comment in header for helpers
+- Updated vicodec with v4l2_m2m_start/stop_streaming renaming in patch 2
+- Fixes htmldoc warnings in patch 4
+
+Changes since v4 at [5]:
+- Squashed "don't resume instantly if not streaming capture" and "fix OUTPUT buffer size configuration" fixes from maxime
+
+Changes since v3 at [3]:
+- Fixed vicodec compliance
+- Fixed vdec compliance with v4l2 state management
+- fixed doc errors for v4l2-mem2mem.h
+
+Changes since v2 at [2]:
+- Move full draining & stopped state tracking into core v4l2-mem2mem
+- Adapt vicodec to use the core v4l2-mem2mem draining & stopped state tracking
+
+Changes since v1 at [1]:
+- fixed output_size is never used reported by hans
+- rebased on G12A and SM1 patches
+- added handling of qbuf after STREAMON and STOP before enought buffer queued
+
+[1] https://lore.kernel.org/linux-media/20191007145909.29979-1-mjourdan@baylibre.com
+[2] https://lore.kernel.org/linux-media/20191126093733.32404-1-narmstrong@baylibre.com
+[3] https://lore.kernel.org/linux-media/20191209122028.13714-1-narmstrong@baylibre.com
+[4] https://people.freedesktop.org/~narmstrong/vicodec-compliance-7ead0e1856b89f2e19369af452bb03fd0cd16793-20200116.log
+[5] https://lore.kernel.org/linux-media/20200116133025.1903-1-narmstrong@baylibre.com
+[6] https://lore.kernel.org/linux-media/20200206082648.25184-1-narmstrong@baylibre.com
+[7] https://lore.kernel.org/linux-media/20200219140156.22893-1-narmstrong@baylibre.com
+
+Maxime Jourdan (2):
+  media: meson: vdec: bring up to compliance
+  media: meson: vdec: add H.264 decoding support
+
+Neil Armstrong (2):
+  media: v4l2-mem2mem: handle draining, stopped and next-buf-is-last
+    states
+  media: vicodec: use v4l2-mem2mem draining, stopped and
+    next-buf-is-last states handling
+
+ drivers/media/platform/vicodec/vicodec-core.c | 162 ++----
+ drivers/media/v4l2-core/v4l2-mem2mem.c        | 221 +++++++-
+ drivers/staging/media/meson/vdec/Makefile     |   2 +-
+ drivers/staging/media/meson/vdec/codec_h264.c | 485 ++++++++++++++++++
+ drivers/staging/media/meson/vdec/codec_h264.h |  14 +
+ drivers/staging/media/meson/vdec/esparser.c   |  58 +--
+ drivers/staging/media/meson/vdec/vdec.c       |  90 ++--
+ drivers/staging/media/meson/vdec/vdec.h       |  14 +-
+ .../staging/media/meson/vdec/vdec_helpers.c   |  88 ++--
+ .../staging/media/meson/vdec/vdec_helpers.h   |   6 +-
+ .../staging/media/meson/vdec/vdec_platform.c  |  71 +++
+ include/media/v4l2-mem2mem.h                  | 133 +++++
+ 12 files changed, 1114 insertions(+), 230 deletions(-)
+ create mode 100644 drivers/staging/media/meson/vdec/codec_h264.c
+ create mode 100644 drivers/staging/media/meson/vdec/codec_h264.h
+
 -- 
-2.24.1
+2.22.0
 
