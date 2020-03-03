@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C69178241
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06A41178152
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733272AbgCCSKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59742 "EHLO mail.kernel.org"
+        id S2388071AbgCCSBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:01:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732012AbgCCRvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:51:37 -0500
+        id S2388048AbgCCSBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:01:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59E8720870;
-        Tue,  3 Mar 2020 17:51:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27DE220656;
+        Tue,  3 Mar 2020 18:01:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257896;
-        bh=r0ZJdfrHlvlMG27ltDw0FNuypu2jAgNIjY5mo1BSf+Q=;
+        s=default; t=1583258504;
+        bh=iC3KiavSmh80Y2SIDeaFyRbSocJf6RlacDi9Ii3VjW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0nBh1yAOo4EjEMLwyMXPSohc7uURyz6LykH2ZicIiN/66qw+cCuUIkOKjhV+8zgX
-         RIxwF9Y5AgQ3A3nb/we16xtrn4qjQnBTbwqRuoD+/2u+SifHFnvXs9O1x65vyOz8r4
-         DYMtQng5WsFTLA0T3pK1CQY5ArWujm3cTxl5/VTg=
+        b=PsevW7h4SaacUGRa6W3SkxfHvxy2WiT5wvTb27iC0F3ToY/eAvSUp2qbXtvR2mYf9
+         fX+I01QaXMiSV672zTbHwXIiaJzVSuLgXyhqeh32JoYhU8t0aN0/cUqUDLatsCbmkJ
+         bfdMsqo67X2ZfQatNoAw8sY+Pi6NkfH04jo9lO6c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Dmitry Bogdanov <dbogdanov@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 132/176] net: atlantic: fix out of range usage of active_vlans array
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 25/87] bcache: ignore pending signals when creating gc and allocator thread
 Date:   Tue,  3 Mar 2020 18:43:16 +0100
-Message-Id: <20200303174320.024538918@linuxfoundation.org>
+Message-Id: <20200303174352.755051667@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
+References: <20200303174349.075101355@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Bogdanov <dbogdanov@marvell.com>
+From: Coly Li <colyli@suse.de>
 
-commit 5a292c89a84d49b598f8978f154bdda48b1072c0 upstream.
+[ Upstream commit 0b96da639a4874311e9b5156405f69ef9fc3bef8 ]
 
-fix static checker warning:
- drivers/net/ethernet/aquantia/atlantic/aq_filters.c:166 aq_check_approve_fvlan()
- error: passing untrusted data to 'test_bit()'
+When run a cache set, all the bcache btree node of this cache set will
+be checked by bch_btree_check(). If the bcache btree is very large,
+iterating all the btree nodes will occupy too much system memory and
+the bcache registering process might be selected and killed by system
+OOM killer. kthread_run() will fail if current process has pending
+signal, therefore the kthread creating in run_cache_set() for gc and
+allocator kernel threads are very probably failed for a very large
+bcache btree.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 7975d2aff5af: ("net: aquantia: add support of rx-vlan-filter offload")
-Signed-off-by: Dmitry Bogdanov <dbogdanov@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Indeed such OOM is safe and the registering process will exit after
+the registration done. Therefore this patch flushes pending signals
+during the cache set start up, specificly in bch_cache_allocator_start()
+and bch_gc_thread_start(), to make sure run_cache_set() won't fail for
+large cahced data set.
 
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_filters.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/alloc.c | 18 ++++++++++++++++--
+ drivers/md/bcache/btree.c | 13 +++++++++++++
+ 2 files changed, 29 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-@@ -163,7 +163,7 @@ aq_check_approve_fvlan(struct aq_nic_s *
- 	}
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 46794cac167e7..2074860cbb16c 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -67,6 +67,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/kthread.h>
+ #include <linux/random.h>
++#include <linux/sched/signal.h>
+ #include <trace/events/bcache.h>
  
- 	if ((aq_nic->ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) &&
--	    (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci),
-+	    (!test_bit(be16_to_cpu(fsp->h_ext.vlan_tci) & VLAN_VID_MASK,
- 		       aq_nic->active_vlans))) {
- 		netdev_err(aq_nic->ndev,
- 			   "ethtool: unknown vlan-id specified");
+ #define MAX_OPEN_BUCKETS 128
+@@ -733,8 +734,21 @@ int bch_open_buckets_alloc(struct cache_set *c)
+ 
+ int bch_cache_allocator_start(struct cache *ca)
+ {
+-	struct task_struct *k = kthread_run(bch_allocator_thread,
+-					    ca, "bcache_allocator");
++	struct task_struct *k;
++
++	/*
++	 * In case previous btree check operation occupies too many
++	 * system memory for bcache btree node cache, and the
++	 * registering process is selected by OOM killer. Here just
++	 * ignore the SIGKILL sent by OOM killer if there is, to
++	 * avoid kthread_run() being failed by pending signals. The
++	 * bcache registering process will exit after the registration
++	 * done.
++	 */
++	if (signal_pending(current))
++		flush_signals(current);
++
++	k = kthread_run(bch_allocator_thread, ca, "bcache_allocator");
+ 	if (IS_ERR(k))
+ 		return PTR_ERR(k);
+ 
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index bb40bd66a10e4..83d6739fd067b 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -34,6 +34,7 @@
+ #include <linux/random.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched/clock.h>
++#include <linux/sched/signal.h>
+ #include <linux/rculist.h>
+ #include <linux/delay.h>
+ #include <trace/events/bcache.h>
+@@ -1898,6 +1899,18 @@ static int bch_gc_thread(void *arg)
+ 
+ int bch_gc_thread_start(struct cache_set *c)
+ {
++	/*
++	 * In case previous btree check operation occupies too many
++	 * system memory for bcache btree node cache, and the
++	 * registering process is selected by OOM killer. Here just
++	 * ignore the SIGKILL sent by OOM killer if there is, to
++	 * avoid kthread_run() being failed by pending signals. The
++	 * bcache registering process will exit after the registration
++	 * done.
++	 */
++	if (signal_pending(current))
++		flush_signals(current);
++
+ 	c->gc_thread = kthread_run(bch_gc_thread, c, "bcache_gc");
+ 	return PTR_ERR_OR_ZERO(c->gc_thread);
+ }
+-- 
+2.20.1
+
 
 
