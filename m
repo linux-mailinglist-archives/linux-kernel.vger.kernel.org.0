@@ -2,163 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82E5917854E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 23:12:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC140178553
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 23:12:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbgCCWMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 17:12:14 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36679 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbgCCWMM (ORCPT
+        id S1727869AbgCCWMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 17:12:46 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39375 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbgCCWMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 17:12:12 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t13so4176161qto.3;
-        Tue, 03 Mar 2020 14:12:10 -0800 (PST)
+        Tue, 3 Mar 2020 17:12:45 -0500
+Received: by mail-qt1-f194.google.com with SMTP id e13so4150123qts.6;
+        Tue, 03 Mar 2020 14:12:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yX7SAwUD3SiuK4YKn5lNeb4SBU8XYQV9n9efJll51FI=;
+        b=eYMll79hi4j/mcfzxzdZtGc/kLf+/rOdMexxW4MXp6BasErUivRPmc4vS2gcD/hKj7
+         5y11my/lmMjMAYw5ABR8VC8QMXp18tm2BsT2PojF0O4NDxls5Aegw/ISkhlDuTVG/D5g
+         XcRIuQAk9eD+ONMoDkEK9trz7BfA9ViFJVybHhgFM4fzKwpXkbDkWglDcoFfxX/hN/7r
+         Wa0AqeKRQEzUpUtKRBNibgV5eTosn/9XdsmzzEBWU2yjH9XZF8qy89E1ANVFbrdfyF28
+         hP5Ut2G+8jcP+ZahGZPvzgJiZLGOcLGQpGSSskUbkjUmOqwzVnJd0o3PxrKhsKyrzEYk
+         /Pyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=y9ZUfBYU9k6PdrRDPkXq7obctTGrbSS1tg9LdI2Are4=;
-        b=QXiBmcCGLb5DjlOO6pafUvZodbPjAzVIxc52fwNz1v22FfDnRRdKgbl+n2z9hlCLct
-         9Ee8I2PVCih1SDGAv6NB3LiWz4nF0i3UzZMnzPwE/AsOBQXO07iF1fp1hP0EUGX+fkVJ
-         OoyiiajPIUk21txh7m0sSERD22UsqNXxYs0QXrq+URgO06FwAT77ahUeNQjy7p4dd0Uw
-         2Xshx1pVoK3nQUHzxEmEB6j1JM8BMScAEK83CzGCzeYi0iRzVMbHFmHXWM+PK3dFW2vg
-         uUA9LEAyTzabK7fVgyGzBe/vtnQgEsesS4TUNZ+0sONaccAyjcUwTQc/I3fC4boMW+r0
-         gwIA==
-X-Gm-Message-State: ANhLgQ2OqzMrcWs0FYBQb3p8iMvAINvwBueN37LJVxv+VzEcE3hVq4P8
-        usTeYyzNiFKoqR+5AEJM1FM7f2U2X0Q=
-X-Google-Smtp-Source: ADFU+vtuvw7kFLYQpjB96pGtl57vnfa7Vz85lUKgsu1P/kPobOULRfCYE1RlXYKyG2XomJdm4M/sVw==
-X-Received: by 2002:ac8:7210:: with SMTP id a16mr6679247qtp.167.1583273530010;
-        Tue, 03 Mar 2020 14:12:10 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id i91sm13267378qtd.70.2020.03.03.14.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 14:12:09 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     linux-efi@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] efi/x86: Don't relocate the kernel unless necessary
-Date:   Tue,  3 Mar 2020 17:12:05 -0500
-Message-Id: <20200303221205.4048668-6-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200303221205.4048668-1-nivedita@alum.mit.edu>
-References: <20200301230537.2247550-1-nivedita@alum.mit.edu>
- <20200303221205.4048668-1-nivedita@alum.mit.edu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yX7SAwUD3SiuK4YKn5lNeb4SBU8XYQV9n9efJll51FI=;
+        b=kLx1CgfNolc8RgmSppJCxqqged+rSfMR1/haJpgVMDc5NSteQ6JLGGGl733m9avB6w
+         zcIuMjldYnR368px5IGcXlBHM6tcweIq2kyhOt6T3xuh6fCCxFzUeiAn4WwMTQPDxbgM
+         wlH2bCxbj0J9/DtN4j+nfD1GcW4l/YLFgVVYLSF3RVaQaCgf9Sxt4Ytj7RW6EpadrrBv
+         we09FJ/l1Qb8Y0gZc5yiwLpabwpOOlLYNOygIUa9k3WAn07JbRe4jVQdiNrPkPh12Q8X
+         +yzaPU0wSE0Sj2qOdQdjcbW1wvLWGHIKQXs1Fru+UWC1/DtIUc4sM4T9UQrNcRm7pY0v
+         5TkA==
+X-Gm-Message-State: ANhLgQ2ZwsOuVdocvzLSkoBBU27743KP7EGjU5JkH4CNGo+SkNAFJUXI
+        3M8U4M5O+PhPC4im4wxWFWj+Y8cNgWBvmuVHQo4=
+X-Google-Smtp-Source: ADFU+vvI3zxkMe27WrXtuIWVLqJI+C4mgUDVyAcjpazJxCsZ4gC250YvDzSgpNsbgy0SrhreY3m7kJ9PQ3jtQXJaDkM=
+X-Received: by 2002:ac8:4581:: with SMTP id l1mr6378408qtn.59.1583273564200;
+ Tue, 03 Mar 2020 14:12:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200303140950.6355-1-kpsingh@chromium.org> <20200303140950.6355-2-kpsingh@chromium.org>
+In-Reply-To: <20200303140950.6355-2-kpsingh@chromium.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 3 Mar 2020 14:12:32 -0800
+Message-ID: <CAEf4BzZj1+G7D2eZ9Enp_FtmmNPEkX7f6BDj2q=iZ1D8ZxxTMQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/7] bpf: Refactor trampoline update code
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add alignment slack to the PE image size, so that we can realign the
-decompression buffer within the space allocated for the image.
+On Tue, Mar 3, 2020 at 6:13 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> From: KP Singh <kpsingh@google.com>
+>
+> As we need to introduce a third type of attachment for trampolines, the
+> flattened signature of arch_prepare_bpf_trampoline gets even more
+> complicated.
+>
+> Refactor the prog and count argument to arch_prepare_bpf_trampoline to
+> use bpf_tramp_progs to simplify the addition and accounting for new
+> attachment types.
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> ---
+>  arch/x86/net/bpf_jit_comp.c | 31 +++++++++---------
+>  include/linux/bpf.h         | 13 ++++++--
+>  kernel/bpf/bpf_struct_ops.c | 13 +++++++-
+>  kernel/bpf/trampoline.c     | 63 +++++++++++++++++++++----------------
+>  4 files changed, 75 insertions(+), 45 deletions(-)
+>
+> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+> index 9ba08e9abc09..15c7d28bc05c 100644
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -1362,12 +1362,12 @@ static void restore_regs(const struct btf_func_model *m, u8 **prog, int nr_args,
+>  }
+>
+>  static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
+> -                     struct bpf_prog **progs, int prog_cnt, int stack_size)
+> +                     struct bpf_tramp_progs *tp, int stack_size)
 
-Only relocate the kernel if it has been loaded at an unsuitable address:
-* Below LOAD_PHYSICAL_ADDR, or
-* Above 64T for 64-bit and 512MiB for 32-bit
+nit: it's `tp` here, but `tprogs` in arch_prepare_bpf_trampoline. It's
+minor, but would be nice to stick to consistent naming.
 
-For 32-bit, the upper limit is conservative, but the exact limit can be
-difficult to calculate.
+>  {
+>         u8 *prog = *pprog;
+>         int cnt = 0, i;
+>
+> -       for (i = 0; i < prog_cnt; i++) {
+> +       for (i = 0; i < tp->nr_progs; i++) {
+>                 if (emit_call(&prog, __bpf_prog_enter, prog))
+>                         return -EINVAL;
+>                 /* remember prog start time returned by __bpf_prog_enter */
+> @@ -1376,17 +1376,17 @@ static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
+>                 /* arg1: lea rdi, [rbp - stack_size] */
+>                 EMIT4(0x48, 0x8D, 0x7D, -stack_size);
+>                 /* arg2: progs[i]->insnsi for interpreter */
+> -               if (!progs[i]->jited)
+> +               if (!tp->progs[i]->jited)
+>                         emit_mov_imm64(&prog, BPF_REG_2,
+> -                                      (long) progs[i]->insnsi >> 32,
+> -                                      (u32) (long) progs[i]->insnsi);
+> +                                      (long) tp->progs[i]->insnsi >> 32,
+> +                                      (u32) (long) tp->progs[i]->insnsi);
+>                 /* call JITed bpf program or interpreter */
+> -               if (emit_call(&prog, progs[i]->bpf_func, prog))
+> +               if (emit_call(&prog, tp->progs[i]->bpf_func, prog))
+>                         return -EINVAL;
+>
+>                 /* arg1: mov rdi, progs[i] */
+> -               emit_mov_imm64(&prog, BPF_REG_1, (long) progs[i] >> 32,
+> -                              (u32) (long) progs[i]);
+> +               emit_mov_imm64(&prog, BPF_REG_1, (long) tp->progs[i] >> 32,
+> +                              (u32) (long) tp->progs[i]);
+>                 /* arg2: mov rsi, rbx <- start time in nsec */
+>                 emit_mov_reg(&prog, true, BPF_REG_2, BPF_REG_6);
+>                 if (emit_call(&prog, __bpf_prog_exit, prog))
+> @@ -1458,12 +1458,13 @@ static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
+>   */
+>  int arch_prepare_bpf_trampoline(void *image, void *image_end,
+>                                 const struct btf_func_model *m, u32 flags,
+> -                               struct bpf_prog **fentry_progs, int fentry_cnt,
+> -                               struct bpf_prog **fexit_progs, int fexit_cnt,
+> +                               struct bpf_tramp_progs *tprogs,
+>                                 void *orig_call)
+>  {
+>         int cnt = 0, nr_args = m->nr_args;
+>         int stack_size = nr_args * 8;
+> +       struct bpf_tramp_progs *fentry = &tprogs[BPF_TRAMP_FENTRY];
+> +       struct bpf_tramp_progs *fexit = &tprogs[BPF_TRAMP_FEXIT];
+>         u8 *prog;
+>
+>         /* x86-64 supports up to 6 arguments. 7+ can be added in the future */
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- arch/x86/boot/tools/build.c             | 16 +++++-------
- drivers/firmware/efi/libstub/x86-stub.c | 33 ++++++++++++++++++++++---
- 2 files changed, 36 insertions(+), 13 deletions(-)
+[...]
 
-diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
-index 3d03ad753ed5..db528961c283 100644
---- a/arch/x86/boot/tools/build.c
-+++ b/arch/x86/boot/tools/build.c
-@@ -238,21 +238,17 @@ static void update_pecoff_text(unsigned int text_start, unsigned int file_sz,
- 
- 	pe_header = get_unaligned_le32(&buf[0x3c]);
- 
--#ifdef CONFIG_EFI_MIXED
- 	/*
--	 * In mixed mode, we will execute startup_32() at whichever offset in
--	 * memory it happened to land when the PE/COFF loader loaded the image,
--	 * which may be misaligned with respect to the kernel_alignment field
--	 * in the setup header.
-+	 * The PE/COFF loader may load the image at an address which is
-+	 * misaligned with respect to the kernel_alignment field in the setup
-+	 * header.
- 	 *
--	 * In order for startup_32 to safely execute in place at this offset,
--	 * we need to ensure that the CONFIG_PHYSICAL_ALIGN aligned allocation
--	 * it creates for the page tables does not extend beyond the declared
--	 * size of the image in the PE/COFF header. So add the required slack.
-+	 * In order to avoid relocating the kernel to correct the misalignment,
-+	 * add slack to allow the buffer to be aligned within the declared size
-+	 * of the image.
- 	 */
- 	bss_sz	+= CONFIG_PHYSICAL_ALIGN;
- 	init_sz	+= CONFIG_PHYSICAL_ALIGN;
--#endif
- 
- 	/*
- 	 * Size of code: Subtract the size of the first sector (512 bytes)
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index e71b8421e088..fbc4354f534c 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -17,6 +17,9 @@
- 
- #include "efistub.h"
- 
-+/* Maximum physical address for 64-bit kernel with 4-level paging */
-+#define MAXMEM_X86_64_4LEVEL (1ull << 46)
-+
- static efi_system_table_t *sys_table;
- extern const bool efi_is64;
- extern u32 image_offset;
-@@ -717,6 +720,7 @@ unsigned long efi_main(efi_handle_t handle,
- 			     struct boot_params *boot_params)
- {
- 	unsigned long bzimage_addr = (unsigned long)startup_32;
-+	unsigned long buffer_start, buffer_end;
- 	struct setup_header *hdr = &boot_params->hdr;
- 	efi_status_t status;
- 	unsigned long cmdline_paddr;
-@@ -728,10 +732,33 @@ unsigned long efi_main(efi_handle_t handle,
- 		efi_exit(handle, EFI_INVALID_PARAMETER);
- 
- 	/*
--	 * If the kernel isn't already loaded at the preferred load
--	 * address, relocate it.
-+	 * If the kernel isn't already loaded at a suitable address,
-+	 * relocate it.
-+	 *
-+	 * It must be loaded above LOAD_PHYSICAL_ADDR.
-+	 *
-+	 * The maximum address for 64-bit is 1 << 46 for 4-level paging. This
-+	 * is defined as the macro MAXMEM, but unfortunately that is not a
-+	 * compile-time constant if 5-level paging is configured, so we instead
-+	 * define our own macro for use here.
-+	 *
-+	 * For 32-bit, the maximum address is complicated to figure out, for
-+	 * now use KERNEL_IMAGE_SIZE, which will be 512MiB, the same as what
-+	 * KASLR uses.
-+	 *
-+	 * Also relocate it if image_offset is zero, i.e. we weren't loaded by
-+	 * LoadImage, but we are not aligned correctly.
- 	 */
--	if (bzimage_addr - image_offset != hdr->pref_address) {
-+
-+	buffer_start = ALIGN(bzimage_addr - image_offset,
-+			     hdr->kernel_alignment);
-+	buffer_end = buffer_start + hdr->init_size;
-+
-+	if ((buffer_start < LOAD_PHYSICAL_ADDR)				     ||
-+	    (IS_ENABLED(CONFIG_X86_32) && buffer_end > KERNEL_IMAGE_SIZE)    ||
-+	    (IS_ENABLED(CONFIG_X86_64) && buffer_end > MAXMEM_X86_64_4LEVEL) ||
-+	    (image_offset == 0 && !IS_ALIGNED(bzimage_addr,
-+					      hdr->kernel_alignment))) {
- 		status = efi_relocate_kernel(&bzimage_addr,
- 					     hdr->init_size, hdr->init_size,
- 					     hdr->pref_address,
--- 
-2.24.1
+> diff --git a/kernel/bpf/bpf_struct_ops.c b/kernel/bpf/bpf_struct_ops.c
+> index c498f0fffb40..a011a77b21fa 100644
+> --- a/kernel/bpf/bpf_struct_ops.c
+> +++ b/kernel/bpf/bpf_struct_ops.c
+> @@ -320,6 +320,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
+>         struct bpf_struct_ops_value *uvalue, *kvalue;
+>         const struct btf_member *member;
+>         const struct btf_type *t = st_ops->type;
+> +       struct bpf_tramp_progs *tprogs = NULL;
+>         void *udata, *kdata;
+>         int prog_fd, err = 0;
+>         void *image;
+> @@ -425,10 +426,19 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
+>                         goto reset_unlock;
+>                 }
+>
+> +               tprogs = kcalloc(BPF_TRAMP_MAX, sizeof(struct bpf_tramp_progs),
 
+nit: sizeof(*tprogs) ?
+
+> +                                GFP_KERNEL);
+> +               if (!tprogs) {
+> +                       err = -ENOMEM;
+> +                       goto reset_unlock;
+> +               }
+> +
+> +               *tprogs[BPF_TRAMP_FENTRY].progs = prog;
+
+I'm very confused what's going on here, why * at the beginning here,
+but no * below?.. It seems unnecessary.
+
+> +               tprogs[BPF_TRAMP_FENTRY].nr_progs = 1;
+>                 err = arch_prepare_bpf_trampoline(image,
+>                                                   st_map->image + PAGE_SIZE,
+>                                                   &st_ops->func_models[i], 0,
+> -                                                 &prog, 1, NULL, 0, NULL);
+> +                                                 tprogs, NULL);
+>                 if (err < 0)
+>                         goto reset_unlock;
+>
+> @@ -469,6 +479,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
+>         memset(uvalue, 0, map->value_size);
+>         memset(kvalue, 0, map->value_size);
+>  unlock:
+> +       kfree(tprogs);
+>         mutex_unlock(&st_map->lock);
+>         return err;
+>  }
+> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+> index 704fa787fec0..9daeb094f054 100644
+> --- a/kernel/bpf/trampoline.c
+> +++ b/kernel/bpf/trampoline.c
+> @@ -190,40 +190,50 @@ static int register_fentry(struct bpf_trampoline *tr, void *new_addr)
+>         return ret;
+>  }
+>
+> -/* Each call __bpf_prog_enter + call bpf_func + call __bpf_prog_exit is ~50
+> - * bytes on x86.  Pick a number to fit into BPF_IMAGE_SIZE / 2
+> - */
+> -#define BPF_MAX_TRAMP_PROGS 40
+> +static struct bpf_tramp_progs *
+> +bpf_trampoline_update_progs(struct bpf_trampoline *tr, int *total)
+> +{
+> +       struct bpf_tramp_progs *tprogs;
+> +       struct bpf_prog **progs;
+> +       struct bpf_prog_aux *aux;
+> +       int kind;
+> +
+> +       *total = 0;
+> +       tprogs = kcalloc(BPF_TRAMP_MAX, sizeof(struct bpf_tramp_progs),
+
+same nit as above, sizeof(*tprogs) is shorter and less error-prone
+
+> +                        GFP_KERNEL);
+> +       if (!tprogs)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       for (kind = 0; kind < BPF_TRAMP_MAX; kind++) {
+> +               tprogs[kind].nr_progs = tr->progs_cnt[kind];
+> +               *total += tr->progs_cnt[kind];
+> +               progs = tprogs[kind].progs;
+> +
+> +               hlist_for_each_entry(aux, &tr->progs_hlist[kind], tramp_hlist)
+> +                       *progs++ = aux->prog;
+> +       }
+> +       return tprogs;
+> +}
+>
+
+[...]
