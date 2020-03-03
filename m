@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8810517801B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76EC017801D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732577AbgCCRyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:54:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35912 "EHLO mail.kernel.org"
+        id S1732585AbgCCRyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:54:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732568AbgCCRyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:54:40 -0500
+        id S1732208AbgCCRym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:54:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4999D215A4;
-        Tue,  3 Mar 2020 17:54:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0C372467F;
+        Tue,  3 Mar 2020 17:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258079;
-        bh=+/FZOqzt6MlQA00zyR37ZYv9F7JLoObSm5NSgWGQGpE=;
+        s=default; t=1583258082;
+        bh=fsPvjRYgB4pv7V5kfZoupwdYyArfFebXqtBGXqlzQ+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHLmuNpdA6O5yFP8GuH6jceA2ZiT1bhwwkaasTizIrEjXT+QcABwRAZg+yR5tXFgu
-         mzQeaxf1gvrSPrJGTpaqG7yLaay6qd7h4hzpr0yMkvHGDv9+cX9o8m427VEQZZZJKd
-         QViw/kopEWSgDqyv5xhiAfWZ4iPZMQYTQvPoKSyg=
+        b=0aCOdhXnLDPwLFc1UvBB7QbpEphmvnHDBSz+i5/ypzfWydbfciGVNPGjqzkUWqyYl
+         EXzXYcTOrgBWgYhGW0j3wlpFVLQ/YGq3yGN7ZWONn1/RNKV1Vqx9FyN6DajTH/josA
+         GyW3kYCPZR+pq7ilDxCMBYKxuuOE6D1bP2meM5/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aviad Brikman <aviad.brikman@celeno.com>,
-        Shay Bar <shay.bar@celeno.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Yufeng Mo <moyufeng@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 064/152] mac80211: fix wrong 160/80+80 MHz setting
-Date:   Tue,  3 Mar 2020 18:42:42 +0100
-Message-Id: <20200303174309.713724249@linuxfoundation.org>
+Subject: [PATCH 5.4 065/152] net: hns3: add management table after IMP reset
+Date:   Tue,  3 Mar 2020 18:42:43 +0100
+Message-Id: <20200303174309.837237957@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
 References: <20200303174302.523080016@linuxfoundation.org>
@@ -45,68 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shay Bar <shay.bar@celeno.com>
+From: Yufeng Mo <moyufeng@huawei.com>
 
-[ Upstream commit 33181ea7f5a62a17fbe55f0f73428ecb5e686be8 ]
+[ Upstream commit d0db7ed397517c8b2be24a0d1abfa15df776908e ]
 
-Before this patch, STA's would set new width of 160/80+80 MHz based on AP capability only.
-This is wrong because STA may not support > 80MHz BW.
-Fix is to verify STA has 160/80+80 MHz capability before increasing its width to > 80MHz.
+In the current process, the management table is missing after the
+IMP reset. This patch adds the management table to the reset process.
 
-The "support_80_80" and "support_160" setting is based on:
-"Table 9-272 — Setting of the Supported Channel Width Set subfield and Extended NSS BW
-Support subfield at a STA transmitting the VHT Capabilities Information field"
->From "Draft P802.11REVmd_D3.0.pdf"
-
-Signed-off-by: Aviad Brikman <aviad.brikman@celeno.com>
-Signed-off-by: Shay Bar <shay.bar@celeno.com>
-Link: https://lore.kernel.org/r/20200210130728.23674-1-shay.bar@celeno.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: f5aac71c0327 ("net: hns3: add manager table initialization for hardware")
+Signed-off-by: Yufeng Mo <moyufeng@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/util.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/net/mac80211/util.c b/net/mac80211/util.c
-index 739e90555d8b9..decd46b383938 100644
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@ -2993,10 +2993,22 @@ bool ieee80211_chandef_vht_oper(struct ieee80211_hw *hw,
- 	int cf0, cf1;
- 	int ccfs0, ccfs1, ccfs2;
- 	int ccf0, ccf1;
-+	u32 vht_cap;
-+	bool support_80_80 = false;
-+	bool support_160 = false;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 162881005a6df..0c3c63aed2c06 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -9437,6 +9437,13 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		return ret;
+ 	}
  
- 	if (!oper || !htop)
- 		return false;
- 
-+	vht_cap = hw->wiphy->bands[chandef->chan->band]->vht_cap.cap;
-+	support_160 = (vht_cap & (IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_MASK |
-+				  IEEE80211_VHT_CAP_EXT_NSS_BW_MASK));
-+	support_80_80 = ((vht_cap &
-+			 IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160_80PLUS80MHZ) ||
-+			(vht_cap & IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160MHZ &&
-+			 vht_cap & IEEE80211_VHT_CAP_EXT_NSS_BW_MASK) ||
-+			((vht_cap & IEEE80211_VHT_CAP_EXT_NSS_BW_MASK) >>
-+				    IEEE80211_VHT_CAP_EXT_NSS_BW_SHIFT > 1));
- 	ccfs0 = oper->center_freq_seg0_idx;
- 	ccfs1 = oper->center_freq_seg1_idx;
- 	ccfs2 = (le16_to_cpu(htop->operation_mode) &
-@@ -3024,10 +3036,10 @@ bool ieee80211_chandef_vht_oper(struct ieee80211_hw *hw,
- 			unsigned int diff;
- 
- 			diff = abs(ccf1 - ccf0);
--			if (diff == 8) {
-+			if ((diff == 8) && support_160) {
- 				new.width = NL80211_CHAN_WIDTH_160;
- 				new.center_freq1 = cf1;
--			} else if (diff > 8) {
-+			} else if ((diff > 8) && support_80_80) {
- 				new.width = NL80211_CHAN_WIDTH_80P80;
- 				new.center_freq2 = cf1;
- 			}
++	ret = init_mgr_tbl(hdev);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"failed to reinit manager table, ret = %d\n", ret);
++		return ret;
++	}
++
+ 	ret = hclge_init_fd_config(hdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "fd table init fail, ret=%d\n", ret);
 -- 
 2.20.1
 
