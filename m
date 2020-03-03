@@ -2,73 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 624D81775F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 13:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AAE61775F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 13:34:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbgCCMdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 07:33:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:46406 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbgCCMdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 07:33:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8B93FEC;
-        Tue,  3 Mar 2020 04:33:23 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A66D3F534;
-        Tue,  3 Mar 2020 04:33:23 -0800 (PST)
-Date:   Tue, 3 Mar 2020 12:33:21 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ASoc: amd: use correct format specifier for a long
- int
-Message-ID: <20200303123321.GC3866@sirena.org.uk>
-References: <20200303103903.9259-1-colin.king@canonical.com>
+        id S1729308AbgCCMel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 07:34:41 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42320 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbgCCMek (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 07:34:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q19so2396328ljp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 04:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cd3PuDX7QGlpsLRHSkLqaNlrKLigo/VJS+jTQKxKQ4I=;
+        b=Y9nHQ8bhBUHFsRGta95iKneEmmxYzcq36hN1eDHokC2iEnSBusLXp4oraHu4nZ44a1
+         PDUL0NPlkSj9R2KiOB/guYeQHSCwsWMKMFUpofbpDnmeIuhCK2v4ZgKWv3wWeT0vU743
+         Dym6dRgKsaosD8pNyCJhPyass3LMEOwPWFpoPjQuObMWqL9DenwMCAhhjzvmO/AsHhyX
+         fw0zseDzmakF6WleQx56XgB1IR235elHrHqkZWg1JsKGZBFaC7R8p11d3N2ZRXjN48ae
+         XtEr+3+tJuqIi3eXzd+pbWklChykz3YNF3fvLsk2K1+i4krGaczU7gfWhng4hbt5ZLKJ
+         CtZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cd3PuDX7QGlpsLRHSkLqaNlrKLigo/VJS+jTQKxKQ4I=;
+        b=mTHM0PSoUWRXUZqd1h6ResQYsjKWPSzMDrdhfMX4ewitu6RjDvDJyhdwy8XbbJTz6/
+         +71QcHJIP1addnrjIo3hQlko+Tu3Fe8bV14bLFbSm0gymD0PrX3B6TY7Q8CYLXemAJWu
+         j4nwX4F2f1ygbuoq5yT5aGtSQogs8QdUEmWKhskJtJr6RmknAAnfkutLhtNAjmYLA97t
+         ld0rnMwKZFeh0RoEVcSmDLlYHCCr4u7NIp6FB9h3PpvfnnHb6xp6N+Y+HlaTn8Tfwvaq
+         yMrjUd4TFxi8ZNVQ3g7hkLArcJ23qxrRpz5JYzfaiZn2pqgga2l150WkAACLlDjHZtoe
+         AuMA==
+X-Gm-Message-State: ANhLgQ2jxFs0GvKSxWbv13hZYbliPTSTF1pn7TAdEwVmD3YVa7Yvqe4I
+        LHGwVXB1jz6zjsXLQDn3fDt9TeNtwTwm2gl5Xek9J61S
+X-Google-Smtp-Source: ADFU+vsn3QSWuqyWnLpWbybp4u+9gaM0g0ZKJO5jT/H3hFJPpid+emxdoaQ9W2xtLAISDCjngcELgbpKPPFtmrs5BIc=
+X-Received: by 2002:a2e:9c8a:: with SMTP id x10mr2417162lji.277.1583238876321;
+ Tue, 03 Mar 2020 04:34:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JgQwtEuHJzHdouWu"
-Content-Disposition: inline
-In-Reply-To: <20200303103903.9259-1-colin.king@canonical.com>
-X-Cookie: Drilling for oil is boring.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200302082448.11795-1-geert+renesas@glider.be>
+In-Reply-To: <20200302082448.11795-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 3 Mar 2020 13:34:24 +0100
+Message-ID: <CACRpkdZXUVaDFq5TLmQnEMyRH5yv2XKE3au5KbuMCh0j0+Yh3g@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Fix inverted check in gpiochip_remove()
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 2, 2020 at 9:24 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
---JgQwtEuHJzHdouWu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The optimization to check for requested lines actually optimized for the
+> uncomon error case, where one of the GPIO lines is still in use.
+> Hence the error message must be printed when the loop is terminated
+> early, not when it went through all available GPIO lines.
+>
+> Fixes: 869233f81337bfb3 ("gpiolib: Optimize gpiochip_remove() when check for requested line")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Mar 03, 2020 at 10:39:03AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently the format specifier %d is being used for a long int. Fix
-> the by using %ld instead.
+Patch applied with Andy's ACK.
 
-Someone already sent a fix for this.
-
---JgQwtEuHJzHdouWu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5eTpEACgkQJNaLcl1U
-h9AKuQf/U01aci745PIHD/iQ86xIE2c0Ph5wIDFYgVS45kaTlPwBGX6iX72t/5tT
-/BesrakIoU6wHxO5wNQst+QuxCauSfQTqwuqtA4k4P/sizM7M5NPcoxeM/uECmGf
-Z91qqtfZq492X6yWceLwhCt9SA+5xzJ1bKdeETaOGaiJ594qhD/4+22WjhuibSF5
-FHcllXvFPVKZCVGB0QOAVtUpBK0NQfRBsjshPlNLwMsop+dXJSfI3YhrhiIq5+sS
-41UM1RDsJu3jGE6Lld3dBl5BgUdxR5yxudSuCqPtliEYnKyINev6qqWrrGoiwZ4B
-SbuwgxiOqB11TS0lW97afaTVtdAETQ==
-=tEk3
------END PGP SIGNATURE-----
-
---JgQwtEuHJzHdouWu--
+Yours,
+Linus Walleij
