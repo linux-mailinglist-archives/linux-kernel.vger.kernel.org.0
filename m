@@ -2,100 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 768FC177B65
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D01177B78
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:03:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbgCCQA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 11:00:56 -0500
-Received: from mga09.intel.com ([134.134.136.24]:33796 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbgCCQAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 11:00:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 08:00:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="274254851"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Mar 2020 08:00:53 -0800
-Date:   Tue, 3 Mar 2020 08:00:52 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: Re: [PATCH v2 61/66] KVM: x86: Don't propagate MMU lpage support to
- memslot.disallow_lpage
-Message-ID: <20200303160052.GI1439@linux.intel.com>
-References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
- <20200302235709.27467-62-sean.j.christopherson@intel.com>
- <e436d608-41ed-c9ad-6584-360451fb6d65@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e436d608-41ed-c9ad-6584-360451fb6d65@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1730193AbgCCQDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 11:03:32 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:32806 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729484AbgCCQDb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 11:03:31 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023Fs9OZ165169;
+        Tue, 3 Mar 2020 16:03:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=mhifvgYvFG9SQGr24bsa0VTvq4k/UtMxi0xav7PMSD4=;
+ b=Qlljubb2cPKZK0SV3JQBg/3fhm36xvZOkp8DXUFGZZzYGLxaitySLu1xVdJU3uxEaJIa
+ NYRN/w/wG7L59DxXkh2FgxpnDAGFFEOWl+Fz1lR/n0dWeRC89iPdlHIESSPpNt1DFrpN
+ tyLrrPn+8YsrU9DM1wcJCH1niZY9x6Lu8spPR7LH1gbZZWiRVou6lvFSOsFzeU/87vi4
+ KwBN7bZ+CLY0E6kVhHcIFjJfzAykkgimauVaHdtOkEDhwo5p+lUe13/GN7c5v3v3Ed4m
+ VLXwm8KmSWs7q7fldLpgZE7edM0TD2HA6HgsIrtz37l5NphnSsdVsYChXcjTiKKCPmJ+ dA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2yffwqr7ac-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 16:03:25 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023G2Vfc139732;
+        Tue, 3 Mar 2020 16:03:25 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2yg1p4rk9r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 16:03:24 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 023G3N1A007489;
+        Tue, 3 Mar 2020 16:03:23 GMT
+Received: from dhcp-10-175-165-222.vpn.oracle.com (/10.175.165.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Mar 2020 16:03:22 +0000
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     brendanhiggins@google.com, trishalfonso@google.com,
+        skhan@linuxfoundation.org
+Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Alan Maguire <alan.maguire@oracle.com>
+Subject: [RFC PATCH kunit-next 0/2] kunit: extend kunit resources API
+Date:   Tue,  3 Mar 2020 16:02:39 +0000
+Message-Id: <1583251361-12748-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ mlxlogscore=490 mlxscore=0 spamscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003030114
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=547 mlxscore=0 suspectscore=0
+ phishscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003030113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 04:31:15PM +0100, Paolo Bonzini wrote:
-> On 03/03/20 00:57, Sean Christopherson wrote:
-> > Stop propagating MMU large page support into a memslot's disallow_lpage
-> > now that the MMU's max_page_level handles the scenario where VMX's EPT is
-> > enabled and EPT doesn't support 2M pages.
-> > 
-> > No functional change intended.
-> > 
-> > Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > ---
-> >  arch/x86/kvm/vmx/vmx.c | 3 ---
-> >  arch/x86/kvm/x86.c     | 6 ++----
-> >  2 files changed, 2 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index f8eb081b63fe..1fbe54dc3263 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -7698,9 +7698,6 @@ static __init int hardware_setup(void)
-> >  	if (!cpu_has_vmx_tpr_shadow())
-> >  		kvm_x86_ops->update_cr8_intercept = NULL;
-> >  
-> > -	if (enable_ept && !cpu_has_vmx_ept_2m_page())
-> > -		kvm_disable_largepages();
-> > -
-> >  #if IS_ENABLED(CONFIG_HYPERV)
-> >  	if (ms_hyperv.nested_features & HV_X64_NESTED_GUEST_MAPPING_FLUSH
-> >  	    && enable_ept) {
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 4fdf5b04f148..cc9b543d210b 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -9863,11 +9863,9 @@ static int kvm_alloc_memslot_metadata(struct kvm_memory_slot *slot,
-> >  		ugfn = slot->userspace_addr >> PAGE_SHIFT;
-> >  		/*
-> >  		 * If the gfn and userspace address are not aligned wrt each
-> > -		 * other, or if explicitly asked to, disable large page
-> > -		 * support for this slot
-> > +		 * other, disable large page support for this slot.
-> >  		 */
-> > -		if ((slot->base_gfn ^ ugfn) & (KVM_PAGES_PER_HPAGE(level) - 1) ||
-> > -		    !kvm_largepages_enabled()) {
-> > +		if ((slot->base_gfn ^ ugfn) & (KVM_PAGES_PER_HPAGE(level) - 1)) {
-> >  			unsigned long j;
-> >  
-> >  			for (j = 0; j < lpages; ++j)
-> > 
-> 
-> This should technically go in the next patch.
+A recent RFC patch set [1] suggests some additional functionality
+may be needed around kunit resources.  It seems to require
 
-Hmm, yeah, I agree.  IIRC I split it this way so that the next patch didn't
-touch any arch code, but removing only the call to kvm_disable_largepages()
-would be cleaner.
+1. support for resources without allocation
+2. support for lookup of such resources
+3. support for access to resources across multiple kernel threads
+
+The proposed changes here are designed to address these needs.
+The idea is we first generalize the API to support adding
+resources with static data; then from there we support named
+resources.  The latter support is needed because if we are
+in a different thread context and only have the "struct kunit *"
+to work with, we need a way to identify a resource in lookup.
+
+[1] https://lkml.org/lkml/2020/2/26/1286
+
+Alan Maguire (2):
+  kunit: generalize kunit_resource API beyond allocated resources
+  kunit: add support for named resources
+
+ include/kunit/test.h      | 145 ++++++++++++++++++++++------
+ lib/kunit/kunit-test.c    | 103 ++++++++++++++++----
+ lib/kunit/string-stream.c |  14 ++-
+ lib/kunit/test.c          | 234 +++++++++++++++++++++++++++++++++-------------
+ 4 files changed, 375 insertions(+), 121 deletions(-)
+
+-- 
+1.8.3.1
+
