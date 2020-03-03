@@ -2,248 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ADCF177381
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4908A177388
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:11:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbgCCKKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 05:10:37 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43090 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727798AbgCCKKh (ORCPT
+        id S1728401AbgCCKLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 05:11:13 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55006 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728078AbgCCKLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 05:10:37 -0500
-Received: by mail-lf1-f65.google.com with SMTP id s23so2185219lfs.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 02:10:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version;
-        bh=2lBH94o2PcHIglkC8tdFIZftFpVYeorWUf+G12zJQW4=;
-        b=DUixScdOTtavztb6NXfZUx6eofx4PGD5zfvUfbjB4CXGeLO7Ur0s8TwPkEOUgEXvPu
-         Ts8rCS9f1rGO1mjaIpUl347NhBjVlbjwofGVA4Nm2NuY6YuUA9XZOXWcAJ/8LyaJDwD6
-         o3tqXXJHeLh2zJQTfdGqYj6bYRPkfN7/yjk8bwym/+yQ2bBrjbOaWAomDYXHa5KS4LVE
-         XyC4IUhWqzizPlK75qgJKhZquU6yLZkoasT6vhchjnbSCjcVupK5pNqwM6yI43/05uMB
-         vDmwbIqhdDtSXyWvSPmEnBkBtQlQiRc9YU7QZ+Rc2g5WeMqpuDNZlS0ZZ3HowXz/pVlv
-         n7rQ==
+        Tue, 3 Mar 2020 05:11:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583230271;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0lKGMZz2mVXzfjH8foE9O3JFOJlrljIc2oxkVwn7z1E=;
+        b=eRS9e4E0vFXoWHEL7Lf37P4+9E09SG+E0UN53Hi6+guk3p1l11qDtH44PTjB2UIHl7q2Ef
+        t7czCS3LBQJ2k5m1mSqNXiKP69Mkr86m5n8LUnLsAAPZ3xqQD/VYvahloNFBgkyhlpdDQh
+        /LpQv3TP15UwEM6ClRs4BfA7XERf71U=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-Gifoue1zNUSfh9u3WtwOWw-1; Tue, 03 Mar 2020 05:11:06 -0500
+X-MC-Unique: Gifoue1zNUSfh9u3WtwOWw-1
+Received: by mail-wr1-f70.google.com with SMTP id p11so999956wrn.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 02:11:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version;
-        bh=2lBH94o2PcHIglkC8tdFIZftFpVYeorWUf+G12zJQW4=;
-        b=ar9APYHYl0M5dw+tWEw5wNelASDJDtCq98ctKq4ZtvRPvHhHany+C/E+RNHPEwm+B/
-         T3POkJj+Lfz3VDKZkh1Ufn/bdfJv2LLArSEHCQUmy/0MjTL/T3FQ56SpYfvSKOV1Ajku
-         a7g4k7NXKT7A2WDqnFFUxRisxRv34JB9YJKy4JDNODzHr4PG7RAhr1sJ+2jWOn2rty95
-         EJY4palaHFyrInlD6dF3ypzJGSp4rGN8Ujl2t3tj8oJ8/DqEk8XWDwmBviiUvHVlMthF
-         k6gV0eK5UScYnuqbrXXq1JIXyK/ZMxhCJCXlkKJZfbPxwHwWvsV4A8oERKzhJ2zQJcy5
-         KJyA==
-X-Gm-Message-State: ANhLgQ3VBwtj+we4BaPJ6/fZE1k7on0kjSH092M8xszFhRhzi8MUhmRy
-        nzhsCmGWzF/SqCnza4Hab3Y=
-X-Google-Smtp-Source: ADFU+vvCK/dhrA0HP90FSZ4H2gM/ZTfYDVGZI2QL86FFvhSRqOivBshJgAGF9V7MeYb1cB5n62gWKQ==
-X-Received: by 2002:ac2:48b6:: with SMTP id u22mr2319457lfg.18.1583230233683;
-        Tue, 03 Mar 2020 02:10:33 -0800 (PST)
-Received: from eldfell.localdomain ([194.136.85.206])
-        by smtp.gmail.com with ESMTPSA id z1sm123878ljh.17.2020.03.03.02.10.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0lKGMZz2mVXzfjH8foE9O3JFOJlrljIc2oxkVwn7z1E=;
+        b=rFl+sKeRaotSTT88rMSi9bQJUvEzDwZ0Ys9OTDnTJsZBGX6yodI6hkH/pnDMrxhN0D
+         jejGOCnybVyIyGDwB8R3Djju7I7XaAT637mat0hNMzNCDHFlRxv/hZpoDpBjDHE3ky0h
+         qxGHDT0hyzTwlGgXWaCSNKkZ+lNKhOfhZbL9SQXIm+HQbwu+ezX58Vamuf01KYUum+qY
+         sHkdbv4KQm8bmp5gskTeTvgG8g18lv9waBrQ1ckuEt6MdeosjMmvme7Og72y2sWz8S14
+         Ys9cZf72YJrjSx1BXZj6segKpdcQ8OLh1iPqPOdLSoxW/6ziyunEtNG25y1mOhmG9STa
+         zaPw==
+X-Gm-Message-State: ANhLgQ2uPMjASCqXFcCPULx8Nyc7EudjI5f5bGmNSDeJm8383/rIKthF
+        LpU575GevKC0PKUbbohZeo1uRvtDlFiD6yFuZa3CmSSzbSCT6MpD9OihGVuMN3s+3KgUDUFS9SR
+        fXl2DBfyLnf3y9lPbTRqWLZLr
+X-Received: by 2002:a7b:c5cd:: with SMTP id n13mr3568990wmk.172.1583230264531;
+        Tue, 03 Mar 2020 02:11:04 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vupO8zpDPGI2M251ftAIAreBbyyhVWtPWzvaf5Z4LtEpAgdcTDnuje0fNmPeffLysPi04uEaw==
+X-Received: by 2002:a7b:c5cd:: with SMTP id n13mr3568951wmk.172.1583230264185;
+        Tue, 03 Mar 2020 02:11:04 -0800 (PST)
+Received: from kherbst.pingu.com ([2a02:8308:b0be:6900:482c:9537:40:83ba])
+        by smtp.gmail.com with ESMTPSA id w206sm3315371wmg.11.2020.03.03.02.11.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 02:10:33 -0800 (PST)
-Date:   Tue, 3 Mar 2020 12:10:29 +0200
-From:   Pekka Paalanen <ppaalanen@gmail.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] drm/fourcc: Add modifier definitions for describing
- Amlogic Video Framebuffer Compression
-Message-ID: <20200303121029.5532669d@eldfell.localdomain>
-In-Reply-To: <20200221090845.7397-2-narmstrong@baylibre.com>
-References: <20200221090845.7397-1-narmstrong@baylibre.com>
-        <20200221090845.7397-2-narmstrong@baylibre.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 03 Mar 2020 02:11:03 -0800 (PST)
+From:   Karol Herbst <kherbst@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Karol Herbst <kherbst@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lyude Paul <lyude@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH v6] pci: prevent putting nvidia GPUs into lower device states on certain intel bridges
+Date:   Tue,  3 Mar 2020 11:10:52 +0100
+Message-Id: <20200303101052.133631-1-kherbst@redhat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rszd0x.FOSs6mcQm0ZPJOpS"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rszd0x.FOSs6mcQm0ZPJOpS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fixes state transitions of Nvidia Pascal GPUs from D3cold into higher device
+states.
 
-On Fri, 21 Feb 2020 10:08:42 +0100
-Neil Armstrong <narmstrong@baylibre.com> wrote:
+v2: convert to pci_dev quirk
+    put a proper technical explanation of the issue as a in-code comment
+v3: disable it only for certain combinations of intel and nvidia hardware
+v4: simplify quirk by setting flag on the GPU itself
+v5: restructure quirk to make it easier to add new IDs
+    fix whitespace issues
+    fix potential NULL pointer access
+    update the quirk documentation
+v6: move quirk into nouveau
 
-> Amlogic uses a proprietary lossless image compression protocol and format
-> for their hardware video codec accelerators, either video decoders or
-> video input encoders.
->=20
-> It considerably reduces memory bandwidth while writing and reading
-> frames in memory.
->=20
-> The underlying storage is considered to be 3 components, 8bit or 10-bit
-> per component, YCbCr 420, single plane :
-> - DRM_FORMAT_YUV420_8BIT
-> - DRM_FORMAT_YUV420_10BIT
->=20
-> This modifier will be notably added to DMA-BUF frames imported from the V=
-4L2
-> Amlogic VDEC decoder.
->=20
-> At least two options are supported :
-> - Scatter mode: the buffer is filled with a IOMMU scatter table referring
->   to the encoder current memory layout. This mode if more efficient in te=
-rms
->   of memory allocation but frames are not dumpable and only valid during =
-until
->   the buffer is freed and back in control of the encoder
-> - Memory saving: when the pixel bpp is 8b, the size of the superblock can
->   be reduced, thus saving memory.
->=20
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  include/uapi/drm/drm_fourcc.h | 56 +++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->=20
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index 8bc0b31597d8..8a6e87bacadb 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -309,6 +309,7 @@ extern "C" {
->  #define DRM_FORMAT_MOD_VENDOR_BROADCOM 0x07
->  #define DRM_FORMAT_MOD_VENDOR_ARM     0x08
->  #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
-> +#define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
-> =20
->  /* add more to the end as needed */
-> =20
-> @@ -804,6 +805,61 @@ extern "C" {
->   */
->  #define DRM_FORMAT_MOD_ALLWINNER_TILED fourcc_mod_code(ALLWINNER, 1)
-> =20
-> +/*
-> + * Amlogic Video Framebuffer Compression modifiers
-> + *
-> + * Amlogic uses a proprietary lossless image compression protocol and fo=
-rmat
-> + * for their hardware video codec accelerators, either video decoders or
-> + * video input encoders.
-> + *
-> + * It considerably reduces memory bandwidth while writing and reading
-> + * frames in memory.
-> + * Implementation details may be platform and SoC specific, and shared
-> + * between the producer and the decoder on the same platform.
+Signed-off-by: Karol Herbst <kherbst@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+Cc: Mika Westerberg <mika.westerberg@intel.com>
+Cc: linux-pci@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: nouveau@lists.freedesktop.org
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205623
+---
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 56 +++++++++++++++++++++++++++
+ drivers/pci/pci.c                     |  8 ++++
+ include/linux/pci.h                   |  1 +
+ 3 files changed, 65 insertions(+)
 
-Hi,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 2cd83849600f..51d3a7ba7731 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -618,6 +618,59 @@ nouveau_drm_device_fini(struct drm_device *dev)
+ 	kfree(drm);
+ }
+ 
++/*
++ * On some Intel PCIe bridge controllers doing a
++ * D0 -> D3hot -> D3cold -> D0 sequence causes Nvidia GPUs to not reappear.
++ * Skipping the intermediate D3hot step seems to make it work again. Thise is
++ * probably caused by not meeting the expectation the involved AML code has
++ * when the GPU is put into D3hot state before invoking it.
++ *
++ * This leads to various manifestations of this issue:
++ *  - AML code execution to power on the GPU hits an infinite loop (as the
++ *    code waits on device memory to change).
++ *  - kernel crashes, as all PCI reads return -1, which most code isn't able
++ *    to handle well enough.
++ *
++ * In all cases dmesg will contain at least one line like this:
++ * 'nouveau 0000:01:00.0: Refused to change power state, currently in D3'
++ * followed by a lot of nouveau timeouts.
++ *
++ * In the \_SB.PCI0.PEG0.PG00._OFF code deeper down writes bit 0x80 to the not
++ * documented PCI config space register 0x248 of the Intel PCIe bridge
++ * controller (0x1901) in order to change the state of the PCIe link between
++ * the PCIe port and the GPU. There are alternative code paths using other
++ * registers, which seem to work fine (executed pre Windows 8):
++ *  - 0xbc bit 0x20 (publicly available documentation claims 'reserved')
++ *  - 0xb0 bit 0x10 (link disable)
++ * Changing the conditions inside the firmware by poking into the relevant
++ * addresses does resolve the issue, but it seemed to be ACPI private memory
++ * and not any device accessible memory at all, so there is no portable way of
++ * changing the conditions.
++ * On a XPS 9560 that means bits [0,3] on \CPEX need to be cleared.
++ *
++ * The only systems where this behavior can be seen are hybrid graphics laptops
++ * with a secondary Nvidia Maxwell, Pascal or Turing GPU. Its unclear wheather
++ * this issue only occurs in combination with listed Intel PCIe bridge
++ * controllers and the mentioned GPUs or other devices as well.
++ *
++ * documentation on the PCIe bridge controller can be found in the
++ * "7th Generation Intel® Processor Families for H Platforms Datasheet Volume 2"
++ * Section "12 PCI Express* Controller (x16) Registers"
++ */
++
++static void quirk_broken_nv_runpm(struct pci_dev *dev)
++{
++	struct pci_dev *bridge = pci_upstream_bridge(dev);
++
++	if (!bridge || bridge->vendor != PCI_VENDOR_ID_INTEL)
++		return;
++
++	switch (bridge->device) {
++	case 0x1901:
++		dev->parent_d3cold = 1;
++	}
++}
++
+ static int nouveau_drm_probe(struct pci_dev *pdev,
+ 			     const struct pci_device_id *pent)
+ {
+@@ -699,6 +752,7 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
+ 	if (ret)
+ 		goto fail_drm_dev_init;
+ 
++	quirk_broken_nv_runpm(pdev);
+ 	return 0;
+ 
+ fail_drm_dev_init:
+@@ -737,6 +791,8 @@ nouveau_drm_remove(struct pci_dev *pdev)
+ {
+ 	struct drm_device *dev = pci_get_drvdata(pdev);
+ 
++	/* revert our workaround */
++	pdev->parent_d3cold = false;
+ 	nouveau_drm_device_remove(dev);
+ }
+ 
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 951099279192..6ece05723fa2 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -860,6 +860,14 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
+ 	   || (state == PCI_D2 && !dev->d2_support))
+ 		return -EIO;
+ 
++	/*
++	 * Power management can be disabled for certain devices as they don't
++	 * come back up later on runtime_resume. We rely on platform means to
++	 * cut power consumption instead (e.g. ACPI).
++	 */
++	if (state != PCI_D0 && dev->parent_d3cold)
++		return 0;
++
+ 	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+ 	if (pmcsr == (u16) ~0) {
+ 		pci_err(dev, "can't change power state from %s to %s (config space inaccessible)\n",
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 930fab293073..3e5938b91966 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -340,6 +340,7 @@ struct pci_dev {
+ 	unsigned int	no_d3cold:1;	/* D3cold is forbidden */
+ 	unsigned int	bridge_d3:1;	/* Allow D3 for bridge */
+ 	unsigned int	d3cold_allowed:1;	/* D3cold is allowed by user */
++	unsigned int	parent_d3cold:1;	/* power manage the parent instead */
+ 	unsigned int	mmio_always_on:1;	/* Disallow turning off io/mem
+ 						   decoding during BAR sizing */
+ 	unsigned int	wakeup_prepared:1;
+-- 
+2.24.1
 
-after a lengthy IRC discussion on #dri-devel, this "may be platform and
-SoC specific" is a problem.
-
-It can be an issue in two ways:
-
-- If something in the data acts like a sub-modifier, then advertising
-  support for one modifier does not really tell if the data layout is
-  supported or not.
-
-- If you need to know the platform and/or SoC to be able to interpret
-  the data, it means the modifier is ill-defined and cannot be used in
-  inter-machine communication (e.g. Pipewire).
-
-Neil mentioned the data contains a "header" that further specifies
-things, but there is no specification about the header itself.
-Therefore I don't think we can even know if the header contains
-something that acts like a sub-modifier or not.
-
-All this sounds like the modifier definitions here are not enough to
-fully interpret the data. At the very least I would expect a reference
-to a document explaining the "header", or even better, a kernel ReST
-doc.
-
-I wonder if this is at all suitable as a DRM format modifier as is. I
-have been assuming that a modifier together with all the usual FB
-parameters should be enough to interpret the stored data, but in this
-case I have doubt it actually is.
-
-I have no problem with proprietary data layouts as long as they are
-fully specified.
-
-I do feel like I would not be able to write a software decoder for this
-set of modifiers given the details below.
-
-
-Thanks,
-pq
-
-> + *
-> + * The underlying storage is considered to be 3 components, 8bit or 10-b=
-it
-> + * per component YCbCr 420, single plane :
-> + * - DRM_FORMAT_YUV420_8BIT
-> + * - DRM_FORMAT_YUV420_10BIT
-> + *
-> + * The classic memory storage is composed of:
-> + * - a body content organized in 64x32 superblocks with 4096 bytes per
-> + *   superblock in default mode.
-> + * - a 32 bytes per 128x64 header block
-> + */
-> +#define DRM_FORMAT_MOD_AMLOGIC_FBC_DEFAULT fourcc_mod_code(AMLOGIC, 0)
-> +
-> +/*
-> + * Amlogic Video Framebuffer Compression Options
-> + *
-> + * Two optional features are available which may not supported/used on e=
-very
-> + * SoCs and Compressed Framebuffer producers.
-> + */
-> +#define DRM_FORMAT_MOD_AMLOGIC_FBC(__modes) fourcc_mod_code(AMLOGIC, __m=
-odes)
-> +
-> +/*
-> + * Amlogic FBC Scatter Memory layout
-> + *
-> + * Indicates the header contains IOMMU references to the compressed
-> + * frames content to optimize memory access and layout.
-> + * In this mode, only the header memory address is needed, thus the
-> + * content memory organization is tied to the current producer
-> + * execution and cannot be saved/dumped.
-> + */
-> +#define DRM_FORMAT_MOD_AMLOGIC_FBC_SCATTER	(1ULL << 0)
-> +
-> +/*
-> + * Amlogic FBC Memory Saving mode
-> + *
-> + * Indicates the storage is packed when pixel size is multiple of word
-> + * boudaries, i.e. 8bit should be stored in this mode to save allocation
-> + * memory.
-> + *
-> + * This mode reduces body layout to 3072 bytes per 64x32 superblock and
-> + * 3200 bytes per 64x32 superblock combined with scatter mode.
-> + */
-> +#define DRM_FORMAT_MOD_AMLOGIC_FBC_MEM_SAVING	(1ULL << 1)
-> +
->  #if defined(__cplusplus)
->  }
->  #endif
-
-
---Sig_/rszd0x.FOSs6mcQm0ZPJOpS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAl5eLRUACgkQI1/ltBGq
-qqdL8xAAjMPK1D1qmrv9Tqdi/ZSw69SGwq6aCR6pDThCLT+q4CVDMg3fbMdA+Evy
-4owhcCrMY+SsDWV8wksuyfJSanusmFQjnRz0eiU6gP/Nnp/AhoMw5R0mqePmRen2
-XUN0CkTmbNQfaZtYnv3LkLG8/Azz/YPwx2V6iQ2LEbPScnxfsSEd4dvv0pdqynNw
-czBQEKLEKDOtLWfS/W3xB8Etc1i+HgBS97vLllbQ1UtEt1L5Q5CU7ZrxdwM3+7XH
-IM+uaBh9ud9sZJgyejAAU1e6FiD2KDkpI3A6VKMyhhBqMw8n+8Vo5kL878VvqfZO
-ufAwE056wNelfhWuSCpu5zi5cKBs3z7BvS55jdDi+whyorgZAOflPxk3XllWhPby
-YK/o5b8yPuL6WvZtYLjJNGx8skJrNpGfRDvpJqIS5803RofPRdYofB7JL45GjsNo
-vxD6zDfb8k8jK2rbaWzlSfzklwj422Nw1wkz9qs6qIbzih1n5lOzcqqSJGyQW/mG
-0liMnUqg2HvXFCFtvh1tNtO7eD6nI/pjSKaDatji/QPAHEkdYPVUlnWz1bWaweOV
-Xd944KvyOIpfMo/RLlgGOKXKF2ego9QG6PeE/lPoxLvznKLui4s4YIwC4cGcqAGb
-GZ9ZCw8A/wKOwOlRJwYmnT3eB9GPksMJPTsR/hVMCaNGmvVducM=
-=CoFq
------END PGP SIGNATURE-----
-
---Sig_/rszd0x.FOSs6mcQm0ZPJOpS--
