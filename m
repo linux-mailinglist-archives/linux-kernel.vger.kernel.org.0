@@ -2,102 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3F0178256
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80E34178244
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730879AbgCCSTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:19:32 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44491 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbgCCSTb (ORCPT
+        id S1730844AbgCCSRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:17:21 -0500
+Received: from gateway20.websitewelcome.com ([192.185.63.14]:36631 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728955AbgCCSRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:19:31 -0500
-Received: by mail-io1-f65.google.com with SMTP id u17so4627882iog.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 10:19:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nPvek0ZtRCNTYdhlOy/oh4ZQVPcCFziBknkZ1GwpcJY=;
-        b=UZSZiVIuzflEmSQZMD4XoiyUvp0ADjwPChHhEM2E6Pq2eoLde85hugz1zHkWUWi3O7
-         6DV9EmkMGGqbiRbl4DuvW2KNSGOvLZLwF07VVy6GE9h9dbLed9bQ4KWbxmfBpKeYVNEp
-         /114VJiF0/fd3Vs3Rma/uGqdeO8/5EFjiHg4GRlA/OPFhoPgzXn7+zjCNccz2GejfWk7
-         UQxbRyVTdMVsmQyKfyOaApOBQ+/nLZRj2s6yZgedgZvSMbr6hjussMHCmwHXdDHwQJ+1
-         iEJa7/n9NDRFQRkKqvgsyjVJzkK3PGMbH6TdsVlpCp7r3SNPZ0lmxsU0Rb9VZnmbfbeP
-         Vqew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nPvek0ZtRCNTYdhlOy/oh4ZQVPcCFziBknkZ1GwpcJY=;
-        b=jEEPwTohZgJjYTTnNduHR9PHjoxh/CpTE6U+ndw8plbDZPqRW85SiOnZGBCgjUB4Qp
-         QnjpZKw8E0LaUsvX/XroB+uTw9wYz3R6acuTKEMjBkD5hmuSVT3ZWVJz2NcQ1PjRuv8u
-         AaEQBiHU0ppY2bbbcK+l6+LWbxr/b712rL4W0xz3XT6yZVxb2TAo39phpYcojtsiygW6
-         K/6eMSAvuR9aDTCH5WVS8HuyBnzN+RwV4IXPou7PMILoEG/0Gp63g4lg2O7jCy/GvSve
-         fwMfmDDe4r5jN+PI3gncScW8g8+keXfnjYUmtHs2Twwyk5dZJ5dAMxcPPyGcU1sfl+ww
-         hLCw==
-X-Gm-Message-State: ANhLgQ0VQ7IQlGGPB8UINczTfv/wlB0tXL9v+akaDX7aONL+r/Ee5w9b
-        nKvHfSxCq23014PQYTMFTOujgg==
-X-Google-Smtp-Source: ADFU+vu/2n6F/Kxthc40wuYGRz3+W2Q2JeJIi3zJZf6LK08fX7k3pJlntIPp8Kx1DFUNXDwaV91N1w==
-X-Received: by 2002:a02:85e8:: with SMTP id d95mr5089329jai.92.1583259569483;
-        Tue, 03 Mar 2020 10:19:29 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id x25sm5829658iol.6.2020.03.03.10.19.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 10:19:29 -0800 (PST)
-Subject: Re: [PATCH 5.4 062/152] bcache: ignore pending signals when creating
- gc and allocator thread
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Sasha Levin <sashal@kernel.org>
-References: <20200303174302.523080016@linuxfoundation.org>
- <20200303174309.501274295@linuxfoundation.org>
- <db776832-64ff-6757-de09-ced1ea8b368f@kernel.dk>
- <20200303181228.GA1014382@kroah.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <950f1d0a-6b01-6c80-8627-b1a9b2d2c89b@kernel.dk>
-Date:   Tue, 3 Mar 2020 11:19:28 -0700
+        Tue, 3 Mar 2020 13:17:21 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id A80FE4011EB8A
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Mar 2020 11:02:41 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9C6aj5LUuvBMd9C6aj00gj; Tue, 03 Mar 2020 12:17:20 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ey4WjzYgUg1JN9sD4FRXGAPjCfky/AZd9UOFQ0HJlG0=; b=gXQ7WZT5wyzzwtk51w//ezXOQ8
+        gC7Xv5gLPMT52rB6ZShyv2XBfyXvkKC22rA4sefKUXYJtEPtjQanAdIW5ApewUNP3CX/mhPBprm45
+        BeWO/ZHdHnorUuYp+eccBBbasG7pPPd/v1lwgL0MM2AXtR63jMYZGO1zMe+vpwbqejcYVgXE2yaMb
+        dxPdjy/x4fTSVDKTE5kYps/Sv76UiHOG7U+R4E4guIisKNXW5Jm9nqRepRbxb+xWxqzVKKePuThfq
+        p7h1t2bLdOIdMX1Kb0C/lTE+96qhgc8pKd6f6bPyE6qrtPIyEU1g+RUeuktwmT9FjFtdoa7BZujT6
+        ohN4jStg==;
+Received: from [201.162.240.41] (port=17449 helo=[192.168.43.132])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j9C6Y-003H1B-IC; Tue, 03 Mar 2020 12:17:19 -0600
+Subject: Re: [PATCH][next] drm: Replace zero-length array with flexible-array
+ member
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Eric Anholt <eric@anholt.net>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org
+References: <20200225140347.GA22864@embeddedor> <87a756sqdc.fsf@intel.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <138ff691-94b3-1ce5-e7fa-e6d7c436bf8e@embeddedor.com>
+Date:   Tue, 3 Mar 2020 12:20:16 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200303181228.GA1014382@kroah.com>
+In-Reply-To: <87a756sqdc.fsf@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.240.41
+X-Source-L: No
+X-Exim-ID: 1j9C6Y-003H1B-IC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.132]) [201.162.240.41]:17449
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 23
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/3/20 11:12 AM, Greg Kroah-Hartman wrote:
-> On Tue, Mar 03, 2020 at 10:55:04AM -0700, Jens Axboe wrote:
->> On 3/3/20 10:42 AM, Greg Kroah-Hartman wrote:
->>> From: Coly Li <colyli@suse.de>
->>>
->>> [ Upstream commit 0b96da639a4874311e9b5156405f69ef9fc3bef8 ]
->>>
->>> When run a cache set, all the bcache btree node of this cache set will
->>> be checked by bch_btree_check(). If the bcache btree is very large,
->>> iterating all the btree nodes will occupy too much system memory and
->>> the bcache registering process might be selected and killed by system
->>> OOM killer. kthread_run() will fail if current process has pending
->>> signal, therefore the kthread creating in run_cache_set() for gc and
->>> allocator kernel threads are very probably failed for a very large
->>> bcache btree.
->>>
->>> Indeed such OOM is safe and the registering process will exit after
->>> the registration done. Therefore this patch flushes pending signals
->>> during the cache set start up, specificly in bch_cache_allocator_start()
->>> and bch_gc_thread_start(), to make sure run_cache_set() won't fail for
->>> large cahced data set.
+
+
+On 2/25/20 08:17, Jani Nikula wrote:
+> On Tue, 25 Feb 2020, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>> The current codebase makes use of the zero-length array language
+>> extension to the C90 standard, but the preferred mechanism to declare
+>> variable-length types such as these ones is a flexible array member[1][2],
+>> introduced in C99:
 >>
->> Please drop this one, it's being reverted in mainline.
+>> struct foo {
+>>         int stuff;
+>>         struct boo array[];
+>> };
+>>
+>> By making use of the mechanism above, we will get a compiler warning
+>> in case the flexible array does not occur last in the structure, which
+>> will help us prevent some kind of undefined behavior bugs from being
+>> inadvertently introduced[3] to the codebase from now on.
+>>
+>> Also, notice that, dynamic memory allocations won't be affected by
+>> this change:
+>>
+>> "Flexible array members have incomplete type, and so the sizeof operator
+>> may not be applied. As a quirk of the original implementation of
+>> zero-length arrays, sizeof evaluates to zero."[1]
+>>
+>> This issue was found with the help of Coccinelle.
+>>
+>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+>> [2] https://github.com/KSPP/linux/issues/21
+>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/gpu/drm/etnaviv/etnaviv_gem.h         | 2 +-
+>>  drivers/gpu/drm/gma500/intel_bios.h           | 2 +-
+>>  drivers/gpu/drm/i915/display/intel_vbt_defs.h | 4 ++--
+>>  drivers/gpu/drm/i915/gt/intel_lrc.c           | 2 +-
+>>  drivers/gpu/drm/i915/i915_gpu_error.h         | 2 +-
 > 
-> Dropped from all trees now, thanks.
+> Please split out the i915 changes to a separate patch.
+> 
 
-Thanks!
+Sure thing. I can do that.
 
--- 
-Jens Axboe
+>>  drivers/gpu/drm/msm/msm_gem.h                 | 2 +-
+>>  drivers/gpu/drm/qxl/qxl_cmd.c                 | 2 +-
+>>  drivers/gpu/drm/vboxvideo/vboxvideo.h         | 2 +-
+>>  drivers/gpu/drm/vc4/vc4_drv.h                 | 2 +-
+>>  drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c    | 2 +-
+>>  drivers/gpu/drm/vmwgfx/vmwgfx_surface.c       | 2 +-
+>>  include/drm/bridge/mhl.h                      | 4 ++--
+>>  include/drm/drm_displayid.h                   | 2 +-
+>>  include/uapi/drm/i915_drm.h                   | 4 ++--
+> 
+> Not sure it's worth touching uapi headers. They're full of both [0] and
+> []. Again, please at least split it to a separate patch to be decided
+> separately.
+> 
+
+Yeah, it's worth it; the purpose of these patches is to replace [0] with [] across
+the whole tree.
+
+Thanks
+--
+Gustavo
 
