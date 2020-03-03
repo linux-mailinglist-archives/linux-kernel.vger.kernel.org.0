@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F52178122
+	by mail.lfdr.de (Postfix) with ESMTP id E65CA178123
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387849AbgCCSAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:00:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44642 "EHLO mail.kernel.org"
+        id S2387856AbgCCSAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:00:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733081AbgCCSAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:00:46 -0500
+        id S2387842AbgCCSAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:00:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A12820656;
-        Tue,  3 Mar 2020 18:00:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8407F20836;
+        Tue,  3 Mar 2020 18:00:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258445;
-        bh=G4QSvPGFRpe0qgz7VhN+mv+kHRd9FUCfvTd2y2Cud9k=;
+        s=default; t=1583258447;
+        bh=DE5YWSbha798yCuN0NyX42YbVoLZfyj4BR5jjOdp1YQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T6mugbwA1Q6wEfy/HzHqg2JOLdbJM8gFQcaOh1pyf2OmvCZoTj0GlKp4mfTHhYI+f
-         BzHulAWUrAidQhT3/5sv7IqFNIsP7sh1y7/o3NZhRqFMNobDWJqtBcWGFXJn0GOpXb
-         jj9J7W28j1C05oc9fyGcBZIzgu1RAoJCWRbxJqzI=
+        b=S+T5cxCBwf9C/P4oxT4Gf2JM4kM5ybCbJNCB6bcN3JXln27RbovkRmvYCNKQCjDGG
+         yBFk7JgML6phalehjIfhJhlGsQEi11FSITLWofTcx4KilsrRRHlcXH9gKiuIEjC4Md
+         TNMuX111uaKd3py4V6l8fRI/dl5ZGwgT9e+PZZ0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f2a62d07a5198c819c7b@syzkaller.appspotmail.com,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 51/87] vhost: Check docket sk_family instead of call getname
-Date:   Tue,  3 Mar 2020 18:43:42 +0100
-Message-Id: <20200303174354.941065895@linuxfoundation.org>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.19 52/87] HID: alps: Fix an error handling path in alps_input_configured()
+Date:   Tue,  3 Mar 2020 18:43:43 +0100
+Message-Id: <20200303174355.026993631@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
 References: <20200303174349.075101355@linuxfoundation.org>
@@ -46,54 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugenio Pérez <eperezma@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit 42d84c8490f9f0931786f1623191fcab397c3d64 upstream.
+commit 8d2e77b39b8fecb794e19cd006a12f90b14dd077 upstream.
 
-Doing so, we save one call to get data we already have in the struct.
+They are issues:
+   - if 'input_allocate_device()' fails and return NULL, there is no need
+     to free anything and 'input_free_device()' call is a no-op. It can
+     be axed.
+   - 'ret' is known to be 0 at this point, so we must set it to a
+     meaningful value before returning
 
-Also, since there is no guarantee that getname use sockaddr_ll
-parameter beyond its size, we add a little bit of security here.
-It should do not do beyond MAX_ADDR_LEN, but syzbot found that
-ax25_getname writes more (72 bytes, the size of full_sockaddr_ax25,
-versus 20 + 32 bytes of sockaddr_ll + MAX_ADDR_LEN in syzbot repro).
-
-Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
-Reported-by: syzbot+f2a62d07a5198c819c7b@syzkaller.appspotmail.com
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2562756dde55 ("HID: add Alps I2C HID Touchpad-Stick support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/net.c |   10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/hid/hid-alps.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1187,10 +1187,6 @@ static int vhost_net_release(struct inod
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -734,7 +734,7 @@ static int alps_input_configured(struct
+ 	if (data->has_sp) {
+ 		input2 = input_allocate_device();
+ 		if (!input2) {
+-			input_free_device(input2);
++			ret = -ENOMEM;
+ 			goto exit;
+ 		}
  
- static struct socket *get_raw_socket(int fd)
- {
--	struct {
--		struct sockaddr_ll sa;
--		char  buf[MAX_ADDR_LEN];
--	} uaddr;
- 	int r;
- 	struct socket *sock = sockfd_lookup(fd, &r);
- 
-@@ -1203,11 +1199,7 @@ static struct socket *get_raw_socket(int
- 		goto err;
- 	}
- 
--	r = sock->ops->getname(sock, (struct sockaddr *)&uaddr.sa, 0);
--	if (r < 0)
--		goto err;
--
--	if (uaddr.sa.sll_family != AF_PACKET) {
-+	if (sock->sk->sk_family != AF_PACKET) {
- 		r = -EPFNOSUPPORT;
- 		goto err;
- 	}
 
 
