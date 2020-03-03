@@ -2,125 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3601784D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 22:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F391784EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 22:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732614AbgCCVZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 16:25:16 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42929 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732580AbgCCVZQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 16:25:16 -0500
-Received: by mail-pf1-f194.google.com with SMTP id f5so2124892pfk.9;
-        Tue, 03 Mar 2020 13:25:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pogs7tPo/L/NBSyyRxPvOrbszi59KiJaOrJoFUbt2WY=;
-        b=Kn9+nUVfu3l+nTvfNq/uPFWNk9LhmCulmVcbQTiFCrzt87NWiJeEfwUlfj+wvg/pjb
-         8vJWrV3V+QUc+z3cQ3rblXKBOnBh4cxRyH66THpI0TC/g+Yi9viEOfGKoZfvGRbjsTjb
-         lSdn3NmShU2JTxYtekvZsreSYc4PxJETF0GwCh8nx85+DxwfC+3n+LZiR2Kf/nNOPHMy
-         MgiM4+8WUBmXUpScefLvyeHOvU6Axf6+/U7aNd9PELE7dBj4GzXSYsRbsjkMCs7/ej5c
-         Joga0FcKcl2GvMdm5uPoIztFnrnEtK5Jyrzb0zi7aASy+l0JUcZTktxDhE06nV7Xu1UD
-         EKgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pogs7tPo/L/NBSyyRxPvOrbszi59KiJaOrJoFUbt2WY=;
-        b=UKOKodjcmCYkC9ikFFqSh5i+H8ZrACW3UrUxUtTKKYtk8dfsPxWp1pcTaictpVSgZr
-         e4NDsNbHTZFgMHdNqq09aH0GunnuumxjrMnkuwdvV8ZYWRp7rudzQcWMYObwI9xW88ZX
-         X4J1tMotGIkOAQUlqGX6eGUS4CoZeCcYZhbJV4lsLttjU6RHzuFUfJubA1xaMawvR2lx
-         jGhWX4Qww0ycR8d9UgpD2vC5bRjluLjZAZ/SNsJMsSpXeVotQe5+irdAl1VChHHSUpGw
-         MhyWt35RIpwwkTeapICCZQDUKWjx/sZ9OwtZPKO08InAa3lpijQx6YbSyy2pCK/kGQ3e
-         UPaQ==
-X-Gm-Message-State: ANhLgQ15PCucqbobasirCrKpKUqMnKM6Glo8MxA5mEMIXIK2He3sBwJA
-        s1w14IRgz39BILNZJwOcbQw=
-X-Google-Smtp-Source: ADFU+vtkWCpXDJsbFyREWnVzsCvO7puF/A5Fgv1NB2cWK73a/Md3BJQYPqwAqrxzo+2D4FVURkMW8g==
-X-Received: by 2002:aa7:8582:: with SMTP id w2mr5814744pfn.89.1583270714393;
-        Tue, 03 Mar 2020 13:25:14 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h16sm131571pje.43.2020.03.03.13.25.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Mar 2020 13:25:13 -0800 (PST)
-Date:   Tue, 3 Mar 2020 13:25:12 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     wim@linux-watchdog.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        joel@jms.id.au, avifishman70@gmail.com, tali.perry1@gmail.com,
-        yuenn@google.com, benjaminfair@google.com,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v2 3/3] watchdog: npcm: remove whitespaces
-Message-ID: <20200303212512.GA20448@roeck-us.net>
-References: <20200303100114.87786-1-tmaimon77@gmail.com>
- <20200303100114.87786-4-tmaimon77@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200303100114.87786-4-tmaimon77@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1732661AbgCCVcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 16:32:05 -0500
+Received: from mga06.intel.com ([134.134.136.31]:55266 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732649AbgCCVcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 16:32:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 13:32:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="263355817"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
+  by fmsmga004.fm.intel.com with ESMTP; 03 Mar 2020 13:32:03 -0800
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     platform-driver-x86@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vishwanath.somayaji@intel.com,
+        dvhart@infradead.org, mika.westerberg@intel.com,
+        peterz@infradead.org, charles.d.prestopine@intel.com,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Chen Zhou <chenzhou10@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "David E . Box" <david.e.box@intel.com>
+Subject: [PATCH v4] platform/x86: intel_pmc_core: fix: Make pmc_core_lpm_display() generic for platforms that support sub-states
+Date:   Tue,  3 Mar 2020 13:28:08 -0800
+Message-Id: <d770d0ed104ae009a98d72e85eae1ce4d63866b4.1583265275.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 12:01:14PM +0200, Tomer Maimon wrote:
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Currently pmc_core_lpm_display() uses array of struct pointers i.e.,
+tgl_lpm_maps for Tiger Lake directly to iterate through and to get the
+number of status/live status registers which is hardcoded and cannot
+be re-used for future platforms that support sub-states. To maintain
+readability, make pmc_core_lpm_display() generic, so that it can re-used
+for future platforms.
 
-Turns out this problem does not actually exist in the upstream driver
-(as of v5.6-rc4). You might want to align your code with the upstream
-kernel.
+Cc: Chen Zhou <chenzhou10@huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David E. Box <david.e.box@intel.com>
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+---
 
-Guenter
+Changes since v1:
+1) Changed the order of the patches i.e., patch 2 in v1 is made first in
+   the order for v2.
+2) Fixed the warnings reported by kbuild test robot.
 
-> ---
->  drivers/watchdog/npcm_wdt.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
-> index 84a728af6664..bd38bf1ee6a1 100644
-> --- a/drivers/watchdog/npcm_wdt.c
-> +++ b/drivers/watchdog/npcm_wdt.c
-> @@ -123,30 +123,29 @@ static int npcm_wdt_stop(struct watchdog_device *wdd)
->  	return 0;
->  }
->  
-> -
->  static int npcm_wdt_set_timeout(struct watchdog_device *wdd,
->  				unsigned int timeout)
->  {
->  	if (timeout < 2)
->  		wdd->timeout = 1;
->  	else if (timeout < 3)
-> -	      wdd->timeout = 2;
-> +		wdd->timeout = 2;
->  	else if (timeout < 6)
-> -	      wdd->timeout = 5;
-> +		wdd->timeout = 5;
->  	else if (timeout < 11)
-> -	      wdd->timeout = 10;
-> +		wdd->timeout = 10;
->  	else if (timeout < 22)
-> -	      wdd->timeout = 21;
-> +		wdd->timeout = 21;
->  	else if (timeout < 44)
-> -	      wdd->timeout = 43;
-> +		wdd->timeout = 43;
->  	else if (timeout < 87)
-> -	      wdd->timeout = 86;
-> +		wdd->timeout = 86;
->  	else if (timeout < 173)
-> -	      wdd->timeout = 172;
-> +		wdd->timeout = 172;
->  	else if (timeout < 688)
-> -	      wdd->timeout = 687;
-> +		wdd->timeout = 687;
->  	else
-> -	      wdd->timeout = 2750;
-> +		wdd->timeout = 2750;
->  
->  	if (watchdog_active(wdd))
->  		npcm_wdt_start(wdd);
+Changes since v2:
+1) Add "Make pmc_core_substate_res_show() generic" patch to v3.
+2) Fixed the memory leak issue in pmc_core_lpm_display().
+3) Moved patch 2 in v2 to the last in the series in v3.
+
+Changes since v3:
+1) Addressed the comments received in v3.
+2) Sending this patch alone in v4
+
+ drivers/platform/x86/intel_pmc_core.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index 986fe677d6fe..6ddb74d05ea6 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -20,6 +20,7 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
++#include <linux/slab.h>
+ #include <linux/suspend.h>
+ #include <linux/uaccess.h>
+ 
+@@ -639,20 +640,35 @@ static void pmc_core_slps0_display(struct pmc_dev *pmcdev, struct device *dev,
+ 	}
+ }
+ 
++static int pmc_core_lpm_get_arr_size(const struct pmc_bit_map **maps)
++{
++	int idx;
++
++	for (idx = 0; maps[idx]; idx++)
++		;/* Nothing */
++
++	return idx;
++}
++
+ static void pmc_core_lpm_display(struct pmc_dev *pmcdev, struct device *dev,
+ 				 struct seq_file *s, u32 offset,
+ 				 const char *str,
+ 				 const struct pmc_bit_map **maps)
+ {
+-	u32 lpm_regs[ARRAY_SIZE(tgl_lpm_maps)-1];
+-	int index, idx, len = 32, bit_mask;
++	int index, idx, len = 32, bit_mask, arr_size;
++	u32 *lpm_regs;
++
++	arr_size = pmc_core_lpm_get_arr_size(maps);
++	lpm_regs = kmalloc_array(arr_size, sizeof(*lpm_regs), GFP_KERNEL);
++	if (!lpm_regs)
++		return;
+ 
+-	for (index = 0; tgl_lpm_maps[index]; index++) {
++	for (index = 0; index < arr_size; index++) {
+ 		lpm_regs[index] = pmc_core_reg_read(pmcdev, offset);
+ 		offset += 4;
+ 	}
+ 
+-	for (idx = 0; maps[idx]; idx++) {
++	for (idx = 0; idx < arr_size; idx++) {
+ 		if (dev)
+ 			dev_dbg(dev, "\nLPM_%s_%d:\t0x%x\n", str, idx,
+ 				lpm_regs[idx]);
+@@ -671,6 +687,8 @@ static void pmc_core_lpm_display(struct pmc_dev *pmcdev, struct device *dev,
+ 					   lpm_regs[idx] & bit_mask ? 1 : 0);
+ 		}
+ 	}
++
++	kfree(lpm_regs);
+ }
+ 
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
+
+base-commit: 8d92e160dd8fa62a4e52e334ff6dccc885cb6696
+-- 
+2.17.1
+
