@@ -2,131 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 126ED1771AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0681771B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:59:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbgCCI6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 03:58:09 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51572 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbgCCI6I (ORCPT
+        id S1727955AbgCCI7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:59:15 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33986 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727707AbgCCI7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:58:08 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a132so2140549wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 00:58:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o3nAJyS427GVNyXsslN2Pau0rWQbZoVpqZd5vhmDcbo=;
-        b=tZcfn5hggmSYfUmewSPycxLwEXrzWSo5yFlO6Fj2G/1GApsalpYcY/dFxmqjGiFWbw
-         k1VVE2ajw6/tPrOrOZHs4q2r+7WoGpWfx7lQxXlUD6wm54lshIHjlzoRbln5ctLXZ/sE
-         pciAtg6RclRnUIu0NqoYPUc6BgjNMHoyhH97Xq8zyHU83mpyMTudbWMzdvczqpyXAy/k
-         RaZMvtxm7f8qNcy4Ywnh7RDtzjnhuBx7TttiXJBwytlcp59K0mUF2bMhCaSsR7MQyHVz
-         QAzK4VPApCIBjhjRcafI5nppQbUk9LfUOZYsuV5JeXZHjqYQd5OipmND91lB6Itz1Qhi
-         Hi1g==
-X-Gm-Message-State: ANhLgQ2Rkin0nCFDizFuqPbhsVdktJeCBmbVg6txGKUR/XEQh4o3PZmt
-        8TFHFBx4lqZlkFVbg7DKPjQ=
-X-Google-Smtp-Source: ADFU+vsiSyGnf4NyZB71E2Xs4HRY4mlABNwI6En59X2klzFiehq8MNIym6DH+Eheu4txeMlKQO5MBA==
-X-Received: by 2002:a1c:2747:: with SMTP id n68mr3180805wmn.14.1583225887031;
-        Tue, 03 Mar 2020 00:58:07 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id b10sm32893984wrw.61.2020.03.03.00.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 00:58:06 -0800 (PST)
-Date:   Tue, 3 Mar 2020 09:58:05 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Mel Gorman <mgorman@suse.de>, David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
-Message-ID: <20200303085805.GB4380@dhcp22.suse.cz>
-References: <20200228034248.GE29971@bombadil.infradead.org>
- <87a7538977.fsf@yhuang-dev.intel.com>
- <edae2736-3239-0bdc-499c-560fc234c974@redhat.com>
- <871rqf850z.fsf@yhuang-dev.intel.com>
- <20200228094954.GB3772@suse.de>
- <87h7z76lwf.fsf@yhuang-dev.intel.com>
- <20200302151607.GC3772@suse.de>
- <87zhcy5hoj.fsf@yhuang-dev.intel.com>
- <20200303080945.GX4380@dhcp22.suse.cz>
- <87o8td4yf9.fsf@yhuang-dev.intel.com>
+        Tue, 3 Mar 2020 03:59:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583225953;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=Kp0XyTWrMUPNYfT6+rfxcT5Op3P4n5f1CbxbxYRrw7s=;
+        b=I38yU7mhdBkcBzCooimuk0/ZYgOjnFpNMy1+7LXSWKbE4KYeao4eIoGAJtAT7j4AWDbyQ7
+        DPESJLlXPBWKcnDyL4d8YeEhBZ4GkiIZydgCCdrY6aOgSICUIXFoM4izvTYNia5afLYIy9
+        eCAViv73jrZh+946+WOOrDbYUaAexmk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-150-a7oGbn7_Mye38Dy9TKuLMQ-1; Tue, 03 Mar 2020 03:59:12 -0500
+X-MC-Unique: a7oGbn7_Mye38Dy9TKuLMQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 688FC800D48;
+        Tue,  3 Mar 2020 08:59:10 +0000 (UTC)
+Received: from [10.36.117.113] (ovpn-117-113.ams2.redhat.com [10.36.117.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C81A1001B0B;
+        Tue,  3 Mar 2020 08:59:09 +0000 (UTC)
+Subject: Re: [PATCH] mm/vmscan.c: Clean code by removing unnecessary
+ assignment
+To:     mateusznosek0@gmail.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org
+References: <20200229214022.11853-1-mateusznosek0@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <4f7ab7ce-de14-caa7-5609-0e4004ab3bfd@redhat.com>
+Date:   Tue, 3 Mar 2020 09:59:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o8td4yf9.fsf@yhuang-dev.intel.com>
+In-Reply-To: <20200229214022.11853-1-mateusznosek0@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03-03-20 16:47:54, Huang, Ying wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
+On 29.02.20 22:40, mateusznosek0@gmail.com wrote:
+> From: Mateusz Nosek <mateusznosek0@gmail.com>
 > 
-> > On Tue 03-03-20 09:51:56, Huang, Ying wrote:
-> >> Mel Gorman <mgorman@suse.de> writes:
-> >> > On Mon, Mar 02, 2020 at 07:23:12PM +0800, Huang, Ying wrote:
-> >> >> If some applications cannot tolerate the latency incurred by the memory
-> >> >> allocation and zeroing.  Then we cannot discard instead of migrate
-> >> >> always.  While in some situations, less memory pressure can help.  So
-> >> >> it's better to let the administrator and the application choose the
-> >> >> right behavior in the specific situation?
-> >> >> 
-> >> >
-> >> > Is there an application you have in mind that benefits from discarding
-> >> > MADV_FREE pages instead of migrating them?
-> >> >
-> >> > Allowing the administrator or application to tune this would be very
-> >> > problematic. An application would require an update to the system call
-> >> > to take advantage of it and then detect if the running kernel supports
-> >> > it. An administrator would have to detect that MADV_FREE pages are being
-> >> > prematurely discarded leading to a slowdown and that is hard to detect.
-> >> > It could be inferred from monitoring compaction stats and checking
-> >> > if compaction activity is correlated with higher minor faults in the
-> >> > target application. Proving the correlation would require using the perf
-> >> > software event PERF_COUNT_SW_PAGE_FAULTS_MIN and matching the addresses
-> >> > to MADV_FREE regions that were freed prematurely. That is not an obvious
-> >> > debugging step to take when an application detects latency spikes.
-> >> >
-> >> > Now, you could add a counter specifically for MADV_FREE pages freed for
-> >> > reasons other than memory pressure and hope the administrator knows about
-> >> > the counter and what it means. That type of knowledge could take a long
-> >> > time to spread so it's really very important that there is evidence of
-> >> > an application that suffers due to the current MADV_FREE and migration
-> >> > behaviour.
-> >> 
-> >> OK.  I understand that this patchset isn't a universal win, so we need
-> >> some way to justify it.  I will try to find some application for that.
-> >> 
-> >> Another thought, as proposed by David Hildenbrand, it's may be a
-> >> universal win to discard clean MADV_FREE pages when migrating if there are
-> >> already memory pressure on the target node.  For example, if the free
-> >> memory on the target node is lower than high watermark?
-> >
-> > This is already happening because if the target node is short on memory
-> > it will start to reclaim and if MADV_FREE pages are at the tail of
-> > inactive file LRU list then they will be dropped. Please note how that
-> > follows proper aging and doesn't introduce any special casing. Really
-> > MADV_FREE is an inactive cache for anonymous memory and we treat it like
-> > inactive page cache. This is not carved in stone of course but it really
-> > requires very good justification to change.
+> Previously 0 was assigned to variable 'lruvec_size',
+> but the variable was never read later.
+> So the assignment can be removed.
 > 
-> If my understanding were correct, the newly migrated clean MADV_FREE
-> pages will be put at the head of inactive file LRU list instead of the
-> tail.  So it's possible that some useful file cache pages will be
-> reclaimed.
+> Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
+> ---
+>  mm/vmscan.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index f14c8c6069a6..a605ff36f126 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2427,10 +2427,8 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+>  		case SCAN_FILE:
+>  		case SCAN_ANON:
+>  			/* Scan one type exclusively */
+> -			if ((scan_balance == SCAN_FILE) != file) {
+> -				lruvec_size = 0;
+> +			if ((scan_balance == SCAN_FILE) != file)
+>  				scan = 0;
+> -			}
+>  			break;
+>  		default:
+>  			/* Look ma, no brain */
+> 
 
-This is the case also when you migrate other pages, right? We simply
-cannot preserve the aging.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+David / dhildenb
+
