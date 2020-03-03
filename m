@@ -2,60 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8181177893
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 647E2177899
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgCCOPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 09:15:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbgCCOPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:15:16 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D20C920838;
-        Tue,  3 Mar 2020 14:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583244908;
-        bh=CjxVJIk2GRMkI+aexuaFJkj4rdIHh1K0MxjOvbTOuHw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MfWDSJZFaVtO2Sm7kObMRnB38aqqykP8ysgH3kis0axH0H7CKcGHk9MtijxdFLHlp
-         17U3cyNF5yxf7rkmV6lhS0wxcc3g9iOYeXrEMr1LX313FTfkuvMOmP0Nxvmka2f/Kt
-         5HGaEDOX7WRHyUPV77HRU7/VV6Sq2aO7RjtNoOgc=
-Date:   Tue, 3 Mar 2020 15:15:05 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     zzyiwei@google.com, mingo@redhat.com, elder@kernel.org,
-        federico.vaga@cern.ch, tony.luck@intel.com, vilhelm.gray@gmail.com,
-        linus.walleij@linaro.org, tglx@linutronix.de,
-        yamada.masahiro@socionext.com, paul.walmsley@sifive.com,
-        bhelgaas@google.com, darekm@google.com, ndesaulniers@google.com,
-        joelaf@google.com, linux-kernel@vger.kernel.org,
-        prahladk@google.com, android-kernel@google.com
-Subject: Re: [PATCH v4] gpu/trace: add a gpu total memory usage tracepoint
-Message-ID: <20200303141505.GA3405@kroah.com>
-References: <CAKT=dDnFpj2hJd5z73pfcrhXXacDpPVyKzC7+K94tsX=+e_BHg@mail.gmail.com>
- <20200302235044.59163-1-zzyiwei@google.com>
- <20200303090703.32b2ad68@gandalf.local.home>
+        id S1728949AbgCCOQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 09:16:32 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57706 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbgCCOQb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 09:16:31 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023ECuOA151981;
+        Tue, 3 Mar 2020 14:16:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=sL7wL8dxkuL7cejD6WDz6jQpyi/urX1RqkURUcQ6Hm0=;
+ b=R8PIDa7h7n73FWTMf4ULgW7d4Sxbf6/7FwEtaw59UMThqkUhwYppNzzxPXfmiC5SyN6a
+ uVqcxpRlPB+hclsL3pvwuXciDb6wVt3PMYqogu2NwpZxotE+z54W2L8glgtgssj4j4WA
+ VcW7tVubSwDwrHxM3QsdYc56BofoBt7fpjJ9SdTQPpyIOiTrGoO1cXbF8loz9t8Sw4Qb
+ ZyZNIXTOen1NLDgCW801FJInvMWik/RJqtBQUE83uYCUeVkLkWrHTGTy8RrZzdAW+rCq
+ WsIlrsJSlnzrRYQ286qXEWyi8ja9VXxRS1K9XFYb8aPwUw4GWMfisw8G0SJMM5yHcAQf ew== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2yghn338ev-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 14:16:11 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023EEhdE084667;
+        Tue, 3 Mar 2020 14:16:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2yg1ekttds-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 14:16:10 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 023EG5OL002159;
+        Tue, 3 Mar 2020 14:16:05 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Mar 2020 06:16:05 -0800
+Date:   Tue, 3 Mar 2020 17:15:54 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
+ copy_from_user()
+Message-ID: <20200303141554.GG4118@kadam>
+References: <20200302130430.201037-1-glider@google.com>
+ <20200302130430.201037-2-glider@google.com>
+ <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
+ <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
+ <4cac10d3e2c03e4f21f1104405a0a62a853efb4e.camel@perches.com>
+ <CAG_fn=XOyPGau9m7x8eCLJHy3m-H=nbMODewWVJ1xb2e+BPdFw@mail.gmail.com>
+ <18b0d6ea5619c34ca4120a6151103dbe9bfa0cbe.camel@perches.com>
+ <CAG_fn=U2T--j_uhyppqzFvMO3w3yUA529pQrCpbhYvqcfh9Z1w@mail.gmail.com>
+ <20200303093832.GD24372@kadam>
+ <58c1f1bf6b30bd5c39184cd9c09f25a9b9d67a68.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303090703.32b2ad68@gandalf.local.home>
+In-Reply-To: <58c1f1bf6b30bd5c39184cd9c09f25a9b9d67a68.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9548 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003030108
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9548 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003030108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 09:07:03AM -0500, Steven Rostedt wrote:
+On Tue, Mar 03, 2020 at 05:56:51AM -0800, Joe Perches wrote:
+> > The real fix is to initialize everything manually, the automated
+> > initialization is a hardenning feature which many people will disable.
+> > So I don't think the hardenning needs to be perfect, it needs to simple
+> > and fast.
 > 
-> Greg,
-> 
-> You acked this patch before, did you want to ack it again, and I'll take it
-> in my tree?
+> Dan, perhaps I don't understand you.
+> Can you clarify what you mean?
 
-Sure, but where did my ack go?  What changed from previous versions???
+I'm basically agreeing with you.
 
-Anyway, the patch seems sane enough to me:
+Even though copy_from_user() might only initialize part of the struct
+we should just record that it initializes the struct without getting
+bogged down in details.  The annotation should be simple.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If the automated system to initialize stack variables doesn't work 100%
+that's okay because it's a supplement and not a replacement for manually
+initializing stack variables.
+
+regards,
+dan carpenter
+
