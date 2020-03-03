@@ -2,109 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 598CC176FA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D2D5176FA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 07:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbgCCGwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 01:52:55 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44320 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbgCCGwy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 01:52:54 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y5so961266pfb.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 22:52:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uN72wLEDvwlBRCICos4EhVBwO6gbBBFN6vJE7pQ2WOk=;
-        b=U4m4K8Iw9bAuO9WWHp0Vg4j6awd+MPpCjS5FDUij+lsMesZjNwYVKd+uBjUY5Xthr4
-         yJ5Qhnaea6ekz/F4NKU+Ale+QxqkMBfhPIx8jE9T8RHAQGyzuKwmN2UELjS/XLkvdDte
-         KNSkv6CRGZzDNtyRbSeQzSKIuld+rKYqn1Jxl8UjSuryBRkeVrjazEv9Fem+HAxm749E
-         UKerqe643Q2ZNkLwlys/Pm2FEV02u3Kl07ei/fz6neug80g3RjLZB6X9lQHThuiA9cxJ
-         UWb2ywKq8VgElp7eIklsDq9fvs0IwXRbFMSBEzcrRUXMX54GvQzJjvh9w6SVFZcesrhO
-         9TMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uN72wLEDvwlBRCICos4EhVBwO6gbBBFN6vJE7pQ2WOk=;
-        b=cSpMLfYjCCVEpUS0rh2FLHnmfdggTAFOaZfUDzxWS78kgDGC6vbhKFltmdVzG5GwFo
-         FKNIE1qbvayTGjKOh7jyPbClHt0rJ576skGDKyqA/A5U9CbB2tZ9rpRQkH84yk1YuFqG
-         I6ZUgpwOp1AKTU+U8UGBGZttDraqB6/1ee/1jx79qMPiQw5ZPvw4ImUCNXOa62u3IpYM
-         os8gv3KsdJKNNSg8ALE2WVfU1U0mDQSSl35vIceHEak3QmRzUz62pDUWo0ZvFdIB/YDb
-         nIDjriLkBKIFtloOZ1Em4tbUohipoKCnRuuu/hs5fijcQAHyA8GNTSTa5c1SXLuC6Kq7
-         2n6Q==
-X-Gm-Message-State: ANhLgQ0kCCpoM6AT1j/xbxJFwlQjGi0+suhNqPxi5sv8rCK28FGrdONW
-        +k3Y5HjYUJaNBF2iMQ99+PIHg/qe
-X-Google-Smtp-Source: ADFU+vv8HFhSmpiZrdShaIugSli7Bo77oMZ2MWH1IxWfg2RFVazBtza9QrsYyp1tKhjQJNk7PU1osA==
-X-Received: by 2002:a62:c144:: with SMTP id i65mr1718852pfg.260.1583218372707;
-        Mon, 02 Mar 2020 22:52:52 -0800 (PST)
-Received: from ZB-PF114XEA.360buyad.local ([103.90.76.242])
-        by smtp.gmail.com with ESMTPSA id t11sm22780754pgi.15.2020.03.02.22.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 22:52:52 -0800 (PST)
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        zhenzhong.duan@gmail.com, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 2/2] x86/boot/KASLR: Fix unused variable warning
-Date:   Tue,  3 Mar 2020 14:52:10 +0800
-Message-Id: <20200303065210.1279-3-zhenzhong.duan@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200303065210.1279-1-zhenzhong.duan@gmail.com>
-References: <20200303065210.1279-1-zhenzhong.duan@gmail.com>
+        id S1727564AbgCCGyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 01:54:14 -0500
+Received: from mout.web.de ([212.227.15.4]:41071 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbgCCGyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 01:54:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1583218369;
+        bh=Tw6WiExerKH3MYiejQXgfAi8Kj6gQGvgXqA0l7ZIMQY=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=oFr7LlwfL6Moph+Knido1xTrSjOI+lmXQvJUR9ZDzbi7XibS13kp1X3wftTv4U3DL
+         axHrL8MKKSL32lX5tjXiH0Vilv7aid+HoaegqAOKns3WM4FYiHU3mue6XI1X1aoVMV
+         /Ii0xhlbCvYqubhK8sa2xszCQarjVHgFiSWXfkOw=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.62.7]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MAdX1-1jFqvK2RNz-00Bvgl; Tue, 03
+ Mar 2020 07:52:49 +0100
+Subject: Re: [v3] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+References: <158313621831.3082.9886161529613724376.stgit@devnote2>
+ <158313622831.3082.8237132211731864948.stgit@devnote2>
+ <8c032093-c652-5e33-36ad-732f73beabab@infradead.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <12200e6e-2ef0-a0e4-9d92-35d7150342d2@web.de>
+Date:   Tue, 3 Mar 2020 07:52:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8c032093-c652-5e33-36ad-732f73beabab@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:Ri05URW0Gf7ouLqfc7nIJOjM23BryCaIGtcbrWNx4VnmoH5MvUY
+ y7Tc8/Roll1Rv5yCuoiEsgXf5xoN4hg3guGQHMQv5vox0vUR7nsd7JVHKA9IO4zT2ZUjzzF
+ CSnLDr6YH0LdOz+e7IdKnNy7ztZJzAQfbeh+m6kxSAGgNCSC7ypT+3YmV2vWEXyFg/Zk4lr
+ 9xM8E0thhSztHU9BHH9Pw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VQ3eeP0xYvo=:Vs4HSsGJqhz59b/40aAE6w
+ 2r9O0jR+ZGb211ABVUshbRfTq7B86pPbSozFqlffTXsvl807d6wd6aennxucPij4SfbIqxiY0
+ NjOfwH7361LfEukgLSHmvntfipYMhYxFCvSrLC+ClNxCPxTd75UNJ+sL2qcXcdjhdA3h84434
+ A+mm4WKhWMDm8kuRmzOryOF7SPvps2UOQqFYd51OHzb3RQ40sM6IMzF6OOo8w2mO4Mae+BZN7
+ GOKN3OIuRp/pKNteNP9+vftLKIoTAEYnRilSA/Ex2Yh9x0YyhTAxISFpUKo0p9cEpJ5Ov9f/O
+ mxxxOx5s1lELiSzF+C0dowrxM2SjlFEM4Cl2uVNhDqLghOHEyAn7qVhk8WJVeXXY8u8tQDvKp
+ 1INsk2GQhe35jA6pXb0LgkFNdWCz1GbvfwIWoE9JX2gWtsHz45LLzByic2+LlLa0hozMM0XIB
+ S7tIsMQ1S2ogtNjuk0NDz6S0B2RAhjLuicJcdDOgb47MtlRVubC8v7FqYQUTEayR0AN6vP/mX
+ kmDBEyMhZNdF4e5qjnYly3tnc0MrWqH+HDIONVUpsQa7uTiW1lUneVt03ZGMKjDbxSabnRzjR
+ OMdEudNjxBuZgBWccmvCmEL13QJ0+veUx6M+Kb1qM8xgCS8oafcFpgvLeRpgOihxOvoT42I8W
+ 8JT4crlDzzCDTQ0PmllCcS3bbM/R8HcAsEieTvzqTpvKNWyGqieqgekOPdQdK/N5ypnkFRUeO
+ eIqev6ii5eN/P6fHZ1te9GVYHiU2GPh0Bb7pavrRJz5asKtfJLSd4OIqRtd9pgxs0BB1+sD0x
+ XWJsFobvATt5f2rlWUFMkSj0Ara6Ac0xBPR9gqZJoUwe2bZlxmMNR66ncFm8yEAs52uTAfODa
+ PUA56jt0lcmqbzOycc5N3FMeyQ19gNN9hq8duzeiCoSOzg9PMpw3E8/w/duwDPH+Gq+zB9Ui/
+ iwp8BE1YqIxHfkHQtv5WxAytiLQAKwPLuhs3Cap8KPl9ICwpt0H+0yYUOVBC/lAWr02KqBr2j
+ yC5+yH4syVvMXGh4Se5zeeYYyXPA3WTNt68XpA5P1EDnhYNLzToX6wSG9GHchrJlJJv/8VRuv
+ 4ENJClDmTWQhozcUlgcmv8umKNmnR3oh7/L3hfllu1bPI5WQ1XlPMv4VYCpEtKVdxc5TByYv4
+ Ymyk63Ri9/uHIS1bcJ562CnXB9zMrkwyd5zXuiSVoiH9gIe5rTF2c03dzKjpO33+n3BDtG6XQ
+ /xhMC2hbg6ZWlO9HP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
-CONFIG_ACPI are defined, but definition of variable 'i' is out of guard.
-If any of the two macros is undefined, below warning triggers during
-build, fix it by moving 'i' in the guard.
+> All of the other changes look good to me.
 
-arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable ‘i’ [-Wunused-variable]
+I suggest to take another closer look.
+Would you like to help with the clarification of any remaining
+software documentation concerns?
 
-Fixes: 690eaa532057 ("x86/boot/KASLR: Limit KASLR to extract the kernel in immovable memory only")
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
----
- arch/x86/boot/compressed/kaslr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index d7408af55738..62bc46684581 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -695,7 +695,6 @@ static bool process_mem_region(struct mem_vector *region,
- 			       unsigned long long minimum,
- 			       unsigned long long image_size)
- {
--	int i;
- 	/*
- 	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
- 	 * use @region directly.
-@@ -711,6 +710,7 @@ static bool process_mem_region(struct mem_vector *region,
- 	}
- 
- #if defined(CONFIG_MEMORY_HOTREMOVE) && defined(CONFIG_ACPI)
-+	int i;
- 	/*
- 	 * If immovable memory found, filter the intersection between
- 	 * immovable memory and @region.
--- 
-2.17.1
-
+Regards,
+Markus
