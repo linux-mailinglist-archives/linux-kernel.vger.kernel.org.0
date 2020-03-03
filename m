@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D11178155
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE5F17818A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388089AbgCCSBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:01:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46192 "EHLO mail.kernel.org"
+        id S2388323AbgCCSDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:03:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388069AbgCCSBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:01:51 -0500
+        id S2388080AbgCCSBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:01:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4480206D5;
-        Tue,  3 Mar 2020 18:01:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80FEB2072D;
+        Tue,  3 Mar 2020 18:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258509;
-        bh=UFx5DEXiFUfVTRW6CG4s7+7JeUlESCSJAD4fsfTcsGc=;
+        s=default; t=1583258512;
+        bh=TJRLZVqpjrDKwuU1vo4afdslkSMUlhhhwY6hrgN7a3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cxOnuXemsNTxvRg/Uv20ZiVqvcmTMuscjO0zzMnNwMAjkVRfJ0JRLNwPeS4NMhbNy
-         i01frR699XvFHaCfDGDFKuAnjPdMiRRFfcmKCk9NWwIpn1JCCS/hITd82s4XAC3+Xq
-         D9ZGKlBPwV08pvaO39JK3S71SscKto78SdHrGwcw=
+        b=B8CUET52wLudwI2Dxt64XHFhFR4o2a0RubVlAgKZBy5yf3tnLimF5vLe3lPkFQeMY
+         t5Z/4cNTF29z+i5rQ/fUR4heeu3UKGBRj7p0PrsENemqUmg5wobSLTY8dfyR+beNNP
+         6ddcHkvmfkcki8r/PE55xBvJkL+aXKNo8X8q0n5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 77/87] kprobes: Set unoptimized flag after unoptimizing code
-Date:   Tue,  3 Mar 2020 18:44:08 +0100
-Message-Id: <20200303174357.166761258@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 4.19 78/87] pwm: omap-dmtimer: put_device() after of_find_device_by_node()
+Date:   Tue,  3 Mar 2020 18:44:09 +0100
+Message-Id: <20200303174357.270372755@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
 References: <20200303174349.075101355@linuxfoundation.org>
@@ -50,89 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit f66c0447cca1281116224d474cdb37d6a18e4b5b upstream.
+commit c7cb3a1dd53f63c64fb2b567d0be130b92a44d91 upstream.
 
-Set the unoptimized flag after confirming the code is completely
-unoptimized. Without this fix, when a kprobe hits the intermediate
-modified instruction (the first byte is replaced by an INT3, but
-later bytes can still be a jump address operand) while unoptimizing,
-it can return to the middle byte of the modified code, which causes
-an invalid instruction exception in the kernel.
+This was found by coccicheck:
 
-Usually, this is a rare case, but if we put a probe on the function
-call while text patching, it always causes a kernel panic as below:
+	drivers/pwm/pwm-omap-dmtimer.c:304:2-8: ERROR: missing put_device;
+	call of_find_device_by_node on line 255, but without a corresponding
+	object release within this function.
 
- # echo p text_poke+5 > kprobe_events
- # echo 1 > events/kprobes/enable
- # echo 0 > events/kprobes/enable
-
-invalid opcode: 0000 [#1] PREEMPT SMP PTI
- RIP: 0010:text_poke+0x9/0x50
- Call Trace:
-  arch_unoptimize_kprobe+0x22/0x28
-  arch_unoptimize_kprobes+0x39/0x87
-  kprobe_optimizer+0x6e/0x290
-  process_one_work+0x2a0/0x610
-  worker_thread+0x28/0x3d0
-  ? process_one_work+0x610/0x610
-  kthread+0x10d/0x130
-  ? kthread_park+0x80/0x80
-  ret_from_fork+0x3a/0x50
-
-text_poke() is used for patching the code in optprobes.
-
-This can happen even if we blacklist text_poke() and other functions,
-because there is a small time window during which we show the intermediate
-code to other CPUs.
-
- [ mingo: Edited the changelog. ]
-
-Tested-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
-Link: https://lkml.kernel.org/r/157483422375.25881.13508326028469515760.stgit@devnote2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 6604c6556db9 ("pwm: Add PWM driver for OMAP using dual-mode timers")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/kprobes.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pwm/pwm-omap-dmtimer.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -523,6 +523,8 @@ static void do_unoptimize_kprobes(void)
- 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
- 	/* Loop free_list for disarming */
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-+		/* Switching from detour code to origin */
-+		op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 		/* Disarm probes if marked disabled */
- 		if (kprobe_disabled(&op->kp))
- 			arch_disarm_kprobe(&op->kp);
-@@ -662,6 +664,7 @@ static void force_unoptimize_kprobe(stru
- {
- 	lockdep_assert_cpus_held();
- 	arch_unoptimize_kprobe(op);
-+	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 	if (kprobe_disabled(&op->kp))
- 		arch_disarm_kprobe(&op->kp);
- }
-@@ -689,7 +692,6 @@ static void unoptimize_kprobe(struct kpr
- 		return;
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -259,7 +259,7 @@ static int pwm_omap_dmtimer_probe(struct
+ 	if (!timer_pdev) {
+ 		dev_err(&pdev->dev, "Unable to find Timer pdev\n");
+ 		ret = -ENODEV;
+-		goto put;
++		goto err_find_timer_pdev;
  	}
  
--	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 	if (!list_empty(&op->list)) {
- 		/* Dequeue from the optimization queue */
- 		list_del_init(&op->list);
+ 	timer_pdata = dev_get_platdata(&timer_pdev->dev);
+@@ -267,7 +267,7 @@ static int pwm_omap_dmtimer_probe(struct
+ 		dev_dbg(&pdev->dev,
+ 			 "dmtimer pdata structure NULL, deferring probe\n");
+ 		ret = -EPROBE_DEFER;
+-		goto put;
++		goto err_platdata;
+ 	}
+ 
+ 	pdata = timer_pdata->timer_ops;
+@@ -286,19 +286,19 @@ static int pwm_omap_dmtimer_probe(struct
+ 	    !pdata->write_counter) {
+ 		dev_err(&pdev->dev, "Incomplete dmtimer pdata structure\n");
+ 		ret = -EINVAL;
+-		goto put;
++		goto err_platdata;
+ 	}
+ 
+ 	if (!of_get_property(timer, "ti,timer-pwm", NULL)) {
+ 		dev_err(&pdev->dev, "Missing ti,timer-pwm capability\n");
+ 		ret = -ENODEV;
+-		goto put;
++		goto err_timer_property;
+ 	}
+ 
+ 	dm_timer = pdata->request_by_node(timer);
+ 	if (!dm_timer) {
+ 		ret = -EPROBE_DEFER;
+-		goto put;
++		goto err_request_timer;
+ 	}
+ 
+ 	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
+@@ -355,7 +355,14 @@ err_pwmchip_add:
+ err_alloc_omap:
+ 
+ 	pdata->free(dm_timer);
+-put:
++err_request_timer:
++
++err_timer_property:
++err_platdata:
++
++	put_device(&timer_pdev->dev);
++err_find_timer_pdev:
++
+ 	of_node_put(timer);
+ 
+ 	return ret;
+@@ -375,6 +382,8 @@ static int pwm_omap_dmtimer_remove(struc
+ 
+ 	omap->pdata->free(omap->dm_timer);
+ 
++	put_device(&omap->dm_timer_pdev->dev);
++
+ 	mutex_destroy(&omap->mutex);
+ 
+ 	return 0;
 
 
