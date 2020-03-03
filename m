@@ -2,147 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E4F177D0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2FB177D31
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:18:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730758AbgCCRMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:12:22 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37368 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730731AbgCCRMQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:12:16 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a141so3660257wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:12:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LBQ2v3hA6tUuTQv1F+Yyise6oBp+Wr4OulTkBt8Vu4I=;
-        b=MuZ/MiO2WECej5cula13eoTtSplGql2nE4/SV0KTwBnbu1ULqTOwYdxwhA9dTioSVG
-         MDF6Y7w6EF/Etsd0sds4bS4DiXQTLMO+O8Zruq5mrFfU75ahUKCpn87rQgv8Ugz5orSd
-         pehyOiaNqPHFgkt1lCDbVz5qGvx3cKrxm2G8HzeLddue7+pdhcwZTIPRO6EI863Vcm8o
-         NmLGUNMw3OnmCblBtEnOzighvjaiLNgv8LDvFApMorKHn0R59sJafAMM73Q2PAkzMZLf
-         oPuC1UGwO2skPUuXI0XyyOZB5a0THy2BFygUAHJAoARhWovvYDNtv/S9y6Xk9MM0t88A
-         41qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LBQ2v3hA6tUuTQv1F+Yyise6oBp+Wr4OulTkBt8Vu4I=;
-        b=a1GquEYRgGN6J3XwlwEpzseJEjlM3MPO0WtQ6kUkmcudvK9LugCAKlbty+cjFI80ZR
-         VryZ3lyPUxN4gDUQ8YnkzfFBeniY05B/3nM6O34GyU9vDxo+EgoHK6bqTpZNSGR7JUcA
-         NA33SYX7zR78NlJtw1P2WEYm8e7qUAOYRYK2yFrL2giEwMruKgisSzB5GH4zGVrKtN9C
-         MKTbjp4J+xxSIc5Gwn0nqgwmhOx2b1GGATNWTY0KpOKvp2nGM3ysDnWthAewon1TiLL2
-         gADd/XEaCtTeAiOuxpludfN/M9JgZESb6DM6tpS15TLC7u3l+5IrVln24+vbxSmtgLTT
-         pDJQ==
-X-Gm-Message-State: ANhLgQ2H80Ir53MJnd7WLjYbYaKXNe6S4AyLEf6AbQI28vLCq4yFQ4o1
-        3sFsNgpGtx7QFS6vQAIs3wjAQA==
-X-Google-Smtp-Source: ADFU+vtjKGrY2UQkokTzHe0CV7rbHBSu/5iKmuaPRTnpGoKYIJ2QcJzM9XpasbAPE/3CsG61MXPzIw==
-X-Received: by 2002:a1c:4b0f:: with SMTP id y15mr5143834wma.87.1583255534987;
-        Tue, 03 Mar 2020 09:12:14 -0800 (PST)
-Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id z13sm5425319wrw.88.2020.03.03.09.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 09:12:14 -0800 (PST)
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
-        bjorn.andersson@linaro.org, robh@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v7 18/18] arm64: dts: qcom: qcs404-evb: Enable USB controllers
-Date:   Tue,  3 Mar 2020 17:11:59 +0000
-Message-Id: <20200303171159.246992-19-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303171159.246992-1-bryan.odonoghue@linaro.org>
-References: <20200303171159.246992-1-bryan.odonoghue@linaro.org>
+        id S1729795AbgCCRQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:16:22 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2506 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729100AbgCCRQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:16:22 -0500
+Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 20BACB3F076F71A9F686;
+        Tue,  3 Mar 2020 17:16:20 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml709-cah.china.huawei.com (10.201.108.32) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 3 Mar 2020 17:16:19 +0000
+Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 3 Mar 2020
+ 17:16:19 +0000
+Subject: Re: About commit "io: change inX() to have their own IO barrier
+ overrides"
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Sinan Kaya <okaya@kernel.org>, "xuwei (O)" <xuwei5@hisilicon.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com>
+ <c1489f55-369d-2cff-ff36-b10fb5d3ee79@kernel.org>
+ <8207cd51-5b94-2f15-de9f-d85c9c385bca@huawei.com>
+ <6115fa56-a471-1e9f-edbb-e643fa4e7e11@kernel.org>
+ <7c955142-1fcb-d99e-69e4-1e0d3d9eb8c3@huawei.com>
+ <CAK8P3a0f9hnKGd6GJ8qFZSu+J-n4fY23TCGxQkmgJaxbpre50Q@mail.gmail.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <773c5d63-5626-ca3d-634b-73d3a7776ddb@huawei.com>
+Date:   Tue, 3 Mar 2020 17:16:18 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a0f9hnKGd6GJ8qFZSu+J-n4fY23TCGxQkmgJaxbpre50Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-ClientProxiedBy: lhreml725-chm.china.huawei.com (10.201.108.76) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the primary and secondary USB controllers on the
-qcs404-evb.
+On 03/03/2020 16:40, Arnd Bergmann wrote:
+> On Tue, Mar 3, 2020 at 2:18 PM John Garry <john.garry@huawei.com> wrote:
+>>
+>> + linux-arch
+>>
+>> For background, see
+>> https://lore.kernel.org/lkml/2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com/
+>>
+>>>>
+>>>> So today only ARM64 uses it for this relevant code, above. But maybe
+>>>> others in future will want to use it - any arch without native IO port
+>>>> access is a candidate.
+>>>
+>>> I'm looking at Arnd here for help.
+>>>
+>>>>
+>>>>>
+>>>>> As long as the expectations are set, I see no reason why it shouldn't
+>>>>> but, I'll let Arnd comment on it too.
+>>>>
+>>>> ok, so it looks reasonable consider replicating your change for ***, above.
+>>
+>> To be clear, I would make this change in lib/logic_pio.c since
+>> __io_pbr() can be overridden per-arch:
+>>
+>>    #define BUILD_LOGIC_IO(bw, type)
+>>    type logic_in##bw(unsigned long addr)
+>>    {
+>>         type ret = (type)~0;
+>>         if (addr < MMIO_UPPER_LIMIT) {
+>> -          ret = read##bw(PCI_IOBASE + addr);
+>> +          __io_pbr();
+>> +          ret = __raw_read##bw(PCI_IOBASE + addr);
+>> +          __io_pbr();
+> 
+> __io_par();
+> 
+>>         } else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {
+>>             struct logic_pio_hwaddr *entry = find_io_range(addr);
+>>
+>> ...
+>>
+>> (forgetting leX_to_cpu for the moment)
+> 
+> Yes, I suppose this is required to get consistent behavior on arm64,
+> which overrides __io_par() but not __io_ar(), with the current code
+> the barrier after read is weaker when LOGIC_PIO is enabled than it
+> is otherwise.
 
-Primary:
-The primary USB controller has
+Ok.
 
-- One USB3 SS PHY using gpio-usb-conn
-- One USB2 HS PHY in device mode only and no connector driver
-  associated.
+Apart from that, this code is somewhat hidden. I mean, most people would 
+consider generic IO port accessors come from asm-generic/io.h only, 
+which is not the case here. Maybe this can be better integrated into 
+asm-generic/io.h, the only hint today being the logic_pio.h include half 
+way through the file.
 
-Secondary:
-The second DWC3 controller which has one USB Hi-Speed PHY attached to it.
+> 
+> For other architectures, I suppose we would need another indirection
+> level, as those can also override the default inb() itself to do something
+> other than readb(PCI_IOBASE + addr), and that is not handled
+> here either. We can do that if we need LOGIC_PIO on a second
+> architecture.
 
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 40 ++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Jiaxun Yang did mention that MIPS may want to move away from its own IO 
+space management.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index 44c7dda1e1fc..4dc3f45282fe 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -319,6 +319,46 @@ pinconf {
- 	};
- };
- 
-+&usb2 {
-+	status = "okay";
-+};
-+
-+&usb2_phy_sec {
-+	vdd-supply = <&vreg_l4_1p2>;
-+	vdda1p8-supply = <&vreg_l5_1p8>;
-+	vdda3p3-supply = <&vreg_l12_3p3>;
-+	status = "okay";
-+};
-+
-+&usb3 {
-+	status = "okay";
-+	dwc3@7580000 {
-+		usb-role-switch;
-+		usb_con: connector {
-+			compatible = "gpio-usb-b-connector";
-+			label = "USB-C";
-+			id-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+			vbus-supply = <&usb3_vbus_reg>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&usb3_id_pin>, <&usb3_vbus_pin>;
-+			status = "okay";
-+		};
-+	};
-+};
-+
-+&usb2_phy_prim {
-+	vdd-supply = <&vreg_l4_1p2>;
-+	vdda1p8-supply = <&vreg_l5_1p8>;
-+	vdda3p3-supply = <&vreg_l12_3p3>;
-+	status = "okay";
-+};
-+
-+&usb3_phy {
-+	vdd-supply = <&vreg_l3_1p05>;
-+	vdda1p8-supply = <&vreg_l5_1p8>;
-+	status = "okay";
-+};
-+
- &wifi {
- 	status = "okay";
- 	vdd-0.8-cx-mx-supply = <&vreg_l2_1p275>;
--- 
-2.25.1
-
+Thanks,
+John
