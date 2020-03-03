@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2882117814E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F07261781C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388051AbgCCSBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:01:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45970 "EHLO mail.kernel.org"
+        id S2388076AbgCCSG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:06:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387634AbgCCSBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:01:43 -0500
+        id S1732929AbgCCR4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:56:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A5720656;
-        Tue,  3 Mar 2020 18:01:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC4DC20728;
+        Tue,  3 Mar 2020 17:56:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258502;
-        bh=pzGm8eK7SpJZs6fNIB004VSlto+LmlEKyxHVCC01dDE=;
+        s=default; t=1583258197;
+        bh=wezH3LP0LPiLkBoge+fgK2CiR4BSELS3gw6fPaPAwYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QKTZfJH1gAXFQv4ipzZzpZQ85OM/AI8DCrK9SNLzsrwR0bq5od1z0pQTB7TvC7w23
-         J8VmqCeBTUpxbBK2fJw/f0UtyhfneyRpUWgqjHgrXx4iVjYziSXHF4QMbz6MoOXip7
-         mQMzONO0VQI8JwijnwII2eO9oGFn6/LKBwTJQ1aw=
+        b=Q4KK8Ba9yH1I74KlytiOUsFdRF61UujhwL60VNwDEtM8VzLALPBI5QHclVBByCFOE
+         TJGky5p4WS/3VG0mi1ryeWjqWj2CqI1bFfYLT+kxgbkFCtTv2oA3hXbDYwdWSMz1cr
+         v4Ukqyuq7IRLSjEZ5d1XwQPnpmTzA3DixRFF+kcU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Pavel Belous <pbelous@marvell.com>,
+        Igor Russkikh <irusskikh@marvell.com>,
+        Dmitry Bogdanov <dbogdanov@marvell.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 34/87] sctp: move the format error check out of __sctp_sf_do_9_1_abort
-Date:   Tue,  3 Mar 2020 18:43:25 +0100
-Message-Id: <20200303174353.676123773@linuxfoundation.org>
+Subject: [PATCH 5.4 108/152] net: atlantic: fix potential error handling
+Date:   Tue,  3 Mar 2020 18:43:26 +0100
+Message-Id: <20200303174314.953350288@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Pavel Belous <pbelous@marvell.com>
 
-[ Upstream commit 245709ec8be89af46ea7ef0444c9c80913999d99 ]
+commit 380ec5b9af7f0d57dbf6ac067fd9f33cff2fef71 upstream.
 
-When T2 timer is to be stopped, the asoc should also be deleted,
-otherwise, there will be no chance to call sctp_association_free
-and the asoc could last in memory forever.
+Code inspection found that in case of mapping error we do return current
+'ret' value. But beside error, it is used to count number of descriptors
+allocated for the packet. In that case map_skb function could return '1'.
 
-However, in sctp_sf_shutdown_sent_abort(), after adding the cmd
-SCTP_CMD_TIMER_STOP for T2 timer, it may return error due to the
-format error from __sctp_sf_do_9_1_abort() and miss adding
-SCTP_CMD_ASSOC_FAILED where the asoc will be deleted.
+Changing it to return zero (number of mapped descriptors for skb)
 
-This patch is to fix it by moving the format error check out of
-__sctp_sf_do_9_1_abort(), and do it before adding the cmd
-SCTP_CMD_TIMER_STOP for T2 timer.
-
-Thanks Hangbin for reporting this issue by the fuzz testing.
-
-v1->v2:
-  - improve the comment in the code as Marcelo's suggestion.
-
-Fixes: 96ca468b86b0 ("sctp: check invalid value of length parameter in error cause")
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Fixes: 018423e90bee ("net: ethernet: aquantia: Add ring support code")
+Signed-off-by: Pavel Belous <pbelous@marvell.com>
+Signed-off-by: Igor Russkikh <irusskikh@marvell.com>
+Signed-off-by: Dmitry Bogdanov <dbogdanov@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/sm_statefuns.c |   29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
 
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -185,6 +185,16 @@ static inline bool sctp_chunk_length_val
- 	return true;
- }
+---
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -467,8 +467,10 @@ static unsigned int aq_nic_map_skb(struc
+ 				     dx_buff->len,
+ 				     DMA_TO_DEVICE);
  
-+/* Check for format error in an ABORT chunk */
-+static inline bool sctp_err_chunk_valid(struct sctp_chunk *chunk)
-+{
-+	struct sctp_errhdr *err;
-+
-+	sctp_walk_errors(err, chunk->chunk_hdr);
-+
-+	return (void *)err == (void *)chunk->chunk_end;
-+}
-+
- /**********************************************************
-  * These are the state functions for handling chunk events.
-  **********************************************************/
-@@ -2270,6 +2280,9 @@ enum sctp_disposition sctp_sf_shutdown_p
- 		    sctp_bind_addr_state(&asoc->base.bind_addr, &chunk->dest))
- 		return sctp_sf_discard_chunk(net, ep, asoc, type, arg, commands);
+-	if (unlikely(dma_mapping_error(aq_nic_get_dev(self), dx_buff->pa)))
++	if (unlikely(dma_mapping_error(aq_nic_get_dev(self), dx_buff->pa))) {
++		ret = 0;
+ 		goto exit;
++	}
  
-+	if (!sctp_err_chunk_valid(chunk))
-+		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-+
- 	return __sctp_sf_do_9_1_abort(net, ep, asoc, type, arg, commands);
- }
- 
-@@ -2313,6 +2326,9 @@ enum sctp_disposition sctp_sf_shutdown_s
- 		    sctp_bind_addr_state(&asoc->base.bind_addr, &chunk->dest))
- 		return sctp_sf_discard_chunk(net, ep, asoc, type, arg, commands);
- 
-+	if (!sctp_err_chunk_valid(chunk))
-+		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-+
- 	/* Stop the T2-shutdown timer. */
- 	sctp_add_cmd_sf(commands, SCTP_CMD_TIMER_STOP,
- 			SCTP_TO(SCTP_EVENT_TIMEOUT_T2_SHUTDOWN));
-@@ -2580,6 +2596,9 @@ enum sctp_disposition sctp_sf_do_9_1_abo
- 		    sctp_bind_addr_state(&asoc->base.bind_addr, &chunk->dest))
- 		return sctp_sf_discard_chunk(net, ep, asoc, type, arg, commands);
- 
-+	if (!sctp_err_chunk_valid(chunk))
-+		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-+
- 	return __sctp_sf_do_9_1_abort(net, ep, asoc, type, arg, commands);
- }
- 
-@@ -2597,16 +2616,8 @@ static enum sctp_disposition __sctp_sf_d
- 
- 	/* See if we have an error cause code in the chunk.  */
- 	len = ntohs(chunk->chunk_hdr->length);
--	if (len >= sizeof(struct sctp_chunkhdr) + sizeof(struct sctp_errhdr)) {
--		struct sctp_errhdr *err;
--
--		sctp_walk_errors(err, chunk->chunk_hdr);
--		if ((void *)err != (void *)chunk->chunk_end)
--			return sctp_sf_pdiscard(net, ep, asoc, type, arg,
--						commands);
--
-+	if (len >= sizeof(struct sctp_chunkhdr) + sizeof(struct sctp_errhdr))
- 		error = ((struct sctp_errhdr *)chunk->skb->data)->cause;
--	}
- 
- 	sctp_add_cmd_sf(commands, SCTP_CMD_SET_SK_ERR, SCTP_ERROR(ECONNRESET));
- 	/* ASSOC_FAILED will DELETE_TCB. */
+ 	first = dx_buff;
+ 	dx_buff->len_pkt = skb->len;
 
 
