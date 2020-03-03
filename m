@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCE31781C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE60B17819E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387993AbgCCSGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:06:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
+        id S2387527AbgCCSEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:04:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732660AbgCCR47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:56:59 -0500
+        id S1733268AbgCCSAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:00:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2449F20656;
-        Tue,  3 Mar 2020 17:56:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC6EF206D5;
+        Tue,  3 Mar 2020 18:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258217;
-        bh=BjvBwR9wfIQkcbw6f/vc4ogNDAmbRZYRGuqdD7B4jQ8=;
+        s=default; t=1583258422;
+        bh=WzlYHJe57erTHa7c4Ow9Tj26lAx2Kg/MFEhS3xdvflY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pG97AJxZLDpxRrQpbjb27IseD00tLyLUkQ4Shxw6Ziu3O+xJI5tTVXsuR4PVmUqno
-         WevRxOXlAOEqS8nQ73xzUsAjTQltISCtpkP/pZtIUnYs00+DXbxDJEthyMNQzqhoLi
-         L9cmztVHV4zwYdpVOPqla0NsDarVHBneMZMyevDM=
+        b=N0IucV67cE9KY8o+V48biGeh+OOP1eQ+cgmTNSRksVss3U++AdEQvAFPGnLBlbRwn
+         LJSOq4RoWAm9QqtO0td10Ytu12Hs02GkOlTDfoAgQjVa7+LKrM/J4gzCbSQALRaDpq
+         8n4EKiPqBP3Rfp49f5vAJgk+IH2i9rf2qRx22D1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.4 116/152] kbuild: make single target builds even faster
-Date:   Tue,  3 Mar 2020 18:43:34 +0100
-Message-Id: <20200303174315.952250016@linuxfoundation.org>
+        =?UTF-8?q?Zden=C4=9Bk=20Rampas?= <zdenda.rampas@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 4.19 44/87] HID: ite: Only bind to keyboard USB interface on Acer SW5-012 keyboard dock
+Date:   Tue,  3 Mar 2020 18:43:35 +0100
+Message-Id: <20200303174354.315990476@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
+References: <20200303174349.075101355@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,138 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit b1fbfcb4a20949df08dd995927cdc5ad220c128d upstream.
+commit beae56192a2570578ae45050e73c5ff9254f63e6 upstream.
 
-Commit 2dffd23f81a3 ("kbuild: make single target builds much faster")
-made the situation much better.
+Commit 8f18eca9ebc5 ("HID: ite: Add USB id match for Acer SW5-012 keyboard
+dock") added the USB id for the Acer SW5-012's keyboard dock to the
+hid-ite driver to fix the rfkill driver not working.
 
-To improve it even more, apply the similar idea to the top Makefile.
-Trim unrelated directories from build-dirs.
+Most keyboard docks with an ITE 8595 keyboard/touchpad controller have the
+"Wireless Radio Control" bits which need the special hid-ite driver on the
+second USB interface (the mouse interface) and their touchpad only supports
+mouse emulation, so using generic hid-input handling for anything but
+the "Wireless Radio Control" bits is fine. On these devices we simply bind
+to all USB interfaces.
 
-The single build code must be moved above the 'descend' target.
+But unlike other ITE8595 using keyboard docks, the Acer Aspire Switch 10
+(SW5-012)'s touchpad not only does mouse emulation it also supports
+HID-multitouch and all the keys including the "Wireless Radio Control"
+bits have been moved to the first USB interface (the keyboard intf).
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Jens Axboe <axboe@kernel.dk>
+So we need hid-ite to handle the first (keyboard) USB interface and have
+it NOT bind to the second (mouse) USB interface so that that can be
+handled by hid-multitouch.c and we get proper multi-touch support.
+
+This commit changes the hid_device_id for the SW5-012 keyboard dock to
+only match on hid devices from the HID_GROUP_GENERIC group, this way
+hid-ite will not bind the the mouse/multi-touch interface which has
+HID_GROUP_MULTITOUCH_WIN_8 as group.
+This fixes the regression to mouse-emulation mode introduced by adding
+the keyboard dock USB id.
+
+Cc: stable@vger.kernel.org
+Fixes: 8f18eca9ebc5 ("HID: ite: Add USB id match for Acer SW5-012 keyboard dock")
+Reported-by: Zdeněk Rampas <zdenda.rampas@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile |   90 ++++++++++++++++++++++++++++++++-------------------------------
- 1 file changed, 47 insertions(+), 43 deletions(-)
+ drivers/hid/hid-ite.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -1635,6 +1635,50 @@ help:
- PHONY += prepare
- endif # KBUILD_EXTMOD
- 
-+# Single targets
-+# ---------------------------------------------------------------------------
-+# To build individual files in subdirectories, you can do like this:
-+#
-+#   make foo/bar/baz.s
-+#
-+# The supported suffixes for single-target are listed in 'single-targets'
-+#
-+# To build only under specific subdirectories, you can do like this:
-+#
-+#   make foo/bar/baz/
-+
-+ifdef single-build
-+
-+# .ko is special because modpost is needed
-+single-ko := $(sort $(filter %.ko, $(MAKECMDGOALS)))
-+single-no-ko := $(sort $(patsubst %.ko,%.mod, $(MAKECMDGOALS)))
-+
-+$(single-ko): single_modpost
-+	@:
-+$(single-no-ko): descend
-+	@:
-+
-+ifeq ($(KBUILD_EXTMOD),)
-+# For the single build of in-tree modules, use a temporary file to avoid
-+# the situation of modules_install installing an invalid modules.order.
-+MODORDER := .modules.tmp
-+endif
-+
-+PHONY += single_modpost
-+single_modpost: $(single-no-ko)
-+	$(Q){ $(foreach m, $(single-ko), echo $(extmod-prefix)$m;) } > $(MODORDER)
-+	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
-+
-+KBUILD_MODULES := 1
-+
-+export KBUILD_SINGLE_TARGETS := $(addprefix $(extmod-prefix), $(single-no-ko))
-+
-+# trim unrelated directories
-+build-dirs := $(foreach d, $(build-dirs), \
-+			$(if $(filter $(d)/%, $(KBUILD_SINGLE_TARGETS)), $(d)))
-+
-+endif
-+
- # Handle descending into subdirectories listed in $(build-dirs)
- # Preset locale variables to speed up the build process. Limit locale
- # tweaks to this spot to avoid wrong language settings when running
-@@ -1643,7 +1687,9 @@ endif # KBUILD_EXTMOD
- PHONY += descend $(build-dirs)
- descend: $(build-dirs)
- $(build-dirs): prepare
--	$(Q)$(MAKE) $(build)=$@ single-build=$(single-build) need-builtin=1 need-modorder=1
-+	$(Q)$(MAKE) $(build)=$@ \
-+	single-build=$(if $(filter-out $@/, $(single-no-ko)),1) \
-+	need-builtin=1 need-modorder=1
- 
- clean-dirs := $(addprefix _clean_, $(clean-dirs))
- PHONY += $(clean-dirs) clean
-@@ -1747,48 +1793,6 @@ tools/%: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
- 	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(tools_silent) $(filter --j% -j,$(MAKEFLAGS))" O=$(abspath $(objtree)) subdir=tools -C $(srctree)/tools/ $*
- 
--# Single targets
--# ---------------------------------------------------------------------------
--# To build individual files in subdirectories, you can do like this:
--#
--#   make foo/bar/baz.s
--#
--# The supported suffixes for single-target are listed in 'single-targets'
--#
--# To build only under specific subdirectories, you can do like this:
--#
--#   make foo/bar/baz/
--
--ifdef single-build
--
--# .ko is special because modpost is needed
--single-ko := $(sort $(filter %.ko, $(MAKECMDGOALS)))
--single-no-ko := $(sort $(patsubst %.ko,%.mod, $(MAKECMDGOALS)))
--
--$(single-ko): single_modpost
--	@:
--$(single-no-ko): descend
--	@:
--
--ifeq ($(KBUILD_EXTMOD),)
--# For the single build of in-tree modules, use a temporary file to avoid
--# the situation of modules_install installing an invalid modules.order.
--MODORDER := .modules.tmp
--endif
--
--PHONY += single_modpost
--single_modpost: $(single-no-ko)
--	$(Q){ $(foreach m, $(single-ko), echo $(extmod-prefix)$m;) } > $(MODORDER)
--	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
--
--KBUILD_MODULES := 1
--
--export KBUILD_SINGLE_TARGETS := $(addprefix $(extmod-prefix), $(single-no-ko))
--
--single-build = $(if $(filter-out $@/, $(single-no-ko)),1)
--
--endif
--
- # FIXME Should go into a make.lib or something
- # ===========================================================================
- 
+--- a/drivers/hid/hid-ite.c
++++ b/drivers/hid/hid-ite.c
+@@ -44,8 +44,9 @@ static const struct hid_device_id ite_de
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ITE, USB_DEVICE_ID_ITE8595) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_258A, USB_DEVICE_ID_258A_6A88) },
+ 	/* ITE8595 USB kbd ctlr, with Synaptics touchpad connected to it. */
+-	{ HID_USB_DEVICE(USB_VENDOR_ID_SYNAPTICS,
+-			 USB_DEVICE_ID_SYNAPTICS_ACER_SWITCH5_012) },
++	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
++		     USB_VENDOR_ID_SYNAPTICS,
++		     USB_DEVICE_ID_SYNAPTICS_ACER_SWITCH5_012) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(hid, ite_devices);
 
 
