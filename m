@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A75C21783D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 21:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D3B1783D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 21:21:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731586AbgCCUUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 15:20:53 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36168 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbgCCUUw (ORCPT
+        id S1731596AbgCCUVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 15:21:19 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33394 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbgCCUVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 15:20:52 -0500
-Received: by mail-ot1-f66.google.com with SMTP id j14so4392678otq.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 12:20:52 -0800 (PST)
+        Tue, 3 Mar 2020 15:21:19 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a20so4425335otl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 12:21:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=P2kzWYnhHNwPKndZNxUfTV8Fu7co3KaoSWSaF0iBUUU=;
-        b=erfB9EEXH1OrsG7ZoHatHAnCFvM5uXNWzBvJHrxa3PNccf1O+8LugRnExtYFRWJ5uP
-         2ZqjCuPbZviv5jOvIxmKCZnwfw8ScajoJUrA+m5KKeVbTSsYdgKJ9qAxw/Mb6hguDJhf
-         SE1UHtlKMKKFU1aAGNlUdg2pdNbzs5xFlhwsBnNnlqrO4d8AuoETisVrThfpVWmQlvBv
-         BFJQiMXCMPLtvxA8V7bQaoOzoZFUkATmzjsnw1J1asWEzusfJxBiy+lFK2SOprNGT35+
-         1kSaP+2YgMYsUU0nxd+X8t6Tly2u9E4NzvvFBhP8CCV9LIknKelxkvLF9g2KMlwJp8Zm
-         GP1A==
+        bh=mwgO9cOowU4zuHwpbJmXttNfsLky+bg1fiQ3b/r6xjA=;
+        b=SJV5lLpRMKqd31yWpeqPEGc7Sx+8lMOei7OauXUe71+7Oq7FO9M3WJuZcCm3zjrVF5
+         vWzuvNhyUTvPC41/K2x9nvH4SGnyNCbzuBJ912fx2tK297vn6ZG9ClXFde+Wb6KnFMk9
+         c9O1HhfoiMVe9ek4vOLYS8wbQxsE/p62YekUnRw+Y5sSPCYgKxo8AIMCS/a/+DNiOt0p
+         xtMbJ7UIW/2nMntgSovpI1hlJPvj+LBx19OQu9rRKnwLq+8oA3Up9QcYxIUHX2asrvcV
+         JETHcas1Cl4/klj1v5oW01k9GpG+6exyIf0sjr6yLN1ht3rgahELHxkpPsZp1clAZ48w
+         kNDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=P2kzWYnhHNwPKndZNxUfTV8Fu7co3KaoSWSaF0iBUUU=;
-        b=IlQUqKsq3CanXAP0fnemHuK+ftgJPRQiJiRJkarM96rD2i7WbMgof8GSbHm2oKqswH
-         KmxzvdQ7Su74H/SL2Ca/sEuRD3EPsYvp4MY1uzbIpN0Oec6uDNct9ODZ7o0EvFYfbw/D
-         vztpi0SS5gJ5nk44+zyjrOCWUroPXZIhdVNpMyxy900IMG7Hz1/b8f0c6dV3pd6mpYv8
-         UgUhp0+90ZCLCCQzxhhLOoqd7js/lWsR1E7DJCB3DAKPTpImJHYDefWWiajELFb7LZMl
-         Wwo+PGLdgerRLZoP+uSDAoc1DznImSYzEJeUoJgUVDn0+JZs0vlmmMnJn9aDaD6RI7RW
-         PFcw==
-X-Gm-Message-State: ANhLgQ01XckQv2f6cEpM7ECxoUSNiFsnLN+5NMqOd2DVBZhrAN3OKIWW
-        hDnLv2XRdw4YtuLHy5I4cebm0RoEUCQVwiwnThttrCUPKv8=
-X-Google-Smtp-Source: ADFU+vs2DtsvTbW47OVOu6Ao9H1B1gjgvRzFxWp+o3Hao6p4+O9zUgSqehDixn13kp4U4VInFxKDQNdyTxgN5AhhznI=
-X-Received: by 2002:a9d:906:: with SMTP id 6mr4419945otp.251.1583266851521;
- Tue, 03 Mar 2020 12:20:51 -0800 (PST)
+        bh=mwgO9cOowU4zuHwpbJmXttNfsLky+bg1fiQ3b/r6xjA=;
+        b=O38JHTkVb7i/Eb35Zuw8fP2RiRUtngN6+kk6nziXkUObDZZ3YeRe8yuAMFCcVWvhvt
+         sS5WIvBjz8jd3ZkZlqGzUPwqGszoKzgFX8cW5Z5CAZZ1deNRhpydU7LU60Nq3lxx/2C2
+         h1LYWWErDbIxcKOH741YJGwcUpTD2de5Zw/iwkx1SvqRXzHQRrMEXZoj0GEhlDeNvAmY
+         c9UuU+tNUCjss2phuqbkbrBBOQER57d5oxlYVqCK3tWCejZhADHfnbGZ2AevQaloFo7/
+         RcpZ9S0amDogJN6uTyk6SVgACS0IxhONXbgVm5Bn6/FwuaVFQ2XMTuArskGMMDSs8n7E
+         GlMw==
+X-Gm-Message-State: ANhLgQ1P8H5jYpWCUn2BG2q/z8QH9lxTqQdZIN82nsGYg69HiJnQ+Avh
+        qlm7Bn2JcqQj/2qcBs2Y/3mPdB+qcpf9U9BrA/dcp9JHfB4=
+X-Google-Smtp-Source: ADFU+vutrvovFXnBERiCdgpZT7u3ux90PiGT6B9OmcY9VzbHdIl5QVKE7cIVwDkZWQ1bNq3jvMqyFRRxqK/WoKMs3IY=
+X-Received: by 2002:a9d:7410:: with SMTP id n16mr4880028otk.23.1583266877139;
+ Tue, 03 Mar 2020 12:21:17 -0800 (PST)
 MIME-Version: 1.0
-References: <1583263716-25150-1-git-send-email-cai@lca.pw>
-In-Reply-To: <1583263716-25150-1-git-send-email-cai@lca.pw>
+References: <1583263716-25150-1-git-send-email-cai@lca.pw> <1583263716-25150-2-git-send-email-cai@lca.pw>
+In-Reply-To: <1583263716-25150-2-git-send-email-cai@lca.pw>
 From:   Marco Elver <elver@google.com>
-Date:   Tue, 3 Mar 2020 21:20:40 +0100
-Message-ID: <CANpmjNO6SmBvG5LfrLZCeummtfbPk0cDBfmwv7q09W-nQ0=+yQ@mail.gmail.com>
-Subject: Re: [PATCH -next 1/2] mm: disable KCSAN for kmemleak
+Date:   Tue, 3 Mar 2020 21:21:05 +0100
+Message-ID: <CANpmjNOaZ7PBiQh9r06ZuvsbtyYpKjGCt+0hXTVabOJD18OXEA@mail.gmail.com>
+Subject: Re: [PATCH -next 2/2] Revert "mm/kmemleak: annotate various data
+ races obj->ptr"
 To:     Qian Cai <cai@lca.pw>
 Cc:     Andrew Morton <akpm@linux-foundation.org>, catalin.marinas@arm.com,
         Linux Memory Management List <linux-mm@kvack.org>,
@@ -60,15 +61,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 3 Mar 2020 at 20:28, Qian Cai <cai@lca.pw> wrote:
 >
-> Kmemleak could scan task stacks while plain writes happens to those
-> stack variables which could results in data races. For example, in
-> sys_rt_sigaction and do_sigaction(), it could have plain writes in
-> a 32-byte size. Since the kmemleak does not care about the actual values
-> of a non-pointer and all do_sigaction() call sites only copy to stack
-> variables, just disable KCSAN for kmemleak to avoid annotating anything
-> outside Kmemleak just because Kmemleak scans everything.
+> This reverts commit a03184297d546c6531cdd40878f1f50732d3bac9.
 >
-> Suggested-by: Marco Elver <elver@google.com>
 > Signed-off-by: Qian Cai <cai@lca.pw>
 
 Acked-by: Marco Elver <elver@google.com>
@@ -76,21 +70,36 @@ Acked-by: Marco Elver <elver@google.com>
 Thank you!
 
 > ---
->  mm/Makefile | 1 +
->  1 file changed, 1 insertion(+)
+>  mm/kmemleak.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
 >
-> diff --git a/mm/Makefile b/mm/Makefile
-> index 946754cc66b6..6e263045f0c2 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -14,6 +14,7 @@ KCSAN_SANITIZE_slab_common.o := n
->  KCSAN_SANITIZE_slab.o := n
->  KCSAN_SANITIZE_slub.o := n
->  KCSAN_SANITIZE_page_alloc.o := n
-> +KCSAN_SANITIZE_kmemleak.o := n
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index 788dc5509539..e362dc3d2028 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -1169,12 +1169,7 @@ static bool update_checksum(struct kmemleak_object *object)
+>         u32 old_csum = object->checksum;
 >
->  # These files are disabled because they produce non-interesting and/or
->  # flaky coverage that is not a function of syscall inputs. E.g. slab is out of
+>         kasan_disable_current();
+> -       /*
+> -        * crc32() will dereference object->pointer. If an unstable value was
+> -        * returned due to a data race, it will be corrected in the next scan.
+> -        */
+> -       object->checksum = data_race(crc32(0, (void *)object->pointer,
+> -                                          object->size));
+> +       object->checksum = crc32(0, (void *)object->pointer, object->size);
+>         kasan_enable_current();
+>
+>         return object->checksum != old_csum;
+> @@ -1248,7 +1243,7 @@ static void scan_block(void *_start, void *_end,
+>                         break;
+>
+>                 kasan_disable_current();
+> -               pointer = data_race(*ptr);
+> +               pointer = *ptr;
+>                 kasan_enable_current();
+>
+>                 untagged_ptr = (unsigned long)kasan_reset_tag((void *)pointer);
 > --
 > 1.8.3.1
 >
