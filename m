@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 102C3178100
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D9117825B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387715AbgCCSAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43478 "EHLO mail.kernel.org"
+        id S2387997AbgCCSKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:10:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733291AbgCCR75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:59:57 -0500
+        id S1731540AbgCCRur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:50:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A4FC20870;
-        Tue,  3 Mar 2020 17:59:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62316206D5;
+        Tue,  3 Mar 2020 17:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258396;
-        bh=Mza0Sia5ckBcm/F+8ry5l6Hexh5VcJP+9/hvYktOy60=;
+        s=default; t=1583257846;
+        bh=mCggJkKA8cUpf3SzAiuVzOPs82bmMMhiDIGPL/xGvEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XdEyu7y6QaY3cbcYsjrvPjlUxci4+3pYlRyw1TmJ2JTqYqI/H25UVKL/PN3BpGg3V
-         hwIRYQzwqVhXXJCczUVJJoN01x5FiiVK7kOtvonulqjNuzfNwLgq0Sa7s/aRcBWwgo
-         bvtgIs795kbFaEIpTHQ+Mn30RbTkMlTka3cvwQMI=
+        b=rAhbdzSVQB4H7vqCy7Rzn4TrNxxB9436upg79gZMlPjBvbKVumF5b6tBysL5n3efT
+         Xp1OCh95CVnN4kN/gy1FbJxvByjIjHmdkqA3bcCRGG0FI0GRAVBn8Zd/Lexs/xvCcM
+         ZOQSn0q0sR5fk39+fwO75G+LePvaFz5/MOg+9GyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 26/87] cfg80211: add missing policy for NL80211_ATTR_STATUS_CODE
-Date:   Tue,  3 Mar 2020 18:43:17 +0100
-Message-Id: <20200303174352.840239211@linuxfoundation.org>
+        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 134/176] net/smc: no peer ID in CLC decline for SMCD
+Date:   Tue,  3 Mar 2020 18:43:18 +0100
+Message-Id: <20200303174320.258161757@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+From: Ursula Braun <ubraun@linux.ibm.com>
 
-[ Upstream commit ea75080110a4c1fa011b0a73cb8f42227143ee3e ]
+commit 369537c97024dca99303a8d4d6ab38b4f54d3909 upstream.
 
-The nl80211_policy is missing for NL80211_ATTR_STATUS_CODE attribute.
-As a result, for strictly validated commands, it's assumed to not be
-supported.
+Just SMCR requires a CLC Peer ID, but not SMCD. The field should be
+zero for SMCD.
 
-Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
-Link: https://lore.kernel.org/r/20200213131608.10541-2-sergey.matyukevich.os@quantenna.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: c758dfddc1b5 ("net/smc: add SMC-D support in CLC messages")
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/smc/smc_clc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 823dea187691f..dfde06b8d25d1 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -323,6 +323,7 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
- 	[NL80211_ATTR_CONTROL_PORT_NO_ENCRYPT] = { .type = NLA_FLAG },
- 	[NL80211_ATTR_CONTROL_PORT_OVER_NL80211] = { .type = NLA_FLAG },
- 	[NL80211_ATTR_PRIVACY] = { .type = NLA_FLAG },
-+	[NL80211_ATTR_STATUS_CODE] = { .type = NLA_U16 },
- 	[NL80211_ATTR_CIPHER_SUITE_GROUP] = { .type = NLA_U32 },
- 	[NL80211_ATTR_WPA_VERSIONS] = { .type = NLA_U32 },
- 	[NL80211_ATTR_PID] = { .type = NLA_U32 },
--- 
-2.20.1
-
+--- a/net/smc/smc_clc.c
++++ b/net/smc/smc_clc.c
+@@ -372,7 +372,9 @@ int smc_clc_send_decline(struct smc_sock
+ 	dclc.hdr.length = htons(sizeof(struct smc_clc_msg_decline));
+ 	dclc.hdr.version = SMC_CLC_V1;
+ 	dclc.hdr.flag = (peer_diag_info == SMC_CLC_DECL_SYNCERR) ? 1 : 0;
+-	memcpy(dclc.id_for_peer, local_systemid, sizeof(local_systemid));
++	if (smc->conn.lgr && !smc->conn.lgr->is_smcd)
++		memcpy(dclc.id_for_peer, local_systemid,
++		       sizeof(local_systemid));
+ 	dclc.peer_diagnosis = htonl(peer_diag_info);
+ 	memcpy(dclc.trl.eyecatcher, SMC_EYECATCHER, sizeof(SMC_EYECATCHER));
+ 
 
 
