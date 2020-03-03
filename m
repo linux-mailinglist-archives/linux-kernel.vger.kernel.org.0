@@ -2,329 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 013EB177259
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:28:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E15117726E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbgCCJ22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 04:28:28 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19962 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728049AbgCCJ22 (ORCPT
+        id S1728190AbgCCJcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 04:32:55 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43598 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbgCCJcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:28:28 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0239RJ52103229
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Mar 2020 04:28:27 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yfhs4rhgg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 04:28:27 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Tue, 3 Mar 2020 09:28:25 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Mar 2020 09:28:16 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0239RH5f50463074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Mar 2020 09:27:17 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3AC3E5204E;
-        Tue,  3 Mar 2020 09:28:15 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.93.72])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2C40752051;
-        Tue,  3 Mar 2020 09:28:14 +0000 (GMT)
-Subject: Re: [PATCH v3 16/27] powerpc/powernv/pmem: Register a character
- device for userspace to interact with
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-17-alastair@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Tue, 3 Mar 2020 10:28:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 3 Mar 2020 04:32:54 -0500
+Received: by mail-wr1-f67.google.com with SMTP id h9so2449125wrr.10;
+        Tue, 03 Mar 2020 01:32:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XYpfou3pNPf/l+cdS9KAFxciOnURpc9US/Ck720UZHw=;
+        b=aqzLeWQfRDVvrZa298Hwxwy6HOoMmC3nQqu87aPqpd4t7Py35ZgwNoAgLQoxE9FCaM
+         qgw51japeUWQn+BYQLbDhcq21A98ki0WViEdYDI2gDnrm/ryTwoFvpyiy/ofuprUB7lE
+         6e+7QX1JE8j2aErOcWfb0YYNlid5n+U6vdXE3/AVDTEvHTMRpjAlgGM1Ke2q4MqH112Z
+         YvK4RAyKqF19iIs2ME4K4yshAFCzdEgIOfliIxX4MIVziY2DEyEaviU2O/sFBOSLyAyD
+         yftjwRDMrXWpLUpdKE0BjF2MWHhQsln22h/j4GTqJMVxadFzAo07ObRVBj3JF2SxqU1E
+         NSjA==
+X-Gm-Message-State: ANhLgQ1W269+2rpTNpBQ1yfAQCXEncVrMMPk0PyXMeeqlkxfMpIn57T3
+        dFy78rMMZtSZZDqa1QJQVCg=
+X-Google-Smtp-Source: ADFU+vtF+RbwIjqore5UHIM7atEL0jn316nOITsQv4Z2OqwFH4XPXNTPD5ODK8h9prUeZDx1qzGkkA==
+X-Received: by 2002:a5d:4088:: with SMTP id o8mr4722346wrp.144.1583227972535;
+        Tue, 03 Mar 2020 01:32:52 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id f17sm12224197wrm.3.2020.03.03.01.32.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 01:32:51 -0800 (PST)
+Date:   Tue, 3 Mar 2020 10:32:51 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: css_tryget_online cleanups
+Message-ID: <20200303093251.GD4380@dhcp22.suse.cz>
+References: <20200302203109.179417-1-shakeelb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200221032720.33893-17-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030309-4275-0000-0000-000003A7D8ED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030309-4276-0000-0000-000038BCE05A
-Message-Id: <e9ebc395-9748-61a2-9125-eefc5c763332@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-03_02:2020-03-03,2020-03-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
- suspectscore=2 clxscore=1015 bulkscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2003030073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302203109.179417-1-shakeelb@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 21/02/2020 à 04:27, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
+On Mon 02-03-20 12:31:09, Shakeel Butt wrote:
+> Currently multiple locations in memcg code, css_tryget_online() is being
+> used. However it doesn't matter whether the cgroup is online for the
+> callers. Online used to matter when we had reparenting on offlining and
+> we needed a way to prevent new ones from showing up.
 > 
-> This patch introduces a character device (/dev/ocxl-scmX) which further
-> patches will use to interact with userspace.
+> The failure case for couple of these css_tryget_online usage is to
+> fallback to root_mem_cgroup which kind of make bypassing the memcg
+> limits possible for some workloads. For example creating an inotify
+> group in a subcontainer and then deleting that container after moving the
+> process to a different container will make all the event objects
+> allocated for that group to the root_mem_cgroup. So, using
+> css_tryget_online() is dangerous for such cases.
 > 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Two locations still use the online version. The swapin of offlined
+> memcg's pages and the memcg kmem cache creation. The kmem cache indeed
+> needs the online version as the kernel does the reparenting of memcg
+> kmem caches. For the swapin case, it has been left for later as the
+> fallback is not really that concerning.
+
+Could you be more specific about the swap in case please?
+
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+
+Other than that nothing really jumped at me although I have to confess
+that I am far from deeply familiar with the sk_buff charging path.
+
+Acked-by: Michal Hocko <mhocko@suse.com>
 > ---
->   arch/powerpc/platforms/powernv/pmem/ocxl.c    | 116 +++++++++++++++++-
->   .../platforms/powernv/pmem/ocxl_internal.h    |   2 +
->   2 files changed, 116 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> index b8bd7e703b19..63109a870d2c 100644
-> --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> @@ -10,6 +10,7 @@
->   #include <misc/ocxl.h>
->   #include <linux/delay.h>
->   #include <linux/ndctl.h>
-> +#include <linux/fs.h>
->   #include <linux/mm_types.h>
->   #include <linux/memory_hotplug.h>
->   #include "ocxl_internal.h"
-> @@ -339,6 +340,9 @@ static void free_ocxlpmem(struct ocxlpmem *ocxlpmem)
->   
->   	free_minor(ocxlpmem);
->   
-> +	if (ocxlpmem->cdev.owner)
-> +		cdev_del(&ocxlpmem->cdev);
-> +
->   	if (ocxlpmem->metadata_addr)
->   		devm_memunmap(&ocxlpmem->dev, ocxlpmem->metadata_addr);
->   
-> @@ -396,6 +400,70 @@ static int ocxlpmem_register(struct ocxlpmem *ocxlpmem)
->   	return device_register(&ocxlpmem->dev);
->   }
->   
-> +static void ocxlpmem_put(struct ocxlpmem *ocxlpmem)
-> +{
-> +	put_device(&ocxlpmem->dev);
-> +}
-> +
-> +static struct ocxlpmem *ocxlpmem_get(struct ocxlpmem *ocxlpmem)
-> +{
-> +	return (get_device(&ocxlpmem->dev) == NULL) ? NULL : ocxlpmem;
-> +}
-> +
-> +static struct ocxlpmem *find_and_get_ocxlpmem(dev_t devno)
-> +{
-> +	struct ocxlpmem *ocxlpmem;
-> +	int minor = MINOR(devno);
-> +	/*
-> +	 * We don't declare an RCU critical section here, as our AFU
-> +	 * is protected by a reference counter on the device. By the time the
-> +	 * minor number of a device is removed from the idr, the ref count of
-> +	 * the device is already at 0, so no user API will access that AFU and
-> +	 * this function can't return it.
-> +	 */
-
-
-I fixed something related in the ocxl driver (which had enough changes 
-with the introduction of the "info" device to make a similar comment 
-become wrong). See commit a58d37bce0d21. The issue is handling a 
-simultaneous open() and removal of the device through /sysfs as best we can.
-
-We are on a file open path and it's not like we're going to have a 
-thousand clients, so performance is not that critical. We can take the 
-mutex before searching in the IDR and release it after we increment the 
-reference count on the device.
-But that's not enough: we could still find the device in the IDR while 
-it is being removed in free_ocxlpmem(). I believe the only safe way to 
-address it is by removing the user-facing APIs (the char device) before 
-calling device_unregister(). So that it's not possible to find the 
-device in file_open() if it's in the middle of being removed.
-
-   Fred
-
-
-> +	ocxlpmem = idr_find(&minors_idr, minor);
-> +	if (ocxlpmem)
-> +		ocxlpmem_get(ocxlpmem);
-> +	return ocxlpmem;
-> +}
-> +
-> +static int file_open(struct inode *inode, struct file *file)
-> +{
-> +	struct ocxlpmem *ocxlpmem;
-> +
-> +	ocxlpmem = find_and_get_ocxlpmem(inode->i_rdev);
-> +	if (!ocxlpmem)
-> +		return -ENODEV;
-> +
-> +	file->private_data = ocxlpmem;
-> +	return 0;
-> +}
-> +
-> +static int file_release(struct inode *inode, struct file *file)
-> +{
-> +	struct ocxlpmem *ocxlpmem = file->private_data;
-> +
-> +	ocxlpmem_put(ocxlpmem);
-> +	return 0;
-> +}
-> +
-> +static const struct file_operations fops = {
-> +	.owner		= THIS_MODULE,
-> +	.open		= file_open,
-> +	.release	= file_release,
-> +};
-> +
-> +/**
-> + * create_cdev() - Create the chardev in /dev for the device
-> + * @ocxlpmem: the SCM metadata
-> + * Return: 0 on success, negative on failure
-> + */
-> +static int create_cdev(struct ocxlpmem *ocxlpmem)
-> +{
-> +	cdev_init(&ocxlpmem->cdev, &fops);
-> +	return cdev_add(&ocxlpmem->cdev, ocxlpmem->dev.devt, 1);
-> +}
-> +
->   /**
->    * ocxlpmem_remove() - Free an OpenCAPI persistent memory device
->    * @pdev: the PCI device information struct
-> @@ -572,6 +640,11 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   		goto err;
->   	}
->   
-> +	if (create_cdev(ocxlpmem)) {
-> +		dev_err(&pdev->dev, "Could not create character device\n");
-> +		goto err;
-> +	}
-
-
-As already mentioned in a previous patch, we branch to the err label so 
-rc needs to be set to a valid error.
-
-
-
-> +
->   	elapsed = 0;
->   	timeout = ocxlpmem->readiness_timeout + ocxlpmem->memory_available_timeout;
->   	while (!is_usable(ocxlpmem, false)) {
-> @@ -613,20 +686,59 @@ static struct pci_driver pci_driver = {
->   	.shutdown = ocxlpmem_remove,
->   };
->   
-> +static int file_init(void)
-> +{
-> +	int rc;
-> +
-> +	mutex_init(&minors_idr_lock);
-> +	idr_init(&minors_idr);
-> +
-> +	rc = alloc_chrdev_region(&ocxlpmem_dev, 0, NUM_MINORS, "ocxl-pmem");
-> +	if (rc) {
-> +		idr_destroy(&minors_idr);
-> +		pr_err("Unable to allocate OpenCAPI persistent memory major number: %d\n", rc);
-> +		return rc;
-> +	}
-> +
-> +	ocxlpmem_class = class_create(THIS_MODULE, "ocxl-pmem");
-> +	if (IS_ERR(ocxlpmem_class)) {
-> +		idr_destroy(&minors_idr);
-> +		pr_err("Unable to create ocxl-pmem class\n");
-> +		unregister_chrdev_region(ocxlpmem_dev, NUM_MINORS);
-> +		return PTR_ERR(ocxlpmem_class);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void file_exit(void)
-> +{
-> +	class_destroy(ocxlpmem_class);
-> +	unregister_chrdev_region(ocxlpmem_dev, NUM_MINORS);
-> +	idr_destroy(&minors_idr);
-> +}
-> +
->   static int __init ocxlpmem_init(void)
->   {
-> -	int rc = 0;
-> +	int rc;
->   
-> -	rc = pci_register_driver(&pci_driver);
-> +	rc = file_init();
->   	if (rc)
->   		return rc;
->   
-> +	rc = pci_register_driver(&pci_driver);
-> +	if (rc) {
-> +		file_exit();
-> +		return rc;
-> +	}
-> +
->   	return 0;
->   }
->   
->   static void ocxlpmem_exit(void)
->   {
->   	pci_unregister_driver(&pci_driver);
-> +	file_exit();
->   }
->   
->   module_init(ocxlpmem_init);
-> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> index 28e2020f6355..d2d81fec7bb1 100644
-> --- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> @@ -2,6 +2,7 @@
->   // Copyright 2019 IBM Corp.
->   
->   #include <linux/pci.h>
-> +#include <linux/cdev.h>
->   #include <misc/ocxl.h>
->   #include <linux/libnvdimm.h>
->   #include <linux/mm.h>
-> @@ -99,6 +100,7 @@ struct ocxlpmem_function0 {
->   struct ocxlpmem {
->   	struct device dev;
->   	struct pci_dev *pdev;
-> +	struct cdev cdev;
->   	struct ocxl_fn *ocxl_fn;
->   	struct nd_interleave_set nd_set;
->   	struct nvdimm_bus_descriptor bus_desc;
+> Changes since v1:
+> - replaced WARN_ON with WARN_ON_ONCE
 > 
+>  mm/memcontrol.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 62b574d0cd3c..75d8883bf975 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -656,7 +656,7 @@ __mem_cgroup_largest_soft_limit_node(struct mem_cgroup_tree_per_node *mctz)
+>  	 */
+>  	__mem_cgroup_remove_exceeded(mz, mctz);
+>  	if (!soft_limit_excess(mz->memcg) ||
+> -	    !css_tryget_online(&mz->memcg->css))
+> +	    !css_tryget(&mz->memcg->css))
+>  		goto retry;
+>  done:
+>  	return mz;
+> @@ -961,7 +961,8 @@ struct mem_cgroup *get_mem_cgroup_from_page(struct page *page)
+>  		return NULL;
+>  
+>  	rcu_read_lock();
+> -	if (!memcg || !css_tryget_online(&memcg->css))
+> +	/* Page should not get uncharged and freed memcg under us. */
+> +	if (!memcg || WARN_ON_ONCE(!css_tryget(&memcg->css)))
+>  		memcg = root_mem_cgroup;
+>  	rcu_read_unlock();
+>  	return memcg;
+> @@ -974,10 +975,13 @@ EXPORT_SYMBOL(get_mem_cgroup_from_page);
+>  static __always_inline struct mem_cgroup *get_mem_cgroup_from_current(void)
+>  {
+>  	if (unlikely(current->active_memcg)) {
+> -		struct mem_cgroup *memcg = root_mem_cgroup;
+> +		struct mem_cgroup *memcg;
+>  
+>  		rcu_read_lock();
+> -		if (css_tryget_online(&current->active_memcg->css))
+> +		/* current->active_memcg must hold a ref. */
+> +		if (WARN_ON_ONCE(!css_tryget(&current->active_memcg->css)))
+> +			memcg = root_mem_cgroup;
+> +		else
+>  			memcg = current->active_memcg;
+>  		rcu_read_unlock();
+>  		return memcg;
+> @@ -6732,7 +6736,7 @@ void mem_cgroup_sk_alloc(struct sock *sk)
+>  		goto out;
+>  	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys) && !memcg->tcpmem_active)
+>  		goto out;
+> -	if (css_tryget_online(&memcg->css))
+> +	if (css_tryget(&memcg->css))
+>  		sk->sk_memcg = memcg;
+>  out:
+>  	rcu_read_unlock();
+> -- 
+> 2.25.0.265.gbab2e86ba0-goog
 
+-- 
+Michal Hocko
+SUSE Labs
