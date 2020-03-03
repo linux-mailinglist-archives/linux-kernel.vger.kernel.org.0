@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CD0177F95
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 043AB1780A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732040AbgCCRvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:51:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59862 "EHLO mail.kernel.org"
+        id S1733190AbgCCR56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:57:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732032AbgCCRvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:51:42 -0500
+        id S1733176AbgCCR5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:57:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4699320870;
-        Tue,  3 Mar 2020 17:51:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DE192072D;
+        Tue,  3 Mar 2020 17:57:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257901;
-        bh=QqfcphkuUzCyavQxgi/91Rdbk/ME1gyPfETDf2x+bRE=;
+        s=default; t=1583258273;
+        bh=ZbFEaN5l+8Ba/vTiEQbdT83zjZPqCfMcehVz7b5ITFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BpgfUxq+fa7GYZZzccSCSHsStjEWKpov58ZsY+g3SRXBZDDgTdvyGedYCy54n53LV
-         4sFSQElGdBuafWZhrtKKK4JPerxqU7bHBwl5vD4rNSW7/GI0NxE7OK/2Q+w0sLW4dw
-         vAKLqDXJIEI+mZbiodjYiazuwFl/xfQdAttOj6D4=
+        b=d/iONkOYCvMzMwpJ5UIhy+QgoOWvpvyAQqoSlo8qDzTTCLfyAGGeQOud0oQYDXvje
+         jSiDw4CS8r6scVYqcmoNCjVkdn65wz72Y17UbTgYh2MQ/tZr7plslrwgKu/Ed8B/VD
+         Cl9wsYhqsBYJu0/ziSoWAgZITnqOIg/6626GIQIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yang <richardw.yang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.5 173/176] mm/huge_memory.c: use head to check huge zero page
+        stable@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.4 139/152] thermal: db8500: Depromote debug print
 Date:   Tue,  3 Mar 2020 18:43:57 +0100
-Message-Id: <20200303174323.892055985@linuxfoundation.org>
+Message-Id: <20200303174318.598717376@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yang <richardw.yang@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit cb829624867b5ab10bc6a7036d183b1b82bfe9f8 upstream.
+commit c56dcfa3d4d0f49f0c37cd24886aa86db7aa7f30 upstream.
 
-The page could be a tail page, if this is the case, this BUG_ON will
-never be triggered.
+We are not interested in getting this debug print on our
+console all the time.
 
-Link: http://lkml.kernel.org/r/20200110032610.26499-1-richardw.yang@linux.intel.com
-Fixes: e9b61f19858a ("thp: reintroduce split_huge_page()")
-
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Stephan Gerhold <stephan@gerhold.net>
+Fixes: 6c375eccded4 ("thermal: db8500: Rewrite to be a pure OF sensor")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191119074650.2664-1-linus.walleij@linaro.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/huge_memory.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/db8500_thermal.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2712,7 +2712,7 @@ int split_huge_page_to_list(struct page
- 	unsigned long flags;
- 	pgoff_t end;
+--- a/drivers/thermal/db8500_thermal.c
++++ b/drivers/thermal/db8500_thermal.c
+@@ -152,8 +152,8 @@ static irqreturn_t prcmu_high_irq_handle
+ 		db8500_thermal_update_config(th, idx, THERMAL_TREND_RAISING,
+ 					     next_low, next_high);
  
--	VM_BUG_ON_PAGE(is_huge_zero_page(page), page);
-+	VM_BUG_ON_PAGE(is_huge_zero_page(head), head);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(!PageCompound(page), page);
- 
+-		dev_info(&th->tz->device,
+-			 "PRCMU set max %ld, min %ld\n", next_high, next_low);
++		dev_dbg(&th->tz->device,
++			"PRCMU set max %ld, min %ld\n", next_high, next_low);
+ 	} else if (idx == num_points - 1)
+ 		/* So we roof out 1 degree over the max point */
+ 		th->interpolated_temp = db8500_thermal_points[idx] + 1;
 
 
