@@ -2,96 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9765177891
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8181177893
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbgCCOOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 09:14:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52004 "EHLO mail.kernel.org"
+        id S1728945AbgCCOPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 09:15:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbgCCOOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:14:39 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1726536AbgCCOPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 09:15:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24A1320838;
-        Tue,  3 Mar 2020 14:14:38 +0000 (UTC)
-Date:   Tue, 3 Mar 2020 09:14:36 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Cengiz Can <cengiz@kernel.wtf>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] blktrace: fix dereference after null check
-Message-ID: <20200303091436.2e7ab191@gandalf.local.home>
-In-Reply-To: <20200303073358.57799-1-cengiz@kernel.wtf>
-References: <20200303073358.57799-1-cengiz@kernel.wtf>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id D20C920838;
+        Tue,  3 Mar 2020 14:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583244908;
+        bh=CjxVJIk2GRMkI+aexuaFJkj4rdIHh1K0MxjOvbTOuHw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MfWDSJZFaVtO2Sm7kObMRnB38aqqykP8ysgH3kis0axH0H7CKcGHk9MtijxdFLHlp
+         17U3cyNF5yxf7rkmV6lhS0wxcc3g9iOYeXrEMr1LX313FTfkuvMOmP0Nxvmka2f/Kt
+         5HGaEDOX7WRHyUPV77HRU7/VV6Sq2aO7RjtNoOgc=
+Date:   Tue, 3 Mar 2020 15:15:05 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     zzyiwei@google.com, mingo@redhat.com, elder@kernel.org,
+        federico.vaga@cern.ch, tony.luck@intel.com, vilhelm.gray@gmail.com,
+        linus.walleij@linaro.org, tglx@linutronix.de,
+        yamada.masahiro@socionext.com, paul.walmsley@sifive.com,
+        bhelgaas@google.com, darekm@google.com, ndesaulniers@google.com,
+        joelaf@google.com, linux-kernel@vger.kernel.org,
+        prahladk@google.com, android-kernel@google.com
+Subject: Re: [PATCH v4] gpu/trace: add a gpu total memory usage tracepoint
+Message-ID: <20200303141505.GA3405@kroah.com>
+References: <CAKT=dDnFpj2hJd5z73pfcrhXXacDpPVyKzC7+K94tsX=+e_BHg@mail.gmail.com>
+ <20200302235044.59163-1-zzyiwei@google.com>
+ <20200303090703.32b2ad68@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303090703.32b2ad68@gandalf.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  3 Mar 2020 10:33:59 +0300
-Cengiz Can <cengiz@kernel.wtf> wrote:
-
-> There was a recent change in blktrace.c that added a RCU protection to
-> `q->blk_trace` in order to fix a use-after-free issue during access.
+On Tue, Mar 03, 2020 at 09:07:03AM -0500, Steven Rostedt wrote:
 > 
-> However the change missed an edge case that can lead to dereferencing of
-> `bt` pointer even when it's NULL:
+> Greg,
 > 
-> ```
->         bt->act_mask = value; // bt can still be NULL here
-> ```
-> 
-> Added a reassignment into the NULL check block to fix the issue.
+> You acked this patch before, did you want to ack it again, and I'll take it
+> in my tree?
 
-Note, you should probably add a note in your change log that this issue was
-found by Coverity. Sometimes static analyzers have a tag of some kind that
-they would like patches that fix the issues they discover to be in the
-change log. This way they can track the fixes that are found by the tool.
+Sure, but where did my ack go?  What changed from previous versions???
 
-> 
-> Fixes: c780e86dd48 ("blktrace: Protect q->blk_trace with RCU")
-> 
-> Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
-> ---
->  Huge thanks goes to Steven Rostedt for his assistance.
-> 
->  kernel/trace/blktrace.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> index 4560878f0bac..29ea88f10b87 100644
-> --- a/kernel/trace/blktrace.c
-> +++ b/kernel/trace/blktrace.c
-> @@ -1896,8 +1896,10 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
->  	}
-> 
->  	ret = 0;
-> -	if (bt == NULL)
-> +	if (bt == NULL) {
->  		ret = blk_trace_setup_queue(q, bdev);
-> +		bt = q->blk_trace;
+Anyway, the patch seems sane enough to me:
 
-As I said in the other email, the above assignment still needs RCU
-annotation:
-
-		bt = rcu_dereference_protected(q->blk_trace,
-				lockdep_is_held(&q->blk_trace_mutex));
-
-Otherwise, other static analyzers will flag this as a problem.
-
--- Steve
-
-
-> +	}
-> 
->  	if (ret == 0) {
->  		if (attr == &dev_attr_act_mask)
-> --
-> 2.25.1
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
