@@ -2,112 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87978177D45
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1860A177D73
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:29:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbgCCRWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:22:12 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:35948 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729570AbgCCRWM (ORCPT
+        id S1730304AbgCCR3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:29:37 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57823 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727440AbgCCR3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:22:12 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 023HMBTi113154;
-        Tue, 3 Mar 2020 11:22:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583256131;
-        bh=SBRUU+j3XyFM6R2K8Qs7x9a1C38P7C+RT5tCbBFb0hI=;
-        h=From:To:CC:Subject:Date;
-        b=v7cg1KPn7IPdLZAVsY8/27/RR2l/nN/JHJRMrmyrf+EvYnjV8LHzuUAqDypAq5NQ+
-         U5M37Me3JuTQ+RqasRWnfiGIJJei/PY1n0I2SrZIT19bIbPQ0afRfGFO3Apd6e4KN/
-         oLSJ87u3nPajtUs3837qNK5DNjfYtJDlXqpYWiGs=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 023HMBKj077381
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Mar 2020 11:22:11 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 3 Mar
- 2020 11:22:10 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 3 Mar 2020 11:22:10 -0600
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 023HMAq0014433;
-        Tue, 3 Mar 2020 11:22:10 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>,
-        <stable@vger.kernel.org>
-Subject: [Patch] media: ti-vpe: cal: fix a kernel oops when unloading module
-Date:   Tue, 3 Mar 2020 11:26:29 -0600
-Message-ID: <20200303172629.21339-1-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 3 Mar 2020 12:29:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583256576;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OrfJnMYXSp8JuLlI51btEW+NHNdpcFTSzHFKKNkjZ3g=;
+        b=icVbOLMYPVorVQptZ1XFRS6OGN5Ml2EL0Y5Lj+V2KkCZ33vDsJnl3Q8R75T2tJJgDzBdN1
+        wDF1doPoNeut2NUOehgLxoiQH5Mkp+4S5srTGVxa2U5KXXXQpCJd05eb0WkCgcE8T4MRii
+        G7GOHEcKXSDw04tlYzxJTOYQOznZwvs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-255-k4EmAwWJOxaF8xFyyIDScA-1; Tue, 03 Mar 2020 12:29:33 -0500
+X-MC-Unique: k4EmAwWJOxaF8xFyyIDScA-1
+Received: by mail-wr1-f69.google.com with SMTP id j32so1535931wre.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:29:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OrfJnMYXSp8JuLlI51btEW+NHNdpcFTSzHFKKNkjZ3g=;
+        b=BMwm4sZKf65hR4iW1crLf35CVFzZIA7cL+wE3C8sRw2XN2wi9PGI9RiQRGzmusfGoy
+         Xjpb2ptgi3lYUtixMLcCKPRvgAOxQdzPBQwAErCAxVKOoTZEtwHccM2qT6Sxz/5p1waY
+         VodTVkvLKoDac+r76ACxU6BY3PRSznSxeMrYYup0xzWbeh8xj5GFbtXoV9NEtjDvILkK
+         5q6rwiSq3UfkmGpQrAxhV9oxp3SbkXGhXAdHm5yegP+JtOG1TVYaQ5LXzu2VWVhTlA88
+         gkxseniRqon9oOGJ+K4Gtqe29oMYAU2CAUqWlik2bvOMM0KjhmuIJrImJIdfneIuNIa8
+         WiPg==
+X-Gm-Message-State: ANhLgQ0n1vKjT0mwjIDHqT430Ky6yCV8AjV0Y1S9po3exaQe413EOFNI
+        vWguehP22N4I2gcwzyofeHPT/1Sf/j8h8gsHB1NEnjeBG/P4jJbLxD5sXSgS2SG4HQIlI0ceuIb
+        6CHhXOr6vsh29IBiZCN2k3HvB
+X-Received: by 2002:adf:ab4e:: with SMTP id r14mr6584101wrc.350.1583256572436;
+        Tue, 03 Mar 2020 09:29:32 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vupGdoUnfoghBjUL1FIu3d71GoeGRPzgmv5uLVuiDEfNO0XORZcpwr/9jEOAVGm1kpiW/5Fyw==
+X-Received: by 2002:adf:ab4e:: with SMTP id r14mr6584088wrc.350.1583256572246;
+        Tue, 03 Mar 2020 09:29:32 -0800 (PST)
+Received: from [192.168.178.40] ([151.20.254.94])
+        by smtp.gmail.com with ESMTPSA id n8sm33290957wrm.46.2020.03.03.09.29.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2020 09:29:31 -0800 (PST)
+Subject: Re: [PATCH v2 06/13] KVM: x86: Refactor emulate tracepoint to
+ explicitly take context
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200218232953.5724-1-sean.j.christopherson@intel.com>
+ <20200218232953.5724-7-sean.j.christopherson@intel.com>
+ <8736axjmte.fsf@vitty.brq.redhat.com> <20200303164813.GL1439@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <2f3f7aff-2bd0-fa62-4b66-9f90f125e44e@redhat.com>
+Date:   Tue, 3 Mar 2020 18:29:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200303164813.GL1439@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the switch to use v4l2_async_notifier_add_subdev() and
-v4l2_async_notifier_cleanup(), unloading the ti_cal module would casue a
-kernel oops.
+On 03/03/20 17:48, Sean Christopherson wrote:
+>>>  	TP_fast_assign(
+>>>  		__entry->csbase = kvm_x86_ops->get_segment_base(vcpu, VCPU_SREG_CS);
+>> This seems the only usage of 'vcpu' parameter now; I checked and even
+>> after switching to dynamic emulation context allocation we still set
+>> ctxt->vcpu in alloc_emulate_ctxt(), can we get rid of 'vcpu' parameter
+>> here then (and use ctxt->vcpu instead)?
+> Hmm, ya, not sure what I was thinking here.
+> 
 
-This was root cause to the fact that v4l2_async_notifier_cleanup() tries
-to kfree the asd pointer passed into v4l2_async_notifier_add_subdev().
+As long as we have one use of vcpu, I'd rather skip this patch and
+adjust patch 8 to use "->".  Even the other "explicitly take context"
+parts are kinda debatable since you still have to do emul_to_vcpu.
+Throwing a handful of
 
-In our case the asd reference was from a statically allocated struct.
-So in effect v4l2_async_notifier_cleanup() was trying to free a pointer
-that was not kalloc.
+- 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
++ 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
 
-So here we switch to using a kzalloc struct instead of a static one.
+into patch 8 is not bad at all and limits the churn.
 
-Fixes: d079f94c9046 ("media: platform: Switch to v4l2_async_notifier_add_subdev")
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
----
- drivers/media/platform/ti-vpe/cal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 6d4cbb8782ed..18fe2cb9dd17 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -372,8 +372,6 @@ struct cal_ctx {
- 	struct v4l2_subdev	*sensor;
- 	struct v4l2_fwnode_endpoint	endpoint;
- 
--	struct v4l2_async_subdev asd;
--
- 	struct v4l2_fh		fh;
- 	struct cal_dev		*dev;
- 	struct cc_data		*cc;
-@@ -2032,7 +2030,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 
- 	parent = pdev->dev.of_node;
- 
--	asd = &ctx->asd;
- 	endpoint = &ctx->endpoint;
- 
- 	ep_node = NULL;
-@@ -2040,6 +2037,10 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 	sensor_node = NULL;
- 	ret = -EINVAL;
- 
-+	asd = kzalloc(sizeof(*asd), GFP_KERNEL);
-+	if (!asd)
-+		goto cleanup_exit;
-+
- 	ctx_dbg(3, ctx, "Scanning Port node for csi2 port: %d\n", inst);
- 	for (index = 0; index < CAL_NUM_CSI2_PORTS; index++) {
- 		port = of_get_next_port(parent, port);
--- 
-2.17.1
+Paolo
 
