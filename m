@@ -2,112 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2DA1177C53
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A1C4177C65
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 17:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730415AbgCCQs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 11:48:29 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49295 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730088AbgCCQs2 (ORCPT
+        id S1730456AbgCCQvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 11:51:21 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49178 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730115AbgCCQvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 11:48:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583254107;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tVR3fLZLUNSfxeCmLw5WmmWD0RuodP2e89qJb7tyUbA=;
-        b=Q7W9c2h23gi+SiOobHrzX2JpX7TtKFOgzTSOFQmpZ3GJfbXQoc1YySjb4ODpe09AEIuO9A
-        vbkqcyJchHNcCY2TyCIPTVIXgCTliFB53180PbnK8sog4YUt6csH4nKqajmm+etpI1ty5j
-        1gchLAR7Q7PwcqoFOK0dUOFHxdez++A=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-189-jzDLnre9PnKHkWG1ExSX1g-1; Tue, 03 Mar 2020 11:48:26 -0500
-X-MC-Unique: jzDLnre9PnKHkWG1ExSX1g-1
-Received: by mail-wm1-f71.google.com with SMTP id 7so1336395wmo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 08:48:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=tVR3fLZLUNSfxeCmLw5WmmWD0RuodP2e89qJb7tyUbA=;
-        b=Ms08GxCXZ8db331lXw2zU6AIIWChitWARBu4uLc4DtPqQov5dB9D8Alb8BDYJQpdwW
-         RX8uFXyui9GDdfbDKIV28TdLatyhhJPtvPOyNHKgEcvqflXXI5JgqfjrYMIPH5qzhm9t
-         BHH7RXvbzFWFwuJ12GZ5B7s35RH82/wbw6biCFyMQe2x5IfCzhx6DBWKExSLiIe79RJR
-         IF24CWM+0soFiysL/VKoE1gZMziv+OmoM/vkExBrQ3V1CbgBMeel6Mb2XjI6FBTqY7gb
-         K8Y+Bpd5eHuD+8jTE0Gp1Ezay9nBC4CJAMW8g5ICbJqVVd6DoBaMAPa3xfx5csD95jCM
-         jZDg==
-X-Gm-Message-State: ANhLgQ1VAi2eKIohZXVxx8iP7FEVMX4bhyxoleC70mL81+T6pjAvA+Gf
-        pDVd0Fce2qZCOPMV7qgBo7px74VBbwmCh9ddW54l8H/OKnE9briESCcLCIJlENkLa+sdj7fYuO/
-        s7UQwPt3oZaVjaKcOROn5DeUz
-X-Received: by 2002:a1c:c5:: with SMTP id 188mr5045453wma.89.1583254105142;
-        Tue, 03 Mar 2020 08:48:25 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsGgm2F+r1bKNVwLZMv9knu4h001U/8h/7d1/cNm6RSBUOoIvQloC/Uy5Ldo1pOpceQ/SNfPQ==
-X-Received: by 2002:a1c:c5:: with SMTP id 188mr5045438wma.89.1583254104859;
-        Tue, 03 Mar 2020 08:48:24 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id q125sm5312013wme.19.2020.03.03.08.48.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 08:48:23 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: Re: [PATCH v2 00/66] KVM: x86: Introduce KVM cpu caps
-In-Reply-To: <20200302235709.27467-1-sean.j.christopherson@intel.com>
-References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
-Date:   Tue, 03 Mar 2020 17:48:23 +0100
-Message-ID: <87wo81e65k.fsf@vitty.brq.redhat.com>
+        Tue, 3 Mar 2020 11:51:20 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j9Akd-0004ZP-Kd; Tue, 03 Mar 2020 16:50:35 +0000
+Date:   Tue, 3 Mar 2020 17:50:34 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCHv5] exec: Fix a deadlock in ptrace
+Message-ID: <20200303165034.5w76hbatbnr64pkd@wittgenstein>
+References: <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87v9nlii0b.fsf@x220.int.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Tue, Mar 03, 2020 at 09:18:44AM -0600, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+> > This fixes a deadlock in the tracer when tracing a multi-threaded
+> > application that calls execve while more than one thread are running.
+> >
+> > I observed that when running strace on the gcc test suite, it always
+> > blocks after a while, when expect calls execve, because other threads
+> > have to be terminated.  They send ptrace events, but the strace is no
+> > longer able to respond, since it is blocked in vm_access.
+> >
+> > The deadlock is always happening when strace needs to access the
+> > tracees process mmap, while another thread in the tracee starts to
+> > execve a child process, but that cannot continue until the
+> > PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
+> 
+> A couple of things.
+> 
+> Why do we think it is safe to change the behavior exposed to userspace?
+> Not the deadlock but all of the times the current code would not
+> deadlock?
+> 
+> Especially given that this is a small window it might be hard for people
+> to track down and report so we need a strong argument that this won't
+> break existing userspace before we just change things.
+> 
+> Usually surveying all of the users of a system call that we can find
+> and checking to see if they might be affected by the change in behavior
+> is difficult enough that we usually opt for not being lazy and
+> preserving the behavior.
+> 
+> This patch is up to two changes in behavior now, that could potentially
+> affect a whole array of programs.  Adding linux-api so that this change
+> in behavior can be documented if/when this change goes through.
+> 
+> If you can split the documentation and test fixes out into separate
+> patches that would help reviewing this code, or please make it explicit
+> that the your are changing documentation about behavior that is changing
+> with this patch.
 
-> All AMD patches are build-tested only.
+Agreed. I think it'd be good to do it in three patches:
+1. unrelated documentation update
+2. fix + documentation changes specific to the fix
+3. test(s)
 
-I tried this on my AMD EPYC 7401P with QEMU and '-cpu host' and the only
-difference in CPUIDs I see is:
-
-# diff -u cpuid_with cpuid_without
---- cpuid_with	2020-03-03 11:38:34.786583429 -0500
-+++ cpuid_without	2020-03-03 11:43:58.103484420 -0500
-@@ -454,16 +454,16 @@
-       SvmRev: SVM revision = 0x1 (1)
-    SVM Secure Virtual Machine (0x8000000a/edx):
-       nested paging                          = true
--      LBR virtualization                     = true
--      SVM lock                               = true
-+      LBR virtualization                     = false
-+      SVM lock                               = false
-       NRIP save                              = true
--      MSR based TSC rate control             = true
--      VMCB clean bits support                = true
--      flush by ASID                          = true
--      decode assists                         = true
-+      MSR based TSC rate control             = false
-+      VMCB clean bits support                = false
-+      flush by ASID                          = false
-+      decode assists                         = false
-       SSSE3/SSE5 opcode set disable          = false
--      pause intercept filter                 = true
--      pause filter threshold                 = true
-+      pause intercept filter                 = false
-+      pause filter threshold                 = false
-       AVIC: AMD virtual interrupt controller = false
-       virtualized VMLOAD/VMSAVE              = false
-       virtualized GIF                        = false
-
-These are all 0x8000000a.EDX and Paolo already highlighted the issue
-(PATCH66).
-
--- 
-Vitaly
-
+Christian
