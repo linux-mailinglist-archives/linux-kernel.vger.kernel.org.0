@@ -2,134 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACE6176B6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C160176B86
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 03:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgCCCuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 21:50:19 -0500
-Received: from mga17.intel.com ([192.55.52.151]:48417 "EHLO mga17.intel.com"
+        id S1729208AbgCCCuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 21:50:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729082AbgCCCuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:50:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 18:50:08 -0800
-X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
-   d="scan'208";a="233439160"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.255.30.67]) ([10.255.30.67])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 02 Mar 2020 18:50:05 -0800
-Subject: Re: [PATCH 1/6] KVM: x86: Fix tracing of CPUID.function when function
- is out-of-range
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>
-References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
- <20200302195736.24777-2-sean.j.christopherson@intel.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <6b41fc5c-f7f4-b20d-cfb5-95bf13cc7534@intel.com>
-Date:   Tue, 3 Mar 2020 10:50:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1729152AbgCCCuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:50:23 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48827246E7;
+        Tue,  3 Mar 2020 02:50:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583203823;
+        bh=sOAGFuQmdWeLvsjXjqeTg71nvzmjKCDHQHCRceyd3eA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jz0ckZ9vLUlabOubgMhvIFGtOn5QIGAIs1KwDesnACf/NBQolSisQIIwL/DnRuvWE
+         O7BkPBzZPA8B05ksPxU17VkDWKLlOVk8+W4qzzgMWO7157LQxGWN7tDOfjtB/OfmRg
+         5V62PMS8gtvocm/5t1+Zy0dqaTejcakBvoW8bbPU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Daniel Golle <daniel@makrotopia.org>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 01/11] serial: ar933x_uart: set UART_CS_{RX,TX}_READY_ORIDE
+Date:   Mon,  2 Mar 2020 21:50:11 -0500
+Message-Id: <20200303025021.10754-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200302195736.24777-2-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/3/2020 3:57 AM, Sean Christopherson wrote:
-> Rework kvm_cpuid() to query entry->function when adjusting the output
-> values so that the original function (in the aptly named "function") is
-> preserved for tracing.  This fixes a bug where trace_kvm_cpuid() will
-> trace the max function for a range instead of the requested function if
-> the requested function is out-of-range and an entry for the max function
-> exists.
-> 
-> Fixes: 43561123ab37 ("kvm: x86: Improve emulation of CPUID leaves 0BH and 1FH")
-> Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Cc: Jim Mattson <jmattson@google.com>
-> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->   arch/x86/kvm/cpuid.c | 15 +++++++--------
->   1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index b1c469446b07..6be012937eba 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -997,12 +997,12 @@ static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
->   	return max && function <= max->eax;
->   }
->   
-> +/* Returns true if the requested leaf/function exists in guest CPUID. */
->   bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
->   	       u32 *ecx, u32 *edx, bool check_limit)
->   {
-> -	u32 function = *eax, index = *ecx;
-> +	const u32 function = *eax, index = *ecx;
->   	struct kvm_cpuid_entry2 *entry;
-> -	struct kvm_cpuid_entry2 *max;
->   	bool found;
->   
->   	entry = kvm_find_cpuid_entry(vcpu, function, index);
-> @@ -1015,18 +1015,17 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
->   	 */
->   	if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
->   	    !cpuid_function_in_range(vcpu, function)) {
-> -		max = kvm_find_cpuid_entry(vcpu, 0, 0);
-> -		if (max) {
-> -			function = max->eax;
-> -			entry = kvm_find_cpuid_entry(vcpu, function, index);
-> -		}
-> +		entry = kvm_find_cpuid_entry(vcpu, 0, 0);
-> +		if (entry)
-> +			entry = kvm_find_cpuid_entry(vcpu, entry->eax, index);
+From: Daniel Golle <daniel@makrotopia.org>
 
-There is a problem.
+[ Upstream commit 87c5cbf71ecbb9e289d60a2df22eb686c70bf196 ]
 
-when queried leaf is out of range on Intel CPU, it returns the maximum 
-basic leaf, and any dependence on input ECX (i.e., subleaf) value in the 
-basic leaf is honored. As disclaimed in SDM of CPUID instruction.
+On AR934x this UART is usually not initialized by the bootloader
+as it is only used as a secondary serial port while the primary
+UART is a newly introduced NS16550-compatible.
+In order to make use of the ar933x-uart on AR934x without RTS/CTS
+hardware flow control, one needs to set the
+UART_CS_{RX,TX}_READY_ORIDE bits as other than on AR933x where this
+UART is used as primary/console, the bootloader on AR934x typically
+doesn't set those bits.
+Setting them explicitely on AR933x should not do any harm, so just
+set them unconditionally.
 
-The ECX should be honored if and only the leaf has a significant index.
-If the leaf doesn't has a significant index, it just ignores the EDX 
-input in bare metal.
+Tested-by: Chuanhong Guo <gch981213@gmail.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Link: https://lore.kernel.org/r/20200207095335.GA179836@makrotopia.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/tty/serial/ar933x_uart.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-So it should be something like:
-
-if (!entry && check_limit && !guest_cpuid_is_amd(vcpu) &&
-	!cpuid_function_in_range(vcpu, function)) {
-	entry = kvm_find_cpuid_entry(vcpu, 0, 0);
-	if (entry) {
-		entry = kvm_find_cpuid_entry(vcpu, entry->eax, 0);
-		if (entry &&
-		    entry->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX ) {
-			entry = kvm_find_cpuid_entry(vcpu, entry->eax,
-						     index);
-		}
-	}
-}
-
->   	}
->   	if (entry) {
->   		*eax = entry->eax;
->   		*ebx = entry->ebx;
->   		*ecx = entry->ecx;
->   		*edx = entry->edx;
-> -		if (function == 7 && index == 0) {
-> +
-> +		if (entry->function == 7 && index == 0) {
->   			u64 data;
->   		        if (!__kvm_get_msr(vcpu, MSR_IA32_TSX_CTRL, &data, true) &&
->   			    (data & TSX_CTRL_CPUID_CLEAR))
-> 
+diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
+index 1519d2ca7705f..40194791cde0b 100644
+--- a/drivers/tty/serial/ar933x_uart.c
++++ b/drivers/tty/serial/ar933x_uart.c
+@@ -294,6 +294,10 @@ static void ar933x_uart_set_termios(struct uart_port *port,
+ 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+ 			    AR933X_UART_CS_HOST_INT_EN);
+ 
++	/* enable RX and TX ready overide */
++	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
++		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
++
+ 	/* reenable the UART */
+ 	ar933x_uart_rmw(up, AR933X_UART_CS_REG,
+ 			AR933X_UART_CS_IF_MODE_M << AR933X_UART_CS_IF_MODE_S,
+@@ -426,6 +430,10 @@ static int ar933x_uart_startup(struct uart_port *port)
+ 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+ 			    AR933X_UART_CS_HOST_INT_EN);
+ 
++	/* enable RX and TX ready overide */
++	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
++		AR933X_UART_CS_TX_READY_ORIDE | AR933X_UART_CS_RX_READY_ORIDE);
++
+ 	/* Enable RX interrupts */
+ 	up->ier = AR933X_UART_INT_RX_VALID;
+ 	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, up->ier);
+-- 
+2.20.1
 
