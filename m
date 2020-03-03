@@ -2,341 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 823971781AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3354D1781BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388187AbgCCSFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:05:09 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733057AbgCCSFH (ORCPT
+        id S2388284AbgCCSFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:05:40 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43922 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732433AbgCCSFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:05:07 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 023I4clc057562
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Mar 2020 13:05:06 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfhqr9as8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 13:05:06 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Tue, 3 Mar 2020 18:05:03 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Mar 2020 18:04:56 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 023I3uiT39518482
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Mar 2020 18:03:56 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8070442042;
-        Tue,  3 Mar 2020 18:04:54 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5262D42041;
-        Tue,  3 Mar 2020 18:04:53 +0000 (GMT)
-Received: from bali.tlslab.ibm.com (unknown [9.101.4.17])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Mar 2020 18:04:53 +0000 (GMT)
-Subject: Re: [PATCH v3 18/27] powerpc/powernv/pmem: Add controller dump IOCTLs
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-19-alastair@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Tue, 3 Mar 2020 19:04:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 3 Mar 2020 13:05:34 -0500
+Received: by mail-io1-f66.google.com with SMTP id n21so4595663ioo.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 10:05:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BeqmVRD23R+Ys+6oL1OQi3U6ndkvAqV94YJI5k3rbnY=;
+        b=Wdf74tmgxXLRrohPgWHNosIVdnICT1cA9Lt1UzNTqQGYkQUT310eKC+YQDU7DsVX5+
+         ZeBcD0lemBhKYaKyY6GtE+pLSn36sCnKEpBUpVgxf1Aq77Srl3Zh9ZwEchpnwJzkC8/G
+         Mos2wMkoq8sFHfLJp9TGRTc4SvxEH52jY1pk4R3yXtS7678Fc+jFzT4/IOC0HxCXM33q
+         +ktyaxHu9H8/IX5SiuHDdN5H5BUNg1PbsdLKZgsx7L0IaKZo22dIfz201EEJW1gwSDQc
+         i5mQ/MERUwlzgAIIW0fghZlw8c7mYMvUmQuuKmKjKN+5ehqJH7rylxCnPNA+rjNxr1q3
+         Dpdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BeqmVRD23R+Ys+6oL1OQi3U6ndkvAqV94YJI5k3rbnY=;
+        b=kBJeBL7sDk6co42AwOmNu9Rrj26xd1SlYuSqeOb5GfoLcO8cdEbwowHk1FAX7BxKb6
+         v3F8aZUmLLq5qSMdhyd96Ap2Jkj59j6hTB/p24a8l/cI1kGaBM2SvfFcExWo7+DjI5ga
+         wl2DNJQ40c2fDBVJ2Ac+gXNQ4Q4xXjf8pAzeA2J+SoY8cPJ71OY0zatWt0uVFcZYakFM
+         vic9a2XIVng3AGH7orG/ob8xNf+p4L9PF10k9Nk3dP+ltUnuYccOxrMQI6LQWGuUmP8k
+         hVmJGCXO6iJWDFJZqtRWrzILS6f7qaW5/6oK2aGCcq2BKnzoSqcWnnPuQKSy9LV3w/VQ
+         BN9Q==
+X-Gm-Message-State: ANhLgQ2PauHYZeX1evouAmfc52eNWr7FOuWxctGYBsKiThZGkk8+0F8i
+        0W5GTU0zKPB8ZyE8nexOSpkhH0lCV7JC54VWWHoRMw==
+X-Google-Smtp-Source: ADFU+vu2a70oC8lR2iWbpY+kDjkXD0RbbPQlayFHSII+Chks5lqrwSbjjN5zO7UmxFOCozGue+NWzeJoxcwT1djquHY=
+X-Received: by 2002:a02:c9cf:: with SMTP id c15mr2566556jap.71.1583258733428;
+ Tue, 03 Mar 2020 10:05:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200221032720.33893-19-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030318-0020-0000-0000-000003B02A77
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030318-0021-0000-0000-000022085B20
-Message-Id: <6d1f28bc-334c-e85b-9974-71cf88a1ad20@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-03_06:2020-03-03,2020-03-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=45 adultscore=0 phishscore=0
- priorityscore=1501 clxscore=1015 lowpriorityscore=0 bulkscore=0
- impostorscore=0 malwarescore=0 mlxscore=45 suspectscore=2 mlxlogscore=9
- spamscore=45 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003030122
+References: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
+ <1582167465-2549-7-git-send-email-sidgup@codeaurora.org> <20200227215940.GC20116@xps15>
+ <1a615fcd5a5c435d1d8babe8d5c3f8c3@codeaurora.org> <20200228183832.GA23026@xps15>
+ <cac45f2726a272ccd0ce82e12e46756f@codeaurora.org>
+In-Reply-To: <cac45f2726a272ccd0ce82e12e46756f@codeaurora.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 3 Mar 2020 11:05:22 -0700
+Message-ID: <CANLsYkzUh_BRjapX_jDZZ00Lj8MMgMPM12+otYHDKqad1s-qHQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Add notification types to SSR
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, tsoni@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        psodagud@codeaurora.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2 Mar 2020 at 13:54, <rishabhb@codeaurora.org> wrote:
+>
+> On 2020-02-28 10:38, Mathieu Poirier wrote:
+> > On Thu, Feb 27, 2020 at 04:00:21PM -0800, rishabhb@codeaurora.org
+> > wrote:
+> >> On 2020-02-27 13:59, Mathieu Poirier wrote:
+> >> > On Wed, Feb 19, 2020 at 06:57:45PM -0800, Siddharth Gupta wrote:
+> >> > > The SSR subdevice only adds callback for the unprepare event. Add
+> >> > > callbacks
+> >> > > for unprepare, start and prepare events. The client driver for a
+> >> > > particular
+> >> > > remoteproc might be interested in knowing the status of the remoteproc
+> >> > > while undergoing SSR, not just when the remoteproc has finished
+> >> > > shutting
+> >> > > down.
+> >> > >
+> >> > > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> >> > > ---
+> >> > >  drivers/remoteproc/qcom_common.c | 39
+> >> > > +++++++++++++++++++++++++++++++++++----
+> >> > >  include/linux/remoteproc.h       | 15 +++++++++++++++
+> >> > >  2 files changed, 50 insertions(+), 4 deletions(-)
+> >> > >
+> >> > > diff --git a/drivers/remoteproc/qcom_common.c
+> >> > > b/drivers/remoteproc/qcom_common.c
+> >> > > index 6714f27..6f04a5b 100644
+> >> > > --- a/drivers/remoteproc/qcom_common.c
+> >> > > +++ b/drivers/remoteproc/qcom_common.c
+> >> > > @@ -183,9 +183,9 @@ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
+> >> > >   *
+> >> > >   * Returns pointer to srcu notifier head on success, ERR_PTR on
+> >> > > failure.
+> >> > >   *
+> >> > > - * This registers the @notify function as handler for restart
+> >> > > notifications. As
+> >> > > - * remote processors are stopped this function will be called, with
+> >> > > the rproc
+> >> > > - * pointer passed as a parameter.
+> >> > > + * This registers the @notify function as handler for
+> >> > > powerup/shutdown
+> >> > > + * notifications. This function will be invoked inside the
+> >> > > callbacks registered
+> >> > > + * for the ssr subdevice, with the rproc pointer passed as a
+> >> > > parameter.
+> >> > >   */
+> >> > >  void *qcom_register_ssr_notifier(struct rproc *rproc, struct
+> >> > > notifier_block *nb)
+> >> > >  {
+> >> > > @@ -227,11 +227,39 @@ int qcom_unregister_ssr_notifier(void *notify,
+> >> > > struct notifier_block *nb)
+> >> > >  }
+> >> > >  EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+> >> > >
+> >> > > +static int ssr_notify_prepare(struct rproc_subdev *subdev)
+> >> > > +{
+> >> > > +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> > > +
+> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> > > +                                 RPROC_BEFORE_POWERUP, (void *)ssr->name);
+> >> > > +        return 0;
+> >> > > +}
+> >> > > +
+> >> > > +static int ssr_notify_start(struct rproc_subdev *subdev)
+> >> > > +{
+> >> > > +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> > > +
+> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> > > +                                 RPROC_AFTER_POWERUP, (void *)ssr->name);
+> >> > > +        return 0;
+> >> > > +}
+> >> > > +
+> >> > > +static void ssr_notify_stop(struct rproc_subdev *subdev, bool
+> >> > > crashed)
+> >> > > +{
+> >> > > +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> > > +
+> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> > > +                                 RPROC_BEFORE_SHUTDOWN, (void *)ssr->name);
+> >> > > +}
+> >> > > +
+> >> > > +
+> >> > >  static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+> >> > >  {
+> >> > >          struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> > >
+> >> > > -        srcu_notifier_call_chain(ssr->rproc_notif_list, 0, (void
+> >> > > *)ssr->name);
+> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> > > +                                 RPROC_AFTER_SHUTDOWN, (void *)ssr->name);
+> >> > >  }
+> >> > >
+> >> > >  /**
+> >> > > @@ -248,6 +276,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc,
+> >> > > struct qcom_rproc_ssr *ssr,
+> >> > >  {
+> >> > >          ssr->name = ssr_name;
+> >> > >          ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
+> >> > > +        ssr->subdev.prepare = ssr_notify_prepare;
+> >> > > +        ssr->subdev.start = ssr_notify_start;
+> >> > > +        ssr->subdev.stop = ssr_notify_stop;
+> >> >
+> >> > Now that I have a better understanding of what this patchset is doing, I
+> >> > realise
+> >> > my comments in patch 04 won't work.  To differentiate the subdevs of an
+> >> > rproc I
+> >> > suggest to wrap them in a generic structure with a type and an enum.
+> >> > That way
+> >> > you can differenciate between subdevices without having to add to the
+> >> > core.
+> >> Ok. I can try that.
+> >> >
+> >> > That being said, I don't understand what patches 5 and 6 are doing...
+> >> > Registering with the global ssr_notifiers allowed to gracefully shutdown
+> >> > all the
+> >> > MCUs in the system when one of them would go down.  But now that we are
+> >> > using
+> >> > the notifier on a per MCU, I really don't see why each subdev couldn't
+> >> > implement
+> >> > the right prepare/start/stop functions.
+> >> >
+> >> > Am I missing something here?
+> >> We only want kernel clients to be notified when the Remoteproc they
+> >> are
+> >> interested
+> >> in changes state. For e.g. audio kernel driver should be notified when
+> >> audio
+> >> processor goes down but it does not care about any other remoteproc.
+> >> If you are suggesting that these kernel clients be added as subdevices
+> >> then
+> >> we will end up having many subdevices registered to each remoteproc.
+> >> So we
+> >> implemented a notifier chain per Remoteproc. This keeps the SSR
+> >> notifications as
+> >> the subdevice per remoteproc, and all interested clients can register
+> >> to it.
+> >
+> > It seems like I am missing information...  Your are referring to
+> > "kernel
+> > clients" and as such I must assume some drivers that are not part of
+> > the
+> > remoteproc/rpmsg subsystems are calling qcom_register_ssr_notifier().
+> > I must
+> Yes these are not part of remoteproc framework and they will register
+> for notifications.
+> > also assume these drivers (or that functionality) are not yet upsream
+> > because
+> > all I can see calling qcom_register_ssr_notifier() is
+> > qcom_glink_ssr_probe().
+> Correct.These are not upstreamed.
 
+Ok, things are starting to make sense.
 
-Le 21/02/2020 à 04:27, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> This patch adds IOCTLs to allow userspace to request & fetch dumps
-> of the internal controller state.
-> 
-> This is useful during debugging or when a fatal error on the controller
-> has occurred.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->   arch/powerpc/platforms/powernv/pmem/ocxl.c | 132 +++++++++++++++++++++
->   include/uapi/nvdimm/ocxl-pmem.h            |  15 +++
->   2 files changed, 147 insertions(+)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> index 2b64504f9129..2cabafe1fc58 100644
-> --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
-> @@ -640,6 +640,124 @@ static int ioctl_error_log(struct ocxlpmem *ocxlpmem,
->   	return 0;
->   }
->   
-> +static int ioctl_controller_dump_data(struct ocxlpmem *ocxlpmem,
-> +		struct ioctl_ocxl_pmem_controller_dump_data __user *uarg)
-> +{
-> +	struct ioctl_ocxl_pmem_controller_dump_data args;
-> +	u16 i;
-> +	u64 val;
-> +	int rc;
-> +
-> +	if (copy_from_user(&args, uarg, sizeof(args)))
-> +		return -EFAULT;
-> +
-> +	if (args.buf_size % 8)
-> +		return -EINVAL;
-> +
-> +	if (args.buf_size > ocxlpmem->admin_command.data_size)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&ocxlpmem->admin_command.lock);
-> +
-> +	rc = admin_command_request(ocxlpmem, ADMIN_COMMAND_CONTROLLER_DUMP);
-> +	if (rc)
-> +		goto out;
-> +
-> +	val = ((u64)args.offset) << 32;
-> +	val |= args.buf_size;
-> +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
-> +				      ocxlpmem->admin_command.request_offset + 0x08,
-> +				      OCXL_LITTLE_ENDIAN, val);
-> +	if (rc)
-> +		goto out;
-> +
-> +	rc = admin_command_execute(ocxlpmem);
-> +	if (rc)
-> +		goto out;
-> +
-> +	rc = admin_command_complete_timeout(ocxlpmem,
-> +					    ADMIN_COMMAND_CONTROLLER_DUMP);
-> +	if (rc < 0) {
-> +		dev_warn(&ocxlpmem->dev, "Controller dump timed out\n");
-> +		goto out;
-> +	}
-> +
-> +	rc = admin_response(ocxlpmem);
-> +	if (rc < 0)
-> +		goto out;
-> +	if (rc != STATUS_SUCCESS) {
-> +		warn_status(ocxlpmem,
-> +			    "Unexpected status from retrieve error log",
-> +			    rc);
-> +		goto out;
-> +	}
+> >
+> > Speaking of which, what is the role of the qcom_glink_ssr_driver?  Is
+> > the glink
+> > device that driver is handling the same as the glink device registed in
+> > adsp_probe() and q6v5_probe()?
+> glink ssr driver will send out notifications to remoteprocs that have
+> opened the
+> "glink_ssr" channel that some subsystem has gone down or booted up. This
+> helps notify
+> neighboring subsystems about change in state of any other subsystem.
 
+I am still looking for an answer to my second question.
 
-
-It would help if there was a comment indicating how the 3 ioctls are 
-used. My understanding is that the userland is:
-- requesting the controller to prepare a state dump
-- then one or more ioctls to fetch the data. The number of calls 
-required to get the full state really depends on the size of the buffer 
-passed by user
-- a last ioctl to tell the controller that we're done, presumably to let 
-it free some resources.
-
-
-> +
-> +	for (i = 0; i < args.buf_size; i += 8) {
-> +		u64 val;
-> +
-> +		rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
-> +					     ocxlpmem->admin_command.data_offset + i,
-> +					     OCXL_HOST_ENDIAN, &val);
-> +		if (rc)
-> +			goto out;
-> +
-> +		if (copy_to_user(&args.buf[i], &val, sizeof(u64))) {
-> +			rc = -EFAULT;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	if (copy_to_user(uarg, &args, sizeof(args))) {
-> +		rc = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	rc = admin_response_handled(ocxlpmem);
-> +	if (rc)
-> +		goto out;
-> +
-> +out:
-> +	mutex_unlock(&ocxlpmem->admin_command.lock);
-> +	return rc;
-> +}
-> +
-> +int request_controller_dump(struct ocxlpmem *ocxlpmem)
-> +{
-> +	int rc;
-> +	u64 busy = 1;
-> +
-> +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CHIC,
-> +				    OCXL_LITTLE_ENDIAN,
-> +				    GLOBAL_MMIO_CHI_CDA);
-> +
-
-
-rc is not checked here.
-
-
-> +
-> +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_HCI,
-> +				    OCXL_LITTLE_ENDIAN,
-> +				    GLOBAL_MMIO_HCI_CONTROLLER_DUMP);
-> +	if (rc)
-> +		return rc;
-> +
-> +	while (busy) {
-> +		rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
-> +					     GLOBAL_MMIO_HCI,
-> +					     OCXL_LITTLE_ENDIAN, &busy);
-> +		if (rc)
-> +			return rc;
-> +
-> +		busy &= GLOBAL_MMIO_HCI_CONTROLLER_DUMP;
-
-
-Setting 'busy' doesn't hurt, but it's not really useful, is it?
-
-We should add some kind of timeout so that if the controller hits an 
-issue, we don't spin in kernel space endlessly.
-
-
-
-> +		cond_resched();
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ioctl_controller_dump_complete(struct ocxlpmem *ocxlpmem)
-> +{
-> +	return ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_HCI,
-> +				    OCXL_LITTLE_ENDIAN,
-> +				    GLOBAL_MMIO_HCI_CONTROLLER_DUMP_COLLECTED);
-> +}
-> +
->   static long file_ioctl(struct file *file, unsigned int cmd, unsigned long args)
->   {
->   	struct ocxlpmem *ocxlpmem = file->private_data;
-> @@ -650,7 +768,21 @@ static long file_ioctl(struct file *file, unsigned int cmd, unsigned long args)
->   		rc = ioctl_error_log(ocxlpmem,
->   				     (struct ioctl_ocxl_pmem_error_log __user *)args);
->   		break;
-> +
-> +	case IOCTL_OCXL_PMEM_CONTROLLER_DUMP:
-> +		rc = request_controller_dump(ocxlpmem);
-> +		break;
-> +
-> +	case IOCTL_OCXL_PMEM_CONTROLLER_DUMP_DATA:
-> +		rc = ioctl_controller_dump_data(ocxlpmem,
-> +						(struct ioctl_ocxl_pmem_controller_dump_data __user *)args);
-> +		break;
-> +
-> +	case IOCTL_OCXL_PMEM_CONTROLLER_DUMP_COMPLETE:
-> +		rc = ioctl_controller_dump_complete(ocxlpmem);
-> +		break;
->   	}
-> +
->   	return rc;
->   }
->   
-> diff --git a/include/uapi/nvdimm/ocxl-pmem.h b/include/uapi/nvdimm/ocxl-pmem.h
-> index b10f8ac0c20f..d4d8512d03f7 100644
-> --- a/include/uapi/nvdimm/ocxl-pmem.h
-> +++ b/include/uapi/nvdimm/ocxl-pmem.h
-> @@ -38,9 +38,24 @@ struct ioctl_ocxl_pmem_error_log {
->   	__u8 *buf; /* pointer to output buffer */
->   };
->   
-> +struct ioctl_ocxl_pmem_controller_dump_data {
-> +	__u8 *buf; /* pointer to output buffer */
-
-
-We only support 64-bit user app on powerpc, but using a pointer type in 
-a kernel ABI is unusual. We should use a know size like __u64.
-(also applies to buf pointer in struct ioctl_ocxl_pmem_error_log from 
-previous patch too)
-
-The rest of the structure will also be padded by the compiler, which we 
-should avoid.
-
-    Fred
-
-
-
-> +	__u16 buf_size; /* in/out, buffer size provided/required.
-> +			 * If required is greater than provided, the buffer
-> +			 * will be truncated to the amount provided. If its
-> +			 * less, then only the required bytes will be populated.
-> +			 * If it is 0, then there is no more dump data available.
-> +			 */
-> +	__u32 offset; /* in, Offset within the dump */
-> +	__u64 reserved[8];
-> +};
-> +
->   /* ioctl numbers */
->   #define OCXL_PMEM_MAGIC 0x5C
->   /* SCM devices */
->   #define IOCTL_OCXL_PMEM_ERROR_LOG			_IOWR(OCXL_PMEM_MAGIC, 0x01, struct ioctl_ocxl_pmem_error_log)
-> +#define IOCTL_OCXL_PMEM_CONTROLLER_DUMP			_IO(OCXL_PMEM_MAGIC, 0x02)
-> +#define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_DATA		_IOWR(OCXL_PMEM_MAGIC, 0x03, struct ioctl_ocxl_pmem_controller_dump_data)
-> +#define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_COMPLETE	_IO(OCXL_PMEM_MAGIC, 0x04)
->   
->   #endif /* _UAPI_OCXL_SCM_H */
-> 
-
+> >
+> >> >
+> >> >
+> >> > >          ssr->subdev.unprepare = ssr_notify_unprepare;
+> >> > >          ssr->rproc_notif_list = kzalloc(sizeof(struct srcu_notifier_head),
+> >> > >                                                                  GFP_KERNEL);
+> >> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> > > index e2f60cc..4be4478 100644
+> >> > > --- a/include/linux/remoteproc.h
+> >> > > +++ b/include/linux/remoteproc.h
+> >> > > @@ -449,6 +449,21 @@ struct rproc_dump_segment {
+> >> > >  };
+> >> > >
+> >> > >  /**
+> >> > > + * enum rproc_notif_type - Different stages of remoteproc
+> >> > > notifications
+> >> > > + * @RPROC_BEFORE_SHUTDOWN:      unprepare stage of  remoteproc
+> >> > > + * @RPROC_AFTER_SHUTDOWN:       stop stage of  remoteproc
+> >> > > + * @RPROC_BEFORE_POWERUP:       prepare stage of  remoteproc
+> >> > > + * @RPROC_AFTER_POWERUP:        start stage of  remoteproc
+> >> > > + */
+> >> > > +enum rproc_notif_type {
+> >> > > +        RPROC_BEFORE_SHUTDOWN,
+> >> > > +        RPROC_AFTER_SHUTDOWN,
+> >> > > +        RPROC_BEFORE_POWERUP,
+> >> > > +        RPROC_AFTER_POWERUP,
+> >> > > +        RPROC_MAX
+> >> > > +};
+> >> > > +
+> >> > > +/**
+> >> > >   * struct rproc - represents a physical remote processor device
+> >> > >   * @node: list node of this rproc object
+> >> > >   * @domain: iommu domain
+> >> > > --
+> >> > > Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> >> > > a Linux Foundation Collaborative Project
+> >> > >
+> >> > > _______________________________________________
+> >> > > linux-arm-kernel mailing list
+> >> > > linux-arm-kernel@lists.infradead.org
+> >> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
