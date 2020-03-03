@@ -2,96 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1184F1771B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F03F91771B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 10:02:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgCCI7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 03:59:39 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:32168 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbgCCI7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:59:39 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48WrYM44cWz9txZT;
-        Tue,  3 Mar 2020 09:59:35 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=ZVzy7pg/; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id FrUTaAzeZjFb; Tue,  3 Mar 2020 09:59:35 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48WrYM2KgFz9txZS;
-        Tue,  3 Mar 2020 09:59:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1583225975; bh=0L++rQNOyOX2RddDfCYMG2qzx/vV9crQ/cfo3VeGzfg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZVzy7pg/L8fYkbRPrmDrcX/BAYqB6gqtgOrkG28Ea3kgN+dSD8SLT2M6ucSJXnw0l
-         /3Dtm1C02MddqetTTT73+qvZbDhyGRsq7I94k/zB076YvJV+nsIQG477tGp1vsKou7
-         6bDiG/ItO4tWp5UbSjoiCnbGrZrx92aSuYYVYCtM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4AE8B8B7E8;
-        Tue,  3 Mar 2020 09:59:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id FSGT-1GJCZt8; Tue,  3 Mar 2020 09:59:36 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 90FAD8B755;
-        Tue,  3 Mar 2020 09:59:35 +0100 (CET)
-Subject: Re: [PATCH v2 -next] powerpc/pmac/smp: drop unnecessary volatile
- qualifier
-To:     YueHaibing <yuehaibing@huawei.com>, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20191225114943.17216-1-yuehaibing@huawei.com>
- <20200303085604.24952-1-yuehaibing@huawei.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <0e2ed3d6-7f16-736e-9392-a326e8c89113@c-s.fr>
-Date:   Tue, 3 Mar 2020 09:59:32 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727959AbgCCJCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 04:02:24 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39766 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbgCCJCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 04:02:23 -0500
+Received: by mail-yw1-f67.google.com with SMTP id x184so2687596ywd.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 01:02:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=Z8TtSYaM0J0heqUPazLwZSPdzKTGtelUp+YBmcCSOQI=;
+        b=MnM9pS32/iYrMbegTeIK+iyVXPUNLKdQxkpq5eI6Sv6EUnfO/ZkIXy4Qbl1lNHldPO
+         KD+vCznjkDwYm46Z3MyozMoHasSAJUjIBdIOoCheV5xGnilazjAC7rvfFqpO04bwk3OU
+         5lU2Yzw5LpF2361OpyQ5M4k+GfEH5j8ejPu4WdJOVmoonCojZw5SmTsxIH68jGMLMmuY
+         tnZMOPPqm0b0diCLdpBzGa9ySOfZTy0dAG1mHBE+Ep5vVWOQkFFCm6apMRmANYsnHMQp
+         bX8tebD+bmGzH2QyVJ36gqeijyCCa6Dic0vcoUz8acktmMCYrtmtHMGqMd+1TdA0Q7hh
+         i1Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Z8TtSYaM0J0heqUPazLwZSPdzKTGtelUp+YBmcCSOQI=;
+        b=tOWPOoCGbawiajBNDazAN0Wk7GpoT2iHxj8MDcW6D58+D+Vdr1fhlsWbGhw7lqZ2TB
+         ORRtvGwLXfqGbu7FpehgBof604PXFiN8w5DBJ73WjhfX9D0kmoHxUlDJv1vBVYWCnuYC
+         JxivXITpb4QSwW81t1kM991rMAX+HVIrRfVyxflxKjMTYM/V5vluB4JmQCiY8uqzjN55
+         IyOjc+32kKxchviS0oJY/Xm9VfuTPmpe2ZtbVSkUetyKjIjRRdBEdZ5bdZpUq5nmi3O+
+         hqbDlScFzkm9hwTPTFY8Vnv9yRtqlFM3ZhadWi5X6zelpGzVZ1l0C1GBgDXj86+0RNds
+         Zr1g==
+X-Gm-Message-State: ANhLgQ2aNVD1yMba8fJsbLc1fk7Dg26x8utw1dexRuUdsSnFhWmlgdNV
+        VjUaQNQXeH2wUnonpRzI7gE=
+X-Google-Smtp-Source: ADFU+vuTquiZw2d05QpD/xexuO38xTrAyEL2a62gMYu0gILWXmxUXFEvLVXVmGfVk1iVqw6YX5YTDQ==
+X-Received: by 2002:a81:50d6:: with SMTP id e205mr3287301ywb.208.1583226142941;
+        Tue, 03 Mar 2020 01:02:22 -0800 (PST)
+Received: from vps.qemfd.net (vps.qemfd.net. [173.230.130.29])
+        by smtp.gmail.com with ESMTPSA id 63sm7821080ywg.54.2020.03.03.01.02.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 01:02:22 -0800 (PST)
+Received: from schwarzgerat.orthanc (schwarzgerat.danknet [10.88.0.2])
+        by vps.qemfd.net (Postfix) with ESMTP id CC7192B283;
+        Tue,  3 Mar 2020 04:02:21 -0500 (EST)
+Received: by schwarzgerat.orthanc (Postfix, from userid 1000)
+        id A83DF6003DA; Tue,  3 Mar 2020 04:02:21 -0500 (EST)
+Date:   Tue, 3 Mar 2020 04:02:21 -0500
+From:   Nick Black <dankamongmen@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] serial-console.rst: break up code chunks
+Message-ID: <20200303090221.GA1081508@schwarzgerat.orthanc>
 MIME-Version: 1.0
-In-Reply-To: <20200303085604.24952-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Trivial: there are two code sections here, not one.
+Break up the RST backticks.
 
+Signed-off-by: Nick Black <dankamongmen@gmail.com>
 
-Le 03/03/2020 à 09:56, YueHaibing a écrit :
-> core99_l2_cache/core99_l3_cache no need to mark as volatile,
-> just remove it.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ Documentation/admin-guide/serial-console.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+diff --git Documentation/admin-guide/serial-console.rst Documentation/admin-guide/serial-console.rst
+index a8d1e36b627a..b8c803afae2f 100644
+--- Documentation/admin-guide/serial-console.rst
++++ Documentation/admin-guide/serial-console.rst
+@@ -96,7 +96,7 @@ Replace the sample values as needed.
+    open ``/dev/console``. If you have created the new ``/dev/console`` device,
+    and your console is NOT the virtual console some programs will fail.
+    Those are programs that want to access the VT interface, and use
+-   ``/dev/console instead of /dev/tty0``. Some of those programs are::
++   ``/dev/console`` instead of ``/dev/tty0``. Some of those programs are::
+ 
+      Xfree86, svgalib, gpm, SVGATextMode
+ 
+-- 
+2.25.1
 
-> ---
-> v2: remove 'volatile' qualifier
-> ---
->   arch/powerpc/platforms/powermac/smp.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powermac/smp.c b/arch/powerpc/platforms/powermac/smp.c
-> index f95fbde..69ad567 100644
-> --- a/arch/powerpc/platforms/powermac/smp.c
-> +++ b/arch/powerpc/platforms/powermac/smp.c
-> @@ -661,8 +661,8 @@ static void smp_core99_gpio_tb_freeze(int freeze)
->   #endif /* !CONFIG_PPC64 */
->   
->   /* L2 and L3 cache settings to pass from CPU0 to CPU1 on G4 cpus */
-> -volatile static long int core99_l2_cache;
-> -volatile static long int core99_l3_cache;
-> +static long core99_l2_cache;
-> +static long core99_l3_cache;
->   
->   static void core99_init_caches(int cpu)
->   {
-> 
