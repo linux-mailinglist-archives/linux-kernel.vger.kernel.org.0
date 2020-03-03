@@ -2,88 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5791B177E1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:46:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 855B8177DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731178AbgCCRqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:46:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53206 "EHLO mail.kernel.org"
+        id S1730451AbgCCRmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:42:43 -0500
+Received: from mga07.intel.com ([134.134.136.100]:24045 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730850AbgCCRqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:46:34 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 752B0214DB;
-        Tue,  3 Mar 2020 17:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257593;
-        bh=EkFTaxNeRWoAph9sd5w3nMrfRhI4lP9sUIK9fUjXBxg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I8w4rkYpJ0doZeYjkivmz6ThdpmvVSwzE3HCfJhGZWZJIPo4ht2nHYkbS/gPi/txf
-         pkPOtWDu08FK8Vx3Vm4+1EOedgex12o2jIJH9QXg/F5vnfT4CVwxDRDaQUjtgrTDx0
-         eI2QuNQa4fJsHVQjNhyiMLetDdQKgklDXqOj+npA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Lara Gomez <ezegomez@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 055/176] net: ena: add missing ethtool TX timestamping indication
-Date:   Tue,  3 Mar 2020 18:41:59 +0100
-Message-Id: <20200303174310.897588411@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728955AbgCCRmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:42:43 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 09:42:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="412824186"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga005.jf.intel.com with ESMTP; 03 Mar 2020 09:42:42 -0800
+Date:   Tue, 3 Mar 2020 09:42:42 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/13] KVM: x86: Refactor emulate tracepoint to
+ explicitly take context
+Message-ID: <20200303174242.GN1439@linux.intel.com>
+References: <20200218232953.5724-1-sean.j.christopherson@intel.com>
+ <20200218232953.5724-7-sean.j.christopherson@intel.com>
+ <8736axjmte.fsf@vitty.brq.redhat.com>
+ <20200303164813.GL1439@linux.intel.com>
+ <2f3f7aff-2bd0-fa62-4b66-9f90f125e44e@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f3f7aff-2bd0-fa62-4b66-9f90f125e44e@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+On Tue, Mar 03, 2020 at 06:29:30PM +0100, Paolo Bonzini wrote:
+> On 03/03/20 17:48, Sean Christopherson wrote:
+> >>>  	TP_fast_assign(
+> >>>  		__entry->csbase = kvm_x86_ops->get_segment_base(vcpu, VCPU_SREG_CS);
+> >> This seems the only usage of 'vcpu' parameter now; I checked and even
+> >> after switching to dynamic emulation context allocation we still set
+> >> ctxt->vcpu in alloc_emulate_ctxt(), can we get rid of 'vcpu' parameter
+> >> here then (and use ctxt->vcpu instead)?
+> > Hmm, ya, not sure what I was thinking here.
+> > 
+> 
+> As long as we have one use of vcpu, I'd rather skip this patch and
+> adjust patch 8 to use "->".  Even the other "explicitly take context"
+> parts are kinda debatable since you still have to do emul_to_vcpu.
+> Throwing a handful of
+> 
+> - 	struct x86_emulate_ctxt *ctxt = &vcpu->arch.emulate_ctxt;
+> + 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
+> 
+> into patch 8 is not bad at all and limits the churn.
 
-[ Upstream commit cf6d17fde93bdda23c9b02dd5906a12bf8c55209 ]
-
-Current implementation of the driver calls skb_tx_timestamp()to add a
-software tx timestamp to the skb, however the software-transmit capability
-is not reported in ethtool -T.
-
-This commit updates the ethtool structure to report the software-transmit
-capability in ethtool -T using the standard ethtool_op_get_ts_info().
-This function reports all software timestamping capabilities (tx and rx),
-as well as setting phc_index = -1. phc_index is the index of the PTP
-hardware clock device that will be used for hardware timestamps. Since we
-don't have such a device in ENA, using the default -1 value is the correct
-setting.
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Ezequiel Lara Gomez <ezegomez@amazon.com>
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/amazon/ena/ena_ethtool.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-index fc96c66b44cb5..8b56383b64aea 100644
---- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-@@ -812,6 +812,7 @@ static const struct ethtool_ops ena_ethtool_ops = {
- 	.set_channels		= ena_set_channels,
- 	.get_tunable		= ena_get_tunable,
- 	.set_tunable		= ena_set_tunable,
-+	.get_ts_info            = ethtool_op_get_ts_info,
- };
- 
- void ena_set_ethtool_ops(struct net_device *netdev)
--- 
-2.20.1
-
-
-
+Hmm, I'd prefer to explicitly pass @ctxt, even for the tracepoint.  I get
+that it's technically unnecessary churn, but explicitly passing @ctxt means
+that every funcition that grabs arch.emulate_ctxt (all three of 'em) checks
+for a NULL ctxt.  That makes it trivial to visually audit that there's no
+risk of a bad pointer dereference, and IMO having @ctxt in the prototype
+is helpful to see "oh, this helper is called from within the emulator".
