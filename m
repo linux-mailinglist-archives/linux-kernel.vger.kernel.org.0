@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13137176D48
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:02:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14935176D3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:02:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbgCCDC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 22:02:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
+        id S1727331AbgCCDCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 22:02:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727647AbgCCCqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:46:46 -0500
+        id S1727699AbgCCCqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 21:46:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD7942465E;
-        Tue,  3 Mar 2020 02:46:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C8AE2465E;
+        Tue,  3 Mar 2020 02:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203605;
-        bh=8H8u9Jdm4LXU8U5wy3ICUDTpKOuA7hqVpkDvPwmyKTM=;
+        s=default; t=1583203608;
+        bh=KN9SO/J+tUto2qJJGvqUlkJWp2gYhmf9sKcl2h9v6Ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GLc+uamvuRQ9oBSJfdTOF/HUngnuIC3R21JtXtZv0ZICjH8HZwhRHYEtGrE1hRxP2
-         ghe7e41QmJzsOT3VfvAXsSe2udXSKxWBovkeZp3a9bfhhfMS80WjOJVAHAPyg3bY4L
-         xWQscB4T57hyr83XgoWgFxpzpkEwdjOnI6Qlvy3w=
+        b=fIws6RM93RKHJrgTQIELZTDwgpA16gOtZpQrXx8ZTjjKrGrjcoJ6AI73PZybSyVBI
+         vcenmK/2WZ7NYzgrNxAz8LHFIcs9g0hfideKmib1hZTrxo/E0jkZY0rHNItIxDTsbh
+         WuaZ6HTIGz75matxbIo7FxFFtg3ZhJmoXgXclYMU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Egor Pomozov <epomozov@marvell.com>,
+Cc:     Pavel Belous <pbelous@marvell.com>,
+        Christophe Vu-Brugier <cvubrugier@fastmail.fm>,
         Igor Russkikh <irusskikh@marvell.com>,
         Dmitry Bogdanov <dbogdanov@marvell.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 24/66] net: atlantic: ptp gpio adjustments
-Date:   Mon,  2 Mar 2020 21:45:33 -0500
-Message-Id: <20200303024615.8889-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 26/66] net: atlantic: fix use after free kasan warn
+Date:   Mon,  2 Mar 2020 21:45:35 -0500
+Message-Id: <20200303024615.8889-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200303024615.8889-1-sashal@kernel.org>
 References: <20200303024615.8889-1-sashal@kernel.org>
@@ -45,94 +46,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Egor Pomozov <epomozov@marvell.com>
+From: Pavel Belous <pbelous@marvell.com>
 
-[ Upstream commit f08a464c27ca0a4050333baa271504b27ce834b7 ]
+[ Upstream commit a4980919ad6a7be548d499bc5338015e1a9191c6 ]
 
-Clock adjustment data should be passed to FW as well, otherwise in some
-cases a drift was observed when using GPIO features.
+skb->len is used to calculate statistics after xmit invocation.
 
-Signed-off-by: Egor Pomozov <epomozov@marvell.com>
+Under a stress load it may happen that skb will be xmited,
+rx interrupt will come and skb will be freed, all before xmit function
+is even returned.
+
+Eventually, skb->len will access unallocated area.
+
+Moving stats calculation into tx_clean routine.
+
+Fixes: 018423e90bee ("net: ethernet: aquantia: Add ring support code")
+Reported-by: Christophe Vu-Brugier <cvubrugier@fastmail.fm>
 Signed-off-by: Igor Russkikh <irusskikh@marvell.com>
+Signed-off-by: Pavel Belous <pbelous@marvell.com>
 Signed-off-by: Dmitry Bogdanov <dbogdanov@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_hw.h       |  2 ++
- .../ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c    |  4 +++-
- .../aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c     | 12 ++++++++++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c  | 4 ----
+ drivers/net/ethernet/aquantia/atlantic/aq_ring.c | 7 +++++--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-index cc70c606b6ef2..251767c31f7e5 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-@@ -337,6 +337,8 @@ struct aq_fw_ops {
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+index c85e3e29012c0..263beea1859c1 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -655,10 +655,6 @@ int aq_nic_xmit(struct aq_nic_s *self, struct sk_buff *skb)
+ 	if (likely(frags)) {
+ 		err = self->aq_hw_ops->hw_ring_tx_xmit(self->aq_hw,
+ 						       ring, frags);
+-		if (err >= 0) {
+-			++ring->stats.tx.packets;
+-			ring->stats.tx.bytes += skb->len;
+-		}
+ 	} else {
+ 		err = NETDEV_TX_BUSY;
+ 	}
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+index 6941999ae845d..bae95a6185608 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
+@@ -272,9 +272,12 @@ bool aq_ring_tx_clean(struct aq_ring_s *self)
+ 			}
+ 		}
  
- 	void (*enable_ptp)(struct aq_hw_s *self, int enable);
+-		if (unlikely(buff->is_eop))
+-			dev_kfree_skb_any(buff->skb);
++		if (unlikely(buff->is_eop)) {
++			++self->stats.rx.packets;
++			self->stats.tx.bytes += buff->skb->len;
  
-+	void (*adjust_ptp)(struct aq_hw_s *self, uint64_t adj);
-+
- 	int (*set_eee_rate)(struct aq_hw_s *self, u32 speed);
- 
- 	int (*get_eee_rate)(struct aq_hw_s *self, u32 *rate,
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index 5784da26f8683..9acdb3fbb750d 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -1162,6 +1162,8 @@ static int hw_atl_b0_adj_sys_clock(struct aq_hw_s *self, s64 delta)
- {
- 	self->ptp_clk_offset += delta;
- 
-+	self->aq_fw_ops->adjust_ptp(self, self->ptp_clk_offset);
-+
- 	return 0;
- }
- 
-@@ -1212,7 +1214,7 @@ static int hw_atl_b0_gpio_pulse(struct aq_hw_s *self, u32 index,
- 	fwreq.ptp_gpio_ctrl.index = index;
- 	fwreq.ptp_gpio_ctrl.period = period;
- 	/* Apply time offset */
--	fwreq.ptp_gpio_ctrl.start = start - self->ptp_clk_offset;
-+	fwreq.ptp_gpio_ctrl.start = start;
- 
- 	size = sizeof(fwreq.msg_id) + sizeof(fwreq.ptp_gpio_ctrl);
- 	return self->aq_fw_ops->send_fw_request(self, &fwreq, size);
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c
-index 97ebf849695fd..77a4ed64830fd 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c
-@@ -30,6 +30,9 @@
- #define HW_ATL_FW3X_EXT_CONTROL_ADDR     0x378
- #define HW_ATL_FW3X_EXT_STATE_ADDR       0x37c
- 
-+#define HW_ATL_FW3X_PTP_ADJ_LSW_ADDR	 0x50a0
-+#define HW_ATL_FW3X_PTP_ADJ_MSW_ADDR	 0x50a4
-+
- #define HW_ATL_FW2X_CAP_PAUSE            BIT(CAPS_HI_PAUSE)
- #define HW_ATL_FW2X_CAP_ASYM_PAUSE       BIT(CAPS_HI_ASYMMETRIC_PAUSE)
- #define HW_ATL_FW2X_CAP_SLEEP_PROXY      BIT(CAPS_HI_SLEEP_PROXY)
-@@ -475,6 +478,14 @@ static void aq_fw3x_enable_ptp(struct aq_hw_s *self, int enable)
- 	aq_hw_write_reg(self, HW_ATL_FW3X_EXT_CONTROL_ADDR, ptp_opts);
- }
- 
-+static void aq_fw3x_adjust_ptp(struct aq_hw_s *self, uint64_t adj)
-+{
-+	aq_hw_write_reg(self, HW_ATL_FW3X_PTP_ADJ_LSW_ADDR,
-+			(adj >>  0) & 0xffffffff);
-+	aq_hw_write_reg(self, HW_ATL_FW3X_PTP_ADJ_MSW_ADDR,
-+			(adj >> 32) & 0xffffffff);
-+}
-+
- static int aq_fw2x_led_control(struct aq_hw_s *self, u32 mode)
- {
- 	if (self->fw_ver_actual < HW_ATL_FW_VER_LED)
-@@ -633,4 +644,5 @@ const struct aq_fw_ops aq_fw_2x_ops = {
- 	.enable_ptp         = aq_fw3x_enable_ptp,
- 	.led_control        = aq_fw2x_led_control,
- 	.set_phyloopback    = aq_fw2x_set_phyloopback,
-+	.adjust_ptp         = aq_fw3x_adjust_ptp,
- };
++			dev_kfree_skb_any(buff->skb);
++		}
+ 		buff->pa = 0U;
+ 		buff->eop_index = 0xffffU;
+ 		self->sw_head = aq_ring_next_dx(self, self->sw_head);
 -- 
 2.20.1
 
