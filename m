@@ -2,151 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF05617816B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 566E417823B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388191AbgCCSCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:02:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388177AbgCCSCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:02:19 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFD68206D5;
-        Tue,  3 Mar 2020 18:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258538;
-        bh=RdW95msYqZwPu5bl1s1ms5/qXiC27To1/xFmApXKYT8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KSYaawrfW/oYzFMBmBVBTslpXOEplln6Wcz0wlGKJYZHKia2oJFuuYGFCSmtdX8mf
-         s1eKPCEYwVMf8lvOZB+YoznLFMAMFs840Cr47CppT3rv7ndWyaIlBk7w3mrp0UGOfA
-         BeRZQj++LYNqK1Zu3S/gJ0KKpV3Z8wEeWes5AWE4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 87/87] mm, thp: fix defrag setting if newline is not used
-Date:   Tue,  3 Mar 2020 18:44:18 +0100
-Message-Id: <20200303174358.147786617@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
-References: <20200303174349.075101355@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1733152AbgCCSJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:09:45 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:49146 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731328AbgCCRvz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:51:55 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 023Hp8Bl007909;
+        Tue, 3 Mar 2020 09:51:13 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=rsD1LdJcb4XeJg2CPYn1NUbbWfj4DFC/7mHXA9v+pbw=;
+ b=oZKw7eqzE02H/wabnnEOSoeVbMV4fWs0xZQ9qLymdlfHd6ZPlGKmVSe0ZPX717GVMDBt
+ KxjqgGAmdId9JPEKd+gQbsP4tnrzCOY6dOSVeTaDMMAYb6xOoDqYw+h2kjm/4S4g9E6y
+ bnFzahlofRJB7GMkfYiG5jC41Trhcnt0gPw= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2yfmb6y83d-7
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 03 Mar 2020 09:51:13 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 3 Mar 2020 09:51:01 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m4ssrtudTioHC2rcLso6oAmx3wdvp8XBZzrZ3/17BTvBTt894l8R6GzeDjq+enRup56di0ohZkphO+hvMgdNCc7nG/K6hZsy7k/jTcIwCybEdXKZH89+EXfnBgZK0zc4uD1J43W6qcRzhU7ekMI2doaIN0T9jqdM6ZWTXzaPzRhJ2HtB71ow9HS3U3o2WNuUIJMOYpnc1frOZvUIhamOlOk2E1upfA5+KwtwMsb35vykQetHSWyCtnkvsScMID2tAO+6V7nsQcVtiOKHAoAN5oZ1jqA3oJiyTvy15rSMhPQiX8DtOZ71yZJ3NuE+qnM/8G02CT4tQJ3bYxQZKfbJCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rsD1LdJcb4XeJg2CPYn1NUbbWfj4DFC/7mHXA9v+pbw=;
+ b=oKV1YfgRF/46xzMENfLd3T1KSS7WfZFi0Ssf8AkAfgpzFhJGIbLL75x9FgP7q3RV+qFjizXN7gjfTz4aC4/5hJs5pg0oh6J8SYYD4J/+1WtALqU92KCACUn98qg8nZ9Ge/SqqaEuPG69blDfjtoEiASvkGOBInvuBIrZJpbZ0ye/1Xc2Mfe6pHEOf852WNdm3Z7MwS87Fv5cdQrN/YK2L+zNhk9JPtm7pbKkbp4cKfLGnsOgOmZ3GVoyqKVfJIIo4bicWp63XK8zJLUwPaSIpNtiW01Ea+fn1MWbDe6KO7Gwglk3DjgyjIJSHcD86rwiqkoCBtrAVf8UV2bhakamuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rsD1LdJcb4XeJg2CPYn1NUbbWfj4DFC/7mHXA9v+pbw=;
+ b=ZUmG+NQwbAccbTlN91hpkDx/SKEttLhXprFDuQuk9YorasQrvnO7Sl0Yz4DrBPZ20mxB9CACTWVv3eaMGW0AXyjQbqO2aN8CA4H2ajIpB6BwuvUxWEF1Jsfie4aMBEsK1JrNAzbreF1z8khdCBX/a1R19GrTRTZ+7Q+1QH7vC3s=
+Received: from BYAPR15MB2278.namprd15.prod.outlook.com (2603:10b6:a02:8e::17)
+ by BYAPR15MB2454.namprd15.prod.outlook.com (2603:10b6:a02:89::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Tue, 3 Mar
+ 2020 17:51:00 +0000
+Received: from BYAPR15MB2278.namprd15.prod.outlook.com
+ ([fe80::4d5a:6517:802b:5f47]) by BYAPR15MB2278.namprd15.prod.outlook.com
+ ([fe80::4d5a:6517:802b:5f47%4]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 17:51:00 +0000
+Date:   Tue, 3 Mar 2020 09:50:51 -0800
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     Lorenz Bauer <lmb@cloudflare.com>
+CC:     <john.fastabend@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        <kernel-team@cloudflare.com>, <netdev@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next v2 3/9] bpf: sockmap: move generic sockmap hooks
+ from BPF TCP
+Message-ID: <20200303175051.zcxmo3c257pfpj7f@kafai-mbp>
+References: <20200228115344.17742-1-lmb@cloudflare.com>
+ <20200228115344.17742-4-lmb@cloudflare.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228115344.17742-4-lmb@cloudflare.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: MWHPR21CA0033.namprd21.prod.outlook.com
+ (2603:10b6:300:129::19) To BYAPR15MB2278.namprd15.prod.outlook.com
+ (2603:10b6:a02:8e::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from kafai-mbp (2620:10d:c090:500::7:521b) by MWHPR21CA0033.namprd21.prod.outlook.com (2603:10b6:300:129::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.2 via Frontend Transport; Tue, 3 Mar 2020 17:50:58 +0000
+X-Originating-IP: [2620:10d:c090:500::7:521b]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7ba4bb87-883b-4550-bc80-08d7bf9b6ec9
+X-MS-TrafficTypeDiagnostic: BYAPR15MB2454:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB2454AC50E20335088945E9DFD5E40@BYAPR15MB2454.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-Forefront-PRVS: 03319F6FEF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(376002)(396003)(136003)(199004)(189003)(4326008)(5660300002)(1076003)(8676002)(81156014)(4744005)(81166006)(7416002)(2906002)(478600001)(186003)(66946007)(66476007)(66556008)(6916009)(16526019)(9686003)(6496006)(55016002)(52116002)(316002)(33716001)(86362001)(8936002)(54906003)(6666004)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2454;H:BYAPR15MB2278.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kiX9OfwZfrDhQteOm5OO+r/+eHbCZ7UY7eq3w5zK5tLFTPYuXOW+aOmIP0kQABtUGtpMFP1cT3OwdhXBYDAUnx5mrtKncjm1qaXgbMkPF9kJ2k9pM9Z8L3Mnd8JR+y1fDTkJSJsadB87emLHFvfVmF2m6ABJUY/1bt6WKikTOQm6+AVra47oQfQgNgwHLVJGIYPwgxyts+cAvaPJvH5qcGMAWN7U9i3VBuUffNnisd/2LJyo1r52gRbK1slvYuZdJowi0GHog2OMcsgN8EbxjH+Qr7LabyFIKqlZSxCFF1pAeei/c9lt9/Itc8+rx6ul69dHtdADYEG1lpvheIkSr8ik4+lmYnBvFEtDySwI8faCTqRCltFN3YZetH2Ev3deIEPkzrpPUpLtUJ9kAyRUO2NefUN5goOlSB4OKyM+Eaj46oEdj4MjRBk8zlJWcvkAf2CGpZZusCH4AGnAwEfcm1dFJKKCFL1aC7Sa9yD2FG0dmofB5RTWSSr0kUegQ/Ux
+X-MS-Exchange-AntiSpam-MessageData: TuiYMCZFYeNrDfsbOreHNk7FusIZ9n4Fz7I/85F7PYHi9gHrQVqHPClx5ekIzeDunIcrhdSCejiVlb+WgX3ywB+15pzJqeax+b5d2qgQ8iYf3zBNcp+FF9uf23mSNCDmS0fq/M77a19cn/mAON9RurGnqyP42YwlMpjrjQEPxVk2iM8DxXoaWDFPyU1OxvvP
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba4bb87-883b-4550-bc80-08d7bf9b6ec9
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 17:50:59.8723
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bT2kLkJpFFf6/jGbEHmbitOiuyUFAoXRA1YWqc0ZAMeaXOESHGzX8KIssPKRKdwA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2454
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-03_06:2020-03-03,2020-03-03 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 phishscore=0 clxscore=1011 mlxlogscore=853 suspectscore=0
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003030120
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Rientjes <rientjes@google.com>
+On Fri, Feb 28, 2020 at 11:53:38AM +0000, Lorenz Bauer wrote:
+> The close, unhash and clone handlers from TCP sockmap are actually generic,
+> and can be reused by UDP sockmap. Move the helpers into the sockmap code
+Is clone reused in UDP? 
 
-commit f42f25526502d851d0e3ca1e46297da8aafce8a7 upstream.
+> base and expose them. This requires tcp_bpf_(re)init and tcp_bpf_clone to
+> be conditional on BPF_STREAM_PARSER.
+> 
 
-If thp defrag setting "defer" is used and a newline is *not* used when
-writing to the sysfs file, this is interpreted as the "defer+madvise"
-option.
+[ ... ]
 
-This is because we do prefix matching and if five characters are written
-without a newline, the current code ends up comparing to the first five
-bytes of the "defer+madvise" option and using that instead.
-
-Use the more appropriate sysfs_streq() that handles the trailing newline
-for us.  Since this doubles as a nice cleanup, do it in enabled_store()
-as well.
-
-The current implementation relies on prefix matching: the number of
-bytes compared is either the number of bytes written or the length of
-the option being compared.  With a newline, "defer\n" does not match
-"defer+"madvise"; without a newline, however, "defer" is considered to
-match "defer+madvise" (prefix matching is only comparing the first five
-bytes).  End result is that writing "defer" is broken unless it has an
-additional trailing character.
-
-This means that writing "madv" in the past would match and set
-"madvise".  With strict checking, that no longer is the case but it is
-unlikely anybody is currently doing this.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.2001171411020.56385@chino.kir.corp.google.com
-Fixes: 21440d7eb904 ("mm, thp: add new defer+madvise defrag option")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/huge_memory.c |   24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
-
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -173,16 +173,13 @@ static ssize_t enabled_store(struct kobj
- {
- 	ssize_t ret = count;
- 
--	if (!memcmp("always", buf,
--		    min(sizeof("always")-1, count))) {
-+	if (sysfs_streq(buf, "always")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG, &transparent_hugepage_flags);
- 		set_bit(TRANSPARENT_HUGEPAGE_FLAG, &transparent_hugepage_flags);
--	} else if (!memcmp("madvise", buf,
--			   min(sizeof("madvise")-1, count))) {
-+	} else if (sysfs_streq(buf, "madvise")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_FLAG, &transparent_hugepage_flags);
- 		set_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG, &transparent_hugepage_flags);
--	} else if (!memcmp("never", buf,
--			   min(sizeof("never")-1, count))) {
-+	} else if (sysfs_streq(buf, "never")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG, &transparent_hugepage_flags);
- 	} else
-@@ -246,32 +243,27 @@ static ssize_t defrag_store(struct kobje
- 			    struct kobj_attribute *attr,
- 			    const char *buf, size_t count)
- {
--	if (!memcmp("always", buf,
--		    min(sizeof("always")-1, count))) {
-+	if (sysfs_streq(buf, "always")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
- 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
--	} else if (!memcmp("defer+madvise", buf,
--		    min(sizeof("defer+madvise")-1, count))) {
-+	} else if (sysfs_streq(buf, "defer+madvise")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
- 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
--	} else if (!memcmp("defer", buf,
--		    min(sizeof("defer")-1, count))) {
-+	} else if (sysfs_streq(buf, "defer")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
- 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
--	} else if (!memcmp("madvise", buf,
--			   min(sizeof("madvise")-1, count))) {
-+	} else if (sysfs_streq(buf, "madvise")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
- 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
--	} else if (!memcmp("never", buf,
--			   min(sizeof("never")-1, count))) {
-+	} else if (sysfs_streq(buf, "never")) {
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
- 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
-
-
+> @@ -707,3 +659,4 @@ void tcp_bpf_clone(const struct sock *sk, struct sock *newsk)
+>  	if (prot == &tcp_bpf_prots[family][TCP_BPF_BASE])
+>  		newsk->sk_prot = sk->sk_prot_creator;
+>  }
+> +#endif /* CONFIG_BPF_STREAM_PARSER */
+> 
