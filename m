@@ -2,128 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D61176E1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 05:39:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D104176E21
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 05:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCCEjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 23:39:42 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45996 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbgCCEjm (ORCPT
+        id S1727350AbgCCEm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 23:42:28 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39927 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgCCEm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 23:39:42 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b22so717913pls.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 20:39:40 -0800 (PST)
+        Mon, 2 Mar 2020 23:42:27 -0500
+Received: by mail-pf1-f196.google.com with SMTP id l7so815942pff.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 20:42:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Fsfwjx7jgGYItwF5bCeIDJyJTUNRPkOSFQYt5/XqQ6U=;
-        b=HFmh7HTAS7PHa+TvciXQAcYw5whCIuhZU2zUpAkLC9ZJSjxyCGmEPDXrMVM0dfkTyv
-         ETn18Etqs5FyLnJDrAVM/OwrQtNrlzIHx775yZXbREV7ssdmKxlU8CZQObyJhmBCBrLZ
-         qwhlET/uk886S32xAP95UNxC5j3EejlV71gy4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U6duRWraf8EaQi0o/dvKzroqytjT7Ei3jM9dYO7Znh0=;
+        b=mvNnPvKL2qk6jSdT/iVB8CdoDzZTE31ZGy9g/3g1FuUV7HBrgauX0+LUVlue54XNL3
+         EuVrzaJQ8eZs8U1cQkhmPYXJq7YpppJjmRDennu10PiBJjcneJ2owqrYOLSQ2dAUwIK2
+         3/gOfs5/108g/w/N8Ga4F50+a6Wg8m6rup7QFrAQBV3xj98+dsSa1reMogpZnc1X5mUH
+         5nnb2Ghh8mWRzcDSmTBbV4PDBMmc+wce1Hlz0ZFLvJENgPuXmmqAnouLVAYG1kW3XfDM
+         NCcyxrG67czwMIvexo4u8KnlYXr9t4JUdOWKZoqTJojgnhKfBD1GkAFyxzSPHZa3OPoy
+         BJ/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Fsfwjx7jgGYItwF5bCeIDJyJTUNRPkOSFQYt5/XqQ6U=;
-        b=fPL6lbul8LV/Dmpt+mPC39CAF0CUYfJ69Aa5tdVH6Pwjuwy4blaN/JPzW3jDzcAK6X
-         euv9T9RgljVrqit+tE/nOWbjY/G+0y6WqMZhcsrFcgOZFTTw3NTRhK96X7ODVQ9YMjE2
-         vxQs+qfVJ000dttYagR3EIhnIUNi0J5OVVPdOzkMnlQx+urqYn4NQ5sxy9q73CqoQnYd
-         QleLSrHBAnpSR36oKWKQFMzLgLfQu3sLbeNMSXZIjLlkhpQqzd5TJPwrJsqSbAR1Ykqb
-         0Z2Xmqu15gCpU85VL0ATC4HW7PK+ZPwhFSPmrPxmQFCcuZ2gxvDrrPqYvmza/aPSP1wC
-         uSpA==
-X-Gm-Message-State: ANhLgQ3IlP0aaifUcrLu7wXmp1tt9EvYsJE7N+y9QVC40LGCe/acwCZx
-        JsrQ5GAckit950KhSsBfwd+tXg==
-X-Google-Smtp-Source: ADFU+vvU6WYjtUTp1RucOTTWWsoavTwgO9nAvwOPiJV4Gr7RaT3WB98LZl3onhyoGq/qdZgd/7XeWA==
-X-Received: by 2002:a17:902:7087:: with SMTP id z7mr2493646plk.270.1583210379715;
-        Mon, 02 Mar 2020 20:39:39 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u126sm22329618pfu.182.2020.03.02.20.39.38
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U6duRWraf8EaQi0o/dvKzroqytjT7Ei3jM9dYO7Znh0=;
+        b=ZU3ogD8krDkylqpOR6d2lfmxj6X92sZdm0tb7lSjLRHBbROTP/+h6Zrh4osuVWTVB+
+         UmhJbHbI9YSw6s9dBoIj1sZ1K5fXlEYCgyQtwT7T8AwrVSS/gFFdT/e4SABzVSFNVA17
+         eZOXaHo+KYmDQFLU0zSULpvq5KztbZOMqNwqPtRI4BxjsNMI7rO7sCDdi5EVuaEFVMFn
+         pTwDUgXXlb2855yJvI0mz9EAwHw3idZVMZ3T4jU5/ZWOFUbGsYUVeqWwR6TXdb8mNtC9
+         okP50A9AICkuOJBvCJZx/uKTGVLDeePjiA6H1yD4Gldocaftt6h/GpytscolxfsohVFW
+         dMmg==
+X-Gm-Message-State: ANhLgQ3w3RT4sL6i6Bw/tHOG6+aFV4smPjJREKx7cjq0aWbnM0a5F/2G
+        IZgw7m0VK6hp6FwWwd+ZU/rB3m5u
+X-Google-Smtp-Source: ADFU+vvAhmvbn+zxwYplvJTYDWCVbROZowmT6QIvRNLnCyZnul2KOVCgOIB5r4bZQgbC5V+GN0Qz2g==
+X-Received: by 2002:aa7:93a6:: with SMTP id x6mr2424759pff.72.1583210546365;
+        Mon, 02 Mar 2020 20:42:26 -0800 (PST)
+Received: from localhost.localdomain (167.117.30.125.dy.iij4u.or.jp. [125.30.117.167])
+        by smtp.gmail.com with ESMTPSA id x4sm23116465pff.143.2020.03.02.20.42.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 20:39:38 -0800 (PST)
-Date:   Mon, 2 Mar 2020 20:39:37 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     Alexander Potapenko <glider@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/edid: Distribute switch variables for initialization
-Message-ID: <202003022038.07A611E@keescook>
-References: <20200220062229.68762-1-keescook@chromium.org>
+        Mon, 02 Mar 2020 20:42:25 -0800 (PST)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Lech Perczak <l.perczak@camlintechnologies.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Ogness <john.ogness@linutronix.de>
+Subject: [PATCH] printk: queue wake_up_klogd irq_work only if per-CPU areas are ready
+Date:   Tue,  3 Mar 2020 13:40:59 +0900
+Message-Id: <20200303044059.1325-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200220062229.68762-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 10:22:29PM -0800, Kees Cook wrote:
-> Variables declared in a switch statement before any case statements
-> cannot be automatically initialized with compiler instrumentation (as
-> they are not part of any execution flow). With GCC's proposed automatic
-> stack variable initialization feature, this triggers a warning (and they
-> don't get initialized). Clang's automatic stack variable initialization
-> (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
-> doesn't initialize such variables[1]. Note that these warnings (or silent
-> skipping) happen before the dead-store elimination optimization phase,
-> so even when the automatic initializations are later elided in favor of
-> direct initializations, the warnings remain.
-> 
-> To avoid these problems, move such variables into the "case" where
-> they're used or lift them up into the main function body.
-> 
-> drivers/gpu/drm/drm_edid.c: In function ‘drm_edid_to_eld’:
-> drivers/gpu/drm/drm_edid.c:4395:9: warning: statement will never be executed [-Wswitch-unreachable]
->  4395 |     int sad_count;
->       |         ^~~~~~~~~
-> 
-> [1] https://bugs.llvm.org/show_bug.cgi?id=44916
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+printk_deferred(), similarly to printk_safe/printk_nmi,
+does not immediately attempt to print a new message on
+the consoles, avoiding calls into non-reentrant kernel
+paths, e.g. scheduler or timekeeping, which potentially
+can deadlock the system. Those printk() flavors, instead,
+rely on per-CPU flush irq_work to print messages from
+safer contexts. For same reasons (recursive scheduler or
+timekeeping calls) printk() uses per-CPU irq_work in
+order to wake up user space syslog/kmsg readers.
 
-Ping. Can someone pick this up, please?
+However, only printk_safe/printk_nmi do make sure that
+per-CPU areas have been initialised and that it's safe
+to modify per-CPU irq_work. This means that, for instance,
+should printk_deferred() be invoked "too early", that
+is before per-CPU areas are initialised, printk_deferred()
+will perform illegal per-CPU access.
 
-Thanks!
+Lech Perczak [0] reports that after commit 1b710b1b10ef
+("char/random: silence a lockdep splat with printk()")
+user-space syslog/kmsg readers are not able to read new
+kernel messages. The reason is printk_deferred() being
+called too early (as was pointed out by Petr and John).
 
--Kees
+Fix printk_deferred() and do not queue per-CPU irq_work
+before per-CPU areas are initialized.
 
-> ---
->  drivers/gpu/drm/drm_edid.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 805fb004c8eb..2941b65b427f 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -4392,9 +4392,9 @@ static void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
->  			dbl = cea_db_payload_len(db);
->  
->  			switch (cea_db_tag(db)) {
-> -				int sad_count;
-> +			case AUDIO_BLOCK: {
->  
-> -			case AUDIO_BLOCK:
-> +				int sad_count;
->  				/* Audio Data Block, contains SADs */
->  				sad_count = min(dbl / 3, 15 - total_sad_count);
->  				if (sad_count >= 1)
-> @@ -4402,6 +4402,7 @@ static void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
->  					       &db[1], sad_count * 3);
->  				total_sad_count += sad_count;
->  				break;
-> +			}
->  			case SPEAKER_BLOCK:
->  				/* Speaker Allocation Data Block */
->  				if (dbl >= 1)
-> 
+[0] https://lore.kernel.org/lkml/aa0732c6-5c4e-8a8b-a1c1-75ebe3dca05b@camlintechnologies.com/
 
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Reported-by: Lech Perczak <l.perczak@camlintechnologies.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: John Ogness <john.ogness@linutronix.de>
+---
+ kernel/printk/internal.h    |  3 +++
+ kernel/printk/printk.c      | 31 +++++++++++++++++++++++++++++++
+ kernel/printk/printk_safe.c | 11 +----------
+ 3 files changed, 35 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index c8e6ab689d42..8ed2b7737063 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -23,6 +23,8 @@ __printf(1, 0) int vprintk_func(const char *fmt, va_list args);
+ void __printk_safe_enter(void);
+ void __printk_safe_exit(void);
+ 
++bool printk_percpu_data_ready(void);
++
+ #define printk_safe_enter_irqsave(flags)	\
+ 	do {					\
+ 		local_irq_save(flags);		\
+@@ -64,4 +66,5 @@ __printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
+ #define printk_safe_enter_irq() local_irq_disable()
+ #define printk_safe_exit_irq() local_irq_enable()
+ 
++bool printk_percpu_data_ready(void) { return false; }
+ #endif /* CONFIG_PRINTK */
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index ad4606234545..d951d35a0786 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -461,6 +461,18 @@ static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
+ static char *log_buf = __log_buf;
+ static u32 log_buf_len = __LOG_BUF_LEN;
+ 
++/*
++ * We cannot access per-CPU data (e.g. per-CPU flush irq_work) before
++ * per_cpu_areas are initialised. This variable is set to true when
++ * it's safe to access per-CPU data.
++ */
++static bool __printk_percpu_data_ready __read_mostly;
++
++bool printk_percpu_data_ready(void)
++{
++	return __printk_percpu_data_ready;
++}
++
+ /* Return log buffer address */
+ char *log_buf_addr_get(void)
+ {
+@@ -1147,12 +1159,25 @@ static void __init log_buf_add_cpu(void)
+ static inline void log_buf_add_cpu(void) {}
+ #endif /* CONFIG_SMP */
+ 
++static void __init set_percpu_data_ready(void)
++{
++	__printk_percpu_data_ready = true;
++}
++
+ void __init setup_log_buf(int early)
+ {
+ 	unsigned long flags;
+ 	char *new_log_buf;
+ 	unsigned int free;
+ 
++	/*
++	 * Some archs call setup_log_buf() multiple times - first is very
++	 * early, e.g. from setup_arch(), and second - when percpu_areas
++	 * are initialised.
++	 */
++	if (!early)
++		set_percpu_data_ready();
++
+ 	if (log_buf != __log_buf)
+ 		return;
+ 
+@@ -3009,6 +3034,9 @@ static DEFINE_PER_CPU(struct irq_work, wake_up_klogd_work) = {
+ 
+ void wake_up_klogd(void)
+ {
++	if (!printk_percpu_data_ready())
++		return;
++
+ 	preempt_disable();
+ 	if (waitqueue_active(&log_wait)) {
+ 		this_cpu_or(printk_pending, PRINTK_PENDING_WAKEUP);
+@@ -3019,6 +3047,9 @@ void wake_up_klogd(void)
+ 
+ void defer_console_output(void)
+ {
++	if (!printk_percpu_data_ready())
++		return;
++
+ 	preempt_disable();
+ 	__this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
+ 	irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
+diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+index b4045e782743..d9a659a686f3 100644
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -27,7 +27,6 @@
+  * There are situations when we want to make sure that all buffers
+  * were handled or when IRQs are blocked.
+  */
+-static int printk_safe_irq_ready __read_mostly;
+ 
+ #define SAFE_LOG_BUF_LEN ((1 << CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT) -	\
+ 				sizeof(atomic_t) -			\
+@@ -51,7 +50,7 @@ static DEFINE_PER_CPU(struct printk_safe_seq_buf, nmi_print_seq);
+ /* Get flushed in a more safe context. */
+ static void queue_flush_work(struct printk_safe_seq_buf *s)
+ {
+-	if (printk_safe_irq_ready)
++	if (printk_percpu_data_ready())
+ 		irq_work_queue(&s->work);
+ }
+ 
+@@ -402,14 +401,6 @@ void __init printk_safe_init(void)
+ #endif
+ 	}
+ 
+-	/*
+-	 * In the highly unlikely event that a NMI were to trigger at
+-	 * this moment. Make sure IRQ work is set up before this
+-	 * variable is set.
+-	 */
+-	barrier();
+-	printk_safe_irq_ready = 1;
+-
+ 	/* Flush pending messages that did not have scheduled IRQ works. */
+ 	printk_safe_flush();
+ }
 -- 
-Kees Cook
+2.25.1
+
