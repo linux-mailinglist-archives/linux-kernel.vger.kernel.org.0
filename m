@@ -2,236 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A2B176A4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 02:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D2B176A3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 02:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgCCB7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 20:59:38 -0500
-Received: from mail-eopbgr70080.outbound.protection.outlook.com ([40.107.7.80]:6078
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726773AbgCCB7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 20:59:37 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fHviazYhLzT7cg3W16e8KZqUmOPdY7yaopMz4gnN9lESt7onpUt5r3J+ZRCHJsi1cYG81+0yEt8tVPcCUAD16jqeS4I6wTuwjSwkjAj1c0TzgGchgOGHOVTa8ldCYqwwRtnPwvGzGLY1RhotQKThc7T0UPS7cSTtuu8f4Pg3ekf8xQu2ns2a0wtgLeRN7UtKJzN74c8ArydOrVWHZL0MB9/eZq0sGF9ZZ1f/kmj4hkVNTloTwKnk8DLMx6I8lo597fy2cYmD4cg4zgF15h1Km6UlqbXvbrpZJoXsgGVbuRWtvu/Cswj1Q2TwWAAwbzkSvKumtlp6rV4+rfSwKUpjNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DTvoRVO9xBz7ueGSJ3OZsxJs1anDLM+ApXbtx5gXwqY=;
- b=DqRRBOeCGYlGfMB34kNCGB7NGMT1b+gls5nKYP7bDWp3xkZaeW0J9iTS/ggAqgjuXpg8kdgqI9FKqc1XaH9nBuxJjrc2kX0VH/FnbVU+74GclhV7V4lHGiut0s2/gIRO4ZTlGI6ExO7TND7mhnKMYqXdmDjAQezX1dzZ8sjwMfiw3PT1aXRHmjI0mugAWP1GPNFxbUQWfT55nLavJG+RCvRmhMTId8WGlDMACDoavWpyhZQUuSOlHxLqy9Uh6bQqCxfA3cSRpuD6DdSMQhf88wHAiXhdbheS0gqCsXCPHTTMLXSJBKYI4gjqqk7bJ7hp2xcfwfE6cuKtXjopU7SWRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DTvoRVO9xBz7ueGSJ3OZsxJs1anDLM+ApXbtx5gXwqY=;
- b=oeD5FChEi7biuw7sCGR3P9H+9DkBgLeErrK4GemKVyTVYONhymxAGsJmyCmHV4tlYfBqRBI1Z3T13I0ZstwTQTM7wL3/u1BtbKzZaTW2EPr/aLmZykQnQ9Df+etVZUnzJi6umVoQsyoNU+X7V1MLjHHtcV/2zbtEP/m42aB2exk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB7057.eurprd04.prod.outlook.com (10.186.131.209) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15; Tue, 3 Mar 2020 01:59:34 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
- 01:59:34 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
-        jassisinghbrar@gmail.com, o.rempel@pengutronix.de
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V4 4/4] firmware: imx-scu: Support one TX and one RX
-Date:   Tue,  3 Mar 2020 09:53:00 +0800
-Message-Id: <1583200380-15623-5-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583200380-15623-1-git-send-email-peng.fan@nxp.com>
-References: <1583200380-15623-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0147.apcprd04.prod.outlook.com
- (2603:1096:3:16::31) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1726979AbgCCBxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 20:53:43 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53052 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726859AbgCCBxn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Mar 2020 20:53:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583200422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8YDgDoV4ahljl0qd5YHDVMuO7AQEk1tr+IyznNreQpE=;
+        b=II+F1z+aXihcqsUj+6IdkZI96gZLJ2iCNYs3sKt2kootuKTEJrh4KesHPPlYl8HpqUf5Up
+        aRtqgEhRdGb5xj84mkjWq3bBUcZMj2uUjzmAuutcYZNnqnsp5CYHmry+w6MVcNCJUxbZJp
+        bkDgevWS4w0mZeP+UGZ7ohNKKTTAc4g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-27-6tSTwckJOZ-gfpRYRIYViQ-1; Mon, 02 Mar 2020 20:53:38 -0500
+X-MC-Unique: 6tSTwckJOZ-gfpRYRIYViQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6332613E5;
+        Tue,  3 Mar 2020 01:53:36 +0000 (UTC)
+Received: from localhost (ovpn-12-29.pek2.redhat.com [10.72.12.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CFBF5C219;
+        Tue,  3 Mar 2020 01:53:32 +0000 (UTC)
+Date:   Tue, 3 Mar 2020 09:53:29 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, richardw.yang@linux.intel.com,
+        osalvador@suse.de, dan.j.williams@intel.com, mhocko@suse.com,
+        rppt@linux.ibm.com, robin.murphy@arm.com
+Subject: Re: [PATCH v2 3/7] mm/sparse.c: introduce a new function
+ clear_subsection_map()
+Message-ID: <20200303015329.GV24216@MiWiFi-R3L-srv>
+References: <20200220043316.19668-1-bhe@redhat.com>
+ <20200220043316.19668-4-bhe@redhat.com>
+ <dc5ab1b1-65e2-e20f-66aa-b71d739a5b6d@redhat.com>
+ <20200301052028.GN24216@MiWiFi-R3L-srv>
+ <1346f0c2-7b1f-6feb-5e9b-2854fd0022ba@redhat.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR04CA0147.apcprd04.prod.outlook.com (2603:1096:3:16::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2772.18 via Frontend Transport; Tue, 3 Mar 2020 01:59:30 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: c8be9a0a-3368-4845-ba5c-08d7bf168540
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7057:|AM0PR04MB7057:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB7057129C329AF239DE2E020F88E40@AM0PR04MB7057.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
-X-Forefront-PRVS: 03319F6FEF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(136003)(346002)(396003)(376002)(189003)(199004)(9686003)(6512007)(2906002)(6666004)(6506007)(26005)(956004)(81156014)(81166006)(8936002)(52116002)(186003)(6486002)(2616005)(4326008)(16526019)(69590400007)(66946007)(66476007)(8676002)(478600001)(66556008)(86362001)(36756003)(316002)(5660300002)(83323001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7057;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: t2Lyl2oA5ZPiOz+BcWCsCETHhasy3Oinwsm0fIvMBfoV1LgnT8PvYlw30KnVyaR0myO57C51roOKT87XNjT1TvX4OXNisdEhCF+vTKLAuFFtG3nyKbBVK+M9UshxZgHzk0dpa6m6YRBRdmqzEZIXE1us88ww2wIbBtJ+Wxh5V5c9Aakf0JQStvuHhcX7lnQK97gtqpuaYj6pdZKcR0xjOHrXaSgDakhDaC0agu6afLhp0u4AJEdMAdyMpqh9iuiEubhkt2iLEVJ6TlIfN0xaPlXqtIV+T5ovRNUGJ2W76av/ZZSeSzS2+t+ZB5R/FvbzZtktPOupY3GEUC3YYd7z5QleSMOgThFswBheGFDEVMua0pd9y8ec61lCcI2pmWMhVzj2ulYZje84I3+PeYPb96g7g5lmx1xNiEeqUpPJc22JiY37zy0s5de3kZlMk5KM4L0U60DM6+F+GktraqU9VDW/X0sVBsLnt8WQfrES2znqmgoOqDNfFGVot4vIXI22cTR7ldWoCpJPk20KbTSZuw==
-X-MS-Exchange-AntiSpam-MessageData: Z6LlZZhhIFawx4ibiAfcgqydpZiIjNHNDkM8NZZm5IJznQUncZV84g/636xiIr8f582bAka3SRMYxTBrgETooYosNZEDFEii4WfvOgzlI2eUYNjeHjZsaXfM8YMoM0lbTmyS813ARwa5qwzRq2RjhA==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8be9a0a-3368-4845-ba5c-08d7bf168540
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 01:59:34.4120
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5R605ZNPvkN+PkO3ba6ArC6ersVwUHoiRKkLC0BIAI5IXao7lgOJ47NG6rcjSQx2MYnZquvrvvZ8mnFUiZsEJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7057
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1346f0c2-7b1f-6feb-5e9b-2854fd0022ba@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On 03/02/20 at 04:43pm, David Hildenbrand wrote:
+> On 01.03.20 06:20, Baoquan He wrote:
+> > On 02/28/20 at 03:36pm, David Hildenbrand wrote:
+> >> On 20.02.20 05:33, Baoquan He wrote:
+> >>> Wrap the codes which clear subsection map of one memory region from
+> >>> section_deactivate() into clear_subsection_map().
+> >>>
+> >>> Signed-off-by: Baoquan He <bhe@redhat.com>
+> >>> ---
+> >>>  mm/sparse.c | 46 ++++++++++++++++++++++++++++++++++++++--------
+> >>>  1 file changed, 38 insertions(+), 8 deletions(-)
+> >>>
+> >>> diff --git a/mm/sparse.c b/mm/sparse.c
+> >>> index 977b47acd38d..df857ee9330c 100644
+> >>> --- a/mm/sparse.c
+> >>> +++ b/mm/sparse.c
+> >>> @@ -726,14 +726,25 @@ static void free_map_bootmem(struct page *memmap)
+> >>>  }
+> >>>  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
+> >>>  
+> >>> -static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> >>> -		struct vmem_altmap *altmap)
+> >>> +/**
+> >>> + * clear_subsection_map - Clear subsection map of one memory region
+> >>> + *
+> >>> + * @pfn - start pfn of the memory range
+> >>> + * @nr_pages - number of pfns to add in the region
+> >>> + *
+> >>> + * This is only intended for hotplug, and clear the related subsection
+> >>> + * map inside one section.
+> >>> + *
+> >>> + * Return:
+> >>> + * * -EINVAL	- Section already deactived.
+> >>> + * * 0		- Subsection map is emptied.
+> >>> + * * 1		- Subsection map is not empty.
+> >>> + */
+> >>
+> >> Less verbose please (in my preference: none and simplify return handling)
+> >>
+> >>> +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
+> >>>  {
+> >>>  	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> >>>  	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
+> >>>  	struct mem_section *ms = __pfn_to_section(pfn);
+> >>> -	bool section_is_early = early_section(ms);
+> >>> -	struct page *memmap = NULL;
+> >>>  	unsigned long *subsection_map = ms->usage
+> >>>  		? &ms->usage->subsection_map[0] : NULL;
+> >>>  
+> >>> @@ -744,8 +755,28 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> >>>  	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
+> >>>  				"section already deactivated (%#lx + %ld)\n",
+> >>>  				pfn, nr_pages))
+> >>> -		return;
+> >>> +		return -EINVAL;
+> >>> +
+> >>> +	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> >>>  
+> >>> +	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
+> >>> +		return 0;
+> >>> +
+> >>
+> >> Can we please just have a
+> >>
+> >> subsection_map_empty() instead and handle that in the caller?
+> >> (you can then always return true in the !VMEMMAP variant)
+> > 
+> > I don't follow. Could you be more specific? or pseudo code please?
+> > 
+> > The old code has to handle below case in which subsection_map has been
+> > cleared. And I introduce clear_subsection_map() to encapsulate all
+> > subsection map realted code so that !VMEMMAP won't have to see it any
+> > more.
+> > 
+> 
+> Something like this on top would be easier to understand IMHO
 
-Current imx-scu requires four TX and four RX to communicate with
-SCU. This is low efficient and causes lots of mailbox interrupts.
+Ok, I see. Both is fine to me, I even like the old way a tiny little
+bit more, but I would like to try to satisfy reviewer, will change as you
+suggested. Thanks.
 
-With imx-mailbox driver could support one TX to use all four transmit
-registers and one RX to use all four receive registers, imx-scu
-could use one TX and one RX.
+If no other concern, I will repost after changing and testing.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-
-V4:
- None
-V3:
- Check mbox fsl,imx8-mu-scu for fast_ipc
-
- drivers/firmware/imx/imx-scu.c | 54 +++++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/firmware/imx/imx-scu.c b/drivers/firmware/imx/imx-scu.c
-index f71eaa5bf52d..e94a5585b698 100644
---- a/drivers/firmware/imx/imx-scu.c
-+++ b/drivers/firmware/imx/imx-scu.c
-@@ -38,6 +38,7 @@ struct imx_sc_ipc {
- 	struct device *dev;
- 	struct mutex lock;
- 	struct completion done;
-+	bool fast_ipc;
- 
- 	/* temporarily store the SCU msg */
- 	u32 *msg;
-@@ -115,6 +116,7 @@ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
- 	struct imx_sc_ipc *sc_ipc = sc_chan->sc_ipc;
- 	struct imx_sc_rpc_msg *hdr;
- 	u32 *data = msg;
-+	int i;
- 
- 	if (!sc_ipc->msg) {
- 		dev_warn(sc_ipc->dev, "unexpected rx idx %d 0x%08x, ignore!\n",
-@@ -122,6 +124,19 @@ static void imx_scu_rx_callback(struct mbox_client *c, void *msg)
- 		return;
- 	}
- 
-+	if (sc_ipc->fast_ipc) {
-+		hdr = msg;
-+		sc_ipc->rx_size = hdr->size;
-+		sc_ipc->msg[0] = *data++;
-+
-+		for (i = 1; i < sc_ipc->rx_size; i++)
-+			sc_ipc->msg[i] = *data++;
-+
-+		complete(&sc_ipc->done);
-+
-+		return;
-+	}
-+
- 	if (sc_chan->idx == 0) {
- 		hdr = msg;
- 		sc_ipc->rx_size = hdr->size;
-@@ -147,6 +162,7 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 	struct imx_sc_chan *sc_chan;
- 	u32 *data = msg;
- 	int ret;
-+	int size;
- 	int i;
- 
- 	/* Check size */
-@@ -156,7 +172,8 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 	dev_dbg(sc_ipc->dev, "RPC SVC %u FUNC %u SIZE %u\n", hdr->svc,
- 		hdr->func, hdr->size);
- 
--	for (i = 0; i < hdr->size; i++) {
-+	size = sc_ipc->fast_ipc ? 1 : hdr->size;
-+	for (i = 0; i < size; i++) {
- 		sc_chan = &sc_ipc->chans[i % 4];
- 
- 		/*
-@@ -168,8 +185,10 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
- 		 * Wait for tx_done before every send to ensure that no
- 		 * queueing happens at the mailbox channel level.
- 		 */
--		wait_for_completion(&sc_chan->tx_done);
--		reinit_completion(&sc_chan->tx_done);
-+		if (!sc_ipc->fast_ipc) {
-+			wait_for_completion(&sc_chan->tx_done);
-+			reinit_completion(&sc_chan->tx_done);
-+		}
- 
- 		ret = mbox_send_message(sc_chan->ch, &data[i]);
- 		if (ret < 0)
-@@ -246,6 +265,8 @@ static int imx_scu_probe(struct platform_device *pdev)
- 	struct imx_sc_chan *sc_chan;
- 	struct mbox_client *cl;
- 	char *chan_name;
-+	struct of_phandle_args args;
-+	int num_channel;
- 	int ret;
- 	int i;
- 
-@@ -253,11 +274,20 @@ static int imx_scu_probe(struct platform_device *pdev)
- 	if (!sc_ipc)
- 		return -ENOMEM;
- 
--	for (i = 0; i < SCU_MU_CHAN_NUM; i++) {
--		if (i < 4)
-+	ret = of_parse_phandle_with_args(pdev->dev.of_node, "mboxes",
-+					 "#mbox-cells", 0, &args);
-+	if (ret)
-+		return ret;
-+
-+	sc_ipc->fast_ipc = of_device_is_compatible(args.np, "fsl,imx8-mu-scu");
-+
-+	num_channel = sc_ipc->fast_ipc ? 2 : SCU_MU_CHAN_NUM;
-+	for (i = 0; i < num_channel; i++) {
-+		if (i < num_channel / 2)
- 			chan_name = kasprintf(GFP_KERNEL, "tx%d", i);
- 		else
--			chan_name = kasprintf(GFP_KERNEL, "rx%d", i - 4);
-+			chan_name = kasprintf(GFP_KERNEL, "rx%d",
-+					      i - num_channel / 2);
- 
- 		if (!chan_name)
- 			return -ENOMEM;
-@@ -269,13 +299,15 @@ static int imx_scu_probe(struct platform_device *pdev)
- 		cl->knows_txdone = true;
- 		cl->rx_callback = imx_scu_rx_callback;
- 
--		/* Initial tx_done completion as "done" */
--		cl->tx_done = imx_scu_tx_done;
--		init_completion(&sc_chan->tx_done);
--		complete(&sc_chan->tx_done);
-+		if (!sc_ipc->fast_ipc) {
-+			/* Initial tx_done completion as "done" */
-+			cl->tx_done = imx_scu_tx_done;
-+			init_completion(&sc_chan->tx_done);
-+			complete(&sc_chan->tx_done);
-+		}
- 
- 		sc_chan->sc_ipc = sc_ipc;
--		sc_chan->idx = i % 4;
-+		sc_chan->idx = i % (num_channel / 2);
- 		sc_chan->ch = mbox_request_channel_byname(cl, chan_name);
- 		if (IS_ERR(sc_chan->ch)) {
- 			ret = PTR_ERR(sc_chan->ch);
--- 
-2.16.4
+> 
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index dc79b00ddaaa..be5c80e9cfee 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -726,20 +726,6 @@ static void free_map_bootmem(struct page *memmap)
+>  }
+>  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
+>  
+> -/**
+> - * clear_subsection_map - Clear subsection map of one memory region
+> - *
+> - * @pfn - start pfn of the memory range
+> - * @nr_pages - number of pfns to add in the region
+> - *
+> - * This is only intended for hotplug, and clear the related subsection
+> - * map inside one section.
+> - *
+> - * Return:
+> - * * -EINVAL	- Section already deactived.
+> - * * 0		- Subsection map is emptied.
+> - * * 1		- Subsection map is not empty.
+> - */
+>  static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
+>  {
+>  	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
+> @@ -758,11 +744,12 @@ static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
+>  		return -EINVAL;
+>  
+>  	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> +	return 0;
+> +}
+>  
+> -	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION))
+> -		return 0;
+> -
+> -	return 1;
+> +static bool is_subsection_map_empty(unsigned long pfn, unsigned long nr_pages)
+> +{
+> +	return bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION);
+>  }
+>  
+>  static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> @@ -771,11 +758,8 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  	struct mem_section *ms = __pfn_to_section(pfn);
+>  	bool section_is_early = early_section(ms);
+>  	struct page *memmap = NULL;
+> -	int rc;
+> -
+>  
+> -	rc = clear_subsection_map(pfn, nr_pages);
+> -	if (IS_ERR_VALUE((unsigned long)rc))
+> +	if (unlikely(clear_subsection_map(pfn, nr_pages)))
+>  		return;
+>  	/*
+>  	 * There are 3 cases to handle across two configurations
+> @@ -794,7 +778,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  	 *
+>  	 * For 2/ and 3/ the SPARSEMEM_VMEMMAP={y,n} cases are unified
+>  	 */
+> -	if (!rc) {
+> +	if (is_subsection_map_empty(pfn, nr_pages)) {
+>  		unsigned long section_nr = pfn_to_section_nr(pfn);
+>  
+>  		/*
+> @@ -816,7 +800,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  	else
+>  		depopulate_section_memmap(pfn, nr_pages, altmap);
+>  
+> -	if (!rc)
+> +	if (is_subsection_map_empty(pfn, nr_pages))
+>  		ms->section_mem_map = (unsigned long)NULL;
+>  }
+>  
+> 
+> -- 
+> Thanks,
+> 
+> David / dhildenb
 
