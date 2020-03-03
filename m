@@ -2,71 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257281777C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 993F817779E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:45:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbgCCNuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:50:19 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:42612 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728350AbgCCNuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:50:18 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 50CA7200EF4;
-        Tue,  3 Mar 2020 14:50:17 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BFBC2200A5C;
-        Tue,  3 Mar 2020 14:50:14 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4CA8F402A7;
-        Tue,  3 Mar 2020 21:50:11 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org,
+        id S1728398AbgCCNpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:45:19 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54936 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727459AbgCCNpT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:45:19 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023DgsjP103555;
+        Tue, 3 Mar 2020 13:44:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=vwBN/g7wSj2rxEfOmHREhq/V9cF9S95isMpxJfnzWDI=;
+ b=kOqCIMSRkOpz4XSkCCbWSJMyd5BxXZQibLDHCHyHiVWImArzTc+FwBGmQ5YF8z3ixX7a
+ B6rdv1ZyrDk9W2jEJJCePkVPZNcMXtAuDsEymEcSsHfY26cQeYXBSHnGHpGCmcIwq+E2
+ kaVo/R9o392E/PZmYFahSwA4keDIRwgDqhXpx292xp3tNi+IAMlAguQJkbD1PxMKGgBD
+ 56Ly9By0DtjndLdwbRBRkiItS81leDBYhLo+uojZh+C55hMOHku3c102fwE7Cr3OLRrK
+ ufTVaQygOGgim+Kaa4UdOcZmQJP4YPzsQlGoFIcMMnma7RYI1kyAE5XrraV7829vroBx SA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2yghn332pe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 13:44:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023Dh7c2026059;
+        Tue, 3 Mar 2020 13:44:45 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2yg1gxfu0w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 13:44:45 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 023Dij8D031981;
+        Tue, 3 Mar 2020 13:44:45 GMT
+Received: from [192.168.1.14] (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Mar 2020 05:44:44 -0800
+Subject: Re: [PATCH] blktrace: fix dereference after null check
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Cengiz Can <cengiz@kernel.wtf>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] regulator: anatop: Lower error message level for -EPROBE_DEFER
-Date:   Tue,  3 Mar 2020 21:44:12 +0800
-Message-Id: <1583243052-1930-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20200303073358.57799-1-cengiz@kernel.wtf>
+ <ec24c6d8-617f-1460-0420-bc2ac3f346c6@oracle.com>
+ <20200303083523.78233c24@gandalf.local.home>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <61e6efc2-6521-5dc3-b9cf-353f52e10e2c@oracle.com>
+Date:   Tue, 3 Mar 2020 21:44:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20200303083523.78233c24@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9548 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=2 malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003030105
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9548 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=2
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003030105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_regulator_register() could return -EPROBE_DEFER when trying to
-get init data and NOT all resources are available at that time, for
-this case, error message is better to be present for debug level ONLY.
+On 3/3/20 9:35 PM, Steven Rostedt wrote:
+> On Tue, 3 Mar 2020 21:29:08 +0800
+> Bob Liu <bob.liu@oracle.com> wrote:
+> 
+>> On 3/3/20 3:33 PM, Cengiz Can wrote:
+>>> There was a recent change in blktrace.c that added a RCU protection to
+>>> `q->blk_trace` in order to fix a use-after-free issue during access.
+>>>
+>>> However the change missed an edge case that can lead to dereferencing of
+>>> `bt` pointer even when it's NULL:
+>>>
+>>> ```
+>>>         bt->act_mask = value; // bt can still be NULL here
+>>> ```
+>>>
+>>> Added a reassignment into the NULL check block to fix the issue.
+>>>
+>>> Fixes: c780e86dd48 ("blktrace: Protect q->blk_trace with RCU")
+>>>
+>>> Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
+>>> ---
+>>>  Huge thanks goes to Steven Rostedt for his assistance.
+>>>
+>>>  kernel/trace/blktrace.c | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+>>> index 4560878f0bac..29ea88f10b87 100644
+>>> --- a/kernel/trace/blktrace.c
+>>> +++ b/kernel/trace/blktrace.c
+>>> @@ -1896,8 +1896,10 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
+>>>  	}
+>>>
+>>>  	ret = 0;
+>>> -	if (bt == NULL)
+>>> +	if (bt == NULL) {
+>>>  		ret = blk_trace_setup_queue(q, bdev);
+>>> +		bt = q->blk_trace;  
+>>
+>> The return value 'ret' should be judged, it's wrong to set 'bt' if blk_trace_setup_queue()
+>> return failure.
+> 
+> Why? If ret is an error, q is still valid, and bt would just be garbage. bt
+> is ignored below if ret is anything but zero. Why add an unnecessary if
+> condition here?
+>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- lower the defer error message to debug level instead of dropping it.
----
- drivers/regulator/anatop-regulator.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Oh..yes. You are right, sorry for missed the if (ret == 0) below.
 
-diff --git a/drivers/regulator/anatop-regulator.c b/drivers/regulator/anatop-regulator.c
-index 754739d..ca92b3d 100644
---- a/drivers/regulator/anatop-regulator.c
-+++ b/drivers/regulator/anatop-regulator.c
-@@ -305,9 +305,13 @@ static int anatop_regulator_probe(struct platform_device *pdev)
- 	/* register regulator */
- 	rdev = devm_regulator_register(dev, rdesc, &config);
- 	if (IS_ERR(rdev)) {
--		dev_err(dev, "failed to register %s\n",
--			rdesc->name);
--		return PTR_ERR(rdev);
-+		ret = PTR_ERR(rdev);
-+		if (ret == -EPROBE_DEFER)
-+			dev_dbg(dev, "failed to register %s, deferring...\n",
-+				rdesc->name);
-+		else
-+			dev_err(dev, "failed to register %s\n", rdesc->name);
-+		return ret;
- 	}
- 
- 	platform_set_drvdata(pdev, rdev);
--- 
-2.7.4
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
+
+> That said, the bt assignment still needs rcu annotation:
+> > 		bt = rcu_dereference_protected(q->blk_trace,
+> 				lockdep_is_held(&q->blk_trace_mutex));
+> 
+> -- Steve
+> 
+> 
+>>
+>>> +	}
+>>>
+>>>  	if (ret == 0) {
+>>>  		if (attr == &dev_attr_act_mask)
+>>> --
+>>> 2.25.1
+>>>   
+> 
 
