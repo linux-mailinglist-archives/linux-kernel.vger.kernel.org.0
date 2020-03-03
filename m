@@ -2,144 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B74177C9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:02:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A67F177CBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 18:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbgCCRBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:01:17 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:47486 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbgCCRBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:01:16 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023GsOhe127300;
-        Tue, 3 Mar 2020 17:00:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=YHBXFBSktgQjLaRBFzopaXSA2ylIlKhMSsg5ZAsockc=;
- b=jU4quvUitJTwIwf5TegZ6FvIOBcS7nc9vzYDmvRycgAyYS2EIZXF4yJGEcLYrT3KdvuV
- jhRwojj9cPlXqOkY6n5kvVVh5G0J0mOX6h2eaYotu+Vqjpw4ByxwHjDLm4fFJo61pLRo
- H15BnFMK6Nmmx9uaHL2jKDU5x/l8JQAbgTk30omrZLmb+HN2S+d72h7gTcX1QAQI+pB+
- taCAcpWazu99ZdDj9UPHFQGKFfTGOwvQsMb6orDhb+8sLl+XznEFUvdYGO1dnPpJfAxg
- w/EOHLbWP8RmoSrRnwywhAKt7G3HJdQx4RcbxkUHJw8pUKTOr1XrBUdm//7T8wTxEqYK NQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2yffwqrknh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Mar 2020 17:00:17 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023GmTDr053801;
-        Tue, 3 Mar 2020 17:00:16 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2yg1p4vf44-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Mar 2020 17:00:16 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 023H0AJR001636;
-        Tue, 3 Mar 2020 17:00:11 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Mar 2020 09:00:10 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 7873A6A0129; Tue,  3 Mar 2020 12:03:53 -0500 (EST)
-Date:   Tue, 3 Mar 2020 12:03:53 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Ashish Kalra <ashish.kalra@amd.com>
-Cc:     Konrad Rzeszutek Wilk <konrad@darnok.org>, hch@lst.de,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, luto@kernel.org, peterz@infradead.org,
-        dave.hansen@linux-intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, brijesh.singh@amd.com,
-        Thomas.Lendacky@amd.com
-Subject: Re: [PATCH v2] swiotlb: Adjust SWIOTBL bounce buffer size for SEV
- guests.
-Message-ID: <20200303170353.GC31627@char.us.oracle.com>
-References: <20191209231346.5602-1-Ashish.Kalra@amd.com>
- <20191220015245.GA7010@localhost.localdomain>
- <20200121200947.GA24884@ashkalra_ubuntu_server>
- <20200121205403.GC75374@Konrads-MacBook-Pro.local>
- <20200124230008.GA1565@ashkalra_ubuntu_server>
- <20200204193500.GA15564@ashkalra_ubuntu_server>
+        id S1730531AbgCCREa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:04:30 -0500
+Received: from mail-bn8nam11on2066.outbound.protection.outlook.com ([40.107.236.66]:20302
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729000AbgCCREa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:04:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AeKDJ62K/Tbp2FEYNXjwiwlkCfQ/6G7CwZFvj1ngBdq9B0Q2vJppI+cY034QuMNlCltHrhk2+oYLAQ2XbY0CYqWCPo8TNKTkDdLoGoSz6ulXUbDgMOiOiHK8XDrMmpqpIOjNdyHprD2s77sVeyUg3Q4jYdpnfOvIu4aiJhsa5qdtNCdnS/GNNG1aEj6zcQTO18sE7BdPkjR9eqhu8gJ8IXu40l/JQiLGMSE5l0um+gr45loYy211AckMEkkH8lVZcR3spRuKk/OZS/XWy/3MGccZ0GjwwyefKUr4RapjSxFgsDmG5tJRrnqtD7Wj/3rBWtvewuv8749Lix8GeQms2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QPtfK5t+6xALbK8zwNW9i/3AI19PXF/GvftPPfakOIM=;
+ b=oTbTxgyNyXmfU8pdy0i1a+zM1LVpdLi1CDKP1zvaGv0J4I9ObOVj/gu8kRm/MvN6OBDViqgRl/nIkPaDo6POqzeKgEtF1rc1wkIZ59eWJsi9AS4U+gGhsS+XLC/sT02FKTM9OdY3RBwaEQvbMfNzo0O+FIYQ4o9Co1dB1QJMwD/GyxEB4a6e5RuJTzMWdutwwq+XaZQIByvLiz8kTYxGr9q9rx5tHIiJ2ANT4s7gcFR9Kp9eHm+Z6pkdkIBQDvNpSObaJwmIv/vVLhOBcxRpHavV/Ct2bHgiPOHaLF7R82R9hUvOKDoNpv8g++84L5p3lTG8N4mmPGgEGGfeEfasFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QPtfK5t+6xALbK8zwNW9i/3AI19PXF/GvftPPfakOIM=;
+ b=cqiqwgAvVLbLSHvD4+iqFiNFH0R5Yf0KWJbBuA8Xinm8BS0SXZ6j9nP+dl1eUCDeFuj9XireuhwLg2vcVi5vvWldHnjF3hcG7mU8C1l/sE84PumgSqcRcPH3bJck75PZU8+djrlmjY3z9sEUFpRrjDtnqFZJS4nifijvWy1kb8A=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kim.phillips@amd.com; 
+Received: from SN6PR12MB2845.namprd12.prod.outlook.com (2603:10b6:805:75::33)
+ by SN6PR12MB2671.namprd12.prod.outlook.com (2603:10b6:805:75::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18; Tue, 3 Mar
+ 2020 17:04:26 +0000
+Received: from SN6PR12MB2845.namprd12.prod.outlook.com
+ ([fe80::dd6f:a575:af8e:4f1b]) by SN6PR12MB2845.namprd12.prod.outlook.com
+ ([fe80::dd6f:a575:af8e:4f1b%7]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 17:04:26 +0000
+Subject: Re: [PATCH v3 3/3] perf vendor events amd: update Zen1 events to V2
+To:     Vijay Thakkar <vijaythakkar@me.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        =?UTF-8?Q?Martin_Li=c5=a1ka?= <mliska@suse.cz>,
+        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+References: <20200228175639.39171-1-vijaythakkar@me.com>
+ <20200228175639.39171-4-vijaythakkar@me.com>
+From:   Kim Phillips <kim.phillips@amd.com>
+Message-ID: <77552e9e-7fca-7186-24cc-6a8a87d4b7b6@amd.com>
+Date:   Tue, 3 Mar 2020 11:04:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+In-Reply-To: <20200228175639.39171-4-vijaythakkar@me.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DM5PR22CA0012.namprd22.prod.outlook.com
+ (2603:10b6:3:101::22) To SN6PR12MB2845.namprd12.prod.outlook.com
+ (2603:10b6:805:75::33)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204193500.GA15564@ashkalra_ubuntu_server>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 adultscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003030116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- phishscore=0 clxscore=1011 bulkscore=0 adultscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003030116
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.236.136.247] (165.204.77.1) by DM5PR22CA0012.namprd22.prod.outlook.com (2603:10b6:3:101::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Tue, 3 Mar 2020 17:04:24 +0000
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 4785c8fc-37ee-4c95-f512-08d7bf94ed7f
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2671:|SN6PR12MB2671:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN6PR12MB267187C79D372610E589528887E40@SN6PR12MB2671.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
+X-Forefront-PRVS: 03319F6FEF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(39860400002)(346002)(376002)(189003)(199004)(8936002)(7416002)(66476007)(81166006)(31696002)(5660300002)(81156014)(4326008)(6486002)(86362001)(8676002)(66946007)(66556008)(53546011)(52116002)(36756003)(110136005)(31686004)(16576012)(16526019)(54906003)(316002)(26005)(2906002)(2616005)(956004)(478600001)(186003)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2671;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: e5JhFpE0IYvrCu5keJ6NvKH/bZCM+bX/S9ya551RIPfJbSoYxECboCsjyVY+0Xd1BYa/DiR1Mv+eQmAb8N7ibuqBPIzFLNaKzwPzuQPwWeonsHeJS95ituq1amEZaCcRAqBWTAn9Mm74pJKuU8/5zPQ6/oNxRNNCG5ffaudKvsnmodRcPPKy/xPFIhGH4BpSgockeKh/NXRBWlEfGPutB56Q02BcGLkvnhimIDKb4qWSg6RAVKA+wBHihSYWESzBUej3nuDmhjdWJJEJ0oZkqDz8NfPZVCT/PQxYshDjrLS5q5C5CMWxSFfLPSjLRTyK7qlbAt7A8bBP22sHEvpPAwOTD0u+Du6zo1nZq3aQFFoHZvVRcYa1hNEAItZAD9n9z921B8Cbibo0Dut3MaKQgGtXat26K1xVl6Xr8EPnNLi9SLCzz8/WZ7lbeA1fmbCk
+X-MS-Exchange-AntiSpam-MessageData: xbfVOTlU383yu+JfbBhPKLB0i6Jon3uczQHY3BAuAtXgTFTo2vXfirX8FFmIwbze3nBAYyeDEQmc/HfR7ZjeLJXAGmjXoAZm/VWnJEllKPCAFhvHgW8svlDubCMY9v758wPVckZcR7NC/ahXngYztg==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4785c8fc-37ee-4c95-f512-08d7bf94ed7f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 17:04:25.8757
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C0HAFfzkJ3iRF3QS2wY++XUhnmWMBmrhPTUO9SInWILnGsU19skK75SaOXyU481XZCdGFuvtC7UzzBm/QDj5Eg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2671
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 07:35:00PM +0000, Ashish Kalra wrote:
-> Hello Konrad,
-> 
-> Looking fwd. to your feedback regarding support of other memory
-> encryption architectures such as Power, S390, etc.
-> 
-> Thanks,
-> Ashish
-> 
-> On Fri, Jan 24, 2020 at 11:00:08PM +0000, Ashish Kalra wrote:
-> > On Tue, Jan 21, 2020 at 03:54:03PM -0500, Konrad Rzeszutek Wilk wrote:
-> > > > 
-> > > > Additional memory calculations based on # of PCI devices and
-> > > > their memory ranges will make it more complicated with so
-> > > > many other permutations and combinations to explore, it is
-> > > > essential to keep this patch as simple as possible by 
-> > > > adjusting the bounce buffer size simply by determining it
-> > > > from the amount of provisioned guest memory.
-> > >> 
-> > >> Please rework the patch to:
-> > >> 
-> > >>  - Use a log solution instead of the multiplication.
-> > >>    Feel free to cap it at a sensible value.
-> > 
-> > Ok.
-> > 
-> > >> 
-> > >>  - Also the code depends on SWIOTLB calling in to the
-> > >>    adjust_swiotlb_default_size which looks wrong.
-> > >> 
-> > >>    You should not adjust io_tlb_nslabs from swiotlb_size_or_default.
-> > 
-> > >>    That function's purpose is to report a value.
-> > >> 
-> > >>  - Make io_tlb_nslabs be visible outside of the SWIOTLB code.
-> > >> 
-> > >>  - Can you utilize the IOMMU_INIT APIs and have your own detect which would
-> > >>    modify the io_tlb_nslabs (and set swiotbl=1?).
-> > 
-> > This seems to be a nice option, but then IOMMU_INIT APIs are
-> > x86-specific and this swiotlb buffer size adjustment is also needed
-> > for other memory encryption architectures like Power, S390, etc.
+Hi Vijay,
 
-Oh dear. That I hadn't considered.
-> > 
-> > >> 
-> > >>    Actually you seem to be piggybacking on pci_swiotlb_detect_4gb - so
-> > >>    perhaps add in this code ? Albeit it really should be in it's own
-> > >>    file, not in arch/x86/kernel/pci-swiotlb.c
-> > 
-> > Actually, we piggyback on pci_swiotlb_detect_override which sets
-> > swiotlb=1 as x86_64_start_kernel() and invocation of sme_early_init()
-> > forces swiotlb on, but again this is all x86 architecture specific.
+On 2/28/20 11:56 AM, Vijay Thakkar wrote:
+> +++ b/tools/perf/pmu-events/arch/x86/amdzen1/floating-point.json
+> @@ -3,16 +3,72 @@
+>      "EventName": "fpu_pipe_assignment.dual",
+>      "EventCode": "0x00",
+>      "BriefDescription": "Total number multi-pipe uOps.",
 
-Then it looks like the best bet is to do it from within swiotlb_init?
-We really can't do it from swiotlb_size_or_default - that function
-should just return a value and nothing else.
+Please concatenate .."assigned to all pipes", like you did in the publicDescription:
 
-> > 
-> > Thanks,
-> > Ashish
+> -    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to Pipe 3.",
+> +    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number multi-pipe uOps assigned to all pipes.",
+>      "UMask": "0xf0"
+>    },
+<snip>
+>    {
+>      "EventName": "fpu_pipe_assignment.total",
+>      "EventCode": "0x00",
+>      "BriefDescription": "Total number uOps.",
+
+Same here.
+
+> -    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number uOps assigned to Pipe 3.",
+> +    "PublicDescription": "The number of operations (uOps) and dual-pipe uOps dispatched to each of the 4 FPU execution pipelines. This event reflects how busy the FPU pipelines are and may be used for workload characterization. This includes all operations performed by x87, MMX, and SSE instructions, including moves. Each increment represents a one- cycle dispatch event. This event is a speculative event. Since this event includes non-numeric operations it is not suitable for measuring MFLOPS. Total number uOps assigned to all pipes.",
+>      "UMask": "0xf"
+>    },
+
+The rest looks good to me, and so does patch 1/3 still.
+
+Thanks,
+
+Kim
+
