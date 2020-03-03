@@ -2,124 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9028D178293
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C6B3178299
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbgCCSmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:42:11 -0500
-Received: from mga03.intel.com ([134.134.136.65]:25430 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726988AbgCCSmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 13:42:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 10:42:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="263306240"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Mar 2020 10:42:09 -0800
-Date:   Tue, 3 Mar 2020 10:42:09 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, tony.luck@intel.com,
-        peterz@infradead.org, fenghua.yu@intel.com, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] x86/split_lock: Export handle_user_split_lock()
-Message-ID: <20200303184209.GP1439@linux.intel.com>
-References: <20200206070412.17400-1-xiaoyao.li@intel.com>
- <20200206070412.17400-2-xiaoyao.li@intel.com>
+        id S1730001AbgCCSrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:47:42 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39430 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726899AbgCCSrl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 13:47:41 -0500
+Received: by mail-ot1-f65.google.com with SMTP id x97so4082438ota.6;
+        Tue, 03 Mar 2020 10:47:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V16aal7zag3kMsr09Mn6Pwm+yaS63ymnYzw5shFWl8o=;
+        b=hPPd8kp79gKGNtyGE61o3kO8/xGa4wfSN3K9mSGqWCAuX5YjJl9JxKZfNSNkQyukGY
+         xmoawkOIa7R97kUou2yF+hYqHRU++xU90KvpDYN/dxDT+MbOX/vsd0VJOvwSQYjUkwI2
+         tx8y0lc1kRM/D/GIBr8ee/0I6XcnnlldgpUEZisVaPo3cFDeTB2/bdVowCP56XtZUlHT
+         y7jHymiZFOK1/DDA0ocsUTQoEgzm9gcadgyVZ59bx363QHN6luHtiKoPffFuzk+ZMruA
+         iJWySNHhe/SkbvfwAQZJKNGOWDK0hX5FiIbjtZ5b7VmNnqY1lL2W/QuB/UNqZlww+fGr
+         87CQ==
+X-Gm-Message-State: ANhLgQ1tXVTvr/fMzxrTM9KbRV4BLFvw+oKAuhSO688q+kSWOl83ID3Y
+        s8LH3NfOTG2F9l1auIoeyQ==
+X-Google-Smtp-Source: ADFU+vtZ2kBjLYMbCupGtxnCYEydzNp//c2n2ytmjC5DrFRFmsm+XNsR1sLMnsSr9bp4FbQOOdzObw==
+X-Received: by 2002:a9d:5e82:: with SMTP id f2mr4317186otl.240.1583261259115;
+        Tue, 03 Mar 2020 10:47:39 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s2sm766013otp.35.2020.03.03.10.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 10:47:38 -0800 (PST)
+Received: (nullmailer pid 20625 invoked by uid 1000);
+        Tue, 03 Mar 2020 18:47:37 -0000
+Date:   Tue, 3 Mar 2020 12:47:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Michael Walle <michael@walle.cc>
+Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Jiri Slaby <jslaby@suse.com>, Peng Fan <peng.fan@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Yuan Yao <yao.yuan@nxp.com>
+Subject: Re: [PATCH v3 3/9] tty: serial: fsl_lpuart: handle EPROBE_DEFER for
+ DMA
+Message-ID: <20200303184737.GD26191@bogus>
+References: <20200303174306.6015-1-michael@walle.cc>
+ <20200303174306.6015-4-michael@walle.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200206070412.17400-2-xiaoyao.li@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200303174306.6015-4-michael@walle.cc>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 03:04:05PM +0800, Xiaoyao Li wrote:
-> Move the EFLAGS.AC check to do_alignment_check() so that
-> handle_user_split_lock() can be used by KVM in the future to handle #AC
-> caused by split lock in guest.
+On Tue, Mar 03, 2020 at 06:43:00PM +0100, Michael Walle wrote:
+> The DMA channel might not be available at probe time. This is esp. the
+> case if the DMA controller has an IOMMU mapping.
 
-Probably worth explaining that KVM doesn't have a @regs context and will
-pre-check EFLAGS.AC.
+The subject should be updated as this doesn't involve deferred probe any 
+more. 
 
-> Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> There is also another caveat. If there is no DMA controller at all,
+> dma_request_chan() will also return -EPROBE_DEFER. Thus we cannot test
+> for -EPROBE_DEFER in probe(). Otherwise the lpuart driver will fail to
+> probe if, for example, the DMA driver is not enabled in the kernel
+> configuration.
+> 
+> To workaround this, we request the DMA channel in _startup(). Other
+> serial drivers do it the same way.
+> 
+> Signed-off-by: Michael Walle <michael@walle.cc>
 > ---
->  arch/x86/include/asm/cpu.h  | 4 ++--
->  arch/x86/kernel/cpu/intel.c | 7 ++++---
->  arch/x86/kernel/traps.c     | 2 +-
->  3 files changed, 7 insertions(+), 6 deletions(-)
+>  drivers/tty/serial/fsl_lpuart.c | 84 +++++++++++++++++++++------------
+>  1 file changed, 53 insertions(+), 31 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-> index ff6f3ca649b3..ff567afa6ee1 100644
-> --- a/arch/x86/include/asm/cpu.h
-> +++ b/arch/x86/include/asm/cpu.h
-> @@ -43,11 +43,11 @@ unsigned int x86_stepping(unsigned int sig);
->  #ifdef CONFIG_CPU_SUP_INTEL
->  extern void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c);
->  extern void switch_to_sld(unsigned long tifn);
-> -extern bool handle_user_split_lock(struct pt_regs *regs, long error_code);
-> +extern bool handle_user_split_lock(unsigned long ip);
->  #else
->  static inline void __init cpu_set_core_cap_bits(struct cpuinfo_x86 *c) {}
->  static inline void switch_to_sld(unsigned long tifn) {}
-> -static inline bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-> +static inline bool handle_user_split_lock(unsigned long ip)
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+> index c31b8f3db6bf..0b8c477b32a3 100644
+> --- a/drivers/tty/serial/fsl_lpuart.c
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> @@ -1493,36 +1493,63 @@ static void rx_dma_timer_init(struct lpuart_port *sport)
+>  static void lpuart_tx_dma_startup(struct lpuart_port *sport)
 >  {
->  	return false;
->  }
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index db3e745e5d47..2b3874a96bd4 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -1058,13 +1058,13 @@ static void split_lock_init(void)
->  	sld_state = sld_off;
->  }
+>  	u32 uartbaud;
+> +	int ret;
 >  
-> -bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-> +bool handle_user_split_lock(unsigned long ip)
->  {
-> -	if ((regs->flags & X86_EFLAGS_AC) || sld_state == sld_fatal)
-> +	if (sld_state == sld_fatal)
->  		return false;
->  
->  	pr_warn_ratelimited("#AC: %s/%d took a split_lock trap at address: 0x%lx\n",
-> -			    current->comm, current->pid, regs->ip);
-> +			    current->comm, current->pid, ip);
->  
->  	/*
->  	 * Disable the split lock detection for this task so it can make
-> @@ -1075,6 +1075,7 @@ bool handle_user_split_lock(struct pt_regs *regs, long error_code)
->  	set_tsk_thread_flag(current, TIF_SLD);
->  	return true;
->  }
-> +EXPORT_SYMBOL_GPL(handle_user_split_lock);
->  
->  /*
->   * This function is called only when switching between tasks with
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 0ef5befaed7d..407ff9be610f 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -304,7 +304,7 @@ dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code)
->  
->  	local_irq_enable();
->  
-> -	if (handle_user_split_lock(regs, error_code))
-> +	if (!(regs->flags & X86_EFLAGS_AC) && handle_user_split_lock(regs->ip))
->  		return;
->  
->  	do_trap(X86_TRAP_AC, SIGBUS, "alignment check", regs,
-> -- 
-> 2.23.0
-> 
+> -	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
+> -		init_waitqueue_head(&sport->dma_wait);
+> -		sport->lpuart_dma_tx_use = true;
+> -		if (lpuart_is_32(sport)) {
+> -			uartbaud = lpuart32_read(&sport->port, UARTBAUD);
+> -			lpuart32_write(&sport->port,
+> -				       uartbaud | UARTBAUD_TDMAE, UARTBAUD);
+> -		} else {
+> -			writeb(readb(sport->port.membase + UARTCR5) |
+> -				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
+> -		}
+> +	sport->dma_tx_chan = dma_request_slave_channel(sport->port.dev, "tx");
+> +	if (!sport->dma_tx_chan) {
+> +		dev_info_once(sport->port.dev,
+> +			      "DMA tx channel request failed, operating without tx DMA\n");
+
+Might be useful to print the errno too.
+
+Rob
