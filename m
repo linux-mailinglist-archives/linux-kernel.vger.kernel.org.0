@@ -2,116 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D37176FBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:09:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A08176FC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbgCCHJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:09:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbgCCHJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:09:52 -0500
-Received: from onda.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6196A20CC7;
-        Tue,  3 Mar 2020 07:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583219391;
-        bh=25tK8WOoFxs0713ihIp2v/ZITVby64PNqh7BHCke+Yc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZbJbnpZz2MfKVFBPbmxrq+1xY9Pdkkw/QUQp9bomOyWUw/rJb6q+yiJPtpjPlhC+c
-         HdpxKkmIGdmb8A75J6BmmPcZ6cm/Z5Ag2Z823D5MBBix+R6E6ip8SHUlCvshtm7aRK
-         bUSTNRkHrZ6tvkDBrlLApaZ0wenZ3dUqkkRyUXlw=
-Date:   Tue, 3 Mar 2020 08:09:47 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] Convert some DT documentation files to ReST
-Message-ID: <20200303080947.5f381004@onda.lan>
-In-Reply-To: <20200302123554.08ac0c34@lwn.net>
-References: <cover.1583135507.git.mchehab+huawei@kernel.org>
-        <20200302123554.08ac0c34@lwn.net>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727541AbgCCHNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:13:18 -0500
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:7362 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727507AbgCCHNS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 02:13:18 -0500
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.19]) by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee65e5e035d2c5-c6d2e; Tue, 03 Mar 2020 15:12:30 +0800 (CST)
+X-RM-TRANSID: 2ee65e5e035d2c5-c6d2e
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[112.3.208.44])
+        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea5e5e03553e9-cdb48;
+        Tue, 03 Mar 2020 15:12:30 +0800 (CST)
+X-RM-TRANSID: 2eea5e5e03553e9-cdb48
+From:   tangbin <tangbin@cmss.chinamobile.com>
+To:     gregkh@linuxfoundation.org
+Cc:     jslaby@suse.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        tangbin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH 2/2] tty:serial:mvebu-uart:fix a wrong return
+Date:   Tue,  3 Mar 2020 15:13:09 +0800
+Message-Id: <20200303071309.17172-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.20.1.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 2 Mar 2020 12:35:54 -0700
-Jonathan Corbet <corbet@lwn.net> escreveu:
+in this place,the right return should be
+return PTR_ERR(),not return -PTR_ERR()
 
-> On Mon,  2 Mar 2020 08:59:25 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
->=20
-> > While most of the devicetree stuff has its own format (with is now being
-> > converted to YAML format), some documents there are actually
-> > describing the DT concepts and how to contribute to it.
-> >=20
-> > IMHO, those documents would fit perfectly as part of the documentation
-> > body, as part of the firmare documents set.
-> >=20
-> > This patch series manually converts some DT documents that, on my
-> > opinion, would belong to it. =20
->=20
-> Did you consider putting this stuff into the firmware-guide while you were
-> at it?  It's not a perfect fit, I guess, but it doesn't seem too awkward
-> either.
+Signed-off-by: tangbin <tangbin@cmss.chinamobile.com>
+---
+ drivers/tty/serial/mvebu-uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I placed it just below the firmware-guide at the main index file.
+diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
+index c12a12556..4e9a59071 100644
+--- a/drivers/tty/serial/mvebu-uart.c
++++ b/drivers/tty/serial/mvebu-uart.c
+@@ -851,7 +851,7 @@ static int mvebu_uart_probe(struct platform_device *pdev)
+ 
+ 	port->membase = devm_ioremap_resource(&pdev->dev, reg);
+ 	if (IS_ERR(port->membase))
+-		return -PTR_ERR(port->membase);
++		return PTR_ERR(port->membase);
+ 
+ 	mvuart = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_uart),
+ 			      GFP_KERNEL);
+-- 
+2.20.1.windows.1
 
-I have split thoughts about moving the files to there, though. From
-one side, it may fit better from the PoV of organizing the documentation.
 
-=46rom other side, newcomers working with DT may expect looking at the
-text files inside Documentation/devicetree/.
 
-Maybe I could add an extra patch at the end of this series with the
-move, adding a "RFC" on his title. This way, we can better discuss it,
-and either merge the last one or not depending on the comments.
-
->=20
-> It also seems like it would be good to CC the devicetree folks, or at
-> least the devicetree mailing list?
-
-Yeah, that would make sense. I'm using get-maintainers script to
-prepare the c/c list, as it is simply too much work to find the
-right maintainers by hand, for every single patch.
-
-I just noticed today that there's just *one entry* at MAINTAINERS
-file for Documentation/devicetree, and that points to you:
-
-	DOCUMENTATION
-	M:	Jonathan Corbet <corbet@lwn.net>
-	L:      linux-doc@vger.kernel.org
-	S:	Maintained
-	F:      Documentation/
-	F:	scripts/documentation-file-ref-check
-	F:	scripts/kernel-doc
-	F:	scripts/sphinx-pre-install
-	X:      Documentation/ABI/
-	X:	Documentation/firmware-guide/acpi/
-	X:	Documentation/devicetree/
-
-So, perhaps we should add something like this to MAINTAINERS:
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe3ab10354c2..64deb23dbb13 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12394,6 +12394,11 @@ L:	linux-rdma@vger.kernel.org
- S:	Supported
- F:	drivers/infiniband/ulp/opa_vnic
-=20
-+OPEN FIRMWARE
-+L:	devicetree@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree
-+
- OPEN FIRMWARE AND DEVICE TREE OVERLAYS
- M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
- M:	Frank Rowand <frowand.list@gmail.com>
