@@ -2,124 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF62E177AF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 16:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB996177ACE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 16:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbgCCPuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 10:50:06 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33286 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbgCCPuG (ORCPT
+        id S1730134AbgCCPn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 10:43:59 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58916 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729751AbgCCPn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 10:50:06 -0500
-Received: by mail-ed1-f66.google.com with SMTP id c62so5051436edf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 07:50:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wUChkrPr5ljfTasjojcfSOHYLssa67n/JsN8CgfdAHE=;
-        b=K9XNUJGroYRdDR1ux6pXF7oQJcGzvpLxnCKPCsX26C0Tu9hC5HuWWrFU7srbEOJOL+
-         Jk8ookxlAbji14BsL73PDTTF5eIJrpdAnDiCpyDiRGGvFozH6M+B80Uy/Fe1JxlrrsXH
-         GRW1RIhoPUEdNvwHY5SmG3qe3uwWBJBypBRAE=
+        Tue, 3 Mar 2020 10:43:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583250237;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yAMnWRJ5vnc6TKSkmN2sROwH3cHSL3g+RIjwXJW2VbU=;
+        b=JgIPrcfFz7PEAjvXlQGWEbtY3UqhaQxqb91VnLqOeEs6p2iQ7fpe1HNH9NL0/MgaYQAgKn
+        W9/3rQlWpdDtbJmbf1UZ5YlDHXAEstcEfgeLvx+9tq+0tzBvjUN7omnMiOK9ZdogzcFGf9
+        YTKx4I2Bj7Z40wMSq0Ojy609WZU039Y=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-47-yZxEFT8UOiq8SG2cNbktig-1; Tue, 03 Mar 2020 10:43:54 -0500
+X-MC-Unique: yZxEFT8UOiq8SG2cNbktig-1
+Received: by mail-wr1-f72.google.com with SMTP id p5so1373916wrj.17
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 07:43:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wUChkrPr5ljfTasjojcfSOHYLssa67n/JsN8CgfdAHE=;
-        b=bE3rvOgReC7Pnazg18WSyBuAi7XKoRWf90DiLjPc1LDuC/suX5Lr8CLtuJLUY0SbV+
-         YSjQe3gc6dMEBt15lYpkpGcw4XXzC5omE9lPb2X9O0043JGcY95fQFYKsqTKd02N4CML
-         qjTiiR+sIJXbrY0RVsKS6iUYsPEJriqhkbdbZmnELoeeabFXEL2XtXMZr74DKdGbElox
-         fmJlZHjJiOxOvrAzWvnf26uofVujjr9V3bAvB9eSoD9HgUdXqxGXPLnuWw5MPaHTooJQ
-         PtFuR3kbIfoNsWVhdAMi/HbjbAc/K+W6bDX9CkgSY++NjD55xjBiVLjNWLOeNVW6EhV/
-         PPKQ==
-X-Gm-Message-State: ANhLgQ0qz38K6TnCCuGtkUS40ZgH37w/EKICcKII0nlQofJ9UUHDJXSN
-        QbamiKulJN6sMXzW9RAt/BO++4/6rT8=
-X-Google-Smtp-Source: ADFU+vttVDtv0P1qbkp8LSK1MIUDonbRRILAUFZjRU0G2DJCROkyT5D8i8vNxsgrcCbKymyDzXFwOQ==
-X-Received: by 2002:a05:6402:c02:: with SMTP id co2mr2678858edb.72.1583250604338;
-        Tue, 03 Mar 2020 07:50:04 -0800 (PST)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
-        by smtp.gmail.com with ESMTPSA id m6sm1050164ejb.51.2020.03.03.07.50.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 07:50:04 -0800 (PST)
-Received: by mail-wm1-f49.google.com with SMTP id a25so2662611wmm.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 07:50:04 -0800 (PST)
-X-Received: by 2002:a7b:c416:: with SMTP id k22mr4837344wmi.88.1583250223087;
- Tue, 03 Mar 2020 07:43:43 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=yAMnWRJ5vnc6TKSkmN2sROwH3cHSL3g+RIjwXJW2VbU=;
+        b=jyJOtKB8PiujMREGuozLVOWj5G/XoK62QciM9IxmHurbtjKBeZt0oIki/19K6ETX5/
+         I3wZzj3osyNVB+ipuDFk617BOueOw1kEcjj/B6vo/0q1+EM6v4bJd/MQaolqWrpCzOeQ
+         edgm+AWiikmUjDCHk9dfLYkxGIOv906n3r74Y5EC6kbnZ20kkAispjZZUQ5h941up/Rv
+         MNd9aRrYWYZL3joC6Z06A1i/dI1qSvgibJKQmS5DtSgqOop7hLGRIpu/JLI8IE8hN+7E
+         H6Q/N5qxkTWyHuhk8mjn0f855OCxZodrb3StcxF/GPKDZyutwSGwnJ9cvjRpUMbp2IkZ
+         GXgw==
+X-Gm-Message-State: ANhLgQ2r9/qOSbe36pIr/3HNKzX+UighFz3dVKSMFoQRdWb1WLZmnciN
+        s3XzaW8jYdE7yDzEhpI7KFn9qpW0ShKHXss9UjMG+Rcl43I4lvR6dtrDhDXfiNpYmZO5b13apln
+        IHBCjzrPQckECISgRXji4SXvU
+X-Received: by 2002:a5d:6604:: with SMTP id n4mr5757443wru.136.1583250233023;
+        Tue, 03 Mar 2020 07:43:53 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vumqsR5rnOG00c9GaGZ2ofh5YCbObsW6EeH/JregSBt8pHYDCYHTiSCjQ5QkNnLlKN2Hw9ffg==
+X-Received: by 2002:a5d:6604:: with SMTP id n4mr5757420wru.136.1583250232749;
+        Tue, 03 Mar 2020 07:43:52 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id j20sm4826677wmj.46.2020.03.03.07.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 07:43:52 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH v2 26/66] KVM: x86: Replace bare "unsigned" with "unsigned int" in cpuid helpers
+In-Reply-To: <20200302235709.27467-27-sean.j.christopherson@intel.com>
+References: <20200302235709.27467-1-sean.j.christopherson@intel.com> <20200302235709.27467-27-sean.j.christopherson@intel.com>
+Date:   Tue, 03 Mar 2020 16:43:51 +0100
+Message-ID: <87lfohfnpk.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20200228000105.165012-1-thgarnie@chromium.org>
- <202003022100.54CEEE60F@keescook> <20200303095514.GA2596@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200303095514.GA2596@hirez.programming.kicks-ass.net>
-From:   Thomas Garnier <thgarnie@chromium.org>
-Date:   Tue, 3 Mar 2020 07:43:31 -0800
-X-Gmail-Original-Message-ID: <CAJcbSZH1oON2VC2U8HjfC-6=M-xn5eU+JxHG2575iMpVoheKdA@mail.gmail.com>
-Message-ID: <CAJcbSZH1oON2VC2U8HjfC-6=M-xn5eU+JxHG2575iMpVoheKdA@mail.gmail.com>
-Subject: Re: [PATCH v11 00/11] x86: PIE support to extend KASLR randomization
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Allison Randal <allison@lohutok.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 1:55 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Mar 02, 2020 at 09:02:15PM -0800, Kees Cook wrote:
-> > On Thu, Feb 27, 2020 at 04:00:45PM -0800, Thomas Garnier wrote:
-> > > Minor changes based on feedback and rebase from v10.
-> > >
-> > > Splitting the previous serie in two. This part contains assembly code
-> > > changes required for PIE but without any direct dependencies with the
-> > > rest of the patchset.
-> > >
-> > > Note: Using objtool to detect non-compliant PIE relocations is not yet
-> > > possible as this patchset only includes the simplest PIE changes.
-> > > Additional changes are needed in kvm, xen and percpu code.
-> > >
-> > > Changes:
-> > >  - patch v11 (assembly);
-> > >    - Fix comments on x86/entry/64.
-> > >    - Remove KASLR PIE explanation on all commits.
-> > >    - Add note on objtool not being possible at this stage of the patchset.
-> >
-> > This moves us closer to PIE in a clean first step. I think these patches
-> > look good to go, and unblock the work in kvm, xen, and percpu code. Can
-> > one of the x86 maintainers pick this series up?
->
-> But,... do we still need this in the light of that fine-grained kaslr
-> stuff?
->
-> What is the actual value of this PIE crud in the face of that?
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-If I remember well, it makes it easier/better but I haven't seen a
-recent update on that. Is that accurate Kees?
+> Replace "unsigned" with "unsigned int" to make checkpatch and people
+> everywhere a little bit happier, and to avoid propagating the filth when
+> future patches add more cpuid helpers that work with unsigned (ints).
+>
+> No functional change intended.
+>
+> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kvm/cpuid.h | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> index 72a79bdfed6b..46b4b61b6cf8 100644
+> --- a/arch/x86/kvm/cpuid.h
+> +++ b/arch/x86/kvm/cpuid.h
+> @@ -63,7 +63,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+>   * and can't be used by KVM to query/control guest capabilities.  And obviously
+>   * the leaf being queried must have an entry in the lookup table.
+>   */
+> -static __always_inline void reverse_cpuid_check(unsigned x86_leaf)
+> +static __always_inline void reverse_cpuid_check(unsigned int x86_leaf)
+>  {
+>  	BUILD_BUG_ON(x86_leaf == CPUID_LNX_1);
+>  	BUILD_BUG_ON(x86_leaf == CPUID_LNX_2);
+> @@ -87,15 +87,16 @@ static __always_inline u32 __feature_bit(int x86_feature)
+>  
+>  #define feature_bit(name)  __feature_bit(X86_FEATURE_##name)
+>  
+> -static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+> +static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned int x86_feature)
+>  {
+> -	unsigned x86_leaf = x86_feature / 32;
+> +	unsigned int x86_leaf = x86_feature / 32;
+>  
+>  	reverse_cpuid_check(x86_leaf);
+>  	return reverse_cpuid[x86_leaf];
+>  }
+>  
+> -static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu,
+> +						     unsigned int x86_feature)
+>  {
+>  	struct kvm_cpuid_entry2 *entry;
+>  	const struct cpuid_reg cpuid = x86_feature_cpuid(x86_feature);
+> @@ -119,7 +120,8 @@ static __always_inline u32 *guest_cpuid_get_register(struct kvm_vcpu *vcpu, unsi
+>  	}
+>  }
+>  
+> -static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu,
+> +					    unsigned int x86_feature)
+>  {
+>  	u32 *reg;
+>  
+> @@ -130,7 +132,8 @@ static __always_inline bool guest_cpuid_has(struct kvm_vcpu *vcpu, unsigned x86_
+>  	return *reg & __feature_bit(x86_feature);
+>  }
+>  
+> -static __always_inline void guest_cpuid_clear(struct kvm_vcpu *vcpu, unsigned x86_feature)
+> +static __always_inline void guest_cpuid_clear(struct kvm_vcpu *vcpu,
+> +					      unsigned int x86_feature)
+>  {
+>  	u32 *reg;
+
+I am a little bit happier indeed, thank you! We still have 170+ bare
+unsigned-s in arch/x86/kvm but let's at least not add more.
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+-- 
+Vitaly
+
