@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7641C177EEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 459EE178055
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731432AbgCCRrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:47:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54702 "EHLO mail.kernel.org"
+        id S1732841AbgCCR4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:56:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731418AbgCCRro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:47:44 -0500
+        id S1730841AbgCCR4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:56:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D43CD208C3;
-        Tue,  3 Mar 2020 17:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73B9B2072D;
+        Tue,  3 Mar 2020 17:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257664;
-        bh=RHF07HH/10+qbB+CsSVVFZKfwr43HSrnCB+OSo7B0FI=;
+        s=default; t=1583258162;
+        bh=Wn/4Yi/m96hOLe/jzp6H24+r/KiD9+YMjhMDtg05hG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SqHlIjlQhTyq0Fd+Nxyqi7k7rx8DvAzcWlBS6TFEvaI3HXGGzzaRGgbpot4Kn6hW6
-         k8m8qne9RF5wo8rNhFiH6ailIl5Daj5tEzx3YdH1BcuH8KnhzTPsrkP+QvH3tpbxwT
-         ook123pWKbqD0UPC26YJc7R/FUtWChMAMyJpXmco=
+        b=TnNb8Nck8d4GvrffsOQBhst7p5z0RQx++eZyvGgAGGlDYI2JUuKP2Prdw1ufy9i4x
+         IAL2/JXZJsHbn4Ghhl/Q47wkBAOHG3IOYdr5wSq5NeDYOoDKIVoEP2t4kJuD83woJ+
+         LWGYgIFoV+KYm31WmmzZVipSX87Qs/2vt3KYOYSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Remus <jremus@linux.ibm.com>,
-        Fedor Loshakov <loshakov@linux.ibm.com>,
-        Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.5 082/176] scsi: zfcp: fix wrong data and display format of SFP+ temperature
-Date:   Tue,  3 Mar 2020 18:42:26 +0100
-Message-Id: <20200303174314.133709004@linuxfoundation.org>
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 049/152] net: ena: fix potential crash when rxfh key is NULL
+Date:   Tue,  3 Mar 2020 18:42:27 +0100
+Message-Id: <20200303174308.000110422@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,60 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Block <bblock@linux.ibm.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-commit a3fd4bfe85fbb67cf4ec1232d0af625ece3c508b upstream.
+[ Upstream commit 91a65b7d3ed8450f31ab717a65dcb5f9ceb5ab02 ]
 
-When implementing support for retrieval of local diagnostic data from the
-FCP channel, the wrong data format was assumed for the temperature of the
-local SFP+ connector. The Fibre Channel Link Services (FC-LS-3)
-specification is not clear on the format of the stored integer, and only
-after consulting the SNIA specification SFF-8472 did we realize it is
-stored as two's complement. Thus, the used data and display format is
-wrong, and highly misleading for users when the temperature should drop
-below 0°C (however unlikely that may be).
+When ethtool -X is called without an hkey, ena_com_fill_hash_function()
+is called with key=NULL, which is passed to memcpy causing a crash.
 
-To fix this, change the data format in `struct fsf_qtcb_bottom_port` from
-unsigned to signed, and change the printf format string used to generate
-`zfcp_sysfs_adapter_diag_sfp_temperature_show()` from `%hu` to `%hd`.
+This commit fixes this issue by checking key is not NULL.
 
-Link: https://lore.kernel.org/r/d6e3be5428da5c9490cfff4df7cae868bc9f1a7e.1582039501.git.bblock@linux.ibm.com
-Fixes: a10a61e807b0 ("scsi: zfcp: support retrieval of SFP Data via Exchange Port Data")
-Fixes: 6028f7c4cd87 ("scsi: zfcp: introduce sysfs interface for diagnostics of local SFP transceiver")
-Cc: <stable@vger.kernel.org> # 5.5+
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
-Reviewed-by: Fedor Loshakov <loshakov@linux.ibm.com>
-Reviewed-by: Steffen Maier <maier@linux.ibm.com>
-Signed-off-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/scsi/zfcp_fsf.h   |    2 +-
- drivers/s390/scsi/zfcp_sysfs.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_fsf.h
-+++ b/drivers/s390/scsi/zfcp_fsf.h
-@@ -410,7 +410,7 @@ struct fsf_qtcb_bottom_port {
- 	u8 cb_util;
- 	u8 a_util;
- 	u8 res2;
--	u16 temperature;
-+	s16 temperature;
- 	u16 vcc;
- 	u16 tx_bias;
- 	u16 tx_power;
---- a/drivers/s390/scsi/zfcp_sysfs.c
-+++ b/drivers/s390/scsi/zfcp_sysfs.c
-@@ -800,7 +800,7 @@ static ZFCP_DEV_ATTR(adapter_diag, b2b_c
- 	static ZFCP_DEV_ATTR(adapter_diag_sfp, _name, 0400,		       \
- 			     zfcp_sysfs_adapter_diag_sfp_##_name##_show, NULL)
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index ea62604fdf8ca..e54c44fdcaa73 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -2297,15 +2297,16 @@ int ena_com_fill_hash_function(struct ena_com_dev *ena_dev,
  
--ZFCP_DEFINE_DIAG_SFP_ATTR(temperature, temperature, 5, "%hu");
-+ZFCP_DEFINE_DIAG_SFP_ATTR(temperature, temperature, 6, "%hd");
- ZFCP_DEFINE_DIAG_SFP_ATTR(vcc, vcc, 5, "%hu");
- ZFCP_DEFINE_DIAG_SFP_ATTR(tx_bias, tx_bias, 5, "%hu");
- ZFCP_DEFINE_DIAG_SFP_ATTR(tx_power, tx_power, 5, "%hu");
+ 	switch (func) {
+ 	case ENA_ADMIN_TOEPLITZ:
+-		if (key_len > sizeof(hash_key->key)) {
+-			pr_err("key len (%hu) is bigger than the max supported (%zu)\n",
+-			       key_len, sizeof(hash_key->key));
+-			return -EINVAL;
++		if (key) {
++			if (key_len != sizeof(hash_key->key)) {
++				pr_err("key len (%hu) doesn't equal the supported size (%zu)\n",
++				       key_len, sizeof(hash_key->key));
++				return -EINVAL;
++			}
++			memcpy(hash_key->key, key, key_len);
++			rss->hash_init_val = init_val;
++			hash_key->keys_num = key_len >> 2;
+ 		}
+-
+-		memcpy(hash_key->key, key, key_len);
+-		rss->hash_init_val = init_val;
+-		hash_key->keys_num = key_len >> 2;
+ 		break;
+ 	case ENA_ADMIN_CRC32:
+ 		rss->hash_init_val = init_val;
+-- 
+2.20.1
+
 
 
