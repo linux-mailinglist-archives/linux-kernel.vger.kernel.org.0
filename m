@@ -2,78 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994BF176D8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70314176D96
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 04:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCCDZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 22:25:57 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:34432 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbgCCDZ4 (ORCPT
+        id S1727143AbgCCDhq convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Mar 2020 22:37:46 -0500
+Received: from atlantico.unifap.br ([200.139.21.37]:54222 "EHLO
+        atlantico.unifap.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbgCCDhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 22:25:56 -0500
-Received: by mail-il1-f194.google.com with SMTP id n11so1516812ild.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 19:25:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wzQcjQiljMZHk04fD58LGKeytnaqThE2ImCl62xxtGw=;
-        b=gvtKrk97dyg8vZFA/UyhjwGK7wwLRLzO4JaKCmDnLPB4uaVOIWceJk3AVrSWG+tqn+
-         i38ENLxtrVWCUEezxMcaWvK1ydOlXaZyDFBOHwQRYG34ddB9vCoOZHaW3FY4aBIgOIow
-         qMvVJF1R2Y+In3LSEoce8WHpTlsDOVkVWe5f8NgQQ+t0kCsPHNYPlZcO8m7PbJjIFdUQ
-         /RQ/Cs1N4e1qXZQRvabsrcNXQloJUPZbwatzhaZe1OxCbiUpGhBAy1I2WdBrWGIZnZaj
-         vjHYWQ/6nk03klg/mtoRuhHh8HfURPYXbwuVz+PzgRzk8ugRU4ZUDractKKJTIbJ/X6J
-         0FEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wzQcjQiljMZHk04fD58LGKeytnaqThE2ImCl62xxtGw=;
-        b=sAFwc/geqLS3v7G1842Yd9NuOEf3Nd8AWijOAMQBlR6z1YNlKjRrPe+YBRSuvMPyxY
-         BZQzRyHyIubAMyBiqUcnjOabxc8r3iCx+bqFB5WuXwPJfgEET+qlg2AVKsawTCv1qpR4
-         e1FBGqLX3gU+UATsQAJApbR0hAR4a1axq30juB0C/GeD73jSwSHCzgLgi/dVvqUPhOBy
-         fenVzrbZxclD0YUZH2ak8OndXEn318iTrwRvTids37CUxCbNvLzjtWtA4C1NABlhZ7vR
-         KKcDkc4f9hXiCtas9s+l2UwCfyWnZzxF+Y5CQ8/o/0Lf1jOdHzKQd3PncS3nQBPd4Koh
-         lpAA==
-X-Gm-Message-State: ANhLgQ0TMUyq5vNN/kM96G8+vKdM6bmPCDImfNWOLhJlA5P3KN/llskt
-        WXwp16T4BwA+58y7uY1P2QSxXUnv06pYCLhqEiMsrg==
-X-Google-Smtp-Source: ADFU+vsXeBNw6lE9vPufNiNNr1E9nPXO3ou8dsPEfPthJokT+oEqBw0I0OoQKRXOLzdC/aMa2lzH9rdkH3GNL5fM9Lw=
-X-Received: by 2002:a92:981b:: with SMTP id l27mr2882984ili.118.1583205954541;
- Mon, 02 Mar 2020 19:25:54 -0800 (PST)
+        Mon, 2 Mar 2020 22:37:46 -0500
+X-Greylist: delayed 2431 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Mar 2020 22:37:45 EST
+Received: from localhost (localhost [127.0.0.1])
+        by atlantico.unifap.br (Postfix) with ESMTP id E24823C90EE6;
+        Mon,  2 Mar 2020 23:24:50 -0300 (-03)
+Received: from atlantico.unifap.br ([127.0.0.1])
+        by localhost (atlantico.unifap.br [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id qHGqnwB-iH90; Mon,  2 Mar 2020 23:24:50 -0300 (-03)
+Received: from localhost (localhost [127.0.0.1])
+        by atlantico.unifap.br (Postfix) with ESMTP id 4AAA93C91347;
+        Mon,  2 Mar 2020 23:24:49 -0300 (-03)
+X-Virus-Scanned: amavisd-new at unifap.br
+Received: from atlantico.unifap.br ([127.0.0.1])
+        by localhost (atlantico.unifap.br [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id iXmkTyCVEKTn; Mon,  2 Mar 2020 23:24:49 -0300 (-03)
+Received: from atlantico.unifap.br (atlantico.unifap.br [200.139.21.37])
+        by atlantico.unifap.br (Postfix) with ESMTP id 5FE7C3C90EDB;
+        Mon,  2 Mar 2020 23:24:47 -0300 (-03)
+Date:   Mon, 2 Mar 2020 23:24:47 -0300 (BRT)
+From:   Trust Online Credit Bvba <rute@unifap.br>
+Reply-To: "info@trustonlinecreditbvba.com" <info@trustonlinecreditbvba.com>
+Message-ID: <953401153.773874.1583202287349.JavaMail.zimbra@unifap.br>
+Subject: lening
 MIME-Version: 1.0
-References: <20200302195736.24777-1-sean.j.christopherson@intel.com> <20200302195736.24777-3-sean.j.christopherson@intel.com>
-In-Reply-To: <20200302195736.24777-3-sean.j.christopherson@intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 2 Mar 2020 19:25:43 -0800
-Message-ID: <CALMp9eThBnN3ktAfwhNs7L-O031JDFqjb67OMPooGvmkcdhK4A@mail.gmail.com>
-Subject: Re: [PATCH 2/6] KVM: x86: Fix CPUID range check for Centaur and
- Hypervisor ranges
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [200.139.21.37]
+X-Mailer: Zimbra 8.8.12_GA_3807 (zclient/8.8.12_GA_3807)
+Thread-Index: YCz+CGTMFhxgibhuBIZTvxQGl4p66A==
+Thread-Topic: lening
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 11:57 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
+Goedendag,
+      Dit is Trust Online Credit Bvba, wij werken onder een korte, duidelijke en begrijpelijke voorwaarden Wij verstrekken leningen tegen een lage rente Gewoonlijk vanaf 3%. Merk op dat dit aanbod is voor serieus ingestelde personen, bedrijven en bedrijven. Ontvang uw lening om uw financiële problemen op te lossen, zoals rekeningen afbetalen, nieuwe bedrijven oprichten, oude bedrijven opnieuw vestigen
 
-> The bad behavior can be visually confirmed by dumping CPUID output in
-> the guest when running Qemu with a stable TSC, as Qemu extends the limit
-> of range 0x40000000 to 0x40000010 to advertise VMware's cpuid_freq,
-> without defining zeroed entries for 0x40000002 - 0x4000000f.
+Jullie namen:
+Benodigde leningbedrag:
+Looptijd:
 
-I think it could be reasonably argued that this is a userspace bug.
-Clearly, when userspace explicitly supplies the results for a leaf,
-those results override the default CPUID values for that leaf. But I
-haven't seen it documented anywhere that leaves *not* explicitly
-supplied by userspace will override the default CPUID values, just
-because they happen to appear in some magic range.
+Trust Online Credit Bvba
+E-mail: info@trustonlinecreditbvba.com
+Website: https://trustonlinecreditbvba.com/
+Bericht op WhatsApp +44 7480 726469
+Telefoonnummer: +44 7723 723485
