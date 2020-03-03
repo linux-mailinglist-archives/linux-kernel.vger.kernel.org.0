@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D98D17800E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CF2177EF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732518AbgCCRy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:54:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35520 "EHLO mail.kernel.org"
+        id S1731456AbgCCRr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:47:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732314AbgCCRyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:54:25 -0500
+        id S1731445AbgCCRry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:47:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DF19206D5;
-        Tue,  3 Mar 2020 17:54:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 776CE208C3;
+        Tue,  3 Mar 2020 17:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258064;
-        bh=2k1Uh2+g4UIU3FTUqMeqDDj6AHc8elwxBX5WMs5PIzY=;
+        s=default; t=1583257672;
+        bh=fLUXpRZ6kvhbDnqKO57WORhRZO9tCoIFRvf9WuY/EKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U1E0sPnY2VXvnV78tbciVvjkXWYDgiQWT/+efjT0UmUm77n4ESAuiV4+cd1nm43FK
-         207bOXacfQRoodMvsNxBmOIHxvZwmQaBPTX5idFTKSdgyKGHwL3bjuSzCTonNeGcEN
-         7g/50gBAv+8fnQOehDG3GNow/PVuDX1ffBoD8RwY=
+        b=AnaReL/26l4u6SNYq2yu7Bg5iCdak9/H5pmK3htQuZkmTxIrxcYpeiKYi7tRIbUKt
+         fW9MDac7sUMJNqNEEcH/lXSXA4nS7gEweV1eGehv/8Erh0IfkPW2lQnPHQBPCAmYWg
+         CAJyx7KUx+sh8SFwmBNSSqjmfrc0QIlapjhMiHYQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 050/152] net: ena: fix uses of round_jiffies()
-Date:   Tue,  3 Mar 2020 18:42:28 +0100
-Message-Id: <20200303174308.103154883@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+1f4d90ead370d72e450b@syzkaller.appspotmail.com,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 5.5 085/176] audit: fix error handling in audit_data_to_entry()
+Date:   Tue,  3 Mar 2020 18:42:29 +0100
+Message-Id: <20200303174314.517029522@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,75 +44,203 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+From: Paul Moore <paul@paul-moore.com>
 
-[ Upstream commit 2a6e5fa2f4c25b66c763428a3e65363214946931 ]
+commit 2ad3e17ebf94b7b7f3f64c050ff168f9915345eb upstream.
 
->From the documentation of round_jiffies():
-"Rounds a time delta  in the future (in jiffies) up or down to
-(approximately) full seconds. This is useful for timers for which
-the exact time they fire does not matter too much, as long as
-they fire approximately every X seconds.
-By rounding these timers to whole seconds, all such timers will fire
-at the same time, rather than at various times spread out. The goal
-of this is to have the CPU wake up less, which saves power."
+Commit 219ca39427bf ("audit: use union for audit_field values since
+they are mutually exclusive") combined a number of separate fields in
+the audit_field struct into a single union.  Generally this worked
+just fine because they are generally mutually exclusive.
+Unfortunately in audit_data_to_entry() the overlap can be a problem
+when a specific error case is triggered that causes the error path
+code to attempt to cleanup an audit_field struct and the cleanup
+involves attempting to free a stored LSM string (the lsm_str field).
+Currently the code always has a non-NULL value in the
+audit_field.lsm_str field as the top of the for-loop transfers a
+value into audit_field.val (both .lsm_str and .val are part of the
+same union); if audit_data_to_entry() fails and the audit_field
+struct is specified to contain a LSM string, but the
+audit_field.lsm_str has not yet been properly set, the error handling
+code will attempt to free the bogus audit_field.lsm_str value that
+was set with audit_field.val at the top of the for-loop.
 
-There are 2 parts to this patch:
-================================
-Part 1:
--------
-In our case we need timer_service to be called approximately every
-X=1 seconds, and the exact time does not matter, so using round_jiffies()
-is the right way to go.
+This patch corrects this by ensuring that the audit_field.val is only
+set when needed (it is cleared when the audit_field struct is
+allocated with kcalloc()).  It also corrects a few other issues to
+ensure that in case of error the proper error code is returned.
 
-Therefore we add round_jiffies() to the mod_timer() in ena_timer_service().
+Cc: stable@vger.kernel.org
+Fixes: 219ca39427bf ("audit: use union for audit_field values since they are mutually exclusive")
+Reported-by: syzbot+1f4d90ead370d72e450b@syzkaller.appspotmail.com
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Part 2:
--------
-round_jiffies() is used in check_for_missing_keep_alive() when
-getting the jiffies of the expiration of the keep_alive timeout. Here it
-is actually a mistake to use round_jiffies() because we want the exact
-time when keep_alive should expire and not an approximate rounded time,
-which can cause early, false positive, timeouts.
-
-Therefore we remove round_jiffies() in the calculation of
-keep_alive_expired() in check_for_missing_keep_alive().
-
-Fixes: 82ef30f13be0 ("net: ena: add hardware hints capability to the driver")
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/auditfilter.c |   71 ++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 39 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index b4a145220abae..f0cddf250cfd5 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -3035,8 +3035,8 @@ static void check_for_missing_keep_alive(struct ena_adapter *adapter)
- 	if (adapter->keep_alive_timeout == ENA_HW_HINTS_NO_TIMEOUT)
- 		return;
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -456,6 +456,7 @@ static struct audit_entry *audit_data_to
+ 	bufp = data->buf;
+ 	for (i = 0; i < data->field_count; i++) {
+ 		struct audit_field *f = &entry->rule.fields[i];
++		u32 f_val;
  
--	keep_alive_expired = round_jiffies(adapter->last_keep_alive_jiffies +
--					   adapter->keep_alive_timeout);
-+	keep_alive_expired = adapter->last_keep_alive_jiffies +
-+			     adapter->keep_alive_timeout;
- 	if (unlikely(time_is_before_jiffies(keep_alive_expired))) {
- 		netif_err(adapter, drv, adapter->netdev,
- 			  "Keep alive watchdog timeout.\n");
-@@ -3138,7 +3138,7 @@ static void ena_timer_service(struct timer_list *t)
+ 		err = -EINVAL;
+ 
+@@ -464,12 +465,12 @@ static struct audit_entry *audit_data_to
+ 			goto exit_free;
+ 
+ 		f->type = data->fields[i];
+-		f->val = data->values[i];
++		f_val = data->values[i];
+ 
+ 		/* Support legacy tests for a valid loginuid */
+-		if ((f->type == AUDIT_LOGINUID) && (f->val == AUDIT_UID_UNSET)) {
++		if ((f->type == AUDIT_LOGINUID) && (f_val == AUDIT_UID_UNSET)) {
+ 			f->type = AUDIT_LOGINUID_SET;
+-			f->val = 0;
++			f_val = 0;
+ 			entry->rule.pflags |= AUDIT_LOGINUID_LEGACY;
+ 		}
+ 
+@@ -485,7 +486,7 @@ static struct audit_entry *audit_data_to
+ 		case AUDIT_SUID:
+ 		case AUDIT_FSUID:
+ 		case AUDIT_OBJ_UID:
+-			f->uid = make_kuid(current_user_ns(), f->val);
++			f->uid = make_kuid(current_user_ns(), f_val);
+ 			if (!uid_valid(f->uid))
+ 				goto exit_free;
+ 			break;
+@@ -494,11 +495,12 @@ static struct audit_entry *audit_data_to
+ 		case AUDIT_SGID:
+ 		case AUDIT_FSGID:
+ 		case AUDIT_OBJ_GID:
+-			f->gid = make_kgid(current_user_ns(), f->val);
++			f->gid = make_kgid(current_user_ns(), f_val);
+ 			if (!gid_valid(f->gid))
+ 				goto exit_free;
+ 			break;
+ 		case AUDIT_ARCH:
++			f->val = f_val;
+ 			entry->rule.arch_f = f;
+ 			break;
+ 		case AUDIT_SUBJ_USER:
+@@ -511,11 +513,13 @@ static struct audit_entry *audit_data_to
+ 		case AUDIT_OBJ_TYPE:
+ 		case AUDIT_OBJ_LEV_LOW:
+ 		case AUDIT_OBJ_LEV_HIGH:
+-			str = audit_unpack_string(&bufp, &remain, f->val);
+-			if (IS_ERR(str))
++			str = audit_unpack_string(&bufp, &remain, f_val);
++			if (IS_ERR(str)) {
++				err = PTR_ERR(str);
+ 				goto exit_free;
+-			entry->rule.buflen += f->val;
+-
++			}
++			entry->rule.buflen += f_val;
++			f->lsm_str = str;
+ 			err = security_audit_rule_init(f->type, f->op, str,
+ 						       (void **)&f->lsm_rule);
+ 			/* Keep currently invalid fields around in case they
+@@ -524,68 +528,71 @@ static struct audit_entry *audit_data_to
+ 				pr_warn("audit rule for LSM \'%s\' is invalid\n",
+ 					str);
+ 				err = 0;
+-			}
+-			if (err) {
+-				kfree(str);
++			} else if (err)
+ 				goto exit_free;
+-			} else
+-				f->lsm_str = str;
+ 			break;
+ 		case AUDIT_WATCH:
+-			str = audit_unpack_string(&bufp, &remain, f->val);
+-			if (IS_ERR(str))
++			str = audit_unpack_string(&bufp, &remain, f_val);
++			if (IS_ERR(str)) {
++				err = PTR_ERR(str);
+ 				goto exit_free;
+-			entry->rule.buflen += f->val;
+-
+-			err = audit_to_watch(&entry->rule, str, f->val, f->op);
++			}
++			err = audit_to_watch(&entry->rule, str, f_val, f->op);
+ 			if (err) {
+ 				kfree(str);
+ 				goto exit_free;
+ 			}
++			entry->rule.buflen += f_val;
+ 			break;
+ 		case AUDIT_DIR:
+-			str = audit_unpack_string(&bufp, &remain, f->val);
+-			if (IS_ERR(str))
++			str = audit_unpack_string(&bufp, &remain, f_val);
++			if (IS_ERR(str)) {
++				err = PTR_ERR(str);
+ 				goto exit_free;
+-			entry->rule.buflen += f->val;
+-
++			}
+ 			err = audit_make_tree(&entry->rule, str, f->op);
+ 			kfree(str);
+ 			if (err)
+ 				goto exit_free;
++			entry->rule.buflen += f_val;
+ 			break;
+ 		case AUDIT_INODE:
++			f->val = f_val;
+ 			err = audit_to_inode(&entry->rule, f);
+ 			if (err)
+ 				goto exit_free;
+ 			break;
+ 		case AUDIT_FILTERKEY:
+-			if (entry->rule.filterkey || f->val > AUDIT_MAX_KEY_LEN)
++			if (entry->rule.filterkey || f_val > AUDIT_MAX_KEY_LEN)
+ 				goto exit_free;
+-			str = audit_unpack_string(&bufp, &remain, f->val);
+-			if (IS_ERR(str))
++			str = audit_unpack_string(&bufp, &remain, f_val);
++			if (IS_ERR(str)) {
++				err = PTR_ERR(str);
+ 				goto exit_free;
+-			entry->rule.buflen += f->val;
++			}
++			entry->rule.buflen += f_val;
+ 			entry->rule.filterkey = str;
+ 			break;
+ 		case AUDIT_EXE:
+-			if (entry->rule.exe || f->val > PATH_MAX)
++			if (entry->rule.exe || f_val > PATH_MAX)
+ 				goto exit_free;
+-			str = audit_unpack_string(&bufp, &remain, f->val);
++			str = audit_unpack_string(&bufp, &remain, f_val);
+ 			if (IS_ERR(str)) {
+ 				err = PTR_ERR(str);
+ 				goto exit_free;
+ 			}
+-			entry->rule.buflen += f->val;
+-
+-			audit_mark = audit_alloc_mark(&entry->rule, str, f->val);
++			audit_mark = audit_alloc_mark(&entry->rule, str, f_val);
+ 			if (IS_ERR(audit_mark)) {
+ 				kfree(str);
+ 				err = PTR_ERR(audit_mark);
+ 				goto exit_free;
+ 			}
++			entry->rule.buflen += f_val;
+ 			entry->rule.exe = audit_mark;
+ 			break;
++		default:
++			f->val = f_val;
++			break;
+ 		}
  	}
  
- 	/* Reset the timer */
--	mod_timer(&adapter->timer_service, jiffies + HZ);
-+	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
- }
- 
- static int ena_calc_io_queue_num(struct pci_dev *pdev,
--- 
-2.20.1
-
 
 
