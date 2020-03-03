@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99229177EEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCACE177FB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731413AbgCCRrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54586 "EHLO mail.kernel.org"
+        id S1732146AbgCCRwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:52:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731402AbgCCRrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:47:40 -0500
+        id S1730992AbgCCRwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:52:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F32CD20CC7;
-        Tue,  3 Mar 2020 17:47:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1974A206D5;
+        Tue,  3 Mar 2020 17:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257659;
-        bh=wW3mnCktbCYmM3gZdL9hrOX6Kz4wm/IgY/aenYoR6z4=;
+        s=default; t=1583257940;
+        bh=Qjyvv69TvJ2XwxB8JdC7/51eE9UYXSmJQHfW9d9906o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F5M8iExaBgHYAqvgfCsTyVW+6dbWDcq5AUSa5w4n0oLLiq4Sk/H40tq01FjRVu2H0
-         MhKXraxYNt+3NT0a1v1zA6hCW/lyHEH8ow/853s5JKy/gRB4sENzs4wca+4oarolf/
-         Ucm21g52r8+yYILO4aqDsq5z2R5XgRfT2sU1crZM=
+        b=cWwjf1iR1K4kmsOb7EfHq1hSDQ1GudygyapqbozeWhjv5oD60d5VW21pf5dZ7I3tH
+         uW1wfNF9Kb8CYcI8u37KbmUpO9JoFapABtqk18FO8Vh9HSD5D2uoMaVjjSPxV/WvY6
+         MKgW1EDb+wI8TEay3cZFxmdc2FOc8xovBZO8H2Hw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Benjamin Coddington <bcodding@gmail.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 037/176] NFSv4: Fix races between open and dentry revalidation
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 003/152] net: dsa: b53: Ensure the default VID is untagged
 Date:   Tue,  3 Mar 2020 18:41:41 +0100
-Message-Id: <20200303174308.801200679@linuxfoundation.org>
+Message-Id: <20200303174302.912933039@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,81 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit cf5b4059ba7197d6cef9c0e024979d178ed8c8ec ]
+[ Upstream commit d965a5432d4c3e6b9c3d2bc1d4a800013bbf76f6 ]
 
-We want to make sure that we revalidate the dentry if and only if
-we've done an OPEN by filename.
-In order to avoid races with remote changes to the directory on the
-server, we want to save the verifier before calling OPEN. The exception
-is if the server returned a delegation with our OPEN, as we then
-know that the filename can't have changed on the server.
+We need to ensure that the default VID is untagged otherwise the switch
+will be sending tagged frames and the results can be problematic. This
+is especially true with b53 switches that use VID 0 as their default
+VLAN since VID 0 has a special meaning.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Reviewed-by: Benjamin Coddington <bcodding@gmail.com>
-Tested-by: Benjamin Coddington <bcodding@gmail.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: fea83353177a ("net: dsa: b53: Fix default VLAN ID")
+Fixes: 061f6a505ac3 ("net: dsa: Add ndo_vlan_rx_{add, kill}_vid implementation")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4file.c |  1 -
- fs/nfs/nfs4proc.c | 18 ++++++++++++++++--
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ drivers/net/dsa/b53/b53_common.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-index 620de905cba97..3f892035c1413 100644
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -86,7 +86,6 @@ nfs4_file_open(struct inode *inode, struct file *filp)
- 	if (inode != d_inode(dentry))
- 		goto out_drop;
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1353,6 +1353,9 @@ void b53_vlan_add(struct dsa_switch *ds,
  
--	nfs_set_verifier(dentry, nfs_save_change_attribute(dir));
- 	nfs_file_set_open_context(filp, ctx);
- 	nfs_fscache_open_file(inode, filp);
- 	err = 0;
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 6ddb4f517d373..13c2de527718a 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2962,10 +2962,13 @@ static int _nfs4_open_and_get_state(struct nfs4_opendata *opendata,
- 	struct dentry *dentry;
- 	struct nfs4_state *state;
- 	fmode_t acc_mode = _nfs4_ctx_to_accessmode(ctx);
-+	struct inode *dir = d_inode(opendata->dir);
-+	unsigned long dir_verifier;
- 	unsigned int seq;
- 	int ret;
+ 		b53_get_vlan_entry(dev, vid, vl);
  
- 	seq = raw_seqcount_begin(&sp->so_reclaim_seqcount);
-+	dir_verifier = nfs_save_change_attribute(dir);
- 
- 	ret = _nfs4_proc_open(opendata, ctx);
- 	if (ret != 0)
-@@ -2993,8 +2996,19 @@ static int _nfs4_open_and_get_state(struct nfs4_opendata *opendata,
- 			dput(ctx->dentry);
- 			ctx->dentry = dentry = alias;
- 		}
--		nfs_set_verifier(dentry,
--				nfs_save_change_attribute(d_inode(opendata->dir)));
-+	}
++		if (vid == 0 && vid == b53_default_pvid(dev))
++			untagged = true;
 +
-+	switch(opendata->o_arg.claim) {
-+	default:
-+		break;
-+	case NFS4_OPEN_CLAIM_NULL:
-+	case NFS4_OPEN_CLAIM_DELEGATE_CUR:
-+	case NFS4_OPEN_CLAIM_DELEGATE_PREV:
-+		if (!opendata->rpc_done)
-+			break;
-+		if (opendata->o_res.delegation_type != 0)
-+			dir_verifier = nfs_save_change_attribute(dir);
-+		nfs_set_verifier(dentry, dir_verifier);
- 	}
- 
- 	/* Parse layoutget results before we check for access */
--- 
-2.20.1
-
+ 		vl->members |= BIT(port);
+ 		if (untagged && !dsa_is_cpu_port(ds, port))
+ 			vl->untag |= BIT(port);
 
 
