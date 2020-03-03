@@ -2,154 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB3517820C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:03:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9674D1781AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388200AbgCCSId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 13:08:33 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45554 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730394AbgCCRxc (ORCPT
+        id S2388197AbgCCSFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 13:05:16 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:46956 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387409AbgCCR6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:53:32 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v19so3890045oic.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:53:32 -0800 (PST)
+        Tue, 3 Mar 2020 12:58:31 -0500
+Received: by mail-il1-f195.google.com with SMTP id e8so3518245ilc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 09:58:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1QskSzXkk1uR/gTFKte9PcDDhEgJX8WglHuzZL1T1G4=;
-        b=EkdAW6/gbfcyTLcI6cTuLSxNcHGev64LQOUj5OAjNQw2Xj0vLIPKWYamrckOeGPLtq
-         MhahHQt+YRF0QGMJZcGPkOWZV/8U8AknEZxlXU2VZ+FrViArmUtKhGfIaEUbH7F/gF4T
-         04hPqBSpVHKtoGKcQNVvvSuZKE0Vy3OUl+JOHQR+tULqSkdsfOHK69X+FeNXTap9cvFf
-         C/YFZiDDbNYtWupxyhH4d0URwyaCyd8kqZvCe5TE6eQtT1l4uTTY9eodjkNdGJDN0ujX
-         +t9dGG48tMSUkTYHDv2NOPSrqgFzqNTMcYapNtcIFzhp5ASA9hiX7gzvkquAyM5Bko1n
-         AiOQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=G5nat7TjfwsYKukhiu6yJ6peKaEgkq8tBpj9OwyiAts=;
+        b=1BVMSz5op5aH4SjFm/0AsfcMaTUcTjYDE6RYQdIeeh6bJpDEvM4lczmgOBYIgehYU6
+         3wROaS6Xl/bSaiSQf1ruWmaWuuF7FyuSv7ZRENnxDrZxheVkOjHnLQ/GNJEQR6lM2VMp
+         koVVCUE6aU9BJMHhq9kh3VRjDq/M2GUjetqQFWni8tEoSBPcIpKb/zSSIGmjFAU8NrFZ
+         k9n15D7kPTkUMdfLUV+6X4ZmzIunA0Bdsim+Bap2Su7dPEHZWa8OxFn7XfKDdc1KYiFZ
+         W681UKO6qansKW5nNWQcDpAYHf2w6E0cACcLMNMmocdS+Fkal/VR09QiiT4H4Y3s67uc
+         vMJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1QskSzXkk1uR/gTFKte9PcDDhEgJX8WglHuzZL1T1G4=;
-        b=JcpaGQzNZmnUUPRlps+OUZUQKD1OBC7HItzS7cQ4ayD53zVz1mD42rlItGZsHEaHrW
-         bEY4zhYeJhViPCsqQw8K3gLz9bxLn7ypD3QE2UsekVCC++gLXG/BTysMvHDVogTiNoHd
-         AiGc+apYT19BZhzydzrpk8E8WxJKcClrClCEc6grbjq6cQPus//IJuC3OwCDszQjRb17
-         qNi5EP0AuS0Kgmc8vf8ens2+tmgwDHVV1ygloxliVcbFiOS4J4fdmJQr+vH+VAwAzBzW
-         PL3qfY2P4aY+Eu1uxBlvbFs35MXZz2SIPlcAZcOWWtuwWEIKEf7XFiHisY8Rp8tF93+K
-         oMtQ==
-X-Gm-Message-State: ANhLgQ1lSQlDoCYOZkYRZRqPYfckyze/LAI01AGPT3VdRXlqkBIkX/Cf
-        rSjrX6qZfADG6Ef0kY3eF7cMfE0eDxniiZP3QWtwr4ZcOUY=
-X-Google-Smtp-Source: ADFU+vvAz3SFLobt0buMef4VTMqh/gw3M2ubbyrfIoKOqQ/M5Ky/Ct5gh8DK1xfIa99e1pRyzln7JMroMoIwcBdJCwY=
-X-Received: by 2002:aca:4cd8:: with SMTP id z207mr3096082oia.155.1583258011709;
- Tue, 03 Mar 2020 09:53:31 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=G5nat7TjfwsYKukhiu6yJ6peKaEgkq8tBpj9OwyiAts=;
+        b=bbdRqlV2XtttjWG9s/pXgJhWT2irF70MCoWv+KcZ7ov+lfvIX4i93yqsH+Gl0P8/nG
+         /3q8qiB649Wdefy7EOqolWIe5KsLoWVHLTqGvgzVoBw5hcV70kZW91BQMFnzU23tWVww
+         QgtMZoCPu0lqOJzFUhtJbP+Gms3/HT/GFIFGcdkfvsmtqsVJ32VFFCy++jKQQjVl8IDS
+         rrBZDbVznSkZxQvmALGVuCSUnY1yBonMaLivvOHZk+Xb2C1zlbTxNngd8cd1cyq2qywa
+         Qcn4jRmuWMoUFxIyKgwIKQMxmb2b8M6MysKC5WtNsVl61bi+UZKGUhmxnkSY8GPAjsES
+         YKpA==
+X-Gm-Message-State: ANhLgQ3sZIyXmG2OysGETqQzfQfuin0x+YDsk8xDs/IEtonUX+ukujR5
+        LAactQtc0yl6hc9dHKVGwtDDTA==
+X-Google-Smtp-Source: ADFU+vtV+apP8mi6vB9ANWxLbJfeoFiJDA7yX1gYyG13Gfv6reOP037TkZVssoM3D1a1NrpJRw0hBA==
+X-Received: by 2002:a92:de03:: with SMTP id x3mr5968538ilm.146.1583258310639;
+        Tue, 03 Mar 2020 09:58:30 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id k16sm8140521ili.35.2020.03.03.09.58.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2020 09:58:30 -0800 (PST)
+Subject: Re: [PATCH 5.5 072/176] bcache: ignore pending signals when creating
+ gc and allocator thread
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+References: <20200303174304.593872177@linuxfoundation.org>
+ <20200303174312.994115258@linuxfoundation.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <24e19cd9-8eea-a41a-27f7-84ffcd872977@kernel.dk>
+Date:   Tue, 3 Mar 2020 10:58:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <1583256049-15497-1-git-send-email-cai@lca.pw>
-In-Reply-To: <1583256049-15497-1-git-send-email-cai@lca.pw>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 3 Mar 2020 18:53:20 +0100
-Message-ID: <CANpmjNPJc_45+h_yJWwmw=YUuWduD6pPX2vdfPVekPvnnHd+_Q@mail.gmail.com>
-Subject: Re: [PATCH -next] signal: annotate data races in sys_rt_sigaction
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, catalin.marinas@arm.com,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200303174312.994115258@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Mar 2020 at 18:21, Qian Cai <cai@lca.pw> wrote:
->
-> Kmemleak could scan task stacks while plain writes happens to those
-> stack variables which could results in data races. For example, in
-> sys_rt_sigaction and do_sigaction(), it could have plain writes in
-> a 32-byte size. Since the kmemleak does not care about the actual values
-> of a non-pointer and all do_sigaction() call sites only copy to stack
-> variables, annotate them as intentional data races using the
-> data_race() macro. The data races were reported by KCSAN,
->
->  BUG: KCSAN: data-race in _copy_from_user / scan_block
->
->  read to 0xffffb3074e61fe58 of 8 bytes by task 356 on cpu 19:
->   scan_block+0x6e/0x1a0
->   scan_block at mm/kmemleak.c:1251
->   kmemleak_scan+0xbea/0xd20
->   kmemleak_scan at mm/kmemleak.c:1482
->   kmemleak_scan_thread+0xcc/0xfa
->   kthread+0x1cd/0x1f0
->   ret_from_fork+0x3a/0x50
+On 3/3/20 10:42 AM, Greg Kroah-Hartman wrote:
+> From: Coly Li <colyli@suse.de>
+> 
+> [ Upstream commit 0b96da639a4874311e9b5156405f69ef9fc3bef8 ]
+> 
+> When run a cache set, all the bcache btree node of this cache set will
+> be checked by bch_btree_check(). If the bcache btree is very large,
+> iterating all the btree nodes will occupy too much system memory and
+> the bcache registering process might be selected and killed by system
+> OOM killer. kthread_run() will fail if current process has pending
+> signal, therefore the kthread creating in run_cache_set() for gc and
+> allocator kernel threads are very probably failed for a very large
+> bcache btree.
+> 
+> Indeed such OOM is safe and the registering process will exit after
+> the registration done. Therefore this patch flushes pending signals
+> during the cache set start up, specificly in bch_cache_allocator_start()
+> and bch_gc_thread_start(), to make sure run_cache_set() won't fail for
+> large cahced data set.
 
-I think we should move the annotations to kmemleak instead of signal.c.
+Ditto this one, of course.
 
-Because putting a "data_race()" on the accesses in signal.c just
-because of Kmemleak feels wrong because then we might miss other more
-serious issues. Kmemleak isn't normally enabled in a non-debug kernel.
+Did someone send this in for stable? It's not marked stable in the
+original commit.
 
-I wonder if it'd be a better idea to just disable KCSAN on scan_block
-with __no_kcsan? If Kmemleak only does reads, then __no_kcsan will do
-the right thing here, because the reads are hidden completely from
-KCSAN. With "data_race()" you would still have to mark both accesses
-in signal.c and kmemleak (this is by design, so that we document all
-intentionally data-racy accesses).
+-- 
+Jens Axboe
 
-An alternative would be to just exempt kmemleak from KCSAN with
-"KCSAN_SANITIZE_kmemleak.o := n". Given Kmemleak is a debugging tool
-and it's expected to race with all kinds of accesses, maybe that's the
-best option.
-
-Thanks,
--- Marco
-
->  write to 0xffffb3074e61fe58 of 32 bytes by task 30208 on cpu 2:
->   _copy_from_user+0xb2/0xe0
->   copy_user_generic at arch/x86/include/asm/uaccess_64.h:37
->   (inlined by) raw_copy_from_user at arch/x86/include/asm/uaccess_64.h:71
->   (inlined by) _copy_from_user at lib/usercopy.c:15
->   __x64_sys_rt_sigaction+0x83/0x140
->   __do_sys_rt_sigaction at kernel/signal.c:4245
->   (inlined by) __se_sys_rt_sigaction at kernel/signal.c:4233
->   (inlined by) __x64_sys_rt_sigaction at kernel/signal.c:4233
->   do_syscall_64+0x91/0xb05
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  kernel/signal.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 5b2396350dd1..bf39078c8be1 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -3964,14 +3964,15 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
->
->         spin_lock_irq(&p->sighand->siglock);
->         if (oact)
-> -               *oact = *k;
-> +               /* Kmemleak could scan the task stack. */
-> +               data_race(*oact = *k);
->
->         sigaction_compat_abi(act, oact);
->
->         if (act) {
->                 sigdelsetmask(&act->sa.sa_mask,
->                               sigmask(SIGKILL) | sigmask(SIGSTOP));
-> -               *k = *act;
-> +               data_race(*k = *act);
->                 /*
->                  * POSIX 3.3.1.3:
->                  *  "Setting a signal action to SIG_IGN for a signal that is
-> @@ -4242,7 +4243,9 @@ int __compat_save_altstack(compat_stack_t __user *uss, unsigned long sp)
->         if (sigsetsize != sizeof(sigset_t))
->                 return -EINVAL;
->
-> -       if (act && copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)))
-> +       if (act &&
-> +           /* Kmemleak could scan the task stack. */
-> +           data_race(copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa))))
->                 return -EFAULT;
->
->         ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
-> --
-> 1.8.3.1
->
