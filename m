@@ -2,161 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC14717866B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:36:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DBB178672
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbgCCXgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 18:36:03 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:28352 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727942AbgCCXgC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 18:36:02 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 023NSvXY032631
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Mar 2020 15:36:01 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=v54f4hvtEpOMZZj7Wq4+S30Pdqx6OVy19TrOKQ69H14=;
- b=ZLUPAVrVrvWOH07Sei5a8edivsFuryHz/mhmicFdCuYVrgEFGEAv1Bq9Y5CgWrF9qdIX
- 3dB4VtAD0jC46moXjUuSGBtdKnWX3hCKSrhp8L/uuf8SR2tiNb9z7Ou50fgWt1oex0CO
- zxOxx13KFNf01gbbyi1P3olovII8Feslg8Q= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 2yhpfwkttv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 15:36:01 -0800
-Received: from intmgw001.06.prn3.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 3 Mar 2020 15:36:01 -0800
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 971CA2FA13176; Tue,  3 Mar 2020 15:35:51 -0800 (PST)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, <linux-mm@kvack.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Roman Gushchin <guro@fb.com>, <stable@vger.kernel.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH] mm: fork: fix kernel_stack memcg stats for various stack implementations
-Date:   Tue, 3 Mar 2020 15:35:50 -0800
-Message-ID: <20200303233550.251375-1-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        id S1728637AbgCCXhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 18:37:10 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46706 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728388AbgCCXhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 18:37:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 15:37:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="229117109"
+Received: from kwasilew-mobl.ger.corp.intel.com (HELO localhost) ([10.251.88.57])
+  by orsmga007.jf.intel.com with ESMTP; 03 Mar 2020 15:37:00 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v28 04/22] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+Date:   Wed,  4 Mar 2020 01:35:51 +0200
+Message-Id: <20200303233609.713348-5-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
+References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-03_08:2020-03-03,2020-03-03 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- mlxscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0 spamscore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003030154
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depending on CONFIG_VMAP_STACK and the THREAD_SIZE / PAGE_SIZE ratio
-the space for task stacks can be allocated using __vmalloc_node_range(),
-alloc_pages_node() and kmem_cache_alloc_node(). In the first and the
-second cases page->mem_cgroup pointer is set, but in the third it's
-not: memcg membership of a slab page should be determined using the
-memcg_from_slab_page() function, which looks at
-page->slab_cache->memcg_params.memcg . In this case, using
-mod_memcg_page_state() (as in account_kernel_stack()) is incorrect:
-page->mem_cgroup pointer is NULL even for pages charged to a non-root
-memory cgroup.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-It can lead to kernel_stack per-memcg counters permanently showing 0
-on some architectures (depending on the configuration).
+Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
+a #PF with SGX set happens.
 
-In order to fix it, let's introduce a mod_memcg_obj_state() helper,
-which takes a pointer to a kernel object as a first argument, uses
-mem_cgroup_from_obj() to get a RCU-protected memcg pointer and
-calls mod_memcg_state(). It allows to handle all possible
-configurations (CONFIG_VMAP_STACK and various THREAD_SIZE/PAGE_SIZE
-values) without spilling any memcg/kmem specifics into fork.c .
+CPU throws a #PF with the SGX bit in the event of Enclave Page Cache Map
+(EPCM) conflict. The EPCM is a CPU-internal table, which describes the
+properties for a enclave page. Enclaves are measured and signed software
+entities, which SGX hosts. [1]
 
-Note: this patch has been first posted as a part of the new slab
-controller patchset. This is a slightly updated version: the fixes
-tag has been added and the commit log was extended by the advice
-of Johannes Weiner. Because it's a fix that makes sense by itself,
-I'm re-posting it as a standalone patch.
+Although the primary purpose of the EPCM conflict checks  is to prevent
+malicious accesses to an enclave, an illegit access can happen also for
+legit reasons.
 
-Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: stable@vger.kernel.org
+All SGX reserved memory, including EPCM is encrypted with a transient
+key that does not survive from the power transition. Throwing a SIGSEGV
+allows user space software react when this happens (e.g. rec-create the
+enclave, which was invalidated).
+
+[1] Intel SDM: 36.5.1 Enclave Page Cache Map (EPCM)
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- include/linux/memcontrol.h |  5 +++++
- kernel/fork.c              |  4 ++--
- mm/memcontrol.c            | 11 +++++++++++
- 3 files changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/traps.h |  1 +
+ arch/x86/mm/fault.c          | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 3253d5de8243..817ea1d93e0e 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -695,6 +695,7 @@ static inline unsigned long lruvec_page_state_local(struct lruvec *lruvec,
- void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 			int val);
- void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val);
-+void mod_memcg_obj_state(void *p, int idx, int val);
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index ffa0dc8a535e..bb8d5ae74dbc 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -174,5 +174,6 @@ enum x86_pf_error_code {
+ 	X86_PF_RSVD	=		1 << 3,
+ 	X86_PF_INSTR	=		1 << 4,
+ 	X86_PF_PK	=		1 << 5,
++	X86_PF_SGX	=		1 << 15,
+ };
+ #endif /* _ASM_X86_TRAPS_H */
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index fa4ea09593ab..dee9504cde79 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1179,6 +1179,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
+ 	if (error_code & X86_PF_PK)
+ 		return 1;
  
- static inline void mod_lruvec_state(struct lruvec *lruvec,
- 				    enum node_stat_item idx, int val)
-@@ -1129,6 +1130,10 @@ static inline void __mod_lruvec_slab_state(void *p, enum node_stat_item idx,
- 	__mod_node_page_state(page_pgdat(page), idx, val);
- }
- 
-+static inline void mod_memcg_obj_state(void *p, int idx, int val)
-+{
-+}
++	/*
++	 * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
++	 * access is allowed by the PTE but not the EPCM. This usually happens
++	 * when the EPCM is yanked out from under us, e.g. by hardware after a
++	 * suspend/resume cycle. In any case, software, i.e. the kernel, can't
++	 * fix the source of the fault as the EPCM can't be directly modified by
++	 * software. Handle the fault as an access error in order to signal
++	 * userspace so that userspace can rebuild their enclave(s), even though
++	 * userspace may not have actually violated access permissions.
++	 */
++	if (unlikely(error_code & X86_PF_SGX))
++		return 1;
 +
- static inline
- unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 					    gfp_t gfp_mask,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index a1f2f5205a61..bdc5004effa4 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -404,8 +404,8 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
- 		mod_zone_page_state(page_zone(first_page), NR_KERNEL_STACK_KB,
- 				    THREAD_SIZE / 1024 * account);
- 
--		mod_memcg_page_state(first_page, MEMCG_KERNEL_STACK_KB,
--				     account * (THREAD_SIZE / 1024));
-+		mod_memcg_obj_state(stack, MEMCG_KERNEL_STACK_KB,
-+				    account * (THREAD_SIZE / 1024));
- 	}
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d1ae46838af1..6514df549433 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -776,6 +776,17 @@ void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val)
- 	rcu_read_unlock();
- }
- 
-+void mod_memcg_obj_state(void *p, int idx, int val)
-+{
-+	struct mem_cgroup *memcg;
-+
-+	rcu_read_lock();
-+	memcg = mem_cgroup_from_obj(p);
-+	if (memcg)
-+		mod_memcg_state(memcg, idx, val);
-+	rcu_read_unlock();
-+}
-+
- /**
-  * __count_memcg_events - account VM events in a cgroup
-  * @memcg: the memory cgroup
+ 	/*
+ 	 * Make sure to check the VMA so that we do not perform
+ 	 * faults just to hit a X86_PF_PK as soon as we fill in a
 -- 
-2.24.1
+2.25.0
 
