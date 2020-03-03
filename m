@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E0CD177EDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E653B177FED
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731342AbgCCRrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:47:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54222 "EHLO mail.kernel.org"
+        id S1732407AbgCCRxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:53:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731332AbgCCRrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:47:21 -0500
+        id S1731615AbgCCRxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:53:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA60E20CC7;
-        Tue,  3 Mar 2020 17:47:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D878620CC7;
+        Tue,  3 Mar 2020 17:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257641;
-        bh=UeHlxsf9EkdklZ/gEJ4UdDiX9mhmtzs1cPM0Loq8CW0=;
+        s=default; t=1583258015;
+        bh=nWKwmnt7V+VmRBijgT0w4CKnk9ky7pcdeZKE9vO47Bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c/T6NHWS0C7BcMcI9Rt9ENgc135xP97hUcFk+2x5oGPikRNi7PF/yTUus/5GePzZu
-         aKCvbPNz2dXomJ1TUvX8pdz3uo3JuKsf4wBeI40ZjyIKrsPnzSIrxwXI8oDr5P+5hD
-         2/FYiWlU7rO4KnVGWA5wWtJ6ydrINU9t30/2an2M=
+        b=OmRB0YC0UbM+a7ExGSqYoKo89W1FafPLpNZEKArpnpaQbmsF3GsH+YUXasje1ePvg
+         1/+ZslN/WZV7qU0h4+tXbMaKf2CwhsTcjxMpjbKx4UNRBnTJbsYjmXHbf9d0IizGTf
+         2sFmBjwkHp9L1OgQdq163NNKNbWYQhlyYaB9zD6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 071/176] cifs: Fix mode output in debugging statements
-Date:   Tue,  3 Mar 2020 18:42:15 +0100
-Message-Id: <20200303174312.861809326@linuxfoundation.org>
+Subject: [PATCH 5.4 038/152] perf/x86/msr: Add Tremont support
+Date:   Tue,  3 Mar 2020 18:42:16 +0100
+Message-Id: <20200303174306.748067715@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
-References: <20200303174304.593872177@linuxfoundation.org>
+In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
+References: <20200303174302.523080016@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Sorenson <sorenson@redhat.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit f52aa79df43c4509146140de0241bc21a4a3b4c7 ]
+[ Upstream commit 0aa0e0d6b34b89649e6b5882a7e025a0eb9bd832 ]
 
-A number of the debug statements output file or directory mode
-in hex.  Change these to print using octal.
+Tremont is Intel's successor to Goldmont Plus. SMI_COUNT MSR is also
+supported.
 
-Signed-off-by: Frank Sorenson <sorenson@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Link: https://lkml.kernel.org/r/1580236279-35492-3-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifsacl.c | 4 ++--
- fs/cifs/connect.c | 2 +-
- fs/cifs/inode.c   | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/events/msr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
-index fb41e51dd5743..25704beb9d4ca 100644
---- a/fs/cifs/cifsacl.c
-+++ b/fs/cifs/cifsacl.c
-@@ -601,7 +601,7 @@ static void access_flags_to_mode(__le32 ace_flags, int type, umode_t *pmode,
- 			((flags & FILE_EXEC_RIGHTS) == FILE_EXEC_RIGHTS))
- 		*pmode |= (S_IXUGO & (*pbits_to_set));
+diff --git a/arch/x86/events/msr.c b/arch/x86/events/msr.c
+index 6f86650b3f77d..a949f6f55991d 100644
+--- a/arch/x86/events/msr.c
++++ b/arch/x86/events/msr.c
+@@ -75,8 +75,9 @@ static bool test_intel(int idx, void *data)
  
--	cifs_dbg(NOISY, "access flags 0x%x mode now 0x%x\n", flags, *pmode);
-+	cifs_dbg(NOISY, "access flags 0x%x mode now %04o\n", flags, *pmode);
- 	return;
- }
+ 	case INTEL_FAM6_ATOM_GOLDMONT:
+ 	case INTEL_FAM6_ATOM_GOLDMONT_D:
+-
+ 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
++	case INTEL_FAM6_ATOM_TREMONT_D:
++	case INTEL_FAM6_ATOM_TREMONT:
  
-@@ -630,7 +630,7 @@ static void mode_to_access_flags(umode_t mode, umode_t bits_to_use,
- 	if (mode & S_IXUGO)
- 		*pace_flags |= SET_FILE_EXEC_RIGHTS;
- 
--	cifs_dbg(NOISY, "mode: 0x%x, access flags now 0x%x\n",
-+	cifs_dbg(NOISY, "mode: %04o, access flags now 0x%x\n",
- 		 mode, *pace_flags);
- 	return;
- }
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 0aa3623ae0e16..641825cfa7670 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -4151,7 +4151,7 @@ int cifs_setup_cifs_sb(struct smb_vol *pvolume_info,
- 	cifs_sb->mnt_gid = pvolume_info->linux_gid;
- 	cifs_sb->mnt_file_mode = pvolume_info->file_mode;
- 	cifs_sb->mnt_dir_mode = pvolume_info->dir_mode;
--	cifs_dbg(FYI, "file mode: 0x%hx  dir mode: 0x%hx\n",
-+	cifs_dbg(FYI, "file mode: %04ho  dir mode: %04ho\n",
- 		 cifs_sb->mnt_file_mode, cifs_sb->mnt_dir_mode);
- 
- 	cifs_sb->actimeo = pvolume_info->actimeo;
-diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-index ca76a9287456f..b3f3675e18788 100644
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -1649,7 +1649,7 @@ int cifs_mkdir(struct inode *inode, struct dentry *direntry, umode_t mode)
- 	struct TCP_Server_Info *server;
- 	char *full_path;
- 
--	cifs_dbg(FYI, "In cifs_mkdir, mode = 0x%hx inode = 0x%p\n",
-+	cifs_dbg(FYI, "In cifs_mkdir, mode = %04ho inode = 0x%p\n",
- 		 mode, inode);
- 
- 	cifs_sb = CIFS_SB(inode->i_sb);
+ 	case INTEL_FAM6_XEON_PHI_KNL:
+ 	case INTEL_FAM6_XEON_PHI_KNM:
 -- 
 2.20.1
 
