@@ -2,59 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62342176A31
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 02:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD76176A33
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 02:49:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgCCBsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Mar 2020 20:48:55 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:48877 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726773AbgCCBsz (ORCPT
+        id S1727005AbgCCBtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Mar 2020 20:49:05 -0500
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:34233 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgCCBtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Mar 2020 20:48:55 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=zhangliguang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TrVHtRc_1583200126;
-Received: from localhost(mailfrom:zhangliguang@linux.alibaba.com fp:SMTPD_---0TrVHtRc_1583200126)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 03 Mar 2020 09:48:52 +0800
-From:   luanshi <zhangliguang@linux.alibaba.com>
-To:     Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        luanshi <zhangliguang@linux.alibaba.com>
-Subject: [PATCH] irqdomain: Fix function documentation of __irq_domain_alloc_fwnode
-Date:   Tue,  3 Mar 2020 09:48:45 +0800
-Message-Id: <1583200125-58806-1-git-send-email-zhangliguang@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 2 Mar 2020 20:49:05 -0500
+Received: by mail-lj1-f177.google.com with SMTP id x7so1713138ljc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 17:49:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mirlab-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=r/4TK4RpSOsZG1KYz157/rVP7bhcgbrwMq9gvsQBpSE=;
+        b=WOqssWS1QIrJEQysDIBeZnlnC3TVwM/clsfKrxa8W0mlF8iDgI38/oJxklFjEPhBjj
+         yjFmIcnmIvpI6ZWY1mOXnU2uHLBOxE/dkUta7wYvUHOnjlLF9yyjEY6ZdKT07/uGftqX
+         Z+be1jpr3yHB0zguCDZwbByH3OeRMMBqTR+z3yYszh16NwM8kC5zNkYDApeKRrjiGqXY
+         BrVQ9xfOyXVFjP0SCr/6wL/Wrpi1EH2iNtqFg6RoEwZg6+40O4GI96r6rvbIP0kb7td4
+         GgnK2BqbEtwzUuXLfFQww+/0M/bC8NEFqDhKDrRu9ZRoA/5U/0D9C32dVAthX2kKMzEq
+         07vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=r/4TK4RpSOsZG1KYz157/rVP7bhcgbrwMq9gvsQBpSE=;
+        b=bvPygEghcOR58vL6CUXDwYvKDSFM5HNdNsTuqOGiAkvVCIfqmLEAiCCWWnMM/qxSfy
+         AP3NViDCgIeat3mHdCX+KB96MO6FNSUnmjFuNEg0UaLIyNTW1faN3R1rh3xuDx6YCGX7
+         hZA0qFwefQcMufZu9OokXGUsglF3aj3ca/dtv+ujYpqBwV6U0iJYQJcp79DgS0ai5tvj
+         tL0sSystl7AYOW77vbkJl4/dZqoDFycUBN6UX81BE2IpHSSNI7muX3f8sDf4WIMTJR42
+         /+W2E0z15NS5u7zggkdT5jOgHwdu61MSmsVPK9orNfen4a/vG1hIO3SskQ2xEm95PQ2j
+         45Cw==
+X-Gm-Message-State: ANhLgQ0aPvVlr53rZ6TiYp/bplCAgKONIp6lZKfyywiPfIEmar1ka3bB
+        R5wJYGzkoASYpVcm0cihGInle6dsbA5O/BzV8Q8NMh1l0jc=
+X-Google-Smtp-Source: ADFU+vsEiDn/HoUUhMS6Uzq8YFYaGK1WeU3lCbywAsX4x/xp9zTRrFFSVOmzBWmSwyb8aEOOykO6+y7m2/NBWC3IVAg=
+X-Received: by 2002:a2e:99cc:: with SMTP id l12mr660926ljj.271.1583200142999;
+ Mon, 02 Mar 2020 17:49:02 -0800 (PST)
+MIME-Version: 1.0
+References: <CAB3eZfv4VSj6_XBBdHK12iX_RakhvXnTCFAmQfwogR34uySo3Q@mail.gmail.com>
+ <20200302103754.nsvtne2vvduug77e@yavin> <20200302104741.b5lypijqlbpq5lgz@yavin>
+In-Reply-To: <20200302104741.b5lypijqlbpq5lgz@yavin>
+From:   lampahome <pahome.chen@mirlab.org>
+Date:   Tue, 3 Mar 2020 09:48:50 +0800
+Message-ID: <CAB3eZfuAXaT4YTBSZ4sGe=NP8=71OT8wu7zXMzOjkd4NzjtXag@mail.gmail.com>
+Subject: Re: why do we need utf8 normalization when compare name?
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function got renamed at some point, but the kernel-doc was not
-updated.
+> Sorry, a better example would've been "=C3=B1" (U+00F1). You can also
+> represent it as "n" (U+006E) followed by "=E2=97=8C=CC=83" (U+0303 -- "co=
+mbining
+> tilde"). Both forms are defined by Unicode to be canonically equivalent
+> so it would be incorrect to treat the two Unicode strings differently
+> (that isn't quite the case for "=C3=85").
 
-Signed-off-by: luanshi <zhangliguang@linux.alibaba.com>
----
- kernel/irq/irqdomain.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 7527e5e..fdfc213 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -46,11 +46,11 @@ static inline void debugfs_remove_domain_dir(struct irq_domain *d) { }
- EXPORT_SYMBOL_GPL(irqchip_fwnode_ops);
- 
- /**
-- * irq_domain_alloc_fwnode - Allocate a fwnode_handle suitable for
-+ * __irq_domain_alloc_fwnode - Allocate a fwnode_handle suitable for
-  *                           identifying an irq domain
-  * @type:	Type of irqchip_fwnode. See linux/irqdomain.h
-- * @name:	Optional user provided domain name
-  * @id:		Optional user provided id if name != NULL
-+ * @name:	Optional user provided domain name
-  * @pa:		Optional user-provided physical address
-  *
-  * Allocate a struct irqchip_fwid, and return a poiner to the embedded
--- 
-1.8.3.1
-
+So utf8-normalize will convert  "=C3=B1" (U+00F1) and "n" (U+006E) followed
+by "=E2=97=8C=CC=83" to a utf8 code, and both are the same, right?
+Then compare it byte by byte.
