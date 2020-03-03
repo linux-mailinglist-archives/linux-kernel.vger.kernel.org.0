@@ -2,102 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 039B61776CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 519291776DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbgCCNSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:18:24 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2504 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727901AbgCCNSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:18:24 -0500
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A3C06456DF2344B7B802;
-        Tue,  3 Mar 2020 13:18:22 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 3 Mar 2020 13:18:21 +0000
-Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 3 Mar 2020
- 13:18:22 +0000
-Subject: Re: About commit "io: change inX() to have their own IO barrier
- overrides"
-To:     Sinan Kaya <okaya@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-CC:     "xuwei (O)" <xuwei5@hisilicon.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-arch <linux-arch@vger.kernel.org>
-References: <2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com>
- <c1489f55-369d-2cff-ff36-b10fb5d3ee79@kernel.org>
- <8207cd51-5b94-2f15-de9f-d85c9c385bca@huawei.com>
- <6115fa56-a471-1e9f-edbb-e643fa4e7e11@kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <7c955142-1fcb-d99e-69e4-1e0d3d9eb8c3@huawei.com>
-Date:   Tue, 3 Mar 2020 13:18:21 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1729288AbgCCNTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:19:25 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38549 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728330AbgCCNTY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:19:24 -0500
+Received: by mail-qk1-f193.google.com with SMTP id h22so3295914qke.5;
+        Tue, 03 Mar 2020 05:19:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Dq0BrbehtK7dXyNHKSd+EsOqpyv9pUXKpu+rlI2sPy0=;
+        b=dS7oPsIcp/43xUk811EfREN9F0E/R1GAaoEagaxvwV3+zlqbGtVcU7P352DpRveBUL
+         o4ug8Ghz4tfQvW05T4Gyz6fehTJGT2/qKzvpsMjMfvX02AcUmTQ20N14TNAQGZFw93nD
+         sy98slN9mRSb1T/Ef2+8W+i8p15qvv5oODLKp2ia0CyqILrUX8bVSq8qNWdsStPTI8iD
+         ixRbGieZO9m/P702VfNAqnayQ30qKfCxC9CjmDMmWjKAI5I/b0OvBlNvtrTCjxS2KEM/
+         N+UQy03P/OkJ4BDnTmfPQLM0ECxCdhNsARPcejnqcqXFtL+788rMYq13pgmYk5mkgZRK
+         7M4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=Dq0BrbehtK7dXyNHKSd+EsOqpyv9pUXKpu+rlI2sPy0=;
+        b=VFoljd7clZcYp5iDXsrXWJxF6LMAPb5bdq9x0HvdIZftGlqYMP3GYLs35qmalpAc0E
+         E+zAuC1Oxs1aKFRF6MI+vYFEWF8ZewekZbNl2W2EWDNr1rFPb+ekfXdjVdtaZ7nYrjh7
+         fsR9NkqWH1VHm0Uib2Wz2IoH7w0NBDdd3fZAYrVZnWZ9NVJVr7XXVN89BI46LToBmdo8
+         cim1mJHwtrG8Xv15LJHO82ReD4Ily0rqEp9QKAj+0zqu92dqBvtd/7A6mc3MzIK9Dc+t
+         yaSNHRsuXsKZyICcv+mqolLlWL6IzmbYKWzySSXUcsekb3h8WQi9pPnK+2Xe0I2My5zE
+         SbJQ==
+X-Gm-Message-State: ANhLgQ314g46v2o+ivvj+tTdBqzG0W84wAwG7MdRwle8tl05U5AkGPeN
+        9wiotsUlsGZtjcI6uSk44wvI3+viif8=
+X-Google-Smtp-Source: ADFU+vvF5+WTDJs1wG460WrGfpTxI7+RdZTc6LshJRnRDEWuGkFnJDLgH0/WGXKpwe1wsVKCyM/XlA==
+X-Received: by 2002:a37:aa88:: with SMTP id t130mr4252977qke.452.1583241562821;
+        Tue, 03 Mar 2020 05:19:22 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::7f70])
+        by smtp.gmail.com with ESMTPSA id j17sm12534162qth.27.2020.03.03.05.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 05:19:22 -0800 (PST)
+Date:   Tue, 3 Mar 2020 08:19:21 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Daniel Xu <dxu@dxuuu.xyz>
+Cc:     cgroups@vger.kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 1/2] kernfs: Add option to enable user xattrs
+Message-ID: <20200303131921.GB5186@mtj.thefacebook.com>
+References: <20200303013901.32150-1-dxu@dxuuu.xyz>
+ <20200303013901.32150-2-dxu@dxuuu.xyz>
 MIME-Version: 1.0
-In-Reply-To: <6115fa56-a471-1e9f-edbb-e643fa4e7e11@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.45]
-X-ClientProxiedBy: lhreml725-chm.china.huawei.com (10.201.108.76) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303013901.32150-2-dxu@dxuuu.xyz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ linux-arch
+Hello,
 
-For background, see 
-https://lore.kernel.org/lkml/2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com/
-
->>
->> So today only ARM64 uses it for this relevant code, above. But maybe
->> others in future will want to use it - any arch without native IO port
->> access is a candidate.
-> 
-> I'm looking at Arnd here for help.
-> 
->>
->>>
->>> As long as the expectations are set, I see no reason why it shouldn't
->>> but, I'll let Arnd comment on it too.
->>
->> ok, so it looks reasonable consider replicating your change for ***, above.
-
-To be clear, I would make this change in lib/logic_pio.c since 
-__io_pbr() can be overridden per-arch:
-
-  #define BUILD_LOGIC_IO(bw, type)
-  type logic_in##bw(unsigned long addr)
-  {
-       type ret = (type)~0;
-       if (addr < MMIO_UPPER_LIMIT) {
--          ret = read##bw(PCI_IOBASE + addr);
-+          __io_pbr();
-+          ret = __raw_read##bw(PCI_IOBASE + addr);
-+          __io_pbr();	
-       } else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {
-           struct logic_pio_hwaddr *entry = find_io_range(addr);
-
+On Mon, Mar 02, 2020 at 05:39:00PM -0800, Daniel Xu wrote:
+> +static int kernfs_vfs_user_xattr_set(const struct xattr_handler *handler,
+> +				     struct dentry *unused, struct inode *inode,
+> +				     const char *suffix, const void *value,
+> +				     size_t size, int flags)
+> +{
 ...
+> +	if (value && atomic_inc_return(nr) > KERNFS_MAX_USER_XATTRS) {
+> +		ret = -ENOSPC;
+> +		goto dec_out;
+> +	}
 
-(forgetting leX_to_cpu for the moment)
+So, we limit the number of user xattrs here but
 
-> 
-> Arnd is the maintainer here. We should consult first.
+> +	ret = kernfs_vfs_xattr_set(handler, unused, inode, suffix, value,
+> +				   size, flags);
 
-ok, fine.
+This will call into simple_xattr_set() which doesn't put any further
+restriction on size and just calls GFP_KERNEL kmalloc on it allowing
+users incur high-order allocations. Maybe it'd make sense to limit
+both the number and size?
 
-> I believe there is also a linux-arch mailing list. Going there with this
-> question makes sense IMO.
+Thanks.
 
-Cheers,
-John
-
+-- 
+tejun
