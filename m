@@ -2,97 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E72E17779B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDAC1777A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbgCCNpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:45:09 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35810 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbgCCNpI (ORCPT
+        id S1728661AbgCCNp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:45:26 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33842 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbgCCNpZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:45:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0yup3mARE7euXRUrinjIYjaiwDrqny/kYWdlvrncAsM=; b=Ix1npxEPg/BN0E66WionUlpl8
-        Q18ezX5tE6P7m/7P/HHPmMZvqgsmXup3cAB30aHQToKLFr/i68zA0CT2w7bR6/O84vRlrK5Q1xHSc
-        0u6DH/xvf+nwKahGZe2l5TkLEs5RBQMhMEnte6XylwWjCg4LjhLShgD0ChfGliYGlDzWjCEKm2xVV
-        OPXethEeNJaKdpWvTSiI4vhvxU1ZEGskg4JMDxWuA7jO1+yT0rU2IK1f+HLmHYQRG4Q5JrEyLOCMI
-        Ycg0OqQ2xFq4QhBeS3LLBpRp+dape+V88KmRLCmfFhL0CeLmEnZy7HCV/55icBNaSvrEmXf4So7lg
-        LX+baEtPg==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:48182)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1j97qz-0008H7-2z; Tue, 03 Mar 2020 13:44:57 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1j97qv-0005wH-1l; Tue, 03 Mar 2020 13:44:53 +0000
-Date:   Tue, 3 Mar 2020 13:44:53 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, mkl@pengutronix.de,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, david@protonic.nl,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v1] net: dsa: sja1105: add 100baseT1_Full support
-Message-ID: <20200303134452.GL25745@shell.armlinux.org.uk>
-References: <20200303074414.30693-1-o.rempel@pengutronix.de>
- <CA+h21hrkVr4-Bgop0bor9nkKDUm4dYdyuDWJ_jthjKpy98ZQ1A@mail.gmail.com>
+        Tue, 3 Mar 2020 08:45:25 -0500
+Received: by mail-qk1-f193.google.com with SMTP id 11so3425018qkd.1;
+        Tue, 03 Mar 2020 05:45:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=k3SVGsAkRULOndp1bH4Vy4WDCwesGWr3P2z5Nm2yK10=;
+        b=sWbH2eXGNk7O1rQtiTzgMXTDZu43PmepDSxq/uNPdI7SoPgKCrQc597H3jFSvq2zv1
+         he75Y3Zb2UfC0zVYPysm6n3V+dKaiHAnEWWMEgHkZTWindFlUzUwSNrgbYg8JwUUAuET
+         K9VADaX7yvdP7LE2K8UTyxstGXHGw3Z7ZXBtsPfecPJGtAXaxrFtqlXDjnJJu84WC74g
+         xVAZhKs+WisQ6K5jO6DzK1ETO9PjxW2uwIGBQk8cCYnKD0MZxpdfSG41qOjKPDD84cBd
+         KkOo2PAR3ze0M7wNRVkVghDcTdire3inJI9/dDoxrSTL9HcS4rQo7xAjsJumQYgjF/Ka
+         aRzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=k3SVGsAkRULOndp1bH4Vy4WDCwesGWr3P2z5Nm2yK10=;
+        b=Bwkbv+MiRKDx2Wf92mwku23vPB6QvpIZozG8w9Utl9JyJyEQjzWxzNC+2Viuot10yr
+         G5i0Es0qd4mn52YVJLKc4GeNVLKuBKhsYV6HM8RMHDlmqVUYa73Uod7L3ytBxbtfIPic
+         sMXaeZtMKRGNrXxSk+dB7ar/Bk+ZqHko4MgNIdAfjCWPc9HD4xcxjK+fVWbuhMfl5tWu
+         EwJbgsEffxir4g2HDyYgMvcYeP97VeSfYAv5ZKtkfX5At50VwhZpjPqlg9KvpQ76g1MK
+         3eisOgb+3ZQ3cdiUybbVY5abjzdTuMhBH4Z9+pnzO42kvTQCeSeJ9+c3oy9pd3z3gmGO
+         QSQQ==
+X-Gm-Message-State: ANhLgQ1qkLdBHYpl9v2/a3H/3UBgzowPC7g3qcG1TFj88tSjiTvkToMF
+        wl1zh6rlVmdDamwWKwLrc1iQuVrHnOU=
+X-Google-Smtp-Source: ADFU+vtMcmjz2IkoUm+AEKIOmhmLZ+Zq/cFMxCPvZfbkApv9+ewkMMxJ3r0lr/5bDhlCrRFK+R2JMg==
+X-Received: by 2002:ae9:ef4c:: with SMTP id d73mr3833332qkg.201.1583243123678;
+        Tue, 03 Mar 2020 05:45:23 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id o127sm12169290qke.92.2020.03.03.05.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 05:45:23 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Tue, 3 Mar 2020 08:45:21 -0500
+To:     Mika =?utf-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] efi/x86: Decompress at start of PE image load address
+Message-ID: <20200303134521.GA3628638@rani.riverdale.lan>
+References: <20200301230537.2247550-1-nivedita@alum.mit.edu>
+ <20200301230537.2247550-3-nivedita@alum.mit.edu>
+ <dce7e026-ccb2-36f0-c892-83558dcc055f@nextfour.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+h21hrkVr4-Bgop0bor9nkKDUm4dYdyuDWJ_jthjKpy98ZQ1A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dce7e026-ccb2-36f0-c892-83558dcc055f@nextfour.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 12:04:04PM +0200, Vladimir Oltean wrote:
-> On Tue, 3 Mar 2020 at 09:44, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+On Tue, Mar 03, 2020 at 06:28:20AM +0000, Mika Penttilä wrote:
+> 
+> 
+> On 2.3.2020 1.05, Arvind Sankar wrote:
+> > When booted via PE loader, define image_offset to hold the offset of
+> > startup_32 from the start of the PE image, and use it as the start of
+> > the decompression buffer.
 > >
-> > Validate 100baseT1_Full to make this driver work with TJA1102 PHY.
-> >
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 > > ---
+> >  arch/x86/boot/compressed/head_32.S      | 17 +++++++++++
+> >  arch/x86/boot/compressed/head_64.S      | 38 +++++++++++++++++++++++--
+> >  drivers/firmware/efi/libstub/x86-stub.c | 12 ++++++--
+> >  3 files changed, 61 insertions(+), 6 deletions(-)
 > 
-> I was expecting this patch sooner or later.
+> ...
+> > --- a/drivers/firmware/efi/libstub/x86-stub.c
+> > +++ b/drivers/firmware/efi/libstub/x86-stub.c
+> > @@ -19,6 +19,7 @@
+> >  
+> >  static efi_system_table_t *sys_table;
+> >  extern const bool efi_is64;
+> > +extern u32 image_offset;
+> >  
+> >  __pure efi_system_table_t *efi_system_table(void)
+> >  {
+> > @@ -364,6 +365,7 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+> >  	struct boot_params *boot_params;
+> >  	struct setup_header *hdr;
+> >  	efi_loaded_image_t *image;
+> > +	void *image_base;
+> >  	efi_guid_t proto = LOADED_IMAGE_PROTOCOL_GUID;
+> >  	int options_size = 0;
+> >  	efi_status_t status;
+> > @@ -384,7 +386,10 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+> >  		efi_exit(handle, status);
+> >  	}
+> >  
+> > -	hdr = &((struct boot_params *)efi_table_attr(image, image_base))->hdr;
+> > +	image_base = efi_table_attr(image, image_base);
+> > +	image_offset = (void *)startup_32 - image_base;
 > 
-> Acked-by: Vladimir Oltean <olteanv@gmail.com>
+> startup_32 == 0, so maybe something like
 > 
-> I should take this opportunity and express the fact that it is strange
-> for MAC drivers to have to sign off all possible copper and fiber
-> media types in their .phylink_validate method. Sooner or later
-> somebody is going to want to add 1000Base-T1 too. I don't think it is
-> going to scale very well. Russell, with your plan to make MAC drivers
-> just populate a bitmap of phy_modes (MII side), is it also going to
-> get rid of media side validation?
+> leaq	startup_32(%rip) - image_base
+> 
+> should be used ?
+> 
 
-You're touching on a concern I've had for some time that the link modes
-mix together several different parameters: speed, duplex, and media.
-
-What we actually want for a MAC is to know which speeds and duplexes
-they support for each interface mode, and then translate that to the
-ethtool link modes as appropriate.  That isn't a problem I've addressed
-yet, but something that could be addressed.
-
-I've just updated my net-queue with a bunch of stuff that's been
-sitting in other branches (some published, some not), which includes
-the PHY_INTERFACE_MODE bitmap changes - everything from and including
-"net: mvpp2: add port support helpers" concerns the bitmap stuff.
-
-At the moment, it has to support both the new bitmap solution and the
-legacy solution, but hopefully in time we can drop the legacy solution.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+That's what it already uses. All the files in this directory are
+compiled to be position-independent, so it uses rip-relative addressing
+on 64-bit and GOT-relative addressing on 32-bit.
