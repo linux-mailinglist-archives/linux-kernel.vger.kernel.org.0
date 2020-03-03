@@ -2,176 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 974C71777F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2A991777EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:59:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbgCCN62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:58:28 -0500
-Received: from smtprelay0155.hostedemail.com ([216.40.44.155]:58754 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725796AbgCCN62 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:58:28 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 866DE18225DF6;
-        Tue,  3 Mar 2020 13:58:26 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1263:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1544:1593:1594:1605:1711:1730:1747:1777:1792:1801:2194:2198:2199:2200:2393:2525:2553:2560:2563:2682:2685:2692:2693:2828:2859:2918:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4117:4321:4470:4605:5007:6119:6691:7875:7903:7904:9025:9388:10004:10049:10848:11026:11232:11233:11473:11658:11914:12043:12295:12296:12297:12438:12555:12740:12760:12776:12895:13160:13161:13229:13439:14096:14097:14106:14107:14181:14659:14721:14849:21080:21220:21433:21611:21627:21740:21939:21990:30012:30051:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: yard67_83a1f2d77a221
-X-Filterd-Recvd-Size: 6456
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Mar 2020 13:58:24 +0000 (UTC)
-Message-ID: <58c1f1bf6b30bd5c39184cd9c09f25a9b9d67a68.camel@perches.com>
-Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
- copy_from_user()
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Alexander Potapenko <glider@google.com>
-Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Todd Kjos <tkjos@google.com>
-Date:   Tue, 03 Mar 2020 05:56:51 -0800
-In-Reply-To: <20200303093832.GD24372@kadam>
-References: <20200302130430.201037-1-glider@google.com>
-         <20200302130430.201037-2-glider@google.com>
-         <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
-         <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
-         <4cac10d3e2c03e4f21f1104405a0a62a853efb4e.camel@perches.com>
-         <CAG_fn=XOyPGau9m7x8eCLJHy3m-H=nbMODewWVJ1xb2e+BPdFw@mail.gmail.com>
-         <18b0d6ea5619c34ca4120a6151103dbe9bfa0cbe.camel@perches.com>
-         <CAG_fn=U2T--j_uhyppqzFvMO3w3yUA529pQrCpbhYvqcfh9Z1w@mail.gmail.com>
-         <20200303093832.GD24372@kadam>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1729300AbgCCN6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:58:00 -0500
+Received: from mail-co1nam11on2088.outbound.protection.outlook.com ([40.107.220.88]:6191
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727175AbgCCN55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:57:57 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XrYSuGfl2xvDqLt6Xdg/4UbtEuHWt2ZkYk2CsdHkpSs3MJuKKI5n6MPiQQSzvwwRuj3Ugb8ORpDHgNfHRlFiPJkuRYFvHzwS4++m8oKXSve629fBHO9qiTNlWfZ4UH0RFh+RkkSo+WOtxYHqowIXWQdYyeFtz/KTiK31iOZ+MeQrRpJahxKgmxPpOJB84qAKubA8jGxhdViDN4vAonCOYQWPCjfHom5EgJJ6FdD3LBH9vEzLPU/CzxSm3wXSL0APsZIW6I12Sroh4oZE7HB4uI1Uyhom3try+5U+ENUsXrw0tIFxJy9NVeGrZY1vG0nTAC5BqEVo66DgkGphfyqyuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qZMWb7Eq4ivM9vyllqWft4rmA4RrCkNSa+MXkv+okm8=;
+ b=LhBKOCohxNLp8+/NTg4ClFWtB0Gcq/qxAg4/QnGyy203TRz2MSorIBKG/NpePYn9iEwQLDNhc5cDbhO/V8eqWb7rcbZ2GPRXOC0baJ6VzskN8Y+ylQq+hKk99cDpvs1X9aZgWbUdaktbW5loQ5FoM7IJEklw2a2Zz7AI9ytWscd9KcCdHO5eUeNn1O0+KHxjKandJcUJ3E9pvKrv0DKQaHxfXSfOdMAjTpZqlX/JiLlN3ojULAXS3l4ivAomjerQlIIMeofk9g/DFevNIwJ2f/39KP/wZ5FgdNPotbeLj3B2z4Fxk6gvwiI/Ddf5AJQml19FY+P6gbEvmF/eBoTz6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qZMWb7Eq4ivM9vyllqWft4rmA4RrCkNSa+MXkv+okm8=;
+ b=tUbLKn1N3tmeYyFpzhesRSJdfolJ2MoFaFD+4EnCVCoUnXNup8+7crvsHGa7BAOeKYuwRpMDM1Ea+rXVTYXjmZioLkl5KHVddQJNTqC/qvjfovTQbd1lF21NlF7rXWVNLGl9q1BOE0+fHJHdOaRPe0TA7LNAxhkRQJIJcZk9xa0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=John.Allen@amd.com; 
+Received: from SN1PR12MB2448.namprd12.prod.outlook.com (2603:10b6:802:28::23)
+ by SN1PR12MB2414.namprd12.prod.outlook.com (2603:10b6:802:2e::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Tue, 3 Mar
+ 2020 13:57:52 +0000
+Received: from SN1PR12MB2448.namprd12.prod.outlook.com
+ ([fe80::4064:dc7:d9b9:1f64]) by SN1PR12MB2448.namprd12.prod.outlook.com
+ ([fe80::4064:dc7:d9b9:1f64%7]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 13:57:52 +0000
+From:   John Allen <john.allen@amd.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     thomas.lendacky@amd.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, brijesh.singh@amd.com, bp@suse.de,
+        linux-kernel@vger.kernel.org, John Allen <john.allen@amd.com>
+Subject: [PATCH 0/2] crypto/ccp: Properly NULL variables on sev exit             
+Date:   Tue,  3 Mar 2020 07:57:22 -0600
+Message-Id: <20200303135724.14060-1-john.allen@amd.com>
+X-Mailer: git-send-email 2.24.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: DM5PR07CA0060.namprd07.prod.outlook.com
+ (2603:10b6:4:ad::25) To SN1PR12MB2448.namprd12.prod.outlook.com
+ (2603:10b6:802:28::23)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mojo.amd.com (165.204.77.1) by DM5PR07CA0060.namprd07.prod.outlook.com (2603:10b6:4:ad::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18 via Frontend Transport; Tue, 3 Mar 2020 13:57:51 +0000
+X-Mailer: git-send-email 2.24.1
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 5ec9ade6-b7f3-45c3-f8c4-08d7bf7add8c
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2414:|SN1PR12MB2414:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN1PR12MB2414CDD5CC2439EE5C36A8DD9AE40@SN1PR12MB2414.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:108;
+X-Forefront-PRVS: 03319F6FEF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(376002)(366004)(136003)(189003)(199004)(478600001)(26005)(6486002)(4326008)(8676002)(81166006)(36756003)(8936002)(16526019)(6666004)(52116002)(7696005)(44832011)(86362001)(186003)(81156014)(316002)(1076003)(2616005)(66476007)(956004)(4744005)(66556008)(66946007)(5660300002)(2906002)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2414;H:SN1PR12MB2448.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Mba8QG9IdaxnGZmtrd+3QvcpAa9p1Oi8+C0OovHsSRzpFJO41s1Id2Maei3y+4HldqsBeRMHVkf4RrIkoS4odSw5fv9dfF9kf9u/KU/0TUl+IQJOQ2+fgQZhr2Q15WB1SPk5ZAKRcIAOIN3qXOkzMNCR7rovbHABDutTQvLuMLWcelUlLoUX0iqO5s5BIDxn2gBlkadbMXfxsSq9dlIZaVmSRKFSLfTFTj2QOTYbCRYwl+8ag4UY/IBWdVLZFtCd1cdUmnZnHwc0O9Eng4O/JQqyyVwPLD80tkwkdZtlNMRsdJAHKnXif0ozqo7/O2WiJ7Qn3euoU2Na+ILS+4luUB+ewBBKuYGDbsxMuaELBtGwFdANcZ+QGi1V0RzKMt5wspsxH0tnH2B+BI8WOE/zZHkA84CBtvxU2iUEGsDyunPVhhyBKkq+zuCdRuCmUvFy
+X-MS-Exchange-AntiSpam-MessageData: sIvPPNfk790tWLzKGmCaJdxQlaOiDJg8bpF8znIrvBzZqVZWdyRm6rqlkJAWTiZLnOfEiGcVw1LQaDudHgcrk1GqZ2ljjIQyZ4ZRWrGTSY/Keb1wfT21cPWs3JAPjstiD8BmJIpM160vl5kO7H2mlw==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ec9ade6-b7f3-45c3-f8c4-08d7bf7add8c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 13:57:52.3121
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o/vy80V9BSsIguW9t81/T7VhVrS8mB5SnHNGxkR3/Oy6C8sq/UKJMST1pHOYtxTdOu5JHaBUl3f74da/h4arWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2414
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-03 at 12:38 +0300, Dan Carpenter wrote:
-> On Tue, Mar 03, 2020 at 10:14:18AM +0100, Alexander Potapenko wrote:
-> > On Mon, Mar 2, 2020 at 7:51 PM Joe Perches <joe@perches.com> wrote:
-> > > On Mon, 2020-03-02 at 19:17 +0100, Alexander Potapenko wrote:
-> > > > On Mon, Mar 2, 2020 at 3:00 PM Joe Perches <joe@perches.com> wrote:
-> > > > > On Mon, 2020-03-02 at 14:25 +0100, Alexander Potapenko wrote:
-> > > > > > On Mon, Mar 2, 2020 at 2:11 PM Joe Perches <joe@perches.com> wrote:
-> > > > > > > On Mon, 2020-03-02 at 14:04 +0100, glider@google.com wrote:
-> > > > > > > > Certain copy_from_user() invocations in binder.c are known to
-> > > > > > > > unconditionally initialize locals before their first use, like e.g. in
-> > > > > > > > the following case:
-> > > > > > > []
-> > > > > > > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > > > > > > []
-> > > > > > > > @@ -3788,7 +3788,7 @@ static int binder_thread_write(struct binder_proc *proc,
-> > > > > > > > 
-> > > > > > > >               case BC_TRANSACTION_SG:
-> > > > > > > >               case BC_REPLY_SG: {
-> > > > > > > > -                     struct binder_transaction_data_sg tr;
-> > > > > > > > +                     struct binder_transaction_data_sg tr __no_initialize;
-> > > > > > > > 
-> > > > > > > >                       if (copy_from_user(&tr, ptr, sizeof(tr)))
-> > > > > > > 
-> > > > > > > I fail to see any value in marking tr with __no_initialize
-> > > > > > > when it's immediately written to by copy_from_user.
-> > > > > > 
-> > > > > > This is being done exactly because it's immediately written to by copy_to_user()
-> > > > > > Clang is currently unable to figure out that copy_to_user() initializes memory.
-> > > > > > So building the kernel with CONFIG_INIT_STACK_ALL=y basically leads to
-> > > > > > the following code:
-> > > > > > 
-> > > > > >   struct binder_transaction_data_sg tr;
-> > > > > >   memset(&tr, 0xAA, sizeof(tr));
-> > > > > >   if (copy_from_user(&tr, ptr, sizeof(tr))) {...}
-> > > > > > 
-> > > > > > This unnecessarily slows the code down, so we add __no_initialize to
-> > > > > > prevent the compiler from emitting the redundant initialization.
-> > > > > 
-> > > > > So?  CONFIG_INIT_STACK_ALL by design slows down code.
-> > > > Correct.
-> > > > 
-> > > > > This marking would likely need to be done for nearly all
-> > > > > 3000+ copy_from_user entries.
-> > > > Unfortunately, yes. I was just hoping to do so for a handful of hot
-> > > > cases that we encounter, but in the long-term a compiler solution must
-> > > > supersede them.
-> > > > 
-> > > > > Why not try to get something done on the compiler side
-> > > > > to mark the function itself rather than the uses?
-> > > > This is being worked on in the meantime as well (see
-> > > > http://lists.llvm.org/pipermail/cfe-dev/2020-February/064633.html)
-> > > > Do you have any particular requisitions about how this should look on
-> > > > the source level?
-> > > 
-> > > I presume something like the below when appropriate for
-> > > automatic variables when not already initialized or modified.
-> > > ---
-[]
-> > > diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-[]
-> > > @@ -138,7 +138,8 @@ _copy_to_user(void __user *, const void *, unsigned long);
-> > >  #endif
-> > > 
-> > >  static __always_inline unsigned long __must_check
-> > > -copy_from_user(void *to, const void __user *from, unsigned long n)
-> > > +copy_from_user(void __no_initialize *to, const void __user *from,
-> > > +              unsigned long n)
-> > 
-> > Shall this __no_initialize attribute denote that the whole object
-> > passed to it is initialized?
+Stale pointers left in static variables misc_dev and sp_dev_master will
+trigger use-after-free error when DEBUG_TEST_DRIVER_REMOVE is configured.
+                                                                                 
+John Allen (2):
+  crypto/ccp: Cleanup misc_dev on sev exit
+  crypto/ccp: Cleanup sp_dev_master on psp device destroy
 
-My presumption is the compiler could determine that only if the
-accessed variable is a local automatic, it does not need to be
-initialized.
+ drivers/crypto/ccp/psp-dev.c | 3 +++
+ drivers/crypto/ccp/sev-dev.c | 6 +++---
+ drivers/crypto/ccp/sp-dev.h  | 1 +
+ drivers/crypto/ccp/sp-pci.c  | 9 +++++++++
+ 4 files changed, 16 insertions(+), 3 deletions(-)
 
-> > Or do we need to encode the length as well, as Jann suggests?
-
-I think not.
-
-> > It's also interesting what should happen if *to is pointing _inside_ a
-> > local object - presumably it's unsafe to disable initialization for
-> > the whole object.
-
-Are you asking if for example:
-
-	struct foo {
-		...;
-	};
-
-	struct bar {
-		struct foo a;
-		...;
-	};
-
-	void func(void)
-	{
-		struct bar b;
-		...;
-		copy_from_user(&b.a, baz, len);
-		...;
-	}
-
-that the containing struct b would not be initialized?
-
-I presume a compiler would initialized all of b, but
-if it manages to initialize all of b but b.a, good on
-the compiler writer.
-
-> The real fix is to initialize everything manually, the automated
-> initialization is a hardenning feature which many people will disable.
-> So I don't think the hardenning needs to be perfect, it needs to simple
-> and fast.
-
-Dan, perhaps I don't understand you.
-Can you clarify what you mean?
+-- 
+2.18.2
 
