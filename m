@@ -2,283 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B9017868C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C859F178686
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 00:40:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbgCCXkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 18:40:24 -0500
-Received: from mga11.intel.com ([192.55.52.93]:38119 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728382AbgCCXkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 18:40:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 15:40:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="440790517"
-Received: from kwasilew-mobl.ger.corp.intel.com (HELO localhost) ([10.251.88.57])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Mar 2020 15:40:15 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH v28 22/22] selftests/x86: Add vDSO selftest for SGX
-Date:   Wed,  4 Mar 2020 01:36:09 +0200
-Message-Id: <20200303233609.713348-23-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728924AbgCCXju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 18:39:50 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37637 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728366AbgCCXju (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 18:39:50 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b8so136039plx.4;
+        Tue, 03 Mar 2020 15:39:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MlgGONKkRLK3NcvigeAJc91a/0y8Apuj7MwQf/mg+U0=;
+        b=D9W5ElJ2zxSPQm4mNWtoIMwwurVR9+YB+QwzGyMNY+2dod40+OQtgHk1q3WL8pPRYi
+         btF0N+R5jBEgLjFYe+UritcA0LB7O2LpRC4TF6WnkYIUYHQs2oGEIJ1hopgAuDvLOrbR
+         99Qf4VTvjXvqXXGOSr71qqkt90axZRtZIeQPSx8NvO1TBgPdE6OLFDWyWyF8FnFv1zVK
+         Yz+DCu48XhqgPtdAbDal/QSFSEcakC1n7h8nk1PThpkRVStI262AVvSFq3ySlUCtivXo
+         XQlWw9ME8wwoKH0ZSOnwzO5dDtOWIsubW9wOPAxXlpbo0OnNiijNI6XopU+6aksokKYA
+         gQqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MlgGONKkRLK3NcvigeAJc91a/0y8Apuj7MwQf/mg+U0=;
+        b=EotNq3q6mQ9zpSwPJfZUn/XQstN44AQVF4eNIqYAkTHFf6K72YT552pwBtUpQToW7J
+         1gQrq+UP8jKBErruAdePjC6d0Avj7Xm50lOG/CjZZ1BGScd7APKPbKzLP/eO8+wOOmuK
+         1iv0GjB+YsOS0rTHbRFWI6nV00xQMKL8m+7kG0X3GTCx9DMg/JDI1y/OaKlmOKDgiQlt
+         41lIyuViECOc+QOz4kB/3H30St8KYomXp/ykizOm0A6IMylhvYSzkhjX+n3hWu164GhD
+         Mfvg80V6RZSfuu/ZSRUgsXBY0DAv62fZXMx//OU6I3etuhmDW4uhVS2iqTydOMe4LEDz
+         Xi9Q==
+X-Gm-Message-State: ANhLgQ0tAE/Tf9jh1+/y40AF7+qoBli8GNRzE6Es8kbrsuJnjJwb66TM
+        IZtTZ6qCKllZdreHUFlQicM=
+X-Google-Smtp-Source: ADFU+vtQ/e7DsvLk4ksjt5EmjwpakcglqQtUHEch5z+psuTO23FwIqq98Hw/eHUDA5CdkXvxchABqA==
+X-Received: by 2002:a17:90a:c390:: with SMTP id h16mr399pjt.131.1583278788877;
+        Tue, 03 Mar 2020 15:39:48 -0800 (PST)
+Received: from VM_0_35_centos.localdomain ([150.109.62.251])
+        by smtp.gmail.com with ESMTPSA id d1sm25569029pgi.63.2020.03.03.15.39.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Mar 2020 15:39:48 -0800 (PST)
+From:   Qiujun Huang <hqjagain@gmail.com>
+To:     sfrench@samba.org
+Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org, smfrench@gmail.com,
+        Qiujun Huang <hqjagain@gmail.com>
+Subject: [PATCH] fs/cifs/cifsacl: remove set but not used variable 'rc'
+Date:   Wed,  4 Mar 2020 07:39:43 +0800
+Message-Id: <1583278783-11584-1-git-send-email-hqjagain@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expand the selftest by invoking the enclave by using
-__vdso_sgx_enter_enclave() in addition to direct ENCLS[EENTER].
+ It is set but not used, So can be removed.
 
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
 ---
- tools/testing/selftests/x86/sgx/main.c     | 132 +++++++++++++++++++++
- tools/testing/selftests/x86/sgx/sgx_call.S |  43 +++++++
- tools/testing/selftests/x86/sgx/sgx_call.h |   3 +
- 3 files changed, 178 insertions(+)
+ fs/cifs/cifsacl.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/sgx/main.c b/tools/testing/selftests/x86/sgx/main.c
-index 48ed5fdfb3cb..d97cc3cf0093 100644
---- a/tools/testing/selftests/x86/sgx/main.c
-+++ b/tools/testing/selftests/x86/sgx/main.c
-@@ -21,6 +21,109 @@
- #define PAGE_SIZE  4096
- 
- static const uint64_t MAGIC = 0x1122334455667788ULL;
-+void *eenter;
-+
-+struct vdso_symtab {
-+	Elf64_Sym *elf_symtab;
-+	const char *elf_symstrtab;
-+	Elf64_Word *elf_hashtab;
-+};
-+
-+static void *vdso_get_base_addr(char *envp[])
-+{
-+	Elf64_auxv_t *auxv;
-+	int i;
-+
-+	for (i = 0; envp[i]; i++)
-+		;
-+
-+	auxv = (Elf64_auxv_t *)&envp[i + 1];
-+
-+	for (i = 0; auxv[i].a_type != AT_NULL; i++) {
-+		if (auxv[i].a_type == AT_SYSINFO_EHDR)
-+			return (void *)auxv[i].a_un.a_val;
-+	}
-+
-+	return NULL;
-+}
-+
-+static Elf64_Dyn *vdso_get_dyntab(void *addr)
-+{
-+	Elf64_Ehdr *ehdr = addr;
-+	Elf64_Phdr *phdrtab = addr + ehdr->e_phoff;
-+	int i;
-+
-+	for (i = 0; i < ehdr->e_phnum; i++)
-+		if (phdrtab[i].p_type == PT_DYNAMIC)
-+			return addr + phdrtab[i].p_offset;
-+
-+	return NULL;
-+}
-+
-+static void *vdso_get_dyn(void *addr, Elf64_Dyn *dyntab, Elf64_Sxword tag)
-+{
-+	int i;
-+
-+	for (i = 0; dyntab[i].d_tag != DT_NULL; i++)
-+		if (dyntab[i].d_tag == tag)
-+			return addr + dyntab[i].d_un.d_ptr;
-+
-+	return NULL;
-+}
-+
-+static bool vdso_get_symtab(void *addr, struct vdso_symtab *symtab)
-+{
-+	Elf64_Dyn *dyntab = vdso_get_dyntab(addr);
-+
-+	symtab->elf_symtab = vdso_get_dyn(addr, dyntab, DT_SYMTAB);
-+	if (!symtab->elf_symtab)
-+		return false;
-+
-+	symtab->elf_symstrtab = vdso_get_dyn(addr, dyntab, DT_STRTAB);
-+	if (!symtab->elf_symstrtab)
-+		return false;
-+
-+	symtab->elf_hashtab = vdso_get_dyn(addr, dyntab, DT_HASH);
-+	if (!symtab->elf_hashtab)
-+		return false;
-+
-+	return true;
-+}
-+
-+static unsigned long elf_sym_hash(const char *name)
-+{
-+	unsigned long h = 0, high;
-+
-+	while (*name) {
-+		h = (h << 4) + *name++;
-+		high = h & 0xf0000000;
-+
-+		if (high)
-+			h ^= high >> 24;
-+
-+		h &= ~high;
-+	}
-+
-+	return h;
-+}
-+
-+static Elf64_Sym *vdso_symtab_get(struct vdso_symtab *symtab, const char *name)
-+{
-+	Elf64_Word bucketnum = symtab->elf_hashtab[0];
-+	Elf64_Word *buckettab = &symtab->elf_hashtab[2];
-+	Elf64_Word *chaintab = &symtab->elf_hashtab[2 + bucketnum];
-+	Elf64_Sym *sym;
-+	Elf64_Word i;
-+
-+	for (i = buckettab[elf_sym_hash(name) % bucketnum]; i != STN_UNDEF;
-+	     i = chaintab[i]) {
-+		sym = &symtab->elf_symtab[i];
-+		if (!strcmp(name, &symtab->elf_symstrtab[sym->st_name]))
-+			return sym;
-+	}
-+
-+	return NULL;
-+}
- 
- static bool encl_create(int dev_fd, unsigned long bin_size,
- 			struct sgx_secs *secs)
-@@ -218,10 +321,14 @@ bool load_sigstruct(const char *path, void *sigstruct)
- 
- int main(int argc, char *argv[], char *envp[])
+diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
+index 716574a..1cf3916 100644
+--- a/fs/cifs/cifsacl.c
++++ b/fs/cifs/cifsacl.c
+@@ -342,7 +342,6 @@
+ sid_to_id(struct cifs_sb_info *cifs_sb, struct cifs_sid *psid,
+ 		struct cifs_fattr *fattr, uint sidtype)
  {
-+	struct sgx_enclave_exception exception;
- 	struct sgx_sigstruct sigstruct;
-+	struct vdso_symtab symtab;
-+	Elf64_Sym *eenter_sym;
- 	struct sgx_secs secs;
- 	uint64_t result = 0;
- 	off_t bin_size;
-+	void *addr;
- 	void *bin;
- 
- 	if (!encl_data_map("encl.bin", &bin, &bin_size))
-@@ -243,5 +350,30 @@ int main(int argc, char *argv[], char *envp[])
- 
- 	printf("Output: 0x%lx\n", result);
- 
-+	memset(&exception, 0, sizeof(exception));
-+
-+	addr = vdso_get_base_addr(envp);
-+	if (!addr)
-+		exit(1);
-+
-+	if (!vdso_get_symtab(addr, &symtab))
-+		exit(1);
-+
-+	eenter_sym = vdso_symtab_get(&symtab, "__vdso_sgx_enter_enclave");
-+	if (!eenter_sym)
-+		exit(1);
-+	eenter = addr + eenter_sym->st_value;
-+
-+	printf("Input: 0x%lx\n", MAGIC);
-+
-+	sgx_call_vdso((void *)&MAGIC, &result, 0, NULL, NULL, NULL,
-+		      (void *)secs.base, &exception, NULL);
-+	if (result != MAGIC) {
-+		fprintf(stderr, "0x%lx != 0x%lx\n", result, MAGIC);
-+		exit(1);
-+	}
-+
-+	printf("Output: 0x%lx\n", result);
-+
- 	exit(0);
- }
-diff --git a/tools/testing/selftests/x86/sgx/sgx_call.S b/tools/testing/selftests/x86/sgx/sgx_call.S
-index ca4c7893f9d9..e71f44f7a995 100644
---- a/tools/testing/selftests/x86/sgx/sgx_call.S
-+++ b/tools/testing/selftests/x86/sgx/sgx_call.S
-@@ -21,3 +21,46 @@ sgx_async_exit:
- 	ENCLU
- 	pop	%rbx
- 	ret
-+
-+	.global sgx_call_vdso
-+sgx_call_vdso:
-+	.cfi_startproc
-+	push	%r15
-+	.cfi_adjust_cfa_offset	8
-+	.cfi_rel_offset		%r15, 0
-+	push	%r14
-+	.cfi_adjust_cfa_offset	8
-+	.cfi_rel_offset		%r14, 0
-+	push	%r13
-+	.cfi_adjust_cfa_offset	8
-+	.cfi_rel_offset		%r13, 0
-+	push	%r12
-+	.cfi_adjust_cfa_offset	8
-+	.cfi_rel_offset		%r12, 0
-+	push	%rbx
-+	.cfi_adjust_cfa_offset	8
-+	.cfi_rel_offset		%rbx, 0
-+	push	$0
-+	.cfi_adjust_cfa_offset	8
-+	push	0x48(%rsp)
-+	.cfi_adjust_cfa_offset	8
-+	push	0x48(%rsp)
-+	.cfi_adjust_cfa_offset	8
-+	push	0x48(%rsp)
-+	.cfi_adjust_cfa_offset	8
-+	mov	$2, %eax
-+	call	*eenter(%rip)
-+	add	$0x20, %rsp
-+	.cfi_adjust_cfa_offset	-0x20
-+	pop	%rbx
-+	.cfi_adjust_cfa_offset	-8
-+	pop	%r12
-+	.cfi_adjust_cfa_offset	-8
-+	pop	%r13
-+	.cfi_adjust_cfa_offset	-8
-+	pop	%r14
-+	.cfi_adjust_cfa_offset	-8
-+	pop	%r15
-+	.cfi_adjust_cfa_offset	-8
-+	ret
-+	.cfi_endproc
-diff --git a/tools/testing/selftests/x86/sgx/sgx_call.h b/tools/testing/selftests/x86/sgx/sgx_call.h
-index bf72068ada23..a4072c5ecce7 100644
---- a/tools/testing/selftests/x86/sgx/sgx_call.h
-+++ b/tools/testing/selftests/x86/sgx/sgx_call.h
-@@ -8,4 +8,7 @@
- 
- void sgx_call_eenter(void *rdi, void *rsi, void *entry);
- 
-+int sgx_call_vdso(void *rdi, void *rsi, long rdx, void *rcx, void *r8, void *r9,
-+		  void *tcs, struct sgx_enclave_exception *ei, void *cb);
-+
- #endif /* SGX_CALL_H */
+-	int rc;
+ 	struct key *sidkey;
+ 	char *sidstr;
+ 	const struct cred *saved_cred;
+@@ -403,7 +402,6 @@
+ 	saved_cred = override_creds(root_cred);
+ 	sidkey = request_key(&cifs_idmap_key_type, sidstr, "");
+ 	if (IS_ERR(sidkey)) {
+-		rc = -EINVAL;
+ 		cifs_dbg(FYI, "%s: Can't map SID %s to a %cid\n",
+ 			 __func__, sidstr, sidtype == SIDOWNER ? 'u' : 'g');
+ 		goto out_revert_creds;
+@@ -416,7 +414,6 @@
+ 	 */
+ 	BUILD_BUG_ON(sizeof(uid_t) != sizeof(gid_t));
+ 	if (sidkey->datalen != sizeof(uid_t)) {
+-		rc = -EIO;
+ 		cifs_dbg(FYI, "%s: Downcall contained malformed key (datalen=%hu)\n",
+ 			 __func__, sidkey->datalen);
+ 		key_invalidate(sidkey);
 -- 
-2.25.0
+1.8.3.1
 
