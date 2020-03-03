@@ -2,113 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 915771770D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:10:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB411770E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 09:15:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgCCIKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 03:10:46 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44266 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbgCCIKp (ORCPT
+        id S1727758AbgCCIPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 03:15:39 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:42787 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbgCCIPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 03:10:45 -0500
-Received: by mail-ot1-f67.google.com with SMTP id v22so2086552otq.11;
-        Tue, 03 Mar 2020 00:10:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L4V0nO6YoFQC+VrJorOZx6spYOy7Y14kJjuP4AbSkIU=;
-        b=PbEXrlLp2334WdUN/e3b5ckICpiQ2Evoi8UpHxP8GJsMYA2UUvO6rlcORMKf2BkhdH
-         ZeqoxIONQgyJJlrOENvUEGyDXH6HTGGmkXdnnDNSkh68g2E+YsHYQ0chZYTxf28b8h6B
-         H7abpILC//Ix7/rv5i7eBiGJsGFiif1aCZx5EYalhPGGqQGv7fzNDXivn2XIl6T4ic/c
-         oEtYAvImfq9QlS9kgcLptAetwQHMLqPxVxH1dpEg3dQHY3mBEiiVEBLU1Z8kRrkIzlYF
-         ELYpIswcGQvyKSm2SkLrtRZeC6D7liGqQAwinja7zUASR5758gmJspOuu8JyJg5R0ppL
-         wyVg==
-X-Gm-Message-State: ANhLgQ1u9Dx8hWyr3gK3CEzhLBINNtYVdCs5WHAznzOgI0+/bnaTjlu1
-        LcNLZ0NEs5nllwmlpkXUKyyvJSxOnfji+y46A7w=
-X-Google-Smtp-Source: ADFU+vuWzFfOUoamA3IIYQ4UI32smmS6vWrPi1qIqsiRlYKHqGQaJDMJFksM/3CcoBGTBlx4iYe24VYAu2AOIG3J9zU=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr2470704otk.145.1583223044438;
- Tue, 03 Mar 2020 00:10:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20200228170210.18252-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdUn9njDRWZPcSD87YuejmhNvDK3pUqL5kXNX6KA-8Y72g@mail.gmail.com> <CA+V-a8tZaAp3q0JtavGK0MV4MxcZqNMkuvY=dMj8CFu7k3w0NA@mail.gmail.com>
-In-Reply-To: <CA+V-a8tZaAp3q0JtavGK0MV4MxcZqNMkuvY=dMj8CFu7k3w0NA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Mar 2020 09:10:33 +0100
-Message-ID: <CAMuHMdWtom=LB93K_KLBZaRUgTDue8HYArhs5jf0gBG1eMCMVw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0-cat874: Add support for
- AISTARVISION MIPI Adapter V2.1
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
+        Tue, 3 Mar 2020 03:15:38 -0500
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 5677C240038;
+        Tue,  3 Mar 2020 08:15:03 +0000 (UTC)
+Message-ID: <fe4e0010826d4d18843b148dc088c2b01c7e2072.camel@hadess.net>
+Subject: Re: [PATCH 1/2] Input: Add keycodes for keyboard backlight control
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Rajat Jain <rajatja@google.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dtor@google.com
+Cc:     rajatxjain@gmail.com
+Date:   Tue, 03 Mar 2020 09:15:02 +0100
+In-Reply-To: <20200303005645.237763-1-rajatja@google.com>
+References: <20200303005645.237763-1-rajatja@google.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.35.92 (3.35.92-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lad,
+On Mon, 2020-03-02 at 16:56 -0800, Rajat Jain wrote:
+> New keyboards can have backlight control keys. Allocating keycodes
+> for them. Such keyboards are already available in ChromeOS.
+> 
+> Signed-off-by: Rajat Jain <rajatja@google.com>
+> ---
+>  include/uapi/linux/input-event-codes.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/uapi/linux/input-event-codes.h
+> b/include/uapi/linux/input-event-codes.h
+> index 0f1db1cccc3fd..e12a19dc30262 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -652,6 +652,10 @@
+>  /* Electronic privacy screen control */
+>  #define KEY_PRIVACY_SCREEN_TOGGLE	0x279
+>  
+> +/* Keyboard Backlight control */
+> +#define KEY_KBD_BKLIGHT_UP              0x280
+> +#define KEY_KBD_BKLIGHT_DOWN            0x281
 
-On Tue, Mar 3, 2020 at 8:51 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Mon, Mar 2, 2020 at 3:57 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Fri, Feb 28, 2020 at 6:02 PM Lad Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > > This patch adds support AISTARVISION MIPI Adapter V2.1 board connected
-> > > to G2E board. Common file aistarvision-mipi-adapter-2.1.dtsi is created
-> > > which have the camera endpoint nodes with disabled status and in
-> > > r8a774c0-ek874-mipi-2.1.dts file VIN/CSI nodes are enabled. By default
-> > > imx219 endpoint is tied with CSI2.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+There's already KEY_KBDILLUMDOWN and KEY_KBDILLUMUP, used since the
+aluminium PowerBook G4 in 2005 (commit
+146a4b3bdfb5641bfbf975e29680b482b8b343ba)
 
-> > > --- /dev/null
-> > > +++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+> +
+>  /*
+>   * Some keyboards have keys which do not have a defined meaning,
+> these keys
+>   * are intended to be programmed / bound to macros by the user. For
+> most
 
-> > > +
-> > > +&ov5645 {
-> > > +       /* uncomment status and remote-endpoint properties to tie ov5645
-> > > +        * to CSI2 also make sure remote-endpoint for imx219 camera is
-> > > +        * commented and remote endpoint in csi40_in is ov5645_ep
-> > > +        */
-> > > +       /* status = "okay"; */
-> > > +
-> > > +       #address-cells = <1>;
-> > > +       #size-cells = <0>;
-> >
-> > #{address,size}-cells not needed.
-> >
-> agreed will drop it.
->
-> > > +       enable-gpios = <&gpio5 5 GPIO_ACTIVE_HIGH>;
-> > > +       reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
-> > > +
-> > > +       clocks = <&cpg CPG_MOD 716>;
-> > > +       clock-frequency = <24000000>;
-> >
-> > I know this is dictated by the DT bindings for the ov5645 camera, but
-> > specifying a clock rate is usually done through assigned-clock-rates,
-> > cfr.  Documentation/devicetree/bindings/clock/clock-bindings.txt.
-> >
-> agreed will replace it.
-
-Note that doing so means you have to fix the ov5645 driver, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
