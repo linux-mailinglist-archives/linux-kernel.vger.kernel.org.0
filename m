@@ -2,92 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFFF1777EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 934DA17780F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 14:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgCCN6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 08:58:20 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36985 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728018AbgCCN6T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:58:19 -0500
-Received: by mail-ot1-f67.google.com with SMTP id b3so3066476otp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 05:58:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jbcRkVBxSbJptVd45Z925xp04oFQnSe/xFiehp4Z2HY=;
-        b=DwhrlK2SAnNEc310PFtb/wtiEb9o2QG+UHkXx02enw/+bZgoV6Vd5k8t+bCxIS1KL0
-         CiIHCR8bIHYIzYgCbotrzwPNaxWcGCBo6bso4emMvUjLbFuXSSHRESWkUWD1Uu5k7FRM
-         4Vp1SoFKTD3zxA2iouOs+1gHuAxgPAHCjdmx9y3Z64VomIGs1W9TJARAEn9XvapU495J
-         4uzCui4iWa676vBWfxjW4CTO6BjHIQ1Lckvx+aAJsinjy77isJjFM9chRYG35xDZGopB
-         KL5XmcSMPD2RhSW0TpDuMNH3knppvSaAvflJgJyYCfpOQQnkPBwctXg5GgtAQnOfAh4L
-         8qCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jbcRkVBxSbJptVd45Z925xp04oFQnSe/xFiehp4Z2HY=;
-        b=dmEXVxKIWDxDZlviGRYJBvLgJZjTZlLrSPusJ0XtFrJa4CyYagwJSyZrbyoml6CZ0c
-         MQ/2pkUcbjla95VAmkcva60DwoXzW6PC/q9L3L4a1X24E5yV1Tl675HFuji1xvVwCA/n
-         /xYRjkEDrjhQWoQIKHgA0ceEYAHueeEt6TOurScPHIvpnEBReEOore0ORA1BnN0GPi1D
-         ZzfLLHYWvlewD6kry1bpczskvhUIc6H2hxxMkZUCKLSyJXLeEGzCJE+d0uzpQ0GS8BQf
-         QdKwcwBFm7V6BP1M2PVD6I9T74xZFTg3is3gKmHXZJ4GOLYlf0rBJBebgofkOoblq5iz
-         SVbw==
-X-Gm-Message-State: ANhLgQ2ZJ2ZCXoXFeK4wj/0gqDxiratcATcFqd3RfAvSkGB3G5xrrpTG
-        bd4pi83EQyjrkTOpGkVSVhDj5SSGFQGV21bAJ6el+Q==
-X-Google-Smtp-Source: ADFU+vsOF73UPQUHQMvLyMi287mQvulbkayIZkhYFakbOdqU0mvsrMAl1bBqLrnm9Y8XjItDIaCeUz4e0WfTPYOhbTA=
-X-Received: by 2002:a05:6830:11a:: with SMTP id i26mr3553549otp.180.1583243886992;
- Tue, 03 Mar 2020 05:58:06 -0800 (PST)
+        id S1729412AbgCCN7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 08:59:42 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:43508 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729366AbgCCN7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:59:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=LxSraZ4V6R6eSZ2XYZzkqraIm7vZB0AJQUd3qlAu/BQ=; b=gEdvT9UJOe7ZmXC9c8402O0aeo
+        ZGe43nTZlQu4l2nCtqiM8ZfXptCpck6hPP/C6TDQSTWTw0m43qAduJYnA48JY3CRtZXc3hJVlh/zC
+        stWqc/CxpRzYlAUEK7k9Ff1V3s14AVySvuD7ZHGX2R/8jZywUmYAOAYmzXbsuLI2M/Fk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1j985A-0006OD-Bh; Tue, 03 Mar 2020 14:59:36 +0100
+Date:   Tue, 3 Mar 2020 14:59:36 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Marek Vasut <marex@denx.de>, David Jander <david@protonic.nl>,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: Re: [PATCH v1] net: phy: tja11xx: add TJA1102 support
+Message-ID: <20200303135936.GG31977@lunn.ch>
+References: <20200303073715.32301-1-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-References: <20200303105427.260620-1-jannh@google.com> <CAKv+Gu82eEpZFz5Qto+BnKifM4duv8sBTx3YhLXU8ZPPsND+Rg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu82eEpZFz5Qto+BnKifM4duv8sBTx3YhLXU8ZPPsND+Rg@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 3 Mar 2020 14:57:40 +0100
-Message-ID: <CAG48ez1u-CB8dW4iaH8zpdaUxb-kY4VDPVWPAoNOQKhnhsZkkg@mail.gmail.com>
-Subject: Re: [PATCH v2] lib/refcount: Document interaction with PID_MAX_LIMIT
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Will Deacon <will@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303073715.32301-1-o.rempel@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 2:07 PM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On Tue, 3 Mar 2020 at 11:54, Jann Horn <jannh@google.com> wrote:
-> >
-> > Document the circumstances under which refcount_t's saturation mechanism
-> > works deterministically.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
->
-> I /think/ the main point of Kees's suggestion was that FUTEX_TID_MASK
-> is UAPI, so unlikely to change.
+Hi Oleksij
 
-Yeah, but it has already changed three times in git history:
+> TJA1102 is an dual T1 PHY chip. Both PHYs are separately addressable.
+> PHY 0 can be identified by PHY ID. PHY 1 has no PHY ID and can be
+> configured in device tree by setting compatible =
+> "ethernet-phy-id0180.dc81".
 
-76b81e2b0e224 ("[PATCH] lightweight robust futexes updates 2"):
-0x1fffffff -> 0x3fffffff
-d0aa7a70bf03b ("futex_requeue_pi optimization"): 0x3fffffff -> 0x0fffffff
-bd197234b0a6 ("Revert "futex_requeue_pi optimization""): 0x0fffffff ->
-0x3fffffff
+Why-o-why do silicon vendors make devices with invalid PHY IDs!?!?!
 
-I just sent a patch to fix up a comment that still claimed the mask
-was 0x1fffffff... so I didn't want to explicitly write the new value
-here.
+Did you try avoiding the compatible string. We know PHY 0 will probe
+as normal. From its PHY ID we know it is a dual device. Could the
+probe of PHY 0 register PHY 1?
 
-While making the value *bigger* would probably be a bit hard (and
-unnecessary), making it smaller would be fairly easy here - the field
-is populated by userspace, so even though the mask is 0x3fffffff,
-userspace will never set the upper bits, so they're effectively
-reserved bits with value 0.
+No idea if it will work, but could nxp-tja11xx.c register is fixup for
+PHY_ID_TJA1102. That fixup would do something like:
+
+void tja1102_fixup(struct phy_device *phydev_phy0)
+{
+        struct mii_bus *bus = phydev_phy0->mdio.mii;
+        struct phy_device *phydev_phy1;
+
+        phydev_phy1 = phy_device_create(bus, phydev_phy0->addr + 1,
+                                        PHY_ID_TJA1102, FALSE, NULL);
+	if (phydev_phy1)
+               phy_device_register(phydev_phy1);
+}
+
+I think the issue here is, it will deadlock when scanning for fixup
+for phydev_phy1. So this basic idea, but maybe hooked in somewhere
+else?
+
+Something like this might also help vsc8584 which is a quad PHY with
+some shared registers?
+
+	  Andrew
