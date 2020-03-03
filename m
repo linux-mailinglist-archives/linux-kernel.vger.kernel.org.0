@@ -2,161 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D32FB1775AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 13:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 163EC1775AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 13:10:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgCCMJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 07:09:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:46210 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbgCCMJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 07:09:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8E84FEC;
-        Tue,  3 Mar 2020 04:09:31 -0800 (PST)
-Received: from e110176-lin.kfn.arm.com (unknown [10.50.4.151])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 539263F534;
-        Tue,  3 Mar 2020 04:09:30 -0800 (PST)
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Ofir Drang <ofir.drang@arm.com>,
+        id S1729165AbgCCMK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 07:10:28 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:22467 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729141AbgCCMK2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 07:10:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583237426;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=3mMB/nNVi0z8+CG/KyauyvUCLnkwQ+0FkBfzbfehBPw=;
+        b=bHJTJlPR7zkJEKfZX+qM/uKwKiG1YeRW2itLAEZwn4Eyy7fuZjvFI3M9gGMOM29wV4
+        EVjd6McnM90OSor4fvFw5tjFhAnkl6CRBq+iemfbgb+CNoBATC7htLKymKlxdbUV5vy1
+        a+ZLTtrGzfTsd+MJActzN0XsHHlMihfSjtO83J2UnRsoODc4gk0F7Xzdd2Ri4xElPgdx
+        ltQMHAAcBOgg+FHQmejjpm7uz13Q8dzqEEgsyYxjxo1EC2y+HE9760TA4oJ0gQoohKQV
+        H4Zpt7JG5j5yeEdn617kPxXCKWfCvF3p/ocXaga2IhkK3L+hjkSC5IrnWAaa2qr2Wava
+        WsHA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGHPrpwDGvxw=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
+        with ESMTPSA id y0a02cw23CANI4n
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Tue, 3 Mar 2020 13:10:23 +0100 (CET)
+Subject: Re: [PATCH v5 2/5] MIPS: DTS: CI20: fix PMU definitions for ACT8600
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20200303101818.GA12103@alpha.franken.de>
+Date:   Tue, 3 Mar 2020 13:10:22 +0100
+Cc:     Paul Boddie <paul@boddie.org.uk>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] crypto: testmgr - sync both RFC4106 IV copies
-Date:   Tue,  3 Mar 2020 14:09:25 +0200
-Message-Id: <20200303120925.12067-1-gilad@benyossef.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, stable <stable@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <85F9D066-EAF6-4840-8F54-24E6D8A534DC@goldelico.com>
+References: <cover.1583005548.git.hns@goldelico.com> <02f18080fa0e0c214b40431749ca1ce514c53d37.1583005548.git.hns@goldelico.com> <20200303101818.GA12103@alpha.franken.de>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RFC4106 AEAD ciphers the AAD is the concatenation of associated
-authentication data || IV || plaintext or ciphertext but the
-random AEAD message generation in testmgr extended tests did
-not obey this requirements producing messages with undefined
-behaviours. Fix it by syncing the copies if needed.
+Hi Thomas,
 
-Since this only relevant for developer only extended tests any
-additional cycles/run time costs are negligible.
+> Am 03.03.2020 um 11:18 schrieb Thomas Bogendoerfer =
+<tsbogend@alpha.franken.de>:
+>=20
+> On Sat, Feb 29, 2020 at 08:45:45PM +0100, H. Nikolaus Schaller wrote:
+>> There is a ACT8600 on the CI20 board and the bindings of the
+>> ACT8865 driver have changed without updating the CI20 device
+>> tree. Therefore the PMU can not be probed successfully and
+>> is running in power-on reset state.
+>>=20
+>> Fix DT to match the latest act8865-regulator bindings.
+>>=20
+>> Fixes: 73f2b940474d ("MIPS: CI20: DTS: Add I2C nodes")
+>=20
+> I see checkpatch warnings in this patch, could please fix them ?
 
-This fixes extended AEAD test failures with the ccree driver
-caused by illegal input.
+Ah, ok. The comment. Well, on a 5k screen this 80 character limit
+is really outdated. But checkpatch is the king :)
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Eric Biggers <ebiggers@kernel.org>
----
+Noted for v6.
 
- crypto/testmgr.c | 35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
+> And please seperate fixes from improvments, thank you.
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 88f33c0efb23..379bd1c7dd5b 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -91,10 +91,16 @@ struct aead_test_suite {
- 	unsigned int einval_allowed : 1;
- 
- 	/*
--	 * Set if the algorithm intentionally ignores the last 8 bytes of the
--	 * AAD buffer during decryption.
-+	 * Set if the algorithm includes a copy of the IV (last 8 bytes)
-+	 * in the AAD buffer but does not include it in calculating the ICV
- 	 */
--	unsigned int esp_aad : 1;
-+	unsigned int skip_aad_iv : 1;
-+
-+	/*
-+	 * Set if the algorithm includes a copy of the IV (last 8 bytes)
-+	 * in the AAD buffer and does include it when calculating the ICV
-+	 */
-+	unsigned int auth_aad_iv : 1;
- };
- 
- struct cipher_test_suite {
-@@ -2167,14 +2173,20 @@ struct aead_extra_tests_ctx {
-  * here means the full ciphertext including the authentication tag.  The
-  * authentication tag (and hence also the ciphertext) is assumed to be nonempty.
-  */
--static void mutate_aead_message(struct aead_testvec *vec, bool esp_aad)
-+static void mutate_aead_message(struct aead_testvec *vec,
-+				const struct aead_test_suite *suite)
- {
--	const unsigned int aad_tail_size = esp_aad ? 8 : 0;
-+	const unsigned int aad_ivsize = 8;
-+	const unsigned int aad_tail_size = suite->skip_aad_iv ? aad_ivsize : 0;
- 	const unsigned int authsize = vec->clen - vec->plen;
- 
- 	if (prandom_u32() % 2 == 0 && vec->alen > aad_tail_size) {
- 		 /* Mutate the AAD */
- 		flip_random_bit((u8 *)vec->assoc, vec->alen - aad_tail_size);
-+		if (suite->auth_aad_iv)
-+			memcpy((u8 *)vec->iv,
-+			       (vec->assoc + vec->alen - aad_ivsize),
-+			       aad_ivsize);
- 		if (prandom_u32() % 2 == 0)
- 			return;
- 	}
-@@ -2208,6 +2220,10 @@ static void generate_aead_message(struct aead_request *req,
- 	/* Generate the AAD. */
- 	generate_random_bytes((u8 *)vec->assoc, vec->alen);
- 
-+	if (suite->auth_aad_iv && (vec->alen > ivsize))
-+		memcpy(((u8 *)vec->assoc + vec->alen - ivsize), vec->iv,
-+		       ivsize);
-+
- 	if (inauthentic && prandom_u32() % 2 == 0) {
- 		/* Generate a random ciphertext. */
- 		generate_random_bytes((u8 *)vec->ctext, vec->clen);
-@@ -2242,7 +2258,7 @@ static void generate_aead_message(struct aead_request *req,
- 		 * Mutate the authentic (ciphertext, AAD) pair to get an
- 		 * inauthentic one.
- 		 */
--		mutate_aead_message(vec, suite->esp_aad);
-+		mutate_aead_message(vec, suite);
- 	}
- 	vec->novrfy = 1;
- 	if (suite->einval_allowed)
-@@ -5202,7 +5218,7 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.aead = {
- 				____VECS(aes_gcm_rfc4106_tv_template),
- 				.einval_allowed = 1,
--				.esp_aad = 1,
-+				.skip_aad_iv = 1,
- 			}
- 		}
- 	}, {
-@@ -5214,7 +5230,7 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.aead = {
- 				____VECS(aes_ccm_rfc4309_tv_template),
- 				.einval_allowed = 1,
--				.esp_aad = 1,
-+				.skip_aad_iv = 1,
- 			}
- 		}
- 	}, {
-@@ -5225,6 +5241,7 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.aead = {
- 				____VECS(aes_gcm_rfc4543_tv_template),
- 				.einval_allowed = 1,
-+				.auth_aad_iv = 1,
- 			}
- 		}
- 	}, {
-@@ -5240,7 +5257,7 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.aead = {
- 				____VECS(rfc7539esp_tv_template),
- 				.einval_allowed = 1,
--				.esp_aad = 1,
-+				.skip_aad_iv = 1,
- 			}
- 		}
- 	}, {
--- 
-2.25.1
+What do you mean by "separate"? Two separate patches?
+This patch only contains fixes (which I would consider
+all of them to be improvements).
+
+>=20
+> Thomas.
+
+BR and thanks,
+Nikolaus
 
