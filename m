@@ -2,143 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 011BB17848F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 22:06:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCC5E178495
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 22:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732333AbgCCVGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 16:06:46 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42393 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729880AbgCCVGq (ORCPT
+        id S1732379AbgCCVIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 16:08:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43292 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732305AbgCCVIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 16:06:46 -0500
-Received: by mail-pf1-f194.google.com with SMTP id f5so2099253pfk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 13:06:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ILFaru9VkZkMm/uyrzqiQJ9WG3dQIfoo+O/VJBbEFZM=;
-        b=iGTGKK10+oxxGN/v1WRzlg2M7NJw6f+qRsLtaBqc7c4Ps8N8OV1wA0nsn8Qi0vXheX
-         2I7VybJAPo/CSFrdzqO8O7NJ4eZf42BLLr1BvTvx0qahY/5511jVg9WApd8aKL87j7Wo
-         JwGHVbPh6NYNAW7PSci6bP5TQNZ8U1XfDSCSY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ILFaru9VkZkMm/uyrzqiQJ9WG3dQIfoo+O/VJBbEFZM=;
-        b=Bo9JyuBuQojmvZAvzDGkHZZ+rPtFrza3kr1yGgypYUPERT22ZM/noPeClOi09m88o+
-         lE0qFgXevx+7bRt3x15wK9JKhfAPJYytGmm8RUmnBpczpiX5MAAY96IuFDEnFDnnNlCf
-         ejq5b5cuMQXtlqX2GjI+O6D0YFxbPJZMWz/gchMKzxuMt+UhbfPyJunX3y2H5BcBmPdh
-         aKKW1fz+KSuNxgbVQLTzdXXIchg1yvT95OoG+gi6vpQJMW0lNkaLirir6ENJBeaadBB1
-         FJjAoXKzQbDzCobd2xrFcfeVM4cRqRJSq1NuurK2UnTDMJFSU9ZJWisz4VZ683yGEFwo
-         Y15g==
-X-Gm-Message-State: ANhLgQ01/rIpFBMMHw2ARMe6PPbIbUUgb//gTUWel/1pSHKFRJTT+Gf0
-        0NzpFfFdAruetzA9ToWpgexd1Q==
-X-Google-Smtp-Source: ADFU+vsX24TqvZducoROKbsVvZI+6EDVj0It78BA7xOOgTAPjpEniKQ6+IXDdCbfi0Jq0Yosvyx13Q==
-X-Received: by 2002:a63:385e:: with SMTP id h30mr5587070pgn.230.1583269605143;
-        Tue, 03 Mar 2020 13:06:45 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id gx18sm135662pjb.8.2020.03.03.13.06.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 13:06:44 -0800 (PST)
-Date:   Tue, 3 Mar 2020 13:06:43 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kbuild: Remove debug info from kallsyms linking
-Message-ID: <202003031301.083CF048C2@keescook>
-References: <202002242114.CBED7F1@keescook>
- <CAEf4BzYrBoQJ1tPMRMQ_-G6e76=zj4zyC=HrY-mxH_9QK65oqg@mail.gmail.com>
+        Tue, 3 Mar 2020 16:08:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6O6fbkfkYGCe9b79ekUjZYR81XFo81dBGsl7YghXNvU=; b=Jj3yieUhLOGVX8uFIwdAAZlj3N
+        Oac1Nqw1P7MUBmhk4kCkmZwA/Y8d1Sp9Zowvb/3Pan4OStjIuHiGPJVNb+V46XhtF2GRH43BgPVcM
+        EqH/k5KN/3r2IrFnbFOcgULl8gqrWbX/Ex7ks/IJQkxI1Qw8wzcK4fXIhxeZMlthjcKrRV2nU81jr
+        dxjblvMzmG+THgmwHOLzmwFKzZeHYUpjXvL1B3VKy8p04RIjOE7yA1cmolh9InmTpy8i5cBDov3iy
+        fE3ylbdcvo8pkV0Vdv1Js5JmNJVlsTE3JGaojazCC1TKylDpdEh01hxkbQuHHuQxfRXhjeuPJ0qsE
+        yugZFpiw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9Elz-0007Wz-1M; Tue, 03 Mar 2020 21:08:15 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 87460980E5A; Tue,  3 Mar 2020 22:08:12 +0100 (CET)
+Date:   Tue, 3 Mar 2020 22:08:12 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, irogers@google.com,
+        eranian@google.com, ak@linux.intel.com
+Subject: Re: [PATCH] perf/core: Fix endless multiplex timer
+Message-ID: <20200303210812.GA4745@worktop.programming.kicks-ass.net>
+References: <20200303202819.3942-1-kan.liang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzYrBoQJ1tPMRMQ_-G6e76=zj4zyC=HrY-mxH_9QK65oqg@mail.gmail.com>
+In-Reply-To: <20200303202819.3942-1-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 10:55:04PM -0800, Andrii Nakryiko wrote:
-> On Mon, Feb 24, 2020 at 9:17 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > When CONFIG_DEBUG_INFO is enabled, the two kallsyms linking steps spend
-> > time collecting and writing the dwarf sections to the temporary output
-> > files. kallsyms does not need this information, and leaving it off
-> > halves their linking time. This is especially noticeable without
-> > CONFIG_DEBUG_INFO_REDUCED. The BTF linking stage, however, does still
-> > need those details.
-> >
-> > Refactor the BTF and kallsyms generation stages slightly for more
-> > regularized temporary names. Skip debug during kallsyms links.
-> >
-> > For a full debug info build with BTF, my link time goes from 1m06s to
-> > 0m54s, saving about 12 seconds, or 18%.
-> >
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
+On Tue, Mar 03, 2020 at 12:28:19PM -0800, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> I've tested locally, seems to be generating BTF properly (I haven't
-> timed anything, though). See nit below, but otherwise:
+> A lot of time are spent in writing uncore MSRs even though no perf is
+> running.
 > 
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
+>   4.66%  swapper      [kernel.kallsyms]        [k] native_write_msr
+>             |
+>              --4.56%--native_write_msr
+>                        |
+>                        |--1.68%--snbep_uncore_msr_enable_box
+>                        |          perf_mux_hrtimer_handler
+>                        |          __hrtimer_run_queues
+>                        |          hrtimer_interrupt
+>                        |          smp_apic_timer_interrupt
+>                        |          apic_timer_interrupt
+>                        |          cpuidle_enter_state
+>                        |          cpuidle_enter
+>                        |          do_idle
+>                        |          cpu_startup_entry
+>                        |          start_kernel
+>                        |          secondary_startup_64
+> 
+> The root cause is that multiplex timer was not stopped when perf stat
+> finished.
+> Current perf relies on rotate_necessary to determine whether the
+> multiplex timer should be stopped. The variable only be reset in
+> ctx_sched_out(), which is not enough for system-wide event.
+> Perf stat invokes PERF_EVENT_IOC_DISABLE to stop system-wide event
+> before closing it.
+>   perf_ioctl()
+>     perf_event_disable()
+>       event_sched_out()
+> The rotate_necessary will never be reset.
+> 
+> The issue is a generic issue, not just impact the uncore.
+> 
+> Check whether we had been multiplexing. If yes, reset rotate_necessary
+> for the last active event in __perf_event_disable().
+> 
+> Fixes: fd7d55172d1e ("perf/cgroups: Don't rotate events for cgroups unnecessarily")
+> Reported-by: Andi Kleen <ak@linux.intel.com>
+> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  kernel/events/core.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 3f1f77de7247..50688de56181 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2242,6 +2242,16 @@ static void __perf_event_disable(struct perf_event *event,
+>  		update_cgrp_time_from_event(event);
+>  	}
+>  
+> +	/*
+> +	 * If we had been multiplexing,
+> +	 * stop the rotations for the last active event.
+> +	 * Only need to check system wide events.
+> +	 * For task events, it will be checked in ctx_sched_out().
+> +	 */
+> +	if ((cpuctx->ctx.nr_events != cpuctx->ctx.nr_active) &&
+> +	    (cpuctx->ctx.nr_active == 1))
+> +		cpuctx->ctx.rotate_necessary = 0;
+> +
+>  	if (event == event->group_leader)
+>  		group_sched_out(event, cpuctx, ctx);
+>  	else
 
-Thanks!
 
-> 
-> >  scripts/link-vmlinux.sh | 28 +++++++++++++++++++---------
-> >  1 file changed, 19 insertions(+), 9 deletions(-)
-> >
-> 
-> [...]
-> 
-> > @@ -106,6 +114,8 @@ gen_btf()
-> >  {
-> >         local pahole_ver
-> >         local bin_arch
-> > +       local bin_format
-> > +       local bin_file
-> >
-> >         if ! [ -x "$(command -v ${PAHOLE})" ]; then
-> >                 echo >&2 "BTF: ${1}: pahole (${PAHOLE}) is not available"
-> > @@ -118,8 +128,9 @@ gen_btf()
-> >                 return 1
-> >         fi
-> >
-> > -       info "BTF" ${2}
-> >         vmlinux_link ${1}
-> > +
-> > +       info "BTF" ${2}
-> 
-> Any reason to exclude linking from "BTF" step? It's still a part of
-> BTF generation, so seems fair to have BTF encompass both vmlinux
-> linking and BTF generation/deduplication?
+I'm thinking this is wrong.
 
-I'm not sure I'm following what you're saying here. If you're asking why
-BTF linking is separate from the final vmlinux link, it's because of how
-kallsyms is generated. Currently it's using a rather brute-force
-approach to figure out exactly where everything is going to be in the
-final link, and for that it need to have both the BTF symbols present
-and the kallysms symbols present. So, unfortunately, each needs to be a
-separate step. I spent some time trying to merge BTF and kallsyms phase
-1, but I didn't find a viable solution. I'm *sure* there is a better way
-to handle kallsyms, but I haven't had the time to really investigate it.
-I think it would require some close coordination with linker behavior
-changes...
+That is, yes, this fixes the observed problem, but it also misses at
+least one other site. Which seems to suggest we ought to take a
+different approach.
 
-> 
-> >         LLVM_OBJCOPY=${OBJCOPY} ${PAHOLE} -J ${1}
-> >
-> >         # dump .BTF section into raw binary file to link with final vmlinux
+But even with that; I wonder if the actual condition isn't wrong.
+Suppose the event was exclusive, and other events weren't scheduled
+because of that. Then you disable the one exclusive event _and_ kill
+rotation, so then nothing else will ever get on.
 
-BTW, in looking at BTF generation, why is this cut up into three steps:
-pahole, objcopy, objcopy... shouldn't pahole just gross an output method
-to dump the final .o file? That would be MUCH nicer. Especially since
-the first step ends up rewriting (?!) the original ELF. This is a lot of
-needless IO...
+So what I think was supposed to happen is rotation killing itself;
+rotation will schedule out the context -- which will clear the flag, and
+then schedule the thing back in -- which will set the flag again when
+needed.
 
--- 
-Kees Cook
+Now, that isn't happening, and I think I see why, because when we drop
+to !nr_active, we terminate ctx_sched_out() before we get to clearing
+the flag, oops!
+
+So how about something like this?
+
+---
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index e453589da97c..7947bd3271a9 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2182,6 +2182,7 @@ __perf_remove_from_context(struct perf_event *event,
+ 
+ 	if (!ctx->nr_events && ctx->is_active) {
+ 		ctx->is_active = 0;
++		ctx->rotate_necessary = 0;
+ 		if (ctx->task) {
+ 			WARN_ON_ONCE(cpuctx->task_ctx != ctx);
+ 			cpuctx->task_ctx = NULL;
+@@ -3074,15 +3075,15 @@ static void ctx_sched_out(struct perf_event_context *ctx,
+ 
+ 	is_active ^= ctx->is_active; /* changed bits */
+ 
+-	if (!ctx->nr_active || !(is_active & EVENT_ALL))
+-		return;
+-
+ 	/*
+ 	 * If we had been multiplexing, no rotations are necessary, now no events
+ 	 * are active.
+ 	 */
+ 	ctx->rotate_necessary = 0;
+ 
++	if (!ctx->nr_active || !(is_active & EVENT_ALL))
++		return;
++
+ 	perf_pmu_disable(ctx->pmu);
+ 	if (is_active & EVENT_PINNED) {
+ 		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list)
