@@ -2,74 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB73177898
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EECC17789D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 15:18:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbgCCOQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 09:16:24 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58650 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728356AbgCCOQY (ORCPT
+        id S1728470AbgCCORs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 09:17:48 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:45966 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727370AbgCCORr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:16:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583244983;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MUTEP1p4YWjzskXYVbK6H4xhC2oS8H6SYOsK8O1eOyQ=;
-        b=bzSew+et0oTss8hF+yTQBV3ff184kWxMigwSUARoJj5M8pUzzw8OvdvNwyYkXVBq0RC6fv
-        EtyYNQRsJ7HXt4pIwoxZPAktxUYSaWkGN12FU/zRdP/Bj7//+1+kOQ7HkkDQokBnwvTSqC
-        mxqH+5vNO0Y3oafmHY8s3JyHiICkpPc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-275-5TEOS0MJNLqJ4_DgIWdrhA-1; Tue, 03 Mar 2020 09:16:19 -0500
-X-MC-Unique: 5TEOS0MJNLqJ4_DgIWdrhA-1
-Received: by mail-wr1-f72.google.com with SMTP id f10so1283745wrv.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 06:16:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MUTEP1p4YWjzskXYVbK6H4xhC2oS8H6SYOsK8O1eOyQ=;
-        b=LtwYkYGu0iNB3wZSBE2VklLEZ+GkiwKk+Fg4P39y7ClTv6cqSbda6Y8IZBR1jfYz0g
-         3Mit+w+BgEFkgoMkNvqCHZC4fqEOZ/Tm7d2YCwDt9yvz11+Zo2/hSjghtWS3eq8z8rN1
-         R8t04l8WIDPPsQEO14Pmdgk+Rk3PiRsIfRaGp/E6mLsyMcOPdtFv3ApnJ/6/aAZBh1mg
-         e9EbjCA8L4fZAysRRw95iORjvjJWm81UststkUQ2sJN2HBK7aOF7inMR0ieUcUorrcDB
-         JPXpj3bujUHgb/SopUgEFluEaFAfk5OIdofawtp9pRtpaB8TsaOk0M4ePh+CYxtXvAal
-         KVWg==
-X-Gm-Message-State: ANhLgQ383/xFZY7w8z5Qzmg/d6f3bXx7EFYMPWGOIki+MraKyThQ//KO
-        SnqOHPp3kNLNlMeFNowJNz9mMpRShAuukeCNjOCqBrdRWAVY2X+PBCnZyJGk87yPMJvEKiBpa+e
-        YF3qk54CVlPKMUCVfC/U+sS0u
-X-Received: by 2002:adf:e6c9:: with SMTP id y9mr5857109wrm.246.1583244978784;
-        Tue, 03 Mar 2020 06:16:18 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsYNg7+BUQwOf9zvxhDv8luT0LXJFS2Ip7Opm1OZwN8LJ4aJ2q/o6inCPO/0+w/9WVAKxYWiQ==
-X-Received: by 2002:adf:e6c9:: with SMTP id y9mr5857091wrm.246.1583244978498;
-        Tue, 03 Mar 2020 06:16:18 -0800 (PST)
-Received: from [192.168.178.40] ([151.20.254.94])
-        by smtp.gmail.com with ESMTPSA id m25sm2351920wml.35.2020.03.03.06.16.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 06:16:18 -0800 (PST)
-Subject: Re: [PATCH v2 01/66] KVM: x86: Return -E2BIG when
- KVM_GET_SUPPORTED_CPUID hits max entries
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
- <20200302235709.27467-2-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <599c3a95-a0a6-b31d-56a6-c50971d4ab59@redhat.com>
-Date:   Tue, 3 Mar 2020 15:16:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 3 Mar 2020 09:17:47 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R631e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TrZAYVM_1583245023;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TrZAYVM_1583245023)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 03 Mar 2020 22:17:18 +0800
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Subject: [RFC PATCH] sched: fix the nonsense shares when load of cfs_rq is
+ too, small
+Message-ID: <44fa1cee-08db-e4ab-e5ab-08d6fbd421d7@linux.alibaba.com>
+Date:   Tue, 3 Mar 2020 22:17:03 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200302235709.27467-2-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,39 +40,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/03/20 00:56, Sean Christopherson wrote:
-> (KVM hard caps CPUID 0xD at a single sub-leaf).
+During our testing, we found a case that shares no longer
+working correctly, the cgroup topology is like:
 
-Hmm... no it doesn't?
+  /sys/fs/cgroup/cpu/A		(shares=102400)
+  /sys/fs/cgroup/cpu/A/B	(shares=2)
+  /sys/fs/cgroup/cpu/A/B/C	(shares=1024)
 
-                for (idx = 1, i = 1; idx < 64; ++idx) {
-                        u64 mask = ((u64)1 << idx);
-                        if (*nent >= maxnent)
-                                goto out;
+  /sys/fs/cgroup/cpu/D		(shares=1024)
+  /sys/fs/cgroup/cpu/D/E	(shares=1024)
+  /sys/fs/cgroup/cpu/D/E/F	(shares=1024)
 
-                        do_host_cpuid(&entry[i], function, idx);
-                        if (idx == 1) {
-                                entry[i].eax &= kvm_cpuid_D_1_eax_x86_features;
-                                cpuid_mask(&entry[i].eax, CPUID_D_1_EAX);
-                                entry[i].ebx = 0;
-                                if (entry[i].eax & (F(XSAVES)|F(XSAVEC)))
-                                        entry[i].ebx =
-                                                xstate_required_size(supported,
-                                                                     true);
-                        } else {
-                                if (entry[i].eax == 0 || !(supported & mask))
-                                        continue;
-                                if (WARN_ON_ONCE(entry[i].ecx & 1))
-                                        continue;
-                        }
-                        entry[i].ecx = 0;
-                        entry[i].edx = 0;
-                        ++*nent;
-                        ++i;
-                }
+The same benchmark is running in group C & F, no other tasks are
+running, the benchmark is capable to consumed all the CPUs.
 
-I still think the patch is correct, what matters is that no KVM in
-existence supports enough processor features to reach 100 or so subleaves.
+We suppose the group C will win more CPU resources since it could
+enjoy all the shares of group A, but it's F who wins much more.
 
-Paolo
+The reason is because we have group B with shares as 2, which make
+the group A 'cfs_rq->load.weight' very small.
+
+And in calc_group_shares() we calculate shares as:
+
+  load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
+  shares = (tg_shares * load) / tg_weight;
+
+Since the 'cfs_rq->load.weight' is too small, the load become 0
+in here, although 'tg_shares' is 102400, shares of the se which
+stand for group A on root cfs_rq become 2.
+
+While the se of D on root cfs_rq is far more bigger than 2, so it
+wins the battle.
+
+This patch add a check on the zero load and make it as MIN_SHARES
+to fix the nonsense shares, after applied the group C wins as
+expected.
+
+Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+---
+ kernel/sched/fair.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 84594f8aeaf8..53d705f75fa4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3182,6 +3182,8 @@ static long calc_group_shares(struct cfs_rq *cfs_rq)
+ 	tg_shares = READ_ONCE(tg->shares);
+
+ 	load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
++	if (!load && cfs_rq->load.weight)
++		load = MIN_SHARES;
+
+ 	tg_weight = atomic_long_read(&tg->load_avg);
+
+-- 
+2.14.4.44.g2045bb6
 
