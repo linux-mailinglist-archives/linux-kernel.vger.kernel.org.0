@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D76417740C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:23:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C96017740E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 11:23:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbgCCKXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 05:23:19 -0500
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:37312 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbgCCKXS (ORCPT
+        id S1728712AbgCCKXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 05:23:32 -0500
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:55592 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728607AbgCCKXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 05:23:18 -0500
+        Tue, 3 Mar 2020 05:23:13 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 391823F713;
-        Tue,  3 Mar 2020 11:23:17 +0100 (CET)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=q1xapct0;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id CFADC3F5C5;
+        Tue,  3 Mar 2020 11:23:10 +0100 (CET)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=XzKbFy1v;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,22 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id A-6sDjxEzpWn; Tue,  3 Mar 2020 11:23:05 +0100 (CET)
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id s18uY9_YmiAV; Tue,  3 Mar 2020 11:23:05 +0100 (CET)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id A26123F524;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 8DAF43F374;
         Tue,  3 Mar 2020 11:22:59 +0100 (CET)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 15E65360481;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 377CB3605FD;
         Tue,  3 Mar 2020 11:22:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1583230979; bh=sjfw4EDUDCZlOzwRRGyUB4kL3vTEnAR8SOHYZEwYpC8=;
+        t=1583230979; bh=eArF6ZjbQdomBzBVnzbUQcGFkrLPEvAM1NjLa5asgsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q1xapct0xWHb9eW5/I4M/fB4DJFAUYfAtsyDhsYEh1lyQt6hDuSG2nOOQDlFwZ+S9
-         67vyqJIvAFDzy8MCte6k/L0G8M86vSlbFyh4h75iJABbrvJw/n9IUEoyLhFGzoadeU
-         a4V01nF2Ec5TVZl/Cq3jE9Kvv566+jDNKIicgJjU=
+        b=XzKbFy1vvDq9Qqj/53vwQWoztOK+QmPXWJqVpcNmqIf7XzEIEQEFM/jzuzNqstJEg
+         V6/wdQSNdnKti8SV6jBWZeN4bkwc8q5VIbaM4dHxFRTMuu0ebI2VsZ91/qOqn2Uvtr
+         aMpFPrIMnqKPMWJNRbYK8MruGzHSKyNB3iVcF2RA=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
@@ -56,9 +56,9 @@ Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH v5 2/9] mm: Introduce vma_is_special_huge
-Date:   Tue,  3 Mar 2020 11:22:40 +0100
-Message-Id: <20200303102247.4635-3-thomas_os@shipmail.org>
+Subject: [PATCH v5 3/9] mm: Split huge pages on write-notify or COW
+Date:   Tue,  3 Mar 2020 11:22:41 +0100
+Message-Id: <20200303102247.4635-4-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200303102247.4635-1-thomas_os@shipmail.org>
 References: <20200303102247.4635-1-thomas_os@shipmail.org>
@@ -72,17 +72,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-For VM_PFNMAP and VM_MIXEDMAP vmas that want to support transhuge pages
-and -page table entries, introduce vma_is_special_huge() that takes the
-same codepaths as vma_is_dax().
+The functions wp_huge_pmd() and wp_huge_pud() currently relies on the
+huge_fault() callback to split huge page table entries if needed.
+However for module users that requires export of the split_huge_xxx()
+functionality which may be undesired. Instead split pre-existing huge
+page-table entries on VM_FAULT_FALLBACK return.
 
-The use of "special" follows the definition in memory.c, vm_normal_page():
-"Special" mappings do not wish to be associated with a "struct page"
-(either it doesn't exist, or it exists but they don't want to touch it)
+We currently only do COW and write-notify on the PTE level, so if the
+huge_fault() handler returns VM_FAULT_FALLBACK on wp faults,
+split the huge pages and page-table entries. Also do this for huge PUDs
+if there is no huge_fault() handler and the vma is not anonymous, similar
+to how it's done for PMDs.
 
-For PAGE_SIZE pages, "special" is determined per page table entry to be
-able to deal with COW pages. But since we don't have huge COW pages,
-we can classify a vma as either "special huge" or "normal huge".
+Note that fs/dax.c still does the splitting in the huge_fault() handler, but as
+huge_fault() A follow-up patch can remove the dax.c split_huge_pmd() if needed.
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Michal Hocko <mhocko@suse.com>
@@ -95,69 +98,57 @@ Cc: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Acked-by: Christian König <christian.koenig@amd.com>
 ---
- include/linux/mm.h | 17 +++++++++++++++++
- mm/huge_memory.c   |  6 +++---
- 2 files changed, 20 insertions(+), 3 deletions(-)
+ mm/memory.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 52269e56c514..e61cf3f609b4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2863,6 +2863,23 @@ extern long copy_huge_page_from_user(struct page *dst_page,
- 				const void __user *usr_src,
- 				unsigned int pages_per_huge_page,
- 				bool allow_pagefault);
-+
-+/**
-+ * vma_is_special_huge - Are transhuge page-table entries considered special?
-+ * @vma: Pointer to the struct vm_area_struct to consider
-+ *
-+ * Whether transhuge page-table entries are considered "special" following
-+ * the definition in vm_normal_page().
-+ *
-+ * Return: true if transhuge page-table entries should be considered special,
-+ * false otherwise.
-+ */
-+static inline bool vma_is_special_huge(const struct vm_area_struct *vma)
-+{
-+	return vma_is_dax(vma) || (vma->vm_file &&
-+				   (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP)));
-+}
-+
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
+diff --git a/mm/memory.c b/mm/memory.c
+index 0bccc622e482..1e3fc1988790 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3932,11 +3932,14 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
+ {
+ 	if (vma_is_anonymous(vmf->vma))
+ 		return do_huge_pmd_wp_page(vmf, orig_pmd);
+-	if (vmf->vma->vm_ops->huge_fault)
+-		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
++	if (vmf->vma->vm_ops->huge_fault) {
++		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
  
- #ifdef CONFIG_DEBUG_PAGEALLOC
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b08b199f9a11..ff7a8b85c3ba 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1802,7 +1802,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	orig_pmd = pmdp_huge_get_and_clear_full(tlb->mm, addr, pmd,
- 			tlb->fullmm);
- 	tlb_remove_pmd_tlb_entry(tlb, pmd, addr);
--	if (vma_is_dax(vma)) {
-+	if (vma_is_special_huge(vma)) {
- 		if (arch_needs_pgtable_deposit())
- 			zap_deposited_table(tlb->mm, pmd);
- 		spin_unlock(ptl);
-@@ -2066,7 +2066,7 @@ int zap_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	 */
- 	pudp_huge_get_and_clear_full(tlb->mm, addr, pud, tlb->fullmm);
- 	tlb_remove_pud_tlb_entry(tlb, pud, addr);
--	if (vma_is_dax(vma)) {
-+	if (vma_is_special_huge(vma)) {
- 		spin_unlock(ptl);
- 		/* No zero page support yet */
- 	} else {
-@@ -2175,7 +2175,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 		 */
- 		if (arch_needs_pgtable_deposit())
- 			zap_deposited_table(mm, pmd);
--		if (vma_is_dax(vma))
-+		if (vma_is_special_huge(vma))
- 			return;
- 		page = pmd_page(_pmd);
- 		if (!PageDirty(page) && pmd_dirty(_pmd))
+-	/* COW handled on pte level: split pmd */
+-	VM_BUG_ON_VMA(vmf->vma->vm_flags & VM_SHARED, vmf->vma);
++		if (!(ret & VM_FAULT_FALLBACK))
++			return ret;
++	}
++
++	/* COW or write-notify handled on pte level: split pmd. */
+ 	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
+ 
+ 	return VM_FAULT_FALLBACK;
+@@ -3949,12 +3952,20 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
+ 
+ static vm_fault_t create_huge_pud(struct vm_fault *vmf)
+ {
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
++	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
+ 	/* No support for anonymous transparent PUD pages yet */
+ 	if (vma_is_anonymous(vmf->vma))
+-		return VM_FAULT_FALLBACK;
+-	if (vmf->vma->vm_ops->huge_fault)
+-		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
++		goto split;
++	if (vmf->vma->vm_ops->huge_fault) {
++		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
++
++		if (!(ret & VM_FAULT_FALLBACK))
++			return ret;
++	}
++split:
++	/* COW or write-notify not handled on PUD level: split pud.*/
++	__split_huge_pud(vmf->vma, vmf->pud, vmf->address);
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 	return VM_FAULT_FALLBACK;
+ }
 -- 
 2.21.1
 
