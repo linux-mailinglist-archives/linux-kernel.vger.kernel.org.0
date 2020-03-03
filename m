@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF82E177FD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C864F177EC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 19:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732290AbgCCRxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:53:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33430 "EHLO mail.kernel.org"
+        id S1730220AbgCCRq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:46:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731028AbgCCRxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:53:02 -0500
+        id S1731249AbgCCRqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:46:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49D8C20728;
-        Tue,  3 Mar 2020 17:53:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 930FB20870;
+        Tue,  3 Mar 2020 17:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583257980;
-        bh=6ZdR+j7W/1OYrpvBOqvO9W3YcYR2SMwtDCKXi/fmZFY=;
+        s=default; t=1583257612;
+        bh=/wvHWtSABa6XrGoPvgU/g74uNC1TiUDqH775k+bJX6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ewzsqmxpz41i7adSUKPSE1S4wPfHhF/er0HnDIs5HZ9iquA3ofaGxL/V+oz8jNt6/
-         5EPkl4LuMKJwNP3+Y3yk1GjiRSo8UNx9AP6Zr47NHh7VKsFyBaLmjIKewiPRJHO5fe
-         j80ktS1xmdN6zQVm1JIUBVdVSt5Q+lRH76E31bK4=
+        b=y/Vt2wRk9bopVW4wxixvtlWgsU+cuemeBCK/bnvRtJSxG1FHHl5UHfuTOcFDtV9x/
+         Fc42y78N5dENGRzG02vVvKtijTjzBzeZLCxklm3xMjSmuasxd8RZbfYFz++KnC6hd1
+         w9AfCNHZQFJn/J3B/EcEa8vRYhLUcK9bdt1yUdxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ben Segall <bsegall@google.com>,
+        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 026/152] sched/fair: Prevent unlimited runtime on throttled group
-Date:   Tue,  3 Mar 2020 18:42:04 +0100
-Message-Id: <20200303174305.422479067@linuxfoundation.org>
+Subject: [PATCH 5.5 061/176] net: ena: fix corruption of dev_idx_to_host_tbl
+Date:   Tue,  3 Mar 2020 18:42:05 +0100
+Message-Id: <20200303174311.676580695@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200303174302.523080016@linuxfoundation.org>
-References: <20200303174302.523080016@linuxfoundation.org>
+In-Reply-To: <20200303174304.593872177@linuxfoundation.org>
+References: <20200303174304.593872177@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,63 +45,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Guittot <vincent.guittot@linaro.org>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit 2a4b03ffc69f2dedc6388e9a6438b5f4c133a40d ]
+[ Upstream commit e3f89f91e98ce07dc0f121a3b70d21aca749ba39 ]
 
-When a running task is moved on a throttled task group and there is no
-other task enqueued on the CPU, the task can keep running using 100% CPU
-whatever the allocated bandwidth for the group and although its cfs rq is
-throttled. Furthermore, the group entity of the cfs_rq and its parents are
-not enqueued but only set as curr on their respective cfs_rqs.
+The function ena_com_ind_tbl_convert_from_device() has an overflow
+bug as explained below. Either way, this function is not needed at
+all since we don't retrieve the indirection table from the device
+at any point which means that this conversion is not needed.
 
-We have the following sequence:
+The bug:
+The for loop iterates over all io_sq_queues, when passing the actual
+number of used queues the io_sq_queues[i].idx equals 0 since they are
+uninitialized which results in the following code to be executed till
+the end of the loop:
 
-sched_move_task
-  -dequeue_task: dequeue task and group_entities.
-  -put_prev_task: put task and group entities.
-  -sched_change_group: move task to new group.
-  -enqueue_task: enqueue only task but not group entities because cfs_rq is
-    throttled.
-  -set_next_task : set task and group_entities as current sched_entity of
-    their cfs_rq.
+dev_idx_to_host_tbl[0] = i;
 
-Another impact is that the root cfs_rq runnable_load_avg at root rq stays
-null because the group_entities are not enqueued. This situation will stay
-the same until an "external" event triggers a reschedule. Let trigger it
-immediately instead.
+This results dev_idx_to_host_tbl[0] in being equal to
+ENA_TOTAL_NUM_QUEUES - 1.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Ben Segall <bsegall@google.com>
-Link: https://lkml.kernel.org/r/1579011236-31256-1-git-send-email-vincent.guittot@linaro.org
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 28 -----------------------
+ 1 file changed, 28 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8c89c893078af..e921126aec84b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7058,8 +7058,15 @@ void sched_move_task(struct task_struct *tsk)
- 
- 	if (queued)
- 		enqueue_task(rq, tsk, queue_flags);
--	if (running)
-+	if (running) {
- 		set_next_task(rq, tsk);
-+		/*
-+		 * After changing group, the running task may have joined a
-+		 * throttled one but it's still the running task. Trigger a
-+		 * resched to make sure that task can still run.
-+		 */
-+		resched_curr(rq);
-+	}
- 
- 	task_rq_unlock(rq, tsk, &rf);
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index 8ab192cb26b74..74743fd8a1e0a 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -1281,30 +1281,6 @@ static int ena_com_ind_tbl_convert_to_device(struct ena_com_dev *ena_dev)
+ 	return 0;
  }
+ 
+-static int ena_com_ind_tbl_convert_from_device(struct ena_com_dev *ena_dev)
+-{
+-	u16 dev_idx_to_host_tbl[ENA_TOTAL_NUM_QUEUES] = { (u16)-1 };
+-	struct ena_rss *rss = &ena_dev->rss;
+-	u8 idx;
+-	u16 i;
+-
+-	for (i = 0; i < ENA_TOTAL_NUM_QUEUES; i++)
+-		dev_idx_to_host_tbl[ena_dev->io_sq_queues[i].idx] = i;
+-
+-	for (i = 0; i < 1 << rss->tbl_log_size; i++) {
+-		if (rss->rss_ind_tbl[i].cq_idx > ENA_TOTAL_NUM_QUEUES)
+-			return -EINVAL;
+-		idx = (u8)rss->rss_ind_tbl[i].cq_idx;
+-
+-		if (dev_idx_to_host_tbl[idx] > ENA_TOTAL_NUM_QUEUES)
+-			return -EINVAL;
+-
+-		rss->host_rss_ind_tbl[i] = dev_idx_to_host_tbl[idx];
+-	}
+-
+-	return 0;
+-}
+-
+ static void ena_com_update_intr_delay_resolution(struct ena_com_dev *ena_dev,
+ 						 u16 intr_delay_resolution)
+ {
+@@ -2638,10 +2614,6 @@ int ena_com_indirect_table_get(struct ena_com_dev *ena_dev, u32 *ind_tbl)
+ 	if (!ind_tbl)
+ 		return 0;
+ 
+-	rc = ena_com_ind_tbl_convert_from_device(ena_dev);
+-	if (unlikely(rc))
+-		return rc;
+-
+ 	for (i = 0; i < (1 << rss->tbl_log_size); i++)
+ 		ind_tbl[i] = rss->host_rss_ind_tbl[i];
+ 
 -- 
 2.20.1
 
