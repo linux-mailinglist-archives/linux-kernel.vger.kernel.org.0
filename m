@@ -2,73 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1F9177014
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F8C17701B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 08:29:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbgCCH1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 02:27:43 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35581 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbgCCH1n (ORCPT
+        id S1727591AbgCCH3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 02:29:39 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:39002 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbgCCH3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:27:43 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 145so2476041qkl.2;
-        Mon, 02 Mar 2020 23:27:42 -0800 (PST)
+        Tue, 3 Mar 2020 02:29:38 -0500
+Received: by mail-vs1-f66.google.com with SMTP id a19so1731844vsp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Mar 2020 23:29:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=EPMkUwZp6KV2zQtOQ/HDG4J9jIuHDQrBU740Rw3sZEw=;
-        b=rvJ+YaWGiQIUHJTTbjQXHsU+qz27tkISaqJdwTMGHwOpQ6XBcywdlcljo9qFTxSUUF
-         T57+8xyeBd1i9PX1cxoEWcpWNwf3wEzuOqAggFO/kU28QptTCfI22G1SmtpxN+zIBE84
-         ts6a7JvevtVNF39MVqhgWJXxOZQ74GsfIzIlS6C2ZxWs1MxbhAoRuCPFFNCUwixaUd5W
-         3ywUkrmMrk1XC5WJ1q2JUNOElGJX1h8Tz0yYJcvX4/ofdz13/hTPOEPq4FT99t01wsUr
-         AtQl1ET64hv4hGwZpom4H35P23kLU+YJsfG/lWK14+6nbVbvMl6fc/coHBqtW8QUKzcy
-         R6HA==
+        bh=FfJGP3VvelPHBu9uAoszVPyAW2vGFIv4G/uor0aD668=;
+        b=wS4MKI86i7vYgDExykq5E/9nAFZP1oxRif7r7AX+nw2mR4pGHUdQ54RIYxqtwLwneY
+         A5K//2Hg6Cq3gYj2GT5HQ0W+jiSbn7zSEO1wIHugA2IFFR6/VB0MtqnEPNnFUv1Ba4Qi
+         QzriKcACmsM+4l1zZQ3CGfLph9nz1xKozupNGUKPucW+PneR3xFN4GWQNkmkRa+Nh+A7
+         7w/0Lo2DjYpYQMtfVGLqq93RLdFd5x/80J4zmRxMW7jzhwB5ii3n33303mN4E59Be12d
+         5RYNVbtl7KHRuKVP0TSN7NPLddqIHzO4qXp3eG6Ebm3QBU9IXP42ewCVg/UbsTrU+k1j
+         X78Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EPMkUwZp6KV2zQtOQ/HDG4J9jIuHDQrBU740Rw3sZEw=;
-        b=oRKG+X+jqAhyk9bFFhs/Bl1nkbaMecg052RIY+Z3rVyhQ3mCwbCAC2g/C+JHHVUuxc
-         gKJj7aFP8FKlNG9Gp6BlrrI0L4mcALb1wEc0QI33AYcSeEdDs4i7vW/sdKG/jjeeDJ+F
-         zzyeQrE70+r+OTV5UpGKdmNF585g3aPcI5Xt2e4v3RikIcIK1WiriVtTFyNXJkrN99rM
-         8RJQasp2X2dw+1l8Bsf0HmcWuEna97qLg0o/JVQMiQP+pXzPh83K/bvsaaA4/mmPVpLe
-         pfBnj5WgKZL2lwVYDDNIY6du3vVRP0BvitN4k7mLQAJuH9gNKy5HYRCHpl9QpI4ae3VO
-         lm3w==
-X-Gm-Message-State: ANhLgQ3E8GPak/3/ckxhOYUro6o8BMEkty4ntYQaNS77F5nk+h5v6+uf
-        JXZsgeBUwyl82CbOZn7ZVThfmeTzsCFwlozCFgzhIxCYSxCnqA==
-X-Google-Smtp-Source: ADFU+vtPLeYYw40rLd76IFgdK//etfwn2dnKzi5huN2O0NR+iLdTt9fmsfVhcO38RDt6XnlZ/2hvsaA3mKubpSUXX44=
-X-Received: by 2002:a05:620a:1210:: with SMTP id u16mr2857096qkj.493.1583220461898;
- Mon, 02 Mar 2020 23:27:41 -0800 (PST)
+        bh=FfJGP3VvelPHBu9uAoszVPyAW2vGFIv4G/uor0aD668=;
+        b=n0euD6L5M+O4+Spop9WncHo+BpKFC6ug90j4y29IUnccsrMSQh0p7J+v66FVtRm0EU
+         STLhE8cbCHHeNhU1+jWpYeVZEquL4WxyO0llctBO1Bq89czoYu4LTN8/0i0Y3VD+FDCV
+         xBe0aNSza3SO/L2/QA5i4SnF2itQQKaSsQKuFVJNXG8B1dFlKy3YHNmbq37aYfJanZbg
+         5iLNQHcpsl0KzZMFqOK+xUmBwND9Z7FDFoCuYniypbu6T3SZglxhOfHEtOAC/UU7AqKD
+         kW6zRmjHFkxdSL+kooLYA9fU09FO+2QIPn9mjfK8VnW0kVonTD70YiRb93jc0udaKjRI
+         VPwg==
+X-Gm-Message-State: ANhLgQ1+LUXXwnAWTJQGD973EI5pOdyvgsfCudjjC51+YUI0dmPjbZ6z
+        eTYlVi0ZYqhOqTe9uEw8LbsyH1DnBIa1PTV8V9b/Vw==
+X-Google-Smtp-Source: ADFU+vulPkBe+NP8hErcIC7CIaSa54wA7KvH3UVGqyZLPXVSP7bmLeyJKxNI+sys5rqmvRX9zk33gOx/WwmhWFhKvEk=
+X-Received: by 2002:a05:6102:3205:: with SMTP id r5mr1609818vsf.206.1583220577377;
+ Mon, 02 Mar 2020 23:29:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20200303005035.13814-1-luke.r.nels@gmail.com> <20200303005035.13814-4-luke.r.nels@gmail.com>
-In-Reply-To: <20200303005035.13814-4-luke.r.nels@gmail.com>
-From:   =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
-Date:   Tue, 3 Mar 2020 08:27:30 +0100
-Message-ID: <CAJ+HfNhQaW8V6qiSf3XO0f7hMViEUsYFyyctKYVm1QEB20-N6Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 3/4] bpf, doc: add BPF JIT for RV32G to BPF documentation
-To:     Luke Nelson <lukenels@cs.washington.edu>
-Cc:     bpf <bpf@vger.kernel.org>, Luke Nelson <luke.r.nels@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, Xi Wang <xi.wang@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-riscv@lists.infradead.org
+References: <2094703.CetWLLyMuz@kreacher> <CAD8Lp46VbG3b5NV54vmBFQH2YLY6wRngYv0oY2tiveovPRhiVw@mail.gmail.com>
+ <CAPpJ_edfTg11QZs25MrThj2+FKUo2103rv7iYNzo=kr-jeg1MA@mail.gmail.com>
+ <CAJZ5v0gB9yuVmPjJ_MvfT8aFpvP-X5JRsNfZn8+Mv5RwTednGg@mail.gmail.com> <CAJZ5v0imqwdmXzKayqs1kgHOb-mXrkr61uNxVka8J9bKca989Q@mail.gmail.com>
+In-Reply-To: <CAJZ5v0imqwdmXzKayqs1kgHOb-mXrkr61uNxVka8J9bKca989Q@mail.gmail.com>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Tue, 3 Mar 2020 15:28:48 +0800
+Message-ID: <CAPpJ_efvF0XzjevA1eL3BUJqBwxRTOPLcqWKN40Azj-n1AtjcA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] ACPI: EC: Updates related to initialization
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Drake <drake@endlessm.com>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,49 +63,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Mar 2020 at 01:50, Luke Nelson <lukenels@cs.washington.edu> wrote=
-:
-> Update filter.txt and admin-guide to mention the BPF JIT for RV32G.
+Rafael J. Wysocki <rafael@kernel.org> =E6=96=BC 2020=E5=B9=B43=E6=9C=882=E6=
+=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-> Co-developed-by: Xi Wang <xi.wang@gmail.com>
-> Signed-off-by: Xi Wang <xi.wang@gmail.com>
-> Signed-off-by: Luke Nelson <luke.r.nels@gmail.com>
+> On Mon, Mar 2, 2020 at 11:38 AM Rafael J. Wysocki <rafael@kernel.org> wro=
+te:
+> >
+> > On Mon, Mar 2, 2020 at 6:54 AM Jian-Hong Pan <jian-hong@endlessm.com> w=
+rote:
+> > >
+> > > Daniel Drake <drake@endlessm.com> =E6=96=BC 2020=E5=B9=B42=E6=9C=8828=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=885:43=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> > > >
+> > > > On Thu, Feb 27, 2020 at 10:25 PM Rafael J. Wysocki <rjw@rjwysocki.n=
+et> wrote:
+> > > > > The purpose of this series of update of the ACPI EC driver is to =
+make its
+> > > > > initialization more straightforward.
+> > > > >
+> > > > > They fix a couple of issues, clean up some things, remove redunda=
+nt code etc.
+> > > > >
+> > > > > Please refer to the changelogs of individual patches for details.
+> > > > >
+> > > > > For easier access, the series is available in the git branch at
+> > > > >
+> > > > >  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.gi=
+t \
+> > > > >  acpi-ec-work
+> > > > >
+> > > > > on top of 5.6-rc3.
+> > > >
+> > > > Jian-Hong, can you please test this on Asus UX434DA?
+> > > > Check if the screen brightness hotkeys are still working after thes=
+e changes.
+> > >
+> > > Hi Rafael,
+> > >
+> > > Thanks for your patches, but we found an issue:
+> > > The laptops like ASUS UX434DA's screen brightness hotkeys work before
+> > > this patch series.  However, the hotkeys are failed with the patch
+> > > "ACPI: EC: Unify handling of event handler installation failures".
+> >
+> > So I have modified the series to avoid the change that can possibly bre=
+ak this.
+> >
+> > Can you please pull the new series from
+> >
+> >  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+> >  acpi-ec-work
+> >
+> > (same branch) and retest?
+>
+> Note that the current top-most commit in that branch is
+>
+> 0957d98f50da ACPI: EC: Consolidate event handler installation code
 
-Acked-by: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.com>
+I tested the commits in acpi-ec-work branch whose last commit is
+0957d98f50da ("ACPI: EC: Consolidate event handler installation
+code").  The screen brightness hotkeys are still failed with
+0957d98f50da ("ACPI: EC: Consolidate event handler installation
+code").
 
-> ---
->  Documentation/admin-guide/sysctl/net.rst | 3 ++-
->  Documentation/networking/filter.txt      | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/admin-guide/sysctl/net.rst b/Documentation/adm=
-in-guide/sysctl/net.rst
-> index 287b98708a40..e043c9213388 100644
-> --- a/Documentation/admin-guide/sysctl/net.rst
-> +++ b/Documentation/admin-guide/sysctl/net.rst
-> @@ -67,7 +67,8 @@ two flavors of JITs, the newer eBPF JIT currently suppo=
-rted on:
->    - sparc64
->    - mips64
->    - s390x
-> -  - riscv
-> +  - riscv64
-> +  - riscv32
->
->  And the older cBPF JIT supported on the following archs:
->
-> diff --git a/Documentation/networking/filter.txt b/Documentation/networki=
-ng/filter.txt
-> index c4a328f2d57a..2f0f8b17dade 100644
-> --- a/Documentation/networking/filter.txt
-> +++ b/Documentation/networking/filter.txt
-> @@ -606,7 +606,7 @@ before a conversion to the new layout is being done b=
-ehind the scenes!
->
->  Currently, the classic BPF format is being used for JITing on most
->  32-bit architectures, whereas x86-64, aarch64, s390x, powerpc64,
-> -sparc64, arm32, riscv (RV64G) perform JIT compilation from eBPF
-> +sparc64, arm32, riscv64, riscv32 perform JIT compilation from eBPF
->  instruction set.
->
->  Some core changes of the new internal format:
+I tweak and add some debug messages:
+
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index 85f1fe8e208a..3887f427283c 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1443,23 +1443,27 @@ static bool install_gpe_event_handler(struct
+acpi_ec *ec)
+        return true;
+ }
+
+-static bool install_gpio_irq_event_handler(struct acpi_ec *ec,
++static int install_gpio_irq_event_handler(struct acpi_ec *ec,
+                                           struct acpi_device *device)
+ {
+        int irq, ret;
+
+        /* ACPI reduced hardware platforms use a GpioInt specified in _CRS.=
+ */
+        irq =3D acpi_dev_gpio_irq_get(device, 0);
+-       if (irq < 0)
+-               return false;
++       if (irq < 0) {
++               pr_err("%s: acpi_dev_gpio_irq_get returns %d\n", __func__, =
+irq);
++               return irq;
++       }
+
+        ret =3D request_irq(irq, acpi_ec_irq_handler, IRQF_SHARED, "ACPI EC=
+", ec);
+-       if (ret < 0)
+-               return false;
++       if (ret < 0) {
++               pr_err("%s: request_irq returns %d\n", __func__, ret);
++               return ret;
++       }
+
+        ec->irq =3D irq;
+
+-       return true;
++       return 0;
+ }
+
+ /**
+@@ -1517,9 +1521,11 @@ static int ec_install_handlers(struct acpi_ec
+*ec, struct acpi_device *device)
+                         * fatal, because the EC can be polled for events.
+                         */
+                } else {
+-                       ready =3D install_gpio_irq_event_handler(ec, device=
+);
+-                       if (!ready)
+-                               return -ENXIO;
++                       pr_err("%s: install_gpio_irq_event_handler\n",
+__func__);
++                       int ret =3D install_gpio_irq_event_handler(ec, devi=
+ce);
++                       if (ret)
++                               return ret;
++                       ready =3D true;
+                }
+                if (ready) {
+                        set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flag=
+s);
+
+The dmesg shows:
+
+[    0.121117] ACPI: EC: ec_install_handlers: install_gpio_irq_event_handle=
+r
+[    0.121133] ACPI: EC: install_gpio_irq_event_handler:
+acpi_dev_gpio_irq_get returns -517
+
+Originally, ec_install_handlers() will return the returned value from
+install_gpio_irq_event_handler() from acpi_dev_gpio_irq_get(), which
+is -EPROBE_DEFER, instead of -ENXIO.  However, ec_install_handlers()
+returns -ENXIO directly if install_gpio_irq_event_handler() returns
+false in patch ("ACPI: EC: Consolidate event handler installation
+code").  Here needs some modification.
+
+Jian-Hong Pan
