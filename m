@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B141780E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1B691780F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Mar 2020 20:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387596AbgCCR7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 12:59:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42588 "EHLO mail.kernel.org"
+        id S2387647AbgCCR7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 12:59:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731109AbgCCR7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 12:59:20 -0500
+        id S2387626AbgCCR7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 12:59:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86CEE214D8;
-        Tue,  3 Mar 2020 17:59:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 150A6214D8;
+        Tue,  3 Mar 2020 17:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583258360;
-        bh=CObFl1cb5UvCfomOI018fcjAEGpaCccIR6+DPEZK/Do=;
+        s=default; t=1583258375;
+        bh=fbzw3Pn7cP5CyCmMaoGnl/JxtaOazCYdtc8rjGGmI2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VWKQKGO7pLNFg5S1uSR/jcmdENzXUukeauIeFc5rVFNH3yAEHmOT+jwBu6WcYfMR9
-         8SFpuepMGzka7TvHApJcpMOIsazWBtGHXAXMvMXpAz/DAOgHDT9ozVtajxEMs7d1/y
-         bbsXEVY7OZqnfL1yPYV3C63Srfz4UMaq0vTqpfO4=
+        b=xDzVdJw0kPvaw2DYQq+GaOP4OqmqKB1yYmV1PCeGydtYw7mLmhqiwbOjUvL8KiPY5
+         6g+FHNxN3oooX/ynxg5+jSkggwHmJDFz/FH7a+QWobb7gCKyPd3GO+pcqVQrAWDx/x
+         wHM6iEE5T4JJx6xy0BUEH+FZTQtzIET49qlajV18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Ajay Kaher <akaher@vmware.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 02/87] iwlwifi: pcie: fix rb_allocator workqueue allocation
-Date:   Tue,  3 Mar 2020 18:42:53 +0100
-Message-Id: <20200303174349.250817378@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Corey Minyard <cminyard@mvista.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 03/87] ipmi:ssif: Handle a possible NULL pointer reference
+Date:   Tue,  3 Mar 2020 18:42:54 +0100
+Message-Id: <20200303174349.322023049@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200303174349.075101355@linuxfoundation.org>
 References: <20200303174349.075101355@linuxfoundation.org>
@@ -44,64 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 8188a18ee2e48c9a7461139838048363bfce3fef upstream
+[ Upstream commit 6b8526d3abc02c08a2f888e8c20b7ac9e5776dfe ]
 
-We don't handle failures in the rb_allocator workqueue allocation
-correctly. To fix that, move the code earlier so the cleanup is
-easier and we don't have to undo all the interrupt allocations in
-this case.
+In error cases a NULL can be passed to memcpy.  The length will always
+be zero, so it doesn't really matter, but go ahead and check for NULL,
+anyway, to be more precise and avoid static analysis errors.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-[Ajay: Modified to apply on v4.19.y and v4.14.y]
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/char/ipmi/ipmi_ssif.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index 4f5571123f70a..24da496151353 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -3283,6 +3283,15 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
- 	spin_lock_init(&trans_pcie->reg_lock);
- 	mutex_init(&trans_pcie->mutex);
- 	init_waitqueue_head(&trans_pcie->ucode_write_waitq);
-+
-+	trans_pcie->rba.alloc_wq = alloc_workqueue("rb_allocator",
-+						   WQ_HIGHPRI | WQ_UNBOUND, 1);
-+	if (!trans_pcie->rba.alloc_wq) {
-+		ret = -ENOMEM;
-+		goto out_free_trans;
-+	}
-+	INIT_WORK(&trans_pcie->rba.rx_alloc, iwl_pcie_rx_allocator_work);
-+
- 	trans_pcie->tso_hdr_page = alloc_percpu(struct iwl_tso_hdr_page);
- 	if (!trans_pcie->tso_hdr_page) {
- 		ret = -ENOMEM;
-@@ -3485,10 +3494,6 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
- 		trans_pcie->inta_mask = CSR_INI_SET_MASK;
- 	 }
+diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+index af44db2dfb68a..fec679433f72d 100644
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -735,10 +735,14 @@ static void msg_done_handler(struct ssif_info *ssif_info, int result,
+ 	flags = ipmi_ssif_lock_cond(ssif_info, &oflags);
+ 	msg = ssif_info->curr_msg;
+ 	if (msg) {
++		if (data) {
++			if (len > IPMI_MAX_MSG_LENGTH)
++				len = IPMI_MAX_MSG_LENGTH;
++			memcpy(msg->rsp, data, len);
++		} else {
++			len = 0;
++		}
+ 		msg->rsp_size = len;
+-		if (msg->rsp_size > IPMI_MAX_MSG_LENGTH)
+-			msg->rsp_size = IPMI_MAX_MSG_LENGTH;
+-		memcpy(msg->rsp, data, msg->rsp_size);
+ 		ssif_info->curr_msg = NULL;
+ 	}
  
--	trans_pcie->rba.alloc_wq = alloc_workqueue("rb_allocator",
--						   WQ_HIGHPRI | WQ_UNBOUND, 1);
--	INIT_WORK(&trans_pcie->rba.rx_alloc, iwl_pcie_rx_allocator_work);
--
- #ifdef CONFIG_IWLWIFI_PCIE_RTPM
- 	trans->runtime_pm_mode = IWL_PLAT_PM_MODE_D0I3;
- #else
-@@ -3501,6 +3506,8 @@ out_free_ict:
- 	iwl_pcie_free_ict(trans);
- out_no_pci:
- 	free_percpu(trans_pcie->tso_hdr_page);
-+	destroy_workqueue(trans_pcie->rba.alloc_wq);
-+out_free_trans:
- 	iwl_trans_free(trans);
- 	return ERR_PTR(ret);
- }
 -- 
 2.20.1
 
