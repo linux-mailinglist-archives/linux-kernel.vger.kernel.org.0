@@ -2,66 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1DC817971E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F42617970D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:50:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388432AbgCDRui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:50:38 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45342 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730097AbgCDRu0 (ORCPT
+        id S2388287AbgCDRuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:50:07 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:21119 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388257AbgCDRuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:50:26 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b22so1312830pls.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:50:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0Q1y0EmQ17o7dLu3VnHpBCLQNV4RQszSwODn/zuDQVM=;
-        b=YouEmhWj/T6AACpVmmuOqEReEfJZSvBeeA9x3fCCCiQc0ID5tXQQL8VG5EPAicxqFY
-         oDt333K90hfzI7ZRbt3E4iEEXN8hNW/R1t1vb+EehzI3aDoYyP6Rx8EsMSOQyBbUyMpV
-         y/dKcKVh1cssaN88fjsetCVHq97t41k7UvS+0=
+        Wed, 4 Mar 2020 12:50:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583344204;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VFqtYf9mq+u3FzlLfuxydB/fRuMWFK1AHk/2aTLyELw=;
+        b=bHcRrpq94kdBCjhkExfeCCkBWxwDh1TeaZtONLDnNW6iCyf3+0PCBSqxoHkCUNc/AuAlau
+        ziuXCKxc+bnZdF5mghhuFJL+CwCg0ViaK7w2fvOX9/SlldeNyptoPozc28Zp8mKxer6F8F
+        QZxhtJFa2evLfbhQgpP0qjeKPCU6hHk=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-390-lo43dFHfNdGHvgIA0v4kkQ-1; Wed, 04 Mar 2020 12:50:02 -0500
+X-MC-Unique: lo43dFHfNdGHvgIA0v4kkQ-1
+Received: by mail-qv1-f70.google.com with SMTP id s2so1422719qvt.16
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:50:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0Q1y0EmQ17o7dLu3VnHpBCLQNV4RQszSwODn/zuDQVM=;
-        b=LeVYaUIdvTEcaebl6iyn8n2DzwhxusN0qxNERH5sorsbeLxTbJhw1ANjUHXfFHY9qe
-         sdyrjAmFcObmjQyipGmsIrflyEJkZwJQ34uraMujcW/YfoPMFh6ZbX2LZCGiPePIMkXK
-         VUL+qDOsXGIf2aEM+G7KBdvNqOgxTMclKZoWr1IQnjZ30jBEfndhOTsqjzOFfd6URCe9
-         Yq0Mkg79tfODDfpjWyKe7QDqLpSPjd5Xg+rdx7hcFminPE5A7H1tUDPg1rpXChIsdF1b
-         7e7qGFFkRaveOjd2DC7CGyjWgWs72FpPOODm+X/Lb9Y8U9aYYZmgwiwlXSOUZvgCWIs0
-         ohzw==
-X-Gm-Message-State: ANhLgQ2O7Gv63jr//VxgfudqW4agYmnTDKk1K6ZIuYn+2u5LE7uKWePY
-        if1UEBzJiUkygRxTx2fRZSqstQ==
-X-Google-Smtp-Source: ADFU+vtAbhmyNA0+J7TDqxCjwxk7PgJ2KfbJNh1drwe0TPzvcXFf4nhwGPMDeZ7xCl8MlPX75l0TYw==
-X-Received: by 2002:a17:90a:c214:: with SMTP id e20mr4101785pjt.98.1583344224660;
-        Wed, 04 Mar 2020 09:50:24 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:476b:691:abc3:38db])
-        by smtp.gmail.com with ESMTPSA id x7sm26124338pgp.0.2020.03.04.09.50.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VFqtYf9mq+u3FzlLfuxydB/fRuMWFK1AHk/2aTLyELw=;
+        b=SBQIz14hqiVx6axCCX2Gs7U3dSUmCiStuustYR2xXs6xhUJ/mhVSMviIjIsAFdSAql
+         8Tdp7aGNCPlJ/v/RO7al6pE0foogm+MXVMyqa+PInjHzSy2osffFuUpakccVhPi1BRKG
+         Am9ZNB5LrgnWBHLW5UbpueofAKSi/F+BWf08GRiyqfY59SiEbXnlnbMUwKdTFngv2q4U
+         2Djg+PMci6UxxmK3gPhUisok++VGXSdjQrg+Ku8qASHsSScaitF0LsILUa4UqNeVY4kV
+         Acry5S4HgJ/34FJsM3+LteKF7VGbG9mhkGfX8Ag1hYC0kYQ22Lp4FSbv23LSJWLXCXiK
+         qgwA==
+X-Gm-Message-State: ANhLgQ20hJv+eeFRzOTBmK5bh5IpW3W+nbEV0jft2kUi65Ok8AtdylXm
+        zUUksuAMkI5JM4shrbZ/OiiOT+73YFQwzJ2Oqz5qZSQzfA5SP/blwbhSpVmhFGL7Fb0nC+lGbCR
+        VxoRgERnBCPZVt4l6JvpRqAOE
+X-Received: by 2002:a05:620a:45:: with SMTP id t5mr4142021qkt.183.1583344200677;
+        Wed, 04 Mar 2020 09:50:00 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vuV9E0aEjjiDtxp63RR4mFcE5IKG9i03l5AaenmvtSKw30ATQkXmkmRYxAQsESWhrOQWKYJeQ==
+X-Received: by 2002:a05:620a:45:: with SMTP id t5mr4141982qkt.183.1583344200307;
+        Wed, 04 Mar 2020 09:50:00 -0800 (PST)
+Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id x1sm14060953qkf.38.2020.03.04.09.49.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:50:24 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     devicetree@vger.kernel.org
-Cc:     bleung@chromium.org, swboyd@chromium.org,
-        heikki.krogerus@linux.intel.com, enric.balletbo@collabora.com,
-        Prashant Malani <pmalani@chromium.org>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support), linux-kernel@vger.kernel.org (open list),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support), linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH] dt-bindings: Convert usb-connector to YAML format.
-Date:   Wed,  4 Mar 2020 09:49:35 -0800
-Message-Id: <20200304174942.124070-1-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+        Wed, 04 Mar 2020 09:49:59 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Yan Zhao <yan.y.zhao@intel.com>, peterx@redhat.com,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>
+Subject: [PATCH v5 03/14] KVM: X86: Don't track dirty for KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+Date:   Wed,  4 Mar 2020 12:49:36 -0500
+Message-Id: <20200304174947.69595-4-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200304174947.69595-1-peterx@redhat.com>
+References: <20200304174947.69595-1-peterx@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,499 +76,319 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the usb-connector.txt bindings file to YAML format. This allows
-it to be used in dt_bindings_check verification. This patch was
-born out of a patch series for the addition of a Type C connector
-class port driver[1].
+Originally, we have three code paths that can dirty a page without
+vcpu context for X86:
 
-An attempt has been made to maintain the same documentation text and
-example structure as was in the .txt file, but wherever needed
-modifications have been made to satisfy dt_bindings_check.
+  - init_rmode_identity_map
+  - init_rmode_tss
+  - kvmgt_rw_gpa
 
-Also, update all references to usb-connector.txt to now use
-usb-connector.yaml.
+init_rmode_identity_map and init_rmode_tss will be setup on
+destination VM no matter what (and the guest cannot even see them), so
+it does not make sense to track them at all.
 
-[1]: https://lkml.org/lkml/2020/2/19/1232
+To do this, allow __x86_set_memory_region() to return the userspace
+address that just allocated to the caller.  Then in both of the
+functions we directly write to the userspace address instead of
+calling kvm_write_*() APIs.
 
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
+Another trivial change is that we don't need to explicitly clear the
+identity page table root in init_rmode_identity_map() because no
+matter what we'll write to the whole page with 4M huge page entries.
+
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- .../connector/samsung,usb-connector-11pin.txt |   2 +-
- .../bindings/connector/usb-connector.txt      | 135 ------------
- .../bindings/connector/usb-connector.yaml     | 193 ++++++++++++++++++
- .../devicetree/bindings/usb/fcs,fusb302.txt   |   2 +-
- .../devicetree/bindings/usb/generic.txt       |   2 +-
- .../devicetree/bindings/usb/mediatek,mtu3.txt |   2 +-
- .../devicetree/bindings/usb/mediatek,musb.txt |   2 +-
- .../bindings/usb/richtek,rt1711h.txt          |   2 +-
- .../devicetree/bindings/usb/ti,hd3ss3220.txt  |   2 +-
- .../devicetree/bindings/usb/typec-tcpci.txt   |   2 +-
- .../devicetree/bindings/usb/usb-conn-gpio.txt |   4 +-
- 11 files changed, 203 insertions(+), 145 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/connector/usb-connector.txt
- create mode 100644 Documentation/devicetree/bindings/connector/usb-connector.yaml
+ arch/x86/include/asm/kvm_host.h |  3 +-
+ arch/x86/kvm/svm.c              |  9 ++--
+ arch/x86/kvm/vmx/vmx.c          | 78 ++++++++++++++++-----------------
+ arch/x86/kvm/x86.c              | 40 ++++++++++++++---
+ 4 files changed, 80 insertions(+), 50 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt b/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
-index 22256e295a7a1..3dd8961154abf 100644
---- a/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
-+++ b/Documentation/devicetree/bindings/connector/samsung,usb-connector-11pin.txt
-@@ -19,7 +19,7 @@ Required nodes:
-     0: High Speed (HS),
-     3: Mobile High-Definition Link (MHL), specific to 11-pin Samsung micro-USB.
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 98959e8cd448..ae7641b6a473 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1651,7 +1651,8 @@ void __kvm_request_immediate_exit(struct kvm_vcpu *vcpu);
  
--[1]: bindings/connector/usb-connector.txt
-+[1]: bindings/connector/usb-connector.yaml
+ int kvm_is_in_guest(void);
  
- Example
- -------
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-deleted file mode 100644
-index 88578ac1a8a76..0000000000000
---- a/Documentation/devicetree/bindings/connector/usb-connector.txt
-+++ /dev/null
-@@ -1,135 +0,0 @@
--USB Connector
--=============
--
--A USB connector node represents a physical USB connector. It should be
--a child of a USB interface controller.
--
--Required properties:
--- compatible: describes type of the connector, must be one of:
--    "usb-a-connector",
--    "usb-b-connector",
--    "usb-c-connector".
--
--Optional properties:
--- label: symbolic name for the connector,
--- type: size of the connector, should be specified in case of USB-A, USB-B
--  non-fullsize connectors: "mini", "micro".
--- self-powered: Set this property if the usb device that has its own power
--  source.
--
--Optional properties for usb-b-connector:
--- id-gpios: an input gpio for USB ID pin.
--- vbus-gpios: an input gpio for USB VBUS pin, used to detect presence of
--  VBUS 5V.
--  see gpio/gpio.txt.
--- vbus-supply: a phandle to the regulator for USB VBUS if needed when host
--  mode or dual role mode is supported.
--  Particularly, if use an output GPIO to control a VBUS regulator, should
--  model it as a regulator.
--  see regulator/fixed-regulator.yaml
--- pinctrl-names : a pinctrl state named "default" is optional
--- pinctrl-0 : pin control group
--  see pinctrl/pinctrl-bindings.txt
--
--Optional properties for usb-c-connector:
--- power-role: should be one of "source", "sink" or "dual"(DRP) if typec
--  connector has power support.
--- try-power-role: preferred power role if "dual"(DRP) can support Try.SNK
--  or Try.SRC, should be "sink" for Try.SNK or "source" for Try.SRC.
--- data-role: should be one of "host", "device", "dual"(DRD) if typec
--  connector supports USB data.
--
--Required properties for usb-c-connector with power delivery support:
--- source-pdos: An array of u32 with each entry providing supported power
--  source data object(PDO), the detailed bit definitions of PDO can be found
--  in "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.2
--  Source_Capabilities Message, the order of each entry(PDO) should follow
--  the PD spec chapter 6.4.1. Required for power source and power dual role.
--  User can specify the source PDO array via PDO_FIXED/BATT/VAR/PPS_APDO()
--  defined in dt-bindings/usb/pd.h.
--- sink-pdos: An array of u32 with each entry providing supported power
--  sink data object(PDO), the detailed bit definitions of PDO can be found
--  in "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.3
--  Sink Capabilities Message, the order of each entry(PDO) should follow
--  the PD spec chapter 6.4.1. Required for power sink and power dual role.
--  User can specify the sink PDO array via PDO_FIXED/BATT/VAR/PPS_APDO() defined
--  in dt-bindings/usb/pd.h.
--- op-sink-microwatt: Sink required operating power in microwatt, if source
--  can't offer the power, Capability Mismatch is set. Required for power
--  sink and power dual role.
--
--Required nodes:
--- any data bus to the connector should be modeled using the OF graph bindings
--  specified in bindings/graph.txt, unless the bus is between parent node and
--  the connector. Since single connector can have multiple data buses every bus
--  has assigned OF graph port number as follows:
--    0: High Speed (HS), present in all connectors,
--    1: Super Speed (SS), present in SS capable connectors,
--    2: Sideband use (SBU), present in USB-C.
--
--Examples
----------
--
--1. Micro-USB connector with HS lines routed via controller (MUIC):
--
--muic-max77843@66 {
--	...
--	usb_con: connector {
--		compatible = "usb-b-connector";
--		label = "micro-USB";
--		type = "micro";
--	};
--};
--
--2. USB-C connector attached to CC controller (s2mm005), HS lines routed
--to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
--DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
--
--ccic: s2mm005@33 {
--	...
--	usb_con: connector {
--		compatible = "usb-c-connector";
--		label = "USB-C";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				usb_con_hs: endpoint {
--					remote-endpoint = <&max77865_usbc_hs>;
--				};
--			};
--			port@1 {
--				reg = <1>;
--				usb_con_ss: endpoint {
--					remote-endpoint = <&usbdrd_phy_ss>;
--				};
--			};
--			port@2 {
--				reg = <2>;
--				usb_con_sbu: endpoint {
--					remote-endpoint = <&dp_aux>;
--				};
--			};
--		};
--	};
--};
--
--3. USB-C connector attached to a typec port controller(ptn5110), which has
--power delivery support and enables drp.
--
--typec: ptn5110@50 {
--	...
--	usb_con: connector {
--		compatible = "usb-c-connector";
--		label = "USB-C";
--		power-role = "dual";
--		try-power-role = "sink";
--		source-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
--		sink-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)
--			     PDO_VAR(5000, 12000, 2000)>;
--		op-sink-microwatt = <10000000>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-new file mode 100644
-index 0000000000000..f0fac9bd63364
---- /dev/null
-+++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-@@ -0,0 +1,193 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/connector/usb-connector.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: USB Connector
-+
-+maintainers:
-+  - linux-usb@vger.kernel.org
-+
-+description:
-+  A USB connector node represents a physical USB connector. It should be a child
-+  of a USB interface controller.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - usb-a-connector
-+      - usb-b-connector
-+      - usb-c-connector
-+
-+  label:
-+    description: Symbolic name for the connector.
-+
-+  type:
-+    description: Size of the connector, should be specified in case of USB-A,
-+      USB-B non-fullsize connectors.
-+    enum:
-+      - mini
-+      - micro
-+
-+  self-powered:
-+    description: Set this property if the USB device has its own power source.
-+
-+  # The following are optional properties for "usb-b-connector".
-+  id-gpios:
-+    description: An input gpio for USB ID pin.
-+
-+  vbus-gpios:
-+    description: An input gpio for USB VBus pin, used to detect presence of
-+      VBUS 5V. See gpio/gpio.txt.
-+
-+  vbus-supply:
-+    description: A phandle to the regulator for USB VBUS if needed when host
-+      mode or dual role mode is supported.
-+      Particularly, if use an output GPIO to control a VBUS regulator, should
-+      model it as a regulator. See regulator/fixed-regulator.yaml
-+
-+  pinctrl-names:
-+    description: A pinctrl state named "default" is optional.
-+
-+  pinctrl-0:
-+    description: Pin control group. See pinctrl/pinctrl-bindings.txt
-+
-+  # The following are optional properties for "usb-c-connector".
-+  power-role:
-+    description: Determines the power role that the Type C connector will
-+      support.
-+    contains:
-+      source:
-+        description: Connector is a power source.
-+      sink:
-+        description: Connector is a power sink.
-+      dual:
-+        description: Connector is a Dual Role Port (DRP).
-+
-+  try-power-role:
-+    description: Preferred power role.
-+    contains:
-+      sink:
-+        description: Try.SNK is preferred power role.
-+      source:
-+        description: Try.SRC is preferred power role.
-+      dual:
-+        description: DRP can support Try.SNK or Try.SRC.
-+
-+  data-role:
-+    description: Data role if Type C connector supports USB data.
-+    contains:
-+      host:
-+        description: Connector is a host.
-+      device:
-+        description: Connector is a device.
-+      dual:
-+        description: Connector is Dual Role Device (DRD).
-+
-+  # The following are optional properties for "usb-c-connector" with power
-+  # delivery support.
-+  source-pdos:
-+    description: An array of u32 with each entry providing supported power
-+      source data object(PDO), the detailed bit definitions of PDO can be found
-+      in "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.2
-+      Source_Capabilities Message, the order of each entry(PDO) should follow
-+      the PD spec chapter 6.4.1. Required for power source and power dual role.
-+      User can specify the source PDO array via PDO_FIXED/BATT/VAR/PPS_APDO()
-+      defined in dt-bindings/usb/pd.h.
-+    minItems: 1
-+    maxItems: 7
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+
-+
-+  sink-pdos:
-+    description: An array of u32 with each entry providing supported power sink
-+      data object(PDO), the detailed bit definitions of PDO can be found in
-+      "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.3
-+      Sink Capabilities Message, the order of each entry(PDO) should follow the
-+      PD spec chapter 6.4.1. Required for power sink and power dual role. User
-+      can specify the sink PDO array via PDO_FIXED/BATT/VAR/PPS_APDO() defined
-+      in dt-bindings/usb/pd.h.
-+    minItems: 1
-+    maxItems: 7
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+
-+  op-sink-microwatt:
-+    description: Sink required operating power in microwatt, if source can't
-+      offer the power, Capability Mismatch is set. Required for power sink and
-+      power dual role.
-+
-+# Any data bus to the connector should be modeled using the OF graph bindings
-+# specified in bindings/graph.txt, unless the bus is between parent node and
-+# the connector. Since single connector can have multiple data buses every bus
-+# has assigned OF graph port number as follows:
-+# 0: High Speed (HS), present in all connectors,
-+# 1: Super Speed (SS), present in SS capable connectors,
-+# 2: Sideband use (SBU), present in USB-C.
-+required:
-+  - compatible
-+
-+examples:
-+  # Micro-USB connector with HS lines routed via controller (MUIC).
-+  - |+
-+    muic-max77843@66 {
-+      usb_con1: connector {
-+        compatible = "usb-b-connector";
-+        label = "micro-USB";
-+        type = "micro";
-+      };
-+    };
-+
-+  # USB-C connector attached to CC controller (s2mm005), HS lines routed
-+  # to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
-+  # DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
-+  - |+
-+    ccic: s2mm005@33 {
-+      usb_con2: connector {
-+        compatible = "usb-c-connector";
-+        label = "USB-C";
-+
-+        ports {
-+          #address-cells = <1>;
-+          #size-cells = <0>;
-+
-+          port@0 {
-+            reg = <0>;
-+            usb_con_hs: endpoint {
-+              remote-endpoint = <&max77865_usbc_hs>;
-+            };
-+          };
-+          port@1 {
-+            reg = <1>;
-+            usb_con_ss: endpoint {
-+            remote-endpoint = <&usbdrd_phy_ss>;
-+            };
-+          };
-+          port@2 {
-+            reg = <2>;
-+            usb_con_sbu: endpoint {
-+            remote-endpoint = <&dp_aux>;
-+            };
-+          };
-+        };
-+      };
-+    };
-+
-+  # USB-C connector attached to a typec port controller(ptn5110), which has
-+  # power delivery support and enables drp.
-+  - |+
-+    #include <dt-bindings/usb/pd.h>
-+    typec: ptn5110@50 {
-+      usb_con3: connector {
-+        compatible = "usb-c-connector";
-+        label = "USB-C";
-+        power-role = "dual";
-+        try-power-role = "sink";
-+        source-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
-+        sink-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)
-+                     PDO_VAR(5000, 12000, 2000)>;
-+        op-sink-microwatt = <10000000>;
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/usb/fcs,fusb302.txt b/Documentation/devicetree/bindings/usb/fcs,fusb302.txt
-index ba2e32d500c02..60e4654297af7 100644
---- a/Documentation/devicetree/bindings/usb/fcs,fusb302.txt
-+++ b/Documentation/devicetree/bindings/usb/fcs,fusb302.txt
-@@ -9,7 +9,7 @@ Required sub-node:
- - connector : The "usb-c-connector" attached to the FUSB302 IC. The bindings
-   of the connector node are specified in:
+-int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size);
++void __user *__x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
++				     u32 size);
+ bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu);
+ bool kvm_vcpu_is_bsp(struct kvm_vcpu *vcpu);
  
--	Documentation/devicetree/bindings/connector/usb-connector.txt
-+	Documentation/devicetree/bindings/connector/usb-connector.yaml
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 24c0b2ba8fb9..9b325599faf2 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1736,7 +1736,8 @@ static u64 *avic_get_physical_id_entry(struct kvm_vcpu *vcpu,
+  */
+ static int avic_update_access_page(struct kvm *kvm, bool activate)
+ {
+-	int ret = 0;
++	void __user *ret;
++	int r = 0;
  
+ 	mutex_lock(&kvm->slots_lock);
+ 	/*
+@@ -1752,13 +1753,15 @@ static int avic_update_access_page(struct kvm *kvm, bool activate)
+ 				      APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+ 				      APIC_DEFAULT_PHYS_BASE,
+ 				      activate ? PAGE_SIZE : 0);
+-	if (ret)
++	if (IS_ERR(ret)) {
++		r = PTR_ERR(ret);
+ 		goto out;
++	}
  
- Example:
-diff --git a/Documentation/devicetree/bindings/usb/generic.txt b/Documentation/devicetree/bindings/usb/generic.txt
-index e6790d2a4da9b..474e74c06522d 100644
---- a/Documentation/devicetree/bindings/usb/generic.txt
-+++ b/Documentation/devicetree/bindings/usb/generic.txt
-@@ -34,7 +34,7 @@ Optional properties:
-  - usb-role-switch: boolean, indicates that the device is capable of assigning
- 			the USB data role (USB host or USB device) for a given
- 			USB connector, such as Type-C, Type-B(micro).
--			see connector/usb-connector.txt.
-+			see connector/usb-connector.yaml.
+ 	kvm->arch.apic_access_page_done = activate;
+ out:
+ 	mutex_unlock(&kvm->slots_lock);
+-	return ret;
++	return r;
+ }
  
- This is an attribute to a USB controller such as:
+ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 40b1e6138cd5..fc638a164e03 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -3467,34 +3467,26 @@ static bool guest_state_valid(struct kvm_vcpu *vcpu)
+ 	return true;
+ }
  
-diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
-index e0ae6096f7ac8..a82ca438aec1f 100644
---- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
-+++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
-@@ -34,7 +34,7 @@ Optional properties:
- 	dual-role mode.
- 	it's considered valid for compatibility reasons, not allowed for
- 	new bindings, and put into a usb-connector node.
--	see connector/usb-connector.txt.
-+	see connector/usb-connector.yaml.
-  - pinctrl-names : a pinctrl state named "default" is optional, and need be
- 	defined if auto drd switch is enabled, that means the property dr_mode
- 	is set as "otg", and meanwhile the property "mediatek,enable-manual-drd"
-diff --git a/Documentation/devicetree/bindings/usb/mediatek,musb.txt b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-index 2b8a87c90d9ea..5eedb02965622 100644
---- a/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-+++ b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
-@@ -23,7 +23,7 @@ Optional properties:
-                      MTCMOS
+-static int init_rmode_tss(struct kvm *kvm)
++static int init_rmode_tss(struct kvm *kvm, void __user *ua)
+ {
+-	gfn_t fn;
++	const void *zero_page = (const void *) __va(page_to_phys(ZERO_PAGE(0)));
+ 	u16 data = 0;
+ 	int idx, r;
  
- Required child nodes:
-- usb connector node as defined in bindings/connector/usb-connector.txt
-+ usb connector node as defined in bindings/connector/usb-connector.yaml
- Optional properties:
-  - id-gpios        : input GPIO for USB ID pin.
-  - vbus-gpios      : input GPIO for USB VBUS pin.
-diff --git a/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt b/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
-index e3fc57e605ed6..6f8115db2ea9b 100644
---- a/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
-+++ b/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
-@@ -9,7 +9,7 @@ Required properties:
- Required sub-node:
- - connector: The "usb-c-connector" attached to the tcpci chip, the bindings
-   of connector node are specified in
--  Documentation/devicetree/bindings/connector/usb-connector.txt
-+  Documentation/devicetree/bindings/connector/usb-connector.yaml
+-	idx = srcu_read_lock(&kvm->srcu);
+-	fn = to_kvm_vmx(kvm)->tss_addr >> PAGE_SHIFT;
+-	r = kvm_clear_guest_page(kvm, fn, 0, PAGE_SIZE);
+-	if (r < 0)
+-		goto out;
++	for (idx = 0; idx < 3; idx++) {
++		r = __copy_to_user(ua + PAGE_SIZE * idx, zero_page, PAGE_SIZE);
++		if (r)
++			return -EFAULT;
++	}
++
+ 	data = TSS_BASE_SIZE + TSS_REDIRECTION_SIZE;
+-	r = kvm_write_guest_page(kvm, fn++, &data,
+-			TSS_IOPB_BASE_OFFSET, sizeof(u16));
+-	if (r < 0)
+-		goto out;
+-	r = kvm_clear_guest_page(kvm, fn++, 0, PAGE_SIZE);
+-	if (r < 0)
+-		goto out;
+-	r = kvm_clear_guest_page(kvm, fn, 0, PAGE_SIZE);
+-	if (r < 0)
+-		goto out;
++	r = __copy_to_user(ua + TSS_IOPB_BASE_OFFSET, &data, sizeof(u16));
++	if (r)
++		return -EFAULT;
++
+ 	data = ~0;
+-	r = kvm_write_guest_page(kvm, fn, &data,
+-				 RMODE_TSS_SIZE - 2 * PAGE_SIZE - 1,
+-				 sizeof(u8));
+-out:
+-	srcu_read_unlock(&kvm->srcu, idx);
++	r = __copy_to_user(ua + RMODE_TSS_SIZE - 1, &data, sizeof(u8));
++
+ 	return r;
+ }
  
- Example :
- rt1711h@4e {
-diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-index 25780e945b154..2bd21b22ce95b 100644
---- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-+++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-@@ -9,7 +9,7 @@ Required sub-node:
-  - connector: The "usb-c-connector" attached to the hd3ss3220 chip. The
-    bindings of the connector node are specified in:
+@@ -3503,6 +3495,7 @@ static int init_rmode_identity_map(struct kvm *kvm)
+ 	struct kvm_vmx *kvm_vmx = to_kvm_vmx(kvm);
+ 	int i, r = 0;
+ 	kvm_pfn_t identity_map_pfn;
++	void __user *uaddr;
+ 	u32 tmp;
  
--	Documentation/devicetree/bindings/connector/usb-connector.txt
-+	Documentation/devicetree/bindings/connector/usb-connector.yaml
+ 	/* Protect kvm_vmx->ept_identity_pagetable_done. */
+@@ -3515,22 +3508,24 @@ static int init_rmode_identity_map(struct kvm *kvm)
+ 		kvm_vmx->ept_identity_map_addr = VMX_EPT_IDENTITY_PAGETABLE_ADDR;
+ 	identity_map_pfn = kvm_vmx->ept_identity_map_addr >> PAGE_SHIFT;
  
- Example:
- hd3ss3220@47 {
-diff --git a/Documentation/devicetree/bindings/usb/typec-tcpci.txt b/Documentation/devicetree/bindings/usb/typec-tcpci.txt
-index 0dd1469e73180..2082522b1c326 100644
---- a/Documentation/devicetree/bindings/usb/typec-tcpci.txt
-+++ b/Documentation/devicetree/bindings/usb/typec-tcpci.txt
-@@ -13,7 +13,7 @@ Required properties:
- Required sub-node:
- - connector: The "usb-c-connector" attached to the tcpci chip, the bindings
-   of connector node are specified in
--  Documentation/devicetree/bindings/connector/usb-connector.txt
-+  Documentation/devicetree/bindings/connector/usb-connector.yaml
+-	r = __x86_set_memory_region(kvm, IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
+-				    kvm_vmx->ept_identity_map_addr, PAGE_SIZE);
+-	if (r < 0)
++	uaddr = __x86_set_memory_region(kvm,
++					IDENTITY_PAGETABLE_PRIVATE_MEMSLOT,
++					kvm_vmx->ept_identity_map_addr,
++					PAGE_SIZE);
++	if (IS_ERR(uaddr)) {
++		r = PTR_ERR(uaddr);
+ 		goto out;
++	}
  
- Example:
+-	r = kvm_clear_guest_page(kvm, identity_map_pfn, 0, PAGE_SIZE);
+-	if (r < 0)
+-		goto out;
+ 	/* Set up identity-mapping pagetable for EPT in real mode */
+ 	for (i = 0; i < PT32_ENT_PER_PAGE; i++) {
+ 		tmp = (i << 22) + (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |
+ 			_PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_PSE);
+-		r = kvm_write_guest_page(kvm, identity_map_pfn,
+-				&tmp, i * sizeof(tmp), sizeof(tmp));
+-		if (r < 0)
++		r = __copy_to_user(uaddr + i * sizeof(tmp), &tmp, sizeof(tmp));
++		if (r) {
++			r = -EFAULT;
+ 			goto out;
++		}
+ 	}
+ 	kvm_vmx->ept_identity_pagetable_done = true;
  
-diff --git a/Documentation/devicetree/bindings/usb/usb-conn-gpio.txt b/Documentation/devicetree/bindings/usb/usb-conn-gpio.txt
-index 3d05ae56cb0dc..ec80641208a53 100644
---- a/Documentation/devicetree/bindings/usb/usb-conn-gpio.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-conn-gpio.txt
-@@ -8,11 +8,11 @@ Required properties:
- - compatible : should include "gpio-usb-b-connector" and "usb-b-connector".
- - id-gpios, vbus-gpios : input gpios, either one of them must be present,
- 	and both can be present as well.
--	see connector/usb-connector.txt
-+	see connector/usb-connector.yaml
+@@ -3557,19 +3552,22 @@ static void seg_setup(int seg)
+ static int alloc_apic_access_page(struct kvm *kvm)
+ {
+ 	struct page *page;
+-	int r = 0;
++	void __user *r;
++	int ret = 0;
  
- Optional properties:
- - vbus-supply : can be present if needed when supports dual role mode.
--	see connector/usb-connector.txt
-+	see connector/usb-connector.yaml
+ 	mutex_lock(&kvm->slots_lock);
+ 	if (kvm->arch.apic_access_page_done)
+ 		goto out;
+ 	r = __x86_set_memory_region(kvm, APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+ 				    APIC_DEFAULT_PHYS_BASE, PAGE_SIZE);
+-	if (r)
++	if (IS_ERR(r)) {
++		ret = PTR_ERR(r);
+ 		goto out;
++	}
  
- - Sub-nodes:
- 	- port : can be present.
+ 	page = gfn_to_page(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
+ 	if (is_error_page(page)) {
+-		r = -EFAULT;
++		ret = -EFAULT;
+ 		goto out;
+ 	}
+ 
+@@ -3581,7 +3579,7 @@ static int alloc_apic_access_page(struct kvm *kvm)
+ 	kvm->arch.apic_access_page_done = true;
+ out:
+ 	mutex_unlock(&kvm->slots_lock);
+-	return r;
++	return ret;
+ }
+ 
+ int allocate_vpid(void)
+@@ -4503,7 +4501,7 @@ static int vmx_interrupt_allowed(struct kvm_vcpu *vcpu)
+ 
+ static int vmx_set_tss_addr(struct kvm *kvm, unsigned int addr)
+ {
+-	int ret;
++	void __user *ret;
+ 
+ 	if (enable_unrestricted_guest)
+ 		return 0;
+@@ -4513,10 +4511,12 @@ static int vmx_set_tss_addr(struct kvm *kvm, unsigned int addr)
+ 				      PAGE_SIZE * 3);
+ 	mutex_unlock(&kvm->slots_lock);
+ 
+-	if (ret)
+-		return ret;
++	if (IS_ERR(ret))
++		return PTR_ERR(ret);
++
+ 	to_kvm_vmx(kvm)->tss_addr = addr;
+-	return init_rmode_tss(kvm);
++
++	return init_rmode_tss(kvm, ret);
+ }
+ 
+ static int vmx_set_identity_map_addr(struct kvm *kvm, u64 ident_addr)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 5de200663f51..fe485d4ba6c7 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9756,7 +9756,33 @@ void kvm_arch_sync_events(struct kvm *kvm)
+ 	kvm_free_pit(kvm);
+ }
+ 
+-int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
++/**
++ * __x86_set_memory_region: Setup KVM internal memory slot
++ *
++ * @kvm: the kvm pointer to the VM.
++ * @id: the slot ID to setup.
++ * @gpa: the GPA to install the slot (unused when @size == 0).
++ * @size: the size of the slot. Set to zero to uninstall a slot.
++ *
++ * This function helps to setup a KVM internal memory slot.  Specify
++ * @size > 0 to install a new slot, while @size == 0 to uninstall a
++ * slot.  The return code can be one of the following:
++ *
++ *   - An error number if error happened, or,
++ *   - For installation: the HVA of the newly mapped memory slot, or,
++ *   - For uninstallation: zero if we successfully uninstall a slot.
++ *
++ * The caller should always use IS_ERR() to check the return value
++ * before use.  NOTE: KVM internal memory slots are guaranteed and
++ * won't change until the VM is destroyed. This is also true to the
++ * returned HVA when installing a new memory slot.  The HVA can be
++ * invalidated by either an errornous userspace program or a VM under
++ * destruction, however as long as we use __copy_{to|from}_user()
++ * properly upon the HVAs and handle the failure paths always then
++ * we're safe.
++ */
++void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
++				      u32 size)
+ {
+ 	int i, r;
+ 	unsigned long hva;
+@@ -9765,12 +9791,12 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+ 
+ 	/* Called with kvm->slots_lock held.  */
+ 	if (WARN_ON(id >= KVM_MEM_SLOTS_NUM))
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 
+ 	slot = id_to_memslot(slots, id);
+ 	if (size) {
+ 		if (slot->npages)
+-			return -EEXIST;
++			return ERR_PTR(-EEXIST);
+ 
+ 		/*
+ 		 * MAP_SHARED to prevent internal slot pages from being moved
+@@ -9779,10 +9805,10 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+ 		hva = vm_mmap(NULL, 0, size, PROT_READ | PROT_WRITE,
+ 			      MAP_SHARED | MAP_ANONYMOUS, 0);
+ 		if (IS_ERR((void *)hva))
+-			return PTR_ERR((void *)hva);
++			return (void __user *)hva;
+ 	} else {
+ 		if (!slot->npages)
+-			return 0;
++			return ERR_PTR(0);
+ 
+ 		hva = 0;
+ 	}
+@@ -9798,13 +9824,13 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+ 		m.memory_size = size;
+ 		r = __kvm_set_memory_region(kvm, &m);
+ 		if (r < 0)
+-			return r;
++			return ERR_PTR(r);
+ 	}
+ 
+ 	if (!size)
+ 		vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
+ 
+-	return 0;
++	return (void __user *)hva;
+ }
+ EXPORT_SYMBOL_GPL(__x86_set_memory_region);
+ 
 -- 
-2.25.0.265.gbab2e86ba0-goog
+2.24.1
 
