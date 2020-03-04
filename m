@@ -2,215 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0584B178D7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E006178D80
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:33:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbgCDJd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 04:33:28 -0500
-Received: from mga11.intel.com ([192.55.52.93]:14299 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728916AbgCDJd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 04:33:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 01:33:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,513,1574150400"; 
-   d="scan'208";a="352054757"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 04 Mar 2020 01:33:24 -0800
-Received: by lahna (sSMTP sendmail emulation); Wed, 04 Mar 2020 11:33:24 +0200
-Date:   Wed, 4 Mar 2020 11:33:24 +0200
-From:   Mika Westerberg <mika.westerberg@intel.com>
-To:     Karol Herbst <kherbst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Lyude Paul <lyude@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v6] pci: prevent putting nvidia GPUs into lower device
- states on certain intel bridges
-Message-ID: <20200304093324.GI2540@lahna.fi.intel.com>
-References: <20200303101052.133631-1-kherbst@redhat.com>
+        id S1729220AbgCDJdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 04:33:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58240 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbgCDJdt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 04:33:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gX2uMel8bqojLwNLrW/nBkgoOloh9SjGrsYWMzHuEsw=; b=aN61YDADxoRGokV7pRaxA5Jw8t
+        PNTXa6oprGIxP47+jS/vX10PY31xtAOd+yneGCjw02qlwgqy3WBg2KPXsVaq0+hRC71YgwZlI8XHt
+        RYl89LPwSDQ/97/9g/42kYCsaX+D4DmLlcNYFl0FQ1eELJp8XmG4QXl71XvYKI457+XuyLgA1VKdx
+        lHdsRtP4st2DBrZEVeGu3xnojyofs+zsgha71myWK+pj9ECD3H7/B5uLptuvyINaOsX0JfhqB5c52
+        HffcJHhit69Ll8qT/efDPjtTRajMR4m4JADoiN1F2Uz6FRpYl2koeQDRSMKLR3hMqAOO9g1BWCdJj
+        fRHOqqpw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9QPS-0004ws-1v; Wed, 04 Mar 2020 09:33:46 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9FAA63024EA;
+        Wed,  4 Mar 2020 10:31:45 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1ECCC2011CA98; Wed,  4 Mar 2020 10:33:44 +0100 (CET)
+Date:   Wed, 4 Mar 2020 10:33:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, irogers@google.com,
+        eranian@google.com, ak@linux.intel.com
+Subject: Re: [PATCH] perf/core: Fix endless multiplex timer
+Message-ID: <20200304093344.GJ2596@hirez.programming.kicks-ass.net>
+References: <20200303202819.3942-1-kan.liang@linux.intel.com>
+ <20200303210812.GA4745@worktop.programming.kicks-ass.net>
+ <b71515e4-484e-d80a-37db-2e51abe69928@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200303101052.133631-1-kherbst@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <b71515e4-484e-d80a-37db-2e51abe69928@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Mar 03, 2020 at 11:10:52AM +0100, Karol Herbst wrote:
-> Fixes state transitions of Nvidia Pascal GPUs from D3cold into higher device
-> states.
-
-I think it is good to explain bit more here why this fix is needed.
-
-> v2: convert to pci_dev quirk
->     put a proper technical explanation of the issue as a in-code comment
-> v3: disable it only for certain combinations of intel and nvidia hardware
-> v4: simplify quirk by setting flag on the GPU itself
-> v5: restructure quirk to make it easier to add new IDs
->     fix whitespace issues
->     fix potential NULL pointer access
->     update the quirk documentation
-> v6: move quirk into nouveau
-
-This information typically goes under the '---' line.
-
-> Signed-off-by: Karol Herbst <kherbst@redhat.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Mika Westerberg <mika.westerberg@intel.com>
-
-I have few minor comments but regardless,
-
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: nouveau@lists.freedesktop.org
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205623
-> ---
->  drivers/gpu/drm/nouveau/nouveau_drm.c | 56 +++++++++++++++++++++++++++
->  drivers/pci/pci.c                     |  8 ++++
->  include/linux/pci.h                   |  1 +
->  3 files changed, 65 insertions(+)
+On Tue, Mar 03, 2020 at 08:40:10PM -0500, Liang, Kan wrote:
+> > I'm thinking this is wrong.
+> > 
+> > That is, yes, this fixes the observed problem, but it also misses at
+> > least one other site. Which seems to suggest we ought to take a
+> > different approach.
+> > 
+> > But even with that; I wonder if the actual condition isn't wrong.
+> > Suppose the event was exclusive, and other events weren't scheduled
+> > because of that. Then you disable the one exclusive event _and_ kill
+> > rotation, so then nothing else will ever get on.
+> > 
+> > So what I think was supposed to happen is rotation killing itself;
+> > rotation will schedule out the context -- which will clear the flag, and
+> > then schedule the thing back in -- which will set the flag again when
+> > needed.
+> > 
+> > Now, that isn't happening, and I think I see why, because when we drop
+> > to !nr_active, we terminate ctx_sched_out() before we get to clearing
+> > the flag, oops!
+> > 
+> > So how about something like this?
+> > 
+> > ---
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index e453589da97c..7947bd3271a9 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -2182,6 +2182,7 @@ __perf_remove_from_context(struct perf_event *event,
+> >   	if (!ctx->nr_events && ctx->is_active) {
+> >   		ctx->is_active = 0;
+> > +		ctx->rotate_necessary = 0;
+> >   		if (ctx->task) {
+> >   			WARN_ON_ONCE(cpuctx->task_ctx != ctx);
+> >   			cpuctx->task_ctx = NULL;
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> index 2cd83849600f..51d3a7ba7731 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> @@ -618,6 +618,59 @@ nouveau_drm_device_fini(struct drm_device *dev)
->  	kfree(drm);
->  }
->  
-> +/*
-> + * On some Intel PCIe bridge controllers doing a
-> + * D0 -> D3hot -> D3cold -> D0 sequence causes Nvidia GPUs to not reappear.
-> + * Skipping the intermediate D3hot step seems to make it work again. Thise is
-                                                                        ^^^^^
-Thise -> This
+> 
+> The patch can fix the observed problem with uncore PMU.
+> But it cannot fix all the cases with core PMU, especially when NMI watchdog
+> is enabled.
+> Because the ctx->nr_events never be 0 with NMI watchdog enabled.
 
-> + * probably caused by not meeting the expectation the involved AML code has
-> + * when the GPU is put into D3hot state before invoking it.
-> + *
-> + * This leads to various manifestations of this issue:
-> + *  - AML code execution to power on the GPU hits an infinite loop (as the
-> + *    code waits on device memory to change).
-> + *  - kernel crashes, as all PCI reads return -1, which most code isn't able
-> + *    to handle well enough.
-> + *
-> + * In all cases dmesg will contain at least one line like this:
-> + * 'nouveau 0000:01:00.0: Refused to change power state, currently in D3'
-> + * followed by a lot of nouveau timeouts.
-> + *
-> + * In the \_SB.PCI0.PEG0.PG00._OFF code deeper down writes bit 0x80 to the not
-> + * documented PCI config space register 0x248 of the Intel PCIe bridge
-> + * controller (0x1901) in order to change the state of the PCIe link between
-> + * the PCIe port and the GPU. There are alternative code paths using other
-> + * registers, which seem to work fine (executed pre Windows 8):
-> + *  - 0xbc bit 0x20 (publicly available documentation claims 'reserved')
-> + *  - 0xb0 bit 0x10 (link disable)
-> + * Changing the conditions inside the firmware by poking into the relevant
-> + * addresses does resolve the issue, but it seemed to be ACPI private memory
-> + * and not any device accessible memory at all, so there is no portable way of
-> + * changing the conditions.
-> + * On a XPS 9560 that means bits [0,3] on \CPEX need to be cleared.
-> + *
-> + * The only systems where this behavior can be seen are hybrid graphics laptops
-> + * with a secondary Nvidia Maxwell, Pascal or Turing GPU. Its unclear wheather
-                                                             ^^^         ^^^^^^^^
-Its -> It's
-wheather -> whether
+But, I'm confused.. why do we care about nr_events==0 ? The below: vvvv
 
-> + * this issue only occurs in combination with listed Intel PCIe bridge
-> + * controllers and the mentioned GPUs or other devices as well.
-> + *
-> + * documentation on the PCIe bridge controller can be found in the
-> + * "7th Generation Intel® Processor Families for H Platforms Datasheet Volume 2"
-> + * Section "12 PCI Express* Controller (x16) Registers"
-> + */
-> +
-> +static void quirk_broken_nv_runpm(struct pci_dev *dev)
-> +{
-> +	struct pci_dev *bridge = pci_upstream_bridge(dev);
-> +
-> +	if (!bridge || bridge->vendor != PCI_VENDOR_ID_INTEL)
-> +		return;
-> +
-> +	switch (bridge->device) {
-> +	case 0x1901:
-> +		dev->parent_d3cold = 1;
+> > @@ -3074,15 +3075,15 @@ static void ctx_sched_out(struct perf_event_context *ctx,
+> >   	is_active ^= ctx->is_active; /* changed bits */
+> > -	if (!ctx->nr_active || !(is_active & EVENT_ALL))
+> > -		return;
+> > -
+> >   	/*
+> >   	 * If we had been multiplexing, no rotations are necessary, now no events
+> >   	 * are active.
+> >   	 */
+> >   	ctx->rotate_necessary = 0;
+> > +	if (!ctx->nr_active || !(is_active & EVENT_ALL))
+> > +		return;
+> > +
+> >   	perf_pmu_disable(ctx->pmu);
+> >   	if (is_active & EVENT_PINNED) {
+> >   		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list)
 
-I think it is better to add
+Makes sure we clear the flag when we ctx_sched_out(), and as long as
+ctx->rotate_necessary is set, perf_rotate_context() will do exactly
+that.
 
-		break;
+Then ctx_sched_in() will re-set the flag if it failed to schedule a
+counter.
 
-here.
-
-> +	}
-> +}
-> +
->  static int nouveau_drm_probe(struct pci_dev *pdev,
->  			     const struct pci_device_id *pent)
->  {
-> @@ -699,6 +752,7 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
->  	if (ret)
->  		goto fail_drm_dev_init;
->  
-> +	quirk_broken_nv_runpm(pdev);
->  	return 0;
->  
->  fail_drm_dev_init:
-> @@ -737,6 +791,8 @@ nouveau_drm_remove(struct pci_dev *pdev)
->  {
->  	struct drm_device *dev = pci_get_drvdata(pdev);
->  
-> +	/* revert our workaround */
-> +	pdev->parent_d3cold = false;
->  	nouveau_drm_device_remove(dev);
->  }
->  
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 951099279192..6ece05723fa2 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -860,6 +860,14 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
->  	   || (state == PCI_D2 && !dev->d2_support))
->  		return -EIO;
->  
-> +	/*
-> +	 * Power management can be disabled for certain devices as they don't
-> +	 * come back up later on runtime_resume. We rely on platform means to
-> +	 * cut power consumption instead (e.g. ACPI).
-> +	 */
-> +	if (state != PCI_D0 && dev->parent_d3cold)
-> +		return 0;
-> +
->  	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
->  	if (pmcsr == (u16) ~0) {
->  		pci_err(dev, "can't change power state from %s to %s (config space inaccessible)\n",
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 930fab293073..3e5938b91966 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -340,6 +340,7 @@ struct pci_dev {
->  	unsigned int	no_d3cold:1;	/* D3cold is forbidden */
->  	unsigned int	bridge_d3:1;	/* Allow D3 for bridge */
->  	unsigned int	d3cold_allowed:1;	/* D3cold is allowed by user */
-> +	unsigned int	parent_d3cold:1;	/* power manage the parent instead */
-
-Just to be consistent with the other comments, start with a capital
-letter:
-
-	unsigned int	parent_d3cold:1;	/* Power manage the parent instead */
+So where is that going wrong?
