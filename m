@@ -2,180 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE5DC178CB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:42:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9137178CC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbgCDImj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:42:39 -0500
-Received: from mga04.intel.com ([192.55.52.120]:18127 "EHLO mga04.intel.com"
+        id S2387719AbgCDIrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:47:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725271AbgCDImj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:42:39 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 00:42:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,513,1574150400"; 
-   d="scan'208";a="352042688"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Mar 2020 00:42:36 -0800
-Date:   Wed, 4 Mar 2020 16:46:07 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com
-Subject: Re: [PATCH v9 3/7] KVM: VMX: Pass through CET related MSRs
-Message-ID: <20200304084607.GB5831@local-michael-cet-test.sh.intel.com>
-References: <20191227021133.11993-1-weijiang.yang@intel.com>
- <20191227021133.11993-4-weijiang.yang@intel.com>
- <20200303215153.GA1439@linux.intel.com>
+        id S2387644AbgCDIrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 03:47:06 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1692620870;
+        Wed,  4 Mar 2020 08:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583311625;
+        bh=YRt4ny1N5XbDwaPfGXa8mDpw6A7mF9/GZ+UIVd8L6bE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yI+V0yzhyNgV85Sf/pnh/IEiItAmLRIV7vWmy2KZjuH1uLo8ckxb7h0NfK+c6DIcM
+         TjfqUy/ofsM7b47Sv59CmTXX8YbrY89MGKa4tZCL6dWCFXWbR90Ofei2EltOmmCZ2f
+         cUD6vNSq3/gKc2m8W4y+mqe5NzWhWjBctnEZivL8=
+Date:   Wed, 4 Mar 2020 09:47:02 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 5.5 000/176] 5.5.8-stable review
+Message-ID: <20200304084702.GA1416015@kroah.com>
+References: <20200303174304.593872177@linuxfoundation.org>
+ <CA+G9fYtNKXBOQKE_AD6qLoRo4TeaBYOc9Ce3kBxdLap1av4v=Q@mail.gmail.com>
+ <20200304081128.GC1401372@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200303215153.GA1439@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200304081128.GC1401372@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 01:51:53PM -0800, Sean Christopherson wrote:
-> On Fri, Dec 27, 2019 at 10:11:29AM +0800, Yang Weijiang wrote:
-> > CET MSRs pass through Guest directly to enhance performance.
-> > CET runtime control settings are stored in MSR_IA32_{U,S}_CET,
-> > Shadow Stack Pointer(SSP) are stored in MSR_IA32_PL{0,1,2,3}_SSP,
-> > SSP table base address is stored in MSR_IA32_INT_SSP_TAB,
-> > these MSRs are defined in kernel and re-used here.
+On Wed, Mar 04, 2020 at 09:11:28AM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Mar 04, 2020 at 12:43:42PM +0530, Naresh Kamboju wrote:
+> > On Tue, 3 Mar 2020 at 23:16, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 5.5.8 release.
+> > > There are 176 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Thu, 05 Mar 2020 17:42:06 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.5.8-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.5.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> > >
 > > 
-> > MSR_IA32_U_CET and MSR_IA32_PL3_SSP are used for user mode protection,
-> > the contents could differ from process to process, therefore,
-> > kernel needs to save/restore them during context switch, it makes
-> > sense to pass through them so that the guest kernel can
-> > use xsaves/xrstors to operate them efficiently. Other MSRs are used
-> > for non-user mode protection. See CET spec for detailed info.
+> > Results from Linaro’s test farm.
+> > Regressions detected on x86_64 and i386.
 > > 
-> > The difference between CET VMCS state fields and xsave components is that,
-> > the former used for CET state storage during VMEnter/VMExit,
-> > whereas the latter used for state retention between Guest task/process
-> > switch.
+> > Test failure output:
+> > CVE-2017-5715: VULN (IBRS+IBPB or retpoline+IBPB+RSB filling, is
+> > needed to mitigate the vulnerability)
 > > 
-> > Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > ---
-> >  arch/x86/kvm/cpuid.h   |  2 ++
-> >  arch/x86/kvm/vmx/vmx.c | 48 ++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 50 insertions(+)
+> > Test description:
+> > CVE-2017-5715 branch target injection (Spectre Variant 2)
 > > 
-> > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> > index d78a61408243..1d77b880084d 100644
-> > --- a/arch/x86/kvm/cpuid.h
-> > +++ b/arch/x86/kvm/cpuid.h
-> > @@ -27,6 +27,8 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
-> >  
-> >  int cpuid_query_maxphyaddr(struct kvm_vcpu *vcpu);
-> >  
-> > +u64 kvm_supported_xss(void);
-> > +
-> >  static inline int cpuid_maxphyaddr(struct kvm_vcpu *vcpu)
-> >  {
-> >  	return vcpu->arch.maxphyaddr;
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 477173e4a85d..61fc846c7ef3 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -7091,6 +7091,52 @@ static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
-> >  		vmx->pt_desc.ctl_bitmask &= ~(0xfULL << (32 + i * 4));
-> >  }
-> >  
-> > +static void vmx_update_intercept_for_cet_msr(struct kvm_vcpu *vcpu)
-> > +{
-> > +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > +	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
-> > +
-> > +	/*
-> > +	 * U_CET is required for USER CET, per CET spec., meanwhile U_CET and
-> > +	 * PL3_SPP are a bundle for USER CET xsaves.
-> > +	 */
-> > +	if ((kvm_supported_xss() & XFEATURE_MASK_CET_USER) &&
-> > +	    (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
-> > +	    guest_cpuid_has(vcpu, X86_FEATURE_IBT))) {
-> > +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_U_CET, MSR_TYPE_RW);
-> > +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL3_SSP, MSR_TYPE_RW);
-> > +	} else {
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_U_CET, MSR_TYPE_RW, true);
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL3_SSP, MSR_TYPE_RW, true);
-> > +	}
+> > Impact: Kernel
+> > Mitigation 1: new opcode via microcode update that should be used by
+> > up to date compilers to protect the BTB (by flushing indirect branch
+> > predictors)
+> > Mitigation 2: introducing "retpoline" into compilers, and recompile
+> > software/OS with it
+> > Performance impact of the mitigation: high for mitigation 1, medium
+> > for mitigation 2, depending on your CPU
 > 
-> I prefer the style of pt_update_intercept_for_msr(), e.g.
+> So these are regressions or just new tests?
 > 
-> 	flag = (kvm_supported_xss() & XFEATURE_MASK_CET_USER) &&
-> 		(guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
-> 		 guest_cpuid_has(vcpu, X86_FEATURE_IBT));
+> If regressions, can you do 'git bisect' to find the offending commit?
 > 
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_U_CET, MSR_TYPE_RW, flag);
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL3_SSP, MSR_TYPE_RW, flag);
-> 
-> 
-> 	flag = (kvm_supported_xss() & XFEATURE_MASK_CET_KERNEL) &&
-> 		(guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
-> 		 guest_cpuid_has(vcpu, X86_FEATURE_IBT));
-> 
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_S_CET, MSR_TYPE_RW, flag);
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL0_SSP, MSR_TYPE_RW, flag);
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL1_SSP, MSR_TYPE_RW, flag);
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL2_SSP, MSR_TYPE_RW, flag);
-> 
-> 	/* SSP_TAB only available for KERNEL SHSTK.*/
-> 	flag &= guest_cpuid_has(vcpu, X86_FEATURE_SHSTK);
-> 	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW, flag);
-> 
->
-Sure, will change that, thank you!
+> Also, are you sure you have an updated microcode on these machines and a
+> proper compiler for retpoline?
 
-> > +	/*
-> > +	 * S_CET is required for KERNEL CET, meanwhile PL0_SSP ... PL2_SSP are a bundle
-> > +	 * for CET KERNEL xsaves.
-> > +	 */
-> > +	if ((kvm_supported_xss() & XFEATURE_MASK_CET_KERNEL) &&
-> > +	    (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
-> > +	    guest_cpuid_has(vcpu, X86_FEATURE_IBT))) {
-> > +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_S_CET, MSR_TYPE_RW);
-> > +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL0_SSP, MSR_TYPE_RW);
-> > +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL1_SSP, MSR_TYPE_RW);
-> > +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL2_SSP, MSR_TYPE_RW);
-> > +
-> > +		/* SSP_TAB only available for KERNEL SHSTK.*/
-> > +		if (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> > +			vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_INT_SSP_TAB,
-> > +						      MSR_TYPE_RW);
-> > +		else
-> > +			vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_INT_SSP_TAB,
-> > +						  MSR_TYPE_RW, true);
-> > +	} else {
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_S_CET, MSR_TYPE_RW, true);
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL0_SSP, MSR_TYPE_RW, true);
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL1_SSP, MSR_TYPE_RW, true);
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_PL2_SSP, MSR_TYPE_RW, true);
-> > +		vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW, true);
-> > +	}
-> > +}
-> > +
-> >  static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
-> >  {
-> >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > @@ -7115,6 +7161,8 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
-> >  	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
-> >  			guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
-> >  		update_intel_pt_cfg(vcpu);
-> > +
-> > +	vmx_update_intercept_for_cet_msr(vcpu);
-> >  }
-> >  
-> >  static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
-> > -- 
-> > 2.17.2
-> > 
+As an example of just how crazy that script is, here's the output of my
+machine for that first CVE issue:
+
+CVE-2017-5715 aka 'Spectre Variant 2, branch target injection'
+* Mitigated according to the /sys interface:  YES  (Mitigation: Full generic retpoline, IBPB: conditional, IBRS_FW, STIBP: conditional, RSB filling)
+* Mitigation 1
+  * Kernel is compiled with IBRS support:  YES
+    * IBRS enabled and active:  YES  (for firmware code only)
+  * Kernel is compiled with IBPB support:  YES
+    * IBPB enabled and active:  YES
+* Mitigation 2
+  * Kernel has branch predictor hardening (arm):  NO
+  * Kernel compiled with retpoline option:  YES
+    * Kernel compiled with a retpoline-aware compiler:  YES  (kernel reports full retpoline compilation)
+  * Kernel supports RSB filling:  UNKNOWN  (couldn't check (couldn't find your kernel image in /boot, if you used netboot, this is normal))
+> STATUS:  VULNERABLE  (IBRS+IBPB or retpoline+IBPB+RSB filling, is needed to mitigate
+
+So why is this "Vulnerable"?  Because it didn't think it could find my
+kernel image for some odd reason, despite it really being in /boot/ (I
+don't use netboot)
+
+So please verify that this really is a real issue, and not just the
+script doing foolish things.
+
+thanks,
+
+greg k-h
