@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10420179024
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0433F179066
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:30:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387948AbgCDMTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 07:19:46 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10723 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729118AbgCDMTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 07:19:46 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BB74A70B5BC42A7D5B3D;
-        Wed,  4 Mar 2020 20:19:38 +0800 (CST)
-Received: from euler.huawei.com (10.175.104.193) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 4 Mar 2020 20:19:30 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <nbd@nbd.name>, <lorenzo.bianconi83@gmail.com>,
-        <ryder.lee@mediatek.com>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH] mt76: remove variable 'val' set but not used
-Date:   Wed, 4 Mar 2020 20:34:11 +0800
-Message-ID: <20200304123411.33499-1-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729428AbgCDMap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 07:30:45 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:8997 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729420AbgCDMap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 07:30:45 -0500
+X-UUID: af168a97b4af4bd6ba21e7758aa64d8c-20200304
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=hUGYRcp79nujMp8CJYYSA+RvajWD2N45GZbZUHTBZnU=;
+        b=IddU/DlZSXXFw1EUrAP469n+GZNlpN+nzgGE3K3en+IF0e5ppljZWJBXdOWt90V79AdR3w2R4Zv2eS9Wqa6cF51PJjKo+VFNvSh9vjd5zmrlyvHNZ1ZDIWNU9s/p65phrgcSU3h6ExdSJuA0xEZ+2tVQeB1Hpp8i2gmHqJj8Umc=;
+X-UUID: af168a97b4af4bd6ba21e7758aa64d8c-20200304
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 723530932; Wed, 04 Mar 2020 20:29:41 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 4 Mar
+ 2020 20:28:17 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 4 Mar 2020 20:28:39 +0800
+Message-ID: <1583324972.4784.24.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 2/3] iommu/mediatek: add pdata member for legacy ivrp
+ paddr
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Fabien Parent <fparent@baylibre.com>
+CC:     <anan.sun@mediatek.com>, <devicetree@vger.kernel.org>,
+        <joro@8bytes.org>, <youlin.pei@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <ck.hu@mediatek.com>,
+        <iommu@lists.linux-foundation.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <scott.wang@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 4 Mar 2020 20:29:32 +0800
+In-Reply-To: <1583324597.4784.23.camel@mhfsdcap03>
+References: <20200302112152.2887131-1-fparent@baylibre.com>
+         <20200302112152.2887131-2-fparent@baylibre.com>
+         <1583324597.4784.23.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.193]
-X-CFilter-Loop: Reflected
+X-TM-SNTS-SMTP: 031010B90B15B5E0A03BD5360C9733A8E74D3311E1BEF4AF91EC3A67C5B8F8BA2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/net/wireless/mediatek/mt76/mt76x0/phy.c: In function mt76x0_phy_rf_init:
-drivers/net/wireless/mediatek/mt76/mt76x0/phy.c:1158:5: warning: variable val set but not used [-Wunused-but-set-variable]
-
-Fixes: 10de7a8b4ab9 ("mt76x0: phy files")
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
----
- drivers/net/wireless/mediatek/mt76/mt76x0/phy.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
-index b56397c05218..09f34deb6ba1 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
-@@ -1155,7 +1155,6 @@ static void mt76x0_rf_patch_reg_array(struct mt76x02_dev *dev,
- static void mt76x0_phy_rf_init(struct mt76x02_dev *dev)
- {
- 	int i;
--	u8 val;
- 
- 	mt76x0_rf_patch_reg_array(dev, mt76x0_rf_central_tab,
- 				  ARRAY_SIZE(mt76x0_rf_central_tab));
-@@ -1188,7 +1187,7 @@ static void mt76x0_phy_rf_init(struct mt76x02_dev *dev)
- 	 */
- 	mt76x0_rf_wr(dev, MT_RF(0, 22),
- 		     min_t(u8, dev->cal.rx.freq_offset, 0xbf));
--	val = mt76x0_rf_rr(dev, MT_RF(0, 22));
-+	mt76x0_rf_rr(dev, MT_RF(0, 22));
- 
- 	/* Reset procedure DAC during power-up:
- 	 * - set B0.R73<7>
--- 
-2.17.1
+T24gV2VkLCAyMDIwLTAzLTA0IGF0IDIwOjIzICswODAwLCBZb25nIFd1IHdyb3RlOg0KPiBPbiBN
+b24sIDIwMjAtMDMtMDIgYXQgMTI6MjEgKzAxMDAsIEZhYmllbiBQYXJlbnQgd3JvdGU6DQo+ID4g
+QWRkIGEgbmV3IHBsYXRmb3JtIGRhdGEgbWVtYmVyIGluIG9yZGVyIHRvIHNlbGVjdCB3aGljaCBJ
+VlJQX1BBRERSDQo+ID4gZm9ybWF0IGlzIHVzZWQgYnkgYW4gU29DLg0KPiA+IA0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IEZhYmllbiBQYXJlbnQgPGZwYXJlbnRAYmF5bGlicmUuY29tPg0KPiA+IC0tLQ0K
+PiA+IA0KPiA+IHYyOiBuZXcgcGF0Y2gNCj4gPiANCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9pb21t
+dS9tdGtfaW9tbXUuYyB8IDMgKystDQo+ID4gIGRyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmggfCAx
+ICsNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkN
+Cj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYyBiL2RyaXZl
+cnMvaW9tbXUvbXRrX2lvbW11LmMNCj4gPiBpbmRleCA5NTk0NWY0NjdjMDMuLjc4Y2IxNGFiN2Rk
+MCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2lvbW11L210a19pb21tdS5jDQo+ID4gKysrIGIv
+ZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KPiA+IEBAIC01NjksNyArNTY5LDcgQEAgc3RhdGlj
+IGludCBtdGtfaW9tbXVfaHdfaW5pdChjb25zdCBzdHJ1Y3QgbXRrX2lvbW11X2RhdGEgKmRhdGEp
+DQo+ID4gIAkJRl9JTlRfUFJFVEVUQ0hfVFJBTlNBVElPTl9GSUZPX0ZBVUxUOw0KPiA+ICAJd3Jp
+dGVsX3JlbGF4ZWQocmVndmFsLCBkYXRhLT5iYXNlICsgUkVHX01NVV9JTlRfTUFJTl9DT05UUk9M
+KTsNCj4gPiAgDQo+ID4gLQlpZiAoZGF0YS0+cGxhdF9kYXRhLT5tNHVfcGxhdCA9PSBNNFVfTVQ4
+MTczKQ0KPiA+ICsJaWYgKGRhdGEtPnBsYXRfZGF0YS0+aGFzX2xlZ2FjeV9pdnJwX3BhZGRyKQ0K
+PiA+ICAJCXJlZ3ZhbCA9IChkYXRhLT5wcm90ZWN0X2Jhc2UgPj4gMSkgfCAoZGF0YS0+ZW5hYmxl
+XzRHQiA8PCAzMSk7DQo+ID4gIAllbHNlDQo+ID4gIAkJcmVndmFsID0gbG93ZXJfMzJfYml0cyhk
+YXRhLT5wcm90ZWN0X2Jhc2UpIHwNCj4gPiBAQCAtNzg2LDYgKzc4Niw3IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgbXRrX2lvbW11X3BsYXRfZGF0YSBtdDgxNzNfZGF0YSA9IHsNCj4gPiAgCS5tNHVf
+cGxhdCAgICAgPSBNNFVfTVQ4MTczLA0KPiA+ICAJLmhhc180Z2JfbW9kZSA9IHRydWUsDQo+ID4g
+IAkuaGFzX2JjbGsgICAgID0gdHJ1ZSwNCj4gPiArCS5oYXNfbGVnYWN5X2l2cnBfcGFkZHIgPSB0
+cnVlOw0KDQosDQoNCj4gPiAgCS5yZXNldF9heGkgICAgPSB0cnVlLA0KPiA+ICAJLmxhcmJpZF9y
+ZW1hcCA9IHswLCAxLCAyLCAzLCA0LCA1fSwgLyogTGluZWFyIG1hcHBpbmcuICovDQo+ID4gIH07
+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmggYi9kcml2ZXJzL2lv
+bW11L210a19pb21tdS5oDQo+ID4gaW5kZXggZWE5NDlhMzI0ZTMzLi40Njk2YmEwMjdhNzEgMTAw
+NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuaA0KPiA+ICsrKyBiL2RyaXZl
+cnMvaW9tbXUvbXRrX2lvbW11LmgNCj4gPiBAQCAtNDIsNiArNDIsNyBAQCBzdHJ1Y3QgbXRrX2lv
+bW11X3BsYXRfZGF0YSB7DQo+ID4gIAlib29sICAgICAgICAgICAgICAgIGhhc19iY2xrOw0KPiA+
+ICAJYm9vbCAgICAgICAgICAgICAgICBoYXNfdmxkX3BhX3JuZzsNCj4gPiAgCWJvb2wgICAgICAg
+ICAgICAgICAgcmVzZXRfYXhpOw0KPiA+ICsJYm9vbCAgICAgICAgICAgICAgICBoYXNfbGVnYWN5
+X2l2cnBfcGFkZHI7DQo+IA0KPiBJJ2QgbGlrZSB0byBwdXQgdGhpcyBiZWZvcmUgImhhc192bGRf
+cGFfcm5nIiBhbHBoYWJldGljYWxseS4NCj4gDQo+IE90aGVyIHRoYW4gdGhpcywNCj4gDQo+IFJl
+dmlld2VkLWJ5OiBZb25nIFd1IDx5b25nLnd1QG1lZGlhdGVrLmNvbT4NCj4gDQo+ID4gIAl1bnNp
+Z25lZCBjaGFyICAgICAgIGxhcmJpZF9yZW1hcFtNVEtfTEFSQl9OUl9NQVhdOw0KPiA+ICB9Ow0K
+PiA+ICANCj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fDQo+IExpbnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPiBMaW51eC1tZWRpYXRla0BsaXN0
+cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlz
+dGluZm8vbGludXgtbWVkaWF0ZWsNCg0K
 
