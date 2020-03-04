@@ -2,129 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1930F178C40
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A46B178C4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:10:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbgCDIIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:08:12 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:36133 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725271AbgCDIIL (ORCPT
+        id S1728885AbgCDIK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:10:28 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:18098 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728387AbgCDIK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:08:11 -0500
-Received: by mail-io1-f69.google.com with SMTP id 24so945202ioz.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 00:08:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=QWihqIbI3h2cwVYItSSsgDU+DanrmjhYM/cRBn7sMYM=;
-        b=BX+axW7wVDmR5nelFXh79UNkMXiSTkIHrrsRm4PFI9g3v/lOt0wFbVEOiph/y1pJtz
-         WhK13PGSQ47hzk2hipuQiqkfAtOtabgCgTUMCeWrb2nROeiWpwHt4XhZq21cCFu7cs66
-         /HDex/Sw/XtyDO/3gdZMdk2FG6zVJmBmgF2wIQVG1jwmtKLN32xOnYqq3GizvHMA8kfz
-         aY15JRpVQ9J1RnGKmAvWcOgrJk4GJVoxCok3UgXVUXLfsPM5zBZFgCBnLbs7xicPaiLD
-         dxzI4RZIIy9e2aLQHac9xwD07T80dIFohfk1z7wgeusW7Lw+GpE2tDShWkyvvspw9t7P
-         T+gA==
-X-Gm-Message-State: ANhLgQ1cXZN6SNvA5X/96C711KpddVQNVE+z0kTo8C81h82BmHnZ/C3T
-        olg4CJbPMl4h+c24T/ofbSL74d9JjAsyWau+Oa+HpsmJHgqq
-X-Google-Smtp-Source: ADFU+vuO5aJSyB0F3WMNwd9r/kxM2JQMSL8AbibBvCOWRnOfCodaF/8419p9BH+fF/DNjT+h/zRr0l5nq4MoEGP/MnVGS+lg5YZP
+        Wed, 4 Mar 2020 03:10:27 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02487rv0032631;
+        Wed, 4 Mar 2020 09:10:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=Ic1C52dxdRVd8hopKHFmxL20NCwaptXElaVaPhP+rUE=;
+ b=u6FbvwLMTti9eJsDBmKkvCAdcWlQHcVPaTZQa1CAlCVWbdVsR8z3WQm8rWX5mGHprAzY
+ UDheNAzsQerzo9oF26Gt0wPFywt8/XZ8BjXzsvcrApxtZmqQmPxK/jrIIe3XEcf9hYsH
+ /i38IKdL5CbjyNHVzaPQgSH4yxBwz7SQB82pKilAtkB+Ci+iO1L3echhIDpDBHE1Btur
+ 39xwg/rAuASlDHFKre50CDyR4vzHZqNqEtT1DFyp4gfiWDOBlQk1+ovqlN/ksAsZk/Og
+ lO+89gvrrYTulefBJICTaWWZliGQqVRxot335MocEGI9kCJh0jP5BxNKQXMJswScNrMS lg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yfem0ybx2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Mar 2020 09:10:10 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 01392100038;
+        Wed,  4 Mar 2020 09:10:05 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DF0AC21FE85;
+        Wed,  4 Mar 2020 09:10:05 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG6NODE1.st.com (10.75.127.16)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Mar 2020 09:10:05
+ +0100
+From:   Yann Gautier <yann.gautier@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Yann Gautier <yann.gautier@st.com>
+Subject: [PATCH 0/3] Update SDMMC nodes on STM32MP1 boards 
+Date:   Wed, 4 Mar 2020 09:09:53 +0100
+Message-ID: <20200304080956.7699-1-yann.gautier@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:a516:: with SMTP id e22mr1642125jam.116.1583309291096;
- Wed, 04 Mar 2020 00:08:11 -0800 (PST)
-Date:   Wed, 04 Mar 2020 00:08:11 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dd909105a002ebe6@google.com>
-Subject: INFO: rcu detected stall in sys_keyctl
-From:   syzbot <syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-04_01:2020-03-03,2020-03-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This patchset updates the sdmmc nodes for STM32MP1.
+For SD cards nodes, the cd-gpio property is used instead of broken-cd,
+and the disable-wp property is added.
+The last patch corrects the vqmmc regulator for eMMC on ED1/EV1 boards.
 
-syzbot found the following crash on:
+Yann Gautier (3):
+  ARM:dts: stm32: add cd-gpios properties for SD-cards on STM32MP1
+    boards
+  ARM: dts: stm32: add disable-wp property for SD-card on STM32MP1
+    boards
+  ARM: dts: stm32: use correct vqmmc regu for eMMC on stm32mp1 ED1/EV1
+    boards
 
-HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15257ba1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c5c2dbf76930df91489
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+ arch/arm/boot/dts/stm32mp157a-avenger96.dts | 3 ++-
+ arch/arm/boot/dts/stm32mp157c-ed1.dts       | 5 +++--
+ arch/arm/boot/dts/stm32mp15xx-dkx.dtsi      | 3 ++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-Unfortunately, I don't have any reproducer for this crash yet.
+-- 
+2.17.1
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	0-....: (1 GPs behind) idle=576/1/0x4000000000000002 softirq=55718/56054 fqs=5235 
-	(t=10500 jiffies g=63445 q=1523)
-NMI backtrace for cpu 0
-CPU: 0 PID: 18804 Comm: syz-executor.4 Not tainted 5.6.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
- arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
- trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
- rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree_stall.h:254
- print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
- check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
- rcu_pending kernel/rcu/tree.c:3030 [inline]
- rcu_sched_clock_irq.cold+0x51a/0xc37 kernel/rcu/tree.c:2276
- update_process_times+0x2d/0x70 kernel/time/timer.c:1726
- tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:171
- tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1314
- __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
- __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1579
- hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1641
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1119 [inline]
- smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1144
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x16/0x20 kernel/kcov.c:276
-Code: 48 89 e5 48 8b 4d 08 e8 d8 fe ff ff 5d c3 66 0f 1f 44 00 00 55 89 f2 89 fe bf 05 00 00 00 48 89 e5 48 8b 4d 08 e8 ba fe ff ff <5d> c3 0f 1f 84 00 00 00 00 00 55 48 89 f2 48 89 fe bf 07 00 00 00
-RSP: 0018:ffffc900053877d8 EFLAGS: 00000297 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000002 RBX: 584279fc973b765a RCX: ffffffff83b71a81
-RDX: 00000000ffffff75 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: ffffc900053877d8 R08: ffff888041a265c0 R09: 0000000000000092
-R10: ffffed1015d0707b R11: ffff8880ae8383db R12: ffff88809eb56398
-R13: 000000003ab2c4e4 R14: 1b0d4377a72d08f5 R15: 00000000ffffff75
- mpihelp_submul_1+0x161/0x1a0 lib/mpi/generic_mpih-mul3.c:45
- mpihelp_divrem+0x1ce/0x1360 lib/mpi/mpih-div.c:209
- mpi_powm+0xffb/0x1d20 lib/mpi/mpi-pow.c:205
- _compute_val crypto/dh.c:39 [inline]
- dh_compute_value+0x373/0x610 crypto/dh.c:178
- crypto_kpp_generate_public_key include/crypto/kpp.h:315 [inline]
- __keyctl_dh_compute+0x9ae/0x1470 security/keys/dh.c:367
- keyctl_dh_compute+0xcf/0x12d security/keys/dh.c:422
- __do_sys_keyctl security/keys/keyctl.c:1818 [inline]
- __se_sys_keyctl security/keys/keyctl.c:1714 [inline]
- __x64_sys_keyctl+0x159/0x470 security/keys/keyctl.c:1714
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45c479
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f872a51fc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
-RAX: ffffffffffffffda RBX: 00007f872a5206d4 RCX: 000000000045c479
-RDX: 0000000020002700 RSI: 0000000020000400 RDI: 0000000000000017
-RBP: 000000000076bfc0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffff84 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000006fa R14: 00000000004c9883 R15: 000000000076bfcc
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
