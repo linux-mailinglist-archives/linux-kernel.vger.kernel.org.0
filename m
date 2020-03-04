@@ -2,268 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C854C179393
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:35:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56CA2179378
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388245AbgCDPf2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:35:28 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:35380 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388222AbgCDPfY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:35:24 -0500
-Received: by mail-vs1-f67.google.com with SMTP id u26so1417364vsg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:35:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yJOWerAYEJjdAX3ZuFJFRLFmx2EwHLWwTWibHvMWIao=;
-        b=nF+aXYXcFjFuSNJLpn0XdDC6o2UhWxHXIzq07XPt5+4Ksc2BJmJknk5la2+lXokvPV
-         FFx/dkELcvFtZo93j+K8w2sP+TzkHBrXEnwTJcLn/PfEzQCXSwSfseDQ5129hTWlYRN/
-         5OdpGBWVuPaTID8ladQxVyMkkTCC9+1qUgfd0Bcza69f42nGBkp3mbmiINpQ+9XHHNfN
-         Nu3mktQam0HG9yVc+QU07rW7RawBWmYNeziC7L+oglg1DVPK0qat3xQztbt9HZSfaTDG
-         468W5v5oHdNgCBcyCJ39pDjJn4e7T1egV/BHJ7H0KP56gAAXKPCc3N6C642bhs1bFD/7
-         0hvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yJOWerAYEJjdAX3ZuFJFRLFmx2EwHLWwTWibHvMWIao=;
-        b=qHWrZ7mNiYcIW8y3who3sSWAB9Add2/q5EsnlOHEt+LsUZ9VGR2mtKPQLdzHOjRXrs
-         yI+n64VUo4KUE8ztGLxcvl/9635RC5j/FlsZowRKnn6UoMaGzlWnCg4RBwf4vI/qtj++
-         ZSjHB4DZzeqw2a7ZOMTSDr7PUe/kPeHAPOcrNyxlau3fQWXrEv6DsYWS35BXK3ujDdOA
-         L2AAwJ4OvENVHL1EUBcMFA6uM/Ar68RGkdHaHAdpnp852KjB+Dec3NWlenViUm+2b4hG
-         ZU6hbzHELuu23KqOVAMAEfdtKQ3bJOrWzlX3WE7WgjqlB7Np+m61kP7h6cK02PjcGb+k
-         HUkQ==
-X-Gm-Message-State: ANhLgQ1FfgYxiFGAe/m0m9aPvNfMtIv1y6zQtygo2iubEDBavW/p9eno
-        4IRTzcGxHakTM6Joq9aHOeOHZuEQUtbOyPWbziDgbQ==
-X-Google-Smtp-Source: ADFU+vvNNHeK3g4ohZSJ3ngU7x2ceHcSlbG0W/Gqbdn14NtNxxY48MecoczZOwnQVIiWshjLoJIutHRF++OYUBwNELA=
-X-Received: by 2002:a67:7fd0:: with SMTP id a199mr2130312vsd.200.1583336122487;
- Wed, 04 Mar 2020 07:35:22 -0800 (PST)
+        id S2388019AbgCDPfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:35:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbgCDPfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 10:35:02 -0500
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D0FC24658;
+        Wed,  4 Mar 2020 15:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583336101;
+        bh=mGvRr//+DglMPcp75TxeFCBhxIqq00jQR1JrOSa+h4Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zya9ztGN4pWxB5+fYDdBdITZt8ZGTMnZo+22Td1X1Qkl1YcPxTJtwgEW7yB24Haq+
+         wOH9dOkcSiPsrw87U0Tk8Wk2Tq3s+Wr3sYw90Yz9lQphYvnfFAvOkzS7qqj5f5ZT+m
+         FgPMwPgBQq+rB5PPkPD5iSOjBJvxIg2zoi+0ijLg=
+Received: by mail-qv1-f53.google.com with SMTP id r8so947916qvs.12;
+        Wed, 04 Mar 2020 07:35:01 -0800 (PST)
+X-Gm-Message-State: ANhLgQ0BAIu9rA2czjgJrViQMEE1HUlxKfarrGVvmgn4EUsQIYtCnhVA
+        SUQikMt8hx06fUi2mSq29uMoHB+7SI7pVtdf6w==
+X-Google-Smtp-Source: ADFU+vteyB29cYQ7Q1UB74Gv0vdvXOHZ+jzrw1aE7WliF9I8s/sqI/IDAw2TT3/P6koVZqmBoPO96WROOJctXEQuW7o=
+X-Received: by 2002:a0c:fecb:: with SMTP id z11mr2571272qvs.85.1583336100783;
+ Wed, 04 Mar 2020 07:35:00 -0800 (PST)
 MIME-Version: 1.0
-References: <1582105474-27866-1-git-send-email-vbadigan@codeaurora.org> <1582714668-17247-1-git-send-email-vbadigan@codeaurora.org>
-In-Reply-To: <1582714668-17247-1-git-send-email-vbadigan@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 4 Mar 2020 16:34:46 +0100
-Message-ID: <CAPDyKFqxPPAs7ox75-aBefJi7DG_huxn5SCChP+M2Z2foJ6QBA@mail.gmail.com>
-Subject: Re: [PATCH V3] mmc: mmc_test: Pass different sg lists for
- non-blocking requests
-To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>
+References: <20200304032038.14424-1-masahiroy@kernel.org> <20200304032038.14424-2-masahiroy@kernel.org>
+In-Reply-To: <20200304032038.14424-2-masahiroy@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 4 Mar 2020 09:34:49 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ3q4txoV6wE-Vk5X9oo0roVbBYpwMuPEngDiEv1XXinQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ3q4txoV6wE-Vk5X9oo0roVbBYpwMuPEngDiEv1XXinQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] kbuild: avoid concurrency issue in parallel building
+ dtbs and dtbs_check
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Feb 2020 at 11:58, Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
+On Tue, Mar 3, 2020 at 9:20 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
 >
-> Supply a separate sg list for each of the request in non-blocking
-> IO test cases where two requests will be issued at same time.
+> 'make dtbs_check' checks the shecma in addition to building *.dtb files,
+
+typo
+
+> in other words, 'make dtbs_check' is a super-set of 'make dtbs'.
+> So, you do not have to do 'make dtbs dtbs_check', but I want to keep
+> the build system robust in any use.
 >
-> Otherwise, sg memory may get unmapped when a request is done while
-> same memory is being accessed by controller from the other request,
-> and it leads to iommu errors with below call stack:
+> Currently, 'dtbs' and 'dtbs_check' are independent of each other.
+> In parallel building, two threads descend into arch/*/boot/dts/,
+> one for dtbs and the other for dtbs_check, then end up with building
+> the same DTB simultaneously.
 >
->         __arm_lpae_unmap+0x2e0/0x478
->         arm_lpae_unmap+0x54/0x70
->         arm_smmu_unmap+0x64/0xa4
->         __iommu_unmap+0xb8/0x1f0
->         iommu_unmap_fast+0x38/0x48
->         __iommu_dma_unmap+0x88/0x108
->         iommu_dma_unmap_sg+0x90/0xa4
->         sdhci_post_req+0x5c/0x78
->         mmc_test_start_areq+0x10c/0x120 [mmc_test]
->         mmc_test_area_io_seq+0x150/0x264 [mmc_test]
->         mmc_test_rw_multiple+0x174/0x1c0 [mmc_test]
->         mmc_test_rw_multiple_sg_len+0x44/0x6c [mmc_test]
->         mmc_test_profile_sglen_wr_nonblock_perf+0x6c/0x94 [mmc_test]
->         mtf_test_write+0x238/0x3cc [mmc_test]
+> This commit fixes the concurrency issue. Otherwise, I see build errors
+> like follows:
 >
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
+> $ make ARCH=arm64 defconfig
+> $ make -j16 ARCH=arm64 DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/psci.yaml dtbs dtbs_check
+>   <snip>
+>   DTC     arch/arm64/boot/dts/qcom/sdm845-cheza-r2.dtb
+>   DTC     arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtb
+>   DTC     arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dtb
+>   DTC     arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dtb
+>   DTC     arch/arm64/boot/dts/freescale/imx8mn-evk.dtb
+>   DTC     arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dtb
+>   DTC     arch/arm64/boot/dts/zte/zx296718-pcbox.dtb
+>   DTC     arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dt.yaml
+>   DTC     arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dtb
+>   DTC     arch/arm64/boot/dts/xilinx/zynqmp-zc1254-revA.dtb
+>   DTC     arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dtb
+>   DTC     arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-inx.dtb
+>   DTC     arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dtb
+>   CHECK   arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dt.yaml
+> fixdep: error opening file: arch/arm64/boot/dts/allwinner/.sun50i-h6-orangepi-lite2.dtb.d: No such file or directory
+> make[2]: *** [scripts/Makefile.lib:296: arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dtb] Error 2
+> make[2]: *** Deleting file 'arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dtb'
+> make[2]: *** Waiting for unfinished jobs....
+>   DTC     arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet-kd.dtb
+>   DTC     arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p231.dtb
+>   DTC     arch/arm64/boot/dts/xilinx/zynqmp-zc1275-revA.dtb
+>   DTC     arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dtb
+> fixdep: parse error; no targets found
+> make[2]: *** [scripts/Makefile.lib:296: arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dtb] Error 1
+> make[2]: *** Deleting file 'arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dtb'
+> make[1]: *** [scripts/Makefile.build:505: arch/arm64/boot/dts/allwinner] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+>   DTC     arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dtb
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
-> Changes since V2:
->         - Simplfied mmc_test_nonblock_transter() function aruguments.
 >
-> Changes since V1:
->         - Freeing-up sg_areq memory.
->         - Added check to ensure sg length is equal for both the sg-lists
->           supplied in case of non-blocking requests.
-> ---
->  drivers/mmc/core/mmc_test.c | 52 ++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 40 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> index 492dd45..c21b3cb 100644
-> --- a/drivers/mmc/core/mmc_test.c
-> +++ b/drivers/mmc/core/mmc_test.c
-> @@ -71,6 +71,7 @@ struct mmc_test_mem {
->   * @sg_len: length of currently mapped scatterlist @sg
->   * @mem: allocated memory
->   * @sg: scatterlist
-> + * @sg_areq: scatterlist for non-blocking request
->   */
->  struct mmc_test_area {
->         unsigned long max_sz;
-> @@ -82,6 +83,7 @@ struct mmc_test_area {
->         unsigned int sg_len;
->         struct mmc_test_mem *mem;
->         struct scatterlist *sg;
-> +       struct scatterlist *sg_areq;
->  };
->
->  /**
-> @@ -836,14 +838,16 @@ static int mmc_test_start_areq(struct mmc_test_card *test,
->  }
->
->  static int mmc_test_nonblock_transfer(struct mmc_test_card *test,
-> -                                     struct scatterlist *sg, unsigned sg_len,
-> -                                     unsigned dev_addr, unsigned blocks,
-> -                                     unsigned blksz, int write, int count)
-> +                                     unsigned int dev_addr, int write,
-> +                                     int count)
->  {
->         struct mmc_test_req *rq1, *rq2;
->         struct mmc_request *mrq, *prev_mrq;
->         int i;
->         int ret = RESULT_OK;
-> +       struct mmc_test_area *t = &test->area;
-> +       struct scatterlist *sg = t->sg;
-> +       struct scatterlist *sg_areq = t->sg_areq;
->
->         rq1 = mmc_test_req_alloc();
->         rq2 = mmc_test_req_alloc();
-> @@ -857,8 +861,8 @@ static int mmc_test_nonblock_transfer(struct mmc_test_card *test,
->
->         for (i = 0; i < count; i++) {
->                 mmc_test_req_reset(container_of(mrq, struct mmc_test_req, mrq));
-> -               mmc_test_prepare_mrq(test, mrq, sg, sg_len, dev_addr, blocks,
-> -                                    blksz, write);
-> +               mmc_test_prepare_mrq(test, mrq, sg, t->sg_len, dev_addr,
-> +                                    t->blocks, 512, write);
->                 ret = mmc_test_start_areq(test, mrq, prev_mrq);
->                 if (ret)
->                         goto err;
-> @@ -867,7 +871,8 @@ static int mmc_test_nonblock_transfer(struct mmc_test_card *test,
->                         prev_mrq = &rq2->mrq;
->
->                 swap(mrq, prev_mrq);
-> -               dev_addr += blocks;
-> +               swap(sg, sg_areq);
-> +               dev_addr += t->blocks;
->         }
->
->         ret = mmc_test_start_areq(test, NULL, prev_mrq);
-> @@ -1396,10 +1401,11 @@ static int mmc_test_no_highmem(struct mmc_test_card *test)
->   * Map sz bytes so that it can be transferred.
->   */
->  static int mmc_test_area_map(struct mmc_test_card *test, unsigned long sz,
-> -                            int max_scatter, int min_sg_len)
-> +                            int max_scatter, int min_sg_len, bool nonblock)
->  {
->         struct mmc_test_area *t = &test->area;
->         int err;
-> +       unsigned int sg_len = 0;
->
->         t->blocks = sz >> 9;
->
-> @@ -1411,6 +1417,22 @@ static int mmc_test_area_map(struct mmc_test_card *test, unsigned long sz,
->                 err = mmc_test_map_sg(t->mem, sz, t->sg, 1, t->max_segs,
->                                       t->max_seg_sz, &t->sg_len, min_sg_len);
->         }
-> +
-> +       if (err || !nonblock)
-> +               goto err;
-> +
-> +       if (max_scatter) {
-> +               err = mmc_test_map_sg_max_scatter(t->mem, sz, t->sg_areq,
-> +                                                 t->max_segs, t->max_seg_sz,
-> +                                                 &sg_len);
-> +       } else {
-> +               err = mmc_test_map_sg(t->mem, sz, t->sg_areq, 1, t->max_segs,
-> +                                     t->max_seg_sz, &sg_len, min_sg_len);
-> +       }
-> +       if (!err && sg_len != t->sg_len)
-> +               err = -EINVAL;
-> +
-> +err:
->         if (err)
->                 pr_info("%s: Failed to map sg list\n",
->                        mmc_hostname(test->card->host));
-> @@ -1440,7 +1462,6 @@ static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
->         struct timespec64 ts1, ts2;
->         int ret = 0;
->         int i;
-> -       struct mmc_test_area *t = &test->area;
->
->         /*
->          * In the case of a maximally scattered transfer, the maximum transfer
-> @@ -1458,15 +1479,14 @@ static int mmc_test_area_io_seq(struct mmc_test_card *test, unsigned long sz,
->                         sz = max_tfr;
->         }
->
-> -       ret = mmc_test_area_map(test, sz, max_scatter, min_sg_len);
-> +       ret = mmc_test_area_map(test, sz, max_scatter, min_sg_len, nonblock);
->         if (ret)
->                 return ret;
->
->         if (timed)
->                 ktime_get_ts64(&ts1);
->         if (nonblock)
-> -               ret = mmc_test_nonblock_transfer(test, t->sg, t->sg_len,
-> -                                dev_addr, t->blocks, 512, write, count);
-> +               ret = mmc_test_nonblock_transfer(test, dev_addr, write, count);
->         else
->                 for (i = 0; i < count && ret == 0; i++) {
->                         ret = mmc_test_area_transfer(test, dev_addr, write);
-> @@ -1525,6 +1545,7 @@ static int mmc_test_area_cleanup(struct mmc_test_card *test)
->         struct mmc_test_area *t = &test->area;
->
->         kfree(t->sg);
-> +       kfree(t->sg_areq);
->         mmc_test_free_mem(t->mem);
->
->         return 0;
-> @@ -1584,6 +1605,13 @@ static int mmc_test_area_init(struct mmc_test_card *test, int erase, int fill)
->                 goto out_free;
->         }
->
-> +       t->sg_areq = kmalloc_array(t->max_segs, sizeof(*t->sg_areq),
-> +                                  GFP_KERNEL);
-> +       if (!t->sg_areq) {
-> +               ret = -ENOMEM;
-> +               goto out_free;
-> +       }
-> +
->         t->dev_addr = mmc_test_capacity(test->card) / 2;
->         t->dev_addr -= t->dev_addr % (t->max_sz >> 9);
->
-> @@ -2468,7 +2496,7 @@ static int __mmc_test_cmds_during_tfr(struct mmc_test_card *test,
->         if (!(test->card->host->caps & MMC_CAP_CMD_DURING_TFR))
->                 return RESULT_UNSUP_HOST;
->
-> -       ret = mmc_test_area_map(test, sz, 0, 0);
-> +       ret = mmc_test_area_map(test, sz, 0, 0, use_areq);
->         if (ret)
->                 return ret;
->
-> --
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+>  Makefile | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
