@@ -2,91 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28BBA17909F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44040179097
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:47:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbgCDMsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 07:48:45 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10724 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728953AbgCDMso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 07:48:44 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C18B397235A83F66C401;
-        Wed,  4 Mar 2020 20:48:33 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Mar 2020
- 20:48:25 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <pmladek@suse.com>, <rostedt@goodmis.org>,
-        <sergey.senozhatsky@gmail.com>,
-        <andriy.shevchenko@linux.intel.com>, <linux@rasmusvillemoes.dk>
-CC:     <linux-kernel@vger.kernel.org>, Jason Yan <yanaijie@huawei.com>,
-        "Scott Wood" <oss@buserror.net>, Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <tobin@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Axtens <dja@axtens.net>
-Subject: [PATCH] vfsprintf: only hash addresses in security environment
-Date:   Wed, 4 Mar 2020 20:47:07 +0800
-Message-ID: <20200304124707.22650-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        id S2388068AbgCDMrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 07:47:46 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:56073 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729175AbgCDMrp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 07:47:45 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id D47C7CECDC;
+        Wed,  4 Mar 2020 13:57:10 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH] MAINTAINERS: adjust to 6lowpan doc ReST conversion
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
+Date:   Wed, 4 Mar 2020 13:47:43 +0100
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-doc@vger.kernel.org,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        linux-wpan@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <D2D045E0-180D-4F76-93D5-735A5600E62B@holtmann.org>
+References: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I am implementing KASLR for powerpc, Scott Wood argued that format
-specifier "%p" always hashes the addresses that people do not have a
-choice to shut it down: https://patchwork.kernel.org/cover/11367547/
+Hi Lukas,
 
-It's true that if in a debug environment or security is not concerned,
-such as KASLR is absent or kptr_restrict = 0,  there is no way to shut
-the hashing down except changing the code and build the kernel again
-to use a different format specifier like "%px". And when we want to
-turn to security environment, the format specifier has to be changed
-back and rebuild the kernel.
+> Commit 107db7ec7838 ("docs: networking: convert 6lowpan.txt to ReST")
+> renamed 6lowpan.txt to 6lowpan.rst for the ReST conversion.
+> 
+> Since then, ./scripts/get_maintainer.pl --self-test complains:
+> 
+>  warning: no file matches F: Documentation/networking/6lowpan.txt
+> 
+> Adjust 6LOWPAN GENERIC (BTLE/IEEE 802.15.4) entry in MAINTAINERS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Mauro, please ack.
+> Marcel, please pick for bluetooth-next.
+> 
+> MAINTAINERS | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As KASLR is available on most popular platforms and enabled by default,
-print the raw value of address while KASLR is absent and kptr_restrict
-is zero. Those who concerns about security must have KASLR enabled or
-kptr_restrict set properly.
+patch has been applied to bluetooth-next tree.
 
-Cc: Scott Wood <oss@buserror.net>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: "Tobin C . Harding" <tobin@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
- lib/vsprintf.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Regards
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 7c488a1ce318..f74131b152a1 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -2253,8 +2253,15 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 		return err_ptr(buf, end, ptr, spec);
- 	}
- 
--	/* default is to _not_ leak addresses, hash before printing */
--	return ptr_to_id(buf, end, ptr, spec);
-+	/*
-+	 * In security environment, while kaslr is enabled or kptr_restrict is
-+	 * not zero, hash before printing so that addresses will not be
-+	 * leaked. And if not in a security environment, print the raw value
-+	 */
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) || kptr_restrict)
-+		return ptr_to_id(buf, end, ptr, spec);
-+	else
-+		return pointer_string(buf, end, ptr, spec);
- }
- 
- /*
--- 
-2.17.2
+Marcel
 
