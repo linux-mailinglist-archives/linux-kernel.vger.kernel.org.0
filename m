@@ -2,218 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B0A917962F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:01:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9AC179628
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:01:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbgCDRBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:01:37 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23495 "EHLO
+        id S1729982AbgCDRBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:01:20 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24923 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729750AbgCDQ7P (ORCPT
+        with ESMTP id S1729754AbgCDQ7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:59:15 -0500
+        Wed, 4 Mar 2020 11:59:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1583341154;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UkuSi18F920kGdVfDKBjKhJnrlqzG64xslOlb7+rPeo=;
-        b=h7tWtMak+ucy2cRaFruod10j7aX9gTWOFOPp7C5pD2QJidN7qRZs+Rb0ie7wdJH0+K3uyE
-        MAlJlL9s4OV8aXR0qXqeCHKKJ6F6+D9Hu+g/bdaP4CuVOwcAlp9fyeEdYAJSjzl+4VhzZB
-        melGOFU70XN2jJvf4EGL5Pu0eLZ/UdQ=
+        bh=tXMOYhh28M9MIiOvKM7hHDjTfKiVup//8weNBz18dPA=;
+        b=Y0kjj3HKZvKJRf+CGjtPY30I90ia4xtW0uww0VN/HOxs6BCdEmE6FVZPLcwQHOFIIqJWlF
+        5Is0RX9qF7qQzibvx/WJfOYsnFOJCnDnCJU38wjldxHDIR1Qh3LMin9wEkxuSIkjH1L9YM
+        iW1zT8Rb1jkmmuLN/fU0iB9N6VTF2PA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-273-oxthAFKsP8SvGNgN7WHShA-1; Wed, 04 Mar 2020 11:59:13 -0500
-X-MC-Unique: oxthAFKsP8SvGNgN7WHShA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-312-7nTI_chPNUaLeyHa9cM3Cw-1; Wed, 04 Mar 2020 11:59:13 -0500
+X-MC-Unique: 7nTI_chPNUaLeyHa9cM3Cw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E8F11DB63;
-        Wed,  4 Mar 2020 16:59:11 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2252E18C35A0;
+        Wed,  4 Mar 2020 16:59:12 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B638C7388E;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1EBF48;
         Wed,  4 Mar 2020 16:59:11 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 53AD42257D9; Wed,  4 Mar 2020 11:59:03 -0500 (EST)
+        id 65DA7225811; Wed,  4 Mar 2020 11:59:03 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu
 Cc:     vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
         mst@redhat.com
-Subject: [PATCH 07/20] fuse: Get rid of no_mount_options
-Date:   Wed,  4 Mar 2020 11:58:32 -0500
-Message-Id: <20200304165845.3081-8-vgoyal@redhat.com>
+Subject: [PATCH 11/20] fuse: implement FUSE_INIT map_alignment field
+Date:   Wed,  4 Mar 2020 11:58:36 -0500
+Message-Id: <20200304165845.3081-12-vgoyal@redhat.com>
 In-Reply-To: <20200304165845.3081-1-vgoyal@redhat.com>
 References: <20200304165845.3081-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This option was introduced so that for virtio_fs we don't show any mounts
-options fuse_show_options(). Because we don't offer any of these options
-to be controlled by mounter.
+The device communicates FUSE_SETUPMAPPING/FUSE_REMOVMAPPING alignment
+constraints via the FUST_INIT map_alignment field.  Parse this field and
+ensure our DAX mappings meet the alignment constraints.
 
-Very soon we are planning to introduce option "dax" which mounter should
-be able to specify. And no_mount_options does not work anymore. What
-we need is a per mount option specific flag so that fileystem can
-specify which options to show.
+We don't actually align anything differently since our mappings are
+already 2MB aligned.  Just check the value when the connection is
+established.  If it becomes necessary to honor arbitrary alignments in
+the future we'll have to adjust how mappings are sized.
 
-Add few such flags to control the behavior in more fine grained manner
-and get rid of no_mount_options.
+The upshot of this commit is that we can be confident that mappings will
+work even when emulating x86 on Power and similar combinations where the
+host page sizes are different.
 
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/fuse_i.h    | 14 ++++++++++----
- fs/fuse/inode.c     | 22 ++++++++++++++--------
- fs/fuse/virtio_fs.c |  1 -
- 3 files changed, 24 insertions(+), 13 deletions(-)
+ fs/fuse/fuse_i.h          |  5 ++++-
+ fs/fuse/inode.c           | 19 +++++++++++++++++--
+ include/uapi/linux/fuse.h |  4 +++-
+ 3 files changed, 24 insertions(+), 4 deletions(-)
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index aa75e2305b75..2cebdf6dcfd8 100644
+index edd3136c11f7..b41275f73e4c 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -468,18 +468,21 @@ struct fuse_fs_context {
- 	int fd;
- 	unsigned int rootmode;
- 	kuid_t user_id;
-+	bool user_id_show;
- 	kgid_t group_id;
-+	bool group_id_show;
- 	bool is_bdev:1;
- 	bool fd_present:1;
- 	bool rootmode_present:1;
- 	bool user_id_present:1;
- 	bool group_id_present:1;
- 	bool default_permissions:1;
-+	bool default_permissions_show:1;
- 	bool allow_other:1;
-+	bool allow_other_show:1;
- 	bool destroy:1;
- 	bool no_control:1;
- 	bool no_force_umount:1;
--	bool no_mount_options:1;
- 	unsigned int max_read;
- 	unsigned int blksize;
- 	const char *subtype;
-@@ -509,9 +512,11 @@ struct fuse_conn {
+@@ -47,7 +47,10 @@
+ /** Number of dentries for each connection in the control filesystem */
+ #define FUSE_CTL_NUM_DENTRIES 5
 =20
- 	/** The user id for this mount */
- 	kuid_t user_id;
-+	bool user_id_show:1;
-=20
- 	/** The group id for this mount */
- 	kgid_t group_id;
-+	bool group_id_show:1;
-=20
- 	/** The pid namespace for this mount */
- 	struct pid_namespace *pid_ns;
-@@ -695,10 +700,14 @@ struct fuse_conn {
-=20
- 	/** Check permissions based on the file mode or not? */
- 	unsigned default_permissions:1;
-+	bool default_permissions_show:1;
-=20
- 	/** Allow other than the mounter user to access the filesystem ? */
- 	unsigned allow_other:1;
-=20
-+	/** Show allow_other in mount options */
-+	bool allow_other_show:1;
-+
- 	/** Does the filesystem support copy_file_range? */
- 	unsigned no_copy_file_range:1;
-=20
-@@ -714,9 +723,6 @@ struct fuse_conn {
- 	/** Do not allow MNT_FORCE umount */
- 	unsigned int no_force_umount:1;
-=20
--	/* Do not show mount options */
--	unsigned int no_mount_options:1;
--
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
+-/* Default memory range size, 2MB */
++/*
++ * Default memory range size.  A power of 2 so it agrees with common FUS=
+E_INIT
++ * map_alignment values 4KB and 64KB.
++ */
+ #define FUSE_DAX_MEM_RANGE_SZ	(2*1024*1024)
+ #define FUSE_DAX_MEM_RANGE_PAGES	(FUSE_DAX_MEM_RANGE_SZ/PAGE_SIZE)
 =20
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 95d712d44ca1..f160a3d47b63 100644
+index 0ba092bf0b6d..36cb9c00bbe5 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -515,10 +515,12 @@ static int fuse_parse_param(struct fs_context *fc, =
-struct fs_parameter *param)
+@@ -961,9 +961,10 @@ static void process_init_reply(struct fuse_conn *fc,=
+ struct fuse_args *args,
+ {
+ 	struct fuse_init_args *ia =3D container_of(args, typeof(*ia), args);
+ 	struct fuse_init_out *arg =3D &ia->out;
++	bool ok =3D true;
 =20
- 	case OPT_DEFAULT_PERMISSIONS:
- 		ctx->default_permissions =3D true;
-+		ctx->default_permissions_show =3D true;
- 		break;
+ 	if (error || arg->major !=3D FUSE_KERNEL_VERSION)
+-		fc->conn_error =3D 1;
++		ok =3D false;
+ 	else {
+ 		unsigned long ra_pages;
 =20
- 	case OPT_ALLOW_OTHER:
- 		ctx->allow_other =3D true;
-+		ctx->allow_other_show =3D true;
- 		break;
+@@ -1026,6 +1027,14 @@ static void process_init_reply(struct fuse_conn *f=
+c, struct fuse_args *args,
+ 					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+ 					max_t(unsigned int, arg->max_pages, 1));
+ 			}
++			if ((arg->flags & FUSE_MAP_ALIGNMENT) &&
++			    (FUSE_DAX_MEM_RANGE_SZ % (1ul << arg->map_alignment))) {
++				printk(KERN_ERR "FUSE: map_alignment %u"
++				       " incompatible with dax mem range size"
++				       " %u\n", arg->map_alignment,
++				       FUSE_DAX_MEM_RANGE_SZ);
++				ok =3D false;
++			}
+ 		} else {
+ 			ra_pages =3D fc->max_read / PAGE_SIZE;
+ 			fc->no_lock =3D 1;
+@@ -1041,6 +1050,11 @@ static void process_init_reply(struct fuse_conn *f=
+c, struct fuse_args *args,
+ 	}
+ 	kfree(ia);
 =20
- 	case OPT_MAX_READ:
-@@ -553,14 +555,15 @@ static int fuse_show_options(struct seq_file *m, st=
-ruct dentry *root)
- 	struct super_block *sb =3D root->d_sb;
- 	struct fuse_conn *fc =3D get_fuse_conn_super(sb);
-=20
--	if (fc->no_mount_options)
--		return 0;
--
--	seq_printf(m, ",user_id=3D%u", from_kuid_munged(fc->user_ns, fc->user_i=
-d));
--	seq_printf(m, ",group_id=3D%u", from_kgid_munged(fc->user_ns, fc->group=
-_id));
--	if (fc->default_permissions)
-+	if (fc->user_id_show)
-+		seq_printf(m, ",user_id=3D%u",
-+			   from_kuid_munged(fc->user_ns, fc->user_id));
-+	if (fc->group_id_show)
-+		seq_printf(m, ",group_id=3D%u",
-+			   from_kgid_munged(fc->user_ns, fc->group_id));
-+	if (fc->default_permissions && fc->default_permissions_show)
- 		seq_puts(m, ",default_permissions");
--	if (fc->allow_other)
-+	if (fc->allow_other && fc->allow_other_show)
- 		seq_puts(m, ",allow_other");
- 	if (fc->max_read !=3D ~0)
- 		seq_printf(m, ",max_read=3D%u", fc->max_read);
-@@ -1171,14 +1174,17 @@ int fuse_fill_super_common(struct super_block *sb=
-, struct fuse_fs_context *ctx)
- 	sb->s_flags |=3D SB_POSIXACL;
-=20
- 	fc->default_permissions =3D ctx->default_permissions;
-+	fc->default_permissions_show =3D ctx->default_permissions_show;
- 	fc->allow_other =3D ctx->allow_other;
-+	fc->allow_other_show =3D ctx->allow_other_show;
- 	fc->user_id =3D ctx->user_id;
-+	fc->user_id_show =3D ctx->user_id_show;
- 	fc->group_id =3D ctx->group_id;
-+	fc->group_id_show =3D ctx->group_id_show;
- 	fc->max_read =3D max_t(unsigned, 4096, ctx->max_read);
- 	fc->destroy =3D ctx->destroy;
- 	fc->no_control =3D ctx->no_control;
- 	fc->no_force_umount =3D ctx->no_force_umount;
--	fc->no_mount_options =3D ctx->no_mount_options;
-=20
- 	err =3D -ENOMEM;
- 	root =3D fuse_get_root_inode(sb, ctx->rootmode);
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index a16cc9195087..3f786a15b0d9 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -1060,7 +1060,6 @@ static int virtio_fs_fill_super(struct super_block =
-*sb)
- 		.destroy =3D true,
- 		.no_control =3D true,
- 		.no_force_umount =3D true,
--		.no_mount_options =3D true,
- 	};
-=20
- 	mutex_lock(&virtio_fs_mutex);
++	if (!ok) {
++		fc->conn_init =3D 0;
++		fc->conn_error =3D 1;
++	}
++
+ 	fuse_set_initialized(fc);
+ 	wake_up_all(&fc->blocked_waitq);
+ }
+@@ -1063,7 +1077,8 @@ void fuse_send_init(struct fuse_conn *fc)
+ 		FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
+ 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+-		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
++		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
++		FUSE_MAP_ALIGNMENT;
+ 	ia->args.opcode =3D FUSE_INIT;
+ 	ia->args.in_numargs =3D 1;
+ 	ia->args.in_args[0].size =3D sizeof(ia->in);
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 373cada89815..5b85819e045f 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -313,7 +313,9 @@ struct fuse_file_lock {
+  * FUSE_CACHE_SYMLINKS: cache READLINK responses
+  * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
+  * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit re=
+quest
+- * FUSE_MAP_ALIGNMENT: map_alignment field is valid
++ * FUSE_MAP_ALIGNMENT: init_out.map_alignment contains log2(byte alignme=
+nt) for
++ *		       foffset and moffset fields in struct
++ *		       fuse_setupmapping_out and fuse_removemapping_one.
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
 --=20
 2.20.1
 
