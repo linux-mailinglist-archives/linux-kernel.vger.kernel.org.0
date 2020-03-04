@@ -2,91 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 470BF1797CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 223591797B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:21:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbgCDSYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 13:24:15 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43793 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbgCDSYO (ORCPT
+        id S1729957AbgCDSVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 13:21:17 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.48]:32116 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726748AbgCDSVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 13:24:14 -0500
-Received: by mail-qk1-f195.google.com with SMTP id q18so2594967qki.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 10:24:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7uGKfMEoQma2YTmYindpAJZ+6Dd9e8pZRREodN0XilM=;
-        b=Mia0eqxiqiZ+f66hq7l6dJh58ejISZYPQsbp5h2zfh7vp/vvIx56r1xShga41jPdFM
-         e087spTKJZixh1I+cmplDpNzi7uP35TRbI1WyoV55iFHQD4y3aa6Uo2Qu0p2vZwEm2oU
-         BRwcjvdDuzGLgSRxdxHfjKtJb+I2IfhjPZsOtLFRERV44TCfb8vgRINjDujDhZCBL1Mq
-         8YVUWjbZl7bQOQtQy8+7vDn0tuTUhfGryD1aZ7KDHPo2Aenypv0LbCQ5WMge9hDq26G5
-         nheK73Rsky6AO2srjk5QIAx2fj2tGoYcKvDjnWOBiJIX4MtqPoKvSOkAsok1NVDRiJdf
-         Y6Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7uGKfMEoQma2YTmYindpAJZ+6Dd9e8pZRREodN0XilM=;
-        b=HIlMk1K7+OdLcYz2iOe8UVbKHyRQPoGPQkc7ETOXFKw+ZfEvYHWk5l2xQ5+OLpa2Fu
-         XHXKMsfGKAvIc8L3BAXVbsQgfSquvd+wh/8ax2EuZ1RqylfseySolTLOkskTp55Apu6j
-         ivrwxEUNdqY1y7iwPBS7kHbypTFNUE6TV7l6FMFnXTcbtdpreGPNE9O5vNKAy5FL6wcW
-         Y5h8+JzqXAxj9EXNVUCI3EgZzs2IHuPh27mryvqM2Ba8xrBmANJQgZCa4dGxmkFQdAE0
-         zBiir00SqKsUQetl6n75h/BMDiDWqpOxUVHZR1WHrEgClegqqzc+X0LhKjmhixZfK9Wb
-         Vgvg==
-X-Gm-Message-State: ANhLgQ2YXrzPmGRiywmcDHce/FGPNKJNz+ykFARPbumC6dsbFJ4/BQ6R
-        +350ExpkOiW0cDOSRAbXSnxrFA==
-X-Google-Smtp-Source: ADFU+vtRodrQGutbTEE2PU9HNmEC1IZAyA11ZBYfVhgiKLz7nf/pB721n80U6tbbZtje9FYX/xbyrw==
-X-Received: by 2002:a05:620a:2012:: with SMTP id c18mr3760545qka.242.1583346252226;
-        Wed, 04 Mar 2020 10:24:12 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id 133sm14361291qkh.109.2020.03.04.10.24.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Mar 2020 10:24:11 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1j9Ygl-0000KJ-CH; Wed, 04 Mar 2020 14:24:11 -0400
-Date:   Wed, 4 Mar 2020 14:24:11 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Bernard Metzler <bmt@zurich.ibm.com>
-Cc:     chuck.lever@oracle.com, dledford@redhat.com, leon@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, parav@mellanox.com,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Subject: Re: [PATCH for-rc] RDMA/siw: Fix passive connection establishment
-Message-ID: <20200304182411.GA1201@ziepe.ca>
-References: <20200228173534.26815-1-bmt@zurich.ibm.com>
+        Wed, 4 Mar 2020 13:21:17 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id E1778F02B
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Mar 2020 12:21:15 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9Ydvj8wH2Sl8q9YdvjlaDE; Wed, 04 Mar 2020 12:21:15 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=JDhxZMFsRy6LtFt3EXn4J/8lQgixC7JfkVVzanx6o+s=; b=iUTvs3omZaH2L93UgChx/+YyCm
+        wgkVqHnEbAhbv6dTQpu2m+0Pc1e3D5lZD2vBB6T13ZNMLwi6usyoG4kbRwJ83dLmBgp37KfQa3CIm
+        0cLlpfJM1KyFnBIKreZjdHSP7iSIFhFxJxGs+YzEyas73m/AR3yHtWGI3Gw/5HFzpumXJDXcZqqu6
+        WHq9ZNNvQ66a3/YshEmZbxsWdt+H3vWtb7G0O4MZBh+KVUKCN/9Rqi4YMLy1srBCT7bdyL5IWUPqD
+        Cf0dL3+FU9l/g+smM31ngd8wYoNwOod0Gobmlp56SQ2pXaDArqdKRhi0K1BHdyfye3k6XglnFczrS
+        lIhI6pnw==;
+Received: from [200.39.25.77] (port=7482 helo=[192.168.43.132])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j9Ydu-003hTf-H9; Wed, 04 Mar 2020 12:21:15 -0600
+Subject: Re: [PATCH] PCI: hv: Replace zero-length array with flexible-array
+ member
+To:     Wei Liu <wei.liu@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200213005048.GA9662@embeddedor.com>
+ <HK0P153MB0148FB68FCBAE908CA5991C3BF1A0@HK0P153MB0148.APCP153.PROD.OUTLOOK.COM>
+ <20200304175509.dwhn63omfzewaukv@debian>
+ <20200304180635.GA21844@e121166-lin.cambridge.arm.com>
+ <20200304181017.epqvhmtegefb4eba@debian>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <fc6c9a2e-1012-5ada-1613-69134719d67c@embeddedor.com>
+Date:   Wed, 4 Mar 2020 12:24:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228173534.26815-1-bmt@zurich.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200304181017.epqvhmtegefb4eba@debian>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.39.25.77
+X-Source-L: No
+X-Exim-ID: 1j9Ydu-003hTf-H9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.132]) [200.39.25.77]:7482
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 06:35:34PM +0100, Bernard Metzler wrote:
-> Holding the rtnl_lock while iterating a devices interface
-> address list potentially causes deadlocks with the
-> cma_netdev_callback. While this was implemented to
-> limit the scope of a wildcard listen to addresses
-> of the current device only, a better solution limits
-> the scope of the socket to the device. This completely
-> avoiding locking, and also results in significant code
-> simplification.
+
+
+On 3/4/20 12:10, Wei Liu wrote:
+
+>>>>
+>>>> Looks good to me. Thanks, Gustavo!
+>>>>  
+>>>> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+>>>>
+>>>
+>>> Lorenzo, will you be picking up this patch? It seems to me you've been
+>>> handling patches to pci-hyperv.c. This patch is not yet in pci/hv branch
+>>> in your repository.
+>>>
+>>> Let me know what you think.
+>>
+>> I shall pick it up, I checked patchwork and it was erroneously
+>> assigned to Bjorn, that's why I have not taken it yet.
+>>
+>> Fixed now, apologies, I will merge it shortly.
 > 
-> Reported-by: syzbot+55de90ab5f44172b0c90@syzkaller.appspotmail.com
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
-> ---
->  drivers/infiniband/sw/siw/siw_cm.c | 137 +++++++----------------------
->  1 file changed, 31 insertions(+), 106 deletions(-)
+> Thanks for picking it up.
+> 
 
-Applied to for-next, the possibility of hitting the locking inversion
-found by syzkaller is really remote as you'd have to run siw on top of
-bond and then do horrible things to the bond.
-
-Jason
+Thank you all, guys. :)
+--
+Gustavo
