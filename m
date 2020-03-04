@@ -2,103 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B01F6178FE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:55:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6EF0178FCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:50:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbgCDLy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:54:56 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:22269 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729256AbgCDLy4 (ORCPT
+        id S2387954AbgCDLuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:50:22 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33684 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387398AbgCDLuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:54:56 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583322896; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=W5rRdfNWJ5nVdqFZkJkJMeomkC+t/R8ZjVOc6SDbNwA=; b=qWqlTE9ykvm/Ejg2ueIdKyzfO/x7UI1gsXRNbOjCZ36Z/UXDv6OodVtxqkDOFLulmUWaB8us
- kkVNwFY0uBiZyP+7fLn0olMsdmmwOAoiP+DH4XGnTN77AyQpwwaQEWCwU7NfctqE8kcgUE2O
- 1aIG/gLvfWgjvrMAIsesh4+vnng=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e5f9705.7fe789fed7a0-smtp-out-n03;
- Wed, 04 Mar 2020 11:54:45 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C1B0EC4479F; Wed,  4 Mar 2020 11:54:45 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 87536C43383;
-        Wed,  4 Mar 2020 11:54:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 87536C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH V2] mmc: sdhci-msm: Disable CQE during SDHC reset
-Date:   Wed,  4 Mar 2020 17:24:16 +0530
-Message-Id: <1583322863-21790-1-git-send-email-vbadigan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1582890639-32072-1-git-send-email-vbadigan@codeaurora.org>
-References: <1582890639-32072-1-git-send-email-vbadigan@codeaurora.org>
+        Wed, 4 Mar 2020 06:50:22 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 024BoKr2000813;
+        Wed, 4 Mar 2020 05:50:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583322621;
+        bh=I1LvhXp8lDPeOMH6UKe4C7/GztRumHt7wXjhQP2BUuI=;
+        h=From:To:CC:Subject:Date;
+        b=RjexQymLssiCTHHxYriW7IAAs39o/2H/inKqg61EuL2liVYl8XmvMJO9zY6H3ppr4
+         UsbPi76CG9RLqoYG2SP7HW30qZ+XFj2lYuj5lf9wiaM37CYuYoCoWHm/mLi5aNBEdo
+         +0+Z9NaCgm6rRgD+MdTB/sRbFcUZZVbyjo7xaWbA=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 024BoKQH120199
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Mar 2020 05:50:20 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Mar
+ 2020 05:50:20 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 4 Mar 2020 05:50:20 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 024BoI9e104827;
+        Wed, 4 Mar 2020 05:50:19 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL v2] PHY: For 5.6 -rc
+Date:   Wed, 4 Mar 2020 17:24:54 +0530
+Message-ID: <20200304115454.14921-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When SDHC gets reset (E.g. in suspend path), CQE also gets reset
-and goes to disable state. But s/w state still points it as CQE
-is in enabled state. Since s/w and h/w states goes out of sync,
-it results in s/w request timeout for subsequent CQE requests.
+Hi Greg,
 
-To synchronize CQE s/w and h/w state during SDHC reset,
-explicitly disable CQE after reset.
+Please find the updated pull request for 5.6 -rc cycle below. It only
+adds an additional patch over my previous pull request (I added a new
+patch since my initial pull request is not merged).
 
-Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
----
-Changes since V1:
-	- Disable CQE only when SDHC undergoes s/w reset for all.
----
- drivers/mmc/host/sdhci-msm.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+It fixes an issue caused because of adding device_link_add() on platforms
+which have cyclic dependency between PHY consumer and PHY provider.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 53b79ee..75929d3 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1823,6 +1823,13 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- 	pr_debug("%s: supported caps: 0x%08x\n", mmc_hostname(mmc), caps);
- }
- 
-+static void sdhci_msm_reset(struct sdhci_host *host, u8 mask)
-+{
-+	sdhci_reset(host, mask);
-+	if ((host->mmc->caps2 & MMC_CAP2_CQE) && (mask & SDHCI_RESET_ALL))
-+		cqhci_suspend(host->mmc);
-+}
-+
- static const struct sdhci_msm_variant_ops mci_var_ops = {
- 	.msm_readl_relaxed = sdhci_msm_mci_variant_readl_relaxed,
- 	.msm_writel_relaxed = sdhci_msm_mci_variant_writel_relaxed,
-@@ -1861,7 +1868,7 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
- 
- static const struct sdhci_ops sdhci_msm_ops = {
--	.reset = sdhci_reset,
-+	.reset = sdhci_msm_reset,
- 	.set_clock = sdhci_msm_set_clock,
- 	.get_min_clock = sdhci_msm_get_min_clock,
- 	.get_max_clock = sdhci_msm_get_max_clock,
+It also includes couple of timeout fixes in Motorola and other misc
+fixes in TI and Broadcom's PHY driver.
+Please see the tag message for the complete list of changes and let me
+know if I have to change something.
+
+Thanks
+Kishon
+
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.6-rc_v2
+
+for you to fetch changes up to be4e3c737eebd75815633f4b8fd766defaf0f1fc:
+
+  phy: mapphone-mdm6600: Fix timeouts by adding wake-up handling (2020-02-27 10:20:40 +0530)
+
+----------------------------------------------------------------
+phy: for 5.6-rc
+
+*) Fix phy_get() from erroring out if device link creation failed
+*) Fix write timeouts in Motorola Mapphone mdm6600 PHY
+*) Fix Broadcom brcm-sata PHY driver to write to the correct MDIO register
+*) Add GMII PHY mode in supported modes of TI AM335x/437x/5xx SoCs
+
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+
+----------------------------------------------------------------
+Florian Fainelli (1):
+      phy: brcm-sata: Correct MDIO operations for 40nm platforms
+
+Grygorii Strashko (2):
+      phy: ti: gmii-sel: fix set of copy-paste errors
+      phy: ti: gmii-sel: do not fail in case of gmii
+
+Kishon Vijay Abraham I (1):
+      phy: core: Fix phy_get() to not return error on link creation failure
+
+Tony Lindgren (2):
+      phy: mapphone-mdm6600: Fix write timeouts with shorter GPIO toggle interval
+      phy: mapphone-mdm6600: Fix timeouts by adding wake-up handling
+
+ drivers/phy/broadcom/phy-brcm-sata.c        | 148 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------------
+ drivers/phy/motorola/phy-mapphone-mdm6600.c |  27 ++++++++++++++++++++++++---
+ drivers/phy/phy-core.c                      |  18 ++++++------------
+ drivers/phy/ti/phy-gmii-sel.c               |  10 +++++-----
+ 4 files changed, 100 insertions(+), 103 deletions(-)
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+2.17.1
+
