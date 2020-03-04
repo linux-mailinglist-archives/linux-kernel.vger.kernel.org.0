@@ -2,294 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE0C179157
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:33:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45896179179
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:36:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgCDNdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 08:33:08 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40503 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbgCDNdI (ORCPT
+        id S1729471AbgCDNgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 08:36:50 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33090 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728451AbgCDNgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 08:33:08 -0500
-Received: by mail-qt1-f196.google.com with SMTP id o10so1305628qtr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 05:33:07 -0800 (PST)
+        Wed, 4 Mar 2020 08:36:50 -0500
+Received: by mail-qk1-f195.google.com with SMTP id p62so1584775qkb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 05:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kTXA8aTzCHMRyfe5aJq/9SLfxVVPRldNDGrbwHGiHHQ=;
-        b=PFXhlmOCyYEsN/iqu5F9fR+m+MhhNVTZ/suAXJ0e+tU35cmZ85UC65Ji6kbaujvkF/
-         oPs0vwMEpyg6QWOjkQmNqlK5oj9b4ZYlxYmMoebe9qOfl05Wy1p3n9Ded9LYv3iQGEcJ
-         1yvv2tLIJItHvLDNZglNtAM5kDJhbWJhJOHB4gKHQ1ClHRXZ8ThnSPDWD41bUvlEl5Ai
-         wkol60LFZlFGQg3+EfhHVOvZQSKl5aBzRnXQkeaEJ2j4G+3W8rXR2/Eph2kJjvapGre0
-         s2PoUxG/fB/UoMn5rvlnAvk9D6+rb4McF0/SSsWhkmg30rh4RAifYmgy7HSuoGELBLQh
-         h7Ug==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mpYEiYRocka7ATrbRk79a6a7IumZgblHI2WLdpIhwgE=;
+        b=KRMhg3xagLh3UMJC+uZmNRJhAvbb7+lGITFZ6oXEJ30imCsJOA2C8r3Gx1xSeoh0lb
+         u03uyVzA7OaXsX0ecbqGS+TRSALv/m+efBvYRWRK4sQZPqEj/fTrv1B7Pmq325DuD5NW
+         cMufP88PsLaQcCfoDSfv4BPWYvqoVkNYsnhvMkNnX4TuvZd59E+SOYv2wK4k/hxlGpDg
+         A2arqwo0nTy1v+8iaOoMpOA01VAURb/SRsABLzydqTmYAeuDo7DyVz1SfDuQwfpnTmhO
+         X6UJVLROabbZPV6y+CIAT7vCViW9RJcXYUBynLPR36HFNmVikISKGdk38i/5pQf6o5CQ
+         /2HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kTXA8aTzCHMRyfe5aJq/9SLfxVVPRldNDGrbwHGiHHQ=;
-        b=rL4zz2y3JppDvf/tDiQDKW/9Pa21Y4LKgzMmPCUCfwdemjypleqgniSEG6XTdNA9+4
-         MlkhupY2q0onG6NtdLe4EdMqOYnthtnBFiKFEU97DpI+XwX8qu2gJZWk+z5YTJn0RgVt
-         l6DBVTUYG41y5WMWd/VQN+1ygDVcKTFgSJTm93knh5oNJb55qimeIefeJdQ6cy8aYIfS
-         ddJ5UB3Mq3DCK8S/Aga3C4jw0NwWocV2/YKWDGt8/vJbsQIASzPQibMbzZ3dcFP91b2f
-         7KsrrBpxUGaCc+Jg7TKST7fP9why5CfZQjNH6Jwcl/jBhER8jhpzmCf3X943fOdhznko
-         92pA==
-X-Gm-Message-State: ANhLgQ1MoYJD+pmbbs+ZIW29HcfpkMhLQ/i5Jwzcu4hCWehWZcupgT8r
-        YwC7m2P/IY7I/natZ6KQZ3TCno7pNyWTFQ==
-X-Google-Smtp-Source: ADFU+vvViPSlkYX6V+W3Ecv34xL9NoUhYvO8SniOo6wKPfCRxs8VxDcK/KvhJ8D9ekIqA5izsP0cLg==
-X-Received: by 2002:ac8:3798:: with SMTP id d24mr2420435qtc.178.1583328786690;
-        Wed, 04 Mar 2020 05:33:06 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id x7sm7846059qkx.110.2020.03.04.05.33.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 05:33:05 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B0C8B403AD; Wed,  4 Mar 2020 10:33:02 -0300 (-03)
-Date:   Wed, 4 Mar 2020 10:33:02 -0300
-To:     kan.liang@linux.intel.com
-Cc:     jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        adrian.hunter@intel.com, mathieu.poirier@linaro.org,
-        ravi.bangoria@linux.ibm.com, alexey.budankov@linux.intel.com,
-        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com,
-        mpe@ellerman.id.au, eranian@google.com, ak@linux.intel.com
-Subject: Re: [PATCH 00/12] Stitch LBR call stack (Perf Tools)
-Message-ID: <20200304133302.GA12612@kernel.org>
-References: <20200228163011.19358-1-kan.liang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228163011.19358-1-kan.liang@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mpYEiYRocka7ATrbRk79a6a7IumZgblHI2WLdpIhwgE=;
+        b=Rjuy/1OTjVIjE7OnIWos4PLUqITebJjKmS+4Lz1MgnP+SRs1lwU769KVWcCcgin4lc
+         DtXhc61Yo37asG+olHKPCGfs+zq7efwvFJQXlcEEJd56/jc8Z6LJXsM0iAuWAqRcZYHQ
+         xavX3vNXbOf6aE7wl6FNjnYd3GpiI3HBstckQh8XLjVCKweA/BiOX8TpwsEQgCidYWWf
+         sDptpI2vR9M0MdgZ6gWcnoUN9U6TYxncHqH4oJnFA7UNAbmpwkKPSLgJcDF6J7aVLyGB
+         mpL9aP6zPivJqLFAEHok+xWBUlD1+uvfDUafh6XcQ08ZVMaN2xyh+w2tprjPh/mMjZXZ
+         TvbA==
+X-Gm-Message-State: ANhLgQ1/rRxB/eS/d1lQtG64dEetl5vxu5XYlNaGbJA1Z/Zu72DASw2t
+        qxno80cFoF8zaETGwbb62siszA==
+X-Google-Smtp-Source: ADFU+vvwqhWeKWuvP/JFbgNL86TeSCyI6fdLqE6IggaPG4339qKIgUrS9GlI8K+DfcRdgWhhjUKT7Q==
+X-Received: by 2002:a05:620a:2224:: with SMTP id n4mr2787662qkh.21.1583329009507;
+        Wed, 04 Mar 2020 05:36:49 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id k5sm1492991qte.25.2020.03.04.05.36.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Mar 2020 05:36:48 -0800 (PST)
+Message-ID: <1583329007.7365.151.camel@lca.pw>
+Subject: Re: [PATCH] cgroup: fix psi_show() crash on 32bit ino archs
+From:   Qian Cai <cai@lca.pw>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     tj@kernel.org, lizefan@huawei.com, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 04 Mar 2020 08:36:47 -0500
+In-Reply-To: <20200224162906.GB1674@cmpxchg.org>
+References: <20200224030007.3990-1-cai@lca.pw>
+         <20200224162906.GB1674@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 28, 2020 at 08:29:59AM -0800, kan.liang@linux.intel.com escreveu:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On Mon, 2020-02-24 at 11:29 -0500, Johannes Weiner wrote:
+> On Sun, Feb 23, 2020 at 10:00:07PM -0500, Qian Cai wrote:
+> > Similar to the commit d7495343228f ("cgroup: fix incorrect
+> > WARN_ON_ONCE() in cgroup_setup_root()"), cgroup_id(root_cgrp) does not
+> > equal to 1 on 32bit ino archs which triggers all sorts of issues with
+> > psi_show() on s390x. For example,
+> > 
+> >  BUG: KASAN: slab-out-of-bounds in collect_percpu_times+0x2d0/
+> >  Read of size 4 at addr 000000001e0ce000 by task read_all/3667
+> >  collect_percpu_times+0x2d0/0x798
+> >  psi_show+0x7c/0x2a8
+> >  seq_read+0x2ac/0x830
+> >  vfs_read+0x92/0x150
+> >  ksys_read+0xe2/0x188
+> >  system_call+0xd8/0x2b4
+> > 
+> > Fix it by using cgroup_ino().
+> > 
+> > Fixes: 743210386c03 ("cgroup: use cgrp->kn->id as the cgroup ID")
+> > Signed-off-by: Qian Cai <cai@lca.pw>
 > 
-> The kernel patches have been merged into linux-next.
->   commit bbfd5e4fab63 ("perf/core: Add new branch sample type for HW
-> index of raw branch records")
->   commit db278b90c326 ("perf/x86/intel: Output LBR TOS information
-> correctly")
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-I saw it landed in tip/perf/core, going thru this patchset now.
-
-Thanks,
-
-- Arnaldo
- 
-> Start from Haswell, Linux perf can utilize the existing Last Branch
-> Record (LBR) facility to record call stack. However, the depth of the
-> reconstructed LBR call stack limits to the number of LBR registers.
-> E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
-> That's because HW will overwrite the oldest LBR registers when it's
-> full.
-> 
-> However, the overwritten LBRs may still be retrieved from previous
-> sample. At that moment, HW hasn't overwritten the LBR registers yet.
-> Perf tools can stitch those overwritten LBRs on current call stacks to
-> get a more complete call stack.
-> 
-> To determine if LBRs can be stitched, the physical index of LBR
-> registers is required. A new branch sample type is introduced to dump
-> the physical index of the most recent LBR aka Top-of-Stack (TOS)
-> information for perf tools.
-> Patch 1 & 2 extend struct branch_stack to support the new branch sample
-> type, PERF_SAMPLE_BRANCH_HW_INDEX.
-> 
-> Since the output format of PERF_SAMPLE_BRANCH_STACK will be changed
-> when the new branch sample type is set, an older version of perf tool
-> may parse the perf.data incorrectly. Furthermore, there is no warning
-> if this case happens. Because current perf header never check for
-> unknown input bits in attr. Patch 3 adds check for event attr. (Can be
-> merged independently.)
-> 
-> Besides the physical index, the maximum number of LBRs is required as
-> well. Patch 4 & 5 retrieve the capabilities information from sysfs
-> and save them in perf header.
-> 
-> Patch 6 & 7 implements the LBR stitching approach.
-> 
-> Users can use the options introduced in patch 8-11 to enable the LBR
-> stitching approach for perf report, script, top and c2c.
-> 
-> Patch 12 adds a fast path for duplicate entries check. It benefits all
-> call stack parsing, not just for stitch LBR call stack. It can be
-> merged independently.
-> 
-> 
-> The stitching approach base on LBR call stack technology. The known
-> limitations of LBR call stack technology still apply to the approach,
-> e.g. Exception handing such as setjmp/longjmp will have calls/returns
-> not match.
-> This approach is not full proof. There can be cases where it creates
-> incorrect call stacks from incorrect matches. There is no attempt
-> to validate any matches in another way. So it is not enabled by default.
-> However in many common cases with call stack overflows it can recreate
-> better call stacks than the default lbr call stack output. So if there
-> are problems with LBR overflows this is a possible workaround.
-> 
-> Regression:
-> Users may collect LBR call stack on a machine with new perf tool and
-> new kernel (support LBR TOS). However, they may parse the perf.data with
-> old perf tool (not support LBR TOS). The old tool doesn't check
-> attr.branch_sample_type. Users probably get incorrect information
-> without any warning.
-> 
-> Performance impact:
-> The processing time may increase with the LBR stitching approach
-> enabled. The impact depends on the increased depth of call stacks.
-> 
-> For a simple test case tchain_edit with 43 depth of call stacks.
-> perf record --call-graph lbr -- ./tchain_edit
-> perf report --stitch-lbr
-> 
-> Without --stitch-lbr, perf report only display 32 depth of call stacks.
-> With --stitch-lbr, perf report can display all 43 depth of call stacks.
-> The depth of call stacks increase 34.3%.
-> 
-> Correspondingly, the processing time of perf report increases 39%,
-> Without --stitch-lbr:                           11.0 sec
-> With --stitch-lbr:                              15.3 sec
-> 
-> The source code of tchain_edit.c is something similar as below.
-> noinline void f43(void)
-> {
->         int i;
->         for (i = 0; i < 10000;) {
-> 
->                 if(i%2)
->                         i++;
->                 else
->                         i++;
->         }
-> }
-> 
-> noinline void f42(void)
-> {
->         int i;
->         for (i = 0; i < 100; i++) {
->                 f43();
->                 f43();
->                 f43();
->         }
-> }
-> 
-> noinline void f41(void)
-> {
->         int i;
->         for (i = 0; i < 100; i++) {
->                 f42();
->                 f42();
->                 f42();
->         }
-> }
-> noinline void f40(void)
-> {
->         f41();
-> }
-> 
-> ... ...
-> 
-> noinline void f32(void)
-> {
->         f33();
-> }
-> 
-> noinline void f31(void)
-> {
->         int i;
-> 
->         for (i = 0; i < 10000; i++) {
->                 if(i%2)
->                         i++;
->                 else
->                         i++;
->         }
-> 
->         f32();
-> }
-> 
-> noinline void f30(void)
-> {
->         f31();
-> }
-> 
-> ... ...
-> 
-> noinline void f1(void)
-> {
->         f2();
-> }
-> 
-> int main()
-> {
->         f1();
-> }
-> 
-> Kan Liang (12):
->   perf tools: Add hw_idx in struct branch_stack
->   perf tools: Support PERF_SAMPLE_BRANCH_HW_INDEX
->   perf header: Add check for event attr
->   perf pmu: Add support for PMU capabilities
->   perf header: Support CPU PMU capabilities
->   perf machine: Refine the function for LBR call stack reconstruction
->   perf tools: Stitch LBR call stack
->   perf report: Add option to enable the LBR stitching approach
->   perf script: Add option to enable the LBR stitching approach
->   perf top: Add option to enable the LBR stitching approach
->   perf c2c: Add option to enable the LBR stitching approach
->   perf hist: Add fast path for duplicate entries check approach
-> 
->  tools/include/uapi/linux/perf_event.h         |   8 +-
->  tools/perf/Documentation/perf-c2c.txt         |  11 +
->  tools/perf/Documentation/perf-report.txt      |  11 +
->  tools/perf/Documentation/perf-script.txt      |  11 +
->  tools/perf/Documentation/perf-top.txt         |   9 +
->  .../Documentation/perf.data-file-format.txt   |  16 +
->  tools/perf/builtin-c2c.c                      |   6 +
->  tools/perf/builtin-record.c                   |   3 +
->  tools/perf/builtin-report.c                   |   6 +
->  tools/perf/builtin-script.c                   |  76 ++--
->  tools/perf/builtin-stat.c                     |   1 +
->  tools/perf/builtin-top.c                      |  11 +
->  tools/perf/tests/sample-parsing.c             |   7 +-
->  tools/perf/util/branch.h                      |  27 +-
->  tools/perf/util/callchain.h                   |  12 +-
->  tools/perf/util/cs-etm.c                      |   1 +
->  tools/perf/util/env.h                         |   3 +
->  tools/perf/util/event.h                       |   1 +
->  tools/perf/util/evsel.c                       |  20 +-
->  tools/perf/util/evsel.h                       |   6 +
->  tools/perf/util/header.c                      | 147 ++++++
->  tools/perf/util/header.h                      |   1 +
->  tools/perf/util/hist.c                        |  26 +-
->  tools/perf/util/intel-pt.c                    |   2 +
->  tools/perf/util/machine.c                     | 424 +++++++++++++++---
->  tools/perf/util/perf_event_attr_fprintf.c     |   1 +
->  tools/perf/util/pmu.c                         |  87 ++++
->  tools/perf/util/pmu.h                         |  12 +
->  .../scripting-engines/trace-event-python.c    |  30 +-
->  tools/perf/util/session.c                     |   8 +-
->  tools/perf/util/sort.c                        |   2 +-
->  tools/perf/util/sort.h                        |   2 +
->  tools/perf/util/synthetic-events.c            |   6 +-
->  tools/perf/util/thread.c                      |   2 +
->  tools/perf/util/thread.h                      |  34 ++
->  tools/perf/util/top.h                         |   1 +
->  36 files changed, 900 insertions(+), 131 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
-
--- 
-
-- Arnaldo
+Tejun, can you take a look at this when you had a chance?
