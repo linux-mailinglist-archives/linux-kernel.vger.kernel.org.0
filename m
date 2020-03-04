@@ -2,131 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3461179B42
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:49:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 083FB179B48
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:51:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388440AbgCDVto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 16:49:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44648 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388312AbgCDVtn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:49:43 -0500
-Received: from mail-yw1-f70.google.com ([209.85.161.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <seth.forshee@canonical.com>)
-        id 1j9btd-0000WF-4v
-        for linux-kernel@vger.kernel.org; Wed, 04 Mar 2020 21:49:41 +0000
-Received: by mail-yw1-f70.google.com with SMTP id w185so4666445ywa.22
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 13:49:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D15ynwrrHMGu8Lvf29PfzDkO2Xnj0Kx0WtMUcRAoGUk=;
-        b=qoWQGSSu/tFHv8n1zwRep6M0w8gOzEnTnGgWSITy8RY1i92WhHypPPLqIeE5ehpgJm
-         ikKLO32hhoo6dG7MBS8eg7o9eOVWx8rk5ttTptc4+5aD8XLFlpsx2O4uQkAlde9OsQST
-         FRaLmBW+RErO1VW4i28DXK7mUfXgiXOi86AC6v8erm3nnHWjlKEAoIS0ykauHbX1HSRt
-         im6CC1qJoCCyNS5C89hs+2TVkLGJDZAm532KbO+PnK6TFRmv0j2DLqm11FztAUJYnON/
-         oWps5hVQFRi6dywVEsjioL+/U1isGBvPNhiX2CTbE3aQKGSm8Uh5ha+5yaT8uurDyVcB
-         U5WA==
-X-Gm-Message-State: ANhLgQ3JMUgiSAyBYZ65sExLKB2N9h13OzhtDnqMLDpZiM+TQBVYUyTT
-        VBM4x6nzqth12atvf6CYt6VmGLojAgW2ESsBAlxjK1sWKObQnhzvOD+i2g38Y59VDgU6qkOoNIg
-        oGAdjKzX8vZ/+0/szJK8dGSyJJbKfvZ8l1Vg3eTHOGg==
-X-Received: by 2002:a81:1c0a:: with SMTP id c10mr3094621ywc.142.1583358580153;
-        Wed, 04 Mar 2020 13:49:40 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vvZJaZ2FtmAIkALFVCfi34cHUNwTZA1Ei8eY+3Av/7AbgzCPgrLFiRi2PMqNWVrh806Nnr7ZA==
-X-Received: by 2002:a81:1c0a:: with SMTP id c10mr3094602ywc.142.1583358579744;
-        Wed, 04 Mar 2020 13:49:39 -0800 (PST)
-Received: from localhost ([2605:a601:af9b:a120:d987:fd11:6482:bff3])
-        by smtp.gmail.com with ESMTPSA id d2sm5077945ywe.36.2020.03.04.13.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 13:49:38 -0800 (PST)
-Date:   Wed, 4 Mar 2020 15:49:37 -0600
-From:   Seth Forshee <seth.forshee@canonical.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/ftrace: Use printf instead of echo in kprobe
- syntax error tests
-Message-ID: <20200304214937.GA2347@ubuntu-x1>
-References: <20200304161435.23019-1-seth.forshee@canonical.com>
- <20200304155004.7dd033a3@gandalf.local.home>
+        id S2388412AbgCDVvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 16:51:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388338AbgCDVvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 16:51:14 -0500
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED5DC21744
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Mar 2020 21:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583358674;
+        bh=XvJqeL9Dkwgz8DG/GvAWCcKvRlJMAOJtbu4NVFvKZTc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LmWDx1sWG0yVE0/Eh7z7VqCtWsxacrnGIghlxQgHOyPF3CwSZfGTAcXb5DGXys6L3
+         xwjnQ1wR1+Uy1B7y3igsW52Du5QuYOYpQQUwPP9RgaVPPcljdfJ+tofOXLfh9UrYlG
+         L7Mhu0m/Q69F2D2vyVZS1+zKPtBPRLEM/nWYuSCk=
+Received: by mail-wr1-f49.google.com with SMTP id h9so4390221wrr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 13:51:13 -0800 (PST)
+X-Gm-Message-State: ANhLgQ2dEXK+qQwCx0rbAZWg5uQXHI2BLMnSDTG1QJYugQquWSUrPFIs
+        HD+Osv6xiNyFyVyYwokQYD7M8z/TadKK1FUxjMM4pA==
+X-Google-Smtp-Source: ADFU+vt0nYE3kz2ug9hAB7jm/qu/DZt727mpeG008Vdr3dUP3kbKTQb7M36u9X/u+2LrgWShbhBrNFxZJ1vLMx8JsSo=
+X-Received: by 2002:adf:f84a:: with SMTP id d10mr6182793wrq.208.1583358672314;
+ Wed, 04 Mar 2020 13:51:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304155004.7dd033a3@gandalf.local.home>
+References: <20200303205445.3965393-1-nivedita@alum.mit.edu>
+ <20200303205445.3965393-2-nivedita@alum.mit.edu> <CAKv+Gu_LmntqGjkakR0-SFSCR+JF+CFeKyc=5qzOdpn4wTvKhw@mail.gmail.com>
+ <20200304154908.GB998825@rani.riverdale.lan> <CAKv+Gu-Xo2zj9_N+K8FrpBstgU57GZvWO-pDr4tRAODhsYzW-A@mail.gmail.com>
+ <20200304185042.GA281042@rani.riverdale.lan> <CAKv+Gu-6YoJMLbR8UUsBeRPzk7r_4aKBprqay2kf6cKMPwsHgQ@mail.gmail.com>
+ <20200304191053.GA291311@rani.riverdale.lan> <CAKv+Gu84Bj4tBz=+FhG6cqpYUjc5czaqiNAVDdKgqGoXbnHKbQ@mail.gmail.com>
+ <20200304195447.GA295419@rani.riverdale.lan>
+In-Reply-To: <20200304195447.GA295419@rani.riverdale.lan>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 4 Mar 2020 22:51:01 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu8sTuj+Wkk8g2tv+1k9LczXV4yV4KSbaJ6Bs69SQwR2_A@mail.gmail.com>
+Message-ID: <CAKv+Gu8sTuj+Wkk8g2tv+1k9LczXV4yV4KSbaJ6Bs69SQwR2_A@mail.gmail.com>
+Subject: Re: [PATCH 1/4] x86/mm/pat: Handle no-GBPAGES case correctly in populate_pud
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 03:50:04PM -0500, Steven Rostedt wrote:
-> On Wed,  4 Mar 2020 10:14:35 -0600
-> Seth Forshee <seth.forshee@canonical.com> wrote:
-> 
-> > --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-> > +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-> > @@ -37,7 +37,7 @@ fi
-> >  
-> >  check_error 'p vfs_read ^$none_var'	# BAD_VAR
-> >  
-> > -check_error 'p vfs_read ^%none_reg'	# BAD_REG_NAME
-> > +check_error 'p vfs_read ^%%none_reg'	# BAD_REG_NAME
-> >  check_error 'p vfs_read ^@12345678abcde'	# BAD_MEM_ADDR
-> >  check_error 'p vfs_read ^@+10'		# FILE_ON_KPROBE
-> >  
-> > @@ -80,7 +80,7 @@ check_error 'p vfs_read arg1=^'			# NO_ARG_BODY
-> >  # instruction boundary check is valid on x86 (at this moment)
-> >  case $(uname -m) in
-> >    x86_64|i[3456]86)
-> > -    echo 'p vfs_read' > kprobe_events
-> > +    printf 'p vfs_read' > kprobe_events
-> >      if grep -q FTRACE ../kprobes/list ; then
-> >  	check_error 'p ^vfs_read+3'		# BAD_INSN_BNDRY (only if function-tracer is enabled)
-> >      fi
-> > @@ -89,13 +89,13 @@ esac
-> >  
-> >  # multiprobe errors
-> >  if grep -q "Create/append/" README && grep -q "imm-value" README; then
-> > -echo 'p:kprobes/testevent _do_fork' > kprobe_events
-> > +printf 'p:kprobes/testevent _do_fork' > kprobe_events
-> >  check_error '^r:kprobes/testevent do_exit'	# DIFF_PROBE_TYPE
-> > -echo 'p:kprobes/testevent _do_fork abcd=\1' > kprobe_events
-> > -check_error 'p:kprobes/testevent _do_fork ^bcd=\1'	# DIFF_ARG_TYPE
-> > -check_error 'p:kprobes/testevent _do_fork ^abcd=\1:u8'	# DIFF_ARG_TYPE
-> > -check_error 'p:kprobes/testevent _do_fork ^abcd=\"foo"'	# DIFF_ARG_TYPE
-> > -check_error '^p:kprobes/testevent _do_fork abcd=\1'	# SAME_PROBE
-> > +printf 'p:kprobes/testevent _do_fork abcd=\\1' > kprobe_events
-> > +check_error 'p:kprobes/testevent _do_fork ^bcd=\\1'	# DIFF_ARG_TYPE
-> > +check_error 'p:kprobes/testevent _do_fork ^abcd=\\1:u8'	# DIFF_ARG_TYPE
-> > +check_error 'p:kprobes/testevent _do_fork ^abcd=\\"foo"'# DIFF_ARG_TYPE
-> > +check_error '^p:kprobes/testevent _do_fork abcd=\\1'	# SAME_PROBE
-> >  fi
-> >  
-> >  exit 0
-> 
-> 
-> This change causes my tests to fail:
-> 
-> ++ echo 'Test command: p vfs_read arg1="abcd'
-> Test command: p vfs_read arg1="abcd
-> ++ echo
-> ++ grep 'trace_kprobe: error:' -A 3 error_log
-> [61913.240093] trace_kprobe: error: Invalid fetch argument
->   Command: p vfs_read arg1="abcd
->                            ^
-> +++ tail -n 1 error_log
-> +++ wc -c
-> ++ N=29
-> +++ expr 13 + 21
-> ++ test 34 -eq 29
+On Wed, 4 Mar 2020 at 20:54, Arvind Sankar <nivedita@alum.mit.edu> wrote:
+>
+> On Wed, Mar 04, 2020 at 08:22:36PM +0100, Ard Biesheuvel wrote:
+> > The wrong one, obviously :-)
+> >
+> > With Haswell, I get [before]
+> >
+> > [    0.368541] 0x0000000000900000-0x0000000000a00000           1M
+> > RW                     NX pte
+> > [    0.369118] 0x0000000000a00000-0x0000000080000000        2038M
+> > RW         PSE         NX pmd
+> > [    0.369592] 0x0000000080000000-0x00000000b9800000         920M
+> >                          pmd
+> > [    0.370177] 0x00000000b9800000-0x00000000b9856000         344K
+> >                          pte
+> ^^ so this is showing the region that didn't get mapped, so you did
+> reproduce the issue.
+> > [    0.370649] 0x00000000b9856000-0x00000000b9a00000        1704K
+> > RW                     NX pte
+> > [    0.371066] 0x00000000b9a00000-0x00000000baa00000          16M
+> > ro         PSE         x  pmd
+> >
+> > and after
+> >
+> > [    0.349577] 0x0000000000a00000-0x0000000080000000        2038M
+> > RW         PSE         NX pmd
+> > [    0.350049] 0x0000000080000000-0x00000000b9800000         920M
+> >                          pmd
+> > [    0.350514] 0x00000000b9800000-0x00000000b9856000         344K
+> >                          pte
+> ^^ but it didn't get fixed :( This region should now be mapped properly
+> with flags RW/NX.
+> > [    0.351013] 0x00000000b9856000-0x00000000b9a00000        1704K
+> > RW                     NX pte
+> >
+> > so i'm still doing something wrong, I think?
+>
+> You're *sure* the after is actually after? There seems to be no change
+> at all, the patch should have had some effect.
 
-Ah, I did miss a couple of backslashes that need to be escaped there.
-The test passes for me without it though, so mabye printf behavior is
-less consistent than I thought.
+Duh.
 
-I'll send a v2, hopefully it will work better for you.
-
-Seth
+Yes, you are right. It was 'operator error'
