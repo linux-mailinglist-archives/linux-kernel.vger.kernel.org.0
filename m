@@ -2,124 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA823178791
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 02:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F74F178786
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 02:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387476AbgCDB0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 20:26:20 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42034 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727985AbgCDB0R (ORCPT
+        id S1728183AbgCDBTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 20:19:41 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:64767 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727865AbgCDBTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 20:26:17 -0500
-Received: by mail-vs1-f67.google.com with SMTP id w142so103300vsw.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 17:26:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O9pD7eTKayKhsYYKw3enP3Cpnqb80umNsGJzDDGsAM4=;
-        b=hDossmiPT5ZsYw2/No/UnWGjFk7tvNCv2mxERrWzKJ2udcQ1LHSUgCZqbpDPpatSe9
-         CsS5IBrOxI5WqEGk50OMnXk1qi7Cx2xaGwn8Y4MCD7gDL88s5hhhs0bmJEcU8zvNhcp0
-         N26ZpQs0UrOayJeWh70iaWxvSBb0pAwI9eYzx4CmScF4n2uJqX0vbIzcCyLA2eQ/JPH7
-         f3F0f/pr3vlw+oZU9kDCRH5y3Xe9HE6a5Cce2mMuDa5Wj0KbxrLs3aLSgXR2ju2HpGJa
-         +duer7EVx2x02EhR1KTZpXzldgOj/IJzlYFsZ/83uEtuv68D4/4xX99ZyNwvmDf+U9zb
-         Q76Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O9pD7eTKayKhsYYKw3enP3Cpnqb80umNsGJzDDGsAM4=;
-        b=R5yGl6dlPm2rSml0Lyu7AIdpyP4NSuIbH/ktuc6wHBjUb3gd3s8FxvDMPL5hfQG/Dp
-         toQXxxcHpOvburrV7QEU/NMcsNX/uOKaBWrwNJ1N+Fr8r0rkYvZTKcswISfOByyFcVG4
-         RjypcSbE5fCXdhpbAq7pyJJbsphJW8uai73RHirkrwWRUOhjIqtFnICB2zG6fA9UPGNA
-         JPSyfU/+gZURKMOe/9hl7pX7JOMjMQS6n97R2X3amv7qfD0R4VD1Xkwx/gYegSWgt2wX
-         tkQdhaj8vUDIN6TaoaeJeO3etYOsZaXTtue43cSvHuj/LkLb9GtE3HeF2JghBvy7kXFd
-         wiXA==
-X-Gm-Message-State: ANhLgQ2JVPHykW2QSi34+l9LiopiDFycAlt6Hm4vmgCf1Ej0mh0iY9PK
-        OJtEQ+jA23v0oWCB/CipGS3QaIt8oI72CLUsxvt5ejgq
-X-Google-Smtp-Source: ADFU+vvZ3G3hJoK+Tptnc6CvVgnHyEoMJ1j7yGPugaq8jQK47/UHTWvcE0MhTcvOFbyI14sWscWpUpwzm4wI4D7mpZQ=
-X-Received: by 2002:a67:f1ca:: with SMTP id v10mr471335vsm.180.1583285175252;
- Tue, 03 Mar 2020 17:26:15 -0800 (PST)
+        Tue, 3 Mar 2020 20:19:40 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Trab3LS_1583284752;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Trab3LS_1583284752)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Mar 2020 09:19:27 +0800
+Subject: Re: [RFC PATCH] sched: fix the nonsense shares when load of cfs_rq is
+ too, small
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+References: <44fa1cee-08db-e4ab-e5ab-08d6fbd421d7@linux.alibaba.com>
+ <20200303195245.GF2596@hirez.programming.kicks-ass.net>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <241603dd-1149-58aa-85cf-43f3da2de43f@linux.alibaba.com>
+Date:   Wed, 4 Mar 2020 09:19:12 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200227210454.18217-1-alistair.francis@wdc.com>
- <20200228095748.uu4sqkz6y477eabc@sirius.home.kraxel.org> <CAKmqyKOTjyRL9vxZrZW8Q+yBM0n-Nw-o-Cn3dUDDfAAa7Nswrg@mail.gmail.com>
- <20200303062437.tjoje5huts6oldrv@sirius.home.kraxel.org>
-In-Reply-To: <20200303062437.tjoje5huts6oldrv@sirius.home.kraxel.org>
-From:   Alistair Francis <alistair23@gmail.com>
-Date:   Tue, 3 Mar 2020 17:18:34 -0800
-Message-ID: <CAKmqyKPEtbDr1kmnyz6FtfU567xxgmxn+F=zH_h8k_m1EN9b5A@mail.gmail.com>
-Subject: Re: [PATCH] drm/bochs: Remove vga write
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     Alistair Francis <alistair.francis@wdc.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        Daniel Vetter <daniel@ffwll.ch>, airlied@linux.ie,
-        Khem Raj <raj.khem@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200303195245.GF2596@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 10:24 PM Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> On Mon, Mar 02, 2020 at 02:14:02PM -0800, Alistair Francis wrote:
-> > On Fri, Feb 28, 2020 at 1:57 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
-> > >
-> > > On Thu, Feb 27, 2020 at 01:04:54PM -0800, Alistair Francis wrote:
-> > > > The QEMU model for the Bochs display has no VGA memory section at offset
-> > > > 0x400 [1]. By writing to this register Linux can create a write to
-> > > > unassigned memory which depending on machine and architecture can result
-> > > > in a store fault.
-> > > >
-> > > > I don't see any reference to this address at OSDev [2] or in the Bochs
-> > > > source code.
-> > > >
-> > > > Removing this write still allows graphics to work inside QEMU with
-> > > > the bochs-display.
-> > >
-> > > It's not that simple.  The driver also handles the qemu stdvga (-device
-> > > VGA, -device secondary-vga) which *does* need the vga port write.
-> > > There is no way for the guest to figure whenever the device is
-> > > secondary-vga or bochs-display.
-> > >
-> > > So how about fixing things on the host side?  Does qemu patch below
-> > > help?
-> >
-> > That patch looks like it will fix the problem, but it doesn't seem
-> > like the correct fix. I would rather avoid adding a large chunk of
-> > dummy I/O to handle the two devices.
->
-> It's just a single handler for the parent mmio region, so we have a
-> defined default action instead of undefined behavior.
->
-> Patch just posted to qemu-devel, lets see what others think ...
 
-Thanks, let's wait and see what happens.
 
->
-> > > Maybe another possible approach is to enable/disable vga access per
-> > > arch.  On x86 this doesn't cause any problems.  I guess you are on
-> > > risc-v?
-> >
-> > I would prefer this option. I do see this on RISC-V, but I suspect the
-> > issue will appear on other architectures (although how they handle I/O
-> > failures in QEMU is a different story).
-> >
-> > Can I just do the VGA write if x86?
->
-> I know ppc needs it too.  Not sure about other architectures.  I'd
-> suggest to do it the other way around: blacklist known-problematic
-> archs.
+On 2020/3/4 上午3:52, Peter Zijlstra wrote:
+[snip]
+>> The reason is because we have group B with shares as 2, which make
+>> the group A 'cfs_rq->load.weight' very small.
+>>
+>> And in calc_group_shares() we calculate shares as:
+>>
+>>   load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
+>>   shares = (tg_shares * load) / tg_weight;
+>>
+>> Since the 'cfs_rq->load.weight' is too small, the load become 0
+>> in here, although 'tg_shares' is 102400, shares of the se which
+>> stand for group A on root cfs_rq become 2.
+> 
+> Argh, because A->cfs_rq.load.weight is B->se.load.weight which is
+> B->shares/nr_cpus.
 
-Argh, that is a little uglier. Let's circle back after receiving
-feedback on the QEMU patch.
+Yeah, that's exactly why it happens, even the share 2 scale up to 2048,
+on 96 CPUs platform, each CPU get only 21 in equal case.
 
-Alistair
+> 
+>> While the se of D on root cfs_rq is far more bigger than 2, so it
+>> wins the battle.
+>>
+>> This patch add a check on the zero load and make it as MIN_SHARES
+>> to fix the nonsense shares, after applied the group C wins as
+>> expected.
+>>
+>> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+>> ---
+>>  kernel/sched/fair.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 84594f8aeaf8..53d705f75fa4 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -3182,6 +3182,8 @@ static long calc_group_shares(struct cfs_rq *cfs_rq)
+>>  	tg_shares = READ_ONCE(tg->shares);
+>>
+>>  	load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
+>> +	if (!load && cfs_rq->load.weight)
+>> +		load = MIN_SHARES;
+>>
+>>  	tg_weight = atomic_long_read(&tg->load_avg);
+> 
+> Yeah, I suppose that'll do. Hurmph, wants a comment though.
+> 
+> But that has me looking at other users of scale_load_down(), and doesn't
+> at least update_tg_cfs_load() suffer the same problem?
 
->
-> cheers,
->   Gerd
->
+Good point :-) I'm not sure but is scale_load_down() supposed to scale small
+value into 0? If not, maybe we should fix the helper to make sure it at
+least return some real load? like:
+
+# define scale_load_down(w) ((w + (1 << SCHED_FIXEDPOINT_SHIFT)) >> SCHED_FIXEDPOINT_SHIFT)
+
+Regards,
+Michael Wang
+
+> 
