@@ -2,108 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70DF117893D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 04:46:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D773178954
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 04:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387667AbgCDDpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 22:45:53 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41874 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387640AbgCDDpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 22:45:53 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v4so557979wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 19:45:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dl4yIvdbNV8zUEZF0iJKHHNN3Cn7sHrjK08gaKgENUM=;
-        b=krmkkN4V5zPIpMl1EPpZRD1webC/631MVKogbzCnK4d3YjLOrLOZDWnsNmM0IRwePB
-         u5+remgX6B5Eyqy3000CS47e+Kuyh/oI4sNBIieCN5H+74G63bcAhvFyKLz5Diq/791C
-         YGVGx3dST5jJ25lsJomJdOvOkADYQmUdBo5j3cDRmtGuXZZ4i8bdxBean3nmBoigyKHL
-         avDmfaDxbG0Zf8KtISwZmadDC0AbpK5ft/vqa+VAqW1axj3EdTP+g7B9C8VgaOhwQvfI
-         WWiwk7Y1or5Hmq42pVli4ci+9t82SN0Y5T0gz2/GbLHlS1Ao2uggNWioPKIkx/A/7OG6
-         BfBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dl4yIvdbNV8zUEZF0iJKHHNN3Cn7sHrjK08gaKgENUM=;
-        b=sVnef/RtGYYA3+d67nQs2k+P02B0EbtjGVb8SjXpgf5Gdbp41I1iMCw5QHsZufMUuB
-         tAI+k/7E1FgEnPIFUWLhEpm1LBOjPax95Dg6s6JRZKP+QCx5DEZYU17eApvmvBt0wVnF
-         O4M4libBKpc4AhWuIYC10qo3ulWe+Yja2gsLCrh0tTSEzEOBj6ErpeNdpbuS/1aI+dqs
-         NfoHerYxEmPqR7xbWP9znBLiUviPUFXCaLBR5Mscsc4rB7qgV8xBXpQ/OKanscafPQgA
-         HLgPmRVyXq9kHk6aTZISPaCQc8UqWmM3zdRuZBXogvGTzaY+eW2KmHifQTIKYdNk6LIg
-         vYeg==
-X-Gm-Message-State: ANhLgQ1t9PQZUEHTJfhA/hlS6CpgYrxk5bxHyhcmIx5h9hH7wfqrwuoH
-        DNMCltquNoOHijaOFDEJIXzF+Dxpf9iMeqUFxjJODA==
-X-Google-Smtp-Source: ADFU+vvJT3jupIF+x5Oj1qF5HLpZyr9Rp5nN4jMR5lQXgXCYyIIUg56PeBlrGlO8WTISClOKWSw3x4YkD0iH1eNa1gA=
-X-Received: by 2002:adf:e90d:: with SMTP id f13mr1649750wrm.0.1583293549186;
- Tue, 03 Mar 2020 19:45:49 -0800 (PST)
+        id S1726300AbgCDD6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 22:58:41 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11141 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725796AbgCDD6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 22:58:41 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 43BDCC901401D4F4FFA7;
+        Wed,  4 Mar 2020 11:58:39 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 4 Mar 2020 11:58:32 +0800
+From:   Zeng Tao <prime.zeng@hisilicon.com>
+To:     <sudeep.holla@arm.com>
+CC:     <linuxarm@huawei.com>, Zeng Tao <prime.zeng@hisilicon.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] cpu-topology: Fix the potential data corruption
+Date:   Wed, 4 Mar 2020 11:54:52 +0800
+Message-ID: <1583294092-5929-1-git-send-email-prime.zeng@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-References: <1582084147-24516-1-git-send-email-yash.shah@sifive.com>
-In-Reply-To: <1582084147-24516-1-git-send-email-yash.shah@sifive.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Wed, 4 Mar 2020 09:15:38 +0530
-Message-ID: <CAAhSdy0jGQ+PZnwjb63Wpu-pyhUWCJdnspNJOwMbYyOxBTnJfQ@mail.gmail.com>
-Subject: Re: [PATCH] riscv: dts: Add GPIO reboot method to HiFive Unleashed
- DTS file
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>, devicetree@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 9:19 AM Yash Shah <yash.shah@sifive.com> wrote:
->
-> Add the ability to reboot the HiFive Unleashed board via GPIO.
->
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+Currently there are only 10 bytes to store the cpu-topology 'name'
+information. Only 10 bytes copied into cluster/thread/core names.
 
-LGTM.
+If the cluster ID exceeds 2-digit number, it will result in the data
+corruption, and ending up in a dead loop in the parsing routines. The
+same applies to the thread names with more that 3-digit number.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+This issue was found using the boundary tests under virtualised
+environment like QEMU.
 
-Regards,
-Anup
+Let us increase the buffer to fix such potential issues.
 
-> ---
->  arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> index 609198c..4a2729f 100644
-> --- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> +++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-> @@ -2,6 +2,7 @@
->  /* Copyright (c) 2018-2019 SiFive, Inc */
->
->  #include "fu540-c000.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
->
->  /* Clock frequency (in Hz) of the PCB crystal for rtcclk */
->  #define RTCCLK_FREQ            1000000
-> @@ -41,6 +42,10 @@
->                 clock-frequency = <RTCCLK_FREQ>;
->                 clock-output-names = "rtcclk";
->         };
-> +       gpio-restart {
-> +               compatible = "gpio-restart";
-> +               gpios = <&gpio 10 GPIO_ACTIVE_LOW>;
-> +       };
->  };
->
->  &uart0 {
-> --
-> 2.7.4
->
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+
+---
+Changelog:
+v1->v2: update the commit message suggested by sudeep.
+---
+ drivers/base/arch_topology.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 6119e11..f489883 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -281,7 +281,7 @@ static int __init get_cpu_for_node(struct device_node *node)
+ static int __init parse_core(struct device_node *core, int package_id,
+ 			     int core_id)
+ {
+-	char name[10];
++	char name[20];
+ 	bool leaf = true;
+ 	int i = 0;
+ 	int cpu;
+@@ -327,7 +327,7 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 
+ static int __init parse_cluster(struct device_node *cluster, int depth)
+ {
+-	char name[10];
++	char name[20];
+ 	bool leaf = true;
+ 	bool has_cores = false;
+ 	struct device_node *c;
+-- 
+2.8.1
+
