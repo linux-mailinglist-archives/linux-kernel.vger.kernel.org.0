@@ -2,94 +2,337 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 609C8179323
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF94B179317
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbgCDPSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:18:01 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51817 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgCDPSB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:18:01 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a132so2531022wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:17:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=sopjCc7otIA/K9Xwe3ZxbD5Bi8I07+57/M1L8O+OwaM=;
-        b=JT+yFrG9MXK0CWi9wNlEWn38es/dbIpTyDQNxE7L50IBo+a0Z59Vr9PBmJWf2pQlYf
-         Ld9jE2RPEnrzM6XhYpUVy7X2/Wt2lEQho9Hu9NuPoccEsIXXTtqhJVq6OHkHHuu19uVZ
-         54/2Chhbmqs10mpJxx3YbDh/bibMCT/vnTKqbnBpwEEYlchraN3BAaNUoBnfM1vA0wl/
-         pLnwvDQNK9m2PreNmN8E4I08FZodaSnMd6hv85O/Fl3UegYSDCB6Rw2XeXwhgZxAsok2
-         tJTilP1QPcclONRmPaKnnF0yCIw8MhWffLDRCyZaueTGEOquP1gsepM/L0YVMT0KUjwi
-         dlvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sopjCc7otIA/K9Xwe3ZxbD5Bi8I07+57/M1L8O+OwaM=;
-        b=HMHbaZwq6pJlZaMUL2OL6g/bUbmjsbS+ZI8MxxQ7IFk0bcytkwSW7ikLtZNcfb43ph
-         6TupNGOhuBbpfaN+PJwtSwQXeyTZk9y/5fd7pAQqXDTAS1BvIJ8zY7k8GdVX/TnVG025
-         UKHxbkoL9V0ePOFrLBL2L4VzE/onpJzN1hdZpf9mElo0+jnLN11Xc2m75DyDfSDxbLMA
-         omAHxbHb+U/mmWeB428jORa35P3KQVVwfW2mKdkVHbGObx/0d6JFjI2wfoG1rXpQzc7a
-         +dtkDZxhL/rDbOnOhUn6Io4efax90vCz+e3FB9cGt0zoTybMrK3fSprugiu0RUKELxdO
-         Q2ng==
-X-Gm-Message-State: ANhLgQ2J7p5Hmj0Q5j6FhyJGHmhxZoDAiUsb4KysEPifD0nOioSPp7vZ
-        QUi+wreCNo2XN8/lcYtEZ0O1yLiG0J8=
-X-Google-Smtp-Source: ADFU+vtW1FpBmeBT0MsPtvoankvYs+ReW52TULHQ9oETJvwPUjfWY0UiRhkGsfvXN/bjsbmXAkv2BA==
-X-Received: by 2002:a1c:4681:: with SMTP id t123mr4246576wma.86.1583335079072;
-        Wed, 04 Mar 2020 07:17:59 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:79d2:4161:5a2e:cf5c])
-        by smtp.gmail.com with ESMTPSA id k126sm4425397wme.4.2020.03.04.07.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 07:17:58 -0800 (PST)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, linux-kernel@vger.kernel.org
-Cc:     pauld@redhat.com, parth@linux.ibm.com, valentin.schneider@arm.com,
-        hdanton@sina.com, zhout@vivaldi.net,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/fair : fix reordering of enqueue_task_fair
-Date:   Wed,  4 Mar 2020 16:17:48 +0100
-Message-Id: <20200304151748.26135-1-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S1729517AbgCDPOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:14:52 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46978 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725795AbgCDPOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 10:14:51 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 07:14:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,514,1574150400"; 
+   d="scan'208";a="240486044"
+Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
+  by orsmga003.jf.intel.com with ESMTP; 04 Mar 2020 07:14:45 -0800
+Date:   Wed, 4 Mar 2020 23:18:15 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        jmattson@google.com, yu.c.zhang@linux.intel.com
+Subject: Re: [PATCH v9 7/7] KVM: X86: Add user-space access interface for CET
+ MSRs
+Message-ID: <20200304151815.GD5831@local-michael-cet-test.sh.intel.com>
+References: <20191227021133.11993-1-weijiang.yang@intel.com>
+ <20191227021133.11993-8-weijiang.yang@intel.com>
+ <20200303222827.GC1439@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303222827.GC1439@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even when a cgroup is throttled, the group se of a child cgroup can still
-be enqueued and its gse->on_rq stays true. When a task is enqueued on such
-child, we still have to update the load_avg and increase h_nr_running of
-the throttled cfs. Nevertheless, the 1st for_each_sched_entity loop is
-skipped because of gse->on_rq == true and the 2nd loop because the cfs is
-throttled whereas we have to update both load_avg with the old
-h_nr_running and increment h_nr_running in such case.
+On Tue, Mar 03, 2020 at 02:28:27PM -0800, Sean Christopherson wrote:
+> Subject should be something like "Enable CET virtualization", or maybe
+> move CPUID changes to a separate final patch?
+>
+OK, let me put the CPUID/CR4.CET into a separate patch.
 
-Note that the update of load_avg will effectively happen only once in order
-to sync with the throttled time. Next call for updating load_avg will stop
-early because the clock stays unchanged.
+> On Fri, Dec 27, 2019 at 10:11:33AM +0800, Yang Weijiang wrote:
+> > There're two different places storing Guest CET states, states
+> > managed with XSAVES/XRSTORS, as restored/saved
+> > in previous patch, can be read/write directly from/to the MSRs.
+> > For those stored in VMCS fields, they're access via vmcs_read/
+> > vmcs_write.
+> > 
+> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> > ---
+> >  arch/x86/include/asm/kvm_host.h |   3 +-
+> >  arch/x86/kvm/cpuid.c            |   5 +-
+> >  arch/x86/kvm/vmx/vmx.c          | 138 ++++++++++++++++++++++++++++++++
+> >  arch/x86/kvm/x86.c              |  11 +++
+> >  4 files changed, 154 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index 64bf379381e4..34140462084f 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -90,7 +90,8 @@
+> >  			  | X86_CR4_PGE | X86_CR4_PCE | X86_CR4_OSFXSR | X86_CR4_PCIDE \
+> >  			  | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_FSGSBASE \
+> >  			  | X86_CR4_OSXMMEXCPT | X86_CR4_LA57 | X86_CR4_VMXE \
+> > -			  | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP))
+> > +			  | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP \
+> > +			  | X86_CR4_CET))
+> >  
+> >  #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
+> >  
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index 126a31b99823..4414bd110f3c 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -385,13 +385,14 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
+> >  		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+> >  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+> >  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+> > -		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/;
+> > +		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | F(SHSTK) |
+> > +		0 /*WAITPKG*/;
+> >  
+> >  	/* cpuid 7.0.edx*/
+> >  	const u32 kvm_cpuid_7_0_edx_x86_features =
+> >  		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+> >  		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+> > -		F(MD_CLEAR);
+> > +		F(MD_CLEAR) | F(IBT);
+> >  
+> >  	/* cpuid 7.1.eax */
+> >  	const u32 kvm_cpuid_7_1_eax_x86_features =
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 0a75b65d03f0..52ac67604026 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -1763,6 +1763,96 @@ static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
+> >  	return 0;
+> >  }
+> >  
+> > +#define CET_MSR_RSVD_BITS_1    0x3
+> > +#define CET_MSR_RSVD_BITS_2   (0xF << 6)
+> 
+> Would it make sense to use GENMASK?
+>
+Yes, will change it. thank you.
 
-Fixes: 6d4d22468dae ("sched/fair: Reorder enqueue/dequeue_task_fair path")
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +static bool cet_ssp_write_allowed(struct kvm_vcpu *vcpu, struct msr_data *msr)
+> > +{
+> > +	u64 data = msr->data;
+> > +	u32 high_word = data >> 32;
+> > +
+> > +	if (is_64_bit_mode(vcpu)) {
+> > +		if (data & CET_MSR_RSVD_BITS_1)
+> 
+> This looks odd.  I assume it should look more like cet_ctl_write_allowed()?
+> E.g.
+> 
+> 	if (data & CET_MSR_RSVD_BITS_1)
+> 		return false;
+> 
+> 	if (!is_64_bit_mode(vcpu) && high_word)
+> 		return false;
+> 
+Correct, this looks much better.
+> > +			return false;
+> > +	} else if (high_word) {
+> > +		return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static bool cet_ctl_write_allowed(struct kvm_vcpu *vcpu, struct msr_data *msr)
+> > +{
+> > +	u64 data = msr->data;
+> > +	u32 high_word = data >> 32;
+> > +
+> > +	if (data & CET_MSR_RSVD_BITS_2)
+> > +		return false;
+> > +
+> > +	if (!is_64_bit_mode(vcpu) && high_word)
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static bool cet_ssp_access_allowed(struct kvm_vcpu *vcpu, struct msr_data *msr)
+> > +{
+> > +	u64 kvm_xss;
+> > +	u32 index = msr->index;
+> > +
+> > +	if (is_guest_mode(vcpu))
+> 
+> Hmm, this seems wrong, e.g. shouldn't WRMSR be allowed if L1 passes the MSR
+> to L2, which is the only way to reach this, if I'm not mistaken.
+> 
+Actually I tried to hide the CET feature from L2 guest, but the code
+was broken for this part, I'm working on this part...
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fcc968669aea..22d827fc46c3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5432,7 +5432,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 		cfs_rq = cfs_rq_of(se);
- 
- 		/* end evaluation on encountering a throttled cfs_rq */
--		if (cfs_rq_throttled(cfs_rq))
-+		if (!se->on_rq && cfs_rq_throttled(cfs_rq))
- 			goto enqueue_throttle;
- 
- 		update_load_avg(cfs_rq, se, UPDATE_TG);
--- 
-2.17.1
+> > +		return false;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SHSTK))
+> > +		return false;
+> > +
+> > +	if (!msr->host_initiated &&
+> > +	    !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
+> > +		return false;
+> > +
+> > +	if (index == MSR_IA32_INT_SSP_TAB)
+> > +		return true;
+> > +
+> > +	kvm_xss = kvm_supported_xss();
+> > +
+> > +	if (index == MSR_IA32_PL3_SSP) {
+> > +		if (!(kvm_xss & XFEATURE_MASK_CET_USER))
+> > +			return false;
+> > +	} else if (!(kvm_xss & XFEATURE_MASK_CET_KERNEL)) {
+> > +		return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static bool cet_ctl_access_allowed(struct kvm_vcpu *vcpu, struct msr_data *msr)
+> > +{
+> > +	u64 kvm_xss;
+> > +	u32 index = msr->index;
+> > +
+> > +	if (is_guest_mode(vcpu))
+> > +		return false;
+> > +
+> > +	kvm_xss = kvm_supported_xss();
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SHSTK) &&
+> > +	    !boot_cpu_has(X86_FEATURE_IBT))
+> > +		return false;
+> > +
+> > +	if (!msr->host_initiated &&
+> > +	    !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) &&
+> > +	    !guest_cpuid_has(vcpu, X86_FEATURE_IBT))
+> > +		return false;
+> > +
+> > +	if (index == MSR_IA32_U_CET) {
+> > +		if (!(kvm_xss & XFEATURE_MASK_CET_USER))
+> > +			return false;
+> > +	} else if (!(kvm_xss & XFEATURE_MASK_CET_KERNEL)) {
+> > +		return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> >  /*
+> >   * Reads an msr value (of 'msr_index') into 'pdata'.
+> >   * Returns 0 on success, non-0 otherwise.
+> > @@ -1886,6 +1976,26 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> >  		else
+> >  			msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
+> >  		break;
+> > +	case MSR_IA32_S_CET:
+> > +		if (!cet_ctl_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		msr_info->data = vmcs_readl(GUEST_S_CET);
+> > +		break;
+> > +	case MSR_IA32_INT_SSP_TAB:
+> > +		if (!cet_ssp_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		msr_info->data = vmcs_readl(GUEST_INTR_SSP_TABLE);
+> > +		break;
+> > +	case MSR_IA32_U_CET:
+> > +		if (!cet_ctl_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		rdmsrl(MSR_IA32_U_CET, msr_info->data);
+> > +		break;
+> > +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> > +		if (!cet_ssp_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		rdmsrl(msr_info->index, msr_info->data);
+> 
+> Ugh, thought of another problem.  If a SoftIRQ runs after an IRQ it can
+> load the kernel FPU state.  So for all the XSAVES MSRs we'll need a helper
+> similar to vmx_write_guest_kernel_gs_base(), except XSAVES has to be even
+> more restrictive and disable IRQs entirely.  E.g.
+> 
+> static void vmx_get_xsave_msr(struct msr_data *msr_info)
+> {
+> 	local_irq_disable();
+> 	if (test_thread_flag(TIF_NEED_FPU_LOAD))
+> 		switch_fpu_return();
+> 	rdmsrl(msr_info->index, msr_info->data);
+> 	local_irq_enable();
+In this case, would SoftIRQ destroy vcpu->arch.guest.fpu states which
+had been restored to XSAVES MSRs that we were accessing? So should we restore
+guest.fpu or? In previous patch, we have restored guest.fpu before
+access the XSAVES MSRs.
 
+> }
+> 
+> > +		break;
+> >  	case MSR_TSC_AUX:
+> >  		if (!msr_info->host_initiated &&
+> >  		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
+> > @@ -2147,6 +2257,34 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> >  		else
+> >  			vmx->pt_desc.guest.addr_a[index / 2] = data;
+> >  		break;
+> > +	case MSR_IA32_S_CET:
+> > +		if (!cet_ctl_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		if (!cet_ctl_write_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		vmcs_writel(GUEST_S_CET, data);
+> > +		break;
+> > +	case MSR_IA32_INT_SSP_TAB:
+> > +		if (!cet_ctl_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		if (!is_64_bit_mode(vcpu))
+> > +			return 1;
+> > +		vmcs_writel(GUEST_INTR_SSP_TABLE, data);
+> > +		break;
+> > +	case MSR_IA32_U_CET:
+> > +		if (!cet_ctl_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		if (!cet_ctl_write_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		wrmsrl(MSR_IA32_U_CET, data);
+> > +		break;
+> > +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> > +		if (!cet_ssp_access_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		if (!cet_ssp_write_allowed(vcpu, msr_info))
+> > +			return 1;
+> > +		wrmsrl(msr_info->index, data);
+> > +		break;
+> >  	case MSR_TSC_AUX:
+> >  		if (!msr_info->host_initiated &&
+> >  		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 6dbe77365b22..7de6faa6aa51 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -1186,6 +1186,10 @@ static const u32 msrs_to_save_all[] = {
+> >  	MSR_ARCH_PERFMON_EVENTSEL0 + 12, MSR_ARCH_PERFMON_EVENTSEL0 + 13,
+> >  	MSR_ARCH_PERFMON_EVENTSEL0 + 14, MSR_ARCH_PERFMON_EVENTSEL0 + 15,
+> >  	MSR_ARCH_PERFMON_EVENTSEL0 + 16, MSR_ARCH_PERFMON_EVENTSEL0 + 17,
+> > +
+> > +	MSR_IA32_XSS, MSR_IA32_U_CET, MSR_IA32_S_CET,
+> > +	MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
+> > +	MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
+> >  };
+> >  
+> >  static u32 msrs_to_save[ARRAY_SIZE(msrs_to_save_all)];
+> > @@ -1468,6 +1472,13 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
+> >  		 * invokes 64-bit SYSENTER.
+> >  		 */
+> >  		data = get_canonical(data, vcpu_virt_addr_bits(vcpu));
+> > +		break;
+> > +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> > +	case MSR_IA32_U_CET:
+> > +	case MSR_IA32_S_CET:
+> > +	case MSR_IA32_INT_SSP_TAB:
+> > +		if (is_noncanonical_address(data, vcpu))
+> > +			return 1;
+> >  	}
+> >  
+> >  	msr.data = data;
+> > -- 
+> > 2.17.2
+> > 
