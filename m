@@ -2,122 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772BC178D7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41225178D93
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:37:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgCDJdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 04:33:44 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:54020 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728744AbgCDJdo (ORCPT
+        id S1729203AbgCDJhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 04:37:40 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48469 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729112AbgCDJhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 04:33:44 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0249IkHl010160;
-        Wed, 4 Mar 2020 04:33:40 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2yfnranteg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Mar 2020 04:33:39 -0500
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 0249Xc30047386
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Wed, 4 Mar 2020 04:33:38 -0500
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 4 Mar 2020 01:33:37 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 4 Mar 2020 01:33:36 -0800
-Received: from saturn.ad.analog.com ([10.48.65.112])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 0249XYC0029310;
-        Wed, 4 Mar 2020 04:33:34 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <mranostay@gmail.com>,
-        <matt.ranostay@konsulko.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH] iio: potentiostat: lmp9100: fix iio_triggered_buffer_{predisable,postenable} positions
-Date:   Wed, 4 Mar 2020 11:36:33 +0200
-Message-ID: <20200304093633.32264-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 4 Mar 2020 04:37:40 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0TrdAbQ3_1583314652;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TrdAbQ3_1583314652)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Mar 2020 17:37:32 +0800
+Subject: Re: [PATCH v9 07/20] mm/lru: introduce TestClearPageLRU
+To:     Rong Chen <rong.a.chen@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        hannes@cmpxchg.org, lkp@intel.com,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <1583146830-169516-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1583146830-169516-8-git-send-email-alex.shi@linux.alibaba.com>
+ <20200302141144.b30abe0d89306fd387e13a92@linux-foundation.org>
+ <9cacdc21-9c1f-2a17-05cb-e9cf2959cef5@linux.alibaba.com>
+ <20200303164659.b3a30ab9d68c9ed82299a29c@linux-foundation.org>
+ <6d155f79-8ba2-b322-4e92-311e7be98f79@linux.alibaba.com>
+ <20200304090301.GB5972@shao2-debian>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <60d253bb-33d0-4328-bfde-3b7c26435cde@linux.alibaba.com>
+Date:   Wed, 4 Mar 2020 17:37:31 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-04_01:2020-03-03,2020-03-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=933 bulkscore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
- malwarescore=0 clxscore=1011 spamscore=0 phishscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003040073
+In-Reply-To: <20200304090301.GB5972@shao2-debian>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The iio_triggered_buffer_{predisable,postenable} functions attach/detach
-the poll functions.
 
-For the predisable hook, the disable code should occur before detaching
-the poll func, and for the postenable hook, the poll func should be
-attached before the enable code.
 
-The lmp9100 was attaching a poll function but never detaching it via any
-IIO disable hook.
+在 2020/3/4 下午5:03, Rong Chen 写道:
+>> Hi Andrew,
+>>
+>> Thanks a lot for comments!
+>> Yes, this patch is essential for all next.
+>>
+>> Consider the normal memory testing would focus on user page, that probabably with PageLRU. 
+>>
+>> Fengguang's vm-scalibicase-small-allocs which used a lots vm_area_struct slab, which may
+>> got some impact. 0day/Cheng Rong is working on the test. In my roughly testing, it may drop 5% on my
+>> 96threads/394GB machine.
+>>
+>> Thanks
+>> Alex
+> Hi,
+> 
+> We only tested one case and found a slight regression of vm-scalability.median from this patch set:
+> 
+> Test case: small allocs
+> =========================================================================================
+> compiler/cpufreq_governor/kconfig/rootfs/runtime/tbox_group/test/testcase/ucode:
+>   gcc-7/performance/x86_64-rhel-7.6/debian-x86_64-20191114.cgz/300s/lkp-ivb-d02/small-allocs/vm-scalability/0x21
 
-This change adds the detaching of the poll function, and moves/renames
-lmp91000_buffer_preenable() function to lmp91000_buffer_postenable().
-The idea is to make it more symmetrical, so that when the
-iio_triggered_buffer_{predisable,postenable} functions get removed, it's
-easier to see.
+It's a very acceptable result!
 
-Fixes: 67e17300dc1d7 ("iio: potentiostat: add LMP91000 support")
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/potentiostat/lmp91000.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Thanks a lot for so quick testing! I believe your results would be far more stable than me. :)
 
-diff --git a/drivers/iio/potentiostat/lmp91000.c b/drivers/iio/potentiostat/lmp91000.c
-index a0e5f530faa9..72c814fd63a7 100644
---- a/drivers/iio/potentiostat/lmp91000.c
-+++ b/drivers/iio/potentiostat/lmp91000.c
-@@ -275,11 +275,16 @@ static int lmp91000_buffer_cb(const void *val, void *private)
- static const struct iio_trigger_ops lmp91000_trigger_ops = {
- };
- 
--static int lmp91000_buffer_preenable(struct iio_dev *indio_dev)
-+static int lmp91000_buffer_postenable(struct iio_dev *indio_dev)
- {
- 	struct lmp91000_data *data = iio_priv(indio_dev);
-+	int err;
- 
--	return iio_channel_start_all_cb(data->cb_buffer);
-+	err = iio_channel_start_all_cb(data->cb_buffer);
-+	if (err)
-+		iio_triggered_buffer_predisable(indio_dev);
-+
-+	return err;
- }
- 
- static int lmp91000_buffer_predisable(struct iio_dev *indio_dev)
-@@ -288,12 +293,11 @@ static int lmp91000_buffer_predisable(struct iio_dev *indio_dev)
- 
- 	iio_channel_stop_all_cb(data->cb_buffer);
- 
--	return 0;
-+	return iio_triggered_buffer_predisable(indio_dev);
- }
- 
- static const struct iio_buffer_setup_ops lmp91000_buffer_setup_ops = {
--	.preenable = lmp91000_buffer_preenable,
--	.postenable = iio_triggered_buffer_postenable,
-+	.postenable = lmp91000_buffer_postenable,
- 	.predisable = lmp91000_buffer_predisable,
- };
- 
--- 
-2.20.1
+(My testing show quit different result in 2 reboot(1.3% or 6.6% drop). Maybe sth wrong for me in this case.)
 
+Thanks for your report!
+Alex
