@@ -2,165 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D65178E58
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E609178E72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbgCDK2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:28:54 -0500
-Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:59994 "EHLO
-        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728969AbgCDK2x (ORCPT
+        id S2387780AbgCDKbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:31:35 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44817 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbgCDKbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:28:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id E90D0404FE;
-        Wed,  4 Mar 2020 11:28:51 +0100 (CET)
-Authentication-Results: pio-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Vp2NlkyK;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uOqXNY853LJq; Wed,  4 Mar 2020 11:28:50 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id A1AFC40519;
-        Wed,  4 Mar 2020 11:28:50 +0100 (CET)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 0281C362DAE;
-        Wed,  4 Mar 2020 11:28:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1583317729; bh=J0csJtJzFzASFDy4326l66VL08ywOKVC8Fi2u7EkHTo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vp2NlkyKSL5Wyly/KMrxFkAg4Xr52zc8y1jtjI3InujE/rjClhS07d+9PYvjJchcz
-         CI9PKtsmvhOWT4ZfA32805OXT1ba+Zu1XDKia1qZGhQyF6wfydbuCwC+m8QXPjfPS4
-         kTyAVIxeC55zA/weEyYIhgEOkFZ9b4TK+ZkTf1Vs=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Roland Scheidegger <sroland@vmware.com>
-Subject: [PATCH v6 9/9] drm/vmwgfx: Hook up the helpers to align buffer objects
-Date:   Wed,  4 Mar 2020 11:28:40 +0100
-Message-Id: <20200304102840.2801-10-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200304102840.2801-1-thomas_os@shipmail.org>
-References: <20200304102840.2801-1-thomas_os@shipmail.org>
+        Wed, 4 Mar 2020 05:31:34 -0500
+Received: from 79.184.237.41.ipv4.supernova.orange.pl (79.184.237.41) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id f2ea0c19e76830b0; Wed, 4 Mar 2020 11:31:32 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH] cpuidle-haltpoll: allow force loading on hosts without the REALTIME hint
+Date:   Wed, 04 Mar 2020 11:31:31 +0100
+Message-ID: <2118832.28snYOIflM@kreacher>
+In-Reply-To: <75d483b5-8edf-efb1-9642-ca367e2f1423@maciej.szmigiero.name>
+References: <20200221174331.1480468-1-mail@maciej.szmigiero.name> <75d483b5-8edf-efb1-9642-ca367e2f1423@maciej.szmigiero.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+On Friday, February 28, 2020 6:10:18 PM CET Maciej S. Szmigiero wrote:
+> A friendly ping here.
+> 
+> Maciej
+> 
+> On 21.02.2020 18:43, Maciej S. Szmigiero wrote:
+> > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+> > 
+> > Before commit 1328edca4a14 ("cpuidle-haltpoll: Enable kvm guest polling
+> > when dedicated physical CPUs are available") the cpuidle-haltpoll driver
+> > could also be used in scenarios when the host does not advertise the
+> > KVM_HINTS_REALTIME hint.
+> > 
+> > While the behavior introduced by the aforementioned commit makes sense as
+> > the default there are cases where the old behavior is desired, for example,
+> > when other kernel changes triggered by presence by this hint are unwanted,
+> > for some workloads where the latency benefit from polling overweights the
+> > loss from idle CPU capacity that otherwise would be available, or just when
+> > running under older Qemu versions that lack this hint.
+> > 
+> > Let's provide a typical "force" module parameter that allows restoring the
+> > old behavior.
+> > 
+> > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+> > ---
+> >  drivers/cpuidle/cpuidle-haltpoll.c | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
+> > index b0ce9bc78113..07e5b36076bb 100644
+> > --- a/drivers/cpuidle/cpuidle-haltpoll.c
+> > +++ b/drivers/cpuidle/cpuidle-haltpoll.c
+> > @@ -18,6 +18,11 @@
+> >  #include <linux/kvm_para.h>
+> >  #include <linux/cpuidle_haltpoll.h>
+> >  
+> > +static bool force __read_mostly;
+> > +module_param(force, bool, 0444);
+> > +MODULE_PARM_DESC(force,
+> > +		 "Load even if the host does not provide the REALTIME hint");
 
-Start using the helpers that align buffer object user-space addresses and
-buffer object vram addresses to huge page boundaries.
-This is to improve the chances of allowing huge page-table entries.
+Why not to say "Load unconditionally" here?
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Roland Scheidegger <sroland@vmware.com>
-Acked-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/drm_file.c                 |  1 +
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        | 13 +++++++++++++
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h        |  1 +
- drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c |  2 +-
- 4 files changed, 16 insertions(+), 1 deletion(-)
+As is, one needs to know what "the REALTIME hint" is to understand it.
 
-diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-index 77e691202b52..b29a72b68068 100644
---- a/drivers/gpu/drm/drm_file.c
-+++ b/drivers/gpu/drm/drm_file.c
-@@ -935,4 +935,5 @@ unsigned long drm_get_unmapped_area(struct file *file,
- 	return current->mm->get_unmapped_area(file, uaddr, len, pgoff, flags);
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-+EXPORT_SYMBOL_GPL(drm_get_unmapped_area);
- #endif /* CONFIG_MMU */
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 827458f49112..77d85bc54ef0 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -1223,6 +1223,18 @@ static void vmw_remove(struct pci_dev *pdev)
- 	pci_disable_device(pdev);
- }
- 
-+static unsigned long
-+vmw_get_unmapped_area(struct file *file, unsigned long uaddr,
-+		      unsigned long len, unsigned long pgoff,
-+		      unsigned long flags)
-+{
-+	struct drm_file *file_priv = file->private_data;
-+	struct vmw_private *dev_priv = vmw_priv(file_priv->minor->dev);
-+
-+	return drm_get_unmapped_area(file, uaddr, len, pgoff, flags,
-+				     &dev_priv->vma_manager);
-+}
-+
- static int vmwgfx_pm_notifier(struct notifier_block *nb, unsigned long val,
- 			      void *ptr)
- {
-@@ -1394,6 +1406,7 @@ static const struct file_operations vmwgfx_driver_fops = {
- 	.compat_ioctl = vmw_compat_ioctl,
- #endif
- 	.llseek = noop_llseek,
-+	.get_unmapped_area = vmw_get_unmapped_area,
- };
- 
- static struct drm_driver driver = {
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index fe5b7293b8d1..4853bd95bf54 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -929,6 +929,7 @@ extern int vmw_mmap(struct file *filp, struct vm_area_struct *vma);
- 
- extern void vmw_validation_mem_init_ttm(struct vmw_private *dev_priv,
- 					size_t gran);
-+
- /**
-  * TTM buffer object driver - vmwgfx_ttm_buffer.c
-  */
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-index d8ea3dd10af0..34c721ab3ff3 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
-@@ -754,7 +754,7 @@ static int vmw_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
- 		break;
- 	case TTM_PL_VRAM:
- 		/* "On-card" video ram */
--		man->func = &ttm_bo_manager_func;
-+		man->func = &vmw_thp_func;
- 		man->gpu_offset = 0;
- 		man->flags = TTM_MEMTYPE_FLAG_FIXED | TTM_MEMTYPE_FLAG_MAPPABLE;
- 		man->available_caching = TTM_PL_FLAG_CACHED;
--- 
-2.21.1
+> > +
+> >  static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
+> >  static enum cpuhp_state haltpoll_hp_state;
+> >  
+> > @@ -90,6 +95,11 @@ static void haltpoll_uninit(void)
+> >  	haltpoll_cpuidle_devices = NULL;
+> >  }
+> >  
+> > +static bool haltpool_want(void)
+> > +{
+> > +	return kvm_para_has_hint(KVM_HINTS_REALTIME) || force;
+> > +}
+> > +
+> >  static int __init haltpoll_init(void)
+> >  {
+> >  	int ret;
+> > @@ -102,7 +112,7 @@ static int __init haltpoll_init(void)
+> >  	cpuidle_poll_state_init(drv);
+> >  
+> >  	if (!kvm_para_available() ||
+> > -		!kvm_para_has_hint(KVM_HINTS_REALTIME))
+> > +	    !haltpool_want())
+
+And you don't need to break this line.
+
+> >  		return -ENODEV;
+> >  
+> >  	ret = cpuidle_register_driver(drv);
+> > 
+> 
+> 
+
+Thanks!
+
+
 
