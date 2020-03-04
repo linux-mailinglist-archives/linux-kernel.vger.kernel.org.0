@@ -2,229 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10F89178A02
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5D85178A32
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:25:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725948AbgCDFWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 00:22:52 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49341 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbgCDFWw (ORCPT
+        id S1726254AbgCDFZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 00:25:50 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:39158 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbgCDFZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 00:22:52 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1j9MUO-0005cz-Uc; Wed, 04 Mar 2020 06:22:36 +0100
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1j9MUN-0005kn-F5; Wed, 04 Mar 2020 06:22:35 +0100
-Date:   Wed, 4 Mar 2020 06:22:35 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Biwen Li <biwen.li@nxp.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        Clark Wang <xiaoning.wang@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Jiafei Pan <jiafei.pan@nxp.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [EXT] Re: [v6] i2c: imx: support slave mode for imx I2C driver
-Message-ID: <20200304052235.mvpjqa2u56joew3r@pengutronix.de>
-References: <20191203114809.21226-1-biwen.li@nxp.com>
- <20191204100005.r56huywxa7h3c6zr@pengutronix.de>
- <9a1a00c1-e9fa-36a1-0e79-3492d9b98d9f@pengutronix.de>
- <DB7PR04MB4490D8434B77DE285A9518448FE50@DB7PR04MB4490.eurprd04.prod.outlook.com>
+        Wed, 4 Mar 2020 00:25:50 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j9MXV-0007tb-6m; Tue, 03 Mar 2020 22:25:49 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j9MXU-0001BC-FT; Tue, 03 Mar 2020 22:25:49 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200223011154.GY23230@ZenIV.linux.org.uk>
+        <20200301215125.GA873525@ZenIV.linux.org.uk>
+        <CAHk-=wh1Q=H-YstHZRKfEw2McUBX2_TfTc=+5N-iH8DSGz44Qg@mail.gmail.com>
+        <20200302003926.GM23230@ZenIV.linux.org.uk>
+        <87o8tdgfu8.fsf@x220.int.ebiederm.org>
+        <20200304002434.GO23230@ZenIV.linux.org.uk>
+Date:   Tue, 03 Mar 2020 23:23:39 -0600
+In-Reply-To: <20200304002434.GO23230@ZenIV.linux.org.uk> (Al Viro's message of
+        "Wed, 4 Mar 2020 00:24:34 +0000")
+Message-ID: <87wo80g0bo.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DB7PR04MB4490D8434B77DE285A9518448FE50@DB7PR04MB4490.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 06:19:12 up 109 days, 20:37, 124 users,  load average: 0.07, 0.06,
- 0.02
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-XM-SPF: eid=1j9MXU-0001BC-FT;;;mid=<87wo80g0bo.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/UTv8fSOWm0P3BimXgYvHzkz1l3lFMik8=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
+        T_TooManySym_01 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4790]
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 279 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 4.0 (1.4%), b_tie_ro: 2.8 (1.0%), parse: 1.34
+        (0.5%), extract_message_metadata: 23 (8.4%), get_uri_detail_list: 2.3
+        (0.8%), tests_pri_-1000: 25 (9.0%), tests_pri_-950: 1.58 (0.6%),
+        tests_pri_-900: 1.23 (0.4%), tests_pri_-90: 24 (8.6%), check_bayes: 22
+        (8.1%), b_tokenize: 8 (2.7%), b_tok_get_all: 7 (2.4%), b_comp_prob:
+        2.8 (1.0%), b_tok_touch_all: 2.9 (1.1%), b_finish: 0.76 (0.3%),
+        tests_pri_0: 177 (63.5%), check_dkim_signature: 0.56 (0.2%),
+        check_dkim_adsp: 2.4 (0.8%), poll_dns_idle: 0.84 (0.3%), tests_pri_10:
+        4.2 (1.5%), tests_pri_500: 12 (4.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v3)
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Biwen,
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-On Wed, Mar 04, 2020 at 04:13:03AM +0000, Biwen Li wrote:
-> Hi Wolfram,
-> 
-> Any comments?
+> On Tue, Mar 03, 2020 at 05:48:31PM -0600, Eric W. Biederman wrote:
+>
+>> > I hope it gets serious beating, though - it touches pretty much every
+>> > codepath in pathname resolution.  Is there any way to sic the bots on
+>> > a branch, short of "push it into -next and wait for screams"?
+>> 
+>> Last I looked pushing a branch to kernel.org was enough for the
+>> kbuild bots.  Sending patches to LKML is also enough for those bots.
+>> 
+>> I don't know if that kind of bot is what you need testing your code.
+>
+> Build bots are generally nice, but in this case... pretty much all of
+> the changes are in fs/namei.c, which is not all that sensitive to
+> config/architecture/whatnot.  Sure, something like "is audit enabled?"
+> may affect the build problems, but not much beyond that.
+>
+> What was that Intel-run(?) bot that posts "such-and-such metrics has
+> 42% regression on such-and-such commit" from time to time?
+> <checks>
+> Subject: [locking/qspinlock] 7b6da71157: unixbench.score 8.4% improvement
+> seems to be the latest of that sort,
+> From: kernel test robot <rong.a.chen@intel.com>
+>
+> Not sure how much of pathwalk-heavy loads is covered by profiling
+> bots of that sort, unfortunately... ;-/
 
-Wolfram is waiting until you react to our comments. Until this is not
-happened, I will not ACK this patch and Wolfram will not take it.
+Do the xfs-tests cover that sort of thing?
+The emphasis is stress testing the filesystem not the VFS but there is a
+lot of overlap between the two.
 
-regards,
-Oleksij
+Eric
 
-> Best Regards,
-> Biwen Li
-> 
-> > 
-> > Hi,
-> > 
-> > On 04.12.19 11:00, Sascha Hauer wrote:
-> > > Hi,
-> > >
-> > > The patch looks ok to me now, but I still do not like the #ifdeffery
-> > > around CONFIG_I2C_SLAVE. With the patch I just sent (You are on Cc:)
-> > > we could apply the following on your patch which makes it more
-> > > readable and increases compile coverage.
-> > >
-> > > Wolfram, Biwen, what do you think?
-> > 
-> > 
-> > RCAR depends on slave:
-> > config I2C_RCAR
-> > 
-> >          tristate "Renesas R-Car I2C Controller"
-> > 
-> >          depends on ARCH_RENESAS || COMPILE_TEST
-> > 
-> >          select I2C_SLAVE
-> > see:
-> > drivers/i2c/busses/i2c-rcar.c
-> > 
-> > So, I would suggest to do the same in imx.
-> > 
-> > So far, I tested this patch on iMX6S. It works in one board (i2c-gpio + i2c-imx)
-> > and two board (i2c-imx + i2c-imx) configuration.
-> > Tested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > 
-> > 
-> > >
-> > > Sascha
-> > >
-> > > ---------------------------8<------------------------------
-> > >
-> > >  From 52f7c2bf59db61d4b27b59ca6404136e3ed77310 Mon Sep 17
-> > 00:00:00
-> > > 2001
-> > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > Date: Wed, 4 Dec 2019 10:56:34 +0100
-> > > Subject: [PATCH] fixup! i2c: imx: support slave mode for imx I2C
-> > > driver
-> > >
-> > > ---
-> > >   drivers/i2c/busses/i2c-imx.c | 21 ++++++++++-----------
-> > >   1 file changed, 10 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/drivers/i2c/busses/i2c-imx.c
-> > > b/drivers/i2c/busses/i2c-imx.c index 40ccfca600bf..c5d9ae8226cd 100644
-> > > --- a/drivers/i2c/busses/i2c-imx.c
-> > > +++ b/drivers/i2c/busses/i2c-imx.c
-> > > @@ -203,9 +203,7 @@ struct imx_i2c_struct {
-> > >       struct pinctrl_state *pinctrl_pins_gpio;
-> > >
-> > >       struct imx_i2c_dma      *dma;
-> > > -#if IS_ENABLED(CONFIG_I2C_SLAVE)
-> > >       struct i2c_client       *slave;
-> > > -#endif
-> > >   };
-> > >
-> > >   static const struct imx_i2c_hwdata imx1_i2c_hwdata = { @@ -913,12
-> > > +911,10 @@ static int i2c_imx_xfer(struct i2c_adapter *adapter,
-> > >
-> > >       dev_dbg(&i2c_imx->adapter.dev, "<%s>\n", __func__);
-> > >
-> > > -#if IS_ENABLED(CONFIG_I2C_SLAVE)
-> > >       if (i2c_imx->slave) {
-> > >               dev_err(&i2c_imx->adapter.dev, "Please not do operations
-> > of master mode in slave mode");
-> > >               return -EBUSY;
-> > >       }
-> > > -#endif
-> > >
-> > >       result = pm_runtime_get_sync(i2c_imx->adapter.dev.parent);
-> > >       if (result < 0)
-> > > @@ -1068,7 +1064,6 @@ static u32 i2c_imx_func(struct i2c_adapter
-> > *adapter)
-> > >               | I2C_FUNC_SMBUS_READ_BLOCK_DATA;
-> > >   }
-> > >
-> > > -#if IS_ENABLED(CONFIG_I2C_SLAVE)
-> > >   static int i2c_imx_slave_init(struct imx_i2c_struct *i2c_imx)
-> > >   {
-> > >       int temp;
-> > > @@ -1159,6 +1154,10 @@ static int i2c_imx_reg_slave(struct i2c_client
-> > *client)
-> > >   {
-> > >       struct imx_i2c_struct *i2c_imx = i2c_get_adapdata(client->adapter);
-> > >       int ret;
-> > > +
-> > > +     if (!IS_ENABLED(CONFIG_I2C_SLAVE))
-> > > +             return -EINVAL;
-> > > +
-> > >       if (i2c_imx->slave)
-> > >               return -EBUSY;
-> > >
-> > > @@ -1173,6 +1172,9 @@ static int i2c_imx_unreg_slave(struct i2c_client
-> > *client)
-> > >   {
-> > >       struct imx_i2c_struct *i2c_imx =
-> > > i2c_get_adapdata(client->adapter);
-> > >
-> > > +     if (!IS_ENABLED(CONFIG_I2C_SLAVE))
-> > > +             return -EINVAL;
-> > > +
-> > >       if (!i2c_imx->slave)
-> > >               return -EINVAL;
-> > >
-> > > @@ -1188,15 +1190,12 @@ static int i2c_imx_unreg_slave(struct
-> > > i2c_client *client)
-> > >
-> > >       return 0;
-> > >   }
-> > > -#endif
-> > >
-> > >   static const struct i2c_algorithm i2c_imx_algo = {
-> > >       .master_xfer    = i2c_imx_xfer,
-> > >       .functionality  = i2c_imx_func,
-> > > -#if IS_ENABLED(CONFIG_I2C_SLAVE)
-> > >       .reg_slave      = i2c_imx_reg_slave,
-> > >       .unreg_slave    = i2c_imx_unreg_slave,
-> > > -#endif
-> > >   };
-> > >
-> > >   static irqreturn_t i2c_imx_isr(int irq, void *dev_id) @@ -1208,10
-> > > +1207,10 @@ static irqreturn_t i2c_imx_isr(int irq, void *dev_id)
-> > >
-> > >       if (status & I2SR_IIF) {
-> > >               i2c_imx_clr_if_bit(status, i2c_imx); -#if
-> > > IS_ENABLED(CONFIG_I2C_SLAVE)
-> > > -             if (i2c_imx->slave)
-> > > +
-> > > +             if (IS_ENABLED(CONFIG_I2C_SLAVE) && i2c_imx->slave)
-> > >                       return i2c_imx_slave_isr(i2c_imx); -#endif
-> > > +
-> > >               i2c_imx->i2csr = status;
-> > >               return i2c_imx_master_isr(i2c_imx);
-> > >       }
-> > >
-> > 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
