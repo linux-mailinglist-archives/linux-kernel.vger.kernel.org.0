@@ -2,247 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E5D179693
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:21:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C513B17969B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387969AbgCDRV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:21:29 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11492 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbgCDRV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:21:29 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e5fe3420000>; Wed, 04 Mar 2020 09:20:02 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 04 Mar 2020 09:21:26 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 04 Mar 2020 09:21:26 -0800
-Received: from [10.2.174.88] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Mar
- 2020 17:21:25 +0000
-Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Jon Hunter <jonathanh@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        <lkft-triage@lists.linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kishon <kishon@ti.com>
-References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
- <CAPDyKFqqhxC-pmV_j8PLY-D=AbqCAbiipAAHXLpJ4N_BiYYOFw@mail.gmail.com>
- <CA+G9fYugQuAERqp3VXUFG-3QxXoF8bz7OSMh6WGSZcrGkbfDSQ@mail.gmail.com>
- <CAPDyKFo-vEO7zN_F+NqcKtnKmAo_deOZx3gYNiks3yTAQAjv-Q@mail.gmail.com>
- <a602a27a-b960-ce56-c541-3b4b95f5dce2@nvidia.com>
- <CAPDyKFrXQgtHa4gLaKUi_F0rs4FMBai3Y_+TcHZR_zpkb0B4QQ@mail.gmail.com>
- <6523119a-50ac-973a-d1cd-ab1569259411@nvidia.com>
- <f960aa98-5508-36fd-166d-7f41c7d85154@nvidia.com>
- <CAPDyKFokE6x0mn+v5B9=so-SyrdTn0JBU8Mrp3Zdu6kSaCie2g@mail.gmail.com>
- <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com>
- <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
- <34fd84d7-387b-b6f3-7fb3-aa490909e205@ti.com>
- <CAPDyKFrrO4noYqdxWL9Y8Nx75LopbDudKGMotkGbGcAF1oq==w@mail.gmail.com>
- <5e9b5646-bd48-e55b-54ee-1c2c41fc9218@nvidia.com>
- <CAPDyKFqpNo_4OePBR1KnJNO=kR8XEqbcsEd=icSceSdDH+Rk1Q@mail.gmail.com>
- <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com>
-Message-ID: <d12fe142-7e72-ab58-33ab-17817e35096f@nvidia.com>
-Date:   Wed, 4 Mar 2020 09:21:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729923AbgCDRW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:22:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbgCDRW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 12:22:28 -0500
+Received: from linux-8ccs (p5B2812F9.dip0.t-ipconnect.de [91.40.18.249])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F0D424654;
+        Wed,  4 Mar 2020 17:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583342547;
+        bh=3CPV+AsSdS5WdEO5Ob/fxquNaWSN/KrsHEiHs0jjZvw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KZmGdI1lM65i4Af/w+Zj502oECNTgmrJ6NenC+brcuNvJFNY5Eqeyxpn7nk8OYgwf
+         0bZHo3E/zytCTAXfneKSrfkP5TF/FrfZVz5Wuih6wFibGWmsX3vAinpmSd8R31WOfR
+         D86ehJv6lr7Xq9sY+AqkE4QF8VXxumBH7w6+0eEo=
+Date:   Wed, 4 Mar 2020 18:22:23 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Matthias Maennich <maennich@google.com>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] modpost: move the namespace field in Module.symvers last
+Message-ID: <20200304172221.GB14910@linux-8ccs>
+References: <20200304170345.21218-1-jeyu@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1583342402; bh=GbIgVd9O1kr8mo1qAwm+UniwG4p7RDJ1M3R1py2qnEQ=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=ItRdHG/GUs5Xjr4rXBVbx70+gqFdHfKfdcABCqCrZ2AfyK6nZsjHAyCLZhcdcsTE1
-         jkGa0MKRfqebbV2lUVtSfeF/pTQZ3c6s0j+KprLrL7/KKxlWH/FekdNQhqYJ0hkSSU
-         DEQHOQXcpThpwdksFcuzGYSKyigRAmwLDRVbgUEDCZ8pEAXsQe0JdLa811KDv77Dlb
-         47gMGj6BRQ3cuA5kdQibHcNKqT8aKppP0obXsx0pj8v5NdsEc9yJR7BFW8u4vT45Jx
-         qlCOqrdEuBnuVAA5XflUoAa9w6ptGGZZ47MqLbFrUehwZh2qLWwkW0wsH3vszqM7ED
-         NhRae+ZwW8XuA==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200304170345.21218-1-jeyu@kernel.org>
+X-OS:   Linux linux-8ccs 5.5.0-lp150.12.61-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++++ Jessica Yu [04/03/20 18:03 +0100]:
+>In order to preserve backwards compatability with kmod tools, we have to
+>move the namespace field in Module.symvers last, as the depmod -e -E
+>option looks at the first three fields in Module.symvers to check symbol
+>versions (and it's expected they stay in the original order of crc,
+>symbol, module).
+>
+>Fixes: cb9b55d21fe0 ("modpost: add support for symbol namespaces")
+>Cc: stable@vger.kernel.org
+>Signed-off-by: Jessica Yu <jeyu@kernel.org>
 
-On 3/4/20 8:56 AM, Sowjanya Komatineni wrote:
+First, I apologize for not having caught this mistake earlier. I still
+have questions about the Module.symvers format, please see below.
+
+>---
+> Documentation/kbuild/modules.rst |  4 ++--
+> scripts/export_report.pl         |  2 +-
+> scripts/mod/modpost.c            | 24 ++++++++++++------------
+> 3 files changed, 15 insertions(+), 15 deletions(-)
 >
-> On 3/4/20 2:18 AM, Ulf Hansson wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> [...]
->>
->>> So, from my side, me and Anders Roxell, have been collaborating on
->>> testing the behaviour on a TI Beagleboard x15 (remotely with limited
->>> debug options), which is using the sdhci-omap variant. I am trying to
->>> get hold of an Nvidia jetson-TX2, but not found one yet. These are the
->>> conclusions from the observed behaviour on the Beagleboard for the
->>> CMD6 cache flush command.
->>>
->>> First, the reported host->max_busy_timeout is 2581 (ms) for the
->>> sdhci-omap driver in this configuration.
->>>
->>> 1. As we all know by now, the cache flush command (CMD6) fails with
->>> -110 currently. This is when MMC_CACHE_FLUSH_TIMEOUT_MS is set to 30 *
->>> 1000 (30s), which means __mmc_switch() drops the MMC_RSP_BUSY flag
->>> from the command.
->>>
->>> 2. Changing the MMC_CACHE_FLUSH_TIMEOUT_MS to 2000 (2s), means that
->>> the MMC_RSP_BUSY flag becomes set by __mmc_switch, because of the
->>> timeout_ms parameter is less than max_busy_timeout (2000 < 2581).
->>> Then everything works fine.
->>>
->>> 3. Updating the code to again use 30s as the
->>> MMC_CACHE_FLUSH_TIMEOUT_MS, but instead forcing the MMC_RSP_BUSY to be
->>> set, even when the timeout_ms becomes greater than max_busy_timeout.
->>> This also works fine.
->>>
->>> Clearly this indicates a problem that I think needs to be addressed in
->>> the sdhci driver. However, of course I can revert the three discussed
->>> patches to fix the problem, but that would only hide the issues and I
->>> am sure we would then get back to this issue, sooner or later.
->>>
->>> To fix the problem in the sdhci driver, I would appreciate if someone
->>> from TI and Nvidia can step in to help, as I don't have the HW on my
->>> desk.
->>>
->>> Comments or other ideas of how to move forward?
->> [...]
->>
->>> Hi Ulf,
->>>
->>> I could repro during suspend on Jetson TX1/TX2 as when it does mmc 
->>> flush cache.
->> Okay, great.
->>
->>>
->>> Timeout I see is for switch status CMD13 after sending CMD6 as 
->>> device side CMD6 is still inflight while host sends CMD13 as we are 
->>> using R1 response type with timeout_ms changes to 30s.
->>>
->>>
->>>
->>> Earlier we used timeout_ms of 0 for CMD6 flush cache, and with it 
->>> uses R1B response type and host will wait for busy state followed by 
->>> response from device for CMD6 and then data lines go High.
->>>
->>>
->>>
->>> Now with timeout_ms changed to 30s, we use R1 response and SW waits 
->>> for busy by checking for DAT0 line to go High.
->> If I understand correctly, because of the timeout now set to 30s,
->> MMC_RSP_BUSY becomes disabled in __mmc_switch() for your case in
->> sdhci-tegra as well?
-> Yes
->>
->> In other words, mmc_poll_for_busy() is being called, which in your
->> case means the ->card_busy() host ops (set to sdhci_card_busy() in
->> your case) will be invoked to wait for the card to stop signal busy on
->> DAT0.
->>
->> This indicates to me, that the ->card_busy() ops returns zero to
->> inform that the card is *not* busy, even if the card actually signals
->> busy? Is that correct?
-> Yes
->>
->>>
->>>
->>> With R1B type, host design after sending command at end of 
->>> completion after end bit waits for 2 cycles for data line to go low 
->>> (busy state from device) and waits for response cycles after which 
->>> data lines will go back high and then we issue switch status CMD13.
->>>
->>>
->>>
->>> With R1 type, host after sending command and at end of completion 
->>> after end bit, DATA lines will go high immediately as its R1 type 
->>> and switch status CMD13 gets issued but by this time it looks like 
->>> CMD6 on device side is still in flight for sending status and data.
->> So, yes, using R1 instead of R1B triggers a different behaviour, but
->> according to the eMMC spec it's perfectly allowed to issue a CMD13
->> even if the card signals busy on DAT0. The CMD13 is not using the DATA
->> lines, so this should work.
->>
->> If I understand correctly, your driver (and controller?) has issues
->> with coping with this scenario. Is it something that can be fixed?
->>
->>>
->>> 30s timeout is the wait time for data0 line to go high and 
->>> mmc_busy_status will return success right away with R1 response type 
->>> and SW sends switch status CMD13 but during that time on device side 
->>> looks like still processing CMD6 as we are not waiting for enough 
->>> time when we use R1 response type.
->> Right, as stated above, isn't sdhci_card_busy() working for your case?
->> Can we fix it?
+>diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
+>index 69fa48ee93d6..e0b45a257f21 100644
+>--- a/Documentation/kbuild/modules.rst
+>+++ b/Documentation/kbuild/modules.rst
+>@@ -470,9 +470,9 @@ build.
 >
-> sdhci_card_busy() returned 0 indicating its not busy.
+> 	The syntax of the Module.symvers file is::
 >
-> Based on our host design, When CMD6 is issued with R1 type, we program 
-> it as NO_RESPONSE and with this command complete interrupt happens 
-> right at end bit of command and there will be no transfer complete 
-> interrupt.
-*[Correction] Based on our host design, When CMD6 is issued with R1 type 
-as we program it as NO_RESPONSE and with this command complete interrupt 
-happens right at end bit of command and there will be no transfer 
-complete interrupt.
+>-	<CRC>       <Symbol>          <Namespace>  <Module>                         <Export Type>
+>+	<CRC>       <Symbol>         <Module>                         <Export Type>     <Namespace>
 >
-> When CMD6 is issued with R1B type, we program is as R1B RESP_SHORT and 
-> with this command complete is end bit of device resp and transfer 
-> complete interrupt will be when DAT0 LOW -> HIGH.
+>-	0xe1cc2a05  usb_stor_suspend  USB_STORAGE  drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL
+>+	0xe1cc2a05  usb_stor_suspend drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL USB_STORAGE
 >
-> Regardless of R1/R1B, device side CMD6 will always have busy state on 
-> D0 and response on CMD lines.
+> 	The fields are separated by tabs and values may be empty (e.g.
+> 	if no namespace is defined for an exported symbol).
+>diff --git a/scripts/export_report.pl b/scripts/export_report.pl
+>index 548330e8c4e7..feb3d5542a62 100755
+>--- a/scripts/export_report.pl
+>+++ b/scripts/export_report.pl
+>@@ -94,7 +94,7 @@ if (defined $opt{'o'}) {
+> #
+> while ( <$module_symvers> ) {
+> 	chomp;
+>-	my (undef, $symbol, $namespace, $module, $gpl) = split('\t');
+>+	my (undef, $symbol, $module, $gpl, $namespace) = split('\t');
+> 	$SYMBOL { $symbol } =  [ $module , "0" , $symbol, $gpl];
+> }
+> close($module_symvers);
+>diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+>index 7edfdb2f4497..6ab235354f36 100644
+>--- a/scripts/mod/modpost.c
+>+++ b/scripts/mod/modpost.c
+>@@ -2427,7 +2427,7 @@ static void write_if_changed(struct buffer *b, const char *fname)
+> }
 >
-> There will be 2 clock cycles period after sending CMD6 for device to 
-> send busy state on data0.
+> /* parse Module.symvers file. line format:
+>- * 0x12345678<tab>symbol<tab>module[[<tab>export]<tab>something]
+>+ * 0x12345678<tab>symbol<tab>module<tab>export<tab>namespace
+
+So, this comment was a source of confusion for me and Matthias I
+think. It suggests that the export field is optional, and that even
+following the export field there may also be "something" else,
+whatever that is.
+
+I suspect that there were historical reasons behind that comment that
+are no longer accurate. We have been unconditionally printing the
+export type since 2.6.18 (commit bd5cbcedf44), which is over a decade
+ago now. And let me explain the read_dump() changes...
+
+>  **/
+> static void read_dump(const char *fname, unsigned int kernel)
+> {
+>@@ -2440,7 +2440,7 @@ static void read_dump(const char *fname, unsigned int kernel)
+> 		return;
 >
-> In case of R1 type, after sending command DAT will stay high and looks 
-> like we are polling for busy early before busy state has started and 
-> sending CMD13 while device is busy and sending response on CMD line is 
-> causing timeout.
+> 	while ((line = get_next_line(&pos, file, size))) {
+>-		char *symname, *namespace, *modname, *d, *export, *end;
+>+		char *symname, *namespace, *modname, *d, *export;
+> 		unsigned int crc;
+> 		struct module *mod;
+> 		struct symbol *s;
+>@@ -2448,16 +2448,16 @@ static void read_dump(const char *fname, unsigned int kernel)
+> 		if (!(symname = strchr(line, '\t')))
+> 			goto fail;
+> 		*symname++ = '\0';
+>-		if (!(namespace = strchr(symname, '\t')))
+>-			goto fail;
+>-		*namespace++ = '\0';
+>-		if (!(modname = strchr(namespace, '\t')))
+>+		if (!(modname = strchr(symname, '\t')))
+> 			goto fail;
+> 		*modname++ = '\0';
+>-		if ((export = strchr(modname, '\t')) != NULL)
+>-			*export++ = '\0';
+>-		if (export && ((end = strchr(export, '\t')) != NULL))
+>-			*end = '\0';
+
+I believe the original read_dump() code treated the export field here
+as optional, to support pre <= 2.6.18 Module.symvers (which does not
+have the export type field). But I don't believe we have to support
+this case anymore, right? It's ages ago. So I cleaned up this area,
+made each field non-optional (but empty string "" for namespace is
+allowed), and updated the comment.
+
+>+		if (!(export = strchr(modname, '\t')))
+>+			goto fail;
+>+		*export++ = '\0';
+>+		if (!(namespace = strchr(export, '\t')))
+>+			goto fail;
+>+		*namespace++ = '\0';
+>+
+> 		crc = strtoul(line, &d, 16);
+> 		if (*symname == '\0' || *modname == '\0' || *d != '\0')
+> 			goto fail;
+>@@ -2508,9 +2508,9 @@ static void write_dump(const char *fname)
+> 				namespace = symbol->namespace;
+> 				buf_printf(&buf, "0x%08x\t%s\t%s\t%s\t%s\n",
+> 					   symbol->crc, symbol->name,
+>-					   namespace ? namespace : "",
+> 					   symbol->module->name,
+>-					   export_str(symbol->export));
+>+					   export_str(symbol->export),
+>+					   namespace ? namespace : "");
+> 			}
+> 			symbol = symbol->next;
+> 		}
+>-- 
+>2.16.4
 >
-> Probably with this specific case of CMD6 with R1 type, to wait for 
-> card busy we should poll for DAT0 to go Low first and then to go High??
->
->>
->>>
->>>
->>>
->>> Actually we always use R1B with CMD6 as per spec.
->> I fully agree that R1B is preferable, but it's not against the spec to
->> send CMD13 to poll for busy.
->>
->> Moreover, we need to cope with the scenario when the host has
->> specified a maximum timeout that isn't sufficiently long enough for
->> the requested operation. Do you have another proposal for how to
->> manage this, but disabling MMC_RSP_BUSY?
->>
->> Let's assume you driver would get a R1B for the CMD6 (we force it),
->> then what timeout would the driver be using if we would set
->> cmd.busy_timeout to 30ms?
->>
->> Kind regards
->> Uffe
