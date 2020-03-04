@@ -2,165 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D5F178EEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2BD178EEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:53:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbgCDKwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:52:46 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45876 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbgCDKwq (ORCPT
+        id S2387904AbgCDKw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:52:57 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55844 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbgCDKwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:52:46 -0500
-Received: by mail-lf1-f67.google.com with SMTP id b13so1090660lfb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 02:52:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Dw8YXGE2I3jTmAJ66a5mJGk/pXkO5jiL6BxX0YlOF4A=;
-        b=yev9FXldw7OF5QP1G/bgbhJF2dehFneq2luy5DcahhSoCsqjqCvbHLylb5nebRRUIb
-         Q/zK2merHFYgvVuY4Moz2OVfTr+uvviniCiYviLhSlceL2IXf9sL4dwqfOX0OzqxbDtH
-         U6bFqUE0tAiVizqSi/Y9mO2LCATsSNaJkuvmF0NuvEN+ahH4DfjluGlDdgZ6OkPpevuX
-         auBnnUdeO0hGYmMgclX5uAZVf3N9C7JxxCAebctT+qSBUcIY86bq6vodeSasoq/a6AHh
-         W+oGlC6ejs/XlesP8xaNTq8SpoFD9GxH9h2ZgEnSu4bj6y1bIVgOaua+gdtd5KPsvN6N
-         oYxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Dw8YXGE2I3jTmAJ66a5mJGk/pXkO5jiL6BxX0YlOF4A=;
-        b=k2Adwv4KQFDaVINOwq9o3nVs9cGcaG/dks7P7SHKfGsliYV753SfORVfQ5MEHn98wI
-         t/zf7QVcGBaOxYPpZu6k94Z0Nad7qgfK+cwxFzIyRwN+wXcPmg4YPtAUctnGomK5lmEB
-         w4aA93oQoNmE/LLztxXHRD9IBECLQtOPx6D7BiyfdX/o8JTJzshgim3yK5Cf0ZtaXdtK
-         8Jzs7gFWdSxNVPnocmvrxz6qaV0taP3g0TDE/hJUWlbkuEIRsKySkcOpUpRS8rnZHAtX
-         //NlHEsWxDUskxrHidumGSx9PC6Vp5wQZVFVSgzpNzZPRkMzfz0Esc5MUo0OVzhi6XxR
-         Wywg==
-X-Gm-Message-State: ANhLgQ0EHYeJLHJnvMem55iWyPT5pWxY8uZzbS4V/yyUVr3T0QNaeFLa
-        x41iXS9sjU7EYkK3RAjsy9h/ibDkBi2ICAnBd8MT3w==
-X-Google-Smtp-Source: ADFU+vs1yTijjyYdGtS8Q2UjYj8BrBUEgqLpP48PqmtXx1x2dl3X+u7OOLrgj99qwdC9vizbdMbmK9kjT2iH1RBqisY=
-X-Received: by 2002:a05:6512:3e5:: with SMTP id n5mr1658913lfq.55.1583319161751;
- Wed, 04 Mar 2020 02:52:41 -0800 (PST)
+        Wed, 4 Mar 2020 05:52:55 -0500
+Received: from 79.184.237.41.ipv4.supernova.orange.pl (79.184.237.41) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 02fd77c7e36182cc; Wed, 4 Mar 2020 11:52:52 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH v2 6/6] ACPI: EC: Consolidate event handler installation code
+Date:   Wed, 04 Mar 2020 11:52:40 +0100
+Message-ID: <1693488.22sX2o2Tg0@kreacher>
+In-Reply-To: <2411774.6kdisLRoUK@kreacher>
+References: <2094703.CetWLLyMuz@kreacher> <2411774.6kdisLRoUK@kreacher>
 MIME-Version: 1.0
-References: <20200303174304.593872177@linuxfoundation.org> <CA+G9fYtNKXBOQKE_AD6qLoRo4TeaBYOc9Ce3kBxdLap1av4v=Q@mail.gmail.com>
- <20200304081128.GC1401372@kroah.com> <20200304084702.GA1416015@kroah.com> <20200304084946.GB1416015@kroah.com>
-In-Reply-To: <20200304084946.GB1416015@kroah.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 4 Mar 2020 16:22:30 +0530
-Message-ID: <CA+G9fYuTXB03s5YSn=NL0dtF-Kzj0YHUu6NwqSh6m9Hco59DPw@mail.gmail.com>
-Subject: Re: [PATCH 5.5 000/176] 5.5.8-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Mar 2020 at 14:19, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Mar 04, 2020 at 09:47:02AM +0100, Greg Kroah-Hartman wrote:
-> > On Wed, Mar 04, 2020 at 09:11:28AM +0100, Greg Kroah-Hartman wrote:
-> > > On Wed, Mar 04, 2020 at 12:43:42PM +0530, Naresh Kamboju wrote:
-> > > > On Tue, 3 Mar 2020 at 23:16, Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > This is the start of the stable review cycle for the 5.5.8 releas=
-e.
-> > > > > There are 176 patches in this series, all will be posted as a res=
-ponse
-> > > > > to this one.  If anyone has any issues with these being applied, =
-please
-> > > > > let me know.
-> > > > >
-> > > > > Responses should be made by Thu, 05 Mar 2020 17:42:06 +0000.
-> > > > > Anything received after that time might be too late.
-> > > > >
-> > > > > The whole patch series can be found in one patch at:
-> > > > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-revie=
-w/patch-5.5.8-rc1.gz
-> > > > > or in the git tree and branch at:
-> > > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
-x-stable-rc.git linux-5.5.y
-> > > > > and the diffstat can be found below.
-> > > > >
-> > > > > thanks,
-> > > > >
-> > > > > greg k-h
-> > > > >
-> > > >
-> > > > Results from Linaro=E2=80=99s test farm.
-> > > > Regressions detected on x86_64 and i386.
-> > > >
-> > > > Test failure output:
-> > > > CVE-2017-5715: VULN (IBRS+IBPB or retpoline+IBPB+RSB filling, is
-> > > > needed to mitigate the vulnerability)
-> > > >
-> > > > Test description:
-> > > > CVE-2017-5715 branch target injection (Spectre Variant 2)
-> > > >
-> > > > Impact: Kernel
-> > > > Mitigation 1: new opcode via microcode update that should be used b=
-y
-> > > > up to date compilers to protect the BTB (by flushing indirect branc=
-h
-> > > > predictors)
-> > > > Mitigation 2: introducing "retpoline" into compilers, and recompile
-> > > > software/OS with it
-> > > > Performance impact of the mitigation: high for mitigation 1, medium
-> > > > for mitigation 2, depending on your CPU
-> > >
-> > > So these are regressions or just new tests?
-> > >
-> > > If regressions, can you do 'git bisect' to find the offending commit?
-> > >
-> > > Also, are you sure you have an updated microcode on these machines an=
-d a
-> > > proper compiler for retpoline?
-> >
-> > As an example of just how crazy that script is, here's the output of my
-> > machine for that first CVE issue:
-> >
-> > CVE-2017-5715 aka 'Spectre Variant 2, branch target injection'
-> > * Mitigated according to the /sys interface:  YES  (Mitigation: Full ge=
-neric retpoline, IBPB: conditional, IBRS_FW, STIBP: conditional, RSB fillin=
-g)
-> > * Mitigation 1
-> >   * Kernel is compiled with IBRS support:  YES
-> >     * IBRS enabled and active:  YES  (for firmware code only)
-> >   * Kernel is compiled with IBPB support:  YES
-> >     * IBPB enabled and active:  YES
-> > * Mitigation 2
-> >   * Kernel has branch predictor hardening (arm):  NO
-> >   * Kernel compiled with retpoline option:  YES
-> >     * Kernel compiled with a retpoline-aware compiler:  YES  (kernel re=
-ports full retpoline compilation)
-> >   * Kernel supports RSB filling:  UNKNOWN  (couldn't check (couldn't fi=
-nd your kernel image in /boot, if you used netboot, this is normal))
-> > > STATUS:  VULNERABLE  (IBRS+IBPB or retpoline+IBPB+RSB filling, is nee=
-ded to mitigate
-> >
-> > So why is this "Vulnerable"?  Because it didn't think it could find my
-> > kernel image for some odd reason, despite it really being in /boot/ (I
-> > don't use netboot)
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-Now I know the real reason why this test failed.
-With this note we can conclude this is not a regression.
+Commit 406857f773b0 ("ACPI: EC: add support for hardware-reduced
+systems") made ec_install_handlers() return an error on failures
+to configure a GPIO IRQ for the EC, but that is inconsistent with
+the handling of the GPE event handler installation failures even
+though it is exactly the same issue and the driver can respond to
+it in the same way in both cases (the EC can be actively polled
+for events through its registers if the event handler installation
+fails).
 
-No regressions on arm64, arm, x86_64, and i386 for 4.19, 5.4 and 5.5 branch=
-es.
+Moreover, it requires acpi_ec_add() to take that special case into
+account and disagrees with the ec_install_handlers() header comment.
 
-Sorry for the noise.
+For this reason, rework the event handler installation code in
+ec_install_handlers() to explicitly take deferred probing (that
+may be needed in the GPIO IRQ case) into account and to avoid
+failing the EC initialization in any other case.
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Among other things, reduce code duplication between
+install_gpe_event_handler() and install_gpio_irq_event_handler() by
+moving some code from there into ec_install_handlers() itself and
+simplify the error code path in acpi_ec_add().
+
+While at it, turn the ec_install_handlers() header comment into
+a proper kerneldoc one and add some general control flow information
+to it.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tested-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+
+-> v2:
+   * Reorder (previously [4/6]) and rebase.
+   * Take possible deferred GPIO IRQ acquisition into account.
+
+---
+ drivers/acpi/ec.c | 114 +++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 61 insertions(+), 53 deletions(-)
+
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index 355d6973cb70..47baeec9190d 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1427,54 +1427,43 @@ ec_parse_device(acpi_handle handle, u32 Level, void *context, void **retval)
+ 	return AE_CTRL_TERMINATE;
+ }
+ 
+-static void install_gpe_event_handler(struct acpi_ec *ec)
+-{
+-	acpi_status status =
+-		acpi_install_gpe_raw_handler(NULL, ec->gpe,
+-					     ACPI_GPE_EDGE_TRIGGERED,
+-					     &acpi_ec_gpe_handler,
+-					     ec);
+-	if (ACPI_SUCCESS(status)) {
+-		/* This is not fatal as we can poll EC events */
+-		set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags);
+-		acpi_ec_leave_noirq(ec);
+-		if (test_bit(EC_FLAGS_STARTED, &ec->flags) &&
+-		    ec->reference_count >= 1)
+-			acpi_ec_enable_gpe(ec, true);
+-	}
+-}
+-
+-/* ACPI reduced hardware platforms use a GpioInt specified in _CRS. */
+-static int install_gpio_irq_event_handler(struct acpi_ec *ec,
+-					  struct acpi_device *device)
++static bool install_gpe_event_handler(struct acpi_ec *ec)
+ {
+-	int irq = acpi_dev_gpio_irq_get(device, 0);
+-	int ret;
+-
+-	if (irq < 0)
+-		return irq;
++	acpi_status status;
+ 
+-	ret = request_irq(irq, acpi_ec_irq_handler, IRQF_SHARED,
+-			  "ACPI EC", ec);
++	status = acpi_install_gpe_raw_handler(NULL, ec->gpe,
++					      ACPI_GPE_EDGE_TRIGGERED,
++					      &acpi_ec_gpe_handler, ec);
++	if (ACPI_FAILURE(status))
++		return false;
+ 
+-	/*
+-	 * Unlike the GPE case, we treat errors here as fatal, we'll only
+-	 * implement GPIO polling if we find a case that needs it.
+-	 */
+-	if (ret < 0)
+-		return ret;
++	if (test_bit(EC_FLAGS_STARTED, &ec->flags) && ec->reference_count >= 1)
++		acpi_ec_enable_gpe(ec, true);
+ 
+-	ec->irq = irq;
+-	set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags);
+-	acpi_ec_leave_noirq(ec);
++	return true;
++}
+ 
+-	return 0;
++static bool install_gpio_irq_event_handler(struct acpi_ec *ec)
++{
++	return request_irq(ec->irq, acpi_ec_irq_handler, IRQF_SHARED,
++			   "ACPI EC", ec) >= 0;
+ }
+ 
+-/*
+- * Note: This function returns an error code only when the address space
+- *       handler is not installed, which means "not able to handle
+- *       transactions".
++/**
++ * ec_install_handlers - Install service callbacks and register query methods.
++ * @ec: Target EC.
++ * @device: ACPI device object corresponding to @ec.
++ *
++ * Install a handler for the EC address space type unless it has been installed
++ * already.  If @device is not NULL, also look for EC query methods in the
++ * namespace and register them, and install an event (either GPE or GPIO IRQ)
++ * handler for the EC, if possible.
++ *
++ * Return:
++ * -ENODEV if the address space handler cannot be installed, which means
++ *  "unable to handle transactions",
++ * -EPROBE_DEFER if GPIO IRQ acquisition needs to be deferred,
++ * or 0 (success) otherwise.
+  */
+ static int ec_install_handlers(struct acpi_ec *ec, struct acpi_device *device)
+ {
+@@ -1498,6 +1487,19 @@ static int ec_install_handlers(struct acpi_ec *ec, struct acpi_device *device)
+ 	if (!device)
+ 		return 0;
+ 
++	if (ec->gpe < 0) {
++		/* ACPI reduced hardware platforms use a GpioInt from _CRS. */
++		int irq = acpi_dev_gpio_irq_get(device, 0);
++		/*
++		 * Bail out right away for deferred probing or complete the
++		 * initialization regardless of any other errors.
++		 */
++		if (irq == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		else if (irq >= 0)
++			ec->irq = irq;
++	}
++
+ 	if (!test_bit(EC_FLAGS_QUERY_METHODS_INSTALLED, &ec->flags)) {
+ 		/* Find and register all query methods */
+ 		acpi_walk_namespace(ACPI_TYPE_METHOD, ec->handle, 1,
+@@ -1506,13 +1508,21 @@ static int ec_install_handlers(struct acpi_ec *ec, struct acpi_device *device)
+ 		set_bit(EC_FLAGS_QUERY_METHODS_INSTALLED, &ec->flags);
+ 	}
+ 	if (!test_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags)) {
+-		if (ec->gpe >= 0) {
+-			install_gpe_event_handler(ec);
+-		} else {
+-			int ret = install_gpio_irq_event_handler(ec, device);
+-			if (ret)
+-				return ret;
++		bool ready = false;
++
++		if (ec->gpe >= 0)
++			ready = install_gpe_event_handler(ec);
++		else if (ec->irq >= 0)
++			ready = install_gpio_irq_event_handler(ec);
++
++		if (ready) {
++			set_bit(EC_FLAGS_EVENT_HANDLER_INSTALLED, &ec->flags);
++			acpi_ec_leave_noirq(ec);
+ 		}
++		/*
++		 * Failures to install an event handler are not fatal, because
++		 * the EC can be polled for events.
++		 */
+ 	}
+ 	/* EC is fully operational, allow queries */
+ 	acpi_ec_enable_event(ec);
+@@ -1625,7 +1635,7 @@ static int acpi_ec_add(struct acpi_device *device)
+ 		status = ec_parse_device(device->handle, 0, ec, NULL);
+ 		if (status != AE_CTRL_TERMINATE) {
+ 			ret = -EINVAL;
+-			goto err_alloc;
++			goto err;
+ 		}
+ 
+ 		if (boot_ec && ec->command_addr == boot_ec->command_addr &&
+@@ -1646,7 +1656,7 @@ static int acpi_ec_add(struct acpi_device *device)
+ 
+ 	ret = acpi_ec_setup(ec, device);
+ 	if (ret)
+-		goto err_query;
++		goto err;
+ 
+ 	if (ec == boot_ec)
+ 		acpi_handle_info(boot_ec->handle,
+@@ -1666,12 +1676,10 @@ static int acpi_ec_add(struct acpi_device *device)
+ 	acpi_handle_debug(ec->handle, "enumerated.\n");
+ 	return 0;
+ 
+-err_query:
+-	if (ec != boot_ec)
+-		acpi_ec_remove_query_handlers(ec, true, 0);
+-err_alloc:
++err:
+ 	if (ec != boot_ec)
+ 		acpi_ec_free(ec);
++
+ 	return ret;
+ }
+ 
+-- 
+2.16.4
+
+
+
+
