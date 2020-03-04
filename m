@@ -2,111 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3673917990F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CB117991E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:40:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbgCDTas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 14:30:48 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41854 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbgCDTas (ORCPT
+        id S1728665AbgCDTke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 14:40:34 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54314 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728599AbgCDTke (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:30:48 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i1so3295061oie.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 11:30:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a1hBDuTj5DKdqI1D6QdlHihqCJQwThRu8E8B+XZMHIU=;
-        b=r1Uryj1NDD0JkgMwSl0hQiab0O6yqkh4uEnZ/4nlsIy0yG3tWZvd8iRX3ps02nVZPp
-         SL2XkqBEBwi36q74phYiRf39TroHOQ5Xbnrt0B1XXvcGwZH65CR5Qy0htnBBEkNQqXe1
-         HZFKQN0v99OX20sIHWjqY4cb4HUC7BRkCVXDmIIxsiHp7XO5bu0TBJmb8cSRwx7d4B75
-         gQehAp4b5UR2IZrFIgErt0I4g/BmiXk2BP5zMJCZK9+y+ihkba6EFF/jaAETxiAniQX1
-         DlvWUkb0Ys6HgKId3oQNjFkNQV7fAipuKCe3lx4FStT3PRPwiPoEzcWXuPW5mX8BlV7R
-         6WJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a1hBDuTj5DKdqI1D6QdlHihqCJQwThRu8E8B+XZMHIU=;
-        b=DiDWNhu0uCbcMeXH1YaUUgayhPuttIkhbDa2iaIeGiElEl4K3MzDmG1Z4hx2l7H4v/
-         l8bV+EYcn/nNot+XnfkH4dsq0wQT5JKtLoEJNV8LrNv8+m7CSFeKeUPv+48jU+sug0Lz
-         uJuTe3oSdWZFa69821/qwGQJ1BxjgSLpHri4PtDFmvLI/K0U9neVxsdPGmOllWiL9eJu
-         7TEyc9EugNFfKqoQKK/orpOIvpZL+8GXF7aY6KgJQG6wB0t9s5WRM3CaVbBDnDipvxG1
-         7YSY/hLUNOb9vYLOiW+CVHVrc6yuto/pKVRpJK74EOuRCJfAVmcsY/SljfnYZRnLPnpc
-         Y5sg==
-X-Gm-Message-State: ANhLgQ1k2JVytRNhHbcbMCB84qdJcFdy9Axqkud6uUNPU4evzR8AlonN
-        kNXKF6xJSKvdm4opOQplcciw4WxkZ67MPTxFNNlX6w==
-X-Google-Smtp-Source: ADFU+vs2vaQrQ7kp2NGMoTMDmG2l6VuaVi60jgfpU4RAjhIzPvbNOqgBhKY9euHn5Qg/96Y3B1qg3tPDPviuetP3eBc=
-X-Received: by 2002:a05:6808:d7:: with SMTP id t23mr2913141oic.69.1583350246176;
- Wed, 04 Mar 2020 11:30:46 -0800 (PST)
+        Wed, 4 Mar 2020 14:40:34 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 024Jdn0B105016;
+        Wed, 4 Mar 2020 13:39:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583350789;
+        bh=r2mknFt8cgYulGR03WSMmgUWqx+HkwzAP0Mh0loWYh8=;
+        h=From:To:CC:Subject:Date;
+        b=wOMHCfxkWmYSQwhY+zBDpZeBvklZ9uobgr8EHGKfjLyHRRdz3kl8bO6QYfavg7nmQ
+         Z8UKDjUzUlmChhRCYkYxw+isnMIyJShg2QjJot8VF8MUZn6Yu66oNZ1Zk+fV2u739a
+         fTailUwIdRce8oaBW9vYJ+mOBv5yxmUbwPIP1Hws=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 024Jdntj005972
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Mar 2020 13:39:49 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Mar
+ 2020 13:39:49 -0600
+Received: from localhost.localdomain (10.64.41.19) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 4 Mar 2020 13:39:49 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 024Jdmnl064182;
+        Wed, 4 Mar 2020 13:39:49 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH for-next] ASoC: tlv320adcx140: Fix mic_bias and vref device tree verification
+Date:   Wed, 4 Mar 2020 13:34:27 -0600
+Message-ID: <20200304193427.16886-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200111052125.238212-1-saravanak@google.com> <f9f3afa0-f0a7-6cff-2e57-e4e448a81a90@linaro.org>
- <CAGETcx_VV+NUALO=9PS5id7Jz0yLjG=T4FsC=J4PjuQ-rGcd9A@mail.gmail.com>
-In-Reply-To: <CAGETcx_VV+NUALO=9PS5id7Jz0yLjG=T4FsC=J4PjuQ-rGcd9A@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 4 Mar 2020 11:30:10 -0800
-Message-ID: <CAGETcx_Y7TroxBGsD0ssG8X+iZawoMVnqVPbEOJwR2Wmv=0Kxw@mail.gmail.com>
-Subject: Re: [PATCH v1] clocksource: Avoid creating dead devices
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 1:22 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> On Thu, Feb 27, 2020 at 1:06 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> >
-> > On 11/01/2020 06:21, Saravana Kannan wrote:
-> > > Timer initialization is done during early boot way before the driver
-> > > core starts processing devices and drivers. Timers initialized during
-> > > this early boot period don't really need or use a struct device.
-> > >
-> > > However, for timers represented as device tree nodes, the struct devices
-> > > are still created and sit around unused and wasting memory. This change
-> > > avoid this by marking the device tree nodes as "populated" if the
-> > > corresponding timer is successfully initialized.
-> > >
-> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > ---
-> > >  drivers/clocksource/timer-probe.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
-> > > index ee9574da53c0..a10f28d750a9 100644
-> > > --- a/drivers/clocksource/timer-probe.c
-> > > +++ b/drivers/clocksource/timer-probe.c
-> > > @@ -27,8 +27,10 @@ void __init timer_probe(void)
-> > >
-> > >               init_func_ret = match->data;
-> > >
-> > > +             of_node_set_flag(np, OF_POPULATED);
-> > >               ret = init_func_ret(np);
-> > >               if (ret) {
-> > > +                     of_node_clear_flag(np, OF_POPULATED);
-> >
-> > Isn't it in conflict with:
-> >
-> > drivers/clocksource/ingenic-timer.c
-> >
-> > ?
->
-> No, it won't interfere with that driver because:
-> 1. This flag is getting set only if the driver already registered a
-> timer init function using TIMER_OF_DECLARE.
-> 2. And if the function fails, we clear the flag.
->
-> So in the case of ingenic-timer, the device will still be there and be
-> probed by the driver.
+Fix the range verification check for the mic_bias and vref device tree
+entries.
 
-Daniel, friendly reminder. Or do you have a patchworks link too that I
-can keep an eye on?
+Fixes 37bde5acf040 ("ASoC: tlv320adcx140: Add the tlv320adcx140 codec driver family")
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ sound/soc/codecs/tlv320adcx140.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
--Saravana
+diff --git a/sound/soc/codecs/tlv320adcx140.c b/sound/soc/codecs/tlv320adcx140.c
+index 93a0cb8e662c..38897568ee96 100644
+--- a/sound/soc/codecs/tlv320adcx140.c
++++ b/sound/soc/codecs/tlv320adcx140.c
+@@ -748,9 +748,8 @@ static int adcx140_codec_probe(struct snd_soc_component *component)
+ 	if (ret)
+ 		bias_source = ADCX140_MIC_BIAS_VAL_VREF;
+ 
+-	if (bias_source != ADCX140_MIC_BIAS_VAL_VREF &&
+-	    bias_source != ADCX140_MIC_BIAS_VAL_VREF_1096 &&
+-	    bias_source != ADCX140_MIC_BIAS_VAL_AVDD) {
++	if (bias_source < ADCX140_MIC_BIAS_VAL_VREF ||
++	    bias_source > ADCX140_MIC_BIAS_VAL_AVDD) {
+ 		dev_err(adcx140->dev, "Mic Bias source value is invalid\n");
+ 		return -EINVAL;
+ 	}
+@@ -760,9 +759,8 @@ static int adcx140_codec_probe(struct snd_soc_component *component)
+ 	if (ret)
+ 		vref_source = ADCX140_MIC_BIAS_VREF_275V;
+ 
+-	if (vref_source != ADCX140_MIC_BIAS_VREF_275V &&
+-	    vref_source != ADCX140_MIC_BIAS_VREF_25V &&
+-	    vref_source != ADCX140_MIC_BIAS_VREF_1375V) {
++	if (vref_source < ADCX140_MIC_BIAS_VREF_275V ||
++	    vref_source > ADCX140_MIC_BIAS_VREF_1375V) {
+ 		dev_err(adcx140->dev, "Mic Bias source value is invalid\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.25.1
+
