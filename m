@@ -2,107 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C75178F01
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:56:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1DC178F0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:59:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387814AbgCDK4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:56:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50756 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726860AbgCDK4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:56:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D54F9B080;
-        Wed,  4 Mar 2020 10:56:14 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 10:56:07 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     "Huang, Ying" <ying.huang@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
-Message-ID: <20200304105607.GF3772@suse.de>
-References: <871rqf850z.fsf@yhuang-dev.intel.com>
- <20200228094954.GB3772@suse.de>
- <87h7z76lwf.fsf@yhuang-dev.intel.com>
- <20200302151607.GC3772@suse.de>
- <87zhcy5hoj.fsf@yhuang-dev.intel.com>
- <20200303080945.GX4380@dhcp22.suse.cz>
- <87o8td4yf9.fsf@yhuang-dev.intel.com>
- <20200303085805.GB4380@dhcp22.suse.cz>
- <87ftep4pzy.fsf@yhuang-dev.intel.com>
- <20200304095802.GE16139@dhcp22.suse.cz>
+        id S2387847AbgCDK7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:59:09 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:55391 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387805AbgCDK7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 05:59:08 -0500
+X-Originating-IP: 176.88.145.204
+Received: from localhost.localdomain (unknown [176.88.145.204])
+        (Authenticated sender: cengiz@kernel.wtf)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 9B91560009;
+        Wed,  4 Mar 2020 10:59:03 +0000 (UTC)
+From:   Cengiz Can <cengiz@kernel.wtf>
+To:     Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Cengiz Can <cengiz@kernel.wtf>
+Subject: [PATCH v2] blktrace: fix dereference after null check
+Date:   Wed,  4 Mar 2020 13:58:19 +0300
+Message-Id: <20200304105818.11781-1-cengiz@kernel.wtf>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20200304095802.GE16139@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 10:58:02AM +0100, Michal Hocko wrote:
-> > >> If my understanding were correct, the newly migrated clean MADV_FREE
-> > >> pages will be put at the head of inactive file LRU list instead of the
-> > >> tail.  So it's possible that some useful file cache pages will be
-> > >> reclaimed.
-> > >
-> > > This is the case also when you migrate other pages, right? We simply
-> > > cannot preserve the aging.
-> > 
-> > So you consider the priority of the clean MADV_FREE pages is same as
-> > that of page cache pages?
-> 
-> This is how MADV_FREE has been implemented, yes. See f7ad2a6cb9f7 ("mm:
-> move MADV_FREE pages into LRU_INACTIVE_FILE list") for the
-> justification.
-> 
-> > Because the penalty difference is so large, I
-> > think it may be a good idea to always put clean MADV_FREE pages at the
-> > tail of the inactive file LRU list?
-> 
-> You are again making assumptions without giving any actual real
-> examples. Reconstructing MADV_FREE pages cost can differ a lot. This
-> really depends on the specific usecase. Moving pages to the tail of LRU
-> would make them the primary candidate for the reclaim with a strange
-> LIFO semantic. Adding them to the head might be not the universal win
-> but it will at least provide a reasonable FIFO semantic. I also find
-> it much more easier to reason about MADV_FREE as an inactive cache.
+There was a recent change in blktrace.c that added a RCU protection to
+`q->blk_trace` in order to fix a use-after-free issue during access.
 
-I tend to agree, that would make MADV_FREE behave more like a
-PageReclaim page that gets tagged for immediate reclaim when writeback
-completes. Immediate reclaim is in response to heavy memory pressure where
-there is trouble finding clean file pages to reclaim and dirty/writeback
-pages are getting artifically preserved over hot-but-clean file
-pages. That is a clear inversion of the order pages should be reclaimed
-and is justified.  While there *might* be a basis for reclaiming MADV_FREE
-sooner rather than later, there would have to be some evidence of a Page
-inversion problem where a known hot page was getting reclaimed before
-MADV_FREE pages. For example, it could easily be considered a bug to free
-MADV_FREE pages over a page that was last touched at boot time.
+However the change missed an edge case that can lead to dereferencing of
+`bt` pointer even when it's NULL:
 
-About the only real concern I could find about MADV_FREE is that it
-keeps RSS artifically high relative to MADV_DONTNEED in the absense of
-memory pressure. In some cases userspace provided a way of switching to
-MADV_DONTNEED at startup time to determine if there is a memory leak or
-just MADV_FREE keeping pages resident. They probably would have benefitted
-from a counter noting the number of MADV_FREE pages in the system as
-opposed to the vmstat event or some other way of distinguishing real RSS
-from MADV_FREE.
+Coverity static analyzer marked this as a FORWARD_NULL issue with CID
+1460458.
 
-However, I can't find a bug report indicating that MADV_FREE pages were
-pushing hot pages out to disk (be it file-backed or anonymous).
+```
+/kernel/trace/blktrace.c: 1904 in sysfs_blk_trace_attr_store()
+1898            ret = 0;
+1899            if (bt == NULL)
+1900                    ret = blk_trace_setup_queue(q, bdev);
+1901
+1902            if (ret == 0) {
+1903                    if (attr == &dev_attr_act_mask)
+>>>     CID 1460458:  Null pointer dereferences  (FORWARD_NULL)
+>>>     Dereferencing null pointer "bt".
+1904                            bt->act_mask = value;
+1905                    else if (attr == &dev_attr_pid)
+1906                            bt->pid = value;
+1907                    else if (attr == &dev_attr_start_lba)
+1908                            bt->start_lba = value;
+1909                    else if (attr == &dev_attr_end_lba)
+```
 
--- 
-Mel Gorman
-SUSE Labs
+Added a reassignment with RCU annotation to fix the issue.
+
+Fixes: c780e86dd48 ("blktrace: Protect q->blk_trace with RCU")
+
+Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
+---
+
+    Patch Changelog
+    * v2: Added RCU annotation to assignment
+
+ kernel/trace/blktrace.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 4560878f0bac..ca39dc3230cb 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -1896,8 +1896,11 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
+ 	}
+
+ 	ret = 0;
+-	if (bt == NULL)
++	if (bt == NULL) {
+ 		ret = blk_trace_setup_queue(q, bdev);
++		bt = rcu_dereference_protected(q->blk_trace,
++				lockdep_is_held(&q->blk_trace_mutex));
++	}
+
+ 	if (ret == 0) {
+ 		if (attr == &dev_attr_act_mask)
+--
+2.25.1
+
