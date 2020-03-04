@@ -2,98 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF8E179ADC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:26:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E641D179AE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:27:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388356AbgCDV0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 16:26:17 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33604 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729825AbgCDV0Q (ORCPT
+        id S2388352AbgCDV1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 16:27:41 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42315 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387762AbgCDV1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:26:16 -0500
-Received: by mail-ed1-f68.google.com with SMTP id c62so4082595edf.0;
-        Wed, 04 Mar 2020 13:26:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=eMvhBOIg5MRjHF1oFd/XQ7SSnXXeEGxIFK8nINn5g7k=;
-        b=Eb3IOFXsE/5oc8UPJfOC7SVDxP8zUqyH896zGb2lG90S92LZk+QnhPw4pVvGkuUOBc
-         HNNsuwN8g4bIw/+bygigUIyQKJD/dfC8mJ3EKwOiH5mRU9/gG0AvuY3Q3Dg5yAwO7RZ4
-         jtSI3psRzrtJ/pMIT/q2i5jPkznXQcEtRj3jIc9pJ3e9XZBnSXXLXANUpAWvHvr8RgYv
-         UdfrXmvdYQSm1ZjK6rHHxch+eHZcWs5gxG/b0VpLsvwOLoktgmI+ac0Ez0dINeXkQzn7
-         caRHXsHS/MDmtrJwJaPuE/nSk0XsJmSMFdMuNcwzd0BUrrVPgIa+Z6+2oWfWT2arzwej
-         2Jtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eMvhBOIg5MRjHF1oFd/XQ7SSnXXeEGxIFK8nINn5g7k=;
-        b=Z+qgQAg7m+jrRnD1ftT3V1ZHIJbh7QapYMC3lRPEFHdHNHxrIhRtXLyFLmPkqvRCt3
-         NLQ5d+8uTRn8IGXFWMp3pMMcLZuJIt809vDF3d40SFAZE8rtjr1lEn2sr3dHWQRrkZmU
-         N78Ks7GRMg1zpyjFieMJ0EtrHZP6SkdFLdeDS7Scw3412seooWki5JovjQmb9QTIO0jJ
-         ZSNHMVHu10BSiro2aQlb0jg8xHi2n7u/Zn7UUnlmmQDgyL7prrHSzirLghlCuRZ5FSL7
-         7VRM6ho0nsoD8kDBM4SVrWxfeLpuvdFryqF1MjHgHYH/2TreEyGW8ajpHaNvraZtzaT4
-         GtHg==
-X-Gm-Message-State: ANhLgQ3YC6GBH5N89YXhk60b0KIU/IWuiNZ92MOJYkp9Q7xz0WwY7rs+
-        b0PDgTL5dGeK0XuQS+KtMGp2HsmrimI=
-X-Google-Smtp-Source: ADFU+vsYttFIIZKSMto/Dsvrd8XkxFID6j5epaPlIKW2H/3V/H1ZiJlIaehOf50JN/z7KI79i34OKQ==
-X-Received: by 2002:a50:b043:: with SMTP id i61mr4672103edd.194.1583357174832;
-        Wed, 04 Mar 2020 13:26:14 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2d16:4100:5c62:5f:595c:f76d])
-        by smtp.gmail.com with ESMTPSA id ss15sm1332396ejb.10.2020.03.04.13.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 13:26:14 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, Yangtao Li <tiny.windzz@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Rob Herring <robh@kernel.org>
-Cc:     linux-pm@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2] MAINTAINERS: update ALLWINNER CPUFREQ DRIVER entry
-Date:   Wed,  4 Mar 2020 22:26:00 +0100
-Message-Id: <20200304212600.6172-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 4 Mar 2020 16:27:41 -0500
+X-Originating-IP: 90.76.143.236
+Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 1C0AE60002;
+        Wed,  4 Mar 2020 21:27:38 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 22:27:37 +0100
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Hanna Hawa <hhhawa@amazon.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, tsahee@annapurnalabs.com,
+        antoine.tenart@bootlin.com, mchehab+samsung@kernel.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        Jonathan.Cameron@huawei.com, tglx@linutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dwmw@amazon.co.uk,
+        benh@amazon.com, ronenk@amazon.com, talel@amazon.com,
+        jonnyc@amazon.com, hanochu@amazon.com, eitan@amazon.com
+Subject: Re: [PATCH v4 6/6] arm64: dts: amazon: add Amazon's Annapurna Labs
+ Alpine v3 support
+Message-ID: <20200304212737.GN3179@kwain>
+References: <20200225112926.16518-1-hhhawa@amazon.com>
+ <20200225112926.16518-7-hhhawa@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200225112926.16518-7-hhhawa@amazon.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b30d8cf5e171 ("dt-bindings: opp: Convert Allwinner H6 OPP to a
-schema") converted in Documentation/devicetree/bindings/opp/ the file
-sun50i-nvmem-cpufreq.txt to allwinner,sun50i-h6-operating-points.yaml.
+Hello,
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+Sorry, I'm a bit late to the party...
 
-  warning: no file matches \
-  F: Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
+On Tue, Feb 25, 2020 at 01:29:26PM +0200, Hanna Hawa wrote:
+> diff --git a/arch/arm64/boot/dts/amazon/alpine-v3.dtsi b/arch/arm64/boot/dts/amazon/alpine-v3.dtsi
+> +     arch-timer {                                                    
 
-Adjust the file pattern in the ALLWINNER CPUFREQ DRIVER entry.
+Please use 'timer' instead.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Changes to v1:
-  - do not include new maintainers because it is not needed.
+> +             compatible = "arm,armv8-timer";                         
+> +             interrupts = <GIC_PPI 0xd IRQ_TYPE_LEVEL_LOW>,          
+> +                          <GIC_PPI 0xe IRQ_TYPE_LEVEL_LOW>,          
+> +                          <GIC_PPI 0xb IRQ_TYPE_LEVEL_LOW>,          
+> +                          <GIC_PPI 0xa IRQ_TYPE_LEVEL_LOW>;          
+> +     };
 
-Maxime, Chen-Yu, Yangtao, please ack.
-Rob, please pick this patch.
+> +		gic: interrupt-controller@f0000000 {
+> +			compatible = "arm,gic-v3";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No need for this.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6158a143a13e..9402b05630f9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -693,7 +693,7 @@ ALLWINNER CPUFREQ DRIVER
- M:	Yangtao Li <tiny.windzz@gmail.com>
- L:	linux-pm@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
-+F:	Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
- F:	drivers/cpufreq/sun50i-cpufreq-nvmem.c
- 
- ALLWINNER CRYPTO DRIVERS
+> +			interrupt-controller;
+> +			reg = <0x0 0xf0800000 0 0x10000>,
+> +			      <0x0 0xf0a00000 0 0x200000>,
+> +			      <0x0 0xf0000000 0 0x2000>,
+> +			      <0x0 0xf0010000 0 0x1000>,
+> +			      <0x0 0xf0020000 0 0x2000>;
+
+Please add comments here, see alpine-v2.dtsi (or other dtsi in
+arch/arm64).
+
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+> +		msix: msix@fbe00000 {
+> +			compatible = "al,alpine-msix";
+> +			reg = <0x0 0xfbe00000 0x0 0x100000>;
+> +			interrupt-controller;
+> +			msi-controller;
+> +			al,msi-base-spi = <160>;
+> +			al,msi-num-spis = <800>;
+> +			interrupt-parent = <&gic>;
+> +		};
+> +
+> +		uart0: serial@fd883000 {
+
+Looking at the Alpine v2 dtsi, this node was put in an io-fabric bus. It
+seems to me the Alpine v3 dtsi is very similar. Would it apply as well?
+
+> +			compatible = "ns16550a";
+> +			reg = <0x0 0xfd883000 0x0 0x1000>;
+> +			clock-frequency = <0>;
+
+Is the frequency set to 0 on purpose? Or is it set by a firmware at boot
+time (if so please add a comment)?
+
+> +			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+
+Since you're enabling this node explicitly in the dts, you can set it to
+disabled by default.
+
+> +		};
+> +
+> +		pcie@fbd00000 {
+
+Please order the nodes in increasing order.
+
+> +			compatible = "pci-host-ecam-generic";
+> +			device_type = "pci";
+> +			#size-cells = <2>;
+> +			#address-cells = <3>;
+> +			#interrupt-cells = <1>;
+> +			reg = <0x0 0xfbd00000 0x0 0x100000>;
+> +			interrupt-map-mask = <0xf800 0 0 7>;
+> +			/* 8 x legacy interrupts for SATA only */
+> +			interrupt-map = <0x4000 0 0 1 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x4800 0 0 1 &gic 0 58 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x5000 0 0 1 &gic 0 59 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x5800 0 0 1 &gic 0 60 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x6000 0 0 1 &gic 0 61 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x6800 0 0 1 &gic 0 62 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x7000 0 0 1 &gic 0 63 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0x7800 0 0 1 &gic 0 64 IRQ_TYPE_LEVEL_HIGH>;
+> +			ranges = <0x02000000 0x0 0xfe000000 0x0 0xfe000000 0x0 0x1000000>;
+> +			bus-range = <0x00 0x00>;
+> +			msi-parent = <&msix>;
+> +		};
+> +	};
+> +};
+
+The rest of the series looks good.
+
+Thanks!
+Antoine
+
 -- 
-2.17.1
-
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
