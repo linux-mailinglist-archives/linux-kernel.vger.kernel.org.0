@@ -2,159 +2,326 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5653178EBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5BE178EBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387833AbgCDKpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:45:20 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41658 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387817AbgCDKpT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:45:19 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l21so951463qtr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 02:45:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=huiJ97gIg8Vp/O2i1Ez97YEyu+JLeKY5B4/+r4G3YWA=;
-        b=L11Digy+PkNgloldAwW9RxrQsjxuPahfbgTPhljMLZA1NSA04seBp65zQu3orBWXCP
-         ujc+S77td1vf7bZTq2xGoWwNZAjP57v9v7rxQvmoil7us4OK8zeM9EXKA+AKkS51mT/+
-         aAZJOa7AQiHNiC/DiM996CDsGPRL85usUw7IDm8cab1ZLqmmeAALv4CmuPse4svRnYfF
-         qVO6xwUekgpjYAri3OaqrXFtmswbEKnhVQ6gySKvqPPWvzQiZwKEn+azx4/GYDD3zhSZ
-         ZHrR7Eyl5M2IxZsJbtmiwk/llsUljTH0nK/HHAUZb275rmvGecit2whGiJnDGJzu48LJ
-         G1wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=huiJ97gIg8Vp/O2i1Ez97YEyu+JLeKY5B4/+r4G3YWA=;
-        b=dPxpdFB/ha0UsEL2IeP3zkbf+pQVi3vDbajxgcDLrbk0+rxKTxUcsYKQWfSFcfi68F
-         iTN2en9J6OO5pt5vMbooxN/FN0L8saJY1dBcS8mlavLMgI6kE+vXusx0/EWRZHVZpYBG
-         JvD72SqXcj/PhJ1/IPo0DJR6RyxxlfPa9MqwwMcQPnCS8bz0KpCEfpg5VAbOQTGBBrlS
-         yfq6m1mHlrFPQOD8oWwxVmRyBUf+p/Sh2x7qDkkxbCCMPKGmcixUR+jZyhxm6/6Yb/uM
-         DeycQmu3fadE9EY2mM3Q7RqZux1QtMmUqdfwsBjqqXxO3juQBXa5bReMJoIbNYs1L3Qd
-         lYBw==
-X-Gm-Message-State: ANhLgQ20GwjdltTTOuV0SqBnHAUpTySC3S3m5uhML7Obg6kPfzjn0aCZ
-        1bY/wx8RDhg+tqtOTdZnaNKjaFFkSY51+HI1zJbcnQ==
-X-Google-Smtp-Source: ADFU+vtTPmntYpOJcz/uSFLW22+158HLcsM+4XAySJDIKJAijs8WRfB9AZdn0xgTh4qwPZs2mHwhc+5RvjKSh7qSO74=
-X-Received: by 2002:ac8:3533:: with SMTP id y48mr1787396qtb.380.1583318717797;
- Wed, 04 Mar 2020 02:45:17 -0800 (PST)
+        id S2387780AbgCDKon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:44:43 -0500
+Received: from foss.arm.com ([217.140.110.172]:60734 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728387AbgCDKom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 05:44:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D780130E;
+        Wed,  4 Mar 2020 02:44:41 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 084C93F534;
+        Wed,  4 Mar 2020 02:44:39 -0800 (PST)
+Date:   Wed, 4 Mar 2020 10:44:34 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Remi Pommarel <repk@triplefau.lt>, kishon@ti.com,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 5/7] phy: amlogic: Add Amlogic AXG MIPI/PCIE analog
+ PHY Driver
+Message-ID: <20200304104434.GA6613@e121166-lin.cambridge.arm.com>
+References: <20200123232943.10229-1-repk@triplefau.lt>
+ <20200123232943.10229-6-repk@triplefau.lt>
+ <20200303171921.GB9641@e121166-lin.cambridge.arm.com>
+ <af715acf-9ea4-8a82-92d3-578d09aec760@baylibre.com>
 MIME-Version: 1.0
-References: <000000000000dd909105a002ebe6@google.com> <20200304102850.2492-1-hdanton@sina.com>
-In-Reply-To: <20200304102850.2492-1-hdanton@sina.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 4 Mar 2020 11:43:15 +0100
-Message-ID: <CACT4Y+ZSyZbDTQ9VOj999eDMiowEQdQmGrNMrQ04SPHe_882pA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in sys_keyctl
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     syzbot <syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af715acf-9ea4-8a82-92d3-578d09aec760@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 4, 2020 at 11:29 AM Hillf Danton <hdanton@sina.com> wrote:
-> On Wed, 04 Mar 2020 00:08:11 -0800
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=15257ba1e00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0c5c2dbf76930df91489
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com
-> >
-> > rcu: INFO: rcu_preempt self-detected stall on CPU
-> > rcu:  0-....: (1 GPs behind) idle=576/1/0x4000000000000002 softirq=55718/56054 fqs=5235
-> >       (t=10500 jiffies g=63445 q=1523)
-> > NMI backtrace for cpu 0
-> > CPU: 0 PID: 18804 Comm: syz-executor.4 Not tainted 5.6.0-rc3-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Call Trace:
-> >  <IRQ>
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x197/0x210 lib/dump_stack.c:118
-> >  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-> >  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-> >  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-> >  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
-> >  rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree_stall.h:254
-> >  print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
-> >  check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
-> >  rcu_pending kernel/rcu/tree.c:3030 [inline]
-> >  rcu_sched_clock_irq.cold+0x51a/0xc37 kernel/rcu/tree.c:2276
-> >  update_process_times+0x2d/0x70 kernel/time/timer.c:1726
-> >  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:171
-> >  tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1314
-> >  __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
-> >  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1579
-> >  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1641
-> >  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1119 [inline]
-> >  smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1144
-> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
-> >  </IRQ>
-> > RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x16/0x20 kernel/kcov.c:276
-> > Code: 48 89 e5 48 8b 4d 08 e8 d8 fe ff ff 5d c3 66 0f 1f 44 00 00 55 89 f2 89 fe bf 05 00 00 00 48 89 e5 48 8b 4d 08 e8 ba fe ff ff <5d> c3 0f 1f 84 00 00 00 00 00 55 48 89 f2 48 89 fe bf 07 00 00 00
-> > RSP: 0018:ffffc900053877d8 EFLAGS: 00000297 ORIG_RAX: ffffffffffffff13
-> > RAX: 0000000000000002 RBX: 584279fc973b765a RCX: ffffffff83b71a81
-> > RDX: 00000000ffffff75 RSI: 0000000000000000 RDI: 0000000000000005
-> > RBP: ffffc900053877d8 R08: ffff888041a265c0 R09: 0000000000000092
-> > R10: ffffed1015d0707b R11: ffff8880ae8383db R12: ffff88809eb56398
-> > R13: 000000003ab2c4e4 R14: 1b0d4377a72d08f5 R15: 00000000ffffff75
-> >  mpihelp_submul_1+0x161/0x1a0 lib/mpi/generic_mpih-mul3.c:45
-> >  mpihelp_divrem+0x1ce/0x1360 lib/mpi/mpih-div.c:209
-> >  mpi_powm+0xffb/0x1d20 lib/mpi/mpi-pow.c:205
-> >  _compute_val crypto/dh.c:39 [inline]
-> >  dh_compute_value+0x373/0x610 crypto/dh.c:178
-> >  crypto_kpp_generate_public_key include/crypto/kpp.h:315 [inline]
-> >  __keyctl_dh_compute+0x9ae/0x1470 security/keys/dh.c:367
-> >  keyctl_dh_compute+0xcf/0x12d security/keys/dh.c:422
-> >  __do_sys_keyctl security/keys/keyctl.c:1818 [inline]
-> >  __se_sys_keyctl security/keys/keyctl.c:1714 [inline]
-> >  __x64_sys_keyctl+0x159/0x470 security/keys/keyctl.c:1714
-> >  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x45c479
-> > Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007f872a51fc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
-> > RAX: ffffffffffffffda RBX: 00007f872a5206d4 RCX: 000000000045c479
-> > RDX: 0000000020002700 RSI: 0000000020000400 RDI: 0000000000000017
-> > RBP: 000000000076bfc0 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 00000000ffffff84 R11: 0000000000000246 R12: 00000000ffffffff
-> > R13: 00000000000006fa R14: 00000000004c9883 R15: 000000000076bfcc
-> >
-> >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> Cut the chance of being a cpu hog.
->
-> --- a/lib/mpi/mpih-div.c
-> +++ b/lib/mpi/mpih-div.c
-> @@ -215,6 +215,8 @@ q_test:
->
->                                 qp[i] = q;
->                                 n0 = np[dsize - 1];
-> +
-> +                               cond_resched();
+On Wed, Mar 04, 2020 at 10:08:55AM +0100, Neil Armstrong wrote:
+> Hi Lorenzo,
+> 
+> 
+> On 03/03/2020 18:19, Lorenzo Pieralisi wrote:
+> > On Fri, Jan 24, 2020 at 12:29:41AM +0100, Remi Pommarel wrote:
+> >> This adds support for the MIPI analog PHY which is also used for PCIE
+> >> found in the Amlogic AXG SoC Family.
+> >>
+> >> MIPI or PCIE selection is done by the #phy-cells, making the mode
+> >> static and exclusive.
+> >>
+> >> For now only PCIE fonctionality is supported.
+> >>
+> >> This PHY will be used to replace the mipi_enable clock gating logic
+> >> which was mistakenly added in the clock subsystem. This also activate
+> >> a non documented band gap bit in those registers that allows reliable
+> >> PCIE clock signal generation on AXG platforms.
+> >>
+> >> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> >> ---
+> >>  drivers/phy/amlogic/Kconfig                   |  11 +
+> >>  drivers/phy/amlogic/Makefile                  |  11 +-
+> >>  .../amlogic/phy-meson-axg-mipi-pcie-analog.c  | 188 ++++++++++++++++++
+> >>  3 files changed, 205 insertions(+), 5 deletions(-)
+> >>  create mode 100644 drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
+> > 
+> > Kishon, Neil,
+> > 
+> > can you please review/ack this patch and patch 6 ?
+> 
+> Sure, it was already acked by jerome, but it's also ok for me:
+> 
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Isn't it looping infinitely? cond_resched() won't help in such case.
+Thanks. Sorry for the pedantry but on patch (6) too.
+
+Lorenzo
+
+> Neil
+> > 
+> > I would like to queue the series shortly, thanks.
+> > 
+> > Lorenzo
+> > 
+> >> diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
+> >> index af774ac2b934..8c9cf2403591 100644
+> >> --- a/drivers/phy/amlogic/Kconfig
+> >> +++ b/drivers/phy/amlogic/Kconfig
+> >> @@ -59,3 +59,14 @@ config PHY_MESON_G12A_USB3_PCIE
+> >>  	  Enable this to support the Meson USB3 + PCIE Combo PHY found
+> >>  	  in Meson G12A SoCs.
+> >>  	  If unsure, say N.
+> >> +
+> >> +config PHY_MESON_AXG_MIPI_PCIE_ANALOG
+> >> +	tristate "Meson AXG MIPI + PCIE analog PHY driver"
+> >> +	default ARCH_MESON
+> >> +	depends on OF && (ARCH_MESON || COMPILE_TEST)
+> >> +	select GENERIC_PHY
+> >> +	select REGMAP_MMIO
+> >> +	help
+> >> +	  Enable this to support the Meson MIPI + PCIE analog PHY
+> >> +	  found in Meson AXG SoCs.
+> >> +	  If unsure, say N.
+> >> diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
+> >> index 11d1c42ac2be..0aecf92d796a 100644
+> >> --- a/drivers/phy/amlogic/Makefile
+> >> +++ b/drivers/phy/amlogic/Makefile
+> >> @@ -1,6 +1,7 @@
+> >>  # SPDX-License-Identifier: GPL-2.0-only
+> >> -obj-$(CONFIG_PHY_MESON8B_USB2)		+= phy-meson8b-usb2.o
+> >> -obj-$(CONFIG_PHY_MESON_GXL_USB2)	+= phy-meson-gxl-usb2.o
+> >> -obj-$(CONFIG_PHY_MESON_G12A_USB2)	+= phy-meson-g12a-usb2.o
+> >> -obj-$(CONFIG_PHY_MESON_GXL_USB3)	+= phy-meson-gxl-usb3.o
+> >> -obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)	+= phy-meson-g12a-usb3-pcie.o
+> >> +obj-$(CONFIG_PHY_MESON8B_USB2)			+= phy-meson8b-usb2.o
+> >> +obj-$(CONFIG_PHY_MESON_GXL_USB2)		+= phy-meson-gxl-usb2.o
+> >> +obj-$(CONFIG_PHY_MESON_G12A_USB2)		+= phy-meson-g12a-usb2.o
+> >> +obj-$(CONFIG_PHY_MESON_GXL_USB3)		+= phy-meson-gxl-usb3.o
+> >> +obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)		+= phy-meson-g12a-usb3-pcie.o
+> >> +obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE_ANALOG)	+= phy-meson-axg-mipi-pcie-analog.o
+> >> diff --git a/drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c b/drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
+> >> new file mode 100644
+> >> index 000000000000..1431cbf885e1
+> >> --- /dev/null
+> >> +++ b/drivers/phy/amlogic/phy-meson-axg-mipi-pcie-analog.c
+> >> @@ -0,0 +1,188 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Amlogic AXG MIPI + PCIE analog PHY driver
+> >> + *
+> >> + * Copyright (C) 2019 Remi Pommarel <repk@triplefau.lt>
+> >> + */
+> >> +#include <linux/module.h>
+> >> +#include <linux/phy/phy.h>
+> >> +#include <linux/regmap.h>
+> >> +#include <linux/platform_device.h>
+> >> +#include <dt-bindings/phy/phy.h>
+> >> +
+> >> +#define HHI_MIPI_CNTL0 0x00
+> >> +#define		HHI_MIPI_CNTL0_COMMON_BLOCK	GENMASK(31, 28)
+> >> +#define		HHI_MIPI_CNTL0_ENABLE		BIT(29)
+> >> +#define		HHI_MIPI_CNTL0_BANDGAP		BIT(26)
+> >> +#define		HHI_MIPI_CNTL0_DECODE_TO_RTERM	GENMASK(15, 12)
+> >> +#define		HHI_MIPI_CNTL0_OUTPUT_EN	BIT(3)
+> >> +
+> >> +#define HHI_MIPI_CNTL1 0x01
+> >> +#define		HHI_MIPI_CNTL1_CH0_CML_PDR_EN	BIT(12)
+> >> +#define		HHI_MIPI_CNTL1_LP_ABILITY	GENMASK(5, 4)
+> >> +#define		HHI_MIPI_CNTL1_LP_RESISTER	BIT(3)
+> >> +#define		HHI_MIPI_CNTL1_INPUT_SETTING	BIT(2)
+> >> +#define		HHI_MIPI_CNTL1_INPUT_SEL	BIT(1)
+> >> +#define		HHI_MIPI_CNTL1_PRBS7_EN		BIT(0)
+> >> +
+> >> +#define HHI_MIPI_CNTL2 0x02
+> >> +#define		HHI_MIPI_CNTL2_CH_PU		GENMASK(31, 25)
+> >> +#define		HHI_MIPI_CNTL2_CH_CTL		GENMASK(24, 19)
+> >> +#define		HHI_MIPI_CNTL2_CH0_DIGDR_EN	BIT(18)
+> >> +#define		HHI_MIPI_CNTL2_CH_DIGDR_EN	BIT(17)
+> >> +#define		HHI_MIPI_CNTL2_LPULPS_EN	BIT(16)
+> >> +#define		HHI_MIPI_CNTL2_CH_EN(n)		BIT(15 - (n))
+> >> +#define		HHI_MIPI_CNTL2_CH0_LP_CTL	GENMASK(10, 1)
+> >> +
+> >> +struct phy_axg_mipi_pcie_analog_priv {
+> >> +	struct phy *phy;
+> >> +	unsigned int mode;
+> >> +	struct regmap *regmap;
+> >> +};
+> >> +
+> >> +static const struct regmap_config phy_axg_mipi_pcie_analog_regmap_conf = {
+> >> +	.reg_bits = 8,
+> >> +	.val_bits = 32,
+> >> +	.reg_stride = 4,
+> >> +	.max_register = HHI_MIPI_CNTL2,
+> >> +};
+> >> +
+> >> +static int phy_axg_mipi_pcie_analog_power_on(struct phy *phy)
+> >> +{
+> >> +	struct phy_axg_mipi_pcie_analog_priv *priv = phy_get_drvdata(phy);
+> >> +
+> >> +	/* MIPI not supported yet */
+> >> +	if (priv->mode != PHY_TYPE_PCIE)
+> >> +		return -EINVAL;
+> >> +
+> >> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> >> +			   HHI_MIPI_CNTL0_BANDGAP, HHI_MIPI_CNTL0_BANDGAP);
+> >> +
+> >> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> >> +			   HHI_MIPI_CNTL0_ENABLE, HHI_MIPI_CNTL0_ENABLE);
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int phy_axg_mipi_pcie_analog_power_off(struct phy *phy)
+> >> +{
+> >> +	struct phy_axg_mipi_pcie_analog_priv *priv = phy_get_drvdata(phy);
+> >> +
+> >> +	/* MIPI not supported yet */
+> >> +	if (priv->mode != PHY_TYPE_PCIE)
+> >> +		return -EINVAL;
+> >> +
+> >> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> >> +			   HHI_MIPI_CNTL0_BANDGAP, 0);
+> >> +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
+> >> +			   HHI_MIPI_CNTL0_ENABLE, 0);
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int phy_axg_mipi_pcie_analog_init(struct phy *phy)
+> >> +{
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int phy_axg_mipi_pcie_analog_exit(struct phy *phy)
+> >> +{
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static const struct phy_ops phy_axg_mipi_pcie_analog_ops = {
+> >> +	.init = phy_axg_mipi_pcie_analog_init,
+> >> +	.exit = phy_axg_mipi_pcie_analog_exit,
+> >> +	.power_on = phy_axg_mipi_pcie_analog_power_on,
+> >> +	.power_off = phy_axg_mipi_pcie_analog_power_off,
+> >> +	.owner = THIS_MODULE,
+> >> +};
+> >> +
+> >> +static struct phy *phy_axg_mipi_pcie_analog_xlate(struct device *dev,
+> >> +						  struct of_phandle_args *args)
+> >> +{
+> >> +	struct phy_axg_mipi_pcie_analog_priv *priv = dev_get_drvdata(dev);
+> >> +	unsigned int mode;
+> >> +
+> >> +	if (args->args_count != 1) {
+> >> +		dev_err(dev, "invalid number of arguments\n");
+> >> +		return ERR_PTR(-EINVAL);
+> >> +	}
+> >> +
+> >> +	mode = args->args[0];
+> >> +
+> >> +	/* MIPI mode is not supported yet */
+> >> +	if (mode != PHY_TYPE_PCIE) {
+> >> +		dev_err(dev, "invalid phy mode select argument\n");
+> >> +		return ERR_PTR(-EINVAL);
+> >> +	}
+> >> +
+> >> +	priv->mode = mode;
+> >> +	return priv->phy;
+> >> +}
+> >> +
+> >> +static int phy_axg_mipi_pcie_analog_probe(struct platform_device *pdev)
+> >> +{
+> >> +	struct phy_provider *phy;
+> >> +	struct device *dev = &pdev->dev;
+> >> +	struct phy_axg_mipi_pcie_analog_priv *priv;
+> >> +	struct device_node *np = dev->of_node;
+> >> +	struct regmap *map;
+> >> +	struct resource *res;
+> >> +	void __iomem *base;
+> >> +	int ret;
+> >> +
+> >> +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
+> >> +	if (!priv)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >> +	base = devm_ioremap_resource(dev, res);
+> >> +	if (IS_ERR(base)) {
+> >> +		dev_err(dev, "failed to get regmap base\n");
+> >> +		return PTR_ERR(base);
+> >> +	}
+> >> +
+> >> +	map = devm_regmap_init_mmio(dev, base,
+> >> +				    &phy_axg_mipi_pcie_analog_regmap_conf);
+> >> +	if (IS_ERR(map)) {
+> >> +		dev_err(dev, "failed to get HHI regmap\n");
+> >> +		return PTR_ERR(map);
+> >> +	}
+> >> +	priv->regmap = map;
+> >> +
+> >> +	priv->phy = devm_phy_create(dev, np, &phy_axg_mipi_pcie_analog_ops);
+> >> +	if (IS_ERR(priv->phy)) {
+> >> +		ret = PTR_ERR(priv->phy);
+> >> +		if (ret != -EPROBE_DEFER)
+> >> +			dev_err(dev, "failed to create PHY\n");
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	phy_set_drvdata(priv->phy, priv);
+> >> +	dev_set_drvdata(dev, priv);
+> >> +
+> >> +	phy = devm_of_phy_provider_register(dev,
+> >> +					    phy_axg_mipi_pcie_analog_xlate);
+> >> +
+> >> +	return PTR_ERR_OR_ZERO(phy);
+> >> +}
+> >> +
+> >> +static const struct of_device_id phy_axg_mipi_pcie_analog_of_match[] = {
+> >> +	{
+> >> +		.compatible = "amlogic,axg-mipi-pcie-analog-phy",
+> >> +	},
+> >> +	{ },
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, phy_axg_mipi_pcie_analog_of_match);
+> >> +
+> >> +static struct platform_driver phy_axg_mipi_pcie_analog_driver = {
+> >> +	.probe = phy_axg_mipi_pcie_analog_probe,
+> >> +	.driver = {
+> >> +		.name = "phy-axg-mipi-pcie-analog",
+> >> +		.of_match_table = phy_axg_mipi_pcie_analog_of_match,
+> >> +	},
+> >> +};
+> >> +module_platform_driver(phy_axg_mipi_pcie_analog_driver);
+> >> +
+> >> +MODULE_AUTHOR("Remi Pommarel <repk@triplefau.lt>");
+> >> +MODULE_DESCRIPTION("Amlogic AXG MIPI + PCIE analog PHY driver");
+> >> +MODULE_LICENSE("GPL v2");
+> >> -- 
+> >> 2.24.1
+> >>
+> 
