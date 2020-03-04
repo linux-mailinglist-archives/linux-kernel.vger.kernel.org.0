@@ -2,104 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14516178915
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 04:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33D45178931
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 04:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387692AbgCDDVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 22:21:25 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:64195 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387400AbgCDDVZ (ORCPT
+        id S2387640AbgCDDdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 22:33:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46328 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387535AbgCDDdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 22:21:25 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id 0243Kef6018747;
-        Wed, 4 Mar 2020 12:20:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 0243Kef6018747
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1583292045;
-        bh=v2vJfpnqozXNkEifp79FluQTimJVampIAlakCpTKI9o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nKKD3muBJ0m/YtVBc8JE/Aa5V22EojkwDntV6b7YPhjlSrnAfwn7kf5+Dnz6XgstE
-         zoCnF0F0WglpiFMNLmDan8WZbUAjY4qqrp1oQx1YTRxArHcoFdMyPIytG3DROCfJQ1
-         TjboNnqww42k7q5gwnpA/5H9h+r86AwbiQ+VKXAO4nIj65miHrEKwMSZAbWYTSkB/w
-         qsZ/H6c3ckDabFevv5dN8DmYVk7UquO16Oc/6ZtJK5A57gx3K8Rfi0Oq63GHy4R4WU
-         MsrupfHEyH5E1k8Xwp5BuKeP/cLirWfT07iaooAZoGT+Tqj5mIYFJ3AK69OqXtVLcf
-         8fAAxrt8UXvBA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-kbuild@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 3/3] kbuild: allow to run dt_binding_check without kernel configuration
-Date:   Wed,  4 Mar 2020 12:20:38 +0900
-Message-Id: <20200304032038.14424-4-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200304032038.14424-1-masahiroy@kernel.org>
-References: <20200304032038.14424-1-masahiroy@kernel.org>
+        Tue, 3 Mar 2020 22:33:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M+dQULEmEUvZ5aWDmJahkgl/f7eC2PLINBXVNSLE+f8=; b=QYrRwdIo5LlcWwp3LG53vFwDFJ
+        oU6aF5TklVYfocgjVxpAejUO2nFXbqpSKRFQLG+NhkBulVZk/22dbw2gPu1GpM4nrz9TUbUkV+S9s
+        LsGWt5IHKKSkHuKOfMs4EqTd6vZIdqXPyILE+CHIW0WARhD5yt1S0UyI0GkY6fK8lSRAY9LEXQ0Jj
+        7QE8JeFc9/jBOgNbuWJKY1hh3Wwh429WjpQYxUOhcNUahImF7uhrTR/OqhZvyLi70/b2EgRSKc1ni
+        WXDb1JJPkhoG/9dc5eEycJhCbaQkmM7DojVdXgsB96goVMNhCZSYf1ru2FMJOy+Wwjtxw0x5WxOP3
+        Qc5CVP/A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9Kmn-0003Si-Mh; Wed, 04 Mar 2020 03:33:29 +0000
+Date:   Tue, 3 Mar 2020 19:33:29 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     paulmck@kernel.org, elver@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] lib: disable KCSAN for XArray
+Message-ID: <20200304033329.GZ29971@bombadil.infradead.org>
+References: <20200304031551.1326-1-cai@lca.pw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200304031551.1326-1-cai@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dt_binding_check target is located outside of the
-'ifneq ($(dtstree),) ... endif' block.
+On Tue, Mar 03, 2020 at 10:15:51PM -0500, Qian Cai wrote:
+> Functions like xas_find_marked(), xas_set_mark(), and xas_clear_mark()
+> could happen concurrently result in data races, but those operate only
+> on a single bit that are pretty much harmless. For example,
 
-Hence, you can run 'make dt_binding_check' on any architecture.
-This makes a perfect sense because the dt-schema is arch-agnostic.
-
-The only one problem I see is that scripts/dtc/dtc is not always built.
-For example, ARCH=x86 defconfig does not define CONFIG_DTC. Kbuild
-descends into scripts/dtc/, but does nothing. Then, it fails to build
-*.example.dt.yaml files.
-
-Let's build scripts/dtc/dtc forcibly when running dt_binding_check.
-
-The dt-schema does not depend on any CONFIG option either, so you
-should be able to run dt_binding_check without the .config file.
-
-Going forward, you can directly run 'make dt_binding_check' in a
-pristine source tree.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- Makefile             | 2 +-
- scripts/dtc/Makefile | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 7dec7b343842..190f595c7bfc 100644
---- a/Makefile
-+++ b/Makefile
-@@ -255,7 +255,7 @@ clean-targets := %clean mrproper cleandocs
- no-dot-config-targets := $(clean-targets) \
- 			 cscope gtags TAGS tags help% %docs check% coccicheck \
- 			 $(version_h) headers headers_% archheaders archscripts \
--			 %asm-generic kernelversion %src-pkg
-+			 %asm-generic kernelversion %src-pkg dt_binding_check
- no-sync-config-targets := $(no-dot-config-targets) install %install \
- 			   kernelrelease
- single-targets := %.a %.i %.ko %.lds %.ll %.lst %.mod %.o %.s %.symtypes %/
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index 3acbb410904c..2f3c3a7e1620 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -1,8 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- # scripts/dtc makefile
- 
--hostprogs		:= dtc
--always-$(CONFIG_DTC)	:= $(hostprogs)
-+hostprogs			:= dtc
-+always-$(CONFIG_DTC)		+= $(hostprogs)
-+always-$(CHECK_DT_BINDING)	+= $(hostprogs)
- 
- dtc-objs	:= dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
- 		   srcpos.o checks.o util.o
--- 
-2.17.1
+Those aren't data races.  The writes are protected by a spinlock and the
+reads by the RCU read lock.  If the tool can't handle RCU protection,
+it's not going to be much use.
 
