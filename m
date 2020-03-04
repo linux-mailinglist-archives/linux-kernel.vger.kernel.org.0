@@ -2,108 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7DEE17927A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EAFA179284
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgCDOkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 09:40:06 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36369 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbgCDOkF (ORCPT
+        id S1729447AbgCDOlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 09:41:13 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33255 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388023AbgCDOlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 09:40:05 -0500
-Received: by mail-io1-f67.google.com with SMTP id d15so2649868iog.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 06:40:05 -0800 (PST)
+        Wed, 4 Mar 2020 09:41:12 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x7so2727484wrr.0;
+        Wed, 04 Mar 2020 06:41:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dMGVVFarDw73CfV5fUTk6Su35UJvJOifOzDgrmDUXRc=;
-        b=Zn9CxSVlchouOG4GZgk7Nm4O/NAB0SnMeBa/JRkGZQ9G1OUrvvluEsXpyBEz8p0mbm
-         7wYFzOiTNUdcvsrB6Rvv5CcuSi1CFmYKyGmQmVo8he30G67WaU8kY5ZmaCpX13/5okzl
-         KA6BcOXHqW21m8kffBdz9LGa8fLlHe/L+vgJkgYOgJU1kYf0fqdurzWAaaMthk9C24R4
-         PZ/4+OTiTWx44fuJjJuJajQQLJPFuchVQ9vRd62Ti3X+1x87hzclf65iIwzpQLwcyk9S
-         juAGN51NgAopyDzlSLFxItv/TCemR9SYKMqZSNW27phIVAWaxpAEjIXz34t1ePEh6V+R
-         cxLg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tCtKJyb0/NtRc1ah/YeyZWRmrmSc960u9t/iq++pctQ=;
+        b=R4bWqPW02fm4nkxV0Ak9O8GdBoEajmQ37qYu+0EweklUM9nyjVIUHvh8+6oCSiZqni
+         /UI75iYEW/gPNcnB403xDMsMsPyQ0Z0XUbtWyAIuxxEF8Xl4LPj47io6o9wQbCAgtNo6
+         3e/5spSmMM50Tam8A794PbBptTnR9RaDVS5b0f56GKR9mJTV3LCr1BoSgYt9X8d0L4Gl
+         x8VZqquFLgKio7ch59MeSiqjH2tfw86Q+QCnaos0CxQaRwV+HhGkKYENhyOZEEF3hiLO
+         LQUetKEibArZLltveclWLmI2vcYFuWZNUEREFkJRnpz7XAjGeC4nU2HoAaDfY9BuCNuc
+         Xj7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dMGVVFarDw73CfV5fUTk6Su35UJvJOifOzDgrmDUXRc=;
-        b=bNbEnku/acRhfy4qQcnz6wV027s869VLa/ZTEiZmwA0W7VKOA17ZL2QjYm6uhX1LUK
-         pDABTkYV4IqJWWDYjqEBirwBvNfUsvKQ4K/B6rraKR84p2wLayTbViWNSc+ZcMxSpfPg
-         vTKIQENjX5td8mkCJrSFVoM2aR3bUDNsfMZ4AMKPsrPlqH2p85hJOk1BlHUWdRAMv7AW
-         b/UReXstUDgsD+w6rpRC5MeiGt1qKKQpQzGyfu8w2LjaPNKyG0yrqIpKR6zn1CMTOlOU
-         V6zgT2Q2hnbeOu1F49L5PiSSssTGlpG2qdq13YJx8q++W8OKBxs2+J5Ao96kYOTj2U6Z
-         v0XQ==
-X-Gm-Message-State: ANhLgQ2QFakIWgdhtxAgTiP9nggKJIu8W1Q/Lc+nBxk4im7p0rVGut33
-        YHG1wuyxaCjxAXzpfxwJRfMKB9F7SpU=
-X-Google-Smtp-Source: ADFU+vubGPSo6Z/AKTb62TsrXVcF66QjDDSgPTJ2s+8TaTBeohcH0WybO8+xeSzKqgfJmF8AzmAnRQ==
-X-Received: by 2002:a6b:3756:: with SMTP id e83mr2523436ioa.133.1583332805008;
-        Wed, 04 Mar 2020 06:40:05 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c24sm6544597iom.0.2020.03.04.06.40.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 06:40:04 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
-Date:   Wed, 4 Mar 2020 07:40:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tCtKJyb0/NtRc1ah/YeyZWRmrmSc960u9t/iq++pctQ=;
+        b=UTqEm47uNhSYNhXLKW2QNpSThNbfNciqyVSqns78RtEn+5J3wi1njOOEw+eLfCRLaE
+         2S4UacYuzsSkccQ/tk5IIapgprdbqJFsosjyREoACFEsyK+bc65d0rbw+z8SopzeD8Jj
+         Mae3gGBd768JOT/6LYRHK78rAHroEFHMMQrXNO0loMipZcN/Zp0vYkFbKXnolfKXNBcN
+         E3BxjpzBQx4pBFZodlAzDhMa3fIMC0Dc6IGnMwAvzDP7eHwjzDz2q0kTq661nxihwV25
+         Y/8dTQEwA3v0ACJGMHgiEYfVuXiE+W9zo+kaR4Tln82i87niORW3iz3Brgk/hYksRZoO
+         s3qw==
+X-Gm-Message-State: ANhLgQ2qJHd+yZpYlW+pbNakjtVonULw4ZAsG0nwzW+5R0mm7pCJKdvB
+        6wcRDYXyPPHic3GzPLr0Kmk=
+X-Google-Smtp-Source: ADFU+vsV2rXo6R7E8LyFSyxoB2/CQNHH4LKEdBCKcqgGzs6DkRDeFKR72TjfYg/ctlXmu8Su0JfJQA==
+X-Received: by 2002:adf:cd0a:: with SMTP id w10mr4331698wrm.171.1583332869611;
+        Wed, 04 Mar 2020 06:41:09 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
+        by smtp.gmail.com with ESMTPSA id u20sm4195561wmj.14.2020.03.04.06.41.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 06:41:08 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Borislav Petkov <bp@suse.de>,
+        Yash Shah <yash.shah@sifive.com>, linux-edac@vger.kernel.org,
+        Sebastian Duda <sebastian.duda@fau.de>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify EDAC-SIFIVE entry
+Date:   Wed,  4 Mar 2020 15:40:45 +0100
+Message-Id: <20200304144045.15060-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
-> On Fri, Feb 7, 2020 at 9:14 AM syzbot
-> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
->> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
->> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
-> 
-> +io_uring maintainers
-> 
-> Here is a repro:
-> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+Commit 9209fb51896f ("riscv: move sifive_l2_cache.c to drivers/soc") moved
+arch/riscv/mm/sifive_l2_cache.c to drivers/soc/sifive/sifive_l2_cache.c
+and adjusted the MAINTAINERS EDAC-SIFIVE entry but slipped in a mistake.
 
-I've queued up a fix for this:
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
+  warning: no file matches F: drivers/soc/sifive_l2_cache.c
 
+Rectify the EDAC-SIFIVE entry in MAINTAINERS now.
+
+Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Paul, please pick this patch.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6158a143a13e..5c755e03ddee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6110,7 +6110,7 @@ M:	Yash Shah <yash.shah@sifive.com>
+ L:	linux-edac@vger.kernel.org
+ S:	Supported
+ F:	drivers/edac/sifive_edac.c
+-F:	drivers/soc/sifive_l2_cache.c
++F:	drivers/soc/sifive/sifive_l2_cache.c
+ 
+ EDAC-SKYLAKE
+ M:	Tony Luck <tony.luck@intel.com>
 -- 
-Jens Axboe
+2.17.1
 
