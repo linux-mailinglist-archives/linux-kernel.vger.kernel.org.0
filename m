@@ -2,144 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3572C179721
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1CD817972E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388459AbgCDRun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:50:43 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58637 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388447AbgCDRul (ORCPT
+        id S2388362AbgCDRvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:51:24 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36624 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729823AbgCDRt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:50:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583344240;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uBsS/YmxjQODOBkmb+NINDDG4I3J9mAU22trZxbPnrk=;
-        b=c4drWRpLbrruldNQNMCw0+raYhmGtLLbCxAB8CFk4xIb4BFCIJ32/nb4XWkfjqF0+Tnup3
-        DvBKCyoJm+kWH5j5m0uMtEJjysW/fRWwFV369qwqs/DfY53FbZZQ57wn9V1MOtoFcH0RYs
-        V1p9PvOpUzz9vAtZAni4sIX1B9rAFho=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-255-QzHQtLaLP829sryb3UKVMQ-1; Wed, 04 Mar 2020 12:50:39 -0500
-X-MC-Unique: QzHQtLaLP829sryb3UKVMQ-1
-Received: by mail-qt1-f198.google.com with SMTP id f25so1967016qtp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:50:39 -0800 (PST)
+        Wed, 4 Mar 2020 12:49:57 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d9so1336722pgu.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:49:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6Pcd87jXBoko1RLArOK3JOBlDi7LhTUzZixbyRsnysk=;
+        b=KydW31s5IW/9GAa1O2cOf0tr47W3xiu+sI0QS5k4+QTrWO48/QOCDWuN6szRJdWC8t
+         m/ZU4WaUCpLcsf9bclQU0uYpXvxA/CFmAjaIBn9jvqddhcgnTC8rY7ASNGsULHLxRTyz
+         DpGPCTwJLKmg4lkn/XHl8yyhMdUGpPVZxGJTbvxc/hHkx1J5PSmQftvbfoPmI+ElqXgA
+         RLHiSnZdLeCzCa/nSmn7ycYQJ4UrLEiLLec1aKYuIs4xhXwFPUaQVU5eZvXGVVyoPbH6
+         99wBpcfSf+LzhQq5UeMHjVCCgeycHumKOAST2EsqrhfXlsOzIumoWMlV51O5jA7QPA8q
+         seGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uBsS/YmxjQODOBkmb+NINDDG4I3J9mAU22trZxbPnrk=;
-        b=ZyuQRPgGoJIM0PlpOE1ezADKPgjgxAebwx6oCifjdtmJe3GjNq0TkYUVlNUX8jI6DP
-         RmM9lbolIihEAq5kFDVLrif7aRm3cScSfSXAMUB5lbBUNKQ9Uv8nUy7YKi3ebZoqfNbF
-         PVQ8dTSN2//3dgi3AhAHt0xY0upLqdOx6WE+S+jU9sFRLkyefHOKsbODackwHLXOJnkB
-         6WHkEdZgdbOFyuYg3iITxNNMGJEDm909xptYjf1+JG0tpMDYvPtePUgoENjB1Hy1abHF
-         XdeTzJ0WIv6ZI9x49MVClTbvFxsOsbtx7FluD6+7C/5Sbyh5iX25l36mtVrSTIuxcXF7
-         qmUA==
-X-Gm-Message-State: ANhLgQ2hc4MyBNxROppdKfljTBCJgExGWjAzFmBxZxjlsPB2kzD9Gpui
-        9CtKhylth4rCAegqVP/tn+HgZGO/xhCEFfVA4Pvbfn3F4U5jQHNnWNEptFClWflh9PM5/8+Zo7J
-        WDwqOOoUtyp6rKBfxxMehMnjA
-X-Received: by 2002:a05:6214:18f4:: with SMTP id ep20mr2998451qvb.76.1583344238583;
-        Wed, 04 Mar 2020 09:50:38 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vvtOskywcCh8+++WY2I+jwaVGUp00xQLcHN1X7GBTJP5eBRi7AmIcA7LT3sPZ8m1MioYkVRGg==
-X-Received: by 2002:a05:6214:18f4:: with SMTP id ep20mr2998429qvb.76.1583344238321;
-        Wed, 04 Mar 2020 09:50:38 -0800 (PST)
-Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id f13sm9747092qkm.42.2020.03.04.09.50.36
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6Pcd87jXBoko1RLArOK3JOBlDi7LhTUzZixbyRsnysk=;
+        b=LxtUhRamLk+pR9sZUrQji0NVTK9RlxbO2e0mMZ6QtCdFuDtubsnLcGzdPENAAGGzQP
+         QrD6nZ6Qk0+SVjDSDyDJKxHqes9QZHusq3YsvAgd7rWtwABKCGcmiUraRm0JdPEWdqUV
+         4gG1XeItAj0Z1M2QfGbDGs1QlXDYasOg6nzOa3H/jE4Ix9NceLTzOo5zc4HKGAJF0nTx
+         4Dx2+uPTRJ5CfbPs5YR2XhpktkV6O9FEqqZLCLibPPT4wFlvwwQVPRSEikRBGS84+xSw
+         mlX/Y10pNyeWAiW6E6GfjIN/XNML0/p59h2oIQ7ZU/38Mwq+SllM6/V+mfec6jD7TEdv
+         CB+g==
+X-Gm-Message-State: ANhLgQ31L/99U3/f5U7joFKyoo8WZkGTQdtTf4TlrXH8hl8l0YII51Qx
+        ByGopLFzaHbBDZi+1VczCHIsCw==
+X-Google-Smtp-Source: ADFU+vvRmOFNnEgqA4kQ83WWcrv9V7CjpSLIyfapy8Mc6wnRSXjV1nvF8cP+fFDnku2nnHZ+vIFuvg==
+X-Received: by 2002:a63:4f0c:: with SMTP id d12mr3689461pgb.322.1583344195976;
+        Wed, 04 Mar 2020 09:49:55 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id k1sm7834537pgg.56.2020.03.04.09.49.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:50:37 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Yan Zhao <yan.y.zhao@intel.com>, peterx@redhat.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>
-Subject: [PATCH v5 14/14] KVM: selftests: Add "-c" parameter to dirty log test
-Date:   Wed,  4 Mar 2020 12:49:47 -0500
-Message-Id: <20200304174947.69595-15-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200304174947.69595-1-peterx@redhat.com>
-References: <20200304174947.69595-1-peterx@redhat.com>
+        Wed, 04 Mar 2020 09:49:55 -0800 (PST)
+Date:   Wed, 4 Mar 2020 10:49:53 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCHv7 09/15] remoteproc/omap: Check for undefined mailbox
+ messages
+Message-ID: <20200304174953.GH8197@xps15>
+References: <20200221101936.16833-1-t-kristo@ti.com>
+ <20200221101936.16833-10-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221101936.16833-10-t-kristo@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's only used to override the existing dirty ring size/count.  If
-with a bigger ring count, we test async of dirty ring.  If with a
-smaller ring count, we test ring full code path.  Async is default.
+On Fri, Feb 21, 2020 at 12:19:30PM +0200, Tero Kristo wrote:
+> From: Suman Anna <s-anna@ti.com>
+> 
+> Add some checks in the mailbox callback function to limit
+> any processing in the mailbox callback function to only
+> certain currently valid messages, and drop all the remaining
+> messages. A debug message is added to print any such invalid
+> messages when the appropriate trace control is enabled.
+> 
+> Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+> Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-It has no use for non-dirty-ring tests.
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index f27e3ac340a2..54283e03d8f3 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -168,6 +168,7 @@ static enum log_mode_t host_log_mode_option = LOG_MODE_ALL;
- /* Logging mode for current run */
- static enum log_mode_t host_log_mode;
- pthread_t vcpu_thread;
-+static uint32_t test_dirty_ring_count = TEST_DIRTY_RING_COUNT;
- 
- /* Only way to pass this to the signal handler */
- struct kvm_vm *current_vm;
-@@ -245,7 +246,7 @@ static void dirty_ring_create_vm_done(struct kvm_vm *vm)
- 	 * Switch to dirty ring mode after VM creation but before any
- 	 * of the vcpu creation.
- 	 */
--	vm_enable_dirty_ring(vm, TEST_DIRTY_RING_COUNT *
-+	vm_enable_dirty_ring(vm, test_dirty_ring_count *
- 			     sizeof(struct kvm_dirty_gfn));
- }
- 
-@@ -267,7 +268,7 @@ static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
- 	uint32_t count = 0;
- 
- 	while (true) {
--		cur = &dirty_gfns[*fetch_index % TEST_DIRTY_RING_COUNT];
-+		cur = &dirty_gfns[*fetch_index % test_dirty_ring_count];
- 		if (!dirty_gfn_is_dirtied(cur))
- 			break;
- 		TEST_ASSERT(cur->slot == slot, "Slot number didn't match: "
-@@ -774,6 +775,9 @@ static void help(char *name)
- 	printf("usage: %s [-h] [-i iterations] [-I interval] "
- 	       "[-p offset] [-m mode]\n", name);
- 	puts("");
-+	printf(" -c: specify dirty ring size, in number of entries\n");
-+	printf("     (only useful for dirty-ring test; default: %"PRIu32")\n",
-+	       TEST_DIRTY_RING_COUNT);
- 	printf(" -i: specify iteration counts (default: %"PRIu64")\n",
- 	       TEST_HOST_LOOP_N);
- 	printf(" -I: specify interval in ms (default: %"PRIu64" ms)\n",
-@@ -829,8 +833,11 @@ int main(int argc, char *argv[])
- 	vm_guest_mode_params_init(VM_MODE_P40V48_4K, true, true);
- #endif
- 
--	while ((opt = getopt(argc, argv, "hi:I:p:m:M:")) != -1) {
-+	while ((opt = getopt(argc, argv, "c:hi:I:p:m:M:")) != -1) {
- 		switch (opt) {
-+		case 'c':
-+			test_dirty_ring_count = strtol(optarg, NULL, 10);
-+			break;
- 		case 'i':
- 			iterations = strtol(optarg, NULL, 10);
- 			break;
--- 
-2.24.1
-
+> ---
+>  drivers/remoteproc/omap_remoteproc.c | 6 ++++++
+>  drivers/remoteproc/omap_remoteproc.h | 7 +++++++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+> index 8c3dc0edae95..5d6f32974aa3 100644
+> --- a/drivers/remoteproc/omap_remoteproc.c
+> +++ b/drivers/remoteproc/omap_remoteproc.c
+> @@ -130,6 +130,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+>  		dev_info(dev, "received echo reply from %s\n", name);
+>  		break;
+>  	default:
+> +		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+> +			return;
+> +		if (msg > oproc->rproc->max_notifyid) {
+> +			dev_dbg(dev, "dropping unknown message 0x%x", msg);
+> +			return;
+> +		}
+>  		/* msg contains the index of the triggered vring */
+>  		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
+>  			dev_dbg(dev, "no message was found in vqid %d\n", msg);
+> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+> index f6d2036d383d..72f656c93caa 100644
+> --- a/drivers/remoteproc/omap_remoteproc.h
+> +++ b/drivers/remoteproc/omap_remoteproc.h
+> @@ -56,6 +56,12 @@
+>   *
+>   * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
+>   * recovery mechanism (to some extent).
+> + *
+> + * Introduce new message definitions if any here.
+> + *
+> + * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+> + * This should be the last definition.
+> + *
+>   */
+>  enum omap_rp_mbox_messages {
+>  	RP_MBOX_READY		= 0xFFFFFF00,
+> @@ -64,6 +70,7 @@ enum omap_rp_mbox_messages {
+>  	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
+>  	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
+>  	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
+> +	RP_MBOX_END_MSG		= 0xFFFFFF06,
+>  };
+>  
+>  #endif /* _OMAP_RPMSG_H */
+> -- 
+> 2.17.1
+> 
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
