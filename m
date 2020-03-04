@@ -2,86 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C75C178CEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:57:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3A4178CE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:56:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387752AbgCDI5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:57:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59771 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727734AbgCDI5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:57:23 -0500
-Received: from [IPv6:2601:646:8600:3281:d841:929b:f37:3a31] ([IPv6:2601:646:8600:3281:d841:929b:f37:3a31])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id 0248uuI6301245
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-        Wed, 4 Mar 2020 00:56:57 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 0248uuI6301245
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2020022001; t=1583312217;
-        bh=utclo29XAiv2dCDxoewItG7aKxdh43V5IBOk+FLmUjY=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=cXEyWHpJQo074KfzwRKYbKann7+FAimOqGQv6QUi4OIfOaa9rTLXfqJLtS+wYT5mj
-         uyHFTop4R7A/l9kT2sBZqG/37sZaT/LkV+b0WxBGHDhx7uZWy9REvhHf4anYRPTAHV
-         TxTXNJ7ey+1FhWjJbRPyXMAg1jkSgw7phFlp5EhiHfp6+lXmXrXYxijRzGVGfbHJov
-         +rlGKs6OwvOTqFsmNJzFXuqbq4+nnUzRl4Qv1+wohaAq0B47aRrV8geqZ88r/wxlKN
-         Iv4Cp+wJqmVyxQxhxSuEbxWfggUa/cv4c86ZGwccl31fygbpOcwUT7WS9TEZsM4PgX
-         EeARcAxxx3zxg==
-Date:   Wed, 04 Mar 2020 00:54:09 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20200303204144.GA9913@avx2>
-References: <20200303204144.GA9913@avx2>
+        id S2387722AbgCDI4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:56:00 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:51062 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727734AbgCDIz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 03:55:59 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0248s6Gp016466;
+        Wed, 4 Mar 2020 09:55:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=/qiD8X3t4cPtlJawNy1q2Zqg0xWhtfmpQr6wgwRGjrM=;
+ b=hz0b0Qz0JNlgGjP1cioYkf5IGoiRBgECEFc+UFw+3ZkktXnOidYT/kqNYTPSdyFu/W15
+ 3c9Jvudx4NKmVAZscAkPTlEwDvgepIDzIiFBlC2psgIASwfVNIHwdjNLkaLXfwliyFbe
+ 7kwLBhNJppeTrzb1BEfQgHaPOrD7Q6FizAX6dPzA0nfgc06HigMHv9Ut8j3lrHFabXPR
+ qi42hY5070HPMsEP5vHDu3h5tUCSABYXYU9pWaGGfcEf8rTxksL/5AGKVDUwOE/il2N5
+ pYoZ6M6+nHxvenxN0qnW9GiXui7k3XrpkDoCjaYX5QxhPa5lWSY6gtw3CsQAL+mIh5Ex 8g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yfea6yqap-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Mar 2020 09:55:50 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 01A0310003B;
+        Wed,  4 Mar 2020 09:55:45 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3DD1920F831;
+        Wed,  4 Mar 2020 09:55:45 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Mar 2020 09:55:44
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>
+CC:     <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
+        <fabrice.gasnier@st.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] regulator: stm32-vrefbuf: fix a possible overshoot when re-enabling
+Date:   Wed, 4 Mar 2020 09:55:32 +0100
+Message-ID: <1583312132-20932-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] x86/acpi: make "asmlinkage" part first thing in the function definition
-To:     Alexey Dobriyan <adobriyan@gmail.com>, rjw@rjwysocki.net,
-        lenb@kernel.org
-CC:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        luto@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-From:   hpa@zytor.com
-Message-ID: <9947D7CB-B9CD-47E0-BC5E-C7FC3A81FC7B@zytor.com>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-04_01:2020-03-03,2020-03-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On March 3, 2020 12:41:44 PM PST, Alexey Dobriyan <adobriyan@gmail=2Ecom> w=
-rote:
->g++ insists that function declaration must start with extern "C"
->(which asmlinkage expands to)=2E
->
->gcc doesn't care=2E
->
->Signed-off-by: _Z6Alexeyv <adobriyan@gmail=2Ecom>
->---
->
-> arch/x86/kernel/acpi/sleep=2Ec |    2 +-
-> arch/x86/kernel/acpi/sleep=2Eh |    2 +-
-> 2 files changed, 2 insertions(+), 2 deletions(-)
->
->--- a/arch/x86/kernel/acpi/sleep=2Ec
->+++ b/arch/x86/kernel/acpi/sleep=2Ec
->@@ -43,7 +43,7 @@ unsigned long acpi_get_wakeup_address(void)
->  *
->  * Wrapper around acpi_enter_sleep_state() to be called by assmebly=2E
->  */
->-acpi_status asmlinkage __visible x86_acpi_enter_sleep_state(u8 state)
->+asmlinkage acpi_status __visible x86_acpi_enter_sleep_state(u8 state)
-> {
-> 	return acpi_enter_sleep_state(state);
-> }
->--- a/arch/x86/kernel/acpi/sleep=2Eh
->+++ b/arch/x86/kernel/acpi/sleep=2Eh
->@@ -19,4 +19,4 @@ extern void do_suspend_lowlevel(void);
->=20
-> extern int x86_acpi_suspend_lowlevel(void);
->=20
->-acpi_status asmlinkage x86_acpi_enter_sleep_state(u8 state);
->+asmlinkage acpi_status x86_acpi_enter_sleep_state(u8 state);
+There maybe an overshoot, when disabling, then re-enabling vrefbuf
+too quickly. VREFBUF is used by ADC/DAC on some boards. When re-enabling
+too quickly, an overshoot on the reference voltage make the conversions
+inaccurate for a short period of time.
+- Don't put the VREFBUF in HiZ when disabling, to force an active
+discharge.
+- Enforce a 1ms OFF/ON delay
 
-Are you building the kernel with C++?!
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+Fixes: 0cdbf481e927 ("regulator: Add support for stm32-vrefbuf")
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/regulator/stm32-vrefbuf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/stm32-vrefbuf.c b/drivers/regulator/stm32-vrefbuf.c
+index bdfaf7e..992bc18 100644
+--- a/drivers/regulator/stm32-vrefbuf.c
++++ b/drivers/regulator/stm32-vrefbuf.c
+@@ -88,7 +88,7 @@ static int stm32_vrefbuf_disable(struct regulator_dev *rdev)
+ 	}
+ 
+ 	val = readl_relaxed(priv->base + STM32_VREFBUF_CSR);
+-	val = (val & ~STM32_ENVR) | STM32_HIZ;
++	val &= ~STM32_ENVR;
+ 	writel_relaxed(val, priv->base + STM32_VREFBUF_CSR);
+ 
+ 	pm_runtime_mark_last_busy(priv->dev);
+@@ -175,6 +175,7 @@ static const struct regulator_desc stm32_vrefbuf_regu = {
+ 	.volt_table = stm32_vrefbuf_voltages,
+ 	.n_voltages = ARRAY_SIZE(stm32_vrefbuf_voltages),
+ 	.ops = &stm32_vrefbuf_volt_ops,
++	.off_on_delay = 1000,
+ 	.type = REGULATOR_VOLTAGE,
+ 	.owner = THIS_MODULE,
+ };
+-- 
+2.7.4
+
