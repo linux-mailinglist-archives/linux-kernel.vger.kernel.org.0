@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573D01793FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3491793EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbgCDPsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:48:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38525 "EHLO
+        id S2388160AbgCDPsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:48:02 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54208 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387801AbgCDPsA (ORCPT
+        with ESMTP id S2388063AbgCDPsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:48:00 -0500
-Received: by mail-wm1-f66.google.com with SMTP id u9so2377329wml.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:47:59 -0800 (PST)
+        Wed, 4 Mar 2020 10:48:01 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g134so2642750wme.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:48:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OnY0sLzc6EG75w+2zGbx52f2fr6wBzB9p2HqJRSWjIE=;
-        b=jeBpg3zx7Fq/WdtomdsFbKI/7lD4yn2XfYDa5pB6rTmiZ12Y115rivK54p00W4iK3w
-         1oirVnEoTQV9OKlV+/MaN2u15j9SZI2YyEz2rRzfxxDzE3go9t3zRfzpO8zmihWIMJLb
-         2jSWVAnSZjoyr7Y3W/CZpolMgiS8wq7Ypo414=
+        bh=LRL6J9WKtvx/RPJ0atWk9n/5aR6bK+oJrTzd62kZy8U=;
+        b=Ie8ZqTulx72jXcIilsU1d/WAVSGRYBCLfmfJux0wONI0NlvrKQ9Enw2cSDDGVsHmSU
+         lVYjEsE+LZfyyPRfmG6NsHrFnMRoLf45pDyr8xuxkLLuVPPWwBFDc/7quKSaQnxJb1tH
+         pPdtLx8zLfLFzNwYXT8e6srppXRhLdtZmK/Fk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OnY0sLzc6EG75w+2zGbx52f2fr6wBzB9p2HqJRSWjIE=;
-        b=W+ga/UAzH0aOfN0oFL8N70y96IJePog8d3JCIw6PgqxIHq4qS3gsuwcFJfysc3v4Nl
-         SRU/PgiO+p9Ek3zAt/PENWRkV3E/bUcl0h0ImaX/bueIaYwxLwS7UtM0xXUAXA4jrj3x
-         ptw+Xr0eIRant7gbOtq30fV31xIB91PeTuHMOPikDRTQ3epus4sQyr7UQs+cuFpI6lbc
-         6wE8zlmYy5DKC9YsReTzmIQlq3eY9PBEwufk8ZAYHQVAKK+clPTtFpHkaHfKZYJrl6vm
-         Qpn1eqp+vNWhduRoFJNkPERCvX7M3/rY1G+Qa/Smy5t998hDtSJEpVuUMmnsKNh/T9GJ
-         te3w==
-X-Gm-Message-State: ANhLgQ1Rn3AtzWRQrCDDQ/aSpd3TpuMIks9sa1pRXFDpj0QSmDDugd47
-        eF2qfrNdWGTp+Uh0eP7hZHEixw==
-X-Google-Smtp-Source: ADFU+vtyWWEd7y4ar3XJjKvHHh8Lk8eZl5HKOd3/C8g5c0EZydhJWiwJ4rMhfCmFH57jJGr+drrg5A==
-X-Received: by 2002:a1c:1b11:: with SMTP id b17mr4150774wmb.93.1583336878995;
-        Wed, 04 Mar 2020 07:47:58 -0800 (PST)
+        bh=LRL6J9WKtvx/RPJ0atWk9n/5aR6bK+oJrTzd62kZy8U=;
+        b=ewbbewxK4iqYf02OT5s8MP+3iA73FUfs3seoyrRfym6KTB89BIlkzqwzqJ1H9Gdpa7
+         UE2sGsi/3vERYxNpv0MITcvOv6GvI2QTjsXgobYze4xZ11/0l4tU1RUmWk9aIkhDlIZD
+         M3fLb+S59IGx6lt/kFQ9L3WjuzxxTzdkVacUyB8kI59Exnc7U+N2hkleTSomj/UAV6NZ
+         stEveC8lbqvGvA+5sTcrsgpDuRCtr/VYlYuGbcQh9pr8tR6MJgCDZq+Uea+EbECeZC4E
+         YVOCYyj0R6Ub8hNhBg18z6GUmAWc01uUrdCN+pMgVJ+/T4HSow+Gxehe7cAAHMG0QVEx
+         YwHw==
+X-Gm-Message-State: ANhLgQ0zAH27RSBcsgGbr9MLS2JUMbmSU6hiH9bJE9t5cE716BYhOi/J
+        Zt0eLbdkAHdXI4wJd/eoCBYpdA==
+X-Google-Smtp-Source: ADFU+vtGAQk6b9qNhtaeyie9qoPkeL44V/Y93fExB9w/SWb+vlwG17d+/ILecdmYCU41C5LszJwThw==
+X-Received: by 2002:a1c:a5c2:: with SMTP id o185mr4094248wme.173.1583336879927;
+        Wed, 04 Mar 2020 07:47:59 -0800 (PST)
 Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:308:8ca0:6f80:af01:b24])
-        by smtp.gmail.com with ESMTPSA id u25sm4816091wml.17.2020.03.04.07.47.58
+        by smtp.gmail.com with ESMTPSA id u25sm4816091wml.17.2020.03.04.07.47.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 07:47:58 -0800 (PST)
+        Wed, 04 Mar 2020 07:47:59 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, bpf@vger.kernel.org
@@ -51,9 +51,9 @@ Cc:     Andrii Nakryiko <andriin@fb.com>,
         Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>
-Subject: [PATCH bpf-next v3 4/7] bpf: Attachment verification for BPF_MODIFY_RETURN
-Date:   Wed,  4 Mar 2020 16:47:44 +0100
-Message-Id: <20200304154747.23506-5-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v3 5/7] tools/libbpf: Add support for BPF_MODIFY_RETURN
+Date:   Wed,  4 Mar 2020 16:47:45 +0100
+Message-Id: <20200304154747.23506-6-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200304154747.23506-1-kpsingh@chromium.org>
 References: <20200304154747.23506-1-kpsingh@chromium.org>
@@ -66,122 +66,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: KP Singh <kpsingh@google.com>
 
-- Allow BPF_MODIFY_RETURN attachment only to functions that are:
-
-    * Whitelisted for error injection by checking
-      within_error_injection_list. Similar discussions happened for the
-      bpf_override_return helper.
-
-    * security hooks, this is expected to be cleaned up with the LSM
-      changes after the KRSI patches introduce the LSM_HOOK macro:
-
-        https://lore.kernel.org/bpf/20200220175250.10795-1-kpsingh@chromium.org/
-
-- The attachment is currently limited to functions that return an int.
-  This can be extended later other types (e.g. PTR).
-
 Signed-off-by: KP Singh <kpsingh@google.com>
 Acked-by: Andrii Nakryiko <andriin@fb.com>
 ---
- kernel/bpf/btf.c      | 28 ++++++++++++++++++++--------
- kernel/bpf/verifier.c | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 8 deletions(-)
+ tools/lib/bpf/libbpf.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 30841fb8b3c0..50080add2ab9 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -3710,14 +3710,26 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
- 		nr_args--;
- 	}
- 
--	if ((prog->expected_attach_type == BPF_TRACE_FEXIT ||
--	     prog->expected_attach_type == BPF_MODIFY_RETURN) &&
--	    arg == nr_args) {
--		if (!t)
--			/* Default prog with 5 args. 6th arg is retval. */
--			return true;
--		/* function return type */
--		t = btf_type_by_id(btf, t->type);
-+	if (arg == nr_args) {
-+		if (prog->expected_attach_type == BPF_TRACE_FEXIT) {
-+			if (!t)
-+				return true;
-+			t = btf_type_by_id(btf, t->type);
-+		} else if (prog->expected_attach_type == BPF_MODIFY_RETURN) {
-+			/* For now the BPF_MODIFY_RETURN can only be attached to
-+			 * functions that return an int.
-+			 */
-+			if (!t)
-+				return false;
-+
-+			t = btf_type_skip_modifiers(btf, t->type, NULL);
-+			if (!btf_type_is_int(t)) {
-+				bpf_log(log,
-+					"ret type %s not allowed for fmod_ret\n",
-+					btf_kind_str[BTF_INFO_KIND(t->info)]);
-+				return false;
-+			}
-+		}
- 	} else if (arg >= nr_args) {
- 		bpf_log(log, "func '%s' doesn't have %d-th argument\n",
- 			tname, arg + 1);
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2460c8e6b5be..ae32517d4ccd 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -19,6 +19,7 @@
- #include <linux/sort.h>
- #include <linux/perf_event.h>
- #include <linux/ctype.h>
-+#include <linux/error-injection.h>
- 
- #include "disasm.h"
- 
-@@ -9800,6 +9801,33 @@ static int check_struct_ops_btf_id(struct bpf_verifier_env *env)
- 
- 	return 0;
- }
-+#define SECURITY_PREFIX "security_"
-+
-+static int check_attach_modify_return(struct bpf_verifier_env *env)
-+{
-+	struct bpf_prog *prog = env->prog;
-+	unsigned long addr = (unsigned long) prog->aux->trampoline->func.addr;
-+
-+	if (within_error_injection_list(addr))
-+		return 0;
-+
-+	/* This is expected to be cleaned up in the future with the KRSI effort
-+	 * introducing the LSM_HOOK macro for cleaning up lsm_hooks.h.
-+	 */
-+	if (!strncmp(SECURITY_PREFIX, prog->aux->attach_func_name,
-+		     sizeof(SECURITY_PREFIX) - 1)) {
-+
-+		if (!capable(CAP_MAC_ADMIN))
-+			return -EPERM;
-+
-+		return 0;
-+	}
-+
-+	verbose(env, "fmod_ret attach_btf_id %u (%s) is not modifiable\n",
-+		prog->aux->attach_btf_id, prog->aux->attach_func_name);
-+
-+	return -EINVAL;
-+}
- 
- static int check_attach_btf_id(struct bpf_verifier_env *env)
- {
-@@ -10000,6 +10028,9 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
- 		}
- 		tr->func.addr = (void *)addr;
- 		prog->aux->trampoline = tr;
-+
-+		if (prog->expected_attach_type == BPF_MODIFY_RETURN)
-+			ret = check_attach_modify_return(env);
- out:
- 		mutex_unlock(&tr->mutex);
- 		if (ret)
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index f8c4042e5855..223be01dc466 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -6288,6 +6288,10 @@ static const struct bpf_sec_def section_defs[] = {
+ 		.expected_attach_type = BPF_TRACE_FENTRY,
+ 		.is_attach_btf = true,
+ 		.attach_fn = attach_trace),
++	SEC_DEF("fmod_ret/", TRACING,
++		.expected_attach_type = BPF_MODIFY_RETURN,
++		.is_attach_btf = true,
++		.attach_fn = attach_trace),
+ 	SEC_DEF("fexit/", TRACING,
+ 		.expected_attach_type = BPF_TRACE_FEXIT,
+ 		.is_attach_btf = true,
 -- 
 2.20.1
 
