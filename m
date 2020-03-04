@@ -2,98 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 649751788A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:51:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E0C51788B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:54:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbgCDCvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:51:20 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:27958 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387411AbgCDCvU (ORCPT
+        id S2387508AbgCDCyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:54:25 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:38643 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387459AbgCDCyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:51:20 -0500
-X-UUID: dec6e0326ba54b168947a9cbb341fd39-20200304
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=7FGKC2CL96iktvyoBP2vbwLVT6EXR3CbHjrpB2EcLgw=;
-        b=hPYqR650vpsEYzBHmuAXyKnxqVIEQBBVAcCTMDzNGoAwtzCDRYIwjuEb74suQHC5uF4kn9HIzQZzW9VPpMZXVOqR6GhdGGz6Sna6R/dEJQeOswmugcivby0Zpb9CoNoF+LDw6DxpNOBtZMdUVkZODgFNz4OAgslUCgFw25w1QQs=;
-X-UUID: dec6e0326ba54b168947a9cbb341fd39-20200304
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <light.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1622470829; Wed, 04 Mar 2020 10:51:17 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 4 Mar 2020 10:50:08 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 4 Mar 2020 10:51:55 +0800
-From:   <light.hsieh@mediatek.com>
-To:     <ulf.hansson@linaro.org>
-CC:     <linux-mediatek@lists.infradead.org>, <axboe@kernel.dk>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kuohong.wang@mediatek.com>, <stanley.chu@mediatek.com>,
-        Light Hsieh <light.hsieh@mediatek.com>
-Subject: [PATCH v1 3/3] block: set partition read/write policy according to write-protection status
-Date:   Wed, 4 Mar 2020 10:51:14 +0800
-Message-ID: <1583290274-5525-4-git-send-email-light.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1583290274-5525-1-git-send-email-light.hsieh@mediatek.com>
-References: <1583290274-5525-1-git-send-email-light.hsieh@mediatek.com>
+        Tue, 3 Mar 2020 21:54:24 -0500
+Received: by mail-ua1-f68.google.com with SMTP id y3so146093uaq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 18:54:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BeYrItptjbmjm//xr6aNyLoo5RY49LjduotLIGizl2Q=;
+        b=svKGsOub7ZxaZcRswMLgCyDY9M7NlICSs5yYlhOef4CgZNMJcaYeET/xRbMKQ2Sjr5
+         x7GrMkay5P8/ZTFyES2T+ek+RbYR2RemcPCVu+HbAmIFr52QuJUfNlYIDjqSawG8QDzp
+         0vCxvKUV/N1gtjL905bZyOBMcqzTysyA9eRQIdcblr7hiLn1f0+ey7tUnKSqwIK0dsIS
+         QBaYZSPDhDrYqdgCHcHWHXctCO5wH1KioQ8OeE2T7xde0a1zreyfPiWu4q1SIFRVPuK5
+         aXi9e42c6PiHzw6poPmQTBgbmSY2eZooZwI57dm74ZY9MkZBdtGScDfCaLfZfBsw1f2W
+         kINQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BeYrItptjbmjm//xr6aNyLoo5RY49LjduotLIGizl2Q=;
+        b=ODJbH64Yu9MmixYctWlZugHj/B2kT+mUnWV3b8dHDvjDlvfh0fll25r1S42OwHW3Cf
+         4PsCeHRTgRPucrHZW1CcQ+81KefB8wFvdgQR7gOc7VsWVxaTEAyXf2sO8tgJ0NJW9gPs
+         WI58MBcPMS4kP3SHBMGSAT88kKqY305PberZ7OXPsNg9u39oWqnzTvvqhzlCUhTdTnW0
+         +PYf944GZDYEhS92Uu5dF2x4zxc6GHMMQhKhkcAZRxufKPS0i9MX6XXcTteV78PfukUC
+         EPr7H+THdHm6i4+jonwGLQHnoiQ2twDUd0LLpcBrg/U+qZEg1zOpsZnjfJYC9re0MMsN
+         HS8g==
+X-Gm-Message-State: ANhLgQ1QH6PpGQrCjjHz6BkmUm7rTQSr/a6sW8x2OhgFdRfWLbpKCgmn
+        J90wUrWGBwq2gv2LPu0Adn061Cqzu3HoA4F9VkfyRQ==
+X-Google-Smtp-Source: ADFU+vsmy3goZ2XX5DADDbfFg/eIMnxSpbzjpinVr40A+RklPux/uxz2QGDs7Xd1N45NfSJVEjGvjDKfrkpOY1fF7WQ=
+X-Received: by 2002:ab0:1161:: with SMTP id g33mr388779uac.32.1583290462899;
+ Tue, 03 Mar 2020 18:54:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <2094703.CetWLLyMuz@kreacher> <CAD8Lp46VbG3b5NV54vmBFQH2YLY6wRngYv0oY2tiveovPRhiVw@mail.gmail.com>
+ <CAPpJ_edfTg11QZs25MrThj2+FKUo2103rv7iYNzo=kr-jeg1MA@mail.gmail.com>
+ <CAJZ5v0gB9yuVmPjJ_MvfT8aFpvP-X5JRsNfZn8+Mv5RwTednGg@mail.gmail.com>
+ <CAJZ5v0imqwdmXzKayqs1kgHOb-mXrkr61uNxVka8J9bKca989Q@mail.gmail.com>
+ <CAPpJ_efvF0XzjevA1eL3BUJqBwxRTOPLcqWKN40Azj-n1AtjcA@mail.gmail.com>
+ <CAJZ5v0hie79+jG+3h4t5Q8r0M7E37HY-7i8ijg8DpvS0RXZSiQ@mail.gmail.com> <CAJZ5v0hwrZX4+4m-g0c2bUTHxJO=1+kenXBjLz1ChWdcxSLJbA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hwrZX4+4m-g0c2bUTHxJO=1+kenXBjLz1ChWdcxSLJbA@mail.gmail.com>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Wed, 4 Mar 2020 10:53:33 +0800
+Message-ID: <CAPpJ_ed5KPPu47ri3phnjKrToqJ8vSNV32zaRmBPLr3pq4M_4A@mail.gmail.com>
+Subject: Re: [PATCH 0/6] ACPI: EC: Updates related to initialization
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Drake <drake@endlessm.com>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KRm9yIHN0b3Jh
-Z2UgZGV2aWNlIHdpdGggd3JpdGUtcHJvdGVjdGlvbiBzdXBwb3J0LCBlLmcuIGVNTUMsIHJlZ2lz
-dGVyDQpjaGVja19kaXNrX3JhbmdlX3dwKCkgaW4gc3RydWN0IGJsb2NrX2RldmljZV9vcGVyYXRp
-b25zIGZvciBjaGVja2luZw0Kd3JpdGUtcHJvdGVjdGlvbiBzdGF0dXMuIFdoZW4gY3JlYXRpbmcg
-YmxvY2sgZGV2aWNlIGZvciBhIHBhcnRpdGlvbiwgc2V0DQpyZWFkL3dyaXRlIHBvbGljeSBhY2Nv
-cmRpbmcgdG8gcmVzdWx0IG9mIGNoZWNrX2Rpc2tfcmFuZ2Vfd3AoKSBvcGVyYXRpb24NCihpZiBy
-ZWdpc3RlcmVkKS4NCg0KV2l0aG91dCB0aGlzIHBhdGNoLCBybyBhdHRyaWJ1dGUgaXMgbm90IHNl
-dCBmb3IgY3JlYXRlZCBibG9jayBkZXZpY2Ugb2YNCndyaXRlLXByb3RlY3RlZCBwYXJ0aXRpb24u
-IFVzZXIgcGVyZm9ybSBhc3luY2hyb25vdXMgYnVmZmVyZWQgd3JpdGUgdG8NCnN1Y2ggcGFydGl0
-aW9uIHdvbid0IGdldCBpbW1lZGlhdGUgZXJyb3IgYW5kIHRoZXJlZm9yZSBoZSB3b24ndCBiZSBh
-d2FyZWQNCnRoYXQgd3JpdGUgaXMgbm90IGFjdHVhbGx5IHBlcmZvcm1lZC4NCldpdGggdGhpcyBw
-YXRjaCwgcm8gYXR0cmlidXRlIGlzIHNldCBmb3IgY3JlYXRlZCBibG9jayBkZXZpY2Ugb2YNCndy
-aXRlLXByb3RlY3RlZCBwYXJ0aXRpb24uIFVzZXIgcGVyZm9ybSBhc3luY2hyb25vdXMgYnVmZmVy
-ZWQgd3JpdGUgdG8NCnN1Y2ggcGFydGl0aW9uIHdpbGwgZ2V0IGltbWVkaWF0ZSBlcnJvciBhbmQg
-dGhlcmVmb3JlIGhlIHdpbGwgYmUgYXdhcmVkLg0KDQpTaWduZWQtb2ZmLWJ5OiBMaWdodCBIc2ll
-aCA8bGlnaHQuaHNpZWhAbWVkaWF0ZWsuY29tPg0KLS0tDQogYmxvY2svcGFydGl0aW9uLWdlbmVy
-aWMuYyB8IDEwICsrKysrKysrKysNCiBkcml2ZXJzL21tYy9jb3JlL2Jsb2NrLmMgIHwgIDEgKw0K
-IGluY2x1ZGUvbGludXgvYmxrZGV2LmggICAgfCAgMSArDQogMyBmaWxlcyBjaGFuZ2VkLCAxMiBp
-bnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9ibG9jay9wYXJ0aXRpb24tZ2VuZXJpYy5jIGIv
-YmxvY2svcGFydGl0aW9uLWdlbmVyaWMuYw0KaW5kZXggNTY0ZmFlNy4uNjkwODhlOCAxMDA2NDQN
-Ci0tLSBhL2Jsb2NrL3BhcnRpdGlvbi1nZW5lcmljLmMNCisrKyBiL2Jsb2NrL3BhcnRpdGlvbi1n
-ZW5lcmljLmMNCkBAIC0zOTQsNiArMzk0LDE2IEBAIHN0cnVjdCBoZF9zdHJ1Y3QgKmFkZF9wYXJ0
-aXRpb24oc3RydWN0IGdlbmRpc2sgKmRpc2ssIGludCBwYXJ0bm8sDQogCQlnb3RvIG91dF9mcmVl
-X2luZm87DQogCXBkZXYtPmRldnQgPSBkZXZ0Ow0KIA0KKwlpZiAoIXAtPnBvbGljeSkgew0KKwkJ
-aWYgKGRpc2stPmZvcHMtPmNoZWNrX2Rpc2tfcmFuZ2Vfd3ApIHsNCisJCQllcnIgPSBkaXNrLT5m
-b3BzLT5jaGVja19kaXNrX3JhbmdlX3dwKGRpc2ssIHN0YXJ0LCBsZW4pOw0KKwkJCWlmIChlcnIg
-PiAwKQ0KKwkJCQlwLT5wb2xpY3kgPSAxOw0KKwkJCWVsc2UgaWYgKGVyciAhPSAwKQ0KKwkJCQln
-b3RvIG91dF9mcmVlX2luZm87DQorCQl9DQorCX0NCisNCiAJLyogZGVsYXkgdWV2ZW50IHVudGls
-ICdob2xkZXJzJyBzdWJkaXIgaXMgY3JlYXRlZCAqLw0KIAlkZXZfc2V0X3VldmVudF9zdXBwcmVz
-cyhwZGV2LCAxKTsNCiAJZXJyID0gZGV2aWNlX2FkZChwZGV2KTsNCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL21tYy9jb3JlL2Jsb2NrLmMgYi9kcml2ZXJzL21tYy9jb3JlL2Jsb2NrLmMNCmluZGV4IGVl
-ODVhYmYuLmFmODEzMTEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL21tYy9jb3JlL2Jsb2NrLmMNCisr
-KyBiL2RyaXZlcnMvbW1jL2NvcmUvYmxvY2suYw0KQEAgLTEwNDcsNiArMTA0Nyw3IEBAIHN0YXRp
-YyBpbnQgbW1jX2Jsa19jb21wYXRfaW9jdGwoc3RydWN0IGJsb2NrX2RldmljZSAqYmRldiwgZm1v
-ZGVfdCBtb2RlLA0KICNpZmRlZiBDT05GSUdfQ09NUEFUDQogCS5jb21wYXRfaW9jdGwJCT0gbW1j
-X2Jsa19jb21wYXRfaW9jdGwsDQogI2VuZGlmDQorCS5jaGVja19kaXNrX3JhbmdlX3dwCT0gbW1j
-X2Jsa19jaGVja19kaXNrX3JhbmdlX3dwLA0KIH07DQogDQogc3RhdGljIGludCBtbWNfYmxrX3Bh
-cnRfc3dpdGNoX3ByZShzdHJ1Y3QgbW1jX2NhcmQgKmNhcmQsDQpkaWZmIC0tZ2l0IGEvaW5jbHVk
-ZS9saW51eC9ibGtkZXYuaCBiL2luY2x1ZGUvbGludXgvYmxrZGV2LmgNCmluZGV4IDA1M2VhNGIu
-Ljc4MTQyOTAgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4L2Jsa2Rldi5oDQorKysgYi9pbmNs
-dWRlL2xpbnV4L2Jsa2Rldi5oDQpAQCAtMTcwNyw2ICsxNzA3LDcgQEAgc3RydWN0IGJsb2NrX2Rl
-dmljZV9vcGVyYXRpb25zIHsNCiAJdm9pZCAoKnN3YXBfc2xvdF9mcmVlX25vdGlmeSkgKHN0cnVj
-dCBibG9ja19kZXZpY2UgKiwgdW5zaWduZWQgbG9uZyk7DQogCWludCAoKnJlcG9ydF96b25lcyko
-c3RydWN0IGdlbmRpc2sgKiwgc2VjdG9yX3Qgc2VjdG9yLA0KIAkJCXVuc2lnbmVkIGludCBucl96
-b25lcywgcmVwb3J0X3pvbmVzX2NiIGNiLCB2b2lkICpkYXRhKTsNCisJaW50ICgqY2hlY2tfZGlz
-a19yYW5nZV93cCkoc3RydWN0IGdlbmRpc2sgKmQsIHNlY3Rvcl90IHMsIHNlY3Rvcl90IGwpOw0K
-IAlzdHJ1Y3QgbW9kdWxlICpvd25lcjsNCiAJY29uc3Qgc3RydWN0IHByX29wcyAqcHJfb3BzOw0K
-IH07DQotLSANCjEuOC4xLjEuZGlydHkNCg==
+Rafael J. Wysocki <rafael@kernel.org> =E6=96=BC 2020=E5=B9=B43=E6=9C=884=E6=
+=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=886:23=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Tue, Mar 3, 2020 at 10:09 AM Rafael J. Wysocki <rafael@kernel.org> wro=
+te:
+> >
+> > On Tue, Mar 3, 2020 at 8:29 AM Jian-Hong Pan <jian-hong@endlessm.com> w=
+rote:
+> > >
+> > > Rafael J. Wysocki <rafael@kernel.org> =E6=96=BC 2020=E5=B9=B43=E6=9C=
+=882=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> > > >
+>
+> [cut]
+>
+> > >
+> > > Originally, ec_install_handlers() will return the returned value from
+> > > install_gpio_irq_event_handler() from acpi_dev_gpio_irq_get(), which
+> > > is -EPROBE_DEFER, instead of -ENXIO.  However, ec_install_handlers()
+> > > returns -ENXIO directly if install_gpio_irq_event_handler() returns
+> > > false in patch ("ACPI: EC: Consolidate event handler installation
+> > > code").  Here needs some modification.
+> >
+> > Thanks, I forgot about the -EPROBE_DEFER case.
+>
+> The top-most commit in the git branch at
+>
+>  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>  acpi-ec-work
+>
+> has been updated to take that case into account (I think that it
+> should be spelled out explicitly or it will be very easy to overlook
+> in the future).
+>
+> Please test this one if possible.
 
+Tested the commits on some laptops including ASUS UX434DA.  The
+brightness hotkeys are working now.
+
+Jian-Hong Pan
