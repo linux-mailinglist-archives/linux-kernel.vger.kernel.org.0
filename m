@@ -2,204 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9C5178882
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:39:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F70817886C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387651AbgCDCjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:39:10 -0500
-Received: from mga07.intel.com ([134.134.136.100]:56583 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387631AbgCDCjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:39:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 18:39:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
-   d="scan'208";a="233866922"
-Received: from skuppusw-desk.jf.intel.com ([10.7.201.16])
-  by orsmga008.jf.intel.com with ESMTP; 03 Mar 2020 18:39:06 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v17 12/12] PCI/ACPI: Enable EDR support
-Date:   Tue,  3 Mar 2020 18:36:35 -0800
-Message-Id: <246aa05acca8f0a7e6d20a65ab05af0027f60118.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S2387517AbgCDCgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:36:48 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:8565 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387406AbgCDCgr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 21:36:47 -0500
+X-UUID: 4e0a777e8c7149e8b7eb90a0ce6943d3-20200304
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=N8uzmfi4oZf5SjaF1khnb5BTauSzbMkMnOjjAfK7Xwg=;
+        b=kUv+Q1W63A1dnmFWptEDLaQr7gyze9SehA222Fyqr7zllZKbNIHIf1F0EGqReLd6ka4+p/1Rgd3Kknmz+q33UEJoyThY6z4k9bHCjdynbyilnP58GhkJMgF49xLrDBYnlqIeIHnIbzsr+BM84pff+IG5qmD0tZrypsAxt+bV1OI=;
+X-UUID: 4e0a777e8c7149e8b7eb90a0ce6943d3-20200304
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 212195843; Wed, 04 Mar 2020 10:36:43 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 4 Mar 2020 10:35:46 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 4 Mar 2020 10:36:01 +0800
+Message-ID: <1583289401.32049.2.camel@mtksdaap41>
+Subject: Re: [PATCH v4 04/13] mailbox: mediatek: cmdq: clear task in channel
+ before shutdown
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <dri-devel@lists.freedesktop.org>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        HS Liao <hs.liao@mediatek.com>
+Date:   Wed, 4 Mar 2020 10:36:41 +0800
+In-Reply-To: <1583233125-7827-5-git-send-email-dennis-yc.hsieh@mediatek.com>
+References: <1583233125-7827-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+         <1583233125-7827-5-git-send-email-dennis-yc.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
-
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
-
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
-
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
----
- drivers/acpi/pci_root.c | 16 ++++++++++++++++
- drivers/pci/pcie/edr.c  |  4 +++-
- drivers/pci/probe.c     |  1 +
- include/linux/acpi.h    |  6 ++++--
- include/linux/pci.h     |  1 +
- 5 files changed, 25 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..ad1be5941a00 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,16 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	/*
-+	 * Per the Downstream Port Containment Related Enhancements ECN to
-+	 * the PCI Firmware Spec, r3.2, sec 4.5.1, table 4-5,
-+	 * OSC_PCI_EXPRESS_DPC_CONTROL indicates the OS supports both DPC
-+	 * and EDR. So use CONFIG_PCIE_EDR for requesting DPC control which
-+	 * will only be turned on if both EDR and DPC is enabled.
-+	 */
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +930,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
-index 2d8680be0302..45d165e838bb 100644
---- a/drivers/pci/pcie/edr.c
-+++ b/drivers/pci/pcie/edr.c
-@@ -195,6 +195,7 @@ static void edr_handle_event(acpi_handle handle, u32 event, void *data)
- void pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-+	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
- 	acpi_status astatus;
- 
- 	if (!adev) {
-@@ -214,7 +215,8 @@ void pci_acpi_add_edr_notifier(struct pci_dev *pdev)
- 	 * OS can use bit 7 of _OSC control field to negotiate control
- 	 * over DPC Capability.
- 	 */
--	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native) {
-+	if (!pcie_aer_get_firmware_first(pdev) || pcie_ports_dpc_native ||
-+	    (host->native_dpc)) {
- 		pci_dbg(pdev, "OS handles AER/DPC, so skip EDR init\n");
- 		return;
- 	}
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index c6f91f886818..f67c007edcae 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -598,6 +598,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0f24d701fbdc..b7d3caf6f205 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -530,8 +530,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
- 
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -540,7 +541,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
- 
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index a0b7e7a53741..7ed7c088c952 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -515,6 +515,7 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
- 
- 	/* Resource alignment requirements */
--- 
-2.25.1
+SGksIERlbm5pczoNCg0KT24gVHVlLCAyMDIwLTAzLTAzIGF0IDE4OjU4ICswODAwLCBEZW5uaXMg
+WUMgSHNpZWggd3JvdGU6DQo+IERvIHN1Y2Nlc3MgY2FsbGJhY2sgaW4gY2hhbm5lbCB3aGVuIHNo
+dXRkb3duLiBGb3IgdGhvc2UgdGFzayBub3QgZmluaXNoLA0KPiBjYWxsYmFjayB3aXRoIGVycm9y
+IGNvZGUgdGh1cyBjbGllbnQgaGFzIGNoYW5jZSB0byBjbGVhbnVwIG9yIHJlc2V0Lg0KPiANCg0K
+UmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoNCj4gU2lnbmVkLW9mZi1i
+eTogRGVubmlzIFlDIEhzaWVoIDxkZW5uaXMteWMuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0N
+Cj4gIGRyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMgfCAzOCArKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAzOCBpbnNlcnRpb25zKCspDQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1haWxib3guYyBiL2Ry
+aXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmMNCj4gaW5kZXggOTk5NGFjOTQyNmQ2Li5i
+NTZkMzQwYzg5ODIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWFpbGJveC9tdGstY21kcS1tYWls
+Ym94LmMNCj4gKysrIGIvZHJpdmVycy9tYWlsYm94L210ay1jbWRxLW1haWxib3guYw0KPiBAQCAt
+Mzg3LDYgKzM4NywxMiBAQCBzdGF0aWMgaW50IGNtZHFfbWJveF9zZW5kX2RhdGEoc3RydWN0IG1i
+b3hfY2hhbiAqY2hhbiwgdm9pZCAqZGF0YSkNCj4gIA0KPiAgCWlmIChsaXN0X2VtcHR5KCZ0aHJl
+YWQtPnRhc2tfYnVzeV9saXN0KSkgew0KPiAgCQlXQVJOX09OKGNsa19lbmFibGUoY21kcS0+Y2xv
+Y2spIDwgMCk7DQo+ICsJCS8qDQo+ICsJCSAqIFRoZSB0aHJlYWQgcmVzZXQgd2lsbCBjbGVhciB0
+aHJlYWQgcmVsYXRlZCByZWdpc3RlciB0byAwLA0KPiArCQkgKiBpbmNsdWRpbmcgcGMsIGVuZCwg
+cHJpb3JpdHksIGlycSwgc3VzcGVuZCBhbmQgZW5hYmxlLiBUaHVzDQo+ICsJCSAqIHNldCBDTURR
+X1RIUl9FTkFCTEVEIHRvIENNRFFfVEhSX0VOQUJMRV9UQVNLIHdpbGwgZW5hYmxlDQo+ICsJCSAq
+IHRocmVhZCBhbmQgbWFrZSBpdCBydW5uaW5nLg0KPiArCQkgKi8NCj4gIAkJV0FSTl9PTihjbWRx
+X3RocmVhZF9yZXNldChjbWRxLCB0aHJlYWQpIDwgMCk7DQo+ICANCj4gIAkJd3JpdGVsKHRhc2st
+PnBhX2Jhc2UgPj4gY21kcS0+c2hpZnRfcGEsDQo+IEBAIC00NTAsNiArNDU2LDM4IEBAIHN0YXRp
+YyBpbnQgY21kcV9tYm94X3N0YXJ0dXAoc3RydWN0IG1ib3hfY2hhbiAqY2hhbikNCj4gIA0KPiAg
+c3RhdGljIHZvaWQgY21kcV9tYm94X3NodXRkb3duKHN0cnVjdCBtYm94X2NoYW4gKmNoYW4pDQo+
+ICB7DQo+ICsJc3RydWN0IGNtZHFfdGhyZWFkICp0aHJlYWQgPSAoc3RydWN0IGNtZHFfdGhyZWFk
+ICopY2hhbi0+Y29uX3ByaXY7DQo+ICsJc3RydWN0IGNtZHEgKmNtZHEgPSBkZXZfZ2V0X2RydmRh
+dGEoY2hhbi0+bWJveC0+ZGV2KTsNCj4gKwlzdHJ1Y3QgY21kcV90YXNrICp0YXNrLCAqdG1wOw0K
+PiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ICsNCj4gKwlzcGluX2xvY2tfaXJxc2F2ZSgmdGhy
+ZWFkLT5jaGFuLT5sb2NrLCBmbGFncyk7DQo+ICsJaWYgKGxpc3RfZW1wdHkoJnRocmVhZC0+dGFz
+a19idXN5X2xpc3QpKQ0KPiArCQlnb3RvIGRvbmU7DQo+ICsNCj4gKwlXQVJOX09OKGNtZHFfdGhy
+ZWFkX3N1c3BlbmQoY21kcSwgdGhyZWFkKSA8IDApOw0KPiArDQo+ICsJLyogbWFrZSBzdXJlIGV4
+ZWN1dGVkIHRhc2tzIGhhdmUgc3VjY2VzcyBjYWxsYmFjayAqLw0KPiArCWNtZHFfdGhyZWFkX2ly
+cV9oYW5kbGVyKGNtZHEsIHRocmVhZCk7DQo+ICsJaWYgKGxpc3RfZW1wdHkoJnRocmVhZC0+dGFz
+a19idXN5X2xpc3QpKQ0KPiArCQlnb3RvIGRvbmU7DQo+ICsNCj4gKwlsaXN0X2Zvcl9lYWNoX2Vu
+dHJ5X3NhZmUodGFzaywgdG1wLCAmdGhyZWFkLT50YXNrX2J1c3lfbGlzdCwNCj4gKwkJCQkgbGlz
+dF9lbnRyeSkgew0KPiArCQljbWRxX3Rhc2tfZXhlY19kb25lKHRhc2ssIENNRFFfQ0JfRVJST1Ip
+Ow0KPiArCQlrZnJlZSh0YXNrKTsNCj4gKwl9DQo+ICsNCj4gKwljbWRxX3RocmVhZF9kaXNhYmxl
+KGNtZHEsIHRocmVhZCk7DQo+ICsJY2xrX2Rpc2FibGUoY21kcS0+Y2xvY2spOw0KPiArZG9uZToN
+Cj4gKwkvKg0KPiArCSAqIFRoZSB0aHJlYWQtPnRhc2tfYnVzeV9saXN0IGVtcHR5IG1lYW5zIHRo
+cmVhZCBhbHJlYWR5IGRpc2FibGUuIFRoZQ0KPiArCSAqIGNtZHFfbWJveF9zZW5kX2RhdGEoKSBh
+bHdheXMgcmVzZXQgdGhyZWFkIHdoaWNoIGNsZWFyIGRpc2FibGUgYW5kDQo+ICsJICogc3VzcGVu
+ZCBzdGF0dWUgd2hlbiBmaXJzdCBwa3Qgc2VuZCB0byBjaGFubmVsLCBzbyB0aGVyZSBpcyBubyBu
+ZWVkDQo+ICsJICogdG8gZG8gYW55IG9wZXJhdGlvbiBoZXJlLCBvbmx5IHVubG9jayBhbmQgbGVh
+dmUuDQo+ICsJICovDQo+ICsJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmdGhyZWFkLT5jaGFuLT5s
+b2NrLCBmbGFncyk7DQo+ICB9DQo+ICANCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWJveF9jaGFu
+X29wcyBjbWRxX21ib3hfY2hhbl9vcHMgPSB7DQoNCg==
 
