@@ -2,70 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92153179508
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADCC8179529
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:27:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388304AbgCDQYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:24:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42336 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388254AbgCDQYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:24:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 51662ADB3;
-        Wed,  4 Mar 2020 16:24:20 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 04235E037F; Wed,  4 Mar 2020 17:24:19 +0100 (CET)
-Message-Id: <4c410fbb93c84d801c267be68799101036715ecb.1583337972.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1583337972.git.mkubecek@suse.cz>
-References: <cover.1583337972.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next 5/5] tun: drop TUN_DEBUG and tun_debug()
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Wed,  4 Mar 2020 17:24:20 +0100 (CET)
+        id S2388371AbgCDQ1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:27:08 -0500
+Received: from mail-wr1-f73.google.com ([209.85.221.73]:33362 "EHLO
+        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388286AbgCDQ0v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 11:26:51 -0500
+Received: by mail-wr1-f73.google.com with SMTP id d7so1075695wrr.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 08:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=KkLXOOSG3EccFvXnveAsAjlCd4Cuj/e0jkzvyAbgB9g=;
+        b=qZMF/8H31N+tU9HXK3934/ePKJPPhUukwvNWbO2CngiFnO2S1pZA5D04fryyHOjcic
+         hcn/37cJE8ZiJAlv2eXPofk+HXUOZCp++XlFjjV85KedIeF9bNjDRJGCHSiFmdadFZDp
+         BTSItRnZH2VkQwfN7Byv+QQak8Hg6e5SeUFyC5dFzgUUbfK3g81V6GuShW+YVeLOA/Qg
+         258s1gSYoGYox8oAsvfLAO7NwEagbmwJml4qVauqIoDbr6miG9fNkB0ld/457wur/5Mv
+         uE9AGIVTu6sALEIIiU/8qo4V55KzCD3SOq8w6r/9aVJF+JjhZxNw2UWZO0oTS75RQMDk
+         sHSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=KkLXOOSG3EccFvXnveAsAjlCd4Cuj/e0jkzvyAbgB9g=;
+        b=NelBVsGcPHii7ipXBrWstyyM7k067RRg/tVD/2HzJyhmE/o8tGc31DLy1ZPMuE95fT
+         yylQxaMtrFr+2bCpeWzNWBtjCYcmkCYU9SUJPzXB/KOWcJnDhzDeAEHxKhCUpBiNvt1l
+         xSakkl9rjT5mFTx1toBYr1qAjpR4OcPS8deKnQOaA1qkVN4qL8v1fzmtqTYnlQgkIg5c
+         fEhVw9r1Fii0GkS748aHbYTgYK0WujeLKKUwouvnWaAXHMxjwXBlOriZF6Mdh0umP3Wu
+         CsRjXONhMG69mAhxkW/EFKwP0nm3VWgovp3dOs+oCG+5ybJq9yN5ZCttIXIoer9dUhRk
+         poIQ==
+X-Gm-Message-State: ANhLgQ0IYcwBd2yM/uBDHiOqZvzgPdkLwzIXRWentD2wfH7J8iVS0yER
+        j5JUVfIuYEn9lvqkZ+4HoK25i0+2FQ==
+X-Google-Smtp-Source: ADFU+vuwHYHwbkfL0PNKCtBj5UcdevPUZcsHif32DA8cz76eBj0bRnn5n5s9CUCgRlXNld1pzFBAFR97Rg==
+X-Received: by 2002:adf:f4c9:: with SMTP id h9mr4909942wrp.168.1583339209473;
+ Wed, 04 Mar 2020 08:26:49 -0800 (PST)
+Date:   Wed,  4 Mar 2020 17:25:39 +0100
+Message-Id: <20200304162541.46663-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH 1/3] kcsan: Fix a typo in a comment
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TUN_DEBUG and tun_debug() are no longer used anywhere, drop them.
+From: Qiujun Huang <hqjagain@gmail.com>
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+s/slots slots/slots/
+
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+[elver: commit message]
+Signed-off-by: Marco Elver <elver@google.com>
 ---
- drivers/net/tun.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ kernel/kcsan/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 42110aba0014..4689e4c62e21 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -75,23 +75,6 @@
- static void tun_default_link_ksettings(struct net_device *dev,
- 				       struct ethtool_link_ksettings *cmd);
+diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+index eb30ecdc8c009..ee8200835b607 100644
+--- a/kernel/kcsan/core.c
++++ b/kernel/kcsan/core.c
+@@ -45,7 +45,7 @@ static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
+ };
  
--/* Uncomment to enable debugging */
--/* #define TUN_DEBUG 1 */
--
--#ifdef TUN_DEBUG
--#define tun_debug(level, tun, fmt, args...)			\
--do {								\
--	if (tun->msg_enable)					\
--		netdev_printk(level, tun->dev, fmt, ##args);	\
--} while (0)
--#else
--#define tun_debug(level, tun, fmt, args...)			\
--do {								\
--	if (0)							\
--		netdev_printk(level, tun->dev, fmt, ##args);	\
--} while (0)
--#endif
--
- #define TUN_RX_PAD (NET_IP_ALIGN + NET_SKB_PAD)
- 
- /* TUN device flags */
+ /*
+- * Helper macros to index into adjacent slots slots, starting from address slot
++ * Helper macros to index into adjacent slots, starting from address slot
+  * itself, followed by the right and left slots.
+  *
+  * The purpose is 2-fold:
 -- 
-2.25.1
+2.25.0.265.gbab2e86ba0-goog
 
