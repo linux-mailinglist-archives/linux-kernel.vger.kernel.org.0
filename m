@@ -2,95 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B39178F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C8E178FA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:37:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbgCDL04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:26:56 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:41187 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728953AbgCDL04 (ORCPT
+        id S2387820AbgCDLh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:37:27 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:12496 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729267AbgCDLh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:26:56 -0500
-Received: by mail-wr1-f51.google.com with SMTP id v4so1926883wrs.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 03:26:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bH3fISo8TLwz0Zch/JAF6ezBy0LKas5gSdqAMX74AuQ=;
-        b=G/b/+R4wHEdOVX5WgbULi2JZJjbHCFFvveJgmWUGvgKzePUuaC/OD/aNxQfxRMiGjv
-         VVky5HkRCwVv/YB5VGXoegLhp4y5bn4mnwDSlzEzRQXcvHLqwPx5BD+/Q9mf+xnweE3q
-         yNVmDeJyJrbUmeYAqyp574JchxLyhE8WseyNbf84io9uQVv/i1mM8qrGS9TzpZHRlZ9U
-         osm4BoRxq7fICqrlowXGzPOgNAsirDoM9v/kaZdcfYSX0z9nCg2DVws14NCZpyUhGEar
-         hH/flawuKremyg4CJw3qX/4836OQ/GTKlDP6bIQRjbYRV24LgAqkQm0fyAWFtdcDwRgn
-         CvCQ==
-X-Gm-Message-State: ANhLgQ0+johhGNKSENLkYL+0tqsVNMNfSbZPUgCQ9jpvHc2p+Rjsx/+R
-        Gxudb2i7ZH/iqotNGDA4kjk=
-X-Google-Smtp-Source: ADFU+vtivAUEm4FokWwu4Bokvv9b1dtgYKE4mT5/AUo0fk+wRLC+rDkVCCGO8bokCPMlXeezzk9cgA==
-X-Received: by 2002:adf:e98f:: with SMTP id h15mr3788899wrm.263.1583321214487;
-        Wed, 04 Mar 2020 03:26:54 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id i1sm17963622wrs.18.2020.03.04.03.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 03:26:53 -0800 (PST)
-Date:   Wed, 4 Mar 2020 12:26:53 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Mel Gorman <mgorman@suse.de>, David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [RFC 0/3] mm: Discard lazily freed pages when migrating
-Message-ID: <20200304112653.GH16139@dhcp22.suse.cz>
-References: <20200228094954.GB3772@suse.de>
- <87h7z76lwf.fsf@yhuang-dev.intel.com>
- <20200302151607.GC3772@suse.de>
- <87zhcy5hoj.fsf@yhuang-dev.intel.com>
- <20200303080945.GX4380@dhcp22.suse.cz>
- <87o8td4yf9.fsf@yhuang-dev.intel.com>
- <20200303085805.GB4380@dhcp22.suse.cz>
- <87ftep4pzy.fsf@yhuang-dev.intel.com>
- <20200304095802.GE16139@dhcp22.suse.cz>
- <87blpc2wxj.fsf@yhuang-dev.intel.com>
+        Wed, 4 Mar 2020 06:37:27 -0500
+X-Greylist: delayed 544 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Mar 2020 06:37:26 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583321845;
+        s=strato-dkim-0002; d=plating.de;
+        h=Date:Message-ID:Cc:To:Subject:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=FGQ4rSzepB0EcVTj9BxbCbRMEHfRUYaLUDGhQumEvDc=;
+        b=JF/m5q/h6hT0kTIMnAg7QU+guurAub4556bC8EyEnm2Z5jsah7orPTZEQi6sYXCVfr
+        7BLIl3khqRlR8YpLTEVnsvuWE5TBu0PrSHX5af+gOTtOes7g8PQ616+qjpB4iY+59W7/
+        CYdxa+Rm8a/g99aF4pEBj1606PhFDdlRJFh6qh7TWLxVUsTHqQppAmP13B94oTfW+xDz
+        EimavDIYrAJddsB1HxaV0icHq4q1WK+f7OufqGqx2Rye3Z3EL+F7YopmT/t36EU3mjes
+        29OWbPMZajc1F//NKmQX8E4ib1h9sGP6TqOV3bwaNF1OWIeQv8U6t28AOKhw7KtEM50V
+        cFYQ==
+X-RZG-AUTH: ":P2EQZVataeyI5jZ/YFVerR/NeEUpp/1ZEi4FSKT8sA3i0IzVhLiw6JgrUzaKN77axfKEX18="
+X-RZG-CLASS-ID: mo00
+Received: from mail.dl.plating.de
+        by smtp.strato.de (RZmta 46.2.0 AUTH)
+        with ESMTPSA id R06d1cw24BPJJAP
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 4 Mar 2020 12:25:19 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.dl.plating.de (Postfix) with ESMTP id 79E9A122A65;
+        Wed,  4 Mar 2020 12:25:19 +0100 (CET)
+X-Virus-Scanned: amavisd-new at dl.plating.de
+Received: from mail.dl.plating.de ([127.0.0.1])
+        by localhost (mail.dl.plating.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WdCRduM3m4mk; Wed,  4 Mar 2020 12:25:13 +0100 (CET)
+Received: from [172.16.4.186] (unknown [172.16.4.186])
+        by mail.dl.plating.de (Postfix) with ESMTPSA id 7340012293F;
+        Wed,  4 Mar 2020 12:25:12 +0100 (CET)
+From:   =?UTF-8?Q?Lars_M=c3=b6llendorf?= <lars.moellendorf@plating.de>
+Subject: Question about regmap_range_cfg and regmap_mmio
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>
+Message-ID: <d2eb2248-0120-7b0f-9bcf-4f9c71954117@plating.de>
+Date:   Wed, 4 Mar 2020 12:25:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87blpc2wxj.fsf@yhuang-dev.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04-03-20 19:15:20, Huang, Ying wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
-> 
-> > On Tue 03-03-20 19:49:53, Huang, Ying wrote:
-[...]
-> >> Because the penalty difference is so large, I
-> >> think it may be a good idea to always put clean MADV_FREE pages at the
-> >> tail of the inactive file LRU list?
-> >
-> > You are again making assumptions without giving any actual real
-> > examples. Reconstructing MADV_FREE pages cost can differ a lot.
-> 
-> In which situation the cost to reconstruct MADV_FREE pages can be higher
-> than the cost to allocate file cache page and read from disk?  Heavy
-> contention on mmap_sem?
+Hi,
 
-Allocating a page might be really costly but even without that.
-Reconstructnig the content of the page can be really high and actually
-much larger than an IO to get a page from the storage. Consider
-decompression or some other transformations to get the content.
-Userspace has means to detect that the content is still up-to-date as
-already has been mentioned so all those steps can be avoided.
+this mail is copied from internal issue written in markdown - I hope
+this is still readable as mail.
+
+I am referring to kernel sources v4.9.87 but I think all my assumptions
+do still apply to current kernel versions.
+
+[regmap.h](https://elixir.bootlin.com/linux/v4.9.87/source/include/linux/regmap.h#L334)
+contains:
+
+```c
+/**
+ * Configuration for indirectly accessed or paged registers.
+ * Registers, mapped to this virtual range, are accessed in two steps:
+ *     1. page selector register update;
+ *     2. access through data window registers.
+ *
+ * @name: Descriptive name for diagnostics
+ *
+ * @range_min: Address of the lowest register address in virtual range.
+ * @range_max: Address of the highest register in virtual range.
+ *
+ * @page_sel_reg: Register with selector field.
+ * @page_sel_mask: Bit shift for selector value.
+ * @page_sel_shift: Bit mask for selector value.
+ *
+ * @window_start: Address of first (lowest) register in data window.
+ * @window_len: Number of registers in data window.
+ */
+struct regmap_range_cfg {
+	const char *name;
+
+	/* Registers of virtual address range */
+	unsigned int range_min;
+	unsigned int range_max;
+
+	/* Page selector for indirect addressing */
+	unsigned int selector_reg;
+	unsigned int selector_mask;
+	int selector_shift;
+
+	/* Data window (per each page) */
+	unsigned int window_start;
+	unsigned int window_len;
+};
+```
+
+Unfortunately this seems not to work for MMIO devices.
+
+In
+[`__regmap_init()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap.c#L711)
+[`_regmap_bus_reg_read()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap.c#L2330)
+is assigned to
+[`regmap.reg_read()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/internal.h#L101)
+if `!bus->read || !bus->write`, else
+[`_regmap_bus_read()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap.c#L2338)
+is assigned:
+
+```c
+	if (!bus) {
+		map->reg_read  = config->reg_read;
+		map->reg_write = config->reg_write;
+
+		map->defer_caching = false;
+		goto skip_format_initialization;
+	} else if (!bus->read || !bus->write) {
+		map->reg_read = _regmap_bus_reg_read;
+		map->reg_write = _regmap_bus_reg_write;
+
+		map->defer_caching = false;
+		goto skip_format_initialization;
+	} else {
+		map->reg_read  = _regmap_bus_read;
+		map->reg_update_bits = bus->reg_update_bits;
+	}
+```
+[`_regmap_bus_reg_read()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap.c#L2330)
+calls the `reg_read` function of the bus directly,
+[`_regmap_bus_read()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap.c#L2338)
+instead calls `_regmap_raw_read()`:
+
+```c
+static int _regmap_bus_reg_read(void *context, unsigned int reg,
+				unsigned int *val)
+{
+	struct regmap *map = context;
+
+	return map->bus->reg_read(map->bus_context, reg, val);
+}
+
+static int _regmap_bus_read(void *context, unsigned int reg,
+			    unsigned int *val)
+{
+	int ret;
+	struct regmap *map = context;
+
+	if (!map->format.parse_val)
+		return -EINVAL;
+
+	ret = _regmap_raw_read(map, reg, map->work_buf, map->format.val_bytes);
+	if (ret == 0)
+		*val = map->format.parse_val(map->work_buf);
+
+	return ret;
+}
+```
+
+[`_regmap_raw_read()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap.c#L2297)
+in turn calls
+[`_regmap_range_lookup()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap-mmio.c#L479)
+and
+[`_regmap_select_page()`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap-mmio.c#L1283)
+which do the paging.
+
+-
+[`regmap_mmio`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap-mmio.c#L212)
+does neither contain `.read` nor `.write`.
+-
+[`regmap_i2c`](https://elixir.bootlin.com/linux/v4.9.87/source/drivers/base/regmap/regmap-i2c.c#L204)
+does contain both.
+
+My assumption is that paging is not a common use case for Memory-mapped
+I/O and thus has not been implemented for this case.
+
+- Are my assumptions correct?
+- If so, what would you recommend me to do:
+  - Continue using `regmap-mmio` and implement my custom paging
+functions on top of that?
+  - Enhance the current `regmap-mmio` implementation so it does paging
+and submit a patch?
+  - Write my own `better-regmap-mmio` implementation?
+
+Thank you,
+Lars
 
 -- 
-Michal Hocko
-SUSE Labs
+
+Lars Möllendorf, B. Eng.
+
+
+Tel.:    +49 (0) 7641 93500-425
+Fax:     +49 (0) 7641 93500-999
+E-Mail:  lars.moellendorf@plating.de <mailto:lars.moellendorf@plating.de>
+Website: www.plating.de <http://www.plating.de>
+
+--------------------------------
+plating electronic GmbH - Amtsgericht Freiburg - HRB Nr. 260 592 /
+Geschäftsführer Karl Rieder / Rheinstraße 4 – 79350 Sexau – Tel.:+49 (0)
+7641 – 93500-0
+
+--------------------------------
+Der Inhalt dieser E-Mail ist vertraulich und ausschließlich für den
+bezeichneten Adressaten bestimmt. Wenn Sie nicht der vorgesehene
+Adressat dieser E-Mail oder dessen Vertreter sein sollten, so beachten
+Sie bitte, dass jede Form der Kenntnisnahme, Veröffentlichung,
+Vervielfältigung oder Weitergabe des Inhalts dieser E-Mail unzulässig
+ist. Wir bitten Sie, sich in diesem Fall mit dem Absender der E-Mail in
+Verbindung zu setzen. Aussagen gegenüber  dem Adressaten unterliegen den
+Regelungen des zugrundeliegenden Angebotes bzw. Auftrags, insbesondere
+den Allgemeinen Geschäftsbedingungen und der individuellen
+Haftungsvereinbarung. Der Inhalt der E-Mail ist nur rechtsverbindlich,
+wenn er unsererseits durch einen Brief oder ein Telefax entsprechend
+bestaetigt wird.
+
+The information contained in this email is confidential. It is intended
+solely for the addressee. Access to this email by anyone else is
+unauthorized. If you are not the intended recipient, any form of
+disclosure, reproduction, distribution or any action taken or refrained
+from in reliance on it, is prohibited and may be unlawful. Please notify
+the sender immediately. All statements of opinion or advice directed via
+this email to our clients are subject to the terms and conditions
+expressed in the governing client engagement letter. The content of this
+email is not legally binding unless confirmed by letter or fax.
+
+Although plating electronic GmbH attempts to sweep e-mail and
+attachments for viruses, it does not guarantee that either are
+virus-free and accepts no liability for any damage sustained as a result
+of viruses.
+
