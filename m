@@ -2,135 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B48B178F41
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D53DE178F4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:08:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388023AbgCDLGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:06:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387871AbgCDLGp (ORCPT
+        id S1729275AbgCDLHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:07:55 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:34088 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbgCDLHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:06:45 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 024AxXhb059409
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Mar 2020 06:06:44 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yhryderjt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 06:06:44 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Wed, 4 Mar 2020 11:06:41 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Mar 2020 11:06:35 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 024B5ZcQ41484714
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Mar 2020 11:05:35 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C9325AE058;
-        Wed,  4 Mar 2020 11:06:33 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7F8AAE056;
-        Wed,  4 Mar 2020 11:06:32 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.145.27])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Mar 2020 11:06:32 +0000 (GMT)
-Subject: Re: [PATCH v3 21/27] powerpc/powernv/pmem: Add an IOCTL to request
- controller health & perf data
-To:     Andrew Donnellan <ajd@linux.ibm.com>,
-        "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-22-alastair@au1.ibm.com>
- <fdc5faec-d03d-3cba-4a9c-add7e522ad13@linux.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Wed, 4 Mar 2020 12:06:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <fdc5faec-d03d-3cba-4a9c-add7e522ad13@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030411-0008-0000-0000-0000035938C6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030411-0009-0000-0000-00004A7A6B55
-Message-Id: <3ecb49e3-8828-ab7b-4391-5dd6127e76e0@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-04_01:2020-03-04,2020-03-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- bulkscore=0 phishscore=0 impostorscore=0 spamscore=0 adultscore=0
- clxscore=1015 mlxlogscore=678 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003040085
+        Wed, 4 Mar 2020 06:07:55 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 024B46U4167217;
+        Wed, 4 Mar 2020 11:07:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=qk/3ZmWRWb3QGJUEL1xyFS4r4TRjTGBtpUL+aarZ+aA=;
+ b=WRGB97hWT27+P//0oAj6vftOyYbWyV9ZmF/Le5DtQ/ZPnWOBNvTJRx5X0BsiTJQ16dky
+ 2EE7Anwq4J7reb9CsEA0xMAOAspvMa6AUFkGZizgK9ET/UTP/znVaLoV/X+cJ/DIBIxd
+ Qp2M00BEfhq/7noi9/q6m1c4VWuqBBSo/SLV/O+DAN8CUjz9Bo6cdGbylsyFYhiVX5XY
+ oDdSfbf+7KGDkElKxKrj9lT2qG+xffgMOM8e+Yr9WWUz0I42gNEtrBAhrlnZmIq/tm6F
+ kuufLTx7Z4lGkGqTSj776wBZSSCJoCZgSaQXvh7ckElcgMBgIq4COKt3aMRSAnxFlbXh jQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2yffwqwm7d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Mar 2020 11:07:45 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 024B3Sh7027604;
+        Wed, 4 Mar 2020 11:07:44 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2yg1h0nbpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Mar 2020 11:07:44 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 024B7h8m005718;
+        Wed, 4 Mar 2020 11:07:43 GMT
+Received: from dhcp-10-175-165-222.vpn.oracle.com (/10.175.165.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 04 Mar 2020 03:07:43 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     brendanhiggins@google.com, frowand.list@gmail.com,
+        gregkh@linuxfoundation.org, shuah@kernel.org
+Cc:     corbet@lwn.net, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH v6 kunit-next 0/4] kunit: add debugfs representation to show results
+Date:   Wed,  4 Mar 2020 11:07:12 +0000
+Message-Id: <1583320036-442-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=3 malwarescore=0 mlxlogscore=995 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040086
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=3
+ phishscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003040086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When kunit tests are run on native (i.e. non-UML) environments, the results
+of test execution are often intermixed with dmesg output.  This patch
+series attempts to solve this by providing a debugfs representation
+of the results of the last test run, available as
 
+/sys/kernel/debug/kunit/<testsuite>/results
 
-Le 28/02/2020 à 07:12, Andrew Donnellan a écrit :
-> On 21/2/20 2:27 pm, Alastair D'Silva wrote:
->> From: Alastair D'Silva <alastair@d-silva.org>
->>
->> When health & performance data is requested from the controller,
->> it responds with an error log containing the requested information.
->>
->> This patch allows the request to me issued via an IOCTL.
-> 
-> A better explanation would be good - this IOCTL triggers a request to 
-> the controller to collect controller health/perf data, and the 
-> controller will later respond with an error log that can be picked up 
-> via the error log IOCTL that you've defined earlier.
+Changes since v5:
 
-And even more precisely (to also check my understanding):
+- replaced undefined behaviour use of snprintf(buf, ..., buf) in kunit_log()
+  with a function to append string to existing log (Frank, patch 1)
+- added clarification on log size limitations to documentation
+  (Frank, patch 4)
 
- > this IOCTL triggers a request to
- > the controller to collect controller health/perf data, and the
- > controller will later respond
+Changes since v4:
 
-by raising an interrupt to let the user app know that
+- added suite-level log expectations to kunit log test (Brendan, patch 2)
+- added log expectations (of it being NULL) for case where
+  CONFIG_KUNIT_DEBUGFS=n to kunit log test (patch 2)
+- added patch 3 which replaces subtest tab indentation with 4 space
+  indentation as per TAP 14 spec (Frank, patch 3)
 
- > an error log that can be picked up
- > via the error log IOCTL that you've defined earlier.
+Changes since v3:
 
+- added CONFIG_KUNIT_DEBUGFS to support conditional compilation of debugfs
+  representation, including string logging (Frank, patch 1)
+- removed unneeded NULL check for test_case in
+  kunit_suite_for_each_test_case() (Frank, patch 1)
+- added kunit log test to verify logging multiple strings works
+  (Frank, patch 2)
+- rephrased description of results file (Frank, patch 3)
 
-The rest of the patch looks ok to me.
+Changes since v2:
 
-   Fred
+- updated kunit_status2str() to kunit_status_to_string() and made it
+  static inline in include/kunit/test.h (Brendan)
+- added log string to struct kunit_suite and kunit_case, with log
+  pointer in struct kunit pointing at the case log.  This allows us
+  to collect kunit_[err|info|warning]() messages at the same time
+  as we printk() them.  This solves for the most part the sharing
+  of log messages between test execution and debugfs since we
+  just print the suite log (which contains the test suite preamble)
+  and the individual test logs.  The only exception is the suite-level
+  status, which we cannot store in the suite log as it would mean
+  we'd print the suite and its status prior to the suite's results.
+  (Brendan, patch 1)
+- dropped debugfs-based kunit run patch for now so as not to cause
+  problems with tests currently under development (Brendan)
+- fixed doc issues with code block (Brendan, patch 3)
+
+Changes since v1:
+ - trimmed unneeded include files in lib/kunit/debugfs.c (Greg)
+ - renamed global debugfs functions to be prefixed with kunit_ (Greg)
+ - removed error checking for debugfs operations (Greg)
+
+Alan Maguire (4):
+  kunit: add debugfs /sys/kernel/debug/kunit/<suite>/results display
+  kunit: add log test
+  kunit: subtests should be indented 4 spaces according to TAP
+  kunit: update documentation to describe debugfs representation
+
+ Documentation/dev-tools/kunit/usage.rst |  14 +++
+ include/kunit/test.h                    |  59 +++++++++++--
+ lib/kunit/Kconfig                       |   8 ++
+ lib/kunit/Makefile                      |   4 +
+ lib/kunit/assert.c                      |  79 ++++++++---------
+ lib/kunit/debugfs.c                     | 116 +++++++++++++++++++++++++
+ lib/kunit/debugfs.h                     |  30 +++++++
+ lib/kunit/kunit-test.c                  |  45 +++++++++-
+ lib/kunit/test.c                        | 147 +++++++++++++++++++++++++-------
+ 9 files changed, 421 insertions(+), 81 deletions(-)
+ create mode 100644 lib/kunit/debugfs.c
+ create mode 100644 lib/kunit/debugfs.h
+
+-- 
+1.8.3.1
 
