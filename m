@@ -2,101 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0A391792BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:49:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 466F11792C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:54:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbgCDOtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 09:49:04 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44212 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbgCDOtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 09:49:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id n7so2703209wrt.11;
-        Wed, 04 Mar 2020 06:49:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ahY/ktb/Tn6dne+Gv/s9FpNDYukQ7zmj9C6Dhcf5KwI=;
-        b=pnw0vb8Neu/VV2Uh6Kp0+J8K7lx2KjGDD0eKfbj5H75lQGWGQGkfTZSj34z4XNCuXa
-         rxOA0cu1SO+VGCahWQ0cV1/ZeSL6V2cHsbh3DedzClmZVwUSTFM+7Vw1PUCSlzlRcafu
-         j82wk2vhSq8a8ZKA5KNL/t7SyXwSK/MOID6SL/aNqBgIh1uhfaD/vVoar9094sKb/2Zg
-         L9UGl48T71vK3mGOIqVC0V8dq1W7elRF8KETlDNS6bofGnW7O9XVchb/DH/VYIRNWHoD
-         bwhXOgqDEMC46BTtHycOoGnmuWmhGvSbeboi9twYSfNrx+JMpnSYMMKY8KghIjOUiDP/
-         tlnw==
-X-Gm-Message-State: ANhLgQ1Z3u39Y57/8jTDu+NltTvgo1dzaaLnb1d3nPSDeeU0/EPeiGAM
-        9IKVTGBfDkgTcu1qZXzH3EM=
-X-Google-Smtp-Source: ADFU+vtWTzfJYdWlQ8luVZD6y6cDm7sEDV5/bdS4EZV7rh1uOrQaH6mvrGnueAEamGKgKQwpL8CJ6g==
-X-Received: by 2002:adf:9cc7:: with SMTP id h7mr4317475wre.369.1583333341820;
-        Wed, 04 Mar 2020 06:49:01 -0800 (PST)
-Received: from debian (41.142.6.51.dyn.plus.net. [51.6.142.41])
-        by smtp.gmail.com with ESMTPSA id b18sm40168570wrm.86.2020.03.04.06.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 06:49:01 -0800 (PST)
-Date:   Wed, 4 Mar 2020 14:48:58 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Lucas Tanure <tanure@linux.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>, linux-hyperv@vger.kernel.org,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Wei Liu <wei.liu@kernel.org>
-Subject: Re: [PATCH] HID: hyperv: NULL check before some freeing functions is
- not needed.
-Message-ID: <20200304144858.xc6ekcvbzrhbggsc@debian>
-References: <20200229173007.61838-1-tanure@linux.com>
- <CAO-hwJJDv=LnOQDbgWwg2sOccM9Tt-h=082Coi0aYdwG-CG-Kg@mail.gmail.com>
- <20200302120951.fhdafzl5xtnmjrls@debian>
+        id S1726915AbgCDOy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 09:54:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:35372 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725795AbgCDOy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 09:54:28 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C8B431B;
+        Wed,  4 Mar 2020 06:54:27 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16F413F6CF;
+        Wed,  4 Mar 2020 06:54:25 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH] drm: komeda: Make rt_pm_ops dependent on CONFIG_PM
+Date:   Wed,  4 Mar 2020 14:54:12 +0000
+Message-Id: <20200304145412.33936-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302120951.fhdafzl5xtnmjrls@debian>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 12:09:51PM +0000, Wei Liu wrote:
-> Hi Benjamin
-> 
-> On Mon, Mar 02, 2020 at 11:16:30AM +0100, Benjamin Tissoires wrote:
-> > On Sat, Feb 29, 2020 at 6:30 PM Lucas Tanure <tanure@linux.com> wrote:
-> > >
-> > > Fix below warnings reported by coccicheck:
-> > > drivers/hid/hid-hyperv.c:197:2-7: WARNING: NULL check before some freeing functions is not needed.
-> > > drivers/hid/hid-hyperv.c:211:2-7: WARNING: NULL check before some freeing functions is not needed.
-> > >
-> > > Signed-off-by: Lucas Tanure <tanure@linux.com>
-> > > ---
-> > 
-> > Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > 
-> > Sasha, do you prefer taking this through your tree or through the HID
-> > one. I don't think we have much scheduled for hyperv, so it's up to
-> > you.
-> 
-> Sasha stepped down as a hyperv maintainer a few days back. I will be
-> taking over maintenance of the hyperv tree.
-> 
-> The problem is at the moment I haven't got write access to the
-> repository hosted on git.kernel.org. That's something I will need to
-> sort out as soon as possible.
-> 
-> In the meantime, it would be great if you can pick up this patch so that
-> it doesn't get lost while I sort out access on my side.
+komeda_rt_pm_suspend() and komeda_rt_pm_resume() are compiled only when
+CONFIG_PM is enabled. Having it disabled triggers the following warning
+at compile time:
 
-Hi Benjamin
+linux/drivers/gpu/drm/arm/display/komeda/komeda_drv.c:156:12:
+warning: ‘komeda_rt_pm_resume’ defined but not used [-Wunused-function]
+ static int komeda_rt_pm_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~
+linux/drivers/gpu/drm/arm/display/komeda/komeda_drv.c:149:12:
+warning: ‘komeda_rt_pm_suspend’ defined but not used [-Wunused-function]
+ static int komeda_rt_pm_suspend(struct device *dev)
 
-I got access to the Hyper-V tree. I will be picking this patch up since
-I haven't got a confirmation from your side.
+Make komeda_rt_pm_suspend() and komeda_rt_pm_resume() dependent on
+CONFIG_PM to address the issue.
 
-Wei.
+Cc: "James (Qian) Wang" <james.qian.wang@arm.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Mihail Atanassov <mihail.atanassov@arm.com>
+Cc: Brian Starkey <brian.starkey@arm.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Thanks,
-> Wei.
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+index ea5cd1e17304..dd3ae3d88687 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+@@ -146,6 +146,7 @@ static const struct of_device_id komeda_of_match[] = {
+ 
+ MODULE_DEVICE_TABLE(of, komeda_of_match);
+ 
++#ifdef CONFIG_PM
+ static int komeda_rt_pm_suspend(struct device *dev)
+ {
+ 	struct komeda_drv *mdrv = dev_get_drvdata(dev);
+@@ -159,6 +160,7 @@ static int komeda_rt_pm_resume(struct device *dev)
+ 
+ 	return komeda_dev_resume(mdrv->mdev);
+ }
++#endif /* CONFIG_PM */
+ 
+ static int __maybe_unused komeda_pm_suspend(struct device *dev)
+ {
+-- 
+2.25.1
+
