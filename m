@@ -2,65 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 603D6178F04
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:57:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8316178F1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:01:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387817AbgCDK5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:57:13 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38588 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728953AbgCDK5M (ORCPT
+        id S2387950AbgCDLAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:00:53 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19738 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387805AbgCDLAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:57:12 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 024AurYt044782;
-        Wed, 4 Mar 2020 04:56:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583319413;
-        bh=l63DDIs8VVk2Lfq1t466kWNcanLP/rNBPoLGxXNl37k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=StsEyURw2s4JTT1ZprfUcgojmabOm+SrC+RyK4yv+r7Oa/YRmsuO8jhtIy1TmNG5u
-         xWjz6QFyXswPB2nNBjPSL7avctZLsKxXT371rdczrrxAkcrwaMdvtxcWrRi9kF/lyu
-         ZGWUEo8SEA5rA/gf/Jo/noxlEXyhdI5V31Can5GA=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 024Aur8i128156;
-        Wed, 4 Mar 2020 04:56:53 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Mar
- 2020 04:56:53 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Mar 2020 04:56:53 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 024Aun3i016814;
-        Wed, 4 Mar 2020 04:56:49 -0600
-Subject: Re: [PATCH v6 6/7] phy: amlogic: Add Amlogic AXG PCIE PHY Driver
-To:     Remi Pommarel <repk@triplefau.lt>, Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-References: <20200123232943.10229-1-repk@triplefau.lt>
- <20200123232943.10229-7-repk@triplefau.lt>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <14627e42-4894-6674-4911-3205ea8f5e55@ti.com>
-Date:   Wed, 4 Mar 2020 16:31:24 +0530
+        Wed, 4 Mar 2020 06:00:52 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 024AsPXH124476
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Mar 2020 06:00:51 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yhw6nuatk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 06:00:50 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Wed, 4 Mar 2020 11:00:48 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Mar 2020 11:00:41 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 024B0dSP51511486
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Mar 2020 11:00:39 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45A0DAE055;
+        Wed,  4 Mar 2020 11:00:39 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3E5A3AE057;
+        Wed,  4 Mar 2020 11:00:38 +0000 (GMT)
+Received: from pic2.home (unknown [9.145.145.27])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Mar 2020 11:00:38 +0000 (GMT)
+Subject: Re: [PATCH v3 20/27] powerpc/powernv/pmem: Forward events to
+ userspace
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+ <20200221032720.33893-21-alastair@au1.ibm.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Wed, 4 Mar 2020 12:00:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200123232943.10229-7-repk@triplefau.lt>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200221032720.33893-21-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20030411-0008-0000-0000-000003593836
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030411-0009-0000-0000-00004A7A6AC0
+Message-Id: <7ee589c0-2c02-9b8e-95a9-743ce29674ec@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-04_01:2020-03-04,2020-03-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 spamscore=0
+ suspectscore=2 adultscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -68,258 +103,420 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 24/01/20 4:59 am, Remi Pommarel wrote:
-> This adds support for the PCI PHY found in the Amlogic AXG SoC Family.
-> This will allow to mutualize code in pci-meson.c between AXG and G12A
-> SoC.
+Le 21/02/2020 à 04:27, Alastair D'Silva a écrit :
+> From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> This PHY also uses and chains an analog PHY, which on AXG platform
-> is needed to have reliable PCIe communication.
-
-Is the analog PHY an independent block and can be used with other PHYs?
-
-For the patch itself
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-Thanks
-Kishon
+> Some of the interrupts that the card generates are better handled
+> by the userspace daemon, in particular:
+> Controller Hardware/Firmware Fatal
+> Controller Dump Available
+> Error Log available
 > 
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> This patch allows a userspace application to register an eventfd with
+> the driver via SCM_IOCTL_EVENTFD to receive notifications of these
+> interrupts.
+> 
+> Userspace can then identify what events have occurred by calling
+> SCM_IOCTL_EVENT_CHECK and checking against the SCM_IOCTL_EVENT_FOO
+> masks.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 > ---
->  drivers/phy/amlogic/Kconfig              |  11 ++
->  drivers/phy/amlogic/Makefile             |   1 +
->  drivers/phy/amlogic/phy-meson-axg-pcie.c | 192 +++++++++++++++++++++++
->  3 files changed, 204 insertions(+)
->  create mode 100644 drivers/phy/amlogic/phy-meson-axg-pcie.c
+>   arch/powerpc/platforms/powernv/pmem/ocxl.c    | 216 ++++++++++++++++++
+>   .../platforms/powernv/pmem/ocxl_internal.h    |   5 +
+>   include/uapi/nvdimm/ocxl-pmem.h               |  16 ++
+>   3 files changed, 237 insertions(+)
 > 
-> diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
-> index 8c9cf2403591..71801e30d601 100644
-> --- a/drivers/phy/amlogic/Kconfig
-> +++ b/drivers/phy/amlogic/Kconfig
-> @@ -60,6 +60,17 @@ config PHY_MESON_G12A_USB3_PCIE
->  	  in Meson G12A SoCs.
->  	  If unsure, say N.
->  
-> +config PHY_MESON_AXG_PCIE
-> +	tristate "Meson AXG PCIE PHY driver"
-> +	default ARCH_MESON
-> +	depends on OF && (ARCH_MESON || COMPILE_TEST)
-> +	select GENERIC_PHY
-> +	select REGMAP_MMIO
-> +	help
-> +	  Enable this to support the Meson MIPI + PCIE PHY found
-> +	  in Meson AXG SoCs.
-> +	  If unsure, say N.
+> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl.c b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> index 009d4fd29e7d..e46696d3cc36 100644
+> --- a/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl.c
+> @@ -10,6 +10,7 @@
+>   #include <misc/ocxl.h>
+>   #include <linux/delay.h>
+>   #include <linux/ndctl.h>
+> +#include <linux/eventfd.h>
+>   #include <linux/fs.h>
+>   #include <linux/mm_types.h>
+>   #include <linux/memory_hotplug.h>
+> @@ -335,11 +336,22 @@ static void free_ocxlpmem(struct ocxlpmem *ocxlpmem)
+>   {
+>   	int rc;
+>   
+> +	// Disable doorbells
+> +	(void)ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CHIEC,
+> +				     OCXL_LITTLE_ENDIAN,
+> +				     GLOBAL_MMIO_CHI_ALL);
 > +
->  config PHY_MESON_AXG_MIPI_PCIE_ANALOG
->  	tristate "Meson AXG MIPI + PCIE analog PHY driver"
->  	default ARCH_MESON
-> diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
-> index 0aecf92d796a..e2baa133f7af 100644
-> --- a/drivers/phy/amlogic/Makefile
-> +++ b/drivers/phy/amlogic/Makefile
-> @@ -4,4 +4,5 @@ obj-$(CONFIG_PHY_MESON_GXL_USB2)		+= phy-meson-gxl-usb2.o
->  obj-$(CONFIG_PHY_MESON_G12A_USB2)		+= phy-meson-g12a-usb2.o
->  obj-$(CONFIG_PHY_MESON_GXL_USB3)		+= phy-meson-gxl-usb3.o
->  obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)		+= phy-meson-g12a-usb3-pcie.o
-> +obj-$(CONFIG_PHY_MESON_AXG_PCIE)		+= phy-meson-axg-pcie.o
->  obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE_ANALOG)	+= phy-meson-axg-mipi-pcie-analog.o
-> diff --git a/drivers/phy/amlogic/phy-meson-axg-pcie.c b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-> new file mode 100644
-> index 000000000000..377ed0dcd0d9
-> --- /dev/null
-> +++ b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-> @@ -0,0 +1,192 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Amlogic AXG PCIE PHY driver
-> + *
-> + * Copyright (C) 2020 Remi Pommarel <repk@triplefau.lt>
-> + */
-> +#include <linux/module.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/bitfield.h>
-> +#include <dt-bindings/phy/phy.h>
+>   	if (ocxlpmem->nvdimm_bus)
+>   		nvdimm_bus_unregister(ocxlpmem->nvdimm_bus);
+>   
+>   	free_minor(ocxlpmem);
+>   
+> +	if (ocxlpmem->irq_addr[1])
+> +		iounmap(ocxlpmem->irq_addr[1]);
 > +
-> +#define MESON_PCIE_REG0 0x00
-> +#define		MESON_PCIE_COMMON_CLK	BIT(4)
-> +#define		MESON_PCIE_PORT_SEL	GENMASK(3, 2)
-> +#define		MESON_PCIE_CLK		BIT(1)
-> +#define		MESON_PCIE_POWERDOWN	BIT(0)
+> +	if (ocxlpmem->irq_addr[0])
+> +		iounmap(ocxlpmem->irq_addr[0]);
 > +
-> +#define MESON_PCIE_TWO_X1		FIELD_PREP(MESON_PCIE_PORT_SEL, 0x3)
-> +#define MESON_PCIE_COMMON_REF_CLK	FIELD_PREP(MESON_PCIE_COMMON_CLK, 0x1)
-> +#define MESON_PCIE_PHY_INIT		(MESON_PCIE_TWO_X1 |		\
-> +					 MESON_PCIE_COMMON_REF_CLK)
-> +#define MESON_PCIE_RESET_DELAY		500
-> +
-> +struct phy_axg_pcie_priv {
-> +	struct phy *phy;
-> +	struct phy *analog;
-> +	struct regmap *regmap;
-> +	struct reset_control *reset;
-> +};
-> +
-> +static const struct regmap_config phy_axg_pcie_regmap_conf = {
-> +	.reg_bits = 8,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +	.max_register = MESON_PCIE_REG0,
-> +};
-> +
-> +static int phy_axg_pcie_power_on(struct phy *phy)
-> +{
-> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = phy_power_on(priv->analog);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	regmap_update_bits(priv->regmap, MESON_PCIE_REG0,
-> +			   MESON_PCIE_POWERDOWN, 0);
-> +	return 0;
-> +}
-> +
-> +static int phy_axg_pcie_power_off(struct phy *phy)
-> +{
-> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = phy_power_off(priv->analog);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	regmap_update_bits(priv->regmap, MESON_PCIE_REG0,
-> +			   MESON_PCIE_POWERDOWN, 1);
-> +	return 0;
-> +}
-> +
-> +static int phy_axg_pcie_init(struct phy *phy)
-> +{
-> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = phy_init(priv->analog);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	regmap_write(priv->regmap, MESON_PCIE_REG0, MESON_PCIE_PHY_INIT);
-> +	return reset_control_reset(priv->reset);
-> +}
-> +
-> +static int phy_axg_pcie_exit(struct phy *phy)
-> +{
-> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = phy_exit(priv->analog);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	return reset_control_reset(priv->reset);
-> +}
-> +
-> +static int phy_axg_pcie_reset(struct phy *phy)
-> +{
-> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
-> +	int ret = 0;
-> +
-> +	ret = phy_reset(priv->analog);
-> +	if (ret != 0)
-> +		goto out;
-> +
-> +	ret = reset_control_assert(priv->reset);
-> +	if (ret != 0)
-> +		goto out;
-> +	udelay(MESON_PCIE_RESET_DELAY);
-> +
-> +	ret = reset_control_deassert(priv->reset);
-> +	if (ret != 0)
-> +		goto out;
-> +	udelay(MESON_PCIE_RESET_DELAY);
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-> +static const struct phy_ops phy_axg_pcie_ops = {
-> +	.init = phy_axg_pcie_init,
-> +	.exit = phy_axg_pcie_exit,
-> +	.power_on = phy_axg_pcie_power_on,
-> +	.power_off = phy_axg_pcie_power_off,
-> +	.reset = phy_axg_pcie_reset,
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +static int phy_axg_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct phy_provider *pphy;
-> +	struct device *dev = &pdev->dev;
-> +	struct phy_axg_pcie_priv *priv;
-> +	struct device_node *np = dev->of_node;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->phy = devm_phy_create(dev, np, &phy_axg_pcie_ops);
-> +	if (IS_ERR(priv->phy)) {
-> +		ret = PTR_ERR(priv->phy);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(dev, "failed to create PHY\n");
-> +		return ret;
+>   	if (ocxlpmem->cdev.owner)
+>   		cdev_del(&ocxlpmem->cdev);
+>   
+> @@ -443,6 +455,11 @@ static int file_release(struct inode *inode, struct file *file)
+>   {
+>   	struct ocxlpmem *ocxlpmem = file->private_data;
+>   
+> +	if (ocxlpmem->ev_ctx) {
+> +		eventfd_ctx_put(ocxlpmem->ev_ctx);
+> +		ocxlpmem->ev_ctx = NULL;
 > +	}
 > +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
+>   	ocxlpmem_put(ocxlpmem);
+>   	return 0;
+>   }
+> @@ -938,6 +955,51 @@ static int ioctl_controller_stats(struct ocxlpmem *ocxlpmem,
+>   	return rc;
+>   }
+>   
+> +static int ioctl_eventfd(struct ocxlpmem *ocxlpmem,
+> +		 struct ioctl_ocxl_pmem_eventfd __user *uarg)
+> +{
+> +	struct ioctl_ocxl_pmem_eventfd args;
 > +
-> +	priv->regmap = devm_regmap_init_mmio(dev, base,
-> +					     &phy_axg_pcie_regmap_conf);
-> +	if (IS_ERR(priv->regmap))
-> +		return PTR_ERR(priv->regmap);
+> +	if (copy_from_user(&args, uarg, sizeof(args)))
+> +		return -EFAULT;
 > +
-> +	priv->reset = devm_reset_control_array_get(dev, false, false);
-> +	if (IS_ERR(priv->reset))
-> +		return PTR_ERR(priv->reset);
+> +	if (ocxlpmem->ev_ctx)
+> +		return -EINVAL;
+
+
+EBUSY?
+
+
 > +
-> +	priv->analog = devm_phy_get(dev, "analog");
-> +	if (IS_ERR(priv->analog))
-> +		return PTR_ERR(priv->analog);
+> +	ocxlpmem->ev_ctx = eventfd_ctx_fdget(args.eventfd);
+> +	if (!ocxlpmem->ev_ctx)
+> +		return -EFAULT;
+
+
+Why not use what eventfd_ctx_fdget() returned? (through some IS_ERR() 
+and PTR_ERR() convolution)
+
+
 > +
-> +	phy_set_drvdata(priv->phy, priv);
-> +	dev_set_drvdata(dev, priv);
-> +	pphy = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +
-> +	return PTR_ERR_OR_ZERO(pphy);
+> +	return 0;
 > +}
 > +
-> +static const struct of_device_id phy_axg_pcie_of_match[] = {
-> +	{
-> +		.compatible = "amlogic,axg-pcie-phy",
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, phy_axg_pcie_of_match);
+> +static int ioctl_event_check(struct ocxlpmem *ocxlpmem, u64 __user *uarg)
+> +{
+> +	u64 val = 0;
+> +	int rc;
+> +	u64 chi = 0;
 > +
-> +static struct platform_driver phy_axg_pcie_driver = {
-> +	.probe = phy_axg_pcie_probe,
-> +	.driver = {
-> +		.name = "phy-axg-pcie",
-> +		.of_match_table = phy_axg_pcie_of_match,
-> +	},
-> +};
-> +module_platform_driver(phy_axg_pcie_driver);
+> +	rc = ocxlpmem_chi(ocxlpmem, &chi);
+> +	if (rc < 0)
+> +		return rc;
 > +
-> +MODULE_AUTHOR("Remi Pommarel <repk@triplefau.lt>");
-> +MODULE_DESCRIPTION("Amlogic AXG PCIE PHY driver");
-> +MODULE_LICENSE("GPL v2");
+> +	if (chi & GLOBAL_MMIO_CHI_ELA)
+> +		val |= IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE;
+> +
+> +	if (chi & GLOBAL_MMIO_CHI_CDA)
+> +		val |= IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE;
+> +
+> +	if (chi & GLOBAL_MMIO_CHI_CFFS)
+> +		val |= IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL;
+> +
+> +	if (chi & GLOBAL_MMIO_CHI_CHFS)
+> +		val |= IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL;
+> +
+> +	rc = copy_to_user((u64 __user *) uarg, &val, sizeof(val));
+> +
+
+
+copy_to_user doesn't return an errno. Should be:
+
+if (copy_to_user((u64 __user *) uarg, &val, sizeof(val)))
+	return -EFAULT;
+
+
+> +	return rc;
+> +}
+> +
+>   static long file_ioctl(struct file *file, unsigned int cmd, unsigned long args)
+>   {
+>   	struct ocxlpmem *ocxlpmem = file->private_data;
+> @@ -966,6 +1028,15 @@ static long file_ioctl(struct file *file, unsigned int cmd, unsigned long args)
+>   		rc = ioctl_controller_stats(ocxlpmem,
+>   					    (struct ioctl_ocxl_pmem_controller_stats __user *)args);
+>   		break;
+> +
+> +	case IOCTL_OCXL_PMEM_EVENTFD:
+> +		rc = ioctl_eventfd(ocxlpmem,
+> +				   (struct ioctl_ocxl_pmem_eventfd __user *)args);
+> +		break;
+> +
+> +	case IOCTL_OCXL_PMEM_EVENT_CHECK:
+> +		rc = ioctl_event_check(ocxlpmem, (u64 __user *)args);
+> +		break;
+>   	}
+>   
+>   	return rc;
+> @@ -1107,6 +1178,146 @@ static void dump_error_log(struct ocxlpmem *ocxlpmem)
+>   	kfree(buf);
+>   }
+>   
+> +static irqreturn_t imn0_handler(void *private)
+> +{
+> +	struct ocxlpmem *ocxlpmem = private;
+> +	u64 chi = 0;
+> +
+> +	(void)ocxlpmem_chi(ocxlpmem, &chi);
+> +
+> +	if (chi & GLOBAL_MMIO_CHI_ELA) {
+> +		dev_warn(&ocxlpmem->dev, "Error log is available\n");
+> +
+> +		if (ocxlpmem->ev_ctx)
+> +			eventfd_signal(ocxlpmem->ev_ctx, 1);
+> +	}
+> +
+> +	if (chi & GLOBAL_MMIO_CHI_CDA) {
+> +		dev_warn(&ocxlpmem->dev, "Controller dump is available\n");
+> +
+> +		if (ocxlpmem->ev_ctx)
+> +			eventfd_signal(ocxlpmem->ev_ctx, 1);
+> +	}
+> +
+> +
+
+
+(at least) one empty line too many.
+
+
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static irqreturn_t imn1_handler(void *private)
+> +{
+> +	struct ocxlpmem *ocxlpmem = private;
+> +	u64 chi = 0;
+> +
+> +	(void)ocxlpmem_chi(ocxlpmem, &chi);
+> +
+> +	if (chi & (GLOBAL_MMIO_CHI_CFFS | GLOBAL_MMIO_CHI_CHFS)) {
+> +		dev_err(&ocxlpmem->dev,
+> +			"Controller status is fatal, chi=0x%llx, going offline\n", chi);
+> +
+> +		if (ocxlpmem->nvdimm_bus) {
+> +			nvdimm_bus_unregister(ocxlpmem->nvdimm_bus);
+> +			ocxlpmem->nvdimm_bus = NULL;
+> +		}
+> +
+> +		if (ocxlpmem->ev_ctx)
+> +			eventfd_signal(ocxlpmem->ev_ctx, 1);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +
+> +/**
+> + * ocxlpmem_setup_irq() - Set up the IRQs for the OpenCAPI Persistent Memory device
+> + * @ocxlpmem: the device metadata
+> + * Return: 0 on success, negative on failure
+> + */
+> +static int ocxlpmem_setup_irq(struct ocxlpmem *ocxlpmem)
+> +{
+> +	int rc;
+> +	u64 irq_addr;
+> +
+> +	rc = ocxl_afu_irq_alloc(ocxlpmem->ocxl_context, &ocxlpmem->irq_id[0]);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = ocxl_irq_set_handler(ocxlpmem->ocxl_context, ocxlpmem->irq_id[0],
+> +				  imn0_handler, NULL, ocxlpmem);
+> +
+> +	irq_addr = ocxl_afu_irq_get_addr(ocxlpmem->ocxl_context, ocxlpmem->irq_id[0]);
+> +	if (!irq_addr)
+> +		return -EINVAL;
+> +
+> +	ocxlpmem->irq_addr[0] = ioremap(irq_addr, PAGE_SIZE);
+> +	if (!ocxlpmem->irq_addr[0])
+> +		return -EINVAL;
+> +
+> +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_IMA0_OHP,
+> +				      OCXL_LITTLE_ENDIAN,
+> +				      (u64)ocxlpmem->irq_addr[0]);
+> +	if (rc)
+> +		goto out_irq0;
+> +
+> +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_IMA0_CFP,
+> +				      OCXL_LITTLE_ENDIAN, 0);
+> +	if (rc)
+> +		goto out_irq0;
+
+
+That's a few lines of duplicate code. On the other hand, there's enough 
+varying parameters between the 2 interrupts that factorizing in a 
+subfunction would be slightly less readable. So duplicating is probably ok.
+
+
+
+> +	rc = ocxl_afu_irq_alloc(ocxlpmem->ocxl_context, &ocxlpmem->irq_id[1]);
+> +	if (rc)
+> +		goto out_irq0;
+> +
+> +
+> +	rc = ocxl_irq_set_handler(ocxlpmem->ocxl_context, ocxlpmem->irq_id[1],
+> +				  imn1_handler, NULL, ocxlpmem);
+> +	if (rc)
+> +		goto out_irq0;
+> +
+> +	irq_addr = ocxl_afu_irq_get_addr(ocxlpmem->ocxl_context, ocxlpmem->irq_id[1]);
+> +	if (!irq_addr) {
+> +		rc = -EFAULT;
+> +		goto out_irq0;
+> +	}
+> +
+> +	ocxlpmem->irq_addr[1] = ioremap(irq_addr, PAGE_SIZE);
+> +	if (!ocxlpmem->irq_addr[1]) {
+> +		rc = -EINVAL;
+> +		goto out_irq0;
+> +	}
+> +
+> +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_IMA1_OHP,
+> +				      OCXL_LITTLE_ENDIAN,
+> +				      (u64)ocxlpmem->irq_addr[1]);
+> +	if (rc)
+> +		goto out_irq1;
+> +
+> +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_IMA1_CFP,
+> +				      OCXL_LITTLE_ENDIAN, 0);
+> +	if (rc)
+> +		goto out_irq1;
+> +
+> +	// Enable doorbells
+> +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CHIE,
+> +				    OCXL_LITTLE_ENDIAN,
+> +				    GLOBAL_MMIO_CHI_ELA | GLOBAL_MMIO_CHI_CDA |
+> +				    GLOBAL_MMIO_CHI_CFFS | GLOBAL_MMIO_CHI_CHFS |
+> +				    GLOBAL_MMIO_CHI_NSCRA);
+
+
+GLOBAL_MMIO_CHI_NSCRA doesn't seem to be handled in the handlers.
+
+
+
+> +	if (rc)
+> +		goto out_irq1;
+> +
+> +	return 0;
+> +
+> +out_irq1:
+> +	iounmap(ocxlpmem->irq_addr[1]);
+> +	ocxlpmem->irq_addr[1] = NULL;
+> +
+> +out_irq0:
+> +	iounmap(ocxlpmem->irq_addr[0]);
+> +	ocxlpmem->irq_addr[0] = NULL;
+> +
+> +	return rc;
+> +}
+> +
+>   /**
+>    * probe_function0() - Set up function 0 for an OpenCAPI persistent memory device
+>    * This is important as it enables templates higher than 0 across all other functions,
+> @@ -1216,6 +1427,11 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   		goto err;
+>   	}
+>   
+> +	if (ocxlpmem_setup_irq(ocxlpmem)) {
+> +		dev_err(&pdev->dev, "Could not set up OCXL IRQs\n");
+
+
+Like with other patches, rc needs to be set.
+
+
+> +		goto err;
+> +	}
+> +
+>   	if (setup_command_metadata(ocxlpmem)) {
+>   		dev_err(&pdev->dev, "Could not read OCXL command matada\n");
+>   		goto err;
+> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> index b953ee522ed4..927690f4888f 100644
+> --- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
+> @@ -103,6 +103,10 @@ struct ocxlpmem {
+>   	struct pci_dev *pdev;
+>   	struct cdev cdev;
+>   	struct ocxl_fn *ocxl_fn;
+> +#define SCM_IRQ_COUNT 2
+> +	int irq_id[SCM_IRQ_COUNT];
+> +	struct dev_pagemap irq_pgmap[SCM_IRQ_COUNT];
+
+
+irq_pgmap is not used.
+
+
+> +	void *irq_addr[SCM_IRQ_COUNT];
+>   	struct nd_interleave_set nd_set;
+>   	struct nvdimm_bus_descriptor bus_desc;
+>   	struct nvdimm_bus *nvdimm_bus;
+> @@ -113,6 +117,7 @@ struct ocxlpmem {
+>   	struct command_metadata ns_command;
+>   	struct resource pmem_res;
+>   	struct nd_region *nd_region;
+> +	struct eventfd_ctx *ev_ctx;
+>   	char fw_version[8+1];
+>   	u32 timeouts[ADMIN_COMMAND_MAX+1];
+>   
+> diff --git a/include/uapi/nvdimm/ocxl-pmem.h b/include/uapi/nvdimm/ocxl-pmem.h
+> index add223aa2fdb..988eb0bc413d 100644
+> --- a/include/uapi/nvdimm/ocxl-pmem.h
+> +++ b/include/uapi/nvdimm/ocxl-pmem.h
+> @@ -66,6 +66,20 @@ struct ioctl_ocxl_pmem_controller_stats {
+>   	__u64 cache_write_latency; /* nanoseconds */
+>   };
+>   
+> +struct ioctl_ocxl_pmem_eventfd {
+> +	__s32 eventfd;
+> +	__u32 reserved;
+> +};
+> +
+> +#ifndef BIT_ULL
+> +#define BIT_ULL(nr)	(1ULL << (nr))
+> +#endif
+> +
+> +#define IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE	BIT_ULL(0)
+> +#define IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE	BIT_ULL(1)
+> +#define IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL		BIT_ULL(2)
+> +#define IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL		BIT_ULL(3)
+> +
+
+
+I'm not fond of adding a macro with such a generic name as BIT_ULL() in 
+a user header file. What's wrong with:
+
+#define IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE	0x1
+#define IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE	0x2
+#define IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL		0x4
+#define IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL		0x8
+
+
+   Fred
+
+
+>   /* ioctl numbers */
+>   #define OCXL_PMEM_MAGIC 0x5C
+>   /* SCM devices */
+> @@ -74,5 +88,7 @@ struct ioctl_ocxl_pmem_controller_stats {
+>   #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_DATA		_IOWR(OCXL_PMEM_MAGIC, 0x03, struct ioctl_ocxl_pmem_controller_dump_data)
+>   #define IOCTL_OCXL_PMEM_CONTROLLER_DUMP_COMPLETE	_IO(OCXL_PMEM_MAGIC, 0x04)
+>   #define IOCTL_OCXL_PMEM_CONTROLLER_STATS		_IO(OCXL_PMEM_MAGIC, 0x05)
+> +#define IOCTL_OCXL_PMEM_EVENTFD				_IOW(OCXL_PMEM_MAGIC, 0x06, struct ioctl_ocxl_pmem_eventfd)
+> +#define IOCTL_OCXL_PMEM_EVENT_CHECK			_IOR(OCXL_PMEM_MAGIC, 0x07, __u64)
+>   
+>   #endif /* _UAPI_OCXL_SCM_H */
 > 
+
