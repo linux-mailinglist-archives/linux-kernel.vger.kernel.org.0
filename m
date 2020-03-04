@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DB41178D1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 913CF178D1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:08:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387847AbgCDJHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 04:07:55 -0500
+        id S2387861AbgCDJH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 04:07:59 -0500
 Received: from mga03.intel.com ([134.134.136.65]:17638 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387761AbgCDJHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 04:07:53 -0500
+        id S2387846AbgCDJH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 04:07:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 01:07:53 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 01:07:57 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,513,1574150400"; 
-   d="scan'208";a="413074288"
+   d="scan'208";a="413074297"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.167])
-  by orsmga005.jf.intel.com with ESMTP; 04 Mar 2020 01:07:49 -0800
+  by orsmga005.jf.intel.com with ESMTP; 04 Mar 2020 01:07:53 -0800
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -33,9 +33,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Leo Yan <leo.yan@linaro.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH V4 08/13] ftrace: Add perf text poke events for ftrace trampolines
-Date:   Wed,  4 Mar 2020 11:06:28 +0200
-Message-Id: <20200304090633.420-9-adrian.hunter@intel.com>
+Subject: [PATCH V4 09/13] perf kcore_copy: Fix module map when there are no modules loaded
+Date:   Wed,  4 Mar 2020 11:06:29 +0200
+Message-Id: <20200304090633.420-10-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200304090633.420-1-adrian.hunter@intel.com>
 References: <20200304090633.420-1-adrian.hunter@intel.com>
@@ -44,46 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add perf text poke events for ftrace trampolines when created and when
-freed.
+In the absence of any modules, no "modules" map is created, but there are
+other executable pages to map, due to eBPF JIT, kprobe or ftrace. Map them
+by recognizing that the first "module" symbol is not necessarily from a
+module, and adjust the map accordingly.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- kernel/trace/ftrace.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ tools/perf/util/symbol-elf.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index fda0c9144642..75f9aac31fec 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2795,6 +2795,13 @@ static void ftrace_trampoline_free(struct ftrace_ops *ops)
- {
- 	if (ops && (ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP) &&
- 	    ops->trampoline) {
-+		/*
-+		 * Record the text poke event before the ksymbol unregister
-+		 * event.
-+		 */
-+		perf_event_text_poke((void *)ops->trampoline,
-+				     (void *)ops->trampoline,
-+				     ops->trampoline_size, NULL, 0);
- 		perf_event_ksymbol(PERF_RECORD_KSYMBOL_TYPE_OOL,
- 				   ops->trampoline, ops->trampoline_size,
- 				   true, FTRACE_TRAMPOLINE_SYM);
-@@ -6812,6 +6819,13 @@ static void ftrace_update_trampoline(struct ftrace_ops *ops)
- 		perf_event_ksymbol(PERF_RECORD_KSYMBOL_TYPE_OOL,
- 				   ops->trampoline, ops->trampoline_size, false,
- 				   FTRACE_TRAMPOLINE_SYM);
-+		/*
-+		 * Record the perf text poke event after the ksymbol register
-+		 * event.
-+		 */
-+		perf_event_text_poke((void *)ops->trampoline, NULL, 0,
-+				     (void *)ops->trampoline,
-+				     ops->trampoline_size);
- 	}
- }
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 1965aefccb02..3df77b56e28a 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1452,6 +1452,7 @@ struct kcore_copy_info {
+ 	u64 first_symbol;
+ 	u64 last_symbol;
+ 	u64 first_module;
++	u64 first_module_symbol;
+ 	u64 last_module_symbol;
+ 	size_t phnum;
+ 	struct list_head phdrs;
+@@ -1528,6 +1529,8 @@ static int kcore_copy__process_kallsyms(void *arg, const char *name, char type,
+ 		return 0;
  
+ 	if (strchr(name, '[')) {
++		if (!kci->first_module_symbol || start < kci->first_module_symbol)
++			kci->first_module_symbol = start;
+ 		if (start > kci->last_module_symbol)
+ 			kci->last_module_symbol = start;
+ 		return 0;
+@@ -1725,6 +1728,10 @@ static int kcore_copy__calc_maps(struct kcore_copy_info *kci, const char *dir,
+ 		kci->etext += page_size;
+ 	}
+ 
++	if (kci->first_module_symbol &&
++	    (!kci->first_module || kci->first_module_symbol < kci->first_module))
++		kci->first_module = kci->first_module_symbol;
++
+ 	kci->first_module = round_down(kci->first_module, page_size);
+ 
+ 	if (kci->last_module_symbol) {
 -- 
 2.17.1
 
