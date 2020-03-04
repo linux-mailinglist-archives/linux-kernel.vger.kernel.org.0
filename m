@@ -2,106 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE8B17993B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFDEB17994D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbgCDTr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 14:47:57 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50186 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbgCDTrz (ORCPT
+        id S2387863AbgCDTuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 14:50:12 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:27738 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728946AbgCDTuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:47:55 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6177D891AD;
-        Thu,  5 Mar 2020 08:47:51 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1583351271;
-        bh=6XBNRDhkWzjQ/BWbtuSrwUhydhs8LSrpvUU5gWhaVjU=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=JyZ8aVNLcGj2bOxfqheLkl84Ck2ptHFI1yCxEhXR84p2n+6jHKEQL8ETZXkWUTzrg
-         MOvP5jHOsctjT6qj7bQLHjO+aj+ki+inBfkfQivAOqJ3Ksc4AsNMi2+m3OMNxXnFyH
-         /arlcU2vn86pJAoOk5hmedrR5IvkW7VZRHZjhkpcJuO0piBuFHn6MjdN7BYrpAwlcv
-         6L1CRFM2WScsDABnxlu62ut07CakdQP+pcJ0jnxARqeg45hr+3Zk81QVfsdk2tbZvA
-         VIyn361f7dE+JKHuC0tG9fiYvqoL4gMiryZAi0jITaXfabOkhQiRlyarNSbE7YQvyo
-         gNFkmzZEGwlDQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e6005e50001>; Thu, 05 Mar 2020 08:47:49 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Thu, 5 Mar 2020 08:47:51 +1300
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1497.006; Thu, 5 Mar 2020 08:47:51 +1300
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "wzssyqa@gmail.com" <wzssyqa@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "shomeek@phoenicselectronics.com" <shomeek@phoenicselectronics.com>,
-        "paulburton@kernel.org" <paulburton@kernel.org>
-Subject: Re: [PATCH 0/6] Re-instate octeon staging drivers
-Thread-Topic: [PATCH 0/6] Re-instate octeon staging drivers
-Thread-Index: AQHV27jULEYW8pzvQEaKRSkEjvcZ7qgXS+4AgB+wyACAAFEjAIAAP0EAgAAXxACAAIVUAA==
-Date:   Wed, 4 Mar 2020 19:47:50 +0000
-Message-ID: <bae500e38d3c83f1a8e11a4e593587b6c2363988.camel@alliedtelesis.co.nz>
-References: <20200205001116.14096-1-chris.packham@alliedtelesis.co.nz>
-         <20200212215200.GA2367959@kroah.com>
-         <CAKcpw6VczRuMC_KRzP6VRPeZPtmEpVOJE5Fc+JhDH4mWU7jUVg@mail.gmail.com>
-         <20200304063910.GA1203555@kroah.com>
-         <CAKcpw6Vt1wUGcps2b86YGU8gGijvKTa6ERL5F1Nk=utaJyz+kg@mail.gmail.com>
-         <20200304115038.GB1581141@kroah.com>
-In-Reply-To: <20200304115038.GB1581141@kroah.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:9f0:cd07:c13:4b8a]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <37F0F527A14B2B42BA74ADAAE608E27A@atlnz.lc>
-Content-Transfer-Encoding: base64
+        Wed, 4 Mar 2020 14:50:12 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 024Jk8K9024747
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Mar 2020 11:50:11 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=zBd+5qaL3qCpMGDjmFLdwfve7IIb8GrWrTDOOZQAm1o=;
+ b=OD+9dxjAszOVJAKEAHqFl5ws+jBOYe2g195UCbw2bPSpTkzs6EmmQISeR1R92rT5YRyl
+ LRU03bd53091itcJ1s3NTjuQSG/NaPN4CTZw4jlxmzmE5U3id0y5CDdLuBo+KCCpYWvM
+ IfvBE0k8ksQXOUa4dQibIPrH1PuDyABTm/o= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2yjggj0u82-9
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 11:50:11 -0800
+Received: from intmgw001.41.prn1.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 4 Mar 2020 11:50:07 -0800
+Received: by devvm4439.prn2.facebook.com (Postfix, from userid 111017)
+        id 1C713FEBAC0A; Wed,  4 Mar 2020 11:50:03 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm4439.prn2.facebook.com
+To:     Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>
+CC:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, Rik van Riel <riel@surriel.com>,
+        Roman Gushchin <guro@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH] btrfs: implement migratepage callback
+Date:   Wed, 4 Mar 2020 11:50:02 -0800
+Message-ID: <20200304195002.3854765-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-04_08:2020-03-04,2020-03-04 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0 phishscore=0
+ impostorscore=0 adultscore=0 spamscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=756
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040129
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTAzLTA0IGF0IDEyOjUwICswMTAwLCBHcmVnIEtIIHdyb3RlOg0KPiBPbiBX
-ZWQsIE1hciAwNCwgMjAyMCBhdCAwNjoyNTozNFBNICswODAwLCBZdW5RaWFuZyBTdSB3cm90ZToN
-Cj4gPiBHcmVnIEtIIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4g5LqOMjAyMOW5tDPmnIg0
-5pel5ZGo5LiJIOS4i+WNiDI6MznlhpnpgZPvvJoNCj4gPiA+IA0KPiA+ID4gT24gV2VkLCBNYXIg
-MDQsIDIwMjAgYXQgMDk6NDg6NDZBTSArMDgwMCwgWXVuUWlhbmcgU3Ugd3JvdGU6DQo+ID4gPiA+
-IEdyZWcgS0ggPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPiDkuo4yMDIw5bm0MuaciDEz5pel
-5ZGo5ZubIOS4iuWNiDU6NTLlhpnpgZPvvJoNCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBPbiBXZWQs
-IEZlYiAwNSwgMjAyMCBhdCAwMToxMToxMFBNICsxMzAwLCBDaHJpcyBQYWNraGFtIHdyb3RlOg0K
-PiA+ID4gPiA+ID4gVGhpcyBzZXJpZXMgcmUtaW5zdGF0ZXMgdGhlIG9jdGVvbiBkcml2ZXJzIHRo
-YXQgd2VyZSByZWNlbnRseSByZW1vdmVkIGFuZA0KPiA+ID4gPiA+ID4gYWRkcmVzc2VzIHRoZSBi
-dWlsZCBpc3N1ZXMgdGhhdCBsZWFkIHRvIHRoYXQgZGVjaXNpb24uDQo+ID4gPiA+ID4gPiANCj4g
-PiA+ID4gPiA+IEkndmUgYXBwcm9hY2hlZCBDYXZpdW0vTWFydmVsbCBhYm91dCB0YWtpbmcgYSBt
-b3JlIGFjdGl2ZSBpbnRlcmVzdCBpbiBnZXR0aW5nDQo+ID4gPiA+ID4gPiB0aGUgY29kZSBvdXQg
-b2Ygc3RhZ2luZyBhbmQgaW50byB0aGVpciBwcm9wZXIgbG9jYXRpb24uIE5vIHJlcGx5IG9uIHRo
-YXQgKHlldCkuDQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gR29vZCBsdWNrIHdpdGggdGFsa2luZyB0
-byB0aGUgY29tcGFuaWVzLCBob3BlZnVsbHkgdGhhdCB3aWxsIHdvcmsuDQo+ID4gPiA+ID4gDQo+
-ID4gPiA+ID4gQW55d2F5LCBJJ3ZlIGFwcGxpZWQgdGhpcyBzZXJpZXMsIHRoYW5rcyBmb3IgdGhp
-cywgbGV0J3Mgc2VlIHdoYXQgYnJlYWtzDQo+ID4gPiA+ID4gbm93IDopDQo+ID4gPiA+IA0KPiA+
-ID4gPiBEaWQgeW91IG1lZXQgYW55IHByb2JsZW0gdG8gbWVyZ2UgQ2hyaXMncyBwYXRjaHNldD8N
-Cj4gPiA+IA0KPiA+ID4gVGhleSBhcmUgYWxsIGluIGxpbnV4LW5leHQsIHNvIHlvdSBjYW4gc2Vl
-IGZvciB5b3Vyc2VsZiA6KQ0KPiA+IA0KPiA+IFRoYW5rIHlvdSBzbyBtdWNoLiBJIGZvdW5kIGl0
-Lg0KPiA+IEl0IGlzIHZlcnkgaW1wb3J0YW50IGZvciBEZWJpYW4gTUlQUyBQb3J0cyBhcyB3ZSBh
-cmUgdXNpbmcgc29tZSBvZg0KPiA+IE9jdGVvbiBtYWNoaW5lcy4NCj4gDQo+IElmIGl0IGlzIHNv
-IGltcG9ydGFudCwgd2h5IGlzIG5vIG9uZSB3b3JraW5nIG9uIGZpeGluZyB0aGVzZSBkcml2ZXJz
-IHVwPw0KPiANCg0KSSBoYXZlIGhhZCBhIHJlcGx5IGZyb20gTWFydmVsbC4gVGhleSd2ZSBjb250
-cmFjdGVkIHN1cHBvcnQgZm9yIHRoZSBvbGQNCkNhdml1bSBPY3Rlb24gZGVzaWducyBvdXQgdG8g
-YW4gZXh0ZXJuYWwgY29tcGFueS4gSSdtIG5vdCBzdXJlIHRoYXQNCm1lYW5zIHRoYXQgd2UnbGwg
-c2VlIHNvbWUgYWN0aW9uIG9uIHRoZXNlIGRyaXZlcnMgYW55IHRpbWUgc29vbiBidXQgYXQNCmxl
-YXN0IHRoZXkncmUgZG9pbmcgc29tZXRoaW5nLg0K
+Currently btrfs doesn't provide a migratepage callback. It means that
+fallback_migrate_page()	is used to migrate btrfs pages.
+
+fallback_migrate_page() cannot move dirty pages, instead it tries to
+flush them (in sync mode) or just fails (in async mode).
+
+In the sync mode pages which are scheduled to be processed by
+btrfs_writepage_fixup_worker() can't be effectively flushed by the
+migration code, because there is no established way to wait for the
+completion of the delayed work.
+
+It all leads to page migration failures.
+
+To fix it the patch implements a btrs-specific migratepage callback,
+which is similar to iomap_migrate_page() used by some other fs, except
+it does take care of the PagePrivate2 flag which is used for data
+ordering purposes.
+
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Reviewed-by: Chris Mason <clm@fb.com>
+---
+ fs/btrfs/inode.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 7735ce6127c3..f23230b3cbda 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -28,6 +28,7 @@
+ #include <linux/magic.h>
+ #include <linux/iversion.h>
+ #include <linux/swap.h>
++#include <linux/migrate.h>
+ #include <linux/sched/mm.h>
+ #include <asm/unaligned.h>
+ #include "misc.h"
+@@ -8323,6 +8324,37 @@ static int btrfs_releasepage(struct page *page, gfp_t gfp_flags)
+ 	return __btrfs_releasepage(page, gfp_flags);
+ }
+ 
++static int btrfs_migratepage(struct address_space *mapping,
++			     struct page *newpage, struct page *page,
++			     enum migrate_mode mode)
++{
++	int ret;
++
++	ret = migrate_page_move_mapping(mapping, newpage, page, 0);
++	if (ret != MIGRATEPAGE_SUCCESS)
++		return ret;
++
++	if (page_has_private(page)) {
++		ClearPagePrivate(page);
++		get_page(newpage);
++		set_page_private(newpage, page_private(page));
++		set_page_private(page, 0);
++		put_page(page);
++		SetPagePrivate(newpage);
++	}
++
++	if (PagePrivate2(page)) {
++		ClearPagePrivate2(page);
++		SetPagePrivate2(newpage);
++	}
++
++	if (mode != MIGRATE_SYNC_NO_COPY)
++		migrate_page_copy(newpage, page);
++	else
++		migrate_page_states(newpage, page);
++	return MIGRATEPAGE_SUCCESS;
++}
++
+ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
+ 				 unsigned int length)
+ {
+@@ -10525,6 +10557,7 @@ static const struct address_space_operations btrfs_aops = {
+ 	.direct_IO	= btrfs_direct_IO,
+ 	.invalidatepage = btrfs_invalidatepage,
+ 	.releasepage	= btrfs_releasepage,
++	.migratepage	= btrfs_migratepage,
+ 	.set_page_dirty	= btrfs_set_page_dirty,
+ 	.error_remove_page = generic_error_remove_page,
+ 	.swap_activate	= btrfs_swap_activate,
+-- 
+2.24.1
+
