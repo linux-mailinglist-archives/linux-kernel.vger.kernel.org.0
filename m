@@ -2,407 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D69178A57
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:48:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67CEB178A63
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbgCDFsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 00:48:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63456 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725965AbgCDFsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 00:48:21 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0245j71Z118398
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Mar 2020 00:48:19 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yhpwmhmr7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 00:48:19 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Wed, 4 Mar 2020 05:48:17 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Mar 2020 05:48:09 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0245m86839846112
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Mar 2020 05:48:08 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04DEA4C06A;
-        Wed,  4 Mar 2020 05:48:08 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 602E94C059;
-        Wed,  4 Mar 2020 05:48:07 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Mar 2020 05:48:07 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 7F1EAA023A;
-        Wed,  4 Mar 2020 16:48:02 +1100 (AEDT)
-Subject: Re: [PATCH v3 20/27] powerpc/powernv/pmem: Forward events to
- userspace
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     Andrew Donnellan <ajd@linux.ibm.com>
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Date:   Wed, 04 Mar 2020 16:48:06 +1100
-In-Reply-To: <d50b19fc-b88a-b4de-4cc5-07790a4ddac0@linux.ibm.com>
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
-         <20200221032720.33893-21-alastair@au1.ibm.com>
-         <d50b19fc-b88a-b4de-4cc5-07790a4ddac0@linux.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1726608AbgCDFz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 00:55:57 -0500
+Received: from mail-am6eur05on2053.outbound.protection.outlook.com ([40.107.22.53]:36704
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725271AbgCDFz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 00:55:57 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N1MjS6cXqmRnj4AamD/rqp6pwjaef7vz5ZJpIWUrkme7ndbcq8NPLDjHV3LKuw0/J6Ldvh5fmCimNZNR2WhFE5X4JsJeWkM3uZ6d5PlszPSsZqe42l9Y7yktTyVdc9l1eRWrLY/k27+0IpXGUcLCTN31xoCa7IgFBlO2CrI4nLAqDXeZLIkVMhNVHGJ3eE5HU6tJ9dxT4pCX6SPr7WXDj/sKavZuZNOgtebSnUnq5/fpdDxNijj72PQPL6OWzp5kVqxjqQ7oqRYlAdXbuPy5Zc3vMCv9ZKs3Sq2+dFP9to2oTUH4YskWBtzY1L5OucEKfRlvNcYpe98mMqHA096y3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MAFRintuq51dkWazuKBiRasNFIRbGW9FyJTdxezItSY=;
+ b=KQUWGPJbAIlpHpn7FjT1Ubz4eMiu3vjFyjPWZxTcArPl0Lejxsh6XhWEk8+o0M/PdSBP0Z5YghXD6VOdctjLc4jd4VyCwYoP60ZbTRHsiB592HRANCerbCsrU6BpCuSzFEc99t3irahJlkxEFb++n76qS18exc8asM19Im+gByFBiZtiqTSDDNEZcgVX2tNhflx1yhpqdtjwsaiQn6M9YS3Q/PZypE+pzZkEwZ7gPQ+qD0B6/1DtzRSVbALJPYT3EqaPVmOlpUuk2KGsjeqZtgAdtff2Xi5KOSJn78k0z1wG2YFMXsuaaBeU3TPEBctJET7dleqHd0dVrEzoo3JxqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MAFRintuq51dkWazuKBiRasNFIRbGW9FyJTdxezItSY=;
+ b=EFVtjqzCT/19HFFwWyzYwdxlliY9ZkQOGboC7qPpPHu88u9DbucGZL3ofIK+WFcSzqCeor5revNnfMyv2a5AwvUMPROz1Tm5+P1HsJDbD1i3efMdiaeqoIDKyvfbu8ET9PuJFPjjZlP361DYUb+LwWRiuZtbmKxxcR0hmx4VdJ4=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5860.eurprd04.prod.outlook.com (20.178.203.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.18; Wed, 4 Mar 2020 05:55:54 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2772.019; Wed, 4 Mar 2020
+ 05:55:54 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
+        jassisinghbrar@gmail.com, o.rempel@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V6 0/4] mailbox/firmware: imx: support SCU channel type
+Date:   Wed,  4 Mar 2020 13:49:33 +0800
+Message-Id: <1583300977-2327-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR0401CA0010.apcprd04.prod.outlook.com
+ (2603:1096:3:1::20) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030405-4275-0000-0000-000003A82ABD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030405-4276-0000-0000-000038BD34F1
-Message-Id: <6417f5b4e7f30daafaea7cef4b6fc3da46354b08.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-03_08:2020-03-03,2020-03-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- adultscore=0 spamscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- mlxlogscore=999 phishscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003040042
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR0401CA0010.apcprd04.prod.outlook.com (2603:1096:3:1::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2772.15 via Frontend Transport; Wed, 4 Mar 2020 05:55:50 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: dec08fba-2bcf-4d45-ad4f-08d7c000b3a7
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5860:|AM0PR04MB5860:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB5860016532A91CB68A21D96988E50@AM0PR04MB5860.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2657;
+X-Forefront-PRVS: 0332AACBC3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(366004)(346002)(376002)(396003)(189003)(199004)(81166006)(8936002)(6512007)(15650500001)(9686003)(5660300002)(81156014)(86362001)(66556008)(4326008)(8676002)(6486002)(66946007)(66476007)(52116002)(6506007)(2906002)(6666004)(966005)(36756003)(16526019)(26005)(956004)(186003)(2616005)(478600001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5860;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xufQ9YXtq4vgOwC/DRSXapOXf2XRtilVub28E2CnXm/PBpnSAYRq1lLzXiwEBaFUk8udP3rrlswfQTahbU+kU98DYRDdaivrUC5d5JAEo7KQbL+EOmQSQBcKdcwyUO5e0jj9BmyT96+IVwVQ2Z4PRnfhvSZENFofxQqK6GZhRLU1J5ZXjM/VnwDl95pOtmJDa/Wy6/E8E0RZa68X9NpKIT6JTAjNvFZM8hZHva+i8T8BRxnM0KMJ5NsYXkQ7N3M6jGe9d16oHrvIUQ5EXxBqmLrAHRdgWUIuNufjtFtKIrijtt1kM5fXwxPO/dFwoOBUTuxddxZx/NBCuNMTCjAW7TjlyH5M7yt/OkA4uQgUtu4ekHTM1Bc1Ys50/5x4C2j6ZGOOa8zK1DyFvWcaDjIh6S35ASLwUN06+owScqpwk4q9sD4hIMfyYltEjK7QI06CIJ7rU25HhDBfXD7WNgCxYKWx+WEJoYVNC4zcJBedBSqcXVueygcEPhXmU5HvqzVdgdQFP33Sxy9TVp4hkD92Fg==
+X-MS-Exchange-AntiSpam-MessageData: VYyVCq+aHE7dAjM+pueYvrOMNeZqRZk+WWlrWKHJq4gWJMjgREZGn7V2S+8hp9YBkWYqJ23YSExFWY5F5jZdQMAohYCMpX5SRo305lO7WJxcwFyK9ZUuXdj4tZHTLoOokoyfDh7Dutlsenb1F08XIw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dec08fba-2bcf-4d45-ad4f-08d7c000b3a7
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2020 05:55:54.4697
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h1lyOZJTc8iZTZGLmK2pzRXYmHdlbPjMVjfqSehMEfDe6msIFU4rKF/zFHdwo2ZQDn0L6CPOPymYjBfrBLyRYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5860
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-03 at 18:02 +1100, Andrew Donnellan wrote:
-> On 21/2/20 2:27 pm, Alastair D'Silva wrote:> @@ -938,6 +955,51 @@
-> static 
-> int ioctl_controller_stats(struct ocxlpmem *ocxlpmem,
-> >   	return rc;
-> >   }
-> >   
-> > +static int ioctl_eventfd(struct ocxlpmem *ocxlpmem,
-> > +		 struct ioctl_ocxl_pmem_eventfd __user *uarg)
-> > +{
-> > +	struct ioctl_ocxl_pmem_eventfd args;
-> > +
-> > +	if (copy_from_user(&args, uarg, sizeof(args)))
-> > +		return -EFAULT;
-> > +
-> > +	if (ocxlpmem->ev_ctx)
-> > +		return -EINVAL;
-> 
-> I think EBUSY is more appropriate here.
-> 
+From: Peng Fan <peng.fan@nxp.com>
 
-Ok
+V6:
+ Add Oleksij's R-b tag
+ Patch 3/4, per https://www.kernel.org/doc/Documentation/printk-formats.txt
+ should use %zu for printk sizeof
 
-> > +
-> > +	ocxlpmem->ev_ctx = eventfd_ctx_fdget(args.eventfd);
-> > +	if (!ocxlpmem->ev_ctx)
-> > +		return -EFAULT;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int ioctl_event_check(struct ocxlpmem *ocxlpmem, u64 __user
-> > *uarg)
-> > +{
-> > +	u64 val = 0;
-> > +	int rc;
-> > +	u64 chi = 0;
-> > +
-> > +	rc = ocxlpmem_chi(ocxlpmem, &chi);
-> > +	if (rc < 0)
-> > +		return rc;
-> > +
-> > +	if (chi & GLOBAL_MMIO_CHI_ELA)
-> > +		val |= IOCTL_OCXL_PMEM_EVENT_ERROR_LOG_AVAILABLE;
-> > +
-> > +	if (chi & GLOBAL_MMIO_CHI_CDA)
-> > +		val |= IOCTL_OCXL_PMEM_EVENT_CONTROLLER_DUMP_AVAILABLE;
-> > +
-> > +	if (chi & GLOBAL_MMIO_CHI_CFFS)
-> > +		val |= IOCTL_OCXL_PMEM_EVENT_FIRMWARE_FATAL;
-> > +
-> > +	if (chi & GLOBAL_MMIO_CHI_CHFS)
-> > +		val |= IOCTL_OCXL_PMEM_EVENT_HARDWARE_FATAL;
-> > +
-> > +	rc = copy_to_user((u64 __user *) uarg, &val, sizeof(val));
-> > +
-> > +	return rc;
-> > +}
-> > +
-> >   static long file_ioctl(struct file *file, unsigned int cmd,
-> > unsigned long args)
-> >   {
-> >   	struct ocxlpmem *ocxlpmem = file->private_data;
-> > @@ -966,6 +1028,15 @@ static long file_ioctl(struct file *file,
-> > unsigned int cmd, unsigned long args)
-> >   		rc = ioctl_controller_stats(ocxlpmem,
-> >   					    (struct
-> > ioctl_ocxl_pmem_controller_stats __user *)args);
-> >   		break;
-> > +
-> > +	case IOCTL_OCXL_PMEM_EVENTFD:
-> > +		rc = ioctl_eventfd(ocxlpmem,
-> > +				   (struct ioctl_ocxl_pmem_eventfd
-> > __user *)args);
-> > +		break;
-> > +
-> > +	case IOCTL_OCXL_PMEM_EVENT_CHECK:
-> > +		rc = ioctl_event_check(ocxlpmem, (u64 __user *)args);
-> > +		break;
-> >   	}
-> >   
-> >   	return rc;
-> > @@ -1107,6 +1178,146 @@ static void dump_error_log(struct ocxlpmem
-> > *ocxlpmem)
-> >   	kfree(buf);
-> >   }
-> >   
-> > +static irqreturn_t imn0_handler(void *private)
-> > +{
-> > +	struct ocxlpmem *ocxlpmem = private;
-> > +	u64 chi = 0;
-> > +
-> > +	(void)ocxlpmem_chi(ocxlpmem, &chi);
-> > +
-> > +	if (chi & GLOBAL_MMIO_CHI_ELA) {
-> > +		dev_warn(&ocxlpmem->dev, "Error log is available\n");
-> > +
-> > +		if (ocxlpmem->ev_ctx)
-> > +			eventfd_signal(ocxlpmem->ev_ctx, 1);
-> > +	}
-> > +
-> > +	if (chi & GLOBAL_MMIO_CHI_CDA) {
-> > +		dev_warn(&ocxlpmem->dev, "Controller dump is
-> > available\n");
-> > +
-> > +		if (ocxlpmem->ev_ctx)
-> > +			eventfd_signal(ocxlpmem->ev_ctx, 1);
-> > +	}
-> > +
-> > +
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> > +static irqreturn_t imn1_handler(void *private)
-> > +{
-> > +	struct ocxlpmem *ocxlpmem = private;
-> > +	u64 chi = 0;
-> > +
-> > +	(void)ocxlpmem_chi(ocxlpmem, &chi);
-> > +
-> > +	if (chi & (GLOBAL_MMIO_CHI_CFFS | GLOBAL_MMIO_CHI_CHFS)) {
-> > +		dev_err(&ocxlpmem->dev,
-> > +			"Controller status is fatal, chi=0x%llx, going
-> > offline\n", chi);
-> > +
-> > +		if (ocxlpmem->nvdimm_bus) {
-> > +			nvdimm_bus_unregister(ocxlpmem->nvdimm_bus);
-> > +			ocxlpmem->nvdimm_bus = NULL;
-> > +		}
-> > +
-> > +		if (ocxlpmem->ev_ctx)
-> > +			eventfd_signal(ocxlpmem->ev_ctx, 1);
-> > +	}
-> > +
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> > +
-> > +/**
-> > + * ocxlpmem_setup_irq() - Set up the IRQs for the OpenCAPI
-> > Persistent Memory device
-> > + * @ocxlpmem: the device metadata
-> > + * Return: 0 on success, negative on failure
-> > + */
-> > +static int ocxlpmem_setup_irq(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +	int rc;
-> > +	u64 irq_addr;
-> > +
-> > +	rc = ocxl_afu_irq_alloc(ocxlpmem->ocxl_context, &ocxlpmem-
-> > >irq_id[0]);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	rc = ocxl_irq_set_handler(ocxlpmem->ocxl_context, ocxlpmem-
-> > >irq_id[0],
-> > +				  imn0_handler, NULL, ocxlpmem);
-> > +
-> > +	irq_addr = ocxl_afu_irq_get_addr(ocxlpmem->ocxl_context,
-> > ocxlpmem->irq_id[0]);
-> > +	if (!irq_addr)
-> > +		return -EINVAL;
-> > +
-> > +	ocxlpmem->irq_addr[0] = ioremap(irq_addr, PAGE_SIZE);
-> > +	if (!ocxlpmem->irq_addr[0])
-> > +		return -EINVAL;
-> 
-> Something other than EINVAL for these two
+V5:
+ Move imx_mu_dcfg below imx_mu_priv
+ Add init hooks to imx_mu_dcfg
+ drop __packed __aligned
+ Add more debug msg
+ code style cleanup
 
-Ok
+V4:
+ Drop IMX_MU_TYPE_[GENERIC, SCU]
+ Pack MU chans init to separate function
+ Add separate function for SCU chans init and xlate
+ Add santity check to msg hdr.size
+ Limit SCU MU chans to 6, TX0/RX0/RXDB[0-3]
 
-> 
-> > +
-> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_IMA0_OHP,
-> > +				      OCXL_LITTLE_ENDIAN,
-> > +				      (u64)ocxlpmem->irq_addr[0]);
-> > +	if (rc)
-> > +		goto out_irq0;
-> > +
-> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_IMA0_CFP,
-> > +				      OCXL_LITTLE_ENDIAN, 0);
-> > +	if (rc)
-> > +		goto out_irq0;
-> > +
-> > +	rc = ocxl_afu_irq_alloc(ocxlpmem->ocxl_context, &ocxlpmem-
-> > >irq_id[1]);
-> > +	if (rc)
-> > +		goto out_irq0;
-> > +
-> > +
-> > +	rc = ocxl_irq_set_handler(ocxlpmem->ocxl_context, ocxlpmem-
-> > >irq_id[1],
-> > +				  imn1_handler, NULL, ocxlpmem);
-> > +	if (rc)
-> > +		goto out_irq0;
-> > +
-> > +	irq_addr = ocxl_afu_irq_get_addr(ocxlpmem->ocxl_context,
-> > ocxlpmem->irq_id[1]);
-> > +	if (!irq_addr) {
-> > +		rc = -EFAULT;
-> > +		goto out_irq0;
-> > +	}
-> > +
-> > +	ocxlpmem->irq_addr[1] = ioremap(irq_addr, PAGE_SIZE);
-> > +	if (!ocxlpmem->irq_addr[1]) {
-> > +		rc = -EINVAL;
-> > +		goto out_irq0;
-> > +	}
-> > +
-> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_IMA1_OHP,
-> > +				      OCXL_LITTLE_ENDIAN,
-> > +				      (u64)ocxlpmem->irq_addr[1]);
-> > +	if (rc)
-> > +		goto out_irq1;
-> > +
-> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_IMA1_CFP,
-> > +				      OCXL_LITTLE_ENDIAN, 0);
-> > +	if (rc)
-> > +		goto out_irq1;
-> > +
-> > +	// Enable doorbells
-> > +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_CHIE,
-> > +				    OCXL_LITTLE_ENDIAN,
-> > +				    GLOBAL_MMIO_CHI_ELA |
-> > GLOBAL_MMIO_CHI_CDA |
-> > +				    GLOBAL_MMIO_CHI_CFFS |
-> > GLOBAL_MMIO_CHI_CHFS |
-> > +				    GLOBAL_MMIO_CHI_NSCRA);
-> 
-> We don't actually do anything in the handlers with NSCRA...
+V3:
+ Rebase to Shawn's for-next
+ Include fsl,imx8-mu-scu compatible
+ Per Oleksij's comments, introduce generic tx/rx and added scu mu type
+ Check fsl,imx8-mu-scu in firmware driver for fast_ipc
 
-Good catch, this belongs in the overwrite patch (which was dropped from
-this series).
+V2:
+ Drop patch 1/3 which added fsl,scu property
+ Force to use scu channel type when machine has node compatible "fsl,imx-scu"
+ Force imx-scu to use fast_ipc
 
-> 
-> > +	if (rc)
-> > +		goto out_irq1;
-> > +
-> > +	return 0;
-> > +
-> > +out_irq1:
-> > +	iounmap(ocxlpmem->irq_addr[1]);
-> > +	ocxlpmem->irq_addr[1] = NULL;
-> > +
-> > +out_irq0:
-> > +	iounmap(ocxlpmem->irq_addr[0]);
-> > +	ocxlpmem->irq_addr[0] = NULL;
-> > +
-> > +	return rc;
-> > +}
-> > +
-> >   /**
-> >    * probe_function0() - Set up function 0 for an OpenCAPI
-> > persistent memory device
-> >    * This is important as it enables templates higher than 0 across
-> > all other functions,
-> > @@ -1216,6 +1427,11 @@ static int probe(struct pci_dev *pdev, const
-> > struct pci_device_id *ent)
-> >   		goto err;
-> >   	}
-> >   
-> > +	if (ocxlpmem_setup_irq(ocxlpmem)) {
-> > +		dev_err(&pdev->dev, "Could not set up OCXL IRQs\n");
-> > +		goto err;
-> > +	}
-> > +
-> >   	if (setup_command_metadata(ocxlpmem)) {
-> >   		dev_err(&pdev->dev, "Could not read OCXL command
-> > matada\n");
-> >   		goto err;
-> > diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> > b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> > index b953ee522ed4..927690f4888f 100644
-> > --- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> > +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
-> > @@ -103,6 +103,10 @@ struct ocxlpmem {
-> >   	struct pci_dev *pdev;
-> >   	struct cdev cdev;
-> >   	struct ocxl_fn *ocxl_fn;
-> > +#define SCM_IRQ_COUNT 2
-> > +	int irq_id[SCM_IRQ_COUNT];
-> > +	struct dev_pagemap irq_pgmap[SCM_IRQ_COUNT];
-> > +	void *irq_addr[SCM_IRQ_COUNT];
-> 
-> I think this should be tagged __iomem
-> 
+ I not found a generic method to make SCFW message generic enough, SCFW
+ message is not fixed length including TX and RX. And it use TR0/RR0
+ interrupt.
 
-Ok
+V1:
+Sorry to bind the mailbox/firmware patch together. This is make it
+to understand what changed to support using 1 TX and 1 RX channel
+for SCFW message.
 
+Per i.MX8QXP Reference mannual, there are several message using
+examples. One of them is:
+Passing short messages: Transmit register(s) can be used to pass
+short messages from one to four words in length. For example,
+when a four-word message is desired, only one of the registers
+needs to have its corresponding interrupt enable bit set at the
+receiver side.
+
+This patchset is to using this for SCFW message to replace four TX
+and four RX method.
+
+Peng Fan (4):
+  dt-bindings: mailbox: imx-mu: add SCU MU support
+  mailbox: imx: restructure code to make easy for new MU
+  mailbox: imx: add SCU MU support
+  firmware: imx-scu: Support one TX and one RX
+
+ .../devicetree/bindings/mailbox/fsl,mu.txt         |   2 +
+ drivers/firmware/imx/imx-scu.c                     |  54 ++++-
+ drivers/mailbox/imx-mailbox.c                      | 267 +++++++++++++++++----
+ 3 files changed, 260 insertions(+), 63 deletions(-)
+
+
+base-commit: 770fbb32d34e5d6298cc2be590c9d2fd6069aa17
 -- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
+2.16.4
 
