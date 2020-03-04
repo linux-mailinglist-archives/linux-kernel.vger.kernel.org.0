@@ -2,79 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530E117932B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B480179353
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:26:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbgCDPT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:19:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbgCDPT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:19:56 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729764AbgCDP0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:26:05 -0500
+Received: from mx-relay77-hz1.antispameurope.com ([94.100.132.239]:56792 "EHLO
+        mx-relay77-hz1.antispameurope.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729568AbgCDP0E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 10:26:04 -0500
+X-Greylist: delayed 361 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Mar 2020 10:26:04 EST
+Received: from mailgw1.iis.fraunhofer.de ([153.96.172.4]) by mx-relay77-hz1.antispameurope.com;
+ Wed, 04 Mar 2020 16:20:00 +0100
+Received: from mail.iis.fraunhofer.de (mail01.iis.fhg.de [153.96.171.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF00020848;
-        Wed,  4 Mar 2020 15:19:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583335195;
-        bh=je8tPnydze2QJm0S9OXSeYj7zI/Hug4h3RxcJaMT+oA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gPhmMur2fts/HYB7wL0f19b1lSPBPoEtR43qAT6+4Lb2oH3rUnv1BODfuEMwIMZRZ
-         siv8Zs7tKh4kO5REFiAFZsTSoLwyFBZKdzn1/CgfCoEYW94Rmm18kQrdqRCsZOq+iX
-         iOg/mP2XaSPvt0piHSMUyoR4/LJquW/mPPsbM3NY=
-Received: by mail-qk1-f174.google.com with SMTP id p62so1964923qkb.0;
-        Wed, 04 Mar 2020 07:19:55 -0800 (PST)
-X-Gm-Message-State: ANhLgQ0uOHOuTmjJ5Bpke2X7A42M+AF8fBcV0dWNG3a6ix7VkthLDLjT
-        xd630Drtr4YhmwNZzO/w4N5yF9Y2x++pNoqRuw==
-X-Google-Smtp-Source: ADFU+vuR0h6EdKTSVQErVvrih+gw6uB8EuJe4uEVCTXvTm2XksE1TMQ6vJGet8PXkAQ0dKd/eFgIT4INjk+HiXTsIdI=
-X-Received: by 2002:a05:620a:12a3:: with SMTP id x3mr3528546qki.254.1583335194936;
- Wed, 04 Mar 2020 07:19:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20200304032038.14424-1-masahiroy@kernel.org> <20200304032038.14424-3-masahiroy@kernel.org>
- <20200304055520.GA28911@ravnborg.org>
-In-Reply-To: <20200304055520.GA28911@ravnborg.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 4 Mar 2020 09:19:43 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLA7yq8rnVhM210sLt788yeu2xxFd94Fe0K_CGZw-mqSA@mail.gmail.com>
-Message-ID: <CAL_JsqLA7yq8rnVhM210sLt788yeu2xxFd94Fe0K_CGZw-mqSA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] kbuild: allow to run dt_binding_check and dtbs_check
- in a single command
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>, devicetree@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        by mailgw1.iis.fraunhofer.de (Postfix) with ESMTPS id 9E2F82400083;
+        Wed,  4 Mar 2020 16:19:56 +0100 (CET)
+Received: from mail01.iis.fhg.de (2001:638:a0a:1111:fd91:8c2a:e4a5:e74e) by
+ mail01.iis.fhg.de (2001:638:a0a:1111:fd91:8c2a:e4a5:e74e) with Microsoft SMTP
+ Server (TLS) id 15.0.1395.4; Wed, 4 Mar 2020 16:19:56 +0100
+Received: from mail01.iis.fhg.de ([fe80::fd91:8c2a:e4a5:e74e]) by
+ mail01.iis.fhg.de ([fe80::fd91:8c2a:e4a5:e74e%12]) with mapi id
+ 15.00.1395.000; Wed, 4 Mar 2020 16:19:56 +0100
+From:   "Stahl, Manuel" <manuel.stahl@iis-extern.fraunhofer.de>
+To:     "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "hjk@linutronix.de" <hjk@linutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "sojkam1@fel.cvut.cz" <sojkam1@fel.cvut.cz>
+Subject: Re: [PATCH 2/2] uio: Prefer MSI(X) interrupts in PCI drivers
+Thread-Topic: [PATCH 2/2] uio: Prefer MSI(X) interrupts in PCI drivers
+Thread-Index: AQHTPqe0AewtzyOB0kiu6siMSnXwqaLWtAAAgAABSQCAABKaAIAV3VwAgAACLgCFUTs3gA==
+Date:   Wed, 4 Mar 2020 15:19:55 +0000
+Message-ID: <9ba3cdd6d330486a91cb5c376f012b5b963c4eae.camel@iis-extern.fraunhofer.de>
+References: <1507296707.2915.14.camel@iis-extern.fraunhofer.de>
+         <1507296804.2915.16.camel@iis-extern.fraunhofer.de>
+         <20171006134550.GA1626@kroah.com>
+         <1507297826.2915.18.camel@iis-extern.fraunhofer.de>
+         <20171006075700.587a5e22@xeon-e3> <20171020125044.GA8634@kroah.com>
+         <1508504312.3128.23.camel@iis-extern.fraunhofer.de>
+In-Reply-To: <1508504312.3128.23.camel@iis-extern.fraunhofer.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [153.96.171.210]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D7AB6DFC20E36C47BA570DC2F3116EC5@iis.fhg.de>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-cloud-security-sender: manuel.stahl@iis-extern.fraunhofer.de
+X-cloud-security-recipient: linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Virusscan: CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay77-hz1.antispameurope.com with C3591600930
+X-cloud-security-connect: mailgw1.iis.fraunhofer.de[153.96.172.4], TLS=1, IP=153.96.172.4
+X-cloud-security: scantime:.3309
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 11:55 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Masahiro
->
-> Thanks for the nice improvements to the dt infrastructure.
->
-> Stealing a thread here..
->
-> >  It is also possible to run checks with a single schema file by setting the
-> >  ``DT_SCHEMA_FILES`` variable to a specific schema file.
-> Would it be simple to enable the use of dirs for DT_SCHEMA_FILES?
-
-I did name that with the intent of supporting more than one file.
-
-> So I for example could do:
->
-> make dt_bindings_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/panel/
-
-Does this work?:
-
-make dt_bindings_check DT_SCHEMA_FILES="$(find
-Documentation/devicetree/bindings/display/panel/ -name '*.yaml' |
-xargs)"
-
-Rob
+SGkgR3JlZywNCg0Kc28gc29tZWhvdyB0aGlzIGRpc2N1c3Npb24gc3RvcHBlZCB3aXRob3V0IGFu
+eSBpbnN0cnVjdGlvbnMgaG93IHRvIHByb2NlZWQuDQpJIHRoaW5rIHRoaXMga2luZCBvZiBkcml2
+ZXIgaGVscHMgZXZlcnkgRlBHQSBkZXZlbG9wZXIgdG8gaW50ZXJmYWNlIGhpcyBkZXNpZ24gdmlh
+IFBDSWUgdG8gYSBMaW51eCBQQy4NClNvIGlmIHRoZXJlIGlzIGFueSBjaGFuY2UgdG8gZ2V0IHRo
+aXMgY29kZSBtZXJnZWQsIEknbSBnbGFkIHRvIHJlYmFzZSB0aGlzIG9udG8gdGhlIGxhdGVzdCBr
+ZXJuZWwgcmVsZWFzZS4NCg0KQmVzdCByZWdhcmRzLA0KTWFudWVsIFN0YWhsDQoNCk9uIEZyLCAy
+MDE3LTEwLTIwIGF0IDE0OjU4ICswMjAwLCBNYW51ZWwgU3RhaGwgd3JvdGU6DQo+IEhpIEdyZWcs
+DQo+IA0KPiBpdCBqdXN0IHVzZXMgTVNJLVggb3IgTVNJIHdoZW4gYXZhaWxhYmxlIGFuZCBmYWxs
+cyBiYWNrIHRvIGxlZ2FjeSBJUlEgb3RoZXJ3aXNlLg0KPiANCj4gUmVnYXJkcywNCj4gTWFudWVs
+DQo+IA0KPiBPbiBGciwgMjAxNy0xMC0yMCBhdCAxNDo1MCArMDIwMCwgZ3JlZ2toQGxpbnV4Zm91
+bmRhdGlvbi5vcmcgd3JvdGU6DQo+ID4gT24gRnJpLCBPY3QgMDYsIDIwMTcgYXQgMDc6NTc6MDBB
+TSAtMDcwMCwgU3RlcGhlbiBIZW1taW5nZXIgd3JvdGU6DQo+ID4gPiBPbiBGcmksIDYgT2N0IDIw
+MTcgMTM6NTA6NDQgKzAwMDANCj4gPiA+ICJTdGFobCwgTWFudWVsIiA8bWFudWVsLnN0YWhsQGlp
+cy1leHRlcm4uZnJhdW5ob2Zlci5kZT4gd3JvdGU6DQo+ID4gPiANCj4gPiA+ID4gTVNJKFgpIGlu
+dGVycnVwdHMgYXJlIG5vdCBzaGFyZWQgYmV0d2VlbiBkZXZpY2VzLiBTbyB3aGVuIGF2YWlsYWJs
+ZQ0KPiA+ID4gPiB0aG9zZSBzaG91bGQgYmUgcHJlZmVycmVkIG92ZXIgbGVnYWN5IGludGVycnVw
+dHMuDQo+ID4gPiA+IA0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBNYW51ZWwgU3RhaGwgPG1hbnVl
+bC5zdGFobEBpaXMuZnJhdW5ob2Zlci5kZT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICBkcml2ZXJz
+L3Vpby91aW9fcGNpX2RtZW1fZ2VuaXJxLmMgfCAyNyArKysrKysrKysrKysrKysrKysrKy0tLS0t
+LS0NCj4gPiA+ID4gIGRyaXZlcnMvdWlvL3Vpb19wY2lfZ2VuZXJpYy5jICAgICB8IDI0ICsrKysr
+KysrKysrKysrKysrKy0tLS0tLQ0KPiA+ID4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAzOCBpbnNlcnRp
+b25zKCspLCAxMyBkZWxldGlvbnMoLSkNCj4gPiA+IA0KPiA+ID4gVGhlIGxhc3QgdGltZSBJIHRy
+aWVkIHRvIGRvIE1TSS1YIHdpdGggcGNpLWdlbmVyaWMgaXQgZ290IHJlamVjdGVkDQo+ID4gPiBi
+eSB0aGUgbWFpbnRhaW5lci4NCj4gPiANCj4gPiBIbSwgeWVhaCwgdGhpcyB3b3VsZCBicmVhayB1
+c2VycyB0b2RheSB0aGF0IGRvIG5vdCBoYXZlIG1zaS14LCByaWdodD8NCj4gPiANCj4gPiBOb3Qg
+Z29vZCwgTWFudWVsLCBob3cgd2VsbCBkaWQgeW91IHRlc3QgdGhpcz8NCj4gPiANCj4gPiB0aGFu
+a3MsDQo+ID4gDQo+ID4gZ3JlZyBrLWgNCg==
