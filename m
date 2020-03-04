@@ -2,104 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2D9178A31
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67320178A41
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726007AbgCDFZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 00:25:11 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:17133 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725773AbgCDFZK (ORCPT
+        id S1725892AbgCDFdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 00:33:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14776 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725795AbgCDFdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 00:25:10 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583299510; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=oihPKp8ryrKXx/gJOsIWTwnq9rmnQIjm1elo0OxWhdQ=; b=sRiyRaB8/JfwmM1gXQSPkm5yBiYRO9XL858UCa6CiXcIscaKzF31cJFJ/udfcdecOgP0Xdff
- BkBKfUWMUkwsm8eB5trK6EaE1GVyOpuwFQxZQ112W/cOUH06lFH4aqSYOVIXhhzj9wo6krhj
- xh4T1cuA9aoDC9aTV3W6s1CyyKo=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e5f3baf.7f29cfba42d0-smtp-out-n03;
- Wed, 04 Mar 2020 05:25:03 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8F097C447A0; Wed,  4 Mar 2020 05:25:02 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.0.105] (unknown [49.206.126.249])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 4 Mar 2020 00:33:22 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0245UTgK033342
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Mar 2020 00:33:21 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yj4q0jt3q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 00:33:21 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Wed, 4 Mar 2020 05:33:18 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Mar 2020 05:33:11 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0245XAH923986300
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Mar 2020 05:33:10 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9136A4054;
+        Wed,  4 Mar 2020 05:33:10 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5598EA405B;
+        Wed,  4 Mar 2020 05:33:10 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Mar 2020 05:33:10 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A36ABC43383;
-        Wed,  4 Mar 2020 05:24:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A36ABC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH 1/2] clk: qcom: Add DT bindings for ipq6018 apss clock
- controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org>
- <1582797318-26288-2-git-send-email-sivaprak@codeaurora.org>
- <20200227171425.GA4211@bogus>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
-Date:   Wed, 4 Mar 2020 10:54:56 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 75423A023A;
+        Wed,  4 Mar 2020 16:33:05 +1100 (AEDT)
+Subject: Re: [PATCH v3 03/27] powerpc: Map & release OpenCAPI LPC memory
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Andrew Donnellan <ajd@linux.ibm.com>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Date:   Wed, 04 Mar 2020 16:33:09 +1100
+In-Reply-To: <33ff636c-6b85-ed0d-275b-3e8697b5316f@linux.ibm.com>
+References: <20200221032720.33893-1-alastair@au1.ibm.com>
+         <20200221032720.33893-4-alastair@au1.ibm.com>
+         <33ff636c-6b85-ed0d-275b-3e8697b5316f@linux.ibm.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <20200227171425.GA4211@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 20030405-0012-0000-0000-0000038CF7DB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030405-0013-0000-0000-000021C9B0CB
+Message-Id: <c44b323e66baab9ed176a78c02293b3a83fc72ea.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-03_08:2020-03-03,2020-03-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 spamscore=0 mlxlogscore=611
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040040
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Tue, 2020-03-03 at 17:10 +1100, Andrew Donnellan wrote:
+> On 21/2/20 2:26 pm, Alastair D'Silva wrote:> +#ifdef 
+> CONFIG_MEMORY_HOTPLUG_SPARSE
+> > +u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size)
+> > +{
+> > +	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
+> > +	struct pnv_phb *phb = hose->private_data;
+> > +	u32 bdfn = pci_dev_id(pdev);
+> > +	__be64 base_addr_be64;
+> > +	u64 base_addr;
+> > +	int rc;
+> > +
+> > +	rc = opal_npu_mem_alloc(phb->opal_id, bdfn, size,
+> > &base_addr_be64);
+> 
+> Sparse warning:
+> 
+> https://openpower.xyz/job/snowpatch/job/snowpatch-linux-sparse/15776//artifact/linux/report.txt
+> 
+> I think in patch 1 we need to change a uint64_t to a __be64.
+> 
 
-I ran make dt_binding_check and dtbs_check both on mainline(5.6-rc4) and 
-linux-next both are successful.
+Ok, thanks
 
-The file qcom,gcc-ipq6018.h is merged in 5.6, not sure what is going wrong.
+-- 
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
-Could you please help?
-
-Thanks,
-
-Siva
-
-On 2/27/2020 10:44 PM, Rob Herring wrote:
-> On Thu, 27 Feb 2020 15:25:17 +0530, Sivaprakash Murugesan wrote:
->> add dt-binding for ipq6018 apss clock controller
->>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,apsscc.yaml     | 58 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,apss-ipq6018.h      | 26 ++++++++++
->>   2 files changed, 84 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,apsscc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,apss-ipq6018.h
->>
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-> Documentation/devicetree/bindings/clock/qcom,apsscc.example.dts:17:10: fatal error: dt-bindings/clock/qcom,gcc-ipq6018.h: No such file or directory
->   #include <dt-bindings/clock/qcom,gcc-ipq6018.h>
->            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/clock/qcom,apsscc.example.dt.yaml' failed
-> make[1]: *** [Documentation/devicetree/bindings/clock/qcom,apsscc.example.dt.yaml] Error 1
-> Makefile:1263: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
->
-> See https://patchwork.ozlabs.org/patch/1245691
-> Please check and re-submit.
