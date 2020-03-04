@@ -2,75 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF1331791B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0551791B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbgCDNt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 08:49:58 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44180 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbgCDNt6 (ORCPT
+        id S1729575AbgCDNuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 08:50:20 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43095 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729462AbgCDNuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 08:49:58 -0500
-Received: by mail-io1-f68.google.com with SMTP id u17so2412612iog.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 05:49:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Qc7lFNCTKln6OQu4srI6Xyqi6GuBxKNE2fl3UlOi/90=;
-        b=spYZNtf60n2nJqYYLPBY75X4wjJqDiMiC77N6lFViBiYdnJTOzxrqZo/xPGDLW3GMu
-         gIuu+Nuh9NIjBYOLVrINPGlBYexHSJvDNB9syW0UY7efVuQK2BUYKhCDlL4UJGFGHXbR
-         sggs/QBZtgQvRvG+V3SB7GG//HBdh05hEC5xgt32AKxR8xSVkbrmgDeFpqrbPGknnibA
-         mueOsNvxdFKsKhnoDhId+IDuJNFLZ3oFreWIOHekb3xTwaYqvomouzMPS2VWRsob6iNH
-         4aBp1wqVJIf/1muVnuyzu7nWY1q1MwdMIe/5CE1RlwH+fnZF6iIPHGskifHlXRcNT8zY
-         enCw==
+        Wed, 4 Mar 2020 08:50:20 -0500
+Received: by mail-ed1-f67.google.com with SMTP id dc19so2371134edb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 05:50:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Qc7lFNCTKln6OQu4srI6Xyqi6GuBxKNE2fl3UlOi/90=;
-        b=sr7+2Evmr+6Bbks0bjyil60EMkVm1phDzuTRkna4Z2B5HPtawLvPUDp5V2bnhdcDfE
-         /3bOFpkmKCEqetTswJYiO4S9sRV/y+sGQQAZ3WBYsze9VytumRInSoxoxIwj+HRuhY7x
-         5RijmSHw7NHya25SyZLCMLAvAvw4IQwIjwcqcZ5aCeeJziIeI0Uztl8GLxhRIfF0ygAH
-         xZMN3EkQDgDXQ/J+T3o3qLqvlYSylHy5H+noUNmVdLu0fSUn/Zv4Lk1cLTn+xujZaZtv
-         1yxVEh91xSfeyIW8keQfmhEU7pgAz+PZ9wncE9UR+lb5bO7yuMJ6aY5fNhkZ+E/h/OtP
-         Ug6g==
-X-Gm-Message-State: ANhLgQ1obLJ6GbUNy7oWP+XbNQbqbx3qvqMWuhgpfGv2E3vNdbx/qPni
-        WKGXThvbpG7Y+gXmspL48k3QGvCmBn5v0qYJl64=
-X-Google-Smtp-Source: ADFU+vt0+nGSOu51T0zWGGS6FEB4GA1pelemaJmkPwfRuegMaKmVgzrokmwS2WdrLNuAzJPHgitonwNgA5fdxRyp+ew=
-X-Received: by 2002:a5d:824c:: with SMTP id n12mr2237369ioo.234.1583329797349;
- Wed, 04 Mar 2020 05:49:57 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8jD1aQ0K4ZHRI9L4DVErk5de13t4CvMVfGLComiCULQ=;
+        b=ZqltTS70iJsun/g6QXtqNguIewELXM1O803THyGEJYI64VgICBoe8o1hehYLIkd1Hp
+         G+sXavVGYL37hZG36ov+1XSgpiUmyyImioTe/Ty2pKQ4iupuqcYkLUdHzE954ElUvG2/
+         KBjL9JyH/8VFnstg7h5QSZJ3vCwxmxb9jsybHS9OneN2ouDigNjoi5ungOaQHhPj8aIE
+         zh0pwJivwLJbSWhEAKt/KynxIGGAhF7gkRG1xeFF3a5cYqLPoOxTy30wyZxJYnZGdwu8
+         BPy8y//WtFTBwJlcQI+xzEVzLJsFSOfzsLRZt5FkwnKcmM7WbtYOKwzqqCqRkaIguEIR
+         efcg==
+X-Gm-Message-State: ANhLgQ3dYf4wq0BXJXvrvnaInqgBeTbbe3CJ/PR5B4wNcUpTNdgWHWe4
+        zvK9DQkqiX3plnI1iKjzQjc=
+X-Google-Smtp-Source: ADFU+vsZrq7uJzWcS4/3LZotBPFTQ9gsYfoZvYENWEf9F84kQ9T2I6uins3J28b/fwvpIldukXjlEQ==
+X-Received: by 2002:a17:906:8284:: with SMTP id h4mr2489505ejx.224.1583329818066;
+        Wed, 04 Mar 2020 05:50:18 -0800 (PST)
+Received: from a483e7b01a66.ant.amazon.com (54-240-197-232.amazon.com. [54.240.197.232])
+        by smtp.gmail.com with ESMTPSA id a7sm48294ejs.33.2020.03.04.05.50.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Mar 2020 05:50:17 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] xenbus: req->body should be updated before
+ req->state
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, joe.jin@oracle.com
+References: <20200303221423.21962-1-dongli.zhang@oracle.com>
+From:   Julien Grall <julien@xen.org>
+Message-ID: <a45de885-2050-f590-b298-b3297da957a5@xen.org>
+Date:   Wed, 4 Mar 2020 13:50:15 +0000
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Received: by 2002:a4f:fa1b:0:0:0:0:0 with HTTP; Wed, 4 Mar 2020 05:49:57 -0800 (PST)
-Reply-To: dublonderic09@gmail.com
-From:   Dublond Eric <dublond.eric1@gmail.com>
-Date:   Wed, 4 Mar 2020 13:49:57 +0000
-Message-ID: <CAEH0xdro7gOf9dyitwsbMbvPXq5hBFftJ0wCY-iXhjfi-_Ns9w@mail.gmail.com>
-Subject: =?UTF-8?B?2KPZhtinINmF2K3Yp9mFINiv2YjYqNmE2YjZhtiv?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200303221423.21962-1-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2KPZhtinINmF2K3Yp9mFINiv2YjYqNmE2YjZhtivDQrZhNmC2K8g2KPYsdiz2YTYqiDZhNmDINmH
-2LDZhyDYp9mE2LHYs9in2YTYqSDZgtio2YQg2LTZh9ixINiMINmE2YPZhtmG2Yog2YTYs9iqINmF
-2KrYo9mD2K/Zi9inINmF2YYg2KPZhtmDINit2LXZhNiqINi52YTZitmH2KcNCtiMINij2LHZitiv
-2YMg2KPZhiDYqtmC2YEg2K7ZhNmB2YvYpyDZhNi52YXZitmE2Yog2KfZhNmF2KrZiNmB2Ykg2KfZ
-hNiw2Yog2YPYp9mGINmF2YjYp9i32YbZi9inINmB2Yog2KjZhNiv2YMg2YjYo9mGINmK2K3ZhdmE
-DQrZhtmB2LMg2KfZhNmE2YLYqCDZhdi52YMuINiq2YjZgdmKINmB2Yog2K3Yp9iv2Ksg2LPZitin
-2LHYqSDZhdi5INi52KfYptmE2KrZhyDYjCDYqtin2LHZg9inINmF2KjZhNi62Kcg2YPYqNmK2LHY
-pyDZhdmGDQrYp9mE2YXYp9mEINiMICjYq9mE2KfYq9ipINi52LTYsSDZhdmE2YrZiNmGINmI2K7Z
-hdiz2YXYp9im2Kkg2YjYq9mF2KfZhtmI2YYg2KPZhNmBINiv2YjZhNin2LEpINmB2Yog2KfZhNio
-2YbZgy4g2KjYudivDQrZhNit2LjYqSDZgdin2LTZhNipINmB2Yog2KfZhNio2K3YqyDYudmGINij
-2YLYp9ix2KjZhyDYqNiz2KjYqCDYp9mE2KrZgdmI2YrYtiDYp9mE2LnYp9is2YQg2KfZhNiw2Yog
-2YXZhtit2YbZiiDZhNiq2YLYr9mK2YUg2KPZig0K2YXZhiDYo9mC2KfYsdio2Ycg2YrYrdmF2YQg
-2YbZgdizINin2YTZhNmC2Kgg2YTZhtmC2YQg2KfZhNij2YXZiNin2YQg2YjYp9mE2YXYt9in2YTY
-qNipINio2YfYpyDYjCDZgtix2LHYqiDYp9mE2KfYqti12KfZhCDYqNmDLg0K2YjYs9ij2LnYt9mK
-2YMg2KfZhNmF2LLZitivINmF2YYg2KfZhNiq2YHYp9i12YrZhCDYudmE2Ykg2KfZhNmG2K3ZiCDY
-p9mE2KrYp9mE2Yo6INio2YXYrNix2K8g2KrZhNmC2Yog2LHYr9mD2YUg2KfZhNil2YrYrNin2KjZ
-ii4NCg0K2KrZgdi22YTZiNinINio2YLYqNmI2YQg2YHYp9im2YIg2KfZhNin2K3Yqtix2KfZhdiM
-DQrZhdit2KfZhSDYr9mI2KjZhNmI2YbYryDYp9ix2YrZgw0K
+Hi,
+
+On 03/03/2020 22:14, Dongli Zhang wrote:
+> The req->body should be updated before req->state is updated and the
+> order should be guaranteed by a barrier.
+> 
+> Otherwise, read_reply() might return req->body = NULL.
+> 
+> Below is sample callstack when the issue is reproduced on purpose by
+> reordering the updates of req->body and req->state and adding delay in
+> code between updates of req->state and req->body.
+> 
+> [   22.356105] general protection fault: 0000 [#1] SMP PTI
+> [   22.361185] CPU: 2 PID: 52 Comm: xenwatch Not tainted 5.5.0xen+ #6
+> [   22.366727] Hardware name: Xen HVM domU, BIOS ...
+> [   22.372245] RIP: 0010:_parse_integer_fixup_radix+0x6/0x60
+> ... ...
+> [   22.392163] RSP: 0018:ffffb2d64023fdf0 EFLAGS: 00010246
+> [   22.395933] RAX: 0000000000000000 RBX: 75746e7562755f6d RCX: 0000000000000000
+> [   22.400871] RDX: 0000000000000000 RSI: ffffb2d64023fdfc RDI: 75746e7562755f6d
+> [   22.405874] RBP: 0000000000000000 R08: 00000000000001e8 R09: 0000000000cdcdcd
+> [   22.410945] R10: ffffb2d6402ffe00 R11: ffff9d95395eaeb0 R12: ffff9d9535935000
+> [   22.417613] R13: ffff9d9526d4a000 R14: ffff9d9526f4f340 R15: ffff9d9537654000
+> [   22.423726] FS:  0000000000000000(0000) GS:ffff9d953bc80000(0000) knlGS:0000000000000000
+> [   22.429898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   22.434342] CR2: 000000c4206a9000 CR3: 00000001ea3fc002 CR4: 00000000001606e0
+> [   22.439645] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   22.444941] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   22.450342] Call Trace:
+> [   22.452509]  simple_strtoull+0x27/0x70
+> [   22.455572]  xenbus_transaction_start+0x31/0x50
+> [   22.459104]  netback_changed+0x76c/0xcc1 [xen_netfront]
+> [   22.463279]  ? find_watch+0x40/0x40
+> [   22.466156]  xenwatch_thread+0xb4/0x150
+> [   22.469309]  ? wait_woken+0x80/0x80
+> [   22.472198]  kthread+0x10e/0x130
+> [   22.474925]  ? kthread_park+0x80/0x80
+> [   22.477946]  ret_from_fork+0x35/0x40
+> [   22.480968] Modules linked in: xen_kbdfront xen_fbfront(+) xen_netfront xen_blkfront
+> [   22.486783] ---[ end trace a9222030a747c3f7 ]---
+> [   22.490424] RIP: 0010:_parse_integer_fixup_radix+0x6/0x60
+> 
+> The virt_rmb() is added in the 'true' path of test_reply(). The "while"
+> is changed to "do while" so that test_reply() is used as a read memory
+> barrier.
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+
+Reviewed-by: Julien Grall <jgrall@amazon.com>
+
+> ---
+> Changed since v1:
+>    - change "barrier()" to "virt_rmb()" in test_reply()
+> Changed since v2:
+>    - Use "virt_rmb()" only in 'true' path
+> 
+>   drivers/xen/xenbus/xenbus_comms.c | 2 ++
+>   drivers/xen/xenbus/xenbus_xs.c    | 9 ++++++---
+>   2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/xen/xenbus/xenbus_comms.c b/drivers/xen/xenbus/xenbus_comms.c
+> index d239fc3c5e3d..852ed161fc2a 100644
+> --- a/drivers/xen/xenbus/xenbus_comms.c
+> +++ b/drivers/xen/xenbus/xenbus_comms.c
+> @@ -313,6 +313,8 @@ static int process_msg(void)
+>   			req->msg.type = state.msg.type;
+>   			req->msg.len = state.msg.len;
+>   			req->body = state.body;
+> +			/* write body, then update state */
+> +			virt_wmb();
+>   			req->state = xb_req_state_got_reply;
+>   			req->cb(req);
+>   		} else
+> diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+> index ddc18da61834..3a06eb699f33 100644
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -191,8 +191,11 @@ static bool xenbus_ok(void)
+>   
+>   static bool test_reply(struct xb_req_data *req)
+>   {
+> -	if (req->state == xb_req_state_got_reply || !xenbus_ok())
+> +	if (req->state == xb_req_state_got_reply || !xenbus_ok()) {
+> +		/* read req->state before all other fields */
+> +		virt_rmb();
+>   		return true;
+> +	}
+>   
+>   	/* Make sure to reread req->state each time. */
+>   	barrier();
+> @@ -202,7 +205,7 @@ static bool test_reply(struct xb_req_data *req)
+>   
+>   static void *read_reply(struct xb_req_data *req)
+>   {
+> -	while (req->state != xb_req_state_got_reply) {
+> +	do {
+>   		wait_event(req->wq, test_reply(req));
+>   
+>   		if (!xenbus_ok())
+> @@ -216,7 +219,7 @@ static void *read_reply(struct xb_req_data *req)
+>   		if (req->err)
+>   			return ERR_PTR(req->err);
+>   
+> -	}
+> +	} while (req->state != xb_req_state_got_reply);
+>   
+>   	return req->body;
+>   }
+> 
+
+-- 
+Julien Grall
