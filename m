@@ -2,99 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E76761798B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:13:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBEEE1798F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:26:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgCDTNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 14:13:31 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42384 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbgCDTNb (ORCPT
+        id S2387665AbgCDT0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 14:26:11 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:45034 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbgCDT0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:13:31 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u3so1431709plr.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 11:13:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=bWWT0U7gHG36go3/z5DgOvjRYUt+7WTsiRbz2Kqd1qY=;
-        b=KrDb4dJR9TipAek99R/Qkotco316kjOROJVvfj5QLq2nQMUrLqLQWHPvZ2YmRFk+gL
-         Xb457WqeHGsnYiVRwkmmRDvKa0Ml4oO6WGX1TAw3O/GjciLLmoxs89vhtJe24P2pItz7
-         3cdXBGHTQ9kIWAKHZdsOk9hBs8MK1zInEOie8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=bWWT0U7gHG36go3/z5DgOvjRYUt+7WTsiRbz2Kqd1qY=;
-        b=b0+uy63X2KMDrLbL0h9t9kXIsSV3Zx6QnZzlAd/nASkgILWs95zgAkJr9iQdElm1Ot
-         DbLbYBsdbLb0GXFY4Mn4STUqIx2EfQ1L3OfJ1eV9XYH6fG70U9kBooh2Js+ONwWx7XI6
-         AQEuxzR/nteyK3PggNiyopDN2MS7RAqF6sJ5H0cI8Vz9EeB4nN4QvzdTVbA3/CK97lql
-         Tp1NSZz0cEbs4HQMqQ5BxRfXP1vQ0XkJ/+fn5eR6V1ajzdQjRP3VS/k0X94WxQem/GeR
-         KuHSL0ZskXV2hnZs/jPHxs6C6oyN97CbE2PkXcdm/0Sq+b7TcPvwP4nVlSTAn9czIhSj
-         chRw==
-X-Gm-Message-State: ANhLgQ2M2Xex837XG3Z1/qBC6udZPx+dxZtHSUt6e8UzolTXACiEXHiV
-        bRU8ZlDSfNYL2ZOVYhsPm3LgdQ==
-X-Google-Smtp-Source: ADFU+vs8lPKj88hbp2zjV9Zwouj4ueT/9QLwk1yoVWR8eEp+HS7tGSSmKS4bSvY+HXXNwHbodHUsdg==
-X-Received: by 2002:a17:90a:f0c8:: with SMTP id fa8mr4540508pjb.136.1583349210375;
-        Wed, 04 Mar 2020 11:13:30 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r12sm29051419pgu.93.2020.03.04.11.13.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 11:13:29 -0800 (PST)
-Date:   Wed, 4 Mar 2020 11:13:28 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: deprecated.rst: Add %p to the list
-Message-ID: <202003041103.A5842AD@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Wed, 4 Mar 2020 14:26:11 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 024JOgJ0069936;
+        Wed, 4 Mar 2020 19:26:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=RVwMPoBytgJqzvT5Zwwfx1pDAOri+D3vJZqoRxlhfz4=;
+ b=P+C2a0D1aH+Lot/o+i66MqgkOSPyazmJ4SyIhxCO1QyPVxUM7pvVSTsT5+5E3ecHrJZ+
+ sVhpbbHCbnHA/Ns7OcKdsCJ89vdESPYP4KA5Wr/oHasyHNyLWvBoqjJhJi/w6ifRtuAO
+ JmejqWyWD6TuvfpU3VoYOwZStkkwq6/z4bmlRCdOq8rXs1buRvEOLkbXSWM0YmKmjf4L
+ q7vHCL+ZXLSEJBA1FldrA1Pu5z3/RQUHN+J+3LboFqipaAIIIgpDyBBsK+Obe2tkkqO2
+ CwPHd2XCx70CeffoPaQ9mxtGeFCscGsWliE5ZcI649M4P1H5d5C9zXycP5sWzS069+n/ /g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2yffwr0ens-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Mar 2020 19:26:08 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 024JNJJf107698;
+        Wed, 4 Mar 2020 19:26:08 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2yg1rrys8s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Mar 2020 19:26:08 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 024JQ5UG016484;
+        Wed, 4 Mar 2020 19:26:06 GMT
+Received: from localhost.localdomain (/10.211.9.80)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 04 Mar 2020 11:26:05 -0800
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     linux-block@vger.kernel.org
+Cc:     axboe@kernel.dk, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] null_blk: describe the usage of fault injection param
+Date:   Wed,  4 Mar 2020 11:16:44 -0800
+Message-Id: <20200304191644.25220-1-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9550 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=1 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040127
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9550 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=1
+ phishscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003040127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once in a while %p usage comes up, and I've needed to have a reference
-to point people to. Add %p details to deprecated.rst.
+As null_blk is a very good start point to test block layer, this patch adds
+description and comments to 'timeout' and 'requeue' to explain how to use
+fault injection with null_blk.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+The nvme has similar with nvme_core.fail_request in the form of comment.
+
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 ---
- Documentation/process/deprecated.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/block/null_blk_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-index f9f196d3a69b..a4db119f4e09 100644
---- a/Documentation/process/deprecated.rst
-+++ b/Documentation/process/deprecated.rst
-@@ -109,6 +109,23 @@ the given limit of bytes to copy. This is inefficient and can lead to
- linear read overflows if a source string is not NUL-terminated. The
- safe replacement is :c:func:`strscpy`.
+diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
+index 133060431dbd..1ee5aaacdb0f 100644
+--- a/drivers/block/null_blk_main.c
++++ b/drivers/block/null_blk_main.c
+@@ -96,11 +96,17 @@ module_param_named(home_node, g_home_node, int, 0444);
+ MODULE_PARM_DESC(home_node, "Home node for the device");
  
-+%p format specifier
-+-------------------
-+Using %p in format strings leads to a huge number of address exposures.
-+Instead of leaving these to be exploitable, "%p" should not be used in
-+the kernel. If used currently, it is a hashed value, rendering it
-+unusable for addressing. Paraphrasing Linus's current `guideance <https://lore.kernel.org/lkml/CA+55aFwQEd_d40g4mUCSsVRZzrFPUJt74vc6PPpb675hYNXcKw@mail.gmail.com/>`_:
-+
-+- Just use %p and get the hashed value.
-+- If the hashed value is pointless, ask yourself whether the pointer
-+  itself is important. Maybe it should be removed entirely?
-+- As a last option, if you really think the true pointer value is
-+  important, why is some system state or user privilege level considered
-+  "special"? If it is well justified (in comments and commit log), maybe
-+  you can use %px along with making sure you have sensible permissions.
-+
-+A system-wide toggle will `not be accepted <https://lore.kernel.org/lkml/CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com/>`_.
-+
- Variable Length Arrays (VLAs)
- -----------------------------
- Using stack VLAs produces much worse machine code than statically
+ #ifdef CONFIG_BLK_DEV_NULL_BLK_FAULT_INJECTION
++/*
++ * For more details about fault injection, please refer to
++ * Documentation/fault-injection/fault-injection.rst.
++ */
+ static char g_timeout_str[80];
+ module_param_string(timeout, g_timeout_str, sizeof(g_timeout_str), 0444);
++MODULE_PARM_DESC(timeout, "Fault injection. timeout=<interval>,<probability>,<space>,<times>");
+ 
+ static char g_requeue_str[80];
+ module_param_string(requeue, g_requeue_str, sizeof(g_requeue_str), 0444);
++MODULE_PARM_DESC(requeue, "Fault injection. requeue=<interval>,<probability>,<space>,<times>");
+ #endif
+ 
+ static int g_queue_mode = NULL_Q_MQ;
 -- 
-2.20.1
+2.17.1
 
-
--- 
-Kees Cook
