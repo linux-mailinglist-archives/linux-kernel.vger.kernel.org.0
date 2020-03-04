@@ -2,193 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E911794B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 303931794C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:16:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388151AbgCDQPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:15:40 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44264 "EHLO
+        id S2388174AbgCDQQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:16:15 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42673 "EHLO
         mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbgCDQPj (ORCPT
+        with ESMTP id S1726764AbgCDQQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:15:39 -0500
-Received: by mail-oi1-f195.google.com with SMTP id d62so2604253oia.11;
-        Wed, 04 Mar 2020 08:15:38 -0800 (PST)
+        Wed, 4 Mar 2020 11:16:14 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l12so2616162oil.9;
+        Wed, 04 Mar 2020 08:16:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G/m9Dnt93HLh8ZZeYopXZOgJzRYkBJrpgZdowTke/ZA=;
-        b=L7n10FCrkw01jAghMOOReCAs/sbDtLbEesLrEQYqoCP2ahyG9H8g3Eb5rFOQbtMgvu
-         hEibq6E6uYWcr/675ZKZUmuWRrdXZw7vtXoQURWQdohhIHspjA5GnDe3iM1CBOMANI7+
-         PMheEcDLNWHwaA4mTsbJeREXt26VM/BMFlhcr1nwVGpYJOziOSCgGILEICAZ1+eSXOOw
-         U/SVe3E2jxQzrhB667SzdCN3q8vie/ILFtDLP9/K+f13gDDc29N3+qWCWVvxoQX10n7C
-         ZUMneBKJDe7Y6uaAPjJhegGS8qokkoRaLriX/unOkwbfKo9CllRCodugB0CuWwpGzNxL
-         LgqQ==
-X-Gm-Message-State: ANhLgQ2AAyjfiHkjUTpq+do1rjBZ6H9dVuCX3Fst7PhXEwclANcT79W8
-        NYlmmc8jHjWatGKJCRUFKg==
-X-Google-Smtp-Source: ADFU+vvQPKn3HTHYpHagUTruHe80jgRcAKAs1iIPLjepLVEiIsroKoDtfMT7OCsZXUt/LNxDyx47Yw==
-X-Received: by 2002:aca:a9d4:: with SMTP id s203mr2347678oie.106.1583338538421;
-        Wed, 04 Mar 2020 08:15:38 -0800 (PST)
+        bh=GhAsniKvYUMptrJyDO+p1c/FdpaCICij3vPs9vpAABc=;
+        b=AM/n4YR00J/Wy1i49Km/cUAwb+B0QZnL2VFTA2dq2ZpNR8oRTzr16Ursul74awi/a6
+         6ilnUfUmh9XyF3aO6ydFSZv0P4tfvb9cWlr/BGF8YrW/BsjaTomBl4nMhm/mWZlSfsuq
+         Y1ZznhItVa5nrzSwP+6E5oHVDOa5mjY1tTTLpTDs8N8jfmA4Y1v4L1YLnydYIpRQtId/
+         R254ipFeUijAknWmM0snIiJn/hV16qgv74bi8+4tlPmn7O08W0aD7vAZpM5/U8z9FwPZ
+         AjebC5mQcXI2XHgv77Jiaa8y+1xeNK6mI4o7flrhZQPodbEixf99Q/MyvXl1JNKl3g1o
+         UJew==
+X-Gm-Message-State: ANhLgQ1TLz5Glzy8oVAZqS7z5pIYgt3X0r9blZsHkFMj0LLMy4jVygQ7
+        nezqOtilgFTiaEdpyQZTxg==
+X-Google-Smtp-Source: ADFU+vscMM6br/Xn3C+U6tfhoqQLV4NMo3JZu/sSuSbhBxEB3/oNdCr4+Z6EvzgPb0uWjeursQTGaw==
+X-Received: by 2002:aca:4f8e:: with SMTP id d136mr2309174oib.77.1583338572096;
+        Wed, 04 Mar 2020 08:16:12 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v65sm965478oib.17.2020.03.04.08.15.36
+        by smtp.gmail.com with ESMTPSA id s83sm8891708oif.33.2020.03.04.08.16.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 08:15:37 -0800 (PST)
-Received: (nullmailer pid 26064 invoked by uid 1000);
-        Wed, 04 Mar 2020 16:15:36 -0000
-Date:   Wed, 4 Mar 2020 10:15:36 -0600
+        Wed, 04 Mar 2020 08:16:11 -0800 (PST)
+Received: (nullmailer pid 26946 invoked by uid 1000);
+        Wed, 04 Mar 2020 16:16:10 -0000
+Date:   Wed, 4 Mar 2020 10:16:10 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, srv_heupstream@mediatek.com,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com, huijuan.xie@mediatek.com
-Subject: Re: [PATCH v12 4/6] dt-bindings: display: mediatek: convert the
- document format from txt to yaml
-Message-ID: <20200304161536.GA20736@bogus>
-References: <20200303052722.94795-1-jitao.shi@mediatek.com>
- <20200303052722.94795-5-jitao.shi@mediatek.com>
+To:     rentao.bupt@gmail.com
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        taoren@fb.com, Tao Ren <rentao.bupt@gmail.com>
+Subject: Re: [PATCH v7 7/7] dt-bindings: usb: add documentation for aspeed
+ usb-vhub
+Message-ID: <20200304161610.GA26873@bogus>
+References: <20200303062336.7361-1-rentao.bupt@gmail.com>
+ <20200303062336.7361-8-rentao.bupt@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303052722.94795-5-jitao.shi@mediatek.com>
+In-Reply-To: <20200303062336.7361-8-rentao.bupt@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 01:27:20PM +0800, Jitao Shi wrote:
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+On Mon,  2 Mar 2020 22:23:36 -0800, rentao.bupt@gmail.com wrote:
+> From: Tao Ren <rentao.bupt@gmail.com>
+> 
+> Add device tree binding documentation for the Aspeed USB 2.0 Virtual HUb
+> Controller.
+> 
+> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
 > ---
->  .../display/mediatek/mediatek,dpi.txt         | 45 ---------
->  .../display/mediatek/mediatek,dpi.yaml        | 92 +++++++++++++++++++
->  2 files changed, 92 insertions(+), 45 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt
->  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+>  Changes in v7:
+>    - updated to dual license.
+>    - removed description for "reg" and "clocks" properties.
+>    - Added constraints (minimum/maximum/default) for vendor specific
+>      properties.
+>  Changes in v6:
+>    - added 2 required properties into example and passed "make
+>      dt_binding_check".
+>  Changes in v5:
+>    - updated maintainer to Ben.
+>    - refined patch description per Joel's suggestion.
+>  No change in v2/v3/v4:
+>    - the patch is added to the patch series since v4.
+> 
+>  .../bindings/usb/aspeed,usb-vhub.yaml         | 77 +++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
+> 
 
-You need to run 'make dt_binding_check' on this and fix the errors.
-
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-> new file mode 100644
-> index 000000000000..eb2b0cb5eb5a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-> @@ -0,0 +1,92 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/mediatek,dpi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: mediatek DPI Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - CK Hu <ck.hu@mediatek.com>
-> +  - Jitao shi <jitao.shi@mediatek.com>
-> +
-> +description: |
-> +  The Mediatek DPI function block is a sink of the display subsystem and
-> +  provides 8-bit RGB/YUV444 or 8/10/10-bit YUV422 pixel data on a parallel
-> +  output bus.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt2701-dpi
-> +      - mediatek,mt8173-dpi
-> +      - mediatek,mt8183-dpi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Pixel Clock
-> +      - description: Engine Clock
-> +      - description: DPI PLL
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pixel
-> +      - const: engine
-> +      - const: pll
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-> +      - const: sleep
-
-Doesn't match what you just added to the binding...
-
-> +
-> +  port:
-> +    type: object
-> +    description:
-> +      Output port node with endpoint definitions as described in
-> +      Documentation/devicetree/bindings/graph.txt. This port should be connected
-> +      to the input port of an attached HDMI or LVDS encoder chip.
-> +
-> +    properties:
-> +      pclk-sample:
-> +      description: refer Documentation/devicetree/bindings/media/video-interfaces.txt.
-
-This is wrong in multiple ways. 'description' is missing indentation, so 
-you are defining 'description' to be a property.
-
-And 'pclk-sample' is not a property of 'port' node, but 'endpoint'.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    dpi0: dpi@1401d000 {
-> +        compatible = "mediatek,mt8173-dpi";
-> +        reg = <0 0x1401d000 0 0x1000>;
-> +        interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
-> +        clocks = <&mmsys CLK_MM_DPI_PIXEL>,
-> +             <&mmsys CLK_MM_DPI_ENGINE>,
-> +             <&apmixedsys CLK_APMIXED_TVDPLL>;
-
-Examples are built now and you need to add includes for these defines.
-
-> +        clock-names = "pixel", "engine", "pll";
-> +        pinctrl-names = "default", "sleep";
-> +        pinctrl-0 = <&dpi_pin_func>;
-> +        pinctrl-1 = <&dpi_pin_idle>;
-> +
-> +        port {
-> +            reg = <0>;
-
-Drop 'reg'.
-
-> +            dpi0_out: endpoint {
-> +                pclk-sample = <0>;
-> +                remote-endpoint = <&hdmi0_in>;
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> -- 
-> 2.21.0
+Reviewed-by: Rob Herring <robh@kernel.org>
