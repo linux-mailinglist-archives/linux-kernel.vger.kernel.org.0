@@ -2,110 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C31D17913A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:24:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCE8179143
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:25:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388042AbgCDNYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 08:24:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51328 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbgCDNYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 08:24:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 28610AAC7;
-        Wed,  4 Mar 2020 13:24:42 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     phil@raspberrypi.org, f.fainelli@gmail.com,
-        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: dts: bcm2711: Move emmc2 into its own bus
-Date:   Wed,  4 Mar 2020 14:24:37 +0100
-Message-Id: <20200304132437.20164-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2388127AbgCDNZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 08:25:52 -0500
+Received: from mail27.static.mailgun.info ([104.130.122.27]:39323 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388105AbgCDNZv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 08:25:51 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583328351; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=iH2BVLutkT3mo6DEf/Q0zVBw9AE3FJkvxBA6A3Q28UA=; b=qKPC1RTzv7TO1x6Nxmj3GGT0Z757kutLvrtlsDfJAin7p+sQQb0i8NKk+eBRp4EsVvI4+iu7
+ yWuUn3f/21SEsV5Fbd7r2E0JTsD2hl8wjDoPBKHTm5CQBhONvx92UReWEwWky5LR1pr6JtOA
+ UysTTIvJeqPdFA8vLukvbvpYn7A=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e5fac58.7fa3b0bd0dc0-smtp-out-n02;
+ Wed, 04 Mar 2020 13:25:44 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 04EF2C4479D; Wed,  4 Mar 2020 13:25:44 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 39512C43383;
+        Wed,  4 Mar 2020 13:25:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39512C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, dianders@google.com,
+        mka@chromium.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>
+Subject: [PATCH V2] mmc: cqhci: Update cqhci memory ioresource name
+Date:   Wed,  4 Mar 2020 18:55:20 +0530
+Message-Id: <1583328320-9981-1-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1583323250-23596-1-git-send-email-vbadigan@codeaurora.org>
+References: <1583323250-23596-1-git-send-email-vbadigan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depending on bcm2711's revision its emmc2 controller might have
-different DMA constraints. Raspberry Pi 4's firmware will take care of
-updating those, but only if a certain alias is found in the device tree.
-So, move emmc2 into its own bus, so as not to pollute other devices with
-dma-ranges changes and create the emmc2bus alias.
+Update cqhci memory ioresource name from cqhci_mem to cqhci since
+suffix _mem is redundant.
 
-Based in Phil ELwell's downstream implementation.
+Only sdhci-msm driver is making use of this resource as of now.
+No other vendor's driver is using it. So this update shouldn't affect
+any other vendor's cqhci functionality.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
 ---
+Corresponding binding change:
+https://lore.kernel.org/linux-arm-msm/1582545470-11530-1-git-send-email-vbadigan@codeaurora.org/
 
-Changes since v1:
- - Add comment in dt
- - Fix commit title
+Changes sicne V1:
+	- Updated commit text expalining this change affects *only*
+	  qcom cqhci functionality.
 
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts |  1 +
- arch/arm/boot/dts/bcm2711.dtsi        | 25 ++++++++++++++++++++-----
- 2 files changed, 21 insertions(+), 5 deletions(-)
+---
+ drivers/mmc/host/cqhci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index 1d4b589fe233..e26ea9006378 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -20,6 +20,7 @@ memory@0 {
- 	};
+diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+index e2ea2c4..e24b8ff 100644
+--- a/drivers/mmc/host/cqhci.c
++++ b/drivers/mmc/host/cqhci.c
+@@ -1077,7 +1077,7 @@ struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev)
  
- 	aliases {
-+		emmc2bus = &emmc2bus;
- 		ethernet0 = &genet;
- 		pcie0 = &pcie0;
- 	};
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-index d1e684d0acfd..a91cf68e3c4c 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
-@@ -241,17 +241,32 @@ pwm1: pwm@7e20c800 {
- 			status = "disabled";
- 		};
- 
-+		hvs@7e400000 {
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+
-+	/*
-+	 * emmc2 has different DMA constraints based on SoC revisions. It was
-+	 * moved into its own bus, so as for RPi4's firmware to update them.
-+	 * The firmware will find whether the emmc2bus alias is defined, and if
-+	 * so, it'll edit the dma-ranges property below accordingly.
-+	 */
-+	emmc2bus: emmc2bus {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+
-+		ranges = <0x0 0x7e000000  0x0 0xfe000000  0x01800000>;
-+		dma-ranges = <0x0 0xc0000000  0x0 0x00000000  0x40000000>;
-+
- 		emmc2: emmc2@7e340000 {
- 			compatible = "brcm,bcm2711-emmc2";
--			reg = <0x7e340000 0x100>;
-+			reg = <0x0 0x7e340000 0x100>;
- 			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clocks BCM2711_CLOCK_EMMC2>;
- 			status = "disabled";
- 		};
--
--		hvs@7e400000 {
--			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
--		};
- 	};
- 
- 	arm-pmu {
+ 	/* check and setup CMDQ interface */
+ 	cqhci_memres = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						   "cqhci_mem");
++						   "cqhci");
+ 	if (!cqhci_memres) {
+ 		dev_dbg(&pdev->dev, "CMDQ not supported\n");
+ 		return ERR_PTR(-EINVAL);
 -- 
-2.25.1
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
