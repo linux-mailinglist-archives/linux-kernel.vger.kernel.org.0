@@ -2,91 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 392DB179AEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB6BC179B54
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388401AbgCDV3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 16:29:52 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38863 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388281AbgCDV3w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:29:52 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e25so4083405edq.5;
-        Wed, 04 Mar 2020 13:29:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ZhvV+X/QugBakZftkSm3Y3Vs/NjUYpL1g5J3nO6+eBo=;
-        b=BMUSDZuKUJEsB0rx65KmLOfr18pOxTALdV6q709AOz4ACj0OKVgMZ35sKyJ4A/9g0S
-         djD3oN6qJ/VOZ+TUE4VK8fvJCkkf5lzPWp9YLyLabXpyEecr3ACz4pb3n8HVLqix0AqJ
-         OPf51c0i38VC4SOGVtFGEfiM+KyQ9G9PbL/RPGQ93coVv4KTbTHNCSY8Drwh9qgbFUDl
-         Ss8xgqc3fn2UDHd42bebeQGNb4XNGp17J/GsP1gYd0J9BUEvUjSvmhbI1TQAzBbAoHLx
-         14wfe2SohwELPdmJMEhWcwSmsbuTys4OsTJUHiDcBjn6blegOJvgQBl7XJdHM/SRYcI0
-         jPZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ZhvV+X/QugBakZftkSm3Y3Vs/NjUYpL1g5J3nO6+eBo=;
-        b=aUiwpwgVAWAkY/9jStS+CLbt4Cc+zR7GjJmvOfjGQbC8EgzYvggZ/v+JkdKRvJ5VaW
-         renczNoe+Fx6MtU8hB0ekR7GBhGUEsuwYdkOUiLaPgWAwGx0FMQWkVtACCXhpumMD7Gn
-         6fZsQtDTj2NbFgp/MeBAI8w4coesmCgpvd3GbTjBKk3kkyIJpGK1YQHrT6xKcbUnYIOp
-         Elg4Su0A76jBsV3Jk1Nxw7o6zbDiHgdRJz9Q9gLQINurv3Iok33ocEuhfwnSzV2PCfWm
-         hgu3rYKrsHGxlHMcVxq4OW8+YaMhRobuFaR3rzDq0jtB3yGf3FU96t3YRE8AEGpFPzi/
-         aBXQ==
-X-Gm-Message-State: ANhLgQ0nWFHR+ZMCSqioJt4hi6JMKb64GICveTwSZnIjPvmckXCEmNH7
-        7MMbJQqabDiNadRh3wT3xiI=
-X-Google-Smtp-Source: ADFU+vsinGfEMDGvYA3rbefP4+LG0EuZ8p5Sjx1gqvFYpYT40aNciRcBN2rt9NVFEdqWu+XwpOzQpQ==
-X-Received: by 2002:a05:6402:22e9:: with SMTP id dn9mr4755253edb.165.1583357390388;
-        Wed, 04 Mar 2020 13:29:50 -0800 (PST)
-Received: from felia ([2001:16b8:2d16:4100:5c62:5f:595c:f76d])
-        by smtp.gmail.com with ESMTPSA id g31sm1622644edd.53.2020.03.04.13.29.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 13:29:49 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Wed, 4 Mar 2020 22:29:48 +0100 (CET)
-X-X-Sender: lukas@felia
-To:     Chen-Yu Tsai <wens@csie.org>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Rob Herring <robh@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: update ALLWINNER CPUFREQ DRIVER entry
-In-Reply-To: <CAGb2v66sJ42yaLwHubrOvCNBQQ4sJ1HXYpVmf86oW-sp7bCqGA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2003042226380.2698@felia>
-References: <20200304113452.10201-1-lukas.bulwahn@gmail.com> <CAGb2v66sJ42yaLwHubrOvCNBQQ4sJ1HXYpVmf86oW-sp7bCqGA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2388428AbgCDVzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 16:55:42 -0500
+Received: from elvis.franken.de ([193.175.24.41]:51174 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728926AbgCDVzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 16:55:42 -0500
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1j9bzN-0000mm-00; Wed, 04 Mar 2020 22:55:37 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 832E3C0EF9; Wed,  4 Mar 2020 21:31:44 +0100 (CET)
+Date:   Wed, 4 Mar 2020 21:31:44 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        John Crispin <john@phrozen.org>
+Subject: Re: [PATCH v3] MIPS: Replace setup_irq() by request_irq()
+Message-ID: <20200304203144.GA4323@alpha.franken.de>
+References: <20200304005549.5832-1-afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200304005549.5832-1-afzal.mohd.ma@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Wed, 4 Mar 2020, Chen-Yu Tsai wrote:
-
-> On Wed, Mar 4, 2020 at 7:35 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> >  ALLWINNER CPUFREQ DRIVER
-> >  M:     Yangtao Li <tiny.windzz@gmail.com>
-> > +M:     Chen-Yu Tsai <wens@csie.org>
-> > +M:     Maxime Ripard <mripard@kernel.org>
+On Wed, Mar 04, 2020 at 06:25:43AM +0530, afzal mohammed wrote:
+> Hi mips maintainers,
 > 
-> There's no need to add us. The Allwinner entry already covers this under sun*i.
-> 
+> if okay w/ this change, please consider taking it thr' your tree, else please
+> let me know.
 
-Okay. I sent out a PATCH v2 without adding you as extra maintainers:
+sorry this doesn't even compile for the first platform I've tested:
 
-https://lore.kernel.org/linux-pm/20200304212600.6172-1-lukas.bulwahn@gmail.com/T/#u
+In file included from /home/tbogendoerfer/wip/korg/linux/arch/mips/sni/reset.c:11:0:
+/home/tbogendoerfer/wip/korg/linux/arch/mips/include/asm/sni.h:242:8: error: unknown type name ‘irqreturn_t’
+ extern irqreturn_t sni_isa_irq_handler(int dummy, void *p);
+        ~~~~~~~~~~~
 
-An ACK is appreciated. Thanks.
+Thomas.
 
-Lukas
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
