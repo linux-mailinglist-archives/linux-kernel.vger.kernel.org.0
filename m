@@ -2,161 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8EE178C6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:15:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC31178C6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbgCDIPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:15:31 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44315 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbgCDIPa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:15:30 -0500
-Received: by mail-qt1-f193.google.com with SMTP id h16so701110qtr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 00:15:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XYaQQxVSy2LFcixV0usx/fdLhqd23krMhAkcq5zI6GI=;
-        b=tV1IU1zEKW6IgOo7X6mrGeplTe1isPnr9wWY3Z8we/1gmJ+yyf6JXV7lhonSkXjcn8
-         V/lbZMHPh+WIHoWV48wm+TrG4TPXab/Lw+OPkyfF5MwZHtUnWX+/iK/FJm5qcWwCfOmk
-         VH3j2DPykgCAwvu/Ko59JTgIlk8r4NR17EoTYHKjOnW3CC0WEyvqHdQQ3NgvOqop86eX
-         1/tx7gjYpiAhMt/fue6UafkNcj7svHcTUQeg6KW5ZOs7BzjeMiahcSmxGZmKaprKLsQZ
-         w+Z9CGFQ1m9RGp9/Km9CLLmc+e6nD9qhHH3aXOmZEvwuv1E09yRevTZlCrE47ntHdImP
-         wdqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XYaQQxVSy2LFcixV0usx/fdLhqd23krMhAkcq5zI6GI=;
-        b=QhghkeQmH+hk6SqrN1mcogrOmgsmUbMaMCzrIfzFohGAugDJCLka0xnV8ZA7aZB92z
-         if9ClmqsiCW7EVJ6NfaEMVIHOif7KDtHmgLlNfT1rpMQjpFRRo6Wtu1qcUVD4PajljS0
-         NcbgP7mbFa9RByLLDk29vB2tODy+6tqbL03KijYB0k+dswAjkZ1WHviwm0wu/VvN0b9Q
-         ou/2irpszxu8j7ENsektH/0WKfT+FvRFMR6hWoutf0yAd7hsaCxhg/JOtQIdVpzsr4Kw
-         MgQDAoJDmhHjimOASinTuFd1wgHdhxilpYoUxjy6vJvQVNijfB/47ZK1uwgHOAATyqzV
-         neUw==
-X-Gm-Message-State: ANhLgQ1snZB3eRFVw8Iy0gUo7r2FeVwKCJITSUnEl9A0XLvxi40SQ59V
-        hL0tBctzQ7QGzcoENH438pr6bbXjNeJRvWLcSmwefR+LQRI=
-X-Google-Smtp-Source: ADFU+vu/aEmWi2FpgD6dYckIMsvmwRFS/0yUIenkrmsbwWHbzZYMT5ZttmNMvF7ANxCaTK+mc93W3fnKgrgZJDpF1o4=
-X-Received: by 2002:ac8:3533:: with SMTP id y48mr1371864qtb.380.1583309729203;
- Wed, 04 Mar 2020 00:15:29 -0800 (PST)
-MIME-Version: 1.0
-References: <000000000000dd909105a002ebe6@google.com>
-In-Reply-To: <000000000000dd909105a002ebe6@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 4 Mar 2020 09:15:17 +0100
-Message-ID: <CACT4Y+ZyhwEsuGK9aJZ=4vXJ_AfHqFn6n5d58H_5E_-o9qHRWA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in sys_keyctl
-To:     syzbot <syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
+        id S1728909AbgCDIPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:15:43 -0500
+Received: from mga04.intel.com ([192.55.52.120]:16101 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728885AbgCDIPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 03:15:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 00:15:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,513,1574150400"; 
+   d="scan'208";a="352036316"
+Received: from xingzhen-mobl1.ccr.corp.intel.com (HELO [10.255.29.85]) ([10.255.29.85])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Mar 2020 00:15:39 -0800
+Subject: Re: [LKP] Re: [ext4] b1b4705d54: filebench.sum_bytes_mb/s -20.2%
+ regression
+To:     Rong Chen <rong.a.chen@intel.com>, Jan Kara <jack@suse.cz>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biggers <ebiggers@kernel.org>, allison@lohutok.net
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        lkp@lists.01.org
+References: <20191224005915.GW2760@shao2-debian>
+ <20200107134106.GD25547@quack2.suse.cz> <20200107165708.GA3619@mit.edu>
+ <20200107172824.GK25547@quack2.suse.cz>
+ <fde1ad11-c9b0-4393-a123-3f7625c819fa@intel.com>
+From:   Xing Zhengjun <zhengjun.xing@linux.intel.com>
+Message-ID: <7ec6b078-7b09-fb87-8ad2-a328e96c5bf9@linux.intel.com>
+Date:   Wed, 4 Mar 2020 16:15:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <fde1ad11-c9b0-4393-a123-3f7625c819fa@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 4, 2020 at 9:08 AM syzbot
-<syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15257ba1e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9833e26bab355358
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0c5c2dbf76930df91489
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+0c5c2dbf76930df91489@syzkaller.appspotmail.com
->
-> rcu: INFO: rcu_preempt self-detected stall on CPU
-> rcu:    0-....: (1 GPs behind) idle=576/1/0x4000000000000002 softirq=55718/56054 fqs=5235
->         (t=10500 jiffies g=63445 q=1523)
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 18804 Comm: syz-executor.4 Not tainted 5.6.0-rc3-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x197/0x210 lib/dump_stack.c:118
->  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
->  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
->  rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree_stall.h:254
->  print_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
->  check_cpu_stall kernel/rcu/tree_stall.h:549 [inline]
->  rcu_pending kernel/rcu/tree.c:3030 [inline]
->  rcu_sched_clock_irq.cold+0x51a/0xc37 kernel/rcu/tree.c:2276
->  update_process_times+0x2d/0x70 kernel/time/timer.c:1726
->  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:171
->  tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1314
->  __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
->  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1579
->  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1641
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1119 [inline]
->  smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1144
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
->  </IRQ>
-> RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x16/0x20 kernel/kcov.c:276
-> Code: 48 89 e5 48 8b 4d 08 e8 d8 fe ff ff 5d c3 66 0f 1f 44 00 00 55 89 f2 89 fe bf 05 00 00 00 48 89 e5 48 8b 4d 08 e8 ba fe ff ff <5d> c3 0f 1f 84 00 00 00 00 00 55 48 89 f2 48 89 fe bf 07 00 00 00
-> RSP: 0018:ffffc900053877d8 EFLAGS: 00000297 ORIG_RAX: ffffffffffffff13
-> RAX: 0000000000000002 RBX: 584279fc973b765a RCX: ffffffff83b71a81
-> RDX: 00000000ffffff75 RSI: 0000000000000000 RDI: 0000000000000005
-> RBP: ffffc900053877d8 R08: ffff888041a265c0 R09: 0000000000000092
-> R10: ffffed1015d0707b R11: ffff8880ae8383db R12: ffff88809eb56398
-> R13: 000000003ab2c4e4 R14: 1b0d4377a72d08f5 R15: 00000000ffffff75
->  mpihelp_submul_1+0x161/0x1a0 lib/mpi/generic_mpih-mul3.c:45
+Hi Matthew,
 
-+lib/mpi maintainers
+  We test it in v5.6-rc4, the issue still exist, do you have time to 
+take a look at this? Thanks.
 
-I wonder if this can also be triggered by remote actors (tls, wifi, usb, etc).
+On 1/8/2020 10:31 AM, Rong Chen wrote:
+> 
+> 
+> On 1/8/20 1:28 AM, Jan Kara wrote:
+>> On Tue 07-01-20 11:57:08, Theodore Y. Ts'o wrote:
+>>> On Tue, Jan 07, 2020 at 02:41:06PM +0100, Jan Kara wrote:
+>>>> Hello,
+>>>>
+>>>> On Tue 24-12-19 08:59:15, kernel test robot wrote:
+>>>>> FYI, we noticed a -20.2% regression of filebench.sum_bytes_mb/s due 
+>>>>> to commit:
+>>>>>
+>>>>>
+>>>>> commit: b1b4705d54abedfd69dcdf42779c521aa1e0fbd3 ("ext4: introduce 
+>>>>> direct I/O read using iomap infrastructure")
+>>>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>>>>>
+>>>>> in testcase: filebench
+>>>>> on test machine: 8 threads Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz 
+>>>>> with 8G memory
+>>>>> with following parameters:
+>>>>>
+>>>>>     disk: 1HDD
+>>>>>     fs: ext4
+>>>>>     test: fivestreamreaddirect.f
+>>>>>     cpufreq_governor: performance
+>>>>>     ucode: 0x27
+>>>> I was trying to reproduce this but I failed with my test VM. I had 
+>>>> SATA SSD
+>>>> as a backing store though so maybe that's what makes a difference. 
+>>>> Maybe
+>>>> the new code results in somewhat more seeks because the five threads 
+>>>> which
+>>>> compete in submitting sequential IO end up being more interleaved?
+>>> A "-20.2% regression" should be read as a "20.2% performance
+>>> improvement" is zero-day kernel speak.
+>> Are you sure? I can see:
+>>
+>>       58.30 ±  2%     -20.2%      46.53        filebench.sum_bytes_mb/s
+>>
+>> which implies to me previously the throughput was 58 MB/s and after the
+>> commit it was 46 MB/s?
+>>
+>> Anyway, in my testing that commit made no difference in that benchmark
+>> whasoever (getting around 97 MB/s for each thread before and after the
+>> commit).
+>>                                 Honza
+> 
+> We're sorry for the misunderstanding, "-20.2%" means the change of 
+> filebench.sum_bytes_mb/s,
+> "regression" means the explanation of this change from LKP.
+> 
+> Best Regards,
+> Rong Chen
+> _______________________________________________
+> LKP mailing list -- lkp@lists.01.org
+> To unsubscribe send an email to lkp-leave@lists.01.org
 
->  mpihelp_divrem+0x1ce/0x1360 lib/mpi/mpih-div.c:209
->  mpi_powm+0xffb/0x1d20 lib/mpi/mpi-pow.c:205
->  _compute_val crypto/dh.c:39 [inline]
->  dh_compute_value+0x373/0x610 crypto/dh.c:178
->  crypto_kpp_generate_public_key include/crypto/kpp.h:315 [inline]
->  __keyctl_dh_compute+0x9ae/0x1470 security/keys/dh.c:367
->  keyctl_dh_compute+0xcf/0x12d security/keys/dh.c:422
->  __do_sys_keyctl security/keys/keyctl.c:1818 [inline]
->  __se_sys_keyctl security/keys/keyctl.c:1714 [inline]
->  __x64_sys_keyctl+0x159/0x470 security/keys/keyctl.c:1714
->  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x45c479
-> Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f872a51fc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
-> RAX: ffffffffffffffda RBX: 00007f872a5206d4 RCX: 000000000045c479
-> RDX: 0000000020002700 RSI: 0000000020000400 RDI: 0000000000000017
-> RBP: 000000000076bfc0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00000000ffffff84 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 00000000000006fa R14: 00000000004c9883 R15: 000000000076bfcc
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000dd909105a002ebe6%40google.com.
+-- 
+Zhengjun Xing
