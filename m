@@ -2,276 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA3E81798D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4DBE1798E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbgCDTTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 14:19:14 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37655 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729028AbgCDTTH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:19:07 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q8so3874066wrm.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 11:19:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JH3iKdoX60vBDf5RPVZX6I6Dg2qntJTjRhn9rqqRbkU=;
-        b=HkgfDg34Y9S1r1aUYc2WzszZi+OHc7WMrHSZcuJ7UW0X9/KCI5F1lMKrYwIVuXVagU
-         6WA2SNU4O3Y7J4HukdiRqVubR4/J4mi3f7fwhSyhE+Bi/j8nhtqGvhSqgSovJKqCZCER
-         jAkauOChBh/Jd5NymJac7OCRGu5jOt6ftwkEQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JH3iKdoX60vBDf5RPVZX6I6Dg2qntJTjRhn9rqqRbkU=;
-        b=Z17flSQIIB5VqhLKQ1BAhbtuVIUe7QmenHgOdHpRjAbOMvXhmJbfziQBo+H8WKHXYJ
-         V0ogEAf7W1Nht73yZl7YrxXd6B5Ihn72pBgCLNvPHwjx9C5tBnfF5jCMrbl4+Mo1Hcd8
-         ptzpI2v2f269+VZ1EF1QPJZZi7haR/+oxnFCpZsBn9KefOmLdoih6LT1TzkEcTuwpE75
-         aIJBye5D7Lkh4qiu9t+rdrjl3kw+n3Gkt4LCGTsQoYrSOMFx9kMAjm8Rf6PAkF2m8zxg
-         IL7nBl0YrdLCQN4S11qCv7E+6wZhz6RFpIeN4oplG9RV39JCDR+5ON7ndKdn1H8Qg4TR
-         9v+Q==
-X-Gm-Message-State: ANhLgQ0nY3UGN81xi+QhlVdFHSWV3StyLwe+FKJfP9k1GVgE+wit8rm9
-        hLG20FvZmuuFAUejh1I62hgtmA==
-X-Google-Smtp-Source: ADFU+vvM081dkI4BPq5Ksk1QLSoPEztpVw/YEoRfNQzv8OHVRkGJG40z3kFrTEgE8ZQ79OVR7enZnA==
-X-Received: by 2002:adf:fd92:: with SMTP id d18mr5749973wrr.16.1583349545947;
-        Wed, 04 Mar 2020 11:19:05 -0800 (PST)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id w9sm2018556wrn.35.2020.03.04.11.19.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 11:19:05 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>
-Subject: [PATCH bpf-next v4 7/7] bpf: Add selftests for BPF_MODIFY_RETURN
-Date:   Wed,  4 Mar 2020 20:18:53 +0100
-Message-Id: <20200304191853.1529-8-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200304191853.1529-1-kpsingh@chromium.org>
-References: <20200304191853.1529-1-kpsingh@chromium.org>
+        id S2388003AbgCDTTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 14:19:41 -0500
+Received: from foss.arm.com ([217.140.110.172]:38686 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbgCDTTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 14:19:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 551651FB;
+        Wed,  4 Mar 2020 11:19:40 -0800 (PST)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B33803F6C4;
+        Wed,  4 Mar 2020 11:19:34 -0800 (PST)
+Subject: Re: 5.6-rc3: WARNING: CPU: 48 PID: 17435 at kernel/sched/fair.c:380
+ enqueue_task_fair+0x328/0x440
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <ace7327f-0fd6-4f36-39ae-a8d7d1c7f06b@de.ibm.com>
+ <afacbbd1-3d6b-c537-34e2-5b455e1c2267@de.ibm.com>
+ <CAKfTPtBikHzpHY-NdRJFfOFxx+S3=4Y0aPM5s0jpHs40+9BaGA@mail.gmail.com>
+ <b073a50e-4b86-56db-3fbd-6869b2716b34@de.ibm.com>
+ <1a607a98-f12a-77bd-2062-c3e599614331@de.ibm.com>
+ <CAKfTPtBZ2X8i6zMgrA1gNJmwoSnyRc76yXmLZEwboJmF-R9QVg@mail.gmail.com>
+ <b664f050-72d6-a483-be0a-8504f687f225@de.ibm.com>
+ <20200228163545.GA18662@vingu-book>
+ <be45b190-d96c-1893-3ef0-f574eb595256@de.ibm.com>
+ <49a2ebb7-c80b-9e2b-4482-7f9ff938417d@de.ibm.com>
+ <ad0f263a-6837-e793-5761-fda3264fd8ad@de.ibm.com>
+ <CAKfTPtCX4padfJm8aLrP9+b5KVgp-ff76=teu7MzMZJBYrc-7w@mail.gmail.com>
+ <CAKfTPtD9b6o=B6jkbWNjfAw9e1UjT9Z07vxdsVfikEQdeCtfPw@mail.gmail.com>
+ <2108173c-beaa-6b84-1bc3-8f575fb95954@de.ibm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <7be92e79-731b-220d-b187-d38bde80ad16@arm.com>
+Date:   Wed, 4 Mar 2020 20:19:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <2108173c-beaa-6b84-1bc3-8f575fb95954@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+Hi Christian,
 
-Test for two scenarios:
+On 04/03/2020 18:42, Christian Borntraeger wrote:
+> 
+> 
+> On 04.03.20 16:26, Vincent Guittot wrote:
+>> On Tue, 3 Mar 2020 at 08:55, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>>>
+>>> On Tue, 3 Mar 2020 at 08:37, Christian Borntraeger
+>>> <borntraeger@de.ibm.com> wrote:
+>>>>
+>>>>
+>>>>
+>> [...]
+>>>>>>> ---
+>>>>>>>  kernel/sched/fair.c | 2 +-
+>>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>>>>> index 3c8a379c357e..beb773c23e7d 100644
+>>>>>>> --- a/kernel/sched/fair.c
+>>>>>>> +++ b/kernel/sched/fair.c
+>>>>>>> @@ -4035,8 +4035,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>>>>>>>             __enqueue_entity(cfs_rq, se);
+>>>>>>>     se->on_rq = 1;
+>>>>>>>
+>>>>>>> +   list_add_leaf_cfs_rq(cfs_rq);
+>>>>>>>     if (cfs_rq->nr_running == 1) {
+>>>>>>> -           list_add_leaf_cfs_rq(cfs_rq);
+>>>>>>>             check_enqueue_throttle(cfs_rq);
+>>>>>>>     }
+>>>>>>>  }
+>>>>>>
+>>>>>> Now running for 3 hours. I have not seen the issue yet. I can tell tomorrow if this fixes
+>>>>>> the issue.
+>>>>>
+>>>>>
+>>>>> Still running fine. I can tell for sure tomorrow, but I have the impression that this makes the
+>>>>> WARN_ON go away.
+>>>>
+>>>> So I guess this change "fixed" the issue. If you want me to test additional patches, let me know.
+>>>
+>>> Thanks for the test. For now, I don't have any other patch to test. I
+>>> have to look more deeply how the situation happens.
+>>> I will let you know if I have other patch to test
+>>
+>> So I haven't been able to figure out how we reach this situation yet.
+>> In the meantime I'm going to make a clean patch with the fix above.
+>>
+>> Is it ok if I add a reported -by and a tested-by you ?
+> 
+> Sure-
+> I just realized that this system has something special. Some month ago I created 2 slices
+> $ head /etc/systemd/system/*.slice
+> ==> /etc/systemd/system/machine-production.slice <==
+> [Unit]
+> Description=VM production
+> Before=slices.target
+> Wants=machine.slice
+> [Slice]
+> CPUQuota=2000%
+> CPUWeight=1000
+> 
+> ==> /etc/systemd/system/machine-test.slice <==
+> [Unit]
+> Description=VM production
+> Before=slices.target
+> Wants=machine.slice
+> [Slice]
+> CPUQuota=300%
+> CPUWeight=100
+> 
+> 
+> And the guests are then put into these slices. that also means that this test will never use more than the 2300%.
+> No matter how much CPUs the system has.
 
-  * When the fmod_ret program returns 0, the original function should
-    be called along with fentry and fexit programs.
-  * When the fmod_ret program returns a non-zero value, the original
-    function should not be called, no side effect should be observed and
-    fentry and fexit programs should be called.
+If you could run this debug patch on top of your un-patched kernel, it would tell us which task (in the enqueue case)
+and which taskgroup is causing that.
 
-The result from the kernel function call and whether a side-effect is
-observed is returned via the retval attr of the BPF_PROG_TEST_RUN (bpf)
-syscall.
+You could then further dump the appropriate taskgroup directory under the cpu cgroup mountpoint
+(to see e.g. the CFS bandwidth data). 
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Acked-by: Andrii Nakryiko <andriin@fb.com>
+I expect more than one hit since assert_list_leaf_cfs_rq() uses SCHED_WARN_ON, hence WARN_ONCE.
+
+--8<--
+From b709758f476ee4cfc260eceedc45ebcc50d93074 Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Sat, 29 Feb 2020 11:07:05 +0000
+Subject: [PATCH] test: rq->tmp_alone_branch != &rq->leaf_cfs_rq_list
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
- net/bpf/test_run.c                            | 22 ++++++-
- .../selftests/bpf/prog_tests/modify_return.c  | 65 +++++++++++++++++++
- .../selftests/bpf/progs/modify_return.c       | 49 ++++++++++++++
- 3 files changed, 135 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/modify_return.c
- create mode 100644 tools/testing/selftests/bpf/progs/modify_return.c
+ kernel/sched/fair.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 3600f098e7c6..4c921f5154e0 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -10,6 +10,7 @@
- #include <net/bpf_sk_storage.h>
- #include <net/sock.h>
- #include <net/tcp.h>
-+#include <linux/error-injection.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/bpf_test_run.h>
-@@ -143,6 +144,14 @@ int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
- 	return a + (long)b + c + d + (long)e + f;
- }
- 
-+int noinline bpf_modify_return_test(int a, int *b)
-+{
-+	*b += 1;
-+	return a + *b;
-+}
-+
-+ALLOW_ERROR_INJECTION(bpf_modify_return_test, ERRNO);
-+
- static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
- 			   u32 headroom, u32 tailroom)
- {
-@@ -168,7 +177,9 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
- 			      const union bpf_attr *kattr,
- 			      union bpf_attr __user *uattr)
- {
--	int err = -EFAULT;
-+	u16 side_effect = 0, ret = 0;
-+	int b = 2, err = -EFAULT;
-+	u32 retval = 0;
- 
- 	switch (prog->expected_attach_type) {
- 	case BPF_TRACE_FENTRY:
-@@ -181,10 +192,19 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
- 		    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111)
- 			goto out;
- 		break;
-+	case BPF_MODIFY_RETURN:
-+		ret = bpf_modify_return_test(1, &b);
-+		if (b != 2)
-+			side_effect = 1;
-+		break;
- 	default:
- 		goto out;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3c8a379c357e..69fc30db7440 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4619,6 +4619,15 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 			break;
  	}
  
-+	retval = ((u32)side_effect << 16) | ret;
-+	if (copy_to_user(&uattr->test.retval, &retval, sizeof(retval)))
-+		goto out;
++	if (rq->tmp_alone_branch != &rq->leaf_cfs_rq_list) {
++		char path[64];
 +
- 	err = 0;
- out:
- 	trace_bpf_test_finish(&err);
-diff --git a/tools/testing/selftests/bpf/prog_tests/modify_return.c b/tools/testing/selftests/bpf/prog_tests/modify_return.c
-new file mode 100644
-index 000000000000..97fec70c600b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/modify_return.c
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: GPL-2.0
++		sched_trace_cfs_rq_path(cfs_rq, path, 64);
 +
-+/*
-+ * Copyright 2020 Google LLC.
-+ */
++		printk("CPU%d path=%s on_list=%d nr_running=%d\n",
++		       cpu_of(rq), path, cfs_rq->on_list, cfs_rq->nr_running);
++	}
 +
-+#include <test_progs.h>
-+#include "modify_return.skel.h"
+ 	assert_list_leaf_cfs_rq(rq);
+ 
+ 	if (!se)
+@@ -5320,6 +5329,18 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		}
+ 	}
+ 
++	if (rq->tmp_alone_branch != &rq->leaf_cfs_rq_list) {
++		char path[64];
 +
-+#define LOWER(x) ((x) & 0xffff)
-+#define UPPER(x) ((x) >> 16)
++		cfs_rq = cfs_rq_of(&p->se);
 +
++		sched_trace_cfs_rq_path(cfs_rq, path, 64);
 +
-+static void run_test(__u32 input_retval, __u16 want_side_effect, __s16 want_ret)
-+{
-+	struct modify_return *skel = NULL;
-+	int err, prog_fd;
-+	__u32 duration = 0, retval;
-+	__u16 side_effect;
-+	__s16 ret;
++		printk("CPU%d path=%s on_list=%d nr_running=%d p=[%s %d]\n",
++		       cpu_of(rq), path, cfs_rq->on_list, cfs_rq->nr_running,
++		       p->comm, p->pid);
++	}
 +
-+	skel = modify_return__open_and_load();
-+	if (CHECK(!skel, "skel_load", "modify_return skeleton failed\n"))
-+		goto cleanup;
-+
-+	err = modify_return__attach(skel);
-+	if (CHECK(err, "modify_return", "attach failed: %d\n", err))
-+		goto cleanup;
-+
-+	skel->bss->input_retval = input_retval;
-+	prog_fd = bpf_program__fd(skel->progs.fmod_ret_test);
-+	err = bpf_prog_test_run(prog_fd, 1, NULL, 0, NULL, 0,
-+				&retval, &duration);
-+
-+	CHECK(err, "test_run", "err %d errno %d\n", err, errno);
-+
-+	side_effect = UPPER(retval);
-+	ret  = LOWER(retval);
-+
-+	CHECK(ret != want_ret, "test_run",
-+	      "unexpected ret: %d, expected: %d\n", ret, want_ret);
-+	CHECK(side_effect != want_side_effect, "modify_return",
-+	      "unexpected side_effect: %d\n", side_effect);
-+
-+	CHECK(skel->bss->fentry_result != 1, "modify_return",
-+	      "fentry failed\n");
-+	CHECK(skel->bss->fexit_result != 1, "modify_return",
-+	      "fexit failed\n");
-+	CHECK(skel->bss->fmod_ret_result != 1, "modify_return",
-+	      "fmod_ret failed\n");
-+
-+cleanup:
-+	modify_return__destroy(skel);
-+}
-+
-+void test_modify_return(void)
-+{
-+	run_test(0 /* input_retval */,
-+		 1 /* want_side_effect */,
-+		 4 /* want_ret */);
-+	run_test(-EINVAL /* input_retval */,
-+		 0 /* want_side_effect */,
-+		 -EINVAL /* want_ret */);
-+}
-+
-diff --git a/tools/testing/selftests/bpf/progs/modify_return.c b/tools/testing/selftests/bpf/progs/modify_return.c
-new file mode 100644
-index 000000000000..8b7466a15c6b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/modify_return.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2020 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+static int sequence = 0;
-+__s32 input_retval = 0;
-+
-+__u64 fentry_result = 0;
-+SEC("fentry/bpf_modify_return_test")
-+int BPF_PROG(fentry_test, int a, __u64 b)
-+{
-+	sequence++;
-+	fentry_result = (sequence == 1);
-+	return 0;
-+}
-+
-+__u64 fmod_ret_result = 0;
-+SEC("fmod_ret/bpf_modify_return_test")
-+int BPF_PROG(fmod_ret_test, int a, int *b, int ret)
-+{
-+	sequence++;
-+	/* This is the first fmod_ret program, the ret passed should be 0 */
-+	fmod_ret_result = (sequence == 2 && ret == 0);
-+	return input_retval;
-+}
-+
-+__u64 fexit_result = 0;
-+SEC("fexit/bpf_modify_return_test")
-+int BPF_PROG(fexit_test, int a, __u64 b, int ret)
-+{
-+	sequence++;
-+	/* If the input_reval is non-zero a successful modification should have
-+	 * occurred.
-+	 */
-+	if (input_retval)
-+		fexit_result = (sequence == 3 && ret == input_retval);
-+	else
-+		fexit_result = (sequence == 3 && ret == 4);
-+
-+	return 0;
-+}
+ 	assert_list_leaf_cfs_rq(rq);
+ 
+ 	hrtick_update(rq);
 -- 
-2.20.1
-
+2.17.1
