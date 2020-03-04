@@ -2,149 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1731179A15
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 21:37:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2BA71799D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 21:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbgCDUgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 15:36:10 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:57500 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728539AbgCDUgJ (ORCPT
+        id S2388003AbgCDUae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 15:30:34 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42521 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbgCDUad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 15:36:09 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 024KZfwq023776;
-        Wed, 4 Mar 2020 12:36:04 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type :
- content-transfer-encoding : in-reply-to : mime-version; s=facebook;
- bh=sE4WwHlECRV1KTII489CwIOd3n05CETzPAm9swS5rqA=;
- b=iCO4+46pRu0bAudOsw25nGkvA1ETSNhb/YKRz8b6apyW4Q5pnGspUfGHGVQtD1T4ZJ4Y
- dBUCGzNiCTjJ5mZKpD82dUqdt6Amvtku+iHR4R8xyE55IlnR+NPEQhqv3GhmPEHHm1jF
- QxVCrkwLt9xRNrfl914NpaVsrvuDIGQNrIM= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2yjk74r2xf-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 04 Mar 2020 12:36:04 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 4 Mar 2020 12:36:02 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GkCtkAVfyBfWwlEDYH4tHmME1hFVNcLBRDnam+WmmLmKxJ29GWnwbbxzNjxPotRLSx9V+XXzLccWBnpvnG0zbUEuCqI7vOY9tZVWoKk1vubr+R97doStHRr6tn9MLTE7/UZ5E5q1v9JIRSnsFNy11K65zdTVK+C4laO/R3Ttic5cvNlOnEFA/0vU/+rXkoVI0Dlgsy7h4SRi03FqRkt/dLyfReVj0oyV7yIYzj4wj/iytSBilEuw2HgWdOsgGyrubieizTBHtrIZjkPkeqoowfL4GZQ8lh2C4JXtVgF+nmxflqAiXmLzuLZozwor7PFyWZtFIv/o2y/3ddd/pH3HQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sE4WwHlECRV1KTII489CwIOd3n05CETzPAm9swS5rqA=;
- b=exOiaK+OMQ0sD3YWi3W90Z1P1w96o6pK3ZTtA2Lu4Jcb0xIs5CwoT5IiLhsrTPrHiB+Tm3VGlCEntcqdnmcejNYA3Ze/JpY2+nq7jB+48fLysGi/z3vO+y7Ick5XJdgMda2AA0UOotMFAI8OgwiX51yu4H3sdSiVNej+YdO56B4v2qvVihcauj4VG/X9pVASAkwN6Lo8OD9BUJU9wxkMu6pj+IjJuK+ZaXk9/mZ43mzukT0z2LTERzydY8P8q37UjlBR2ylZl5hVeYjgxYCggwhbxN8q8wG/PnfC7J9Wjej1/LGXMEhW35yIaxUIg6gyU+/KKa4xnN8zeP6XJsZVwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sE4WwHlECRV1KTII489CwIOd3n05CETzPAm9swS5rqA=;
- b=lDn1MlHIePJlNQAQAx3U8tcek7QzxcK/GDVo6Mfw6ptVhdEm4ll9FUIQM52qZq7p+f2X6HNn+bi+IZnwfAtdf3xogNn0O/KD+Oaa7wX2D0Q9jiQshcMeEofCcCN86vl9knBadjbfKTDDHZRDvZJhOGYG2CWP3JGBcs9XGqv0k0A=
-Received: from MWHPR15MB1661.namprd15.prod.outlook.com (2603:10b6:300:124::23)
- by MWHPR15MB1901.namprd15.prod.outlook.com (2603:10b6:301:56::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Wed, 4 Mar
- 2020 20:20:03 +0000
-Received: from MWHPR15MB1661.namprd15.prod.outlook.com
- ([fe80::90a5:3eb0:b2a8:dc5e]) by MWHPR15MB1661.namprd15.prod.outlook.com
- ([fe80::90a5:3eb0:b2a8:dc5e%11]) with mapi id 15.20.2772.019; Wed, 4 Mar 2020
- 20:20:03 +0000
-Date:   Wed, 4 Mar 2020 12:19:59 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Chris Mason <clm@fb.com>
-CC:     Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH] btrfs: implement migratepage callback
-Message-ID: <20200304201959.GA800002@carbon.DHCP.thefacebook.com>
-References: <20200304195002.3854765-1-guro@fb.com>
- <EE31DE08-36D3-4A5F-910D-9264FF973C30@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <EE31DE08-36D3-4A5F-910D-9264FF973C30@fb.com>
-X-ClientProxiedBy: MWHPR13CA0008.namprd13.prod.outlook.com
- (2603:10b6:300:16::18) To MWHPR15MB1661.namprd15.prod.outlook.com
- (2603:10b6:300:124::23)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:f3aa) by MWHPR13CA0008.namprd13.prod.outlook.com (2603:10b6:300:16::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.9 via Frontend Transport; Wed, 4 Mar 2020 20:20:02 +0000
-X-Originating-IP: [2620:10d:c090:400::5:f3aa]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 89993d88-ef44-484f-33b8-08d7c0796c16
-X-MS-TrafficTypeDiagnostic: MWHPR15MB1901:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MWHPR15MB19012CBC1978482065C1163EBEE50@MWHPR15MB1901.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 0332AACBC3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(199004)(189003)(2906002)(1076003)(9686003)(16526019)(186003)(55016002)(498600001)(33656002)(86362001)(8936002)(66946007)(54906003)(6666004)(7696005)(53546011)(6506007)(66476007)(81156014)(8676002)(52116002)(5660300002)(81166006)(66556008)(6862004)(6636002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1901;H:MWHPR15MB1661.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: d8no7Mvdv56eYArfk22Scr5hq3XyMXCEKAKL9d2Rens6Gn7JgGUh6DXyz1BzaXBqITazJXyLAl+IoqwIBvHPdE4mPursl45el6wv0XFAaePW+Eren7Yxv760y1zf3ga/wHMMqZfqQ7KR8Aqf/iuBvEGUxh4rAP9gU71lUHKvdM+9beXCHtglhaY8uofjXHhzqhVlDQbfYrr/2Bpx/oHHOSLFgSj0y6aw4F+Z09tpVeGo0I+eEy2sCQS5hRPmNbRAir136BR0Q4w7XBjtU64fgAhMWFuBzD+VfNRIkFlykuOHrVawLTU6xRdFA86hBHbYqRJ7Z4Dm5JNv2OwDIf4Y96Vj62Xqjr8rwLruZNkn3dXLG+gDag8cdWSIPt+686QUkiiYuUtvgSqbCryhl1X0rKvskzTVOJMwIgp8Pis2bj0g5onR01fussEeDaH4BJ9m
-X-MS-Exchange-AntiSpam-MessageData: 5P/H+yv5By6o5selQJcylPwTigy0p1FS1XO2VpXH3sGGPDagmcHvhM+4qDUcVtkP40Jdc9s2B5RGXbJWJp3UvpON9aQpAE0mrYS3iJ00zSVvlLZHXhlSRv2tQP64LcftKY9MOMInoTxPfRwnagHwxAY/uzsLTeIeB/ui6qSra3i4rMifONda6jM/XQ6SBjEa
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89993d88-ef44-484f-33b8-08d7c0796c16
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2020 20:20:03.5023
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mAHTzm09Syy0GW3nhkcn8ZV/WbtjU6Tl+nXEaGbDJwscLqzcCBgcdoZ/3OCGMurY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1901
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-04_08:2020-03-04,2020-03-04 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 malwarescore=0 adultscore=0
- bulkscore=0 spamscore=0 mlxlogscore=608 mlxscore=0 suspectscore=1
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003040134
-X-FB-Internal: deliver
+        Wed, 4 Mar 2020 15:30:33 -0500
+Received: by mail-pg1-f194.google.com with SMTP id h8so1526340pgs.9;
+        Wed, 04 Mar 2020 12:30:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=NY5izrCaTjPPMM0nMljJM70P0c5WnZWBbXOSJziAbQI=;
+        b=dYC62F7ks46pS4Q68zNNsItNhXrU184Sts4g63KBpd9Q3R6NQV123wl1oxCHiQ7Jti
+         p1o0QgBv9g21NRNuC3VGkKEQL7hvbwZKVZFH2Pe/ri5oqI4silP8nX8UDgMlY2JNrC0R
+         HQ/6FhGqfyxlI/4LtgDBsW9sh3X2g5XQa6LXm6NrgjQS3WsbHcnM2iQY6gKOl73FQRxK
+         5yZ7/LfRh4L3OhrCZ4w4ysIvEjk74C9jUW1Ug0O+z/T7LXpzp958PMS/j2nbUlZxABq8
+         pCw+CHC7lS4pcj7DyL9uC23oeiS7Pr3rP2daBsOHxEXlZrFE46uTuZzhfTa1LC9wdQQ6
+         k9nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=NY5izrCaTjPPMM0nMljJM70P0c5WnZWBbXOSJziAbQI=;
+        b=IdIQ3mYlUOgkiRBac8bD7UwWrpIeNtgrpWhnPelWRElUHQpdHRkrUAi0iYMUrwSFrR
+         5jFsxGoF39j9h/qakt0C10fYpSCYdz+rBw7zfBpSmDRnMOHmsVFLM/NL7Uc3kR+HIy7d
+         RhB0QMS5QlZZAJDv4yN+BAuxFqlsecvo1S7esgyZjwEE3HRPGAicXzPY4XOC3ACXAWOo
+         fsUh7AO5Ayg+ZvvO0rK/NDtxsBdu0wVtUPHV452yPlmrEZWyLVic20jXbEq4bWdEomMJ
+         Q/HJI7TClliDlvXldj0ZQ/NvxX5l/j2VrFUzfWEcOz524dScICi+w7RC+fbqm5IdoT/x
+         74Kg==
+X-Gm-Message-State: ANhLgQ2dhc2XKwxVYzSdCQcxVk5NchzHgnZ3iGY6XtQqEBDosCiNjIZx
+        T6K0b5JMSu7tFuwd9O0kR2w=
+X-Google-Smtp-Source: ADFU+vtDiLzB5A+RDGdcwREuzbLcYTrDkbng/6a82Zf9JBW6Two8xHW5WgrddP17z/IaL8xRqbhuWw==
+X-Received: by 2002:a62:a518:: with SMTP id v24mr4543065pfm.77.1583353832440;
+        Wed, 04 Mar 2020 12:30:32 -0800 (PST)
+Received: from [10.2.129.203] ([66.170.99.2])
+        by smtp.gmail.com with ESMTPSA id e189sm24524247pfa.139.2020.03.04.12.30.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Mar 2020 12:30:31 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [PATCH] KVM: X86: Avoid explictly fetch instruction in
+ x86_decode_insn()
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <ad023c34-9a08-7d61-22de-911c4e8760ba@redhat.com>
+Date:   Wed, 4 Mar 2020 12:30:30 -0800
+Cc:     Peter Xu <peterx@redhat.com>, linmiaohe <linmiaohe@huawei.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <13E8DCB7-D977-49AD-B63F-8BF4B06B096E@gmail.com>
+References: <05ca4e7e070844dd92e4f673a1bc15d9@huawei.com>
+ <20200304153253.GB7146@xz-x1>
+ <ad023c34-9a08-7d61-22de-911c4e8760ba@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 02:53:21PM -0500, Chris Mason wrote:
-> 
-> 
-> On 4 Mar 2020, at 14:50, Roman Gushchin wrote:
-> 
-> > Currently btrfs doesn't provide a migratepage callback. It means that
-> > fallback_migrate_page()	is used to migrate btrfs pages.
-> > 
-> > fallback_migrate_page() cannot move dirty pages, instead it tries to
-> > flush them (in sync mode) or just fails (in async mode).
-> > 
-> > In the sync mode pages which are scheduled to be processed by
-> > btrfs_writepage_fixup_worker() can't be effectively flushed by the
-> > migration code, because there is no established way to wait for the
-> > completion of the delayed work.
-> > 
-> > It all leads to page migration failures.
-> > 
-> > To fix it the patch implements a btrs-specific migratepage callback,
-> > which is similar to iomap_migrate_page() used by some other fs, except
-> > it does take care of the PagePrivate2 flag which is used for data
-> > ordering purposes.
-> 
-> Since the default migratepage didn’t copy PagePrivate2, didn’t you find it
-> was also causing pages to get funneled into the fixup worker flow?
+> On Mar 4, 2020, at 10:19 AM, Paolo Bonzini <pbonzini@redhat.com> =
+wrote:
+>=20
+> On 04/03/20 16:32, Peter Xu wrote:
+>>> Looks good, thanks. But it seems we should also take care of the =
+comment in __do_insn_fetch_bytes(), as we do not
+>>> load instruction at the beginning of x86_decode_insn() now, which =
+may be misleading:
+>>> 		/*
+>>>         * One instruction can only straddle two pages,
+>>>         * and one has been loaded at the beginning of
+>>>         * x86_decode_insn.  So, if not enough bytes
+>>>         * still, we must have hit the 15-byte boundary.
+>>>         */
+>>>        if (unlikely(size < op_size))
+>>>                return emulate_gp(ctxt, 0);
+>> Right, thanks for spotting that (even if the patch to be dropped :).
+>>=20
+>> I guess not only the comment, but the check might even fail if we
+>> apply the patch. Because when the fetch is the 1st attempt and
+>> unluckily that acrosses one page boundary (because we'll only fetch
+>> until either 15 bytes or the page boundary), so that single fetch
+>> could be smaller than op_size provided.
+>=20
+> Right, priming the decode cache with one byte from the current page
+> cannot fail, and then we know that the next call must be at the
+> beginning of the next page.
 
-A good question.
+IIRC I encountered (and fixed) a similar KVM bug in the past. It is a =
+shame
+I never wrote a unit test (and I don=E2=80=99t have time now), but it =
+would be nice
+to have one.
 
-I've definitely seen a lot of fixup worker activity.
-
-On the other hand the default (fallback) migration path is flushing
-the page first (if dirty), so it should not move dirty pages.
-If PagePrivate2 can outlive PageDirty, then the answer is yes.
-
-Thanks!
