@@ -2,105 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A074C179733
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:52:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB0D17973F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbgCDRwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:52:00 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:51506 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730022AbgCDRv5 (ORCPT
+        id S1730032AbgCDRxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:53:47 -0500
+Received: from mail-il1-f169.google.com ([209.85.166.169]:41720 "EHLO
+        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729749AbgCDRxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:51:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583344316;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=IJXI3OyHBMNvDSp9XDQtawbxBSkKafXuFCrtPHquIJw=;
-        b=akvkN1fHlnK7OgqWCEJIp1VwCHIjSu5Rdeb+ujQEUW4IL8h/UtVnARklOIF8mAqgazOeXo
-        01KoownD91HYeEdBJDBT2TQF+qu+tgb9L48+BWV5niFwc+K/Xyl0YZaer0V9R49b8m/QQ4
-        EjiyiAqaYfJ3Ew4HLTGjRinHzf9FJ6w=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-186-r1zKoanaMqmksrBt1GmGlA-1; Wed, 04 Mar 2020 12:51:55 -0500
-X-MC-Unique: r1zKoanaMqmksrBt1GmGlA-1
-Received: by mail-qt1-f199.google.com with SMTP id s5so1986392qtn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:51:55 -0800 (PST)
+        Wed, 4 Mar 2020 12:53:45 -0500
+Received: by mail-il1-f169.google.com with SMTP id q13so2564293ile.8;
+        Wed, 04 Mar 2020 09:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e2CTmEA524fnfnIjgrSUvig7hPGvXP3F6DwJJOx39LI=;
+        b=b4vLwWcBSQXoiv6P8h/9NTqnrSaaKGKKSUSlQrjuIYE3ksV8RhUyWlmIn36T8haYV1
+         ujkMaWlZGJlstIt1iyiLp2XkLO6kOIm3vLs0PWcEXCjxskD8Eo5lmCfWs0KAb/11UkMf
+         y7lRWBza6jh0/w67GDG4MfC327lyS79ML3TzVxQyDnTf2L+hZvLvtEjctkY52PDq/RTv
+         jLi+UJUoIfJ9OCePABvaDJZiqRTE4yPB8Q/sX67aX35RxjUk+fvDYrLAlPtffDwO4ZYn
+         ioUPtv+vawQQZmFc8AdyhG/lFWjyr3RGbJt7B3X3VBD4cFUUGO/3QkQ1Doj3+IcG+RVY
+         lzDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IJXI3OyHBMNvDSp9XDQtawbxBSkKafXuFCrtPHquIJw=;
-        b=ioA/g/AbKQlnoL8xKwUsIPwFZfCWEsolqX4c2MORoqMoSFYLYA8kjSJw88qHZgGTZ+
-         cyCWdWK6jE7kAHM3QOkPM86aLT7R8OatqURmwy0aL3uEsyC7GE8joTNq6rOd4vjWlNGp
-         7rhkWKEOF+4jNWNlmWvHk/NfFehcNNNPApaZEQo7KbZj0ltD13mJ9YgtX1lkDQe9DA7r
-         My3fAqo/anGJ1avTMxTzOnwNB/nEqRNQaiqHhhdW5czwuNxd32Wgi7w50XM40pRg1c2w
-         e+dyUdcIwHGQcAD03F3NAf4Zh4gXU0x3Rk57DtMTObCTsIWyxwZd3yK1qs3/rJeb+CAN
-         wSoA==
-X-Gm-Message-State: ANhLgQ3gYcP0+UgrjWkSneqM2Hq4N40P6idm45uWPFzpPIdFhs3R9pxM
-        AFs3NAch3Pc2dC3Ive8g4VoXDWJdK7ilhmJKy5rpntOVuqCrd6zZL8drKp3YaPvManG+NL0taj6
-        BGulyN46+NBEDpIHaeokvMZAa
-X-Received: by 2002:ac8:5190:: with SMTP id c16mr3490702qtn.200.1583344314481;
-        Wed, 04 Mar 2020 09:51:54 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vtWEE5pJUAb30CAlOc0HdE+PUBn4KyN4CpVzLvvvPRbZcbJ8+PWR7QVW9jUIxp3W8cZRXvkfA==
-X-Received: by 2002:ac8:5190:: with SMTP id c16mr3490689qtn.200.1583344314257;
-        Wed, 04 Mar 2020 09:51:54 -0800 (PST)
-Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id o4sm14008251qki.26.2020.03.04.09.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:51:53 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     peterx@redhat.com, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH] KVM: Drop gfn_to_pfn_atomic()
-Date:   Wed,  4 Mar 2020 12:51:52 -0500
-Message-Id: <20200304175152.70471-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e2CTmEA524fnfnIjgrSUvig7hPGvXP3F6DwJJOx39LI=;
+        b=jbUMh8udfkPL2hmt0UaeYpM+1hEZOsqsNn7iYs7hyGospybiSWJkKNEVLSEWXpH+5r
+         2euQRfFRBUQP8VB/IIuizyqMTdK08nQeZ584xny6tnlel6ExzgelEr/hP0lVNFYlLQOk
+         cjmosNB6e5yzX4DfvWYfwwTzWv+Z3Tir05qLDYK8ED6wyo+pM+HLKAeAs1ghR3sGs7Kh
+         +Wp/QQunXxhTvp7k2WAEpXgCibh2urhp+besy5CKPxTxhFN7ICQ2tdsvp1WbTD7SRi1I
+         vDi+RhkulVjvwDycXBK444rmJ6sOPh/D1h+xe0n+xVQNkkjiZ/SP0wuyvrL3pAwmKE9s
+         wvFA==
+X-Gm-Message-State: ANhLgQ0MmgJCnQi50IYt5oHIKDTgY5AMaHett4SZ9JX4/gOsSksySiaK
+        MdQf06ol+ce2yyuMXW9oNiULbqAeTAWypodoscA=
+X-Google-Smtp-Source: ADFU+vsBrHpXk15htEhvGqXBvj6J95qHvJwp3T2Xq2b0NCaHDpAkmt2tXm3mV3JSmzToPkbpwxRA03OaJtQhF5VwZWw=
+X-Received: by 2002:a92:3a55:: with SMTP id h82mr3860438ila.75.1583344424195;
+ Wed, 04 Mar 2020 09:53:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200301212019.2248-1-linux.amoon@gmail.com> <20200304081151.GA17560@pi3>
+In-Reply-To: <20200304081151.GA17560@pi3>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Wed, 4 Mar 2020 23:23:33 +0530
+Message-ID: <CANAwSgS11Bo=KhbspY1w=8qpSjjN8ed81s71zBB9AGczBe=wTA@mail.gmail.com>
+Subject: Re: [PATCHv2 0/3] Add support for suspend clk for Exynos5422 SoC
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's never used anywhere now.
+Hi Krzysztof,
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- include/linux/kvm_host.h | 1 -
- virt/kvm/kvm_main.c      | 6 ------
- 2 files changed, 7 deletions(-)
+On Wed, 4 Mar 2020 at 13:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Sun, Mar 01, 2020 at 09:20:15PM +0000, Anand Moon wrote:
+> > Seried build and tested on linux next-20200228.
+> >
+> > This patch series tries to enable suspend clk using
+> > exynos dwc3 driver, for this I have added new
+> > compatible string "samsung,exynos5420-dwusb3"
+> > so that we could add new suspend clk in addition
+> > to the core clk. exynos dwc3 driver will help
+> > enable/disable these clk.
+>
+> That's not entirely correct. You enable there SCLK which is a "special
+> clock", not a "suspend clock". You use word "suspend: in multiple places
+> in commits making an impression that it is about some suspend clock...
+> no, there is no suspend clock.
+>
+Ok
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index bcb9b2ac0791..3faa062ea108 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -704,7 +704,6 @@ void kvm_release_page_clean(struct page *page);
- void kvm_release_page_dirty(struct page *page);
- void kvm_set_page_accessed(struct page *page);
- 
--kvm_pfn_t gfn_to_pfn_atomic(struct kvm *kvm, gfn_t gfn);
- kvm_pfn_t gfn_to_pfn(struct kvm *kvm, gfn_t gfn);
- kvm_pfn_t gfn_to_pfn_prot(struct kvm *kvm, gfn_t gfn, bool write_fault,
- 		      bool *writable);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 70f03ce0e5c1..d29718c7017c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1754,12 +1754,6 @@ kvm_pfn_t gfn_to_pfn_memslot_atomic(struct kvm_memory_slot *slot, gfn_t gfn)
- }
- EXPORT_SYMBOL_GPL(gfn_to_pfn_memslot_atomic);
- 
--kvm_pfn_t gfn_to_pfn_atomic(struct kvm *kvm, gfn_t gfn)
--{
--	return gfn_to_pfn_memslot_atomic(gfn_to_memslot(kvm, gfn), gfn);
--}
--EXPORT_SYMBOL_GPL(gfn_to_pfn_atomic);
--
- kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn)
- {
- 	return gfn_to_pfn_memslot_atomic(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn);
--- 
-2.24.1
+> There is however a clock which driver calls suspend_clk (but it is just
+> some name) and it is being enabled for entire lifetime of device (so
+> also during suspend). AFAIU, this is not needed for Exynos5422 but I am
+> not sure. So please convince me...
+>
 
+Yep you are absolutely correct. Yes all the CLK_SLK* are call special clk's
+
+Earlier I had share the FSYS clk diagram for Exynos5422
+[0] https://imgur.com/gallery/zAiBoyh
+from the diagram I mapped the naming terminology.
+
+CLKMUX_USBDRD300 --->CLKDIV_USBDRD300 ---> SCLK_USBDRD300 (48 MHz)
+---> USBDRD30_0 (SUSPEND_CLK)
+                                   |
+                                   |--->CLKDIV_USBPHY300--->
+SCLK_USBPHY300 (48 MHZ) ---> USBDRD30_PHY_0 (USB30_SCLK_100M |
+USB20_PICO_CLKCORE)
+
+CLKMUX_USBDRD301 --->CLKDIV_USBDRD301 ---> SCLK_USBDRD301 (48 MHz)
+---> USBDRD30_1 (SUSPEND_CLK)
+                                   |
+                                   |--->CLKDIV_USBPHY301--->
+SCLK_USBPHY301 (48 MHZ) ---> USBDRD30_PHY_1 (USB30_SCLK_100M)
+
+SCLK_USBDRD300      USBDRD30_0             operating clock to 24 MHz
+SCLK_USBDRD301      USBDRD30_PHY_0    operating clock to 24 MHz
+SCLK_USBPHY300      USBPHY30_0             operating clock to 24 MHz
+SCLK_USBPHY301      USBDRD30_PHY_1    operating clock to 24 Mhz
+
+> However I have still the same questions:
+> 1. What problem are you trying to solve here?
+> 2. Why this is needed?
+
+I am trying to get the USB clk to get enabled for FSYS power domain
+to working efficiently.
+
+> 3. What is fixed with this patch?
+
+Currently locally I tried to enable the FSYS power domain for USB 3.0 / USB 2.0.
+but it's not working as expected, need future study.
+
+*Note:* For now plz discard these patches.
+When I get the FSYS power domain to work correctly.
+I will link with those patch which will be better for testing.
+
+-Anand
+
+>
+> Best regards,
+> Krzysztof
+>
