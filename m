@@ -2,88 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBC5178FA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:37:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C5C178FA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387897AbgCDLh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60042 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729261AbgCDLh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:37:27 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2311920870;
-        Wed,  4 Mar 2020 11:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583321847;
-        bh=EnJ48mBqSJNuN4pur5d9rPaOtktt8Bg5LJqlLCktZOo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SwU1LASd5/2lSKALZC7pvGkWl05Sb1JkPB43thx8zoYj9QZX7F8y2aY0ETGeuF6gi
-         nPzVe6rAksGD/PZ5WXe5/JHK9hSXxEi5A6aFfRfFBx4PxPqJHVFJhFyktiREXlnPBp
-         PuZldeM963PVB6sDwEMgnE3NzwiF8xVWx7E2hSLA=
-Date:   Wed, 4 Mar 2020 20:37:22 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH v4] Documentation: bootconfig: Update boot configuration
- documentation
-Message-Id: <20200304203722.8e8699c2a3e0a979aae091b1@kernel.org>
-In-Reply-To: <ad1e9855-4c64-53bd-7da5-f7cdafe78571@infradead.org>
-References: <158322634266.31847.8245359938993378502.stgit@devnote2>
-        <158322635301.31847.15011454479023637649.stgit@devnote2>
-        <ad1e9855-4c64-53bd-7da5-f7cdafe78571@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2387919AbgCDLi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:38:28 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36845 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729232AbgCDLi2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 06:38:28 -0500
+Received: by mail-lj1-f195.google.com with SMTP id 195so1634679ljf.3;
+        Wed, 04 Mar 2020 03:38:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ij3G+PRAMng8mle7qC0u8RzdsZ5G5T3N3JUhXF+5wl4=;
+        b=ge3+vVzZWvDrEQHuickCzS5ORp8m2VFeSOEtEEvTs1iiMh7xjG+cBwtp3l+ZOZWxDL
+         hPhmAz4XCny2+7gcauv6XpWUBmCT4Q0tsy/pzJOHXYocZT9TKc6eVkZGr577ZOFkuDkr
+         d6IS6TCstSbBhqa0gc1+e27XoEJDOA/dJ/34DnmYXXxUTgOqxl84p3qYhelfIL3jdUIh
+         iGyMdqrKo0fRTOA+7S0Q+Ck37jIiiJggl1cPv97dUyVoOU9oGFTGdHOlqzjbkJt7sXxi
+         s+BWWwigtFAxN1NoJAhEcbINlVg4myTuf101aiO18K+HFgUODiq0hrQvT8klcBdUWFf+
+         OaEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ij3G+PRAMng8mle7qC0u8RzdsZ5G5T3N3JUhXF+5wl4=;
+        b=t3cXk8K5q8Uvmyin9p7uKPd6PhcAgOxaW23fSHQJZM5Gw0tiGbcJfSKGG8yBMAqGP5
+         ChHQmT/3Wi240hOD0E7B0sb9i+weAucI6AXOb5uhpc2itKdDjotIvtR51+jQmg0L0M0a
+         c8BDOgV2RssegmTFHW3W3r07u50hr6cPiTBMpyRDha3T5+YC64/NTL32pUVuEmp7j7S3
+         JUE/i21+RqjmkBkoTeMvgdpW2eVztLNtagvgDUXR3Dqvc+XvbMJBhf+e1amTgBNAP/wX
+         hxLb+EWsZ50g17Ng64SqmQC9qxWwfRIka57Mj69amVOw9QmlY1dUjJcGW2yjn/PCqjg9
+         lAMg==
+X-Gm-Message-State: ANhLgQ05ccCeN8lPIi00uF1ToMxGluF1QdLy3euh/czF7wZ+7M0EZtto
+        NbSpRo452MGPDn91wO1vKfSAdS+B
+X-Google-Smtp-Source: ADFU+vt2XesDLF/GQc9LX68YPiLvq2bNdKvpYr50PkZkQOGXsCSCQKFrD/Mjp/3ikj1m7kzdeYWbxw==
+X-Received: by 2002:a2e:9a93:: with SMTP id p19mr1742719lji.177.1583321904924;
+        Wed, 04 Mar 2020 03:38:24 -0800 (PST)
+Received: from localhost.localdomain (ip-195-182-193-216.opensvit.ua. [195.182.193.216])
+        by smtp.googlemail.com with ESMTPSA id t7sm13833552ljo.7.2020.03.04.03.38.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 03:38:23 -0800 (PST)
+From:   Leonid Maksymchuk <leonmaxx@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     corentin.chary@gmail.com, dvhart@infradead.org, andy@infradead.org,
+        yurii.pavlovskyi@gmail.com, acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        Leonid Maksymchuk <leonmaxx@gmail.com>
+Subject: [PATCH] platform/x86: asus_wmi: Fix return value of fan_boost_mode_store
+Date:   Wed,  4 Mar 2020 13:38:11 +0200
+Message-Id: <20200304113811.31988-1-leonmaxx@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+Function fan_boost_mode_store returns 0 if store is successful,
+this leads to infinite loop after any write to it's sysfs entry:
 
-Thanks for review and good suggestions!
+# echo 0 >/sys/devices/platform/asus-nb-wmi/fan_boost_mode
 
-On Tue, 3 Mar 2020 20:55:39 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+This command never ends, one CPU core is at 100% utilization.
+This patch fixes this by returning size of written data.
 
-> > +Boot Configuration Syntax
-> > +=========================
-> > +
-> > +The boot configuration syntax is a simple structured key-value. Each key
-> > +consists of dot-connected-words, and key and value are connected by ``=``.
-> > +The value has to be terminated by semi-colon (``;``) or newline (``\n``).
-> >  For array value, array entries are separated by comma (``,``). ::
-> 
->              values,
-> or just
->    For an array, its entries are separated by
+Fixes: b096f626a682 ("platform/x86: asus-wmi: Switch fan boost mode")
+Signed-off-by: Leonid Maksymchuk <leonmaxx@gmail.com>
+---
+ drivers/platform/x86/asus-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I like this latter one.
-
-[...]
-> > +Tree Structured Key
-> > +-------------------
-> >  
-> > -The boot config file syntax allows user to merge partially same word keys
-> > -by brace. For example::
-> > +The boot configuration syntax allows user to merge same parent key using
-> 
->                                  allows the user
-> although I am having problems with the rest of that sentence.
-
-What about the following?
-
-User can group identical parent keys together and use braces to list child keys
-under them.
-
-Thank you,
-
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 612ef5526226..e5d35987c048 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1719,7 +1719,7 @@ static ssize_t fan_boost_mode_store(struct device *dev,
+ 	asus->fan_boost_mode = new_mode;
+ 	fan_boost_mode_write(asus);
+ 
+-	return result;
++	return count;
+ }
+ 
+ // Fan boost mode: 0 - normal, 1 - overboost, 2 - silent
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.25.1
+
