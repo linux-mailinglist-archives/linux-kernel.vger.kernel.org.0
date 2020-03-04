@@ -2,95 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D218317881B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F3DF17881E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:18:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387473AbgCDCRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:17:01 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20049 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387400AbgCDCRB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:17:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583288219;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zwpmLVhYAg+RzC4wgoFG5yb2Ol28WwASDz+oEeK9Uow=;
-        b=RkMGg80ReMekloKrhUk7steiD/j0iRh1+Vg3U/b+El4vCyvrWwy7FAqUmhwkFEumaMavTB
-        yyo4gZhAS0aiTs+3CflFE1aYwSnfRmDEMhiMnSKZzylnMYVUWBF+GFNB9acgZlPZw8QwKi
-        zUM2QXWC7m24dzz5CaeSzNhmK7aZvFo=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-334-KLrQ_LnZNW2aluW2YA0jjA-1; Tue, 03 Mar 2020 21:16:55 -0500
-X-MC-Unique: KLrQ_LnZNW2aluW2YA0jjA-1
-Received: by mail-qk1-f200.google.com with SMTP id w6so315080qki.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 18:16:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zwpmLVhYAg+RzC4wgoFG5yb2Ol28WwASDz+oEeK9Uow=;
-        b=GKXW4RuCUGWe43r9j/uHmNwBuMZmmTsRR8RsbTbI/Sahrt+CgFBnywDYFR6SCc1Njv
-         4I43/GCJpXgUTPZaopjm8y38PTsFuptDRBPMqKKhyQYknlsctqinPg50vQZ64a4gyKiK
-         AOz6oenUnpq8F60eBsI7z11qBI1zDzB7DZyXrcOleRjGvwkXErJ7mKjVj8avUHad7+4H
-         khqb48bX3Ywa1/GhtEsRoDMy92Q+8lflsnge7J7AhB2JV8PE/L7rykIY02b63RuCD8nk
-         UBtAM5mcBSl2NMDe9n6vZk6f3cR9a663c7ifLHBPShCZCNV59fSGsiBRStTmJ845GWJK
-         fqNQ==
-X-Gm-Message-State: ANhLgQ3Z6rFBfI0z0gHW4pndmv5txaGs9qrQyg6Bow8qfTQDVjIVWYYF
-        I3gNkc9ZNasNjSFpuXhHMlq0MTkdyGt9LITAwlmUzfFCXsuWw6dyfYzxrdLs6JieC9hsKYBqgUR
-        NS1p11+D+AFhMNyORmGmPBy/0
-X-Received: by 2002:a05:620a:350:: with SMTP id t16mr936780qkm.238.1583288214462;
-        Tue, 03 Mar 2020 18:16:54 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vu1ZMXcr1gqC/Zi87ZN+GHeSsAkSbjaQbQrEwLisqJpF+0jVmM6F3RpKZnuzgvqnsEWVWUn7Q==
-X-Received: by 2002:a05:620a:350:: with SMTP id t16mr936762qkm.238.1583288214196;
-        Tue, 03 Mar 2020 18:16:54 -0800 (PST)
-Received: from xz-x1.hitronhub.home ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id n59sm4185363qtd.77.2020.03.03.18.16.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 18:16:53 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH] KVM: X86: Avoid explictly fetch instruction in x86_decode_insn()
-Date:   Tue,  3 Mar 2020 21:16:37 -0500
-Message-Id: <20200304021637.17856-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        id S2387503AbgCDCR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:17:59 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33589 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387480AbgCDCR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 21:17:59 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48XHbT2VjPz9sNg;
+        Wed,  4 Mar 2020 13:17:56 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1583288277;
+        bh=hpgJ2oNDHzFVZ1UIs/SBXcgrzbH4pnZJKFb2uK6CM7A=;
+        h=Date:From:To:Cc:Subject:From;
+        b=vFs+lrp7xK5y2ur+m9MY4atDzgE5ieV40Uw3dVW9WZqhd54ijh/zXtmrndUdWOAOU
+         oM4dvjjo9Bn/iPp0ajdfhrirJ4ee1KxmrwTSuYfvRvUan5O3dUZ7B4rEpfWEz4xk6W
+         quFLfY8ONwxCqK7UCucEOu5g4Ix5cyVDXLonyqM2+gQ9+HZF8wvQ5VoEUFxinWhHhW
+         bos80cb3EC2lEi3ylJ/hF6VaXR/cjzrYqKTUkTbs5piVPXQ8Tho5U9WJTESKoZ1Q2g
+         BM4YDcipW0VUUZLf22AKZbdA7uZrnDQAHMCXzIgINWtmGIxf1Nzb1aiEjTJLL5+Rz6
+         K1MBwoJbpSlcQ==
+Date:   Wed, 4 Mar 2020 13:17:50 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: linux-next: build warning after merge of the block tree
+Message-ID: <20200304131750.55d84beb@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/2g3lSYciyAYKzTKo8jSMg23";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-insn_fetch() will always implicitly refill instruction buffer properly
-when the buffer is empty, so we don't need to explicitly fetch it even
-if insn_len==0 for x86_decode_insn().
+--Sig_/2g3lSYciyAYKzTKo8jSMg23
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- arch/x86/kvm/emulate.c | 5 -----
- 1 file changed, 5 deletions(-)
+Hi all,
 
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index dd19fb3539e0..04f33c1ca926 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5175,11 +5175,6 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
- 	ctxt->opcode_len = 1;
- 	if (insn_len > 0)
- 		memcpy(ctxt->fetch.data, insn, insn_len);
--	else {
--		rc = __do_insn_fetch_bytes(ctxt, 1);
--		if (rc != X86EMUL_CONTINUE)
--			goto done;
--	}
- 
- 	switch (mode) {
- 	case X86EMUL_MODE_REAL:
--- 
-2.24.1
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
+fs/io_uring.c: In function 'io_close':
+fs/io_uring.c:3415:3: warning: ignoring return value of 'refcount_inc_not_z=
+ero', declared with attribute warn_unused_result [-Wunused-result]
+ 3415 |   refcount_inc_not_zero(&req->refs);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  62e0c6b73a2c ("io_uring: make submission ref putting consistent")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2g3lSYciyAYKzTKo8jSMg23
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5fD84ACgkQAVBC80lX
+0GyMSAf/ZS/X9mvmvslQ9O0FV3yMqMnxIaKXZmyRqKQlCooOxb8U9tMHfHe6F4K8
+nIMrMx8nwXV6OjJd7GFs6IDSjLw8EUHSd9Abw07p1J7kscWy65k2UJ/W13TdEvJV
+j72yz1TQ8EG/AGAs8y/pWYVyH3uYOifRGZKM2qOCkIPmh5jGn8QP26IIqjXJDEQx
+0Wl3lZJCkIIzpXt8oxEM3QUFf8flMgzedzPnu6Kv7rv5JIbZmNJGUt0ZSR5Zx1Nr
+b307BPZC3F9lv3ZEiO1L36nqPiBEmAmU/0HjmD1zf47+4Cj2vS5pmro4qr56uU47
+ffLDtVOzbXWD6glevVD4Kl75UV2qag==
+=Kpwx
+-----END PGP SIGNATURE-----
+
+--Sig_/2g3lSYciyAYKzTKo8jSMg23--
