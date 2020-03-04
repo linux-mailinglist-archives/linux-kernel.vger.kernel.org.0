@@ -2,98 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5131178F97
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E91FB178F9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387805AbgCDLdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:33:01 -0500
-Received: from vps-vb.mhejs.net ([37.28.154.113]:57462 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729256AbgCDLdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:33:00 -0500
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1j9SGj-0000pl-Un; Wed, 04 Mar 2020 12:32:53 +0100
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Joao Martins <joao.m.martins@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] cpuidle-haltpoll: allow force loading on hosts without the REALTIME hint
-Date:   Wed,  4 Mar 2020 12:32:48 +0100
-Message-Id: <20200304113248.1143057-1-mail@maciej.szmigiero.name>
-X-Mailer: git-send-email 2.25.1
+        id S2387969AbgCDLfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:35:13 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10722 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726440AbgCDLfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 06:35:13 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A00CA218892F29E61954;
+        Wed,  4 Mar 2020 19:35:05 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Mar 2020
+ 19:34:55 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ak@it-klinger.de>, <jic23@kernel.org>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <Jonathan.Cameron@huawei.com>
+CC:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] iio: ping: set pa_laser_ping_cfg in of_ping_match
+Date:   Wed, 4 Mar 2020 19:34:23 +0800
+Message-ID: <20200304113423.26920-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+pa_laser_ping_cfg should be set in of_ping_match
+instead of pa_ping_cfg.
 
-Before commit 1328edca4a14 ("cpuidle-haltpoll: Enable kvm guest polling
-when dedicated physical CPUs are available") the cpuidle-haltpoll driver
-could also be used in scenarios when the host does not advertise the
-KVM_HINTS_REALTIME hint.
-
-While the behavior introduced by the aforementioned commit makes sense as
-the default there are cases where the old behavior is desired, for example,
-when other kernel changes triggered by presence by this hint are unwanted,
-for some workloads where the latency benefit from polling overweights the
-loss from idle CPU capacity that otherwise would be available, or just when
-running under older Qemu versions that lack this hint.
-
-Let's provide a typical "force" module parameter that allows restoring the
-old behavior.
-
-Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+Fixes: 7bb501f49ddb ("iio: ping: add parallax ping sensors")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/cpuidle/cpuidle-haltpoll.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/iio/proximity/ping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v1:
-Make the module parameter description more general, don't unnecessarily
-break a line in haltpoll_init().
+diff --git a/drivers/iio/proximity/ping.c b/drivers/iio/proximity/ping.c
+index 34aff10..12b893c 100644
+--- a/drivers/iio/proximity/ping.c
++++ b/drivers/iio/proximity/ping.c
+@@ -269,7 +269,7 @@ static const struct iio_chan_spec ping_chan_spec[] = {
+ 
+ static const struct of_device_id of_ping_match[] = {
+ 	{ .compatible = "parallax,ping", .data = &pa_ping_cfg},
+-	{ .compatible = "parallax,laserping", .data = &pa_ping_cfg},
++	{ .compatible = "parallax,laserping", .data = &pa_laser_ping_cfg},
+ 	{},
+ };
+ 
+-- 
+2.7.4
 
-diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
-index b0ce9bc78113..db124bc1ca2c 100644
---- a/drivers/cpuidle/cpuidle-haltpoll.c
-+++ b/drivers/cpuidle/cpuidle-haltpoll.c
-@@ -18,6 +18,10 @@
- #include <linux/kvm_para.h>
- #include <linux/cpuidle_haltpoll.h>
- 
-+static bool force __read_mostly;
-+module_param(force, bool, 0444);
-+MODULE_PARM_DESC(force, "Load unconditionally");
-+
- static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
- static enum cpuhp_state haltpoll_hp_state;
- 
-@@ -90,6 +94,11 @@ static void haltpoll_uninit(void)
- 	haltpoll_cpuidle_devices = NULL;
- }
- 
-+static bool haltpool_want(void)
-+{
-+	return kvm_para_has_hint(KVM_HINTS_REALTIME) || force;
-+}
-+
- static int __init haltpoll_init(void)
- {
- 	int ret;
-@@ -101,8 +110,7 @@ static int __init haltpoll_init(void)
- 
- 	cpuidle_poll_state_init(drv);
- 
--	if (!kvm_para_available() ||
--		!kvm_para_has_hint(KVM_HINTS_REALTIME))
-+	if (!kvm_para_available() || !haltpool_want())
- 		return -ENODEV;
- 
- 	ret = cpuidle_register_driver(drv);
+
