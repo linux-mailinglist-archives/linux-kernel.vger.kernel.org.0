@@ -2,207 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25362179505
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5861794FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:24:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388282AbgCDQYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:24:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42312 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388254AbgCDQYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:24:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 54129B4C4;
-        Wed,  4 Mar 2020 16:24:15 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id F19C3E037F; Wed,  4 Mar 2020 17:24:14 +0100 (CET)
-Message-Id: <fd9f73a61a1c70d20d254d32eae0d8cf33888f20.1583337972.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1583337972.git.mkubecek@suse.cz>
-References: <cover.1583337972.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net-next 4/5] tun: replace tun_debug() by netif_info()
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Wed,  4 Mar 2020 17:24:14 +0100 (CET)
+        id S2388107AbgCDQYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:24:07 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35725 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728278AbgCDQYG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 11:24:06 -0500
+Received: by mail-ed1-f66.google.com with SMTP id cq8so2302155edb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 08:24:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cRSqqyVQcgkFGQEI4WVpqxDQwCK2dLecE852C4OPnck=;
+        b=ltaenl3Tu/Uh7cHCpFacONDPzzzqQrkNujMvp58M14/XfVcwRWa9kwro+hgX741c1H
+         cHnCwykPCAHfAWZmq+NsVrSJt60Ar5l8PBnPxMnYF4ldkMKjpzHC/rCTzyZ2/Y5h88kv
+         bqoO8m4mB+MtaoMBxxJ11DliaahtilK++IfG/BJkK+EQc+WHQeVm17p/OveeUZkNSqe0
+         fnvHDULD6vm31OuojQziBWWptXNAKl2Gm5Mmg7LKGLg1WqqMaCjgpG9u/AHjjImliWi0
+         gRKjn5q0WJI87Pj4LSzwHtJiNzyN3Axe7z4laTFODANHwTiIBlLYDY4JA7bRQl9r+IBc
+         f4PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cRSqqyVQcgkFGQEI4WVpqxDQwCK2dLecE852C4OPnck=;
+        b=EsPDXQXVVhGqi5PZsViwW/8JxkoUeyKr40CX4CWr3k6ZnMkeH5T3fhB3OTUaRNbyPg
+         Zl96lG2+3uq0ltgzJqtK/tL9sG9JIPC/xmZ7/dXTrOXMpR2s4JXuPLRtof+QvkfVgAiP
+         3gHfQF9zI3P6ZQpIaCWOiNni0b7tJzxDTe8oTvamuw/1a4uQkBLGON9aCiOOUwxBY/dD
+         9A/HuUTF2pcpZNIMA5jorYGCpGPb7Z1kIDsEp3XMMMzxGacChSRj9hdyhtbsVmFXyq5Y
+         NKLRn6aLcza33JlQCpX6NyMDA1aJh//1cPA7BfYAHV8FMw4SyGt6KC5E+MVHfiiHuDc7
+         MdTg==
+X-Gm-Message-State: ANhLgQ0RCwLvY5/okcAhZU+es2sxNxx+97QkLq/qh+cbvO+qEbrA4wFY
+        tjXufuksJQvyOWVhzLjXZEkgGw==
+X-Google-Smtp-Source: ADFU+vuKkH6eC/TyjKp82VgLkReuX6Vu6bromPkvOyS874kNDx2MU23u3kTtssmvRyNsQaYULSffiA==
+X-Received: by 2002:a17:906:604c:: with SMTP id p12mr3231175ejj.202.1583339044755;
+        Wed, 04 Mar 2020 08:24:04 -0800 (PST)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id a40sm1535657edf.90.2020.03.04.08.24.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Mar 2020 08:24:03 -0800 (PST)
+Subject: Re: [PATCH v7 07/18] dt-bindings: usb: dwc3: Add a gpio-usb-connector
+ example
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+References: <20200303171159.246992-1-bryan.odonoghue@linaro.org>
+ <20200303171159.246992-8-bryan.odonoghue@linaro.org>
+ <20200304145756.GA17484@bogus>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Message-ID: <1072c2cb-5b09-1725-4246-f19ef3899e4e@linaro.org>
+Date:   Wed, 4 Mar 2020 16:24:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200304145756.GA17484@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tun driver uses custom macro tun_debug() which is only available if
-TUN_DEBUG is set. Replace it by standard netif_ifinfo(). For that purpose,
-rename tun_struct::debug to msg_enable and make it u32 and always present.
-Finally, make tun_get_msglevel(), tun_set_msglevel() and TUNSETDEBUG ioctl
-independent of TUN_DEBUG.
+On 04/03/2020 14:57, Rob Herring wrote:
+> On Tue,  3 Mar 2020 17:11:48 +0000, Bryan O'Donoghue wrote:
+>> A USB connector should be a child node of the USB controller
+>> connector/usb-connector.txt. This patch adds an example of how to do this
+>> to the dwc3 binding descriptions.
+>>
+>> It is necessary to declare a connector as a child-node of a USB controller
+>> for role-switching to work, so this example should be helpful to others
+>> implementing that.
+>>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: linux-usb@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Acked-by: Felipe Balbi <balbi@kernel.org>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>>   Documentation/devicetree/bindings/usb/dwc3.txt | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+> 
+> Please add Acked-by/Reviewed-by tags when posting new versions. However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> 
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- drivers/net/tun.c | 60 +++++++++++++++++++++--------------------------
- 1 file changed, 27 insertions(+), 33 deletions(-)
+Yep apologies I forgot to add your
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 15ae2050ab5b..42110aba0014 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -81,7 +81,7 @@ static void tun_default_link_ksettings(struct net_device *dev,
- #ifdef TUN_DEBUG
- #define tun_debug(level, tun, fmt, args...)			\
- do {								\
--	if (tun->debug)						\
-+	if (tun->msg_enable)					\
- 		netdev_printk(level, tun->dev, fmt, ##args);	\
- } while (0)
- #else
-@@ -213,9 +213,7 @@ struct tun_struct {
- 	struct sock_fprog	fprog;
- 	/* protected by rtnl lock */
- 	bool			filter_attached;
--#ifdef TUN_DEBUG
--	int debug;
--#endif
-+	u32			msg_enable;
- 	spinlock_t lock;
- 	struct hlist_head flows[TUN_NUM_FLOW_ENTRIES];
- 	struct timer_list flow_gc_timer;
-@@ -411,8 +409,9 @@ static struct tun_flow_entry *tun_flow_create(struct tun_struct *tun,
- 	struct tun_flow_entry *e = kmalloc(sizeof(*e), GFP_ATOMIC);
- 
- 	if (e) {
--		tun_debug(KERN_INFO, tun, "create flow: hash %u index %u\n",
--			  rxhash, queue_index);
-+		netif_info(tun, tx_queued, tun->dev,
-+			   "create flow: hash %u index %u\n",
-+			   rxhash, queue_index);
- 		e->updated = jiffies;
- 		e->rxhash = rxhash;
- 		e->rps_rxhash = 0;
-@@ -426,8 +425,8 @@ static struct tun_flow_entry *tun_flow_create(struct tun_struct *tun,
- 
- static void tun_flow_delete(struct tun_struct *tun, struct tun_flow_entry *e)
- {
--	tun_debug(KERN_INFO, tun, "delete flow: hash %u index %u\n",
--		  e->rxhash, e->queue_index);
-+	netif_info(tun, tx_queued, tun->dev, "delete flow: hash %u index %u\n",
-+		   e->rxhash, e->queue_index);
- 	hlist_del_rcu(&e->hash_link);
- 	kfree_rcu(e, rcu);
- 	--tun->flow_count;
-@@ -1061,7 +1060,7 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
- 	if (!rcu_dereference(tun->steering_prog))
- 		tun_automq_xmit(tun, skb);
- 
--	tun_debug(KERN_INFO, tun, "tun_net_xmit %d\n", skb->len);
-+	netif_info(tun, tx_queued, tun->dev, "%s %d\n", __func__, skb->len);
- 
- 	/* Drop if the filter does not like it.
- 	 * This is a noop if the filter is disabled.
-@@ -3085,7 +3084,7 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
- 	if (!tun)
- 		goto unlock;
- 
--	tun_debug(KERN_INFO, tun, "tun_chr_ioctl cmd %u\n", cmd);
-+	netif_info(tun, drv, tun->dev, "tun_chr_ioctl cmd %u\n", cmd);
- 
- 	net = dev_net(tun->dev);
- 	ret = 0;
-@@ -3106,8 +3105,8 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
- 		/* Disable/Enable checksum */
- 
- 		/* [unimplemented] */
--		tun_debug(KERN_INFO, tun, "ignored: set checksum %s\n",
--			  arg ? "disabled" : "enabled");
-+		netif_info(tun, drv, tun->dev, "ignored: set checksum %s\n",
-+			   arg ? "disabled" : "enabled");
- 		break;
- 
- 	case TUNSETPERSIST:
-@@ -3125,8 +3124,8 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
- 			do_notify = true;
- 		}
- 
--		tun_debug(KERN_INFO, tun, "persist %s\n",
--			  arg ? "enabled" : "disabled");
-+		netif_info(tun, drv, tun->dev, "persist %s\n",
-+			   arg ? "enabled" : "disabled");
- 		break;
- 
- 	case TUNSETOWNER:
-@@ -3138,8 +3137,8 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
- 		}
- 		tun->owner = owner;
- 		do_notify = true;
--		tun_debug(KERN_INFO, tun, "owner set to %u\n",
--			  from_kuid(&init_user_ns, tun->owner));
-+		netif_info(tun, drv, tun->dev, "owner set to %u\n",
-+			   from_kuid(&init_user_ns, tun->owner));
- 		break;
- 
- 	case TUNSETGROUP:
-@@ -3151,29 +3150,28 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
- 		}
- 		tun->group = group;
- 		do_notify = true;
--		tun_debug(KERN_INFO, tun, "group set to %u\n",
--			  from_kgid(&init_user_ns, tun->group));
-+		netif_info(tun, drv, tun->dev, "group set to %u\n",
-+			   from_kgid(&init_user_ns, tun->group));
- 		break;
- 
- 	case TUNSETLINK:
- 		/* Only allow setting the type when the interface is down */
- 		if (tun->dev->flags & IFF_UP) {
--			tun_debug(KERN_INFO, tun,
--				  "Linktype set failed because interface is up\n");
-+			netif_info(tun, drv, tun->dev,
-+				   "Linktype set failed because interface is up\n");
- 			ret = -EBUSY;
- 		} else {
- 			tun->dev->type = (int) arg;
--			tun_debug(KERN_INFO, tun, "linktype set to %d\n",
--				  tun->dev->type);
-+			netif_info(tun, drv, tun->dev, "linktype set to %d\n",
-+				   tun->dev->type);
- 			ret = 0;
- 		}
- 		break;
- 
--#ifdef TUN_DEBUG
- 	case TUNSETDEBUG:
--		tun->debug = arg;
-+		tun->msg_enable = (u32)arg;
- 		break;
--#endif
-+
- 	case TUNSETOFFLOAD:
- 		ret = set_offload(tun, arg);
- 		break;
-@@ -3529,20 +3527,16 @@ static void tun_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info
- 
- static u32 tun_get_msglevel(struct net_device *dev)
- {
--#ifdef TUN_DEBUG
- 	struct tun_struct *tun = netdev_priv(dev);
--	return tun->debug;
--#else
--	return -EOPNOTSUPP;
--#endif
-+
-+	return tun->msg_enable;
- }
- 
- static void tun_set_msglevel(struct net_device *dev, u32 value)
- {
--#ifdef TUN_DEBUG
- 	struct tun_struct *tun = netdev_priv(dev);
--	tun->debug = value;
--#endif
-+
-+	tun->msg_enable = value;
- }
- 
- static int tun_get_coalesce(struct net_device *dev,
--- 
-2.25.1
+Reviewed-by: Rob Herring <robh@kernel.org>
 
+when posting this one
