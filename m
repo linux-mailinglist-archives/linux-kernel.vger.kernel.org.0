@@ -2,67 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 184D4178CAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:40:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D70178CBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:45:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbgCDIkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:40:52 -0500
-Received: from mga12.intel.com ([192.55.52.136]:6900 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728942AbgCDIkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:40:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 00:40:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,513,1574150400"; 
-   d="scan'208";a="274585961"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Mar 2020 00:40:49 -0800
-Date:   Wed, 4 Mar 2020 16:44:20 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com
-Subject: Re: [PATCH v9 2/7] KVM: VMX: Define CET VMCS fields and #CP flag
-Message-ID: <20200304084419.GA5831@local-michael-cet-test.sh.intel.com>
-References: <20191227021133.11993-1-weijiang.yang@intel.com>
- <20191227021133.11993-3-weijiang.yang@intel.com>
- <20200303214254.GZ1439@linux.intel.com>
+        id S2387665AbgCDIpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:45:13 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33690 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbgCDIpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 03:45:12 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a20so1260302otl.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 00:45:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ma8ZuzcCeVEH6377/YAf0HxDb+sbrr8YMMlgCfFH6Lk=;
+        b=FrMlwWsM6VLOsyh8IR/l2AzoOl3oFGBHNGhVWnWt1/tr3WhRWPJ0BMj3yX6YGBMea/
+         TQXGkaFBa4jar3k26oX5MaEcapBB2a9JrNsHVM3OA9DUIQ5UDooYIFTp46eOZKBkaMDc
+         08Zcri9aN5WHeb0oDzOIOw4JngUyWipsbPvd0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ma8ZuzcCeVEH6377/YAf0HxDb+sbrr8YMMlgCfFH6Lk=;
+        b=o2HxduhwweDgqnJ6zJWz19GQrUIW5p5rmFdAlsgjbF8tPOTxCO51riKdNT3KO+yiqL
+         7RgLMpI9kb9ceJ8HFzYTMHAO7IY3CAqD8jE9k7DVId9VU+GXD0Yqr23qyHm6Ias2dx6M
+         1OKZcWDgVQc7Kzgspl8ye29cxbmDpePHrIfn9HQ6safS7BoNsxMHVPTqCgTENR3vTWDg
+         pfdZEzQhtR62Uqbrhz0Vepj03qz9M+GrdXQHhNrHCyKHGo+JIEEgvOcBd46nCXNUFw3x
+         84wD7k3KWHqh3ukWuwhGVp/mxD6ET7AJNOV15GwQ/CnKBV5slOe2NEypqpgIsveLy7ef
+         azrg==
+X-Gm-Message-State: ANhLgQ3JFlxEWkAaRDAbXFujWB/bKub5IJO9SAbxk/FUutriQbS4BMYN
+        lXBFJDPR688wof50YYxaJMwKK5AGuwxbMTP8ukH6hKOTdivyYA==
+X-Google-Smtp-Source: ADFU+vszsCH0gAioTE/0Oo9bJUmXm+Eq3B6gwTKHp5hf/N0BfkJM6SCshdG+Ifs/jv7uE2DSKKOkCsuTMscyII1dFjw=
+X-Received: by 2002:a9d:10d:: with SMTP id 13mr1579216otu.334.1583311509322;
+ Wed, 04 Mar 2020 00:45:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200303214254.GZ1439@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20200228115344.17742-1-lmb@cloudflare.com> <20200228115344.17742-4-lmb@cloudflare.com>
+ <20200303175051.zcxmo3c257pfpj7f@kafai-mbp>
+In-Reply-To: <20200303175051.zcxmo3c257pfpj7f@kafai-mbp>
+From:   Lorenz Bauer <lmb@cloudflare.com>
+Date:   Wed, 4 Mar 2020 09:44:57 +0100
+Message-ID: <CACAyw9_Ewe86YYgdffhz3dVaPPMnXeckMYhoPn+umvhAShtnBA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 3/9] bpf: sockmap: move generic sockmap hooks
+ from BPF TCP
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     John Fastabend <john.fastabend@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        kernel-team <kernel-team@cloudflare.com>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 01:42:54PM -0800, Sean Christopherson wrote:
-> On Fri, Dec 27, 2019 at 10:11:28AM +0800, Yang Weijiang wrote:
-> > @@ -298,7 +298,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
-> >   * In future, applicable XSS state bits can be added here
-> >   * to make them available to KVM and guest.
-> >   */
-> > -#define KVM_SUPPORTED_XSS	0
-> > +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER \
-> > +				| XFEATURE_MASK_CET_KERNEL)
-> 
-> My preference would be to put the operator on the previous line, though I
-> realize this diverges from other KVM behavior.  I find it much easier to
-> read With the names aligned.
-> 
-> #define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER | \
-> 				 XFEATURE_MASK_CET_KERNEL)
+On Tue, 3 Mar 2020 at 18:51, Martin KaFai Lau <kafai@fb.com> wrote:
+>
+> On Fri, Feb 28, 2020 at 11:53:38AM +0000, Lorenz Bauer wrote:
+> > The close, unhash and clone handlers from TCP sockmap are actually generic,
+> > and can be reused by UDP sockmap. Move the helpers into the sockmap code
+> Is clone reused in UDP?
 
-Yep, I also feel it's preferable now :-), thanks!
-> >  
-> >  extern u64 host_xcr0;
-> >  
-> > -- 
-> > 2.17.2
-> > 
+No, my bad. I'll update the commit message.
+
+-- 
+Lorenz Bauer  |  Systems Engineer
+6th Floor, County Hall/The Riverside Building, SE1 7PB, UK
+
+www.cloudflare.com
