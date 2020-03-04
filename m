@@ -2,109 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AFB179450
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D87179458
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbgCDQDv convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Mar 2020 11:03:51 -0500
-Received: from mail-oln040092255080.outbound.protection.outlook.com ([40.92.255.80]:6071
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726275AbgCDQDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:03:51 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JvdU18pJDxG2xXKore6ScpF8FP40Zn+LpdkQxqoFDfod5lu97gjKSCQGen07OQS09IGx/2pvcaUS+oLWMO3oPpbAqBkz0+qFYEUs3jXXXVesl/eCUnS56TZgym1ThgNBB185qrSWkreCCvmSpydknGZgN5oTbkzn+CletGq9SvWNJaFIIiVnmd5CkzYbzSOViKl2znj5/lot4bt/7wgYruqC2TAHDeBoBRcLuCOAlJyz+J74UXJAUlE/4I07wAxyKb9oY/dn7lEBRiCBVyG3qZ/pGecndLW/+2idRo/EDPz5+dgFlEI3HE8hPVaYv/l49aAf2/rSp61xf1+PyUBasg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gj9mH37PyE4LbLmwiC8aESnDN5mOjPxPLO0g1KgEY5g=;
- b=VpoZv3v7U6QqnvvwcR8QVVzREXCBPWVTICs3CDIcwadclhCzju8P+57ZNG0kiyMaktAdUGtz5fY87fbauQuXZMgWdlMv23EKC/jPagiW68Mhsj6eh1fNcnrdBGkwjNrSrdQSURux54J/JYA3j5l6VPqxtXAGZn9CEQ6j7bB7M7lCMRarBG67WpVJLuEPdwP115Z7IbA6LPoSUVeraZiTiX6LkLDZQY/LYQp9mlX6AOTek5OR1KUJsCkbZwhM0SdpkUTHIg20gyBK9VxcY8HJCqPKmzvLEJiEdh/yhIDvJ7RCbPmVd2hJvoHdiZWKrPhZKvgWe+S1ghMtJWbmmHylvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from PU1APC01FT018.eop-APC01.prod.protection.outlook.com
- (2a01:111:e400:7ebe::3b) by
- PU1APC01HT014.eop-APC01.prod.protection.outlook.com (2a01:111:e400:7ebe::150)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Wed, 4 Mar
- 2020 16:03:46 +0000
-Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.252.57) by
- PU1APC01FT018.mail.protection.outlook.com (10.152.253.189) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.11 via Frontend Transport; Wed, 4 Mar 2020 16:03:46 +0000
-Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
- ([fe80::a5dc:fc1:6544:5cb2]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
- ([fe80::a5dc:fc1:6544:5cb2%7]) with mapi id 15.20.2772.019; Wed, 4 Mar 2020
- 16:03:46 +0000
-Received: from nicholas-dell-linux (2001:44b8:6065:1c:6059:d44:6861:fae2) by ME1PR01CA0125.ausprd01.prod.outlook.com (2603:10c6:200:19::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Wed, 4 Mar 2020 16:03:45 +0000
-From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2 2/3] nvmem: check for NULL reg_read and reg_write
- before dereferencing
-Thread-Topic: [PATCH v2 2/3] nvmem: check for NULL reg_read and reg_write
- before dereferencing
-Thread-Index: AQHV8KlCqOzxWYRvokel+qEls5/4v6g2rAsAgAHvkoA=
-Date:   Wed, 4 Mar 2020 16:03:46 +0000
-Message-ID: <PSXP216MB0438A73D6C6EC2FF4EA102DE80E50@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-References: <PSXP216MB0438FE68DAAFC23CB9AAD5E180E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <PSXP216MB0438A1EEBF56DF852F18F14580E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <20200303102956.GM2540@lahna.fi.intel.com>
-In-Reply-To: <20200303102956.GM2540@lahna.fi.intel.com>
-Accept-Language: en-AU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: ME1PR01CA0125.ausprd01.prod.outlook.com
- (2603:10c6:200:19::34) To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
- (2603:1096:300:d::20)
-x-incomingtopheadermarker: OriginalChecksum:26799587320B260C5796456294F272CEB29E74FEE3550B3E1BFB8F64F68DF513;UpperCasedChecksum:24F1C920A8D223B9EE6E4D3E074B56F3A38FAA1950D59266B3F981D79D2D5A1D;SizeAsReceived:7980;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [KPldaVRASJ6VtKyeZMSCASjVbzWwbdHUPfv/b/1HhTthXUKWpA8kbYX83w03E6gA]
-x-microsoft-original-message-id: <20200304160339.GA2300@nicholas-dell-linux>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: 03e1d57e-6c06-4d45-f5d6-08d7c0559e99
-x-ms-traffictypediagnostic: PU1APC01HT014:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 4/8MDeVwazpXfn7iIVFOTIZznE4ZUh7+6LbpJwB3g21hl/t4+4wfsuSuudwrUFKyNuXk2O/vE5aD9GbPwgRgGNHcrwEKcmDu0tFljqeGXYBrB93BKmSk8SmmVNhl1PKhss5WmSbvXmLSOGfDrtEP3V/0X0CgcTWlr1ZpBNdi/d9VS2oq1J/rZLxh7PsUjX8g
-x-ms-exchange-antispam-messagedata: GOJic5IKNdanO653yzh44d5f0aH97ebGZus+YlYOtJOp1FhPOQ5SQuOTvCux/QCtSDJkpmosSvo+92Xw0y4lhTI7pKjkwtOJbnvu16bejfzD3eUp6I5bSNyXGMpP3UfyJQTVXgFdtZvZQsR5IR2T4fuuUWfc43Z/gx0xnZ9u/6ZwT+emPbEtKnkTRyDRjkzrY25bjBQZeHpXJxCT0Sr4rg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F4F6E631FE9BA0478E51D3D908A715B2@KORP216.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03e1d57e-6c06-4d45-f5d6-08d7c0559e99
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2020 16:03:46.9204
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT014
+        id S1729851AbgCDQEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:04:15 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38096 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbgCDQEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 11:04:14 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t11so3062827wrw.5;
+        Wed, 04 Mar 2020 08:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=U/EkvVl7FAi6+YEFd5JxFzG6+4DfZZOGAx7Rl8CToMk=;
+        b=E1JN1GbGM8dgvnEHDscwegwpfaMaQ7uNI35EyIvMcMf2sw+8icQudqTE5OJkyH//m4
+         sxWXzYGXuxf17vSkNtS6vwLBXIQN1WthG6PDuKUeppzQI0CbXr+99sBifnfdr0DVC4Q3
+         8bE9hDL/ExIVkl9SoyKHBUo6CqfBn1IS0o5oFHlidXR2mK4ZKIEIz++HhIJhkna/UIl5
+         DllgjA+teBq5a1OTvkme+RyeCZYdxgzYOG1sQhCRvEyEsa7KcgBiJCTz1VksSuA5zDxf
+         cUOwDWP2NiFZOJdu+ynWXIQaT2sOkz1YxEo3zJlhg9h+2kDeAC6hwj0992FeW9pGF4hf
+         sp7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=U/EkvVl7FAi6+YEFd5JxFzG6+4DfZZOGAx7Rl8CToMk=;
+        b=QXAWdMWEjunXo0OTwno+wW0dkJLOuonfEvdyC3R6YTyBbZrlyS3Mk1rpKMP+UUJGcR
+         cb9URABGVluJ7ntxmbseWfXrZHZiM+UEKvKKgpy46e1rXTTu6ifVUuXX0GYb8FBSJevd
+         wYHhLgIOEX6Xf5pNSr2t/gZspCjZlasaRRGYfMG3Lh6daTK4t7j2a83bG9q5nWv0Khc0
+         WWyfMnibqMi/xIlqwW/hDKk1r8Ry0pF91bCNBglsriXvoq/y9OGlSO29FEXkTpDS8fhr
+         znnqEhsb9jNNirhR+nnZw5Kk12nXd+0uSA4GUEYjQWC/goUDnhF0ObLdDtZkmZCTFZxL
+         rxyA==
+X-Gm-Message-State: ANhLgQ3malTn5gsTac5/EsWKGOSC/ttE5KiXstuD6oqLQp33e5ii3/K3
+        KMb+iHRJvJZ0RvnZYYuHD7k=
+X-Google-Smtp-Source: ADFU+vu6NnUvsLhagcO8Q4poilEAI652nzvJveCmlcKlhnSPTvayuVO6DjHuiAqzqYSqFm2261DWgw==
+X-Received: by 2002:a5d:4b51:: with SMTP id w17mr4544176wrs.231.1583337852868;
+        Wed, 04 Mar 2020 08:04:12 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
+        by smtp.gmail.com with ESMTPSA id y1sm3699219wrh.65.2020.03.04.08.04.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 08:04:12 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Sebastian Duda <sebastian.duda@fau.de>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust to trusted keys subsystem creation
+Date:   Wed,  4 Mar 2020 17:03:59 +0100
+Message-Id: <20200304160359.16809-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 12:29:56PM +0200, Mika Westerberg wrote:
-> On Mon, Mar 02, 2020 at 03:43:02PM +0000, Nicholas Johnson wrote:
-> > Return -EPERM if reg_read is NULL in bin_attr_nvmem_read() or if
-> > reg_write is NULL in bin_attr_nvmem_write().
-> 
-> Hmm, is this patch required at all since you already check the invalid
-> combinations in the patch 1/3?
-This is checked in nvmem_reg_read() and nvmem_reg_write() in 
-drivers/nvmem/core.c - for consistency, perhaps both should be done. 
-Also, defensive programming is a good idea, because code changes might 
-allow for a NULL to slip through in the future. But you are correct, at 
-this moment in time, we should not be able to cause a NULL dereference 
-(at least as far as I can tell).
+Commit 47f9c2796891 ("KEYS: trusted: Create trusted keys subsystem")
+renamed trusted.h to trusted_tpm.h in include/keys/, and moved trusted.c
+to trusted-keys/trusted_tpm1.c in security/keys/.
 
-Srinivas can either apply this patch or not, so if it is decided this is 
-not needed, I will not need to do a PATCH v3. Patch 3/3 does not 
-conflict with this patch.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Cheers
+  warning: no file matches F: security/keys/trusted.c
+  warning: no file matches F: include/keys/trusted.h
+
+Rectify the KEYS-TRUSTED entry in MAINTAINERS now.
+
+Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Sumit, please ack.
+Jarkko, please pick this patch.
+
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5c755e03ddee..cf389058ca76 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9276,8 +9276,8 @@ L:	keyrings@vger.kernel.org
+ S:	Supported
+ F:	Documentation/security/keys/trusted-encrypted.rst
+ F:	include/keys/trusted-type.h
+-F:	security/keys/trusted.c
+-F:	include/keys/trusted.h
++F:	include/keys/trusted_tpm.h
++F:	security/keys/trusted-keys/trusted_tpm1.c
+ 
+ KEYS/KEYRINGS
+ M:	David Howells <dhowells@redhat.com>
+-- 
+2.17.1
+
