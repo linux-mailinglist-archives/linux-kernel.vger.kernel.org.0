@@ -2,106 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2C88178F08
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 596A9178F19
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387774AbgCDK6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:58:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728953AbgCDK6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:58:41 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5ECA2166E;
-        Wed,  4 Mar 2020 10:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583319520;
-        bh=HkpTmmopcWeiJOUsgTP+pcb5bKUbqsfE8qE/21U6EO0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ognYXJmePYp6yQ4NZn96MFB+MLpGmSQ5o7fC/QRcNKdilISLKMp1t8ioLh5fb34ax
-         /KdpfBRN3D+xH6axDzHuRjrrNsa2oCNrA2cXnkwP2URDtO204FUUnBQEXQjrJLhoho
-         A1Jft/Qcph5Pl4wFIxgaVp6C/HqBoYtd1MtFBJX0=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j9Rjb-009xyH-1n; Wed, 04 Mar 2020 10:58:39 +0000
+        id S2387935AbgCDLAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:00:22 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:48581 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387841AbgCDLAV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 06:00:21 -0500
+Received: from 79.184.237.41.ipv4.supernova.orange.pl (79.184.237.41) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 17beebadd5720644; Wed, 4 Mar 2020 12:00:19 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Jules Irenge <jbi.octave@gmail.com>
+Cc:     boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
+        Len Brown <lenb@kernel.org>,
+        "open list:ACPI" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH 22/30] ACPI: OSL: Add missing annotation for acpi_os_acquire_lock()
+Date:   Wed, 04 Mar 2020 12:00:19 +0100
+Message-ID: <6715482.taCdthcxpl@kreacher>
+In-Reply-To: <20200223231711.157699-23-jbi.octave@gmail.com>
+References: <20200223231711.157699-23-jbi.octave@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 04 Mar 2020 10:58:38 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     =?UTF-8?Q?=E5=91=A8=E7=90=B0=E6=9D=B0_=28Zhou_Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        daniel.lezcano@linaro.org, paul@crapouillou.net,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
-        dongsheng.qiu@ingenic.com
-Subject: Re: [PATCH 4/4] irqchip: Ingenic: Add support for TCU of X1000.
-In-Reply-To: <1582100974-129559-6-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1582100974-129559-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1582100974-129559-6-git-send-email-zhouyanjie@wanyeetech.com>
-Message-ID: <cf9434a075ee7efa6430bc39877c416c@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: zhouyanjie@wanyeetech.com, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, sboyd@kernel.org, mturquette@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org, daniel.lezcano@linaro.org, paul@crapouillou.net, sernia.zhou@foxmail.com, zhenwenjin@gmail.com, dongsheng.qiu@ingenic.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-02-19 08:29, 周琰杰 wrote:
-> X1000 has a different TCU containing OST, since X1000, OST has been
-> independent of TCU. This patch is prepare for later OST driver.
-
-You keep on talking about OST (whatever that is), but never deals with 
-it.
-Why don't you just say
-
-"Enable TCU support for Ingenic X1000, which can be supported by
-the existing driver."
-
-as this is what the patch is doing?
-
+On Monday, February 24, 2020 12:17:03 AM CET Jules Irenge wrote:
+> Sparse reports a warning at acpi_os_acquire_lock()
 > 
-> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> warning: context imbalance in acpi_os_acquire_lock() - unexpected unlock
+> 
+> The root cause is the missing annotation at acpi_os_acquire_lock()
+> Add the missing annotation __acquires(lockp)
+> 
+> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 > ---
->  drivers/irqchip/irq-ingenic-tcu.c | 1 +
+>  drivers/acpi/osl.c | 1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/irqchip/irq-ingenic-tcu.c
-> b/drivers/irqchip/irq-ingenic-tcu.c
-> index 6d05cef..7a7222d 100644
-> --- a/drivers/irqchip/irq-ingenic-tcu.c
-> +++ b/drivers/irqchip/irq-ingenic-tcu.c
-> @@ -180,3 +180,4 @@ static int __init ingenic_tcu_irq_init(struct
-> device_node *np,
->  IRQCHIP_DECLARE(jz4740_tcu_irq, "ingenic,jz4740-tcu", 
-> ingenic_tcu_irq_init);
->  IRQCHIP_DECLARE(jz4725b_tcu_irq, "ingenic,jz4725b-tcu", 
-> ingenic_tcu_irq_init);
->  IRQCHIP_DECLARE(jz4770_tcu_irq, "ingenic,jz4770-tcu", 
-> ingenic_tcu_irq_init);
-> +IRQCHIP_DECLARE(x1000_tcu_irq, "ingenic,x1000-tcu", 
-> ingenic_tcu_irq_init);
+> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+> index 41168c027a5a..7094abc5ffc6 100644
+> --- a/drivers/acpi/osl.c
+> +++ b/drivers/acpi/osl.c
+> @@ -1598,6 +1598,7 @@ void acpi_os_delete_lock(acpi_spinlock handle)
+>   */
+>  
+>  acpi_cpu_flags acpi_os_acquire_lock(acpi_spinlock lockp)
+> +	__acquires(lockp)
+>  {
+>  	acpi_cpu_flags flags;
+>  	spin_lock_irqsave(lockp, flags);
+> 
 
-Otherwise,
+Merged with the [23/30] and applied with modified subject and changelog as
+5.7 material.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Thanks!
 
-I expect this to go via the MIPS tree as a series.
 
-Thanks,
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+
