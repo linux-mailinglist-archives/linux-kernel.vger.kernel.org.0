@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50580178F9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBC5178FA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:37:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387939AbgCDLfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:35:07 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39221 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbgCDLfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:35:07 -0500
-Received: by mail-ed1-f65.google.com with SMTP id m13so1908007edb.6;
-        Wed, 04 Mar 2020 03:35:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=DPVszP3963wNdExcgJRPDsGAe8NIh4E9G99F11CZ+qc=;
-        b=XdUQLmI/IVWiEXuPBYH7fvfVsR01GI/hoVyjziqRLy5X3xiB77BReI0dcgMcRrUu5D
-         dOVMapahG8pFdUqHjOYIYWHLGaR60G1q/+fDuNWoHAafyJ8J5+Mbvh6EZcNWIvSlFrIq
-         KOJwQd+cNNk8u48jEySS4ZYTJz7NkcBEPhjjpkB0uK0yt1Un2FVzC0KR4RZCfEJ70Ll2
-         iyMov+IBO0AMKwuw/CVkwO7xE836se0c7Mn98M+SJ9Gq5bOZHvNhKXN/OUADOtVExvNX
-         pMlgPNsRtA03fwhCK9s42j3CfcfIg+QZS0TJJ19KILHjmKrHsTjVWxLSy1acw4rHkrgT
-         8Ufg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DPVszP3963wNdExcgJRPDsGAe8NIh4E9G99F11CZ+qc=;
-        b=YMM8blcEs685TRS4mV1tG8CnXrl/szBJvXuyyKY6PJ/q53O5gsYUWwctEUq+mct5Cj
-         bBLV1B2ey4ObHW7jIHWnTWE4uMVMxRRWA8e/4DSCUeNMZpY8nd+hQq6cTS7echCta3b6
-         MKx5pDu7tDP1I5B0yhfk6cqeoeXoDMCldqyTeXn5un79/6dw+tIhavNVMoabP2bOQtjb
-         KiIm6HWgTABEtgT9TSkYb26w/uiWXBJFZgfzn0zh29AogSrhnJFJy1rDuHv+So23m242
-         g3arxH2HnqDWT/WcXyQcWUZSV+rnFl3QmwxJOUZz053TBLnLA5vS01LCoXNo/4JXFvO5
-         YuQg==
-X-Gm-Message-State: ANhLgQ2CECE1fj1vCpohDPZXR0EzTsJXK6+B15JD6zHc5lggB3fZZqbU
-        zl14gK05jc03b/dV1XVRplQ=
-X-Google-Smtp-Source: ADFU+vvrwiVGnfIJe5IcbqtO7UovqUrHErJ78bJvdOvfQb4axpxC72rr8v7LZuQXP9axGJeBad+iuA==
-X-Received: by 2002:a17:906:1be2:: with SMTP id t2mr2128366ejg.357.1583321703821;
-        Wed, 04 Mar 2020 03:35:03 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
-        by smtp.gmail.com with ESMTPSA id n4sm273434edv.26.2020.03.04.03.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 03:35:03 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, Yangtao Li <tiny.windzz@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Rob Herring <robh@kernel.org>
-Cc:     linux-pm@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: update ALLWINNER CPUFREQ DRIVER entry
-Date:   Wed,  4 Mar 2020 12:34:52 +0100
-Message-Id: <20200304113452.10201-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S2387897AbgCDLh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:37:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60042 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729261AbgCDLh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 06:37:27 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2311920870;
+        Wed,  4 Mar 2020 11:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583321847;
+        bh=EnJ48mBqSJNuN4pur5d9rPaOtktt8Bg5LJqlLCktZOo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SwU1LASd5/2lSKALZC7pvGkWl05Sb1JkPB43thx8zoYj9QZX7F8y2aY0ETGeuF6gi
+         nPzVe6rAksGD/PZ5WXe5/JHK9hSXxEi5A6aFfRfFBx4PxPqJHVFJhFyktiREXlnPBp
+         PuZldeM963PVB6sDwEMgnE3NzwiF8xVWx7E2hSLA=
+Date:   Wed, 4 Mar 2020 20:37:22 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [PATCH v4] Documentation: bootconfig: Update boot configuration
+ documentation
+Message-Id: <20200304203722.8e8699c2a3e0a979aae091b1@kernel.org>
+In-Reply-To: <ad1e9855-4c64-53bd-7da5-f7cdafe78571@infradead.org>
+References: <158322634266.31847.8245359938993378502.stgit@devnote2>
+        <158322635301.31847.15011454479023637649.stgit@devnote2>
+        <ad1e9855-4c64-53bd-7da5-f7cdafe78571@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b30d8cf5e171 ("dt-bindings: opp: Convert Allwinner H6 OPP to a
-schema") converted in Documentation/devicetree/bindings/opp/ the file
-sun50i-nvmem-cpufreq.txt to allwinner,sun50i-h6-operating-points.yaml.
+Hi Randy,
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+Thanks for review and good suggestions!
 
-  warning: no file matches \
-  F: Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
+On Tue, 3 Mar 2020 20:55:39 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Adjust the file pattern and while at it, add the two maintainers mentioned
-in the yaml file to the ALLWINNER CPUFREQ DRIVER entry.
+> > +Boot Configuration Syntax
+> > +=========================
+> > +
+> > +The boot configuration syntax is a simple structured key-value. Each key
+> > +consists of dot-connected-words, and key and value are connected by ``=``.
+> > +The value has to be terminated by semi-colon (``;``) or newline (``\n``).
+> >  For array value, array entries are separated by comma (``,``). ::
+> 
+>              values,
+> or just
+>    For an array, its entries are separated by
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Maxime, Chen-Yu, Yangtao, please ack.
-Rob, please pick this patch.
+I like this latter one.
 
- MAINTAINERS | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[...]
+> > +Tree Structured Key
+> > +-------------------
+> >  
+> > -The boot config file syntax allows user to merge partially same word keys
+> > -by brace. For example::
+> > +The boot configuration syntax allows user to merge same parent key using
+> 
+>                                  allows the user
+> although I am having problems with the rest of that sentence.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6158a143a13e..8e5ed8737966 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -691,9 +691,11 @@ F:	drivers/staging/media/allegro-dvt/
- 
- ALLWINNER CPUFREQ DRIVER
- M:	Yangtao Li <tiny.windzz@gmail.com>
-+M:	Chen-Yu Tsai <wens@csie.org>
-+M:	Maxime Ripard <mripard@kernel.org>
- L:	linux-pm@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
-+F:	Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
- F:	drivers/cpufreq/sun50i-cpufreq-nvmem.c
- 
- ALLWINNER CRYPTO DRIVERS
+What about the following?
+
+User can group identical parent keys together and use braces to list child keys
+under them.
+
+Thank you,
+
 -- 
-2.17.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
