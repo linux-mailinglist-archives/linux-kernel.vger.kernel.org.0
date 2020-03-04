@@ -2,74 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F779179332
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:22:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F8F179336
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:22:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbgCDPWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:22:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57458 "EHLO mx2.suse.de"
+        id S1729700AbgCDPWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:22:35 -0500
+Received: from foss.arm.com ([217.140.110.172]:35686 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbgCDPWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:22:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 73D74AC62;
-        Wed,  4 Mar 2020 15:22:00 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 16:21:59 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Lech Perczak <l.perczak@camlintechnologies.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Ogness <john.ogness@linutronix.de>
-Subject: Re: [PATCHv2] printk: queue wake_up_klogd irq_work only if per-CPU
- areas are ready
-Message-ID: <20200304152159.2p7d7dnztf433i24@pathway.suse.cz>
-References: <20200303113002.63089-1-sergey.senozhatsky@gmail.com>
+        id S1726440AbgCDPWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 10:22:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D12C54B2;
+        Wed,  4 Mar 2020 07:22:34 -0800 (PST)
+Received: from e113632-lin (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C7073F6CF;
+        Wed,  4 Mar 2020 07:22:33 -0800 (PST)
+References: <20200304114844.17700-1-daniel.lezcano@linaro.org>
+User-agent: mu4e 0.9.17; emacs 26.3
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        "open list\:SCHEDULER" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched: fair: Use the earliest break even
+In-reply-to: <20200304114844.17700-1-daniel.lezcano@linaro.org>
+Date:   Wed, 04 Mar 2020 15:22:17 +0000
+Message-ID: <jhjimjk16xi.mognet@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200303113002.63089-1-sergey.senozhatsky@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2020-03-03 20:30:02, Sergey Senozhatsky wrote:
-> However, only printk_safe/printk_nmi do make sure that
-> per-CPU areas have been initialised and that it's safe
-> to modify per-CPU irq_work. This means that, for instance,
-> should printk_deferred() be invoked "too early", that
-> is before per-CPU areas are initialised, printk_deferred()
-> will perform illegal per-CPU access.
-> 
-> Lech Perczak [0] reports that after commit 1b710b1b10ef
-> ("char/random: silence a lockdep splat with printk()")
-> user-space syslog/kmsg readers are not able to read new
-> kernel messages. The reason is printk_deferred() being
-> called too early (as was pointed out by Petr and John).
-> 
-> Fix printk_deferred() and do not queue per-CPU irq_work
-> before per-CPU areas are initialized.
-> 
-> [0] https://lore.kernel.org/lkml/aa0732c6-5c4e-8a8b-a1c1-75ebe3dca05b@camlintechnologies.com/
-> 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Reported-by: Lech Perczak <l.perczak@camlintechnologies.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: John Ogness <john.ogness@linutronix.de>
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+On Wed, Mar 04 2020, Daniel Lezcano wrote:
+> In the idle CPU selection process occuring in the slow path via the
+> find_idlest_group_cpu() function, we pick up in priority an idle CPU
+> with the shallowest idle state otherwise we fall back to the least
+> loaded CPU.
+>
+> In order to be more energy efficient but without impacting the
+> performances, let's use another criteria: the break even deadline.
+>
+> At idle time, when we store the idle state the CPU is entering in, we
+> compute the next deadline where the CPU could be woken up without
+> spending more energy to sleep.
+>
+> At the selection process, we use the shallowest CPU but in addition we
+> choose the one with the minimal break even deadline instead of relying
+> on the idle_timestamp. When the CPU is idle, the timestamp has less
+> meaning because the CPU could have wake up and sleep again several times
+> without exiting the idle loop. In this case the break even deadline is
+> more relevant as it increases the probability of choosing a CPU which
+> reached its break even.
+>
 
-Now, the question is whether to hurry this fix into 5.6 or if
-it could wait for 5.7.
+Ok so we still favour smallest exit latency, but if we have to pick
+among several CPUs with the same exit latency, we can use the break
+even. I'll want to test this on stuff, but I like the overall idea.
 
-I think that it could wait because 5.6 is not affected by
-the particular printk_deferred(). This patch fixes a long-term
-generic problem. But I am open for other opinions.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index fcc968669aea..520c5e822fdd 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5793,6 +5793,7 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
+>  {
+>       unsigned long load, min_load = ULONG_MAX;
+>       unsigned int min_exit_latency = UINT_MAX;
+> +	s64 min_break_even = S64_MAX;
+>       u64 latest_idle_timestamp = 0;
+>       int least_loaded_cpu = this_cpu;
+>       int shallowest_idle_cpu = -1;
+> @@ -5810,6 +5811,8 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
+>               if (available_idle_cpu(i)) {
+>                       struct rq *rq = cpu_rq(i);
+>                       struct cpuidle_state *idle = idle_get_state(rq);
+> +			s64 break_even = idle_get_break_even(rq);
+> +
 
-Best Regards,
-Petr
+Nit: there's tabs in that line break.
+
+>                       if (idle && idle->exit_latency < min_exit_latency) {
+>                               /*
+>                                * We give priority to a CPU whose idle state
+> @@ -5817,10 +5820,21 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
+>                                * of any idle timestamp.
+>                                */
+>                               min_exit_latency = idle->exit_latency;
+> +				min_break_even = break_even;
+>                               latest_idle_timestamp = rq->idle_stamp;
+>                               shallowest_idle_cpu = i;
+> -			} else if ((!idle || idle->exit_latency == min_exit_latency) &&
+> -				   rq->idle_stamp > latest_idle_timestamp) {
+> +			} else if ((idle && idle->exit_latency == min_exit_latency) &&
+> +				   break_even < min_break_even) {
+> +				/*
+> +				 * We give priority to the shallowest
+> +				 * idle states with the minimal break
+> +				 * even deadline to decrease the
+> +				 * probability to choose a CPU which
+> +				 * did not reach its break even yet
+> +				 */
+> +				min_break_even = break_even;
+> +				shallowest_idle_cpu = i;
+> +			} else if (!idle && rq->idle_stamp > latest_idle_timestamp) {
+>                               /*
+>                                * If equal or no active idle state, then
+>                                * the most recently idled CPU might have
+
+That comment will need to be changed as well, that condition now only
+catters to the !idle case.
+
+With that said, that comment actually raises a valid point: picking
+recently idled CPUs might give us warmer cache. So by using the break
+even stat, we can end up picking CPUs with colder caches (have been
+idling for longer) than the current logic would. I suppose more testing
+will tell us where we stand.
+
+> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+> index b743bf38f08f..189cd51cd474 100644
+> --- a/kernel/sched/idle.c
+> +++ b/kernel/sched/idle.c
+> @@ -19,7 +19,14 @@ extern char __cpuidle_text_start[], __cpuidle_text_end[];
+>   */
+>  void sched_idle_set_state(struct cpuidle_state *idle_state)
+>  {
+> -	idle_set_state(this_rq(), idle_state);
+> +	struct rq *rq = this_rq();
+> +	ktime_t kt;
+> +
+> +	if (likely(idle_state)) {
+
+Doesn't this break things? e.g. calling this with NULL?
+
+> +		kt = ktime_add_ns(ktime_get(), idle_state->exit_latency_ns);
+
+ISTR there were objections to using ktime stuff in the scheduler, but I
+can't remember anything specific. If we only call into it when actually
+entering an idle state (and not when we're exiting one), I suppose that
+would be fine?
+
+> +		idle_set_state(rq, idle_state);
+> +		idle_set_break_even(rq, ktime_to_ns(kt));
+> +	}
+>  }
+>
+>  static int __read_mostly cpu_idle_force_poll;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 2a0caf394dd4..abf2d2e73575 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1015,6 +1015,7 @@ struct rq {
+>  #ifdef CONFIG_CPU_IDLE
+>       /* Must be inspected within a rcu lock section */
+>       struct cpuidle_state	*idle_state;
+> +	s64			break_even;
+
+Why signed? This should be purely positive, right?
+
+>  #endif
+>  };
+>
+> @@ -1850,6 +1851,16 @@ static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+>
+>       return rq->idle_state;
+>  }
+> +
+> +static inline void idle_set_break_even(struct rq *rq, s64 break_even)
+> +{
+> +	rq->break_even = break_even;
+> +}
+> +
+> +static inline s64 idle_get_break_even(struct rq *rq)
+> +{
+> +	return rq->break_even;
+> +}
+
+I'm not super familiar with the callsites for setting idle states,
+what's the locking situation there? Do we have any rq lock?
+
+In find_idlest_group_cpu() we're in a read-side RCU section, so the
+idle_state is protected (speaking of which, why isn't idle_get_state()
+using rcu_dereference()?), but that's doesn't cover the break even.
+
+IIUC at the very least we may want to give them the READ/WRITE_ONCE()
+treatment.
