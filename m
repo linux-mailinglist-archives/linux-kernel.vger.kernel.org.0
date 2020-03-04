@@ -2,137 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A69B17983F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6F917984C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:46:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388203AbgCDSpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 13:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730021AbgCDSpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 13:45:04 -0500
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 422F624679
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Mar 2020 18:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583347503;
-        bh=Xrw/0ZXS8o5llP7/hWRgBB1gg32aOCivmOH4N2PPq28=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=evFc4Gy2bN812x4sk2r8Pn9zAtdOD5nizsdGRFGnPPQJjIT3Giw+WApSBY2sg4RQj
-         iTqf7tJ5u5IGF0EXEAMZNb1VAIz5xMM6HzAydQcZPNoCREgPFvBNUAcWYJTqD+wqzD
-         sux5tvloTufAOp3GDV77PXiGSd4cbGPBEygtj4qA=
-Received: by mail-wr1-f41.google.com with SMTP id t11so3753782wrw.5
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 10:45:03 -0800 (PST)
-X-Gm-Message-State: ANhLgQ2GOQ+urtkrV42gSkYaPD2ro2mNlG4c7R62xufKuOns6vNshCc8
-        7dxriseACfJUVFhChUomCsmkxJ89E7c5OuduJc2/EA==
-X-Google-Smtp-Source: ADFU+vtlsxwoHrm1OQRutaVl5g00tzjaOFt5JVahFb3l/ibOgX3f8Wh4bQByjMpAPzr6IyStGc/YxKeZy0zjhVlBpC0=
-X-Received: by 2002:a05:6000:110b:: with SMTP id z11mr5480355wrw.252.1583347501553;
- Wed, 04 Mar 2020 10:45:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20200303205445.3965393-1-nivedita@alum.mit.edu>
- <20200303205445.3965393-2-nivedita@alum.mit.edu> <CAKv+Gu_LmntqGjkakR0-SFSCR+JF+CFeKyc=5qzOdpn4wTvKhw@mail.gmail.com>
- <20200304154908.GB998825@rani.riverdale.lan>
-In-Reply-To: <20200304154908.GB998825@rani.riverdale.lan>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 4 Mar 2020 19:44:50 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu-Xo2zj9_N+K8FrpBstgU57GZvWO-pDr4tRAODhsYzW-A@mail.gmail.com>
-Message-ID: <CAKv+Gu-Xo2zj9_N+K8FrpBstgU57GZvWO-pDr4tRAODhsYzW-A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] x86/mm/pat: Handle no-GBPAGES case correctly in populate_pud
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1730173AbgCDSqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 13:46:25 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46701 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730004AbgCDSqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 13:46:25 -0500
+Received: from carbon-x1.hos.anvin.org ([IPv6:2601:646:8600:3281:e7ea:4585:74bd:2ff0])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id 024IivPG430134
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Wed, 4 Mar 2020 10:44:57 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 024IivPG430134
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2020022001; t=1583347500;
+        bh=QUlRbhYXKi9CdoMv3oDgidaagtZkvk5Xf61FHG+n0Uw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KvnKCUYqLiZUp2UObBU/tThRYE5Pcbpbj9OH7MRc6EhVU+JkTmvljzcf9g3Iq0bUo
+         9V/tj2EXxvJiUXm7HH1prOmM37wqwJoIIdDzX831hmKb+hmUXMnLz6huKUq6lctiao
+         9yVGb1BWiEcKMdHr7tY+bxx1phc/XYIDy/FPIaZRucMI0ALoh4PforyLWc2i46g4LF
+         9jvPpeb6Wt8rrT/rjPRpA9yATnlktqf18q7Ch9gkjeys788Oa08dWH+Jl0E1vAvCtE
+         7A/rPHzQ/zlvdtJoTGxn717oTmGTxwdSf+uw1OjF/a1K8De68Woo5pz7m6tpEgXSaS
+         wvrehHjq8HzNA==
+Subject: Re: [PATCH v11 00/11] x86: PIE support to extend KASLR randomization
+To:     Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Thomas Garnier <thgarnie@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Allison Randal <allison@lohutok.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux PM list <linux-pm@vger.kernel.org>
+References: <20200228000105.165012-1-thgarnie@chromium.org>
+ <202003022100.54CEEE60F@keescook>
+ <20200303095514.GA2596@hirez.programming.kicks-ass.net>
+ <CAJcbSZH1oON2VC2U8HjfC-6=M-xn5eU+JxHG2575iMpVoheKdA@mail.gmail.com>
+ <6e7e4191612460ba96567c16b4171f2d2f91b296.camel@linux.intel.com>
+ <202003031314.1AFFC0E@keescook>
+ <20200304092136.GI2596@hirez.programming.kicks-ass.net>
+ <202003041019.C6386B2F7@keescook>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <e60876d0-4f7d-9523-bcec-6d002f717623@zytor.com>
+Date:   Wed, 4 Mar 2020 10:44:52 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <202003041019.C6386B2F7@keescook>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Mar 2020 at 16:49, Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> On Wed, Mar 04, 2020 at 09:17:44AM +0100, Ard Biesheuvel wrote:
-> > On Tue, 3 Mar 2020 at 21:54, Arvind Sankar <nivedita@alum.mit.edu> wrote:
-> > >
-> > > Commit d367cef0a7f0 ("x86/mm/pat: Fix boot crash when 1GB pages are not
-> > > supported by the CPU") added checking for CPU support for 1G pages
-> > > before using them.
-> > >
-> > > However, when support is not present, nothing is done to map the
-> > > intermediate 1G regions and we go directly to the code that normally
-> > > maps the remainder after 1G mappings have been done. This code can only
-> > > handle mappings that fit inside a single PUD entry, but there is no
-> > > check, and it instead silently produces a corrupted mapping to the end
-> > > of the PUD entry, and no mapping beyond it, but still returns success.
-> > >
-> > > This bug is encountered on EFI machines in mixed mode (32-bit firmware
-> > > with 64-bit kernel), with RAM beyond 2G. The EFI support code
-> > > direct-maps all the RAM, so a memory range from below 1G to above 2G
-> > > triggers the bug and results in no mapping above 2G, and an incorrect
-> > > mapping in the 1G-2G range. If the kernel resides in the 1G-2G range, a
-> > > firmware call does not return correctly, and if it resides above 2G, we
-> > > end up passing addresses that are not mapped in the EFI pagetable.
-> > >
-> > > Fix this by mapping the 1G regions using 2M pages when 1G page support
-> > > is not available.
-> > >
-> > > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-> >
-> > I was trying to test these patches, and while they seem fine from a
-> > regression point of view, I can't seem to reproduce this issue and
-> > make it go away again by applying this patch.
-> >
-> > Do you have any detailed instructions how to reproduce this?
-> >
->
-> The steps I'm following are
-> - build x86_64 defconfig + enable EFI_PGT_DUMP (to show the incorrect
->   pagetable)
-> - run (QEMU is 4.2.0)
-> $ qemu-system-x86_64 -cpu Haswell -pflash qemu/OVMF_32.fd -m 3072 -nographic \
->   -kernel kernel64/arch/x86/boot/bzImage -append "earlyprintk=ttyS0,keep efi=debug nokaslr"
->
-> The EFI memory map I get is (abbreviated to regions of interest):
-> ...
-> [    0.253991] efi: mem10: [Conventional Memory|   |  |  |  |  |  |  |  |   |WB|WT|WC|UC] range=[0x00000000053e7000-0x000000003fffbfff] (940MB)
-> [    0.254424] efi: mem11: [Loader Data        |   |  |  |  |  |  |  |  |   |WB|WT|WC|UC] range=[0x000000003fffc000-0x000000003fffffff] (0MB)
-> [    0.254991] efi: mem12: [Conventional Memory|   |  |  |  |  |  |  |  |   |WB|WT|WC|UC] range=[0x0000000040000000-0x00000000bbf77fff] (1983MB)
-> ...
->
-> The pagetable this produces is (abbreviated again):
-> ...
-> [    0.272980] 0x0000000003400000-0x0000000004800000          20M     ro         PSE         x  pmd
-> [    0.273327] 0x0000000004800000-0x0000000005200000          10M     RW         PSE         NX pmd
-> [    0.273987] 0x0000000005200000-0x0000000005400000           2M     RW                     NX pte
-> [    0.274343] 0x0000000005400000-0x000000003fe00000         938M     RW         PSE         NX pmd
-> [    0.274725] 0x000000003fe00000-0x0000000040000000           2M     RW                     NX pte
-> [    0.275066] 0x0000000040000000-0x0000000080000000           1G     RW         PSE         NX pmd
-> [    0.275437] 0x0000000080000000-0x00000000bbe00000         958M                               pmd
-> ...
->
-> Note how 0x80000000-0xbbe00000 range is unmapped in the resulting
-> pagetable. The dump doesn't show physical addresses, but the
-> 0x40000000-0x80000000 range is incorrectly mapped as well, as the loop
-> in populate_pmd would just go over that virtual address range twice.
->
->         while (end - start >= PMD_SIZE) {
->                 ...
->                 pmd = pmd_offset(pud, start);
->
->                 set_pmd(pmd, pmd_mkhuge(pfn_pmd(cpa->pfn,
->                                         canon_pgprot(pmd_pgprot))));
->
->                 start     += PMD_SIZE;
->                 cpa->pfn  += PMD_SIZE >> PAGE_SHIFT;
->                 cur_pages += PMD_SIZE >> PAGE_SHIFT;
->         }
+On 2020-03-04 10:21, Kees Cook wrote:
+> On Wed, Mar 04, 2020 at 10:21:36AM +0100, Peter Zijlstra wrote:
+>> But at what cost; it does unspeakable ugly to the asm. And didn't a
+>> kernel compiled with the extended PIE range produce a measurably slower
+>> kernel due to all the ugly?
+> 
+> Was that true? I thought the final results were a wash and that earlier
+> benchmarks weren't accurate for some reason? I can't find the thread
+> now. Thomas, do you have numbers on that?
+> 
+> BTW, I totally agree that fgkaslr is the way to go in the future. I
+> am mostly arguing for this under the assumption that it doesn't
+> have meaningful performance impact and that it gains the kernel some
+> flexibility in the kinds of things it can do in the future. If the former
+> is not true, then I'd agree, the benefit needs to be more clear.
+> 
 
-I've tried a couple of different ways, but I can't seem to get my
-memory map organized in the way that will trigger the error.
+"Making the assembly really ugly" by itself is a reason not to do it, in my
+Not So Humble Opinion[TM]; but the reason the kernel and small memory models
+exist in the first place is because there is a nonzero performance impact of
+the small-PIC memory model. Having modules in separate regions would further
+add the cost of a GOT references all over the place (PLT is optional, useless
+and deprecated for eager binding) *plus* might introduce at least one new
+vector of attack: overwrite a random GOT slot, and just wait until it gets hit
+by whatever code path it happens to be in; the exact code path doesn't matter.
+From an kASLR perspective this is *very* bad, since you only need to guess the
+general region of a GOT rather than an exact address.
+
+The huge memory model, required for arbitrary placement, has a very
+significant performance impact.
+
+The assembly code is *very* different across memory models.
+
+	-hpa
