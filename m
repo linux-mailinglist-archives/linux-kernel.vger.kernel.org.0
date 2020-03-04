@@ -2,118 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FDB4179262
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEACA179265
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbgCDOgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 09:36:12 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:45264 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbgCDOgM (ORCPT
+        id S1729570AbgCDOge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 09:36:34 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39004 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729488AbgCDOgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 09:36:12 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j9V86-0007Lq-7y; Wed, 04 Mar 2020 07:36:10 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j9V6V-0005fb-RG; Wed, 04 Mar 2020 07:36:08 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Qian Cai <cai@lca.pw>, oleg@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <87wo80lcqi.fsf@nanos.tec.linutronix.de>
-Date:   Wed, 04 Mar 2020 08:32:22 -0600
-In-Reply-To: <87wo80lcqi.fsf@nanos.tec.linutronix.de> (Thomas Gleixner's
-        message of "Wed, 04 Mar 2020 09:56:37 +0100")
-Message-ID: <87lfogfax5.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 4 Mar 2020 09:36:33 -0500
+Received: by mail-wm1-f68.google.com with SMTP id j1so2111030wmi.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 06:36:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lTzQt0c8E2G6FZcIo18SJrDWTb5FVlLb3zKNZ55nIjU=;
+        b=UAlQDt3yXzhr1/Rlios7rnu8wu2dcEdNDRjne6mXF68TpoDeVMd80MArY6GgTG0o+h
+         eeRgrqZAwiSTKJFNqNMVUGYca3sMWZcDXfhfqeoQGKmJwTdSONAYepcnIPU431ZdwBti
+         H1TWcZZ3+JCr+9iuwAAmxXK+eRMDHht/RoggLD1iTWBXi8lXfUE4etVlHlu1IaPXfk9R
+         sBmPPzWC3vyUAz0KT/tUM84vO19UR79dRW/ElIsVaIS60KGvKbeIxSnZ/zyfqrLyvx6I
+         7PJNDvgKCAxIdUggDa2GpVHGOy2m9GIdp4xiZ8/HTimBbfPwNyezGZSZIzhQCaX0WJn0
+         l14Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lTzQt0c8E2G6FZcIo18SJrDWTb5FVlLb3zKNZ55nIjU=;
+        b=V6F2zidCmcrB1J/6S9Ix2TzYEHMsxpqZeGtSndoNKnCV9sp2O2/q+0JKgIoq6rVG7Y
+         CfIezbPCdDq5vkQcVA4d/JDdNUleIGtxmawY2ABeU4m1QYWJ9hQuPY+LzqV46d3zhTFA
+         OMpaOqzsc72jnRiBuuv4JGaKxE+9WFcjY55UAqN08SKC+m72YY8kzbqmcRy/L6cNqCBi
+         v/JUndZHkqM+RTA780gy2hfl4cNyKOxr5YYdh8qRDAxGNHEX1Q2TrnYlAbu6UK5fLfbJ
+         hkly1XLy9DT8R6C6CvM8o9dWhGiVbIqEFxWqZMAXbbxCZ4qztfcKbsbMp/yCP8coOqE9
+         Pccg==
+X-Gm-Message-State: ANhLgQ3qzdeswvhG/EJDmFlK8n1e3O9yq+pSxL/SRdXdYXcaBa5xtCBf
+        mibYYZk9lyZXRZak/vOpwD7H0zGA4HicKfd1jmugPg==
+X-Google-Smtp-Source: ADFU+vtpj9M0/D5qC5k2fYKUXJ7T8fvjXg9+pLPrkkl6qnlX0K21QBOgi8n2/aKZZLKMXiH5E/H2EvEi9HcpVdIwjdc=
+X-Received: by 2002:a1c:238d:: with SMTP id j135mr4057772wmj.165.1583332591534;
+ Wed, 04 Mar 2020 06:36:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j9V6V-0005fb-RG;;;mid=<87lfogfax5.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18ZxI6RGtjE7slLwFYskhXIghFEN64IuMA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: *******
-X-Spam-Status: No, score=7.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMGappySubj_01,XMSubLong,XM_Palau_URI
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4990]
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  5.0 XM_Palau_URI RAW: Palau .pw URI
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *******;Thomas Gleixner <tglx@linutronix.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 3628 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.9 (0.1%), b_tie_ro: 2.00 (0.1%), parse: 1.52
-        (0.0%), extract_message_metadata: 24 (0.7%), get_uri_detail_list: 2.2
-        (0.1%), tests_pri_-1000: 25 (0.7%), tests_pri_-950: 1.80 (0.0%),
-        tests_pri_-900: 1.52 (0.0%), tests_pri_-90: 21 (0.6%), check_bayes: 19
-        (0.5%), b_tokenize: 7 (0.2%), b_tok_get_all: 6 (0.2%), b_comp_prob:
-        1.81 (0.0%), b_tok_touch_all: 2.6 (0.1%), b_finish: 0.63 (0.0%),
-        tests_pri_0: 321 (8.9%), check_dkim_signature: 0.48 (0.0%),
-        check_dkim_adsp: 2.3 (0.1%), poll_dns_idle: 3211 (88.5%),
-        tests_pri_10: 3.2 (0.1%), tests_pri_500: 3223 (88.8%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH timers/core] posix-cpu-timers: Put the task_struct in posix_cpu_timers_create
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <0000000000007b25c1059f8b5a4f@google.com> <CAG_fn=XWOjiLY8KON5VdieOVpWdnbtMqo2v8TZ1f04+4777J=g@mail.gmail.com>
+In-Reply-To: <CAG_fn=XWOjiLY8KON5VdieOVpWdnbtMqo2v8TZ1f04+4777J=g@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Wed, 4 Mar 2020 15:36:18 +0100
+Message-ID: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in simple_attr_read
+To:     syzbot <syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: multipart/mixed; boundary="000000000000aeadcc05a0085848"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+--000000000000aeadcc05a0085848
+Content-Type: text/plain; charset="UTF-8"
 
-> ebiederm@xmission.com (Eric W. Biederman) writes:
->
->> Qian Cai <cai@lca.pw> writes:
->>> The recent commit removed put_task_struct() in posix_cpu_timer_del()
->>> results in many memory leaks like this,
->>>
->>> unreferenced object 0xc0000016d9b44480 (size 8192):
->>>   comm "timer_create01", pid 57749, jiffies 4295163733 (age 6159.670s)
->>>   hex dump (first 32 bytes):
->>>     02 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00  ................
->>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>>   backtrace:
->>>     [<0000000056aca129>] copy_process+0x26c/0x18e0
->>>     alloc_task_struct_node at kernel/fork.c:169
->>>     (inlined by) dup_task_struct at kernel/fork.c:877
->>>     (inlined by) copy_process at kernel/fork.c:1929
->>>     [<00000000bdbbf9f8>] _do_fork+0xac/0xb20
->>>     [<00000000dcb1c445>] __do_sys_clone+0x98/0xe0
->>>     __do_sys_clone at kernel/fork.c:2591
->>>     [<000000006c059205>] ppc_clone+0x8/0xc
->>>     ppc_clone at arch/powerpc/kernel/entry_64.S:479
->>>
->>
->> I forgot that get_task_for_clock called by posix_cpu_timer_create
->> returns a reference to a task_struct.  Put that reference
->> to avoid the leak.
->
-> I took the liberty to fold this back into the affected commit and add a
-> comment why this put_task_struct() is actually required.
+Hi Greg, Rafael, Arnd,
 
-Good enough.
+> This report says it's uninit in strlen, but there's actually an
+> information leak later on that lets the user read arbitrary data past
+> the non-terminated attr->get_buf.
 
-We should be able to use rcu and remove the reference entirely.
-But that is a change for another day.
+The attached PoC demonstrates the problem.
+I am not sure how bad is that, given that /sys/kernel/debug is usually
+accessible only to the root, and simple attribute files don't seem to
+be used anywhere else.
 
-Eric
+--000000000000aeadcc05a0085848
+Content-Type: text/x-csrc; charset="US-ASCII"; name="simple_attr_read-leak.c"
+Content-Disposition: attachment; filename="simple_attr_read-leak.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k7dfc2n10>
+X-Attachment-Id: f_k7dfc2n10
+
+I2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPGZjbnRsLmg+CiNpbmNsdWRlIDxzdGRpby5o
+PgojaW5jbHVkZSA8c3RyaW5nLmg+CiNpbmNsdWRlIDxzeXMvbW1hbi5oPgojaW5jbHVkZSA8dW5p
+c3RkLmg+CgojZGVmaW5lIEJVRl9TSVpFIDEyOAppbnQgbWFpbihpbnQgYXJnYywgY2hhciAqYXJn
+dltdKQp7CiAgY2hhciBidWZbQlVGX1NJWkVdOwogIGNvbnN0IGNoYXIgZGVmX2ZpbGVuYW1lW10g
+PSAiL3N5cy9rZXJuZWwvZGVidWcvYmx1ZXRvb3RoLzZsb3dwYW5fZW5hYmxlIjsKICBjaGFyICpm
+aWxlbmFtZSA9IChjaGFyICopZGVmX2ZpbGVuYW1lOwogIGludCBwaXBlZmRbMl0sIGRmc19mZDsK
+ICBzdHJ1Y3QgaW92ZWMgaW92OwoKICBpZiAoYXJnYyA+IDEpCiAgICBmaWxlbmFtZSA9IGFyZ3Zb
+MV07CiAgcGlwZShwaXBlZmQpOwogIGlvdi5pb3ZfYmFzZSA9IG1tYXAoTlVMTCwgMHgxMDAwLCAz
+LCBNQVBfUFJJVkFURXxNQVBfQU5PTllNT1VTLCAtMSwgMCk7CiAgaW92Lmlvdl9sZW4gPSAweDE7
+CiAgdm1zcGxpY2UocGlwZWZkWzFdLCAmaW92LCAxLCAxKTsKICBkZnNfZmQgPSBvcGVuKGZpbGVu
+YW1lLCBPX1JEV1IpOwogIHNwbGljZShwaXBlZmRbMF0sIDAsIGRmc19mZCwgMCwgMHgxLCBTUExJ
+Q0VfRl9OT05CTE9DSyk7CiAgbWVtc2V0KGJ1ZiwgMCwgQlVGX1NJWkUpOwogIHJlYWQoZGZzX2Zk
+LCBidWYsIEJVRl9TSVpFKTsKICBwcmludGYoIiclcydcbiIsIGJ1Zik7CiAgcmV0dXJuIDA7Cn0K
+--000000000000aeadcc05a0085848--
