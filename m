@@ -2,112 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B77F0179AE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF8E179ADC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:26:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388405AbgCDV0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 16:26:25 -0500
-Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:45176 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388364AbgCDV0Y (ORCPT
+        id S2388356AbgCDV0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 16:26:17 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33604 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729825AbgCDV0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:26:24 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 0BF45100E7B42;
-        Wed,  4 Mar 2020 21:26:23 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2525:2553:2561:2564:2682:2685:2693:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7514:7903:7974:8985:9025:9108:10004:10400:10848:10967:11232:11658:11914:12043:12050:12296:12297:12555:12663:12740:12760:12895:12986:13161:13184:13229:13439:13618:13846:14096:14097:14181:14659:14721:21080:21325:21433:21451:21627:21740:21749:21811:21939:21972:30003:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: top47_1a6fca43cfd3c
-X-Filterd-Recvd-Size: 3754
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  4 Mar 2020 21:26:21 +0000 (UTC)
-Message-ID: <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-From:   Joe Perches <joe@perches.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 04 Mar 2020 13:24:48 -0800
-In-Reply-To: <20200304212846.0c79c6da@coco.lan>
-References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
-         <20200304131035.731a3947@lwn.net> <20200304212846.0c79c6da@coco.lan>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Mar 2020 16:26:16 -0500
+Received: by mail-ed1-f68.google.com with SMTP id c62so4082595edf.0;
+        Wed, 04 Mar 2020 13:26:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=eMvhBOIg5MRjHF1oFd/XQ7SSnXXeEGxIFK8nINn5g7k=;
+        b=Eb3IOFXsE/5oc8UPJfOC7SVDxP8zUqyH896zGb2lG90S92LZk+QnhPw4pVvGkuUOBc
+         HNNsuwN8g4bIw/+bygigUIyQKJD/dfC8mJ3EKwOiH5mRU9/gG0AvuY3Q3Dg5yAwO7RZ4
+         jtSI3psRzrtJ/pMIT/q2i5jPkznXQcEtRj3jIc9pJ3e9XZBnSXXLXANUpAWvHvr8RgYv
+         UdfrXmvdYQSm1ZjK6rHHxch+eHZcWs5gxG/b0VpLsvwOLoktgmI+ac0Ez0dINeXkQzn7
+         caRHXsHS/MDmtrJwJaPuE/nSk0XsJmSMFdMuNcwzd0BUrrVPgIa+Z6+2oWfWT2arzwej
+         2Jtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eMvhBOIg5MRjHF1oFd/XQ7SSnXXeEGxIFK8nINn5g7k=;
+        b=Z+qgQAg7m+jrRnD1ftT3V1ZHIJbh7QapYMC3lRPEFHdHNHxrIhRtXLyFLmPkqvRCt3
+         NLQ5d+8uTRn8IGXFWMp3pMMcLZuJIt809vDF3d40SFAZE8rtjr1lEn2sr3dHWQRrkZmU
+         N78Ks7GRMg1zpyjFieMJ0EtrHZP6SkdFLdeDS7Scw3412seooWki5JovjQmb9QTIO0jJ
+         ZSNHMVHu10BSiro2aQlb0jg8xHi2n7u/Zn7UUnlmmQDgyL7prrHSzirLghlCuRZ5FSL7
+         7VRM6ho0nsoD8kDBM4SVrWxfeLpuvdFryqF1MjHgHYH/2TreEyGW8ajpHaNvraZtzaT4
+         GtHg==
+X-Gm-Message-State: ANhLgQ3YC6GBH5N89YXhk60b0KIU/IWuiNZ92MOJYkp9Q7xz0WwY7rs+
+        b0PDgTL5dGeK0XuQS+KtMGp2HsmrimI=
+X-Google-Smtp-Source: ADFU+vsYttFIIZKSMto/Dsvrd8XkxFID6j5epaPlIKW2H/3V/H1ZiJlIaehOf50JN/z7KI79i34OKQ==
+X-Received: by 2002:a50:b043:: with SMTP id i61mr4672103edd.194.1583357174832;
+        Wed, 04 Mar 2020 13:26:14 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d16:4100:5c62:5f:595c:f76d])
+        by smtp.gmail.com with ESMTPSA id ss15sm1332396ejb.10.2020.03.04.13.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 13:26:14 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Yangtao Li <tiny.windzz@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-pm@vger.kernel.org, Joe Perches <joe@perches.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: update ALLWINNER CPUFREQ DRIVER entry
+Date:   Wed,  4 Mar 2020 22:26:00 +0100
+Message-Id: <20200304212600.6172-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-04 at 21:28 +0100, Mauro Carvalho Chehab wrote:
-> Em Wed, 4 Mar 2020 13:10:35 -0700
-> Jonathan Corbet <corbet@lwn.net> escreveu:
-> 
-> > On Wed,  4 Mar 2020 08:29:50 +0100
-> > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > 
-> > > Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
-> > > ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
-> > > converts many Documentation/filesystems/ files to ReST.
-> > > 
-> > > Since then, ./scripts/get_maintainer.pl --self-test complains with 27
-> > > warnings on Documentation/filesystems/ of this kind:
-> > > 
-> > >   warning: no file matches F: Documentation/filesystems/...
-> > > 
-> > > Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
-> > > patch series and address the 27 warnings.
-> > > 
-> > > Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > ---
-> > > Mauro, please ack.
-> > > Jonathan, pick pick this patch for doc-next.  
-> > 
-> > Sigh, I need to work a MAINTAINERS check into my workflow...
-> > 
-> > Thanks for fixing these, but ... what tree did you generate the patch
-> > against?  I doesn't come close to applying to docs-next.
-> 
-> I'm starting to suspect that maybe the best workflow would be to just 
-> apply the patches at docs-next keeping links broken, and then run
-> ./scripts/documentation-file-ref-check --fix by the end of a merge
-> window, addressing such breakages.
+Commit b30d8cf5e171 ("dt-bindings: opp: Convert Allwinner H6 OPP to a
+schema") converted in Documentation/devicetree/bindings/opp/ the file
+sun50i-nvmem-cpufreq.txt to allwinner,sun50i-h6-operating-points.yaml.
 
-I'm not sure at all that that script will always do the
-right thing with MAINTAINERS, but it seems to work OK
-except for some renames where a .txt file was directly
-renamed to a .rst file in the same directory where there
-was a similarly named file in a different directory.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Likely the direct rename of a filename extension from
-.txt to .rst should always be applied by the script.
+  warning: no file matches \
+  F: Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
 
-Anyway, for -next as of today:
+Adjust the file pattern in the ALLWINNER CPUFREQ DRIVER entry.
 
-$ git diff --shortstat
- 64 files changed, 116 insertions(+), 116 deletions(-)
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Changes to v1:
+  - do not include new maintainers because it is not needed.
 
-> There are usually lots of churn outside the merge window.
-> 
-> Another alternative would be to split the MAINTAINERS file on a
-> per-subsystem basis. If I remember well, someone proposed this once at
-> LKML. I vaguely remember that there were even a patch (or RFC)
-> adding support for such thing for get_maintainers.pl.
+Maxime, Chen-Yu, Yangtao, please ack.
+Rob, please pick this patch.
 
-Yeah.  get_maintainer.pl does work if the MAINTAINERS
-file is split up a few different ways.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There was also a tool to do the MAINTAINERS split.
-https://lore.kernel.org/patchwork/patch/817857/
-
-I doubt that would matter at all given today's tools and
-the general mechanisms of maintainers renaming files and
-not running checkpatch in the first place.
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6158a143a13e..9402b05630f9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -693,7 +693,7 @@ ALLWINNER CPUFREQ DRIVER
+ M:	Yangtao Li <tiny.windzz@gmail.com>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/opp/sun50i-nvmem-cpufreq.txt
++F:	Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+ F:	drivers/cpufreq/sun50i-cpufreq-nvmem.c
+ 
+ ALLWINNER CRYPTO DRIVERS
+-- 
+2.17.1
 
