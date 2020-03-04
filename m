@@ -2,197 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6FE41790AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:55:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5211C1790B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbgCDMzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 07:55:50 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:28854 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726440AbgCDMzt (ORCPT
+        id S2388073AbgCDM7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 07:59:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46824 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388060AbgCDM7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 07:55:49 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 024Crm5M010459
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Mar 2020 07:55:48 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yhw6nya93-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:55:48 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 4 Mar 2020 12:55:46 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Mar 2020 12:55:42 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 024CsgYl33948012
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Mar 2020 12:54:42 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F6C64C050;
-        Wed,  4 Mar 2020 12:55:40 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3482B4C046;
-        Wed,  4 Mar 2020 12:55:39 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.200.112])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Mar 2020 12:55:39 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: add a new CONFIG for loading arch-specific
- policies
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Ard Biesheuvel <ardb@kernel.org>, Nayna Jain <nayna@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        x86@kernel.org
-Date:   Wed, 04 Mar 2020 07:55:38 -0500
-In-Reply-To: <CAKv+Gu831SRo+Di6WgKTex40TcOVqNQAdeNLtfQpPdgnvrxucw@mail.gmail.com>
-References: <1583289211-5420-1-git-send-email-nayna@linux.ibm.com>
-         <CAKv+Gu831SRo+Di6WgKTex40TcOVqNQAdeNLtfQpPdgnvrxucw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030412-0012-0000-0000-0000038D17CB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030412-0013-0000-0000-000021C9D293
-Message-Id: <1583326538.6264.32.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-04_03:2020-03-04,2020-03-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 spamscore=0
- suspectscore=0 adultscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003040099
+        Wed, 4 Mar 2020 07:59:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583326790;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hhdoWtYJUAFB+5isvchTA1I3gIKalNxasPf308iYp70=;
+        b=i/xtpsps/sca3H1Ea8xLpIN/CElpZ/R1nXFMX+zgWSfOC9a0m2tVLxIC0s0Ojv2zcdqxTv
+        ef32+Lmsu6c6yNUIxcAH9rlRbXFMPnW3SBkz+A16rmre3RXAYwO2K4lQbK0qEP3YfM9aRl
+        kXGcPhe6PGq5NYAkNUUxfuTk1DOEF2k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-369-AScE1ydWP0Waxce9yLkZhQ-1; Wed, 04 Mar 2020 07:59:47 -0500
+X-MC-Unique: AScE1ydWP0Waxce9yLkZhQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F24471B18BC0;
+        Wed,  4 Mar 2020 12:59:45 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-38.phx2.redhat.com [10.3.112.38])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B61215DA60;
+        Wed,  4 Mar 2020 12:59:43 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id 7EE1B121; Wed,  4 Mar 2020 09:59:40 -0300 (BRT)
+Date:   Wed, 4 Mar 2020 09:59:40 -0300
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH] tools lib traceevent: Remove extra '\n' in
+ print_event_time()
+Message-ID: <20200304125940.GA6498@redhat.com>
+References: <20200303231852.6ab6882f@oasis.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303231852.6ab6882f@oasis.local.home>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc'ing Thomas Gleixner and x86 mailing list]
-
-On Wed, 2020-03-04 at 08:14 +0100, Ard Biesheuvel wrote:
-> On Wed, 4 Mar 2020 at 03:34, Nayna Jain <nayna@linux.ibm.com> wrote:
-> >
-> > Every time a new architecture defines the IMA architecture specific
-> > functions - arch_ima_get_secureboot() and arch_ima_get_policy(), the IMA
-> > include file needs to be updated. To avoid this "noise", this patch
-> > defines a new IMA Kconfig IMA_SECURE_AND_OR_TRUSTED_BOOT option, allowing
-> > the different architectures to select it.
-> >
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: Philipp Rudo <prudo@linux.ibm.com>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+Em Tue, Mar 03, 2020 at 11:18:52PM -0500, Steven Rostedt escreveu:
 > 
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
-
-Thanks, Ard.
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> for the x86 bits, but I'm not an x86 maintainer. Also, you may need to
-> split this if you want to permit arch maintainers to pick up their
-> parts individually.
+> If the precesion of print_event_time() is zero or greater than the
 
-Michael, Philipp, Thomas, do you prefer separate patches?
+precision, right?
 
+Thanks, applied.
+
+- Arnaldo
+
+> timestamp, it uses a different format. But that format had an extra new line
+> at the end, and caused the output to not look right:
 > 
-> > ---
-> > v2:
-> > * Fixed the issue identified by Mimi. Thanks Mimi, Ard, Heiko and Michael for
-> > discussing the fix.
-> >
-> >  arch/powerpc/Kconfig           | 1 +
-> >  arch/s390/Kconfig              | 1 +
-> >  arch/x86/Kconfig               | 1 +
-> >  include/linux/ima.h            | 3 +--
-> >  security/integrity/ima/Kconfig | 9 +++++++++
-> >  5 files changed, 13 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> > index 497b7d0b2d7e..a5cfde432983 100644
-> > --- a/arch/powerpc/Kconfig
-> > +++ b/arch/powerpc/Kconfig
-> > @@ -979,6 +979,7 @@ config PPC_SECURE_BOOT
-> >         bool
-> >         depends on PPC_POWERNV
-> >         depends on IMA_ARCH_POLICY
-> > +       select IMA_SECURE_AND_OR_TRUSTED_BOOT
-> >         help
-> >           Systems with firmware secure boot enabled need to define security
-> >           policies to extend secure boot to the OS. This config allows a user
-> > diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> > index 8abe77536d9d..4a502fbcb800 100644
-> > --- a/arch/s390/Kconfig
-> > +++ b/arch/s390/Kconfig
-> > @@ -195,6 +195,7 @@ config S390
-> >         select ARCH_HAS_FORCE_DMA_UNENCRYPTED
-> >         select SWIOTLB
-> >         select GENERIC_ALLOCATOR
-> > +       select IMA_SECURE_AND_OR_TRUSTED_BOOT if IMA_ARCH_POLICY
-> >
-> >
-> >  config SCHED_OMIT_FRAME_POINTER
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index beea77046f9b..7f5bfaf0cbd2 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -230,6 +230,7 @@ config X86
-> >         select VIRT_TO_BUS
-> >         select X86_FEATURE_NAMES                if PROC_FS
-> >         select PROC_PID_ARCH_STATUS             if PROC_FS
-> > +       select IMA_SECURE_AND_OR_TRUSTED_BOOT   if EFI && IMA_ARCH_POLICY
-> >
-> >  config INSTRUCTION_DECODER
-> >         def_bool y
-> > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> > index 1659217e9b60..aefe758f4466 100644
-> > --- a/include/linux/ima.h
-> > +++ b/include/linux/ima.h
-> > @@ -30,8 +30,7 @@ extern void ima_kexec_cmdline(const void *buf, int size);
-> >  extern void ima_add_kexec_buffer(struct kimage *image);
-> >  #endif
-> >
-> > -#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390) \
-> > -       || defined(CONFIG_PPC_SECURE_BOOT)
-> > +#ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
-> >  extern bool arch_ima_get_secureboot(void);
-> >  extern const char * const *arch_get_ima_policy(void);
-> >  #else
-> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> > index 3f3ee4e2eb0d..d17972aa413a 100644
-> > --- a/security/integrity/ima/Kconfig
-> > +++ b/security/integrity/ima/Kconfig
-> > @@ -327,3 +327,12 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
-> >         depends on IMA_MEASURE_ASYMMETRIC_KEYS
-> >         depends on SYSTEM_TRUSTED_KEYRING
-> >         default y
-> > +
-> > +config IMA_SECURE_AND_OR_TRUSTED_BOOT
-> > +       bool
-> > +       depends on IMA
-> > +       depends on IMA_ARCH_POLICY
+> cpus=2
+>            sleep-3946  [001]111264306005
+> : function:             inotify_inode_queue_event
+>            sleep-3946  [001]111264307158
+> : function:             __fsnotify_parent
+>            sleep-3946  [001]111264307637
+> : function:             inotify_dentry_parent_queue_event
+>            sleep-3946  [001]111264307989
+> : function:             fsnotify
+>            sleep-3946  [001]111264308401
+> : function:             audit_syscall_exit
 > 
-> Doesn't the latter already depend on the former?
-
-Yes, there's no need for the first.
-
-Mimi
+> Fixes: 38847db9740a ("libtraceevent, perf tools: Changes in tep_print_event_* APIs")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  tools/lib/traceevent/event-parse.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > +       default n
-> > +       help
-> > +          This option is selected by architectures to enable secure and/or
-> > +          trusted boot based on IMA runtime policies.
-> > --
-> > 2.13.6
-> >
+> diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+> index beaa8b8c08ff..e1bd2a93c6db 100644
+> --- a/tools/lib/traceevent/event-parse.c
+> +++ b/tools/lib/traceevent/event-parse.c
+> @@ -5541,7 +5541,7 @@ static void print_event_time(struct tep_handle *tep, struct trace_seq *s,
+>  	if (p10 > 1 && p10 < time)
+>  		trace_seq_printf(s, "%5llu.%0*llu", time / p10, prec, time % p10);
+>  	else
+> -		trace_seq_printf(s, "%12llu\n", time);
+> +		trace_seq_printf(s, "%12llu", time);
+>  }
+>  
+>  struct print_event_type {
+> -- 
+> 2.20.1
 
