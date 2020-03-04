@@ -2,195 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 072BE178865
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB8017888A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387627AbgCDCeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:34:19 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:48880 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387473AbgCDCeT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:34:19 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=shile.zhang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TrbZL9z_1583289243;
-Received: from ali-6c96cfdd1403.local(mailfrom:shile.zhang@linux.alibaba.com fp:SMTPD_---0TrbZL9z_1583289243)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 04 Mar 2020 10:34:15 +0800
-Subject: Re: [PATCH v2 1/1] mm: fix interrupt disabled long time inside
- deferred_init_memmap()
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>
-References: <20200303161551.132263-1-shile.zhang@linux.alibaba.com>
- <20200303161551.132263-2-shile.zhang@linux.alibaba.com>
- <fc22967d-0803-2e6f-26af-148a24f8f958@virtuozzo.com>
-From:   Shile Zhang <shile.zhang@linux.alibaba.com>
-Message-ID: <386d7d5f-a57d-f5b1-acee-131ce23d35ec@linux.alibaba.com>
-Date:   Wed, 4 Mar 2020 10:34:03 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        id S2387591AbgCDCjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:39:07 -0500
+Received: from mga12.intel.com ([192.55.52.136]:44650 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387400AbgCDCjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 21:39:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 18:39:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="233866891"
+Received: from skuppusw-desk.jf.intel.com ([10.7.201.16])
+  by orsmga008.jf.intel.com with ESMTP; 03 Mar 2020 18:39:06 -0800
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v17 00/12] Add Error Disconnect Recover (EDR) support
+Date:   Tue,  3 Mar 2020 18:36:23 -0800
+Message-Id: <cover.1583286655.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <fc22967d-0803-2e6f-26af-148a24f8f958@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kirill,
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Thanks for your quickly reply!
+This patchset adds support for following features:
 
-On 2020/3/4 00:52, Kirill Tkhai wrote:
-> On 03.03.2020 19:15, Shile Zhang wrote:
->> When 'CONFIG_DEFERRED_STRUCT_PAGE_INIT' is set, 'pgdatinit' kthread will
->> initialise the deferred pages with local interrupts disabled. It is
->> introduced by commit 3a2d7fa8a3d5 ("mm: disable interrupts while
->> initializing deferred pages").
->>
->> The local interrupt will be disabled long time inside
->> deferred_init_memmap(), depends on memory size.
->> On machine with NCPUS <= 2, the 'pgdatinit' kthread could be pined on
->> boot CPU, then the tick timer will stuck long time, which caused the
->> system wall time inaccuracy.
->>
->> For example, the dmesg shown that:
->>
->>    [    0.197975] node 0 initialised, 32170688 pages in 1ms
->>
->> Obviously, 1ms is unreasonable.
->> Now, fix it by restore in the pending interrupts inside the while loop.
->> The reasonable demsg shown likes:
->>
->> [    1.069306] node 0 initialised, 32203456 pages in 894ms
-> The way I understand the original problem, that Pavel fixed:
->
-> we need disable irqs in deferred_init_memmap() since this function may be called
-> in parallel with deferred_grow_zone() called from interrupt handler. So, Pavel
-> added lock to fix the race.
->
-> In case of we temporary unlock the lock, interrupt still be possible,
-> so my previous proposition returns the problem back.
->
-> Now thought again, I think we have to just add:
->
-> 	pgdat_resize_unlock();
-> 	pgdat_resize_lock();
->
-> instead of releasing interrupts, since in case of we just release them with lock held,
-> a call of interrupt->deferred_grow_zone() bring us to a deadlock.
->
-> So, unlock the lock is must.
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-Yes, you're right! I missed this point.
-Thanks for your comment!
+You can find EDR spec in the following link.
 
->
->> Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
->> ---
->>   mm/page_alloc.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 3c4eb750a199..d3f337f2e089 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1809,8 +1809,12 @@ static int __init deferred_init_memmap(void *data)
->>   	 * that we can avoid introducing any issues with the buddy
->>   	 * allocator.
->>   	 */
->> -	while (spfn < epfn)
->> +	while (spfn < epfn) {
->>   		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
->> +		/* let in any pending interrupts */
->> +		local_irq_restore(flags);
->> +		local_irq_save(flags);
->> +	}
->>   zone_empty:
->>   	pgdat_resize_unlock(pgdat, &flags);
-> I think we need here something like below (untested):
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 79e950d76ffc..323afa9a4db5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1828,7 +1828,7 @@ static int __init deferred_init_memmap(void *data)
->   {
->   	pg_data_t *pgdat = data;
->   	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-> -	unsigned long spfn = 0, epfn = 0, nr_pages = 0;
-> +	unsigned long spfn = 0, epfn = 0, nr_pages = 0, prev_nr_pages = 0;
->   	unsigned long first_init_pfn, flags;
->   	unsigned long start = jiffies;
->   	struct zone *zone;
-> @@ -1869,8 +1869,18 @@ static int __init deferred_init_memmap(void *data)
->   	 * that we can avoid introducing any issues with the buddy
->   	 * allocator.
->   	 */
-> -	while (spfn < epfn)
-> +	while (spfn < epfn) {
->   		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-> +		/*
-> +		 * Release interrupts every 1Gb to give a possibility
-> +		 * a timer to advance jiffies.
-> +		 */
-> +		if (nr_pages - prev_nr_pages > (1UL << (30 - PAGE_SHIFT))) {
-> +			prev_nr_pages = nr_pages;
-> +			pgdat_resize_unlock(pgdat, &flags);
-> +			pgdat_resize_lock(pgdat, &flags);
-> +		}
-> +	}
->   zone_empty:
->   	pgdat_resize_unlock(pgdat, &flags);
->   
->
-> (I believe the comment may be improved more).
+https://members.pcisig.com/wg/PCI-SIG/document/12614
 
-Yeah, your patch is better!
-I test your code and it works!
-But it seems that 1G is still hold the interrupts too long, about 40ms 
-in my env
-with Intel(R) Xeon(R) 2.5GHz). I tried other size, it is OK to use 1024 
-pages (4MB),
-which suggested by Andrew's before.
+Changes since v16:
+ * Removed reset_link from pcie_port_service_driver.
+ * Removed pcie_port_find_service().
+ * Added pci_dpc_init() in pci_init_capabilities().
 
-Could you please help to review it again?
+Changes since v15:
+ * Splitted Patch # 3 in previous set into multiple patches.
+ * Refactored EDR driver use pci_dev instead of dpc_dev.
+ * Added some debug logs to EDR driver.
+ * Used pci_aer_raw_clear_status() for clearing AER errors in EDR path.
+ * Addressed other comments from Bjorn.
+ * Rebased patches on top of Bjorns "PCI/DPC: Move data to struct pci_dev" patch.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3c4eb750a199..5def66d3ffcd 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1768,7 +1768,7 @@ static int __init deferred_init_memmap(void *data)
-  {
-         pg_data_t *pgdat = data;
-         const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
--       unsigned long spfn = 0, epfn = 0, nr_pages = 0;
-+       unsigned long spfn = 0, epfn = 0, nr_pages = 0, prev_nr_pages = 0;
-         unsigned long first_init_pfn, flags;
-         unsigned long start = jiffies;
-         struct zone *zone;
-@@ -1809,8 +1809,17 @@ static int __init deferred_init_memmap(void *data)
-          * that we can avoid introducing any issues with the buddy
-          * allocator.
-          */
--       while (spfn < epfn)
-+       while (spfn < epfn) {
-                 nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-+               /*
-+                * Restore pending interrupts every 1024 pages to give
-+                * the chance tick timer to advance jiffies.
-+                */
-+               if (nr_pages - prev_nr_pages > 1024) {
-+                       pgdat_resize_unlock(&flags);
-+                       pgdat_resize_lock(&flags);
-+               }
-+       }
-  zone_empty:
-         pgdat_resize_unlock(pgdat, &flags);
+Changes since v14:
+ * Rebased on top of v5.6-rc1
 
+Changes since v13:
+ * Moved all EDR related code to edr.c
+ * Addressed Bjorns comments.
+
+Changes since v12:
+ * Addressed Bjorns comments.
+ * Added check for CONFIG_PCIE_EDR before requesting DPC control from firmware.
+ * Removed ff_check parameter from AER APIs.
+ * Used macros for _OST return status values in DPC driver.
+
+Changes since v11:
+ * Allowed error recovery to proceed after successful reset_link().
+ * Used correct ACPI handle for sending EDR status.
+ * Rebased on top of v5.5-rc5
+
+Changes since v10:
+ * Added "edr_enabled" member to dpc priv structure, which is used to cache EDR
+   enabling status based on status of pcie_ports_dpc_native and FF mode.
+ * Changed type of _DSM argument from Integer to Package in acpi_enable_dpc_port()
+   function to fix ACPI related boot warnings.
+ * Rebased on top of v5.5-rc3
+
+Changes since v9:
+ * Removed caching of pcie_aer_get_firmware_first() in dpc driver.
+ * Added proper spec reference in git log for patch 5 & 7.
+ * Added new function parameter "ff_check" to pci_cleanup_aer_uncorrect_error_status(),
+   pci_aer_clear_fatal_status() and pci_cleanup_aer_error_status_regs() functions.
+ * Rebased on top of v5.4-rc5
+
+Changes since v8:
+ * Rebased on top of v5.4-rc1
+
+Changes since v7:
+ * Updated DSM version number to match the spec.
+
+Changes since v6:
+ * Modified the order of patches to enable EDR only after all necessary support is added in kernel.
+ * Addressed Bjorn comments.
+
+Changes since v5:
+ * Addressed Keith's comments.
+ * Added additional check for FF mode in pci_aer_init().
+ * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
+
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Kuppuswamy Sathyanarayanan (12):
+  PCI/ERR: Update error status after reset_link()
+  PCI/AER: Move pci_cleanup_aer_error_status_regs() declaration to pci.h
+  PCI/ERR: Remove service dependency in pcie_do_recovery()
+  PCI: portdrv: remove unnecessary pcie_port_find_service()
+  PCI: portdrv: remove reset_link member from pcie_port_service_driver
+  Documentation: PCI: Remove reset_link references
+  PCI/ERR: Return status of pcie_do_recovery()
+  PCI/DPC: Cache DPC capabilities in pci_init_capabilities()
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Export DPC error recovery functions
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/ACPI: Enable EDR support
+
+ Documentation/PCI/pcieaer-howto.rst |  25 ++-
+ drivers/acpi/pci_root.c             |  16 ++
+ drivers/pci/pci-acpi.c              |   3 +
+ drivers/pci/pci.h                   |  16 +-
+ drivers/pci/pcie/Kconfig            |  10 ++
+ drivers/pci/pcie/Makefile           |   1 +
+ drivers/pci/pcie/aer.c              |  34 ++--
+ drivers/pci/pcie/dpc.c              |  47 ++++--
+ drivers/pci/pcie/edr.c              | 251 ++++++++++++++++++++++++++++
+ drivers/pci/pcie/err.c              |  26 +--
+ drivers/pci/pcie/portdrv.h          |   5 -
+ drivers/pci/pcie/portdrv_core.c     |  21 ---
+ drivers/pci/probe.c                 |   2 +
+ include/linux/acpi.h                |   6 +-
+ include/linux/aer.h                 |   5 -
+ include/linux/pci-acpi.h            |   8 +
+ include/linux/pci.h                 |   1 +
+ 17 files changed, 389 insertions(+), 88 deletions(-)
+ create mode 100644 drivers/pci/pcie/edr.c
+
+-- 
+2.25.1
 
