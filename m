@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E081791B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 460EB1791C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:54:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbgCDNuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 08:50:54 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39418 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729462AbgCDNuy (ORCPT
+        id S1729580AbgCDNyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 08:54:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54070 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgCDNyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 08:50:54 -0500
-Received: by mail-ed1-f68.google.com with SMTP id m13so2388478edb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 05:50:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nUOxF6a7YWDCkJQKwMw5WU/iZ3kgnizQnBTCbTp/G3M=;
-        b=MyiSU1JbjFjGSORVkRc8md7Tcvg9L+XkIdhImVKAjKPplj0Kb10arXNNMZpcPmLCsD
-         A5jkThUaTIOl8LnC077eUjRIWDnGVtcuSrWOz55t08viRAdi5LWkJ93qhb7GrCpSHqgn
-         2HjCf0S53zsx0RvZtvGLWNeERc6II/Ik7odzWQgGH/c6RaS2AVl49+fUuSnC+BthV0jn
-         mmDSJADTBY1BrsBsum3OyFv5OAdqCsHcKz1xemS4+d6FWFBppLcrpIkgKiMsKtovs1E4
-         SztbE1r6oUxnVyzF9hT3UPdpOgVU916GfZSUGi5cqMpU/YYwXA60zzPkm+4UVO30Uyz+
-         n0Aw==
-X-Gm-Message-State: ANhLgQ3AcZwJpDMJwCBWE4MKrXN5FpFZYmhafhfyBHCv0QPSRGH2GcsO
-        J7UR8cORELYMrbnqw22qqHTwPewlDztPJg==
-X-Google-Smtp-Source: ADFU+vvRs/8m17ncgBqBdzTJujYabyOfUGbiS2SlE8/I+XAXVPuKXJJGhzqox4bFzMMW7oq6yMBaTA==
-X-Received: by 2002:a50:8a62:: with SMTP id i89mr2863379edi.173.1583329852681;
-        Wed, 04 Mar 2020 05:50:52 -0800 (PST)
-Received: from a483e7b01a66.ant.amazon.com (54-240-197-232.amazon.com. [54.240.197.232])
-        by smtp.gmail.com with ESMTPSA id s10sm714333ejr.2.2020.03.04.05.50.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 05:50:52 -0800 (PST)
-Subject: Re: [PATCH v3 2/2] xenbus: req->err should be updated before
- req->state
-To:     Dongli Zhang <dongli.zhang@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, joe.jin@oracle.com
-References: <20200303221423.21962-1-dongli.zhang@oracle.com>
- <20200303221423.21962-2-dongli.zhang@oracle.com>
-From:   Julien Grall <julien@xen.org>
-Message-ID: <3bc030fb-340e-434d-60a2-a54bce097680@xen.org>
-Date:   Wed, 4 Mar 2020 13:50:51 +0000
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        Wed, 4 Mar 2020 08:54:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=x7QxWeQIS4QmKxDASEYVZavWooJQqeQFhHog8X1BkfA=; b=oG5B0bbZM/UCZziL+BKY3IdPW/
+        BjJi6lZfeHj8rJ58DlWVG1XXOWQUKB+Qj1OB5wDu1gEVe+ebjwPo0Idq/IKgs+5KWUn/ldoEKAxt9
+        v0gH6m40CEe6lV42BBXk1iswmJHFzjz6u3dz8WJeVniKKAw4EZe4/dK5G8ojNgQcf5bFV7HPTocMz
+        FRHhWy3lLlOb4yiDPjwEdlUOmcfervjPiwKOo/hNT1/kJeAIOraz7R90MEtexL0+nrwDPIsroABBw
+        a8+6MIDkfZ3pw9he6gXBhkSvxzO/X3d6MjWQdVMLhALgQIs7r6ernzxbx8a/z44s7fjXse1gy8YF+
+        meEZ4UQQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9UTC-0000HA-SQ; Wed, 04 Mar 2020 13:53:55 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 767C630066E;
+        Wed,  4 Mar 2020 14:51:53 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DF7D423D4FA1C; Wed,  4 Mar 2020 14:53:51 +0100 (CET)
+Date:   Wed, 4 Mar 2020 14:53:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     syzbot <syzbot+3daecb3e8271380aeb51@syzkaller.appspotmail.com>
+Cc:     acme@kernel.org, alexander.shishkin@linux.intel.com,
+        andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, jolsa@redhat.com, kafai@fb.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mingo@redhat.com, namhyung@kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
+Subject: Re: WARNING: locking bug in __perf_event_task_sched_in
+Message-ID: <20200304135351.GN2596@hirez.programming.kicks-ass.net>
+References: <0000000000005c967305a006d54d@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200303221423.21962-2-dongli.zhang@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000005c967305a006d54d@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 03/03/2020 22:14, Dongli Zhang wrote:
-> This patch adds the barrier to guarantee that req->err is always updated
-> before req->state.
+On Wed, Mar 04, 2020 at 04:48:13AM -0800, syzbot wrote:
+> Hello,
 > 
-> Otherwise, read_reply() would not return ERR_PTR(req->err) but
-> req->body, when process_writes()->xb_write() is failed.
+> syzbot found the following crash on:
 > 
-> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> HEAD commit:    f8788d86 Linux 5.6-rc3
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13bcd8f9e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5d2e033af114153f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3daecb3e8271380aeb51
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+3daecb3e8271380aeb51@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(1)
+> WARNING: CPU: 0 PID: 22488 at kernel/locking/lockdep.c:167 hlock_class kernel/locking/lockdep.c:167 [inline]
+> WARNING: CPU: 0 PID: 22488 at kernel/locking/lockdep.c:167 __lock_acquire+0x18b8/0x1bc0 kernel/locking/lockdep.c:3950
 
-Reviewed-by: Julien Grall <jgrall@amazon.com>
+Something went sideways bad, could be you've overflowed lockdep_depth.
+For some reason the check:
 
-Cheers,
+	if (unlikely(curr->lockdep_depth >= MAX_LOCK_DEPTH))
 
----
-Julien Grall
+is rather late.. Dunno, most times I've hit lockdep errors like this,
+something else was screwy and we're just the ones to trip over it.
