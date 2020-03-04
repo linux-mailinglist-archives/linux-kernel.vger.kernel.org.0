@@ -2,82 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 165A617956F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CBA317957F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbgCDQfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:35:32 -0500
-Received: from mail-sh.amlogic.com ([58.32.228.43]:43444 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbgCDQfc (ORCPT
+        id S1729811AbgCDQhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:37:24 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34197 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbgCDQhY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:35:32 -0500
-Received: from [10.18.90.110] (10.18.90.110) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Thu, 5 Mar 2020
- 00:36:00 +0800
-Subject: Re: [PATCH v2] dt-bindings: power: Fix dt_binding_check error
-To:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>
-CC:     <linux-amlogic@lists.infradead.org>, SoC Team <soc@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        <devicetree@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1583164448-83438-1-git-send-email-jianxin.pan@amlogic.com>
- <20200302201554.GA22028@bogus> <7h5zflrfp3.fsf@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <b1fc2451-7eec-aa03-3d4d-3a7ae186105c@amlogic.com>
-Date:   Thu, 5 Mar 2020 00:35:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 4 Mar 2020 11:37:24 -0500
+Received: by mail-vs1-f68.google.com with SMTP id y204so1577872vsy.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 08:37:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hABaqSyYZLOUCpK2+i1NqdTSDdnUnv1VCEKCW00h9WI=;
+        b=b/h5yz5wlSBuj4Lbv+kbPLguRwtFdV5HC/ap61En5X/K6/4YD+4zRyFLn78H9qD27V
+         7GAA7Uuczidrny2Vt2luLVc9+Ex0aJ/lGNQ8tEBs+DmWPecQpoBQb9F4JV2uw2bgipSd
+         CAvK4wsRbKO/d+Z9hQUQmcLpGcMtuAroXiK2hFYLHgxsa0Ifiu+7sZ7f5dG1zniuK5l+
+         zPvvbaNW6IJT2P4KEmZdKgwZ2kGkOtvy8B3ZjXOvKK+D2Ptk8sh8yVy91lCEUh+rSHVp
+         1UwsYKyiQMqvc89tkSoFnVWGIhC5EDiBTZ9whQR4DYCLTFMHOLW8XrXJrII2HeibgVs6
+         W4NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hABaqSyYZLOUCpK2+i1NqdTSDdnUnv1VCEKCW00h9WI=;
+        b=JsFTFn8GaHh2eDl0e7YseS1OA/ebMjzqFMS+9ywMvoSyTxn+9TfgJ4LZHpui1agTch
+         vJCqIl9tLdrpOfvFGCvUdhBZQ7c+mtjUdJrpGPSFUwVUXcn0r4BPUw2pP/bzPDMeDB6+
+         c9QO8zr8LhLLF9HoijmUd7iLHHOweZzWejZOfv+Xgw74a2U3QhXzHHAK588wCov6A9Oq
+         c2VgVnV/XaOslIAIMHTJU1T20OPKlwW/m9iZ2hx8col2IdzB6NftBr4X1QEv1o4Bhvur
+         bJXElJIzh34WvUBusSO+fMs4tzPWBuRnmTU6yOBnqudWibueOr7qvMltik9r5h+FF8ro
+         HyoA==
+X-Gm-Message-State: ANhLgQ0HnJ+wSCayvTlIjZGQ9grUZMlB6jvT1sibWV58bXHm24601APd
+        Xom+hvJ4zVAtVGwp6qExJs326q1HTlctftogHf7/6g==
+X-Google-Smtp-Source: ADFU+vsqaKb2RoRKxPcXhxp65L9DlvDybJ++9ZBqVDK57rvpHpGbRYrYO7V96B/Jdy+fc8mQrqBMgQDJ+jef4TTwT+Y=
+X-Received: by 2002:a67:7fd0:: with SMTP id a199mr2328053vsd.200.1583339842981;
+ Wed, 04 Mar 2020 08:37:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7h5zflrfp3.fsf@baylibre.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.90.110]
+References: <20200224231841.26550-1-digetx@gmail.com> <20200224231841.26550-4-digetx@gmail.com>
+ <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
+In-Reply-To: <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 4 Mar 2020 17:36:46 +0100
+Message-ID: <CAPDyKFoXnoukjH_2cM=f0DGHBHS6kVUQSYOa_5ffQppC7VOn2A@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] partitions: Introduce NVIDIA Tegra Partition Table
+To:     Stephen Warren <swarren@wwwdotorg.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Billy Laws <blaws05@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Andrey Danin <danindrey@mail.ru>,
+        Gilles Grandou <gilles@grandou.net>,
+        Ryan Grachek <ryan@edited.us>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/3 16:43, Kevin Hilman wrote:
-> Rob Herring <robh@kernel.org> writes:
-> 
->> On Mon, 2 Mar 2020 23:54:08 +0800, Jianxin Pan wrote:
->>> Missing ';' in the end of secure-monitor example node.
->>>
->>> Fixes: 165b5fb294e8 ("dt-bindings: power: add Amlogic secure power domains bindings")
->>> Reported-by: Rob Herring <robh+dt@kernel.org>
->>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->>> ---
->>>  Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>
->> Please add Acked-by/Reviewed-by tags when posting new versions. However,
->> there's no need to repost patches *only* to add the tags. The upstream
->> maintainer will do that for acks received on the version they apply.
->>
->> If a tag was not added on purpose, please state why and what changed.
-> 
-> I've (re)added these tags:
-> 
->   Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->   Acked-by: Rob Herring <robh@kernel.org>
-> 
-> when applying this time.
-> 
-> Jianxin, please collect the tags in the future and add when you send
-> follow-up versions.
-OK, I will do it next time, thanks for your time.
-> 
-> Thanks,
-> 
-> Kevin
-> 
-> .
-> 
+On Tue, 25 Feb 2020 at 01:20, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>
+> On 2/24/20 4:18 PM, Dmitry Osipenko wrote:
+> > All NVIDIA Tegra devices use a special partition table format for the
+> > internal storage partitioning. Most of Tegra devices have GPT partition
+> > in addition to TegraPT, but some older Android consumer-grade devices do
+> > not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
+> > in order to support these devices properly in the upstream kernel. This
+> > patch adds support for NVIDIA Tegra Partition Table format that is used
+> > at least by all NVIDIA Tegra20 and Tegra30 devices.
+>
+> > diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+>
+> > +static void __init tegra_boot_config_table_init(void)
+> > +{
+> > +     void __iomem *bct_base;
+> > +     u16 pt_addr, pt_size;
+> > +
+> > +     bct_base = IO_ADDRESS(TEGRA_IRAM_BASE) + TEGRA_IRAM_BCT_OFFSET;
+>
+> This shouldn't be hard-coded. IIRC, the boot ROM writes a BIT (Boot
+> Information Table) to a fixed location in IRAM, and there's some value
+> in the BIT that points to where the BCT is in IRAM. In practice, it
+> might work out that the BCT is always at the same place in IRAM, but
+> this certainly isn't guaranteed. I think there's code in U-Boot which
+> extracts the BCT location from the BIT? Yes, see
+> arch/arm/mach-tegra/ap.c:get_odmdata().
 
+So, have you considered using the command line partition option,
+rather than adding yet another partition scheme to the kernel?
+
+In principle, you would let the boot loader scan for the partitions,
+likely from machine specific code in U-boot. Then you append these to
+the kernel command line and let block/partitions/cmdline.c scan for
+it.
+
+Kind regards
+Uffe
