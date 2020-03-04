@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06763179708
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F5317970B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:50:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388101AbgCDRt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:49:58 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33827 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729979AbgCDRt5 (ORCPT
+        id S2388231AbgCDRuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:50:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56561 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388189AbgCDRuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:49:57 -0500
+        Wed, 4 Mar 2020 12:50:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583344196;
+        s=mimecast20190719; t=1583344202;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zL6sq31OFwBXF/RS7PK1GArrpq69jRR45bepTSw46TU=;
-        b=V9c6rKanZhYOcRtszuXnPCFz8rDeWWvkT5U1Dh/Zdu1eq9CzFyWlbBLcEWYMrbf9IFptSi
-        TnImRPt9VtTUonX4hw27UhErGi+8bW/dDSfmps8DwP3yXXUVRPNoBRC9vRmVm8JGTg8Hxv
-        DOpPVDNbvaHCeK+FmvD41h+VrxftmVc=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-188-ZKbhGoO1NYuDt2_Wq2WIvQ-1; Wed, 04 Mar 2020 12:49:55 -0500
-X-MC-Unique: ZKbhGoO1NYuDt2_Wq2WIvQ-1
-Received: by mail-qt1-f198.google.com with SMTP id l21so2002253qtq.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:49:54 -0800 (PST)
+        bh=mfTkC/PY7xB+DvD3BXQd6wkmojeJ73JPJ868luIW5QI=;
+        b=Ew6ViRSW+jgrTdZcI/bibJtVngLuS+9HaoL2K/hFIwkGcMUf7W+673w6idEWhGh/RTIY12
+        j1YFh+sEkl+b6l7lu/M/EIySkFykA7GHmQHkyqAMtimrKDIZ2wlZ80mDA/eSxqJqNUWmVL
+        4TiCJ7Q5Z6X0W5+df+Yu+Bjn9tZcz6k=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-148-95EYofcGO-S_U0opbASqKw-1; Wed, 04 Mar 2020 12:49:58 -0500
+X-MC-Unique: 95EYofcGO-S_U0opbASqKw-1
+Received: by mail-qt1-f200.google.com with SMTP id i6so1995823qtw.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:49:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zL6sq31OFwBXF/RS7PK1GArrpq69jRR45bepTSw46TU=;
-        b=eqRX4q2P10rMKfc3Kt+w1vozsUNXPFgl5EPM/P0vAqGE+Noaj6iyQFNOYNVbzUy04F
-         dngRW7t+f878ppRTF0QcVI6NXSeLsG2C3lp5cNPxjbzPRwo3M9OpZWgoluE1fIqDOcfi
-         c/SAnAxbDidluxPRZh5Xln1MdLs6t5Dastl+OYJL94ugZJdret4aIFwlFbGVUXIw4C6r
-         6v1n0xw4JQMUaqd6owfNVxyZhon/pUl6y+dxT+f04UgUP7zOfjZmgmiGEzXARDnWfTRI
-         qGyY6+A4Yoicb3nx02lwWavSDw84Q164CnQUcz1MKcP90bksJeHCSYDcq3x8PFwcvoLx
-         8/7g==
-X-Gm-Message-State: ANhLgQ1rDxLGdUJQ2mAe4JbtuM8Z7NrtVL7DrcM72P9Ull2O4myH2LDN
-        JKVthULUsljORmlrkplwAGdcLNiln8sVD8nqW1TNTKZbBYxq0/eAbvVv74FOlhgSU6FDWCZCHd0
-        L+gHYKIoXPKNvxcX1OQCGiZIB
-X-Received: by 2002:ac8:534b:: with SMTP id d11mr3512260qto.101.1583344194070;
-        Wed, 04 Mar 2020 09:49:54 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsEcJ8+mn9bDrZSYhkrNp5+S9+YoenWyrwAv3oEiBqUoFFjT9yfw5nnfEEcipf3nFOz7+yVbQ==
-X-Received: by 2002:ac8:534b:: with SMTP id d11mr3512237qto.101.1583344193844;
-        Wed, 04 Mar 2020 09:49:53 -0800 (PST)
+        bh=mfTkC/PY7xB+DvD3BXQd6wkmojeJ73JPJ868luIW5QI=;
+        b=Fq1BHs+lDWRv3d2P6smP7NOQOkcIgR2bVFE1NAe2TeCOACIi8kITHTjX0gIcbpG0Uy
+         gsyabibm53YfDuXJn5OCXmftqIeIOsFSeXeRfAUxfMvau+MhpPrea6g26eQ710XU6Zr6
+         OUCjU+RNuDcW/Wgg3ZL4CGZHdG5Nt7KxSec6RFCddEiGLDQUwElPOs7TSpxvdt42ECm7
+         rBGSp3vrGZYS5LiNUcTlvpSVHIiOrD/94Dzj4pYzC34E5dLkpIOH0Mqb1i2q2bqEHC15
+         m3EuAF9/D5UaVkBGLMV77OZJY9IuwhZpJaFIMNG9e/ws1/b9GirD2MyUIoPtqzOSCkjb
+         tKsQ==
+X-Gm-Message-State: ANhLgQ06Fl996ZhEQQ+AM2CRgQKCPdsSD2mH1ezVd81rrUnJdPACI1T1
+        KZEnn/mFQOSxcYRw4rW5+MnXG7LC0qX5IwwSx9823bEn9uHuaEjP7VgpCIArW1tLa6X2d93mW9f
+        j3P6RLj2CnCtFKEL++RgWTYbJ
+X-Received: by 2002:a05:620a:2116:: with SMTP id l22mr4026047qkl.311.1583344197311;
+        Wed, 04 Mar 2020 09:49:57 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vvrMDWUEoj6vNcSrSe6DsUXUc0EpIPzTdDJM3axSpL8+wBuqbsoHgNqZ8SLGK51EOT04ppFQg==
+X-Received: by 2002:a05:620a:2116:: with SMTP id l22mr4026023qkl.311.1583344197103;
+        Wed, 04 Mar 2020 09:49:57 -0800 (PST)
 Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id j4sm6990420qtv.45.2020.03.04.09.49.52
+        by smtp.gmail.com with ESMTPSA id e88sm7085142qtd.9.2020.03.04.09.49.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:49:53 -0800 (PST)
+        Wed, 04 Mar 2020 09:49:56 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Yan Zhao <yan.y.zhao@intel.com>, peterx@redhat.com,
@@ -63,9 +63,9 @@ Cc:     Yan Zhao <yan.y.zhao@intel.com>, peterx@redhat.com,
         Kevin Tian <kevin.tian@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Christophe de Dinechin <dinechin@redhat.com>
-Subject: [PATCH v5 01/14] KVM: X86: Change parameter for fast_page_fault tracepoint
-Date:   Wed,  4 Mar 2020 12:49:34 -0500
-Message-Id: <20200304174947.69595-2-peterx@redhat.com>
+Subject: [PATCH v5 02/14] KVM: Cache as_id in kvm_memory_slot
+Date:   Wed,  4 Mar 2020 12:49:35 -0500
+Message-Id: <20200304174947.69595-3-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200304174947.69595-1-peterx@redhat.com>
 References: <20200304174947.69595-1-peterx@redhat.com>
@@ -76,45 +76,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be clearer to dump the return value to know easily on whether
-did we go through the fast path for handling current page fault.
-Remove the old two last parameters because after all the old/new sptes
-were dumped in the same line.
+Cache the address space ID just like the slot ID.  It will be used in
+order to fill in the dirty ring entries.
 
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/x86/kvm/mmutrace.h | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ include/linux/kvm_host.h | 1 +
+ virt/kvm/kvm_main.c      | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/arch/x86/kvm/mmutrace.h b/arch/x86/kvm/mmutrace.h
-index ffcd96fc02d0..ef523e760743 100644
---- a/arch/x86/kvm/mmutrace.h
-+++ b/arch/x86/kvm/mmutrace.h
-@@ -244,9 +244,6 @@ TRACE_EVENT(
- 		  __entry->access)
- );
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index bcb9b2ac0791..afa0e9034881 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -346,6 +346,7 @@ struct kvm_memory_slot {
+ 	unsigned long userspace_addr;
+ 	u32 flags;
+ 	short id;
++	u8 as_id;
+ };
  
--#define __spte_satisfied(__spte)				\
--	(__entry->retry && is_writable_pte(__entry->__spte))
--
- TRACE_EVENT(
- 	fast_page_fault,
- 	TP_PROTO(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u32 error_code,
-@@ -274,12 +271,10 @@ TRACE_EVENT(
- 	),
+ static inline unsigned long kvm_dirty_bitmap_bytes(struct kvm_memory_slot *memslot)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 70f03ce0e5c1..e6484dabfc59 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1036,6 +1036,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
  
- 	TP_printk("vcpu %d gva %llx error_code %s sptep %p old %#llx"
--		  " new %llx spurious %d fixed %d", __entry->vcpu_id,
-+		  " new %llx ret %d", __entry->vcpu_id,
- 		  __entry->cr2_or_gpa, __print_flags(__entry->error_code, "|",
- 		  kvm_mmu_trace_pferr_flags), __entry->sptep,
--		  __entry->old_spte, __entry->new_spte,
--		  __spte_satisfied(old_spte), __spte_satisfied(new_spte)
--	)
-+		  __entry->old_spte, __entry->new_spte, __entry->retry)
- );
+ 	new = old = *slot;
  
- TRACE_EVENT(
++	BUILD_BUG_ON(U8_MAX < KVM_ADDRESS_SPACE_NUM);
++	new.as_id = as_id;
+ 	new.id = id;
+ 	new.base_gfn = base_gfn;
+ 	new.npages = npages;
 -- 
 2.24.1
 
