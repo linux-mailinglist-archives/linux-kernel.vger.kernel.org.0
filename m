@@ -2,144 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B74C179B0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF2B6179AFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 22:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729965AbgCDVif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 16:38:35 -0500
-Received: from mx01-sz.bfs.de ([194.94.69.67]:29728 "EHLO mx01-sz.bfs.de"
+        id S2388441AbgCDVao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 16:30:44 -0500
+Received: from mout.web.de ([217.72.192.78]:49715 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728482AbgCDVif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:38:35 -0500
-Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
-        by mx01-sz.bfs.de (Postfix) with ESMTPS id 94AF520371;
-        Wed,  4 Mar 2020 22:38:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1583357912; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QkLnH+NE8c3qkE/LnlNQPG4USM8MtcA/4B/Z5q7MV94=;
-        b=ox2a1lRVK9fnzc4iDIFh+2Xs0zIRwBsojXkNVowJNH0DwpX0/bc50gOOC5+uK2qfJH/AZ3
-        Tar6sQOvFZvIf9dUqNYqROoKSEAVxMnsUhJeEImDzuPnkITX/7YTiIBm8SkTtLAKVhw3F7
-        alPNFEjEwZpqP9jhEaoK2PZFXke8M/MTtToYdgL3atOVa0G6JF2Zkt1p1mgZES94xbobin
-        96CgPo5uO1m3gvMgVHgAT9pE1zEGrsRYwJ2nbTe9nG+Tz50oSs/7zxJCOFN5E1i0lmOH0g
-        gGzu/+tQni4Mj8k+TtJdQC/rqpIKRwnIKkqHgTUX1J+rFHeIdYoinVBRa7cuHQ==
-Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
- (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.1913.5; Wed, 4 Mar 2020
- 22:28:31 +0100
-Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
- SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%6]) with mapi id
- 15.01.1913.005; Wed, 4 Mar 2020 22:28:31 +0100
-From:   Walter Harms <wharms@bfs.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Paul Burton <paulburton@kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: AW: [PATCH 5.5 110/176] MIPS: VPE: Fix a double free and a memory
- leak in release_vpe()
-Thread-Topic: [PATCH 5.5 110/176] MIPS: VPE: Fix a double free and a memory
- leak in release_vpe()
-Thread-Index: AQHV8Y196lGPcYxjR0WoJuuadsBv/Kg49D8A
-Date:   Wed, 4 Mar 2020 21:28:31 +0000
-Message-ID: <adf1859b4dcc497285ebbda017ece22d@bfs.de>
-References: <20200303174304.593872177@linuxfoundation.org>,<20200303174317.555620066@linuxfoundation.org>
-In-Reply-To: <20200303174317.555620066@linuxfoundation.org>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.137.16.40]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726440AbgCDVao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 16:30:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1583357406;
+        bh=mgNZGik5S6lzIQpeNai8Nuk17HKYUdEYdjLqz4skHWo=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=BdpU5DsU10VGkVp3jA3P8oWtsn9FMcaOgOUWSeykxAkBj5aCrrehqQcC/DjSG8f7w
+         YFQ58SYfQzl1P21dIxfnXXOcHk5RxuFWx3cbWHnYgZTYMaPvMwuKKPtVjU0Vqu9RJW
+         yMsgQftmuSue/bJdSmd47t3q0/04KTdMFyFSWY9o=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.49.53.147]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M2MUi-1jSVNy14ui-00s7cb; Wed, 04
+ Mar 2020 22:30:06 +0100
+Subject: Re: [v4] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+References: <158322634266.31847.8245359938993378502.stgit@devnote2>
+ <158322635301.31847.15011454479023637649.stgit@devnote2>
+ <ad1e9855-4c64-53bd-7da5-f7cdafe78571@infradead.org>
+ <20200304203722.8e8699c2a3e0a979aae091b1@kernel.org>
+ <3a3a5f1a-3654-d96d-3b4a-dd649a366c65@web.de>
+ <531371ef-354a-b0fa-f69f-c8cf9ecc9919@infradead.org>
+ <a9f8980e-4325-52c1-d217-d2fca1add37d@web.de>
+ <3118d72b-a33c-e6d7-36a1-204d39d2bdbb@infradead.org>
+ <a6680eb7-5a1d-ea58-0eec-14f2b5bcd99a@web.de>
+ <20200304142259.7eaa3633@lwn.net>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <be741d2a-5a30-c167-3a79-011652ace17a@web.de>
+Date:   Wed, 4 Mar 2020 22:30:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-Spam-Status: No, score=-0.33
-Authentication-Results: mx01-sz.bfs.de;
-        none
-X-Spamd-Result: default: False [-0.33 / 7.00];
-         ARC_NA(0.00)[];
-         TO_DN_EQ_ADDR_SOME(0.00)[];
-         HAS_XOIP(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         NEURAL_HAM(-0.00)[-0.980,0];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         BAYES_HAM(-0.33)[75.84%]
+In-Reply-To: <20200304142259.7eaa3633@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:Pju323mmyfLGNhS8/943QHchhj66429t7z4fZ0iu8DH8XByxfFD
+ c3RI4E8WrKGygNzKsNUmW2WhqWcgvQvrzncHuSAS7o2YlAXUF6ow1O9mRBlVxvVYzIMdZ36
+ UefY6VYl2xuOHGSHSRVxzjPJDmRla+UBXaOtgcplSmgFTDZ0ZA6xjM32qAA1f3Vq6wpwWYP
+ bOjkKRp7xWPMNamVC8zFQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SkUDe0ifHKc=:qBVOlAnq8MVYdTqqBUr1ZL
+ 5daXXV3u6M8UoQmxj63+o7k73R6Ihh3IjVtePgoZ0U2f4EWUPw6Bqnj1xDDQpcSZ4UYAkcwNG
+ Gn7TuG9X7//WCCo5C2yhdVljJWHlJDZt27kTMERT6zTfO9WQdTtTlxichNgOBOJvujoEkKR7I
+ T2TkYh4L4z8czjIfs+O+wXEb3DC96RqB02sgw0aSwghXyYpHQZ7DSuT7k8INjk68DtiihIpoV
+ DGvTrYAW2Z/IJICHsXvoBUwHmmG28EsqYd3cmuGHBd8YB6rnsT+FDi+M1/ssXnCPnubHSJ601
+ tHyh9c06YK5z6uVsCyVARFSqkL/iEPqxcWcctWD1K1SiivmvS15LiTZrY1/fD6gWrVEEu6vvh
+ mwxEC91R5My0/yyW3WK4TTezVsc3XHDK79IvRoScwOxhoNLybra0IuZ1Hh/akoz5hF7yZjt+a
+ /9R14ekmcDzz0pdSVtkomUSqLCGHWRyy3DWi0XY5WHCx+MR4XB2iLtllPZ5DiqDzZkMlUoA4m
+ ei6gf7wzRQR/+VK6uztNzO48UVk8x8YRLlVS67+FGPerx9URkJh2u2RaRqsga8QlBnyyatrKx
+ hfcHQNLIn1eDxyPR8UDW9ErYbXR3UssG8WGOZ2rTtqfd8rIG2yPLUTsw1RVkn4adQalpwSjgB
+ 9n16Q97lKm1F03uUkywbs8Yjc8BMyk26X3eLQtm4443C7O1PuPLNDBfzuC4ykoRe2ylAmw6dC
+ Pf313e5mgKlFZYbicDTIVFig8KXQjYaQVk1mB5KJ9xElimkRpUGynAxb/EHm4BYfl3roRjmQG
+ nbg3+J7sI1prtKEVdxtQo8Co3/n6fCTCLMCVGFNZwEmeQtxe973Mr2RtF/LeqzwEJhjmWrMpS
+ bOIrXJ+KTv37wfu+RuNbIyOI5xoDYv6iS75IC7/aq4Q40r3gs8d2l6+8nqsb0Lqb88ZroXyks
+ sidRp8KwSc3Oh4ZoyVMQCisu4G2k/LV4O6HwO9XPDd2NuWM0tdYYi5JVlNJ4Px0kibqHHFHN6
+ w60L8FYXQJpavlio/Y6fGQC2+X9nAB9RIrQAPZ77BIOTry3gPEbdaPp88I9diVtlikGXsuJth
+ +/cCwGHUkYjq4/E/lfC/QycT+xtXd5bca03VaCQynsgxjYnzx1KiMifyKl2upbVbal7tTs+OW
+ cgj7fE8Giz9usqMdT75hK1wo5Rdxqs+qalAFbQK4vLWO9UwNzx5L5/ps+TGztJYGYNV3xblCW
+ D8WsUrzx6XwwCsgTV
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> Honestly, Markus, I think that the patch is good enough for now; time to
+> merge it and move on to something else.
 
-________________________________________
-Von: kernel-janitors-owner@vger.kernel.org <kernel-janitors-owner@vger.kern=
-el.org> im Auftrag von Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Gesendet: Dienstag, 3. M=E4rz 2020 18:42
-An: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman; stable@vger.kernel.org; Christophe JAILLET; Paul Bu=
-rton; ralf@linux-mips.org; linux-mips@vger.kernel.org; kernel-janitors@vger=
-.kernel.org
-Betreff: [PATCH 5.5 110/176] MIPS: VPE: Fix a double free and a memory leak=
- in release_vpe()
+I pointed a few details out for further considerations.
+I am curious if they will get more attention for the desired clarification.
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-commit bef8e2dfceed6daeb6ca3e8d33f9c9d43b926580 upstream.
-
-Pointer on the memory allocated by 'alloc_progmem()' is stored in
-'v->load_addr'. So this is this memory that should be freed by
-'release_progmem()'.
-
-'release_progmem()' is only a call to 'kfree()'.
-
-With the current code, there is both a double free and a memory leak.
-Fix it by passing the correct pointer to 'release_progmem()'.
-
-Fixes: e01402b115ccc ("More AP / SP bits for the 34K, the Malta bits and th=
-ings. Still wants")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: ralf@linux-mips.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kernel/vpe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/mips/kernel/vpe.c
-+++ b/arch/mips/kernel/vpe.c
-@@ -134,7 +134,7 @@ void release_vpe(struct vpe *v)
- {
-        list_del(&v->list);
-        if (v->load_addr)
--               release_progmem(v);
-+               release_progmem(v->load_addr);
-        kfree(v);
- }
-
-
-since release_progmem() is kfree() it is also possible to drop "if (v->load=
-_addr)"
-
-jm2c
-
-re,
- wh=
+Regards,
+Markus
