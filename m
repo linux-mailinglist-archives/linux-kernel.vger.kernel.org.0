@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F1F178E2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD0E178E1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:13:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387863AbgCDKNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:13:53 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34203 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387752AbgCDKNt (ORCPT
+        id S2387881AbgCDKNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:13:54 -0500
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:39118 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387817AbgCDKNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:13:49 -0500
-Received: by mail-lj1-f194.google.com with SMTP id x7so1364297ljc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 02:13:47 -0800 (PST)
+        Wed, 4 Mar 2020 05:13:50 -0500
+Received: by mail-lf1-f54.google.com with SMTP id n30so1018177lfh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 02:13:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cloudflare.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=37n9ID/jQISQUdmUM2Xy9nSmU2zdBjkBqvMddVrEaU0=;
-        b=JYPrHolptd1n2nSDReTgh2qB3EIJhFPcT8U2rWu0VGMz4ZfOXORHYPLWXVMzA2hkhv
-         8i5RXCTGg8rYBAYowpL0n60igO49EEIw2yd8naNh3dsGnw1G6eg68anezW6ztoYc/W6J
-         3CD+fjvY3YO9JCmls4GuxCUQrUdCuSmwfDHjE=
+        bh=0JG4vRN2U1vBjajCliJupAy0Xm38EfZHPBvH9KwfXgk=;
+        b=elTxoKyu7RkdVLYq8DExwAcOXjjfFBZEbcj6vrF5UpngljtRqGrZ7ebgasBZPsdubp
+         zuovFtYIe0rEhyusnKUocgzt3WlrXT9ZeqK8YMpldRtrMSXiw8t9Hir0CdQkbdyOFnYw
+         I7z3lQfWSwm41cFGvT8VytXTt1vcuzNp4ypXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=37n9ID/jQISQUdmUM2Xy9nSmU2zdBjkBqvMddVrEaU0=;
-        b=gMlsxFC5y7WP0Q7L7/4FIBhd9pagh82QHuCCRNFsXEoSb/BL1APPU6gsbSsJq8FuU2
-         16xjQEhW+WPmDJdj7fL3NN04zmXDmUw/+jcZBQBlHIJB2TsTCfguSP4mFZroGlXulD27
-         sWUc468/jbuAmwPjNV7ZyTDWavxD/JW/D9tRBYDuo7a55afTwKbrDvL/nevdsbwEMkb1
-         sD4Mv+Nv6UHN5QJCTwOgIaBn8fW53bOFYxu1TEnqNIp5lCjzTrlKToxSWJonvMoo7w9E
-         vrr0X5MolyVj4eaHdgvRvDgfu6A4+hzwHzKRtLDW081RY96NygnLaiQqla1wQVsKwv1n
-         6new==
-X-Gm-Message-State: ANhLgQ3hRGYOyLIzg2ME5EpmhQ8s1AlCK8LxvgUHTLvtf6MA5ufJdA+B
-        5oN/FDPiDDYy+/vawhiYY0Ts6g==
-X-Google-Smtp-Source: ADFU+vvdRHJXk5KTON2lz3bzzhYKfTKoWcnjztS1Xi8SaNMzHXlSTQRuZRQFj4iNxNcGreu2af+oMw==
-X-Received: by 2002:a2e:8884:: with SMTP id k4mr1535745lji.59.1583316826417;
-        Wed, 04 Mar 2020 02:13:46 -0800 (PST)
+        bh=0JG4vRN2U1vBjajCliJupAy0Xm38EfZHPBvH9KwfXgk=;
+        b=iNr885Ts4TLOXJjUCV4jFa1/IiBa+6ULmI56ulKG5DQnpO+WWhePHW9NfBB7vsDO4G
+         6Ll0aevZ/5AaeMV6w0s48qdjxdx6BCcco0TfFbLMYhFUkaLV71kf6+mXMhvBj8P6aRZU
+         6B0LUhzi4/vC587BWwzSOTJCsnhVNXUKh8a7JjvwbPa4Pstr9XNFEJtOV8edx7zi1ikA
+         SIITB7zbjJsdh+/KIFQgFRJOC3drqNRzf+/xEt+5zMlngZdzK9ISQmYj7AC3UurvTlUb
+         5sMArtN1LXGDR4Dx33WDAV0+grDdHw+XVG8uzWT9w7gqAqMcGvPi/sZRagzaHBZ1bS/q
+         EIOQ==
+X-Gm-Message-State: ANhLgQ3c465UzYiiqbrpxdU7TacVnyc8NpK9NDc9viuCPUUrd252peUQ
+        zQu61F69JfKuI861xpJu8NBL1A==
+X-Google-Smtp-Source: ADFU+vtOHKTMDKLBdW063ze8vJHAb6ivzE/JIjJvB1eGckwN1kulKZrWnFhZaB0IdtDF9F6BE/XHCQ==
+X-Received: by 2002:a19:760b:: with SMTP id c11mr982899lff.140.1583316828295;
+        Wed, 04 Mar 2020 02:13:48 -0800 (PST)
 Received: from localhost.localdomain ([176.221.114.230])
-        by smtp.gmail.com with ESMTPSA id l7sm341777lfk.65.2020.03.04.02.13.45
+        by smtp.gmail.com with ESMTPSA id l7sm341777lfk.65.2020.03.04.02.13.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 02:13:45 -0800 (PST)
+        Wed, 04 Mar 2020 02:13:47 -0800 (PST)
 From:   Lorenz Bauer <lmb@cloudflare.com>
-To:     john.fastabend@gmail.com, Daniel Borkmann <daniel@iogearbox.net>,
+To:     john.fastabend@gmail.com, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Jakub Sitnicki <jakub@cloudflare.com>,
         Lorenz Bauer <lmb@cloudflare.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
         Alexei Starovoitov <ast@kernel.org>
-Cc:     kernel-team@cloudflare.com, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v3 06/12] bpf: sockmap: simplify sock_map_init_proto
-Date:   Wed,  4 Mar 2020 11:13:11 +0100
-Message-Id: <20200304101318.5225-7-lmb@cloudflare.com>
+Cc:     kernel-team@cloudflare.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH bpf-next v3 07/12] bpf: add sockmap hooks for UDP sockets
+Date:   Wed,  4 Mar 2020 11:13:12 +0100
+Message-Id: <20200304101318.5225-8-lmb@cloudflare.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200304101318.5225-1-lmb@cloudflare.com>
 References: <20200304101318.5225-1-lmb@cloudflare.com>
@@ -64,68 +66,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can take advantage of the fact that both callers of
-sock_map_init_proto are holding a RCU read lock, and
-have verified that psock is valid.
+Add basic psock hooks for UDP sockets. This allows adding and
+removing sockets, as well as automatic removal on unhash and close.
 
 Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+Signed-off-by: Jakub Sitnicki <jakub@cloudflare.com>
 ---
- net/core/sock_map.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ MAINTAINERS        |  1 +
+ include/net/udp.h  |  5 +++++
+ net/ipv4/Makefile  |  1 +
+ net/ipv4/udp_bpf.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 60 insertions(+)
+ create mode 100644 net/ipv4/udp_bpf.c
 
-diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-index 9898294e119d..83c5082cefd3 100644
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -141,28 +141,17 @@ static void sock_map_unref(struct sock *sk, void *link_raw)
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8f27f40d22bb..b2fae56dca9f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9359,6 +9359,7 @@ F:	include/linux/skmsg.h
+ F:	net/core/skmsg.c
+ F:	net/core/sock_map.c
+ F:	net/ipv4/tcp_bpf.c
++F:	net/ipv4/udp_bpf.c
+ 
+ LANTIQ / INTEL Ethernet drivers
+ M:	Hauke Mehrtens <hauke@hauke-m.de>
+diff --git a/include/net/udp.h b/include/net/udp.h
+index e55d5f765807..a8fa6c0c6ded 100644
+--- a/include/net/udp.h
++++ b/include/net/udp.h
+@@ -503,4 +503,9 @@ static inline struct sk_buff *udp_rcv_segment(struct sock *sk,
+ 	return segs;
  }
  
--static int sock_map_init_proto(struct sock *sk)
-+static int sock_map_init_proto(struct sock *sk, struct sk_psock *psock)
- {
--	struct sk_psock *psock;
- 	struct proto *prot;
++#ifdef CONFIG_BPF_STREAM_PARSER
++struct sk_psock;
++struct proto *udp_bpf_get_proto(struct sock *sk, struct sk_psock *psock);
++#endif /* BPF_STREAM_PARSER */
++
+ #endif	/* _UDP_H */
+diff --git a/net/ipv4/Makefile b/net/ipv4/Makefile
+index 9d97bace13c8..9e1a186a3671 100644
+--- a/net/ipv4/Makefile
++++ b/net/ipv4/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_TCP_CONG_LP) += tcp_lp.o
+ obj-$(CONFIG_TCP_CONG_YEAH) += tcp_yeah.o
+ obj-$(CONFIG_TCP_CONG_ILLINOIS) += tcp_illinois.o
+ obj-$(CONFIG_NET_SOCK_MSG) += tcp_bpf.o
++obj-$(CONFIG_BPF_STREAM_PARSER) += udp_bpf.o
+ obj-$(CONFIG_NETLABEL) += cipso_ipv4.o
  
- 	sock_owned_by_me(sk);
- 
--	rcu_read_lock();
--	psock = sk_psock(sk);
--	if (unlikely(!psock)) {
--		rcu_read_unlock();
--		return -EINVAL;
--	}
--
- 	prot = tcp_bpf_get_proto(sk, psock);
--	if (IS_ERR(prot)) {
--		rcu_read_unlock();
-+	if (IS_ERR(prot))
- 		return PTR_ERR(prot);
--	}
- 
- 	sk_psock_update_proto(sk, psock, prot);
--	rcu_read_unlock();
- 	return 0;
- }
- 
-@@ -241,7 +230,7 @@ static int sock_map_link(struct bpf_map *map, struct sk_psock_progs *progs,
- 	if (msg_parser)
- 		psock_set_prog(&psock->progs.msg_parser, msg_parser);
- 
--	ret = sock_map_init_proto(sk);
-+	ret = sock_map_init_proto(sk, psock);
- 	if (ret < 0)
- 		goto out_drop;
- 
-@@ -286,7 +275,7 @@ static int sock_map_link_no_progs(struct bpf_map *map, struct sock *sk)
- 	if (!psock)
- 		return -ENOMEM;
- 
--	ret = sock_map_init_proto(sk);
-+	ret = sock_map_init_proto(sk, psock);
- 	if (ret < 0)
- 		sk_psock_put(sk, psock);
- 	return ret;
+ obj-$(CONFIG_XFRM) += xfrm4_policy.o xfrm4_state.o xfrm4_input.o \
+diff --git a/net/ipv4/udp_bpf.c b/net/ipv4/udp_bpf.c
+new file mode 100644
+index 000000000000..eddd973e6575
+--- /dev/null
++++ b/net/ipv4/udp_bpf.c
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2020 Cloudflare Ltd https://cloudflare.com */
++
++#include <linux/skmsg.h>
++#include <net/sock.h>
++#include <net/udp.h>
++
++enum {
++	UDP_BPF_IPV4,
++	UDP_BPF_IPV6,
++	UDP_BPF_NUM_PROTS,
++};
++
++static struct proto *udpv6_prot_saved __read_mostly;
++static DEFINE_SPINLOCK(udpv6_prot_lock);
++static struct proto udp_bpf_prots[UDP_BPF_NUM_PROTS];
++
++static void udp_bpf_rebuild_protos(struct proto *prot, const struct proto *base)
++{
++	*prot        = *base;
++	prot->unhash = sock_map_unhash;
++	prot->close  = sock_map_close;
++}
++
++static void udp_bpf_check_v6_needs_rebuild(struct sock *sk, struct proto *ops)
++{
++	if (sk->sk_family == AF_INET6 &&
++	    unlikely(ops != smp_load_acquire(&udpv6_prot_saved))) {
++		spin_lock_bh(&udpv6_prot_lock);
++		if (likely(ops != udpv6_prot_saved)) {
++			udp_bpf_rebuild_protos(&udp_bpf_prots[UDP_BPF_IPV6], ops);
++			smp_store_release(&udpv6_prot_saved, ops);
++		}
++		spin_unlock_bh(&udpv6_prot_lock);
++	}
++}
++
++static int __init udp_bpf_v4_build_proto(void)
++{
++	udp_bpf_rebuild_protos(&udp_bpf_prots[UDP_BPF_IPV4], &udp_prot);
++	return 0;
++}
++core_initcall(udp_bpf_v4_build_proto);
++
++struct proto *udp_bpf_get_proto(struct sock *sk, struct sk_psock *psock)
++{
++	int family = sk->sk_family == AF_INET ? UDP_BPF_IPV4 : UDP_BPF_IPV6;
++
++	if (!psock->sk_proto)
++		udp_bpf_check_v6_needs_rebuild(sk, READ_ONCE(sk->sk_prot));
++
++	return &udp_bpf_prots[family];
++}
 -- 
 2.20.1
 
