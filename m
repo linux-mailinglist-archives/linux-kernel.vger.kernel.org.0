@@ -2,220 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C70E017952C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:27:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21008179532
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388375AbgCDQ1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:27:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387497AbgCDQ1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:27:43 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C035F21775;
-        Wed,  4 Mar 2020 16:27:40 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 11:27:39 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] sched/rt: cpupri_find: Implement fallback
- mechanism for !fit case
-Message-ID: <20200304112739.7b99677e@gandalf.local.home>
-In-Reply-To: <20200302132721.8353-2-qais.yousef@arm.com>
-References: <20200302132721.8353-1-qais.yousef@arm.com>
-        <20200302132721.8353-2-qais.yousef@arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2387497AbgCDQ2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:28:06 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46219 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388019AbgCDQ2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 11:28:05 -0500
+Received: by mail-ed1-f68.google.com with SMTP id y3so2981166edj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 08:28:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jlekstrand-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7TRIY9YZNfQ03l0XAD8uITch5RH+qIr9GBOry06eMOI=;
+        b=DyjBlh4x8TGTi0/baq7816HKFpJxdmdh2OzVkAZqLMtGgEWsnnRBjUNDbMhLtTxKrm
+         qsWwddd2y1HXIShfDo4TTplQmv/XPR48GHuE0B4EBpMcKo7lBNjPYMetgokwrGCaVzdt
+         szyOmrwGOGIpQAcwpTf9aaBVdeIg8ZD3/fh2BXXK9eVrI0jWHP8CNvEZWqcKf1R1BHdc
+         cGMCQ+mRhLMKzM9MAZpiI7hKFH77iA9jeVil4vAf4z3GX6urUtr5aev2Si1JICBfTk8O
+         /pIvKegc01ZP9YmE7S7jfCoWdt1GNU+8mX8o/CwmR/ga8fbT99pHiso1U+mizqMrJQVQ
+         rAKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7TRIY9YZNfQ03l0XAD8uITch5RH+qIr9GBOry06eMOI=;
+        b=hJqlIBi6DS708y1w/rzyPdEtwT2/FZa/UI6u+mModSyO8h1PBt7A/oabxTahHTVlj8
+         NAZ7osVRY5g5pXmDNg9MLZyDEcCkwIpjymkabuOcGxuG4ToXfkMFkJIjLvlID2mAQfKy
+         /GUWgwFem4zGVn7x22Jl/y8JAaZQphyNREZU4SBGSXdUGlotDZlZGhRdv+UulnIwowbm
+         nE6owMl5TtivAFnk2In0bJLEBMD5pJKec+jpZqxhPQrsPl3dO7I6GMBL0XyVZPMGmAGr
+         Cq8nWulNIsOBJoMCnf8CE+gQk227z6n1GwhgQ+AbBTtbMpnXKJ8d4y/xekHV2ASlXoST
+         2/3g==
+X-Gm-Message-State: ANhLgQ3nZWluNB5s0jfmtVgTBlnrwnFnwqPFrIEN/UR578xrCD7t4XJY
+        Y1joqh92syJU3AGWUWPkR1EeC3geIOaxngDaIDAfrQ==
+X-Google-Smtp-Source: ADFU+vsSyopp0FIj9kIHIXWZFM6m95W5fA7PACVmDDg7Apxr6rZ0+SjUG+P1JsIhCXAPTgAxBiN91lx8DJJ0ecG4TlA=
+X-Received: by 2002:a17:906:f258:: with SMTP id gy24mr927151ejb.120.1583339283393;
+ Wed, 04 Mar 2020 08:28:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20200225235856.975366-1-jason@jlekstrand.net> <8066d8b2-dd6a-10ef-a7bb-2c18a0661912@amd.com>
+ <20200226100523.GQ2363188@phenom.ffwll.local> <CAOFGe94O66HL212aXqhi9tdYqw---Xm-fwNSV4pxHyPmpSGpbg@mail.gmail.com>
+ <CAP+8YyEUz29fXDW5kO_0ZG6c849=TuFWCK8ynT3LuM+Tn+rMzw@mail.gmail.com>
+ <810a26e7-4294-a615-b7ee-18148ac70641@amd.com> <CAOFGe96namyeQXTvdrduM+=wkJuoWWx34CxcsJHS3fcCaKDadw@mail.gmail.com>
+ <21aeacc0-f3ae-c5dd-66df-4d2f3d73f73e@amd.com>
+In-Reply-To: <21aeacc0-f3ae-c5dd-66df-4d2f3d73f73e@amd.com>
+From:   Jason Ekstrand <jason@jlekstrand.net>
+Date:   Wed, 4 Mar 2020 10:27:51 -0600
+Message-ID: <CAOFGe95Gx=kX=sxwhx1FYmXQuPtGAKwt2V5YodQBwJXujE3WwA@mail.gmail.com>
+Subject: Re: [PATCH] RFC: dma-buf: Add an API for importing and exporting sync files
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Bas Nieuwenhuizen <bas@basnieuwenhuizen.nl>,
+        Dave Airlie <airlied@redhat.com>,
+        Jesse Hall <jessehall@google.com>,
+        James Jones <jajones@nvidia.com>,
+        Daniel Stone <daniels@collabora.com>,
+        =?UTF-8?Q?Kristian_H=C3=B8gsberg?= <hoegsberg@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Chenbo Feng <fengc@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        linux-media@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  2 Mar 2020 13:27:16 +0000
-Qais Yousef <qais.yousef@arm.com> wrote:
+On Wed, Mar 4, 2020 at 2:34 AM Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
+>
+> Am 03.03.20 um 20:10 schrieb Jason Ekstrand:
+> > On Thu, Feb 27, 2020 at 2:28 AM Christian K=C3=B6nig
+> > <christian.koenig@amd.com> wrote:
+> >> [SNIP]
+> >>> However, I'm not sure what the best way is to do garbage collection o=
+n
+> >>> that so that we don't get an impossibly list of fence arrays.
+> >> Exactly yes. That's also the reason why the dma_fence_chain container =
+I
+> >> came up with for the sync timeline stuff has such a rather sophisticat=
+ed
+> >> garbage collection.
+> >>
+> >> When some of the included fences signal you need to free up the
+> >> array/chain and make sure that the memory for the container can be reu=
+sed.
+> > Currently (as of v2), I'm using dma_fence_array and being careful to
+> > not bother constructing one if there's only one fence in play.  Is
+> > this insufficient?  If so, maybe we should consider improving
+> > dma_fence_array.
+>
+> That still won't work correctly in all cases. See the problem is not
+> only optimization, but also avoiding situations where userspace can
+> abuse the interface to do nasty things.
+>
+> For example if userspace just calls that function in a loop you can
+> create a long chain of dma_fence_array objects.
+>
+> If that chain is then suddenly released the recursive dropping of
+> references can overwrite the kernel stack.
+>
+> For reference see what dance is necessary in the dma_fence_chain_release
+> function to avoid that:
+> >         /* Manually unlink the chain as much as possible to avoid
+> > recursion
+> >          * and potential stack overflow.
+> >          */
+> >         while ((prev =3D rcu_dereference_protected(chain->prev, true)))=
+ {
+> ....
+>
+> It took me quite a while to figure out how to do this without causing
+> issues. But I don't see how this would be possible for dma_fence_array.
+
+Ah, I see the issue now!  It hadn't even occurred to me that userspace
+could use this to build up an infinite recursion chain.  That's nasty!
+ I'll give this some more thought and see if can come up with
+something clever.
+
+Here's one thought:  We could make dma_fence_array automatically
+collapse any arrays it references and instead directly reference their
+fences.  This way, no matter how much the client chains things, they
+will never get more than one dma_fence_array.  Of course, the
+difficulty here (answering my own question) comes if they ping-pong
+back-and-forth between something which constructs a dma_fence_array
+and something which constructs a dma_fence_chain to get
+array-of-chain-of-array-of-chain-of-...  More thought needed.
+
+> As far as I can see the only real option to implement this would be to
+> change the dma_resv object container so that you can add fences without
+> overriding existing ones.
+>
+> For shared fences that can be done relative easily, but I absolutely
+> don't see how to do this for exclusive ones without a larger rework.
+
+Fair enough.  Thanks for taking the time to explain the issue.  I'll
+give this some more thought.
+
+--Jason
 
 
->  /**
->   * cpupri_find - find the best (lowest-pri) CPU in the system
->   * @cp: The cpupri context
-> @@ -62,80 +115,72 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
->  		struct cpumask *lowest_mask,
->  		bool (*fitness_fn)(struct task_struct *p, int cpu))
->  {
-> -	int idx = 0;
->  	int task_pri = convert_prio(p->prio);
-> +	int best_unfit_idx = -1;
-> +	int idx = 0, cpu;
-
-Nit, but if you moved idx, might as well remove the unnecessary
-initialization of it as well ;-)
-
->  
->  	BUG_ON(task_pri >= CPUPRI_NR_PRIORITIES);
->  
->  	for (idx = 0; idx < task_pri; idx++) {
-
-It's initialized here.
-
-> -		struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-> -		int skip = 0;
->  
-> -		if (!atomic_read(&(vec)->count))
-> -			skip = 1;
-> -		/*
-> -		 * When looking at the vector, we need to read the counter,
-> -		 * do a memory barrier, then read the mask.
-> -		 *
-> -		 * Note: This is still all racey, but we can deal with it.
-> -		 *  Ideally, we only want to look at masks that are set.
-> -		 *
-> -		 *  If a mask is not set, then the only thing wrong is that we
-> -		 *  did a little more work than necessary.
-> -		 *
-> -		 *  If we read a zero count but the mask is set, because of the
-> -		 *  memory barriers, that can only happen when the highest prio
-> -		 *  task for a run queue has left the run queue, in which case,
-> -		 *  it will be followed by a pull. If the task we are processing
-> -		 *  fails to find a proper place to go, that pull request will
-> -		 *  pull this task if the run queue is running at a lower
-> -		 *  priority.
-> -		 */
-> -		smp_rmb();
-> -
-> -		/* Need to do the rmb for every iteration */
-> -		if (skip)
-> -			continue;
-> -
-> -		if (cpumask_any_and(p->cpus_ptr, vec->mask) >= nr_cpu_ids)
-> +		if (!__cpupri_find(cp, p, lowest_mask, idx))
->  			continue;
->  
-> -		if (lowest_mask) {
-> -			int cpu;
-> +		if (!lowest_mask || !fitness_fn)
-> +			return 1;
->  
-> -			cpumask_and(lowest_mask, p->cpus_ptr, vec->mask);
-> +		/* Ensure the capacity of the CPUs fit the task */
-> +		for_each_cpu(cpu, lowest_mask) {
-> +			if (!fitness_fn(p, cpu))
-> +				cpumask_clear_cpu(cpu, lowest_mask);
-> +		}
->  
-> +		/*
-> +		 * If no CPU at the current priority can fit the task
-> +		 * continue looking
-> +		 */
-> +		if (cpumask_empty(lowest_mask)) {
->  			/*
-> -			 * We have to ensure that we have at least one bit
-> -			 * still set in the array, since the map could have
-> -			 * been concurrently emptied between the first and
-> -			 * second reads of vec->mask.  If we hit this
-> -			 * condition, simply act as though we never hit this
-> -			 * priority level and continue on.
-> +			 * Store our fallback priority in case we
-> +			 * didn't find a fitting CPU
->  			 */
-> -			if (cpumask_empty(lowest_mask))
-> -				continue;
-> +			if (best_unfit_idx == -1)
-> +				best_unfit_idx = idx;
->  
-> -			if (!fitness_fn)
-> -				return 1;
-> -
-> -			/* Ensure the capacity of the CPUs fit the task */
-> -			for_each_cpu(cpu, lowest_mask) {
-> -				if (!fitness_fn(p, cpu))
-> -					cpumask_clear_cpu(cpu, lowest_mask);
-> -			}
-> -
-> -			/*
-> -			 * If no CPU at the current priority can fit the task
-> -			 * continue looking
-> -			 */
-> -			if (cpumask_empty(lowest_mask))
-> -				continue;
-> +			continue;
->  		}
->  
->  		return 1;
->  	}
->  
-> +	/*
-> +	 * If we failed to find a fitting lowest_mask, make sure we fall back
-> +	 * to the last known unfitting lowest_mask.
-> +	 *
-> +	 * Note that the map of the recorded idx might have changed since then,
-> +	 * so we must ensure to do the full dance to make sure that level still
-> +	 * holds a valid lowest_mask.
-> +	 *
-> +	 * As per above, the map could have been concurrently emptied while we
-> +	 * were busy searching for a fitting lowest_mask at the other priority
-> +	 * levels.
-> +	 *
-> +	 * This rule favours honouring priority over fitting the task in the
-> +	 * correct CPU (Capacity Awareness being the only user now).
-> +	 * The idea is that if a higher priority task can run, then it should
-> +	 * run even if this ends up being on unfitting CPU.
-> +	 *
-> +	 * The cost of this trade-off is not entirely clear and will probably
-> +	 * be good for some workloads and bad for others.
-> +	 *
-> +	 * The main idea here is that if some CPUs were overcommitted, we try
-> +	 * to spread which is what the scheduler traditionally did. Sys admins
-> +	 * must do proper RT planning to avoid overloading the system if they
-> +	 * really care.
-> +	 */
-> +	if (best_unfit_idx != -1)
-> +		return __cpupri_find(cp, p, lowest_mask, best_unfit_idx);
-
-Hmm, this only checks the one index, which can change and then we miss
-everything. I think we can do better. What about this:
-
-
-        for (idx = 0; idx < task_pri; idx++) {
-		int found = -1;
-
-                if (!__cpupri_find(cp, p, lowest_mask, idx))
-                        continue;
-
-                if (!lowest_mask || !fitness_fn)
-                        return 1;
-
-		/* Make sure we have one fit CPU before clearing */
-		for_each_cpu(cpu, lowest_mask) {
-			if (fitness_fn(p, cpu)) {
-				found = cpu;
-				break;
-			}
-		}
-
-		if (found == -1)
-			continue;
-
-                /* Ensure the capacity of the CPUs fit the task */
-                for_each_cpu(cpu, lowest_mask) {
-                        if (cpu < found || !fitness_fn(p, cpu))
-                                cpumask_clear_cpu(cpu, lowest_mask);
-                }
-
-                return 1;
-        }
-
-This way, if nothing fits we return the untouched lowest_mask, and only
-clear the lowest_mask bits if we found a fitness cpu.
-
--- Steve
+> >>>    (Note
+> >>> the dma_resv has a lock that needs to be taken before adding an
+> >>> exclusive fence, might be useful). Some code that does a thing like
+> >>> this is __dma_resv_make_exclusive in
+> >>> drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+> >> Wanted to move that into dma_resv.c for quite a while since there are
+> >> quite a few other cases where we need this.
+> > I've roughly done that.  The primary difference is that my version
+> > takes an optional additional fence to add to the array.  This makes it
+> > a bit more complicated but I think I got it mostly right.
+> >
+> > I've also written userspace code which exercises this and it seems to
+> > work.  Hopefully, that will give a better idea of what I'm trying to
+> > accomplish.
+>
+> Yes, that is indeed a really nice to have feature.
+>
+> Regards,
+> Christian.
