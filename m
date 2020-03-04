@@ -2,74 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992E9179A63
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 21:47:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7757179A68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 21:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388328AbgCDUrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 15:47:42 -0500
-Received: from mga12.intel.com ([192.55.52.136]:6749 "EHLO mga12.intel.com"
+        id S1729267AbgCDUuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 15:50:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728539AbgCDUrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 15:47:41 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 12:47:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,515,1574150400"; 
-   d="scan'208";a="439262784"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga005.fm.intel.com with ESMTP; 04 Mar 2020 12:47:40 -0800
-Date:   Wed, 4 Mar 2020 12:47:40 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: Re: [PATCH 3/6] KVM: x86: Add dedicated emulator helper for grabbing
- CPUID.maxphyaddr
-Message-ID: <20200304204740.GG21662@linux.intel.com>
-References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
- <20200302195736.24777-4-sean.j.christopherson@intel.com>
- <de2ed4e9-409a-6cb1-e295-ea946be11e82@redhat.com>
- <617748ab-0edd-2ccc-e86b-b86b0adf9d3b@siemens.com>
- <4ddde497-9c71-d64c-df20-3b4439664336@redhat.com>
+        id S1728482AbgCDUuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 15:50:07 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7112320828;
+        Wed,  4 Mar 2020 20:50:06 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 15:50:04 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: Use printf instead of echo in kprobe
+ syntax error tests
+Message-ID: <20200304155004.7dd033a3@gandalf.local.home>
+In-Reply-To: <20200304161435.23019-1-seth.forshee@canonical.com>
+References: <20200304161435.23019-1-seth.forshee@canonical.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ddde497-9c71-d64c-df20-3b4439664336@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 11:14:22AM +0100, Paolo Bonzini wrote:
-> On 03/03/20 10:48, Jan Kiszka wrote:
-> >>
-> >> I don't think this is a particularly useful change.  Yes, it's not
-> >> intuitive but is it more than a matter of documentation (and possibly
-> >> moving the check_cr_write snippet into a separate function)?
-> > 
-> > Besides the non obvious return value of the current function, this
-> > approach also avoids leaving cpuid traces for querying maxphyaddr, which
-> > is also not very intuitive IMHO.
-> 
-> There are already other cases where we leave CPUID traces.  We can just
-> stop tracing if check_limit (which should be renamed to from_guest) is
-> true; there are other internal cases which call ctxt->ops->get_cpuid,
-> such as vendor_intel, and those should also use check_limit==true and
-> check the return value of ctxt->ops->get_cpuid.
+On Wed,  4 Mar 2020 10:14:35 -0600
+Seth Forshee <seth.forshee@canonical.com> wrote:
 
-No, the vendor checks that use get_cpuid() shouldn't do check_limit=true,
-they're looking for an exact match on the vendor.
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> @@ -37,7 +37,7 @@ fi
+>  
+>  check_error 'p vfs_read ^$none_var'	# BAD_VAR
+>  
+> -check_error 'p vfs_read ^%none_reg'	# BAD_REG_NAME
+> +check_error 'p vfs_read ^%%none_reg'	# BAD_REG_NAME
+>  check_error 'p vfs_read ^@12345678abcde'	# BAD_MEM_ADDR
+>  check_error 'p vfs_read ^@+10'		# FILE_ON_KPROBE
+>  
+> @@ -80,7 +80,7 @@ check_error 'p vfs_read arg1=^'			# NO_ARG_BODY
+>  # instruction boundary check is valid on x86 (at this moment)
+>  case $(uname -m) in
+>    x86_64|i[3456]86)
+> -    echo 'p vfs_read' > kprobe_events
+> +    printf 'p vfs_read' > kprobe_events
+>      if grep -q FTRACE ../kprobes/list ; then
+>  	check_error 'p ^vfs_read+3'		# BAD_INSN_BNDRY (only if function-tracer is enabled)
+>      fi
+> @@ -89,13 +89,13 @@ esac
+>  
+>  # multiprobe errors
+>  if grep -q "Create/append/" README && grep -q "imm-value" README; then
+> -echo 'p:kprobes/testevent _do_fork' > kprobe_events
+> +printf 'p:kprobes/testevent _do_fork' > kprobe_events
+>  check_error '^r:kprobes/testevent do_exit'	# DIFF_PROBE_TYPE
+> -echo 'p:kprobes/testevent _do_fork abcd=\1' > kprobe_events
+> -check_error 'p:kprobes/testevent _do_fork ^bcd=\1'	# DIFF_ARG_TYPE
+> -check_error 'p:kprobes/testevent _do_fork ^abcd=\1:u8'	# DIFF_ARG_TYPE
+> -check_error 'p:kprobes/testevent _do_fork ^abcd=\"foo"'	# DIFF_ARG_TYPE
+> -check_error '^p:kprobes/testevent _do_fork abcd=\1'	# SAME_PROBE
+> +printf 'p:kprobes/testevent _do_fork abcd=\\1' > kprobe_events
+> +check_error 'p:kprobes/testevent _do_fork ^bcd=\\1'	# DIFF_ARG_TYPE
+> +check_error 'p:kprobes/testevent _do_fork ^abcd=\\1:u8'	# DIFF_ARG_TYPE
+> +check_error 'p:kprobes/testevent _do_fork ^abcd=\\"foo"'# DIFF_ARG_TYPE
+> +check_error '^p:kprobes/testevent _do_fork abcd=\\1'	# SAME_PROBE
+>  fi
+>  
+>  exit 0
 
-Not that it matters.  @check_limit only comes into play on a vendor check
-if CPUID.0 doesn't exist, and @check_limit only effects the output if
-CPUID.0 _does_ exist.  I.e. the output for CPUID.0 is unaffected by
-@check_limit.
+
+This change causes my tests to fail:
+
+++ echo 'Test command: p vfs_read arg1="abcd'
+Test command: p vfs_read arg1="abcd
+++ echo
+++ grep 'trace_kprobe: error:' -A 3 error_log
+[61913.240093] trace_kprobe: error: Invalid fetch argument
+  Command: p vfs_read arg1="abcd
+                           ^
++++ tail -n 1 error_log
++++ wc -c
+++ N=29
++++ expr 13 + 21
+++ test 34 -eq 29
+
+
+-- Steve
