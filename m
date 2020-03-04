@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E57F0178C1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F1F178C3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:06:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbgCDIDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:03:39 -0500
-Received: from mail-qv1-f42.google.com ([209.85.219.42]:42421 "EHLO
-        mail-qv1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbgCDIDj (ORCPT
+        id S2387626AbgCDIFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:05:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23389 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725271AbgCDIFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:03:39 -0500
-Received: by mail-qv1-f42.google.com with SMTP id e7so391444qvy.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 00:03:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fvcgS0kaXJOVRywfNG/lNV2uF4vbt2syEwAD5+QBlzo=;
-        b=Gt4O3kKNzok2CysVWD2u3PBvZtBIGkUhLJORObJgQFPs1Y7YFnfuyfGf0IfBx8ZQ6b
-         p9HsmW9q9BNbFTFVIf5K3vLxwkMJKJJmbc0OUO9Zk2BhG7rz0Pdev1f0YCblgQwmOGXf
-         MmD2PpAwnKc1pJra4Wq+VUWyK0UaiWPrLNw+qhxbUC7RlFqjGAZcH1OabQg6Dx14jUJ6
-         QL0PoSg4O2TR3vtJdT8kEkFUrjUf+SFq4KeZ13AEAqtKK0idqq8MMAcrDUhoDZzqRVnh
-         soPslGD1sOK53cGMv1QR9ngzipDeIgchY6Vpfd9Q7s2S+YAnBgUhcIeKxxdp5Bwh+ATi
-         Tbkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fvcgS0kaXJOVRywfNG/lNV2uF4vbt2syEwAD5+QBlzo=;
-        b=gexu0XCD/dkXiYPLfx5DInVJIv6suYpKl1TxhdZQmA04FVPddvL8D7UTntX6L//Zwp
-         jQsddeE5ywYdWwkfZ+yb+Wr13gJdIf2xiQag73Nbrs9BngcxFHLB30gM2uVJ5t9oTDdl
-         HUi7ZKtqBov7LhtCmnZCxdD8hmdV3mvisS+q/Tw0Xe7wBOknE+eo4Vl7mNoQE5xXEwOu
-         rtjl1TZ/FaqH7190Yi/yuUFpRZhxGpIuQw5yd03rreh+VyXTphLOOS3FnrMWZXp4udZo
-         eufbD1VgXDFcjqOCtluiTo6LmBcxDUdD9iY6HFTUX2KDHiJL8UAcYxvuqjhcQIU6N+wX
-         jZSw==
-X-Gm-Message-State: ANhLgQ1Jq/iPDV3b4J/hJ6PeaPkXB6JJejbtHhd+c+tj8S3bcVb3FL5h
-        dj+psEI1krVTOUCPFfMTvEoIftSJVVHfmrsGQ8iEBQ==
-X-Google-Smtp-Source: ADFU+vur/xZleKVdRHzI0H1ZvQvwTlsXpp6Y39wE53NWXVg1mf/u1WO9LRq/X33XIyAxU5944mW6rgngj0asd9wn9FA=
-X-Received: by 2002:a05:6214:1467:: with SMTP id c7mr1167140qvy.122.1583309016750;
- Wed, 04 Mar 2020 00:03:36 -0800 (PST)
+        Wed, 4 Mar 2020 03:05:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583309153;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kEXp+MsDMiIQ48dZsIdgW3c7/qT3rYq7zxn6pOdg4xA=;
+        b=E9FCmj9jcnhbA11ESDwbYCxh/Gpv5iWydcqEE/7+VlwdQNMLtleJeKmEvHqrwO1YJ3rCw+
+        orJ/1xl9wbMwQUzWehwTt3Qc1RXkyeYxyRONMwr3J1LsSP+pFg6KfXZZQt9dE4w51m3YFO
+        ymSTBR/H8Hh2p4P1/OiEyy8Z1ECgoGM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-136-LfdfQ2d3O6mP8LQD7TgVEQ-1; Wed, 04 Mar 2020 03:05:49 -0500
+X-MC-Unique: LfdfQ2d3O6mP8LQD7TgVEQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6149E801E6C;
+        Wed,  4 Mar 2020 08:05:47 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-150.ams2.redhat.com [10.36.116.150])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 41D545DA60;
+        Wed,  4 Mar 2020 08:05:44 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 7778C17506; Wed,  4 Mar 2020 09:05:43 +0100 (CET)
+Date:   Wed, 4 Mar 2020 09:05:43 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     David Stevens <stevensd@chromium.org>
+Cc:     Gurchetan Singh <gurchetansingh@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linaro-mm-sig@lists.linaro.org, virtio-dev@lists.oasis-open.org
+Subject: Re: [virtio-dev] [PATCH v2 4/4] drm/virtio: Support virtgpu exported
+ resources
+Message-ID: <20200304080543.jtf3kcfp6cyegkag@sirius.home.kraxel.org>
+References: <20200302121524.7543-1-stevensd@chromium.org>
+ <20200302121524.7543-5-stevensd@chromium.org>
+ <CAAfnVBk46vsP77hx3kUHqVCPG8Eakh7Kgi0kEHZtrHD-0bHzqQ@mail.gmail.com>
+ <CAD=HUj5-0CE-tm4meQ_Y7KB4Df41v=kBH2GTStYJptTOSp1yVw@mail.gmail.com>
 MIME-Version: 1.0
-References: <0000000000007523a60576e80a47@google.com> <CACT4Y+b3AmVQMjPNsPHOXRZS4tNYb6Z9h5-c=1ZwZk0VR-5J5Q@mail.gmail.com>
- <20180928070042.GF3439@hirez.programming.kicks-ass.net> <CACT4Y+YFmSmXjs5EMNRPvsR-mLYeAYKypBppYq_M_boTi8a9uQ@mail.gmail.com>
- <CACT4Y+ZBYYUiJejNbPcZWS+aHehvkgKkTKm0gvuviXGGcirJ5g@mail.gmail.com>
- <CACT4Y+bTGp1J9Wn=93LUObdTcWPo2JrChYKF-1v6aXmtvoQgPQ@mail.gmail.com>
- <CAM_iQpVtcNFeEtW15z_nZoyC1Q-_pCq+UfZ4vYBB3Lb2CMm4Mg@mail.gmail.com>
- <CAMArcTUJ=Nemq=hsEeOzc-hOU4bPOKq_Xa1ECGDk4ceZHzhGVw@mail.gmail.com> <CAM_iQpU+d4bbtN_oE+G0CaWmeSbBEyS1Wuc7s1vK36gGrcYzjQ@mail.gmail.com>
-In-Reply-To: <CAM_iQpU+d4bbtN_oE+G0CaWmeSbBEyS1Wuc7s1vK36gGrcYzjQ@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 4 Mar 2020 09:03:25 +0100
-Message-ID: <CACT4Y+Y-602aWheEZT8ha7qJ=P7uhu3LG5PqFebB7guNg8z=_w@mail.gmail.com>
-Subject: Re: BUG: MAX_LOCKDEP_CHAINS too low!
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzbot <syzbot+aaa6fa4949cc5d9b7b25@syzkaller.appspotmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=HUj5-0CE-tm4meQ_Y7KB4Df41v=kBH2GTStYJptTOSp1yVw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 18, 2020 at 9:41 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
->
-> On Thu, Jan 16, 2020 at 7:09 AM Taehee Yoo <ap420073@gmail.com> wrote:
-> > Yes, I fully agree with this.
-> > If we calculate the subclass for lock_nested() very well, I think we
-> > might use static lockdep key for addr_list_lock_key too. I think
-> > "dev->upper_level" and "dev->lower_level" might be used as subclass.
-> > These values are updated recursively in master/nomaster operation.
->
-> Great! I will think about this too. At least I will remove the other keys
-> for net-next.
+On Tue, Mar 03, 2020 at 11:42:22AM +0900, David Stevens wrote:
+> > cmd_p->hdr.ctx_id =
+> >
+> > Before this completion of this hypercall, this resource can be
+> > considered context local, while afterward it can be considered
+> > "exported".
+> 
+> Maybe I'm misunderstanding render contexts, but exporting a resource
+> doesn't seem related to render contexts.
 
-Hi Cong,
+It isn't indeed.  Binding resources to contexts might need dma-buf
+imports/exports on the host side, but that is another story and not
+related to dma-buf exports inside the guest.
 
-Was this done? This still harms testing of the whole kernel. Disabling
-LOCKDEP does not look good either...
+cheers,
+  Gerd
+
