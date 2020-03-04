@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B42C178D46
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DE3178D4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:20:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbgCDJUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 04:20:16 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:46365 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726860AbgCDJUP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 04:20:15 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1j9QCJ-0007g2-Gm; Wed, 04 Mar 2020 10:20:11 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2EE681C20C4;
-        Wed,  4 Mar 2020 10:20:11 +0100 (CET)
-Date:   Wed, 04 Mar 2020 09:20:10 -0000
-From:   "tip-bot2 for Wen Yang" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timekeeping: Prevent 32bit truncation in
- scale64_check_overflow()
-Cc:     Wen Yang <wenyang@linux.alibaba.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200120100523.45656-1-wenyang@linux.alibaba.com>
-References: <20200120100523.45656-1-wenyang@linux.alibaba.com>
+        id S1729138AbgCDJUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 04:20:40 -0500
+Received: from smtp3-1.goneo.de ([85.220.129.38]:57975 "EHLO smtp3-1.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725283AbgCDJUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 04:20:39 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by smtp3.goneo.de (Postfix) with ESMTP id 2CC2423F604;
+        Wed,  4 Mar 2020 10:20:37 +0100 (CET)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -2.75
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.75 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=0.150, BAYES_00=-1.9] autolearn=ham
+Received: from smtp3.goneo.de ([127.0.0.1])
+        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id EgvGAP8NJ19H; Wed,  4 Mar 2020 10:20:35 +0100 (CET)
+Received: from [192.168.1.127] (dyndsl-091-096-162-220.ewe-ip-backbone.de [91.96.162.220])
+        by smtp3.goneo.de (Postfix) with ESMTPSA id 24A4523F935;
+        Wed,  4 Mar 2020 10:20:35 +0100 (CET)
+Subject: Re: [PATCH] scripts/sphinx-pre-install: add '-p python3' to
+ virtualenv
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     "Bird, Tim" <Tim.Bird@sony.com>, Jonathan Corbet <corbet@lwn.net>,
+        "tbird20d@gmail.com" <tbird20d@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1582594481-23221-1-git-send-email-tim.bird@sony.com>
+ <20200302130911.05a7e465@lwn.net>
+ <MWHPR13MB0895EFDA9EBF7740875E661CFDE40@MWHPR13MB0895.namprd13.prod.outlook.com>
+ <20200304064214.64341a49@onda.lan>
+ <31a69fe7-c08d-9381-a111-5f522a4c9ffd@darmarit.de>
+ <20200304093138.6aced5a0@coco.lan>
+From:   Markus Heiser <markus.heiser@darmarit.de>
+Message-ID: <c491adf3-ae49-fefc-ea6d-32b75f4f9ca9@darmarit.de>
+Date:   Wed, 4 Mar 2020 10:20:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Message-ID: <158331361093.28353.8221399414721139924.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200304093138.6aced5a0@coco.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     4cbbc3a0eeed675449b1a4d080008927121f3da3
-Gitweb:        https://git.kernel.org/tip/4cbbc3a0eeed675449b1a4d080008927121f3da3
-Author:        Wen Yang <wenyang@linux.alibaba.com>
-AuthorDate:    Mon, 20 Jan 2020 18:05:23 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 04 Mar 2020 10:17:51 +01:00
+Am 04.03.20 um 09:31 schrieb Mauro Carvalho Chehab:
+> Em Wed, 4 Mar 2020 07:20:48 +0100
+> Markus Heiser <markus.heiser@darmarit.de> escreveu:
+>> With py3 the recommended way to install virtual environments is::
+>>
+>>     python3 -m venv sphinx-env
+>>
+>> This (python3) is what worked for me on RHEL/CentOS (dnf),
+>> archlinux and debian/ubuntu (tested from 16.04 up to 20.04).
+> 
+> Hmm... from:
+> 
+> 	https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
+> 
+> This works since Python version 3.3. It sounds doable to use it.
+> 
+> Yet, if we'll be switching to this method, the script should check if
+> the version is 3.3 or newer. The logic inside get_sphinx_fname() would
+> also require some changes, as it won't need to install anymore the
+> virtualenv program for Python >= 3.3.
 
-timekeeping: Prevent 32bit truncation in scale64_check_overflow()
+I guess you can ignore 3.2 and downwards
 
-While unlikely the divisor in scale64_check_overflow() could be >= 32bit in
-scale64_check_overflow(). do_div() truncates the divisor to 32bit at least
-on 32bit platforms.
+   https://en.wikipedia.org/wiki/History_of_Python#Table_of_versions
 
-Use div64_u64() instead to avoid the truncation to 32-bit.
+Support for py2.7 and >=py3.3 should match nearly all use cases / distributions 
+we support.
 
-[ tglx: Massaged changelog ]
+BTW: starting scripts with:
 
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20200120100523.45656-1-wenyang@linux.alibaba.com
+-m <module-name>
+     Searches sys.path for the named module and runs the
+     corresponding .py file as a script.
 
----
- kernel/time/timekeeping.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+is mostly more robust.  The option exists also in py2.  From py3.3 on
+a subset of virtualenv is built-in, so you can run '-m venv' ot of the
+box.
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index ca69290..4fc2af4 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1005,9 +1005,8 @@ static int scale64_check_overflow(u64 mult, u64 div, u64 *base)
- 	    ((int)sizeof(u64)*8 - fls64(mult) < fls64(rem)))
- 		return -EOVERFLOW;
- 	tmp *= mult;
--	rem *= mult;
- 
--	do_div(rem, div);
-+	rem = div64_u64(rem * mult, div);
- 	*base = tmp + rem;
- 	return 0;
- }
+   -- Markus --
