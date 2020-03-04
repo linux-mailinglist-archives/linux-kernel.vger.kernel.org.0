@@ -2,117 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8CC61792DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248A61792DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:58:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387600AbgCDO5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 09:57:39 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:53813 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725795AbgCDO5j (ORCPT
+        id S2387969AbgCDO57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 09:57:59 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41846 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbgCDO56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 09:57:39 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id DE1E822028;
-        Wed,  4 Mar 2020 09:57:37 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 04 Mar 2020 09:57:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=RpoQ1huL7zGeKqGEJkj7F3VzgOoyyCAyMSmbqbd6H
-        S4=; b=mQnbNT43lD4XXySmgRBs3C67DgNJTge1eoqVieRmgF7BvRYJjQXHaWN9R
-        lA4ML7Bf7BtK7HnWgDRnktq2D9xg1Z+0WJI6clkJS1IzatYbeupRUhMtII7tekjI
-        QwZx0Iztetua6mF33vJGinR1nrtfLUAvUotmezvGodcOX71DfyBGAAgjgtPuEFkt
-        rCVbESvaCPu2FqxkARKlw8KEo0JVwJe/waKzmd5Xy4bzoLYkJFviuXZ3f8X41cGd
-        tt4wviy5vszvyxpq9yIK1DagxSoLjnvsKWcnQd1dDy85/JREIAtvPnbFpaaiuVqp
-        J86u+f7vopMc0/RJRYyUnQqipop/A==
-X-ME-Sender: <xms:4MFfXh0V-5D2tgqmioBOLZHFFHqZPekei0o-CuI72cANFqvln9n-Vg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddtkedgjeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomheprfgvkhhk
-    rgcugfhnsggvrhhguceophgvnhgsvghrghesihhkihdrfhhiqeenucfkphepkeelrddvje
-    drfeefrddujeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomhepphgvnhgsvghrghesihhkihdrfhhi
-X-ME-Proxy: <xmx:4MFfXuN6YTaoejeOq48pwWMp_aNnDe9Y-7E5Ur6GrPZQ_FqEXMENGw>
-    <xmx:4MFfXo1pT0cre-FUGwGRVk3v5PaS-fFgmrMJn_3esK6xfi9kJMYd4Q>
-    <xmx:4MFfXl8cxxioV45GH5-O8uWUYJPWlXYSD-Ypnvh8CBDJGhcIGJLg_A>
-    <xmx:4cFfXqeEP_cgNi7SOPQnMYGfnGHNvDHhO5O9t3wc-QfqjKWj4-v0lQ>
-Received: from [192.168.1.105] (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BF4563280063;
-        Wed,  4 Mar 2020 09:57:34 -0500 (EST)
-Subject: Re: SLUB: sysfs lets root force slab order below required minimum,
- causing memory corruption
-To:     David Rientjes <rientjes@google.com>, Jann Horn <jannh@google.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>
-References: <CAG48ez31PP--h6_FzVyfJ4H86QYczAFPdxtJHUEEan+7VJETAQ@mail.gmail.com>
- <alpine.DEB.2.21.2003031724400.77561@chino.kir.corp.google.com>
-From:   Pekka Enberg <penberg@iki.fi>
-Message-ID: <de62c9f9-2274-8a28-22c9-3b704016e7d3@iki.fi>
-Date:   Wed, 4 Mar 2020 16:57:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 4 Mar 2020 09:57:58 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i1so2337320oie.8;
+        Wed, 04 Mar 2020 06:57:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DmcoZNUJxxsS5LTSsyiiqENx6EIP1OPlgM367MTeK8I=;
+        b=LfCBzxIQ8WzX+TFAeheZYWPj7a+6aLUYdys0KxSQXX3caQxK7LsvQE3PA+LnNzHJCk
+         RSj5rh0tt5JG7Ak0tSdDlnmfNSn5KD33ddWAqUx7ZdL4WH1EHiS9Dcsbyphi9b8jgzFO
+         f0pLTUKKXETfUlRv6B+GtFNlJrYgoiKvEeSanuAqU79sYqw0mjQzQlKGPUCsMxm/9NEE
+         Uav2xvs2uhnsNLqwH972fMi81mArWIGPill7gsW7HKhta4DLa3j9nX8uLuPcVQhefAkx
+         DhAgflMCUEIq+YwPUcQ09inpHIVv/lDlAj00ENChzi4lGnGaeMCXPe+pkJH/G2CYb05/
+         ZKpw==
+X-Gm-Message-State: ANhLgQ13rwoGGPCvr1hCRwlcdN4+WYajaxIpwsgoly9h2e4tu60kVF2S
+        j3I7eYps4qV93iTfB20HtA==
+X-Google-Smtp-Source: ADFU+vt4gqhc3KDXQ3ks19GyfY1ioyJVdrTyDw9Oyh68DIp1bWp9tTZzshgCw7rze/fFoCaTdgQKdQ==
+X-Received: by 2002:aca:f1c2:: with SMTP id p185mr2037926oih.87.1583333877779;
+        Wed, 04 Mar 2020 06:57:57 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i20sm9072512otp.14.2020.03.04.06.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 06:57:57 -0800 (PST)
+Received: (nullmailer pid 17602 invoked by uid 1000);
+        Wed, 04 Mar 2020 14:57:56 -0000
+Date:   Wed, 4 Mar 2020 08:57:56 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
+        bjorn.andersson@linaro.org, robh@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 07/18] dt-bindings: usb: dwc3: Add a
+ gpio-usb-connector example
+Message-ID: <20200304145756.GA17484@bogus>
+References: <20200303171159.246992-1-bryan.odonoghue@linaro.org>
+ <20200303171159.246992-8-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.2003031724400.77561@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303171159.246992-8-bryan.odonoghue@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/4/20 3:26 AM, David Rientjes wrote:
-> On Wed, 4 Mar 2020, Jann Horn wrote:
+On Tue,  3 Mar 2020 17:11:48 +0000, Bryan O'Donoghue wrote:
+> A USB connector should be a child node of the USB controller
+> connector/usb-connector.txt. This patch adds an example of how to do this
+> to the dwc3 binding descriptions.
 > 
->> Hi!
->>
->> FYI, I noticed that if you do something like the following as root,
->> the system blows up pretty quickly with error messages about stuff
->> like corrupt freelist pointers because SLUB actually allows root to
->> force a page order that is smaller than what is required to store a
->> single object:
->>
->>      echo 0 > /sys/kernel/slab/task_struct/order
->>
->> The other SLUB debugging options, like red_zone, also look kind of
->> suspicious with regards to races (either racing with other writes to
->> the SLUB debugging options, or with object allocations).
->>
+> It is necessary to declare a connector as a child-node of a USB controller
+> for role-switching to work, so this example should be helpful to others
+> implementing that.
 > 
-> Thanks for the report, Jann.  To address the most immediate issue,
-> allowing a smaller order than allowed, I think we'd need something like
-> this.
-> 
-> I can propose it as a formal patch if nobody has any alternate
-> suggestions?
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-usb@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Acked-by: Felipe Balbi <balbi@kernel.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
->   mm/slub.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3598,7 +3598,7 @@ static int calculate_sizes(struct kmem_cache *s, int forced_order)
->   	 */
->   	size = ALIGN(size, s->align);
->   	s->size = size;
-> -	if (forced_order >= 0)
-> +	if (forced_order >= slab_order(size, 1, MAX_ORDER, 1))
->   		order = forced_order;
->   	else
->   		order = calculate_order(size);
+>  Documentation/devicetree/bindings/usb/dwc3.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
 
-Reviewed-by: Pekka Enberg <penberg@iki.fi>
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
