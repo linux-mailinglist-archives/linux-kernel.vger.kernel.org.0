@@ -2,137 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4DEF17990C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D711798FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:28:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbgCDT37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 14:29:59 -0500
-Received: from mail-eopbgr70059.outbound.protection.outlook.com ([40.107.7.59]:56135
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727137AbgCDT36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:29:58 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O28yo6HF05cOsDBFSqz1xMDAtNrElXsrbcRnlYMGaj2kyYG4lQSelyzHTf8j+k7ZFPi61Xz+B0JDTn5V4o/w8UpVsrhHegKh2ibvYPw2iG5bc353ghz2hzsC6qtzsqhMj4qmh7dCCUrf9Bh8Nl52Kq8yHp1IrsfoYKERvWMixe24BgPyZXOMqEZ4x0u9XFPuiuZWt2BNe4mypSBT+v1BVNRzXlnNho+UyjJzGhPXadfuVTXny+j4kxUbuwCAsbaYto2QNkATYpDMoPTq/XoL7D2Fxsq3UkXOyoweyRR+Saq9aynNXs2cYQydhVf/ja4KoE1jmj9BOXAndFKnNnaw+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BdAaCaeS6gH3f4tq2Jl1Gb8UTkCxekN4gIDIDC+Aqrg=;
- b=NPkj7Xw6JJhBzULl8qRtCh5SdrJhHVx1Ky7opqsmY3dXeFQ5yp4mPYKXdU3ztXqx1KAjO1CeYpL7sMx43iQ6FhDKNBWQdGWex4wUOGhPxbal9SNg1jP2/kmdx5dMpk4pj9NQPcHDnV9T+9vKlA5OpJ9IrevbxISiPF/RUThUcWcUzcil73wZJzJiGfVePm7h5/fltnaZ1yDCXj/IeRWRyCe6YtlZX0dApyno4cJVKzem/AX+3c894tHE8rL/eFtUuAkKas1O0SaS+wSBjbz7wgU4HSfjRZ146uNWrX5NHUWp+mTOtM8T56J+SdAR4OufOmQVFQ3lha48907Rw8Xqcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BdAaCaeS6gH3f4tq2Jl1Gb8UTkCxekN4gIDIDC+Aqrg=;
- b=XdhUAXzgUWUmvJv97oAXj/MKjzreQtkMbpM5u2QjlMiqBcNAbPkXLpx1K4GfuDRmOrYDDgGPtRKjHVIWLLDQDD+TJf8JKRHRQIbjI4ghmlKmX0crc8EoXY6kxmx4E6rgvelsc25O9Y50WEv1fzvZ7gz/PElgvbFPbS8tF4DCsgk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (52.133.14.15) by
- VI1PR05MB5517.eurprd05.prod.outlook.com (20.177.63.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15; Wed, 4 Mar 2020 19:29:54 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1c00:7925:d5c6:d60d]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1c00:7925:d5c6:d60d%7]) with mapi id 15.20.2772.019; Wed, 4 Mar 2020
- 19:29:53 +0000
-Date:   Wed, 4 Mar 2020 15:29:49 -0400
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        tiwei.bie@intel.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        haotian.wang@sifive.com, lingshan.zhu@intel.com,
-        eperezma@redhat.com, lulu@redhat.com, parav@mellanox.com,
-        kevin.tian@intel.com, stefanha@redhat.com, rdunlap@infradead.org,
-        hch@infradead.org, aadam@redhat.com, jiri@mellanox.com,
-        shahafs@mellanox.com, hanand@xilinx.com, mhabets@solarflare.com,
-        gdawar@xilinx.com, saugatm@xilinx.com, vmireyno@marvell.com
-Subject: Re: [PATCH V5 3/5] vDPA: introduce vDPA bus
-Message-ID: <20200304192949.GR26318@mellanox.com>
-References: <20200226060456.27275-1-jasowang@redhat.com>
- <20200226060456.27275-4-jasowang@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226060456.27275-4-jasowang@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MN2PR10CA0033.namprd10.prod.outlook.com
- (2603:10b6:208:120::46) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:44::15)
+        id S1729144AbgCDT1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 14:27:51 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.94]:44440 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726440AbgCDT1u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 14:27:50 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id B0250312148
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Mar 2020 13:27:49 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9ZgLjAPehSl8q9ZgLjn2sw; Wed, 04 Mar 2020 13:27:49 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=yV3RHTJGEJ6X5MtVLixPDzRdxD9I2sP1TZY5RWDJRi4=; b=ZHFbqW/8vWTeVjXhQrEzeourHs
+        R1Vt5jRPS076UUyTOM5125y6VgEjm97vvSsu6ET/V5HWsjrDiPpHJoOlUx4daZ20aOsU7hBHLcS5w
+        Mz4CYkQGB/SRzkHpBJ5uQ1vbk9xAtfmcB+uZJQotKNAi96vJN1HRu8ZRtkhAhjabeRIQTa+JhE8gD
+        w2paeJ4AVcUvsS2ElKVRMy6GSytV4GFQQ0MuBdGvb3ccQdlFYgdXzZAl3mEFsMwdwWXlGEetr0QzN
+        8zFKU0DmhlXMJE2EwTDTfjqeH0Kz2hXlaZKlWWipdvp1PKa+o1aWPwPDD5swZ/3lFOrWgbV8uD7//
+        RBC4VMwg==;
+Received: from [200.39.25.77] (port=10307 helo=[192.168.43.132])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j9ZgL-004JcY-4q; Wed, 04 Mar 2020 13:27:49 -0600
+Subject: Re: [PATCH] docs: deprecated.rst: Clean up fall-through details
+To:     Kees Cook <keescook@chromium.org>, Jonathan Corbet <corbet@lwn.net>
+Cc:     Joe Perches <joe@perches.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202003041102.47A4E4B62@keescook>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <a8aa5d75-9a4e-1a84-b3ed-f868206ddee7@embeddedor.com>
+Date:   Wed, 4 Mar 2020 13:30:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from mlx.ziepe.ca (142.68.57.212) by MN2PR10CA0033.namprd10.prod.outlook.com (2603:10b6:208:120::46) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Wed, 4 Mar 2020 19:29:53 +0000
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1j9ZiH-00049z-RF; Wed, 04 Mar 2020 15:29:49 -0400
-X-Originating-IP: [142.68.57.212]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d98aec35-0972-4f40-4e0b-08d7c0726a09
-X-MS-TrafficTypeDiagnostic: VI1PR05MB5517:|VI1PR05MB5517:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR05MB55177CA4E470400BD227AFACCFE50@VI1PR05MB5517.eurprd05.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
-X-Forefront-PRVS: 0332AACBC3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(346002)(136003)(376002)(39860400002)(189003)(199004)(5660300002)(66476007)(66556008)(1076003)(2906002)(186003)(26005)(66946007)(4744005)(2616005)(478600001)(4326008)(9786002)(86362001)(7416002)(9746002)(33656002)(316002)(52116002)(8936002)(6916009)(81156014)(36756003)(8676002)(81166006)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5517;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Cs+Oqh1WVP0VX5f10uU7496uwqpHzFRQZ4St/l9G0+aHAHkA2m4poO6MRBAy8QDNkUHGmlh4tyNxDBYGal8BQq9DUvrKmoUs2fff6Js7+pS3dEMm5g+RFg6nDvx/GZfG7ppJffjFhFq5BsboG9ZQtY+b4CvkKmvyJrVw4WQ1sgyewj9iPdq29jMuT21bqCUc39Rf/etKlAgrESAj2LZO1++GLdCF0S9eRUG2KXlLn0z0zkkjew5qFSHJzpOC7PyT5CtQ4q8EvmHgn4qGq1N6Xty9EyME05XUV4qhOwymtvPE5Ol6kp5g72PIPUEO6uFEOjg5m490cQARg53YkgejufLAgB3+NGG0fAfBod1U+eFRuBZ2Z+ItF3g3SX7FnFgkLJNOyDYZ0PhE08QabNQMiljN/uCx31xdRKHsgRpArp2OZoi5+UTss2ZJ0XR9Xux2dy0wxIFgL/GfABVC7os2dopjgDpLNZZFsSFJLWXv3EFL1GZpDWj9eZFzM5FEEdce
-X-MS-Exchange-AntiSpam-MessageData: G5bmvnIdH/p+8eBLKd/Pv2g3KSi+XqfhCywq5AL8n2zB8cW+S6JbYTF7KdzfKnEPuJ1RLvgKKCns1nRhSwbWgpvOdE/jfPkXdLZW6FP2R/OpHrv3R6PWJNkBvObHMyiM4dUTHSgc//c358DLdm+Hdg==
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d98aec35-0972-4f40-4e0b-08d7c0726a09
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2020 19:29:53.7052
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gm95soseglM49q+o7mL7+vmRjQK8qoTKXNbiKqcZ/f/ZYos7+evrQihzO6cBRFlQv4URKt3+4bsSiLOrxBlcDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5517
+In-Reply-To: <202003041102.47A4E4B62@keescook>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.39.25.77
+X-Source-L: No
+X-Exim-ID: 1j9ZgL-004JcY-4q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.132]) [200.39.25.77]:10307
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 02:04:54PM +0800, Jason Wang wrote:
-> +struct vdpa_device *vdpa_alloc_device(struct device *parent,
-> +				      struct device *dma_dev,
-> +				      const struct vdpa_config_ops *config)
-> +{
-> +	struct vdpa_device *vdev;
-> +	int err = -ENOMEM;
-> +
-> +	if (!parent || !dma_dev || !config)
-> +		goto err;
-> +
-> +	vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
-> +	if (!vdev)
-> +		goto err;
-> +
-> +	err = ida_simple_get(&vdpa_index_ida, 0, 0, GFP_KERNEL);
-> +	if (err < 0)
-> +		goto err_ida;
-> +
-> +	vdev->dev.bus = &vdpa_bus;
-> +	vdev->dev.parent = parent;
-> +	vdev->dev.release = vdpa_release_dev;
-> +
-> +	device_initialize(&vdev->dev);
-> +
-> +	vdev->index = err;
-> +	vdev->dma_dev = dma_dev;
-> +	vdev->config = config;
-> +
-> +	dev_set_name(&vdev->dev, "vdpa%u", vdev->index);
 
-Probably shouldn't ignore the error for dev_set_name ?
 
-err = dev_set_name()
-if (err) {
-   put_device(&vdev->dev);
-   return ERR_PTR(err);
-}
+On 3/4/20 13:03, Kees Cook wrote:
+> Add example of fall-through, list-ify the case ending statements, and
+> adjust the markup for links and readability. While here, adjust
+> strscpy() details to mention strscpy_pad().
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Jason
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+> ---
+>  Documentation/process/deprecated.rst | 48 +++++++++++++++++-----------
+>  1 file changed, 29 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
+> index 179f2a5625a0..f9f196d3a69b 100644
+> --- a/Documentation/process/deprecated.rst
+> +++ b/Documentation/process/deprecated.rst
+> @@ -94,8 +94,8 @@ and other misbehavior due to the missing termination. It also NUL-pads the
+>  destination buffer if the source contents are shorter than the destination
+>  buffer size, which may be a needless performance penalty for callers using
+>  only NUL-terminated strings. The safe replacement is :c:func:`strscpy`.
+> -(Users of :c:func:`strscpy` still needing NUL-padding will need an
+> -explicit :c:func:`memset` added.)
+> +(Users of :c:func:`strscpy` still needing NUL-padding should instead
+> +use strscpy_pad().)
+>  
+>  If a caller is using non-NUL-terminated strings, :c:func:`strncpy()` can
+>  still be used, but destinations should be marked with the `__nonstring
+> @@ -122,27 +122,37 @@ memory adjacent to the stack (when built without `CONFIG_VMAP_STACK=y`)
+>  
+>  Implicit switch case fall-through
+>  ---------------------------------
+> -The C language allows switch cases to "fall-through" when a "break" statement
+> -is missing at the end of a case. This, however, introduces ambiguity in the
+> -code, as it's not always clear if the missing break is intentional or a bug.
+> +The C language allows switch cases to fall through to the next case
+> +when a "break" statement is missing at the end of a case. This, however,
+> +introduces ambiguity in the code, as it's not always clear if the missing
+> +break is intentional or a bug. For example, it's not obvious just from
+> +looking at the code if `STATE_ONE` is intentionally designed to fall
+> +through into `STATE_TWO`::
+> +
+> +	switch (value) {
+> +	case STATE_ONE:
+> +		do_something();
+> +	case STATE_TWO:
+> +		do_other();
+> +		break;
+> +	default:
+> +		WARN("unknown state");
+> +	}
+>  
+>  As there have been a long list of flaws `due to missing "break" statements
+>  <https://cwe.mitre.org/data/definitions/484.html>`_, we no longer allow
+> -"implicit fall-through".
+> -
+> -In order to identify intentional fall-through cases, we have adopted a
+> -pseudo-keyword macro 'fallthrough' which expands to gcc's extension
+> -__attribute__((__fallthrough__)).  `Statement Attributes
+> -<https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html>`_
+> -
+> -When the C17/C18  [[fallthrough]] syntax is more commonly supported by
+> +implicit fall-through. In order to identify intentional fall-through
+> +cases, we have adopted a pseudo-keyword macro "fallthrough" which
+> +expands to gcc's extension `__attribute__((__fallthrough__))
+> +<https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html>`_.
+> +(When the C17/C18  `[[fallthrough]]` syntax is more commonly supported by
+>  C compilers, static analyzers, and IDEs, we can switch to using that syntax
+> -for the macro pseudo-keyword.
+> +for the macro pseudo-keyword.)
+>  
+>  All switch/case blocks must end in one of:
+>  
+> -	break;
+> -	fallthrough;
+> -	continue;
+> -	goto <label>;
+> -	return [expression];
+> +* break;
+> +* fallthrough;
+> +* continue;
+> +* goto <label>;
+> +* return [expression];
+> 
