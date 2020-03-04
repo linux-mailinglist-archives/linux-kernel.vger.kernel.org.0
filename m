@@ -2,115 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC9B179352
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDC3179355
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbgCDPZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:25:51 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:42984 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729568AbgCDPZv (ORCPT
+        id S1729573AbgCDP03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:26:29 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42367 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbgCDP02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:25:51 -0500
-Received: by mail-yw1-f68.google.com with SMTP id n127so2282116ywd.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:25:50 -0800 (PST)
+        Wed, 4 Mar 2020 10:26:28 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q19so2464744ljp.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:26:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8sse2ZoFpDstytju+TH7ofYW6pSMF+pSogTbI3fs9ho=;
-        b=lGZ2xtuNzMfE7wAmiXHHzCnmr8MzzHfxItp2rd8giQGw/HSGKfml5i954ukKVs7g4R
-         SV/CWrY+mfr1KM0nSpZ/L5/mBUZ0i2vp5pDWQevXUAn+rX4AN1qiCh6qk+K3FozYTkXc
-         TgWgGofoMCm7TAPmWZQwVUuEA/9WUNcyr0rAo4tP0ChGoxZvyJpkBckjWehF+bIqa/LF
-         lJfUprE1MYE3m2b7xdOIzKAeVUiDp6ow2zmAMYDqDsB9+iOrMXQXcV7Fn9FdSvGP/aqu
-         NDRCFhJ/3FirfpACd6ZR17ng53eJFfPVArAk9t+mzEemvLMODRIYWMXgcyhKBBzY+5P3
-         wZzQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F+RhEtXPtmYR/U69zTfewCstn7kMyr6p5puYGeQETdE=;
+        b=WDIEE+bKVVDorT0Hdt3zplxv3MgbUY2SU6erAp9OlB9TrpLm9bcErrlDIGtaAY/L/J
+         qXJR4sLnpm5M/u6NP6VXkNyYFI7uP7cSHO2Qj9QPLMxR2s49OwHhUIP5HINz7cB1lWSH
+         67RSIJZp7/PtFcqNVk4Wr09RPtHjlZq8rE7dPQEU5IYkyicfBbDph9DyUmTMQTeKW4s/
+         Tv+s1dVc78VfeDVBDExjbtLwz4y97cA4pgdAmH72d7OA2OSngMgUq8nayKP9fWdaEpTp
+         ntUeHnNytUUdjGqJUrWDrENv5g6TqpWSlLRrHdcs5N7MxVwzJ7vN+RcS3R4SCfiG+04t
+         m5ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=8sse2ZoFpDstytju+TH7ofYW6pSMF+pSogTbI3fs9ho=;
-        b=BD+PhjcfGrgFc+p2GV7QeHNMfptFDmmdgO+yFaxyVnfDdhiQ0B1lj3v9v7z6GQPs/r
-         1XMvUov70glR0CCjomqOEEeRXTT8g9S9zBRjXXhDGLoKLO/ClbUKSsxqy3m5Rj5cslTG
-         UAWh9zKja5B9NocWtP6XIsxEdPp4GPjksC9dLVZ2KqYQrs413YSIboxRYuBWeJIUQZSu
-         jeWO/9H769XE3smnLM5MWz2gLjb3anthx+zhJkoeQ3pY+6DCNEj6BedSA+3KRsFE4mm4
-         7MjemN8ZwfkYTs5hLJ+/gh93/kGXwxCOIvguLtvgSH1BpscwZ6BlONt0QSPWIbG2FmSH
-         EZAQ==
-X-Gm-Message-State: ANhLgQ2KfIt6kZrBK+O1TZ5VLe5t39DMV4QxIZUPfksp5mbWeN7jKET6
-        ao6QHvFrU358U0Y8fiYiZPimXg==
-X-Google-Smtp-Source: ADFU+vuFcgaPWUOAEJEwQ9M7JAHuHmY8ShKNroK4R3mkMu9rX782nf/hMKBtrfQJZO+16Isd7BkRlQ==
-X-Received: by 2002:a81:3695:: with SMTP id d143mr3175382ywa.362.1583335548150;
-        Wed, 04 Mar 2020 07:25:48 -0800 (PST)
-Received: from localhost (c-75-72-120-152.hsd1.mn.comcast.net. [75.72.120.152])
-        by smtp.gmail.com with ESMTPSA id k5sm3578652ywh.108.2020.03.04.07.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 07:25:47 -0800 (PST)
-Date:   Wed, 4 Mar 2020 09:25:46 -0600
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 5.5 000/176] 5.5.8-stable review
-Message-ID: <20200304152546.qhfop74fuwmr6iop@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-References: <20200303174304.593872177@linuxfoundation.org>
- <CA+G9fYtNKXBOQKE_AD6qLoRo4TeaBYOc9Ce3kBxdLap1av4v=Q@mail.gmail.com>
- <20200304081128.GC1401372@kroah.com>
- <20200304084702.GA1416015@kroah.com>
- <20200304084946.GB1416015@kroah.com>
- <CA+G9fYuTXB03s5YSn=NL0dtF-Kzj0YHUu6NwqSh6m9Hco59DPw@mail.gmail.com>
- <20200304115232.GC1581141@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F+RhEtXPtmYR/U69zTfewCstn7kMyr6p5puYGeQETdE=;
+        b=Z9TRODGXlhiGHRNh4aWhtC8NUyk3L0ymp/cSr6a2gGTm3CpDDsXW1kLHR4JYv78XrH
+         mrMsE2ENqVB1CZmEomMT3uV0cTARB/2du7AhEDFsxqNyuRm47TMReziP4X8CBntB0UNZ
+         0ZjPtEcOBDveW6S3Q9k4gzkOlQHT0TkRYRMfe+TM3yU4tiL8kBMgt/qHg8sAVL/38KAC
+         vxyfZKFy2c7zfUGN9YQ54FaSSLru9BZCKMg4xjuo2yrm/98sA5S+vZFtBGHa3WLP3elS
+         /5/TsNsZ3sKkp4jaXyfDY2Af0SrkPgteTlPULFSkdj/QUvBGKo+6ibF4Pyz6RYzWu/Kl
+         NrrA==
+X-Gm-Message-State: ANhLgQ3I2lbI5zxUY6Woqmvwk3c4zUGJN+KlV6zgbz7OnHi7BBMHG2vS
+        eKwu4nIpU9H+nYfWYErmkY2oEY0djfk1KAeH+Wo7pg==
+X-Google-Smtp-Source: ADFU+vul88yIimH5BIng1vyHG7r6h/Ce54aYP65phyk/cdxHcyk2OZMYC/phv9bFDAFfzrO9otGk4wTBt/v2zRAC9CI=
+X-Received: by 2002:a2e:8090:: with SMTP id i16mr2341545ljg.4.1583335586741;
+ Wed, 04 Mar 2020 07:26:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304115232.GC1581141@kroah.com>
+References: <ace7327f-0fd6-4f36-39ae-a8d7d1c7f06b@de.ibm.com>
+ <afacbbd1-3d6b-c537-34e2-5b455e1c2267@de.ibm.com> <CAKfTPtBikHzpHY-NdRJFfOFxx+S3=4Y0aPM5s0jpHs40+9BaGA@mail.gmail.com>
+ <b073a50e-4b86-56db-3fbd-6869b2716b34@de.ibm.com> <1a607a98-f12a-77bd-2062-c3e599614331@de.ibm.com>
+ <CAKfTPtBZ2X8i6zMgrA1gNJmwoSnyRc76yXmLZEwboJmF-R9QVg@mail.gmail.com>
+ <b664f050-72d6-a483-be0a-8504f687f225@de.ibm.com> <20200228163545.GA18662@vingu-book>
+ <be45b190-d96c-1893-3ef0-f574eb595256@de.ibm.com> <49a2ebb7-c80b-9e2b-4482-7f9ff938417d@de.ibm.com>
+ <ad0f263a-6837-e793-5761-fda3264fd8ad@de.ibm.com> <CAKfTPtCX4padfJm8aLrP9+b5KVgp-ff76=teu7MzMZJBYrc-7w@mail.gmail.com>
+In-Reply-To: <CAKfTPtCX4padfJm8aLrP9+b5KVgp-ff76=teu7MzMZJBYrc-7w@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 4 Mar 2020 16:26:15 +0100
+Message-ID: <CAKfTPtD9b6o=B6jkbWNjfAw9e1UjT9Z07vxdsVfikEQdeCtfPw@mail.gmail.com>
+Subject: Re: 5.6-rc3: WARNING: CPU: 48 PID: 17435 at kernel/sched/fair.c:380 enqueue_task_fair+0x328/0x440
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 12:52:32PM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Mar 04, 2020 at 04:22:30PM +0530, Naresh Kamboju wrote:
-> > > > So why is this "Vulnerable"?  Because it didn't think it could find my
-> > > > kernel image for some odd reason, despite it really being in /boot/ (I
-> > > > don't use netboot)
-> > 
-> > Now I know the real reason why this test failed.
-> > With this note we can conclude this is not a regression.
-> > 
-> > No regressions on arm64, arm, x86_64, and i386 for 4.19, 5.4 and 5.5 branches.
-> 
-> Great, thanks for confirming and for testing all of these.
+On Tue, 3 Mar 2020 at 08:55, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> On Tue, 3 Mar 2020 at 08:37, Christian Borntraeger
+> <borntraeger@de.ibm.com> wrote:
+> >
+> >
+> >
+[...]
+> > >>> ---
+> > >>>  kernel/sched/fair.c | 2 +-
+> > >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>>
+> > >>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > >>> index 3c8a379c357e..beb773c23e7d 100644
+> > >>> --- a/kernel/sched/fair.c
+> > >>> +++ b/kernel/sched/fair.c
+> > >>> @@ -4035,8 +4035,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> > >>>             __enqueue_entity(cfs_rq, se);
+> > >>>     se->on_rq = 1;
+> > >>>
+> > >>> +   list_add_leaf_cfs_rq(cfs_rq);
+> > >>>     if (cfs_rq->nr_running == 1) {
+> > >>> -           list_add_leaf_cfs_rq(cfs_rq);
+> > >>>             check_enqueue_throttle(cfs_rq);
+> > >>>     }
+> > >>>  }
+> > >>
+> > >> Now running for 3 hours. I have not seen the issue yet. I can tell tomorrow if this fixes
+> > >> the issue.
+> > >
+> > >
+> > > Still running fine. I can tell for sure tomorrow, but I have the impression that this makes the
+> > > WARN_ON go away.
+> >
+> > So I guess this change "fixed" the issue. If you want me to test additional patches, let me know.
+>
+> Thanks for the test. For now, I don't have any other patch to test. I
+> have to look more deeply how the situation happens.
+> I will let you know if I have other patch to test
 
-We originally added spectre-meltdown-checker to lkft for informational
-purposes, so that we could compare its report to any actual tests that
-produce spectre/meltdown related failures (and help determine if the
-problem is hardware/firmware or kernel). In practice, it's never been
-helpful (because it's not an actual test) and so we'll be removing it
-from LKFT.
+So I haven't been able to figure out how we reach this situation yet.
+In the meantime I'm going to make a clean patch with the fix above.
 
-Dan
+Is it ok if I add a reported -by and a tested-by you ?
 
-> 
-> greg k-h
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+>
+> >
