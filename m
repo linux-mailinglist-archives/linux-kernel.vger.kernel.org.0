@@ -2,61 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CFBD178AD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 07:49:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FEC5178AEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 07:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbgCDGtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 01:49:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56654 "EHLO mail.kernel.org"
+        id S1728392AbgCDGvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 01:51:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725271AbgCDGtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 01:49:45 -0500
+        id S1725271AbgCDGvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 01:51:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBE3E2146E;
-        Wed,  4 Mar 2020 06:49:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71BF72146E;
+        Wed,  4 Mar 2020 06:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583304585;
-        bh=VK53u2VxkYUENGgHTPFGpT3Z/fpLjjPmXcKQ3gcUtws=;
+        s=default; t=1583304664;
+        bh=rpXCbKBh+vkhu4LbxUhgsvfrgYX9A2Td2iWADRYckww=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V+kwW6KvpMnnUi3CM3rOFD+6kThqvnEFjb1p+czVRydBv93/KSXzGe2IYFoW676Fv
-         pH2x4cytTMjT9gRUPVeCMQ+P04yFBpP+CZWgtITnnRIko9PnsJXb6Tw5ZE2IyElK15
-         1/ziS9d0t+rBiXatxi4PMTLBHTJDG2uW3BZ39/MI=
-Date:   Wed, 4 Mar 2020 07:49:43 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kaaira Gupta <kgupta@es.iitr.ac.in>
-Cc:     Manish Chopra <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
-        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] staging: qlge: emit debug and dump at same level
-Message-ID: <20200304064943.GA1232764@kroah.com>
-References: <20200224082448.GA6826@kaaira-HP-Pavilion-Notebook>
+        b=Ad49lQTddtod21WVnwNAtbRcaubnjHb7ywOUcCLGELj0/J9F/cHoMl5pgpF7Cjfq8
+         rKs5a1jIPJ0hLQ/OcSYBfmIY8wegBOSoFsDQK2LW1ff4OXd0aIh+bX+R4nU3q4gYbY
+         0yJ9bMlmikVXidhO09oWCIA3omblTrGuwF5G7OkA=
+Date:   Wed, 4 Mar 2020 07:51:02 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-wireless@vger.kernel.org, ajay.kathat@microchip.com,
+        adham.abozaeid@microchip.com
+Subject: Re: [PATCH] staging: wilc1000: spi: Use new structure for SPI
+ transfer delays
+Message-ID: <20200304065102.GA1232845@kroah.com>
+References: <20200227145054.24567-1-sergiu.cuciurean@analog.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224082448.GA6826@kaaira-HP-Pavilion-Notebook>
+In-Reply-To: <20200227145054.24567-1-sergiu.cuciurean@analog.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 01:54:48PM +0530, Kaaira Gupta wrote:
-> Simplify code in ql_mpi_core_to_log() by calling print_hex_dump()
-> instead of existing functions so that the debug and dump are
-> emitted at the same KERN_<LEVEL>
-> 
-> Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
-> ---
-> 
-> changes since v1: make code of ql_mpi_core_to_log() simpler.
-> changes since v2: directly call the function instead of defining a
-> macro.
-> changes since v3: Remove prefix string.
-> 
-> ----
-> ---
->  drivers/staging/qlge/qlge_dbg.c | 23 +++--------------------
->  1 file changed, 3 insertions(+), 20 deletions(-)
+On Thu, Feb 27, 2020 at 04:50:54PM +0200, Sergiu Cuciurean wrote:
+> In a recent change to the SPI subsystem [1], a new `delay` struct was added
+> to replace the `delay_usecs`. This change replaces the current
+> `delay_usecs` with `delay` for this driver.
 
-Does not apply to my tree :(
+Please also fix this one up based on the comments Dan provided for your
+other "Use new structure..." patch.
+
+thanks,
+
+greg k-h
