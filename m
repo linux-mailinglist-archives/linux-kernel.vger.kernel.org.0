@@ -2,136 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1CD817972E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:51:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF92417971A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388362AbgCDRvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:51:24 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36624 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729823AbgCDRt5 (ORCPT
+        id S2388351AbgCDRud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:50:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37537 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388403AbgCDRu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:49:57 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d9so1336722pgu.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:49:56 -0800 (PST)
+        Wed, 4 Mar 2020 12:50:29 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q23so3018630ljm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:50:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6Pcd87jXBoko1RLArOK3JOBlDi7LhTUzZixbyRsnysk=;
-        b=KydW31s5IW/9GAa1O2cOf0tr47W3xiu+sI0QS5k4+QTrWO48/QOCDWuN6szRJdWC8t
-         m/ZU4WaUCpLcsf9bclQU0uYpXvxA/CFmAjaIBn9jvqddhcgnTC8rY7ASNGsULHLxRTyz
-         DpGPCTwJLKmg4lkn/XHl8yyhMdUGpPVZxGJTbvxc/hHkx1J5PSmQftvbfoPmI+ElqXgA
-         RLHiSnZdLeCzCa/nSmn7ycYQJ4UrLEiLLec1aKYuIs4xhXwFPUaQVU5eZvXGVVyoPbH6
-         99wBpcfSf+LzhQq5UeMHjVCCgeycHumKOAST2EsqrhfXlsOzIumoWMlV51O5jA7QPA8q
-         seGw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YanxhDNwSrOQ8EEY63icXGm0gGnIdDmC5NC1S8xKJaQ=;
+        b=s+Ps3L3aloOq7/NilQpwIe3UQ0kxFVT7tQEak79iSy5xKTVd9hDlCq0Ylq5ZOF1CBI
+         cFVEjLyQC7pecWUzFANZ7gTSxz5Th66Kay3SzBvtcDIabWc7byndjvriOuRJV6P2pvrs
+         /BnMCaNQUFFiYBKS3+imIwgztiNDjeROsE7gZzQL7DspM4BJGNbSR0cQOoebaTt6Wfy9
+         waDR6Ul7ceU+uK4G5vrjuB6bF/ykHRbjvxtUnAdAjmHwy3Z6DVgLogeF0PcpkXgy2zXK
+         7WyP1DzBpOurb4KTvWDQNitWI7gFtfbNCy4XOLT1JKUu3GmYQwrr4yd1M7h1HUCkvxm3
+         d0VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6Pcd87jXBoko1RLArOK3JOBlDi7LhTUzZixbyRsnysk=;
-        b=LxtUhRamLk+pR9sZUrQji0NVTK9RlxbO2e0mMZ6QtCdFuDtubsnLcGzdPENAAGGzQP
-         QrD6nZ6Qk0+SVjDSDyDJKxHqes9QZHusq3YsvAgd7rWtwABKCGcmiUraRm0JdPEWdqUV
-         4gG1XeItAj0Z1M2QfGbDGs1QlXDYasOg6nzOa3H/jE4Ix9NceLTzOo5zc4HKGAJF0nTx
-         4Dx2+uPTRJ5CfbPs5YR2XhpktkV6O9FEqqZLCLibPPT4wFlvwwQVPRSEikRBGS84+xSw
-         mlX/Y10pNyeWAiW6E6GfjIN/XNML0/p59h2oIQ7ZU/38Mwq+SllM6/V+mfec6jD7TEdv
-         CB+g==
-X-Gm-Message-State: ANhLgQ31L/99U3/f5U7joFKyoo8WZkGTQdtTf4TlrXH8hl8l0YII51Qx
-        ByGopLFzaHbBDZi+1VczCHIsCw==
-X-Google-Smtp-Source: ADFU+vvRmOFNnEgqA4kQ83WWcrv9V7CjpSLIyfapy8Mc6wnRSXjV1nvF8cP+fFDnku2nnHZ+vIFuvg==
-X-Received: by 2002:a63:4f0c:: with SMTP id d12mr3689461pgb.322.1583344195976;
-        Wed, 04 Mar 2020 09:49:55 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id k1sm7834537pgg.56.2020.03.04.09.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:49:55 -0800 (PST)
-Date:   Wed, 4 Mar 2020 10:49:53 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCHv7 09/15] remoteproc/omap: Check for undefined mailbox
- messages
-Message-ID: <20200304174953.GH8197@xps15>
-References: <20200221101936.16833-1-t-kristo@ti.com>
- <20200221101936.16833-10-t-kristo@ti.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YanxhDNwSrOQ8EEY63icXGm0gGnIdDmC5NC1S8xKJaQ=;
+        b=VGzLBJJ1eBVt3zgQ6ftdgSpaJvkvQVx4fAEm4pslGtqAF6sPZ54PqP3mDn9EuTk3UL
+         ko/tz3Mdb+enCnH/nBIzOEAFDeP5An1EXe9pPgM0wOrCev5U26q5SJ/QA3F5TjCrPpEF
+         AvRaj2G2Fl6n2zghSf1K3gYeij36VpB25uL6jW1YMt88F5SlsHgsqu9+0td1nlmcJyQs
+         79fOQhf7p4J2Q9jWNtzUgRqcDr2v+CcsTt0QswufxF8FPzJgjaees75VdWJ51wjbbDXX
+         ZOQh3Ew8F8j9uFm7DkcAoOl0koUyIrYiC5Hz1UfsSW/g39NOauMk+Se3MLNwEj+ekRdF
+         ioug==
+X-Gm-Message-State: ANhLgQ1kjb8Vft4Iazg272NhEx/rqGRRz5sXITXqgn7bjld6SyzCHWfj
+        /DQFlwXlH9P3gDphC8P14KkmILxdWy3yy1oo3l0nyg==
+X-Google-Smtp-Source: ADFU+vugR28AJaRLbZ4M2FnsU/0hysorMlPynp1fbMwBBqDBNVDfKBAUmVQdVEzs3kaemubGGVLU2X1ioHfnquWHVJc=
+X-Received: by 2002:a2e:8546:: with SMTP id u6mr27796ljj.21.1583344227317;
+ Wed, 04 Mar 2020 09:50:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221101936.16833-10-t-kristo@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200304151748.26135-1-vincent.guittot@linaro.org>
+In-Reply-To: <20200304151748.26135-1-vincent.guittot@linaro.org>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 4 Mar 2020 18:50:14 +0100
+Message-ID: <CAKfTPtBDeTg0MEsazrtNRObL9nC2wjZTwo944kjZ7O8H0-n4nQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair : fix reordering of enqueue_task_fair
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Phil Auld <pauld@redhat.com>, Parth Shah <parth@linux.ibm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Hillf Danton <hdanton@sina.com>, Tao Zhou <zhout@vivaldi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 12:19:30PM +0200, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> Add some checks in the mailbox callback function to limit
-> any processing in the mailbox callback function to only
-> certain currently valid messages, and drop all the remaining
-> messages. A debug message is added to print any such invalid
-> messages when the appropriate trace control is enabled.
-> 
-> Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-> Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
+On Wed, 4 Mar 2020 at 16:17, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> Even when a cgroup is throttled, the group se of a child cgroup can still
+> be enqueued and its gse->on_rq stays true. When a task is enqueued on such
+> child, we still have to update the load_avg and increase h_nr_running of
+> the throttled cfs. Nevertheless, the 1st for_each_sched_entity loop is
+> skipped because of gse->on_rq == true and the 2nd loop because the cfs is
+> throttled whereas we have to update both load_avg with the old
+> h_nr_running and increment h_nr_running in such case.
+>
+> Note that the update of load_avg will effectively happen only once in order
+> to sync with the throttled time. Next call for updating load_avg will stop
+> early because the clock stays unchanged.
+>
+> Fixes: 6d4d22468dae ("sched/fair: Reorder enqueue/dequeue_task_fair path")
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > ---
->  drivers/remoteproc/omap_remoteproc.c | 6 ++++++
->  drivers/remoteproc/omap_remoteproc.h | 7 +++++++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 8c3dc0edae95..5d6f32974aa3 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -130,6 +130,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
->  		dev_info(dev, "received echo reply from %s\n", name);
->  		break;
->  	default:
-> +		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-> +			return;
-> +		if (msg > oproc->rproc->max_notifyid) {
-> +			dev_dbg(dev, "dropping unknown message 0x%x", msg);
-> +			return;
-> +		}
->  		/* msg contains the index of the triggered vring */
->  		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
->  			dev_dbg(dev, "no message was found in vqid %d\n", msg);
-> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-> index f6d2036d383d..72f656c93caa 100644
-> --- a/drivers/remoteproc/omap_remoteproc.h
-> +++ b/drivers/remoteproc/omap_remoteproc.h
-> @@ -56,6 +56,12 @@
->   *
->   * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
->   * recovery mechanism (to some extent).
-> + *
-> + * Introduce new message definitions if any here.
-> + *
-> + * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-> + * This should be the last definition.
-> + *
->   */
->  enum omap_rp_mbox_messages {
->  	RP_MBOX_READY		= 0xFFFFFF00,
-> @@ -64,6 +70,7 @@ enum omap_rp_mbox_messages {
->  	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
->  	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
->  	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
-> +	RP_MBOX_END_MSG		= 0xFFFFFF06,
->  };
->  
->  #endif /* _OMAP_RPMSG_H */
-> -- 
-> 2.17.1
-> 
+
+Please ignore this patch, it's not enough to fix all cases
+
+
+>  kernel/sched/fair.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index fcc968669aea..22d827fc46c3 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5432,7 +5432,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>                 cfs_rq = cfs_rq_of(se);
+>
+>                 /* end evaluation on encountering a throttled cfs_rq */
+> -               if (cfs_rq_throttled(cfs_rq))
+> +               if (!se->on_rq && cfs_rq_throttled(cfs_rq))
+>                         goto enqueue_throttle;
+>
+>                 update_load_avg(cfs_rq, se, UPDATE_TG);
 > --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 2.17.1
+>
