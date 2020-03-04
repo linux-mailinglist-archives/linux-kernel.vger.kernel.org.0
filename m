@@ -2,98 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084E4178EC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2923A178ED6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387803AbgCDKr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:47:28 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38535 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387488AbgCDKr1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:47:27 -0500
-Received: by mail-ed1-f66.google.com with SMTP id e25so1751036edq.5;
-        Wed, 04 Mar 2020 02:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=b6DQCUS0+Ug7UlNm5mZo2LZjk1wdwZ8PPHxJgscamZg=;
-        b=drTJ2zTMj0NNTZz8bc6a7Qn9zT9Qkuo5l8l38x7+6y1beHr0FBGlK/Re5BDWKyeD+l
-         kdVh3Jxm2m3t5SCQl24C/QuaCD9kjRZZ9oRTRI2tXAB+3DmjU4lQT6woIGKyDe8Dg1s2
-         cjUAzathkzY7gd5/KxgEgwp8PmO/dHTFtkfE8NxeBhas24s+4DYimHvDe7KCCtfDHxE3
-         6iYEXmG61vBibkXmvkAs8G7MoGCsS81jLRsF8joiK1TsFxb98cCO1H3X/FbnWzyRSx/R
-         kXPKyoNnMfSowRHQBe2CMXfsNsjKSCIlHJ5L+eXmz1gUYIjqNlB3Bi/2uucf22iNzSmF
-         Nbjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=b6DQCUS0+Ug7UlNm5mZo2LZjk1wdwZ8PPHxJgscamZg=;
-        b=KNkB39CYXDpio5YDiNTIA+yBXmtSCWsD2STl6HT/J1WWFQUaJq44dwoCyGe/0S3gA8
-         PMhmGzALCf+FeqP/nN4hkwYsltrJjaW714CmpPwGNYSPy4fEqef8EImnKrjisA2eXYxl
-         EUvLNelCgg93Hp/kt9chAtz2ZxJC1IMkYRCHHo7wvlUAr7s8sLT6FkfUELa5n8jeJoNK
-         oK+J1LDpreVloWMj3nzLzAvJebs++vCTuXNUfq7vl0TsWJGK0Kc4ebluuI8M4TV5uhNI
-         LbVVyD0rEVvPz9oUUHbR35IgM90pLbtalMdqYks3x/sDY5c21GJR6n9d51PwHAcmByPZ
-         Pygg==
-X-Gm-Message-State: ANhLgQ3j/+njcs0+xgI5YH6BzqffLbCLS38l41fFxh+TTgARqlkxp+CR
-        iNqZZSvcjXXO57VDkT53t3A4BJyC4x4=
-X-Google-Smtp-Source: ADFU+vseIgFS3ZIL+3zyZq5qbs5LEoXF3Ie+FFY6418MPbDsbyXXQiJ4InDXicWMqYfHwlHZx0Rpxw==
-X-Received: by 2002:a50:d0d0:: with SMTP id g16mr2114242edf.187.1583318845457;
-        Wed, 04 Mar 2020 02:47:25 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
-        by smtp.gmail.com with ESMTPSA id 29sm1122854ejb.4.2020.03.04.02.47.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 02:47:24 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     linux-doc@vger.kernel.org,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        linux-bluetooth@vger.kernel.org,
-        Alexander Aring <alex.aring@gmail.com>,
-        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
-        linux-wpan@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust to 6lowpan doc ReST conversion
-Date:   Wed,  4 Mar 2020 11:47:17 +0100
-Message-Id: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729235AbgCDKsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:48:38 -0500
+Received: from m15-113.126.com ([220.181.15.113]:50240 "EHLO m15-113.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbgCDKsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 05:48:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=IeCdyAGFwXp3ZJWoz2
+        7XzqKXoULD6qM3z6NhawmdYlI=; b=FLwMrJsDJPv6HNAMsaGYL/PvWgyW9o9yHK
+        q6HXkdW7AM1QvSpze8XFkN/SeWjbG/ha9btTU56lE+M8PInQu6ULLwfn3eq822dk
+        SrDWA4Xs8tW1x/7nTQS0J5+PPhE+3YyYJI01BS7C3e3bbWs+6NOra1lDgTAZ/hKQ
+        zcoZxa7tE=
+Received: from 192.168.137.251 (unknown [112.10.84.98])
+        by smtp3 (Coremail) with SMTP id DcmowAC3EAc8h19e2h4DCA--.2331S3;
+        Wed, 04 Mar 2020 18:47:26 +0800 (CST)
+From:   Xianting Tian <xianting_tian@126.com>
+To:     akpm@linux-foundation.org, willy@infradead.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/filemap.c: clear page error before actual read
+Date:   Wed,  4 Mar 2020 05:47:24 -0500
+Message-Id: <1583318844-22971-1-git-send-email-xianting_tian@126.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: DcmowAC3EAc8h19e2h4DCA--.2331S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZF1rGr4DAw1UAryrCrW7Jwb_yoWrAFWDpr
+        ZxK3WDKr4DGrnrCan2q3Z7Ar1rGrnrAay5ZayrW343Zwn8XF1fW34xCFyjg345Gr1FyFWx
+        Xr4FqF98Cr9YqaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jTc_-UUUUU=
+X-Originating-IP: [112.10.84.98]
+X-CM-SenderInfo: h0ld03plqjs3xldqqiyswou0bp/1tbi3B7cpFpD+S1DOAAAsM
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 107db7ec7838 ("docs: networking: convert 6lowpan.txt to ReST")
-renamed 6lowpan.txt to 6lowpan.rst for the ReST conversion.
+Mount failure issue happens under the scenario:
+Application forked dozens of threads to mount the same number of
+cramfs images separately in docker, but several mounts failed
+with high probability. Mount failed due to the checking result of
+the page(read from the superblock of loop dev) is not uptodate
+after wait_on_page_locked(page) returned in function cramfs_read:
+   wait_on_page_locked(page);
+   if (!PageUptodate(page)) {
+      ...
+   }
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
+The reason of the checking result of the page not uptodate:
+systemd-udevd read the loopX dev before mount, because the status
+of loopX is Lo_unbound at this time, so loop_make_request directly
+trigger the calling of io_end handler end_buffer_async_read, which
+called SetPageError(page). So It caused the page can't be set to
+uptodate in function end_buffer_async_read:
+   if(page_uptodate && !PageError(page)) {
+      SetPageUptodate(page);
+   }
+Then mount operation is performed, it used the same page which is
+just accessed by systemd-udevd above, Because this page is not
+uptodate, it will launch a actual read via submit_bh, then wait on
+this page by calling wait_on_page_locked(page). When the I/O of
+the page done, io_end handler end_buffer_async_read is called,
+because no one cleared the page error(during the whole read path of
+mount), which is caused by systemd-udevd reading, so this page is
+still in "PageError" status, which can't be set to uptodate in
+function end_buffer_async_read, then caused mount failure.
 
-  warning: no file matches F: Documentation/networking/6lowpan.txt
+But sometimes mount succeed even through systemd-udeved read loopX
+dev just before, The reason is systemd-udevd launched other loopX
+read just between step 3.1 and 3.2, the steps as below:
+1, loopX dev default status is Lo_unbound;
+2, systemd-udved read loopX dev (page is set to PageError);
+3, mount operation
+   1) set loopX status to Lo_bound;
+   ==>systemd-udevd read loopX dev<==
+   2) read loopX dev(page has no error)
+   3) mount succeed
+As the loopX dev status is set to Lo_bound after step 3.1, so the
+other loopX dev read by systemd-udevd will go through the whole
+I/O stack, part of the call trace as below:
+   SYS_read
+      vfs_read
+          do_sync_read
+              blkdev_aio_read
+                 generic_file_aio_read
+                     do_generic_file_read:
+                        ClearPageError(page);
+                        mapping->a_ops->readpage(filp, page);
+here, mapping->a_ops->readpage() is blkdev_readpage.
+In latest kernel, some function name changed, the call trace as
+below:
+   blkdev_read_iter
+      generic_file_read_iter
+         generic_file_buffered_read:
+            /*
+             * A previous I/O error may have been due to temporary
+             * failures, eg. mutipath errors.
+             * Pg_error will be set again if readpage fails.
+             */
+            ClearPageError(page);
+            /* Start the actual read. The read will unlock the page*/
+            error=mapping->a_ops->readpage(flip, page);
+We can see ClearPageError(page) is called before the actual read,
+then the read in step 3.2 succeed.
 
-Adjust 6LOWPAN GENERIC (BTLE/IEEE 802.15.4) entry in MAINTAINERS.
+This patch is to add the calling of ClearPageError just before the
+actual read of read path of cramfs mount.
+Without the patch, the call trace as below when performing cramfs
+mount:
+   do_mount
+      cramfs_read
+         cramfs_blkdev_read
+            read_cache_page
+               do_read_cache_page:
+                  filler(data, page);
+                  or
+                  mapping->a_ops->readpage(data, page);
+With the patch, the call trace as below when performing mount:
+   do_mount
+      cramfs_read
+         cramfs_blkdev_read
+            read_cache_page:
+               do_read_cache_page:
+                  ClearPageError(page); <== new add
+                  filler(data, page);
+                  or
+                  mapping->a_ops->readpage(data, page);
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+With the patch, mount operation trigger the calling of
+ClearPageError(page) before the actual read, the page has no error
+if no additional page error happen when I/O done.
+
+Signed-off-by: Xianting Tian <xianting_tian@126.com>
 ---
-Mauro, please ack.
-Marcel, please pick for bluetooth-next.
+ mm/filemap.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e19b275f2ac2..d064049aad1b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -176,7 +176,7 @@ L:	linux-wpan@vger.kernel.org
- S:	Maintained
- F:	net/6lowpan/
- F:	include/net/6lowpan.h
--F:	Documentation/networking/6lowpan.txt
-+F:	Documentation/networking/6lowpan.rst
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 1784478..77c370d 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2823,6 +2823,14 @@ static struct page *do_read_cache_page(struct address_space *mapping,
+ 		unlock_page(page);
+ 		goto out;
+ 	}
++
++	/*
++	 * A previous I/O error may have been due to temporary
++	 * failures.
++	 * Clear page error before actual read, PG_error will be
++	 * set again if read page fails.
++	 */
++	ClearPageError(page);
+ 	goto filler;
  
- 6PACK NETWORK DRIVER FOR AX.25
- M:	Andreas Koensgen <ajk@comnets.uni-bremen.de>
+ out:
 -- 
-2.17.1
+1.8.3.1
 
