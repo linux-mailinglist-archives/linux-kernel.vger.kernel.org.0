@@ -2,65 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4BED17885D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 829D417884D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:31:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387584AbgCDCdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:33:24 -0500
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:15193 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387411AbgCDCdX (ORCPT
+        id S2387497AbgCDCbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:31:23 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37888 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387432AbgCDCbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:33:23 -0500
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 21:33:22 EST
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 4 Mar
- 2020 10:18:08 +0800
-Received: from tony-HX002EA.zhaoxin.com (10.32.64.44) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 4 Mar
- 2020 10:18:07 +0800
-From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <DavidWang@zhaoxin.com>, <CooperYan@zhaoxin.com>,
-        <QiyuanWang@zhaoxin.com>, <HerryYang@zhaoxin.com>
-Subject: [PATCH] x86/Kconfig: Make X86_UMIP to cover Zhaoxin CPUs too
-Date:   Wed, 4 Mar 2020 10:18:05 +0800
-Message-ID: <1583288285-2804-1-git-send-email-TonyWWang-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 3 Mar 2020 21:31:23 -0500
+Received: by mail-il1-f196.google.com with SMTP id f5so510696ilq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 18:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cs.washington.edu; s=goo201206;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iDh/enhDaAA8PUFA/sO33m/8w76mEhVPC2n0905OieU=;
+        b=S8jgdom0wODh397o+u6x7vdYMOxPd/sn1jhl7jFTzqmZwArA/RGIOqXd1Lfk54/0Vl
+         OnuKtqPJi4jEGtECkwc5BXE+qT27/RonNFdTLx9kPE210O+Z5T2l6hPG58KWXs+eDdf1
+         pHa2aWWb75igheHNKaBH3PpojCyHVsQH0TMYk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iDh/enhDaAA8PUFA/sO33m/8w76mEhVPC2n0905OieU=;
+        b=tq1cUY+q6bF3Ua+gQyjjQayTJr7xUjLjcGTVbzw6WabI/okgSaoWwM2Ay6wyoCD9Vu
+         0Kx0+DwzBvdnsI3C7nuV25x430EEhLDfAYD9H3vs1G4d6zQeAaVFzjjEIfMRWlGAjlw/
+         j2CL1w1LlqXb3SfEZQEz9HmkBzkXWqVOBHh/wkyUaiHL8BDn29nGyeoZFX0MAfO2HUeP
+         6usPJwGxVpMspt3cqUxaa1jRzlWeu9We/paza5H+nL+zKj3EfSZ4kqHGPeBJEp3VPrsY
+         py9JLQja9kKwJe4y/MJjUEl3dHS4Hn/Vf8KnDh17XDGZODfehHYadm7yFXdLz/HQd/l/
+         B9ig==
+X-Gm-Message-State: ANhLgQ2Suj7mCnSr9JYd1oUE95cNsh2UhcjsAiY86xKy74blIE5iFaZe
+        82am59xLuicZwZHII1hnokOXzUB0F8CiyD/fTEzUVA==
+X-Google-Smtp-Source: ADFU+vtpJ/AVr87l3sVJ8pp3Eu7HomjQQiORzxtMTMauDedmgqcfPEE0GdUhImRuEnjWdcebpvzP0Zzi0Nqw6HfYP3A=
+X-Received: by 2002:a92:860a:: with SMTP id g10mr674584ild.280.1583289081991;
+ Tue, 03 Mar 2020 18:31:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.32.64.44]
-X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
+References: <20200303005035.13814-1-luke.r.nels@gmail.com> <20200303005035.13814-2-luke.r.nels@gmail.com>
+ <CAJ+HfNhSj9ycgh8Y44b_ZruW1A=+W_53fXnCDc488WXSESJ3dw@mail.gmail.com>
+In-Reply-To: <CAJ+HfNhSj9ycgh8Y44b_ZruW1A=+W_53fXnCDc488WXSESJ3dw@mail.gmail.com>
+From:   Luke Nelson <lukenels@cs.washington.edu>
+Date:   Tue, 3 Mar 2020 18:31:11 -0800
+Message-ID: <CADasFoC5EEXdq43waj9pQDb9HtpG2bWE2yMVySBZ4rpopYbROQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 1/4] riscv, bpf: move common riscv JIT code to header
+To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Cc:     bpf <bpf@vger.kernel.org>, Luke Nelson <luke.r.nels@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, Xi Wang <xi.wang@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New Zhaoxin family 7 CPUs support the UMIP (User-Mode Instruction
-Prevention) feature. So, modify X86_UMIP depends on Zhaoxin CPUs too.
+Hi Bj=C3=B6rn,
 
-Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
----
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the comments! Inlined responses below:
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 16a4b39..ca4beb8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1877,7 +1877,7 @@ config X86_SMAP
- 
- config X86_UMIP
- 	def_bool y
--	depends on CPU_SUP_INTEL || CPU_SUP_AMD
-+	depends on CPU_SUP_INTEL || CPU_SUP_AMD || CPU_SUP_CENTAUR || CPU_SUP_ZHAOXIN
- 	prompt "User Mode Instruction Prevention" if EXPERT
- 	---help---
- 	  User Mode Instruction Prevention (UMIP) is a security feature in
--- 
-2.7.4
+On Mon, Mar 2, 2020 at 11:50 PM Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.co=
+m> wrote:
+>
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Common functionality for RV32 and RV64 BPF JIT compilers
+> > + *
+> > + * Copyright (c) 2019 Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.com>
+> > + * Copyright (c) 2020 Luke Nelson <luke.r.nels@gmail.com>
+> > + * Copyright (c) 2020 Xi Wang <xi.wang@gmail.com>
+>
+> I'm no lawyer, so this is more of a question; You've pulled out code
+> into a header, and renamed two functions. Does that warrant copyright
+> line additions? Should my line be removed?
 
+This header also includes new code for emitting instructions required
+for the RV32 JIT (e.g., sltu) and some additional pseudoinstructions
+(e.g., bgtu and similar). I'm also no lawyer, so I don't know either
+if this rises to the level of adding copyright lines. I'm happy to
+do the following in v5 if it looks better:
+
++ * Copyright (c) 2019 Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.com>
++ *
++ * Modified by ...
+
+> > +#if __riscv_xlen =3D=3D 64
+>
+> Please remove this. If the inlined functions are not used, they're not
+> part of the binary. This adds complexity to the code, and without it
+> we can catch build errors early on!
+
+I agree in general we should avoid #if. The reason for using it
+here is to cause build errors if the RV32 JIT ever tries to emit
+an RV64-only instruction by mistake. Otherwise, what is now a build
+error would be delayed to an illegal instruction trap when the JITed
+code is executed, which is much harder to find and diagnose.
+
+We could use separate files, bpf_jit_32.h and bpf_jit_64.h (the
+latter will include the former), if we want to avoid #if. Though
+this adds another form of complexity.
+
+So the options here are 1) using no #if, with the risk of hiding
+subtle bugs in the RV32 JIT; 2) using #if as is; and 3) using
+separate headers. What do you think?
+
+Thanks!
+
+Luke
