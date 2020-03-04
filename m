@@ -2,62 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3384179093
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28BBA17909F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:48:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388042AbgCDMqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 07:46:37 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47291 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387776AbgCDMqg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 07:46:36 -0500
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1j9TPp-0003QV-Ke; Wed, 04 Mar 2020 13:46:21 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id E2994101161; Wed,  4 Mar 2020 13:46:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [patch 06/24] x86/idtentry: Provide macros to define/declare IDT entry points
-In-Reply-To: <9382db5c-90e2-f5bc-279e-9c92e282b0b3@oracle.com>
-References: <20200225221606.511535280@linutronix.de> <20200225222648.772492410@linutronix.de> <9382db5c-90e2-f5bc-279e-9c92e282b0b3@oracle.com>
-Date:   Wed, 04 Mar 2020 13:46:20 +0100
-Message-ID: <87o8tcl23n.fsf@nanos.tec.linutronix.de>
+        id S1729410AbgCDMsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 07:48:45 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10724 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728953AbgCDMso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 07:48:44 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C18B397235A83F66C401;
+        Wed,  4 Mar 2020 20:48:33 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Mar 2020
+ 20:48:25 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <pmladek@suse.com>, <rostedt@goodmis.org>,
+        <sergey.senozhatsky@gmail.com>,
+        <andriy.shevchenko@linux.intel.com>, <linux@rasmusvillemoes.dk>
+CC:     <linux-kernel@vger.kernel.org>, Jason Yan <yanaijie@huawei.com>,
+        "Scott Wood" <oss@buserror.net>, Kees Cook <keescook@chromium.org>,
+        "Tobin C . Harding" <tobin@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH] vfsprintf: only hash addresses in security environment
+Date:   Wed, 4 Mar 2020 20:47:07 +0800
+Message-ID: <20200304124707.22650-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexandre Chartre <alexandre.chartre@oracle.com> writes:
-> On 2/25/20 11:16 PM, Thomas Gleixner wrote:
->> +#else /* !__ASSEMBLY__ */
->> +
->> +/* Defines for ASM code to construct the IDT entries */
->> +#define DECLARE_IDTENTRY(vector, func)				\
->> +	idtentry vector asm_##func func has_error_code=0
->
-> Should be DEFINE_IDENTRY(), no? Like the comment says: "Defines for
-> ..."
+When I am implementing KASLR for powerpc, Scott Wood argued that format
+specifier "%p" always hashes the addresses that people do not have a
+choice to shut it down: https://patchwork.kernel.org/cover/11367547/
 
-No. That's my confused brain. DECLARE_IDTENTRY is used for declarations
-in C code and for emitting the ASM stubs when included from entry*.S
+It's true that if in a debug environment or security is not concerned,
+such as KASLR is absent or kptr_restrict = 0,  there is no way to shut
+the hashing down except changing the code and build the kernel again
+to use a different format specifier like "%px". And when we want to
+turn to security environment, the format specifier has to be changed
+back and rebuild the kernel.
 
-I'll reword the comment and add some more documentation.
+As KASLR is available on most popular platforms and enabled by default,
+print the raw value of address while KASLR is absent and kptr_restrict
+is zero. Those who concerns about security must have KASLR enabled or
+kptr_restrict set properly.
 
-Thanks,
+Cc: Scott Wood <oss@buserror.net>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Tobin C . Harding" <tobin@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+---
+ lib/vsprintf.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-        tglx
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 7c488a1ce318..f74131b152a1 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -2253,8 +2253,15 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 		return err_ptr(buf, end, ptr, spec);
+ 	}
+ 
+-	/* default is to _not_ leak addresses, hash before printing */
+-	return ptr_to_id(buf, end, ptr, spec);
++	/*
++	 * In security environment, while kaslr is enabled or kptr_restrict is
++	 * not zero, hash before printing so that addresses will not be
++	 * leaked. And if not in a security environment, print the raw value
++	 */
++	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) || kptr_restrict)
++		return ptr_to_id(buf, end, ptr, spec);
++	else
++		return pointer_string(buf, end, ptr, spec);
+ }
+ 
+ /*
+-- 
+2.17.2
+
