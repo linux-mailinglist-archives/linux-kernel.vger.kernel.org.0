@@ -2,210 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 970DA17973A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9BF2179740
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729823AbgCDRxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:53:44 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:33261 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbgCDRxn (ORCPT
+        id S1730085AbgCDRxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:53:55 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:37704 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729749AbgCDRxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:53:43 -0500
-Received: by mail-pj1-f68.google.com with SMTP id o21so1243492pjs.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:53:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=J9VCtnnz3Nd7elOdqb9vblPcNeduHwOUxl7qeFTsSH0=;
-        b=R2Wn7R6wnkJLtjbAhVCnpK4/qjSirzEVjomk2VO+kbZQrTr5F92eQWXa9fkC5cYi6Z
-         T893huW5IjKoblnhiA50YB2dWaRvmqOaxW9T4/TlLXmjer4IfY8zwGKSOhIKrjVUC28R
-         zZZu9t5AN/l05dILV9tJywL+X0Rs9AU6rGb60=
+        Wed, 4 Mar 2020 12:53:55 -0500
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <andrea.righi@canonical.com>)
+        id 1j9YDR-0005BK-Dm
+        for linux-kernel@vger.kernel.org; Wed, 04 Mar 2020 17:53:53 +0000
+Received: by mail-wr1-f69.google.com with SMTP id p5so1139499wrj.17
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:53:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J9VCtnnz3Nd7elOdqb9vblPcNeduHwOUxl7qeFTsSH0=;
-        b=inzxDrfCp92iR46inAuyk1BwUSn/Otx4sNKpSfZYzBz1sE22aZv8X0wULuDklTGicF
-         LGRMfZl5CmbwMwjyru7NcSiD4S/vf8+xDgg+yBWbNWKemA2tDE7ICv37TK7ZwUVdf9wj
-         6ZrXy0+3uOp8d2Xg7wrS8bnFWv2uw/2p/b1yD+pYE4q8XzEtVwwHWYTfsNd+kKosvHzC
-         340I9duNyogvdedKf6kmFBe8ncRZ6mhmt07qOQtMs4m/WgMDZUa8PA2r/iSqPQrp+plZ
-         0Dtj7px8JFKBDxFAe0qoRTr36mW6uarn6cGjkyqx4ifQqPej1m5pdPrB/3w/BDukInzp
-         vMGw==
-X-Gm-Message-State: ANhLgQ05c0xATsW9NOZpU5sVesC61Y55vCTwA/kEMjtXdkhzXmKthu0I
-        fs5NL27B7Jr2Yyt2T00erlJj1w==
-X-Google-Smtp-Source: ADFU+vvq/oz4PxdN/eoQl5JOtR3XyQpVIKwZUj3+l+sWzZihPaB0ZxYsAuC8Zp7jxEAQWjie7hViTA==
-X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr3998136plo.284.1583344421959;
-        Wed, 04 Mar 2020 09:53:41 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:476b:691:abc3:38db])
-        by smtp.gmail.com with ESMTPSA id i15sm9972411pfk.115.2020.03.04.09.53.41
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=tgXnocXG+jZrTeViaEPQZMOPzJF0dDDQTUKioSbPZLw=;
+        b=IHCOuPvr5oQmjiFcEmt16j93HMkH2LXlXI7YpANmPZHnP9AzX/4JpBdh5sA5TJtd28
+         AN5ouh3oDAGXBfuzeX/yGnk6sB7wlziXn1P4EnjfV4nnLW3GfE5dUELVaPYIyO2K2Nk+
+         P51i+Kyx7gE3ezOJYdoaFJCQZq1jjKwATWyAqKSL+XGza+IzqQL63d3Y+vWndpa/tVAf
+         rOjrPGME2cwuLOgkpH/UfiuWwd11Pz+WtKnu4/9Y+8GXu2Mdu5qk+cnMOur1gR5cJH3V
+         wCk7OngyMcqZDYmKh55xFm7wsL+LiT4qQrvOVCZCCI/aGNUiMS25ZFU7ftud+wHA9/+v
+         YM6w==
+X-Gm-Message-State: ANhLgQ3UJCZo4rmnI2V9gQQda/nHD5E8k7ZdDSDmu2i32Zzx8eP45Va9
+        JXE4zULxxvT5DZWXhcT0HgrEdfkvc3r092vmm5mtJ4G7c9n7bBfadZrMXPnKgd/Bljkj4z0I0gH
+        SWM8KJtJ3jkSuDjwELxQRbNzdtZL4Q+phAFmACcsEPw==
+X-Received: by 2002:a05:600c:4151:: with SMTP id h17mr4964392wmm.189.1583344433066;
+        Wed, 04 Mar 2020 09:53:53 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vuL6fP8UzU9Yr2dI0/WuSEUIxMfCycwldfogtODqrI3DPCrLXBqrb8HQ1spg4nDeYKW00haZQ==
+X-Received: by 2002:a05:600c:4151:: with SMTP id h17mr4964377wmm.189.1583344432781;
+        Wed, 04 Mar 2020 09:53:52 -0800 (PST)
+Received: from localhost (host96-127-dynamic.32-79-r.retail.telecomitalia.it. [79.32.127.96])
+        by smtp.gmail.com with ESMTPSA id b10sm5469093wmh.48.2020.03.04.09.53.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:53:41 -0800 (PST)
-Date:   Wed, 4 Mar 2020 09:53:40 -0800
-From:   Prashant Malani <pmalani@chromium.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, enric.balletbo@collabora.com,
-        bleung@chromium.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: Add cros-ec Type C port driver
-Message-ID: <20200304175340.GA133748@google.com>
-References: <20200220003102.204480-1-pmalani@chromium.org>
- <20200220003102.204480-2-pmalani@chromium.org>
- <20200227151216.GA18240@kuha.fi.intel.com>
- <20200227231547.GA30103@bogus>
+        Wed, 04 Mar 2020 09:53:52 -0800 (PST)
+Date:   Wed, 4 Mar 2020 18:53:50 +0100
+From:   Andrea Righi <andrea.righi@canonical.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     Vladis Dronov <vdronov@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ptp: free ptp clock properly
+Message-ID: <20200304175350.GB267906@xps-13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227231547.GA30103@bogus>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+There is a bug in ptp_clock_unregister() where ptp_clock_release() can
+free up resources needed by posix_clock_unregister() to properly destroy
+a related sysfs device.
 
-Thanks for reviewing the patch. Please see inline.
+Fix this by calling posix_clock_unregister() in ptp_clock_release().
 
-On Thu, Feb 27, 2020 at 05:15:47PM -0600, Rob Herring wrote:
-> On Thu, Feb 27, 2020 at 05:12:16PM +0200, Heikki Krogerus wrote:
-> > Hi,
-> > 
-> > On Wed, Feb 19, 2020 at 04:30:55PM -0800, Prashant Malani wrote:
-> > > Some Chrome OS devices with Embedded Controllers (EC) can read and
-> > > modify Type C port state.
-> > > 
-> > > Add an entry in the DT Bindings documentation that lists out the logical
-> > > device and describes the relevant port information, to be used by the
-> > > corresponding driver.
-> > > 
-> > > Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> > > ---
-> > > 
-> > > Changes in v3:
-> > > - Fixed license identifier.
-> > > - Renamed "port" to "connector".
-> > > - Made "connector" be a "usb-c-connector" compatible property.
-> > > - Updated port-number description to explain min and max values,
-> > >   and removed $ref which was causing dt_binding_check errors.
-> > > - Fixed power-role, data-role and try-power-role details to make
-> > >   dt_binding_check pass.
-> > > - Fixed example to include parent EC SPI DT Node.
-> > > 
-> > > Changes in v2:
-> > > - No changes. Patch first introduced in v2 of series.
-> > > 
-> > >  .../bindings/chrome/google,cros-ec-typec.yaml | 86 +++++++++++++++++++
-> > >  1 file changed, 86 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> > > new file mode 100644
-> > > index 00000000000000..97fd982612f120
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> > > @@ -0,0 +1,86 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
-> > > +
-> > > +maintainers:
-> > > +  - Benson Leung <bleung@chromium.org>
-> > > +  - Prashant Malani <pmalani@chromium.org>
-> > > +
-> > > +description:
-> > > +  Chrome OS devices have an Embedded Controller(EC) which has access to
-> > > +  Type C port state. This node is intended to allow the host to read and
-> > > +  control the Type C ports. The node for this device should be under a
-> > > +  cros-ec node like google,cros-ec-spi.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: google,cros-ec-typec
-> > > +
-> > > +  connector:
-> > > +    description: A node that represents a physical Type C connector port
-> > > +      on the device.
-> > > +    type: object
-> > > +    properties:
-> > > +      compatible:
-> > > +        const: usb-c-connector
-> > > +      port-number:
-> > > +        description: The number used by the Chrome OS EC to identify
-> > > +          this type C port. Valid values are 0 - (EC_USB_PD_MAX_PORTS - 1).
-> > > +      power-role:
-> > > +        description: Determines the power role that the Type C port will
-> > > +          adopt.
-> > > +        maxItems: 1
-> > > +        contains:
-> > > +          enum:
-> > > +            - sink
-> > > +            - source
-> > > +            - dual
-> > > +      data-role:
-> > > +        description: Determines the data role that the Type C port will
-> > > +          adopt.
-> > > +        maxItems: 1
-> > > +        contains:
-> > > +          enum:
-> > > +            - host
-> > > +            - device
-> > > +            - dual
-> > > +      try-power-role:
-> > > +        description: Determines the preferred power role of the Type C port.
-> > > +        maxItems: 1
-> > > +        contains:
-> > > +          enum:
-> > > +            - sink
-> > > +            - source
-> > > +            - dual
-> > > +
-> > > +    required:
-> > > +      - port-number
-> > > +      - power-role
-> > > +      - data-role
-> > > +      - try-power-role
-> > 
-> > Do you really need to redefine those?
-> 
-> No.
-> 
-> > 
-> > I think you just need to mention that there is a required sub-node
-> > "connector", and the place where it's described. So something
-> > like this:
-> > 
-> >         Required sub-node:
-> >         - connector : The "usb-c-connector". The bindings of the
-> >           connector node are specified in:
-> > 
-> >                 Documentation/devicetree/bindings/connector/usb-connector.txt
-> 
-> Ideally, we'd convert this to schema first and then here just have:
+See also:
+commit 75718584cb3c ("ptp: free ptp device pin descriptors properly").
 
-I've converted this to schema here: https://lkml.org/lkml/2020/3/4/790
-I've sent that patch separately from this series, since there is ongoing
-discussion regarding the structure of the bindings (and use of OF graph
-API) here.
+BugLink: https://bugs.launchpad.net/bugs/1864754
+Fixes: a33121e5487b ("ptp: fix the race between the release of ptp_clock and cdev")
+Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
+---
+ drivers/ptp/ptp_clock.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index ac1f2bf9e888..12951023d0c6 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -171,6 +171,7 @@ static void ptp_clock_release(struct device *dev)
+ 	struct ptp_clock *ptp = container_of(dev, struct ptp_clock, dev);
+ 
+ 	ptp_cleanup_pin_groups(ptp);
++	posix_clock_unregister(&ptp->clock);
+ 	mutex_destroy(&ptp->tsevq_mux);
+ 	mutex_destroy(&ptp->pincfg_mux);
+ 	ida_simple_remove(&ptp_clocks_map, ptp->index);
+@@ -303,8 +304,6 @@ int ptp_clock_unregister(struct ptp_clock *ptp)
+ 	if (ptp->pps_source)
+ 		pps_unregister_source(ptp->pps_source);
+ 
+-	posix_clock_unregister(&ptp->clock);
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL(ptp_clock_unregister);
+-- 
+2.25.0
 
-> 
-> connector:
->   $ref: /schemas/connector/usb-connector.yaml#
-> 
-> > 
-> > 
-> > Then you just need to define the Chrome OS EC specific properties, so
-> > I guess just the "port-number".
-> 
-> 'reg' as Stephen suggested.
-> 
-> Rob
