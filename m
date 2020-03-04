@@ -2,99 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF09917988A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:04:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05D1C17989D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 20:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbgCDTES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 14:04:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39638 "EHLO mail.kernel.org"
+        id S1730217AbgCDTHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 14:07:52 -0500
+Received: from mga18.intel.com ([134.134.136.126]:4255 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727528AbgCDTER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:04:17 -0500
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0B0524677
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Mar 2020 19:04:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583348657;
-        bh=hJurs/av6t9EdSglXfHGBNi3KPMs5TYGjABwzZDQpvE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QIqc975YYSbTdnPOs8FNUDH6hSs32LUwNkUIKDwZt0hy5IENjOq+mLlbMqqfA2YFJ
-         46bOeKDC0ID/iz2t431gDQPHKTv3A6ikLMV5+kUCteYRzOjDy3VNbmW5kTwpCDBWHg
-         kYya9bod/N6YiVWt8jo7/AmHpzQ1Zlk0TOl8DneE=
-Received: by mail-wr1-f43.google.com with SMTP id j7so3801375wrp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 11:04:16 -0800 (PST)
-X-Gm-Message-State: ANhLgQ0BDf741kQiKn7/pFHjVGSL4lr8LVov7w7VF108eQ8phBQh7c3P
-        s44vNM6rIh0e62VOYVVHOYKMn7mdqHkMP0u3asH88A==
-X-Google-Smtp-Source: ADFU+vvNwUmp7UUfbaV0t7YWCbx3o1VoR36mkm9WU2rUlP6aAWyjGRVGsnHUEBD6CsLghQhpGlsvblBIBoa0uLJRlY8=
-X-Received: by 2002:adf:e742:: with SMTP id c2mr5384523wrn.262.1583348655022;
- Wed, 04 Mar 2020 11:04:15 -0800 (PST)
+        id S1730055AbgCDTHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 14:07:51 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 11:07:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,514,1574150400"; 
+   d="scan'208";a="287438301"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Mar 2020 11:07:50 -0800
+Date:   Wed, 4 Mar 2020 11:07:50 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     pbonzini@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: fix Kconfig menu text for -Werror
+Message-ID: <20200304190750.GF21662@linux.intel.com>
+References: <20200304104221.2977-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-References: <20200303205445.3965393-1-nivedita@alum.mit.edu>
- <20200303205445.3965393-2-nivedita@alum.mit.edu> <CAKv+Gu_LmntqGjkakR0-SFSCR+JF+CFeKyc=5qzOdpn4wTvKhw@mail.gmail.com>
- <20200304154908.GB998825@rani.riverdale.lan> <CAKv+Gu-Xo2zj9_N+K8FrpBstgU57GZvWO-pDr4tRAODhsYzW-A@mail.gmail.com>
- <20200304185042.GA281042@rani.riverdale.lan>
-In-Reply-To: <20200304185042.GA281042@rani.riverdale.lan>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 4 Mar 2020 20:04:04 +0100
-X-Gmail-Original-Message-ID: <CAKv+Gu-6YoJMLbR8UUsBeRPzk7r_4aKBprqay2kf6cKMPwsHgQ@mail.gmail.com>
-Message-ID: <CAKv+Gu-6YoJMLbR8UUsBeRPzk7r_4aKBprqay2kf6cKMPwsHgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] x86/mm/pat: Handle no-GBPAGES case correctly in populate_pud
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200304104221.2977-1-Jason@zx2c4.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Mar 2020 at 19:50, Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> On Wed, Mar 04, 2020 at 07:44:50PM +0100, Ard Biesheuvel wrote:
-> >
-> > I've tried a couple of different ways, but I can't seem to get my
-> > memory map organized in the way that will trigger the error.
->
-> What does yours look like? efi_merge_regions doesn't merge everything
-> that will eventually be mapped the same way, so if there are some
-> non-conventional memory regions scattered over the address space, it
-> might be breaking up the mappings to the point where this doesn't
-> trigger.
+On Wed, Mar 04, 2020 at 06:42:21PM +0800, Jason A. Donenfeld wrote:
+> This was evidently copy and pasted from the i915 driver, but the text
+> wasn't updated.
+> 
+> Fixes: 4f337faf1c55 ("KVM: allow disabling -Werror")
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  arch/x86/kvm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 1bb4927030af..29bd4dc3363e 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -68,7 +68,7 @@ config KVM_WERROR
+>  	depends on (X86_64 && !KASAN) || !COMPILE_TEST
+>  	depends on EXPERT
+>  	help
+> -	  Add -Werror to the build flags for (and only for) i915.ko.
+> +	  Add -Werror to the build flags for kvm.ko.
 
-I have a region
+The -Werror flag also gets used when compiling kvm-intel.ko and kvm-amd.ko
+as separate modules, as well as when KVM is built into the kernel and there
+is no kvm.ko.  Probably easiest to simply say "for KVM".
 
-[    0.000000] efi: mem07: [Conventional Memory|   |  |  |  |  |  |  |
- |   |WB|WT|WC|UC] range=[0x0000000001400000-0x00000000b9855fff]
-(2948MB)
-
-which gets covered correctly
-
-[    0.401766] 0x0000000000a00000-0x0000000040000000        1014M
-RW         PSE         NX pmd
-[    0.403436] 0x0000000040000000-0x0000000080000000           1G
-RW         PSE         NX pud
-[    0.404645] 0x0000000080000000-0x00000000b9800000         920M
-RW         PSE         NX pmd
-[    0.405844] 0x00000000b9800000-0x00000000b9a00000           2M
-RW                     NX pte
-[    0.407436] 0x00000000b9a00000-0x00000000baa00000          16M
-ro         PSE         x  pmd
-[    0.408591] 0x00000000baa00000-0x00000000bbe00000          20M
-RW         PSE         NX pmd
-[    0.409751] 0x00000000bbe00000-0x00000000bc000000           2M
-RW                     NX pte
-[    0.410821] 0x00000000bc000000-0x00000000be600000          38M
-RW         PSE         NX pmd
-
-However, the fact that you can provide a case where it does fail
-should be sufficient justification for taking this patch. I was just
-trying to give more than a regression-tested-by
+>  
+>  	  If in doubt, say "N".
+>  
+> -- 
+> 2.25.1
+> 
