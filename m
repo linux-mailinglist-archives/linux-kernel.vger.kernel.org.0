@@ -2,108 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E0C51788B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB161788BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387508AbgCDCyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:54:25 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:38643 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387459AbgCDCyY (ORCPT
+        id S2387626AbgCDC5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:57:43 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45822 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387543AbgCDC5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:54:24 -0500
-Received: by mail-ua1-f68.google.com with SMTP id y3so146093uaq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 18:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BeYrItptjbmjm//xr6aNyLoo5RY49LjduotLIGizl2Q=;
-        b=svKGsOub7ZxaZcRswMLgCyDY9M7NlICSs5yYlhOef4CgZNMJcaYeET/xRbMKQ2Sjr5
-         x7GrMkay5P8/ZTFyES2T+ek+RbYR2RemcPCVu+HbAmIFr52QuJUfNlYIDjqSawG8QDzp
-         0vCxvKUV/N1gtjL905bZyOBMcqzTysyA9eRQIdcblr7hiLn1f0+ey7tUnKSqwIK0dsIS
-         QBaYZSPDhDrYqdgCHcHWHXctCO5wH1KioQ8OeE2T7xde0a1zreyfPiWu4q1SIFRVPuK5
-         aXi9e42c6PiHzw6poPmQTBgbmSY2eZooZwI57dm74ZY9MkZBdtGScDfCaLfZfBsw1f2W
-         kINQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BeYrItptjbmjm//xr6aNyLoo5RY49LjduotLIGizl2Q=;
-        b=ODJbH64Yu9MmixYctWlZugHj/B2kT+mUnWV3b8dHDvjDlvfh0fll25r1S42OwHW3Cf
-         4PsCeHRTgRPucrHZW1CcQ+81KefB8wFvdgQR7gOc7VsWVxaTEAyXf2sO8tgJ0NJW9gPs
-         WI58MBcPMS4kP3SHBMGSAT88kKqY305PberZ7OXPsNg9u39oWqnzTvvqhzlCUhTdTnW0
-         +PYf944GZDYEhS92Uu5dF2x4zxc6GHMMQhKhkcAZRxufKPS0i9MX6XXcTteV78PfukUC
-         EPr7H+THdHm6i4+jonwGLQHnoiQ2twDUd0LLpcBrg/U+qZEg1zOpsZnjfJYC9re0MMsN
-         HS8g==
-X-Gm-Message-State: ANhLgQ1QH6PpGQrCjjHz6BkmUm7rTQSr/a6sW8x2OhgFdRfWLbpKCgmn
-        J90wUrWGBwq2gv2LPu0Adn061Cqzu3HoA4F9VkfyRQ==
-X-Google-Smtp-Source: ADFU+vsmy3goZ2XX5DADDbfFg/eIMnxSpbzjpinVr40A+RklPux/uxz2QGDs7Xd1N45NfSJVEjGvjDKfrkpOY1fF7WQ=
-X-Received: by 2002:ab0:1161:: with SMTP id g33mr388779uac.32.1583290462899;
- Tue, 03 Mar 2020 18:54:22 -0800 (PST)
+        Tue, 3 Mar 2020 21:57:43 -0500
+X-UUID: 70527d2412e8458d932c019c061a2315-20200304
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=4Tp8i81rBL0bV3dcOPyhC4/n91xDQC95NgC/GnLFqIE=;
+        b=bRdeliBMsJYguedrqxZYnh7RXR6U15ACA4oD7raeOqem42as4vqXnGIny+kdUIm9mdVlIg5H1GYS2SYvDNOMywCSJsHWzNnEue/A2cVAsASg7ZLff8nfU/UNNXbkVxZq9cgLNHcx1GxCyOtvgE/7LcjCSMduX4v3IQFl8Rs0dC8=;
+X-UUID: 70527d2412e8458d932c019c061a2315-20200304
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1051547790; Wed, 04 Mar 2020 10:57:38 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 4 Mar 2020 10:56:28 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 4 Mar 2020 10:58:16 +0800
+From:   <light.hsieh@mediatek.com>
+To:     <ulf.hansson@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <axboe@kernel.dk>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kuohong.wang@mediatek.com>, <stanley.chu@mediatek.com>,
+        Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v1 0/3] set ro attribute of block device according to write-protection status
+Date:   Wed, 4 Mar 2020 10:57:32 +0800
+Message-ID: <1583290655-7858-1-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-References: <2094703.CetWLLyMuz@kreacher> <CAD8Lp46VbG3b5NV54vmBFQH2YLY6wRngYv0oY2tiveovPRhiVw@mail.gmail.com>
- <CAPpJ_edfTg11QZs25MrThj2+FKUo2103rv7iYNzo=kr-jeg1MA@mail.gmail.com>
- <CAJZ5v0gB9yuVmPjJ_MvfT8aFpvP-X5JRsNfZn8+Mv5RwTednGg@mail.gmail.com>
- <CAJZ5v0imqwdmXzKayqs1kgHOb-mXrkr61uNxVka8J9bKca989Q@mail.gmail.com>
- <CAPpJ_efvF0XzjevA1eL3BUJqBwxRTOPLcqWKN40Azj-n1AtjcA@mail.gmail.com>
- <CAJZ5v0hie79+jG+3h4t5Q8r0M7E37HY-7i8ijg8DpvS0RXZSiQ@mail.gmail.com> <CAJZ5v0hwrZX4+4m-g0c2bUTHxJO=1+kenXBjLz1ChWdcxSLJbA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hwrZX4+4m-g0c2bUTHxJO=1+kenXBjLz1ChWdcxSLJbA@mail.gmail.com>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Wed, 4 Mar 2020 10:53:33 +0800
-Message-ID: <CAPpJ_ed5KPPu47ri3phnjKrToqJ8vSNV32zaRmBPLr3pq4M_4A@mail.gmail.com>
-Subject: Re: [PATCH 0/6] ACPI: EC: Updates related to initialization
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Drake <drake@endlessm.com>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-SNTS-SMTP: E978A8E0381A4EFA74F0521E4BB358506639EA9010A2EA3F0FCB60A953564A212000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rafael J. Wysocki <rafael@kernel.org> =E6=96=BC 2020=E5=B9=B43=E6=9C=884=E6=
-=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=886:23=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, Mar 3, 2020 at 10:09 AM Rafael J. Wysocki <rafael@kernel.org> wro=
-te:
-> >
-> > On Tue, Mar 3, 2020 at 8:29 AM Jian-Hong Pan <jian-hong@endlessm.com> w=
-rote:
-> > >
-> > > Rafael J. Wysocki <rafael@kernel.org> =E6=96=BC 2020=E5=B9=B43=E6=9C=
-=882=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=
-=EF=BC=9A
-> > > >
->
-> [cut]
->
-> > >
-> > > Originally, ec_install_handlers() will return the returned value from
-> > > install_gpio_irq_event_handler() from acpi_dev_gpio_irq_get(), which
-> > > is -EPROBE_DEFER, instead of -ENXIO.  However, ec_install_handlers()
-> > > returns -ENXIO directly if install_gpio_irq_event_handler() returns
-> > > false in patch ("ACPI: EC: Consolidate event handler installation
-> > > code").  Here needs some modification.
-> >
-> > Thanks, I forgot about the -EPROBE_DEFER case.
->
-> The top-most commit in the git branch at
->
->  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->  acpi-ec-work
->
-> has been updated to take that case into account (I think that it
-> should be spelled out explicitly or it will be very easy to overlook
-> in the future).
->
-> Please test this one if possible.
+RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KKioqIEJMVVJC
+IEhFUkUgKioqDQoNCkxpZ2h0IEhzaWVoICgzKToNCiAgbW1jOiByZWNvcmQgd3BfZ3JwX3NpemUg
+YW5kIGJvb3Rfd3Bfc3RhdHVzDQogIG1tYzogY2hlY2sgd3JpdGUtcHJvdGVjdGlvbiBzdGF0dXMg
+ZHVyaW5nIEJMS1JPU0VUIGlvY3RsDQogIGJsb2NrOiBzZXQgcGFydGl0aW9uIHJlYWQvd3JpdGUg
+cG9saWN5IGFjY29yZGluZyB0byB3cml0ZS1wcm90ZWN0aW9uDQogICAgc3RhdHVzDQoNCiBibG9j
+ay9pb2N0bC5jICAgICAgICAgICAgIHwgICAyICstDQogYmxvY2svcGFydGl0aW9uLWdlbmVyaWMu
+YyB8ICAxMCArKysNCiBkcml2ZXJzL21tYy9jb3JlL2Jsb2NrLmMgIHwgMjE3ICsrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL21tYy9jb3JlL21t
+Yy5jICAgIHwgIDE2ICsrKysNCiBpbmNsdWRlL2xpbnV4L2Jsa2Rldi5oICAgIHwgICAxICsNCiBp
+bmNsdWRlL2xpbnV4L21tYy9jYXJkLmggIHwgICAzICsNCiBpbmNsdWRlL2xpbnV4L21tYy9tbWMu
+aCAgIHwgICAyICsNCiA3IGZpbGVzIGNoYW5nZWQsIDI1MCBpbnNlcnRpb25zKCspLCAxIGRlbGV0
+aW9uKC0pDQoNCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
 
-Tested the commits on some laptops including ASUS UX434DA.  The
-brightness hotkeys are working now.
-
-Jian-Hong Pan
