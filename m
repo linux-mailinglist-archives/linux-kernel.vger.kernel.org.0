@@ -2,100 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C95B1790FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A71717910D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 14:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbgCDNMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 08:12:21 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:27290 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729175AbgCDNMV (ORCPT
+        id S2388068AbgCDNPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 08:15:13 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45366 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387992AbgCDNPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 08:12:21 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583327540; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=ZwXdsbHaxrkcUsXQf1QG7Fhh4a45XXcmUJXcVDM57ho=; b=ccjTYSj7IxOVvHRefoWOs3ACTe6l+knN9EcOL4FwBxHMu0u8R3MfaI4YZBx3350R0lPYFPIo
- uKmgIMCDRdGTlXiHaF0Rd4VsE/GaNstVEKlKLohA5Jkr2apR8QKHVTms7RKhMDWZPzAFX/B6
- 49yMvH5mXlpBNcXKswjCvXTAP4U=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e5fa92c.7f4ace769880-smtp-out-n01;
- Wed, 04 Mar 2020 13:12:12 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AC190C4479C; Wed,  4 Mar 2020 13:12:12 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.206.25.140] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9CFBC43383;
-        Wed,  4 Mar 2020 13:12:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9CFBC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH] mmc: cqhci: Update cqhci memory ioresource name
-To:     Adrian Hunter <adrian.hunter@intel.com>, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, dianders@google.com,
-        mka@chromium.org, Ritesh Harjani <riteshh@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>
-References: <1583323250-23596-1-git-send-email-vbadigan@codeaurora.org>
- <e1bd6b82-01d1-ce71-d170-a891a18b8141@intel.com>
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Message-ID: <5d19b5a1-3a1a-9366-fde2-ea0c0ee85dd6@codeaurora.org>
-Date:   Wed, 4 Mar 2020 18:42:06 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 4 Mar 2020 08:15:13 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v2so2321370wrp.12;
+        Wed, 04 Mar 2020 05:15:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dRuvXTjD/bPv3Dn/8R1C/YZLNUqFpK4uHKwIIFfjLvE=;
+        b=D1AislnaQYm2mm20PGFzfIW/Hz7YC7gS3iGO/8K5V7ZY7Dii2b/iZX/2UwIXkbMrCj
+         yLCHKIBsHLGUnMmWXqzScHao8dskVH46wtNjOPD7hN+w6rqajScN+4hyfF/DU1fVH1m7
+         kdQxk1+SNjC7D7tlpu9ZJZ5HwFqB3vMY3tqljWkNhohmfT8zhcws+ki2bTzeBNahfDnv
+         gUd8Lh4EVoAExg9co7IYIQmW+0z5JV7IxB8du9evvs1mqwV7GwuFR6JY666sr7+4FBpo
+         tlLyAhjl7WkFQ/succ8ddIs/SRwo0a6CjvcQcDgv72pn4KRdealOw5O/dT70LCE9SR6Q
+         LSRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dRuvXTjD/bPv3Dn/8R1C/YZLNUqFpK4uHKwIIFfjLvE=;
+        b=H3tzicVBBdql3mdeICEkjhgNclGloFEB2ZSRIA07VRiTkyWnwhxUk2qbHpqtiQ8SY7
+         pnAYImZX6LU3VB2G558qQR1Q+ujnPunHgbC7yoqV6lMjt5KJedcK1xCEhWxx3G982lx5
+         EZVRFuRCUpaEWfg2WU+7FjvbCvFXAwOPy8ZyvXTIB3hw2i7RM3ZP/BDYbBQ0FMkFnQXM
+         XsZnpWgqa7Ejcf4GG6FcI5cFIXR/p5TElyn4hNnJCFWzEHXazQVTmuMFNAN8nO+m1aP5
+         yrTglKgum49oP8S+sVIZVspPXfNoLUEUI3MVjFEimFykx5t6cuBDFhQqV8UpOBj4GiAx
+         XW+g==
+X-Gm-Message-State: ANhLgQ37v757jkOzhh6pnW+dk14BJvuyzm1frvgVmfzKRH2ruz4FfuVd
+        sVCww9HhiyLjIaCn3JnqmeA=
+X-Google-Smtp-Source: ADFU+vufuO491PqFldO6XhiGin1UqHD5LSSt9/l2D8Gc6MfsEewAdg/CMfFVQbqHAzQHnpzzDJaK1g==
+X-Received: by 2002:adf:e742:: with SMTP id c2mr4066931wrn.262.1583327711343;
+        Wed, 04 Mar 2020 05:15:11 -0800 (PST)
+Received: from localhost.localdomain ([109.126.130.242])
+        by smtp.gmail.com with ESMTPSA id c14sm24746746wro.36.2020.03.04.05.15.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 05:15:10 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] io-wq/io_uring locking optimisation
+Date:   Wed,  4 Mar 2020 16:14:08 +0300
+Message-Id: <cover.1583314087.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <e1bd6b82-01d1-ce71-d170-a891a18b8141@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[1-3] are shedding excessive locking of @wqe's and @worker's spinlocks
+from io_worker_handle_work().
 
-On 3/4/2020 5:53 PM, Adrian Hunter wrote:
-> On 4/03/20 2:00 pm, Veerabhadrarao Badiganti wrote:
->> Update cqhci memory ioresource name from cqhci_mem to cqhci since
->> suffix _mem is redundant.
-> Which is OK only because sdhci-msm is the only caller of cqhci_pltfm_init(),
-> right?  So no one else could be using "cqhci_mem"? Some more explanation is
-> needed here.
+[4] removes an extra pair of refcount get/put by making former io_put_work()
+to own the submission reference. It also changes io-wq get/put API
+and renames io_put_work() into io_free_work() to reflect it.
 
-Right, only qcom cqhci solution is making use of it.
+Pavel Begunkov (4):
+  io-wq: shuffle io_worker_handle_work() code
+  io-wq: optimise locking in io_worker_handle_work()
+  io-wq: optimise out *next_work() double lock
+  io_uring/io-wq: forward submission ref to async
 
-I did a grep in dt and find no other vendor is using it.
+ fs/io-wq.c    | 148 ++++++++++++++++++++++++++------------------------
+ fs/io-wq.h    |   6 +-
+ fs/io_uring.c |  31 ++++-------
+ 3 files changed, 90 insertions(+), 95 deletions(-)
 
-Sure. Will update commit text.
+-- 
+2.24.0
 
->> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
->> ---
->> Corresponding binding change:
->> https://lore.kernel.org/linux-arm-msm/1582545470-11530-1-git-send-email-vbadigan@codeaurora.org/
->> ---
->>   drivers/mmc/host/cqhci.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
->> index e2ea2c4..e24b8ff 100644
->> --- a/drivers/mmc/host/cqhci.c
->> +++ b/drivers/mmc/host/cqhci.c
->> @@ -1077,7 +1077,7 @@ struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev)
->>   
->>   	/* check and setup CMDQ interface */
->>   	cqhci_memres = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->> -						   "cqhci_mem");
->> +						   "cqhci");
->>   	if (!cqhci_memres) {
->>   		dev_dbg(&pdev->dev, "CMDQ not supported\n");
->>   		return ERR_PTR(-EINVAL);
->>
