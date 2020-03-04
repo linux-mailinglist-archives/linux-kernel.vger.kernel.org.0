@@ -2,94 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B37178DD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:53:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0481F178DE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:57:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387762AbgCDJxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 04:53:50 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33149 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387730AbgCDJxu (ORCPT
+        id S1729118AbgCDJ4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 04:56:55 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52314 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbgCDJ4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 04:53:50 -0500
-Received: by mail-oi1-f196.google.com with SMTP id q81so1510909oig.0;
-        Wed, 04 Mar 2020 01:53:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PWiXu1+kJXOlwOOpFNo5aE1XWbQqXbi+uifPWRjlrfo=;
-        b=RqAnTBJ0zv90EjnDJ2daFDK1OQOcKTp0W5oHkdnUnf4UhSfDRrT7yvGPcSWTlu6zYB
-         PfbJu0M6WDnS67PZm6BidVyYcdCFRuX25qGLm0Pkw3X2OYg1aZ58UadTp+upFi9WV2xq
-         VtTr5dVjGrF+M7RqmtkUtqHLdOk073Ac3ihvQVLNygKmZcAODXBLOkpDqREZW7GwXVSj
-         W1Byi33qA1UufVOi5tesRi0TgGP+UYVrR1KDCak24oUGTb8ciLrkiO4OWQhty8oqcCuh
-         pr+hsmeoC8fmxncqn8JNYpeFxbYDPlOLWuIk649lEsIMZeuN7Q07o+voSmvfycSTOrfl
-         yUjQ==
-X-Gm-Message-State: ANhLgQ1ErAOmQeWI+yeg5OknCgkt+mdzWOG48t2eHP1RSbyinVaXcdRY
-        rkrpO8fRFmJ85zs5buzp3NAx3JWe/PDlU6jO/Cg=
-X-Google-Smtp-Source: ADFU+vtVWZhGfGf6R94WwxIgGmV4KIpNe17sPVEV0Rt5PoQsGytvmiGxeM29nQ7TeQliq+SetX2cwwMlR+GafhuGbNg=
-X-Received: by 2002:aca:bfc2:: with SMTP id p185mr1182951oif.57.1583315629465;
- Wed, 04 Mar 2020 01:53:49 -0800 (PST)
+        Wed, 4 Mar 2020 04:56:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2ckkr/ncutWqUu2JPEoyksHSnlWmNLmI7ZyB0FkDM1U=; b=fSWIl1dfxrK+42SRld1Ot5iGl0
+        IzEr0AhZsVvYpk5KeYgu+3z7bC/P9iWTMGxbTJyBJdQndc0xHLRXK6f6zUTU1k8v4dlioDawAD8fJ
+        y53dDgix8bndMqvjDeXLGXpdORMLpDaR57aLc0PdV4BlXJUOrsk8w+TB+ZOXV1psIVSDETYHGXQwR
+        UUNxFJB1wvkf6fq9Jd6/5MHce7ri/OWi/9BHEMEQKv+IdhE7dK0I53AYiAFthZ2J3pAE9dKFP0hIi
+        pm15xo9Jw7XGldL+cHUQD3JCKWl+sgkl1B4RHGXufoiFSKA46JDr0K9beWWXxC4thhVBCNAOBhp7F
+        VG35X45g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9Qll-0008ED-NN; Wed, 04 Mar 2020 09:56:49 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 00A6F3012C3;
+        Wed,  4 Mar 2020 10:54:48 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6C10E20BCBDC5; Wed,  4 Mar 2020 10:56:47 +0100 (CET)
+Date:   Wed, 4 Mar 2020 10:56:47 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Qian Cai <cai@lca.pw>, fweisbec@gmail.com, mingo@kernel.org,
+        elver@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tick/sched: fix data races at tick_do_timer_cpu
+Message-ID: <20200304095647.GL2596@hirez.programming.kicks-ass.net>
+References: <20200225030808.1207-1-cai@lca.pw>
+ <87tv34laqq.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20200227013411.1.Ica3bb9fa898499d94e0b0a2bfa08ec46c89d84fa@changeid>
- <20200303170948.1.I108734f38ade020c3e5da825839dca11d2a2ff87@changeid>
-In-Reply-To: <20200303170948.1.I108734f38ade020c3e5da825839dca11d2a2ff87@changeid>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 4 Mar 2020 10:53:38 +0100
-Message-ID: <CAJZ5v0j+bx5fh1wv738MNoui_SaZ-c21rDnZkWOqi_GCVg5stQ@mail.gmail.com>
-Subject: Re: [PATCH v3] intel_idle: Add Comet Lake support
-To:     Harry Pan <harry.pan@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Harry Pan <gs0622@gmail.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tv34laqq.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 10:10 AM Harry Pan <harry.pan@intel.com> wrote:
->
-> Add a general C-state table in order to support Comet Lake.
->
-> Signed-off-by: Harry Pan <harry.pan@intel.com>
->
-> ---
->
->  drivers/idle/intel_idle.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index d55606608ac8..05bce595fafe 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -1067,6 +1067,11 @@ static const struct idle_cpu idle_cpu_dnv = {
->         .use_acpi = true,
->  };
->
-> +static const struct idle_cpu idle_cpu_cml = {
-> +       .state_table = skl_cstates,
-> +       .disable_promotion_to_c1e = true,
+On Wed, Mar 04, 2020 at 10:39:41AM +0100, Thomas Gleixner wrote:
+> Qian,
+> 
+> Qian Cai <cai@lca.pw> writes:
+> > tick_do_timer_cpu could be accessed concurrently where both plain writes
+> > and plain reads are not protected by a lock. Thus, it could result in
+> > data races. Fix them by adding pairs of READ|WRITE_ONCE(). The data
+> > races were reported by KCSAN,
+> 
+> They are reported, but are they actually a real problem?
+> 
+> This completely lacks analysis why these 8 places need the
+> READ/WRITE_ONCE() treatment at all and if so why the other 14 places
+> accessing tick_do_timer_cpu are safe without it.
+> 
+> I definitely appreciate the work done with KCSAN, but just making the
+> tool shut up does not cut it. 
 
-.use_acpi = true,
+Worse:
 
-missing?  Otherwise you can just use idle_cpu_skl as is, can't you?
++	if (cpu != READ_ONCE(tick_do_timer_cpu) &&
++	    (READ_ONCE(tick_do_timer_cpu) != TICK_DO_TIMER_NONE ||
 
-> +};
-> +
->  static const struct x86_cpu_id intel_idle_ids[] __initconst = {
->         INTEL_CPU_FAM6(NEHALEM_EP,              idle_cpu_nhx),
->         INTEL_CPU_FAM6(NEHALEM,                 idle_cpu_nehalem),
-> @@ -1105,6 +1110,8 @@ static const struct x86_cpu_id intel_idle_ids[] __initconst = {
->         INTEL_CPU_FAM6(ATOM_GOLDMONT_PLUS,      idle_cpu_bxt),
->         INTEL_CPU_FAM6(ATOM_GOLDMONT_D,         idle_cpu_dnv),
->         INTEL_CPU_FAM6(ATOM_TREMONT_D,          idle_cpu_dnv),
-> +       INTEL_CPU_FAM6(COMETLAKE_L,             idle_cpu_cml),
-> +       INTEL_CPU_FAM6(COMETLAKE,               idle_cpu_cml),
->         {}
->  };
->
-> --
-> 2.24.1
->
+Doing that read twice is just utterly stupid. And the patch is full of
+that :/
+
+Please stop this non-thinking 'fix' generation!
