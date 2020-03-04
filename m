@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4619E179614
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F72179612
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:00:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388422AbgCDRAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:00:37 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40697 "EHLO
+        id S2388410AbgCDRAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:00:25 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39587 "EHLO
         mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388366AbgCDRAV (ORCPT
+        with ESMTP id S2388365AbgCDRAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 4 Mar 2020 12:00:21 -0500
-Received: by mail-qt1-f196.google.com with SMTP id o10so1879349qtr.7
+Received: by mail-qt1-f196.google.com with SMTP id e13so1887734qts.6
         for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:00:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=digitalocean.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=iHGWLZVF8jdtLRYACYK4pKqHvrlbxJPu8oMEVlE29fE=;
-        b=HXxyQFbLHqoe08CYyyOuGf85h0yOdF6IQaAEjK4Uu+mC9S6nIO213ggfx3XCHTdYfD
-         adDitE0z0omPARKpKky4edr3NYo9VC8gNB8Id4loerYfrv2Wr7rYdQvlEh8xWMkPOf20
-         x+LCR+57C+TDomUoHkCVtIqBdrEZWibxb4HS0=
+        bh=ei+INJxVJ7JO6KporPxQXDCshgcX8SOazF2unhH80Ds=;
+        b=Ndcwh9KtVR2l9U2EAn15s8DVIZNgojc0ksNWb9C3txzESPDnhP6b5KBvPwGIflpNig
+         g4WSruDGjUjlVQmmX8/6WzH5m1PLHhAL+BSi2/uY9/UDmgqDCE0ubXzK9Eq+16uTx8hA
+         6GRaVaaHJtEt3L1Dmdek9Y+h/8kDLEI3EKaD0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=iHGWLZVF8jdtLRYACYK4pKqHvrlbxJPu8oMEVlE29fE=;
-        b=Nzxnu90lodOP7LlR6X5ySObsllF+FAoN4c8HgjRjwobPRXtjcbewFA2RqxNLWYqAor
-         MS9lc8YA8HRjKlWRcuBR8jcDxhmk8w31AWEmglei11gRFoycmtplR7qe9SyVfdIiSqiQ
-         Ybo9Pdb/N/g+++BkjbMdOVuwBdd67JfhuddVnqtNh+tO/T4D2J5c87ZN46lTyXi3y/xJ
-         Yubc1SbhONKiUWCMhkMTQOHJeSEE6iAO7FK4yyaRKQVRDCwLyXoLzF20qmAF6hWP73lx
-         HCmpPVnMsrSPky2WURDByTWl+91bp3fjO6ONxy55TmlMna9szEO2iewzmsVw8l1w3Q02
-         GxBw==
-X-Gm-Message-State: ANhLgQ3qlqzt8CCfP3tpK1zHMv1mocj+y9oC9ud3OBtihk+WObDBwIm5
-        gVvyadfJBpipVaBQO2qejPv1PA==
-X-Google-Smtp-Source: ADFU+vuvgU3xnJZsJfuuQxym+ySdHHNh44TPc9pdouz0fWXt9gbcGQjHKUzvbJu4gs3rkYZUjWw2yA==
-X-Received: by 2002:ac8:1bdb:: with SMTP id m27mr3285828qtk.283.1583341218921;
-        Wed, 04 Mar 2020 09:00:18 -0800 (PST)
+        bh=ei+INJxVJ7JO6KporPxQXDCshgcX8SOazF2unhH80Ds=;
+        b=p38gSwLptY6AT06K/i+ZMZGvGw064ZT0t+X0uGgfTQU3OiqLwyn1bfMJnFpP/a0Gn/
+         fVfia3dPArLPakSxMM0WvduE5SThNW5ynjcIylaKE6ETE3cXrsFF9vsFs4jCOKLwWMV3
+         1CzmlvNJgurslci5ZuPTqWLFbgTLMkX5Vg+y5FtkpMTHY21FIf7G1uEpu3YATVRJtTPG
+         E8eZJ3PbkxOSQbSG8R1ecWxy+iCqIHSUOfSARoJUBN0bY1ztwMrCDhVK/BM8Uon2ilIN
+         aymliRgaTMyGnlH3vfKIwyZXC5VEqrXKl5zGzoJCCwEuR+MyMnsbOedWdDK4wzTQYyYT
+         SjoQ==
+X-Gm-Message-State: ANhLgQ3w6UFdZiKCt1hKXOs+rG2IgKFeEIzq75Xf+Taq3xa1aKUauBkk
+        swfKQEIN8kG4VArgnK1WYV9wRw==
+X-Google-Smtp-Source: ADFU+vtKMu9fK99ZzoCL08dDrxLjqTTyCMhVuu9Jb/A9FbuGDR37xo3wpDpUSXggkj3SZJ1YguS7nw==
+X-Received: by 2002:ac8:7508:: with SMTP id u8mr3314362qtq.163.1583341219859;
+        Wed, 04 Mar 2020 09:00:19 -0800 (PST)
 Received: from s2r5node9 ([162.243.188.99])
-        by smtp.gmail.com with ESMTPSA id n59sm5209979qtd.77.2020.03.04.09.00.18
+        by smtp.gmail.com with ESMTPSA id h7sm5724183qkm.125.2020.03.04.09.00.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:00:18 -0800 (PST)
+        Wed, 04 Mar 2020 09:00:19 -0800 (PST)
 From:   vpillai <vpillai@digitalocean.com>
 To:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
         Julien Desfossez <jdesfossez@digitalocean.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
         tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org
-Cc:     Aubrey Li <aubrey.li@intel.com>, linux-kernel@vger.kernel.org,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
+Cc:     linux-kernel@vger.kernel.org, fweisbec@gmail.com,
+        keescook@chromium.org, kerrnel@google.com,
         Phil Auld <pauld@redhat.com>, Aaron Lu <aaron.lwe@gmail.com>,
         Aubrey Li <aubrey.intel@gmail.com>, aubrey.li@linux.intel.com,
         Valentin Schneider <valentin.schneider@arm.com>,
@@ -58,9 +58,9 @@ Cc:     Aubrey Li <aubrey.li@intel.com>, linux-kernel@vger.kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
         Joel Fernandes <joelaf@google.com>, joel@joelfernandes.org,
         Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Subject: [RFC PATCH 11/13] sched: migration changes for core scheduling
-Date:   Wed,  4 Mar 2020 17:00:01 +0000
-Message-Id: <279f7f6606ea18e14d64517840bcada56deb0ce3.1583332765.git.vpillai@digitalocean.com>
+Subject: [RFC PATCH 12/13] sched: cgroup tagging interface for core scheduling
+Date:   Wed,  4 Mar 2020 17:00:02 +0000
+Message-Id: <6c48d9428e5b23aab9be67538a94fe0436b16ecb.1583332765.git.vpillai@digitalocean.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1583332764.git.vpillai@digitalocean.com>
 References: <cover.1583332764.git.vpillai@digitalocean.com>
@@ -71,179 +71,354 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aubrey Li <aubrey.li@intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
- - Don't migrate if there is a cookie mismatch
-     Load balance tries to move task from busiest CPU to the
-     destination CPU. When core scheduling is enabled, if the
-     task's cookie does not match with the destination CPU's
-     core cookie, this task will be skipped by this CPU. This
-     mitigates the forced idle time on the destination CPU.
+Marks all tasks in a cgroup as matching for core-scheduling.
 
- - Select cookie matched idle CPU
-     In the fast path of task wakeup, select the first cookie matched
-     idle CPU instead of the first idle CPU.
+A task will need to be moved into the core scheduler queue when the cgroup
+it belongs to is tagged to run with core scheduling.  Similarly the task
+will need to be moved out of the core scheduler queue when the cgroup
+is untagged.
 
- - Find cookie matched idlest CPU
-     In the slow path of task wakeup, find the idlest CPU whose core
-     cookie matches with task's cookie
+Also after we forked a task, its core scheduler queue's presence will
+need to be updated according to its new cgroup's status.
 
- - Don't migrate task if cookie not match
-     For the NUMA load balance, don't migrate task to the CPU whose
-     core cookie does not match with task's cookie
+Use stop machine mechanism to update all tasks in a cgroup to prevent a
+new task from sneaking into the cgroup, and missed out from the update
+while we iterates through all the tasks in the cgroup.  A more complicated
+scheme could probably avoid the stop machine.  Such scheme will also
+need to resovle inconsistency between a task's cgroup core scheduling
+tag and residency in core scheduler queue.
 
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+We are opting for the simple stop machine mechanism for now that avoids
+such complications.
+
+Core scheduler has extra overhead.  Enable it only for core with
+more than one SMT hardware threads.
+
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Julien Desfossez <jdesfossez@digitalocean.com>
 Signed-off-by: Vineeth Remanan Pillai <vpillai@digitalocean.com>
 ---
- kernel/sched/fair.c  | 55 +++++++++++++++++++++++++++++++++++++++++---
- kernel/sched/sched.h | 29 +++++++++++++++++++++++
- 2 files changed, 81 insertions(+), 3 deletions(-)
+ kernel/sched/core.c  | 186 +++++++++++++++++++++++++++++++++++++++++--
+ kernel/sched/sched.h |   4 +
+ 2 files changed, 184 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1c9a80d8dbb8..f42ceecb749f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1789,6 +1789,15 @@ static void task_numa_find_cpu(struct task_numa_env *env,
- 		if (!cpumask_test_cpu(cpu, env->p->cpus_ptr))
- 			continue;
- 
-+#ifdef CONFIG_SCHED_CORE
-+		/*
-+		 * Skip this cpu if source task's cookie does not match
-+		 * with CPU's core cookie.
-+		 */
-+		if (!sched_core_cookie_match(cpu_rq(cpu), env->p))
-+			continue;
-+#endif
-+
- 		env->dst_cpu = cpu;
- 		task_numa_compare(env, taskimp, groupimp, maymove);
- 	}
-@@ -5660,8 +5669,13 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
- 
- 	/* Traverse only the allowed CPUs */
- 	for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
-+		struct rq *rq = cpu_rq(i);
-+
-+#ifdef CONFIG_SCHED_CORE
-+		if (!sched_core_cookie_match(rq, p))
-+			continue;
-+#endif
- 		if (available_idle_cpu(i)) {
--			struct rq *rq = cpu_rq(i);
- 			struct cpuidle_state *idle = idle_get_state(rq);
- 			if (idle && idle->exit_latency < min_exit_latency) {
- 				/*
-@@ -5927,8 +5941,14 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 			return si_cpu;
- 		if (!cpumask_test_cpu(cpu, p->cpus_ptr))
- 			continue;
-+#ifdef CONFIG_SCHED_CORE
-+		if (available_idle_cpu(cpu) &&
-+		    sched_core_cookie_match(cpu_rq(cpu), p))
-+			break;
-+#else
- 		if (available_idle_cpu(cpu))
- 			break;
-+#endif
- 		if (si_cpu == -1 && sched_idle_cpu(cpu))
- 			si_cpu = cpu;
- 	}
-@@ -7264,8 +7284,9 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	 * We do not migrate tasks that are:
- 	 * 1) throttled_lb_pair, or
- 	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
--	 * 3) running (obviously), or
--	 * 4) are cache-hot on their current CPU.
-+	 * 3) task's cookie does not match with this CPU's core cookie
-+	 * 4) running (obviously), or
-+	 * 5) are cache-hot on their current CPU.
- 	 */
- 	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
- 		return 0;
-@@ -7300,6 +7321,15 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 		return 0;
- 	}
- 
-+#ifdef CONFIG_SCHED_CORE
-+	/*
-+	 * Don't migrate task if the task's cookie does not match
-+	 * with the destination CPU's core cookie.
-+	 */
-+	if (!sched_core_cookie_match(cpu_rq(env->dst_cpu), p))
-+		return 0;
-+#endif
-+
- 	/* Record that we found atleast one task that could run on dst_cpu */
- 	env->flags &= ~LBF_ALL_PINNED;
- 
-@@ -8498,6 +8528,25 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
- 					p->cpus_ptr))
- 			continue;
- 
-+#ifdef CONFIG_SCHED_CORE
-+		if (sched_core_enabled(cpu_rq(this_cpu))) {
-+			int i = 0;
-+			bool cookie_match = false;
-+
-+			for_each_cpu(i, sched_group_span(group)) {
-+				struct rq *rq = cpu_rq(i);
-+
-+				if (sched_core_cookie_match(rq, p)) {
-+					cookie_match = true;
-+					break;
-+				}
-+			}
-+			/* Skip over this group if no cookie matched */
-+			if (!cookie_match)
-+				continue;
-+		}
-+#endif
-+
- 		local_group = cpumask_test_cpu(this_cpu,
- 					       sched_group_span(group));
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 552c80b70757..e4019a482f0e 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1057,6 +1057,35 @@ static inline raw_spinlock_t *rq_lockp(struct rq *rq)
- 	return &rq->__lock;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 18ee8e10a171..11e5a2a494ac 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -140,6 +140,37 @@ static inline bool __sched_core_less(struct task_struct *a, struct task_struct *
+ 	return false;
  }
  
-+/*
-+ * Helper to check if the CPU's core cookie matches with the task's cookie
-+ * when core scheduling is enabled.
-+ * A special case is that the task's cookie always matches with CPU's core
-+ * cookie if the CPU is in an idle core.
-+ */
-+static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
++static bool sched_core_empty(struct rq *rq)
 +{
-+	bool idle_core = true;
-+	int cpu;
++	return RB_EMPTY_ROOT(&rq->core_tree);
++}
 +
-+	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-+	if (!sched_core_enabled(rq))
-+		return true;
++static bool sched_core_enqueued(struct task_struct *task)
++{
++	return !RB_EMPTY_NODE(&task->core_node);
++}
 +
-+	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-+		if (!available_idle_cpu(cpu)) {
-+			idle_core = false;
-+			break;
++static struct task_struct *sched_core_first(struct rq *rq)
++{
++	struct task_struct *task;
++
++	task = container_of(rb_first(&rq->core_tree), struct task_struct, core_node);
++	return task;
++}
++
++static void sched_core_flush(int cpu)
++{
++	struct rq *rq = cpu_rq(cpu);
++	struct task_struct *task;
++
++	while (!sched_core_empty(rq)) {
++		task = sched_core_first(rq);
++		rb_erase(&task->core_node, &rq->core_tree);
++		RB_CLEAR_NODE(&task->core_node);
++	}
++	rq->core->core_task_seq++;
++}
++
+ static void sched_core_enqueue(struct rq *rq, struct task_struct *p)
+ {
+ 	struct rb_node *parent, **node;
+@@ -171,10 +202,11 @@ static void sched_core_dequeue(struct rq *rq, struct task_struct *p)
+ {
+ 	rq->core->core_task_seq++;
+ 
+-	if (!p->core_cookie)
++	if (!sched_core_enqueued(p))
+ 		return;
+ 
+ 	rb_erase(&p->core_node, &rq->core_tree);
++	RB_CLEAR_NODE(&p->core_node);
+ }
+ 
+ void sched_core_add(struct rq *rq, struct task_struct *p)
+@@ -250,8 +282,22 @@ static int __sched_core_stopper(void *data)
+ 	bool enabled = !!(unsigned long)data;
+ 	int cpu;
+ 
+-	for_each_online_cpu(cpu)
+-		cpu_rq(cpu)->core_enabled = enabled;
++	if (!enabled) {
++		for_each_online_cpu(cpu) {
++		/*
++		 * All active and migrating tasks will have already been removed
++		 * from core queue when we clear the cgroup tags.
++		 * However, dying tasks could still be left in core queue.
++		 * Flush them here.
++		 */
++			sched_core_flush(cpu);
 +		}
 +	}
 +
-+	/*
-+	 * A CPU in an idle core is always the best choice for tasks with
-+	 * cookies.
-+	 */
-+	return idle_core || rq->core->core_cookie == p->core_cookie;
++	for_each_online_cpu(cpu) {
++		if (!enabled || (enabled && cpumask_weight(cpu_smt_mask(cpu)) >= 2))
++			cpu_rq(cpu)->core_enabled = enabled;
++	}
+ 
+ 	return 0;
+ }
+@@ -261,7 +307,11 @@ static int sched_core_count;
+ 
+ static void __sched_core_enable(void)
+ {
+-	// XXX verify there are no cookie tasks (yet)
++	int cpu;
++
++	/* verify there are no cookie tasks (yet) */
++	for_each_online_cpu(cpu)
++		BUG_ON(!sched_core_empty(cpu_rq(cpu)));
+ 
+ 	static_branch_enable(&__sched_core_enabled);
+ 	stop_machine(__sched_core_stopper, (void *)true, NULL);
+@@ -269,8 +319,6 @@ static void __sched_core_enable(void)
+ 
+ static void __sched_core_disable(void)
+ {
+-	// XXX verify there are no cookie tasks (left)
+-
+ 	stop_machine(__sched_core_stopper, (void *)false, NULL);
+ 	static_branch_disable(&__sched_core_enabled);
+ }
+@@ -416,6 +464,7 @@ static int __deactivate_cpu_core_sched(void *data)
+ 
+ static inline void sched_core_enqueue(struct rq *rq, struct task_struct *p) { }
+ static inline void sched_core_dequeue(struct rq *rq, struct task_struct *p) { }
++static bool sched_core_enqueued(struct task_struct *task) { return false; }
+ static inline void core_sched_cpu_update(unsigned int cpu, int action) { }
+ 
+ #endif /* CONFIG_SCHED_CORE */
+@@ -3268,6 +3317,9 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ #ifdef CONFIG_SMP
+ 	plist_node_init(&p->pushable_tasks, MAX_PRIO);
+ 	RB_CLEAR_NODE(&p->pushable_dl_tasks);
++#endif
++#ifdef CONFIG_SCHED_CORE
++	RB_CLEAR_NODE(&p->core_node);
+ #endif
+ 	return 0;
+ }
+@@ -6819,6 +6871,9 @@ void init_idle(struct task_struct *idle, int cpu)
+ #ifdef CONFIG_SMP
+ 	sprintf(idle->comm, "%s/%d", INIT_TASK_COMM, cpu);
+ #endif
++#ifdef CONFIG_SCHED_CORE
++	RB_CLEAR_NODE(&idle->core_node);
++#endif
+ }
+ 
+ #ifdef CONFIG_SMP
+@@ -7796,6 +7851,15 @@ static void sched_change_group(struct task_struct *tsk, int type)
+ 	tg = container_of(task_css_check(tsk, cpu_cgrp_id, true),
+ 			  struct task_group, css);
+ 	tg = autogroup_task_group(tsk, tg);
++
++#ifdef CONFIG_SCHED_CORE
++	if ((unsigned long)tsk->sched_task_group == tsk->core_cookie)
++		tsk->core_cookie = 0UL;
++
++	if (tg->tagged /* && !tsk->core_cookie ? */)
++		tsk->core_cookie = (unsigned long)tg;
++#endif
++
+ 	tsk->sched_task_group = tg;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+@@ -7881,6 +7945,18 @@ static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
+ 	return 0;
+ }
+ 
++static void cpu_cgroup_css_offline(struct cgroup_subsys_state *css)
++{
++#ifdef CONFIG_SCHED_CORE
++	struct task_group *tg = css_tg(css);
++
++	if (tg->tagged) {
++		sched_core_put();
++		tg->tagged = 0;
++	}
++#endif
 +}
 +
- extern void queue_core_balance(struct rq *rq);
+ static void cpu_cgroup_css_released(struct cgroup_subsys_state *css)
+ {
+ 	struct task_group *tg = css_tg(css);
+@@ -7910,7 +7986,12 @@ static void cpu_cgroup_fork(struct task_struct *task)
+ 	rq = task_rq_lock(task, &rf);
  
- void sched_core_add(struct rq *rq, struct task_struct *p);
+ 	update_rq_clock(rq);
++	if (sched_core_enqueued(task))
++		sched_core_dequeue(rq, task);
+ 	sched_change_group(task, TASK_SET_GROUP);
++	if (sched_core_enabled(rq) && task_on_rq_queued(task) &&
++	    task->core_cookie)
++		sched_core_enqueue(rq, task);
+ 
+ 	task_rq_unlock(rq, task, &rf);
+ }
+@@ -8436,6 +8517,82 @@ static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
+ }
+ #endif /* CONFIG_RT_GROUP_SCHED */
+ 
++#ifdef CONFIG_SCHED_CORE
++static u64 cpu_core_tag_read_u64(struct cgroup_subsys_state *css, struct cftype *cft)
++{
++	struct task_group *tg = css_tg(css);
++
++	return !!tg->tagged;
++}
++
++struct write_core_tag {
++	struct cgroup_subsys_state *css;
++	int val;
++};
++
++static int __sched_write_tag(void *data)
++{
++	struct write_core_tag *tag = (struct write_core_tag *) data;
++	struct cgroup_subsys_state *css = tag->css;
++	int val = tag->val;
++	struct task_group *tg = css_tg(tag->css);
++	struct css_task_iter it;
++	struct task_struct *p;
++
++	tg->tagged = !!val;
++
++	css_task_iter_start(css, 0, &it);
++	/*
++	 * Note: css_task_iter_next will skip dying tasks.
++	 * There could still be dying tasks left in the core queue
++	 * when we set cgroup tag to 0 when the loop is done below.
++	 */
++	while ((p = css_task_iter_next(&it))) {
++		p->core_cookie = !!val ? (unsigned long)tg : 0UL;
++
++		if (sched_core_enqueued(p)) {
++			sched_core_dequeue(task_rq(p), p);
++			if (!p->core_cookie)
++				continue;
++		}
++
++		if (sched_core_enabled(task_rq(p)) &&
++		    p->core_cookie && task_on_rq_queued(p))
++			sched_core_enqueue(task_rq(p), p);
++
++	}
++	css_task_iter_end(&it);
++
++	return 0;
++}
++
++static int cpu_core_tag_write_u64(struct cgroup_subsys_state *css, struct cftype *cft, u64 val)
++{
++	struct task_group *tg = css_tg(css);
++	struct write_core_tag wtag;
++
++	if (val > 1)
++		return -ERANGE;
++
++	if (!static_branch_likely(&sched_smt_present))
++		return -EINVAL;
++
++	if (tg->tagged == !!val)
++		return 0;
++
++	if (!!val)
++		sched_core_get();
++
++	wtag.css = css;
++	wtag.val = val;
++	stop_machine(__sched_write_tag, (void *) &wtag, NULL);
++	if (!val)
++		sched_core_put();
++
++	return 0;
++}
++#endif
++
+ static struct cftype cpu_legacy_files[] = {
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	{
+@@ -8472,6 +8629,14 @@ static struct cftype cpu_legacy_files[] = {
+ 		.write_u64 = cpu_rt_period_write_uint,
+ 	},
+ #endif
++#ifdef CONFIG_SCHED_CORE
++	{
++		.name = "tag",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.read_u64 = cpu_core_tag_read_u64,
++		.write_u64 = cpu_core_tag_write_u64,
++	},
++#endif
+ #ifdef CONFIG_UCLAMP_TASK_GROUP
+ 	{
+ 		.name = "uclamp.min",
+@@ -8645,6 +8810,14 @@ static struct cftype cpu_files[] = {
+ 		.write_s64 = cpu_weight_nice_write_s64,
+ 	},
+ #endif
++#ifdef CONFIG_SCHED_CORE
++	{
++		.name = "tag",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.read_u64 = cpu_core_tag_read_u64,
++		.write_u64 = cpu_core_tag_write_u64,
++	},
++#endif
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	{
+ 		.name = "max",
+@@ -8673,6 +8846,7 @@ static struct cftype cpu_files[] = {
+ struct cgroup_subsys cpu_cgrp_subsys = {
+ 	.css_alloc	= cpu_cgroup_css_alloc,
+ 	.css_online	= cpu_cgroup_css_online,
++	.css_offline	= cpu_cgroup_css_offline,
+ 	.css_released	= cpu_cgroup_css_released,
+ 	.css_free	= cpu_cgroup_css_free,
+ 	.css_extra_stat_show = cpu_extra_stat_show,
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index e4019a482f0e..2079654b5c87 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -355,6 +355,10 @@ struct cfs_bandwidth {
+ struct task_group {
+ 	struct cgroup_subsys_state css;
+ 
++#ifdef CONFIG_SCHED_CORE
++	int			tagged;
++#endif
++
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	/* schedulable entities of this group on each CPU */
+ 	struct sched_entity	**se;
 -- 
 2.17.1
 
