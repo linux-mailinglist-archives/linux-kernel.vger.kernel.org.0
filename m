@@ -2,88 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F00C178EAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD64178EF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388017AbgCDKmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:42:01 -0500
-Received: from out28-5.mail.aliyun.com ([115.124.28.5]:48265 "EHLO
-        out28-5.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387776AbgCDKmB (ORCPT
+        id S2387964AbgCDKxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:53:05 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43875 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387850AbgCDKw6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:42:01 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2020651|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.351558-0.00513039-0.643312;DS=CONTINUE|ham_system_inform|0.0595886-0.000272615-0.940139;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03307;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.Gw1wbHL_1583318513;
-Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Gw1wbHL_1583318513)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Wed, 04 Mar 2020 18:41:54 +0800
-Subject: Re: [PATCH 2/4] clk: Ingenic: Add support for TCU of X1000.
-To:     =?UTF-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>, linux-mips@vger.kernel.org
-References: <1582100974-129559-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1582100974-129559-4-git-send-email-zhouyanjie@wanyeetech.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, tglx@linutronix.de, maz@kernel.org,
-        jason@lakedaemon.net, sboyd@kernel.org, mturquette@baylibre.com,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        daniel.lezcano@linaro.org, paul@crapouillou.net,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
-        dongsheng.qiu@ingenic.com
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <5E5F85F0.5060605@wanyeetech.com>
-Date:   Wed, 4 Mar 2020 18:41:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        Wed, 4 Mar 2020 05:52:58 -0500
+Received: from 79.184.237.41.ipv4.supernova.orange.pl (79.184.237.41) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id c8a51d99c2fb8d5f; Wed, 4 Mar 2020 11:52:57 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH v2 0/6] ACPI: EC: Updates related to initialization
+Date:   Wed, 04 Mar 2020 11:42:07 +0100
+Message-ID: <2411774.6kdisLRoUK@kreacher>
+In-Reply-To: <2094703.CetWLLyMuz@kreacher>
+References: <2094703.CetWLLyMuz@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <1582100974-129559-4-git-send-email-zhouyanjie@wanyeetech.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi All,
 
-On 2020年02月19日 16:29, 周琰杰 (Zhou Yanjie) wrote:
-> X1000 has a different TCU containing OST, since X1000, OST has been
-> independent of TCU. This patch is prepare for later OST driver.
->
-> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+On Thursday, February 27, 2020 11:19:19 PM CET Rafael J. Wysocki wrote:
+> 
+> The purpose of this series of update of the ACPI EC driver is to make its
+> initialization more straightforward.
+> 
+> They fix a couple of issues, clean up some things, remove redundant code etc.
+> 
+> Please refer to the changelogs of individual patches for details.
+> 
+> For easier access, the series is available in the git branch at
+> 
+>  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>  acpi-ec-work
+> 
+> on top of 5.6-rc3.
 
-Any review/ack from clock framework subsystem?
+The above is still true, including the location of the git branch containing
+the changes.
+
+Since the original submission, the series has been rearranged to reduce
+artificial dependencies between the patches and the last patch (previously
+[4/6]) has been reworked to take deferred probing into account properly.
+
+Thanks!
 
 
-Thanks and best regards!
-
-> ---
->   drivers/clk/ingenic/tcu.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-> index ad7daa4..8799907 100644
-> --- a/drivers/clk/ingenic/tcu.c
-> +++ b/drivers/clk/ingenic/tcu.c
-> @@ -317,10 +317,17 @@ static const struct ingenic_soc_info jz4770_soc_info = {
->   	.has_tcu_clk = false,
->   };
->   
-> +static const struct ingenic_soc_info x1000_soc_info = {
-> +	.num_channels = 8,
-> +	.has_ost = false, /* X1000 has OST, but it not belong TCU */
-> +	.has_tcu_clk = false,
-> +};
-> +
->   static const struct of_device_id ingenic_tcu_of_match[] __initconst = {
->   	{ .compatible = "ingenic,jz4740-tcu", .data = &jz4740_soc_info, },
->   	{ .compatible = "ingenic,jz4725b-tcu", .data = &jz4725b_soc_info, },
->   	{ .compatible = "ingenic,jz4770-tcu", .data = &jz4770_soc_info, },
-> +	{ .compatible = "ingenic,x1000-tcu", .data = &x1000_soc_info, },
->   	{ /* sentinel */ }
->   };
->   
-> @@ -471,3 +478,4 @@ static void __init ingenic_tcu_init(struct device_node *np)
->   CLK_OF_DECLARE_DRIVER(jz4740_cgu, "ingenic,jz4740-tcu", ingenic_tcu_init);
->   CLK_OF_DECLARE_DRIVER(jz4725b_cgu, "ingenic,jz4725b-tcu", ingenic_tcu_init);
->   CLK_OF_DECLARE_DRIVER(jz4770_cgu, "ingenic,jz4770-tcu", ingenic_tcu_init);
-> +CLK_OF_DECLARE_DRIVER(x1000_cgu, "ingenic,x1000-tcu", ingenic_tcu_init);
 
