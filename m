@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 641A2178E8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:41:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7E1178EA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 11:41:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387825AbgCDKlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 05:41:02 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42630 "EHLO
+        id S2387863AbgCDKlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 05:41:05 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38438 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387805AbgCDKlC (ORCPT
+        with ESMTP id S1728969AbgCDKlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:41:02 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z11so1744326wro.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 02:41:00 -0800 (PST)
+        Wed, 4 Mar 2020 05:41:03 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t11so1762935wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 02:41:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ajIJB0wcFTIisjxYEYMgxm+dr9nVY4WUtZ38KJr42sk=;
-        b=wg0RvIDCGd3OKaS+UQvVbeeMEYBWJF8GOY/PfMOKdQVJ+TjqChEm4pHTM69HwAbcCX
-         Ex/7xSAM1S2h4CuGEj33aykuH0PKks9E44VM31QfhpCHDz63upJK9OFMlqxsgAtBq2Nz
-         aN1DBI3qRWbUl0moYu2dCezZbRxsydcMItxVLT3946v2JgZpCBKkwEclmbG9OteF4vci
-         32xslYPrUrGOKImGpSpFBKB4SuS0OGuno5LIq8urHrqEzvL5aNSSgbmYr1oUm1FP6/Ln
-         y0yoUQauN9eyXCMnuoly6kqtiuuwxtgKyUKLEJcJn8Qw2Qn4nLN1ZflEdpIB3NwBwMOC
-         lJdw==
+        bh=6fPj5TgC2jUYLfz4Vs3gbXgfh3ZeKyckJI3P6/EwL1o=;
+        b=M16492gcFm1M/b93ik55wP4X2xibbNHk+7ZvwTrQvBh4f/tG8ga7h4RR+mwYaZPAlG
+         SF8rQ7AbB1ZJLmvpkZfzQgWYGBKoh9WRS2mVEy3U4SGo/pf1xfuvcM6Alj2Hc8c25yZ6
+         QkwahiC1bEh+ObLBx8WL3h/YFjvLDgZowt9fVLVLHhGD9DOw10Mz6neFPFJy5GPcWYqh
+         t18UuoPLqfOD0r+edKcH7R3IeRh7KPhkp8AaKKYS4IWHm9HPXm31AGCBEAuYAmHfp+9J
+         uuc7S8XJf0qdtd43gcVrhhr7CEVuYdHiLXOcZ4spz+OgWpwPk6ihPqia18y4V4ouP6A3
+         8mhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ajIJB0wcFTIisjxYEYMgxm+dr9nVY4WUtZ38KJr42sk=;
-        b=TIDZ2RWzkUf2lRE+bWVldcUU4zw9NwmCMeMnyWMWWwNOYXSnnMkL2F9CaHYILR2lZp
-         jaim17ptrQIcKJ4+oLWlDHWen65r2nME9uj57P81LyjMVK/GmyJp6wuIrTwDvAW7FZQi
-         N0Ar/54MdhnfnP8+cmOdgKFvCt/XvQ7etuVgVdC7HOFBDFgTeoMI640EcsJI8SOvXQRq
-         rzBWS33Nsfs2HgmCOLg0zXuqUAd0ovG3bMd+YL1Its+4SWA9cWwvdKP6nrkZZJehUpUU
-         hoGXrxkQmQPhfPZ/67XuwpVjNMCR4NOLnH5E6Jmm0+zUQOaTZ3OZ1jXrOM1uDgjmDYX+
-         2Gww==
-X-Gm-Message-State: ANhLgQ3jilSfU2WiG30zvMolIVH+9sf6VggJM4nVV9qlwNBrt1Bgj1HT
-        +9IQMVP/vLGEOLT1i6hzGnNZDQ==
-X-Google-Smtp-Source: ADFU+vsX44bMGYYDWTVYLN4XIHqigFLMlCLDbsBmS7tp2HMpAhPRQ9ZynsXeUOg29HcIDJKwo4OQ4w==
-X-Received: by 2002:adf:9282:: with SMTP id 2mr3674245wrn.124.1583318460121;
-        Wed, 04 Mar 2020 02:41:00 -0800 (PST)
+        bh=6fPj5TgC2jUYLfz4Vs3gbXgfh3ZeKyckJI3P6/EwL1o=;
+        b=IF4UQyEeobRm49pe8rBGqMXau/g+ssPshjf6h54oIYGbU1q0Xy4l18Hz5K2pPSV3ns
+         lTl7hscq4Bg+bFeBPXUXNb/+1JrrRwMS6aYan6oknXGkiJKmKDvoWLFKXYLsdWm8VxIG
+         mYBe+CMqhNh0GSk8PcBllLwuSawgD65Qjmo2CcpBRXHPO6JQNfFKPylk8bCL3TKZlz0l
+         mM2VOvDbfuP9FTtoxzfwuWBLu3glIpvyUnQsWhdS3J4BWu8JtoWfMhTCNSuQG1qC6kcL
+         8UAtj+ELzMgQukE1L/qVYPGlNBA0SIhSu2RoW95xebRP1V4V0a4NNLo7Fd237BZyhGNr
+         Z32g==
+X-Gm-Message-State: ANhLgQ2JAep1VErP61/80C+rZ0bn8fwS8qrI2tdKhUkNke/H2gsIkPPk
+        OedBdjj78mZ0uxm+WsZ+ixDvqg==
+X-Google-Smtp-Source: ADFU+vsLT+l1ePDs5v3r0T9iY83Llt3kWCUJwmA48pBvBjPuVueZH/TNfPGj/dvaQYJSc5KIiiLFbQ==
+X-Received: by 2002:a5d:4a10:: with SMTP id m16mr3339405wrq.333.1583318461487;
+        Wed, 04 Mar 2020 02:41:01 -0800 (PST)
 Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c14sm24006398wro.36.2020.03.04.02.40.59
+        by smtp.gmail.com with ESMTPSA id c14sm24006398wro.36.2020.03.04.02.41.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 02:40:59 -0800 (PST)
+        Wed, 04 Mar 2020 02:41:01 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     p.zabel@pengutronix.de, heiko@sntech.de, a.hajda@samsung.com,
         Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
         jernej.skrabec@siol.net, boris.brezillon@collabora.com
-Cc:     linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v5 02/11] drm/bridge: dw-hdmi: add max bpc connector property
-Date:   Wed,  4 Mar 2020 11:40:43 +0100
-Message-Id: <20200304104052.17196-3-narmstrong@baylibre.com>
+Subject: [PATCH v5 03/11] drm/bridge: dw-hdmi: Plug atomic state hooks to the default implementation
+Date:   Wed,  4 Mar 2020 11:40:44 +0100
+Message-Id: <20200304104052.17196-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200304104052.17196-1-narmstrong@baylibre.com>
 References: <20200304104052.17196-1-narmstrong@baylibre.com>
@@ -67,38 +67,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Karlman <jonas@kwiboo.se>
+Add atomic_duplicate_state/atomic_destroy_state/atomic_reset bridge
+funcs to allow setup of atomic bridge state.
 
-Add the max_bpc property to the dw-hdmi connector to prepare support
-for 10, 12 & 16bit output support.
-
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Reviewed-by: Jernej Škrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 10f98c9ee77e..e097f60e6431 100644
+index e097f60e6431..9f2918898f60 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2414,6 +2414,14 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge,
- 				    DRM_MODE_CONNECTOR_HDMIA,
- 				    hdmi->ddc);
+@@ -2506,6 +2506,9 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+ }
  
-+	/*
-+	 * drm_connector_attach_max_bpc_property() requires the
-+	 * connector to have a state.
-+	 */
-+	drm_atomic_helper_connector_reset(connector);
-+
-+	drm_connector_attach_max_bpc_property(connector, 8, 16);
-+
- 	if (hdmi->version >= 0x200a && hdmi->plat_data->use_drm_infoframe)
- 		drm_object_attach_property(&connector->base,
- 			connector->dev->mode_config.hdr_output_metadata_property, 0);
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_reset = drm_atomic_helper_bridge_reset,
+ 	.attach = dw_hdmi_bridge_attach,
+ 	.detach = dw_hdmi_bridge_detach,
+ 	.enable = dw_hdmi_bridge_enable,
 -- 
 2.22.0
 
