@@ -2,124 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EBE17947F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7287B179477
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbgCDQIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:08:19 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:58834 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbgCDQIT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:08:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1583338099; x=1614874099;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   mime-version;
-  bh=jc/5pmQb0YfPhtIbInDedgkyxcFInN57uJozqb4Q7Vc=;
-  b=KPBxnELEWwQRxi86ZgyWeL0TS14/E+WRA4aneA2vF2YyCXJ0GJgkbrBu
-   GRN8cST+iYuLkh9o2xxIaLQPG5v46TG6d8juXFgC4qU9jbIESzi2gdQ/k
-   YaO0I08Wq1I5qtq8jJF0E+azl13Dt+7B0RmW0H9GI5Mbyv1WoEmY1Rv/X
-   s=;
-IronPort-SDR: 2pyxj85lzSXsWPOES5aKY6zToYQjHYcLHFmoLoTVMVJEbwnzkx7WZo1br2DPd94KSzx0s4f9LR
- peenIz+NnxNg==
-X-IronPort-AV: E=Sophos;i="5.70,514,1574121600"; 
-   d="scan'208";a="19761042"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 04 Mar 2020 16:08:04 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com (Postfix) with ESMTPS id AA8A3A20D6;
-        Wed,  4 Mar 2020 16:07:54 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Wed, 4 Mar 2020 16:07:54 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.115) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 4 Mar 2020 16:07:42 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     Rik van Riel <riel@surriel.com>
-CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
-        "SeongJae Park" <sjpark@amazon.de>, <aarcange@redhat.com>,
-        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
-        <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
-        <brendanhiggins@google.com>, <cai@lca.pw>,
-        <colin.king@canonical.com>, <corbet@lwn.net>, <dwmw@amazon.com>,
-        <jolsa@redhat.com>, <kirill@shutemov.name>, <mark.rutland@arm.com>,
-        <mgorman@suse.de>, <minchan@kernel.org>, <mingo@redhat.com>,
-        <namhyung@kernel.org>, <peterz@infradead.org>,
-        <rdunlap@infradead.org>, <rientjes@google.com>,
-        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
-        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>,
-        <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
-        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [RFC v4 2/7] mm/damon: Account age of target regions
-Date:   Wed, 4 Mar 2020 17:07:28 +0100
-Message-ID: <20200304160728.19130-1-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <221dab45ed46405b707825455086855665ead7cc.camel@surriel.com> (raw)
+        id S1729722AbgCDQHd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Mar 2020 11:07:33 -0500
+Received: from mail-oln040092254020.outbound.protection.outlook.com ([40.92.254.20]:6026
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726561AbgCDQHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 11:07:33 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ejL4kL82ydNmmp604ozVAkutFX7o8RhwolCShkmRj/62RjT1ewgvqfIf2CdyWLf7Pa4+iJijesu1O0rfqp8WAJVGpblXSgxyT+Mj4pk1CDTCA3waGdgYQjWqHVMvSoXSp7wW29PN/In9800kBRFjl0CDzpVIAPBmOVw8wfOTUWPn/p94K4wp+7maDwLG6Qps5SL30p3qHmzFGQlDxRv+/MoOmRe79R6Kgk2Feqp5YX1QhsG+nmqFeA/0MYAIHzaYSB/tH7CKYREmw9fMshUDPhEDOOEh6bXHbEbQuWTXmmcUCfrozb0DcJIniC2pFPKBhLaYmnAMoec4UZGH1qnorQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pk3nu6xUqkAcH9iNL6rHQ5mFJvG7uers/+lKAEsEwJg=;
+ b=PGOPKiZonXJn6XpcdAMeJxvbLRWslirhA+6lf63IOyTDZ4z4ZU5Em+jG2CpkAo3XTwxNzeKFBQOl5GOa1cwPZG6h1M1j228fOdk/uFnkNr7u9NXLB5VXOKATiRKBXie9mxAsjpQ0hAkEQ+U1stHikiccKzC+VGmqMOjjJFEPDrEFk7ryLoTRMVeOPMlejWVdi2TZua2Up9XdAGwlKKEVvIGeqxdtr4cJ+ZgW6mEtJzM858cseGEsByUmToBMrfbmrzkfRPTjJyFyPVZA/+/mBywsSaPoQPxlJaXqmY8Eg3j+bqi2fPX1EtK39BDJU2s42I40nl04A4ItyMf0Kqf2wQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from PU1APC01FT018.eop-APC01.prod.protection.outlook.com
+ (2a01:111:e400:7ebe::3a) by
+ PU1APC01HT142.eop-APC01.prod.protection.outlook.com (2a01:111:e400:7ebe::196)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Wed, 4 Mar
+ 2020 16:07:29 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.252.57) by
+ PU1APC01FT018.mail.protection.outlook.com (10.152.253.189) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Wed, 4 Mar 2020 16:07:29 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2%7]) with mapi id 15.20.2772.019; Wed, 4 Mar 2020
+ 16:07:29 +0000
+Received: from nicholas-dell-linux (2001:44b8:6065:1c:6059:d44:6861:fae2) by ME1PR01CA0115.ausprd01.prod.outlook.com (2603:10c6:200:19::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18 via Frontend Transport; Wed, 4 Mar 2020 16:07:27 +0000
+From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 3/3] Revert "thunderbolt: Prevent crash if non-active
+ NVMem file is read"
+Thread-Topic: [PATCH v2 3/3] Revert "thunderbolt: Prevent crash if non-active
+ NVMem file is read"
+Thread-Index: AQHV8KlS3XYq90/jLkW1+zKh/mLy4qg2rPIAgAHvtAA=
+Date:   Wed, 4 Mar 2020 16:07:29 +0000
+Message-ID: <PSXP216MB04384541A10255DF4E70F4D480E50@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+References: <PSXP216MB0438FE68DAAFC23CB9AAD5E180E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+ <PSXP216MB04388C56BECC4CE5EC81EA2680E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+ <20200303103310.GN2540@lahna.fi.intel.com>
+In-Reply-To: <20200303103310.GN2540@lahna.fi.intel.com>
+Accept-Language: en-AU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: ME1PR01CA0115.ausprd01.prod.outlook.com
+ (2603:10c6:200:19::24) To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:300:d::20)
+x-incomingtopheadermarker: OriginalChecksum:DF1240B440FA8036B3F480089BA21868AB0A26136DAE31AAC04613F8D34D7595;UpperCasedChecksum:79325A480BF9D1B208EEE0CF560FE25011CD95D804F5DFA38BA8B7C96B7C8160;SizeAsReceived:7993;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [nXYBbVw5BgGnCgKUXFwNzz+Ddc3f43P5tqu7UkZvb2QD6wRzhOTFUknwhvLGiwto]
+x-microsoft-original-message-id: <20200304160722.GB2300@nicholas-dell-linux>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 53875f8f-c78b-4b6c-7416-08d7c0562360
+x-ms-traffictypediagnostic: PU1APC01HT142:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: zAYvY13HFp/M2YdStgohYQmG+u+9keCaQY4pb4cvnYTIg+iLLK55L3R3cK9/aguedq0O0mvRJ8x+eQ79zFC6n9H7eygOlzHfz3voOtiBw+Du7G794dzNbWYIYKRf7Zz81CkLsoa47FpicL8RHNOXzA3Xw9oXjfIINVisJNGYK1A4p0IVzwkrMBLrikMiOB59
+x-ms-exchange-antispam-messagedata: GnPJp/vz8vJSoVkGpMlQPwGS/PTD6qR2FfxRTfQ067wGWqjXfNIv8tWzTCU+Dt507H82wgUcmFKqlngiQv+4+Awvibl4MMdYHp1idNjka+6rovEOzhATrHW6DltCLkbqkekyx9YRWn6zfiTo6PEv+FqR2y1GL/mI84+HLcMt+xnKVLoIzLhrDhR0PE8PszODhEufY0FO239oO2kwohH1Ug==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1C04A619FB220342B3D49E1106EC935D@KORP216.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.115]
-X-ClientProxiedBy: EX13D19UWA001.ant.amazon.com (10.43.160.169) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53875f8f-c78b-4b6c-7416-08d7c0562360
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2020 16:07:29.2517
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rick,
-
-Thank you for question :)
-
-On Wed, 04 Mar 2020 10:21:29 -0500 Rik van Riel <riel@surriel.com> wrote:
-
-> [-- Attachment #1: Type: text/plain, Size: 558 bytes --]
+On Tue, Mar 03, 2020 at 12:33:10PM +0200, Mika Westerberg wrote:
+> On Mon, Mar 02, 2020 at 03:43:29PM +0000, Nicholas Johnson wrote:
+> > This reverts commit 03cd45d2e219301880cabc357e3cf478a500080f.
+> > 
+> > Since NVMEM subsystem gained support for write-only instances, this
+> > workaround is no longer required, so drop it.
+> > 
+> > Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
 > 
-> On Tue, 2020-03-03 at 13:14 +0100, SeongJae Park wrote:
-> > From: SeongJae Park <sjpark@amazon.de>
+> Assuming this goes through The NVMem tree:
 > 
-> > --- a/mm/damon.c
-> > +++ b/mm/damon.c
-> > @@ -87,6 +87,10 @@ static struct damon_region
-> > *damon_new_region(struct damon_ctx *ctx,
-> >  	ret->sampling_addr = damon_rand(ctx, vm_start, vm_end);
-> >  	INIT_LIST_HEAD(&ret->list);
-> >  
-> > +	ret->age = 0;
-> > +	ret->last_vm_start = vm_start;
-> > +	ret->last_vm_end = vm_end;
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > 
-> Wait, what tree is this supposed to apply against?
-> 
-> I see no mm/damon.c file in current Linus upstream.
+> If that's not the case, please let me know. I can also take them through
+> the Thunderbolt tree.
+I do not know how this would normally work - I have not experienced much 
+cross-subsystem work. Perhaps it should be taken through your tree. If 
+it goes through your tree and not part of this series, perhaps it does 
+not make sense for it to be authored by me, either. It's just a revert; 
+it does not take a lot of effort or doing something original.
 
-This patchset is supposed to apply against v5.5 plus DAMON patchset[1] plus a
-patch from Minchan.  You can get the tree this patchset is applied via:
-
-    $ git clone git://github.com/sjp38/linux -b damos/rfc/v4
-
-Or, the web is also available:
-https://github.com/sjp38/linux/releases/tag/damos/rfc/v4
-
-I am posting this as a seperate RFC patchset because 1) this patchset is based
-on the tree other than Linus or other maintainers' upstream trees, 2) I
-want to keep the size of original patchset small for convenience of reviewers,
-3) this patchset is relatively recently made and thus might unstable compared
-to the DAMON patchset[1], and 4) I want to share my plan and get early
-feedbacks as many as possible.
-
-Sorry if this made you confused.  Also, if you have some opinions regarding
-this seperated postings, please let me know.
-
-
-[1] https://lore.kernel.org/linux-mm/20200224123047.32506-1-sjpark@amazon.com
-
-
-Thanks,
-SeongJae Park
-
-> 
-> -- 
-> All Rights Reversed.
+Cheers.
