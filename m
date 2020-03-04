@@ -2,42 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0932178F28
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DECB8178F26
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:02:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388024AbgCDLCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:02:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:46657 "EHLO
+        id S2388006AbgCDLB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:01:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46650 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387688AbgCDLCA (ORCPT
+        with ESMTP id S2387688AbgCDLB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:02:00 -0500
+        Wed, 4 Mar 2020 06:01:57 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1j9Rme-0001YG-Qn; Wed, 04 Mar 2020 12:01:48 +0100
+        id 1j9Rmg-0001YS-5g; Wed, 04 Mar 2020 12:01:50 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 624D31C21B2;
-        Wed,  4 Mar 2020 12:01:48 +0100 (CET)
-Date:   Wed, 04 Mar 2020 11:01:48 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CB4CC1C21B2;
+        Wed,  4 Mar 2020 12:01:49 +0100 (CET)
+Date:   Wed, 04 Mar 2020 11:01:49 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf symbols: Don't try to find a vmlinux file
- when looking for kernel modules
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        Michael Petlan <mpetlan@redhat.com>,
+Subject: [tip: perf/urgent] perf tests bp_account: Make global variable static
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200302191007.GD10335@kernel.org>
-References: <20200302191007.GD10335@kernel.org>
 MIME-Version: 1.0
-Message-ID: <158331970807.28353.6153474651149655292.tip-bot2@tip-bot2>
+Message-ID: <158331970957.28353.16382895991011482208.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,97 +47,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     b5c0951860ba98cfe1936b5c0739450875d51451
-Gitweb:        https://git.kernel.org/tip/b5c0951860ba98cfe1936b5c0739450875d51451
+Commit-ID:     cff20b3151ccab690715cb6cf0f5da5cccb32adf
+Gitweb:        https://git.kernel.org/tip/cff20b3151ccab690715cb6cf0f5da5cccb32adf
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 02 Mar 2020 16:03:34 -03:00
+AuthorDate:    Mon, 02 Mar 2020 11:13:19 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 03 Mar 2020 16:20:01 -03:00
+CommitterDate: Mon, 02 Mar 2020 11:15:07 -03:00
 
-perf symbols: Don't try to find a vmlinux file when looking for kernel modules
+perf tests bp_account: Make global variable static
 
-The dso->kernel value is now set to everything that is in
-machine->kmaps, but that was being used to decide if vmlinux lookup is
-needed, which ended up making that lookup be made for kernel modules,
-that now have dso->kernel set, leading to these kinds of warnings when
-running on a machine with compressed kernel modules, like fedora:31:
+To fix the build with newer gccs, that without this patch exit with:
 
-  [root@five ~]# perf record -F 10000 -a sleep 2
-  [ perf record: Woken up 1 times to write data ]
-  lzma: fopen failed on vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
-  lzma: fopen failed on vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
-  lzma: fopen failed on vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
-  lzma: fopen failed on vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
-  lzma: fopen failed on vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux: 'No such file or directory'
-  lzma: fopen failed on /boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /usr/lib/debug/boot/vmlinux-5.5.5-200.fc31.x86_64: 'No such file or directory'
-  lzma: fopen failed on /lib/modules/5.5.5-200.fc31.x86_64/build/vmlinux: 'No such file or directory'
-  [ perf record: Captured and wrote 1.024 MB perf.data (1366 samples) ]
-  [root@five ~]#
+    LD       /tmp/build/perf/tests/perf-in.o
+  ld: /tmp/build/perf/tests/bp_account.o:/git/perf/tools/perf/tests/bp_account.c:22: multiple definition of `the_var'; /tmp/build/perf/tests/bp_signal.o:/git/perf/tools/perf/tests/bp_signal.c:38: first defined here
+  make[4]: *** [/git/perf/tools/build/Makefile.build:145: /tmp/build/perf/tests/perf-in.o] Error 1
 
-This happens when collecting the buildid, when we find samples for
-kernel modules, fix it by checking if the looked up DSO is a kernel
-module by other means.
+First noticed in fedora:rawhide/32 with:
 
-Fixes: 02213cec64bb ("perf maps: Mark module DSOs with kernel type")
-Tested-by: Jiri Olsa <jolsa@redhat.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Kim Phillips <kim.phillips@amd.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+  [perfbuilder@a5ff49d6e6e4 ~]$ gcc --version
+  gcc (GCC) 10.0.1 20200216 (Red Hat 10.0.1-0.8)
+
+Reported-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Link: http://lore.kernel.org/lkml/20200302191007.GD10335@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ tools/perf/tests/bp_account.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 1077013..26bc6a0 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1622,7 +1622,12 @@ int dso__load(struct dso *dso, struct map *map)
- 		goto out;
- 	}
+diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
+index d0b9353..489b506 100644
+--- a/tools/perf/tests/bp_account.c
++++ b/tools/perf/tests/bp_account.c
+@@ -19,7 +19,7 @@
+ #include "../perf-sys.h"
+ #include "cloexec.h"
  
--	if (dso->kernel) {
-+	kmod = dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE ||
-+		dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE_COMP ||
-+		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE ||
-+		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE_COMP;
-+
-+	if (dso->kernel && !kmod) {
- 		if (dso->kernel == DSO_TYPE_KERNEL)
- 			ret = dso__load_kernel_sym(dso, map);
- 		else if (dso->kernel == DSO_TYPE_GUEST_KERNEL)
-@@ -1650,12 +1655,6 @@ int dso__load(struct dso *dso, struct map *map)
- 	if (!name)
- 		goto out;
+-volatile long the_var;
++static volatile long the_var;
  
--	kmod = dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE ||
--		dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE_COMP ||
--		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE ||
--		dso->symtab_type == DSO_BINARY_TYPE__GUEST_KMODULE_COMP;
--
--
- 	/*
- 	 * Read the build id if possible. This is required for
- 	 * DSO_BINARY_TYPE__BUILDID_DEBUGINFO to work
+ static noinline int test_function(void)
+ {
