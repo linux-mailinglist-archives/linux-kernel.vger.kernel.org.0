@@ -2,125 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E722178CAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C8B0178CA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387672AbgCDIlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:41:20 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45548 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725271AbgCDIlT (ORCPT
+        id S1728894AbgCDIj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:39:28 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:54480 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727026AbgCDIj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:41:19 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0248fJrg076181;
-        Wed, 4 Mar 2020 02:41:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583311279;
-        bh=rh+u6hRecxH1UwjsGXN0erDuw+ULRQgmjFGSRajyK60=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=MMAktQ/ejoPhBWD9wssZfw0fGIRODO1BIfxEJ8tYQBJra4cpFunSZK8VepBGBKuAp
-         4tvCoi7i2/YY/g9dmBi0YVL+T/uvWqTROk8s1aJFmN+xTYd6M9oC4vbQup67hN5CoW
-         d/bQqROvl6yDwEp75+nUPDgim5XJjkU+VXr8pXNA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0248fI3C008404
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Mar 2020 02:41:18 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Mar
- 2020 02:41:18 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Mar 2020 02:41:18 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0248fGQt038530;
-        Wed, 4 Mar 2020 02:41:17 -0600
-Subject: Re: [Patch] media: ti-vpe: cal: fix a kernel oops when unloading
- module
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-To:     Benoit Parrot <bparrot@ti.com>, Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20200303172629.21339-1-bparrot@ti.com>
- <4010c13f-6a32-f3c3-5b6d-62a4e3782c64@ti.com>
-Message-ID: <f7f6dd87-147f-b9e9-aaa7-c063a8f3c11e@ti.com>
-Date:   Wed, 4 Mar 2020 10:41:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 4 Mar 2020 03:39:28 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0248UCGJ020216;
+        Wed, 4 Mar 2020 03:39:25 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ygm52abvb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Mar 2020 03:39:25 -0500
+Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 0248dNFX036291
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Wed, 4 Mar 2020 03:39:24 -0500
+Received: from SCSQCASHYB7.ad.analog.com (10.77.17.133) by
+ SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 4 Mar 2020 00:39:22 -0800
+Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by
+ SCSQCASHYB7.ad.analog.com (10.77.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 4 Mar 2020 00:39:22 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
+ (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Wed, 4 Mar 2020 00:39:22 -0800
+Received: from saturn.ad.analog.com ([10.48.65.112])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 0248dJYq021800;
+        Wed, 4 Mar 2020 03:39:19 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>, <eugen.hristev@microchip.com>,
+        <ludovic.desroches@microchip.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v2 1/2] iio: at91-sama5d2_adc: split at91_adc_current_chan_is_touch() helper
+Date:   Wed, 4 Mar 2020 10:42:18 +0200
+Message-ID: <20200304084219.20810-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <4010c13f-6a32-f3c3-5b6d-62a4e3782c64@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-04_01:2020-03-03,2020-03-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0
+ impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2020 10:40, Tomi Valkeinen wrote:
-> On 03/03/2020 19:26, Benoit Parrot wrote:
->> After the switch to use v4l2_async_notifier_add_subdev() and
->> v4l2_async_notifier_cleanup(), unloading the ti_cal module would casue a
->> kernel oops.
->>
->> This was root cause to the fact that v4l2_async_notifier_cleanup() tries
->> to kfree the asd pointer passed into v4l2_async_notifier_add_subdev().
->>
->> In our case the asd reference was from a statically allocated struct.
->> So in effect v4l2_async_notifier_cleanup() was trying to free a pointer
->> that was not kalloc.
->>
->> So here we switch to using a kzalloc struct instead of a static one.
->>
->> Fixes: d079f94c9046 ("media: platform: Switch to v4l2_async_notifier_add_subdev")
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Benoit Parrot <bparrot@ti.com>
->> ---
->>   drivers/media/platform/ti-vpe/cal.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
->> index 6d4cbb8782ed..18fe2cb9dd17 100644
->> --- a/drivers/media/platform/ti-vpe/cal.c
->> +++ b/drivers/media/platform/ti-vpe/cal.c
->> @@ -372,8 +372,6 @@ struct cal_ctx {
->>       struct v4l2_subdev    *sensor;
->>       struct v4l2_fwnode_endpoint    endpoint;
->> -    struct v4l2_async_subdev asd;
->> -
->>       struct v4l2_fh        fh;
->>       struct cal_dev        *dev;
->>       struct cc_data        *cc;
->> @@ -2032,7 +2030,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
->>       parent = pdev->dev.of_node;
->> -    asd = &ctx->asd;
->>       endpoint = &ctx->endpoint;
->>       ep_node = NULL;
->> @@ -2040,6 +2037,10 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
->>       sensor_node = NULL;
->>       ret = -EINVAL;
->> +    asd = kzalloc(sizeof(*asd), GFP_KERNEL);
->> +    if (!asd)
->> +        goto cleanup_exit;
->> +
->>       ctx_dbg(3, ctx, "Scanning Port node for csi2 port: %d\n", inst);
->>       for (index = 0; index < CAL_NUM_CSI2_PORTS; index++) {
->>           port = of_get_next_port(parent, port);
->>
-> 
-> Thanks, this fixes the crash for me.
-> 
-> It does look a bit odd that something is allocated with kzalloc, and then it's freed somewhere 
-> inside v4l2_async_notifier_cleanup, though. But if that's how it supposed to be used, looks fine to me.
+This change moves the logic to check if the current channel is the
+touchscreen channel to a separate helper.
+This reduces some code duplication, but the main intent is to re-use this
+in the next patches.
 
-Well, sent that a few seconds too early... With this patch, I see kmemleaks.
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
 
-  Tomi
+This patchset continues discussion:
+   https://lore.kernel.org/linux-iio/20191023082508.17583-1-alexandru.ardelean@analog.com/
+Apologies for the delay.
 
+Changelog v1 -> v2:
+* added patch 'iio: at91-sama5d2_adc: split at91_adc_current_chan_is_touch()
+  helper'
+* renamed at91_adc_buffer_postenable() -> at91_adc_buffer_preenable()
+  - at91_adc_buffer_postenable() - now just calls
+    iio_triggered_buffer_postenable() if the channel isn't the touchscreen
+    channel
+* renamed at91_adc_buffer_predisable() -> at91_adc_buffer_postdisable()
+  - at91_adc_buffer_predisable() - now just calls
+    iio_triggered_buffer_predisable() if the channel isn't the touchscreen
+    channel
+
+ drivers/iio/adc/at91-sama5d2_adc.c | 31 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+index a5c7771227d5..f2a74c47c768 100644
+--- a/drivers/iio/adc/at91-sama5d2_adc.c
++++ b/drivers/iio/adc/at91-sama5d2_adc.c
+@@ -873,18 +873,24 @@ static int at91_adc_dma_start(struct iio_dev *indio_dev)
+ 	return 0;
+ }
+ 
++static bool at91_adc_current_chan_is_touch(struct iio_dev *indio_dev)
++{
++	struct at91_adc_state *st = iio_priv(indio_dev);
++
++	return !!bitmap_subset(indio_dev->active_scan_mask,
++			       &st->touch_st.channels_bitmask,
++			       AT91_SAMA5D2_MAX_CHAN_IDX + 1);
++}
++
+ static int at91_adc_buffer_postenable(struct iio_dev *indio_dev)
+ {
+ 	int ret;
+ 	struct at91_adc_state *st = iio_priv(indio_dev);
+ 
+ 	/* check if we are enabling triggered buffer or the touchscreen */
+-	if (bitmap_subset(indio_dev->active_scan_mask,
+-			  &st->touch_st.channels_bitmask,
+-			  AT91_SAMA5D2_MAX_CHAN_IDX + 1)) {
+-		/* touchscreen enabling */
++	if (at91_adc_current_chan_is_touch(indio_dev))
+ 		return at91_adc_configure_touch(st, true);
+-	}
++
+ 	/* if we are not in triggered mode, we cannot enable the buffer. */
+ 	if (!(indio_dev->currentmode & INDIO_ALL_TRIGGERED_MODES))
+ 		return -EINVAL;
+@@ -906,12 +912,9 @@ static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
+ 	u8 bit;
+ 
+ 	/* check if we are disabling triggered buffer or the touchscreen */
+-	if (bitmap_subset(indio_dev->active_scan_mask,
+-			  &st->touch_st.channels_bitmask,
+-			  AT91_SAMA5D2_MAX_CHAN_IDX + 1)) {
+-		/* touchscreen disable */
++	if (at91_adc_current_chan_is_touch(indio_dev))
+ 		return at91_adc_configure_touch(st, false);
+-	}
++
+ 	/* if we are not in triggered mode, nothing to do here */
+ 	if (!(indio_dev->currentmode & INDIO_ALL_TRIGGERED_MODES))
+ 		return -EINVAL;
+@@ -1886,14 +1889,10 @@ static __maybe_unused int at91_adc_resume(struct device *dev)
+ 		return 0;
+ 
+ 	/* check if we are enabling triggered buffer or the touchscreen */
+-	if (bitmap_subset(indio_dev->active_scan_mask,
+-			  &st->touch_st.channels_bitmask,
+-			  AT91_SAMA5D2_MAX_CHAN_IDX + 1)) {
+-		/* touchscreen enabling */
++	if (at91_adc_current_chan_is_touch(indio_dev))
+ 		return at91_adc_configure_touch(st, true);
+-	} else {
++	else
+ 		return at91_adc_configure_trigger(st->trig, true);
+-	}
+ 
+ 	/* not needed but more explicit */
+ 	return 0;
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.20.1
+
