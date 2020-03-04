@@ -2,162 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E08C2179796
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78592179799
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:10:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388171AbgCDSKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 13:10:20 -0500
-Received: from muru.com ([72.249.23.125]:58812 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbgCDSKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 13:10:20 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 471448185;
-        Wed,  4 Mar 2020 18:11:03 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 10:10:14 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH v2 1.5/5] clocksource: timer-ti-dm: Prepare for using cpuidle
-Message-ID: <20200304181014.GY37466@atomide.com>
-References: <20200228095346.32177-1-lokeshvutla@ti.com>
- <20200228095346.32177-2-lokeshvutla@ti.com>
+        id S2388250AbgCDSKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 13:10:23 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33527 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388189AbgCDSKW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 13:10:22 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a25so5285872wmm.0;
+        Wed, 04 Mar 2020 10:10:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6K5mSx3hLH2eC6TJDpwRSBd6DNa0fXfEXM9YJbhKTUo=;
+        b=X/blQgC7janOQG/uErT1N7XiZKBg6Xy1ve+jBJwpYUjlyKMs9GvWC+KJEfUZ7NezSz
+         BsLAtkRSDgNKrjZJ7C06qL2IEXqsuZt7/j+AUmCMo2b23j65c/O9zztUjMm6ucfrHAJc
+         FQ5Nprvk211O8Fg7CjADu9+RHBsf125RuRD6lU/PO8OHIUUGzD2PmlHPglV+paYnQTo8
+         BA58lHlZDhkvb0Z6Wlhh3Qs23+7kbSzABxwcwDZq3LkCvoLsjTEVEOxFHmem3cffj9/C
+         GJ5X4QO1cD5jT76F8pknl8CTKL+YJEQn65raHOV3mQXYjCtYAzUKooERz3S7G0xM29PW
+         z0LQ==
+X-Gm-Message-State: ANhLgQ1aUHQiOtqbmZ20K+tJNxlBB0Y/oNWQA3PqWfDHyL58bvtOYw2m
+        OA20a/56bYFb1SLFk1w1qAY=
+X-Google-Smtp-Source: ADFU+vv8F7j77Sv2x6A2y7G2otTcm4JBrH0lQ9MmEphsTYfNiML6p42pZ9rYylq3kZ7sK2hY/cJjww==
+X-Received: by 2002:a1c:750e:: with SMTP id o14mr4618729wmc.156.1583345420226;
+        Wed, 04 Mar 2020 10:10:20 -0800 (PST)
+Received: from debian (41.142.6.51.dyn.plus.net. [51.6.142.41])
+        by smtp.gmail.com with ESMTPSA id z12sm3468853wrl.48.2020.03.04.10.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 10:10:19 -0800 (PST)
+Date:   Wed, 4 Mar 2020 18:10:17 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: hv: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200304181017.epqvhmtegefb4eba@debian>
+References: <20200213005048.GA9662@embeddedor.com>
+ <HK0P153MB0148FB68FCBAE908CA5991C3BF1A0@HK0P153MB0148.APCP153.PROD.OUTLOOK.COM>
+ <20200304175509.dwhn63omfzewaukv@debian>
+ <20200304180635.GA21844@e121166-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200228095346.32177-2-lokeshvutla@ti.com>
+In-Reply-To: <20200304180635.GA21844@e121166-lin.cambridge.arm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's add runtime_suspend and resume functions and atomic enabled
-flag. This way we can use these when converting to use cpuidle
-for saving and restoring device context.
+On Wed, Mar 04, 2020 at 06:06:35PM +0000, Lorenzo Pieralisi wrote:
+> On Wed, Mar 04, 2020 at 05:55:09PM +0000, Wei Liu wrote:
+> > On Thu, Feb 13, 2020 at 03:43:40AM +0000, Dexuan Cui wrote:
+> > > > From: linux-hyperv-owner@vger.kernel.org
+> > > > <linux-hyperv-owner@vger.kernel.org> On Behalf Of Gustavo A. R. Silva
+> > > > Sent: Wednesday, February 12, 2020 4:51 PM
+> > > >  ...
+> > > > The current codebase makes use of the zero-length array language
+> > > > extension to the C90 standard, but the preferred mechanism to declare
+> > > > variable-length types such as these ones is a flexible array member[1][2],
+> > > > introduced in C99:
+> > > > 
+> > > > struct foo {
+> > > >         int stuff;
+> > > >         struct boo array[];
+> > > > };
+> > > > 
+> > > > By making use of the mechanism above, we will get a compiler warning
+> > > > in case the flexible array does not occur last in the structure, which
+> > > > will help us prevent some kind of undefined behavior bugs from being
+> > > > inadvertently introduced[3] to the codebase from now on.
+> > > > 
+> > > > Also, notice that, dynamic memory allocations won't be affected by
+> > > > this change:
+> > > > 
+> > > > "Flexible array members have incomplete type, and so the sizeof operator
+> > > > may not be applied. As a quirk of the original implementation of
+> > > > zero-length arrays, sizeof evaluates to zero."[1]
+> > > > 
+> > > > This issue was found with the help of Coccinelle.
+> > > 
+> > > Looks good to me. Thanks, Gustavo!
+> > >  
+> > > Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> > > 
+> > 
+> > Lorenzo, will you be picking up this patch? It seems to me you've been
+> > handling patches to pci-hyperv.c. This patch is not yet in pci/hv branch
+> > in your repository.
+> > 
+> > Let me know what you think.
+> 
+> I shall pick it up, I checked patchwork and it was erroneously
+> assigned to Bjorn, that's why I have not taken it yet.
+> 
+> Fixed now, apologies, I will merge it shortly.
 
-And we need to maintain the driver state in the driver as documented
-in "9. Autosuspend, or automatically-delayed suspends" in the
-Documentation/power/runtime_pm.rst document related to using driver
-private lock and races with runtime_suspend().
+Thanks for picking it up.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clocksource/timer-ti-dm.c | 36 ++++++++++++++++++++++++++-----
- include/clocksource/timer-ti-dm.h |  1 +
- 2 files changed, 32 insertions(+), 5 deletions(-)
+Wei.
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -491,7 +491,7 @@ __u32 omap_dm_timer_modify_idlect_mask(__u32 inputmask)
- 
- int omap_dm_timer_trigger(struct omap_dm_timer *timer)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not available or enabled.\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -690,7 +690,7 @@ static unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer)
- {
- 	unsigned int l;
- 
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not available or enabled.\n", __func__);
- 		return 0;
- 	}
-@@ -702,7 +702,7 @@ static unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer)
- 
- static int omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int value)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev)))
-+	if (unlikely(!timer || !atomic_read(&timer->enabled)))
- 		return -EINVAL;
- 
- 	__omap_dm_timer_write_status(timer, value);
-@@ -712,7 +712,7 @@ static int omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int
- 
- static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not iavailable or enabled.\n", __func__);
- 		return 0;
- 	}
-@@ -722,7 +722,7 @@ static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer)
- 
- static int omap_dm_timer_write_counter(struct omap_dm_timer *timer, unsigned int value)
- {
--	if (unlikely(!timer || pm_runtime_suspended(&timer->pdev->dev))) {
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
- 		pr_err("%s: timer not available or enabled.\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -750,6 +750,29 @@ int omap_dm_timers_active(void)
- 	return 0;
- }
- 
-+static int __maybe_unused omap_dm_timer_runtime_suspend(struct device *dev)
-+{
-+	struct omap_dm_timer *timer = dev_get_drvdata(dev);
-+
-+	atomic_set(&timer->enabled, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused omap_dm_timer_runtime_resume(struct device *dev)
-+{
-+	struct omap_dm_timer *timer = dev_get_drvdata(dev);
-+
-+	atomic_set(&timer->enabled, 1);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops omap_dm_timer_pm_ops = {
-+	SET_RUNTIME_PM_OPS(omap_dm_timer_runtime_suspend,
-+			   omap_dm_timer_runtime_resume, NULL)
-+};
-+
- static const struct of_device_id omap_timer_match[];
- 
- /**
-@@ -800,6 +823,8 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 	if (IS_ERR(timer->io_base))
- 		return PTR_ERR(timer->io_base);
- 
-+	platform_set_drvdata(pdev, timer);
-+
- 	if (dev->of_node) {
- 		if (of_find_property(dev->of_node, "ti,timer-alwon", NULL))
- 			timer->capability |= OMAP_TIMER_ALWON;
-@@ -946,6 +971,7 @@ static struct platform_driver omap_dm_timer_driver = {
- 	.driver = {
- 		.name   = "omap_timer",
- 		.of_match_table = of_match_ptr(omap_timer_match),
-+		.pm = &omap_dm_timer_pm_ops,
- 	},
- };
- 
-diff --git a/include/clocksource/timer-ti-dm.h b/include/clocksource/timer-ti-dm.h
---- a/include/clocksource/timer-ti-dm.h
-+++ b/include/clocksource/timer-ti-dm.h
-@@ -105,6 +105,7 @@ struct omap_dm_timer {
- 	void __iomem	*pend;		/* write pending */
- 	void __iomem	*func_base;	/* function register base */
- 
-+	atomic_t enabled;
- 	unsigned long rate;
- 	unsigned reserved:1;
- 	unsigned posted:1;
--- 
-2.25.1
+> 
+> Lorenzo
