@@ -2,135 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6846179B6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 23:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E58E4179B80
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 23:04:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388566AbgCDWCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 17:02:16 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39651 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388543AbgCDWCJ (ORCPT
+        id S2388445AbgCDWEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 17:04:14 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:46574 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728955AbgCDWEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 17:02:09 -0500
-Received: by mail-wm1-f68.google.com with SMTP id j1so3495259wmi.4;
-        Wed, 04 Mar 2020 14:02:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KdIcE5d8Uw19DbXJrimdSx5cb22qFvX6ysB7MYCKIMM=;
-        b=DT74En0t8WP6H/Hexamx0rxCsqFPiiha4yzOdsehfam6IQBtGInXvKUFXioP5nUlSc
-         poRsG9gB/iKu9aUyo4BV3OiWHggC+lF5BAdgv4OWBKzkt43Lkp6l+Z93hRtKrHKTtInp
-         clG4/BfBouQT4C8CIZXzutBdqGBJG1wkUMF8M60X/sTGWL/dn4R63gi9ieQJzlIpdfU7
-         nSn8McAArL3b8QLNSUTvkhx0CRSbC3hRK6XhrMymlW6D99UJSDTJz1WZv1tsFIY6xpeE
-         N1Z06otI6bhcnCrFx4gnFri2Jg4/6PRCYtIaxmbZ+pm+R+00U5fo+o0NZbuG+61vpKXE
-         7I/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=KdIcE5d8Uw19DbXJrimdSx5cb22qFvX6ysB7MYCKIMM=;
-        b=SoFx1+n3gZcxdk7bsfdlWEcpbcxS5NLmGWsUJU6d660cDMh0cjB7iJh8QG+dRCggdV
-         uY5wtN41qDKQ+Euy2Q3e+Io7wa19YwRwodvwOUYonZjHsm5QuXfCrR4rjuZgyskl0k7E
-         wowIs9vmk7ePgPEYqkA4VyKo0D50FYrojoWBGNVnVXrwfkX5kBIj8SHTAYL/GOxeMuOh
-         zquCxkabMNfyr71D6bmru+fWK089q0A9wzCLV6Of8bixO8pDiCJUFv21hpDqCsRPCtex
-         3EDYewkOZcnLPdhthl+9o3w7hvMcs83a0tf4Vef02Px9tEyXhY8/BGSHgG3wXUR0ucro
-         e/7w==
-X-Gm-Message-State: ANhLgQ3+ypzmzKU+lN97DWXI0fY9RF42oK590Sps1E9Rw3/P32MGbL2W
-        2HYzeXuvLUgQz1JolVIHD7o=
-X-Google-Smtp-Source: ADFU+vs5VXV7lI5oAktJlLp9+JLzZTPIciZWhBuqWaMxv27GlCHOahYTOfLiGOWZ1UIwAfK67+gJWg==
-X-Received: by 2002:a7b:c204:: with SMTP id x4mr5516319wmi.20.1583359327911;
-        Wed, 04 Mar 2020 14:02:07 -0800 (PST)
-Received: from localhost.localdomain ([79.115.60.40])
-        by smtp.gmail.com with ESMTPSA id z2sm36776402wrq.95.2020.03.04.14.02.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 14:02:07 -0800 (PST)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eha@deif.com, angelo@sysam.it, andrew.smirnov@gmail.com,
-        gustavo@embeddedor.com, weic@nvidia.com, mhosny@nvidia.com
-Subject: [PATCH 12/12] spi: spi-fsl-dspi: Take software timestamp in dspi_fifo_write
-Date:   Thu,  5 Mar 2020 00:00:44 +0200
-Message-Id: <20200304220044.11193-13-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200304220044.11193-1-olteanv@gmail.com>
-References: <20200304220044.11193-1-olteanv@gmail.com>
+        Wed, 4 Mar 2020 17:04:13 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C288715AD58E7;
+        Wed,  4 Mar 2020 14:04:12 -0800 (PST)
+Date:   Wed, 04 Mar 2020 14:04:10 -0800 (PST)
+Message-Id: <20200304.140410.731261448085906331.davem@davemloft.net>
+To:     vithampi@vmware.com
+Cc:     richardcochran@gmail.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Pv-drivers@vmware.com,
+        virtualization@lists.linux-foundation.org, x86@kernel.org,
+        thellstrom@vmware.com, jgross@suse.com
+Subject: Re: [PATCH RESEND] ptp: add VMware virtual PTP clock driver
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200228053230.GA457139@sc2-cpbu2-b0737.eng.vmware.com>
+References: <20200228053230.GA457139@sc2-cpbu2-b0737.eng.vmware.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 04 Mar 2020 14:04:13 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+From: Vivek Thampi <vithampi@vmware.com>
+Date: Fri, 28 Feb 2020 05:32:46 +0000
 
-Although the SPI system timestamps are supposed to reflect the moment
-that the peripheral has received a word rather than the moment when the
-CPU has enqueued that word to the FIFO, in practice it is easier to just
-record the latter time than the former (with a smaller error).
+> Add a PTP clock driver called ptp_vmw, for guests running on VMware ESXi
+> hypervisor. The driver attaches to a VMware virtual device called
+> "precision clock" that provides a mechanism for querying host system time.
+> Similar to existing virtual PTP clock drivers (e.g. ptp_kvm), ptp_vmw
+> utilizes the kernel's PTP hardware clock API to implement a clock device
+> that can be used as a reference in Chrony for synchronizing guest time with
+> host.
+> 
+> The driver is only applicable to x86 guests running in VMware virtual
+> machines with precision clock virtual device present. It uses a VMware
+> specific hypercall mechanism to read time from the device.
+> 
+> Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+> Signed-off-by: Vivek Thampi <vithampi@vmware.com>
+> ---
+>  Based on feedback, resending patch to include a broader audience.
 
-With the recent migration of TCFQ users from poll back to interrupt mode
-(this time for XSPI FIFO), it's wiser to keep the interrupt latency
-outside of the measurement of the PTP system timestamp itself. If there
-proves to be any constant offset that requires static compensation, that
-can always be added later. So far that does not appear to be the case at
-least on the LS1021A-TSN board, where testing shows that the phc2sys
-offset is able to remain within +/- 200 ns even after 68 hours of
-testing.
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/spi/spi-fsl-dspi.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index d5983be32180..b5ab0afbfa26 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -838,19 +838,18 @@ static void dspi_setup_accel(struct fsl_dspi *dspi)
- 
- static void dspi_fifo_write(struct fsl_dspi *dspi)
- {
-+	struct spi_transfer *xfer = dspi->cur_transfer;
-+	struct spi_message *msg = dspi->cur_msg;
-+	int bytes_sent;
-+
- 	dspi_setup_accel(dspi);
- 
-+	spi_take_timestamp_pre(dspi->ctlr, xfer, dspi->progress, !dspi->irq);
-+
- 	if (dspi->devtype_data->trans_mode == DSPI_EOQ_MODE)
- 		dspi_eoq_fifo_write(dspi);
- 	else
- 		dspi_xspi_fifo_write(dspi);
--}
--
--static int dspi_rxtx(struct fsl_dspi *dspi)
--{
--	struct spi_transfer *xfer = dspi->cur_transfer;
--	struct spi_message *msg = dspi->cur_msg;
--	int bytes_sent;
- 
- 	/* Update total number of bytes that were transferred */
- 	bytes_sent = dspi->words_in_flight * dspi->oper_word_size;
-@@ -859,16 +858,16 @@ static int dspi_rxtx(struct fsl_dspi *dspi)
- 
- 	spi_take_timestamp_post(dspi->ctlr, dspi->cur_transfer,
- 				dspi->progress, !dspi->irq);
-+}
- 
-+static int dspi_rxtx(struct fsl_dspi *dspi)
-+{
- 	dspi_fifo_read(dspi);
- 
- 	if (!dspi->len)
- 		/* Success! */
- 		return 0;
- 
--	spi_take_timestamp_pre(dspi->ctlr, dspi->cur_transfer,
--			       dspi->progress, !dspi->irq);
--
- 	dspi_fifo_write(dspi);
- 
- 	return -EINPROGRESS;
--- 
-2.17.1
-
+If it's just providing a read of an accurate timesource, I think it's kinda
+pointless to provide a full PTP driver for it.
