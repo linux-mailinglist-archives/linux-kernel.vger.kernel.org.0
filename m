@@ -2,75 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938EA1794EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EED7D1794EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 17:22:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388199AbgCDQVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:21:05 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34945 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgCDQVD (ORCPT
+        id S1729796AbgCDQV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 11:21:58 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33101 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgCDQV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:21:03 -0500
-Received: by mail-qt1-f194.google.com with SMTP id v15so1792702qto.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 08:21:03 -0800 (PST)
+        Wed, 4 Mar 2020 11:21:58 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c20so2023229lfb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 08:21:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dA2hYD+OudMyLEYw9vGPZKppB+9NldT/3jWoHjIzdlg=;
-        b=eamRAbG0xhZrCMRXKsXIG0E8aFb8uc1gEQfEi/UAcZdwr3itU9ulHanDYM8rwKFiCj
-         DAvEgoTXE9h3DqPk9xZKKjj390D8KRXaTDxGFsSlAXU8HS2VDwFXz7f+SwvL9OkaURet
-         HGYi0qvzLxg+mzMb5BlVEyZHs/pEccvjB0+nmd+HI2mhqheNOMfS0dSXfF2aTJ5sybHf
-         H3bG6GUp2sQobHfUtd5w926RrDUSX6qHJi7ZIqH1yuUw3qVAFdC7VnCYez/1HeQrxkkQ
-         SWWkz5JoP+6kHZZ0wXqz7C5et0IhHr/vilu3kGITpHEWJi+uVBjjwcm8bR3bXaErRK+a
-         EgPw==
+        h=from:to:cc:subject:date:message-id;
+        bh=O24KKwE3bCNAXE/AxZ3sPbGF9KCAkXxe3BjPmV9rOX0=;
+        b=EO+9SIDWbT6LZnKAEg2mm+Jw4k8sOnlYlZ9tgunN/Co1d9dVdLGkLI6P4phqXvRH8/
+         59o564h/u1w1zeeO2HPhyo1ELWswxne/hSkVEKyTpVoLPDAg1aiNQ8setYoGCHqKtEc3
+         JSpS+/yZMdwQiEMARmvBCkfZ/zqUlz7Tr0gdbMwjBHivE/DEbE6ii8m1FoaonnMobmH4
+         ncCniwywa69Ox/6RE8S2td0tCDdlRJadj+gfK4N5eJxjCMFayAqYWgnyuC0BMFww2zRW
+         JGGJSh1+MmRA0F7wC7rALOi/wuMvoB47ZTXkGlzXLwBjRNdmMD9OcJhsbMKz5euWE4y8
+         /iaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=dA2hYD+OudMyLEYw9vGPZKppB+9NldT/3jWoHjIzdlg=;
-        b=rXgI+Eff3Jq+YK98sv9B4H2xTcJOzKOPzMX5zRaQiMd9qnGWzf24ZLaKKbfucYrIDr
-         PgsM0TvL0DZDFwTCX937v08X4W8v6E2HrMIVMdo9uokColo9UIF5Jae4ZI9JdQNHSNUQ
-         U3hU8Bulp/RVHNeBU4ruQ5Hbv2SVfWZRVB3wNKbO1MhFTqizxIfiWrvsiiUQDfvo8MBr
-         4c2iCLsItjPMwzHu2U2GeUUlbI2VNbluEJuTJaUKlDnCTiSsI4dMwEi8MEye4bm8Un3E
-         xwvpFdgWEOmISYXaghSzQhOqqE8TCDl2zb9y6l7+b/YVB/p3QGSgmej9of0mgZ7aINgq
-         9j5Q==
-X-Gm-Message-State: ANhLgQ3KO3yl7SpIftcZNekkOUeyYykRS5bRieM6oXv21WHi+kY1Lj3I
-        33Fg4fssx98DuyIyi4sv1gk=
-X-Google-Smtp-Source: ADFU+vvhJ7nC607fUEZnIeQ3XKKD0XsCUc0dD50xdDho/SyOSc8B/zFdXKlt884z9ucWNtqwzUf6lA==
-X-Received: by 2002:ac8:76d7:: with SMTP id q23mr3124541qtr.198.1583338862563;
-        Wed, 04 Mar 2020 08:21:02 -0800 (PST)
-Received: from localhost ([71.172.127.161])
-        by smtp.gmail.com with ESMTPSA id 4sm5798235qkl.79.2020.03.04.08.21.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=O24KKwE3bCNAXE/AxZ3sPbGF9KCAkXxe3BjPmV9rOX0=;
+        b=JxsDKrLscdd2xGtNiuURlS5dATy4iTOWuUIJDAdGMZ8k9MGBtaauaSB6WXbO40o/Mv
+         ga7qspOzWZNcoXELuVcMh7V/Aljzq5DSH7PdqAFGRhmBRuFh+HwJrgYHBuARrb7cbfMs
+         sjT+5Vs8CuTb8F5k74YBqcgm8ohYhAMC88sNv6afvH8gQ8FXYZynVEYuUpSAJefNuNke
+         KZ5PjvaP/diMYMJUG+50rZrK+eZ6ksitedmYlrMw1Y+CK1PCv1xxdle3RzrRiedBxdZv
+         ryBhkHwDi2WIEXUWGoQ+UYOFS2zfGRa1vM/M/xi6xQvPMJnyGuhphv2WM/D/iOJ/pFO7
+         Kpug==
+X-Gm-Message-State: ANhLgQ1PuPy9zkFg9mX5ir6fsq98p66b6e/K+A0UOxgcVRKBpilhciRb
+        d7RZOLGdn2vdqPntcOQA1yg=
+X-Google-Smtp-Source: ADFU+vu8XOFeWJMwK9k3vQ9qTzW4w5iJib5+Lj2Ig0FCvGWB9de+h99yB+IrqJPyd6/c0UmhasAToA==
+X-Received: by 2002:ac2:5f62:: with SMTP id c2mr2517936lfc.207.1583338916346;
+        Wed, 04 Mar 2020 08:21:56 -0800 (PST)
+Received: from localhost.localdomain (188.146.98.66.nat.umts.dynamic.t-mobile.pl. [188.146.98.66])
+        by smtp.gmail.com with ESMTPSA id w24sm13445961ljh.26.2020.03.04.08.21.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 08:21:01 -0800 (PST)
-Date:   Wed, 4 Mar 2020 11:21:00 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Yu Chen <chen.yu@easystack.cn>
-Cc:     linux-kernel@vger.kernel.org, 33988979@163.com
-Subject: Re: [PATCH] workqueue: Make workqueue_init*() return void
-Message-ID: <20200304162100.GE189690@mtj.thefacebook.com>
-References: <20200223072852.3954-1-chen.yu@easystack.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200223072852.3954-1-chen.yu@easystack.cn>
+        Wed, 04 Mar 2020 08:21:55 -0800 (PST)
+From:   mateusznosek0@gmail.com
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Nosek <mateusznosek0@gmail.com>, akpm@linux-foundation.org,
+        vbabka@suse.cz, mgorman@techsingularity.net
+Subject: [PATCH v2] mm: Micro-optimisation: Save two branches on hot - page allocation path
+Date:   Wed,  4 Mar 2020 17:21:18 +0100
+Message-Id: <20200304162118.14784-1-mateusznosek0@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 03:28:52PM +0800, Yu Chen wrote:
-> The return values of workqueue_init() and workqueue_early_int() are 
-> always 0, and there is no usage of their return value.  So just make 
-> them return void.
-> 
-> Signed-off-by: Yu Chen <chen.yu@easystack.cn>
+From: Mateusz Nosek <mateusznosek0@gmail.com>
 
-Applied to wq/for-5.7.
+This patch makes ALLOC_KSWAPD equal to __GFP_KSWAPD_RECLAIM (cast to int).
 
-Thanks.
+Thanks to that code like:
+    if (gfp_mask & __GFP_KSWAPD_RECLAIM)
+	    alloc_flags |= ALLOC_KSWAPD;
+can be changed to:
+    alloc_flags |= (__force int) (gfp_mask &__GFP_KSWAPD_RECLAIM);
+Thanks to this one branch less is generated in the assembly.
 
+In case of ALLOC_KSWAPD flag two branches are saved, first one in code that
+always executes in the beginning of page allocation and the second one in
+loop in page allocator slowpath.
+
+Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/internal.h   |  2 +-
+ mm/page_alloc.c | 22 ++++++++++++++--------
+ 2 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/mm/internal.h b/mm/internal.h
+index 86372d164476..f089fc98fc08 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -535,7 +535,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+ #else
+ #define ALLOC_NOFRAGMENT	  0x0
+ #endif
+-#define ALLOC_KSWAPD		0x200 /* allow waking of kswapd */
++#define ALLOC_KSWAPD		0x800 /* allow waking of kswapd, __GFP_KSWAPD_RECLAIM set */
+ 
+ enum ttu_flags;
+ struct tlbflush_unmap_batch;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 79e950d76ffc..eed9f790eef7 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3609,10 +3609,13 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
+ static inline unsigned int
+ alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
+ {
+-	unsigned int alloc_flags = 0;
++	unsigned int alloc_flags;
+ 
+-	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
+-		alloc_flags |= ALLOC_KSWAPD;
++	/*
++	 * __GFP_KSWAPD_RECLAIM is assumed to be the same as ALLOC_KSWAPD
++	 * to save a branch.
++	 */
++	alloc_flags = (__force int) (gfp_mask & __GFP_KSWAPD_RECLAIM);
+ 
+ #ifdef CONFIG_ZONE_DMA32
+ 	if (!zone)
+@@ -4248,8 +4251,13 @@ gfp_to_alloc_flags(gfp_t gfp_mask)
+ {
+ 	unsigned int alloc_flags = ALLOC_WMARK_MIN | ALLOC_CPUSET;
+ 
+-	/* __GFP_HIGH is assumed to be the same as ALLOC_HIGH to save a branch. */
++	/*
++	 * __GFP_HIGH is assumed to be the same as ALLOC_HIGH
++	 * and __GFP_KSWAPD_RECLAIM is assumed to be the same as ALLOC_KSWAPD
++	 * to save two branches.
++	 */
+ 	BUILD_BUG_ON(__GFP_HIGH != (__force gfp_t) ALLOC_HIGH);
++	BUILD_BUG_ON(__GFP_KSWAPD_RECLAIM != (__force gfp_t) ALLOC_KSWAPD);
+ 
+ 	/*
+ 	 * The caller may dip into page reserves a bit more if the caller
+@@ -4257,7 +4265,8 @@ gfp_to_alloc_flags(gfp_t gfp_mask)
+ 	 * policy or is asking for __GFP_HIGH memory.  GFP_ATOMIC requests will
+ 	 * set both ALLOC_HARDER (__GFP_ATOMIC) and ALLOC_HIGH (__GFP_HIGH).
+ 	 */
+-	alloc_flags |= (__force int) (gfp_mask & __GFP_HIGH);
++	alloc_flags |= (__force int)
++		(gfp_mask & (__GFP_HIGH | __GFP_KSWAPD_RECLAIM));
+ 
+ 	if (gfp_mask & __GFP_ATOMIC) {
+ 		/*
+@@ -4274,9 +4283,6 @@ gfp_to_alloc_flags(gfp_t gfp_mask)
+ 	} else if (unlikely(rt_task(current)) && !in_interrupt())
+ 		alloc_flags |= ALLOC_HARDER;
+ 
+-	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
+-		alloc_flags |= ALLOC_KSWAPD;
+-
+ #ifdef CONFIG_CMA
+ 	if (gfpflags_to_migratetype(gfp_mask) == MIGRATE_MOVABLE)
+ 		alloc_flags |= ALLOC_CMA;
 -- 
-tejun
+2.17.1
+
