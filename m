@@ -2,132 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3866178D42
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:19:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9758E178D47
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 10:20:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387707AbgCDJTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 04:19:14 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26621 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728744AbgCDJTN (ORCPT
+        id S1729112AbgCDJUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 04:20:17 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46366 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728953AbgCDJUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 04:19:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583313552;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FI5hMv/arl4qoCeh1Zs40mfxO3eHqAJDiq6mor5YF9w=;
-        b=eS32pJK1Ef6kM9MYhZVDfjzO5BBI7ijWG/5LFq9jhd6IMKN1Ne7yc4cS7Y3h1eg2jyEb3j
-        IAl+VrBgMm/A7e3Q4nuOFwT1zG51hT5fosdBpiSp8e7hi0mF+o6ivTZ/MF0xZL97VxKHVi
-        2x+RgSz6l90C3csST5VkIy6Gomts9+g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-79-g8imVRMWMAy_rwQX3efAQg-1; Wed, 04 Mar 2020 04:19:08 -0500
-X-MC-Unique: g8imVRMWMAy_rwQX3efAQg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 650CF1005514;
-        Wed,  4 Mar 2020 09:19:06 +0000 (UTC)
-Received: from carbon (ovpn-200-19.brq.redhat.com [10.40.200.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 985709CA3;
-        Wed,  4 Mar 2020 09:18:56 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 10:18:53 +0100
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     brouer@redhat.com, Jakub Kicinski <kuba@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Luigi Rizzo <lrizzo@google.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdl?= =?UTF-8?B?bnNlbg==?= 
-        <toke@redhat.com>, David Miller <davem@davemloft.net>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        "Jubran, Samih" <sameehj@amazon.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH v4] netdev attribute to control xdpgeneric skb
- linearization
-Message-ID: <20200304101853.760034dc@carbon>
-In-Reply-To: <CA+FuTSeL_psqzpB6hxSh6f1HnO_SrpED=71Y3HcyDweG2Y3sdg@mail.gmail.com>
-References: <20200228105435.75298-1-lrizzo@google.com>
-        <20200228110043.2771fddb@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <CA+FuTSfd80pZroxtqZDsTeEz4FaronC=pdgjeaBBfYqqi5HiyQ@mail.gmail.com>
-        <3c27d9c0-eb17-b20f-2d10-01f3bdf8c0d6@iogearbox.net>
-        <20200303125020.2baef01b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <CA+FuTSeL_psqzpB6hxSh6f1HnO_SrpED=71Y3HcyDweG2Y3sdg@mail.gmail.com>
+        Wed, 4 Mar 2020 04:20:16 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1j9QCJ-0007fz-7g; Wed, 04 Mar 2020 10:20:11 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D1B151C21B0;
+        Wed,  4 Mar 2020 10:20:10 +0100 (CET)
+Date:   Wed, 04 Mar 2020 09:20:10 -0000
+From:   "tip-bot2 for Wen Yang" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] hrtimer: Cast explicitely to u32t in __ktime_divns()
+Cc:     Wen Yang <wenyang@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200130130851.29204-1-wenyang@linux.alibaba.com>
+References: <20200130130851.29204-1-wenyang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <158331361059.28353.6154145435691851897.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Mar 2020 16:10:14 -0500
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+The following commit has been merged into the timers/core branch of tip:
 
-> On Tue, Mar 3, 2020 at 3:50 PM Jakub Kicinski <kuba@kernel.org> wrote:
-> >
-> > On Tue, 3 Mar 2020 20:46:55 +0100 Daniel Borkmann wrote:  
-> > > Thus, when the data/data_end test fails in generic XDP, the user can
-> > > call e.g. bpf_xdp_pull_data(xdp, 64) to make sure we pull in as much as
-> > > is needed w/o full linearization and once done the data/data_end can be
-> > > repeated to proceed. Native XDP will leave xdp->rxq->skb as NULL, but
-> > > later we could perhaps reuse the same bpf_xdp_pull_data() helper for
-> > > native with skb-less backing. Thoughts?  
-> 
-> Something akin to pskb_may_pull sounds like a great solution to me.
-> 
-> Another approach would be a new xdp_action XDP_NEED_LINEARIZED that
-> causes the program to be restarted after linearization. But that is both
-> more expensive and less elegant.
-> 
-> Instead of a sysctl or device option, is this an optimization that
-> could be taken based on the program? Specifically, would XDP_FLAGS be
-> a path to pass a SUPPORT_SG flag along with the program? I'm not
-> entirely familiar with the XDP setup code, so this may be a totally
-> off. But from a quick read it seems like generic_xdp_install could
-> transfer such a flag to struct net_device.
-> 
-> > I'm curious why we consider a xdpgeneric-only addition. Is attaching
-> > a cls_bpf program noticeably slower than xdpgeneric?  
-> 
-> This just should not be xdp*generic* only, but allow us to use any XDP
-> with large MTU sizes and without having to disable GRO.
+Commit-ID:     38f7b0b1316d435f38ec3f2bb078897b7a1cfdea
+Gitweb:        https://git.kernel.org/tip/38f7b0b1316d435f38ec3f2bb078897b7a1cfdea
+Author:        Wen Yang <wenyang@linux.alibaba.com>
+AuthorDate:    Thu, 30 Jan 2020 21:08:51 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 04 Mar 2020 10:17:51 +01:00
 
-This is an important point: "should not be xdp*generic* only".
+hrtimer: Cast explicitely to u32t in __ktime_divns()
 
-I really want to see this work for XDP-native *first*, and it seems
-that with Daniel's idea, it can can also work for XDP-generic.  As Jakub
-also hinted, it seems strange that people are trying to implement this
-for XDP-generic, as I don't think there is any performance advantage
-over cls_bpf.  We really want this to work from XDP-native.
+do_div() does a 64-by-32 division at least on 32bit platforms, while the
+divisor 'div' is explicitly casted to unsigned long, thus 64-bit on 64-bit
+platforms.
 
+The code already ensures that the divisor is less than 2^32. Hence the
+proper cast type is u32.
 
-> I'd still like a way to be able to drop or modify packets before GRO,
-> or to signal that a type of packet should skip GRO.
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20200130130851.29204-1-wenyang@linux.alibaba.com
 
-That is a use-case, that we should remember to support.
+---
+ kernel/time/hrtimer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Samih (cc'ed) is working on adding multi-frame support[1] to XDP-native.
-Given the huge interest this thread shows, I think I will dedicate
-some of my time to help him out on the actual coding.
-
-For my idea to work[1], we first have storage space for the multi-buffer
-references, and I propose we use the skb_shared_info area, that is
-available anyhow for XDP_PASS that calls build_skb().  Thus, we first
-need to standardize across all XDP drivers, how and where this memory
-area is referenced/offset.
-
-
-[1] https://github.com/xdp-project/xdp-project/blob/master/areas/core/xdp-multi-buffer01-design.org
-[2] https://github.com/xdp-project/xdp-project/blob/master/areas/core/xdp-multi-buffer01-design.org#storage-space-for-multi-buffer-referencessegments
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
-
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 3a609e7..d74fdcd 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -311,7 +311,7 @@ s64 __ktime_divns(const ktime_t kt, s64 div)
+ 		div >>= 1;
+ 	}
+ 	tmp >>= sft;
+-	do_div(tmp, (unsigned long) div);
++	do_div(tmp, (u32) div);
+ 	return dclc < 0 ? -tmp : tmp;
+ }
+ EXPORT_SYMBOL_GPL(__ktime_divns);
