@@ -2,176 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E6BE1789F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25543178A03
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 06:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbgCDFTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 00:19:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:55908 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725283AbgCDFTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 00:19:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EE0E31B;
-        Tue,  3 Mar 2020 21:19:31 -0800 (PST)
-Received: from [10.163.1.88] (unknown [10.163.1.88])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DDBA3F6CF;
-        Tue,  3 Mar 2020 21:19:16 -0800 (PST)
-Subject: Re: [RFC 1/3] mm/vma: Define a default value for
- VM_DATA_DEFAULT_FLAGS
-To:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Salter <msalter@redhat.com>, Guo Ren <guoren@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Brian Cain <bcain@codeaurora.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Nick Hu <nickhu@andestech.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jeff Dike <jdike@addtoit.com>, Chris Zankel <chris@zankel.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org
-References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com>
- <1583131666-15531-2-git-send-email-anshuman.khandual@arm.com>
- <b243be54-7b5e-c6e9-fb68-46369d7d7aa4@suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <8b0f4c1b-f693-e139-4f66-ee4e1e88b95c@arm.com>
-Date:   Wed, 4 Mar 2020 10:49:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726137AbgCDFXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 00:23:35 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:59444 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgCDFXe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 00:23:34 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j9MVJ-00082y-7k; Tue, 03 Mar 2020 22:23:33 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j9MV6-0003OP-Vb; Tue, 03 Mar 2020 22:23:33 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Qian Cai <cai@lca.pw>
+Cc:     tglx@linutronix.de, oleg@redhat.com, linux-kernel@vger.kernel.org
+References: <20200304004336.960-1-cai@lca.pw>
+Date:   Tue, 03 Mar 2020 23:21:11 -0600
+In-Reply-To: <20200304004336.960-1-cai@lca.pw> (Qian Cai's message of "Tue, 3
+        Mar 2020 19:43:36 -0500")
+Message-ID: <877e00hf08.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <b243be54-7b5e-c6e9-fb68-46369d7d7aa4@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1j9MV6-0003OP-Vb;;;mid=<877e00hf08.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18+dbHGiv/ztm3INrbnp2Mweg4CvI0F3KI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *******
+X-Spam-Status: No, score=7.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMGappySubj_01,XMSubLong,XM_Palau_URI
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        *  5.0 XM_Palau_URI RAW: Palau .pw URI
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *******;Qian Cai <cai@lca.pw>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 11831 ms - load_scoreonly_sql: 0.11 (0.0%),
+        signal_user_changed: 4.3 (0.0%), b_tie_ro: 2.7 (0.0%), parse: 1.40
+        (0.0%), extract_message_metadata: 18 (0.2%), get_uri_detail_list: 2.1
+        (0.0%), tests_pri_-1000: 13 (0.1%), tests_pri_-950: 1.59 (0.0%),
+        tests_pri_-900: 1.19 (0.0%), tests_pri_-90: 23 (0.2%), check_bayes: 21
+        (0.2%), b_tokenize: 7 (0.1%), b_tok_get_all: 7 (0.1%), b_comp_prob:
+        2.2 (0.0%), b_tok_touch_all: 3.2 (0.0%), b_finish: 0.72 (0.0%),
+        tests_pri_0: 247 (2.1%), check_dkim_signature: 0.81 (0.0%),
+        check_dkim_adsp: 2.5 (0.0%), poll_dns_idle: 11463 (96.9%),
+        tests_pri_10: 2.1 (0.0%), tests_pri_500: 11514 (97.3%), rewrite_mail:
+        0.00 (0.0%)
+Subject: [PATCH timers/core] posix-cpu-timers: Put the task_struct in posix_cpu_timers_create
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Qian Cai <cai@lca.pw> writes:
+> The recent commit removed put_task_struct() in posix_cpu_timer_del()
+> results in many memory leaks like this,
+>
+> unreferenced object 0xc0000016d9b44480 (size 8192):
+>   comm "timer_create01", pid 57749, jiffies 4295163733 (age 6159.670s)
+>   hex dump (first 32 bytes):
+>     02 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<0000000056aca129>] copy_process+0x26c/0x18e0
+>     alloc_task_struct_node at kernel/fork.c:169
+>     (inlined by) dup_task_struct at kernel/fork.c:877
+>     (inlined by) copy_process at kernel/fork.c:1929
+>     [<00000000bdbbf9f8>] _do_fork+0xac/0xb20
+>     [<00000000dcb1c445>] __do_sys_clone+0x98/0xe0
+>     __do_sys_clone at kernel/fork.c:2591
+>     [<000000006c059205>] ppc_clone+0x8/0xc
+>     ppc_clone at arch/powerpc/kernel/entry_64.S:479
+>
 
-On 03/03/2020 10:55 PM, Vlastimil Babka wrote:
-> On 3/2/20 7:47 AM, Anshuman Khandual wrote:
->> There are many platforms with exact same value for VM_DATA_DEFAULT_FLAGS
->> This creates a default value for VM_DATA_DEFAULT_FLAGS in line with the
->> existing VM_STACK_DEFAULT_FLAGS. While here, also define some more macros
->> with standard VMA access flag combinations that are used frequently across
->> many platforms. Apart from simplification, this reduces code duplication
->> as well.
->>
->> Cc: Richard Henderson <rth@twiddle.net>
->> Cc: Vineet Gupta <vgupta@synopsys.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Mark Salter <msalter@redhat.com>
->> Cc: Guo Ren <guoren@kernel.org>
->> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
->> Cc: Brian Cain <bcain@codeaurora.org>
->> Cc: Tony Luck <tony.luck@intel.com>
->> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->> Cc: Michal Simek <monstr@monstr.eu>
->> Cc: Ralf Baechle <ralf@linux-mips.org>
->> Cc: Paul Burton <paulburton@kernel.org>
->> Cc: Nick Hu <nickhu@andestech.com>
->> Cc: Ley Foon Tan <ley.foon.tan@intel.com>
->> Cc: Jonas Bonn <jonas@southpole.se>
->> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Paul Walmsley <paul.walmsley@sifive.com>
->> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
->> Cc: Rich Felker <dalias@libc.org>
->> Cc: "David S. Miller" <davem@davemloft.net>
->> Cc: Guan Xuetao <gxt@pku.edu.cn>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Jeff Dike <jdike@addtoit.com>
->> Cc: Chris Zankel <chris@zankel.net>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: linux-alpha@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-snps-arc@lists.infradead.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-c6x-dev@linux-c6x.org
->> Cc: uclinux-h8-devel@lists.sourceforge.jp
->> Cc: linux-hexagon@vger.kernel.org
->> Cc: linux-ia64@vger.kernel.org
->> Cc: linux-m68k@lists.linux-m68k.org
->> Cc: linux-mips@vger.kernel.org
->> Cc: nios2-dev@lists.rocketboards.org
->> Cc: openrisc@lists.librecores.org
->> Cc: linux-parisc@vger.kernel.org
->> Cc: linuxppc-dev@lists.ozlabs.org
->> Cc: linux-riscv@lists.infradead.org
->> Cc: linux-s390@vger.kernel.org
->> Cc: linux-sh@vger.kernel.org
->> Cc: sparclinux@vger.kernel.org
->> Cc: linux-um@lists.infradead.org
->> Cc: linux-xtensa@linux-xtensa.org
->> Cc: linux-mm@kvack.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Nit:
-> 
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index b0e53ef13ff1..7a764ae6ab68 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -342,6 +342,21 @@ extern unsigned int kobjsize(const void *objp);
->>  /* Bits set in the VMA until the stack is in its final location */
->>  #define VM_STACK_INCOMPLETE_SETUP	(VM_RAND_READ | VM_SEQ_READ)
->>  
->> +#define TASK_EXEC ((current->personality & READ_IMPLIES_EXEC) ? VM_EXEC : 0)
->> +
->> +/* Common data flag combinations */
->> +#define VM_DATA_FLAGS_TSK_EXEC	(VM_READ | VM_WRITE | TASK_EXEC | \
->> +				 VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
->> +#define VM_DATA_FLAGS_NON_EXEC	(VM_READ | VM_WRITE | VM_MAYREAD | \
->> +				 VM_MAYWRITE | VM_MAYEXEC)
->> +#define VM_DATA_FLAGS_EXEC	(VM_READ | VM_WRITE | VM_EXEC | \
->> +				 VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
->> +
->> +#ifndef VM_DATA_DEFAULT_FLAGS		/* arch can override this */
->> +#define VM_DATA_DEFAULT_FLAGS	(VM_READ | VM_WRITE | VM_EXEC | \
->> +				 VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
-> 
-> Should you use VM_DATA_FLAGS_EXEC here? Yeah one more macro to expand, but it's
-> right above this.
+I forgot that get_task_for_clock called by posix_cpu_timer_create
+returns a reference to a task_struct.  Put that reference
+to avoid the leak.
 
-Sure, can do that.
+Link: https://lore.kernel.org/lkml/20200304004336.960-1-cai@lca.pw/
+Fixes: 672ebe8eb017a5 ("posix-cpu-timers: Store a reference to a pid not a task")
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ kernel/time/posix-cpu-timers.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->> +#endif
->> +
->>  #ifndef VM_STACK_DEFAULT_FLAGS		/* arch can override this */
->>  #define VM_STACK_DEFAULT_FLAGS VM_DATA_DEFAULT_FLAGS
->>  #endif
->>
-> 
-> 
-> 
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 1c21f2fd3d9b..cd88c1217224 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -405,6 +405,7 @@ static int posix_cpu_timer_create(struct k_itimer *new_timer)
+ 	new_timer->kclock = &clock_posix_cpu;
+ 	timerqueue_init(&new_timer->it.cpu.node);
+ 	new_timer->it.cpu.pid = get_task_pid(p, cpu_timer_pid_type(new_timer));
++	put_task_struct(p);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
