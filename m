@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076F617961A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FB2179625
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbgCDQ7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 11:59:17 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55642 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729638AbgCDQ7P (ORCPT
+        id S1729811AbgCDRBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:01:10 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49981 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729870AbgCDQ7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:59:15 -0500
+        Wed, 4 Mar 2020 11:59:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1583341155;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Er9GaMZzdsOf9xEWkAkuca5dLTt+xn8O50AMDB2wK58=;
-        b=OhmPYUqR0mJR/I1+1sSkVGdy9lUEMAfXQ7IP+zVottKtJ5/cbRWELM1E2BzHBUobrzIgjT
-        4sgHCP9F1PbYvl8sxr7alromq8P9L+yommQYFM1mRCYWGjsFV4hqd67pV364VuAmYKvQMo
-        q7FJNZ/hSmjeRdhiuUu8QkQQpqrBV1M=
+        bh=Ljm8bumTyb/4W3KUJ3oIqUfg3wZGMAKiuOFC8bfSc0U=;
+        b=DFBMGL+H8WNR4Lg2f5FkSsfFWsZ2aU5OOUdhg+1tRchz0MAz3CTU+LHDUYBt+VyE/HqaKz
+        vK21T90GjpEfC5UnNylQlYu12YS13dLGrCvl9BVirLxESpdnS9My/LpYLtELDrDk47eMyS
+        Eb0UM+ft5n/uMAUghrKrwVIDApUeOnM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-M5lHkdEMMj-8WUyOMMWnBA-1; Wed, 04 Mar 2020 11:59:13 -0500
-X-MC-Unique: M5lHkdEMMj-8WUyOMMWnBA-1
+ us-mta-63-ygJdFtY3NkStZ0nPmlTODw-1; Wed, 04 Mar 2020 11:59:13 -0500
+X-MC-Unique: ygJdFtY3NkStZ0nPmlTODw-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3BC1EDB64;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 459D3DB65;
         Wed,  4 Mar 2020 16:59:12 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 15B9873892;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EF7273893;
         Wed,  4 Mar 2020 16:59:12 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 6A74C225812; Wed,  4 Mar 2020 11:59:03 -0500 (EST)
+        id 78406225814; Wed,  4 Mar 2020 11:59:03 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu
 Cc:     vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
-        mst@redhat.com, Peng Tao <tao.peng@linux.alibaba.com>
-Subject: [PATCH 12/20] fuse: Introduce setupmapping/removemapping commands
-Date:   Wed,  4 Mar 2020 11:58:37 -0500
-Message-Id: <20200304165845.3081-13-vgoyal@redhat.com>
+        mst@redhat.com
+Subject: [PATCH 14/20] fuse,dax: add DAX mmap support
+Date:   Wed,  4 Mar 2020 11:58:39 -0500
+Message-Id: <20200304165845.3081-15-vgoyal@redhat.com>
 In-Reply-To: <20200304165845.3081-1-vgoyal@redhat.com>
 References: <20200304165845.3081-1-vgoyal@redhat.com>
 MIME-Version: 1.0
@@ -54,61 +54,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce two new fuse commands to setup/remove memory mappings. This
-will be used to setup/tear down file mapping in dax window.
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
+Add DAX mmap() support.
+
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 ---
- include/uapi/linux/fuse.h | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ fs/fuse/file.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 61 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 5b85819e045f..62633555d547 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -894,4 +894,41 @@ struct fuse_copy_file_range_in {
- 	uint64_t	flags;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 9effdd3dc6d6..303496e6617f 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2870,10 +2870,15 @@ static const struct vm_operations_struct fuse_fil=
+e_vm_ops =3D {
+ 	.page_mkwrite	=3D fuse_page_mkwrite,
  };
 =20
-+#define FUSE_SETUPMAPPING_ENTRIES 8
-+#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
-+struct fuse_setupmapping_in {
-+	/* An already open handle */
-+	uint64_t	fh;
-+	/* Offset into the file to start the mapping */
-+	uint64_t	foffset;
-+	/* Length of mapping required */
-+	uint64_t	len;
-+	/* Flags, FUSE_SETUPMAPPING_FLAG_* */
-+	uint64_t	flags;
-+	/* Offset in Memory Window */
-+	uint64_t	moffset;
++static int fuse_dax_mmap(struct file *file, struct vm_area_struct *vma);
+ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct fuse_file *ff =3D file->private_data;
+=20
++	/* DAX mmap is superior to direct_io mmap */
++	if (IS_DAX(file_inode(file)))
++		return fuse_dax_mmap(file, vma);
++
+ 	if (ff->open_flags & FOPEN_DIRECT_IO) {
+ 		/* Can't provide the coherency needed for MAP_SHARED */
+ 		if (vma->vm_flags & VM_MAYSHARE)
+@@ -2892,9 +2897,63 @@ static int fuse_file_mmap(struct file *file, struc=
+t vm_area_struct *vma)
+ 	return 0;
+ }
+=20
++static vm_fault_t __fuse_dax_fault(struct vm_fault *vmf,
++				   enum page_entry_size pe_size, bool write)
++{
++	vm_fault_t ret;
++	struct inode *inode =3D file_inode(vmf->vma->vm_file);
++	struct super_block *sb =3D inode->i_sb;
++	pfn_t pfn;
++
++	if (write)
++		sb_start_pagefault(sb);
++
++	ret =3D dax_iomap_fault(vmf, pe_size, &pfn, NULL, &fuse_iomap_ops);
++
++	if (ret & VM_FAULT_NEEDDSYNC)
++		ret =3D dax_finish_sync_fault(vmf, pe_size, pfn);
++
++	if (write)
++		sb_end_pagefault(sb);
++
++	return ret;
++}
++
++static vm_fault_t fuse_dax_fault(struct vm_fault *vmf)
++{
++	return __fuse_dax_fault(vmf, PE_SIZE_PTE,
++				vmf->flags & FAULT_FLAG_WRITE);
++}
++
++static vm_fault_t fuse_dax_huge_fault(struct vm_fault *vmf,
++			       enum page_entry_size pe_size)
++{
++	return __fuse_dax_fault(vmf, pe_size, vmf->flags & FAULT_FLAG_WRITE);
++}
++
++static vm_fault_t fuse_dax_page_mkwrite(struct vm_fault *vmf)
++{
++	return __fuse_dax_fault(vmf, PE_SIZE_PTE, true);
++}
++
++static vm_fault_t fuse_dax_pfn_mkwrite(struct vm_fault *vmf)
++{
++	return __fuse_dax_fault(vmf, PE_SIZE_PTE, true);
++}
++
++static const struct vm_operations_struct fuse_dax_vm_ops =3D {
++	.fault		=3D fuse_dax_fault,
++	.huge_fault	=3D fuse_dax_huge_fault,
++	.page_mkwrite	=3D fuse_dax_page_mkwrite,
++	.pfn_mkwrite	=3D fuse_dax_pfn_mkwrite,
 +};
 +
-+struct fuse_setupmapping_out {
-+	/* Offsets into the cache of mappings */
-+	uint64_t	coffset[FUSE_SETUPMAPPING_ENTRIES];
-+        /* Lengths of each mapping */
-+        uint64_t	len[FUSE_SETUPMAPPING_ENTRIES];
-+};
-+
-+struct fuse_removemapping_in {
-+	/* number of fuse_removemapping_one follows */
-+	uint32_t        count;
-+};
-+
-+struct fuse_removemapping_one {
-+	/* Offset into the dax window start the unmapping */
-+	uint64_t        moffset;
-+        /* Length of mapping required */
-+        uint64_t	len;
-+};
-+
-+#define FUSE_REMOVEMAPPING_MAX_ENTRY   \
-+		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
-+
- #endif /* _LINUX_FUSE_H */
+ static int fuse_dax_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+-	return -EINVAL; /* TODO */
++	file_accessed(file);
++	vma->vm_ops =3D &fuse_dax_vm_ops;
++	vma->vm_flags |=3D VM_MIXEDMAP | VM_HUGEPAGE;
++	return 0;
+ }
+=20
+ static int convert_fuse_file_lock(struct fuse_conn *fc,
+@@ -3940,6 +3999,7 @@ static const struct file_operations fuse_file_opera=
+tions =3D {
+ 	.release	=3D fuse_release,
+ 	.fsync		=3D fuse_fsync,
+ 	.lock		=3D fuse_file_lock,
++	.get_unmapped_area =3D thp_get_unmapped_area,
+ 	.flock		=3D fuse_file_flock,
+ 	.splice_read	=3D generic_file_splice_read,
+ 	.splice_write	=3D iter_file_splice_write,
 --=20
 2.20.1
 
