@@ -2,90 +2,313 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72FEA179690
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F138179696
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 18:21:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbgCDRT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 12:19:28 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34686 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbgCDRT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:19:27 -0500
-Received: by mail-qk1-f194.google.com with SMTP id f3so2392028qkh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:19:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DivPesDQYVQHTV465p4P0jQ8dQ9FG60oILnE+jt1qOw=;
-        b=Nxyt+C4ZL86JMPS0DuKKqaDCTtTy7A3i98Rdr3OVV5HOejk3wIdYffNI+7YXWNfAMx
-         Us4G4n7Vb02iyzJ/p91JqvoZ/6hJkCdjoyKGe+beg3rAOX4QObGAMEYbqCZWEiRqpyZA
-         LOWzqF6bND0THW9eMHm8J+13RA7r2Oarj+d0njqXxFUL6pM1yRH8IUiNMA6eINBN3ZDP
-         6CYwHpxyQhxu8m+YuMf0dsJdZcbR+vEDwzvYPzlm1eoUHlpqjkIxacTIT/4goIsw0MG2
-         uFoQYyAcKWM2uson9sc3Fz2XwChPQeSVOODVzFFnE10/5KghZMAgxXu3uMWnXHFGgx0k
-         0Mrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DivPesDQYVQHTV465p4P0jQ8dQ9FG60oILnE+jt1qOw=;
-        b=kvptNM0feagZe0o3Ic+lGs+gJ8gOCEV9kgz5PMcYri5tYnpArALLL0LbiDt+7DTSIY
-         IcdM/lpexOhLFn3/991fao/rM6pHzaG4+6CFgHEjEMuc+IMnz4vNCxq47Yz+iM7/J/RE
-         Hr0YNyccNMgfbNB7ElBT5yndmaNIGmAKGaz8xkuTv8xoiM6f4YT8yNI/uWBPzZ7ZSmH0
-         dxD3Yny3uVoCA4AiGeF6OWvkLyfYdZpml7sk5+4Kui5GRS7UtPwRzebDxFoKOnC70b00
-         sRAYH33Jhfz0odcF0B1h/QTCvSLWubYyoJiVCGaSLqDSayxufcoy/5YGSvGq25qgQZCL
-         SfQQ==
-X-Gm-Message-State: ANhLgQ24LKJ7UG1JVVNvg4n6/hiCDC1U/jJwQPv+eq3iSYbRaslKkWBL
-        Yf4acaU/1FBKG92TkHOiB/e+GA==
-X-Google-Smtp-Source: ADFU+vshwpDrER12aKgSnlgVlWHCHkYggG6y3qQO/cIkCAfMESDgmV6ycDm3qKlZY7Ahix9fNSdJ4w==
-X-Received: by 2002:a37:a6d4:: with SMTP id p203mr3996211qke.350.1583342366640;
-        Wed, 04 Mar 2020 09:19:26 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id u9sm5721516qku.124.2020.03.04.09.19.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Mar 2020 09:19:26 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1j9Xg5-0001xi-Mt; Wed, 04 Mar 2020 13:19:25 -0400
-Date:   Wed, 4 Mar 2020 13:19:25 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Alexander Lobakin <alobakin@dlink.ru>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Maxim Mikityanskiy <maximmi@mellanox.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rdma] IB/mlx5: Optimize u64 division on 32-bit arches
-Message-ID: <20200304171925.GA7515@ziepe.ca>
-References: <20200217073629.8051-1-alobakin@dlink.ru>
+        id S1729780AbgCDRVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 12:21:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbgCDRVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 12:21:43 -0500
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6783524658
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Mar 2020 17:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583342501;
+        bh=JGYuhMvD3vRAF7mr6AMtAFFeUW69MZz9ct4vKKYFOLg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CynZrDF+QIEJQeClku8f4V8WbWY2IpQY+p0u1/oP6PfHw6NFeWZ9bHqHeHlkd6vhQ
+         HEB/2fGkJZKeih1hrWt2b5Pl49QKrOQUYG11gu/zpPZVirMo0DAp3nxi+gT6QwP1wh
+         FXNuZjz/nNLF6fl8L8FQU9/avd46fNOMQf4mzCkU=
+Received: by mail-wr1-f46.google.com with SMTP id v11so1444292wrm.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 09:21:41 -0800 (PST)
+X-Gm-Message-State: ANhLgQ24hzMsBVgi2q2hLda0DYr7AfrGSRS4fcmVqmszWWT+sqLgPDWY
+        bgqqmV3i2bCZVJpS4anOA26W2WpmfGQFnp7G6T0mHA==
+X-Google-Smtp-Source: ADFU+vtEcBzLi3ygUjekNiT+vyNKO03tdiFM4H8bmtuR9z7HfMivRVCDlxcmAqIP36SsnjhEjKxlxvg+Y+vreXN2lIk=
+X-Received: by 2002:a05:6000:110b:: with SMTP id z11mr5170540wrw.252.1583342499798;
+ Wed, 04 Mar 2020 09:21:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217073629.8051-1-alobakin@dlink.ru>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAKv+Gu_3ZRRcoAcLTVVQe26q5x9KALmztaNQF=e=KqWaAwxtpA@mail.gmail.com>
+ <20200304154936.24206-1-vdronov@redhat.com> <CAKv+Gu_WFL24dGPakcPgGW3MayYx1qND9HxL87vods7h4LyZJw@mail.gmail.com>
+ <1638562976.13095767.1583342296275.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1638562976.13095767.1583342296275.JavaMail.zimbra@redhat.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 4 Mar 2020 18:21:28 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu_dz2UfZbX0gdegFRk1XFWgsmaX2SkFAhoBjfbwBDU36Q@mail.gmail.com>
+Message-ID: <CAKv+Gu_dz2UfZbX0gdegFRk1XFWgsmaX2SkFAhoBjfbwBDU36Q@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: fix a race and a buffer overflow while reading
+ efivars via sysfs
+To:     Vladis Dronov <vdronov@redhat.com>
+Cc:     joeyli <jlee@suse.com>, linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 10:36:29AM +0300, Alexander Lobakin wrote:
-> Commit f164be8c0366 ("IB/mlx5: Extend caps stage to handle VAR
-> capabilities") introduced a straight "/" division of the u64
-> variable "bar_size".
-> This was fixed with commit 685eff513183 ("IB/mlx5: Use div64_u64
-> for num_var_hw_entries calculation"). However, div64_u64() is
-> redundant here as mlx5_var_table::stride_size is of type u32.
-> Make the actual code way more optimized on 32-bit kernels using
-> div_u64() and fix 80 chars break-through by the way.
-> 
-> Fixes: 685eff513183 ("IB/mlx5: Use div64_u64 for num_var_hw_entries
-> calculation")
-> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-> ---
->  drivers/infiniband/hw/mlx5/main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On Wed, 4 Mar 2020 at 18:18, Vladis Dronov <vdronov@redhat.com> wrote:
+>
+> Hello, Ard, Joye, all,
+>
+> ----- Original Message -----
+> > From: "Ard Biesheuvel" <ardb@kernel.org>
+> > To: "Vladis Dronov" <vdronov@redhat.com>
+> > Cc: "linux-efi" <linux-efi@vger.kernel.org>, "joeyli" <jlee@suse.com>, "Linux Kernel Mailing List"
+> > <linux-kernel@vger.kernel.org>
+> > Sent: Wednesday, March 4, 2020 4:57:16 PM
+> > Subject: Re: [PATCH v2] efi: fix a race and a buffer overflow while reading efivars via sysfs
+> >
+> > On Wed, 4 Mar 2020 at 16:50, Vladis Dronov <vdronov@redhat.com> wrote:
+> > >
+> > > There is a race and a buffer overflow corrupting a kernel memory while
+> > > reading an efi variable with a size more than 1024 bytes via the older
+> > > sysfs method. This happens because accessing struct efi_variable in
+> > > efivar_{attr,size,data}_read() and friends is not protected from
+> > > a concurrent access leading to a kernel memory corruption and, at best,
+> > > to a crash. The race scenario is the following:
+> > >
+> > > CPU0:                                CPU1:
+> > > efivar_attr_read()
+> > >   var->DataSize = 1024;
+> > >   efivar_entry_get(... &var->DataSize)
+> > >     down_interruptible(&efivars_lock)
+> > >                                      efivar_attr_read() // same efi var
+> > >                                        var->DataSize = 1024;
+> > >                                        efivar_entry_get(... &var->DataSize)
+> > >                                          down_interruptible(&efivars_lock)
+> > >     virt_efi_get_variable()
+> > >     // returns EFI_BUFFER_TOO_SMALL but
+> > >     // var->DataSize is set to a real
+> > >     // var size more than 1024 bytes
+> > >     up(&efivars_lock)
+> > >                                          virt_efi_get_variable()
+> > >                                          // called with var->DataSize set
+> > >                                          // to a real var size, returns
+> > >                                          // successfully and overwrites
+> > >                                          // a 1024-bytes kernel buffer
+> > >                                          up(&efivars_lock)
+> > >
+> > > This can be reproduced by concurrent reading of an efi variable which size
+> > > is more than 1024 bytes:
+> > >
+> > > ts# for cpu in $(seq 0 $(nproc --ignore=1)); do ( taskset -c $cpu \
+> > > cat /sys/firmware/efi/vars/KEKDefault*/size & ) ; done
+> > >
+> > > Fix this by using a local variable for a var's data buffer size so it
+> > > does not get overwritten. Also add a sanity check to efivar_store_raw().
+> > >
+> > > Reported-by: Bob Sanders <bob.sanders@hpe.com> and the LTP testsuite
+> > > Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+>
+> AFAIU, you can modify suggested patches, could you please, add a link here
+> so further reader has a reference (I forgot to do it myself):
+>
+> Link: https://lore.kernel.org/linux-efi/20200303085528.27658-1-vdronov@redhat.com/T/#u
+>
+> > > ---
+> > >  drivers/firmware/efi/efi-pstore.c |  2 +-
+> > >  drivers/firmware/efi/efivars.c    | 32 ++++++++++++++++++++++---------
+> > >  drivers/firmware/efi/vars.c       |  2 +-
+> > >  3 files changed, 25 insertions(+), 11 deletions(-)
+> > >
+> > > diff --git a/drivers/firmware/efi/efi-pstore.c
+> > > b/drivers/firmware/efi/efi-pstore.c
+> > > index 9ea13e8d12ec..e4767a7ce973 100644
+> > > --- a/drivers/firmware/efi/efi-pstore.c
+> > > +++ b/drivers/firmware/efi/efi-pstore.c
+> > > @@ -161,7 +161,7 @@ static int efi_pstore_scan_sysfs_exit(struct
+> > > efivar_entry *pos,
+> > >   *
+> > >   * @record: pstore record to pass to callback
+> > >   *
+> > > - * You MUST call efivar_enter_iter_begin() before this function, and
+> > > + * You MUST call efivar_entry_iter_begin() before this function, and
+> > >   * efivar_entry_iter_end() afterwards.
+> > >   *
+> > >   */
+> >
+> > This hunk can be dropped now, I guess
+>
+> I surely do not have much experience in writing upstream patches. But I saw people
+> doing small fixes like this one, say, commit 589b7289 ("While we are here, the previous
+> line has some trailing whitespace; clean that up as well"). This is a small mistype
+> and I just wanted to fix it and did not wanted to allocate a whole commit for that.
+> I believe a bigger commit is an acceptable place to fix mistypes.
+>
+> AFAIU, a maintainer can modify suggested patches, so please, feel free to drop this
+> hunk, if you feel this is a right thing.
+>
 
-Applied to for-next, thanks
+I am not going to perform surgery on your patches. Please drop this
+hunk (and the one at the end) in the next version.
 
-Jason
+
+> > > diff --git a/drivers/firmware/efi/efivars.c
+> > > b/drivers/firmware/efi/efivars.c
+> > > index 7576450c8254..16a617f9c5cf 100644
+> > > --- a/drivers/firmware/efi/efivars.c
+> > > +++ b/drivers/firmware/efi/efivars.c
+> > > @@ -83,13 +83,16 @@ static ssize_t
+> > >  efivar_attr_read(struct efivar_entry *entry, char *buf)
+> > >  {
+> > >         struct efi_variable *var = &entry->var;
+> > > +       unsigned long size = sizeof(var->Data);
+> > >         char *str = buf;
+> > > +       int ret;
+> > >
+> > >         if (!entry || !buf)
+> > >                 return -EINVAL;
+> > >
+> > > -       var->DataSize = 1024;
+> > > -       if (efivar_entry_get(entry, &var->Attributes, &var->DataSize,
+> > > var->Data))
+> > > +       ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
+> > > +       var->DataSize = size;
+> >
+> > For my understanding, could you explain why we do the assignment here?
+> > Does var->DataSize matter in this case? Can it deviate from 1024?
+>
+> Yes, the other code expects var->DataSize to be set to a real size of a var
+> after efivar_entry_get() call. For example, efivar_show_raw():
+>
+>     compat->DataSize = var->DataSize;
+>
+> and efivar_data_read():
+>
+>     memcpy(buf, var->Data, var->DataSize);
+>     return var->DataSize;
+>
+> Yes, we can change the code to use size here, but this will make struct efi_variable
+> *var inconsistent (name, guid, data, attr set properly, but not size). It feels so
+> incorrect to leave this struct inconsistent. I'm not sure that code which calls
+> efivar_{attr,size,data}_read()/efivar_show_raw() is not using this struct's ->DataSize
+> field later.
+>
+
+OK, that makes sense.
+
+> > > +       if (ret)
+> > >                 return -EIO;
+> > >
+> > >         if (var->Attributes & EFI_VARIABLE_NON_VOLATILE)
+> > > @@ -116,13 +119,16 @@ static ssize_t
+> > >  efivar_size_read(struct efivar_entry *entry, char *buf)
+> > >  {
+> > >         struct efi_variable *var = &entry->var;
+> > > +       unsigned long size = sizeof(var->Data);
+> > >         char *str = buf;
+> > > +       int ret;
+> > >
+> > >         if (!entry || !buf)
+> > >                 return -EINVAL;
+> > >
+> > > -       var->DataSize = 1024;
+> > > -       if (efivar_entry_get(entry, &var->Attributes, &var->DataSize,
+> > > var->Data))
+> > > +       ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
+> > > +       var->DataSize = size;
+> > > +       if (ret)
+> > >                 return -EIO;
+> > >
+> > >         str += sprintf(str, "0x%lx\n", var->DataSize);
+> > > @@ -133,12 +139,15 @@ static ssize_t
+> > >  efivar_data_read(struct efivar_entry *entry, char *buf)
+> > >  {
+> > >         struct efi_variable *var = &entry->var;
+> > > +       unsigned long size = sizeof(var->Data);
+> > > +       int ret;
+> > >
+> > >         if (!entry || !buf)
+> > >                 return -EINVAL;
+> > >
+> > > -       var->DataSize = 1024;
+> > > -       if (efivar_entry_get(entry, &var->Attributes, &var->DataSize,
+> > > var->Data))
+> > > +       ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
+> > > +       var->DataSize = size;
+> > > +       if (ret)
+> > >                 return -EIO;
+> > >
+> > >         memcpy(buf, var->Data, var->DataSize);
+> > > @@ -199,6 +208,9 @@ efivar_store_raw(struct efivar_entry *entry, const char
+> > > *buf, size_t count)
+> > >         u8 *data;
+> > >         int err;
+> > >
+> > > +       if (!entry || !buf)
+> > > +               return -EINVAL;
+> > > +
+> >
+> > So what are we sanity checking here? When might this occur? Does it
+> > need to be in the same patch?
+>
+> efivar_{attr,size,data}_read()/efivar_show_raw() has this check, I believe
+> it is reasonable to add it here too. In case entry or buf happen to be NULL
+> it will lead to a NULL-deref later:
+>
+>     compat = (struct compat_efi_variable *)buf;
+>     memcpy(compat->VariableName, var->VariableName, EFI_VAR_NAME_LEN);
+>
+> I see this as more-or-less related and too small for a whole separate commit.
+> Please, feel free to drop this hunk, if you believe this is not correct. Would
+> you like me to send a separate patch adding the check above in this case?
+>
+
+Yes, please. Make it a two-piece series with a cover letter.
+
+
+> > >         if (in_compat_syscall()) {
+> > >                 struct compat_efi_variable *compat;
+> > >
+> > > @@ -250,14 +262,16 @@ efivar_show_raw(struct efivar_entry *entry, char
+> > > *buf)
+> > >  {
+> > >         struct efi_variable *var = &entry->var;
+> > >         struct compat_efi_variable *compat;
+> > > +       unsigned long datasize = sizeof(var->Data);
+> > >         size_t size;
+> > > +       int ret;
+> > >
+> > >         if (!entry || !buf)
+> > >                 return 0;
+> > >
+> > > -       var->DataSize = 1024;
+> > > -       if (efivar_entry_get(entry, &entry->var.Attributes,
+> > > -                            &entry->var.DataSize, entry->var.Data))
+> > > +       ret = efivar_entry_get(entry, &var->Attributes, &datasize,
+> > > var->Data);
+> > > +       var->DataSize = size;
+> > > +       if (ret)
+> > >                 return -EIO;
+> > >
+> > >         if (in_compat_syscall()) {
+> > > diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
+> > > index 436d1776bc7b..5f2a4d162795 100644
+> > > --- a/drivers/firmware/efi/vars.c
+> > > +++ b/drivers/firmware/efi/vars.c
+> > > @@ -1071,7 +1071,7 @@ EXPORT_SYMBOL_GPL(efivar_entry_iter_end);
+> > >   * entry on the list. It is safe for @func to remove entries in the
+> > >   * list via efivar_entry_delete().
+> > >   *
+> > > - * You MUST call efivar_enter_iter_begin() before this function, and
+> > > + * You MUST call efivar_entry_iter_begin() before this function, and
+> > >   * efivar_entry_iter_end() afterwards.
+> > >   *
+> > >   * It is possible to begin iteration from an arbitrary entry within
+> >
+> > We can drop this.
+
+... or make it a 3 piece series if you *really* want to clean up the
+whitespace :-)
+
+> >
+> > > --
+> > > 2.20.1
+>
+> Best regards,
+> Vladis Dronov | Red Hat, Inc. | The Core Kernel | Senior Software Engineer
+>
