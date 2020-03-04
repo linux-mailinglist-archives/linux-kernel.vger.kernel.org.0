@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA301787AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 02:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61EBB1787B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 02:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387513AbgCDBjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 20:39:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35974 "EHLO mail.kernel.org"
+        id S2387550AbgCDBkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 20:40:13 -0500
+Received: from mga05.intel.com ([192.55.52.43]:23655 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387476AbgCDBjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 20:39:47 -0500
-Received: from [10.44.0.22] (unknown [103.48.210.53])
+        id S1727958AbgCDBkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Mar 2020 20:40:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 17:40:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="351970143"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Mar 2020 17:40:12 -0800
+Received: from [10.251.17.20] (kliang2-mobl.ccr.corp.intel.com [10.251.17.20])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46D6B2073D;
-        Wed,  4 Mar 2020 01:39:44 +0000 (UTC)
-Subject: Re: [PATCH v5] m68k: Replace setup_irq() by request_irq()
-To:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>
-References: <20200229153406.GA32479@afzalpc> <20200301012655.GA6035@afzalpc>
- <c2c04a29-4fc8-7cb5-6cc6-5bc3b125d047@linux-m68k.org>
- <20200304013711.GA5470@afzalpc>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <3c721380-2348-dccd-8de8-5ee60a1d5240@linux-m68k.org>
-Date:   Wed, 4 Mar 2020 11:39:41 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        by linux.intel.com (Postfix) with ESMTPS id A7E47580372;
+        Tue,  3 Mar 2020 17:40:11 -0800 (PST)
+Subject: Re: [PATCH] perf/core: Fix endless multiplex timer
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, irogers@google.com,
+        eranian@google.com, ak@linux.intel.com
+References: <20200303202819.3942-1-kan.liang@linux.intel.com>
+ <20200303210812.GA4745@worktop.programming.kicks-ass.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <b71515e4-484e-d80a-37db-2e51abe69928@linux.intel.com>
+Date:   Tue, 3 Mar 2020 20:40:10 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200304013711.GA5470@afzalpc>
+In-Reply-To: <20200303210812.GA4745@worktop.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -39,51 +46,171 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Afzal,
 
-On 4/3/20 11:37 am, afzal mohammed wrote:
-> Hi Greg,
-> 
-> On Mon, Mar 02, 2020 at 11:32:53AM +1000, Greg Ungerer wrote:
-> 
->> I have retested and everything works as expected, so:
+
+On 3/3/2020 4:08 PM, Peter Zijlstra wrote:
+> On Tue, Mar 03, 2020 at 12:28:19PM -0800, kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
 >>
->>    Tested-by: Greg Ungerer <gerg@linux-m68k.org>
+>> A lot of time are spent in writing uncore MSRs even though no perf is
+>> running.
 >>
->> I have applied this to the m68knommu git tree, for next branch.
-> 
-> Thanks
-> 
->>>    void hw_timer_init(irq_handler_t handler)
->>>    {
->>> +	int r;
+>>    4.66%  swapper      [kernel.kallsyms]        [k] native_write_msr
+>>              |
+>>               --4.56%--native_write_msr
+>>                         |
+>>                         |--1.68%--snbep_uncore_msr_enable_box
+>>                         |          perf_mux_hrtimer_handler
+>>                         |          __hrtimer_run_queues
+>>                         |          hrtimer_interrupt
+>>                         |          smp_apic_timer_interrupt
+>>                         |          apic_timer_interrupt
+>>                         |          cpuidle_enter_state
+>>                         |          cpuidle_enter
+>>                         |          do_idle
+>>                         |          cpu_startup_entry
+>>                         |          start_kernel
+>>                         |          secondary_startup_64
 >>
->> You used 'r' here as the error return value holder.
->> But in the previous cases you used 'ret'.
->> I would have used the same name everywhere ('ret' probably being the
->> most commonly used in the kernel).
+>> The root cause is that multiplex timer was not stopped when perf stat
+>> finished.
+>> Current perf relies on rotate_necessary to determine whether the
+>> multiplex timer should be stopped. The variable only be reset in
+>> ctx_sched_out(), which is not enough for system-wide event.
+>> Perf stat invokes PERF_EVENT_IOC_DISABLE to stop system-wide event
+>> before closing it.
+>>    perf_ioctl()
+>>      perf_event_disable()
+>>        event_sched_out()
+>> The rotate_necessary will never be reset.
+>>
+>> The issue is a generic issue, not just impact the uncore.
+>>
+>> Check whether we had been multiplexing. If yes, reset rotate_necessary
+>> for the last active event in __perf_event_disable().
+>>
+>> Fixes: fd7d55172d1e ("perf/cgroups: Don't rotate events for cgroups unnecessarily")
+>> Reported-by: Andi Kleen <ak@linux.intel.com>
+>> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> ---
+>>   kernel/events/core.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 3f1f77de7247..50688de56181 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -2242,6 +2242,16 @@ static void __perf_event_disable(struct perf_event *event,
+>>   		update_cgrp_time_from_event(event);
+>>   	}
+>>   
+>> +	/*
+>> +	 * If we had been multiplexing,
+>> +	 * stop the rotations for the last active event.
+>> +	 * Only need to check system wide events.
+>> +	 * For task events, it will be checked in ctx_sched_out().
+>> +	 */
+>> +	if ((cpuctx->ctx.nr_events != cpuctx->ctx.nr_active) &&
+>> +	    (cpuctx->ctx.nr_active == 1))
+>> +		cpuctx->ctx.rotate_necessary = 0;
+>> +
+>>   	if (event == event->group_leader)
+>>   		group_sched_out(event, cpuctx, ctx);
+>>   	else
 > 
-> That was a circus to dodge 80 char limit, i did think about it while
-> making the changes whether to do or not. If 'ret' is used request_irq()
-> line had to be split to two, slightly affecting the readability and
-> since 'r' was a local variable (though conventionally 'ret' or 'err'
-> is used) went ahead that way. Even if 're' is used as the local
-> variable, it would be 81 chars ;)
 > 
-> Let me know if you want to change it.
-
-Understand. No, no need to change it.
-
-Regards
-Greg
-
-
-> Regards
-> afzal
+> I'm thinking this is wrong.
 > 
->>> -	setup_irq(MCF_IRQ_TIMER, &mcfslt_timer_irq);
->>> +	r = request_irq(MCF_IRQ_TIMER, mcfslt_tick, IRQF_TIMER, "timer", NULL);
->>> +	if (r) {
->>> +		pr_err("Failed to request irq %d (timer): %pe\n", MCF_IRQ_TIMER,
->>> +		       ERR_PTR(r));
->>> +	}
+> That is, yes, this fixes the observed problem, but it also misses at
+> least one other site. Which seems to suggest we ought to take a
+> different approach.
+> 
+> But even with that; I wonder if the actual condition isn't wrong.
+> Suppose the event was exclusive, and other events weren't scheduled
+> because of that. Then you disable the one exclusive event _and_ kill
+> rotation, so then nothing else will ever get on.
+> 
+> So what I think was supposed to happen is rotation killing itself;
+> rotation will schedule out the context -- which will clear the flag, and
+> then schedule the thing back in -- which will set the flag again when
+> needed.
+> 
+> Now, that isn't happening, and I think I see why, because when we drop
+> to !nr_active, we terminate ctx_sched_out() before we get to clearing
+> the flag, oops!
+> 
+> So how about something like this?
+> 
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index e453589da97c..7947bd3271a9 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2182,6 +2182,7 @@ __perf_remove_from_context(struct perf_event *event,
+>   
+>   	if (!ctx->nr_events && ctx->is_active) {
+>   		ctx->is_active = 0;
+> +		ctx->rotate_necessary = 0;
+>   		if (ctx->task) {
+>   			WARN_ON_ONCE(cpuctx->task_ctx != ctx);
+>   			cpuctx->task_ctx = NULL;
+
+
+The patch can fix the observed problem with uncore PMU.
+But it cannot fix all the cases with core PMU, especially when NMI 
+watchdog is enabled.
+Because the ctx->nr_events never be 0 with NMI watchdog enabled.
+
+For example,
+$echo 1 > /proc/sys/kernel/nmi_watchdog
+$sudo perf stat -e ref-cycles,ref-cycles -a sleep 1
+  Performance counter stats for 'system wide':
+     549,432,900      ref-cycles   (50.01%) 
+
+     545,358,967      ref-cycles   (49.99%) 
+
+  1.002367894 seconds time elapsed
+$perf probe --add perf_rotate_context
+$perf record -e probe:perf_rotate_context -aR -g sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.896 MB perf.data (1750 samples) ]
+$perf report --stdio
+    100.00%   100.00%  (ffffffffa5604e84)
+             |
+              --99.83%--0xffffffffa54000d4
+                        start_secondary
+                        cpu_startup_entry
+                        do_idle
+                        call_cpuidle
+                        cpuidle_enter
+                        cpuidle_enter_state
+                        apic_timer_interrupt
+                        smp_apic_timer_interrupt
+                        hrtimer_interrupt
+                        __hrtimer_run_queues
+                        perf_mux_hrtimer_handler
+
+Thanks,
+Kan
+
+> @@ -3074,15 +3075,15 @@ static void ctx_sched_out(struct perf_event_context *ctx,
+>   
+>   	is_active ^= ctx->is_active; /* changed bits */
+>   
+> -	if (!ctx->nr_active || !(is_active & EVENT_ALL))
+> -		return;
+> -
+>   	/*
+>   	 * If we had been multiplexing, no rotations are necessary, now no events
+>   	 * are active.
+>   	 */
+>   	ctx->rotate_necessary = 0;
+>   
+> +	if (!ctx->nr_active || !(is_active & EVENT_ALL))
+> +		return;
+> +
+>   	perf_pmu_disable(ctx->pmu);
+>   	if (is_active & EVENT_PINNED) {
+>   		list_for_each_entry_safe(event, tmp, &ctx->pinned_active, active_list)
+> 
