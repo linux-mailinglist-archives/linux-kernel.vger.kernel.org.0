@@ -2,110 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0FA017885F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B09178867
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 03:34:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387619AbgCDCd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Mar 2020 21:33:29 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45586 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387411AbgCDCd3 (ORCPT
+        id S2387580AbgCDCet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Mar 2020 21:34:49 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51698 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387473AbgCDCes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Mar 2020 21:33:29 -0500
-Received: by mail-io1-f65.google.com with SMTP id w9so646490iob.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 18:33:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cs.washington.edu; s=goo201206;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=z8i39F29uItXrQ0Vm+/tnYAlpVrh5Zrfz37MFCt4wqg=;
-        b=YA+26ZyPPsXhtvsAfcQdDGKF76soF525p7XOyeC2g3fWKaRu7Nchx0JivsPHU9+mVx
-         L2n+BpbDPm4VZ0rdcng/wCTI7pmzhvs1BTt5zoXCYUBmigd7w6CB7jsBLqS/tRZ3sBra
-         ttxpQ4mYrMFxanwRq3ExFUcoGdLn+TstWEZGs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z8i39F29uItXrQ0Vm+/tnYAlpVrh5Zrfz37MFCt4wqg=;
-        b=QaCYrN67NQM6OB7Fx+c/aCv6LOYb43A7DRBMyrgL7SHrBfXm8ktsJazBx9rZTbiGyI
-         khnOAKHXyt/UN3AS84kuuLVnVtNRPKNGNjSOjClrZfQKzaSzsTEYKvVua0U0G2/4xjT3
-         SUWIVUNbSra+tG7VIl251+4trFiqq/7gcQbEz6xWcDp2PgU558EdnRockEoKdLQ1N8jU
-         OzDEvKgv5GRozym6Wc/D/b+c3IMzVgH2M9A5L/0LC93RMdvO/ZjGBN4NXIe2OcPu7Hme
-         M0gV4YUawjdYEtwTSgSb6DAXvOZhyTXZLVz7ENzP+bybr27HBcnu1C/W97mxiVs74Goa
-         zETA==
-X-Gm-Message-State: ANhLgQ2rI7Koq2H9fNYdt1SevLHwoClDFJjxZlpIwYhKRhTSNqL3FMz+
-        lup9L9OfpKt3H82wFIt73+tXDxz9KRkKF66Ca6mn/w==
-X-Google-Smtp-Source: ADFU+vtdbhJTXt1bRm93LupwhvNWTGVMBaqbP4QMYe4hxwp7dnVdENhAaLm/Y73xWVIRUbZJWq6Ns+B//0CejhYYfa0=
-X-Received: by 2002:a6b:e310:: with SMTP id u16mr451066ioc.43.1583289208493;
- Tue, 03 Mar 2020 18:33:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20200303005035.13814-1-luke.r.nels@gmail.com> <20200303005035.13814-5-luke.r.nels@gmail.com>
- <20200303100228.GJ1224808@smile.fi.intel.com>
-In-Reply-To: <20200303100228.GJ1224808@smile.fi.intel.com>
-From:   Luke Nelson <lukenels@cs.washington.edu>
-Date:   Tue, 3 Mar 2020 18:33:17 -0800
-Message-ID: <CADasFoCq7S2KRYg+ghAKt1e+hELzEMJaNH74sGdjM7E=z3KcnQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 4/4] MAINTAINERS: Add entry for RV32G BPF JIT
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     bpf <bpf@vger.kernel.org>, Luke Nelson <luke.r.nels@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
-        Xi Wang <xi.wang@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 3 Mar 2020 21:34:48 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0242TQAM090644
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Mar 2020 21:34:47 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yhyxq5m7h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Mar 2020 21:34:47 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Wed, 4 Mar 2020 02:34:45 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Mar 2020 02:34:41 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0242YdrU48693396
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Mar 2020 02:34:39 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA3CD42084;
+        Wed,  4 Mar 2020 02:34:39 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A9194207C;
+        Wed,  4 Mar 2020 02:33:40 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.57.81])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Mar 2020 02:33:39 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-efi@vger.kernel.org, linux-s390@vger.kernel.org
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, zohar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v2] ima: add a new CONFIG for loading arch-specific policies
+Date:   Tue,  3 Mar 2020 21:33:31 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 20030402-0016-0000-0000-000002ECF156
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030402-0017-0000-0000-000033503B67
+Message-Id: <1583289211-5420-1-git-send-email-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-03_08:2020-03-03,2020-03-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 impostorscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003040017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 2:02 AM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> > -BPF JIT for RISC-V (RV64G)
-> > +BPF JIT for 32-bit RISC-V (RV32G)
-> > +M:   Luke Nelson <luke.r.nels@gmail.com>
-> > +M:   Xi Wang <xi.wang@gmail.com>
-> > +L:   bpf@vger.kernel.org
-> > +S:   Maintained
-> > +F:   arch/riscv/net/
-> > +X:   arch/riscv/net/bpf_jit_comp.c
-> > +
-> > +BPF JIT for 64-bit RISC-V (RV64G)
-> >  M:   Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.com>
-> > -L:   netdev@vger.kernel.org
-> > +L:   bpf@vger.kernel.org
-> >  S:   Maintained
-> >  F:   arch/riscv/net/
-> > +X:   arch/riscv/net/bpf_jit_comp32.c
->
-> Obviously this breaks an order. Please, fix.
-> Hint: run parse-maintainers.pl after the change.
+Every time a new architecture defines the IMA architecture specific
+functions - arch_ima_get_secureboot() and arch_ima_get_policy(), the IMA
+include file needs to be updated. To avoid this "noise", this patch
+defines a new IMA Kconfig IMA_SECURE_AND_OR_TRUSTED_BOOT option, allowing
+the different architectures to select it.
 
-Hi,
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Philipp Rudo <prudo@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+---
+v2:
+* Fixed the issue identified by Mimi. Thanks Mimi, Ard, Heiko and Michael for
+discussing the fix.
 
-Thanks for the comment!
+ arch/powerpc/Kconfig           | 1 +
+ arch/s390/Kconfig              | 1 +
+ arch/x86/Kconfig               | 1 +
+ include/linux/ima.h            | 3 +--
+ security/integrity/ima/Kconfig | 9 +++++++++
+ 5 files changed, 13 insertions(+), 2 deletions(-)
 
-I'll change the entry names in v5 to be "BPF JIT for RISC-V (32-bit)"
-and "BPF JIT for RISC-V (64-bit)", similar to the x86 JIT entries.
-This will pass parse-maintainers.pl and the entries are still in
-order.
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 497b7d0b2d7e..a5cfde432983 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -979,6 +979,7 @@ config PPC_SECURE_BOOT
+ 	bool
+ 	depends on PPC_POWERNV
+ 	depends on IMA_ARCH_POLICY
++	select IMA_SECURE_AND_OR_TRUSTED_BOOT
+ 	help
+ 	  Systems with firmware secure boot enabled need to define security
+ 	  policies to extend secure boot to the OS. This config allows a user
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 8abe77536d9d..4a502fbcb800 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -195,6 +195,7 @@ config S390
+ 	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
+ 	select SWIOTLB
+ 	select GENERIC_ALLOCATOR
++	select IMA_SECURE_AND_OR_TRUSTED_BOOT if IMA_ARCH_POLICY
+ 
+ 
+ config SCHED_OMIT_FRAME_POINTER
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index beea77046f9b..7f5bfaf0cbd2 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -230,6 +230,7 @@ config X86
+ 	select VIRT_TO_BUS
+ 	select X86_FEATURE_NAMES		if PROC_FS
+ 	select PROC_PID_ARCH_STATUS		if PROC_FS
++	select IMA_SECURE_AND_OR_TRUSTED_BOOT	if EFI && IMA_ARCH_POLICY
+ 
+ config INSTRUCTION_DECODER
+ 	def_bool y
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 1659217e9b60..aefe758f4466 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -30,8 +30,7 @@ extern void ima_kexec_cmdline(const void *buf, int size);
+ extern void ima_add_kexec_buffer(struct kimage *image);
+ #endif
+ 
+-#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390) \
+-	|| defined(CONFIG_PPC_SECURE_BOOT)
++#ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
+ extern bool arch_ima_get_secureboot(void);
+ extern const char * const *arch_get_ima_policy(void);
+ #else
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 3f3ee4e2eb0d..d17972aa413a 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -327,3 +327,12 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
+ 	depends on IMA_MEASURE_ASYMMETRIC_KEYS
+ 	depends on SYSTEM_TRUSTED_KEYRING
+ 	default y
++
++config IMA_SECURE_AND_OR_TRUSTED_BOOT
++	bool
++	depends on IMA
++	depends on IMA_ARCH_POLICY
++	default n
++	help
++	   This option is selected by architectures to enable secure and/or
++	   trusted boot based on IMA runtime policies.
+-- 
+2.13.6
 
-Thanks again,
-
-Luke
