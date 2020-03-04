@@ -2,132 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 104B1178CDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:53:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C75C178CEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 09:57:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387714AbgCDIxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 03:53:49 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45556 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728744AbgCDIxt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:53:49 -0500
-Received: by mail-lf1-f67.google.com with SMTP id b13so804683lfb.12;
-        Wed, 04 Mar 2020 00:53:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=I9+aL780TGa2bAdTy5D8onwjF2cwdZt5A8dBDQnrtx4=;
-        b=mSgSnSYsc7j1ch2rUpzF9UFNMOmmVqKtde4IPZ/1oNLhqWVVnU2B4qEULNO17WtRPu
-         U1Bh5gwC8LqGoXDuI+sIgF44+ul/xxEzvXVazuL/CFh86shGevWKB7gqn9lg02WbdoIp
-         uNhx6wK0yd6ERqaYg06NMBZnDoUU3thC77w7on35KbWjpJkX32thRvVuY517SYk8V7oU
-         k8oXaO21xuam/GJ6lZO0uhIiTSxktCNAJl0WhQsbq1EtBJPthcKLiJPB/rwsqSv5VZCT
-         B/MlMuDBBYjWzfy2GN6AFm7lPMkG52k+UdqQfSl9MDs5X9ot267QS5odFjh6KkhUvxn8
-         fKFQ==
-X-Gm-Message-State: ANhLgQ03iCNl9jSQJahGLotAzfoiBGf8yDHJfVDY84b7FwaWGQwsRo8X
-        YU/oPBdMVIdMky5zQco42nATdNyw
-X-Google-Smtp-Source: ADFU+vuc36aEPaMkEB93k8MtGuOq9qmShZI1iyvTJWtxbGwjDSf14rSMM1iYeTB2d/6kBLQKyhCdVg==
-X-Received: by 2002:a19:c20b:: with SMTP id l11mr1363543lfc.135.1583312026813;
-        Wed, 04 Mar 2020 00:53:46 -0800 (PST)
-Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id b20sm13664470ljp.20.2020.03.04.00.53.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 00:53:45 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1j9Pmf-0003KL-Ol; Wed, 04 Mar 2020 09:53:41 +0100
-Date:   Wed, 4 Mar 2020 09:53:41 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Rocky Liao <rjliao@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
-        c-hbandi@codeaurora.org, hemantg@codeaurora.org, mka@chromium.org
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: Make bt_en and susclk not
- mandatory for QCA Rome
-Message-ID: <20200304085341.GF32540@localhost>
-References: <20200304015429.20615-1-rjliao@codeaurora.org>
+        id S2387752AbgCDI5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 03:57:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59771 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727734AbgCDI5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 03:57:23 -0500
+Received: from [IPv6:2601:646:8600:3281:d841:929b:f37:3a31] ([IPv6:2601:646:8600:3281:d841:929b:f37:3a31])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id 0248uuI6301245
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Wed, 4 Mar 2020 00:56:57 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 0248uuI6301245
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2020022001; t=1583312217;
+        bh=utclo29XAiv2dCDxoewItG7aKxdh43V5IBOk+FLmUjY=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=cXEyWHpJQo074KfzwRKYbKann7+FAimOqGQv6QUi4OIfOaa9rTLXfqJLtS+wYT5mj
+         uyHFTop4R7A/l9kT2sBZqG/37sZaT/LkV+b0WxBGHDhx7uZWy9REvhHf4anYRPTAHV
+         TxTXNJ7ey+1FhWjJbRPyXMAg1jkSgw7phFlp5EhiHfp6+lXmXrXYxijRzGVGfbHJov
+         +rlGKs6OwvOTqFsmNJzFXuqbq4+nnUzRl4Qv1+wohaAq0B47aRrV8geqZ88r/wxlKN
+         Iv4Cp+wJqmVyxQxhxSuEbxWfggUa/cv4c86ZGwccl31fygbpOcwUT7WS9TEZsM4PgX
+         EeARcAxxx3zxg==
+Date:   Wed, 04 Mar 2020 00:54:09 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20200303204144.GA9913@avx2>
+References: <20200303204144.GA9913@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304015429.20615-1-rjliao@codeaurora.org>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] x86/acpi: make "asmlinkage" part first thing in the function definition
+To:     Alexey Dobriyan <adobriyan@gmail.com>, rjw@rjwysocki.net,
+        lenb@kernel.org
+CC:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        luto@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+From:   hpa@zytor.com
+Message-ID: <9947D7CB-B9CD-47E0-BC5E-C7FC3A81FC7B@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 09:54:29AM +0800, Rocky Liao wrote:
-> On some platforms the bt_en pin and susclk are default on and there
-> is no exposed resource to control them. This patch makes the bt_en
-> and susclk not mandatory to have BT work. It also will not set the
-> HCI_QUIRK_NON_PERSISTENT_SETUP and shutdown() callback if bt_en is
-> not available.
-> 
-> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
-> ---
->  drivers/bluetooth/hci_qca.c | 47 ++++++++++++++++++++-----------------
->  1 file changed, 26 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index bf436d6e638e..325baa046c3a 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1562,9 +1562,11 @@ static int qca_power_on(struct hci_dev *hdev)
->  		ret = qca_wcn3990_init(hu);
->  	} else {
->  		qcadev = serdev_device_get_drvdata(hu->serdev);
-> -		gpiod_set_value_cansleep(qcadev->bt_en, 1);
-> -		/* Controller needs time to bootup. */
-> -		msleep(150);
-> +		if (!IS_ERR(qcadev->bt_en)) {
-> +			gpiod_set_value_cansleep(qcadev->bt_en, 1);
-> +			/* Controller needs time to bootup. */
-> +			msleep(150);
-> +		}
->  	}
->  
->  	return ret;
-> @@ -1750,7 +1752,7 @@ static void qca_power_shutdown(struct hci_uart *hu)
->  		host_set_baudrate(hu, 2400);
->  		qca_send_power_pulse(hu, false);
->  		qca_regulator_disable(qcadev);
-> -	} else {
-> +	} else if (!IS_ERR(qcadev->bt_en)) {
->  		gpiod_set_value_cansleep(qcadev->bt_en, 0);
->  	}
->  }
-> @@ -1852,6 +1854,7 @@ static int qca_serdev_probe(struct serdev_device *serdev)
->  	struct hci_dev *hdev;
->  	const struct qca_vreg_data *data;
->  	int err;
-> +	bool power_ctrl_enabled = true;
->  
->  	qcadev = devm_kzalloc(&serdev->dev, sizeof(*qcadev), GFP_KERNEL);
->  	if (!qcadev)
-> @@ -1901,35 +1904,37 @@ static int qca_serdev_probe(struct serdev_device *serdev)
->  		qcadev->bt_en = devm_gpiod_get(&serdev->dev, "enable",
->  					       GPIOD_OUT_LOW);
+On March 3, 2020 12:41:44 PM PST, Alexey Dobriyan <adobriyan@gmail=2Ecom> w=
+rote:
+>g++ insists that function declaration must start with extern "C"
+>(which asmlinkage expands to)=2E
+>
+>gcc doesn't care=2E
+>
+>Signed-off-by: _Z6Alexeyv <adobriyan@gmail=2Ecom>
+>---
+>
+> arch/x86/kernel/acpi/sleep=2Ec |    2 +-
+> arch/x86/kernel/acpi/sleep=2Eh |    2 +-
+> 2 files changed, 2 insertions(+), 2 deletions(-)
+>
+>--- a/arch/x86/kernel/acpi/sleep=2Ec
+>+++ b/arch/x86/kernel/acpi/sleep=2Ec
+>@@ -43,7 +43,7 @@ unsigned long acpi_get_wakeup_address(void)
+>  *
+>  * Wrapper around acpi_enter_sleep_state() to be called by assmebly=2E
+>  */
+>-acpi_status asmlinkage __visible x86_acpi_enter_sleep_state(u8 state)
+>+asmlinkage acpi_status __visible x86_acpi_enter_sleep_state(u8 state)
+> {
+> 	return acpi_enter_sleep_state(state);
+> }
+>--- a/arch/x86/kernel/acpi/sleep=2Eh
+>+++ b/arch/x86/kernel/acpi/sleep=2Eh
+>@@ -19,4 +19,4 @@ extern void do_suspend_lowlevel(void);
+>=20
+> extern int x86_acpi_suspend_lowlevel(void);
+>=20
+>-acpi_status asmlinkage x86_acpi_enter_sleep_state(u8 state);
+>+asmlinkage acpi_status x86_acpi_enter_sleep_state(u8 state);
 
-Shouldn't you use devm_gpiod_get_optional()?
-
->  		if (IS_ERR(qcadev->bt_en)) {
-> -			dev_err(&serdev->dev, "failed to acquire enable gpio\n");
-> -			return PTR_ERR(qcadev->bt_en);
-> +			dev_warn(&serdev->dev, "failed to acquire enable gpio\n");
-> +			power_ctrl_enabled = false;
-
-And bail out on errors, but treat NULL as !port_ctrl_enabled?
-
->  		}
->  
->  		qcadev->susclk = devm_clk_get(&serdev->dev, NULL);
-
-And devm_clk_get_optional() here.
-
-Etc.
-
-Also does the devicetree binding need to be updated to reflect this
-change?
-
-Johan
+Are you building the kernel with C++?!
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
