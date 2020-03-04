@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248A61792DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:58:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47CC11792E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 15:58:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387969AbgCDO57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 09:57:59 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41846 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbgCDO56 (ORCPT
+        id S1728278AbgCDO60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 09:58:26 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42009 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbgCDO60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 09:57:58 -0500
-Received: by mail-oi1-f196.google.com with SMTP id i1so2337320oie.8;
-        Wed, 04 Mar 2020 06:57:58 -0800 (PST)
+        Wed, 4 Mar 2020 09:58:26 -0500
+Received: by mail-io1-f66.google.com with SMTP id q128so2681201iof.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 06:58:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MI1PXuWt7Kag0MFTc+PiKW4eyxOQoHf1qp779Es8aXg=;
+        b=jlEbGqj0JV8uts4QRzcS6Eajtw0tKvhkbeliNCbF4uNcgjKTS/ufjxuns+h7Dpv6oK
+         iRjdlxhkwkZI1FmdhgsHRZm18X+J/tCJza8pnjG/RS/TKmekikpIX0g4Ktub7s/SxPOV
+         trmM3oYR2IE7l7X78+F/LxlrLp+ecQgRRpBjY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DmcoZNUJxxsS5LTSsyiiqENx6EIP1OPlgM367MTeK8I=;
-        b=LfCBzxIQ8WzX+TFAeheZYWPj7a+6aLUYdys0KxSQXX3caQxK7LsvQE3PA+LnNzHJCk
-         RSj5rh0tt5JG7Ak0tSdDlnmfNSn5KD33ddWAqUx7ZdL4WH1EHiS9Dcsbyphi9b8jgzFO
-         f0pLTUKKXETfUlRv6B+GtFNlJrYgoiKvEeSanuAqU79sYqw0mjQzQlKGPUCsMxm/9NEE
-         Uav2xvs2uhnsNLqwH972fMi81mArWIGPill7gsW7HKhta4DLa3j9nX8uLuPcVQhefAkx
-         DhAgflMCUEIq+YwPUcQ09inpHIVv/lDlAj00ENChzi4lGnGaeMCXPe+pkJH/G2CYb05/
-         ZKpw==
-X-Gm-Message-State: ANhLgQ13rwoGGPCvr1hCRwlcdN4+WYajaxIpwsgoly9h2e4tu60kVF2S
-        j3I7eYps4qV93iTfB20HtA==
-X-Google-Smtp-Source: ADFU+vt4gqhc3KDXQ3ks19GyfY1ioyJVdrTyDw9Oyh68DIp1bWp9tTZzshgCw7rze/fFoCaTdgQKdQ==
-X-Received: by 2002:aca:f1c2:: with SMTP id p185mr2037926oih.87.1583333877779;
-        Wed, 04 Mar 2020 06:57:57 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i20sm9072512otp.14.2020.03.04.06.57.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 06:57:57 -0800 (PST)
-Received: (nullmailer pid 17602 invoked by uid 1000);
-        Wed, 04 Mar 2020 14:57:56 -0000
-Date:   Wed, 4 Mar 2020 08:57:56 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        gregkh@linuxfoundation.org, jackp@codeaurora.org, balbi@kernel.org,
-        bjorn.andersson@linaro.org, robh@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 07/18] dt-bindings: usb: dwc3: Add a
- gpio-usb-connector example
-Message-ID: <20200304145756.GA17484@bogus>
-References: <20200303171159.246992-1-bryan.odonoghue@linaro.org>
- <20200303171159.246992-8-bryan.odonoghue@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MI1PXuWt7Kag0MFTc+PiKW4eyxOQoHf1qp779Es8aXg=;
+        b=IFGh1Xmivf+TlRlULMD7DveiL624PyFzAzkkr6Nl1PWO2gh6uYJHDJ18BlcQxmDhJh
+         Qg7ul779VdQjDOcBnD179GKcXurlfLMzxx6VrpakG9/eJ2Er/5QP+WZMBRJodmlYQakm
+         zpwPjPrMfvh4qP966+YpWa0C3zeVsgm44I4gPPORaypEmkap4Buyfu2D6wSdGQiqEmBK
+         2i+UYiO2kY/smZ/RsIGFRAf09rx6Mk0kcZUV+vs9mxkQpfB9PG3fL40D/uT8Szv7DTax
+         gT7j2udWlR80N66+1Zb41mH4cjQkPO9fybkhemexCID+VrGHrz4H3Pr4y6cE4RfMZ/V3
+         BK/A==
+X-Gm-Message-State: ANhLgQ1zcAnC8gud7dpmFJGYtDuicWfyq1yFp1jhXkzeY8uCaxnDxzSx
+        mWYxOoUQbltlsZE1iuugJG90Q5ugsBofrFxhWoTcJA==
+X-Google-Smtp-Source: ADFU+vt7iszIUbYisTGd86KHNUYtvuTdfoY/g3ldBLGb8T53mnRCU8tRd+55HaV44wyYtBstlDMXhGVD9Q344+TQJSs=
+X-Received: by 2002:a02:558a:: with SMTP id e132mr3150631jab.58.1583333905701;
+ Wed, 04 Mar 2020 06:58:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200303171159.246992-8-bryan.odonoghue@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <158230818859.2185128.8921928947340497977.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158230818859.2185128.8921928947340497977.stgit@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 4 Mar 2020 15:58:14 +0100
+Message-ID: <CAJfpegtcNorH0uBbmodOj5WZXRjXnbzRXWbX7+A=qf02LDJCtg@mail.gmail.com>
+Subject: Re: [PATCH 10/17] fsinfo: Allow mount information to be queried [ver #17]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  3 Mar 2020 17:11:48 +0000, Bryan O'Donoghue wrote:
-> A USB connector should be a child node of the USB controller
-> connector/usb-connector.txt. This patch adds an example of how to do this
-> to the dwc3 binding descriptions.
-> 
-> It is necessary to declare a connector as a child-node of a USB controller
-> for role-switching to work, so this example should be helpful to others
-> implementing that.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-usb@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Acked-by: Felipe Balbi <balbi@kernel.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  Documentation/devicetree/bindings/usb/dwc3.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
+On Fri, Feb 21, 2020 at 7:03 PM David Howells <dhowells@redhat.com> wrote:
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+> +/*
+> + * Return the path of this mount relative to its parent and clipped to
+> + * the current chroot.
 
-If a tag was not added on purpose, please state why and what changed.
+And clipped to nothing if outside current root.  The code doesn't
+appear to care, which to me seems like a hole.
+
+And btw, what is the point of only showing path relative to parent
+mount?  This way it's impossible to get a consistent path from root
+due to mount/dentry tree changes between calls to fsinfo().
+
+Thanks,
+Miklos
