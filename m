@@ -2,69 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A458179061
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10420179024
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 13:19:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbgCDM3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 07:29:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729175AbgCDM3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 07:29:40 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B4612166E;
-        Wed,  4 Mar 2020 12:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583324979;
-        bh=q2HpzpEFlt66LCc0CN8paD0dy7D/lMctDByWBOfYWDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BjmxhOST79gAxpkZ2y78ISWiFHHMkQCZxBDA+ud4HCQ68Y+b75tFMLhkaYHL2jfBr
-         VHYSo3j6UKXJKKlFZA9phX5PbcNbRzloZdDtMTaAsLTRqPNOPFWCFRXvCGQS1xF10a
-         18AJJjq8jgxvrz0xGMnDLH7AWf9ZYazGeLXkVTcg=
-Date:   Wed, 4 Mar 2020 13:29:36 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL v2] PHY: For 5.6 -rc
-Message-ID: <20200304122936.GA1600752@kroah.com>
-References: <20200304115454.14921-1-kishon@ti.com>
+        id S2387948AbgCDMTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 07:19:46 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10723 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729118AbgCDMTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 07:19:46 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BB74A70B5BC42A7D5B3D;
+        Wed,  4 Mar 2020 20:19:38 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 4 Mar 2020 20:19:30 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <nbd@nbd.name>, <lorenzo.bianconi83@gmail.com>,
+        <ryder.lee@mediatek.com>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH] mt76: remove variable 'val' set but not used
+Date:   Wed, 4 Mar 2020 20:34:11 +0800
+Message-ID: <20200304123411.33499-1-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304115454.14921-1-kishon@ti.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 05:24:54PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Greg,
-> 
-> Please find the updated pull request for 5.6 -rc cycle below. It only
-> adds an additional patch over my previous pull request (I added a new
-> patch since my initial pull request is not merged).
-> 
-> It fixes an issue caused because of adding device_link_add() on platforms
-> which have cyclic dependency between PHY consumer and PHY provider.
-> 
-> It also includes couple of timeout fixes in Motorola and other misc
-> fixes in TI and Broadcom's PHY driver.
-> Please see the tag message for the complete list of changes and let me
-> know if I have to change something.
-> 
-> Thanks
-> Kishon
-> 
-> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-> 
->   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.6-rc_v2
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Pulled and pushed out, thanks.
+drivers/net/wireless/mediatek/mt76/mt76x0/phy.c: In function mt76x0_phy_rf_init:
+drivers/net/wireless/mediatek/mt76/mt76x0/phy.c:1158:5: warning: variable val set but not used [-Wunused-but-set-variable]
 
-greg k-h
+Fixes: 10de7a8b4ab9 ("mt76x0: phy files")
+Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt76x0/phy.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
+index b56397c05218..09f34deb6ba1 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
+@@ -1155,7 +1155,6 @@ static void mt76x0_rf_patch_reg_array(struct mt76x02_dev *dev,
+ static void mt76x0_phy_rf_init(struct mt76x02_dev *dev)
+ {
+ 	int i;
+-	u8 val;
+ 
+ 	mt76x0_rf_patch_reg_array(dev, mt76x0_rf_central_tab,
+ 				  ARRAY_SIZE(mt76x0_rf_central_tab));
+@@ -1188,7 +1187,7 @@ static void mt76x0_phy_rf_init(struct mt76x02_dev *dev)
+ 	 */
+ 	mt76x0_rf_wr(dev, MT_RF(0, 22),
+ 		     min_t(u8, dev->cal.rx.freq_offset, 0xbf));
+-	val = mt76x0_rf_rr(dev, MT_RF(0, 22));
++	mt76x0_rf_rr(dev, MT_RF(0, 22));
+ 
+ 	/* Reset procedure DAC during power-up:
+ 	 * - set B0.R73<7>
+-- 
+2.17.1
+
