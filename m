@@ -2,130 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FD6178F56
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DDEA178F5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 12:08:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbgCDLID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 06:08:03 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:45242 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729286AbgCDLIB (ORCPT
+        id S1729494AbgCDLIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 06:08:31 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33910 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbgCDLIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:08:01 -0500
-Received: from 79.184.237.41.ipv4.supernova.orange.pl (79.184.237.41) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id 2bd8be21abd0c5ba; Wed, 4 Mar 2020 12:07:58 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     madhuparnabhowmik10@gmail.com
-Cc:     pavel@ucw.cz, len.brown@intel.com, gregkh@linuxfoundation.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org
-Subject: Re: [PATCH 1/2] drivers: base: power: main.c: Use built-in RCU list checking
-Date:   Wed, 04 Mar 2020 12:07:58 +0100
-Message-ID: <1643853.WSYDh8IRHD@kreacher>
-In-Reply-To: <20200303194130.24617-1-madhuparnabhowmik10@gmail.com>
-References: <20200303194130.24617-1-madhuparnabhowmik10@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 4 Mar 2020 06:08:31 -0500
+Received: by mail-ed1-f68.google.com with SMTP id c21so325639edt.1;
+        Wed, 04 Mar 2020 03:08:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3yy/OH+uOLzdanIeOX7H2H64xTV/u4qsSGbI1/KJzyQ=;
+        b=LCcft+2QE7nFkT9X5HUWblXU5lWrxdJypIWyYJo3inXIcHdt0vKgmcK+IrS9h2dwro
+         qa7BWl8WjLE+T1r4EH2PRleIDulCN2puooKxfs9ZtRPiobwqs0Rb14VwbEkOfZTQwgn3
+         Ym2McuhANF2g8pWsych3r5aHBj0SN82uOP+vIjjbbxaGd2vuRnflMoCii7XWmOL8Pntg
+         0kyjp8rMjMYu2VnATJ+qoj1OpV3MibWfyDVuzupFeE6OTslpD0bWvABzyXRWRPpBKdDf
+         9s5HmswIkdR9d95fiOLl6UW6VAB91iHxRMXHr9NKD7UEr7PPjl7YdfdDHHjf4YTIRtXy
+         Hn5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3yy/OH+uOLzdanIeOX7H2H64xTV/u4qsSGbI1/KJzyQ=;
+        b=WPuwKFF1v1IoXaBQrqvhCH1PyZel58q6BG4jIJuhGLI2wavTk1WW3HtCpHMxfA4CSk
+         wmlWoZeZMVGQbtMdwa8AzRw6p6DKT1Owmsj96ZW2WmAUwS64EHogGlbiI2Y9Aoesl1Be
+         xFedDvlkxvcBB6zGFciWpkdRBSYs4+13Xbobmo91jTxfHlymsouxIzMqO2QwNmIUIfCb
+         G8P0fsFst1TmRwP51YBxqMd2XfusEWX8m9ArwJwHytNvV9zZLwFgtul/ky2NnBM1QKnc
+         pD50iLJuLpC/hiotHvl+v4wXF63NkHEKe12tjBnQ80LwLv3Z1X4kK6KpdZkbDn52hdk4
+         +ZbA==
+X-Gm-Message-State: ANhLgQ1E0H9zZpthsw2WlHpJd8k2Gfnr31VToiLyHGBeEaly6/P/tgwz
+        u3mhS9EXhDvZelgf++RATzYHEbm8qL8=
+X-Google-Smtp-Source: ADFU+vt49WpWk/Ua0NarpmOvy2WnwfqwmQwVx6samXjJI6itrKgzgZfzc16xKdY/y/XcYduymMXYBw==
+X-Received: by 2002:a50:fc85:: with SMTP id f5mr2142948edq.294.1583320109377;
+        Wed, 04 Mar 2020 03:08:29 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
+        by smtp.gmail.com with ESMTPSA id d1sm425796edc.71.2020.03.04.03.08.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 03:08:28 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>, Sameer Rahmani <lxsameer@gnu.org>
+Cc:     linux-doc@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust to kobject doc ReST conversion
+Date:   Wed,  4 Mar 2020 12:08:21 +0100
+Message-Id: <20200304110821.7243-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, March 3, 2020 8:41:30 PM CET madhuparnabhowmik10@gmail.com wrote:
-> From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> 
-> This patch passes the cond argument to list_for_each_entry_rcu()
-> to fix the following false-positive lockdep warnings:
-> (with CONFIG_PROVE_RCU_LIST = y)
-> 
-> [  330.302784] =============================
-> [  330.302789] WARNING: suspicious RCU usage
-> [  330.302796] 5.6.0-rc1+ #5 Not tainted
-> [  330.302801] -----------------------------
-> [  330.302808] drivers/base/power/main.c:326 RCU-list traversed in non-reader section!!
-> 
-> [  330.303303] =============================
-> [  330.303307] WARNING: suspicious RCU usage
-> [  330.303311] 5.6.0-rc1+ #5 Not tainted
-> [  330.303315] -----------------------------
-> [  330.303319] drivers/base/power/main.c:1698 RCU-list traversed in non-reader section!!
-> 
-> [  331.934969] =============================
-> [  331.934971] WARNING: suspicious RCU usage
-> [  331.934973] 5.6.0-rc1+ #5 Not tainted
-> [  331.934975] -----------------------------
-> [  331.934977] drivers/base/power/main.c:1238 RCU-list traversed in non-reader section!!
-> 
-> [  332.467772] WARNING: suspicious RCU usage
-> [  332.467775] 5.6.0-rc1+ #5 Not tainted
-> [  332.467775] -----------------------------
-> [  332.467778] drivers/base/power/main.c:269 RCU-list traversed in non-reader section!!
-> 
-> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> ---
->  drivers/base/power/main.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 0e99a760aebd..6d1dee7051eb 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -40,6 +40,10 @@
->  
->  typedef int (*pm_callback_t)(struct device *);
->  
-> +#define list_for_each_entry_rcu_locked(pos, head, member) \
-> +	list_for_each_entry_rcu(pos, head, member, \
-> +			device_links_read_lock_held())
-> +
->  /*
->   * The entries in the dpm_list list are in a depth first order, simply
->   * because children are guaranteed to be discovered after parents, and
-> @@ -266,7 +270,7 @@ static void dpm_wait_for_suppliers(struct device *dev, bool async)
->  	 * callbacks freeing the link objects for the links in the list we're
->  	 * walking.
->  	 */
-> -	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
-> +	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
->  		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
->  			dpm_wait(link->supplier, async);
->  
-> @@ -323,7 +327,7 @@ static void dpm_wait_for_consumers(struct device *dev, bool async)
->  	 * continue instead of trying to continue in parallel with its
->  	 * unregistration).
->  	 */
-> -	list_for_each_entry_rcu(link, &dev->links.consumers, s_node)
-> +	list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_node)
->  		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
->  			dpm_wait(link->consumer, async);
->  
-> @@ -1235,7 +1239,7 @@ static void dpm_superior_set_must_resume(struct device *dev)
->  
->  	idx = device_links_read_lock();
->  
-> -	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
-> +	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
->  		link->supplier->power.must_resume = true;
->  
->  	device_links_read_unlock(idx);
-> @@ -1695,7 +1699,7 @@ static void dpm_clear_superiors_direct_complete(struct device *dev)
->  
->  	idx = device_links_read_lock();
->  
-> -	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
-> +	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
->  		spin_lock_irq(&link->supplier->power.lock);
->  		link->supplier->power.direct_complete = false;
->  		spin_unlock_irq(&link->supplier->power.lock);
-> 
+Commit 5fed00dcaca8 ("Documentation: kobject.txt has been moved to
+core-api/kobject.rst") missed to adjust the entry in MAINTAINERS.
 
-Applied along with the [2/2] (with updated changelogs) as 5.7 material.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Thanks!
+  warning: no file matches F: Documentation/kobject.txt
 
+Adjust DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS entry in MAINTAINERS.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Sameer, please ack.
+Jonathan, pick pick this patch for doc-next.
 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d064049aad1b..998d56e61a41 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5213,7 +5213,7 @@ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ R:	"Rafael J. Wysocki" <rafael@kernel.org>
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+ S:	Supported
+-F:	Documentation/kobject.txt
++F:	Documentation/core-api/kobject.rst
+ F:	drivers/base/
+ F:	fs/debugfs/
+ F:	fs/sysfs/
+-- 
+2.17.1
 
