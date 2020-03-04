@@ -2,102 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B8D1797B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B921797C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 19:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388226AbgCDSUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 13:20:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56019 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388130AbgCDSUH (ORCPT
+        id S1730133AbgCDSWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 13:22:15 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48828 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729675AbgCDSWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 13:20:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583346006;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sc0Xcmlskdb745JmJFxuE7AmsaR9eAsu+qMPQfvgRAA=;
-        b=eDkIqyvjUnm9dj3Lgoxc/HLfoyUR55xFutBY1nqTxiVrgkQ+3fKHlh5aKxJgtZzw3c45ub
-        FvTdmkHXd6kMbT5wgxUy8gBbUh2NL8WTpfPZKtnjb2NxL/YwMeolu3u51PVJDq+3uNCqEx
-        u4HzOeJe7c2o/XZlFChTY17v8rfxo54=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-247-PMmpI1QpMeWuAf14S2_6CQ-1; Wed, 04 Mar 2020 13:20:02 -0500
-X-MC-Unique: PMmpI1QpMeWuAf14S2_6CQ-1
-Received: by mail-wr1-f69.google.com with SMTP id w6so1176088wrm.16
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 10:20:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Sc0Xcmlskdb745JmJFxuE7AmsaR9eAsu+qMPQfvgRAA=;
-        b=R2d3FtM6U1BEe62D7p8w53Zvqn1i0hLL0nE2/7vNzE0OrJjC1Yhyhg43H70zGJYQux
-         f4A9glTH5MBq6Kau81hBGBEFxpqhCGLGPJoMToQgQJpB4FTINp4mb3cI5jIF+phsElFm
-         ow4oJ4auXRrdfxi1U8sm7MlGCrONV0/wuQA5QXLruBmIhPhy/vq1tp2+EX4tEFmWf2+g
-         SFoDTbmGUziPDVVNhKb50YtTpnQLyispSmn2wBt13vxDSQhgKKPqrBCfpnYtsbcqs/4+
-         QeOHz+3Fbc5lYGNwP7a9W5v+b/XteI1lZpVMAp2LWFZN0ewaBMdkY3TwRE9qHzd4rP5S
-         3t0Q==
-X-Gm-Message-State: ANhLgQ3KHoDx84Kh1LmHLsuPDYuxmE26RlafTH0M2BWCDORe/kKakthn
-        pNStYXmZkVif9qozIqdOoO2T1L0JhZbE26pidi3HtTNixulsn0SMTy15iim4GWbqDejxw/0x4Px
-        RmYVYKSMUImetEZLpl4iM5daM
-X-Received: by 2002:a5d:4043:: with SMTP id w3mr5385371wrp.139.1583346001108;
-        Wed, 04 Mar 2020 10:20:01 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vvMvPx30AeZ0XZ0GMLVOfVyfATjiiWEyIm29aWaWBtqZT4tOSR60u07P5jBLCYTmV38Q30pcw==
-X-Received: by 2002:a5d:4043:: with SMTP id w3mr5385363wrp.139.1583346000909;
-        Wed, 04 Mar 2020 10:20:00 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:9def:34a0:b68d:9993? ([2001:b07:6468:f312:9def:34a0:b68d:9993])
-        by smtp.gmail.com with ESMTPSA id k66sm2769279wmf.0.2020.03.04.10.19.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 10:20:00 -0800 (PST)
-Subject: Re: [PATCH] KVM: X86: Avoid explictly fetch instruction in
- x86_decode_insn()
-To:     Peter Xu <peterx@redhat.com>, linmiaohe <linmiaohe@huawei.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-References: <05ca4e7e070844dd92e4f673a1bc15d9@huawei.com>
- <20200304153253.GB7146@xz-x1>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <ad023c34-9a08-7d61-22de-911c4e8760ba@redhat.com>
-Date:   Wed, 4 Mar 2020 19:19:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 4 Mar 2020 13:22:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hKyWk7Lq9ur1Op8sObVzpsl0Nt0c5ZcDaJMgGzKn8JE=; b=NY2qlbYBsu9O8vYaS7tyE5l9MV
+        AmD64y52Ym5b+53nu8nhjjIy86DdgdzHv6M9XPy1Bt8m1eTKWH26Sa2J/6i0vUl56tBwnidlxdItv
+        hm0VLOonJMI+2O7PSHkchFj27+lL/fwtdiH3pTNTiyCM+Eju56n7fANmWpnTPp02ivGzw+zvZcGgs
+        Qa4iJO2RjOyDxcLNQMIjcKk8ZdLwAkXVgWMaqwxRJMRtm5qCGJ4XDDBCi0vJuNHoEIANp3RdDJa4A
+        2vpc/fIpflsJyq2WIkJSnfHqtMUjPam47XOnMJnkjtQpi9CVGUsqfteXwJ1PWVF0Gk8CFu6HrONx3
+        uOByesWA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9YeM-0002BO-IQ; Wed, 04 Mar 2020 18:21:43 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E36C8303DA3;
+        Wed,  4 Mar 2020 19:19:40 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9213E23CE6B20; Wed,  4 Mar 2020 19:21:39 +0100 (CET)
+Date:   Wed, 4 Mar 2020 19:21:39 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Don <joshdon@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Li Zefan <lizefan@huawei.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Paul Turner <pjt@google.com>
+Subject: Re: [PATCH] sched/cpuset: distribute tasks within affinity masks
+Message-ID: <20200304182139.GO2596@hirez.programming.kicks-ass.net>
+References: <20200228010134.42866-1-joshdon@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200304153253.GB7146@xz-x1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228010134.42866-1-joshdon@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/20 16:32, Peter Xu wrote:
->> Looks good, thanks. But it seems we should also take care of the comment in __do_insn_fetch_bytes(), as we do not
->> load instruction at the beginning of x86_decode_insn() now, which may be misleading:
->> 		/*
->>          * One instruction can only straddle two pages,
->>          * and one has been loaded at the beginning of
->>          * x86_decode_insn.  So, if not enough bytes
->>          * still, we must have hit the 15-byte boundary.
->>          */
->>         if (unlikely(size < op_size))
->>                 return emulate_gp(ctxt, 0);
-> Right, thanks for spotting that (even if the patch to be dropped :).
-> 
-> I guess not only the comment, but the check might even fail if we
-> apply the patch. Because when the fetch is the 1st attempt and
-> unluckily that acrosses one page boundary (because we'll only fetch
-> until either 15 bytes or the page boundary), so that single fetch
-> could be smaller than op_size provided.
+On Thu, Feb 27, 2020 at 05:01:34PM -0800, Josh Don wrote:
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 04278493bf15..a2aab6a8a794 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1587,6 +1587,8 @@ extern int task_can_attach(struct task_struct *p, const struct cpumask *cs_cpus_
+>  #ifdef CONFIG_SMP
+>  extern void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask);
+>  extern int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask);
+> +extern int set_cpus_allowed_ptr_distribute(struct task_struct *p,
+> +				const struct cpumask *new_mask);
 
-Right, priming the decode cache with one byte from the current page
-cannot fail, and then we know that the next call must be at the
-beginning of the next page.
+Why? Changelog doesn't seem to give a reason for adding another
+interface.
 
-Paolo
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 1a9983da4408..2336d6d66016 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1612,6 +1612,32 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+>  		set_next_task(rq, p);
+>  }
+>  
+> +static DEFINE_PER_CPU(int, distribute_cpu_mask_prev);
+> +
+> +/*
+> + * Returns an arbitrary cpu within *srcp1 & srcp2
+> + *
+> + * Iterated calls using the same srcp1 and srcp2, passing the previous cpu each
+> + * time, will be distributed within their intersection.
+> + */
+> +static int distribute_to_new_cpumask(const struct cpumask *src1p,
+> +				     const struct cpumask *src2p)
+> +{
+> +	int next, prev;
+> +
+> +	/* NOTE: our first selection will skip 0. */
+> +	prev = __this_cpu_read(distribute_cpu_mask_prev);
+> +
+> +	next = cpumask_next_and(prev, src1p, src2p);
+> +	if (next >= nr_cpu_ids)
+> +		next = cpumask_first_and(src1p, src2p);
+> +
+> +	if (next < nr_cpu_ids)
+> +		__this_cpu_write(distribute_cpu_mask_prev, next);
+> +
+> +	return next;
+> +}
 
+That's a valid implementation of cpumask_any_and(), it just has a really
+weird name.
+
+>  /*
+>   * Change a given task's CPU affinity. Migrate the thread to a
+>   * proper CPU and schedule it away if the CPU it's executing on
+> @@ -1621,11 +1647,11 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+>   * task must not exit() & deallocate itself prematurely. The
+>   * call is not atomic; no spinlocks may be held.
+>   */
+> -static int __set_cpus_allowed_ptr(struct task_struct *p,
+> +static int __set_cpus_allowed_ptr(struct task_struct *p, bool distribute_cpus,
+>  				  const struct cpumask *new_mask, bool check)
+>  {
+>  	const struct cpumask *cpu_valid_mask = cpu_active_mask;
+> -	unsigned int dest_cpu;
+> +	unsigned int dest_cpu, prev_cpu;
+>  	struct rq_flags rf;
+>  	struct rq *rq;
+>  	int ret = 0;
+> @@ -1652,8 +1678,33 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+>  	if (cpumask_equal(p->cpus_ptr, new_mask))
+>  		goto out;
+>  
+> -	dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
+> -	if (dest_cpu >= nr_cpu_ids) {
+> +	if (!cpumask_intersects(new_mask, cpu_valid_mask)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	prev_cpu = task_cpu(p);
+> +	if (distribute_cpus) {
+> +		dest_cpu = distribute_to_new_cpumask(new_mask,
+> +						     cpu_valid_mask);
+> +	} else {
+> +		/*
+> +		 * Can the task run on the task's current CPU? If so, we're
+> +		 * done.
+> +		 *
+> +		 * We only enable this short-circuit in the case that we're
+> +		 * not trying to distribute tasks.  As we may otherwise not
+> +		 * distribute away from a loaded CPU, or make duplicate
+> +		 * assignments to it.
+> +		 */
+> +		if (cpumask_test_cpu(prev_cpu, new_mask))
+> +			dest_cpu = prev_cpu;
+> +		else
+> +			dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
+> +	}
+
+That all seems overly complicated; what is wrong with just this:
+
+	dest_cpu = cpumask_any_and_fancy(cpu_valid_mask, new_mask);
+
+I don't really buy the argument why that shortcut is problematic; it's
+all averages anyway, and keeping a task on a CPU where it's already
+running seems like a win.
+
+> +	/* May have raced with cpu_down */
+> +	if (unlikely(dest_cpu >= nr_cpu_ids)) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
