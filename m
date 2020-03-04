@@ -2,72 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D8EF178B82
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 08:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BE4C178B86
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 08:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387488AbgCDHlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 02:41:02 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34548 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728499AbgCDHlC (ORCPT
+        id S2387676AbgCDHlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 02:41:07 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54974 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbgCDHlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 02:41:02 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z15so1094593wrl.1;
-        Tue, 03 Mar 2020 23:41:01 -0800 (PST)
+        Wed, 4 Mar 2020 02:41:03 -0500
+Received: by mail-wm1-f68.google.com with SMTP id i9so749747wml.4;
+        Tue, 03 Mar 2020 23:41:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CrHAGg7xO0NT1A0T82S72pHlkMFHuRzLgTSmN7ed1nE=;
-        b=ipv6JMiDw6jP42BqOvDDy9Yh3RXYzZGPYyDcU9jXEqL4JxdqaTmfpcYntDy+H33beR
-         2f0GsEhs7IsntUPTAfnYI33ifPrYDREXuxlsb3vVIEOu/NhxBcW14ekLXlN1tn3uRxEQ
-         rfG14QpPV2D07MSU0WGqQV0A9EpuwEzueZF/uIBBK6FQTvQPCYYB+vVBGAgt7GoKJsOr
-         qf/8dgdyaoCc4cHLCTFG5CFuWSCbhQP0H0R6mE5k/N2ahBwO1tBdxSPqHaBUGzGz6iqp
-         JfAlYBFJaoyPJ0EkhHQDoawMGHk657Jnl4ifI2eGN3IkzFC65H1mQfCKcRoH5v1VTjbg
-         SxKA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=zaJoE8S6ZoYeei3qANBHRGMHafpbqFjs0OJRPS7inbc=;
+        b=I5oGKA/UWW7QwBvJ3wSieVr1KrOam29uhrWVFyJ5NShFtWmXS+wm5O+7mUKNS5Wi8z
+         shOlw/C2PyNt+V8WIOWvMAVn3Kk4InYVY5Wg6OK3nLXbh1EbJb8vouDBFm3yStE1AopM
+         ckEbB82cX+WY6Wyzpci3c1xu9loT169vXv73YWaPeyUc6Q5ZJGzedG0uOqJbTjBGJbWE
+         WS4Upwtv9gUEi9lHfV1Y3GOAaGC5FeZ0TfPCCzY0NMhD4ES8MXVARxwRNqvby2q89v1p
+         LWk4TbrY9acWFcbqcg1JE+hPmviVwkyU8cCYWEDsfZ9+yvo1zJJwMVKZnA+v0ls9j+p2
+         TgZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CrHAGg7xO0NT1A0T82S72pHlkMFHuRzLgTSmN7ed1nE=;
-        b=a3Xayg7ZYpD6XfhTFY7gRC5PYY5zEDDr4lDMqEcQl0fM0m3Dq55QfLsO3lfJzaYsTd
-         NORGsZ/fZ9dmIu0AgiSzQ+GvG6tKOGEwNB9aw3JePOBjyXhI4TbsEH5ke39EVnp62ryy
-         0sujdJCpnyJb68lUHBVpjMmxaSNrMkl5okFlruXy2ufIhB1q/TiMGz3x7f9JI2/gH2la
-         1JSqQLAu7MuAK0bHtbEkajfydUkNA0f2Ou7MQgFZkopk6ZanBaVvB+WvUj7DP0cTAy6p
-         j8+Kp0rQJnsVWDqIsL6QYV6nZVcyE6dmxAQ7Zy9dW1w3nJQXSdgyrdmlzBhZw0fA1EOc
-         my2w==
-X-Gm-Message-State: ANhLgQ0k3/8cchoobv9oOodJQQeekoGYezw9cCxtijtgby8vDP1aXH3B
-        Cv6KYPWnufszkwCPhNVwFh8=
-X-Google-Smtp-Source: ADFU+vs1bZk9bnffIwK2hnQ7f7/N9rjAEGy/0M/3YUa4nM2yYGwzhot/uOrj5R/5NG1RttDv7QCOWw==
-X-Received: by 2002:a5d:410f:: with SMTP id l15mr2638334wrp.245.1583307660517;
-        Tue, 03 Mar 2020 23:41:00 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=zaJoE8S6ZoYeei3qANBHRGMHafpbqFjs0OJRPS7inbc=;
+        b=Clj0zaRm5WrSk8E8gYw2D3b3fjt0D+H4SZ3T4oKpUjGlLirJ7HSt+l9U/koO5axXX7
+         RzQ5vIetprYk04c5lXEJQOpoIukjckKOaXWIfTbw6+OyJCs0MyNW8gWbySVrRDcJsEzg
+         ESWymdPCWHSSmld7WZaDn7jtTs8y4wkonHtaEO/Oq/p4f3PzsxedA5MB+BYdiZyoZBK1
+         Y7wpBW3km7bWYaV60xKZdj8or0KdOtm/NzCZTAwfwfyBHpl4dc7qWGW8RaxaPn0Payda
+         QJmV3ECAAqwqGyuBZJJS80A+bIaJ80vizMIRpWK1/GEwyBrU7tKqZx9bdUyvNriBd8xq
+         F64A==
+X-Gm-Message-State: ANhLgQ30ndqO3v09tBKWPMf0TqZA/uSCly1TgEwCMtXx855sJCw7W43m
+        W09aV3y4iw+Q30JkHd+CMJ78pQVx
+X-Google-Smtp-Source: ADFU+vvLjNcHwxp+EXcjbM13xCnQx0EC41KlBeGvt1Ll82wKDOjh2PiuZOTCyyaL63+lJ3bvpLSuEA==
+X-Received: by 2002:a05:600c:214b:: with SMTP id v11mr2277253wml.13.1583307661540;
+        Tue, 03 Mar 2020 23:41:01 -0800 (PST)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id m16sm6410530wrs.67.2020.03.03.23.40.59
+        by smtp.gmail.com with ESMTPSA id m16sm6410530wrs.67.2020.03.03.23.41.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Mar 2020 23:40:59 -0800 (PST)
+        Tue, 03 Mar 2020 23:41:01 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] ARM: dts: rockchip: add missing model properties
-Date:   Wed,  4 Mar 2020 08:40:49 +0100
-Message-Id: <20200304074051.8742-1-jbx6244@gmail.com>
+Subject: [PATCH 2/3] ARM: dts: rockchip: add missing @0 to memory nodenames
+Date:   Wed,  4 Mar 2020 08:40:50 +0100
+Message-Id: <20200304074051.8742-2-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200304074051.8742-1-jbx6244@gmail.com>
+References: <20200304074051.8742-1-jbx6244@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A test with the command below gives these errors:
+A test with the command below gives for example this error:
 
-arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: /: 'model'
-is a required property
-arch/arm/boot/dts/rk3288-evb-rk808.dt.yaml: /: 'model'
-is a required property
-arch/arm/boot/dts/rk3288-r89.dt.yaml: /: 'model'
-is a required property
+arch/arm/boot/dts/rk3288-tinker.dt.yaml: /: memory:
+False schema does not allow
+{'device_type': ['memory'], 'reg': [[0, 0, 0, 2147483648]]}
 
-Fix this error by adding the missing model properties to
-the involved dts files.
+The memory nodes all have a reg property that requires '@' in
+the nodename. Fix this error by adding the missing '@0' to
+the involved memory nodenames.
 
 make ARCH=arm dtbs_check
 DT_SCHEMA_FILES=~/.local/lib/python3.5/site-packages/dtschema/
@@ -75,47 +76,64 @@ schemas/root-node.yaml
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rk3288-evb-act8846.dts | 1 +
- arch/arm/boot/dts/rk3288-evb-rk808.dts   | 1 +
- arch/arm/boot/dts/rk3288-r89.dts         | 1 +
- 3 files changed, 3 insertions(+)
+ arch/arm/boot/dts/rk3288-phycore-som.dtsi | 2 +-
+ arch/arm/boot/dts/rk3288-tinker.dtsi      | 2 +-
+ arch/arm/boot/dts/rk3288-veyron.dtsi      | 2 +-
+ arch/arm/boot/dts/rk3288-vyasa.dts        | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3288-evb-act8846.dts b/arch/arm/boot/dts/rk3288-evb-act8846.dts
-index 80080767c..be695b8c1 100644
---- a/arch/arm/boot/dts/rk3288-evb-act8846.dts
-+++ b/arch/arm/boot/dts/rk3288-evb-act8846.dts
-@@ -4,6 +4,7 @@
- #include "rk3288-evb.dtsi"
+diff --git a/arch/arm/boot/dts/rk3288-phycore-som.dtsi b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
+index 77a47b9b7..9e76166c3 100644
+--- a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
++++ b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
+@@ -16,7 +16,7 @@
+ 	 * Set the minimum memory size here and
+ 	 * let the bootloader set the real size.
+ 	 */
+-	memory {
++	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x8000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index 312582c1b..77ae303b0 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -12,7 +12,7 @@
+ 		stdout-path = "serial2:115200n8";
+ 	};
  
- / {
-+	model = "Rockchip RK3288 EVB ACT8846";
- 	compatible = "rockchip,rk3288-evb-act8846", "rockchip,rk3288";
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 		device_type = "memory";
+ 	};
+diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
+index 54a6838d7..c089ce008 100644
+--- a/arch/arm/boot/dts/rk3288-veyron.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
+@@ -18,7 +18,7 @@
+ 	 * The default coreboot on veyron devices ignores memory@0 nodes
+ 	 * and would instead create another memory node.
+ 	 */
+-	memory {
++	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/rk3288-vyasa.dts b/arch/arm/boot/dts/rk3288-vyasa.dts
+index ba06e9f97..889b95e95 100644
+--- a/arch/arm/boot/dts/rk3288-vyasa.dts
++++ b/arch/arm/boot/dts/rk3288-vyasa.dts
+@@ -14,7 +14,7 @@
+ 		stdout-path = &uart2;
+ 	};
  
- 	vcc_lcd: vcc-lcd {
-diff --git a/arch/arm/boot/dts/rk3288-evb-rk808.dts b/arch/arm/boot/dts/rk3288-evb-rk808.dts
-index 167882096..42384ea4c 100644
---- a/arch/arm/boot/dts/rk3288-evb-rk808.dts
-+++ b/arch/arm/boot/dts/rk3288-evb-rk808.dts
-@@ -4,6 +4,7 @@
- #include "rk3288-evb.dtsi"
- 
- / {
-+	model = "Rockchip RK3288 EVB RK808";
- 	compatible = "rockchip,rk3288-evb-rk808", "rockchip,rk3288";
- };
- 
-diff --git a/arch/arm/boot/dts/rk3288-r89.dts b/arch/arm/boot/dts/rk3288-r89.dts
-index a6ffc381a..a258c7ae5 100644
---- a/arch/arm/boot/dts/rk3288-r89.dts
-+++ b/arch/arm/boot/dts/rk3288-r89.dts
-@@ -9,6 +9,7 @@
- #include "rk3288.dtsi"
- 
- / {
-+	model = "Netxeon R89";
- 	compatible = "netxeon,r89", "rockchip,rk3288";
- 
- 	memory@0 {
+-	memory {
++	memory@0 {
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 		device_type = "memory";
+ 	};
 -- 
 2.11.0
 
