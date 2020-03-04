@@ -2,276 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8BFF1793EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 183DE179408
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Mar 2020 16:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388226AbgCDPsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 10:48:05 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45282 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388181AbgCDPsE (ORCPT
+        id S2388267AbgCDPtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 10:49:13 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:43845 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729573AbgCDPtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:48:04 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v2so2963293wrp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 07:48:02 -0800 (PST)
+        Wed, 4 Mar 2020 10:49:13 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q18so2037757qki.10;
+        Wed, 04 Mar 2020 07:49:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JH3iKdoX60vBDf5RPVZX6I6Dg2qntJTjRhn9rqqRbkU=;
-        b=ce65Ks4eMK1y7cjThJcC8xe2T0GpZxp0Y+G35ZaB+P0atYcbffyjFrn2rV5D+ghDVU
-         A4GZnpbhNKizq6u4X16MSbcKPlq1vVvO3PSxW+87YBkymRC/1qwwWikmt8GEexTzo2tg
-         B7RhyEdQ+sXdUVuV3tsaj+MgXW5XPgmLgFxzw=
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TsTKXhrbnw/QAlugyUyOjWQ0P4Lr6lXfLnd3ahgcNlQ=;
+        b=LmHHN+/yzZIXHZsAT4mPjlLhLhDwRzyHrf4mOtnXBsZHhyIBerM7ivcQPYfmN0zu6M
+         MCpqRZ0853FsImWkM8jJqsAAWmYEoyzkUielgjLay4Whb47ZdwgVV/VzoHfmSlnXlNo3
+         vt8KFlhUaOdOYWZq9BPIH3Ak+dzsUQs5cqzn/6cHlOj5RkPT6A0EvUvIKG8+IupQa8wa
+         nHuSVnBnQyFqzFVhr3EUmcXmVdW5VdLx7na6S8dSRUpiMSgUI8B6So0y5dusrau4YXIf
+         gRfJVVqcF0GcwaB+H3QjzSY6fzYJBksg2CAJjjpSFPH+WXaLKAWGoZEqYV4AbysBmG7S
+         KxZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JH3iKdoX60vBDf5RPVZX6I6Dg2qntJTjRhn9rqqRbkU=;
-        b=BSerC21hOQHeCGGMNPMmkrTcrHbbwpwMlnaDphisR9Yvq3SHGxxm0oKSU2v4eYIczP
-         zW821PVeRVGsHE/MOKB80+RsI0eFrjrwExeCDC1CBvJkBrTJ+7zIA/RwBK469r/T5Foj
-         haDNbO26G+tfAsZ+lA5QasBdX0sb4zkbhYw67CLRs8+djPqzso58OwZLUsWHE1odg/PR
-         wDEnMU7aOfhSodLc0yddqYbJjsrD4gtvsKGvjKCifS4AtsKD3e+u5IJkutinsuZ1siJ6
-         fajPpISJnROF2whJjb6LpMekDEFSX1kc4tNJovtlQOM2We2DXMQJj9Dvhg6mT7YqpjiZ
-         768A==
-X-Gm-Message-State: ANhLgQ3mlfQ+XjJGUPnuPKfAZC0x9uOQsRZwAkH9tP/OGBrPvmQdlEDx
-        uVqVNRrdIhacA6+IcJ8jMPA9jQ==
-X-Google-Smtp-Source: ADFU+vtR4KyEGJ2cO/OPp0l9p4ynjqVAQjux5fRnVlx1siYw/whKL46bRLgi6BO7eEqFZVwwZt+RuQ==
-X-Received: by 2002:adf:c44a:: with SMTP id a10mr4453283wrg.279.1583336882040;
-        Wed, 04 Mar 2020 07:48:02 -0800 (PST)
-Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:308:8ca0:6f80:af01:b24])
-        by smtp.gmail.com with ESMTPSA id u25sm4816091wml.17.2020.03.04.07.48.01
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TsTKXhrbnw/QAlugyUyOjWQ0P4Lr6lXfLnd3ahgcNlQ=;
+        b=YWOxTE5rd/xZDD6NTHh03SqWsgHNrw6YPwj2IQ31lmwkfeu5C5DgvByztKZV3dsGMe
+         2Lt9X1kdEHvRxeKUDAGdibwlWx7c354R3b4XA9PQ3PC79MQIZ/xhdtu6evpbyxrLgyAi
+         G/xKn7u6geSiD7TMrmPRUJQX4kBi5aCcmZWChl684XsdZiP9M+pnS8OH6qK35xNd7uGI
+         C5N/99aft2O9dMZ+Vr0zg+sp7gPdclJdpSqvrdJ90zWosITnLyOj+pWP6zVd1fya1810
+         y0i8JNn3m0IoEOd11F3P3IJ3o+NMXDpEw5WQCiAsdhBhTOOKZvHu1DXyOoxk5Wl94eyH
+         flUA==
+X-Gm-Message-State: ANhLgQ0b28NxaGJ5aZUWcXgR8qjTg9oSWMwmnboJT4Whh25BG4PNYbfH
+        tf5HB/0eae34vv4CtW2kWRXGMOvly7g=
+X-Google-Smtp-Source: ADFU+vu6MjrfeMJUkM08i6nKGwC401gXeN93yXmVhriRbMKWEwypOR4JepxmDbYtCZB/O4uXmPxkbw==
+X-Received: by 2002:a05:620a:21c9:: with SMTP id h9mr3527412qka.29.1583336951756;
+        Wed, 04 Mar 2020 07:49:11 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id 89sm14195261qth.3.2020.03.04.07.49.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 07:48:01 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>
-Subject: [PATCH bpf-next v3 7/7] bpf: Add selftests for BPF_MODIFY_RETURN
-Date:   Wed,  4 Mar 2020 16:47:47 +0100
-Message-Id: <20200304154747.23506-8-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200304154747.23506-1-kpsingh@chromium.org>
-References: <20200304154747.23506-1-kpsingh@chromium.org>
+        Wed, 04 Mar 2020 07:49:11 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 4 Mar 2020 10:49:09 -0500
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] x86/mm/pat: Handle no-GBPAGES case correctly in
+ populate_pud
+Message-ID: <20200304154908.GB998825@rani.riverdale.lan>
+References: <20200303205445.3965393-1-nivedita@alum.mit.edu>
+ <20200303205445.3965393-2-nivedita@alum.mit.edu>
+ <CAKv+Gu_LmntqGjkakR0-SFSCR+JF+CFeKyc=5qzOdpn4wTvKhw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_LmntqGjkakR0-SFSCR+JF+CFeKyc=5qzOdpn4wTvKhw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+On Wed, Mar 04, 2020 at 09:17:44AM +0100, Ard Biesheuvel wrote:
+> On Tue, 3 Mar 2020 at 21:54, Arvind Sankar <nivedita@alum.mit.edu> wrote:
+> >
+> > Commit d367cef0a7f0 ("x86/mm/pat: Fix boot crash when 1GB pages are not
+> > supported by the CPU") added checking for CPU support for 1G pages
+> > before using them.
+> >
+> > However, when support is not present, nothing is done to map the
+> > intermediate 1G regions and we go directly to the code that normally
+> > maps the remainder after 1G mappings have been done. This code can only
+> > handle mappings that fit inside a single PUD entry, but there is no
+> > check, and it instead silently produces a corrupted mapping to the end
+> > of the PUD entry, and no mapping beyond it, but still returns success.
+> >
+> > This bug is encountered on EFI machines in mixed mode (32-bit firmware
+> > with 64-bit kernel), with RAM beyond 2G. The EFI support code
+> > direct-maps all the RAM, so a memory range from below 1G to above 2G
+> > triggers the bug and results in no mapping above 2G, and an incorrect
+> > mapping in the 1G-2G range. If the kernel resides in the 1G-2G range, a
+> > firmware call does not return correctly, and if it resides above 2G, we
+> > end up passing addresses that are not mapped in the EFI pagetable.
+> >
+> > Fix this by mapping the 1G regions using 2M pages when 1G page support
+> > is not available.
+> >
+> > Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+> 
+> I was trying to test these patches, and while they seem fine from a
+> regression point of view, I can't seem to reproduce this issue and
+> make it go away again by applying this patch.
+> 
+> Do you have any detailed instructions how to reproduce this?
+> 
 
-Test for two scenarios:
+The steps I'm following are
+- build x86_64 defconfig + enable EFI_PGT_DUMP (to show the incorrect
+  pagetable)
+- run (QEMU is 4.2.0)
+$ qemu-system-x86_64 -cpu Haswell -pflash qemu/OVMF_32.fd -m 3072 -nographic \
+  -kernel kernel64/arch/x86/boot/bzImage -append "earlyprintk=ttyS0,keep efi=debug nokaslr"
 
-  * When the fmod_ret program returns 0, the original function should
-    be called along with fentry and fexit programs.
-  * When the fmod_ret program returns a non-zero value, the original
-    function should not be called, no side effect should be observed and
-    fentry and fexit programs should be called.
+The EFI memory map I get is (abbreviated to regions of interest):
+...
+[    0.253991] efi: mem10: [Conventional Memory|   |  |  |  |  |  |  |  |   |WB|WT|WC|UC] range=[0x00000000053e7000-0x000000003fffbfff] (940MB)
+[    0.254424] efi: mem11: [Loader Data        |   |  |  |  |  |  |  |  |   |WB|WT|WC|UC] range=[0x000000003fffc000-0x000000003fffffff] (0MB)
+[    0.254991] efi: mem12: [Conventional Memory|   |  |  |  |  |  |  |  |   |WB|WT|WC|UC] range=[0x0000000040000000-0x00000000bbf77fff] (1983MB)
+...
 
-The result from the kernel function call and whether a side-effect is
-observed is returned via the retval attr of the BPF_PROG_TEST_RUN (bpf)
-syscall.
+The pagetable this produces is (abbreviated again):
+...
+[    0.272980] 0x0000000003400000-0x0000000004800000          20M     ro         PSE         x  pmd
+[    0.273327] 0x0000000004800000-0x0000000005200000          10M     RW         PSE         NX pmd
+[    0.273987] 0x0000000005200000-0x0000000005400000           2M     RW                     NX pte
+[    0.274343] 0x0000000005400000-0x000000003fe00000         938M     RW         PSE         NX pmd
+[    0.274725] 0x000000003fe00000-0x0000000040000000           2M     RW                     NX pte
+[    0.275066] 0x0000000040000000-0x0000000080000000           1G     RW         PSE         NX pmd
+[    0.275437] 0x0000000080000000-0x00000000bbe00000         958M                               pmd
+...
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Acked-by: Andrii Nakryiko <andriin@fb.com>
----
- net/bpf/test_run.c                            | 22 ++++++-
- .../selftests/bpf/prog_tests/modify_return.c  | 65 +++++++++++++++++++
- .../selftests/bpf/progs/modify_return.c       | 49 ++++++++++++++
- 3 files changed, 135 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/modify_return.c
- create mode 100644 tools/testing/selftests/bpf/progs/modify_return.c
+Note how 0x80000000-0xbbe00000 range is unmapped in the resulting
+pagetable. The dump doesn't show physical addresses, but the
+0x40000000-0x80000000 range is incorrectly mapped as well, as the loop
+in populate_pmd would just go over that virtual address range twice.
 
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 3600f098e7c6..4c921f5154e0 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -10,6 +10,7 @@
- #include <net/bpf_sk_storage.h>
- #include <net/sock.h>
- #include <net/tcp.h>
-+#include <linux/error-injection.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/bpf_test_run.h>
-@@ -143,6 +144,14 @@ int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
- 	return a + (long)b + c + d + (long)e + f;
- }
- 
-+int noinline bpf_modify_return_test(int a, int *b)
-+{
-+	*b += 1;
-+	return a + *b;
-+}
-+
-+ALLOW_ERROR_INJECTION(bpf_modify_return_test, ERRNO);
-+
- static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
- 			   u32 headroom, u32 tailroom)
- {
-@@ -168,7 +177,9 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
- 			      const union bpf_attr *kattr,
- 			      union bpf_attr __user *uattr)
- {
--	int err = -EFAULT;
-+	u16 side_effect = 0, ret = 0;
-+	int b = 2, err = -EFAULT;
-+	u32 retval = 0;
- 
- 	switch (prog->expected_attach_type) {
- 	case BPF_TRACE_FENTRY:
-@@ -181,10 +192,19 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
- 		    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111)
- 			goto out;
- 		break;
-+	case BPF_MODIFY_RETURN:
-+		ret = bpf_modify_return_test(1, &b);
-+		if (b != 2)
-+			side_effect = 1;
-+		break;
- 	default:
- 		goto out;
- 	}
- 
-+	retval = ((u32)side_effect << 16) | ret;
-+	if (copy_to_user(&uattr->test.retval, &retval, sizeof(retval)))
-+		goto out;
-+
- 	err = 0;
- out:
- 	trace_bpf_test_finish(&err);
-diff --git a/tools/testing/selftests/bpf/prog_tests/modify_return.c b/tools/testing/selftests/bpf/prog_tests/modify_return.c
-new file mode 100644
-index 000000000000..97fec70c600b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/modify_return.c
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2020 Google LLC.
-+ */
-+
-+#include <test_progs.h>
-+#include "modify_return.skel.h"
-+
-+#define LOWER(x) ((x) & 0xffff)
-+#define UPPER(x) ((x) >> 16)
-+
-+
-+static void run_test(__u32 input_retval, __u16 want_side_effect, __s16 want_ret)
-+{
-+	struct modify_return *skel = NULL;
-+	int err, prog_fd;
-+	__u32 duration = 0, retval;
-+	__u16 side_effect;
-+	__s16 ret;
-+
-+	skel = modify_return__open_and_load();
-+	if (CHECK(!skel, "skel_load", "modify_return skeleton failed\n"))
-+		goto cleanup;
-+
-+	err = modify_return__attach(skel);
-+	if (CHECK(err, "modify_return", "attach failed: %d\n", err))
-+		goto cleanup;
-+
-+	skel->bss->input_retval = input_retval;
-+	prog_fd = bpf_program__fd(skel->progs.fmod_ret_test);
-+	err = bpf_prog_test_run(prog_fd, 1, NULL, 0, NULL, 0,
-+				&retval, &duration);
-+
-+	CHECK(err, "test_run", "err %d errno %d\n", err, errno);
-+
-+	side_effect = UPPER(retval);
-+	ret  = LOWER(retval);
-+
-+	CHECK(ret != want_ret, "test_run",
-+	      "unexpected ret: %d, expected: %d\n", ret, want_ret);
-+	CHECK(side_effect != want_side_effect, "modify_return",
-+	      "unexpected side_effect: %d\n", side_effect);
-+
-+	CHECK(skel->bss->fentry_result != 1, "modify_return",
-+	      "fentry failed\n");
-+	CHECK(skel->bss->fexit_result != 1, "modify_return",
-+	      "fexit failed\n");
-+	CHECK(skel->bss->fmod_ret_result != 1, "modify_return",
-+	      "fmod_ret failed\n");
-+
-+cleanup:
-+	modify_return__destroy(skel);
-+}
-+
-+void test_modify_return(void)
-+{
-+	run_test(0 /* input_retval */,
-+		 1 /* want_side_effect */,
-+		 4 /* want_ret */);
-+	run_test(-EINVAL /* input_retval */,
-+		 0 /* want_side_effect */,
-+		 -EINVAL /* want_ret */);
-+}
-+
-diff --git a/tools/testing/selftests/bpf/progs/modify_return.c b/tools/testing/selftests/bpf/progs/modify_return.c
-new file mode 100644
-index 000000000000..8b7466a15c6b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/modify_return.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2020 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+static int sequence = 0;
-+__s32 input_retval = 0;
-+
-+__u64 fentry_result = 0;
-+SEC("fentry/bpf_modify_return_test")
-+int BPF_PROG(fentry_test, int a, __u64 b)
-+{
-+	sequence++;
-+	fentry_result = (sequence == 1);
-+	return 0;
-+}
-+
-+__u64 fmod_ret_result = 0;
-+SEC("fmod_ret/bpf_modify_return_test")
-+int BPF_PROG(fmod_ret_test, int a, int *b, int ret)
-+{
-+	sequence++;
-+	/* This is the first fmod_ret program, the ret passed should be 0 */
-+	fmod_ret_result = (sequence == 2 && ret == 0);
-+	return input_retval;
-+}
-+
-+__u64 fexit_result = 0;
-+SEC("fexit/bpf_modify_return_test")
-+int BPF_PROG(fexit_test, int a, __u64 b, int ret)
-+{
-+	sequence++;
-+	/* If the input_reval is non-zero a successful modification should have
-+	 * occurred.
-+	 */
-+	if (input_retval)
-+		fexit_result = (sequence == 3 && ret == input_retval);
-+	else
-+		fexit_result = (sequence == 3 && ret == 4);
-+
-+	return 0;
-+}
--- 
-2.20.1
+	while (end - start >= PMD_SIZE) {
+		...
+		pmd = pmd_offset(pud, start);
 
+		set_pmd(pmd, pmd_mkhuge(pfn_pmd(cpa->pfn,
+					canon_pgprot(pmd_pgprot))));
+
+		start	  += PMD_SIZE;
+		cpa->pfn  += PMD_SIZE >> PAGE_SHIFT;
+		cur_pages += PMD_SIZE >> PAGE_SHIFT;
+	}
