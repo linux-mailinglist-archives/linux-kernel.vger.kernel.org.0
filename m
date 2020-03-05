@@ -2,270 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7AD717A3BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 114C817A3C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbgCELKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:10:24 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:27591 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725816AbgCELKX (ORCPT
+        id S1727331AbgCELLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:11:00 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:52690 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbgCELK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:10:23 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583406622; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=kkKqaCREFIcFeWu8i5T/o363HLW4FpZR/5+zbhVgff4=; b=ftdWLHEUImjLCMoo+fZYWi6ak/xviTgaepdGkqYuF+HwhNw/h+VueIcX0wckpchVVfdDsVbi
- S9PelV37HqOLvkCXgp9+4dhJkRqz9iNZhkvcdd0WijGIXBLiVrG2Gn/rmr8EsgbZHfgCbXM/
- eCt2bUhTNviSYsotHJto98LX1UE=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e60de1b.7fbe0ef52180-smtp-out-n05;
- Thu, 05 Mar 2020 11:10:19 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AF859C4479F; Thu,  5 Mar 2020 11:10:18 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.206.13.37] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 58527C43383;
-        Thu,  5 Mar 2020 11:10:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 58527C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-Subject: Re: [PATCH v10 2/3] soc: qcom: rpmh: Update dirty flag only when data
- changes
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
+        Thu, 5 Mar 2020 06:10:59 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 82B55296408
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
+        bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
-References: <1583238415-18686-1-git-send-email-mkshah@codeaurora.org>
- <1583238415-18686-3-git-send-email-mkshah@codeaurora.org>
- <CAD=FV=VOARbQzY_p-SyDFu0mzFROp8nV9E=sraNrykWiySwEpw@mail.gmail.com>
-From:   Maulik Shah <mkshah@codeaurora.org>
-Message-ID: <8e307595-7758-6eb5-ab2d-73ab1ac1029c@codeaurora.org>
-Date:   Thu, 5 Mar 2020 16:40:11 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-tegra@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Bastien Nocera <hadess@hadess.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Anson Huang <Anson.Huang@nxp.com>
+Subject: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
+Date:   Thu,  5 Mar 2020 12:10:47 +0100
+Message-Id: <20200305111047.147355-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VOARbQzY_p-SyDFu0mzFROp8nV9E=sraNrykWiySwEpw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We refactored the CrOS EC drivers moving part of the code from the MFD
+subsystem to the platform chrome subsystem. During this change we needed
+to rename some config options, so, update the defconfigs accordingly.
 
-On 3/5/2020 4:51 AM, Doug Anderson wrote:
-> Hi,
->
-> On Tue, Mar 3, 2020 at 4:27 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->> Currently rpmh ctrlr dirty flag is set for all cases regardless of data
->> is really changed or not. Add changes to update dirty flag when data is
->> changed to newer values. Update dirty flag everytime when data in batch
->> cache is updated since rpmh_flush() may get invoked from any CPU instead
->> of only last CPU going to low power mode.
->>
->> Also move dirty flag updates to happen from within cache_lock and remove
->> unnecessary INIT_LIST_HEAD() call and a default case from switch.
->>
->> Fixes: 600513dfeef3 ("drivers: qcom: rpmh: cache sleep/wake state requests")
->> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
->> Reviewed-by: Srinivas Rao L <lsrao@codeaurora.org>
->> Reviewed-by: Evan Green <evgreen@chromium.org>
->> ---
->>  drivers/soc/qcom/rpmh.c | 21 +++++++++++++--------
->>  1 file changed, 13 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
->> index eb0ded0..f28afe4 100644
->> --- a/drivers/soc/qcom/rpmh.c
->> +++ b/drivers/soc/qcom/rpmh.c
->> @@ -133,26 +133,30 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
->>
->>         req->addr = cmd->addr;
->>         req->sleep_val = req->wake_val = UINT_MAX;
->> -       INIT_LIST_HEAD(&req->list);
->>         list_add_tail(&req->list, &ctrlr->cache);
->>
->>  existing:
->>         switch (state) {
->>         case RPMH_ACTIVE_ONLY_STATE:
->> -               if (req->sleep_val != UINT_MAX)
->> +               if (req->sleep_val != UINT_MAX) {
->>                         req->wake_val = cmd->data;
->> +                       ctrlr->dirty = true;
->> +               }
-> You could maybe avoid a few additional "dirty" cases by changing the
-> above "if" to:
->
-> if (req->sleep_val != UINT_MAX &&
->    (req->wake_val != cmd->data)
->
-> ...since otherwise writing an "ACTIVE_ONLY" thing over and over again
-> with the same value would keep saying "dirty".
->
->
-> Looking at this code makes me wonder a bit about how it's supposed to
-> work, though.  Let's look at a sequence of 3 commands called in two
-> different orders:
->
-> rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0xaa);
-> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
-> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0xbb);
->
-> ==> End result will be a cache entry (addr=0x10, wake=0xaa, sleep=0xbb)
->
->
-> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0xbb);
-> rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0xaa);
-> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
->
-> ==> End result will be a cache entry (addr=0x10, wake=0x99, sleep=0xbb)
->
->
-> Said another way, it seems weird that a vote for "active" counts as a
-> vote for "wake", but only if a sleep vote was made beforehand?
-> Howzat?
->
->
-> Maybe at one point in time it was assumed that wake's point was just
-> to undo sleep?  That is, if:
->
-> state_orig = /* the state before sleep happens */
-> state_sleep = apply(state_orig, sleep_actions)
-> state_wake = apply(state_sleep, wake_actions)
->
-> The code is assuming "state_orig == state_wake".
->
-> ...it sorta makes sense that "state_orig == state_wake" would be true,
-> but if we were really making that requirement we really should have
-> structured RPMH's APIs differently.  We shouldn't have even allowed
-> the callers to specify "WAKE_ONLY" state and we should have just
-> constructed it from the "ACTIVE_ONLY" state.
->
->
-> To summarize:
->
-> a) If the only allowable use of "WAKE_ONLY" is to undo "SLEEP_ONLY"
-> then we should re-think the API and stop letting callers to
-> rpmh_write(), rpmh_write_async(), or rpmh_write_batch() ever specify
-> "WAKE_ONLY".  The code should just assume that "wake_only =
-> active_only if (active_only != sleep_only)".  In other words, RPMH
-> should programmatically figure out the "wake" state based on the
-> sleep/active state and not force callers to do this.
->
-> b) If "WAKE_ONLY" is allowed to do other things (or if it's not RPMH's
-> job to enforce/assume this) then we should fully skip calling
-> cache_rpm_request() for RPMH_ACTIVE_ONLY_STATE.
->
->
-> NOTE: this discussion also makes me wonder about the is_req_valid()
-> function.  That will skip sending a sleep/wake entry if the sleep and
-> wake entries are equal to each other.  ...but if sleep and wake are
-> both different than "active" it'll be a problem.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+Dear all,
 
-Hi Doug,
+This is a resend of a resend patch [3]. In some previous discussions
+maintainers would prefer to have this merged through the arm-soc tree
+but wasn't merged yet and I forget to ping again, hence, sending a new
+resend.
 
-To answer above points, yes in general it’s the understanding that wake is
-almost always need to be equal to active. However, there can be valid reasons
-for which the callers are enforced to call them differently in the first place.
-
-At present caller send 3 types of request.
-rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
-rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
-rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0x99);
-
-Now, Lets assume we handle this in rpmh driver since wake=active and the caller
-send only 2 type of request (lets call it active and sleep, since we have assumption
-of wake=active, and we don’t want 3rd request as its handled in rpmh driver)
-So callers will now invoke 2 types of request.
-
-rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
-rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
-
-with first type request, it now needs to serve 2 purpose
-(a)    cache ACTIVE request votes as WAKE votes
-(b)    trigger it out immediately (in ACTIVE TCS) as it need to be also complete immediately.
-
-For SLEEP, nothing changes. Now when entering to sleep we do rpmh_flush() to program all
-WAKE and SLEEP request…so far so good…
-
-Now consider a corner case,
-
-There is something called a solver mode in RSC where HW could be in autonomous mode executing
-low power modes. For this it may want to “only” program WAKE and SLEEP votes and then controller
-would be in solver mode entering and exiting sleep autonomously.
-
-There is no ACTIVE set request and hence no requirement to send it right away as ACTIVE vote.
-
-If we have only 2 type of request, caller again need to differentiate to tell rpmh driver that
-when it invoke
-
-rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
-
-with this caching it as WAKE is fine  ((a) in above) but do not trigger it ((b) in above)
-
-so we need to again modify this API and pass another argument saying whether to do (a + b) or only (a).
-but caller can already differentiate by using RPMH_ACTIVE_ONLY_STATE or RPMH_WAKE_ONLY_STATE.
-
-i think at least for now, leave it as it is, unless we really see any impact by caller invoking all
-3 types of request and take in account all such corner cases before i make any such change.
-we can take it separate if needed along with optimization pointed in v9 series discussions.
->
->>                 break;
->>         case RPMH_WAKE_ONLY_STATE:
->> -               req->wake_val = cmd->data;
->> +               if (req->wake_val != cmd->data) {
->> +                       req->wake_val = cmd->data;
->> +                       ctrlr->dirty = true;
-> As far as I can tell from the code, you can also avoid dirty if
-> req->sleep_val == UINT_MAX since nothing will be sent if either
-> sleep_val or wake_val are UINT_MAX.  Same in the sleep case where we
-> can avoid dirty if wake_val == UINT_MAX.
->
->
->> +               }
->>                 break;
->>         case RPMH_SLEEP_STATE:
->> -               req->sleep_val = cmd->data;
->> -               break;
->> -       default:
->> +               if (req->sleep_val != cmd->data) {
->> +                       req->sleep_val = cmd->data;
->> +                       ctrlr->dirty = true;
->> +               }
->>                 break;
->>         }
-> I wonder if instead of putting the dirty everywhere above it's better
-> to cache the old value before the switch, then do:
->
-> ctrl->dirty = (req->sleep_val != old_sleep_val ||
->   req->wake_val != old_wake_val) &&
->   req->sleep_val != UINT_MAX &&
->   req->wake_val != UINT_MAX;
->
->
-> -Doug
-
-Thanks,  this seems good. v11 on the way.
+To give some context to some discussions that can arise again (i.e
+whether some symbols should be built-in or not) please look at the
+previous resends [1] and [2].
 
 Thanks,
-Maulik
+ Enric
 
+[1] https://lkml.org/lkml/2019/8/23/518
+[2] https://lkml.org/lkml/2019/8/23/475
+[3] https://patchwork.kernel.org/patch/11267741/
+
+ arch/arm/configs/exynos_defconfig   | 4 +++-
+ arch/arm/configs/multi_v7_defconfig | 5 ++++-
+ arch/arm/configs/pxa_defconfig      | 4 +++-
+ arch/arm/configs/tegra_defconfig    | 2 +-
+ arch/arm64/configs/defconfig        | 5 ++++-
+ 5 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index c8e0c14092e8..cb030549dd69 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -160,7 +160,9 @@ CONFIG_DEVFREQ_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+ CONFIG_WATCHDOG=y
+ CONFIG_S3C2410_WATCHDOG=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 017d65f86eba..9099787ccf70 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -938,7 +938,7 @@ CONFIG_SERIO_NVEC_PS2=y
+ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
+ CONFIG_STAGING_BOARD=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_COMMON_CLK_MAX77686=y
+@@ -1118,3 +1118,6 @@ CONFIG_CMA_SIZE_MBYTES=64
+ CONFIG_PRINTK_TIME=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_FS=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
++CONFIG_CROS_EC_CHARDEV=m
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index b817c57f05f1..f1b084ace88d 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_BCM590XX=m
+ CONFIG_MFD_AXP20X=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_MFD_ASIC3=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index a27592d3b1fa..7bfae67d2016 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
+ CONFIG_WATCHDOG=y
+ CONFIG_TEGRA_WATCHDOG=y
+ CONFIG_MFD_AS3722=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 905109f6814f..2095e61c8665 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -705,9 +705,12 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=y
+ CONFIG_CROS_EC_SPI=y
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.25.1
+
