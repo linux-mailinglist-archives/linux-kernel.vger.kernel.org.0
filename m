@@ -2,111 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4171717A2E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC50017A2F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:15:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbgCEKN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:13:57 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42477 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbgCEKN4 (ORCPT
+        id S1727341AbgCEKOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:14:16 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38108 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbgCEKOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:13:56 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v11so4294300wrm.9;
-        Thu, 05 Mar 2020 02:13:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4cPtlreV3CL6qZiIeDzuws4IJav/mV5BaDJqKCbYawY=;
-        b=OafLWsUnM/1kmPD7KtLMTHejoDLDAvnms9/3ZbzBlWKee3Zicmg1F73LefZ7elPMlq
-         Z8x04BrZcjpbZz9DUK/q9OgvNsLvhCsFRCzzWQEw9bc2rDXXchnxYwrOFzYtWm4HZ4uo
-         C+MGtkCjmRUTxzwFfqA3Ta5mq6zV23DX3faEbbdKBXJpdf3Gwq585c9w/HEWAgDXA7oO
-         5D1N0DkvMZdIcXi9RyFqHJLgQVxBOWGq/ImVGaMmmH5p6bWdK0JNJCWP2dVG0sWBAkYx
-         79r8lbDslttu4ojkE5tYJMzi2b1Za7eV6JH3xWavBpn1w7c8nAEbc9aDUwLl8Pw7Ra1l
-         PRlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=4cPtlreV3CL6qZiIeDzuws4IJav/mV5BaDJqKCbYawY=;
-        b=R4GBxXIYMis/1XdAgK4ylSxwrwA4TwQssHUPDos5+es4XH9KkBnanxGh9hlv+BkWvj
-         CCakUhuZO720mhUxDflTnYtdnco1RgGx+ZY5kPmTtP8ojua4/vaL9cbdGrzNguZlt9Bd
-         M9jT/iP+Hjg5RFm5vqaQeuT5iKOKUqlWXcquux5FEb2UveCycyjpFQ2dojRb69MIFSHe
-         mdqX4hXKErvDXbjrkRC5f+bFKsRqa9+7vJL0SP0f+ilR/Yq/4+tDf/SPyrm+VgL/ERBj
-         gSYgZM/mQxd6vcCX55lntbu4f4fjEFOAy1cpnh/M6wd8JX/JnnsUODX8MQUanmpi39VR
-         5PSg==
-X-Gm-Message-State: ANhLgQ0rFYT0GxKymdpP3LI+ucHcBFzANyephwaZENjFJeQdJQrNBrRM
-        a5Lw/gKXD1uS7zvcjNlETIrQ+BfC
-X-Google-Smtp-Source: ADFU+vtBqAdjgrLdjZSQ1LmtNj/Y8C3TvswtEHlbg8pHuojHh8FqT20A+MXnh+tXxQKDYNku+ouoRQ==
-X-Received: by 2002:adf:fcc2:: with SMTP id f2mr9342392wrs.199.1583403234220;
-        Thu, 05 Mar 2020 02:13:54 -0800 (PST)
-Received: from 640k.localdomain.com ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id p15sm8331066wma.40.2020.03.05.02.13.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Mar 2020 02:13:53 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     cavery@redhat.com, vkuznets@redhat.com, jan.kiszka@siemens.com,
-        wei.huang2@amd.com
-Subject: [PATCH 4/4] KVM: nSVM: avoid loss of pending IRQ/NMI before entering L2
-Date:   Thu,  5 Mar 2020 11:13:47 +0100
-Message-Id: <1583403227-11432-5-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1583403227-11432-1-git-send-email-pbonzini@redhat.com>
-References: <1583403227-11432-1-git-send-email-pbonzini@redhat.com>
+        Thu, 5 Mar 2020 05:14:15 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025A7mv2038879;
+        Thu, 5 Mar 2020 10:13:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=SGXNoWNlZVLnSYJIxa2/4WB0jyZ02hYC4NTOct1cKkQ=;
+ b=JLFvXCWsTdaT86bZXB2zn8XjFgTtkJFosOBxbYl+jtJTDwQFO4EpD1WYdi3aWJ7FL1YW
+ 9FbJUMo4I0omrJiwDpGwmlpGvH68jzzALWaUDhfqSVmyPkWwi/PC1xEM0ZNXiVdeG1a4
+ 8Y0glEHr5VwcbOvDYKAt2GFV9JOoxJ9iDV29kNGHiUzyWIkdgfrA+e9KZWCDmMM1BM8w
+ uqAIZg2H5XW6VFAEW1FaVHXc0Id6yxv55s7t4F6ziMf5iKvvJ8TfqlIakpBlxMo+HB6K
+ 9pqrF575lSX0ietRKXPNhzozvi4npitTINZHJW4oWF6hw2b/XIoi+RzYKrFSHshyKtFG rQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2yffcuv8vb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Mar 2020 10:13:38 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025ACuAd064867;
+        Thu, 5 Mar 2020 10:13:38 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2yg1rus3dv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Mar 2020 10:13:37 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 025ADYBw000924;
+        Thu, 5 Mar 2020 10:13:34 GMT
+Received: from [192.168.1.14] (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Mar 2020 02:13:34 -0800
+Subject: Re: [PATCH v2] blktrace: fix dereference after null check
+To:     Cengiz Can <cengiz@kernel.wtf>, Jens Axboe <axboe@kernel.dk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200304105818.11781-1-cengiz@kernel.wtf>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <dd82137a-5152-7c93-a632-ac1766286be5@oracle.com>
+Date:   Thu, 5 Mar 2020 18:13:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20200304105818.11781-1-cengiz@kernel.wtf>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9550 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=2 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003050064
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9550 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 suspectscore=2 spamscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003050063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch reproduces for nSVM the change that was made for nVMX in
-commit b5861e5cf2fc ("KVM: nVMX: Fix loss of pending IRQ/NMI before
-entering L2").  While I do not have a test that breaks without it, I
-cannot see why it would not be necessary since all events are unblocked
-by VMRUN's setting of GIF back to 1.
+On 3/4/20 6:58 PM, Cengiz Can wrote:
+> There was a recent change in blktrace.c that added a RCU protection to
+> `q->blk_trace` in order to fix a use-after-free issue during access.
+> 
+> However the change missed an edge case that can lead to dereferencing of
+> `bt` pointer even when it's NULL:
+> 
+> Coverity static analyzer marked this as a FORWARD_NULL issue with CID
+> 1460458.
+> 
+> ```
+> /kernel/trace/blktrace.c: 1904 in sysfs_blk_trace_attr_store()
+> 1898            ret = 0;
+> 1899            if (bt == NULL)
+> 1900                    ret = blk_trace_setup_queue(q, bdev);
+> 1901
+> 1902            if (ret == 0) {
+> 1903                    if (attr == &dev_attr_act_mask)
+>>>>     CID 1460458:  Null pointer dereferences  (FORWARD_NULL)
+>>>>     Dereferencing null pointer "bt".
+> 1904                            bt->act_mask = value;
+> 1905                    else if (attr == &dev_attr_pid)
+> 1906                            bt->pid = value;
+> 1907                    else if (attr == &dev_attr_start_lba)
+> 1908                            bt->start_lba = value;
+> 1909                    else if (attr == &dev_attr_end_lba)
+> ```
+> 
+> Added a reassignment with RCU annotation to fix the issue.
+> 
+> Fixes: c780e86dd48 ("blktrace: Protect q->blk_trace with RCU")
+> 
+> Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/svm.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+This version looks good to me, thanks.
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 0d773406f7ac..3df62257889a 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3574,6 +3574,10 @@ static bool nested_vmcb_checks(struct vmcb *vmcb)
- static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 				 struct vmcb *nested_vmcb, struct kvm_host_map *map)
- {
-+	bool evaluate_pending_interrupts =
-+		is_intercept(svm, INTERCEPT_VINTR) ||
-+		is_intercept(svm, INTERCEPT_IRET);
-+
- 	if (kvm_get_rflags(&svm->vcpu) & X86_EFLAGS_IF)
- 		svm->vcpu.arch.hflags |= HF_HIF_MASK;
- 	else
-@@ -3660,7 +3664,21 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 
- 	svm->nested.vmcb = vmcb_gpa;
- 
-+	/*
-+	 * If L1 had a pending IRQ/NMI before executing VMRUN,
-+	 * which wasn't delivered because it was disallowed (e.g.
-+	 * interrupts disabled), L0 needs to evaluate if this pending
-+	 * event should cause an exit from L2 to L1 or be delivered
-+	 * directly to L2.
-+	 *
-+	 * Usually this would be handled by the processor noticing an
-+	 * IRQ/NMI window request.  However, VMRUN can unblock interrupts
-+	 * by implicitly setting GIF, so force L0 to perform pending event
-+	 * evaluation by requesting a KVM_REQ_EVENT.
-+	 */
- 	enable_gif(svm);
-+	if (unlikely(evaluate_pending_interrupts))
-+		kvm_make_request(KVM_REQ_EVENT, &svm->vcpu);
- 
- 	mark_all_dirty(svm->vmcb);
- }
--- 
-1.8.3.1
+> ---
+> 
+>     Patch Changelog
+>     * v2: Added RCU annotation to assignment
+> 
+>  kernel/trace/blktrace.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+> index 4560878f0bac..ca39dc3230cb 100644
+> --- a/kernel/trace/blktrace.c
+> +++ b/kernel/trace/blktrace.c
+> @@ -1896,8 +1896,11 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
+>  	}
+> 
+>  	ret = 0;
+> -	if (bt == NULL)
+> +	if (bt == NULL) {
+>  		ret = blk_trace_setup_queue(q, bdev);
+> +		bt = rcu_dereference_protected(q->blk_trace,
+> +				lockdep_is_held(&q->blk_trace_mutex));
+> +	}
+> 
+>  	if (ret == 0) {
+>  		if (attr == &dev_attr_act_mask)
+> --
+> 2.25.1
+> 
 
