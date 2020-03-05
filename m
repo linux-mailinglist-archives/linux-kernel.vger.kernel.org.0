@@ -2,333 +2,270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F17E17A3D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7AD717A3BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgCELMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:12:48 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60682 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726635AbgCELMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:12:33 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 75239EA63A111208039D;
-        Thu,  5 Mar 2020 19:12:28 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 5 Mar 2020 19:12:22 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>
-CC:     <will@kernel.org>, <ak@linux.intel.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <james.clark@arm.com>,
-        <qiangqing.zhang@nxp.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH 6/6] perf test: Add pmu-events test
-Date:   Thu, 5 Mar 2020 19:08:06 +0800
-Message-ID: <1583406486-154841-7-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1583406486-154841-1-git-send-email-john.garry@huawei.com>
-References: <1583406486-154841-1-git-send-email-john.garry@huawei.com>
+        id S1727052AbgCELKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:10:24 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:27591 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbgCELKX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 06:10:23 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583406622; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=kkKqaCREFIcFeWu8i5T/o363HLW4FpZR/5+zbhVgff4=; b=ftdWLHEUImjLCMoo+fZYWi6ak/xviTgaepdGkqYuF+HwhNw/h+VueIcX0wckpchVVfdDsVbi
+ S9PelV37HqOLvkCXgp9+4dhJkRqz9iNZhkvcdd0WijGIXBLiVrG2Gn/rmr8EsgbZHfgCbXM/
+ eCt2bUhTNviSYsotHJto98LX1UE=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e60de1b.7fbe0ef52180-smtp-out-n05;
+ Thu, 05 Mar 2020 11:10:19 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id AF859C4479F; Thu,  5 Mar 2020 11:10:18 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.206.13.37] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 58527C43383;
+        Thu,  5 Mar 2020 11:10:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 58527C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+Subject: Re: [PATCH v10 2/3] soc: qcom: rpmh: Update dirty flag only when data
+ changes
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
+References: <1583238415-18686-1-git-send-email-mkshah@codeaurora.org>
+ <1583238415-18686-3-git-send-email-mkshah@codeaurora.org>
+ <CAD=FV=VOARbQzY_p-SyDFu0mzFROp8nV9E=sraNrykWiySwEpw@mail.gmail.com>
+From:   Maulik Shah <mkshah@codeaurora.org>
+Message-ID: <8e307595-7758-6eb5-ab2d-73ab1ac1029c@codeaurora.org>
+Date:   Thu, 5 Mar 2020 16:40:11 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAD=FV=VOARbQzY_p-SyDFu0mzFROp8nV9E=sraNrykWiySwEpw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a pmu-events test.
 
-This test will scan all PMUs in the system, and run a PMU event aliasing
-test for each CPU or uncore PMU.
+On 3/5/2020 4:51 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Tue, Mar 3, 2020 at 4:27 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>> Currently rpmh ctrlr dirty flag is set for all cases regardless of data
+>> is really changed or not. Add changes to update dirty flag when data is
+>> changed to newer values. Update dirty flag everytime when data in batch
+>> cache is updated since rpmh_flush() may get invoked from any CPU instead
+>> of only last CPU going to low power mode.
+>>
+>> Also move dirty flag updates to happen from within cache_lock and remove
+>> unnecessary INIT_LIST_HEAD() call and a default case from switch.
+>>
+>> Fixes: 600513dfeef3 ("drivers: qcom: rpmh: cache sleep/wake state requests")
+>> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+>> Reviewed-by: Srinivas Rao L <lsrao@codeaurora.org>
+>> Reviewed-by: Evan Green <evgreen@chromium.org>
+>> ---
+>>  drivers/soc/qcom/rpmh.c | 21 +++++++++++++--------
+>>  1 file changed, 13 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+>> index eb0ded0..f28afe4 100644
+>> --- a/drivers/soc/qcom/rpmh.c
+>> +++ b/drivers/soc/qcom/rpmh.c
+>> @@ -133,26 +133,30 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
+>>
+>>         req->addr = cmd->addr;
+>>         req->sleep_val = req->wake_val = UINT_MAX;
+>> -       INIT_LIST_HEAD(&req->list);
+>>         list_add_tail(&req->list, &ctrlr->cache);
+>>
+>>  existing:
+>>         switch (state) {
+>>         case RPMH_ACTIVE_ONLY_STATE:
+>> -               if (req->sleep_val != UINT_MAX)
+>> +               if (req->sleep_val != UINT_MAX) {
+>>                         req->wake_val = cmd->data;
+>> +                       ctrlr->dirty = true;
+>> +               }
+> You could maybe avoid a few additional "dirty" cases by changing the
+> above "if" to:
+>
+> if (req->sleep_val != UINT_MAX &&
+>    (req->wake_val != cmd->data)
+>
+> ...since otherwise writing an "ACTIVE_ONLY" thing over and over again
+> with the same value would keep saying "dirty".
+>
+>
+> Looking at this code makes me wonder a bit about how it's supposed to
+> work, though.  Let's look at a sequence of 3 commands called in two
+> different orders:
+>
+> rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0xaa);
+> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
+> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0xbb);
+>
+> ==> End result will be a cache entry (addr=0x10, wake=0xaa, sleep=0xbb)
+>
+>
+> rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0xbb);
+> rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0xaa);
+> rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
+>
+> ==> End result will be a cache entry (addr=0x10, wake=0x99, sleep=0xbb)
+>
+>
+> Said another way, it seems weird that a vote for "active" counts as a
+> vote for "wake", but only if a sleep vote was made beforehand?
+> Howzat?
+>
+>
+> Maybe at one point in time it was assumed that wake's point was just
+> to undo sleep?  That is, if:
+>
+> state_orig = /* the state before sleep happens */
+> state_sleep = apply(state_orig, sleep_actions)
+> state_wake = apply(state_sleep, wake_actions)
+>
+> The code is assuming "state_orig == state_wake".
+>
+> ...it sorta makes sense that "state_orig == state_wake" would be true,
+> but if we were really making that requirement we really should have
+> structured RPMH's APIs differently.  We shouldn't have even allowed
+> the callers to specify "WAKE_ONLY" state and we should have just
+> constructed it from the "ACTIVE_ONLY" state.
+>
+>
+> To summarize:
+>
+> a) If the only allowable use of "WAKE_ONLY" is to undo "SLEEP_ONLY"
+> then we should re-think the API and stop letting callers to
+> rpmh_write(), rpmh_write_async(), or rpmh_write_batch() ever specify
+> "WAKE_ONLY".  The code should just assume that "wake_only =
+> active_only if (active_only != sleep_only)".  In other words, RPMH
+> should programmatically figure out the "wake" state based on the
+> sleep/active state and not force callers to do this.
+>
+> b) If "WAKE_ONLY" is allowed to do other things (or if it's not RPMH's
+> job to enforce/assume this) then we should fully skip calling
+> cache_rpm_request() for RPMH_ACTIVE_ONLY_STATE.
+>
+>
+> NOTE: this discussion also makes me wonder about the is_req_valid()
+> function.  That will skip sending a sleep/wake entry if the sleep and
+> wake entries are equal to each other.  ...but if sleep and wake are
+> both different than "active" it'll be a problem.
 
-For known aliases added in pmu-events/arch/test, we need to add an entry
-in test_cpu_aliases[] or test_uncore_aliases[].
+Hi Doug,
 
-A sample run is as follows for x86:
+To answer above points, yes in general it’s the understanding that wake is
+almost always need to be equal to active. However, there can be valid reasons
+for which the callers are enforced to call them differently in the first place.
 
-Couldn't bump rlimit(MEMLOCK), failures may take place when creating BPF maps, etc
-10: PMU event aliases                                     :
---- start ---
-test child forked, pid 30869
-Using CPUID GenuineIntel-6-9E-9
-intel_pt default config: tsc,mtc,mtc_period=3,psb_period=3,pt,branch
-skipping testing PMU software
-testing PMU power: skip
-testing PMU cpu: matched event segment_reg_loads.any
-testing PMU cpu: matched event dispatch_blocked.any
-testing PMU cpu: matched event eist_trans
-testing PMU cpu: matched event bp_l1_btb_correct
-testing PMU cpu: matched event bp_l2_btb_correct
-testing PMU cpu: pass
-testing PMU cstate_core: skip
-testing PMU uncore_cbox_2: matched event unc_cbo_xsnp_response.miss_eviction
-testing PMU uncore_cbox_2: pass
-skipping testing PMU breakpoint
-testing PMU uncore_cbox_0: matched event unc_cbo_xsnp_response.miss_eviction
-testing PMU uncore_cbox_0: pass
-skipping testing PMU tracepoint
-testing PMU cstate_pkg: skip
-testing PMU uncore_arb: skip
-testing PMU msr: skip
-testing PMU uncore_cbox_3: matched event unc_cbo_xsnp_response.miss_eviction
-testing PMU uncore_cbox_3: pass
-testing PMU intel_pt: skip
-testing PMU uncore_cbox_1: matched event unc_cbo_xsnp_response.miss_eviction
-testing PMU uncore_cbox_1: pass
-test child finished with 0
----- end ----
-PMU event aliases: Ok
+At present caller send 3 types of request.
+rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
+rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
+rpmh_write(RPMH_WAKE_ONLY_STATE, addr=0x10, data=0x99);
 
+Now, Lets assume we handle this in rpmh driver since wake=active and the caller
+send only 2 type of request (lets call it active and sleep, since we have assumption
+of wake=active, and we don’t want 3rd request as its handled in rpmh driver)
+So callers will now invoke 2 types of request.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- tools/perf/tests/Build          |   1 +
- tools/perf/tests/builtin-test.c |   4 +
- tools/perf/tests/pmu-events.c   | 192 ++++++++++++++++++++++++++++++++
- tools/perf/tests/tests.h        |   1 +
- 4 files changed, 198 insertions(+)
- create mode 100644 tools/perf/tests/pmu-events.c
+rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
+rpmh_write(RPMH_SLEEP_STATE, addr=0x10, data=0x0);
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 1692529639b0..b3d1bf13ca07 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -14,6 +14,7 @@ perf-y += evsel-roundtrip-name.o
- perf-y += evsel-tp-sched.o
- perf-y += fdarray.o
- perf-y += pmu.o
-+perf-y += pmu-events.o
- perf-y += hists_common.o
- perf-y += hists_link.o
- perf-y += hists_filter.o
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 5f05db75cdd8..e8f56740d14a 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -72,6 +72,10 @@ static struct test generic_tests[] = {
- 		.desc = "Parse perf pmu format",
- 		.func = test__pmu,
- 	},
-+	{
-+		.desc = "PMU event aliases",
-+		.func = test__pmu_event_aliases,
-+	},
- 	{
- 		.desc = "DSO data read",
- 		.func = test__dso_data,
-diff --git a/tools/perf/tests/pmu-events.c b/tools/perf/tests/pmu-events.c
-new file mode 100644
-index 000000000000..176b80666b5e
---- /dev/null
-+++ b/tools/perf/tests/pmu-events.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include "parse-events.h"
-+#include "pmu.h"
-+#include "tests.h"
-+#include <errno.h>
-+#include <stdio.h>
-+#include <linux/kernel.h>
-+
-+#include <linux/zalloc.h>
-+
-+#include "debug.h"
-+#include "../pmu-events/pmu-events.h"
-+
-+static struct perf_pmu_alias test_cpu_aliases[] = {
-+	{
-+		.name = (char *)"segment_reg_loads.any",
-+		.str = (char *)"umask=0x80,(null)=0x30d40,event=0x6",
-+		.desc = (char *)"Number of segment register loads",
-+		.topic = (char *)"other",
-+
-+	},
-+	{
-+		.name = (char *)"dispatch_blocked.any",
-+		.str = (char *)"umask=0x20,(null)=0x30d40,event=0x9",
-+		.desc = (char *)"Memory cluster signals to block micro-op dispatch for any reason",
-+		.topic = (char *)"other",
-+
-+	},
-+	{
-+		.name = (char *)"eist_trans",
-+		.str = (char *)"umask=0,(null)=0x30d40,event=0x3a",
-+		.desc = (char *)"Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions",
-+		.topic = (char *)"other",
-+
-+	},
-+	{
-+		.name = (char *)"bp_l1_btb_correct",
-+		.str = (char *)"event=0x8a",
-+		.desc = (char *)"L1 BTB Correction",
-+		.topic = (char *)"branch",
-+
-+	},
-+	{
-+		.name = (char *)"bp_l2_btb_correct",
-+		.str = (char *)"event=0x8b",
-+		.desc = (char *)"L2 BTB Correction",
-+		.topic = (char *)"branch",
-+
-+	},
-+	{ /* sentinel */
-+	}
-+};
-+
-+static struct perf_pmu_alias test_uncore_aliases[] = {
-+	{
-+		.name = (char *)"uncore_hisi_ddrc.flux_wcmd",
-+		.str = (char *)"event=0x2",
-+		.desc = (char *)"DDRC write commands. Unit: hisi_sccl,ddrc ",
-+		.topic = (char *)"uncore",
-+
-+	},
-+	{
-+		.name = (char *)"unc_cbo_xsnp_response.miss_eviction",
-+		.str = (char *)"umask=0x81,event=0x22",
-+		.desc = (char *)"Unit: uncore_cbox A cross-core snoop resulted from L3 Eviction which misses in some processor core",
-+		.long_desc = (char *)"A cross-core snoop resulted from L3 Eviction which misses in some processor core",
-+		.topic = (char *)"uncore",
-+
-+	},
-+	{ /* sentinel */
-+	}
-+
-+};
-+
-+static bool is_same(char *reference, char *test)
-+{
-+	if (!test)
-+		return false;
-+
-+	return !strcmp(reference, test);
-+}
-+
-+static struct perf_pmu_alias *find_alias(char *pmu_name, char *alias_name)
-+{
-+	struct perf_pmu_alias *alias;
-+
-+	if (is_pmu_core(pmu_name))
-+		alias = &test_cpu_aliases[0];
-+	else
-+		alias = &test_uncore_aliases[0];
-+
-+	for (; alias->name; alias++)
-+		if (!strcmp(alias_name, alias->name))
-+			return alias;
-+
-+	return NULL;
-+}
-+
-+static int __test__pmu_event_aliases(char *pmu_name, int *count)
-+{
-+	struct perf_pmu_alias *alias;
-+	struct perf_pmu *pmu;
-+	LIST_HEAD(aliases);
-+	int res = 0;
-+
-+	pmu = zalloc(sizeof(*pmu));
-+	if (!pmu)
-+		return -1;
-+
-+	pmu->name = pmu_name;
-+
-+	pmu_add_cpu_aliases_map(&aliases, pmu, &pmu_events_map_test);
-+
-+	list_for_each_entry(alias, &aliases, list) {
-+		struct perf_pmu_alias *test_alias;
-+
-+		test_alias = find_alias(pmu_name, alias->name);
-+
-+		if (!test_alias) {
-+			pr_debug2("no alias for PMU %s\n", pmu_name);
-+			res = -1;
-+			break;
-+		}
-+
-+		if (test_alias->desc &&
-+		    !is_same(test_alias->desc, alias->desc)) {
-+			pr_debug2("mismatched desc for PMU %s, %s vs %s\n",
-+				  pmu_name, test_alias->desc, alias->desc);
-+			res = -1;
-+			break;
-+		}
-+
-+		if (test_alias->long_desc &&
-+		    !is_same(test_alias->long_desc, alias->long_desc)) {
-+			pr_debug2("mismatched long_desc for PMU %s, %s vs %s\n",
-+				  pmu_name, test_alias->long_desc,
-+				  alias->long_desc);
-+			res = -1;
-+			break;
-+		}
-+
-+		if (test_alias->str && !is_same(test_alias->str, alias->str)) {
-+			pr_debug2("mismatched str for PMU %s, %s vs %s\n",
-+				  pmu_name, test_alias->str, alias->str);
-+			res = -1;
-+			break;
-+		}
-+
-+		if (test_alias->topic &&
-+		    !is_same(test_alias->topic, alias->topic)) {
-+			pr_debug2("mismatched topic for PMU %s, %s vs %s\n",
-+				  pmu_name, test_alias->topic, alias->topic);
-+			res = -1;
-+			break;
-+		}
-+
-+		(*count)++;
-+
-+		pr_debug2("testing PMU %s: matched event %s\n",
-+			  pmu_name, test_alias->name);
-+	}
-+
-+	free(pmu);
-+	return res;
-+}
-+
-+int test__pmu_event_aliases(struct test *test __maybe_unused,
-+			    int subtest __maybe_unused)
-+{
-+	struct perf_pmu *pmu = NULL;
-+
-+	while ((pmu = perf_pmu__scan(pmu)) != NULL) {
-+		int count = 0;
-+
-+		if (list_empty(&pmu->format)) {
-+			pr_debug2("skipping testing PMU %s\n", pmu->name);
-+			continue;
-+		}
-+
-+		if (__test__pmu_event_aliases(pmu->name, &count)) {
-+			pr_debug("testing PMU %s: failed\n", pmu->name);
-+			return -1;
-+		}
-+
-+		if (count == 0)
-+			pr_debug("testing PMU %s: skip\n", pmu->name);
-+		else
-+			pr_debug("testing PMU %s: pass\n", pmu->name);
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index 9a160fef47c9..a7ca3bb1c9cd 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -49,6 +49,7 @@ int test__perf_evsel__roundtrip_name_test(struct test *test, int subtest);
- int test__perf_evsel__tp_sched_test(struct test *test, int subtest);
- int test__syscall_openat_tp_fields(struct test *test, int subtest);
- int test__pmu(struct test *test, int subtest);
-+int test__pmu_event_aliases(struct test *test, int subtest);
- int test__attr(struct test *test, int subtest);
- int test__dso_data(struct test *test, int subtest);
- int test__dso_data_cache(struct test *test, int subtest);
+with first type request, it now needs to serve 2 purpose
+(a)    cache ACTIVE request votes as WAKE votes
+(b)    trigger it out immediately (in ACTIVE TCS) as it need to be also complete immediately.
+
+For SLEEP, nothing changes. Now when entering to sleep we do rpmh_flush() to program all
+WAKE and SLEEP request…so far so good…
+
+Now consider a corner case,
+
+There is something called a solver mode in RSC where HW could be in autonomous mode executing
+low power modes. For this it may want to “only” program WAKE and SLEEP votes and then controller
+would be in solver mode entering and exiting sleep autonomously.
+
+There is no ACTIVE set request and hence no requirement to send it right away as ACTIVE vote.
+
+If we have only 2 type of request, caller again need to differentiate to tell rpmh driver that
+when it invoke
+
+rpmh_write(RPMH_ACTIVE_ONLY_STATE, addr=0x10, data=0x99);
+
+with this caching it as WAKE is fine  ((a) in above) but do not trigger it ((b) in above)
+
+so we need to again modify this API and pass another argument saying whether to do (a + b) or only (a).
+but caller can already differentiate by using RPMH_ACTIVE_ONLY_STATE or RPMH_WAKE_ONLY_STATE.
+
+i think at least for now, leave it as it is, unless we really see any impact by caller invoking all
+3 types of request and take in account all such corner cases before i make any such change.
+we can take it separate if needed along with optimization pointed in v9 series discussions.
+>
+>>                 break;
+>>         case RPMH_WAKE_ONLY_STATE:
+>> -               req->wake_val = cmd->data;
+>> +               if (req->wake_val != cmd->data) {
+>> +                       req->wake_val = cmd->data;
+>> +                       ctrlr->dirty = true;
+> As far as I can tell from the code, you can also avoid dirty if
+> req->sleep_val == UINT_MAX since nothing will be sent if either
+> sleep_val or wake_val are UINT_MAX.  Same in the sleep case where we
+> can avoid dirty if wake_val == UINT_MAX.
+>
+>
+>> +               }
+>>                 break;
+>>         case RPMH_SLEEP_STATE:
+>> -               req->sleep_val = cmd->data;
+>> -               break;
+>> -       default:
+>> +               if (req->sleep_val != cmd->data) {
+>> +                       req->sleep_val = cmd->data;
+>> +                       ctrlr->dirty = true;
+>> +               }
+>>                 break;
+>>         }
+> I wonder if instead of putting the dirty everywhere above it's better
+> to cache the old value before the switch, then do:
+>
+> ctrl->dirty = (req->sleep_val != old_sleep_val ||
+>   req->wake_val != old_wake_val) &&
+>   req->sleep_val != UINT_MAX &&
+>   req->wake_val != UINT_MAX;
+>
+>
+> -Doug
+
+Thanks,  this seems good. v11 on the way.
+
+Thanks,
+Maulik
+
 -- 
-2.17.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
