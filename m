@@ -2,135 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701AD17A1A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E54CE17A19F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgCEIoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 03:44:12 -0500
-Received: from mail-eopbgr150129.outbound.protection.outlook.com ([40.107.15.129]:20036
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725930AbgCEIoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:44:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IHYFtC78jrSpoajpDIQlGQotuZ+vg6k5ha59Q37vZB+EBVGiYDJzi7epYEs7A0gER5KSdhAYL8bYRsq/Q2pjT2CwrRK0mSkHvHzyfFIRV+Quc2RVLZshuAyTYc3b/SZs873z2Tb35APjGCBgb11A88FhvMs0doV3VLfRjA87Or9LgOWDRVMEghPo4Xbzex8rGhkHdmDY168ttvoE0QduY6hk5niDaY9udOOcXnAl8EO/Dg2Ey09nVfspF/1o3HTnUpSEvgxnH8GCw+XyR60uCIhqesxAYz+mdg5id1g3vHM/miYrslXo6ZL8Je+AoyWquhgaCTHY525Z13eGx9AIkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l0XOU+p6rqZ5221PhnSOt3EZNG3K9O+zu0qIkOijz+A=;
- b=myBuPNSzu1Oxh9gbhrGl30O0QBtTiIaQvsw1su6T8qMJI+MsXqp+zztR4Z+ztir3kcM6lNsxYcfM/zAOIZZZgFiV2DYHHVVqoirmR2TG7Ne4FWEujmAqzkt+g1WHosAATH4QXgu1ij8ukqKuarVxBmoitWxmGiAF5S5P+HVZTjMlu/aJ13Yk4K1EEzVodSPoLCwNfGBstPty2tHg7jzxvWP08U4qDgh2XEo6rFeB05ulc1DDqi/A70BnUMSs+P8eX/7eprHXm70HJAG3OeoiJS7E2ppKj1XHrhMqkOR+FlD8gqJhsqFScu0i+C3SQjg5Gr+y3TUfT77sADm3Z3oAUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l0XOU+p6rqZ5221PhnSOt3EZNG3K9O+zu0qIkOijz+A=;
- b=lugudhm9d2cg89j2ZVvxiRgC/6wLrigFNA5zZw8gWAtDmbs6EZMniz4kqxBUZj4oybEM/r4mLV4NtbZCMQYU47CYgeQcR4BNkkVfWi3RZ23AwUyfdOuGvx0kaAJNpsHXqCmhxvQ1Cbh2exv+CIEgV8XS4dqnsPKQwZKoOgFnd/c=
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (10.167.127.12) by
- HE1PR0702MB3836.eurprd07.prod.outlook.com (52.133.5.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.5; Thu, 5 Mar 2020 08:43:33 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::2806:c34c:d469:8e87]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::2806:c34c:d469:8e87%5]) with mapi id 15.20.2793.011; Thu, 5 Mar 2020
- 08:43:33 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "mingo@kernel.org" <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "acme@kernel.org" <acme@kernel.org>
-CC:     "williams@redhat.com" <williams@redhat.com>,
-        "acme@redhat.com" <acme@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "jolsa@kernel.org" <jolsa@kernel.org>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 4/5] perf bench: Share some global variables to fix build
- with gcc 10
-Thread-Topic: [PATCH 4/5] perf bench: Share some global variables to fix build
- with gcc 10
-Thread-Index: AQHV8ZTykRSfudvvH0q4VUAIVRb2L6g5sSMA
-Date:   Thu, 5 Mar 2020 08:43:32 +0000
-Message-ID: <bb1a3048a0f75d1fdf497c67d16a022cdd15c437.camel@nokia.com>
-References: <20200303194827.6461-1-acme@kernel.org>
-         <20200303194827.6461-5-acme@kernel.org>
-In-Reply-To: <20200303194827.6461-5-acme@kernel.org>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-x-originating-ip: [131.228.2.19]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7ee40b5b-abbf-4a0e-b148-08d7c0e149af
-x-ms-traffictypediagnostic: HE1PR0702MB3836:
-x-microsoft-antispam-prvs: <HE1PR0702MB3836FD5633D3CC71C3D1F561B4E20@HE1PR0702MB3836.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:126;
-x-forefront-prvs: 03333C607F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(376002)(366004)(136003)(346002)(396003)(199004)(189003)(6486002)(71200400001)(54906003)(110136005)(36756003)(81166006)(76116006)(26005)(186003)(2906002)(81156014)(7416002)(478600001)(2616005)(66476007)(5660300002)(66946007)(64756008)(66446008)(66556008)(8936002)(6512007)(8676002)(4326008)(86362001)(6506007)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3836;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: yqVbg6x2qFZ12IT1i/IAf0/G4u3w8uT8LC1xtkZ1k3LwQtwDEvrHuWXMDiU42xE8CGEBVH9P/UIvQE1AFhp5P47N4FDOhmeCl92DQOhpmmOR5IYN7orYibR08l3G7c3ox9O0CEL4l6AHsl2IZbhbZrQAvz4ssfsjGkEj6NCB9ACBj37Kj4KEmoDxqGwuj3JzrE8dFk+oRlNiSJAWq00HMwmmdmiDZhErYsALOdGehOwRigJMbuvUUIXc6iqTGalPYn2EHqOY3QrOjha9yd6bwzhmTNpki6geAbwhcjyZ2vguqZiByxfyO9H1nigQp9KO5S42kqDfYHtfDTiDDVEt1FjJ0wDS5BkDoio9/U1mKibCwLanhFXwaj4Dt8GrmYt5hrsn/VBdkNJYzHLl2xs6Hvc9zE6POWLFSsBtEq7pHtTK9U6rFCLp4ouBQoFd8oa6
-x-ms-exchange-antispam-messagedata: /UVnvmy/jCS0/WzXQi3xCCSne9QBH97KXmNCug1SlMcx91dlGJYjlKd+MeKKwUoZN/Q2zIgDJEE4haUC9pyryU5tSLqR0DAn9IHaZvYYmsdsKD1faDztOHB5NxOad8psGZ+8rBm9U2rWltP32Sb0tg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DBCBB3ABE3FB454DA4566DFD0905E922@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726490AbgCEInp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:43:45 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51876 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbgCEIno (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 03:43:44 -0500
+Received: by mail-pj1-f65.google.com with SMTP id l8so2197144pjy.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qLIiVnETYMcqyHUOB6dvtW3Moz4oU4X9cKVTwd3yA8c=;
+        b=kKygSQHPXYjoLnwA1ga7lbOBuQ4B3qVXZyngHi+LC2o/VaTyQJhD2EXZzU+PSc4Gea
+         K9zNUJb3/BW522ytiVZy8nwiz7YBFZn0khKA7/wpVRIpczVueTClG2kIBR5cd+Hv/RAm
+         g5KAEkrBoRpzRyT6cnQHxzoaMdHwGqTmk1oNc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qLIiVnETYMcqyHUOB6dvtW3Moz4oU4X9cKVTwd3yA8c=;
+        b=klH3eAW6vwaLW4+zpM1fXtn2zgR1Xkh+vpWU26mKvIZ9xBJ6wj66geuArPw5AesHaQ
+         Ch7ilPZ0vklgP0ubeQ3ldCLxHVBwDCwjA8Ex65U2m4DZggw28w37x+fjQEEoOjOnYx94
+         ryYNzIit9ihAY7ndcH2rN4C5aYMmhiaMEcIF0YMNglpijGkCX3qvhWlXRNjQbDfJbxrE
+         nBqq4K/hw9UeLgxsxeaQwZWMVPtk/dFYD0ZT0HCuaokCJCWhrJOuNPQ3iSQSLi0iPUrO
+         c92s2Cv+XYODynFP539ekVGfs2B1e+TkqU1Xsc3Ej7zutUVcfJvGgXBOzocPzwZtBniW
+         LjXw==
+X-Gm-Message-State: ANhLgQ2Cmspu5BQ1TDFpTLpMKkSG786TaFVSbwbFtkNS74Be/q2zK+Xv
+        HARgS0eXsdXRJjCq4CAuWFn1pA==
+X-Google-Smtp-Source: ADFU+vs0xirHyYZLefNjWviL/3XiwrLplDXNizVgNsIp9KLNwQSGoVUke+T4UGkcqzcArx8rmnRr4w==
+X-Received: by 2002:a17:902:8f94:: with SMTP id z20mr7209601plo.62.1583397823273;
+        Thu, 05 Mar 2020 00:43:43 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id r125sm3807907pfc.79.2020.03.05.00.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 00:43:42 -0800 (PST)
+Date:   Thu, 5 Mar 2020 00:43:41 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     cl@rock-chips.com
+Cc:     heiko@sntech.de, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, akpm@linux-foundation.org, tglx@linutronix.de,
+        mpe@ellerman.id.au, surenb@google.com, ben.dooks@codethink.co.uk,
+        anshuman.khandual@arm.com, catalin.marinas@arm.com,
+        will@kernel.org, luto@amacapital.net, wad@chromium.org,
+        mark.rutland@arm.com, geert+renesas@glider.be,
+        george_davis@mentor.com, sudeep.holla@arm.com,
+        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v1 1/1] sched/fair: do not preempt current task if it is
+ going to call schedule()
+Message-ID: <202003050031.27889B4@keescook>
+References: <20200305081611.29323-1-cl@rock-chips.com>
+ <20200305081611.29323-2-cl@rock-chips.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ee40b5b-abbf-4a0e-b148-08d7c0e149af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2020 08:43:32.9561
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S301rbVIj/xwr4WHHl/wU/zwrxvb5KdzPfb0trqsX9YASBY1baS/SzEjnvJPqmifZTvVJnoxOm/t3h+NwenUa46tIuNHo6tOvpSDt8v0inA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3836
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200305081611.29323-2-cl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTAzLTAzIGF0IDE2OjQ4IC0wMzAwLCBBcm5hbGRvIENhcnZhbGhvIGRlIE1l
-bG8gd3JvdGU6DQo+IEZyb206IEFybmFsZG8gQ2FydmFsaG8gZGUgTWVsbyA8YWNtZUByZWRoYXQu
-Y29tPg0KDQpCVFcgdGhlcmUncyBhbHNvIHNvbWUgZGl2LWJ5LXplcm8gYnVncyBoZXJlIGlmIHJ1
-bnRpbWUgaXMgemVybzoNCg0KJCBwZXJmIGJlbmNoIGVwb2xsIHdhaXQgLS1ydW50aW1lPTANCiMg
-UnVubmluZyAnZXBvbGwvd2FpdCcgYmVuY2htYXJrOg0KUnVuIHN1bW1hcnkgW1BJRCAzMDg1OV06
-IDcgdGhyZWFkcyBtb25pdG9yaW5nIG9uIDY0IGZpbGUtZGVzY3JpcHRvcnMgZm9yIDANCnNlY3Mu
-DQoNCkZsb2F0aW5nIHBvaW50IGV4Y2VwdGlvbiAoY29yZSBkdW1wZWQpDQoNCj4gZGlmZiAtLWdp
-dCBhL3Rvb2xzL3BlcmYvYmVuY2gvZXBvbGwtd2FpdC5jIGIvdG9vbHMvcGVyZi9iZW5jaC9lcG9s
-bC0NCj4gd2FpdC5jDQo+IGluZGV4IDdhZjY5NDQzN2Y0ZS4uZDFjNWNiNTI2YjlmIDEwMDY0NA0K
-PiAtLS0gYS90b29scy9wZXJmL2JlbmNoL2Vwb2xsLXdhaXQuYw0KPiArKysgYi90b29scy9wZXJm
-L2JlbmNoL2Vwb2xsLXdhaXQuYw0KPiANCj4gQEAgLTUxOSw3ICs1MTgsNyBAQCBpbnQgYmVuY2hf
-ZXBvbGxfd2FpdChpbnQgYXJnYywgY29uc3QgY2hhciAqKmFyZ3YpDQo+ICAJCXFzb3J0KHdvcmtl
-ciwgbnRocmVhZHMsIHNpemVvZihzdHJ1Y3Qgd29ya2VyKSwgY21wd29ya2VyKTsNCj4gIA0KPiAg
-CWZvciAoaSA9IDA7IGkgPCBudGhyZWFkczsgaSsrKSB7DQo+IC0JCXVuc2lnbmVkIGxvbmcgdCA9
-IHdvcmtlcltpXS5vcHMvcnVudGltZS50dl9zZWM7DQo+ICsJCXVuc2lnbmVkIGxvbmcgdCA9IHdv
-cmtlcltpXS5vcHMgLyBiZW5jaF9fcnVudGltZS50dl9zZWM7DQo+ICANCj4gIAkJdXBkYXRlX3N0
-YXRzKCZ0aHJvdWdocHV0X3N0YXRzLCB0KTsNCj4gIA0KPiBkaWZmIC0tZ2l0IGEvdG9vbHMvcGVy
-Zi9iZW5jaC9mdXRleC1oYXNoLmMgYi90b29scy9wZXJmL2JlbmNoL2Z1dGV4LQ0KPiBoYXNoLmMN
-Cj4gaW5kZXggOGJhMGMzMzMwYTlhLi4yMTc3Njg2MmU5NDAgMTAwNjQ0DQo+IC0tLSBhL3Rvb2xz
-L3BlcmYvYmVuY2gvZnV0ZXgtaGFzaC5jDQo+ICsrKyBiL3Rvb2xzL3BlcmYvYmVuY2gvZnV0ZXgt
-aGFzaC5jDQo+IA0KPiBAQCAtMjA0LDcgKzIwNCw3IEBAIGludCBiZW5jaF9mdXRleF9oYXNoKGlu
-dCBhcmdjLCBjb25zdCBjaGFyICoqYXJndikNCj4gIAlwdGhyZWFkX211dGV4X2Rlc3Ryb3koJnRo
-cmVhZF9sb2NrKTsNCj4gIA0KPiAgCWZvciAoaSA9IDA7IGkgPCBudGhyZWFkczsgaSsrKSB7DQo+
-IC0JCXVuc2lnbmVkIGxvbmcgdCA9IHdvcmtlcltpXS5vcHMvcnVudGltZS50dl9zZWM7DQo+ICsJ
-CXVuc2lnbmVkIGxvbmcgdCA9IHdvcmtlcltpXS5vcHMgLyBiZW5jaF9fcnVudGltZS50dl9zZWM7
-DQo+ICAJCXVwZGF0ZV9zdGF0cygmdGhyb3VnaHB1dF9zdGF0cywgdCk7DQo+ICAJCWlmICghc2ls
-ZW50KSB7DQo+ICAJCQlpZiAobmZ1dGV4ZXMgPT0gMSkNCj4gZGlmZiAtLWdpdCBhL3Rvb2xzL3Bl
-cmYvYmVuY2gvZnV0ZXgtbG9jay1waS5jIGIvdG9vbHMvcGVyZi9iZW5jaC9mdXRleC0NCj4gbG9j
-ay1waS5jDQo+IGluZGV4IGQwY2FlODEyNTQyMy4uMzBkOTcxMjFkYzRmIDEwMDY0NA0KPiAtLS0g
-YS90b29scy9wZXJmL2JlbmNoL2Z1dGV4LWxvY2stcGkuYw0KPiArKysgYi90b29scy9wZXJmL2Jl
-bmNoL2Z1dGV4LWxvY2stcGkuYw0KPiANCj4gQEAgLTIxMSw3ICsyMTAsNyBAQCBpbnQgYmVuY2hf
-ZnV0ZXhfbG9ja19waShpbnQgYXJnYywgY29uc3QgY2hhciAqKmFyZ3YpDQo+ICAJcHRocmVhZF9t
-dXRleF9kZXN0cm95KCZ0aHJlYWRfbG9jayk7DQo+ICANCj4gIAlmb3IgKGkgPSAwOyBpIDwgbnRo
-cmVhZHM7IGkrKykgew0KPiAtCQl1bnNpZ25lZCBsb25nIHQgPSB3b3JrZXJbaV0ub3BzL3J1bnRp
-bWUudHZfc2VjOw0KPiArCQl1bnNpZ25lZCBsb25nIHQgPSB3b3JrZXJbaV0ub3BzIC8gYmVuY2hf
-X3J1bnRpbWUudHZfc2VjOw0KPiAgDQo+ICAJCXVwZGF0ZV9zdGF0cygmdGhyb3VnaHB1dF9zdGF0
-cywgdCk7DQo+ICAJCWlmICghc2lsZW50KQ0KDQo=
+On Thu, Mar 05, 2020 at 04:16:11PM +0800, cl@rock-chips.com wrote:
+> From: Liang Chen <cl@rock-chips.com>
+> 
+> when we create a kthread with ktrhead_create_on_cpu(),the child thread
+> entry is ktread.c:ktrhead() which will be preempted by the parent after
+> call complete(done) while schedule() is not called yet,then the parent
+> will call wait_task_inactive(child) but the child is still on the runqueue,
+> so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
+> time,especially on startup.
+> 
+>   parent                             child
+> ktrhead_create_on_cpu()
+>   wait_fo_completion(&done) -----> ktread.c:ktrhead()
+>                              |----- complete(done);--wakeup and preempted by parent
+>  kthread_bind() <------------|  |-> schedule();--dequeue here
+>   wait_task_inactive(child)     |
+>    schedule_hrtimeout(1 jiffy) -|
+> 
+> So we hope the child just wakeup parent but not preempted by parent, and the
+> child is going to call schedule() soon,then the parent will not call
+> schedule_hrtimeout(1 jiffy) as the child is already dequeue.
+> 
+> The same issue for ktrhead_park()&&kthread_parkme().
+> This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
+
+Interesting improvement!
+
+> 
+> Signed-off-by: Liang Chen <cl@rock-chips.com>
+> ---
+>  arch/arm/include/asm/thread_info.h   |  1 +
+>  arch/arm64/include/asm/thread_info.h |  1 +
+>  include/linux/sched.h                | 15 +++++++++++++++
+>  kernel/kthread.c                     |  4 ++++
+>  kernel/sched/fair.c                  |  4 ++++
+>  5 files changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
+> index 0d0d5178e2c3..51802991ba1f 100644
+> --- a/arch/arm/include/asm/thread_info.h
+> +++ b/arch/arm/include/asm/thread_info.h
+> @@ -145,6 +145,7 @@ extern int vfp_restore_user_hwstate(struct user_vfp *,
+>  #define TIF_USING_IWMMXT	17
+>  #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+>  #define TIF_RESTORE_SIGMASK	20
+> +#define TIF_GOING_TO_SCHED	27	/* task is going to call schedule() */
+>  
+>  #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+> diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
+> index f0cec4160136..332786f11dc3 100644
+> --- a/arch/arm64/include/asm/thread_info.h
+> +++ b/arch/arm64/include/asm/thread_info.h
+> @@ -78,6 +78,7 @@ void arch_release_task_struct(struct task_struct *tsk);
+>  #define TIF_SVE_VL_INHERIT	24	/* Inherit sve_vl_onexec across exec */
+>  #define TIF_SSBD		25	/* Wants SSB mitigation */
+>  #define TIF_TAGGED_ADDR		26	/* Allow tagged user addresses */
+> +#define TIF_GOING_TO_SCHED	27	/* task is going to call schedule() */
+>  
+>  #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+
+I don't think you want a TIF flag for this (they're used in special
+places, especially in entry code, etc). Since you're only changing
+"normal" C code, I would suggest a atomic_flags addition instead:
+
+#define PFA_GOING_TO_SCHED	8
+...
+TASK_PFA_TEST(GOING_TO_SCHED, going_to_sched)
+TASK_PFA_SET(GOING_TO_SCHED, going_to_sched)
+TASK_PFA_CLEAR(GOING_TO_SCHED, going_to_sched)
+
+(Also if you used TIF, you'd need to add the TIF to every architecture
+to use it in the common scheduler code, which too much work.)
+
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 04278493bf15..cb9058d2cf0b 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1768,6 +1768,21 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
+>  	return unlikely(test_tsk_thread_flag(tsk,TIF_NEED_RESCHED));
+>  }
+>  
+> +static inline void set_tsk_going_to_sched(struct task_struct *tsk)
+> +{
+> +	set_tsk_thread_flag(tsk, TIF_GOING_TO_SCHED);
+> +}
+> +
+> +static inline void clear_tsk_going_to_sched(struct task_struct *tsk)
+> +{
+> +	clear_tsk_thread_flag(tsk, TIF_GOING_TO_SCHED);
+> +}
+> +
+> +static inline int test_tsk_going_to_sched(struct task_struct *tsk)
+> +{
+> +	return unlikely(test_tsk_thread_flag(tsk, TIF_GOING_TO_SCHED));
+> +}
+
+Then you can drop these wrappers since you'll have the test/set/clear
+functions declared above (task_set/clear_going_to_sched(),
+task_going_to_sched()) with the TASK_PFA... macros.
+
+> +
+>  /*
+>   * cond_resched() and cond_resched_lock(): latency reduction via
+>   * explicit rescheduling in places that are safe. The return
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index b262f47046ca..8a4e4c9cdc22 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -199,8 +199,10 @@ static void __kthread_parkme(struct kthread *self)
+>  		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+>  			break;
+>  
+> +		set_tsk_going_to_sched(current);
+
+task_set_going_to_sched(current);
+
+>  		complete(&self->parked);
+>  		schedule();
+> +		clear_tsk_going_to_sched(current);
+
+task_clear_going_to_sched(current);
+
+>  	}
+>  	__set_current_state(TASK_RUNNING);
+>  }
+> @@ -245,8 +247,10 @@ static int kthread(void *_create)
+>  	/* OK, tell user we're spawned, wait for stop or wakeup */
+>  	__set_current_state(TASK_UNINTERRUPTIBLE);
+>  	create->result = current;
+> +	set_tsk_going_to_sched(current);
+>  	complete(done);
+>  	schedule();
+> +	clear_tsk_going_to_sched(current);
+
+etc.
+
+>  
+>  	ret = -EINTR;
+>  	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 3c8a379c357e..28a308743bf8 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4330,6 +4330,8 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+>  			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>  		return;
+>  #endif
+> +	if (test_tsk_going_to_sched(rq_of(cfs_rq)->curr))
+> +		return;
+
+if (unlikely(task_going_to_sched(rq_of(cfs_rq)->curr)))
+	return;
+
+>  
+>  	if (cfs_rq->nr_running > 1)
+>  		check_preempt_tick(cfs_rq, curr);
+> @@ -6633,6 +6635,8 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
+>  	 */
+>  	if (test_tsk_need_resched(curr))
+>  		return;
+> +	if (test_tsk_going_to_sched(curr))
+> +		return;
+
+same.
+
+>  
+>  	/* Idle tasks are by definition preempted by non-idle tasks. */
+>  	if (unlikely(task_has_idle_policy(curr)) &&
+> -- 
+> 2.17.1
+> 
+> 
+> 
+
+I'd add comments above each of the "return" cases to help people
+understand why the test is important.
+
+-- 
+Kees Cook
