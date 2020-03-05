@@ -2,93 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4079A17AE41
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A12F217AE52
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbgCEShU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:37:20 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:39092 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbgCEShU (ORCPT
+        id S1726128AbgCESlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:41:11 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39594 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbgCESlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:37:20 -0500
-Received: by mail-qv1-f68.google.com with SMTP id fc12so2886947qvb.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:37:19 -0800 (PST)
+        Thu, 5 Mar 2020 13:41:11 -0500
+Received: by mail-lj1-f196.google.com with SMTP id f10so7236971ljn.6
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:41:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XVLGt4j/QYyjZ+3/rCrgc0GJ7j43MM2UGJs3lgyOEpk=;
-        b=aDyUWMhUKKXxS6Vhp3vnS8xBPJbhvHrhe56sBrYBFQvuJoD7c8+LgDz6/qtSWJ7+tD
-         QoYKl4Knf82Mf8wS3QuqzpcVXQWvTeDq5cReqdvWjFLntFG4VjZnQ0jzsDsdkEagkxHs
-         zp9YgkLTLh/y/CviVKvbz6NMSRIhQfZ83cy4Bkvouhde3ITo7RTaABE1SIWAMtiLH/gu
-         8sZgl3bkxj9LmE4owXTQt6Pjc/cS7woy4SIYJUP1zzyIiDcITroR8uhZMV71HTiE5GLT
-         PnEunU3gGo2REn+I/dN7JSXy0Unm/0gxnEytRhh1topfkhKaxH1MYssN27Fbi0W1MC9t
-         vPWQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GyFYtqx37jEduc84+d5pwBxcfH/mxsB1MriBNxAX86U=;
+        b=RHIX8oyd/XhxPGVZ1D8Gc7950WIw8PdXBWEEFQBGahK8v+TiZSToq8FzyieSsSUgZL
+         LyrLSR6LXPvkeaUzuRnALL+vrw927bPnQhlbOm7VzIawQuLGpIw9vXotbZKKexGzj51P
+         wyQEn8I3s2PxzDqma64uA7+QmDlRvDZZy4RaE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XVLGt4j/QYyjZ+3/rCrgc0GJ7j43MM2UGJs3lgyOEpk=;
-        b=d/LFVbhJJV3K/5xEOd1lRdoGst26OEitfqaggl7OAiW19hM3XwPaPJ4eGy6c8/Iij7
-         klsLDcjGpfsljTavH48yBoRu8t8m2DOlll2m9XLSKYB3zXR8cK493zQKdu99/FO6uhsl
-         9pmOKyP/Cx94L6r/Rpp6AGLfWt9Fa4TZ6+nCfHddLQ3ngEOPSp9P//7AOd+uUNwjYciF
-         zV/rV/apf2CrUkqBJMjIH+W4o1qfwZRMEheDYTR27kslOljhUcOa1GAG3COVi3H4rA7V
-         YeQfGKjoIfhVyRHn/quJ9Sk2xHRlAVUZ1IOtrCEinNe1Y5zymSbMkooYBaCQgLLv+niN
-         aPCw==
-X-Gm-Message-State: ANhLgQ04Uwgg2UayxLbQOdjah3Ee0nIMeEtqOKxm5qoIDqICk+yTv9Zh
-        Kq/WzkD2wH/U8RxCqs/AQiFzg/rxG1g=
-X-Google-Smtp-Source: ADFU+vtAB4m+frt4OgPhGK3bjFH/Mq6EFNWAn4lywl9mtCgIsj+7JWPOo6i9rKGPSDIUMb2g4nqQHg==
-X-Received: by 2002:ad4:5673:: with SMTP id bm19mr46300qvb.231.1583433439112;
-        Thu, 05 Mar 2020 10:37:19 -0800 (PST)
-Received: from dfj.bfc.timesys.com (host134-3-dynamic.50-79-r.retail.telecomitalia.it. [79.50.3.134])
-        by smtp.gmail.com with ESMTPSA id z4sm13868300qtm.69.2020.03.05.10.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 10:37:18 -0800 (PST)
-From:   Angelo Dureghello <angelo.dureghello@timesys.com>
-To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        zbr@ioremap.net
-Cc:     Angelo Dureghello <angelo.dureghello@timesys.com>
-Subject: [PATCH] w1: ds2430: non functional fixes
-Date:   Thu,  5 Mar 2020 19:39:51 +0100
-Message-Id: <20200305183951.2647785-1-angelo.dureghello@timesys.com>
-X-Mailer: git-send-email 2.25.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GyFYtqx37jEduc84+d5pwBxcfH/mxsB1MriBNxAX86U=;
+        b=qeLM7YW0dKmtjI7TJGKXWeIDjSydaRVJxeEpwSGbMoFHfYes52qpukpJLITr6h07Es
+         kYLlcVl1MePqOQdan1zv/rVo9K7mcp2yqqWWpFS/hm67zcxn/DQ3v12xpymS3hYb/+aF
+         V90XpV57HiyabFcUuysh9kjSbRCuj2C4ICzet8QjtYimD/tDQIHw45SPOSRMMJCtzG7c
+         W2rsDJGe3UVsncxFf0jmMGFj7nMTL1tWkLM4hiuBf3GdZdjdLcbFQZ9eAA1FUrM12P60
+         LXl0Z+Z3ZZz4W3UnAQDBIsqzMke4SzPc8NQOfzIQYA/cL2EODoqe1J+K2ycvp+BBchc+
+         dVZw==
+X-Gm-Message-State: ANhLgQ1/iI4BbpRodiw2uDAQxwjB1Zh9gjHx1Yt2RVKAhdcDPjyjYiBn
+        v8OG+KmrKiKILFAoJ5EKoMYXiMs3bXKa6Q==
+X-Google-Smtp-Source: ADFU+vuYozBgNz+/E3RdR9nIa04vVPy6nJQLhbY71fbPs0LPaHE4PayuIa4cUbugpauSwXnUBS3POQ==
+X-Received: by 2002:a2e:6a09:: with SMTP id f9mr5886673ljc.107.1583433669060;
+        Thu, 05 Mar 2020 10:41:09 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id b20sm16041022ljp.20.2020.03.05.10.41.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 10:41:08 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id q19so7246980ljp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:41:07 -0800 (PST)
+X-Received: by 2002:a05:651c:502:: with SMTP id o2mr6169123ljp.150.1583433667474;
+ Thu, 05 Mar 2020 10:41:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-542-sashal@kernel.org>
+ <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
+ <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
+ <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
+ <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
+ <20200218182041.GB24185@bombadil.infradead.org> <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
+ <20200218223325.GA143300@gmail.com> <CAHk-=wgKHFB9-XggwOmBCJde3V35Mw9g+vGnt0JGjfGbSgtWhQ@mail.gmail.com>
+ <CANaxB-xTTDcshttGnVMgDLm96CC8FYsQT4LpobvCWSQym2=8qA@mail.gmail.com>
+In-Reply-To: <CANaxB-xTTDcshttGnVMgDLm96CC8FYsQT4LpobvCWSQym2=8qA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Mar 2020 12:40:51 -0600
+X-Gmail-Original-Message-ID: <CAHk-=wgpHbbOhYtxC1rrZ4xjm1GSfZk6_roKU4++3TQVFDMXiw@mail.gmail.com>
+Message-ID: <CAHk-=wgpHbbOhYtxC1rrZ4xjm1GSfZk6_roKU4++3TQVFDMXiw@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
+ reading or writing
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mainly discovered a typo in the eeprom size that may lead to
-misunderstandings.
+On Thu, Mar 5, 2020 at 12:20 PM Andrei Vagin <avagin@gmail.com> wrote:
+>
+> After this change, one more criu test became flaky. This is due to one
+> of corner cases, so I am not sure that we need to fix something in the
+> kernel. I have fixed this issue in the test. I am not sure that this
+> will affect any real applications.
 
-Signed-off-by: Angelo Dureghello <angelo.dureghello@timesys.com>
----
- drivers/w1/slaves/w1_ds2430.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's an interesting test-case, but it's really not doing anything you
+should rely on.
 
-diff --git a/drivers/w1/slaves/w1_ds2430.c b/drivers/w1/slaves/w1_ds2430.c
-index 6fb0563fb2ae..67d168ddfb60 100644
---- a/drivers/w1/slaves/w1_ds2430.c
-+++ b/drivers/w1/slaves/w1_ds2430.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-  * w1_ds2430.c - w1 family 14 (DS2430) driver
-- **
-+ *
-  * Copyright (c) 2019 Angelo Dureghello <angelo.dureghello@timesys.com>
-  *
-  * Cloned and modified from ds2431
-@@ -290,6 +290,6 @@ static struct w1_family w1_family_14 = {
- module_w1_family(w1_family_14);
- 
- MODULE_AUTHOR("Angelo Dureghello <angelo.dureghello@timesys.com>");
--MODULE_DESCRIPTION("w1 family 14 driver for DS2430, 256kb EEPROM");
-+MODULE_DESCRIPTION("w1 family 14 driver for DS2430, 256b EEPROM");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("w1-family-" __stringify(W1_EEPROM_DS2430));
--- 
-2.25.0
+The code basically expects a pipe write() to be "atomic" for something
+bigger than PIPE_BUF. We've never really guaranteed that (and POSIX
+doesn't), but we had this special case where readers would continue to
+read as long as there was an active writer, which kind of approximated
+that for some cases (and your test-case in particular).
 
+A reader that wants to read everything should do multiple read() calls
+until it gets an EOF (or gets the expected buffer size). A regular
+read() on a pipe can simply always return a partial buffer (it will
+always do so in the case of signals, but what you're seeing is that it
+will also now do it if the kernel buffers emptied even when there was
+a writer that was ready to fill them again).
+
+And I suspect it wasn't actually the commit you point to that changes
+the behavior, I think it's actually the "pipe: remove
+'waiting_writers' merging logic" that changed behavior for your test
+
+But because it's then timing-dependent on whether the reader gets all
+the data or not, it might bisect to any commit after that point.
+Particularly since some of the other commits change timing too..
+
+We could re-introduce the "continue reading while there are active
+writers" logic, but if this is the only test that triggers that, I'd
+prefer to wait until some real user notices...
+
+But if CRIU itself depends on this behavior (rather than just a test),
+then I guess we need to.
+
+So is it just a test-case, or does CRIU itself depend on that "reads
+get full buffers"? As mentioned, that really _is_ fundamentally broken
+if there is any chance of signals..
+
+                Linus
