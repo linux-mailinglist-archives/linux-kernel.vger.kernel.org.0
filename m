@@ -2,184 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A624E17B15B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B74917B15F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgCEWW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:22:56 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:40169 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbgCEWWz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:22:55 -0500
-Received: by mail-ua1-f68.google.com with SMTP id t20so2711443uao.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 14:22:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=95/46g5pEvd0qIotsQKvfp4ftOtWVpLaKSOw5ad1I28=;
-        b=SKt/zNaEj7PcvMg41K6OypdkLZVzRG52OYqtYvWkcRWn9j//QnasvOR12OKUzfD7KO
-         aYa/iDeDuwOWKaDWQkTBA1cMErzjoLrYYHMJYQWpqpoKcIwr16xsI1/cf0JFFeX2V9iv
-         LHt7+5U3D6FQcodeLvvpyfMH/NWNoE/MXgnIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=95/46g5pEvd0qIotsQKvfp4ftOtWVpLaKSOw5ad1I28=;
-        b=AgVKxaTgfHJm6TxDbQZYxAVIXaM8ij/mDjXs7y6539FSoADiU6sCCRc1AyoGyfAgzS
-         dIp0Zj0YYTGn89/g/o8t+WmYmU+pphQr2PQHBq5wLIh4rsFwUFU7OIRNg8CnnelhmGIR
-         oATItc9RoBNHRPPai16P/3GiD0VYgYhhXj0UrqOttxCBd+cxl3Un7n1fZKauBex3HCDc
-         Aw+wnCwyixs6P9jv2WJBqQt9wMgQxNgTKOm6uX3vhYlvm0BTn8Yy6mFsi6WCbTE/9DGS
-         NsOpkGVpyuRf1JptiwtIjgewo25UenyYZzUvAZSUgifK3ugk9Dl7HcvwmcR/sFHr6Uoq
-         mNgw==
-X-Gm-Message-State: ANhLgQ2bCuvKeFPL/TFR1FoK5yOJsCUfqhyfuz4+HBNB6wuMRZTColg2
-        UxwEQJ/+TBbrqr7y2gKBRJGE2fZEUuE=
-X-Google-Smtp-Source: ADFU+vvy6uV5i9sKqGK2GymElAzks4ZJzU0bFK/ID92uXHe58Qp5Kk4A5U4CXsxrxc4M9vP5EYjKbg==
-X-Received: by 2002:ab0:1d03:: with SMTP id j3mr60104uak.6.1583446973660;
-        Thu, 05 Mar 2020 14:22:53 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id b79sm7018436vkb.47.2020.03.05.14.22.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2020 14:22:53 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id 94so7006uat.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 14:22:52 -0800 (PST)
-X-Received: by 2002:ab0:6652:: with SMTP id b18mr61173uaq.0.1583446972244;
- Thu, 05 Mar 2020 14:22:52 -0800 (PST)
+        id S1726191AbgCEWXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:23:44 -0500
+Received: from mout.gmx.net ([212.227.17.22]:44301 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbgCEWXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 17:23:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1583446984;
+        bh=LGz0Ac8M2VCBTBKcZ8Cfwh9vk3xuYtKImru4lo9VeqI=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=DeveEGgdJvCius7RQhsJdo1/YgH2ToK+TvWed9EoPc+smbnGfB+ScI8ZZg4v863Ew
+         y84x2W3AHjCjlBKuxNwXWrh6m28d4wsFGquk34aIAuY2zQmgLgA95Rm8bBpP6H/DzW
+         wR5LvhyOhGfYAaZ/+LAATha0X2skX2dKyz/QKmIo=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([5.146.195.153]) by mail.gmx.com (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MEFzx-1j1yYE47sL-00AIgE; Thu, 05
+ Mar 2020 23:23:04 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     rcu@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "rculist: Describe variadic macro argument in a Sphinx-compatible way"
+Date:   Thu,  5 Mar 2020 23:22:55 +0100
+Message-Id: <20200305222255.25266-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1583428023-19559-1-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1583428023-19559-1-git-send-email-mkshah@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 5 Mar 2020 14:22:41 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XwGR+3n__q=ojz7fV3EOSzLYCUdvcsCDY=uLo+eRvUMw@mail.gmail.com>
-Message-ID: <CAD=FV=XwGR+3n__q=ojz7fV3EOSzLYCUdvcsCDY=uLo+eRvUMw@mail.gmail.com>
-Subject: Re: [PATCH v12 0/4] Invoke rpmh_flush for non OSI targets
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lcYis6IUbD9AoVz5IC9ajdFSVsnIDAIJYcwNlhjvJYmMaT3EFMz
+ VwFhBw3Z8icfhHL5o7wo/23JyZWt2XcARlBkcYlgJxXlBB8VSEuwpkeS5aDlWLtdn5FJSCB
+ WitTn+CjFA5J9AISGKWTrfK/yIhSqb6XWNnzlJsyvRjW+JB7tUXvr8u+3DTwg4UaLFaSpgL
+ wmKgi4xLFYqRAOdiRwAfQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qMJoParss7A=:JIqFDbLdbYdIYtJmy8sdXz
+ A5iDrxV7UvXiY9FkdIbypNqSC9796zDTEtv939X2/x/+69V8bmuiI01QPgO9RPSH+J0CJG/9U
+ MuOvVp7tBoaJzbU5fpVvA5By75xKX6c4EIzpWBPfQEJExL5oVMDDpo23zn7a8ETB+axr/F04u
+ zZKCnHBwmnFb/0Rd/x2/h7u7iy7yYq7Qzy1OJcbSYQLh0XaVHEzp/aEInqV9FDYxiYXq3Agpp
+ nnGXO9ICKu7YKDaFnj4ztGElj3m2W+JGbC7/mLX+5k8vcTy1Zud7ct+gRQ3eKUt4CZ04PGq4e
+ eFGhn2bZaoQY682wuPwiTiT0rncOYHch+seVUbIyFHIW+c2WwLGVHWqWJj0FrOHSta/wTMW4G
+ 4U7o5+t2/ri3uWqBgv0Y+We3AQ7PYl4XEI85FjdQVJFhUotyGqiT4g/pT04HK867DIwG5qpfn
+ j3/f0sBHYz0UKOCqa2pg5kHUJEC7GccIcvkF8RVD7k5OPbDIKyylGl2TfREE0dlmlC1OUSBSF
+ Sz6kLoYXSMaAgMjqx4oPi7NpJqrOfWmlfammD/0wKnO1jWbwBvEinDnfQlnyoWXPyyfc+b50u
+ cDWhVfr2cCe3tTa74FL7z+J/jcVJpBMBmfWpN4GlTGm7P5TcGKtKwncmm2FdGfBn7TaY83TzJ
+ Kv0xpimUuXSFIx2Lp3J2qWyKKKQGRQFcGZk/4udr8JT5MbYu808fwUKJqoA+qn7XKBBspC3H+
+ hXyVPJIQqd6qi485hP8jgPXK1BTNa0kc20iEnOTKkWwp8cOfORMt4zDcfbYo6en8/hwPcAxjC
+ 8hGVT9dQWitEvQ6Q12cEM6OZGYildEa7IpF+mV1u7e45NDWgfK+4vcgZb4FAqnRP/RMxZO5iJ
+ rd7u5ETJtY02w9cjLGqhKKoD+M/Zpuo3DAO6Uts2A7DCznrjCRXASHk+cnEDCJtrclzWJMTt6
+ vOBz6QTydhUqNxnPlr7wVpujzvwcH2ptKn1DQUtTv1qBOuRMmPzS9bOfiixMzFgPqNuN6Di/r
+ EUBjNx9+hoSNWN+SEVralpFO+PG4Cs+hnWkO3FM3JEfA++9Mvv1oBBpMxs+4NMiC5sxYPdOFV
+ pZq02nvpeLoPaG823z03FydrNvYGIQFcT7u4FUpZhuZ4sksmBxg8Z13qfsmVwsgFj2XMCmHK7
+ BeSHFCgF5vsk53IgI/+btR1kvY7sBcUbZlwaq4pzXyE23kJmj7egk4+OGG3DjIxu1tQpf4b1D
+ pQD+huMsZ/N7rbgZy
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This reverts commit f452ee096d95482892b101bde4fd037fa025d3cc.
 
-On Thu, Mar 5, 2020 at 9:07 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->
-> Changes in v12:
-> - Kconfig change to remove COMPILE_TEST was dropped in v11, reinclude it.
->
-> Changes in v11:
-> - Address Doug's comments on change 2 and 3
-> - Include change to invalidate TCSes before flush from [4]
->
-> Changes in v10:
-> - Address Evan's comments to update commit message on change 2
-> - Add Evan's Reviewed by on change 2
-> - Remove comment from rpmh_flush() related to last CPU invoking it
-> - Rebase all changes on top of next-20200302
->
-> Changes in v9:
-> - Keep rpmh_flush() to invoke from within cache_lock
-> - Remove comments related to only last cpu invoking rpmh_flush()
->
-> Changes in v8:
-> - Address Stephen's comments on changes 2 and 3
-> - Add Reviewed by from Stephen on change 1
->
-> Changes in v7:
-> - Address Srinivas's comments to update commit text
-> - Add Reviewed by from Srinivas
->
-> Changes in v6:
-> - Drop 1 & 2 changes from v5 as they already landed in maintainer tree
-> - Drop 3 & 4 changes from v5 as no user at present for power domain in rsc
-> - Rename subject to appropriate since power domain changes are dropped
-> - Rebase other changes on top of next-20200221
->
-> Changes in v5:
-> - Add Rob's Acked by on dt-bindings change
-> - Drop firmware psci change
-> - Update cpuidle stats in dtsi to follow PC mode
-> - Include change to update dirty flag when data is updated from [4]
-> - Add change to invoke rpmh_flush when caches are dirty
->
-> Changes in v4:
-> - Add change to allow hierarchical topology in PC mode
-> - Drop hierarchical domain idle states converter from v3
-> - Address Merge sc7180 dtsi change to add low power modes
->
-> Changes in v3:
-> - Address Rob's comment on dt property value
-> - Address Stephen's comments on rpmh-rsc driver change
-> - Include sc7180 cpuidle low power mode changes from [1]
-> - Include hierarchical domain idle states converter change from [2]
->
-> Changes in v2:
-> - Add Stephen's Reviewed-By to the first three patches
-> - Addressed Stephen's comments on fourth patch
-> - Include changes to connect rpmh domain to cpuidle and genpds
->
-> Resource State Coordinator (RSC) is responsible for powering off/lowering
-> the requirements from CPU subsystem for the associated hardware like buses,
-> clocks, and regulators when all CPUs and cluster is powered down.
->
-> RSC power domain uses last-man activities provided by genpd framework based
-> on Ulf Hansoon's patch series[3], when the cluster of CPUs enter deepest
-> idle states. As a part of domain poweroff, RSC can lower resource state
-> requirements by flushing the cached sleep and wake state votes for various
-> resources.
->
-> [1] https://patchwork.kernel.org/patch/11218965
-> [2] https://patchwork.kernel.org/patch/10941671
-> [3] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=222355
-> [4] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=236503
->
-> Maulik Shah (3):
->   arm64: dts: qcom: sc7180: Add cpuidle low power states
->   soc: qcom: rpmh: Update dirty flag only when data changes
->   soc: qcom: rpmh: Invoke rpmh_flush for dirty caches
->
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 78 ++++++++++++++++++++++++++++++++++++
->  drivers/soc/qcom/rpmh.c              | 27 ++++++++++---
->  2 files changed, 100 insertions(+), 5 deletions(-)
+The workaround became unnecessary with commit 43756e347f21
+("scripts/kernel-doc: Add support for named variable macro arguments").
 
-One overall optimization idea?
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ include/linux/rculist.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Should we add two API calls:
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+index 9f313e4999fe..93accccb9620 100644
+=2D-- a/include/linux/rculist.h
++++ b/include/linux/rculist.h
+@@ -371,7 +371,7 @@ static inline void list_splice_tail_init_rcu(struct li=
+st_head *list,
+  * @pos:	the type * to use as a loop cursor.
+  * @head:	the head for your list.
+  * @member:	the name of the list_head within the struct.
+- * @cond...:	optional lockdep expression if called from non-RCU protectio=
+n.
++ * @cond:	optional lockdep expression if called from non-RCU protection.
+  *
+  * This list-traversal primitive may safely run concurrently with
+  * the _rcu list-mutation primitives such as list_add_rcu()
+@@ -646,7 +646,7 @@ static inline void hlist_add_behind_rcu(struct hlist_n=
+ode *n,
+  * @pos:	the type * to use as a loop cursor.
+  * @head:	the head for your list.
+  * @member:	the name of the hlist_node within the struct.
+- * @cond...:	optional lockdep expression if called from non-RCU protectio=
+n.
++ * @cond:	optional lockdep expression if called from non-RCU protection.
+  *
+  * This list-traversal primitive may safely run concurrently with
+  * the _rcu list-mutation primitives such as hlist_add_head_rcu()
+=2D-
+2.20.1
 
-rpmh_start_operations()
-rpmh_end_operations()
-
-These optional API calls would be an optimization a client could use.
-When rpmh_start_operations() is called then RPMH code will inhibit
-flushing (but will still update the "dirty" flag).  When
-rpmh_end_operations() is called then the RPMH will flush if the dirty
-flag is set.
-
-This is a pretty simple concept but should have a huge impact in the
-number of times we program hardware in non-OSI mode.  Specifically, if
-we don't do that and we look at what happens in the interconnect code:
-
-1. We "invalidate" the batch.  We have to flush the non-batch commands
-back into the hardware.
-
-2. We program the "wake only" commands.  We have to flush the batch
-wake-only commands and also the non-batch commands back into the
-hardware.
-
-3. We program the "sleep only" commands.  We have to flush yet again
-with everything.
-
-
-
--Doug
