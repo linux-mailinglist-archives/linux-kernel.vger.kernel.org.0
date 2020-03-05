@@ -2,110 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195AF17A96A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D733417A970
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:58:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgCEP5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:57:21 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47751 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726184AbgCEP5U (ORCPT
+        id S1726894AbgCEP6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:58:40 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:29948 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726143AbgCEP6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:57:20 -0500
+        Thu, 5 Mar 2020 10:58:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583423839;
+        s=mimecast20190719; t=1583423919;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=BKhoQxKzVdv0hd1Nmd+yV7hKjeG+Y4sbHF1K+C0InG0=;
-        b=No1VK0Jsb+nIocMcR2Idv9eWZ+dU69bLU0tsrH1ZgdSqSc1Z3oFam29usjXcExoaWRL9j+
-        CJkD4YADUjwGsRUhTeSAuwrkQSTxPG10Kh+I0Ry3oU7vvZvcyqsvMzzKwnHbOPfWwPeFiK
-        Z1jhe6D/5sdgd733y8AuHxEY+McZsnQ=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-25-plA_70yAM6Oa0ROicP3veg-1; Thu, 05 Mar 2020 10:57:18 -0500
-X-MC-Unique: plA_70yAM6Oa0ROicP3veg-1
-Received: by mail-qt1-f197.google.com with SMTP id o9so4107671qtt.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 07:57:18 -0800 (PST)
+        bh=vcmbPSG7Ns1BCQM6qMZvbDUeuBY81aAMlv0waXN9f5o=;
+        b=V12JsjHTImEGtUWIvsWV9HLWkNDzBEKSGyTp82xGobfleUqg149FBO/KyA+MWks4nVlzj8
+        V0wDetNxi2fmDjDucbXxigscxiUbEtowV2YB2gTguESik5KLjXsX+D7xAZLj0RGl0idpT/
+        9TVy38AU7yIcCA8Ywgyml+UOfN64ToE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-317-PIHivq34MQeIWEw2WWR3zQ-1; Thu, 05 Mar 2020 10:58:37 -0500
+X-MC-Unique: PIHivq34MQeIWEw2WWR3zQ-1
+Received: by mail-wm1-f71.google.com with SMTP id d129so2259628wmd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 07:58:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BKhoQxKzVdv0hd1Nmd+yV7hKjeG+Y4sbHF1K+C0InG0=;
-        b=KD/swwufV1p+8LNjbPdQdXBHJXJNgUfJVn8CbGDtz12Y3qecZHOkLaUyPOBZBx80Iq
-         eikPKCr6sWP5y8pVuNLHLsTVbi5uLPcnz62ECCrnLW8/EXgN/hv+9st5AB+9YEhWCXd4
-         pj1z10Kk6eATBbBRA4pWRGTqa+CRavgabzG6Fc74BDok4/07fQ1zsgR3e+602syq9gaj
-         hQyFkCFwC1jb5tJosktw5fBJYGxicDTx5PNY42Bgahc7naIS32RPKorol+HzzJvE9snu
-         yn2wgykXOwGZM7fufq7DhaZJGL6AGkpC8y9OJATPhek7DWdLvZW6J9cy0Nxr5eaob7Lc
-         qx2w==
-X-Gm-Message-State: ANhLgQ1Cr4x79T7fiOfCHLMAX48udRkvPBSj76KSocT8/zPJ1e2eQnxd
-        Wt+S1Hz/FCLqE7f/HsIsVg00s8jrUylvLyoJIJW9STA6+plM8bL9imFtult1lKojGViuCHeIY8I
-        E7HYRFJs2L15k+qesFmqkDOc9
-X-Received: by 2002:a0c:f64e:: with SMTP id s14mr6990172qvm.129.1583423837882;
-        Thu, 05 Mar 2020 07:57:17 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vtbWhnXso6DibXEzx0MPB5VJm2bB4SiaCiuUwt486jy6wWRPqTydJKvfB1ptF3rG84ssICm/Q==
-X-Received: by 2002:a0c:f64e:: with SMTP id s14mr6990149qvm.129.1583423837566;
-        Thu, 05 Mar 2020 07:57:17 -0800 (PST)
-Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id x93sm8030727qte.60.2020.03.05.07.57.16
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=vcmbPSG7Ns1BCQM6qMZvbDUeuBY81aAMlv0waXN9f5o=;
+        b=RtG3y3j92+nDH4S7eLy+dtLvO6HfIU/mIlPrbawOcXwJzZkUB1wGS2Z9Ly7I5WOaAu
+         n3Z6LXYkAZwgHNd2Qwufw6S+wxpgbs6umUuatSt8zTIyXAKxqUmG5qcboOT84zlN/1nN
+         fWE/xXXKEwm907GUqBlSm1bJH1jPJUDDPbKJTjMngqwg7KIQpCsrJHNBXgN81yw9bm2X
+         uT9e8g53HZpXzrQSGFWWTmzTSYBbc8zStCYhI1c2rp0cETwz9+5+jk+6yuqb4iGJq4lK
+         jFJl8ey8x87KjALkexF7srTqBrasMzcJWtiYtwlO+0EvAo9bqp+tkzUauDuIwZ3ehwOm
+         UJfA==
+X-Gm-Message-State: ANhLgQ3JIREiLLyFfN30koiok7Nti6jGdX7Id0V4emgdjSEsA+N8/6Zz
+        5qE3Wi94G3CRurdIkzQc/IbgPWk8Y52nZouTZVgepUQr6g+ny6tF+8gkh2gUuI8AIdQ6UN8w0LL
+        J3tIKsfexQLElE694bGxefu6m
+X-Received: by 2002:a5d:630a:: with SMTP id i10mr10613139wru.273.1583423916362;
+        Thu, 05 Mar 2020 07:58:36 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vs2tnnfpQubkBdyyW38Ps48EoLmLBMqtqEn0LHkSSBuz/+LpaZRPiwmvos+UYZioFDdZJfdLg==
+X-Received: by 2002:a5d:630a:: with SMTP id i10mr10613126wru.273.1583423916167;
+        Thu, 05 Mar 2020 07:58:36 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id d203sm9339731wmd.37.2020.03.05.07.58.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 07:57:16 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linmiaohe@huawei.com, Paolo Bonzini <pbonzini@redhat.com>,
-        peterx@redhat.com
-Subject: [PATCH v2 2/2] KVM: Drop gfn_to_pfn_atomic()
-Date:   Thu,  5 Mar 2020 10:57:09 -0500
-Message-Id: <20200305155709.118503-3-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200305155709.118503-1-peterx@redhat.com>
-References: <20200305155709.118503-1-peterx@redhat.com>
+        Thu, 05 Mar 2020 07:58:35 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] KVM: x86: VMX: rename 'kvm_area' to 'vmxon_region'
+In-Reply-To: <20200305153623.GA11500@linux.intel.com>
+References: <20200305100123.1013667-1-vkuznets@redhat.com> <20200305100123.1013667-2-vkuznets@redhat.com> <20200305153623.GA11500@linux.intel.com>
+Date:   Thu, 05 Mar 2020 16:58:35 +0100
+Message-ID: <875zfig5ec.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's never used anywhere now.
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Reviewed-by: linmiaohe <linmiaohe@huawei.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- include/linux/kvm_host.h | 1 -
- virt/kvm/kvm_main.c      | 6 ------
- 2 files changed, 7 deletions(-)
+> Super nit: can I convince you to use "KVM: VMX:" instead of "KVM: x86: VMX:"?
+>
+>   $ glo | grep -e "KVM: x86: nVMX" -e "KVM: x86: VMX:" | wc -l
+>   8
+>   $ glo | grep -e "KVM: nVMX" -e "KVM: VMX:" | wc -l
+>   1032
+>
+> I'm very conditioned to scan for "KVM: *VMX:", e.g. I was about to complain
+> that this used the wrong scope :-)   And in the event that Intel adds a new
+> technology I'd like to be able to use "KVM: Intel:" and "KVM: ***X:"
+> instead of "KVM: x86: Intel:" and "KVM: x86: Intel: ***X:" for code that is
+> common to Intel versus specific to a technology.
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index bcb9b2ac0791..3faa062ea108 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -704,7 +704,6 @@ void kvm_release_page_clean(struct page *page);
- void kvm_release_page_dirty(struct page *page);
- void kvm_set_page_accessed(struct page *page);
- 
--kvm_pfn_t gfn_to_pfn_atomic(struct kvm *kvm, gfn_t gfn);
- kvm_pfn_t gfn_to_pfn(struct kvm *kvm, gfn_t gfn);
- kvm_pfn_t gfn_to_pfn_prot(struct kvm *kvm, gfn_t gfn, bool write_fault,
- 		      bool *writable);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 70f03ce0e5c1..d29718c7017c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1754,12 +1754,6 @@ kvm_pfn_t gfn_to_pfn_memslot_atomic(struct kvm_memory_slot *slot, gfn_t gfn)
- }
- EXPORT_SYMBOL_GPL(gfn_to_pfn_memslot_atomic);
- 
--kvm_pfn_t gfn_to_pfn_atomic(struct kvm *kvm, gfn_t gfn)
--{
--	return gfn_to_pfn_memslot_atomic(gfn_to_memslot(kvm, gfn), gfn);
--}
--EXPORT_SYMBOL_GPL(gfn_to_pfn_atomic);
--
- kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn)
- {
- 	return gfn_to_pfn_memslot_atomic(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn);
+What if someone else adds VMX instead? :-)
+
+Point taken, will use 'KVM: VMX:' in the future (and I'm in no way
+object to changing this in the queue if it's not too late).
+
 -- 
-2.24.1
+Vitaly
 
