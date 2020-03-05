@@ -2,93 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9526A17A450
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0307617A468
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbgCELdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:33:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:23507 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbgCELdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:33:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 03:33:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,517,1574150400"; 
-   d="scan'208";a="234387456"
-Received: from unknown (HELO jsakkine-mobl1) ([10.237.50.161])
-  by orsmga008.jf.intel.com with ESMTP; 05 Mar 2020 03:33:27 -0800
-Message-ID: <04362c0cf66bf66e8f7c25a531830b9f294d2d09.camel@linux.intel.com>
-Subject: Re: [PATCH v28 14/22] selftests/x86: Add a selftest for SGX
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nathaniel McCallum <npmccallum@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        "Svahn, Kai" <kai.svahn@intel.com>, bp@alien8.de,
-        Josh Triplett <josh@joshtriplett.org>, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        linux-kselftest@vger.kernel.org
-Date:   Thu, 05 Mar 2020 13:33:28 +0200
-In-Reply-To: <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
-         <20200303233609.713348-15-jarkko.sakkinen@linux.intel.com>
-         <CAOASepN1JrD6OEzZycbqOr6_ZVACK=EctEOoQ8oSAEeigMr1Eg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.35.92-1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727411AbgCELjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:39:52 -0500
+Received: from lucky1.263xmail.com ([211.157.147.134]:42380 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbgCELjv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 06:39:51 -0500
+Received: from localhost (unknown [192.168.167.32])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 491126D08C;
+        Thu,  5 Mar 2020 19:39:24 +0800 (CST)
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P32419T139954420168448S1583408354858766_;
+        Thu, 05 Mar 2020 19:39:24 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <60c9cb10d66f05175c03168580c048c6>
+X-RL-SENDER: andy.yan@rock-chips.com
+X-SENDER: yxj@rock-chips.com
+X-LOGIN-NAME: andy.yan@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+From:   Andy Yan <andy.yan@rock-chips.com>
+To:     heiko@sntech.de, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 0/4] Enable eDP display on rk3399 evb.
+Date:   Thu,  5 Mar 2020 19:39:08 +0800
+Message-Id: <20200305113912.32226-1-andy.yan@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-04 at 14:27 -0500, Nathaniel McCallum wrote:
-> > > +xsave_area:
-> > +       .fill   1, 4, 0x037F            # FCW
-> > +       .fill   5, 4, 0
-> > +       .fill   1, 4, 0x1F80            # MXCSR
-> > +       .fill   1, 4, 0xFFFF            # MXCSR_MASK
-> > +       .fill   123, 4, 0
-> > +       .fill   1, 4, 0x80000000        # XCOMP_BV[63] = 1, compaction mode
-> > +       .fill   12, 4, 0
-> 
-> I find this much more readable:
 
-And I always aim to get things more readable. Thank you.
+When I try to test a patch for eDP on mainline, I found there is no
+display suport for this board. So I try to add all the releated things
+for it.
 
-> xsave_area:
->         # Legacy
->         .fill   1, 4, 0x037F            # FCW
->         .fill   5, 4, 0
->         .fill   1, 4, 0x1F80            # MXCSR
->         .fill   1, 4, 0xFFFF            # MXCSR_MASK
->         .fill   60, 8, 0
-> 
->         # Header
->         .fill   1, 8, 0                 # XSTATE_BV
->         .fill   1, 8, 1 << 63           # XCOMP_BV (compaction mode)
->         .fill   6, 8, 0
-> 
-> Also, since people are likely to copy this code for their own
-> enclaves, it would be helpful to document which flags are set in FCW
-> and MXCSR.
 
-It was meant as a test program but I'd guess what you say is true
-because it also might be the only alternative user space to Intel's
-:-) And a great starting point if you want to do things from scratch.
+Andy Yan (4):
+  arm64: dts: rockchip: remove dvs2 pinctrl for pmic on rk3399 evb
+  arm64: dts: rockchip: Add pmic dt tree for rk3399 evb
+  arm64: dts: rockchip: remove enable-gpio of backlight on rk3399 evb
+  arm64: dts: rockchip: Enable eDP display on rk3399 evb
 
-Because I meant it as a smoke test program for SGX, not everything is
-too well documented but given the multipurpose use for that code I'll
-make the improvements that you are suggesting.
+ arch/arm64/boot/dts/rockchip/rk3399-evb.dts | 267 +++++++++++++++++++-
+ 1 file changed, 261 insertions(+), 6 deletions(-)
 
-/Jarkko
+-- 
+2.17.1
+
+
 
