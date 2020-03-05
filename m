@@ -2,118 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A449179D14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 01:57:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9EBF179D1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 01:58:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbgCEA5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 19:57:51 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43793 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgCEA5u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 19:57:50 -0500
-Received: by mail-pg1-f193.google.com with SMTP id u12so1864735pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 16:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r1cjoiRs5yfI/5ZwZNPh4J3Hd5wrkW8j/pkn8QIoYoI=;
-        b=GyV8uU9CINptKvdryE//p4TelPw6MzQUvY0bQByDvwZ36sulOY/unL5MnrAv9wv8jp
-         dbCtNJhdZqzKmlo0IJ3Ul5yzSPYC8JXWX7j022XR/Tlu2e/kdZZe4XozYLMywRja+sF1
-         /3S2SXr8G95/JN7RR0FkKRCfuymTF+nfmrPoYGO5rY+iPCmyiJ0rUGBe9I/CHqjqFV5z
-         xDi4kO9e4crpRXoqNb+7p82JDdnwLS1k7ei3KxeLySG8zxUiIF/Smw5JVRePLbGi5L8s
-         dLQmYA6DTO7lmSou9AkGpr5T2HqzJ6Sm+hg2fPXh5wXMTasN9sIlzXFIGFL1uSzJPQcZ
-         6f6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=r1cjoiRs5yfI/5ZwZNPh4J3Hd5wrkW8j/pkn8QIoYoI=;
-        b=VcXKKdLXBBLvV553+uELuUNwlZe5H9KuO5y8JV537kD9DHztR2NAjau048nNSbTtJz
-         TdzU9E5A0Z9zasUMZphgFPjrjKJl2d5qEcoTh5CaxYx00DUlBCRzuIGgwej1bh01eGjy
-         q1ESgVNaaI3f/tNsqAG+zS6R6IhcjW46LD+RBPjHr+EdgXOtakJzhpOBV3hHl21RG+jJ
-         /gRJNVMBKmQdgifQw0urF2crBiQ11Lzl/vR2ZxXp5mHmg5zldm2Z0/A0qO1GvioEreTB
-         1hlk7UmmqU2u7eRREMGN/a+6pw8mJSofr0RV5JNmMgygEBLWRQHp+QzENBNbHAZ7dpfS
-         32ZQ==
-X-Gm-Message-State: ANhLgQ3G0WFtsv+Q5FJFU34qnJJ3cGyD0SWm/g8hJfDmBTaBBCIEf1Bq
-        Ra7VhH2G7EhDl/CKGI4vEbLOJA==
-X-Google-Smtp-Source: ADFU+vsMu+SCwaGiTvNt7q5D3Z8AxBmHq9uvSeqYl34akVxe8tr0UJLcPLA5uAY0m8LsDJcoJulbmA==
-X-Received: by 2002:a62:a206:: with SMTP id m6mr5912639pff.254.1583369868705;
-        Wed, 04 Mar 2020 16:57:48 -0800 (PST)
-Received: from localhost ([2620:0:1000:2514:23a5:d584:6a92:3e3c])
-        by smtp.gmail.com with ESMTPSA id w17sm24466490pfg.33.2020.03.04.16.57.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 16:57:48 -0800 (PST)
-Date:   Wed, 04 Mar 2020 16:57:48 -0800 (PST)
-X-Google-Original-Date: Wed, 04 Mar 2020 16:56:49 PST (-0800)
-Subject:     Re: [PATCH 4/8] riscv: move exception table immediately after RO_DATA
-In-Reply-To: <20200217083223.2011-5-zong.li@sifive.com>
-CC:     Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        zong.li@sifive.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     zong.li@sifive.com
-Message-ID: <mhng-6a94c49b-419b-4b5a-a11d-dda1fb0aa896@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1726254AbgCEA6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 19:58:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbgCEA6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 19:58:11 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A2CB20842;
+        Thu,  5 Mar 2020 00:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583369890;
+        bh=qBHd9zT00b7CN2peWKuf3SotoS9UgrnfGTi/urSOl9I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Oe/JVIOOL2NJ+2yNnt2zTB42B65tVfqHBaSFXBE2M3ztqk22pAO1uLMOIh7CQ2MKR
+         dKmTVQKvvKoTOE6lu2tS6Kp0N1c8DyjO90n7CJUfgf0/BNzRFeB8b1o9y6VfhFFSji
+         tEgsdcmztSbJ8nCVhFu2O1UAyBmoswbKimT4md/w=
+Date:   Thu, 5 Mar 2020 09:58:06 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Markus Elfring <Markus.Elfring@web.de>, linux-doc@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: Re: [v4] Documentation: bootconfig: Update boot configuration
+ documentation
+Message-Id: <20200305095806.3ba477b939c07d5bec298b48@kernel.org>
+In-Reply-To: <531371ef-354a-b0fa-f69f-c8cf9ecc9919@infradead.org>
+References: <158322634266.31847.8245359938993378502.stgit@devnote2>
+        <158322635301.31847.15011454479023637649.stgit@devnote2>
+        <ad1e9855-4c64-53bd-7da5-f7cdafe78571@infradead.org>
+        <20200304203722.8e8699c2a3e0a979aae091b1@kernel.org>
+        <3a3a5f1a-3654-d96d-3b4a-dd649a366c65@web.de>
+        <531371ef-354a-b0fa-f69f-c8cf9ecc9919@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Feb 2020 00:32:19 PST (-0800), zong.li@sifive.com wrote:
-> Move EXCEPTION_TABLE immediately after RO_DATA. Make it easy to set the
-> attribution of the sections which should be read-only at a time.
-> Move .sdata to indicate the start of data section with write permission.
-> This patch is prepared for STRICT_KERNEL_RWX support.
->
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> ---
->  arch/riscv/kernel/vmlinux.lds.S | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
-> index 1e0193ded420..4ba8a5397e8b 100644
-> --- a/arch/riscv/kernel/vmlinux.lds.S
-> +++ b/arch/riscv/kernel/vmlinux.lds.S
-> @@ -9,6 +9,7 @@
->  #include <asm/page.h>
->  #include <asm/cache.h>
->  #include <asm/thread_info.h>
-> +#include <asm/set_memory.h>
->
->  OUTPUT_ARCH(riscv)
->  ENTRY(_start)
-> @@ -52,12 +53,15 @@ SECTIONS
->  	}
->
->  	/* Start of data section */
-> -	_sdata = .;
->  	RO_DATA(L1_CACHE_BYTES)
->  	.srodata : {
->  		*(.srodata*)
->  	}
->
-> +	EXCEPTION_TABLE(0x10)
-> +
-> +	_sdata = .;
-> +
->  	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE, THREAD_SIZE)
->  	.sdata : {
->  		__global_pointer$ = . + 0x800;
-> @@ -69,8 +73,6 @@ SECTIONS
->
->  	BSS_SECTION(PAGE_SIZE, PAGE_SIZE, 0)
->
-> -	EXCEPTION_TABLE(0x10)
-> -
->  	.rel.dyn : {
->  		*(.rel.dyn*)
->  	}
+On Wed, 4 Mar 2020 08:20:35 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-As far as I can tell this is OK: core_kernel_data() explicitly says that RODATA
-may or may not be between _sdata and _edata.  That said, I think we should add
-__start_rodata and __end_rodata atomicly with this change (around RO_DATA and
-.srodata).
+> On 3/4/20 6:45 AM, Markus Elfring wrote:
+> >> What about the following?
+> >>
+> >> User can group identical parent keys together and use braces to list child keys
+> 
+>    The user
+> (as Markus noted)
+
+OK.
+
+> 
+> >> under them.
+> > 
+> > Another wording alternative:
+> > 
+> > The user can group settings together. Curly brackets enclose a configuration then
+> > according to a parent context.
+> 
+> I slightly prefer Masami's text.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
