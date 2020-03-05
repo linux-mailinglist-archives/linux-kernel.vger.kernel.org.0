@@ -2,383 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE52D17A60C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 14:08:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E7617A61B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 14:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbgCENIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 08:08:51 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:53410 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbgCENIv (ORCPT
+        id S1726413AbgCENLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 08:11:30 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725912AbgCENL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 08:08:51 -0500
-Received: by mail-pj1-f68.google.com with SMTP id cx7so2480626pjb.3;
-        Thu, 05 Mar 2020 05:08:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bVBnRKTWMAoJt8jksXDWM1oJP/8GMBvpEQFwQVtFuIY=;
-        b=r60dpSbIkHMLtxKIhm+8VCcgW+WOqWPdnuFOaD9pUBjD6hZQTwzEkjKPOlhPBHrNsP
-         Mo5y5hTGDuBFAq+AugItAfU+ColTSq53EK5Khq5gJorimNZXxqc4xpthFDzRle8lHaRf
-         VQAe1cepgdQy6DHiocLrHJJpna4EeG/IMqKMxoQUmDYr8gThkFMptzji+rXJ32svmt9A
-         Q0iRtULEdCog1g0aJnu4da7qnTq/xlKv2Xf3HRmiu5FGLBpLaaeHqAAnHwlzVbsJpOHm
-         6ApVQECG4gipJ+MbVcSW+hFG7Bs9z13ZYg/rqhbT0VhZdn4oRJXKWqjHVkQx0F+1+QJz
-         /FJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bVBnRKTWMAoJt8jksXDWM1oJP/8GMBvpEQFwQVtFuIY=;
-        b=JM2p1PQbYtUGSnNYOKaDetOf5fAcQ7gS+dD1rkI/19Nkl1Vkt5odiBAgAUxtvxgCxn
-         WrLBE3O3qtlvZV50gyYIf2B5P+ozbZzSKLjcYneSqe8yy3b2OI32TGOD3RVjKt1iDwEW
-         nbsh2C0bfY1ThjdyO88vQP2RiBL71cW2ytYwkVfE1OMPwa0Khpn3V7RCwqn3eEiLiRsF
-         g3wJDgDlO3bAgwY+Dvn9Sjd58tjt1vqZCDmIkiA9QuCNadG4gqtffK3vQm7jX1KRS8Km
-         eIUqrEkrxExPMgB2PQZw9kh+QQahnAEskCsK3piInO/quOXvkuNH40RTOUkA4NUabWAp
-         l7ww==
-X-Gm-Message-State: ANhLgQ0hkP7jM4SuLLzu/7OZ/OjgZodvJhKfWIk5ivpJjNAnZl8qstEb
-        B/pF/cUBQOoxbQ1umRS7CuXrMXIq
-X-Google-Smtp-Source: ADFU+vuS+lQbEoY484SdLMg0+EJFwX19PU7CwNQfP73a9xhYjj7XMFk85KfOdsFKvynPKc+y8/Akog==
-X-Received: by 2002:a17:90a:d793:: with SMTP id z19mr8486239pju.40.1583413728753;
-        Thu, 05 Mar 2020 05:08:48 -0800 (PST)
-Received: from localhost.localdomain ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id x18sm20683829pfo.148.2020.03.05.05.08.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 05:08:48 -0800 (PST)
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     afzal mohammed <afzal.mohd.ma@gmail.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>
-Subject: [PATCH v4] alpha: Replace setup_irq() by request_irq()
-Date:   Thu,  5 Mar 2020 18:38:41 +0530
-Message-Id: <20200305130843.17989-1-afzal.mohd.ma@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200304005209.5636-1-afzal.mohd.ma@gmail.com>
-References: <20200304005209.5636-1-afzal.mohd.ma@gmail.com>
+        Thu, 5 Mar 2020 08:11:28 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 025CtJ0a092573
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Mar 2020 08:11:27 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yjrtsgw5b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 08:11:26 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Thu, 5 Mar 2020 13:11:24 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Mar 2020 13:11:21 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 025DBKtd42598476
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Mar 2020 13:11:20 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F3E5A405C;
+        Thu,  5 Mar 2020 13:11:20 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E660CA4054;
+        Thu,  5 Mar 2020 13:11:19 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Mar 2020 13:11:19 +0000 (GMT)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf/s390/json: Add new deflate counters for IBM z15
+Date:   Thu,  5 Mar 2020 14:11:17 +0100
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 20030513-0012-0000-0000-0000038D71F6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030513-0013-0000-0000-000021CA3132
+Message-Id: <20200305131117.29175-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-05_03:2020-03-05,2020-03-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ mlxscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 mlxlogscore=999 clxscore=1015 malwarescore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003050084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-request_irq() is preferred over setup_irq(). Invocations of setup_irq()
-occur after memory allocators are ready.
+Add support for new deflate counters:
+- Counter 247: cycles CPU spent obtaining access to Deflate unit
+- Counter 252: cycles CPU is using Deflate unit
+- Counter 264: Increments by one for every DEFLATE CONVERSION CALL
+	    instruction executed.
+- Counter 265: Increments by one for every DEFLATE CONVERSION CALL
+	    instruction executed that ended in Condition Codes
+	    0, 1 or 2.
 
-Per tglx[1], setup_irq() existed in olden days when allocators were not
-ready by the time early interrupts were initialized.
-
-Hence replace setup_irq() by request_irq().
-
-[1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
-
-Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
 ---
-Hi alpha maintainers,
+ .../pmu-events/arch/s390/cf_z15/crypto6.json  |  8 ++---
+ .../pmu-events/arch/s390/cf_z15/extended.json | 30 ++++++++++++++++++-
+ 2 files changed, 33 insertions(+), 5 deletions(-)
 
-if okay w/ this change, please consider taking it thr' your tree, else please
-let me know.
-
-Regards
-afzal
-
-Link to v3, v2 & v1,
-[v3] https://lkml.kernel.org/r/20200304005209.5636-1-afzal.mohd.ma@gmail.com
-[v2] https://lkml.kernel.org/r/cover.1582471508.git.afzal.mohd.ma@gmail.com
-[v1] https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
-
-v4:
- * Fix build error @ init_rtc_irq arg
-v3:
- * Split out from tree wide series, as Thomas suggested to get it thr'
-	respective maintainers
- * Modify pr_err displayed in case of error
- * Re-arrange code & choose pr_err args as required to improve readability
- * Remove irrelevant parts from commit message & improve
- 
-v2:
- * Replace pr_err("request_irq() on %s failed" by
-           pr_err("%s: request_irq() failed"
- * Commit message massage
-
- arch/alpha/kernel/irq_alpha.c     | 29 +++++------------------------
- arch/alpha/kernel/irq_i8259.c     |  8 ++------
- arch/alpha/kernel/irq_impl.h      |  7 +------
- arch/alpha/kernel/irq_pyxis.c     |  3 ++-
- arch/alpha/kernel/sys_alcor.c     |  3 ++-
- arch/alpha/kernel/sys_cabriolet.c |  3 ++-
- arch/alpha/kernel/sys_eb64p.c     |  3 ++-
- arch/alpha/kernel/sys_marvel.c    |  2 +-
- arch/alpha/kernel/sys_miata.c     |  6 ++++--
- arch/alpha/kernel/sys_ruffian.c   |  3 ++-
- arch/alpha/kernel/sys_rx164.c     |  3 ++-
- arch/alpha/kernel/sys_sx164.c     |  3 ++-
- arch/alpha/kernel/sys_wildfire.c  |  7 ++-----
- arch/alpha/kernel/time.c          |  6 ++----
- 14 files changed, 31 insertions(+), 55 deletions(-)
-
-diff --git a/arch/alpha/kernel/irq_alpha.c b/arch/alpha/kernel/irq_alpha.c
-index da3e10d5f7fe..d17e44c99df9 100644
---- a/arch/alpha/kernel/irq_alpha.c
-+++ b/arch/alpha/kernel/irq_alpha.c
-@@ -213,32 +213,13 @@ process_mcheck_info(unsigned long vector, unsigned long la_ptr,
-  * The special RTC interrupt type.  The interrupt itself was
-  * processed by PALcode, and comes in via entInt vector 1.
-  */
--
--struct irqaction timer_irqaction = {
--	.handler	= rtc_timer_interrupt,
--	.name		= "timer",
--};
--
- void __init
--init_rtc_irq(void)
-+init_rtc_irq(irq_handler_t handler)
- {
- 	irq_set_chip_and_handler_name(RTC_IRQ, &dummy_irq_chip,
- 				      handle_percpu_irq, "RTC");
--	setup_irq(RTC_IRQ, &timer_irqaction);
-+	if (!handler)
-+		handler = rtc_timer_interrupt;
-+	if (request_irq(RTC_IRQ, handler, 0, "timer", NULL))
-+		pr_err("Failed to register timer interrupt\n");
- }
--
--/* Dummy irqactions.  */
--struct irqaction isa_cascade_irqaction = {
--	.handler	= no_action,
--	.name		= "isa-cascade"
--};
--
--struct irqaction timer_cascade_irqaction = {
--	.handler	= no_action,
--	.name		= "timer-cascade"
--};
--
--struct irqaction halt_switch_irqaction = {
--	.handler	= no_action,
--	.name		= "halt-switch"
--};
-diff --git a/arch/alpha/kernel/irq_i8259.c b/arch/alpha/kernel/irq_i8259.c
-index 5d54c076a8ae..1dcf0d9038fd 100644
---- a/arch/alpha/kernel/irq_i8259.c
-+++ b/arch/alpha/kernel/irq_i8259.c
-@@ -82,11 +82,6 @@ struct irq_chip i8259a_irq_type = {
- void __init
- init_i8259a_irqs(void)
- {
--	static struct irqaction cascade = {
--		.handler	= no_action,
--		.name		= "cascade",
--	};
--
- 	long i;
- 
- 	outb(0xff, 0x21);	/* mask all of 8259A-1 */
-@@ -96,7 +91,8 @@ init_i8259a_irqs(void)
- 		irq_set_chip_and_handler(i, &i8259a_irq_type, handle_level_irq);
- 	}
- 
--	setup_irq(2, &cascade);
-+	if (request_irq(2, no_action, 0, "cascade", NULL))
-+		pr_err("Failed to request irq 2 (cascade)\n");
- }
- 
- 
-diff --git a/arch/alpha/kernel/irq_impl.h b/arch/alpha/kernel/irq_impl.h
-index 16f2b0276f3a..fbf21892e66d 100644
---- a/arch/alpha/kernel/irq_impl.h
-+++ b/arch/alpha/kernel/irq_impl.h
-@@ -21,14 +21,9 @@ extern void isa_no_iack_sc_device_interrupt(unsigned long);
- extern void srm_device_interrupt(unsigned long);
- extern void pyxis_device_interrupt(unsigned long);
- 
--extern struct irqaction timer_irqaction;
--extern struct irqaction isa_cascade_irqaction;
--extern struct irqaction timer_cascade_irqaction;
--extern struct irqaction halt_switch_irqaction;
--
- extern void init_srm_irqs(long, unsigned long);
- extern void init_pyxis_irqs(unsigned long);
--extern void init_rtc_irq(void);
-+extern void init_rtc_irq(irq_handler_t  handler);
- 
- extern void common_init_isa_dma(void);
- 
-diff --git a/arch/alpha/kernel/irq_pyxis.c b/arch/alpha/kernel/irq_pyxis.c
-index a968b10e687d..27070b5bd33e 100644
---- a/arch/alpha/kernel/irq_pyxis.c
-+++ b/arch/alpha/kernel/irq_pyxis.c
-@@ -107,5 +107,6 @@ init_pyxis_irqs(unsigned long ignore_mask)
- 		irq_set_status_flags(i, IRQ_LEVEL);
- 	}
- 
--	setup_irq(16+7, &isa_cascade_irqaction);
-+	if (request_irq(16 + 7, no_action, 0, "isa-cascade", NULL))
-+		pr_err("Failed to register isa-cascade interrupt\n");
- }
-diff --git a/arch/alpha/kernel/sys_alcor.c b/arch/alpha/kernel/sys_alcor.c
-index e56efd5b855f..ce5430056f65 100644
---- a/arch/alpha/kernel/sys_alcor.c
-+++ b/arch/alpha/kernel/sys_alcor.c
-@@ -133,7 +133,8 @@ alcor_init_irq(void)
- 	init_i8259a_irqs();
- 	common_init_isa_dma();
- 
--	setup_irq(16+31, &isa_cascade_irqaction);
-+	if (request_irq(16 + 31, no_action, 0, "isa-cascade", NULL))
-+		pr_err("Failed to register isa-cascade interrupt\n");
- }
- 
- 
-diff --git a/arch/alpha/kernel/sys_cabriolet.c b/arch/alpha/kernel/sys_cabriolet.c
-index 10bc46a4ec40..0aa6a27d0e2f 100644
---- a/arch/alpha/kernel/sys_cabriolet.c
-+++ b/arch/alpha/kernel/sys_cabriolet.c
-@@ -112,7 +112,8 @@ common_init_irq(void (*srm_dev_int)(unsigned long v))
- 	}
- 
- 	common_init_isa_dma();
--	setup_irq(16+4, &isa_cascade_irqaction);
-+	if (request_irq(16 + 4, no_action, 0, "isa-cascade", NULL))
-+		pr_err("Failed to register isa-cascade interrupt\n");
- }
- 
- #ifndef CONFIG_ALPHA_PC164
-diff --git a/arch/alpha/kernel/sys_eb64p.c b/arch/alpha/kernel/sys_eb64p.c
-index 5251937ec1b4..1cdfe55fb987 100644
---- a/arch/alpha/kernel/sys_eb64p.c
-+++ b/arch/alpha/kernel/sys_eb64p.c
-@@ -123,7 +123,8 @@ eb64p_init_irq(void)
- 	}
- 
- 	common_init_isa_dma();
--	setup_irq(16+5, &isa_cascade_irqaction);
-+	if (request_irq(16 + 5, no_action, 0, "isa-cascade", NULL))
-+		pr_err("Failed to register isa-cascade interrupt\n");
- }
- 
- /*
-diff --git a/arch/alpha/kernel/sys_marvel.c b/arch/alpha/kernel/sys_marvel.c
-index 8d34cf6e002a..533899a4a1a1 100644
---- a/arch/alpha/kernel/sys_marvel.c
-+++ b/arch/alpha/kernel/sys_marvel.c
-@@ -397,7 +397,7 @@ marvel_init_pci(void)
- static void __init
- marvel_init_rtc(void)
- {
--	init_rtc_irq();
-+	init_rtc_irq(NULL);
- }
- 
- static void
-diff --git a/arch/alpha/kernel/sys_miata.c b/arch/alpha/kernel/sys_miata.c
-index 6fa07dc5339d..702292af2225 100644
---- a/arch/alpha/kernel/sys_miata.c
-+++ b/arch/alpha/kernel/sys_miata.c
-@@ -81,8 +81,10 @@ miata_init_irq(void)
- 	init_pyxis_irqs(0x63b0000);
- 
- 	common_init_isa_dma();
--	setup_irq(16+2, &halt_switch_irqaction);	/* SRM only? */
--	setup_irq(16+6, &timer_cascade_irqaction);
-+	if (request_irq(16 + 2, no_action, 0, "halt-switch", NULL))
-+		pr_err("Failed to register halt-switch interrupt\n");
-+	if (request_irq(16 + 6, no_action, 0, "timer-cascade", NULL))
-+		pr_err("Failed to register timer-cascade interrupt\n");
- }
- 
- 
-diff --git a/arch/alpha/kernel/sys_ruffian.c b/arch/alpha/kernel/sys_ruffian.c
-index 07830cccabf9..d33074011960 100644
---- a/arch/alpha/kernel/sys_ruffian.c
-+++ b/arch/alpha/kernel/sys_ruffian.c
-@@ -82,7 +82,8 @@ ruffian_init_rtc(void)
- 	outb(0x31, 0x42);
- 	outb(0x13, 0x42);
- 
--	setup_irq(0, &timer_irqaction);
-+	if (request_irq(0, rtc_timer_interrupt, 0, "timer", NULL))
-+		pr_err("Failed to request irq 0 (timer)\n");
- }
- 
- static void
-diff --git a/arch/alpha/kernel/sys_rx164.c b/arch/alpha/kernel/sys_rx164.c
-index a3db719d3c38..4d85eaeb44aa 100644
---- a/arch/alpha/kernel/sys_rx164.c
-+++ b/arch/alpha/kernel/sys_rx164.c
-@@ -106,7 +106,8 @@ rx164_init_irq(void)
- 	init_i8259a_irqs();
- 	common_init_isa_dma();
- 
--	setup_irq(16+20, &isa_cascade_irqaction);
-+	if (request_irq(16 + 20, no_action, 0, "isa-cascade", NULL))
-+		pr_err("Failed to register isa-cascade interrupt\n");
- }
- 
- 
-diff --git a/arch/alpha/kernel/sys_sx164.c b/arch/alpha/kernel/sys_sx164.c
-index 1ec638a2746a..17cc203176c8 100644
---- a/arch/alpha/kernel/sys_sx164.c
-+++ b/arch/alpha/kernel/sys_sx164.c
-@@ -54,7 +54,8 @@ sx164_init_irq(void)
- 	else
- 		init_pyxis_irqs(0xff00003f0000UL);
- 
--	setup_irq(16+6, &timer_cascade_irqaction);
-+	if (request_irq(16 + 6, no_action, 0, "timer-cascade", NULL))
-+		pr_err("Failed to register timer-cascade interrupt\n");
- }
- 
- /*
-diff --git a/arch/alpha/kernel/sys_wildfire.c b/arch/alpha/kernel/sys_wildfire.c
-index 8e64052811ab..2191bde161fd 100644
---- a/arch/alpha/kernel/sys_wildfire.c
-+++ b/arch/alpha/kernel/sys_wildfire.c
-@@ -156,10 +156,6 @@ static void __init
- wildfire_init_irq_per_pca(int qbbno, int pcano)
- {
- 	int i, irq_bias;
--	static struct irqaction isa_enable = {
--		.handler	= no_action,
--		.name		= "isa_enable",
--	};
- 
- 	irq_bias = qbbno * (WILDFIRE_PCA_PER_QBB * WILDFIRE_IRQ_PER_PCA)
- 		 + pcano * WILDFIRE_IRQ_PER_PCA;
-@@ -198,7 +194,8 @@ wildfire_init_irq_per_pca(int qbbno, int pcano)
- 		irq_set_status_flags(i + irq_bias, IRQ_LEVEL);
- 	}
- 
--	setup_irq(32+irq_bias, &isa_enable);
-+	if (request_irq(32 + irq_bias, no_action, 0, "isa_enable", NULL))
-+		pr_err("Failed to register isa_enable interrupt\n");
- }
- 
- static void __init
-diff --git a/arch/alpha/kernel/time.c b/arch/alpha/kernel/time.c
-index 0069360697ee..4d01c392ab14 100644
---- a/arch/alpha/kernel/time.c
-+++ b/arch/alpha/kernel/time.c
-@@ -242,7 +242,7 @@ common_init_rtc(void)
- 	outb(0x31, 0x42);
- 	outb(0x13, 0x42);
- 
--	init_rtc_irq();
-+	init_rtc_irq(NULL);
- }
- 
- 
-@@ -396,9 +396,7 @@ time_init(void)
- 	if (alpha_using_qemu) {
- 		clocksource_register_hz(&qemu_cs, NSEC_PER_SEC);
- 		init_qemu_clockevent();
--
--		timer_irqaction.handler = qemu_timer_interrupt;
--		init_rtc_irq();
-+		init_rtc_irq(qemu_timer_interrupt);
- 		return;
- 	}
- 
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json b/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
+index 5e36bc2468d0..c998e4f1d1d2 100644
+--- a/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
++++ b/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
+@@ -4,27 +4,27 @@
+ 		"EventCode": "80",
+ 		"EventName": "ECC_FUNCTION_COUNT",
+ 		"BriefDescription": "ECC Function Count",
+-		"PublicDescription": "Long ECC function Count"
++		"PublicDescription": "This counter counts the total number of the elliptic-curve cryptography (ECC) functions issued by the CPU."
+ 	},
+ 	{
+ 		"Unit": "CPU-M-CF",
+ 		"EventCode": "81",
+ 		"EventName": "ECC_CYCLES_COUNT",
+ 		"BriefDescription": "ECC Cycles Count",
+-		"PublicDescription": "Long ECC Function cycles count"
++		"PublicDescription": "This counter counts the total number of CPU cycles when the ECC coprocessor is busy performing the elliptic-curve cryptography (ECC) functions issued by the CPU."
+ 	},
+ 	{
+ 		"Unit": "CPU-M-CF",
+ 		"EventCode": "82",
+ 		"EventName": "ECC_BLOCKED_FUNCTION_COUNT",
+ 		"BriefDescription": "Ecc Blocked Function Count",
+-		"PublicDescription": "Long ECC blocked function count"
++		"PublicDescription": "This counter counts the total number of the elliptic-curve cryptography (ECC) functions that are issued by the CPU and are blocked because the ECC coprocessor is busy performing a function issued by another CPU."
+ 	},
+ 	{
+ 		"Unit": "CPU-M-CF",
+ 		"EventCode": "83",
+ 		"EventName": "ECC_BLOCKED_CYCLES_COUNT",
+ 		"BriefDescription": "ECC Blocked Cycles Count",
+-		"PublicDescription": "Long ECC blocked cycles count"
++		"PublicDescription": "This counter counts the total number of CPU cycles blocked for the elliptic-curve cryptography (ECC) functions issued by the CPU because the ECC coprocessor is busy performing a function issued by another CPU."
+ 	},
+ ]
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z15/extended.json b/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
+index 89e070727e1b..2df2e231e9ee 100644
+--- a/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
++++ b/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
+@@ -25,7 +25,7 @@
+ 		"EventCode": "131",
+ 		"EventName": "DTLB2_HPAGE_WRITES",
+ 		"BriefDescription": "DTLB2 One-Megabyte Page Writes",
+-		"PublicDescription": "A translation entry was written into the Combined Region and Segment Table Entry array in the Level-2 TLB for a one-megabyte page or a Last Host Translation was done"
++		"PublicDescription": "A translation entry was written into the Combined Region and Segment Table Entry array in the Level-2 TLB for a one-megabyte page"
+ 	},
+ 	{
+ 		"Unit": "CPU-M-CF",
+@@ -356,6 +356,34 @@
+ 		"BriefDescription": "Aborted transactions in constrained TX mode using special completion logic",
+ 		"PublicDescription": "A transaction abort has occurred in a constrained transactional-execution mode and the CPU is using special logic to allow the transaction to complete"
+ 	},
++	{
++		"Unit": "CPU-M-CF",
++		"EventCode": "247",
++		"EventName": "DFLT_ACCESS",
++		"BriefDescription": "Cycles CPU spent obtaining access to Deflate unit",
++		"PublicDescription": "Cycles CPU spent obtaining access to Deflate unit"
++	},
++	{
++		"Unit": "CPU-M-CF",
++		"EventCode": "252",
++		"EventName": "DFLT_CYCLES",
++		"BriefDescription": "Cycles CPU is using Deflate unit",
++		"PublicDescription": "Cycles CPU is using Deflate unit"
++	},
++	{
++		"Unit": "CPU-M-CF",
++		"EventCode": "264",
++		"EventName": "DFLT_CC",
++		"BriefDescription": "Increments by one for every DEFLATE CONVERSION CALL instruction executed",
++		"PublicDescription": "Increments by one for every DEFLATE CONVERSION CALL instruction executed"
++	},
++	{
++		"Unit": "CPU-M-CF",
++		"EventCode": "265",
++		"EventName": "DFLT_CCERROR",
++		"BriefDescription": "Increments by one for every DEFLATE CONVERSION CALL instruction executed that ended in Condition Codes 0, 1 or 2",
++		"PublicDescription": "Increments by one for every DEFLATE CONVERSION CALL instruction executed that ended in Condition Codes 0, 1 or 2"
++	},
+ 	{
+ 		"Unit": "CPU-M-CF",
+ 		"EventCode": "448",
 -- 
-2.18.0
+2.23.0
 
