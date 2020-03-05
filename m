@@ -2,82 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E59D917B0A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 22:27:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D54617B0A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 22:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgCEV1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 16:27:06 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40223 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCEV1G (ORCPT
+        id S1726565AbgCEV1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 16:27:22 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:43577 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCEV1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 16:27:06 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t24so32205pgj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 13:27:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FtiKzPpj8LFUymwSB7yTCNI/ZF3QVUV6m/8sRe74jM4=;
-        b=oRBr4FLijrduwoNUKzThW1pzbMbuel52u18sGML2FWtMFIppQsC5WrydR18VOc2DVW
-         hPGyQlUvw2GvTRfe2Zd5SmqiARI1lYo9r0C2mchmdOKvUC+IO9X2QES5eu7CcSRdnkhs
-         XpSaKYEA4NgV/zoDKF0l6wUjuqj567yZbzxbidkawyB5EvM9/vjsriViU0aaz0xzbOv2
-         TvyPuQsJEElz9CngC8iqddtlNanSmDUoNQC8TYVM0fodKKnirkZP3SlCxUS9XhR64ayR
-         V+Q2T4DL5gx7NjaOTb0nqMm3a5XMg2TaF06BC+NLW9IPpcFXCCjN1selMaZgT5CLsBOM
-         4UgA==
+        Thu, 5 Mar 2020 16:27:22 -0500
+Received: by mail-qv1-f67.google.com with SMTP id eb12so3128618qvb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 13:27:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FtiKzPpj8LFUymwSB7yTCNI/ZF3QVUV6m/8sRe74jM4=;
-        b=mvHX+HYtgG5IoJ8kfSE3Z/vwSW1n+4iNrmgE0OSb0sEANFkNQ8HuObpAGIcmkrEgoJ
-         DEjgaV86D1sNvYXkUGxkBc2ybMskWNh3ejOcJe5AJFKdtI0gVF+fnFICou2YOxUc6+Ew
-         UzMtu/uZmsFXyd19o0LdinZLrmlZvp7saAdUGqSZW5juAC+7pKAnQTXZFVlFzOkqQ42h
-         uRXyfHpjsVTpVb1vyDWoIPqmknbDke8O7V0jZrj//ipt9K5gjH7Aa/bILM+CfiAJ6UkW
-         i8n9yVxQEJLETq2XbUFgdhOAhHPvaLIAmLswIvxY0Skg+HosyphSbUJ9gYEXiPep8nrS
-         eoCQ==
-X-Gm-Message-State: ANhLgQ1xAvoscNG1qZ2l5OpXTsVhMm9K0nJkO0/m6c2mHYup+zhdKD5a
-        3eKBQT7ih2eRVDSr5FkyjMqZMcOioaSsD4iikwNA8A==
-X-Google-Smtp-Source: ADFU+vv1ccqmownE6Ld6bBaNNfKO9+DSifBwb0CTWOQ7cMNitASw2cC+2IapEYQTfniJm4gw/d6RJSKIjoNXzef1WYI=
-X-Received: by 2002:a63:6cc6:: with SMTP id h189mr102259pgc.201.1583443625213;
- Thu, 05 Mar 2020 13:27:05 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9K4pNKxCAagBBMJm2ftqWB6E4IhmeUAZc+AwmoD+QfY=;
+        b=OV9REuI3f16c9bO8tfKOSIbk8GH0XUI6o5hykP4CQ1y5UTlQ1bYfBN2IVlStbuBpxp
+         ofdc7ZRECsoKSXc2h78qsz+O3GbmLn7tlv/IRRCoOVIBi6xuyS+B3sqPjmyP473nScea
+         xwvxhvo+VmC09agCoZphQAh33K2CmJ0NSnRQFP35BQT9KhdmU1OduV4JLiqwK887EpIn
+         M0Q0N/8iu3Vlov6Qaum3ya+zC5QrbAFdEqbkzLk6Owg7WpCaHmCmajfqTg+Wj7BeftB8
+         8ExBOkQYMaMmGqrDK4mR7kTAGbJ5nqDa5Is862HlLjVNhwrCTLHqNWuXBq28rW15fGwF
+         RcCA==
+X-Gm-Message-State: ANhLgQ35ZszhvMKoU9MRGGXqusbof0sHJQhAHy3jJfhMHrT3/paZ+Z1U
+        2pIkDOOjhjIAVfgBtohTPHs9brT48NQ=
+X-Google-Smtp-Source: ADFU+vtmbrAIZLCWQQliGk6t/24DTq4EYksoC7ftXffZQK+Uv/TSUaTzVdWp328mFA1Y5/ccH86T6g==
+X-Received: by 2002:a0c:a910:: with SMTP id y16mr244117qva.139.1583443641107;
+        Thu, 05 Mar 2020 13:27:21 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:500::b9df])
+        by smtp.gmail.com with ESMTPSA id i91sm16814609qtd.70.2020.03.05.13.27.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 13:27:20 -0800 (PST)
+Date:   Thu, 5 Mar 2020 16:27:18 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [RESEND PATCH] percpu_ref: Fix comment regarding percpu_ref_init
+ flags
+Message-ID: <20200305212718.GA79730@dennisz-mbp.dhcp.thefacebook.com>
+References: <20200221231607.12782-1-ira.weiny@intel.com>
+ <20200221235627.GA59628@dennisz-mbp.dhcp.thefacebook.com>
+ <20200222004656.GA459391@carbon.DHCP.thefacebook.com>
+ <20200223143222.GA29607@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <20200305200409.239406-1-heidifahim@google.com> <20200305200409.239406-2-heidifahim@google.com>
-In-Reply-To: <20200305200409.239406-2-heidifahim@google.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 5 Mar 2020 13:26:54 -0800
-Message-ID: <CAFd5g46Ht=+ueEyMZPVfG6G-APSTf5j3ragRrxH6=HJFffmi9g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kunit: Run all KUnit tests through allyesconfig
-To:     Heidi Fahim <heidifahim@google.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200223143222.GA29607@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 12:04 PM Heidi Fahim <heidifahim@google.com> wrote:
->
-> Implemented the functionality to run all KUnit tests through kunit_tool
-> by specifying an --alltests flag, which builds UML with allyesconfig
-> enabled, and consequently runs every KUnit test. A new function was
-> added to kunit_kernel: make_allyesconfig.
-> Firstly, if --alltests is specified, kunit.py triggers build_um_kernel
-> which call make_allyesconfig. This function calls the make command,
-> disables the broken configs that would otherwise prevent UML from
-> building, then starts the kernel with all possible configurations
-> enabled. All stdout and stderr is sent to test.log and read from there
-> then fed through kunit_parser to parse the tests to the user. Also added
-> a signal_handler in case kunit is interrupted while running.
-> Tested: Run under different conditions such as testing with
-> --raw_output, testing program interrupt then immediately running kunit
-> again without --alltests and making sure to clean the console.
->
-> Signed-off-by: Heidi Fahim <heidifahim@google.com>
+On Sun, Feb 23, 2020 at 06:32:23AM -0800, Ira Weiny wrote:
+> 
+> [snip]
+> 
+> > > > diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
+> > > > index 4f6c6ebbbbde..48d7fcff70b6 100644
+> > > > --- a/lib/percpu-refcount.c
+> > > > +++ b/lib/percpu-refcount.c
+> > > > @@ -50,9 +50,9 @@ static unsigned long __percpu *percpu_count_ptr(struct percpu_ref *ref)
+> > > >   * @flags: PERCPU_REF_INIT_* flags
+> > > >   * @gfp: allocation mask to use
+> > > >   *
+> > > > - * Initializes @ref.  If @flags is zero, @ref starts in percpu mode with a
+> > > > - * refcount of 1; analagous to atomic_long_set(ref, 1).  See the
+> > > > - * definitions of PERCPU_REF_INIT_* flags for flag behaviors.
+> > > > + * Initializes @ref.  If @flags is zero or PERCPU_REF_ALLOW_REINIT, @ref starts
+> > > > + * in percpu mode with a refcount of 1; analagous to atomic_long_set(ref, 1).
+> > > > + * See the definitions of PERCPU_REF_INIT_* flags for flag behaviors.
+> > > 
+> > > Yeah. Prior we had both PERCPU_REF_INIT_ATOMIC and PERCPU_REF_INIT_DEAD
+> > > with the latter implying the former. So 0 meant percpu and the others
+> > > meant atomic. With PERCPU_REF_ALLOW_REINIT, it's probably easier to
+> > > understand by saying if neither PERCPU_REF_INIT_ATOMIC or
+> > > PERCPU_REF_INIT_DEAD is set, it starts out in percpu mode which is
+> > > mentioned in the comments where the flags are defined.  It's not great
+> > > having implied flags, but it's worked so far.
+> > > 
+> > > Also, it's not quite analagous to atomic_long_set(ref, 1) as there is a
+> > > bias to prevent prematurely hitting 0.
+> > > 
+> > > I can take this and massage the wording a bit.
+> > 
+> > Hello Ira! Hello Dennis!
+> > 
+> > Yeah, I'd simple say that it starts in the percpu mode, except the case when
+> > PERCPU_REF_INIT_ATOMIC is set, then (atomic mode, 1) and
+> > PERCPU_REF_INIT_DEAD is set, then (atomic mode, 0).
+> > 
+> > PERCPU_REF_ALLOW_REINIT actually doesn't affect the initial state.
+> > 
+> 
+> Thanks for the clarification.  Dennis let me know if you want me to resubmit
+> the patch.
+> 
+> Thanks!
+> Ira
+> 
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Sorry for the delay. I've applied it to for-5.7.
 
-Thanks!
+Thanks,
+Dennis
