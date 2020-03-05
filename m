@@ -2,99 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F0A17AC3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:19:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6080117AB17
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgCERTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:19:15 -0500
-Received: from labrats.qualcomm.com ([199.106.110.90]:1437 "EHLO
-        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbgCERPL (ORCPT
+        id S1726090AbgCERDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:03:16 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41915 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbgCERDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:15:11 -0500
-IronPort-SDR: XuA4+RAW8bgZWyzJMYTe3vh0ha9IHBzmH3ZJqao3xLZZ5MIw/tfGRoQaoTaupZAYNmjnRlN3YC
- 0wqb9aSnMknGCJlhEG09JvYrbZfVIf580g7hvqmMF8Nx1O5SWATsunGAMNaInFjFhuD3fuyeTK
- oXPHb5heAFg5qwbXm+c5j13I25Jq0N+F3LHaMzgquDvqANroeTBi6jNLmx1YFwreRcNdk50sE6
- XXcBSz1+odzI0eCiAxj70LrYkg1crpsrM2aNQ1W2HBA/hK7PpvTIgoTJA/MSHm4Ku7eXgWOkrt
- wEk=
-X-IronPort-AV: E=Sophos;i="5.70,517,1574150400"; 
-   d="scan'208";a="28542843"
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by labrats.qualcomm.com with ESMTP; 05 Mar 2020 00:53:15 -0800
-Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
-  by ironmsg01-sd.qualcomm.com with ESMTP; 05 Mar 2020 00:53:14 -0800
-Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
-        id 76BE139CE; Thu,  5 Mar 2020 00:53:14 -0800 (PST)
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 1/1] scsi: ufs: Fix possible unclocked access to auto hibern8 timer register
-Date:   Thu,  5 Mar 2020 00:53:07 -0800
-Message-Id: <1583398391-14273-1-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 5 Mar 2020 12:03:16 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v4so7928839wrs.8
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 09:03:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hHPiLUd9Vqu0fARHM9kAYBclFZJwYelUs5zlBPCC7IA=;
+        b=nlXMrRW9tAvk+bar6IoHNikZAQf0IRsrZVBd1w//XqEAzwP91n3kJZTZnP++BnGw9d
+         wmCQdKXJSZRfTREui8ShtBwtabJ8sgfKMK/Jk7vU1utOyPerbmDzTqeLL3ip65O+fKgL
+         Yp7oXX5vkiAHCdaeNrX7/h9FRai2fS9StwNAcRY17LG+wNiKG92mIU/vYiJEbbbMLq5D
+         aWxinpBKw//krQs9BUgKxKqobm6PHKfPyNKYzEJk/ylmCq27mYRVdDQohdCDfN796tdP
+         ht7GlkUjhj5pqmJH0R+bC332zPBSAqh0ZXayAYw/oeE2NEbOFWOYRIq6W7w0I9O8FGU8
+         FM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hHPiLUd9Vqu0fARHM9kAYBclFZJwYelUs5zlBPCC7IA=;
+        b=l/NtnMgLcCeNRCT0QmNjBkyHmcdZN/bTFP0M+Pvz9G9/0e9wtoP39Ycx/DvNkV8Wty
+         bUbtVj8t3oLkB17dBc4c9BI09rGEhUaIP529SPzRkby3BDXFfzyvjV4M+8GjQibVPrp0
+         p/uwU6p3CXFTizPFhlZ3hRKMVZu+h5CGdIRznbD69SHAaai0auOzVlo9yEWxZUV6Q9ck
+         zD2lIJ/sK3eXIIJzDzHQfAJz/H7SVDlUwXfdrX44CYQKUjtbxnAgD2tlkejF2tupxcyk
+         xFNixVFh2h5SYe1CXA1BO1Ti7J0urn+HR0ZcKTLegHhzq6056Xsukg2DNdgXk+yk6R4u
+         /q8w==
+X-Gm-Message-State: ANhLgQ11Yj4WUtH1yCuMpo7UIa4zQ8gd+K0ozg3lNnvwk6yroKrZGxPm
+        CmRu0k5KCUlc1s/wmjbgrQHxLULuhMY=
+X-Google-Smtp-Source: ADFU+vuJyYO4yt6HwG11Zm56RxBoyaZqq7thyZi/sX5lIWI48g1VsaxF2uKpSccjn2G1AgvghRkeDw==
+X-Received: by 2002:adf:ec52:: with SMTP id w18mr11028719wrn.26.1583427793486;
+        Thu, 05 Mar 2020 09:03:13 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id r19sm9464829wmh.26.2020.03.05.09.03.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Mar 2020 09:03:12 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] nvmem: Add support for write-only instances
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>
+References: <PSXP216MB0438930B1FC30EF79F15FD1780E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <b934ddde-702a-1731-034d-1682a9df23e2@linaro.org>
+Date:   Thu, 5 Mar 2020 17:03:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <PSXP216MB0438930B1FC30EF79F15FD1780E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before access auto hibner8 timer register, make sure power and clock are
-properly configured to avoid unclocked register access.
 
-Fixes: ba7af5ec5126 ("scsi: ufs: export ufshcd_auto_hibern8_update for vendor usage")
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+On 02/03/2020 15:42, Nicholas Johnson wrote:
+> There is at least one real-world use-case for write-only nvmem
+> instances. Refer to 03cd45d2e219 ("thunderbolt: Prevent crash if
+> non-active NVMem file is read").
+> 
+> Add support for write-only nvmem instances by adding attrs for 0200.
+> 
+> Change nvmem_register() to abort if NULL group is returned from
+> nvmem_sysfs_get_groups().
+> 
+> Return NULL from nvmem_sysfs_get_groups() in invalid cases.
+> 
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index e987fa3a..5698f11 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3914,18 +3914,25 @@ int ufshcd_uic_hibern8_exit(struct ufs_hba *hba)
- void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit)
- {
- 	unsigned long flags;
-+	bool update = false;
- 
--	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
-+	if (!ufshcd_is_auto_hibern8_supported(hba))
- 		return;
- 
- 	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (hba->ahit == ahit)
--		goto out_unlock;
--	hba->ahit = ahit;
--	if (!pm_runtime_suspended(hba->dev))
--		ufshcd_writel(hba, hba->ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
--out_unlock:
-+	if (hba->ahit != ahit) {
-+		hba->ahit = ahit;
-+		update = true;
-+	}
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+
-+	if (update && !pm_runtime_suspended(hba->dev)) {
-+		pm_runtime_get_sync(hba->dev);
-+		ufshcd_hold(hba, false);
-+		ufshcd_auto_hibern8_enable(hba);
-+		ufshcd_release(hba);
-+		pm_runtime_put(hba->dev);
-+	}
- }
- EXPORT_SYMBOL_GPL(ufshcd_auto_hibern8_update);
- 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+> ---
+>   drivers/nvmem/core.c        |  2 ++
+>   drivers/nvmem/nvmem-sysfs.c | 53 ++++++++++++++++++++++++++++++++-----
+>   2 files changed, 48 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index ef326f243..27bd4c4e3 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -388,6 +388,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+>   			   config->read_only || !nvmem->reg_write;
+>   
+>   	nvmem->dev.groups = nvmem_sysfs_get_groups(nvmem, config);
+> +	if (!nvmem->dev.groups)
+> +		return NULL;
+Returning here will be leaking in this function.
 
+>   
+>   	device_initialize(&nvmem->dev);
+>   
+> diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
+> index 9e0c429cd..00d3259ea 100644
+> --- a/drivers/nvmem/nvmem-sysfs.c
+> +++ b/drivers/nvmem/nvmem-sysfs.c
+> @@ -196,16 +196,50 @@ static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
+>   	NULL,
+>   };
+>   
+> +/* write only permission, root only */
+> +static struct bin_attribute bin_attr_wo_root_nvmem = {
+
+TBH, you would not need this patch once 2/3 patch is applied.
+Unless there is a strong reason for you to have write only file.
+
+If for any reasons you would want to add Write only file then it should 
+be added for both with root and user privileges.
+
+>   const struct attribute_group **nvmem_sysfs_get_groups(
+>   					struct nvmem_device *nvmem,
+>   					const struct nvmem_config *config)
+>   {
+> -	if (config->root_only)
+> -		return nvmem->read_only ?
+> -			nvmem_ro_root_dev_groups :
+> -			nvmem_rw_root_dev_groups;
+> -
+> -	return nvmem->read_only ? nvmem_ro_dev_groups : nvmem_rw_dev_groups;
+> +	/* Read-only */
+> +	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only))
+> +		return config->root_only ?
+> +			nvmem_ro_root_dev_groups : nvmem_ro_dev_groups;
+> +
+> +	/* Read-write */
+> +	if (nvmem->reg_read && nvmem->reg_write)
+
+read_only flag will override this assumption!
+
+> +		return config->root_only ?
+> +			nvmem_rw_root_dev_groups : nvmem_rw_dev_groups;
+> +
+> +	/* Write-only, do not honour request for global writable entry */
+> +	if (!nvmem->reg_read && nvmem->reg_write)
+> +		return config->root_only ? nvmem_wo_root_dev_groups : NULL;
+> +
+> +	/* Neither reg_read nor reg_write are provided, abort */
+This should not be the case anymore after this check in place
+
+https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/commit/?h=for-next&id=f8f782f63bace8b08362e466747e648ca57b6c06
+
+thanks,
+srini
+
+> +	return NULL;
+>   }
+>   
+>   /*
+> @@ -224,11 +258,16 @@ int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
+>   	if (!config->base_dev)
+>   		return -EINVAL;
+>   
+> -	if (nvmem->read_only) {
+> +	if (nvmem->reg_read && (!nvmem->reg_write || nvmem->read_only)) {
+>   		if (config->root_only)
+>   			nvmem->eeprom = bin_attr_ro_root_nvmem;
+>   		else
+>   			nvmem->eeprom = bin_attr_ro_nvmem;
+> +	} else if (!nvmem->reg_read && nvmem->reg_write) {
+> +		if (config->root_only)
+> +			nvmem->eeprom = bin_attr_wo_root_nvmem;
+> +		else
+> +			return -EPERM;
+>   	} else {
+>   		if (config->root_only)
+>   			nvmem->eeprom = bin_attr_rw_root_nvmem;
+> 
