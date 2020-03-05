@@ -2,170 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250D817ADE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1AF617ADF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:15:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbgCESNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:13:52 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25612 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726036AbgCESNv (ORCPT
+        id S1726222AbgCESPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:15:39 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38065 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbgCESPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:13:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583432030;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CISWnYCTgIHs8Q99tWvsNfg16hI8DJbFk1pD+36Cny4=;
-        b=AKL6FAM49eHEL63EyLnRh/qfmeWhcunRtggMgZb/0Z3uY0aCqGYgS44v+XRyr9ruEMIQ/P
-        tUhZUrCWSP4xPTgCy0/d/cfT5Wa3Wz6Jk3zHPzFsdd5myDkWIUqNX5/+aoPHe6CxAJAioi
-        gQbpYYL7Wwefg6n23jQgjnp1sg66LZA=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-132-d58nCAtcMYCc-4SjiJ04RQ-1; Thu, 05 Mar 2020 13:13:46 -0500
-X-MC-Unique: d58nCAtcMYCc-4SjiJ04RQ-1
-Received: by mail-qk1-f199.google.com with SMTP id e13so4355831qkm.23
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:13:46 -0800 (PST)
+        Thu, 5 Mar 2020 13:15:38 -0500
+Received: by mail-qt1-f196.google.com with SMTP id e20so4868347qto.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:15:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=taGYctWUYbUF3wN5YqlkpDDhXC7j/BKiUe4CLO3HA00=;
+        b=fi9OUuEfnNwsMFfZ6K9oDoplTvqx+7muOU76Ic3e4RAD39qYdTda8npDlz1U3dqyG+
+         q+tf7QuuAanHDQXMONjtT+/4C0SIOdoBtb3jdWJGHo7EoN6fX+zbueqEgECqlB/ueyZc
+         iD8X1efeuxmkLP3nCQ6g7PJayKFyFNf+gFBIJHjM+WUeUHnYe4EDUnYw9A3kjxTROSVj
+         4nh8g255YcrxxMbVZle3h4s4ZK9O3hHhzfmGopN2+Jh0u91Qc/t+Xm0dOKXz3Ar6fB7J
+         TM6eGMSxO/O9mUa2m0C0EDqGEgEyFwCLTx1kcgQK0GPgMJV0goSMjcEbQHUY41DFY6aA
+         xxIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=CISWnYCTgIHs8Q99tWvsNfg16hI8DJbFk1pD+36Cny4=;
-        b=PZYX+f4TayFKX/CetgXoujy4NN/eWDOklIOCWziixfOHGG02xQfEHAMJvDZFcCRe/N
-         h2GRpLrdNB04vqBoV+QcjDzu4Z76Xgrwx1CEnMrt+DrfRB1uksgsFUGA12vGHyIGmvQ4
-         0dvRGz4PdFjLHs2nLiML/FWO7cgEXXbjWLdcasm1bTjjeOvT40iX8NV7XPOxNfwEJADv
-         0QB0tGd7PLyA1bNw/DLVphN76wREfiLy4CHa094ctKmdNI9s7nC1qFftS+azUDUKgsWA
-         3z6/tMEagd0FtBxu7MXuJf4mUs5gIyZOuU8Lal67DB+qFZ4tBfEznxjoBQ4oPa0NXdYk
-         POzg==
-X-Gm-Message-State: ANhLgQ1R6TWfxl7h1c/U8Svh8caTsGal80oO3B5qIpwEoEumdJjhr212
-        7i4GAPl+wP4R1e3DkYR+6v66cftHVBSCu+F0nmAeN4aN9nkhlcvCruZTfTvLNIVQ1ESef7OkbVx
-        rQ4M6HBd4VhvAF2L0CTHiE35C
-X-Received: by 2002:a37:e47:: with SMTP id 68mr8996556qko.17.1583432026339;
-        Thu, 05 Mar 2020 10:13:46 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vu9Di0TJjle9QFCxhPtgKkfebQZ/w1X7INadpj/G0J6OCnioF3WigU5h2qVIMfKm/UJg8NJJg==
-X-Received: by 2002:a37:e47:: with SMTP id 68mr8996532qko.17.1583432026089;
-        Thu, 05 Mar 2020 10:13:46 -0800 (PST)
-Received: from Ruby ([172.58.220.228])
-        by smtp.gmail.com with ESMTPSA id z19sm2921705qts.86.2020.03.05.10.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 10:13:45 -0800 (PST)
-Message-ID: <73f52c392431cd21a80a118dd2fd1986e2c535df.camel@redhat.com>
-Subject: Re: [PATCH 2/3] drm/dp_mst: Don't show connectors as connected
- before probing available PBN
-From:   Lyude Paul <lyude@redhat.com>
-To:     Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, Sean Paul <seanpaul@google.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Mikita Lipski <mikita.lipski@amd.com>
-Date:   Thu, 05 Mar 2020 13:13:36 -0500
-In-Reply-To: <20200305131119.GJ13686@intel.com>
-References: <20200304223614.312023-1-lyude@redhat.com>
-         <20200304223614.312023-3-lyude@redhat.com>
-         <20200305131119.GJ13686@intel.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=taGYctWUYbUF3wN5YqlkpDDhXC7j/BKiUe4CLO3HA00=;
+        b=PE2R2OkgLW7UfTrfC+bQFLL9AWcJe55pGwacWYse61jhcKYaNa5TJTA0v1brD+tY/t
+         4zCkIrPm5zniFP8OhFDmCQidZ/9+ofQuZqvGUzBN0M+3MF2QyUlNsYdoUFC4WSCPObaA
+         1KH4g9ngGfNa9D+u0YIG3ukHx7Oo1hCvmIN9rrOWV+LhkwfHj7oZ504pXaVmrLMAv+c4
+         1FVHupSP8Q32SmMxuuAnTwN3//B0X1a+6PjESTc3GzX4q3vjSGRYfS5A4o4MafSZI0jl
+         VGh6CZGaIyCwgJCG0t96wPqdsxvV0ZZFWja/inl4imKhg74cxirP/IpmzzSHg1TWugQ+
+         h8dw==
+X-Gm-Message-State: ANhLgQ0nDUPIlTtSarK1VJzz5UqKOkEI6eXImE8n7v2ddCc9KdWrHx3k
+        ZQKSFN/aQUGJiBDEbtgP0bI=
+X-Google-Smtp-Source: ADFU+vtM6tWWY3q8eUJiPICKsST9fUvV4TO81glTFHhrwj8nGzxZynulWGfYiAqfFZDYLHIsJtULVw==
+X-Received: by 2002:ac8:5644:: with SMTP id 4mr3148736qtt.195.1583432137577;
+        Thu, 05 Mar 2020 10:15:37 -0800 (PST)
+Received: from [10.94.4.21] (189-94-128-21.3g.claro.net.br. [189.94.128.21])
+        by smtp.gmail.com with ESMTPSA id k1sm9975455qkj.69.2020.03.05.10.15.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Mar 2020 10:15:37 -0800 (PST)
+Date:   Thu, 05 Mar 2020 15:14:35 -0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20200305153434.5r2jqsfxyrusrgwc@linux-p48b>
+References: <20200305083714.9381-1-tommi.t.rantala@nokia.com> <20200305083714.9381-3-tommi.t.rantala@nokia.com> <20200305145149.GB7895@kernel.org> <20200305153434.5r2jqsfxyrusrgwc@linux-p48b>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] perf bench futex-wake: Restore thread count default to online CPU count
+To:     Davidlohr Bueso <dave@stgolabs.net>
+CC:     Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Darren Hart <dvhart@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+From:   Arnaldo Melo <arnaldo.melo@gmail.com>
+Message-ID: <64827405-D03D-4216-A3BD-8547AE42450B@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-03-05 at 15:11 +0200, Ville Syrjälä wrote:
-> On Wed, Mar 04, 2020 at 05:36:12PM -0500, Lyude Paul wrote:
-> > It's next to impossible for us to do connector probing on topologies
-> > without occasionally racing with userspace, since creating a connector
-> > itself causes a hotplug event which we have to send before probing the
-> > available PBN of a connector. Even if we didn't have this hotplug event
-> > sent, there's still always a chance that userspace started probing
-> > connectors before we finished probing the topology.
-> > 
-> > This can be a problem when validating a new MST state since the
-> > connector will be shown as connected briefly, but without any available
-> > PBN - causing any atomic state which would enable said connector to fail
-> > with -ENOSPC. So, let's simply workaround this by telling userspace new
-> > MST connectors are disconnected until we've finished probing their PBN.
-> > Since we always send a hotplug event at the end of the link address
-> > probing process, userspace will still know to reprobe the connector when
-> > we're ready.
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Fixes: cd82d82cbc04 ("drm/dp_mst: Add branch bandwidth validation to MST
-> > atomic check")
-> > Cc: Mikita Lipski <mikita.lipski@amd.com>
-> > Cc: Alex Deucher <alexander.deucher@amd.com>
-> > Cc: Sean Paul <seanpaul@google.com>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > ---
-> >  drivers/gpu/drm/drm_dp_mst_topology.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > index 207eef08d12c..7b0ff0cff954 100644
-> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > @@ -4033,6 +4033,19 @@ drm_dp_mst_detect_port(struct drm_connector
-> > *connector,
-> >  			ret = connector_status_connected;
-> >  		break;
-> >  	}
-> > +
-> > +	/* We don't want to tell userspace the port is actually plugged into
-> > +	 * anything until we've finished probing it's available_pbn, otherwise
-> 
-> "its"
-> 
-> Why is the connector even registered before we've finished the probe?
-> 
-Oops, I'm not sure how I did this by accident but the explanation I gave in
-the commit message was uh, completely wrong. I must have forgotten that I made
-sure we didn't expose connectors before probing their PBN back when I started
-my MST cleanup....
 
-So: despite what I said before it's not actually when new connectors are
-created, it's when downstream hotplugs happen which means that the conenctor's
-always going to be there before we probe the available_pbn. I did just notice
-though that we send a hotplug on connection status notifications even before
-we've finished the PBN probe, so I might be able to improve on that as well.
-We still definitely want to report the connector as disconnected before we
-have the available PBN though, in case another probe was already going before
-we got the connection status notification.
 
-I'll make sure to fixup the explanation in the commit message on the next
-respin
+On March 5, 2020 12:34:34 PM GMT-03:00, Davidlohr Bueso <dave@stgolabs=2En=
+et> wrote:
+>On Thu, 05 Mar 2020, Arnaldo Carvalho de Melo wrote:
+>
+>>Em Thu, Mar 05, 2020 at 10:37:13AM +0200, Tommi Rantala escreveu:
+>>> Since commit 3b2323c2c1c4 ("perf bench futex: Use cpumaps") the
+>default
+>>> number of threads the benchmark uses got changed from number of
+>online
+>>> CPUs to zero:
+>>>
+>>>   $ perf bench futex wake
+>>>   # Running 'futex/wake' benchmark:
+>>>   Run summary [PID 15930]: blocking on 0 threads (at [private] futex
+>0x558b8ee4bfac), waking up 1 at a time=2E
+>>>   [Run 1]: Wokeup 0 of 0 threads in 0=2E0000 ms
+>>>   [=2E=2E=2E]
+>>>   [Run 10]: Wokeup 0 of 0 threads in 0=2E0000 ms
+>>>   Wokeup 0 of 0 threads in 0=2E0004 ms (+-40=2E82%)
+>>>
+>>> Restore the old behavior by grabbing the number of online CPUs via
+>>> cpu->nr:
+>>>
+>>>   $ perf bench futex wake
+>>>   # Running 'futex/wake' benchmark:
+>>>   Run summary [PID 18356]: blocking on 8 threads (at [private] futex
+>0xb3e62c), waking up 1 at a time=2E
+>>>   [Run 1]: Wokeup 8 of 8 threads in 0=2E0260 ms
+>>>   [=2E=2E=2E]
+>>>   [Run 10]: Wokeup 8 of 8 threads in 0=2E0270 ms
+>>>   Wokeup 8 of 8 threads in 0=2E0419 ms (+-24=2E35%)
+>>>
+>>> Fixes: 3b2323c2c1c4 ("perf bench futex: Use cpumaps")
+>>
+>>Thanks, tested and applied=2E
+>
+>Thanks!
 
-> > +	 * userspace will see racy atomic check failures
-> > +	 *
-> > +	 * Since we always send a hotplug at the end of probing topology
-> > +	 * state, we can just let userspace reprobe this connector later.
-> > +	 */
-> > +	if (ret == connector_status_connected && !port->available_pbn) {
-> > +		DRM_DEBUG_KMS("[CONNECTOR:%d:%s] not ready yet (PBN not
-> > probed)\n",
-> > +			      connector->base.id, connector->name);
-> > +		ret = connector_status_disconnected;
-> > +	}
-> >  out:
-> >  	drm_dp_mst_topology_put_port(port);
-> >  	return ret;
-> > -- 
-> > 2.24.1
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
--- 
-Cheers,
-	Lyude Paul (she/her)
-	Associate Software Engineer at Red Hat
+Taking that as an Acked-by, ok?
 
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
