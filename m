@@ -2,100 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7055C17A40B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C6517A415
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:20:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCELSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:18:10 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35089 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbgCELSK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:18:10 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1j9oVi-0005IW-4W; Thu, 05 Mar 2020 12:17:50 +0100
-Message-ID: <bbe8a83fade9c0cffbf439f06f94e8b5bc7fcfd3.camel@pengutronix.de>
-Subject: Re: [PATCH][next] drm: etnaviv_gem.h: Replace zero-length array
- with flexible-array member
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 05 Mar 2020 12:17:48 +0100
-In-Reply-To: <20200305105137.GA18628@embeddedor>
-References: <20200305105137.GA18628@embeddedor>
+        id S1727363AbgCELU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:20:26 -0500
+Received: from mga11.intel.com ([192.55.52.93]:14882 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726101AbgCELU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 06:20:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 03:20:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,517,1574150400"; 
+   d="scan'208";a="240786483"
+Received: from unknown (HELO jsakkine-mobl1) ([10.237.50.161])
+  by orsmga003.jf.intel.com with ESMTP; 05 Mar 2020 03:20:22 -0800
+Message-ID: <deab5eab2de31a1116e16e025c94fbc6f1d0d742.camel@linux.intel.com>
+Subject: Re: [PATCH v6 0/3] Enable vTPM 2.0 for the IBM vTPM driver
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
+        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
+        gcwilson@linux.ibm.com, jgg@ziepe.ca,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 05 Mar 2020 13:20:23 +0200
+In-Reply-To: <20200304132243.179402-1-stefanb@linux.vnet.ibm.com>
+References: <20200304132243.179402-1-stefanb@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+User-Agent: Evolution 3.35.92-1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Wed, 2020-03-04 at 08:22 -0500, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> QEMU 5.0 will support the PAPR vTPM device model for TPM 1.2 and TPM 2.0.
+> This series of patches enables vTPM 2.0 support for the IBM vTPM driver.
 
-I've adjusted the subject a bit to match the style of the other etnaviv
-driver commits and applied this to the etnaviv/next branch.
+BTW, what is PAPR vTPM device model? Is it something that is used
+generally for vTPM's or just in IBM context?
 
-Regards,
-Lucas
-
-On Do, 2020-03-05 at 04:51 -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> index 6b68fe16041b..98e60df882b6 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> @@ -105,7 +105,7 @@ struct etnaviv_gem_submit {
->  	unsigned int nr_pmrs;
->  	struct etnaviv_perfmon_request *pmrs;
->  	unsigned int nr_bos;
-> -	struct etnaviv_gem_submit_bo bos[0];
-> +	struct etnaviv_gem_submit_bo bos[];
->  	/* No new members here, the previous one is variable-length! */
->  };
->  
+/Jarkko
 
