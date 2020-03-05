@@ -2,207 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B59817A297
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7DA17A2B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCEJ64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 04:58:56 -0500
-Received: from mga01.intel.com ([192.55.52.88]:50986 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgCEJ64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 04:58:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 01:58:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,517,1574150400"; 
-   d="scan'208";a="234366402"
-Received: from snr.bj.intel.com ([10.240.193.90])
-  by orsmga008.jf.intel.com with ESMTP; 05 Mar 2020 01:58:49 -0800
-From:   Luwei Kang <luwei.kang@intel.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        pawan.kumar.gupta@linux.intel.com, ak@linux.intel.com,
-        thomas.lendacky@amd.com, fenghua.yu@intel.com,
-        kan.liang@linux.intel.com, like.xu@linux.intel.com
-Subject: [PATCH v1 01/11] perf/x86/core: Support KVM to assign a dedicated counter for guest PEBS
-Date:   Fri,  6 Mar 2020 01:56:55 +0800
-Message-Id: <1583431025-19802-2-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1583431025-19802-1-git-send-email-luwei.kang@intel.com>
-References: <1583431025-19802-1-git-send-email-luwei.kang@intel.com>
+        id S1727350AbgCEJ7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 04:59:46 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:38248 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgCEJ7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 04:59:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/JtrFN+p8a3QC10s77+QKXamNutI63FbL9mQ/tVqXtE=; b=AQfv63NYpHw2aIOP1taIlPNfSi
+        EvrF/Trq9jXMvnhjumleeMn6ICJcj9JMNmlOpjUJqEWdFXkfeD/vadK32d9AIt0f7rmKAc3hJoT+1
+        KyYG4XTDPkT9tR6DTyDa07LQcgHB5uXpPOZ4LoqS9IGNHD3owFIeignrZlFTs5AMVEvMLU6aeYvNG
+        MO4KYve2jCoVJd2w6dRDaPbKMG+AOXcONTfYNve6dgm+oMgQ2U9VQfmgy0fYPDfl13idVYnRVI03g
+        XFLK0R83bqXmElw8rrJMbF97zOzwZ9nzpBPSUGafNWDwMN1hOC1a0CcJsqt9Y0TZsIhQyWkDbG+a1
+        XBMc5URg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9nGY-00011M-Sr; Thu, 05 Mar 2020 09:58:07 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 49762303DA3;
+        Thu,  5 Mar 2020 10:56:04 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2A95423D4FA17; Thu,  5 Mar 2020 10:58:03 +0100 (CET)
+Date:   Thu, 5 Mar 2020 10:58:03 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     cl@rock-chips.com
+Cc:     heiko@sntech.de, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        akpm@linux-foundation.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        surenb@google.com, ben.dooks@codethink.co.uk,
+        anshuman.khandual@arm.com, catalin.marinas@arm.com,
+        will@kernel.org, keescook@chromium.org, luto@amacapital.net,
+        wad@chromium.org, mark.rutland@arm.com, geert+renesas@glider.be,
+        george_davis@mentor.com, sudeep.holla@arm.com,
+        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v1 1/1] sched/fair: do not preempt current task if it is
+ going to call schedule()
+Message-ID: <20200305095803.GW2596@hirez.programming.kicks-ass.net>
+References: <20200305081611.29323-1-cl@rock-chips.com>
+ <20200305081611.29323-2-cl@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200305081611.29323-2-cl@rock-chips.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Mar 05, 2020 at 04:16:11PM +0800, cl@rock-chips.com wrote:
+> From: Liang Chen <cl@rock-chips.com>
+> 
+> when we create a kthread with ktrhead_create_on_cpu(),the child thread
+> entry is ktread.c:ktrhead() which will be preempted by the parent after
+> call complete(done) while schedule() is not called yet,then the parent
+> will call wait_task_inactive(child) but the child is still on the runqueue,
+> so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
+> time,especially on startup.
+> 
+>   parent                             child
+> ktrhead_create_on_cpu()
+>   wait_fo_completion(&done) -----> ktread.c:ktrhead()
+>                              |----- complete(done);--wakeup and preempted by parent
+>  kthread_bind() <------------|  |-> schedule();--dequeue here
+>   wait_task_inactive(child)     |
+>    schedule_hrtimeout(1 jiffy) -|
+> 
+> So we hope the child just wakeup parent but not preempted by parent, and the
+> child is going to call schedule() soon,then the parent will not call
+> schedule_hrtimeout(1 jiffy) as the child is already dequeue.
+> 
+> The same issue for ktrhead_park()&&kthread_parkme().
+> This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
 
-The PEBS event created by host needs to be assigned specific counters
-requested by the guest, which means the guest and host counter indexes
-have to be the same or fail to create. This is needed because PEBS leaks
-counter indexes into the guest. Otherwise, the guest driver will be
-confused by the counter indexes in the status field of the PEBS record.
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index b262f47046ca..8a4e4c9cdc22 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -199,8 +199,10 @@ static void __kthread_parkme(struct kthread *self)
+>  		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+>  			break;
+>  
+> +		set_tsk_going_to_sched(current);
+>  		complete(&self->parked);
+>  		schedule();
+> +		clear_tsk_going_to_sched(current);
+>  	}
+>  	__set_current_state(TASK_RUNNING);
+>  }
+> @@ -245,8 +247,10 @@ static int kthread(void *_create)
+>  	/* OK, tell user we're spawned, wait for stop or wakeup */
+>  	__set_current_state(TASK_UNINTERRUPTIBLE);
+>  	create->result = current;
+> +	set_tsk_going_to_sched(current);
+>  	complete(done);
+>  	schedule();
+> +	clear_tsk_going_to_sched(current);
+>  
+>  	ret = -EINTR;
+>  	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
 
-A guest_dedicated_idx field is added to indicate the counter index
-specifically requested by KVM. The dedicated event constraints would
-constrain the counter in the host to the same numbered counter in guest.
+Were you looking for this? I think it does the same without having
+fallen from the ugly tree...
 
-A intel_ctrl_guest_dedicated_mask field is added to indicate the enabled
-counters for guest PEBS events. The IA32_PEBS_ENABLE MSR will be switched
-during the VMX transitions if intel_ctrl_guest_owned is set.
-
-Originally-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/core.c | 60 +++++++++++++++++++++++++++++++++++++++++++-
- arch/x86/events/perf_event.h |  1 +
- include/linux/perf_event.h   |  2 ++
- kernel/events/core.c         |  1 +
- 4 files changed, 63 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index dff6623..ef95076 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -368,6 +368,29 @@
- 	EVENT_CONSTRAINT_END
- };
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index b262f47046ca..62699ff414f4 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -199,8 +199,10 @@ static void __kthread_parkme(struct kthread *self)
+ 		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+ 			break;
  
-+#define GUEST_DEDICATED_CONSTRAINT(idx) {          \
-+	{ .idxmsk64 = (1ULL << (idx)) },        \
-+	.weight = 1,                            \
-+}
-+
-+static struct event_constraint dedicated_gp_c[MAX_PEBS_EVENTS] = {
-+	GUEST_DEDICATED_CONSTRAINT(0),
-+	GUEST_DEDICATED_CONSTRAINT(1),
-+	GUEST_DEDICATED_CONSTRAINT(2),
-+	GUEST_DEDICATED_CONSTRAINT(3),
-+	GUEST_DEDICATED_CONSTRAINT(4),
-+	GUEST_DEDICATED_CONSTRAINT(5),
-+	GUEST_DEDICATED_CONSTRAINT(6),
-+	GUEST_DEDICATED_CONSTRAINT(7),
-+};
-+
-+static struct event_constraint dedicated_fixed_c[MAX_FIXED_PEBS_EVENTS] = {
-+	GUEST_DEDICATED_CONSTRAINT(INTEL_PMC_IDX_FIXED),
-+	GUEST_DEDICATED_CONSTRAINT(INTEL_PMC_IDX_FIXED + 1),
-+	GUEST_DEDICATED_CONSTRAINT(INTEL_PMC_IDX_FIXED + 2),
-+	GUEST_DEDICATED_CONSTRAINT(INTEL_PMC_IDX_FIXED + 3),
-+};
-+
- static u64 intel_pmu_event_map(int hw_event)
- {
- 	return intel_perfmon_event_map[hw_event];
-@@ -2158,6 +2181,7 @@ static void intel_pmu_disable_event(struct perf_event *event)
++		preempt_disable()
+ 		complete(&self->parked);
+-		schedule();
++		schedule_preempt_disabled();
++		preempt_enable();
  	}
- 
- 	cpuc->intel_ctrl_guest_mask &= ~(1ull << hwc->idx);
-+	cpuc->intel_ctrl_guest_dedicated_mask &= ~(1ull << hwc->idx);
- 	cpuc->intel_ctrl_host_mask &= ~(1ull << hwc->idx);
- 	cpuc->intel_cp_status &= ~(1ull << hwc->idx);
- 
-@@ -2246,6 +2270,10 @@ static void intel_pmu_enable_event(struct perf_event *event)
- 	if (event->attr.exclude_guest)
- 		cpuc->intel_ctrl_host_mask |= (1ull << hwc->idx);
- 
-+	if (unlikely(event->guest_dedicated_idx >= 0)) {
-+		WARN_ON(hwc->idx != event->guest_dedicated_idx);
-+		cpuc->intel_ctrl_guest_dedicated_mask |= (1ull << hwc->idx);
-+	}
- 	if (unlikely(event_is_checkpointed(event)))
- 		cpuc->intel_cp_status |= (1ull << hwc->idx);
- 
-@@ -3036,7 +3064,21 @@ static void intel_commit_scheduling(struct cpu_hw_events *cpuc, int idx, int cnt
- 	if (cpuc->excl_cntrs)
- 		return intel_get_excl_constraints(cpuc, event, idx, c2);
- 
--	return c2;
-+	if (event->guest_dedicated_idx < 0)
-+		return c2;
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(dedicated_fixed_c) != MAX_FIXED_PEBS_EVENTS);
-+	if (c2->idxmsk64 & (1ULL << event->guest_dedicated_idx)) {
-+		if (event->guest_dedicated_idx < MAX_PEBS_EVENTS)
-+			return &dedicated_gp_c[event->guest_dedicated_idx];
-+		else if ((event->guest_dedicated_idx >= INTEL_PMC_IDX_FIXED) &&
-+			 (event->guest_dedicated_idx < INTEL_PMC_IDX_FIXED +
-+							MAX_FIXED_PEBS_EVENTS))
-+			return &dedicated_fixed_c[event->guest_dedicated_idx -
-+							INTEL_PMC_IDX_FIXED];
-+	}
-+
-+	return &emptyconstraint;
+ 	__set_current_state(TASK_RUNNING);
  }
+@@ -245,8 +247,10 @@ static int kthread(void *_create)
+ 	/* OK, tell user we're spawned, wait for stop or wakeup */
+ 	__set_current_state(TASK_UNINTERRUPTIBLE);
+ 	create->result = current;
++	preempt_disable()
+ 	complete(done);
+-	schedule();
++	schedule_preempt_disabled();
++	preempt_enable();
  
- static void intel_put_excl_constraints(struct cpu_hw_events *cpuc,
-@@ -3373,6 +3415,22 @@ static struct perf_guest_switch_msr *intel_guest_get_msrs(int *nr)
- 		*nr = 2;
- 	}
- 
-+	if (cpuc->intel_ctrl_guest_dedicated_mask) {
-+		arr[0].guest |= cpuc->intel_ctrl_guest_dedicated_mask;
-+		arr[1].msr = MSR_IA32_PEBS_ENABLE;
-+		arr[1].host = cpuc->pebs_enabled &
-+				~cpuc->intel_ctrl_guest_dedicated_mask;
-+		arr[1].guest = cpuc->intel_ctrl_guest_dedicated_mask;
-+		*nr = 2;
-+	} else {
-+		/* Remove MSR_IA32_PEBS_ENABLE from MSR switch list in KVM */
-+		if (*nr == 1) {
-+			arr[1].msr = MSR_IA32_PEBS_ENABLE;
-+			arr[1].host = arr[1].guest = 0;
-+			*nr = 2;
-+		}
-+	}
-+
- 	return arr;
- }
- 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index f1cd1ca..621529c 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -242,6 +242,7 @@ struct cpu_hw_events {
- 	 * Intel host/guest exclude bits
- 	 */
- 	u64				intel_ctrl_guest_mask;
-+	u64				intel_ctrl_guest_dedicated_mask;
- 	u64				intel_ctrl_host_mask;
- 	struct perf_guest_switch_msr	guest_switch_msrs[X86_PMC_IDX_MAX];
- 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 547773f..3bccb88 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -750,6 +750,8 @@ struct perf_event {
- 	void *security;
- #endif
- 	struct list_head		sb_list;
-+	/* the guest specified counter index of KVM owned event, e.g PEBS */
-+	int				guest_dedicated_idx;
- #endif /* CONFIG_PERF_EVENTS */
- };
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e453589..7a7b56c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10731,6 +10731,7 @@ static void account_event(struct perf_event *event)
- 	event->id		= atomic64_inc_return(&perf_event_id);
- 
- 	event->state		= PERF_EVENT_STATE_INACTIVE;
-+	event->guest_dedicated_idx = -1;
- 
- 	if (task) {
- 		event->attach_state = PERF_ATTACH_TASK;
--- 
-1.8.3.1
-
+ 	ret = -EINTR;
+ 	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
