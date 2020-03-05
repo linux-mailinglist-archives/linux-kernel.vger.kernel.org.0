@@ -2,94 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C333117A961
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79FFE17A96D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCEP4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:56:32 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45254 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgCEP4c (ORCPT
+        id S1727222AbgCEP5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:57:24 -0500
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:39484 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbgCEP5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:56:32 -0500
-Received: by mail-qt1-f193.google.com with SMTP id a4so4467284qto.12;
-        Thu, 05 Mar 2020 07:56:31 -0800 (PST)
+        Thu, 5 Mar 2020 10:57:23 -0500
+Received: by mail-lj1-f179.google.com with SMTP id f10so6640814ljn.6
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 07:57:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mPwMNk+ywAAOySGwpStasV/rtFlsFxHauenyLwI0dE0=;
-        b=L4gEN4fLSHFIN8N2dbXqrF6tp+7Rewco/W77UH+Z5Oze++xHDVAyIZPFBz5ob/RIzk
-         VPY+kPGecWT+XCr50BHWwbO+Uu2QkMI0FF3nwltGYDZ+vqIY71waK7HabgWSkcMl1drq
-         OjHOwhH0wsGVNG2nisYFY2yqGgG45/nVLslURkTlWyRA+O3Y6HsAP0h/2zpsKjPOnwRy
-         O/vRXxOLw087pV89f4hQjZguVPJvyX0yVy8i4SLDT1EHHcka6hrM9uDylYX4ub3q7hZg
-         23wvYCsetBQ56/AMuGbF7rCBmBFm+MUB//3X18xct5f6pqrI08rru6mxdEvUh60ISYuu
-         tGVA==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=rqIqdBCD5RRhq+ESzxD263ZwH1pSyIOt6ZovmEQfZgE=;
+        b=VTsX+xwi+BhtN9rKWpyqs4TWKRtygG01WC2LSwSBHFue9EJ7EzvYEPZU9ZNzSQtr0l
+         +B2ENQr5HvYeTEm+4ov1YyAbYiNNOUh7pkofZmttovqvegUgLDkRRjobGx21XVNNLu9y
+         0CKRDpuwyUt2hYyAia1wzF9hlJEXQMAPttwVr9N0qu9VZiKIGeZPpo75QXLbjwGSkPHZ
+         8DPDnGX3Qm9833P4CGEIsJt2RPofO3GlXd3bSFOMB7eJKV2AZFCBl/eoBA0UMuTmI0FD
+         7igysT3ydC/9TOIzmiQrJzxhJqRYGAvnNMCipfhk/zvhcvRjjIVJKAqmBmENNuwiK87J
+         +3jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mPwMNk+ywAAOySGwpStasV/rtFlsFxHauenyLwI0dE0=;
-        b=B4v7jWsR7gQvBdYBjKoecATMtL7jMFeoFPju9GiVrCFQu61EHGDJxyvd3MejSijPyL
-         uWsx92eov125QYrbtjClRz1MHunpYVIbWZE0B+zeEYPRJJxZxzPVJ3tqmsfobqnyuyd5
-         AOdP93JUCpGlCN5bJiFV0fvKHs4FW8UpimIzhftUho0X6F2jOKmhykAYTWsEH6K5d4AA
-         avYdbjxFArXOsT/4F6C8MjE/JdiNpkhL9PIhnl1gZblWidhmxrCAYSZD/LE4X/72nJ/p
-         +iIBIfAt2cRIbpcdFW9fkUviGHl1tu5KqqLBd8ZJGbiIHHeDlrQc4bIS/W0maPQJpE7z
-         vCjA==
-X-Gm-Message-State: ANhLgQ1u6peI7uC6Ca6E8Wq5lXKcoMIdwo44eJXqVvp75XELcQ8+d5jx
-        qJsfNVho5Sv5gVzuEBK2wSI=
-X-Google-Smtp-Source: ADFU+vsxfLTudGX5w89SZdUaEJ48x598pdr0PQHinjq1b/mv0xOAvLSlNj6TCU0hcCEpRfTazoX45g==
-X-Received: by 2002:ac8:7956:: with SMTP id r22mr7925742qtt.323.1583423791213;
-        Thu, 05 Mar 2020 07:56:31 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id f7sm17099341qtc.29.2020.03.05.07.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 07:56:30 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Thu, 5 Mar 2020 10:56:29 -0500
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>,
-        kernel-hardening@lists.openwall.com,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sh: Stop printing the virtual memory layout
-Message-ID: <20200305155628.GA857024@rani.riverdale.lan>
-References: <202003021038.8F0369D907@keescook>
- <20200305151010.835954-1-nivedita@alum.mit.edu>
- <f672417e-1323-4ef2-58a1-1158c482d569@physik.fu-berlin.de>
- <31d1567c4c195f3bc5c6b610386cf0f559f9094f.camel@perches.com>
- <3c628a5a-35c7-3d92-b94b-23704500f7c4@physik.fu-berlin.de>
- <20200305154657.GA848330@rani.riverdale.lan>
- <456fddd9-c980-b0f2-9dd0-19befee7861e@physik.fu-berlin.de>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=rqIqdBCD5RRhq+ESzxD263ZwH1pSyIOt6ZovmEQfZgE=;
+        b=Z2XI2ZECUYbQqAc8M384Dxe7HCSU3X5K5jPEXtkPT1WFBWgLlNP0EXMEFkuU2ycaFg
+         fgZuz1V49E6XLlbuVoQmX457ABLi8kz3C21ba4Tl4jwpBvjFCuGdiDsuGlk6pqGh/Iqr
+         qrpa+fVilJ/FlHr/nGjXZNHXCt3EhuRCfoDigqGFmrPueSrMOF7L7ZaYYxVLUGKJAD0z
+         9YWjb1VMSs4enVaLw9dN4NkRY96u8gXTGcX0wcrRYqlQUvb615N8rWW42PPS29dGLzKN
+         DwkLdYr4khWfy33+1khCdWHR33lh9LdgBqjQKwdwnFvfAIkQTZS3yA2krj7Z4wctdHKB
+         q+9g==
+X-Gm-Message-State: ANhLgQ1Z8n0ihyO9KNtZ7qlEfq3HEOcGzo7IsKnSR+U6dCKYaFUM7NKa
+        cShKDMcGEIObA7TkWtkhe2vyD+q9Tfq4DTL24G32kLmIwnPXXw==
+X-Google-Smtp-Source: ADFU+vtnKNMxf8ks11Or7LeIRcYocTA0s0SdaX2VTCM3EMu3hKgmm3RGEwJyJHDqRCPwkQTUkUWQO0OLobb4dR2cqog=
+X-Received: by 2002:a05:651c:414:: with SMTP id 20mr5404820lja.165.1583423839387;
+ Thu, 05 Mar 2020 07:57:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <456fddd9-c980-b0f2-9dd0-19befee7861e@physik.fu-berlin.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 5 Mar 2020 21:27:07 +0530
+Message-ID: <CA+G9fYvRZ9eCE29FjXkv1dQfrdGO3uWp4Tvkip5Z_jsgjVJeAQ@mail.gmail.com>
+Subject: BUG: kernel NULL pointer dereference, address: 00 - ida_free+0x76/0x140
+To:     open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Cc:     rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        lkft-triage@lists.linaro.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 04:49:22PM +0100, John Paul Adrian Glaubitz wrote:
-> On 3/5/20 4:46 PM, Arvind Sankar wrote:
-> > Not really too late. I can do s/pr_info/pr_devel and resubmit.
-> > 
-> > parisc for eg actually hides this in #if 0 rather than deleting the
-> > code.
-> > 
-> > Kees, you fine with that?
-> 
-> But wasn't it removed for all the other architectures already? Or are these
-> changes not in Linus' tree yet?
-> 
-> Adrian
+Regression reported on Linux next 5.6.0-rc4-next-20200305 on x86_64,
+i386, arm and arm64. The steps to reproduce is running kselftests lib
+printf.sh test case.
+Which is doing modprobe operations.
 
-The ones mentioned in the commit message, yes, those are long gone. But
-I don't see any reason why the remaining ones (there are 6 left that I
-submitted patches just now for) couldn't switch to pr_devel instead.
+BTW, there are few RCU warnings from the boot log.
+Please refer below link for more details.
+
+Steps reproduce by using kselftests,
+
+          - lsmod || true
+          - cd /opt/kselftests/default-in-kernel/lib/
+          - export PATH=/opt/kselftests/default-in-kernel/kselftest:$PATH
+          - ./printf.sh || true
+          - ./bitmap.sh || true
+          - ./prime_numbers.sh || true
+          - ./strscpy.sh || true
+
+x86_64 kernel BUG dump.
++ ./printf.sh
+[   32.594369] test_printf: loaded.
+[   32.599859] BUG: kernel NULL pointer dereference, address: 00000000
+[   32.606143] #PF: supervisor read access in kernel mode
+[   32.611280] #PF: error_code(0x0000) - not-present page
+[   32.616419] *pde = 00000000
+[   32.619306] Oops: 0000 [#1] SMP
+[   32.622452] CPU: 0 PID: 387 Comm: modprobe Not tainted
+5.6.0-rc4-next-20200305 #1
+[   32.629928] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.2 05/23/2018
+[   32.637314] EIP: ida_free+0x61/0x130
+[   32.640891] Code: 00 c7 45 e8 00 00 00 00 c7 45 ec 00 00 00 00 0f
+88 c4 00 00 00 89 d3 e8 9d ee 01 00 89 c7 8d 45 d8 e8 e3 18 01 00 a8
+01 75 3f <0f> a3 30 72 72 8b 45 d8 89 fa e8 70 f0 01 00 53 68 d8 61 01
+d3 e8
+[   32.659628] EAX: 00000000 EBX: 00000000 ECX: ffffffff EDX: 00000000
+[   32.665887] ESI: 00000000 EDI: 00000246 EBP: f21a7cc8 ESP: f21a7c9c
+[   32.672153] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010046
+[   32.678928] CR0: 80050033 CR2: 00000000 CR3: 32ff3000 CR4: 003406d0
+[   32.685186] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+[   32.691442] DR6: fffe0ff0 DR7: 00000400
+[   32.695273] Call Trace:
+[   32.697721]  software_node_release+0x21/0x80
+[   32.701990]  kobject_put+0xa8/0x1c0
+[   32.705476]  kobject_del+0x40/0x60
+[   32.708881]  kobject_put+0x92/0x1c0
+[   32.712380]  fwnode_remove_software_node+0x30/0x50
+[   32.717201]  software_node_unregister_nodes+0x2b/0x50
+[   32.722246]  test_printf_init+0xe00/0x1d29 [test_printf]
+[   32.727563]  ? find_held_lock+0x27/0xa0
+[   32.731423]  ? test_hashed+0x54/0x54 [test_printf]
+[   32.736207]  ? test_hashed+0x54/0x54 [test_printf]
+[   32.741001]  do_one_initcall+0x54/0x2e0
+[   32.744841]  ? rcu_read_lock_sched_held+0x47/0x70
+[   32.749547]  ? kmem_cache_alloc_trace+0x285/0x2b0
+[   32.754249]  ? do_init_module+0x21/0x1ef
+[   32.758166]  ? do_init_module+0x21/0x1ef
+[   32.762087]  do_init_module+0x50/0x1ef
+[   32.765837]  load_module+0x1e32/0x2540
+[   32.769586]  ? kernel_read_file+0x295/0x2d0
+[   32.773771]  sys_finit_module+0x8a/0xe0
+[   32.777611]  do_fast_syscall_32+0x8e/0x340
+[   32.781709]  entry_SYSENTER_32+0xaa/0x102
+[   32.785719] EIP: 0xb7f75ce1
+[   32.788508] Code: 5e 5d c3 8d b6 00 00 00 00 b8 40 42 0f 00 eb c1
+8b 04 24 c3 8b 1c 24 c3 8b 34 24 c3 8b 3c 24 c3 90 51 52 55 89 e5 0f
+34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90
+8d 76
+[   32.807246] EAX: ffffffda EBX: 00000003 ECX: 0806233a EDX: 00000000
+[   32.813502] ESI: 085fb600 EDI: 085fb550 EBP: 085fb6e0 ESP: bffe839c
+[   32.819760] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000292
+[   32.826542] Modules linked in: test_printf(+) x86_pkg_temp_thermal fuse
+[   32.833150] CR2: 0000000000000000
+[   32.836461] ---[ end trace 69388c972b4562b8 ]---
+[   32.841072] EIP: ida_free+0x61/0x130
+[   32.844642] Code: 00 c7 45 e8 00 00 00 00 c7 45 ec 00 00 00 00 0f
+88 c4 00 00 00 89 d3 e8 9d ee 01 00 89 c7 8d 45 d8 e8 e3 18 01 00 a8
+01 75 3f <0f> a3 30 72 72 8b 45 d8 89 fa e8 70 f0 01 00 53 68 d8 61 01
+d3 e8
+[   32.863420] EAX: 00000000 EBX: 00000000 ECX: ffffffff EDX: 00000000
+[   32.869679] ESI: 00000000 EDI: 00000246 EBP: f21a7cc8 ESP: f21a7c9c
+[   32.875936] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010046
+[   32.882713] CR0: 80050033 CR2: 00000000 CR3: 32ff3000 CR4: 003406d0
+[   32.888970] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+[   32.895227] DR6: fffe0ff0 DR7: 00000400
+[   32.899060] BUG: sleeping function called from invalid context at
+/usr/src/kernel/include/linux/percpu-rwsem.h:49
+[   32.909303] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid:
+387, name: modprobe
+[   32.917207] INFO: lockdep is turned off.
+[   32.921124] irq event stamp: 5120
+[   32.924434] hardirqs last  enabled at (5119): [<d20dea05>] kfree+0x135/0x270
+[   32.931472] hardirqs last disabled at (5120): [<d2b9ab04>]
+_raw_spin_lock_irqsave+0x14/0x40
+[   32.939809] softirqs last  enabled at (4978): [<d2b9f165>]
+__do_softirq+0x2c5/0x3c3
+[   32.947454] softirqs last disabled at (4969): [<d1ea67d5>]
+call_on_stack+0x45/0x50
+[   32.955009] CPU: 0 PID: 387 Comm: modprobe Tainted: G      D
+   5.6.0-rc4-next-20200305 #1
+[   32.963867] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.2 05/23/2018
+[   32.971250] Call Trace:
+[   32.973695]  dump_stack+0x6e/0x96
+[   32.977009]  ___might_sleep+0x14d/0x240
+[   32.980846]  __might_sleep+0x33/0x80
+[   32.984419]  exit_signals+0x2a/0x2d0
+[   32.987997]  do_exit+0x8e/0xb00
+[   32.991143]  ? do_fast_syscall_32+0x8e/0x340
+[   32.995421]  rewind_stack_do_exit+0x11/0x13
+[   32.999600] EIP: 0xb7f75ce1
+[   33.002416] Code: 5e 5d c3 8d b6 00 00 00 00 b8 40 42 0f 00 eb c1
+8b 04 24 c3 8b 1c 24 c3 8b 34 24 c3 8b 3c 24 c3 90 51 52 55 89 e5 0f
+34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90
+8d 76
+[   33.021153] EAX: ffffffda EBX: 00000003 ECX: 0806233a EDX: 00000000
+[   33.027425] ESI: 085fb600 EDI: 085fb550 EBP: 085fb6e0 ESP: bffe839c
+[   33.033685] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000292
+[   33.040465] note: modprobe[387] exited with preempt_count 1
+./../kselftest/module.sh: line 56:   387 Killed
+$modprobe -q $module $args
+printf:  [FAIL]
+
+
+metadata:
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git branch: master
+  git describe: next-20200305
+  kernel-config:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-core2-32/lkft/linux-next/719/config
+
+ref:
+https://lkft.validation.linaro.org/scheduler/job/1267112#L1254
+https://lkft.validation.linaro.org/scheduler/job/1267041#L9795
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
