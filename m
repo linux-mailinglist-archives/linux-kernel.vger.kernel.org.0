@@ -2,146 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF0A117A1D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D7A217A1D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:04:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgCEJDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 04:03:30 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38511 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgCEJDa (ORCPT
+        id S1726694AbgCEJEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 04:04:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28336 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725866AbgCEJET (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 04:03:30 -0500
-Received: by mail-lj1-f196.google.com with SMTP id w1so5173031ljh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 01:03:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b+nyhy3biY02LIl4kBkjbxJ2dWjzxv1IAt+3PKhBtDE=;
-        b=adE2B2XkLqsd0IRa+nAvysANIFaAJhyJUDjsZjaeMRjhIacspUqor3sR2vgW5KxlR0
-         yaeVJXmuCtcCtPd1emscrdjWgwBLEBSQlUy6X/wipkS1iU1Xrv3haU3SJuBAw58tAKXN
-         ePuoeD8dpBz2YWIpZGllhhZdb1h61/uXZ7KmA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b+nyhy3biY02LIl4kBkjbxJ2dWjzxv1IAt+3PKhBtDE=;
-        b=Dr82rTRAqA9/dBMuEorxp+Nhd+h8yOniP4868v/q3hAFii/TPIj2v0/5SGn8a+IYFL
-         Aep8SWJMWDFHI/bzIiGlqvwP5oMryVESr6w7gaOSy76vWUoTvt8cD1ukck/BnoXuJmJO
-         i0/SRFiJHxFQq3Zg1k1TFQVabZ3PPMd5x84K36Cdzw5tx88IzvTqLF7zJaacZo+NFTFF
-         WDA+h9+rnDC6E55TmmGDSxkNEz6X7s+rzmy/tlwyXLk5RDpJZMA0Mlo/6/FiJzasPYW4
-         fZEOUQSsqPgBhvFOBB+4pbWUCIQOo5hRlEazvabmY6a0dV9Y/x9jqFLK10Zp0zzV9v2C
-         Mp9Q==
-X-Gm-Message-State: ANhLgQ3j3lPTXQDTAh1XzBZjPs7BOb0cdEb9pqb64exDmH0BtKwsAiMw
-        uVL1SQoeyKylBqkFAFKDGC7DY94l9zAKCMS/
-X-Google-Smtp-Source: ADFU+vuwpeT6grWUw/3SZRIzyyguUNee5NahuOQg0T4LKxoIoY3hoMytiDSWCzR56EF00n4V1NJ66A==
-X-Received: by 2002:a05:651c:319:: with SMTP id a25mr4818202ljp.57.1583399007530;
-        Thu, 05 Mar 2020 01:03:27 -0800 (PST)
-Received: from [172.16.11.50] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id y24sm17699428lfg.63.2020.03.05.01.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2020 01:03:27 -0800 (PST)
-Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
- copy_from_user()
-To:     Jann Horn <jannh@google.com>,
-        Alexander Potapenko <glider@google.com>
-Cc:     Joe Perches <joe@perches.com>, Todd Kjos <tkjos@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200302130430.201037-1-glider@google.com>
- <20200302130430.201037-2-glider@google.com>
- <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
- <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
- <4cac10d3e2c03e4f21f1104405a0a62a853efb4e.camel@perches.com>
- <CAG_fn=XOyPGau9m7x8eCLJHy3m-H=nbMODewWVJ1xb2e+BPdFw@mail.gmail.com>
- <CAG48ez3sPSFQjB7K64YiNYfemZ_W9cCcKQW34XAcLP_MkXUjCw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <205aa3d8-7d18-1b73-4650-5ef534fe55da@rasmusvillemoes.dk>
-Date:   Thu, 5 Mar 2020 10:03:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAG48ez3sPSFQjB7K64YiNYfemZ_W9cCcKQW34XAcLP_MkXUjCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Mar 2020 04:04:19 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0258wvVR001633
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Mar 2020 04:04:18 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yhr4k0ag7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 04:04:16 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Thu, 5 Mar 2020 09:04:06 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Mar 2020 09:04:04 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 025942UE61603854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Mar 2020 09:04:03 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 292684C046;
+        Thu,  5 Mar 2020 09:04:02 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DB85B4C040;
+        Thu,  5 Mar 2020 09:04:01 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Mar 2020 09:04:01 +0000 (GMT)
+From:   Michael Mueller <mimu@linux.ibm.com>
+To:     linux-s390@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, borntraeger@de.ibm.com,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: [PATCH] s390/diag: fix display of diagnose call statistics
+Date:   Thu,  5 Mar 2020 10:03:55 +0100
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 20030509-0028-0000-0000-000003E11438
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030509-0029-0000-0000-000024A64869
+Message-Id: <20200305090355.88036-1-mimu@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-05_02:2020-03-04,2020-03-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ mlxscore=0 phishscore=0 mlxlogscore=876 suspectscore=1 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 spamscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003050057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/2020 19.31, Jann Horn wrote:
-> On Mon, Mar 2, 2020 at 7:17 PM Alexander Potapenko <glider@google.com> wrote:
->> On Mon, Mar 2, 2020 at 3:00 PM Joe Perches <joe@perches.com> wrote:
->>>
->>> So?  CONFIG_INIT_STACK_ALL by design slows down code.
->> Correct.
->>
->>> This marking would likely need to be done for nearly all
->>> 3000+ copy_from_user entries.
->> Unfortunately, yes. I was just hoping to do so for a handful of hot
->> cases that we encounter, but in the long-term a compiler solution must
->> supersede them.
->>
->>> Why not try to get something done on the compiler side
->>> to mark the function itself rather than the uses?
->> This is being worked on in the meantime as well (see
->> http://lists.llvm.org/pipermail/cfe-dev/2020-February/064633.html)
->> Do you have any particular requisitions about how this should look on
->> the source level?
-> 
-> Just thinking out loud: Should this be a function attribute, or should
-> it be a builtin - something like __builtin_assume_initialized(ptr,
-> len)? That would make it also work for macros,
+Show the full diag statistic table and not just parts of it.
 
-But with macros (and static inlines), the compiler sees all the
-initialization being done, no?
+Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+---
+ arch/s390/kernel/diag.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-and it might simplify
-> the handling of inlining in the compiler. And you wouldn't need such a
-> complicated attribute that refers to function arguments by index and
-> such.
+diff --git a/arch/s390/kernel/diag.c b/arch/s390/kernel/diag.c
+index e9dac9a24d3f..61f2b0412345 100644
+--- a/arch/s390/kernel/diag.c
++++ b/arch/s390/kernel/diag.c
+@@ -84,7 +84,7 @@ static int show_diag_stat(struct seq_file *m, void *v)
+ 
+ static void *show_diag_stat_start(struct seq_file *m, loff_t *pos)
+ {
+-	return *pos <= nr_cpu_ids ? (void *)((unsigned long) *pos + 1) : NULL;
++	return *pos <= NR_DIAG_STAT ? (void *)((unsigned long) *pos + 1) : NULL;
+ }
+ 
+ static void *show_diag_stat_next(struct seq_file *m, void *v, loff_t *pos)
+-- 
+2.17.1
 
-Does copy_from_user guarantee to zero-initialize the remaining buffer if
-copying fails partway through? Otherwise it will be hard for the
-compiler to make use of an annotation such as __assume_initialized(buf,
-size - ret_from_cfu) - it will have to say "ok, the caller is bailing
-out unless ret_from_cfu is 0, and in that case, yes, the whole local
-struct variable is indeed initialized". And we can't make the annotation
-unconditionally __assume_initialized(buf, size) [unless c_f_u comes with
-that guarantee] because we don't know that all callers of c_f_u() bail
-out on non-zero.
-
-
-Somewhat related: I've long wanted a bunch of function attributes
-
-  __may_read(ptr, bytes)
-  __may_write(ptr, bytes)
-  __will_write(ptr, bytes)
-
-The first could be used to warn about passing an uninitialized or
-too-small buffer (e.g.
-
-  struct pollfd fds[4];
-  poll(fds, sizeof(fds), ...) // whoops, should have been ARRAY_SIZE)
-
-the second also for warning about a too-small buffer, and the third
-would essentially be the same as __assume_initializes. Perhaps with some
-sanitization option the compiler could also instrument the function
-definition to not read/write beyond the area declared via those attributes.
-
-But the attribute syntax doesn't currently allow complex expressions in
-terms of the parameter names; I'd want to annotate poll as
-
-  int poll(struct pollfd *fds, nfds_t nfds, int to) __may_rw(fds, nfds *
-sizeof(*fds))
-
-Rasmus
