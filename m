@@ -2,91 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD9ED17A38E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:02:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DDBA17A394
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbgCELBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:01:36 -0500
-Received: from forward104j.mail.yandex.net ([5.45.198.247]:43097 "EHLO
-        forward104j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725903AbgCELBf (ORCPT
+        id S1727341AbgCELCn convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Mar 2020 06:02:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30212 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725903AbgCELCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:01:35 -0500
-Received: from forward100q.mail.yandex.net (forward100q.mail.yandex.net [IPv6:2a02:6b8:c0e:4b:0:640:4012:bb97])
-        by forward104j.mail.yandex.net (Yandex) with ESMTP id 446E84A1583;
-        Thu,  5 Mar 2020 14:01:33 +0300 (MSK)
-Received: from mxback8q.mail.yandex.net (mxback8q.mail.yandex.net [IPv6:2a02:6b8:c0e:42:0:640:b38f:32ec])
-        by forward100q.mail.yandex.net (Yandex) with ESMTP id 417987080006;
-        Thu,  5 Mar 2020 14:01:33 +0300 (MSK)
-Received: from vla5-445dc1c4c112.qloud-c.yandex.net (vla5-445dc1c4c112.qloud-c.yandex.net [2a02:6b8:c18:3609:0:640:445d:c1c4])
-        by mxback8q.mail.yandex.net (mxback/Yandex) with ESMTP id JCH9oiAXUo-1XNSk0sb;
-        Thu, 05 Mar 2020 14:01:33 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1583406093;
-        bh=/kV4O0qJVZXzwid6BVH7MX/fCuvUiaSY86OITvWYn1A=;
-        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
-        b=TamgzMfWAMa1KOXUnp4dwwC7MfAGwuARc/H+dgdt2VxkKtxHM8Txz/F/TYVMTCLdN
-         3SIZPRmzTt8uV+d4wUVEJx6vap6/n5uFUsIS2vmXIDNDA2sIN/flWQuf8+/xm8Wzah
-         ButFPaNGxfu7PjNP2KBAzxPttBnasQcqSu8pa2kk=
-Authentication-Results: mxback8q.mail.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by vla5-445dc1c4c112.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id 8hWJyQQZRL-1WW8nAin;
-        Thu, 05 Mar 2020 14:01:32 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-From:   Nikita Shubin <NShubin@topcon.com>
-Cc:     Nikita Shubin <NShubin@topcon.com>, stable@vger.kernel.org,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/1] remoteproc: Fix NULL pointer dereference in rproc_virtio_notify
-Date:   Thu,  5 Mar 2020 14:02:18 +0300
-Message-Id: <20200305110218.8799-2-NShubin@topcon.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200305110218.8799-1-NShubin@topcon.com>
-References: <20200228110804.25822-1-nikita.shubin@maquefel.me>
- <20200305110218.8799-1-NShubin@topcon.com>
+        Thu, 5 Mar 2020 06:02:42 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 025Apfa6103254
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Mar 2020 06:02:41 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yhr4k3x9x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:02:40 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Thu, 5 Mar 2020 11:02:38 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Mar 2020 11:02:32 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 025B2WdM58720390
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Mar 2020 11:02:32 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E96F04203F;
+        Thu,  5 Mar 2020 11:02:31 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8822742045;
+        Thu,  5 Mar 2020 11:02:31 +0000 (GMT)
+Received: from localhost (unknown [9.199.53.44])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Mar 2020 11:02:31 +0000 (GMT)
+Date:   Thu, 05 Mar 2020 16:32:30 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2] perf symbols: Consolidate symbol fixup issue
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        John Garry <john.garry@huawei.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>
+References: <20200303110407.28162-1-leo.yan@linaro.org>
+In-Reply-To: <20200303110407.28162-1-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+User-Agent: astroid/v0.15-13-gb675b421
+ (https://github.com/astroidmail/astroid)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 20030511-0008-0000-0000-00000359903A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030511-0009-0000-0000-00004A7AC710
+Message-Id: <1583405831.eapbxpc3ni.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-05_03:2020-03-05,2020-03-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ mlxscore=0 phishscore=0 mlxlogscore=999 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 spamscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003050069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.kick method not set in rproc_ops will result in:
+Leo Yan wrote:
+> After copying Arm64's perf archive with object files and perf.data file
+> to x86 laptop, the x86's perf kernel symbol resolution fails.  It
+> outputs 'unknown' for all symbols parsing.
+> 
+> This issue is root caused by the function elf__needs_adjust_symbols(),
+> x86 perf tool uses one weak version, Arm64 (and powerpc) has rewritten
+> their own version.  elf__needs_adjust_symbols() decides if need to parse
+> symbols with the relative offset address; but x86 building uses the weak
+> function which misses to check for the elf type 'ET_DYN', so that it
+> cannot parse symbols in Arm DSOs due to the wrong result from
+> elf__needs_adjust_symbols().
+> 
+> The DSO parsing should not depend on any specific architecture perf
+> building; e.g. x86 perf tool can parse Arm and Arm64 DSOs, vice versa.
+> So this patch changes elf__needs_adjust_symbols() as a common function
+> and removes the arch specific functions for Arm64 and powerpc.
+> 
+> In the common elf__needs_adjust_symbols(), it checks elf header and if
+> the machine type is one of Arm64/ppc/ppc64, it checks extra condition
+> for 'ET_DYN'.  Finally, the Arm64 DSO can be parsed properly with x86's
+> perf tool.
+> 
+> Before:
+> 
+>   # perf script
+>   main  3258          1          branches:                 0 [unknown] ([unknown]) => ffff800010c4665c [unknown] ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c46670 [unknown] ([kernel.kallsyms]) => ffff800010c4eaec [unknown] ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4eaec [unknown] ([kernel.kallsyms]) => ffff800010c4eb00 [unknown] ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4eb08 [unknown] ([kernel.kallsyms]) => ffff800010c4e780 [unknown] ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4e7a0 [unknown] ([kernel.kallsyms]) => ffff800010c4eeac [unknown] ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4eebc [unknown] ([kernel.kallsyms]) => ffff800010c4ed80 [unknown] ([kernel.kallsyms])
+> 
+> After:
+> 
+>   # perf script
+>   main  3258          1          branches:                 0 [unknown] ([unknown]) => ffff800010c4665c coresight_timeout+0x54 ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c46670 coresight_timeout+0x68 ([kernel.kallsyms]) => ffff800010c4eaec etm4_enable_hw+0x3cc ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4eaec etm4_enable_hw+0x3cc ([kernel.kallsyms]) => ffff800010c4eb00 etm4_enable_hw+0x3e0 ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4eb08 etm4_enable_hw+0x3e8 ([kernel.kallsyms]) => ffff800010c4e780 etm4_enable_hw+0x60 ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4e7a0 etm4_enable_hw+0x80 ([kernel.kallsyms]) => ffff800010c4eeac etm4_enable+0x2d4 ([kernel.kallsyms])
+>   main  3258          1          branches:  ffff800010c4eebc etm4_enable+0x2e4 ([kernel.kallsyms]) => ffff800010c4ed80 etm4_enable+0x1a8 ([kernel.kallsyms])
+> 
 
-8<--- cut here ---
-Unable to handle kernel NULL pointer dereference
+I am not able to reproduce this since powerpc64 kernels are not being 
+built as ET_EXEC anymore.
 
-in rproc_virtio_notify, after firmware loading.
+> v2: Fixed Arm64 and powerpc native building.
+> 
+> Reported-by: Mike Leach <mike.leach@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  tools/perf/arch/arm64/util/Build            |  1 -
+>  tools/perf/arch/arm64/util/sym-handling.c   | 19 -------------------
+>  tools/perf/arch/powerpc/util/Build          |  1 -
+>  tools/perf/arch/powerpc/util/sym-handling.c | 10 ----------
+>  tools/perf/util/symbol-elf.c                |  8 +++++++-
+>  5 files changed, 7 insertions(+), 32 deletions(-)
+>  delete mode 100644 tools/perf/arch/arm64/util/sym-handling.c
+> 
+> diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
+> index 0a7782c61209..789956f76d85 100644
+> --- a/tools/perf/arch/arm64/util/Build
+> +++ b/tools/perf/arch/arm64/util/Build
+> @@ -1,6 +1,5 @@
+>  perf-y += header.o
+>  perf-y += perf_regs.o
+> -perf-y += sym-handling.o
+>  perf-$(CONFIG_DWARF)     += dwarf-regs.o
+>  perf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
+>  perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
+> diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
+> deleted file mode 100644
+> index 8dfa3e5229f1..000000000000
+> --- a/tools/perf/arch/arm64/util/sym-handling.c
+> +++ /dev/null
+> @@ -1,19 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-only
+> -/*
+> - *
+> - * Copyright (C) 2015 Naveen N. Rao, IBM Corporation
+> - */
+> -
+> -#include "symbol.h" // for the elf__needs_adjust_symbols() prototype
+> -#include <stdbool.h>
+> -
+> -#ifdef HAVE_LIBELF_SUPPORT
+> -#include <gelf.h>
+> -
+> -bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+> -{
+> -	return ehdr.e_type == ET_EXEC ||
+> -	       ehdr.e_type == ET_REL ||
+> -	       ehdr.e_type == ET_DYN;
+> -}
+> -#endif
+> diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
+> index 7cf0b8803097..e5c9504f8586 100644
+> --- a/tools/perf/arch/powerpc/util/Build
+> +++ b/tools/perf/arch/powerpc/util/Build
+> @@ -1,5 +1,4 @@
+>  perf-y += header.o
+> -perf-y += sym-handling.o
+>  perf-y += kvm-stat.o
+>  perf-y += perf_regs.o
+>  perf-y += mem-events.o
+> diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/powerpc/util/sym-handling.c
+> index abb7a12d8f93..0856b32f9e08 100644
+> --- a/tools/perf/arch/powerpc/util/sym-handling.c
+> +++ b/tools/perf/arch/powerpc/util/sym-handling.c
+> @@ -10,16 +10,6 @@
+>  #include "probe-event.h"
+>  #include "probe-file.h"
+> 
+> -#ifdef HAVE_LIBELF_SUPPORT
+> -bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+> -{
+> -	return ehdr.e_type == ET_EXEC ||
+> -	       ehdr.e_type == ET_REL ||
+> -	       ehdr.e_type == ET_DYN;
+> -}
+> -
+> -#endif
+> -
+>  int arch__choose_best_symbol(struct symbol *syma,
+>  			     struct symbol *symb __maybe_unused)
+>  {
+> diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+> index 1965aefccb02..ee788ac67415 100644
+> --- a/tools/perf/util/symbol-elf.c
+> +++ b/tools/perf/util/symbol-elf.c
+> @@ -704,8 +704,14 @@ void symsrc__destroy(struct symsrc *ss)
+>  	close(ss->fd);
+>  }
+> 
+> -bool __weak elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+> +bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
+>  {
+> +	if (ehdr.e_machine == EM_AARCH64 ||
+> +	    ehdr.e_machine == EM_PPC ||
+> +	    ehdr.e_machine == EM_PPC64)
+> +		return ehdr.e_type == ET_EXEC || ehdr.e_type == ET_REL ||
+> +		       ehdr.e_type == ET_DYN;
+> +
+>  	return ehdr.e_type == ET_EXEC || ehdr.e_type == ET_REL;
 
-refuse to register an rproc-induced virtio device if no kick method was
-defined for rproc.
+Patch looks good to me. However:
 
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
-Fixes: 7a186941626d19f668b08108db158379b32e6e02 ("remoteproc: remove the single rpmsg vdev limitation")
-Cc: stable@vger.kernel.org
----
- drivers/remoteproc/remoteproc_virtio.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+This is only used for checking kernel, so I wonder if we can simply 
+include check for ET_DYN across all architectures? This would only 
+matter if there are architectures building their kernel as ET_DYN that 
+_don't_ want to adjust symbols.
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 8c07cb2ca8ba..31a62a0b470e 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -334,6 +334,13 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 	struct rproc_mem_entry *mem;
- 	int ret;
- 
-+	if (rproc->ops->kick == NULL) {
-+		ret = -EINVAL;
-+		dev_err(dev, ".kick method not defined for %s",
-+				rproc->name);
-+		goto out;
-+	}
-+
- 	/* Try to find dedicated vdev buffer carveout */
- 	mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
- 	if (mem) {
--- 
-2.24.1
+
+- Naveen
 
