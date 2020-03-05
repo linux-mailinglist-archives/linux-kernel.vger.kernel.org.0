@@ -2,210 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5490417AB97
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B3517AC9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:21:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgCERPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:15:00 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:15276 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbgCEROl (ORCPT
+        id S1726211AbgCERO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:14:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40076 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727604AbgCERON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:14:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1583428481; x=1614964481;
-  h=from:subject:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=5fApbeaqTcP0p/hHQ0KDa3FOcjpecfzaTtmdMnU8Cg4=;
-  b=C6AcNVIgYxXMhAd+acEWJ/3LrP08LYHfFpmpLtLpyZ+6R2NXa9ihLt4J
-   S41VCgOjMj7quo69lFNe2N+b4kP+q2tDI0ynQG2GPW1aneafJF9r3wkde
-   ecDgTq6QiN8QoailrtC47Xo5UDEQombHTuFVnXLsuRyIb0/CBybhhHq7h
-   U=;
-IronPort-SDR: EtTtVXXh4nhSPq0l+1rlC6IjpDmotIhfWTqDYxh6jbBOZoG+jtgmHMuPXMXz4dXEWL2ImWfocY
- 4HYs/ioX7lAg==
-X-IronPort-AV: E=Sophos;i="5.70,518,1574121600"; 
-   d="scan'208";a="19767269"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 05 Mar 2020 17:14:18 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com (Postfix) with ESMTPS id A5A5CA2090;
-        Thu,  5 Mar 2020 17:14:14 +0000 (UTC)
-Received: from EX13D13UWB001.ant.amazon.com (10.43.161.156) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 5 Mar 2020 17:14:13 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
- EX13D13UWB001.ant.amazon.com (10.43.161.156) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 5 Mar 2020 17:14:13 +0000
-Received: from [10.107.3.22] (10.107.3.22) by mail-relay.amazon.com
- (10.43.161.249) with Microsoft SMTP Server (TLS) id 15.0.1367.3 via Frontend
- Transport; Thu, 5 Mar 2020 17:14:08 +0000
-From:   "Hawa, Hanna" <hhhawa@amazon.com>
-Subject: Re: [EXTERNAL][PATCH v4 6/6] arm64: dts: amazon: add Amazon's
- Annapurna Labs Alpine v3 support
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <tsahee@annapurnalabs.com>, <mchehab+samsung@kernel.org>,
-        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-        <Jonathan.Cameron@huawei.com>, <tglx@linutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <dwmw@amazon.co.uk>,
-        <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
-        <jonnyc@amazon.com>, <hanochu@amazon.com>, <eitan@amazon.com>
-References: <20200225112926.16518-1-hhhawa@amazon.com>
- <20200225112926.16518-7-hhhawa@amazon.com> <20200304212737.GN3179@kwain>
-Message-ID: <7a1c1b59-f12d-5839-beea-6af5e7998640@amazon.com>
-Date:   Thu, 5 Mar 2020 19:14:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 5 Mar 2020 12:14:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583428451;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pNFG4r2jcMd7zD6p/OeosGiXr6KudiQkY+8b32nG8s0=;
+        b=So08X36rcQqb62Vv7AbUV5GRknjANnm7HyoNEZUQFJnTaGC88PgeG5KX8iHiJp2wqPo0V9
+        ibFjk7jA5lmMVRVyPkpNxdxcwNK4ya602kKjK4slyWCnp/77o8HiSSqXxnAzbXPPNiihjv
+        ovyzWdif5h5GEvgAuwSplgsK6MLgGA0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-332-YIy-mLF0Mm6hHmV2DR43KQ-1; Thu, 05 Mar 2020 12:14:09 -0500
+X-MC-Unique: YIy-mLF0Mm6hHmV2DR43KQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50791800D6C;
+        Thu,  5 Mar 2020 17:14:08 +0000 (UTC)
+Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F3ED90796;
+        Thu,  5 Mar 2020 17:14:07 +0000 (UTC)
+Date:   Thu, 5 Mar 2020 10:14:06 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dev@dpdk.org" <dev@dpdk.org>,
+        "mtosatti@redhat.com" <mtosatti@redhat.com>,
+        "thomas@monjalon.net" <thomas@monjalon.net>,
+        "bluca@debian.org" <bluca@debian.org>,
+        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>
+Subject: Re: [PATCH v2 0/7] vfio/pci: SR-IOV support
+Message-ID: <20200305101406.02703e2a@w520.home>
+In-Reply-To: <a6c04bac-0a37-f4c0-876e-e5cf2a8a6c3f@redhat.com>
+References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D79A8A7@SHSMSX104.ccr.corp.intel.com>
+        <a6c04bac-0a37-f4c0-876e-e5cf2a8a6c3f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200304212737.GN3179@kwain>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Antonie,
+On Tue, 25 Feb 2020 14:09:07 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-Thanks for reviewing,
+> On 2020/2/25 =E4=B8=8A=E5=8D=8810:33, Tian, Kevin wrote:
+> >> From: Alex Williamson
+> >> Sent: Thursday, February 20, 2020 2:54 AM
+> >>
+> >> Changes since v1 are primarily to patch 3/7 where the commit log is
+> >> rewritten, along with option parsing and failure logging based on
+> >> upstream discussions.  The primary user visible difference is that
+> >> option parsing is now much more strict.  If a vf_token option is
+> >> provided that cannot be used, we generate an error.  As a result of
+> >> this, opening a PF with a vf_token option will serve as a mechanism of
+> >> setting the vf_token.  This seems like a more user friendly API than
+> >> the alternative of sometimes requiring the option (VFs in use) and
+> >> sometimes rejecting it, and upholds our desire that the option is
+> >> always either used or rejected.
+> >>
+> >> This also means that the VFIO_DEVICE_FEATURE ioctl is not the only
+> >> means of setting the VF token, which might call into question whether
+> >> we absolutely need this new ioctl.  Currently I'm keeping it because I
+> >> can imagine use cases, for example if a hypervisor were to support
+> >> SR-IOV, the PF device might be opened without consideration for a VF
+> >> token and we'd require the hypservisor to close and re-open the PF in
+> >> order to set a known VF token, which is impractical.
+> >>
+> >> Series overview (same as provided with v1): =20
+> > Thanks for doing this!
+> > =20
+> >> The synopsis of this series is that we have an ongoing desire to drive
+> >> PCIe SR-IOV PFs from userspace with VFIO.  There's an immediate need
+> >> for this with DPDK drivers and potentially interesting future use =20
+> > Can you provide a link to the DPDK discussion?
+> > =20
+> >> cases in virtualization.  We've been reluctant to add this support
+> >> previously due to the dependency and trust relationship between the
+> >> VF device and PF driver.  Minimally the PF driver can induce a denial
+> >> of service to the VF, but depending on the specific implementation,
+> >> the PF driver might also be responsible for moving data between VFs
+> >> or have direct access to the state of the VF, including data or state
+> >> otherwise private to the VF or VF driver. =20
+> > Just a loud thinking. While the motivation of VF token sounds reasonable
+> > to me, I'm curious why the same concern is not raised in other usages.
+> > For example, there is no such design in virtio framework, where the
+> > virtio device could also be restarted, putting in separate process (vho=
+st-user),
+> > and even in separate VM (virtio-vhost-user), etc. =20
+>=20
+>=20
+> AFAIK, the restart could only be triggered by either VM or qemu. But=20
+> yes, the datapath could be offloaded.
+>=20
+> But I'm not sure introducing another dedicated mechanism is better than=20
+> using the exist generic POSIX mechanism to make sure the connection=20
+> (AF_UINX) is secure.
+>=20
+>=20
+> >   Of course the para-
+> > virtualized attribute of virtio implies some degree of trust, but as you
+> > mentioned many SR-IOV implementations support VF->PF communication
+> > which also implies some level of trust. It's perfectly fine if VFIO jus=
+t tries
+> > to do better than other sub-systems, but knowing how other people
+> > tackle the similar problem may make the whole picture clearer. =F0=9F=
+=98=8A
+> >
+> > +Jason. =20
+>=20
+>=20
+> I'm not quite sure e.g allowing userspace PF driver with kernel VF=20
+> driver would not break the assumption of kernel security model. At least=
+=20
+> we should forbid a unprivileged PF driver running in userspace.
 
-On 3/4/2020 11:27 PM, Antoine Tenart wrote:
-> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
-> 
-> 
-> 
-> Hello,
-> 
-> Sorry, I'm a bit late to the party...
-> 
-> On Tue, Feb 25, 2020 at 01:29:26PM +0200, Hanna Hawa wrote:
->> diff --git a/arch/arm64/boot/dts/amazon/alpine-v3.dtsi b/arch/arm64/boot/dts/amazon/alpine-v3.dtsi
->> +     arch-timer {
-> 
-> Please use 'timer' instead.
+It might be useful to have your opinion on this series, because that's
+exactly what we're trying to do here.  Various environments, DPDK
+specifically, want a userspace PF driver.  This series takes steps to
+mitigate the risk of having such a driver, such as requiring this VF
+token interface to extend the VFIO interface and validate participation
+around a PF that is not considered trusted by the kernel.  We also set
+a driver_override to try to make sure no host kernel driver can
+automatically bind to a VF of a user owned PF, only vfio-pci, but we
+don't prevent the admin from creating configurations where the VFs are
+used by other host kernel drivers.
 
-Will be fixed
+I think the question Kevin is inquiring about is whether virtio devices
+are susceptible to the type of collaborative, shared key environment
+we're creating here.  For example, can a VM or qemu have access to
+reset a virtio device in a way that could affect other devices, ex. FLR
+on a PF that could interfere with VF operation.  Thanks,
 
-> 
->> +             compatible = "arm,armv8-timer";
->> +             interrupts = <GIC_PPI 0xd IRQ_TYPE_LEVEL_LOW>,
->> +                          <GIC_PPI 0xe IRQ_TYPE_LEVEL_LOW>,
->> +                          <GIC_PPI 0xb IRQ_TYPE_LEVEL_LOW>,
->> +                          <GIC_PPI 0xa IRQ_TYPE_LEVEL_LOW>;
->> +     };
-> 
->> +             gic: interrupt-controller@f0000000 {
->> +                     compatible = "arm,gic-v3";
->> +                     #interrupt-cells = <3>;
->> +                     #address-cells = <0>;
-> 
-> No need for this.
+Alex
 
-Will be removed
-
-> 
->> +                     interrupt-controller;
->> +                     reg = <0x0 0xf0800000 0 0x10000>,
->> +                           <0x0 0xf0a00000 0 0x200000>,
->> +                           <0x0 0xf0000000 0 0x2000>,
->> +                           <0x0 0xf0010000 0 0x1000>,
->> +                           <0x0 0xf0020000 0 0x2000>;
-> 
-> Please add comments here, see alpine-v2.dtsi (or other dtsi in
-> arch/arm64).
-
-Will be added.
-
-> 
->> +                     interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +             };
->> +
->> +             msix: msix@fbe00000 {
->> +                     compatible = "al,alpine-msix";
->> +                     reg = <0x0 0xfbe00000 0x0 0x100000>;
->> +                     interrupt-controller;
->> +                     msi-controller;
->> +                     al,msi-base-spi = <160>;
->> +                     al,msi-num-spis = <800>;
->> +                     interrupt-parent = <&gic>;
->> +             };
->> +
->> +             uart0: serial@fd883000 {
-> 
-> Looking at the Alpine v2 dtsi, this node was put in an io-fabric bus. It
-> seems to me the Alpine v3 dtsi is very similar. Would it apply as well?
-
-V3 very similar to V2, will add to io-fabric bus and will add missing 
-uart devices.
-
-> 
->> +                     compatible = "ns16550a";
->> +                     reg = <0x0 0xfd883000 0x0 0x1000>;
->> +                     clock-frequency = <0>;
-> 
-> Is the frequency set to 0 on purpose? Or is it set by a firmware at boot
-> time (if so please add a comment)?
-
-It's updated by firmware, will add a comment.
-
-> 
->> +                     interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
->> +                     reg-shift = <2>;
->> +                     reg-io-width = <4>;
-> 
-> Since you're enabling this node explicitly in the dts, you can set it to
-> disabled by default.
-
-Ack
-
-> 
->> +             };
->> +
->> +             pcie@fbd00000 {
-> 
-> Please order the nodes in increasing order.
-
-Ack
-
-> 
->> +                     compatible = "pci-host-ecam-generic";
->> +                     device_type = "pci";
->> +                     #size-cells = <2>;
->> +                     #address-cells = <3>;
->> +                     #interrupt-cells = <1>;
->> +                     reg = <0x0 0xfbd00000 0x0 0x100000>;
->> +                     interrupt-map-mask = <0xf800 0 0 7>;
->> +                     /* 8 x legacy interrupts for SATA only */
->> +                     interrupt-map = <0x4000 0 0 1 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x4800 0 0 1 &gic 0 58 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x5000 0 0 1 &gic 0 59 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x5800 0 0 1 &gic 0 60 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x6000 0 0 1 &gic 0 61 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x6800 0 0 1 &gic 0 62 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x7000 0 0 1 &gic 0 63 IRQ_TYPE_LEVEL_HIGH>,
->> +                                     <0x7800 0 0 1 &gic 0 64 IRQ_TYPE_LEVEL_HIGH>;
->> +                     ranges = <0x02000000 0x0 0xfe000000 0x0 0xfe000000 0x0 0x1000000>;
->> +                     bus-range = <0x00 0x00>;
->> +                     msi-parent = <&msix>;
->> +             };
->> +     };
->> +};
-> 
-> The rest of the series looks good.
-Thanks
-
-Regards,
-Hanna
-
-> 
-> Thanks!
-> Antoine
-> 
-> --
-> Antoine Ténart, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-> 
