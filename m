@@ -2,245 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C68F617AD8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B2117AD84
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbgCERuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:50:55 -0500
-Received: from mga14.intel.com ([192.55.52.115]:24953 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726020AbgCERuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:50:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 09:50:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="320276072"
-Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga001.jf.intel.com with ESMTP; 05 Mar 2020 09:50:53 -0800
-Subject: [RFC][PATCH 2/2] x86: add extra serialization for non-serializing MSRs
-To:     linux-kernel@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, jan.kiszka@siemens.com,
-        x86@kernel.org, peterz@infradead.org
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Thu, 05 Mar 2020 09:47:08 -0800
-References: <20200305174706.0D6B8EE4@viggo.jf.intel.com>
-In-Reply-To: <20200305174706.0D6B8EE4@viggo.jf.intel.com>
-Message-Id: <20200305174708.F77040DD@viggo.jf.intel.com>
+        id S1726083AbgCERst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:48:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59762 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbgCERst (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:48:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=Df+Ig0PmkHN63sTvEob8OOMDLzhpt9pB/wVBSuAD08A=; b=FYcQwAuXpfAk4AjiPu8FznYBor
+        IxyzqmH5D44FR8ZLhaDF/85SOnKAqv1Hh5leH1eFRZ276OIFQtX3upoMz/ISSD9x2I1TJqbYsslkI
+        8l+h/HHV88hpFJBhVBT+8iXqNQUzYDATQR+N0zIUhO4SLyWGmhFRysiS/qgjVvYOnKzd8sNALWFEb
+        TVkRzAMWjfGnx7YURGJewlS5V+v53yZolCpOqPMnuuHKh6300JyrcQqmC0IzTbOVWiwlFY4x7nwSi
+        N2q8WoxbB2fKWT1ATAw+oAU6mkXbkkbWxKbqUhKw352ENOE4MX5CloLrVxq6VM8+pMypHmvoIze4h
+        Cp+TRhJQ==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9uc4-0000dn-4v; Thu, 05 Mar 2020 17:48:48 +0000
+Subject: Re: [v5] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Markus Elfring <Markus.Elfring@web.de>, linux-doc@vger.kernel.org
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+References: <158339065180.26602.26457588086834858.stgit@devnote2>
+ <158339066140.26602.7533299987467005089.stgit@devnote2>
+ <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+ <3fb124a6-07d2-7a40-8981-07561aeb3c1e@web.de>
+ <f823204d-dcd1-2159-a525-02f15562e1af@infradead.org>
+ <29c599ef-991d-a253-9f27-5999fb55b228@web.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <997f73af-dc6c-bc8b-12ba-69270ee4b95d@infradead.org>
+Date:   Thu, 5 Mar 2020 09:48:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <29c599ef-991d-a253-9f27-5999fb55b228@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 3/5/20 9:30 AM, Markus Elfring wrote:
+>>> How does this feedback fit to known concerns around the discussed wordings?
+>>
+>> As far as I am concerned, it means that the documentation is
+>> sufficiently good enough to be useful and not difficult to read.
+> 
+> Would you like to add anything to my previous review comments
+> (besides simple typo adjustments)?
 
-Jan Kiszka reported that the x2apic_wrmsr_fence() function uses a
-plain "mfence" while the Intel SDM (10.12.3 MSR Access in x2APIC
-Mode) calls for "mfence;lfence".
+If you would (could) be more concrete (or discrete) in your suggestions,
+I would be glad to comment on them.
 
-Short summary: we have special MSRs that have weaker ordering
-than all the rest.  Add fencing consistent with current SDM
-recommendatrions.
+> 
+> 
+>> It does not mean that it's perfect. Patches can still be made to it.
+> 
+> I hope that corresponding agreements will be achieved for
+> further improvements.
 
-This is not known to cause any issues in practice, only in
-theory.
 
-Longer story below:
+-- 
+~Randy
 
-The reason the kernel uses a different semantic is that the SDM
-changed (roughly in late 2017).  The SDM changed because folks at
-Intel were auditing all of the recommended fences in the SDM and
-realized that the x2apic fences were insufficient.
-
-Why was the pain "mfence" judged insufficient?
-
-WRMSR itself is normally a serializing instruction.  No fences
-are needed because because the instruction itself serializes
-everything.
-
-But, there are explicit exceptions for this serializing behavior
-written into the WRMSR instruction documentation for two classes
-of MSRs: IA32_TSC_DEADLINE and the X2APIC MSRs.
-
-Back to x2apic: WRMSR is *not* serializing in this specific case.
-But why is MFENCE insufficient?  MFENCE makes writes visible, but
-only affects load/store instructions.  WRMSR is unfortunately not
-a load/store instruction and is unaffected by MEFNCE.  This means
-that a non-serializing WRMSR could be reordered by the CPU to
-execute before the writes made visible by the MFENCE have even
-occurred in the first place.
-
-This mean that an x2apic IPI could theoretically be triggered
-before there is any (visible) data to process.
-
-Does this affect anything in practice?  I honestly don't know.
-It seems quite possible that by the time an interrupt gets to
-consume the (not yet) MFENCE'd data, it has become visible,
-mostly by accident.
-
-To be safe, add the SDM-recommended fences for all x2apic WRMSRs.
-
-This also leaves open the question of the _other_ weakly-ordered
-WRMSR: MSR_IA32_TSC_DEADLINE.  While it has the same ordering
-architecture as the x2APIC MSRs, it seems substantially less
-likely to be a problem in practice.  While writes to the
-in-memory Local Vector Table (LVT) might theoretically be
-reordered with respect to a weakly-ordered WRMSR like
-TSC_DEADLINE, the SDM has this to say:
-
-	In x2APIC mode, the WRMSR instruction is used to write to
-	the LVT entry. The processor ensures the ordering of this
-	write and any subsequent WRMSR to the deadline; no
-	fencing is required.
-
-But, that might still leave xAPIC exposed.  The safest thing to
-do for now is to add the extra, recommended LFENCE.
-
-Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-
----
-
- b/arch/x86/include/asm/apic.h           |   10 ----------
- b/arch/x86/include/asm/barrier.h        |   18 ++++++++++++++++++
- b/arch/x86/kernel/apic/apic.c           |    4 ++++
- b/arch/x86/kernel/apic/x2apic_cluster.c |    6 ++++--
- b/arch/x86/kernel/apic/x2apic_phys.c    |    9 ++++++---
- b/tools/arch/x86/include/asm/barrier.h  |    1 +
- 6 files changed, 33 insertions(+), 15 deletions(-)
-
-diff -puN arch/x86/include/asm/apic.h~x2apic-wrmsr-serialization arch/x86/include/asm/apic.h
---- a/arch/x86/include/asm/apic.h~x2apic-wrmsr-serialization	2020-03-05 09:42:38.876901038 -0800
-+++ b/arch/x86/include/asm/apic.h	2020-03-05 09:42:38.891901038 -0800
-@@ -195,16 +195,6 @@ static inline bool apic_needs_pit(void)
- #endif /* !CONFIG_X86_LOCAL_APIC */
- 
- #ifdef CONFIG_X86_X2APIC
--/*
-- * Make previous memory operations globally visible before
-- * sending the IPI through x2apic wrmsr. We need a serializing instruction or
-- * mfence for this.
-- */
--static inline void x2apic_wrmsr_fence(void)
--{
--	asm volatile("mfence" : : : "memory");
--}
--
- static inline void native_apic_msr_write(u32 reg, u32 v)
- {
- 	if (reg == APIC_DFR || reg == APIC_ID || reg == APIC_LDR ||
-diff -puN arch/x86/include/asm/barrier.h~x2apic-wrmsr-serialization arch/x86/include/asm/barrier.h
---- a/arch/x86/include/asm/barrier.h~x2apic-wrmsr-serialization	2020-03-05 09:42:38.878901038 -0800
-+++ b/arch/x86/include/asm/barrier.h	2020-03-05 09:42:38.893901038 -0800
-@@ -84,4 +84,22 @@ do {									\
- 
- #include <asm-generic/barrier.h>
- 
-+/*
-+ * Make previous memory operations globally visible before
-+ * a WRMSR.
-+ *
-+ * MFENCE makes writes visible, but only affects load/store
-+ * instructions.  WRMSR is unfortunately not a load/store
-+ * instruction and is unaffected by MEFNCE.  The LFENCE ensures
-+ * that the WRMSR is not reordered.
-+ *
-+ * Most WRMSRs are full serializing instructions themselves and
-+ * do not require this barrier.  This is only required for the
-+ * IA32_TSC_DEADLINE and X2APIC MSRs.
-+ */
-+static inline void weak_wrmsr_fence(void)
-+{
-+	asm volatile("mfence; lfence" : : : "memory");
-+}
-+
- #endif /* _ASM_X86_BARRIER_H */
-diff -puN arch/x86/kernel/apic/apic.c~x2apic-wrmsr-serialization arch/x86/kernel/apic/apic.c
---- a/arch/x86/kernel/apic/apic.c~x2apic-wrmsr-serialization	2020-03-05 09:42:38.880901038 -0800
-+++ b/arch/x86/kernel/apic/apic.c	2020-03-05 09:42:38.892901038 -0800
-@@ -42,6 +42,7 @@
- #include <asm/x86_init.h>
- #include <asm/pgalloc.h>
- #include <linux/atomic.h>
-+#include <asm/barrier.h>
- #include <asm/mpspec.h>
- #include <asm/i8259.h>
- #include <asm/proto.h>
-@@ -474,6 +475,9 @@ static int lapic_next_deadline(unsigned
- {
- 	u64 tsc;
- 
-+	/* This MSR is special and need a special fence: */
-+	weak_wrmsr_fence();
-+
- 	tsc = rdtsc();
- 	wrmsrl(MSR_IA32_TSC_DEADLINE, tsc + (((u64) delta) * TSC_DIVISOR));
- 	return 0;
-diff -puN arch/x86/kernel/apic/x2apic_cluster.c~x2apic-wrmsr-serialization arch/x86/kernel/apic/x2apic_cluster.c
---- a/arch/x86/kernel/apic/x2apic_cluster.c~x2apic-wrmsr-serialization	2020-03-05 09:42:38.882901038 -0800
-+++ b/arch/x86/kernel/apic/x2apic_cluster.c	2020-03-05 09:42:38.892901038 -0800
-@@ -29,7 +29,8 @@ static void x2apic_send_IPI(int cpu, int
- {
- 	u32 dest = per_cpu(x86_cpu_to_logical_apicid, cpu);
- 
--	x2apic_wrmsr_fence();
-+	/* x2apic MSRs are special and need a special fence: */
-+	weak_wrmsr_fence();
- 	__x2apic_send_IPI_dest(dest, vector, APIC_DEST_LOGICAL);
- }
- 
-@@ -41,7 +42,8 @@ __x2apic_send_IPI_mask(const struct cpum
- 	unsigned long flags;
- 	u32 dest;
- 
--	x2apic_wrmsr_fence();
-+	/* x2apic MSRs are special and need a special fence: */
-+	weak_wrmsr_fence();
- 	local_irq_save(flags);
- 
- 	tmpmsk = this_cpu_cpumask_var_ptr(ipi_mask);
-diff -puN arch/x86/kernel/apic/x2apic_phys.c~x2apic-wrmsr-serialization arch/x86/kernel/apic/x2apic_phys.c
---- a/arch/x86/kernel/apic/x2apic_phys.c~x2apic-wrmsr-serialization	2020-03-05 09:42:38.885901038 -0800
-+++ b/arch/x86/kernel/apic/x2apic_phys.c	2020-03-05 09:42:38.892901038 -0800
-@@ -37,7 +37,8 @@ static void x2apic_send_IPI(int cpu, int
- {
- 	u32 dest = per_cpu(x86_cpu_to_apicid, cpu);
- 
--	x2apic_wrmsr_fence();
-+	/* x2apic MSRs are special and need a special fence: */
-+	weak_wrmsr_fence();
- 	__x2apic_send_IPI_dest(dest, vector, APIC_DEST_PHYSICAL);
- }
- 
-@@ -48,7 +49,8 @@ __x2apic_send_IPI_mask(const struct cpum
- 	unsigned long this_cpu;
- 	unsigned long flags;
- 
--	x2apic_wrmsr_fence();
-+	/* x2apic MSRs are special and need a special fence: */
-+	weak_wrmsr_fence();
- 
- 	local_irq_save(flags);
- 
-@@ -116,7 +118,8 @@ void __x2apic_send_IPI_shorthand(int vec
- {
- 	unsigned long cfg = __prepare_ICR(which, vector, 0);
- 
--	x2apic_wrmsr_fence();
-+	/* x2apic MSRs are special and need a special fence: */
-+	weak_wrmsr_fence();
- 	native_x2apic_icr_write(cfg, 0);
- }
- 
-diff -puN tools/arch/x86/include/asm/barrier.h~x2apic-wrmsr-serialization tools/arch/x86/include/asm/barrier.h
---- a/tools/arch/x86/include/asm/barrier.h~x2apic-wrmsr-serialization	2020-03-05 09:42:38.887901038 -0800
-+++ b/tools/arch/x86/include/asm/barrier.h	2020-03-05 09:42:38.892901038 -0800
-@@ -43,4 +43,5 @@ do {						\
- 	___p1;					\
- })
- #endif /* defined(__x86_64__) */
-+
- #endif /* _TOOLS_LINUX_ASM_X86_BARRIER_H */
-_
