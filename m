@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59BA817B1D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 271EB17B1AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:47:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgCEWrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:47:16 -0500
+        id S1726563AbgCEWpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:45:47 -0500
 Received: from mga18.intel.com ([134.134.136.126]:5017 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbgCEWpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726162AbgCEWpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Mar 2020 17:45:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 14:45:45 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 14:45:46 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,519,1574150400"; 
-   d="scan'208";a="234674597"
+   d="scan'208";a="234674600"
 Received: from minkleyx-mobl1.amr.corp.intel.com (HELO spandruv-mobl.amr.corp.intel.com) ([10.252.207.66])
   by fmsmga008.fm.intel.com with ESMTP; 05 Mar 2020 14:45:45 -0800
 From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
@@ -25,9 +25,9 @@ To:     andriy.shevchenko@linux.intel.com
 Cc:     platform-driver-x86@vger.kernel.org, prarit@redhat.com,
         linux-kernel@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 02/27] tools/power/x86/intel-speed-select: Make target CPU optional for core-power info
-Date:   Thu,  5 Mar 2020 14:45:13 -0800
-Message-Id: <20200305224538.490864-3-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 03/27] tools/power/x86/intel-speed-select: Enhance core-power info command
+Date:   Thu,  5 Mar 2020 14:45:14 -0800
+Message-Id: <20200305224538.490864-4-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200305224538.490864-1-srinivas.pandruvada@linux.intel.com>
 References: <20200305224538.490864-1-srinivas.pandruvada@linux.intel.com>
@@ -38,46 +38,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently "-c" is a mandatory option for "core-power info" command. Make
-this optional as this is a per package/die property. When not specified,
-it will print info for every package/die.
+In addition to CLOS enable status, also show the core-power feature
+status. This will help why clos enable status didn't give desired
+results as the core-power feature may be disabled or unsupported.
+
+The new display looks as follows:
+
+$intel-speed-select core-power info
+Intel(R) Speed Select Technology
+..
+ package-0
+  die-0
+    cpu-0
+      core-power
+        support-status:supported
+        enable-status:enabled
+        clos-enable-status:1
+        priority-type:0
+
+In the above display "support-status" and "enable-status", shows the
+status of the core-power feature and "clos-enable-status", shows the
+status of the clos.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- tools/power/x86/intel-speed-select/isst-config.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ .../power/x86/intel-speed-select/isst-config.c  |  9 +++++++--
+ .../power/x86/intel-speed-select/isst-display.c | 17 ++++++++++++++++-
+ tools/power/x86/intel-speed-select/isst.h       |  4 +++-
+ 3 files changed, 26 insertions(+), 4 deletions(-)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 3f019f4f90df..c0de18e10cda 100644
+index c0de18e10cda..405b03cba248 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -1763,19 +1763,17 @@ static void dump_clos_info(int arg)
- 	if (cmd_help) {
- 		fprintf(stderr,
- 			"Print Intel Speed Select Technology core power information\n");
--		fprintf(stderr, "\tSpecify targeted cpu id with [--cpu|-c]\n");
--		exit(0);
--	}
--
--	if (!max_target_cpus) {
--		fprintf(stderr,
--			"Invalid target cpu. Specify with [-c|--cpu]\n");
-+		fprintf(stderr, "\t Optionally specify targeted cpu id with [--cpu|-c]\n");
- 		exit(0);
- 	}
- 
- 	isst_ctdp_display_information_start(outf);
--	for_each_online_target_cpu_in_set(get_clos_info_for_cpu, NULL,
--					  NULL, NULL, NULL);
-+	if (max_target_cpus)
-+		for_each_online_target_cpu_in_set(get_clos_info_for_cpu, NULL,
-+						  NULL, NULL, NULL);
-+	else
-+		for_each_online_package_in_set(get_clos_info_for_cpu, NULL,
-+					       NULL, NULL, NULL);
- 	isst_ctdp_display_information_end(outf);
- 
+@@ -1754,8 +1754,13 @@ static void get_clos_info_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
+ 	ret = isst_clos_get_clos_information(cpu, &enable, &prio_type);
+ 	if (ret)
+ 		perror("isst_clos_get_info");
+-	else
+-		isst_clos_display_clos_information(cpu, outf, enable, prio_type);
++	else {
++		int cp_state, cp_cap;
++
++		isst_read_pm_config(cpu, &cp_state, &cp_cap);
++		isst_clos_display_clos_information(cpu, outf, enable, prio_type,
++						   cp_state, cp_cap);
++	}
  }
+ 
+ static void dump_clos_info(int arg)
+diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
+index 3d70be2a9f61..30377acb909d 100644
+--- a/tools/power/x86/intel-speed-select/isst-display.c
++++ b/tools/power/x86/intel-speed-select/isst-display.c
+@@ -589,7 +589,8 @@ void isst_clos_display_information(int cpu, FILE *outf, int clos,
+ }
+ 
+ void isst_clos_display_clos_information(int cpu, FILE *outf,
+-					int clos_enable, int type)
++					int clos_enable, int type,
++					int state, int cap)
+ {
+ 	char header[256];
+ 	char value[256];
+@@ -605,7 +606,21 @@ void isst_clos_display_clos_information(int cpu, FILE *outf,
+ 	snprintf(header, sizeof(header), "core-power");
+ 	format_and_print(outf, 4, header, NULL);
+ 
++	snprintf(header, sizeof(header), "support-status");
++	if (cap)
++		snprintf(value, sizeof(value), "supported");
++	else
++		snprintf(value, sizeof(value), "unsupported");
++	format_and_print(outf, 5, header, value);
++
+ 	snprintf(header, sizeof(header), "enable-status");
++	if (state)
++		snprintf(value, sizeof(value), "enabled");
++	else
++		snprintf(value, sizeof(value), "disabled");
++	format_and_print(outf, 5, header, value);
++
++	snprintf(header, sizeof(header), "clos-enable-status");
+ 	snprintf(value, sizeof(value), "%d", clos_enable);
+ 	format_and_print(outf, 5, header, value);
+ 
+diff --git a/tools/power/x86/intel-speed-select/isst.h b/tools/power/x86/intel-speed-select/isst.h
+index ad5aa6341d0f..53e147a9a295 100644
+--- a/tools/power/x86/intel-speed-select/isst.h
++++ b/tools/power/x86/intel-speed-select/isst.h
+@@ -245,7 +245,9 @@ extern void isst_display_result(int cpu, FILE *outf, char *feature, char *cmd,
+ 
+ extern int isst_clos_get_clos_information(int cpu, int *enable, int *type);
+ extern void isst_clos_display_clos_information(int cpu, FILE *outf,
+-					       int clos_enable, int type);
++					       int clos_enable, int type,
++					       int state, int cap);
+ extern int is_clx_n_platform(void);
+ extern int get_cpufreq_base_freq(int cpu);
++extern int isst_read_pm_config(int cpu, int *cp_state, int *cp_cap);
+ #endif
 -- 
 2.24.1
 
