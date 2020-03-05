@@ -2,142 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73EFF17B06F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 22:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F5117B08A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 22:20:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgCEVRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 16:17:13 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:50911 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbgCEVRM (ORCPT
+        id S1726067AbgCEVUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 16:20:08 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46079 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbgCEVUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 16:17:12 -0500
-Received: by mail-pj1-f68.google.com with SMTP id nm6so128039pjb.0;
-        Thu, 05 Mar 2020 13:17:12 -0800 (PST)
+        Thu, 5 Mar 2020 16:20:07 -0500
+Received: by mail-pg1-f193.google.com with SMTP id m15so13356pgv.12
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 13:20:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sMCdEJuXdOhoW7m3gO5zM39AjW+YF/Rrads4zZrd1kg=;
-        b=QLDq4YaDIhaMBuukLE9flkTFbc+QtHMA/oiSdyTDoEucukwkh/qEIOtiLrIaSPrTK6
-         IbBwi9DE4rWJY/cRk6jqyRNQWADhqF4G3vuMdui0IZQ7kCZlXSJ6hvraMZnX89JIvTfq
-         BHstEMkSF+S53O+U2m43bKmbZaKOP7JCwhNQoCViZCDX8rGi8rzzaJV2caPcb181w2cV
-         5Ih7zwO2yZySaFOkknNUNLu46EQk/KI0nqyA5a2gSpyIvBCNIcrXNyv4auEuOR6S6rYO
-         wM8iKHLjtq8nNk20lh0Jm32XL9MiJhdHR8jU/J+3piz5zb/m8XsTiWgpo/DSCYRlR3js
-         37Gw==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=loNKzfZ2WYLORcMWCHnowkSlwOV4uJb56BC4cjXOiZU=;
+        b=FvsPrdXRRh3QO/+s411g5ODMr7nz7JNzHdZUNqmf3I0YSid7pOy9SG8unIaxB7I8qK
+         0b1WIMrjkovcf2oUrO1UOt4ur/E6lhmkDoUhoGLeuB76SYdb8URghyBAbaZcvdZvGCfd
+         9mr95A9Hcj0CUdd2H9PuSaS7ktdpityBgJ8rc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sMCdEJuXdOhoW7m3gO5zM39AjW+YF/Rrads4zZrd1kg=;
-        b=CwBtAR2tzZ4odrHefeJPSc4FBYLSmeegGAXL5vRWFqcQObrVYEjpZEn8I3xFeET2yV
-         5lf8g6+SoqqPPgmPR60h0+pjdLz3OR968rHkuBbOzDUJWpDZkIqpxtTSVsCLT3JggrfV
-         UShLh98Pf643wZRuzCtBxf/XWnRLzlsn5GAG3ksRQSgbtVd99sQ8Drcd0gv4j4OQo+eW
-         0FBBLu/U2SRdx9z2RSOp0tt/0Du9ZEXRa3r8BfyWuDOik/bJukKZtezZMf5fXzTMLDCz
-         v+JF4gDH7kkJs2FItyk4USnQcGIm6xNRPXhP9NEuZ+rfc1cvtn/NdlvdEBt6NUzj0uVI
-         f2eg==
-X-Gm-Message-State: ANhLgQ3Y/9YPnGzOOgoVDGjlTQhMckKIudO8KFUt21PKzdaTEUz5h5B8
-        0Bd1HQ7QE15ovxOm+SU1HKfM2g9h
-X-Google-Smtp-Source: ADFU+vuBValh/xWu8eZS3JQlD4ct4iHhbaZw6HRIxQki/aNn7M/w9mK7wdAYuhReqpJGtbECQIuY/w==
-X-Received: by 2002:a17:902:401:: with SMTP id 1mr94281ple.177.1583443031459;
-        Thu, 05 Mar 2020 13:17:11 -0800 (PST)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id na18sm8053910pjb.9.2020.03.05.13.17.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2020 13:17:10 -0800 (PST)
-Subject: Re: [PATCH v3] net: memcg: late association of sock to memcg
-To:     Shakeel Butt <shakeelb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Roman Gushchin <guro@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200305205525.245058-1-shakeelb@google.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <9505d35b-f9fc-149b-6df5-e65ad95acabb@gmail.com>
-Date:   Thu, 5 Mar 2020 13:17:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=loNKzfZ2WYLORcMWCHnowkSlwOV4uJb56BC4cjXOiZU=;
+        b=q8gPnEYnVsQoS4WM7YQ70cRI6XLixyW0AOXTD5fVCR9lGypTcoz4fT4nFQdOJApQvg
+         iZQACqYbNIPrnQkBbot4FgXjOU/+CAipyc3eOYjDDR7pkiMm9ln8zE/kXVT0N8V7OoWL
+         8R42Vg2FtLlMrzl/wo7/BcUeBANIG6r6JiARB6+oEykX1sBbKkeL+d45KDDl+vWjG1av
+         27wRIrLuIZ2K2TVesQrYqxJvmwjljRh9bX5x3GPT+TsEBq25sk6X33OHW2w+8XDOvDDH
+         4F7nOTbDOnbFw6Biu15Poqj0kzBs7jzgfhWiMTydF8g5aba8w4lWvJhlm5p/LBPwijTq
+         NBOg==
+X-Gm-Message-State: ANhLgQ2SZQK6e7j/wxOLhtYk4txSnJBwO/bMJrDrednguoHj4tRnA/J3
+        OLKa2M+IQBgFQ/KkQdQld/OTWA==
+X-Google-Smtp-Source: ADFU+vvOwKIZrmY5TmSyaDSc10dmgGfZMXiDaur2s6Rjr8CpcpphDf6IrHTFxblTEIC0/8jRjSIHOA==
+X-Received: by 2002:aa7:8ad9:: with SMTP id b25mr342124pfd.70.1583443206190;
+        Thu, 05 Mar 2020 13:20:06 -0800 (PST)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id q187sm32819052pfq.185.2020.03.05.13.20.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 13:20:05 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200305205525.245058-1-shakeelb@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200305030135.210675-1-pmalani@chromium.org>
+References: <20200305030135.210675-1-pmalani@chromium.org>
+Subject: Re: [PATCH v2] dt-bindings: Convert usb-connector to YAML format.
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     bleung@chromium.org, heikki.krogerus@linux.intel.com,
+        enric.balletbo@collabora.com,
+        Prashant Malani <pmalani@chromium.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>
+To:     Prashant Malani <pmalani@chromium.org>, devicetree@vger.kernel.org
+Date:   Thu, 05 Mar 2020 13:20:04 -0800
+Message-ID: <158344320452.25912.4758137777863945655@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/5/20 12:55 PM, Shakeel Butt wrote:
-> If a TCP socket is allocated in IRQ context or cloned from unassociated
-> (i.e. not associated to a memcg) in IRQ context then it will remain
-> unassociated for its whole life. Almost half of the TCPs created on the
-> system are created in IRQ context, so, memory used by such sockets will
-> not be accounted by the memcg.
-> 
-> This issue is more widespread in cgroup v1 where network memory
-> accounting is opt-in but it can happen in cgroup v2 if the source socket
-> for the cloning was created in root memcg.
-> 
-> To fix the issue, just do the late association of the unassociated
-> sockets at accept() time in the process context and then force charge
-> the memory buffer already reserved by the socket.
-> 
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> ---
-> Changes since v2:
-> - Additional check for charging.
-> - Release the sock after charging.
-> 
-> Changes since v1:
-> - added sk->sk_rmem_alloc to initial charging.
-> - added synchronization to get memory usage and set sk_memcg race-free.
-> 
->  net/ipv4/inet_connection_sock.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-> index a4db79b1b643..5face55cf818 100644
-> --- a/net/ipv4/inet_connection_sock.c
-> +++ b/net/ipv4/inet_connection_sock.c
-> @@ -482,6 +482,26 @@ struct sock *inet_csk_accept(struct sock *sk, int flags, int *err, bool kern)
->  		}
->  		spin_unlock_bh(&queue->fastopenq.lock);
->  	}
+Quoting Prashant Malani (2020-03-04 19:01:30)
+> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.ya=
+ml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> new file mode 100644
+> index 0000000000000..b386e2880405c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> @@ -0,0 +1,203 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/connector/usb-connector.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	if (mem_cgroup_sockets_enabled && !newsk->sk_memcg) {
-> +		int amt;
+> +title: USB Connector
 > +
-> +		/* atomically get the memory usage, set and charge the
-> +		 * sk->sk_memcg.
-> +		 */
-> +		lock_sock(newsk);
+> +maintainers:
+> +  - linux-usb@vger.kernel.org
 > +
-> +		/* The sk has not been accepted yet, no need to look at
-> +		 * sk->sk_wmem_queued.
-> +		 */
-> +		amt = sk_mem_pages(newsk->sk_forward_alloc +
-> +				   atomic_read(&sk->sk_rmem_alloc));
-> +		mem_cgroup_sk_alloc(newsk);
-> +		if (newsk->sk_memcg && amt)
-> +			mem_cgroup_charge_skmem(newsk->sk_memcg, amt);
+> +description:
+> +  A USB connector node represents a physical USB connector. It should be=
+ a child
+> +  of a USB interface controller.
 > +
-> +		release_sock(newsk);
-> +	}
->  out:
->  	release_sock(sk);
->  	if (req)
-> 
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - usb-a-connector
+> +      - usb-b-connector
+> +      - usb-c-connector
+> +
+> +  label:
+> +    description: Symbolic name for the connector.
+> +
+> +  type:
+> +    description: Size of the connector, should be specified in case of U=
+SB-A,
+> +      USB-B non-fullsize connectors.
 
-This patch looks fine, but why keeping the mem_cgroup_sk_alloc(newsk);
-in sk_clone_lock() ?
+Maybe "should be specified in case of non-fullsize 'usb-a-connector' or
+'usb-b-connector' compatible connectors"?
 
-Note that all TCP sk_clone_lock() calls happen in softirq context.
+> +    $ref: /schemas/types.yaml#definitions/string
+> +    enum:
+> +      - mini
+> +      - micro
+> +
+> +  self-powered:
+> +    description: Set this property if the USB device has its own power s=
+ource.
+> +    type: boolean
+> +
+> +  # The following are optional properties for "usb-b-connector".
+> +  id-gpios:
+> +    description: An input gpio for USB ID pin.
+> +    maxItems: 1
+> +
+> +  vbus-gpios:
+> +    description: An input gpio for USB VBus pin, used to detect presence=
+ of
+> +      VBUS 5V. See gpio/gpio.txt.
+
+Can this be written as bindings/gpio/gpio.txt?
+
+> +    maxItems: 1
+> +
+> +  vbus-supply:
+> +    description: A phandle to the regulator for USB VBUS if needed when =
+host
+> +      mode or dual role mode is supported.
+> +      Particularly, if use an output GPIO to control a VBUS regulator, s=
+hould
+> +      model it as a regulator. See regulator/fixed-regulator.yaml
+
+And bindings/regulator/fixed-regulator.yaml? The idea is to
+disambiguate from kernel Documentation/ directory.
+
+> +
+> +  # The following are optional properties for "usb-c-connector".
+
+Is there a way to constrain the binding so that this can't be put in a
+connector that doesn't have the usb-c-connector compatible string?
+
+> +  power-role:
+> +    description: Determines the power role that the Type C connector will
+> +      support. "dual" refers to Dual Role Port (DRP).
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#definitions/string
+> +    enum:
+> +      - source
+> +      - sink
+> +      - dual
+> +
+> +  try-power-role:
+> +    description: Preferred power role.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#definitions/string
+> +    enum:
+> +     - source
+> +     - sink
+> +     - dual
+> +
+> +  data-role:
+> +    description: Data role if Type C connector supports USB data. "dual"=
+ refers
+> +      Dual Role Device (DRD).
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#definitions/string
+> +    enum:
+> +      - host
+> +      - device
+> +      - dual
+
+Is there a way to maintain a description for each possible string
+property? Then we could move the last sentence in the description above
+to be attached to '- dual' here.
+
+> +
+> +  # The following are optional properties for "usb-c-connector" with pow=
+er
+> +  # delivery support.
+> +  source-pdos:
+> +    description: An array of u32 with each entry providing supported pow=
+er
+> +      source data object(PDO), the detailed bit definitions of PDO can b=
+e found
+> +      in "Universal Serial Bus Power Delivery Specification" chapter 6.4=
+.1.2
+> +      Source_Capabilities Message, the order of each entry(PDO) should f=
+ollow
+> +      the PD spec chapter 6.4.1. Required for power source and power dua=
+l role.
+> +      User can specify the source PDO array via PDO_FIXED/BATT/VAR/PPS_A=
+PDO()
+> +      defined in dt-bindings/usb/pd.h.
+> +    minItems: 1
+> +    maxItems: 7
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +  sink-pdos:
+> +    description: An array of u32 with each entry providing supported pow=
+er sink
+> +      data object(PDO), the detailed bit definitions of PDO can be found=
+ in
+> +      "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.3
+> +      Sink Capabilities Message, the order of each entry(PDO) should fol=
+low the
+> +      PD spec chapter 6.4.1. Required for power sink and power dual role=
+. User
+> +      can specify the sink PDO array via PDO_FIXED/BATT/VAR/PPS_APDO() d=
+efined
+> +      in dt-bindings/usb/pd.h.
+> +    minItems: 1
+> +    maxItems: 7
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +  op-sink-microwatt:
+> +    description: Sink required operating power in microwatt, if source c=
+an't
+> +      offer the power, Capability Mismatch is set. Required for power si=
+nk and
+> +      power dual role.
+> +
+> +  ports:
+> +    description: OF graph bindings (specified in bindings/graph.txt) tha=
+t model
+> +      any data bus to the connector unless the bus is between parent nod=
+e and
+> +      the connector. Since a single connector can have multiple data bus=
+es every
+> +      bus has assigned OF graph port number as described below.
+
+has an assigned?
+
+> +    type: object
+> +    properties:
+> +      port@0:
+> +        type: object
+> +        description: High Speed (HS), present in all connectors.
+> +
+> +      port@1:
+> +        type: object
+> +        description: Super Speed (SS), present in SS capable connectors.
+> +
+> +      port@2:
+> +        type: object
+> +        description: Sideband Use (SBU), present in USB-C.
+
+Likewise, is it possible to constrain this to only usb-c-connector
+compatible string based bindings? And if so, does it become required for
+that compatible string?
+
+> +
+> +    required:
+> +      - port@0
+> +
+> +required:
+> +  - compatible
+> +
+> +examples:
+> +  # Micro-USB connector with HS lines routed via controller (MUIC).
+> +  - |+
+> +    muic-max77843@66 {
+
+Add a reg =3D <0x66>; here? Or drop the unit address above.
+
+> +      usb_con1: connector {
+> +        compatible =3D "usb-b-connector";
+> +        label =3D "micro-USB";
+> +        type =3D "micro";
+> +      };
+> +    };
+> +
+> +  # USB-C connector attached to CC controller (s2mm005), HS lines routed
+> +  # to companion PMIC (max77865), SS lines to USB3 PHY and SBU to Displa=
+yPort.
+> +  # DisplayPort video lines are routed to the connector via SS mux in US=
+B3 PHY.
+> +  - |+
+> +    ccic: s2mm005@33 {
+
+Same unit address comment.
+
+> +      usb_con2: connector {
+> +        compatible =3D "usb-c-connector";
+> +        label =3D "USB-C";
+> +
+> +        ports {
+> +          #address-cells =3D <1>;
+> +          #size-cells =3D <0>;
+> +
+> +          port@0 {
+> +            reg =3D <0>;
+> +            usb_con_hs: endpoint {
+> +              remote-endpoint =3D <&max77865_usbc_hs>;
+> +            };
+> +          };
+> +          port@1 {
+> +            reg =3D <1>;
+> +            usb_con_ss: endpoint {
+> +            remote-endpoint =3D <&usbdrd_phy_ss>;
+> +            };
+> +          };
+> +          port@2 {
+> +            reg =3D <2>;
+> +            usb_con_sbu: endpoint {
+> +            remote-endpoint =3D <&dp_aux>;
+> +            };
+
+Tabs should be replaced with spaces.
+
+> +          };
+> +        };
+> +      };
+> +    };
+> +
+> +  # USB-C connector attached to a typec port controller(ptn5110), which =
+has
+> +  # power delivery support and enables drp.
+> +  - |+
+> +    #include <dt-bindings/usb/pd.h>
+> +    typec: ptn5110@50 {
+
+Same unit address comment.
+
+> +      usb_con3: connector {
+> +        compatible =3D "usb-c-connector";
+> +        label =3D "USB-C";
+> +        power-role =3D "dual";
+> +        try-power-role =3D "sink";
+> +        source-pdos =3D <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
+> +        sink-pdos =3D <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)
+> +                     PDO_VAR(5000, 12000, 2000)>;
+> +        op-sink-microwatt =3D <10000000>;
+> +      };
+> +    };
