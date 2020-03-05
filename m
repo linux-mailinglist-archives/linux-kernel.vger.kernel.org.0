@@ -2,87 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AE617A132
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:25:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B1B17A138
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbgCEIYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 03:24:21 -0500
-Received: from sauhun.de ([88.99.104.3]:45142 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbgCEIYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:24:21 -0500
-Received: from localhost (p54B330C6.dip0.t-ipconnect.de [84.179.48.198])
-        by pokefinder.org (Postfix) with ESMTPSA id A7A422C1F28;
-        Thu,  5 Mar 2020 09:24:18 +0100 (CET)
-Date:   Thu, 5 Mar 2020 09:24:15 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] include/bitmap.h: add new functions to documentation
-Message-ID: <20200305082415.GA1079@ninjato>
-References: <20200304140920.6109-1-wsa+renesas@sang-engineering.com>
- <20200304140920.6109-3-wsa+renesas@sang-engineering.com>
- <20200304204026.GA55400@dennisz-mbp>
+        id S1726145AbgCEI02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:26:28 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44237 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbgCEI01 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 03:26:27 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y26so2398252pfn.11
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:26:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pEatHTWH0KovQUE1IliiOOh+OJO6vJzogkc3LdB4OY0=;
+        b=E/kkoPaC2FMeGYEZ+bcmO62AmBz6ioa1QQm9IiXemxyUaA7oKQKDSF84iTdG7NT6m6
+         btxAs0G47enywKwVaiVOlSyznVAcx8fSXopz5vsetifC/uyO3YhjiqBsZx3pLve+j76/
+         UkzGgSX4JdMpqLgCRi0vjG1HGcBz0K5sn/Qtg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pEatHTWH0KovQUE1IliiOOh+OJO6vJzogkc3LdB4OY0=;
+        b=fEut5ZrnlZy20a0OWB3aH9DjC4HVGr9OhD7VyoeuOMlYnVT1VTI/HiDu6Ph+IGaMgr
+         ns2XkQHzBvnY5pnomG8m7jeTY83uEMlMzFwSVPRIpT/n5PrAKk3JiSb9XxfWhZVA5I1g
+         f2QvQ2a3efeeCVKOu0ZhjYqt4qSbe6k/q7tIDx2rHdi0aEHtE6R3ur/AsEBNEdpUT9il
+         QEycgAYgifLYhrxYjQGhkL56ijpr5Y7xZMKbgIk7AhDM3ksnhCPvgT3+MPutSaKFIc3X
+         XwXma+YkaD3kZD77zJJOcXu4RCJBf6K1w/Q0RfQ05vKadwt6rZIrivzTfR/6M6Uxnv8J
+         Go3A==
+X-Gm-Message-State: ANhLgQ184yE9dQV49zYFPEU6kY49h9y0TMDPnRYGYXaNqEkvrPxRGq+N
+        etfGdbWsCKRi7dDD/KOOEaLVGw==
+X-Google-Smtp-Source: ADFU+vtzSJ2ErVWBCNHqCv68ee7q7/rHaGMcbMhofpwmAUpPHp6vsLSbOD4qp3AIRnc9whaK7cnjSQ==
+X-Received: by 2002:a65:468d:: with SMTP id h13mr6418693pgr.359.1583396786314;
+        Thu, 05 Mar 2020 00:26:26 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 1sm26930783pff.11.2020.03.05.00.26.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 00:26:25 -0800 (PST)
+Date:   Thu, 5 Mar 2020 00:26:24 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to
+ copy_from_user()
+Message-ID: <202003050010.A1A965BF37@keescook>
+References: <20200302130430.201037-2-glider@google.com>
+ <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
+ <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
+ <4cac10d3e2c03e4f21f1104405a0a62a853efb4e.camel@perches.com>
+ <CAG_fn=XOyPGau9m7x8eCLJHy3m-H=nbMODewWVJ1xb2e+BPdFw@mail.gmail.com>
+ <18b0d6ea5619c34ca4120a6151103dbe9bfa0cbe.camel@perches.com>
+ <CAG_fn=U2T--j_uhyppqzFvMO3w3yUA529pQrCpbhYvqcfh9Z1w@mail.gmail.com>
+ <20200303093832.GD24372@kadam>
+ <202003040951.7857DFD936@keescook>
+ <20200305080756.GB19839@kadam>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200304204026.GA55400@dennisz-mbp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200305080756.GB19839@kadam>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 05, 2020 at 11:07:56AM +0300, Dan Carpenter wrote:
+> On Wed, Mar 04, 2020 at 10:13:40AM -0800, Kees Cook wrote:
+> > On Tue, Mar 03, 2020 at 12:38:32PM +0300, Dan Carpenter wrote:
+> > > The real fix is to initialize everything manually, the automated
+> > > initialization is a hardenning feature which many people will disable.
+> > 
+> > I cannot disagree more with this sentiment. Linus has specifically said he
+> > wants this initialization on by default[1],
+> 
+> Fine, but as long as it's a configurable thing then we need to manually
+> initialize as well or it's still a CVE etc.  It will take a while before
+> we drop support for old versions of GCC as well.
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I agree; that's totally true. We need to continue to fix all the
+uninitialized flaws we encounter unless this is on by default for all
+supported compiler versions (which will be a looong time). (But it's
+not relevant to this patch because copy_from_user() does already do
+the initialization.)
 
+This set of patches was about dealing with the pathological cases of
+auto-init colliding with functions that do, in fact, fully init. Though
+I must say, I remain concerned about inventing such markings for fear
+they'll be used in places where the "trust me, it's fully initialized"
+state does not actually hold[1] but the author thinks it does.
 
-> > I found these functions only by chance although I was looking exactly
-> > for something like them. So, add them to the list of functions to make
-> > them more visible.
-> >=20
-> > Fixes: e837dfde15a4 ("bitmap: genericize percpu bitmap region iterators=
-")
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Cc: Dennis Zhou <dennis@kernel.org>
->=20
-> Ah thanks. That was a miss not adding the documentation. I can pick
-> these up unless Andrew would rather run them through his tree. I have a
-> few other miscellaneous documentation cleanups for percpu I need to run
-> anyway.
+-Kees
 
-That sounds like a good fit to me. Will you take both of the patches?
+[1] https://lore.kernel.org/netdev/1509471094.3828.26.camel@edumazet-glaptop3.roam.corp.google.com/
 
-Thanks,
-
-   Wolfram
-
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5gtysACgkQFA3kzBSg
-KbaSyQ//a6OXSGwK/vLNNCOnhGY6pviH+BI2Kt82p5SuaSru/5vIskDNeMCMALkn
-KX+e9JA87IyNXX8nGSznpbWOpS5Mr8Olmomhl6cYoEODwW06AEPvzsqxIKn/I1DO
-0Hvcj1bUbt/wCUuP1GdQAGBJvNYDdDUwwsNVixJCRdM6pxfmTPAWzybogTVy6g1I
-HIQkUqpZS3WQ2euffU0z4fJ/hThAGnLK5T3J9irqZnGDp054f+DS64ytrmMCeboD
-7aITrunzud7KaMYCSV3bf957MZiU7wqZJZZZbhsVnFdyTLRF9hE5bRVQdAb3SXYN
-lhHMhGTkUvZdgRLWPWMaRhGpEj7GWRvhIlql4+s+OK4GDUPHW/5X7EqwZEC2ZQ5r
-hX+hHi+cokiOTrHA6YvGWAnrC+6W0IlEVNJQ6phKC30x+wvNStnZLoa5htO+kNzT
-wvbHOgpaK/sGD2+cmTQMDgZ99v7Zok6pkBMs/Qu4e/HrnLALLIfH7DCkkBkI0w2i
-6cOARozzG7k1NPEGKjEj1N1Re+O3HfIqcHf33N3nbU2hcCmeiv4GL7AxA/g1Z3Nn
-mCVW6YL9PktQkc/zzAuD55h5BKBwuQtVBPwXAdSyhXwBaQwd1abbKDdiS42BmOA6
-C2PxnxZBr3q3tB8mhZjzM+y9DDpig4t1yuMo6RdFkcmE6UeJhIY=
-=vIoE
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+-- 
+Kees Cook
