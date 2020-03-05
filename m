@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7523A17A88D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF0217A893
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgCEPKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:10:14 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42772 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbgCEPKN (ORCPT
+        id S1726894AbgCEPLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:11:47 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45153 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbgCEPLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:10:13 -0500
-Received: by mail-qk1-f193.google.com with SMTP id e11so5565750qkg.9;
-        Thu, 05 Mar 2020 07:10:12 -0800 (PST)
+        Thu, 5 Mar 2020 10:11:47 -0500
+Received: by mail-qk1-f196.google.com with SMTP id z12so5574938qkg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 07:11:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vjlqsulZ8K9prSopQV0I1fobX6NO06lX2v06DPlECEg=;
-        b=foFNtqfr7y4gokHOziQZidILEolu/UP287zItw72f8Rybfc+Ytfw3o4S1qJwUPrvi2
-         pb/yPQS7ZJygSBXyl0HJcPb59v8lfQ/4uhWMZ+xDmhfr2wnlUqHvBuLfYkG5qqiFyAu9
-         eMvY5wMOauZcOVWcjwDV5NMxw0NSJG4OmAwmAltEHEHiOFIMe66T/OPgYxLJMJNPLVaT
-         dl0YP3ItdL8ZvDwFARLCQ7Yrk3KPO1d8rDaDb5P73RkSQkP28/9X4MK4Fr7ECDXYWZJm
-         84cczQ7VXBpqHszO4qxM+2ddcFWvnXV1julg5XOjTwdEa7zs+l+hZkLTS3XzmauP2riZ
-         Agew==
-X-Gm-Message-State: ANhLgQ3dziKYt9fNHW+61nFmtg58khlx7SGX8mGDzaGG5EhhKzUGtaiR
-        hvcr7Ldt723zqEa79RfQ+hM=
-X-Google-Smtp-Source: ADFU+vtlP7URSdOBinGRLUa/NfZvf3ez4vGHwQVZBV9W6KWtOQr25JZI77VoRkEQCD2epaYXZ5MIIg==
-X-Received: by 2002:ae9:e812:: with SMTP id a18mr8535338qkg.455.1583421012246;
-        Thu, 05 Mar 2020 07:10:12 -0800 (PST)
+        bh=PjbkYOJJF4QVM5t+Vwl8Y4BXszbEfFKAKxz7B3KWc7g=;
+        b=hbSfUhz2vNSiIczfy2VYETXMVSDxOQbnJuEongmKIQZ4+nNi6YC17l4LgNU/bPymcM
+         4jls1ShrCDSN+eHO7qfll9HNSGxAXaCPloUHK4feUJa+GaZ9RsUSaTT6ej++JiL8VDq6
+         6SYv4OGOKqfMT2tnMSnhlWa/vmgLxQsY7tWHLOoqE1/vcWOTYTB8bJo0QnoR8oxK6C7r
+         Xwrt+pKgQ9XxTfcLsv/NQ1mGVInWG/x/Xo+7WqPRD+ETpRJKR9VJOMzMGI4yxkAPhcwj
+         gQJVnPcJwDcPlY2Nn4nUZD3CwwBBPPeLmQ7cTC/utuM/2GLNQxKkfTt3t/ox4Otq73v4
+         CgtQ==
+X-Gm-Message-State: ANhLgQ3d/uSafX3ng30vGQ8aUToBtnBvKA7GhnVllI2gHf7fdXtRGiAh
+        h+FoORn+eyR4DX5oKeI9XJs=
+X-Google-Smtp-Source: ADFU+vtlWGM1UZ1f2aliBPEDyGuIg9uQXGA6okBMuDSwkcXoOJqL+PG1QBjgeAKnASBWIjuWGN8Egw==
+X-Received: by 2002:a37:b984:: with SMTP id j126mr8051038qkf.3.1583421105629;
+        Thu, 05 Mar 2020 07:11:45 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id l6sm16004184qti.10.2020.03.05.07.10.11
+        by smtp.gmail.com with ESMTPSA id m17sm9377680qke.24.2020.03.05.07.11.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 07:10:11 -0800 (PST)
+        Thu, 05 Mar 2020 07:11:45 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>,
         kernel-hardening@lists.openwall.com,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] sh: Stop printing the virtual memory layout
-Date:   Thu,  5 Mar 2020 10:10:10 -0500
-Message-Id: <20200305151010.835954-1-nivedita@alum.mit.edu>
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] xtensa/mm: Stop printing the virtual memory layout
+Date:   Thu,  5 Mar 2020 10:11:44 -0500
+Message-Id: <20200305151144.836824-1-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <202003021038.8F0369D907@keescook>
 References: <202003021038.8F0369D907@keescook>
@@ -68,61 +68,66 @@ adb1fe9ae2ee ("mm/page_alloc: Remove kernel address exposure in free_reserved_ar
 
 Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- arch/sh/mm/init.c | 41 -----------------------------------------
- 1 file changed, 41 deletions(-)
+ arch/xtensa/mm/init.c | 46 -------------------------------------------
+ 1 file changed, 46 deletions(-)
 
-diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index d1b1ff2be17a..e68a1106e99b 100644
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -360,47 +360,6 @@ void __init mem_init(void)
- 	vsyscall_init();
+diff --git a/arch/xtensa/mm/init.c b/arch/xtensa/mm/init.c
+index 19c625e6d81f..7ba3f1fce8ec 100644
+--- a/arch/xtensa/mm/init.c
++++ b/arch/xtensa/mm/init.c
+@@ -155,52 +155,6 @@ void __init mem_init(void)
+ 	memblock_free_all();
  
  	mem_init_print_info(NULL);
 -	pr_info("virtual kernel memory layout:\n"
--		"    fixmap  : 0x%08lx - 0x%08lx   (%4ld kB)\n"
+-#ifdef CONFIG_KASAN
+-		"    kasan   : 0x%08lx - 0x%08lx  (%5lu MB)\n"
+-#endif
+-#ifdef CONFIG_MMU
+-		"    vmalloc : 0x%08lx - 0x%08lx  (%5lu MB)\n"
+-#endif
 -#ifdef CONFIG_HIGHMEM
--		"    pkmap   : 0x%08lx - 0x%08lx   (%4ld kB)\n"
+-		"    pkmap   : 0x%08lx - 0x%08lx  (%5lu kB)\n"
+-		"    fixmap  : 0x%08lx - 0x%08lx  (%5lu kB)\n"
 -#endif
--		"    vmalloc : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"    lowmem  : 0x%08lx - 0x%08lx   (%4ld MB) (cached)\n"
--#ifdef CONFIG_UNCACHED_MAPPING
--		"            : 0x%08lx - 0x%08lx   (%4ld MB) (uncached)\n"
+-		"    lowmem  : 0x%08lx - 0x%08lx  (%5lu MB)\n"
+-		"    .text   : 0x%08lx - 0x%08lx  (%5lu kB)\n"
+-		"    .rodata : 0x%08lx - 0x%08lx  (%5lu kB)\n"
+-		"    .data   : 0x%08lx - 0x%08lx  (%5lu kB)\n"
+-		"    .init   : 0x%08lx - 0x%08lx  (%5lu kB)\n"
+-		"    .bss    : 0x%08lx - 0x%08lx  (%5lu kB)\n",
+-#ifdef CONFIG_KASAN
+-		KASAN_SHADOW_START, KASAN_SHADOW_START + KASAN_SHADOW_SIZE,
+-		KASAN_SHADOW_SIZE >> 20,
 -#endif
--		"      .init : 0x%08lx - 0x%08lx   (%4ld kB)\n"
--		"      .data : 0x%08lx - 0x%08lx   (%4ld kB)\n"
--		"      .text : 0x%08lx - 0x%08lx   (%4ld kB)\n",
+-#ifdef CONFIG_MMU
+-		VMALLOC_START, VMALLOC_END,
+-		(VMALLOC_END - VMALLOC_START) >> 20,
+-#ifdef CONFIG_HIGHMEM
+-		PKMAP_BASE, PKMAP_BASE + LAST_PKMAP * PAGE_SIZE,
+-		(LAST_PKMAP*PAGE_SIZE) >> 10,
 -		FIXADDR_START, FIXADDR_TOP,
 -		(FIXADDR_TOP - FIXADDR_START) >> 10,
--
--#ifdef CONFIG_HIGHMEM
--		PKMAP_BASE, PKMAP_BASE+LAST_PKMAP*PAGE_SIZE,
--		(LAST_PKMAP*PAGE_SIZE) >> 10,
 -#endif
--
--		(unsigned long)VMALLOC_START, VMALLOC_END,
--		(VMALLOC_END - VMALLOC_START) >> 20,
--
--		(unsigned long)memory_start, (unsigned long)high_memory,
--		((unsigned long)high_memory - (unsigned long)memory_start) >> 20,
--
--#ifdef CONFIG_UNCACHED_MAPPING
--		uncached_start, uncached_end, uncached_size >> 20,
+-		PAGE_OFFSET, PAGE_OFFSET +
+-		(max_low_pfn - min_low_pfn) * PAGE_SIZE,
+-#else
+-		min_low_pfn * PAGE_SIZE, max_low_pfn * PAGE_SIZE,
 -#endif
--
--		(unsigned long)&__init_begin, (unsigned long)&__init_end,
--		((unsigned long)&__init_end -
--		 (unsigned long)&__init_begin) >> 10,
--
--		(unsigned long)&_etext, (unsigned long)&_edata,
--		((unsigned long)&_edata - (unsigned long)&_etext) >> 10,
--
--		(unsigned long)&_text, (unsigned long)&_etext,
--		((unsigned long)&_etext - (unsigned long)&_text) >> 10);
--
- 	mem_init_done = 1;
+-		((max_low_pfn - min_low_pfn) * PAGE_SIZE) >> 20,
+-		(unsigned long)_text, (unsigned long)_etext,
+-		(unsigned long)(_etext - _text) >> 10,
+-		(unsigned long)__start_rodata, (unsigned long)__end_rodata,
+-		(unsigned long)(__end_rodata - __start_rodata) >> 10,
+-		(unsigned long)_sdata, (unsigned long)_edata,
+-		(unsigned long)(_edata - _sdata) >> 10,
+-		(unsigned long)__init_begin, (unsigned long)__init_end,
+-		(unsigned long)(__init_end - __init_begin) >> 10,
+-		(unsigned long)__bss_start, (unsigned long)__bss_stop,
+-		(unsigned long)(__bss_stop - __bss_start) >> 10);
  }
  
+ static void __init parse_memmap_one(char *p)
 -- 
 2.24.1
 
