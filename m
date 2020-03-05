@@ -2,103 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D76817A202
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9002F17A1F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCEJHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 04:07:24 -0500
-Received: from foss.arm.com ([217.140.110.172]:45250 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbgCEJHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 04:07:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C7634B2;
-        Thu,  5 Mar 2020 01:07:20 -0800 (PST)
-Received: from e108754-lin.cambridge.arm.com (e108754-lin.cambridge.arm.com [10.1.198.53])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 117C43F534;
-        Thu,  5 Mar 2020 01:07:17 -0800 (PST)
-From:   Ionela Voinescu <ionela.voinescu@arm.com>
-To:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        maz@kernel.org, suzuki.poulose@arm.com, sudeep.holla@arm.com,
-        lukasz.luba@arm.com, valentin.schneider@arm.com,
-        dietmar.eggemann@arm.com, rjw@rjwysocki.net,
-        pkondeti@codeaurora.org, ionela.voinescu@arm.com
-Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v6 7/7] clocksource/drivers/arm_arch_timer: validate arch_timer_rate
-Date:   Thu,  5 Mar 2020 09:06:27 +0000
-Message-Id: <20200305090627.31908-8-ionela.voinescu@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200305090627.31908-1-ionela.voinescu@arm.com>
-References: <20200305090627.31908-1-ionela.voinescu@arm.com>
+        id S1726998AbgCEJHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 04:07:07 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:54210 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbgCEJHG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 04:07:06 -0500
+Received: by mail-pj1-f66.google.com with SMTP id cx7so2217825pjb.3;
+        Thu, 05 Mar 2020 01:07:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CwWk3rymKlBi7YMKzGNb1n6EmY/0fOhsKyM88/tetFg=;
+        b=klpt5eD0lOtMOlCD5w9upzN5MpEqELB1VFCJEfVhkmU5Zh/Z5kIcGB7jZfHR+c/LaH
+         2kbROwAXGEZ//027FUQT6zMBJ6GPWY5L5Ur9TWzhA8NqJ7ht6cAI1ecJx0meCQ89YnnE
+         GEAKxEwX29TwLSK7YklkkL49IlUuVx9FseHC/XmkfBjvfRQfl76UvxWb6NS7S8f1NWrz
+         VF37gLXVlQrlvF74m+789A/fhF/f4HTvK+WIdYq9d2QcuD6AUm0rLvW6t3qH/oWpMVo6
+         Erubp45bmBx1/yw43tBtBM47YbmTEIVEUT0faLSCHSqOMKXuI8DErOZlRkaHyPxOrtmc
+         E9eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CwWk3rymKlBi7YMKzGNb1n6EmY/0fOhsKyM88/tetFg=;
+        b=kS951B6rNfUESNgq1bH4FA2bHhuhrPjsNK4EEDI6SLnacWBD4Hzyew/k6wsMmP7/d+
+         /+ndgMEDJVFDJSM6Ce8FMzxgFG9ZG9+lLzuHxYdNsCe9IfZ8P5CZo1o+HzFmImqRY8tg
+         o7m7r81BAV5I4kSW6PDE8xNKKfj8JZYZwWGacWIk8eE8qG3Oh2qqh8LyC4qXHQUI4/pE
+         z9IyDz9fIUZj7jJPscpgdrFvZ/MOUMaUnYbJNDCVrjcbqPbuYtEO/IHI8RTFGLjIf2IE
+         iwTaGHpBmb+P3p6pjgDNDuKSOLkorFLvQBjIiNb6hfPizfXkMBSlHaSEdcgutbGEP0dM
+         hPxQ==
+X-Gm-Message-State: ANhLgQ0m2tzZe0YyE0vJC/Me1FwURfQvot9jvn8kNyVREP7zuY4Dj6YY
+        kE17TN+ZIxWSs+eFUa0sZkZAmCWw
+X-Google-Smtp-Source: ADFU+vvbk9XiN+e5NS1NkizYhrxuArSYCMucjcPDA/Qy+EnS7Ar6iKHF9uTwRCjX+df5AMO+yMHWlg==
+X-Received: by 2002:a17:902:bd95:: with SMTP id q21mr7267961pls.148.1583399223859;
+        Thu, 05 Mar 2020 01:07:03 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id r14sm10626822pfh.119.2020.03.05.01.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 01:07:03 -0800 (PST)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH] arm64: dts: specify console via command line
+Date:   Thu,  5 Mar 2020 17:06:35 +0800
+Message-Id: <20200305090635.30569-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using an arch timer with a frequency of less than 1MHz can potentially
-result in incorrect functionality in systems that assume a reasonable
-rate of the arch timer of 1 to 50MHz, described as typical in the
-architecture specification.
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-Therefore, warn if the arch timer rate is below 1MHz, which is
-considered atypical and worth emphasizing.
+The SPRD serial driver need to know which port would be used as console
+in an early period during initialization, otherwise console init would
+fail since we added this feature[1].
 
-Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
-Suggested-by: Valentin Schneider <valentin.schneider@arm.com>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
+So this patch add console to command line via devicetree.
+
+[1] https://lore.kernel.org/lkml/20190826072929.7696-4-zhang.lyra@gmail.com/
+
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 ---
- drivers/clocksource/arm_arch_timer.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/sprd/sp9863a-1h10.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 9a5464c625b4..4faa930eabf8 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -885,6 +885,17 @@ static int arch_timer_starting_cpu(unsigned int cpu)
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/sprd/sp9863a-1h10.dts b/arch/arm64/boot/dts/sprd/sp9863a-1h10.dts
+index 2047f7a74265..510f65f4d8b8 100644
+--- a/arch/arm64/boot/dts/sprd/sp9863a-1h10.dts
++++ b/arch/arm64/boot/dts/sprd/sp9863a-1h10.dts
+@@ -28,7 +28,7 @@
  
-+static int validate_timer_rate(void)
-+{
-+	if (!arch_timer_rate)
-+		return -EINVAL;
-+
-+	/* Arch timer frequency < 1MHz can cause trouble */
-+	WARN_ON(arch_timer_rate < 1000000);
-+
-+	return 0;
-+}
-+
- /*
-  * For historical reasons, when probing with DT we use whichever (non-zero)
-  * rate was probed first, and don't verify that others match. If the first node
-@@ -900,7 +911,7 @@ static void arch_timer_of_configure_rate(u32 rate, struct device_node *np)
- 		arch_timer_rate = rate;
+ 	chosen {
+ 		stdout-path = "serial1:115200n8";
+-		bootargs = "earlycon";
++		bootargs = "earlycon console=ttyS1";
+ 	};
+ };
  
- 	/* Check the timer frequency. */
--	if (arch_timer_rate == 0)
-+	if (validate_timer_rate())
- 		pr_warn("frequency not available\n");
- }
- 
-@@ -1594,9 +1605,10 @@ static int __init arch_timer_acpi_init(struct acpi_table_header *table)
- 	 * CNTFRQ value. This *must* be correct.
- 	 */
- 	arch_timer_rate = arch_timer_get_cntfrq();
--	if (!arch_timer_rate) {
-+	ret = validate_timer_rate();
-+	if (ret) {
- 		pr_err(FW_BUG "frequency not available.\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
- 	arch_timer_uses_ppi = arch_timer_select_ppi();
 -- 
-2.17.1
+2.20.1
 
