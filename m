@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2DB417B1D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA0217B1B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:47:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbgCEWrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:47:01 -0500
-Received: from mga18.intel.com ([134.134.136.126]:5017 "EHLO mga18.intel.com"
+        id S1727097AbgCEWp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:45:56 -0500
+Received: from mga18.intel.com ([134.134.136.126]:5026 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726897AbgCEWpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:45:49 -0500
+        id S1726917AbgCEWpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 17:45:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 14:45:49 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,519,1574150400"; 
-   d="scan'208";a="234674622"
+   d="scan'208";a="234674626"
 Received: from minkleyx-mobl1.amr.corp.intel.com (HELO spandruv-mobl.amr.corp.intel.com) ([10.252.207.66])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Mar 2020 14:45:48 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 05 Mar 2020 14:45:49 -0800
 From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To:     andriy.shevchenko@linux.intel.com
 Cc:     platform-driver-x86@vger.kernel.org, prarit@redhat.com,
         linux-kernel@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 10/27] tools/power/x86/intel-speed-select: Enhance --info option
-Date:   Thu,  5 Mar 2020 14:45:21 -0800
-Message-Id: <20200305224538.490864-11-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 11/27] tools/power/x86/intel-speed-select: Add an API for error/information print
+Date:   Thu,  5 Mar 2020 14:45:22 -0800
+Message-Id: <20200305224538.490864-12-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200305224538.490864-1-srinivas.pandruvada@linux.intel.com>
 References: <20200305224538.490864-1-srinivas.pandruvada@linux.intel.com>
@@ -38,143 +38,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add additional information, which will allow user to detect available
-features. This will allow users to check presence of features before
-continue to test.
-A sample output:
+Add a common API which can be used to print all error and information
+messages. In this way a common format can be used.
 
-$sudo ./intel-speed-select --info
-
-Intel(R) Speed Select Technology
-Executing on CPU model:85[0x55]
-Platform: API version : 1
-Platform: Driver version : 1
-Platform: mbox supported : 1
-Platform: mmio supported : 0
-Intel(R) SST-PP (feature perf-profile) is not supported
-Only performance level 0 (base level) is present
-TDP level change control is locked
-Intel(R) SST-TF (feature turbo-freq) is supported
-Intel(R) SST-BF (feature base-freq) is supported
-Intel(R) SST-CP (feature core-power) is supported
+For json output an error index in suffixed to make unique error key.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../x86/intel-speed-select/isst-config.c      | 74 +++++++++++++++++++
+ .../x86/intel-speed-select/isst-config.c      |  5 +++
+ .../x86/intel-speed-select/isst-display.c     | 44 +++++++++++++++++++
  tools/power/x86/intel-speed-select/isst.h     |  2 +
- 2 files changed, 76 insertions(+)
+ 3 files changed, 51 insertions(+)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 5302a552f87f..65110d06394f 100644
+index 65110d06394f..360fa00f9c7a 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -846,12 +846,85 @@ static int isst_fill_platform_info(void)
- 	return 0;
- }
+@@ -69,6 +69,11 @@ struct cpu_topology {
+ 	short die_id;
+ };
  
-+static void isst_print_extended_platform_info(void)
++FILE *get_output_file(void)
 +{
-+	int cp_state, cp_cap, fact_support = 0, pbf_support = 0;
-+	struct isst_pkg_ctdp_level_info ctdp_level;
-+	struct isst_pkg_ctdp pkg_dev;
-+	int ret, i, j;
-+	FILE *filep;
-+
-+	for (i = 0; i < 256; ++i) {
-+		char path[256];
-+
-+		snprintf(path, sizeof(path),
-+			 "/sys/devices/system/cpu/cpu%d/topology/thread_siblings", i);
-+		filep = fopen(path, "r");
-+		if (filep)
-+			break;
-+	}
-+
-+	if (!filep)
-+		return;
-+
-+	fclose(filep);
-+
-+	ret = isst_get_ctdp_levels(i, &pkg_dev);
-+	if (ret)
-+		return;
-+
-+	if (pkg_dev.enabled) {
-+		fprintf(outf, "Intel(R) SST-PP (feature perf-profile) is supported\n");
-+	} else {
-+		fprintf(outf, "Intel(R) SST-PP (feature perf-profile) is not supported\n");
-+		fprintf(outf, "Only performance level 0 (base level) is present\n");
-+	}
-+
-+	if (pkg_dev.locked)
-+		fprintf(outf, "TDP level change control is locked\n");
-+	else
-+		fprintf(outf, "TDP level change control is unlocked, max level: %d \n", pkg_dev.levels);
-+
-+	for (j = 0; j <= pkg_dev.levels; ++j) {
-+		ret = isst_get_ctdp_control(i, j, &ctdp_level);
-+		if (ret)
-+			continue;
-+
-+		if (!fact_support && ctdp_level.fact_support)
-+			fact_support = 1;
-+
-+		if (!pbf_support && ctdp_level.pbf_support)
-+			pbf_support = 1;
-+	}
-+
-+	if (fact_support)
-+		fprintf(outf, "Intel(R) SST-TF (feature turbo-freq) is supported\n");
-+	else
-+		fprintf(outf, "Intel(R) SST-TF (feature turbo-freq) is not supported\n");
-+
-+	if (pbf_support)
-+		fprintf(outf, "Intel(R) SST-BF (feature base-freq) is supported\n");
-+	else
-+		fprintf(outf, "Intel(R) SST-BF (feature base-freq) is not supported\n");
-+
-+	ret = isst_read_pm_config(i, &cp_state, &cp_cap);
-+	if (cp_cap)
-+		fprintf(outf, "Intel(R) SST-CP (feature core-power) is supported\n");
-+	else
-+		fprintf(outf, "Intel(R) SST-CP (feature core-power) is not supported\n");
++	return outf;
 +}
 +
- static void isst_print_platform_information(void)
+ void debug_printf(const char *format, ...)
  {
- 	struct isst_if_platform_info platform_info;
- 	const char *pathname = "/dev/isst_interface";
- 	int fd;
+ 	va_list args;
+diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
+index ec737e101e52..943226d1dd4e 100644
+--- a/tools/power/x86/intel-speed-select/isst-display.c
++++ b/tools/power/x86/intel-speed-select/isst-display.c
+@@ -515,15 +515,18 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
+ 	format_and_print(outf, 1, NULL, NULL);
+ }
  
-+	if (is_clx_n_platform()) {
-+		fprintf(stderr, "\nThis option in not supported on this platform\n");
-+		exit(0);
++static int start;
+ void isst_ctdp_display_information_start(FILE *outf)
+ {
+ 	last_level = 0;
+ 	format_and_print(outf, 0, "start", NULL);
++	start = 1;
+ }
+ 
+ void isst_ctdp_display_information_end(FILE *outf)
+ {
+ 	format_and_print(outf, 0, NULL, NULL);
++	start = 0;
+ }
+ 
+ void isst_pbf_display_information(int cpu, FILE *outf, int level,
+@@ -686,3 +689,44 @@ void isst_display_result(int cpu, FILE *outf, char *feature, char *cmd,
+ 
+ 	format_and_print(outf, 1, NULL, NULL);
+ }
++
++void isst_display_error_info_message(int error, char *msg, int arg_valid, int arg)
++{
++	FILE *outf = get_output_file();
++	static int error_index;
++	char header[256];
++	char value[256];
++
++	if (!out_format_is_json()) {
++		if (arg_valid)
++			snprintf(value, sizeof(value), "%s %d", msg, arg);
++		else
++			snprintf(value, sizeof(value), "%s", msg);
++
++		if (error)
++			fprintf(outf, "Error: %s\n", value);
++		else
++			fprintf(outf, "Information: %s\n", value);
++		return;
 +	}
 +
- 	fd = open(pathname, O_RDWR);
- 	if (fd < 0)
- 		err(-1, "%s open failed", pathname);
-@@ -867,6 +940,7 @@ static void isst_print_platform_information(void)
- 			platform_info.mbox_supported);
- 		fprintf(outf, "Platform: mmio supported : %d\n",
- 			platform_info.mmio_supported);
-+		isst_print_extended_platform_info();
- 	}
- 
- 	close(fd);
++	if (!start)
++		format_and_print(outf, 0, "start", NULL);
++
++	if (error)
++		snprintf(header, sizeof(header), "Error%d", error_index++);
++	else
++		snprintf(header, sizeof(header), "Information:%d", error_index++);
++	format_and_print(outf, 1, header, NULL);
++
++	snprintf(header, sizeof(header), "message");
++	if (arg_valid)
++		snprintf(value, sizeof(value), "%s %d", msg, arg);
++	else
++		snprintf(value, sizeof(value), "%s", msg);
++
++	format_and_print(outf, 2, header, value);
++	format_and_print(outf, 1, NULL, NULL);
++	if (!start)
++		format_and_print(outf, 0, NULL, NULL);
++}
 diff --git a/tools/power/x86/intel-speed-select/isst.h b/tools/power/x86/intel-speed-select/isst.h
-index 53e147a9a295..639d3d649480 100644
+index 639d3d649480..4950d2368ff8 100644
 --- a/tools/power/x86/intel-speed-select/isst.h
 +++ b/tools/power/x86/intel-speed-select/isst.h
-@@ -196,6 +196,8 @@ extern int isst_send_msr_command(unsigned int cpu, unsigned int command,
- 				 int write, unsigned long long *req_resp);
+@@ -172,6 +172,7 @@ extern int get_cpu_count(int pkg_id, int die_id);
+ extern int get_core_count(int pkg_id, int die_id);
  
- extern int isst_get_ctdp_levels(int cpu, struct isst_pkg_ctdp *pkg_dev);
-+extern int isst_get_ctdp_control(int cpu, int config_index,
-+				 struct isst_pkg_ctdp_level_info *ctdp_level);
- extern int isst_get_coremask_info(int cpu, int config_index,
- 			   struct isst_pkg_ctdp_level_info *ctdp_level);
- extern int isst_get_process_ctdp(int cpu, int tdp_level,
+ /* Common interfaces */
++FILE *get_output_file(void);
+ extern void debug_printf(const char *format, ...);
+ extern int out_format_is_json(void);
+ extern int get_physical_package_id(int cpu);
+@@ -252,4 +253,5 @@ extern void isst_clos_display_clos_information(int cpu, FILE *outf,
+ extern int is_clx_n_platform(void);
+ extern int get_cpufreq_base_freq(int cpu);
+ extern int isst_read_pm_config(int cpu, int *cp_state, int *cp_cap);
++extern void isst_display_error_info_message(int error, char *msg, int arg_valid, int arg);
+ #endif
 -- 
 2.24.1
 
