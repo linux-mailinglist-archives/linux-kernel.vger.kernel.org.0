@@ -2,180 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5267179EF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF80C179EFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:14:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgCEFLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 00:11:53 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:51259 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725858AbgCEFLr (ORCPT
+        id S1725938AbgCEFO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 00:14:28 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38586 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbgCEFO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 00:11:47 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5548A13FA;
-        Thu,  5 Mar 2020 00:11:46 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 05 Mar 2020 00:11:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=0dYXasnkpGOQZ
-        LFyXNdb8zxFf9H+yIuoHLwntjCQcYE=; b=szqNxEJqg4QyV52aLoqP+WYBelowo
-        eQ6BEYKCOFpgD+JXGqx2NZ8zCi5IlmLadM1ynCd3hdA9wF6wiMPqrn6C95LRqlH3
-        OI6OKss6LOzAcPykH02uDzlmxDWmuV7PQLDXGmuuUxxCIByXUO+AA4xRwh4Pb6LL
-        TRndzK085mhIXgWW0RKHnj6GOBgUU5tHvykmLpw82rBhHzVTNWDxqF9YHpORrbHm
-        fDWMIyPoWocTFr95WWg2cRuYfKfBjMnCY8v+SX+3SLpDq4V20EwpXJMBigfRt1x8
-        JqDi1X0LdN4/45+YB+0e3kh5RGL8RVF3deNBB2MNdW0Jnls9kcxo1Pkpg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=0dYXasnkpGOQZLFyXNdb8zxFf9H+yIuoHLwntjCQcYE=; b=BgPpJs9X
-        qsYUrb9w7uwYG19jMccmRazQAMNM546YSkycFXyGzqfy7hcSFCLBJj8e30U0O2zm
-        zwtGl4HcGFuJYOJSbzOQZfdQziPb2dXHjzUPN8HaAPW4tMlpPgl4x5d4HAFyJ38J
-        yEVmEaKqkRYaux+wLthEup7zSjN4t02GD6xmOmq9vlHsITLro6Mged8Q7OXBeaIU
-        HWdwXX/qcKg6UlhizRVNBKdrhbNuYTWhhkBtERsbVkVk04JTSkdL2ZoXznC9bEft
-        SW45YobGLe8dMjV/nGEjwffXu0o/AcJTNGK2JdE5wVToeipLwAMalDeawOlGyOEg
-        0bTrPZ6pn+IMSg==
-X-ME-Sender: <xms:EYpgXr6j67OazVuBPO9hACrMGV7_3SHA7XpD6g2LmPdpHkjMa2BTWQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddtledgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
-    rghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:EYpgXhGI7sRg5OEHhbkLiPFtze7OlPJqaHEE3WaXkSNID1MYGCqiLw>
-    <xmx:EYpgXlGaXqlC7FSaK9l_GMfgxFHAiD895wzeShRcFS2bUisNgGUXow>
-    <xmx:EYpgXntxGPM4zr3xWEW0WVHhFotmFeUToX0DEMZGee8om_Sgb3isrA>
-    <xmx:EopgXvo5zk0bawmLU3Hc_R0gLlq_TZdZO72Hk_z3Qf30ZBwDoZaVYw>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6C5853280067;
-        Thu,  5 Mar 2020 00:11:45 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Ondrej Jirman <megous@megous.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v4 3/3] ASoC: simple-card: Add support for codec2codec DAI links
-Date:   Wed,  4 Mar 2020 23:11:43 -0600
-Message-Id: <20200305051143.60691-4-samuel@sholland.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200305051143.60691-1-samuel@sholland.org>
-References: <20200305051143.60691-1-samuel@sholland.org>
+        Thu, 5 Mar 2020 00:14:28 -0500
+Received: by mail-qk1-f195.google.com with SMTP id j7so3876162qkd.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 21:14:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rTn3aZiOBdvpLaF9in60GflGuo7nuzt/CIGjImwtiUM=;
+        b=NrFhDK9B12p+3RdamIUYum/ORdm0XLJgoFeESAo99664Tf9pb1E6TcqGodgrLcM5BU
+         6YUyipKpSxuCMqCS5XxgM87hpGBtG6kcUPm3Zq2El6LJ+BtsgCxRXTFOKSp/G+nfZOOI
+         T1OpoH0qKLaMjQXRWCU3Yc3tRnguEKVaKs5oI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rTn3aZiOBdvpLaF9in60GflGuo7nuzt/CIGjImwtiUM=;
+        b=DSg8gHPIxad8Ao+eVfJM18HII72sZzsgZ+JxYLfqdGc0OENE8WE8ECT3YYY1v2/f36
+         dQP0nmoYA/XFQvZhK2348mc/4tWntdRPkdRL3HV8xuAdn+QAsplCDMJAUZlz+VoKxP7P
+         7HcwxQ266XR3Du92Fy4NQfJoMbpBI0rVk99N4ahgMnJEp47jEkZeB7C1miTCnuiNrw4U
+         vLLA7o0JiUFRPNzF2cFpxFXkw0v2OEqN5Qe1jFpbpXY/iszrPxmsqgEI2oZnMX/2glTk
+         W9mY3l9QFKra8wH7tAGyTKE+iYNY7+b2SZc0Bsc9EdrTyPmBEyRrTKt/TM2Kbgzqu0UM
+         HOpw==
+X-Gm-Message-State: ANhLgQ25TdNzrew8ALBKW9Ku3fUx8SnX1b2rckMABiNm2dzoamW5MhB/
+        wh/jwBYs7ZNL9NWLA+aLwtGGbFfouL0QNNYgX2MCIQ==
+X-Google-Smtp-Source: ADFU+vsjlqRt25RAnjpqBwwBqr94htBKQelMZzFwJ5kzWW9Pubmn0eresOonSxZoZDexvuo0WFSMiY0iBLfQk0M8fiw=
+X-Received: by 2002:a37:c47:: with SMTP id 68mr996909qkm.144.1583385266606;
+ Wed, 04 Mar 2020 21:14:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1567503456-24725-1-git-send-email-yong.wu@mediatek.com> <1567503456-24725-4-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1567503456-24725-4-git-send-email-yong.wu@mediatek.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 5 Mar 2020 13:14:14 +0800
+Message-ID: <CANMq1KAOHFF43708ktvhEU6EYZv_s7Wp+kUwFD7h0bwVrQpyqw@mail.gmail.com>
+Subject: Re: [PATCH v3 03/14] iommu/mediatek: Add device_link between the
+ consumer and the larb devices
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org, youlin.pei@mediatek.com,
+        Matthias Kaehlcke <mka@chromium.org>, anan.sun@mediatek.com,
+        cui.zhang@mediatek.com, chao.hao@mediatek.com,
+        ming-fan.chen@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following the example in cb2cf0de1174 ("ASoC: soc-core: care Codec <->
-Codec case by non_legacy_dai_naming"), determine if a DAI link contains
-only codec DAIs by examining the non_legacy_dai_naming flag in each
-DAI's component.
+On Tue, Sep 3, 2019 at 5:38 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> MediaTek IOMMU don't have its power-domain. all the consumer connect
+> with smi-larb, then connect with smi-common.
+>
+>         M4U
+>          |
+>     smi-common
+>          |
+>   -------------
+>   |         |    ...
+>   |         |
+> larb1     larb2
+>   |         |
+> vdec       venc
+>
+> When the consumer works, it should enable the smi-larb's power which
+> also need enable the smi-common's power firstly.
+>
+> Thus, First of all, use the device link connect the consumer and the
+> smi-larbs. then add device link between the smi-larb and smi-common.
+>
+> This patch adds device_link between the consumer and the larbs.
+>
+> When device_link_add, I add the flag DL_FLAG_STATELESS to avoid calling
+> pm_runtime_xx to keep the original status of clocks. It can avoid two
+> issues:
+> 1) Display HW show fastlogo abnormally reported in [1]. At the beggining,
+> all the clocks are enabled before entering kernel, but the clocks for
+> display HW(always in larb0) will be gated after clk_enable and clk_disable
+> called from device_link_add(->pm_runtime_resume) and rpm_idle. The clock
+> operation happened before display driver probe. At that time, the display
+> HW will be abnormal.
+>
+> 2) A deadlock issue reported in [2]. Use DL_FLAG_STATELESS to skip
+> pm_runtime_xx to avoid the deadlock.
+>
+> Corresponding, DL_FLAG_AUTOREMOVE_CONSUMER can't be added, then
+> device_link_removed should be added explicitly.
+>
+> [1] http://lists.infradead.org/pipermail/linux-mediatek/2019-July/
+> 021500.html
+> [2] https://lore.kernel.org/patchwork/patch/1086569/
+>
+> Suggested-by: Tomasz Figa <tfiga@chromium.org>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+>  drivers/iommu/mtk_iommu.c    | 17 +++++++++++++++++
+>  drivers/iommu/mtk_iommu_v1.c | 18 +++++++++++++++++-
+>  2 files changed, 34 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+> index b138b94..2511b3c 100644
+> --- a/drivers/iommu/mtk_iommu.c
+> +++ b/drivers/iommu/mtk_iommu.c
+> @@ -450,6 +450,9 @@ static int mtk_iommu_add_device(struct device *dev)
+>         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+>         struct mtk_iommu_data *data;
+>         struct iommu_group *group;
+> +       struct device_link *link;
+> +       struct device *larbdev;
+> +       unsigned int larbid;
+>
+>         if (!fwspec || fwspec->ops != &mtk_iommu_ops)
+>                 return -ENODEV; /* Not a iommu client device */
+> @@ -461,6 +464,14 @@ static int mtk_iommu_add_device(struct device *dev)
+>         if (IS_ERR(group))
+>                 return PTR_ERR(group);
+>
+> +       /* Link the consumer device with the smi-larb device(supplier) */
+> +       larbid = MTK_M4U_TO_LARB(fwspec->ids[0]);
 
-For now, we assume there is only one or a small set of valid PCM stream
-parameters, so num_params == 1 is good enough. We also assume that the
-same params are valid for all supported streams. params is set to the
-subset of parameters common among all DAIs, and then the existing code
-automatically chooses the highest quality of the remaining values when
-the link is brought up.
+I'll mirror the comment I made on gerrit
+(https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1361013):
+Maybe I'm missing something here, but for example, on MT8173,
+vcodec_enc: vcodec@18002000 needs to use both larb3 and larb5, isn't
+the code below just adding a link for larb3?
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- Documentation/sound/soc/codec-to-codec.rst |  9 +++-
- sound/soc/generic/simple-card-utils.c      | 48 ++++++++++++++++++++++
- 2 files changed, 55 insertions(+), 2 deletions(-)
+Do we need to iterate over all fwspecs->ids to figure out which larbs
+we need to add links to each of them?
 
-diff --git a/Documentation/sound/soc/codec-to-codec.rst b/Documentation/sound/soc/codec-to-codec.rst
-index 810109d7500d..4eaa9a0c41fc 100644
---- a/Documentation/sound/soc/codec-to-codec.rst
-+++ b/Documentation/sound/soc/codec-to-codec.rst
-@@ -104,5 +104,10 @@ Make sure to name your corresponding cpu and codec playback and capture
- dai names ending with "Playback" and "Capture" respectively as dapm core
- will link and power those dais based on the name.
- 
--Note that in current device tree there is no way to mark a dai_link
--as codec to codec. However, it may change in future.
-+A dai_link in a "simple-audio-card" will automatically be detected as
-+codec to codec when all DAIs on the link belong to codec components.
-+The dai_link will be initialized with the subset of stream parameters
-+(channels, format, sample rate) supported by all DAIs on the link. Since
-+there is no way to provide these parameters in the device tree, this is
-+mostly useful for communication with simple fixed-function codecs, such
-+as a Bluetooth controller or cellular modem.
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 9b794775df53..320e648f7499 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -331,6 +331,50 @@ static int asoc_simple_init_dai(struct snd_soc_dai *dai,
- 	return 0;
- }
- 
-+static int asoc_simple_init_dai_link_params(struct snd_soc_pcm_runtime *rtd,
-+					    struct simple_dai_props *dai_props)
-+{
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	struct snd_soc_component *component;
-+	struct snd_soc_pcm_stream *params;
-+	struct snd_pcm_hardware hw;
-+	int i, ret, stream;
-+
-+	/* Only codecs should have non_legacy_dai_naming set. */
-+	for_each_rtd_components(rtd, i, component) {
-+		if (!component->driver->non_legacy_dai_naming)
-+			return 0;
-+	}
-+
-+	/* Assumes the capabilities are the same for all supported streams */
-+	for (stream = 0; stream < 2; stream++) {
-+		ret = snd_soc_runtime_calc_hw(rtd, &hw, stream);
-+		if (ret == 0)
-+			break;
-+	}
-+
-+	if (ret < 0) {
-+		dev_err(rtd->dev, "simple-card: no valid dai_link params\n");
-+		return ret;
-+	}
-+
-+	params = devm_kzalloc(rtd->dev, sizeof(*params), GFP_KERNEL);
-+	if (!params)
-+		return -ENOMEM;
-+
-+	params->formats = hw.formats;
-+	params->rates = hw.rates;
-+	params->rate_min = hw.rate_min;
-+	params->rate_max = hw.rate_max;
-+	params->channels_min = hw.channels_min;
-+	params->channels_max = hw.channels_max;
-+
-+	dai_link->params = params;
-+	dai_link->num_params = 1;
-+
-+	return 0;
-+}
-+
- int asoc_simple_dai_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-@@ -347,6 +391,10 @@ int asoc_simple_dai_init(struct snd_soc_pcm_runtime *rtd)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = asoc_simple_init_dai_link_params(rtd, dai_props);
-+	if (ret < 0)
-+		return ret;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(asoc_simple_dai_init);
--- 
-2.24.1
-
+> +       larbdev = data->larb_imu[larbid].dev;
+> +       link = device_link_add(dev, larbdev,
+> +                              DL_FLAG_PM_RUNTIME | DL_FLAG_STATELESS);
+> +       if (!link)
+> +               dev_err(dev, "Unable to link %s\n", dev_name(larbdev));
+> +
+>         iommu_group_put(group);
+>         return 0;
+>  }
+> @@ -469,6 +480,8 @@ static void mtk_iommu_remove_device(struct device *dev)
+>  {
+>         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+>         struct mtk_iommu_data *data;
+> +       struct device *larbdev;
+> +       unsigned int larbid;
+>
+>         if (!fwspec || fwspec->ops != &mtk_iommu_ops)
+>                 return;
+> @@ -476,6 +489,10 @@ static void mtk_iommu_remove_device(struct device *dev)
+>         data = fwspec->iommu_priv;
+>         iommu_device_unlink(&data->iommu, dev);
+>
+> +       larbid = MTK_M4U_TO_LARB(fwspec->ids[0]);
+> +       larbdev = data->larb_imu[larbid].dev;
+> +       device_link_remove(dev, larbdev);
+> +
+>         iommu_group_remove_device(dev);
+>         iommu_fwspec_free(dev);
+>  }
+> diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+> index 2034d72..a7f22a2 100644
+> --- a/drivers/iommu/mtk_iommu_v1.c
+> +++ b/drivers/iommu/mtk_iommu_v1.c
+> @@ -423,7 +423,9 @@ static int mtk_iommu_add_device(struct device *dev)
+>         struct of_phandle_iterator it;
+>         struct mtk_iommu_data *data;
+>         struct iommu_group *group;
+> -       int err;
+> +       struct device_link *link;
+> +       struct device *larbdev;
+> +       int err, larbid;
+>
+>         of_for_each_phandle(&it, err, dev->of_node, "iommus",
+>                         "#iommu-cells", 0) {
+> @@ -466,6 +468,14 @@ static int mtk_iommu_add_device(struct device *dev)
+>                 return err;
+>         }
+>
+> +       /* Link the consumer device with the smi-larb device(supplier) */
+> +       larbid = mt2701_m4u_to_larb(fwspec->ids[0]);
+> +       larbdev = data->larb_imu[larbid].dev;
+> +       link = device_link_add(dev, larbdev,
+> +                              DL_FLAG_PM_RUNTIME | DL_FLAG_STATELESS);
+> +       if (!link)
+> +               dev_err(dev, "Unable to link %s\n", dev_name(larbdev));
+> +
+>         return iommu_device_link(&data->iommu, dev);
+>  }
+>
+> @@ -473,6 +483,8 @@ static void mtk_iommu_remove_device(struct device *dev)
+>  {
+>         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+>         struct mtk_iommu_data *data;
+> +       struct device *larbdev;
+> +       unsigned int larbid;
+>
+>         if (!fwspec || fwspec->ops != &mtk_iommu_ops)
+>                 return;
+> @@ -480,6 +492,10 @@ static void mtk_iommu_remove_device(struct device *dev)
+>         data = fwspec->iommu_priv;
+>         iommu_device_unlink(&data->iommu, dev);
+>
+> +       larbid = mt2701_m4u_to_larb(fwspec->ids[0]);
+> +       larbdev = data->larb_imu[larbid].dev;
+> +       device_link_remove(dev, larbdev);
+> +
+>         iommu_group_remove_device(dev);
+>         iommu_fwspec_free(dev);
+>  }
+> --
+> 1.9.1
+>
