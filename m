@@ -2,149 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDA6F17A106
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:16:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79EA617A12F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbgCEIQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 03:16:00 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41717 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgCEIQA (ORCPT
+        id S1726049AbgCEIYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:24:04 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:41560 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbgCEIYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:16:00 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v4so5816547wrs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:15:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:subject:in-reply-to:date:message-id
-         :mime-version;
-        bh=59ResbYkgYYtyGS3yqL1pe7i5n25xfvpTn1SJGZoQcc=;
-        b=uvMsy2gFIQJuGwPQY4jTQZfM443hyAsMpQsWvt61TsBrrNb5+brqKR7fyXH16dpcUG
-         NKHn+FHej/vn1kTGDZAOiT3te05ZccNq2vpP9gefTXD4I8jUaaSMpDCA+puh6P7ugPyN
-         Mq7CTRQp8ON7UQ8wyQBrxWkNHSBgn0GUrhEMx1wbzjnVma9BXBHRHMUXZ0u2P0xEa8lJ
-         DaG2SUbfh2TZLAYPQNjz3QPd8SSGcSHivVrvmeFzY2wnQcFZQVrX8n1b+M7K41fDnb2V
-         eqa2HBw0fdA4F/n4kWCqTVQAxYnxfMrF2BbKv5TCUD4Ge+NID+Dhpu/0B5cPIlHVEg20
-         VWgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=59ResbYkgYYtyGS3yqL1pe7i5n25xfvpTn1SJGZoQcc=;
-        b=LHPML/ETqankU4Q5r/aAQ+93bUc49GISUe5Xl8PTU7ZGacjdvat2/hGUXfD80WOmVC
-         wwozEbZaRkWk9WqvKAVWnD1eatanGP0nbCvCD7AuWPBrEttfkHLsXmI8Yf9zjQEG0zpf
-         smFd0deHFB5Bsry6I6BseWxJHHvlAtbpi1wkaGxURIQqCyHD7mPhPC2uge/OklRphuhi
-         RHBkS9Wd87FnWjS6sRQcKAs1fPObj/OU7jdXvuelFk8RZH3RZukoNsV0NiaiyrZo0IaB
-         TuKvEHseC8yUx7gs27js1IAFs82Uo5MFQbsb+EPt/3WAwAcZnvkq+JtZct5+ISgQK35A
-         dx3g==
-X-Gm-Message-State: ANhLgQ2IPYip6lbxHDyF08UJs+IeVDaX3628gHbvreDJDkdFElHIuFj2
-        gaQ3yUOrK8lF+74jt3HJ3ONfjg==
-X-Google-Smtp-Source: ADFU+vuuoKy23fJWsGIKanNj5vBpIUf8a+/Rb9mL+rPcSl7wR8cgvC2houSQAoG3kJh7HFjBsXemgw==
-X-Received: by 2002:adf:f70f:: with SMTP id r15mr8903620wrp.269.1583396158372;
-        Thu, 05 Mar 2020 00:15:58 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c2sm8220616wma.39.2020.03.05.00.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 00:15:57 -0800 (PST)
-References: <1582991214-85209-1-git-send-email-christianshewitt@gmail.com> <1582991214-85209-3-git-send-email-christianshewitt@gmail.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Christian Hewitt <christianshewitt@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: meson-g12a-tanix-tx5max: add initial device tree
-In-reply-to: <1582991214-85209-3-git-send-email-christianshewitt@gmail.com>
-Date:   Thu, 05 Mar 2020 09:15:56 +0100
-Message-ID: <1jh7z3cj43.fsf@starbuckisacylon.baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 5 Mar 2020 03:24:03 -0500
+X-Greylist: delayed 452 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Mar 2020 03:24:02 EST
+Received: from localhost (unknown [192.168.167.209])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 045DC8B0D3;
+        Thu,  5 Mar 2020 16:16:27 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P32633T140274034538240S1583396184137610_;
+        Thu, 05 Mar 2020 16:16:26 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <e59db39a75117ec32bc961e850a9069c>
+X-RL-SENDER: cl@rock-chips.com
+X-SENDER: cl@rock-chips.com
+X-LOGIN-NAME: cl@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+From:   <cl@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        akpm@linux-foundation.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        surenb@google.com, ben.dooks@codethink.co.uk,
+        anshuman.khandual@arm.com, catalin.marinas@arm.com,
+        will@kernel.org, keescook@chromium.org, luto@amacapital.net,
+        wad@chromium.org, mark.rutland@arm.com, geert+renesas@glider.be,
+        george_davis@mentor.com, sudeep.holla@arm.com,
+        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huangtao@rock-chips.com, Liang Chen <cl@rock-chips.com>
+Subject: [PATCH v1 0/1] wait_task_inactive() spend too much time on system startup
+Date:   Thu,  5 Mar 2020 16:16:10 +0800
+Message-Id: <20200305081611.29323-1-cl@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Liang Chen <cl@rock-chips.com>
 
-On Sat 29 Feb 2020 at 16:46, Christian Hewitt <christianshewitt@gmail.com> wrote:
+Changelog:
+v1: wait_task_inactive() frequently call schedule_hrtimeout() and spend a lot of time,
+i am trying to optimize it on rockchip platform.
 
-> The Oranth Tanix TX5 Max is based on the Amlogic U200 reference design
-> using the S905X2 chipset. Hardware specification:
->
-> - 4GB LPDDR4 RAM
-> - 32GB eMMC storage
-> - 10/100/1000 Base-T Ethernet using External RGMII PHY
-> - 802.11 a/b/g/b/ac + BT 4.1 sdio wireless
-> - HDMI 2.0 (4k@60p) video
-> - Composite video + 2-channel audio output on 3.5mm jack
-> - S/PDIF audio output
-> - 1x USB 3.0
-> - 1x USB 2.0
-> - 1x micro SD card slot
->
-> The device tree is based on the higher-spec X96 Max box device.
+Liang Chen (1):
+  sched/fair: do not preempt current task if it is going to call
+    schedule()
 
-Would you mind pointing out the differences ?
-Maybe I missed something, but do we really this dts ?
-Can't this device directly use the x96 dt, or the u200 ?
+ arch/arm/include/asm/thread_info.h   |  1 +
+ arch/arm64/include/asm/thread_info.h |  1 +
+ include/linux/sched.h                | 15 +++++++++++++++
+ kernel/kthread.c                     |  4 ++++
+ kernel/sched/fair.c                  |  4 ++++
+ 5 files changed, 25 insertions(+)
 
-All these boards, for which we don't have any documentation, add up 
+-- 
+2.17.1
 
->
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->  arch/arm64/boot/dts/amlogic/Makefile               |   1 +
->  .../boot/dts/amlogic/meson-g12a-tanix-tx5max.dts   | 481 +++++++++++++++++++++
->  2 files changed, 482 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-tanix-tx5max.dts
->
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index eef0045..a1db803 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-sei510.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-g12a-tanix-tx5max.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-x96-max.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-khadas-vim3.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-tanix-tx5max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-tanix-tx5max.dts
-> new file mode 100644
-> index 0000000..c3ef0ee
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-tanix-tx5max.dts
-> @@ -0,0 +1,481 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2018 BayLibre SAS. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
 
-[...]
-
-> +&spdifout_b {
-> +	status = "okay";
-> +};
-
-Why do you need this ?
-This producer is dedicated to HDMI controller which does not support it
-ATM. Also it is not even used in your sound card
-
-Same goes for the x96 BTW.
-
-> +
-> +&tdmif_b {
-> +	status = "okay";
-> +};
-> +
-> +&tdmout_b {
-> +	status = "okay";
-> +};
-> +
-> +&tohdmitx {
-> +	status = "okay";
-> +};
 
