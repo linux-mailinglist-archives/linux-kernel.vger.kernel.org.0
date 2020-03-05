@@ -2,140 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC50017A2F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF5817A2FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbgCEKOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:14:16 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38108 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbgCEKOP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:14:15 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025A7mv2038879;
-        Thu, 5 Mar 2020 10:13:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=SGXNoWNlZVLnSYJIxa2/4WB0jyZ02hYC4NTOct1cKkQ=;
- b=JLFvXCWsTdaT86bZXB2zn8XjFgTtkJFosOBxbYl+jtJTDwQFO4EpD1WYdi3aWJ7FL1YW
- 9FbJUMo4I0omrJiwDpGwmlpGvH68jzzALWaUDhfqSVmyPkWwi/PC1xEM0ZNXiVdeG1a4
- 8Y0glEHr5VwcbOvDYKAt2GFV9JOoxJ9iDV29kNGHiUzyWIkdgfrA+e9KZWCDmMM1BM8w
- uqAIZg2H5XW6VFAEW1FaVHXc0Id6yxv55s7t4F6ziMf5iKvvJ8TfqlIakpBlxMo+HB6K
- 9pqrF575lSX0ietRKXPNhzozvi4npitTINZHJW4oWF6hw2b/XIoi+RzYKrFSHshyKtFG rQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2yffcuv8vb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Mar 2020 10:13:38 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025ACuAd064867;
-        Thu, 5 Mar 2020 10:13:38 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2yg1rus3dv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Mar 2020 10:13:37 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 025ADYBw000924;
-        Thu, 5 Mar 2020 10:13:34 GMT
-Received: from [192.168.1.14] (/114.88.246.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 05 Mar 2020 02:13:34 -0800
-Subject: Re: [PATCH v2] blktrace: fix dereference after null check
-To:     Cengiz Can <cengiz@kernel.wtf>, Jens Axboe <axboe@kernel.dk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200304105818.11781-1-cengiz@kernel.wtf>
-From:   Bob Liu <bob.liu@oracle.com>
-Message-ID: <dd82137a-5152-7c93-a632-ac1766286be5@oracle.com>
-Date:   Thu, 5 Mar 2020 18:13:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        id S1726898AbgCEKSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:18:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58382 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbgCEKSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 05:18:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 7A4F7AE2D;
+        Thu,  5 Mar 2020 10:18:46 +0000 (UTC)
+Subject: Re: xen boot PVH guest with linux 5.6.0-rc4-ish kernel: general
+ protection fault, RIP: 0010:__pv_queued_spin_lock_slowpath
+To:     Sander Eikelenboom <linux@eikelenboom.it>
+Cc:     "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <d323139d-97ef-0c76-8ec6-a669f5b0ba2d@eikelenboom.it>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <bb3965c5-6724-b261-260b-d07e40176802@suse.com>
+Date:   Thu, 5 Mar 2020 11:18:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200304105818.11781-1-cengiz@kernel.wtf>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <d323139d-97ef-0c76-8ec6-a669f5b0ba2d@eikelenboom.it>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9550 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- suspectscore=2 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003050064
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9550 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 suspectscore=2 spamscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003050063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/4/20 6:58 PM, Cengiz Can wrote:
-> There was a recent change in blktrace.c that added a RCU protection to
-> `q->blk_trace` in order to fix a use-after-free issue during access.
+On 04.03.20 18:52, Sander Eikelenboom wrote:
+> Hi Juergen,
 > 
-> However the change missed an edge case that can lead to dereferencing of
-> `bt` pointer even when it's NULL:
+> Just tested a 5.6.0-rc4'ish kernel (8b614cb8f1dcac8ca77cf4dd85f46ef3055f8238, so it includes the xen fixes from x86 trees).
+> Xen is the latest xen-unstable, dom0 kernel is 5.5.7.
 > 
-> Coverity static analyzer marked this as a FORWARD_NULL issue with CID
-> 1460458.
-> 
-> ```
-> /kernel/trace/blktrace.c: 1904 in sysfs_blk_trace_attr_store()
-> 1898            ret = 0;
-> 1899            if (bt == NULL)
-> 1900                    ret = blk_trace_setup_queue(q, bdev);
-> 1901
-> 1902            if (ret == 0) {
-> 1903                    if (attr == &dev_attr_act_mask)
->>>>     CID 1460458:  Null pointer dereferences  (FORWARD_NULL)
->>>>     Dereferencing null pointer "bt".
-> 1904                            bt->act_mask = value;
-> 1905                    else if (attr == &dev_attr_pid)
-> 1906                            bt->pid = value;
-> 1907                    else if (attr == &dev_attr_start_lba)
-> 1908                            bt->start_lba = value;
-> 1909                    else if (attr == &dev_attr_end_lba)
-> ```
-> 
-> Added a reassignment with RCU annotation to fix the issue.
-> 
-> Fixes: c780e86dd48 ("blktrace: Protect q->blk_trace with RCU")
-> 
-> Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
+> During boot of the PVH guest I got the splat below.
+> With a 5.5.7 kernel the guest boots fine.
 
-This version looks good to me, thanks.
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
+There were 2 bugs. I have sent the patches.
 
-> ---
-> 
->     Patch Changelog
->     * v2: Added RCU annotation to assignment
-> 
->  kernel/trace/blktrace.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-> index 4560878f0bac..ca39dc3230cb 100644
-> --- a/kernel/trace/blktrace.c
-> +++ b/kernel/trace/blktrace.c
-> @@ -1896,8 +1896,11 @@ static ssize_t sysfs_blk_trace_attr_store(struct device *dev,
->  	}
-> 
->  	ret = 0;
-> -	if (bt == NULL)
-> +	if (bt == NULL) {
->  		ret = blk_trace_setup_queue(q, bdev);
-> +		bt = rcu_dereference_protected(q->blk_trace,
-> +				lockdep_is_held(&q->blk_trace_mutex));
-> +	}
-> 
->  	if (ret == 0) {
->  		if (attr == &dev_attr_act_mask)
-> --
-> 2.25.1
-> 
+Interesting, though, that you did see only one of them (I hit the
+same bug as you did only after fixing the xenbus problem).
 
+
+Juergen
