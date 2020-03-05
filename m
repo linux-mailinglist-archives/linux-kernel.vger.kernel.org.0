@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EE83179F97
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:51:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D34E8179F99
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:51:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgCEFuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 00:50:14 -0500
-Received: from mga07.intel.com ([134.134.136.100]:47577 "EHLO mga07.intel.com"
+        id S1726635AbgCEFuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 00:50:18 -0500
+Received: from mga01.intel.com ([192.55.52.88]:30230 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbgCEFuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 00:50:13 -0500
+        id S1726436AbgCEFuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 00:50:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 21:50:13 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 21:50:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,516,1574150400"; 
-   d="scan'208";a="441262403"
+   d="scan'208";a="244175466"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Mar 2020 21:50:11 -0800
+  by orsmga006.jf.intel.com with ESMTP; 04 Mar 2020 21:50:12 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1j9jOd-0006ko-0H; Thu, 05 Mar 2020 13:50:11 +0800
-Date:   Thu, 05 Mar 2020 13:49:29 +0800
+        id 1j9jOd-0006mo-Ar; Thu, 05 Mar 2020 13:50:11 +0800
+Date:   Thu, 05 Mar 2020 13:49:34 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     "x86-ml" <x86@kernel.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:timers/urgent] BUILD SUCCESS
- ecc421e05bab97cf3ff4fe456ade47ef84dba8c2
-Message-ID: <5e6092e9.jXVeJddSGJpdRDtQ%lkp@intel.com>
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ b95b4d5ef061806fde07a6a3255e6c07f4fed0d3
+Message-ID: <5e6092ee.UiEnBw9ptw0Q8biG%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,13 +39,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  timers/urgent
-branch HEAD: ecc421e05bab97cf3ff4fe456ade47ef84dba8c2  sys/sysinfo: Respect boottime inside time namespace
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  perf/urgent
+branch HEAD: b95b4d5ef061806fde07a6a3255e6c07f4fed0d3  Merge tag 'perf-urgent-for-mingo-5.6-20200303' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent
 
-elapsed time: 2113m
+elapsed time: 1130m
 
-configs tested: 258
-configs skipped: 0
+configs tested: 211
+configs skipped: 14
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -67,19 +67,20 @@ arm64                               defconfig
 sparc                            allyesconfig
 s390                             alldefconfig
 m68k                             allmodconfig
-parisc                generic-64bit_defconfig
-sh                          rsk7269_defconfig
-csky                                defconfig
-sh                  sh7785lcr_32bit_defconfig
-sparc                               defconfig
-h8300                    h8300h-sim_defconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                             alldefconfig
-i386                                defconfig
-ia64                             alldefconfig
+mips                              allnoconfig
 ia64                             allmodconfig
 ia64                              allnoconfig
+sh                          rsk7269_defconfig
+parisc                generic-64bit_defconfig
+sh                  sh7785lcr_32bit_defconfig
+s390                          debug_defconfig
+csky                                defconfig
+sparc                               defconfig
+i386                              allnoconfig
+i386                             alldefconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
 ia64                             allyesconfig
 ia64                                defconfig
 c6x                              allyesconfig
@@ -94,22 +95,22 @@ alpha                               defconfig
 nds32                             allnoconfig
 nds32                               defconfig
 h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
 h8300                       h8s-sim_defconfig
 m68k                       m5475evb_defconfig
 m68k                          multi_defconfig
 m68k                           sun3_defconfig
-arc                              allyesconfig
 arc                                 defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
+arc                              allyesconfig
 powerpc                             defconfig
 powerpc                       ppc64_defconfig
 powerpc                          rhel-kconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
 mips                           32r2_defconfig
 mips                         64r6el_defconfig
 mips                             allmodconfig
-mips                              allnoconfig
 mips                             allyesconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
@@ -128,18 +129,6 @@ x86_64               randconfig-a003-20200305
 i386                 randconfig-a001-20200305
 i386                 randconfig-a002-20200305
 i386                 randconfig-a003-20200305
-x86_64               randconfig-a001-20200303
-x86_64               randconfig-a002-20200303
-x86_64               randconfig-a003-20200303
-i386                 randconfig-a001-20200303
-i386                 randconfig-a002-20200303
-i386                 randconfig-a003-20200303
-alpha                randconfig-a001-20200303
-m68k                 randconfig-a001-20200303
-mips                 randconfig-a001-20200303
-nds32                randconfig-a001-20200303
-parisc               randconfig-a001-20200303
-riscv                randconfig-a001-20200303
 alpha                randconfig-a001-20200305
 m68k                 randconfig-a001-20200305
 mips                 randconfig-a001-20200305
@@ -152,11 +141,6 @@ mips                 randconfig-a001-20200304
 nds32                randconfig-a001-20200304
 parisc               randconfig-a001-20200304
 riscv                randconfig-a001-20200304
-c6x                  randconfig-a001-20200303
-h8300                randconfig-a001-20200303
-microblaze           randconfig-a001-20200303
-nios2                randconfig-a001-20200303
-sparc64              randconfig-a001-20200303
 c6x                  randconfig-a001-20200304
 h8300                randconfig-a001-20200304
 microblaze           randconfig-a001-20200304
@@ -178,24 +162,12 @@ x86_64               randconfig-b003-20200304
 i386                 randconfig-b001-20200304
 i386                 randconfig-b002-20200304
 i386                 randconfig-b003-20200304
-x86_64               randconfig-b001-20200303
-x86_64               randconfig-b002-20200303
-i386                 randconfig-b001-20200303
-i386                 randconfig-b003-20200303
-i386                 randconfig-b002-20200303
-x86_64               randconfig-b003-20200303
 x86_64               randconfig-b001-20200305
 x86_64               randconfig-b002-20200305
 x86_64               randconfig-b003-20200305
 i386                 randconfig-b001-20200305
 i386                 randconfig-b002-20200305
 i386                 randconfig-b003-20200305
-x86_64               randconfig-c001-20200303
-x86_64               randconfig-c002-20200303
-x86_64               randconfig-c003-20200303
-i386                 randconfig-c001-20200303
-i386                 randconfig-c002-20200303
-i386                 randconfig-c003-20200303
 x86_64               randconfig-c001-20200305
 x86_64               randconfig-c002-20200305
 x86_64               randconfig-c003-20200305
@@ -226,24 +198,12 @@ x86_64               randconfig-e003-20200305
 i386                 randconfig-e001-20200305
 i386                 randconfig-e002-20200305
 i386                 randconfig-e003-20200305
-x86_64               randconfig-e001-20200303
-x86_64               randconfig-e002-20200303
-x86_64               randconfig-e003-20200303
-i386                 randconfig-e001-20200303
-i386                 randconfig-e002-20200303
-i386                 randconfig-e003-20200303
 x86_64               randconfig-f001-20200304
 x86_64               randconfig-f002-20200304
 x86_64               randconfig-f003-20200304
 i386                 randconfig-f001-20200304
 i386                 randconfig-f002-20200304
 i386                 randconfig-f003-20200304
-x86_64               randconfig-g001-20200303
-x86_64               randconfig-g002-20200303
-x86_64               randconfig-g003-20200303
-i386                 randconfig-g001-20200303
-i386                 randconfig-g002-20200303
-i386                 randconfig-g003-20200303
 x86_64               randconfig-g001-20200304
 x86_64               randconfig-g002-20200304
 x86_64               randconfig-g003-20200304
@@ -262,18 +222,12 @@ x86_64               randconfig-h003-20200304
 i386                 randconfig-h001-20200304
 i386                 randconfig-h002-20200304
 i386                 randconfig-h003-20200304
-x86_64               randconfig-h001-20200303
-x86_64               randconfig-h002-20200303
-x86_64               randconfig-h003-20200303
-i386                 randconfig-h001-20200303
-i386                 randconfig-h002-20200303
-i386                 randconfig-h003-20200303
-arc                  randconfig-a001-20200303
-arm                  randconfig-a001-20200303
-arm64                randconfig-a001-20200303
-ia64                 randconfig-a001-20200303
-powerpc              randconfig-a001-20200303
-sparc                randconfig-a001-20200303
+arc                  randconfig-a001-20200305
+arm                  randconfig-a001-20200305
+arm64                randconfig-a001-20200305
+ia64                 randconfig-a001-20200305
+powerpc              randconfig-a001-20200305
+sparc                randconfig-a001-20200305
 arc                  randconfig-a001-20200304
 arm                  randconfig-a001-20200304
 arm64                randconfig-a001-20200304
@@ -286,12 +240,11 @@ riscv                               defconfig
 riscv                    nommu_virt_defconfig
 riscv                          rv32_defconfig
 riscv                            allmodconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                          debug_defconfig
-s390                                defconfig
 s390                       zfcpdump_defconfig
+s390                             allyesconfig
+s390                              allnoconfig
+s390                             allmodconfig
+s390                                defconfig
 sh                               allmodconfig
 sh                                allnoconfig
 sh                            titan_defconfig
@@ -299,9 +252,9 @@ sparc64                          allmodconfig
 sparc64                           allnoconfig
 sparc64                          allyesconfig
 sparc64                             defconfig
-um                                  defconfig
-um                             i386_defconfig
 um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
 x86_64                              fedora-25
 x86_64                                  kexec
 x86_64                                    lkp
