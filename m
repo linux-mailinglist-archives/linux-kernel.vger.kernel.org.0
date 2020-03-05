@@ -2,221 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 588B217AD7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 514F617AD8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:51:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbgCERnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:43:43 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54078 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726179AbgCERnm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:43:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583430221;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=+47MZRdP4eySwBBvI9Z4qJ2/RVGABmp0e90Oh4PvK+U=;
-        b=YEeZ3QLvTamb/QKTGs6S1voXx2LQk8BCDNDdMva8eoHYgFs+abhyXqE5c9CHebGSJiFUdv
-        V45ohUjCq1quFvaX+zHKgc2Ux3VxeZJ5I+/KAuP3AroL9Z8Xyvp5uRTXHCpGKxeQllqoiW
-        x4NYneijWZ4vzLLsup5H3ZR8PJwAmdQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-413-NwK1P_MQO6-93JL8IGBKmQ-1; Thu, 05 Mar 2020 12:43:37 -0500
-X-MC-Unique: NwK1P_MQO6-93JL8IGBKmQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0EDFE800D54;
-        Thu,  5 Mar 2020 17:43:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE17460BE0;
-        Thu,  5 Mar 2020 17:43:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     linux-api@vger.kernel.org
-cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        dhowells@redhat.com, metze@samba.org, cyphar@cyphar.com,
-        christian.brauner@ubuntu.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH] Mark AT_* path flags as deprecated and add missing RESOLVE_ flags
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3774366.1583430213.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 05 Mar 2020 17:43:33 +0000
-Message-ID: <3774367.1583430213@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+        id S1726436AbgCERu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:50:58 -0500
+Received: from mga18.intel.com ([134.134.136.126]:47062 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726048AbgCERuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:50:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 09:50:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="352404073"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Mar 2020 09:50:51 -0800
+Subject: [RFC][PATCH 1/2] x86: remove duplicate TSC DEADLINE MSR definitions
+To:     linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        peterz@infradead.org
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Thu, 05 Mar 2020 09:47:06 -0800
+Message-Id: <20200305174706.0D6B8EE4@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do we want to do this?  Or should we duplicate the RESOLVE_* flags to AT_*
-flags so that existing *at() syscalls can make use of them?
 
-David
+There are two definitions for the TSC deadline MSR in msr-index.h,
+one with an underscore and one without.  Axe one of them and move
+all the references over to the other one.
+
+Cc: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+
 ---
-commit 448731bf3b29f2b1f7c969d7efe1f0673ae13b5e
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Mar 5 17:40:02 2020 +0000
 
-    Mark AT_* flags as deprecated and add missing RESOLVE_ flags
-    =
+ b/arch/x86/include/asm/msr-index.h                       |    2 --
+ b/arch/x86/kvm/x86.c                                     |    6 +++---
+ b/tools/arch/x86/include/asm/msr-index.h                 |    2 --
+ b/tools/perf/trace/beauty/tracepoints/x86_msr.sh         |    2 +-
+ b/tools/testing/selftests/kvm/include/x86_64/processor.h |    2 --
+ 5 files changed, 4 insertions(+), 10 deletions(-)
 
-    It has been suggested that new path-using system calls should use RESO=
-LVE_*
-    flags instead of AT_* flags, but the RESOLVE_* flag functions are not =
-a
-    superset of the AT_* flag functions.  So formalise this by:
-    =
-
-     (1) In linux/fcntl.h, add a comment noting that the AT_* flags are
-         deprecated for new system calls and that RESOLVE_* flags should b=
-e
-         used instead.
-    =
-
-     (2) Add some missing flags:
-    =
-
-            RESOLVE_NO_TERMINAL_SYMLINKS    for AT_SYMLINK_NOFOLLOW
-            RESOLVE_NO_TERMINAL_AUTOMOUNTS  for AT_NO_AUTOMOUNT
-            RESOLVE_EMPTY_PATH              for AT_EMPTY_PATH
-    =
-
-     (3) Make openat2() support RESOLVE_NO_TERMINAL_SYMLINKS.  LOOKUP_OPEN
-         internally implies LOOKUP_AUTOMOUNT, and AT_EMPTY_PATH is probabl=
-y not
-         worth supporting (maybe use dup2() instead?).
-    =
-
-    Reported-by: Stefan Metzmacher <metze@samba.org>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Aleksa Sarai <cyphar@cyphar.com>
-
-diff --git a/fs/open.c b/fs/open.c
-index 0788b3715731..6946ad09b42b 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -977,7 +977,7 @@ inline struct open_how build_open_how(int flags, umode=
-_t mode)
- inline int build_open_flags(const struct open_how *how, struct open_flags=
- *op)
- {
- 	int flags =3D how->flags;
--	int lookup_flags =3D 0;
-+	int lookup_flags =3D LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
- 	int acc_mode =3D ACC_MODE(flags);
- =
-
- 	/* Must never be set by userspace */
-@@ -1055,8 +1055,8 @@ inline int build_open_flags(const struct open_how *h=
-ow, struct open_flags *op)
- =
-
- 	if (flags & O_DIRECTORY)
- 		lookup_flags |=3D LOOKUP_DIRECTORY;
--	if (!(flags & O_NOFOLLOW))
--		lookup_flags |=3D LOOKUP_FOLLOW;
-+	if (flags & O_NOFOLLOW)
-+		lookup_flags &=3D ~LOOKUP_FOLLOW;
- =
-
- 	if (how->resolve & RESOLVE_NO_XDEV)
- 		lookup_flags |=3D LOOKUP_NO_XDEV;
-@@ -1068,6 +1068,8 @@ inline int build_open_flags(const struct open_how *h=
-ow, struct open_flags *op)
- 		lookup_flags |=3D LOOKUP_BENEATH;
- 	if (how->resolve & RESOLVE_IN_ROOT)
- 		lookup_flags |=3D LOOKUP_IN_ROOT;
-+	if (how->resolve & RESOLVE_NO_TERMINAL_SYMLINKS)
-+		lookup_flags &=3D ~LOOKUP_FOLLOW;
- =
-
- 	op->lookup_flags =3D lookup_flags;
- 	return 0;
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 7bcdcf4f6ab2..fd6ee34cce0f 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -19,7 +19,8 @@
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
- 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
--	 RESOLVE_BENEATH | RESOLVE_IN_ROOT)
-+	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_NO_TERMINAL_SYMLINKS | \
-+	 RESOLVE_NO_TERMINAL_AUTOMOUNTS | RESOLVE_EMPTY_PATH)
- =
-
- /* List of all open_how "versions". */
- #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index ca88b7bce553..9f5432dbd213 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -84,9 +84,20 @@
- #define DN_ATTRIB	0x00000020	/* File changed attibutes */
- #define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
- =
-
--#define AT_FDCWD		-100    /* Special value used to indicate
--                                           openat should use the current
--                                           working directory. */
-+
-+/*
-+ * Special dfd/dirfd file descriptor value used to indicate that *at() sy=
-stem
-+ * calls should use the current working directory for relative paths.
-+ */
-+#define AT_FDCWD		-100
-+
-+/*
-+ * Pathwalk control flags, used for the *at() syscalls.  These should be
-+ * considered deprecated and should not be used for new system calls.  Th=
-e
-+ * RESOLVE_* flags in <linux/openat2.h> should be used instead.
-+ *
-+ * There are also system call-specific flags here (REMOVEDIR, STATX, RECU=
-RSIVE).
-+ */
- #define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
- #define AT_REMOVEDIR		0x200   /* Remove directory instead of
-                                            unlinking file.  */
-diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-index 58b1eb711360..bb8d0a7f82c2 100644
---- a/include/uapi/linux/openat2.h
-+++ b/include/uapi/linux/openat2.h
-@@ -22,7 +22,10 @@ struct open_how {
- 	__u64 resolve;
- };
- =
-
--/* how->resolve flags for openat2(2). */
-+/*
-+ * Path resolution paths to replace AT_* paths in all new syscalls that w=
-ould
-+ * use them.
-+ */
- #define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
- 					(includes bind-mounts). */
- #define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-styl=
-e
-@@ -35,5 +38,8 @@ struct open_how {
- #define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
- 					be scoped inside the dirfd
- 					(similar to chroot(2)). */
-+#define RESOLVE_NO_TERMINAL_SYMLINKS	0x20 /* Don't follow terminal symlin=
-ks in the path */
-+#define RESOLVE_NO_TERMINAL_AUTOMOUNTS	0x40 /* Don't follow terminal auto=
-mounts in the path */
-+#define RESOLVE_EMPTY_PATH	0x80	/* Permit a path of "" to indicate the df=
-d exactly */
- =
-
- #endif /* _UAPI_LINUX_OPENAT2_H */
-
+diff -puN arch/x86/include/asm/msr-index.h~kill-dup-MSR_IA32_TSCDEADLINE arch/x86/include/asm/msr-index.h
+--- a/arch/x86/include/asm/msr-index.h~kill-dup-MSR_IA32_TSCDEADLINE	2020-03-05 09:42:37.049901042 -0800
++++ b/arch/x86/include/asm/msr-index.h	2020-03-05 09:42:37.062901042 -0800
+@@ -576,8 +576,6 @@
+ #define MSR_IA32_APICBASE_ENABLE	(1<<11)
+ #define MSR_IA32_APICBASE_BASE		(0xfffff<<12)
+ 
+-#define MSR_IA32_TSCDEADLINE		0x000006e0
+-
+ #define MSR_IA32_UCODE_WRITE		0x00000079
+ #define MSR_IA32_UCODE_REV		0x0000008b
+ 
+diff -puN arch/x86/kvm/x86.c~kill-dup-MSR_IA32_TSCDEADLINE arch/x86/kvm/x86.c
+--- a/arch/x86/kvm/x86.c~kill-dup-MSR_IA32_TSCDEADLINE	2020-03-05 09:42:37.051901042 -0800
++++ b/arch/x86/kvm/x86.c	2020-03-05 09:42:37.065901042 -0800
+@@ -1200,7 +1200,7 @@ static const u32 emulated_msrs_all[] = {
+ 	MSR_KVM_PV_EOI_EN,
+ 
+ 	MSR_IA32_TSC_ADJUST,
+-	MSR_IA32_TSCDEADLINE,
++	MSR_IA32_TSC_DEADLINE,
+ 	MSR_IA32_ARCH_CAPABILITIES,
+ 	MSR_IA32_MISC_ENABLE,
+ 	MSR_IA32_MCG_STATUS,
+@@ -2688,7 +2688,7 @@ int kvm_set_msr_common(struct kvm_vcpu *
+ 		return kvm_set_apic_base(vcpu, msr_info);
+ 	case APIC_BASE_MSR ... APIC_BASE_MSR + 0x3ff:
+ 		return kvm_x2apic_msr_write(vcpu, msr, data);
+-	case MSR_IA32_TSCDEADLINE:
++	case MSR_IA32_TSC_DEADLINE:
+ 		kvm_set_lapic_tscdeadline_msr(vcpu, data);
+ 		break;
+ 	case MSR_IA32_TSC_ADJUST:
+@@ -3009,7 +3009,7 @@ int kvm_get_msr_common(struct kvm_vcpu *
+ 	case APIC_BASE_MSR ... APIC_BASE_MSR + 0x3ff:
+ 		return kvm_x2apic_msr_read(vcpu, msr_info->index, &msr_info->data);
+ 		break;
+-	case MSR_IA32_TSCDEADLINE:
++	case MSR_IA32_TSC_DEADLINE:
+ 		msr_info->data = kvm_get_lapic_tscdeadline_msr(vcpu);
+ 		break;
+ 	case MSR_IA32_TSC_ADJUST:
+diff -puN tools/arch/x86/include/asm/msr-index.h~kill-dup-MSR_IA32_TSCDEADLINE tools/arch/x86/include/asm/msr-index.h
+--- a/tools/arch/x86/include/asm/msr-index.h~kill-dup-MSR_IA32_TSCDEADLINE	2020-03-05 09:42:37.055901042 -0800
++++ b/tools/arch/x86/include/asm/msr-index.h	2020-03-05 09:42:37.066901042 -0800
+@@ -576,8 +576,6 @@
+ #define MSR_IA32_APICBASE_ENABLE	(1<<11)
+ #define MSR_IA32_APICBASE_BASE		(0xfffff<<12)
+ 
+-#define MSR_IA32_TSCDEADLINE		0x000006e0
+-
+ #define MSR_IA32_UCODE_WRITE		0x00000079
+ #define MSR_IA32_UCODE_REV		0x0000008b
+ 
+diff -puN tools/perf/trace/beauty/tracepoints/x86_msr.sh~kill-dup-MSR_IA32_TSCDEADLINE tools/perf/trace/beauty/tracepoints/x86_msr.sh
+--- a/tools/perf/trace/beauty/tracepoints/x86_msr.sh~kill-dup-MSR_IA32_TSCDEADLINE	2020-03-05 09:42:37.057901042 -0800
++++ b/tools/perf/trace/beauty/tracepoints/x86_msr.sh	2020-03-05 09:42:37.066901042 -0800
+@@ -15,7 +15,7 @@ x86_msr_index=${arch_x86_header_dir}/msr
+ 
+ printf "static const char *x86_MSRs[] = {\n"
+ regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+MSR_([[:alnum:]][[:alnum:]_]+)[[:space:]]+(0x00000[[:xdigit:]]+)[[:space:]]*.*'
+-egrep $regex ${x86_msr_index} | egrep -v 'MSR_(ATOM|P[46]|AMD64|IA32_TSCDEADLINE|IDT_FCR4)' | \
++egrep $regex ${x86_msr_index} | egrep -v 'MSR_(ATOM|P[46]|AMD64|IA32_TSC_DEADLINE|IDT_FCR4)' | \
+ 	sed -r "s/$regex/\2 \1/g" | sort -n | \
+ 	xargs printf "\t[%s] = \"%s\",\n"
+ printf "};\n\n"
+diff -puN tools/testing/selftests/kvm/include/x86_64/processor.h~kill-dup-MSR_IA32_TSCDEADLINE tools/testing/selftests/kvm/include/x86_64/processor.h
+--- a/tools/testing/selftests/kvm/include/x86_64/processor.h~kill-dup-MSR_IA32_TSCDEADLINE	2020-03-05 09:42:37.058901042 -0800
++++ b/tools/testing/selftests/kvm/include/x86_64/processor.h	2020-03-05 09:42:37.067901042 -0800
+@@ -813,8 +813,6 @@ void kvm_get_cpu_address_width(unsigned
+ #define		APIC_VECTOR_MASK	0x000FF
+ #define	APIC_ICR2	0x310
+ 
+-#define MSR_IA32_TSCDEADLINE		0x000006e0
+-
+ #define MSR_IA32_UCODE_WRITE		0x00000079
+ #define MSR_IA32_UCODE_REV		0x0000008b
+ 
+_
