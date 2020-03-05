@@ -2,96 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63DB7179FE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 07:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8D7179FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 07:22:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbgCEGWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 01:22:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35036 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbgCEGWH (ORCPT
+        id S1726143AbgCEGWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 01:22:40 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59780 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgCEGWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 01:22:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=8Uv8yfjAePAyCPwv9/ehe9yX6LBL9Q9lCZWm2Tx3ZcM=; b=qOTBdj4gqNy6LTESqeLIZIB3Fs
-        FOmFYttafyaItPS3h+s+Z62K0y4Y+6nRqEdujd4k5wELPJuEcKHHxDDnIqTmbg7yEoCgq/+RYaZo9
-        YLfh5A7xmJwO9zbBD44lvTsG7++UMGroyGYj6pfmnmZb7VPs7b/rWRTms+m/1Kj4JrnZYaWqw28Nl
-        txzKVRn1EHOSO2hcyQ3F9JpWf/STOL/i+877LXzRzZrw4XduVuTBrh51N5oDCp1l2VZELbMyl0Wil
-        xRpW4R5oO2qUccguiasEClmoCXJlk3HErDRK4URCRUTP6AxKs8qPoEyYhMAgdfPHhQqBnh2oTYOiF
-        gFRnqMiw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9jtG-0006Qj-9J; Thu, 05 Mar 2020 06:21:50 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Cc:     Vitaly Andrianov <vitalya@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Matt Mackall <mpm@selenic.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] hw_random: move TI Keystone driver into the config menu
- structure
-Message-ID: <06417e19-57fe-c090-c493-d4c481dfee00@infradead.org>
-Date:   Wed, 4 Mar 2020 22:21:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 5 Mar 2020 01:22:40 -0500
+Received: from 1.is.james.uk.vpn ([10.172.254.24] helo=malefic)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <james.troup@canonical.com>)
+        id 1j9ju0-0005S7-TL; Thu, 05 Mar 2020 06:22:37 +0000
+Received: from james by malefic with local (Exim 4.93 #3 (Debian))
+        id 1j9jtw-003dRU-Ie; Thu, 05 Mar 2020 07:22:32 +0100
+From:   James Troup <james.troup@canonical.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: deprecated.rst: Add %p to the list
+References: <202003041103.A5842AD@keescook>
+Mail-Copies-To: never
+Date:   Thu, 05 Mar 2020 07:22:31 +0100
+In-Reply-To: <202003041103.A5842AD@keescook> (Kees Cook's message of "Wed, 4
+        Mar 2020 11:13:28 -0800")
+Message-ID: <87mu8vtj6g.fsf@canonical.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Kees Cook <keescook@chromium.org> writes:
 
-Move the TI Keystone hardware random number generator into the
-same menu as all of the other hardware random number generators.
+> diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
+> index f9f196d3a69b..a4db119f4e09 100644
+> --- a/Documentation/process/deprecated.rst
+> +++ b/Documentation/process/deprecated.rst
+> @@ -109,6 +109,23 @@ the given limit of bytes to copy. This is inefficient and can lead to
+>  linear read overflows if a source string is not NUL-terminated. The
+>  safe replacement is :c:func:`strscpy`.
+>  
+> +%p format specifier
+> +-------------------
+> +Using %p in format strings leads to a huge number of address exposures.
 
-This makes the driver config be listed in the correct place in
-the kconfig tools.
+Perhaps this sentence should be in the past tense, since %p currently
+prints a hashed value?
 
-Fixes: eb428ee0e3ca ("hwrng: ks-sa - add hw_random driver")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vitaly Andrianov <vitalya@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Murali Karicheri <m-karicheri2@ti.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Matt Mackall <mpm@selenic.com>
-Cc: linux-crypto@vger.kernel.org
----
- drivers/char/hw_random/Kconfig |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> +Instead of leaving these to be exploitable, "%p" should not be used in
+> +the kernel.
 
---- linux-next-20200304.orig/drivers/char/hw_random/Kconfig
-+++ linux-next-20200304/drivers/char/hw_random/Kconfig
-@@ -467,6 +467,13 @@ config HW_RANDOM_NPCM
- 
-  	  If unsure, say Y.
- 
-+config HW_RANDOM_KEYSTONE
-+	depends on ARCH_KEYSTONE || COMPILE_TEST
-+	default HW_RANDOM
-+	tristate "TI Keystone NETCP SA Hardware random number generator"
-+	help
-+	  This option enables Keystone's hardware random generator.
-+
- endif # HW_RANDOM
- 
- config UML_RANDOM
-@@ -483,10 +490,3 @@ config UML_RANDOM
- 	  (check your distro, or download from
- 	  http://sourceforge.net/projects/gkernel/).  rngd periodically reads
- 	  /dev/hwrng and injects the entropy into /dev/random.
--
--config HW_RANDOM_KEYSTONE
--	depends on ARCH_KEYSTONE || COMPILE_TEST
--	default HW_RANDOM
--	tristate "TI Keystone NETCP SA Hardware random number generator"
--	help
--	  This option enables Keystone's hardware random generator.
+On its face, this seems to contradict the guidance below?
 
+> If used currently, it is a hashed value, rendering it
+
+Perhaps: s/it is/it prints/ ?
+
+> +unusable for addressing. Paraphrasing Linus's current `guideance
+> <https://lore.kernel.org/lkml/CA+55aFwQEd_d40g4mUCSsVRZzrFPUJt74vc6PPpb675hYNXcKw@mail.gmail.com/>`_:
+
+Typo: guidance
+
+> +- Just use %p and get the hashed value.
+
+-- 
+James
