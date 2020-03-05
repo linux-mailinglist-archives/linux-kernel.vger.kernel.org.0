@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9933A179F72
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0AA179F79
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:46:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbgCEFop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 00:44:45 -0500
+        id S1725974AbgCEFqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 00:46:04 -0500
 Received: from mail26.static.mailgun.info ([104.130.122.26]:61650 "EHLO
         mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725844AbgCEFop (ORCPT
+        by vger.kernel.org with ESMTP id S1725844AbgCEFqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 00:44:45 -0500
+        Thu, 5 Mar 2020 00:46:04 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583387084; h=Message-ID: References: In-Reply-To: Subject:
+ s=smtp; t=1583387164; h=Message-ID: References: In-Reply-To: Subject:
  Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=As7z+9RsocK5CQV9qlxwp3vbojEnbfUk/NP3ejBV3dc=;
- b=V6yyqpEeGhjXBzHPiqJk2aFtDuK+RDojVipsiIk6nqCbn6am5VwdZ2J1CzOh9fS40o/1pzVF
- xHI957itbSNzbMrk4o6PPUBl1CeM7ZXT67ukzUEV/eO3q4v5V7Y3LWcdQMoQWbqcLdlK+VSk
- DyWcfVH8zw1tv6nFI99uJP7alRQ=
+ MIME-Version: Sender; bh=xJc+7Bp3FwZ9FEajchA9Dd3Tszwww0y5sCjNNZKDRO0=;
+ b=gYNQDdlGXrZvPgQU7ksD6QZpSqyHNdEksJqorkZv/arDCAKIhAHYsJi7E3GCXsIj5hvI7Z9s
+ kV81XK8BfHic9zFzeMInN3zjLEnJlaPMUGalVxHHPwEmhT6PqWAJ/KiogFU7ImhChgkTbrM3
+ X2yZFsjoXRRss9f41KpvGFGiuAM=
 X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6091cb.7f9a4dcfafb8-smtp-out-n04;
- Thu, 05 Mar 2020 05:44:43 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e609211.7f6d2737ee30-smtp-out-n03;
+ Thu, 05 Mar 2020 05:45:53 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2E615C447A4; Thu,  5 Mar 2020 05:44:41 +0000 (UTC)
+        id E1998C4479F; Thu,  5 Mar 2020 05:45:51 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -35,13 +35,13 @@ Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
         (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A1C56C43383;
-        Thu,  5 Mar 2020 05:44:39 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 03824C43383;
+        Thu,  5 Mar 2020 05:45:50 +0000 (UTC)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 05 Mar 2020 13:44:39 +0800
+Date:   Thu, 05 Mar 2020 13:45:49 +0800
 From:   Can Guo <cang@codeaurora.org>
 To:     Stanley Chu <stanley.chu@mediatek.com>
 Cc:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
@@ -52,11 +52,12 @@ Cc:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kuohong.wang@mediatek.com, peter.wang@mediatek.com,
         chun-hung.wu@mediatek.com, andy.teng@mediatek.com
-Subject: Re: [PATCH v1 2/4] scsi: ufs: use an enum for host capabilities
-In-Reply-To: <20200305040704.10645-3-stanley.chu@mediatek.com>
+Subject: Re: [PATCH v1 3/4] scsi: ufs: allow customized delay for host
+ enabling
+In-Reply-To: <20200305040704.10645-4-stanley.chu@mediatek.com>
 References: <20200305040704.10645-1-stanley.chu@mediatek.com>
- <20200305040704.10645-3-stanley.chu@mediatek.com>
-Message-ID: <2f7c30cab1abf458930ac4253ff17ee1@codeaurora.org>
+ <20200305040704.10645-4-stanley.chu@mediatek.com>
+Message-ID: <1d7964c76ceb218529f0101499fabbea@codeaurora.org>
 X-Sender: cang@codeaurora.org
 User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,98 +68,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Stanley,
 
 On 2020-03-05 12:07, Stanley Chu wrote:
-> Use an enum to specify the host capabilities instead of #defines inside 
-> the
-> structure definition.
+> Currently a 1 ms delay is applied before polling CONTROLLER_ENABLE
+> bit. This delay may not be required or can be changed in different
+> controllers. Make the delay as a changeable value in struct ufs_hba to
+> allow it customized by vendors.
 > 
 > Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
 
 Reviewed-by: Can Guo <cang@codeaurora.org>
 
 > ---
->  drivers/scsi/ufs/ufshcd.h | 65 ++++++++++++++++++++++-----------------
->  1 file changed, 37 insertions(+), 28 deletions(-)
+>  drivers/scsi/ufs/ufshcd.c | 6 +++++-
+>  drivers/scsi/ufs/ufshcd.h | 1 +
+>  2 files changed, 6 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index ed61ecb98b2d..39cae907abd0 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -4282,7 +4282,10 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
+>  	 * instruction might be read back.
+>  	 * This delay can be changed based on the controller.
+>  	 */
+> -	usleep_range(1000, 1100);
+> +	if (hba->hba_enable_delay_us) {
+> +		usleep_range(hba->hba_enable_delay_us,
+> +			     hba->hba_enable_delay_us + 100);
+> +	}
+> 
+>  	/* wait for the host controller to complete initialization */
+>  	retry = 10;
+> @@ -8402,6 +8405,7 @@ int ufshcd_init(struct ufs_hba *hba, void
+> __iomem *mmio_base, unsigned int irq)
+> 
+>  	hba->mmio_base = mmio_base;
+>  	hba->irq = irq;
+> +	hba->hba_enable_delay_us = 1000;
+> 
+>  	err = ufshcd_hba_init(hba);
+>  	if (err)
 > diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 4e235cef99bc..49ade1bfd085 100644
+> index 49ade1bfd085..baf1143d4839 100644
 > --- a/drivers/scsi/ufs/ufshcd.h
 > +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -510,6 +510,43 @@ enum ufshcd_quirks {
->  	UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION		= 1 << 5,
->  };
+> @@ -662,6 +662,7 @@ struct ufs_hba {
+>  	u32 eh_flags;
+>  	u32 intr_mask;
+>  	u16 ee_ctrl_mask;
+> +	u16 hba_enable_delay_us;
+>  	bool is_powered;
 > 
-> +enum ufshcd_caps {
-> +	/* Allow dynamic clk gating */
-> +	UFSHCD_CAP_CLK_GATING				= 1 << 0,
-> +
-> +	/* Allow hiberb8 with clk gating */
-> +	UFSHCD_CAP_HIBERN8_WITH_CLK_GATING		= 1 << 1,
-> +
-> +	/* Allow dynamic clk scaling */
-> +	UFSHCD_CAP_CLK_SCALING				= 1 << 2,
-> +
-> +	/* Allow auto bkops to enabled during runtime suspend */
-> +	UFSHCD_CAP_AUTO_BKOPS_SUSPEND			= 1 << 3,
-> +
-> +	/*
-> +	 * This capability allows host controller driver to use the UFS HCI's
-> +	 * interrupt aggregation capability.
-> +	 * CAUTION: Enabling this might reduce overall UFS throughput.
-> +	 */
-> +	UFSHCD_CAP_INTR_AGGR				= 1 << 4,
-> +
-> +	/*
-> +	 * This capability allows the device auto-bkops to be always enabled
-> +	 * except during suspend (both runtime and suspend).
-> +	 * Enabling this capability means that device will always be allowed
-> +	 * to do background operation when it's active but it might degrade
-> +	 * the performance of ongoing read/write operations.
-> +	 */
-> +	UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND = 1 << 5,
-> +
-> +	/*
-> +	 * This capability allows host controller driver to automatically
-> +	 * enable runtime power management by itself instead of waiting
-> +	 * for userspace to control the power management.
-> +	 */
-> +	UFSHCD_CAP_RPM_AUTOSUSPEND			= 1 << 6,
-> +};
-> +
->  /**
->   * struct ufs_hba - per adapter private structure
->   * @mmio_base: UFSHCI base register address
-> @@ -662,34 +699,6 @@ struct ufs_hba {
->  	struct ufs_clk_gating clk_gating;
->  	/* Control to enable/disable host capabilities */
->  	u32 caps;
-> -	/* Allow dynamic clk gating */
-> -#define UFSHCD_CAP_CLK_GATING	(1 << 0)
-> -	/* Allow hiberb8 with clk gating */
-> -#define UFSHCD_CAP_HIBERN8_WITH_CLK_GATING (1 << 1)
-> -	/* Allow dynamic clk scaling */
-> -#define UFSHCD_CAP_CLK_SCALING	(1 << 2)
-> -	/* Allow auto bkops to enabled during runtime suspend */
-> -#define UFSHCD_CAP_AUTO_BKOPS_SUSPEND (1 << 3)
-> -	/*
-> -	 * This capability allows host controller driver to use the UFS HCI's
-> -	 * interrupt aggregation capability.
-> -	 * CAUTION: Enabling this might reduce overall UFS throughput.
-> -	 */
-> -#define UFSHCD_CAP_INTR_AGGR (1 << 4)
-> -	/*
-> -	 * This capability allows the device auto-bkops to be always enabled
-> -	 * except during suspend (both runtime and suspend).
-> -	 * Enabling this capability means that device will always be allowed
-> -	 * to do background operation when it's active but it might degrade
-> -	 * the performance of ongoing read/write operations.
-> -	 */
-> -#define UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND (1 << 5)
-> -	/*
-> -	 * This capability allows host controller driver to automatically
-> -	 * enable runtime power management by itself instead of waiting
-> -	 * for userspace to control the power management.
-> -	 */
-> -#define UFSHCD_CAP_RPM_AUTOSUSPEND (1 << 6)
-> 
->  	struct devfreq *devfreq;
->  	struct ufs_clk_scaling clk_scaling;
+>  	/* Work Queues */
