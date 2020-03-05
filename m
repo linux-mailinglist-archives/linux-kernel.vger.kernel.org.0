@@ -2,65 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A91D17AE1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A1517AE21
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:33:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgCEScI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:32:08 -0500
-Received: from mga01.intel.com ([192.55.52.88]:29598 "EHLO mga01.intel.com"
+        id S1726129AbgCESdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:33:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbgCEScH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:32:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 10:32:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="352410826"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Mar 2020 10:32:07 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id EA28D301BC6; Thu,  5 Mar 2020 10:32:06 -0800 (PST)
-Date:   Thu, 5 Mar 2020 10:32:06 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc:     zhe.he@windriver.com, jolsa@kernel.org, meyerk@hpe.com,
-        linux-kernel@vger.kernel.org, acme@kernel.org
-Subject: Re: [PATCH] perf: Fix crash due to null pointer dereference when
- iterating cpu map
-Message-ID: <20200305183206.GA1454533@tassilo.jf.intel.com>
-References: <1583405239-352868-1-git-send-email-zhe.he@windriver.com>
- <20200305152755.GA6958@redhat.com>
+        id S1725938AbgCESdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 13:33:17 -0500
+Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 075DD208C3;
+        Thu,  5 Mar 2020 18:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583433196;
+        bh=i361yaz71ZQSQSvKnP5INeI9FIKJz9QtFHGSbaESSFs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lTtpmMDZ5Z83xNGZ0pdEf4rFf8SvnPANzaHl0Dn5SSBa7dy79hLEUResDWd9lmPz0
+         9iq610Kgsm+Z5w9yl6+/5niHfDF+5S7T6nDn62Rbq7Ii26DXa50swHmxzmrnUvEl8H
+         rWqlXsUuDenriYvCrOwhdu3sAb9yXFDKibduvrcc=
+Date:   Thu, 5 Mar 2020 19:33:13 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Alex Belits <abelits@marvell.com>
+Cc:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Prasun Kapoor <pkapoor@marvell.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-mm@vger.kernel.org" <linux-mm@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 03/12] task_isolation: userspace hard isolation from
+ kernel
+Message-ID: <20200305183313.GA29033@lenoir>
+References: <4473787e1b6bc3cc226067e8d122092a678b63de.camel@marvell.com>
+ <36d84b8dd168a38e6a56549dedc15dd6ebf8c09e.camel@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200305152755.GA6958@redhat.com>
+In-Reply-To: <36d84b8dd168a38e6a56549dedc15dd6ebf8c09e.camel@marvell.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 12:27:55PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Mar 05, 2020 at 06:47:19PM +0800, zhe.he@windriver.com escreveu:
-> > From: He Zhe <zhe.he@windriver.com>
-> > 
-> > NULL pointer may be passed to perf_cpu_map__cpu and then cause the
-> > following crash.
-> > 
-> > perf ftrace -G start_kernel ls
-> > failed to set tracing filters
-> > [  208.710716] perf[341]: segfault at 4 ip 00000000567c7c98
-> >                sp 00000000ff937ae0 error 4 in perf[56630000+1b2000]
-> > [  208.724778] Code: fc ff ff e8 aa 9b 01 00 8d b4 26 00 00 00 00 8d
-> >                      76 00 55 89 e5 83 ec 18 65 8b 0d 14 00 00 00 89
-> >                      4d f4 31 c9 8b 45 08 8b9
-> > Segmentation fault
+On Wed, Mar 04, 2020 at 04:07:12PM +0000, Alex Belits wrote:
+> The existing nohz_full mode is designed as a "soft" isolation mode
+> that makes tradeoffs to minimize userspace interruptions while
+> still attempting to avoid overheads in the kernel entry/exit path,
+> to provide 100% kernel semantics, etc.
 > 
-> I'm not being able to repro this here, what is the tree you are using?
+> However, some applications require a "hard" commitment from the
+> kernel to avoid interruptions, in particular userspace device driver
+> style applications, such as high-speed networking code.
+> 
+> This change introduces a framework to allow applications
+> to elect to have the "hard" semantics as needed, specifying
+> prctl(PR_TASK_ISOLATION, PR_TASK_ISOLATION_ENABLE) to do so.
+> 
+> The kernel must be built with the new TASK_ISOLATION Kconfig flag
+> to enable this mode, and the kernel booted with an appropriate
+> "isolcpus=nohz,domain,CPULIST" boot argument to enable
+> nohz_full and isolcpus. The "task_isolation" state is then indicated
+> by setting a new task struct field, task_isolation_flag, to the
+> value passed by prctl(), and also setting a TIF_TASK_ISOLATION
+> bit in the thread_info flags. When the kernel is returning to
+> userspace from the prctl() call and sees TIF_TASK_ISOLATION set,
+> it calls the new task_isolation_start() routine to arrange for
+> the task to avoid being interrupted in the future.
+> 
+> With interrupts disabled, task_isolation_start() ensures that kernel
+> subsystems that might cause a future interrupt are quiesced. If it
+> doesn't succeed, it adjusts the syscall return value to indicate that
+> fact, and userspace can retry as desired. In addition to stopping
+> the scheduler tick, the code takes any actions that might avoid
+> a future interrupt to the core, such as a worker thread being
+> scheduled that could be quiesced now (e.g. the vmstat worker)
+> or a future IPI to the core to clean up some state that could be
+> cleaned up now (e.g. the mm lru per-cpu cache).
+> 
+> Once the task has returned to userspace after issuing the prctl(),
+> if it enters the kernel again via system call, page fault, or any
+> other exception or irq, the kernel will kill it with SIGKILL.
+> In addition to sending a signal, the code supports a kernel
+> command-line "task_isolation_debug" flag which causes a stack
+> backtrace to be generated whenever a task loses isolation.
+> 
+> To allow the state to be entered and exited, the syscall checking
+> test ignores the prctl(PR_TASK_ISOLATION) syscall so that we can
+> clear the bit again later, and ignores exit/exit_group to allow
+> exiting the task without a pointless signal being delivered.
+> 
+> The prctl() API allows for specifying a signal number to use instead
+> of the default SIGKILL, to allow for catching the notification
+> signal; for example, in a production environment, it might be
+> helpful to log information to the application logging mechanism
+> before exiting. Or, the signal handler might choose to reset the
+> program counter back to the code segment intended to be run isolated
+> via prctl() to continue execution.
 
-I believe that's the same bug that Jann Horn reported recently for perf trace.
-I thought the patch for that went in.
+Hi Alew,
 
--Andi
+I'm glad this patchset is being resurected.
+Reading that changelog, I like the general idea and the direction.
+The diff is a bit scary though but I'll check the patches in detail
+in the upcoming days.
+
+> 
+> In a number of cases we can tell on a remote cpu that we are
+> going to be interrupting the cpu, e.g. via an IPI or a TLB flush.
+> In that case we generate the diagnostic (and optional stack dump)
+> on the remote core to be able to deliver better diagnostics.
+> If the interrupt is not something caught by Linux (e.g. a
+> hypervisor interrupt) we can also request a reschedule IPI to
+> be sent to the remote core so it can be sure to generate a
+> signal to notify the process.
+
+I'm wondering if it's wise to run that on a guest at all :-)
+Or we should consider any guest exit to the host as a
+disturbance, we would then need some sort of paravirt
+driver to notify that, etc... That doesn't sound appealing.
+
+Thanks.
