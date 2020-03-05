@@ -2,102 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8035817A817
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:50:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 347AB17A81F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:51:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCEOuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 09:50:15 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:58408 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726222AbgCEOuO (ORCPT
+        id S1726368AbgCEOvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 09:51:32 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:32598 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725963AbgCEOvb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 09:50:14 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583419814; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=EQk0KCf8GS+eddjuRJP/6UWlL8WvGJW4Y9Or4QcCRFc=; b=WQLH2x8p80hZv5kHZu9J0IwvV82/J7V6REWVadRu+iW2AtQX+MD4yh4gZjA3CsKkZPC0pV9R
- C1SMg/MWB62l2TT85131uQRF8YC9CWxx7KVJ8YTsV3quwK2YYGsG302euVuIyN3XHXNZp2C7
- 3j4Zkt7u9GIFn/OSQ2mF9FMrozY=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6111a0.7faf999d98f0-smtp-out-n01;
- Thu, 05 Mar 2020 14:50:08 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6F02EC447A0; Thu,  5 Mar 2020 14:50:08 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DC02CC43383;
-        Thu,  5 Mar 2020 14:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC02CC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Daniel Drake <dsd@gentoo.org>, Ulrich Kunitz <kune@deine-taler.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] zd1211rw/zd_usb.h: Replace zero-length array with flexible-array member
-References: <20200305111216.GA24982@embeddedor>
-Date:   Thu, 05 Mar 2020 16:50:03 +0200
-In-Reply-To: <20200305111216.GA24982@embeddedor> (Gustavo A. R. Silva's
-        message of "Thu, 5 Mar 2020 05:12:16 -0600")
-Message-ID: <87k13yq2jo.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 5 Mar 2020 09:51:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583419890;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q2h6nPEsw2WQpXjdndQPq3IqLV2vLVlw94U+XC3vi3k=;
+        b=eYR9WFqjHc2tluXiDlAyhnk2Hdri1jZblg02na6nkysoAFSysjuLLr3sZr5+QJXZc4eC8+
+        RuCG8iFd2ROJNeEqxV3kt2pD6JNvXefPDsMzETe9veSIqzJ/rRkB4FLcsHix0HfhUYLTSM
+        N03LEQa5f79YzbtIm3Kn+Kw+fddxotw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-296-jJzC4JpDNW-yrc6nSNDSUg-1; Thu, 05 Mar 2020 09:51:26 -0500
+X-MC-Unique: jJzC4JpDNW-yrc6nSNDSUg-1
+Received: by mail-wm1-f72.google.com with SMTP id e26so664120wmk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:51:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q2h6nPEsw2WQpXjdndQPq3IqLV2vLVlw94U+XC3vi3k=;
+        b=kC2Ac0U/zno0byWxGOXfsa7wOVbrUL37EHP9liwJUiXvnfirAbAc5APfzOBVWwcjRP
+         qbSkbDwcpewwKtCvYpoVtowN+R7X4dsgjLCIUcUSNdjitNYC0xbFdQ6gFV4pBLWhtd+D
+         1VScJpUAv8GN6nzc5a2jia1VFR7ce/i4xo1yp+cnyPavw/7LIW24zqp6SY1JuoTI9AcQ
+         GpG3+kJS8Uc3XJQAAiYci27eWpJmVIfN3XJkHfFurOpOp5qtLlx6JRADXDRvmwWgIAeu
+         PsiJgspT9uIr6nMiJ1H0+Yyj0VIGhe/RN5qK3Xrm3+pC+oQvwFevAT6tqDzIBleh6OyN
+         IH0Q==
+X-Gm-Message-State: ANhLgQ0mm5E4mRxz84W4UJ/mHJ4evN/ic80unxoceizTvezJ6N67qqpu
+        Lx2RBAYAqOlsJtuKb0Qp1Id3cTk8Q+j8Zhnxa0I3tRgkQVce2iobzr+hVmD5IeJ34FBGGXj5iIZ
+        hIIKLbEl3rDfaZY9onVjnRcGZ
+X-Received: by 2002:adf:db84:: with SMTP id u4mr10772012wri.317.1583419884800;
+        Thu, 05 Mar 2020 06:51:24 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vtTRxo3t5rJ55MDnIHanJNHGJWt5oHjPPR6NBeyxl0zG2Vh2C3V07dfWyE02Tr41RF7mTuCEA==
+X-Received: by 2002:adf:db84:: with SMTP id u4mr10771941wri.317.1583419883699;
+        Thu, 05 Mar 2020 06:51:23 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:9def:34a0:b68d:9993? ([2001:b07:6468:f312:9def:34a0:b68d:9993])
+        by smtp.gmail.com with ESMTPSA id 12sm9559704wmo.30.2020.03.05.06.51.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 06:51:23 -0800 (PST)
+Subject: Re: [PATCH v9 1/7] KVM: CPUID: Fix IA32_XSS support in CPUID(0xd,i)
+ enumeration
+To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmattson@google.com,
+        sean.j.christopherson@intel.com
+Cc:     yu.c.zhang@linux.intel.com
+References: <20191227021133.11993-1-weijiang.yang@intel.com>
+ <20191227021133.11993-2-weijiang.yang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <bd75450f-a929-f60b-e973-205e4f5a9743@redhat.com>
+Date:   Thu, 5 Mar 2020 15:51:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191227021133.11993-2-weijiang.yang@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
+On 27/12/19 03:11, Yang Weijiang wrote:
+> +	u64 (*supported_xss)(void);
 
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
->
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
->
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/net/wireless/zydas/zd1211rw/zd_usb.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+I don't think the new callback is needed.  Anyway I'm rewriting this
+patch on top of the new CPUID feature and will post it shortly.
 
-"zd1211rw: " is enough, no need to have the filename in the title.
+Paolo
 
-But I asked this already in an earlier patch, who prefers this format?
-It already got opposition so I'm not sure what to do.
-
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
