@@ -2,157 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC96A179FA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7CB179FA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:54:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbgCEFxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 00:53:54 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40476 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgCEFxy (ORCPT
+        id S1726131AbgCEFyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 00:54:20 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43449 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgCEFyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 00:53:54 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p5so3541728lfc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 21:53:52 -0800 (PST)
+        Thu, 5 Mar 2020 00:54:20 -0500
+Received: by mail-qt1-f194.google.com with SMTP id v22so3291651qtp.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 21:54:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OLZQk5H+gmDXNMVLZ+oRJufK+h7dOlNTyaf6cOwRd+E=;
-        b=jkE9AAaRlZx3UZcG1QwUzSj58GhGLQwrKMF4CLrJVUx5I6jj4I8R6NC/WVMrhtCY0u
-         KXlH73UyQozrdMMmEgKNprrrWzj5FyEBfSYselBLjoBnzsiEibSh6h44mraRFDgUVp1C
-         T2k+XshZggpgBfpA7cRsx7W77Tp6Jwf29X4pnElJXBUPN4Y+4i3ZCt+VnSpazPnSIlp1
-         pDWcOb3qqcaCHpSTtY+ZJou17pwrGMvWURubrycw3KIsxfVXwWAQtZKVhZgHPZI7E+Va
-         XbAFKv+sJumWtzfMZ0tvLDJijKlEbOxPD523FjUF78HDpFSyLJ71TPaQ0Hfj+ZxLneiH
-         N/7Q==
+         :cc;
+        bh=+7mgcJIet7qBayZZcIdFHC3F2O5NeLmq5vShyrq3W0w=;
+        b=dY9g6SaFxN9gyIiVuNUf1N24ghTHSEPIiKO6j1gQ7lJvXc/g0lC4uPLA/xNS6La82i
+         v6iOG6cjJopKQ+A3S9uWOyabqxqc3R//HFFVmnsAdtqOUobD/UvkHyyagFzUZ9eHUx67
+         nNa5NNGd3JKATe9NJ5WnBiKUMJYO/6IE1Ae5XzY3g3wTBWu3odx6cSNzjtfiNO6XTb8U
+         T7MrVuE7JjIQ0wc4HFK6GjzZH384Ov7XWOYe6EOb5woc6wz8raapd3D2MP1RRvRHQ3En
+         I/Jet0BWFRonDyGXBoXbjIYFvufiSvVbir0txzFOqF/f1otES0ly9YMfTjGz/GrqPVNw
+         SU5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OLZQk5H+gmDXNMVLZ+oRJufK+h7dOlNTyaf6cOwRd+E=;
-        b=VGnfYOz/OY+VbeYlCAVZZZG1rr0DSxFKvBbnhW7BDDMhyko1DflYx/4T7Ugm2+czoG
-         A1BJASMmO1CoCDD+LFg8AN7ARdxn6f++WMHTrnarkwqlUL8N1sCxyNvLfqbfeVVg/EZD
-         vGzqqL+tni04olpa7U6i+DeesB/JFCkTbmd6ydmRpFAmHrETCFcK4QKsqLf3Vq30rOUR
-         GUkuOxKpanfl8/7J3wysUKhUHsNmVPhPvNfO9pEFfuDoHO7qw6ZolIGpxc8HZAcpdnAT
-         OYN5wwN2ls01YGJMVmSWfp58yZVZCi3/VVAhw7UK3u2HGRnT4ctcqyPTUlDV2+vHy/2b
-         fz9g==
-X-Gm-Message-State: ANhLgQ0Zmz1uyyt2ddtXeVjdzXIOZW4vQ74SweicG/kq6wwq9hFBCRal
-        aNehT3HLvbYruafW4ki12d5u54Z+VCbymAMqj28=
-X-Google-Smtp-Source: ADFU+vv70zomwvXOzyTIwR+9Mqd/acmQSjPI/apXIDKIjBOQiLZl2mipGI7MlwEWxxRp7FsSULfFbvgyM3vF7v/wW4g=
-X-Received: by 2002:ac2:5e8d:: with SMTP id b13mr309351lfq.113.1583387631784;
- Wed, 04 Mar 2020 21:53:51 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=+7mgcJIet7qBayZZcIdFHC3F2O5NeLmq5vShyrq3W0w=;
+        b=PCC4A9BX9e2KzgXOKg4oqPKwBCKg/DxgmancoALf5OtUNnDjLT49quf8EGapPYngih
+         TZ1do2+RZpOa83zxI7oj5YQhVaXmjKJkm/YNobUNLWhd0euos3+d4wSqCZsyCz4vKfsV
+         cT9VdLrGdoc90z3kVznbR6zxNdrO66eXBw1EAEQCdP0TMBcRf4NCdawV28Ltr2KOqVSM
+         lK+5kwVrM4E0o0IBM7J6KgiHH/Vodd58eV6N9gDJxUCEtHUfKMu8G/dY4vL2TL3CSPH6
+         S71Ft3kmpkQSLu9T5C4Prh37Uj34kfBQpHg+Q69e2EmagKI03HCMOTbsr2cfL3K9dDyP
+         nZVQ==
+X-Gm-Message-State: ANhLgQ2Xd0fCcj7jdsQf+Qnto/qsqsQdnp8HI2An2GhIEHMEnrc9Dwlp
+        ntIO6j3SQFKYo3K6D65lkH2ABlulHYCIFG0Ep3/NyQ==
+X-Google-Smtp-Source: ADFU+vvpfm81OA3PanYLFThp3djsW6cZtJxs9xKlCyhKW+1/lC8XEgyQ51fGhGDLsry1t6MC9Ui/IdM3QW2eFKcg2Wo=
+X-Received: by 2002:ac8:3778:: with SMTP id p53mr5648903qtb.158.1583387659031;
+ Wed, 04 Mar 2020 21:54:19 -0800 (PST)
 MIME-Version: 1.0
-References: <20200217083223.2011-8-zong.li@sifive.com> <mhng-0d866567-f710-4d27-8ae9-1f78454d7d85@palmerdabbelt-glaptop1>
-In-Reply-To: <mhng-0d866567-f710-4d27-8ae9-1f78454d7d85@palmerdabbelt-glaptop1>
-From:   Zong Li <zongbox@gmail.com>
-Date:   Thu, 5 Mar 2020 13:53:41 +0800
-Message-ID: <CA+ZOyahuV=Y427S_dWjOvbfQQNSWS3aK8SXxeEEiGBxt3n8WiA@mail.gmail.com>
-Subject: Re: [PATCH 7/8] riscv: add DEBUG_WX support
-To:     Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     Zong Li <zong.li@sifive.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+References: <20200305163743.7128c251@canb.auug.org.au>
+In-Reply-To: <20200305163743.7128c251@canb.auug.org.au>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 5 Mar 2020 06:54:07 +0100
+Message-ID: <CACT4Y+ZX0xaZNnNqOzassKi2=NSPz-9K4VpxdL6FGx_Y4vWSUg@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>
+        Walter Wu <walter-zh.wu@mediatek.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        kasan-dev <kasan-dev@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Palmer Dabbelt <palmer@dabbelt.com> =E6=96=BC 2020=E5=B9=B43=E6=9C=885=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=889:44=E5=AF=AB=E9=81=93=EF=BC=9A
+On Thu, Mar 5, 2020 at 6:37 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> On Mon, 17 Feb 2020 00:32:22 PST (-0800), zong.li@sifive.com wrote:
-> > Support DEBUG_WX to check whether there are mapping with write and
-> > execute permission at the same time.
-> >
-> > Signed-off-by: Zong Li <zong.li@sifive.com>
-> > ---
-> >  arch/riscv/Kconfig.debug        | 30 ++++++++++++++++++++++++++++++
-> >  arch/riscv/include/asm/ptdump.h |  6 ++++++
-> >  arch/riscv/mm/init.c            |  2 ++
-> >  3 files changed, 38 insertions(+)
-> >
-> > diff --git a/arch/riscv/Kconfig.debug b/arch/riscv/Kconfig.debug
-> > index e69de29bb2d1..2bcd88e75626 100644
-> > --- a/arch/riscv/Kconfig.debug
-> > +++ b/arch/riscv/Kconfig.debug
-> > @@ -0,0 +1,30 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +config DEBUG_WX
-> > +     bool "Warn on W+X mappings at boot"
-> > +     select PTDUMP_CORE
-> > +     help
-> > +       Generate a warning if any W+X mappings are found at boot.
-> > +
-> > +       This is useful for discovering cases where the kernel is leavin=
-g
-> > +       W+X mappings after applying NX, as such mappings are a security=
- risk.
-> > +       This check also includes UXN, which should be set on all kernel
-> > +       mappings.
-> > +
-> > +       Look for a message in dmesg output like this:
-> > +
-> > +         riscv/mm: Checked W+X mappings: passed, no W+X pages found.
-> > +
-> > +       or like this, if the check failed:
-> > +
-> > +         riscv/mm: Checked W+X mappings: FAILED, <N> W+X pages found.
-> > +
-> > +       Note that even if the check fails, your kernel is possibly
-> > +       still fine, as W+X mappings are not a security hole in
-> > +       themselves, what they do is that they make the exploitation
-> > +       of other unfixed kernel bugs easier.
-> > +
-> > +       There is no runtime or memory usage effect of this option
-> > +       once the kernel has booted up - it's a one time check.
-> > +
-> > +       If in doubt, say "Y".
+> Hi all,
 >
-> It looks like this comes verbatim from the arm64 port, at least.  I think=
- we
-> should just refactor this to some sort of ARCH_HAS_DEBUG_WX so we can sha=
-re the
-> code.  I usually do this by adding the shared support, using it for RISC-=
-V, and
-> then converting the other ports over.
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 >
+> mm/kasan/common.o: warning: objtool: kasan_report()+0x17: call to report_enabled() with UACCESS enabled
+> In file included from include/linux/bitmap.h:9,
+>                  from include/linux/cpumask.h:12,
+>                  from arch/x86/include/asm/paravirt.h:17,
+>                  from arch/x86/include/asm/irqflags.h:72,
+>                  from include/linux/irqflags.h:16,
+>                  from include/linux/rcupdate.h:26,
+>                  from include/linux/rculist.h:11,
+>                  from include/linux/pid.h:5,
+>                  from include/linux/sched.h:14,
+>                  from include/linux/uaccess.h:6,
+>                  from arch/x86/include/asm/fpu/xstate.h:5,
+>                  from arch/x86/include/asm/pgtable.h:26,
+>                  from include/linux/kasan.h:15,
+>                  from lib/test_kasan.c:12:
+> In function 'memmove',
+>     inlined from 'kmalloc_memmove_invalid_size' at lib/test_kasan.c:301:2:
+> include/linux/string.h:441:9: warning: '__builtin_memmove' specified bound 18446744073709551614 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
 
-OK. It seems to be different work, maybe I could separate this patch
-in next version. Thanks.
++kasan-dev
 
-> > diff --git a/arch/riscv/include/asm/ptdump.h b/arch/riscv/include/asm/p=
-tdump.h
-> > index e29af7191909..eb2a1cc5f22c 100644
-> > --- a/arch/riscv/include/asm/ptdump.h
-> > +++ b/arch/riscv/include/asm/ptdump.h
-> > @@ -8,4 +8,10 @@
-> >
-> >  void ptdump_check_wx(void);
-> >
-> > +#ifdef CONFIG_DEBUG_WX
-> > +#define debug_checkwx() ptdump_check_wx()
-> > +#else
-> > +#define debug_checkwx() do { } while (0)
-> > +#endif
-> > +
-> >  #endif /* _ASM_RISCV_PTDUMP_H */
-> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > index 09fa643e079c..a05d76e5fefe 100644
-> > --- a/arch/riscv/mm/init.c
-> > +++ b/arch/riscv/mm/init.c
-> > @@ -509,6 +509,8 @@ void mark_rodata_ro(void)
-> >       set_memory_ro(rodata_start, (data_start - rodata_start) >> PAGE_S=
-HIFT);
-> >       set_memory_nx(rodata_start, (data_start - rodata_start) >> PAGE_S=
-HIFT);
-> >       set_memory_nx(data_start, (max_low - data_start) >> PAGE_SHIFT);
-> > +
-> > +     debug_checkwx();
-> >  }
-> >  #endif
+We probably need to make this 18446744073709551614 constant "dynamic"
+so that compiler does not see it.
+
+Walter, will you take a look? Thanks
+
+>   441 |  return __builtin_memmove(p, q, size);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >
+> Introduced by commit
+>
+>   519e500fac64 ("kasan: add test for invalid size in memmove")
+>
+> That's a bit annoying during a normal x86_64 allmodconfig build ...
+>
+> --
+> Cheers,
+> Stephen Rothwell
