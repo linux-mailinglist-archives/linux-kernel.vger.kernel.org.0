@@ -2,184 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A689017ADFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3007317ADFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbgCESUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:20:10 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43557 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbgCESUJ (ORCPT
+        id S1726007AbgCESWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:22:41 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31973 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726080AbgCESWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:20:09 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p125so6927932oif.10;
-        Thu, 05 Mar 2020 10:20:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2sYXJQO6Yq9otqWKHOhi+UR9qlXpPMPoT6Si1fUA0Sk=;
-        b=PMJEmZnUwXE3NOgvQUgOt2bjP55cluHYSc8rSdjGCzCbt1j3zTCwedZkvini9gvf8F
-         tx9Jxt/qPLBQesudk+IiHEN8iIymNiycFyiV/oUmgYqqYhFSinRMpO6U5LZ0VIGZEm0W
-         ZvqJ+QJp+P2tMObn+9ZY7CLkXMioDwTXkzxPQk3ZX6n/zNlt/klfO6bf7heSSSx4qA7w
-         nyv3hyFOMo5Wv8KQdPaoEP2R3sMk+NCxVFgdWsNAffuH0P1qTzicxN0ROZKwiNeg3c+W
-         N2KDH1cFJ6TqJzkWoAiBt0ppB5H0p79DUje7WDTyMzIz25GM1CSB/3pLhutXvNpvUCUr
-         nwrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2sYXJQO6Yq9otqWKHOhi+UR9qlXpPMPoT6Si1fUA0Sk=;
-        b=MszNaJbMjXHOOO2kq4nhGczPCnerooi3K6sCZVa4BeIgeurO8Va5vqVLapzmR+WplK
-         4FUba42EPLzzmzGNGMty0sdsiMhlgaKv1D3nJdNIM6SkhBpsuI8X19/oS/eh/IsXjYLf
-         HwzkYHQedtG+TBj6ITEpT9qqjXYBc4H/oGz6/4GhFhrw0QjAUP6+wJVwwQWLjof13Ij4
-         OZUcMxhs7UsIB6BPVP/kZAxawrGM19X/vyN1vb3+8M5VVc6OkeRiSr6WuzAGzcBj9ocC
-         Z+3QgNpk/SvxwgodkrfVncl/Ayoej8XPcxvSO9fjdvoMtaWDDfymtKD/OotAwlJWZ19/
-         Nz4w==
-X-Gm-Message-State: ANhLgQ3nQQ5OsG1h2/dzbrcNY2KOKATP7RY5KX9s4X7UX6vWGV/iyWoR
-        roMRfX5onmKWwju6VtyBQgJw4PY01SOL58Bk/MQ=
-X-Google-Smtp-Source: ADFU+vtribu1lE9gfwLSME7/yQEkndnVmVMFtDPMbjJTGDEAm13SV25Kute1R6cgk/Mf3g2E7xNxRXPhfT1drE0KbXk=
-X-Received: by 2002:aca:170c:: with SMTP id j12mr271017oii.50.1583432408698;
- Thu, 05 Mar 2020 10:20:08 -0800 (PST)
+        Thu, 5 Mar 2020 13:22:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583432559;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=90RLHPqVNEZEMrWwkgjpPMMkSbZ9eZRo8m2gr4E/ffQ=;
+        b=Ggxo3a7hdHrwjG4k3gtHSePRaYS7JCUUlBq8TkcngeHnEYq9fUY4witBaMGMgM815n/wtV
+        HeED+CbMbDPRDQ3q+P7oFnRDn3WQUy+T2a80xjIzQKSq2626SeZ/SXnf4ikjql/8OgQEm0
+        I61e3R0iTTjFamUNFl9Wq08zZj+295g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-140-FZVPSvRgM1yuOakSm6mTpA-1; Thu, 05 Mar 2020 13:22:35 -0500
+X-MC-Unique: FZVPSvRgM1yuOakSm6mTpA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 23DBB13F6;
+        Thu,  5 Mar 2020 18:22:34 +0000 (UTC)
+Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B5AB8F34E;
+        Thu,  5 Mar 2020 18:22:31 +0000 (UTC)
+Date:   Thu, 5 Mar 2020 11:22:30 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dev@dpdk.org" <dev@dpdk.org>,
+        "mtosatti@redhat.com" <mtosatti@redhat.com>,
+        "thomas@monjalon.net" <thomas@monjalon.net>,
+        "bluca@debian.org" <bluca@debian.org>,
+        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>
+Subject: Re: [PATCH v2 5/7] vfio/pci: Add sriov_configure support
+Message-ID: <20200305112230.0dd77712@w520.home>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D79A943@SHSMSX104.ccr.corp.intel.com>
+References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
+        <158213846731.17090.37693075723046377.stgit@gimli.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D79A943@SHSMSX104.ccr.corp.intel.com>
 MIME-Version: 1.0
-References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-542-sashal@kernel.org>
- <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
- <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
- <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
- <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
- <20200218182041.GB24185@bombadil.infradead.org> <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
- <20200218223325.GA143300@gmail.com> <CAHk-=wgKHFB9-XggwOmBCJde3V35Mw9g+vGnt0JGjfGbSgtWhQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wgKHFB9-XggwOmBCJde3V35Mw9g+vGnt0JGjfGbSgtWhQ@mail.gmail.com>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Thu, 5 Mar 2020 10:19:56 -0800
-Message-ID: <CANaxB-xTTDcshttGnVMgDLm96CC8FYsQT4LpobvCWSQym2=8qA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
- reading or writing
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On Tue, 25 Feb 2020 03:08:00 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-After this change, one more criu test became flaky. This is due to one
-of corner cases, so I am not sure that we need to fix something in the
-kernel. I have fixed this issue in the test. I am not sure that this
-will affect any real applications.
+> > From: Alex Williamson
+> > Sent: Thursday, February 20, 2020 2:54 AM
+> > 
+> > With the VF Token interface we can now expect that a vfio userspace
+> > driver must be in collaboration with the PF driver, an unwitting
+> > userspace driver will not be able to get past the GET_DEVICE_FD step
+> > in accessing the device.  We can now move on to actually allowing
+> > SR-IOV to be enabled by vfio-pci on the PF.  Support for this is not
+> > enabled by default in this commit, but it does provide a module option
+> > for this to be enabled (enable_sriov=1).  Enabling VFs is rather
+> > straightforward, except we don't want to risk that a VF might get
+> > autoprobed and bound to other drivers, so a bus notifier is used to
+> > "capture" VFs to vfio-pci using the driver_override support.  We
+> > assume any later action to bind the device to other drivers is
+> > condoned by the system admin and allow it with a log warning.
+> > 
+> > vfio-pci will disable SR-IOV on a PF before releasing the device,
+> > allowing a VF driver to be assured other drivers cannot take over the
+> > PF and that any other userspace driver must know the shared VF token.
+> > This support also does not provide a mechanism for the PF userspace
+> > driver itself to manipulate SR-IOV through the vfio API.  With this
+> > patch SR-IOV can only be enabled via the host sysfs interface and the
+> > PF driver user cannot create or remove VFs.  
+> 
+> I'm not sure how many devices can be properly configured simply 
+> with pci_enable_sriov. It is not unusual to require PF driver prepare
+> something before turning PCI SR-IOV capability. If you look kernel
+> PF drivers, there are only two using generic pci_sriov_configure_
+> simple (simple wrapper like pci_enable_sriov), while most others
+> implementing their own callback. However vfio itself has no idea
+> thus I'm not sure how an user knows whether using this option can
+> actually meet his purpose. I may miss something here, possibly 
+> using DPDK as an example will make it clearer.
 
-Here is the reproducer:
+There is still the entire vfio userspace driver interface.  Imagine for
+example that QEMU emulates the SR-IOV capability and makes a call out
+to libvirt (or maybe runs with privs for the PF SR-IOV sysfs attribs)
+when the guest enables SR-IOV.  Can't we assume that any PF specific
+support can still be performed in the userspace/guest driver, leaving
+us with a very simple and generic sriov_configure callback in vfio-pci?
+Thanks,
 
-#include <unistd.h>
-#include <stdio.h>
+Alex
 
-int main()
-{
-    char buf[1<<20];
-    int pid, p[2], ret;
-
-    if (pipe(p) < 0)
-        return 1;
-    pid = fork();
-    if (pid == 0) {
-        close(p[1]);
-
-        ret = read(p[0], buf, sizeof(buf));
-        if (ret < 0)
-            return 1;
-        printf("read -> %d\n", ret);
-        return 0;
-    }
-    close(p[0]);
-    ret = write(p[1], buf, sizeof(buf));
-    if (ret < 0)
-        return 1;
-    printf("write -> %d\n", ret);
-    return 0;
-}
-
-Before this change:
-[avagin@laptop fifo]$ uname -a
-Linux laptop 5.3.7-200.fc30.x86_64 #1 SMP Fri Oct 18 20:13:59 UTC 2019
-x86_64 x86_64 x86_64 GNU/Linux
-[avagin@laptop fifo]$ strace -e read,write,pipe -f ./pipe_bigbuf
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260r\2\0\0\0\0\0"...,
-832) = 832
-read(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"...,
-784) = 784
-read(3, "\4\0\0\0\20\0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0",
-32) = 32
-read(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0gZ\316<\240z\v\206=\360\37F\32{\t\204"...,
-68) = 68
-read(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"...,
-784) = 784
-read(3, "\4\0\0\0\20\0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0",
-32) = 32
-read(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0gZ\316<\240z\v\206=\360\37F\32{\t\204"...,
-68) = 68
-pipe([3, 4])                            = 0
-strace: Process 622350 attached
-[pid 622349] write(4,
-"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
-1048576 <unfinished ...>
-[pid 622350] read(3,  <unfinished ...>
-[pid 622349] <... write resumed> )      = 1048576
-[pid 622350] <... read resumed>
-"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
-1048576) = 1048576
-[pid 622349] write(1, "write -> 1048576\n", 17write -> 1048576
-) = 17
-[pid 622350] write(1, "read -> 1048576\n", 16read -> 1048576
-) = 16
-[pid 622349] +++ exited with 0 +++
-+++ exited with 0 +++
-
-After this change:
-[root@fc24 ~]# strace -e read,write,pipe -f ./pipe_bigbuf
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260r\2\0\0\0\0\0"...,
-832) = 832
-read(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"...,
-784) = 784
-read(3, "\4\0\0\0\20\0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0",
-32) = 32
-read(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0L\355\265_\4c\17r@ix\305q\26W\242"...,
-68) = 68
-read(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"...,
-784) = 784
-read(3, "\4\0\0\0\20\0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0",
-32) = 32
-read(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0L\355\265_\4c\17r@ix\305q\26W\242"...,
-68) = 68
-pipe([3, 4])                            = 0
-strace: Process 4946 attached
-[pid  4945] write(4,
-"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
-1048576 <unfinished ...>
-[pid  4946] read(3,
-"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
-1048576) = 65536
-[pid  4946] write(1, "read -> 65536\n", 14read -> 65536
-) = 14
-[pid  4945] <... write resumed>)        = 131072
-[pid  4946] +++ exited with 0 +++
---- SIGPIPE {si_signo=SIGPIPE, si_code=SI_USER, si_pid=4945, si_uid=0} ---
-+++ killed by SIGPIPE +++
-
-On Tue, Feb 18, 2020 at 3:03 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, Feb 18, 2020 at 2:33 PM Andrei Vagin <avagin@gmail.com> wrote:
-> >
-> > I run CRIU tests on the kernel with both these patches. Everything work
-> > as expected.
->
-> Thanks. I've added your tested-by and pushed out the fix.
->
->            Linus
