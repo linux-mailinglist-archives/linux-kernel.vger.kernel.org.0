@@ -2,347 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB34617B12D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B006017B132
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbgCEWGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:06:02 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39241 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgCEWGB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:06:01 -0500
-Received: by mail-pf1-f195.google.com with SMTP id l7so42618pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 14:06:00 -0800 (PST)
+        id S1726524AbgCEWHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:07:32 -0500
+Received: from mail-bn7nam10on2060.outbound.protection.outlook.com ([40.107.92.60]:26476
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726209AbgCEWHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 17:07:31 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lYND0VQRxxfOplPQ0bJWQ8ZRpzOkI+m+ZPgQ7QZHUlVsDBD09N/Hbk/TE1aA1o+RXzHmhZ0f7H6aBgaMARGR6Ua+LROMZzJJqkx86D2tNqqT8ZlrBGtX8rtdcXeXQnU0kiXwPFVjJF9J5SR0Gamo7IRSdQJ8hOxhdQPx3rC7XcdDntOwc+LpFU+EbjUVYZQ5bu2x5m6ea9NA0jrr4ctIYb0EKmqAV9UFX5j3oUN8sf7zOv850vJ/RmeKCsVOz378frEJCgvB5TGVlqGK/FA0Bl7hd4HHXthfrw4TzJ94QPnEXYzdD6ESoQ3+jBsoeplqlgWNR+8736V9wlMLnB1MTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TvaJvMAO4X/6KtlJktfWtK6KTJ3YKH2bT8+MOJZYH+Q=;
+ b=Wq/Tqb9rp28SgWz/swZtAJlf5xrPupf1KXEyc1NEBoUUTPX0/lBxZPpxV98RQ8zrA7Nql+HDd3x54LWjWafVhMUFHupOjPl9qoOE2bzfY4C0EtShX31k+pmntW4AwSetRDknU4l0cnvJg2LQgQMt2Xdmf9kOC+QVQR/CAfLO9J98shTLPwmr2hPAWHmWkOPTW1ioHx28tfs2o9o0DlbbsB/z1xYP1V57XkSl/t5Zn0CLx4qVCkOiH8nGjZaVLXXCmtb9Epidj3fNLcmF4+00tcc9sXA+4MPEMNbKMYHP6vWI3AVOX0aoOWfO/X6zsln64iDDDovYLodKhN076RsSKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IX8YVBG4p5k2QAbGer4G96xm3Z8NgKYITeF73HxiwoQ=;
-        b=S9o23N9G7dy68xECMQim9toy0bN5fZeup+7EJEjxkpq+VK5XUc65vI4l3O2YZKdpkQ
-         gvA9npnGGhuiu0rZ0dDbA9D8ltdVcaCSy2DvHupfA2qXEYDL66i9t6sipSByz8uIm1mo
-         dNf4lwirNVWsg+ZSVFVC9Qcq5cSWDHKVE2njM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IX8YVBG4p5k2QAbGer4G96xm3Z8NgKYITeF73HxiwoQ=;
-        b=Kend54Yf03kbF3C+ujlzLxSUX/ETlUSiIS7l+eOn6JkjPAjA4ymqEutm8muzpy/f+a
-         TcS5sjsk4tn4gjPHVY2kswM7lQTYGfmpsOapO/f+m9Y5ALZt3FsezfAF+tklLkfa+UzK
-         ynBLnXlIdDC395uEPH9Ht78pImEAOiyKrSGnRJQ5z9PHkeG43L0QSW2xfLsXJ5Zv4oDa
-         sUt9ZzrDxIm4v76UYMtiiIEH7o7oAqOZTP2NtaQ0R0XYlaAUDbDfHNdeaugMdg71cYzO
-         yBUiygKdQNq/B4ivX6khFfaPtzvJ0SXSlqnrbhrk1RqKQT9S6DrDoYoqnqfDvk9WT1f5
-         GmdQ==
-X-Gm-Message-State: ANhLgQ0LYiiQ6ua6YFZ6lqqigJ4hubg+R0jPRZDvtmelIN0LTpeglACt
-        ARQBlujxC1SRDOgKQWXmdBJZrg==
-X-Google-Smtp-Source: ADFU+vuvZPa1OmI4ocX3yUSt0BjsEQf0N7rTtxK6vihyroJfBvCM0Z34TqdrRfy8RitMUWttAdCs1Q==
-X-Received: by 2002:a63:9dc2:: with SMTP id i185mr243179pgd.240.1583445960052;
-        Thu, 05 Mar 2020 14:06:00 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:476b:691:abc3:38db])
-        by smtp.gmail.com with ESMTPSA id w14sm32400569pgi.22.2020.03.05.14.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 14:05:59 -0800 (PST)
-Date:   Thu, 5 Mar 2020 14:05:58 -0800
-From:   Prashant Malani <pmalani@chromium.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     devicetree@vger.kernel.org, bleung@chromium.org,
-        heikki.krogerus@linux.intel.com, enric.balletbo@collabora.com,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TvaJvMAO4X/6KtlJktfWtK6KTJ3YKH2bT8+MOJZYH+Q=;
+ b=OiRMEtluv8+AjNkOq7MHG5XxmJRoHLONc4ni+J9Pg7QWrwjTLF4Fj5bRkOMgQRjdtyI9gPX4RmvuBwv5r3CsA154VUiGEngJJPfu5VCug04W7Z5eTGI10nfWlmAoKIi3cfA47GtNrbUuIiLBqmszDTu1Da4SeBhzxyppjtW1sfk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kim.phillips@amd.com; 
+Received: from SN6PR12MB2845.namprd12.prod.outlook.com (2603:10b6:805:75::33)
+ by SN6PR12MB2751.namprd12.prod.outlook.com (2603:10b6:805:6c::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18; Thu, 5 Mar
+ 2020 22:06:59 +0000
+Received: from SN6PR12MB2845.namprd12.prod.outlook.com
+ ([fe80::dd6f:a575:af8e:4f1b]) by SN6PR12MB2845.namprd12.prod.outlook.com
+ ([fe80::dd6f:a575:af8e:4f1b%7]) with mapi id 15.20.2793.013; Thu, 5 Mar 2020
+ 22:06:59 +0000
+Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard
+ information
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: Convert usb-connector to YAML format.
-Message-ID: <20200305220558.GC142502@google.com>
-References: <20200305030135.210675-1-pmalani@chromium.org>
- <158344320452.25912.4758137777863945655@swboyd.mtv.corp.google.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        yao.jin@linux.intel.com, Robert Richter <robert.richter@amd.com>,
+        maddy@linux.ibm.com
+References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+ <20200302101332.GS18400@hirez.programming.kicks-ass.net>
+ <CABPqkBSzwpR6p7UZs7g1vWGCJRLsh565mRMGc6m0Enn1SnkC4w@mail.gmail.com>
+ <df966d6e-8898-029f-e697-8496500a1663@amd.com>
+ <2550ec4d-a015-4625-ca24-ff10632dbe2e@linux.ibm.com>
+From:   Kim Phillips <kim.phillips@amd.com>
+Message-ID: <d3c82708-dd09-80e0-4e9f-1cbab118a169@amd.com>
+Date:   Thu, 5 Mar 2020 16:06:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+In-Reply-To: <2550ec4d-a015-4625-ca24-ff10632dbe2e@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN6PR01CA0021.prod.exchangelabs.com (2603:10b6:805:b6::34)
+ To SN6PR12MB2845.namprd12.prod.outlook.com (2603:10b6:805:75::33)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158344320452.25912.4758137777863945655@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.236.136.247] (165.204.77.1) by SN6PR01CA0021.prod.exchangelabs.com (2603:10b6:805:b6::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18 via Frontend Transport; Thu, 5 Mar 2020 22:06:58 +0000
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 247a078f-1247-4889-d972-08d7c151869f
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2751:|SN6PR12MB2751:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN6PR12MB2751542223B6575A1BB1820987E20@SN6PR12MB2751.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2733;
+X-Forefront-PRVS: 03333C607F
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(39860400002)(366004)(136003)(199004)(189003)(16576012)(316002)(81166006)(2906002)(81156014)(53546011)(956004)(478600001)(54906003)(2616005)(66946007)(44832011)(52116002)(6486002)(8936002)(8676002)(5660300002)(31686004)(66556008)(6916009)(66476007)(86362001)(186003)(16526019)(26005)(4326008)(31696002)(36756003)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2751;H:SN6PR12MB2845.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: C3wy1n78yHKbo1yOTw0br2y0U2+ybLHpiE9arrdmwNEcIwG9v0MOcMRbJs4AFlWsgUsR9F6T3z+fAs4k7g/Ev25Ka6Q1TAJvOIN47GqoTA/8JVQzSb7mOf4J2Xcdcu1ef5Ou/3NLAt9R82ZY82tvJtrKWlyGWfcKrisM8A5bk6jr/2yKvaZ8MfzOSFGCN6baLS/g8M/UWjYX2F0hbIWoCflrZxTmOsva/Y/eKvD4Z8KIlfBZQB3caQZyO0Ldt1D0k2eNBecuAmcdK2UoeJti+IpZU7xrn3TuK5OJMCIZXP+rmPLlamY0RxTd1A5k7/ztpjDQjvFbNJO27RoaI1NETGH4coV788e6CUoHDDPlGJ3iARBQH9w51pHJGMiBC1jB3/3gZs5lLFm28xMpSXcw1BiaRsqZW7V9pX1Df7COiQ5pSKMfEz6LlAbWvXxvE69H
+X-MS-Exchange-AntiSpam-MessageData: pdcyoGlB0kdn6NcbczrywneCcIt8TFBr+J1wiM9KDRC/QA9qe0t+ZilunFVmoTdZxtICCn0xXtwZCkG9mZ7UCijWwbsYjlpANYn2O2uK7V2PFZl17YQEvEv47GZJ72nfa6ryvJwf45hQ2BipItCnsQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 247a078f-1247-4889-d972-08d7c151869f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2020 22:06:59.3897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3YSiA6ZTZmnA9NNF6icuBw7YzVBmcY+8kHN2Lu25xAB1g0jNZKXBn0Z2BX8ug/jSJJSv11oaoqPDc3JsAuUWXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2751
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On 3/4/20 10:46 PM, Ravi Bangoria wrote:
+> Hi Kim,
 
-Thanks for reviewing the patch. Kindly see my responses inline.
+Hi Ravi,
 
-Best regards,
+> On 3/3/20 3:55 AM, Kim Phillips wrote:
+>> On 3/2/20 2:21 PM, Stephane Eranian wrote:
+>>> On Mon, Mar 2, 2020 at 2:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>>>>
+>>>> On Mon, Mar 02, 2020 at 10:53:44AM +0530, Ravi Bangoria wrote:
+>>>>> Modern processors export such hazard data in Performance
+>>>>> Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
+>>>>> Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
+>>>>> AMD[3] provides similar information.
+>>>>>
+>>>>> Implementation detail:
+>>>>>
+>>>>> A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
+>>>>> If it's set, kernel converts arch specific hazard information
+>>>>> into generic format:
+>>>>>
+>>>>>    struct perf_pipeline_haz_data {
+>>>>>           /* Instruction/Opcode type: Load, Store, Branch .... */
+>>>>>           __u8    itype;
+>>>>>           /* Instruction Cache source */
+>>>>>           __u8    icache;
+>>>>>           /* Instruction suffered hazard in pipeline stage */
+>>>>>           __u8    hazard_stage;
+>>>>>           /* Hazard reason */
+>>>>>           __u8    hazard_reason;
+>>>>>           /* Instruction suffered stall in pipeline stage */
+>>>>>           __u8    stall_stage;
+>>>>>           /* Stall reason */
+>>>>>           __u8    stall_reason;
+>>>>>           __u16   pad;
+>>>>>    };
+>>>>
+>>>> Kim, does this format indeed work for AMD IBS?
+>>
+>> It's not really 1:1, we don't have these separations of stages
+>> and reasons, for example: we have missed in L2 cache, for example.
+>> So IBS output is flatter, with more cycle latency figures than
+>> IBM's AFAICT.
+> 
+> AMD IBS captures pipeline latency data incase Fetch sampling like the
+> Fetch latency, tag to retire latency, completion to retire latency and
+> so on. Yes, Ops sampling do provide more data on load/store centric
+> information. But it also captures more detailed data for Branch instructions.
+> And we also looked at ARM SPE, which also captures more details pipeline
+> data and latency information.
+> 
+>>> Personally, I don't like the term hazard. This is too IBM Power
+>>> specific. We need to find a better term, maybe stall or penalty.
+>>
+>> Right, IBS doesn't have a filter to only count stalled or otherwise
+>> bad events.  IBS' PPR descriptions has one occurrence of the
+>> word stall, and no penalty.  The way I read IBS is it's just
+>> reporting more sample data than just the precise IP: things like
+>> hits, misses, cycle latencies, addresses, types, etc., so words
+>> like 'extended', or the 'auxiliary' already used today even
+>> are more appropriate for IBS, although I'm the last person to
+>> bikeshed.
+> 
+> We are thinking of using "pipeline" word instead of Hazard.
 
--Prashant
+Hm, the word 'pipeline' occurs 0 times in IBS documentation.
 
-On Thu, Mar 05, 2020 at 01:20:04PM -0800, Stephen Boyd wrote:
-> Quoting Prashant Malani (2020-03-04 19:01:30)
-> > diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> > new file mode 100644
-> > index 0000000000000..b386e2880405c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> > @@ -0,0 +1,203 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/connector/usb-connector.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: USB Connector
-> > +
-> > +maintainers:
-> > +  - linux-usb@vger.kernel.org
-> > +
-> > +description:
-> > +  A USB connector node represents a physical USB connector. It should be a child
-> > +  of a USB interface controller.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - usb-a-connector
-> > +      - usb-b-connector
-> > +      - usb-c-connector
-> > +
-> > +  label:
-> > +    description: Symbolic name for the connector.
-> > +
-> > +  type:
-> > +    description: Size of the connector, should be specified in case of USB-A,
-> > +      USB-B non-fullsize connectors.
-> 
-> Maybe "should be specified in case of non-fullsize 'usb-a-connector' or
-> 'usb-b-connector' compatible connectors"?
-> 
-Done.
+I realize there are a couple of core pipeline-specific pieces
+of information coming out of it, but the vast majority
+are addresses, latencies of various components in the memory
+hierarchy, and various component hit/miss bits.
 
-> > +    $ref: /schemas/types.yaml#definitions/string
-> > +    enum:
-> > +      - mini
-> > +      - micro
-> > +
-> > +  self-powered:
-> > +    description: Set this property if the USB device has its own power source.
-> > +    type: boolean
-> > +
-> > +  # The following are optional properties for "usb-b-connector".
-> > +  id-gpios:
-> > +    description: An input gpio for USB ID pin.
-> > +    maxItems: 1
-> > +
-> > +  vbus-gpios:
-> > +    description: An input gpio for USB VBus pin, used to detect presence of
-> > +      VBUS 5V. See gpio/gpio.txt.
-> 
-> Can this be written as bindings/gpio/gpio.txt?
+What's needed here is a vendor-specific extended
+sample information that all these technologies gather,
+of which things like e.g., 'L1 TLB cycle latency' we
+all should have in common.
 
-Dropping it based on Rob's later comment.
-> 
-> > +    maxItems: 1
-> > +
-> > +  vbus-supply:
-> > +    description: A phandle to the regulator for USB VBUS if needed when host
-> > +      mode or dual role mode is supported.
-> > +      Particularly, if use an output GPIO to control a VBUS regulator, should
-> > +      model it as a regulator. See regulator/fixed-regulator.yaml
-> 
-> And bindings/regulator/fixed-regulator.yaml? The idea is to
-> disambiguate from kernel Documentation/ directory.
+I'm not sure why a new PERF_SAMPLE_PIPELINE_HAZ is needed
+either.  Can we use PERF_SAMPLE_AUX instead?  Take a look at
+commit 98dcf14d7f9c "perf tools: Add kernel AUX area sampling
+definitions".  The sample identifier can be used to determine
+which vendor's sampling IP's data is in it, and events can
+be recorded just by copying the content of the SIER, etc.
+registers, and then events get synthesized from the aux
+sample at report/inject/annotate etc. time.  This allows
+for less sample recording overhead, and moves all the vendor
+specific decoding and common event conversions for userspace
+to figure out.
 
-Done.
+>>> Also worth considering is the support of ARM SPE (Statistical
+>>> Profiling Extension) which is their version of IBS.
+>>> Whatever gets added need to cover all three with no limitations.
+>>
+>> I thought Intel's various LBR, PEBS, and PT supported providing
+>> similar sample data in perf already, like with perf mem/c2c?
 > 
-> > +
-> > +  # The following are optional properties for "usb-c-connector".
-> 
-> Is there a way to constrain the binding so that this can't be put in a
-> connector that doesn't have the usb-c-connector compatible string?
-> 
-> > +  power-role:
-> > +    description: Determines the power role that the Type C connector will
-> > +      support. "dual" refers to Dual Role Port (DRP).
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#definitions/string
-> > +    enum:
-> > +      - source
-> > +      - sink
-> > +      - dual
-> > +
-> > +  try-power-role:
-> > +    description: Preferred power role.
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#definitions/string
-> > +    enum:
-> > +     - source
-> > +     - sink
-> > +     - dual
-> > +
-> > +  data-role:
-> > +    description: Data role if Type C connector supports USB data. "dual" refers
-> > +      Dual Role Device (DRD).
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#definitions/string
-> > +    enum:
-> > +      - host
-> > +      - device
-> > +      - dual
-> 
-> Is there a way to maintain a description for each possible string
-> property? Then we could move the last sentence in the description above
-> to be attached to '- dual' here.
-> 
-I'm not sure of a way to do this, so leaving this as is for now.
-> > +
-> > +  # The following are optional properties for "usb-c-connector" with power
-> > +  # delivery support.
-> > +  source-pdos:
-> > +    description: An array of u32 with each entry providing supported power
-> > +      source data object(PDO), the detailed bit definitions of PDO can be found
-> > +      in "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.2
-> > +      Source_Capabilities Message, the order of each entry(PDO) should follow
-> > +      the PD spec chapter 6.4.1. Required for power source and power dual role.
-> > +      User can specify the source PDO array via PDO_FIXED/BATT/VAR/PPS_APDO()
-> > +      defined in dt-bindings/usb/pd.h.
-> > +    minItems: 1
-> > +    maxItems: 7
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +
-> > +  sink-pdos:
-> > +    description: An array of u32 with each entry providing supported power sink
-> > +      data object(PDO), the detailed bit definitions of PDO can be found in
-> > +      "Universal Serial Bus Power Delivery Specification" chapter 6.4.1.3
-> > +      Sink Capabilities Message, the order of each entry(PDO) should follow the
-> > +      PD spec chapter 6.4.1. Required for power sink and power dual role. User
-> > +      can specify the sink PDO array via PDO_FIXED/BATT/VAR/PPS_APDO() defined
-> > +      in dt-bindings/usb/pd.h.
-> > +    minItems: 1
-> > +    maxItems: 7
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +
-> > +  op-sink-microwatt:
-> > +    description: Sink required operating power in microwatt, if source can't
-> > +      offer the power, Capability Mismatch is set. Required for power sink and
-> > +      power dual role.
-> > +
-> > +  ports:
-> > +    description: OF graph bindings (specified in bindings/graph.txt) that model
-> > +      any data bus to the connector unless the bus is between parent node and
-> > +      the connector. Since a single connector can have multiple data buses every
-> > +      bus has assigned OF graph port number as described below.
-> 
-> has an assigned?
+> perf-mem is more of data centric in my opinion. It is more towards
+> memory profiling. So proposal here is to expose pipeline related
+> details like stalls and latencies.
 
-Done.
-> 
-> > +    type: object
-> > +    properties:
-> > +      port@0:
-> > +        type: object
-> > +        description: High Speed (HS), present in all connectors.
-> > +
-> > +      port@1:
-> > +        type: object
-> > +        description: Super Speed (SS), present in SS capable connectors.
-> > +
-> > +      port@2:
-> > +        type: object
-> > +        description: Sideband Use (SBU), present in USB-C.
-> 
-> Likewise, is it possible to constrain this to only usb-c-connector
-> compatible string based bindings? And if so, does it become required for
-> that compatible string?
-> 
-> > +
-> > +    required:
-> > +      - port@0
-> > +
-> > +required:
-> > +  - compatible
-> > +
-> > +examples:
-> > +  # Micro-USB connector with HS lines routed via controller (MUIC).
-> > +  - |+
-> > +    muic-max77843@66 {
-> 
-> Add a reg = <0x66>; here? Or drop the unit address above.
+Like I said, I don't see it that way, I see it as "any particular
+vendor's event's extended details', and these pipeline details
+have overlap with existing infrastructure within perf, e.g., L2
+cache misses.
 
-Dropped the unit address.
-> 
-> > +      usb_con1: connector {
-> > +        compatible = "usb-b-connector";
-> > +        label = "micro-USB";
-> > +        type = "micro";
-> > +      };
-> > +    };
-> > +
-> > +  # USB-C connector attached to CC controller (s2mm005), HS lines routed
-> > +  # to companion PMIC (max77865), SS lines to USB3 PHY and SBU to DisplayPort.
-> > +  # DisplayPort video lines are routed to the connector via SS mux in USB3 PHY.
-> > +  - |+
-> > +    ccic: s2mm005@33 {
-> 
-> Same unit address comment.
-Dropped the unit address.
-> 
-> > +      usb_con2: connector {
-> > +        compatible = "usb-c-connector";
-> > +        label = "USB-C";
-> > +
-> > +        ports {
-> > +          #address-cells = <1>;
-> > +          #size-cells = <0>;
-> > +
-> > +          port@0 {
-> > +            reg = <0>;
-> > +            usb_con_hs: endpoint {
-> > +              remote-endpoint = <&max77865_usbc_hs>;
-> > +            };
-> > +          };
-> > +          port@1 {
-> > +            reg = <1>;
-> > +            usb_con_ss: endpoint {
-> > +            remote-endpoint = <&usbdrd_phy_ss>;
-> > +            };
-> > +          };
-> > +          port@2 {
-> > +            reg = <2>;
-> > +            usb_con_sbu: endpoint {
-> > +            remote-endpoint = <&dp_aux>;
-> > +            };
-> 
-> Tabs should be replaced with spaces.
-
-Fixed the spacing here.
-> 
-> > +          };
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +  # USB-C connector attached to a typec port controller(ptn5110), which has
-> > +  # power delivery support and enables drp.
-> > +  - |+
-> > +    #include <dt-bindings/usb/pd.h>
-> > +    typec: ptn5110@50 {
-> 
-> Same unit address comment.
-
-Dropped the unit address.
-> 
-> > +      usb_con3: connector {
-> > +        compatible = "usb-c-connector";
-> > +        label = "USB-C";
-> > +        power-role = "dual";
-> > +        try-power-role = "sink";
-> > +        source-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
-> > +        sink-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)
-> > +                     PDO_VAR(5000, 12000, 2000)>;
-> > +        op-sink-microwatt = <10000000>;
-> > +      };
-> > +    };
+Kim
