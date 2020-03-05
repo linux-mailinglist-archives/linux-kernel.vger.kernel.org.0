@@ -2,64 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94B5D17A9C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 17:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 091C817AA08
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 17:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCEQAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 11:00:24 -0500
-Received: from mga02.intel.com ([134.134.136.20]:42329 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbgCEQAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 11:00:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 08:00:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="259222061"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga002.jf.intel.com with ESMTP; 05 Mar 2020 08:00:18 -0800
-Date:   Thu, 5 Mar 2020 08:00:18 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KVM: x86: VMX: rename 'kvm_area' to 'vmxon_region'
-Message-ID: <20200305160017.GE11500@linux.intel.com>
-References: <20200305100123.1013667-1-vkuznets@redhat.com>
- <20200305100123.1013667-2-vkuznets@redhat.com>
- <20200305153623.GA11500@linux.intel.com>
- <875zfig5ec.fsf@vitty.brq.redhat.com>
+        id S1726170AbgCEQCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 11:02:39 -0500
+Received: from smtprelay0252.hostedemail.com ([216.40.44.252]:59879 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725946AbgCEQCj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 11:02:39 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 68BD5180A9556;
+        Thu,  5 Mar 2020 16:02:38 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:966:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2196:2199:2393:2559:2562:2828:2915:3138:3139:3140:3141:3142:3351:3622:3865:3867:3868:3871:3872:3873:4321:4385:5007:6691:7974:8957:10004:10226:10400:10848:11026:11232:11473:11658:11914:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21325:21627,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: pen85_16eb2d8e49438
+X-Filterd-Recvd-Size: 1615
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  5 Mar 2020 16:02:37 +0000 (UTC)
+Message-ID: <84f8504924380fc6380216d03d28a2285e3d106e.camel@perches.com>
+Subject: Re: [PATCH] spi: Remove CONFIG_ prefix from Kconfig select
+From:   Joe Perches <joe@perches.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 05 Mar 2020 08:01:02 -0800
+In-Reply-To: <e265e7df-fd8c-691f-389a-c0e0e377ed9e@huawei.com>
+References: <f8ac6b32a29b9a05b58a7e58ffe8b780642abbf1.camel@perches.com>
+         <e265e7df-fd8c-691f-389a-c0e0e377ed9e@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875zfig5ec.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 04:58:35PM +0100, Vitaly Kuznetsov wrote:
-> Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Thu, 2020-03-05 at 15:53 +0000, John Garry wrote:
+> On 05/03/2020 15:15, Joe Perches wrote:
+> > commit a2ca53b52e00 ("spi: Add HiSilicon v3xx SPI NOR flash
+> > controller driver") likely inadvertently used a select statement
+> > with a CONFIG_ prefix, remove the prefix.
+> > 
+> > Signed-off-by: Joe Perches <joe@perches.com>
 > 
-> > Super nit: can I convince you to use "KVM: VMX:" instead of "KVM: x86: VMX:"?
-> >
-> >   $ glo | grep -e "KVM: x86: nVMX" -e "KVM: x86: VMX:" | wc -l
-> >   8
-> >   $ glo | grep -e "KVM: nVMX" -e "KVM: VMX:" | wc -l
-> >   1032
-> >
-> > I'm very conditioned to scan for "KVM: *VMX:", e.g. I was about to complain
-> > that this used the wrong scope :-)   And in the event that Intel adds a new
-> > technology I'd like to be able to use "KVM: Intel:" and "KVM: ***X:"
-> > instead of "KVM: x86: Intel:" and "KVM: x86: Intel: ***X:" for code that is
-> > common to Intel versus specific to a technology.
-> 
-> What if someone else adds VMX instead? :-)
+> It's a pity checkpatch can't pick this stuff up...
 
-I never said it was a _good_ plan :-D
+You are free to write a rule and submit a patch.
+
+The grammar is pretty hard to verify from a patch
+fragment though.
+
+There are 2 existing nominal false positives.
+
+$ git grep 'select\b.*\bCONFIG_' -- '*/Kconfig*'
+drivers/edac/Kconfig:     select CONFIG_ACPI_NFIT.
+drivers/edac/Kconfig:     select CONFIG_ACPI_NFIT.
+
+
