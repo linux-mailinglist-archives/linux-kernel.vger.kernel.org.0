@@ -2,76 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBFFE17AB44
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7C917AB3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:12:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbgCERNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:13:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38498 "EHLO mail.kernel.org"
+        id S1726067AbgCERMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:12:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:19713 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbgCERNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:13:12 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB45A20870;
-        Thu,  5 Mar 2020 17:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583428392;
-        bh=YAFvu5ij+AyAowyPL31UII9ZhMcFpurD7oRq4jnXm+Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0hAzfVeDjAx0et3c3+5lt2O8lthkddmejoBBfcr/mDnHXVQYbEZkg0dNM5+Anyvyc
-         sNUtZlQz8Rqd2BgEXyCL5UO6Ymp4dit1z9h4ic6sqHiJ+7Yf8YdO3vKUNYSRqH0p6P
-         DrSi6Jr26HYIVMhe6Gl17ZgQMlyRwIXOM3mDTbhE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mansour Behabadi <mansour@oxplot.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 02/67] HID: apple: Add support for recent firmware on Magic Keyboards
-Date:   Thu,  5 Mar 2020 12:12:03 -0500
-Message-Id: <20200305171309.29118-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305171309.29118-1-sashal@kernel.org>
-References: <20200305171309.29118-1-sashal@kernel.org>
+        id S1725938AbgCERME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:12:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 09:12:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="264040974"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga004.fm.intel.com with ESMTP; 05 Mar 2020 09:12:04 -0800
+Date:   Thu, 5 Mar 2020 09:12:04 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v2 0/7] KVM: x86: CPUID emulation and tracing fixes
+Message-ID: <20200305171204.GI11500@linux.intel.com>
+References: <20200305013437.8578-1-sean.j.christopherson@intel.com>
+ <6071310f-dd4b-6a6d-5578-7b6f72a9b1be@redhat.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6071310f-dd4b-6a6d-5578-7b6f72a9b1be@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mansour Behabadi <mansour@oxplot.com>
+On Thu, Mar 05, 2020 at 05:42:59PM +0100, Paolo Bonzini wrote:
+> On 05/03/20 02:34, Sean Christopherson wrote:
+> > 
+> > In theory, everything up to the refactoring is non-controversial, i.e. we
+> > can bikeshed the refactoring without delaying the bug fixes.
+> 
+> Even the refactoring itself is much less controversial.  I queued
+> everything, there's always time to unqueue.
 
-[ Upstream commit e433be929e63265b7412478eb7ff271467aee2d7 ]
+Looks like the build-time assertions don't play nice with older versions of
+gcc :-(
 
-Magic Keyboards with more recent firmware (0x0100) report Fn key differently.
-Without this patch, Fn key may not behave as expected and may not be
-configurable via hid_apple fnmode module parameter.
+config: x86_64-randconfig-s2-20200305 (attached as .config)
+compiler: gcc-4.9 (Debian 4.9.2-10+deb8u1) 4.9.2
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
 
-Signed-off-by: Mansour Behabadi <mansour@oxplot.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hid/hid-apple.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index 6ac8becc2372e..d732d1d10cafb 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -340,7 +340,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		unsigned long **bit, int *max)
- {
- 	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
--			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
-+			usage->hid == (HID_UP_MSVENDOR | 0x0003) ||
-+			usage->hid == (HID_UP_HPVENDOR2 | 0x0003)) {
- 		/* The fn key on Apple USB keyboards */
- 		set_bit(EV_REP, hi->input->evbit);
- 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
--- 
-2.20.1
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/export.h:43:0,
+                    from include/linux/linkage.h:7,
+                    from include/linux/preempt.h:10,
+                    from include/linux/hardirq.h:5,
+                    from include/linux/kvm_host.h:7,
+                    from arch/x86/kvm/emulate.c:21:
+   arch/x86/kvm/emulate.c: In function 'em_cpuid':
+>> include/linux/compiler.h:350:38: error: call to '__compiletime_assert_3957' declared with attribute error: BUILD_BUG_ON failed: X86EMUL_CPUID_VENDOR_AuthenticAMD_ebx != *(u32 *)"Auth" || X86EMUL_CPUID_VENDOR_AuthenticAMD_edx != *(u32 *)"enti" || X86EMUL_CPUID_VENDOR_AuthenticAMD_ecx != *(u32 *)"cAMD"
+     _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
 
