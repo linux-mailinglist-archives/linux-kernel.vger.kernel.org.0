@@ -2,187 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C3717A827
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:53:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C053517A82F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:54:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgCEOxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 09:53:08 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42770 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgCEOxI (ORCPT
+        id S1726650AbgCEOxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 09:53:54 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:41802 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbgCEOxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 09:53:08 -0500
-Received: by mail-qt1-f195.google.com with SMTP id r6so4293627qtt.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:53:07 -0800 (PST)
+        Thu, 5 Mar 2020 09:53:53 -0500
+Received: by mail-wr1-f47.google.com with SMTP id v4so7382506wrs.8
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:53:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HRrEhEN79eJRcPS27NqKFVT1ofNhGlJsDkYPXYilXv0=;
-        b=L/Lx6XuldIolthi+k2y5sow3sFv3wZlinQNwDvdkQwQcMqjzMnWtvKEzaM7lffuCfd
-         2oS+hq57j/CcHdeReKRyj/6zFbRU1TewMolaAv/G7UTLX+YRtX8vOm9V5dWs82bux9on
-         Prt79RBKPu8SaA/+b4MBxpB+u6Uo1iMeo5svtUlHSh3/5PQBFwcirBQV1dHdYDW3GpSj
-         ANPbYgo0T5QGR7KBaDZWdTTvLRhLPQi0yNOy9FcwLeUxzG9TY4kJZTRItM6A5TsSRqe5
-         14G4UsLcylL3p2QwEDYKekNn5hDhSx9kc0bJtUpfCcJjhlPWjh+qJ7Gj1hfQW5jHf0Oj
-         L6wg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lCZ4HBLcDjnL0GdiZ5dsCCZ5Ed4ecHOyKpkVxr2Wiks=;
+        b=yewZkC5Pn9QnislGnz/uZFfnAAGZWyd7Ao8vvhbNkIKtHlSvMCkKMmeqn2RnBR749E
+         Q/Tsersijkoxdqb56hKlHqu8Y6xz0TKDRw78BcLFLdeRtsS8LqnQmKOdMmFpGJSVy5I6
+         xMC6STJnPA+hgvvcxotH0AS1oagHWOHjuNiwoGEtOOLYYysTPnaLwD78XH9mnWKH15JM
+         Z4cHOLiZpLFdN2nqzAtofFYq8Kf8nXLPAFEnKEnQG/Vlc2Vu08qESciVnElHIZrKnU06
+         tUPrTHwcbX/ifBZ8bQj9KwplZ4xVmzhjYFRz8+Mrg5ACXuHP4Qs7T6qCiSKoH0Pihbgx
+         M83w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HRrEhEN79eJRcPS27NqKFVT1ofNhGlJsDkYPXYilXv0=;
-        b=dOC+Eg1IAO5zj/LdrpsgMlmtof7pXqpVeAuem1/THDODPTQTdi9H0QvsrzQl878jld
-         +90w9bcRMksZOWNFYpvMFIn4CpPO2QHb9k0yfGbfTrF5OMfrdVgOOfqu3rWsrvxQZG3P
-         oa0F9xOMC9jFDj48yGeAT1pY0IPlbh9hwxDMBh0zdyKisAOjTMINoFDrohbQbewoxBwO
-         mFKFW3664r1JmhzzA/F2TRSyTX9RR8xNd7SNSUBrgfmGOBnuoAVNDZJ+waSjI/v50hcA
-         zq1OvM9PahIUAL6JR8A5xlHeobzW2MceuiwcaShElxCXtd65IgBRRxXQmn2jnERfqKdp
-         UsGQ==
-X-Gm-Message-State: ANhLgQ0GS18PhBrK83ELoqVEEcgsiR3LS6EMrhifcT072aGAAG/jyvi3
-        fD53Bb4N7RP/ies7lx00tRE=
-X-Google-Smtp-Source: ADFU+vtKdkIn8+gnmqWAltQ5uXueBcDgJNW61sDDfN6g+Xp0BN+lUEXdcO9U891Lpqqdn6VXOcbf5A==
-X-Received: by 2002:ac8:7511:: with SMTP id u17mr7325946qtq.316.1583419986708;
-        Thu, 05 Mar 2020 06:53:06 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id o16sm15915918qke.35.2020.03.05.06.53.05
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lCZ4HBLcDjnL0GdiZ5dsCCZ5Ed4ecHOyKpkVxr2Wiks=;
+        b=HTmhCC6lh+n4gWB1YDVCexguM26F/zQqA3c/HCumuPbvAuRUv7mEqOFYDpcrjqtxBr
+         5oVnhnSolNPyyVXQfw6edg+kW9ItF1dY+D2w3cGT4mdyafYLjYvJzqt6/o7VqCl7Z1FF
+         xqfvafQ5s1lsqr15hEfm4dg816jQaZUzAN2qg07ogHN7szJup/UyV/3T1804cTKkIup+
+         WbQy+273g0zWYmCkdt73MUVgHgmqMxmWXODoGzi/SOmTUAUdJhXHBVJRYyBF5tG/MV/3
+         Td8xyqip/+0chDF6WGhq8jaSyt+vKkOFcaHwtKlGRkjVb/jM1oUl72Nxz7J3SFhsWJu0
+         /BKQ==
+X-Gm-Message-State: ANhLgQ2W0mudTqHjZnYO8sbyo/SQ4l8e5lUE+LXtntRxMYJnCjd48+jJ
+        Mubgc90cdGrEO6iU8doPDOFlWQ==
+X-Google-Smtp-Source: ADFU+vsfm72FlPKo2DedsUpzOgx9vtyfPB8peWEuftgmEYyDsNFyRjk9QP5ylKJRXp0nOMtr/hbdHw==
+X-Received: by 2002:adf:e3d0:: with SMTP id k16mr10701691wrm.260.1583420030754;
+        Thu, 05 Mar 2020 06:53:50 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id f16sm35785985wrx.25.2020.03.05.06.53.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 06:53:06 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 47390403AD; Thu,  5 Mar 2020 11:53:04 -0300 (-03)
-Date:   Thu, 5 Mar 2020 11:53:04 -0300
-To:     Tommi Rantala <tommi.t.rantala@nokia.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Darren Hart <dvhart@infradead.org>,
-        Changbin Du <changbin.du@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] perf bench: Clear struct sigaction before
- sigaction() syscall
-Message-ID: <20200305145304.GC7895@kernel.org>
-References: <20200305083714.9381-1-tommi.t.rantala@nokia.com>
- <20200305083714.9381-4-tommi.t.rantala@nokia.com>
+        Thu, 05 Mar 2020 06:53:50 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     bjorn.andersson@linaro.org, agross@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/4] arm64: dts: qcom: sdm845: add audio support
+Date:   Thu,  5 Mar 2020 14:53:40 +0000
+Message-Id: <20200305145344.14670-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200305083714.9381-4-tommi.t.rantala@nokia.com>
-X-Url:  http://acmel.wordpress.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Mar 05, 2020 at 10:37:14AM +0200, Tommi Rantala escreveu:
-> Avoid garbage in sigaction structs used in sigaction() syscalls.
-> Valgrind is complaining about it.
+First 3 patches in this patchset adds support to audio via wcd934x codec.
+Last patch adds support to i2c/spi buses on Low speed expansion.
 
-Thanks, applied.
 
-- Arnaldo
- 
-> Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
-> ---
->  tools/perf/bench/epoll-ctl.c           | 1 +
->  tools/perf/bench/epoll-wait.c          | 1 +
->  tools/perf/bench/futex-hash.c          | 1 +
->  tools/perf/bench/futex-lock-pi.c       | 1 +
->  tools/perf/bench/futex-requeue.c       | 1 +
->  tools/perf/bench/futex-wake-parallel.c | 1 +
->  tools/perf/bench/futex-wake.c          | 1 +
->  7 files changed, 7 insertions(+)
-> 
-> diff --git a/tools/perf/bench/epoll-ctl.c b/tools/perf/bench/epoll-ctl.c
-> index bb617e5688412..63e2520017d81 100644
-> --- a/tools/perf/bench/epoll-ctl.c
-> +++ b/tools/perf/bench/epoll-ctl.c
-> @@ -313,6 +313,7 @@ int bench_epoll_ctl(int argc, const char **argv)
->  		exit(EXIT_FAILURE);
->  	}
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-wait.c
-> index 7af694437f4ea..5336e628b404c 100644
-> --- a/tools/perf/bench/epoll-wait.c
-> +++ b/tools/perf/bench/epoll-wait.c
-> @@ -427,6 +427,7 @@ int bench_epoll_wait(int argc, const char **argv)
->  		exit(EXIT_FAILURE);
->  	}
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-> index 8ba0c3330a9a2..c441aa446c7f8 100644
-> --- a/tools/perf/bench/futex-hash.c
-> +++ b/tools/perf/bench/futex-hash.c
-> @@ -137,6 +137,7 @@ int bench_futex_hash(int argc, const char **argv)
->  	if (!cpu)
->  		goto errmem;
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> diff --git a/tools/perf/bench/futex-lock-pi.c b/tools/perf/bench/futex-lock-pi.c
-> index d0cae8125423f..27c6e1944cbed 100644
-> --- a/tools/perf/bench/futex-lock-pi.c
-> +++ b/tools/perf/bench/futex-lock-pi.c
-> @@ -161,6 +161,7 @@ int bench_futex_lock_pi(int argc, const char **argv)
->  	if (!cpu)
->  		err(EXIT_FAILURE, "calloc");
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> diff --git a/tools/perf/bench/futex-requeue.c b/tools/perf/bench/futex-requeue.c
-> index a00a6891447ab..7a15c2e610228 100644
-> --- a/tools/perf/bench/futex-requeue.c
-> +++ b/tools/perf/bench/futex-requeue.c
-> @@ -128,6 +128,7 @@ int bench_futex_requeue(int argc, const char **argv)
->  	if (!cpu)
->  		err(EXIT_FAILURE, "cpu_map__new");
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> diff --git a/tools/perf/bench/futex-wake-parallel.c b/tools/perf/bench/futex-wake-parallel.c
-> index a053cf2b70397..cd2b81a845acb 100644
-> --- a/tools/perf/bench/futex-wake-parallel.c
-> +++ b/tools/perf/bench/futex-wake-parallel.c
-> @@ -234,6 +234,7 @@ int bench_futex_wake_parallel(int argc, const char **argv)
->  		exit(EXIT_FAILURE);
->  	}
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
-> index 58906e9499bb0..2dfcef3e371e4 100644
-> --- a/tools/perf/bench/futex-wake.c
-> +++ b/tools/perf/bench/futex-wake.c
-> @@ -136,6 +136,7 @@ int bench_futex_wake(int argc, const char **argv)
->  	if (!cpu)
->  		err(EXIT_FAILURE, "calloc");
->  
-> +	memset(&act, 0, sizeof(act));
->  	sigfillset(&act.sa_mask);
->  	act.sa_sigaction = toggle_done;
->  	sigaction(SIGINT, &act, NULL);
-> -- 
-> 2.21.1
-> 
+Srinivas Kandagatla (4):
+  arm64: dts: qcom: sdm845: Add ADSP audio support
+  arm64: dts: qcom: c630: Enable audio support
+  arm64: dts: qcom: db845c: add analog audio support
+  arm64: dts: qcom: db845c: add Low speed expansion i2c and spi nodes
+
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts    | 147 ++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 338 ++++++++++++++++++
+ .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts |  91 +++++
+ 3 files changed, 576 insertions(+)
 
 -- 
+2.21.0
 
-- Arnaldo
