@@ -2,88 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE0317AB31
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D34AC17AB43
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:13:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgCERHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:07:48 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:10965 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726368AbgCERHs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:07:48 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583428067; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=pRNvHxX80n8wBj2lKTDP98u1doAk5pcKRHB2R9qvWTg=; b=vJegXxrfNp/xxk49Ls2o+wn8yUm9mFj1rro3nyxjaw7v2HtA3LndbPLlO3jePLKyYNnCywzf
- LjA1zdFYLfyxOWRflyyujw2BOO+Ra6K9vuSeSJcHfYZrmKnCbCOSsnlEKoF5dPZSio1rd8QL
- JigXnGDlc+wSMldwo60Grjb0aQo=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6131d2.7f63685e0810-smtp-out-n03;
- Thu, 05 Mar 2020 17:07:30 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 3F016C433A2; Thu,  5 Mar 2020 17:07:30 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
-Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726099AbgCERNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:13:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38482 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbgCERNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:13:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4B4B9C447A0;
-        Thu,  5 Mar 2020 17:07:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B4B9C447A0
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
-        bjorn.andersson@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v12 4/4] soc: qcom: rpmh: Invalidate SLEEP and WAKE TCSes before flushing new data
-Date:   Thu,  5 Mar 2020 22:37:03 +0530
-Message-Id: <1583428023-19559-5-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583428023-19559-1-git-send-email-mkshah@codeaurora.org>
-References: <1583428023-19559-1-git-send-email-mkshah@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 66449207FD;
+        Thu,  5 Mar 2020 17:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583428391;
+        bh=FIFrABoB8QeK45tFteYnkG68cJC9jutS7xfCAHi33XQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uOTCiV99S2m/yZV+oJXTsEnFpZ0UOZWrvet2apb/fdblX2xobiAcSIHZtp/3p/gIB
+         cGAe+TOrTS2kYMytMzEi0VLy+r7JC48XXO+J/iqNsvRZ4p1Caqo7WoJyZbcv9eUhgM
+         BOxCbI64fbpcR7hFximO5iONyzOk3YnB6IaCBJxk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jean Delvare <jdelvare@suse.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-doc@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 01/67] ACPI: watchdog: Allow disabling WDAT at boot
+Date:   Thu,  5 Mar 2020 12:12:02 -0500
+Message-Id: <20200305171309.29118-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TCSes have previously programmed data when rpmh_flush is called.
-This can cause old data to trigger along with newly flushed.
+From: Jean Delvare <jdelvare@suse.de>
 
-Fix this by cleaning SLEEP and WAKE TCSes before new data is flushed.
+[ Upstream commit 3f9e12e0df012c4a9a7fd7eb0d3ae69b459d6b2c ]
 
-Fixes: 600513dfeef3 ("drivers: qcom: rpmh: cache sleep/wake state requests")
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+In case the WDAT interface is broken, give the user an option to
+ignore it to let a native driver bind to the watchdog device instead.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/qcom/rpmh.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  4 ++++
+ drivers/acpi/acpi_watchdog.c                    | 12 +++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index 1951f6a..63364ce 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -472,6 +472,11 @@ int rpmh_flush(struct rpmh_ctrlr *ctrlr)
- 		return 0;
- 	}
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index ade4e6ec23e03..727a03fb26c99 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -136,6 +136,10 @@
+ 			dynamic table installation which will install SSDT
+ 			tables to /sys/firmware/acpi/tables/dynamic.
  
-+	/* Invalidate the TCSes first to avoid stale data */
-+	do {
-+		ret = rpmh_rsc_invalidate(ctrlr_to_drv(ctrlr));
-+	} while (ret == -EAGAIN);
++	acpi_no_watchdog	[HW,ACPI,WDT]
++			Ignore the ACPI-based watchdog interface (WDAT) and let
++			a native driver control the watchdog device instead.
 +
- 	/* First flush the cached batch requests */
- 	ret = flush_batch(ctrlr);
- 	if (ret)
+ 	acpi_rsdp=	[ACPI,EFI,KEXEC]
+ 			Pass the RSDP address to the kernel, mostly used
+ 			on machines running EFI runtime service to boot the
+diff --git a/drivers/acpi/acpi_watchdog.c b/drivers/acpi/acpi_watchdog.c
+index b5516b04ffc07..ab6e434b4cee0 100644
+--- a/drivers/acpi/acpi_watchdog.c
++++ b/drivers/acpi/acpi_watchdog.c
+@@ -55,12 +55,14 @@ static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
+ }
+ #endif
+ 
++static bool acpi_no_watchdog;
++
+ static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
+ {
+ 	const struct acpi_table_wdat *wdat = NULL;
+ 	acpi_status status;
+ 
+-	if (acpi_disabled)
++	if (acpi_disabled || acpi_no_watchdog)
+ 		return NULL;
+ 
+ 	status = acpi_get_table(ACPI_SIG_WDAT, 0,
+@@ -88,6 +90,14 @@ bool acpi_has_watchdog(void)
+ }
+ EXPORT_SYMBOL_GPL(acpi_has_watchdog);
+ 
++/* ACPI watchdog can be disabled on boot command line */
++static int __init disable_acpi_watchdog(char *str)
++{
++	acpi_no_watchdog = true;
++	return 1;
++}
++__setup("acpi_no_watchdog", disable_acpi_watchdog);
++
+ void __init acpi_watchdog_init(void)
+ {
+ 	const struct acpi_wdat_entry *entries;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.20.1
+
