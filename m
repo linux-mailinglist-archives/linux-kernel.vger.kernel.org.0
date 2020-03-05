@@ -2,94 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA48617A32E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:33:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB9417A327
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:32:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgCEKdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:33:00 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36728 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgCEKc7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:32:59 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g12so2465461plo.3;
-        Thu, 05 Mar 2020 02:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vsmWfQHYKO+IuisE4zoMrrWqQil3RoLQ09NM/R4vXz8=;
-        b=PnfP0bOcQb6PjDSK6KH7VyFI6lPRcbRKxQXVVwlFjpqKwUREnrvNYwuGVOOeteK46l
-         +ziFUEWNEhZ4HH1r5D4yvLldZTqLP1B2uxtlFvEFbevqxE6Q4PWw4Z0APOak1KTgfX6U
-         hxzlSAPkg/84vnQwYAIdOSZr9isyzANmrggt0Yn8ZrmbqAilHz1ctIexj6h3qljDRYgn
-         SrJhXCHML0kTVTJQCkBTiF3orv1usOgLZbXjj82UJBqjpho02d0GIUNX6w7cLLFdtpIV
-         ln3u6zd2iGo7YHWIlXYb4wBvy/339xHyTqYqRlQEi/0djWXaw8YHz1QSS5ERq1mG5x4z
-         5MwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vsmWfQHYKO+IuisE4zoMrrWqQil3RoLQ09NM/R4vXz8=;
-        b=sgKtQ4NInQR02M+Aa+/FOdE3oti94Y8ZU4jA5EsoBwj/movIPdf6KXGmc+5O9Wa5oa
-         vstb20e4CK4TgQxbFUxFmdA2DfpzCfn347C7JbYY61loXg3PJ/BYKuYUKPGjcEoCvv/L
-         CEzVvpY6PhvNIxkqrHTaTj3pz+driULzWFwSu6RkTJASggUlF6lWC9xWJBAZaWVRX1u1
-         LgvJcz+HgIIZ7GdQGUeBc864FD5mf3qNJ1/Tua0qSAW4Tq7ZymbJwkxziJVlpD6KWynG
-         X6Yhe3b16xHyg3in/fkUbs438lTwJzu44ezBLwI5EOkCn/ogYw3bOI/HUenl5gzv8Zra
-         Y6Mw==
-X-Gm-Message-State: ANhLgQ0JX0T9kdQ+LPtJ0MtbdVBfN5w59uySXoscSKcYpisuA5oJOxG9
-        SJTu99Vry5MqUWnDjmxtezuDv8nr
-X-Google-Smtp-Source: ADFU+vuvup2OQ+LkXonFteqL3x/Q3zHIPTB1pvus9Rdsa06vHb/D3yAFoir8AtziitgcAYM/Iw/3Pg==
-X-Received: by 2002:a17:90a:e654:: with SMTP id ep20mr8005006pjb.60.1583404378204;
-        Thu, 05 Mar 2020 02:32:58 -0800 (PST)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id t17sm31540145pgn.94.2020.03.05.02.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 02:32:57 -0800 (PST)
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH 2/2] tty: serial: make SERIAL_SPRD not depend on ARCH_SPRD
-Date:   Thu,  5 Mar 2020 18:32:28 +0800
-Message-Id: <20200305103228.9686-2-zhang.lyra@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305103228.9686-1-zhang.lyra@gmail.com>
-References: <20200305103228.9686-1-zhang.lyra@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726170AbgCEKcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:32:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725897AbgCEKcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 05:32:53 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AC4F2073D;
+        Thu,  5 Mar 2020 10:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583404373;
+        bh=sr30sqa4SuM2XE80uZeHb0R8Wbi8yOclxBaVYaYJwn0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JdKxasopQqSxschhodSYnvdN8iO9+f6N5a72gnc4p4TfzFl8BDmuvun1BESUVOELF
+         bLNbifmeXRR33qwpXBWnwfc5nZ1zOUEwkoabuHarWiFi+f2GRYpC8/k0/NGWKIt9i2
+         3omCdgs/mbrHYoFavUhLpmsOOPfqkNuiu2ooXpyE=
+Date:   Thu, 5 Mar 2020 19:32:49 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [PATCH v5] Documentation: bootconfig: Update boot configuration
+ documentation
+Message-Id: <20200305193249.4c5f993bb52e5874cd2df627@kernel.org>
+In-Reply-To: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+References: <158339065180.26602.26457588086834858.stgit@devnote2>
+        <158339066140.26602.7533299987467005089.stgit@devnote2>
+        <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+On Wed, 4 Mar 2020 23:01:21 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Remove the dependency with ARCH_SPRD from sprd serial/console Kconfig-s,
-since we want them can be built-in when ARCH_SPRD is set as 'm'.
+> On 3/4/20 10:44 PM, Masami Hiramatsu wrote:
+> > Update boot configuration documentation.
+> > 
+> >  - Not using "config" abbreviation but configuration or description.
+> >  - Rewrite descriptions of node and its maxinum number.
+> >  - Add a section of use cases of boot configuration.
+> >  - Move how to use bootconfig to earlier section.
+> >  - Fix some typos, indents and format mistakes.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> Hi Masami,
+> 
+> I swear that I am not trying to cause another version...
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
- drivers/tty/serial/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Oh, no problem. I'll go along with your reviews.
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 52eaac21ff9f..2b9addc0afb5 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1452,7 +1452,6 @@ config SERIAL_MEN_Z135
- 
- config SERIAL_SPRD
- 	tristate "Support for Spreadtrum serial"
--	depends on ARCH_SPRD
- 	select SERIAL_CORE
- 	help
- 	  This enables the driver for the Spreadtrum's serial.
+> 
+> > ---
+> > Changes in v5:
+> >  - Elaborate the document.
+> >  - Fix some typos.
+> > Changes in v4:
+> >  - Remove O= option from examples.
+> > Changes in v3:
+> >  - Specify that comments also count in size.
+> >  - Fix a confusing sentence.
+> >  - Add O=<builddir> to make command.
+> > Changes in v2:
+> >  - Fixes additional typos (Thanks Markus and Randy!)
+> >  - Change a section title to "Tree Structured Key".
+> > ---
+> >  Documentation/admin-guide/bootconfig.rst |  201 +++++++++++++++++++-----------
+> >  Documentation/trace/boottime-trace.rst   |    2 
+> >  2 files changed, 131 insertions(+), 72 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
+> > index cf2edcd09183..3bfc9ddf68e1 100644
+> > --- a/Documentation/admin-guide/bootconfig.rst
+> > +++ b/Documentation/admin-guide/bootconfig.rst
+> > @@ -11,25 +11,106 @@ Boot Configuration
+> 
+> > +When to Use the Boot Configuration?
+> > +-----------------------------------
+> > +
+> > +The boot configuration supports kernel command line options and init daemon
+> > +boot options. All sub-keys under "kernel" root key are passed as a part of
+> > +the kernel command line [1]_, and ones under "init" root key are passed as
+> > +a part of the init daemon's command line. For example, ::
+> > +
+> > +   root=UUID=8cd79b08-bda0-4b9d-954c-5d5f34b98c82 ro quiet splash console=ttyS0,115200n8 console=tty0
+> > +
+> > +This can be written as following boot configuration file.::
+> > +
+> > +   kernel {
+> > +      root = "UUID=8cd79b08-bda0-4b9d-954c-5d5f34b98c82" # nvme0n1p3
+> > +      ro       # mount rootfs as read only
+> > +      quiet    # No console log
+> > +      splash   # show splash image on boot screen
+> > +      console = "ttyS0,115200n8" # 1st console to serial device
+> > +      console += tty0            # add 2nd console
+> > +   }
+> > +
+> > +If you think that kernel/init options becomes too long to write in boot-loader
+> 
+>                                          become
+
+OK.
+
+> 
+> > +configuration file or you want to comment on each option, the boot
+> > +configuration may be suitable. If unsure, you can still continue to use the
+> > +legacy kernel command line.
+> 
+> 
+> > +Boot Configuration Syntax
+> > +=========================
+> > +
+> > +The boot configuration syntax is a simple structured key-value. Each key
+> > +consists of dot-connected-words, and key and value are connected by ``=``.
+> > +The value has to be terminated by semicolon (``;``) or newline (``\n``).
+> > +For an array, its entries are separated by comma (``,``). ::
+> > +
+> > +  KEY[.WORD[...]] = VALUE[, VALUE2[...]][;]
+> >  
+> >  Unlike the kernel command line syntax, spaces are OK around the comma and ``=``.
+> >  
+> >  Each key word must contain only alphabets, numbers, dash (``-``) or underscore
+> >  (``_``). And each value only contains printable characters or spaces except
+> > -for delimiters such as semi-colon (``;``), new-line (``\n``), comma (``,``),
+> > +for delimiters such as semicolon (``;``), new-line (``\n``), comma (``,``),
+> 
+>             usually called:                  newline
+
+Yeah, I wonder why I have written so...
+
+> 
+> >  hash (``#``) and closing brace (``}``).
+> >  
+> >  If you want to use those delimiters in a value, you can use either double-
+> 
+> 
+> >  Comments
+> >  --------
+> >  
+> > -The config syntax accepts shell-script style comments. The comments starting
+> > -with hash ("#") until newline ("\n") will be ignored.
+> > -
+> > -::
+> > +The boot configuration accepts shell-script style comments. The comments,
+> > +beginning with hash (``#``) continues until newline (``\n``), will be
+> 
+>                                and continuing until newline
+
+OK.
+
+> 
+> > +skipped.::
+> >  
+> >   # comment line
+> >   foo = value # value is set to foo.
+> 
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thank you!
+
 -- 
-2.20.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
