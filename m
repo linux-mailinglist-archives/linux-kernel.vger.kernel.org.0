@@ -2,225 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0006817B41C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 02:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D30EA17B463
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbgCFB6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 20:58:21 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53931 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbgCFB6V (ORCPT
+        id S1726887AbgCFCWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:22:37 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44486 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726178AbgCFCWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 20:58:21 -0500
-Received: by mail-pj1-f65.google.com with SMTP id cx7so381525pjb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 17:58:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=wh7Q2VwyqtGAxtms6nglNFsFQ7MdfU9cND60WM5uI00=;
-        b=b21f6Jut3JgisQtbwKqZArpDfn9DdJxApklh+IeiXoK95Rlh37sXtw7OQG2lD3r9gX
-         HN7Ig0BJSuHn+wX8ACnTG9DimKJDah5LMFlovOaUC99jli6V8ZCMZO9W0QFGgJLdy6b5
-         asnRKhgRPoHKOP+iHhrkyKTJcw13t3NXPGE9U4R5gY3zjyhsFTbCyzzrYsB4iPrlrGS3
-         4hiSwTzhg1Lj3GuhIr7f1EQnER1oxu/YVMMHy9VMX92nzdryVt2nXiKxYD4vny6rIE10
-         PI/xX0OA6upeSjIwFmzU791djf9965aPd4T38UjVni1GUIhkC+KsnnV7emgiZcx+yuKW
-         wK3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wh7Q2VwyqtGAxtms6nglNFsFQ7MdfU9cND60WM5uI00=;
-        b=P7PvyjLj0ehdlisfLKUrRBBQ4CR2DsPQfTgLPdAC0wkxw2uCxiuom9fdpdtTtAHKwv
-         in3sQsysyvgRNg3368nc6MfpMQzeu51uVfqAtUB7WA8y0Zh4CoAxtrJHqMAnvWCPxgD8
-         s7p5BySrR/wJF/gakZ8FtSKYoGdfNwONUnNqowjKA4K5Ho+s4RdJuhuHL8NOo9bCis99
-         cWfgV5yDNlxhCh6gY6klPguzC43V8d2f777FC1zLYTGf+kaYIHo4naHLVY4obaanmxxp
-         U4qnii0Vf/Cs/EYhxZgAXalSMwTs7xp7MFijcajILzAwOs+10ROErUYqufzxm1+TuAqk
-         94Ow==
-X-Gm-Message-State: ANhLgQ1QaZk94L/cDXdaIfqdKvo7C03I1+vsSxFgCO92L5lqCPNhtm3q
-        bkXILJKrybf09r9fXI5UtLHFNw==
-X-Google-Smtp-Source: ADFU+vtIHGVEZP+AzwZw9Rs0iLTE3c16v/UyIoRjtixhKbiWacUffFNrXjt5ZH9q0g0zm8rRalxCKA==
-X-Received: by 2002:a17:902:ab81:: with SMTP id f1mr709400plr.5.1583459899689;
-        Thu, 05 Mar 2020 17:58:19 -0800 (PST)
-Received: from localhost ([2400:8904::f03c:91ff:fe8a:bbe4])
-        by smtp.gmail.com with ESMTPSA id j4sm33839748pfh.152.2020.03.05.17.58.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Mar 2020 17:58:18 -0800 (PST)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        John Garry <john.garry@huawei.com>,
-        Enrico Weigelt <info@metux.net>, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3] perf symbols: Consolidate symbol fixup issue
-Date:   Fri,  6 Mar 2020 09:57:58 +0800
-Message-Id: <20200306015759.10084-1-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 5 Mar 2020 21:22:36 -0500
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0262G1OQ008859;
+        Thu, 5 Mar 2020 18:22:04 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=Mp/1lQJtzXVINzsbfr8kALKtjQcBVu5sDXErI8SIq2U=;
+ b=avREyIi2vpTR0GskRVXXOpJiKWxwyKa5+UfKrR1JMovcvlevrU7uy7OcHYGqM1KQxRer
+ zwrY88V12Veu+RVgZ7x0ha0xMwxTxmqSIlDqBsYxbgQfO8Ut+3WNoQQW6uXRX1uLEl8u
+ 0ruZNjC1KJoXGwcLiu1r2u5benyYWiOInEE= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 2yjk74ye8u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 05 Mar 2020 18:22:04 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Thu, 5 Mar 2020 18:22:03 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LNlSR53fRtcNZrkKBz6oByyMr26AxfOgKlGnBkKHnCPMtD1zZjWvSqfrwplNiGZmjwSR7qTokxiiPmexNe1EUJZe+dL+Vwh++XGyE6K9o2ctPEfQ0lzW7u1ygUxRayvDcvBobvOSMHvtwgcC3p37XJenpEoNa5htvBFmbYLKj5SVCuLNIzpKyc99O/EkWcqgOxKoNLFLZeuYlyCNERHp0d/YlnEeXvnGFpcPLd2yKnnw9h9s9AON+nbGzrlLboT878Yms+w2DojSjNRV8qUXPSGxGQ08DKpem179m9dUX6kzMTfSaxeyD0vbeVM6AmZ1FTX2pN3/bxxYg8HTDfhPbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mp/1lQJtzXVINzsbfr8kALKtjQcBVu5sDXErI8SIq2U=;
+ b=IY5N4XlYiHUi7FEqdsKuKzVDNezhKoEi0T+NAMIDnyUoyM9ZJSFEqwNPhr7Q+9yrYjjEXIVyGIkqifz4BMCsxzqhrxFXCIH9C5Dy8TZxJUcaGUXRdRyoafOzLw/k+9paAmgqiQUtYbl5edkOMlXAJM+OCvq1LVKMmirkPWKQIKOodppYfn6LseR0XGPOsliHO6DLbJaizcxUxJeNmw1Ja9rOKSlYoBaxvclnRvqwrwlMuwOK+1qxfLvpeu1vPbYWqeuTSIuHnmmkw1dTM50fS+XTee2G5TKnV3/ljMWJ3kkgycS4jOrdvCYxsAJGqT18tloe8aTc2urJLx5oj2fiyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mp/1lQJtzXVINzsbfr8kALKtjQcBVu5sDXErI8SIq2U=;
+ b=DvqdHXaDP1jCaE9I3yAMp9KSL9ccvoHhRmr4evrHQD6mheSjU5OCVcRZBonsHbFpZ4bCsuP57z3HGWitmv+L8kslPEaBiFsBfSo/QOQ1KGLKbaGgCSU2VsaSGSTc3iRCCcAPaYiLnQloMR5AGtevHnAS/tTieLUwfE5vw7maMqk=
+Received: from MWHPR15MB1661.namprd15.prod.outlook.com (2603:10b6:300:124::23)
+ by MWHPR15MB1790.namprd15.prod.outlook.com (2603:10b6:301:53::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Thu, 5 Mar
+ 2020 22:45:48 +0000
+Received: from MWHPR15MB1661.namprd15.prod.outlook.com
+ ([fe80::90a5:3eb0:b2a8:dc5e]) by MWHPR15MB1661.namprd15.prod.outlook.com
+ ([fe80::90a5:3eb0:b2a8:dc5e%11]) with mapi id 15.20.2772.019; Thu, 5 Mar 2020
+ 22:45:48 +0000
+Date:   Thu, 5 Mar 2020 14:45:44 -0800
+From:   Roman Gushchin <guro@fb.com>
+To:     Shakeel Butt <shakeelb@google.com>
+CC:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] net: memcg: late association of sock to memcg
+Message-ID: <20200305224544.GA1092120@carbon.dhcp.thefacebook.com>
+References: <20200305205525.245058-1-shakeelb@google.com>
+ <9505d35b-f9fc-149b-6df5-e65ad95acabb@gmail.com>
+ <CALvZod68Raqfa2ZJOfF_OOQdb-hxkOs54G5KK3VQnUdxiZ=KTQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod68Raqfa2ZJOfF_OOQdb-hxkOs54G5KK3VQnUdxiZ=KTQ@mail.gmail.com>
+X-ClientProxiedBy: MWHPR01CA0027.prod.exchangelabs.com (2603:10b6:300:101::13)
+ To MWHPR15MB1661.namprd15.prod.outlook.com (2603:10b6:300:124::23)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:500::6:48b4) by MWHPR01CA0027.prod.exchangelabs.com (2603:10b6:300:101::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Thu, 5 Mar 2020 22:45:47 +0000
+X-Originating-IP: [2620:10d:c090:500::6:48b4]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 800c2384-4534-4115-ef7a-08d7c156f2a3
+X-MS-TrafficTypeDiagnostic: MWHPR15MB1790:
+X-Microsoft-Antispam-PRVS: <MWHPR15MB17908BE18B0F1013A1A6E265BEE20@MWHPR15MB1790.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 03333C607F
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(376002)(346002)(136003)(199004)(189003)(8936002)(9686003)(55016002)(7416002)(6916009)(1076003)(86362001)(4326008)(2906002)(52116002)(66946007)(81166006)(81156014)(5660300002)(7696005)(6506007)(316002)(53546011)(478600001)(66556008)(186003)(8676002)(33656002)(66476007)(6666004)(16526019)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1790;H:MWHPR15MB1661.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: k15srNGbHOJj3rjwNPD+tFPbVF7geOq/KrZ4yxA/WMoUirt24rsJCUNwhQ3tpBK9kcDhtDxhfOExH+ikHRujQbSEnNtR5Cvmqu/xgOGwC+QO1ekfxKJEv+siI4Bf3e323UnvPAq/w6m10O2WuAF9TkJl84w3HSeLHaGNGW6BoEqQgLN7QZNOydIX1lPRt46525S291j9EXxWn+6e5rZEr2rJK3tUitdU1ikY1J696QgvU07VspY0l2smBu/kh7ep2DtzxUPSF/vfzfi6wVOw5ktJWsbfXK4GorMo928pBRRmNWbmKj7uuEU1AevcOeKj2a/ElkeMw964QBJfFH3477kZUlZ9v7V+/zxk1fzXLnw+1hJMGohM3Hvpi5QeeoGP8KNs9HnqUFJHLzuE01CiiS39/A+KJpw1W3BlCE2K8bP2yCTTn0RdxEd6VxIjsFpG
+X-MS-Exchange-AntiSpam-MessageData: /0FtUZouI7L/nWCc3fWAa0HA5wp9RgP7EcB6ixjugoDFMT+yUKHxpZpyOQF4EoH7sNtZ3qM3Hzf51+INdPnWGqi/fjrY6wwzON0aJqI3Eu5oBZ/nieN3FOKQ3ObyJsekhq+uta6AMtFXVuE4RWNagKj92fqGIzmeQLPLMRbECr7Q7f49t5MbUe3DkbmtfQgc
+X-MS-Exchange-CrossTenant-Network-Message-Id: 800c2384-4534-4115-ef7a-08d7c156f2a3
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2020 22:45:48.1851
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kuOqZwSFHTIXI2AbY/gGYlsLOD9xOBqscJB+N0nXwAJpgsGbLoO0OQYsCxrrtb6K
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1790
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-05_08:2020-03-05,2020-03-05 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
+ clxscore=1011 lowpriorityscore=0 phishscore=0 malwarescore=0 adultscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 suspectscore=5
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003060012
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After copying Arm64's perf archive with object files and perf.data file
-to x86 laptop, the x86's perf kernel symbol resolution fails.  It
-outputs 'unknown' for all symbols parsing.
+On Thu, Mar 05, 2020 at 01:59:37PM -0800, Shakeel Butt wrote:
+> On Thu, Mar 5, 2020 at 1:17 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >
+> >
+> >
+> > On 3/5/20 12:55 PM, Shakeel Butt wrote:
+> > > If a TCP socket is allocated in IRQ context or cloned from unassociated
+> > > (i.e. not associated to a memcg) in IRQ context then it will remain
+> > > unassociated for its whole life. Almost half of the TCPs created on the
+> > > system are created in IRQ context, so, memory used by such sockets will
+> > > not be accounted by the memcg.
+> > >
+> > > This issue is more widespread in cgroup v1 where network memory
+> > > accounting is opt-in but it can happen in cgroup v2 if the source socket
+> > > for the cloning was created in root memcg.
+> > >
+> > > To fix the issue, just do the late association of the unassociated
+> > > sockets at accept() time in the process context and then force charge
+> > > the memory buffer already reserved by the socket.
+> > >
+> > > Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> > > ---
+> > > Changes since v2:
+> > > - Additional check for charging.
+> > > - Release the sock after charging.
+> > >
+> > > Changes since v1:
+> > > - added sk->sk_rmem_alloc to initial charging.
+> > > - added synchronization to get memory usage and set sk_memcg race-free.
+> > >
+> > >  net/ipv4/inet_connection_sock.c | 20 ++++++++++++++++++++
+> > >  1 file changed, 20 insertions(+)
+> > >
+> > > diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+> > > index a4db79b1b643..5face55cf818 100644
+> > > --- a/net/ipv4/inet_connection_sock.c
+> > > +++ b/net/ipv4/inet_connection_sock.c
+> > > @@ -482,6 +482,26 @@ struct sock *inet_csk_accept(struct sock *sk, int flags, int *err, bool kern)
+> > >               }
+> > >               spin_unlock_bh(&queue->fastopenq.lock);
+> > >       }
+> > > +
+> > > +     if (mem_cgroup_sockets_enabled && !newsk->sk_memcg) {
+> > > +             int amt;
+> > > +
+> > > +             /* atomically get the memory usage, set and charge the
+> > > +              * sk->sk_memcg.
+> > > +              */
+> > > +             lock_sock(newsk);
+> > > +
+> > > +             /* The sk has not been accepted yet, no need to look at
+> > > +              * sk->sk_wmem_queued.
+> > > +              */
+> > > +             amt = sk_mem_pages(newsk->sk_forward_alloc +
+> > > +                                atomic_read(&sk->sk_rmem_alloc));
+> > > +             mem_cgroup_sk_alloc(newsk);
+> > > +             if (newsk->sk_memcg && amt)
+> > > +                     mem_cgroup_charge_skmem(newsk->sk_memcg, amt);
+> > > +
+> > > +             release_sock(newsk);
+> > > +     }
+> > >  out:
+> > >       release_sock(sk);
+> > >       if (req)
+> > >
+> >
+> > This patch looks fine, but why keeping the mem_cgroup_sk_alloc(newsk);
+> > in sk_clone_lock() ?
+> >
+> > Note that all TCP sk_clone_lock() calls happen in softirq context.
+> 
+> So, basically re-doing something like 9f1c2674b328 ("net: memcontrol:
+> defer call to mem_cgroup_sk_alloc()") in this patch. I am fine with
+> that.
+> 
+> Roman, any concerns?
 
-This issue is root caused by the function elf__needs_adjust_symbols(),
-x86 perf tool uses one weak version, Arm64 (and powerpc) has rewritten
-their own version.  elf__needs_adjust_symbols() decides if need to parse
-symbols with the relative offset address; but x86 building uses the weak
-function which misses to check for the elf type 'ET_DYN', so that it
-cannot parse symbols in Arm DSOs due to the wrong result from
-elf__needs_adjust_symbols().
+Nothing at the moment, I'll try to give some testing to the final patch.
+I hope this time it will work better...
 
-The DSO parsing should not depend on any specific architecture perf
-building; e.g. x86 perf tool can parse Arm and Arm64 DSOs, vice versa.
-And confirmed by Naveen N. Rao that powerpc64 kernels are not being
-built as ET_DYN anymore and change to ET_EXEC.
-
-This patch removes the arch specific functions for Arm64 and powerpc and
-changes elf__needs_adjust_symbols() as a common function.
-
-In the common elf__needs_adjust_symbols(), it checks an extra condition
-'ET_DYN' for elf header type.  With this fixing, the Arm64 DSO can be
-parsed properly with x86's perf tool.
-
-Before:
-
-  # perf script
-  main  3258          1          branches:                 0 [unknown] ([unknown]) => ffff800010c4665c [unknown] ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c46670 [unknown] ([kernel.kallsyms]) => ffff800010c4eaec [unknown] ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4eaec [unknown] ([kernel.kallsyms]) => ffff800010c4eb00 [unknown] ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4eb08 [unknown] ([kernel.kallsyms]) => ffff800010c4e780 [unknown] ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4e7a0 [unknown] ([kernel.kallsyms]) => ffff800010c4eeac [unknown] ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4eebc [unknown] ([kernel.kallsyms]) => ffff800010c4ed80 [unknown] ([kernel.kallsyms])
-
-After:
-
-  # perf script
-  main  3258          1          branches:                 0 [unknown] ([unknown]) => ffff800010c4665c coresight_timeout+0x54 ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c46670 coresight_timeout+0x68 ([kernel.kallsyms]) => ffff800010c4eaec etm4_enable_hw+0x3cc ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4eaec etm4_enable_hw+0x3cc ([kernel.kallsyms]) => ffff800010c4eb00 etm4_enable_hw+0x3e0 ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4eb08 etm4_enable_hw+0x3e8 ([kernel.kallsyms]) => ffff800010c4e780 etm4_enable_hw+0x60 ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4e7a0 etm4_enable_hw+0x80 ([kernel.kallsyms]) => ffff800010c4eeac etm4_enable+0x2d4 ([kernel.kallsyms])
-  main  3258          1          branches:  ffff800010c4eebc etm4_enable+0x2e4 ([kernel.kallsyms]) => ffff800010c4ed80 etm4_enable+0x1a8 ([kernel.kallsyms])
-
-v3: Changed to check for ET_DYN across all architectures.
-
-v2: Fixed Arm64 and powerpc native building.
-
-Reported-by: Mike Leach <mike.leach@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
----
- tools/perf/arch/arm64/util/Build            |  1 -
- tools/perf/arch/arm64/util/sym-handling.c   | 19 -------------------
- tools/perf/arch/powerpc/util/Build          |  1 -
- tools/perf/arch/powerpc/util/sym-handling.c | 10 ----------
- tools/perf/util/symbol-elf.c                | 10 ++++++++--
- 5 files changed, 8 insertions(+), 33 deletions(-)
- delete mode 100644 tools/perf/arch/arm64/util/sym-handling.c
-
-diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
-index 0a7782c61209..789956f76d85 100644
---- a/tools/perf/arch/arm64/util/Build
-+++ b/tools/perf/arch/arm64/util/Build
-@@ -1,6 +1,5 @@
- perf-y += header.o
- perf-y += perf_regs.o
--perf-y += sym-handling.o
- perf-$(CONFIG_DWARF)     += dwarf-regs.o
- perf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
- perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
-deleted file mode 100644
-index 8dfa3e5229f1..000000000000
---- a/tools/perf/arch/arm64/util/sym-handling.c
-+++ /dev/null
-@@ -1,19 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- *
-- * Copyright (C) 2015 Naveen N. Rao, IBM Corporation
-- */
--
--#include "symbol.h" // for the elf__needs_adjust_symbols() prototype
--#include <stdbool.h>
--
--#ifdef HAVE_LIBELF_SUPPORT
--#include <gelf.h>
--
--bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
--{
--	return ehdr.e_type == ET_EXEC ||
--	       ehdr.e_type == ET_REL ||
--	       ehdr.e_type == ET_DYN;
--}
--#endif
-diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
-index 7cf0b8803097..e5c9504f8586 100644
---- a/tools/perf/arch/powerpc/util/Build
-+++ b/tools/perf/arch/powerpc/util/Build
-@@ -1,5 +1,4 @@
- perf-y += header.o
--perf-y += sym-handling.o
- perf-y += kvm-stat.o
- perf-y += perf_regs.o
- perf-y += mem-events.o
-diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/powerpc/util/sym-handling.c
-index abb7a12d8f93..0856b32f9e08 100644
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -10,16 +10,6 @@
- #include "probe-event.h"
- #include "probe-file.h"
- 
--#ifdef HAVE_LIBELF_SUPPORT
--bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
--{
--	return ehdr.e_type == ET_EXEC ||
--	       ehdr.e_type == ET_REL ||
--	       ehdr.e_type == ET_DYN;
--}
--
--#endif
--
- int arch__choose_best_symbol(struct symbol *syma,
- 			     struct symbol *symb __maybe_unused)
- {
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 1965aefccb02..be5b493f8284 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -704,9 +704,15 @@ void symsrc__destroy(struct symsrc *ss)
- 	close(ss->fd);
- }
- 
--bool __weak elf__needs_adjust_symbols(GElf_Ehdr ehdr)
-+bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
- {
--	return ehdr.e_type == ET_EXEC || ehdr.e_type == ET_REL;
-+	/*
-+	 * Usually vmlinux is an ELF file with type ET_EXEC for most
-+	 * architectures; except Arm64 kernel is linked with option
-+	 * '-share', so need to check type ET_DYN.
-+	 */
-+	return ehdr.e_type == ET_EXEC || ehdr.e_type == ET_REL ||
-+	       ehdr.e_type == ET_DYN;
- }
- 
- int symsrc__init(struct symsrc *ss, struct dso *dso, const char *name,
--- 
-2.17.1
-
+Thank you!
