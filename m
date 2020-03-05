@@ -2,65 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB0B17A8A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:17:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE7217A8A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:16:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbgCEPRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:17:30 -0500
-Received: from smtprelay0012.hostedemail.com ([216.40.44.12]:37052 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726131AbgCEPRa (ORCPT
+        id S1726436AbgCEPQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:16:13 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:42588 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbgCEPQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:17:30 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 2F716182CF66B;
-        Thu,  5 Mar 2020 15:17:29 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1539:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3865:3870:5007:6691:8957:10004:10400:10848:11026:11473:11658:11914:12296:12297:12555:12760:13069:13311:13357:13439:14096:14097:14181:14394:14659:14721:21080:21627:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: hour30_413e0a59f4f56
-X-Filterd-Recvd-Size: 1485
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  5 Mar 2020 15:17:28 +0000 (UTC)
-Message-ID: <f8ac6b32a29b9a05b58a7e58ffe8b780642abbf1.camel@perches.com>
-Subject: [PATCH] spi: Remove CONFIG_ prefix from Kconfig select
-From:   Joe Perches <joe@perches.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 05 Mar 2020 07:15:53 -0800
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 5 Mar 2020 10:16:12 -0500
+Received: by mail-qv1-f68.google.com with SMTP id e7so2562169qvy.9;
+        Thu, 05 Mar 2020 07:16:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Qr9T4/HfHNjKQEoGnPMpOHpy/Tgp3MiA/ssiXAaRBcU=;
+        b=TKdntnCh9T9OceR6r5KJMZbWwbtVWrwUMfrde9/uPEKUCsO1IxxVBguSbk3Zfefyw/
+         O/sPEidM4LDyiCPa+QwlRiVfg5kxK04BfWsxp1MF+gngNX23T415jUPyxvkMBq4aykoO
+         iUEgOPPPaAuVpLpvTnselNkPnAoanY1mryl18l/QU9h4fNgCqXypbNNa2STqelFWiou/
+         pAmh6SH2mTPaRFaLH2fAQu2ExSr1z3xnzXN/o/rJa/eLT2ISp6QNJR2C720qbEKth3Q2
+         JLCG4XNjiF2XA038mO51V9ZVXy8ZT0lOKeTafx3WO/kSPIAPBliZ0Gtqt5qTNikgIDFO
+         aR4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Qr9T4/HfHNjKQEoGnPMpOHpy/Tgp3MiA/ssiXAaRBcU=;
+        b=FQCe6KdWGi8bAKBgie8sSC8A535vM+FMEl7Kp+E0KQ76xj/Tr8CQRJGX38Yt69517I
+         5LOZ33wSmipQnqhwgdcg5c1NEL9UFisxXm3lJRN5hZdtGiMGeoh9cjopHEs2Ak+A+F2p
+         Pa4H7NpeMY0SKFCj+n4MMVkY5297YEJbeI1fvoW0bdKiM8sdrsSy0e7y2N1FI3YnUqPH
+         jsTi5pGOuQUpqQjUZnck4jdRgUKotyT5HAWe0WfIYjk4kS/YaWGAl/PL/WIH68AKXHZv
+         6+jo9RWX3iv5HeMGDT6CzpqKrW58r9Ih5wcMJRV7up7tDLm0NBVIcWqJGce1aQUyruDt
+         23Yw==
+X-Gm-Message-State: ANhLgQ0KWRipUgKwOsQEHmIbS/+m3tJnO31pwFc/PgbYXNBmrpUSbgyn
+        FNZVT5UzSgLloPvp/UG45FCBsRGYZ0E=
+X-Google-Smtp-Source: ADFU+vtDD5SoolymY435I3JgIVSFCVZwLKyiD32jrBVXmOt78Q17Y06DePByKUYqLmqiUvIFnWdzoQ==
+X-Received: by 2002:a0c:fdc5:: with SMTP id g5mr7055887qvs.194.1583421371779;
+        Thu, 05 Mar 2020 07:16:11 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id u18sm1537531qtv.96.2020.03.05.07.16.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 07:16:11 -0800 (PST)
+From:   Arnaldo Carvalho de MElo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de MElo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 1A32C403AD; Thu,  5 Mar 2020 12:16:09 -0300 (-03)
+Date:   Thu, 5 Mar 2020 12:16:09 -0300
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 4/5] perf bench: Share some global variables to fix build
+ with gcc 10
+Message-ID: <20200305151609.GE7895@kernel.org>
+References: <20200303194827.6461-1-acme@kernel.org>
+ <20200303194827.6461-5-acme@kernel.org>
+ <bb1a3048a0f75d1fdf497c67d16a022cdd15c437.camel@nokia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb1a3048a0f75d1fdf497c67d16a022cdd15c437.camel@nokia.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit a2ca53b52e00 ("spi: Add HiSilicon v3xx SPI NOR flash
-controller driver") likely inadvertently used a select statement
-with a CONFIG_ prefix, remove the prefix.
+Em Thu, Mar 05, 2020 at 08:43:32AM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) escreveu:
+> On Tue, 2020-03-03 at 16:48 -0300, Arnaldo Carvalho de Melo wrote:
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> BTW there's also some div-by-zero bugs here if runtime is zero:
+> 
+> $ perf bench epoll wait --runtime=0
+> # Running 'epoll/wait' benchmark:
+> Run summary [PID 30859]: 7 threads monitoring on 64 file-descriptors for 0
+> secs.
+> 
+> Floating point exception (core dumped)
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can you please submit a patch for that? 
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 82177d..2dc7bd 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -292,7 +292,7 @@ config SPI_HISI_SFC_V3XX
- 	tristate "HiSilicon SPI-NOR Flash Controller for Hi16XX chipsets"
- 	depends on (ARM64 && ACPI) || COMPILE_TEST
- 	depends on HAS_IOMEM
--	select CONFIG_MTD_SPI_NOR
-+	select MTD_SPI_NOR
- 	help
- 	  This enables support for HiSilicon v3xx SPI-NOR flash controller
- 	  found in hi16xx chipsets.
+I've applied the other 3 fixes you submitted, thanks for that!
 
+- Arnaldo
+ 
+> > diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-
+> > wait.c
+> > index 7af694437f4e..d1c5cb526b9f 100644
+> > --- a/tools/perf/bench/epoll-wait.c
+> > +++ b/tools/perf/bench/epoll-wait.c
+> > 
+> > @@ -519,7 +518,7 @@ int bench_epoll_wait(int argc, const char **argv)
+> >  		qsort(worker, nthreads, sizeof(struct worker), cmpworker);
+> >  
+> >  	for (i = 0; i < nthreads; i++) {
+> > -		unsigned long t = worker[i].ops/runtime.tv_sec;
+> > +		unsigned long t = worker[i].ops / bench__runtime.tv_sec;
+> >  
+> >  		update_stats(&throughput_stats, t);
+> >  
+> > diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-
+> > hash.c
+> > index 8ba0c3330a9a..21776862e940 100644
+> > --- a/tools/perf/bench/futex-hash.c
+> > +++ b/tools/perf/bench/futex-hash.c
+> > 
+> > @@ -204,7 +204,7 @@ int bench_futex_hash(int argc, const char **argv)
+> >  	pthread_mutex_destroy(&thread_lock);
+> >  
+> >  	for (i = 0; i < nthreads; i++) {
+> > -		unsigned long t = worker[i].ops/runtime.tv_sec;
+> > +		unsigned long t = worker[i].ops / bench__runtime.tv_sec;
+> >  		update_stats(&throughput_stats, t);
+> >  		if (!silent) {
+> >  			if (nfutexes == 1)
+> > diff --git a/tools/perf/bench/futex-lock-pi.c b/tools/perf/bench/futex-
+> > lock-pi.c
+> > index d0cae8125423..30d97121dc4f 100644
+> > --- a/tools/perf/bench/futex-lock-pi.c
+> > +++ b/tools/perf/bench/futex-lock-pi.c
+> > 
+> > @@ -211,7 +210,7 @@ int bench_futex_lock_pi(int argc, const char **argv)
+> >  	pthread_mutex_destroy(&thread_lock);
+> >  
+> >  	for (i = 0; i < nthreads; i++) {
+> > -		unsigned long t = worker[i].ops/runtime.tv_sec;
+> > +		unsigned long t = worker[i].ops / bench__runtime.tv_sec;
+> >  
+> >  		update_stats(&throughput_stats, t);
+> >  		if (!silent)
+> 
 
+-- 
+
+- Arnaldo
