@@ -2,78 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B061617A370
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D5C17A365
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbgCEKwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:52:13 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45848 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726979AbgCEKwM (ORCPT
+        id S1727198AbgCEKuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:50:06 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.142]:24925 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbgCEKuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:52:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583405531;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UI+jv9WRtSfSOrEtwCJt1VuJ+panaiTzk05DWwgj8hE=;
-        b=Zocv2NxYtS+xF7k3linUcXvCwyDCnMDz42RUMozA0PAqXhaP2NKLGXu49O3+axWAuJQFZU
-        xKDR5ZlZgCVBoBYE7Mpefq1CuUABRktWSIz9tWYmTDsHjF2OAVIYc12ru2+nsC9ebhoORO
-        g+1UIvf2Flv8dACQ63tWeeuuBdFUEo8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-421-Ix9rltTnOy6V2Odi6gbcew-1; Thu, 05 Mar 2020 05:52:05 -0500
-X-MC-Unique: Ix9rltTnOy6V2Odi6gbcew-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4CE67800D50;
-        Thu,  5 Mar 2020 10:52:04 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42E455C219;
-        Thu,  5 Mar 2020 10:52:04 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3363D1809563;
-        Thu,  5 Mar 2020 10:52:04 +0000 (UTC)
-Date:   Thu, 5 Mar 2020 05:52:04 -0500 (EST)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     linux-efi <linux-efi@vger.kernel.org>, joeyli <jlee@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <911968708.13281322.1583405524154.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CAKv+Gu_n8MhgRFw-BUFgN1UUfTh1R6wsCNxKRA9QrQK74z6g7g@mail.gmail.com>
-References: <CAKv+Gu_3ZRRcoAcLTVVQe26q5x9KALmztaNQF=e=KqWaAwxtpA@mail.gmail.com> <20200305084041.24053-1-vdronov@redhat.com> <20200305084041.24053-2-vdronov@redhat.com> <CAKv+Gu_n8MhgRFw-BUFgN1UUfTh1R6wsCNxKRA9QrQK74z6g7g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] efi: fix a race and a buffer overflow while
- reading efivars via sysfs
+        Thu, 5 Mar 2020 05:50:06 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id B8FF92B2C55
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Mar 2020 04:50:03 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9o4pjPpH3Sl8q9o4pj2IEv; Thu, 05 Mar 2020 04:50:03 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Jugb5LVg8mFca90YkJDM5+QeWSDDP8jv8ZoLZGi2tQk=; b=fyQCDPNsuCw6k+WxIMaPPP4leb
+        7l1Nz0bH4kub4AkCs87UpqzkevQYEMH+f2hnlm2AVjrLtRJ+XAz0RMZEtn2rExj9zSH2UBM+Ec+w0
+        0KMNhgH25n7RtAOoEpe3zuLaCYf8j5f8c5eOUnhAmCjcxKn1y/gwju/lGlo7e622Lrwz3a199ZH8p
+        4BK5XJDxm596Mow3aIXsleBpy3FAU+bMdebDWiz5evyLoomLlWRVFsftjPfs0+ETHR8eWwYG4vOKc
+        3E6E/9x904yADz4B2a0nSbUustpehD9zc1mMFQgU2tHDCZp1EG9gR5KOZJmsA75MgoQFTI7SfTWJ9
+        OxpMQrbg==;
+Received: from [201.166.169.220] (port=15208 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j9o4m-003e9d-GQ; Thu, 05 Mar 2020 04:50:01 -0600
+Date:   Thu, 5 Mar 2020 04:53:06 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] drm/gma500/intel_bios.h: Replace zero-length array
+ with flexible-array member
+Message-ID: <20200305105306.GA18788@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.40.204.231, 10.4.195.11]
-Thread-Topic: fix a race and a buffer overflow while reading efivars via sysfs
-Thread-Index: ZwtG1mjZkaktWXHopN/M4SFWBKQyCQ==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.169.220
+X-Source-L: No
+X-Exim-ID: 1j9o4m-003e9d-GQ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.169.220]:15208
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ard!
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-> > Reported-by: Bob Sanders <bob.sanders@hpe.com> and the LTP testsuite
-> > Link:
-> > https://lore.kernel.org/linux-efi/20200303085528.27658-1-vdronov@redhat.com/T/#u
-> 
-> For the future, please don't add these links. This one points to the
-> old version of the patch, not to this one. It will be added by the
-> tooling once the patch gets picked up.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Aha. I was under an impression Links: are added manually by authors. My intention
-here was to point at the root message of the whole discussion, not at the patch.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Anyway, thank you for the review and for bearing with me!
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-Best regards,
-Vladis Dronov | Red Hat, Inc. | The Core Kernel | Senior Software Engineer
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/gma500/intel_bios.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/gma500/intel_bios.h b/drivers/gpu/drm/gma500/intel_bios.h
+index a1f9ce9465a5..0e6facf21e33 100644
+--- a/drivers/gpu/drm/gma500/intel_bios.h
++++ b/drivers/gpu/drm/gma500/intel_bios.h
+@@ -227,7 +227,7 @@ struct bdb_general_definitions {
+ 	 * number = (block_size - sizeof(bdb_general_definitions))/
+ 	 *	     sizeof(child_device_config);
+ 	 */
+-	struct child_device_config devices[0];
++	struct child_device_config devices[];
+ };
+ 
+ struct bdb_lvds_options {
+-- 
+2.25.0
 
