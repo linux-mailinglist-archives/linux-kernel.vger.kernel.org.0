@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8B817B197
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3240B17B19A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbgCEWlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:41:19 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:49158 "EHLO
+        id S1726440AbgCEWlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:41:23 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:49160 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgCEWlT (ORCPT
+        with ESMTP id S1726142AbgCEWlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:41:19 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 025MfG8V128542;
-        Thu, 5 Mar 2020 16:41:16 -0600
+        Thu, 5 Mar 2020 17:41:20 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 025MfHC2128546;
+        Thu, 5 Mar 2020 16:41:17 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583448076;
-        bh=UDxDPhpvCVuvdegOP8p0ZmjTKioDGinq2lw5CQF6aq8=;
+        s=ti-com-17Q1; t=1583448077;
+        bh=xLnhFXjcntooqJEdFx6nrAVNHWk6LDOKQ7ZIRr8tZrc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=wqa6CYXeXa9JlCz+7P86soPxQKNzNeWney8R2aLj8/zvf13t46wLev/YNxPgS7LNY
-         wxQ7WsWs56ngWohUFD91GOSPxDZPbwFidOdTwoWYr8tWlHXyRgGVNfa4emNlMue94f
-         tc74kOPdlAM3qPW5XOc9XmgIVLK9yS8N7bPworsw=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 025MfGNN102981
+        b=HkYQcweBCpizFmpL+mWD/faZrLtKoAIhAHEm7TvhfOt6zz6UG2Qv/Jv3/Z3u8XMEY
+         SNzC2FMGpncnvBYLl9Fii3xhanZABmHXeoj6DfUtd5mouU+voMWO7GxUibLgGwEAKm
+         r+my3HLz8qrRyJT919dttANLC15T4joHumQ7t/8U=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 025MfHb3027248
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Mar 2020 16:41:16 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 5 Mar 2020 16:41:17 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Mar
- 2020 16:41:15 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 16:41:16 -0600
+Received: from localhost.localdomain (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Mar 2020 16:41:15 -0600
+ Frontend Transport; Thu, 5 Mar 2020 16:41:16 -0600
 Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 025MfFKR026645;
-        Thu, 5 Mar 2020 16:41:15 -0600
+        by localhost.localdomain (8.15.2/8.15.2) with ESMTP id 025MfG0c003914;
+        Thu, 5 Mar 2020 16:41:16 -0600
 Received: from localhost (irmo.dhcp.ti.com [128.247.81.254])
-        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 025MfFPC098950;
-        Thu, 5 Mar 2020 16:41:15 -0600
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 025MfGog098953;
+        Thu, 5 Mar 2020 16:41:16 -0600
 From:   Suman Anna <s-anna@ti.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Loic Pallardy <loic.pallardy@st.com>
@@ -48,9 +48,9 @@ CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Tero Kristo <t-kristo@ti.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/2] remoteproc: fall back to using parent memory pool if no dedicated available
-Date:   Thu, 5 Mar 2020 16:41:07 -0600
-Message-ID: <20200305224108.21351-2-s-anna@ti.com>
+Subject: [PATCH 2/2] remoteproc: Fix and restore the parenting hierarchy for vdev
+Date:   Thu, 5 Mar 2020 16:41:08 -0600
+Message-ID: <20200305224108.21351-3-s-anna@ti.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20200305224108.21351-1-s-anna@ti.com>
 References: <20200305224108.21351-1-s-anna@ti.com>
@@ -63,44 +63,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
+dma memory pool") has introduced a new vdev subdevice for each vdev
+declared in the firmware resource table and made it as the parent for the
+created virtio rpmsg devices instead of the previous remoteproc device.
+This changed the overall parenting hierarchy for the rpmsg devices, which
+were children of virtio devices, and does not allow the corresponding
+rpmsg drivers to retrieve the parent rproc device through the
+rproc_get_by_child() API.
 
-In some cases, like with OMAP remoteproc, we are not creating dedicated
-memory pool for the virtio device. Instead, we use the same memory pool
-for all shared memories. The current virtio memory pool handling forces
-a split between these two, as a separate device is created for it,
-causing memory to be allocated from bad location if the dedicated pool
-is not available. Fix this by falling back to using the parent device
-memory pool if dedicated is not available.
+Fix this by restoring the remoteproc device as the parent. The new vdev
+subdevice can continue to inherit the DMA attributes from the remoteproc's
+parent device (actual platform device).
 
 Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 8c07cb2ca8ba..4723ebe574b8 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -368,6 +368,16 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 				goto out;
- 			}
- 		}
-+	} else {
-+		struct device_node *np = rproc->dev.parent->of_node;
-+
-+		/*
-+		 * If we don't have dedicated buffer, just attempt to
-+		 * re-assign the reserved memory from our parent.
-+		 * Failure is non-critical so don't check return value
-+		 * either.
-+		 */
-+		of_reserved_mem_device_init_by_idx(dev, np, 0);
- 	}
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 097f33e4f1f3..ba18f32bd0c4 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -510,7 +510,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
  
- 	/* Allocate virtio device */
+ 	/* Initialise vdev subdevice */
+ 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+-	rvdev->dev.parent = rproc->dev.parent;
++	rvdev->dev.parent = &rproc->dev;
+ 	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
+ 	rvdev->dev.release = rproc_rvdev_release;
+ 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
 -- 
 2.23.0
 
