@@ -2,123 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CFA6179ED9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:02:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9B6179EE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725818AbgCEFC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 00:02:26 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36142 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbgCEFCY (ORCPT
+        id S1725877AbgCEFGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 00:06:49 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725208AbgCEFGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 00:02:24 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d9so2143278pgu.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 21:02:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cs.washington.edu; s=goo201206;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sV8q7HarohWqKtnLYGNVE5KFLA+QloKZuMOzSIKtRfg=;
-        b=dAYgGP3CO8Go0Zt3CaMIpp3oxWWrwBLg5KnHPPIq1+VU1MpOpmu2zAFLvsOtpeZ180
-         NKGu6+L7b2be7/a8CLckxLaKZP1QmM/5QftVRYVbj5sqDFXW03auDeJMHhm2V1Cj1dlX
-         nD37M0rf1FK33a5vwQcWtV+vReeBbTFCqxzas=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sV8q7HarohWqKtnLYGNVE5KFLA+QloKZuMOzSIKtRfg=;
-        b=ngF9Imuqml4zu9zCtQGy26zy6R5XWOGcju9Ms38c8LO3vPNXRdRLINeXMMM5xbn7r0
-         qZ+ZgRD/yFtWt6EvrxokWTzQoGJPaL71N2XMmj5+SaBiwk8fJkZ9yDP2aB9maMZ+5j0X
-         H7ILt3cyEKzK75g9ezyRihqApeOqaX96DKG/kIV574LTLPecslSiFr1li9g+Oiz5JgyY
-         Zc6JtzgcJSQUTQjEWAGZlBFduJ/aFdwlcgD0w9GCnGXVUnsuf/nenTCCV57FKwkiCb15
-         fWtJUS1uz9e7xw4cSaLLvOxG+ilDA9JLXq/u0qddeOkiZblQEVX9JxAwlAjInmZi0Epw
-         Sayg==
-X-Gm-Message-State: ANhLgQ3R+JMVTHu3hzceyb+Hi0+aQGGbx5tBgU0xMegI8YDoNrsfFl/W
-        z0sW3GKBfNQsXc1ppuYTegyoHw==
-X-Google-Smtp-Source: ADFU+vuDUOkuw26JMyYv3YyKm1JJ4tL0PWpDR+kh5XrqfpKiEVBUYAUr39/AOzWyra/fJYd3DntQNg==
-X-Received: by 2002:a63:1e4f:: with SMTP id p15mr5929375pgm.28.1583384543147;
-        Wed, 04 Mar 2020 21:02:23 -0800 (PST)
-Received: from ryzen.cs.washington.edu ([2607:4000:200:11:e9fe:faad:3d84:58ea])
-        by smtp.gmail.com with ESMTPSA id y7sm17820466pfq.15.2020.03.04.21.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 21:02:22 -0800 (PST)
-From:   Luke Nelson <lukenels@cs.washington.edu>
-X-Google-Original-From: Luke Nelson <luke.r.nels@gmail.com>
-To:     bpf@vger.kernel.org
-Cc:     Luke Nelson <luke.r.nels@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@gmail.com>,
-        Xi Wang <xi.wang@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [PATCH bpf-next v5 4/4] MAINTAINERS: add entry for RV32G BPF JIT
-Date:   Wed,  4 Mar 2020 21:02:07 -0800
-Message-Id: <20200305050207.4159-5-luke.r.nels@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305050207.4159-1-luke.r.nels@gmail.com>
-References: <20200305050207.4159-1-luke.r.nels@gmail.com>
+        Thu, 5 Mar 2020 00:06:49 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02555fWP105983
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Mar 2020 00:06:47 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfmg39822-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:06:44 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Thu, 5 Mar 2020 05:06:31 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Mar 2020 05:06:25 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02556NhQ60096556
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Mar 2020 05:06:23 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C5113A405E;
+        Thu,  5 Mar 2020 05:06:23 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02CE7A4053;
+        Thu,  5 Mar 2020 05:06:17 +0000 (GMT)
+Received: from [9.199.61.135] (unknown [9.199.61.135])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Mar 2020 05:06:16 +0000 (GMT)
+Subject: Re: [RFC 00/11] perf: Enhancing perf to export processor hazard
+ information
+To:     Paul Clarke <pc@us.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, ak@linux.intel.com, maddy@linux.ibm.com,
+        peterz@infradead.org, alexey.budankov@linux.intel.com,
+        adrian.hunter@intel.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, yao.jin@linux.intel.com,
+        mingo@redhat.com, paulus@samba.org, eranian@google.com,
+        robert.richter@amd.com, namhyung@kernel.org, kim.phillips@amd.com,
+        jolsa@redhat.com, kan.liang@linux.intel.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200302052355.36365-1-ravi.bangoria@linux.ibm.com>
+ <91026159-1e83-6efd-c624-464b12b18b5c@us.ibm.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Thu, 5 Mar 2020 10:36:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <91026159-1e83-6efd-c624-464b12b18b5c@us.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20030505-0012-0000-0000-0000038D4DE8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030505-0013-0000-0000-000021CA0BC8
+Message-Id: <b0518fdd-4993-90d4-e8b1-2330f7488d72@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-04_10:2020-03-04,2020-03-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003050028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new entry for the 32-bit RISC-V JIT to MAINTAINERS and change
-mailing list from netdev to bpf following the guidelines from
-commit e42da4c62abb ("docs/bpf: Update bpf development Q/A file").
+Hi Paul,
 
-Cc: Björn Töpel <bjorn.topel@gmail.com>
-Signed-off-by: Xi Wang <xi.wang@gmail.com>
-Signed-off-by: Luke Nelson <luke.r.nels@gmail.com>
----
- MAINTAINERS | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Sorry for bit late reply.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8f27f40d22bb..ffad63a02d7a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3213,11 +3213,20 @@ L:	bpf@vger.kernel.org
- S:	Maintained
- F:	arch/powerpc/net/
- 
--BPF JIT for RISC-V (RV64G)
-+BPF JIT for RISC-V (32-bit)
-+M:	Luke Nelson <luke.r.nels@gmail.com>
-+M:	Xi Wang <xi.wang@gmail.com>
-+L:	bpf@vger.kernel.org
-+S:	Maintained
-+F:	arch/riscv/net/
-+X:	arch/riscv/net/bpf_jit_comp64.c
-+
-+BPF JIT for RISC-V (64-bit)
- M:	Björn Töpel <bjorn.topel@gmail.com>
--L:	netdev@vger.kernel.org
-+L:	bpf@vger.kernel.org
- S:	Maintained
- F:	arch/riscv/net/
-+X:	arch/riscv/net/bpf_jit_comp32.c
- 
- BPF JIT for S390
- M:	Ilya Leoshkevich <iii@linux.ibm.com>
--- 
-2.20.1
+On 3/3/20 2:38 AM, Paul Clarke wrote:
+> On 3/1/20 11:23 PM, Ravi Bangoria wrote:
+>> Most modern microprocessors employ complex instruction execution
+>> pipelines such that many instructions can be 'in flight' at any
+>> given point in time. Various factors affect this pipeline and
+>> hazards are the primary among them. Different types of hazards
+>> exist - Data hazards, Structural hazards and Control hazards.
+>> Data hazard is the case where data dependencies exist between
+>> instructions in different stages in the pipeline. Structural
+>> hazard is when the same processor hardware is needed by more
+>> than one instruction in flight at the same time. Control hazards
+>> are more the branch misprediction kinds.
+>>
+>> Information about these hazards are critical towards analyzing
+>> performance issues and also to tune software to overcome such
+>> issues. Modern processors export such hazard data in Performance
+>> Monitoring Unit (PMU) registers. Ex, 'Sampled Instruction Event
+>> Register' on IBM PowerPC[1][2] and 'Instruction-Based Sampling' on
+>> AMD[3] provides similar information.
+>>
+>> Implementation detail:
+>>
+>> A new sample_type called PERF_SAMPLE_PIPELINE_HAZ is introduced.
+>> If it's set, kernel converts arch specific hazard information
+>> into generic format:
+>>
+>>    struct perf_pipeline_haz_data {
+>>           /* Instruction/Opcode type: Load, Store, Branch .... */
+>>           __u8    itype;
+> 
+> At the risk of bike-shedding (in an RFC, no less), "itype" doesn't convey enough meaning to me.  "inst_type"?  I see in 03/11, you use "perf_inst_type".
+
+I was thinking to rename itype with operation_type or op_type. Because
+AMD IBS and ARM SPE observes micro ops and also op_type is more aligned
+to pipeline word.
+
+> 
+>>           /* Instruction Cache source */
+>>           __u8    icache;
+> 
+> Possibly same here, and you use "perf_inst_cache" in 03/11.
+
+Sure.
+
+> 
+>>           /* Instruction suffered hazard in pipeline stage */
+>>           __u8    hazard_stage;
+>>           /* Hazard reason */
+>>           __u8    hazard_reason;
+>>           /* Instruction suffered stall in pipeline stage */
+>>           __u8    stall_stage;
+>>           /* Stall reason */
+>>           __u8    stall_reason;
+>>           __u16   pad;
+>>    };
+>>
+>> ... which can be read by user from mmap() ring buffer. With this
+>> approach, sample perf report in hazard mode looks like (On IBM
+>> PowerPC):
+>>
+>>    # ./perf record --hazard ./ebizzy
+>>    # ./perf report --hazard
+>>    Overhead  Symbol          Shared  Instruction Type  Hazard Stage   Hazard Reason         Stall Stage   Stall Reason  ICache access
+>>      36.58%  [.] thread_run  ebizzy  Load              LSU            Mispredict            LSU           Load fin      L1 hit
+>>       9.46%  [.] thread_run  ebizzy  Load              LSU            Mispredict            LSU           Dcache_miss   L1 hit
+>>       1.76%  [.] thread_run  ebizzy  Fixed point       -              -                     -             -             L1 hit
+>>       1.31%  [.] thread_run  ebizzy  Load              LSU            ERAT Miss             LSU           Load fin      L1 hit
+>>       1.27%  [.] thread_run  ebizzy  Load              LSU            Mispredict            -             -             L1 hit
+>>       1.16%  [.] thread_run  ebizzy  Fixed point       -              -                     FXU           Fixed cycle   L1 hit
+>>       0.50%  [.] thread_run  ebizzy  Fixed point       ISU            Source Unavailable    FXU           Fixed cycle   L1 hit
+>>       0.30%  [.] thread_run  ebizzy  Load              LSU            LMQ Full, DERAT Miss  LSU           Load fin      L1 hit
+>>       0.24%  [.] thread_run  ebizzy  Load              LSU            ERAT Miss             -             -             L1 hit
+>>       0.08%  [.] thread_run  ebizzy  -                 -              -                     BRU           Fixed cycle   L1 hit
+>>       0.05%  [.] thread_run  ebizzy  Branch            -              -                     BRU           Fixed cycle   L1 hit
+>>       0.04%  [.] thread_run  ebizzy  Fixed point       ISU            Source Unavailable    -             -             L1 hit
+> 
+> How are these to be interpreted?  This is great information, but is it possible to make it more readable for non-experts?
+
+For the RFC proposal we just pulled the details from the spec. But yes, will
+look into this.
+
+>  If each of these map 1:1 with hardware events, should you emit the name of the event here, so that can be used to look up further information? For example, does the first line map to PM_CMPLU_STALL_LSU_FIN?
+I'm using PM_MRK_INST_CMPL event in perf record an SIER provides all these
+information.
+
+> What was "Mispredict[ed]"? (Is it different from a branch misprediction?) And how does this relate to "L1 hit"?
+
+I'm not 100% sure. I'll check with the hw folks about it.
+
+> Can we emit "Load finish" instead of "Load fin" for easier reading?  03/11 also has "Marked fin before NTC".
+> Nit: why does "Dcache_miss" have an underscore and none of the others?
+
+Sure. Will change it.
+
+> 
+>> Also perf annotate with hazard data:
+> 
+>>           │    static int
+>>           │    compare(const void *p1, const void *p2)
+>>           │    {
+>>     33.23 │      std    r31,-8(r1)
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>           │       {haz_stage: LSU, haz_reason: Load Hit Store, stall_stage: LSU, stall_reason: -, icache: L3 hit}
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: -, stall_reason: -, icache: L1 hit}
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>      0.84 │      stdu   r1,-64(r1)
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: -, stall_reason: -, icache: L1 hit}
+>>      0.24 │      mr     r31,r1
+>>           │       {haz_stage: -, haz_reason: -, stall_stage: -, stall_reason: -, icache: L1 hit}
+>>     21.18 │      std    r3,32(r31)
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>           │       {haz_stage: LSU, haz_reason: ERAT Miss, stall_stage: LSU, stall_reason: Store, icache: L1 hit}
+>>
+>>
+>> Patches:
+>>   - Patch #1 is a simple cleanup patch
+>>   - Patch #2, #3, #4 implements generic and arch specific kernel
+>>     infrastructure
+>>   - Patch #5 enables perf record and script with hazard mode
+>>   - Patch #6, #7, #8 enables perf report with hazard mode
+>>   - Patch #9, #10, #11 enables perf annotate with hazard mode
+>>
+>> Note:
+>>   - This series is based on the talk by Madhavan in LPC 2018[4]. This is
+>>     just an early RFC to get comments about the approach and not intended
+>>     to be merged yet.
+>>   - I've prepared the series base on v5.6-rc3. But it depends on generic
+>>     perf annotate fixes [5][6] which are already merged by Arnaldo in
+>>     perf/urgent and perf/core.
+>>
+>> [1]: Book III, Section 9.4.10:
+>>       https://openpowerfoundation.org/?resource_lib=power-isa-version-3-0
+>> [2]: https://wiki.raptorcs.com/w/images/6/6b/POWER9_PMU_UG_v12_28NOV2018_pub.pdf#G9.1106986
+> 
+> This document is also available from the "IBM Portal for OpenPOWER" under the "All IBM Material for OpenPOWER" https://www-355.ibm.com/systems/power/openpower/tgcmDocumentRepository.xhtml?aliasId=OpenPOWER, under each of the individual modules.  (Well hidden, it might be said, and not a simple link like you have here.)
+
+Thanks for pointing it :)
+Ravi
 
