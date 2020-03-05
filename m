@@ -2,153 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F219E17A3D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B50A17A3BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgCELOD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Mar 2020 06:14:03 -0500
-Received: from mo-csw1116.securemx.jp ([210.130.202.158]:35840 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbgCELOD (ORCPT
+        id S1727255AbgCELK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:10:58 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.181]:37538 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbgCELK6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:14:03 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 025BDX1V015860; Thu, 5 Mar 2020 20:13:33 +0900
-X-Iguazu-Qid: 2wGrZsIRE8pQSV7Fy5
-X-Iguazu-QSIG: v=2; s=0; t=1583406813; q=2wGrZsIRE8pQSV7Fy5; m=McYGfV8dxJXuSzrIAY5pjF/E2qWawJI35af6F8TIVNI=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1111) id 025BDVrV006451;
-        Thu, 5 Mar 2020 20:13:32 +0900
-Received: from enc01.localdomain ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id 025BDVip015915;
-        Thu, 5 Mar 2020 20:13:31 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.localdomain  with ESMTP id 025BDVfC004108;
-        Thu, 5 Mar 2020 20:13:31 +0900
-From:   <masahiro31.yamada@kioxia.com>
-To:     <kbusch@kernel.org>, <axboe@fb.com>, <hch@lst.de>,
-        <sagi@grimberg.me>, <linux-nvme@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2] nvme: Add compat_ioctl handler for NVME_IOCTL_SUBMIT_IO
-Thread-Topic: [PATCH V2] nvme: Add compat_ioctl handler for
- NVME_IOCTL_SUBMIT_IO
-Thread-Index: AdXy3d6dwSgpOC+0SI6LHpzHuGP6yQ==
-Date:   Thu, 5 Mar 2020 11:13:29 +0000
-X-TSB-HOP: ON
-Message-ID: <92c670379c264775b8bb28a2bd3b380b@TGXML281.toshiba.local>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [133.116.224.115]
-msscp.transfermailtomossagent: 103
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        Thu, 5 Mar 2020 06:10:58 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 5BF3FDEF04
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Mar 2020 05:10:57 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 9oP3jVf8oXVkQ9oP3jpTu4; Thu, 05 Mar 2020 05:10:57 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/PmmIcka33M6DCpffXgPTbzuHdS7VrmxxyOXeOtKOCc=; b=BEr2mtWCniGS2h7uzC5+yZXgzV
+        CYD7FwHzciKYdIXJhAIuibexDfR3Fx5/fqoCunXL2mGYlkodttzp3B2D6tqtJvXP8TkiUVb/L4wTF
+        MxRckg1ebX5hOVhLYGS+YM+drBjKAYq/sJFcInsKn8OHwefe3227uKWiL6kXNS9P6f1jBeulfC+7I
+        ebXryUGcRQsBer2ejFkY+MWxbxthshurmq4XB1QS5MucVjILwqnj2Ph3D18C0uhXJOA+svFSPK8d2
+        J2W/71Ib1TzEJhC96th7OuZeFqXOUuna/FmIMpg8h6+5ufcRFFjiEn/YLKlndsob7K9CND2RGuowq
+        wKJGFleg==;
+Received: from [201.166.169.220] (port=24188 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j9oP1-003r7m-BW; Thu, 05 Mar 2020 05:10:55 -0600
+Date:   Thu, 5 Mar 2020 05:14:01 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Solomon Peachy <pizza@shaftnet.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] cw1200/wsm.h: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200305111401.GA25126@embeddedor>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.169.220
+X-Source-L: No
+X-Exim-ID: 1j9oP1-003r7m-BW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.169.220]:24188
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 17
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently 32 bit application gets ENOTTY when it calls
-compat_ioctl with NVME_IOCTL_SUBMIT_IO in 64 bit kernel.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-The cause is that the results of sizeof(struct nvme_user_io),
-which is used to define NVME_IOCTL_SUBMIT_IO,
-are not same between 32 bit compiler and 64 bit compiler.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-* 32 bit: the result of sizeof nvme_user_io is 44.
-* 64 bit: the result of sizeof nvme_user_io is 48.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-64 bit compiler seems to add 32 bit padding for multiple of 8 bytes.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-This patch adds a compat_ioctl handler.
-The handler replaces NVME_IOCTL_SUBMIT_IO32 with NVME_IOCTL_SUBMIT_IO
-in case 32 bit application calls compat_ioctl for submit in 64 bit kernel.
-Then, it calls nvme_ioctl as usual.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-Signed-off-by: Masahiro Yamada (KIOXIA) <masahiro31.yamada@kioxia.com>
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
-v2:
-- Add a comment explaining what is going on in nvme_compat_ioctl()
-- Put nvme_compat_ioctl() under CONFIG_COMPAT and add #else branch
-- Move struct nvme_user_io32 #ifdef CONFIG_COMPAT block in core.c
-- Fix packed pragma warning by checkpatch.pl
-  WARNING: __packed is preferred over __attribute__((packed))
+ drivers/net/wireless/st/cw1200/wsm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/nvme/host/core.c | 45 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 641c07347e8d..8c6998920b2a 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1584,6 +1584,47 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
- 	return ret;
- }
+diff --git a/drivers/net/wireless/st/cw1200/wsm.h b/drivers/net/wireless/st/cw1200/wsm.h
+index ddea57f8c8ab..1ffa47994bb9 100644
+--- a/drivers/net/wireless/st/cw1200/wsm.h
++++ b/drivers/net/wireless/st/cw1200/wsm.h
+@@ -1623,7 +1623,7 @@ struct wsm_p2p_device_info {
+ 	u8 local_devname[D11_MAX_SSID_LEN];
+ 	u8 reserved2[3];
+ 	u8 num_secdev_supported;
+-	struct wsm_p2p_device_type secdevs[0];
++	struct wsm_p2p_device_type secdevs[];
+ } __packed;
  
-+#ifdef CONFIG_COMPAT
-+struct nvme_user_io32 {
-+	__u8	opcode;
-+	__u8	flags;
-+	__u16	control;
-+	__u16	nblocks;
-+	__u16	rsvd;
-+	__u64	metadata;
-+	__u64	addr;
-+	__u64	slba;
-+	__u32	dsmgmt;
-+	__u32	reftag;
-+	__u16	apptag;
-+	__u16	appmask;
-+} __attribute__((__packed__));
-+
-+#define NVME_IOCTL_SUBMIT_IO32	_IOW('N', 0x42, struct nvme_user_io32)
-+
-+static int nvme_compat_ioctl(struct block_device *bdev, fmode_t mode,
-+		unsigned int cmd, unsigned long arg)
-+{
-+	/*
-+	 * Corresponds to the difference of NVME_IOCTL_SUBMIT_IO
-+	 * between 32 bit programs and 64 bit kernel.
-+	 * The cause is that the results of sizeof(struct nvme_user_io),
-+	 * which is used to define NVME_IOCTL_SUBMIT_IO,
-+	 * are not same between 32 bit compiler and 64 bit compiler.
-+	 * NVME_IOCTL_SUBMIT_IO32 is for 64 bit kernel handling
-+	 * NVME_IOCTL_SUBMIT_IO issued from 32 bit programs.
-+	 * Other IOCTL numbers are same between 32 bit and 64 bit.
-+	 * So there is nothing to do regarding to other IOCTL numbers.
-+	 */
-+	if (cmd == NVME_IOCTL_SUBMIT_IO32)
-+		return nvme_ioctl(bdev, mode, NVME_IOCTL_SUBMIT_IO, arg);
-+
-+	return nvme_ioctl(bdev, mode, cmd, arg);
-+}
-+#else
-+#define nvme_compat_ioctl	NULL
-+#endif /* CONFIG_COMPAT */
-+
- static int nvme_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct nvme_ns *ns = bdev->bd_disk->private_data;
-@@ -2027,7 +2068,7 @@ EXPORT_SYMBOL_GPL(nvme_sec_submit);
- static const struct block_device_operations nvme_fops = {
- 	.owner		= THIS_MODULE,
- 	.ioctl		= nvme_ioctl,
--	.compat_ioctl	= nvme_ioctl,
-+	.compat_ioctl	= nvme_compat_ioctl,
- 	.open		= nvme_open,
- 	.release	= nvme_release,
- 	.getgeo		= nvme_getgeo,
-@@ -2055,7 +2096,7 @@ const struct block_device_operations nvme_ns_head_ops = {
- 	.open		= nvme_ns_head_open,
- 	.release	= nvme_ns_head_release,
- 	.ioctl		= nvme_ioctl,
--	.compat_ioctl	= nvme_ioctl,
-+	.compat_ioctl	= nvme_compat_ioctl,
- 	.getgeo		= nvme_getgeo,
- 	.pr_ops		= &nvme_pr_ops,
- };
+ /* 4.36 SetWCDMABand - WO */
 -- 
-2.20.1
-
-
+2.25.0
 
