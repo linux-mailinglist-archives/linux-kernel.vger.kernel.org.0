@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15BE317A1D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8500217A1DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgCEJEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 04:04:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbgCEJEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 04:04:08 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1B5B2073D;
-        Thu,  5 Mar 2020 09:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583399048;
-        bh=/6hF5scP1zvZeyIU0B87IO/MHTgoe9Adm/F7cTCYpYo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LQ2cd7ZCPN5x1ut2556O2IwBvL2MV5hGs8f3FzN8+RLKaN89TV60Sq6vbuzpSa6ZG
-         fxpaOhNaW6swzZ6Ef02WvH3HetHoW9v2oIWmjb9ewYhZmSk4S6l1PDQwhDeVYfC+Eb
-         1iUifiF75fln9brFMB2ZyKjfenhb0PivuyJ1Wkos=
-Date:   Thu, 5 Mar 2020 18:04:02 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4 03/13] kprobes: Add symbols for kprobe insn pages
-Message-Id: <20200305180402.cf9aa40f57880616d8c8d811@kernel.org>
-In-Reply-To: <CAADnVQL1nDy4Fa5Y02r0Mg89nhRTf81ow5tCQxuyHeAztTvj8g@mail.gmail.com>
-References: <20200304090633.420-1-adrian.hunter@intel.com>
-        <20200304090633.420-4-adrian.hunter@intel.com>
-        <20200305145852.5756764a9ffe5da10ae71c3e@kernel.org>
-        <CAADnVQL1nDy4Fa5Y02r0Mg89nhRTf81ow5tCQxuyHeAztTvj8g@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726203AbgCEJGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 04:06:00 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37544 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbgCEJGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 04:06:00 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q65so5224697oif.4;
+        Thu, 05 Mar 2020 01:06:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TFaIpxONCt+sIKKd0QPqj0IgGgaDTj/hC/vgrFizdCQ=;
+        b=GuzS8nT3AauttJ6WfU/a6zTaQ464al1hHmereqWJb/Ssz+PgO89ZNSWLT+2xGhbIAb
+         k9erFuzRmTtgQv5VAtIXO2M48mIXQTze4OmmMGMkyHfBYvVnfvvpgphvSP7urJVN1uoT
+         /hievaawLxaBuoYt6FFYCNHeMc6Tdx83HiNwDG3Di+L2TAP4dH1SjL3HelJ4Dq1OXm/6
+         KN18lIlFBwzefLKQEUc0+4XbKPUztBe/OnkkwLdjaf9TbVf4wNLvBDv87SwCxw81eBvl
+         jfy2O+jxRxuQsFahzVIwLFcI9fsEmN8fuusIlYPo0xo8ANcO89wlEEA74bxZ6UulYTki
+         xPDw==
+X-Gm-Message-State: ANhLgQ3c8xrF+uhqJ94aaBppbfyaejCbRxlkwV9HifavVxJzTm0aiYCV
+        zPqBSuiafriJr3uXxEwSeQWDHCsiYkavvdE27pE=
+X-Google-Smtp-Source: ADFU+vsVto72cKF3MbnXe+qIld4wE26jLbmiKoIvdaN3p8hl2BHPVRl6eXOwNLvQlumM0l5svFNoiVz3tZWVRYd3M0s=
+X-Received: by 2002:aca:bfc2:: with SMTP id p185mr5074380oif.57.1583399159819;
+ Thu, 05 Mar 2020 01:05:59 -0800 (PST)
+MIME-Version: 1.0
+References: <20200305013509.GF5972@shao2-debian> <951b0986-bb35-d9a5-1639-0a8cdb3dcd04@intel.com>
+ <cbe4887c-d54a-c4aa-e4bf-981b5fcc291d@intel.com>
+In-Reply-To: <cbe4887c-d54a-c4aa-e4bf-981b5fcc291d@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 5 Mar 2020 10:05:48 +0100
+Message-ID: <CAJZ5v0g2vzYQ04GyrpubLx2+B0O4SDbqoTDCvhnSyaj1j1xswA@mail.gmail.com>
+Subject: Re: [cpufreq] 909c0e9cc1: fwq.fwq.med 210.0% improvement
+To:     Rong Chen <rong.a.chen@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        Linux PM <linux-pm@vger.kernel.org>, lkp@lists.01.org,
+        Rafael Wysocki <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Mar 2020 22:10:10 -0800
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-
-> On Wed, Mar 4, 2020 at 10:01 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > >
-> > >       # perf probe __schedule
-> > >       Added new event:
-> > >         probe:__schedule     (on __schedule)
-> > >       # cat /proc/kallsyms | grep '\[__builtin__kprobes\]'
-> > >       ffffffffc00d4000 t kprobe_insn_page     [__builtin__kprobes]
-> > >       ffffffffc00d6000 t kprobe_optinsn_page  [__builtin__kprobes]
-> > >
-> > > Note: This patch adds "__builtin__kprobes" as a module name in
-> > > /proc/kallsyms for symbols for pages allocated for kprobes' purposes, even
-> > > though "__builtin__kprobes" is not a module.
+On Thu, Mar 5, 2020 at 9:18 AM Rong Chen <rong.a.chen@intel.com> wrote:
+>
+>
+>
+> On 3/5/20 3:50 PM, Rafael J. Wysocki wrote:
+> > On 3/5/2020 2:35 AM, kernel test robot wrote:
+> >> Greeting,
+> >>
+> >> FYI, we noticed a 210.0% improvement of fwq.fwq.med due to commit:
 > >
-> > Looks good to me.
+> > Well, that sounds impressive. :-)
 > >
-> > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 > >
-> > BTW, would you also make a patch to change [bpf] to [__builtin__bpf]?
-> 
-> Please do not.
-> There is nothing 'builtin' about bpf.
+> >>
+> >> commit: 909c0e9cc11ba39fa5a660583b25c2431cf54deb ("cpufreq:
+> >> intel_pstate: Use passive mode by default without HWP")
+> >> https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git
+> >> intel_pstate-passive
+> >>
+> >> in testcase: fwq
+> >> on test machine: 16 threads Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz
+> >> with 48G memory
+> >> with following parameters:
+> >>
+> >>     nr_task: 100%
+> >>     samples: 100000ss
+> >>     iterations: 18x
+> >>     cpufreq_governor: powersave
+> >
+> > The governor should be schedutil, though, unless it is explicitly set
+> > to powersave in the test environment.
+> >
+> > Is that the case?
+> >
+> >
+>
+> Hi Rafael,
+>
+> Yes, we set to powersave for this test.
 
-Hmm, so, would we reject bpf.ko to be loaded ?
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+I wonder why this is done?  Is there any particular technical reason
+for doing that?
