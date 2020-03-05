@@ -2,163 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6179B17A953
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:54:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA6417A959
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgCEPyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:54:25 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44380 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbgCEPyZ (ORCPT
+        id S1726359AbgCEPy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:54:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50802 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbgCEPy6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:54:25 -0500
-Received: by mail-wr1-f67.google.com with SMTP id n7so7609978wrt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 07:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8r3r3JLBCoT+7BHX6G7TDShJ5a1/tz8dj9KPds9gTCo=;
-        b=DEApbHTnS0agxpfhPaqw8/MbeQWWgxQiV8dMim1J2/cDkAgUz+6XYcVbU7CosnhTLk
-         jBo/lHQ9zWrKOYL2BbSrzLmvYHQG1LRK6ppljf+IIBlhV7O4HdXRDC/SWiQ/SAPwDHfr
-         /YNmZkOjupuCcvGVS5w+KPzUaHKJtNrvCe1PU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8r3r3JLBCoT+7BHX6G7TDShJ5a1/tz8dj9KPds9gTCo=;
-        b=LoJ6UdqPb/nx9dQvAREYVIb3xQfzJ+06GVLaGZumGQE1k1ggF0MTYd3xYxciw+IxFX
-         H1Z4jnn7QGkzlaFqXBfUOeYzAl1KOH7Rum6se+Drx248L1JlfSAPw1OL9WbslVBv6PRO
-         rqORTw03TWYRforQFEmvyZ/kfErCr/ajThS/3pZW5UXS4HNdWSybcrdQicpXlupJO2MR
-         YOQrUgxzZV6L1obxL8zraJR3S1nzl2n+w10ltTqDvnExKx3IM3QDuT8/sv8ODRXXMIFA
-         8ARGQCJMaF1ObzFefpExGLGdAUwrZpEoWUh6FuvpgB74W56TbC5KVWLe2eIAYZn1WGsu
-         A6iA==
-X-Gm-Message-State: ANhLgQ0TpjTZF9pjdDFB615Bu6OlyID3GzrbKdlKE0nA/fZcfiVPPA2H
-        D2mEXJHIzfkAkObgAXZvGTJJLw==
-X-Google-Smtp-Source: ADFU+vuZnHlrjwtYGp90nAVDU7FR3teK5G/y9pKUhZxtjW/2S5agwnFL89xTRzG1s0R8AIPZj3It3A==
-X-Received: by 2002:adf:d4ca:: with SMTP id w10mr10686408wrk.407.1583423663087;
-        Thu, 05 Mar 2020 07:54:23 -0800 (PST)
-Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id y8sm9685425wmj.22.2020.03.05.07.54.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 07:54:22 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Thu, 5 Mar 2020 16:54:21 +0100
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>, jmorris@namei.org,
-        Paul Moore <paul@paul-moore.com>, casey@schaufler-ca.com
-Subject: Re: [PATCH bpf-next v4 3/7] bpf: Introduce BPF_MODIFY_RETURN
-Message-ID: <20200305155421.GA209155@google.com>
-References: <20200304191853.1529-1-kpsingh@chromium.org>
- <20200304191853.1529-4-kpsingh@chromium.org>
- <CAEjxPJ4+aW5JVC9QjJywjNUS=+cVJeaWwRHLwOssLsZyhX3siw@mail.gmail.com>
+        Thu, 5 Mar 2020 10:54:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=FHoAtrnq2TfDWklT4etUCR7uoAYMpCP72dBUNrrO+Co=; b=XizxDUNmkBJyKmTny690w8ct39
+        v/VRV4YLutHLgS2i6gmYmh7CWGYA7RC+1VtoIM+nIdLQ69FGTtxCnSzkzj1XW3IgpN7dIVGctImbT
+        a1FNAWMdWK23p3Ffgfwcjcuy+Gu6bU06Hp3jf2CNjXXfjvFCyQYMl41NhWhUOXyksIbKGakW0wrpc
+        i9r8cTga5rJej7l6l0oTH0/Qv9f3J9U4bZsixjcl3uLrvBw7TPqThl1+JaiJufbB+mxrXdBfc0ZPR
+        1jWgXTWAnz7+Z4NeuN0Q3eueboJSUgvTFRERhH1eQ47zlCOJmY3kdwWSm782dGmOQjz3pVEowtxHw
+        CrWeC/6g==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9spq-00042f-MB; Thu, 05 Mar 2020 15:54:54 +0000
+Subject: Re: [PATCH] platform/chrome: Kconfig: Remove CONFIG_ prefix from
+ MFD_CROS_EC section
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
+        bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>
+References: <20200305102838.108967-1-enric.balletbo@collabora.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4131a083-3319-a6e3-a7e2-cfba67016844@infradead.org>
+Date:   Thu, 5 Mar 2020 07:54:52 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEjxPJ4+aW5JVC9QjJywjNUS=+cVJeaWwRHLwOssLsZyhX3siw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200305102838.108967-1-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-Mar 08:51, Stephen Smalley wrote:
-> On Wed, Mar 4, 2020 at 2:20 PM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > When multiple programs are attached, each program receives the return
-> > value from the previous program on the stack and the last program
-> > provides the return value to the attached function.
-> >
-> > The fmod_ret bpf programs are run after the fentry programs and before
-> > the fexit programs. The original function is only called if all the
-> > fmod_ret programs return 0 to avoid any unintended side-effects. The
-> > success value, i.e. 0 is not currently configurable but can be made so
-> > where user-space can specify it at load time.
-> >
-> > For example:
-> >
-> > int func_to_be_attached(int a, int b)
-> > {  <--- do_fentry
-> >
-> > do_fmod_ret:
-> >    <update ret by calling fmod_ret>
-> >    if (ret != 0)
-> >         goto do_fexit;
-> >
-> > original_function:
-> >
-> >     <side_effects_happen_here>
-> >
-> > }  <--- do_fexit
-> >
-> > The fmod_ret program attached to this function can be defined as:
-> >
-> > SEC("fmod_ret/func_to_be_attached")
-> > int BPF_PROG(func_name, int a, int b, int ret)
-> > {
-> >         // This will skip the original function logic.
-> >         return 1;
-> > }
-> >
-> > The first fmod_ret program is passed 0 in its return argument.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Acked-by: Andrii Nakryiko <andriin@fb.com>
+On 3/5/20 2:28 AM, Enric Balletbo i Serra wrote:
+> Remove the CONFIG_ prefix from the select statement for MFD_CROS_EC.
 > 
-> IIUC you've switched from a model where the BPF program would be
-> invoked after the original function logic
-> and the BPF program is skipped if the original function logic returns
-> non-zero to a model where the BPF program is invoked first and
-> the original function logic is skipped if the BPF program returns
-> non-zero.  I'm not keen on that for userspace-loaded code attached
+> Fixes: 2fa2b980e3fe1 ("mfd / platform: cros_ec: Rename config to a better name")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-We do want to continue the KRSI series and the effort to implement a
-proper BPF LSM. In the meantime, the tracing + error injection
-solution helps us to:
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-  * Provide better debug capabilities.
-  * And parallelize the effort to come up with the right helpers
-    for our LSM work and work on sleepable BPF which is also essential
-    for some of the helpers.
+Thanks.
 
-As you noted, in the KRSI v4 series, we mentioned that we would like
-to have the user-space loaded BPF programs be unable to override the
-decision made by the in-kernel logic/LSMs, but this got shot down:
+> ---
+> 
+>  drivers/platform/chrome/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 15fc8b8a2db8..5ae6c49f553d 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -7,7 +7,7 @@ config MFD_CROS_EC
+>  	tristate "Platform support for Chrome hardware (transitional)"
+>  	select CHROME_PLATFORMS
+>  	select CROS_EC
+> -	select CONFIG_MFD_CROS_EC_DEV
+> +	select MFD_CROS_EC_DEV
+>  	depends on X86 || ARM || ARM64 || COMPILE_TEST
+>  	help
+>  	  This is a transitional Kconfig option and will be removed after
+> 
 
-   https://lore.kernel.org/bpf/00c216e1-bcfd-b7b1-5444-2a2dfa69190b@schaufler-ca.com
 
-I would like to continue this discussion when we post the v5 series
-for KRSI as to what the correct precedence order should be for the
-BPF_PROG_TYPE_LSM and would appreciate if you also bring it up there.
+-- 
+~Randy
 
-> to LSM hooks; it means that userspace BPF programs can run even if
-> SELinux would have denied access and SELinux hooks get
-> skipped entirely if the BPF program returns an error.  I think Casey
-> may have wrongly pointed you in this direction on the grounds
-> it can already happen with the base DAC checking logic.  But that's
-
-What we can do for this tracing/modify_ret series, is to remove
-the special casing for "security_" functions in the BPF code and add
-ALLOW_ERROR_INJECTION calls to the security hooks. This way, if
-someone needs to disable the BPF programs being able to modify
-security hooks, they can disable error injection. If that's okay, we
-can send a patch.
-
-- KP
-
-> kernel DAC checking logic, not userspace-loaded code.
-> And the existing checking on attachment is not sufficient for SELinux
-> since CAP_MAC_ADMIN is not all powerful to SELinux.
-> Be careful about designing your mechanisms around Smack because Smack
-> is not the only LSM.
