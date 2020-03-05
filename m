@@ -2,137 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C1A17B131
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E290017B134
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:08:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgCEWHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:07:11 -0500
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:37034 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbgCEWHK (ORCPT
+        id S1726591AbgCEWIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:08:16 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40548 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbgCEWIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:07:10 -0500
-Received: by mail-yw1-f73.google.com with SMTP id e65so483463ywb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 14:07:10 -0800 (PST)
+        Thu, 5 Mar 2020 17:08:16 -0500
+Received: by mail-io1-f65.google.com with SMTP id d8so111254ion.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 14:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=2LVcA//xMsKOt9mjU3OYra05ePTxLPNjdiCeiJ24xHk=;
-        b=tp6mc21pjpEVC/Bxg5uRQ8lu2TqFDqX0UYwIzbpG9H0v6lN7bVZ5iU89ZnmJOWtxRC
-         9kmZCFUw4iqgudvVlYlcmANtnCyebknVFaq85mFKgMxmte4F5NPbmBJSiXK/B0MndD2Q
-         VBMfJTALe0+UOb8gVyi+TXs8KfXucmUnzJwzuBSJqdhm2TzdXdBBwN5UgFpbKF22J9nC
-         t11291VMg25ZF42xds17jWLhJZI6kZksAawC1DYfsVE0c09KEfbtWr526+j0MaNUHFBT
-         P1/4MQ85DHTY3oE0QSgQI/gptaqqq2uRb3u4RpeqCK9Dne3JzGcPW4UFhG3KE/XbyGmr
-         f96w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OGS8rnXzHLbpXsJJAH3jh30eyIA7p3nGgcBVwa0A2w8=;
+        b=fzqeEciFPF22o5uyQb5nHvkhVF8jr5xf2Wo5iKCh1x0QlRNspF7nqIhsmjI6R0JPN3
+         tEi8EvQg+inlv/MZY/54d5x7ow47ExRcP9TN/GAsrIS1QseaOW3dXjAgAuotTHd1SuqV
+         ap65h9Hkwnl1INBV+i9n2vvRw9p/S2xfuN7/ilfX8B2CIGzQ1/2M+qxLydAVK46c2LRS
+         WDYy39RorrBeZYlr+8liVxg6aCqJj6o6vxBtEgPtYT8GgiTuN0cG7NYJPqe+vjD5yxW+
+         5udG5txKOInbYOZbpMrrUpx2jq6Vcgl4vcCnIXy7A1eK5Npk0zFKcuDVPHxzAQlYoeox
+         ZAfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=2LVcA//xMsKOt9mjU3OYra05ePTxLPNjdiCeiJ24xHk=;
-        b=UMveBiNdRDiFivBYO/zT8tuG7O9yBkfQhq/Do7iO048qdU5BXzO7u3sjrK6yyxGToD
-         7jys5DlBuVeTZ9tbustgBrqq35eaX972bFhTLzE07Ya4hOnuLUdaU7v/eZ8r4uFcBB+T
-         Dz/mMHLU3ODgFJl23Z5LupU4Usi8K9HCHxaWUmL4qN1DLncy/9/TGKl1gBXh+i9UCovr
-         fgXV3g++N4lnsTkhzKnu+QhpmTedJ+LykFRMZVP90TOdlO9JrLwjyq2OQcFbuXQ0HASi
-         N8THb6seEdW3sBMWi5inabhMZI/dn6Za02MrS3RHeS3rJnvN4hhvuvgHNmd9SnWBUgdy
-         GIwA==
-X-Gm-Message-State: ANhLgQ1K7E3zCYQk6reWK4FsYBwmegq3oSW5bgGKAcmB9qgDNpqz5akD
-        dTqKCrBwed8Y+HerSvmx1zj1bwznEg==
-X-Google-Smtp-Source: ADFU+vvRvYVdkAKhRDokkTvwayFr2Hw4PUNZmqDX0wQnxghSeCcr9NsJsEGMJAFxV5QbdEXng9Cd6YHpZw==
-X-Received: by 2002:a25:7355:: with SMTP id o82mr497694ybc.140.1583446029978;
- Thu, 05 Mar 2020 14:07:09 -0800 (PST)
-Date:   Thu,  5 Mar 2020 23:06:57 +0100
-Message-Id: <20200305220657.46800-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH v2] exit: Move preemption fixup up, move blocking operations down
-From:   Jann Horn <jannh@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OGS8rnXzHLbpXsJJAH3jh30eyIA7p3nGgcBVwa0A2w8=;
+        b=SPb3C6kcBV6/iskoZzGJqc1nlYUqZoG6WK4xGKM0NeG//ppgPAoiY189AYg1bd9vQR
+         LsDaiE/Wg2sI5Yn4Fg3nzhCJVQG8kCYbB4C/u/SgaKICi/WduH/ZJHbTy8eqJ4/KXrvz
+         0mHCl+lmwqS1arSytiGpMc9ELWgR2C3SHGFXUUPaM1pCh56Jb3xD37rTT1Q4jHgcRSck
+         E9vc/STd2/uGIFS3xO8dv7NN8aV4ph078DQqucAtJNNriACZQE5VauK2RmulHQzxVSM1
+         0Yjunyi84xsuoP7+e8lWXrbaJrsliTYvoukUyWd+tPP1ObGEHY16SMbLDv1Kf0rGFxwJ
+         WdEg==
+X-Gm-Message-State: ANhLgQ3cCJLgqcblfz/8F5jr6AYYcF31tzIOXOdf7C4H4UhkxTYgpr4X
+        nktgOgNmWJrG0CXRI574yVSabTYN7p1zAFzHzT3X8A==
+X-Google-Smtp-Source: ADFU+vveEQCvuJ7btQNldSOgXGFAeDpBOkfuEX1g8TVAtm4CcqZ0jqP7fo30nSwwhYYivnaHCnk+9qqz5ORdkzcvwIk=
+X-Received: by 2002:a02:3093:: with SMTP id q141mr650220jaq.121.1583446094877;
+ Thu, 05 Mar 2020 14:08:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20200304213941.112303-1-xii@google.com> <20200305075742.GR2596@hirez.programming.kicks-ass.net>
+ <87blpad6b2.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87blpad6b2.fsf@nanos.tec.linutronix.de>
+From:   Paul Turner <pjt@google.com>
+Date:   Thu, 5 Mar 2020 14:07:37 -0800
+Message-ID: <CAPM31RKR4w75Y8oNxS-cZ77AauvCFFXRzH=hhWXfr6LLQt2Myw@mail.gmail.com>
+Subject: Re: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>, Xi Wang <xii@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
+        Josh Don <joshdon@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With CONFIG_DEBUG_ATOMIC_SLEEP=y and CONFIG_CGROUPS=y, kernel oopses in
-non-preemptible context look untidy; after the main oops, the kernel prints
-a "sleeping function called from invalid context" report because
-exit_signals() -> cgroup_threadgroup_change_begin() -> percpu_down_read()
-can sleep, and that happens before the preempt_count_set(PREEMPT_ENABLED)
-fixup.
+On Thu, Mar 5, 2020 at 10:07 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Peter Zijlstra <peterz@infradead.org> writes:
+>
+> > On Wed, Mar 04, 2020 at 01:39:41PM -0800, Xi Wang wrote:
+> >> The main purpose of kernel watchdog is to test whether scheduler can
+> >> still schedule tasks on a cpu. In order to reduce latency from
+> >> periodically invoking watchdog reset in thread context, we can simply
+> >> touch watchdog from pick_next_task in scheduler. Compared to actually
+> >> resetting watchdog from cpu stop / migration threads, we lose coverage
+> >> on: a migration thread actually get picked and we actually context
+> >> switch to the migration thread. Both steps are heavily protected by
+> >> kernel locks and unlikely to silently fail. Thus the change would
+> >> provide the same level of protection with less overhead.
+> >>
+> >> The new way vs the old way to touch the watchdogs is configurable
+> >> from:
+> >>
+> >> /proc/sys/kernel/watchdog_touch_in_thread_interval
+> >>
+> >> The value means:
+> >> 0: Always touch watchdog from pick_next_task
+> >> 1: Always touch watchdog from migration thread
+> >> N (N>0): Touch watchdog from migration thread once in every N
+> >>          invocations, and touch watchdog from pick_next_task for
+> >>          other invocations.
+> >>
+> >
+> > This is configurable madness. What are we really trying to do here?
+>
+> Create yet another knob which will be advertised in random web blogs to
+> solve all problems of the world and some more. Like the one which got
+> silently turned into a NOOP ~10 years ago :)
+>
 
-It looks like the same thing applies to profile_task_exit() and
-kcov_task_exit().
-
-Fix it by moving the preemption fixup up and the calls to
-profile_task_exit() and kcov_task_exit() down.
-
-Fixes: 1dc0fffc48af ("sched/core: Robustify preemption leak checks")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-As so often, I have no idea which tree this should go through. tip? mm?
-
-v2: now without adding redundant whitespace...
-
- kernel/exit.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 2833ffb0c211..eb42d49fd99d 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -713,8 +713,12 @@ void __noreturn do_exit(long code)
- 	struct task_struct *tsk = current;
- 	int group_dead;
- 
--	profile_task_exit(tsk);
--	kcov_task_exit(tsk);
-+	/*
-+	 * We can get here from a kernel oops, sometimes with preemption off.
-+	 * Start by checking for critical errors.
-+	 * Then fix up important state like USER_DS and preemption.
-+	 * Then do everything else.
-+	 */
- 
- 	WARN_ON(blk_needs_flush_plug(tsk));
- 
-@@ -732,6 +736,16 @@ void __noreturn do_exit(long code)
- 	 */
- 	set_fs(USER_DS);
- 
-+	if (unlikely(in_atomic())) {
-+		pr_info("note: %s[%d] exited with preempt_count %d\n",
-+			current->comm, task_pid_nr(current),
-+			preempt_count());
-+		preempt_count_set(PREEMPT_ENABLED);
-+	}
-+
-+	profile_task_exit(tsk);
-+	kcov_task_exit(tsk);
-+
- 	ptrace_event(PTRACE_EVENT_EXIT, code);
- 
- 	validate_creds_for_do_exit(tsk);
-@@ -749,13 +763,6 @@ void __noreturn do_exit(long code)
- 
- 	exit_signals(tsk);  /* sets PF_EXITING */
- 
--	if (unlikely(in_atomic())) {
--		pr_info("note: %s[%d] exited with preempt_count %d\n",
--			current->comm, task_pid_nr(current),
--			preempt_count());
--		preempt_count_set(PREEMPT_ENABLED);
--	}
--
- 	/* sync mm's RSS info before statistics gathering */
- 	if (tsk->mm)
- 		sync_mm_rss(tsk->mm);
-
-base-commit: 9f65ed5fe41ce08ed1cb1f6a950f9ec694c142ad
--- 
-2.25.0.265.gbab2e86ba0-goog
-
+The knob can obviously be removed, it's vestigial and reflects caution
+from when we were implementing / rolling things over to it.  We have
+default values that we know work at scale. I don't think this actually
+needs or wants to be tunable beyond on or off (and even that could be
+strictly compile or boot time only).
