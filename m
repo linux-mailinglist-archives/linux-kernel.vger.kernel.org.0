@@ -2,71 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C385217A0B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 08:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BEFE17A0B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 08:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbgCEHuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 02:50:04 -0500
-Received: from mga11.intel.com ([192.55.52.93]:62923 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725914AbgCEHuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 02:50:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 23:50:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,517,1574150400"; 
-   d="scan'208";a="234335912"
-Received: from rjwysock-mobl1.ger.corp.intel.com (HELO [10.249.138.71]) ([10.249.138.71])
-  by orsmga008.jf.intel.com with ESMTP; 04 Mar 2020 23:50:01 -0800
-Subject: Re: [cpufreq] 909c0e9cc1: fwq.fwq.med 210.0% improvement
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org,
-        devel@acpica.org, linux-pm@vger.kernel.org, lkp@lists.01.org,
-        Rafael Wysocki <rafael@kernel.org>
-References: <20200305013509.GF5972@shao2-debian>
-From:   "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <951b0986-bb35-d9a5-1639-0a8cdb3dcd04@intel.com>
-Date:   Thu, 5 Mar 2020 08:50:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726048AbgCEHvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 02:51:13 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:60301 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbgCEHvM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 02:51:12 -0500
+Received: from mail-qv1-f54.google.com ([209.85.219.54]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mk178-1jcBCo3SLw-00kPug for <linux-kernel@vger.kernel.org>; Thu, 05 Mar
+ 2020 08:51:11 +0100
+Received: by mail-qv1-f54.google.com with SMTP id r15so2029449qve.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 23:51:10 -0800 (PST)
+X-Gm-Message-State: ANhLgQ2U+8pPT5kfyGfFXqzd6MriA8KgQoFaWBDnMBNbsBeLzpZD8JjN
+        zxhE07MuCNtrq725d4vyOyeNKR2kU+YrfXuLmxc=
+X-Google-Smtp-Source: ADFU+vstp1h0CG3pY8NKD3dLm/x1PP0tZEXhU2VaJcMhmxB0PpHKWPcO9B09FS7oilMTPjj9fe4r4108YlpY1i3Z7Sk=
+X-Received: by 2002:a0c:f647:: with SMTP id s7mr5473438qvm.4.1583394669674;
+ Wed, 04 Mar 2020 23:51:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200305013509.GF5972@shao2-debian>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <4e90d9af-c1ec-020f-b66b-a5a02e7fbe59@infradead.org>
+In-Reply-To: <4e90d9af-c1ec-020f-b66b-a5a02e7fbe59@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 5 Mar 2020 08:50:53 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0yfaZM6_jtbcgam7+ku2K3ZROnk2VGx+UAk0EODGs5WQ@mail.gmail.com>
+Message-ID: <CAK8P3a0yfaZM6_jtbcgam7+ku2K3ZROnk2VGx+UAk0EODGs5WQ@mail.gmail.com>
+Subject: Re: [PATCH] char: group some /dev configs together and un-split tty configs
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:oocrq4800gh6pLpqB35733BbJ3muCU01A0MOJSGXzY2Z2Qn4ML7
+ 2txQYJBW2U6eHSIanq/6I88cOb/mCkBRWY8zxgIYig5GPAa3RhTfOll4oaQqpc033xyOShN
+ z18NfFcqyCcmQmElJlEHGcHcDgqhYdE/GHs1XO+TdlOV1u7p3U0Az2bzbzo+ZGWmw/duKAK
+ M/g0tt8ioUxGf34NHG12Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H5vi0Qhmjfk=:TAQiCgTzDwnOb01NdSEckR
+ DD5taXro6OT2UQ+I4kW0vKpf9xa66onSL7IswTaCF63coGTaeOD4UUaie1mNPJGwvNeXNlkjA
+ 3XDxzkYvxJ5Efw/y4NstsCoFEChTlMQhM90UVqERfUB9YvBnsqcDz+XIYpdrw44Ow1PiMuoyz
+ uyh11+9VNtDVY17CRZygM7DXJKCVOELbm/q9xB82icW0p8vQSbhLyf96gEceVBNmFW8piU1hC
+ LoOQ6l+bTVwKRh/zpItN3Wpt+9nC6dTt2tVEsFWheXzbYAaPWUeTtQU3dRlVXf1mW+/ZP+trS
+ J7Gqd0jBS5/SnMZiJQjpgiEZCAUCrTbNKiADtea/AhNPQEzI5/MT1ZgIIv4p38YZj7Y5WiXtA
+ ZQE2BQmcPndVOvSSAgWuTs5SjODPEDEViHf1yZIuZPLVyJWRQ7NjdfOev2Yk6zeDuhbBifxN5
+ NwCims9ZdR4L+WtEwYJB4Oa2sxe8OqLl5txpsyiCIuGaCjIk2ttmo/u4w4ZKXViRKK58vyqUz
+ eeOH5zvZMoKdMxDMbqRnk+W6A1ud1hYotlEI2McxqgC01UfvXGFTMhMvB9hP8EzR7JbVHkCdn
+ qNHV12U3wM0Ri4gCbAXFeAKdPr60Q6QmtfuLNp9vIRZbZqldPF4wnHoxV4JrjsNck/MA6IA+5
+ CxkVHX6R+MDUMM9ZemTiGTFLwoVGR1KxkpgyPeLjdUPqdrTbGmqe/mdsGZulN+oYX60m6rZTW
+ nE09m+gYAqoihiL/UMeALmtTh6S1ar190RI+wY4fmiw/Z51R2XS6t92cwx9ZKM/3RfYp/T8qp
+ BIkXc66ZPrxAWP2FNibr5p+6Bw64+PkjE6hqiUTKptLM4PGRHw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/5/2020 2:35 AM, kernel test robot wrote:
-> Greeting,
+On Thu, Mar 5, 2020 at 7:45 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> FYI, we noticed a 210.0% improvement of fwq.fwq.med due to commit:
-
-Well, that sounds impressive. :-)
-
-
+> From: Randy Dunlap <rdunlap@infradead.org>
 >
-> commit: 909c0e9cc11ba39fa5a660583b25c2431cf54deb ("cpufreq: intel_pstate: Use passive mode by default without HWP")
-> https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git intel_pstate-passive
+> Group /dev/{mem,kmem,nvram,raw,port} driver configs together.
+> This also means that tty configs are now grouped together instead
+> of being split up.
 >
-> in testcase: fwq
-> on test machine: 16 threads Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz with 48G memory
-> with following parameters:
+> This just moves Kconfig lines around. There are no other changes.
 >
-> 	nr_task: 100%
-> 	samples: 100000ss
-> 	iterations: 18x
-> 	cpufreq_governor: powersave
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/char/Kconfig |  100 ++++++++++++++++++++---------------------
+>  1 file changed, 50 insertions(+), 50 deletions(-)
+>
+> --- linux-next-20200304.orig/drivers/char/Kconfig
+> +++ linux-next-20200304/drivers/char/Kconfig
+> @@ -7,25 +7,6 @@ menu "Character devices"
+>
+>  source "drivers/tty/Kconfig"
+>
+> -config DEVMEM
+> -       bool "/dev/mem virtual device support"
+> -       default y
+> -       help
+> -         Say Y here if you want to support the /dev/mem device.
+> -         The /dev/mem device is used to access areas of physical
+> -         memory.
+> -         When in doubt, say "Y".
+> -
+> -config DEVKMEM
+> -       bool "/dev/kmem virtual device support"
+> -       # On arm64, VMALLOC_START < PAGE_OFFSET, which confuses kmem read/write
+> -       depends on !ARM64
+> -       help
+> -         Say Y here if you want to support the /dev/kmem device. The
+> -         /dev/kmem device is rarely used, but can be used for certain
+> -         kind of kernel debugging operations.
+> -         When in doubt, say "N".
+> -
+>  source "drivers/tty/serial/Kconfig"
+>  source "drivers/tty/serdev/Kconfig"
 
-The governor should be schedutil, though, unless it is explicitly set to 
-powersave in the test environment.
+Good idea!
 
-Is that the case?
+Looking at the result though, how about including drivers/tty/*/Kconfig
+from drivers/tty/Kconfig after this? From the user point of view, it's
+the same, but it seems to be grouped more logically then.
 
+CONFIG_SYNCLINK_CS (in drivers/char/pcmcia/Kconfig) is also a
+tty option that should probably get moved, but I guess that's an unrelated
+change, and it would make sense to move the driver along with the
+option.
 
+      Arnd
