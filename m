@@ -2,79 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858FB17ABBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACD617AC1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgCERPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:15:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbgCERPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:15:38 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4AC321739;
-        Thu,  5 Mar 2020 17:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583428537;
-        bh=9nAbje9iOp4zeC5CKqiOjMhWdsB1A/TcFuuEYuwgMPI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w7CcOJ7qcUWvyVmY74hsGWy8j1WQrwycAqkX4jfEwJI45+e/0mqDyDhnXekin+pxS
-         jMdeAI50wSRXf9xjszGY0OrdHqQlXFOjFOJxLrPsWyFsGISLEuqwQaoN+nlS9KRbE3
-         EIz2yP4Xhl1OgtxiFG+W/unEMzgCcPvMqyGSsnyM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 16/31] mac80211: rx: avoid RCU list traversal under mutex
-Date:   Thu,  5 Mar 2020 12:15:00 -0500
-Message-Id: <20200305171516.30028-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305171516.30028-1-sashal@kernel.org>
-References: <20200305171516.30028-1-sashal@kernel.org>
+        id S1727279AbgCERPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:15:30 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40117 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbgCERPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:15:12 -0500
+Received: by mail-io1-f66.google.com with SMTP id d8so4128159ion.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 09:15:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bLVc72+NvHbHflO1/mhElGn5mslbixEGyqtU22wNbzY=;
+        b=BQufJX3zg+gQzLw25jvC+wiv8qKJlzqGMQwSX/omduYNht7JYBotYPuk8BMzUHJsai
+         +bof1wzwev80VmQzxXBx80uOrRkIYRbZgwiAYDG2h9x5ap/t/00Rrq47r9AyxQLIdlOu
+         UUvRD+R8Pe1l5xhuaw7JfIQ94SuWG0lTvOP4gEj3TDbLdK+gG7s3SrVsqVHn2hvmh4rg
+         HSq4JSqtAa9ULRPAFOl0qS24pqOVRuxNB0f9Qts5KqCeYKCNq9hI06D1pCWrzkuoZoRQ
+         7MEIU4+Qr1U7zR5cAINsOrJTi/f+MFURPhxPwOOwjJNvgNtfuNy1nKSCP/Y78bheVS01
+         ZniA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bLVc72+NvHbHflO1/mhElGn5mslbixEGyqtU22wNbzY=;
+        b=OZSTB8eRRb/E9OxgABsZQGXFVxyIcrC9omRsT7MFFa5CN7RUJlaQYthMRgU5Ln/Dc5
+         I9AsVaum0wXcTi6dz8sRdXcRAJULAtBjqgMzkoHsqS9e0bxy/L8q5zrra3ku2og/73h3
+         Qezc1W7ShWP//xtePfFf6rn7JPfDi97cPWSjxQN4tKQgy7H513lQNt5pWmsTRZtOXsdk
+         julApMp4vYNRr1vNqZWLJv3HGBdfFaJOA4XVIvoXU4513p2Q7zm8l9k1YCMqAjJDUELA
+         Y6xKibBdj5mkIiyno2A21y3NUFK8Hga/NlggRHy48Dr/LgQm6WJP6XnQA2DMlQfhojJ9
+         qw6Q==
+X-Gm-Message-State: ANhLgQ2Hnz+1E8OyMmG62EqXRzm8voakUV77yphdMA2gCO4+E/aqcMkN
+        6CRQryDFkUKctzzvxrt3NBxSV+9Lv4SsLuTO1c7EbQ==
+X-Google-Smtp-Source: ADFU+vt+cTzF+W4m9ZuLrugVE31A2dI3lE2J9BIpQq/GwEAFV9ZK8xkEnolSrCBv/dwQ0MPPETibjSvK5e83+lwRFIU=
+X-Received: by 2002:a6b:dc05:: with SMTP id s5mr86042ioc.72.1583428511510;
+ Thu, 05 Mar 2020 09:15:11 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20200221101936.16833-1-t-kristo@ti.com> <20200221101936.16833-16-t-kristo@ti.com>
+ <20200304224220.GC2799@xps15> <28ab188e-9e6e-35dd-c423-30aaa80afb90@ti.com>
+In-Reply-To: <28ab188e-9e6e-35dd-c423-30aaa80afb90@ti.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 5 Mar 2020 10:15:00 -0700
+Message-ID: <CANLsYkwKUQZ=xxG5Xox7G+7J6VYDriJAUckY3WH56pQRtwE=Rw@mail.gmail.com>
+Subject: Re: [PATCHv7 15/15] remoteproc/omap: Switch to SPDX license identifiers
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        "Andrew F. Davis" <afd@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+On Wed, 4 Mar 2020 at 17:24, Suman Anna <s-anna@ti.com> wrote:
+>
+> Hi Mathieu,
+>
+> On 3/4/20 4:42 PM, Mathieu Poirier wrote:
+> > On Fri, Feb 21, 2020 at 12:19:36PM +0200, Tero Kristo wrote:
+> >> From: Suman Anna <s-anna@ti.com>
+> >>
+> >> Use the appropriate SPDX license identifiers in various OMAP remoteproc
+> >> source files and drop the previous boilerplate license text.
+> >>
+> >> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> >> ---
+> >>  drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
+> >>  1 file changed, 1 insertion(+), 26 deletions(-)
+> >>
+> >> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+> >> index 13f17d9135c0..828e13256c02 100644
+> >> --- a/drivers/remoteproc/omap_remoteproc.h
+> >> +++ b/drivers/remoteproc/omap_remoteproc.h
+> >> @@ -1,35 +1,10 @@
+> >> +/* SPDX-License-Identifier: BSD-3-Clause */
+> >
+> > This is odd considering omap_remoteproc.c is GPL-2.0-only
+>
+> We were using these enums on the firmware-side as well. The first
+> version of this in v1 [1] is actually using Dual BSD and GPL-2.0-only,
+> but even that one had posed some questions, so just converting to use
+> the SPDX for the original license text.
 
-[ Upstream commit 253216ffb2a002a682c6f68bd3adff5b98b71de8 ]
+Very well.
 
-local->sta_mtx is held in __ieee80211_check_fast_rx_iface().
-No need to use list_for_each_entry_rcu() as it also requires
-a cond argument to avoid false lockdep warnings when not used in
-RCU read-side section (with CONFIG_PROVE_RCU_LIST).
-Therefore use list_for_each_entry();
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Link: https://lore.kernel.org/r/20200223143302.15390-1-madhuparnabhowmik10@gmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/mac80211/rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 02d0b22d01141..c7c456c86b0d3 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -4042,7 +4042,7 @@ void __ieee80211_check_fast_rx_iface(struct ieee80211_sub_if_data *sdata)
- 
- 	lockdep_assert_held(&local->sta_mtx);
- 
--	list_for_each_entry_rcu(sta, &local->sta_list, list) {
-+	list_for_each_entry(sta, &local->sta_list, list) {
- 		if (sdata != sta->sdata &&
- 		    (!sta->sdata->bss || sta->sdata->bss != sdata->bss))
- 			continue;
--- 
-2.20.1
-
+>
+> regards
+> Suman
+>
+> [1] https://patchwork.kernel.org/patch/11215415/
+> >
+> > Thanks,
+> > Mathieu
+> >
+> >>  /*
+> >>   * Remote processor messaging
+> >>   *
+> >>   * Copyright (C) 2011-2020 Texas Instruments, Inc.
+> >>   * Copyright (C) 2011 Google, Inc.
+> >>   * All rights reserved.
+> >> - *
+> >> - * Redistribution and use in source and binary forms, with or without
+> >> - * modification, are permitted provided that the following conditions
+> >> - * are met:
+> >> - *
+> >> - * * Redistributions of source code must retain the above copyright
+> >> - *   notice, this list of conditions and the following disclaimer.
+> >> - * * Redistributions in binary form must reproduce the above copyright
+> >> - *   notice, this list of conditions and the following disclaimer in
+> >> - *   the documentation and/or other materials provided with the
+> >> - *   distribution.
+> >> - * * Neither the name Texas Instruments nor the names of its
+> >> - *   contributors may be used to endorse or promote products derived
+> >> - *   from this software without specific prior written permission.
+> >> - *
+> >> - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+> >> - * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+> >> - * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+> >> - * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+> >> - * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+> >> - * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+> >> - * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+> >> - * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+> >> - * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+> >> - * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+> >> - * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+> >>   */
+> >>
+> >>  #ifndef _OMAP_RPMSG_H
+> >> --
+> >> 2.17.1
+> >>
+> >> --
+> >> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>
