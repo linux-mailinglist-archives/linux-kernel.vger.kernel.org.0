@@ -2,461 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994AB17ACE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20DB417AD24
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:24:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbgCERXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:23:20 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41252 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbgCERXR (ORCPT
+        id S1727509AbgCERYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:24:34 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38093 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbgCERYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:23:17 -0500
-Received: by mail-pg1-f194.google.com with SMTP id b1so3063135pgm.8;
-        Thu, 05 Mar 2020 09:23:16 -0800 (PST)
+        Thu, 5 Mar 2020 12:24:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id w3so44924plz.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 09:24:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+bkKk7iqoi5S/dJdHL0QBNekmkV769PZZtmx/GwHqBo=;
-        b=eys7fdE1n2U1j26tUKuWBHshY3aZK0tSN4hWFCgB/QtOQdGdLf1ibb914YTCSvS9zQ
-         KBUCP1hUxGH2ylh0nC5IntewaSuMaFs0ycxIcQtgu2p8rFVrCcP+2ofTSCllsP9FirMj
-         dR3n7P+BPwwLJop/FIFtLmw5p5jrY2rgf3cPcuJSHjwgCGqluu82txU1eSCCPm/rKVK7
-         KrFt9DpwwZNqPm/PVYnWWjpkefCUYVzRHY3RVWTfKukiE3s9cGQbqR9/RyV7N+eYuUzE
-         GYLEGl+gXduG0ciASI8MuarnzVbMKJWS3Dnuh84RXh85A0v/jd5VDCxMOMw1/xqGD6yZ
-         eYdw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=mp5fWww43kwzuooPmGWsuVGO+tZOpFhcHE+Owcf1fPw=;
+        b=E4Y/lUsmZXp9+AAsZa7Zo5SzTQ9O+aYrU5ndNRs7WiK1c8XxM2exp14Q62BFn1Venr
+         djbBK0ms3ZbYweQUswq8VZGv8IkmQJfKAOH17R3IFd7GSLAKiPoGZsGuQ2RF56wnA37c
+         sqxdD/b+BVBMNEXe4fDRy18jx9RD6LINy4hrY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+bkKk7iqoi5S/dJdHL0QBNekmkV769PZZtmx/GwHqBo=;
-        b=SijzvfKmINOysgQuFsAH/aQAjuQfaOKQyb6NVaY2UYJv23LSgN9YfNJTtW5PTKE7xf
-         M0GhO73uQhBuC0DwgnGFyXB/2Qs80J2WWhzt2Nbv5k/2z+wXC1yXpguxD2G2fp+BgwAX
-         tSpkw/SFagYzyXbvrTQ7RTJ8s3yepr7wJefhAKS8YxqNAGhFFy/+Qh1xfr0m4D1M+0eM
-         nthShIL/1ysMKF8pEgkU7nCu58+cbzSIDdEaARZuV/+v+3nGeD0TlAPXKMvswFRbQ11C
-         ByXKoj4I8tMqB2FifJq13p2/NiQYk36oQkoimh6JKdhBATPaby/fhc295f7WREksyRcM
-         9pTw==
-X-Gm-Message-State: ANhLgQ14XEc7WBes6rr5cPzr+/tcUNlvMGC5bnFeMpo+QwvtJe9SNg7d
-        tc5DkvsHmy0Y5DFf+O+DkQ==
-X-Google-Smtp-Source: ADFU+vu4j+inyYadCyilJ3hXHI8AzN8fyupEmSz2mx28zb9hg7p6jbB0rnTFeXepS6BdYfqfBbNrbg==
-X-Received: by 2002:a63:5251:: with SMTP id s17mr8678269pgl.160.1583428996112;
-        Thu, 05 Mar 2020 09:23:16 -0800 (PST)
-Received: from madhuparna-HP-Notebook ([2402:3a80:1ee0:fa4c:45f1:8421:bfd8:b0fb])
-        by smtp.gmail.com with ESMTPSA id p94sm7065663pjp.15.2020.03.05.09.23.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Mar 2020 09:23:15 -0800 (PST)
-From:   Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-X-Google-Original-From: Madhuparna Bhowmik <change_this_user_name@gmail.com>
-Date:   Thu, 5 Mar 2020 22:53:00 +0530
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     madhuparnabhowmik10@gmail.com, paulmck@kernel.org,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-        Amol Grover <frextrite@gmail.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] Default enable RCU list lockdep debugging with PROVE_RCU
-Message-ID: <20200305172300.GA9915@madhuparna-HP-Notebook>
-References: <20200228092451.10455-1-madhuparnabhowmik10@gmail.com>
- <CGME20200305105038eucas1p1bad0e1bd4b12a28e05ecd14615b31af2@eucas1p1.samsung.com>
- <59f5554c-3343-7bf6-d7d8-bba53710afae@samsung.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mp5fWww43kwzuooPmGWsuVGO+tZOpFhcHE+Owcf1fPw=;
+        b=tWt5ZT9aGd/5P9cQ3xbYvtQYP532rJmrBUZkCjjeXeKcdcfJ3t0MjUJIy+nYYOqFq8
+         v+iab5EZ/d+VmeNqfRRIDjvGolBzwLsG7YnxjMi1/mrjYRz/FSQC2fFFXn4aCAyihHuT
+         eujMvDWz5zDVTV14DJnYL7sMNOvY9OhfYulvf0VUlkYTBWnEif7xQnVSlw1vfLboPWMP
+         2oguhtjg5zhKDG/aJwfRTaxsItbgnaTV8bB/XQmk8TzqJF0AFYnkktjd4KkcOn7sAFMP
+         VZ3WRMeRhoIUhK9roXwFlzhnudCKrtrQnqnib3bhjytFB/kgjCalBOtapcRsvYPej7Q5
+         W6Zw==
+X-Gm-Message-State: ANhLgQ0nRVToyELz641/7xNQPxsc7JnVx/ggYoxuz0FJyoTifX6PUZA+
+        N+uhNpLx8FRIRLhFoDDyvYHGY05FTDc=
+X-Google-Smtp-Source: ADFU+vt9l0oVbJ6VNPpaOLHDblo5TqyZNoJVjyz+Iu+6pL5xZpvRVmjo1V8vi6bgpHk7AmIq2Mfksg==
+X-Received: by 2002:a17:90b:1983:: with SMTP id mv3mr9946768pjb.86.1583429072818;
+        Thu, 05 Mar 2020 09:24:32 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t4sm10049060pfd.52.2020.03.05.09.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 09:24:31 -0800 (PST)
+Date:   Thu, 5 Mar 2020 09:24:30 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     cl@rock-chips.com
+Cc:     heiko@sntech.de, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, akpm@linux-foundation.org, tglx@linutronix.de,
+        mpe@ellerman.id.au, surenb@google.com, ben.dooks@codethink.co.uk,
+        anshuman.khandual@arm.com, catalin.marinas@arm.com,
+        will@kernel.org, luto@amacapital.net, wad@chromium.org,
+        mark.rutland@arm.com, geert+renesas@glider.be,
+        george_davis@mentor.com, sudeep.holla@arm.com,
+        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v2 1/1] sched/fair: do not preempt current task if it is
+ going to call schedule()
+Message-ID: <202003050921.5559A8C3@keescook>
+References: <20200305095948.10873-1-cl@rock-chips.com>
+ <20200305095948.10873-2-cl@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <59f5554c-3343-7bf6-d7d8-bba53710afae@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200305095948.10873-2-cl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 11:50:37AM +0100, Marek Szyprowski wrote:
-> Dear All,
+On Thu, Mar 05, 2020 at 05:59:48PM +0800, cl@rock-chips.com wrote:
+> From: Liang Chen <cl@rock-chips.com>
 > 
-> On 28.02.2020 10:24, madhuparnabhowmik10@gmail.com wrote:
-> > From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> >
-> > This patch default enables CONFIG_PROVE_RCU_LIST option with
-> > CONFIG_PROVE_RCU for RCU list lockdep debugging.
-> >
-> > With this change, RCU list lockdep debugging will be default
-> > enabled in CONFIG_PROVE_RCU=y kernels.
-> >
-> > Most of the RCU users (in core kernel/, drivers/, and net/
-> > subsystem) have already been modified to include lockdep
-> > expressions hence RCU list debugging can be enabled by
-> > default.
-> >
-> > However, there are still chances of enountering
-> > false-positive lockdep splats because not everything is converted,
-> > in case RCU list primitives are used in non-RCU read-side critical
-> > section but under the protection of a lock. It would be okay to
-> > have a few false-positives, as long as bugs are identified, since this
-> > patch only affects debugging kernels.
-> >
-> > Co-developed-by: Amol Grover <frextrite@gmail.com>
-> > Signed-off-by: Amol Grover <frextrite@gmail.com>
-> > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+> when we create a kthread with ktrhead_create_on_cpu(),the child thread
+> entry is ktread.c:ktrhead() which will be preempted by the parent after
+> call complete(done) while schedule() is not called yet,then the parent
+> will call wait_task_inactive(child) but the child is still on the runqueue,
+> so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
+> time,especially on startup.
 > 
-> This patch landed in today's linux-next (20200305) as commit 
-> c9af03c14bfdfd21515e556c3a90ffe2aadc964d. It causes the following kernel 
-> warning during system suspend/resume cycle on all ARM 32bit Samsung 
-> Exynos-based boards (kernel compiled from exynos_defconfig):
+>   parent                             child
+> ktrhead_create_on_cpu()
+>   wait_fo_completion(&done) -----> ktread.c:ktrhead()
+>                              |----- complete(done);--wakeup and preempted by parent
+>  kthread_bind() <------------|  |-> schedule();--dequeue here
+>   wait_task_inactive(child)     |
+>    schedule_hrtimeout(1 jiffy) -|
 > 
-> # rtcwake -s 10 -m mem
-> rtcwake: wakeup from "mem" using /dev/rtc0 at Sat Jan  1 00:01:13 2000
-> PM: suspend entry (deep)
-> Filesystems sync: 0.008 seconds
-> Freezing user space processes ... (elapsed 0.003 seconds) done.
-> OOM killer disabled.
-> Freezing remaining freezable tasks ... (elapsed 0.013 seconds) done.
-> printk: Suspending console(s) (use no_console_suspend to debug)
->
-Hi,
+> So we hope the child just wakeup parent but not preempted by parent, and the
+> child is going to call schedule() soon,then the parent will not call
+> schedule_hrtimeout(1 jiffy) as the child is already dequeue.
+> 
+> The same issue for ktrhead_park()&&kthread_parkme().
+> This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
+> 
+> Signed-off-by: Liang Chen <cl@rock-chips.com>
 
-These warnings in power/main.c and power/wakeup.c  are already
-addressed.
-Check this https://lore.kernel.org/patchwork/patch/1204515/
-Thank you,
-Madhuparna
-> =============================
-> WARNING: suspicious RCU usage
-> 5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
-> -----------------------------
-> drivers/base/power/main.c:326 RCU-list traversed in non-reader section!!
+I'm not familiar with the subtleties of scheduler internals
+(e.g. is there a race between the end of "schedule();" and calling
+"task_clear_going_to_sched();" that effects the preemption test logic?),
+so I'll leave that review to the others. But speaking to the PFA change,
+it looks sane to me:
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  include/linux/sched.h |  5 +++++
+>  kernel/kthread.c      |  4 ++++
+>  kernel/sched/fair.c   | 13 +++++++++++++
+>  3 files changed, 22 insertions(+)
 > 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 5 locks held by rtcwake/1452:
->   #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
->   #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
->   #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
->   #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
->   #4: c1285d98 (device_links_srcu){....}, at: 
-> device_links_read_lock+0x0/0x50
-> 
-> stack backtrace:
-> CPU: 7 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
-> #7728
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
-> [<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
-> [<c0b5c50c>] (dump_stack) from [<c061ea2c>] 
-> (dpm_wait_for_subordinate+0xf4/0xfc)
-> [<c061ea2c>] (dpm_wait_for_subordinate) from [<c061f578>] 
-> (__device_suspend+0x20/0x838)
-> [<c061f578>] (__device_suspend) from [<c0622e1c>] (dpm_suspend+0x188/0x57c)
-> [<c0622e1c>] (dpm_suspend) from [<c0623bfc>] (dpm_suspend_start+0x98/0xa0)
-> [<c0623bfc>] (dpm_suspend_start) from [<c0197e20>] 
-> (suspend_devices_and_enter+0xec/0xc74)
-> [<c0197e20>] (suspend_devices_and_enter) from [<c0198da0>] 
-> (pm_suspend+0x3f8/0x480)
-> [<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
-> [<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
-> [<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
-> [<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
-> [<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
-> [<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xeac89fa8 to 0xeac89ff0)
-> 9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
-> 00000000
-> 9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
-> 00028160
-> 9fe0: 0000006c be980ac8 b6eae000 b6f0b634
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
-> -----------------------------
-> drivers/base/power/main.c:1698 RCU-list traversed in non-reader section!!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 6 locks held by rtcwake/1452:
->   #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
->   #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
->   #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
->   #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
->   #4: ebecd984 (&dev->mutex){....}, at: __device_suspend+0xf8/0x838
->   #5: c1285d98 (device_links_srcu){....}, at: 
-> device_links_read_lock+0x0/0x50
-> 
-> stack backtrace:
-> CPU: 7 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
-> #7728
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
-> [<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
-> [<c0b5c50c>] (dump_stack) from [<c061f8bc>] (__device_suspend+0x364/0x838)
-> [<c061f8bc>] (__device_suspend) from [<c0622e1c>] (dpm_suspend+0x188/0x57c)
-> [<c0622e1c>] (dpm_suspend) from [<c0623bfc>] (dpm_suspend_start+0x98/0xa0)
-> [<c0623bfc>] (dpm_suspend_start) from [<c0197e20>] 
-> (suspend_devices_and_enter+0xec/0xc74)
-> [<c0197e20>] (suspend_devices_and_enter) from [<c0198da0>] 
-> (pm_suspend+0x3f8/0x480)
-> [<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
-> [<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
-> [<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
-> [<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
-> [<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
-> [<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xeac89fa8 to 0xeac89ff0)
-> 9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
-> 00000000
-> 9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
-> 00028160
-> 9fe0: 0000006c be980ac8 b6eae000 b6f0b634
-> wake enabled for irq 160
-> wake enabled for irq 164
-> samsung-pinctrl 13400000.pinctrl: Setting external wakeup interrupt 
-> mask: 0xffffffe7
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
-> -----------------------------
-> drivers/base/power/wakeup.c:408 RCU-list traversed in non-reader section!!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 5 locks held by rtcwake/1452:
->   #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
->   #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
->   #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
->   #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
->   #4: c128722c (wakeup_srcu){....}, at: 
-> device_wakeup_arm_wake_irqs+0x0/0x124
-> 
-> stack backtrace:
-> CPU: 5 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
-> #7728
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
-> [<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
-> [<c0b5c50c>] (dump_stack) from [<c0625740>] 
-> (device_wakeup_arm_wake_irqs+0xdc/0x124)
-> [<c0625740>] (device_wakeup_arm_wake_irqs) from [<c0622120>] 
-> (dpm_suspend_noirq+0x1c/0x5a0)
-> [<c0622120>] (dpm_suspend_noirq) from [<c019805c>] 
-> (suspend_devices_and_enter+0x328/0xc74)
-> [<c019805c>] (suspend_devices_and_enter) from [<c0198da0>] 
-> (pm_suspend+0x3f8/0x480)
-> [<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
-> [<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
-> [<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
-> [<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
-> [<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
-> [<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xeac89fa8 to 0xeac89ff0)
-> 9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
-> 00000000
-> 9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
-> 00028160
-> 9fe0: 0000006c be980ac8 b6eae000 b6f0b634
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
-> -----------------------------
-> drivers/base/power/main.c:1238 RCU-list traversed in non-reader section!!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 5 locks held by rtcwake/1452:
->   #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
->   #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
->   #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
->   #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
->   #4: c1285d98 (device_links_srcu){....}, at: 
-> device_links_read_lock+0x0/0x50
-> 
-> stack backtrace:
-> CPU: 5 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
-> #7728
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
-> [<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
-> [<c0b5c50c>] (dump_stack) from [<c06202d4>] 
-> (__device_suspend_noirq+0x234/0x304)
-> [<c06202d4>] (__device_suspend_noirq) from [<c0622284>] 
-> (dpm_suspend_noirq+0x180/0x5a0)
-> [<c0622284>] (dpm_suspend_noirq) from [<c019805c>] 
-> (suspend_devices_and_enter+0x328/0xc74)
-> [<c019805c>] (suspend_devices_and_enter) from [<c0198da0>] 
-> (pm_suspend+0x3f8/0x480)
-> [<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
-> [<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
-> [<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
-> [<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
-> [<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
-> [<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xeac89fa8 to 0xeac89ff0)
-> 9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
-> 00000000
-> 9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
-> 00028160
-> 9fe0: 0000006c be980ac8 b6eae000 b6f0b634
-> Disabling non-boot CPUs ...
-> IRQ 51: no longer affine to CPU1
-> IRQ 52: no longer affine to CPU2
-> IRQ 53: no longer affine to CPU3
-> IRQ 54: no longer affine to CPU4
-> IRQ 55: no longer affine to CPU5
-> IRQ 56: no longer affine to CPU6
-> IRQ 57: no longer affine to CPU7
-> Enabling non-boot CPUs ...
-> CPU1 is up
-> CPU2 is up
-> CPU3 is up
-> CPU4: detected I-Cache line size mismatch, workaround enabled
-> CPU4 is up
-> CPU5: detected I-Cache line size mismatch, workaround enabled
-> CPU5 is up
-> CPU6: detected I-Cache line size mismatch, workaround enabled
-> CPU6 is up
-> CPU7: detected I-Cache line size mismatch, workaround enabled
-> CPU7 is up
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
-> -----------------------------
-> drivers/base/power/main.c:269 RCU-list traversed in non-reader section!!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 5 locks held by rtcwake/1452:
->   #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
->   #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
->   #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
->   #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
->   #4: c1285d98 (device_links_srcu){....}, at: 
-> device_links_read_lock+0x0/0x50
-> 
-> stack backtrace:
-> CPU: 0 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
-> #7728
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
-> [<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
-> [<c0b5c50c>] (dump_stack) from [<c061ebf0>] 
-> (dpm_wait_for_superior+0x114/0x12c)
-> [<c061ebf0>] (dpm_wait_for_superior) from [<c061fe98>] 
-> (device_resume_noirq+0x74/0x238)
-> [<c061fe98>] (device_resume_noirq) from [<c0620a34>] 
-> (dpm_resume_noirq+0x160/0x53c)
-> [<c0620a34>] (dpm_resume_noirq) from [<c01983c8>] 
-> (suspend_devices_and_enter+0x694/0xc74)
-> [<c01983c8>] (suspend_devices_and_enter) from [<c0198da0>] 
-> (pm_suspend+0x3f8/0x480)
-> [<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
-> [<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
-> [<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
-> [<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
-> [<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
-> [<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xeac89fa8 to 0xeac89ff0)
-> 9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
-> 00000000
-> 9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
-> 00028160
-> 9fe0: 0000006c be980ac8 b6eae000 b6f0b634
-> s3c-i2c 12c80000.i2c: slave address 0x00
-> s3c-i2c 12c80000.i2c: bus frequency set to 65 KHz
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
-> -----------------------------
-> drivers/base/power/wakeup.c:424 RCU-list traversed in non-reader section!!
-> 
-> other info that might help us debug this:
-> 
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 5 locks held by rtcwake/1452:
->   #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
->   #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
->   #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
->   #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
->   #4: c128722c (wakeup_srcu){....}, at: 
-> device_wakeup_disarm_wake_irqs+0x0/0x124
-> 
-> stack backtrace:
-> CPU: 0 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
-> #7728
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
-> [<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
-> [<c0b5c50c>] (dump_stack) from [<c0625864>] 
-> (device_wakeup_disarm_wake_irqs+0xdc/0x124)
-> [<c0625864>] (device_wakeup_disarm_wake_irqs) from [<c0620b84>] 
-> (dpm_resume_noirq+0x2b0/0x53c)
-> [<c0620b84>] (dpm_resume_noirq) from [<c01983c8>] 
-> (suspend_devices_and_enter+0x694/0xc74)
-> [<c01983c8>] (suspend_devices_and_enter) from [<c0198da0>] 
-> (pm_suspend+0x3f8/0x480)
-> [<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
-> [<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
-> [<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
-> [<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
-> [<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
-> [<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xeac89fa8 to 0xeac89ff0)
-> 9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
-> 00000000
-> 9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
-> 00028160
-> 9fe0: 0000006c be980ac8 b6eae000 b6f0b634
-> 
-> I can help debugging this issue.
-> 
-> > ---
-> >   kernel/rcu/Kconfig.debug | 11 +++--------
-> >   1 file changed, 3 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
-> > index 4aa02eee8f6c..ec4bb6c09048 100644
-> > --- a/kernel/rcu/Kconfig.debug
-> > +++ b/kernel/rcu/Kconfig.debug
-> > @@ -9,15 +9,10 @@ config PROVE_RCU
-> >   	def_bool PROVE_LOCKING
-> >   
-> >   config PROVE_RCU_LIST
-> > -	bool "RCU list lockdep debugging"
-> > -	depends on PROVE_RCU && RCU_EXPERT
-> > -	default n
-> > +	def_bool PROVE_RCU
-> >   	help
-> > -	  Enable RCU lockdep checking for list usages. By default it is
-> > -	  turned off since there are several list RCU users that still
-> > -	  need to be converted to pass a lockdep expression. To prevent
-> > -	  false-positive splats, we keep it default disabled but once all
-> > -	  users are converted, we can remove this config option.
-> > +	  Enable RCU lockdep checking for list usages. It is default
-> > +	  enabled with CONFIG_PROVE_RCU.
-> >   
-> >   config TORTURE_TEST
-> >   	tristate
-> 
-> Best regards
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 04278493bf15..54bf336f5790 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1533,6 +1533,7 @@ static inline bool is_percpu_thread(void)
+>  #define PFA_SPEC_IB_DISABLE		5	/* Indirect branch speculation restricted */
+>  #define PFA_SPEC_IB_FORCE_DISABLE	6	/* Indirect branch speculation permanently restricted */
+>  #define PFA_SPEC_SSB_NOEXEC		7	/* Speculative Store Bypass clear on execve() */
+> +#define PFA_GOING_TO_SCHED		8	/* task is going to call schedule() */
+>  
+>  #define TASK_PFA_TEST(name, func)					\
+>  	static inline bool task_##func(struct task_struct *p)		\
+> @@ -1575,6 +1576,10 @@ TASK_PFA_CLEAR(SPEC_IB_DISABLE, spec_ib_disable)
+>  TASK_PFA_TEST(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
+>  TASK_PFA_SET(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
+>  
+> +TASK_PFA_TEST(GOING_TO_SCHED, going_to_sched)
+> +TASK_PFA_SET(GOING_TO_SCHED, going_to_sched)
+> +TASK_PFA_CLEAR(GOING_TO_SCHED, going_to_sched)
+> +
+>  static inline void
+>  current_restore_flags(unsigned long orig_flags, unsigned long flags)
+>  {
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index b262f47046ca..bc96de2648f6 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -199,8 +199,10 @@ static void __kthread_parkme(struct kthread *self)
+>  		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+>  			break;
+>  
+> +		task_set_going_to_sched(current);
+>  		complete(&self->parked);
+>  		schedule();
+> +		task_clear_going_to_sched(current);
+>  	}
+>  	__set_current_state(TASK_RUNNING);
+>  }
+> @@ -245,8 +247,10 @@ static int kthread(void *_create)
+>  	/* OK, tell user we're spawned, wait for stop or wakeup */
+>  	__set_current_state(TASK_UNINTERRUPTIBLE);
+>  	create->result = current;
+> +	task_set_going_to_sched(current);
+>  	complete(done);
+>  	schedule();
+> +	task_clear_going_to_sched(current);
+>  
+>  	ret = -EINTR;
+>  	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 3c8a379c357e..78666cec794a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4330,6 +4330,12 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+>  			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>  		return;
+>  #endif
+> +	/*
+> +	 * current task is going to call schedule(), do not preempt it or
+> +	 * it will casue more useless contex_switch().
+> +	 */
+> +	if (task_going_to_sched(rq_of(cfs_rq)->curr))
+> +		return;
+>  
+>  	if (cfs_rq->nr_running > 1)
+>  		check_preempt_tick(cfs_rq, curr);
+> @@ -6634,6 +6640,13 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
+>  	if (test_tsk_need_resched(curr))
+>  		return;
+>  
+> +	/*
+> +	 * current task is going to call schedule(), do not preempt it or
+> +	 * it will casue more useless contex_switch().
+> +	 */
+> +	if (task_going_to_sched(curr))
+> +		return;
+> +
+>  	/* Idle tasks are by definition preempted by non-idle tasks. */
+>  	if (unlikely(task_has_idle_policy(curr)) &&
+>  	    likely(!task_has_idle_policy(p)))
 > -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
+> 2.17.1
 > 
+> 
+> 
+
+-- 
+Kees Cook
