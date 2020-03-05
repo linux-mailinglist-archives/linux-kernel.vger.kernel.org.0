@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A2F617B1CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2025517B1C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgCEWqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:46:44 -0500
-Received: from mga18.intel.com ([134.134.136.126]:5028 "EHLO mga18.intel.com"
+        id S1727434AbgCEWqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:46:36 -0500
+Received: from mga18.intel.com ([134.134.136.126]:5035 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbgCEWpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:45:52 -0500
+        id S1727052AbgCEWpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 17:45:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 14:45:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,519,1574150400"; 
-   d="scan'208";a="234674641"
+   d="scan'208";a="234674643"
 Received: from minkleyx-mobl1.amr.corp.intel.com (HELO spandruv-mobl.amr.corp.intel.com) ([10.252.207.66])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Mar 2020 14:45:51 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 05 Mar 2020 14:45:52 -0800
 From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To:     andriy.shevchenko@linux.intel.com
 Cc:     platform-driver-x86@vger.kernel.org, prarit@redhat.com,
         linux-kernel@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 17/27] tools/power/x86/intel-speed-select: Improve error display for base-freq feature
-Date:   Thu,  5 Mar 2020 14:45:28 -0800
-Message-Id: <20200305224538.490864-18-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 18/27] tools/power/x86/intel-speed-select: Improve error display for turbo-freq feature
+Date:   Thu,  5 Mar 2020 14:45:29 -0800
+Message-Id: <20200305224538.490864-19-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200305224538.490864-1-srinivas.pandruvada@linux.intel.com>
 References: <20200305224538.490864-1-srinivas.pandruvada@linux.intel.com>
@@ -39,97 +39,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This change adds improved error display and handling for commands related
-to base-freq feature. The changes include:
+to turbo-freq feature. The changes include:
 - Replace perror/fprintf with helpful error message
 - Error for not specifying TDP level when required
-- For CLX show help which shows limitation
+- Show error for invalid bucket number
+- Show message to enable core-power before enabling turbo-freq feature
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../x86/intel-speed-select/isst-config.c      | 25 ++++++++++++++++---
- .../power/x86/intel-speed-select/isst-core.c  | 14 ++++++++++-
- 2 files changed, 34 insertions(+), 5 deletions(-)
+ .../x86/intel-speed-select/isst-config.c      | 15 ++++---
+ .../power/x86/intel-speed-select/isst-core.c  | 41 ++++++++++++++++---
+ .../x86/intel-speed-select/isst-display.c     | 16 +++++++-
+ tools/power/x86/intel-speed-select/isst.h     |  2 +-
+ 4 files changed, 60 insertions(+), 14 deletions(-)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 362a352e6266..95602f98a138 100644
+index 95602f98a138..48915470c572 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -1276,7 +1276,7 @@ static void clx_n_dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2,
+@@ -1712,12 +1712,15 @@ static void dump_fact_config_for_cpu(int cpu, void *arg1, void *arg2,
+ 	struct isst_fact_info fact_info;
+ 	int ret;
  
- 	ret = clx_n_config(cpu);
- 	if (ret) {
--		perror("isst_get_process_ctdp");
-+		isst_display_error_info_message(1, "clx_n_config failed", 0, 0);
- 	} else {
- 		struct isst_pkg_ctdp_level_info *ctdp_level;
- 		struct isst_pbf_info *pbf_info;
-@@ -1297,7 +1297,9 @@ static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 
- 	ret = isst_get_pbf_info(cpu, tdp_level, &pbf_info);
- 	if (ret) {
--		perror("isst_get_pbf_info");
-+		isst_display_error_info_message(1, "Failed to get base-freq info at this level", 1, tdp_level);
+-	ret = isst_get_fact_info(cpu, tdp_level, &fact_info);
+-	if (ret)
+-		perror("isst_get_fact_bucket_info");
+-	else
++	ret = isst_get_fact_info(cpu, tdp_level, fact_bucket, &fact_info);
++	if (ret) {
++		isst_display_error_info_message(1, "Failed to get turbo-freq info at this level", 1, tdp_level);
 +		isst_ctdp_display_information_end(outf);
 +		exit(1);
- 	} else {
- 		isst_pbf_display_information(cpu, outf, tdp_level, &pbf_info);
- 		isst_get_pbf_info_complete(&pbf_info);
-@@ -1317,7 +1319,7 @@ static void dump_pbf_config(int arg)
++	} else {
+ 		isst_fact_display_information(cpu, outf, tdp_level, fact_bucket,
+ 					      fact_avx, &fact_info);
++	}
+ }
+ 
+ static void dump_fact_config(int arg)
+@@ -1735,7 +1738,7 @@ static void dump_fact_config(int arg)
  	}
  
  	if (tdp_level == 0xff) {
 -		fprintf(outf, "Invalid command: specify tdp_level\n");
-+		isst_display_error_info_message(1, "Invalid command: specify tdp_level", 0, 0);
++		isst_display_error_info_message(1, "Invalid command: specify tdp_level\n", 0, 0);
  		exit(1);
  	}
  
-@@ -1635,7 +1637,7 @@ static void set_pbf_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
+@@ -1763,7 +1766,7 @@ static void set_fact_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
  
- 	ret = isst_set_pbf_fact_status(cpu, 1, status);
+ 	ret = isst_set_pbf_fact_status(cpu, 0, status);
  	if (ret) {
--		perror("isst_set_pbf");
+-		perror("isst_set_fact");
 +		debug_printf("isst_set_pbf_fact_status failed");
  		if (auto_mode)
  			isst_pm_qos_config(cpu, 0, 0);
- 	} else {
-@@ -1667,10 +1669,25 @@ static void set_pbf_enable(int arg)
- 		if (enable) {
- 			fprintf(stderr,
- 				"Enable Intel Speed Select Technology base frequency feature\n");
-+			if (is_clx_n_platform()) {
-+				fprintf(stderr,
-+					"\tOn this platform this command doesn't enable feature in the hardware.\n");
-+				fprintf(stderr,
-+					"\tIt updates the cpufreq scaling_min_freq to match cpufreq base_frequency.\n");
-+				exit(0);
-+
-+			}
- 			fprintf(stderr,
- 				"\tOptional Arguments: -a|--auto : Use priority of cores to set core-power associations\n");
- 		} else {
  
-+			if (is_clx_n_platform()) {
-+				fprintf(stderr,
-+					"\tOn this platform this command doesn't disable feature in the hardware.\n");
-+				fprintf(stderr,
-+					"\tIt updates the cpufreq scaling_min_freq to match cpuinfo_min_freq\n");
-+				exit(0);
-+			}
- 			fprintf(stderr,
- 				"Disable Intel Speed Select Technology base frequency feature\n");
- 			fprintf(stderr,
 diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
-index f69c009ef6f6..7836f9f08af1 100644
+index 7836f9f08af1..89b3068a2685 100644
 --- a/tools/power/x86/intel-speed-select/isst-core.c
 +++ b/tools/power/x86/intel-speed-select/isst-core.c
-@@ -395,15 +395,27 @@ int isst_set_tdp_level(int cpu, int tdp_level)
- int isst_get_pbf_info(int cpu, int level, struct isst_pbf_info *pbf_info)
+@@ -516,7 +516,7 @@ int isst_set_pbf_fact_status(int cpu, int pbf, int enable)
+ 	} else {
+ 
+ 		if (enable && !ctdp_level.sst_cp_enabled)
+-			fprintf(stderr, "Make sure to execute before: core-power enable\n");
++			isst_display_error_info_message(0, "Make sure to execute before: core-power enable", 0, 0);
+ 
+ 		if (ctdp_level.pbf_enabled)
+ 			req = BIT(17);
+@@ -603,18 +603,30 @@ int isst_get_fact_bucket_info(int cpu, int level,
+ 	return 0;
+ }
+ 
+-int isst_get_fact_info(int cpu, int level, struct isst_fact_info *fact_info)
++int isst_get_fact_info(int cpu, int level, int fact_bucket, struct isst_fact_info *fact_info)
  {
  	struct isst_pkg_ctdp_level_info ctdp_level;
 +	struct isst_pkg_ctdp pkg_dev;
- 	int i, ret, core_cnt, max;
- 	unsigned int req, resp;
- 
+ 	unsigned int resp;
+-	int ret;
++	int j, ret, print;
++
 +	ret = isst_get_ctdp_levels(cpu, &pkg_dev);
 +	if (ret) {
 +		isst_display_error_info_message(1, "Failed to get number of levels", 0, 0);
@@ -140,17 +131,93 @@ index f69c009ef6f6..7836f9f08af1 100644
 +		isst_display_error_info_message(1, "Invalid level", 1, level);
 +		return -1;
 +	}
-+
+ 
  	ret = isst_get_ctdp_control(cpu, level, &ctdp_level);
  	if (ret)
  		return ret;
  
- 	if (!ctdp_level.pbf_support) {
--		fprintf(stderr, "base-freq feature is not present at this level:%d\n", level);
-+		isst_display_error_info_message(1, "base-freq feature is not present at this level", 1, level);
+ 	if (!ctdp_level.fact_support) {
+-		fprintf(stderr, "turbo-freq feature is not present at this level:%d\n", level);
++		isst_display_error_info_message(1, "turbo-freq feature is not present at this level", 1, level);
  		return -1;
  	}
  
+@@ -632,8 +644,25 @@ int isst_get_fact_info(int cpu, int level, struct isst_fact_info *fact_info)
+ 	fact_info->lp_clipping_ratio_license_avx512 = (resp >> 16) & 0xff;
+ 
+ 	ret = isst_get_fact_bucket_info(cpu, level, fact_info->bucket_info);
++	if (ret)
++		return ret;
+ 
+-	return ret;
++	print = 0;
++	for (j = 0; j < ISST_FACT_MAX_BUCKETS; ++j) {
++		if (fact_bucket != 0xff && fact_bucket != j)
++			continue;
++
++		if (!fact_info->bucket_info[j].high_priority_cores_count)
++			break;
++
++		print = 1;
++	}
++	if (!print) {
++		isst_display_error_info_message(1, "Invalid bucket", 0, 0);
++		return -1;
++	}
++
++	return 0;
+ }
+ 
+ int isst_set_trl(int cpu, unsigned long long trl)
+@@ -769,7 +798,7 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
+ 		}
+ 
+ 		if (ctdp_level->fact_support) {
+-			ret = isst_get_fact_info(cpu, i,
++			ret = isst_get_fact_info(cpu, i, 0xff,
+ 						 &ctdp_level->fact_info);
+ 			if (ret)
+ 				return ret;
+diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
+index 0667b405f17f..bf9422336fab 100644
+--- a/tools/power/x86/intel-speed-select/isst-display.c
++++ b/tools/power/x86/intel-speed-select/isst-display.c
+@@ -222,7 +222,21 @@ static void _isst_fact_display_information(int cpu, FILE *outf, int level,
+ 	struct isst_fact_bucket_info *bucket_info = fact_info->bucket_info;
+ 	char header[256];
+ 	char value[256];
+-	int j;
++	int print = 0, j;
++
++	for (j = 0; j < ISST_FACT_MAX_BUCKETS; ++j) {
++		if (fact_bucket != 0xff && fact_bucket != j)
++			continue;
++
++		if (!bucket_info[j].high_priority_cores_count)
++			break;
++
++		print = 1;
++	}
++	if (!print) {
++		fprintf(stderr, "Invalid bucket\n");
++		return;
++	}
+ 
+ 	snprintf(header, sizeof(header), "speed-select-turbo-freq-properties");
+ 	format_and_print(outf, base_level, header, NULL);
+diff --git a/tools/power/x86/intel-speed-select/isst.h b/tools/power/x86/intel-speed-select/isst.h
+index 69fa2c3c70c3..2e1afd856a78 100644
+--- a/tools/power/x86/intel-speed-select/isst.h
++++ b/tools/power/x86/intel-speed-select/isst.h
+@@ -219,7 +219,7 @@ extern int isst_set_pbf_fact_status(int cpu, int pbf, int enable);
+ extern int isst_get_pbf_info(int cpu, int level,
+ 			     struct isst_pbf_info *pbf_info);
+ extern void isst_get_pbf_info_complete(struct isst_pbf_info *pbf_info);
+-extern int isst_get_fact_info(int cpu, int level,
++extern int isst_get_fact_info(int cpu, int level, int fact_bucket,
+ 			      struct isst_fact_info *fact_info);
+ extern int isst_get_fact_bucket_info(int cpu, int level,
+ 				     struct isst_fact_bucket_info *bucket_info);
 -- 
 2.24.1
 
