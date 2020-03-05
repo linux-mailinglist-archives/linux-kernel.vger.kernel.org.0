@@ -2,185 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D5CD17AE44
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:37:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C0017AE4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:39:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbgCEShj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:37:39 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28616 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727018AbgCEShh (ORCPT
+        id S1726498AbgCESjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:39:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40168 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbgCESjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:37:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583433456;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Xfb+Soh2A345soHe2wUP+VAGGLoLquQzD+xTt+DA2Nw=;
-        b=LQDw2YpPEeeiOD4M0hd8goh6ZvrhzzZqObKwi8o6a4ObfjFY8B1JS3wsjgThyXW+xHAI1w
-        3AYPTDb0/omBTBhNZiAhIgdGUdubtJ/uF4pB4g/jKFHZK5MBtscp+ZkEt8Zv2CV7KQmk57
-        txbrP8uhQb23XeslKjj19RZb93fDXl8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-70-jTxVSqWGPMWtR54lTrZyVg-1; Thu, 05 Mar 2020 13:37:34 -0500
-X-MC-Unique: jTxVSqWGPMWtR54lTrZyVg-1
-Received: by mail-wm1-f71.google.com with SMTP id i16so551520wmd.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:37:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Xfb+Soh2A345soHe2wUP+VAGGLoLquQzD+xTt+DA2Nw=;
-        b=VL0g2Kntrkvf7HYOmTjvkq7N34EVvyJpZbfHAoVsRn48Z0iCX6mIH4DVFzodOXCXYx
-         4Iq2dTVUc72Xx5SABi39FXohsbzLvme0/Kt1q1h4P9fd9xLHEeNDNoZAOZSYA+epC9WM
-         qK5dXRGj52PJmXeQwJn67w3NTbpCoIvsZczMTWBxKe8wAvrCC14u+ip9xNFf4RarvlMO
-         cEV7I3SPRb685JapEXG7HeZ5ul/PqbXkRFAebI9wLnlJKqrA8/YDmz9Nh8LJ7ZsqBOtU
-         X/+73X+tf31yb76jn8iDLtkuMcheRyvL6FekQcLPEuX6RnL7G7IeoSemb48rNFg2G2Y0
-         dI1Q==
-X-Gm-Message-State: ANhLgQ1gpbk/WXoco2jVX8S4bS/LsS2qCj6M+meCNCnQGpY0LgpifRyW
-        MY1zjIkTQm4HDtuut2so/cGEpO6cxqWjFbXCU5080VZoL8rGHaSmFoJDI97oaUsCpEMfFmBEi8C
-        CP8A5FoYp2Pk6VRY5Ae4Y5G5L
-X-Received: by 2002:a5d:49c5:: with SMTP id t5mr287910wrs.154.1583433453485;
-        Thu, 05 Mar 2020 10:37:33 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vuQ2QHCqVf+xa7VZrF0noYQ9aS405u86qPMgcOqSRhpc33vMZ/QkXSho/1PdQYGhzfZ8ToXUw==
-X-Received: by 2002:a5d:49c5:: with SMTP id t5mr287895wrs.154.1583433453240;
-        Thu, 05 Mar 2020 10:37:33 -0800 (PST)
-Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id u17sm9369121wmj.47.2020.03.05.10.37.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 10:37:32 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] KVM: VMX: untangle VMXON revision_id setting when using eVMCS
-Date:   Thu,  5 Mar 2020 19:37:25 +0100
-Message-Id: <20200305183725.28872-3-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200305183725.28872-1-vkuznets@redhat.com>
-References: <20200305183725.28872-1-vkuznets@redhat.com>
+        Thu, 5 Mar 2020 13:39:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=M6vTzTe4xnlnvoinOU2S0M2cXZtLs7RQd9tRNZ5w7ZA=; b=Ez62A0YYueTD5jhpOxTpm18Xc+
+        pRK9D1LxkHmMOdaOZ68YJ2AVEyf0FK4IA6hFwnYHj6MMIuCQLtSOCg588u8BvMcp8ViSx7FC9ePzi
+        aGEe0uDTJ/aX6BrsAvxCmIlBjirVbqHEriGONzwBnrcQ0lMpizV9OLDWfjxzIB/Z9koJoXo/jOZm6
+        FpHH6MzJFT1aCAX1HquOBP8wjPaFoUSETuE00ZIUmxOdoJC6s0Tfrbaxa1DFpcgKsqgmbOItuI3U/
+        uSz9qnprfWvjc3WGCHZrTacuOxLkIBHITeVWdv72Lohk0ZGWVU0RyX5oQcaucPrperpkt/SJXeQOK
+        3iPLA+5Q==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9vOo-0000Md-ND; Thu, 05 Mar 2020 18:39:10 +0000
+Subject: Re: [v5] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Markus Elfring <Markus.Elfring@web.de>, linux-doc@vger.kernel.org
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+References: <158339065180.26602.26457588086834858.stgit@devnote2>
+ <158339066140.26602.7533299987467005089.stgit@devnote2>
+ <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+ <3fb124a6-07d2-7a40-8981-07561aeb3c1e@web.de>
+ <f823204d-dcd1-2159-a525-02f15562e1af@infradead.org>
+ <29c599ef-991d-a253-9f27-5999fb55b228@web.de>
+ <997f73af-dc6c-bc8b-12ba-69270ee4b95d@infradead.org>
+ <dbef7b77-945a-585e-12fe-b5e30eb1a6bc@web.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e20f52a0-e522-c2cf-17a4-384a1f3308bc@infradead.org>
+Date:   Thu, 5 Mar 2020 10:39:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <dbef7b77-945a-585e-12fe-b5e30eb1a6bc@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As stated in alloc_vmxon_regions(), VMXON region needs to be tagged with
-revision id from MSR_IA32_VMX_BASIC even in case of eVMCS. The logic to
-do so is not very straightforward: first, we set
-hdr.revision_id = KVM_EVMCS_VERSION in alloc_vmcs_cpu() just to reset it
-back to vmcs_config.revision_id in alloc_vmxon_regions(). Simplify this by
-introducing 'enum vmcs_type' parameter to alloc_vmcs_cpu().
+On 3/5/20 9:56 AM, Markus Elfring wrote:
+>> If you would (could) be more concrete (or discrete) in your suggestions,
+>> I would be glad to comment on them.
+> 
+> Does this view indicate any communication difficulties?
 
-No functional change intended.
+Probably.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/vmx/vmx.c | 32 ++++++++++++++------------------
- arch/x86/kvm/vmx/vmx.h | 12 +++++++++---
- 2 files changed, 23 insertions(+), 21 deletions(-)
+> Which of the possibly unanswered issues do you find not concrete enough so far?
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index dab19e4e5f2b..697be8823576 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2554,7 +2554,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 	return 0;
- }
- 
--struct vmcs *alloc_vmcs_cpu(bool shadow, int cpu, gfp_t flags)
-+struct vmcs *alloc_vmcs_cpu(enum vmcs_type type, int cpu, gfp_t flags)
- {
- 	int node = cpu_to_node(cpu);
- 	struct page *pages;
-@@ -2566,13 +2566,21 @@ struct vmcs *alloc_vmcs_cpu(bool shadow, int cpu, gfp_t flags)
- 	vmcs = page_address(pages);
- 	memset(vmcs, 0, vmcs_config.size);
- 
--	/* KVM supports Enlightened VMCS v1 only */
--	if (static_branch_unlikely(&enable_evmcs))
-+	/*
-+	 * When eVMCS is enabled, vmcs->revision_id needs to be set to the
-+	 * supported eVMCS version (KVM_EVMCS_VERSION) instead of revision_id
-+	 * reported by MSR_IA32_VMX_BASIC.
-+	 *
-+	 * However, even though not explicitly documented by TLFS, VMXArea
-+	 * passed as VMXON argument should still be marked with revision_id
-+	 * reported by physical CPU.
-+	 */
-+	if (type != VMXON_REGION && static_branch_unlikely(&enable_evmcs))
- 		vmcs->hdr.revision_id = KVM_EVMCS_VERSION;
- 	else
- 		vmcs->hdr.revision_id = vmcs_config.revision_id;
- 
--	if (shadow)
-+	if (type == SHADOW_VMCS_REGION)
- 		vmcs->hdr.shadow_vmcs = 1;
- 	return vmcs;
- }
-@@ -2652,25 +2660,13 @@ static __init int alloc_vmxon_regions(void)
- 	for_each_possible_cpu(cpu) {
- 		struct vmcs *vmcs;
- 
--		vmcs = alloc_vmcs_cpu(false, cpu, GFP_KERNEL);
-+		/* The VMXON region is really just a special type of VMCS. */
-+		vmcs = alloc_vmcs_cpu(VMXON_REGION, cpu, GFP_KERNEL);
- 		if (!vmcs) {
- 			free_vmxon_regions();
- 			return -ENOMEM;
- 		}
- 
--		/*
--		 * When eVMCS is enabled, alloc_vmcs_cpu() sets
--		 * vmcs->revision_id to KVM_EVMCS_VERSION instead of
--		 * revision_id reported by MSR_IA32_VMX_BASIC.
--		 *
--		 * However, even though not explicitly documented by
--		 * TLFS, VMXArea passed as VMXON argument should
--		 * still be marked with revision_id reported by
--		 * physical CPU.
--		 */
--		if (static_branch_unlikely(&enable_evmcs))
--			vmcs->hdr.revision_id = vmcs_config.revision_id;
--
- 		per_cpu(vmxarea, cpu) = vmcs;
- 	}
- 	return 0;
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index e64da06c7009..4c327030bb9c 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -489,7 +489,13 @@ static inline struct pi_desc *vcpu_to_pi_desc(struct kvm_vcpu *vcpu)
- 	return &(to_vmx(vcpu)->pi_desc);
- }
- 
--struct vmcs *alloc_vmcs_cpu(bool shadow, int cpu, gfp_t flags);
-+enum vmcs_type {
-+	VMXON_REGION,
-+	VMCS_REGION,
-+	SHADOW_VMCS_REGION,
-+};
-+
-+struct vmcs *alloc_vmcs_cpu(enum vmcs_type type, int cpu, gfp_t flags);
- void free_vmcs(struct vmcs *vmcs);
- int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs);
- void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs);
-@@ -498,8 +504,8 @@ void loaded_vmcs_clear(struct loaded_vmcs *loaded_vmcs);
- 
- static inline struct vmcs *alloc_vmcs(bool shadow)
- {
--	return alloc_vmcs_cpu(shadow, raw_smp_processor_id(),
--			      GFP_KERNEL_ACCOUNT);
-+	return alloc_vmcs_cpu(shadow ? SHADOW_VMCS_REGION : VMCS_REGION,
-+			      raw_smp_processor_id(), GFP_KERNEL_ACCOUNT);
- }
- 
- u64 construct_eptp(struct kvm_vcpu *vcpu, unsigned long root_hpa);
+e.g.:
+>>>  Will the clarification become more constructive for remaining challenges?
+
+
 -- 
-2.24.1
+~Randy
 
