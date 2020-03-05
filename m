@@ -2,81 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F92117B194
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5290217B198
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 23:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbgCEWjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 17:39:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35944 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbgCEWjE (ORCPT
+        id S1726358AbgCEWlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 17:41:20 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52232 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbgCEWlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:39:04 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d9so121087pgu.3;
-        Thu, 05 Mar 2020 14:39:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BH9SEY6sBAAworg6urGASTmP0JolCTW4zXLsv8vx0fM=;
-        b=JLlvnkIJTCIJ3NXqKzdDTG+m71bBc5wNzfTmXHmAXbD/kDeCQ9gQZj7mYTrgVSj1wW
-         zTeHtEXXkuas0n0KLPVW59kYAxfJQP6nCjGHGXOR+Sc9nCBAlMKLnOEyxhLDd/ebDbbK
-         5NbwPhaXVRDInHWzY71pTVa4o0DlFWkD0PQAIU2LGYn2QVreNx3dEIz8t2jJgWkbTIAX
-         UAObaMBBBajW9wBmY3F985iGRs/WcIJWyyOrhC4ilqx5xILHa0cDwpuqlzrNSf4kDR2Z
-         fjnXNgm9HUrs7964QxZ8bkyNjk6x3/IwR3Y7LqZw7Yt+Zx8oGWml335HLT+x+PSWMguZ
-         DoCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BH9SEY6sBAAworg6urGASTmP0JolCTW4zXLsv8vx0fM=;
-        b=rqxjWBz18ZlNNAU0pB+lUnqijGQhp19d1dGuggCBT/kGB68qOcQDLmO1GqA3y8apao
-         LQ2oY6Qgm4naMxcg714tQDIYDyUtOSsuZFgNPz/yJqg8c+QDbk72RrMvAp9KW0yIwyB2
-         TrR+PU44uGXlmQsKoCkaTe4P1hajxJQDe+dna0nXs25mEpkH9mG04T8+G03Ke54AAmKx
-         BFrpVkC20M5vIVGTnHsfM9QS7R7BZw56snQCEtecsfrxnEMyiwVhSvWIlqkshGrplL30
-         I3DKCxbczaTWBaGk0GPQMuei1hOyOj/PSDEdV1MFWh6zaOi7vhAWZg1TDa/oSsK8KQks
-         2MMQ==
-X-Gm-Message-State: ANhLgQ3tTA9uRY1/Ziw7Od5ol85HZQa2bpR/OqeDKdw4CkNBeDlY61Va
-        g2DeLv20i1i2WwmLL3z2Lsc=
-X-Google-Smtp-Source: ADFU+vtOChJvtEGPPChwrCfmKZhaaypCWfiV6Jb9Y7N4eDknBWmYPUwlemRkpnNp/0Q2PjhHzhoTmg==
-X-Received: by 2002:a63:dd06:: with SMTP id t6mr345743pgg.384.1583447942858;
-        Thu, 05 Mar 2020 14:39:02 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:400::5:f0e7])
-        by smtp.gmail.com with ESMTPSA id h29sm30356632pfk.57.2020.03.05.14.39.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Mar 2020 14:39:02 -0800 (PST)
-Date:   Thu, 5 Mar 2020 14:38:59 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>
-Subject: Re: [PATCH bpf-next] bpf: Remove unnecessary CAP_MAC_ADMIN check
-Message-ID: <20200305223858.qprrtu6jfbaqt3bk@ast-mbp>
-References: <20200305204955.31123-1-kpsingh@chromium.org>
+        Thu, 5 Mar 2020 17:41:20 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 025MfEWG110314;
+        Thu, 5 Mar 2020 16:41:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583448074;
+        bh=KDMH0YFU9Mx31kpchhyUnkDoDR5x283mB093t2Sod8o=;
+        h=From:To:CC:Subject:Date;
+        b=KFh3bUVOqdZG7qKNtpU2rtvAAL8f+hwfsrusUIb6AISUzF7Z9GteAZ1isFJ8e637e
+         Aq22hcnPqm95X95FFJ+L06+DUEfoVjhp6W2VgdTlr02aH/7x2ivPELLN5pJ+BaZmiZ
+         1+uKQfWJNIQZZH2WN44LMtmfM0L7zQhnH6orW/04=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 025MfEFk115081;
+        Thu, 5 Mar 2020 16:41:14 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Mar
+ 2020 16:41:14 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 5 Mar 2020 16:41:14 -0600
+Received: from lelv0597.itg.ti.com (lelv0597.itg.ti.com [10.181.64.32])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 025MfENq077913;
+        Thu, 5 Mar 2020 16:41:14 -0600
+Received: from localhost (irmo.dhcp.ti.com [128.247.81.254])
+        by lelv0597.itg.ti.com (8.14.7/8.14.7) with ESMTP id 025MfEo2098943;
+        Thu, 5 Mar 2020 16:41:14 -0600
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Loic Pallardy <loic.pallardy@st.com>
+CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/2] Misc. rproc fixes around fixed memory region support
+Date:   Thu, 5 Mar 2020 16:41:06 -0600
+Message-ID: <20200305224108.21351-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200305204955.31123-1-kpsingh@chromium.org>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 09:49:55PM +0100, KP Singh wrote:
-> From: KP Singh <kpsingh@google.com>
-> 
-> While well intentioned, checking CAP_MAC_ADMIN for attaching
-> BPF_MODIFY_RETURN tracing programs to "security_" functions is not
-> necessary as tracing BPF programs already require CAP_SYS_ADMIN.
-> 
-> Fixes: 6ba43b761c41 ("bpf: Attachment verification for BPF_MODIFY_RETURN")
-> Signed-off-by: KP Singh <kpsingh@google.com>
+Hi Bjorn, Loic,
 
-Applied. Thanks
+The following are two different fixes for the same commit 086d08725d34
+("remoteproc: create vdev subdevice with specific dma memory pool") added
+in 5.1 kernel. This has deviated from the core logic prior to the fixed
+memory region support.
+
+Patch 1 fixes an issue for some TI remoteproc drivers which always used
+the same CMA pool for allocating vrings, vring buffers and carveouts. It
+assigns the same pool (if there exists one) for the separated out
+vdev device if there are no specific vdev memory regions, and is a
+no-op otherwise.
+
+Patch 2 restores the parenting hierarchy for rpmsg devices so that the
+rproc handle can be retrieved by rpmsg drivers using the rproc_get_by_child()
+API. 
+
+Following is an example of how the rpmsg-client-sample devices looked on
+our Davinci platforms:
+1. On 4.19 kernel:
+root@omapl138-lcdk# ls -l /sys/bus/rpmsg/devices/
+lrwxrwxrwx    1 root     root             0 Nov 17 02:03 virtio0.rpmsg-client-sample.-1.50 -> ../../../devices/platform/11800000.dsp/remoteproc/remoteproc0/virtio0/virtio0.rpmsg-client-sample.-1.50
+lrwxrwxrwx    1 root     root             0 Nov 17 02:03 virtio0.rpmsg-client-sample.-1.51 -> ../../../devices/platform/11800000.dsp/remoteproc/remoteproc0/virtio0/virtio0.rpmsg-client-sample.-1.51
+
+2. After the commit 086d08725d34:
+root@omapl138-lcdk# ls -l /sys/bus/rpmsg/devices/
+lrwxrwxrwx    1 root     root             0 Nov 17 02:05 virtio0.rpmsg-client-sample.-1.50 -> ../../../devices/platform/11800000.dsp/11800000.dsp#vdev0buffer/virtio0/virtio0.rpmsg-client-sample.-1.50
+lrwxrwxrwx    1 root     root             0 Nov 17 02:05 virtio0.rpmsg-client-sample.-1.51 -> ../../../devices/platform/11800000.dsp/11800000.dsp#vdev0buffer/virtio0/virtio0.rpmsg-client-sample.-1.51
+
+3. With Patch 2:
+root@omapl138-lcdk:/rpmsg/2020lts# ls -l /sys/bus/rpmsg/devices/
+lrwxrwxrwx    1 root     root             0 Nov 17 02:00 virtio0.rpmsg-client-sample.-1.50 -> ../../../devices/platform/11800000.dsp/remoteproc/remoteproc0/remoteproc0#vdev0buffer/virtio0/virtio0.rpmsg-client-sample.-1.50
+lrwxrwxrwx    1 root     root             0 Nov 17 02:00 virtio0.rpmsg-client-sample.-1.51 -> ../../../devices/platform/11800000.dsp/remoteproc/remoteproc0/remoteproc0#vdev0buffer/virtio0/virtio0.rpmsg-client-sample.-1.51
+
+regards
+Suman
+
+Suman Anna (1):
+  remoteproc: Fix and restore the parenting hierarchy for vdev
+
+Tero Kristo (1):
+  remoteproc: fall back to using parent memory pool if no dedicated
+    available
+
+ drivers/remoteproc/remoteproc_core.c   |  2 +-
+ drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+-- 
+2.23.0
+
