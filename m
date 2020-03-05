@@ -2,76 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 546B9179CC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 01:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C5E179CCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 01:24:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388593AbgCEAYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 19:24:25 -0500
-Received: from mga03.intel.com ([134.134.136.65]:26857 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388407AbgCEAYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 19:24:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 16:24:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,515,1574150400"; 
-   d="scan'208";a="352228758"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Mar 2020 16:24:23 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: x86: Fix warning due to implicit truncation on 32-bit KVM
-Date:   Wed,  4 Mar 2020 16:24:22 -0800
-Message-Id: <20200305002422.20968-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
+        id S2388610AbgCEAYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 19:24:52 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36526 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388407AbgCEAYv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 19:24:51 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0250On3E111485;
+        Wed, 4 Mar 2020 18:24:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583367889;
+        bh=gPlToXhRUJtK9e9DoSo5lalTp1nN8pSY5/iPOikv2KQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=dP7vZatJTqnDdmIrK2bhM3EHsBsgvQy348iXBeGumZyirUdTfmU9wYxTwVrGIbMv6
+         EYI8a5bQIbrOWRa458lqhF6qhJkw+I7KwNHp/tGdls3kB5c+w2G1pM3D+3eMjkeDgo
+         D7oXvStmiiIiUxD032FrDZ2RwaG0zPE4KIWCifzw=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0250OneV018428
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Mar 2020 18:24:49 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Mar
+ 2020 18:24:49 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 4 Mar 2020 18:24:49 -0600
+Received: from [128.247.81.254] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0250OnjP104237;
+        Wed, 4 Mar 2020 18:24:49 -0600
+Subject: Re: [PATCHv7 15/15] remoteproc/omap: Switch to SPDX license
+ identifiers
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>, <afd@ti.com>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <20200221101936.16833-1-t-kristo@ti.com>
+ <20200221101936.16833-16-t-kristo@ti.com> <20200304224220.GC2799@xps15>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <28ab188e-9e6e-35dd-c423-30aaa80afb90@ti.com>
+Date:   Wed, 4 Mar 2020 18:24:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200304224220.GC2799@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explicitly cast the integer literal to an unsigned long when stuffing a
-non-canonical value into the host virtual address during private memslot
-deletion.  The explicit cast fixes a warning that gets promoted to an
-error when running with KVM's newfangled -Werror setting.
+Hi Mathieu,
 
-  arch/x86/kvm/x86.c:9739:9: error: large integer implicitly truncated
-  to unsigned type [-Werror=overflow]
+On 3/4/20 4:42 PM, Mathieu Poirier wrote:
+> On Fri, Feb 21, 2020 at 12:19:36PM +0200, Tero Kristo wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> Use the appropriate SPDX license identifiers in various OMAP remoteproc
+>> source files and drop the previous boilerplate license text.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>  drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
+>>  1 file changed, 1 insertion(+), 26 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+>> index 13f17d9135c0..828e13256c02 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.h
+>> +++ b/drivers/remoteproc/omap_remoteproc.h
+>> @@ -1,35 +1,10 @@
+>> +/* SPDX-License-Identifier: BSD-3-Clause */
+> 
+> This is odd considering omap_remoteproc.c is GPL-2.0-only
 
-Fixes: a3e967c0b87d3 ("KVM: Terminate memslot walks via used_slots"
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/x86.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+We were using these enums on the firmware-side as well. The first
+version of this in v1 [1] is actually using Dual BSD and GPL-2.0-only,
+but even that one had posed some questions, so just converting to use
+the SPDX for the original license text.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index ba4d476b79ad..fa03f31ab33c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9735,8 +9735,12 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
- 		if (!slot || !slot->npages)
- 			return 0;
- 
--		/* Stuff a non-canonical value to catch use-after-delete. */
--		hva = 0xdeadull << 48;
-+		/*
-+		 * Stuff a non-canonical value to catch use-after-delete.  This
-+		 * ends up being 0 on 32-bit KVM, but there's no better
-+		 * alternative.
-+		 */
-+		hva = (unsigned long)(0xdeadull << 48);
- 		old_npages = slot->npages;
- 	}
- 
--- 
-2.24.1
+regards
+Suman
+
+[1] https://patchwork.kernel.org/patch/11215415/
+> 
+> Thanks,
+> Mathieu
+> 
+>>  /*
+>>   * Remote processor messaging
+>>   *
+>>   * Copyright (C) 2011-2020 Texas Instruments, Inc.
+>>   * Copyright (C) 2011 Google, Inc.
+>>   * All rights reserved.
+>> - *
+>> - * Redistribution and use in source and binary forms, with or without
+>> - * modification, are permitted provided that the following conditions
+>> - * are met:
+>> - *
+>> - * * Redistributions of source code must retain the above copyright
+>> - *   notice, this list of conditions and the following disclaimer.
+>> - * * Redistributions in binary form must reproduce the above copyright
+>> - *   notice, this list of conditions and the following disclaimer in
+>> - *   the documentation and/or other materials provided with the
+>> - *   distribution.
+>> - * * Neither the name Texas Instruments nor the names of its
+>> - *   contributors may be used to endorse or promote products derived
+>> - *   from this software without specific prior written permission.
+>> - *
+>> - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+>> - * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+>> - * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+>> - * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+>> - * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+>> - * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+>> - * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+>> - * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+>> - * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+>> - * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+>> - * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+>>   */
+>>  
+>>  #ifndef _OMAP_RPMSG_H
+>> -- 
+>> 2.17.1
+>>
+>> --
+>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
