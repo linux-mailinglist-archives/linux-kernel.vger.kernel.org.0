@@ -2,143 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3C1317ABEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 112EE17AC83
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbgCERQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:16:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728462AbgCERQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:16:18 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B6DD21775;
-        Thu,  5 Mar 2020 17:16:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583428578;
-        bh=fnujKJ1/4oO0PNPwquSQpLSJH6HeF+U1tw4Tv1etEbM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YwybFLoavLaEze7LSNcWtQcf9bSzxpIBpMUEdBdav2lOKdiobwgltTVfEExBDhekO
-         4ZeG2EflfdarCWajA9PbL2YU4kET93hNgztwXAvdlkqg4dxBpdTx/XcvbwkgS7hf0P
-         Zmm5TSfzZeyjU7Qghg/wjwIEl4U1/BLHUz2tIz6Y=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Lukas Wunner <lukas@wunner.de>, Petr Stetiar <ynezz@true.cz>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 4/7] net: ks8851-ml: Fix IRQ handling and locking
-Date:   Thu,  5 Mar 2020 12:16:09 -0500
-Message-Id: <20200305171612.30555-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305171612.30555-1-sashal@kernel.org>
-References: <20200305171612.30555-1-sashal@kernel.org>
+        id S1727806AbgCERVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:21:12 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36795 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726917AbgCERVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:21:10 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g12so2914597plo.3;
+        Thu, 05 Mar 2020 09:21:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N0N64ckCOqKc6ZJK0qMwyg/Ulb95IE0OLYm4Irt4HYc=;
+        b=q5In8rRR5y1BoKW12FK5C/a2p+hq/qxV3kRp3nGR64MvPMni5V0e8jQ8JpOBzgxx1O
+         csDdockVi0QpV/jYm7UwOehUxp9iqgpUHqureOBeNrQODecMWFGFpmJZQ37E1hQ57GoJ
+         WOqAnAoMOz51ARLYGg17SsB/IBrJ0Fa87ssJNs6OgBmbDdF5cl3MAnDuuu0ioc8II0rH
+         yfnHFDEzhn5OvKcHf46QOKx9nR4McQI7dbj7ht1JEGlHI0AMXlDpEEtuLNzfVixnMB6g
+         2vddGMidnAXZU8RKn+ywjF3ZfzosaWGjW+7ehDvS2q6OO6vjIA3ZGPsjqxHy93OxaCha
+         bESg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N0N64ckCOqKc6ZJK0qMwyg/Ulb95IE0OLYm4Irt4HYc=;
+        b=NXeGsdfKb4x1Iy+sfz5R//jdtQpuqVfVdQ9g+aorxn1PjdxXFV8su58bRZ2UecFM2v
+         Z0EBr+fxcH7nhamI9Y9AYHd+pJ4GnZWembtR/gpr/BD8BgY9GqaEL7KZgR30LGj3coFw
+         EKYJ+12n3qN8Dx90f+6esDXhNkRWpCCMYBCRRSYFPs7RU8GVgeb5lcIb7GEOFkU/QavX
+         HuWTzrVpduFnFq4/0PTeyByoewivPaStC60b5/AQP3eG6eie24BNoG7SUIKa633prg7i
+         Nl7DVbp4i7i7FI3t6ZCGUD7OKtHgVwF+pI88frihw648wsqE7RXWxOaieeO48vUdcZeD
+         szJQ==
+X-Gm-Message-State: ANhLgQ2L6dyuH1vTbHdkSimcD4da8dbwWlrjtcaf2YbUbd9bMd/yCS6N
+        kLa2F84/DYQexeaVUyY1+pQ=
+X-Google-Smtp-Source: ADFU+vtUW6mCHYJ00vUXWecjWj9VK7jBQBpZHz6iJxYZf0iSdfevdG45412meQQxE170SObQvgTPYA==
+X-Received: by 2002:a17:902:bd42:: with SMTP id b2mr9344237plx.34.1583428869489;
+        Thu, 05 Mar 2020 09:21:09 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:400::5:f0e7])
+        by smtp.gmail.com with ESMTPSA id s12sm9994271pgv.73.2020.03.05.09.21.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Mar 2020 09:21:08 -0800 (PST)
+Date:   Thu, 5 Mar 2020 09:21:05 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Paul Moore <paul@paul-moore.com>, jmorris@namei.org
+Subject: Re: [PATCH bpf-next v4 4/7] bpf: Attachment verification for
+ BPF_MODIFY_RETURN
+Message-ID: <20200305172103.uet5kf6uj5sudeie@ast-mbp>
+References: <20200304191853.1529-1-kpsingh@chromium.org>
+ <20200304191853.1529-5-kpsingh@chromium.org>
+ <CAEjxPJ4G4sp5_zHXxhe+crafNGV-oZZZ2YYbbMb61BZx0F_ujw@mail.gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEjxPJ4G4sp5_zHXxhe+crafNGV-oZZZ2YYbbMb61BZx0F_ujw@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+On Thu, Mar 05, 2020 at 08:43:11AM -0500, Stephen Smalley wrote:
+> On Wed, Mar 4, 2020 at 2:20 PM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > - Allow BPF_MODIFY_RETURN attachment only to functions that are:
+> >
+> >     * Whitelisted for error injection by checking
+> >       within_error_injection_list. Similar discussions happened for the
+> >       bpf_override_return helper.
+> >
+> >     * security hooks, this is expected to be cleaned up with the LSM
+> >       changes after the KRSI patches introduce the LSM_HOOK macro:
+> >
+> >         https://lore.kernel.org/bpf/20200220175250.10795-1-kpsingh@chromium.org/
+> >
+> > - The attachment is currently limited to functions that return an int.
+> >   This can be extended later other types (e.g. PTR).
+> >
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > Acked-by: Andrii Nakryiko <andriin@fb.com>
+> > ---
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 2460c8e6b5be..ae32517d4ccd 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -9800,6 +9801,33 @@ static int check_struct_ops_btf_id(struct bpf_verifier_env *env)
+> >
+> >         return 0;
+> >  }
+> > +#define SECURITY_PREFIX "security_"
+> > +
+> > +static int check_attach_modify_return(struct bpf_verifier_env *env)
+> > +{
+> > +       struct bpf_prog *prog = env->prog;
+> > +       unsigned long addr = (unsigned long) prog->aux->trampoline->func.addr;
+> > +
+> > +       if (within_error_injection_list(addr))
+> > +               return 0;
+> > +
+> > +       /* This is expected to be cleaned up in the future with the KRSI effort
+> > +        * introducing the LSM_HOOK macro for cleaning up lsm_hooks.h.
+> > +        */
+> > +       if (!strncmp(SECURITY_PREFIX, prog->aux->attach_func_name,
+> > +                    sizeof(SECURITY_PREFIX) - 1)) {
+> > +
+> > +               if (!capable(CAP_MAC_ADMIN))
+> > +                       return -EPERM;
+> 
+> CAP_MAC_ADMIN was originally introduced for Smack and is not
+> all-powerful wrt SELinux, so this is not a sufficient check for
+> SELinux.
 
-[ Upstream commit 44343418d0f2f623cb9da6f5000df793131cbe3b ]
-
-The KS8851 requires that packet RX and TX are mutually exclusive.
-Currently, the driver hopes to achieve this by disabling interrupt
-from the card by writing the card registers and by disabling the
-interrupt on the interrupt controller. This however is racy on SMP.
-
-Replace this approach by expanding the spinlock used around the
-ks_start_xmit() TX path to ks_irq() RX path to assure true mutual
-exclusion and remove the interrupt enabling/disabling, which is
-now not needed anymore. Furthermore, disable interrupts also in
-ks_net_stop(), which was missing before.
-
-Note that a massive improvement here would be to re-use the KS8851
-driver approach, which is to move the TX path into a worker thread,
-interrupt handling to threaded interrupt, and synchronize everything
-with mutexes, but that would be a much bigger rework, for a separate
-patch.
-
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Petr Stetiar <ynezz@true.cz>
-Cc: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/micrel/ks8851_mll.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
-index 8dc1f0277117d..cc44143f86a5e 100644
---- a/drivers/net/ethernet/micrel/ks8851_mll.c
-+++ b/drivers/net/ethernet/micrel/ks8851_mll.c
-@@ -866,14 +866,17 @@ static irqreturn_t ks_irq(int irq, void *pw)
- {
- 	struct net_device *netdev = pw;
- 	struct ks_net *ks = netdev_priv(netdev);
-+	unsigned long flags;
- 	u16 status;
- 
-+	spin_lock_irqsave(&ks->statelock, flags);
- 	/*this should be the first in IRQ handler */
- 	ks_save_cmd_reg(ks);
- 
- 	status = ks_rdreg16(ks, KS_ISR);
- 	if (unlikely(!status)) {
- 		ks_restore_cmd_reg(ks);
-+		spin_unlock_irqrestore(&ks->statelock, flags);
- 		return IRQ_NONE;
- 	}
- 
-@@ -899,6 +902,7 @@ static irqreturn_t ks_irq(int irq, void *pw)
- 		ks->netdev->stats.rx_over_errors++;
- 	/* this should be the last in IRQ handler*/
- 	ks_restore_cmd_reg(ks);
-+	spin_unlock_irqrestore(&ks->statelock, flags);
- 	return IRQ_HANDLED;
- }
- 
-@@ -968,6 +972,7 @@ static int ks_net_stop(struct net_device *netdev)
- 
- 	/* shutdown RX/TX QMU */
- 	ks_disable_qmu(ks);
-+	ks_disable_int(ks);
- 
- 	/* set powermode to soft power down to save power */
- 	ks_set_powermode(ks, PMECR_PM_SOFTDOWN);
-@@ -1024,10 +1029,9 @@ static netdev_tx_t ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	netdev_tx_t retv = NETDEV_TX_OK;
- 	struct ks_net *ks = netdev_priv(netdev);
-+	unsigned long flags;
- 
--	disable_irq(netdev->irq);
--	ks_disable_int(ks);
--	spin_lock(&ks->statelock);
-+	spin_lock_irqsave(&ks->statelock, flags);
- 
- 	/* Extra space are required:
- 	*  4 byte for alignment, 4 for status/length, 4 for CRC
-@@ -1041,9 +1045,7 @@ static netdev_tx_t ks_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- 		dev_kfree_skb(skb);
- 	} else
- 		retv = NETDEV_TX_BUSY;
--	spin_unlock(&ks->statelock);
--	ks_enable_int(ks);
--	enable_irq(netdev->irq);
-+	spin_unlock_irqrestore(&ks->statelock, flags);
- 	return retv;
- }
- 
--- 
-2.20.1
-
+I think you're misunderstanding the intent here.
+This facility is just a faster version of kprobe based fault injection.
+It doesn't care about LSM. Security is not a focus here.
+It can fault inject in a lot of places in the kernel: syscalls,
+kmalloc, page_alloc, fs internals, etc
+I think above capable() check created this confusion and
+we should remove it.
