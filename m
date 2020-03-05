@@ -2,129 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AF9179CC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 01:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 546B9179CC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 01:24:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388584AbgCEAWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 19:22:05 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:44415 "EHLO ozlabs.org"
+        id S2388593AbgCEAYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 19:24:25 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26857 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388407AbgCEAWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 19:22:05 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48XrzF0lkwz9sNg;
-        Thu,  5 Mar 2020 11:22:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1583367722;
-        bh=qi76xv8ccVXEeoat1qNh1dA4+AkLuJNPY3Guxujis9g=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=IqJJGxF7mEDiG9F4/XeoviM4ueCPiP7CtWoxAa29XXiFicndrCXpEAK+5cMuP9PF9
-         7AW/uSFcGG4T86lqfht0KwGeAilXiA5eIGnVP9pxRdkMlMwAphI+vo8sZKy5GkZVz7
-         mB51fcaBDZ6KgM7Yp3AieXNxJjRvh7JH0SODhE9HxVrsYRnqfWp8w7n5knxl8WwGje
-         JwFxtpyOqe4pMqlYoKlkxb84G9LpwOvnKbN3u6T6TntpdL2pGnuiVKavRLF+UOn3eY
-         lMtduIhdWwYFeyCO+I9ddq4SJsz52s8I7rtET6+39Tr0sWEqF6JiQ+8iapAamP54et
-         ZKoWFt6y592Zw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Shuah Khan <skhan@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     shuah@kernel.org, luto@amacapital.net, wad@chromium.org,
-        daniel@iogearbox.net, kafai@fb.com, yhs@fb.com, andriin@fb.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        khilman@baylibre.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH 2/4] selftests: Fix seccomp to support relocatable build (O=objdir)
-In-Reply-To: <11ffe43f-f777-7881-623d-c93196a44cb6@linuxfoundation.org>
-References: <cover.1583358715.git.skhan@linuxfoundation.org> <11967e5f164f0cd717921bd382ff9c13ef740146.1583358715.git.skhan@linuxfoundation.org> <202003041442.A46000C@keescook> <11ffe43f-f777-7881-623d-c93196a44cb6@linuxfoundation.org>
-Date:   Thu, 05 Mar 2020 11:22:00 +1100
-Message-ID: <87eeu7r6qf.fsf@mpe.ellerman.id.au>
+        id S2388407AbgCEAYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 19:24:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 16:24:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,515,1574150400"; 
+   d="scan'208";a="352228758"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Mar 2020 16:24:23 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: x86: Fix warning due to implicit truncation on 32-bit KVM
+Date:   Wed,  4 Mar 2020 16:24:22 -0800
+Message-Id: <20200305002422.20968-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shuah Khan <skhan@linuxfoundation.org> writes:
-> On 3/4/20 3:42 PM, Kees Cook wrote:
->> On Wed, Mar 04, 2020 at 03:13:33PM -0700, Shuah Khan wrote:
->>> Fix seccomp relocatable builds. This is a simple fix to use the
->>> right lib.mk variable TEST_GEN_PROGS for objects to leverage
->>> lib.mk common framework for relocatable builds.
->>>
->>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
->>> ---
->>>   tools/testing/selftests/seccomp/Makefile | 16 +++-------------
->>>   1 file changed, 3 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
->>> index 1760b3e39730..a8a9717fc1be 100644
->>> --- a/tools/testing/selftests/seccomp/Makefile
->>> +++ b/tools/testing/selftests/seccomp/Makefile
->>> @@ -1,17 +1,7 @@
->>>   # SPDX-License-Identifier: GPL-2.0
->>> -all:
->>> -
->>> -include ../lib.mk
->>> -
->>> -.PHONY: all clean
->>> -
->>> -BINARIES := seccomp_bpf seccomp_benchmark
->>>   CFLAGS += -Wl,-no-as-needed -Wall
->>> +LDFLAGS += -lpthread
->>>   
->>> -seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
->> 
->> How is the ../kselftest_harness.h dependency detected in the resulting
->> build rules?
->> 
->> Otherwise, looks good.
->
-> Didn't see any problems. I will look into adding the dependency.
+Explicitly cast the integer literal to an unsigned long when stuffing a
+non-canonical value into the host virtual address during private memslot
+deletion.  The explicit cast fixes a warning that gets promoted to an
+error when running with KVM's newfangled -Werror setting.
 
-Before:
+  arch/x86/kvm/x86.c:9739:9: error: large integer implicitly truncated
+  to unsigned type [-Werror=overflow]
 
-  $ make --no-print-directory -C tools/testing/selftests/ TARGETS=seccomp
-  make --no-builtin-rules INSTALL_HDR_PATH=$BUILD/usr \
-          ARCH=powerpc -C ../../.. headers_install
-    INSTALL /home/michael/build/adhoc/kselftest/usr/include
-  gcc -Wl,-no-as-needed -Wall  seccomp_bpf.c -lpthread -o seccomp_bpf
-  gcc -Wl,-no-as-needed -Wall    seccomp_benchmark.c   -o seccomp_benchmark
-  
-  $ touch tools/testing/selftests/kselftest_harness.h
-  
-  $ make --no-print-directory -C tools/testing/selftests/ TARGETS=seccomp
-  make --no-builtin-rules INSTALL_HDR_PATH=$BUILD/usr \
-          ARCH=powerpc -C ../../.. headers_install
-    INSTALL /home/michael/build/adhoc/kselftest/usr/include
-  gcc -Wl,-no-as-needed -Wall  seccomp_bpf.c -lpthread -o seccomp_bpf
-  $
+Fixes: a3e967c0b87d3 ("KVM: Terminate memslot walks via used_slots"
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kvm/x86.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Note that touching the header causes it to rebuild seccomp_bpf.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ba4d476b79ad..fa03f31ab33c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9735,8 +9735,12 @@ int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+ 		if (!slot || !slot->npages)
+ 			return 0;
+ 
+-		/* Stuff a non-canonical value to catch use-after-delete. */
+-		hva = 0xdeadull << 48;
++		/*
++		 * Stuff a non-canonical value to catch use-after-delete.  This
++		 * ends up being 0 on 32-bit KVM, but there's no better
++		 * alternative.
++		 */
++		hva = (unsigned long)(0xdeadull << 48);
+ 		old_npages = slot->npages;
+ 	}
+ 
+-- 
+2.24.1
 
-With this patch applied:
-
-  $ make --no-print-directory -C tools/testing/selftests/ TARGETS=seccomp
-  make -s --no-builtin-rules INSTALL_HDR_PATH=$BUILD/usr \
-          ARCH=powerpc -C ../../.. headers_install
-  gcc -Wl,-no-as-needed -Wall  -lpthread  seccomp_bpf.c  -o /home/michael/build/adhoc/kselftest/seccomp/seccomp_bpf
-  gcc -Wl,-no-as-needed -Wall  -lpthread  seccomp_benchmark.c  -o /home/michael/build/adhoc/kselftest/seccomp/seccomp_benchmark
-  
-  $ touch tools/testing/selftests/kselftest_harness.h
-  
-  $ make --no-print-directory -C tools/testing/selftests/ TARGETS=seccomp
-  make -s --no-builtin-rules INSTALL_HDR_PATH=$BUILD/usr \
-          ARCH=powerpc -C ../../.. headers_install
-  make[1]: Nothing to be done for 'all'.
-  $
-
-
-So yeah it still needs:
-
-seccomp_bpf: ../kselftest_harness.h
-
-
-cheers
