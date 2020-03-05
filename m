@@ -2,116 +2,270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E29A317A11E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:19:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8C217A0C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgCEIS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 03:18:57 -0500
-Received: from mail-m963.mail.126.com ([123.126.96.3]:33768 "EHLO
-        mail-m963.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbgCEIS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:18:57 -0500
-X-Greylist: delayed 1919 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Mar 2020 03:18:49 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=k9HkUhFYn1+h3FUkrG
-        ApXkMLDxlEv2B5rAwCtF/NaqQ=; b=jSZV6G8wQJFoTL3AUqBp248iCElFbcoL0t
-        6c77OFpy7vZH0KQa4AdH2Ztd+ISy1SiiJUU6TmLFZ8eWNK2sC568G171JbSiiV8e
-        szW6pA53Sitv+rxY+vMzsGS5bURWI3e/oZJ5GaUld3BVzmR2VVvIKAwQvxBXGtAz
-        XTa9BeMOA=
-Received: from pek-lpd-ccm2.wrs.com (unknown [60.247.85.82])
-        by smtp8 (Coremail) with SMTP id NORpCgDH1toYrmBeqjl1GQ--.6848S2;
-        Thu, 05 Mar 2020 15:45:34 +0800 (CST)
-From:   Zhaolong Zhang <zhangzl2013@126.com>
-To:     Zhaolong Zhang <zhangzl2013@126.com.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rcu: Fix the (t=0 jiffies) false positive
-Date:   Thu,  5 Mar 2020 15:45:57 +0800
-Message-Id: <1583394357-11767-1-git-send-email-zhangzl2013@126.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: NORpCgDH1toYrmBeqjl1GQ--.6848S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr48tr4DKrWxAw1DZr4kCrg_yoW8Kr17pa
-        y7Ka47ta1UJF1vva47t3s5Xr1UJr4kXa47ta9Fy34Fva15JF4FqF90v34UKrWUur93WrWa
-        vFyFyF9rAw4ktFUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2_M3UUUUU=
-X-Originating-IP: [60.247.85.82]
-X-CM-SenderInfo: x2kd0wt2osiiat6rjloofrz/1tbitQTdz1pEAlS7TwAAsf
+        id S1726059AbgCEIEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:04:54 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11147 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725946AbgCEIEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 03:04:54 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 01B143C07C6844C0EBC2;
+        Thu,  5 Mar 2020 16:04:50 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 5 Mar 2020 16:04:44 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v3] f2fs: introduce F2FS_IOC_RELEASE_COMPRESS_BLOCKS
+Date:   Thu, 5 Mar 2020 16:04:38 +0800
+Message-ID: <20200305080438.106061-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calculate 't' with the previously recorded 'gps' instead of 'gp_start'.
+There are still reserved blocks on compressed inode, this patch
+introduce a new ioctl to help release reserved blocks back to
+filesystem, so that userspace can reuse those freed space.
 
-Signed-off-by: Zhaolong Zhang <zhangzl2013@126.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- kernel/rcu/tree_stall.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+v3:
+- do sanity check on blkaddr in prior to block release.
+- fix to call put_user if @ret is not negative.
+- set SBI_NEED_FSCK if we release reserved blocks partially.
+ fs/f2fs/f2fs.h |   6 ++
+ fs/f2fs/file.c | 154 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 159 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 55f9b84..4223b8b 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -371,7 +371,7 @@ static void rcu_check_gp_kthread_starvation(void)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5ea712a52d46..5ca9efaf2ddc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -427,6 +427,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
+ #define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
+ #define F2FS_IOC_GET_COMPRESS_BLOCKS	_IOR(F2FS_IOCTL_MAGIC, 17, __u64)
++#define F2FS_IOC_RELEASE_COMPRESS_BLOCKS				\
++					_IOR(F2FS_IOCTL_MAGIC, 18, __u64)
+ 
+ #define F2FS_IOC_GET_VOLUME_NAME	FS_IOC_GETFSLABEL
+ #define F2FS_IOC_SET_VOLUME_NAME	FS_IOC_SETFSLABEL
+@@ -3957,6 +3959,10 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
+ {
+ 	int diff = F2FS_I(inode)->i_cluster_size - blocks;
+ 
++	/* don't update i_compr_blocks if saved blocks were released */
++	if (!add && !F2FS_I(inode)->i_compr_blocks)
++		return;
++
+ 	if (add) {
+ 		F2FS_I(inode)->i_compr_blocks += diff;
+ 		stat_add_compr_blocks(inode, diff);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index fb070816a8a5..48ff7406598d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -557,6 +557,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 	bool compressed_cluster = false;
+ 	int cluster_index = 0, valid_blocks = 0;
+ 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
++	bool released = !F2FS_I(dn->inode)->i_compr_blocks;
+ 
+ 	if (IS_INODE(dn->node_page) && f2fs_has_extra_attr(dn->inode))
+ 		base = get_extra_isize(dn->inode);
+@@ -595,7 +596,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 			clear_inode_flag(dn->inode, FI_FIRST_BLOCK_WRITTEN);
+ 
+ 		f2fs_invalidate_blocks(sbi, blkaddr);
+-		nr_free++;
++
++		if (released && blkaddr != COMPRESS_ADDR)
++			nr_free++;
  	}
+ 
+ 	if (compressed_cluster)
+@@ -3410,6 +3413,152 @@ static int f2fs_get_compress_blocks(struct file *filp, unsigned long arg)
+ 	return put_user(blocks, (u64 __user *)arg);
  }
  
--static void print_other_cpu_stall(unsigned long gp_seq)
-+static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
++static int release_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
++	unsigned int released_blocks = 0;
++	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
++	block_t blkaddr;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		blkaddr = data_blkaddr(dn->inode, dn->node_page,
++						dn->ofs_in_node + i);
++
++		if (!__is_valid_data_blkaddr(blkaddr))
++			continue;
++		if (unlikely(!f2fs_is_valid_blkaddr(sbi, blkaddr,
++					DATA_GENERIC_ENHANCE)))
++			return -EFSCORRUPTED;
++	}
++
++	while (count) {
++		int compr_blocks = 0;
++
++		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
++			blkaddr = f2fs_data_blkaddr(dn);
++
++			if (i == 0) {
++				if (blkaddr == COMPRESS_ADDR)
++					continue;
++				dn->ofs_in_node += cluster_size;
++				goto next;
++			}
++
++			if (__is_valid_data_blkaddr(blkaddr))
++				compr_blocks++;
++
++			if (blkaddr != NEW_ADDR)
++				continue;
++
++			dn->data_blkaddr = NULL_ADDR;
++			f2fs_set_data_blkaddr(dn);
++		}
++
++		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, false);
++		dec_valid_block_count(sbi, dn->inode,
++					cluster_size - compr_blocks);
++
++		released_blocks += cluster_size - compr_blocks;
++next:
++		count -= cluster_size;
++	}
++
++	return released_blocks;
++}
++
++static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	pgoff_t page_idx = 0, last_idx;
++	unsigned int released_blocks = 0;
++	int ret;
++
++	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
++		return -EOPNOTSUPP;
++
++	if (!f2fs_compressed_file(inode))
++		return -EINVAL;
++
++	if (f2fs_readonly(sbi->sb))
++		return -EROFS;
++
++	ret = mnt_want_write_file(filp);
++	if (ret)
++		return ret;
++
++	if (!F2FS_I(inode)->i_compr_blocks)
++		goto out;
++
++	f2fs_balance_fs(F2FS_I_SB(inode), true);
++
++	inode_lock(inode);
++
++	if (!IS_IMMUTABLE(inode)) {
++		F2FS_I(inode)->i_flags |= F2FS_IMMUTABLE_FL;
++		f2fs_set_inode_flags(inode);
++		inode->i_ctime = current_time(inode);
++		f2fs_mark_inode_dirty_sync(inode, true);
++	}
++
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++	down_write(&F2FS_I(inode)->i_mmap_sem);
++
++	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
++
++	while (page_idx < last_idx) {
++		struct dnode_of_data dn;
++		pgoff_t end_offset, count;
++
++		set_new_dnode(&dn, inode, NULL, NULL, 0);
++		ret = f2fs_get_dnode_of_data(&dn, page_idx, LOOKUP_NODE);
++		if (ret) {
++			if (ret == -ENOENT) {
++				page_idx = f2fs_get_next_page_offset(&dn,
++								page_idx);
++				ret = 0;
++				continue;
++			}
++			break;
++		}
++
++		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
++		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
++
++		ret = release_compress_blocks(&dn, count);
++
++		f2fs_put_dnode(&dn);
++
++		if (ret < 0)
++			break;
++
++		page_idx += count;
++		released_blocks += ret;
++	}
++
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++	up_write(&F2FS_I(inode)->i_mmap_sem);
++
++	inode_unlock(inode);
++out:
++	mnt_drop_write_file(filp);
++
++	if (ret >= 0) {
++		ret = put_user(released_blocks, (u64 __user *)arg);
++	} else if (released_blocks && F2FS_I(inode)->i_compr_blocks) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_warn(sbi, "%s: partial blocks were released i_ino=%lx "
++			"iblocks=%llu, released=%u, compr_blocks=%llu, "
++			"run fsck to fix.",
++			__func__, inode->i_ino, inode->i_blocks,
++			released_blocks,
++			F2FS_I(inode)->i_compr_blocks);
++	}
++
++	return ret;
++}
++
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
- 	int cpu;
- 	unsigned long flags;
-@@ -408,7 +408,7 @@ static void print_other_cpu_stall(unsigned long gp_seq)
- 	for_each_possible_cpu(cpu)
- 		totqlen += rcu_get_n_cbs_cpu(cpu);
- 	pr_cont("\t(detected by %d, t=%ld jiffies, g=%ld, q=%lu)\n",
--	       smp_processor_id(), (long)(jiffies - rcu_state.gp_start),
-+	       smp_processor_id(), (long)(jiffies - gps),
- 	       (long)rcu_seq_current(&rcu_state.gp_seq), totqlen);
- 	if (ndetected) {
- 		rcu_dump_cpu_stacks();
-@@ -442,7 +442,7 @@ static void print_other_cpu_stall(unsigned long gp_seq)
- 	rcu_force_quiescent_state();  /* Kick them all. */
- }
- 
--static void print_cpu_stall(void)
-+static void print_cpu_stall(unsigned long gps)
- {
- 	int cpu;
- 	unsigned long flags;
-@@ -467,7 +467,7 @@ static void print_cpu_stall(void)
- 	for_each_possible_cpu(cpu)
- 		totqlen += rcu_get_n_cbs_cpu(cpu);
- 	pr_cont("\t(t=%lu jiffies g=%ld q=%lu)\n",
--		jiffies - rcu_state.gp_start,
-+		jiffies - gps,
- 		(long)rcu_seq_current(&rcu_state.gp_seq), totqlen);
- 
- 	rcu_check_gp_kthread_starvation();
-@@ -546,7 +546,7 @@ static void check_cpu_stall(struct rcu_data *rdp)
- 	    cmpxchg(&rcu_state.jiffies_stall, js, jn) == js) {
- 
- 		/* We haven't checked in, so go dump stack. */
--		print_cpu_stall();
-+		print_cpu_stall(gps);
- 		if (rcu_cpu_stall_ftrace_dump)
- 			rcu_ftrace_dump(DUMP_ALL);
- 
-@@ -555,7 +555,7 @@ static void check_cpu_stall(struct rcu_data *rdp)
- 		   cmpxchg(&rcu_state.jiffies_stall, js, jn) == js) {
- 
- 		/* They had a few time units to dump stack, so complain. */
--		print_other_cpu_stall(gs2);
-+		print_other_cpu_stall(gs2, gps);
- 		if (rcu_cpu_stall_ftrace_dump)
- 			rcu_ftrace_dump(DUMP_ALL);
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+@@ -3490,6 +3639,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_set_volume_name(filp, arg);
+ 	case F2FS_IOC_GET_COMPRESS_BLOCKS:
+ 		return f2fs_get_compress_blocks(filp, arg);
++	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
++		return f2fs_release_compress_blocks(filp, arg);
+ 	default:
+ 		return -ENOTTY;
  	}
+@@ -3650,6 +3801,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_GET_VOLUME_NAME:
+ 	case F2FS_IOC_SET_VOLUME_NAME:
+ 	case F2FS_IOC_GET_COMPRESS_BLOCKS:
++	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
 -- 
-1.8.3.1
+2.18.0.rc1
 
