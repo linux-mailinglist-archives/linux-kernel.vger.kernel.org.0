@@ -2,184 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BACCA17A2F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A9DD17A2E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:14:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbgCEKOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:14:21 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40523 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbgCEKOU (ORCPT
+        id S1727030AbgCEKNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:13:53 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50395 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbgCEKNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:14:20 -0500
-Received: by mail-wm1-f67.google.com with SMTP id e26so5040964wme.5;
-        Thu, 05 Mar 2020 02:14:18 -0800 (PST)
+        Thu, 5 Mar 2020 05:13:53 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a5so5559396wmb.0;
+        Thu, 05 Mar 2020 02:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ouu4WXxCaevxlmC9Uhz7tTOBhGUlnzRHTVeHp1aOhiI=;
-        b=TaYxDEiehx09bbma3RrgW09W2c0LlA1BkOiJvjGkNPusdexeODgG4SuNhkwsrMwY0o
-         4007WMrc/4m39OYw4UUkMcQLVpGdZn4c9jBY2o6By1cbNmG1Z9uVdbmAgVrsqfMxqqmW
-         ZMkjrkmS0MwfFDQzyVrGWV3v1HB6q0WnW8LVg+iUXsC7ck7Y1I7myp0Ygg3nNArFQbSn
-         v5nJAENj2gi81V077ki2FvmLt82EfVsLTSytj7KqD5d5XejoEzpIyQUFH/QofGhvwzeb
-         usDNXUIu2OCq9K9SjznaVah+2+9KoN6CsvNnqeIep32vZvTKQtG2UG4e0mnYpBw9+Yxl
-         2Giw==
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=cxk+MXcOeQV1WCXNQhxSl7i6QKVRGSx/9Z04A+Iz51g=;
+        b=USeffCvGW2kT/2nvw5Nshh15XS/mOrJtx1GAM/JerLUzySuvvCWxin5vWI23TGKR/m
+         tQFAFp1FGa71JP8HW4kq08UYGOqN4Dx2VlFi/QkN3/wMqIbGeFHvdJvmkpF3pm/6QP8n
+         Z/7NoxN40809fdsX7ZklFuQSj6xO8cMDpdngGTFdC34m6w2IRaxzzBYkY/tI9Uu0Wlhk
+         Pp4t+kSSO4TncVqzAVTZorMiglcTIIdDk5fkJZzu5CdK72Rw1NAjMcHJoGEoZOgaLNUl
+         ByHiM8ysMfiPyPBPBa5RHYJ2b4kInsKpr9dnQnLDzsTSDyL/qkOiutYD4QxaltWVZnS2
+         TFuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ouu4WXxCaevxlmC9Uhz7tTOBhGUlnzRHTVeHp1aOhiI=;
-        b=JQfX8aV/8oKKKHzpSq+PTdE8RUm8tGnKkDDazAQJVnVzy4fwDvEJe0XICutsq4jB/1
-         pyY1Zi8wwttU17/pxu2+pTQbTC7n+EBhu7sCIHQAt3FzFIX0YI0hA+IR0eJ9VCEIxbOy
-         oQbTfF0uZSzEhbqrkQVjYbcaek3h0mpt6TR3pK7wPFwxIrOVVLYMTSjMPjVa4Tx9FeDj
-         0ZaishPBzdcgZugU+wnnDrOvRsfSyK1ctPFlj0vT5HJoFdbAJ4NRqEoDXpHi0rl5dwAE
-         3NMtRdqzYcPgaEcUFaSJtd8RKhcXsMX22sZC6CFJ5ZzxJnQ4Jv3GxAMOrGyJs1iqlQeE
-         BCNA==
-X-Gm-Message-State: ANhLgQ10fWvLKdUZsa3GiyDrUyFMgeBjatHL/v2Ds9gfpmOAPwDfeehf
-        vZ/t7ZTvEKOdojG5BC3HyhedEkpkb69RD96vBz9MqZUZ
-X-Google-Smtp-Source: ADFU+vtRnF/dXxex4bMtm9lMXct71zx/beWq0f7tsbHICcoY3Vly/IH9SaaT79t48a+UTI0DbFZr1itud86S+ZPQomM=
-X-Received: by 2002:a05:600c:4108:: with SMTP id j8mr8669423wmi.188.1583403257961;
- Thu, 05 Mar 2020 02:14:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20191223152349.180172-1-chenzhou10@huawei.com> <20191223152349.180172-3-chenzhou10@huawei.com>
-In-Reply-To: <20191223152349.180172-3-chenzhou10@huawei.com>
-From:   Prabhakar Kushwaha <prabhakar.pkin@gmail.com>
-Date:   Thu, 5 Mar 2020 15:43:40 +0530
-Message-ID: <CAJ2QiJ+SQ1orriXJWyhKDcDL9s4Vh5+HQHhWFOKPVmijGpMGvw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] arm64: kdump: reserve crashkenel above 4G for
- crash dump kernel
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        James Morse <james.morse@arm.com>, dyoung@redhat.com,
-        Bhupesh Sharma <bhsharma@redhat.com>, xiexiuqi@huawei.com,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        horms@verge.net.au,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=cxk+MXcOeQV1WCXNQhxSl7i6QKVRGSx/9Z04A+Iz51g=;
+        b=e6ib+0NOjXix6dycrhxjXeIdWD9GlUtBDHEDkwvrxBUEo6uT0NoqvKlMtUwDv6WBE4
+         ZWfn0IzJVNV8fcw9RA3hXUf30bTFFJPR5/jAxoFyktCxuEqo28nOz5FeB+7DVbvSqubA
+         f9LHjQXtL/NaydH4CbJrQUPJnYl0XbaEEvzD8ZU9IUmNGqWjtsJvIzhesW4aEX64HUep
+         NrEBpgUANHcogtLb2xyHwlJmgmccOmvUp0o5O1WlBnch7G6qEKXHc//XHjDEzuXguBsn
+         UQgcO15ANfbyfr/wgnaaI19QjA3RiHQmHCQF2CEX8IYHsS3Ma7hJhO0kMfHXMXVdh4Iw
+         bVOQ==
+X-Gm-Message-State: ANhLgQ3b/p3kKPO9wyUIRjnPGueS6lQYrbLaerLQ3Smb51li+++y5FKc
+        Rm4TnL53Q/pROmw0OQ6C3jypRflc
+X-Google-Smtp-Source: ADFU+vtTOHJCj1WO3JX2pSwmBJ2rHiIGvOkj6V7BV0UQ+q4w1huemNS4QWTaP3HgDBcAIVBi2B7fTw==
+X-Received: by 2002:a1c:7719:: with SMTP id t25mr8314292wmi.7.1583403230448;
+        Thu, 05 Mar 2020 02:13:50 -0800 (PST)
+Received: from 640k.localdomain.com ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id p15sm8331066wma.40.2020.03.05.02.13.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Mar 2020 02:13:49 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     cavery@redhat.com, vkuznets@redhat.com, jan.kiszka@siemens.com,
+        wei.huang2@amd.com
+Subject: [PATCH 0/4] KVM: nSVM: first step towards fixing event injection
+Date:   Thu,  5 Mar 2020 11:13:43 +0100
+Message-Id: <1583403227-11432-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 8:57 PM Chen Zhou <chenzhou10@huawei.com> wrote:
->
-> Crashkernel=X tries to reserve memory for the crash dump kernel under
-> 4G. If crashkernel=X,low is specified simultaneously, reserve spcified
-> size low memory for crash kdump kernel devices firstly and then reserve
-> memory above 4G.
->
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-> ---
->  arch/arm64/kernel/setup.c |  8 +++++++-
->  arch/arm64/mm/init.c      | 31 +++++++++++++++++++++++++++++--
->  2 files changed, 36 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index 56f6645..04d1c87 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -238,7 +238,13 @@ static void __init request_standard_resources(void)
->                     kernel_data.end <= res->end)
->                         request_resource(res, &kernel_data);
->  #ifdef CONFIG_KEXEC_CORE
-> -               /* Userspace will find "Crash kernel" region in /proc/iomem. */
-> +               /*
-> +                * Userspace will find "Crash kernel" region in /proc/iomem.
-> +                * Note: the low region is renamed as Crash kernel (low).
-> +                */
-> +               if (crashk_low_res.end && crashk_low_res.start >= res->start &&
-> +                               crashk_low_res.end <= res->end)
-> +                       request_resource(res, &crashk_low_res);
->                 if (crashk_res.end && crashk_res.start >= res->start &&
->                     crashk_res.end <= res->end)
->                         request_resource(res, &crashk_res);
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index b65dffd..0d7afd5 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -80,6 +80,7 @@ static void __init reserve_crashkernel(void)
->  {
->         unsigned long long crash_base, crash_size;
->         int ret;
-> +       phys_addr_t crash_max = arm64_dma32_phys_limit;
->
->         ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
->                                 &crash_size, &crash_base);
-> @@ -87,12 +88,38 @@ static void __init reserve_crashkernel(void)
->         if (ret || !crash_size)
->                 return;
->
-> +       ret = reserve_crashkernel_low();
-> +       if (!ret && crashk_low_res.end) {
-> +               /*
-> +                * If crashkernel=X,low specified, there may be two regions,
-> +                * we need to make some changes as follows:
-> +                *
-> +                * 1. rename the low region as "Crash kernel (low)"
-> +                * In order to distinct from the high region and make no effect
-> +                * to the use of existing kexec-tools, rename the low region as
-> +                * "Crash kernel (low)".
-> +                *
-> +                * 2. change the upper bound for crash memory
-> +                * Set MEMBLOCK_ALLOC_ACCESSIBLE upper bound for crash memory.
-> +                *
-> +                * 3. mark the low region as "nomap"
-> +                * The low region is intended to be used for crash dump kernel
-> +                * devices, just mark the low region as "nomap" simply.
-> +                */
-> +               const char *rename = "Crash kernel (low)";
-> +
-> +               crashk_low_res.name = rename;
-> +               crash_max = MEMBLOCK_ALLOC_ACCESSIBLE;
-> +               memblock_mark_nomap(crashk_low_res.start,
-> +                                   resource_size(&crashk_low_res));
-> +       }
-> +
->         crash_size = PAGE_ALIGN(crash_size);
->
->         if (crash_base == 0) {
->                 /* Current arm64 boot protocol requires 2MB alignment */
-> -               crash_base = memblock_find_in_range(0, arm64_dma32_phys_limit,
-> -                               crash_size, SZ_2M);
-> +               crash_base = memblock_find_in_range(0, crash_max, crash_size,
-> +                               SZ_2M);
->                 if (crash_base == 0) {
->                         pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
->                                 crash_size);
-> --
+Event injection in nSVM does not use check_nested_events, which means it
+is basically broken.  As a first step, this fixes interrupt injection
+which is probably the most complicated case due to the interactions
+with V_INTR_MASKING and the host EFLAGS.IF.
 
-I tested this patch series on ARM64-ThunderX2 with no issue with
-bootargs crashkenel=X@Y crashkernel=250M,low
+This series fixes Cathy's test case that I have sent earlier.
 
-$ dmesg | grep crash
-[    0.000000] crashkernel reserved: 0x0000000b81200000 -
-0x0000000c81200000 (4096 MB)
-[    0.000000] Kernel command line:
-BOOT_IMAGE=/boot/vmlinuz-5.6.0-rc4+
-root=UUID=866b8df3-14f4-4e11-95a1-74a90ee9b694 ro
-crashkernel=4G@0xb81200000 crashkernel=250M,low nowatchdog earlycon
-[   29.310209]     crashkernel=250M,low
+Paolo
 
-$  kexec -p -i /boot/vmlinuz-`uname -r`
---initrd=/boot/initrd.img-`uname -r` --reuse-cmdline
-$ echo 1 > /proc/sys/kernel/sysrq ; echo c > /proc/sysrq-trigger
+Paolo Bonzini (4):
+  KVM: nSVM: do not change host intercepts while nested VM is running
+  KVM: nSVM: ignore L1 interrupt window while running L2 with
+    V_INTR_MASKING=1
+  KVM: nSVM: implement check_nested_events for interrupts
+  KVM: nSVM: avoid loss of pending IRQ/NMI before entering L2
 
-But when i tried with crashkernel=4G crashkernel=250M,low as bootargs.
-Kernel is not able to allocate memory.
-[    0.000000] cannot allocate crashkernel (size:0x100000000)
-[    0.000000] Kernel command line:
-BOOT_IMAGE=/boot/vmlinuz-5.6.0-rc4+
-root=UUID=866b8df3-14f4-4e11-95a1-74a90ee9b694 ro crashkernel=4G
-crashkernel=250M,low nowatchdog
-[   29.332081]     crashkernel=250M,low
+ arch/x86/kvm/svm.c | 172 ++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 103 insertions(+), 69 deletions(-)
 
-does crashkernel=X@Y mandatory to get allocated beyond 4G?
-am I missing something?
+-- 
+1.8.3.1
 
---pk
