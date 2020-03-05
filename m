@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD4AD17A835
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:54:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BFF817A837
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:54:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgCEOx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 09:53:57 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35283 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbgCEOxz (ORCPT
+        id S1727080AbgCEOx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 09:53:58 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32853 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbgCEOx4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 09:53:55 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r7so7406806wro.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:53:54 -0800 (PST)
+        Thu, 5 Mar 2020 09:53:56 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x7so7402907wrr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:53:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/7GaYG1V9yvlGZRAenw2HkEK2JVAUFF5h5EVPufKqGg=;
-        b=VX47RGMYDdzThxyXqhwBxJcO0pcrOV+YjLetQkI/TCXk/3mFWV83ILoz7U8HwXukvR
-         g/aILl08N6i6TFT4UB4WbkiSqE0xGwSxsZ0G7q4WxD0xSssSoxfRXvjtwtAVhsU7EQOc
-         lX5P8yY/GwFEhagbCQKLiWk26ERm7r15TXpNXCtnaN/MFROhZVng/ivNk/WHAcKpTtFK
-         Krum9oEe6d21Dw7OLGFoPmG5UDxwXpWiDo3sowhVjevEIlCxNaYudzJ3LfopHgBU+YhF
-         jP6JzHId2++YhOELM9ikmQQHr91b4nk8DoRI9hhNvDjI3a37Cw3/ghNKOPTM661/AdID
-         uKXA==
+        bh=OmaQCGR2d/jCJOEqDz74ElNR+xHpYD15I1t0df1LVBM=;
+        b=EMkNsNXwSLFK43B5vW8RP9Rz0sCrutRS7eF7B06ftRC4uJWvKCaBQA5orswU9UdcBH
+         KxAaJ9nfxztkzzW7qqZ5jHMXo1rqyf7+wf1CAKIVtjTSzrZM67LBmkj82dmwhgMNhZol
+         EhtPnvgU1FnokVczuAFUcarHCI+dGqOqPF9dKT4L4oQ1gVDnLLjQjr1zWblw4usYNyWS
+         jAPJBXlTpiZa3GdrutFMvirbz3BHciU9gPp2JrXYxlHzpYJnNMCiyrZXLLW51U4QM6XC
+         wbxRAP3nWFBGyRXDWiN0Ufu7lWIsmvJ3QKHq8mELB+ahig3SmwjXuIFTqnW3ZMPHW85a
+         wAng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/7GaYG1V9yvlGZRAenw2HkEK2JVAUFF5h5EVPufKqGg=;
-        b=Q7NMhitd93cjm2ogHTM9MnXVd1TMgwjOISGwxRiCKSPkDLJaoJEcTdvRhQMOItm7Gu
-         Qey8Z2Mi3jksEQRfSYhvscz2kyHj7A8yJ47dmHsd5f/hdIvsKfmkfvCyGokS4+vPLYmN
-         S+D4RDQWXq0mDKrJlsrmKPHZepVE0IIAWl1ctMAVEmqG4zOVO0H/ACm4ebh1pW9TicAe
-         x89Fp76D51EJIseJvc8aXZzVptwTv7EUfVVZEFb1Osv2oYv06s60+mSfevJV1EjsHxH4
-         pS3Gq73NVI9QdKAXZNhI9N6DW7AW3RgZkUOocCsEhJcjRy6SnV44Bj7RR+2vaarYJycF
-         1bDQ==
-X-Gm-Message-State: ANhLgQ3+hPV4Tt2xC54rDjN12ugkNdijkeMnuMXHpDsM2iShI3lRnzcO
-        mZQ7ZHmavvWSc6HTHV7r3rbiQg==
-X-Google-Smtp-Source: ADFU+vt5FvrEnGBWVeZKz6mJ0TXnqCrAyCnnG8ke4oq2YnIDlLLvui9t+E72hFQLLa9Iys3wkfTD3Q==
-X-Received: by 2002:a5d:494c:: with SMTP id r12mr9965765wrs.50.1583420033496;
-        Thu, 05 Mar 2020 06:53:53 -0800 (PST)
+        bh=OmaQCGR2d/jCJOEqDz74ElNR+xHpYD15I1t0df1LVBM=;
+        b=DLUzjulHTjXokoP2YzgUd6SvgKYKEkzoY9TLxYj1FQxuqLW4Pnh2wq0JFZVJZqWrmU
+         XGP/IN2zpTjzHjqxgw5X+rEysLBbycUjJAijki5iaywvEnJKsF3w8Md8x3yeOC4QECuJ
+         /E7c89HqBLYBFgw9ryh+CPccj9pV7GVuycMnhNzvmNUWbXvZDglpi/nzgw32CjBIClr/
+         bT0kuXXuQHIAaW77Yxk8FDRDUAspQvLKHRK70kXA+1uvAuWMk75p3SXmqoqiE4betY3F
+         Uq7rQK2xlI+BYASfthZP/pNKEDU/Gc4HI/Rgjg8F9xw8otEFECsjvd7v+jV/O4aCIWBP
+         kWLg==
+X-Gm-Message-State: ANhLgQ2Zt3ucg86xcWlRQYeUW3I016XX6S364sbSZmm78zMSeNaZ2pYr
+        Ri+QODbLowFxfqlF45NAOVCuHg==
+X-Google-Smtp-Source: ADFU+vtZRDF5yv7ApxoautiIG6WRRPe+gCKcRkTSjflHb6UO4PHJzUZb+PFpIFuRjTSjC0Rbnd+tmg==
+X-Received: by 2002:a05:6000:ca:: with SMTP id q10mr10452080wrx.78.1583420035477;
+        Thu, 05 Mar 2020 06:53:55 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id f16sm35785985wrx.25.2020.03.05.06.53.52
+        by smtp.gmail.com with ESMTPSA id f16sm35785985wrx.25.2020.03.05.06.53.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 06:53:52 -0800 (PST)
+        Thu, 05 Mar 2020 06:53:54 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     bjorn.andersson@linaro.org, agross@kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         robh+dt@kernel.org, linux-kernel@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 2/4] arm64: dts: qcom: c630: Enable audio support
-Date:   Thu,  5 Mar 2020 14:53:42 +0000
-Message-Id: <20200305145344.14670-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 3/4] arm64: dts: qcom: db845c: add analog audio support
+Date:   Thu,  5 Mar 2020 14:53:43 +0000
+Message-Id: <20200305145344.14670-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200305145344.14670-1-srinivas.kandagatla@linaro.org>
 References: <20200305145344.14670-1-srinivas.kandagatla@linaro.org>
@@ -63,30 +63,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add support to audio via WSA881x Speakers and Headset.
+This patch adds support to Analog audio via WSA881x speakers.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts | 91 +++++++++++++++++++
- 1 file changed, 91 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 113 +++++++++++++++++++++
+ 1 file changed, 113 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-index b255be3a4a0a..99f5836b9331 100644
---- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+index 6e60e81f8db7..350d3ea60235 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
 @@ -8,6 +8,8 @@
- /dts-v1/;
- 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
 +#include <dt-bindings/sound/qcom,q6afe.h>
 +#include <dt-bindings/sound/qcom,q6asm.h>
  #include "sdm845.dtsi"
  #include "pm8998.dtsi"
- 
-@@ -353,6 +355,95 @@
- 	status = "okay";
+ #include "pmi8998.dtsi"
+@@ -200,6 +202,41 @@
+ 	firmware-name = "qcom/sdm845/adsp.mdt";
  };
  
++
 +&slim_msm {
 +	ngd@1 {
 +		wcd9340: codec@1{
@@ -97,10 +98,11 @@ index b255be3a4a0a..99f5836b9331 100644
 +			vdd-tx-supply = <&vreg_s4a_1p8>;
 +			vdd-rx-supply = <&vreg_s4a_1p8>;
 +			vdd-io-supply = <&vreg_s4a_1p8>;
++
 +			swm: swm@c85 {
 +				left_spkr:wsa8810-left{
-+					compatible = "sdw10217211000";
-+					reg = <0 3>;
++					compatible = "sdw10217201000";
++					reg = <0 1>;
 +					powerdown-gpios = <&wcdpinctrl 2 0>;
 +					#thermal-sensor-cells = <0>;
 +					sound-name-prefix = "SpkrLeft";
@@ -108,28 +110,56 @@ index b255be3a4a0a..99f5836b9331 100644
 +				};
 +
 +				right_spkr:wsa8810-right{
-+					compatible = "sdw10217211000";
-+					powerdown-gpios = <&wcdpinctrl 3 0>;
-+					reg = <0 4>;
++					compatible = "sdw10217201000";
++					powerdown-gpios = <&wcdpinctrl 2 0>;
++					reg = <0 2>;
 +					#thermal-sensor-cells = <0>;
 +					sound-name-prefix = "SpkrRight";
 +					#sound-dai-cells = <0>;
 +				};
 +			};
-+
 +		};
++	};
++};
++
+ &apps_rsc {
+ 	pm8998-rpmh-regulators {
+ 		compatible = "qcom,pm8998-rpmh-regulators";
+@@ -674,3 +711,79 @@
+ 		bias-pull-up;
+ 	};
+ };
++
++/* QUAT I2S Uses 4 I2S SD Lines for audio on LT9611 HDMI Bridge */
++&q6afedai {
++	qi2s@22 {
++		reg = <22>;
++		qcom,sd-lines = <0 1 2 3>;
 +	};
 +};
 +
 +&sound {
 +	compatible = "qcom,db845c-sndcard";
-+	model = "Lenovo-YOGA-C630-13Q50";
-+
++	pinctrl-0 = <&quat_mi2s_active
++			 &quat_mi2s_sd0_active
++			 &quat_mi2s_sd1_active
++			 &quat_mi2s_sd2_active
++			 &quat_mi2s_sd3_active>;
++	pinctrl-names = "default";
++	model = "DB845c";
 +	audio-routing =
 +		"RX_BIAS", "MCLK",
++		"AMIC1", "MIC BIAS1",
 +		"AMIC2", "MIC BIAS2",
++		"DMIC0", "MIC BIAS1",
++		"DMIC1", "MIC BIAS1",
++		"DMIC2", "MIC BIAS3",
++		"DMIC3", "MIC BIAS3",
 +		"SpkrLeft IN", "SPK1 OUT",
-+		"SpkrRight IN", "SPK2 OUT";
++		"SpkrRight IN", "SPK2 OUT",
++		"MM_DL1",  "MultiMedia1 Playback",
++		"MM_DL2",  "MultiMedia2 Playback",
++		"MultiMedia3 Capture", "MM_UL3";
 +
 +	mm1-dai-link {
 +		link-name = "MultiMedia1";
@@ -175,10 +205,6 @@ index b255be3a4a0a..99f5836b9331 100644
 +		};
 +	};
 +};
-+
- &tlmm {
- 	gpio-reserved-ranges = <0 4>, <81 4>;
- 
 -- 
 2.21.0
 
