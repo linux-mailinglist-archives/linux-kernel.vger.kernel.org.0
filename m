@@ -2,122 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 495C217A36D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:52:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B998517A37C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgCEKvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:51:49 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.87]:39079 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726101AbgCEKvs (ORCPT
+        id S1727137AbgCEKze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:55:34 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49278 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbgCEKze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:51:48 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id D30C318E847
-        for <linux-kernel@vger.kernel.org>; Thu,  5 Mar 2020 04:51:47 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 9o6Vjp1CxvBMd9o6VjjO6e; Thu, 05 Mar 2020 04:51:47 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=i+ZHZ2JVyHEj+om0jPMA5888/g8cqPU9hC9wyCq65OM=; b=q4Ud1DSux3DfZClKV3HOrVqd3o
-        7fIsWjoE+UIanmYTWP+vhoG7Y1vRXw+5v7Un6Z45Z2pV5ItrrPkeHerZFTUE3kHTGyIp32VRAJAwE
-        U7zMXvGDENe9DBeMzngD0w895DKZSn2nSIQn4s9U/BvejcWNA5wb9QMz1dnkG36MSSi8PD3wVW95J
-        CYkf9r3cWwcLdlPaQPfvnrZFttGXgcxJI7me072Wqg7Iu5k6A69CgRiiLojtQbq4/Qkz9PYLAGjRP
-        riAoVrbFxFtyXioh2AOUWQxA60baNAcHGkeeP7sMh3ZM7ycI7rJs7+rQTliXk/vW4lfcENiDOD8tB
-        epRM69+g==;
-Received: from [201.166.169.220] (port=3124 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j9o6T-003f7Y-TU; Thu, 05 Mar 2020 04:51:46 -0600
-Date:   Thu, 5 Mar 2020 04:54:51 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] drm/msm/msm_gem.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200305105451.GA18973@embeddedor>
+        Thu, 5 Mar 2020 05:55:34 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 025AtT2Z010220;
+        Thu, 5 Mar 2020 04:55:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583405729;
+        bh=UMh1opH6tmYxUIx/AyWNlJuD6bLG+NyY4/gGWFJ85Nk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=FsxuKIay7I+ZBVLkyPl3LpD5Y6p6SDnF7fgG7qfZn9e/Qs3/UODQ+ema+spkam3Dm
+         oC4R744c+dIqSRHYZnxu5jf01hUAn0nfY6BHAbjA6S5zx166YKmyg2ooK905vnVZDD
+         j0PrP1WJl3Du/jaaMLEghlYQ0SpRkTBwFXWdVH04=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 025AtTDL030404
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 5 Mar 2020 04:55:29 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Mar
+ 2020 04:55:29 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 5 Mar 2020 04:55:29 -0600
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 025AtQuu006736;
+        Thu, 5 Mar 2020 04:55:27 -0600
+Subject: Re: [for-next PATCH v2 0/5] phy: ti: gmii-sel: add support for
+ am654x/j721e soc
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        David Miller <davem@davemloft.net>
+CC:     <m-karicheri2@ti.com>, <t-kristo@ti.com>, <nsekhar@ti.com>,
+        <robh+dt@kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200303160029.345-1-grygorii.strashko@ti.com>
+ <20200304.143951.1102411401290807167.davem@davemloft.net>
+ <71a6fea9-65c1-3a3c-a35b-9432208b3ee5@ti.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <7c5395a6-56cb-1d2a-0243-99a6b0fed2a7@ti.com>
+Date:   Thu, 5 Mar 2020 12:55:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.169.220
-X-Source-L: No
-X-Exim-ID: 1j9o6T-003f7Y-TU
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.169.220]:3124
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <71a6fea9-65c1-3a3c-a35b-9432208b3ee5@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+On 05/03/2020 07:17, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On 05/03/20 4:09 am, David Miller wrote:
+>> From: Grygorii Strashko <grygorii.strashko@ti.com>
+>> Date: Tue, 3 Mar 2020 18:00:24 +0200
+>>
+>>> Hi Kishon,
+>>>
+>>> This series adds support for TI K3 AM654x/J721E SoCs in TI phy-gmii-sel PHY
+>>> driver, which is required for future adding networking support.
+>>>
+>>> depends on:
+>>>   [PATCH 0/2] phy: ti: gmii-sel: two fixes
+>>>   https://lkml.org/lkml/2020/2/14/2510
+>>>
+>>> Changes in v2:
+>>>   - fixed comments
+>>>
+>>> v1: https://lkml.org/lkml/2020/2/22/100
+>>
+>> This is mostly DT updates and not much networking code changes, will some other
+>> tree take this?
+> 
+> I can take the phy related changes. Grygorii, can you split the dt
+> patches into a separate series?
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+sure. Could pls, pick up 1-3 and I'll resend 4-5.
+Or you want me re-send once again?
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/msm/msm_gem.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_gem.h
-index 9e0953c2b7ce..37aa556c5f92 100644
---- a/drivers/gpu/drm/msm/msm_gem.h
-+++ b/drivers/gpu/drm/msm/msm_gem.h
-@@ -157,7 +157,7 @@ struct msm_gem_submit {
- 			uint32_t handle;
- 		};
- 		uint64_t iova;
--	} bos[0];
-+	} bos[];
- };
- 
- #endif /* __MSM_GEM_H__ */
 -- 
-2.25.0
-
+Best regards,
+grygorii
