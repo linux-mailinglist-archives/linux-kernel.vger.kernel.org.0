@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB13317AE4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 841B617AE4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:39:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbgCESjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:39:10 -0500
-Received: from mga12.intel.com ([192.55.52.136]:53061 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbgCESjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:39:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 10:39:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="233019834"
-Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Mar 2020 10:39:09 -0800
-Message-ID: <5dcc9da2caff92a9af16846cbe1f168f61368c51.camel@intel.com>
-Subject: Re: [RFC PATCH v9 18/27] x86/cet/shstk: Introduce WRUSS instruction
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
-Date:   Thu, 05 Mar 2020 10:39:08 -0800
-In-Reply-To: <202002251309.E238DFEEB4@keescook>
-References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
-         <20200205181935.3712-19-yu-cheng.yu@intel.com>
-         <202002251309.E238DFEEB4@keescook>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726358AbgCESjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:39:36 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37364 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbgCESjf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 13:39:35 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p14so3179466pfn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:39:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=sw2rwPmYk39Rql13/D5MwH/TM4ln6aLBcc4RXpyiuv0=;
+        b=bhJu0NM03saYyYog8nkfx4KBFaAqwgBKfGTqEl8Q911knPHjD9sFKnMdIkuJTPprBp
+         TRtYH2dIdbh/HLDNRuGbrut8QH9JDd3013inySC6sd2m8oBlegn/SfNMZth9YxnRUG2G
+         HEMuUQx7VRlgKxfLVW/ABEBUHDg15YVlPYTQJJhu2be7PEYOp70gXhEftcsG6CtO1vEb
+         coufMtzGW2PbRbg8YbwooRqIUdP5GpsWPikLMICpXIUaeGL3JyrBqjfLur+gCPOBPIB0
+         pke9Kd/uiA5hYkLA8JB6UtY5iIqOIZGAqkPhQUEfliL1Xa+Du73L99N6Yfu/mXykQoMA
+         CILA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=sw2rwPmYk39Rql13/D5MwH/TM4ln6aLBcc4RXpyiuv0=;
+        b=RGDVQOIWtIpWUm6VPxV00sbigjzr8nyCfUwHEzFWnqFoBJ54Za+a+Y5QvWYfw83GmX
+         k3Yjf2gRXVCouDBurUGz/G6XQuvMe5Ty0EJV9LE9P8tUrwcPtyP+8SdDyqwOp8z5MG9D
+         qpCHkGa+OBPyTQbAIq/FGGnrEm9b+Hnf0SBFWSA1IcvuJ2BKlFNDeacTtZ7N1O/JVQXW
+         nzryq3cxPt3x/4bh6FJWcUlWOkP89sRD2yw98oRaMV2aWpbk4wstw2i8fWouGKioBqsY
+         n8tir1mrPlvNviLzprvMJm6h5M0uLB1Z3sshQKQnROyG4SDPgHmTLbKprud9Cgxp6w7Y
+         marg==
+X-Gm-Message-State: ANhLgQ2Rd7oytawxl00p+OhmrOrGBacfYIDrfuJJlmj5MyWuiBzGpnqt
+        +DGUbDVaQ4l1iBqVogaM5M1AMA==
+X-Google-Smtp-Source: ADFU+vuCLS2anqHUGeY9TD58VLE0cYY7IQa2xah6fUp6Ma3O5xQ/K/lY2AR7cF4LH5KAxUwqhaRnGg==
+X-Received: by 2002:a63:fe0a:: with SMTP id p10mr8671132pgh.96.1583433574483;
+        Thu, 05 Mar 2020 10:39:34 -0800 (PST)
+Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
+        by smtp.gmail.com with ESMTPSA id p21sm32698489pfn.103.2020.03.05.10.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 10:39:33 -0800 (PST)
+From:   bsegall@google.com
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, linux-kernel@vger.kernel.org, pauld@redhat.com,
+        parth@linux.ibm.com, valentin.schneider@arm.com, hdanton@sina.com,
+        zhout@vivaldi.net
+Subject: Re: [PATCH v2] sched/fair : fix reordering of enqueue_task_fair
+References: <20200305074829.22792-1-vincent.guittot@linaro.org>
+Date:   Thu, 05 Mar 2020 10:39:31 -0800
+In-Reply-To: <20200305074829.22792-1-vincent.guittot@linaro.org> (Vincent
+        Guittot's message of "Thu, 5 Mar 2020 08:48:29 +0100")
+Message-ID: <xm26k13y4pek.fsf@bsegall-linux.svl.corp.google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-02-25 at 13:10 -0800, Kees Cook wrote:
-> On Wed, Feb 05, 2020 at 10:19:26AM -0800, Yu-cheng Yu wrote:
-> > WRUSS is a new kernel-mode instruction but writes directly to user Shadow
-> > Stack (SHSTK) memory.  This is used to construct a return address on SHSTK
-> > for the signal handler.
-> > 
-> > This instruction can fault if the user SHSTK is not valid SHSTK memory.
-> > In that case, the kernel does a fixup.
-> 
-> Since these functions aren't used in this patch, should this get merged
-> with patch 19?
+Vincent Guittot <vincent.guittot@linaro.org> writes:
 
-Yes, I can do that.
+> Even when a cgroup is throttled, the group se of a child cgroup can still
+> be enqueued and its gse->on_rq stays true. When a task is enqueued on such
+> child, we still have to update the load_avg and increase
+> h_nr_running of the throttled cfs. Nevertheless, the 1st
+> for_each_sched_entity loop is skipped because of gse->on_rq == true and the
+> 2nd loop because the cfs is throttled whereas we have to update both
+> load_avg with the old h_nr_running and increase h_nr_running in such case.
+> Note that the update of load_avg will effectively happen only once in order
+> to sync up to the throttled time. Next call for updating load_avg will stop
+> early because the clock stays unchanged.
+>
+> Fixes: 6d4d22468dae ("sched/fair: Reorder enqueue/dequeue_task_fair path")
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/fair.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index fcc968669aea..5b232d261842 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5431,16 +5431,16 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  	for_each_sched_entity(se) {
+>  		cfs_rq = cfs_rq_of(se);
+>  
+> -		/* end evaluation on encountering a throttled cfs_rq */
+> -		if (cfs_rq_throttled(cfs_rq))
+> -			goto enqueue_throttle;
+> -
+>  		update_load_avg(cfs_rq, se, UPDATE_TG);
+>  		se_update_runnable(se);
+>  		update_cfs_group(se);
+>  
+>  		cfs_rq->h_nr_running++;
+>  		cfs_rq->idle_h_nr_running += idle_h_nr_running;
+> +
+> +		/* end evaluation on encountering a throttled cfs_rq */
+> +		if (cfs_rq_throttled(cfs_rq))
+> +			goto enqueue_throttle;
+>  	}
+>  
+>  enqueue_throttle:
 
-Yu-cheng
 
+I think there's an equivalent issue on dequeue as well, though that's
+much rarer to trigger (but still possible). I think the same fix works
+there too?
