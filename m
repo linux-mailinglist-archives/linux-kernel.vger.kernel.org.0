@@ -2,110 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD9BF179EB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:48:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84932179EBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:53:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbgCEEsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 23:48:14 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:39242 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgCEEsO (ORCPT
+        id S1725919AbgCEEw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 23:52:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbgCEEw6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 23:48:14 -0500
-Received: by mail-qv1-f68.google.com with SMTP id fc12so1884445qvb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 20:48:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bR0yHX0jt6RtU935MOjekAD7bW6X/oaFERrZJKbX81c=;
-        b=B+rC3aCeemmKXHBSwju8vpHFCDXJcRs2zcFIZabqMKtnfwyC5IFe4UBlPY5IdtlbNT
-         1TyZfkxYuwzKwN0UMI8cCtJb36E2zFRjAVnc0eTu/XkdwYPFezn/waq+VXkI+VqRmYnU
-         n5Um4fRTCPyM9+n/57/Kx2tFyn3M9rwprh2/LZ9DPO1FiqsAsrfikh2KWR9wnIKxWeKi
-         wQuv8uUejauid1qLg6ALj5Gl8V2WZ9t8GxEn4fMgbfQ68WJ41HfHuFXnXVo8/TisXRLL
-         WU552JRA4VWKoyjVV+yCz4b1HxFOcjwfXTk29A3DP/yP+yFI6w8eE1hHRmZI3KKRG/Kg
-         1B9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bR0yHX0jt6RtU935MOjekAD7bW6X/oaFERrZJKbX81c=;
-        b=movLjRJ49lUUla61r3d+Hi6EFo6SNExSlyz/XrMRiXjkkrHtmKxNizm8czv+LD0IF9
-         YVhvno4QRkCe3PUpjonHfEOeIa1tj2/HptTlefzSWgwMXgtP5tZojW0ABvnV0T/r7+oF
-         3B0fDCB/b7PcDWDIVS8vo+LpjjCRSZzNOA9kjsRgCJeWAXXxl7mjrYG71U2Pj8CVEwAt
-         s5FKM8DsyEDQICJ/KdxPOxlyjSoR+x+L77AwO/OCW81RYNQEFfjEc9togC45Y68iL9lZ
-         tTpyUhznISe+tTy81Fb7S1HDMoiHJs+/6Yw2FK/gPleE08Im2JkMt7OT5WtjucALb9N1
-         hufg==
-X-Gm-Message-State: ANhLgQ1RHh2dOAUgxFKQ0t5NufC5NnBmtFtxxEIrn4q05zFwSqFkLfeL
-        Qk3VQx2DyP6RoaN+cu5aKAcquw==
-X-Google-Smtp-Source: ADFU+vv4UwakNttileojs5+Urm6yioCkCkSY1Y4lDvERapnfL62VOgXHTglEEbpPG2qMx2Kb88J8Iw==
-X-Received: by 2002:a0c:b669:: with SMTP id q41mr673037qvf.20.1583383693207;
-        Wed, 04 Mar 2020 20:48:13 -0800 (PST)
-Received: from localhost.localdomain (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id f13sm10558859qkm.42.2020.03.04.20.48.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Mar 2020 20:48:12 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     mpe@ellerman.id.au, akpm@linux-foundation.org
-Cc:     rashmicy@gmail.com, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] powerpc/mm/ptdump: fix an undefined behaviour
-Date:   Wed,  4 Mar 2020 23:47:59 -0500
-Message-Id: <20200305044759.1279-1-cai@lca.pw>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
+        Wed, 4 Mar 2020 23:52:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=quiCwQBCyAugJnvjFRablOlpidN+CuyDEr3sWx1hRsA=; b=dtuLObxKV1zy/7AnsqlI9jcBw0
+        bIMJVy8I453xWPrWtH+FfkPfDRQ0NIsabfMaF+6crk51JcqIdkdLoz3a7KSBlGclX+zW9zyOuTkXH
+        +pC4dSmXzCsQ14e0d2DEBLElgqp8MlorQP1+aw8fROWWfqELSqOA2F+//VNrFATOdfVaxjR1O2k3U
+        cY+MLLRrgAjNsEPuAQ/MPd6klehu4R5+nvLf6Wq0kG+J+ay7vPfpJz4aCXkshn5fWnRokfHK9NPWG
+        0J9o+qaWzBFoEvjPotZkSaylWvYnrNoLe/mIY7o4Bi8TRGy0HOElND9AxtkBSTaaRYOjVUGQLMTS0
+        oN6zhSZg==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9iVE-0001Sp-2H; Thu, 05 Mar 2020 04:52:56 +0000
+Subject: Re: [PATCH 1/2] bootconfig: Support O=<builddir> option
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <158323467008.10560.4307464503748340855.stgit@devnote2>
+ <158323468033.10560.14661631369326294355.stgit@devnote2>
+ <27ae25f5-29c6-62f3-5531-78fcc28b7d3c@infradead.org>
+ <20200304221716.007587c7@oasis.local.home>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9e7beb31-b41f-9e95-c92b-1829e420af77@infradead.org>
+Date:   Wed, 4 Mar 2020 20:52:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200304221716.007587c7@oasis.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booting a power9 server with hash MMU could trigger an undefined
-behaviour because pud_offset(p4d, 0) will do,
+On 3/4/20 7:17 PM, Steven Rostedt wrote:
+> On Wed, 4 Mar 2020 15:04:43 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> On 3/3/20 3:24 AM, Masami Hiramatsu wrote:
+>>> Support O=<builddir> option to build bootconfig tool in
+>>> the other directory. As same as other tools, if you specify
+>>> O=<builddir>, bootconfig command is build under <builddir>.  
+>>
+>> Hm.  If I use
+>> $ make O=~/tmp -C tools/bootconfig
+>>
+>> that works: it builds bootconfig in ~/tmp.
+>>
+>> OTOH, if I sit at the top of the kernel source tree
+>> and I enter
+>> $ mkdir builddir
+>> $ make O=builddir -C tools/bootconfig
+>>
+>> I get this:
+>> make: Entering directory '/home/rdunlap/lnx/next/linux-next-20200304/tools/bootconfig'
+>> ../scripts/Makefile.include:4: *** O=builddir does not exist.  Stop.
+>> make: Leaving directory '/home/rdunlap/lnx/next/linux-next-20200304/tools/bootconfig'
+>>
+>> so it looks like tools/scripts/Makefile.include doesn't handle this case correctly
+>> (which is how I do all of my builds).
+>>
+> 
+> Do you build perf that way?
 
-0 >> (PAGE_SHIFT:16 + PTE_INDEX_SIZE:8 + H_PMD_INDEX_SIZE:10)
+No.  It should also be fixed.
 
- UBSAN: shift-out-of-bounds in arch/powerpc/mm/ptdump/ptdump.c:282:15
- shift exponent 34 is too large for 32-bit type 'int'
- CPU: 6 PID: 1 Comm: swapper/0 Not tainted 5.6.0-rc4-next-20200303+ #13
- Call Trace:
- dump_stack+0xf4/0x164 (unreliable)
- ubsan_epilogue+0x18/0x78
- __ubsan_handle_shift_out_of_bounds+0x160/0x21c
- walk_pagetables+0x2cc/0x700
- walk_pud at arch/powerpc/mm/ptdump/ptdump.c:282
- (inlined by) walk_pagetables at arch/powerpc/mm/ptdump/ptdump.c:311
- ptdump_check_wx+0x8c/0xf0
- mark_rodata_ro+0x48/0x80
- kernel_init+0x74/0x194
- ret_from_kernel_thread+0x5c/0x74
+> $ mkdir buildir
+> $ make O=buildir -C tools/perf/
+> make: Entering directory '/work/git/linux-test.git/tools/perf'
+>   BUILD:   Doing 'make -j24' parallel build
+> ../scripts/Makefile.include:4: *** O=/work/git/linux-test.git/tools/perf/buildir does not exist.  Stop.
+> make: *** [Makefile:70: all] Error 2
+> make: Leaving directory '/work/git/linux-test.git/tools/perf'
+> 
+> -- Steve
 
-Fixes: 8eb07b187000 ("powerpc/mm: Dump linux pagetables")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-
-Notes for maintainers:
-
-This is on the top of the linux-next commit "powerpc: add support for
-folded p4d page tables" which is in the Andrew's tree.
-
- arch/powerpc/mm/ptdump/ptdump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/mm/ptdump/ptdump.c b/arch/powerpc/mm/ptdump/ptdump.c
-index 9d6256b61df3..b530f81398a7 100644
---- a/arch/powerpc/mm/ptdump/ptdump.c
-+++ b/arch/powerpc/mm/ptdump/ptdump.c
-@@ -279,7 +279,7 @@ static void walk_pmd(struct pg_state *st, pud_t *pud, unsigned long start)
- 
- static void walk_pud(struct pg_state *st, p4d_t *p4d, unsigned long start)
- {
--	pud_t *pud = pud_offset(p4d, 0);
-+	pud_t *pud = pud_offset(p4d, 0UL);
- 	unsigned long addr;
- 	unsigned int i;
- 
+Thanks.
 -- 
-2.21.0 (Apple Git-122.2)
+~Randy
 
