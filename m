@@ -2,69 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECB817AECB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 20:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F08B17AED1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 20:14:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbgCETMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 14:12:01 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:43749 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgCETMB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 14:12:01 -0500
-Received: by mail-il1-f196.google.com with SMTP id o18so6006397ilg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 11:12:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=GrdyiqEFc7d9G/zdkgFcJ6VHW0IWWZvW+Hm2PT6e4V0=;
-        b=QKGdO2tBeg793YgD+4lRo89nJje4aJqI1NL0/JbPBrcGqRzgzo0tIMBexuwrAtcjtn
-         p7OCo6NcCsOBMaqSb5H5EZNHiiXI9D/w0u5EcUqcJUUQ44DGuWbJMg355Mki2XSw9U+R
-         K8ushibbJRP5ceWKfh8rOzscHW21g8BMy/zWL6n37XC5PDEwp8lHfxLLhrHiKecXks/m
-         z3UNhcLgC+fX81/eCm+CVFCHcoi9f1TXLntAk52W1RDaXdQCr0ASzirUJnXXplu5ugPQ
-         AI0tToRhtBtY36tNhCp/DBWAmqTs0ol9GciNjL7Dsi7abwsIfb2pvA+eoSv0cyuD0NBR
-         1LJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=GrdyiqEFc7d9G/zdkgFcJ6VHW0IWWZvW+Hm2PT6e4V0=;
-        b=Fa70bJ2OT7Ss2qTcfqS4Z00y9YXrPzsp+cw0yGXIbTY/Fho/+huhIsuQFsIKGw4Dp4
-         IufkWNuUtPqNeTo1QcFUQJkEEuLIvHTPW8ZZpkbmVcsLWHguoWHsT7HohgCi/6Vu9yki
-         QY6lvYW0zzNXS8TBpKa5kIK3pVfZ6a0cG0CvWttZHuOUou9k8c9WfTfJMXHwdz30CBfm
-         uAxuVveICupegs6OHR+PpxT4DZOt3kh27div53WuVcisPiIb/EV/+qW0FlIw6ih/eg6D
-         TQQk9iDmui594ajH8A9GGEPSKRYXpV2nhIz+R/hWA9kU7PbcDdSK7f92CaUSWamPn3QB
-         /rmg==
-X-Gm-Message-State: ANhLgQ2UpwC6ptNyBvKZoHylbt7AoTkZyW+JrRh3wueQyMmvxBwN8rcr
-        kmozNZNUAA/tQwhpxmS5UWRjTQTPUwY6uXMMjWY=
-X-Google-Smtp-Source: ADFU+vvPFcece/nH9asK/uJGgCPGO6+mQtfQZCyZ5bGfByLs/kw7JF0qZmuZtCmGXvz+NbxFW/gaKV7mjULzqjqxngI=
-X-Received: by 2002:a92:91da:: with SMTP id e87mr397892ill.183.1583435520129;
- Thu, 05 Mar 2020 11:12:00 -0800 (PST)
+        id S1726007AbgCETOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 14:14:42 -0500
+Received: from mout.web.de ([212.227.17.12]:35539 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbgCETOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 14:14:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1583435642;
+        bh=yYoyeIir1oCS49BazNEGqOHxSJW902JXiFZg6ZtWCo0=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=sOvpAMNqIuTzlreJRSOzWBEWflbCYDMoKLJm01fK0XQezqMF2HNvQBf9k5aPjY5Bk
+         OCfyXy3+CsAICKawYpNlB7p/E0+PRfxBchY670PkAOzP4nUZAVa4rMOSAufwdWIQXU
+         PzHz2b+myD9a3cWNwnFoy1c5Z2HCnOT5dmK08mGU=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.16.47]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LuLxD-1jKCgn2Ppv-011mSN; Thu, 05
+ Mar 2020 20:14:02 +0100
+Subject: Re: [v5] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+References: <158339065180.26602.26457588086834858.stgit@devnote2>
+ <158339066140.26602.7533299987467005089.stgit@devnote2>
+ <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+ <3fb124a6-07d2-7a40-8981-07561aeb3c1e@web.de>
+ <f823204d-dcd1-2159-a525-02f15562e1af@infradead.org>
+ <29c599ef-991d-a253-9f27-5999fb55b228@web.de>
+ <997f73af-dc6c-bc8b-12ba-69270ee4b95d@infradead.org>
+ <dbef7b77-945a-585e-12fe-b5e30eb1a6bc@web.de>
+ <e20f52a0-e522-c2cf-17a4-384a1f3308bc@infradead.org>
+ <ecaffba3-fccd-32ee-763a-a2ec84a65148@web.de>
+ <20200305140004.535eeb1a@gandalf.local.home>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <af5d4af0-9e06-cc6e-c29e-4c4eebdb9b0e@web.de>
+Date:   Thu, 5 Mar 2020 20:14:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Received: by 2002:a02:c80b:0:0:0:0:0 with HTTP; Thu, 5 Mar 2020 11:11:59 -0800 (PST)
-Reply-To: tracywilliam26@gmail.com
-From:   Miss Tracy William <harikunda1116@gmail.com>
-Date:   Thu, 5 Mar 2020 11:11:59 -0800
-Message-ID: <CAGEpkWqU0H8zsUUzMi64ZTg86SO11Wwsm-ZH2jmeTHN3N-dvHQ@mail.gmail.com>
-Subject: GREETINGS FROM TRACY WILLIAM
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200305140004.535eeb1a@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w7dirbgb+AKpEucOaYDYu+SYAyIO5j503QXRb3Ph9aIiXPTqeUt
+ +P8Rc9o4tSKd3OyBE8Q9wlgVaTz0tv/O/jBxE07bz5ERbVXNtERUE4LiLEbVfVe60rvv/bs
+ I1y73w4SCA3vo3+xrrpndDyp0Lx0bF64iEbeV3qxOeBVn32p2vscp2avH2sbKNVI9pkV6+T
+ n/UqILshQweoX3bGRy0Pg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sEtKzxtqiZ8=:iNnlHMcEs0LDbp5gqEB+Gz
+ 1baRpUcaL+4POFnhnTb+Av3hvrLOypQrylX74zhQAMH6jVm8ellMg8Vq+UBWxz8YtdKGWPstH
+ LCiM7Fi761/zTsTZIkqjB0tDzA2M76SYTl6gCJZ9T8VrGOMd6Qpq1z0JRYio39b7m6+CY9BFH
+ sJJ14m2G6nRtEuydnTjilq+jnZFZrk0UdqhLDyyQPN+dtJh3AYOOVxHM+60tM3HEobE1SAIjf
+ f55bSrDx3c99/+FrDiPKkSS7M/3KmY4ohmKzNrm5mkGReJgB7dzfIoycjaz69JAP261hXVcGQ
+ OMjMQGglqNYAmMNd1dbaG1N/Ag9V7wznh73Vetn+4LmbGoBC484a+wFzAz1ofdpxgjdEFAABZ
+ zo0pDTg6k+7RPzVyNsLaer3KOXEVQMTmdEux/a26MnglpaYWFeIFqPMF9rq11ZLBKDgJObS9o
+ LT9HA512jRgYvpLSznMOYGaeLDBiMerbiFdu90KJDfF93rqU1r+0PuqkRa1t4ubdrRnxMgAqJ
+ LdnssCp4a0OBodJHVCEwrUfDEkjXqxDUkGmS7ZHZAU0xauI2I0lWaM2Kj92CMUo/Rje0Djae/
+ El1YiVdYBi+alZABk/QgtcpWht0LiSje3lkF+/vVz6CTxR/l54OgtGkrddEbn9UI02ajwcKU9
+ I9KhgHzcXXuFvtA24vPRUwTwZfvwaFCPQWzFBbZuMn1GmtYK+9mrQNhGyF1eyvfteTRK+TqZZ
+ ut7X9xC0xxd/NG7T9EdNJuqTDJDqMWKpmhIF9ylkNAjG0ZOI9cR35dpGJsKD4WzolTEh/UEL3
+ HjqgXArI7uoLbkvajz0ns5NWZS8qohNMWwqghCUn7OUX/8DbAcLJbUIAVc5lQ/NwhyNYA54++
+ IPe3bExj1rLPHs0DvtZaPo9t8wgOSS3MlhHNnuCp/Ud7dwQZKkrKI8a0ya2Qlf3L/TZUKpHKx
+ 0//0T/YIR0gJbnVLUSu8n3uUJ/Jrve2Yk8kqZ7QeiMSebz3xHveKmQx+qDCs2q4r1hdFH43JA
+ 5nNQRVX3XYwyG9WPZNS42t84rrj7bc6ijO9YK9PaVF3hNbhC90WQGAkCLRKdXtYHhTJcoPQDC
+ dHokCMxcWBIBZYRD+fpTUKleVSckbLuTvmh+cAMQFGylrxg9Wtq7M+kAVZ37nB1Z6qsEmFAbF
+ k4cyZy9NS/IjEw6dWJB+ftvTMuM7+joaTGJLIzU7MPXG0UKgsGGER0BlZP8DG+Eg5odQc4pFX
+ fBKqKfLwQmU2dy1PY
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Hello Dear,
-how are you today,I hope you are doing great.
-It is my great pleasure to
-contact you and i hope you don't mind,I was just surfing
-through the Internet search when i found your email address,I want to make a new
-and special friend,I hope you don't mind.
+>>>> Which of the possibly unanswered issues do you find not concrete enou=
+gh so far?
+>>>
+>>> e.g.:
+>>>>>>  Will the clarification become more constructive for remaining chal=
+lenges?
+>>
+>> Do you expect that known open issues need to be repeated for each patch=
+ revision?
+>
+> I'm clueless about what you are talking about.
 
-My name is Tracy William,I am from the United States of America but
-presently I live
-and work in England,
-I will give you pictures and details of me as soon as i hear from you
-bye
-Tracy
+I suggest to take another look at review comments for previous patch versi=
+ons.
+
+
+> Yes there's communication difficulties.
+
+I hope that we can reduce them somehow.
+
+
+>> How do you think about the desired tracking of bug reports
+>> also for this software?
+>
+> What does that statement have to do with this patch series????
+
+Do you identify any feedback as a bug report (or clarification request) he=
+re?
+
+Regards,
+Markus
