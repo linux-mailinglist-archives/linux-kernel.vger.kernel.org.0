@@ -2,107 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 691EF179E77
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4742C179E7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:07:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbgCEEDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 23:03:40 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35194 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgCEEDk (ORCPT
+        id S1726233AbgCEEHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 23:07:14 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:16398 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725893AbgCEEHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 23:03:40 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z9so3400896lfa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 20:03:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VklxRdhjEuCIVv9HPoUaXq6mGuwwwTdi/ln0LYnVDsY=;
-        b=iqjN7sn1fgP8MPUCuQpmzoScaDl1FaFzxx3l1cao6LafOPa8aFbH28X7nrCPhLRAbR
-         qtXG+jrOx+0IPwQTh8T0OpSSV6eVDvOi2nVHr+AMlvWLKSoWxo9JoXpKQMXHEZjbZdIP
-         Eg0P7foQARhwfsw4LDg3rxTBm0PfMExB/HPfcvvQU6OCxEiMKA+A7donE9uK7TQxxHGd
-         Tlb/uDyhYeWMxsBDSAv3jUoA+bsPBAJ+mBd165pbvxkgbsChGGXYU/liBCc22CPvI+Bi
-         u5S/sz/Q0IsWdmEYawIM+0cbJg3IigCvSnjnEwRb3eJSdmZoLWTq9uMqepeF8ts+1lF1
-         PH+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VklxRdhjEuCIVv9HPoUaXq6mGuwwwTdi/ln0LYnVDsY=;
-        b=g0pu3AQSStkWWwdVIMp0fxu/H9QhXV3r6F3C5ldt9+ZrTqiV+/jqCy5UT5Rb3ZkAd4
-         wLt+bMM85zrHikN2BgsYmXM7tvBqGUCZ0XRnWpyYCyae4TrPOnKiTXbHJVIrobGvNo1h
-         EY8IH/C5xnIBULvReJoFRsHUw3O3B7Cu6QfiTzI2ztT0SEjiK9hj9zmyNkQIeGIm6lXc
-         usOqxpfdabYPPjzFUuplUpCM7bnU6y/Rbr158U+uBQPr/QzJW0h+iVNI8Gp+moqsJiUM
-         51Afog2PjyDqV1ouooYBEZ/8XASYFJlZ/efkALLrdeqikSUxvnTm36Arsl6fZHFAPBvK
-         LhPw==
-X-Gm-Message-State: ANhLgQ0XUHV3R/8B0eiTaftT15RasfTnG5zPBkoukAOC1fBvs5dBwT75
-        ncmlGEO9FQf2GlHCn9T7nVO3numGB5Dv5DuYaHc=
-X-Google-Smtp-Source: ADFU+vuQdhdkwqvCT4rZebQz2XQDE0WI+aS9PhR/Z3fu1h9LmSnA/wASEBpkts2Cc3AneUr71GfjwjxOKvU2A0KiPf4=
-X-Received: by 2002:ac2:5f62:: with SMTP id c2mr4094191lfc.207.1583381017663;
- Wed, 04 Mar 2020 20:03:37 -0800 (PST)
+        Wed, 4 Mar 2020 23:07:12 -0500
+X-UUID: bd3abfec93084a7d8cafadc7aa2a7baf-20200305
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=uT3b+HVjGTui2Fg/xFBgMfnNPkFCcTSrdu3yNux9XCE=;
+        b=VdMFZZKYWKpD6uRDAoui/V6wxNaE4o694Vjkv7ZR/mgYhfOWqAY9TsALjAOAxvx89Cgn6jsXPvO/pzmWAggj0o/EZ3Fs3aG3Tnm3YQ+/jRQcJ3DISVX3FvD/Me4fNrUrxVq3gBHuXFdp0STAxVbOH/oEmQ3F8d5ThMhlNsQVGZU=;
+X-UUID: bd3abfec93084a7d8cafadc7aa2a7baf-20200305
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 963485352; Thu, 05 Mar 2020 12:07:06 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 5 Mar 2020 12:05:03 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 5 Mar 2020 12:06:20 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v1 0/4] scsi: ufs: some cleanups and make the delay for host enabling customizable
+Date:   Thu, 5 Mar 2020 12:07:00 +0800
+Message-ID: <20200305040704.10645-1-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <20200303065210.1279-1-zhenzhong.duan@gmail.com>
- <20200303065210.1279-3-zhenzhong.duan@gmail.com> <ba5067ad-4fba-52c9-6872-c18bfeb947db@intel.com>
-In-Reply-To: <ba5067ad-4fba-52c9-6872-c18bfeb947db@intel.com>
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Date:   Thu, 5 Mar 2020 12:03:26 +0800
-Message-ID: <CAFH1YnN01PtCBm_92m3CPRhsiS2Bzis8q-vOJ5q+_LUq8ZoZqg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86/boot/KASLR: Fix unused variable warning
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 4, 2020 at 6:56 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 3/2/20 10:52 PM, Zhenzhong Duan wrote:
-> > Local variable 'i' is referenced only when CONFIG_MEMORY_HOTREMOVE and
-> > CONFIG_ACPI are defined, but definition of variable 'i' is out of guard=
-.
-> > If any of the two macros is undefined, below warning triggers during
-> > build, fix it by moving 'i' in the guard.
-> >
-> > arch/x86/boot/compressed/kaslr.c:698:6: warning: unused variable =E2=80=
-=98i=E2=80=99 [-Wunused-variable]
-> ...
-> > diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compresse=
-d/kaslr.c
-> > index d7408af55738..62bc46684581 100644
-> > --- a/arch/x86/boot/compressed/kaslr.c
-> > +++ b/arch/x86/boot/compressed/kaslr.c
-> > @@ -695,7 +695,6 @@ static bool process_mem_region(struct mem_vector *r=
-egion,
-> >                              unsigned long long minimum,
-> >                              unsigned long long image_size)
-> >  {
-> > -     int i;
-> >       /*
-> >        * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-> >        * use @region directly.
-> > @@ -711,6 +710,7 @@ static bool process_mem_region(struct mem_vector *r=
-egion,
-> >       }
-> >
-> >  #if defined(CONFIG_MEMORY_HOTREMOVE) && defined(CONFIG_ACPI)
-> > +     int i;
->
-> Won't this just result in a different warning since it now it will
-> declare 'i' in the middle of the function once CONFIG_MEMORY_HOTREMOVE
-> and ACPI are enabled?
+SGksDQoNClRoaXMgcGF0Y2hzZXQgZG8gc29tZSBjbGVhbnVwcyBpbiB1ZnMgaG9zdCBkcml2ZXIg
+YW5kIG1ha2UgdGhlIGRlbGF5IGZvciBob3N0IGVuYWJsaW5nIGN1c3RvbWl6YWJsZQ0KYnkgZGlm
+ZmVyZW50IGNvbnRyb2xsZXIgb3IgdmVuZG9ycy4NCg0KU3RhbmxleSBDaHUgKDQpOg0KICBzY3Np
+OiB1ZnM6IHJlbW92ZSBpbml0X3ByZWZldGNoX2RhdGEgaW4gc3RydWN0IHVmc19oYmENCiAgc2Nz
+aTogdWZzOiB1c2UgYW4gZW51bSBmb3IgaG9zdCBjYXBhYmlsaXRpZXMNCiAgc2NzaTogdWZzOiBh
+bGxvdyBjdXN0b21pemVkIGRlbGF5IGZvciBob3N0IGVuYWJsaW5nDQogIHNjc2k6IHVmcy1tZWRp
+YXRlazogcmVtb3ZlIGRlbGF5IGZvciBob3N0IGVuYWJsaW5nDQoNCiBkcml2ZXJzL3Njc2kvdWZz
+L3Vmcy1tZWRpYXRlay5jIHwgIDIgKw0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMgICAgICAg
+fCAyMSArKysrKy0tLS0tDQogZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuaCAgICAgICB8IDY4ICsr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLQ0KIDMgZmlsZXMgY2hhbmdlZCwgNTEgaW5z
+ZXJ0aW9ucygrKSwgNDAgZGVsZXRpb25zKC0pDQoNCi0tIA0KMi4xOC4wDQo=
 
-I didn't see a different warning with both configs enabled, because
--std=3Dgnu89 isn't
-enforced in arch/x86/boot/compressed but it does in other part of kernel.
-C99 and above allows declaration in middule of the function.
-
-Zhenzhong
