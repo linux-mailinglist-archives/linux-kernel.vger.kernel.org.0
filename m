@@ -2,465 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9F717A242
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C20917A249
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 10:34:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbgCEJdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 04:33:37 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725912AbgCEJdh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 04:33:37 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0259MhA5140714
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Mar 2020 04:33:35 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yjx04snnu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 04:33:35 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Thu, 5 Mar 2020 09:33:32 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 5 Mar 2020 09:33:25 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0259XO8d49348610
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Mar 2020 09:33:24 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21AA242049;
-        Thu,  5 Mar 2020 09:33:24 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D2AD4204D;
-        Thu,  5 Mar 2020 09:33:23 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.161.121])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Mar 2020 09:33:23 +0000 (GMT)
-Subject: Re: [PATCH v3 17/27] powerpc/powernv/pmem: Implement the Read Error
- Log command
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
- <20200221032720.33893-18-alastair@au1.ibm.com>
- <7767dec4-fb78-dd3e-3720-8d15f544639e@linux.ibm.com>
- <739066a997f83e7aa27dc364071223936fa753ef.camel@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Thu, 5 Mar 2020 10:33:22 +0100
+        id S1726956AbgCEJeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 04:34:24 -0500
+Received: from mout.web.de ([212.227.17.11]:49817 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725897AbgCEJeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 04:34:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1583400815;
+        bh=7biBOxRckJ39aV+/ETWmeZBlWXIgMLraqVVwUKgXbuQ=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=OmQvqiWADjN9maowEDZzC5FebyRX2qFmPQ7mzX1LuSEcACN3RvvkcxwlRWVdbAHBY
+         6dd0Q7viMSER4+vjjROqBKN4KDf/QCZC/y5CaBwlfyzYKB346aX94tNKtaIAPfWaAI
+         QRbcrRFyxcH0al45Oo+k+nbGBLr8Uyvjf9WB/hSo=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.16.47]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M0hfO-1jV23d2kD0-00upCY; Thu, 05
+ Mar 2020 10:33:35 +0100
+Subject: Re: [v5] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+References: <158339065180.26602.26457588086834858.stgit@devnote2>
+ <158339066140.26602.7533299987467005089.stgit@devnote2>
+ <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <3fb124a6-07d2-7a40-8981-07561aeb3c1e@web.de>
+Date:   Thu, 5 Mar 2020 10:33:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <739066a997f83e7aa27dc364071223936fa753ef.camel@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030509-0008-0000-0000-000003598926
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030509-0009-0000-0000-00004A7ABFC9
-Message-Id: <758b62a8-f359-504d-3d45-fa96d1ef468f@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-05_02:2020-03-04,2020-03-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 spamscore=0 bulkscore=0
- clxscore=1015 suspectscore=2 mlxlogscore=999 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003050059
+X-Provags-ID: V03:K1:dDL9WEbWqXKKfr2w1raoJA0we/yi6MbjqqPA/LAxdkdXC2oW2OU
+ dwj6TT6wdzaRybzN70AF4rcwQp0pG5ZNj9ACtjXod/CYyYIdLQTBqj/gDPxMYT12tDmDseO
+ JLPHhyxjJ1gtj1xf7+MRAE12asoOOYsoU7cIsXvAPNbWlof9wHTHWmphEKlfQ4kwlc5xX9V
+ 4vI4oEArGn2lNxy8EEFUw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Kf526ytFE4k=:vQAbKrdSDXGY6Buhz+OGha
+ 0nJm4kj4kA4KjPqeK79o1bmQ0l/y8YfcChOaN+vz4IgYhfAt4zd3jhQnJ0TzWtldGVXcsbsk7
+ 5Zm5URGusBxQDjyoxUrTiMfR3+2etg7Y5assi2GumeQzQbrf12moFiJa1cyxe2vV84Zs/pewU
+ Dch8Vp86JUhjnBsH4Qu4F0zys/Dx1Ope11tuWAbQrkg18K3AIo9a3ElKIZBFLkxtsdODgWsqi
+ W5oojYe7gorPTYELw1PyhWjGBp9t8qZYtPxh3sFv1mh/cFvaJHHcw9u7b4hxemFtsip/lzPfb
+ u4wfg+02LkxaMkRadJDB+uUMbn6KpEu9r2MKQ+7Ah8gbF1971eFaAKD8TOeq9IYYSSQzEH0Up
+ d+vX+IIagQZtviMQqbqBsORkr6CPE1kyy/ymQCUBrZDEHs9JyP040IBOv0O9EX8oDOL3hwWoC
+ VsGhFPAvfgW3lKP6ipWCRIEAeXUzwIvpi+3zaTIVEYaNkmkLiXCwBiB2BhnEJbHJ9I+mRZWaZ
+ Wtjgk7MaT0RDoCFTD0OFX/1od6Tz6NyeXAiUaluFjiZ6Sgt+PAgAfAZNszjtDveZsQpQdYle7
+ 9+Xs6/l84imzbLI7U4kvUGOoVK+Uq+TVcH9EnTwFfjZ5ZjHRDngFGHvNu1eXwb6Q5XJVDUaDN
+ s8sdnl7SMc8G1C6d1wAcJ3WCDfAUzVLaKcR/rIew/XmcitwoSra/PbYklAO8hcJZjqcPbvxFg
+ 5JF1JrH59V+d4xsplzyqGh0dEofDL+0N+vbyJWs1O/heAnHTy9hrqzR/CczpM4S87v/moSmbA
+ nzFEqwnmJ68iRd6/aJbPIEMHon3mjpXvf3K/itCJU4/HpI8FMQAvSenR9U8IhYFBalXWmlb3o
+ bYnaQhVinUML2FEqQU2unbFycCRLoRqJrKL1nRnnQnyU4H7vjONzHSNF4qiNbfX1CHsbd91l4
+ ozRj4tlc8n51yMaS4tkGkQZf3/4w2r/1FyRwC8K68RjbUdOu7vE7TijDy6CsRWxlG1QylPblc
+ LirMWrb5JPaKnW+J+WpwPtZvlGKdQZWse3kZr0hG4uUleVzk4jRqx2iNlVSKFIzPwZJMtp/Kj
+ RXRekzSUEpBHgKL5DUMJYdDV3Y+bjU9f+4jl+CLKeE7KftEJ2w+PlF46EZLfpToY6gWDX9J70
+ i7+z/MYCcpfbPhDW0ei/cUBVJ3gyb7f0iGK9yPUbXvcg/i1uJfPtOOok392MIrS6joalw/sGi
+ enY9fm0h/TB2n24bT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
->>> +	if (rc)
->>> +		goto out;
->>> +
->>> +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
->>> +				     ocxlpmem-
->>>> admin_command.data_offset + 0x28,
->>> +				     OCXL_HOST_ENDIAN, &log->wwid[1]);
->>> +	if (rc)
->>> +		goto out;
->>> +
->>> +	rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
->>> +				     ocxlpmem-
->>>> admin_command.data_offset + 0x30,
->>> +				     OCXL_HOST_ENDIAN, (u64 *)log-
->>>> fw_revision);
->>> +	if (rc)
->>> +		goto out;
->>> +	log->fw_revision[8] = '\0';
->>> +
->>> +	buf_length = (user_buf_length < log->buf_size) ?
->>> +		     user_buf_length : log->buf_size;
->>> +	for (i = 0; i < buf_length + 0x48; i += 8) {
->>> +		u64 val;
->>> +
->>> +		rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
->>> +					     ocxlpmem-
->>>> admin_command.data_offset + i,
->>> +					     OCXL_HOST_ENDIAN, &val);
->>> +		if (rc)
->>> +			goto out;
->>> +
->>> +		if (buf_is_user) {
->>> +			if (copy_to_user(&log->buf[i], &val,
->>> sizeof(u64))) {
->>> +				rc = -EFAULT;
->>> +				goto out;
->>> +			}
->>> +		} else
->>> +			log->buf[i] = val;
->>> +	}
->>
->>
->> I think it could be a bit simplified by keeping the handling of the
->> user
->> buffer out of this function. Always call it with a kernel buffer.
->> And
->> have only one copy_to_user() call on the ioctl() path. You'd need to
->> allocate a kernel buf on the ioctl path, but you're already doing it
->> on
->> the probe() path, so it should be doable to share code.
-> 
-> Hmm, the problem then is that on the IOCTL side, I'll have to save,
-> modify, then restore the buf member of struct
-> ioctl_ocxl_pmem_error_log, which would be uglier.
+How does this feedback fit to known concerns around the discussed wordings?
 
-
-buf is just an output buffer. All you'd need to do is allocate a kernel 
-buf, like it's already done for the "probe" case in dump_error_log(). 
-And add a global copy_to_user() of the buf at the end of the ioctl path, 
-instead of having multiple smaller copy_to_user() in the loop here.
-copy_to_user() is a bit expensive so it's usually better to regroup 
-them. I think it's easy here and make sense since that function is also 
-trying to handle both a kernel and user space bufffers.
-But we're not in a critical path, and after this patch, there are others 
-copying out mmio content to user buffers and those don't have a kernel 
-buffer to handle, so the copy_to_user() in a loop makes things easier.
-So I guess the conclusion is whatever you think is the easiest...
-
-
-
->>
->>
->>> +
->>> +	rc = admin_response_handled(ocxlpmem);
->>> +	if (rc)
->>> +		goto out;
->>> +
->>> +out:
->>> +	mutex_unlock(&ocxlpmem->admin_command.lock);
->>> +	return rc;
->>> +
->>> +}
->>> +
->>> +static int ioctl_error_log(struct ocxlpmem *ocxlpmem,
->>> +		struct ioctl_ocxl_pmem_error_log __user *uarg)
->>> +{
->>> +	struct ioctl_ocxl_pmem_error_log args;
->>> +	int rc;
->>> +
->>> +	if (copy_from_user(&args, uarg, sizeof(args)))
->>> +		return -EFAULT;
->>> +
->>> +	rc = read_error_log(ocxlpmem, &args, true);
->>> +	if (rc)
->>> +		return rc;
->>> +
->>> +	if (copy_to_user(uarg, &args, sizeof(args)))
->>> +		return -EFAULT;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static long file_ioctl(struct file *file, unsigned int cmd,
->>> unsigned long args)
->>> +{
->>> +	struct ocxlpmem *ocxlpmem = file->private_data;
->>> +	int rc = -EINVAL;
->>> +
->>> +	switch (cmd) {
->>> +	case IOCTL_OCXL_PMEM_ERROR_LOG:
->>> +		rc = ioctl_error_log(ocxlpmem,
->>> +				     (struct ioctl_ocxl_pmem_error_log
->>> __user *)args);
->>> +		break;
->>> +	}
->>> +	return rc;
->>> +}
->>> +
->>>    static const struct file_operations fops = {
->>>    	.owner		= THIS_MODULE,
->>>    	.open		= file_open,
->>>    	.release	= file_release,
->>> +	.unlocked_ioctl = file_ioctl,
->>> +	.compat_ioctl   = file_ioctl,
->>>    };
->>>    
->>>    /**
->>> @@ -527,6 +736,60 @@ static int read_device_metadata(struct
->>> ocxlpmem *ocxlpmem)
->>>    	return 0;
->>>    }
->>>    
->>> +static const char *decode_error_log_type(u8 error_log_type)
->>> +{
->>> +	switch (error_log_type) {
->>> +	case 0x00:
->>> +		return "general";
->>> +	case 0x01:
->>> +		return "predictive failure";
->>> +	case 0x02:
->>> +		return "thermal warning";
->>> +	case 0x03:
->>> +		return "data loss";
->>> +	case 0x04:
->>> +		return "health & performance";
->>> +	default:
->>> +		return "unknown";
->>> +	}
->>> +}
->>> +
->>> +static void dump_error_log(struct ocxlpmem *ocxlpmem)
->>> +{
->>> +	struct ioctl_ocxl_pmem_error_log log;
->>> +	u32 buf_size;
->>> +	u8 *buf;
->>> +	int rc;
->>> +
->>> +	if (ocxlpmem->admin_command.data_size == 0)
->>> +		return;
->>> +
->>> +	buf_size = ocxlpmem->admin_command.data_size - 0x48;
->>> +	buf = kzalloc(buf_size, GFP_KERNEL);
->>> +	if (!buf)
->>> +		return;
->>> +
->>> +	log.buf = buf;
->>> +	log.buf_size = buf_size;
->>> +
->>> +	rc = read_error_log(ocxlpmem, &log, false);
->>> +	if (rc < 0)
->>> +		goto out;
->>> +
->>> +	dev_warn(&ocxlpmem->dev,
->>> +		 "OCXL PMEM Error log: WWID=0x%016llx%016llx LID=0x%x
->>> PRC=%x type=0x%x %s, Uptime=%u seconds timestamp=0x%llx\n",
->>> +		 log.wwid[0], log.wwid[1],
->>> +		 log.log_identifier, log.program_reference_code,
->>> +		 log.error_log_type,
->>> +		 decode_error_log_type(log.error_log_type),
->>> +		 log.power_on_seconds, log.timestamp);
->>> +	print_hex_dump(KERN_WARNING, "buf", DUMP_PREFIX_OFFSET, 16, 1,
->>> buf,
->>> +		       log.buf_size, false);
->>
->> dev_warn already logs a warning. Isn't KERN_DEBUG more appropriate
->> for
->> the hex dump?
->>
->>
-> 
-> The hex dump is associated binary data for the warning, it doesn't
-> replicate the contents of the message.
-
-
-My point is not about duplicating, it's about exposing an hexadecimal 
-dump where it makes sense. Those DEBUG and WARNING tags are used for 
-filtering content. For example to know what to display on the console. A 
-warning to mention that a device hits a serious error is perfectly fine. 
-A hexadecimal dump which is going to be meaningless to most everybody is 
-not. The system is not crashing, so it's not like the console is our 
-last hope. I think the dump is debug data and should be tagged as such.
-
-   Fred
-
-
-
->>
->>> +
->>> +out:
->>> +	kfree(buf);
->>> +}
->>> +
->>>    /**
->>>     * probe_function0() - Set up function 0 for an OpenCAPI
->>> persistent memory device
->>>     * This is important as it enables templates higher than 0 across
->>> all other functions,
->>> @@ -568,6 +831,7 @@ static int probe(struct pci_dev *pdev, const
->>> struct pci_device_id *ent)
->>>    	struct ocxlpmem *ocxlpmem;
->>>    	int rc;
->>>    	u16 elapsed, timeout;
->>> +	u64 chi;
->>>    
->>>    	if (PCI_FUNC(pdev->devfn) == 0)
->>>    		return probe_function0(pdev);
->>> @@ -667,6 +931,11 @@ static int probe(struct pci_dev *pdev, const
->>> struct pci_device_id *ent)
->>>    	return 0;
->>>    
->>>    err:
->>> +	if (ocxlpmem &&
->>> +		    (ocxlpmem_chi(ocxlpmem, &chi) == 0) &&
->>> +		    (chi & GLOBAL_MMIO_CHI_ELA))
->>> +		dump_error_log(ocxlpmem);
->>> +
->>>    	/*
->>>    	 * Further cleanup is done in the release handler via
->>> free_ocxlpmem()
->>>    	 * This allows us to keep the character device live to handle
->>> IOCTLs to
->>> diff --git a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
->>> b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
->>> index d2d81fec7bb1..b953ee522ed4 100644
->>> --- a/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
->>> +++ b/arch/powerpc/platforms/powernv/pmem/ocxl_internal.h
->>> @@ -5,6 +5,7 @@
->>>    #include <linux/cdev.h>
->>>    #include <misc/ocxl.h>
->>>    #include <linux/libnvdimm.h>
->>> +#include <uapi/nvdimm/ocxl-pmem.h>
->>
->> Can't we limit the extra include to ocxl.c?
->>
-> 
-> Yes, there are no consumers referred to in ocxl_interal.[hc]
-> 
->> Completely unrelated, but ocxl.c contains most of the code for this
->> driver. We should consider renaming it to ocxlpmem.c or something
->> along
->> those lines, since it does a lot more than just interfacing with the
->> opencapi interface. And would avoid confusion with an other already
->> existing ocxl.c file.
->>
-> 
-> Ok, my thinking was that it's already in a pmem directory, but I can
-> see arguments both ways.
-> 
->>
->>>    #include <linux/mm.h>
->>>    
->>>    #define LABEL_AREA_SIZE	(1UL << PA_SECTION_SHIFT)
->>> diff --git a/include/uapi/nvdimm/ocxl-pmem.h
->>> b/include/uapi/nvdimm/ocxl-pmem.h
->>> new file mode 100644
->>> index 000000000000..b10f8ac0c20f
->>> --- /dev/null
->>> +++ b/include/uapi/nvdimm/ocxl-pmem.h
->>> @@ -0,0 +1,46 @@
->>> +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
->>> +/* Copyright 2017 IBM Corp. */
->>> +#ifndef _UAPI_OCXL_SCM_H
->>> +#define _UAPI_OCXL_SCM_H
->>> +
->>> +#include <linux/types.h>
->>> +#include <linux/ioctl.h>
->>> +
->>> +#define OCXL_PMEM_ERROR_LOG_ACTION_RESET	(1 << (32-32))
->>> +#define OCXL_PMEM_ERROR_LOG_ACTION_CHKFW	(1 << (53-32))
->>> +#define OCXL_PMEM_ERROR_LOG_ACTION_REPLACE	(1 << (54-32))
->>> +#define OCXL_PMEM_ERROR_LOG_ACTION_DUMP		(1 << (55-32))
->>> +
->>> +#define OCXL_PMEM_ERROR_LOG_TYPE_GENERAL		(0x00)
->>> +#define OCXL_PMEM_ERROR_LOG_TYPE_PREDICTIVE_FAILURE	(0x01)
->>> +#define OCXL_PMEM_ERROR_LOG_TYPE_THERMAL_WARNING	(0x02)
->>> +#define OCXL_PMEM_ERROR_LOG_TYPE_DATA_LOSS		(0x03)
->>> +#define OCXL_PMEM_ERROR_LOG_TYPE_HEALTH_PERFORMANCE	(0x04)
->>> +
->>> +struct ioctl_ocxl_pmem_error_log {
->>> +	__u32 log_identifier; /* out */
->>> +	__u32 program_reference_code; /* out */
->>> +	__u32 action_flags; /* out, recommended course of action */
->>> +	__u32 power_on_seconds; /* out, Number of seconds the
->>> controller has been on when the error occurred */
->>> +	__u64 timestamp; /* out, relative time since the current IPL */
->>> +	__u64 wwid[2]; /* out, the NAA formatted WWID associated with
->>> the controller */
->>> +	char  fw_revision[8+1]; /* out, firmware revision as null
->>> terminated text */
->>
->> The 8+1 size will make the compiler add some padding here. Are we
->> confident that all the compilers, at least on powerpc, will do the
->> same
->> thing and we can guarantee a kernel ABI? I would play it safe and
->> have a
->> discussion with folks who understand compilers better.
->>
-> 
-> I'll add some explicit padding.
-> 
->>
->>
->>> +	__u16 buf_size; /* in/out, buffer size provided/required.
->>> +			 * If required is greater than provided, the
->>> buffer
->>> +			 * will be truncated to the amount provided. If
->>> its
->>> +			 * less, then only the required bytes will be
->>> populated.
->>> +			 * If it is 0, then there are no more error log
->>> entries.
->>> +			 */
->>> +	__u8  error_log_type;
->>> +	__u8  reserved1;
->>> +	__u32 reserved2;
->>> +	__u64 reserved3[2];
->>> +	__u8 *buf; /* pointer to output buffer */
->>> +};
->>> +
->>> +/* ioctl numbers */
->>> +#define OCXL_PMEM_MAGIC 0x5C
->>
->> Randomly picked?
->> See (and add entry in) Documentation/userspace-api/ioctl/ioctl-
->> number.rst
->>
-> Ok
-> 
->>
->>     Fred
->>
->>
->>
->>> +/* SCM devices */
->>> +#define IOCTL_OCXL_PMEM_ERROR_LOG			_IOWR(OCXL_PMEM
->>> _MAGIC, 0x01, struct ioctl_ocxl_pmem_error_log)
->>> +
->>> +#endif /* _UAPI_OCXL_SCM_H */
->>>
-
+Regards,
+Markus
