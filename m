@@ -2,126 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE42317AF48
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 21:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD7517AF51
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 21:03:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbgCEUBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 15:01:18 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45082 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbgCEUBR (ORCPT
+        id S1726390AbgCEUDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 15:03:07 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:44440 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726049AbgCEUDG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 15:01:17 -0500
-Received: by mail-qt1-f195.google.com with SMTP id a4so5121450qto.12
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 12:01:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=EtvUYpx/Z6jkOZvIKTGZ1YcNxmsRMa5tAVsSg5EuMhY=;
-        b=Q5g8rYEbooZCweqZN9vq52DV5MrDA80j55ts6X0pDZ5lQA7onJ4ZLCWhc1Ih5wtCZn
-         bDB9MUgEAa4hLg2LgEvy3EN3aBTsbXRTYXG5+b6DxpzxbCoZEtqESFI6uPAxr0h7Ok5Z
-         ZDi2D8FmgdAPKe4MJHMGZP2fBtt9d9ZQoeFUes3aj/+EIscyYpBwFB+sZmx5Tjun42eb
-         hUPY7LkUcH0cAIiAcSvecVxXJerpkQY26TU2F3Ck4RyJg50ydFcNnAG5Xkeye628LHDQ
-         eACQJjlGaMUXaL2fOMqECgtEKRq9fI4SdQbtsf7neiVrjGBah0jSzkSoVgPgYSGyXuzz
-         3lPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EtvUYpx/Z6jkOZvIKTGZ1YcNxmsRMa5tAVsSg5EuMhY=;
-        b=g6VPfYj7OCO7jwwz6zRzXfCV7eYON4Xq6QNmnbv+aozGmm+4iNUzMKDkjagrppRCeI
-         vesPQWB7EBH/cwQF07ZEJ9EhOf3uhd3K8kWH9a4kABUI21SM+PbBEvUiiLF8S0MynVdK
-         EHOZtTFF5xXdd0GbfflhGUjQyoqibexORYWdNM2m5ev85QrZNt6XMx9CwyyvtavS2bTD
-         DTleEB3pFtXCxqjZutTBch7AadUcm4arQEFVcgA2/FEO7bzRuWUg+L1aib89GvJzn8+2
-         uPKuKGeSN9+mfTeE8EldFzhnu3lhUB2vATJnVlumC0ii8hB8H5xqAn4dT/41Z07XajzV
-         ZUQA==
-X-Gm-Message-State: ANhLgQ3YTqpIpu74lHpueOKtufCovQuaexbRdy6c94qmaJc1VBSaIn00
-        mduLGS7ZPNc6Y+l+0eev+beqMw==
-X-Google-Smtp-Source: ADFU+vs2fX0fSX8HT8ldaRkDqTnvkbe+A+L8CQ9JvxGCaw+F/gPTk0fICGkAht0UcmGT1kh4f+zKTA==
-X-Received: by 2002:ac8:4cd1:: with SMTP id l17mr362984qtv.165.1583438476608;
-        Thu, 05 Mar 2020 12:01:16 -0800 (PST)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id w21sm17576346qth.17.2020.03.05.12.01.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Mar 2020 12:01:15 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     jroedel@suse.de
-Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] iommu/vt-d: fix RCU-list bugs in intel_iommu_init
-Date:   Thu,  5 Mar 2020 15:00:46 -0500
-Message-Id: <1583438446-9959-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 5 Mar 2020 15:03:06 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 12234C10DD;
+        Thu,  5 Mar 2020 20:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1583438586; bh=KxmfiRKc96Lw0HUN1flKo0En+90Ix6xmPDnhmOpmCYU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RUxeWUMRh/BaX0ePHWDbb+qAtJSk16MF80nfXBNyY9NIsRGbaNfQnEDp0O1Dt41Zs
+         SSjm4S+WFKMGbxMw2Efo/u4Lq09Y/L659RZXh6FMfKTuwwcbstalog6UF01G3+JpFN
+         RbHrcnupp285rzUM7yjJ7ecR2j6jW/YyqyPSVDaRGC9KhZf81U/7mUQfdgvKXnKZ7y
+         bnO5j938rmbrkL665pB8DN9h5ljM5M5Erl/3tyJdskP0bq1mJIYlyBZvR10iYlDCyj
+         NJYcLsYQeKmbt+A8GX6Gq22JPXS13rrbAl8iw3uVHslPd+HbT6dKx9JGVoKyS8Cko+
+         s18puZuPKdojQ==
+Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.79])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 58E0CA005B;
+        Thu,  5 Mar 2020 20:02:58 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 0/4] ARC: handle DSP presence in HW
+Date:   Thu,  5 Mar 2020 23:02:48 +0300
+Message-Id: <20200305200252.14278-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several places traverse RCU-list without holding any lock in
-intel_iommu_init(). Fix them by acquiring dmar_global_lock.
+Arc processors may have DSP extension which is optional.
+In this patch series we:
+* Handle issues caused by DSP extension presence in HW
+* Add optional support for DSP-enabled applications in
+  userspace (with optional AGU extension support)
 
- WARNING: suspicious RCU usage
- -----------------------------
- drivers/iommu/intel-iommu.c:5216 RCU-list traversed in non-reader section!!
+Changes v1->v2:
+ * use r10:r11 register pair as a scratch for ASM code instead of
+   r58:r59
+ * reset DSP_CTRL to value suitable for kernel also in case of
+   DSP for userspcae enabled
+ * Use "Ir" instead of "I" parameter modifier to inline ASM
+   to give compiler wiggle room.
+ * Save / restore ACC0_GLO, ACC0_GHI only in case of context
+   switch
+ * Don't define additional options in headers to not introduce
+   explicit include dependencies
+ * Mode DSP config check to DSP code itself
+ * Minor fixes
 
- other info that might help us debug this:
+Eugeniy Paltsev (4):
+  ARC: add helpers to sanitize config options
+  ARC: handle DSP presence in HW
+  ARC: add support for DSP-enabled userspace applications
+  ARC: allow userspace DSP applications to use AGU extensions
 
- rcu_scheduler_active = 2, debug_locks = 1
- no locks held by swapper/0/1.
+ arch/arc/Kconfig                   |  50 +++++++++-
+ arch/arc/include/asm/arcregs.h     |  26 +++++
+ arch/arc/include/asm/asserts.h     |  34 +++++++
+ arch/arc/include/asm/dsp-impl.h    | 150 +++++++++++++++++++++++++++++
+ arch/arc/include/asm/dsp.h         |  29 ++++++
+ arch/arc/include/asm/entry-arcv2.h |   6 ++
+ arch/arc/include/asm/processor.h   |   4 +
+ arch/arc/include/asm/ptrace.h      |   3 +
+ arch/arc/include/asm/switch_to.h   |   2 +
+ arch/arc/kernel/asm-offsets.c      |   4 +
+ arch/arc/kernel/head.S             |   4 +
+ arch/arc/kernel/setup.c            |  34 ++++---
+ 12 files changed, 332 insertions(+), 14 deletions(-)
+ create mode 100644 arch/arc/include/asm/asserts.h
+ create mode 100644 arch/arc/include/asm/dsp-impl.h
+ create mode 100644 arch/arc/include/asm/dsp.h
 
- Call Trace:
-  dump_stack+0xa0/0xea
-  lockdep_rcu_suspicious+0x102/0x10b
-  intel_iommu_init+0x947/0xb13
-  pci_iommu_init+0x26/0x62
-  do_one_initcall+0xfe/0x500
-  kernel_init_freeable+0x45a/0x4f8
-  kernel_init+0x11/0x139
-  ret_from_fork+0x3a/0x50
- DMAR: Intel(R) Virtualization Technology for Directed I/O
-
-Fixes: d8190dc63886 ("iommu/vt-d: Enable DMA remapping after rmrr mapped")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- drivers/iommu/intel-iommu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 6fa6de2b6ad5..bc138ceb07bc 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5193,6 +5193,7 @@ int __init intel_iommu_init(void)
- 
- 	init_iommu_pm_ops();
- 
-+	down_read(&dmar_global_lock);
- 	for_each_active_iommu(iommu, drhd) {
- 		iommu_device_sysfs_add(&iommu->iommu, NULL,
- 				       intel_iommu_groups,
-@@ -5200,6 +5201,7 @@ int __init intel_iommu_init(void)
- 		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
- 		iommu_device_register(&iommu->iommu);
- 	}
-+	up_read(&dmar_global_lock);
- 
- 	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
- 	if (si_domain && !hw_pass_through)
-@@ -5210,7 +5212,6 @@ int __init intel_iommu_init(void)
- 	down_read(&dmar_global_lock);
- 	if (probe_acpi_namespace_devices())
- 		pr_warn("ACPI name space devices didn't probe correctly\n");
--	up_read(&dmar_global_lock);
- 
- 	/* Finally, we enable the DMA remapping hardware. */
- 	for_each_iommu(iommu, drhd) {
-@@ -5219,6 +5220,8 @@ int __init intel_iommu_init(void)
- 
- 		iommu_disable_protect_mem_regions(iommu);
- 	}
-+	up_read(&dmar_global_lock);
-+
- 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
- 
- 	intel_iommu_enabled = 1;
 -- 
-1.8.3.1
+2.21.1
 
