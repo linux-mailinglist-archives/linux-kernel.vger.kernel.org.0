@@ -2,118 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E5C17A392
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 539AB17A3CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:14:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbgCELCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:02:15 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:37070 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgCELCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:02:15 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 025B2CHG070950;
-        Thu, 5 Mar 2020 05:02:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583406132;
-        bh=Xf1sRmkJiwnY8rrWe4eV5yH+UcPKjlexHlXHcZvFUcA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=KbmLfbIYtekCXup3DzahcPLAG6PjYGXDRJQqtLSPGx3/XRkROU6Vyw6xXsVWxs4lp
-         IHDLzIQvPsIKqkDhP5tMJNuNqoWVZg0+uoG3CYrSEvDml6Ns8yDx3SUEv7L4xE8mou
-         qymDTlEym8/Y9U/t/gFQG0EN4iWTAm4JlZDbXN2I=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 025B2C90041167
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Mar 2020 05:02:12 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Mar
- 2020 05:02:11 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Mar 2020 05:02:11 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 025B28qQ080091;
-        Thu, 5 Mar 2020 05:02:09 -0600
-Subject: Re: [for-next PATCH v2 1/5] phy: ti: gmii-sel: simplify config
- dependencies between net drivers and gmii phy
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC:     Sekhar Nori <nsekhar@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        netdev <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200303160029.345-1-grygorii.strashko@ti.com>
- <20200303160029.345-2-grygorii.strashko@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a6dc55bb-090f-d1de-90c7-247197d3748e@ti.com>
-Date:   Thu, 5 Mar 2020 16:36:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727389AbgCELMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:12:35 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60754 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727359AbgCELMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 06:12:34 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8BEFDADE6EC7917DF24A;
+        Thu,  5 Mar 2020 19:12:28 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 5 Mar 2020 19:12:19 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>
+CC:     <will@kernel.org>, <ak@linux.intel.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <james.clark@arm.com>,
+        <qiangqing.zhang@nxp.com>, John Garry <john.garry@huawei.com>
+Subject: [PATCH 0/6] perf test pmu-events case
+Date:   Thu, 5 Mar 2020 19:08:00 +0800
+Message-ID: <1583406486-154841-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <20200303160029.345-2-grygorii.strashko@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+This series introduces a basic perf test pmu-events test case.
 
-On 03/03/20 9:30 pm, Grygorii Strashko wrote:
-> The phy-gmii-sel can be only auto selected in Kconfig and now the pretty
-> complex Kconfig dependencies are defined for phy-gmii-sel driver, which
-> also need to be updated every time phy-gmii-sel is re-used for any new
-> networking driver.
-> 
-> Simplify Kconfig definition for phy-gmii-sel PHY driver - drop all
-> dependencies and from networking drivers and rely on using 'imply
-> PHY_TI_GMII_SEL' in Kconfig definitions for networking drivers instead.
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
->  drivers/net/ethernet/ti/Kconfig | 1 +
+The test works by verifying correctly created aliases for the HW PMUs in
+the host system.
 
-I can pick this in my tree. Can you give your Acked-by since there is a
-small change in drivers/net?
+The aliases come from a set of invented test events, which are (mostly)
+arch agnostic (even though I copied these aliases from pre-existing x86
+and arm64 JSONs).
 
-Thanks
-Kishon
->  drivers/phy/ti/Kconfig          | 3 ---
->  2 files changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-> index bf98e0fa7d8b..8a6ca16eee3b 100644
-> --- a/drivers/net/ethernet/ti/Kconfig
-> +++ b/drivers/net/ethernet/ti/Kconfig
-> @@ -53,6 +53,7 @@ config TI_CPSW
->  	select MFD_SYSCON
->  	select PAGE_POOL
->  	select REGMAP
-> +	imply PHY_TI_GMII_SEL
->  	---help---
->  	  This driver supports TI's CPSW Ethernet Switch.
->  
-> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
-> index 6dbe9d0b9ff3..15a3bcf32308 100644
-> --- a/drivers/phy/ti/Kconfig
-> +++ b/drivers/phy/ti/Kconfig
-> @@ -106,11 +106,8 @@ config TWL4030_USB
->  
->  config PHY_TI_GMII_SEL
->  	tristate
-> -	default y if TI_CPSW=y || TI_CPSW_SWITCHDEV=y
-> -	depends on TI_CPSW || TI_CPSW_SWITCHDEV || COMPILE_TEST
->  	select GENERIC_PHY
->  	select REGMAP
-> -	default m
->  	help
->  	  This driver supports configuring of the TI CPSW Port mode depending on
->  	  the Ethernet PHY connected to the CPSW Port.
-> 
+In the test, core and uncore events are treated slightly differently. For
+core test events, all events are matched. However, for uncore test events,
+these have "Unit" property, so can only be matched when the corresponding
+HW PMU exists in the host sytem.
+
+A test run looks like this on my x86 dev box:
+
+kernel-dev$ tools/perf/perf test -vv 10
+Couldn't bump rlimit(MEMLOCK), failures may take place when creating BPF maps, etc
+10: PMU event aliases                                     :
+--- start ---
+test child forked, pid 30869
+Using CPUID GenuineIntel-6-9E-9
+intel_pt default config: tsc,mtc,mtc_period=3,psb_period=3,pt,branch
+skipping testing PMU software
+testing PMU power: skip
+testing PMU cpu: matched event segment_reg_loads.any
+testing PMU cpu: matched event dispatch_blocked.any
+testing PMU cpu: matched event eist_trans
+testing PMU cpu: matched event bp_l1_btb_correct
+testing PMU cpu: matched event bp_l2_btb_correct
+testing PMU cpu: pass
+testing PMU cstate_core: skip
+testing PMU uncore_cbox_2: matched event unc_cbo_xsnp_response.miss_eviction
+testing PMU uncore_cbox_2: pass
+skipping testing PMU breakpoint
+testing PMU uncore_cbox_0: matched event unc_cbo_xsnp_response.miss_eviction
+testing PMU uncore_cbox_0: pass
+skipping testing PMU tracepoint
+testing PMU cstate_pkg: skip
+testing PMU uncore_arb: skip
+testing PMU msr: skip
+testing PMU uncore_cbox_3: matched event unc_cbo_xsnp_response.miss_eviction
+testing PMU uncore_cbox_3: pass
+testing PMU intel_pt: skip
+testing PMU uncore_cbox_1: matched event unc_cbo_xsnp_response.miss_eviction
+testing PMU uncore_cbox_1: pass
+test child finished with 0
+---- end ----
+PMU event aliases: Ok
+
+
+Comments welcome.
+
+John Garry (6):
+  perf jevents: Fix leak of mapfile memory
+  perf jevents: Support test events folder
+  perf jevents: Add some test events
+  perf pmu: Refactor pmu_add_cpu_aliases()
+  perf pmu: Add is_pmu_core()
+  perf test: Add pmu-events test
+
+ .../pmu-events/arch/test/test_cpu/branch.json |  12 ++
+ .../pmu-events/arch/test/test_cpu/other.json  |  26 +++
+ .../pmu-events/arch/test/test_cpu/uncore.json |  21 ++
+ tools/perf/pmu-events/jevents.c               |  59 +++++-
+ tools/perf/pmu-events/pmu-events.h            |   4 +
+ tools/perf/tests/Build                        |   1 +
+ tools/perf/tests/builtin-test.c               |   4 +
+ tools/perf/tests/pmu-events.c                 | 192 ++++++++++++++++++
+ tools/perf/tests/tests.h                      |   1 +
+ tools/perf/util/pmu.c                         |  26 ++-
+ tools/perf/util/pmu.h                         |   4 +
+ 11 files changed, 336 insertions(+), 14 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/test/test_cpu/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/test/test_cpu/other.json
+ create mode 100644 tools/perf/pmu-events/arch/test/test_cpu/uncore.json
+ create mode 100644 tools/perf/tests/pmu-events.c
+
+-- 
+2.17.1
+
