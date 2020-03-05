@@ -2,111 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2D717A1A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:45:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 551A717A1A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:45:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgCEIoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 03:44:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38449 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbgCEIoB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:44:01 -0500
-Received: by mail-lj1-f194.google.com with SMTP id w1so5111763ljh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:44:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fbdyI132YwoclqRAqQFcdVx80Hpq+rOO83F3M2/coUY=;
-        b=M2RHZfPPLjF7FpMQLcCbqr8EN9g6Ic3+vH8uz+umLS+RFof6hkjjSGWTRM6jNNndox
-         k6DtkldAR/CFy6cPpqVUsaG5ysOvTdmV7xhr9qA9AOwkMQXVfMLnhkq0azy7efyPI+aS
-         4qvbMDOoeAen2vmmUdCuD6AsTPljasQC9vX32+eqQCBMytLYsMIKUzY+wwBi6asEtwH2
-         xVmjHtapMbyBHpM3bGAW48hfzKoqNSC7wyVR6U/+RZMWp9vtaHXNEHufluU0DVURs3tI
-         W+N/AWsbjr/pRCMw/XP/p0QATrMAgRglWks0u8wK+Dm4YFWcWgccy753zPXixcUkMkKf
-         kfcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fbdyI132YwoclqRAqQFcdVx80Hpq+rOO83F3M2/coUY=;
-        b=Cx7KoqhZhUBcxVG4lz6lZDX+o5EmuPyiwE3elGjI7QHjVF+vpDWZFXICJN+dD7U3M3
-         Fzl6BEoXktYkvTTmCwinPS/OQMoQHvMB+CpkB2YB3XiVcka9JKCkS2D6zZIKkKpOD5NA
-         fIbuKEhhs61kx6PdGJumb2wEN/W9KaFnMOlQyH0EwyMAh1KpDqixjEAULc0vFTvU5sm4
-         scmMOo+mpP4IBkCCdy8FbkYtCY+D0E3a9IUAiK01L1NPNHM+m3+wUY3In0/xeMu9jJ/j
-         gi9gBcIgEIw3aD1wB0YUdYOx+zP0tCvb4MriBcLgD1jFdyBntjuuhJ/5WUbkzxL4NzdG
-         ivsg==
-X-Gm-Message-State: ANhLgQ1WMZKaHt3euVRdQf+KETUH57SfrN0YzZeaMKJbeFDrxZMRIX9H
-        kMdmF5g01ubjQw1lczQ7uh/enIfUpeax4r8yTTvJ8g==
-X-Google-Smtp-Source: ADFU+vvRFk8g3wXnA/A8ma/dUQb4x8dS4Zxl9FCH95G0Ve3S38UAd/rE7NSBOFGF0YuUMSSw1xX1W7Ho7mX9olGU4y8=
-X-Received: by 2002:a05:651c:2049:: with SMTP id t9mr4675395ljo.39.1583397839207;
- Thu, 05 Mar 2020 00:43:59 -0800 (PST)
+        id S1726282AbgCEIpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:45:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725937AbgCEIpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 03:45:49 -0500
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 398B121739
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Mar 2020 08:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583397948;
+        bh=fWS3WZ5Kortv8WPPLoSO915bYycttqhtNLWBFTUiEyk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JiYovA/qdm9/SWizxKOMRvJENTYZpYNV6OuvwMqZO4Jja/qXWhpAuiDDN8OHyMPp6
+         nDsAo5ffUvcwy1P2EOz1oytoMWcMZVLCfc33YAcotxvTiQxc1ryQ1a1FP3u1X4CDZf
+         qRvR4py3rRVhoP+nmgCWKpxeGbvCj50n+JmYIKsA=
+Received: by mail-wr1-f46.google.com with SMTP id v11so3958660wrm.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:45:48 -0800 (PST)
+X-Gm-Message-State: ANhLgQ3HUCELEPd4ZPudww+ldYHCIqpIGJ65oWB+GnTf6QTfGF2buQUK
+        RGxSxj/J94IZKFqkjX/3lTCNVtF52pV2WGfZTrW5wQ==
+X-Google-Smtp-Source: ADFU+vs9bN8Xq64X7JM21vY2L2wxsMUm+2oRJLz9+zoka/skOAbrtQ825bzO36uDKi/yK2nlHeq81MbJ5TeGbjiDLuQ=
+X-Received: by 2002:a5d:6051:: with SMTP id j17mr8872658wrt.151.1583397946565;
+ Thu, 05 Mar 2020 00:45:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20190617221134.9930-1-f.fainelli@gmail.com> <20191114181243.q37rxoo3seds6oxy@pengutronix.de>
- <7322163f-e08e-a6b7-b143-e9d59917ee5b@gmail.com> <20191115070842.2x7psp243nfo76co@pengutronix.de>
- <20191115114416.ba6lmwb7q4gmepzc@pengutronix.de> <60bda4a9-f4f8-3641-2612-17fab3173b29@gmail.com>
- <CACRpkdYJR3gQCb4WXwF4tGzk+tT7jMcV9=nDK0PFkeh+0G11bA@mail.gmail.com> <2639dfb0-9e48-cc0f-27e5-34308f790293@gmail.com>
-In-Reply-To: <2639dfb0-9e48-cc0f-27e5-34308f790293@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 5 Mar 2020 09:43:48 +0100
-Message-ID: <CACRpkdZ8JA=DXOxzYwyvBxCMd2Q5uzLTn87AVK7wdrxHFo5ydQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] KASan for arm
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Marco Felsch <m.felsch@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        kvmarm@lists.cs.columbia.edu, Jonathan Corbet <corbet@lwn.net>,
-        Abbott Liu <liuwenliang@huawei.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        drjones@redhat.com, Vladimir Murzin <vladimir.murzin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Landley <rob@landley.net>, philip@cog.systems,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <CAKv+Gu_3ZRRcoAcLTVVQe26q5x9KALmztaNQF=e=KqWaAwxtpA@mail.gmail.com>
+ <20200305084041.24053-1-vdronov@redhat.com> <20200305084041.24053-2-vdronov@redhat.com>
+In-Reply-To: <20200305084041.24053-2-vdronov@redhat.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 5 Mar 2020 09:45:35 +0100
+X-Gmail-Original-Message-ID: <CAKv+Gu_n8MhgRFw-BUFgN1UUfTh1R6wsCNxKRA9QrQK74z6g7g@mail.gmail.com>
+Message-ID: <CAKv+Gu_n8MhgRFw-BUFgN1UUfTh1R6wsCNxKRA9QrQK74z6g7g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] efi: fix a race and a buffer overflow while
+ reading efivars via sysfs
+To:     Vladis Dronov <vdronov@redhat.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>, joeyli <jlee@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Thu, 5 Mar 2020 at 09:41, Vladis Dronov <vdronov@redhat.com> wrote:
+>
+> There is a race and a buffer overflow corrupting a kernel memory while
+> reading an efi variable with a size more than 1024 bytes via the older
+> sysfs method. This happens because accessing struct efi_variable in
+> efivar_{attr,size,data}_read() and friends is not protected from
+> a concurrent access leading to a kernel memory corruption and, at best,
+> to a crash. The race scenario is the following:
+>
+> CPU0:                                CPU1:
+> efivar_attr_read()
+>   var->DataSize = 1024;
+>   efivar_entry_get(... &var->DataSize)
+>     down_interruptible(&efivars_lock)
+>                                      efivar_attr_read() // same efi var
+>                                        var->DataSize = 1024;
+>                                        efivar_entry_get(... &var->DataSize)
+>                                          down_interruptible(&efivars_lock)
+>     virt_efi_get_variable()
+>     // returns EFI_BUFFER_TOO_SMALL but
+>     // var->DataSize is set to a real
+>     // var size more than 1024 bytes
+>     up(&efivars_lock)
+>                                          virt_efi_get_variable()
+>                                          // called with var->DataSize set
+>                                          // to a real var size, returns
+>                                          // successfully and overwrites
+>                                          // a 1024-bytes kernel buffer
+>                                          up(&efivars_lock)
+>
+> This can be reproduced by concurrent reading of an efi variable which size
+> is more than 1024 bytes:
+>
+> ts# for cpu in $(seq 0 $(nproc --ignore=1)); do ( taskset -c $cpu \
+> cat /sys/firmware/efi/vars/KEKDefault*/size & ) ; done
+>
+> Fix this by using a local variable for a var's data buffer size so it
+> does not get overwritten.
+>
+> Reported-by: Bob Sanders <bob.sanders@hpe.com> and the LTP testsuite
+> Link: https://lore.kernel.org/linux-efi/20200303085528.27658-1-vdronov@redhat.com/T/#u
 
-On Fri, Jan 17, 2020 at 8:55 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+For the future, please don't add these links. This one points to the
+old version of the patch, not to this one. It will be added by the
+tooling once the patch gets picked up.
 
-> Let me submit and rebase v7 get the auto builders some days to see if it
-> exposes a new build issue and then we toss it to RMK's patch tracker and
-> fix bugs from there?
-
-Sorry for hammering, can we get some initial patches going into
-Russell's patch tracker here? I can sign them off and put them in
-if you don't have time.
-
-Thanks,
-Linus Walleij
+> Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+> ---
+>  drivers/firmware/efi/efivars.c | 29 ++++++++++++++++++++---------
+>  1 file changed, 20 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
+> index 7576450c8254..69f13bc4b931 100644
+> --- a/drivers/firmware/efi/efivars.c
+> +++ b/drivers/firmware/efi/efivars.c
+> @@ -83,13 +83,16 @@ static ssize_t
+>  efivar_attr_read(struct efivar_entry *entry, char *buf)
+>  {
+>         struct efi_variable *var = &entry->var;
+> +       unsigned long size = sizeof(var->Data);
+>         char *str = buf;
+> +       int ret;
+>
+>         if (!entry || !buf)
+>                 return -EINVAL;
+>
+> -       var->DataSize = 1024;
+> -       if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
+> +       ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
+> +       var->DataSize = size;
+> +       if (ret)
+>                 return -EIO;
+>
+>         if (var->Attributes & EFI_VARIABLE_NON_VOLATILE)
+> @@ -116,13 +119,16 @@ static ssize_t
+>  efivar_size_read(struct efivar_entry *entry, char *buf)
+>  {
+>         struct efi_variable *var = &entry->var;
+> +       unsigned long size = sizeof(var->Data);
+>         char *str = buf;
+> +       int ret;
+>
+>         if (!entry || !buf)
+>                 return -EINVAL;
+>
+> -       var->DataSize = 1024;
+> -       if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
+> +       ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
+> +       var->DataSize = size;
+> +       if (ret)
+>                 return -EIO;
+>
+>         str += sprintf(str, "0x%lx\n", var->DataSize);
+> @@ -133,12 +139,15 @@ static ssize_t
+>  efivar_data_read(struct efivar_entry *entry, char *buf)
+>  {
+>         struct efi_variable *var = &entry->var;
+> +       unsigned long size = sizeof(var->Data);
+> +       int ret;
+>
+>         if (!entry || !buf)
+>                 return -EINVAL;
+>
+> -       var->DataSize = 1024;
+> -       if (efivar_entry_get(entry, &var->Attributes, &var->DataSize, var->Data))
+> +       ret = efivar_entry_get(entry, &var->Attributes, &size, var->Data);
+> +       var->DataSize = size;
+> +       if (ret)
+>                 return -EIO;
+>
+>         memcpy(buf, var->Data, var->DataSize);
+> @@ -250,14 +259,16 @@ efivar_show_raw(struct efivar_entry *entry, char *buf)
+>  {
+>         struct efi_variable *var = &entry->var;
+>         struct compat_efi_variable *compat;
+> +       unsigned long datasize = sizeof(var->Data);
+>         size_t size;
+> +       int ret;
+>
+>         if (!entry || !buf)
+>                 return 0;
+>
+> -       var->DataSize = 1024;
+> -       if (efivar_entry_get(entry, &entry->var.Attributes,
+> -                            &entry->var.DataSize, entry->var.Data))
+> +       ret = efivar_entry_get(entry, &var->Attributes, &datasize, var->Data);
+> +       var->DataSize = datasize;
+> +       if (ret)
+>                 return -EIO;
+>
+>         if (in_compat_syscall()) {
+> --
+> 2.20.1
+>
