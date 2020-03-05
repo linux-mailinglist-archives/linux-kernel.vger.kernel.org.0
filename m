@@ -2,230 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7D4817AF11
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 20:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5227317AF1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 20:42:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbgCETlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 14:41:08 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39386 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbgCETlI (ORCPT
+        id S1726170AbgCETmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 14:42:42 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37714 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbgCETml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 14:41:08 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d8so16931pje.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 11:41:07 -0800 (PST)
+        Thu, 5 Mar 2020 14:42:41 -0500
+Received: by mail-qt1-f193.google.com with SMTP id j34so5099491qtk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 11:42:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+32SAMShzFc9RiMKQoVwzpevpnCbB5DftyvOF5cOceQ=;
-        b=EXDr6Rod3rKxTQ7ADG2JRkNJRFEWACbapoyB3v8mIgYcXGB3wvAqJZuHDzGh6rPyh3
-         dgAgb2/MCkuChVSLeTirzUO/vlPCIbUcoQArbcTNwfy6c5yWoOfk8+78YQXYDB5Vn5zK
-         RZ6fQp7iH7iK/KxTTFsxWqBUmP2QPOXifqhC7VSC63nGvUuMal1nqVHKb8rHYTDd2XMX
-         dZF1Sgq5FnxtFG4KaEy1knHeBH4baQDzxgbJQT+dXW1leTtoO2ApKvquWmYdr3CwbkJC
-         8sOmzFvzu3r8DRtefmJoP0TfnzLarxvkTB9yQgBnkT9tez82ZtunE0pJfLUJTpnIX6vg
-         5DYA==
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=w9aoQTL/UgB1vjS1g1BNCEFf726wH1IBTlgPdnlXI/U=;
+        b=fjeRQagfXdDHJ9tX9UzUCHDLIRYnroBruHmgIET5qMJijpIVvgC0ui4ms8zm4UzETx
+         qp3y6SeLtxy4vuSto/2bfD5iqzG09QLY+omDnutMsTl9P42zubJINW1U3+uygzUfqRcX
+         rCBsRIoX7fr5DnA0zv4f0LKuY6LRaVQLxey8rncYou16dO6d8X1zdniHR/7BuER9ibfr
+         FjTz/WmRRZnhn2FLNpaFU1yD2E8pulQoGO4ZRwXe8XnU11dUJoenN/h+dYZpVj+JiVmr
+         fNLWNPv4kBYbx0VaGKTo6HoMSO8wsLZcmMJeM4fKUd4CmKNI6XMBOe3gWXCc6yoNH5KY
+         wdYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+32SAMShzFc9RiMKQoVwzpevpnCbB5DftyvOF5cOceQ=;
-        b=HV4oUAGp4ADPyiCG4EV6V9VCwBz3veuUcj0V6GzzUgaqJS2amHDxmdE+F+16AyrvLj
-         3GTwjyznOXRAEDD2h4zWdX19aQ0rvveyoJSYLJHLwWfY6dMCEI68QbFAis3gVsYBNAAx
-         yRrlyti9WQpRsFFNYZVQBE/FjqcXbwzdi1Y+ii1Xfsr5q5SOYhwWnPzuoGfW1aqDQpu9
-         z0lO2lFgNtoMHyhXzOOPYTRgBj5bFfV44pihI2r3plAywAi1jYHU7susPkTKDxtkWa+7
-         WIQI2iqAyzo/Xmu+2qG5Q/GjtSuvCO6IcNMZ9QNHzqjj9PNBxUZQ4wKcqm0PuJtPKQlf
-         Sw3Q==
-X-Gm-Message-State: ANhLgQ2sHQyqKv2QMQT/dzkDo/fDtdsEFMM6F6dJ95YvC/jDJRe8uTU/
-        8pKrPM+7wUOTFnrkMl0N0UAxvRJLUTcNG7n98CTY9Q==
-X-Google-Smtp-Source: ADFU+vtS46rebyFU3E0rDavKWogmZFUqPrK3UoXJ8qI+P6FvkOzYE3lklkHl5xxBGbmQjccHkSdW3akQ+ZG1jKuUisQ=
-X-Received: by 2002:a17:90a:3a90:: with SMTP id b16mr221897pjc.29.1583437266524;
- Thu, 05 Mar 2020 11:41:06 -0800 (PST)
-MIME-Version: 1.0
-References: <CA+G9fYvRZ9eCE29FjXkv1dQfrdGO3uWp4Tvkip5Z_jsgjVJeAQ@mail.gmail.com>
- <CAHp75VfhKoLtWkLHUyzg6m=rx833qiCVimWJVKU13qrX+aJz-Q@mail.gmail.com>
-In-Reply-To: <CAHp75VfhKoLtWkLHUyzg6m=rx833qiCVimWJVKU13qrX+aJz-Q@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 5 Mar 2020 11:40:55 -0800
-Message-ID: <CAFd5g45GbSX1BkuaH=8639ESHi-MCGkpFhEZZpycm9=jQb93rg@mail.gmail.com>
-Subject: Re: BUG: kernel NULL pointer dereference, address: 00 - ida_free+0x76/0x140
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        lkft-triage@lists.linaro.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=w9aoQTL/UgB1vjS1g1BNCEFf726wH1IBTlgPdnlXI/U=;
+        b=hQS8jfx10kjkBwRbUbhtmcYSzrnaesakiL21nuxAZ19MWf4u+4vyMYRPjft60Uo+Tg
+         CFBOaNoVq1ToF6QQw1kdxRnxHBkt4gRg9yfm7mD4NGxwyc0UfXpWp6kNx0hxvqZMHTFi
+         rM8FwkA6GB6j72C+rLZfoVbDmyWXiZ4X7bQ/C8jdVaskqYYi8lA/oAe2HCuffUSKcG6X
+         915kPeFSG9z3QJ/vrWJajBVnhl9PDznaRkPkX/53y7PdOpUPp5DPzZRzOmTJrKb/LLA7
+         oZkTIx7VbYzAoXZVp/ejROXyz+fLMJGrOKGb1427pQB+VacZZB7izUDEpLfKYHRrQL0n
+         pAoA==
+X-Gm-Message-State: ANhLgQ11GoI3YBmRyXV422ZPrIvjeWnfN5YoEbn4HnCAQy4PwVh2N8NY
+        u75Ssi3madRNy3B3VYy1z7bvyQ==
+X-Google-Smtp-Source: ADFU+vvWoq0qrg/FJ5my9DoTUbwc8qrtj5pyQOQnMQmrnKcEjOkZ19Er1lI2KcCU/OZ1arc+wQFMBg==
+X-Received: by 2002:ac8:530b:: with SMTP id t11mr274730qtn.277.1583437359636;
+        Thu, 05 Mar 2020 11:42:39 -0800 (PST)
+Received: from nicolas-tpx395.localdomain ([2610:98:8005::527])
+        by smtp.gmail.com with ESMTPSA id o16sm16335143qke.35.2020.03.05.11.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 11:42:38 -0800 (PST)
+Message-ID: <c7a88abfaf00c00a5c4c4239d1d9c7b348bc052e.camel@ndufresne.ca>
+Subject: Re: [PATCH v6 2/6] media: v4l2-core: Add helpers to build the H264
+ P/B0/B1 reflists
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Boris Brezillon <boris.brezillon@collabora.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>, kernel@collabora.com,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Date:   Thu, 05 Mar 2020 14:42:34 -0500
+In-Reply-To: <20200302154426.5fb09f91@collabora.com>
+References: <20200220163016.21708-1-ezequiel@collabora.com>
+         <20200220163016.21708-3-ezequiel@collabora.com>
+         <20200302142433.0ad1b383@coco.lan> <20200302154426.5fb09f91@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 11:18 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> +Cc: Sakari
->
-> On Thu, Mar 5, 2020 at 6:00 PM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> >
-> > Regression reported on Linux next 5.6.0-rc4-next-20200305 on x86_64,
-> > i386, arm and arm64. The steps to reproduce is running kselftests lib
-> > printf.sh test case.
-> > Which is doing modprobe operations.
-> >
-> > BTW, there are few RCU warnings from the boot log.
-> > Please refer below link for more details.
-> >
-> > Steps reproduce by using kselftests,
-> >
-> >           - lsmod || true
-> >           - cd /opt/kselftests/default-in-kernel/lib/
-> >           - export PATH=/opt/kselftests/default-in-kernel/kselftest:$PATH
-> >           - ./printf.sh || true
-> >           - ./bitmap.sh || true
-> >           - ./prime_numbers.sh || true
-> >           - ./strscpy.sh || true
-> >
-> > x86_64 kernel BUG dump.
-> > + ./printf.sh
+Le lundi 02 mars 2020 à 15:44 +0100, Boris Brezillon a écrit :
+> On Mon, 2 Mar 2020 14:24:33 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Em Thu, 20 Feb 2020 13:30:12 -0300
+> > Ezequiel Garcia <ezequiel@collabora.com> escreveu:
+> > 
+> > > From: Boris Brezillon <boris.brezillon@collabora.com>
+> > > 
+> > > Building those list is a standard procedure described in section
+> > > '8.2.4 Decoding process for reference picture lists construction' of
+> > > the H264 specification.
+> > > 
+> > > We already have 2 drivers needing the same logic (hantro and rkvdec) and
+> > > I suspect we will soon have more.
+> > > 
+> > > Let's provide generic helpers to create those lists.
+> > > 
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > > Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> > > ---
+> > >  drivers/media/v4l2-core/Kconfig     |   4 +
+> > >  drivers/media/v4l2-core/Makefile    |   1 +
+> > >  drivers/media/v4l2-core/v4l2-h264.c | 258 ++++++++++++++++++++++++++++
+> > >  include/media/v4l2-h264.h           |  85 +++++++++
+> > >  4 files changed, 348 insertions(+)
+> > >  create mode 100644 drivers/media/v4l2-core/v4l2-h264.c
+> > >  create mode 100644 include/media/v4l2-h264.h
+> > > 
+> > > diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-
+> > > core/Kconfig
+> > > index 39e3fb30ba0b..8a4ccfbca8cf 100644
+> > > --- a/drivers/media/v4l2-core/Kconfig
+> > > +++ b/drivers/media/v4l2-core/Kconfig
+> > > @@ -45,6 +45,10 @@ config VIDEO_PCI_SKELETON
+> > >  config VIDEO_TUNER
+> > >  	tristate
+> > >  
+> > > +# Used by drivers that need v4l2-h264.ko
+> > > +config V4L2_H264
+> > > +	tristate
+> > > +
+> > >  # Used by drivers that need v4l2-mem2mem.ko
+> > >  config V4L2_MEM2MEM_DEV
+> > >  	tristate
+> > > diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-
+> > > core/Makefile
+> > > index 786bd1ec4d1b..c5c53e0941ad 100644
+> > > --- a/drivers/media/v4l2-core/Makefile
+> > > +++ b/drivers/media/v4l2-core/Makefile
+> > > @@ -21,6 +21,7 @@ obj-$(CONFIG_VIDEO_V4L2) += v4l2-dv-timings.o
+> > >  obj-$(CONFIG_VIDEO_TUNER) += tuner.o
+> > >  
+> > >  obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
+> > > +obj-$(CONFIG_V4L2_H264) += v4l2-h264.o
+> > >  
+> > >  obj-$(CONFIG_V4L2_FLASH_LED_CLASS) += v4l2-flash-led-class.o
+> > >  
+> > > diff --git a/drivers/media/v4l2-core/v4l2-h264.c b/drivers/media/v4l2-
+> > > core/v4l2-h264.c
+> > > new file mode 100644
+> > > index 000000000000..4f68c27ec7fd
+> > > --- /dev/null
+> > > +++ b/drivers/media/v4l2-core/v4l2-h264.c
+> > > @@ -0,0 +1,258 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * V4L2 H264 helpers.
+> > > + *
+> > > + * Copyright (C) 2019 Collabora, Ltd.
+> > > + *
+> > > + * Author: Boris Brezillon <boris.brezillon@collabora.com>
+> > > + */
+> > > +
+> > > +#include <linux/module.h>
+> > > +#include <linux/sort.h>
+> > > +
+> > > +#include <media/v4l2-h264.h>
+> > > +
+> > > +/**
+> > > + * v4l2_h264_init_reflist_builder() - Initialize a P/B0/B1 reference list
+> > > + *				      builder
+> > > + *
+> > > + * @b: the builder context to initialize
+> > > + * @dec_params: decode parameters control
+> > > + * @slice_params: first slice parameters control
+> > > + * @sps: SPS control
+> > > + * @dpb: DPB to use when creating the reference list
+> > > + */
+> > > +void
+> > > +v4l2_h264_init_reflist_builder(struct v4l2_h264_reflist_builder *b,
+> > > +		const struct v4l2_ctrl_h264_decode_params *dec_params,
+> > > +		const struct v4l2_ctrl_h264_slice_params *slice_params,
+> > > +		const struct v4l2_ctrl_h264_sps *sps,
+> > > +		const struct v4l2_h264_dpb_entry *dpb)  
+> > 
+> > The prototype here is not nice...
+> > 
+> > > +{
+> > > +	int cur_frame_num, max_frame_num;
+> > > +	unsigned int i;
+> > > +
+> > > +	max_frame_num = 1 << (sps->log2_max_frame_num_minus4 + 4);
+> > > +	cur_frame_num = slice_params->frame_num;
+> > > +
+> > > +	memset(b, 0, sizeof(*b));
+> > > +	if (!(slice_params->flags & V4L2_H264_SLICE_FLAG_FIELD_PIC))
+> > > +		b->cur_pic_order_count = min(dec_params->bottom_field_order_cnt,
+> > > +					     dec_params->top_field_order_cnt);
+> > > +	else if (slice_params->flags & V4L2_H264_SLICE_FLAG_BOTTOM_FIELD)
+> > > +		b->cur_pic_order_count = dec_params->bottom_field_order_cnt;
+> > > +	else
+> > > +		b->cur_pic_order_count = dec_params->top_field_order_cnt;
+> > > +
+> > > +	for (i = 0; i < 16; i++) {
+> > > +		u32 pic_order_count;
+> > > +
+> > > +		if (!(dpb[i].flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
+> > > +			continue;
+> > > +
+> > > +		b->refs[i].pic_num = dpb[i].pic_num;  
+> > 
+> > ... as you're expecting a fixed number of elements at DPB array, and using
+> > a magic number (16) inside the for loop.
+> 
+> I used to have a '#define V4L2_H264_NUM_DPB_ENTRIES 16' but have been
+> told that this is an arbitrary limitation (the spec does not explicitly
+> limit the DPB size, even if all the HW we've seen seem to limit it to
+> 16). Maybe we can pass the DPB array size as an argument so it stays
+> HW-specific.
 
-Oops, I am wondering if I broke this with my change "Revert "software
-node: Simplify software_node_release() function"":
+it's formalized in A.31 h), to quote it:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=d1c19322388d6935b534b494a2c223dd089e30dd
+max_dec_frame_buffering <= MaxDpbFrames, where MaxDpbFrames is equal to
 
-I am still investigating, will update later.
+  Min( MaxDpbMbs / ( PicWidthInMbs * FrameHeightInMbs ), 16 )
 
-> > [   32.594369] test_printf: loaded.
-> > [   32.599859] BUG: kernel NULL pointer dereference, address: 00000000
-> > [   32.606143] #PF: supervisor read access in kernel mode
-> > [   32.611280] #PF: error_code(0x0000) - not-present page
-> > [   32.616419] *pde = 00000000
-> > [   32.619306] Oops: 0000 [#1] SMP
-> > [   32.622452] CPU: 0 PID: 387 Comm: modprobe Not tainted
-> > 5.6.0-rc4-next-20200305 #1
-> > [   32.629928] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-> > 2.2 05/23/2018
-> > [   32.637314] EIP: ida_free+0x61/0x130
-> > [   32.640891] Code: 00 c7 45 e8 00 00 00 00 c7 45 ec 00 00 00 00 0f
-> > 88 c4 00 00 00 89 d3 e8 9d ee 01 00 89 c7 8d 45 d8 e8 e3 18 01 00 a8
-> > 01 75 3f <0f> a3 30 72 72 8b 45 d8 89 fa e8 70 f0 01 00 53 68 d8 61 01
-> > d3 e8
-> > [   32.659628] EAX: 00000000 EBX: 00000000 ECX: ffffffff EDX: 00000000
-> > [   32.665887] ESI: 00000000 EDI: 00000246 EBP: f21a7cc8 ESP: f21a7c9c
-> > [   32.672153] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010046
-> > [   32.678928] CR0: 80050033 CR2: 00000000 CR3: 32ff3000 CR4: 003406d0
-> > [   32.685186] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-> > [   32.691442] DR6: fffe0ff0 DR7: 00000400
-> > [   32.695273] Call Trace:
-> > [   32.697721]  software_node_release+0x21/0x80
-> > [   32.701990]  kobject_put+0xa8/0x1c0
-> > [   32.705476]  kobject_del+0x40/0x60
-> > [   32.708881]  kobject_put+0x92/0x1c0
-> > [   32.712380]  fwnode_remove_software_node+0x30/0x50
-> > [   32.717201]  software_node_unregister_nodes+0x2b/0x50
-> > [   32.722246]  test_printf_init+0xe00/0x1d29 [test_printf]
-> > [   32.727563]  ? find_held_lock+0x27/0xa0
-> > [   32.731423]  ? test_hashed+0x54/0x54 [test_printf]
-> > [   32.736207]  ? test_hashed+0x54/0x54 [test_printf]
-> > [   32.741001]  do_one_initcall+0x54/0x2e0
-> > [   32.744841]  ? rcu_read_lock_sched_held+0x47/0x70
-> > [   32.749547]  ? kmem_cache_alloc_trace+0x285/0x2b0
-> > [   32.754249]  ? do_init_module+0x21/0x1ef
-> > [   32.758166]  ? do_init_module+0x21/0x1ef
-> > [   32.762087]  do_init_module+0x50/0x1ef
-> > [   32.765837]  load_module+0x1e32/0x2540
-> > [   32.769586]  ? kernel_read_file+0x295/0x2d0
-> > [   32.773771]  sys_finit_module+0x8a/0xe0
-> > [   32.777611]  do_fast_syscall_32+0x8e/0x340
-> > [   32.781709]  entry_SYSENTER_32+0xaa/0x102
-> > [   32.785719] EIP: 0xb7f75ce1
-> > [   32.788508] Code: 5e 5d c3 8d b6 00 00 00 00 b8 40 42 0f 00 eb c1
-> > 8b 04 24 c3 8b 1c 24 c3 8b 34 24 c3 8b 3c 24 c3 90 51 52 55 89 e5 0f
-> > 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90
-> > 8d 76
-> > [   32.807246] EAX: ffffffda EBX: 00000003 ECX: 0806233a EDX: 00000000
-> > [   32.813502] ESI: 085fb600 EDI: 085fb550 EBP: 085fb6e0 ESP: bffe839c
-> > [   32.819760] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000292
-> > [   32.826542] Modules linked in: test_printf(+) x86_pkg_temp_thermal fuse
-> > [   32.833150] CR2: 0000000000000000
-> > [   32.836461] ---[ end trace 69388c972b4562b8 ]---
-> > [   32.841072] EIP: ida_free+0x61/0x130
-> > [   32.844642] Code: 00 c7 45 e8 00 00 00 00 c7 45 ec 00 00 00 00 0f
-> > 88 c4 00 00 00 89 d3 e8 9d ee 01 00 89 c7 8d 45 d8 e8 e3 18 01 00 a8
-> > 01 75 3f <0f> a3 30 72 72 8b 45 d8 89 fa e8 70 f0 01 00 53 68 d8 61 01
-> > d3 e8
-> > [   32.863420] EAX: 00000000 EBX: 00000000 ECX: ffffffff EDX: 00000000
-> > [   32.869679] ESI: 00000000 EDI: 00000246 EBP: f21a7cc8 ESP: f21a7c9c
-> > [   32.875936] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010046
-> > [   32.882713] CR0: 80050033 CR2: 00000000 CR3: 32ff3000 CR4: 003406d0
-> > [   32.888970] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-> > [   32.895227] DR6: fffe0ff0 DR7: 00000400
-> > [   32.899060] BUG: sleeping function called from invalid context at
-> > /usr/src/kernel/include/linux/percpu-rwsem.h:49
-> > [   32.909303] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid:
-> > 387, name: modprobe
-> > [   32.917207] INFO: lockdep is turned off.
-> > [   32.921124] irq event stamp: 5120
-> > [   32.924434] hardirqs last  enabled at (5119): [<d20dea05>] kfree+0x135/0x270
-> > [   32.931472] hardirqs last disabled at (5120): [<d2b9ab04>]
-> > _raw_spin_lock_irqsave+0x14/0x40
-> > [   32.939809] softirqs last  enabled at (4978): [<d2b9f165>]
-> > __do_softirq+0x2c5/0x3c3
-> > [   32.947454] softirqs last disabled at (4969): [<d1ea67d5>]
-> > call_on_stack+0x45/0x50
-> > [   32.955009] CPU: 0 PID: 387 Comm: modprobe Tainted: G      D
-> >    5.6.0-rc4-next-20200305 #1
-> > [   32.963867] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-> > 2.2 05/23/2018
-> > [   32.971250] Call Trace:
-> > [   32.973695]  dump_stack+0x6e/0x96
-> > [   32.977009]  ___might_sleep+0x14d/0x240
-> > [   32.980846]  __might_sleep+0x33/0x80
-> > [   32.984419]  exit_signals+0x2a/0x2d0
-> > [   32.987997]  do_exit+0x8e/0xb00
-> > [   32.991143]  ? do_fast_syscall_32+0x8e/0x340
-> > [   32.995421]  rewind_stack_do_exit+0x11/0x13
-> > [   32.999600] EIP: 0xb7f75ce1
-> > [   33.002416] Code: 5e 5d c3 8d b6 00 00 00 00 b8 40 42 0f 00 eb c1
-> > 8b 04 24 c3 8b 1c 24 c3 8b 34 24 c3 8b 3c 24 c3 90 51 52 55 89 e5 0f
-> > 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90
-> > 8d 76
-> > [   33.021153] EAX: ffffffda EBX: 00000003 ECX: 0806233a EDX: 00000000
-> > [   33.027425] ESI: 085fb600 EDI: 085fb550 EBP: 085fb6e0 ESP: bffe839c
-> > [   33.033685] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000292
-> > [   33.040465] note: modprobe[387] exited with preempt_count 1
-> > ./../kselftest/module.sh: line 56:   387 Killed
-> > $modprobe -q $module $args
-> > printf:  [FAIL]
-> >
-> >
-> > metadata:
-> >   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> >   git branch: master
-> >   git describe: next-20200305
-> >   kernel-config:
-> > http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-core2-32/lkft/linux-next/719/config
-> >
-> > ref:
-> > https://lkft.validation.linaro.org/scheduler/job/1267112#L1254
-> > https://lkft.validation.linaro.org/scheduler/job/1267041#L9795
-> >
-> > --
-> > Linaro LKFT
-> > https://lkft.linaro.org
->
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+So a DPB larger then this is not an H.24 DPB.
+
+> 
+> > > +
+> > > +		/*
+> > > +		 * Handle frame_num wraparound as described in section
+> > > +		 * '8.2.4.1 Decoding process for picture numbers' of the spec.
+> > > +		 * TODO: This logic will have to be adjusted when we start
+> > > +		 * supporting interlaced content.
+> > > +		 */
+> > > +		if (dpb[i].frame_num > cur_frame_num)
+> > > +			b->refs[i].frame_num = (int)dpb[i].frame_num -
+> > > +					       max_frame_num;
+> > > +		else
+> > > +			b->refs[i].frame_num = dpb[i].frame_num;
+> > > +
+> > > +		if (!(dpb[i].flags & V4L2_H264_DPB_ENTRY_FLAG_FIELD))
+> > > +			pic_order_count = min(dpb[i].top_field_order_cnt,
+> > > +					      dpb[i].bottom_field_order_cnt);
+> > > +		else if (dpb[i].flags & V4L2_H264_DPB_ENTRY_FLAG_BOTTOM_FIELD)
+> > > +			pic_order_count = dpb[i].bottom_field_order_cnt;
+> > > +		else
+> > > +			pic_order_count = dpb[i].top_field_order_cnt;
+> > > +
+> > > +		b->refs[i].pic_order_count = pic_order_count;
+> > > +		b->unordered_reflist[b->num_valid] = i;
+> > > +		b->num_valid++;
+> > > +	}
+> > > +
+> > > +	for (i = b->num_valid; i < ARRAY_SIZE(b->unordered_reflist); i++)
+> > > +		b->unordered_reflist[i] = i;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(v4l2_h264_init_reflist_builder);
+> > > +
+> > > +static int v4l2_h264_p_ref_list_cmp(const void *ptra, const void *ptrb,
+> > > +				    const void *data)
+> > > +{
+> > > +	const struct v4l2_h264_reflist_builder *builder = data;
+> > > +	u8 idxa, idxb;
+> > > +
+> > > +	idxa = *((u8 *)ptra);
+> > > +	idxb = *((u8 *)ptrb);
+> > > +
+> > > +	if (builder->refs[idxa].longterm != builder->refs[idxb].longterm) {  
+> > 
+> > Where do you ensure that idxa and idxb won't be bigger than NUM_DPB_ENTRIES?
+> 
+> If it does that means something went wrong in the init func. I can add
+> a WARN_ON() and bail out if you want, but I can't return an error here
+> (that's not what the caller of the callback expects).
+
