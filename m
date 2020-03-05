@@ -2,62 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B686D17AAFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 17:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F0A17AC3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:19:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgCEQzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 11:55:52 -0500
-Received: from mga05.intel.com ([192.55.52.43]:17958 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbgCEQzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 11:55:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 08:55:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="229756751"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by orsmga007.jf.intel.com with ESMTP; 05 Mar 2020 08:55:49 -0800
-From:   richard.gong@linux.intel.com
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, mdf@kernel.org, dinguyen@kernel.org,
-        richard.gong@linux.intel.com, Richard Gong <richard.gong@intel.com>
-Subject: [PATCH 2/2] firmware: intel_stratix10_service: add depend on agilex
-Date:   Thu,  5 Mar 2020 11:12:26 -0600
-Message-Id: <1583428346-13307-3-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583428346-13307-1-git-send-email-richard.gong@linux.intel.com>
-References: <1583428346-13307-1-git-send-email-richard.gong@linux.intel.com>
+        id S1726682AbgCERTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:19:15 -0500
+Received: from labrats.qualcomm.com ([199.106.110.90]:1437 "EHLO
+        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbgCERPL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:15:11 -0500
+IronPort-SDR: XuA4+RAW8bgZWyzJMYTe3vh0ha9IHBzmH3ZJqao3xLZZ5MIw/tfGRoQaoTaupZAYNmjnRlN3YC
+ 0wqb9aSnMknGCJlhEG09JvYrbZfVIf580g7hvqmMF8Nx1O5SWATsunGAMNaInFjFhuD3fuyeTK
+ oXPHb5heAFg5qwbXm+c5j13I25Jq0N+F3LHaMzgquDvqANroeTBi6jNLmx1YFwreRcNdk50sE6
+ XXcBSz1+odzI0eCiAxj70LrYkg1crpsrM2aNQ1W2HBA/hK7PpvTIgoTJA/MSHm4Ku7eXgWOkrt
+ wEk=
+X-IronPort-AV: E=Sophos;i="5.70,517,1574150400"; 
+   d="scan'208";a="28542843"
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by labrats.qualcomm.com with ESMTP; 05 Mar 2020 00:53:15 -0800
+Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
+  by ironmsg01-sd.qualcomm.com with ESMTP; 05 Mar 2020 00:53:14 -0800
+Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
+        id 76BE139CE; Thu,  5 Mar 2020 00:53:14 -0800 (PST)
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v1 1/1] scsi: ufs: Fix possible unclocked access to auto hibern8 timer register
+Date:   Thu,  5 Mar 2020 00:53:07 -0800
+Message-Id: <1583398391-14273-1-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+Before access auto hibner8 timer register, make sure power and clock are
+properly configured to avoid unclocked register access.
 
-Add depend on Agilex for Intel Agilex SoC platform.
-
-Signed-off-by: Richard Gong <richard.gong@intel.com>
-Acked-by: Moritz Fischer <mdf@kernel.org>
+Fixes: ba7af5ec5126 ("scsi: ufs: export ufshcd_auto_hibern8_update for vendor usage")
+Signed-off-by: Can Guo <cang@codeaurora.org>
 ---
- drivers/firmware/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index ea869ad..8007d4a 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -206,7 +206,7 @@ config FW_CFG_SYSFS_CMDLINE
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index e987fa3a..5698f11 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -3914,18 +3914,25 @@ int ufshcd_uic_hibern8_exit(struct ufs_hba *hba)
+ void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit)
+ {
+ 	unsigned long flags;
++	bool update = false;
  
- config INTEL_STRATIX10_SERVICE
- 	tristate "Intel Stratix10 Service Layer"
--	depends on ARCH_STRATIX10 && HAVE_ARM_SMCCC
-+	depends on (ARCH_STRATIX10 || ARCH_AGILEX) && HAVE_ARM_SMCCC
- 	default n
- 	help
- 	  Intel Stratix10 service layer runs at privileged exception level,
+-	if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
++	if (!ufshcd_is_auto_hibern8_supported(hba))
+ 		return;
+ 
+ 	spin_lock_irqsave(hba->host->host_lock, flags);
+-	if (hba->ahit == ahit)
+-		goto out_unlock;
+-	hba->ahit = ahit;
+-	if (!pm_runtime_suspended(hba->dev))
+-		ufshcd_writel(hba, hba->ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
+-out_unlock:
++	if (hba->ahit != ahit) {
++		hba->ahit = ahit;
++		update = true;
++	}
+ 	spin_unlock_irqrestore(hba->host->host_lock, flags);
++
++	if (update && !pm_runtime_suspended(hba->dev)) {
++		pm_runtime_get_sync(hba->dev);
++		ufshcd_hold(hba, false);
++		ufshcd_auto_hibern8_enable(hba);
++		ufshcd_release(hba);
++		pm_runtime_put(hba->dev);
++	}
+ }
+ EXPORT_SYMBOL_GPL(ufshcd_auto_hibern8_update);
+ 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
