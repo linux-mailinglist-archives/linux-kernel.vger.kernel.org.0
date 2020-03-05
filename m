@@ -2,80 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C1817ADFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87AA917AE02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:22:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgCESWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:22:40 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35711 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbgCESWj (ORCPT
+        id S1726269AbgCESW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:22:56 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54921 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbgCESWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:22:39 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r7so8248458wro.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:22:38 -0800 (PST)
+        Thu, 5 Mar 2020 13:22:55 -0500
+Received: by mail-wm1-f68.google.com with SMTP id i9so7460584wml.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:22:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a2anD5Dg00GGuu7ktR9RjZ1JvnNFmxQvljFzM320Nd8=;
-        b=VWNuwIhBEjZXRKsfnczg9Nar5nP19oQIsTjNVfOwlpnT2o0Edu74Cg6q6NVLYtXjUA
-         E9nVpSHSsePW+xMi+RojasqAHh/bjZV6PWhQFj/5L23C5tqN5r/AjGSz+FVnwfUDCMdN
-         15tXe+toeuzyogjsrS/PS3RJum4fyTGzn+/FJ1wPYU3UnoZZZyT0LbH6hpV41YSuBe57
-         MccFfyffCoaYz7/YMgPwxlbJtIrk+MXnSx0JbsuMu7k5HV6FkZOmslK3dQr5lwFwBPua
-         GeJTncZf1uCih1NQFBeD5jwAGcH08LG4z8isOct4xPSPei+BL/2cdkofNgiEYIskLiYx
-         SPzw==
+        d=kresin-me.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=Fka8imS/1xK6KJNhtftXLfBrbLrzvdMLMZpCkl8cR10=;
+        b=iWLNpIoER9UnuztnR+05HmzAnfkAl3NxxjdwsiL9JsUcDyjTQ+V13sJDvRF/CwMzp4
+         o7gU/oN9zypjyyHUlSeZUAIP5obBfz+5CN3Z4B9+bodo9PsjTV3RbEadDxdJzocUxJxz
+         8XXzco+fhfKO3iq7fq6PYjmvJx/a4mVZ6tef1hhUyeZCNPGBxZnvNokhMORxph8P535M
+         4nwDuBxd3Jnqx0pBWanAFthwus7h1F4uRjM3ARF/qw7ixwaZfhfGeVI+vqi+mTTGoQYy
+         wR8FZJ1UXkCx0EYIe5Jp+fyYPhf6U5MJk8HnSvx8PIVjXdmdoMYhWH4Ym+7Urr5CFQ2s
+         xnaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a2anD5Dg00GGuu7ktR9RjZ1JvnNFmxQvljFzM320Nd8=;
-        b=QcukG1c1ZtbT9Vj+cMNm4ddZtndMzF5LU9tCfvUOLQlgk4G4IYMNmSgxDsETvQAhuZ
-         turqxRGZTSFlJsHo6QdRpJhNZqs6uyoPr9J+EJ97JOfIEO+hOCis7XOYC115PiXwApch
-         3vLh+/87b3SN4/BuZOWm/8UzBQ8aMpacmwVX46ESpqV4X8lNAItilS9K1MrOJH+ZpyTO
-         zT9SRanu+lV93F8WORQXRTzX1xLkllOUeooHLyPy9iEHakG+rLf5YbPaO7kk+9AGXmfE
-         qR6cwlh/9WJy4J9yh+v94OW6QsbMsrE37NAXWwRszaUO7uqhjK5XAmn4smp9eRXi4uHK
-         yIgg==
-X-Gm-Message-State: ANhLgQ3T/QkpmWk6ptzonCFLo3X/P1pt+GgEbWbglalHJbJN4+mmpoUM
-        OEYrQagWG0sjxcXCD051I47heA==
-X-Google-Smtp-Source: ADFU+vuCteNRVdM76+1URbWXLgUW9P5Y1amlPIfd1vL0VirqlcrPpKof6N7OxhEHf4vAFLSoMXjYvg==
-X-Received: by 2002:adf:df8c:: with SMTP id z12mr225481wrl.174.1583432557745;
-        Thu, 05 Mar 2020 10:22:37 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id p16sm45367737wrw.15.2020.03.05.10.22.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Mar 2020 10:22:37 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] nvmem: Add support for write-only instances
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <PSXP216MB0438930B1FC30EF79F15FD1780E70@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <b934ddde-702a-1731-034d-1682a9df23e2@linaro.org>
- <PSXP216MB04383EBB7FFBAEA7D9ABCAEE80E20@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <c9f4b098-3a57-38c6-8ca8-7dcda5e4c099@linaro.org>
-Date:   Thu, 5 Mar 2020 18:22:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <PSXP216MB04383EBB7FFBAEA7D9ABCAEE80E20@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Fka8imS/1xK6KJNhtftXLfBrbLrzvdMLMZpCkl8cR10=;
+        b=pYQ98VBA36AZU7/+yzXBn5N94ew5gq4kguyz71el1gnH/fi/Svy8wZm2gAQn2vlkGc
+         QcBoyZaq+w3zbi8va6AYj3VxOlPcfbPTw4UZBSwpoUxZFTqEgGUpMFrmmsjnkoR0ghlG
+         PIMuDq3TxJnISrCFCDHDVvar9FT9N+WhHs3pGk1xNUGg5VCxXHNsP/0sdwckOEpsDR0M
+         uT3XU1X14sx61vdNVTkR9immeEYDh3IDyb2Qrgzhw3JGtY1Thm8Kr1m9JPIxkhxckMtl
+         53oeKM9ZGh3w/+MpNsDWQBj0IgMLbL/bK5SUl9ETcVZjOGwb2oySwcCuIy1en7oa8gEC
+         76rQ==
+X-Gm-Message-State: ANhLgQ03whTcAeJZB77J+D/qYSH45DBFKr/QlvhdMVBq52Dkwd3v/QjT
+        YSXDR5Yyg+vwhp03pq+paD0VDQ==
+X-Google-Smtp-Source: ADFU+vsIJFiHCoLIv+/msfzl/lI5ZtLr2/v7pFClpu9/Qs0qrq4bL/6WVmA9WiCBf4ySO/dBx+hrzQ==
+X-Received: by 2002:a1c:9802:: with SMTP id a2mr57168wme.117.1583432573971;
+        Thu, 05 Mar 2020 10:22:53 -0800 (PST)
+Received: from desktop.wvd.kresin.me (p200300EC2F0EF80014FA05E763F3370C.dip0.t-ipconnect.de. [2003:ec:2f0e:f800:14fa:5e7:63f3:370c])
+        by smtp.gmail.com with ESMTPSA id a5sm10540509wmb.37.2020.03.05.10.22.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 10:22:53 -0800 (PST)
+From:   Mathias Kresin <dev@kresin.me>
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH] pinctrl: falcon: fix syntax error
+Date:   Thu,  5 Mar 2020 19:22:45 +0100
+Message-Id: <20200305182245.9636-1-dev@kresin.me>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the missing semicolon after of_node_put to get the file compiled.
 
+Fixes: f17d2f54d36d ("pinctrl: falcon: Add of_node_put() before return")
+Cc: stable@vger.kernel.org # v5.4+
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+---
+ drivers/pinctrl/pinctrl-falcon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 05/03/2020 18:11, Nicholas Johnson wrote:
->> If for any reasons you would want to add Write only file then it should be
->> added for both with root and user privileges.
-> Mika just advised me that we should not have world-writable files
-I totally agree with him, should have been careful before replying it 
-too early!
-lets keep root only writeable file.
+diff --git a/drivers/pinctrl/pinctrl-falcon.c b/drivers/pinctrl/pinctrl-falcon.c
+index a454f57c264e..62c02b969327 100644
+--- a/drivers/pinctrl/pinctrl-falcon.c
++++ b/drivers/pinctrl/pinctrl-falcon.c
+@@ -451,7 +451,7 @@ static int pinctrl_falcon_probe(struct platform_device *pdev)
+ 		falcon_info.clk[*bank] = clk_get(&ppdev->dev, NULL);
+ 		if (IS_ERR(falcon_info.clk[*bank])) {
+ 			dev_err(&ppdev->dev, "failed to get clock\n");
+-			of_node_put(np)
++			of_node_put(np);
+ 			return PTR_ERR(falcon_info.clk[*bank]);
+ 		}
+ 		falcon_info.membase[*bank] = devm_ioremap_resource(&pdev->dev,
+-- 
+2.17.1
 
---srini
