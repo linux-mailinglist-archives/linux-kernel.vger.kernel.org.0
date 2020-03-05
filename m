@@ -2,126 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBA717A928
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:47:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D67D17A92D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbgCEPrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:47:09 -0500
-Received: from server.eikelenboom.it ([91.121.65.215]:56692 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCEPrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:47:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7zaRKGsS0ZE69bPjVfBfvoMx3pCqo5nNA7n4fl7ujvw=; b=Jz13duDqLs43Wm1XWWqVFYDdVi
-        uowHRKPtI85xiEhqC1CHiWIVqwu5o8osd2w3ocR/lktYKldMi/jWfzSYsehwW7zq6dHMTyWbdu9of
-        OcmlvvPoZNMZ8i2Bb0effUlmmp2LE+ytNWqNMJMjKcWcOxVSE0totMaCx8pF35QZpVMA=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:54264 helo=[172.16.1.50])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1j9skC-0005zf-Kp; Thu, 05 Mar 2020 16:49:04 +0100
-Subject: Re: [Xen-devel] [PATCH v2] xen/blkfront: fix ring info addressing
-To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        id S1726887AbgCEPsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:48:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49368 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbgCEPsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 10:48:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 535D9AC37;
+        Thu,  5 Mar 2020 15:48:14 +0000 (UTC)
+Subject: Re: [PATCH v7 1/7] mm: pass task and mm to do_madvise
+To:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        linux-api@vger.kernel.org, oleksandr@redhat.com,
+        Suren Baghdasaryan <surenb@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        John Dias <joaodias@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Jann Horn <jannh@google.com>,
+        alexander.h.duyck@linux.intel.com, sj38.park@gmail.com,
         Jens Axboe <axboe@kernel.dk>
-References: <20200305114044.20235-1-jgross@suse.com>
- <20200305124255.GW24458@Air-de-Roger.citrite.net>
- <c2c1573a-8c98-4a99-64fb-1346ee724d08@suse.com>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <68f09f4e-180f-0fb7-c329-f3f03be72eb6@eikelenboom.it>
-Date:   Thu, 5 Mar 2020 16:47:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+References: <20200302193630.68771-1-minchan@kernel.org>
+ <20200302193630.68771-2-minchan@kernel.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <2a767d50-4034-da8c-c40c-280e0dda910e@suse.cz>
+Date:   Thu, 5 Mar 2020 16:48:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <c2c1573a-8c98-4a99-64fb-1346ee724d08@suse.com>
+In-Reply-To: <20200302193630.68771-2-minchan@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/2020 14:40, Jürgen Groß wrote:
-> On 05.03.20 13:42, Roger Pau Monné wrote:
->> On Thu, Mar 05, 2020 at 12:40:44PM +0100, Juergen Gross wrote:
->>> Commit 0265d6e8ddb890 ("xen/blkfront: limit allocated memory size to
->>> actual use case") made struct blkfront_ring_info size dynamic. This is
->>> fine when running with only one queue, but with multiple queues the
->>> addressing of the single queues has to be adapted as the structs are
->>> allocated in an array.
->>>
->>> Fixes: 0265d6e8ddb890 ("xen/blkfront: limit allocated memory size to actual use case")
->>> Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
->>> Signed-off-by: Juergen Gross <jgross@suse.com>
->>> ---
->>> V2:
->>> - get rid of rinfo_ptr() helper
->>> - use proper parenthesis in for_each_rinfo()
->>> - rename rinfo parameter of for_each_rinfo()
->>> ---
->>>   drivers/block/xen-blkfront.c | 79 +++++++++++++++++++++++---------------------
->>>   1 file changed, 42 insertions(+), 37 deletions(-)
->>>
->>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
->>> index e2ad6bba2281..8e844da826db 100644
->>> --- a/drivers/block/xen-blkfront.c
->>> +++ b/drivers/block/xen-blkfront.c
->>> @@ -213,6 +213,7 @@ struct blkfront_info
->>>   	struct blk_mq_tag_set tag_set;
->>>   	struct blkfront_ring_info *rinfo;
->>>   	unsigned int nr_rings;
->>> +	unsigned int rinfo_size;
->>>   	/* Save uncomplete reqs and bios for migration. */
->>>   	struct list_head requests;
->>>   	struct bio_list bio_list;
->>> @@ -259,6 +260,18 @@ static int blkfront_setup_indirect(struct blkfront_ring_info *rinfo);
->>>   static void blkfront_gather_backend_features(struct blkfront_info *info);
->>>   static int negotiate_mq(struct blkfront_info *info);
->>>   
->>> +#define for_each_rinfo(info, ptr, idx)				\
->>> +	for ((ptr) = (info)->rinfo, (idx) = 0;			\
->>> +	     (idx) < (info)->nr_rings;				\
->>> +	     (idx)++, (ptr) = (void *)(ptr) + (info)->rinfo_size)
->>> +
->>> +static struct blkfront_ring_info *get_rinfo(struct blkfront_info *info,
->>
->> I still think inline should be added here, but I don't have such a
->> strong opinion to block the patch on it.
-> 
-> I can add it if you like that better. Won't make much difference in the
-> end.
-> 
->> Also, info should be constified AFAICT.
-> 
-> Yes.
-> 
->>
->> With at least info constified:
->>
->> Acked-by: Roger Pau Monné <roger.pau@citrix.com>
->>
->> Can you queue this through the Xen tree?
-> 
-> Sure.
-> 
-> 
-> Juergen
-> 
+On 3/2/20 8:36 PM, Minchan Kim wrote:
+> In upcoming patches, do_madvise will be called from external process
+> context so we shouldn't asssume "current" is always hinted process's
+> task_struct.
 
-Just tested v2 and it works for me, thanks !
 
---
-Sander
+> Furthermore, we couldn't access mm_struct via task->mm
+> once it's verified by access_mm which will be introduced in next
+> patch[1].
 
+I would suggest to replace with:
+
+Furthermore, we must not access mm_struct via task->mm, but obtain it via
+access_mm() once (in the following patch) and only use that pointer [1], so pass
+it to do_madvise() as well. Note the vma->vm_mm pointers are safe, so we can use
+them further down the call stack.
+
+> And let's pass *current* and current->mm as arguments of
+> do_madvise so it shouldn't change existing behavior but prepare
+> next patch to make review easy.
+> 
+> Note: io_madvise pass NULL as target_task argument of do_madvise
+> because it couldn't know who is target.
+
+             can't
+
+> [1] http://lore.kernel.org/r/CAG48ez27=pwm5m_N_988xT1huO7g7h6arTQL44zev6TD-h-7Tg@mail.gmail.com
+> 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Jann Horn <jannh@google.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
+Nit:
+
+> @@ -676,7 +677,6 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+>  	if (nr_swap) {
+>  		if (current->mm == mm)
+>  			sync_mm_rss(mm);
+> -
+>  		add_mm_counter(mm, MM_SWAPENTS, nr_swap);
+>  	}
+>  	arch_leave_lazy_mmu_mode();
+
+This looks stray and unrelated.
