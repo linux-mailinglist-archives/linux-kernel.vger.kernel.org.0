@@ -2,157 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B3517AC9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EFF317AC9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:21:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbgCERO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:14:29 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40076 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727604AbgCERON (ORCPT
+        id S1727728AbgCERVh convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Mar 2020 12:21:37 -0500
+Received: from mailoutvs55.siol.net ([185.57.226.246]:56836 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727604AbgCEROc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:14:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583428451;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pNFG4r2jcMd7zD6p/OeosGiXr6KudiQkY+8b32nG8s0=;
-        b=So08X36rcQqb62Vv7AbUV5GRknjANnm7HyoNEZUQFJnTaGC88PgeG5KX8iHiJp2wqPo0V9
-        ibFjk7jA5lmMVRVyPkpNxdxcwNK4ya602kKjK4slyWCnp/77o8HiSSqXxnAzbXPPNiihjv
-        ovyzWdif5h5GEvgAuwSplgsK6MLgGA0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-332-YIy-mLF0Mm6hHmV2DR43KQ-1; Thu, 05 Mar 2020 12:14:09 -0500
-X-MC-Unique: YIy-mLF0Mm6hHmV2DR43KQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50791800D6C;
-        Thu,  5 Mar 2020 17:14:08 +0000 (UTC)
-Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F3ED90796;
-        Thu,  5 Mar 2020 17:14:07 +0000 (UTC)
-Date:   Thu, 5 Mar 2020 10:14:06 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dev@dpdk.org" <dev@dpdk.org>,
-        "mtosatti@redhat.com" <mtosatti@redhat.com>,
-        "thomas@monjalon.net" <thomas@monjalon.net>,
-        "bluca@debian.org" <bluca@debian.org>,
-        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
-        "Richardson, Bruce" <bruce.richardson@intel.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>
-Subject: Re: [PATCH v2 0/7] vfio/pci: SR-IOV support
-Message-ID: <20200305101406.02703e2a@w520.home>
-In-Reply-To: <a6c04bac-0a37-f4c0-876e-e5cf2a8a6c3f@redhat.com>
-References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D79A8A7@SHSMSX104.ccr.corp.intel.com>
-        <a6c04bac-0a37-f4c0-876e-e5cf2a8a6c3f@redhat.com>
+        Thu, 5 Mar 2020 12:14:32 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id 87E02521A71;
+        Thu,  5 Mar 2020 18:14:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Uu7iizrBYcEZ; Thu,  5 Mar 2020 18:14:29 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 482BE5232A3;
+        Thu,  5 Mar 2020 18:14:29 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Zimbra) with ESMTPA id 7D13B521A71;
+        Thu,  5 Mar 2020 18:14:28 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     a.hajda@samsung.com, narmstrong@baylibre.com
+Cc:     Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 1/4] drm/bridge: dw-hdmi: fix AVI frame colorimetry
+Date:   Thu, 05 Mar 2020 18:14:27 +0100
+Message-ID: <5332114.DvuYhMxLoT@jernej-laptop>
+In-Reply-To: <20200304232512.51616-2-jernej.skrabec@siol.net>
+References: <20200304232512.51616-1-jernej.skrabec@siol.net> <20200304232512.51616-2-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 14:09:07 +0800
-Jason Wang <jasowang@redhat.com> wrote:
+Dne četrtek, 05. marec 2020 ob 00:25:09 CET je Jernej Skrabec napisal(a):
+> CTA-861-F explicitly states that for RGB colorspace colorimetry should
+> be set to "none". Fix that.
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Fixes: def23aa7e982 ("drm: bridge: dw-hdmi: Switch to V4L bus format and
+> encodings") Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-> On 2020/2/25 =E4=B8=8A=E5=8D=8810:33, Tian, Kevin wrote:
-> >> From: Alex Williamson
-> >> Sent: Thursday, February 20, 2020 2:54 AM
-> >>
-> >> Changes since v1 are primarily to patch 3/7 where the commit log is
-> >> rewritten, along with option parsing and failure logging based on
-> >> upstream discussions.  The primary user visible difference is that
-> >> option parsing is now much more strict.  If a vf_token option is
-> >> provided that cannot be used, we generate an error.  As a result of
-> >> this, opening a PF with a vf_token option will serve as a mechanism of
-> >> setting the vf_token.  This seems like a more user friendly API than
-> >> the alternative of sometimes requiring the option (VFs in use) and
-> >> sometimes rejecting it, and upholds our desire that the option is
-> >> always either used or rejected.
-> >>
-> >> This also means that the VFIO_DEVICE_FEATURE ioctl is not the only
-> >> means of setting the VF token, which might call into question whether
-> >> we absolutely need this new ioctl.  Currently I'm keeping it because I
-> >> can imagine use cases, for example if a hypervisor were to support
-> >> SR-IOV, the PF device might be opened without consideration for a VF
-> >> token and we'd require the hypservisor to close and re-open the PF in
-> >> order to set a known VF token, which is impractical.
-> >>
-> >> Series overview (same as provided with v1): =20
-> > Thanks for doing this!
-> > =20
-> >> The synopsis of this series is that we have an ongoing desire to drive
-> >> PCIe SR-IOV PFs from userspace with VFIO.  There's an immediate need
-> >> for this with DPDK drivers and potentially interesting future use =20
-> > Can you provide a link to the DPDK discussion?
-> > =20
-> >> cases in virtualization.  We've been reluctant to add this support
-> >> previously due to the dependency and trust relationship between the
-> >> VF device and PF driver.  Minimally the PF driver can induce a denial
-> >> of service to the VF, but depending on the specific implementation,
-> >> the PF driver might also be responsible for moving data between VFs
-> >> or have direct access to the state of the VF, including data or state
-> >> otherwise private to the VF or VF driver. =20
-> > Just a loud thinking. While the motivation of VF token sounds reasonable
-> > to me, I'm curious why the same concern is not raised in other usages.
-> > For example, there is no such design in virtio framework, where the
-> > virtio device could also be restarted, putting in separate process (vho=
-st-user),
-> > and even in separate VM (virtio-vhost-user), etc. =20
->=20
->=20
-> AFAIK, the restart could only be triggered by either VM or qemu. But=20
-> yes, the datapath could be offloaded.
->=20
-> But I'm not sure introducing another dedicated mechanism is better than=20
-> using the exist generic POSIX mechanism to make sure the connection=20
-> (AF_UINX) is secure.
->=20
->=20
-> >   Of course the para-
-> > virtualized attribute of virtio implies some degree of trust, but as you
-> > mentioned many SR-IOV implementations support VF->PF communication
-> > which also implies some level of trust. It's perfectly fine if VFIO jus=
-t tries
-> > to do better than other sub-systems, but knowing how other people
-> > tackle the similar problem may make the whole picture clearer. =F0=9F=
-=98=8A
-> >
-> > +Jason. =20
->=20
->=20
-> I'm not quite sure e.g allowing userspace PF driver with kernel VF=20
-> driver would not break the assumption of kernel security model. At least=
-=20
-> we should forbid a unprivileged PF driver running in userspace.
+Applied to drm-next-fixes.
 
-It might be useful to have your opinion on this series, because that's
-exactly what we're trying to do here.  Various environments, DPDK
-specifically, want a userspace PF driver.  This series takes steps to
-mitigate the risk of having such a driver, such as requiring this VF
-token interface to extend the VFIO interface and validate participation
-around a PF that is not considered trusted by the kernel.  We also set
-a driver_override to try to make sure no host kernel driver can
-automatically bind to a VF of a user owned PF, only vfio-pci, but we
-don't prevent the admin from creating configurations where the VFs are
-used by other host kernel drivers.
+Best regards,
+Jernej
 
-I think the question Kevin is inquiring about is whether virtio devices
-are susceptible to the type of collaborative, shared key environment
-we're creating here.  For example, can a VM or qemu have access to
-reset a virtio device in a way that could affect other devices, ex. FLR
-on a PF that could interfere with VF operation.  Thanks,
-
-Alex
 
