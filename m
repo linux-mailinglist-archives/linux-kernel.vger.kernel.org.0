@@ -2,184 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C0E17A14F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C5017A178
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:34:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgCEI2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 03:28:49 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48248 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbgCEI2r (ORCPT
+        id S1726211AbgCEIdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:33:21 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50293 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbgCEIdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:28:47 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0258SZwN031789;
-        Thu, 5 Mar 2020 02:28:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583396915;
-        bh=QL/KGL0EwG3I6LcOOeRtMzAMVMZLWa4HTrkEutY3rn0=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=YhNA0Y4ErAPy1EcEswGsm/e69AU37hAROFLrtLno7uPvJ61TyAOaMxW2o67As5Jlx
-         lLhdjx4Suqqx8Cd2W5EAnACimOJnm+dAgTMfVS+IxHrhdOey5HcKBi0/45F36Yprdx
-         NR72HiUX6JLjhjvBIChQZ07GOU+XEv0x/vT2QoF0=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0258SZfq097433;
-        Thu, 5 Mar 2020 02:28:35 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Mar
- 2020 02:28:34 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Mar 2020 02:28:35 -0600
-Received: from uda0131933.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0258S9kX067014;
-        Thu, 5 Mar 2020 02:28:31 -0600
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-To:     Tony Lindgren <tony@atomide.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, <linux-pwm@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH v3 6/6] clocksource: timer-ti-dm: Enable autoreload in set_pwm
-Date:   Thu, 5 Mar 2020 13:57:15 +0530
-Message-ID: <20200305082715.15861-7-lokeshvutla@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200305082715.15861-1-lokeshvutla@ti.com>
-References: <20200305082715.15861-1-lokeshvutla@ti.com>
+        Thu, 5 Mar 2020 03:33:21 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so5190964wmb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 00:33:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SYxbC9qPC4/N8la63J08DdmEKfQjapCeK8070Jjm4tE=;
+        b=pnDwBpExPbjgZWp+2ubL9D0tUj9nEaKK3jT6M7Fn/TH0G3Lbjyut3g6DzXdhjjvMzZ
+         +GwXPkburw2SlIZECET8JCrPSWp08OG9VmI97nCqbT/gCRUWZtZ13dQ+1v1cDc5MGctH
+         7UqV3uyIM+74eOfjbH888lQp7DrypwbfNMUIJ5VMeU09Y8O8PAL9V2ObNjEhNB2yUN12
+         IzctO8945uQQ9pj1cnw+4xUjZf4j2N9fKfRQF0mL/yN+nq+k+q3ItDifWlfgVRQB2jKu
+         BzSPkUZ8qbCcAgghnmBJHDgpjV0TZaCPM4kZFXu3JpPW11jebQ1OELOrmpI1tybI/zQB
+         PdiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SYxbC9qPC4/N8la63J08DdmEKfQjapCeK8070Jjm4tE=;
+        b=IIol7jo+4wxhYnxXS+4mFyvbX87TZRYj6WZDYiqtp1hhIkfXWrHjG81X6Xa072XTIs
+         0JGqwjeOBgVE3TVKalDbepsqrehdAvQsKGGPqbQyOd8kHKFKqerUGWZY7OyECqQek+vO
+         gqjuOkULajueq/2IyN3/D82JlUMdichNwrYEJ6Pp+K+wFicDppl7/w9GxWDJ1e25dAkU
+         +1J7Fek0MT1iHdbVMUvitaqQrZ9d/5EaERKD1IhgGh+qjui9dvOQcJkYpe1rJkRZxwrR
+         9VXLeszoQdGPleQ8VUuCKv6dZHpWA+vJTx9vIurxpQzWOcLHNPmvNBwyiWWQcRbb6nJF
+         PVWA==
+X-Gm-Message-State: ANhLgQ3TYrW94jXXyy5SBTcvp5/4miKVONZEod/mzQwtqMbQVY+igQ6j
+        sClz8htwbNyA0LW4ZkRxEZLFWCO0PLFY0x52KavT1A==
+X-Google-Smtp-Source: ADFU+vtsmIq6Grq3pIa+Q9kL3rRxGKy8PNQt+HhO/d+bzsAYuCAVV9DLBh1QKsu/Mzegk3X+xrTzBlQYplaaQNWsLEg=
+X-Received: by 2002:a7b:c254:: with SMTP id b20mr4315045wmj.165.1583397199527;
+ Thu, 05 Mar 2020 00:33:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20200302130430.201037-2-glider@google.com> <0eaac427354844a4fcfb0d9843cf3024c6af21df.camel@perches.com>
+ <CAG_fn=VNnxjD6qdkAW_E0v3faBQPpSsO=c+h8O=yvNxTZowuBQ@mail.gmail.com>
+ <4cac10d3e2c03e4f21f1104405a0a62a853efb4e.camel@perches.com>
+ <CAG_fn=XOyPGau9m7x8eCLJHy3m-H=nbMODewWVJ1xb2e+BPdFw@mail.gmail.com>
+ <18b0d6ea5619c34ca4120a6151103dbe9bfa0cbe.camel@perches.com>
+ <CAG_fn=U2T--j_uhyppqzFvMO3w3yUA529pQrCpbhYvqcfh9Z1w@mail.gmail.com>
+ <20200303093832.GD24372@kadam> <202003040951.7857DFD936@keescook>
+ <20200305080756.GB19839@kadam> <202003050010.A1A965BF37@keescook>
+In-Reply-To: <202003050010.A1A965BF37@keescook>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 5 Mar 2020 09:33:07 +0100
+Message-ID: <CAG_fn=WSw0Wt=mJs5Vm_133g0--i0yMOTsuEQ-9YbmLo77+w_A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] binder: do not initialize locals passed to copy_from_user()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Ingo Molnar <mingo@redhat.com>, Joe Perches <joe@perches.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dm timer ops set_load() api allows to configure the load value and to
-set the auto reload feature. But auto reload feature is independent of
-load value and should be part of configuring pwm. This way pwm can be
-disabled by disabling auto reload feature using set_pwm() so that the
-current pwm cycle will be completed. Else pwm disabling causes the
-cycle to be stopped abruptly.
+On Thu, Mar 5, 2020 at 9:26 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Thu, Mar 05, 2020 at 11:07:56AM +0300, Dan Carpenter wrote:
+> > On Wed, Mar 04, 2020 at 10:13:40AM -0800, Kees Cook wrote:
+> > > On Tue, Mar 03, 2020 at 12:38:32PM +0300, Dan Carpenter wrote:
+> > > > The real fix is to initialize everything manually, the automated
+> > > > initialization is a hardenning feature which many people will disable.
+> > >
+> > > I cannot disagree more with this sentiment. Linus has specifically said he
+> > > wants this initialization on by default[1],
+> >
+> > Fine, but as long as it's a configurable thing then we need to manually
+> > initialize as well or it's still a CVE etc.  It will take a while before
+> > we drop support for old versions of GCC as well.
+>
+> Yes, I agree; that's totally true. We need to continue to fix all the
+> uninitialized flaws we encounter unless this is on by default for all
+> supported compiler versions (which will be a looong time). (But it's
+> not relevant to this patch because copy_from_user() does already do
+> the initialization.)
+>
+> This set of patches was about dealing with the pathological cases of
+> auto-init colliding with functions that do, in fact, fully init. Though
+> I must say, I remain concerned about inventing such markings for fear
+> they'll be used in places where the "trust me, it's fully initialized"
+> state does not actually hold[1] but the author thinks it does.
+>
+> -Kees
 
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
----
- drivers/clocksource/timer-ti-dm.c          | 16 +++++-----------
- drivers/pwm/pwm-omap-dmtimer.c             |  8 +++++---
- include/linux/platform_data/dmtimer-omap.h |  5 ++---
- 3 files changed, 12 insertions(+), 17 deletions(-)
+Right now I'm trying to make Clang understand that output arguments of
+inline assembly initialize the memory.
+Then it would be possible to write something like:
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index 10e1d08bfc4c..1f210ef60b22 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -531,21 +531,13 @@ static int omap_dm_timer_stop(struct omap_dm_timer *timer)
- 	return 0;
- }
- 
--static int omap_dm_timer_set_load(struct omap_dm_timer *timer, int autoreload,
-+static int omap_dm_timer_set_load(struct omap_dm_timer *timer,
- 				  unsigned int load)
- {
--	u32 l;
--
- 	if (unlikely(!timer))
- 		return -EINVAL;
- 
- 	omap_dm_timer_enable(timer);
--	l = omap_dm_timer_read_reg(timer, OMAP_TIMER_CTRL_REG);
--	if (autoreload)
--		l |= OMAP_TIMER_CTRL_AR;
--	else
--		l &= ~OMAP_TIMER_CTRL_AR;
--	omap_dm_timer_write_reg(timer, OMAP_TIMER_CTRL_REG, l);
- 	omap_dm_timer_write_reg(timer, OMAP_TIMER_LOAD_REG, load);
- 
- 	omap_dm_timer_disable(timer);
-@@ -574,7 +566,7 @@ static int omap_dm_timer_set_match(struct omap_dm_timer *timer, int enable,
- }
- 
- static int omap_dm_timer_set_pwm(struct omap_dm_timer *timer, int def_on,
--				 int toggle, int trigger)
-+				 int toggle, int trigger, int autoreload)
- {
- 	u32 l;
- 
-@@ -584,12 +576,14 @@ static int omap_dm_timer_set_pwm(struct omap_dm_timer *timer, int def_on,
- 	omap_dm_timer_enable(timer);
- 	l = omap_dm_timer_read_reg(timer, OMAP_TIMER_CTRL_REG);
- 	l &= ~(OMAP_TIMER_CTRL_GPOCFG | OMAP_TIMER_CTRL_SCPWM |
--	       OMAP_TIMER_CTRL_PT | (0x03 << 10));
-+	       OMAP_TIMER_CTRL_PT | (0x03 << 10) | OMAP_TIMER_CTRL_AR);
- 	if (def_on)
- 		l |= OMAP_TIMER_CTRL_SCPWM;
- 	if (toggle)
- 		l |= OMAP_TIMER_CTRL_PT;
- 	l |= trigger << 10;
-+	if (autoreload)
-+		l |= OMAP_TIMER_CTRL_AR;
- 	omap_dm_timer_write_reg(timer, OMAP_TIMER_CTRL_REG, l);
- 
- 	omap_dm_timer_disable(timer);
-diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-index 88a3c5690fea..9e4378dc6897 100644
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -183,7 +183,7 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
- 	if (timer_active)
- 		omap->pdata->stop(omap->dm_timer);
- 
--	omap->pdata->set_load(omap->dm_timer, true, load_value);
-+	omap->pdata->set_load(omap->dm_timer, load_value);
- 	omap->pdata->set_match(omap->dm_timer, true, match_value);
- 
- 	dev_dbg(chip->dev, "load value: %#08x (%d), match value: %#08x (%d)\n",
-@@ -192,7 +192,8 @@ static int pwm_omap_dmtimer_config(struct pwm_chip *chip,
- 	omap->pdata->set_pwm(omap->dm_timer,
- 			      pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
- 			      true,
--			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE);
-+			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE,
-+			      true);
- 
- 	/* If config was called while timer was running it must be reenabled. */
- 	if (timer_active)
-@@ -222,7 +223,8 @@ static int pwm_omap_dmtimer_set_polarity(struct pwm_chip *chip,
- 	omap->pdata->set_pwm(omap->dm_timer,
- 			      polarity == PWM_POLARITY_INVERSED,
- 			      true,
--			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE);
-+			      PWM_OMAP_DMTIMER_TRIGGER_OVERFLOW_AND_COMPARE,
-+			      true);
- 	mutex_unlock(&omap->mutex);
- 
- 	return 0;
-diff --git a/include/linux/platform_data/dmtimer-omap.h b/include/linux/platform_data/dmtimer-omap.h
-index 3173b7b6ff6f..95d852aef130 100644
---- a/include/linux/platform_data/dmtimer-omap.h
-+++ b/include/linux/platform_data/dmtimer-omap.h
-@@ -30,12 +30,11 @@ struct omap_dm_timer_ops {
- 	int	(*stop)(struct omap_dm_timer *timer);
- 	int	(*set_source)(struct omap_dm_timer *timer, int source);
- 
--	int	(*set_load)(struct omap_dm_timer *timer, int autoreload,
--			    unsigned int value);
-+	int	(*set_load)(struct omap_dm_timer *timer, unsigned int value);
- 	int	(*set_match)(struct omap_dm_timer *timer, int enable,
- 			     unsigned int match);
- 	int	(*set_pwm)(struct omap_dm_timer *timer, int def_on,
--			   int toggle, int trigger);
-+			   int toggle, int trigger, int autoreload);
- 	int	(*get_pwm_status)(struct omap_dm_timer *timer);
- 	int	(*set_prescaler)(struct omap_dm_timer *timer, int prescaler);
- 
--- 
-2.23.0
+  struct binder_transaction_data tr;
+  asm("": "=m"(tr));
+  if (copy_from_user(&tr, ptr, sizeof(tr))) ...
 
+, and the asm directive can be hidden into copy_from_user().
