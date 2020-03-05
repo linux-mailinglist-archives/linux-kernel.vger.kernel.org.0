@@ -2,74 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAE7179DE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 03:32:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 643C6179DEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 03:36:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725948AbgCECcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 21:32:45 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11144 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725810AbgCECco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 21:32:44 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C5C67A2B9C0A401CC778;
-        Thu,  5 Mar 2020 10:32:40 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Thu, 5 Mar 2020
- 10:32:32 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <jmattson@google.com>, <joro@8bytes.org>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH] KVM: VMX: Use wrapper macro ~RMODE_GUEST_OWNED_EFLAGS_BITS directly
-Date:   Thu, 5 Mar 2020 10:35:31 +0800
-Message-ID: <1583375731-18219-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+        id S1725977AbgCECg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 21:36:26 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:52806 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725830AbgCECgY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Mar 2020 21:36:24 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=teawaterz@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TrhO8q7_1583375772;
+Received: from localhost(mailfrom:teawaterz@linux.alibaba.com fp:SMTPD_---0TrhO8q7_1583375772)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 05 Mar 2020 10:36:16 +0800
+From:   Hui Zhu <teawater@gmail.com>
+To:     fengguang.wu@qq.com, linux-kernel@vger.kernel.org
+Cc:     Hui Zhu <teawater@gmail.com>, Hui Zhu <teawaterz@linux.alibaba.com>
+Subject: [PATCH for vm-scalability v2] usemem: Add new option --punch-holes for generating fragmented pages
+Date:   Thu,  5 Mar 2020 10:36:04 +0800
+Message-Id: <1583375764-20761-1-git-send-email-teawater@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20200304073016.GB19046@wfg-e595>
+References: <20200304073016.GB19046@wfg-e595>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+Hi Fengguang,
 
-(X86_EFLAGS_IOPL | X86_EFLAGS_VM) indicates the eflag bits that can not be
-owned by realmode guest, i.e. ~RMODE_GUEST_OWNED_EFLAGS_BITS. Use wrapper
-macro directly to make it clear and also improve readability.
+Thanks for your review.  This is the new version that was updated
+according to you comments.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+This commit adds new option --punch-holes.  usemem will free every
+other page after allocation.  Then it will generate size/2/pagesize
+fragmented pages with this option.
+Its implementation is to use madvise to release a page every other page.
+
+For example:
+usemem --punch-holes -s -1 400m
+Ideally, this command will generate 200m fragmented pages in the system.
+
+This command can help test anti-fragmentation function and other features
+that are affected by fragmentation issues of the Linux kernel.
+
+Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
 ---
- arch/x86/kvm/vmx/vmx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ usemem.c | 46 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 743b81642ce2..9571f8dea016 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1466,7 +1466,7 @@ void vmx_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags)
- 	vmx->rflags = rflags;
- 	if (vmx->rmode.vm86_active) {
- 		vmx->rmode.save_rflags = rflags;
--		rflags |= X86_EFLAGS_IOPL | X86_EFLAGS_VM;
-+		rflags |= ~RMODE_GUEST_OWNED_EFLAGS_BITS;
+diff --git a/usemem.c b/usemem.c
+index 9ac36e4..e0f9991 100644
+--- a/usemem.c
++++ b/usemem.c
+@@ -95,6 +95,7 @@ int opt_sync_free = 0;
+ int opt_bind_interval = 0;
+ unsigned long opt_delay = 0;
+ int opt_read_again = 0;
++int opt_punch_holes = 0;
+ int nr_task;
+ int nr_thread;
+ int nr_cpu;
+@@ -153,6 +154,7 @@ void usage(int ok)
+ 	"    -O|--anonymous      mmap with MAP_ANONYMOUS\n"
+ 	"    -U|--hugetlb        allocate hugetlbfs page\n"
+ 	"    -Z|--read-again     read memory again after access the memory\n"
++	"    --punch-holes       free every other page after allocation\n"
+ 	"    -h|--help           show this message\n"
+ 	,		ourname);
+ 
+@@ -191,6 +193,7 @@ static const struct option opts[] = {
+ 	{ "delay"	, 1, NULL, 'e' },
+ 	{ "hugetlb"	, 0, NULL, 'U' },
+ 	{ "read-again"	, 0, NULL, 'Z' },
++	{ "punch-holes", 0, NULL, 0 },
+ 	{ "help"	, 0, NULL, 'h' },
+ 	{ NULL		, 0, NULL, 0 }
+ };
+@@ -655,6 +658,21 @@ static void timing_free(void *ptrs[], unsigned int nptr,
+ 
+ static void wait_for_sigusr1(int signal) {}
+ 
++static void do_punch_holes(void *addr, unsigned long len)
++{
++	unsigned long offset;
++
++	for (offset = 0; offset + 2 * pagesize <= len; offset += 2 * pagesize) {
++		if (madvise(addr + offset, pagesize,
++			MADV_DONTNEED) != 0) {
++			fprintf(stderr,
++				"madvise failed with error %s\n",
++				strerror(errno));
++			exit(1);
++		}
++	}
++}
++
+ long do_units(void)
+ {
+ 	struct drand48_data rand_data;
+@@ -752,6 +770,15 @@ long do_units(void)
+ 		}
  	}
- 	vmcs_writel(GUEST_RFLAGS, rflags);
  
-@@ -2797,7 +2797,7 @@ static void enter_rmode(struct kvm_vcpu *vcpu)
- 	flags = vmcs_readl(GUEST_RFLAGS);
- 	vmx->rmode.save_rflags = flags;
++	if (opt_punch_holes) {
++		if (prealloc)
++			do_punch_holes(prealloc, opt_bytes);
++		else {
++			for (i = 0; i < nptr; i++)
++				do_punch_holes(ptrs[i], lens[i]);
++		}
++	}
++
+ 	while (sleep_secs)
+ 		sleep_secs = sleep(sleep_secs);
  
--	flags |= X86_EFLAGS_IOPL | X86_EFLAGS_VM;
-+	flags |= ~RMODE_GUEST_OWNED_EFLAGS_BITS;
+@@ -896,6 +923,7 @@ int do_tasks(void)
+ int main(int argc, char *argv[])
+ {
+ 	int c;
++	int opt_index = 0;
  
- 	vmcs_writel(GUEST_RFLAGS, flags);
- 	vmcs_writel(GUEST_CR4, vmcs_readl(GUEST_CR4) | X86_CR4_VME);
+ #ifdef DBG
+ 	/* print the command line parameters passed on to main */
+@@ -910,9 +938,18 @@ int main(int argc, char *argv[])
+ 	pagesize = getpagesize();
+ 
+ 	while ((c = getopt_long(argc, argv,
+-				"aAB:f:FPp:gqowRMm:n:t:b:ds:T:Sr:u:j:e:EHDNLWyxOUZh", opts, NULL)) != -1)
++				"aAB:f:FPp:gqowRMm:n:t:b:ds:T:Sr:u:j:e:EHDNLWyxOUZh",
++				opts, &opt_index)) != -1)
+ 		{
+ 		switch (c) {
++		case 0:
++			if (strcmp(opts[opt_index].name,
++				"punch-holes") == 0) {
++				opt_punch_holes = 1;
++			} else
++				usage(1);
++			break;
++
+ 		case 'a':
+ 			opt_malloc++;
+ 			break;
+@@ -1045,6 +1082,13 @@ int main(int argc, char *argv[])
+ 		}
+ 	}
+ 
++	if (opt_punch_holes && opt_malloc) {
++		fprintf(stderr,
++			"%s: malloc options ignored for punch-holes\n",
++			ourname);
++		opt_malloc = 0;
++	}
++
+ 	if (opt_malloc) {
+ 		if (map_populate|map_anonymous|map_hugetlb)
+ 			fprintf(stderr,
 -- 
-2.19.1
+2.7.4
 
