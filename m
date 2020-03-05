@@ -2,141 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE5E17A839
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF9017A83E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:54:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbgCEOyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 09:54:00 -0500
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:35887 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbgCEOx6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 09:53:58 -0500
-Received: by mail-wm1-f47.google.com with SMTP id g83so6071346wme.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:53:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T64BhDY4P7BH6N7mZRt4GHgX2fhw+FmEfAXfzxtpWvY=;
-        b=Z9wWJeabu7EJefkYOIj+P/cmEeY6RWiE6YqVxMZi4GNu94+Mbb9b2IkoPnTfUwsoat
-         quh3gQkHQOZdIjhgNEd9yM6khogubrKHLuhC7t6TMOY7PtIYhqfXw4Sahg28TStP/qMY
-         mx67UfasNptCEM0BEC/m2D58vRYmvMhy1rKzZSUrki8g4fPIarXoGgjnwa9LaI/ANJgf
-         yoqmwRLtqZ4Rzt5zrrKlMu8KCUFCDdVqPI6lXvPw33+oUQ5t58pwZVqTdgtKHzaIJq8O
-         Y80w55laQFy5YKsO8rIWZBb8eF/D16vbIWL/ySmJwMshGj8HQZ3YEPfD7X/VN99U/+QP
-         lcrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=T64BhDY4P7BH6N7mZRt4GHgX2fhw+FmEfAXfzxtpWvY=;
-        b=b13fT237dpqrwAENBwvgNKu7vjpVsX8FRCOg4ktC7oJfuUyNIitZDVt+koWFsQttEV
-         1CkJzi+RqF+HKBaNb1uBb1JdnNS82ARJaL6WFH2FV+wuVLYjkyAyGelMYO5/5MI9Nf7Z
-         +BcV+utLmsLqqLMyllMxiyFzSBImweQ+S38kfbFOCDgKUbt54qElLOpRoSgzWILN8nuM
-         sCo1a+WlxMSmjEtJsE3XbCbQhpYGB8ChobWXThvk+Q2ph7NbDW3XhhK7oMCVp2ExAhOM
-         kE6VhRmgd1kmik5uJ5HN2JeUTW3qhVrI/lrIpzy7hgot6fNFuRzsLBGD7qbB3jPKy0JX
-         o2bA==
-X-Gm-Message-State: ANhLgQ04m9e4gwHEV8eJ0p7rMYALRp4PwjINTYOkDZpy6azwEXAneNDJ
-        MkVIEWrv7qcDvFusIRWmgreunw==
-X-Google-Smtp-Source: ADFU+vvXZ5YJeHGJlIdkbo9OsuH2BSu5AF9PVb9/sLJ1fMQHgVzp5lUXGtexk8eiFBfudPbWoHdilQ==
-X-Received: by 2002:a7b:c257:: with SMTP id b23mr9833114wmj.70.1583420036777;
-        Thu, 05 Mar 2020 06:53:56 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id f16sm35785985wrx.25.2020.03.05.06.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 06:53:56 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     bjorn.andersson@linaro.org, agross@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 4/4] arm64: dts: qcom: db845c: add Low speed expansion i2c and spi nodes
-Date:   Thu,  5 Mar 2020 14:53:44 +0000
-Message-Id: <20200305145344.14670-5-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200305145344.14670-1-srinivas.kandagatla@linaro.org>
-References: <20200305145344.14670-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727195AbgCEOyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 09:54:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44956 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727070AbgCEOx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 09:53:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D73E2B2C1;
+        Thu,  5 Mar 2020 14:53:56 +0000 (UTC)
+Date:   Thu, 05 Mar 2020 15:53:56 +0100
+Message-ID: <s5h5zfig8e3.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Ondrej Jirman <megous@megous.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] ALSA: pcm: Add a standalone version of snd_pcm_limit_hw_rates
+In-Reply-To: <20200305051143.60691-2-samuel@sholland.org>
+References: <20200305051143.60691-1-samuel@sholland.org>
+        <20200305051143.60691-2-samuel@sholland.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support UART0, I2C0, I2C1 and SPI0 available
-on Low Speed expansion connector.
+On Thu, 05 Mar 2020 06:11:41 +0100,
+Samuel Holland wrote:
+> 
+> It can be useful to derive min/max rates of a snd_pcm_hardware without
+> having a snd_pcm_runtime, such as before constructing an ASoC DAI link.
+> 
+> Create a new helper that takes a pointer to a snd_pcm_hardware directly,
+> and refactor the original function as a wrapper around it, to avoid
+> needing to update any call sites.
+> 
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+The code change looks OK to me.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-index 350d3ea60235..fd2bdf10a4d9 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-@@ -434,6 +434,24 @@
- 	vdda-pll-supply = <&vreg_l26a_1p2>;
- };
- 
-+&i2c11 {
-+	/* On Low speed expansion */
-+	label = "LS-I2C1";
-+	status = "okay";
-+};
-+
-+&i2c14 {
-+	/* On Low speed expansion */
-+	label = "LS-I2C0";
-+	status = "okay";
-+};
-+
-+&spi2 {
-+	/* On Low speed expansion */
-+	label = "LS-SPI0";
-+	status = "okay";
-+};
-+
- &pm8998_gpio {
- 	vol_up_pin_a: vol-up-active {
- 		pins = "gpio6";
-@@ -574,6 +592,11 @@
- 	};
- };
- 
-+&uart3 {
-+	label = "LS-UART0";
-+	status = "disabled";
-+};
-+
- &uart6 {
- 	status = "okay";
- 
-@@ -589,6 +612,7 @@
- };
- 
- &uart9 {
-+	label = "LS-UART1";
- 	status = "okay";
- };
- 
-@@ -674,6 +698,16 @@
- };
- 
- /* PINCTRL - additions to nodes defined in sdm845.dtsi */
-+&qup_spi2_default {
-+	drive-strength = <16>;
-+};
-+
-+&qup_uart3_default{
-+	pinmux {
-+		pins = "gpio41", "gpio42", "gpio43", "gpio44";
-+		function = "qup3";
-+	};
-+};
- 
- &qup_uart6_default {
- 	pinmux {
--- 
-2.21.0
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
+
+thanks,
+
+Takashi
+
+
+> ---
+>  include/sound/pcm.h   |  9 ++++++++-
+>  sound/core/pcm_misc.c | 18 +++++++++---------
+>  2 files changed, 17 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/sound/pcm.h b/include/sound/pcm.h
+> index 2628246b76fa..f7a95b711100 100644
+> --- a/include/sound/pcm.h
+> +++ b/include/sound/pcm.h
+> @@ -1127,7 +1127,14 @@ snd_pcm_kernel_readv(struct snd_pcm_substream *substream,
+>  	return __snd_pcm_lib_xfer(substream, bufs, false, frames, true);
+>  }
+>  
+> -int snd_pcm_limit_hw_rates(struct snd_pcm_runtime *runtime);
+> +int snd_pcm_hw_limit_rates(struct snd_pcm_hardware *hw);
+> +
+> +static inline int
+> +snd_pcm_limit_hw_rates(struct snd_pcm_runtime *runtime)
+> +{
+> +	return snd_pcm_hw_limit_rates(&runtime->hw);
+> +}
+> +
+>  unsigned int snd_pcm_rate_to_rate_bit(unsigned int rate);
+>  unsigned int snd_pcm_rate_bit_to_rate(unsigned int rate_bit);
+>  unsigned int snd_pcm_rate_mask_intersect(unsigned int rates_a,
+> diff --git a/sound/core/pcm_misc.c b/sound/core/pcm_misc.c
+> index a6a541511534..5dd2e5335900 100644
+> --- a/sound/core/pcm_misc.c
+> +++ b/sound/core/pcm_misc.c
+> @@ -474,32 +474,32 @@ int snd_pcm_format_set_silence(snd_pcm_format_t format, void *data, unsigned int
+>  EXPORT_SYMBOL(snd_pcm_format_set_silence);
+>  
+>  /**
+> - * snd_pcm_limit_hw_rates - determine rate_min/rate_max fields
+> - * @runtime: the runtime instance
+> + * snd_pcm_hw_limit_rates - determine rate_min/rate_max fields
+> + * @hw: the pcm hw instance
+>   *
+>   * Determines the rate_min and rate_max fields from the rates bits of
+> - * the given runtime->hw.
+> + * the given hw.
+>   *
+>   * Return: Zero if successful.
+>   */
+> -int snd_pcm_limit_hw_rates(struct snd_pcm_runtime *runtime)
+> +int snd_pcm_hw_limit_rates(struct snd_pcm_hardware *hw)
+>  {
+>  	int i;
+>  	for (i = 0; i < (int)snd_pcm_known_rates.count; i++) {
+> -		if (runtime->hw.rates & (1 << i)) {
+> -			runtime->hw.rate_min = snd_pcm_known_rates.list[i];
+> +		if (hw->rates & (1 << i)) {
+> +			hw->rate_min = snd_pcm_known_rates.list[i];
+>  			break;
+>  		}
+>  	}
+>  	for (i = (int)snd_pcm_known_rates.count - 1; i >= 0; i--) {
+> -		if (runtime->hw.rates & (1 << i)) {
+> -			runtime->hw.rate_max = snd_pcm_known_rates.list[i];
+> +		if (hw->rates & (1 << i)) {
+> +			hw->rate_max = snd_pcm_known_rates.list[i];
+>  			break;
+>  		}
+>  	}
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(snd_pcm_limit_hw_rates);
+> +EXPORT_SYMBOL(snd_pcm_hw_limit_rates);
+>  
+>  /**
+>   * snd_pcm_rate_to_rate_bit - converts sample rate to SNDRV_PCM_RATE_xxx bit
+> -- 
+> 2.24.1
+> 
