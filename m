@@ -2,84 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BF0417A951
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1EA17A957
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:54:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbgCEPyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:54:01 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2511 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726275AbgCEPyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:54:01 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 81C7585F4FD0C4A75E66;
-        Thu,  5 Mar 2020 15:53:58 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 5 Mar 2020 15:53:58 +0000
-Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 5 Mar 2020
- 15:53:58 +0000
-Subject: Re: [PATCH] spi: Remove CONFIG_ prefix from Kconfig select
-To:     Joe Perches <joe@perches.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f8ac6b32a29b9a05b58a7e58ffe8b780642abbf1.camel@perches.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <e265e7df-fd8c-691f-389a-c0e0e377ed9e@huawei.com>
-Date:   Thu, 5 Mar 2020 15:53:57 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727178AbgCEPyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:54:32 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38874 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbgCEPyb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 10:54:31 -0500
+Received: by mail-ed1-f68.google.com with SMTP id e25so7376323edq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 07:54:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jlekstrand-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jpgwSkp7XcrOD1X4HMaPrupSeCafE36RfxzoW5P2WRA=;
+        b=DiAuYIkHTZXOVb9HWj0I5RfNbwb2gRoDsioZ3DGYGgGwpuHWBI6imJQcLeV/8vMoqx
+         vLpKZYWVuc/WzCc5hrpyImzqk89IyeFPjEb+xaiDUdzUc3L+4vP0GxfMfWHAa5225inH
+         bhqKp8vTYWxjL8QTRbdt0RawrERVG6l9iq4VKC12IMs05TN+MQMi7cEdi0ZODqu3zAmn
+         l87bl6TItmmR7WIHUwFPQog5XZ0yhYkDSymk8Nmfar54q6ikBv7NtkZMuLgKjzmfUNuR
+         ciEIB+WF2eGUFEjO13Md4l7m4l+Ku0SUEk5+AiVw2jj5FK33lWzc593ZRpUii2yNSxRP
+         8p1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jpgwSkp7XcrOD1X4HMaPrupSeCafE36RfxzoW5P2WRA=;
+        b=EYAcgyxEYwZsRGZUAkjnIUXQlsx1uxD16SrrrkDrBHHgjwZ/GkviAi5VaqIKLATKsT
+         k3rKfQM1+ztBdPVxtaV+MCn4dXz/ak3B4o5WzXnzg9GvU02xuiGCzcVOl/r0DwqOjED1
+         kLAyJZmm2WkO59brVG6DHQallk8qdMeMBawbkLfEWiARJkBWegNrie3hNzqqSYEQIVFT
+         dshaZkPKPCpZtamZUP8SCV/osARQsz+wT6LKTdKHLnLGqG3dbYmI9dYyR3/7twq2Xlpr
+         HfjBQA4heh8MQY/k21jw2928MAEQ51JWR/G5tRSxmJKhj1oUt75ZkNibOoA9tcAr8uLT
+         ruGQ==
+X-Gm-Message-State: ANhLgQ2MrZumCwL1FlFq2zcb7cVdJGRNZL1hsliE1laqoNU16H/+h1KY
+        jBqsKLfTPhYHkHb0YgpMwbajCUM330+RLlw0oIloZg==
+X-Google-Smtp-Source: ADFU+vtfOlYmMkcz0GZIDO1iKHc1JvcTJQpELewViffLb0TBaaBXcV3kuWUnf2AGZLPIyKSJzHoRuU3LVrFVwcti4F0=
+X-Received: by 2002:a05:6402:1655:: with SMTP id s21mr9282877edx.324.1583423668000;
+ Thu, 05 Mar 2020 07:54:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f8ac6b32a29b9a05b58a7e58ffe8b780642abbf1.camel@perches.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.45]
-X-ClientProxiedBy: lhreml712-chm.china.huawei.com (10.201.108.63) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+References: <20200225235856.975366-1-jason@jlekstrand.net> <8066d8b2-dd6a-10ef-a7bb-2c18a0661912@amd.com>
+ <20200226100523.GQ2363188@phenom.ffwll.local> <CAOFGe94O66HL212aXqhi9tdYqw---Xm-fwNSV4pxHyPmpSGpbg@mail.gmail.com>
+ <CAP+8YyEUz29fXDW5kO_0ZG6c849=TuFWCK8ynT3LuM+Tn+rMzw@mail.gmail.com>
+ <810a26e7-4294-a615-b7ee-18148ac70641@amd.com> <CAOFGe96namyeQXTvdrduM+=wkJuoWWx34CxcsJHS3fcCaKDadw@mail.gmail.com>
+ <21aeacc0-f3ae-c5dd-66df-4d2f3d73f73e@amd.com> <CAOFGe95Gx=kX=sxwhx1FYmXQuPtGAKwt2V5YodQBwJXujE3WwA@mail.gmail.com>
+ <CAOFGe97XSxgzCViOH=2+B2_d5P3vGifKmvAw-JrzRQbbRMRbcg@mail.gmail.com> <6fb8becf-9e6b-f59e-9c22-2b20069241a7@amd.com>
+In-Reply-To: <6fb8becf-9e6b-f59e-9c22-2b20069241a7@amd.com>
+From:   Jason Ekstrand <jason@jlekstrand.net>
+Date:   Thu, 5 Mar 2020 09:54:16 -0600
+Message-ID: <CAOFGe94gv9N+6n6oEC2aRtsmy7kBfx1D_R6WLQSGq7-8yUM_OQ@mail.gmail.com>
+Subject: Re: [PATCH] RFC: dma-buf: Add an API for importing and exporting sync files
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Bas Nieuwenhuizen <bas@basnieuwenhuizen.nl>,
+        Dave Airlie <airlied@redhat.com>,
+        Jesse Hall <jessehall@google.com>,
+        James Jones <jajones@nvidia.com>,
+        Daniel Stone <daniels@collabora.com>,
+        =?UTF-8?Q?Kristian_H=C3=B8gsberg?= <hoegsberg@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Chenbo Feng <fengc@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        linux-media@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/2020 15:15, Joe Perches wrote:
-> commit a2ca53b52e00 ("spi: Add HiSilicon v3xx SPI NOR flash
-> controller driver") likely inadvertently used a select statement
-> with a CONFIG_ prefix, remove the prefix.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+On Thu, Mar 5, 2020 at 7:06 AM Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
+>
+> Am 04.03.20 um 17:41 schrieb Jason Ekstrand:
+> > On Wed, Mar 4, 2020 at 10:27 AM Jason Ekstrand <jason@jlekstrand.net> w=
+rote:
+> >> On Wed, Mar 4, 2020 at 2:34 AM Christian K=C3=B6nig <christian.koenig@=
+amd.com> wrote:
+> >>> Am 03.03.20 um 20:10 schrieb Jason Ekstrand:
+> >>>> On Thu, Feb 27, 2020 at 2:28 AM Christian K=C3=B6nig
+> >>>> <christian.koenig@amd.com> wrote:
+> >>>> [SNIP]
+> >>> For reference see what dance is necessary in the dma_fence_chain_rele=
+ase
+> >>> function to avoid that:
+> >>>>          /* Manually unlink the chain as much as possible to avoid
+> >>>> recursion
+> >>>>           * and potential stack overflow.
+> >>>>           */
+> >>>>          while ((prev =3D rcu_dereference_protected(chain->prev, tru=
+e))) {
+> >>> ....
+> >>>
+> >>> It took me quite a while to figure out how to do this without causing
+> >>> issues. But I don't see how this would be possible for dma_fence_arra=
+y.
+> >> Ah, I see the issue now!  It hadn't even occurred to me that userspace
+> >> could use this to build up an infinite recursion chain.  That's nasty!
+>
+> Yeah, when I first stumbled over it it was like why the heck is my code
+> crashing in an interrupt handler?
+>
+> Realizing that this is stack corruption because of the long chain we
+> constructed was quite an enlightenment.
+>
+> And then it took me even longer to fix it :)
 
-It's a pity checkpatch can't pick this stuff up...
+Fun....
 
-The select is just for enabling the driver of a slave driver, so should 
-not cause any build issues when not enabled. thanks
+> >>   I'll give this some more thought and see if can come up with
+> >> something clever.
+> >>
+> >> Here's one thought:  We could make dma_fence_array automatically
+> >> collapse any arrays it references and instead directly reference their
+> >> fences.  This way, no matter how much the client chains things, they
+> >> will never get more than one dma_fence_array.  Of course, the
+> >> difficulty here (answering my own question) comes if they ping-pong
+> >> back-and-forth between something which constructs a dma_fence_array
+> >> and something which constructs a dma_fence_chain to get
+> >> array-of-chain-of-array-of-chain-of-...  More thought needed.
+>
+> Condensing the fences into a larger array can certainly work, yes.
+>
+> > Answering my own questions again...  I think the
+> > array-of-chain-of-array case is also solvable.
+> >
+> > For array-of-chain, we can simply add all unsignaled dma_fences in the
+> > chain to the array.  The array won't signal until all of them have
+> > which is exactly the same behavior as if we'd added the chain itself.
+>
+> Yeah, that should work. Probably best to implement something like a
+> cursor to walk all fences in the data structure.
+>
+> > For chain-of-array, we can add all unsignaled dma_fences in the array
+> > to the same point in the chain.  There may be some fiddling with the
+> > chain numbering required here but I think we can get it so the chain
+> > won't signal until everything in the array has signaled and we get the
+> > same behavior as if we'd added the dma_fence_array to the chain.
+>
+> Well as far as I can see this won't work because it would break the
+> semantics of the timeline sync.
 
-FWIW,
-Acked-by: John Garry <john.garry@huawei.com>
+I'm not 100% convinced it has to.  We already have support for the
+seqno regressing and we ensure that we still wait for all the fences.
+I thought maybe we could use that but I haven't spent enough time
+looking at the details to be sure.  I may be missing something.
 
-> ---
->   drivers/spi/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 82177d..2dc7bd 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -292,7 +292,7 @@ config SPI_HISI_SFC_V3XX
->   	tristate "HiSilicon SPI-NOR Flash Controller for Hi16XX chipsets"
->   	depends on (ARM64 && ACPI) || COMPILE_TEST
->   	depends on HAS_IOMEM
-> -	select CONFIG_MTD_SPI_NOR
-> +	select MTD_SPI_NOR
->   	help
->   	  This enables support for HiSilicon v3xx SPI-NOR flash controller
->   	  found in hi16xx chipsets.
-> 
-> 
-> .
-> 
+> But I think I know a different way which should work: A dma_fence_chain
+> can still contain a dma_fence_array, only the other way around is
+> forbidden. Then we create the cursor functionality in such a way that it
+> allows us to deep dive into the data structure and return all containing
+> fences one by one.
 
+Agreed.  As long as one container is able to consume the other, it's fine.
+
+> I can prototype that if you want, shouldn't be more than a few hours of
+> hacking anyway.
+
+If you'd like to, go for it.  I'd be happy to give it a go as well but
+if you already know what you want, it may be easier for you to just
+write the patch for the cursor.
+
+Two more questions:
+
+ 1. Do you want this collapsing to happen every time we create a
+dma_fence_array or should it be a special entrypoint?  Collapsing all
+the time likely means doing extra array calculations instead of the
+dma_fence_array taking ownership of the array that's passed in.  My
+gut says that cost is ok; but my gut doesn't spend much time in kernel
+space.
+
+ 2. When we do the collapsing, should we call dma_fence_is_signaled()
+to avoid adding signaled fences to the array?  It seems like avoiding
+adding references to fences that are already signaled would let the
+kernel clean them up faster and reduce the likelihood that a fence
+will hang around forever because it keeps getting added to arrays with
+other unsignaled fences.
+
+--Jason
