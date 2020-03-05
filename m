@@ -2,89 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F01117A621
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 14:12:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B6E17A62F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 14:15:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgCENLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 08:11:35 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:17716 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726769AbgCENLd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 08:11:33 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 025CoR9L022360;
-        Thu, 5 Mar 2020 08:11:18 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ygm52f46e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Mar 2020 08:11:18 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 025DBHJH041817
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 5 Mar 2020 08:11:17 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 5 Mar 2020
- 08:11:16 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 5 Mar 2020 08:11:16 -0500
-Received: from saturn.ad.analog.com ([10.48.65.112])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 025DB78C029497;
-        Thu, 5 Mar 2020 08:11:13 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <dmitry.torokhov@gmail.com>, <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v4 4/4] Input: adp5589: fix possible memleak of 'kpad'
-Date:   Thu, 5 Mar 2020 15:14:05 +0200
-Message-ID: <20200305131405.6598-4-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200305131405.6598-1-alexandru.ardelean@analog.com>
-References: <20200305131405.6598-1-alexandru.ardelean@analog.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-05_03:2020-03-05,2020-03-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0
- impostorscore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003050083
+        id S1726083AbgCENPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 08:15:38 -0500
+Received: from foss.arm.com ([217.140.110.172]:48418 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725880AbgCENPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 08:15:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 393E91FB;
+        Thu,  5 Mar 2020 05:15:38 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B22053F6CF;
+        Thu,  5 Mar 2020 05:15:37 -0800 (PST)
+Date:   Thu, 05 Mar 2020 13:15:36 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Baolin Wang <baolin.wang7@gmail.com>
+Cc:     alsa-devel@alsa-project.org, baolin.wang7@gmail.com,
+        broonie@kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        orsonzhai@gmail.com, perex@perex.cz, tiwai@suse.com,
+        zhang.lyra@gmail.com
+Subject: Applied "ASoC: sprd: Allow the MCDT driver to build into modules" to the asoc tree
+In-Reply-To:  <9306f2b99641136653ae4fe6cf9e859b7f698f77.1583387748.git.baolin.wang7@gmail.com>
+Message-Id:  <applied-9306f2b99641136653ae4fe6cf9e859b7f698f77.1583387748.git.baolin.wang7@gmail.com>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If 'adp5589_i2c_get_driver_data()' returns an error, the exit path should
-be to also free the 'kpad' object.
-This change fixes that.
+The patch
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+   ASoC: sprd: Allow the MCDT driver to build into modules
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From fd357ec595d36676c239d8d16706a270a961ac32 Mon Sep 17 00:00:00 2001
+From: Baolin Wang <baolin.wang7@gmail.com>
+Date: Thu, 5 Mar 2020 14:00:53 +0800
+Subject: [PATCH] ASoC: sprd: Allow the MCDT driver to build into modules
+
+Change the config to 'tristate' for MCDT driver to allow it to build into
+modules, as well as changing to use IS_ENABLED() to validate if need supply
+dummy functions when building the MCDT driver as a module.
+
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Link: https://lore.kernel.org/r/9306f2b99641136653ae4fe6cf9e859b7f698f77.1583387748.git.baolin.wang7@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/input/keyboard/adp5589-keys.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sprd/Kconfig     | 2 +-
+ sound/soc/sprd/sprd-mcdt.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/keyboard/adp5589-keys.c b/drivers/input/keyboard/adp5589-keys.c
-index 1fd36c581a91..5cef5a13b776 100644
---- a/drivers/input/keyboard/adp5589-keys.c
-+++ b/drivers/input/keyboard/adp5589-keys.c
-@@ -1050,7 +1050,7 @@ static int adp5589_probe(struct i2c_client *client,
+diff --git a/sound/soc/sprd/Kconfig b/sound/soc/sprd/Kconfig
+index 5474fd3de8c0..5e0ac8278572 100644
+--- a/sound/soc/sprd/Kconfig
++++ b/sound/soc/sprd/Kconfig
+@@ -8,7 +8,7 @@ config SND_SOC_SPRD
+ 	  the Spreadtrum SoCs' Audio interfaces.
  
- 	ret = adp5589_i2c_get_driver_data(client, id);
- 	if (ret < 0)
--		return ret;
-+		goto err_free_mem;
+ config SND_SOC_SPRD_MCDT
+-	bool "Spreadtrum multi-channel data transfer support"
++	tristate "Spreadtrum multi-channel data transfer support"
+ 	depends on SND_SOC_SPRD
+ 	help
+ 	  Say y here to enable multi-channel data transfer support. It
+diff --git a/sound/soc/sprd/sprd-mcdt.h b/sound/soc/sprd/sprd-mcdt.h
+index 9cc7e207ac76..679e3af3baad 100644
+--- a/sound/soc/sprd/sprd-mcdt.h
++++ b/sound/soc/sprd/sprd-mcdt.h
+@@ -48,7 +48,7 @@ struct sprd_mcdt_chan {
+ 	struct list_head list;
+ };
  
- 	switch (ret) {
- 	case ADP5585_02:
+-#ifdef CONFIG_SND_SOC_SPRD_MCDT
++#if IS_ENABLED(CONFIG_SND_SOC_SPRD_MCDT)
+ struct sprd_mcdt_chan *sprd_mcdt_request_chan(u8 channel,
+ 					      enum sprd_mcdt_channel_type type);
+ void sprd_mcdt_free_chan(struct sprd_mcdt_chan *chan);
 -- 
 2.20.1
 
