@@ -2,77 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3E817A83D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:54:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B189D17A85A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 15:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbgCEOyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 09:54:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbgCEOyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 09:54:01 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E1FF208CD;
-        Thu,  5 Mar 2020 14:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583420041;
-        bh=3t25Yn1gvcl81+XR7DKIL9gthVsJPbGh2NF+lcogUkA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M+Nf5Z5/7XFsDqdEzoEdxGlHlurv2x7xGjSYV6C1FqTpCst3BKrkEdEPEdBvLTmhq
-         NLHI8404QG6ioVo9FnmcaXdmEWwp4X0+AgLKvI9nzwEgRH0m+G4mZEkTu7w2yLmYWH
-         EpgmMy8V26rxASiFiRJTdY2ctfE7YCnMTr2wnZE0=
-Date:   Thu, 5 Mar 2020 15:53:58 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 12/87] arm/ftrace: Fix BE text poking
-Message-ID: <20200305145358.GC1950999@kroah.com>
-References: <20200303174349.075101355@linuxfoundation.org>
- <20200303174350.172336594@linuxfoundation.org>
- <20200305134956.GD2367@duo.ucw.cz>
+        id S1726608AbgCEO65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 09:58:57 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:43433 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgCEO64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 09:58:56 -0500
+Received: by mail-il1-f195.google.com with SMTP id o18so5250445ilg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 06:58:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4bV4e2J0Fj77NrhTqn4U15G8AA1APxJOoLr6qnKhOMc=;
+        b=esoOeJ8vk39jzQbYXfJq1SFqiVch6RalQvjHVWANNM+olC7WkFv8UUMuQ4k+3AeujU
+         ldsf+SXtvo2g8fplfXNBTqV+HxFYw6ytavS9Yi7rvCgn997XMPTs3uiEzZjmgelDYMCA
+         xNyZd/mKHxBuLL6JVZzGh0lwA3OO4C0t8vi2Pt+RiDN9vgxbT+NiW1IRO5iE9ITrZ2w3
+         UP+RFRkwFWKqt51wrEKEBUiHwdgDyL+BIAkI+DrfdBZ+kU6HSCM1xHd8nnrR+rguCUE5
+         lW+cVrCGK3+K8UgQ9iuIpsdovS8ZDK3sNetDv3lVs7x9KFBjvTXoLDXZhTOxKkb3wbQR
+         PWwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4bV4e2J0Fj77NrhTqn4U15G8AA1APxJOoLr6qnKhOMc=;
+        b=dFQMFS8KSA61TDokFWzvENNKexyJNjWdIYeCJnry3IYbLpvY6OUcXh1yFaIoI+4Rax
+         D1/MXke8LS/gn4LFfRlD9+jk6boaFvpizJgJty9G7Z4Rqtp5ZWyIA9dnxD3/AkE+Tdng
+         BZHGpcvCswBsyaFckUKDXyJmZ9YWSzedTWtSWYZwiTki3wJkb/o4iTmyzLcQ8Y9P+flg
+         0DVPNZAJ+CdewwcqWcRoFAtbVDuiow8cyYf81wAk8230wfbaHK1QTfCFnUsrnfMF7DAK
+         cQM/YE3uu/Q2DHiPCN1lCDgkqcuXLzBWcDGBU141m3WF3u0tDdQ1632GX4Zqo6aO8W1B
+         OB5Q==
+X-Gm-Message-State: ANhLgQ1vS904tskQbkjAQDmlORDuGk50Xet1I4SOG2GLmfM6QuHQWtsQ
+        FHKLop7L1JZAUcbFt6E66ph7bIX5dPk=
+X-Google-Smtp-Source: ADFU+vtpeY9CxlaepFzd4eHxFzmg0UDavlbEE426APDD8aZtC+Rwtl+OAoe0AHeKrotvehazhLMiPw==
+X-Received: by 2002:a92:981b:: with SMTP id l27mr8649435ili.118.1583420334176;
+        Thu, 05 Mar 2020 06:58:54 -0800 (PST)
+Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id p78sm6860932ilk.76.2020.03.05.06.58.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 06:58:53 -0800 (PST)
+Subject: Re: [PATCH 00/17] net: introduce Qualcomm IPA driver (UPDATED)
+To:     David Miller <davem@davemloft.net>
+Cc:     arnd@arndb.de, bjorn.andersson@linaro.org, agross@kernel.org,
+        johannes@sipsolutions.net, dcbw@redhat.com, evgreen@google.com,
+        ejcaruso@google.com, syadagir@codeaurora.org,
+        cpratapa@codeaurora.org, subashab@codeaurora.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, ohad@wizery.com,
+        sidgup@codeaurora.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200228224204.17746-1-elder@linaro.org>
+ <20200304.141547.1905642444413562833.davem@davemloft.net>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <d422e872-ed97-76a0-e8d8-457e8932f4ff@linaro.org>
+Date:   Thu, 5 Mar 2020 08:58:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200305134956.GD2367@duo.ucw.cz>
+In-Reply-To: <20200304.141547.1905642444413562833.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 02:49:57PM +0100, Pavel Machek wrote:
-> Hi!
+On 3/4/20 4:15 PM, David Miller wrote:
+> From: Alex Elder <elder@linaro.org>
+> Date: Fri, 28 Feb 2020 16:41:47 -0600
 > 
-> > From: Peter Zijlstra <peterz@infradead.org>
-> > 
-> > [ Upstream commit be993e44badc448add6a18d6f12b20615692c4c3 ]
-> > 
-> > The __patch_text() function already applies __opcode_to_mem_*(), so
-> > when __opcode_to_mem_*() is not the identity (BE*), it is applied
-> > twice, wrecking the instruction.
-> > 
-> > Fixes: 42e51f187f86 ("arm/ftrace: Use __patch_text()")
+>> This series presents the driver for the Qualcomm IP Accelerator (IPA).
 > 
-> I don't see 42e51f187f86 anywhere. Mainline contains
-> 
-> commit 5a735583b764750726621b0396d03e4782911b77
-> Author: Peter Zijlstra <peterz@infradead.org>
-> Date:   Tue Oct 15 21:07:35 2019 +0200
-> 
->     arm/ftrace: Use __patch_text()
-> 
-> But that one is not present in 4.19, so perhaps we should not need
-> this?
+> This doesn't apply cleanly to the net-next tree if that's where you want
+> this applied, can you respin?
 
-Good catch, I'll go drop this from everywhere.
+Yes I will do that today.  Thanks.	-Alex
 
-I think Sasha has now fixed up his scripts to handle things when the
-Fixes: tag does not point to a valid one.
+> 
+> Thanks.
+> 
 
-thanks,
-
-greg k-h
