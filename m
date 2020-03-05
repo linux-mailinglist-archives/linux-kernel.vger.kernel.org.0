@@ -2,94 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79CD617A5DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 13:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6004A17A5C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 13:57:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgCEM7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 07:59:38 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:50064 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbgCEM7i (ORCPT
+        id S1726275AbgCEM4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 07:56:52 -0500
+Received: from mail-pf1-f175.google.com ([209.85.210.175]:37685 "EHLO
+        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbgCEM4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 07:59:38 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 025CxXw7099764;
-        Thu, 5 Mar 2020 06:59:33 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583413173;
-        bh=b/Jq6XODidw4LHE0naUHsF5hZCiM5+KUNJpP8tfkuY4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=x6MdGpIP/rtjMVDajO4FOB/58E9/K8THr6prVQhnBqAUfUc04gx+qBtBKXNKJceZZ
-         s/DCDM/SfEMOI11bikRmtmX/wxnmlJ0d02odBrJ+Zu8jvsQqovwWZM/E3y574yuYgl
-         8QMjUp/ld9gyVoRy1KQkuqyO6Zc8QzMUVmEsiup4=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 025CxXiT097325
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Mar 2020 06:59:33 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Mar
- 2020 06:59:32 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Mar 2020 06:59:32 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 025CxWSR010686;
-        Thu, 5 Mar 2020 06:59:32 -0600
-Subject: Re: [RFC PATCH] leds: add sgm3140 driver
-To:     Luca Weiss <luca@z3ntu.xyz>, <linux-leds@vger.kernel.org>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, <linux-kernel@vger.kernel.org>
-References: <20200227185015.212479-1-luca@z3ntu.xyz>
- <7742f98c-fd96-7f0e-c33c-fbac61a4881c@ti.com> <11515555.O9o76ZdvQC@g550jk>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <f61133d9-be0f-366a-7b77-1f366d2cd8d6@ti.com>
-Date:   Thu, 5 Mar 2020 06:54:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 5 Mar 2020 07:56:50 -0500
+Received: by mail-pf1-f175.google.com with SMTP id p14so2746973pfn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 04:56:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Dprw7ZFMCDJrSnYhVdBa1Xg6BNbV4uRfUelp4S9rGA0=;
+        b=kEFjk2FJuT0bTqOB47M1X5eP6R8OteYtR4JIWqXJuOgVb8iPKklyX/l9optB/f2RF9
+         ZFPrFzSdZB1QoolioWMI3bQpTQhbGDIeyPjt0qAOoVa0PB5Vnis3oqlGPIWkgosKd2td
+         xA1MwoIGNLL1F/iJgQK1cQvlXRf9UR+gbexWXIpby6u/wkDksjvuDSSCc+QR5H/QvdAc
+         2fpxGieTanfotI8/fE5Zq9eDbUvuc+tTO/NcuEY+hycugklihEUVvL4dvfAAJQOqtBZX
+         DRFuoOfElyCHL2m0u4AqlKswio203EqZ5A0lUPw93fDT2jKOq2WvCL5ae2kpTR1MTG9o
+         PWNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Dprw7ZFMCDJrSnYhVdBa1Xg6BNbV4uRfUelp4S9rGA0=;
+        b=JM/ampC5H0DCWnCo9J9n11vqOEQlZPQ7e0YpetaBFdKKXD48d2lsQ023NPSjCOtR7V
+         OaOXFnkOTrYAB2T5ELyLUMflw11QrAgg995z1JSpz9aE8x4rtfdXRtgWMRE2mDi66wE6
+         ol1PmJCNDW5n2tlCo94V3I97dakaONIteDypRsNL+eJjarrsWWLRfd0yGjdzC+8yKX3a
+         Luwt5tlrhkPXuy2dseFPIzXW4mTZYCmdnPR1pikd/4ZwR0R47kfHCzCywY9SyRLe3CO8
+         CmsRgkNdzSRv13TXelXTAdWU1t1T0/nASy0ChHdYo4lX/FLsap9YSsswM3PO8J7oMrGp
+         DUjg==
+X-Gm-Message-State: ANhLgQ3PhUu636u3ioGzNH0M1EB0D2Wr2vZJsC9YtRQaCOCGK/A2vIgX
+        9ye5CWhfJsD/y8tJDdTwqzYEm7599E0=
+X-Google-Smtp-Source: ADFU+vt6eJdigGY0gJ+ou8rfZpvaDtLlREuL14K8KGvtSIycxJ1ayhllrOFyBNHe/bBZis7imub9UA==
+X-Received: by 2002:aa7:97b4:: with SMTP id d20mr8372466pfq.62.1583413008653;
+        Thu, 05 Mar 2020 04:56:48 -0800 (PST)
+Received: from localhost ([103.195.202.216])
+        by smtp.gmail.com with ESMTPSA id 13sm31824464pfi.78.2020.03.05.04.56.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 04:56:47 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        swboyd@chromium.org, mka@chromium.org, daniel.lezcano@linaro.org,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH v2 0/3] Convert thermal bindings to yaml
+Date:   Thu,  5 Mar 2020 18:26:40 +0530
+Message-Id: <cover.1583412540.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <11515555.O9o76ZdvQC@g550jk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Luca
+Hi all,
 
-On 3/5/20 5:01 AM, Luca Weiss wrote:
-> On Donnerstag, 27. Februar 2020 20:50:40 CET Dan Murphy wrote:
->> Luca
->>
->> On 2/27/20 12:50 PM, Luca Weiss wrote:
->>> Add a driver for the SGMICRO SGM3140 Buck/Boost Charge Pump LED driver.
->>>
->>> This device is controller by two GPIO lines, one for enabling the LED
->>> and the second one for switching between torch and flash mode.
->>>
->>> The device will automatically switch to torch mode after being in flash
->>> mode for about 250-300ms, so after that time the driver will turn the
->>> LED off again automatically.
->>>
->>> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
->>> ---
->> You seem to be missing the devictree bindings doc for the GPIOs.
-> As written in the initial email:
->
->> I will also write dt bindings for the driver once I have "strobe"
->> working.
+Here is a series splitting up the thermal bindings into 3 separate bindings
+in YAML, one each of the sensor, cooling-device and the thermal zones.
+Since I was learning about YAML parsers while creating these bindings,
+there are bound to be some issues.
 
-NACK.
+Changes since v1:
+- Addressed review comments from Rob
+- Moved the license back to GPLv2, waiting for other authors to give
+  permission to relicense to BSD-2-Clause as well
+- Fixed up warnings thrown by dt_binding_check
 
-We review bindings as part of the code.  And we want to understand what 
-bindings the code will be using
+I have to add that the bindings as they exist today, don't really follow
+the "describe the hardware" model of devicetree. e.g. the entire
+thermal-zone binding is a software abstraction to tie arbitrary,
+board-specific trip points to cooling strategies. This doesn't fit well
+into the model where the same SoC in two different form-factor devices e.g.
+mobile and laptop, will have fairly different thermal profiles and might
+benefit from different trip points and mitigation heuristics. I've started
+some experiments with moving the thermal zone data to a board-specific
+platform data that is used to initialise a "thermal zone driver".
 
-You will get better guidance if the patch set contains the documentation 
-so we can understand what is being proposed.
+In any case, if we ever move down that path, it'll probably end up being v2
+of the binding, so this series is still relevant.
 
-Dan
+Please help review.
+
+Regards,
+Amit
+
+Amit Kucheria (3):
+  dt-bindings: thermal: Add yaml bindings for thermal sensors
+  dt-bindings: thermal: Add yaml bindings for thermal cooling-devices
+  dt-bindings: thermal: Add yaml bindings for thermal zones
+
+ .../thermal/thermal-cooling-devices.yaml      | 114 ++++++
+ .../bindings/thermal/thermal-sensor.yaml      |  72 ++++
+ .../bindings/thermal/thermal-zones.yaml       | 325 ++++++++++++++++++
+ 3 files changed, 511 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/thermal-cooling-devices.yaml
+ create mode 100644 Documentation/devicetree/bindings/thermal/thermal-sensor.yaml
+ create mode 100644 Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+
+-- 
+2.20.1
 
