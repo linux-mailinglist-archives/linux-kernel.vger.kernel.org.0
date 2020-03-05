@@ -2,67 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB72E179E81
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:07:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67CE7179E87
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:07:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgCEEHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 23:07:22 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:17791 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725839AbgCEEHN (ORCPT
+        id S1726524AbgCEEH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Mar 2020 23:07:58 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39542 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbgCEEH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 23:07:13 -0500
-X-UUID: 758640ba115b4bbba8289b260a7d261e-20200305
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Yy7OcA+VNcyBjjwI7FolY9/cUiGGAzs/6q/ZDhFXkkU=;
-        b=ewbyAD2fSbRUGOE0Qki4nzBbfNUq8QckFnwrWgJlYG9PHoxtJ4Ok315LA/HjVSjUkmBL/ckthPnwnOfUFB/xnFjwSw4x1FrjJu2XnWHj+/kwxxafc6DvwrwjylRwINAjNkHulDI/2+yFGZHUSBOsTawCL0Nup6+5PczSmCOYk8Q=;
-X-UUID: 758640ba115b4bbba8289b260a7d261e-20200305
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 771170537; Thu, 05 Mar 2020 12:07:06 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 5 Mar 2020 12:05:03 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 5 Mar 2020 12:06:21 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <jejb@linux.ibm.com>
-CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
-        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
-        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v1 4/4] scsi: ufs-mediatek: remove delay for host enabling
-Date:   Thu, 5 Mar 2020 12:07:04 +0800
-Message-ID: <20200305040704.10645-5-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20200305040704.10645-1-stanley.chu@mediatek.com>
-References: <20200305040704.10645-1-stanley.chu@mediatek.com>
+        Wed, 4 Mar 2020 23:07:58 -0500
+Received: by mail-io1-f65.google.com with SMTP id h3so4959838ioj.6;
+        Wed, 04 Mar 2020 20:07:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sv3uK9xf9C73dIUI1DIkkaJoGRZu2pQVCfWVV2VChWM=;
+        b=kNehVANOiC52TvRUHxr1c+SmzU4+JpRUKLnGjZb+owOiqvsB0jHvTv7UUiKP/0cU2O
+         9KifuJ+OCTkwtSK1bhGAOr5+O6pzbu7hKlGZUXqRc69oox5bxLw8ctBVVBJyFHdHn6/0
+         VDs2GNnTv20EXmUSvzYlk2RVQEvNnupggtKdWvg7EzbiRd7Q3+nfENYp5+yERMxGQb2f
+         osKIW7KDLRnk8Ipn0RH2pvfI4YKQn1+f9wc3C3Yv5b0ysJtoyESylO2WPV0kix64fA6z
+         Xi1V22tPhf+o8Zi785JUP9/VQgsN7vwpEQAb6sCpG4cZKI+Z+NRrA66z9ZQIz1ZDffO1
+         bz0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sv3uK9xf9C73dIUI1DIkkaJoGRZu2pQVCfWVV2VChWM=;
+        b=P73mcbhv8FreHX0Wx4CqNvJaGB7orRJF3G9LzYk9d+qFXTOIEBBm0TVEGL8TjdIBwY
+         zDuLxQPF2nZaQVAot1P7c3JpUJaK5nyw47cwNoSNe8eW+PKx2ubqLRWAMszWpIBhpvgm
+         doqPkIO+VXpSdrsFsp0i3ASXF7cf+3bRC6ZmRLpir9aG6hOBBZQ/n6gPtlln9eO4xNhJ
+         xX3MddIpg6gFYd4qnxEWMSpkv4LN+/wDqKgA9FNH5pJYfhE2gl35B5FKvv2MEwhKEuwN
+         VEpK8Q4YRNBl0EkzLnvjzRn0/ZTXhZ+rTPyhjjJQ/Iwqtmo4++XoL9laK0XLBFSsvj7Q
+         zcVw==
+X-Gm-Message-State: ANhLgQ338Cqoc9LIuWlKl5c4PWVWLgB/r+CoTKCd7Gq22yo6zSO1Ep2p
+        oxHTZEurkfuai3Mi++3f//YLYCL5KkWrdnlZcQ8=
+X-Google-Smtp-Source: ADFU+vt9uyjUN8gULjKOUZ6/cN1Ak/LMeyNVMhB2uDZnismRKn3B5kcB03r0UUywSPFnatF2WBQR/Orn5EI8Ifyg1zY=
+X-Received: by 2002:a6b:b309:: with SMTP id c9mr5008105iof.6.1583381277010;
+ Wed, 04 Mar 2020 20:07:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20200301212019.2248-1-linux.amoon@gmail.com> <20200301212019.2248-2-linux.amoon@gmail.com>
+ <20200303094619.GA20181@pi3>
+In-Reply-To: <20200303094619.GA20181@pi3>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Thu, 5 Mar 2020 09:37:45 +0530
+Message-ID: <CANAwSgRxyYsDBX2Cx4w8-U_yEv2KqrzzgTc5oTfwjCFGDgttfw@mail.gmail.com>
+Subject: Re: [PATCHv2 1/3] devicetree: bindings: exynos: Add new compatible
+ for Exynos5420 dwc3 clocks support
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TWVkaWFUZWsgcGxhdGZvcm0gYW5kIFVGUyBjb250cm9sbGVyIGRvIG5vdCByZXF1aXJlIHRoZSBk
-ZWxheQ0KZm9yIGhvc3QgZW5hYmxpbmcsIHRodXMgcmVtb3ZlIGl0Lg0KDQpTaWduZWQtb2ZmLWJ5
-OiBTdGFubGV5IENodSA8c3RhbmxleS5jaHVAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9z
-Y3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYyB8IDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIGIv
-ZHJpdmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYw0KaW5kZXggM2IwZTU3NWQ3NDYwLi5lYTNi
-NWZkNjI0OTIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQor
-KysgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQpAQCAtMjU4LDYgKzI1OCw4IEBA
-IHN0YXRpYyBpbnQgdWZzX210a19pbml0KHN0cnVjdCB1ZnNfaGJhICpoYmEpDQogCWlmIChlcnIp
-DQogCQlnb3RvIG91dF92YXJpYW50X2NsZWFyOw0KIA0KKwloYmEtPmhiYV9lbmFibGVfZGVsYXlf
-dXMgPSAwOw0KKw0KIAkvKiBFbmFibGUgcnVudGltZSBhdXRvc3VzcGVuZCAqLw0KIAloYmEtPmNh
-cHMgfD0gVUZTSENEX0NBUF9SUE1fQVVUT1NVU1BFTkQ7DQogDQotLSANCjIuMTguMA0K
+Hi Krzysztof,
 
+On Tue, 3 Mar 2020 at 15:16, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Sun, Mar 01, 2020 at 09:20:16PM +0000, Anand Moon wrote:
+> > This patch adds the new compatible string for Exynos5422 DWC3
+> > to support enable/disable of core and suspend clk by DWC3 driver.
+> > Also updated the clock names for compatible samsung,exynos5420-dwusb3.
+>
+> Some time ago I mentioned this... so once more:
+> Do not use "This patch adds" but simple "Add".
+> https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst#L151
+>
+
+Ok I will keep this in my mind next time I update my patchs.
+
+> Best regards,
+> Krzysztof
+>
+
+-Anand
