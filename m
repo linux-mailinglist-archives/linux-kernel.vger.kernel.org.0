@@ -2,216 +2,543 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65BA317AF50
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 21:03:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE1E17AF57
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 21:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbgCEUDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 15:03:05 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:44436 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726131AbgCEUDE (ORCPT
+        id S1726170AbgCEUEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 15:04:16 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:36511 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbgCEUEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 15:03:04 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 2C420C10DA;
-        Thu,  5 Mar 2020 20:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1583438583; bh=EKwbyzY3XBPQ6iAgNco3btTgOVO5oLf9gzGrqqpLQDs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jt6RQ8Txu63PQ75IYUCUHmEMRIOHQZrv4llKEMrzvd/USvavsgoKFErqmKgwOHxe2
-         oad2IxA0dldY+ZotlqiP8joulYmbYZhjYDIWFinRiOY6t7nqmlfbLg/lPKCZULpYvz
-         jyJ0hXWpTyMsfK1dpFkP/ZCYhz15yhakl9C25+VpWfkXIsdjxCyTn5wDXorLV+wWln
-         Vcsm4iw4CYCIU0TXYPOzqIm/+ywA7YPXyk8/25OLRH4TjdUVkIIcTRzhgWD4aC3fMC
-         bAoqvb3OvWhhh7MIP/FrLriNuy2uEvxWkud99RE8g0nG5aEbdX4pQUL+AM18hGSCvh
-         64Ht0hAemrvUg==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.79])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 85226A006D;
-        Thu,  5 Mar 2020 20:03:01 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 4/4] ARC: allow userspace DSP applications to use AGU extensions
-Date:   Thu,  5 Mar 2020 23:02:52 +0300
-Message-Id: <20200305200252.14278-5-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200305200252.14278-1-Eugeniy.Paltsev@synopsys.com>
-References: <20200305200252.14278-1-Eugeniy.Paltsev@synopsys.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 5 Mar 2020 15:04:16 -0500
+Received: by mail-pf1-f201.google.com with SMTP id y20so4378103pfb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 12:04:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=tMCzIO7v7+oF2TI9NnUTDYsfoXoho50+U0nbLxke5xw=;
+        b=WPpoAqs24qLmhIF/oX+9zgUftIFutilpKwDIauh0LVVApU8KiojodCcnJIcF270ADc
+         gY41kyk82r+Ma6HQ3+KzYYgsXV6bcw6VsiCAdqS0TelHjvXQjqsRgPPWxhFbUX25/70A
+         unO34eYwXh8XJ/glAiTVMh7iXO4aD7YM3sykfQ3D1nrppuwm202Eao7bc45YOj5Fg7Ra
+         Ned7bLXPIaQWGBKLIH36Vi+YvZeQJ1kOhDgv+on/iWsWRBH2YElzJKqGD38Sb1cV7lkk
+         WR3vE6zp1uHCfnZT+QELUnBKw7vwBpcCRv2bLX87WHlbEA1sezDix0O0okeoBiiupTxQ
+         wvyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=tMCzIO7v7+oF2TI9NnUTDYsfoXoho50+U0nbLxke5xw=;
+        b=nawEd+HL579KChNIj5fioN2h6dMPjahVSFVCfvHTB0SwllRt9It+N6ytd1GDTAMI/t
+         IJKAMNVGE/BxM1dgE6PqtS5/Yi+TqkRnFdCE4LCMRMseaHZlHX33t/4f3zHRv21WHvCs
+         CdQlEdU8wkoc1F5O+0HV5+wOh2SdBGmqaCJfQVJ8/GVLI4F88G5cDxE4k0y6Mx8g9Cfi
+         NElhceivP7Bux10YEIl+B5zAn4QanDNNW/yRjOoFGSPPlJq6csWxHOnRzN/F8R5vv1ZU
+         g9btNhk4nD/+IFZeJH1fryBYGmd8dnQHJ4B17fGMXZ8s8ZDkksnNpIfWVICRgBFuSVBA
+         17Xg==
+X-Gm-Message-State: ANhLgQ1RenH4GBDPQjYzrLeR8u7LVPe4+meT2v6AwG84A6VBqKZySRxQ
+        CdGEKCE/9l3RFNApEoUItcJiQpLxN6OuF3YR
+X-Google-Smtp-Source: ADFU+vtNDnuMwnApPRNxc0A1qqwg/61mCcUYmIEk5v8JWj1s1BES5r6F/G403EsW4J4ZRkLzwKHySlJjlySfEjCM
+X-Received: by 2002:a17:90a:2030:: with SMTP id n45mr355673pjc.20.1583438653773;
+ Thu, 05 Mar 2020 12:04:13 -0800 (PST)
+Date:   Thu,  5 Mar 2020 12:04:08 -0800
+Message-Id: <20200305200409.239406-1-heidifahim@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH v2 1/2] kunit: kunit_parser: make parser more robust
+From:   Heidi Fahim <heidifahim@google.com>
+To:     brendanhiggins@google.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Cc:     Heidi Fahim <heidifahim@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be able to run DSP-enabled userspace applications with AGU
-(address generation unit) extensions we additionally need to
-save and restore following registers at context switch:
- * AGU_AP*
- * AGU_OS*
- * AGU_MOD*
+Previously, kunit_parser did not properly handle kunit TAP output that
+- had any prefixes (generated from different configs e.g.
+CONFIG_PRINTK_TIME)
+- had unrelated kernel output mixed in the middle of
+it, which has shown up when testing with allyesconfig
+To remove prefixes, the parser looks for the first line that includes
+TAP output, "TAP version 14".  It then determines the length of the
+string before this sequence, and strips that number of characters off
+the beginning of the following lines until the last KUnit output line is
+reached.
+These fixes have been tested with additional tests in the
+KUnitParseTest and their associated logs have also been added.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Heidi Fahim <heidifahim@google.com>
 ---
- arch/arc/Kconfig                |  9 +++++++++
- arch/arc/include/asm/arcregs.h  | 12 ++++++++++++
- arch/arc/include/asm/asserts.h  | 10 ++++++++++
- arch/arc/include/asm/dsp-impl.h | 24 ++++++++++++++++++++++++
- arch/arc/include/asm/dsp.h      |  5 +++++
- arch/arc/kernel/setup.c         |  6 ++++++
- 6 files changed, 66 insertions(+)
+Changelog:
+v2:
+- addressed Brendan's comments regarding the commit message.  Reverted
+  some of the regex where possible.
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index eb3bcb206882..ff306246d0f8 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -445,6 +445,15 @@ config ARC_DSP_USERSPACE
- 	help
- 	  DSP extension presence in HW, support save / restore DSP registers to
- 	  run DSP-enabled userspace applications
+tools/testing/kunit/kunit_parser.py           | 40 +++++------
+ tools/testing/kunit/kunit_tool_test.py        | 69 +++++++++++++++++++
+ .../test_data/test_config_printk_time.log     | 31 +++++++++
+ .../test_data/test_interrupted_tap_output.log | 37 ++++++++++
+ .../test_data/test_kernel_panic_interrupt.log | 25 +++++++
+ .../test_data/test_multiple_prefixes.log      | 31 +++++++++
+ ..._output_with_prefix_isolated_correctly.log | 33 +++++++++
+ .../kunit/test_data/test_pound_no_prefix.log  | 33 +++++++++
+ .../kunit/test_data/test_pound_sign.log       | 33 +++++++++
+ 9 files changed, 312 insertions(+), 20 deletions(-)
+ create mode 100644 tools/testing/kunit/test_data/test_config_printk_time.log
+ create mode 100644 tools/testing/kunit/test_data/test_interrupted_tap_output.log
+ create mode 100644 tools/testing/kunit/test_data/test_kernel_panic_interrupt.log
+ create mode 100644 tools/testing/kunit/test_data/test_multiple_prefixes.log
+ create mode 100644 tools/testing/kunit/test_data/test_output_with_prefix_isolated_correctly.log
+ create mode 100644 tools/testing/kunit/test_data/test_pound_no_prefix.log
+ create mode 100644 tools/testing/kunit/test_data/test_pound_sign.log
+
+diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+index 4ffbae0f6732..adf86747b07f 100644
+--- a/tools/testing/kunit/kunit_parser.py
++++ b/tools/testing/kunit/kunit_parser.py
+@@ -46,19 +46,21 @@ class TestStatus(Enum):
+ 	TEST_CRASHED = auto()
+ 	NO_TESTS = auto()
+ 
+-kunit_start_re = re.compile(r'^TAP version [0-9]+$')
+-kunit_end_re = re.compile('List of all partitions:')
++kunit_start_re = re.compile(r'TAP version [0-9]+$')
++kunit_end_re = re.compile('(List of all partitions:|'
++			  'Kernel panic - not syncing: VFS:|reboot: System halted)')
+ 
+ def isolate_kunit_output(kernel_output):
+ 	started = False
+ 	for line in kernel_output:
+-		if kunit_start_re.match(line):
++		if kunit_start_re.search(line):
++			prefix_len = len(line.split('TAP version')[0])
+ 			started = True
+-			yield line
+-		elif kunit_end_re.match(line):
++			yield line[prefix_len:] if prefix_len > 0 else line
++		elif kunit_end_re.search(line):
+ 			break
+ 		elif started:
+-			yield line
++			yield line[prefix_len:] if prefix_len > 0 else line
+ 
+ def raw_output(kernel_output):
+ 	for line in kernel_output:
+@@ -108,18 +110,16 @@ OK_NOT_OK_SUBTEST = re.compile(r'^\t(ok|not ok) [0-9]+ - (.*)$')
+ 
+ OK_NOT_OK_MODULE = re.compile(r'^(ok|not ok) [0-9]+ - (.*)$')
+ 
+-def parse_ok_not_ok_test_case(lines: List[str],
+-			      test_case: TestCase,
+-			      expecting_test_case: bool) -> bool:
++def parse_ok_not_ok_test_case(lines: List[str], test_case: TestCase) -> bool:
+ 	save_non_diagnositic(lines, test_case)
+ 	if not lines:
+-		if expecting_test_case:
+-			test_case.status = TestStatus.TEST_CRASHED
+-			return True
+-		else:
+-			return False
++		test_case.status = TestStatus.TEST_CRASHED
++		return True
+ 	line = lines[0]
+ 	match = OK_NOT_OK_SUBTEST.match(line)
++	while not match and lines:
++		line = lines.pop(0)
++		match = OK_NOT_OK_SUBTEST.match(line)
+ 	if match:
+ 		test_case.log.append(lines.pop(0))
+ 		test_case.name = match.group(2)
+@@ -150,12 +150,12 @@ def parse_diagnostic(lines: List[str], test_case: TestCase) -> bool:
+ 	else:
+ 		return False
+ 
+-def parse_test_case(lines: List[str], expecting_test_case: bool) -> TestCase:
++def parse_test_case(lines: List[str]) -> TestCase:
+ 	test_case = TestCase()
+ 	save_non_diagnositic(lines, test_case)
+ 	while parse_diagnostic(lines, test_case):
+ 		pass
+-	if parse_ok_not_ok_test_case(lines, test_case, expecting_test_case):
++	if parse_ok_not_ok_test_case(lines, test_case):
+ 		return test_case
+ 	else:
+ 		return None
+@@ -234,11 +234,11 @@ def parse_test_suite(lines: List[str]) -> TestSuite:
+ 	expected_test_case_num = parse_subtest_plan(lines)
+ 	if not expected_test_case_num:
+ 		return None
+-	test_case = parse_test_case(lines, expected_test_case_num > 0)
+-	expected_test_case_num -= 1
+-	while test_case:
++	while expected_test_case_num > 0:
++		test_case = parse_test_case(lines)
++		if not test_case:
++			break
+ 		test_suite.cases.append(test_case)
+-		test_case = parse_test_case(lines, expected_test_case_num > 0)
+ 		expected_test_case_num -= 1
+ 	if parse_ok_not_ok_test_suite(lines, test_suite):
+ 		test_suite.status = bubble_up_test_case_errors(test_suite)
+diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
+index cba97756ac4a..0efae697f396 100755
+--- a/tools/testing/kunit/kunit_tool_test.py
++++ b/tools/testing/kunit/kunit_tool_test.py
+@@ -108,6 +108,36 @@ class KUnitParserTest(unittest.TestCase):
+ 		self.assertContains('ok 1 - example', result)
+ 		file.close()
+ 
++	def test_output_with_prefix_isolated_correctly(self):
++		log_path = get_absolute_path(
++			'test_data/test_pound_sign.log')
++		with open(log_path) as file:
++			result = kunit_parser.isolate_kunit_output(file.readlines())
++		self.assertContains('TAP version 14\n', result)
++		self.assertContains('	# Subtest: kunit-resource-test', result)
++		self.assertContains('	1..5', result)
++		self.assertContains('	ok 1 - kunit_resource_test_init_resources', result)
++		self.assertContains('	ok 2 - kunit_resource_test_alloc_resource', result)
++		self.assertContains('	ok 3 - kunit_resource_test_destroy_resource', result)
++		self.assertContains(' foo bar 	#', result)
++		self.assertContains('	ok 4 - kunit_resource_test_cleanup_resources', result)
++		self.assertContains('	ok 5 - kunit_resource_test_proper_free_ordering', result)
++		self.assertContains('ok 1 - kunit-resource-test', result)
++		self.assertContains(' foo bar 	# non-kunit output', result)
++		self.assertContains('	# Subtest: kunit-try-catch-test', result)
++		self.assertContains('	1..2', result)
++		self.assertContains('	ok 1 - kunit_test_try_catch_successful_try_no_catch',
++				    result)
++		self.assertContains('	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch',
++				    result)
++		self.assertContains('ok 2 - kunit-try-catch-test', result)
++		self.assertContains('	# Subtest: string-stream-test', result)
++		self.assertContains('	1..3', result)
++		self.assertContains('	ok 1 - string_stream_test_empty_on_creation', result)
++		self.assertContains('	ok 2 - string_stream_test_not_empty_after_add', result)
++		self.assertContains('	ok 3 - string_stream_test_get_string', result)
++		self.assertContains('ok 3 - string-stream-test', result)
 +
-+config ARC_DSP_AGU_USERSPACE
-+	bool "Support DSP with AGU for userspace apps"
-+	select ARC_HAS_ACCL_REGS
-+	select ARC_DSP_HANDLED
-+	select ARC_DSP_SAVE_RESTORE_REGS
-+	help
-+	  DSP and AGU extensions presence in HW, support save / restore DSP
-+	  and AGU registers to run DSP-enabled userspace applications
- endchoice
+ 	def test_parse_successful_test_log(self):
+ 		all_passed_log = get_absolute_path(
+ 			'test_data/test_is_test_passed-all_passed.log')
+@@ -150,6 +180,45 @@ class KUnitParserTest(unittest.TestCase):
+ 			result.status)
+ 		file.close()
  
- config ARC_IRQ_NO_AUTOSAVE
-diff --git a/arch/arc/include/asm/arcregs.h b/arch/arc/include/asm/arcregs.h
-index aee1ee263065..2162023195c5 100644
---- a/arch/arc/include/asm/arcregs.h
-+++ b/arch/arc/include/asm/arcregs.h
-@@ -132,6 +132,18 @@
- #define ARC_AUX_DSP_CTRL	0x59F
- #define ARC_AUX_DSP_FFT_CTRL	0x59E
- 
-+#define ARC_AUX_AGU_BUILD	0xCC
-+#define ARC_AUX_AGU_AP0		0x5C0
-+#define ARC_AUX_AGU_AP1		0x5C1
-+#define ARC_AUX_AGU_AP2		0x5C2
-+#define ARC_AUX_AGU_AP3		0x5C3
-+#define ARC_AUX_AGU_OS0		0x5D0
-+#define ARC_AUX_AGU_OS1		0x5D1
-+#define ARC_AUX_AGU_MOD0	0x5E0
-+#define ARC_AUX_AGU_MOD1	0x5E1
-+#define ARC_AUX_AGU_MOD2	0x5E2
-+#define ARC_AUX_AGU_MOD3	0x5E3
++	def test_ignores_prefix_printk_time(self):
++		prefix_log = get_absolute_path(
++			'test_data/test_config_printk_time.log')
++		with open(prefix_log) as file:
++			result = kunit_parser.parse_run_tests(file.readlines())
++		self.assertEqual('kunit-resource-test', result.suites[0].name)
 +
- #ifndef __ASSEMBLY__
- 
- #include <soc/arc/aux.h>
-diff --git a/arch/arc/include/asm/asserts.h b/arch/arc/include/asm/asserts.h
-index 3314efbeb528..108f33be6aa5 100644
---- a/arch/arc/include/asm/asserts.h
-+++ b/arch/arc/include/asm/asserts.h
-@@ -10,6 +10,7 @@
- /* Helpers to sanitize config options. */
- 
- void chk_opt_strict(char *opt_name, bool hw_exists, bool opt_ena);
-+void chk_opt_weak(char *opt_name, bool hw_exists, bool opt_ena);
- 
- /*
-  * Check required config option:
-@@ -21,4 +22,13 @@ void chk_opt_strict(char *opt_name, bool hw_exists, bool opt_ena);
- 	chk_opt_strict(#opt_name, hw_exists, IS_ENABLED(opt_name));	\
- })
- 
-+/*
-+ * Check optional config option:
-+ *  - panic in case of OPT enabled but corresponding HW absent.
-+*/
-+#define CHK_OPT_WEAK(opt_name, hw_exists)				\
-+({									\
-+	chk_opt_weak(#opt_name, hw_exists, IS_ENABLED(opt_name));	\
-+})
++	def test_ignores_multiple_prefixes(self):
++		prefix_log = get_absolute_path(
++			'test_data/test_multiple_prefixes.log')
++		with open(prefix_log) as file:
++			result = kunit_parser.parse_run_tests(file.readlines())
++		self.assertEqual('kunit-resource-test', result.suites[0].name)
 +
- #endif /* __ASM_ARC_ASSERTS_H */
-diff --git a/arch/arc/include/asm/dsp-impl.h b/arch/arc/include/asm/dsp-impl.h
-index 8380f7bede81..e1aa212ca6eb 100644
---- a/arch/arc/include/asm/dsp-impl.h
-+++ b/arch/arc/include/asm/dsp-impl.h
-@@ -103,6 +103,21 @@ static inline void dsp_save_restore(struct task_struct *prev,
- 
- 	DSP_AUX_SAVE_RESTORE(saveto, readfrom, DSP_BFLY0);
- 	DSP_AUX_SAVE_RESTORE(saveto, readfrom, DSP_FFT_CTRL);
++	def test_prefix_mixed_kernel_output(self):
++		mixed_prefix_log = get_absolute_path(
++			'test_data/test_interrupted_tap_output.log')
++		with open(mixed_prefix_log) as file:
++			result = kunit_parser.parse_run_tests(file.readlines())
++		self.assertEqual('kunit-resource-test', result.suites[0].name)
 +
-+#ifdef CONFIG_ARC_DSP_AGU_USERSPACE
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP0);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP1);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP2);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP3);
++	def test_prefix_poundsign(self):
++		pound_log = get_absolute_path('test_data/test_pound_sign.log')
++		with open(pound_log) as file:
++			result = kunit_parser.parse_run_tests(file.readlines())
++		self.assertEqual('kunit-resource-test', result.suites[0].name)
 +
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_OS0);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_OS1);
++	def test_kernel_panic_end(self):
++		panic_log = get_absolute_path('test_data/test_kernel_panic_interrupt.log')
++		with open(panic_log) as file:
++			result = kunit_parser.parse_run_tests(file.readlines())
++		self.assertEqual('kunit-resource-test', result.suites[0].name)
 +
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD0);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD1);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD2);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD3);
-+#endif /* CONFIG_ARC_DSP_AGU_USERSPACE */
- }
- 
- #else /* !CONFIG_ARC_DSP_SAVE_RESTORE_REGS */
-@@ -117,9 +132,18 @@ static inline bool dsp_exist(void)
- 	return !!bcr.ver;
- }
- 
-+static inline bool agu_exist(void)
-+{
-+	struct bcr_generic bcr;
++	def test_pound_no_prefix(self):
++		pound_log = get_absolute_path('test_data/test_pound_no_prefix.log')
++		with open(pound_log) as file:
++			result = kunit_parser.parse_run_tests(file.readlines())
++		self.assertEqual('kunit-resource-test', result.suites[0].name)
 +
-+	READ_BCR(ARC_AUX_AGU_BUILD, bcr);
-+	return !!bcr.ver;
-+}
+ class StrContains(str):
+ 	def __eq__(self, other):
+ 		return self in other
+diff --git a/tools/testing/kunit/test_data/test_config_printk_time.log b/tools/testing/kunit/test_data/test_config_printk_time.log
+new file mode 100644
+index 000000000000..c02ca773946d
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_config_printk_time.log
+@@ -0,0 +1,31 @@
++[    0.060000] printk: console [mc-1] enabled
++[    0.060000] random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++[    0.060000] TAP version 14
++[    0.060000] 	# Subtest: kunit-resource-test
++[    0.060000] 	1..5
++[    0.060000] 	ok 1 - kunit_resource_test_init_resources
++[    0.060000] 	ok 2 - kunit_resource_test_alloc_resource
++[    0.060000] 	ok 3 - kunit_resource_test_destroy_resource
++[    0.060000] 	ok 4 - kunit_resource_test_cleanup_resources
++[    0.060000] 	ok 5 - kunit_resource_test_proper_free_ordering
++[    0.060000] ok 1 - kunit-resource-test
++[    0.060000] 	# Subtest: kunit-try-catch-test
++[    0.060000] 	1..2
++[    0.060000] 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++[    0.060000] 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++[    0.060000] ok 2 - kunit-try-catch-test
++[    0.060000] 	# Subtest: string-stream-test
++[    0.060000] 	1..3
++[    0.060000] 	ok 1 - string_stream_test_empty_on_creation
++[    0.060000] 	ok 2 - string_stream_test_not_empty_after_add
++[    0.060000] 	ok 3 - string_stream_test_get_string
++[    0.060000] ok 3 - string-stream-test
++[    0.060000] List of all partitions:
++[    0.060000] No filesystem could mount root, tried:
++[    0.060000]
++[    0.060000] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++[    0.060000] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++[    0.060000] Stack:
++[    0.060000]  602086f8 601bc260 705c0000 705c0000
++[    0.060000]  602086f8 6005fcec 705c0000 6002c6ab
++[    0.060000]  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
+diff --git a/tools/testing/kunit/test_data/test_interrupted_tap_output.log b/tools/testing/kunit/test_data/test_interrupted_tap_output.log
+new file mode 100644
+index 000000000000..5c73fb3a1c6f
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_interrupted_tap_output.log
+@@ -0,0 +1,37 @@
++[    0.060000] printk: console [mc-1] enabled
++[    0.060000] random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++[    0.060000] TAP version 14
++[    0.060000] 	# Subtest: kunit-resource-test
++[    0.060000] 	1..5
++[    0.060000] 	ok 1 - kunit_resource_test_init_resources
++[    0.060000] 	ok 2 - kunit_resource_test_alloc_resource
++[    0.060000] 	ok 3 - kunit_resource_test_destroy_resource
++[    0.060000] kAFS: Red Hat AFS client v0.1 registering.
++[    0.060000] FS-Cache: Netfs 'afs' registered for caching
++[    0.060000] *** VALIDATE kAFS ***
++[    0.060000] Btrfs loaded, crc32c=crc32c-generic, debug=on, assert=on, integrity-checker=on, ref-verify=on
++[    0.060000] BTRFS: selftest: sectorsize: 4096  nodesize: 4096
++[    0.060000] BTRFS: selftest: running btrfs free space cache tests
++[    0.060000] 	ok 4 - kunit_resource_test_cleanup_resources
++[    0.060000] 	ok 5 - kunit_resource_test_proper_free_ordering
++[    0.060000] ok 1 - kunit-resource-test
++[    0.060000] 	# Subtest: kunit-try-catch-test
++[    0.060000] 	1..2
++[    0.060000] 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++[    0.060000] 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++[    0.060000] ok 2 - kunit-try-catch-test
++[    0.060000] 	# Subtest: string-stream-test
++[    0.060000] 	1..3
++[    0.060000] 	ok 1 - string_stream_test_empty_on_creation
++[    0.060000] 	ok 2 - string_stream_test_not_empty_after_add
++[    0.060000] 	ok 3 - string_stream_test_get_string
++[    0.060000] ok 3 - string-stream-test
++[    0.060000] List of all partitions:
++[    0.060000] No filesystem could mount root, tried:
++[    0.060000]
++[    0.060000] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++[    0.060000] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++[    0.060000] Stack:
++[    0.060000]  602086f8 601bc260 705c0000 705c0000
++[    0.060000]  602086f8 6005fcec 705c0000 6002c6ab
++[    0.060000]  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
+diff --git a/tools/testing/kunit/test_data/test_kernel_panic_interrupt.log b/tools/testing/kunit/test_data/test_kernel_panic_interrupt.log
+new file mode 100644
+index 000000000000..c045eee75f27
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_kernel_panic_interrupt.log
+@@ -0,0 +1,25 @@
++[    0.060000] printk: console [mc-1] enabled
++[    0.060000] random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++[    0.060000] TAP version 14
++[    0.060000] 	# Subtest: kunit-resource-test
++[    0.060000] 	1..5
++[    0.060000] 	ok 1 - kunit_resource_test_init_resources
++[    0.060000] 	ok 2 - kunit_resource_test_alloc_resource
++[    0.060000] 	ok 3 - kunit_resource_test_destroy_resource
++[    0.060000] 	ok 4 - kunit_resource_test_cleanup_resources
++[    0.060000] 	ok 5 - kunit_resource_test_proper_free_ordering
++[    0.060000] ok 1 - kunit-resource-test
++[    0.060000] 	# Subtest: kunit-try-catch-test
++[    0.060000] 	1..2
++[    0.060000] 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++[    0.060000] 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++[    0.060000] ok 2 - kunit-try-catch-test
++[    0.060000] 	# Subtest: string-stream-test
++[    0.060000] 	1..3
++[    0.060000] 	ok 1 - string_stream_test_empty_on_creation
++[    0.060000] 	Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++[    0.060000] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++[    0.060000] Stack:
++[    0.060000]  602086f8 601bc260 705c0000 705c0000
++[    0.060000]  602086f8 6005fcec 705c0000 6002c6ab
++[    0.060000]  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
+diff --git a/tools/testing/kunit/test_data/test_multiple_prefixes.log b/tools/testing/kunit/test_data/test_multiple_prefixes.log
+new file mode 100644
+index 000000000000..bc48407dcc36
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_multiple_prefixes.log
+@@ -0,0 +1,31 @@
++[    0.060000][    T1] printk: console [mc-1] enabled
++[    0.060000][    T1] random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++[    0.060000][    T1] TAP version 14
++[    0.060000][    T1] 	# Subtest: kunit-resource-test
++[    0.060000][    T1] 	1..5
++[    0.060000][    T1] 	ok 1 - kunit_resource_test_init_resources
++[    0.060000][    T1] 	ok 2 - kunit_resource_test_alloc_resource
++[    0.060000][    T1] 	ok 3 - kunit_resource_test_destroy_resource
++[    0.060000][    T1] 	ok 4 - kunit_resource_test_cleanup_resources
++[    0.060000][    T1] 	ok 5 - kunit_resource_test_proper_free_ordering
++[    0.060000][    T1] ok 1 - kunit-resource-test
++[    0.060000][    T1] 	# Subtest: kunit-try-catch-test
++[    0.060000][    T1] 	1..2
++[    0.060000][    T1] 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++[    0.060000][    T1] 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++[    0.060000][    T1] ok 2 - kunit-try-catch-test
++[    0.060000][    T1] 	# Subtest: string-stream-test
++[    0.060000][    T1] 	1..3
++[    0.060000][    T1] 	ok 1 - string_stream_test_empty_on_creation
++[    0.060000][    T1] 	ok 2 - string_stream_test_not_empty_after_add
++[    0.060000][    T1] 	ok 3 - string_stream_test_get_string
++[    0.060000][    T1] ok 3 - string-stream-test
++[    0.060000][    T1] List of all partitions:
++[    0.060000][    T1] No filesystem could mount root, tried:
++[    0.060000][    T1]
++[    0.060000][    T1] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++[    0.060000][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++[    0.060000][    T1] Stack:
++[    0.060000][    T1]  602086f8 601bc260 705c0000 705c0000
++[    0.060000][    T1]  602086f8 6005fcec 705c0000 6002c6ab
++[    0.060000][    T1]  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
+diff --git a/tools/testing/kunit/test_data/test_output_with_prefix_isolated_correctly.log b/tools/testing/kunit/test_data/test_output_with_prefix_isolated_correctly.log
+new file mode 100644
+index 000000000000..0f87cdabebb0
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_output_with_prefix_isolated_correctly.log
+@@ -0,0 +1,33 @@
++[    0.060000] printk: console [mc-1] enabled
++[    0.060000] random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++[    0.060000] TAP version 14
++[    0.060000] 	# Subtest: kunit-resource-test
++[    0.060000] 	1..5
++[    0.060000] 	ok 1 - kunit_resource_test_init_resources
++[    0.060000] 	ok 2 - kunit_resource_test_alloc_resource
++[    0.060000] 	ok 3 - kunit_resource_test_destroy_resource
++[    0.060000]  foo bar 	#
++[    0.060000] 	ok 4 - kunit_resource_test_cleanup_resources
++[    0.060000] 	ok 5 - kunit_resource_test_proper_free_ordering
++[    0.060000] ok 1 - kunit-resource-test
++[    0.060000]  foo bar 	# non-kunit output
++[    0.060000] 	# Subtest: kunit-try-catch-test
++[    0.060000] 	1..2
++[    0.060000] 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++[    0.060000] 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++[    0.060000] ok 2 - kunit-try-catch-test
++[    0.060000] 	# Subtest: string-stream-test
++[    0.060000] 	1..3
++[    0.060000] 	ok 1 - string_stream_test_empty_on_creation
++[    0.060000] 	ok 2 - string_stream_test_not_empty_after_add
++[    0.060000] 	ok 3 - string_stream_test_get_string
++[    0.060000] ok 3 - string-stream-test
++[    0.060000] List of all partitions:
++[    0.060000] No filesystem could mount root, tried:
++[    0.060000]
++[    0.060000] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++[    0.060000] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++[    0.060000] Stack:
++[    0.060000]  602086f8 601bc260 705c0000 705c0000
++[    0.060000]  602086f8 6005fcec 705c0000 6002c6ab
++[    0.060000]  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
+diff --git a/tools/testing/kunit/test_data/test_pound_no_prefix.log b/tools/testing/kunit/test_data/test_pound_no_prefix.log
+new file mode 100644
+index 000000000000..2ceb360be7d5
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_pound_no_prefix.log
+@@ -0,0 +1,33 @@
++ printk: console [mc-1] enabled
++ random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++ TAP version 14
++ 	# Subtest: kunit-resource-test
++ 	1..5
++ 	ok 1 - kunit_resource_test_init_resources
++ 	ok 2 - kunit_resource_test_alloc_resource
++ 	ok 3 - kunit_resource_test_destroy_resource
++  foo bar 	#
++ 	ok 4 - kunit_resource_test_cleanup_resources
++ 	ok 5 - kunit_resource_test_proper_free_ordering
++ ok 1 - kunit-resource-test
++  foo bar 	# non-kunit output
++ 	# Subtest: kunit-try-catch-test
++ 	1..2
++ 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++ 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++ ok 2 - kunit-try-catch-test
++ 	# Subtest: string-stream-test
++ 	1..3
++ 	ok 1 - string_stream_test_empty_on_creation
++ 	ok 2 - string_stream_test_not_empty_after_add
++ 	ok 3 - string_stream_test_get_string
++ ok 3 - string-stream-test
++ List of all partitions:
++ No filesystem could mount root, tried:
 +
- static inline void dsp_config_check(void)
- {
- 	CHK_OPT_STRICT(CONFIG_ARC_DSP_HANDLED, dsp_exist());
-+	CHK_OPT_WEAK(CONFIG_ARC_DSP_AGU_USERSPACE, agu_exist());
- }
- 
- #endif /* __ASEMBLY__ */
-diff --git a/arch/arc/include/asm/dsp.h b/arch/arc/include/asm/dsp.h
-index b016f4d2a09f..202c78e56704 100644
---- a/arch/arc/include/asm/dsp.h
-+++ b/arch/arc/include/asm/dsp.h
-@@ -17,6 +17,11 @@
-  */
- struct dsp_callee_regs {
- 	unsigned long ACC0_GLO, ACC0_GHI, DSP_BFLY0, DSP_FFT_CTRL;
-+#ifdef CONFIG_ARC_DSP_AGU_USERSPACE
-+	unsigned long AGU_AP0, AGU_AP1, AGU_AP2, AGU_AP3;
-+	unsigned long AGU_OS0, AGU_OS1;
-+	unsigned long AGU_MOD0, AGU_MOD1, AGU_MOD2, AGU_MOD3;
-+#endif
- };
- 
- #endif /* !__ASSEMBLY__ */
-diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
-index 1ed1528d9045..b2b1cb645d9e 100644
---- a/arch/arc/kernel/setup.c
-+++ b/arch/arc/kernel/setup.c
-@@ -399,6 +399,12 @@ void chk_opt_strict(char *opt_name, bool hw_exists, bool opt_ena)
- 		panic("Disable %s, hardware NOT present\n", opt_name);
- }
- 
-+void chk_opt_weak(char *opt_name, bool hw_exists, bool opt_ena)
-+{
-+	if (!hw_exists && opt_ena)
-+		panic("Disable %s, hardware NOT present\n", opt_name);
-+}
-+
- static void arc_chk_core_config(void)
- {
- 	struct cpuinfo_arc *cpu = &cpuinfo_arc700[smp_processor_id()];
++ Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++ CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++ Stack:
++  602086f8 601bc260 705c0000 705c0000
++  602086f8 6005fcec 705c0000 6002c6ab
++  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
+diff --git a/tools/testing/kunit/test_data/test_pound_sign.log b/tools/testing/kunit/test_data/test_pound_sign.log
+new file mode 100644
+index 000000000000..0f87cdabebb0
+--- /dev/null
++++ b/tools/testing/kunit/test_data/test_pound_sign.log
+@@ -0,0 +1,33 @@
++[    0.060000] printk: console [mc-1] enabled
++[    0.060000] random: get_random_bytes called from init_oops_id+0x35/0x40 with crng_init=0
++[    0.060000] TAP version 14
++[    0.060000] 	# Subtest: kunit-resource-test
++[    0.060000] 	1..5
++[    0.060000] 	ok 1 - kunit_resource_test_init_resources
++[    0.060000] 	ok 2 - kunit_resource_test_alloc_resource
++[    0.060000] 	ok 3 - kunit_resource_test_destroy_resource
++[    0.060000]  foo bar 	#
++[    0.060000] 	ok 4 - kunit_resource_test_cleanup_resources
++[    0.060000] 	ok 5 - kunit_resource_test_proper_free_ordering
++[    0.060000] ok 1 - kunit-resource-test
++[    0.060000]  foo bar 	# non-kunit output
++[    0.060000] 	# Subtest: kunit-try-catch-test
++[    0.060000] 	1..2
++[    0.060000] 	ok 1 - kunit_test_try_catch_successful_try_no_catch
++[    0.060000] 	ok 2 - kunit_test_try_catch_unsuccessful_try_does_catch
++[    0.060000] ok 2 - kunit-try-catch-test
++[    0.060000] 	# Subtest: string-stream-test
++[    0.060000] 	1..3
++[    0.060000] 	ok 1 - string_stream_test_empty_on_creation
++[    0.060000] 	ok 2 - string_stream_test_not_empty_after_add
++[    0.060000] 	ok 3 - string_stream_test_get_string
++[    0.060000] ok 3 - string-stream-test
++[    0.060000] List of all partitions:
++[    0.060000] No filesystem could mount root, tried:
++[    0.060000]
++[    0.060000] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(98,0)
++[    0.060000] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-rc1-gea2dd7c0875e-dirty #2
++[    0.060000] Stack:
++[    0.060000]  602086f8 601bc260 705c0000 705c0000
++[    0.060000]  602086f8 6005fcec 705c0000 6002c6ab
++[    0.060000]  6005fcec 601bc260 705c0000 3000000010
+\ No newline at end of file
 -- 
-2.21.1
+2.25.0.265.gbab2e86ba0-goog
 
