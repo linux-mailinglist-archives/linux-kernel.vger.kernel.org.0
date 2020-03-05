@@ -2,345 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984CF179EB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 05:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D298F179ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 06:02:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725912AbgCEEvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Mar 2020 23:51:48 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43476 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgCEEvr (ORCPT
+        id S1725899AbgCEFCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 00:02:17 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43361 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbgCEFCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Mar 2020 23:51:47 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0254pTD8119086;
-        Wed, 4 Mar 2020 22:51:29 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583383889;
-        bh=YWxU9N3oS/F+fWkAAyJPMZXRGvDp4HaQTUtmye33uIo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=YWICIf1hIItt+93A00J/GummAW0EjoL0G/z3OCIy6sXsCnt7BD+5+191YT//aunS5
-         xqgfaZphkzq+lqnSFb3bQwoYfWcafReIJSU8X2U1pUXmX/l24pIbxa2TSObG31qZnW
-         uo28j2AnhlMx3a9IPTdoEPMJld35Flu6y647pAjE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0254pT5f088116
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Mar 2020 22:51:29 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Mar
- 2020 22:51:28 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Mar 2020 22:51:28 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0254pO4u032047;
-        Wed, 4 Mar 2020 22:51:25 -0600
-Subject: Re: [PATCH v6 6/7] phy: amlogic: Add Amlogic AXG PCIE PHY Driver
-To:     Remi Pommarel <repk@triplefau.lt>
-CC:     Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-References: <20200123232943.10229-1-repk@triplefau.lt>
- <20200123232943.10229-7-repk@triplefau.lt>
- <14627e42-4894-6674-4911-3205ea8f5e55@ti.com> <20200304130811.GP2248@voidbox>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a6f8ac2f-f49a-f53e-1b44-fc446c3d7964@ti.com>
-Date:   Thu, 5 Mar 2020 10:26:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 5 Mar 2020 00:02:17 -0500
+Received: by mail-pg1-f194.google.com with SMTP id u12so2126338pgb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Mar 2020 21:02:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cs.washington.edu; s=goo201206;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YpOwyrb2WE/CDlzT3QThQwLnDNsGkooSRHNga96mtQc=;
+        b=D4mP+M6uKURXP9HP9xpBxfbWTwS2sXLCAH4XXiVTLLBY2AHKEG4zJCDy0WZMfc5Cdf
+         0vWrb8YgmglaHdbSRbvzwy0Ud+GY5kjFjJG5svoO6WbDsiVnX1N3h3+BPsGpiXZjFXIt
+         IjlL0igv8nG47EYU1nWRvSzj9kcDGs1Mwl6Xc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YpOwyrb2WE/CDlzT3QThQwLnDNsGkooSRHNga96mtQc=;
+        b=N81poZB6/8BZzsacF5/2lQeYU1LI9ykLNot8SNk4uJD8OPrro7WWryQQaP0MCK2JKq
+         HUzdn2DtUvYyG9hcfA1oGucF6O+dpI5O5Wnjy6qm4gsVdx7YnbJ2dnaxjAqmhSjY2axp
+         bL/GhXK9JXgATFEaMZZ6wVzO+eNcgsZ6o2/EyFWwehuA4ZGFBtV017b2ktD2kveNUJ4h
+         EzNQusJuwbbSCoVqrUKlPYk71+O3VStYh6pfB/0t3Ts4woLZxP9OqUMljN2M7U52E+xK
+         LltqS1qm45+UbcAVehUCw8pC9jTQyWRVN67BLmYmHN+blZyvRXNfiHXFwafSHZA6QwRF
+         a/YA==
+X-Gm-Message-State: ANhLgQ3EYW1km/lqG15tlRueUNTUnf75t2XuKRlwHTIVNN1ogBI0LEew
+        PqMtNzvmRJuG7dE+v3J04g0p1Q==
+X-Google-Smtp-Source: ADFU+vtsPUj4UrzYUbkDsFFzdcapU3JttJFjuZrekealA4hSmKDIUgQOkMkXBsfF9VaQPKePqPog4A==
+X-Received: by 2002:a63:4a19:: with SMTP id x25mr5914511pga.167.1583384535762;
+        Wed, 04 Mar 2020 21:02:15 -0800 (PST)
+Received: from ryzen.cs.washington.edu ([2607:4000:200:11:e9fe:faad:3d84:58ea])
+        by smtp.gmail.com with ESMTPSA id y7sm17820466pfq.15.2020.03.04.21.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2020 21:02:14 -0800 (PST)
+From:   Luke Nelson <lukenels@cs.washington.edu>
+X-Google-Original-From: Luke Nelson <luke.r.nels@gmail.com>
+To:     bpf@vger.kernel.org
+Cc:     Luke Nelson <luke.r.nels@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@gmail.com>,
+        Xi Wang <xi.wang@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: [PATCH bpf-next v5 0/4] eBPF JIT for RV32G
+Date:   Wed,  4 Mar 2020 21:02:03 -0800
+Message-Id: <20200305050207.4159-1-luke.r.nels@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200304130811.GP2248@voidbox>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series adds an eBPF JIT for 32-bit RISC-V (RV32G) to the kernel,
+adapted from the RV64 JIT and the 32-bit ARM JIT.
 
-On 04/03/20 6:38 pm, Remi Pommarel wrote:
-> On Wed, Mar 04, 2020 at 04:31:24PM +0530, Kishon Vijay Abraham I wrote:
->>
->>
->> On 24/01/20 4:59 am, Remi Pommarel wrote:
->>> This adds support for the PCI PHY found in the Amlogic AXG SoC Family.
->>> This will allow to mutualize code in pci-meson.c between AXG and G12A
->>> SoC.
->>>
->>> This PHY also uses and chains an analog PHY, which on AXG platform
->>> is needed to have reliable PCIe communication.
->>
->> Is the analog PHY an independent block and can be used with other PHYs?
-> 
-> It is documented as a separate block yes, but I think it is unlikely
-> that it will be used with other PHYs than the PCIe or the MIPI one of
-> the AXG SoC.
+There are two main changes required for this to work compared to
+the RV64 JIT.
 
-Shouldn't we then have a single PHY driver instead of chaining PHYs?
+First, eBPF registers are 64-bit, while RV32G registers are 32-bit.
+BPF registers either map directly to 2 RISC-V registers, or reside
+in stack scratch space and are saved and restored when used.
 
-Thanks
-Kishon
+Second, many 64-bit ALU operations do not trivially map to 32-bit
+operations. Operations that move bits between high and low words,
+such as ADD, LSH, MUL, and others must emulate the 64-bit behavior
+in terms of 32-bit instructions.
 
-> 
-> Thanks,
-> Remi
-> 
->>
->> For the patch itself
->> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
->>
->> Thanks
->> Kishon
->>>
->>> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
->>> ---
->>>  drivers/phy/amlogic/Kconfig              |  11 ++
->>>  drivers/phy/amlogic/Makefile             |   1 +
->>>  drivers/phy/amlogic/phy-meson-axg-pcie.c | 192 +++++++++++++++++++++++
->>>  3 files changed, 204 insertions(+)
->>>  create mode 100644 drivers/phy/amlogic/phy-meson-axg-pcie.c
->>>
->>> diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
->>> index 8c9cf2403591..71801e30d601 100644
->>> --- a/drivers/phy/amlogic/Kconfig
->>> +++ b/drivers/phy/amlogic/Kconfig
->>> @@ -60,6 +60,17 @@ config PHY_MESON_G12A_USB3_PCIE
->>>  	  in Meson G12A SoCs.
->>>  	  If unsure, say N.
->>>  
->>> +config PHY_MESON_AXG_PCIE
->>> +	tristate "Meson AXG PCIE PHY driver"
->>> +	default ARCH_MESON
->>> +	depends on OF && (ARCH_MESON || COMPILE_TEST)
->>> +	select GENERIC_PHY
->>> +	select REGMAP_MMIO
->>> +	help
->>> +	  Enable this to support the Meson MIPI + PCIE PHY found
->>> +	  in Meson AXG SoCs.
->>> +	  If unsure, say N.
->>> +
->>>  config PHY_MESON_AXG_MIPI_PCIE_ANALOG
->>>  	tristate "Meson AXG MIPI + PCIE analog PHY driver"
->>>  	default ARCH_MESON
->>> diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
->>> index 0aecf92d796a..e2baa133f7af 100644
->>> --- a/drivers/phy/amlogic/Makefile
->>> +++ b/drivers/phy/amlogic/Makefile
->>> @@ -4,4 +4,5 @@ obj-$(CONFIG_PHY_MESON_GXL_USB2)		+= phy-meson-gxl-usb2.o
->>>  obj-$(CONFIG_PHY_MESON_G12A_USB2)		+= phy-meson-g12a-usb2.o
->>>  obj-$(CONFIG_PHY_MESON_GXL_USB3)		+= phy-meson-gxl-usb3.o
->>>  obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)		+= phy-meson-g12a-usb3-pcie.o
->>> +obj-$(CONFIG_PHY_MESON_AXG_PCIE)		+= phy-meson-axg-pcie.o
->>>  obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE_ANALOG)	+= phy-meson-axg-mipi-pcie-analog.o
->>> diff --git a/drivers/phy/amlogic/phy-meson-axg-pcie.c b/drivers/phy/amlogic/phy-meson-axg-pcie.c
->>> new file mode 100644
->>> index 000000000000..377ed0dcd0d9
->>> --- /dev/null
->>> +++ b/drivers/phy/amlogic/phy-meson-axg-pcie.c
->>> @@ -0,0 +1,192 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Amlogic AXG PCIE PHY driver
->>> + *
->>> + * Copyright (C) 2020 Remi Pommarel <repk@triplefau.lt>
->>> + */
->>> +#include <linux/module.h>
->>> +#include <linux/phy/phy.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/reset.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/bitfield.h>
->>> +#include <dt-bindings/phy/phy.h>
->>> +
->>> +#define MESON_PCIE_REG0 0x00
->>> +#define		MESON_PCIE_COMMON_CLK	BIT(4)
->>> +#define		MESON_PCIE_PORT_SEL	GENMASK(3, 2)
->>> +#define		MESON_PCIE_CLK		BIT(1)
->>> +#define		MESON_PCIE_POWERDOWN	BIT(0)
->>> +
->>> +#define MESON_PCIE_TWO_X1		FIELD_PREP(MESON_PCIE_PORT_SEL, 0x3)
->>> +#define MESON_PCIE_COMMON_REF_CLK	FIELD_PREP(MESON_PCIE_COMMON_CLK, 0x1)
->>> +#define MESON_PCIE_PHY_INIT		(MESON_PCIE_TWO_X1 |		\
->>> +					 MESON_PCIE_COMMON_REF_CLK)
->>> +#define MESON_PCIE_RESET_DELAY		500
->>> +
->>> +struct phy_axg_pcie_priv {
->>> +	struct phy *phy;
->>> +	struct phy *analog;
->>> +	struct regmap *regmap;
->>> +	struct reset_control *reset;
->>> +};
->>> +
->>> +static const struct regmap_config phy_axg_pcie_regmap_conf = {
->>> +	.reg_bits = 8,
->>> +	.val_bits = 32,
->>> +	.reg_stride = 4,
->>> +	.max_register = MESON_PCIE_REG0,
->>> +};
->>> +
->>> +static int phy_axg_pcie_power_on(struct phy *phy)
->>> +{
->>> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
->>> +	int ret;
->>> +
->>> +	ret = phy_power_on(priv->analog);
->>> +	if (ret != 0)
->>> +		return ret;
->>> +
->>> +	regmap_update_bits(priv->regmap, MESON_PCIE_REG0,
->>> +			   MESON_PCIE_POWERDOWN, 0);
->>> +	return 0;
->>> +}
->>> +
->>> +static int phy_axg_pcie_power_off(struct phy *phy)
->>> +{
->>> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
->>> +	int ret;
->>> +
->>> +	ret = phy_power_off(priv->analog);
->>> +	if (ret != 0)
->>> +		return ret;
->>> +
->>> +	regmap_update_bits(priv->regmap, MESON_PCIE_REG0,
->>> +			   MESON_PCIE_POWERDOWN, 1);
->>> +	return 0;
->>> +}
->>> +
->>> +static int phy_axg_pcie_init(struct phy *phy)
->>> +{
->>> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
->>> +	int ret;
->>> +
->>> +	ret = phy_init(priv->analog);
->>> +	if (ret != 0)
->>> +		return ret;
->>> +
->>> +	regmap_write(priv->regmap, MESON_PCIE_REG0, MESON_PCIE_PHY_INIT);
->>> +	return reset_control_reset(priv->reset);
->>> +}
->>> +
->>> +static int phy_axg_pcie_exit(struct phy *phy)
->>> +{
->>> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
->>> +	int ret;
->>> +
->>> +	ret = phy_exit(priv->analog);
->>> +	if (ret != 0)
->>> +		return ret;
->>> +
->>> +	return reset_control_reset(priv->reset);
->>> +}
->>> +
->>> +static int phy_axg_pcie_reset(struct phy *phy)
->>> +{
->>> +	struct phy_axg_pcie_priv *priv = phy_get_drvdata(phy);
->>> +	int ret = 0;
->>> +
->>> +	ret = phy_reset(priv->analog);
->>> +	if (ret != 0)
->>> +		goto out;
->>> +
->>> +	ret = reset_control_assert(priv->reset);
->>> +	if (ret != 0)
->>> +		goto out;
->>> +	udelay(MESON_PCIE_RESET_DELAY);
->>> +
->>> +	ret = reset_control_deassert(priv->reset);
->>> +	if (ret != 0)
->>> +		goto out;
->>> +	udelay(MESON_PCIE_RESET_DELAY);
->>> +
->>> +out:
->>> +	return ret;
->>> +}
->>> +
->>> +static const struct phy_ops phy_axg_pcie_ops = {
->>> +	.init = phy_axg_pcie_init,
->>> +	.exit = phy_axg_pcie_exit,
->>> +	.power_on = phy_axg_pcie_power_on,
->>> +	.power_off = phy_axg_pcie_power_off,
->>> +	.reset = phy_axg_pcie_reset,
->>> +	.owner = THIS_MODULE,
->>> +};
->>> +
->>> +static int phy_axg_pcie_probe(struct platform_device *pdev)
->>> +{
->>> +	struct phy_provider *pphy;
->>> +	struct device *dev = &pdev->dev;
->>> +	struct phy_axg_pcie_priv *priv;
->>> +	struct device_node *np = dev->of_node;
->>> +	struct resource *res;
->>> +	void __iomem *base;
->>> +	int ret;
->>> +
->>> +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
->>> +	if (!priv)
->>> +		return -ENOMEM;
->>> +
->>> +	priv->phy = devm_phy_create(dev, np, &phy_axg_pcie_ops);
->>> +	if (IS_ERR(priv->phy)) {
->>> +		ret = PTR_ERR(priv->phy);
->>> +		if (ret != -EPROBE_DEFER)
->>> +			dev_err(dev, "failed to create PHY\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +	base = devm_ioremap_resource(dev, res);
->>> +	if (IS_ERR(base))
->>> +		return PTR_ERR(base);
->>> +
->>> +	priv->regmap = devm_regmap_init_mmio(dev, base,
->>> +					     &phy_axg_pcie_regmap_conf);
->>> +	if (IS_ERR(priv->regmap))
->>> +		return PTR_ERR(priv->regmap);
->>> +
->>> +	priv->reset = devm_reset_control_array_get(dev, false, false);
->>> +	if (IS_ERR(priv->reset))
->>> +		return PTR_ERR(priv->reset);
->>> +
->>> +	priv->analog = devm_phy_get(dev, "analog");
->>> +	if (IS_ERR(priv->analog))
->>> +		return PTR_ERR(priv->analog);
->>> +
->>> +	phy_set_drvdata(priv->phy, priv);
->>> +	dev_set_drvdata(dev, priv);
->>> +	pphy = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->>> +
->>> +	return PTR_ERR_OR_ZERO(pphy);
->>> +}
->>> +
->>> +static const struct of_device_id phy_axg_pcie_of_match[] = {
->>> +	{
->>> +		.compatible = "amlogic,axg-pcie-phy",
->>> +	},
->>> +	{ },
->>> +};
->>> +MODULE_DEVICE_TABLE(of, phy_axg_pcie_of_match);
->>> +
->>> +static struct platform_driver phy_axg_pcie_driver = {
->>> +	.probe = phy_axg_pcie_probe,
->>> +	.driver = {
->>> +		.name = "phy-axg-pcie",
->>> +		.of_match_table = phy_axg_pcie_of_match,
->>> +	},
->>> +};
->>> +module_platform_driver(phy_axg_pcie_driver);
->>> +
->>> +MODULE_AUTHOR("Remi Pommarel <repk@triplefau.lt>");
->>> +MODULE_DESCRIPTION("Amlogic AXG PCIE PHY driver");
->>> +MODULE_LICENSE("GPL v2");
->>>
+Supported features:
+
+The RV32 JIT supports the same features and instructions as the
+RV64 JIT, with the following exceptions:
+
+- ALU64 DIV/MOD: Requires loops to implement on 32-bit hardware.
+
+- BPF_XADD | BPF_DW: There's no 8-byte atomic instruction in RV32.
+
+These features are also unsupported on other BPF JITs for 32-bit
+architectures.
+
+Testing:
+
+- lib/test_bpf.c
+test_bpf: Summary: 378 PASSED, 0 FAILED, [349/366 JIT'ed]
+test_bpf: test_skb_segment: Summary: 2 PASSED, 0 FAILED
+
+The tests that are not JITed are all due to use of 64-bit div/mod
+or 64-bit xadd.
+
+- tools/testing/selftests/bpf/test_verifier.c
+Summary: 1415 PASSED, 122 SKIPPED, 43 FAILED
+
+Tested both with and without BPF JIT hardening.
+
+This is the same set of tests that pass using the BPF interpreter
+with the JIT disabled.
+
+Running the BPF kernel tests / selftests on riscv32 is non-trivial,
+to help others reproduce the test results I made a guide here:
+https://github.com/lukenels/meta-linux-utils/tree/master/rv32-linux
+
+Verification and synthesis:
+
+We developed the RV32 JIT using our automated verification tool,
+Serval. We have used Serval in the past to verify patches to the
+RV64 JIT. We also used Serval to superoptimize the resulting code
+through program synthesis.
+
+You can find the tool and a guide to the approach and results here:
+https://github.com/uw-unsat/serval-bpf/tree/rv32-jit-v5
+
+Thanks again for all the comments!
+
+Changelog:
+
+v4 -> v5:
+  * Factored common code (build_body, bpf_int_jit_compile, etc)
+    to bpf_jit_core.c (Björn Töpel).
+  * Moved RV32-specific changes to bpf_jit.h from patch 1 to patch 2
+    (Björn Töpel).
+  * Removed "_rv32_" from function names in JIT as it is
+    redundant (Björn Töpel).
+  * Added commit message to MAINTAINERS and made sure to keep
+    entries in order (Andy Shevchenko).
+
+v3 -> v4:
+  * Added more comments and cleaned up style nits (Björn Töpel).
+  * Factored common code in RV64 and RV32 JITs into a separate header
+    (Song Liu, Björn Töpel).
+  * Added an optimization in the BPF_ALU64 BPF_ADD BPF_X case.
+  * Updated MAINTAINERS and kernel documentation (Björn Töpel).
+
+v2 -> v3:
+  * Added support for far jumps / branches similar to RV64 JIT.
+  * Added support for tail calls.
+  * Cleaned up code with more optimizations and comments.
+  * Removed special zero-extension instruction from BPF_ALU64
+    case (Jiong Wang).
+
+v1 -> v2:
+  * Added support for far conditional branches.
+  * Added the zero-extension optimization (Jiong Wang).
+  * Added more optimizations for operations with an immediate operand.
+
+Luke Nelson (4):
+  riscv, bpf: factor common RISC-V JIT code
+  riscv, bpf: add RV32G eBPF JIT
+  bpf, doc: add BPF JIT for RV32G to BPF documentation
+  MAINTAINERS: add entry for RV32G BPF JIT
+
+ Documentation/admin-guide/sysctl/net.rst      |    3 +-
+ Documentation/networking/filter.txt           |    2 +-
+ MAINTAINERS                                   |   13 +-
+ arch/riscv/Kconfig                            |    2 +-
+ arch/riscv/net/Makefile                       |    9 +-
+ arch/riscv/net/bpf_jit.h                      |  514 +++++++
+ arch/riscv/net/bpf_jit_comp32.c               | 1310 +++++++++++++++++
+ .../net/{bpf_jit_comp.c => bpf_jit_comp64.c}  |  605 +-------
+ arch/riscv/net/bpf_jit_core.c                 |  166 +++
+ 9 files changed, 2018 insertions(+), 606 deletions(-)
+ create mode 100644 arch/riscv/net/bpf_jit.h
+ create mode 100644 arch/riscv/net/bpf_jit_comp32.c
+ rename arch/riscv/net/{bpf_jit_comp.c => bpf_jit_comp64.c} (69%)
+ create mode 100644 arch/riscv/net/bpf_jit_core.c
+
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Andrii Nakryiko <andriin@fb.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: "Björn Töpel" <bjorn.topel@gmail.com>
+Cc: Luke Nelson <luke.r.nels@gmail.com>
+Cc: Xi Wang <xi.wang@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: bpf@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+
+-- 
+2.20.1
+
