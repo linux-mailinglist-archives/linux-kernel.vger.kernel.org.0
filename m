@@ -2,79 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C16F117A349
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5871917A33C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 11:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgCEKjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 05:39:46 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.219]:9732 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbgCEKjq (ORCPT
+        id S1727178AbgCEKep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 05:34:45 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42146 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727097AbgCEKen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:39:46 -0500
-X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Mar 2020 05:39:45 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583404784;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=lAG5oOfZYa0ZZc4Uadd+FIbLaL5zY+h9aowSlE+qW80=;
-        b=Rix8BlEqNUpw/rhC0RenKg19D4PTTTY3qR8zkon2ki034WlVYz6UsGdCcnrHysL4wv
-        lU09RfOsv+0nFXrM6cSv/QKoM83eEBWQ8xGPePJhieTCnQS9AMQD5OB3HpdLh7isLL9H
-        pUbZcgwFHNpePIv1pqkaAjWRMbb17i3jCs1xHHwMbY2iENHtz3pj1tNB6Rfr4cYQfycq
-        zXECcr/KCDFufQc3oWNvyPRazBLHeUEsHin600aov9yAm9kQLQemHkurc4bOKLsp4a5s
-        gjPXWLITs8swYsFcZLAvdsR+Y6Ux9MxPiiKP9aF2PsHEhYDJeqrDp3sHRyUomPzWEB+Y
-        V/ng==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDaJfScGJUh"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
-        with ESMTPSA id Q01030w25AXfWvr
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Thu, 5 Mar 2020 11:33:41 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Andrei Botila <andrei.botila@oss.nxp.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] crypto: xts - add check for input length equal to zero
-Date:   Thu, 05 Mar 2020 11:33:40 +0100
-Message-ID: <4145904.A5P2xsN9yQ@tauon.chronox.de>
-In-Reply-To: <20200305102255.12548-1-andrei.botila@oss.nxp.com>
-References: <20200305102255.12548-1-andrei.botila@oss.nxp.com>
+        Thu, 5 Mar 2020 05:34:43 -0500
+Received: by mail-lf1-f68.google.com with SMTP id t21so4164582lfe.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 02:34:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
+        b=fz2DAL/hCVOBzgx+g45rdprPzuuFcQsUW1ZHNo4nDuWKCX/fmtcJFi6lbSs9P/RfJA
+         lAVCHt1fNQbO92SbHey4yazD8D+BRVnEqK7PVKp1rcMy40FqhDMG89bJ58GSzMbwvj8U
+         zAnHbCvHz8cMGM9KEggtHMrJgl6JBjlHSjxVfYCRhwYPKx+Jjq/D+Io2Qn9ywDnb1vG6
+         OscJGDR+ktAt1dSFKcBwqG0UklQUo5kR+xK1xD7ZN4ey+k79Dp/cQzpwPp4ZcFKOa/hp
+         HQXr9qb2tQ0y+avLLK+wgv/3Axz+CmJlkglRa4MPyv4tObLkJ7AkbgA7LI04c8TOXAVI
+         wgbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=zdxUWMWXTEs/zs0LJh1bxLoOHpDg1k5nkLimqXptzik=;
+        b=T6rUrfiJ0Kp+Qw+6biNEI4Y1YXx22lnzGPg2M+Uw2imMiKrUTgqOp+mRjNmdmCpcN5
+         RMzb+Q0+3ozat8bK7SY27UKh3/JNhkXhfz1vwIsce63yZ60Xu8XlnBEE1KLsH3nr4e3q
+         tmoqh7SJESiPcrvDsExPrA2nEWipnotvN0PJq/0QkHlOi2c1Ro3Z/YykGI/SIjOjosBW
+         arFqpmWN/AS/6fEeMpazmouOFcOfY3dFZfcW793nOcPU49QgdGRxPvUBjMmlKIMx4qy9
+         gn8NHV+IcaWzyN0He+mdtNx6jXHK+dECs0hsY32xQYRi91C6AkLy98nqhby78SWFlYxm
+         dIGw==
+X-Gm-Message-State: ANhLgQ0hh8Xc2b76nkgHEyXAi5Jm7VDGDr1AUqPBcyVM/yYT0yFM+lZu
+        IoWUrthIqdeB3UrsIRTbhF8gb9XP+mNYJngajLU=
+X-Google-Smtp-Source: ADFU+vt4p78g3SCPLp2SkhMI2bIlerfed0N6TLid+L8CMxk399v6WJ1kSPdTuUyeuRHmX7GoHE72hDaaexbZ9WYxFUU=
+X-Received: by 2002:a19:c714:: with SMTP id x20mr5096973lff.107.1583404479393;
+ Thu, 05 Mar 2020 02:34:39 -0800 (PST)
 MIME-Version: 1.0
+Received: by 2002:ab3:5d10:0:0:0:0:0 with HTTP; Thu, 5 Mar 2020 02:34:38 -0800 (PST)
+Reply-To: ayishagddafio@mail.ru
+From:   AISHA GADDAFI <mahasaliou4444@gmail.com>
+Date:   Thu, 5 Mar 2020 02:34:38 -0800
+Message-ID: <CAKHB8qf7CPHeUuxPD-D07960Jx9qxdLt6hBH1AJUj0AYDreUzA@mail.gmail.com>
+Subject: Lieber Freund (Assalamu Alaikum),?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 5. M=E4rz 2020, 11:22:55 CET schrieb Andrei Botila:
+--=20
+Lieber Freund (Assalamu Alaikum),
 
-Hi Andrei,
+Ich bin vor einer privaten Suche auf Ihren E-Mail-Kontakt gesto=C3=9Fen
+Ihre Hilfe. Mein Name ist Aisha Al-Qaddafi, eine alleinerziehende
+Mutter und eine Witwe
+mit drei Kindern. Ich bin die einzige leibliche Tochter des Sp=C3=A4tlibysc=
+hen
+Pr=C3=A4sident (verstorbener Oberst Muammar Gaddafi).
 
-> From: Andrei Botila <andrei.botila@nxp.com>
->=20
-> Through this RFC we try to standardize the way input lengths equal to 0
-> are handled in all skcipher algorithms. Currently, in xts when an input
-> has a length smaller than XTS_BLOCK_SIZE it returns -EINVAL while the
-> other algorithms return 0 for input lengths equal to zero.
-> The algorithms that implement this check are CBC, ARC4, CFB, OFB, SALSA20,
-> CTR, ECB and PCBC, XTS being the outlier here. All of them call
-> skcipher_walk_virt() which returns 0 if skcipher_walk_skcipher() finds
-> that input length is equal to 0.
-> This case was discovered when fuzz testing was enabled since it generates
-> this input length.
-> This RFC wants to find out if the approach is ok before updating the
-> other xts implementations.
+Ich habe Investmentfonds im Wert von siebenundzwanzig Millionen
+f=C3=BCnfhunderttausend
+United State Dollar ($ 27.500.000.00) und ich brauche eine
+vertrauensw=C3=BCrdige Investition
+Manager / Partner aufgrund meines aktuellen Fl=C3=BCchtlingsstatus bin ich =
+jedoch
+M=C3=B6glicherweise interessieren Sie sich f=C3=BCr die Unterst=C3=BCtzung =
+von
+Investitionsprojekten in Ihrem Land
+Von dort aus k=C3=B6nnen wir in naher Zukunft Gesch=C3=A4ftsbeziehungen auf=
+bauen.
 
-It may be a good idea to consolidate that. However, changing only one=20
-implementation is not good.
+Ich bin bereit, mit Ihnen =C3=BCber das Verh=C3=A4ltnis zwischen Investitio=
+n und
+Unternehmensgewinn zu verhandeln
+Basis f=C3=BCr die zuk=C3=BCnftige Investition Gewinne zu erzielen.
 
-All XTS implementations would need to be converted then.
+Wenn Sie bereit sind, dieses Projekt in meinem Namen zu bearbeiten,
+antworten Sie bitte dringend
+Damit ich Ihnen mehr Informationen =C3=BCber die Investmentfonds geben kann=
+.
 
-Ciao
-Stephan
+Ihre dringende Antwort wird gesch=C3=A4tzt. schreibe mir an diese email adr=
+esse (
+ayishagddafio@mail.ru ) zur weiteren Diskussion.
 
-
+Freundliche Gr=C3=BC=C3=9Fe
+Frau Aisha Al-Qaddafi
