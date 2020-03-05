@@ -2,126 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8803517A410
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 830B517A390
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 12:02:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbgCELUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 06:20:04 -0500
-Received: from gateway20.websitewelcome.com ([192.185.64.36]:47619 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726170AbgCELUD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 06:20:03 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 274C1400C5D2B
-        for <linux-kernel@vger.kernel.org>; Thu,  5 Mar 2020 03:42:23 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 9oBfjp6IhvBMd9oBfjjT9x; Thu, 05 Mar 2020 04:57:07 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/M5a41L/6lkk9po/XjdkGYtN8HrY6a7NbSP7ZLR7U80=; b=SlXihPvEXqOywcXiQN+/R3+OuP
-        4S4KGRq1wTQHgW8COyQMcOrjARF0U1rfdZNiZzIcXAIDmC75tQAConF2rlstjKmvCVtzXHAvAyOh9
-        38gfEDHqtbx5jXoRURv4S5dSMVY/evu6qbor8dVkRyk5l99Eewbx2gYzmu6zD3syZvfwcWauycRAU
-        JavPSFW3cQyla4S8mjyxZZG5H0wMENIwBEllcFIFHtRxzOsWJGO742rX/N8bvBpwC2k2BpOPXIAyd
-        +i5MopXH6uLVargaQ0jbmspQGnNgvr3nL+Rc5Ju3bqjYpWJQEFN2XdmOMzMUjvxcFEu71zZ0z9Rcy
-        2Dfr/aQw==;
-Received: from [201.166.169.220] (port=6678 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1j9oBd-003i4f-9X; Thu, 05 Mar 2020 04:57:05 -0600
-Date:   Thu, 5 Mar 2020 05:00:11 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] drm/bridge/mhl.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200305110011.GA21056@embeddedor>
+        id S1727237AbgCELCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 06:02:01 -0500
+Received: from mail.z3ntu.xyz ([128.199.32.197]:52142 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725912AbgCELCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 06:02:01 -0500
+Received: by mail.z3ntu.xyz (Postfix, from userid 182)
+        id 8EC30C3EBA; Thu,  5 Mar 2020 11:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1583406118; bh=A09JhYuXQtiWQSwwySPckNq277KWrsZWySE9b6TpTII=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=s2zqd62WGhhJRbiNUaAzO6lQNDZOaLkJJUiU00RDzoE9Y+OzY5aLO/K9MwPLQ/Tqa
+         1yw3gKTr+znjBMyIK6RxrMsQLVHYo8ymWDjSWXYvOK1qvIfKfGjPWLwkTRnPR1JFiv
+         2c2uwTcTx3D/ixkwLEEfdF0Wtb8w4UYa5UYEzXXI=
+X-Spam-Checker-Version: SpamAssassin 3.4.4 (2020-01-24) on arch-vps
+X-Spam-Level: 
+X-Spam-Status: No, score=0.9 required=5.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FROM_SUSPICIOUS_NTLD,
+        PDS_OTHER_BAD_TLD,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.4
+Received: from g550jk.localnet (unknown [10.0.11.2])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id B467FC3EB1;
+        Thu,  5 Mar 2020 11:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1583406115; bh=A09JhYuXQtiWQSwwySPckNq277KWrsZWySE9b6TpTII=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=C5aupyJy9waLsz9CE+dvC8yOrj0oT4kfsSm3Wgx1idF/b/gGbxoeO7dBlVkBZ9Mt5
+         tt3q0+x5URr9RgEtcJoTMwpeAyJaWb9tph9pLAyE0c7KhozHGC0bG09+opJtRk9aCU
+         0HfCq09ytnu3/pTyFoAyKs+e5gX1tBCto+p7BqnI=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] leds: add sgm3140 driver
+Date:   Thu, 05 Mar 2020 12:01:49 +0100
+Message-ID: <11515555.O9o76ZdvQC@g550jk>
+In-Reply-To: <7742f98c-fd96-7f0e-c33c-fbac61a4881c@ti.com>
+References: <20200227185015.212479-1-luca@z3ntu.xyz> <7742f98c-fd96-7f0e-c33c-fbac61a4881c@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.169.220
-X-Source-L: No
-X-Exim-ID: 1j9oBd-003i4f-9X
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.169.220]:6678
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 41
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; boundary="nextPart5372931.DvuYhMxLoT"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+--nextPart5372931.DvuYhMxLoT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+On Donnerstag, 27. Februar 2020 20:50:40 CET Dan Murphy wrote:
+> Luca
+> 
+> On 2/27/20 12:50 PM, Luca Weiss wrote:
+> > Add a driver for the SGMICRO SGM3140 Buck/Boost Charge Pump LED driver.
+> > 
+> > This device is controller by two GPIO lines, one for enabling the LED
+> > and the second one for switching between torch and flash mode.
+> > 
+> > The device will automatically switch to torch mode after being in flash
+> > mode for about 250-300ms, so after that time the driver will turn the
+> > LED off again automatically.
+> > 
+> > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> > ---
+> 
+> You seem to be missing the devictree bindings doc for the GPIOs.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+As written in the initial email:
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+> I will also write dt bindings for the driver once I have "strobe"
+> working.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+I was hoping to get some guidance on the code by posting the WIP patch - the 
+issues I see are documented in the initial email.
 
-This issue was found with the help of Coccinelle.
+Regards
+Luca
+--nextPart5372931.DvuYhMxLoT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- include/drm/bridge/mhl.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+iQIzBAABCAAdFiEEObrSLwgs2pG6FY/6cthDuJ1N11YFAl5g3B0ACgkQcthDuJ1N
+11buvA/+NFLsy6B/FPSdwuK2kinJ9IlHsLxP9npxN6SnuDnNP4VchYVswpz8pYog
+YXOMiFpMXIIVSR1mplUUhsWQ2AbuUdKk3sR4Y6lYz2+c07Yozp3Qr3pds5XKd4+9
+XSheq/jsrQKO8gPGmoGiivutBHv+LJ8YZ/KjC6NVV0nxR4V5yI0NUWcrJvhd6N8Z
+JA3C6wFlg/SYg3b7fCbb0yj3YM6V1HLWwFgrXWZeM0X8//YMeOeTE5eHOcexw92E
+1DKrYa02kfIfbwkfqnOM1Q2DNmBNnhgsOs1prRwiBTUjGkeXciuHqELjFIPjN2z6
+LDAfWsZlk4UP6XKiRnc4535+TKJub3Mx6YWdpIEhNrk8rxovdIyrHOIjJdH8IP1C
+0ZCOsBVxi9o7zyAYqm4uxWJl66WJKU4nVBo7Haq7aR0yU+sIhFkTpB+cpsuSnFDg
+/7ram8GZjlU+A+GRRaj7RK9PoDNc6Ic/iodUBqRGD7o7WdRJtmXrw6tB8AQzs5Ih
+9A7A1/ayYr/hktPyzn1U/lhJDttqZ6gcMxCQodLcOeZVJ1VLCd75xxpBtZxLjGXg
+uKwv5rcr/s4d2ngeJtjoW5kpy09Fim6yKi7LJZ+awPP+pxgpvGDhsLDXBy9kXYIu
+ud5ZjRhMRDgSoeJJN+RPMxUxp+R6CoL0ENHIny9+jXwoviE2doE=
+=VJcI
+-----END PGP SIGNATURE-----
 
-diff --git a/include/drm/bridge/mhl.h b/include/drm/bridge/mhl.h
-index 1cc77bf38324..d96626a0e3fa 100644
---- a/include/drm/bridge/mhl.h
-+++ b/include/drm/bridge/mhl.h
-@@ -327,13 +327,13 @@ struct mhl_burst_bits_per_pixel_fmt {
- 	struct {
- 		u8 stream_id;
- 		u8 pixel_format;
--	} __packed desc[0];
-+	} __packed desc[];
- } __packed;
- 
- struct mhl_burst_emsc_support {
- 	struct mhl3_burst_header hdr;
- 	u8 num_entries;
--	__be16 burst_id[0];
-+	__be16 burst_id[];
- } __packed;
- 
- struct mhl_burst_audio_descr {
--- 
-2.25.0
+--nextPart5372931.DvuYhMxLoT--
+
+
 
