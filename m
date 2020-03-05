@@ -2,88 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77DF17ADF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:15:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88C7617ADF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 19:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbgCESPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 13:15:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54440 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbgCESPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:15:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 15E96AE61;
-        Thu,  5 Mar 2020 18:15:12 +0000 (UTC)
-Subject: Re: [PATCH v7 2/7] mm: introduce external memory hinting API
-To:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        linux-api@vger.kernel.org, oleksandr@redhat.com,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jann Horn <jannh@google.com>,
-        alexander.h.duyck@linux.intel.com, sj38.park@gmail.com
-References: <20200302193630.68771-1-minchan@kernel.org>
- <20200302193630.68771-3-minchan@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <bc3f6bd5-f032-bcf5-a09f-556ab785c587@suse.cz>
-Date:   Thu, 5 Mar 2020 19:15:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726049AbgCESRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 13:17:23 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35547 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbgCESRX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 13:17:23 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m3so6793454wmi.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 10:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ur7gy1iBTjpshiGwn7PHFKRCZKN/EqCC/bRu0X/qyjI=;
+        b=iImtYUMXg9gyEfPpN6j0wtKnybFmfih1SfNntEvPgSKVqSNzIWYwqVA5ucEiEzTvpD
+         yZqKFDabhXvjfFheAMTPtlVso8ONAcoo+XtdsuRau0kiq7I3tS22meFiHsUCPX9eiUIq
+         qDHif+8/lmfO05BuZJZpnk8Wuf8ZHkfZu1QZVtzlCn0sK2aKyP01FAoOFmJJLOppsA4l
+         ZZJfyLFF3rcy1MUWvP79OmIFsx+KiYAzavZdud4ulwIY/zQQXdSEqImdcaJB4nuavcjy
+         YTFsnhVjhRjxjVxYVqmZJ1b1WAbmeRnIrI4YNGhCHFN4ifXVPLL7qKzz+z1+4RB39U6N
+         mY1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ur7gy1iBTjpshiGwn7PHFKRCZKN/EqCC/bRu0X/qyjI=;
+        b=kLh5aEy7DFpIU6g50gXVyZplQe33Gxp7ENGSDsNrLeWEOSIol2tp0E39zSpt5rHzUX
+         mHzLWxolV2Gl7YEupwHH5EOFf80dB97b3Y21sdBwcnGDJ+k+X5RyjyC57x4Y/DNuecED
+         MJSvVNSVjX8I3MmuwBDHrerL3BuqM2l+LOSdbsgohMcyYO2yvEons1WiN1Q0rjn6e/Vj
+         wvz6xRSDwhK7QhofvxgH2jGG36n+2YXzTCr36TsJFYDx33DJ7iqIV6nXEwrW0SZrlJfR
+         xCngysC/Zw8lo/RKuK48FSTE0ktr/tOY78h8UZrpnNf1RhZjgU9Mx3IcQFQPwFYgPjuR
+         yF7w==
+X-Gm-Message-State: ANhLgQ2iWbkH606Asd1xpQuTc+E6BBuzGK7GQWlTs6frtHs8AIqcUxGN
+        Url7C0T0Le6UwANxLO6N+Q==
+X-Google-Smtp-Source: ADFU+vsKpOKjyZZ2sdfPleEssK0P/iXY3amRp8rqYqgctOT1C2k+RMpUAPE2OoUVfiaY5pyfPriW+A==
+X-Received: by 2002:a1c:2ecc:: with SMTP id u195mr26937wmu.167.1583432241952;
+        Thu, 05 Mar 2020 10:17:21 -0800 (PST)
+Received: from avx2 ([46.53.249.49])
+        by smtp.gmail.com with ESMTPSA id v7sm38843379wrm.49.2020.03.05.10.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 10:17:21 -0800 (PST)
+Date:   Thu, 5 Mar 2020 21:17:19 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86_64: fixup TASK_SIZE_MAX comment
+Message-ID: <20200305181719.GA5490@avx2>
 MIME-Version: 1.0
-In-Reply-To: <20200302193630.68771-3-minchan@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/20 8:36 PM, Minchan Kim wrote:
-> There is usecase that System Management Software(SMS) want to give
-> a memory hint like MADV_[COLD|PAGEEOUT] to other processes and
-> in the case of Android, it is the ActivityManagerService.
-> 
-> It's similar in spirit to madvise(MADV_WONTNEED), but the information
+Comment says "by preventing anything executable" which is not true.
+Even PROT_NONE mapping can't be installed at (1<<47 - 4096).
 
-You mean MADV_DONTNEED?
+	mmap(0x7ffffffff000, 4096, PROT_NONE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = -1 ENOMEM
 
-> required to make the reclaim decision is not known to the app.
+I wonder if CPUs with wider address space carried the bugs...
 
-This seems to be mixing up the differences between MADV_DONTNEED and
-COLD/PAGEOUT and self-imposed vs external memory hints?
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-> Instead,
-> it is known to the centralized userspace daemon(ActivityManagerService),
-> and that daemon must be able to initiate reclaim on its own without
-> any app involvement.
-> 
-> To solve the issue, this patch introduces a new syscall process_madvise(2).
-> It uses pidfd of an external process to give the hint.
-> 
->  int process_madvise(int pidfd, void *addr, size_t length, int advise,
-> 			unsigned long flag);
+ arch/x86/include/asm/processor.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's more common to call the argument 'flags' not 'flag'? The code seems to call
-it flags. Also in line with madvise(2), the 'advise' argument should rather be
-'advice'. This is more important for the manpage, but let's be consistent.
-
-...
-
-> 
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-
-For the core parts,
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -887,7 +887,7 @@ static inline void spin_lock_prefetch(const void *x)
+  * On Intel CPUs, if a SYSCALL instruction is at the highest canonical
+  * address, then that syscall will enter the kernel with a
+  * non-canonical return address, and SYSRET will explode dangerously.
+- * We avoid this particular problem by preventing anything executable
++ * We avoid this particular problem by preventing anything
+  * from being mapped at the maximum canonical address.
+  *
+  * On AMD CPUs in the Ryzen family, there's a nasty bug in which the
