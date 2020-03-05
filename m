@@ -2,80 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93DCF17A0BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 08:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E29A317A11E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 09:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbgCEH5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 02:57:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57626 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgCEH5z (ORCPT
+        id S1726300AbgCEIS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 03:18:57 -0500
+Received: from mail-m963.mail.126.com ([123.126.96.3]:33768 "EHLO
+        mail-m963.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbgCEIS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 02:57:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=nU62n5QYJOKYOHbc6ZvACdnGhlJJokPCVj9KKxy8Vvw=; b=EMW3AHx0cCw7tymIImwZ6EeuhB
-        /tfF71jGfrjOy1L8ek2aaiSPj+1qUlxirNpyKK8fe85L9VhpgVBbncq/GRo9m6fSheHGLXnB7Bmru
-        D/sHF/UdaK/yg7gyqmy2TlpQ28dcDwrN91D+Ko6XnPwDq54CNclCrR+HccKH1WGUt89qyeyiYaZtA
-        fHw8gIiErrRi2qc2kaeUqB8DSI3n2lW7Id0ZLZmohc8i6jd9jkQXIfRWVviqJon7lBAoxCftP2ovr
-        n3wQTeAoLDOWbtow2yJrq1V7YOYIB0ubtG5tEfbnYU660A2W4iJrpoDluRuuXuEQe8zeyLoOSV+iC
-        Hf9Y4mdQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9lO4-0005bA-RS; Thu, 05 Mar 2020 07:57:45 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DB38930066E;
-        Thu,  5 Mar 2020 08:55:43 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B9B3D23D4FA08; Thu,  5 Mar 2020 08:57:42 +0100 (CET)
-Date:   Thu, 5 Mar 2020 08:57:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Xi Wang <xii@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Thu, 5 Mar 2020 03:18:57 -0500
+X-Greylist: delayed 1919 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Mar 2020 03:18:49 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=k9HkUhFYn1+h3FUkrG
+        ApXkMLDxlEv2B5rAwCtF/NaqQ=; b=jSZV6G8wQJFoTL3AUqBp248iCElFbcoL0t
+        6c77OFpy7vZH0KQa4AdH2Ztd+ISy1SiiJUU6TmLFZ8eWNK2sC568G171JbSiiV8e
+        szW6pA53Sitv+rxY+vMzsGS5bURWI3e/oZJ5GaUld3BVzmR2VVvIKAwQvxBXGtAz
+        XTa9BeMOA=
+Received: from pek-lpd-ccm2.wrs.com (unknown [60.247.85.82])
+        by smtp8 (Coremail) with SMTP id NORpCgDH1toYrmBeqjl1GQ--.6848S2;
+        Thu, 05 Mar 2020 15:45:34 +0800 (CST)
+From:   Zhaolong Zhang <zhangzl2013@126.com>
+To:     Zhaolong Zhang <zhangzl2013@126.com.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Paul Turner <pjt@google.com>
-Subject: Re: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
-Message-ID: <20200305075742.GR2596@hirez.programming.kicks-ass.net>
-References: <20200304213941.112303-1-xii@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304213941.112303-1-xii@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rcu: Fix the (t=0 jiffies) false positive
+Date:   Thu,  5 Mar 2020 15:45:57 +0800
+Message-Id: <1583394357-11767-1-git-send-email-zhangzl2013@126.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: NORpCgDH1toYrmBeqjl1GQ--.6848S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJr48tr4DKrWxAw1DZr4kCrg_yoW8Kr17pa
+        y7Ka47ta1UJF1vva47t3s5Xr1UJr4kXa47ta9Fy34Fva15JF4FqF90v34UKrWUur93WrWa
+        vFyFyF9rAw4ktFUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2_M3UUUUU=
+X-Originating-IP: [60.247.85.82]
+X-CM-SenderInfo: x2kd0wt2osiiat6rjloofrz/1tbitQTdz1pEAlS7TwAAsf
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 01:39:41PM -0800, Xi Wang wrote:
-> The main purpose of kernel watchdog is to test whether scheduler can
-> still schedule tasks on a cpu. In order to reduce latency from
-> periodically invoking watchdog reset in thread context, we can simply
-> touch watchdog from pick_next_task in scheduler. Compared to actually
-> resetting watchdog from cpu stop / migration threads, we lose coverage
-> on: a migration thread actually get picked and we actually context
-> switch to the migration thread. Both steps are heavily protected by
-> kernel locks and unlikely to silently fail. Thus the change would
-> provide the same level of protection with less overhead.
-> 
-> The new way vs the old way to touch the watchdogs is configurable
-> from:
-> 
-> /proc/sys/kernel/watchdog_touch_in_thread_interval
-> 
-> The value means:
-> 0: Always touch watchdog from pick_next_task
-> 1: Always touch watchdog from migration thread
-> N (N>0): Touch watchdog from migration thread once in every N
->          invocations, and touch watchdog from pick_next_task for
->          other invocations.
-> 
+Calculate 't' with the previously recorded 'gps' instead of 'gp_start'.
 
-This is configurable madness. What are we really trying to do here?
+Signed-off-by: Zhaolong Zhang <zhangzl2013@126.com>
+---
+ kernel/rcu/tree_stall.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index 55f9b84..4223b8b 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -371,7 +371,7 @@ static void rcu_check_gp_kthread_starvation(void)
+ 	}
+ }
+ 
+-static void print_other_cpu_stall(unsigned long gp_seq)
++static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
+ {
+ 	int cpu;
+ 	unsigned long flags;
+@@ -408,7 +408,7 @@ static void print_other_cpu_stall(unsigned long gp_seq)
+ 	for_each_possible_cpu(cpu)
+ 		totqlen += rcu_get_n_cbs_cpu(cpu);
+ 	pr_cont("\t(detected by %d, t=%ld jiffies, g=%ld, q=%lu)\n",
+-	       smp_processor_id(), (long)(jiffies - rcu_state.gp_start),
++	       smp_processor_id(), (long)(jiffies - gps),
+ 	       (long)rcu_seq_current(&rcu_state.gp_seq), totqlen);
+ 	if (ndetected) {
+ 		rcu_dump_cpu_stacks();
+@@ -442,7 +442,7 @@ static void print_other_cpu_stall(unsigned long gp_seq)
+ 	rcu_force_quiescent_state();  /* Kick them all. */
+ }
+ 
+-static void print_cpu_stall(void)
++static void print_cpu_stall(unsigned long gps)
+ {
+ 	int cpu;
+ 	unsigned long flags;
+@@ -467,7 +467,7 @@ static void print_cpu_stall(void)
+ 	for_each_possible_cpu(cpu)
+ 		totqlen += rcu_get_n_cbs_cpu(cpu);
+ 	pr_cont("\t(t=%lu jiffies g=%ld q=%lu)\n",
+-		jiffies - rcu_state.gp_start,
++		jiffies - gps,
+ 		(long)rcu_seq_current(&rcu_state.gp_seq), totqlen);
+ 
+ 	rcu_check_gp_kthread_starvation();
+@@ -546,7 +546,7 @@ static void check_cpu_stall(struct rcu_data *rdp)
+ 	    cmpxchg(&rcu_state.jiffies_stall, js, jn) == js) {
+ 
+ 		/* We haven't checked in, so go dump stack. */
+-		print_cpu_stall();
++		print_cpu_stall(gps);
+ 		if (rcu_cpu_stall_ftrace_dump)
+ 			rcu_ftrace_dump(DUMP_ALL);
+ 
+@@ -555,7 +555,7 @@ static void check_cpu_stall(struct rcu_data *rdp)
+ 		   cmpxchg(&rcu_state.jiffies_stall, js, jn) == js) {
+ 
+ 		/* They had a few time units to dump stack, so complain. */
+-		print_other_cpu_stall(gs2);
++		print_other_cpu_stall(gs2, gps);
+ 		if (rcu_cpu_stall_ftrace_dump)
+ 			rcu_ftrace_dump(DUMP_ALL);
+ 	}
+-- 
+1.8.3.1
+
