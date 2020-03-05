@@ -2,158 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F348417A8AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2EF17A8B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 16:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgCEPSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 10:18:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46028 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgCEPSc (ORCPT
+        id S1726928AbgCEPTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 10:19:47 -0500
+Received: from www62.your-server.de ([213.133.104.62]:39268 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbgCEPTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:18:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TS/k3e90NYvzgoF8mQe3++sKD6jNdRx+wfewqef/PsM=; b=Xed3MIiDOxzHAnItmGqN8/jcyO
-        mIko1panxM2p7jztB3plr90xMuHbzSQLQYKmDD4+q+9QNXHG7psPKCdCh9ZxwP8z7MOcJxiRecDlR
-        9ifAxa9nDJyBS5Cl9oO4pZHpg+uFM6vepbKI2JRXu0I9id5GhyAmjDBjMpmHJCUOVBLO+1x6j9kSK
-        NBotL7aLYE7q4gc5czv/1NmmJNql5btw5wDwyCv1dmxhMUdq1XMtP1PkJ4P4ayp0KHaUVUd53uBDi
-        l5TEfu8puWqUNwBigBAbcn/R5z9teeN/W6SqtWmRaPNtaD0/eSSvkft0RihCrw0o58TRwrEpgV+vr
-        EHLaA2qA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9sGd-0000nu-5d; Thu, 05 Mar 2020 15:18:31 +0000
-Date:   Thu, 5 Mar 2020 07:18:31 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Qian Cai <cai@lca.pw>, elver@google.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] lib: disable KCSAN for XArray
-Message-ID: <20200305151831.GM29971@bombadil.infradead.org>
-References: <20200304031551.1326-1-cai@lca.pw>
- <20200304033329.GZ29971@bombadil.infradead.org>
- <20200304040515.GX2935@paulmck-ThinkPad-P72>
- <20200304043356.GC29971@bombadil.infradead.org>
- <20200304141021.GY2935@paulmck-ThinkPad-P72>
+        Thu, 5 Mar 2020 10:19:46 -0500
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j9sHZ-000311-Dl; Thu, 05 Mar 2020 16:19:29 +0100
+Received: from [85.7.42.192] (helo=pc-9.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1j9sHY-000BjU-MB; Thu, 05 Mar 2020 16:19:28 +0100
+Subject: Re: [PATCH bpf-next v5 0/4] eBPF JIT for RV32G
+To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
+        Luke Nelson <lukenels@cs.washington.edu>
+Cc:     bpf <bpf@vger.kernel.org>, Luke Nelson <luke.r.nels@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, Xi Wang <xi.wang@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-riscv@lists.infradead.org
+References: <20200305050207.4159-1-luke.r.nels@gmail.com>
+ <CAJ+HfNjrUxVqpBgC-WLHbZX7_7Gd-Lk7ghrmASTmaNySuXVUfg@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <4633123d-dc61-ab79-d2ee-e0cef66e4cea@iogearbox.net>
+Date:   Thu, 5 Mar 2020 16:19:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304141021.GY2935@paulmck-ThinkPad-P72>
+In-Reply-To: <CAJ+HfNjrUxVqpBgC-WLHbZX7_7Gd-Lk7ghrmASTmaNySuXVUfg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.102.2/25742/Thu Mar  5 15:10:18 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 06:10:21AM -0800, Paul E. McKenney wrote:
-> On Tue, Mar 03, 2020 at 08:33:56PM -0800, Matthew Wilcox wrote:
-> > On Tue, Mar 03, 2020 at 08:05:15PM -0800, Paul E. McKenney wrote:
-> > > On Tue, Mar 03, 2020 at 07:33:29PM -0800, Matthew Wilcox wrote:
-> > > > On Tue, Mar 03, 2020 at 10:15:51PM -0500, Qian Cai wrote:
-> > > > > Functions like xas_find_marked(), xas_set_mark(), and xas_clear_mark()
-> > > > > could happen concurrently result in data races, but those operate only
-> > > > > on a single bit that are pretty much harmless. For example,
-> > > > 
-> > > > Those aren't data races.  The writes are protected by a spinlock and the
-> > > > reads by the RCU read lock.  If the tool can't handle RCU protection,
-> > > > it's not going to be much use.
-> > > 
-> > > Would KCSAN's ASSERT_EXCLUSIVE_BITS() help here?
-> > 
-> > I'm quite lost in the sea of new macros that have been added to help
-> > with KCSAN.  It doesn't help that they're in -next somewhere that I
-> > can't find, and not in mainline yet.  Is there documentation somewhere?
+On 3/5/20 6:40 AM, Björn Töpel wrote:
+> On Thu, 5 Mar 2020 at 06:02, Luke Nelson <lukenels@cs.washington.edu> wrote:
+>>
+>> This series adds an eBPF JIT for 32-bit RISC-V (RV32G) to the kernel,
+>> adapted from the RV64 JIT and the 32-bit ARM JIT.
+>>
 > 
-> Yes, there is documentation.  In -next somewhere.  :-/
-
-Looking at the documentation link that Marco kindly provided, I don't
-think ASSERT_EXCLUSIVE_BITS is the correct annotation to make.  The bits
-in question are being accessed in parallel, it's just that we're willing
-to accept a certain degree of inaccuracy.
-
-> > struct xa_node {
-> >         unsigned char   shift;          /* Bits remaining in each slot */
-> >         unsigned char   offset;         /* Slot offset in parent */
-> >         unsigned char   count;          /* Total entry count */
-> >         unsigned char   nr_values;      /* Value entry count */
-> >         struct xa_node __rcu *parent;   /* NULL at top of tree */
-> >         struct xarray   *array;         /* The array we belong to */
-> >         union {
-> >                 struct list_head private_list;  /* For tree user */
-> >                 struct rcu_head rcu_head;       /* Used when freeing node */
-> >         };
-> >         void __rcu      *slots[XA_CHUNK_SIZE];
-> >         union {
-> >                 unsigned long   tags[XA_MAX_MARKS][XA_MARK_LONGS];
-> >                 unsigned long   marks[XA_MAX_MARKS][XA_MARK_LONGS];
-> >         };
-> > };
-> > 
-> > 'slots' may be modified with the xa_lock
-> > held, and simultaneously read by an RCU reader.  Ditto 'tags'/'marks'.
+> Nice work! Thanks for hanging in there!
 > 
-> KCSAN expects that accesses to the ->parent field should be marked.
-> But if ->parent is always accessed via things like rcu_dereference()
-> and rcu_assign_pointer() (guessing based on the __rcu), then KCSAN
-> won't complain.
-[...]
-> The situation with ->slots is the same as that for ->parent.
-> 
-> KCSAN expects accesses to the ->tags[] and ->marks[] arrays to be marked.
-> However, the default configuration of KCSAN asks only that the reads
-> be marked.  (Within RCU, I instead configure KCSAN so that it asks that
-> both be marked, but it is of course your choice within your code.)
-> 
-> > The RCU readers are prepared for what they see to be inconsistent --
-> > a fact of life when dealing with RCU!  So in a sense, yes, there is a
-> > race there.  But it's a known, accepted race, and that acceptance is
-> > indicated by the fact that the RCU lock is held.  Does there need to be
-> > more annotation here?  Or is there an un-noticed bug that the tool is
-> > legitimately pointing out?
-> 
-> The answer to both questions is "maybe", depending on the code using
-> the values read.  Yes, it would be nice if KCSAN could figure out the
-> difference, but there are limits to what a tool can do.  And things
-> are sometimes no-obvious, for example:
+> For the series,
+> Acked-by: Björn Töpel <bjorn.topel@gmail.com>
+> Reviewed-by: Björn Töpel <bjorn.topel@gmail.com>
 
-I require the following properties from this array of bits:
+Applied, thanks everyone!
 
- - If a bit was set before and after the modification, it must be seen to
-   be set.
- - If a bit was clear before and after the modification, it must be seen to
-   be clear.
- - If a bit is modified, it may be seen as set or clear.
-
-I have found three locations where we use the ->marks array:
-
-1.
-                        unsigned long data = *addr & (~0UL << offset);
-                        if (data)
-                                return __ffs(data);
-
-2.
-        return find_next_bit(addr, XA_CHUNK_SIZE, offset);
-3.
-        return test_bit(offset, node_marks(node, mark));
-
-The modifications -- all done with the spinlock held -- use the non-atomic
-bitops:
-        return __test_and_set_bit(offset, node_marks(node, mark));
-        return __test_and_clear_bit(offset, node_marks(node, mark));
-        bitmap_fill(node_marks(node, mark), XA_CHUNK_SIZE);
-(that last one doesn't really count -- it's done prior to placing the node
-in the tree)
-
-The first read seems straightforward; I can place a READ_ONCE around
-*addr.  The second & third reads are rather less straightforward.
-find_next_bit() and test_bit() are common code and use plain loads today.
-
-> Your mileage may vary, of course.  For one thing, your actuarial
-> statistics are quite likley significantly more favorable than are mine.
-> Not that mine are at all bad, particularly by the standards of a century
-> or two ago.  ;-)
-
-I don't know ... my preferred form of exercise takes me into the
-harm's way of cars, so while I've significantly lowered my risk of
-dying of cardiovascular disease, I'm much more likely to be killed by
-an inattentive human being!  Bring on our robot cars ...
+P.s.: I fixed the MAINTAINERS entry in the last one to have both netdev and bpf
+to be consistent with all the other JIT entries there.
