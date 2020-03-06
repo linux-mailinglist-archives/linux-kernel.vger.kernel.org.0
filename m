@@ -2,148 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5684017C7C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30A2717C7CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgCFVU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 16:20:58 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:52552 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgCFVU5 (ORCPT
+        id S1726300AbgCFVW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 16:22:29 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54429 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726194AbgCFVW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 16:20:57 -0500
-Received: by mail-pj1-f66.google.com with SMTP id lt1so1585244pjb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 13:20:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=aWA0KDJLLB2h8niWQNr55OSE9WX64DdWT/E3eC2fLV4=;
-        b=UeqIdQrl1JCsF6BXgRPAlToaAuWmDLUojYAdA+5AnAF9TjjwHmj1z3V7McYFXP4BU2
-         TaisRvTQXy2nl7dwdrEaNMtXKfyy/h3VyYm9L9Z/7ixS1lFVvh4yNMvrGpm45zgRS2Py
-         s4xFuE3IZILKz+ZzyxzbBnNdFz1G39ONiKzZeMbRgJfSJ09GKRDg16Wkuv4VO1Twh0Wq
-         2UbTafUWHbe/Cax2u1TppYi//yHtGaP7qPd7c9wqAaQGBm/u3lnzDQj0VzZeyrkTUb5d
-         sHVcxE1qNw+iBPxUJxuPInquukdH0wXKQpmvSkNjkeNbN3x9SBVejk+f2wKEreYiEEKg
-         Smyw==
+        Fri, 6 Mar 2020 16:22:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583529747;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9C8zNDia4xA9aMPRQB8U/bUKEi1VeFjgjTx3pCkBjXg=;
+        b=fQGCtrfhBLVkHOaXfns4VXfAxELVIoMY+iY0g3ay+lJMLrhdOaXjNPfoM5Vah4pMs7YjxG
+        6E9j7xlHhgFeiVUaRT2BTXDZQ2lt6eLIDwxwUMFm3X5qgvVdef/g2aa0Lkp9TtfOQOPQ5h
+        h+tF5+sZSF86aH0uyaqDtijfHqC386E=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-315-oHP5jdDsO5CifbG_MeVPNg-1; Fri, 06 Mar 2020 16:22:23 -0500
+X-MC-Unique: oHP5jdDsO5CifbG_MeVPNg-1
+Received: by mail-qt1-f200.google.com with SMTP id j35so2272557qte.19
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 13:22:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=aWA0KDJLLB2h8niWQNr55OSE9WX64DdWT/E3eC2fLV4=;
-        b=bddqevyJyTjk31Q4rvHcSnFCDzRzgls68OYLBNOBmE3E6r9nJFRNccbFSxYVC2nFa9
-         pxS/PJwX5U99yTeZyyuXq0l2v4Tr1fePr8zJsvmmtK478QHeRgevV2ZLyUHg4w3B6ETh
-         xpKvEM4CkYzjJr5lem1kvbu2XqQoHm70qYuwkTPnYVrK/8Ed2CJGkqgxhqHWwM/B4MFF
-         J/KOSp3KMTPjJa2NiP7kJecWNWnMqah2Dhr7TjaNgu8xMTBqgrKXPx/M+icwiYQ9ekIa
-         BYyIgCrTc5Ygkv4b1nsru4COQgzDRV59sYV2eqdtKHRqZ/n7EbaR0n8pQazA38wq0h6R
-         iplg==
-X-Gm-Message-State: ANhLgQ076P17D168R/7SqXAkoO6EEs3U5kqTmkXaN2d2LEkjYbzoCaso
-        gvduthY32T3XAAvtcrTM7IFC1Q==
-X-Google-Smtp-Source: ADFU+vuF+Xb2jEuByngROV9YsJhqtQOtV/R823s1SCefnQ8gKJG2SHA6ZmN3xXvPi+6HFNbeSJoxSQ==
-X-Received: by 2002:a17:90a:bf81:: with SMTP id d1mr5725511pjs.21.1583529656139;
-        Fri, 06 Mar 2020 13:20:56 -0800 (PST)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
-        by smtp.gmail.com with ESMTPSA id s126sm13532665pfb.143.2020.03.06.13.20.54
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=9C8zNDia4xA9aMPRQB8U/bUKEi1VeFjgjTx3pCkBjXg=;
+        b=jDFvlQkrgqNHUyagj45eoAvEWzdewMDlGemubRf5JyuJx6ejJEuLDwCD43NcQe0jcv
+         nDhI1XBGrajkSLanbH4YDKSB1BC1s708srmJn1DEhsJ1kRdlFav/C37+zVsOYKmJLKWK
+         5E6+UgXYWecUrDJP6f1hKFOVyg7ASSIoy/l+1/3ac0wlPn9ceKYDu6nvMMjTl04aBW8o
+         IwbLQ5CFO1ohTkIdlIqFCfbt/Ep5I6AzC70u1Ij1ZCip57xqoke8RIW7NqUF6rZJydcu
+         MeawioVDPprvHI8WA+fLH1/0Qs34d6PBMakX2qabZhi3iJ3ey3msa5OC0xvpgw0vVbr3
+         oFRA==
+X-Gm-Message-State: ANhLgQ34ll0+ZtINkcfs+EJxhnRmIwWaN159oB77ETaGGIzn1MFInjKj
+        351kCW/L/n6yftBDYHvvFk9zUK8psv4b10WsPVpXIJCOzNj/z66s2BtA/SMlHzNgdYOsTNI6L8R
+        ft8YIAnz0K2aInAgstCI6ZvSY
+X-Received: by 2002:a05:6214:11e6:: with SMTP id e6mr4948470qvu.68.1583529743098;
+        Fri, 06 Mar 2020 13:22:23 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vux6ciun4jfPY5Fa86Bi/Lwf3b2QeqaTRrhbE9qQ2nW32qe44DzI3gid9H4BD37hC6B21aalw==
+X-Received: by 2002:a05:6214:11e6:: with SMTP id e6mr4948462qvu.68.1583529742849;
+        Fri, 06 Mar 2020 13:22:22 -0800 (PST)
+Received: from dhcp-10-20-1-196.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id z8sm213593qta.85.2020.03.06.13.22.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 13:20:55 -0800 (PST)
-From:   bsegall@google.com
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, linux-kernel@vger.kernel.org, pauld@redhat.com,
-        parth@linux.ibm.com, valentin.schneider@arm.com, hdanton@sina.com,
-        zhout@vivaldi.net
-Subject: Re: [PATCH v3] sched/fair : fix reordering of enqueue/dequeue_task_fair
-References: <20200306084208.12583-1-vincent.guittot@linaro.org>
-Date:   Fri, 06 Mar 2020 13:20:53 -0800
-In-Reply-To: <20200306084208.12583-1-vincent.guittot@linaro.org> (Vincent
-        Guittot's message of "Fri, 6 Mar 2020 09:42:08 +0100")
-Message-ID: <xm2636al41u2.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Fri, 06 Mar 2020 13:22:21 -0800 (PST)
+Message-ID: <eec59ee986aa161458fcaf2de29e5a702ad1fdb0.camel@redhat.com>
+Subject: Re: [PATCH 2/3] drm/dp_mst: Don't show connectors as connected
+ before probing available PBN
+From:   Lyude Paul <lyude@redhat.com>
+To:     Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, Sean Paul <seanpaul@google.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Mikita Lipski <mikita.lipski@amd.com>
+Date:   Fri, 06 Mar 2020 16:22:20 -0500
+In-Reply-To: <082a7ac697ade8145afe45001fdf9541d5304748.camel@redhat.com>
+References: <20200304223614.312023-1-lyude@redhat.com>
+         <20200304223614.312023-3-lyude@redhat.com>
+         <20200305131119.GJ13686@intel.com>
+         <73f52c392431cd21a80a118dd2fd1986e2c535df.camel@redhat.com>
+         <20200305182942.GP13686@intel.com>
+         <082a7ac697ade8145afe45001fdf9541d5304748.camel@redhat.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vincent Guittot <vincent.guittot@linaro.org> writes:
+final correction: I probably could actually get rid of this patch and do this
+a bit more nicely by just making sure that we reprobe path resources for
+connectors while under drm_dp_mst_topology_mgr->base.lock on CSNs, instead of
+punting it off to the link address work like we seem to be doing. So, going to
+try doing that instead.
 
-> Even when a cgroup is throttled, the group se of a child cgroup can still
-> be enqueued and its gse->on_rq stays true. When a task is enqueued on such
-> child, we still have to update the load_avg and increase
-> h_nr_running of the throttled cfs. Nevertheless, the 1st
-> for_each_sched_entity loop is skipped because of gse->on_rq == true and the
-> 2nd loop because the cfs is throttled whereas we have to update both
-> load_avg with the old h_nr_running and increase h_nr_running in such case.
->
-> The same sequence can happen during dequeue when se moves to parent before
-> breaking in the 1st loop.
->
-> Note that the update of load_avg will effectively happen only once in order
-> to sync up to the throttled time. Next call for updating load_avg will stop
-> early because the clock stays unchanged.
+On Fri, 2020-03-06 at 15:03 -0500, Lyude Paul wrote:
+> On Thu, 2020-03-05 at 20:29 +0200, Ville Syrjälä wrote:
+> > On Thu, Mar 05, 2020 at 01:13:36PM -0500, Lyude Paul wrote:
+> > > On Thu, 2020-03-05 at 15:11 +0200, Ville Syrjälä wrote:
+> > > > On Wed, Mar 04, 2020 at 05:36:12PM -0500, Lyude Paul wrote:
+> > > > > It's next to impossible for us to do connector probing on topologies
+> > > > > without occasionally racing with userspace, since creating a
+> > > > > connector
+> > > > > itself causes a hotplug event which we have to send before probing
+> > > > > the
+> > > > > available PBN of a connector. Even if we didn't have this hotplug
+> > > > > event
+> > > > > sent, there's still always a chance that userspace started probing
+> > > > > connectors before we finished probing the topology.
+> > > > > 
+> > > > > This can be a problem when validating a new MST state since the
+> > > > > connector will be shown as connected briefly, but without any
+> > > > > available
+> > > > > PBN - causing any atomic state which would enable said connector to
+> > > > > fail
+> > > > > with -ENOSPC. So, let's simply workaround this by telling userspace
+> > > > > new
+> > > > > MST connectors are disconnected until we've finished probing their
+> > > > > PBN.
+> > > > > Since we always send a hotplug event at the end of the link address
+> > > > > probing process, userspace will still know to reprobe the connector
+> > > > > when
+> > > > > we're ready.
+> > > > > 
+> > > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > > > Fixes: cd82d82cbc04 ("drm/dp_mst: Add branch bandwidth validation to
+> > > > > MST
+> > > > > atomic check")
+> > > > > Cc: Mikita Lipski <mikita.lipski@amd.com>
+> > > > > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > > > > Cc: Sean Paul <seanpaul@google.com>
+> > > > > Cc: Hans de Goede <hdegoede@redhat.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/drm_dp_mst_topology.c | 13 +++++++++++++
+> > > > >  1 file changed, 13 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > > b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > > index 207eef08d12c..7b0ff0cff954 100644
+> > > > > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > > @@ -4033,6 +4033,19 @@ drm_dp_mst_detect_port(struct drm_connector
+> > > > > *connector,
+> > > > >  			ret = connector_status_connected;
+> > > > >  		break;
+> > > > >  	}
+> > > > > +
+> > > > > +	/* We don't want to tell userspace the port is actually
+> > > > > plugged into
+> > > > > +	 * anything until we've finished probing it's available_pbn,
+> > > > > otherwise
+> > > > 
+> > > > "its"
+> > > > 
+> > > > Why is the connector even registered before we've finished the probe?
+> > > > 
+> > > Oops, I'm not sure how I did this by accident but the explanation I gave
+> > > in
+> > > the commit message was uh, completely wrong. I must have forgotten that
+> > > I
+> > > made
+> > > sure we didn't expose connectors before probing their PBN back when I
+> > > started
+> > > my MST cleanup....
+> > > 
+> > > So: despite what I said before it's not actually when new connectors are
+> > > created, it's when downstream hotplugs happen which means that the
+> > > conenctor's
+> > > always going to be there before we probe the available_pbn.
+> > 
+> > Not sure I understand. You're saying this is going to change for already
+> > existing connectors when something else gets plugged in, and either we
+> > zero it out during the probe or it always was zero to begin with for
+> > whatever reason?
+> 
+> ok-me and Sean Paul did some playing around with available_pbn and full_pbn
+> (I'll get into this one in a moment), and I also played around with a couple
+> of different hubs and have a much better understanding of how this should
+> work
+> now.
+> 
+> So: first off tl;dr available_pbn is absolutely not what we want in
+> basically
+> any scenario, we actually want to use the full_pbn field that we get when
+> sending ENUM_PATH_RESOURCES. Second, full_pbn represents the _smallest_
+> bandwidth limitation encountered in the path between the root MSTB and each
+> connected sink. Remember that there's technically a DisplayPort link trained
+> between each branch device going down the topology, so that bandwidth
+> limitation basically equates to "what is the lowest trained link rate that
+> exists down the path to this port?". This also means that full_pbn will
+> potentially change every time a new connector is plugged in, as some hubs
+> will be clever and optimize the link rate they decide to use. Likewise,
+> since there's not going to be anything trained on a disconnected port (e.g.
+> ddps=0) there's no point in keeping full_pbn around for disconnected ports,
+> since otherwise we might let userspace see a connected port with a stale
+> full_pbn value.
+> 
+> So-IMHO the behavior of not letting connectors show as connected until we
+> also
+> have their full_pbn probed should definitely be the right solution here.
+> Especially if we want to eventually start pruning modes based on full_pbn at
+> some point in the future.
+> 
+> > > I did just notice
+> > > though that we send a hotplug on connection status notifications even
+> > > before
+> > > we've finished the PBN probe, so I might be able to improve on that as
+> > > well.
+> > > We still definitely want to report the connector as disconnected before
+> > > we
+> > > have the available PBN though, in case another probe was already going
+> > > before
+> > > we got the connection status notification.
+> > > 
+> > > I'll make sure to fixup the explanation in the commit message on the
+> > > next
+> > > respin
+> > > 
+> > > > > +	 * userspace will see racy atomic check failures
+> > > > > +	 *
+> > > > > +	 * Since we always send a hotplug at the end of probing
+> > > > > topology
+> > > > > +	 * state, we can just let userspace reprobe this connector
+> > > > > later.
+> > > > > +	 */
+> > > > > +	if (ret == connector_status_connected && !port-
+> > > > > >available_pbn) 
+> > > > > {
+> > > > > +		DRM_DEBUG_KMS("[CONNECTOR:%d:%s] not ready yet (PBN
+> > > > > not
+> > > > > probed)\n",
+> > > > > +			      connector->base.id, connector->name);
+> > > > > +		ret = connector_status_disconnected;
+> > > > > +	}
+> > > > >  out:
+> > > > >  	drm_dp_mst_topology_put_port(port);
+> > > > >  	return ret;
+> > > > > -- 
+> > > > > 2.24.1
+> > > > > 
+> > > > > _______________________________________________
+> > > > > dri-devel mailing list
+> > > > > dri-devel@lists.freedesktop.org
+> > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > -- 
+> > > Cheers,
+> > > 	Lyude Paul (she/her)
+> > > 	Associate Software Engineer at Red Hat
+-- 
+Cheers,
+	Lyude Paul (she/her)
+	Associate Software Engineer at Red Hat
 
-
-Reviewed-by: Ben Segall <bsegall@google.com>
-
-(though it seems I was too slow in actually testing this and it's in
-tip, which confused me a bunch when I tried to apply the patch for testing)
-
->
-> Fixes: 6d4d22468dae ("sched/fair: Reorder enqueue/dequeue_task_fair path")
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->
-> Changes since v2:
-> - added similar changes into dequeue_task_fair as reported by Ben
->
->  kernel/sched/fair.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index fcc968669aea..ea2748a132a2 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5431,16 +5431,16 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  	for_each_sched_entity(se) {
->  		cfs_rq = cfs_rq_of(se);
->  
-> -		/* end evaluation on encountering a throttled cfs_rq */
-> -		if (cfs_rq_throttled(cfs_rq))
-> -			goto enqueue_throttle;
-> -
->  		update_load_avg(cfs_rq, se, UPDATE_TG);
->  		se_update_runnable(se);
->  		update_cfs_group(se);
->  
->  		cfs_rq->h_nr_running++;
->  		cfs_rq->idle_h_nr_running += idle_h_nr_running;
-> +
-> +		/* end evaluation on encountering a throttled cfs_rq */
-> +		if (cfs_rq_throttled(cfs_rq))
-> +			goto enqueue_throttle;
->  	}
->  
->  enqueue_throttle:
-> @@ -5529,16 +5529,17 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  	for_each_sched_entity(se) {
->  		cfs_rq = cfs_rq_of(se);
->  
-> -		/* end evaluation on encountering a throttled cfs_rq */
-> -		if (cfs_rq_throttled(cfs_rq))
-> -			goto dequeue_throttle;
-> -
->  		update_load_avg(cfs_rq, se, UPDATE_TG);
->  		se_update_runnable(se);
->  		update_cfs_group(se);
->  
->  		cfs_rq->h_nr_running--;
->  		cfs_rq->idle_h_nr_running -= idle_h_nr_running;
-> +
-> +		/* end evaluation on encountering a throttled cfs_rq */
-> +		if (cfs_rq_throttled(cfs_rq))
-> +			goto dequeue_throttle;
-> +
->  	}
->  
->  dequeue_throttle:
