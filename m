@@ -2,79 +2,258 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF9417BA7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 579C017BA6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgCFKjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:39:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44310 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbgCFKjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:39:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E9EE2ADE8;
-        Fri,  6 Mar 2020 10:39:29 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        f.fainelli@gmail.com, phil@raspberrypi.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/10] ARM: dts: bcm2711: Add vmmc regulator in emmc2
-Date:   Fri,  6 Mar 2020 11:38:55 +0100
-Message-Id: <20200306103857.23962-11-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200306103857.23962-1-nsaenzjulienne@suse.de>
-References: <20200306103857.23962-1-nsaenzjulienne@suse.de>
+        id S1726954AbgCFKjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:39:20 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:52913 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgCFKjJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 05:39:09 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jAANk-0000CQ-5F; Fri, 06 Mar 2020 11:39:04 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C96AD1C21BE;
+        Fri,  6 Mar 2020 11:39:03 +0100 (CET)
+Date:   Fri, 06 Mar 2020 10:39:03 -0000
+From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] futex: Remove {get,drop}_futex_key_refs()
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <158349114357.28353.3836686464963839935.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SD card power can be controlled trough a pin routed into the board's
-external GPIO expander. Turn that into a regulator and provide it to
-emmc2.
+The following commit has been merged into the locking/core branch of tip:
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Commit-ID:     4b39f99c222a2aff6a52fddfa6d8d4aef1771737
+Gitweb:        https://git.kernel.org/tip/4b39f99c222a2aff6a52fddfa6d8d4aef1771737
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 04 Mar 2020 13:24:24 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Fri, 06 Mar 2020 11:06:19 +01:00
+
+futex: Remove {get,drop}_futex_key_refs()
+
+Now that {get,drop}_futex_key_refs() have become a glorified NOP,
+remove them entirely.
+
+The only thing get_futex_key_refs() is still doing is an smp_mb(), and
+now that we don't need to (ab)use existing atomic ops to obtain them,
+we can place it explicitly where we need it.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/futex.c | 90 +++----------------------------------------------
+ 1 file changed, 6 insertions(+), 84 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index e26ea9006378..8e98e917f9f4 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -56,6 +56,16 @@ sd_io_1v8_reg: sd_io_1v8_reg {
- 			  3300000 0x0>;
- 		status = "okay";
- 	};
-+
-+	sd_vcc_reg: sd_vcc_reg {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-sd";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpio = <&expgpio 6 GPIO_ACTIVE_HIGH>;
-+	};
- };
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 3463c91..b62cf94 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -135,8 +135,7 @@
+  *
+  * Where (A) orders the waiters increment and the futex value read through
+  * atomic operations (see hb_waiters_inc) and where (B) orders the write
+- * to futex and the waiters read -- this is done by the barriers for both
+- * shared and private futexes in get_futex_key_refs().
++ * to futex and the waiters read (see hb_waiters_pending()).
+  *
+  * This yields the following case (where X:=waiters, Y:=futex):
+  *
+@@ -359,6 +358,10 @@ static inline void hb_waiters_dec(struct futex_hash_bucket *hb)
+ static inline int hb_waiters_pending(struct futex_hash_bucket *hb)
+ {
+ #ifdef CONFIG_SMP
++	/*
++	 * Full barrier (B), see the ordering comment above.
++	 */
++	smp_mb();
+ 	return atomic_read(&hb->waiters);
+ #else
+ 	return 1;
+@@ -396,68 +399,6 @@ static inline int match_futex(union futex_key *key1, union futex_key *key2)
+ 		&& key1->both.offset == key2->both.offset);
+ }
  
- &firmware {
-@@ -174,6 +184,7 @@ brcmf: wifi@1 {
- /* EMMC2 is used to drive the SD card */
- &emmc2 {
- 	vqmmc-supply = <&sd_io_1v8_reg>;
-+	vmmc-supply = <&sd_vcc_reg>;
- 	broken-cd;
- 	status = "okay";
- };
--- 
-2.25.1
-
+-/*
+- * Take a reference to the resource addressed by a key.
+- * Can be called while holding spinlocks.
+- *
+- */
+-static void get_futex_key_refs(union futex_key *key)
+-{
+-	if (!key->both.ptr)
+-		return;
+-
+-	/*
+-	 * On MMU less systems futexes are always "private" as there is no per
+-	 * process address space. We need the smp wmb nevertheless - yes,
+-	 * arch/blackfin has MMU less SMP ...
+-	 */
+-	if (!IS_ENABLED(CONFIG_MMU)) {
+-		smp_mb(); /* explicit smp_mb(); (B) */
+-		return;
+-	}
+-
+-	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
+-	case FUT_OFF_INODE:
+-		smp_mb();		/* explicit smp_mb(); (B) */
+-		break;
+-	case FUT_OFF_MMSHARED:
+-		smp_mb();		/* explicit smp_mb(); (B) */
+-		break;
+-	default:
+-		/*
+-		 * Private futexes do not hold reference on an inode or
+-		 * mm, therefore the only purpose of calling get_futex_key_refs
+-		 * is because we need the barrier for the lockless waiter check.
+-		 */
+-		smp_mb(); /* explicit smp_mb(); (B) */
+-	}
+-}
+-
+-/*
+- * Drop a reference to the resource addressed by a key.
+- * The hash bucket spinlock must not be held. This is
+- * a no-op for private futexes, see comment in the get
+- * counterpart.
+- */
+-static void drop_futex_key_refs(union futex_key *key)
+-{
+-	if (!key->both.ptr) {
+-		/* If we're here then we tried to put a key we failed to get */
+-		WARN_ON_ONCE(1);
+-		return;
+-	}
+-
+-	if (!IS_ENABLED(CONFIG_MMU))
+-		return;
+-
+-	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
+-	case FUT_OFF_INODE:
+-		break;
+-	case FUT_OFF_MMSHARED:
+-		break;
+-	}
+-}
+-
+ enum futex_access {
+ 	FUTEX_READ,
+ 	FUTEX_WRITE
+@@ -589,7 +530,6 @@ get_futex_key(u32 __user *uaddr, int fshared, union futex_key *key, enum futex_a
+ 	if (!fshared) {
+ 		key->private.mm = mm;
+ 		key->private.address = address;
+-		get_futex_key_refs(key);  /* implies smp_mb(); (B) */
+ 		return 0;
+ 	}
+ 
+@@ -729,8 +669,6 @@ again:
+ 		rcu_read_unlock();
+ 	}
+ 
+-	get_futex_key_refs(key); /* implies smp_mb(); (B) */
+-
+ out:
+ 	put_page(page);
+ 	return err;
+@@ -738,7 +676,6 @@ out:
+ 
+ static inline void put_futex_key(union futex_key *key)
+ {
+-	drop_futex_key_refs(key);
+ }
+ 
+ /**
+@@ -1873,7 +1810,6 @@ void requeue_futex(struct futex_q *q, struct futex_hash_bucket *hb1,
+ 		plist_add(&q->list, &hb2->chain);
+ 		q->lock_ptr = &hb2->lock;
+ 	}
+-	get_futex_key_refs(key2);
+ 	q->key = *key2;
+ }
+ 
+@@ -1895,7 +1831,6 @@ static inline
+ void requeue_pi_wake_futex(struct futex_q *q, union futex_key *key,
+ 			   struct futex_hash_bucket *hb)
+ {
+-	get_futex_key_refs(key);
+ 	q->key = *key;
+ 
+ 	__unqueue_futex(q);
+@@ -2006,7 +1941,7 @@ static int futex_requeue(u32 __user *uaddr1, unsigned int flags,
+ 			 u32 *cmpval, int requeue_pi)
+ {
+ 	union futex_key key1 = FUTEX_KEY_INIT, key2 = FUTEX_KEY_INIT;
+-	int drop_count = 0, task_count = 0, ret;
++	int task_count = 0, ret;
+ 	struct futex_pi_state *pi_state = NULL;
+ 	struct futex_hash_bucket *hb1, *hb2;
+ 	struct futex_q *this, *next;
+@@ -2127,7 +2062,6 @@ retry_private:
+ 		 */
+ 		if (ret > 0) {
+ 			WARN_ON(pi_state);
+-			drop_count++;
+ 			task_count++;
+ 			/*
+ 			 * If we acquired the lock, then the user space value
+@@ -2247,7 +2181,6 @@ retry_private:
+ 				 * doing so.
+ 				 */
+ 				requeue_pi_wake_futex(this, &key2, hb2);
+-				drop_count++;
+ 				continue;
+ 			} else if (ret) {
+ 				/*
+@@ -2268,7 +2201,6 @@ retry_private:
+ 			}
+ 		}
+ 		requeue_futex(this, hb1, hb2, &key2);
+-		drop_count++;
+ 	}
+ 
+ 	/*
+@@ -2283,15 +2215,6 @@ out_unlock:
+ 	wake_up_q(&wake_q);
+ 	hb_waiters_dec(hb2);
+ 
+-	/*
+-	 * drop_futex_key_refs() must be called outside the spinlocks. During
+-	 * the requeue we moved futex_q's from the hash bucket at key1 to the
+-	 * one at key2 and updated their key pointer.  We no longer need to
+-	 * hold the references to key1.
+-	 */
+-	while (--drop_count >= 0)
+-		drop_futex_key_refs(&key1);
+-
+ out_put_keys:
+ 	put_futex_key(&key2);
+ out_put_key1:
+@@ -2421,7 +2344,6 @@ retry:
+ 		ret = 1;
+ 	}
+ 
+-	drop_futex_key_refs(&q->key);
+ 	return ret;
+ }
+ 
