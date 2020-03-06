@@ -2,131 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FAF17BC26
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:51:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD86917BC33
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:53:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbgCFLv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:51:29 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48516 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgCFLv2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:51:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ASyBuuTofRbVwPI7PA6nCkMbt1FOFFYZDyxdw70e1XQ=; b=Qcw37GPDXfZ5Izoe6gO4qMlqAv
-        dO22ZmKpMQRD3YdRENFo8YXVd5jg1DbLZfdNoL5VF2PsRireMkDvKh0NxvI9GQqZ9oMnAtxMIeN/K
-        hO8WHKpi+gDbNH+20Ph0i8HPs5JlLT6BXfFtD95vl8w+IE0CPVm46wd7tBhDCb1EsESaxB24qijyn
-        rMC/E7HWz14GUPr12IO28lA8p2BZ+6faN8YeA2muPVZB7KG9HB0xz9KkkyQ+IhhVhPQHHd0HUpYoh
-        lArzUdchklX41lToO8PAZl+bimUIBfhusdVRVI1Z0whRq9c7CiHGV95LlO0I1BccFRYnNMLmImkhL
-        Hzy6QPHw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jABV7-0005NX-7p; Fri, 06 Mar 2020 11:50:45 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 95AC8980DE9; Fri,  6 Mar 2020 12:50:42 +0100 (CET)
-Date:   Fri, 6 Mar 2020 12:50:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        rostedt@goodmis.org
-Cc:     mingo@kernel.org, joel@joelfernandes.org,
-        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
-        tglx@linutronix.de, paulmck@kernel.org, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        luto@kernel.org, tony.luck@intel.com, frederic@kernel.org,
-        dan.carpenter@oracle.com, mhiramat@kernel.org
-Subject: Re: [PATCH v4 11/27] rcu,tracing: Create trace_rcu_{enter,exit}()
-Message-ID: <20200306115042.GG3348@worktop.programming.kicks-ass.net>
-References: <20200221133416.777099322@infradead.org>
- <20200221134215.673793889@infradead.org>
+        id S1726462AbgCFLxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:53:50 -0500
+Received: from foss.arm.com ([217.140.110.172]:60272 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726026AbgCFLxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 06:53:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4756F31B;
+        Fri,  6 Mar 2020 03:53:49 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFEAA3F6C4;
+        Fri,  6 Mar 2020 03:53:46 -0800 (PST)
+Date:   Fri, 6 Mar 2020 11:53:41 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Ionela Voinescu <ionela.voinescu@arm.com>
+Cc:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
+        maz@kernel.org, suzuki.poulose@arm.com, lukasz.luba@arm.com,
+        valentin.schneider@arm.com, dietmar.eggemann@arm.com,
+        rjw@rjwysocki.net, pkondeti@codeaurora.org, peterz@infradead.org,
+        mingo@redhat.com, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 6/7] arm64: use activity monitors for frequency
+ invariance
+Message-ID: <20200306115341.GA44221@bogus>
+References: <20200305090627.31908-1-ionela.voinescu@arm.com>
+ <20200305090627.31908-7-ionela.voinescu@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221134215.673793889@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200305090627.31908-7-ionela.voinescu@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 02:34:27PM +0100, Peter Zijlstra wrote:
-> To facilitate tracers that need RCU, add some helpers to wrap the
-> magic required.
-> 
-> The problem is that we can call into tracers (trace events and
-> function tracing) while RCU isn't watching and this can happen from
-> any context, including NMI.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+On Thu, Mar 05, 2020 at 09:06:26AM +0000, Ionela Voinescu wrote:
+> The Frequency Invariance Engine (FIE) is providing a frequency
+> scaling correction factor that helps achieve more accurate
+> load-tracking.
+>
+> So far, for arm and arm64 platforms, this scale factor has been
+> obtained based on the ratio between the current frequency and the
+> maximum supported frequency recorded by the cpufreq policy. The
+> setting of this scale factor is triggered from cpufreq drivers by
+> calling arch_set_freq_scale. The current frequency used in computation
+> is the frequency requested by a governor, but it may not be the
+> frequency that was implemented by the platform.
+>
+> This correction factor can also be obtained using a core counter and a
+> constant counter to get information on the performance (frequency based
+> only) obtained in a period of time. This will more accurately reflect
+> the actual current frequency of the CPU, compared with the alternative
+> implementation that reflects the request of a performance level from
+> the OS.
+>
+> Therefore, implement arch_scale_freq_tick to use activity monitors, if
+> present, for the computation of the frequency scale factor.
+>
+> The use of AMU counters depends on:
+>  - CONFIG_ARM64_AMU_EXTN - depents on the AMU extension being present
+>  - CONFIG_CPU_FREQ - the current frequency obtained using counter
+>    information is divided by the maximum frequency obtained from the
+>    cpufreq policy.
+>
+> While it is possible to have a combination of CPUs in the system with
+> and without support for activity monitors, the use of counters for
+> frequency invariance is only enabled for a CPU if all related CPUs
+> (CPUs in the same frequency domain) support and have enabled the core
+> and constant activity monitor counters. In this way, there is a clear
+> separation between the policies for which arch_set_freq_scale (cpufreq
+> based FIE) is used, and the policies for which arch_scale_freq_tick
+> (counter based FIE) is used to set the frequency scale factor. For
+> this purpose, a late_initcall_sync is registered to trigger validation
+> work for policies that will enable or disable the use of AMU counters
+> for frequency invariance. If CONFIG_CPU_FREQ is not defined, the use
+> of counters is enabled on all CPUs only if all possible CPUs correctly
+> support the necessary counters.
+>
+> Signed-off-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
 > ---
->  include/linux/rcupdate.h |   29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -175,6 +175,35 @@ do { \
->  #error "Unknown RCU implementation specified to kernel configuration"
->  #endif
->  
-> +/**
-> + * trace_rcu_enter - Force RCU to be active, for code that needs RCU readers
-> + *
-> + * Very similar to RCU_NONIDLE() above.
-> + *
-> + * Tracing can happen while RCU isn't active yet, for instance in the idle loop
-> + * between rcu_idle_enter() and rcu_idle_exit(), or early in exception entry.
-> + * RCU will happily ignore any read-side critical sections in this case.
-> + *
-> + * This function ensures that RCU is aware hereafter and the code can readily
-> + * rely on RCU read-side critical sections working as expected.
-> + *
-> + * This function is NMI safe -- provided in_nmi() is correct and will nest up-to
-> + * INT_MAX/2 times.
-> + */
-> +static inline int trace_rcu_enter(void)
+>  arch/arm64/include/asm/topology.h |   9 ++
+>  arch/arm64/kernel/cpufeature.c    |   4 +
+>  arch/arm64/kernel/topology.c      | 180 ++++++++++++++++++++++++++++++
+>  drivers/base/arch_topology.c      |  12 ++
+>  include/linux/arch_topology.h     |   2 +
+>  5 files changed, 207 insertions(+)
+>
+
+[...]
+
+> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> index 6119e11a9f95..8d63673c1689 100644
+> --- a/drivers/base/arch_topology.c
+> +++ b/drivers/base/arch_topology.c
+> @@ -21,6 +21,10 @@
+>  #include <linux/sched.h>
+>  #include <linux/smp.h>
+>
+> +__weak bool arch_freq_counters_available(struct cpumask *cpus)
 > +{
-> +	int state = !rcu_is_watching();
-> +	if (state)
-> +		rcu_irq_enter_irqsave();
-> +	return state;
+> +	return false;
 > +}
+>  DEFINE_PER_CPU(unsigned long, freq_scale) = SCHED_CAPACITY_SCALE;
+>
+>  void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
+> @@ -29,6 +33,14 @@ void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
+>  	unsigned long scale;
+>  	int i;
+>
+> +	/*
+> +	 * If the use of counters for FIE is enabled, just return as we don't
+> +	 * want to update the scale factor with information from CPUFREQ.
+> +	 * Instead the scale factor will be updated from arch_scale_freq_tick.
+> +	 */
+> +	if (arch_freq_counters_available(cpus))
+> +		return;
 > +
-> +static inline void trace_rcu_exit(int state)
-> +{
-> +	if (state)
-> +		rcu_irq_exit_irqsave();
-> +}
+>  	scale = (cur_freq << SCHED_CAPACITY_SHIFT) / max_freq;
+>
+>  	for_each_cpu(i, cpus)
+> diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
+> index 3015ecbb90b1..1ccdddb541a7 100644
+> --- a/include/linux/arch_topology.h
+> +++ b/include/linux/arch_topology.h
+> @@ -33,6 +33,8 @@ unsigned long topology_get_freq_scale(int cpu)
+>  	return per_cpu(freq_scale, cpu);
+>  }
+>
+> +bool arch_freq_counters_available(struct cpumask *cpus);
 > +
->  /*
->   * The init_rcu_head_on_stack() and destroy_rcu_head_on_stack() calls
->   * are needed for dynamic initialization and destruction of rcu_head
+>  struct cpu_topology {
+>  	int thread_id;
+>  	int core_id;
 
-Massmi; afaict we also need the below. That is, when you stick an
-optimized kprobe in a region RCU is not watching, nothing will make RCU
-go.
+Sorry for the delay. The arch_topology part looks fine to me. For that part:
 
----
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 9ad5e6b346f8..fa14918613da 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -370,6 +370,7 @@ static bool kprobes_allow_optimization;
-  */
- void opt_pre_handler(struct kprobe *p, struct pt_regs *regs)
- {
-+	int rcu_flags = trace_rcu_enter();
- 	struct kprobe *kp;
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
- 	list_for_each_entry_rcu(kp, &p->list, list) {
-@@ -379,6 +380,7 @@ void opt_pre_handler(struct kprobe *p, struct pt_regs *regs)
- 		}
- 		reset_kprobe_instance();
- 	}
-+	trace_rcu_exit(rcu_flags);
- }
- NOKPROBE_SYMBOL(opt_pre_handler);
-
-
+--
+Regards,
+Sudeep
