@@ -2,275 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C732517BA68
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C5517BA82
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbgCFKjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:39:14 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52917 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgCFKjK (ORCPT
+        id S1727300AbgCFKjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:39:53 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50703 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbgCFKju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:39:10 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAANk-0000CW-Pj; Fri, 06 Mar 2020 11:39:04 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7663B1C0081;
-        Fri,  6 Mar 2020 11:39:04 +0100 (CET)
-Date:   Fri, 06 Mar 2020 10:39:04 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] futex: Fix inode life-time issue
-Cc:     Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        Fri, 6 Mar 2020 05:39:50 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a5so1837210wmb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 02:39:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=rCwwPNd2pA0INB2HwJkp3rqo1usGcNxwzdg6ma8wOKI=;
+        b=eTHhCcEclE09OQebKxTAtBcuem6YrVVfqc6wr7gzch/KOv9hjBwMrETehU/oSBUFjX
+         l9RbDlri1cZqI8jE26fig1J/BgoL9F/ihHJocP8/UCnDCvgi1xfAqPrfmg0Ceb7WmzQm
+         aWZ7/H0OldRYsjAGDfwM90Gf9q8iHvafGPsVM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=rCwwPNd2pA0INB2HwJkp3rqo1usGcNxwzdg6ma8wOKI=;
+        b=QwPI0X8op9UGDwObV+RpSqg39iYyEU3FrCN6+Rw9TWt8xFK9eDGsba6S19gcSt8Pxr
+         DxhQwWWviGijX7ZUS3xr7w6cX6bQsePlpgKgqjZBsPf6FYazvRnEvpZ6b6T5AV7tcU6y
+         EsSzczXz+AhLr8TPGvJxT9feb4BgstYumiNpaWww6Q9pnb4moc5m71yBocdtIfDyXzea
+         BdavsoAfFTnJdObF65avXVdaEWaxiBSh/LaaZQquz3pMgMkPznCuDVJv3PtxYd0cWQcn
+         o1WJT6aiHrzxs4YENxxwUsw7s/AsqOmI4j/eyOQ6Jol97FHbhY9282iGdRLrI7OOovd5
+         D1yg==
+X-Gm-Message-State: ANhLgQ20xYInZbGH44pQogiReqyrYJYMzd+k9vlBu9RbU49EHPjvcXkI
+        Tsve6pL7I5iqC7WgAQdR2yJxww==
+X-Google-Smtp-Source: ADFU+vsoxbiLn65abeK+CoaJTkFH/7IMTTkUgAtZxrezRu/238vSq4AIzpYtowBToyIoT+aRz7bdHg==
+X-Received: by 2002:a7b:c756:: with SMTP id w22mr3356418wmk.90.1583491188842;
+        Fri, 06 Mar 2020 02:39:48 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id a184sm13066027wmf.29.2020.03.06.02.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 02:39:48 -0800 (PST)
+Date:   Fri, 6 Mar 2020 11:39:46 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Joe Perches <joe@perches.com>,
+        Sebastian Duda <sebastian.duda@fau.de>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [Intel-gfx] [PATCH] MAINTAINERS: adjust to reservation.h renaming
+Message-ID: <20200306103946.GT2363188@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Joe Perches <joe@perches.com>,
+        Sebastian Duda <sebastian.duda@fau.de>,
+        Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org
+References: <20200304120711.12117-1-lukas.bulwahn@gmail.com>
+ <b0296e3a-31f8-635a-f26d-8b0bc490aae3@amd.com>
 MIME-Version: 1.0
-Message-ID: <158349114423.28353.5298611624163991585.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0296e3a-31f8-635a-f26d-8b0bc490aae3@amd.com>
+X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+On Wed, Mar 04, 2020 at 01:08:32PM +0100, Christian König wrote:
+> Am 04.03.20 um 13:07 schrieb Lukas Bulwahn:
+> > Commit 52791eeec1d9 ("dma-buf: rename reservation_object to dma_resv")
+> > renamed include/linux/reservation.h to include/linux/dma-resv.h, but
+> > missed the reference in the MAINTAINERS entry.
+> > 
+> > Since then, ./scripts/get_maintainer.pl --self-test complains:
+> > 
+> >    warning: no file matches F: include/linux/reservation.h
+> > 
+> > Adjust the DMA BUFFER SHARING FRAMEWORK entry in MAINTAINERS.
+> > 
+> > Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
+> > Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> 
+> Reviewed-by: Christian König <christian.koenig@amd.com>
 
-Commit-ID:     8019ad13ef7f64be44d4f892af9c840179009254
-Gitweb:        https://git.kernel.org/tip/8019ad13ef7f64be44d4f892af9c840179009254
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 04 Mar 2020 11:28:31 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 06 Mar 2020 11:06:15 +01:00
+You'll push this too?
+-Daniel
 
-futex: Fix inode life-time issue
+> 
+> > ---
+> > Christian, please pick this patch.
+> > applies cleanly on current master and next-20200303
+> > 
+> >   MAINTAINERS | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 6158a143a13e..3d6cb2789c9e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -5022,7 +5022,7 @@ L:	dri-devel@lists.freedesktop.org
+> >   L:	linaro-mm-sig@lists.linaro.org (moderated for non-subscribers)
+> >   F:	drivers/dma-buf/
+> >   F:	include/linux/dma-buf*
+> > -F:	include/linux/reservation.h
+> > +F:	include/linux/dma-resv.h
+> >   F:	include/linux/*fence.h
+> >   F:	Documentation/driver-api/dma-buf.rst
+> >   K:	dma_(buf|fence|resv)
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
-As reported by Jann, ihold() does not in fact guarantee inode
-persistence. And instead of making it so, replace the usage of inode
-pointers with a per boot, machine wide, unique inode identifier.
-
-This sequence number is global, but shared (file backed) futexes are
-rare enough that this should not become a performance issue.
-
-Reported-by: Jann Horn <jannh@google.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- fs/inode.c            |  1 +-
- include/linux/fs.h    |  1 +-
- include/linux/futex.h | 17 ++++----
- kernel/futex.c        | 89 +++++++++++++++++++++++++-----------------
- 4 files changed, 65 insertions(+), 43 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 7d57068..93d9252 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -138,6 +138,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	inode->i_sb = sb;
- 	inode->i_blkbits = sb->s_blocksize_bits;
- 	inode->i_flags = 0;
-+	atomic64_set(&inode->i_sequence, 0);
- 	atomic_set(&inode->i_count, 1);
- 	inode->i_op = &empty_iops;
- 	inode->i_fop = &no_open_fops;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3cd4fe6..abedbff 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -698,6 +698,7 @@ struct inode {
- 		struct rcu_head		i_rcu;
- 	};
- 	atomic64_t		i_version;
-+	atomic64_t		i_sequence; /* see futex */
- 	atomic_t		i_count;
- 	atomic_t		i_dio_count;
- 	atomic_t		i_writecount;
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index 5cc3fed..b70df27 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -31,23 +31,26 @@ struct task_struct;
- 
- union futex_key {
- 	struct {
-+		u64 i_seq;
- 		unsigned long pgoff;
--		struct inode *inode;
--		int offset;
-+		unsigned int offset;
- 	} shared;
- 	struct {
-+		union {
-+			struct mm_struct *mm;
-+			u64 __tmp;
-+		};
- 		unsigned long address;
--		struct mm_struct *mm;
--		int offset;
-+		unsigned int offset;
- 	} private;
- 	struct {
-+		u64 ptr;
- 		unsigned long word;
--		void *ptr;
--		int offset;
-+		unsigned int offset;
- 	} both;
- };
- 
--#define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = NULL } }
-+#define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = 0ULL } }
- 
- #ifdef CONFIG_FUTEX
- enum {
-diff --git a/kernel/futex.c b/kernel/futex.c
-index 0cf84c8..e14f7cd 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -429,7 +429,7 @@ static void get_futex_key_refs(union futex_key *key)
- 
- 	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
- 	case FUT_OFF_INODE:
--		ihold(key->shared.inode); /* implies smp_mb(); (B) */
-+		smp_mb();		/* explicit smp_mb(); (B) */
- 		break;
- 	case FUT_OFF_MMSHARED:
- 		futex_get_mm(key); /* implies smp_mb(); (B) */
-@@ -463,7 +463,6 @@ static void drop_futex_key_refs(union futex_key *key)
- 
- 	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
- 	case FUT_OFF_INODE:
--		iput(key->shared.inode);
- 		break;
- 	case FUT_OFF_MMSHARED:
- 		mmdrop(key->private.mm);
-@@ -505,6 +504,46 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
- 	return timeout;
- }
- 
-+/*
-+ * Generate a machine wide unique identifier for this inode.
-+ *
-+ * This relies on u64 not wrapping in the life-time of the machine; which with
-+ * 1ns resolution means almost 585 years.
-+ *
-+ * This further relies on the fact that a well formed program will not unmap
-+ * the file while it has a (shared) futex waiting on it. This mapping will have
-+ * a file reference which pins the mount and inode.
-+ *
-+ * If for some reason an inode gets evicted and read back in again, it will get
-+ * a new sequence number and will _NOT_ match, even though it is the exact same
-+ * file.
-+ *
-+ * It is important that match_futex() will never have a false-positive, esp.
-+ * for PI futexes that can mess up the state. The above argues that false-negatives
-+ * are only possible for malformed programs.
-+ */
-+static u64 get_inode_sequence_number(struct inode *inode)
-+{
-+	static atomic64_t i_seq;
-+	u64 old;
-+
-+	/* Does the inode already have a sequence number? */
-+	old = atomic64_read(&inode->i_sequence);
-+	if (likely(old))
-+		return old;
-+
-+	for (;;) {
-+		u64 new = atomic64_add_return(1, &i_seq);
-+		if (WARN_ON_ONCE(!new))
-+			continue;
-+
-+		old = atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, new);
-+		if (old)
-+			return old;
-+		return new;
-+	}
-+}
-+
- /**
-  * get_futex_key() - Get parameters which are the keys for a futex
-  * @uaddr:	virtual address of the futex
-@@ -517,9 +556,15 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
-  *
-  * The key words are stored in @key on success.
-  *
-- * For shared mappings, it's (page->index, file_inode(vma->vm_file),
-- * offset_within_page).  For private mappings, it's (uaddr, current->mm).
-- * We can usually work out the index without swapping in the page.
-+ * For shared mappings (when @fshared), the key is:
-+ *   ( inode->i_sequence, page->index, offset_within_page )
-+ * [ also see get_inode_sequence_number() ]
-+ *
-+ * For private mappings (or when !@fshared), the key is:
-+ *   ( current->mm, address, 0 )
-+ *
-+ * This allows (cross process, where applicable) identification of the futex
-+ * without keeping the page pinned for the duration of the FUTEX_WAIT.
-  *
-  * lock_page() might sleep, the caller should not hold a spinlock.
-  */
-@@ -659,8 +704,6 @@ again:
- 		key->private.mm = mm;
- 		key->private.address = address;
- 
--		get_futex_key_refs(key); /* implies smp_mb(); (B) */
--
- 	} else {
- 		struct inode *inode;
- 
-@@ -692,40 +735,14 @@ again:
- 			goto again;
- 		}
- 
--		/*
--		 * Take a reference unless it is about to be freed. Previously
--		 * this reference was taken by ihold under the page lock
--		 * pinning the inode in place so i_lock was unnecessary. The
--		 * only way for this check to fail is if the inode was
--		 * truncated in parallel which is almost certainly an
--		 * application bug. In such a case, just retry.
--		 *
--		 * We are not calling into get_futex_key_refs() in file-backed
--		 * cases, therefore a successful atomic_inc return below will
--		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
--		 */
--		if (!atomic_inc_not_zero(&inode->i_count)) {
--			rcu_read_unlock();
--			put_page(page);
--
--			goto again;
--		}
--
--		/* Should be impossible but lets be paranoid for now */
--		if (WARN_ON_ONCE(inode->i_mapping != mapping)) {
--			err = -EFAULT;
--			rcu_read_unlock();
--			iput(inode);
--
--			goto out;
--		}
--
- 		key->both.offset |= FUT_OFF_INODE; /* inode-based key */
--		key->shared.inode = inode;
-+		key->shared.i_seq = get_inode_sequence_number(inode);
- 		key->shared.pgoff = basepage_index(tail);
- 		rcu_read_unlock();
- 	}
- 
-+	get_futex_key_refs(key); /* implies smp_mb(); (B) */
-+
- out:
- 	put_page(page);
- 	return err;
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
