@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E76317C08A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:43:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C360D17C0A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCFOmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 09:42:23 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53815 "EHLO
+        id S1727551AbgCFOna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 09:43:30 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53804 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbgCFOmT (ORCPT
+        with ESMTP id S1726874AbgCFOmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:42:19 -0500
+        Fri, 6 Mar 2020 09:42:17 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAEB3-0006Js-Dk; Fri, 06 Mar 2020 15:42:13 +0100
+        id 1jAEB1-0006JZ-6a; Fri, 06 Mar 2020 15:42:11 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A71AD1C21D5;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 564D71C21DA;
         Fri,  6 Mar 2020 15:42:07 +0100 (CET)
 Date:   Fri, 06 Mar 2020 14:42:07 -0000
-From:   "tip-bot2 for Mel Gorman" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Valentin Schneider" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/numa: Acquire RCU lock for checking idle
- cores during NUMA balancing
-Cc:     Qian Cai <cai@lca.pw>, "Paul E. McKenney" <paulmck@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
+Subject: [tip: sched/core] sched/topology: Don't enable EAS on SMT systems
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200227191804.GJ3818@techsingularity.net>
-References: <20200227191804.GJ3818@techsingularity.net>
+In-Reply-To: <20200227191433.31994-2-valentin.schneider@arm.com>
+References: <20200227191433.31994-2-valentin.schneider@arm.com>
 MIME-Version: 1.0
-Message-ID: <158350572742.28353.9668880281521573284.tip-bot2@tip-bot2>
+Message-ID: <158350572709.28353.16255597109338898725.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,76 +50,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     0621df315402dd7bc56f7272fae9778701289825
-Gitweb:        https://git.kernel.org/tip/0621df315402dd7bc56f7272fae9778701289825
-Author:        Mel Gorman <mgorman@techsingularity.net>
-AuthorDate:    Thu, 27 Feb 2020 19:18:04 
+Commit-ID:     38502ab4bf3c463081bfd53356980a9ec2f32d1d
+Gitweb:        https://git.kernel.org/tip/38502ab4bf3c463081bfd53356980a9ec2f32d1d
+Author:        Valentin Schneider <valentin.schneider@arm.com>
+AuthorDate:    Thu, 27 Feb 2020 19:14:32 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Mar 2020 12:57:22 +01:00
+CommitterDate: Fri, 06 Mar 2020 12:57:23 +01:00
 
-sched/numa: Acquire RCU lock for checking idle cores during NUMA balancing
+sched/topology: Don't enable EAS on SMT systems
 
-Qian Cai reported the following bug:
+EAS already requires asymmetric CPU capacities to be enabled, and mixing
+this with SMT is an aberration, but better be safe than sorry.
 
-  The linux-next commit ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a
-  migration target instead of comparing tasks") introduced a boot warning,
-
-  [   86.520534][    T1] WARNING: suspicious RCU usage
-  [   86.520540][    T1] 5.6.0-rc3-next-20200227 #7 Not tainted
-  [   86.520545][    T1] -----------------------------
-  [   86.520551][    T1] kernel/sched/fair.c:5914 suspicious rcu_dereference_check() usage!
-  [   86.520555][    T1]
-  [   86.520555][    T1] other info that might help us debug this:
-  [   86.520555][    T1]
-  [   86.520561][    T1]
-  [   86.520561][    T1] rcu_scheduler_active = 2, debug_locks = 1
-  [   86.520567][    T1] 1 lock held by systemd/1:
-  [   86.520571][    T1]  #0: ffff8887f4b14848 (&mm->mmap_sem#2){++++}, at: do_page_fault+0x1d2/0x998
-  [   86.520594][    T1]
-  [   86.520594][    T1] stack backtrace:
-  [   86.520602][    T1] CPU: 1 PID: 1 Comm: systemd Not tainted 5.6.0-rc3-next-20200227 #7
-
-task_numa_migrate() checks for idle cores when updating NUMA-related statistics.
-This relies on reading a RCU-protected structure in test_idle_cores() via this
-call chain
-
-task_numa_migrate
-  -> update_numa_stats
-    -> numa_idle_core
-      -> test_idle_cores
-
-While the locking could be fine-grained, it is more appropriate to acquire
-the RCU lock for the entire scan of the domain. This patch removes the
-warning triggered at boot time.
-
-Reported-by: Qian Cai <cai@lca.pw>
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Acked-by: Quentin Perret <qperret@google.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Fixes: ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a migration target instead of comparing tasks")
-Link: https://lkml.kernel.org/r/20200227191804.GJ3818@techsingularity.net
+Link: https://lkml.kernel.org/r/20200227191433.31994-2-valentin.schneider@arm.com
 ---
- kernel/sched/fair.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/sched/topology.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bba9452..3887b73 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1608,6 +1608,7 @@ static void update_numa_stats(struct task_numa_env *env,
- 	memset(ns, 0, sizeof(*ns));
- 	ns->idle_cpu = -1;
- 
-+	rcu_read_lock();
- 	for_each_cpu(cpu, cpumask_of_node(nid)) {
- 		struct rq *rq = cpu_rq(cpu);
- 
-@@ -1627,6 +1628,7 @@ static void update_numa_stats(struct task_numa_env *env,
- 			idle_core = numa_idle_core(idle_core, cpu);
- 		}
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 0091188..8344757 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -317,8 +317,9 @@ static void sched_energy_set(bool has_eas)
+  * EAS can be used on a root domain if it meets all the following conditions:
+  *    1. an Energy Model (EM) is available;
+  *    2. the SD_ASYM_CPUCAPACITY flag is set in the sched_domain hierarchy.
+- *    3. the EM complexity is low enough to keep scheduling overheads low;
+- *    4. schedutil is driving the frequency of all CPUs of the rd;
++ *    3. no SMT is detected.
++ *    4. the EM complexity is low enough to keep scheduling overheads low;
++ *    5. schedutil is driving the frequency of all CPUs of the rd;
+  *
+  * The complexity of the Energy Model is defined as:
+  *
+@@ -360,6 +361,13 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
+ 		goto free;
  	}
-+	rcu_read_unlock();
  
- 	ns->weight = cpumask_weight(cpumask_of_node(nid));
- 
++	/* EAS definitely does *not* handle SMT */
++	if (sched_smt_active()) {
++		pr_warn("rd %*pbl: Disabling EAS, SMT is not supported\n",
++			cpumask_pr_args(cpu_map));
++		goto free;
++	}
++
+ 	for_each_cpu(i, cpu_map) {
+ 		/* Skip already covered CPUs. */
+ 		if (find_pd(pd, i))
