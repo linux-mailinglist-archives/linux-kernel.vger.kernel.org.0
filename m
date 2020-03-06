@@ -2,98 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25F3717C334
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:43:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7CA817C33A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbgCFQnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:43:49 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2516 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726099AbgCFQnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:43:49 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 16B078550CAB53C01BB0;
-        Fri,  6 Mar 2020 16:43:48 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML711-CAH.china.huawei.com (10.201.108.34) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 6 Mar 2020 16:43:47 +0000
-Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 6 Mar 2020
- 16:43:47 +0000
-Subject: Re: About commit "io: change inX() to have their own IO barrier
- overrides"
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Sinan Kaya <okaya@kernel.org>, "xuwei (O)" <xuwei5@hisilicon.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com>
- <c1489f55-369d-2cff-ff36-b10fb5d3ee79@kernel.org>
- <8207cd51-5b94-2f15-de9f-d85c9c385bca@huawei.com>
- <6115fa56-a471-1e9f-edbb-e643fa4e7e11@kernel.org>
- <7c955142-1fcb-d99e-69e4-1e0d3d9eb8c3@huawei.com>
- <CAK8P3a0f9hnKGd6GJ8qFZSu+J-n4fY23TCGxQkmgJaxbpre50Q@mail.gmail.com>
- <90af535f-00ef-c1e3-ec20-aae2bd2a0d88@kernel.org>
- <CAK8P3a2Grd0JsBNsB19oAxrAFtOdpvjrpGcfeArKe7zD_jrUZw@mail.gmail.com>
- <ae0a1bf1-948f-7df0-9efb-cd1e94e27d2d@huawei.com>
- <CAK8P3a2wdCrBP=a8ZypWoC=HyCU3oYYNeCddWM7oT+xM9gTPhw@mail.gmail.com>
- <182a37c2-7437-b1bd-8b86-5c9ce2e29f00@huawei.com>
- <CAK8P3a22fEGdVKVVs_40Rc_vs9SQ2ikejwMtFpyR_o+74utWaA@mail.gmail.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <15e7158d-184d-9591-89a6-cd6b10ef054d@huawei.com>
-Date:   Fri, 6 Mar 2020 16:43:46 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1726860AbgCFQop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:44:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726167AbgCFQoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 11:44:44 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39A3A2072A;
+        Fri,  6 Mar 2020 16:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583513083;
+        bh=uM6BBzCXa6HAUuOEGiA8P2jf81J77c6GVb5q3IeM3R4=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=suKLdZ7u99Tu+TZXXLBW/DTPMhhpoblbweU/aMPVupcPWtgSo/+q6IAK70+gMPfRL
+         ah5o8KFpGEyp2Ul18AA3nzRoMfgJYb3P5A7YF5u3e5JqpvT3J9JTC8iW7bZG8EUK/I
+         jZckRz4TQB2vJtmbOVkawf2lRhrHScoF9i7hpsxg=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 0E85935226BF; Fri,  6 Mar 2020 08:44:43 -0800 (PST)
+Date:   Fri, 6 Mar 2020 08:44:43 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
+Message-ID: <20200306164443.GU2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <00000000000067c6df059df7f9f5@google.com>
+ <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
+ <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
+ <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
+ <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
+ <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a22fEGdVKVVs_40Rc_vs9SQ2ikejwMtFpyR_o+74utWaA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.45]
-X-ClientProxiedBy: lhreml716-chm.china.huawei.com (10.201.108.67) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/03/2020 16:29, Arnd Bergmann wrote:
->> The idea is good, but it would be nice if we just somehow use a common
->> asm-generic io.h definition directly in logic_pio.c, like:
->>
->> asm-generic io.h:
->>
->> #ifndef __raw_inw // name?
->> #define __raw_inw __raw_inw
->> static inline u16 __raw_inw(unsigned long addr)
->> {
->>          u16 val;
->>
->>          __io_pbr();
->>          val = __le16_to_cpu(__raw_readw(addr));
->>          __io_par(val);
->>          return val;
->> }
->> #endif
->>
->> #include <linux/logic_pio.h>
->>
->> #ifndef inw
->> #define inw __raw_inw
->> #endif
-> Yes, makes sense. Maybe __arch_inw() then? Not great either, but I think
-> that's better than __raw_inw() because __raw_* would sound like it
-> mirrors __raw_readl() that lacks the barriers and byteswaps.
+On Fri, Mar 06, 2020 at 04:36:20PM +0100, Jann Horn wrote:
+> On Fri, Mar 6, 2020 at 4:34 PM Jens Axboe <axboe@kernel.dk> wrote:
+> > On 3/6/20 7:57 AM, Jann Horn wrote:
+> > > +paulmck
+> > >
+> > > On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
+> > >> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
+> > >>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
+> > >>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
+> > >>>>
+> > >>>> Hello,
+> > >>>>
+> > >>>> syzbot found the following crash on:
+> > >>>>
+> > >>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
+> > >>>> git tree:       upstream
+> > >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
+> > >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
+> > >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
+> > >>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> > >>>>
+> > >>>> Unfortunately, I don't have any reproducer for this crash yet.
+> > >>>>
+> > >>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > >>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
+> > >>>
+> > >>> +io_uring maintainers
+> > >>>
+> > >>> Here is a repro:
+> > >>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+> > >>
+> > >> I've queued up a fix for this:
+> > >>
+> > >> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
+> > >
+> > > I believe that this fix relies on call_rcu() having FIFO ordering; but
+> > > <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
+> > > says:
+> > >
+> > > | call_rcu() normally acts only on CPU-local state[...] It simply
+> > > enqueues the rcu_head structure on a per-CPU list,
 
-Right, I had the same concern. And maybe the "arch" prefix is 
-misleading. Just __inw could be ok, and hopefully not conflict with the 
-arch/arm/mach-* definitions.
+Indeed.  For but one example, if there was a CPU-to-CPU migration between
+the two call_rcu() invocations, it would not be at all surprising for
+the two callbacks to execute out of order.
 
-Thanks,
-John
+> > > Is this fix really correct?
+> >
+> > That's a good point, there's a potentially stronger guarantee we need
+> > here that isn't "nobody is inside an RCU critical section", but rather
+> > that we're depending on a previous call_rcu() to have happened. Hence I
+> > think you are right - it'll shrink the window drastically, since the
+> > previous callback is already queued up, but it's not a full close.
+> >
+> > Hmm...
+> 
+> You could potentially hack up the semantics you want by doing a
+> call_rcu() whose callback does another call_rcu(), or something like
+> that - but I'd like to hear paulmck's opinion on this first.
+
+That would work!
+
+Or, alternatively, do an rcu_barrier() between the two calls to
+call_rcu(), assuming that the use case can tolerate rcu_barrier()
+overhead and latency.
+
+							Thanx, Paul
