@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918E417BD2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4345D17BD32
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:50:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbgCFMtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:49:12 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:35668 "EHLO
+        id S1727329AbgCFMtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 07:49:16 -0500
+Received: from mail.baikalelectronics.com ([87.245.175.226]:35684 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbgCFMtJ (ORCPT
+        with ESMTP id S1727291AbgCFMtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:49:09 -0500
+        Fri, 6 Mar 2020 07:49:11 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 4E4B1803087C;
-        Fri,  6 Mar 2020 12:49:07 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id AEE648030797;
+        Fri,  6 Mar 2020 12:49:09 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ME3yfzCaukni; Fri,  6 Mar 2020 15:49:06 +0300 (MSK)
+        with ESMTP id LoOnL7-9FjW0; Fri,  6 Mar 2020 15:49:09 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
 CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Serge Semin <fancer.lancer@gmail.com>,
@@ -27,15 +27,15 @@ CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Paul Burton <paulburton@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 16/22] mips: cdmm: Add mti,mips-cdmm dtb node support
-Date:   Fri, 6 Mar 2020 15:46:59 +0300
+Subject: [PATCH 17/22] bus: cdmm: Add MIPS R5 arch support
+Date:   Fri, 6 Mar 2020 15:47:00 +0300
 In-Reply-To: <20200306124705.6595-1-Sergey.Semin@baikalelectronics.ru>
 References: <20200306124705.6595-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306124907.4E4B1803087C@mail.baikalelectronics.ru>
+Message-Id: <20200306124909.AEE648030797@mail.baikalelectronics.ru>
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -44,11 +44,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
-Since having and mapping the CDMM block is platform specific, then
-instead of just returning a zero-address, lets make the default CDMM
-base address search method (mips_cdmm_phys_base()) to do something
-useful. For instance to find the address in a dedicated dtb-node in
-order to support of-based platforms by default.
+CDMM may be available not only MIPS R2 architectures, but also in
+newer MIPS R5 chips. For instance our P5600 chip has one. Lets mark
+the CDMM bus being supported for that MIPS arch too.
 
 Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
@@ -56,45 +54,22 @@ Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: Paul Burton <paulburton@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 ---
- drivers/bus/mips_cdmm.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/bus/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bus/mips_cdmm.c b/drivers/bus/mips_cdmm.c
-index 1b14256376d2..7faa8c049f07 100644
---- a/drivers/bus/mips_cdmm.c
-+++ b/drivers/bus/mips_cdmm.c
-@@ -16,6 +16,8 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/smp.h>
-+#include <linux/of_address.h>
-+#include <linux/of.h>
- #include <asm/cdmm.h>
- #include <asm/hazards.h>
- #include <asm/mipsregs.h>
-@@ -337,9 +339,22 @@ static phys_addr_t mips_cdmm_cur_base(void)
-  * Picking a suitable physical address at which to map the CDMM region is
-  * platform specific, so this weak function can be overridden by platform
-  * code to pick a suitable value if none is configured by the bootloader.
-+ * By default this method tries to find a CDMM-specific node in the system
-+ * dtb. Note that this won't work for early serial console.
-  */
- phys_addr_t __weak mips_cdmm_phys_base(void)
- {
-+	struct device_node *np;
-+	struct resource res;
-+	int err;
-+
-+	np = of_find_compatible_node(NULL, NULL, "mti,mips-cdmm");
-+	if (np) {
-+		err = of_address_to_resource(np, 0, &res);
-+		if (!err)
-+			return res.start;
-+	}
-+
- 	return 0;
- }
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index 6095b6df8a81..63466bff0264 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -58,7 +58,7 @@ config IMX_WEIM
  
+ config MIPS_CDMM
+ 	bool "MIPS Common Device Memory Map (CDMM) Driver"
+-	depends on CPU_MIPSR2
++	depends on CPU_MIPSR2 || CPU_MIPSR5
+ 	help
+ 	  Driver needed for the MIPS Common Device Memory Map bus in MIPS
+ 	  cores. This bus is for per-CPU tightly coupled devices such as the
 -- 
 2.25.1
 
