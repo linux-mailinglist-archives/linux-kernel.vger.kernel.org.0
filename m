@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97DCE17BDAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:07:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D65617BDAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:07:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgCFNHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:07:35 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:36316 "EHLO
+        id S1727226AbgCFNHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:07:39 -0500
+Received: from mail.baikalelectronics.com ([87.245.175.226]:36346 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgCFNHe (ORCPT
+        with ESMTP id S1726194AbgCFNHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:07:34 -0500
+        Fri, 6 Mar 2020 08:07:35 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 7E27C8030705;
-        Fri,  6 Mar 2020 13:07:32 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 3FD2C8030706;
+        Fri,  6 Mar 2020 13:07:33 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XUMLQxRvb2VS; Fri,  6 Mar 2020 16:07:31 +0300 (MSK)
+        with ESMTP id zlcMDz8CAUmd; Fri,  6 Mar 2020 16:07:32 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
@@ -31,15 +31,15 @@ CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         <soc@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/6] dt-bindings: Add Baikal-T1 AXI-bus EHB dts bindings file
-Date:   Fri, 6 Mar 2020 16:07:16 +0300
+Subject: [PATCH 2/6] dt-bindings: Add Baikal-T1 APB-bus EHB dts bindings file
+Date:   Fri, 6 Mar 2020 16:07:17 +0300
 In-Reply-To: <20200306130721.10347-1-Sergey.Semin@baikalelectronics.ru>
 References: <20200306130721.10347-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306130732.7E27C8030705@mail.baikalelectronics.ru>
+Message-Id: <20200306130733.3FD2C8030706@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,9 +48,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
 This is a specific block embedded into the Baikal-T1 SoC, which is
-dedicated to detect AXI-bus protocol errors. So the dts node just
-needs to have the "be,bt1-axi-ehb" compatible string, MMIO registers
-and interrupts properties declared.
+dedicated to detect APB-bus protocol errors and tune the peripheral
+access timeout. So the dts bindings implies that corresponding dts
+node would be equipped with "be,bt1-apb-ehb" compatible string, MMIO
+region of registers space and of space with no device mapped,
+interrupts property and with an APB-reference clock handler.
 
 Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
@@ -61,49 +63,56 @@ Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Olof Johansson <olof@lixom.net>
 Cc: soc@kernel.org
 ---
- .../soc/baikal-t1/be,bt1-axi-ehb.yaml         | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-axi-ehb.yaml
+ .../soc/baikal-t1/be,bt1-apb-ehb.yaml         | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-apb-ehb.yaml
 
-diff --git a/Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-axi-ehb.yaml b/Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-axi-ehb.yaml
+diff --git a/Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-apb-ehb.yaml b/Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-apb-ehb.yaml
 new file mode 100644
-index 000000000000..f0deeb8f261c
+index 000000000000..e262aead2fb5
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-axi-ehb.yaml
-@@ -0,0 +1,52 @@
++++ b/Documentation/devicetree/bindings/soc/baikal-t1/be,bt1-apb-ehb.yaml
+@@ -0,0 +1,66 @@
 +# SPDX-License-Identifier: GPL-2.0
 +#
 +# Copyright (C) 2019 - 2020 BAIKAL ELECTRONICS, JSC
 +#
-+# Baikal-T1 AXI-bus Errors Handler Block Device Tree Bindings.
++# Baikal-T1 APB-bus Errors Handler Block Device Tree Bindings.
 +#
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/soc/baikal-t1/be,bt1-axi-ehb.yaml#
++$id: http://devicetree.org/schemas/soc/baikal-t1/be,bt1-apb-ehb.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Baikal-T1 AXI-bus Errors Handler Block
++title: Baikal-T1 APB-bus Errors Handler Block
 +
 +maintainers:
 +  - Serge Semin <fancer.lancer@gmail.com>
 +
 +description: |
-+  AXI3-bus is the main communication bus connecting all high-speed peripheral
-+  IP-cores with RAM controller and with MIPS P5600 cores. Traffic arbitration
-+  is done by means of Main Interconnect routing IO request from one block to
-+  another. In case of any protocol error, device not responding an IRQ is
-+  raised and a faulty situation is reported to the AXI EHB described by this
-+  bindings.
++  Configuration registers of Baikal-T1 SoC peripheral interfaces are accessed
++  by means of the APB-bus. In case of any APB protocol collisions, slave device
++  not responding on timeout an IRQ is raised with an erroneous address reported
++  to the APB terminator (EHB) sub-block described by this bindings file.
 +
 +properties:
 +  compatible:
-+    const: be,bt1-axi-ehb
++    const: be,bt1-apb-ehb
 +
 +  reg:
-+    maxItems: 1
++    items:
++      - description: APB EHB MMIO registers.
++      - description: APB MMIO region with no any device mapped.
 +
 +  interrupts:
 +    maxItems: 1
++
++  clocks:
++    description: APB reference clock.
++    maxItems: 1
++
++  clock-names:
++    const: ref
 +
 +additionalProperties: false
 +
@@ -111,16 +120,23 @@ index 000000000000..f0deeb8f261c
 +  - compatible
 +  - reg
 +  - interrupts
++  - clocks
++  - clock-names
 +
 +examples:
 +  - |
 +    #include <dt-bindings/interrupt-controller/mips-gic.h>
++    #include <dt-bindings/clock/bt1-ccu.h>
 +
-+    axi_ehb: ehb@1F04D110 {
-+      compatible = "be,bt1-axi-ehb";
-+      reg = <0x1F04D110 0x008>;
++    apb_ehb: ehb@1F059000 {
++      compatible = "be,bt1-apb-ehb";
++      reg = <0x1F059000 0x1000>,
++            <0x1D000000 0x2040000>;
 +
-+      interrupts = <GIC_SHARED 127 IRQ_TYPE_LEVEL_HIGH>;
++      interrupts = <GIC_SHARED 16 IRQ_TYPE_LEVEL_HIGH>;
++
++      clocks = <&ccu_sys CCU_SYS_APB_CLK>;
++      clock-names = "ref";
 +    };
 +...
 -- 
