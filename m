@@ -2,117 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D9217C12E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E28517C134
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgCFPFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:05:30 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23456 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726171AbgCFPFa (ORCPT
+        id S1727065AbgCFPG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:06:26 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45302 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbgCFPG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:05:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583507128;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ClbrAitKr0poeN9xg8y3C6UET4g/5wEOgBcbihysLtE=;
-        b=WOduI9UW9H+QJCqhm7F1v0AjXMzda+oeQtcclERxmCVN/TskO0pwX2vZvx7qXhfM35BA2X
-        9oMSDBbAWUOC+SgLwDazLmfNItwGPY7WrSEwWyfPWHqfNJ6FpKmvhRZcs8Dt43Mon8mLK8
-        Us5sgp7dpnf5EFO18DM13Ncze/5LNAA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-152-Ha7l0eppNsiOhcw_mGBSXw-1; Fri, 06 Mar 2020 10:05:24 -0500
-X-MC-Unique: Ha7l0eppNsiOhcw_mGBSXw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8A8398017DF;
-        Fri,  6 Mar 2020 15:05:22 +0000 (UTC)
-Received: from krava (ovpn-205-205.brq.redhat.com [10.40.205.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B82D1001902;
-        Fri,  6 Mar 2020 15:05:18 +0000 (UTC)
-Date:   Fri, 6 Mar 2020 16:05:14 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCHSET 00/10] perf: Improve cgroup profiling (v5)
-Message-ID: <20200306150514.GE290743@krava>
-References: <20200224043749.69466-1-namhyung@kernel.org>
+        Fri, 6 Mar 2020 10:06:26 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e18so2521607ljn.12
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 07:06:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HDzaXzxxLYUrn3GPFNsbIyfPdJnKtK/whxE91ORURCc=;
+        b=flGi9naMgZ3cXPY2kE4gBsm03tlbpD/xvruyRJWJC0xBOgkTEAeOjE9Rk51U4yrZ12
+         1QEOzwhXQHtJqOeY8+M6h+I9rug0fH4VaQvYmrCqj1dUUAZk8nn644/TXTkG0058gJCr
+         yKBT/Ye8/4LooN4T2IEInrGgbxpIcYhWEL4j0rr61O9b4kO8a5Rf/64oEqSDNKuvcR+c
+         fcSwV4wGsfpdq9S9NCql/Uk5YxZ3DjU71iaFXnmum8+u7FaX/wdDljH0usmud/wsbQy3
+         sVzWl7hSKM8+xI4seOlkTl2KgByHxSh3iLUhdWT1FyLc0atYYPVrS7CLSI76J1Q0Xp3c
+         Mvtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HDzaXzxxLYUrn3GPFNsbIyfPdJnKtK/whxE91ORURCc=;
+        b=q3n8MISyhJumw+I9v/anPtrfSr3ViHkneNnvudymTDDkdgCDH/jEIiyLzXh04Os5AP
+         SJU5cPijjhlgxt8BBX/PT9GLp3iEeDT6KcXWEwejgcb1ZEoo7SZB8istCDS5YkV0iXZF
+         BN6URpoDaKu4l/Uebl8gIYKj+TQb/wDdsIbKtIis7fe1PTCHwHCKqGu0nIgmP0z5EaCq
+         YFbEBW+0Y630pNItfAw773NXC8pGERqxwqwQ7euQbzNoJgW8gYHjYNaob/Wj8+A9QhIT
+         AtkC7mpu+eeLavCiqz6a2OFat0D6yhGYlb+fbnSF6XWdvPNjiHKJQHJuTJ04WdC9TL0o
+         wMfA==
+X-Gm-Message-State: ANhLgQ35csZvnZHBRzWRvtxn83Xh3Ge/zcZCJxjnHsUu9v2O6akVx7yV
+        1GmTJ5DSFQFd3QdPRCFJ5vMAZCWFdc5L9EdMWbVWGg==
+X-Google-Smtp-Source: ADFU+vtszizaVHFKYfQaEqNZqyuZaX9ujZwolXIPaU3X9+/GNEpBFayStkFmPfsNN6ibQlssTyv1Ufh1GBLGP9Yd0i0=
+X-Received: by 2002:a2e:8112:: with SMTP id d18mr2223030ljg.137.1583507184315;
+ Fri, 06 Mar 2020 07:06:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224043749.69466-1-namhyung@kernel.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <bb14528b-08c3-c4c0-5bcf-4bec1d75227a@linux.alibaba.com>
+In-Reply-To: <bb14528b-08c3-c4c0-5bcf-4bec1d75227a@linux.alibaba.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 6 Mar 2020 16:06:12 +0100
+Message-ID: <CAKfTPtAt43DOT2AnRLyO5tqxDGhaCqFKOc1Ws+WSt2NLtGQ9UQ@mail.gmail.com>
+Subject: Re: [PATCH] sched: avoid scale real weight down to zero
+To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 01:37:39PM +0900, Namhyung Kim wrote:
-> Hello,
-> 
-> This work is to improve cgroup profiling in perf.  Currently it only
-> supports profiling tasks in a specific cgroup and there's no way to
-> identify which cgroup the current sample belongs to.  So I added
-> PERF_SAMPLE_CGROUP to add cgroup id into each sample.  It's a 64-bit
-> integer having file handle of the cgroup.  And kernel also generates
-> PERF_RECORD_CGROUP event for new groups to correlate the cgroup id and
-> cgroup name (path in the cgroup filesystem).  The cgroup id can be
-> read from userspace by name_to_handle_at() system call so it can
-> synthesize the CGROUP event for existing groups.
-> 
-> So why do we want this?  Systems running a large number of jobs in
-> different cgroups want to profiling such jobs precisely. This includes
-> container hosting systems widely used today. Currently perf supports
-> namespace tracking but the systems may not use (cgroup) namespace for
-> their jobs. Also it'd be more intuitive to see cgroup names (as
-> they're given by user or sysadmin) rather than numeric
-> cgroup/namespace id even if they use the namespaces.
-> 
-> From Stephane Eranian:
-> > In data centers you care about attributing samples to a job not such
-> > much to a process.  A job may have multiple processes which may come
-> > and go. The cgroup on the other hand stays around for the entire
-> > lifetime of the job. It is much easier to map a cgroup name to a
-> > particular job than it is to map a pid back to a job name,
-> > especially for offline post-processing.
-> 
-> Note that this only works for "perf_event" cgroups (obviously) so if
-> users are still using cgroup-v1 interface, they need to have same
-> hierarchy for subsystem(s) want to profile with it.
-> 
->  * Changes from v4:
->   - use CONFIG_CGROUP_PERF
->   - move cgroup tree to perf_env
->   - move cgroup fs utility function to tools/lib/api/fs
->   - use a local buffer and check its size for cgroup systhesis
+On Thu, 5 Mar 2020 at 03:57, =E7=8E=8B=E8=B4=87 <yun.wang@linux.alibaba.com=
+> wrote:
+>
+> During our testing, we found a case that shares no longer
+> working correctly, the cgroup topology is like:
+>
+>   /sys/fs/cgroup/cpu/A          (shares=3D102400)
+>   /sys/fs/cgroup/cpu/A/B        (shares=3D2)
+>   /sys/fs/cgroup/cpu/A/B/C      (shares=3D1024)
+>
+>   /sys/fs/cgroup/cpu/D          (shares=3D1024)
+>   /sys/fs/cgroup/cpu/D/E        (shares=3D1024)
+>   /sys/fs/cgroup/cpu/D/E/F      (shares=3D1024)
+>
+> The same benchmark is running in group C & F, no other tasks are
+> running, the benchmark is capable to consumed all the CPUs.
+>
+> We suppose the group C will win more CPU resources since it could
+> enjoy all the shares of group A, but it's F who wins much more.
+>
+> The reason is because we have group B with shares as 2, since
+> A->cfs_rq.load.weight =3D=3D B->se.load.weight =3D=3D B->shares/nr_cpus,
+> so A->cfs_rq.load.weight become very small.
+>
+> And in calc_group_shares() we calculate shares as:
+>
+>   load =3D max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg=
+);
+>   shares =3D (tg_shares * load) / tg_weight;
+>
+> Since the 'cfs_rq->load.weight' is too small, the load become 0
+> after scale down, although 'tg_shares' is 102400, shares of the se
+> which stand for group A on root cfs_rq become 2.
+>
+> While the se of D on root cfs_rq is far more bigger than 2, so it
+> wins the battle.
+>
+> Thus when scale_load_down() scale real weight down to 0, it's no
+> longer telling the real story, the caller will have the wrong
+> information and the calculation will be buggy.
+>
+> This patch add check in scale_load_down(), so the real weight will
+> be >=3D MIN_SHARES after scale, after applied the group C wins as
+> expected.
+>
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
 
-the perf top tui should all cgroup id as 0 and the headers are
-misaligned
-
-	Samples
-	Overhead  cgroup id (dev/inode        Pid:Command
-	  83.78%  0/0x0                 N/A     6508:perf
-	   8.82%  0/0x0                 N/A        0:swapper
-	   2.59%  0/0x0                 N/A     6466:perf
-	   1.69%  0/0x0                 N/A     6509:perf-top-UI
-	   0.56%  0/0x0                 N/A       12:rcu_sched
-	   0.29%  0/0x0                 N/A      429:kworker/0:2-mm_
-	   0.15%  0/0x0                 N/A     1416:sshd
-	   0.12%  0/0x0                 N/A      187:migration/35
-
-
-jirka
-
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/sched.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 2a0caf394dd4..75c283f22256 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -118,7 +118,13 @@ extern long calc_load_fold_active(struct rq *this_rq=
+, long adjust);
+>  #ifdef CONFIG_64BIT
+>  # define NICE_0_LOAD_SHIFT     (SCHED_FIXEDPOINT_SHIFT + SCHED_FIXEDPOIN=
+T_SHIFT)
+>  # define scale_load(w)         ((w) << SCHED_FIXEDPOINT_SHIFT)
+> -# define scale_load_down(w)    ((w) >> SCHED_FIXEDPOINT_SHIFT)
+> +# define scale_load_down(w) \
+> +({ \
+> +       unsigned long __w =3D (w); \
+> +       if (__w) \
+> +               __w =3D max(MIN_SHARES, __w >> SCHED_FIXEDPOINT_SHIFT); \
+> +       __w; \
+> +})
+>  #else
+>  # define NICE_0_LOAD_SHIFT     (SCHED_FIXEDPOINT_SHIFT)
+>  # define scale_load(w)         (w)
+> --
+> 2.14.4.44.g2045bb6
+>
