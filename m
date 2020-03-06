@@ -2,143 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DAF017B66C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 06:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 868B817B662
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 06:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgCFFeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 00:34:22 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:37928 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725908AbgCFFeW (ORCPT
+        id S1726026AbgCFFc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 00:32:56 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40825 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725873AbgCFFc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 00:34:22 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Mar 2020 11:02:49 +0530
-Received: from c-mansur-linux.qualcomm.com ([10.204.90.208])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 06 Mar 2020 11:02:40 +0530
-Received: by c-mansur-linux.qualcomm.com (Postfix, from userid 461723)
-        id B9DA52114D; Fri,  6 Mar 2020 11:02:39 +0530 (IST)
-From:   Mansur Alisha Shaik <mansur@codeaurora.org>
-To:     linux-media@vger.kernel.org, stanimir.varbanov@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vgarodia@codeaurora.org, mansur@codeaurora.org
-Subject: [PATCH] venus: avoid extra locking in driver
-Date:   Fri,  6 Mar 2020 11:02:36 +0530
-Message-Id: <1583472756-7611-1-git-send-email-mansur@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 6 Mar 2020 00:32:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583472774;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2Dg5l40fFklgiXW3Pi2JeGrXIz1t8W6lNvDgLqT7nN8=;
+        b=SB5vQ4kWMcIfpkT9Nn0oXRqInC/tiI8mcC71YHZWuCM5YHDd0O/u7lezP+6JofVX+0JbJB
+        kZYtXQ7vpaSHSqx7QS+3+eKrD6XOCni5DzVrCs9HIej2X8CNMnbI1CNxEU3AqhUIgVS8Co
+        SS8HcIR5I5tvntG9GTgXiup6PC9Aqeg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-386-4efOdl5kMQqWKF88EemGuQ-1; Fri, 06 Mar 2020 00:32:53 -0500
+X-MC-Unique: 4efOdl5kMQqWKF88EemGuQ-1
+Received: by mail-wm1-f70.google.com with SMTP id e26so221168wmk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 21:32:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2Dg5l40fFklgiXW3Pi2JeGrXIz1t8W6lNvDgLqT7nN8=;
+        b=KAuPr2EZloesi+7n9QxXA+26Y18e0LP429f3U1nM9p4zWMJGdmZfyjWYhstxEkJ7v9
+         29a9wcwv4TQ6aLghkBZYxixlNAjLJk1atrHvW1BA1G7EZwOP01AIDX+kgPpm8KPKyMiK
+         CF+EPPfOUvtLvM8JSZ+r8HZwK0p4TbqrDDUCoM1/1dfjg8uM77f2Q4Ez6U70d9ozc+sa
+         XPJmHEA5qhfF5X8f2lhrpxU7mVNrdCQmFfDtrrZQ/VIEyusTKCUdq7gRfXaVrgfOBMYe
+         AazjD/t80a0sk7Gi3ROmt4ud4nRtTWhBZ/rvwLAYX8S4lLSgcgtPOlK9vPX3lI33H6wR
+         qRig==
+X-Gm-Message-State: ANhLgQ3c1lGew62T7pv0g6JQrPhlCSLhf56hzLjdozPD+w/qON+co//W
+        B44RR6/2Ci4xPJd11vawD7A7gzUPK1b5yShMeSsQLE/zw9FpFc9mGExIMA4i2nanHQdkUTXAxPN
+        ON/ZNEqIidXpzcehyxzsrPCCa
+X-Received: by 2002:a5d:4902:: with SMTP id x2mr2045481wrq.301.1583472772190;
+        Thu, 05 Mar 2020 21:32:52 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vsk/wfYFESgN2vEQJ3IVYE/ThGeS0U1JqD+oUUhMbb4iHplVb00stFd0EPUaYUZcTYTgaTK1Q==
+X-Received: by 2002:a5d:4902:: with SMTP id x2mr2045463wrq.301.1583472771981;
+        Thu, 05 Mar 2020 21:32:51 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:9def:34a0:b68d:9993? ([2001:b07:6468:f312:9def:34a0:b68d:9993])
+        by smtp.gmail.com with ESMTPSA id b13sm12635205wme.2.2020.03.05.21.32.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 21:32:51 -0800 (PST)
+Subject: Re: [PATCH] KVM: VMX: Use wrapper macro
+ ~RMODE_GUEST_OWNED_EFLAGS_BITS directly
+To:     linmiaohe <linmiaohe@huawei.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <f1b01b4903564f2c8c267a3996e1ac29@huawei.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <1e3f7ff0-0159-98e8-ba21-8806c3a14820@redhat.com>
+Date:   Fri, 6 Mar 2020 06:32:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <f1b01b4903564f2c8c267a3996e1ac29@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change will avoid extra locking in driver.
+On 06/03/20 03:17, linmiaohe wrote:
+> Define a macro RMODE_HOST_OWNED_EFLAGS_BITS for (X86_EFLAGS_IOPL |
+> X86_EFLAGS_VM) as suggested by Vitaly seems a good way to fix this ?
+> Thanks.
 
-Signed-off-by: Mansur Alisha Shaik <mansur@codeaurora.org>
----
- drivers/media/platform/qcom/venus/core.c       |  2 +-
- drivers/media/platform/qcom/venus/core.h       |  2 +-
- drivers/media/platform/qcom/venus/helpers.c    | 11 +++++++++--
- drivers/media/platform/qcom/venus/pm_helpers.c |  8 ++++----
- 4 files changed, 15 insertions(+), 8 deletions(-)
+No, what if a host-owned flag was zero?  I'd just leave it as is.
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index 194b10b9..75d38b8 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -447,7 +447,7 @@ static const struct freq_tbl sdm845_freq_table[] = {
- 	{  244800, 100000000 },	/* 1920x1080@30 */
- };
- 
--static struct codec_freq_data sdm845_codec_freq_data[] =  {
-+static const struct codec_freq_data sdm845_codec_freq_data[] =  {
- 	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 10 },
- 	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 10 },
- 	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675, 10 },
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index ab7c360..8c8d0e9 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -245,7 +245,7 @@ struct venus_buffer {
- struct clock_data {
- 	u32 core_id;
- 	unsigned long freq;
--	const struct codec_freq_data *codec_freq_data;
-+	struct codec_freq_data codec_freq_data;
- };
- 
- #define to_venus_buffer(ptr)	container_of(ptr, struct venus_buffer, vb)
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index bcc6038..550c4ff 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -807,6 +807,7 @@ int venus_helper_init_codec_freq_data(struct venus_inst *inst)
- 	unsigned int i, data_size;
- 	u32 pixfmt;
- 	int ret = 0;
-+	bool found = false;
- 
- 	if (!IS_V4(inst->core))
- 		return 0;
-@@ -816,16 +817,22 @@ int venus_helper_init_codec_freq_data(struct venus_inst *inst)
- 	pixfmt = inst->session_type == VIDC_SESSION_TYPE_DEC ?
- 			inst->fmt_out->pixfmt : inst->fmt_cap->pixfmt;
- 
-+	memset(&inst->clk_data.codec_freq_data, 0,
-+		sizeof(inst->clk_data.codec_freq_data));
-+
- 	for (i = 0; i < data_size; i++) {
- 		if (data[i].pixfmt == pixfmt &&
- 		    data[i].session_type == inst->session_type) {
--			inst->clk_data.codec_freq_data = &data[i];
-+			inst->clk_data.codec_freq_data = data[i];
-+			found = true;
- 			break;
- 		}
- 	}
- 
--	if (!inst->clk_data.codec_freq_data)
-+	if (!found) {
-+		dev_err(inst->core->dev, "cannot find codec freq data\n");
- 		ret = -EINVAL;
-+	}
- 
- 	return ret;
- }
-diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-index abf9315..240845e 100644
---- a/drivers/media/platform/qcom/venus/pm_helpers.c
-+++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-@@ -496,7 +496,7 @@ min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u32 *min_load)
- 	list_for_each_entry(inst_pos, &core->instances, list) {
- 		if (inst_pos == inst)
- 			continue;
--		vpp_freq = inst_pos->clk_data.codec_freq_data->vpp_freq;
-+		vpp_freq = inst_pos->clk_data.codec_freq_data.vpp_freq;
- 		coreid = inst_pos->clk_data.core_id;
- 
- 		mbs_per_sec = load_per_instance(inst_pos);
-@@ -545,7 +545,7 @@ static int decide_core(struct venus_inst *inst)
- 		return 0;
- 
- 	inst_load = load_per_instance(inst);
--	inst_load *= inst->clk_data.codec_freq_data->vpp_freq;
-+	inst_load *= inst->clk_data.codec_freq_data.vpp_freq;
- 	max_freq = core->res->freq_tbl[0].freq;
- 
- 	min_loaded_core(inst, &min_coreid, &min_load);
-@@ -848,10 +848,10 @@ static unsigned long calculate_inst_freq(struct venus_inst *inst,
- 
- 	mbs_per_sec = load_per_instance(inst) / fps;
- 
--	vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vpp_freq;
-+	vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data.vpp_freq;
- 	/* 21 / 20 is overhead factor */
- 	vpp_freq += vpp_freq / 20;
--	vsp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vsp_freq;
-+	vsp_freq = mbs_per_sec * inst->clk_data.codec_freq_data.vsp_freq;
- 
- 	/* 10 / 7 is overhead factor */
- 	if (inst->session_type == VIDC_SESSION_TYPE_ENC)
--- 
-2.7.4
+Paolo
 
