@@ -2,109 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4530317C781
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB1AF17C787
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbgCFVFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 16:05:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39940 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgCFVFm (ORCPT
+        id S1726988AbgCFVGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 16:06:44 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:14564 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgCFVGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 16:05:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id x19so3849279otp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 13:05:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a1kF/OZzMQLactEcP2uvKaRdr9m2gxg0zsQwgDcUpS8=;
-        b=zHeO+NASipBgaWDXKZxHQ9T6Qk7JyQTufn1LqoKL9eCvWxA6ERYUyq5brfvaGK2Q2T
-         O/1XtzLEJ1OB063KrHNDlljqirAy6dSyKF1iCoBOl1Vku6umli7wybNDN4liHG6HiEkL
-         iJQBdSeZVh2iwysFc31yvgGzAfDguHevXnkROYvBITGUqkec3Q6DiV6vn3qAjCSwkC6V
-         7yLNzobtVea45nRJ6F+O3pxCAX7i2s3r6qp0ctkisp7YTbLrPNxHKjQpvGQULi0khAfv
-         gHd+Vg6XcX50oieboKdVEQSwY9XXXxKOGwnkGWC6OtC68at4+VqDSlJ0yEpTWQIPL97W
-         CziA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a1kF/OZzMQLactEcP2uvKaRdr9m2gxg0zsQwgDcUpS8=;
-        b=YNvfWsHFKRv/sPRpB9jUoOpye54vxmRev0UIgv/EfatxniqPY0ny0U6Lnu72AF20ec
-         mS7CpUZQt/TUIhZIOEzVJykrVk1i63n3qXtckGUoVDHI/lmlctH+M012dxx2GvaQrg/n
-         b7nGSX113RQkWJx2YTiAr4Xn3JC0Xfge4+fTMED2V85VJPR/qiwngWMVqssJKxeDDD6T
-         rg9fMqYtKeaFMetxBgeY9m82pm3u4CajkD4D46gRKjf4N/4u/3nFepHohJeW8s+JJOqJ
-         GvnumsjC+pNh79LzzTbRAWOmLPdmEW6QgEDd6hLKz7weKiicw41QA0FxQw2s84+kMHmm
-         SyhQ==
-X-Gm-Message-State: ANhLgQ19mHfZ6LvqIDgK6hzGA4mFxEv7pM55gwLWMYDInnke6QgiAk5a
-        hym4mj6IBq3ZYl7FI+9E/+mSUOJkwCdXgZffdpBpFA==
-X-Google-Smtp-Source: ADFU+vu3caJkxN5foYyF0GPM62BSitG6fiBBhbRTadus2AVityefuk0oEkE1SzZK3vy+IUU4Bmf/G7dorCK3e8I7x8s=
-X-Received: by 2002:a05:6830:1313:: with SMTP id p19mr763057otq.126.1583528741694;
- Fri, 06 Mar 2020 13:05:41 -0800 (PST)
+        Fri, 6 Mar 2020 16:06:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583528798;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=RYyZHfcW0YbAe2JPXL0qNVQFiP9UrPP2fw064FG2p+g=;
+        b=L0TdQB4yQ87ezY/vdwzLp+Vjci8iz1b2lP3PMBj8twTDONdVIOrMn2tk1TOUG06h94
+        RcGPc/Tj3jluNO5fPx3Ifm5MXww/ILPWq/xUbgIxYalW3/K2VN0pkRmeNSr1++6/e0lg
+        Kx1y438tHBtJFMAnFJPHioNV+JhmucKTO1k7goV7eLUOlmzevlWL8xsI/Oft6aGm4fRO
+        FPLPY0eqzgYQ04oaJnfIQBDFd1YICO+15cYoC2P7BLGhwULnAgCyhTXwZwzE/F72TKHa
+        LdUzeMRaQQALZx7U1Gqg4rDHsO21R00EhX+4SnAQ1xXYCa4Mlf/fKj72y1ujh07cnt4n
+        BnZw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH6GQjzrz4="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
+        with ESMTPSA id y0a02cw26L6ZaJb
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 6 Mar 2020 22:06:35 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        Paul Boddie <paul@boddie.org.uk>
+Subject: [PATCH v7 0/3] MIPS: Fixes and improvements for CI20 board (JZ4780)
+Date:   Fri,  6 Mar 2020 22:06:30 +0100
+Message-Id: <cover.1583528793.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <158318759687.2216124.4684754859068906007.stgit@dwillia2-desk3.amr.corp.intel.com>
- <x49a74tnt6n.fsf@segfault.boston.devel.redhat.com>
-In-Reply-To: <x49a74tnt6n.fsf@segfault.boston.devel.redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 6 Mar 2020 13:05:30 -0800
-Message-ID: <CAPcyv4jCWtPf0XEHfw6GGGE80k0_wKpoaruopRFJwKcsHk18gw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Manual definition of Soft Reserved memory devices
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Brice Goglin <Brice.Goglin@inria.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joao Martins <joao.m.martins@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 12:07 PM Jeff Moyer <jmoyer@redhat.com> wrote:
->
-> Dan Williams <dan.j.williams@intel.com> writes:
->
-> > Given the current dearth of systems that supply an ACPI HMAT table, and
-> > the utility of being able to manually define device-dax "hmem" instances
-> > via the efi_fake_mem= option, relax the requirements for creating these
-> > devices. Specifically, add an option (numa=nohmat) to optionally disable
-> > consideration of the HMAT and update efi_fake_mem= to behave like
-> > memmap=nn!ss in terms of delimiting device boundaries.
->
-> So, am I correct in deducing that your primary motivation is testing
-> without hardware/firmware support?
+* renamed DT node for IR receiver from ir-receiver to ir (suggested by Paul Cercueil <paul@crapouillou.net>)
 
-My primary motivation is making the dax_kmem facility useful to
-shipping platforms that have performance differentiated memory, but
-may not have EFI-defined soft-reservations / HMAT (or
-non-EFI-ACPI-platform equivalent). I'm anticipating HMAT enabled
-platforms where the platform firmware policy for what is
-soft-reserved, or not, is not the policy the system owner would pick.
-I'd also highlight Joao's work [1] (see the TODO section) as an
-indication of the demand for custom carving memory resources and
-applying the device-dax memory management interface.
+PATCH V6 2020-03-06 18:29:34:
+* reordered patches and send Fixes as separate ones (requested by Thomas Bogendoerfer <tsbogend@alpha.franken.de>)
+* fixed Checkpatch issue with comments in PMU patch (suggested by Thomas Bogendoerfer <tsbogend@alpha.franken.de>)
 
-> This looks like a bit of a hack to
-> me, and I think maybe it would be better to just emulate the HMAT using
-> qemu.  I don't have a strong objection, though.
+PATCH V5 2020-02-29 20:45:52:
+* add #include irq.h not in PMU patch but in RTC patch
+* added Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 
-Yeah, qemu emulation does not help when you, the system owner, have a
-different use case than what the bare-metal platform-firmware
-envisioned for "specific-purpose memory".
+PATCH V4 2020-02-28 19:02:57:
+* use KEY_F13 for SW1 button to avoid conflict with Enter of an USB keyboard (suggested by Paul Cercueil <paul@crapouillou.net>)
+* tidy up all new #includes to be at beginning of file and alphabetically sorted (suggested by Paul Cercueil <paul@crapouillou.net>)
+* add new #include to DTS only when needed (suggested by Paul Cercueil <paul@crapouillou.net>)
 
-[1]: https://lore.kernel.org/lkml/20200110190313.17144-1-joao.m.martins@oracle.com/
+PATCH V3 2020-02-16 21:21:07:
+* dropped "drm: ingenic-drm: add MODULE_DEVICE_TABLE" because it will be resubmitted
+  with a HDMI driver solution
+* added Cc: stable@vger.kernel.org where appropriate (suggested by Paul Cercueil <paul@crapouillou.net>)
+* squashed all other DTS and CONFIG changes into single patches (suggested by Paul Cercueil <paul@crapouillou.net>)
+
+PATCH V2 2020-02-14 17:10:33:
+* dropped "net: davicom: dm9000: allow to pass MAC address through mac_addr module parameter"
+  from this series because it goes through the netdev tree
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+* added a "fixes:" for "MIPS: DTS: CI20: fix PMU definitions for ACT8600"
+  and "MIPS: DTS: CI20: fix interrupt for pcf8563 RTC"
+  (suggested by Andreas Kemnade <andreas@kemnade.info>)
+* "i2c: jz4780: silence log flood on txabrt" dropped because it is
+  replaced by a new version in v5.6 by Wolfram Sang <wsa@the-dreams.de>
+
+PATCH V1 2020-02-11 22:41:43:
+This patch set provides several improvements for the CI20 board:
+
+* suppress warnings from i2c if device is not responding
+* make ingenic-drm found through DT
+* allow davicom dm9000 ethernet controller to use MAC address provided by U-Boot
+* fix #include in jz4780.dtsi
+* configure for loadable kernel modules
+* add DTS for IR sensor and SW1 button
+* configure so that LEDs, IR sensor, SW1 button have drivers
+* fix DTS for ACT8600 PMU and configure driver
+* fix interrupt of nxp,pcf8563
+
+There is another patch set in our queue to add HDMI support on top of this work.
+
+Signed-off-by: Paul Boddie <paul@boddie.org.uk>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+
+
+Alex Smith (1):
+  MIPS: DTS: CI20: add DT node for IR sensor
+
+H. Nikolaus Schaller (2):
+  MIPS: DTS: CI20: multiple DTS improvements
+  MIPS: CI20: defconfig: multiple improvements
+
+ arch/mips/boot/dts/ingenic/ci20.dts | 19 +++++++++++++++++++
+ arch/mips/configs/ci20_defconfig    | 21 +++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+
+-- 
+2.23.0
+
