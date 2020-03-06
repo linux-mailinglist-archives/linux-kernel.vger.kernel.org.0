@@ -2,192 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09E1017C8EF
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:49:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E239F17C8DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgCFXsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 18:48:08 -0500
-Received: from mail-bn7nam10on2070.outbound.protection.outlook.com ([40.107.92.70]:20608
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727220AbgCFXsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 18:48:01 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BnxfiJ7pRqBk5ftEADKvy6Eg6VI/kQ3PBXryjTmzEibBuPddNrLda9DdwDmJ0wiak+ISLDOl3fYBM1Zah0fHj6lTSs/kez44DujynLLQJynYJxB24Hlhy1zF1cxchUdJ6Df+7RHvOXOYd6MW8v8fYDIs8EV0ykq0p+3VHh8vQTw1iDdkYC8EzDx+E9yPkq6rKUMFczpWgRwvhHrDEUFGoj5G+Ay8leXchMpyC+HVTKi1pQnPyJD6xNcmoU3QEh/w/ck9JTsxj+L3CF8XhNzBjk+L4Pufh5FqmWyshAsJUb41zt+hBMh4lJSnRQKkFJU2uQmoV9EiUPAErAYOd6C/Eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aycpGsfr7l7M5LMGRUVvOc9nwPw3Yz+Hi2W+IySN6tE=;
- b=nN4AVSxRFE0LMRbkQ86/CJdWyGo1tqXwev0UsGXtsZB2NfKqKTB3AEWohWhHm3w2mUs4AV1hRy/Tiuvjo/4BSfiFP8dNz7ylf5ikHG6NFH1bZ8ALGXITtKOqZJjwugOdRVrJYfz6pPT/t59edfpLTm9qb31r/l62xE4JP3pht8V3vl4evTuV6quv/oyVOvKglNXs8RxrwfVWUxcKlnKGg5hMlHoGiY08/fR4HuLIzvo+4KZLxBHnw3sBHjCamrxtNY57JFuLGUM7LuN9gb8fh6YppLvqBHdlQz9qZJhMW6KtVDhauOkrM6sFJOz8IzmvaPsvTgX2KyEFrbHwheZlSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aycpGsfr7l7M5LMGRUVvOc9nwPw3Yz+Hi2W+IySN6tE=;
- b=iLhgd8ASif4vnJ5tzPs1w8jZw+YnbR1UkK/WJHMXuLhT6Mg4IGnaS6GZuyJd6ORkHOwfj9c+N5/b+9ef7nYn0RrP5/2+TQH2ytVojVBS1C+BtTCumYDc4Pk25rTVySvJdrmwtxjNKvSeuTnraTTa9V4eVbZ6K9g50fif19+bnmQ=
-Received: from BL0PR05CA0007.namprd05.prod.outlook.com (2603:10b6:208:91::17)
- by CH2PR02MB6280.namprd02.prod.outlook.com (2603:10b6:610:f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.18; Fri, 6 Mar
- 2020 23:47:59 +0000
-Received: from BL2NAM02FT039.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:91:cafe::ba) by BL0PR05CA0007.outlook.office365.com
- (2603:10b6:208:91::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.5 via Frontend
- Transport; Fri, 6 Mar 2020 23:47:59 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT039.mail.protection.outlook.com (10.152.77.152) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2793.11
- via Frontend Transport; Fri, 6 Mar 2020 23:47:58 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMhC-0003QD-6s; Fri, 06 Mar 2020 15:47:58 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMh7-0002g8-3i; Fri, 06 Mar 2020 15:47:53 -0800
-Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 026NlkKO001015;
-        Fri, 6 Mar 2020 15:47:46 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMh0-0002eg-Jt; Fri, 06 Mar 2020 15:47:46 -0800
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     ard.biesheuvel@linaro.org, mingo@kernel.org,
-        gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
-        sudeep.holla@arm.com, hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
-Subject: [PATCH v3 17/24] firmware: xilinx: Remove eemi ops for release_node
-Date:   Fri,  6 Mar 2020 15:47:25 -0800
-Message-Id: <1583538452-1992-18-git-send-email-jolly.shah@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(396003)(39860400002)(199004)(189003)(54906003)(186003)(70206006)(426003)(478600001)(4326008)(7416002)(26005)(316002)(44832011)(336012)(70586007)(2906002)(8936002)(107886003)(356004)(6636002)(2616005)(7696005)(81156014)(81166006)(36756003)(6666004)(5660300002)(8676002)(9786002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6280;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+        id S1726998AbgCFXro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 18:47:44 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43964 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbgCFXro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 18:47:44 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026Nlddr099804;
+        Fri, 6 Mar 2020 17:47:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583538459;
+        bh=ZQXz6SL7X1fiB1jRFJj+IvnVskcIliu4fHSt0jNN+f4=;
+        h=From:To:CC:Subject:Date;
+        b=CuV5YGiJxJD3eVd4CO1WjmtAF8jCRdQSetr8MbFRBNCVwresX+7DEpOu5OQX7DCq9
+         w49b9Qu08BDfZrHZq21+vE38kPQtWqAAyySp9lgYIr2EUDZ+E0OfErWtsmKjeYaA3A
+         y6kD/GKH0c3+akNUzpAko5w8IyCqlpsbe+0rXtcc=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 026NldVQ002732
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Mar 2020 17:47:39 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
+ 2020 17:47:39 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Mar 2020 17:47:39 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026NlcoV002278;
+        Fri, 6 Mar 2020 17:47:38 -0600
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH net-next v2 0/9] net: ethernet: ti: add networking support for k3 am65x/j721e soc
+Date:   Sat, 7 Mar 2020 01:47:25 +0200
+Message-ID: <20200306234734.15014-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8738a718-4832-4c6b-8b0b-08d7c228cd01
-X-MS-TrafficTypeDiagnostic: CH2PR02MB6280:
-X-Microsoft-Antispam-PRVS: <CH2PR02MB628091DE27A7200915FEEB96B8E30@CH2PR02MB6280.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:605;
-X-Forefront-PRVS: 0334223192
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4yF4RmLxY9SCOjQTWBOiVYPvPpUsGDtyaMn2TmgdWUOvGsWDXMRxj6pS9dQw3Uc4cukJRUtt6BQ9Nulytb5xbhthBfdLAiCwSmyMF7mrr4I16XHrfR7hp9uB9CF5LYAkCmeX/vrUqMSKZ3pWNMCm3w0BwLu3ntJHzYKoDmsEe0KS0r8q1qQcNDrE6utq3BbcYvXcgTDn+jZl3CdjSUIsvfz8esn/vYmnnmK13Jtvx4dYgqeohDAqsd4/eKVKh+KzmzBdAVDjx1mTr3YESd70niUgUu4oLpTGBGLJ+5Dx2l5RSDG5IpFfa9spb20nqmz+ah6mvu5pckCy1+9xOV+iIY1jTlw9Ruau4LJ9iTZbTf5hFL+x8PIDzHbV+lTbjS2Om8t9UtHEJIalwN3G00RA5IXlYHOlsc/3K9gp1IuJx/8JLc7rFevn1s911LQuPuUC
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2020 23:47:58.7653
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8738a718-4832-4c6b-8b0b-08d7c228cd01
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6280
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+Hi
 
-Use direct function call instead of using eemi ops for release_node.
+This v2 series adds basic networking support support TI K3 AM654x/J721E SoC which
+have integrated Gigabit Ethernet MAC (Media Access Controller) into device MCU
+domain and named MCU_CPSW0 (CPSW2G NUSS).
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c       | 4 ++--
- drivers/soc/xilinx/zynqmp_pm_domains.c | 5 +----
- include/linux/firmware/xlnx-zynqmp.h   | 2 +-
- 3 files changed, 4 insertions(+), 7 deletions(-)
+Formally TRMs refer CPSW2G NUSS as two-port Gigabit Ethernet Switch subsystem
+with port 0 being the CPPI DMA host port and port 1 being the external Ethernet
+port, but for 1 external port device it's just Port 0 <-> ALE <-> Port 1 and it's
+rather device with HW filtering capabilities then actually switching device.
+It's expected to have similar devices, but with more external ports.
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 08c6960..d59a00f 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -743,10 +743,11 @@ EXPORT_SYMBOL_GPL(zynqmp_pm_request_node);
-  *
-  * Return: Returns status, either success or error+reason
-  */
--static int zynqmp_pm_release_node(const u32 node)
-+int zynqmp_pm_release_node(const u32 node)
- {
- 	return zynqmp_pm_invoke_fn(PM_RELEASE_NODE, node, 0, 0, 0, NULL);
- }
-+EXPORT_SYMBOL_GPL(zynqmp_pm_release_node);
- 
- /**
-  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
-@@ -769,7 +770,6 @@ static int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
- }
- 
- static const struct zynqmp_eemi_ops eemi_ops = {
--	.release_node = zynqmp_pm_release_node,
- 	.set_requirement = zynqmp_pm_set_requirement,
- 	.fpga_load = zynqmp_pm_fpga_load,
- 	.fpga_get_status = zynqmp_pm_fpga_get_status,
-diff --git a/drivers/soc/xilinx/zynqmp_pm_domains.c b/drivers/soc/xilinx/zynqmp_pm_domains.c
-index cf4eed0..20bee26 100644
---- a/drivers/soc/xilinx/zynqmp_pm_domains.c
-+++ b/drivers/soc/xilinx/zynqmp_pm_domains.c
-@@ -196,16 +196,13 @@ static void zynqmp_gpd_detach_dev(struct generic_pm_domain *domain,
- 	int ret;
- 	struct zynqmp_pm_domain *pd;
- 
--	if (!eemi_ops->release_node)
--		return;
--
- 	pd = container_of(domain, struct zynqmp_pm_domain, gpd);
- 
- 	/* If this is not the last device to detach there is nothing to do */
- 	if (domain->device_count)
- 		return;
- 
--	ret = eemi_ops->release_node(pd->node_id);
-+	ret = zynqmp_pm_release_node(pd->node_id);
- 	/* If releasing a node fails print the error and return */
- 	if (ret) {
- 		pr_err("%s() %s release failed for node %d: %d\n",
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 3e14bd7..e51332e 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -288,7 +288,6 @@ struct zynqmp_pm_query_data {
- struct zynqmp_eemi_ops {
- 	int (*fpga_load)(const u64 address, const u32 size, const u32 flags);
- 	int (*fpga_get_status)(u32 *value);
--	int (*release_node)(const u32 node);
- 	int (*set_requirement)(const u32 node,
- 			       const u32 capabilities,
- 			       const u32 qos,
-@@ -319,6 +318,7 @@ int zynqmp_pm_init_finalize(void);
- int zynqmp_pm_set_suspend_mode(u32 mode);
- int zynqmp_pm_request_node(const u32 node, const u32 capabilities,
- 			   const u32 qos, const enum zynqmp_pm_request_ack ack);
-+int zynqmp_pm_release_node(const u32 node);
- int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
- 			u32 arg2, u32 arg3, u32 *ret_payload);
- 
+The new Host port 0 Communications Port Programming Interface (CPPI5) is
+operating by TI AM654x/J721E NAVSS Unified DMA Peripheral Root Complex (UDMA-P)
+controller [1].
+
+The CPSW2G contains below modules for which existing code is re-used:
+ - MAC SL: cpsw_sl.c
+ - Address Lookup Engine (ALE): cpsw_ale.c, basically compatible with K2 66AK2E/G
+ - Management Data Input/Output interface (MDIO): davinci_mdio.c, fully 
+   compatible with TI AM3/4/5 devices
+
+Basic features supported by CPSW2G NUSS driver:
+ - VLAN support, 802.1Q compliant, Auto add port VLAN for untagged frames on
+   ingress, Auto VLAN removal on egress and auto pad to minimum frame size.
+ - multicast filtering
+ - promisc mode
+ - TX multiq support in Round Robin or Fixed priority modes
+ - RX checksum offload for non-fragmented IPv4/IPv6 TCP/UDP packets
+ - TX checksum offload support for IPv4/IPv6 TCP/UDP packets (J721E only).
+
+Features under development:
+ - Support for IEEE 1588 Clock Synchronization. The CPSW2G NUSS includes new
+   version of Common Platform Time Sync (CPTS)
+ - tc-mqprio: priority level Quality Of Service (QOS) support (802.1p)
+ - tc-cbs: Support for Audio/Video Bridging (P802.1Qav/D6.0) HW shapers
+ - tc-taprio: IEEE 802.1Qbv/D2.2 Enhancements for Scheduled Traffic
+ - frame preemption: IEEE P902.3br/D2.0 Interspersing Express Traffic, 802.1Qbu
+ - extended ALE features: classifier/policers, auto-aging
+
+This series depends on:
+ [for-next PATCH 0/5] phy: ti: gmii-sel: add support for am654x/j721e soc
+ https://lkml.org/lkml/2020/2/22/100
+
+Patches 1-5 are intended for netdev, Patches 6-9 are intended for K# Platform
+tree and provided here for testing purposes.
+
+Changes:
+ - fixed DT yaml definition
+ - fixed comments from David Miller
+
+v1: https://lwn.net/Articles/813087/
+
+TRMs:
+ AM654: http://www.ti.com/lit/ug/spruid7e/spruid7e.pdf
+ J721E: http://www.ti.com/lit/ug/spruil1a/spruil1a.pdf
+
+Preliminary documentation can be found at:
+ http://software-dl.ti.com/processor-sdk-linux/esd/docs/latest/linux/Foundational_Components/Kernel/Kernel_Drivers/Network/K3_CPSW2g.html
+
+[1] https://lwn.net/Articles/808030/
+
+Grygorii Strashko (9):
+  net: ethernet: ti: ale: fix seeing unreg mcast packets with promisc
+    and allmulti disabled
+  net: ethernet: ti: ale: add support for mac-only mode
+  net: ethernet: ti: ale: am65: add support for default thread cfg
+  dt-binding: ti: am65x: document mcu cpsw nuss
+  net: ethernet: ti: introduce am65x/j721e gigabit eth subsystem driver
+  arm64: dts: ti: k3-am65-mcu: add cpsw nuss node
+  arm64: dts: k3-am654-base-board: add mcu cpsw nuss pinmux and phy defs
+  arm64: dts: ti: k3-j721e-mcu: add mcu cpsw nuss node
+  arm64: dts: ti: k3-j721e-common-proc-board: add mcu cpsw nuss pinmux
+    and phy defs
+
+ .../bindings/net/ti,k3-am654-cpsw-nuss.yaml   |  225 ++
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       |   49 +
+ arch/arm64/boot/dts/ti/k3-am65.dtsi           |    1 +
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts |   42 +
+ .../dts/ti/k3-j721e-common-proc-board.dts     |   43 +
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |   49 +
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          |    1 +
+ drivers/net/ethernet/ti/Kconfig               |   19 +-
+ drivers/net/ethernet/ti/Makefile              |    3 +
+ drivers/net/ethernet/ti/am65-cpsw-ethtool.c   |  763 +++++++
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c      | 1991 +++++++++++++++++
+ drivers/net/ethernet/ti/am65-cpsw-nuss.h      |  143 ++
+ drivers/net/ethernet/ti/cpsw_ale.c            |   38 +
+ drivers/net/ethernet/ti/cpsw_ale.h            |    4 +
+ drivers/net/ethernet/ti/k3-udma-desc-pool.c   |  126 ++
+ drivers/net/ethernet/ti/k3-udma-desc-pool.h   |   30 +
+ 16 files changed, 3525 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-ethtool.c
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.c
+ create mode 100644 drivers/net/ethernet/ti/am65-cpsw-nuss.h
+ create mode 100644 drivers/net/ethernet/ti/k3-udma-desc-pool.c
+ create mode 100644 drivers/net/ethernet/ti/k3-udma-desc-pool.h
+
 -- 
-2.7.4
+2.17.1
 
