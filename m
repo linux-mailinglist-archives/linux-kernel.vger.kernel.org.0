@@ -2,103 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9689317C3B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 425C617C3B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:09:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbgCFRJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:09:06 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:38408 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbgCFRJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:09:03 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1jAGSz-0004aX-Qx; Fri, 06 Mar 2020 10:08:56 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1jAGSw-0002Ri-1E; Fri, 06 Mar 2020 10:08:50 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-mm@kvack.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eric Badger <ebadger@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Date:   Fri,  6 Mar 2020 10:08:46 -0700
-Message-Id: <20200306170846.9333-8-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200306170846.9333-1-logang@deltatee.com>
-References: <20200306170846.9333-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-mm@kvack.org, dan.j.williams@intel.com, akpm@linux-foundation.org, hch@lst.de, catalin.marinas@arm.com, benh@kernel.crashing.org, tglx@linutronix.de, david@redhat.com, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, mhocko@kernel.org, will@kernel.org, luto@kernel.org, peterz@infradead.org, ebadger@gigaio.com, logang@deltatee.com, jgg@ziepe.ca
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH v4 7/7] mm/memremap: Set caching mode for PCI P2PDMA memory to WC
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1726958AbgCFRJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:09:01 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:31048 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbgCFRJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:09:01 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id 026H8r3X022896;
+        Sat, 7 Mar 2020 02:08:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 026H8r3X022896
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1583514534;
+        bh=dX7KkYXULgzx8g5CD/y+Pj6tm++eBD7NUDEAVoHN7Aw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ManCIrDUkyS6cD3+B1Zq2T7YG4g8wopZxMxjSn6bFDb1cmAkxMrUe2ixKPGdp6qet
+         p8T6b4bHva1Eby0Z3dXlBzKYxr5WyUN56GwQ+8BEO5cuL6yDdOMrscThDnIUW7aIRr
+         GJiq5AP2W7zZLs7B/gbG96jj1yqhhHSItfS3+BGJFUOw+7bNWsdTtcFf5baXPenmQ3
+         D8aIlTntvNZRB4vLurYBHKe5uadn7NX6WjXCJgW9BNMs0/9tRAtC6qly6K2vWLg+A4
+         MLaaccv1Tbf/v9z31av4phSQPROfvY10rQDMqv6iV38/mh17NuTa5GfxuZvvEWp1L4
+         V0xMo+uKK8ODQ==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH 1/2] kbuild: compute the dtbs_install destination more simply
+Date:   Sat,  7 Mar 2020 02:08:51 +0900
+Message-Id: <20200306170852.17798-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI BAR IO memory should never be mapped as WB, however prior to this
-the PAT bits were set WB and it was typically overridden by MTRR
-registers set by the firmware.
+The 'dtbinst_root' is used to remember the root of the in-kernel dts
+directory (e.g. arch/*/boot/dts), but it looks clumsy.
 
-Set PCI P2PDMA memory to be UC as this is what it currently, typically,
-ends up being mapped as on x86 after the MTRR registers override the
-cache setting.
+I prefer using two variables 'obj' and 'dst' to track the in-kernel
+directory and the install destination, respectively.
 
-Future use-cases may need to generalize this by adding flags to
-select the caching type, as some P2PDMA cases may not want UC.
-However, those use-cases are not upstream yet and this can be changed
-when they arrive.
-
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- mm/memremap.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 06742372a203..9033ae401448 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -190,7 +190,10 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid)
- 		}
- 		break;
- 	case MEMORY_DEVICE_DEVDAX:
-+		need_devmap_managed = false;
-+		break;
- 	case MEMORY_DEVICE_PCI_P2PDMA:
-+		params.pgprot = pgprot_noncached(params.pgprot);
- 		need_devmap_managed = false;
- 		break;
- 	default:
+ Makefile                 | 2 +-
+ scripts/Makefile.dtbinst | 8 ++------
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f68d05ee2900..be237edd2c7f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1253,7 +1253,7 @@ dtbs_check: export CHECK_DTBS=1
+ dtbs_check: dt_binding_check
+ 
+ dtbs_install:
+-	$(Q)$(MAKE) $(dtbinst)=$(dtstree)
++	$(Q)$(MAKE) $(dtbinst)=$(dtstree) dst=$(INSTALL_DTBS_PATH)
+ 
+ ifdef CONFIG_OF_EARLY_FLATTREE
+ all: dtbs
+diff --git a/scripts/Makefile.dtbinst b/scripts/Makefile.dtbinst
+index 7301ab5e2e06..fcd5f2eaaad1 100644
+--- a/scripts/Makefile.dtbinst
++++ b/scripts/Makefile.dtbinst
+@@ -13,8 +13,6 @@ src := $(obj)
+ PHONY := __dtbs_install
+ __dtbs_install:
+ 
+-export dtbinst_root ?= $(obj)
+-
+ include include/config/auto.conf
+ include scripts/Kbuild.include
+ include $(src)/Makefile
+@@ -26,13 +24,11 @@ dtbinst-dirs	:= $(subdir-y) $(subdir-m)
+ quiet_cmd_dtb_install =	INSTALL $<
+       cmd_dtb_install =	mkdir -p $(2); cp $< $(2)
+ 
+-install-dir = $(patsubst $(dtbinst_root)%,$(INSTALL_DTBS_PATH)%,$(obj))
+-
+ $(dtbinst-files): %.dtb: $(obj)/%.dtb
+-	$(call cmd,dtb_install,$(install-dir))
++	$(call cmd,dtb_install,$(dst))
+ 
+ $(dtbinst-dirs):
+-	$(Q)$(MAKE) $(dtbinst)=$(obj)/$@
++	$(Q)$(MAKE) $(dtbinst)=$(obj)/$@ dst=$(dst)/$@
+ 
+ PHONY += $(dtbinst-files) $(dtbinst-dirs)
+ __dtbs_install: $(dtbinst-files) $(dtbinst-dirs)
 -- 
-2.20.1
+2.17.1
 
