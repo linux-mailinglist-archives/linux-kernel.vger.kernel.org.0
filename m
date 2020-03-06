@@ -2,145 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4244A17C2A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D2C417C2B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgCFQMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:12:24 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46758 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbgCFQMY (ORCPT
+        id S1726635AbgCFQRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:17:31 -0500
+Received: from mail-yw1-f74.google.com ([209.85.161.74]:50733 "EHLO
+        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbgCFQRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:12:24 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026FwRdY010762;
-        Fri, 6 Mar 2020 16:12:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=a2clhmmmya55OinwgvvRajQ5WwlmesIYpOf+oPKPgQM=;
- b=FqzPkzNz52Gafw2/hwj9LD1WFKN/LywIRe5GZZThqIqeUx74TZ6SejHQ1W1F48OEMd+m
- j8RPR+9YHdBVF95jNvCFmYJkJUYI+BZtWE9lcH0c/npv5/eCByu/5UkMS+M9EfL2udXg
- pa74fajfUbfAQEyImcEamjtq/J2Dfax9AwuaBpsLv65v5/R1s9AQzpcs2CN5Hg5+dT/P
- tPvRSQEYruQnCIS96W3MJmj4VN4i+F0hmFlG/XIVF8mf3ny7JFrzdhISSa6kcgsPSimc
- rrC/oEBZ+xD+tyPSbCaokafhor3D/2VHxoPO/jF9pUcWh3+Pigz7d7B/whr4vaNtEbxs og== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2ykgys2rkq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Mar 2020 16:12:12 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026FvUOh156456;
-        Fri, 6 Mar 2020 16:12:12 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2yg1pdp0wd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Mar 2020 16:12:10 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 026GC54e032096;
-        Fri, 6 Mar 2020 16:12:05 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Mar 2020 08:12:04 -0800
-Date:   Fri, 6 Mar 2020 11:12:22 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Robin Murphy <robin.murphy@arm.com>, mark.rutland@arm.com,
-        jiangshanlai@gmail.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, tj@kernel.org,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: WARNING: at kernel/workqueue.c:1473 __queue_work+0x3b8/0x3d0
-Message-ID: <20200306161222.wsx6nx26f7u7vabf@ca-dmjordan1.us.oracle.com>
-References: <20200218163504.y5ofvaejleuf5tbh@ca-dmjordan1.us.oracle.com>
- <20200220090350.GA19858@Red>
- <20200221174223.r3y6tugavp3k5jdl@ca-dmjordan1.us.oracle.com>
- <20200228123311.GE3275@willie-the-truck>
- <20200228153331.uimy62rat2tdxxod@ca-dmjordan1.us.oracle.com>
- <20200301175351.GA11684@Red>
- <20200302172510.fspofleipqjcdxak@ca-dmjordan1.us.oracle.com>
- <e7c92da2-42c0-a97d-7427-6fdc769b41b9@arm.com>
- <20200303213017.tanczhqd3nhpeeak@ca-dmjordan1.us.oracle.com>
- <20200303224327.GA89804@sol.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200303224327.GA89804@sol.localdomain>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9552 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 adultscore=0 bulkscore=0
- suspectscore=2 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003060110
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9552 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 lowpriorityscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0 phishscore=0
- adultscore=0 priorityscore=1501 spamscore=0 clxscore=1015 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003060110
+        Fri, 6 Mar 2020 11:17:31 -0500
+Received: by mail-yw1-f74.google.com with SMTP id w197so3972404ywd.17
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 08:17:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=qIlBFT3Kt2tcWYPKabCBDwELz8TNxUv98gWkjXaoCOk=;
+        b=UIreHpWH6UQJs0j9K14EpJ0gqWwjNSF+b7PrYmigUOlohSwOL0kex8Xz7exblAYi2G
+         xcaFZnkuEQJ7jJ2SLpI1mfvF84qTbBbOghDHJhukDjLA8mg1ejNE6vWoROyFLkpC5D0O
+         GTx5M7VPnQgYxHocDwt6xCabK3Hv5uYXJVLv9hhqRKWlvvn3UTQm6JOqArgs4HSaYSRp
+         O6MGIV1MaE5xDhMiTX6xUF+5wYwF9MJNoe7nGW/srPKExRduR1QBwdQnEIzUbRPSTuLK
+         O2D46RZ2EVBZ2oEzSYna61xXhUVX2Ix2zzXCpuNB+xC/rennRT2M7F8Gn2hpFlJHL89Y
+         u8dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=qIlBFT3Kt2tcWYPKabCBDwELz8TNxUv98gWkjXaoCOk=;
+        b=t324EtD7u6s/k1/JPv4UjWtY4waMh9Z8Pu4RU6wPca9eTRDdgJyySVVgIP9WZasmG/
+         iBPR2yGWJbxSAI9CfR8R6sAKDcnkr1O3kMjhlcuw9uNDCvxcUZWOHH88OCszM/RHifDL
+         NmHmoVn2Netmsfcx5E0OS50Fwl2ZNCt5ypJUHJ23bUrLK++oBRIrKz3Cqj0qtuVhY/X8
+         Fo6o5f8K5ddcEmfGvGF3H0vuHPYHMbo1h2ShJMns0e9RuJ6KD6WUuzPu8ankdKRzKcjF
+         2kKk6PZY3esaZkoF43OeSCRHmM2jxw2GDjxWb1WTIGfyZ4JtHSQbwj7deNM9c1y+mbj/
+         PiEQ==
+X-Gm-Message-State: ANhLgQ2f669gZmn4RumwV6KYSF7Y5rZwUhziYTU2IIyI8JEVpwhwyLxU
+        NRMMi5MlgVi0k9emZn+hGcb6wDuT0w==
+X-Google-Smtp-Source: ADFU+vs6IS/KZfvFYayoFc3jA/lDIYq1RFJQe6OJepWFF6PKB2MkSFTognNkdS4kUdogR9vaeTPad1QfiA==
+X-Received: by 2002:a25:3dc4:: with SMTP id k187mr4535109yba.82.1583511448778;
+ Fri, 06 Mar 2020 08:17:28 -0800 (PST)
+Date:   Fri,  6 Mar 2020 17:17:18 +0100
+Message-Id: <20200306161718.50702-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
+Subject: [PATCH] afs: Use kfree_rcu() instead of casting kfree() to rcu_callback_t
+From:   Jann Horn <jannh@google.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 02:43:27PM -0800, Eric Biggers wrote:
-> Probably the request_module() is coming from the registration-time crypto
-> self-tests allocating the generic implementation of algorithm when an
-> architecture-specific implementation is registered.  This occurs when
-> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y on Linux v5.2 and later.
+afs_put_addrlist() casts kfree() to rcu_callback_t. Apart from being wrong
+in theory, this might also blow up when people start enforcing function
+types via compiler instrumentation, and it means the rcu_head has to be
+first in struct afs_addr_list.
 
-Ok, I can confirm that if we get the debug output from one of Corentin's
-boards.
+Use kfree_rcu() instead, it's simpler and more correct.
 
-> If this is causing problems we could do:
-> 
-> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> index ccb3d60729fc..d89791700b88 100644
-> --- a/crypto/testmgr.c
-> +++ b/crypto/testmgr.c
-> @@ -1667,7 +1667,7 @@ static int test_hash_vs_generic_impl(const char *driver,
->  	if (strcmp(generic_driver, driver) == 0) /* Already the generic impl? */
->  		return 0;
->  
-> -	generic_tfm = crypto_alloc_shash(generic_driver, 0, 0);
-> +	generic_tfm = crypto_alloc_shash(generic_driver, 0, CRYPTO_NOLOAD);
->  	if (IS_ERR(generic_tfm)) {
->  		err = PTR_ERR(generic_tfm);
->  		if (err == -ENOENT) {
-> @@ -2389,7 +2389,7 @@ static int test_aead_vs_generic_impl(struct aead_extra_tests_ctx *ctx)
->  	if (strcmp(generic_driver, driver) == 0) /* Already the generic impl? */
->  		return 0;
->  
-> -	generic_tfm = crypto_alloc_aead(generic_driver, 0, 0);
-> +	generic_tfm = crypto_alloc_aead(generic_driver, 0, CRYPTO_NOLOAD);
->  	if (IS_ERR(generic_tfm)) {
->  		err = PTR_ERR(generic_tfm);
->  		if (err == -ENOENT) {
-> @@ -2993,7 +2993,7 @@ static int test_skcipher_vs_generic_impl(const char *driver,
->  	if (strcmp(generic_driver, driver) == 0) /* Already the generic impl? */
->  		return 0;
->  
-> -	generic_tfm = crypto_alloc_skcipher(generic_driver, 0, 0);
-> +	generic_tfm = crypto_alloc_skcipher(generic_driver, 0, CRYPTO_NOLOAD);
->  	if (IS_ERR(generic_tfm)) {
->  		err = PTR_ERR(generic_tfm);
->  		if (err == -ENOENT) {
-> 
-> 
-> ... but that's not ideal, since it would mean that if someone builds all crypto
-> algorithms as modules, then the comparison tests could be unnecessarily skipped.
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+compile-tested only
 
-We should try to avoid this then.
+ fs/afs/addr_list.c | 2 +-
+ fs/afs/internal.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> But it is really always wrong to be calling request_module() from other
-> module_init() functions?  The commit that added 'init_free_wq' was also
-> introduced in v5.2; maybe that's the problem here?
-> 
-> 	commit 1a7b7d9220819afe79d1ec5d759fe4349bd2453e
-> 	Author: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> 	Date:   Thu Apr 25 17:11:37 2019 -0700
-> 
-> 	    modules: Use vmalloc special flag
+diff --git a/fs/afs/addr_list.c b/fs/afs/addr_list.c
+index df415c05939e..de1ae0bead3b 100644
+--- a/fs/afs/addr_list.c
++++ b/fs/afs/addr_list.c
+@@ -19,7 +19,7 @@
+ void afs_put_addrlist(struct afs_addr_list *alist)
+ {
+ 	if (alist && refcount_dec_and_test(&alist->usage))
+-		call_rcu(&alist->rcu, (rcu_callback_t)kfree);
++		kfree_rcu(alist, rcu);
+ }
+ 
+ /*
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 1d81fc4c3058..35f951ac296f 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -81,7 +81,7 @@ enum afs_call_state {
+  * List of server addresses.
+  */
+ struct afs_addr_list {
+-	struct rcu_head		rcu;		/* Must be first */
++	struct rcu_head		rcu;
+ 	refcount_t		usage;
+ 	u32			version;	/* Version */
+ 	unsigned char		max_addrs;
 
-Yes, I don't see a reason init_free_wq has to be initialized that late.
+base-commit: aeb542a1b5c507ea117d21c3e3e012ba16f065ac
+-- 
+2.25.0.265.gbab2e86ba0-goog
+
