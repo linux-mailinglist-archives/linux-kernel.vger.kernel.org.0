@@ -2,32 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C0A17C4C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:44:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D45C017C4B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbgCFRoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:44:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60580 "EHLO mx2.suse.de"
+        id S1726237AbgCFRof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:44:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60562 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726956AbgCFRoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:44:32 -0500
+        id S1726879AbgCFRod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:44:33 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9963FAC66;
-        Fri,  6 Mar 2020 17:44:31 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 8906AACC2;
+        Fri,  6 Mar 2020 17:44:32 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Cc:     phil@raspberrypi.com, linux-mmc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
-        stefan.wahren@i2se.com, linux-rpi-kernel@lists.infradead.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 09/11] mmc: sdhci: iproc: Add custom set_power() callback for bcm2711
-Date:   Fri,  6 Mar 2020 18:44:11 +0100
-Message-Id: <20200306174413.20634-10-nsaenzjulienne@suse.de>
+        stefan.wahren@i2se.com, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH v2 10/11] ARM: dts: bcm2711: Update expgpio's GPIO labels
+Date:   Fri,  6 Mar 2020 18:44:12 +0100
+Message-Id: <20200306174413.20634-11-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200306174413.20634-1-nsaenzjulienne@suse.de>
 References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
@@ -38,49 +36,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The controller needs a valid bus voltage in its power register
-regardless of whether an external regulator is taking care of the power
-supply.
-
-The sdhci core already provides a helper function for this,
-sdhci_set_power_and_bus_voltage(), so create a bcm2711 specific 'struct
-sdhci_ops' which makes use of it.
+The 6th line of the GPIO expander is used to power the board's SD card.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- drivers/mmc/host/sdhci-iproc.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
-index f4f5f0a70cda..225603148d7d 100644
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -261,9 +261,24 @@ static const struct sdhci_iproc_data bcm2835_data = {
- 	.mmc_caps = 0x00000000,
- };
- 
-+static const struct sdhci_ops sdhci_iproc_bcm2711_ops = {
-+	.read_l = sdhci_iproc_readl,
-+	.read_w = sdhci_iproc_readw,
-+	.read_b = sdhci_iproc_readb,
-+	.write_l = sdhci_iproc_writel,
-+	.write_w = sdhci_iproc_writew,
-+	.write_b = sdhci_iproc_writeb,
-+	.set_clock = sdhci_set_clock,
-+	.set_power = sdhci_set_power_and_bus_voltage,
-+	.get_max_clock = sdhci_iproc_get_max_clock,
-+	.set_bus_width = sdhci_set_bus_width,
-+	.reset = sdhci_reset,
-+	.set_uhs_signaling = sdhci_set_uhs_signaling,
-+};
-+
- static const struct sdhci_pltfm_data sdhci_bcm2711_pltfm_data = {
- 	.quirks = SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
--	.ops = &sdhci_iproc_32only_ops,
-+	.ops = &sdhci_iproc_bcm2711_ops,
- };
- 
- static const struct sdhci_iproc_data bcm2711_data = {
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+index 1d4b589fe233..b0ea8233b636 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+@@ -68,7 +68,7 @@ expgpio: gpio {
+ 				  "GLOBAL_RESET",
+ 				  "VDD_SD_IO_SEL",
+ 				  "CAM_GPIO",
+-				  "",
++				  "SD_PWR_ON",
+ 				  "";
+ 		status = "okay";
+ 	};
 -- 
 2.25.1
 
