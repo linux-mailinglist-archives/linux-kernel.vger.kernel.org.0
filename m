@@ -2,57 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B923117C46B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E75C617C4EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:53:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgCFRaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:30:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53034 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbgCFRaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:30:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EDD71B46F;
-        Fri,  6 Mar 2020 17:30:11 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 75940DA728; Fri,  6 Mar 2020 18:29:48 +0100 (CET)
-From:   David Sterba <dsterba@suse.com>
-To:     torvalds@linux-foundation.org
-Cc:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fix for 5.6-rc5
-Date:   Fri,  6 Mar 2020 18:29:47 +0100
-Message-Id: <cover.1583514264.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.25.0
+        id S1726178AbgCFRxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:53:03 -0500
+Received: from saturna.islandhosting.com ([144.217.72.42]:46008 "EHLO
+        saturna.islandhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbgCFRxC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:53:02 -0500
+X-Greylist: delayed 1382 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 12:53:02 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aslenv.com;
+         s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+        Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=7Vaq7NyhziiQ6abkcm0d9o4/7FGijSW7QW1vVly7flU=; b=bzbKxeqIehnCAehvKuW2FVvDcC
+        BIJzibsDpnF8+YAxma0QhGCKna/TQR+NnAn4SqYoVPW8yrIv272ok9cBjPna2oCSDCyvzInodZMJL
+        ZsnMV8fmPzXMiFSml84cznVE04mM+S9xT3ZT3SJ3ov5GTzKRlxybs0gaaRGy4xHf1mAsLL+UkZugL
+        KJXobmb7iug76FWblxrasKZMuhVdRNM5npFX1Mm7eff22WuYcxoUCuOiQtlUoK3XQ4QYgsN3PLhnS
+        R4FxU/4IpoWbX99MICpJmEMdVeWEwds2zSOJa9cNozvNCpPyDqitIr4fVgpUYmcL/7JcadDkNcMGo
+        zDnFBFbw==;
+Received: from [64.251.74.18] (port=47209 helo=PWW72014)
+        by saturna.islandhosting.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+        (Exim 4.93)
+        (envelope-from <pwillis@aslenv.com>)
+        id 1jAGnN-00DjFF-K7
+        for linux-kernel@vger.kernel.org; Fri, 06 Mar 2020 09:29:57 -0800
+From:   "Peter Willis" <pwillis@aslenv.com>
+To:     <linux-kernel@vger.kernel.org>
+Subject: What kernel version does    'irq_set_irq_type'  become available?  
+Date:   Fri, 6 Mar 2020 09:29:57 -0800
+Message-ID: <002301d5f3dc$dc029890$9407c9b0$@aslenv.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdXz3NrsRI7q+O/2TfeZzUIoTsPs5Q==
+Content-Language: en-us
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - saturna.islandhosting.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - aslenv.com
+X-Get-Message-Sender-Via: saturna.islandhosting.com: authenticated_id: pwillis@aslenv.com
+X-Authenticated-Sender: saturna.islandhosting.com: pwillis@aslenv.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello,
 
-one fixup for DIO when in use with the new checksums, a missed case
-where the checksum size was still assuming u32. Please pull, thanks.
+Is there a history diagram somewhere that shows where specific features =
+appear in the codebase?
 
-----------------------------------------------------------------
-The following changes since commit a5ae50dea9111db63d30d700766dd5509602f7ad:
+Various online documentation for kernel driver development have =
+references to functions that, in some cases, are either deprecated or do =
+not yet exist in older versions of kernel source.
 
-  Btrfs: fix deadlock during fast fsync when logging prealloc extents beyond eof (2020-02-21 16:21:19 +0100)
+For example, I have written an interrupt service driver for an embedded =
+application running on kernel version 2.6.21.  The original driver is =
+level triggered and requires the driver to:=20
 
-are available in the Git repository at:
+a.) Temporarily disable the interrupt
+b.) Service the interrupt
+c.) Re-enable the interrupt
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.6-rc4-tag
+There was some desire for that driver to move to a more standard rising =
+edge trigger.
 
-for you to fetch changes up to e7a04894c766daa4248cb736efee93550f2d5872:
+In that line of thought , the documentation suggests    ' =
+irq_set_irq_type'  with flag     'IRQF_TRIGGER_RISING'.
 
-  btrfs: fix RAID direct I/O reads with alternate csums (2020-03-03 15:26:08 +0100)
+That function was experimental at one point, and doesn't appear to be =
+available in the 2.6.21 source.
+I did a      'find' -> 'while read' -> 'fgrep'  search to find the =
+function declaration in headers but had no luck under 2.6.21 .
 
-----------------------------------------------------------------
-Omar Sandoval (1):
-      btrfs: fix RAID direct I/O reads with alternate csums
+-- My specific questions --
 
- fs/btrfs/inode.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Question 1.)   Is  'irq_set_irq_type'  still experimental ?
+Question 2.)   At what version of the kernel source does the function =
+appear?
+Question 3.)  If the function exists for  2.6.21  What headers are =
+required to allow effective compilation?
+
+
+-- Notes and suggestions regarding kernel function documentation --
+
+Note 1.) Perhaps functions should be documented with indications of what =
+kernel versions they apply to.
+Note 2.) In function documentation, an indication of what headers to =
+include supporting each specific function would be nice.
+
+Thank you for your time and comments,
+
+Peter
+
+
+
+
