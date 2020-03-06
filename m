@@ -2,142 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15A1717C411
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD74817C407
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgCFRSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:18:20 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:56238 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbgCFRSU (ORCPT
+        id S1726635AbgCFRQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:16:51 -0500
+Received: from 2.mo173.mail-out.ovh.net ([178.33.251.49]:42992 "EHLO
+        2.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbgCFRQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:18:20 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jAGc4-0001Lk-Ci; Fri, 06 Mar 2020 10:18:16 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jAGc3-0002xI-5G; Fri, 06 Mar 2020 10:18:15 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170B05CFDAF21D8A99B7E48E4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87pndqax3j.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170688693E4114CA9367211E4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Fri, 06 Mar 2020 11:16:00 -0600
-In-Reply-To: <AM6PR03MB5170688693E4114CA9367211E4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Fri, 6 Mar 2020 16:26:34 +0000")
-Message-ID: <87v9nh9zfz.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 6 Mar 2020 12:16:51 -0500
+Received: from player168.ha.ovh.net (unknown [10.108.57.18])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 51AFC134567
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 18:16:48 +0100 (CET)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player168.ha.ovh.net (Postfix) with ESMTPSA id 107B7101F59BD;
+        Fri,  6 Mar 2020 17:16:42 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] Document genhd capability flags
+Date:   Fri,  6 Mar 2020 18:16:21 +0100
+Message-Id: <20200306171621.24134-1-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jAGc3-0002xI-5G;;;mid=<87v9nh9zfz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19gmt4QeYoR+3AHca+FGN8CxL45iobMdDI=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4958]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 577 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 4.7 (0.8%), b_tie_ro: 3.8 (0.7%), parse: 1.59
-        (0.3%), extract_message_metadata: 16 (2.7%), get_uri_detail_list: 1.14
-        (0.2%), tests_pri_-1000: 26 (4.6%), tests_pri_-950: 1.69 (0.3%),
-        tests_pri_-900: 1.48 (0.3%), tests_pri_-90: 36 (6.3%), check_bayes: 34
-        (6.0%), b_tokenize: 17 (3.0%), b_tok_get_all: 9 (1.5%), b_comp_prob:
-        3.0 (0.5%), b_tok_touch_all: 3.4 (0.6%), b_finish: 0.65 (0.1%),
-        tests_pri_0: 475 (82.3%), check_dkim_signature: 0.56 (0.1%),
-        check_dkim_adsp: 3.0 (0.5%), poll_dns_idle: 0.64 (0.1%), tests_pri_10:
-        2.4 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/2] exec: Properly mark the point of no return
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 9619688804342385933
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrudduvddguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhduieekrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+The kernel documentation includes a brief section about genhd
+capabilities, but it turns out that the only documented
+capability (GENHD_FL_MEDIA_CHANGE_NOTIFY) isn't used any more.
 
-> On 3/6/20 6:09 AM, Eric W. Biederman wrote:
->> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->> 
->>> On 3/5/20 10:15 PM, Eric W. Biederman wrote:
->>>>
->>>> Add a flag binfmt->unrecoverable to mark when execution has gotten to
->>>> the point where it is impossible to return to userspace with the
->>>> calling process unchanged.
->>>>
->>>> While techinically this state starts as soon as de_thread starts
->
-> typo: s/techinically/technically/
+This patch removes that flag, and documents the rest, based on my
+understanding of the current uses of these flags in the kernel. The
+documentation is kept in the header file, alongside the declarations,
+in the hope that it will be kept up-to-date in future; the kernel
+documentation is changed to include the documentation generated from
+the header file.
 
->>>> killing threads, the only return path at that point is if there is a
->>>> fatal signal pending.  I have choosen instead to set unrecoverable
->
-> I'm not good at english, is this chosen ?
->
+Because the ultimate goal is to provide some end-user
+documentation (or end-administrator documentation), the comments are
+perhaps more user-oriented than might be expected.
 
-Yes.  Defintley worth fixing.
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ Documentation/block/capability.rst | 16 +++------
+ include/linux/genhd.h              | 52 ++++++++++++++++++++++++++++--
+ 2 files changed, 53 insertions(+), 15 deletions(-)
 
-Eric
+diff --git a/Documentation/block/capability.rst b/Documentation/block/capability.rst
+index 2cf258d64bbe..26b9eccc48eb 100644
+--- a/Documentation/block/capability.rst
++++ b/Documentation/block/capability.rst
+@@ -2,17 +2,9 @@
+ Generic Block Device Capability
+ ===============================
+ 
+-This file documents the sysfs file block/<disk>/capability
++This file documents the sysfs file ``block/<disk>/capability``.
+ 
+-capability is a hex word indicating which capabilities a specific disk
+-supports.  For more information on bits not listed here, see
+-include/linux/genhd.h
++``capability`` is a hex word indicating which capabilities a specific
++disk supports:
+ 
+-GENHD_FL_MEDIA_CHANGE_NOTIFY
+-----------------------------
+-
+-Value: 4
+-
+-When this bit is set, the disk supports Asynchronous Notification
+-of media change events.  These events will be broadcast to user
+-space via kernel uevent.
++.. kernel-doc:: include/linux/genhd.h
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 6fbe58538ad6..d56aa4ccd34f 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -133,13 +133,59 @@ struct hd_struct {
+ 	struct rcu_work rcu_work;
+ };
+ 
++/**
++ * DOC: genhd capability flags
++ *
++ * ``GENHD_FL_REMOVABLE`` (1): indicates that the block device gives
++ * access to removable media.
++ * When set, the device remains present even when media is not
++ * inserted.
++ * Must not be set for devices which are removed entirely when the
++ * media is removed.
++ *
++ * ``GENHD_FL_CD`` (8): the block device is a CD-ROM-style device.
++ * Affects responses to the ``CDROM_GET_CAPABILITY`` ioctl.
++ *
++ * ``GENHD_FL_UP`` (16): indicates that the block device is "up", with
++ * a similar meaning to network interfaces.
++ *
++ * ``GENHD_FL_SUPPRESS_PARTITION_INFO`` (32): don't include partition
++ * information in ``/proc/partitions`` or in the output of
++ * printk_all_partitions().
++ * Used for the null block device and some MMC devices.
++ *
++ * ``GENHD_FL_EXT_DEVT`` (64): the driver supports extended dynamic
++ * ``dev_t``, i.e. it wants extended device numbers
++ * (``BLOCK_EXT_MAJOR``).
++ * This affects the maximum number of partitions.
++ *
++ * ``GENHD_FL_NATIVE_CAPACITY`` (128): based on information in the
++ * partition table, the device's capacity has been extended to its
++ * native capacity; i.e. the device has hidden capacity used by one
++ * of the partitions (this is a flag used so that native capacity is
++ * only ever unlocked once).
++ *
++ * ``GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE`` (256): event polling is
++ * blocked whenever a writer holds an exclusive lock.
++ *
++ * ``GENHD_FL_NO_PART_SCAN`` (512): partition scanning is disabled.
++ * Used for loop devices in their default settings and some MMC
++ * devices.
++ *
++ * ``GENHD_FL_HIDDEN`` (1024): the block device is hidden; it doesn't
++ * produce events, doesn't appear in sysfs, and doesn't have an
++ * associated ``bdev``.
++ * Implies ``GENHD_FL_SUPPRESS_PARTITION_INFO`` and
++ * ``GENHD_FL_NO_PART_SCAN``.
++ * Used for multipath devices.
++ */
+ #define GENHD_FL_REMOVABLE			1
+-/* 2 is unused */
+-#define GENHD_FL_MEDIA_CHANGE_NOTIFY		4
++/* 2 is unused (used to be GENHD_FL_DRIVERFS) */
++/* 4 is unused (used to be GENHD_FL_MEDIA_CHANGE_NOTIFY) */
+ #define GENHD_FL_CD				8
+ #define GENHD_FL_UP				16
+ #define GENHD_FL_SUPPRESS_PARTITION_INFO	32
+-#define GENHD_FL_EXT_DEVT			64 /* allow extended devt */
++#define GENHD_FL_EXT_DEVT			64
+ #define GENHD_FL_NATIVE_CAPACITY		128
+ #define GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE	256
+ #define GENHD_FL_NO_PART_SCAN			512
+
+base-commit: aeb542a1b5c507ea117d21c3e3e012ba16f065ac
+-- 
+2.20.1
+
