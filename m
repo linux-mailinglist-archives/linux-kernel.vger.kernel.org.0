@@ -2,118 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABBB917C371
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C59CE17C376
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgCFRDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:03:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbgCFRDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:03:17 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED957206E2;
-        Fri,  6 Mar 2020 17:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583514197;
-        bh=1Yte6UkWxsbNdREhiZiPbohyajzUvT2/4rsnl6dsz1Y=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=mYeSYKg31vdljHcXbKlFIy3YdbtnKEG4+Tb7u5PDzHV9AJZ6oKo0Y5zCbY+DXznej
-         HG16mI/cwhqjSeTqoh6lWsWLvZ70AzkeurqhmXfIkaeUL2lIgKjBS7eyPTETcLcezQ
-         6y9bFghK6KiRqmhEw7Hbw2W7XM3yncLpLA143M3U=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id CEB6735226BF; Fri,  6 Mar 2020 09:03:16 -0800 (PST)
-Date:   Fri, 6 Mar 2020 09:03:16 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Marco Elver <elver@google.com>, Qian Cai <cai@lca.pw>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] lib: disable KCSAN for XArray
-Message-ID: <20200306170316.GX2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200304031551.1326-1-cai@lca.pw>
- <20200304033329.GZ29971@bombadil.infradead.org>
- <20200304040515.GX2935@paulmck-ThinkPad-P72>
- <20200304043356.GC29971@bombadil.infradead.org>
- <20200304141021.GY2935@paulmck-ThinkPad-P72>
- <20200305151831.GM29971@bombadil.infradead.org>
- <20200305213946.GL2935@paulmck-ThinkPad-P72>
- <CANpmjNOtsdxh3YLcF-pUMua9afWfhg5P_2ziRGSMuT8Gi0c5TA@mail.gmail.com>
- <20200306165300.GC25710@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306165300.GC25710@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726973AbgCFREH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:04:07 -0500
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:40843 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbgCFREG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:04:06 -0500
+Received: by mail-wr1-f50.google.com with SMTP id p2so2403420wrw.7;
+        Fri, 06 Mar 2020 09:04:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YR0lCL3cHcMh4aBsrWN++mBdZnxvJMryxsPb/NXbbQ8=;
+        b=o6u5QtqcDnHFlW4AlXezVmU/uA9dq87KpZSfKp2nyfH/+HQXOGKfNRHKravuP4gGkC
+         JTDXc24U2zJwQLyMII6uw9F9Z8RevD52ddTzt41+vgdY+a7P3HMWBLl2WrlcS+y/EY+C
+         tbklyIHpY3edWhCcStfOfndNlenJ6HADWfPPGFIKY7eRs6mndnMhYICQQY6E/s8dEAz5
+         qVz8jnb7oZ045PUnV78EWmmiyOdJ7iqO8o+/0vMNmUsY/38pQYmxIm5thEQaYqxbXX4G
+         ABKo6hfDjSG1dTIGSxPqUqqF3WY47u5jPiXfArig02OPvYP2G03bDxmDUDDvkHAJQ7Xc
+         8tVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YR0lCL3cHcMh4aBsrWN++mBdZnxvJMryxsPb/NXbbQ8=;
+        b=IHNfVNYHQfyUEvomdv/PsXaXwo42E/6FI2oC3a8iVPeheVS79b0sOEf5R8pbenq1Gg
+         gSm8DtJF02zK6LlREhSG8bKqU6usJYm6edO7DLP6ZmE6tN6RdnWMmpvp80hSnNKr9rj+
+         3AhyzELJmD/hmw7Pd9WnLIDimjpGucrXWcJy85aB6f1ApDA1uaK/XqycB2/GOgcidJ11
+         0yUbb4eOMGpeqzfv4yRn1Vlr8XN4p8ijF4EzwP2h+y0kCME2rOoofFQwHyvokDPS7OgH
+         RdCKHgPpiuRZomhespJcv/3moQQeWAWmz3AAqllS91jGBY9UTfJZlkMV3BvZy8nZSBjM
+         thaQ==
+X-Gm-Message-State: ANhLgQ39xhYICt5SBN74my5KYPLtqb40dzope1pL9wyOiboDpnkmSADB
+        er4qoL6kF0+kuCL+aVYl7lHONGtH
+X-Google-Smtp-Source: ADFU+vs5y9JIqlSp5TU/9gFn3fOnI7lpknUYRYdnf9E1tYzf5UVe7kVdGvJZs6SLhcGoPWMH/D/Hpw==
+X-Received: by 2002:a5d:4382:: with SMTP id i2mr4761249wrq.424.1583514244345;
+        Fri, 06 Mar 2020 09:04:04 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id m3sm30646392wrx.9.2020.03.06.09.04.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Mar 2020 09:04:03 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     hjc@rock-chips.com, airlied@linux.ie, daniel@ffwll.ch,
+        robh+dt@kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] dt-bindings: display: rockchip: convert rockchip vop bindings to yaml
+Date:   Fri,  6 Mar 2020 18:03:53 +0100
+Message-Id: <20200306170353.11393-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 08:53:00AM -0800, Matthew Wilcox wrote:
-> On Fri, Mar 06, 2020 at 02:38:39PM +0100, Marco Elver wrote:
-> > On Thu, 5 Mar 2020 at 22:39, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > On Thu, Mar 05, 2020 at 07:18:31AM -0800, Matthew Wilcox wrote:
-> > > > I have found three locations where we use the ->marks array:
-> > > >
-> > > > 1.
-> > > >                         unsigned long data = *addr & (~0UL << offset);
-> > > >                         if (data)
-> > > >                                 return __ffs(data);
-> > > >
-> > > > 2.
-> > > >         return find_next_bit(addr, XA_CHUNK_SIZE, offset);
-> > > > 3.
-> > > >         return test_bit(offset, node_marks(node, mark));
-> > > >
-> > > > The modifications -- all done with the spinlock held -- use the non-atomic
-> > > > bitops:
-> > > >         return __test_and_set_bit(offset, node_marks(node, mark));
-> > > >         return __test_and_clear_bit(offset, node_marks(node, mark));
-> > > >         bitmap_fill(node_marks(node, mark), XA_CHUNK_SIZE);
-> > > > (that last one doesn't really count -- it's done prior to placing the node
-> > > > in the tree)
-> > > >
-> > > > The first read seems straightforward; I can place a READ_ONCE around
-> > > > *addr.  The second & third reads are rather less straightforward.
-> > > > find_next_bit() and test_bit() are common code and use plain loads today.
-> > >
-> > > Yes, those last two are a bit annoying, aren't they?  I guess the first
-> > > thing would be placing READ_ONCE() inside them, and if that results in
-> > > regressions, have an alternative API for concurrent access?
-> > 
-> > FWIW test_bit() is an "atomic" bitop (per atomic_bitops.txt), and
-> > KCSAN treats it as such. On x86 arch_test_bit() is not instrumented,
-> > and then in asm-generic/bitops/instrumented-non-atomic.h test_bit() is
-> > instrumented with instrument_atomic_read(). So on x86, things should
-> > already be fine for test_bit(). Not sure about other architectures.
-> 
-> Hum.  It may well be documented as atomic, but is it?  Here's the
-> generic implementation:
-> 
-> static inline int test_bit(int nr, const volatile unsigned long *addr)
-> {
->         return 1UL & (addr[BIT_WORD(nr)] >> (nr & (BITS_PER_LONG-1)));
-> }
-> 
-> arch_test_bit is only used by the instrumented variants:
-> 
-> $ git grep arch_test_bit include
-> include/asm-generic/bitops/instrumented-non-atomic.h:   return arch_test_bit(nr, addr);
-> 
-> As far as I can tell, the generic version is what's used on x86.  Does
-> the 'volatile' qualifier save us here?
-> 
-> find_next_bit() doesn't have the 'volatile' qualifier, so may still be
-> a problem?
+Current dts files with 'vop' nodes are manually verified.
+In order to automate this process rockchip-vop.txt
+has to be converted to yaml. Also included are new
+properties needed for the latest Rockchip Socs.
 
-One approach would be to add the needed READ_ONCE().
+Added properties:
+  assigned-clocks
+  assigned-clock-rates
+  power-domains
+  rockchip,grf
 
-Another, if someone is crazy enough to do the work, would be to verify
-that the code output is as if there was a READ_ONCE().
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../bindings/display/rockchip/rockchip-vop.txt     |  74 -----------
+ .../bindings/display/rockchip/rockchip-vop.yaml    | 141 +++++++++++++++++++++
+ 2 files changed, 141 insertions(+), 74 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
 
-Thoughts?
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
+deleted file mode 100644
+index 8b3a5f514..000000000
+--- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
++++ /dev/null
+@@ -1,74 +0,0 @@
+-device-tree bindings for rockchip soc display controller (vop)
+-
+-VOP (Visual Output Processor) is the Display Controller for the Rockchip
+-series of SoCs which transfers the image data from a video memory
+-buffer to an external LCD interface.
+-
+-Required properties:
+-- compatible: value should be one of the following
+-		"rockchip,rk3036-vop";
+-		"rockchip,rk3126-vop";
+-		"rockchip,px30-vop-lit";
+-		"rockchip,px30-vop-big";
+-		"rockchip,rk3066-vop";
+-		"rockchip,rk3188-vop";
+-		"rockchip,rk3288-vop";
+-		"rockchip,rk3368-vop";
+-		"rockchip,rk3366-vop";
+-		"rockchip,rk3399-vop-big";
+-		"rockchip,rk3399-vop-lit";
+-		"rockchip,rk3228-vop";
+-		"rockchip,rk3328-vop";
+-
+-- reg: Must contain one entry corresponding to the base address and length
+-	of the register space. Can optionally contain a second entry
+-	corresponding to the CRTC gamma LUT address.
+-
+-- interrupts: should contain a list of all VOP IP block interrupts in the
+-		 order: VSYNC, LCD_SYSTEM. The interrupt specifier
+-		 format depends on the interrupt controller used.
+-
+-- clocks: must include clock specifiers corresponding to entries in the
+-		clock-names property.
+-
+-- clock-names: Must contain
+-		aclk_vop: for ddr buffer transfer.
+-		hclk_vop: for ahb bus to R/W the phy regs.
+-		dclk_vop: pixel clock.
+-
+-- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names: Must include the following entries:
+-  - axi
+-  - ahb
+-  - dclk
+-
+-- iommus: required a iommu node
+-
+-- port: A port node with endpoint definitions as defined in
+-  Documentation/devicetree/bindings/media/video-interfaces.txt.
+-
+-Example:
+-SoC specific DT entry:
+-	vopb: vopb@ff930000 {
+-		compatible = "rockchip,rk3288-vop";
+-		reg = <0x0 0xff930000 0x0 0x19c>, <0x0 0xff931000 0x0 0x1000>;
+-		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cru ACLK_VOP0>, <&cru DCLK_VOP0>, <&cru HCLK_VOP0>;
+-		clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
+-		resets = <&cru SRST_LCDC1_AXI>, <&cru SRST_LCDC1_AHB>, <&cru SRST_LCDC1_DCLK>;
+-		reset-names = "axi", "ahb", "dclk";
+-		iommus = <&vopb_mmu>;
+-		vopb_out: port {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			vopb_out_edp: endpoint@0 {
+-				reg = <0>;
+-				remote-endpoint=<&edp_in_vopb>;
+-			};
+-			vopb_out_hdmi: endpoint@1 {
+-				reg = <1>;
+-				remote-endpoint=<&hdmi_in_vopb>;
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+new file mode 100644
+index 000000000..93ccd32aa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+@@ -0,0 +1,141 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/rockchip/rockchip-vop.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip soc display controller (VOP)
++
++description:
++  VOP (Visual Output Processor) is the Display Controller for the Rockchip
++  series of SoCs which transfers the image data from a video memory
++  buffer to an external LCD interface.
++
++maintainers:
++  - Sandy Huang <hjc@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    oneOf:
++      - const: rockchip,px30-vop-big
++      - const: rockchip,px30-vop-lit
++      - const: rockchip,rk3036-vop
++      - const: rockchip,rk3066-vop
++      - const: rockchip,rk3126-vop
++      - const: rockchip,rk3188-vop
++      - const: rockchip,rk3228-vop
++      - const: rockchip,rk3288-vop
++      - const: rockchip,rk3328-vop
++      - const: rockchip,rk3366-vop
++      - const: rockchip,rk3368-vop
++      - const: rockchip,rk3399-vop-big
++      - const: rockchip,rk3399-vop-lit
++
++  reg:
++    minItems: 1
++    items:
++      - description:
++          Must contain one entry corresponding to the base address and length
++          of the register space.
++      - description:
++          Can optionally contain a second entry corresponding to
++          the CRTC gamma LUT address.
++
++  interrupts:
++    maxItems: 1
++    description:
++      Should contain a list of all VOP IP block interrupts in the
++      order VSYNC, LCD_SYSTEM. The interrupt specifier
++      format depends on the interrupt controller used.
++
++  clocks:
++    items:
++      - description: Clock for ddr buffer transfer.
++      - description: Pixel clock.
++      - description: Clock for the ahb bus to R/W the phy regs.
++
++  clock-names:
++    items:
++      - const: aclk_vop
++      - const: dclk_vop
++      - const: hclk_vop
++
++  resets:
++    minItems: 3
++    maxItems: 3
++
++  reset-names:
++    items:
++      - const: axi
++      - const: ahb
++      - const: dclk
++
++  port:
++    type: object
++    description:
++      A port node with endpoint definitions as defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++  assigned-clocks:
++    maxItems: 2
++
++  assigned-clock-rates:
++    maxItems: 2
++
++  iommus:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node for
++      the general register file (GRF).
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - port
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rk3288-cru.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    vopb: vopb@ff930000 {
++      compatible = "rockchip,rk3288-vop";
++      reg = <0x0 0xff930000 0x0 0x19c>,
++            <0x0 0xff931000 0x0 0x1000>;
++      interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&cru ACLK_VOP0>,
++               <&cru DCLK_VOP0>,
++               <&cru HCLK_VOP0>;
++      clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
++      resets = <&cru SRST_LCDC1_AXI>,
++               <&cru SRST_LCDC1_AHB>,
++               <&cru SRST_LCDC1_DCLK>;
++      reset-names = "axi", "ahb", "dclk";
++      iommus = <&vopb_mmu>;
++      vopb_out: port {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        vopb_out_edp: endpoint@0 {
++          reg = <0>;
++          remote-endpoint=<&edp_in_vopb>;
++        };
++        vopb_out_hdmi: endpoint@1 {
++          reg = <1>;
++          remote-endpoint=<&hdmi_in_vopb>;
++        };
++      };
++    };
+-- 
+2.11.0
 
-							Thanx, Paul
