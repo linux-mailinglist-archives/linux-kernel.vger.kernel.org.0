@@ -2,144 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67CAC17B9E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE6B17B9EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbgCFKKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:10:04 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40579 "EHLO
+        id S1726524AbgCFKNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:13:35 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51846 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgCFKKE (ORCPT
+        with ESMTP id S1726070AbgCFKNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:10:04 -0500
-Received: by mail-wm1-f65.google.com with SMTP id e26so1703900wme.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 02:10:03 -0800 (PST)
+        Fri, 6 Mar 2020 05:13:35 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a132so1727311wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 02:13:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=og3sMPJN+Nb579KWuJJ61AJ7TUDj6TNf09RkDt7hsI8=;
-        b=W3e46LJj5LqwGN7bmYVtalGehYEZNj3nHr/KAjP31KhaaXN+m0uWmMkf3acHKomptm
-         89d0LyK/fwtGemR8XoQyJ0Ys/LcWeWGdlwW4CeVEEcaicTe2FKFajLwdJ5fOYlueg0Sl
-         TK9CYNYdO7MxSrz07jDyQcWVpS506xMCbX+/TC3r/e8J6B1ZMT5UKVvra0iQbFiIzTGv
-         115moqqHKTtOhYVG2HvcfiNX1TYPoAk1uZbA5LrtS1I/ItmZcZ3+3JYMcA9v6viTj0Yz
-         eEAPwp4x5R0wWQQAwxCEk2yzvnV5bNaOC/JH7GsT7wADh0zmXAuNdX6IGcE4tUIHjkXg
-         jtrQ==
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/vDIlGX0meuTJ9u7QAn+s4nQf3ELnqI9FgEEknuOygI=;
+        b=AAfF9D4sZdaDyHWigxkTcwEDeh5nBGLUDWGgd5LZtuAzONxa2cPUAHBORz22PRi9lz
+         Pl3EcbK0XCqqaO2WaOwCIqPFhQ07s9kLBSdp/V4UP4Xu6nzdPF7txuYTxYXhFyPwwxDJ
+         8ay6PSuPsESmDluAoK+L41ohhu0BOEi+SKVh0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=og3sMPJN+Nb579KWuJJ61AJ7TUDj6TNf09RkDt7hsI8=;
-        b=lsKzoDbKSWqUDCikDdBJLL92HuScNhNYmj+Kmk09+z5UU0MSrfLmFP2O5HVFcOlwMv
-         VvlH2LVHk1I65wt+nehVojl0tCV479fWAB1+qbI2iCZgRihokSiL1r8vkWU4IwaxAHW+
-         rHirYMce99ZH+0yro4lLE66aE/zfdOoayEu5CXc38ektmuOgVGonGxr55h2jO2i6tHUp
-         k7uj66ZT0lalP+R8ALPNGSoLPIf6+dFVihd4daMc+p9bCItY4rWKTzL4wSjZpsEloXXC
-         HDJalI/bV/vKyOXBIaeQ9RA/By3xE8HrNiBTaY70tSHbDuyoU34SRMsm0yzhfI3KC/DX
-         t1PA==
-X-Gm-Message-State: ANhLgQ1FFJpPeiyFN9J3QelFZYlmLcmbcislXgpy0fGd0CJ+d/x6W651
-        kaUYFF1CX0M+dQ+rNNbe8ALGFw==
-X-Google-Smtp-Source: ADFU+vuYWMHCslvUNwXUcaXSJwmBGmrU+STTteHzbOUtCKoxHdMrNV0++OcL5lLFlieALAAa/Z3NFg==
-X-Received: by 2002:a1c:48c1:: with SMTP id v184mr3204485wma.5.1583489402366;
-        Fri, 06 Mar 2020 02:10:02 -0800 (PST)
-Received: from myrica ([2001:171b:c9a8:fbc0:116c:c27a:3e7f:5eaf])
-        by smtp.gmail.com with ESMTPSA id f6sm12992707wmc.9.2020.03.06.02.10.00
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=/vDIlGX0meuTJ9u7QAn+s4nQf3ELnqI9FgEEknuOygI=;
+        b=HZgIJJaHu22+n+NBrIKihlleanaTm4Zn5jmCszVEJhw3p2NpU+Xdsl4C3UxyMJJJ2/
+         0YEabz9w38BRUrgPE+nrkVyywdEvsgyzvukOhNoSryTFxkRyKgnArF3rws4Wubui8b11
+         AQonQw/fDVYZMhGQztwPC85XS4KAIMVxzrl2hiXlqFJDXWF80DIYDMbmGFXRDTPbY2Ue
+         zyu04zMbdXjwm4yQiRe8dFWcMlAtO986PAROFh38P97vt4aFKSlfOUkLvhoOf46gzC8q
+         /bRlZP0hlK76szw+nJlrrdFdwhvWWhK/aFOw75M4gmt9+YS5GoKqsVT+o5FGHUDOsfvG
+         B+PQ==
+X-Gm-Message-State: ANhLgQ3QBvNH3aivM8pyaYvKInWC8A2Vc6EKo57Cx9b6pZuTpEfq9cxI
+        fQevwZPyACQFmPGB2yVfzVMRBg==
+X-Google-Smtp-Source: ADFU+vt7yOW1im8q9ywyGWVPyTSOpVuRYwEPRoCyv4+cUol7N1/VZo0VFbhdrlnn8cytwSvI5VFNdA==
+X-Received: by 2002:a1c:3281:: with SMTP id y123mr3334559wmy.104.1583489611295;
+        Fri, 06 Mar 2020 02:13:31 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 19sm14643940wma.3.2020.03.06.02.13.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 02:10:01 -0800 (PST)
-Date:   Fri, 6 Mar 2020 11:09:55 +0100
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Hanjun Guo <guohanjun@huawei.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH 00/14] iommu: Move iommu_fwspec out of 'struct device'
-Message-ID: <20200306100955.GB50020@myrica>
-References: <20200228150820.15340-1-joro@8bytes.org>
- <ea839f32-194a-29ea-57fc-22caea40b981@huawei.com>
+        Fri, 06 Mar 2020 02:13:30 -0800 (PST)
+Date:   Fri, 6 Mar 2020 11:13:28 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Pekka Paalanen <ppaalanen@gmail.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-amlogic@lists.infradead.org, nd <nd@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/4] drm/fourcc: Add modifier definitions for describing
+ Amlogic Video Framebuffer Compression
+Message-ID: <20200306101328.GR2363188@phenom.ffwll.local>
+Mail-Followup-To: Pekka Paalanen <ppaalanen@gmail.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-amlogic@lists.infradead.org, nd <nd@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20200221090845.7397-1-narmstrong@baylibre.com>
+ <20200221090845.7397-2-narmstrong@baylibre.com>
+ <20200303121029.5532669d@eldfell.localdomain>
+ <20200303105325.bn4sob6yrdf5mwrh@DESKTOP-E1NTVVP.localdomain>
+ <CAKMK7uFgQGrnEkXyac15Wz8Opg43RTa=5cX0nN5=E_omb8oY8Q@mail.gmail.com>
+ <20200303152541.68ab6f3d@eldfell.localdomain>
+ <20200303173332.1c6daa09@eldfell.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ea839f32-194a-29ea-57fc-22caea40b981@huawei.com>
+In-Reply-To: <20200303173332.1c6daa09@eldfell.localdomain>
+X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 04:39:37PM +0800, Hanjun Guo wrote:
-> Hi Joerg,
+On Tue, Mar 03, 2020 at 05:33:32PM +0200, Pekka Paalanen wrote:
+> On Tue, 3 Mar 2020 15:25:41 +0200
+> Pekka Paalanen <ppaalanen@gmail.com> wrote:
 > 
-> On 2020/2/28 23:08, Joerg Roedel wrote:
+> > On Tue, 3 Mar 2020 12:37:16 +0100
+> > Daniel Vetter <daniel@ffwll.ch> wrote:
+> > 
+> > > On Tue, Mar 3, 2020 at 11:53 AM Brian Starkey <brian.starkey@arm.com> wrote:  
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Tue, Mar 03, 2020 at 12:10:29PM +0200, Pekka Paalanen wrote:    
+> > > > > On Fri, 21 Feb 2020 10:08:42 +0100
+> > > > > Neil Armstrong <narmstrong@baylibre.com> wrote:
+> > > > >    
+> ...
+> > > > > > +/*
+> > > > > > + * Amlogic Video Framebuffer Compression modifiers
+> > > > > > + *
+> > > > > > + * Amlogic uses a proprietary lossless image compression protocol and format
+> > > > > > + * for their hardware video codec accelerators, either video decoders or
+> > > > > > + * video input encoders.
+> > > > > > + *
+> > > > > > + * It considerably reduces memory bandwidth while writing and reading
+> > > > > > + * frames in memory.
+> > > > > > + * Implementation details may be platform and SoC specific, and shared
+> > > > > > + * between the producer and the decoder on the same platform.    
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > after a lengthy IRC discussion on #dri-devel, this "may be platform and
+> > > > > SoC specific" is a problem.
+> > > > >
+> > > > > It can be an issue in two ways:
+> > > > >
+> > > > > - If something in the data acts like a sub-modifier, then advertising
+> > > > >   support for one modifier does not really tell if the data layout is
+> > > > >   supported or not.
+> > > > >
+> > > > > - If you need to know the platform and/or SoC to be able to interpret
+> > > > >   the data, it means the modifier is ill-defined and cannot be used in
+> > > > >   inter-machine communication (e.g. Pipewire).
+> > > > >    
+> > > >
+> > > > Playing devil's advocate, the comment sounds similar to
+> > > > I915_FORMAT_MOD_{X,Y}_TILED:
+> > > >
+> > > >  * This format is highly platforms specific and not useful for cross-driver
+> > > >  * sharing. It exists since on a given platform it does uniquely identify the
+> > > >  * layout in a simple way for i915-specific userspace.    
+> > > 
+> > > Yeah which we regret now. We need to now roll out a new set of
+> > > modifiers for at least some of the differences in these on the
+> > > modern-ish chips (the old crap is pretty much lost cause anyway).
+> > > 
+> > > This was kinda a nasty hack to smooth things over since we have epic
+> > > amounts of userspace, but it's really not a great idea (and no one
+> > > else really has epic amounts of existing userspace that uses tiling
+> > > flags everywhere, this is all new code).
+> > > -Daniel
+> > >   
+> > > > Isn't the statement that this for sharing between producer and decoder
+> > > > _on the same platform_ a similar clause with the same effect?
+> > > >
+> > > > What advantage is there to exposing the gory details? For Arm AFBC
+> > > > it's necessary because IP on the SoC can be (likely to be) from
+> > > > different vendors with different capabilities.
+> > > >
+> > > > If this is only for talking between Amlogic IP on the same SoC, and
+> > > > those devices support all the same "flavours", I don't see what is
+> > > > gained by making userspace care about internals.    
+> > > 
+> > > The trouble is if you mix&match IP cores, and one of them supports
+> > > flavours A, B, C and the other C, D, E. But all you have is a single
+> > > magic modifier for "whatever the flavour is that soc prefers". So
+> > > someone gets to stuff this in DT.
+> > > 
+> > > Also eventually, maybe, perhaps ARM does grow up into the
+> > > client/server space with add-on pcie graphics, and at least for client
+> > > you very often end up with integrated + add-in pcie gpu. At that point
+> > > you really can't have magic per-soc modifiers anymore.  
+> > 
 > > Hi,
 > > 
-> > here is a patch-set to rename iommu_param to dev_iommu and
-> > establish it as a struct for generic per-device iommu-data.
-> > Also move the iommu_fwspec pointer from struct device into
-> > dev_iommu to have less iommu-related pointers in struct
-> > device.
+> > I also heard that Pipewire will copy buffers and modifiers verbatim
+> > from one machine to another when streaming across network, assuming
+> > that the same modifier means the same thing on all machines.[Citation needed]
 > > 
-> > The bigger part of this patch-set moves the iommu_priv
-> > pointer from struct iommu_fwspec to dev_iommu, making is
-> > usable for iommu-drivers which do not use fwspecs.
-> > 
-> > The changes for that were mostly straightforward, except for
-> > the arm-smmu (_not_ arm-smmu-v3) and the qcom iommu driver.
-> > Unfortunatly I don't have the hardware for those, so any
-> > testing of these drivers is greatly appreciated.
+> > If that is something that must not be done with DRM modifiers, then
+> > please contact them and document that.
 > 
-> I tested this patch set on Kunpeng 920 ARM64 server which
-> using smmu-v3 with ACPI booting, but triggered a NULL
-> pointer dereference and panic at boot:
+> Sorry, it's waypipe, not pipewire:
+> https://gitlab.freedesktop.org/mstoeckl/waypipe/
 
-I think that's because patch 01/14 move the fwspec access too early. In 
+I do think this is very much something we want to make possible. They
+might pick a silly modifier (compression modifiers only compress bw, by
+necessity the lossless ones have to increase storage space so kinda dumb
+thing to push over the network if you don't add .xz or whatever on top).
 
-                err = pci_for_each_dma_alias(to_pci_dev(dev),
-                                             iort_pci_iommu_init, &info);
+I'm also hoping that intel's modifiers are definitely the one and only
+that we ever screwed up, and we should be getting those fixed in the near
+future too.
 
-                if (!err && iort_pci_rc_supports_ats(node))
-                        dev->iommu_fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
-
-the iommu_fwspec is only valid if iort_pci_iommu_init() initialized it
-successfully, if err == 0. The following might fix it:
-
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 0e981d7f3c7d..7d04424189df 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1015,7 +1015,7 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
- 		return ops;
-
- 	if (dev_is_pci(dev)) {
--		struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-+		struct iommu_fwspec *fwspec;
- 		struct pci_bus *bus = to_pci_dev(dev)->bus;
- 		struct iort_pci_alias_info info = { .dev = dev };
-
-@@ -1028,7 +1028,8 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
- 		err = pci_for_each_dma_alias(to_pci_dev(dev),
- 					     iort_pci_iommu_init, &info);
-
--		if (!err && iort_pci_rc_supports_ats(node))
-+		fwspec = dev_iommu_fwspec_get(dev);
-+		if (fwspec && iort_pci_rc_supports_ats(node))
- 			fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
- 	} else {
- 		int i = 0;
-
-
-Note that this use of iommu_fwspec will be removed by the ATS cleanup
-series [1], but this change should work as a temporary fix.
-
-Thanks,
-Jean
-
-[1] https://lore.kernel.org/linux-iommu/20200213165049.508908-10-jean-philippe@linaro.org/
+So maybe what we should do instead is add a comment to the modifier docs
+that this stuff _is_ supposed to be transferrable over networks and work.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
