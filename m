@@ -2,138 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2CD617C2B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:16:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A555B17C2C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbgCFQP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:15:58 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:44420 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726171AbgCFQP5 (ORCPT
+        id S1726947AbgCFQUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:20:02 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37375 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgCFQUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:15:57 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 026GF32T021743;
-        Fri, 6 Mar 2020 11:15:56 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2yfnray0m7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Mar 2020 11:15:55 -0500
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 026GFscX039533
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Fri, 6 Mar 2020 11:15:54 -0500
-Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
- SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 6 Mar 2020 08:15:53 -0800
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 6 Mar 2020 08:15:19 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Fri, 6 Mar 2020 08:15:52 -0800
-Received: from saturn.ad.analog.com ([10.48.65.112])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 026GFmB9003555;
-        Fri, 6 Mar 2020 11:15:50 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <gregkh@linuxfoundation.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 2/2] uio: uio_pdrv_genirq: use new devm_uio_register_device() function
-Date:   Fri, 6 Mar 2020 18:18:53 +0200
-Message-ID: <20200306161853.25368-2-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200306161853.25368-1-alexandru.ardelean@analog.com>
-References: <20200306161853.25368-1-alexandru.ardelean@analog.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-06_05:2020-03-06,2020-03-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=545 bulkscore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 spamscore=0 phishscore=0 mlxscore=0
- suspectscore=1 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003060110
+        Fri, 6 Mar 2020 11:20:01 -0500
+Received: by mail-pf1-f193.google.com with SMTP id p14so1342146pfn.4;
+        Fri, 06 Mar 2020 08:20:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=HT85QxwdFTCLPqBgxQh69fgGjpwmL/OKcBc+DMSRtbY=;
+        b=U0SCpXGzRVAUN/CEpW1P2vaOBisrt31nPw63g11ueKaCltoVoyX5Wr7SuUysDk7M7R
+         pBjGeqAQSdG35me8VFTutvq/n4HG9wXCpjEoB8YnBTmHO5bbgnF13WhemvM1q2982NS9
+         /dkSjQecKSQdimDWgO9V6x6zg/ueJvzJ1veDWZonPveO3KjkwCVjm2S5b7jVooAkVosa
+         V+m5PsLLH/IuC1UJnM995wVZ7D47chcGqT4X08QYt4N2HzrGz8N19zyGqVTnungYB4yQ
+         ZdtF8HoY6vOEupmbSBi6NMD27J6AAjeWpKiwswq+83OmiSFDrax/wlQaE2489y+hqPKy
+         vb4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=HT85QxwdFTCLPqBgxQh69fgGjpwmL/OKcBc+DMSRtbY=;
+        b=eGJLZPXLXJZ41mBjffcrOq6SMaKRsfRNj8XeKFAv7ToYVDy3jwec1YxNlv7TYBFHu2
+         j8/pst8uAxkLsR3hwujxJO3UPnAhtzoIdVBZiL43vPvmzNB8dYabSIT1Zn0bL0Fqlss1
+         gWfNxeMaN3I+KjaUn0e1rUMVVwXnehCbbgsUQL2hzpTTzGnBa4mc59GMO4EMxXAri/GX
+         eRGakwtkOpotKyjw9ssWDjC7vNTaTZQSbBFlx+j95uD8XrcfBCfx8EZ0z0Z9nkjknR0d
+         jlXKK+9Y8K1rtXdIWXqCRcMjW8Q5vIyMhRZeoOKfmuUz34UvPfq7oX5tKCeBqC8By0Ut
+         CrBQ==
+X-Gm-Message-State: ANhLgQ1h9+fT7XcFCwxaJOesA8GLBqeOxg1B7sgthBc3wRFjldpQNON6
+        qIpstSbkEJcHjyYqbPjc7ypa4zMz
+X-Google-Smtp-Source: ADFU+vt/x/gDdrv8nW5YW6NkMcQXxfUC6YKNJVxfnaZBTijdPleSG0DWGOoyEKmWOZaaV6eb0f99xA==
+X-Received: by 2002:a63:9d04:: with SMTP id i4mr4055404pgd.294.1583511600857;
+        Fri, 06 Mar 2020 08:20:00 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r3sm30036021pfq.126.2020.03.06.08.19.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Mar 2020 08:20:00 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v5.6-rc5
+Date:   Fri,  6 Mar 2020 08:19:58 -0800
+Message-Id: <20200306161958.31030-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes use of the new devm_uio_register_device() initializer.
-This cleans up the exit path quite nicely, and removes the remove function
-of the driver.
+Hi Linus,
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/uio/uio_pdrv_genirq.c | 34 ++++++++++++++--------------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+Please pull hwmon fixes for Linux v5.6-rc5 from signed tag:
 
-diff --git a/drivers/uio/uio_pdrv_genirq.c b/drivers/uio/uio_pdrv_genirq.c
-index fc25ce90da3b..ae319ef3a832 100644
---- a/drivers/uio/uio_pdrv_genirq.c
-+++ b/drivers/uio/uio_pdrv_genirq.c
-@@ -99,6 +99,13 @@ static int uio_pdrv_genirq_irqcontrol(struct uio_info *dev_info, s32 irq_on)
- 	return 0;
- }
- 
-+static void uio_pdrv_genirq_cleanup(void *data)
-+{
-+	struct device *dev = data;
-+
-+	pm_runtime_disable(dev);
-+}
-+
- static int uio_pdrv_genirq_probe(struct platform_device *pdev)
- {
- 	struct uio_info *uioinfo = dev_get_platdata(&pdev->dev);
-@@ -213,28 +220,16 @@ static int uio_pdrv_genirq_probe(struct platform_device *pdev)
- 	 */
- 	pm_runtime_enable(&pdev->dev);
- 
--	ret = uio_register_device(&pdev->dev, priv->uioinfo);
--	if (ret) {
--		dev_err(&pdev->dev, "unable to register uio device\n");
--		pm_runtime_disable(&pdev->dev);
-+	ret = devm_add_action_or_reset(&pdev->dev, uio_pdrv_genirq_cleanup,
-+				       &pdev->dev);
-+	if (ret)
- 		return ret;
--	}
--
--	platform_set_drvdata(pdev, priv);
--	return 0;
--}
--
--static int uio_pdrv_genirq_remove(struct platform_device *pdev)
--{
--	struct uio_pdrv_genirq_platdata *priv = platform_get_drvdata(pdev);
- 
--	uio_unregister_device(priv->uioinfo);
--	pm_runtime_disable(&pdev->dev);
--
--	priv->uioinfo->handler = NULL;
--	priv->uioinfo->irqcontrol = NULL;
-+	ret = devm_uio_register_device(&pdev->dev, priv->uioinfo);
-+	if (ret)
-+		dev_err(&pdev->dev, "unable to register uio device\n");
- 
--	return 0;
-+	return ret;
- }
- 
- static int uio_pdrv_genirq_runtime_nop(struct device *dev)
-@@ -271,7 +266,6 @@ MODULE_PARM_DESC(of_id, "Openfirmware id of the device to be handled by uio");
- 
- static struct platform_driver uio_pdrv_genirq = {
- 	.probe = uio_pdrv_genirq_probe,
--	.remove = uio_pdrv_genirq_remove,
- 	.driver = {
- 		.name = DRIVER_NAME,
- 		.pm = &uio_pdrv_genirq_dev_pm_ops,
--- 
-2.20.1
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v5.6-rc5
 
+Thanks,
+Guenter
+------
+
+The following changes since commit f8788d86ab28f61f7b46eb6be375f8a726783636:
+
+  Linux 5.6-rc3 (2020-02-23 16:17:42 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v5.6-rc5
+
+for you to fetch changes up to 44f2f882909fedfc3a56e4b90026910456019743:
+
+  hwmon: (adt7462) Fix an error return in ADT7462_REG_VOLT() (2020-03-03 12:42:55 -0800)
+
+----------------------------------------------------------------
+hwmon fixes for v5.6-rc5
+
+Fix an error return in the adt7462 driver, bad voltage limits
+reported by the xdpe12284 driver, and a broken documentation
+reference in the adm1177 driver documentation.
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      hwmon: (adt7462) Fix an error return in ADT7462_REG_VOLT()
+
+Mauro Carvalho Chehab (1):
+      docs: adm1177: fix a broken reference
+
+Vadim Pasternak (1):
+      hwmon: (pmbus/xdpe12284) Add callback for vout limits conversion
+
+ Documentation/hwmon/adm1177.rst |  3 +--
+ drivers/hwmon/adt7462.c         |  2 +-
+ drivers/hwmon/pmbus/xdpe12284.c | 54 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 56 insertions(+), 3 deletions(-)
