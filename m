@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DCD17B596
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:31:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9580717B58D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbgCFE3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 23:29:33 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:44634 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbgCFE3G (ORCPT
+        id S1727406AbgCFE3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 23:29:11 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33638 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbgCFE3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 23:29:06 -0500
-Received: by mail-yw1-f68.google.com with SMTP id t141so1054853ywc.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 20:29:06 -0800 (PST)
+        Thu, 5 Mar 2020 23:29:09 -0500
+Received: by mail-yw1-f66.google.com with SMTP id j186so1129253ywe.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 20:29:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=miNN8i4IwcvOjiB/qs3BU+cs0LOJ0WZgNaPZTHxNf20=;
-        b=eslwFNq4PwCC6+Z4KsPepXRVMSQtjU60CJu4GIG6B7Jnm4GZgJE8XkeUHt+m8sYvds
-         Vb3v8FWdY/Hm7Tzv2QWOSvmxWCRZA1Q1yD2R6rTHqF0WUw8XWuYnojK+8Gzhbvnty8b1
-         4FvH9hKarM9faVP8AInLEsBWcB7CTrpeDbz8B+hwcTyTXoHH1F9L2iAZtZOdn8xNMZcd
-         U0qjD73Dgm3vDJkC8eBdPh7pIcbBn++HjfXSEfbn8Eu+1PLU70HJ3MKuMjeyjdKnjrrX
-         WG6/hgDgSof0z3abT9dUiOIGO0mE3Pt9dt2vYe6ncLAoY1prfQBYsXM42eiTP9qihY8l
-         C40A==
+        bh=yRfDYcfz4PClGgSHNiGQSObIaHKPYjVoLJsVmUvy8Lo=;
+        b=OXDXHwpEpqm9D6EcBAAjatlE+DkIqArtmlE79u330SGvIljyyQS5qNc8upKinTIUFS
+         2rVoFnb4MEcaWdeNW4ZLBTNsSq4JgxMVEwAAFjzXvkl31MSvgkWqP+ZGX1CyrF+flEY3
+         b7hSc7mD3NO11fAQX5vLYMveEjpzSvfcyULcFMrpq+ZL0oB7vA9bFxwQeobDEZ8P1WUz
+         sWq99rV4yu0jDyj8aWwi3hCgBT6QrkXNhljWXdm+57lPXotGyvyecDybaMHut2cUCoYm
+         ksiCCYCTqPFmR0IGa5hOny86DRJUr0yOif35Wc1WpAufYd5NlFH7UeLFEvyEMDax3aYw
+         GTng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=miNN8i4IwcvOjiB/qs3BU+cs0LOJ0WZgNaPZTHxNf20=;
-        b=Rlfr8mRbMELHayvfQox5gi+V37T+dw11/emoyW7YmpxmrWuCKk5M6joO1rAOYKvs39
-         RngWfh70mcjEeNTFcpzLpwwr+5kq0iWV6Qs5uJpibBeSBzHapU6PUzou56azxGzFPmbI
-         1xIxgKmQ8pjD+xLw2Gu4/64GzniD02At9Dpiq0WIMxPwk+PeKqnSoNVXawpXgsQ+TMwS
-         8qH3QwZd7BxQVgvujKFws6Z8tRiLCjym8LGp2xBWhjAQbKUHXRyxHNwzu3doxjdfoBid
-         xCj40h+4PtRpQoJmWz2ZD0IS/s/Ke01O2QNbILEgYa1b8/yBfchuftzOejyopXelIGwQ
-         D+cA==
-X-Gm-Message-State: ANhLgQ2bpcpZSxN02v5Jsaf+karZp7q/kXSnWVwDkVxU6YKbM7NX59d1
-        xm4aWzLqAz5XaLPEpeASD+GN+g==
-X-Google-Smtp-Source: ADFU+vvvxCEfuf1gOKNFIP8+FrNcl9hJa0D2HXoL/aVi6uaZ18AjxRORPUKqhxu509Q6FwPA0HW7Tg==
-X-Received: by 2002:a81:49c5:: with SMTP id w188mr2205995ywa.186.1583468945849;
-        Thu, 05 Mar 2020 20:29:05 -0800 (PST)
+        bh=yRfDYcfz4PClGgSHNiGQSObIaHKPYjVoLJsVmUvy8Lo=;
+        b=qnhsM65fEyb1YtmIWv4WBILNw0i4UvU+tAFI93W7tUriiDNmwlL8hiZjVtrwGS8NoR
+         GsJDr5QgnizWkQPWOFl/mEAlKY0xRmx0Z5WJP7sBJXd4TtIcZvanjhJKl51mXp/vjy1p
+         y54gh6d94+d7tzjzHForiB4p62mr/6rqyluNho5r6922dFLVepD8TMbz+D6pTtZQbZop
+         syIRGUpfukadUIQuIDXxbFFCAXtSrepBXE5/INr6hhwNIKrZk+emcIaKANwyxELfZUZB
+         KO2GulBCArrkjYd2dnM6dluLlTyHD6Ec99veLhP9Uh/hyF58vfw8eLJz+xuxwNWIWCfh
+         ngcw==
+X-Gm-Message-State: ANhLgQ2Sq4H07cFeoAiWW+itaTfwLVCiTKWQmIIJGWxsL8R7A/EVF//I
+        G6vRRoIRBBF3Kqtu5BNdsU6GFg==
+X-Google-Smtp-Source: ADFU+vtbD6s3KdGkoHIR3Jf3W+cODKnwpaKznF0IhVNkYrhsjL5c3tCJAgWOSqj4enQpmdrmxj8CdA==
+X-Received: by 2002:a81:6c06:: with SMTP id h6mr2166065ywc.302.1583468947687;
+        Thu, 05 Mar 2020 20:29:07 -0800 (PST)
 Received: from presto.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.gmail.com with ESMTPSA id x2sm12581836ywa.32.2020.03.05.20.29.04
+        by smtp.gmail.com with ESMTPSA id x2sm12581836ywa.32.2020.03.05.20.29.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 20:29:05 -0800 (PST)
+        Thu, 05 Mar 2020 20:29:07 -0800 (PST)
 From:   Alex Elder <elder@linaro.org>
 To:     David Miller <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -64,9 +64,9 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/17] soc: qcom: ipa: support build of IPA code
-Date:   Thu,  5 Mar 2020 22:28:29 -0600
-Message-Id: <20200306042831.17827-16-elder@linaro.org>
+Subject: [PATCH v2 16/17] MAINTAINERS: add entry for the Qualcomm IPA driver
+Date:   Thu,  5 Mar 2020 22:28:30 -0600
+Message-Id: <20200306042831.17827-17-elder@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200306042831.17827-1-elder@linaro.org>
 References: <20200306042831.17827-1-elder@linaro.org>
@@ -77,86 +77,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add build and Kconfig support for the Qualcomm IPA driver.
+Add an entry in the MAINTAINERS file for the Qualcomm IPA driver
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- drivers/net/Kconfig      |  2 ++
- drivers/net/Makefile     |  1 +
- drivers/net/ipa/Kconfig  | 19 +++++++++++++++++++
- drivers/net/ipa/Makefile | 12 ++++++++++++
- 4 files changed, 34 insertions(+)
- create mode 100644 drivers/net/ipa/Kconfig
- create mode 100644 drivers/net/ipa/Makefile
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index 66e410e58c8e..02565bc2be8a 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -444,6 +444,8 @@ source "drivers/net/fddi/Kconfig"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2ec6a539fa42..e8666f980a21 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13662,6 +13662,12 @@ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+ F:	sound/soc/qcom/
  
- source "drivers/net/hippi/Kconfig"
- 
-+source "drivers/net/ipa/Kconfig"
++QCOM IPA DRIVER
++M:	Alex Elder <elder@kernel.org>
++L:	netdev@vger.kernel.org
++S:	Supported
++F:	drivers/net/ipa/
 +
- config NET_SB1000
- 	tristate "General Instruments Surfboard 1000"
- 	depends on PNP
-diff --git a/drivers/net/Makefile b/drivers/net/Makefile
-index 65967246f240..94b60800887a 100644
---- a/drivers/net/Makefile
-+++ b/drivers/net/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_ETHERNET) += ethernet/
- obj-$(CONFIG_FDDI) += fddi/
- obj-$(CONFIG_HIPPI) += hippi/
- obj-$(CONFIG_HAMRADIO) += hamradio/
-+obj-$(CONFIG_QCOM_IPA) += ipa/
- obj-$(CONFIG_PLIP) += plip/
- obj-$(CONFIG_PPP) += ppp/
- obj-$(CONFIG_PPP_ASYNC) += ppp/
-diff --git a/drivers/net/ipa/Kconfig b/drivers/net/ipa/Kconfig
-new file mode 100644
-index 000000000000..b8cb7cadbf75
---- /dev/null
-+++ b/drivers/net/ipa/Kconfig
-@@ -0,0 +1,19 @@
-+config QCOM_IPA
-+	tristate "Qualcomm IPA support"
-+	depends on ARCH_QCOM && 64BIT && NET
-+	select QCOM_QMI_HELPERS
-+	select QCOM_MDT_LOADER
-+	default QCOM_Q6V5_COMMON
-+	help
-+	  Choose Y or M here to include support for the Qualcomm
-+	  IP Accelerator (IPA), a hardware block present in some
-+	  Qualcomm SoCs.  The IPA is a programmable protocol processor
-+	  that is capable of generic hardware handling of IP packets,
-+	  including routing, filtering, and NAT.  Currently the IPA
-+	  driver supports only basic transport of network traffic
-+	  between the AP and modem, on the Qualcomm SDM845 SoC.
-+
-+	  Note that if selected, the selection type must match that
-+	  of QCOM_Q6V5_COMMON (Y or M).
-+
-+	  If unsure, say N.
-diff --git a/drivers/net/ipa/Makefile b/drivers/net/ipa/Makefile
-new file mode 100644
-index 000000000000..afe5df1e6eee
---- /dev/null
-+++ b/drivers/net/ipa/Makefile
-@@ -0,0 +1,12 @@
-+# Un-comment the next line if you want to validate configuration data
-+#ccflags-y		+=	-DIPA_VALIDATE
-+
-+obj-$(CONFIG_QCOM_IPA)	+=	ipa.o
-+
-+ipa-y			:=	ipa_main.o ipa_clock.o ipa_reg.o ipa_mem.o \
-+				ipa_table.o ipa_interrupt.o gsi.o gsi_trans.o \
-+				ipa_gsi.o ipa_smp2p.o ipa_uc.o \
-+				ipa_endpoint.o ipa_cmd.o ipa_modem.o \
-+				ipa_qmi.o ipa_qmi_msg.o
-+
-+ipa-y			+=	ipa_data-sdm845.o ipa_data-sc7180.o
+ QEMU MACHINE EMULATOR AND VIRTUALIZER SUPPORT
+ M:	Gabriel Somlo <somlo@cmu.edu>
+ M:	"Michael S. Tsirkin" <mst@redhat.com>
 -- 
 2.20.1
 
