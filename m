@@ -2,93 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0951817B55C
+	by mail.lfdr.de (Postfix) with ESMTP id 8A3BF17B55D
 	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgCFEX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 23:23:27 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:54612 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726251AbgCFEX1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 23:23:27 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Trni2vY_1583468602;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Trni2vY_1583468602)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 06 Mar 2020 12:23:22 +0800
-Subject: Re: [RFC PATCH] sched: fix the nonsense shares when load of cfs_rq is
- too, small
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ben Segall <bsegall@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-References: <44fa1cee-08db-e4ab-e5ab-08d6fbd421d7@linux.alibaba.com>
- <20200303195245.GF2596@hirez.programming.kicks-ass.net>
- <xm26o8tc3qkv.fsf@bsegall-linux.svl.corp.google.com>
- <1180c6cd-ff61-2c9f-d689-ffe58f8c5a68@linux.alibaba.com>
- <CAKfTPtCaPz2KBmagzpEurh5S9aNFzUomHGh1pDWBx6L_29w5hw@mail.gmail.com>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <12f79b83-491c-4b4b-0581-d23bdcec7c0c@linux.alibaba.com>
-Date:   Fri, 6 Mar 2020 12:23:22 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <CAKfTPtCaPz2KBmagzpEurh5S9aNFzUomHGh1pDWBx6L_29w5hw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726859AbgCFEYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 23:24:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40342 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726251AbgCFEYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 23:24:44 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C86A52073D;
+        Fri,  6 Mar 2020 04:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583468684;
+        bh=XTbr7KlqNbwV2YhVNfxiPjrjjl5yMzT1EDmmNZjlgAk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MbJqfxO3HaXuCRow/zTICEzxaKpC1iTuAyYHnaLVioPjsRLoOFOt7QpWqb4F2J1PJ
+         c8D07qpGHb7aaACU2w8hT9k8hOEaULu2Ho3gFc9VqJFWcHy0pRD30TDttjARJ/TZkj
+         /MOQDiJHpVDd8pt9JqWWJPTAcFMSYKZwZtN2Ntoc=
+Date:   Thu, 5 Mar 2020 20:24:43 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Jaewon Kim <jaewon31.kim@samsung.com>
+Cc:     walken@google.com, bp@suse.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jaewon31.kim@gmail.com
+Subject: Re: [PATCH] mm: mmap: show vm_unmapped_area error log
+Message-Id: <20200305202443.8de3598558336b1d75afbba7@linux-foundation.org>
+In-Reply-To: <5E605749.9050509@samsung.com>
+References: <CGME20200304030211epcas1p4da8cb569947aefb3aad1da039aaabce4@epcas1p4.samsung.com>
+        <20200304030206.1706-1-jaewon31.kim@samsung.com>
+        <5E605749.9050509@samsung.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 5 Mar 2020 10:35:05 +0900 Jaewon Kim <jaewon31.kim@samsung.com> wrote:
 
-
-On 2020/3/5 下午3:53, Vincent Guittot wrote:
-> On Thu, 5 Mar 2020 at 02:14, 王贇 <yun.wang@linux.alibaba.com> wrote:
-[snip]
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index fcc968669aea..6d7a9d72d742 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -3179,9 +3179,9 @@ static long calc_group_shares(struct cfs_rq *cfs_rq)
->>>         long tg_weight, tg_shares, load, shares;
->>>         struct task_group *tg = cfs_rq->tg;
->>>
->>> -       tg_shares = READ_ONCE(tg->shares);
->>> +       tg_shares = scale_load_down(READ_ONCE(tg->shares));
->>>
->>> -       load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
->>> +       load = max(cfs_rq->load.weight, scale_load(cfs_rq->avg.load_avg));
->>>
->>>         tg_weight = atomic_long_read(&tg->load_avg);
->>
->> Get the point, but IMHO fix scale_load_down() sounds better, to
->> cover all the similar cases, let's first try that way see if it's
->> working :-)
+> Hello
 > 
-> The problem with this solution is that the avg.load_avg of gse or
-> cfs_rq might stay to 0 because it uses
-> scale_load_down(se/cfs_rq->load.weight)
-
-Will cfs_rq->load.weight be zero too without scale down?
-
-If cfs_rq->load.weight got at least something, the load will not be
-zero after pick the max, correct?
-
-Regards,
-Michael Wang
-
+> sorry for build warning.
+> I've changed %d to %ld reported by kbuild.
+> Let me attach full patch again below.
+> --------------------------------------------------
 > 
->>
->> Regards,
->> Michael Wang
->>
->>>
->>>
->>>
+> 
+> Even on 64 bit kernel, the mmap failure can happen for a 32 bit task.
+> Virtual memory space shortage of a task on mmap is reported to userspace
+> as -ENOMEM. It can be confused as physical memory shortage of overall
+> system.
+> 
+> The vm_unmapped_area can be called to by some drivers or other kernel
+> core system like filesystem. It can be hard to know which code layer
+> returns the -ENOMEM.
+> 
+> Print error log of vm_unmapped_area with rate limited. Without rate
+> limited, soft lockup ocurrs on infinite mmap sytem call.
+> 
+> i.e.)
+> <3>[  576.024088]  [6:  mmap_infinite:14251] mmap: vm_unmapped_area err:-12 total_vm:0xfee08 flags:0x1 len:0xa00000 low:0x8000 high:0xf3f63000
+> 
+
+hm, I suppose that could be useful.  Although the choice of which info
+to display could be a source of dispute.  Why did you choose this info
+and omit other things?  Perhaps a stack trace could also be useful?
+
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2379,10 +2379,19 @@ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+>  static inline unsigned long
+>  vm_unmapped_area(struct vm_unmapped_area_info *info)
+>  {
+> +    unsigned long addr;
+> +
+>      if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
+> -        return unmapped_area_topdown(info);
+> +        addr = unmapped_area_topdown(info);
+>      else
+> -        return unmapped_area(info);
+> +        addr = unmapped_area(info);
+> +
+> +    if (IS_ERR_VALUE(addr) && printk_ratelimit()) {
+
+Please avoid using printk_ratelimit().  See the comment at the
+printk_ratelimit() definition site:
+
+/*
+ * Please don't use printk_ratelimit(), because it shares ratelimiting state
+ * with all other unrelated printk_ratelimit() callsites.  Instead use
+ * printk_ratelimited() or plain old __ratelimit().
+ */
+
+> +        pr_err("%s err:%ld total_vm:0x%lx flags:0x%lx len:0x%lx low:0x%lx high:0x%lx\n",
+> +            __func__, addr, current->mm->total_vm, info->flags,
+> +            info->length, info->low_limit, info->high_limit);
+> +    }
+> +    return addr;
+>  }
+
