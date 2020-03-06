@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8FF17BC8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C62A17BC99
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbgCFMSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:18:09 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:35034 "EHLO
+        id S1727176AbgCFMS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 07:18:28 -0500
+Received: from mail.baikalelectronics.com ([87.245.175.226]:35016 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbgCFMSE (ORCPT
+        with ESMTP id S1726378AbgCFMSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:18:04 -0500
+        Fri, 6 Mar 2020 07:18:03 -0500
+X-Greylist: delayed 494 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 07:18:01 EST
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 8DD43803087C;
-        Fri,  6 Mar 2020 12:09:40 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 389E480307C4;
+        Fri,  6 Mar 2020 12:10:11 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id SFkyHKoccYws; Fri,  6 Mar 2020 15:09:39 +0300 (MSK)
+        with ESMTP id IodXTFbh9tmm; Fri,  6 Mar 2020 15:10:10 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
-To:     Rob Herring <robh+dt@kernel.org>,
+To:     Paul Burton <paulburton@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Serge Semin <fancer.lancer@gmail.com>,
         Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 01/22] dt-bindings: Permit platform devices in the trivial-devices bindings
-Date:   Fri, 6 Mar 2020 15:08:25 +0300
+        <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 02/22] dt-bindings: Add MIPS CPC controller as a trivial devices
+Date:   Fri, 6 Mar 2020 15:08:26 +0300
+In-Reply-To: <20200306120847.32690-1-Sergey.Semin@baikalelectronics.ru>
+References: <20200306120847.32690-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306120940.8DD43803087C@mail.baikalelectronics.ru>
+Message-Id: <20200306121011.389E480307C4@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -43,11 +47,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
-Indeed there are a log of trivial devices amongst platform controllers,
-IP-blocks, etc. If they satisfy the trivial devices bindings requirements
-like consisting of a compatible field, an address and possibly an interrupt
-line why not having them in the generic trivial-devices bindings file?
-We only need to accordingly alter the bindings title and description nodes.
+It's a Cluster Power Controller embedded into the MIPS IP cores.
+Currently the corresponding dts node is supposed to have a compatible
+and regs properties. There is no need in the text-based mti,mips-cpc
+bindings file from now. So it can be removed.
 
 Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
@@ -55,33 +58,38 @@ Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: Paul Burton <paulburton@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 ---
- Documentation/devicetree/bindings/trivial-devices.yaml | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/power/mti,mips-cpc.txt | 8 --------
+ Documentation/devicetree/bindings/trivial-devices.yaml   | 2 ++
+ 2 files changed, 2 insertions(+), 8 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/power/mti,mips-cpc.txt
 
+diff --git a/Documentation/devicetree/bindings/power/mti,mips-cpc.txt b/Documentation/devicetree/bindings/power/mti,mips-cpc.txt
+deleted file mode 100644
+index c6b82511ae8a..000000000000
+--- a/Documentation/devicetree/bindings/power/mti,mips-cpc.txt
++++ /dev/null
+@@ -1,8 +0,0 @@
+-Binding for MIPS Cluster Power Controller (CPC).
+-
+-This binding allows a system to specify where the CPC registers are
+-located.
+-
+-Required properties:
+-compatible : Should be "mti,mips-cpc".
+-regs: Should describe the address & size of the CPC register region.
 diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 978de7d37c66..ce0149b4b6ed 100644
+index ce0149b4b6ed..b6b6f3181fd8 100644
 --- a/Documentation/devicetree/bindings/trivial-devices.yaml
 +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -4,15 +4,15 @@
- $id: http://devicetree.org/schemas/trivial-devices.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Trivial I2C and SPI devices that have simple device tree bindings
-+title: Trivial I2C, SPI and platform devices having simple device tree bindings
- 
- maintainers:
-   - Rob Herring <robh@kernel.org>
- 
- description: |
--  This is a list of trivial I2C and SPI devices that have simple device tree
--  bindings, consisting only of a compatible field, an address and possibly an
--  interrupt line.
-+  This is a list of trivial I2C, SPI and platform devices that have simple
-+  device tree bindings, consisting only of a compatible field, an address and
-+  possibly an interrupt line.
- 
-   If a device needs more specific bindings, such as properties to
-   describe some aspect of it, there needs to be a specific binding
+@@ -304,6 +304,8 @@ properties:
+           - miramems,da280
+             # MiraMEMS DA311 3-axis 12-bit digital accelerometer
+           - miramems,da311
++            # MIPS Cluster Power Controller (CPC)
++          - mti,mips-cpc
+             # Temperature sensor with integrated fan control
+           - national,lm63
+             # I2C TEMP SENSOR
 -- 
 2.25.1
 
