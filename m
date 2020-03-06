@@ -2,156 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D66B817B48F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E02217B495
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgCFCl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 21:41:29 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42440 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgCFCl3 (ORCPT
+        id S1726635AbgCFCnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:43:49 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:39465 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbgCFCns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 21:41:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id h8so361066pgs.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 18:41:26 -0800 (PST)
+        Thu, 5 Mar 2020 21:43:48 -0500
+Received: by mail-vs1-f66.google.com with SMTP id a19so610199vsp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 18:43:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ybwuAO+dxcFKGdRu+UMo3hrueD2iw1ldBlmuuV7eqeo=;
-        b=lvDBDquHuWLf//VjlWapEVpykhcml4E40Z4woVLPUjf7T9rfmfs+JqNe+LPYcoAddm
-         G3ofnRUuT0BhRDTVLuddKrSFf14y7AokRrnFbP1XhIvODq+8cAPmlOtKLTMqmiIqT+4i
-         OC2Yf6jtH//bC1NBuktFeswv0zT8Br4uEXbs+cRnf/fZmBbm0KJhBHojKi7d3umxcBG7
-         wJQRZDNipvmAhPoBXVfqGcIVrU3RV3VIy2h793viWWg1fwK3MdXthBJzTsdlN0Z5fp9X
-         nWv2aK6R+0gW/UjB2hEEHBKUxvCphLQgcHulTARBx/acgwzch0Yks3jPn9DoSbSa5HLU
-         a5Gw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9J7QUZ3c6oiJJHOCislF9UdZETLylotw3HiKvwmAMXw=;
+        b=E+5Hc2RoJaRGHZP8HBhUfdRXIeqRGN8m1mX+ZoYWKE5rFmO3rqVE3tD2ahZFs+pdHi
+         /4HyvgWRRhRjVfxlEvKX9ZPO9o/jWmDyGVazqEkLQNal6+cTur8SCs2MkknKUJJlpzN5
+         DZe43h++B4igVoAiSlhNUnAYvsmvti3qQYbV8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ybwuAO+dxcFKGdRu+UMo3hrueD2iw1ldBlmuuV7eqeo=;
-        b=uJOzlEQVA7XpPUmgDaTh7TjGEYjVi6ga/8ByNw5SdP1WuYiYfD1bRENSVJYSgnddFU
-         606vnS+vqwBrhjXZe720YPsMWuQ4Y5zfx3iBaR9+1KQj6kw04mEAJaw/dDGW9aNKPqWa
-         wRvA5+YEL2EcaY7qTNG1Bma7KgzCXJIYpZxjAHXt0ozXn5th85n3sIqAsF0j9TYZzNS5
-         o4XVvWtL+SYpxvsU4O2ssS8Ab2/H8E2QEPBP2EmC3GlJlH8qHEE1SK3yUFkSqj6YGmi8
-         CDwM07F12FN5YPWZD/9cE+BkYYJRa7ZfndPowBnQf03qC/uKZ7wxf9DhSBeYXsMx1+yu
-         Vkzg==
-X-Gm-Message-State: ANhLgQ2rwjy9WgXYdqo+k0bKVpLLy0SUAwoIYAejUpLBRVvdtmnWnt9S
-        f7NtIfZJWRoJgcLDmx0NqjA=
-X-Google-Smtp-Source: ADFU+vtBSVoaXvM2y4RkXJrZpfpCILIHtsfS0tQ51RwCnyApHGwq6c/WkoPnjpJCBWqKdwuH7kQfFw==
-X-Received: by 2002:a63:1044:: with SMTP id 4mr1190082pgq.412.1583462486335;
-        Thu, 05 Mar 2020 18:41:26 -0800 (PST)
-Received: from ziqianlu-desktop.localdomain ([47.89.83.64])
-        by smtp.gmail.com with ESMTPSA id q8sm7631575pje.2.2020.03.05.18.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 18:41:25 -0800 (PST)
-Date:   Fri, 6 Mar 2020 10:41:16 +0800
-From:   Aaron Lu <aaron.lwe@gmail.com>
-To:     Aubrey Li <aubrey.intel@gmail.com>
-Cc:     Phil Auld <pauld@redhat.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
-Message-ID: <20200306024116.GA16400@ziqianlu-desktop.localdomain>
-References: <e322a252-f983-e3f3-f823-16d0c16b2867@linux.intel.com>
- <20200212230705.GA25315@sinkpad>
- <29d43466-1e18-6b42-d4d0-20ccde20ff07@linux.intel.com>
- <CAERHkruG4y8si9FrBp7cZNEdfP7EzxbmYwvdF2EvHLf=mU1mgg@mail.gmail.com>
- <20200225034438.GA617271@ziqianlu-desktop.localdomain>
- <CANaguZD205ccu1V_2W-QuMRrJA9SjJ5ng1do4NCdLy8NDKKrbA@mail.gmail.com>
- <20200227020432.GA628749@ziqianlu-desktop.localdomain>
- <20200227141032.GA30178@pauld.bos.csb>
- <20200228025405.GA634650@ziqianlu-desktop.localdomain>
- <CAERHkrunq=BqB=NmS2b_BfjePX2+nNpbv1EfTWw5rExbvYHyJw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9J7QUZ3c6oiJJHOCislF9UdZETLylotw3HiKvwmAMXw=;
+        b=DIElQgLgiM8YTpKHearhx1emaI9Wm/NyPuATkgBQgOj7IZN2AcmW42+PanoIDkNPd/
+         6lA50y/iCjsrblIAVJss/Qb/c4gKkmhvOJ3f70cuVZDtGQzCR2sMe8la9HQ76aTXYXyl
+         43wmKONHevx2PYnPmaIjBdIVpjKIRWbGsqrYHted5k1lWqpBspZc4157ozI59Y5hKlBy
+         54ymLg2bZWDnL1CjngGz7raps+v/PbOKgq27NQQ0Q1JxRhGa5dghDyhaLEKagEc0F7fz
+         PmTyMGrv85lLurRQNExC/jIIKTHRPabd0rk/dAzK9CyGTDq3wEg37Kca1knd+XqWVR8K
+         cAEA==
+X-Gm-Message-State: ANhLgQ23JSM+ouWmDVkkN/Nm7drGwz01Pb9D1MtXegxE+xxlEk7A/m1a
+        0zdyUx6Y44iv+TS8yUFNd8Xv0zPLpA9DA0Ce4QMGzA==
+X-Google-Smtp-Source: ADFU+vv6/yy6QpFMc26UByJ8foEiCd0tx3UtqsQqGWflBPyiIzZovmd5yFBvcuNwqosvDrUuX+XkrYPkCEaxbPFJbJY=
+X-Received: by 2002:a67:d81b:: with SMTP id e27mr927920vsj.79.1583462626960;
+ Thu, 05 Mar 2020 18:43:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAERHkrunq=BqB=NmS2b_BfjePX2+nNpbv1EfTWw5rExbvYHyJw@mail.gmail.com>
+References: <20200207052627.130118-1-drinkcat@chromium.org>
+ <20200207052627.130118-2-drinkcat@chromium.org> <20200225171613.GA7063@bogus>
+ <CANMq1KAVX4o5yC7c_88Wq_O=F+MaSN_V4uNcs1nzS3wBS6A5AA@mail.gmail.com> <1583462055.4947.6.camel@mtksdaap41>
+In-Reply-To: <1583462055.4947.6.camel@mtksdaap41>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Fri, 6 Mar 2020 10:43:35 +0800
+Message-ID: <CANMq1KCi1ee87zz6cEWaB04=vEhkTdtW7C+UKW5EFn+1j6Cf3Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] dt-bindings: gpu: mali-bifrost: Add Mediatek MT8183
+To:     Nick Fan <nick.fan@mediatek.com>
+Cc:     Rob Herring <robh@kernel.org>, Sj Huang <sj.huang@mediatek.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 09:45:15PM +0800, Aubrey Li wrote:
-> On Fri, Feb 28, 2020 at 10:54 AM Aaron Lu <aaron.lwe@gmail.com> wrote:
+On Fri, Mar 6, 2020 at 10:34 AM Nick Fan <nick.fan@mediatek.com> wrote:
+>
+> Sorry for my late reply.
+> I have checked internally.
+> The MT8183_POWER_DOMAIN_MFG_2D is just a legacy name, not really 2D
+> domain.
+>
+> If the naming too confusing, we can change this name to
+> MT8183_POWER_DOMAIN_MFG_CORE2 for consistency.
+
+Thanks! I think I'll keep MT8183_POWER_DOMAIN_MFG_2D (that's fine if
+that's the domain name you use internally in your HW design), but I'll
+modify power-domain-names to core0/1/2 in the binding.
+
+> Thanks
+>
+> Nick Fan
+>
+> On Wed, 2020-02-26 at 08:55 +0800, Nicolas Boichat wrote:
+>
+> > +Nick Fan +Sj Huang @ MTK
 > >
-> > When the core wide weight is somewhat balanced, yes I definitely agree.
-> > But when core wide weight mismatch a lot, I'm not so sure since if these
-> > high weight task is spread among cores, with the feature of core
-> > scheduling, these high weight tasks can get better performance.
-> 
-> It depends.
-> 
-> Say TaskA(cookie 1) and TaskB(cookie1) has high weight,
-> TaskC(cookie 2) and Task D(cookie 2) has low weight.
-> And we have two cores 4 CPU.
-> 
-> If we dispatch
-> - TaskA and TaskB on Core0,
-> - TaskC and TaskD on Core1,
-> 
-> with coresched enabled, all 4 tasks can run all the time.
-
-Although all tasks get CPU, TaskA and TaskB are competing hardware
-resources and will run slower.
-
-> But if we dispatch
-> - TaskA on Core0.CPU0, TaskB on Core1.CPU2,
-> - TaskC on Core0.CPU1, TaskB on Core1.CPU3,
-> 
-> with coresched enabled, when TaskC is running, TaskA will be forced
-> off CPU and replaced with a forced idle thread.
-
-Not likely to happen since TaskA and TaskB's share will normally be a
-lot higher to make sure they get the CPU most of the time.
-
-> 
-> Things get worse if TaskA and TaskB share some data and can get
-> benefit from the core level cache.
-
-That's a good point and hard to argue.
-
-I'm mostly considering colocating redis-server(the main workload) with
-other compute intensive workload. redis-server can be idle most of the
-time but needs every hardware resource when it runs to meet its latency
-and throughput requirement. Test at my side shows redis-server's
-throughput can be about 30% lower when two redis-servers run at the
-same core(throughput is about 80000 when runs exclusively on a core VS
-about 56000 when runs with sibling thread busy) IIRC.
-
-So my use case here is that I don't really care about low weight task's
-performance when high weight task demands CPU. I understand that there
-will be other use cases that also care about low weight task's
-performance. So what I have done is to make the two task's weight
-difference as large as possible to signal that the low weight task is
-not important, maybe I can also try to tag low weight task as SCHED_IDLE
-ones and then we can happily sacrifice SCHED_IDLE task's performance?
- 
-> > So this appeared to me like a question of: is it desirable to protect/enhance
-> > high weight task performance in the presence of core scheduling?
-> 
-> This sounds to me a policy VS mechanism question. Do you have any idea
-> how to spread high weight task among the cores with coresched enabled?
-
-Yes I would like to get us on the same page of the expected behaviour
-before jumping to the implementation details. As for how to achieve
-that: I'm thinking about to make core wide load balanced and then high
-weight task shall spread on different cores. This isn't just about load
-balance, the initial task placement will also need to be considered of
-course if the high weight task only runs a small period.
+> > On Wed, Feb 26, 2020 at 1:16 AM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Fri, Feb 07, 2020 at 01:26:21PM +0800, Nicolas Boichat wrote:
+> > > > Define a compatible string for the Mali Bifrost GPU found in
+> > > > Mediatek's MT8183 SoCs.
+> > > >
+> > > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > > > Reviewed-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+> > > > ---
+> > > >
+> > > > v4:
+> > > >  - Add power-domain-names description
+> > > >    (kept Alyssa's reviewed-by as the change is minor)
+> > > > v3:
+> > > >  - No change
+> > > >
+> > > >  .../bindings/gpu/arm,mali-bifrost.yaml        | 25 +++++++++++++++++++
+> > > >  1 file changed, 25 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+> > > > index 4ea6a8789699709..0d93b3981445977 100644
+> > > > --- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+> > > > +++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+> > > > @@ -17,6 +17,7 @@ properties:
+> > > >      items:
+> > > >        - enum:
+> > > >            - amlogic,meson-g12a-mali
+> > > > +          - mediatek,mt8183-mali
+> > > >            - realtek,rtd1619-mali
+> > > >            - rockchip,px30-mali
+> > > >        - const: arm,mali-bifrost # Mali Bifrost GPU model/revision is fully discoverable
+> > > > @@ -62,6 +63,30 @@ allOf:
+> > > >            minItems: 2
+> > > >        required:
+> > > >          - resets
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          contains:
+> > > > +            const: mediatek,mt8183-mali
+> > > > +    then:
+> > > > +      properties:
+> > > > +        sram-supply: true
+> > > > +        power-domains:
+> > > > +          description:
+> > > > +            List of phandle and PM domain specifier as documented in
+> > > > +            Documentation/devicetree/bindings/power/power_domain.txt
+> > > > +          minItems: 3
+> > > > +          maxItems: 3
+> > > > +        power-domain-names:
+> > > > +          items:
+> > > > +            - const: core0
+> > > > +            - const: core1
+> > > > +            - const: 2d
+> > >
+> > > AFAIK, there's no '2d' block in bifrost GPUs. A power domain for each
+> > > core group is correct though.
+> >
+> > Good question... Hopefully Nick/SJ@MTK can comment, the non-upstream DTS has:
+> > gpu: mali@13040000 {
+> > compatible = "mediatek,mt8183-mali", "arm,mali-bifrost";
+> > power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_CORE0>;
+> > ...
+> > }
+> >
+> > gpu_core1: mali_gpu_core1 {
+> > compatible = "mediatek,gpu_core1";
+> > power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_CORE1>;
+> > };
+> >
+> > gpu_core2: mali_gpu_core2 {
+> > compatible = "mediatek,gpu_core2";
+> > power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_2D>;
+> > };
+> >
+> > So I picked core0/core1/2d as names, but looking at this, it's likely
+> > core2 is more appropriate (and MT8183_POWER_DOMAIN_MFG_2D might just
+> > be a internal/legacy name, if there is no real 2d domain).
+> >
+> > Thanks.
+> >
+> > > Rob
+>
