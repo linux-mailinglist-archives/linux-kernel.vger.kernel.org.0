@@ -2,105 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 566EF17BD5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90F517BD58
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbgCFM5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:57:04 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:35914 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgCFM5D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:57:03 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 3D8F48030786;
-        Fri,  6 Mar 2020 12:57:01 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id i17JiqHGbEZr; Fri,  6 Mar 2020 15:57:00 +0300 (MSK)
-From:   <Sergey.Semin@baikalelectronics.ru>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] clocksource: mips-gic-timer: Set limitations on clocksource/sched-clocks usage
-Date:   Fri, 6 Mar 2020 15:56:04 +0300
-In-Reply-To: <20200306125605.8143-1-Sergey.Semin@baikalelectronics.ru>
-References: <20200306125605.8143-1-Sergey.Semin@baikalelectronics.ru>
+        id S1726874AbgCFM4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 07:56:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:60986 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726240AbgCFM4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 07:56:52 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 544F331B;
+        Fri,  6 Mar 2020 04:56:52 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23E1D3F6CF;
+        Fri,  6 Mar 2020 04:56:51 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH] arm: mach-dove: Mark dove_io_desc as __maybe_unused
+Date:   Fri,  6 Mar 2020 12:56:38 +0000
+Message-Id: <20200306125638.8285-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306125701.3D8F48030786@mail.baikalelectronics.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Without this, we get the warnings below when CONFIG_MMU is disabled:
 
-Currently neither clocksource nor scheduler clock kernel framework
-support the clocks with variable frequency. Needless to say how many
-problems may cause the sudden base clocks frequency change. In a
-simplest case the system time will either slow down or speed up.
-Since on CM2.5 and earlier MIPS GIC timer is synchronously clocked
-with CPU we must set some limitations on using it for these frameworks
-if CPU frequency may change. First of all it's not safe to have the
-MIPS GIC used for scheduler timings. So we shouldn't proceed with
-the clocks registration in the sched-subsystem. Secondly we must
-significantly decrease the MIPS GIC clocksource rating. This will let
-the system to use it only as a last resort.
+linux/arch/arm/mach-dove/common.c:51:24: warning: ‘dove_io_desc’ defined
+but not used [-Wunused-variable]
+static struct map_desc dove_io_desc[] __initdata = {
+                       ^~~~~~~~~~~~
 
-Note CM3.x-based systems may also experience the problems with MIPS GIC
-if they the CPU-frequency change activated for the whole CPU cluster
-instead of using the individual CPC core clocks divider.
-
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- drivers/clocksource/mips-gic-timer.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ arch/arm/mach-dove/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
-index 8239ff99cfe4..5eb241b8b28d 100644
---- a/drivers/clocksource/mips-gic-timer.c
-+++ b/drivers/clocksource/mips-gic-timer.c
-@@ -185,7 +185,10 @@ static int __init __gic_clocksource_init(void)
- 	gic_clocksource.mask = CLOCKSOURCE_MASK(count_width);
- 
- 	/* Calculate a somewhat reasonable rating value. */
--	gic_clocksource.rating = 200 + gic_frequency / 10000000;
-+	if (mips_cm_revision() >= CM_REV_CM3 || !IS_ENABLED(CONFIG_CPU_FREQ))
-+		gic_clocksource.rating = 200 + gic_frequency / 10000000;
-+	else
-+		gic_clocksource.rating = 99;
- 
- 	ret = clocksource_register_hz(&gic_clocksource, gic_frequency);
- 	if (ret < 0)
-@@ -239,9 +242,11 @@ static int __init gic_clocksource_of_init(struct device_node *node)
- 	/* And finally start the counter */
- 	clear_gic_config(GIC_CONFIG_COUNTSTOP);
- 
--	sched_clock_register(mips_cm_is64 ?
--			     gic_read_count_64 : gic_read_count_2x32,
--			     64, gic_frequency);
-+	if (mips_cm_revision() >= CM_REV_CM3 || !IS_ENABLED(CONFIG_CPU_FREQ)) {
-+		sched_clock_register(mips_cm_is64 ?
-+				     gic_read_count_64 : gic_read_count_2x32,
-+				     64, gic_frequency);
-+	}
- 
- 	return 0;
- }
+diff --git a/arch/arm/mach-dove/common.c b/arch/arm/mach-dove/common.c
+index 01b830afcea9..dbe970e37895 100644
+--- a/arch/arm/mach-dove/common.c
++++ b/arch/arm/mach-dove/common.c
+@@ -48,7 +48,7 @@
+ /*****************************************************************************
+  * I/O Address Mapping
+  ****************************************************************************/
+-static struct map_desc dove_io_desc[] __initdata = {
++static struct map_desc __maybe_unused dove_io_desc[] __initdata = {
+ 	{
+ 		.virtual	= (unsigned long) DOVE_SB_REGS_VIRT_BASE,
+ 		.pfn		= __phys_to_pfn(DOVE_SB_REGS_PHYS_BASE),
 -- 
 2.25.1
 
