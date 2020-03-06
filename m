@@ -2,293 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E21517C8DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC7B17C922
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:53:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgCFXql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 18:46:41 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47763 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726635AbgCFXqk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 18:46:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583538399;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=al/yDzOJoDcjWWSn6wQel46tVaw2Vn6muHcLFQgyG6Y=;
-        b=Aizl2v+4m4eqkCyIUuQH90lhrO8gzHOeqcvM1f51UfwG19pMxhCFlZAhQkr4BGyhtUb9CE
-        vbxCWzDtk+VFvY6lCPaopqxohvyDNP+M+fUwVKzM0j3aMWhVHx8RB6+3jy6/4qxPJs5m6e
-        Rni0WTkK24aBDpCVZZmfuJfGOajNQ+k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-123-RIS4M87mOW2Jpch1YHMblw-1; Fri, 06 Mar 2020 18:46:37 -0500
-X-MC-Unique: RIS4M87mOW2Jpch1YHMblw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7647813F5;
-        Fri,  6 Mar 2020 23:46:35 +0000 (UTC)
-Received: from Ruby.bss.redhat.com (dhcp-10-20-1-196.bss.redhat.com [10.20.1.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E85773873;
-        Fri,  6 Mar 2020 23:46:34 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Mikita Lipski <mikita.lipski@amd.com>,
-        Sean Paul <seanpaul@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] drm/dp_mst: Rewrite and fix bandwidth limit checks
-Date:   Fri,  6 Mar 2020 18:46:22 -0500
-Message-Id: <20200306234623.547525-5-lyude@redhat.com>
-In-Reply-To: <20200306234623.547525-1-lyude@redhat.com>
-References: <20200306234623.547525-1-lyude@redhat.com>
+        id S1727602AbgCFXtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 18:49:32 -0500
+Received: from mail-mw2nam12on2085.outbound.protection.outlook.com ([40.107.244.85]:8128
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727222AbgCFXsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 18:48:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OIBZTyo7lIZvu7WssZUcAAC0tL1+PX2/BJBnqXVovqMtvUfFQC0NB3OhGYYS9+WrTgaCe2vQc4Vt13stVbAxEDfSy99qwFwu+qo8P0mVhBb34LW1hZqPgRH6hGf1vINySqkexlER1QRtgXvTCHiMb/f5VxauQB629Dc53Ax74TRrmpgxYk2vJrnVzxdnlxYQSLozkqeALYfARGF1HMV6oTe7OoeZwfDZELpmmSXs12g142ka2FRxqxPvDrMMeTGIjD/f5hvCJrnqamyRBEqIMAlGVN6R6tbKMREJbM3d3RFNdAfpwFBHYI/OJu+9Wfbfoetizi2Iy+qHNH/VI91zpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nFyRL44kb7L9IF+WjTtCQ7auUAug8qJIeSDXwd8qJ4k=;
+ b=ivJ16vMyZybxgG7KgOumaKCr3mDmpF/1+2b2DFG728GURL+5Mf9VkHrsIbxri6vkCZ2YxyUq6ePJA4C4DgWPqEbLxB5foJYuOwOe2fhq57Y1/XfTsbmRR/3+lqENk1854L6f3WWHHcxhY0ImUkbo0yrzrKQv9hy2PyaBtP9MifTZ4qGJFjji7MMpu3El8PqRlFvwTp1HBMK6jfW2cEYQg4cAjkJEeLD79Z2FjNMcQePuYn3AAZuw4/pIChye3/TTt1B+FBWf5txESUJonIRkADSqs9iuBMISY9VBUIR/rH4Ic1kvVhRyuUkv/+M6uL2rxl/EUg0dOD8Z1edc/IdJKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nFyRL44kb7L9IF+WjTtCQ7auUAug8qJIeSDXwd8qJ4k=;
+ b=OHPg9CYe6GL0S8lem9os8zUJXenAHKdRqxtqqXng4q5OvYe/YWrJRQOAbKnKk5Divcv4lJQKdEA1nLa1mp23XXaK/dMEcLZ3WJf5TdEdiLPEoA2dv3DXH8m7T3Tinuun92agQ41SiYQmyHNOZ+4UltMrGPO9LGfZSRAJ5MlvH9k=
+Received: from BL0PR01CA0017.prod.exchangelabs.com (2603:10b6:208:71::30) by
+ CH2PR02MB7031.namprd02.prod.outlook.com (2603:10b6:610:88::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.19; Fri, 6 Mar 2020 23:47:58 +0000
+Received: from BL2NAM02FT003.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:71:cafe::73) by BL0PR01CA0017.outlook.office365.com
+ (2603:10b6:208:71::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend
+ Transport; Fri, 6 Mar 2020 23:47:58 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT003.mail.protection.outlook.com (10.152.76.204) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2793.11
+ via Frontend Transport; Fri, 6 Mar 2020 23:47:58 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jAMhB-0003Q6-Gv; Fri, 06 Mar 2020 15:47:57 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jAMh6-0002g8-Dl; Fri, 06 Mar 2020 15:47:52 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 026NljP0002385;
+        Fri, 6 Mar 2020 15:47:45 -0800
+Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jAMgz-0002eg-KC; Fri, 06 Mar 2020 15:47:45 -0800
+From:   Jolly Shah <jolly.shah@xilinx.com>
+To:     ard.biesheuvel@linaro.org, mingo@kernel.org,
+        gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
+        sudeep.holla@arm.com, hkallweit1@gmail.com, keescook@chromium.org,
+        dmitry.torokhov@gmail.com, michal.simek@xilinx.com
+Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jolly Shah <jolly.shah@xilinx.com>
+Subject: [PATCH v3 00/24] firmware: xilinx: Add xilinx specific sysfs interface
+Date:   Fri,  6 Mar 2020 15:47:08 -0800
+Message-Id: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(346002)(396003)(199004)(189003)(356004)(6666004)(70206006)(6636002)(4326008)(9786002)(107886003)(70586007)(316002)(7416002)(478600001)(44832011)(36756003)(8676002)(2616005)(336012)(186003)(2906002)(81166006)(81156014)(26005)(7696005)(5660300002)(8936002)(426003);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB7031;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0cfb587c-f4f2-472e-37e8-08d7c228cc96
+X-MS-TrafficTypeDiagnostic: CH2PR02MB7031:
+X-Microsoft-Antispam-PRVS: <CH2PR02MB7031692052305D7E4B5E0DA6B8E30@CH2PR02MB7031.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:2733;
+X-Forefront-PRVS: 0334223192
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 99zQs4Y3ARsCGCYEHon/V6ClVe9twUzVw6mxZGbkFpm1KkkU83mWo+/oEIqa/MoQRwE4x/jU+eLOLuazdot/IPV9rlWUz38djJmUbAYSMNHACALk7Ba36W8wq2BXfzV2hJF8cJqTPHfzJzWPaIlXInEmYhU5/HjGBICBP/lvxYR/8+AfTe/KkuA3cvD8ep9ttTs3l9k5PskQwcZIDDzlN0lRK8rK855/VrvJgPdU9/LfGJaeKqWgoQcjgEaop8AZQriklYucsFIaqRtxLnv65Ea9v9WYqZrLRQXlNnzKaQvEVnOlukF//Da1fVDzkVVWkkRIxg5xPHGNkdK9F1HM9t3IdvVA268+YP3d4SX4GPMwA3zGY7FKXa+xZETyx1d62kNI+O+bXqLN++915rbJiMkGgtZ0/wTe/hJUmGbfa0s565rAbSE0gnsj6DXjtZeT
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2020 23:47:58.0689
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cfb587c-f4f2-472e-37e8-08d7c228cc96
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB7031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sigh, this is mostly my fault for not giving commit cd82d82cbc04
-("drm/dp_mst: Add branch bandwidth validation to MST atomic check")
-enough scrutiny during review. The way we're checking bandwidth
-limitations here is mostly wrong:
+This patch series adds xilinx specific sysfs interface for below
+purposes:
+- Register access
+- Set shutdown scope
+- Set boot health status bit
 
-For starters, drm_dp_mst_atomic_check_bw_limit() determines the
-pbn_limit of a branch by simply scanning each port on the current branch
-device, then uses the last non-zero full_pbn value that it finds. It
-then counts the sum of the PBN used on each branch device for that
-level, and compares against the full_pbn value it found before.
+Also this patch series removes eemi ops and adds API
+corresponding to each eemi ops.
 
-This is wrong because ports can and will have different PBN limitations
-on many hubs, especially since a number of DisplayPort hubs out there
-will be clever and only use the smallest link rate required for each
-downstream sink - potentially giving every port a different full_pbn
-value depending on what link rate it's trained at. This means with our
-current code, which max PBN value we end up with is not well defined.
+v3:
+ - Remove eemi ops function pointers and call real functions
+ - For ioctl eemi calls, make actual function calls rather than ioctl api
+ 
+Rajan Vaja (24):
+  firmware: xilinx: Remove eemi ops for get_api_version
+  firmware: xilinx: Remove eemi ops for get_chipid
+  firmware: xilinx: Remove eemi ops for query_data
+  firmware: xilinx: Remove eemi ops for clock_enable
+  firmware: xilinx: Remove eemi ops for clock_disable
+  firmware: xilinx: Remove eemi ops for clock_getstate
+  firmware: xilinx: Remove eemi ops for clock_setdivider
+  firmware: xilinx: Remove eemi ops for clock_getdivider
+  firmware: xilinx: Remove eemi ops for clock set/get rate
+  firmware: xilinx: Remove eemi ops for clock set/get parent
+  firmware: xilinx: Use APIs instead of IOCTLs
+  firmware: xilinx: Remove eemi ops for reset_assert
+  firmware: xilinx: Remove eemi ops for reset_get_status
+  firmware: xilinx: Remove eemi ops for init_finalize
+  firmware: xilinx: Remove eemi ops for set_suspend_mode
+  firmware: xilinx: Remove eemi ops for request_node
+  firmware: xilinx: Remove eemi ops for release_node
+  firmware: xilinx: Remove eemi ops for set_requirement
+  firmware: xilinx: Remove eemi ops for fpga related APIs
+  firmware: xilinx: Add APIs to read/write GGS/PGGS registers
+  firmware: xilinx: Add sysfs interface
+  firmware: xilinx: Add system shutdown API interface
+  firmware: xilinx: Add sysfs to set shutdown scope
+  firmware: xilinx: Add sysfs and API to set boot health status
 
-Additionally, we also need to remember when checking bandwidth
-limitations that the top-most device in any MST topology is a branch
-device, not a port. This means that the first level of a topology
-doesn't technically have a full_pbn value that needs to be checked.
-Instead, we should assume that so long as our VCPI allocations fit we're
-within the bandwidth limitations of the primary MSTB.
+ .../ABI/stable/sysfs-driver-firmware-zynqmp        | 103 +++
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               |   9 +-
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                |   6 +-
+ drivers/clk/zynqmp/clkc.c                          |  17 +-
+ drivers/clk/zynqmp/divider.c                       |  12 +-
+ drivers/clk/zynqmp/pll.c                           |  29 +-
+ drivers/firmware/xilinx/zynqmp-debug.c             |   5 +-
+ drivers/firmware/xilinx/zynqmp.c                   | 806 ++++++++++++++++++---
+ drivers/fpga/zynqmp-fpga.c                         |  12 +-
+ drivers/mmc/host/sdhci-of-arasan.c                 |  33 +-
+ drivers/nvmem/zynqmp_nvmem.c                       |  11 +-
+ drivers/reset/reset-zynqmp.c                       |  26 +-
+ drivers/soc/xilinx/zynqmp_pm_domains.c             |  26 +-
+ drivers/soc/xilinx/zynqmp_power.c                  |  17 +-
+ drivers/spi/spi-zynqmp-gqspi.c                     |   5 -
+ include/linux/firmware/xlnx-zynqmp.h               | 102 +--
+ 16 files changed, 924 insertions(+), 295 deletions(-)
+ create mode 100644 Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
 
-We do however, want to check full_pbn on every port including those of
-the primary MSTB. However, it's important to keep in mind that this
-value represents the minimum link rate /between a port's sink or mstb,
-and the mstb itself/. A quick diagram to explain:
-
-                                MSTB #1
-                               /       \
-                              /         \
-                           Port #1    Port #2
-       full_pbn for Port #1 =E2=86=92 |          | =E2=86=90 full_pbn for=
- Port #2
-                           Sink #1    MSTB #2
-                                         |
-                                       etc...
-
-Note that in the above diagram, the combined PBN from all VCPI
-allocations on said hub should not exceed the full_pbn value of port #2,
-and the display configuration on sink #1 should not exceed the full_pbn
-value of port #1. However, port #1 and port #2 can otherwise consume as
-much bandwidth as they want so long as their VCPI allocations still fit.
-
-And finally - our current bandwidth checking code also makes the mistake
-of not checking whether something is an end device or not before trying
-to traverse down it.
-
-So, let's fix it by rewriting our bandwidth checking helpers. We split
-the function into one part for handling branches which simply adds up
-the total PBN on each branch and returns it, and one for checking each
-port to ensure we're not going over its PBN limit. Phew.
-
-This should fix regressions seen, where we erroneously reject display
-configurations due to thinking they're going over our bandwidth limits
-when they're not.
-
-Changes since v1:
-* Took an even closer look at how PBN limitations are supposed to be
-  handled, and did some experimenting with Sean Paul. Ended up rewriting
-  these helpers again, but this time they should actually be correct!
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: cd82d82cbc04 ("drm/dp_mst: Add branch bandwidth validation to MST =
-atomic check")
-Cc: Mikita Lipski <mikita.lipski@amd.com>
-Cc: Sean Paul <seanpaul@google.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpu/drm/drm_dp_mst_topology.c | 120 ++++++++++++++++++++------
- 1 file changed, 94 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_=
-dp_mst_topology.c
-index b81ad444c24f..322f7b2c9c96 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -4841,41 +4841,103 @@ static bool drm_dp_mst_port_downstream_of_branch=
-(struct drm_dp_mst_port *port,
- 	return false;
- }
-=20
--static inline
--int drm_dp_mst_atomic_check_bw_limit(struct drm_dp_mst_branch *branch,
--				     struct drm_dp_mst_topology_state *mst_state)
-+static int
-+drm_dp_mst_atomic_check_port_bw_limit(struct drm_dp_mst_port *port,
-+				      struct drm_dp_mst_topology_state *state);
-+
-+static int
-+drm_dp_mst_atomic_check_mstb_bw_limit(struct drm_dp_mst_branch *mstb,
-+				      struct drm_dp_mst_topology_state *state)
- {
--	struct drm_dp_mst_port *port;
- 	struct drm_dp_vcpi_allocation *vcpi;
--	int pbn_limit =3D 0, pbn_used =3D 0;
-+	struct drm_dp_mst_port *port;
-+	int pbn_used =3D 0, ret;
-+	bool found =3D false;
-=20
--	list_for_each_entry(port, &branch->ports, next) {
--		if (port->mstb)
--			if (drm_dp_mst_atomic_check_bw_limit(port->mstb, mst_state))
--				return -ENOSPC;
-+	/* Check that we have at least one port in our state that's downstream
-+	 * of this branch, otherwise we can skip this branch
-+	 */
-+	list_for_each_entry(vcpi, &state->vcpis, next) {
-+		if (!vcpi->pbn ||
-+		    !drm_dp_mst_port_downstream_of_branch(vcpi->port,
-+							  mstb))
-+			continue;
-=20
--		if (port->full_pbn > 0)
--			pbn_limit =3D port->full_pbn;
-+		found =3D true;
-+		break;
- 	}
--	DRM_DEBUG_ATOMIC("[MST BRANCH:%p] branch has %d PBN available\n",
--			 branch, pbn_limit);
-+	if (!found)
-+		return 0;
-=20
--	list_for_each_entry(vcpi, &mst_state->vcpis, next) {
--		if (!vcpi->pbn)
--			continue;
-+	if (mstb->port_parent)
-+		DRM_DEBUG_ATOMIC("[MSTB:%p] [MST PORT:%p] Checking bandwidth limits on=
- [MSTB:%p]\n",
-+				 mstb->port_parent->parent, mstb->port_parent,
-+				 mstb);
-+	else
-+		DRM_DEBUG_ATOMIC("[MSTB:%p] Checking bandwidth limits\n",
-+				 mstb);
-=20
--		if (drm_dp_mst_port_downstream_of_branch(vcpi->port, branch))
--			pbn_used +=3D vcpi->pbn;
-+	list_for_each_entry(port, &mstb->ports, next) {
-+		ret =3D drm_dp_mst_atomic_check_port_bw_limit(port, state);
-+		if (ret < 0)
-+			return ret;
-+
-+		pbn_used +=3D ret;
- 	}
--	DRM_DEBUG_ATOMIC("[MST BRANCH:%p] branch used %d PBN\n",
--			 branch, pbn_used);
-=20
--	if (pbn_used > pbn_limit) {
--		DRM_DEBUG_ATOMIC("[MST BRANCH:%p] No available bandwidth\n",
--				 branch);
-+	return pbn_used;
-+}
-+
-+static int
-+drm_dp_mst_atomic_check_port_bw_limit(struct drm_dp_mst_port *port,
-+				      struct drm_dp_mst_topology_state *state)
-+{
-+	struct drm_dp_vcpi_allocation *vcpi;
-+	int pbn_used =3D 0;
-+
-+	if (port->pdt =3D=3D DP_PEER_DEVICE_NONE)
-+		return 0;
-+
-+	if (drm_dp_mst_is_end_device(port->pdt, port->mcs)) {
-+		bool found =3D false;
-+
-+		list_for_each_entry(vcpi, &state->vcpis, next) {
-+			if (vcpi->port !=3D port)
-+				continue;
-+			if (!vcpi->pbn)
-+				return 0;
-+
-+			found =3D true;
-+			break;
-+		}
-+		if (!found)
-+			return 0;
-+
-+		/* This should never happen, as it means we tried to
-+		 * set a mode before querying the full_pbn
-+		 */
-+		if (WARN_ON(!port->full_pbn))
-+			return -EINVAL;
-+
-+		pbn_used =3D vcpi->pbn;
-+	} else {
-+		pbn_used =3D drm_dp_mst_atomic_check_mstb_bw_limit(port->mstb,
-+								 state);
-+		if (pbn_used <=3D 0)
-+			return 0;
-+	}
-+
-+	if (pbn_used > port->full_pbn) {
-+		DRM_DEBUG_ATOMIC("[MSTB:%p] [MST PORT:%p] required PBN of %d exceeds p=
-ort limit of %d\n",
-+				 port->parent, port, pbn_used,
-+				 port->full_pbn);
- 		return -ENOSPC;
- 	}
--	return 0;
-+
-+	DRM_DEBUG_ATOMIC("[MSTB:%p] [MST PORT:%p] uses %d out of %d PBN\n",
-+			 port->parent, port, pbn_used, port->full_pbn);
-+
-+	return pbn_used;
- }
-=20
- static inline int
-@@ -5073,9 +5135,15 @@ int drm_dp_mst_atomic_check(struct drm_atomic_stat=
-e *state)
- 		ret =3D drm_dp_mst_atomic_check_vcpi_alloc_limit(mgr, mst_state);
- 		if (ret)
- 			break;
--		ret =3D drm_dp_mst_atomic_check_bw_limit(mgr->mst_primary, mst_state);
--		if (ret)
-+
-+		mutex_lock(&mgr->lock);
-+		ret =3D drm_dp_mst_atomic_check_mstb_bw_limit(mgr->mst_primary,
-+							    mst_state);
-+		mutex_unlock(&mgr->lock);
-+		if (ret < 0)
- 			break;
-+		else
-+			ret =3D 0;
- 	}
-=20
- 	return ret;
---=20
-2.24.1
+-- 
+2.7.4
 
