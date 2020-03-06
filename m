@@ -2,94 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B2717C1AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A2217C1A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCFPZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:25:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47178 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbgCFPZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:25:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8478BAD88;
-        Fri,  6 Mar 2020 15:25:51 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 0DAE8DA728; Fri,  6 Mar 2020 16:25:27 +0100 (CET)
-Date:   Fri, 6 Mar 2020 16:25:27 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org,
-        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
-        frextrite@gmail.com, linux@roeck-us.net
-Subject: Re: [PATCH] fs: btrfs: block-group.c: Fix suspicious RCU usage
- warning
-Message-ID: <20200306152527.GH2902@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org,
-        frextrite@gmail.com, linux@roeck-us.net
-References: <20200306065243.11699-1-madhuparnabhowmik10@gmail.com>
- <dfd2c14c-acda-3862-9f48-a512e16a895c@gmx.com>
- <20200306140023.GA14186@madhuparna-HP-Notebook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200306140023.GA14186@madhuparna-HP-Notebook>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+        id S1726932AbgCFPZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:25:44 -0500
+Received: from mail-pg1-f172.google.com ([209.85.215.172]:44578 "EHLO
+        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbgCFPZn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 10:25:43 -0500
+Received: by mail-pg1-f172.google.com with SMTP id n24so1215549pgk.11;
+        Fri, 06 Mar 2020 07:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:message-id:in-reply-to:references:subject
+         :mime-version:content-transfer-encoding;
+        bh=U0f7F5SJ5+QRDlAY1wTE5bYTykTqGGdr3VIDJvfMX9U=;
+        b=td1xiA8vNOG/zx1dA/9Svjes7a/vUU/L+C1MrQ9paZNHbMmIIvzK1CIUffxUlR/N9m
+         vuMRkdgTtceI34WKAhyQZThOH+j+GpOuGjSEav3MctVCUkHWiUG9Vx4xGNE+C0C/9IRb
+         bjgFi/EnuLcnhuVAhOZqP/3mzS8h/JPgM1r5bAxkuIJJpt5OrZWHUMFQwhuwMictEsnR
+         D1lrKqjdBm8PuCu0KsrZf+t4/rw/2fXSfI077UtQXy2i3m0kxngHOEs5bqXkvuy/uHD5
+         A1WfuMCosqPUMkNRcY64tfLmO3vTkwzNa3KI6A7G8UvHXv7tpd6Y9FR7vOFVgrSV+BDD
+         u2qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
+         :references:subject:mime-version:content-transfer-encoding;
+        bh=U0f7F5SJ5+QRDlAY1wTE5bYTykTqGGdr3VIDJvfMX9U=;
+        b=SYBxsXW4+OskEd1ab4gwux/83pPCEa8rRHDttz0lXwxgUYnnFRCjDgYg0akvr9STRU
+         xEVRWRegxS7a1/eCNMg2ATeB9wvWB18waK2kSeOu0GfbYchLYCyTb0FZuylfzNhqP/Tw
+         qixgrtI5QKSurIVeYJOJf+LaYFoBCBlpcxM2YzMnpjvOnAT91AzUHQtrcYsDZvh1KIci
+         skj8/FlCj6KrIpSNMWnVwFZz7wjLx0KFZFA2eZP/g39IAgYbIUnbz5FgVhNOfbx4rsU5
+         oDAzLEz78vB+laVGUQbwl9pdVIY0giPoUkhTSZV7BIfAOWJPc+N4Htji5Gzu41fxoeNU
+         2RgA==
+X-Gm-Message-State: ANhLgQ3FM2WvDGnDfPJDdZnOYx9MMfCAcVdgDQLNNhwABG7VdIQOhipo
+        HULrhddpANfwC+GLQlpoo/s=
+X-Google-Smtp-Source: ADFU+vvFswTWSOFzoCgpKWpMnxUox1t9/PId67LHlatzi8Z2lX+XDaSQ7Z/XqGooyrLO0Zbwo0Iq1Q==
+X-Received: by 2002:a63:1459:: with SMTP id 25mr3941888pgu.427.1583508341870;
+        Fri, 06 Mar 2020 07:25:41 -0800 (PST)
+Received: from localhost ([184.63.162.180])
+        by smtp.gmail.com with ESMTPSA id q187sm35905013pfq.185.2020.03.06.07.25.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 07:25:40 -0800 (PST)
+Date:   Fri, 06 Mar 2020 07:25:32 -0800
+From:   John Fastabend <john.fastabend@gmail.com>
+To:     Lorenz Bauer <lmb@cloudflare.com>, john.fastabend@gmail.com,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     kernel-team@cloudflare.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Message-ID: <5e626b6c364eb_17502acca07205b427@john-XPS-13-9370.notmuch>
+In-Reply-To: <20200304101318.5225-4-lmb@cloudflare.com>
+References: <20200304101318.5225-1-lmb@cloudflare.com>
+ <20200304101318.5225-4-lmb@cloudflare.com>
+Subject: RE: [PATCH bpf-next v3 03/12] bpf: tcp: move assertions into
+ tcp_bpf_get_proto
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 07:30:24PM +0530, Madhuparna Bhowmik wrote:
-> On Fri, Mar 06, 2020 at 03:16:53PM +0800, Qu Wenruo wrote:
-> > 
-> > 
-> > On 2020/3/6 下午2:52, madhuparnabhowmik10@gmail.com wrote:
-> > > From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> > > 
-> > > The space_info list is rcu protected.
-> > > Hence, it should be traversed with rcu_read_lock held.
-> > > 
-> > > Warning:
-> > > [   29.104591] =============================
-> > > [   29.104756] WARNING: suspicious RCU usage
-> > > [   29.105046] 5.6.0-rc4-next-20200305 #1 Not tainted
-> > > [   29.105231] -----------------------------
-> > > [   29.105401] fs/btrfs/block-group.c:2011 RCU-list traversed in non-reader section!!
-> > > 
-> > > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > > Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> > > ---
-> > >  fs/btrfs/block-group.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-> > > index 404e050ce8ee..9cabeef66f5b 100644
-> > > --- a/fs/btrfs/block-group.c
-> > > +++ b/fs/btrfs/block-group.c
-> > > @@ -1987,6 +1987,7 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
-> > 
-> > This function is only triggered at mount time, where no other rcu
-> > operation can happen.
-> >
-> Thanks Qu.
+Lorenz Bauer wrote:
+> We need to ensure that sk->sk_prot uses certain callbacks, so that
+> code that directly calls e.g. tcp_sendmsg in certain corner cases
+> works. To avoid spurious asserts, we must to do this only if
+> sk_psock_update_proto has not yet been called. The same invariants
+> apply for tcp_bpf_check_v6_needs_rebuild, so move the call as well.
 > 
-> Joel and Paul, what should we do in this case?
-> Should we just pass cond = true or use list_for_each_entry instead?
+> Doing so allows us to merge tcp_bpf_init and tcp_bpf_reinit.
+> 
+> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
 
-I think we can afford to add rcu lock/unlock, even if it's not strictly
-necessary due to the single threaded context where the function is run.
-There are some lightweight operations inside and inc_block_group starts
-with two spin locks so there's nothing we'd be losing with disabled
-preemption from the caller.
+Small nit if you update it just carry the acks through.
+
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+ 
+>  	skb_verdict = READ_ONCE(progs->skb_verdict);
+> @@ -191,18 +191,14 @@ static int sock_map_link(struct bpf_map *map, struct sk_psock_progs *progs,
+>  			ret = -ENOMEM;
+>  			goto out_progs;
+>  		}
+> -		sk_psock_is_new = true;
+>  	}
+>  
+>  	if (msg_parser)
+>  		psock_set_prog(&psock->progs.msg_parser, msg_parser);
+> -	if (sk_psock_is_new) {
+> -		ret = tcp_bpf_init(sk);
+> -		if (ret < 0)
+> -			goto out_drop;
+> -	} else {
+> -		tcp_bpf_reinit(sk);
+> -	}
+> +
+> +	ret = tcp_bpf_init(sk);
+> +	if (ret < 0)
+> +		goto out_drop;
+>  
+>  	write_lock_bh(&sk->sk_callback_lock);
+>  	if (skb_progs && !psock->parser.enabled) {
+> @@ -239,12 +235,9 @@ static int sock_map_link_no_progs(struct bpf_map *map, struct sock *sk)
+>  	if (IS_ERR(psock))
+>  		return PTR_ERR(psock);
+>  
+> -	if (psock) {
+> -		tcp_bpf_reinit(sk);
+> -		return 0;
+> -	}
+> +	if (!psock)
+> +		psock = sk_psock_init(sk, map->numa_node);
+>  
+> -	psock = sk_psock_init(sk, map->numa_node);
+>  	if (!psock)
+>  		return -ENOMEM;
+
+also small nit this reads,
+
+ if (!psock)
+    psock = ...
+ if (!psock)
+    return -ENOMEM
+
+how about,
+
+ if (!psock) {
+   psock = ...
+   if (!psock) return -ENOMEM;
+ }
