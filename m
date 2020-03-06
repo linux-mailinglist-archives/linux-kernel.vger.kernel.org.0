@@ -2,84 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 097A617BAC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E783B17BAD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgCFKw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:52:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55560 "EHLO mx2.suse.de"
+        id S1726231AbgCFKzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:55:41 -0500
+Received: from foss.arm.com ([217.140.110.172]:59588 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbgCFKw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:52:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id F3F1DAF21;
-        Fri,  6 Mar 2020 10:52:23 +0000 (UTC)
-Message-ID: <48c3673241b500077f6bbc6502cc9808110697ca.camel@suse.de>
-Subject: Re: [PATCH 00/10] Raspberry Pi vmmc regulator support
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Phil Elwell <phil@raspberrypi.com>, devicetree@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
-Cc:     ulf.hansson@linaro.org, f.fainelli@gmail.com,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org
-Date:   Fri, 06 Mar 2020 11:52:21 +0100
-In-Reply-To: <b33aadf7-d481-10db-c290-6e53b696b2d4@raspberrypi.com>
-References: <20200306103857.23962-1-nsaenzjulienne@suse.de>
-         <b33aadf7-d481-10db-c290-6e53b696b2d4@raspberrypi.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-9UhjfUc8RYzzqakH6eEx"
-User-Agent: Evolution 3.34.4 
+        id S1726054AbgCFKzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 05:55:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2A7431B;
+        Fri,  6 Mar 2020 02:55:40 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E648F3F6C4;
+        Fri,  6 Mar 2020 02:55:39 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH] drivers: virtio: Make out_del_vqs dependent on BALLOON_COMPACTION
+Date:   Fri,  6 Mar 2020 10:55:28 +0000
+Message-Id: <20200306105528.5272-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+out_del_vqs label is currently used only when BALLOON_COMPACTION
+configuration option is enabled. Having it disabled triggers the
+following warning at compile time:
 
---=-9UhjfUc8RYzzqakH6eEx
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+drivers/virtio/virtio_balloon.c: In function ‘virtballoon_probe’:
+drivers/virtio/virtio_balloon.c:963:1: warning: label ‘out_del_vqs’
+defined but not used [-Wunused-label]
+  963 | out_del_vqs:
+      | ^~~~~~~~~~~
 
-On Fri, 2020-03-06 at 10:46 +0000, Phil Elwell wrote:
-> Hi Nicolas,
->=20
-> On 06/03/2020 10:38, Nicolas Saenz Julienne wrote:
-> > The series snowballed into adding a new quirk, as I reliased
-> > sdhci-iproc's behaviour is not that uncommon.
-> >=20
-> > Based on Phil Elwell's work in the downstream Raspberry Pi kernel.
->=20
-> There are a few typos in the commit messages ("reliased" -> "realised",
-> "trough" -> "through"), but otherwise:
+Make out_del_vqs dependent on BALLOON_COMPACTION to address the
+issue.
 
-Noted, I'll do an typo sweep for v2.
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ drivers/virtio/virtio_balloon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Reviewed-by: Phil Elwell <phil@raspberrypi.com>
-
-Thanks!
-
-Regards,
-Nicolas
-
-
---=-9UhjfUc8RYzzqakH6eEx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5iK2UACgkQlfZmHno8
-x/4M7gf9EZ0Cv5CEcpHtF6lShxtR/jvIMxJIC1qU2ejjg9BOn/1cwcRQPzFs0VHI
-186bNu4WSIUcv6cJHfJV5zW1lFliXoC4O6ecM0PHvvdDjcVWaoEihNPNpJFJVoEU
-hYPo1VWm0+yHZLuo5sBcCcvVvDQ/gjFcw5btIwbVSxXKlOIwpzowL2piUR28u0wB
-bkXtHzGC7rnPhWDG8MKfiiU5hEX9rZNSVUOv4yTFPk/uDtHYBOFzp5svA0OuNfs+
-Xo/4xoIkoILs/GeZ7qftmSq7VzoUa0qiFSDvtrtH09AjzeUXuSQmV17z/ninTZSQ
-Iv+4C7i6MfH6ePKd09WnGqyjQSq7yg==
-=g6za
------END PGP SIGNATURE-----
-
---=-9UhjfUc8RYzzqakH6eEx--
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 7bfe365d9372..341458fd95ca 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -959,8 +959,8 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 	iput(vb->vb_dev_info.inode);
+ out_kern_unmount:
+ 	kern_unmount(balloon_mnt);
+-#endif
+ out_del_vqs:
++#endif
+ 	vdev->config->del_vqs(vdev);
+ out_free_vb:
+ 	kfree(vb);
+-- 
+2.25.1
 
