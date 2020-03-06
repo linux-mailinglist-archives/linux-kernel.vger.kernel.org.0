@@ -2,68 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB2D17B8A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 09:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8388917B8A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 09:51:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbgCFIv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 03:51:29 -0500
-Received: from smtprelay0205.hostedemail.com ([216.40.44.205]:38779 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726107AbgCFIv3 (ORCPT
+        id S1726524AbgCFIvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 03:51:38 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41165 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbgCFIvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 03:51:29 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id BFF21837F24C;
-        Fri,  6 Mar 2020 08:51:27 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2731:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3871:3872:4250:4321:5007:6119:7903:8603:10004:10400:10848:11026:11232:11658:11914:12048:12296:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:21990:30029:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: can51_63e0f7d79f449
-X-Filterd-Recvd-Size: 1688
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  6 Mar 2020 08:51:26 +0000 (UTC)
-Message-ID: <58c6e6dafabea52e5b030d18b83c13e4f43ab8e3.camel@perches.com>
-Subject: Re: [PATCH v2 1/4] kernfs: kvmalloc xattr value instead of kmalloc
-From:   Joe Perches <joe@perches.com>
-To:     Daniel Xu <dxu@dxuuu.xyz>, cgroups@vger.kernel.org, tj@kernel.org,
-        lizefan@huawei.com, hannes@cmpxchg.org
-Cc:     shakeelb@google.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, kernel-team@fb.com
-Date:   Fri, 06 Mar 2020 00:49:51 -0800
-In-Reply-To: <20200305211632.15369-2-dxu@dxuuu.xyz>
-References: <20200305211632.15369-1-dxu@dxuuu.xyz>
-         <20200305211632.15369-2-dxu@dxuuu.xyz>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Fri, 6 Mar 2020 03:51:38 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b1so767138pgm.8;
+        Fri, 06 Mar 2020 00:51:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KktHYfzCrBS8kPiYs9+pEgMzyzX984i5dmj0nJ9JysY=;
+        b=M+RYqjqz1PqntT8vZIEeUK1Lq7/juK/t7qda5QlSqOWKHI773pXI3Z4nOznRH5Zybr
+         TqgoDoEy/BB2YcceZ7MPrKVAbLbOb+yyH+c5kSVv4BwG9elregK1zFuQplg//TPMwKbK
+         kNAeK5OkinC6a+R+vB8jWP+FluttBYE0GpR0P8O2CWPkaubQ0OiqMcOwUxQ6OcQAzcaz
+         EEGJIGpAlcIcbH3UFl9YnRHPkuzZxEvXZDEceAXtwwENfPdJbEQfDQFR+mGQPg/34+R+
+         LVhNxxk/5oKgFPr2Ru183itm63XZeAxEovwA2DDpv+tOqi42MMYoEMiWQbURjG2Matnr
+         xqtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KktHYfzCrBS8kPiYs9+pEgMzyzX984i5dmj0nJ9JysY=;
+        b=HzQTr+3ZofIc+UDTL8EOdZ7r1lUre8Sjv6W6KwR1YGSsPmC7ptCaL0xFqjFFYghQqw
+         m2lLtHHzhzi/v9+CsY7MBy15BGDzpBaAg8y11pL1Xfyjs+IYjrbZaBeqqsQTWAjfrIDW
+         PbZZQe3yeWFUrjj+8J0ZA9cfEi78zwqmRkEyoqZ/x4vIVFvZiefLTke+PEW8JZ1lAVUX
+         CejKXjrFDwCMc0YLQ28mywXyeShe4ainD8PS5Q4yy/RTMLnAg8Etu9AdkGgKFU+3cLNi
+         48NWKOIBAvFD5VNu8Ev/HzVvw580dOPhbxmGamNJoFO3zoTdnJpUi9aFoSgHQjGoqLnZ
+         GLqA==
+X-Gm-Message-State: ANhLgQ1YpsAk1c7NocjuE4cDGjut1jT1TW5FmOmYnesvPUmGQVVe+aIh
+        eSRggRFF62T48LeStsRanF8=
+X-Google-Smtp-Source: ADFU+vvlagy4Ao6KsyQAplR0VBd9/BzhRXGrNvL42TrLHKgeU0S1Y8qBfwhjGq0U3pCP4+wfTR3rBA==
+X-Received: by 2002:a63:5713:: with SMTP id l19mr2356319pgb.216.1583484697054;
+        Fri, 06 Mar 2020 00:51:37 -0800 (PST)
+Received: from guoguo-omen.lan ([240e:379:94a:b53:8200:7767:6b7e:4da3])
+        by smtp.gmail.com with ESMTPSA id s23sm8527334pjp.28.2020.03.06.00.51.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 00:51:36 -0800 (PST)
+From:   Chuanhong Guo <gch981213@gmail.com>
+To:     linux-mediatek@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org
+Cc:     Chuanhong Guo <gch981213@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 0/4] rewrite mtk-quadspi spi-nor driver with spi-mem
+Date:   Fri,  6 Mar 2020 16:50:48 +0800
+Message-Id: <20200306085052.28258-1-gch981213@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-03-05 at 13:16 -0800, Daniel Xu wrote:
-> It's not really necessary to have contiguous physical memory for xattr
-> values. We no longer need to worry about higher order allocations
-> failing with kvmalloc, especially because the xattr size limit is at
-> 64K.
+This patchset adds a spi-mem driver for Mediatek SPI-NOR controller,
+which already has limited support by mtk-quadspi. This new driver can
+make use of full quadspi capability of this controller.
 
-So why use vmalloc memory at all?
+1st new commit makes spi-max-frequency optional to match current
+binding doc and make this new driver compatible with old driver dt
+bindings.
 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-']
-> @@ -817,7 +817,7 @@ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
->  	if (len < sizeof(*new_xattr))
->  		return NULL;
->  
-> -	new_xattr = kmalloc(len, GFP_KERNEL);
-> +	new_xattr = kvmalloc(len, GFP_KERNEL);
+Change since v2:
+ revert binding example replacement and add a dummy irq binding
 
-Why is this sensible?
-vmalloc memory is a much more limited resource.
+Changes since v1:
+ two new commits.
 
-Also, it seems as if the function should set
-new_xattr->name to NULL before the return.
+Chuanhong Guo (4):
+  spi: make spi-max-frequency optional
+  spi: add support for mediatek spi-nor controller
+  dt-bindings: convert mtk-quadspi binding doc for spi-mtk-nor
+  mtd: spi-nor: remove mtk-quadspi driver
 
+ .../mtk-quadspi.txt => spi/spi-mtk-nor.txt}   |  15 +-
+ drivers/mtd/spi-nor/Kconfig                   |   8 -
+ drivers/mtd/spi-nor/Makefile                  |   1 -
+ drivers/mtd/spi-nor/mtk-quadspi.c             | 565 --------------
+ drivers/spi/Kconfig                           |  10 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-mtk-nor.c                     | 689 ++++++++++++++++++
+ drivers/spi/spi.c                             |   9 +-
+ 8 files changed, 708 insertions(+), 590 deletions(-)
+ rename Documentation/devicetree/bindings/{mtd/mtk-quadspi.txt => spi/spi-mtk-nor.txt} (75%)
+ delete mode 100644 drivers/mtd/spi-nor/mtk-quadspi.c
+ create mode 100644 drivers/spi/spi-mtk-nor.c
+
+-- 
+2.24.1
 
