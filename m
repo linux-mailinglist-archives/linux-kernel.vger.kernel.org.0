@@ -2,175 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B260517BB98
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B6317BBB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:31:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbgCFLX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:23:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33992 "EHLO mga14.intel.com"
+        id S1726299AbgCFLbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:31:39 -0500
+Received: from foss.arm.com ([217.140.110.172]:59960 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbgCFLX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:23:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 03:23:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,521,1574150400"; 
-   d="scan'208";a="234775985"
-Received: from unknown (HELO linuxpc.iind.intel.com) ([10.223.107.108])
-  by orsmga008.jf.intel.com with ESMTP; 06 Mar 2020 03:23:52 -0800
-From:   Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
-To:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     srinivas.pandruvada@linux.intel.com, andriy.shevchenko@intel.com,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
-Subject: [PATCH] tools/thermal: tmon: replace error message SIGINT with SIGTERM
-Date:   Fri,  6 Mar 2020 17:00:11 +0530
-Message-Id: <1583494211-31231-1-git-send-email-sumeet.r.pawnikar@intel.com>
-X-Mailer: git-send-email 1.7.9.5
+        id S1726090AbgCFLbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 06:31:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FED431B;
+        Fri,  6 Mar 2020 03:31:38 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F6683F6C4;
+        Fri,  6 Mar 2020 03:31:37 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH] drivers: soc: Fix COMPILE_TEST for IMX SCU
+Date:   Fri,  6 Mar 2020 11:31:19 +0000
+Message-Id: <20200306113119.56577-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the wrong error message reporting by replacing SIGINT with SIGTERM.
-Fix multiple checkpatch errors and warnings.
+IMX SCU SoCs support COMPILE_TEST that allows to compile the driver on a
+different platform for development purposes.
+These SoCs depend on a firmware interface that is not built on COMPILE_TEST
+mode. This results in triggering the following errors at compile time (on
+arm64):
 
-Signed-off-by: Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+aarch64-none-linux-gnu-ld:
+drivers/soc/imx/soc-imx-scu.o: in function `imx_scu_soc_probe':
+soc-imx-scu.c:(.text+0x24): undefined reference to `imx_scu_get_handle'
+aarch64-none-linux-gnu-ld:
+soc-imx-scu.c:(.text+0xac): undefined reference to `imx_scu_call_rpc'
+aarch64-none-linux-gnu-ld:
+soc-imx-scu.c:(.text+0xd8): undefined reference to `imx_scu_call_rpc'
+linux/Makefile:1078: recipe for target 'vmlinux' failed
+make[1]: *** [vmlinux] Error 1
+Makefile:180: recipe for target 'sub-make' failed
+make: *** [sub-make] Error 2
+
+Enable the relevant compilation units in the Makefile when the config option
+is selected to address the issue.
+
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- tools/thermal/tmon/tmon.c |   26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+ drivers/firmware/imx/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/thermal/tmon/tmon.c b/tools/thermal/tmon/tmon.c
-index 83ec6e4..7eb3216 100644
---- a/tools/thermal/tmon/tmon.c
-+++ b/tools/thermal/tmon/tmon.c
-@@ -46,7 +46,7 @@
- 
- pthread_t event_tid;
- pthread_mutex_t input_lock;
--void usage()
-+void usage(void)
- {
- 	printf("Usage: tmon [OPTION...]\n");
- 	printf("  -c, --control         cooling device in control\n");
-@@ -62,7 +62,7 @@ void usage()
- 	exit(0);
- }
- 
--void version()
-+void version(void)
- {
- 	printf("TMON version %s\n", VERSION);
- 	exit(EXIT_SUCCESS);
-@@ -70,7 +70,6 @@ void version()
- 
- static void tmon_cleanup(void)
- {
--
- 	syslog(LOG_INFO, "TMON exit cleanup\n");
- 	fflush(stdout);
- 	refresh();
-@@ -96,7 +95,6 @@ static void tmon_cleanup(void)
- 	exit(1);
- }
- 
--
- static void tmon_sig_handler(int sig)
- {
- 	syslog(LOG_INFO, "TMON caught signal %d\n", sig);
-@@ -120,7 +118,6 @@ static void tmon_sig_handler(int sig)
- 	tmon_exit = true;
- }
- 
--
- static void start_syslog(void)
- {
- 	if (debug_on)
-@@ -167,7 +164,6 @@ static void prepare_logging(void)
- 		return;
- 	}
- 
--
- 	fprintf(tmon_log, "#----------- THERMAL SYSTEM CONFIG -------------\n");
- 	for (i = 0; i < ptdata.nr_tz_sensor; i++) {
- 		char binding_str[33]; /* size of long + 1 */
-@@ -175,7 +171,7 @@ static void prepare_logging(void)
- 
- 		memset(binding_str, 0, sizeof(binding_str));
- 		for (j = 0; j < 32; j++)
--			binding_str[j] = (ptdata.tzi[i].cdev_binding & 1<<j) ?
-+			binding_str[j] = (ptdata.tzi[i].cdev_binding & (1 << j)) ?
- 				'1' : '0';
- 
- 		fprintf(tmon_log, "#thermal zone %s%02d cdevs binding: %32s\n",
-@@ -187,7 +183,6 @@ static void prepare_logging(void)
- 				trip_type_name[ptdata.tzi[i].tp[j].type],
- 				ptdata.tzi[i].tp[j].temp);
- 		}
--
- 	}
- 
- 	for (i = 0; i <	ptdata.nr_cooling_dev; i++)
-@@ -219,7 +214,6 @@ static void prepare_logging(void)
- 	{ 0, 0, NULL, 0 }
- };
- 
--
- int main(int argc, char **argv)
- {
- 	int err = 0;
-@@ -283,7 +277,7 @@ int main(int argc, char **argv)
- 	if (signal(SIGINT, tmon_sig_handler) == SIG_ERR)
- 		syslog(LOG_DEBUG, "Cannot handle SIGINT\n");
- 	if (signal(SIGTERM, tmon_sig_handler) == SIG_ERR)
--		syslog(LOG_DEBUG, "Cannot handle SIGINT\n");
-+		syslog(LOG_DEBUG, "Cannot handle SIGTERM\n");
- 
- 	if (probe_thermal_sysfs()) {
- 		pthread_mutex_destroy(&input_lock);
-@@ -328,8 +322,7 @@ int main(int argc, char **argv)
- 			show_cooling_device();
- 		}
- 		time_elapsed += ticktime;
--		controller_handler(trec[0].temp[target_tz_index] / 1000,
--				&yk);
-+		controller_handler(trec[0].temp[target_tz_index] / 1000, &yk);
- 		trec[0].pid_out_pct = yk;
- 		if (!dialogue_on)
- 			show_control_w();
-@@ -340,14 +333,15 @@ int main(int argc, char **argv)
- 	return 0;
- }
- 
--static void start_daemon_mode()
-+static void start_daemon_mode(void)
- {
- 	daemon_mode = 1;
- 	/* fork */
- 	pid_t	sid, pid = fork();
--	if (pid < 0) {
+diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
+index 08bc9ddfbdfb..5604adae31d9 100644
+--- a/drivers/firmware/imx/Makefile
++++ b/drivers/firmware/imx/Makefile
+@@ -2,3 +2,5 @@
+ obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
+ obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o
+ obj-$(CONFIG_IMX_SCU_PD)	+= scu-pd.o
 +
-+	if (pid < 0)
- 		exit(EXIT_FAILURE);
--	} else if (pid > 0)
-+	else if (pid > 0)
- 		/* kill parent */
- 		exit(EXIT_SUCCESS);
- 
-@@ -366,11 +360,9 @@ static void start_daemon_mode()
- 	if ((chdir("/")) < 0)
- 		exit(EXIT_FAILURE);
- 
--
- 	sleep(10);
- 
- 	close(STDIN_FILENO);
- 	close(STDOUT_FILENO);
- 	close(STDERR_FILENO);
--
- }
++obj-$(CONFIG_COMPILE_TEST)	+= imx-scu.o misc.o imx-scu-irq.o
 -- 
-1.7.9.5
+2.25.1
 
