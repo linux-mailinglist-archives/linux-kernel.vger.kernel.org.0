@@ -2,107 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9387417B9B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:00:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B34817B9B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 10:57:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgCFKAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:00:18 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54625 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726090AbgCFKAS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:00:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583488817;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AVZKZRodnT8m61EYZkSnJRTdxqQpltbB/y6KfgTIT1g=;
-        b=gIKx0pE3ayOl+1aP25PpEwEthcB4DRRm00Ge3I8PzBP96wlK1r5WxeLP5UoX7pc7WyvuuD
-        7IZSBbuMKfR3XVt6NnzvItQhuwVoBqKHlolzOz+i1LRZMB8e4WjcnJokrh6UHgsuLIuxdA
-        AqNYGPeMxs58SHZ15xkmp9UKLTLLSbk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-239-tC2jjpZ8PDGfgE4KKz_Ljg-1; Fri, 06 Mar 2020 05:00:16 -0500
-X-MC-Unique: tC2jjpZ8PDGfgE4KKz_Ljg-1
-Received: by mail-wm1-f69.google.com with SMTP id m4so682727wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 02:00:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AVZKZRodnT8m61EYZkSnJRTdxqQpltbB/y6KfgTIT1g=;
-        b=YdZ+5SRqPc3M5IzRVllTYOK+vtsOJnbOABP4XVkJs2vb+gqcDndwdVz/OVgmMZa7IL
-         X9JvJkzBhbd4SLqoiVDnhrinBGrP2U3ZzDScgb24EFCwu4JEl4U7fDi5q2muNgFnlpDh
-         t7A8LeyTn+AsduB4SaBVQ27MyWWwKA3wQowdixbJpByaRf9vlwPWzPs5D+1BvOM/BuJI
-         n2+waQv0vHMXJ7Pm9O5AIEphiVoWeoycGtmaR2fnFqsZQxJSAONDZ3YP9K0u+2KamwTs
-         WmfLkMiOctOu/5B+PGXu6VHs1AtS87HKW3RgnnrYsBdtG/XUWV8t+RwIZlD1EYsSLt/j
-         xt3g==
-X-Gm-Message-State: ANhLgQ05xnx3TE3Rt3lM1dTdei7htCktWTKinGCXf5Y83b3TtKUPgnLB
-        +LvllhFhyP4mkRjiNQXARGGKo9KQZTbRGhk0Q7hVTGYV1zcV/D+/6QoM4s+FKyfLsunZO2FHp3L
-        newt6ttBRdkijFwW/R4ngtyoi
-X-Received: by 2002:adf:ee03:: with SMTP id y3mr3344809wrn.5.1583488814290;
-        Fri, 06 Mar 2020 02:00:14 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsV7StFA621WH1U3poGeCCFj5kAbCl4GYqaDAZLKVQ5l065AMt9smou8/Ov0naR1gFtRC+gAw==
-X-Received: by 2002:adf:ee03:: with SMTP id y3mr3344781wrn.5.1583488814004;
-        Fri, 06 Mar 2020 02:00:14 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:b99a:4374:773d:f32e? ([2001:b07:6468:f312:b99a:4374:773d:f32e])
-        by smtp.gmail.com with ESMTPSA id i67sm25991960wri.50.2020.03.06.02.00.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 02:00:13 -0800 (PST)
-Subject: Re: [PATCH] KVM: VMX: Use wrapper macro
- ~RMODE_GUEST_OWNED_EFLAGS_BITS directly
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linmiaohe <linmiaohe@huawei.com>
-Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-References: <f1b01b4903564f2c8c267a3996e1ac29@huawei.com>
- <1e3f7ff0-0159-98e8-ba21-8806c3a14820@redhat.com>
- <87sgiles16.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <2cde5e91-b357-81f9-9e39-fd5d99bb81fd@redhat.com>
-Date:   Fri, 6 Mar 2020 11:00:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <87sgiles16.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726359AbgCFJ52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 04:57:28 -0500
+Received: from mga11.intel.com ([192.55.52.93]:49249 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726054AbgCFJ51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 04:57:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 01:57:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,521,1574150400"; 
+   d="scan'208";a="234750863"
+Received: from unknown (HELO linuxpc.iind.intel.com) ([10.223.107.108])
+  by orsmga008.jf.intel.com with ESMTP; 06 Mar 2020 01:57:25 -0800
+From:   Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+To:     rui.zhang@intel.com, srinivas.pandruvada@linux.intel.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>
+Subject: [PATCH] thermal: int340x: processor_thermal: Add Tiger Lake support
+Date:   Fri,  6 Mar 2020 15:33:44 +0530
+Message-Id: <1583489024-29209-1-git-send-email-sumeet.r.pawnikar@intel.com>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/03/20 10:44, Vitaly Kuznetsov wrote:
->>> Define a macro RMODE_HOST_OWNED_EFLAGS_BITS for (X86_EFLAGS_IOPL |
->>> X86_EFLAGS_VM) as suggested by Vitaly seems a good way to fix this ?
->>> Thanks.
->> No, what if a host-owned flag was zero?  I'd just leave it as is.
->>
-> I'm not saying my suggestion was a good idea but honestly I'm failing to
-> wrap my head around this. The suggested 'RMODE_HOST_OWNED_EFLAGS_BITS'
-> would just be a define for (X86_EFLAGS_IOPL | X86_EFLAGS_VM) so
-> technically the patch would just be nop, no?
+From: Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>
 
-It would not be a nop for the reader.
+Added new PCI id for Tiger Lake processor thermal device along with
+MMIO RAPL support.
 
-Something called RMODE_{GUEST,HOST}_OWNED_EFLAGS_BITS is a mask.  It
-tells you nothing about whether those bugs are 0 or 1.  It's just by
-chance that all three host-owned EFLAGS bits are 1 while in real mode.
-It wouldn't be the case if, for example, we ran the guest using vm86
-mode extensions (i.e. setting CR4.VME=1).  Then VIF would be host-owned,
-but it wouldn't necessarily be 1.
+Signed-off-by: Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>
+---
+ .../int340x_thermal/processor_thermal_device.c     |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Paolo
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index b1fd345..297db1d 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -45,6 +45,9 @@
+ /* JasperLake thermal reporting device */
+ #define PCI_DEVICE_ID_PROC_JSL_THERMAL	0x4503
+ 
++/* TigerLake thermal reporting device */
++#define PCI_DEVICE_ID_PROC_TGL_THERMAL	0x9A03
++
+ #define DRV_NAME "proc_thermal"
+ 
+ struct power_config {
+@@ -728,6 +731,8 @@ static int proc_thermal_resume(struct device *dev)
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_ICL_THERMAL),
+ 		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_JSL_THERMAL)},
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_TGL_THERMAL),
++		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ 0, },
+ };
+ 
+-- 
+1.7.9.5
 
