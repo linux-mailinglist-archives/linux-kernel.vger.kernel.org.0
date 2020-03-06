@@ -2,117 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E94E17C1F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:37:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB7BF17C20C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:43:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbgCFPhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:37:24 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:41264 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbgCFPhY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:37:24 -0500
-Received: by mail-qk1-f194.google.com with SMTP id b5so2651805qkh.8
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 07:37:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=j6sXql4oSXT6Q/ws5TYxgRAPlqnRvsWRJL+OU5ImErY=;
-        b=YAqiAObC9L8ErnG6/sYX0Zx1A4YfyyMtalpuashj3Fr1rvx0oV1OTzOsf1WWd5r0Ca
-         i+rVg+EPA+7B8n4SzAQBM96nGiG7YpOWr3ldTbt4yPhe+3suFzHaAuvNWtiPfdWgFQbB
-         pkC+mQsm5hMdAydfzA3Znr9vsufyjEQL10k4hXn7OL81+feViHmmYOG/rgMttm5whuRf
-         7HUsfjEYrCq2jLdGGJkmywIhcwW8IJHjIsLL+MlYXHPgaJQHc4Oc2VasPVdIWN4zzAEm
-         gBTHTQQcFMLOG2dgiAClPkxa6C2ODhB5T3Q1grlW+yo2942vwg11v77ivtsKG77Cy7F7
-         4fDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=j6sXql4oSXT6Q/ws5TYxgRAPlqnRvsWRJL+OU5ImErY=;
-        b=sO1ad0N0H2+0VgVTnzPSD6qPDZa+7KyeKlicAxzLBGkvoqbGr+nDgwPOPdBesCPp+Y
-         2BIVFDinFr7ek/af/w5m4v8XLWe0uImelyM80DZx/k9OZPIjy7VX+tpnPA9XNL80vsWJ
-         RLzCaB3OY3j7FO0V7t4hKoO8SZEnRjVmK7o5mlQbHiTOm/GM6XtLYT+KY0Jwx9lkod1X
-         QSioHL4p0zkA/3B74QDyoa52349YEffSvWsc0pBJWsNlSMD/CcByq3HMdPQIVERBp7HC
-         ifZTB5uzLE/cqQTrysOL1U8ByxDei8DBi4DfkPRb7p6crStsaBglyZuZKYL2vaH5T9FK
-         ZMrg==
-X-Gm-Message-State: ANhLgQ1tctBiOq9qdqd4tGSyzlIj9sixuvhBLP1r3ED/s54kcxwFPFel
-        RM1dJksRrUUsFb0dJgmHC7uWLA==
-X-Google-Smtp-Source: ADFU+vssYst3rQrdo3Lx7+NOozn/HbgaawMN4v1NWOduUezf5Zgkw4/bA/AC8DrCvilHOguU7M7DHA==
-X-Received: by 2002:a37:a80c:: with SMTP id r12mr3278127qke.241.1583509043047;
-        Fri, 06 Mar 2020 07:37:23 -0800 (PST)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id t3sm16038837qkt.114.2020.03.06.07.37.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Mar 2020 07:37:22 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     aryabinin@virtuozzo.com, glider@google.com, dvyukov@google.com,
-        walter-zh.wu@mediatek.com, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] kasan/tags: fix -Wdeclaration-after-statement warn
-Date:   Fri,  6 Mar 2020 10:37:10 -0500
-Message-Id: <1583509030-27939-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726894AbgCFPny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:43:54 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:35292 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbgCFPny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 10:43:54 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 66F65200BF2;
+        Fri,  6 Mar 2020 16:43:52 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EED8A200BED;
+        Fri,  6 Mar 2020 16:43:48 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6F9A240294;
+        Fri,  6 Mar 2020 23:43:44 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] thermal: add COMPILE_TEST support for i.MX8MM
+Date:   Fri,  6 Mar 2020 23:37:37 +0800
+Message-Id: <1583509057-8197-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The linux-next commit "kasan: detect negative size in memory operation
-function" introduced a compilation warning,
+Add COMPILE_TEST support to i.MX8MM thermal driver for better compile
+testing coverage.
 
-mm/kasan/tags_report.c:51:27: warning: ISO C90 forbids mixing
-declarations and code [-Wdeclaration-after-statement]
-        struct kasan_alloc_meta *alloc_meta;
-
-Fix it by moving a code around a bit where there is no strict
-dependency.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- mm/kasan/tags_report.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/thermal/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
-index 1d412760551a..bee43717d6f0 100644
---- a/mm/kasan/tags_report.c
-+++ b/mm/kasan/tags_report.c
-@@ -36,17 +36,6 @@
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 4d6753f..91af271 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -265,7 +265,7 @@ config IMX_SC_THERMAL
  
- const char *get_bug_type(struct kasan_access_info *info)
- {
--	/*
--	 * If access_size is a negative number, then it has reason to be
--	 * defined as out-of-bounds bug type.
--	 *
--	 * Casting negative numbers to size_t would indeed turn up as
--	 * a large size_t and its value will be larger than ULONG_MAX/2,
--	 * so that this can qualify as out-of-bounds.
--	 */
--	if (info->access_addr + info->access_size < info->access_addr)
--		return "out-of-bounds";
--
- #ifdef CONFIG_KASAN_SW_TAGS_IDENTIFY
- 	struct kasan_alloc_meta *alloc_meta;
- 	struct kmem_cache *cache;
-@@ -71,6 +60,17 @@ const char *get_bug_type(struct kasan_access_info *info)
- 	}
- 
- #endif
-+	/*
-+	 * If access_size is a negative number, then it has reason to be
-+	 * defined as out-of-bounds bug type.
-+	 *
-+	 * Casting negative numbers to size_t would indeed turn up as
-+	 * a large size_t and its value will be larger than ULONG_MAX/2,
-+	 * so that this can qualify as out-of-bounds.
-+	 */
-+	if (info->access_addr + info->access_size < info->access_addr)
-+		return "out-of-bounds";
-+
- 	return "invalid-access";
- }
- 
+ config IMX8MM_THERMAL
+ 	tristate "Temperature sensor driver for Freescale i.MX8MM SoC"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on OF
+ 	help
+ 	  Support for Thermal Monitoring Unit (TMU) found on Freescale i.MX8MM SoC.
 -- 
-1.8.3.1
+2.7.4
 
