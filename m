@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D8F17BD69
+	by mail.lfdr.de (Postfix) with ESMTP id CD60917BD6A
 	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:01:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgCFNBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:01:02 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:36050 "EHLO
+        id S1727023AbgCFNBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:01:06 -0500
+Received: from mail.baikalelectronics.com ([87.245.175.226]:36060 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbgCFNBB (ORCPT
+        with ESMTP id S1726307AbgCFNBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:01:01 -0500
+        Fri, 6 Mar 2020 08:01:05 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 27F388030797;
-        Fri,  6 Mar 2020 13:00:58 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id A8E4B803087C;
+        Fri,  6 Mar 2020 13:00:59 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hd9FgrdLWqSy; Fri,  6 Mar 2020 16:00:56 +0300 (MSK)
+        with ESMTP id MFpeuyWWjueb; Fri,  6 Mar 2020 16:00:58 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -29,15 +29,15 @@ CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Paul Burton <paulburton@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH 4/5] clk: Add Baikal-T1 CCU PLLs driver
-Date:   Fri, 6 Mar 2020 16:00:47 +0300
+Subject: [PATCH 5/5] clk: Add Baikal-T1 CCU dividers driver
+Date:   Fri, 6 Mar 2020 16:00:48 +0300
 In-Reply-To: <20200306130048.8868-1-Sergey.Semin@baikalelectronics.ru>
 References: <20200306130048.8868-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306130058.27F388030797@mail.baikalelectronics.ru>
+Message-Id: <20200306130059.A8E4B803087C@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,35 +45,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
-Baikal-T1 is supposed to be supplied with a high-frequency external
-oscillator. But in order to create signals suitable for each IP-block
-embedded into the SoC the oscillator output is primarily connected to
-a set of CCU PLLs. There are five of them to create clocks for the MIPS
-P5600 cores, the embedded DDR controller, SATA, Ethernet and PCIe
-domains. The last three domains though named by the biggest system
-interfaces in fact include nearly all of the rest SoC peripherals.
-Each of the PLLs is based on True Circuits TSMC CLN28HPM IP-core with
-an interface wrapper (so called safe PLL' clocks switcher) to simplify
-the PLL configuration procedure.
+Nearly each Baikal-T1 IP-core is supposed to have a clock source
+of particular frequency. But since there are greater than five
+IP-blocks embedded into the SoC, the CCU PLLs can't fulfill all the
+devices needs. Baikal-T1 CCU provides a set of fixed and configurable
+clocks dividers in order to generate a necessary signal for each chip
+sub-block.
 
-This driver creates the of-based hardware clocks to use them then in
-the corresponding subsystems. In order to simplify the driver code we
-split the functionality up into the PLLs clocks operations and hardware
-clocks declaration/registration procedures. So if CLK_BT1_CCU is
-defined, then the first part is available in the kernel, while
-CLK_BT1_CCU_PLL config makes the actual clocks being registered at the
-time of_clk_init() is called.
+This driver creates the of-based hardware clocks for each divider
+available in Baikal-T1 CCU. The same way as for PLLs we split the
+functionality up into the clocks operations (gate, ungate, set rate,
+etc) and hardware clocks declaration/registration procedures. So if
+CLK_BT1_CCU is defined, then the first part is available in the
+kernel, while CLK_BT1_CCU_DIV config makes the actual clocks being
+registered at the time of_clk_init() is called.
 
-Even though the PLLs are based on the same IP-core, they actually may
-have some differences. In particular, some CCU PLLs supports the output
-clock change without gating them (like CPU or PCIe PLLs), while the
-others don't, some CCU PLLs are critical and aren't supposed to be
-gated. In order to cover all of these cases the hardware clocks driver
-is designed with a info-descriptor pattern. So there are special static
-descriptors declared for each PLL, which is then used to create a
-hardware clock with proper operations. Additionally debugfs-files are
-provided for each PLL' field to make sure the implemented
-rate-PLLs-dividers calculation algorithm is correct.
+All CCU dividers are distributed into two CCU sub-block: AXI-bus and
+system devices reference clocks. So the first sub-block is used to
+supply the clocks for AXI-bus interfaces (AXI clock domains) and the
+second one provides the SoC IP-cores reference clocks. Each sub-block
+is represented by a dedicated dts node, so they have different
+compatible strings to distinguish one from another.
+
+For some reason CCU provides the dividers of different types. Some
+dividers can be gateable some can't, some are fixed while the others
+are variable, some have special divider' limitations, some's got a
+non-standard register layout and so on. In order to cover all of these
+cases the hardware clocks driver is designed with an info-descriptor
+pattern. So there are special static descriptors declared for the
+dividers of each type with additional flags describing the block
+peculiarity. These descriptors are then used to create hardware clocks
+with proper operations.
+
+Some CCU dividers also provides a way to reset a domain they generate
+a clock for. So the CCU AXI dividers and CCU system devices clock
+drivers also perform the reset controller registration.
+
+Finally in addition to the clocks and reset functionality CCU exposes
+several unrelated blocks like irqless Designware i2c controller with
+indirectly accessed registers, AXI bus errors detector, DW PCIe
+controller PM/clocks/reset manager, CPU/L2 settings block. They are
+considered to be a part of CCU system devices clock sub-block and
+some of them available as syscons when CLK_BT1_CCU_MFD config is
+enabled.
 
 Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
@@ -81,101 +95,51 @@ Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: Paul Burton <paulburton@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 ---
- drivers/clk/Kconfig                 |   1 +
- drivers/clk/Makefile                |   1 +
- drivers/clk/baikal-t1/Kconfig       |  35 ++
- drivers/clk/baikal-t1/Makefile      |   2 +
- drivers/clk/baikal-t1/ccu-pll.c     | 474 ++++++++++++++++++++++++++++
- drivers/clk/baikal-t1/ccu-pll.h     |  73 +++++
- drivers/clk/baikal-t1/clk-ccu-pll.c | 217 +++++++++++++
- drivers/clk/baikal-t1/common.h      |  44 +++
- 8 files changed, 847 insertions(+)
- create mode 100644 drivers/clk/baikal-t1/Kconfig
- create mode 100644 drivers/clk/baikal-t1/Makefile
- create mode 100644 drivers/clk/baikal-t1/ccu-pll.c
- create mode 100644 drivers/clk/baikal-t1/ccu-pll.h
- create mode 100644 drivers/clk/baikal-t1/clk-ccu-pll.c
- create mode 100644 drivers/clk/baikal-t1/common.h
+ drivers/clk/baikal-t1/Kconfig       |  11 +
+ drivers/clk/baikal-t1/Makefile      |   1 +
+ drivers/clk/baikal-t1/ccu-div.c     | 531 ++++++++++++++++++++++++++++
+ drivers/clk/baikal-t1/ccu-div.h     | 114 ++++++
+ drivers/clk/baikal-t1/clk-ccu-div.c | 522 +++++++++++++++++++++++++++
+ drivers/clk/baikal-t1/common.h      |   7 +
+ 6 files changed, 1186 insertions(+)
+ create mode 100644 drivers/clk/baikal-t1/ccu-div.c
+ create mode 100644 drivers/clk/baikal-t1/ccu-div.h
+ create mode 100644 drivers/clk/baikal-t1/clk-ccu-div.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index bcb257baed06..b32da34ebcf9 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -341,6 +341,7 @@ config COMMON_CLK_FIXED_MMIO
- 
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
-+source "drivers/clk/baikal-t1/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc2fd31..1496045d4e01 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -75,6 +75,7 @@ obj-y					+= analogbits/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
- obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
- obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
-+obj-$(CONFIG_CLK_BAIKAL_T1)		+= baikal-t1/
- obj-y					+= bcm/
- obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
- obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
 diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
-new file mode 100644
-index 000000000000..0e2fc86f3ab8
---- /dev/null
+index 0e2fc86f3ab8..e77aef17f734 100644
+--- a/drivers/clk/baikal-t1/Kconfig
 +++ b/drivers/clk/baikal-t1/Kconfig
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: GPL-2.0
-+config CLK_BAIKAL_T1
-+	bool "Baikal-T1 Clocks Control Unit interface"
-+	depends on (MIPS_BAIKAL_T1 || COMPILE_TEST) && OF
+@@ -32,4 +32,15 @@ config CLK_BT1_CCU_PLL
+ 	  over the clock dividers to be only then used as an individual
+ 	  reference clocks of a target device.
+ 
++config CLK_BT1_CCU_DIV
++	bool "Baikal-T1 CCU Dividers support"
++	select RESET_CONTROLLER
 +	default y
 +	help
-+	  Clocks Control Unit is the core of Baikal-T1 SoC responsible for the
-+	  chip subsystems clocking and resetting. It consists of multiple
-+	  global clock domains, which can be reset by means of the CCU control
-+	  registers. These domains and devices placed in them are fed with
-+	  clocks generated by a hierarchy of PLLs, configurable and fixed
-+	  dividers. In addition CCU exposes several unrelated functional blocks
-+	  like irqless Designware i2c controller with indirectly accessed
-+	  registers, AXI bus errors detector, DW PCIe controller PM/clocks/reset
-+	  manager, etc.
++	  Enable this to support the CCU dividers used to distribute clocks
++	  between AXI-bus and system devices coming from CCU PLLs of Baikal-T1
++	  SoCs. CCU dividers can be either configurable or with fixed divider,
++	  either gateable or ungateable. Some of the CCU dividers can be as well
++	  used to reset the domains they're supplying clocks too.
 +
-+	  This driver provides a set of functions to create the kernel clock
-+	  devices of Baikal-T1 PLLs and dividers, and to manipulate the reset
-+	  signals of the SoC.
-+
-+if CLK_BAIKAL_T1
-+
-+config CLK_BT1_CCU_PLL
-+	bool "Baikal-T1 CCU PLLs support"
-+	default y
-+	help
-+	  Enable this to support the PLLs embedded into the Baikal-T1 SoCs.
-+	  These are five PLLs placed at the root of the clocks hierarchy,
-+	  right after the external reference osciallator (normally of 25MHz).
-+	  They are used to generate a high frequency signals, which are
-+	  either directly wired to the consumers (like CPUs, DDR) or passed
-+	  over the clock dividers to be only then used as an individual
-+	  reference clocks of a target device.
-+
-+endif
+ endif
 diff --git a/drivers/clk/baikal-t1/Makefile b/drivers/clk/baikal-t1/Makefile
-new file mode 100644
-index 000000000000..559f034af19e
---- /dev/null
+index 559f034af19e..0daf1bfcb72f 100644
+--- a/drivers/clk/baikal-t1/Makefile
 +++ b/drivers/clk/baikal-t1/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_CLK_BT1_CCU_PLL) += ccu-pll.o clk-ccu-pll.o
-diff --git a/drivers/clk/baikal-t1/ccu-pll.c b/drivers/clk/baikal-t1/ccu-pll.c
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_CLK_BT1_CCU_PLL) += ccu-pll.o clk-ccu-pll.o
++obj-$(CONFIG_CLK_BT1_CCU_DIV) += ccu-div.o clk-ccu-div.o
+diff --git a/drivers/clk/baikal-t1/ccu-div.c b/drivers/clk/baikal-t1/ccu-div.c
 new file mode 100644
-index 000000000000..f2087a80b64d
+index 000000000000..5c49309d1fe5
 --- /dev/null
-+++ b/drivers/clk/baikal-t1/ccu-pll.c
-@@ -0,0 +1,474 @@
++++ b/drivers/clk/baikal-t1/ccu-div.c
+@@ -0,0 +1,531 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
@@ -184,14 +148,13 @@ index 000000000000..f2087a80b64d
 + *   Serge Semin <Sergey.Semin@baikalelectronics.ru>
 + *   Dmitry Dunaev <dmitry.dunaev@baikalelectronics.ru>
 + *
-+ * Baikal-T1 CCU PLL interface driver.
++ * Baikal-T1 CCU Divider interface driver.
 + */
 +
-+#define pr_fmt(fmt) "bt1-ccu-pll: " fmt
++#define pr_fmt(fmt) "bt1-ccu-div: " fmt
 +
 +#include <linux/kernel.h>
 +#include <linux/printk.h>
-+#include <linux/limits.h>
 +#include <linux/bits.h>
 +#include <linux/slab.h>
 +#include <linux/clk-provider.h>
@@ -199,78 +162,66 @@ index 000000000000..f2087a80b64d
 +#include <linux/spinlock.h>
 +#include <linux/delay.h>
 +#include <linux/time64.h>
-+#include <linux/rational.h>
 +#include <linux/debugfs.h>
 +
-+#include "ccu-pll.h"
++#include "ccu-div.h"
 +#include "common.h"
 +
-+#define CCU_PLL_CTL			0x00
-+#define CCU_PLL_CTL_EN			BIT(0)
-+#define CCU_PLL_CTL_RST			BIT(1)
-+#define CCU_PLL_CTL_CLKR_FLD		2
-+#define CCU_PLL_CTL_CLKR_MASK		GENMASK(7, CCU_PLL_CTL_CLKR_FLD)
-+#define CCU_PLL_CTL_CLKF_FLD		8
-+#define CCU_PLL_CTL_CLKF_MASK		GENMASK(20, CCU_PLL_CTL_CLKF_FLD)
-+#define CCU_PLL_CTL_CLKOD_FLD		21
-+#define CCU_PLL_CTL_CLKOD_MASK		GENMASK(24, CCU_PLL_CTL_CLKOD_FLD)
-+#define CCU_PLL_CTL_BYPASS		BIT(30)
-+#define CCU_PLL_CTL_LOCK		BIT(31)
-+#define CCU_PLL_CTL1			0x04
-+#define CCU_PLL_CTL1_BWADJ_FLD		3
-+#define CCU_PLL_CTL1_BWADJ_MASK		GENMASK(14, CCU_PLL_CTL1_BWADJ_FLD)
++#define CCU_DIV_CTL			0x00
++#define CCU_DIV_CTL_EN			BIT(0)
++#define CCU_DIV_CTL_RST			BIT(1)
++#define CCU_DIV_CTL_SET_CLKDIV		BIT(2)
++#define CCU_DIV_CTL_CLKDIV_FLD		4
++#define CCU_DIV_CTL_CLKDIV_MASK(_width) \
++	GENMASK((_width) + CCU_DIV_CTL_CLKDIV_FLD - 1, CCU_DIV_CTL_CLKDIV_FLD)
++#define CCU_DIV_CTL_LOCK_SHIFTED	BIT(27)
++#define CCU_DIV_CTL_LOCK_NORMAL		BIT(31)
 +
-+#define CCU_PLL_RST_DELAY_US		5
-+#define CCU_PLL_LOCK_DELAY_US(_ref_rate, _nr) ({	\
-+	uint64_t _n = 500ULL * (_nr) * USEC_PER_SEC;	\
-+	do_div(_n, _ref_rate);				\
-+	_n;						\
++#define CCU_DIV_RST_DELAY_US		1
++#define CCU_DIV_LOCK_DELAY_NS(_parent_rate, _div) ({		\
++	uint64_t _n = 4ULL * ((_div) ?: 1) * NSEC_PER_SEC;	\
++	do_div(_n, _parent_rate);				\
++	_n;							\
 +})
-+#define CCU_PLL_LOCK_CHECK_RETRIES	50
++#define CCU_DIV_LOCK_CHECK_RETRIES	50
 +
-+#define CCU_PLL_NR_MAX \
-+	((CCU_PLL_CTL_CLKR_MASK >> CCU_PLL_CTL_CLKR_FLD) + 1)
-+#define CCU_PLL_NF_MAX \
-+	((CCU_PLL_CTL_CLKF_MASK >> (CCU_PLL_CTL_CLKF_FLD + 1)) + 1)
-+#define CCU_PLL_OD_MAX \
-+	((CCU_PLL_CTL_CLKOD_MASK >> CCU_PLL_CTL_CLKOD_FLD) + 1)
-+#define CCU_PLL_NB_MAX \
-+	((CCU_PLL_CTL1_BWADJ_MASK >> CCU_PLL_CTL1_BWADJ_FLD) + 1)
-+#define CCU_PLL_FDIV_MIN		427000UL
-+#define CCU_PLL_FDIV_MAX		3500000000UL
-+#define CCU_PLL_FOUT_MIN		200000000UL
-+#define CCU_PLL_FOUT_MAX		2500000000UL
-+#define CCU_PLL_FVCO_MIN		700000000UL
-+#define CCU_PLL_FVCO_MAX		3500000000UL
-+#define CCU_PLL_CLKOD_FACTOR		2
++#define CCU_DIV_CLKDIV_MIN		0
++#define CCU_DIV_CLKDIV_MAX(_mask) \
++	((_mask) >> CCU_DIV_CTL_CLKDIV_FLD)
 +
-+#define CCU_PLL_CALC_FREQ(_ref_rate, _nr, _nf, _od) \
-+	((_ref_rate) / (_nr) * (_nf) / (_od))
++#define CCU_DIV_CALC_FREQ(_parent_rate, _div) \
++	((_parent_rate) / ((_div) ?: 1))
 +
-+static int ccu_pll_reset(struct ccu_pll *pll, unsigned long ref_clk,
-+			 unsigned long nr)
++static int ccu_div_var_update_clkdiv(struct ccu_div *div,
++				     unsigned long parent_rate,
++				     unsigned long divider)
 +{
-+	unsigned long ud;
++	unsigned long nd;
++	u32 val, lock;
 +	int count;
-+	u32 val;
 +
-+	ud = CCU_PLL_LOCK_DELAY_US(ref_clk, nr);
++	nd = CCU_DIV_LOCK_DELAY_NS(parent_rate, divider);
 +
-+	ccu_update(pll->regs + CCU_PLL_CTL, CCU_PLL_CTL_RST, CCU_PLL_CTL_RST);
++	if (div->flags & CCU_DIV_LOCK_SHIFTED)
++		lock = CCU_DIV_CTL_LOCK_SHIFTED;
++	else
++		lock = CCU_DIV_CTL_LOCK_NORMAL;
 +
-+	count = CCU_PLL_LOCK_CHECK_RETRIES;
++	ccu_update(div->reg, CCU_DIV_CTL_SET_CLKDIV, CCU_DIV_CTL_SET_CLKDIV);
++
++	count = CCU_DIV_LOCK_CHECK_RETRIES;
 +	do {
-+		udelay(ud);
-+		val = ccu_read(pll->regs + CCU_PLL_CTL);
-+	} while (!(val & CCU_PLL_CTL_LOCK) && --count);
++		ndelay(nd);
++		val = ccu_read(div->reg);
++	} while (!(val & lock) && --count);
 +
-+	return (val & CCU_PLL_CTL_LOCK) ? 0 : -ETIMEDOUT;
++	return (val & lock) ? 0 : -ETIMEDOUT;
 +}
 +
-+static int ccu_pll_enable(struct clk_hw *hw)
++static int ccu_div_var_enable(struct clk_hw *hw)
 +{
 +	struct clk_hw *parent_hw = clk_hw_get_parent(hw);
-+	struct ccu_pll *pll = to_ccu_pll(hw);
++	struct ccu_div *div = to_ccu_div(hw);
 +	unsigned long flags;
 +	int ret;
 +	u32 val;
@@ -280,390 +231,460 @@ index 000000000000..f2087a80b64d
 +		return -EINVAL;
 +	}
 +
-+	val = ccu_read(pll->regs + CCU_PLL_CTL);
-+	if (val & CCU_PLL_CTL_EN)
++	val = ccu_read(div->reg);
++	if (val & CCU_DIV_CTL_EN)
 +		return 0;
 +
-+	spin_lock_irqsave(&pll->regs_lock, flags);
-+	ccu_write(pll->regs + CCU_PLL_CTL, val | CCU_PLL_CTL_EN);
-+	ret = ccu_pll_reset(pll, clk_hw_get_rate(parent_hw),
-+			    CCU_GET_FLD(CCU_PLL_CTL_CLKR, val) + 1);
-+	spin_unlock_irqrestore(&pll->regs_lock, flags);
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ret = ccu_div_var_update_clkdiv(div, clk_hw_get_rate(parent_hw),
++		CCU_GET_VAR_FLD(CCU_DIV_CTL_CLKDIV, div->mask, val));
++	if (!ret)
++		ccu_write(div->reg, val | CCU_DIV_CTL_EN);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
 +	if (ret)
-+		pr_err("PLL '%s' reset timed out\n", clk_hw_get_name(hw));
++		pr_err("Divider '%s' lock timed out\n", clk_hw_get_name(hw));
 +
 +	return ret;
 +}
 +
-+static void ccu_pll_disable(struct clk_hw *hw)
++static int ccu_div_gate_enable(struct clk_hw *hw)
 +{
-+	struct ccu_pll *pll = to_ccu_pll(hw);
++	struct ccu_div *div = to_ccu_div(hw);
 +	unsigned long flags;
 +
-+	spin_lock_irqsave(&pll->regs_lock, flags);
-+	ccu_update(pll->regs + CCU_PLL_CTL, CCU_PLL_CTL_EN, 0);
-+	spin_unlock_irqrestore(&pll->regs_lock, flags);
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ccu_update(div->reg, CCU_DIV_CTL_EN, CCU_DIV_CTL_EN);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
++
++	return 0;
 +}
 +
-+static int ccu_pll_is_enabled(struct clk_hw *hw)
++static void ccu_div_gate_disable(struct clk_hw *hw)
 +{
-+	struct ccu_pll *pll = to_ccu_pll(hw);
++	struct ccu_div *div = to_ccu_div(hw);
++	unsigned long flags;
 +
-+	return !!(ccu_read(pll->regs + CCU_PLL_CTL) & CCU_PLL_CTL_EN);
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ccu_update(div->reg, CCU_DIV_CTL_EN, 0);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
 +}
 +
-+static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
++static int ccu_div_gate_is_enabled(struct clk_hw *hw)
 +{
-+	struct ccu_pll *pll = to_ccu_pll(hw);
-+	unsigned long nr, nf, od;
++	struct ccu_div *div = to_ccu_div(hw);
++
++	return !!(ccu_read(div->reg) & CCU_DIV_CTL_EN);
++}
++
++static unsigned long ccu_div_var_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct ccu_div *div = to_ccu_div(hw);
++	unsigned long divider;
 +	u32 val;
 +
-+	val = ccu_read(pll->regs + CCU_PLL_CTL);
-+	nr = CCU_GET_FLD(CCU_PLL_CTL_CLKR, val) + 1;
-+	nf = CCU_GET_FLD(CCU_PLL_CTL_CLKF, val) + 1;
-+	od = CCU_GET_FLD(CCU_PLL_CTL_CLKOD, val) + 1;
++	val = ccu_read(div->reg);
++	divider = CCU_GET_VAR_FLD(CCU_DIV_CTL_CLKDIV, div->mask, val);
 +
-+	return CCU_PLL_CALC_FREQ(parent_rate, nr, nf, od);
++	return CCU_DIV_CALC_FREQ(parent_rate, divider);
 +}
 +
-+static void ccu_pll_calc_factors(unsigned long rate, unsigned long parent_rate,
-+				 unsigned long *nr, unsigned long *nf,
-+				 unsigned long *od)
++static inline unsigned long ccu_div_var_calc_divider(unsigned long rate,
++						     unsigned long parent_rate,
++						     unsigned int mask)
 +{
-+	unsigned long err, freq, min_err = ULONG_MAX;
-+	unsigned long num, denom, n1, d1, nri;
-+	unsigned long nr_max, nf_max, od_max;
++	unsigned long divider;
 +
-+	/*
-+	 * Make sure PLL is working with valid input signal (Fdiv). If
-+	 * you want to speed the function up just reduce CCU_PLL_NR_MAX.
-+	 * This will cause a worse approximation though.
-+	 */
-+	nri = (parent_rate / CCU_PLL_FDIV_MAX) + 1;
-+	nr_max = min(parent_rate / CCU_PLL_FDIV_MIN, CCU_PLL_NR_MAX);
-+
-+	/*
-+	 * Find a closest [nr;nf;od] vector taking into account the
-+	 * limitations like: 1) 700MHz <= Fvco <= 3.5GHz, 2) PLL Od is
-+	 * either 1 or even number within the acceptable range (alas 1s
-+	 * is also excluded by the next loop).
-+	 */
-+	for (; nri <= nr_max; ++nri) {
-+		/* Use Od factor to fulfill the limitation 2). */
-+		num = CCU_PLL_CLKOD_FACTOR * rate;
-+		denom = parent_rate / nri;
-+
-+		/*
-+		 * Make sure Fvco is within the acceptable range to fulfill
-+		 * the condition 1). Note due to the CCU_PLL_CLKOD_FACTOR value
-+		 * the actual upper limit is also divided by that factor.
-+		 * It's not big problem for us since practically there is no
-+		 * need in clocks with that high frequency.
-+		 */
-+		nf_max = min(CCU_PLL_FVCO_MAX / denom, CCU_PLL_NF_MAX);
-+		od_max = CCU_PLL_OD_MAX / CCU_PLL_CLKOD_FACTOR;
-+
-+		/*
-+		 * Bypass the out-of-bound values, which can't be properly
-+		 * handled by the rational fraction approximation algorithm.
-+		 */
-+		if (num / denom >= nf_max) {
-+			n1 = nf_max;
-+			d1 = 1;
-+		} else if (denom / num >= od_max) {
-+			n1 = 1;
-+			d1 = od_max;
-+		} else {
-+			rational_best_approximation(num, denom, nf_max, od_max,
-+						    &n1, &d1);
-+		}
-+
-+		/* Select the best approximation of the target rate. */
-+		freq = (((parent_rate / nri) * n1) / d1);
-+		err = abs((int64_t)freq - num);
-+		if (err < min_err) {
-+			min_err = err;
-+			*nr = nri;
-+			*nf = n1;
-+			*od = CCU_PLL_CLKOD_FACTOR * d1;
-+		}
-+	}
++	divider = parent_rate / rate;
++	return clamp_t(unsigned long, divider, CCU_DIV_CLKDIV_MIN,
++		       CCU_DIV_CLKDIV_MAX(mask));
 +}
 +
-+static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
++static long ccu_div_var_round_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long *parent_rate)
 +{
-+	unsigned long nr = 1, nf = 1, od = 1;
++	struct ccu_div *div = to_ccu_div(hw);
++	unsigned long divider;
 +
-+	ccu_pll_calc_factors(rate, *parent_rate, &nr, &nf, &od);
++	divider = ccu_div_var_calc_divider(rate, *parent_rate, div->mask);
 +
-+	return CCU_PLL_CALC_FREQ(*parent_rate, nr, nf, od);
++	return CCU_DIV_CALC_FREQ(*parent_rate, divider);
 +}
 +
 +/*
-+ * This method is used for PLLs, which support the on-the-fly dividers
-+ * adjustment. So there is no need in gating such clocks.
++ * This method is used for the clock divider blocks, which support the
++ * on-the-fly rate change. So due to lacking the EN bit functionality
++ * they can't be gated before the rate adjustment.
 + */
-+static int ccu_pll_set_rate_reset(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long parent_rate)
++static int ccu_div_var_set_rate_slow(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
 +{
-+	struct ccu_pll *pll = to_ccu_pll(hw);
-+	unsigned long nr, nf, od;
-+	unsigned long flags;
-+	u32 mask, val;
++	struct ccu_div *div = to_ccu_div(hw);
++	unsigned long flags, divider;
++	u32 val;
 +	int ret;
 +
-+	ccu_pll_calc_factors(rate, parent_rate, &nr, &nf, &od);
++	divider = ccu_div_var_calc_divider(rate, parent_rate, div->mask);
++	if (divider == 1 && div->flags & CCU_DIV_SKIP_ONE) {
++		divider = 0;
++	} else if (div->flags & CCU_DIV_SKIP_ONE_TO_THREE) {
++		if (divider == 1 || divider == 2)
++			divider = 0;
++		else if (divider == 3)
++			divider = 4;
++	}
 +
-+	mask = CCU_PLL_CTL_CLKR_MASK | CCU_PLL_CTL_CLKF_MASK |
-+	       CCU_PLL_CTL_CLKOD_MASK;
-+	val = CCU_SET_FLD(CCU_PLL_CTL_CLKR, 0, nr - 1) |
-+	      CCU_SET_FLD(CCU_PLL_CTL_CLKF, 0, nf - 1) |
-+	      CCU_SET_FLD(CCU_PLL_CTL_CLKOD, 0, od - 1);
++	val = CCU_SET_VAR_FLD(CCU_DIV_CTL_CLKDIV, div->mask, 0, divider);
 +
-+	spin_lock_irqsave(&pll->regs_lock, flags);
-+	ccu_update(pll->regs + CCU_PLL_CTL, mask, val);
-+	ret = ccu_pll_reset(pll, parent_rate, nr);
-+	spin_unlock_irqrestore(&pll->regs_lock, flags);
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ccu_update(div->reg, div->mask, val);
++	ret = ccu_div_var_update_clkdiv(div, parent_rate, divider);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
 +	if (ret)
-+		pr_err("PLL '%s' reset timed out\n", clk_hw_get_name(hw));
++		pr_err("Divider '%s' lock timed out\n", clk_hw_get_name(hw));
 +
 +	return ret;
 +}
 +
 +/*
-+ * This method is used for PLLs, which don't support the on-the-fly dividers
-+ * adjustment. So the corresponding clocks are supposed to be gated first.
++ * This method is used for the clock divider blocks, which don't support
++ * the on-the-fly rate change.
 + */
-+static int ccu_pll_set_rate_norst(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long parent_rate)
++static int ccu_div_var_set_rate_fast(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
 +{
-+	struct ccu_pll *pll = to_ccu_pll(hw);
-+	unsigned long nr, nf, od;
-+	unsigned long flags;
-+	u32 mask, val;
++	struct ccu_div *div = to_ccu_div(hw);
++	unsigned long flags, divider = 1;
++	u32 val;
 +
-+	ccu_pll_calc_factors(rate, parent_rate, &nr, &nf, &od);
++	divider = ccu_div_var_calc_divider(rate, parent_rate, div->mask);
++	val = CCU_SET_VAR_FLD(CCU_DIV_CTL_CLKDIV, div->mask, 0, divider);
 +
 +	/*
-+	 * Disable PLL if it was enabled by default or left enabled by the
-+	 * system bootloader.
++	 * Also disable the clock divider block if it was enabled by default
++	 * or by the bootloader.
 +	 */
-+	mask = CCU_PLL_CTL_CLKR_MASK | CCU_PLL_CTL_CLKF_MASK |
-+	       CCU_PLL_CTL_CLKOD_MASK | CCU_PLL_CTL_EN;
-+	val = CCU_SET_FLD(CCU_PLL_CTL_CLKR, 0, nr - 1) |
-+	      CCU_SET_FLD(CCU_PLL_CTL_CLKF, 0, nf - 1) |
-+	      CCU_SET_FLD(CCU_PLL_CTL_CLKOD, 0, od - 1);
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ccu_update(div->reg, div->mask | CCU_DIV_CTL_EN, val);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
 +
-+	spin_lock_irqsave(&pll->regs_lock, flags);
-+	ccu_update(pll->regs + CCU_PLL_CTL, mask, val);
-+	spin_unlock_irqrestore(&pll->regs_lock, flags);
++	return 0;
++}
++
++static unsigned long ccu_div_fixed_recalc_rate(struct clk_hw *hw,
++					       unsigned long parent_rate)
++{
++	struct ccu_div *div = to_ccu_div(hw);
++
++	return CCU_DIV_CALC_FREQ(parent_rate, div->divider);
++}
++
++static long ccu_div_fixed_round_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long *parent_rate)
++{
++	struct ccu_div *div = to_ccu_div(hw);
++
++	return CCU_DIV_CALC_FREQ(*parent_rate, div->divider);
++}
++
++static int ccu_div_fixed_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long parent_rate)
++{
++	return 0;
++}
++
++int ccu_div_reset_domain(struct ccu_div *div)
++{
++	unsigned long flags;
++
++	if (!div || !(div->flags & CCU_DIV_RESET_DOMAIN))
++		return -EINVAL;
++
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ccu_update(div->reg, CCU_DIV_CTL_RST, CCU_DIV_CTL_RST);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
++
++	/* The next delay must be enough to cover all the resets. */
++	udelay(CCU_DIV_RST_DELAY_US);
 +
 +	return 0;
 +}
 +
 +#ifdef CONFIG_DEBUG_FS
 +
-+#define CCU_PLL_DBGFS_BIT_ATTR(_name, _reg, _mask)			\
-+static int ccu_pll_dbgfs_##_name##_get(void *priv, u64 *val)		\
-+{									\
-+	struct ccu_pll *pll = priv;					\
-+									\
-+	*val = !!(ccu_read(pll->regs + (_reg)) & (_mask));		\
-+									\
-+	return 0;							\
-+}									\
-+static int ccu_pll_dbgfs_##_name##_set(void *priv, u64 val)		\
-+{									\
-+	struct ccu_pll *pll = priv;					\
-+	unsigned long flags;						\
-+									\
-+	spin_lock_irqsave(&pll->regs_lock, flags);			\
-+	ccu_update(pll->regs + (_reg), (_mask), val ? (_mask) : 0);	\
-+	spin_unlock_irqrestore(&pll->regs_lock, flags);			\
-+									\
-+	return 0;							\
-+}									\
-+DEFINE_DEBUGFS_ATTRIBUTE(ccu_pll_dbgfs_##_name##_fops,			\
-+	ccu_pll_dbgfs_##_name##_get, ccu_pll_dbgfs_##_name##_set, "%llu\n")
++#define CCU_DIV_DBGFS_BIT_ATTR(_name, _mask)			\
++static int ccu_div_dbgfs_##_name##_get(void *priv, u64 *val)	\
++{								\
++	struct ccu_div *div = priv;				\
++								\
++	*val = !!(ccu_read(div->reg) & _mask);			\
++								\
++	return 0;						\
++}								\
++static int ccu_div_dbgfs_##_name##_set(void *priv, u64 val)	\
++{								\
++	struct ccu_div *div = priv;				\
++	unsigned long flags;					\
++								\
++	spin_lock_irqsave(&div->reg_lock, flags);		\
++	ccu_update(div->reg, (_mask), val ? (_mask) : 0);	\
++	spin_unlock_irqrestore(&div->reg_lock, flags);		\
++								\
++	return 0;						\
++}								\
++DEFINE_DEBUGFS_ATTRIBUTE(ccu_div_dbgfs_##_name##_fops,		\
++	ccu_div_dbgfs_##_name##_get, ccu_div_dbgfs_##_name##_set, "%llu\n")
 +
-+#define CCU_PLL_DBGFS_FLD_ATTR(_name, _reg, _fld, _min, _max)		\
-+static int ccu_pll_dbgfs_##_name##_get(void *priv, u64 *val)		\
-+{									\
-+	struct ccu_pll *pll = priv;					\
-+	u32 data;							\
-+									\
-+	data = ccu_read(pll->regs + (_reg));				\
-+	*val = CCU_GET_FLD(_fld, data) + 1;				\
-+									\
-+	return 0;							\
-+}									\
-+static int ccu_pll_dbgfs_##_name##_set(void *priv, u64 val)		\
-+{									\
-+	struct ccu_pll *pll = priv;					\
-+	unsigned long flags;						\
-+	u32 data;							\
-+									\
-+	val = clamp_t(u64, val, _min, _max);				\
-+	data = CCU_SET_FLD(_fld, 0, val - 1);				\
-+									\
-+	spin_lock_irqsave(&pll->regs_lock, flags);			\
-+	ccu_update(pll->regs + (_reg), _fld ## _MASK, data);		\
-+	spin_unlock_irqrestore(&pll->regs_lock, flags);			\
-+									\
-+	return 0;							\
-+}									\
-+DEFINE_DEBUGFS_ATTRIBUTE(ccu_pll_dbgfs_##_name##_fops,			\
-+	ccu_pll_dbgfs_##_name##_get, ccu_pll_dbgfs_##_name##_set, "%llu\n")
++CCU_DIV_DBGFS_BIT_ATTR(en, CCU_DIV_CTL_EN);
++CCU_DIV_DBGFS_BIT_ATTR(rst, CCU_DIV_CTL_RST);
++CCU_DIV_DBGFS_BIT_ATTR(set_clkdiv, CCU_DIV_CTL_SET_CLKDIV);
++CCU_DIV_DBGFS_BIT_ATTR(lock_shifted, CCU_DIV_CTL_LOCK_SHIFTED);
++CCU_DIV_DBGFS_BIT_ATTR(lock_normal, CCU_DIV_CTL_LOCK_NORMAL);
 +
-+CCU_PLL_DBGFS_BIT_ATTR(en, CCU_PLL_CTL, CCU_PLL_CTL_EN);
-+CCU_PLL_DBGFS_BIT_ATTR(rst, CCU_PLL_CTL, CCU_PLL_CTL_RST);
-+CCU_PLL_DBGFS_FLD_ATTR(nr, CCU_PLL_CTL, CCU_PLL_CTL_CLKR, 1, CCU_PLL_NR_MAX);
-+CCU_PLL_DBGFS_FLD_ATTR(nf, CCU_PLL_CTL, CCU_PLL_CTL_CLKF, 1, CCU_PLL_NF_MAX);
-+CCU_PLL_DBGFS_FLD_ATTR(od, CCU_PLL_CTL, CCU_PLL_CTL_CLKOD, 1, CCU_PLL_OD_MAX);
-+CCU_PLL_DBGFS_BIT_ATTR(bypass, CCU_PLL_CTL, CCU_PLL_CTL_BYPASS);
-+CCU_PLL_DBGFS_BIT_ATTR(lock, CCU_PLL_CTL, CCU_PLL_CTL_LOCK);
-+CCU_PLL_DBGFS_FLD_ATTR(nb, CCU_PLL_CTL1, CCU_PLL_CTL1_BWADJ, 1, CCU_PLL_NB_MAX);
++static int ccu_div_dbgfs_var_clkdiv_get(void *priv, u64 *val)
++{
++	struct ccu_div *div = priv;
++	u32 data;
 +
-+static const struct debugfs_reg32 ccu_pll_dbgfs_regs[] = {
-+	CCU_DBGFS_REG("ctl", CCU_PLL_CTL),
-+	CCU_DBGFS_REG("ctl1", CCU_PLL_CTL1)
++	data = ccu_read(div->reg);
++	*val = CCU_GET_VAR_FLD(CCU_DIV_CTL_CLKDIV, div->mask, data);
++
++	return 0;
++}
++static int ccu_div_dbgfs_var_clkdiv_set(void *priv, u64 val)
++{
++	struct ccu_div *div = priv;
++	unsigned long flags;
++	u32 data;
++
++	val = clamp_t(u64, val, CCU_DIV_CLKDIV_MIN,
++		      CCU_DIV_CLKDIV_MAX(div->mask));
++	data = CCU_SET_VAR_FLD(CCU_DIV_CTL_CLKDIV, div->mask, 0, val);
++
++	spin_lock_irqsave(&div->reg_lock, flags);
++	ccu_update(div->reg, div->mask, data);
++	spin_unlock_irqrestore(&div->reg_lock, flags);
++
++	return 0;
++}
++DEFINE_DEBUGFS_ATTRIBUTE(ccu_div_dbgfs_var_clkdiv_fops,
++	ccu_div_dbgfs_var_clkdiv_get, ccu_div_dbgfs_var_clkdiv_set, "%llu\n");
++
++static int ccu_div_dbgfs_fixed_clkdiv_get(void *priv, u64 *val)
++{
++	struct ccu_div *div = priv;
++
++	*val = div->divider;
++
++	return 0;
++}
++DEFINE_DEBUGFS_ATTRIBUTE(ccu_div_dbgfs_fixed_clkdiv_fops,
++	ccu_div_dbgfs_fixed_clkdiv_get, NULL, "%llu\n");
++
++static const struct debugfs_reg32 ccu_div_dbgfs_regs[] = {
++	CCU_DBGFS_REG("ctl", CCU_DIV_CTL)
 +};
 +
-+static void ccu_pll_debug_init(struct clk_hw *hw, struct dentry *dentry)
++static void ccu_div_var_debug_init(struct clk_hw *hw, struct dentry *dentry)
 +{
-+	struct ccu_pll *pll = to_ccu_pll(hw);
++	struct ccu_div *div = to_ccu_div(hw);
 +	struct debugfs_regset32 *regset;
 +
 +	regset = kzalloc(sizeof(*regset), GFP_KERNEL);
 +	if (!regset)
 +		return;
 +
-+	regset->regs = ccu_pll_dbgfs_regs;
-+	regset->nregs = ARRAY_SIZE(ccu_pll_dbgfs_regs);
-+	regset->base = pll->regs;
-+	debugfs_create_regset32("registers", 0400, dentry, regset);
++	regset->regs = ccu_div_dbgfs_regs;
++	regset->nregs = ARRAY_SIZE(ccu_div_dbgfs_regs);
++	regset->base = div->reg;
++	debugfs_create_regset32("register", 0400, dentry, regset);
 +
-+	debugfs_create_file_unsafe("en", 0600, dentry, pll,
-+				   &ccu_pll_dbgfs_en_fops);
-+	debugfs_create_file_unsafe("rst", 0200, dentry, pll,
-+				   &ccu_pll_dbgfs_rst_fops);
-+	debugfs_create_file_unsafe("nr", 0600, dentry, pll,
-+				   &ccu_pll_dbgfs_nr_fops);
-+	debugfs_create_file_unsafe("nf", 0600, dentry, pll,
-+				   &ccu_pll_dbgfs_nf_fops);
-+	debugfs_create_file_unsafe("od", 0600, dentry, pll,
-+				   &ccu_pll_dbgfs_od_fops);
-+	debugfs_create_file_unsafe("bypass", 0600, dentry, pll,
-+				   &ccu_pll_dbgfs_bypass_fops);
-+	debugfs_create_file_unsafe("lock", 0400, dentry, pll,
-+				   &ccu_pll_dbgfs_lock_fops);
-+	debugfs_create_file_unsafe("nb", 0600, dentry, pll,
-+				   &ccu_pll_dbgfs_nb_fops);
++	if (!(div->flags & CCU_DIV_NO_GATE)) {
++		debugfs_create_file_unsafe("en", 0600, dentry, div,
++					   &ccu_div_dbgfs_en_fops);
++	}
++
++	if (div->flags & CCU_DIV_RESET_DOMAIN) {
++		debugfs_create_file_unsafe("rst", 0200, dentry, div,
++					   &ccu_div_dbgfs_rst_fops);
++	}
++
++	debugfs_create_file_unsafe("set_clkdiv", 0200, dentry, div,
++				   &ccu_div_dbgfs_set_clkdiv_fops);
++	debugfs_create_file_unsafe("clkdiv", 0600, dentry, div,
++				   &ccu_div_dbgfs_var_clkdiv_fops);
++
++	if (div->flags & CCU_DIV_LOCK_SHIFTED) {
++		debugfs_create_file_unsafe("lock", 0400, dentry, div,
++					   &ccu_div_dbgfs_lock_shifted_fops);
++	} else {
++		debugfs_create_file_unsafe("lock", 0400, dentry, div,
++					   &ccu_div_dbgfs_lock_normal_fops);
++	}
++}
++
++static void ccu_div_gate_debug_init(struct clk_hw *hw, struct dentry *dentry)
++{
++	struct ccu_div *div = to_ccu_div(hw);
++	struct debugfs_regset32 *regset;
++
++	regset = kzalloc(sizeof(*regset), GFP_KERNEL);
++	if (!regset)
++		return;
++
++	regset->regs = ccu_div_dbgfs_regs;
++	regset->nregs = ARRAY_SIZE(ccu_div_dbgfs_regs);
++	regset->base = div->reg;
++	debugfs_create_regset32("register", 0400, dentry, regset);
++
++	debugfs_create_file_unsafe("en", 0600, dentry, div,
++				   &ccu_div_dbgfs_en_fops);
++
++	debugfs_create_file_unsafe("clkdiv", 0400, dentry, div,
++				   &ccu_div_dbgfs_fixed_clkdiv_fops);
++}
++
++static void ccu_div_fixed_debug_init(struct clk_hw *hw, struct dentry *dentry)
++{
++	struct ccu_div *div = to_ccu_div(hw);
++
++	debugfs_create_file_unsafe("clkdiv", 0400, dentry, div,
++				   &ccu_div_dbgfs_fixed_clkdiv_fops);
 +}
 +
 +#else /* !CONFIG_DEBUG_FS */
 +
-+#define ccu_pll_debug_init NULL
++#define ccu_div_var_debug_init NULL
++#define ccu_div_gate_debug_init NULL
++#define ccu_div_fixed_debug_init NULL
 +
 +#endif /* !CONFIG_DEBUG_FS */
 +
-+static const struct clk_ops ccu_pll_gate_to_set_ops = {
-+	.enable = ccu_pll_enable,
-+	.disable = ccu_pll_disable,
-+	.is_enabled = ccu_pll_is_enabled,
-+	.recalc_rate = ccu_pll_recalc_rate,
-+	.round_rate = ccu_pll_round_rate,
-+	.set_rate = ccu_pll_set_rate_norst,
-+	.debug_init = ccu_pll_debug_init
++static const struct clk_ops ccu_div_var_gate_to_set_ops = {
++	.enable = ccu_div_var_enable,
++	.disable = ccu_div_gate_disable,
++	.is_enabled = ccu_div_gate_is_enabled,
++	.recalc_rate = ccu_div_var_recalc_rate,
++	.round_rate = ccu_div_var_round_rate,
++	.set_rate = ccu_div_var_set_rate_fast,
++	.debug_init = ccu_div_var_debug_init
 +};
 +
-+static const struct clk_ops ccu_pll_straight_set_ops = {
-+	.enable = ccu_pll_enable,
-+	.disable = ccu_pll_disable,
-+	.is_enabled = ccu_pll_is_enabled,
-+	.recalc_rate = ccu_pll_recalc_rate,
-+	.round_rate = ccu_pll_round_rate,
-+	.set_rate = ccu_pll_set_rate_reset,
-+	.debug_init = ccu_pll_debug_init
++static const struct clk_ops ccu_div_var_nogate_ops = {
++	.recalc_rate = ccu_div_var_recalc_rate,
++	.round_rate = ccu_div_var_round_rate,
++	.set_rate = ccu_div_var_set_rate_slow,
++	.debug_init = ccu_div_var_debug_init
 +};
 +
-+struct ccu_pll *ccu_pll_hw_register(struct ccu_pll_init_data *pll_init)
++static const struct clk_ops ccu_div_gate_ops = {
++	.enable = ccu_div_gate_enable,
++	.disable = ccu_div_gate_disable,
++	.is_enabled = ccu_div_gate_is_enabled,
++	.recalc_rate = ccu_div_fixed_recalc_rate,
++	.round_rate = ccu_div_fixed_round_rate,
++	.set_rate = ccu_div_fixed_set_rate,
++	.debug_init = ccu_div_gate_debug_init
++};
++
++static const struct clk_ops ccu_div_fixed_ops = {
++	.recalc_rate = ccu_div_fixed_recalc_rate,
++	.round_rate = ccu_div_fixed_round_rate,
++	.set_rate = ccu_div_fixed_set_rate,
++	.debug_init = ccu_div_fixed_debug_init
++};
++
++struct ccu_div *ccu_div_hw_register(struct ccu_div_init_data *div_init)
 +{
 +	struct clk_parent_data parent_data = {0};
 +	struct clk_init_data hw_init = {0};
-+	struct ccu_pll *pll;
++	struct ccu_div *div;
 +	int ret;
 +
-+	if (!pll_init)
++	if (!div_init)
 +		return ERR_PTR(-EINVAL);
 +
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
 +		return ERR_PTR(-ENOMEM);
 +
-+	pll->hw.init = &hw_init;
-+	pll->id = pll_init->id;
-+	pll->regs = pll_init->regs;
-+	spin_lock_init(&pll->regs_lock);
++	div->hw.init = &hw_init;
++	div->id = div_init->id;
++	div->reg = div_init->reg;
++	div->flags = div_init->flags;
++	spin_lock_init(&div->reg_lock);
 +
-+	hw_init.name = pll_init->name;
++	hw_init.name = div_init->name;
 +	hw_init.flags = CLK_IGNORE_UNUSED;
 +
-+	if (pll_init->flags & CCU_PLL_GATE_TO_SET) {
-+		hw_init.flags |= CLK_SET_RATE_GATE;
-+		hw_init.ops = &ccu_pll_gate_to_set_ops;
++	if (div_init->type == CCU_DIV_VAR) {
++		if (div_init->flags & CCU_DIV_NO_GATE) {
++			hw_init.ops = &ccu_div_var_nogate_ops;
++		} else {
++			hw_init.flags |= CLK_SET_RATE_GATE;
++			hw_init.ops = &ccu_div_var_gate_to_set_ops;
++		}
++		div->mask = CCU_DIV_CTL_CLKDIV_MASK(div_init->width);
++	} else if (div_init->type == CCU_DIV_GATE) {
++		hw_init.ops = &ccu_div_gate_ops;
++		div->divider = div_init->divider;
++	} else if (div_init->type == CCU_DIV_FIXED) {
++		hw_init.ops = &ccu_div_fixed_ops;
++		div->divider = div_init->divider;
 +	} else {
-+		hw_init.ops = &ccu_pll_straight_set_ops;
++		ret = -EINVAL;
++		goto err_free_div;
 +	}
 +
-+	if (pll_init->flags & CCU_PLL_CRITICAL)
++	if (div_init->flags & CCU_DIV_CRITICAL)
 +		hw_init.flags |= CLK_IS_CRITICAL;
 +
-+	if (!pll_init->parent_name) {
++	if (div_init->parent_name) {
++		parent_data.fw_name = div_init->parent_name;
++	} else if (div_init->parent_hw) {
++		parent_data.hw = div_init->parent_hw;
++	} else {
 +		ret = -EINVAL;
-+		goto err_free_pll;
++		goto err_free_div;
 +	}
-+	parent_data.fw_name = pll_init->parent_name;
 +	hw_init.parent_data = &parent_data;
 +	hw_init.num_parents = 1;
 +
-+	ret = of_clk_hw_register(pll_init->np, &pll->hw);
++	ret = of_clk_hw_register(div_init->np, &div->hw);
 +	if (ret)
-+		goto err_free_pll;
++		goto err_free_div;
 +
-+	return pll;
++	return div;
 +
-+err_free_pll:
-+	kfree(pll);
++err_free_div:
++	kfree(div);
 +
 +	return ERR_PTR(ret);
 +}
 +
-+void ccu_pll_hw_unregister(struct ccu_pll *pll)
++void ccu_div_hw_unregister(struct ccu_div *div)
 +{
-+	if (!pll)
++	if (!div)
 +		return;
 +
-+	clk_hw_unregister(&pll->hw);
++	clk_hw_unregister(&div->hw);
 +
-+	kfree(pll);
++	kfree(div);
 +}
-diff --git a/drivers/clk/baikal-t1/ccu-pll.h b/drivers/clk/baikal-t1/ccu-pll.h
+diff --git a/drivers/clk/baikal-t1/ccu-div.h b/drivers/clk/baikal-t1/ccu-div.h
 new file mode 100644
-index 000000000000..6921516311fb
+index 000000000000..b166a1061078
 --- /dev/null
-+++ b/drivers/clk/baikal-t1/ccu-pll.h
-@@ -0,0 +1,73 @@
++++ b/drivers/clk/baikal-t1/ccu-div.h
+@@ -0,0 +1,114 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
 + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
 + *
-+ * Baikal-T1 CCU PLL interface driver.
++ * Baikal-T1 CCU Divider interface driver.
 + */
-+#ifndef __CLK_BT1_CCU_PLL_H__
-+#define __CLK_BT1_CCU_PLL_H__
++#ifndef __CLK_BT1_CCU_DIV_H__
++#define __CLK_BT1_CCU_DIV_H__
 +
 +#include <linux/clk-provider.h>
 +#include <linux/spinlock.h>
@@ -671,70 +692,111 @@ index 000000000000..6921516311fb
 +#include <linux/of.h>
 +
 +/*
-+ * CCU PLL private flags.
-+ * @CCU_PLL_GATE_TO_SET: Some PLLs output clock can't be changed on-the-fly,
-+ *			 so according to documentation they need to be gated
-+ *			 first.
-+ * @CCU_PLL_CRITICAL: Even though there is a way to switch any PLL off, there
-+ *		      might be some, which shouldn't be in any case.
++ * CCU Divider private flags.
++ * @CCU_DIV_NO_GATE: Some of CCU variable dividers can't be disabled due to
++ *		     lack of corresponding functionality.
++ * @CCU_DIV_CRITICAL: Even though there is a way to switch most of the dividers
++ *		      gate PLL off, there might be some, which shouldn't be.
++ * @CCU_DIV_SKIP_ONE: Due to some reason divider can't be set to 1.
++ *		      It can be 0 though, which is functionally the same.
++ * @CCU_DIV_SKIP_ONE_TO_THREE: For some reason divider can't be within [1,3].
++ *			       It can be either 0 or greater than 3.
++ * @CCU_DIV_LOCK_SHIFTED: Find lock-bit at non-standard position.
++ * @CCU_DIV_RESET_DOMAIN: Provide reset clock domain method.
 + */
-+#define CCU_PLL_GATE_TO_SET		BIT(0)
-+#define CCU_PLL_CRITICAL		BIT(1)
++#define CCU_DIV_NO_GATE			BIT(0)
++#define CCU_DIV_CRITICAL		BIT(1)
++#define CCU_DIV_SKIP_ONE		BIT(2)
++#define CCU_DIV_SKIP_ONE_TO_THREE	BIT(3)
++#define CCU_DIV_LOCK_SHIFTED		BIT(4)
++#define CCU_DIV_RESET_DOMAIN		BIT(5)
 +
 +/*
-+ * struct ccu_pll_init_data - CCU PLL initialization data.
-+ * @id: Clock private identifier.
-+ * @regs: PLL registers base address.
-+ * @name: Clocks name.
-+ * @parent_name: Clocks parent name in a fw node.
-+ * @np: Pointer to the node describing the CCU PLLs.
-+ * @flags: PLL private flags.
++ * enum ccu_div_type - CCU Divider types.
++ * @CCU_DIV_VAR: Clocks gate with variable divider.
++ * @CCU_DIV_GATE: Clocks gate with fixed divider.
++ * @CCU_DIV_FIXED: Ungateable clock with fixed divider.
 + */
-+struct ccu_pll_init_data {
++enum ccu_div_type {
++	CCU_DIV_VAR,
++	CCU_DIV_GATE,
++	CCU_DIV_FIXED
++};
++
++/*
++ * struct ccu_div_init_data - CCU Divider initialization data.
++ * @id: Clocks private identifier.
++ * @reg: Divider registers base address.
++ * @name: Clocks name.
++ * @parent_name: Parent clocks name in a fw node.
++ * @parent_hw: Pointer to the parent clk_hw descriptor.
++ * @np: Pointer to the node describing the CCU Dividers.
++ * @type: CCU divider type (variable, fixed with and without gate).
++ * @width: Divider width if it's variable.
++ * @divider: Divider fixed value.
++ * @flags: CCU Divider private flags.
++ */
++struct ccu_div_init_data {
 +	unsigned int id;
-+	void __iomem *regs;
++	void __iomem *reg;
 +	const char *name;
 +	const char *parent_name;
++	const struct clk_hw *parent_hw;
 +	struct device_node *np;
++	enum ccu_div_type type;
++	union {
++		unsigned int width;
++		unsigned int divider;
++	};
 +	unsigned long flags;
 +};
 +
 +/*
-+ * struct ccu_pll - CCU PLL descriptor.
-+ * @hw: clk_hw of the PLL.
++ * struct ccu_div - CCU Divider descriptor.
++ * @hw: clk_hw of the divider.
 + * @id: Clock private identifier.
-+ * @regs: PLL registers base address.
-+ * @regs_lock: The registers exclusive access spin-lock.
++ * @reg: Divider control register base address.
++ * @reg_lock: The control register access spin-lock.
++ * @mask: Divider field mask.
++ * @divider: Divider fixed value.
++ * @flags: Divider private flags.
 + */
-+struct ccu_pll {
++struct ccu_div {
 +	struct clk_hw hw;
 +	unsigned int id;
-+	void __iomem *regs;
-+	spinlock_t regs_lock;
++	void __iomem *reg;
++	spinlock_t reg_lock;
++	union {
++		u32 mask;
++		unsigned int divider;
++	};
++	unsigned long flags;
 +};
-+#define to_ccu_pll(_hw) container_of(_hw, struct ccu_pll, hw)
++#define to_ccu_div(_hw) container_of(_hw, struct ccu_div, hw)
 +
-+static inline struct clk_hw *ccu_pll_get_clk_hw(struct ccu_pll *pll)
++static inline struct clk_hw *ccu_div_get_clk_hw(struct ccu_div *div)
 +{
-+	return pll ? &pll->hw : NULL;
++	return div ? &div->hw : NULL;
 +}
 +
-+static inline unsigned int ccu_pll_get_clk_id(struct ccu_pll *pll)
++static inline unsigned int ccu_div_get_clk_id(struct ccu_div *div)
 +{
-+	return pll ? pll->id : -1;
++	return div ? div->id : -1;
 +}
 +
-+extern struct ccu_pll *ccu_pll_hw_register(struct ccu_pll_init_data *init);
++extern struct ccu_div *ccu_div_hw_register(struct ccu_div_init_data *init);
 +
-+extern void ccu_pll_hw_unregister(struct ccu_pll *pll);
++extern void ccu_div_hw_unregister(struct ccu_div *div);
 +
-+#endif /* __CLK_BT1_CCU_PLL_H__ */
-diff --git a/drivers/clk/baikal-t1/clk-ccu-pll.c b/drivers/clk/baikal-t1/clk-ccu-pll.c
++extern int ccu_div_reset_domain(struct ccu_div *div);
++
++#endif /* __CLK_BT1_CCU_DIV_H__ */
+diff --git a/drivers/clk/baikal-t1/clk-ccu-div.c b/drivers/clk/baikal-t1/clk-ccu-div.c
 new file mode 100644
-index 000000000000..990f0a4a12f9
+index 000000000000..71165ffb7140
 --- /dev/null
-+++ b/drivers/clk/baikal-t1/clk-ccu-pll.c
-@@ -0,0 +1,217 @@
++++ b/drivers/clk/baikal-t1/clk-ccu-div.c
+@@ -0,0 +1,522 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
@@ -743,106 +805,326 @@ index 000000000000..990f0a4a12f9
 + *   Serge Semin <Sergey.Semin@baikalelectronics.ru>
 + *   Dmitry Dunaev <dmitry.dunaev@baikalelectronics.ru>
 + *
-+ * Baikal-T1 CCU PLL clocks driver.
++ * Baikal-T1 CCU Divider clocks driver.
 + */
 +
-+#define pr_fmt(fmt) "bt1-ccu-pll: " fmt
++#define pr_fmt(fmt) "bt1-ccu-div: " fmt
 +
 +#include <linux/kernel.h>
 +#include <linux/printk.h>
 +#include <linux/slab.h>
 +#include <linux/clk-provider.h>
++#include <linux/reset-controller.h>
 +#include <linux/of.h>
 +#include <linux/of_address.h>
++#include <linux/of_platform.h>
 +#include <linux/ioport.h>
 +
 +#include <dt-bindings/clock/bt1-ccu.h>
++#include <dt-bindings/reset/bt1-ccu.h>
 +
-+#include "ccu-pll.h"
++#include "ccu-div.h"
 +
-+#define CCU_CPU_PLL_BASE		0x000
-+#define CCU_SATA_PLL_BASE		0x008
-+#define CCU_DDR_PLL_BASE		0x010
-+#define CCU_PCIE_PLL_BASE		0x018
-+#define CCU_ETH_PLL_BASE		0x020
++#define CCU_AXI_MAIN_BASE		0x000
++#define CCU_AXI_DDR_BASE		0x004
++#define CCU_AXI_SATA_BASE		0x008
++#define CCU_AXI_GMAC0_BASE		0x00C
++#define CCU_AXI_GMAC1_BASE		0x010
++#define CCU_AXI_XGMAC_BASE		0x014
++#define CCU_AXI_PCIE_M_BASE		0x018
++#define CCU_AXI_PCIE_S_BASE		0x01C
++#define CCU_AXI_USB_BASE		0x020
++#define CCU_AXI_HWA_BASE		0x024
++#define CCU_AXI_SRAM_BASE		0x028
 +
-+#define CCU_PLL_INFO(_id, _name, _pname, _base, _flags)	\
-+	{						\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _pname,			\
-+		.base = _base,				\
-+		.flags = _flags				\
++#define CCU_SYS_SATA_REF_BASE		0x000
++#define CCU_SYS_APB_BASE		0x004
++#define CCU_SYS_GMAC0_BASE		0x008
++#define CCU_SYS_GMAC1_BASE		0x00C
++#define CCU_SYS_XGMAC_BASE		0x010
++#define CCU_SYS_USB_BASE		0x014
++#define CCU_SYS_PVT_BASE		0x018
++#define CCU_SYS_HWA_BASE		0x01C
++#define CCU_SYS_UART_BASE		0x024
++#define CCU_SYS_TIMER0_BASE		0x028
++#define CCU_SYS_TIMER1_BASE		0x02C
++#define CCU_SYS_TIMER2_BASE		0x030
++#define CCU_SYS_WDT_BASE		0x0F0
++
++#define CCU_DIV_VAR_INFO(_id, _name, _pname, _base, _width, _flags)	\
++	{								\
++		.id = _id,						\
++		.name = _name,						\
++		.parent_name = _pname,					\
++		.parent_id = -1,					\
++		.base = _base,						\
++		.type = CCU_DIV_VAR,					\
++		.width = _width,					\
++		.flags = _flags						\
 +	}
 +
-+#define CCU_PLL_NUM			ARRAY_SIZE(pll_info)
++#define CCU_DIV_GATE_INFO(_id, _name, _pname, _base, _divider)	\
++	{							\
++		.id = _id,					\
++		.name = _name,					\
++		.parent_name = _pname,				\
++		.parent_id = -1,				\
++		.base = _base,					\
++		.type = CCU_DIV_GATE,				\
++		.divider = _divider				\
++	}
 +
-+struct ccu_pll_info {
++#define CCU_DIV_FIXED_INFO(_id, _name, _pname, _pid, _divider)	\
++	{							\
++		.id = _id,					\
++		.name = _name,					\
++		.parent_name = _pname,				\
++		.parent_id = _pid,				\
++		.type = CCU_DIV_FIXED,				\
++		.divider = _divider				\
++	}
++
++#define CCU_DIV_FIXED_EXT_INFO(_id, _name, _pname, _divider) \
++	CCU_DIV_FIXED_INFO(_id, _name, _pname, -1, _divider)
++
++#define CCU_DIV_FIXED_LOC_INFO(_id, _name, _pid, _divider) \
++	CCU_DIV_FIXED_INFO(_id, _name, NULL, _pid, _divider)
++
++#define CCU_DIV_RST_MAP(_rst_id, _clk_id)	\
++	{					\
++		.rst_id = _rst_id,		\
++		.clk_id = _clk_id		\
++	}
++
++#define CCU_AXI_DIV_NUM			ARRAY_SIZE(axi_info)
++#define CCU_AXI_RST_NUM			ARRAY_SIZE(axi_rst_map)
++
++#define CCU_SYS_DIV_NUM			ARRAY_SIZE(sys_info)
++#define CCU_SYS_RST_NUM			ARRAY_SIZE(sys_rst_map)
++
++struct ccu_div_info {
 +	unsigned int id;
 +	const char *name;
 +	const char *parent_name;
++	unsigned int parent_id;
 +	unsigned int base;
++	enum ccu_div_type type;
++	union {
++		unsigned int width;
++		unsigned int divider;
++	};
 +	unsigned long flags;
 +};
 +
-+static const struct ccu_pll_info pll_info[] = {
-+	CCU_PLL_INFO(CCU_CPU_PLL, "cpu_pll", "ref_clk", CCU_CPU_PLL_BASE,
-+		     CCU_PLL_CRITICAL),
-+	CCU_PLL_INFO(CCU_SATA_PLL, "sata_pll", "ref_clk", CCU_SATA_PLL_BASE,
-+		     CCU_PLL_CRITICAL | CCU_PLL_GATE_TO_SET),
-+	CCU_PLL_INFO(CCU_DDR_PLL, "ddr_pll", "ref_clk", CCU_DDR_PLL_BASE,
-+		     CCU_PLL_CRITICAL | CCU_PLL_GATE_TO_SET),
-+	CCU_PLL_INFO(CCU_PCIE_PLL, "pcie_pll", "ref_clk", CCU_PCIE_PLL_BASE,
-+		     CCU_PLL_CRITICAL),
-+	CCU_PLL_INFO(CCU_ETH_PLL, "eth_pll", "ref_clk", CCU_ETH_PLL_BASE,
-+		     CCU_PLL_GATE_TO_SET)
++struct ccu_div_rst_map {
++	unsigned int rst_id;
++	unsigned int clk_id;
 +};
 +
-+struct ccu_pll_data {
++struct ccu_div_data {
 +	struct device_node *np;
 +	void __iomem *regs;
-+	struct ccu_pll *plls[CCU_PLL_NUM];
++
++	unsigned int divs_num;
++	const struct ccu_div_info *divs_info;
++	struct ccu_div **divs;
++
++	unsigned int rst_num;
++	const struct ccu_div_rst_map *rst_map;
++	struct reset_controller_dev rcdev;
++};
++#define to_ccu_div_data(_rcdev) container_of(_rcdev, struct ccu_div_data, rcdev)
++
++static const struct ccu_div_info axi_info[] = {
++	CCU_DIV_VAR_INFO(CCU_AXI_MAIN_CLK, "axi_main_clk", "pcie_clk",
++			 CCU_AXI_MAIN_BASE, 4,
++			 CCU_DIV_CRITICAL | CCU_DIV_NO_GATE |
++			 CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_DDR_CLK, "axi_ddr_clk", "sata_clk",
++			 CCU_AXI_DDR_BASE, 4,
++			 CCU_DIV_CRITICAL | CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_SATA_CLK, "axi_sata_clk", "sata_clk",
++			 CCU_AXI_SATA_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_GMAC0_CLK, "axi_gmac0_clk", "eth_clk",
++			 CCU_AXI_GMAC0_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_GMAC1_CLK, "axi_gmac1_clk", "eth_clk",
++			 CCU_AXI_GMAC1_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_XGMAC_CLK, "axi_xgmac_clk", "eth_clk",
++			 CCU_AXI_XGMAC_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_PCIE_M_CLK, "axi_pcie_m_clk", "pcie_clk",
++			 CCU_AXI_PCIE_M_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_PCIE_S_CLK, "axi_pcie_s_clk", "pcie_clk",
++			 CCU_AXI_PCIE_S_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_USB_CLK, "axi_usb_clk", "sata_clk",
++			 CCU_AXI_USB_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_HWA_CLK, "axi_hwa_clk", "sata_clk",
++			 CCU_AXI_HWA_BASE, 4, CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_AXI_SRAM_CLK, "axi_sram_clk", "eth_clk",
++			 CCU_AXI_SRAM_BASE, 4, CCU_DIV_RESET_DOMAIN)
 +};
 +
-+static struct ccu_pll *ccu_pll_find_desc(struct ccu_pll_data *data,
++static const struct ccu_div_rst_map axi_rst_map[] = {
++	CCU_DIV_RST_MAP(CCU_AXI_MAIN_RST, CCU_AXI_MAIN_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_DDR_RST, CCU_AXI_DDR_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_SATA_RST, CCU_AXI_SATA_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_GMAC0_RST, CCU_AXI_GMAC0_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_GMAC1_RST, CCU_AXI_GMAC1_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_XGMAC_RST, CCU_AXI_XGMAC_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_PCIE_M_RST, CCU_AXI_PCIE_M_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_PCIE_S_RST, CCU_AXI_PCIE_S_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_USB_RST, CCU_AXI_USB_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_HWA_RST, CCU_AXI_HWA_CLK),
++	CCU_DIV_RST_MAP(CCU_AXI_SRAM_RST, CCU_AXI_SRAM_CLK)
++};
++
++static const struct ccu_div_info sys_info[] = {
++	CCU_DIV_VAR_INFO(CCU_SYS_SATA_REF_CLK, "sys_sata_ref_clk",
++			 "sata_clk", CCU_SYS_SATA_REF_BASE, 4,
++			 CCU_DIV_SKIP_ONE | CCU_DIV_LOCK_SHIFTED |
++			 CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_VAR_INFO(CCU_SYS_APB_CLK, "sys_apb_clk",
++			 "pcie_clk", CCU_SYS_APB_BASE, 5,
++			 CCU_DIV_CRITICAL | CCU_DIV_NO_GATE |
++			 CCU_DIV_RESET_DOMAIN),
++	CCU_DIV_FIXED_LOC_INFO(CCU_SYS_GMAC0_CSR_CLK, "sys_gmac0_csr_clk",
++			       CCU_SYS_APB_CLK, 1),
++	CCU_DIV_GATE_INFO(CCU_SYS_GMAC0_TX_CLK, "sys_gmac0_tx_clk",
++			  "eth_clk", CCU_SYS_GMAC0_BASE, 5),
++	CCU_DIV_FIXED_EXT_INFO(CCU_SYS_GMAC0_PTP_CLK, "sys_gmac0_ptp_clk",
++			       "eth_clk", 10),
++	CCU_DIV_FIXED_LOC_INFO(CCU_SYS_GMAC1_CSR_CLK, "sys_gmac1_csr_clk",
++			       CCU_SYS_APB_CLK, 1),
++	CCU_DIV_GATE_INFO(CCU_SYS_GMAC1_TX_CLK, "sys_gmac1_tx_clk",
++			  "eth_clk", CCU_SYS_GMAC1_BASE, 5),
++	CCU_DIV_FIXED_EXT_INFO(CCU_SYS_GMAC1_PTP_CLK, "sys_gmac1_ptp_clk",
++			       "eth_clk", 10),
++	CCU_DIV_GATE_INFO(CCU_SYS_XGMAC_REF_CLK, "sys_xgmac_ref_clk",
++			  "eth_clk", CCU_SYS_XGMAC_BASE, 8),
++	CCU_DIV_FIXED_EXT_INFO(CCU_SYS_XGMAC_PTP_CLK, "sys_xgmac_ptp_clk",
++			       "eth_clk", 10),
++	CCU_DIV_GATE_INFO(CCU_SYS_USB_CLK, "sys_usb_clk",
++			  "eth_clk", CCU_SYS_USB_BASE, 10),
++	CCU_DIV_VAR_INFO(CCU_SYS_PVT_CLK, "sys_pvt_clk",
++			 "ref_clk", CCU_SYS_PVT_BASE, 5, 0),
++	CCU_DIV_VAR_INFO(CCU_SYS_HWA_CLK, "sys_hwa_clk",
++			 "sata_clk", CCU_SYS_HWA_BASE, 4, 0),
++	CCU_DIV_VAR_INFO(CCU_SYS_UART_CLK, "sys_uart_clk",
++			 "eth_clk", CCU_SYS_UART_BASE, 17, 0),
++	CCU_DIV_FIXED_LOC_INFO(CCU_SYS_SPI_CLK, "sys_spi_clk",
++			   CCU_SYS_APB_CLK, 1),
++	CCU_DIV_FIXED_EXT_INFO(CCU_SYS_I2C1_CLK, "sys_i2c1_clk",
++			       "eth_clk", 10),
++	CCU_DIV_FIXED_EXT_INFO(CCU_SYS_I2C2_CLK, "sys_i2c2_clk",
++			       "eth_clk", 10),
++	CCU_DIV_FIXED_EXT_INFO(CCU_SYS_GPIO_CLK, "sys_gpio_clk",
++			       "ref_clk", 25),
++	CCU_DIV_VAR_INFO(CCU_SYS_TIMER0_CLK, "sys_timer0_clk",
++			 "ref_clk", CCU_SYS_TIMER0_BASE, 17, 0),
++	CCU_DIV_VAR_INFO(CCU_SYS_TIMER1_CLK, "sys_timer1_clk",
++			 "ref_clk", CCU_SYS_TIMER1_BASE, 17, 0),
++	CCU_DIV_VAR_INFO(CCU_SYS_TIMER2_CLK, "sys_timer2_clk",
++			 "ref_clk", CCU_SYS_TIMER2_BASE, 17, 0),
++	CCU_DIV_VAR_INFO(CCU_SYS_WDT_CLK, "sys_wdt_clk",
++			 "eth_clk", CCU_SYS_WDT_BASE, 17,
++			 CCU_DIV_SKIP_ONE_TO_THREE)
++};
++
++static const struct ccu_div_rst_map sys_rst_map[] = {
++	CCU_DIV_RST_MAP(CCU_SYS_SATA_REF_RST, CCU_SYS_SATA_REF_CLK),
++	CCU_DIV_RST_MAP(CCU_SYS_APB_RST, CCU_SYS_APB_CLK),
++};
++
++static struct ccu_div *ccu_div_find_desc(struct ccu_div_data *data,
 +					 unsigned int clk_id)
 +{
-+	struct ccu_pll *pll;
++	struct ccu_div *div;
 +	int idx;
 +
-+	for (idx = 0; idx < CCU_PLL_NUM; ++idx) {
-+		pll = data->plls[idx];
-+		if (clk_id == ccu_pll_get_clk_id(pll))
-+			return pll;
++	for (idx = 0; idx < data->divs_num; ++idx) {
++		div = data->divs[idx];
++		if (clk_id == ccu_div_get_clk_id(div))
++			return div;
 +	}
 +
 +	return ERR_PTR(-EINVAL);
 +}
 +
-+static struct ccu_pll_data *ccu_pll_create_data(struct device_node *np)
++static int ccu_div_reset(struct reset_controller_dev *rcdev,
++			 unsigned long rst_id)
 +{
-+	struct ccu_pll_data *data;
++	struct ccu_div_data *data = to_ccu_div_data(rcdev);
++	const struct ccu_div_rst_map *map;
++	struct ccu_div *div;
++	int idx, ret;
++
++	for (idx = 0, map = data->rst_map; idx < data->rst_num; ++idx, ++map) {
++		if (map->rst_id == rst_id)
++			break;
++	}
++	if (idx == data->rst_num) {
++		pr_err("Invalid reset ID %lu specified\n", rst_id);
++		return -EINVAL;
++	}
++
++	div = ccu_div_find_desc(data, map->clk_id);
++	if (IS_ERR(div)) {
++		pr_err("Invalid clock ID %d in mapping\n", map->clk_id);
++		return PTR_ERR(div);
++	}
++
++	ret = ccu_div_reset_domain(div);
++	if (ret) {
++		pr_err("Reset isn't supported by divider %s\n",
++			clk_hw_get_name(ccu_div_get_clk_hw(div)));
++	}
++
++	return ret;
++}
++
++static const struct reset_control_ops ccu_div_rst_ops = {
++	.reset = ccu_div_reset,
++};
++
++static struct ccu_div_data *ccu_div_create_data(struct device_node *np,
++					unsigned int divs_num,
++					const struct ccu_div_info *divs_info,
++					unsigned int rst_num,
++					const struct ccu_div_rst_map *rst_map)
++{
++	struct ccu_div_data *data;
 +
 +	data = kzalloc(sizeof(*data), GFP_KERNEL);
 +	if (!data)
 +		return ERR_PTR(-ENOMEM);
 +
++	data->divs = kcalloc(divs_num, sizeof(*data->divs), GFP_KERNEL);
++	if (!data->divs) {
++		kfree(data);
++		return ERR_PTR(-ENOMEM);
++	}
++
 +	data->np = np;
++	data->divs_num = divs_num;
++	data->divs_info = divs_info;
++	data->rst_num = rst_num;
++	data->rst_map = rst_map;
 +
 +	return data;
 +}
 +
-+static void ccu_pll_free_data(struct ccu_pll_data *data)
++static void ccu_div_free_data(struct ccu_div_data *data)
 +{
++	kfree(data->divs);
++
 +	kfree(data);
 +}
 +
-+static int ccu_pll_request_regs(struct ccu_pll_data *data)
++static int ccu_div_request_regs(struct ccu_div_data *data)
 +{
 +	data->regs = of_io_request_and_map(data->np, 0,
 +					   of_node_full_name(data->np));
 +	if (IS_ERR(data->regs)) {
-+		pr_err("Failed to request PLLs '%s' regs\n",
++		pr_err("Failed to request dividers '%s' registers\n",
 +			of_node_full_name(data->np));
 +		return PTR_ERR(data->regs);
 +	}
@@ -850,7 +1132,7 @@ index 000000000000..990f0a4a12f9
 +	return 0;
 +}
 +
-+static void ccu_pll_release_regs(struct ccu_pll_data *data)
++static void ccu_div_release_regs(struct ccu_div_data *data)
 +{
 +	struct resource res;
 +
@@ -863,54 +1145,79 @@ index 000000000000..990f0a4a12f9
 +	(void)release_mem_region(res.start, resource_size(&res));
 +}
 +
-+static struct clk_hw *ccu_pll_of_clk_hw_get(struct of_phandle_args *clkspec,
++static struct clk_hw *ccu_div_of_clk_hw_get(struct of_phandle_args *clkspec,
 +					    void *priv)
 +{
-+	struct ccu_pll_data *data = priv;
-+	struct ccu_pll *pll;
++	struct ccu_div_data *data = priv;
++	struct ccu_div *div;
 +	unsigned int clk_id;
 +
 +	clk_id = clkspec->args[0];
-+	pll = ccu_pll_find_desc(data, clk_id);
-+	if (IS_ERR(pll)) {
-+		pr_info("Invalid PLL clock ID %d specified\n", clk_id);
-+		return ERR_CAST(pll);
++	div = ccu_div_find_desc(data, clk_id);
++	if (IS_ERR(div)) {
++		pr_info("Invalid clock ID %d specified\n", clk_id);
++		return ERR_CAST(div);
 +	}
 +
-+	return ccu_pll_get_clk_hw(pll);
++	return ccu_div_get_clk_hw(div);
 +}
 +
-+static int ccu_pll_clk_register(struct ccu_pll_data *data)
++static int ccu_div_clk_register(struct ccu_div_data *data)
 +{
 +	int idx, ret;
 +
-+	for (idx = 0; idx < CCU_PLL_NUM; ++idx) {
-+		const struct ccu_pll_info *info = &pll_info[idx];
-+		struct ccu_pll_init_data init = {0};
++	for (idx = 0; idx < data->divs_num; ++idx) {
++		const struct ccu_div_info *info = &data->divs_info[idx];
++		struct ccu_div_init_data init = {0};
 +
 +		init.id = info->id;
-+		init.regs = data->regs + info->base;
-+		init.parent_name = info->parent_name;
 +		init.np = data->np;
++		init.type = info->type;
 +		init.flags = info->flags;
++
++		if (init.type == CCU_DIV_VAR) {
++			init.reg = data->regs + info->base;
++			init.width = info->width;
++		} else if (init.type == CCU_DIV_GATE) {
++			init.reg = data->regs + info->base;
++			init.divider = info->divider;
++		} else {
++			init.divider = info->divider;
++		}
++
++		if (info->parent_name) {
++			init.parent_name = info->parent_name;
++		} else {
++			struct ccu_div *div;
++
++			div = ccu_div_find_desc(data, info->parent_id);
++			if (IS_ERR_OR_NULL(div)) {
++				ret = -EINVAL;
++				pr_err("Invalid parent ID '%u'\n",
++					info->parent_id);
++				goto err_hw_unregister;
++			}
++
++			init.parent_hw = ccu_div_get_clk_hw(div);
++		}
 +
 +		ret = of_property_read_string_index(data->np,
 +			"clock-output-names", init.id, &init.name);
 +		if (ret)
 +			init.name = info->name;
 +
-+		data->plls[idx] = ccu_pll_hw_register(&init);
-+		if (IS_ERR(data->plls[idx])) {
-+			ret = PTR_ERR(data->plls[idx]);
-+			pr_err("Couldn't register PLL hw '%s'\n",
++		data->divs[idx] = ccu_div_hw_register(&init);
++		if (IS_ERR(data->divs[idx])) {
++			ret = PTR_ERR(data->divs[idx]);
++			pr_err("Couldn't register divider '%s' hw\n",
 +				init.name);
 +			goto err_hw_unregister;
 +		}
 +	}
 +
-+	ret = of_clk_add_hw_provider(data->np, ccu_pll_of_clk_hw_get, data);
++	ret = of_clk_add_hw_provider(data->np, ccu_div_of_clk_hw_get, data);
 +	if (ret) {
-+		pr_err("Couldn't register PLL provider of '%s'\n",
++		pr_err("Couldn't register dividers '%s' clock provider\n",
 +			of_node_full_name(data->np));
 +		goto err_hw_unregister;
 +	}
@@ -919,89 +1226,122 @@ index 000000000000..990f0a4a12f9
 +
 +err_hw_unregister:
 +	for (--idx; idx >= 0; --idx)
-+		ccu_pll_hw_unregister(data->plls[idx]);
++		ccu_div_hw_unregister(data->divs[idx]);
 +
 +	return ret;
 +}
 +
-+static __init void ccu_pll_init(struct device_node *np)
++static void ccu_div_clk_unregister(struct ccu_div_data *data)
 +{
-+	struct ccu_pll_data *data;
++	int idx;
++
++	of_clk_del_provider(data->np);
++
++	for (idx = 0; idx < data->divs_num; ++idx)
++		ccu_div_hw_unregister(data->divs[idx]);
++}
++
++static int ccu_div_rst_register(struct ccu_div_data *data)
++{
 +	int ret;
 +
-+	data = ccu_pll_create_data(np);
-+	if (IS_ERR(data))
-+		return;
++	data->rcdev.ops = &ccu_div_rst_ops;
++	data->rcdev.of_node = data->np;
++	data->rcdev.nr_resets = data->rst_num;
 +
-+	ret = ccu_pll_request_regs(data);
++	ret = reset_controller_register(&data->rcdev);
++	if (ret) {
++		pr_err("Couldn't register divider '%s' reset controller\n",
++			of_node_full_name(data->np));
++	}
++
++	return ret;
++}
++
++static int ccu_div_init(struct device_node *np,
++			unsigned int divs_num,
++			const struct ccu_div_info *divs_info,
++			unsigned int rst_num,
++			const struct ccu_div_rst_map *rst_map)
++{
++	struct ccu_div_data *data;
++	int ret;
++
++	data = ccu_div_create_data(np, divs_num, divs_info, rst_num, rst_map);
++	if (IS_ERR(data))
++		return PTR_ERR(data);
++
++	ret = ccu_div_request_regs(data);
 +	if (ret)
 +		goto err_free_data;
 +
-+	ret = ccu_pll_clk_register(data);
++	ret = ccu_div_clk_register(data);
 +	if (ret)
 +		goto err_release_regs;
 +
-+	pr_info("CCU CPU/SATA/DDR/PCIe/Ethernet PLLs are initialized\n");
++	ret = ccu_div_rst_register(data);
++	if (ret)
++		goto err_clk_unregister;
 +
-+	return;
++	return 0;
++
++err_clk_unregister:
++	ccu_div_clk_unregister(data);
 +
 +err_release_regs:
-+	ccu_pll_release_regs(data);
++	ccu_div_release_regs(data);
 +
 +err_free_data:
-+	ccu_pll_free_data(data);
++	ccu_div_free_data(data);
++
++	return ret;
 +}
-+CLK_OF_DECLARE(ccu_pll, "be,bt1-ccu-pll", ccu_pll_init);
++
++
++static __init void ccu_axi_init(struct device_node *np)
++{
++	int ret;
++
++	ret = ccu_div_init(np, CCU_AXI_DIV_NUM, axi_info,
++			   CCU_AXI_RST_NUM, axi_rst_map);
++	if (!ret)
++		pr_info("CCU AXI-bus clocks/resets are initialized\n");
++}
++CLK_OF_DECLARE(ccu_axi, "be,bt1-ccu-axi", ccu_axi_init);
++
++static __init void ccu_sys_init(struct device_node *np)
++{
++	int ret;
++
++	ret = ccu_div_init(np, CCU_SYS_DIV_NUM, sys_info,
++			   CCU_SYS_RST_NUM, sys_rst_map);
++	if (!ret)
++		pr_info("CCU system devices clocks/resets are initialized\n");
++}
++CLK_OF_DECLARE_DRIVER(ccu_sys, "be,bt1-ccu-sys", ccu_sys_init);
 diff --git a/drivers/clk/baikal-t1/common.h b/drivers/clk/baikal-t1/common.h
-new file mode 100644
-index 000000000000..07c8d67f5275
---- /dev/null
+index 07c8d67f5275..34a3015c4633 100644
+--- a/drivers/clk/baikal-t1/common.h
 +++ b/drivers/clk/baikal-t1/common.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
-+ *
-+ * Baikal-T1 CCU common methods.
-+ */
-+#ifndef __CLK_BT1_COMMON_H__
-+#define __CLK_BT1_COMMON_H__
+@@ -13,10 +13,17 @@
+ #define CCU_GET_FLD(_name, _data) \
+ 	(((u32)(_data) & _name ## _MASK) >> _name ## _FLD)
+ 
++#define CCU_GET_VAR_FLD(_name, _mask, _data) \
++	(((u32)(_data) & (u32)(_mask)) >> _name ## _FLD)
 +
-+#include <linux/debugfs.h>
-+#include <linux/io.h>
+ #define CCU_SET_FLD(_name, _data, _val) \
+ 	(((u32)(_data) & ~_name ## _MASK) | \
+ 	(((u32)(_val) << _name ## _FLD) & _name ## _MASK))
+ 
++#define CCU_SET_VAR_FLD(_name, _mask, _data, _val) \
++	(((u32)(_data) & ~(u32)(_mask)) | \
++	(((u32)(_val) << _name ## _FLD) & (u32)(_mask)))
 +
-+#define CCU_GET_FLD(_name, _data) \
-+	(((u32)(_data) & _name ## _MASK) >> _name ## _FLD)
-+
-+#define CCU_SET_FLD(_name, _data, _val) \
-+	(((u32)(_data) & ~_name ## _MASK) | \
-+	(((u32)(_val) << _name ## _FLD) & _name ## _MASK))
-+
-+#define CCU_DBGFS_REG(_name, _off)	\
-+{					\
-+	.name = _name,			\
-+	.offset = _off			\
-+}
-+
-+static inline u32 ccu_read(void __iomem *reg)
-+{
-+	return readl(reg);
-+}
-+
-+static inline void ccu_write(void __iomem *reg, u32 data)
-+{
-+	writel(data, reg);
-+}
-+
-+static inline void ccu_update(void __iomem *reg, u32 mask, u32 data)
-+{
-+	u32 old;
-+
-+	old = readl_relaxed(reg);
-+	writel((old & ~mask) | (data & mask), reg);
-+}
-+
-+#endif /* __CLK_BT1_COMMON_H__ */
+ #define CCU_DBGFS_REG(_name, _off)	\
+ {					\
+ 	.name = _name,			\
 -- 
 2.25.1
+
 
