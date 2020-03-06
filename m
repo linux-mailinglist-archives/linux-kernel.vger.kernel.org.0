@@ -2,117 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 579D917BF57
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DE017BF6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:44:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCFNls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:41:48 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:6182 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726498AbgCFNls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:41:48 -0500
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 026DYTEA011765;
-        Fri, 6 Mar 2020 08:41:44 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ygm52k7v5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Mar 2020 08:41:44 -0500
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 026DfgAI065008
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Fri, 6 Mar 2020 08:41:42 -0500
-Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
- SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 6 Mar 2020 05:41:41 -0800
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Fri, 6 Mar 2020 05:41:08 -0800
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Fri, 6 Mar 2020 05:41:40 -0800
-Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 026DfbYm025629;
-        Fri, 6 Mar 2020 08:41:38 -0500
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <nios2-dev@lists.rocketboards.org>
-CC:     <ley.foon.tan@intel.com>, <biabeniamin@outlook.com>,
-        <linux-kernel@vger.kernel.org>,
-        Dragos Bogdan <dragos.bogdan@analog.com>,
-        Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH] arch: nios2: Enable the common clk subsystem on Nios2
-Date:   Fri, 6 Mar 2020 15:44:27 +0200
-Message-ID: <20200306134427.7487-1-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726740AbgCFNod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:44:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726090AbgCFNod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 08:44:33 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBEC32084E;
+        Fri,  6 Mar 2020 13:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583502272;
+        bh=bUG6thWj/kGv0A21YoypRJ0B8J5Q4vmy/Ag2Tif8t3s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GT/271kidB1iD89fIgVuEUeYZ+2Ow/EiMQcLULFaS3Lz02CJErXIyQAhNnporCvYV
+         mwVoYbUTqSlJtV0opD06iAVdVImhGDWGIFQ9AmiK9vvPn4lLjJBHwX9/yX45/64bfp
+         bXRN4MXO6j7ptwOWWFoE3zwo6WWPa/O497RA+OM8=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jADHD-00AaT3-3C; Fri, 06 Mar 2020 13:44:31 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-06_04:2020-03-06,2020-03-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0
- impostorscore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003060098
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Mar 2020 13:44:31 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [patch 4/7] genirq: Add return value to check_irq_resend()
+In-Reply-To: <20200306130623.775200917@linutronix.de>
+References: <20200306130341.199467200@linutronix.de>
+ <20200306130623.775200917@linutronix.de>
+Message-ID: <5611ae0ee3a4f6c95cafc4fd782c111a@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dragos Bogdan <dragos.bogdan@analog.com>
+On 2020-03-06 13:03, Thomas Gleixner wrote:
+> In preparation for an interrupt injection interface which can be used
+> safely by error injection mechanisms. e.g. PCI-E/ AER, add a return 
+> value
+> to check_irq_resend() so errors can be propagated to the caller.
+> 
+> Split out the software resend code so the ugly #ifdef in 
+> check_irq_resend()
+> goes away and the whole thing becomes readable.
+> 
+> Fix up the caller in debugfs. The caller in irq_startup() does not care
+> about the return value as this is unconditionally invoked for all
+> interrupts and the resend is best effort anyway.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-This patch adds support for common clock framework on Nios2. Clock
-framework is commonly used in many drivers, and this patch makes it
-available for the entire architecture, not just on a per-driver basis.
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
-Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
----
- arch/nios2/Kconfig             | 1 +
- arch/nios2/platform/platform.c | 8 ++++++++
- 2 files changed, 9 insertions(+)
-
-diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
-index 44b5da37e8bd..4b7c951e80e2 100644
---- a/arch/nios2/Kconfig
-+++ b/arch/nios2/Kconfig
-@@ -6,6 +6,7 @@ config NIOS2
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_UNCACHED_SEGMENT
- 	select ARCH_NO_SWAP
-+	select COMMON_CLK
- 	select TIMER_OF
- 	select GENERIC_ATOMIC64
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/nios2/platform/platform.c b/arch/nios2/platform/platform.c
-index 2a35154ca153..9737a87121fa 100644
---- a/arch/nios2/platform/platform.c
-+++ b/arch/nios2/platform/platform.c
-@@ -15,6 +15,12 @@
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
- #include <linux/io.h>
-+#include <linux/clk-provider.h>
-+
-+static const struct of_device_id clk_match[] __initconst = {
-+	{ .compatible = "fixed-clock", .data = of_fixed_clk_setup, },
-+	{}
-+};
- 
- static int __init nios2_soc_device_init(void)
- {
-@@ -38,6 +44,8 @@ static int __init nios2_soc_device_init(void)
- 		}
- 	}
- 
-+	of_clk_init(clk_match);
-+
- 	return 0;
- }
- 
+         M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
