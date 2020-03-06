@@ -2,122 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B46617B5FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 06:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C11B917B606
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 06:11:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbgCFFHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 00:07:44 -0500
-Received: from m15-6.126.com ([220.181.15.6]:19916 "EHLO m15-6.126.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbgCFFHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 00:07:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=XfIPh
-        7x1oEHUZRf575YujUvh2bmTi0eo55RZ9OzvY18=; b=ceDItYFOsRS/UZ/CwRWan
-        UfqfW9u+yjFoylptIDCtdhHP1b6TMzjd9NpqvIpa9+6Tams5+l2wJ2y7gfMp+TgT
-        Vr3snPOAzoXIGPcbIr8TpcUYQcvLdAd7u0S+YyfSkOaNwLpFc7NDwjKuqVymUevV
-        XMFuVMWNpBKp3Vl6iiv8qE=
-Received: from zhangzl2013$126.com ( [147.11.252.42] ) by
- ajax-webmail-wmsvr6 (Coremail) ; Fri, 6 Mar 2020 13:06:13 +0800 (CST)
-X-Originating-IP: [147.11.252.42]
-Date:   Fri, 6 Mar 2020 13:06:13 +0800 (CST)
-From:   "Zhaolong Zhang" <zhangzl2013@126.com>
-To:     paulmck@kernel.org
-Cc:     "Zhaolong Zhang" <zhangzl2013@126.com>,
-        "Josh Triplett" <josh@joshtriplett.org>,
-        "Steven Rostedt" <rostedt@goodmis.org>,
-        "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
-        "Lai Jiangshan" <jiangshanlai@gmail.com>,
-        "Joel Fernandes" <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rcu: Fix the (t=0 jiffies) false positive
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.10 build 20190724(ac680a23)
- Copyright (c) 2002-2020 www.mailtech.cn 126com
-In-Reply-To: <20200305230515.GN2935@paulmck-ThinkPad-P72>
-References: <1583394357-11767-1-git-send-email-zhangzl2013@126.com>
- <20200305230515.GN2935@paulmck-ThinkPad-P72>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        id S1726029AbgCFFLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 00:11:22 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:54456 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbgCFFLV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 00:11:21 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jA5GZ-0005o8-Nj; Thu, 05 Mar 2020 22:11:19 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jA5GY-0003qV-TP; Thu, 05 Mar 2020 22:11:19 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nmjulm.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <202003021531.C77EF10@keescook>
+        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nlii0b.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74xi4kz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+        <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
+        <AM6PR03MB5170B05CFDAF21D8A99B7E48E4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Thu, 05 Mar 2020 23:09:04 -0600
+In-Reply-To: <AM6PR03MB5170B05CFDAF21D8A99B7E48E4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        (Bernd Edlinger's message of "Thu, 5 Mar 2020 22:56:01 +0000")
+Message-ID: <87pndqax3j.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Message-ID: <3e2ee4b9.3169.170ae3c9ed0.Coremail.zhangzl2013@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: BsqowAD3Br9G2mFeFFR0AA--.44548W
-X-CM-SenderInfo: x2kd0wt2osiiat6rjloofrz/1tbikgfez1pD-8BC0QABsw
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain
+X-XM-SPF: eid=1jA5GY-0003qV-TP;;;mid=<87pndqax3j.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/OxSTSv2CXmzMmUtD1Q1oXz5BqRMOOkKE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4996]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 354 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.9 (0.8%), b_tie_ro: 1.96 (0.6%), parse: 1.14
+        (0.3%), extract_message_metadata: 14 (3.9%), get_uri_detail_list: 1.63
+        (0.5%), tests_pri_-1000: 26 (7.5%), tests_pri_-950: 1.28 (0.4%),
+        tests_pri_-900: 1.05 (0.3%), tests_pri_-90: 32 (9.1%), check_bayes: 31
+        (8.6%), b_tokenize: 12 (3.5%), b_tok_get_all: 9 (2.6%), b_comp_prob:
+        2.6 (0.7%), b_tok_touch_all: 3.7 (1.0%), b_finish: 0.67 (0.2%),
+        tests_pri_0: 262 (74.0%), check_dkim_signature: 0.56 (0.2%),
+        check_dkim_adsp: 2.5 (0.7%), poll_dns_idle: 0.81 (0.2%), tests_pri_10:
+        2.9 (0.8%), tests_pri_500: 7 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] exec: Properly mark the point of no return
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUGF1bCwKClNvcnJ5IGZvciB0aGUgaW5jb252ZW5pZW5jZS4gCkkgY3JlYXRlZCBteSBwYXRj
-aCBiYXNlZCBvbiBtYWlubGluZScgY29tbWl0IDc3NmU0OWU4ZGRiNTE2OWU2NDc3ZmQzM2EzOTZl
-OWM3YjJlYjc0MDAKClRoYW5rIHlvdSBmb3IgdGhlIHByb2Zlc3Npb25hbCBkZXNjcmlwdGlvbiBh
-bmQgaGFuZCBhcHBseWluZy4KSSB3aWxsIHNlbmQgZnV0dXJlIHJjdSByZWxhdGVkIHBhdGNoZXMg
-YmFzZWQgb24geW91ciAiZGV2IiBicmFuY2ggb2YgbGludXgtcmN1IHRyZWUuCgpSZWdhcmRzLApa
-aGFvbG9uZwoKCkF0IDIwMjAtMDMtMDYgMDc6MDU6MTUsICJQYXVsIEUuIE1jS2VubmV5IiA8cGF1
-bG1ja0BrZXJuZWwub3JnPiB3cm90ZToKPk9uIFRodSwgTWFyIDA1LCAyMDIwIGF0IDAzOjQ1OjU3
-UE0gKzA4MDAsIFpoYW9sb25nIFpoYW5nIHdyb3RlOgo+PiBDYWxjdWxhdGUgJ3QnIHdpdGggdGhl
-IHByZXZpb3VzbHkgcmVjb3JkZWQgJ2dwcycgaW5zdGVhZCBvZiAnZ3Bfc3RhcnQnLgo+PiAKPj4g
-U2lnbmVkLW9mZi1ieTogWmhhb2xvbmcgWmhhbmcgPHpoYW5nemwyMDEzQDEyNi5jb20+Cj4KPkdv
-b2QgY2F0Y2gsIHRoYW5rIHlvdSEKPgo+SSBoYWQgdG8gYXBwbHkgdGhpcyBieSBoYW5kLiAgTXkg
-Z3Vlc3MgaXMgdGhhdCB5b3UgZGV2ZWxvcGVkIGFnYWluc3QKPm1haW5saW5lIHJhdGhlciB0aGFu
-IHRoZSAiZGV2IiBicmFuY2ggb2YgdGhlIC1yY3UgdHJlZToKPgo+Z2l0Oi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3BhdWxtY2svbGludXgtcmN1LmdpdAo+Cj5PciBw
-ZXJoYXBzIHlvdXIgZW1haWwgY2xpZW50IGNvcnJ1cHRlZCB0aGUgcGF0Y2g/Cj4KPlJlZ2FyZGxl
-c3MsIHBsZWFzZSBjaGVjayB0aGUgdmVyc2lvbiBiZWxvdyBhbmQgbGV0IG1lIGtub3cgaWYgSSBt
-ZXNzZWQKPmFueXRoaW5nIHVwLgo+Cj4JCQkJCQkJVGhhbngsIFBhdWwKPgo+LS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCj4KPmNvbW1pdCA3ZGQ1ODFiYmJjYzAwMjQ2ZmVjMzVlZGE2MGFkZDRiMzIyMDBiMGEwCj5B
-dXRob3I6IFpoYW9sb25nIFpoYW5nIDx6aGFuZ3psMjAxM0AxMjYuY29tPgo+RGF0ZTogICBUaHUg
-TWFyIDUgMTQ6NTY6MTEgMjAyMCAtMDgwMAo+Cj4gICAgcmN1OiBGaXggdGhlICh0PTAgamlmZmll
-cykgZmFsc2UgcG9zaXRpdmUKPiAgICAKPiAgICBJdCBpcyBwb3NzaWJsZSB0aGF0IGFuIG92ZXIt
-bG9uZyBncmFjZSBwZXJpb2Qgd2lsbCBlbmQgd2hpbGUgdGhlIFJDVQo+ICAgIENQVSBzdGFsbCB3
-YXJuaW5nIG1lc3NhZ2UgaXMgcHJpbnRpbmcuICBJbiB0aGlzIGNhc2UsIHRoZSBlc3RpbWF0ZSBv
-Zgo+ICAgIHRoZSBvZmZlbmRpbmcgZ3JhY2UgcGVyaW9kJ3MgZHVyYXRpb24gY2FuIGJlIGVycm9u
-ZW91cyBkdWUgdG8gcmVmZXRjaGluZwo+ICAgIG9mIHJjdV9zdGF0ZS5ncF9zdGFydCwgd2hpY2gg
-d2lsbCBub3cgYmUgdGhlIHRpbWUgb2YgdGhlIG5ld2x5IHN0YXJ0ZWQKPiAgICBncmFjZSBwZXJp
-b2QuICBDb21wdXRhdGlvbiBvZiB0aGlzIGR1cmF0aW9uIGNsZWFybHkgbmVlZHMgdG8gdXNlIHRo
-ZQo+ICAgIHN0YXJ0IHRpbWUgZm9yIHRoZSBvbGQgb3Zlci1sb25nIGdyYWNlIHBlcmlvZCwgbm90
-IHRoZSBmcmVzaCBuZXcgb25lLgo+ICAgIFRoaXMgY29tbWl0IGF2b2lkcyBzdWNoIGVycm9ycyBi
-eSBjYXVzaW5nIGJvdGggcHJpbnRfb3RoZXJfY3B1X3N0YWxsKCkgYW5kCj4gICAgcHJpbnRfY3B1
-X3N0YWxsKCkgdG8gcmV1c2UgdGhlIHZhbHVlIHByZXZpb3VzbHkgZmV0Y2hlZCBieSB0aGVpciBj
-YWxsZXIuCj4gICAgCj4gICAgU2lnbmVkLW9mZi1ieTogWmhhb2xvbmcgWmhhbmcgPHpoYW5nemwy
-MDEzQDEyNi5jb20+Cj4gICAgU2lnbmVkLW9mZi1ieTogUGF1bCBFLiBNY0tlbm5leSA8cGF1bG1j
-a0BrZXJuZWwub3JnPgo+Cj5kaWZmIC0tZ2l0IGEva2VybmVsL3JjdS90cmVlX3N0YWxsLmggYi9r
-ZXJuZWwvcmN1L3RyZWVfc3RhbGwuaAo+aW5kZXggYjE3Y2Q5Yi4uNTAyYjRkZCAxMDA2NDQKPi0t
-LSBhL2tlcm5lbC9yY3UvdHJlZV9zdGFsbC5oCj4rKysgYi9rZXJuZWwvcmN1L3RyZWVfc3RhbGwu
-aAo+QEAgLTM3MSw3ICszNzEsNyBAQCBzdGF0aWMgdm9pZCByY3VfY2hlY2tfZ3Bfa3RocmVhZF9z
-dGFydmF0aW9uKHZvaWQpCj4gCX0KPiB9Cj4gCj4tc3RhdGljIHZvaWQgcHJpbnRfb3RoZXJfY3B1
-X3N0YWxsKHVuc2lnbmVkIGxvbmcgZ3Bfc2VxKQo+K3N0YXRpYyB2b2lkIHByaW50X290aGVyX2Nw
-dV9zdGFsbCh1bnNpZ25lZCBsb25nIGdwX3NlcSwgdW5zaWduZWQgbG9uZyBncHMpCj4gewo+IAlp
-bnQgY3B1Owo+IAl1bnNpZ25lZCBsb25nIGZsYWdzOwo+QEAgLTQwOCw3ICs0MDgsNyBAQCBzdGF0
-aWMgdm9pZCBwcmludF9vdGhlcl9jcHVfc3RhbGwodW5zaWduZWQgbG9uZyBncF9zZXEpCj4gCWZv
-cl9lYWNoX3Bvc3NpYmxlX2NwdShjcHUpCj4gCQl0b3RxbGVuICs9IHJjdV9nZXRfbl9jYnNfY3B1
-KGNwdSk7Cj4gCXByX2NvbnQoIlx0KGRldGVjdGVkIGJ5ICVkLCB0PSVsZCBqaWZmaWVzLCBnPSVs
-ZCwgcT0lbHUpXG4iLAo+LQkgICAgICAgc21wX3Byb2Nlc3Nvcl9pZCgpLCAobG9uZykoamlmZmll
-cyAtIHJjdV9zdGF0ZS5ncF9zdGFydCksCj4rCSAgICAgICBzbXBfcHJvY2Vzc29yX2lkKCksIChs
-b25nKShqaWZmaWVzIC0gZ3BzKSwKPiAJICAgICAgIChsb25nKXJjdV9zZXFfY3VycmVudCgmcmN1
-X3N0YXRlLmdwX3NlcSksIHRvdHFsZW4pOwo+IAlpZiAobmRldGVjdGVkKSB7Cj4gCQlyY3VfZHVt
-cF9jcHVfc3RhY2tzKCk7Cj5AQCAtNDQyLDcgKzQ0Miw3IEBAIHN0YXRpYyB2b2lkIHByaW50X290
-aGVyX2NwdV9zdGFsbCh1bnNpZ25lZCBsb25nIGdwX3NlcSkKPiAJcmN1X2ZvcmNlX3F1aWVzY2Vu
-dF9zdGF0ZSgpOyAgLyogS2ljayB0aGVtIGFsbC4gKi8KPiB9Cj4gCj4tc3RhdGljIHZvaWQgcHJp
-bnRfY3B1X3N0YWxsKHZvaWQpCj4rc3RhdGljIHZvaWQgcHJpbnRfY3B1X3N0YWxsKHVuc2lnbmVk
-IGxvbmcgZ3BzKQo+IHsKPiAJaW50IGNwdTsKPiAJdW5zaWduZWQgbG9uZyBmbGFnczsKPkBAIC00
-NjcsNyArNDY3LDcgQEAgc3RhdGljIHZvaWQgcHJpbnRfY3B1X3N0YWxsKHZvaWQpCj4gCWZvcl9l
-YWNoX3Bvc3NpYmxlX2NwdShjcHUpCj4gCQl0b3RxbGVuICs9IHJjdV9nZXRfbl9jYnNfY3B1KGNw
-dSk7Cj4gCXByX2NvbnQoIlx0KHQ9JWx1IGppZmZpZXMgZz0lbGQgcT0lbHUpXG4iLAo+LQkJamlm
-ZmllcyAtIHJjdV9zdGF0ZS5ncF9zdGFydCwKPisJCWppZmZpZXMgLSBncHMsCj4gCQkobG9uZyly
-Y3Vfc2VxX2N1cnJlbnQoJnJjdV9zdGF0ZS5ncF9zZXEpLCB0b3RxbGVuKTsKPiAKPiAJcmN1X2No
-ZWNrX2dwX2t0aHJlYWRfc3RhcnZhdGlvbigpOwo+QEAgLTU0Niw3ICs1NDYsNyBAQCBzdGF0aWMg
-dm9pZCBjaGVja19jcHVfc3RhbGwoc3RydWN0IHJjdV9kYXRhICpyZHApCj4gCSAgICBjbXB4Y2hn
-KCZyY3Vfc3RhdGUuamlmZmllc19zdGFsbCwganMsIGpuKSA9PSBqcykgewo+IAo+IAkJLyogV2Ug
-aGF2ZW4ndCBjaGVja2VkIGluLCBzbyBnbyBkdW1wIHN0YWNrLiAqLwo+LQkJcHJpbnRfY3B1X3N0
-YWxsKCk7Cj4rCQlwcmludF9jcHVfc3RhbGwoZ3BzKTsKPiAJCWlmIChyY3VfY3B1X3N0YWxsX2Z0
-cmFjZV9kdW1wKQo+IAkJCXJjdV9mdHJhY2VfZHVtcChEVU1QX0FMTCk7Cj4gCj5AQCAtNTU1LDcg
-KzU1NSw3IEBAIHN0YXRpYyB2b2lkIGNoZWNrX2NwdV9zdGFsbChzdHJ1Y3QgcmN1X2RhdGEgKnJk
-cCkKPiAJCSAgIGNtcHhjaGcoJnJjdV9zdGF0ZS5qaWZmaWVzX3N0YWxsLCBqcywgam4pID09IGpz
-KSB7Cj4gCj4gCQkvKiBUaGV5IGhhZCBhIGZldyB0aW1lIHVuaXRzIHRvIGR1bXAgc3RhY2ssIHNv
-IGNvbXBsYWluLiAqLwo+LQkJcHJpbnRfb3RoZXJfY3B1X3N0YWxsKGdzMik7Cj4rCQlwcmludF9v
-dGhlcl9jcHVfc3RhbGwoZ3MyLCBncHMpOwo+IAkJaWYgKHJjdV9jcHVfc3RhbGxfZnRyYWNlX2R1
-bXApCj4gCQkJcmN1X2Z0cmFjZV9kdW1wKERVTVBfQUxMKTsKPiAJfQo=
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+
+> On 3/5/20 10:15 PM, Eric W. Biederman wrote:
+>> 
+>> Add a flag binfmt->unrecoverable to mark when execution has gotten to
+>> the point where it is impossible to return to userspace with the
+>> calling process unchanged.
+>> 
+>> While techinically this state starts as soon as de_thread starts
+>> killing threads, the only return path at that point is if there is a
+>> fatal signal pending.  I have choosen instead to set unrecoverable
+>> when the killing stops, and there are possibilities of failures other
+>> than fatal signals.  In particular it is possible for the allocation
+>> of a new sighand structure to fail.
+>> 
+>> Setting unrecoverable at this point has the benefit that other actions
+>> can be taken after the other threads are all dead, and the
+>> unrecoverable flag can double as a flag that those actions have been
+>> taken.
+>> 
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> ---
+>>  fs/exec.c               | 7 ++++---
+>>  include/linux/binfmts.h | 7 ++++++-
+>>  2 files changed, 10 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index db17be51b112..c243f9660d46 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1061,7 +1061,7 @@ static int exec_mmap(struct mm_struct *mm)
+>>   * disturbing other processes.  (Other processes might share the signal
+>>   * table via the CLONE_SIGHAND option to clone().)
+>>   */
+>> -static int de_thread(struct task_struct *tsk)
+>> +static int de_thread(struct linux_binprm *bprm, struct task_struct *tsk)
+>>  {
+>>  	struct signal_struct *sig = tsk->signal;
+>>  	struct sighand_struct *oldsighand = tsk->sighand;
+>> @@ -1182,6 +1182,7 @@ static int de_thread(struct task_struct *tsk)
+>>  		release_task(leader);
+>>  	}
+>>  
+>> +	bprm->unrecoverable = true;
+>>  	sig->group_exit_task = NULL;
+>>  	sig->notify_count = 0;
+>>  
+>
+> ah, sorry, 
+>         if (thread_group_empty(tsk))
+>                 goto no_thread_group;
+> will skip this:
+>
+>         sig->group_exit_task = NULL;
+>         sig->notify_count = 0;
+>
+> no_thread_group:
+>         /* we have changed execution domain */
+>         tsk->exit_signal = SIGCHLD;
+>
+> so I think the bprm->unrecoverable = true; should be here?
+
+Absolutely.  Thank you very much.
+
+This is why I try and keep things to one clear simple thing per patch so
+silly thinkos like that can be caught.
+
+Eric
