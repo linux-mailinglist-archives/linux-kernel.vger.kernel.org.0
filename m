@@ -2,259 +2,521 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8C817B4EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 04:34:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2354017B4F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 04:36:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbgCFDen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 22:34:43 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29304 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726251AbgCFDen (ORCPT
+        id S1726440AbgCFDfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 22:35:52 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38694 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgCFDfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 22:34:43 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0263YeBE036402
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Mar 2020 22:34:42 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yj4q36wb5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 22:34:41 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Fri, 6 Mar 2020 03:34:33 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 6 Mar 2020 03:34:26 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0263YPWr47906834
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Mar 2020 03:34:25 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6904BA4053;
-        Fri,  6 Mar 2020 03:34:25 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C0707A4051;
-        Fri,  6 Mar 2020 03:34:24 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Mar 2020 03:34:24 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id C3638A011F;
-        Fri,  6 Mar 2020 14:34:19 +1100 (AEDT)
-Subject: Re: [PATCH v3 18/27] powerpc/powernv/pmem: Add controller dump
- IOCTLs
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     Andrew Donnellan <ajd@linux.ibm.com>
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Date:   Fri, 06 Mar 2020 14:34:23 +1100
-In-Reply-To: <7fc5ee46-d849-11f1-d0ad-429a8c87d7eb@linux.ibm.com>
-References: <20200221032720.33893-1-alastair@au1.ibm.com>
-         <20200221032720.33893-19-alastair@au1.ibm.com>
-         <7fc5ee46-d849-11f1-d0ad-429a8c87d7eb@linux.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Thu, 5 Mar 2020 22:35:52 -0500
+Received: by mail-lf1-f68.google.com with SMTP id x22so714498lff.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 19:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ql3XQZSHAFVJhV4jpmhJbcc5iMOUhyMAEyck+GDMAQU=;
+        b=ocXty+wai9fTVsC4CX6z3BibnVwOowVIPWh4X00X3U2Qxu7lpawKX/RpiJabae20PN
+         Pb2TtNtokHEVUDIQbj8UaOzXQv7+yp8JpJ7UEiphFuiT4IMbxBw5qN3nSFY/EHyPmueQ
+         PVPzPsvzH+xOdzcbKrquvduvzW7iSbCzymmMCkV6v4uXadZ7LGy4XPpk3UapMF1F5lp4
+         UrEA7XVZE+PJyZoV6NzkSHJrQ2rDmfiWtBpOU8vULHdCgypWelFvSqfH8LxXlj38xuAp
+         wmYNxxMi2DpfFZfIj/wBvfoMRgzxq+w+2aqPhE5RJCDZ+bu3/k1EseeWfXCiz2axvuyN
+         tT6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ql3XQZSHAFVJhV4jpmhJbcc5iMOUhyMAEyck+GDMAQU=;
+        b=FlIcnc4VUNULB0l+g4pt0RaFpYRXAj2ORbwFonEIb0+AxEo2Hxm6ajYvY6aPrCnZCV
+         Bi+yv65XMIEtgleI+nHwWoVCUhPnfeVSuL2f11N19wuINB9c2r17/oshkOCHUgoYU3MK
+         T47GOu7IKNm9MoWgqgTnDhQpAFP1pqnxiKWnaWksPsYSTKYvqF6lx7vKt0Slb6L8WuOv
+         2FK9Lt0+qZSeNNhJUITGh9ygWZ63ESC2sK/jigjBneU06d+PTv30rJmXrSZMi0gKbDB1
+         HQLtrfBfWT+XHJeqowQL8nXu9isAUmYWhSvCk/GdeN0U+OlJ9qDlJau3bx0R/B9oyWCH
+         BtoQ==
+X-Gm-Message-State: ANhLgQ0NtUSyB7EEdTxwd3t3jDqhJYxon0Tw9akBaQKCOGYoYpu8w4TJ
+        tggwPr1u3iCCJ6Rd/pVJ6rwTpOsx6xMf5rSkQbBqYA==
+X-Google-Smtp-Source: ADFU+vvi6yOpwqeSa5WiAkefLdhNiT++h6IyU927KGouaDipt2TpXAAAfPnOXKJCXukXNonz4mvXxvId9nspbSfMd5M=
+X-Received: by 2002:a19:2314:: with SMTP id j20mr601707lfj.40.1583465747764;
+ Thu, 05 Mar 2020 19:35:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030603-4275-0000-0000-000003A8D469
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030603-4276-0000-0000-000038BDE5E2
-Message-Id: <c27d416fa11435e8ae6ede081278368506b3b9fc.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-05_08:2020-03-05,2020-03-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 priorityscore=1501 spamscore=0 mlxlogscore=989
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003060021
+References: <20200305012338.219746-1-rajatja@google.com> <20200305012338.219746-4-rajatja@google.com>
+ <87k13znmrc.fsf@intel.com>
+In-Reply-To: <87k13znmrc.fsf@intel.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Thu, 5 Mar 2020 19:35:10 -0800
+Message-ID: <CACK8Z6ERZpZaSXsxrk_yGrRAtrgwytb5TEpyt1sX+V40U7m0sQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] drm/i915: Add support for integrated privacy screens
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Imre Deak <imre.deak@intel.com>,
+        =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        intel-gfx@lists.freedesktop.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mat King <mathewk@google.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@denx.de>,
+        Sean Paul <seanpaul@google.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Pearson <mpearson@lenovo.com>,
+        Nitin Joshi1 <njoshi1@lenovo.com>,
+        Sugumaran Lacshiminarayanan <slacshiminar@lenovo.com>,
+        Tomoki Maruichi <maruichit@lenovo.com>,
+        Guenter Roeck <groeck@google.com>,
+        Rajat Jain <rajatxjain@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-04 at 17:53 +1100, Andrew Donnellan wrote:
-> On 21/2/20 2:27 pm, Alastair D'Silva wrote:
-> > +static int ioctl_controller_dump_data(struct ocxlpmem *ocxlpmem,
-> > +		struct ioctl_ocxl_pmem_controller_dump_data __user
-> > *uarg)
+Hi Jani,
+
+Thank you for the comments. Please see my responses inline.
+
+On Thu, Mar 5, 2020 at 2:02 AM Jani Nikula <jani.nikula@linux.intel.com> wr=
+ote:
+>
+> On Wed, 04 Mar 2020, Rajat Jain <rajatja@google.com> wrote:
+> > Certain laptops now come with panels that have integrated privacy
+> > screens on them. This patch adds support for such panels by adding
+> > a privacy-screen property to the intel_connector for the panel, that
+> > the userspace can then use to control and check the status.
+> >
+> > Identifying the presence of privacy screen, and controlling it, is done
+> > via ACPI _DSM methods.
+> >
+> > Currently, this is done only for the Intel display ports. But in future=
+,
+> > this can be done for any other ports if the hardware becomes available
+> > (e.g. external monitors supporting integrated privacy screens?).
+>
+> I think you should add the property at the drm core level in
+> drm_connector.c, not in i915, to ensure we have the same property across
+> drivers. Even if, for now, you leave the acpi implementation part in
+> i915.
+
+OK, will do. In order to do that I may need to introduce driver level
+hooks that i915 driver can populate and drm core can call (or may be
+some functions to add privacy screen property that drm core exports
+and i915 driver will call).
+
+>
+> More comments inline.
+>
+> >
+> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > ---
+> > v6: Always initialize prop in intel_attach_privacy_screen_property()
+> > v5: fix a cosmetic checkpatch warning
+> > v4: Fix a typo in intel_privacy_screen.h
+> > v3: * Change license to GPL-2.0 OR MIT
+> >     * Move privacy screen enum from UAPI to intel_display_types.h
+> >     * Rename parameter name and some other minor changes.
+> > v2: Formed by splitting the original patch into multiple patches.
+> >     - All code has been moved into i915 now.
+> >     - Privacy screen is a i915 property
+> >     - Have a local state variable to store the prvacy screen. Don't rea=
+d
+> >       it from hardware.
+> >
+> >  drivers/gpu/drm/i915/Makefile                 |  3 +-
+> >  drivers/gpu/drm/i915/display/intel_atomic.c   | 13 +++-
+> >  .../gpu/drm/i915/display/intel_connector.c    | 35 +++++++++
+> >  .../gpu/drm/i915/display/intel_connector.h    |  1 +
+> >  .../drm/i915/display/intel_display_types.h    | 18 +++++
+> >  drivers/gpu/drm/i915/display/intel_dp.c       |  6 ++
+> >  .../drm/i915/display/intel_privacy_screen.c   | 72 +++++++++++++++++++
+> >  .../drm/i915/display/intel_privacy_screen.h   | 27 +++++++
+> >  8 files changed, 171 insertions(+), 4 deletions(-)
+> >  create mode 100644 drivers/gpu/drm/i915/display/intel_privacy_screen.c
+> >  create mode 100644 drivers/gpu/drm/i915/display/intel_privacy_screen.h
+> >
+> > diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makef=
+ile
+> > index 991a8c537d123..825951b4cd006 100644
+> > --- a/drivers/gpu/drm/i915/Makefile
+> > +++ b/drivers/gpu/drm/i915/Makefile
+> > @@ -208,7 +208,8 @@ i915-y +=3D \
+> >       display/intel_vga.o
+> >  i915-$(CONFIG_ACPI) +=3D \
+> >       display/intel_acpi.o \
+> > -     display/intel_opregion.o
+> > +     display/intel_opregion.o \
+> > +     display/intel_privacy_screen.o
+> >  i915-$(CONFIG_DRM_FBDEV_EMULATION) +=3D \
+> >       display/intel_fbdev.o
+> >
+> > diff --git a/drivers/gpu/drm/i915/display/intel_atomic.c b/drivers/gpu/=
+drm/i915/display/intel_atomic.c
+> > index d043057d2fa03..4ed537c877777 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_atomic.c
+> > +++ b/drivers/gpu/drm/i915/display/intel_atomic.c
+> > @@ -40,6 +40,7 @@
+> >  #include "intel_global_state.h"
+> >  #include "intel_hdcp.h"
+> >  #include "intel_psr.h"
+> > +#include "intel_privacy_screen.h"
+> >  #include "intel_sprite.h"
+> >
+> >  /**
+> > @@ -60,11 +61,14 @@ int intel_digital_connector_atomic_get_property(str=
+uct drm_connector *connector,
+> >       struct drm_i915_private *dev_priv =3D to_i915(dev);
+> >       struct intel_digital_connector_state *intel_conn_state =3D
+> >               to_intel_digital_connector_state(state);
+> > +     struct intel_connector *intel_connector =3D to_intel_connector(co=
+nnector);
+> >
+> >       if (property =3D=3D dev_priv->force_audio_property)
+> >               *val =3D intel_conn_state->force_audio;
+> >       else if (property =3D=3D dev_priv->broadcast_rgb_property)
+> >               *val =3D intel_conn_state->broadcast_rgb;
+> > +     else if (property =3D=3D intel_connector->privacy_screen_property=
+)
+> > +             *val =3D intel_conn_state->privacy_screen_status;
+> >       else {
+> >               drm_dbg_atomic(&dev_priv->drm,
+> >                              "Unknown property [PROP:%d:%s]\n",
+> > @@ -93,15 +97,18 @@ int intel_digital_connector_atomic_set_property(str=
+uct drm_connector *connector,
+> >       struct drm_i915_private *dev_priv =3D to_i915(dev);
+> >       struct intel_digital_connector_state *intel_conn_state =3D
+> >               to_intel_digital_connector_state(state);
+> > +     struct intel_connector *intel_connector =3D to_intel_connector(co=
+nnector);
+> >
+> >       if (property =3D=3D dev_priv->force_audio_property) {
+> >               intel_conn_state->force_audio =3D val;
+> >               return 0;
+> > -     }
+> > -
+> > -     if (property =3D=3D dev_priv->broadcast_rgb_property) {
+> > +     } else if (property =3D=3D dev_priv->broadcast_rgb_property) {
+> >               intel_conn_state->broadcast_rgb =3D val;
+> >               return 0;
+> > +     } else if (property =3D=3D intel_connector->privacy_screen_proper=
+ty) {
+> > +             intel_privacy_screen_set_val(intel_connector, val);
+>
+> I think this part should only change the connector state. The driver
+> would then do the magic at commit stage according to the property value.
+
+Can you please point me to some code reference as to where in code
+does the "commit stage" apply the changes?
+
+>
+> > +             intel_conn_state->privacy_screen_status =3D val;
+> > +             return 0;
+> >       }
+> >
+> >       drm_dbg_atomic(&dev_priv->drm, "Unknown property [PROP:%d:%s]\n",
+> > diff --git a/drivers/gpu/drm/i915/display/intel_connector.c b/drivers/g=
+pu/drm/i915/display/intel_connector.c
+> > index 903e49659f561..55f80219cb269 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_connector.c
+> > +++ b/drivers/gpu/drm/i915/display/intel_connector.c
+> > @@ -297,3 +297,38 @@ intel_attach_colorspace_property(struct drm_connec=
+tor *connector)
+> >       drm_object_attach_property(&connector->base,
+> >                                  connector->colorspace_property, 0);
+> >  }
+> > +
+> > +static const struct drm_prop_enum_list privacy_screen_enum[] =3D {
+> > +     { PRIVACY_SCREEN_DISABLED, "Disabled" },
+> > +     { PRIVACY_SCREEN_ENABLED, "Enabled" },
+> > +};
+> > +
+> > +/**
+> > + * intel_attach_privacy_screen_property -
+> > + *     create and attach the connecter's privacy-screen property. *
+> > + * @connector: connector for which to init the privacy-screen property
+> > + *
+> > + * This function creates and attaches the "privacy-screen" property to=
+ the
+> > + * connector. Initial state of privacy-screen is set to disabled.
+> > + */
+> > +void
+> > +intel_attach_privacy_screen_property(struct drm_connector *connector)
 > > +{
-> > +	struct ioctl_ocxl_pmem_controller_dump_data args;
-> > +	u16 i;
-> > +	u64 val;
-> > +	int rc;
+> > +     struct intel_connector *intel_connector =3D to_intel_connector(co=
+nnector);
+> > +     struct drm_property *prop =3D intel_connector->privacy_screen_pro=
+perty;
 > > +
-> > +	if (copy_from_user(&args, uarg, sizeof(args)))
-> > +		return -EFAULT;
+> > +     if (!prop) {
+> > +             prop =3D drm_property_create_enum(connector->dev,
+> > +                                             DRM_MODE_PROP_ENUM,
+> > +                                             "privacy-screen",
+> > +                                             privacy_screen_enum,
+> > +                                         ARRAY_SIZE(privacy_screen_enu=
+m));
+> > +             if (!prop)
+> > +                     return;
 > > +
-> > +	if (args.buf_size % 8)
-> > +		return -EINVAL;
+> > +             intel_connector->privacy_screen_property =3D prop;
+> > +     }
 > > +
-> > +	if (args.buf_size > ocxlpmem->admin_command.data_size)
-> > +		return -EINVAL;
-> > +
-> > +	mutex_lock(&ocxlpmem->admin_command.lock);
-> > +
-> > +	rc = admin_command_request(ocxlpmem,
-> > ADMIN_COMMAND_CONTROLLER_DUMP);
-> > +	if (rc)
-> > +		goto out;
-> > +
-> > +	val = ((u64)args.offset) << 32;
-> > +	val |= args.buf_size;
-> > +	rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
-> > +				      ocxlpmem-
-> > >admin_command.request_offset + 0x08,
-> > +				      OCXL_LITTLE_ENDIAN, val);
-> > +	if (rc)
-> > +		goto out;
-> > +
-> > +	rc = admin_command_execute(ocxlpmem);
-> > +	if (rc)
-> > +		goto out;
-> > +
-> > +	rc = admin_command_complete_timeout(ocxlpmem,
-> > +					    ADMIN_COMMAND_CONTROLLER_DU
-> > MP);
-> > +	if (rc < 0) {
-> > +		dev_warn(&ocxlpmem->dev, "Controller dump timed
-> > out\n");
-> > +		goto out;
-> > +	}
-> > +
-> > +	rc = admin_response(ocxlpmem);
-> > +	if (rc < 0)
-> > +		goto out;
-> > +	if (rc != STATUS_SUCCESS) {
-> > +		warn_status(ocxlpmem,
-> > +			    "Unexpected status from retrieve error
-> > log",
-> 
-> Controller dump
-> 
+> > +     drm_object_attach_property(&connector->base, prop,
+> > +                                PRIVACY_SCREEN_DISABLED);
+> > +}
+>
+> This looks about right, except IMO should be part of drm_connector and
+> moved to drm_connector.c.
 
-Ok
+Will do.
 
-> > +			    rc);
-> > +		goto out;
-> > +	}
+>
+> > diff --git a/drivers/gpu/drm/i915/display/intel_connector.h b/drivers/g=
+pu/drm/i915/display/intel_connector.h
+> > index 93a7375c8196d..61005f37a3385 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_connector.h
+> > +++ b/drivers/gpu/drm/i915/display/intel_connector.h
+> > @@ -31,5 +31,6 @@ void intel_attach_force_audio_property(struct drm_con=
+nector *connector);
+> >  void intel_attach_broadcast_rgb_property(struct drm_connector *connect=
+or);
+> >  void intel_attach_aspect_ratio_property(struct drm_connector *connecto=
+r);
+> >  void intel_attach_colorspace_property(struct drm_connector *connector)=
+;
+> > +void intel_attach_privacy_screen_property(struct drm_connector *connec=
+tor);
+> >
+> >  #endif /* __INTEL_CONNECTOR_H__ */
+> > diff --git a/drivers/gpu/drm/i915/display/intel_display_types.h b/drive=
+rs/gpu/drm/i915/display/intel_display_types.h
+> > index d70612cc1ba2a..de20effb3e073 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_display_types.h
+> > +++ b/drivers/gpu/drm/i915/display/intel_display_types.h
+> > @@ -442,6 +442,23 @@ struct intel_connector {
+> >       struct work_struct modeset_retry_work;
+> >
+> >       struct intel_hdcp hdcp;
 > > +
-> > +	for (i = 0; i < args.buf_size; i += 8) {
-> > +		u64 val;
+> > +     /* Optional "privacy-screen" property for the connector panel */
+> > +     struct drm_property *privacy_screen_property;
+> > +};
 > > +
-> > +		rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
-> > +					     ocxlpmem-
-> > >admin_command.data_offset + i,
-> > +					     OCXL_HOST_ENDIAN, &val);
-> 
-> Is a controller dump something where we want to do endian swapping?
-> 
+> > +/**
+> > + * enum intel_privacy_screen_status - privacy_screen status
+> > + *
+> > + * This enum is used to track and control the state of the integrated =
+privacy
+> > + * screen present on some display panels, via the "privacy-screen" pro=
+perty.
+> > + *
+> > + * @PRIVACY_SCREEN_DISABLED: The privacy-screen on the panel is disabl=
+ed
+> > + * @PRIVACY_SCREEN_ENABLED:  The privacy-screen on the panel is enable=
+d
+> > + **/
+> > +enum intel_privacy_screen_status {
+> > +     PRIVACY_SCREEN_DISABLED =3D 0,
+> > +     PRIVACY_SCREEN_ENABLED =3D 1,
+> >  };
+> >
+> >  struct intel_digital_connector_state {
+> > @@ -449,6 +466,7 @@ struct intel_digital_connector_state {
+> >
+> >       enum hdmi_force_audio force_audio;
+> >       int broadcast_rgb;
+> > +     enum intel_privacy_screen_status privacy_screen_status;
+> >  };
+> >
+> >  #define to_intel_digital_connector_state(x) container_of(x, struct int=
+el_digital_connector_state, base)
+> > diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/=
+i915/display/intel_dp.c
+> > index 171821113d362..ff76c799364d0 100644
+> > --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> > +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> > @@ -62,6 +62,7 @@
+> >  #include "intel_lspcon.h"
+> >  #include "intel_lvds.h"
+> >  #include "intel_panel.h"
+> > +#include "intel_privacy_screen.h"
+> >  #include "intel_psr.h"
+> >  #include "intel_sideband.h"
+> >  #include "intel_tc.h"
+> > @@ -6841,6 +6842,7 @@ intel_dp_add_properties(struct intel_dp *intel_dp=
+, struct drm_connector *connect
+> >  {
+> >       struct drm_i915_private *dev_priv =3D to_i915(connector->dev);
+> >       enum port port =3D dp_to_dig_port(intel_dp)->base.port;
+> > +     struct intel_connector *intel_connector =3D to_intel_connector(co=
+nnector);
+> >
+> >       if (!IS_G4X(dev_priv) && port !=3D PORT_A)
+> >               intel_attach_force_audio_property(connector);
+> > @@ -6871,6 +6873,10 @@ intel_dp_add_properties(struct intel_dp *intel_d=
+p, struct drm_connector *connect
+> >
+> >               /* Lookup the ACPI node corresponding to the connector */
+> >               intel_acpi_device_id_update(dev_priv);
+> > +
+> > +             /* Check for integrated Privacy screen support */
+> > +             if (intel_privacy_screen_present(intel_connector))
+> > +                     intel_attach_privacy_screen_property(connector);
+>
+> As said in reply to patch 2, we need to figure this part out.
 
-No, we just have raw binary data that we want to pass through.
-OCXL_HOST_ENDIAN does no swapping.
+Yup, responded in patch 2 reply.
 
-> Any reason we're not doing the usual check of the data identifier, 
-> additional data length etc?
-> 
-
-I'll add that
-
-> > +		if (rc)
-> > +			goto out;
+>
+> >       }
+> >  }
+> >
+> > diff --git a/drivers/gpu/drm/i915/display/intel_privacy_screen.c b/driv=
+ers/gpu/drm/i915/display/intel_privacy_screen.c
+> > new file mode 100644
+> > index 0000000000000..c8a5b64f94fb7
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/i915/display/intel_privacy_screen.c
+> > @@ -0,0 +1,72 @@
+> > +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> > +/*
+> > + * Intel ACPI privacy screen code
+> > + *
+> > + * Copyright =C2=A9 2019 Google Inc.
+> > + */
 > > +
-> > +		if (copy_to_user(&args.buf[i], &val, sizeof(u64))) {
-> > +			rc = -EFAULT;
-> > +			goto out;
-> > +		}
-> > +	}
+> > +#include <linux/acpi.h>
 > > +
-> > +	if (copy_to_user(uarg, &args, sizeof(args))) {
-> > +		rc = -EFAULT;
-> > +		goto out;
-> > +	}
+> > +#include "intel_privacy_screen.h"
 > > +
-> > +	rc = admin_response_handled(ocxlpmem);
-> > +	if (rc)
-> > +		goto out;
+> > +#define CONNECTOR_DSM_REVID 1
 > > +
-> > +out:
-> > +	mutex_unlock(&ocxlpmem->admin_command.lock);
-> > +	return rc;
+> > +#define CONNECTOR_DSM_FN_PRIVACY_ENABLE              2
+> > +#define CONNECTOR_DSM_FN_PRIVACY_DISABLE             3
+> > +
+> > +static const guid_t drm_conn_dsm_guid =3D
+> > +     GUID_INIT(0xC7033113, 0x8720, 0x4CEB,
+> > +               0x90, 0x90, 0x9D, 0x52, 0xB3, 0xE5, 0x2D, 0x73);
+> > +
+> > +/* Makes _DSM call to set privacy screen status */
+> > +static void acpi_privacy_screen_call_dsm(acpi_handle conn_handle, u64 =
+func)
+> > +{
+> > +     union acpi_object *obj;
+> > +
+> > +     obj =3D acpi_evaluate_dsm(conn_handle, &drm_conn_dsm_guid,
+> > +                             CONNECTOR_DSM_REVID, func, NULL);
+> > +     if (!obj) {
+> > +             DRM_DEBUG_DRIVER("failed to evaluate _DSM for fn %llx\n",=
+ func);
+> > +             return;
+> > +     }
+> > +
+> > +     ACPI_FREE(obj);
 > > +}
 > > +
-> > +int request_controller_dump(struct ocxlpmem *ocxlpmem)
+> > +void intel_privacy_screen_set_val(struct intel_connector *connector,
+> > +                               enum intel_privacy_screen_status val)
 > > +{
-> > +	int rc;
-> > +	u64 busy = 1;
+> > +     acpi_handle acpi_handle =3D connector->acpi_handle;
 > > +
-> > +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_CHIC,
-> > +				    OCXL_LITTLE_ENDIAN,
-> > +				    GLOBAL_MMIO_CHI_CDA);
-> 
-> This return code is ignored
-> 
+> > +     if (!acpi_handle)
+> > +             return;
 > > +
-> > +
-> > +	rc = ocxl_global_mmio_set64(ocxlpmem->ocxl_afu,
-> > GLOBAL_MMIO_HCI,
-> > +				    OCXL_LITTLE_ENDIAN,
-> > +				    GLOBAL_MMIO_HCI_CONTROLLER_DUMP);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	while (busy) {
-> > +		rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
-> > +					     GLOBAL_MMIO_HCI,
-> > +					     OCXL_LITTLE_ENDIAN,
-> > &busy);
-> > +		if (rc)
-> > +			return rc;
-> > +
-> > +		busy &= GLOBAL_MMIO_HCI_CONTROLLER_DUMP;
-> > +		cond_resched();
-> > +	}
-> > +
-> > +	return 0;
+> > +     if (val =3D=3D PRIVACY_SCREEN_DISABLED)
+> > +             acpi_privacy_screen_call_dsm(acpi_handle,
+> > +                                          CONNECTOR_DSM_FN_PRIVACY_DIS=
+ABLE);
+> > +     else if (val =3D=3D PRIVACY_SCREEN_ENABLED)
+> > +             acpi_privacy_screen_call_dsm(acpi_handle,
+> > +                                          CONNECTOR_DSM_FN_PRIVACY_ENA=
+BLE);
+> > +     else
+> > +             DRM_WARN("%s: Cannot set privacy screen to invalid val %u=
+\n",
+> > +                      dev_name(connector->base.dev->dev), val);
 > > +}
-> 
-> 
--- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
+> > +
+> > +bool intel_privacy_screen_present(struct intel_connector *connector)
+> > +{
+> > +     acpi_handle handle =3D connector->acpi_handle;
+> > +
+> > +     if (!handle)
+> > +             return false;
+> > +
+> > +     if (!acpi_check_dsm(handle, &drm_conn_dsm_guid,
+> > +                         CONNECTOR_DSM_REVID,
+> > +                         1 << CONNECTOR_DSM_FN_PRIVACY_ENABLE |
+> > +                         1 << CONNECTOR_DSM_FN_PRIVACY_DISABLE)) {
+> > +             DRM_WARN("%s: Odd, connector ACPI node but no privacy scr=
+n?\n",
+> > +                      dev_name(connector->base.dev->dev));
+> > +             return false;
+> > +     }
+> > +     DRM_DEV_INFO(connector->base.dev->dev, "supports privacy screen\n=
+");
+> > +     return true;
+> > +}
+>
+> I don't have much to say about the ACPI parts, except please use the new
+> drm_dbg_kms and drm_info helpers for logging.
 
+Will do.
+
+Thanks,
+
+Rajat
+
+>
+> BR,
+> Jani.
+>
+>
+> > diff --git a/drivers/gpu/drm/i915/display/intel_privacy_screen.h b/driv=
+ers/gpu/drm/i915/display/intel_privacy_screen.h
+> > new file mode 100644
+> > index 0000000000000..74013a7885c70
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/i915/display/intel_privacy_screen.h
+> > @@ -0,0 +1,27 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+> > +/*
+> > + * Copyright =C2=A9 2019 Google Inc.
+> > + */
+> > +
+> > +#ifndef __DRM_PRIVACY_SCREEN_H__
+> > +#define __DRM_PRIVACY_SCREEN_H__
+> > +
+> > +#include "intel_display_types.h"
+> > +
+> > +#ifdef CONFIG_ACPI
+> > +bool intel_privacy_screen_present(struct intel_connector *connector);
+> > +void intel_privacy_screen_set_val(struct intel_connector *connector,
+> > +                               enum intel_privacy_screen_status val);
+> > +#else
+> > +static bool intel_privacy_screen_present(struct intel_connector *conne=
+ctor)
+> > +{
+> > +     return false;
+> > +}
+> > +
+> > +static void
+> > +intel_privacy_screen_set_val(struct intel_connector *connector,
+> > +                          enum intel_privacy_screen_status val)
+> > +{ }
+> > +#endif /* CONFIG_ACPI */
+> > +
+> > +#endif /* __DRM_PRIVACY_SCREEN_H__ */
+>
+> --
+> Jani Nikula, Intel Open Source Graphics Center
