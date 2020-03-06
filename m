@@ -2,298 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB0517C8EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6147817C8E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbgCFXsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 18:48:06 -0500
-Received: from mail-bn7nam10on2070.outbound.protection.outlook.com ([40.107.92.70]:49824
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727002AbgCFXsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 18:48:01 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kZ4kWpJT8DK7C1MHeNaESa1N+Q85lTL6JrpO9faomu5cbRzzsqyV12ozEpDHUmb6r/jyLetcFU38cZQ7heaLgygOxjQH26jGy1lM0otdebDUengqgZiT7viFh4MDosxpDZEJgk1AZIvGlR1hlyZM1xAYdZlCFQAKXhMtqESHsICYUTrIVmug+NRal9XJiCKho7RPBpL+tXsxP0JueC8n7ET3Z0VwoyWvww5iSl5KD+fs5dHPkyQfJCftxs4gJ69jb8gTTH9mj3qH1CMqcRS8bFTES7ShbwnhN4aCIp7QLet92BowCk6nftwj092iE8OEP5kerIcA6l4qI7beomzOqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zQJv3bA85lbOn4f9viX84EuNNa1XDBWLNQKlx7ulF/E=;
- b=YGzHj4BSIDi3pVyoyJ3bUJLYhGMxOXlhbMPIJ2e+Zj4tWoYBAnugNoQIZUt3DM1YNPjzuUFQ9eHFdSua4fot+lXKrmN45dzGFsSa57ZruBlD3oZvQrL/M3wIvflwS6wCJva2b2ZPmx/wNcD6VvVUry0lgEsrKdhQef16u5VgYGZOe2c/ZSbOprO2NxcQJm3VhgrXTD4shftAYSN70SeRLNHh3bILO68AXLaYhcNppq+2NT99a3RPmBTh7QiFB7FRWew1Q4EuAW+kg3ljwMENBrLA1qZ7PB/x2MP8hHbnH3U7IlDsWKDkVPU96czc9tZFhw34Bwl0cqfSGCX/gxqkhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zQJv3bA85lbOn4f9viX84EuNNa1XDBWLNQKlx7ulF/E=;
- b=GJBw6ZrhRSW+sN5DyoLUGC7t6O4EtWibORsBD3y/nmWHn2Qv8sCYe+h9peM7VbSW/EQPaBo6McwAiVpY5IMY0f4HIB9tY+WvlN1a2T5VotyGYQryUA3CrOkEFCOvArIQF1R5ucqGUFsjDJMnOD3A+vwLP7nle99K1rcko2wWQ+0=
-Received: from SN2PR01CA0001.prod.exchangelabs.com (2603:10b6:804:2::11) by
- DM6PR02MB4524.namprd02.prod.outlook.com (2603:10b6:5:20::25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.18; Fri, 6 Mar 2020 23:47:58 +0000
-Received: from SN1NAM02FT057.eop-nam02.prod.protection.outlook.com
- (2603:10b6:804:2:cafe::d0) by SN2PR01CA0001.outlook.office365.com
- (2603:10b6:804:2::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend
- Transport; Fri, 6 Mar 2020 23:47:58 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT057.mail.protection.outlook.com (10.152.73.105) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2793.11
- via Frontend Transport; Fri, 6 Mar 2020 23:47:58 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMhB-0003Q8-PK; Fri, 06 Mar 2020 15:47:57 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMh6-0002g8-M5; Fri, 06 Mar 2020 15:47:52 -0800
-Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 026Nlkij002418;
-        Fri, 6 Mar 2020 15:47:47 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMh0-0002eg-O1; Fri, 06 Mar 2020 15:47:46 -0800
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     ard.biesheuvel@linaro.org, mingo@kernel.org,
-        gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
-        sudeep.holla@arm.com, hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
-Subject: [PATCH v3 19/24] firmware: xilinx: Remove eemi ops for fpga related APIs
-Date:   Fri,  6 Mar 2020 15:47:27 -0800
-Message-Id: <1583538452-1992-20-git-send-email-jolly.shah@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(376002)(39860400002)(136003)(199004)(189003)(4326008)(8676002)(81166006)(356004)(107886003)(2906002)(8936002)(81156014)(6666004)(7416002)(478600001)(5660300002)(6636002)(36756003)(7696005)(9786002)(186003)(44832011)(54906003)(2616005)(316002)(426003)(26005)(336012)(70586007)(70206006)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4524;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+        id S1727097AbgCFXrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 18:47:47 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43972 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbgCFXrq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 18:47:46 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026NlhxW099811;
+        Fri, 6 Mar 2020 17:47:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583538463;
+        bh=Xzf0pl4I+GiIsTovME8OTFIU5DSaFYgw7dndhzZDk6Y=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=GBXMGsnfVMwwxWU6P9ARiOU9PRI7ziEkTR8/6e2E5EKNPrGsoZEgA86sF0mGk/OgP
+         3bAjGnEh0N+IGVtD2FuYYHEHl30ObFT7meiWiBQGI0K/OK8Lphls0psEB8EnRc4hO0
+         EdvOWIcdsQlzmvRhkzxKTElzEtsYvIE4frNgrVL0=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 026NlhRt018307
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Mar 2020 17:47:43 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
+ 2020 17:47:43 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Mar 2020 17:47:43 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026Nlg4n101236;
+        Fri, 6 Mar 2020 17:47:42 -0600
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH net-next v2 2/9] net: ethernet: ti: ale: add support for mac-only mode
+Date:   Sat, 7 Mar 2020 01:47:27 +0200
+Message-ID: <20200306234734.15014-3-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200306234734.15014-1-grygorii.strashko@ti.com>
+References: <20200306234734.15014-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2208ff8c-42ec-40e4-8b5c-08d7c228cc9b
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4524:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB4524745AF5119EC962FA2601B8E30@DM6PR02MB4524.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:115;
-X-Forefront-PRVS: 0334223192
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: v6hW04gVi5YM2gNIFk4FSoEebr4+wsxQqaz/plOXkvc2igHf2z0LSdttHWupzEr606HPRXjdz7pomw8AVqF90lXK5L/ZwwNTUwBU01Yb7SHLruEkfgR6+eYSJYfoMFNKsjamw8niUolvLiUGe4uYl9MDy3/mgEhXURR5MV8Huu8GZedCAysVdplGW0HhS6ehmpbqbVPfnb1ZXCKPt8gmWcaq2glMlaN7wTvv0RRpdUcLDJNfQLZIxN+xOYABKuNn8u86X8KOhewQwi1Z3PTJgc8eMPFulL2LS1ApKKIRyhJNtbenCD1fHmHeU032kXxxOjhx10kjf2wbvYTrcmSqfzZRmkFOr7n57oRamC7gBjBiCZULLF8Q2Ch0lwMI3WXzc9Fgehnb7cMJwmueMWigGI7LVQbPL3/bMkrcdX9GzVVw4Cz98jZRajhZtYUizbOI+VNPRo1VcIK5tTSQOqMrBTUeDsZLQNLkeWLzHUTo3ITEG3ycZIRFd2Z7S5tRSr+2
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2020 23:47:58.1959
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2208ff8c-42ec-40e4-8b5c-08d7c228cc9b
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4524
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+The new CPSW ALE version, available on TI K3 AM654/J721E SoCs family,
+allows to switch any external port to MAC only mode. When MAC only mode
+enabled this port be treated like a MAC port for the host. All traffic
+received is only sent to the host. The host must direct traffic to this
+port as the lookup engine will not send traffic to the ports with the
+p0_maconly bit set and the p0_no_learn also set. If p0_maconly bit is set
+and the p0_no_learn is not set, the host can send non-directed packets that
+can be sent to the destination of a MacOnly port. It is also possible that
+The host can broadcast to all ports including MacOnly ports in this mode.
 
-Use direct function call instead of using eemi ops for fpga related
-APIs. Also remove eemi ops structure.
+This patch add ALE supprt for MAC only mode.
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 30 ++----------------------------
- drivers/fpga/zynqmp-fpga.c           | 12 ++----------
- drivers/spi/spi-zynqmp-gqspi.c       |  5 -----
- include/linux/firmware/xlnx-zynqmp.h | 16 ++--------------
- 4 files changed, 6 insertions(+), 57 deletions(-)
+ drivers/net/ethernet/ti/cpsw_ale.c | 16 ++++++++++++++++
+ drivers/net/ethernet/ti/cpsw_ale.h |  2 ++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 7426533..36d5a3e 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -24,8 +24,6 @@
- #include <linux/firmware/xlnx-zynqmp.h>
- #include "zynqmp-debug.h"
- 
--static const struct zynqmp_eemi_ops *eemi_ops_tbl;
--
- static bool feature_check_enabled;
- static u32 zynqmp_pm_features[PM_API_MAX];
- 
-@@ -654,8 +652,7 @@ EXPORT_SYMBOL_GPL(zynqmp_pm_reset_get_status);
-  *
-  * Return: Returns status, either success or error+reason
-  */
--static int zynqmp_pm_fpga_load(const u64 address, const u32 size,
--			       const u32 flags)
-+int zynqmp_pm_fpga_load(const u64 address, const u32 size, const u32 flags)
- {
- 	return zynqmp_pm_invoke_fn(PM_FPGA_LOAD, lower_32_bits(address),
- 				   upper_32_bits(address), size, flags, NULL);
-@@ -670,7 +667,7 @@ static int zynqmp_pm_fpga_load(const u64 address, const u32 size,
-  *
-  * Return: Returns status, either success or error+reason
-  */
--static int zynqmp_pm_fpga_get_status(u32 *value)
-+int zynqmp_pm_fpga_get_status(u32 *value)
- {
- 	u32 ret_payload[PAYLOAD_ARG_CNT];
- 	int ret;
-@@ -770,26 +767,6 @@ int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
- }
- EXPORT_SYMBOL_GPL(zynqmp_pm_set_requirement);
- 
--static const struct zynqmp_eemi_ops eemi_ops = {
--	.fpga_load = zynqmp_pm_fpga_load,
--	.fpga_get_status = zynqmp_pm_fpga_get_status,
--};
--
--/**
-- * zynqmp_pm_get_eemi_ops - Get eemi ops functions
-- *
-- * Return: Pointer of eemi_ops structure
-- */
--const struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
--{
--	if (eemi_ops_tbl)
--		return eemi_ops_tbl;
--	else
--		return ERR_PTR(-EPROBE_DEFER);
--
--}
--EXPORT_SYMBOL_GPL(zynqmp_pm_get_eemi_ops);
--
- static int zynqmp_firmware_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -836,9 +813,6 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
- 	pr_info("%s Trustzone version v%d.%d\n", __func__,
- 		pm_tz_version >> 16, pm_tz_version & 0xFFFF);
- 
--	/* Assign eemi_ops_table */
--	eemi_ops_tbl = &eemi_ops;
--
- 	zynqmp_pm_api_debugfs_init();
- 
- 	ret = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, firmware_devs,
-diff --git a/drivers/fpga/zynqmp-fpga.c b/drivers/fpga/zynqmp-fpga.c
-index b8a88d2..5be8685 100644
---- a/drivers/fpga/zynqmp-fpga.c
-+++ b/drivers/fpga/zynqmp-fpga.c
-@@ -40,16 +40,12 @@ static int zynqmp_fpga_ops_write_init(struct fpga_manager *mgr,
- static int zynqmp_fpga_ops_write(struct fpga_manager *mgr,
- 				 const char *buf, size_t size)
- {
--	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
- 	struct zynqmp_fpga_priv *priv;
- 	dma_addr_t dma_addr;
- 	u32 eemi_flags = 0;
- 	char *kbuf;
- 	int ret;
- 
--	if (IS_ERR_OR_NULL(eemi_ops) || !eemi_ops->fpga_load)
--		return -ENXIO;
--
- 	priv = mgr->priv;
- 
- 	kbuf = dma_alloc_coherent(priv->dev, size, &dma_addr, GFP_KERNEL);
-@@ -63,7 +59,7 @@ static int zynqmp_fpga_ops_write(struct fpga_manager *mgr,
- 	if (priv->flags & FPGA_MGR_PARTIAL_RECONFIG)
- 		eemi_flags |= XILINX_ZYNQMP_PM_FPGA_PARTIAL;
- 
--	ret = eemi_ops->fpga_load(dma_addr, size, eemi_flags);
-+	ret = zynqmp_pm_fpga_load(dma_addr, size, eemi_flags);
- 
- 	dma_free_coherent(priv->dev, size, kbuf, dma_addr);
- 
-@@ -78,13 +74,9 @@ static int zynqmp_fpga_ops_write_complete(struct fpga_manager *mgr,
- 
- static enum fpga_mgr_states zynqmp_fpga_ops_state(struct fpga_manager *mgr)
- {
--	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
- 	u32 status;
- 
--	if (IS_ERR_OR_NULL(eemi_ops) || !eemi_ops->fpga_get_status)
--		return FPGA_MGR_STATE_UNKNOWN;
--
--	eemi_ops->fpga_get_status(&status);
-+	zynqmp_pm_fpga_get_status(&status);
- 	if (status & IXR_FPGA_DONE_MASK)
- 		return FPGA_MGR_STATE_OPERATING;
- 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 7412a30..811c97a 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -135,7 +135,6 @@
- 
- #define SPI_AUTOSUSPEND_TIMEOUT		3000
- enum mode_type {GQSPI_MODE_IO, GQSPI_MODE_DMA};
--static const struct zynqmp_eemi_ops *eemi_ops;
- 
- /**
-  * struct zynqmp_qspi - Defines qspi driver instance
-@@ -1015,10 +1014,6 @@ static int zynqmp_qspi_probe(struct platform_device *pdev)
- 	struct zynqmp_qspi *xqspi;
- 	struct device *dev = &pdev->dev;
- 
--	eemi_ops = zynqmp_pm_get_eemi_ops();
--	if (IS_ERR(eemi_ops))
--		return PTR_ERR(eemi_ops);
--
- 	master = spi_alloc_master(&pdev->dev, sizeof(*xqspi));
- 	if (!master)
- 		return -ENOMEM;
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 3135d62..1734d12 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -285,11 +285,6 @@ struct zynqmp_pm_query_data {
- 	u32 arg3;
- };
- 
--struct zynqmp_eemi_ops {
--	int (*fpga_load)(const u64 address, const u32 size, const u32 flags);
--	int (*fpga_get_status)(u32 *value);
--};
--
- int zynqmp_pm_get_api_version(u32 *version);
- int zynqmp_pm_get_chipid(u32 *idcode, u32 *version);
- int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out);
-@@ -318,16 +313,9 @@ int zynqmp_pm_release_node(const u32 node);
- int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
- 			      const u32 qos,
- 			      const enum zynqmp_pm_request_ack ack);
-+int zynqmp_pm_fpga_load(const u64 address, const u32 size, const u32 flags);
-+int zynqmp_pm_fpga_get_status(u32 *value);
- int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
- 			u32 arg2, u32 arg3, u32 *ret_payload);
- 
--#if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--const struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void);
--#else
--static inline struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
--{
--	return ERR_PTR(-ENODEV);
--}
--#endif
--
- #endif /* __FIRMWARE_ZYNQMP_H__ */
+diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
+index 5815225c000c..719e7846127c 100644
+--- a/drivers/net/ethernet/ti/cpsw_ale.c
++++ b/drivers/net/ethernet/ti/cpsw_ale.c
+@@ -779,6 +779,22 @@ static struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
+ 		.port_shift	= 0,
+ 		.bits		= 1,
+ 	},
++	[ALE_PORT_MACONLY]	= {
++		.name		= "mac_only_port_mode",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 11,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_PORT_MACONLY_CAF]	= {
++		.name		= "mac_only_port_caf",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 13,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
+ 	[ALE_PORT_MCAST_LIMIT]	= {
+ 		.name		= "mcast_limit",
+ 		.offset		= ALE_PORTCTL,
+diff --git a/drivers/net/ethernet/ti/cpsw_ale.h b/drivers/net/ethernet/ti/cpsw_ale.h
+index 70d0955c2652..eaca73c17ae7 100644
+--- a/drivers/net/ethernet/ti/cpsw_ale.h
++++ b/drivers/net/ethernet/ti/cpsw_ale.h
+@@ -62,6 +62,8 @@ enum cpsw_ale_control {
+ 	ALE_PORT_UNKNOWN_MCAST_FLOOD,
+ 	ALE_PORT_UNKNOWN_REG_MCAST_FLOOD,
+ 	ALE_PORT_UNTAGGED_EGRESS,
++	ALE_PORT_MACONLY,
++	ALE_PORT_MACONLY_CAF,
+ 	ALE_PORT_BCAST_LIMIT,
+ 	ALE_PORT_MCAST_LIMIT,
+ 	ALE_NUM_CONTROLS,
 -- 
-2.7.4
+2.17.1
 
