@@ -2,118 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9725017C610
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:12:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F7517C60B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:12:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbgCFTMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 14:12:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39344 "EHLO mail.kernel.org"
+        id S1727141AbgCFTMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 14:12:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727060AbgCFTMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 14:12:10 -0500
+        id S1726879AbgCFTMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 14:12:13 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 747F22072D;
-        Fri,  6 Mar 2020 19:12:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 672C420656;
+        Fri,  6 Mar 2020 19:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583521929;
-        bh=FNaXMLj5/QcPnbgig1d0gx9+S/wnGuUyuMa2B5rCyGM=;
+        s=default; t=1583521932;
+        bh=agBSg6xfa4NmUWzblX7S1g3hrA1NtlKGQJ5KXkt+MA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBRexjVcyOxnjVVfJcS3HxXV8bxwbjfn37vRr7g0ZKpIKP1zBBjzQrfbrB3QfCesr
-         5cDHDaz6Tiomwl9vbHS6mkZT9i+TtsQJnVMZPNa5iUJJsuiUJmWcrRpbn0sRBU+DfE
-         mzvg1nAGwMwb+s+0//z6QNtI6x1n2zYDZKxoVVTM=
+        b=IqwXByT39eg064a6YVupvAycJNBq1FbCNYeZlLOPdpMIQgzngSWYMiF8KdMUQ57tg
+         QoSG/6+9HeE3oelzV+7XJbP2f+8vxIso2WFQqxlF4YGBPsMlcLyxIw/+MWvXej1y/V
+         s9sqvQ8DnzgFs6NvhGpiFFkul9FQkNYAqQoLlSAs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Tommi Rantala <tommi.t.rantala@nokia.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 3/6] perf bench futex-wake: Restore thread count default to online CPU count
-Date:   Fri,  6 Mar 2020 16:11:38 -0300
-Message-Id: <20200306191144.12762-6-acme@kernel.org>
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCH 3/5] perf parse-events: Use asprintf() instead of strncpy() to read tracepoint files
+Date:   Fri,  6 Mar 2020 16:11:39 -0300
+Message-Id: <20200306191144.12762-7-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200306191144.12762-1-acme@kernel.org>
 References: <20200306191144.12762-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tommi Rantala <tommi.t.rantala@nokia.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since commit 3b2323c2c1c4 ("perf bench futex: Use cpumaps") the default
-number of threads the benchmark uses got changed from number of online
-CPUs to zero:
+Make the code more compact by using asprintf() instead of malloc()+strncpy() which also uses
+less memory and avoids these warnings with gcc 10:
 
-  $ perf bench futex wake
-  # Running 'futex/wake' benchmark:
-  Run summary [PID 15930]: blocking on 0 threads (at [private] futex 0x558b8ee4bfac), waking up 1 at a time.
-  [Run 1]: Wokeup 0 of 0 threads in 0.0000 ms
-  [...]
-  [Run 10]: Wokeup 0 of 0 threads in 0.0000 ms
-  Wokeup 0 of 0 threads in 0.0004 ms (+-40.82%)
+    CC       /tmp/build/perf/util/cloexec.o
+  In file included from /usr/include/string.h:495,
+                   from util/parse-events.h:12,
+                   from util/parse-events.c:18:
+  In function ‘strncpy’,
+      inlined from ‘tracepoint_id_to_path’ at util/parse-events.c:271:5:
+  /usr/include/bits/string_fortified.h:106:10: error: ‘__builtin_strncpy’ offset [275, 511] from the object at ‘sys_dirent’ is out of the bounds of referenced subobject ‘d_name’ with type ‘char[256]’ at offset 19 [-Werror=array-bounds]
+    106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In file included from /usr/include/dirent.h:61,
+                   from util/parse-events.c:5:
+  util/parse-events.c: In function ‘tracepoint_id_to_path’:
+  /usr/include/bits/dirent.h:33:10: note: subobject ‘d_name’ declared here
+     33 |     char d_name[256];  /* We must not include limits.h! */
+        |          ^~~~~~
+  In file included from /usr/include/string.h:495,
+                   from util/parse-events.h:12,
+                   from util/parse-events.c:18:
+  In function ‘strncpy’,
+      inlined from ‘tracepoint_id_to_path’ at util/parse-events.c:273:5:
+  /usr/include/bits/string_fortified.h:106:10: error: ‘__builtin_strncpy’ offset [275, 511] from the object at ‘evt_dirent’ is out of the bounds of referenced subobject ‘d_name’ with type ‘char[256]’ at offset 19 [-Werror=array-bounds]
+    106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In file included from /usr/include/dirent.h:61,
+                   from util/parse-events.c:5:
+  util/parse-events.c: In function ‘tracepoint_id_to_path’:
+  /usr/include/bits/dirent.h:33:10: note: subobject ‘d_name’ declared here
+     33 |     char d_name[256];  /* We must not include limits.h! */
+        |          ^~~~~~
+    CC       /tmp/build/perf/util/call-path.o
 
-Restore the old behavior by grabbing the number of online CPUs via
-cpu->nr:
-
-  $ perf bench futex wake
-  # Running 'futex/wake' benchmark:
-  Run summary [PID 18356]: blocking on 8 threads (at [private] futex 0xb3e62c), waking up 1 at a time.
-  [Run 1]: Wokeup 8 of 8 threads in 0.0260 ms
-  [...]
-  [Run 10]: Wokeup 8 of 8 threads in 0.0270 ms
-  Wokeup 8 of 8 threads in 0.0419 ms (+-24.35%)
-
-Fixes: 3b2323c2c1c4 ("perf bench futex: Use cpumaps")
-Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lore.kernel.org/lkml/20200305083714.9381-3-tommi.t.rantala@nokia.com
+Link: http://lore.kernel.org/lkml/20200302145535.GA28183@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/bench/futex-wake.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/parse-events.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
-index df810096abfe..58906e9499bb 100644
---- a/tools/perf/bench/futex-wake.c
-+++ b/tools/perf/bench/futex-wake.c
-@@ -43,7 +43,7 @@ static bool done = false, silent = false, fshared = false;
- static pthread_mutex_t thread_lock;
- static pthread_cond_t thread_parent, thread_worker;
- static struct stats waketime_stats, wakeup_stats;
--static unsigned int ncpus, threads_starting, nthreads = 0;
-+static unsigned int threads_starting, nthreads = 0;
- static int futex_flag = 0;
- 
- static const struct option options[] = {
-@@ -141,7 +141,7 @@ int bench_futex_wake(int argc, const char **argv)
- 	sigaction(SIGINT, &act, NULL);
- 
- 	if (!nthreads)
--		nthreads = ncpus;
-+		nthreads = cpu->nr;
- 
- 	worker = calloc(nthreads, sizeof(*worker));
- 	if (!worker)
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index c01ba6f8fdad..a14995835d85 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -257,21 +257,15 @@ struct tracepoint_path *tracepoint_id_to_path(u64 config)
+ 				path = zalloc(sizeof(*path));
+ 				if (!path)
+ 					return NULL;
+-				path->system = malloc(MAX_EVENT_LENGTH);
+-				if (!path->system) {
++				if (asprintf(&path->system, "%.*s", MAX_EVENT_LENGTH, sys_dirent->d_name) < 0) {
+ 					free(path);
+ 					return NULL;
+ 				}
+-				path->name = malloc(MAX_EVENT_LENGTH);
+-				if (!path->name) {
++				if (asprintf(&path->name, "%.*s", MAX_EVENT_LENGTH, evt_dirent->d_name) < 0) {
+ 					zfree(&path->system);
+ 					free(path);
+ 					return NULL;
+ 				}
+-				strncpy(path->system, sys_dirent->d_name,
+-					MAX_EVENT_LENGTH);
+-				strncpy(path->name, evt_dirent->d_name,
+-					MAX_EVENT_LENGTH);
+ 				return path;
+ 			}
+ 		}
 -- 
 2.21.1
 
