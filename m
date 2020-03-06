@@ -2,109 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69AF17BC85
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9FA17BC8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:18:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbgCFMR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:17:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38082 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbgCFMR0 (ORCPT
+        id S1727060AbgCFMSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 07:18:07 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35428 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgCFMSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:17:26 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i14so2204485otp.5;
-        Fri, 06 Mar 2020 04:17:26 -0800 (PST)
+        Fri, 6 Mar 2020 07:18:04 -0500
+Received: by mail-oi1-f194.google.com with SMTP id c1so2340049oiy.2;
+        Fri, 06 Mar 2020 04:18:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XxqhTkVe9CvcMbnhVkoOtD7xWPU2yvO/vQcxe/RtjbA=;
-        b=OcGzQA7+FqmZP12WK/8K/nJGuU8rwXJz0l1xHQpqTPrqCKR6ClXjsp24lhMmcbyqf3
-         N9foCBnj9pAPLERMpPnccO0Uz+cAyxutaVt//5GPwYmhtweAAvVG+CaX3Z4zdh05la9Z
-         iKRAuRjMOGMAbrDA0ayE8e33fE5rOaSTxonzVpKx3E5DVZANxAK/h9dx4aM37rvzlezW
-         OqyWkEMI3ldT8rfwHUzrim/oZfcsVgstcxqU7bT6VufPI0O62S8l/ipJAfLHUWbHDIE3
-         gX3hN1jOZe8nCSrjE/ADQV5E9jORlllRnbQRBg4/NlwfAnV4Vk1dEHsBa5Dr1Qm0dBLj
-         ZbAA==
-X-Gm-Message-State: ANhLgQ0R4rKzX8ZheDeuZ/pa3Oggq+vabEjh4qLRR625+bjo5YzbUlTn
-        f1VvEb8JbBz6f1oPYmusuBJameQXdDDsFbMvFOsaJg==
-X-Google-Smtp-Source: ADFU+vuJ+BYG1vuglT5s23PLlapfDrFaoXzGNMlzNeLZAOPvMqXejVopvRC8E+qWfgs8r3jk8rX7Tr6ECp47LWsPLCY=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr2215931otk.145.1583497046255;
- Fri, 06 Mar 2020 04:17:26 -0800 (PST)
+        bh=zCzopvBe5pClIDQDJUrJo6Mdp8tlxa91qM1CJIBUoZU=;
+        b=pmAH3Nl0rCv4tpkxXRd/+418oHnQ3rfDMD/Q/nM3HfFppl2u0zX4yqCzMSUyMek1gq
+         TIwmFGSpfHgBoSb6GU2GA9OQFklG7TSB5fK9C7ArCqWDgy77FD6GmnFBXNGW4ylxSsd6
+         1LEzlalcl2XpHDLFSveXEsY4ji0C2uvC3wzNJtzWwjiYV5k45X79MqT5aw3n0Wzh6YGW
+         K/vzooN38qK1lY8OccEIgxfAT2+EDvQaZ4LFByU7OR7uoKCMXsv5J3/wkPilpuregi/J
+         cxfo3jfV1jloDLsfcsn0VwX5JivCT6LKPNJBGcZ5uLzTz1+e25D3/SJl2u6YhQMI3Cpw
+         pJ9A==
+X-Gm-Message-State: ANhLgQ1VeaVoIN/Al9grAWokWspS6suIF7uxOBnJcT4c2yVXMF5aJuYu
+        XV9UbotuK1bd781243svRoHlZUGBfFlb3PnGo+o=
+X-Google-Smtp-Source: ADFU+vv2jlvbLhAc6REVXuwMcnoIkqf+yF7o6TIX59QZjp7iyI4Ry7WdpVGYuGOEEDGnsDWTufmFHi8kMV3eEpcMQTg=
+X-Received: by 2002:aca:1a06:: with SMTP id a6mr2240414oia.148.1583497083839;
+ Fri, 06 Mar 2020 04:18:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20200302062340.21453-1-masahiroy@kernel.org> <20200302062340.21453-2-masahiroy@kernel.org>
-In-Reply-To: <20200302062340.21453-2-masahiroy@kernel.org>
+References: <20200305175528.5b3ccc09@canb.auug.org.au> <fabd49c7-d72e-a5a2-7f2c-47a8bd6c36a1@infradead.org>
+In-Reply-To: <fabd49c7-d72e-a5a2-7f2c-47a8bd6c36a1@infradead.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 6 Mar 2020 13:17:15 +0100
-Message-ID: <CAMuHMdWUvKXOU1LWZ-Vmb_tTe8b1wHrWFW6dEnENNSs0S7AvWQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kconfig: make 'imply' obey the direct dependency
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+Date:   Fri, 6 Mar 2020 13:17:52 +0100
+Message-ID: <CAMuHMdUs00Qtm0CMBTougPyTZxS_cN+x8QWezs_OtPFWB0B2Pw@mail.gmail.com>
+Subject: Re: linux-next: Tree for Mar 5 (sound/soc/codecs/wcd934x.o)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+Hi Randy,
 
-On Mon, Mar 2, 2020 at 7:24 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> The 'imply' statement may create unmet direct dependency when the
-> implied symbol depends on m.
+On Thu, Mar 5, 2020 at 5:49 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 3/4/20 10:55 PM, Stephen Rothwell wrote:
+> > Changes since 20200304:
+> >
 >
-> [Test Code]
+> on x86_64:
 >
->   config FOO
->           tristate "foo"
->           imply BAZ
+> CONFIG_MFD_WCD934X=m
+> CONFIG_SND_SOC_WCD934X=y
 >
->   config BAZ
->           tristate "baz"
->           depends on BAR
->
->   config BAR
->           def_tristate m
->
->   config MODULES
->           def_bool y
->           option modules
->
-> If you set FOO=y, BAZ is also promoted to y, which results in the
-> following .config file:
->
->   CONFIG_FOO=y
->   CONFIG_BAZ=y
->   CONFIG_BAR=m
->   CONFIG_MODULES=y
->
-> This does not meet the dependency 'BAZ depends on BAR'.
->
-> Unlike 'select', what is worse, Kconfig never shows the
-> 'WARNING: unmet direct dependencies detected for ...' for this case.
->
-> Because 'imply' is considered to be weaker than 'depends on', Kconfig
-> should take the direct dependency into account.
->
-> For clarification, describe this case in kconfig-language.rst too.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ld: sound/soc/codecs/wcd934x.o: in function `wcd934x_trigger':
+> wcd934x.c:(.text+0x754): undefined reference to `slim_stream_prepare'
+> ld: wcd934x.c:(.text+0x768): undefined reference to `slim_stream_enable'
+> ld: wcd934x.c:(.text+0x797): undefined reference to `slim_stream_unprepare'
+> ld: wcd934x.c:(.text+0x7ab): undefined reference to `slim_stream_disable'
+> ld: sound/soc/codecs/wcd934x.o: in function `wcd934x_codec_probe':
+> wcd934x.c:(.text+0x4c6c): undefined reference to `of_slim_get_device'
+> ld: wcd934x.c:(.text+0x4cd4): undefined reference to `slim_get_logical_addr'
+> ld: wcd934x.c:(.text+0x4cfe): undefined reference to `__regmap_init_slimbus'
+> ld: sound/soc/codecs/wcd934x.o: in function `wcd934x_hw_params':
+> wcd934x.c:(.text+0x6027): undefined reference to `slim_stream_allocate'
 
-This fixes some issue with "imply SND_SOC_WCD934X".
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+This is fixed by:
+https://lore.kernel.org/linux-doc/20200302062340.21453-1-masahiroy@kernel.org/
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
