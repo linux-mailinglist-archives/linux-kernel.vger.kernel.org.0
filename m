@@ -2,117 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00CA017BD91
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:04:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EC717BDC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbgCFNEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:04:09 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:36200 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbgCFNEI (ORCPT
+        id S1727389AbgCFNIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:08:54 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53340 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgCFNIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:04:08 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 136888030701;
-        Fri,  6 Mar 2020 13:04:07 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id eiDv7yP_oPEm; Fri,  6 Mar 2020 16:04:01 +0300 (MSK)
-From:   <Sergey.Semin@baikalelectronics.ru>
-To:     Sebastian Reichel <sre@kernel.org>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] power: reset: syscon-reboot-mode: Add regmap dts-property support
-Date:   Fri, 6 Mar 2020 16:03:41 +0300
-In-Reply-To: <20200306130341.9585-1-Sergey.Semin@baikalelectronics.ru>
-References: <20200306130341.9585-1-Sergey.Semin@baikalelectronics.ru>
+        Fri, 6 Mar 2020 08:08:52 -0500
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jACiV-0003fl-8f; Fri, 06 Mar 2020 14:08:39 +0100
+Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 46E13104085;
+        Fri,  6 Mar 2020 14:08:38 +0100 (CET)
+Message-Id: <20200306130623.500019114@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 06 Mar 2020 14:03:42 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Marc Zyngier <maz@kernel.org>, x86@kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: [patch 1/7] genirq/debugfs: Add missing sanity checks to interrupt injection
+References: <20200306130341.199467200@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306130407.136888030701@mail.baikalelectronics.ru>
+Content-Type: text/plain; charset=UTF-8
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Interrupts cannot be injected when the interrupt is not activated and when
+a replay is already in progress.
 
-'Reboot-mode'-type of devices are supposed to work in conjunction with
-'reboot'-type devices. In particular Baikal-T1 SoC provides a special
-CCU_WDT_RCR register, which is preserved during any type of the CPU
-reset (standard and caused by a watchdog one). Since both of them are
-responsible for the system-wide operation and related with each other
-it would be better to place them at the same place in the dt hierarchy.
-In particular the best location would be the dt root node. Currently
-'syscon-reboot' device node can be placed anywhere in a dtb as long as
-the corresponding device is created at the system boot-up procedure.
-While according to the corresponding bindings file 'system-boot-mode'
-should be represented as a sub-node of a "syscon", "simple-mfd" node.
-This isn't always suitable especially when the reboot-preserved
-register is provided by some device, which we don't want to declared
-as MFD. In this case it would be good to have the 'syscon-reboot-mode'
-node accepting the 'regmap' property with a phandle reference to the
-'syscon' dt-node, in the same way the 'syscon-reboot' driver does.
-This is what this patch provides - it makes the driver to handle the
-optional 'regmap' property. In case if one isn't provided the
-previously implemented scheme is expected to be found in dtb.
-
-Moreover seeing current dt-interface implementation of the
-'syscon-reboot', 'syscon-poweroff' and 'syscon-reboot-mode' drivers,
-they look more or less similar. All of them handle 'offset' and
-'mask' dt-properties. While 'value' property is only acceptable
-by the 'syscon-reboot' and 'syscon-poweroff' driver, the 'mode-*'
-properties of 'syscon-reboot-mode' serve to the similar purpose.
-The only strong difference between them is the ability to get the
-syscon regmap from the 'regmap' property. By having this patch merged
-we'll have that difference eliminated, so the interfaces would look
-unified.
-
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
+Fixes: 536e2e34bd00 ("genirq/debugfs: Triggering of interrupts from userspace")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
 ---
- drivers/power/reset/syscon-reboot-mode.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ kernel/irq/debugfs.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/reset/syscon-reboot-mode.c b/drivers/power/reset/syscon-reboot-mode.c
-index e0772c9f70f7..f8f8218ae3ee 100644
---- a/drivers/power/reset/syscon-reboot-mode.c
-+++ b/drivers/power/reset/syscon-reboot-mode.c
-@@ -40,6 +40,7 @@ static int syscon_reboot_mode_probe(struct platform_device *pdev)
- {
- 	int ret;
- 	struct syscon_reboot_mode *syscon_rbm;
-+	struct regmap *map;
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -206,8 +206,15 @@ static ssize_t irq_debug_write(struct fi
+ 		chip_bus_lock(desc);
+ 		raw_spin_lock_irqsave(&desc->lock, flags);
  
- 	syscon_rbm = devm_kzalloc(&pdev->dev, sizeof(*syscon_rbm), GFP_KERNEL);
- 	if (!syscon_rbm)
-@@ -49,9 +50,13 @@ static int syscon_reboot_mode_probe(struct platform_device *pdev)
- 	syscon_rbm->reboot.write = syscon_reboot_mode_write;
- 	syscon_rbm->mask = 0xffffffff;
- 
--	syscon_rbm->map = syscon_node_to_regmap(pdev->dev.parent->of_node);
--	if (IS_ERR(syscon_rbm->map))
--		return PTR_ERR(syscon_rbm->map);
-+	map = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "regmap");
-+	if (IS_ERR(map)) {
-+		map = syscon_node_to_regmap(pdev->dev.parent->of_node);
-+		if (IS_ERR(map))
-+			return PTR_ERR(map);
-+	}
-+	syscon_rbm->map = map;
- 
- 	if (of_property_read_u32(pdev->dev.of_node, "offset",
- 	    &syscon_rbm->offset))
--- 
-2.25.1
+-		if (irq_settings_is_level(desc) || desc->istate & IRQS_NMI) {
+-			/* Can't do level nor NMIs, sorry */
++		/*
++		 * Don't allow injection when the interrupt is:
++		 *  - Level or NMI type
++		 *  - not activated
++		 *  - replaying already
++		 */
++		if (irq_settings_is_level(desc) ||
++		    !irqd_is_activated(&desc->irq_data) ||
++		    (desc->istate & (IRQS_NMI | IRQS_REPLAY)) {
+ 			err = -EINVAL;
+ 		} else {
+ 			desc->istate |= IRQS_PENDING;
 
