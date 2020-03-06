@@ -2,108 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9321F17B4AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2D517B4B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbgCFC5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 21:57:09 -0500
-Received: from ozlabs.org ([203.11.71.1]:50135 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbgCFC5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 21:57:09 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48YXMl24Y3z9sPJ;
-        Fri,  6 Mar 2020 13:57:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
-        t=1583463427; bh=jpjw5OFah6kEPVNVvcpiQA3pv8k2QyMsCs3Mb1RKBHw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fgJdQRG80ReVgf4vrhLIVyV2vqusF1qUmsRm14QvvudCsNZqYp16J32jK9BtT2soI
-         j3kPzEvgq9Afr8BClb+7cxoYky/YeF2nt/KvdSOrX/vSsYuO7o3W7p3Zt8lJo0G+S3
-         8zhycTEKsbK2XOhY+M429vbC8x4ZbfcoWKEqteCbcy0dzRQAmkq4dPCStUKaMAe8qy
-         JfFlFEaBDFlbFR3Y9PEGgJUPZvJa3XuyBhfrGtL1pAr2K2Jofda5X5iJxkZ9BFl4g/
-         PnYXrV1xTT8IbppKpyhGjRKD/nkapjPX5eCMWD/oTK/D3KBOKlyRrA06JKxf6VIl3u
-         t+nIoz5l2A96g==
-Date:   Fri, 6 Mar 2020 13:57:05 +1100
-From:   Anton Blanchard <anton@ozlabs.org>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, christophe.leroy@c-s.fr,
-        benh@kernel.crashing.org, paulus@ozlabs.org
-Subject: [PATCH] powerpc/vdso: Fix multiple issues with sys_call_table
-Message-ID: <20200306135705.7f80fcad@kryten.localdomain>
-X-Mailer: Mutt/1.8.0 (2017-02-23)
+        id S1727273AbgCFC6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:58:30 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38194 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726565AbgCFC6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 21:58:01 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 50BE53FB20E2953A6B1C;
+        Fri,  6 Mar 2020 10:57:58 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 6 Mar 2020 10:57:47 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <kuba@kernel.org>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 0/9] net: hns3: misc updates for -net-next
+Date:   Fri, 6 Mar 2020 10:57:09 +0800
+Message-ID: <1583463438-60953-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VDSO exports a bitmap of valid syscalls. vdso_setup_syscall_map()
-sets this up, but there are both little and big endian bugs. The issue
-is with:
+This series includes some misc updates for the HNS3 ethernet driver.
 
-       if (sys_call_table[i] != sys_ni_syscall)
+[patch 1] fixes some mixed type operation warning.
+[patch 2] renames a macro to make it more readable.
+[patch 3 & 4]  removes some unnecessary code.
+[patch 5] adds check before assert VF reset to prevent some unsuitable
+error log.
+[patch 6 - 9] some modifications related to printing.
 
-On little endian, instead of comparing pointers to the two functions,
-we compare the first two instructions of each function. If a function
-happens to have the same first two instructions as sys_ni_syscall, then
-we have a spurious match and mark the instruction as not implemented.
-Fix this by removing the inline declarations.
+Guojia Liao (2):
+  net: hns3: fix some mixed type assignment
+  net: hns3: delete some reduandant code
 
-On big endian we have a further issue where sys_ni_syscall is a function
-descriptor and sys_call_table[] holds pointers to the instruction text.
-Fix this by using dereference_kernel_function_descriptor().
+Huazhong Tan (2):
+  net: hns3: print out status register when VF receives unknown source
+    interrupt
+  net: hns3: synchronize some print relating to reset issue
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Anton Blanchard <anton@ozlabs.org>
+Yonglong Liu (1):
+  net: hns3: add a check before PF inform VF to reset
 
----
-diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-index b9a108411c0d..d186b729026e 100644
---- a/arch/powerpc/kernel/vdso.c
-+++ b/arch/powerpc/kernel/vdso.c
-@@ -17,6 +17,7 @@
- #include <linux/elf.h>
- #include <linux/security.h>
- #include <linux/memblock.h>
-+#include <linux/syscalls.h>
- 
- #include <asm/pgtable.h>
- #include <asm/processor.h>
-@@ -30,6 +31,7 @@
- #include <asm/vdso.h>
- #include <asm/vdso_datapage.h>
- #include <asm/setup.h>
-+#include <asm/syscall.h>
- 
- #undef DEBUG
- 
-@@ -644,19 +646,16 @@ static __init int vdso_setup(void)
- static void __init vdso_setup_syscall_map(void)
- {
- 	unsigned int i;
--	extern unsigned long *sys_call_table;
--#ifdef CONFIG_PPC64
--	extern unsigned long *compat_sys_call_table;
--#endif
--	extern unsigned long sys_ni_syscall;
-+	unsigned long ni_syscall;
- 
-+	ni_syscall = (unsigned long)dereference_kernel_function_descriptor(sys_ni_syscall);
- 
- 	for (i = 0; i < NR_syscalls; i++) {
- #ifdef CONFIG_PPC64
--		if (sys_call_table[i] != sys_ni_syscall)
-+		if (sys_call_table[i] != ni_syscall)
- 			vdso_data->syscall_map_64[i >> 5] |=
- 				0x80000000UL >> (i & 0x1f);
--		if (compat_sys_call_table[i] != sys_ni_syscall)
-+		if (compat_sys_call_table[i] != ni_syscall)
- 			vdso_data->syscall_map_32[i >> 5] |=
- 				0x80000000UL >> (i & 0x1f);
- #else /* CONFIG_PPC64 */
+Yufeng Mo (4):
+  net: hns3: rename macro HCLGE_MAX_NCL_CONFIG_LENGTH
+  net: hns3: remove an unnecessary resetting check in
+    hclge_handle_hw_ras_error()
+  net: hns3: print out command code when dump fails in debugfs
+  net: hns3: delete unnecessary logs after kzalloc fails
+
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  4 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 94 ++++++++++++----------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c |  3 -
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 27 ++++---
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  5 +-
+ 5 files changed, 74 insertions(+), 59 deletions(-)
+
+-- 
+2.7.4
+
