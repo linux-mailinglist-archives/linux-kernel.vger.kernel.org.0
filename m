@@ -2,120 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C5E17C342
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CF2617C34B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgCFQsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:48:00 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.182]:11089 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726162AbgCFQsA (ORCPT
+        id S1726485AbgCFQxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:53:01 -0500
+Received: from avon.wwwdotorg.org ([104.237.132.123]:42428 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbgCFQxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:48:00 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id DE4D4216A5
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 10:47:59 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id AG8ljzAt5Sl8qAG8ljbH88; Fri, 06 Mar 2020 10:47:59 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8UHomocG+fX8U3yCwj2THSJfjfw/ABF8sixeOTpNZSE=; b=IMfZCiEdunBj2yBl3vVZc2GNC/
-        tjavhX3pSWR+qk3oW0uHTcB8KQQRVXbLK2JfXqxRWaBjWLrhWcpLYOY8ugzME2mgTO/ttknFBwX/F
-        4QVZSNTYKQPnhzCgtBFNWWBVMnt4Uqu05Klt/zMe415Nh4yKzOepPUEtXb99N6uGOPxf5IyjhgFhz
-        N4/VVdAncZIsENjJmLXA97QsJsSBLBJ/zXoC/HiUu40geuLJ8KijS3b6/iEwPVCmejPvAurgZjGbC
-        Dr2msOjwgihiDwAtHfXiJ5sc05djz7wm+seVTXXUb6yE2E7WEhxT/jes1kWwRBVba5SROuGOp9nTg
-        e1iAoWTQ==;
-Received: from [201.166.190.232] (port=51794 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jAG8j-001tGK-Sl; Fri, 06 Mar 2020 10:47:58 -0600
-Date:   Fri, 6 Mar 2020 10:51:05 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] btrfs/rcu-string.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200306165105.GA22637@embeddedor>
+        Fri, 6 Mar 2020 11:53:01 -0500
+Received: from [10.20.204.51] (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id DD1AD1C01BF;
+        Fri,  6 Mar 2020 09:52:58 -0700 (MST)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.1 at avon.wwwdotorg.org
+Subject: Re: [PATCH v1 3/3] partitions: Introduce NVIDIA Tegra Partition Table
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Billy Laws <blaws05@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Andrey Danin <danindrey@mail.ru>,
+        Gilles Grandou <gilles@grandou.net>,
+        Ryan Grachek <ryan@edited.us>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200224231841.26550-1-digetx@gmail.com>
+ <20200224231841.26550-4-digetx@gmail.com>
+ <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
+ <CAPDyKFoXnoukjH_2cM=f0DGHBHS6kVUQSYOa_5ffQppC7VOn2A@mail.gmail.com>
+ <824a4d5f-8280-8860-3e80-68188a13aa3d@gmail.com>
+ <CAPDyKFric6pZbJ5-2qkwAFoeJ0c0kcha99zHJ12AUrWO6FQmgg@mail.gmail.com>
+From:   Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <6fe6d262-c6b0-52d8-0150-4c32a4c36cbd@wwwdotorg.org>
+Date:   Fri, 6 Mar 2020 09:52:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.190.232
-X-Source-L: No
-X-Exim-ID: 1jAG8j-001tGK-Sl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.190.232]:51794
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 18
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAPDyKFric6pZbJ5-2qkwAFoeJ0c0kcha99zHJ12AUrWO6FQmgg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On 3/6/20 6:37 AM, Ulf Hansson wrote:
+> On Wed, 4 Mar 2020 at 18:09, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> 04.03.2020 19:36, Ulf Hansson пишет:
+>>> On Tue, 25 Feb 2020 at 01:20, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>>
+>>>> On 2/24/20 4:18 PM, Dmitry Osipenko wrote:
+>>>>> All NVIDIA Tegra devices use a special partition table format for the
+>>>>> internal storage partitioning. Most of Tegra devices have GPT partition
+>>>>> in addition to TegraPT, but some older Android consumer-grade devices do
+>>>>> not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
+>>>>> in order to support these devices properly in the upstream kernel. This
+>>>>> patch adds support for NVIDIA Tegra Partition Table format that is used
+>>>>> at least by all NVIDIA Tegra20 and Tegra30 devices.
+>>>>
+>>>>> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+>>>>
+>>>>> +static void __init tegra_boot_config_table_init(void)
+>>>>> +{
+>>>>> +     void __iomem *bct_base;
+>>>>> +     u16 pt_addr, pt_size;
+>>>>> +
+>>>>> +     bct_base = IO_ADDRESS(TEGRA_IRAM_BASE) + TEGRA_IRAM_BCT_OFFSET;
+>>>>
+>>>> This shouldn't be hard-coded. IIRC, the boot ROM writes a BIT (Boot
+>>>> Information Table) to a fixed location in IRAM, and there's some value
+>>>> in the BIT that points to where the BCT is in IRAM. In practice, it
+>>>> might work out that the BCT is always at the same place in IRAM, but
+>>>> this certainly isn't guaranteed. I think there's code in U-Boot which
+>>>> extracts the BCT location from the BIT? Yes, see
+>>>> arch/arm/mach-tegra/ap.c:get_odmdata().
+>>>
+>>> So, have you considered using the command line partition option,
+>>> rather than adding yet another partition scheme to the kernel?
+>>>
+>>> In principle, you would let the boot loader scan for the partitions,
+>>> likely from machine specific code in U-boot. Then you append these to
+>>> the kernel command line and let block/partitions/cmdline.c scan for
+>>> it.
+>>
+>> The bootloader is usually locked-down on a consumer Tegra machines (it's
+>> signed / encrypted).
+> 
+> Right, you are you talking about this from a developer point of view,
+> not from an end product user?
+> 
+> I mean, for sure you can upgrade the bootloader on Nvidia products? No, really?
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+For developer-oriented products like Jetson developer kits, you can 
+upgrade the bootloader, and luckily they haven't used this partition 
+table format for many versions.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/btrfs/rcu-string.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/rcu-string.h b/fs/btrfs/rcu-string.h
-index a97dc74a4d3d..5c1a617eb25d 100644
---- a/fs/btrfs/rcu-string.h
-+++ b/fs/btrfs/rcu-string.h
-@@ -8,7 +8,7 @@
- 
- struct rcu_string {
- 	struct rcu_head rcu;
--	char str[0];
-+	char str[];
- };
- 
- static inline struct rcu_string *rcu_string_strdup(const char *src, gfp_t mask)
--- 
-2.25.0
-
+However, commercial Android products typically have secure boot enabled, 
+so you can't replace the bootloader unless you know the secure boot 
+keys, which only the manufacturer knows. Dmitry is working on 
+re-purposing such products.
