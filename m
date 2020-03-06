@@ -2,158 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A0B117BE3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:25:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6688417BE41
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbgCFNZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:25:22 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:36940 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgCFNZV (ORCPT
+        id S1727173AbgCFNZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:25:47 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726054AbgCFNZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:25:21 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 2AC268030797;
-        Fri,  6 Mar 2020 13:25:19 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nt9nIF6RReRP; Fri,  6 Mar 2020 16:25:18 +0300 (MSK)
-From:   <Sergey.Semin@baikalelectronics.ru>
-To:     Hoan Tran <hoan@os.amperecomputing.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] gpio: dwapb: Add debounce reference clock support
-Date:   Fri, 6 Mar 2020 16:24:48 +0300
-In-Reply-To: <20200306132448.13917-1-Sergey.Semin@baikalelectronics.ru>
-References: <20200306132448.13917-1-Sergey.Semin@baikalelectronics.ru>
+        Fri, 6 Mar 2020 08:25:46 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 026DL9MU024289
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Mar 2020 08:25:45 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ykp8maq5g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 08:25:45 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <imbrenda@linux.ibm.com>;
+        Fri, 6 Mar 2020 13:25:43 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Mar 2020 13:25:40 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 026DPcAu28180808
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 6 Mar 2020 13:25:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A7A2A4053;
+        Fri,  6 Mar 2020 13:25:38 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E6C3BA4057;
+        Fri,  6 Mar 2020 13:25:37 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.145.0.1])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Mar 2020 13:25:37 +0000 (GMT)
+From:   Claudio Imbrenda <imbrenda@linux.ibm.com>
+To:     linux-next@vger.kernel.org, akpm@linux-foundation.org,
+        jack@suse.cz, kirill@shutemov.name
+Cc:     borntraeger@de.ibm.com, david@redhat.com, aarcange@redhat.com,
+        linux-mm@kvack.org, frankja@linux.ibm.com, sfr@canb.auug.org.au,
+        jhubbard@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [PATCH v4 0/2] add callbacks for inaccessible pages
+Date:   Fri,  6 Mar 2020 14:25:35 +0100
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306132519.2AC268030797@mail.baikalelectronics.ru>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20030613-0020-0000-0000-000003B11797
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030613-0021-0000-0000-0000220957F9
+Message-Id: <20200306132537.783769-1-imbrenda@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-06_04:2020-03-06,2020-03-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=783 spamscore=0
+ malwarescore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003060095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+This patchset has a fixup for gup/mm, and provides the necessary arch
+hooks to enable protected virtualization.
 
-Aside from the APB reference clock DW GPIO controller can have a
-dedicated clock connected to setup a debounce time interval for
-GPIO-based IRQs. Since this functionality is optional the corresponding
-clock source is also optional. Due to this lets handle the debounce
-clock in the same way as it was created for APB reference clock,
-but using the bulk request/enable-disable methods.
+Andrew: please simply squash/fixup the first patch into the appropriate
+one that is already in your tree.
 
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
----
- drivers/gpio/gpio-dwapb.c | 35 ++++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+v3-> v4:
+* changed WARN_ON into VM_BUG_ON_PAGE as per review,
+* and small improvement of the associated comment
+v2 -> v3:
+* revert some cosmetic changes to improve readability
+* improve some comments
+v1 -> v2:
+* use put_compound_head in the first patch
+* fix commit message of the second patch
+* minor code cleanups
+* some comments to explain why sometimes we are not doing things
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index bfa16172f973..495b87f7c351 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -62,6 +62,8 @@
- #define GPIO_INTSTATUS_V2	0x3c
- #define GPIO_PORTA_EOI_V2	0x40
- 
-+#define DWAPB_NR_CLOCKS		2
-+
- struct dwapb_gpio;
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -97,7 +99,7 @@ struct dwapb_gpio {
- 	struct irq_domain	*domain;
- 	unsigned int		flags;
- 	struct reset_control	*rst;
--	struct clk		*clk;
-+	struct clk_bulk_data	clks[DWAPB_NR_CLOCKS];
- };
- 
- static inline u32 gpio_reg_v2_convert(unsigned int offset)
-@@ -689,16 +691,19 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpio->regs))
- 		return PTR_ERR(gpio->regs);
- 
--	/* Optional bus clock */
--	gpio->clk = devm_clk_get_optional(&pdev->dev, "bus");
--	if (IS_ERR(gpio->clk)) {
--		dev_info(&pdev->dev, "Cannot get APB clock\n");
--		return PTR_ERR(gpio->clk);
-+	/* Optional bus and debounce clocks */
-+	gpio->clks[0].id = "bus";
-+	gpio->clks[1].id = "db";
-+	err = devm_clk_bulk_get_optional(&pdev->dev, DWAPB_NR_CLOCKS,
-+					 gpio->clks);
-+	if (err) {
-+		dev_info(&pdev->dev, "Cannot get APB/Debounce clocks\n");
-+		return err;
- 	}
- 
--	err = clk_prepare_enable(gpio->clk);
-+	err = clk_bulk_prepare_enable(DWAPB_NR_CLOCKS, gpio->clks);
- 	if (err) {
--		dev_info(&pdev->dev, "Cannot enable APB clock\n");
-+		dev_info(&pdev->dev, "Cannot enable APB/Debounce clocks\n");
- 		return err;
- 	}
- 
-@@ -727,7 +732,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- out_unregister:
- 	dwapb_gpio_unregister(gpio);
- 	dwapb_irq_teardown(gpio);
--	clk_disable_unprepare(gpio->clk);
-+	clk_bulk_disable_unprepare(DWAPB_NR_CLOCKS, gpio->clks);
- 
- 	return err;
- }
-@@ -739,7 +744,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
- 	dwapb_gpio_unregister(gpio);
- 	dwapb_irq_teardown(gpio);
- 	reset_control_assert(gpio->rst);
--	clk_disable_unprepare(gpio->clk);
-+	clk_bulk_disable_unprepare(DWAPB_NR_CLOCKS, gpio->clks);
- 
- 	return 0;
- }
-@@ -784,7 +789,7 @@ static int dwapb_gpio_suspend(struct device *dev)
- 	}
- 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
- 
--	clk_disable_unprepare(gpio->clk);
-+	clk_bulk_disable_unprepare(DWAPB_NR_CLOCKS, gpio->clks);
- 
- 	return 0;
- }
-@@ -794,9 +799,13 @@ static int dwapb_gpio_resume(struct device *dev)
- 	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
- 	struct gpio_chip *gc	= &gpio->ports[0].gc;
- 	unsigned long flags;
--	int i;
-+	int i, err;
- 
--	clk_prepare_enable(gpio->clk);
-+	err = clk_bulk_prepare_enable(DWAPB_NR_CLOCKS, gpio->clks);
-+	if (err) {
-+		dev_err(gpio->dev, "Cannot reenable APB/Debounce clocks\n");
-+		return err;
-+	}
- 
- 	spin_lock_irqsave(&gc->bgpio_lock, flags);
- 	for (i = 0; i < gpio->nr_ports; i++) {
+Claudio Imbrenda (2):
+  mm/gup: fixup for 9947ea2c1e608e32 "mm/gup: track FOLL_PIN pages"
+  mm/gup/writeback: add callbacks for inaccessible pages
+
+ include/linux/gfp.h |  6 ++++
+ mm/gup.c            | 76 +++++++++++++++++++++++++++++----------------
+ mm/page-writeback.c |  9 +++++-
+ 3 files changed, 64 insertions(+), 27 deletions(-)
+
 -- 
-2.25.1
+2.24.1
 
