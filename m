@@ -2,133 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8108717BD8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A863017BDD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbgCFNEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:04:08 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:54088 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgCFNEG (ORCPT
+        id S1727080AbgCFNJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:09:25 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46158 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgCFNJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:04:06 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026D45a2076542;
-        Fri, 6 Mar 2020 07:04:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583499846;
-        bh=YGPGIjMx8NpAqoWqRIFkR0DHWMSpJffHZWteABIBptA=;
-        h=From:To:CC:Subject:Date;
-        b=zDRTKQ6V1wuFj+2ihF5TjttoKFCukldb45qddFXQctpFOblg/vCf6CWpf9yqOtWI8
-         h/Bbd1VDq9byySPBVzCLdSWx9sJ+Fnki177o9d0WBnwJmniyv0tp1KdOGqszUSVAJO
-         gn3pSCF0RTtToHGx1jbCjlTBQDaxH/w6HgDNbWfA=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 026D454T105721
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Mar 2020 07:04:05 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
- 2020 07:04:05 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 6 Mar 2020 07:04:05 -0600
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026D45Ne066327;
-        Fri, 6 Mar 2020 07:04:05 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Benoit Parrot <bparrot@ti.com>, <stable@vger.kernel.org>
-Subject: [Patch v2] media: ti-vpe: cal: fix a kernel oops when unloading module
-Date:   Fri, 6 Mar 2020 07:08:39 -0600
-Message-ID: <20200306130839.1209-1-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 6 Mar 2020 08:09:24 -0500
+Received: by mail-pf1-f195.google.com with SMTP id o24so1084852pfp.13
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 05:09:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=QwvL99c3sTAWScS17ZDj22BvXW0QqQWIhRt4cYTFYXI=;
+        b=gDWywhmbdzL/1mNf8BQtKOQQExNz+wqF3qt0L2eaCPZbG2Lj6B7bL8WZg+7u0K5wes
+         7pVDP7QvRuKySmNNFafef4bDzshFV/CT33oXdQ+tiARnCAzwniqXtfPzWNYFvlYn8K9m
+         KMzZFJKAxHpogMkKBks+kigB6njnZ3FSc9GT4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=QwvL99c3sTAWScS17ZDj22BvXW0QqQWIhRt4cYTFYXI=;
+        b=RKNYbHtigw28E+k6yv5KqqKX+0+7OqqfEECyVTiboeHCeIGMPFjOqqpKhITBFwEymR
+         PUeqcYfc2Luy59xXUlO4+85otn6DGvppW3EHVOhYOjfkGdlU1GcLZNjK2rQ8oH4jqEu3
+         v5aNHL/rlCj/5G5qH5wg+km2VncMptuGn5q2UJ3jLj3CMLJfv/HBGSaMK15sA4A5CAZa
+         aGJcUgDNrZ70C8d+iuGQmXXdv+H0xW5odCT6ViZGUEHvuFE+gX64sIahQNOapr/hjIys
+         cOHtfZz69VERqTBkYOSNjF8BbUTV4F5X+xLNnYrvPi5KENwCqZvZxNkLlW58rmKcjxP3
+         unLg==
+X-Gm-Message-State: ANhLgQ07uVR9iiJLuOoqaQR15yUtTla+tw58yZIErR/sqqjLnV5gHdV9
+        uyJjnBEVNQ6UsU9b6ZxlJjnCdQ==
+X-Google-Smtp-Source: ADFU+vv7MeaUlbRH0dd28x9kTKqYJIqOlQ7piuYzJGALMuTyWBBErd/77e69xbBepw42k+51RfRhkg==
+X-Received: by 2002:a63:a351:: with SMTP id v17mr3195903pgn.319.1583500163031;
+        Fri, 06 Mar 2020 05:09:23 -0800 (PST)
+Received: from localhost (2001-44b8-111e-5c00-b120-f113-a8cb-35fd.static.ipv6.internode.on.net. [2001:44b8:111e:5c00:b120:f113:a8cb:35fd])
+        by smtp.gmail.com with ESMTPSA id k5sm9354724pju.29.2020.03.06.05.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 05:09:21 -0800 (PST)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, kasan-dev@googlegroups.com,
+        aneesh.kumar@linux.ibm.com, bsingharora@gmail.com
+Cc:     Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v7 4/4] powerpc: Book3S 64-bit "heavyweight" KASAN support
+In-Reply-To: <abcc9f7d-995d-e06e-ef04-1dbd144a38e0@c-s.fr>
+References: <20200213004752.11019-1-dja@axtens.net> <20200213004752.11019-5-dja@axtens.net> <abcc9f7d-995d-e06e-ef04-1dbd144a38e0@c-s.fr>
+Date:   Sat, 07 Mar 2020 00:09:17 +1100
+Message-ID: <87wo7xpr42.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the switch to use v4l2_async_notifier_add_subdev() and
-v4l2_async_notifier_cleanup(), unloading the ti_cal module would casue a
-kernel oops.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-This was root cause to the fact that v4l2_async_notifier_cleanup() tries
-to kfree the asd pointer passed into v4l2_async_notifier_add_subdev().
+> Le 13/02/2020 =C3=A0 01:47, Daniel Axtens a =C3=A9crit=C2=A0:
+>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>> index 497b7d0b2d7e..f1c54c08a88e 100644
+>> --- a/arch/powerpc/Kconfig
+>> +++ b/arch/powerpc/Kconfig
+>> @@ -169,7 +169,9 @@ config PPC
+>>   	select HAVE_ARCH_HUGE_VMAP		if PPC_BOOK3S_64 && PPC_RADIX_MMU
+>>   	select HAVE_ARCH_JUMP_LABEL
+>>   	select HAVE_ARCH_KASAN			if PPC32
+>> +	select HAVE_ARCH_KASAN			if PPC_BOOK3S_64 && PPC_RADIX_MMU
+>
+> That's probably detail, but as it is necessary to deeply define the HW=20
+> when selecting that (I mean giving the exact amount of memory and with=20
+> restrictions like having a wholeblock memory), should it also depend of=20
+> EXPERT ?
 
-In our case the asd reference was from a statically allocated struct.
-So in effect v4l2_async_notifier_cleanup() was trying to free a pointer
-that was not kalloc.
+If it weren't a debug feature I would definitely agree with you, but I
+think being a debug feature it's not so necessary. Also anything with
+more memory than the config option specifies will still boot - it's just
+less memory that won't boot. I've set the default to 1024MB: I know
+that's a lot of memory for an embedded system but I think for anything
+with the Radix MMU it's an OK default.
 
-So here we switch to using a kzalloc struct instead of a static one.
-To acheive this we re-order some of the calls to prevent asd allocation
-from leaking.
+I'm sure if mpe disagrees he can add EXPERT when he's merging :)
 
-Fixes: d079f94c9046 ("media: platform: Switch to v4l2_async_notifier_add_subdev")
+> Maybe we could have
+>
+> -  	select HAVE_ARCH_KASAN_VMALLOC		if PPC32
+> +	select HAVE_ARCH_KASAN_VMALLOC		if HAVE_ARCH_KASAN
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
----
-Changes since v1:
-- fix asd allocation leak
+That's a good idea. Done.
 
- drivers/media/platform/ti-vpe/cal.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Thanks for the review!
 
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 6d4cbb8782ed..6c8f3702eac0 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -372,8 +372,6 @@ struct cal_ctx {
- 	struct v4l2_subdev	*sensor;
- 	struct v4l2_fwnode_endpoint	endpoint;
- 
--	struct v4l2_async_subdev asd;
--
- 	struct v4l2_fh		fh;
- 	struct cal_dev		*dev;
- 	struct cc_data		*cc;
-@@ -2032,7 +2030,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 
- 	parent = pdev->dev.of_node;
- 
--	asd = &ctx->asd;
- 	endpoint = &ctx->endpoint;
- 
- 	ep_node = NULL;
-@@ -2079,8 +2076,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 		ctx_dbg(3, ctx, "can't get remote parent\n");
- 		goto cleanup_exit;
- 	}
--	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
--	asd->match.fwnode = of_fwnode_handle(sensor_node);
- 
- 	v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep_node), endpoint);
- 
-@@ -2110,9 +2105,17 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 
- 	v4l2_async_notifier_init(&ctx->notifier);
- 
-+	asd = kzalloc(sizeof(*asd), GFP_KERNEL);
-+	if (!asd)
-+		goto cleanup_exit;
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
-+	asd->match.fwnode = of_fwnode_handle(sensor_node);
-+
- 	ret = v4l2_async_notifier_add_subdev(&ctx->notifier, asd);
- 	if (ret) {
- 		ctx_err(ctx, "Error adding asd\n");
-+		kfree(asd);
- 		goto cleanup_exit;
- 	}
- 
--- 
-2.17.1
+Regards,
+Daniel
 
+>
+>>   	select HAVE_ARCH_KGDB
+>>   	select HAVE_ARCH_MMAP_RND_BITS
+>>   	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if COMPAT
+>
+>
+> Christophe
