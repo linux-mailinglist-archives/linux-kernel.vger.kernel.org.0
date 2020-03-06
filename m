@@ -2,40 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1192B17B2E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 01:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77D9C17B2EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 01:28:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbgCFA1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 19:27:39 -0500
-Received: from ozlabs.org ([203.11.71.1]:50507 "EHLO ozlabs.org"
+        id S1727191AbgCFA1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 19:27:54 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:53273 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbgCFA1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 19:27:39 -0500
+        id S1726436AbgCFA1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 19:27:43 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 48YT3F1QB8z9sRY; Fri,  6 Mar 2020 11:27:36 +1100 (AEDT)
+        id 48YT3K1BwNz9sRY; Fri,  6 Mar 2020 11:27:40 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: ba32f4b02105e57627912b42e141d65d90074c64
-In-Reply-To: <6ecbda05b4119c40222dc8ec284604e1597c9bff.1580327381.git.christophe.leroy@c-s.fr>
+X-powerpc-patch-commit: 9e27086292aa880921a0f2b8501e5189d5efcf03
+In-Reply-To: <8ee3bdbbdfdfc64ca7001e90c43b2aee6f333578.1580470482.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/process: Remove unneccessary #ifdef CONFIG_PPC64 in copy_thread_tls()
-Message-Id: <48YT3F1QB8z9sRY@ozlabs.org>
-Date:   Fri,  6 Mar 2020 11:27:36 +1100 (AEDT)
+Subject: Re: [PATCH v3 1/2] powerpc/32: Warn and return ENOSYS on syscalls from kernel
+Message-Id: <48YT3K1BwNz9sRY@ozlabs.org>
+Date:   Fri,  6 Mar 2020 11:27:40 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-01-29 at 19:50:07 UTC, Christophe Leroy wrote:
-> is_32bit_task() exists on both PPC64 and PPC32, no need of an ifdefery.
+On Fri, 2020-01-31 at 11:34:54 UTC, Christophe Leroy wrote:
+> Since commit b86fb88855ea ("powerpc/32: implement fast entry for
+> syscalls on non BOOKE") and commit 1a4b739bbb4f ("powerpc/32:
+> implement fast entry for syscalls on BOOKE"), syscalls from
+> kernel are unexpected and can have catastrophic consequences
+> as it will destroy the kernel stack.
+> 
+> Test MSR_PR on syscall entry. In case syscall is from kernel,
+> emit a warning and return ENOSYS error.
 > 
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/ba32f4b02105e57627912b42e141d65d90074c64
+https://git.kernel.org/powerpc/c/9e27086292aa880921a0f2b8501e5189d5efcf03
 
 cheers
