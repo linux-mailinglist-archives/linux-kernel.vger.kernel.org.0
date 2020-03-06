@@ -2,142 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EA117B52A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E1D17B52C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:00:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbgCFD7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 22:59:50 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3413 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726317AbgCFD7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 22:59:50 -0500
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 2BC53C5726C0627F8421;
-        Fri,  6 Mar 2020 11:59:46 +0800 (CST)
-Received: from dggeme709-chm.china.huawei.com (10.1.199.105) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 6 Mar 2020 11:59:45 +0800
-Received: from dggeme759-chm.china.huawei.com (10.3.19.105) by
- dggeme709-chm.china.huawei.com (10.1.199.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 6 Mar 2020 11:59:45 +0800
-Received: from dggeme759-chm.china.huawei.com ([10.7.64.73]) by
- dggeme759-chm.china.huawei.com ([10.7.64.73]) with mapi id 15.01.1713.004;
- Fri, 6 Mar 2020 11:59:45 +0800
-From:   "tiantao (H)" <tiantao6@hisilicon.com>
-To:     "tiantao (H)" <tiantao6@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "kraxel@redhat.com" <kraxel@redhat.com>,
-        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "xinliang.liu@linaro.org" <xinliang.liu@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Linuxarm <linuxarm@huawei.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBkcm0vaGlzaWxpY29uOiBBZGQgdGhlIGxvYWQgYW5k?=
- =?gb2312?Q?_unload_for_hibmc=5Fdriver?=
-Thread-Topic: [PATCH] drm/hisilicon: Add the load and unload for hibmc_driver
-Thread-Index: AQHV82lyCana5HHxX0yYG6RWbIO84Kg68D0g
-Date:   Fri, 6 Mar 2020 03:59:45 +0000
-Message-ID: <fb0f81d0c08747768025d6a33150fe08@hisilicon.com>
-References: <1583466184-7060-1-git-send-email-tiantao6@hisilicon.com>
-In-Reply-To: <1583466184-7060-1-git-send-email-tiantao6@hisilicon.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.57.60.129]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1726990AbgCFD75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 22:59:57 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41127 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgCFD74 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 22:59:56 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b1so438191pgm.8;
+        Thu, 05 Mar 2020 19:59:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fTHfeEGAKUEx09sh7hreY5/yhd9fkPYMGk68O4GQCQg=;
+        b=PUcarrjbiWaX0Rz1vdBcrA3yfUMAw8e+Atf96hJeBtwAqJN70Y4poAxEKzUxEnzSsY
+         odGxQJnpTsJBJ86fKUNXt2hGyNiOsDdjIbB4Amfxqnoj2pf+SUwk8EGrFiT9TCKtmQuV
+         DDhF3OFqRURWzQDi+bnOKdRvJJ8S7ASP9ZzfX6imLHTS4Ep8zc8SFSffajJ4dF1BZMqV
+         Rp2Lh0ZOv+BdRzhdo3SxD/TVvbTY9ARexO83cxJF+p+7y1QiY4f/45GBNNhdpDpviR5E
+         YM5bHE/CCuNXScULRfE/a5CE25GZO+iCuJwAltYHpgUdxWQgHqZAgKczjy9mz4ZBwpQy
+         MWfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fTHfeEGAKUEx09sh7hreY5/yhd9fkPYMGk68O4GQCQg=;
+        b=o04HvcNh3xOpydurLcEATp25ZUyeNyJ9yHcsyUFTxiK4oQdYxXYu8QEvHysQWt1U6K
+         +ztDEuhnTogw6bKYvBFauTV9c5cjxAEHqFG3+Lp4kTzytPb2Xa3Th4AaAIGMmbUW+RDY
+         pF924A/r0B5LmyNU8INp4ufPeAJFt6ksrom5iJ5ackn0dGDSJfI/VBDvsTQNyHpzzBDz
+         KgZRImiZRGYkDYfqmovTXHlv+RHZNE741qWxtGnjII0U7Vh02iHHwkS1jOi/87kfnbRm
+         nZ2qhhGqmFLS7to9Uh7wwErrjChVw1zbAWmYu9wlbFK/bD5zrpaP/UOe4oC0WkoYd0WT
+         SEAg==
+X-Gm-Message-State: ANhLgQ090hFev8o5pS+P4cesf/CkvSUdu0UccDf4HVtlaLM5tII44AKE
+        THaN2p191d/6mPUNgbaXwRrBFxAwtOU=
+X-Google-Smtp-Source: ADFU+vumLorMOD36Y6V1YPaG/n5y6GEDPX5EPyx/31sT9LIIiW1Y/t2fQdgWUN7brLM19dr6T7ni6A==
+X-Received: by 2002:a63:d40a:: with SMTP id a10mr1340495pgh.53.1583467193889;
+        Thu, 05 Mar 2020 19:59:53 -0800 (PST)
+Received: from [192.168.1.5] ([110.77.155.127])
+        by smtp.googlemail.com with ESMTPSA id z3sm7632414pjr.46.2020.03.05.19.59.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 19:59:53 -0800 (PST)
+Subject: Re: [PATCH] Add a new PID for HP
+To:     Scott Chen <scott@labau.com.tw>
+Cc:     young@labau.com.tw, jocelyn@labau.com.tw, roger@labau.com.tw,
+        Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200306024048.11408-1-scott@labau.com.tw>
+From:   Lars Melin <larsm17@gmail.com>
+Message-ID: <bc753e9a-6624-0f17-725e-f54144e5a281@gmail.com>
+Date:   Fri, 6 Mar 2020 10:59:48 +0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200306024048.11408-1-scott@labau.com.tw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQWxso7oNCg0KCVNvcnJ5o6xwbGVhc2UgaWdub3JlIHRoaXMgcGF0Y2guDQoNCkJlc3QNCg0K
-LS0tLS3Tyrz+1K28/i0tLS0tDQq3orz+yMs6IExpbnV4YXJtIFttYWlsdG86bGludXhhcm0tYm91
-bmNlc0BodWF3ZWkuY29tXSC0+rHtIFRpYW4gVGFvDQq3osvNyrG85DogMjAyMMTqM9TCNsjVIDEx
-OjQzDQrK1bz+yMs6IENoZW5mZW5nIChwdWNrKSA8cHVjay5jaGVuQGhpc2lsaWNvbi5jb20+OyBh
-aXJsaWVkQGxpbnV4LmllOyBkYW5pZWxAZmZ3bGwuY2g7IHR6aW1tZXJtYW5uQHN1c2UuZGU7IGty
-YXhlbEByZWRoYXQuY29tOyBhbGV4YW5kZXIuZGV1Y2hlckBhbWQuY29tOyB0Z2x4QGxpbnV0cm9u
-aXguZGU7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IHhpbmxpYW5nLmxpdUBsaW5h
-cm8ub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQqzrcvNOiBMaW51eGFybSA8bGlu
-dXhhcm1AaHVhd2VpLmNvbT4NCtb3zOI6IFtQQVRDSF0gZHJtL2hpc2lsaWNvbjogQWRkIHRoZSBs
-b2FkIGFuZCB1bmxvYWQgZm9yIGhpYm1jX2RyaXZlcg0KDQp1c2luZyB0aGUgbG9hZCBhbmQgdW5s
-b2FkIGZ1bmN0aW9uIHByb3ZpZGVkIGJ5IGRybSBmcmFtZXdvcmsgaW5zdGVhZCBvZiBkb2luZyB0
-aGUgc2FtZSB3b3JrIGluIHRoZSBoaWJtY19wY2lfcHJvYmUgYW5kIGRvIHNvbWUgY29kZSBjbGVh
-bnVwLg0KDQpTaWduZWQtb2ZmLWJ5OiBUaWFuIFRhbyA8dGlhbnRhbzZAaGlzaWxpY29uLmNvbT4N
-ClNpZ25lZC1vZmYtYnk6IEdvbmcganVuamllIDxnb25nanVuamllMkBodWF3ZWkuY29tPg0KLS0t
-DQogZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9oaWJtYy9oaWJtY19kcm1fZHJ2LmMgfCA2MiAr
-KysrKysrKystLS0tLS0tLS0tLS0tLS0tICBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2hpYm1j
-L2hpYm1jX2RybV9kcnYuaCB8ICAyICsNCiAyIGZpbGVzIGNoYW5nZWQsIDI0IGluc2VydGlvbnMo
-KyksIDQwIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2hpc2ls
-aWNvbi9oaWJtYy9oaWJtY19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2hp
-Ym1jL2hpYm1jX2RybV9kcnYuYw0KaW5kZXggNzlhMTgwYS4uNTFmMWM3MCAxMDA2NDQNCi0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvaGlibWNfZHJtX2Rydi5jDQorKysgYi9k
-cml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2hpYm1jL2hpYm1jX2RybV9kcnYuYw0KQEAgLTIzLDcg
-KzIzLDcgQEANCiAjaW5jbHVkZSA8ZHJtL2RybV9wcmludC5oPg0KICNpbmNsdWRlIDxkcm0vZHJt
-X3Byb2JlX2hlbHBlci5oPg0KICNpbmNsdWRlIDxkcm0vZHJtX3ZibGFuay5oPg0KLQ0KKyNpbmNs
-dWRlIDxkcm0vZHJtX3BjaS5oPg0KICNpbmNsdWRlICJoaWJtY19kcm1fZHJ2LmgiDQogI2luY2x1
-ZGUgImhpYm1jX2RybV9yZWdzLmgiDQogDQpAQCAtNDksNiArNDksOCBAQCBzdGF0aWMgaXJxcmV0
-dXJuX3QgaGlibWNfZHJtX2ludGVycnVwdChpbnQgaXJxLCB2b2lkICphcmcpDQogDQogc3RhdGlj
-IHN0cnVjdCBkcm1fZHJpdmVyIGhpYm1jX2RyaXZlciA9IHsNCiAJLmRyaXZlcl9mZWF0dXJlcwk9
-IERSSVZFUl9HRU0gfCBEUklWRVJfTU9ERVNFVCB8IERSSVZFUl9BVE9NSUMsDQorCS5sb2FkCQkJ
-PSBoaWJtY19sb2FkLA0KKwkudW5sb2FkCQkJPSBoaWJtY191bmxvYWQsDQogCS5mb3BzCQkJPSAm
-aGlibWNfZm9wcywNCiAJLm5hbWUJCQk9ICJoaWJtYyIsDQogCS5kYXRlCQkJPSAiMjAxNjA4Mjgi
-LA0KQEAgLTIzMiw2ICsyMzQsMjEgQEAgc3RhdGljIGludCBoaWJtY19od19tYXAoc3RydWN0IGhp
-Ym1jX2RybV9wcml2YXRlICpwcml2KQ0KIAlyZXR1cm4gMDsNCiB9DQogDQorc3RhdGljIHZvaWQg
-aGlibWNfaHdfdW5tYXAoc3RydWN0IGhpYm1jX2RybV9wcml2YXRlICpwcml2KSB7DQorCXN0cnVj
-dCBkcm1fZGV2aWNlICpkZXYgPSBwcml2LT5kZXY7DQorDQorCWlmIChwcml2LT5tbWlvKSB7DQor
-CQlkZXZtX2lvdW5tYXAoZGV2LT5kZXYsIHByaXYtPm1taW8pOw0KKwkJcHJpdi0+bW1pbyA9IE5V
-TEw7DQorCX0NCisNCisJaWYgKHByaXYtPmZiX21hcCkgew0KKwkJZGV2bV9pb3VubWFwKGRldi0+
-ZGV2LCBwcml2LT5mYl9tYXApOw0KKwkJcHJpdi0+ZmJfbWFwID0gTlVMTDsNCisJfQ0KK30NCisN
-CiBzdGF0aWMgaW50IGhpYm1jX2h3X2luaXQoc3RydWN0IGhpYm1jX2RybV9wcml2YXRlICpwcml2
-KSAgew0KIAlpbnQgcmV0Ow0KQEAgLTI0NSw3ICsyNjIsNyBAQCBzdGF0aWMgaW50IGhpYm1jX2h3
-X2luaXQoc3RydWN0IGhpYm1jX2RybV9wcml2YXRlICpwcml2KQ0KIAlyZXR1cm4gMDsNCiB9DQog
-DQotc3RhdGljIGludCBoaWJtY191bmxvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRldikNCit2b2lk
-IGhpYm1jX3VubG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQ0KIHsNCiAJc3RydWN0IGhpYm1j
-X2RybV9wcml2YXRlICpwcml2ID0gZGV2LT5kZXZfcHJpdmF0ZTsNCiANCkBAIC0yNTgsMTEgKzI3
-NSwxMiBAQCBzdGF0aWMgaW50IGhpYm1jX3VubG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQ0K
-IA0KIAloaWJtY19rbXNfZmluaShwcml2KTsNCiAJaGlibWNfbW1fZmluaShwcml2KTsNCisJaGli
-bWNfaHdfdW5tYXAocHJpdik7DQogCWRldi0+ZGV2X3ByaXZhdGUgPSBOVUxMOw0KIAlyZXR1cm4g
-MDsNCiB9DQogDQotc3RhdGljIGludCBoaWJtY19sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYp
-DQoraW50IGhpYm1jX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgbG9uZyBm
-bGFncykNCiB7DQogCXN0cnVjdCBoaWJtY19kcm1fcHJpdmF0ZSAqcHJpdjsNCiAJaW50IHJldDsN
-CkBAIC0zMzIsNDMgKzM1MCw3IEBAIHN0YXRpYyBpbnQgaGlibWNfcGNpX3Byb2JlKHN0cnVjdCBw
-Y2lfZGV2ICpwZGV2LA0KIAlpZiAocmV0KQ0KIAkJcmV0dXJuIHJldDsNCiANCi0JZGV2ID0gZHJt
-X2Rldl9hbGxvYygmaGlibWNfZHJpdmVyLCAmcGRldi0+ZGV2KTsNCi0JaWYgKElTX0VSUihkZXYp
-KSB7DQotCQlEUk1fRVJST1IoImZhaWxlZCB0byBhbGxvY2F0ZSBkcm1fZGV2aWNlXG4iKTsNCi0J
-CXJldHVybiBQVFJfRVJSKGRldik7DQotCX0NCi0NCi0JZGV2LT5wZGV2ID0gcGRldjsNCi0JcGNp
-X3NldF9kcnZkYXRhKHBkZXYsIGRldik7DQotDQotCXJldCA9IHBjaV9lbmFibGVfZGV2aWNlKHBk
-ZXYpOw0KLQlpZiAocmV0KSB7DQotCQlEUk1fRVJST1IoImZhaWxlZCB0byBlbmFibGUgcGNpIGRl
-dmljZTogJWRcbiIsIHJldCk7DQotCQlnb3RvIGVycl9mcmVlOw0KLQl9DQotDQotCXJldCA9IGhp
-Ym1jX2xvYWQoZGV2KTsNCi0JaWYgKHJldCkgew0KLQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gbG9h
-ZCBoaWJtYzogJWRcbiIsIHJldCk7DQotCQlnb3RvIGVycl9kaXNhYmxlOw0KLQl9DQotDQotCXJl
-dCA9IGRybV9kZXZfcmVnaXN0ZXIoZGV2LCAwKTsNCi0JaWYgKHJldCkgew0KLQkJRFJNX0VSUk9S
-KCJmYWlsZWQgdG8gcmVnaXN0ZXIgZHJ2IGZvciB1c2Vyc3BhY2UgYWNjZXNzOiAlZFxuIiwNCi0J
-CQkgIHJldCk7DQotCQlnb3RvIGVycl91bmxvYWQ7DQotCX0NCi0JcmV0dXJuIDA7DQotDQotZXJy
-X3VubG9hZDoNCi0JaGlibWNfdW5sb2FkKGRldik7DQotZXJyX2Rpc2FibGU6DQotCXBjaV9kaXNh
-YmxlX2RldmljZShwZGV2KTsNCi1lcnJfZnJlZToNCi0JZHJtX2Rldl9wdXQoZGV2KTsNCi0NCi0J
-cmV0dXJuIHJldDsNCisJcmV0dXJuIGRybV9nZXRfcGNpX2RldihwZGV2LCBlbnQsICZoaWJtY19k
-cml2ZXIpOw0KIH0NCiANCiBzdGF0aWMgdm9pZCBoaWJtY19wY2lfcmVtb3ZlKHN0cnVjdCBwY2lf
-ZGV2ICpwZGV2KSBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9oaWJtYy9o
-aWJtY19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2hpYm1jL2hpYm1jX2Ry
-bV9kcnYuaA0KaW5kZXggNTBhMGMxZi4uNGU4OWNkNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9oaXNpbGljb24vaGlibWMvaGlibWNfZHJtX2Rydi5oDQorKysgYi9kcml2ZXJzL2dwdS9k
-cm0vaGlzaWxpY29uL2hpYm1jL2hpYm1jX2RybV9kcnYuaA0KQEAgLTM3LDYgKzM3LDggQEAgdm9p
-ZCBoaWJtY19zZXRfcG93ZXJfbW9kZShzdHJ1Y3QgaGlibWNfZHJtX3ByaXZhdGUgKnByaXYsICB2
-b2lkIGhpYm1jX3NldF9jdXJyZW50X2dhdGUoc3RydWN0IGhpYm1jX2RybV9wcml2YXRlICpwcml2
-LA0KIAkJCSAgICB1bnNpZ25lZCBpbnQgZ2F0ZSk7DQogDQoraW50IGhpYm1jX2xvYWQoc3RydWN0
-IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgbG9uZyBmbGFncyk7IHZvaWQgDQoraGlibWNfdW5s
-b2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOw0KIGludCBoaWJtY19kZV9pbml0KHN0cnVjdCBo
-aWJtY19kcm1fcHJpdmF0ZSAqcHJpdik7ICBpbnQgaGlibWNfdmRhY19pbml0KHN0cnVjdCBoaWJt
-Y19kcm1fcHJpdmF0ZSAqcHJpdik7DQogDQotLQ0KMi43LjQNCg0KX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCkxpbnV4YXJtIG1haWxpbmcgbGlzdA0KTGlu
-dXhhcm1AaHVhd2VpLmNvbQ0KaHR0cDovL2h1bGsuaHVhd2VpLmNvbS9tYWlsbWFuL2xpc3RpbmZv
-L2xpbnV4YXJtDQo=
+On 3/6/2020 09:40, Scott Chen wrote:
+> Add a device id for HP LD381 Display
+> LD381:   03f0:0f7f
+> 
+> Signed-off-by: Scott Chen <scott@labau.com.tw>
+> ---
+>   drivers/usb/serial/pl2303.c | 1 +
+>   drivers/usb/serial/pl2303.h | 1 +
+>   2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
+> index aab737e1e7b6..5cb1c63295f5 100644
+> --- a/drivers/usb/serial/pl2303.c
+> +++ b/drivers/usb/serial/pl2303.c
+> @@ -97,6 +97,7 @@ static const struct usb_device_id id_table[] = {
+>   	{ USB_DEVICE(COREGA_VENDOR_ID, COREGA_PRODUCT_ID) },
+>   	{ USB_DEVICE(YCCABLE_VENDOR_ID, YCCABLE_PRODUCT_ID) },
+>   	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
+> +	{ USB_DEVICE(HP_VENDOR_ID, HP_LD381_PRODUCT_ID) },
+>   	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
+>   	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
+>   	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
+> diff --git a/drivers/usb/serial/pl2303.h b/drivers/usb/serial/pl2303.h
+> index a019ea7e6e0e..80b20e980064 100644
+> --- a/drivers/usb/serial/pl2303.h
+> +++ b/drivers/usb/serial/pl2303.h
+> @@ -127,6 +127,7 @@
+>   
+>   /* Hewlett-Packard POS Pole Displays */
+>   #define HP_VENDOR_ID		0x03f0
+> +#define HP_LD381_PRODUCT_ID	0x0f7f
+>   #define HP_LM920_PRODUCT_ID	0x026b
+>   #define HP_TD620_PRODUCT_ID	0x0956
+>   #define HP_LD960_PRODUCT_ID	0x0b39
+> 
+
+The tables were sorted on product id, not product name, before you 
+entered this one.
+
+br
+/Lars
