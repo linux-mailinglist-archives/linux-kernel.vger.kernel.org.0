@@ -2,274 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D08E117C91A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9A7417C8F5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:49:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgCFXtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 18:49:21 -0500
-Received: from mail-bn8nam12on2078.outbound.protection.outlook.com ([40.107.237.78]:12335
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727225AbgCFXsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 18:48:02 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GrCqjEwl8rsWuGhPikC3SbGxOZbLSKdDam4VxmKemU9OBJbVkYjjPdfOaB3TKwArIPBaNwz7D/q9fh8PGiIgllGuURYrRfeHsewO7ilRxfgy0LbTNMsWdsenfrXDRwNxEhd5KQTo63FC5bL+ikcmJNjG0kPNnYAc2AzZxnL+DSjGxs3cQ108WtqMeHb5SzjJjbMD8C5s8ufGZ5PHPGxZ4OhRoaGHKf2ozaoEPkyXPM8IiByWKRvU7BTTMqnBiuZSE0bXI+fzEsityJt0VrkvYI+V6PXEE6waCDOFHZ1n6VtlciLl2P7PfApU8ecR1AgwjP8Y8RB5PSNdKtFb0I+dyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GuSJkdmvGBpRYlYRfNsJM3AZ/6KMAauY9hBgSSjJpWs=;
- b=VAHSF+iqAQnOxbpdZE5K7Z/6cdbmyhsqqvg7eN/8nOZ3bggbZ5VMlxP/qgNhI9urM11syuU+sngEGT1azjFDT4rnHGhgFmBzDaDsFVRhkVhtIPZULMIl2VM+WTNfahNoTaYyBlRSNm68zx52k90Y1jT9QbnbT7qV39EyD1vGncFlN2uQwSF7HvQKGJqrO/AtLaxI4H6WaZWrBCmVKNgtOLn2+VvWZdtVEJKVLsz+PtDecfBiMxByijIaqS0v5Nh6KnSSY5v72LD7bnB4gMQCeLLYvPRK3TpsD17T+Du29reHx+hV9IKNVFFkvx/OQJCUWuo3BSr0LJBT+wxkjP84KQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GuSJkdmvGBpRYlYRfNsJM3AZ/6KMAauY9hBgSSjJpWs=;
- b=hmSBVJlW6D3V3flynU61Mw6P6B3LczshKDY44rkCwReGcHFELmsagBQKXilivZygFd3N98D9++lc3dvEoarVFDWxw7X9kTc4cbZhlZz/x0pgE0SnY72y4twhi2hX6WbTmwu8STS59pZXf1wmbT+U29HDkle3cYC5Kn8gsB2Lfsg=
-Received: from BL0PR0102CA0019.prod.exchangelabs.com (2603:10b6:207:18::32) by
- SN6PR02MB4557.namprd02.prod.outlook.com (2603:10b6:805:b4::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.14; Fri, 6 Mar 2020 23:47:58 +0000
-Received: from BL2NAM02FT015.eop-nam02.prod.protection.outlook.com
- (2603:10b6:207:18:cafe::35) by BL0PR0102CA0019.outlook.office365.com
- (2603:10b6:207:18::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend
- Transport; Fri, 6 Mar 2020 23:47:58 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT015.mail.protection.outlook.com (10.152.77.167) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2793.11
- via Frontend Transport; Fri, 6 Mar 2020 23:47:57 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMhB-0003Q5-CZ; Fri, 06 Mar 2020 15:47:57 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMh6-0002g8-94; Fri, 06 Mar 2020 15:47:52 -0800
-Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 026NllXW001025;
-        Fri, 6 Mar 2020 15:47:47 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1jAMh1-0002eg-3A; Fri, 06 Mar 2020 15:47:47 -0800
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     ard.biesheuvel@linaro.org, mingo@kernel.org,
-        gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
-        sudeep.holla@arm.com, hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>,
-        Tejas Patel <tejas.patel@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>
-Subject: [PATCH v3 24/24] firmware: xilinx: Add sysfs and API to set boot health status
-Date:   Fri,  6 Mar 2020 15:47:32 -0800
-Message-Id: <1583538452-1992-25-git-send-email-jolly.shah@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-References: <1583538452-1992-1-git-send-email-jolly.shah@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(396003)(136003)(39860400002)(189003)(199004)(336012)(107886003)(36756003)(54906003)(7416002)(478600001)(426003)(44832011)(2616005)(2906002)(316002)(5660300002)(8676002)(9786002)(26005)(4326008)(6666004)(356004)(6636002)(7696005)(81166006)(70586007)(81156014)(70206006)(186003)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4557;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+        id S1727430AbgCFXsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 18:48:18 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33768 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727302AbgCFXsG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 18:48:06 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026Nm3Jw098220;
+        Fri, 6 Mar 2020 17:48:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583538483;
+        bh=i/TegccITaPMoMi6UVP/BPk+ArR8UaOpWaWzIsURoBI=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=yPLSZ/yzRaUBSU97g3PvAfPQvMLQSXyZ3V/BgNhuwrQcA2lq42Uw8hOnHxIsPj9Te
+         clYjZjifUnKmHvUT/rFg5ZGMTkOvMwVDltzdEM18NbLzBLsOyjtgJDJWWP1uRPbKDb
+         KQi3QxxiDH6JBtagajOtQopUS6fsFsQQgAdoWN1Q=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 026Nm3Sn018871
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Mar 2020 17:48:03 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
+ 2020 17:48:03 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Mar 2020 17:48:03 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026Nm1LW002700;
+        Fri, 6 Mar 2020 17:48:02 -0600
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH net-next v2 8/9] arm64: dts: ti: k3-j721e-mcu: add mcu cpsw nuss node
+Date:   Sat, 7 Mar 2020 01:47:33 +0200
+Message-ID: <20200306234734.15014-9-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200306234734.15014-1-grygorii.strashko@ti.com>
+References: <20200306234734.15014-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8e15b597-9ae3-4d21-aca4-08d7c228cc83
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4557:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB455741C8FF1F54B2C0E52739B8E30@SN6PR02MB4557.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 0334223192
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NuKpZbQyXIL7DRcEMxPzTB4LuUiScC51zYnj6FJWLbpHAPN4tth0P+RHC9HuUJlbq+pwmY8XWV7CIaB0trqjSuKhRv1WhQGGDtsyRYZBVubcY0bDvRqj2gmm/t/bRTKLkCkjRq9XfCVGGlTSeYl0t2KZLviEpG3B4s487u+tc24AJOwf/2m4mALs0CmPIJM9YxEHntfjieF484MpaQcFa8CxDE+JAAPGloeZ6k8/zbRvsnUcw91pGotZSyXV6RyCXYkwTSfcq0cdn9Zxrh56LqNrVHhh2eJj9LENBQK+3OmbgHt2zONA/JNP7UiDIq5HpwxV3aai0RuqG6EG2+RD1FN0UgNBRuweAjWKiViOxVKC/8dwgCMl/DU7hGwoE5+8oUZ1aSHww1zugV6+5BZESfL/aSDxcvOM/TW6f+2q2HJJZhZ3CnDlC7jNo6C2z4ce
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2020 23:47:57.9474
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e15b597-9ae3-4d21-aca4-08d7c228cc83
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4557
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+Add DT node for The TI J721E MCU SoC Gigabit Ethernet
+subsystem (MCU CPSW NUSS).
 
-Add sysfs interface to set boot health status from user space.
-Add API used by this interface to communicate with firmware.
-
-If PMUFW is compiled with CHECK_HEALTHY_BOOT, it will check the
-healthy bit on FPD WDT expiration. If healthy bit is set by a user
-application running in Linux, PMUFW will do APU only restart. If
-healthy bit is not set during FPD WDT expiration, PMUFW will do
-system restart.
-
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 ---
- .../ABI/stable/sysfs-driver-firmware-zynqmp        | 21 ++++++++
- drivers/firmware/xilinx/zynqmp.c                   | 63 ++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h               |  3 ++
- 3 files changed, 87 insertions(+)
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      | 49 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          |  1 +
+ 2 files changed, 50 insertions(+)
 
-diff --git a/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp b/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
-index b46ec0c..a37b408 100644
---- a/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
-+++ b/Documentation/ABI/stable/sysfs-driver-firmware-zynqmp
-@@ -80,3 +80,24 @@ Description:
- 		# echo "subsystem" > /sys/devices/platform/firmware\:zynqmp-firmware/shutdown_scope
- 
- Users:		Xilinx
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+index 6f961d5f077a..dc047273f101 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+@@ -284,4 +284,53 @@
+ 			ti,sci-rm-range-rflow = <0x00>; /* GP RFLOW */
+ 		};
+ 	};
 +
-+What:		/sys/devices/platform/firmware\:zynqmp-firmware/health_status
-+Date:		March 2020
-+KernelVersion:	5.6
-+Contact:	"Jolly Shah" <jollys@xilinx.com>
-+Description:
-+		This sysfs interface allows to set the health status. If PMUFW
-+		is compiled with CHECK_HEALTHY_BOOT, it will check the healthy
-+		bit on FPD WDT expiration. If healthy bit is set by a user
-+		application running in Linux, PMUFW will do APU only restart. If
-+		healthy bit is not set during FPD WDT expiration, PMUFW will do
-+		system restart.
++	mcu_cpsw: ethernet@46000000 {
++		compatible = "ti,j721e-cpsw-nuss";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		reg = <0x0 0x46000000 0x0 0x200000>;
++		reg-names = "cpsw_nuss";
++		ranges = <0x0 0x0 0x0 0x46000000 0x0 0x200000>;
++		dma-coherent;
++		clocks = <&k3_clks 18 22>;
++		clock-names = "fck";
++		power-domains = <&k3_pds 18 TI_SCI_PD_EXCLUSIVE>;
 +
-+		Usage:
-+		Set healthy bit
-+		# echo 1 > /sys/devices/platform/firmware\:zynqmp-firmware/health_status
++		dmas = <&mcu_udmap 0xf000>,
++		       <&mcu_udmap 0xf001>,
++		       <&mcu_udmap 0xf002>,
++		       <&mcu_udmap 0xf003>,
++		       <&mcu_udmap 0xf004>,
++		       <&mcu_udmap 0xf005>,
++		       <&mcu_udmap 0xf006>,
++		       <&mcu_udmap 0xf007>,
++		       <&mcu_udmap 0x7000>;
++		dma-names = "tx0", "tx1", "tx2", "tx3",
++			    "tx4", "tx5", "tx6", "tx7",
++			    "rx";
 +
-+		Unset healthy bit
-+		# echo 0 > /sys/devices/platform/firmware\:zynqmp-firmware/health_status
++		ethernet-ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+Users:		Xilinx
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 9caf1cf..fc3aa4e 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -667,6 +667,21 @@ int zynqmp_pm_read_pggs(u32 index, u32 *value)
- EXPORT_SYMBOL_GPL(zynqmp_pm_read_pggs);
- 
- /**
-+ * zynqmp_pm_set_boot_health_status() - PM API for setting healthy boot status
-+ * @value	Status value to be written
-+ *
-+ * This function sets healthy bit value to indicate boot health status
-+ * to firmware.
-+ *
-+ * @return      Returns status, either success or error+reason
-+ */
-+int zynqmp_pm_set_boot_health_status(u32 value)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, 0, IOCTL_SET_BOOT_HEALTH_STATUS,
-+				   value, 0, NULL);
-+}
++			cpsw_port1: port@1 {
++				reg = <1>;
++				ti,mac-only;
++				label = "port1";
++				ti,syscon-efuse = <&mcu_conf 0x200>;
++				phys = <&phy_gmii_sel 1>;
++			};
++		};
 +
-+/**
-  * zynqmp_pm_reset_assert - Request setting of reset (1 - assert, 0 - release)
-  * @reset:		Reset to be configured
-  * @assert_flag:	Flag stating should reset be asserted (1) or
-@@ -995,6 +1010,53 @@ static const struct attribute_group shutdown_scope_attribute_group = {
++		davinci_mdio: mdio@f00 {
++			compatible = "ti,cpsw-mdio","ti,davinci_mdio";
++			reg = <0x0 0xf00 0x0 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&k3_clks 18 22>;
++			clock-names = "fck";
++			bus_freq = <1000000>;
++		};
++	};
  };
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e.dtsi b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
+index 027bd1febafa..2f9a56d9b114 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e.dtsi
+@@ -30,6 +30,7 @@
+ 		serial9 = &main_uart7;
+ 		serial10 = &main_uart8;
+ 		serial11 = &main_uart9;
++		ethernet0 = &cpsw_port1;
+ 	};
  
- /**
-+ * health_status_store - Store health_status sysfs attribute
-+ * @device:	Device structure
-+ * @attr:	Device attribute structure
-+ * @buf:	User entered health_status attribute string
-+ * @count:	Buffer size
-+ *
-+ * User-space interface for setting the boot health status.
-+ * Usage: echo <value> > /sys/devices/platform/firmware\:zynqmp-firmware/health_status
-+ *
-+ * Value:
-+ *	1 - Set healthy bit to 1
-+ *	0 - Unset healthy bit
-+ *
-+ * Return:	count argument if request succeeds, the corresponding error
-+ *		code otherwise
-+ */
-+static ssize_t health_status_store(struct device *device,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t count)
-+{
-+	int ret;
-+	unsigned int value;
-+
-+	ret = kstrtouint(buf, 10, &value);
-+	if (ret)
-+		return ret;
-+
-+	ret = zynqmp_pm_set_boot_health_status(value);
-+	if (ret) {
-+		pr_err("unable to set healthy bit value to %u\n", value);
-+		return ret;
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_WO(health_status);
-+
-+static struct attribute *zynqmp_health_status_attrs[] = {
-+	&dev_attr_health_status.attr,
-+	NULL,
-+};
-+static const struct attribute_group health_status_attribute_group = {
-+	.attrs = zynqmp_health_status_attrs,
-+};
-+
-+/**
-  * ggs_show - Show global general storage (ggs) sysfs attribute
-  * @device: Device structure
-  * @attr: Device attribute structure
-@@ -1307,6 +1369,7 @@ static const struct attribute_group ggs_attribute_group = {
- const struct attribute_group *firmware_attribute_groups[] = {
- 	&ggs_attribute_group,
- 	&shutdown_scope_attribute_group,
-+	&health_status_attribute_group,
- 	NULL,
- };
- 
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 31ed58c..1900349 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -114,6 +114,8 @@ enum pm_ioctl_id {
- 	IOCTL_READ_GGS,
- 	IOCTL_WRITE_PGGS,
- 	IOCTL_READ_PGGS,
-+	/* Set healthy bit value */
-+	IOCTL_SET_BOOT_HEALTH_STATUS = 17,
- };
- 
- enum pm_query_id {
-@@ -341,6 +343,7 @@ int zynqmp_pm_read_ggs(u32 index, u32 *value);
- int zynqmp_pm_write_pggs(u32 index, u32 value);
- int zynqmp_pm_read_pggs(u32 index, u32 *value);
- int zynqmp_pm_system_shutdown(const u32 type, const u32 subtype);
-+int zynqmp_pm_set_boot_health_status(u32 value);
- int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
- 			u32 arg2, u32 arg3, u32 *ret_payload);
- 
+ 	chosen { };
 -- 
-2.7.4
+2.17.1
 
