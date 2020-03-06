@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8303417C07A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA6D17C0AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbgCFOmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 09:42:31 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53876 "EHLO
+        id S1727575AbgCFOnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 09:43:42 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53769 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbgCFOm0 (ORCPT
+        with ESMTP id S1727059AbgCFOmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:42:26 -0500
+        Fri, 6 Mar 2020 09:42:14 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAEAz-0006Hg-QI; Fri, 06 Mar 2020 15:42:09 +0100
+        id 1jAEAw-0006Ho-Gy; Fri, 06 Mar 2020 15:42:06 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 70FE91C21D3;
-        Fri,  6 Mar 2020 15:42:04 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 21CF91C21D6;
+        Fri,  6 Mar 2020 15:42:05 +0100 (CET)
 Date:   Fri, 06 Mar 2020 14:42:04 -0000
 From:   "tip-bot2 for Qais Yousef" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/rt: Allow pulling unfitting task
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
+Subject: [tip: sched/core] sched/rt: Re-instate old behavior in select_task_rq_rt()
+Cc:     Pavan Kondeti <pkondeti@codeaurora.org>,
         Qais Yousef <qais.yousef@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200302132721.8353-5-qais.yousef@arm.com>
-References: <20200302132721.8353-5-qais.yousef@arm.com>
+In-Reply-To: <20200302132721.8353-3-qais.yousef@arm.com>
+References: <20200302132721.8353-3-qais.yousef@arm.com>
 MIME-Version: 1.0
-Message-ID: <158350572419.28353.10129133387433061878.tip-bot2@tip-bot2>
+Message-ID: <158350572487.28353.5061886185700456995.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,45 +49,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     98ca645f824301bde72e0a51cdc8bdbbea6774a5
-Gitweb:        https://git.kernel.org/tip/98ca645f824301bde72e0a51cdc8bdbbea6774a5
+Commit-ID:     b28bc1e002c23ff8a4999c4a2fb1d4d412bc6f5e
+Gitweb:        https://git.kernel.org/tip/b28bc1e002c23ff8a4999c4a2fb1d4d412bc6f5e
 Author:        Qais Yousef <qais.yousef@arm.com>
-AuthorDate:    Mon, 02 Mar 2020 13:27:19 
+AuthorDate:    Mon, 02 Mar 2020 13:27:17 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Mar 2020 12:57:28 +01:00
+CommitterDate: Fri, 06 Mar 2020 12:57:27 +01:00
 
-sched/rt: Allow pulling unfitting task
+sched/rt: Re-instate old behavior in select_task_rq_rt()
 
-When implemented RT Capacity Awareness; the logic was done such that if
-a task was running on a fitting CPU, then it was sticky and we would try
-our best to keep it there.
+When RT Capacity Aware support was added, the logic in select_task_rq_rt
+was modified to force a search for a fitting CPU if the task currently
+doesn't run on one.
 
-But as Steve suggested, to adhere to the strict priority rules of RT
-class; allow pulling an RT task to unfitting CPU to ensure it gets a
-chance to run ASAP.
+But if the search failed, and the search was only triggered to fulfill
+the fitness request; we could end up selecting a new CPU unnecessarily.
 
-LINK: https://lore.kernel.org/lkml/20200203111451.0d1da58f@oasis.local.home/
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Fix this and re-instate the original behavior by ensuring we bail out
+in that case.
+
+This behavior change only affected asymmetric systems that are using
+util_clamp to implement capacity aware. None asymmetric systems weren't
+affected.
+
+LINK: https://lore.kernel.org/lkml/20200218041620.GD28029@codeaurora.org/
+Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
 Signed-off-by: Qais Yousef <qais.yousef@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Fixes: 804d402fb6f6 ("sched/rt: Make RT capacity-aware")
-Link: https://lkml.kernel.org/r/20200302132721.8353-5-qais.yousef@arm.com
+Link: https://lkml.kernel.org/r/20200302132721.8353-3-qais.yousef@arm.com
 ---
- kernel/sched/rt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/sched/rt.c |  9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 29a8695..bcb1436 100644
+index 55a4a50..f0071fa 100644
 --- a/kernel/sched/rt.c
 +++ b/kernel/sched/rt.c
-@@ -1656,8 +1656,7 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
- static int pick_rt_task(struct rq *rq, struct task_struct *p, int cpu)
- {
- 	if (!task_running(rq, p) &&
--	    cpumask_test_cpu(cpu, p->cpus_ptr) &&
--	    rt_task_fits_capacity(p, cpu))
-+	    cpumask_test_cpu(cpu, p->cpus_ptr))
- 		return 1;
+@@ -1475,6 +1475,13 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 		int target = find_lowest_rq(p);
  
- 	return 0;
+ 		/*
++		 * Bail out if we were forcing a migration to find a better
++		 * fitting CPU but our search failed.
++		 */
++		if (!test && target != -1 && !rt_task_fits_capacity(p, target))
++			goto out_unlock;
++
++		/*
+ 		 * Don't bother moving it if the destination CPU is
+ 		 * not running a lower priority task.
+ 		 */
+@@ -1482,6 +1489,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
+ 			cpu = target;
+ 	}
++
++out_unlock:
+ 	rcu_read_unlock();
+ 
+ out:
