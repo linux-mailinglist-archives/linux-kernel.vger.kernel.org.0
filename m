@@ -2,150 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D35B017BB20
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9290017BB26
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:05:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgCFLFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:05:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43618 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726025AbgCFLFA (ORCPT
+        id S1726859AbgCFLFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:05:39 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36902 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbgCFLFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:05:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583492699;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+Vd4lXmmBZJECiSqYOl3s7WemhxZZt5CNTvS6vYMPFM=;
-        b=O0qYnrfA00r/hwfK4N04o9pNTXF4RkPo1Lo4an4LNx/2Ob+ckI7Ad3zl/Deg2H9DRfm1MJ
-        SOb/8yELuwrPG+uPV17dQ3yqKhqnO4tvaIKoOvnt9UoSPN7k1HTk2fsHxlwXM7IW4T2Cj/
-        I4va46jcpF05pA9UNXZ5pWNM9nzTBsM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-82-uEOEPqwgPQKXOaJTZgwA7g-1; Fri, 06 Mar 2020 06:04:55 -0500
-X-MC-Unique: uEOEPqwgPQKXOaJTZgwA7g-1
-Received: by mail-wm1-f72.google.com with SMTP id f207so744788wme.6
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 03:04:55 -0800 (PST)
+        Fri, 6 Mar 2020 06:05:39 -0500
+Received: by mail-lf1-f68.google.com with SMTP id j11so1576448lfg.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 03:05:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=z1++nVFGTuI4yzatq/XiQaAMDI3Yr8HfGAnBFDQYjxE=;
+        b=yhHO63LGLvumz8zfcMSFQtWWI9++F1D9YMSXxR/ESnKu7b/fVSO/kPj6H6BHBiRKqP
+         i1auvJ4T6nE9eSuluk16UYNh9+m2YsQxHBoGOXQ6yWJYm3DhUhTHbQB7LIiZlrdiQn+k
+         BK21k/KfL/XpjM7uwL6NwbMop2ZtQ01MH7qsboNSuIAeVKV+B0Nc+BtxyEsYem1e5n6p
+         bthbcWs9L1JVXRShfrDhxSPMConWHWPD11xzGJuhlpIrWKDITOhpHDwB58FVUPq872OA
+         ChIV2VNAlWwxsISWGUQlRPMqNLFCvHXqAcs7TLY++jI3DGtlK/0FsP3DjIXrhl5drfn5
+         1RQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+Vd4lXmmBZJECiSqYOl3s7WemhxZZt5CNTvS6vYMPFM=;
-        b=rTi24VJVrxxlZcvKVVpAyC0eXqdCdgqq7eWqmhulFKfcjBoDKgNEB3O31/xbReHSSi
-         awKWk9M1Nh5l4f5UWN0iV3pObkxASK0LcQqH905AF25v+fbAN9wcTpYhekQOrZJ0LmiU
-         vR8a3I1ai1IuSQsK3ENevAAM2MCCRZnUSoHM0EBQdt4+ZrcKXKj/5pcXOtUFISNGDdkw
-         y6RkhMmQRZ0iMeOI3XeZ7CVsBf47CZ1z1FLt2MTxpciiuBYDK8bUhHGC2FnvnN8wGYTz
-         PO8hA4M2Dze97EnUoCm8ghvFTvx/yUZKMZtb9MG14m19xrZPi8sRf2oiMVT84FuYkPCB
-         FjJg==
-X-Gm-Message-State: ANhLgQ3AQliQAk23IUbRC4uIaGRyuHBGMdJkB+JuchkeyKBAm7Hw2zGD
-        aD/rJFmJP6hR132ujkjesezfAZ4t15SrQJiEf6gZ+cDcTzVm09HNFw0rrbDHKwFM5U6P7J51xKg
-        HaDAIOfd6+1E2tLyNibSqlD93
-X-Received: by 2002:a05:600c:581:: with SMTP id o1mr3507752wmd.8.1583492693970;
-        Fri, 06 Mar 2020 03:04:53 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vu7+UUGyrJbYNEJnOT9VcmpJO5hckGHBjC0pdy9GLX2QkWv1D5IkKHrCWu6PX+2j4ofwCJ6FQ==
-X-Received: by 2002:a05:600c:581:: with SMTP id o1mr3507730wmd.8.1583492693730;
-        Fri, 06 Mar 2020 03:04:53 -0800 (PST)
-Received: from x1.localdomain ([2a0e:5700:4:11:42c0:3c5d:2f33:1a6c])
-        by smtp.gmail.com with ESMTPSA id v16sm31228537wrp.84.2020.03.06.03.04.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 03:04:53 -0800 (PST)
-Subject: Re: [PATCH][next] drm/vboxvideo/vboxvideo.h: Replace zero-length
- array with flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20200305105558.GA19124@embeddedor>
- <8e2ab9a2-fb47-1d61-d09c-0510ad5ee5ff@redhat.com>
- <20200306104118.GV2363188@phenom.ffwll.local>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <b6b0d74d-f08a-e5af-b17c-899d6d6da487@redhat.com>
-Date:   Fri, 6 Mar 2020 12:04:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=z1++nVFGTuI4yzatq/XiQaAMDI3Yr8HfGAnBFDQYjxE=;
+        b=f5YDjbjAgOAZ7sucZ/gydmvrRPcidilEyEWG4HFfhjBty5nZIpqRAhJTZ77ocQ+Cka
+         qRX/ozT+VbSqPvPgwOTLiUk0tkDdibV7G4IoeW4pOl/r+ldI4l1qstFnA4wAdPrrasxF
+         xAtXaV1OnEBveaDQ8Bgd7SdlHWM8kAAo/+OxkP+nfj159vlFM3vHDoLIe2RxREAOGi/m
+         2uqOo6Qqs+BzOZNDQlZkFYDvJmXxdZpSTbozBvwkZHz1LEMXUKfbyJAPDEGHatSNSpUu
+         i6Fo7zIQmqRSXrYn7uEuhsxTfUg5JzColyy6tdagM1ZIkNEnUU1vTQKiE8U+gg1CEifR
+         0hRg==
+X-Gm-Message-State: ANhLgQ1hWsI0MXwEKK21k0FAG0o3IVINKEEZOQluYb0JMIUjBGANALYC
+        SxzibM7HJBbVWVYaiKAX8nps/Y+KibduN2f5ysQfKQ==
+X-Google-Smtp-Source: ADFU+vvEdrqidqw7zeBJMr22MkzExrfq8xo3qipCGVQTRrZpyDQOZAgJuCn9C4KHZCPaIlkOvD+ENrUHgfUs9g5TN88=
+X-Received: by 2002:a05:6512:3ab:: with SMTP id v11mr1621059lfp.82.1583492734327;
+ Fri, 06 Mar 2020 03:05:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200306104118.GV2363188@phenom.ffwll.local>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 6 Mar 2020 16:35:22 +0530
+Message-ID: <CA+G9fYvORFZm1s89OU9DV9ckSgk4rWj6tRdUTYh3WPrBnzeRgw@mail.gmail.com>
+Subject: WARNING: kernel/bpf/verifier.c:8186 bpf_check+0x2332/0x30a4
+To:     Netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        lkft-triage@lists.linaro.org, Shuah Khan <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is an informative email report,
 
-On 3/6/20 11:41 AM, Daniel Vetter wrote:
-> On Thu, Mar 05, 2020 at 03:22:38PM +0100, Hans de Goede wrote:
->> Hi,
->>
->> On 3/5/20 11:55 AM, Gustavo A. R. Silva wrote:
->>> The current codebase makes use of the zero-length array language
->>> extension to the C90 standard, but the preferred mechanism to declare
->>> variable-length types such as these ones is a flexible array member[1][2],
->>> introduced in C99:
->>>
->>> struct foo {
->>>           int stuff;
->>>           struct boo array[];
->>> };
->>>
->>> By making use of the mechanism above, we will get a compiler warning
->>> in case the flexible array does not occur last in the structure, which
->>> will help us prevent some kind of undefined behavior bugs from being
->>> inadvertently introduced[3] to the codebase from now on.
->>>
->>> Also, notice that, dynamic memory allocations won't be affected by
->>> this change:
->>>
->>> "Flexible array members have incomplete type, and so the sizeof operator
->>> may not be applied. As a quirk of the original implementation of
->>> zero-length arrays, sizeof evaluates to zero."[1]
->>>
->>> This issue was found with the help of Coccinelle.
->>>
->>> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
->>> [2] https://github.com/KSPP/linux/issues/21
->>> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>
->> Patch looks good to me:
->>
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> You're also going to push this? r-b by maintainers without any hint to
-> what's going to happen is always rather confusing.
+On linux-next while running kselftest bpf test_verifier, the following
+kernel warning reported. But this seems to be NOT a kernel regression
+after reading the commit log.
 
-Sorry about that, atm I'm on the road which makes pushing things somewhat
-inconvenient, so if someone else can push this, that would be great.
+Started noticing from 5.6.0-rc3-next-20200226 and still happening on
+5.6.0-rc4-next-20200306.
 
-Regards,
+Suspecting patch,
+commit id 94dacdbd5d2dfa2cffd308f128d78c99f855f5be
+"
+bpf: Tighten the requirements for preallocated hash maps
+<>
+So preallocation _must_ be enforced for all variants of intrusive
+instrumentation.
 
-Hans
+Unfortunately immediate enforcement would break backwards compatibility, so
+for now such programs still are allowed to run, but a one time warning is
+emitted in dmesg and the verifier emits a warning in the verifier log as
+well so developers are made aware about this and can fix their programs
+before the enforcement becomes mandatory.
+
+Link: https://lore.kernel.org/bpf/20200224145642.540542802@linutronix.de
+"
+steps to reproduce:
+          steps:
+          - cd /opt/kselftests/default-in-kernel/bpf
+          - ./test_verifier || true
 
 
+[    0.000000] Linux version 5.6.0-rc3-next-20200226 (oe-user@oe-host)
+(gcc version 7.3.0 (GCC)) #1 SMP Wed Feb 26 04:46:18 UTC 2020
+<Trim>
+[   54.263845] trace type BPF program uses run-time allocation
+[   54.269438] WARNING: CPU: 1 PID: 473 at
+/usr/src/kernel/kernel/bpf/verifier.c:8186 bpf_check+0x2332/0x30a4
+[   54.280445] Modules linked in: x86_pkg_temp_thermal fuse
+[   54.285759] CPU: 1 PID: 473 Comm: test_verifier Not tainted
+5.6.0-rc3-next-20200226 #1
+[   54.293669] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.2 05/23/2018
+[   54.301054] RIP: 0010:bpf_check+0x2332/0x30a4
+[   54.305412] Code: ff ff 48 c7 c7 b8 91 5e a8 4c 89 85 10 ff ff ff
+48 89 95 18 ff ff ff 48 89 85 20 ff ff ff c6 05 e1 54 98 01 01 e8 4e
+16 ea ff <0f> 0b 4c 8b 85 10 ff ff ff 48 8b 95 18 ff ff ff 48 8b 85 20
+ff ff
+[   54.324149] RSP: 0018:ffffbf708061bc48 EFLAGS: 00010282
+[   54.329365] RAX: 0000000000000000 RBX: ffffa0a66b5ad200 RCX: 0000000000000000
+[   54.336489] RDX: 0000000000000001 RSI: ffffa0a66fa98d48 RDI: ffffa0a66fa98d48
+[   54.343614] RBP: ffffbf708061bd48 R08: 0000000000000000 R09: 0000000000000000
+[   54.350736] R10: 0000000000000000 R11: 0000000000000000 R12: ffffa0a667a90000
+[   54.357863] R13: 0000000000000004 R14: 0000000000000000 R15: ffffbf7080069058
+[   54.364993] FS:  00007fd8b7cd4740(0000) GS:ffffa0a66fa80000(0000)
+knlGS:0000000000000000
+[   54.373070] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   54.378807] CR2: 000000000098e65c CR3: 0000000231bf6001 CR4: 00000000003606e0
+[   54.385931] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   54.393054] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   54.400180] Call Trace:
+[   54.402633]  ? lockdep_hardirqs_on+0xf6/0x190
+[   54.406993]  ? ktime_get_with_offset+0x7a/0x130
+[   54.411525]  ? trace_hardirqs_on+0x4c/0x100
+[   54.415714]  bpf_prog_load+0x57d/0x6f0
+[   54.419466]  ? __might_fault+0x3e/0x90
+[   54.423221]  ? selinux_bpf+0x5a/0x80
+[   54.426806]  __do_sys_bpf+0xd69/0x1cd0
+[   54.430565]  __x64_sys_bpf+0x1a/0x20
+[   54.434146]  do_syscall_64+0x55/0x200
+[   54.437812]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   54.442862] RIP: 0033:0x7fd8b6d9af59
+[   54.446441] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
+00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 0f ff 2b 00 f7 d8 64 89
+01 48
+[   54.465179] RSP: 002b:00007ffd5bac5238 EFLAGS: 00000202 ORIG_RAX:
+0000000000000141
+[   54.472743] RAX: ffffffffffffffda RBX: 00007ffd5bac53ec RCX: 00007fd8b6d9af59
+[   54.479867] RDX: 0000000000000078 RSI: 00007ffd5bac52b0 RDI: 0000000000000005
+[   54.486991] RBP: 00007ffd5bac5250 R08: 00007ffd5bac53f8 R09: 00007ffd5bac52b0
+[   54.494115] R10: 000000000098e638 R11: 0000000000000202 R12: 0000000000000005
+[   54.501239] R13: 000000000098e630 R14: 0000000000000001 R15: 0000000000000000
+[   54.508368] irq event stamp: 82014
+[   54.511770] hardirqs last  enabled at (82013): [<ffffffffa6f775ed>]
+console_unlock+0x45d/0x5c0
+[   54.520374] hardirqs last disabled at (82014): [<ffffffffa6e01f3b>]
+trace_hardirqs_off_thunk+0x1a/0x1c
+[   54.529666] softirqs last  enabled at (82000): [<ffffffffa8000338>]
+__do_softirq+0x338/0x43a
+[   54.538096] softirqs last disabled at (81963): [<ffffffffa6f04588>]
+irq_exit+0xb8/0xc0
+[   54.545999] ---[ end trace 75d82c4cbb8fc047 ]---
 
+metadata:
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git branch: master
+  git describe: next-20200226
+  make_kernelversion: 5.6.0-rc3
+  kernel-config:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-corei7-64/lkft/linux-next/712/config
 
+Full test log,
+https://lkft.validation.linaro.org/scheduler/job/1251016#L1416
+https://lkft.validation.linaro.org/scheduler/job/1269522#L1509
+https://lkft.validation.linaro.org/scheduler/job/1269575#L1501
 
->>> ---
->>>    drivers/gpu/drm/vboxvideo/vboxvideo.h | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/vboxvideo/vboxvideo.h b/drivers/gpu/drm/vboxvideo/vboxvideo.h
->>> index 0592004f71aa..a5de40fe1a76 100644
->>> --- a/drivers/gpu/drm/vboxvideo/vboxvideo.h
->>> +++ b/drivers/gpu/drm/vboxvideo/vboxvideo.h
->>> @@ -138,7 +138,7 @@ struct vbva_buffer {
->>>    	u32 data_len;
->>>    	/* variable size for the rest of the vbva_buffer area in VRAM. */
->>> -	u8 data[0];
->>> +	u8 data[];
->>>    } __packed;
->>>    #define VBVA_MAX_RECORD_SIZE (128 * 1024 * 1024)
->>>
->>
-> 
-
+-- 
+Linaro LKFT
+https://lkft.linaro.org
