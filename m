@@ -2,76 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5ACF17BA0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E3C17BA14
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:21:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgCFKUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:20:13 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39230 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgCFKUN (ORCPT
+        id S1726875AbgCFKU7 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Mar 2020 05:20:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33555 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgCFKU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:20:13 -0500
-Received: by mail-ot1-f66.google.com with SMTP id x97so1902623ota.6;
-        Fri, 06 Mar 2020 02:20:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Mal+x1JmrCy7zwZs9KPsswluRim3HphUgYrnlEClDdE=;
-        b=Xniqih+iqcsNXEOWFzWhQgDXhAB+8nt1LEZoOmZVXTj6rkETDZvoHdManIGcRf0Uob
-         07awvZZxfRb1pElGsvNXVx+v6mJSlcxfZB2Y6ayWhj93wY3pOD+EeG8UuUQqU/Tv/vqe
-         GZpT1kGJM8pn7LSffE5ZSdNqkFzSHYVIxkZ4+wkxBJ2RZ5+eJNG6unuRjWy75Sx4stAW
-         A1uXenMNTTUyFr1XuzyUdonAkXeR1opquf9MSCL5AZuer361WxO6AKN57ho3FGYidG0z
-         zBP2gdAlrX3Bgul7u2VyYwokDZeNvE+7JMmPq0JyQZ0+7ExsPREQIM6oU+hI7iH9KB+J
-         VVaA==
-X-Gm-Message-State: ANhLgQ0q5rVcKKCe7Hgo1gK205hvel0GQWHPEi2iDOrE1LIeSZH0jLdK
-        4yfZ7gQt6OA2ANB0U+kXc5gmOwKX4Mg0zkXtZYp5jLwq
-X-Google-Smtp-Source: ADFU+vvZYSEfh9IaW1N2dhdzBJK6wf6jhcKcDKKi5QFrmON0XXLEtAiopT6g4y/kfHa+ooMThsR9xoi/7dA9ZmUEYNI=
-X-Received: by 2002:a9d:6b04:: with SMTP id g4mr1765710otp.167.1583490012633;
- Fri, 06 Mar 2020 02:20:12 -0800 (PST)
-MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 6 Mar 2020 11:20:01 +0100
-Message-ID: <CAJZ5v0j8jvHpHW+BBALg9L8=hq8PjyVyMQHfUCmusMeTLDifVg@mail.gmail.com>
-Subject: [GIT PULL] Device properties framework fix for v5.6-rc5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Fri, 6 Mar 2020 05:20:59 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1jAA68-00018D-KZ; Fri, 06 Mar 2020 11:20:52 +0100
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1jAA67-0007hp-HB; Fri, 06 Mar 2020 11:20:51 +0100
+Message-ID: <69903c69a95902c0ddc8fb9e7a6762abf28aa034.camel@pengutronix.de>
+Subject: Re: [PATCH v3 2/4] drm/imx: Add initial support for DCSS on iMX8MQ
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Cc:     Laurentiu Palcu <laurentiu.palcu@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, agx@sigxcpu.org,
+        lukas@mntmn.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Date:   Fri, 06 Mar 2020 11:20:51 +0100
+In-Reply-To: <20200306095830.sa5eig67phngr3fa@fsr-ub1864-141>
+References: <1575625964-27102-1-git-send-email-laurentiu.palcu@nxp.com>
+         <1575625964-27102-3-git-send-email-laurentiu.palcu@nxp.com>
+         <03b551925d079fcc151239afa735562332cfd557.camel@pengutronix.de>
+         <20200306095830.sa5eig67phngr3fa@fsr-ub1864-141>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Laurentiu,
 
-Please pull from the tag
+On Fri, 2020-03-06 at 11:58 +0200, Laurentiu Palcu wrote:
+> On Wed, Feb 26, 2020 at 02:19:11PM +0100, Lucas Stach wrote:
+[...]
+> > > +/* This function will be called from interrupt context. */
+> > > +void dcss_scaler_write_sclctrl(struct dcss_scaler *scl)
+> > > +{
+> > > +	int chnum;
+> > > +
+> > > +	for (chnum = 0; chnum < 3; chnum++) {
+> > > +		struct dcss_scaler_ch *ch = &scl->ch[chnum];
+> > > +
+> > > +		if (ch->scaler_ctrl_chgd) {
+> > > +			dcss_ctxld_write_irqsafe(scl->ctxld, scl->ctx_id,
+> > > +						 ch->scaler_ctrl,
+> > > +						 ch->base_ofs +
+> > > +						 DCSS_SCALER_CTRL);
+> > 
+> > Why is this using the _irqsafe variant without any locking? Won't this
+> > lead to potential internal state corruption? dcss_ctxld_write is using
+> > the _irqsave locking variants, so it fine with being called from IRQ
+> > context.
+> 
+> This is only called from __dcss_ctxld_enable() which is already protected
+> by lock/unlock in dcss_ctxld_kick().
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- devprop-5.6-rc5
+You could add a lockdep_assert_held() line to the top of this function
+to make it clear this depends on the lock being held.
 
-with top-most commit 7589238a8cf37331607c3222a64ac3140b29532d
-
- Revert "software node: Simplify software_node_release() function"
-
-on top of commit 98d54f81e36ba3bf92172791eba5ca5bd813989b
-
- Linux 5.6-rc4
-
-to receive a device properties framework fix for 5.6-rc5.
-
-This reverts a problematic commit from the 5.3 development
-cycle (Brendan Higgins).
-
-Thanks!
-
-
----------------
-
-Brendan Higgins (1):
-      Revert "software node: Simplify software_node_release() function"
-
----------------
-
- drivers/base/swnode.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+regards
+Philipp
