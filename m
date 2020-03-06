@@ -2,180 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3829F17BC50
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:07:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E9C17BC57
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:09:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbgCFMH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:07:29 -0500
-Received: from vps.xff.cz ([195.181.215.36]:53666 "EHLO vps.xff.cz"
+        id S1726642AbgCFMJW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Mar 2020 07:09:22 -0500
+Received: from albireo.enyo.de ([37.24.231.21]:58366 "EHLO albireo.enyo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbgCFMH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:07:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1583496446; bh=xEkZMnAJaW3CjRi8Tr1/kP+MDL1qKFyRyqRQ+hjJeW8=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=cBP3CStA3Edz4S9BwQCuNbfWe+Fj/lOclcu8ezWy/dUGtOlmx74M2LTAsfj8Tw4d1
-         cJPGiiAfwrWAvq+4ii9HKLCpyxfF6lQoYVG4GA9jOX7ub842aFUHH4Wv+5bVBbcKgU
-         PGdpmjIyPoyGpyHQb1mgINbbcfEWPzxHIhgukGPw=
-Date:   Fri, 6 Mar 2020 13:07:26 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Enric Balletbo Serra <eballetbo@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>, Torsten Duwe <duwe@suse.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Collabora Kernel ML <kernel@collabora.com>
-Subject: Re: [PATCH v2 2/2] drm/bridge: anx7688: Add anx7688 bridge driver
- support
-Message-ID: <20200306120726.t7aitfz5rq3m7m6y@core.my.home>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Enric Balletbo Serra <eballetbo@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>, Torsten Duwe <duwe@suse.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Collabora Kernel ML <kernel@collabora.com>
-References: <CA+E=qVffVzZwRTk9K7=xhWn-AOKExkew0aPcyL_W1nokx-mDdg@mail.gmail.com>
- <CAFqH_53crnC6hLExNgQRjMgtO+TLJjT6uzA4g8WXvy7NkwHcJg@mail.gmail.com>
- <CA+E=qVfGiQseZZVBvmmK6u2Mu=-91ViwLuhNegu96KRZNAHr_w@mail.gmail.com>
- <CAFqH_505eWt9UU7Wj6tCQpQCMZFMfy9e1ETSkiqi7i5Zx6KULQ@mail.gmail.com>
- <CA+E=qVff5_hdPFdaG4Lrg7Uzorea=JbEdPoy+sQd7rUGNTTZ5g@mail.gmail.com>
- <5245a8e4-2320-46bd-04fd-f86ce6b17ce7@collabora.com>
- <CA+E=qVcyRW4LNC5db27d-8x-T_Nk9QAhkBPwu5rwthTc6ewbYA@mail.gmail.com>
- <20200305193505.4km5j7n25ph4b6hn@core.my.home>
- <2a5a4a62-3189-e053-21db-983a4c766d44@collabora.com>
- <5d72a8c6824b31163a303b5ef1526efe05121e5d.camel@aosc.io>
+        id S1726300AbgCFMJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 07:09:22 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jABmy-0002N2-LF; Fri, 06 Mar 2020 12:09:12 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jABlN-0005No-Ln; Fri, 06 Mar 2020 13:07:33 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     YunQiang Su <syq@debian.org>
+Cc:     Laurent Vivier <laurent@vivier.eu>, torvalds@linux-foundation.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        akpm@linux-foundation.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        libc-alpha@sourceware.org
+Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
+References: <20200306080905.173466-1-syq@debian.org>
+        <87r1y53npd.fsf@mid.deneb.enyo.de>
+        <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu>
+        <87mu8t3mlw.fsf@mid.deneb.enyo.de>
+        <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
+        <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
+        <87v9nhzp6w.fsf@mid.deneb.enyo.de>
+        <CAKcpw6VF1N2gTVXeWLU4aVOuARf5oN6yPg9O=RCzgkMrjXmxYQ@mail.gmail.com>
+Date:   Fri, 06 Mar 2020 13:07:33 +0100
+In-Reply-To: <CAKcpw6VF1N2gTVXeWLU4aVOuARf5oN6yPg9O=RCzgkMrjXmxYQ@mail.gmail.com>
+        (YunQiang Su's message of "Fri, 6 Mar 2020 19:48:35 +0800")
+Message-ID: <87r1y5zny2.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5d72a8c6824b31163a303b5ef1526efe05121e5d.camel@aosc.io>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 04:53:46PM +0800, Icenowy Zheng wrote:
-> 在 2020-03-06星期五的 09:46 +0100，Enric Balletbo i Serra写道：
-> > Hi Ondrej,
-> > 
-> > On 5/3/20 20:35, Ondřej Jirman wrote:
-> > > Hi,
-> > > 
-> > > On Thu, Mar 05, 2020 at 10:29:33AM -0800, Vasily Khoruzhick wrote:
-> > > > On Thu, Mar 5, 2020 at 7:28 AM Enric Balletbo i Serra
-> > > > <enric.balletbo@collabora.com> wrote:
-> > > > > Hi Vasily,
-> > > > 
-> > > > CC: Icenowy and Ondrej
-> > > > > Would you mind to check which firmware version is running the
-> > > > > anx7688 in
-> > > > > PinePhone, I think should be easy to check with i2c-tools.
-> > > > 
-> > > > Icenowy, Ondrej, can you guys please check anx7688 firmware
-> > > > version?
-> > > 
-> > > i2cget 0 0x28 0x00 w
-> > > 0xaaaa
-> > > 
-> > > i2cget 0 0x28 0x02 w
-> > > 0x7688
-> > > 
-> > > i2cget 0 0x28 0x80 w
-> > > 0x0000
-> > > 
-> > 
-> > Can you check the value for 0x81 too?
-> 
-> root@ice-pinephone [ ~ ] # i2cdump 0 0x28
-> No size specified (using byte-data access)
-> WARNING! This program can confuse your I2C bus, cause data loss and
-> worse!
-> I will probe file /dev/i2c-0, address 0x28, mode byte
-> Continue? [Y/n] 
->      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: aa aa 88 76 ac 00 00 00 00 00 00 00 00 00 05 05    ???v?.........??
-> 10: 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    0...............
-> 20: 00 00 00 00 00 00 00 00 00 00 00 24 f2 e4 ff 00    ...........$??..
-> 30: 06 40 00 04 94 11 20 ff ff 03 00 bf ff ff 10 01    ?@.??? ..?.?..??
-> 40: 72 a4 00 09 00 08 05 84 15 40 17 00 00 0a 00 e0    r?.?.????@?..?.?
-> 50: 00 00 00 0a 10 00 e0 df ff ff 00 00 00 10 71 00    ...??.??.....?q.
-> 60: 10 10 04 29 2d 21 10 01 09 13 00 03 e8 13 88 00    ???)-!????.????.
-> 70: 00 19 18 83 16 5c 11 00 ff 00 00 0d 04 38 42 07    .????\?....??8B?
-> 80: 00 00 00 00 00 74 1b 19 44 08 75 00 00 00 00 00    .....t??D?u.....
-> 90: 01 02 00 00 00 00 03 00 ff 30 00 59 01 00 00 00    ??....?..0.Y?...
-> a0: 00 ff fe ff ff 00 00 00 00 00 00 00 00 00 00 02    ..?............?
-> b0: 00 00 00 00 00 00 40 00 28 00 00 00 00 44 08 00    ......@.(....D?.
-> c0: 00 00 00 00 80 00 10 01 0a 10 18 00 00 fd 00 00    ....?.?????..?..
-> d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> e0: 50 10 08 50 00 02 00 70 00 00 30 10 0b 02 1c 01    P??P.?.p..0?????
-> f0: 00 0b 07 00 94 11 7f 00 00 00 00 00 00 01 0e ff    .??.???......??.
+* YunQiang Su:
 
-My values for 0x28 address match this. ^
+> Florian Weimer <fw@deneb.enyo.de> 于2020年3月6日周五 下午7:42写道：
+>>
+>> * YunQiang Su:
+>>
+>> > AT_* only has 32 slot and now. I was afraid that maybe we shouldn't take one.
+>> >    /* AT_* values 18 through 22 are reserved */
+>> >    27,28,29,30 are not used now.
+>> > Which should we use?
+>>
+>> Where does this limit of 32 tags come from?  I don't see it from a
+>> userspace perspective.
+>
+> Sorry it is my mistake: In linux/auxvec.h, I saw
+>
+> #define AT_RANDOM 25    /* address of 16 random bytes */
+> #define AT_HWCAP2 26    /* extension of AT_HWCAP */
+>
+> #define AT_EXECFN  31   /* filename of program */
+>
+> The number jump to 31 from 26.
+>
+> It is my fault: in x86_64-linux-gnu/bits/auxv.h, the max number is 47 now.
 
-Interesting that it returns different register values for different
-device addresses.
-
-> root@ice-pinephone [ ~ ] # i2cdump 0 0x2c
-> No size specified (using byte-data access)
-> WARNING! This program can confuse your I2C bus, cause data loss and
-> worse!
-> I will probe file /dev/i2c-0, address 0x2c, mode byte
-> Continue? [Y/n] 
->      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 29 1f 88 76 00 ac 11 00 11 20 10 10 00 00 00 00    )??v.??.? ??....
-> 10: 03 00 ff 8f ff 7f 00 00 00 00 05 00 10 0a 0c 00    ?..?.?....?.???.
-> 20: 00 00 00 00 99 06 c0 00 00 00 00 00 00 00 02 00    ....???.......?.
-> 30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 40: 04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ?...............
-> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 70: b8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ?...............
-> 80: 01 25 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ?%..............
-> 90: 0f 0f 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ??..............
-> a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 
-> > 
-> > Thanks,
-> >  Enric
-> > 
-> > 
-> > > regards,
-> > > 	o.
-> > > 
-> > > > > Thanks in advance,
-> > > > >  Enric
-> > > > > 
-> > > > > [snip]
-> 
+So AT_* tags aren't a scarce resource after all?
