@@ -2,146 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E57EB17C685
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:52:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B59017C657
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:31:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbgCFTwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 14:52:16 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:24577 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726090AbgCFTwP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 14:52:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583524335;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7wshUEfGJ0oCbRrCm+psHycgVdvMv8N6eiO1mp9WFHQ=;
-        b=K0J4Fj875O1K8xDURpjSaDB+NNNWgB35W5dA+RRKec/DZjhiJAeLRvMbc8hHcCqGaXJqrn
-        fvgYKGbNUeGMecJmbGzQQVYAeLg3tN5Mw2QJUnnpvYVOVczo8Kn/lZEqurR8pCNUoCfOg6
-        GnmQwijqUGUa9CvKaPL9l7MddGY/UD0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-235-ZbozAVvCPia2fE25-rWBtQ-1; Fri, 06 Mar 2020 14:52:13 -0500
-X-MC-Unique: ZbozAVvCPia2fE25-rWBtQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2F7F800053;
-        Fri,  6 Mar 2020 19:52:11 +0000 (UTC)
-Received: from fuller.cnet (ovpn-116-16.gru2.redhat.com [10.97.116.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6295B10027AB;
-        Fri,  6 Mar 2020 19:52:11 +0000 (UTC)
-Received: by fuller.cnet (Postfix, from userid 1000)
-        id 2562842FE410; Fri,  6 Mar 2020 06:56:17 -0300 (-03)
-Date:   Fri, 6 Mar 2020 06:56:17 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH] cpuidle-haltpoll: allow force loading on hosts without
- the REALTIME hint
-Message-ID: <20200306095617.GD32190@fuller.cnet>
-References: <20200221174331.1480468-1-mail@maciej.szmigiero.name>
- <114f7b8d-6f88-222a-d1fa-abcfc0e6a1f2@maciej.szmigiero.name>
+        id S1726751AbgCFTbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 14:31:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:27677 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726533AbgCFTbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 14:31:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 11:31:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
+   d="scan'208";a="234941927"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Mar 2020 11:31:51 -0800
+Received: from [10.7.201.16] (skuppusw-desk.jf.intel.com [10.7.201.16])
+        by linux.intel.com (Postfix) with ESMTP id 462105802C8;
+        Fri,  6 Mar 2020 11:31:51 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [patch 7/7] PCI/AER: Fix the broken interrupt injection
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Marc Zyngier <maz@kernel.org>, x86@kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>
+References: <20200306130341.199467200@linutronix.de>
+ <20200306130624.098374457@linutronix.de>
+ <08c51309-0bd1-9696-4f4b-4f7425762268@linux.intel.com>
+Organization: Intel
+Message-ID: <0d48a902-3168-ed1e-3c25-f7af19f19fbc@linux.intel.com>
+Date:   Fri, 6 Mar 2020 11:29:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <114f7b8d-6f88-222a-d1fa-abcfc0e6a1f2@maciej.szmigiero.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <08c51309-0bd1-9696-4f4b-4f7425762268@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 09:10:18PM +0100, Maciej S. Szmigiero wrote:
-> (CC'ing also Marcelo as the cpuidle-haltpoll driver author and the KVM ML).
 
-Hi Maciej,
-
-> On 21.02.2020 18:43, Maciej S. Szmigiero wrote:
-> > From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
-> > 
-> > Before commit 1328edca4a14 ("cpuidle-haltpoll: Enable kvm guest polling
-> > when dedicated physical CPUs are available") the cpuidle-haltpoll driver
-> > could also be used in scenarios when the host does not advertise the
-> > KVM_HINTS_REALTIME hint.
-> > 
-> > While the behavior introduced by the aforementioned commit makes sense as
-> > the default 
-
-It makes sense for the pCPU overcommitted case only.
-
-> > there are cases where the old behavior is desired, for example,
-> > when other kernel changes triggered by presence by this hint are unwanted,
-> > for some workloads where the latency benefit from polling overweights the
-> > loss from idle CPU capacity that otherwise would be available, or just when
-> > running under older Qemu versions that lack this hint.
-> > 
-> > Let's provide a typical "force" module parameter that allows restoring the
-> > old behavior.
-> > 
-> > Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-
-I would rather: 
-
-1) Switch back to the default non-overcommitted case.
-
-or even better (but requires more investment)
-
-2) Make on the flight dynamic configuration (after all pCPU
-overcommitment=true/false is a property that changes during
-the day, depending on system load).
-
-But its up to Paolo to decide, really.
-
-> > ---
-> >  drivers/cpuidle/cpuidle-haltpoll.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
-> > index b0ce9bc78113..07e5b36076bb 100644
-> > --- a/drivers/cpuidle/cpuidle-haltpoll.c
-> > +++ b/drivers/cpuidle/cpuidle-haltpoll.c
-> > @@ -18,6 +18,11 @@
-> >  #include <linux/kvm_para.h>
-> >  #include <linux/cpuidle_haltpoll.h>
-> >  
-> > +static bool force __read_mostly;
-> > +module_param(force, bool, 0444);
-> > +MODULE_PARM_DESC(force,
-> > +		 "Load even if the host does not provide the REALTIME hint");
-> > +
-> >  static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
-> >  static enum cpuhp_state haltpoll_hp_state;
-> >  
-> > @@ -90,6 +95,11 @@ static void haltpoll_uninit(void)
-> >  	haltpoll_cpuidle_devices = NULL;
-> >  }
-> >  
-> > +static bool haltpool_want(void)
-> > +{
-> > +	return kvm_para_has_hint(KVM_HINTS_REALTIME) || force;
-> > +}
-> > +
-> >  static int __init haltpoll_init(void)
-> >  {
-> >  	int ret;
-> > @@ -102,7 +112,7 @@ static int __init haltpoll_init(void)
-> >  	cpuidle_poll_state_init(drv);
-> >  
-> >  	if (!kvm_para_available() ||
-> > -		!kvm_para_has_hint(KVM_HINTS_REALTIME))
-> > +	    !haltpool_want())
-> >  		return -ENODEV;
-> >  
-> >  	ret = cpuidle_register_driver(drv);
-> > 
+On 3/6/20 10:32 AM, Kuppuswamy Sathyanarayanan wrote:
+>
+> On 3/6/20 5:03 AM, Thomas Gleixner wrote:
+>> The AER error injection mechanism just blindly abuses 
+>> generic_handle_irq()
+>> which is really not meant for consumption by random drivers. The 
+>> include of
+>> linux/irq.h should have been a red flag in the first place. Driver code,
+>> unless implementing interrupt chips or low level hypervisor 
+>> functionality
+>> has absolutely no business with that.
+>>
+>> Invoking generic_handle_irq() from non interrupt handling context can 
+>> have
+>> nasty side effects at least on x86 due to the hardware trainwreck which
+>> makes interrupt affinity changes a fragile beast. Sathyanarayanan 
+>> triggered
+>> a NULL pointer dereference in the low level APIC code that way. While 
+>> the
+>> particular pointer could be checked this would only paper over the issue
+>> because there are other ways to trigger warnings or silently corrupt 
+>> state.
+>>
+>> Invoke the new irq_inject_interrupt() mechanism, which has the necessary
+>> sanity checks in place and injects the interrupt via the irq_retrigger()
+>> mechanism, which is at least halfways safe vs. the fragile x86 affinity
+>> change mechanics.
+>>
+>> It's safe on x86 as it does not corrupt state, but it still can cause a
+>> premature completion of an interrupt affinity change causing the 
+>> interrupt
+>> line to become stale. Very unlikely, but possible.
+>>
+>> For regular operations this is a non issue as AER error injection is 
+>> meant
+>> for debugging and testing and not for usage on production systems. 
+>> People
+>> using this should better know what they are doing.
+> It looks good to me.
+>
+> Reviewed-by: Kuppuswamy Sathyanarayanan 
+> <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Tested-by: Kuppuswamy Sathyanarayanan 
+> <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> Fixes: 390e2db82480 ("PCI/AER: Abstract AER interrupt handling")
+This patch is merged in v4.20 kernel. So this fix could be a candidate 
+for stable fix.
+>> Reported-by: sathyanarayanan.kuppuswamy@linux.intel.com
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>>   drivers/pci/pcie/Kconfig      |    1 +
+>>   drivers/pci/pcie/aer_inject.c |    6 ++----
+>>   2 files changed, 3 insertions(+), 4 deletions(-)
+>>
+>> --- a/drivers/pci/pcie/Kconfig
+>> +++ b/drivers/pci/pcie/Kconfig
+>> @@ -34,6 +34,7 @@ config PCIEAER
+>>   config PCIEAER_INJECT
+>>       tristate "PCI Express error injection support"
+>>       depends on PCIEAER
+>> +    select GENERIC_IRQ_INJECTION
+>>       help
+>>         This enables PCI Express Root Port Advanced Error Reporting
+>>         (AER) software error injector.
+>> --- a/drivers/pci/pcie/aer_inject.c
+>> +++ b/drivers/pci/pcie/aer_inject.c
+>> @@ -16,7 +16,7 @@
+>>     #include <linux/module.h>
+>>   #include <linux/init.h>
+>> -#include <linux/irq.h>
+>> +#include <linux/interrupt.h>
+>>   #include <linux/miscdevice.h>
+>>   #include <linux/pci.h>
+>>   #include <linux/slab.h>
+>> @@ -468,9 +468,7 @@ static int aer_inject(struct aer_error_i
+>>           }
+>>           pci_info(edev->port, "Injecting errors %08x/%08x into 
+>> device %s\n",
+>>                einj->cor_status, einj->uncor_status, pci_name(dev));
+>> -        local_irq_disable();
+>> -        generic_handle_irq(edev->irq);
+>> -        local_irq_enable();
+>> +        ret = irq_inject_interrupt(edev->irq);
+>>       } else {
+>>           pci_err(rpdev, "AER device not found\n");
+>>           ret = -ENODEV;
+>>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
