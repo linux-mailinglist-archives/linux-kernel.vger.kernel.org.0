@@ -2,100 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B159717BE5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:28:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5C5417BE72
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:29:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbgCFN2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:28:15 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39715 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbgCFN2O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:28:14 -0500
-Received: by mail-wm1-f66.google.com with SMTP id j1so2367700wmi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 05:28:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=l0753ioxbAPf/XAPghmG1eWdLr2jDSu4uvwHYqISpUE=;
-        b=GJXKccIXYhtSv6vXeqTHPXu03DjzWWFPmE/k4I1cAtmzKPhXUw6TW9pBcFvqKJON1i
-         EtHMynUyVZ59/pNCPASagVEh7/tZ1h6gdHirsjJLo6H5YXdebW0h8TSYObV67tD1wNAT
-         YZ6DGBeUeRlcqLZn7mQtVllaxuHRZ0imk9IsOFGLMXuh3uZeoOZM5l94FJW30CQY5DT7
-         x+5aO45M+JhORnnqXmoC0foP22mmqTU1FQruGO9jHfwBJpl1sijDARm/0DKR/4EsB6a5
-         jwPNgWncYYtzjUeW3p21xIIaVvl9hEG5NLfqTOXJoJaD18vgRLt8f1fMMVqSiVHjkan2
-         /htg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=l0753ioxbAPf/XAPghmG1eWdLr2jDSu4uvwHYqISpUE=;
-        b=kfXYGqk0KvhZ27qtu++LJTYpjgKU+BfV+UB+92JcgoWlrH/YiLVp47dMzwjIisuzAT
-         2uYpzBuaQtJLcq58m0GsPBcfqDKz30VVQCHLdXxOvsHUSMRZRt1bdFQ1KBrI6+rNFISo
-         kbzfxHr8CEqZhAyQhzj48qHBUW8JITTT92TLhzR0BOgpr5beDjUlNLs0If7ywrejw7g+
-         3gJB9ycbiXfn5fCXuziswXwUmS7QDXWeu+V9TbBbxoJvM7LEUvx97PlbSbESCvqKWoPD
-         ensUWnQX6pwJ7I2x7nWh5jh8lVYTGhFiv/aCgfgtzfx8hT5Q85DlB8CXEz9Z/sppajD6
-         4IVw==
-X-Gm-Message-State: ANhLgQ0gkJ7ByiDO8tMOkvl/3iL7lj+XdygO75ME/NJoc9ERdMMX5VwF
-        hg0Lc+a8YL5F0i/oYZDHRIrp+Q==
-X-Google-Smtp-Source: ADFU+vvFAL6t94Px6BzYAVsj2oEIZBnA3NwxwlqG0OuAe/dK6SNKzCDjT5t8fHLRzEcpjjNgS0s8sQ==
-X-Received: by 2002:a1c:df07:: with SMTP id w7mr3933609wmg.7.1583501293500;
-        Fri, 06 Mar 2020 05:28:13 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id t1sm53349237wrs.41.2020.03.06.05.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 05:28:12 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     broonie@kernel.org
-Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH 2/2] ASoC: wcd934x: remove unused headers
-Date:   Fri,  6 Mar 2020 13:28:06 +0000
-Message-Id: <20200306132806.19684-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200306132806.19684-1-srinivas.kandagatla@linaro.org>
-References: <20200306132806.19684-1-srinivas.kandagatla@linaro.org>
+        id S1727428AbgCFN3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:29:16 -0500
+Received: from mga01.intel.com ([192.55.52.88]:44493 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726524AbgCFN3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 08:29:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 05:29:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,522,1574150400"; 
+   d="scan'208";a="352739465"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Mar 2020 05:29:10 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jAD2O-007Mv4-0y; Fri, 06 Mar 2020 15:29:12 +0200
+Date:   Fri, 6 Mar 2020 15:29:12 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Sergey.Semin@baikalelectronics.ru
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] dmaengine: dw: Take Baikal-T1 SoC DW DMAC
+ peculiarities into account
+Message-ID: <20200306132912.GA1748204@smile.fi.intel.com>
+References: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks like there are some unused headers, remove them.
-Seems to be missed while moving to mfd.
+On Fri, Mar 06, 2020 at 04:10:29PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+> From: Serge Semin <fancer.lancer@gmail.com>
+> 
+> Baikal-T1 SoC has an DW DMAC on-board to provide a Mem-to-Mem, low-speed
+> peripherals Dev-to-Mem and Mem-to-Dev functionality. Mostly it's compatible
+> with currently implemented in the kernel DW DMAC driver, but there are some
+> peculiarities which must be taken into account in order to have the device
+> fully supported.
+> 
+> First of all traditionally we replaced the legacy plain text-based dt-binding
+> file with yaml-based one. Secondly Baikal-T1 DW DMA Controller provides eight
+> channels, which alas have different max burst length configuration.
+> In particular first two channels may burst up to 128 bits (16 bytes) at a time
+> while the rest of them just up to 32 bits. We must make sure that the DMA
+> subsystem doesn't set values exceeding these limitations otherwise the
+> controller will hang up. In third currently we discovered the problem in using
+> the DW APB SPI driver together with DW DMAC. The problem happens if there is no
+> natively implemented multi-block LLP transfers support and the SPI-transfer
+> length exceeds the max lock size. In this case due to asynchronous handling of
+> Tx- and Rx- SPI transfers interrupt we might end up with Dw APB SSI Rx FIFO
+> overflow. So if DW APB SSI (or any other DMAC service consumer) intends to use
+> the DMAC to asynchronously execute the transfers we'd have to at least warn
+> the user of the possible errors.
+> 
+> Finally there is a bug in the algorithm of the nollp flag detection.
+> In particular even if DW DMAC parameters state the multi-block transfers
+> support there is still HC_LLP (hardcode LLP) flag, which if set makes expected
+> by the driver true multi-block LLP functionality unusable. This happens cause'
+> if HC_LLP flag is set the LLP registers will be hardcoded to zero so the
+> contiguous multi-block transfers will be only supported. We must take the
+> flag into account when detecting the LLP support otherwise the driver just
+> won't work correctly.
+> 
+> This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+> commit 98d54f81e36b ("Linux 5.6-rc4").
 
-Reported-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- sound/soc/codecs/wcd934x.c | 4 ----
- 1 file changed, 4 deletions(-)
+Thank you for your series!
 
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 83d643a07775..5269857e2746 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -3,7 +3,6 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
--#include <linux/gpio.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/mfd/wcd934x/registers.h>
-@@ -11,10 +10,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of_clk.h>
--#include <linux/of_device.h>
--#include <linux/of_gpio.h>
- #include <linux/of.h>
--#include <linux/of_irq.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
+I'll definitely review it, but it will take time. So, I think due to late
+submission this is material at least for v5.8.
+
+> 
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
+> Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+> Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
+> Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
+> Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: Paul Burton <paulburton@kernel.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Viresh Kumar <vireshk@kernel.org>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: dmaengine@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Serge Semin (5):
+>   dt-bindings: dma: dw: Replace DW DMAC legacy bindings with YAML-based
+>     one
+>   dt-bindings: dma: dw: Add max burst transaction length property
+>     bindings
+>   dmaengine: dw: Add LLP and block size config accessors
+>   dmaengine: dw: Introduce max burst length hw config
+>   dmaengine: dw: Take HC_LLP flag into account for noLLP auto-config
+> 
+>  .../bindings/dma/snps,dma-spear1340.yaml      | 180 ++++++++++++++++++
+>  .../devicetree/bindings/dma/snps-dma.txt      |  69 -------
+>  drivers/dma/dw/core.c                         |  24 ++-
+>  drivers/dma/dw/dw.c                           |   1 +
+>  drivers/dma/dw/of.c                           |   9 +
+>  drivers/dma/dw/regs.h                         |   3 +
+>  include/linux/platform_data/dma-dw.h          |  22 +++
+>  7 files changed, 238 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/dma/snps-dma.txt
+> 
+> -- 
+> 2.25.1
+> 
+
 -- 
-2.21.0
+With Best Regards,
+Andy Shevchenko
+
 
