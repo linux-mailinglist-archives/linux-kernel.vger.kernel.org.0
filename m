@@ -2,99 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A91D217C5BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D89D17C5BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:57:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgCFS6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 13:58:10 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:38239 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbgCFS6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 13:58:10 -0500
-Received: by mail-pj1-f67.google.com with SMTP id a16so1465169pju.3;
-        Fri, 06 Mar 2020 10:58:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/3ZCx8Mk5y6afBQJbD91M79OAuuEzd2TaW08kA7f5KY=;
-        b=c9/JHYbHnoaDMHxNuq/i5rixydL75M2u7TZTUwYMaEH8wpqa4/2Glko1W+a+iqSdwn
-         K028oePje6EeAIJoA5le77wT+qtnRg9hixyYz9yj3Hv9wBM7OYHgaYR7OLi+npV+Y9B1
-         oSBnJSICJhL6mZRSZK1NKIIoQWBdXnVfoRPZIpkcGQK7+WPc51g1J2tQbi0cd2eSvY75
-         t/ySuN8HqlWD6EGQc/Dz61xbYe47s2WcHjPMxn6ceCoIBotXx6MUT+oaRq9uR340Zgva
-         mWS3nt4Nk/XA2WcPdwcBYDZ5qpXPKoOVbbpVqfjuLXZ8aRhNOrWSQy7V0q78R4FzDPIL
-         kZpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/3ZCx8Mk5y6afBQJbD91M79OAuuEzd2TaW08kA7f5KY=;
-        b=JH9kMC26EIemOAvmT9oWGcLG8x+b97ItA79jqkSe688ENUiB9pKOI31Kap6Z0wRGw5
-         NGVpyOH5r7bzP2c3OBRNjz3u/0jKGjG4vy5DBL33K07bOlC/sXM6uR+gL2jUjG69jlv7
-         ga/EigqypXuYQz7eR3zDhQoSVVDs6pl7gM/ScrcAV3yhSyeCURufXNLcW7LhZG2xh/qt
-         UIwe/pTXM1VaKl2Gr14Bo/bLrUyCoFER5r5uM+crzXZq+6aMlj+qIe8zMDH7GkW0qrSB
-         h16SCde6BYjVBScYdQKo7qwzpFYQ9El+qwigAClG4aZhXB1cdTeL5EnOQa+bv2Q1FGIN
-         xR6Q==
-X-Gm-Message-State: ANhLgQ1rcTDvGlhlG0iy7ttXFFTNBIOsrulO3fmxJKDkfwPePhBNP1iU
-        2mkroqbgnLb04TPJoChW7bk=
-X-Google-Smtp-Source: ADFU+vtAPxxg885xqv5i4oOfx3VxR255wgtLVm1r02ZXIJAdR8wVYGcYKAIDbmturb8Dd6qnXUdwuA==
-X-Received: by 2002:a17:90b:1947:: with SMTP id nk7mr5007306pjb.92.1583521088464;
-        Fri, 06 Mar 2020 10:58:08 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
-        by smtp.gmail.com with ESMTPSA id w81sm23136173pff.22.2020.03.06.10.58.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 10:58:07 -0800 (PST)
-Date:   Fri, 6 Mar 2020 10:58:05 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Arthur Demchenkov <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 1/2] Input: omap4-keypad - Configure interrupt as level
-Message-ID: <20200306185805.GF217608@dtor-ws>
-References: <20200227020407.17276-1-tony@atomide.com>
+        id S1726397AbgCFS5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 13:57:51 -0500
+Received: from mail.manjaro.org ([176.9.38.148]:41996 "EHLO mail.manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbgCFS5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 13:57:51 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.manjaro.org (Postfix) with ESMTP id 9ADA13C21A13;
+        Fri,  6 Mar 2020 19:57:49 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from mail.manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id tbmb0qDcjibI; Fri,  6 Mar 2020 19:57:47 +0100 (CET)
+Subject: Re: [PATCH v4 2/2] arm64: dts: rockchip: Add initial support for
+ Pinebook Pro
+To:     Heiko Stuebner <heiko@sntech.de>,
+        Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Emmanuel Vadot <manu@freebsd.org>,
+        Alexis Ballier <aballier@gentoo.org>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Nick Xie <nick@khadas.com>, Andy Yan <andy.yan@rock-chips.com>,
+        Johan Jonker <jbx6244@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20200304213023.689983-2-t.schramm@manjaro.org>
+ <20200304213023.689983-3-t.schramm@manjaro.org> <6168222.Wuk326WHQK@phil>
+From:   Tobias Schramm <t.schramm@manjaro.org>
+Message-ID: <b30fef29-6667-9200-178b-4d0e9fc63c12@manjaro.org>
+Date:   Fri, 6 Mar 2020 19:58:45 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200227020407.17276-1-tony@atomide.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <6168222.Wuk326WHQK@phil>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+Hi Heiko,
 
-On Wed, Feb 26, 2020 at 06:04:06PM -0800, Tony Lindgren wrote:
-> The interrupt should be level high for SoC internal devices.
-> Otherwise interrupts may not be seen after a wake-up event.
-> 
-> Cc: Arthur Demchenkov <spinal.by@gmail.com>
-> Cc: Merlijn Wajer <merlijn@wizzup.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  drivers/input/keyboard/omap4-keypad.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-> --- a/drivers/input/keyboard/omap4-keypad.c
-> +++ b/drivers/input/keyboard/omap4-keypad.c
-> @@ -344,7 +344,8 @@ static int omap4_keypad_probe(struct platform_device *pdev)
->  	}
->  
->  	error = request_threaded_irq(keypad_data->irq, omap4_keypad_irq_handler,
-> -				     omap4_keypad_irq_thread_fn, IRQF_ONESHOT,
-> +				     omap4_keypad_irq_thread_fn,
-> +				     IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+>> This commit adds initial dt support for the rk3399 based Pinebook Pro.
+>>
+>> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
+>
+> applied for 5.7
+>
 
-Can't we rely on DT/platform to configure this properly?
+any chance you can squeeze in another small fix? Somewhere in the
+process the vmcc and vqmmc supplies of the sdmmc controller were removed
+in error. Those should be added to the sdmmc controller like this:
 
-Thanks.
+ &sdmmc {
+        pinctrl-names = "default";
+        pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
+        sd-uhs-sdr104;
++       vmmc-supply = <&vcc3v0_sd>;
++       vqmmc-supply = <&vcc_sdio>;
+        status = "okay";
+ };
 
--- 
-Dmitry
+Thanks,
+
+Tobias
