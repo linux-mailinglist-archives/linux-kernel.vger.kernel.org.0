@@ -2,152 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E1F17B95E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 10:35:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5B917B962
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 10:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgCFJfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 04:35:18 -0500
-Received: from mout.web.de ([217.72.192.78]:49321 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbgCFJfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 04:35:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1583487278;
-        bh=rUutctVSoXOpWom/7T1TZtB2Hhzq45dxgXswPAdIQCc=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=CudzcFJTkmVXVun+430uQsAOqSN3g73zmuVbOyIF5XHjfDPnfi5cSXb0QKnAHfaUx
-         BPtLRpbDqtTGQWdj2uc3Lxbu8lyvG+hpptiOXccmYDqHno3s7qrbAzZGIyYaSZIW6m
-         Ck2gj9yh51+5niJap3xG8hyv2Z3U0XszpETFYqho=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.156.79]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lheqz-1jfNSJ25mD-00mu4f; Fri, 06
- Mar 2020 10:34:38 +0100
-Subject: Re: [PATCH v5.1] Documentation: bootconfig: Update boot configuration
- documentation
-To:     Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
- <158341540688.4236.11231142256496896074.stgit@devnote2>
- <f3c51b0a-2a55-6523-96e2-4f9ef0635d9f@web.de>
- <20200306105107.afba066a97db1eb12f290aff@kernel.org>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <58f4d6b3-ce3d-d1a5-aa0f-c31c1bbec091@web.de>
-Date:   Fri, 6 Mar 2020 10:34:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726579AbgCFJfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 04:35:47 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54521 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726047AbgCFJfq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 04:35:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Trp4UVu_1583487338;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Trp4UVu_1583487338)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 06 Mar 2020 17:35:39 +0800
+Subject: Re: [RFC PATCH] sched: fix the nonsense shares when load of cfs_rq is
+ too, small
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ben Segall <bsegall@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+References: <44fa1cee-08db-e4ab-e5ab-08d6fbd421d7@linux.alibaba.com>
+ <20200303195245.GF2596@hirez.programming.kicks-ass.net>
+ <xm26o8tc3qkv.fsf@bsegall-linux.svl.corp.google.com>
+ <1180c6cd-ff61-2c9f-d689-ffe58f8c5a68@linux.alibaba.com>
+ <CAKfTPtCaPz2KBmagzpEurh5S9aNFzUomHGh1pDWBx6L_29w5hw@mail.gmail.com>
+ <12f79b83-491c-4b4b-0581-d23bdcec7c0c@linux.alibaba.com>
+ <CAKfTPtD+He8UULUavz0csUeUV3TBdjShV9kUPQY6rpLswUAm4g@mail.gmail.com>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <746d2b82-fb39-1412-0dc3-c5ff10b578ec@linux.alibaba.com>
+Date:   Fri, 6 Mar 2020 17:34:53 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <20200306105107.afba066a97db1eb12f290aff@kernel.org>
+In-Reply-To: <CAKfTPtD+He8UULUavz0csUeUV3TBdjShV9kUPQY6rpLswUAm4g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4cuSGlOvvsGuCntOe3AeGEGEMa74iNrCzb7XNMS+5VxDS0dCpwD
- 0a/ICsuEPiT4ttqHoA8iNVXTlvbpOC59QfWk2ucaFse7vxgvMt3ETCfslBjbiTsgRI1rfWE
- HghZJkbLOVHEHouE728JcJRzy2Tia9dc6UzQXnxXZ+ByV6Km7L8MCNfoBxA0ZINpcuhKpft
- iAllhPtVgN/5TMIExu2iQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:T9SsRQ8wg5M=:j6O6HCNxfzSqOGIhy0X2Ae
- 3D8oXJUnVZKhe0oVvrMkSp/zdMruSJiRwYMB0qMle2mt60qxhUPo6HVbpHTMorvg3qLD/ve+M
- f38CHXofRqJ+JOvpdvDxfDIS4TrI4uALnlEe7qYFo9f6ufagwHocCWE29kr1yr9UwIZUW9lM1
- Z3gbvgekPMVH4AtcHUDWCjBNwRfRrsIe0pmg2C9/U93NHpN4JXP7mRV57VkFAZxVY+zCNsWhT
- 08Jh+oP5D2Tja0aBANuVtKrcSmCdg0TVJWg4JcQ1CWOiOxFDIjXWpltORK/7IHn/7B4x6qZVw
- xkUGMOaoikuD8SqFBIGvfa/WMIcuN6FxU9m49N43zMggc29rYUxYJzqO5BjOuQzB9BZZMedgO
- SMtu2mlbNrBYGYJt67wcv1EVY8KHzxJ73tYetvcxHQbMHV1I6fekiTn+4cHMwwFQxMJxg/Re8
- QTJSzz/AD/lQ8bIfmkYvlcAY+waONES963QVMtLIwegtV0XK0R5XD1g4UGCrTD56dTMKZzITx
- 3Ztu1ys06GT7vUP2YyL7Ehrg6xyiOyCI1ybh/WYDK/qvtgEICtJZA751cDycMj37hgjEi/Vbo
- 2cPEf4+GgVrMhGx1G8d3yddZ5LCnYDqaanT/no/g7cBNE5/gybGbo0mwZHc8I4gQvsn28S3SH
- E7CE0Zgwp09PkWQ67k5EsaecP8ROEAzJv4GIeYyhaMBWDS8pA86G90jykAvHFFZd1lSrfGrMx
- zSojoM+n5c9bNpyOUs/DbdYxpVYWDSLDUluwyWUpywVrBbark93C5jAiyZW4Gg6ydQCPyEBHJ
- 2VOvX3UmO66y/g620LWP4M5UL8RO7srKAsF/ZzbANkNyWWNyd3dcIU0lsCg8XpcXqmfkC8LGP
- hQn+eEJCEuxNXNxMxoYYHFfi6lXPPkDtngk9GiMKX+ffUmsEkvfz4iIApzujZg+kNZSVCyuV0
- MePpeSkG+ajZiTnxUFq7fUhVdGAsz750XIMfy0iMpjSPtwehpxFbVyzINqXwer5nBBJGBn62O
- 5U+NCV71QbjEsrLj1/f9f+woVuk0Qvam+I5dNBNVpYjsGT0jtFj3KzjSmQrxAAgEVRi/RUp6w
- DijVylcwPLsOtuJexjyitapPzyDeiR2Rx/Laa6I6/6OdPV/JzoWT++V/pWrxUIwWX+S1m6R1P
- duP7JqM16XlIYPhCha26yM3sjiCoZpjlO3eK+foMgV6DPq4wunxjYJqYKgcuFn1QU9dgfl83m
- MwEmrKFrYKRF5zSjk
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> If you think you have "any more" update candidates, feel free to make
-> an update "patch" and send to us.
-
-I pointed a few change possibilities out already.
-
-
-> That will be the next step.
-
-I got the impression that we are in the process of constructing another pa=
-tch together
-which will fix known wording weaknesses.
-
-
-By the way:
-I wonder about the shown version identifier.
-Will the patch numbering need also further considerations?
-
-
->> =E2=80=A6
->>> +++ b/Documentation/admin-guide/bootconfig.rst
->> =E2=80=A6
->>> +If you think that kernel/init options become too long to write in boo=
-t-loader
->>> +configuration file or you want to comment on each option, the boot
->>> +configuration may be suitable. =E2=80=A6
+On 2020/3/6 下午4:04, Vincent Guittot wrote:
+> On Fri, 6 Mar 2020 at 05:23, 王贇 <yun.wang@linux.alibaba.com> wrote:
 >>
->> Would you like to specify any settings in the boot configuration file
->> because the provided storage capacity would be too limited by the kerne=
-l command line?
->
-> Yes.
+>>
+>>
+>> On 2020/3/5 下午3:53, Vincent Guittot wrote:
+>>> On Thu, 5 Mar 2020 at 02:14, 王贇 <yun.wang@linux.alibaba.com> wrote:
+>> [snip]
+>>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>>> index fcc968669aea..6d7a9d72d742 100644
+>>>>> --- a/kernel/sched/fair.c
+>>>>> +++ b/kernel/sched/fair.c
+>>>>> @@ -3179,9 +3179,9 @@ static long calc_group_shares(struct cfs_rq *cfs_rq)
+>>>>>         long tg_weight, tg_shares, load, shares;
+>>>>>         struct task_group *tg = cfs_rq->tg;
+>>>>>
+>>>>> -       tg_shares = READ_ONCE(tg->shares);
+>>>>> +       tg_shares = scale_load_down(READ_ONCE(tg->shares));
+>>>>>
+>>>>> -       load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
+>>>>> +       load = max(cfs_rq->load.weight, scale_load(cfs_rq->avg.load_avg));
+>>>>>
+>>>>>         tg_weight = atomic_long_read(&tg->load_avg);
+>>>>
+>>>> Get the point, but IMHO fix scale_load_down() sounds better, to
+>>>> cover all the similar cases, let's first try that way see if it's
+>>>> working :-)
+>>>
+>>> The problem with this solution is that the avg.load_avg of gse or
+>>> cfs_rq might stay to 0 because it uses
+>>> scale_load_down(se/cfs_rq->load.weight)
+>>
+>> Will cfs_rq->load.weight be zero too without scale down?
+> 
+> cfs_rq->load.weight will never be 0, it's min is 2
+> 
+>>
+>> If cfs_rq->load.weight got at least something, the load will not be
+>> zero after pick the max, correct?
+> 
+> But the cfs_rq->avg.load_avg will never be other than 0 what ever
+> there are heavy or light tasks in the group
 
-How will affected places be improved after such an agreement?
+Aha, get the point now :-)
+
+BTW, would you like to give a review on
+  [PATCH] sched: avoid scale real weight down to zero
+please?
 
 Regards,
-Markus
+Michael Wang
+
+
+> 
+>>
+>> Regards,
+>> Michael Wang
+>>
+>>>
+>>>>
+>>>> Regards,
+>>>> Michael Wang
+>>>>
+>>>>>
+>>>>>
+>>>>>
