@@ -2,132 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA8AF17B726
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 08:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F6217B746
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 08:21:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbgCFHCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 02:02:10 -0500
-Received: from lucky1.263xmail.com ([211.157.147.133]:36518 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgCFHCJ (ORCPT
+        id S1726081AbgCFHVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 02:21:53 -0500
+Received: from forward104o.mail.yandex.net ([37.140.190.179]:49002 "EHLO
+        forward104o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725829AbgCFHVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 02:02:09 -0500
-Received: from localhost (unknown [192.168.167.209])
-        by lucky1.263xmail.com (Postfix) with ESMTP id DB3999F894;
-        Fri,  6 Mar 2020 15:01:41 +0800 (CST)
-X-MAIL-AUTO: 1
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P32633T140274261014272S1583478094758456_;
-        Fri, 06 Mar 2020 15:01:41 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <72df5637c48843ecbb6e3b09abe72a59>
-X-RL-SENDER: cl@rock-chips.com
-X-SENDER: cl@rock-chips.com
-X-LOGIN-NAME: cl@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-From:   <cl@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        akpm@linux-foundation.org, tglx@linutronix.de, mpe@ellerman.id.au,
-        surenb@google.com, ben.dooks@codethink.co.uk,
-        anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        will@kernel.org, keescook@chromium.org, luto@amacapital.net,
-        wad@chromium.org, mark.rutland@arm.com, geert+renesas@glider.be,
-        george_davis@mentor.com, sudeep.holla@arm.com,
-        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
-        kstewart@linuxfoundation.org, allison@lohutok.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        huangtao@rock-chips.com, Liang Chen <cl@rock-chips.com>
-Subject: [PATCH v3 1/1] kthread: do not preempt current task if it is going to call schedule()
-Date:   Fri,  6 Mar 2020 15:01:33 +0800
-Message-Id: <20200306070133.18335-2-cl@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200306070133.18335-1-cl@rock-chips.com>
-References: <20200306070133.18335-1-cl@rock-chips.com>
+        Fri, 6 Mar 2020 02:21:52 -0500
+X-Greylist: delayed 367 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 02:21:50 EST
+Received: from mxback7g.mail.yandex.net (mxback7g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:168])
+        by forward104o.mail.yandex.net (Yandex) with ESMTP id EB4DB9424EE;
+        Fri,  6 Mar 2020 10:15:41 +0300 (MSK)
+Received: from iva3-dd2bb2ff2b5f.qloud-c.yandex.net (iva3-dd2bb2ff2b5f.qloud-c.yandex.net [2a02:6b8:c0c:7611:0:640:dd2b:b2ff])
+        by mxback7g.mail.yandex.net (mxback/Yandex) with ESMTP id 4QcmWVIbaF-Ffd0Ohkn;
+        Fri, 06 Mar 2020 10:15:41 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1583478941;
+        bh=dFOJ8HxcJHuVEanjCBZpIwYRShDEHi2Qbibs/FbE4bs=;
+        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
+        b=mihW1Tmq1N5c3RD1C2q1WMfdqBP/6lQmzukxiIy0Ffen0zJ9LTkziBcIUnX+G/suw
+         LC7YUP9goExtyVRjKL0618yWfvJx4sH9hGstU7rsIhiSmU+/ATOMvjUWeCzf8cngEl
+         KOy11Y3bOMg0EL0aJJfr78Bu51osyHK7cugbXvHA=
+Authentication-Results: mxback7g.mail.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by iva3-dd2bb2ff2b5f.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id WFGP46aMDd-FeWi6ntj;
+        Fri, 06 Mar 2020 10:15:40 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Nikita Shubin <NShubin@topcon.com>
+Cc:     Nikita Shubin <NShubin@topcon.com>, stable@vger.kernel.org,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] remoteproc: Fix NULL pointer dereference in rproc_virtio_notify
+Date:   Fri,  6 Mar 2020 10:03:25 +0300
+Message-Id: <20200306070325.15232-1-NShubin@topcon.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200305110218.8799-2-NShubin@topcon.com>
+References: <20200305110218.8799-2-NShubin@topcon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liang Chen <cl@rock-chips.com>
+Undefined rproc_ops .kick method in remoteproc driver will result in
+"Unable to handle kernel NULL pointer dereference" in rproc_virtio_notify, 
+after firmware loading if:
 
-when we create a kthread with ktrhead_create_on_cpu(),the child thread
-entry is ktread.c:ktrhead() which will be preempted by the parent after
-call complete(done) while schedule() is not called yet,then the parent
-will call wait_task_inactive(child) but the child is still on the runqueue,
-so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
-time,especially on startup.
+ 1) .kick method wasn't defined in driver
+ 2) resource_table exists in firmware and has "Virtio device entry" defined
 
-  parent                             child
-ktrhead_create_on_cpu()
-  wait_fo_completion(&done) -----> ktread.c:ktrhead()
-                             |----- complete(done);--wakeup and preempted by parent
- kthread_bind() <------------|  |-> schedule();--dequeue here
-  wait_task_inactive(child)     |
-   schedule_hrtimeout(1 jiffy) -|
+Let's refuse to register an rproc-induced virtio device if no kick method was
+defined for rproc.
 
-So we hope the child just wakeup parent but not preempted by parent, and the
-child is going to call schedule() soon,then the parent will not call
-schedule_hrtimeout(1 jiffy) as the child is already dequeue.
-
-The same issue for ktrhead_park()&&kthread_parkme().
-This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
-
-Signed-off-by: Liang Chen <cl@rock-chips.com>
+Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+Fixes: 7a186941626d ("remoteproc: remove the single rpmsg vdev limitation")
+Cc: stable@vger.kernel.org
 ---
- kernel/kthread.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_virtio.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index b262f47046ca..bfbfa481be3a 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -199,8 +199,15 @@ static void __kthread_parkme(struct kthread *self)
- 		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
- 			break;
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index 8c07cb2ca8ba..31a62a0b470e 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -334,6 +334,13 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+ 	struct rproc_mem_entry *mem;
+ 	int ret;
  
-+		/*
-+		 * Thread is going to call schedule(), do not preempt it,
-+		 * or the caller of kthread_park() may spend more time in
-+		 * wait_task_inactive().
-+		 */
-+		preempt_disable();
- 		complete(&self->parked);
--		schedule();
-+		schedule_preempt_disabled();
-+		preempt_enable();
- 	}
- 	__set_current_state(TASK_RUNNING);
- }
-@@ -245,8 +252,14 @@ static int kthread(void *_create)
- 	/* OK, tell user we're spawned, wait for stop or wakeup */
- 	__set_current_state(TASK_UNINTERRUPTIBLE);
- 	create->result = current;
-+	/*
-+	 * Thread is going to call schedule(), do not preempt it,
-+	 * or the creator may spend more time in wait_task_inactive().
-+	 */
-+	preempt_disable();
- 	complete(done);
--	schedule();
-+	schedule_preempt_disabled();
-+	preempt_enable();
- 
- 	ret = -EINTR;
- 	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
++	if (rproc->ops->kick == NULL) {
++		ret = -EINVAL;
++		dev_err(dev, ".kick method not defined for %s",
++				rproc->name);
++		goto out;
++	}
++
+ 	/* Try to find dedicated vdev buffer carveout */
+ 	mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
+ 	if (mem) {
 -- 
-2.17.1
-
-
+2.24.1
 
