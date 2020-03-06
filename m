@@ -2,106 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BB217C8B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:10:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D34317C8BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 00:11:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgCFXKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 18:10:32 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33045 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbgCFXKc (ORCPT
+        id S1726751AbgCFXLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 18:11:52 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34960 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbgCFXLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 18:10:32 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c20so3240756lfb.0;
-        Fri, 06 Mar 2020 15:10:30 -0800 (PST)
+        Fri, 6 Mar 2020 18:11:51 -0500
+Received: by mail-lj1-f196.google.com with SMTP id a12so3937129ljj.2;
+        Fri, 06 Mar 2020 15:11:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Qe8wUFv1rWfO0Jj+EAuF6LQPlbPXK3Z6EOrgI0Gdx9k=;
-        b=LulrOrqpx0/0G8hFYqFzxTYNXXW1JCsFHC320W5pxat1R/Gq10mUIexXFg2X0IjgkH
-         R/8OhsWZREwdNq+pWnetJCN+wKY6PPWO7dlynTtYJFZLdrxNLmuvOkDAxdvIqtMfa5Pf
-         SNsnvvVnhVemr+T/5x7OgVlT89LwffGVOAG3Kgl/Qk6tX4RwNOAgMKPi67hqLUslbQpd
-         FWE6uU0yvEXZRKex0XGHlyDOzviTBdAyQl1dH+YWCS9YJG9oNNCaXTXIbmDewUqRKY7N
-         yGRAGMRJms0Yc3KcFiF3OJg4QbEE4Jg4HxqFtz9uiU5Qd3B82bawpm43rnyZe0QSVjMT
-         BuPw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gK0NIKisFWdsMrtmzgYZAFdeJlOFf5qgx10lmxvVCTk=;
+        b=mm+uJf+5ympFMJq5u0MTaFeFHYjmBfZeImyavE70t/lDjr1oUEtoWnjUjTC52tUIKo
+         sT2B6YDOr/QwJUwqv5+X0gcLScFHMNGmFM+lqGJ/1Leoa9oeqZ6rHvxIH6q2BQ5T55wx
+         Q85DZ8VKJGuWWrGd3PH1KTlVn9nHz4FU8HQBFVjN1rsr+ezX1fOxlcXvcZvrH4gs7uPT
+         /ccVrZxuVeKsXkk3VRXqAaR7RCuYWBG5I8/JAir3AIUw5GPXEhdw9UAjv1W0Km0rWVrW
+         ZqIjouiLqRzVErbhCj+APOhqnoE/Zt9mSHDPb80/ZgDj0aIGlPKiCy9OFfcbqHf1DjsR
+         XmEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qe8wUFv1rWfO0Jj+EAuF6LQPlbPXK3Z6EOrgI0Gdx9k=;
-        b=KCyZKLhJbCNBYIQCKd2ReG5OvD08oUk9LtFQF6dCaJHaUZUe0JN9JnWIbPC4zRsATo
-         ZugppOY6e+iyHuIUvhR4zpT9RJutZpqRVYsKpkmD05bkHtb0g68eRGHUZt9Zrf1E9jJ6
-         tS2qeMg6O3uTYothNo4O0Jl7iZITgBWV8mfElYC/59y3wdMVc1nKYpYrKEgywB64Y5z2
-         +pau6BZuDI/Vw1oPhHrpyavFvMKbxorEx5tmdElF/bn5oC6txiZ6Fmat6LRoQFueufnc
-         Ik2HKt3GuLsWPcMZHIN3x0KvsswtLu7pj4p19uw0VhPqmP50pJf+ESLnuiCA8ec55c4r
-         qJtA==
-X-Gm-Message-State: ANhLgQ0gXqdtqcgVmOH6ij6+NilG1FM6sH7ASdGJTm2+z+UH01HY/z3u
-        e7IBsZGOJk3Inv8uEGt7kgWBkCRA68fYJUuGWJ4=
-X-Google-Smtp-Source: ADFU+vsWXcoIQAUDTax0XOY1RpvoM6JRnIfSwIJuQvEjIepHZNV7DI+yPeXZlM2SlMk1yIeSgf5HOkbcz+PE0R5Ub0o=
-X-Received: by 2002:a05:6512:304c:: with SMTP id b12mr3256481lfb.196.1583536229276;
- Fri, 06 Mar 2020 15:10:29 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gK0NIKisFWdsMrtmzgYZAFdeJlOFf5qgx10lmxvVCTk=;
+        b=dDSTvd9K5VpYGWqx4BA6d5culwJSa0FW9J5mYPhs+1uOKongJd720Q8aIE75M5RnYh
+         drc6wEgSArnG3n+5yt7lv9/V2t6JzBAJMXwc0O8vCNxgjc93DVuL49dt5/PZx+zTP+JB
+         xO/dXkff38N7i5fLzQWWufXkP6U+thaG8L88PHuD/JqZpc7JaO32lppgHYpumHnFIRcL
+         yoQJlZ6gbfmXZyA+Op4/EqJ4bB02Qtcf8736MnRh1L5KN0IZkDGKCtcuoUE9CY/ZJGbG
+         gZuMfdl4/3sf+s/bqmkk9uwKWsDdF0dlR4P5yJSbBgKvVJIassGKPSVIS0ROoTkpgYln
+         5+Zw==
+X-Gm-Message-State: ANhLgQ2Jwqhz+s4cxFVk9cYlX75zmpmk2kl3PgEKXuJC5DVuyI/n/EUp
+        by6offpk3ltaShBlTn4+uxEogJW4
+X-Google-Smtp-Source: ADFU+vvCrvTob9iFZY6HE4Gqd8Ft7QfjakCUfpIv0st2+oa4Ze6vk/10TpObFCLeWg4GAu2xku65TA==
+X-Received: by 2002:a2e:6a08:: with SMTP id f8mr3412182ljc.76.1583536308523;
+        Fri, 06 Mar 2020 15:11:48 -0800 (PST)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id n26sm16610009lfi.5.2020.03.06.15.11.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2020 15:11:47 -0800 (PST)
+Subject: Re: [PATCH v1 3/3] partitions: Introduce NVIDIA Tegra Partition Table
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Billy Laws <blaws05@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Andrey Danin <danindrey@mail.ru>,
+        Gilles Grandou <gilles@grandou.net>,
+        Ryan Grachek <ryan@edited.us>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200224231841.26550-1-digetx@gmail.com>
+ <20200224231841.26550-4-digetx@gmail.com>
+ <44c22925-a14e-96d0-1f93-1979c0c60525@wwwdotorg.org>
+ <CAPDyKFoXnoukjH_2cM=f0DGHBHS6kVUQSYOa_5ffQppC7VOn2A@mail.gmail.com>
+ <824a4d5f-8280-8860-3e80-68188a13aa3d@gmail.com>
+ <CAPDyKFric6pZbJ5-2qkwAFoeJ0c0kcha99zHJ12AUrWO6FQmgg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6047f07b-c0af-08c8-90d1-79a0d880e0a2@gmail.com>
+Date:   Sat, 7 Mar 2020 02:11:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200221133416.777099322@infradead.org> <20200306104335.GF3348@worktop.programming.kicks-ass.net>
- <20200306113135.GA8787@worktop.programming.kicks-ass.net> <CAADnVQKp=UKg8HAuMOFknhmXtfm_LVu_ynTNJuedHqKdA6zh1g@mail.gmail.com>
- <1896740806.20220.1583510668164.JavaMail.zimbra@efficios.com>
- <20200306125500.6aa75c0d@gandalf.local.home> <609624365.20355.1583526166349.JavaMail.zimbra@efficios.com>
- <20200306154556.6a829484@gandalf.local.home> <65796626.20397.1583528124078.JavaMail.zimbra@efficios.com>
-In-Reply-To: <65796626.20397.1583528124078.JavaMail.zimbra@efficios.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 6 Mar 2020 15:10:17 -0800
-Message-ID: <CAADnVQKot7kEYsEQrEszGeTuug4fpWGkc4GKA_yNeFi6OHe3uw@mail.gmail.com>
-Subject: Re: [PATCH v4 16/27] tracing: Remove regular RCU context for _rcuidle
- tracepoints (again)
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        paulmck <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        dan carpenter <dan.carpenter@oracle.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAPDyKFric6pZbJ5-2qkwAFoeJ0c0kcha99zHJ12AUrWO6FQmgg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 12:55 PM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> ----- On Mar 6, 2020, at 3:45 PM, rostedt rostedt@goodmis.org wrote:
->
-> > On Fri, 6 Mar 2020 15:22:46 -0500 (EST)
-> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> >
-> >> I agree with the overall approach. Just a bit of nitpicking on the API:
-> >>
-> >> I understand that the "prio" argument is a separate argument because it can take
-> >> many values. However, "rcu" is just a boolean, so I wonder if we should not
-> >> rather
-> >> introduce a "int flags" with a bitmask enum, e.g.
-> >
-> > I thought about this approach, but thought it was a bit overkill. As the
-> > kernel doesn't have an internal API, I figured we can switch this over to
-> > flags when we get another flag to add. Unless you can think of one in the
-> > near future.
->
-> The additional feature I have in mind for near future would be to register
-> a probe which can take a page fault to a "sleepable" tracepoint. This would
-> require preemption to be enabled and use of SRCU.
+06.03.2020 16:37, Ulf Hansson пишет:
+...
+>>
+>> Technically, it should be possible to chain-load some custom secondary
+>> bootloader instead of a kernel image, but this is not very practical
+>> because now:
+>>
+>> 1. There is a need to make a custom bootloader and it is quite a lot of
+>> work.
+>>
+>> 2. You'll have to tell everybody that a custom booloader may need to be
+>> used in order to get a working eMMC.
+> 
+> Yeah, I get the point. It's not an optimal situation, but I assume
+> it's about informing developers. They can cope with this, no?
 
-I'm working on sleepable bpf as well and this extra flag for tracepoints
-would come very handy, so I would go with flags approach right away.
-We wouldn't need to touch the same protos multiple times,
-less conflicts for us all, etc.
+Perhaps no, it's not only about the informing. The need for a custom
+bootloader creates other inconveniences because:
+
+1. It won't be possible to boot a vanilla upstream kernel using
+Android's "fastboot boot ..." without applying extra patches to kernel
+for the partition table support. Advanced users usually tend to use
+fastboot and it's also very useful for a regular development purposes as
+well.
+
+2. Somebody (a developer / advanced user) will have to create a custom
+bootloader for each device in the first place. This is not what an
+average person will be able to do and there are not that many developers
+who would want to dedicate theirs time to this.
+
+3. The entry barrier for upstreaming Android devices support to the
+kernel is already quite enormous. Adding extra hurdles isn't a step into
+the right direction, IMO.
+
+>> 3. NVIDIA's bootloader already passes a command line parameter to kernel
+>> for locating GPT entry, but this hack is not acceptable for the upstream
+>> kernel.
+> 
+> Well, I am just worried that we will end up with one partition format
+> per vendor/product, that wouldn't scale very well.
+> 
+> In any case, from mmc point of view I am less concerned, we can find a
+> way to support the needed bits. I just need to review the series more
+> carefully and provide some comments. :-)
+> 
+> However, before I do that, I would like to hear Jens opinion about
+> adding a new partition format, so I don't waste my time here.
+
+Sure, no problems :) Let's wait for the comments from Jens.
