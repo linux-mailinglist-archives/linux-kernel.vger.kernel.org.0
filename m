@@ -2,485 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9EC17C441
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF4E717C44A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:27:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgCFRYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:24:10 -0500
-Received: from mail-io1-f80.google.com ([209.85.166.80]:56715 "EHLO
-        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbgCFRYK (ORCPT
+        id S1726194AbgCFR1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:27:07 -0500
+Received: from smtprelay0133.hostedemail.com ([216.40.44.133]:60088 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725873AbgCFR1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:24:10 -0500
-Received: by mail-io1-f80.google.com with SMTP id d13so1881153ioo.23
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 09:24:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=IZ6VmTHdl7NhBMpo0eSH8LA+stGdQmrwuQ2udc6q5jY=;
-        b=M/qh642y5EZQCxpVBwKdmljn3i9ye6/KHfVRwQ8AdDSd7Qg9HR9EfwNDQxyw4ZVKFN
-         YFaoj3TaAQDFrp4aKj4nav7nFP8JW8Ab98yO/LaPFAI/ffJ9CgVFyqoVjSPZvFln2x5n
-         hO9seRAzAT06xeOV5B7O0mTF3amgxd3zKOQlIwQAu+kaG1QlC06excNvpZ+d0mTrJ3GV
-         Yz1HbtmNhyQnZSrOCTirknVbD6VkMzmUtE3nffQpWHkj4I8/yWS1lGHbvrkPVJVKatZR
-         N+YVD9lu8cGBLEn+FL8QV3rdW1THCWMMGE16Ich1XxQeJXbFKm47rsc/OcdkCiUXvZT4
-         piSQ==
-X-Gm-Message-State: ANhLgQ2y22T26gR9wJhIRpvawvvBEwHWP/a038jQTPha7gwsYwGA9Dtz
-        nOEDmAyAdATB13LdxZr8Hybr8MxrYXIUmgkF21sTErXu3xoj
-X-Google-Smtp-Source: ADFU+vu6U9NrY2mOyJ5Wh3UUC9/LZhQhiHPygFxcyO+cO3ZG193EWhb4Bi0U6ISx3M+MhF/DqL1N5TtCTLmQvpbghg9Siyv3F6hX
+        Fri, 6 Mar 2020 12:27:07 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 5A66D1802929C;
+        Fri,  6 Mar 2020 17:27:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:7808:7903:8660:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12438:12663:12740:12760:12895:13148:13230:13439:14096:14097:14181:14659:14721:21080:21433:21450:21451:21627:21660:21939:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: iron26_5add7c5902505
+X-Filterd-Recvd-Size: 3551
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  6 Mar 2020 17:27:04 +0000 (UTC)
+Message-ID: <a7503afc9d561ae9c7116b97c7a960d7ad5cbff9.camel@perches.com>
+Subject: Re: [PATCH] sched/cputime: silence a -Wunused-function warning
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>, Qian Cai <cai@lca.pw>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, juri.lelli@redhat.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        bsegall@google.com, mgorman@suse.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Date:   Fri, 06 Mar 2020 09:25:29 -0800
+In-Reply-To: <CAKwvOd=V44ksbiffN5UYw-oVfTK_wdeP59ipWANkOUS_zavxew@mail.gmail.com>
+References: <1583509304-28508-1-git-send-email-cai@lca.pw>
+         <CAKwvOd=V44ksbiffN5UYw-oVfTK_wdeP59ipWANkOUS_zavxew@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-X-Received: by 2002:a92:216:: with SMTP id 22mr4196141ilc.53.1583515448967;
- Fri, 06 Mar 2020 09:24:08 -0800 (PST)
-Date:   Fri, 06 Mar 2020 09:24:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5157705a032eb4b@google.com>
-Subject: BUG: Bad page map (4)
-From:   syzbot <syzbot+5f10718b9688f3ce609e@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 2020-03-06 at 09:13 -0800, Nick Desaulniers wrote:
+> On Fri, Mar 6, 2020 at 7:42 AM Qian Cai <cai@lca.pw> wrote:
+> > account_other_time() is only used when CONFIG_IRQ_TIME_ACCOUNTING=y (in
+> > irqtime_account_process_tick()) or CONFIG_VIRT_CPU_ACCOUNTING_GEN=y (in
+> > get_vtime_delta()). When both are off, it will generate a compilation
+> > warning from Clang,
+> > 
+> > kernel/sched/cputime.c:255:19: warning: unused function
+> > 'account_other_time' [-Wunused-function]
+> > static inline u64 account_other_time(u64 max)
+> > 
+> > Rather than wrapping around this function with a macro expression,
+> > 
+> >  if defined(CONFIG_IRQ_TIME_ACCOUNTING) || \
+> >     defined(CONFIG_VIRT_CPU_ACCOUNTING_GEN)
+> > 
+> > just use __maybe_unused for this small function which seems like a good
+> > trade-off.
+> 
+> Generally, I'm not a fan of __maybe_unused.  It is a tool in the
+> toolbox for solving this issue, but it's my least favorite.  Should
+> the call sites be eliminated, this may mask an unused and entirely
+> dead function from being removed.  Preprocessor guards based on config
+> give more context into *why* a particular function may be unused.
+> 
+> So let's take a look at the call sites of account_other_time().  Looks
+> like irqtime_account_process_tick() (guarded by
+> CONFIG_IRQ_TIME_ACCOUNTING) and get_vtime_delta() (guarded by
+> CONFIG_VIRT_CPU_ACCOUNTING_GEN).  If it were one config guard, then I
+> would prefer to move the definition to be within the same guard, just
+> before the function definition that calls it, but we have a more
+> complicated case here.
+> 
+> The next thing I'd check to see is if there's a dependency between
+> configs.  In this case, both CONFIG_IRQ_TIME_ACCOUNTING and
+> CONFIG_VIRT_CPU_ACCOUNTING_GEN are defined in init/Kconfig.  In this
+> case there's also no dependency between configs, so specifying one
+> doesn't imply the other; so guarding on one of the two configs is also
+> not an option.
+> 
+> So, as much as I'm not a fan of __maybe_unused, it is indeed the
+> simplest option.  Though, I'd still prefer the ifdef you describe
+> instead, maybe the maintainers can provide guidance/preference?
 
-syzbot found the following crash on:
-
-HEAD commit:    c99b17ac Add linux-next specific files for 20200225
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1012fa81e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6b7ebe4bd0931c45
-dashboard link: https://syzkaller.appspot.com/bug?extid=5f10718b9688f3ce609e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5f10718b9688f3ce609e@syzkaller.appspotmail.com
-
-BUG: Bad page map in process udevd  pte:77007770 pmd:00172067
-addr:00007f08bce11000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979b1b10 index:1aa
-file:libnss_nis-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Not tainted 5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- vm_normal_page+0x244/0x3c0 mm/memory.c:609
- zap_pte_range mm/memory.c:1053 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x98f/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-BUG: Bad page map in process udevd  pte:00000700 pmd:00172067
-addr:00007f08bcebb000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:49
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- vm_normal_page+0x244/0x3c0 mm/memory.c:609
- zap_pte_range mm/memory.c:1053 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x98f/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-swap_info_get: Bad swap file entry 3ffffffc44447
-BUG: Bad page map in process udevd  pte:77777000 pmd:00172067
-addr:00007f08bcf1b000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:a9
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- zap_pte_range mm/memory.c:1126 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x1cd6/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-BUG: Bad page map in process udevd  pte:00700777 pmd:00172067
-addr:00007f08bcf65000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:f3
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- vm_normal_page+0x244/0x3c0 mm/memory.c:609
- zap_pte_range mm/memory.c:1053 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x98f/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-swap_info_get: Bad swap file entry 3ffffffffc7ff
-BUG: Bad page map in process udevd  pte:00700000 pmd:00172067
-addr:00007f08bcfba000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:148
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- zap_pte_range mm/memory.c:1126 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x1cd6/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-swap_info_get: Bad swap file entry 3fffffffc7c47
-BUG: Bad page map in process udevd  pte:07077000 pmd:00173067
-addr:00007f08bd00f000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:19d
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- zap_pte_range mm/memory.c:1126 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x1cd6/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-BUG: Bad page map in process udevd  pte:77770707 pmd:00173067
-addr:00007f08bd064000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:1f2
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- vm_normal_page+0x244/0x3c0 mm/memory.c:609
- zap_pte_range mm/memory.c:1053 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x98f/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-swap_info_get: Bad swap file entry 3ffffffc7c7ff
-BUG: Bad page map in process udevd  pte:70700000 pmd:00173067
-addr:00007f08bd06f000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979aea50 index:1fd
-file:libnsl-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- zap_pte_range mm/memory.c:1126 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x1cd6/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-BUG: Bad page map in process udevd  pte:77000770 pmd:00173067
-addr:00007f08bd10e000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979ac9d0 index:84
-file:libnss_compat-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- vm_normal_page+0x244/0x3c0 mm/memory.c:609
- zap_pte_range mm/memory.c:1053 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x98f/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f08bd760207
-RDX: 0000000001f622f0 RSI: 00007fff1a787fc0 RDI: 00007fff1a788fd0
-RBP: 0000000000625500 R08: 0000000000000ddf R09: 0000000000000ddf
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001f622f0
-R13: 0000000000000007 R14: 0000000001f50250 R15: 0000000000000005
-BUG: Bad page map in process udevd  pte:77770770 pmd:00173067
-addr:00007f08bd163000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8880979ac9d0 index:d9
-file:libnss_compat-2.13.so fault:ext4_filemap_fault mmap:ext4_file_mmap readpage:ext4_readpage
-CPU: 0 PID: 16669 Comm: udevd Tainted: G    B             5.6.0-rc3-next-20200225-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_bad_pte.cold+0x1d5/0x232 mm/memory.c:546
- vm_normal_page+0x244/0x3c0 mm/memory.c:609
- zap_pte_range mm/memory.c:1053 [inline]
- zap_pmd_range mm/memory.c:1184 [inline]
- zap_pud_range mm/memory.c:1213 [inline]
- zap_p4d_range mm/memory.c:1234 [inline]
- unmap_page_range+0x98f/0x2820 mm/memory.c:1255
- unmap_single_vma+0x19d/0x300 mm/memory.c:1300
- unmap_vmas+0x184/0x2f0 mm/memory.c:1332
- exit_mmap+0x2ba/0x530 mm/mmap.c:3141
- __mmput kernel/fork.c:1090 [inline]
- mmput+0x179/0x4d0 kernel/fork.c:1111
- exec_mmap fs/exec.c:1077 [inline]
- flush_old_exec+0x8ef/0x1e80 fs/exec.c:1310
- load_elf_binary+0x8ae/0x4ab0 fs/binfmt_elf.c:846
- search_binary_handler fs/exec.c:1688 [inline]
- search_binary_handler+0x16d/0x570 fs/exec.c:1665
- exec_binprm fs/exec.c:1731 [inline]
- __do_execve_file.isra.0+0x12fc/0x2270 fs/exec.c:1851
- do_execveat_common fs/exec.c:1897 [inline]
- do_execve fs/exec.c:1914 [inline]
- __do_sys_execve fs/exec.c:1990 [inline]
- __se_sys_execve fs/exec.c:1985 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:1985
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f08bd760207
-Code: Bad RIP value.
-RSP: 002b:00007fff1a787ec8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
+Another option might be to move static inline functions
+where possible to an #include file (like sched.h) but the
+same possible dead function issue would still exist.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
