@@ -2,293 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1791817B437
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:13:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1AF517B454
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgCFCNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 21:13:14 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39426 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbgCFCNK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 21:13:10 -0500
-Received: by mail-lj1-f196.google.com with SMTP id f10so517654ljn.6;
-        Thu, 05 Mar 2020 18:13:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wN+PxT1y6TdL2REZHdTdY6w1jaE17t+W6WihxJCIMPI=;
-        b=RPhQfe9q/A15UWU4QtbLkcnk36g8DCDblpMf04CYoPlYPQtGDFaXFa1QCTGcIdxlp/
-         yw2tpo3Tv5UVOv5fXTS8fMAUWhBtDhOUW76K+JgBSjAg7kKSIxGeWUy5x2meb8w1wViE
-         I/rY5gc88/ui/AX5oGeeGnH2lS/e7/MT2R4+7FZzMITJTWZSVpGlxo25qZK5bvGdHoNJ
-         sEyjro6FQ7wDjy+bqJ8Y5XUF2oRpLy5WX5MmPYmcw+Rz0lI0cUw443dh7GFbxqB623KT
-         W5ls6KE/nmzZa8NK8F1txM8q4npEyl3/OgZN4uEvSjhTvhpv6UwlCRYDg+mSrBWp3lR/
-         mIjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wN+PxT1y6TdL2REZHdTdY6w1jaE17t+W6WihxJCIMPI=;
-        b=hYcHXk4pcZx4ZbxqIC5o1EPLvA4TU6VVIqePOsXRs9COOTiEZecUIcmz4Zc9Jbq1xi
-         qTTLOIISSzodyz+X+oHzX1uAAst3tOpO0/0f0r8gH6oSjxEQljmWh9GJaiZOn8/nRAPl
-         GTpTCX414CL0h+wbBfAv1nsSVUebSLdzfEQeBQLU7tFmtfDlg9MXG6qzb8vOl2uBRcVt
-         DyO8yu0r7lObiee1MfhbPlTUAN7nMFywU+UX+8dcgBklSrOjtb+ECo3bDudhHg4J9DVb
-         9J7OW9x1YC5dtYarte0DfVxB9mQsOHBQRO/ZgPFWGDPGKP4esE9JcOTf6i4IMsAMy7yf
-         i7mw==
-X-Gm-Message-State: ANhLgQ0KfNknGuEhycA+Qd+CpjjHobh/+UPkTkP0bf3Xqe4UEGUCaTkv
-        qFfYu88vQfFGub2mNsKn+zg=
-X-Google-Smtp-Source: ADFU+vulm5XnfKC9jn0ksDTf+tOure9qy0t3uz9GiW6W37MrJWYpfgPl9mblri3rCCA1GWJY18JzyQ==
-X-Received: by 2002:a2e:b8c3:: with SMTP id s3mr603454ljp.84.1583460787730;
-        Thu, 05 Mar 2020 18:13:07 -0800 (PST)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id l11sm10592772lfg.87.2020.03.05.18.13.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 18:13:07 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Billy Laws <blaws05@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrey Danin <danindrey@mail.ru>,
-        Gilles Grandou <gilles@grandou.net>,
-        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] partitions/tegra: Implement eMMC boot partitions scanning
-Date:   Fri,  6 Mar 2020 05:12:20 +0300
-Message-Id: <20200306021220.22097-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200306021220.22097-1-digetx@gmail.com>
-References: <20200306021220.22097-1-digetx@gmail.com>
+        id S1726674AbgCFCPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:15:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:62264 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbgCFCPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 21:15:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 18:15:31 -0800
+X-IronPort-AV: E=Sophos;i="5.70,520,1574150400"; 
+   d="scan'208";a="234638821"
+Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.168.47]) ([10.249.168.47])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 05 Mar 2020 18:15:26 -0800
+Subject: Re: [PATCH v3 2/8] x86/split_lock: Ensure
+ X86_FEATURE_SPLIT_LOCK_DETECT means the existence of feature
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, tony.luck@intel.com,
+        peterz@infradead.org, fenghua.yu@intel.com, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200206070412.17400-1-xiaoyao.li@intel.com>
+ <20200206070412.17400-3-xiaoyao.li@intel.com>
+ <20200303185524.GQ1439@linux.intel.com>
+ <20200303194134.GW1439@linux.intel.com>
+ <ab2a83e1-8ae4-b471-1968-7f6baaac602e@intel.com>
+ <20200305162311.GG11500@linux.intel.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+Message-ID: <20bc0919-72ac-0445-29f2-2b445230faad@intel.com>
+Date:   Fri, 6 Mar 2020 10:15:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200305162311.GG11500@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some NVIDIA Tegra devices store partition table on eMMC boot partition.
-In order to support this case, the tegra-partition parser will read out
-partition table from a boot partition and stash it for the main eMMC
-partition.
+On 3/6/2020 12:23 AM, Sean Christopherson wrote:
+> On Wed, Mar 04, 2020 at 09:49:14AM +0800, Xiaoyao Li wrote:
+>> On 3/4/2020 3:41 AM, Sean Christopherson wrote:
+>>> On Tue, Mar 03, 2020 at 10:55:24AM -0800, Sean Christopherson wrote:
+>>>> On Thu, Feb 06, 2020 at 03:04:06PM +0800, Xiaoyao Li wrote:
+>>>>> When flag X86_FEATURE_SPLIT_LOCK_DETECT is set, it should ensure the
+>>>>> existence of MSR_TEST_CTRL and MSR_TEST_CTRL.SPLIT_LOCK_DETECT bit.
+>>>>
+>>>> The changelog confused me a bit.  "When flag X86_FEATURE_SPLIT_LOCK_DETECT
+>>>> is set" makes it sound like the logic is being applied after the feature
+>>>> bit is set.  Maybe something like:
+>>>>
+>>>> ```
+>>>> Verify MSR_TEST_CTRL.SPLIT_LOCK_DETECT can be toggled via WRMSR prior to
+>>>> setting the SPLIT_LOCK_DETECT feature bit so that runtime consumers,
+>>>> e.g. KVM, don't need to worry about WRMSR failure.
+>>>> ```
+>>>>
+>>>>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+>>>>> ---
+>>>>>   arch/x86/kernel/cpu/intel.c | 41 +++++++++++++++++++++----------------
+>>>>>   1 file changed, 23 insertions(+), 18 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+>>>>> index 2b3874a96bd4..49535ed81c22 100644
+>>>>> --- a/arch/x86/kernel/cpu/intel.c
+>>>>> +++ b/arch/x86/kernel/cpu/intel.c
+>>>>> @@ -702,7 +702,8 @@ static void init_intel(struct cpuinfo_x86 *c)
+>>>>>   	if (tsx_ctrl_state == TSX_CTRL_DISABLE)
+>>>>>   		tsx_disable();
+>>>>> -	split_lock_init();
+>>>>> +	if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT))
+>>>>> +		split_lock_init();
+>>>>>   }
+>>>>>   #ifdef CONFIG_X86_32
+>>>>> @@ -986,9 +987,26 @@ static inline bool match_option(const char *arg, int arglen, const char *opt)
+>>>>>   static void __init split_lock_setup(void)
+>>>>>   {
+>>>>> +	u64 test_ctrl_val;
+>>>>>   	char arg[20];
+>>>>>   	int i, ret;
+>>>>> +	/*
+>>>>> +	 * Use the "safe" versions of rdmsr/wrmsr here to ensure MSR_TEST_CTRL
+>>>>> +	 * and MSR_TEST_CTRL.SPLIT_LOCK_DETECT bit do exist. Because there may
+>>>>> +	 * be glitches in virtualization that leave a guest with an incorrect
+>>>>> +	 * view of real h/w capabilities.
+>>>>> +	 */
+>>>>> +	if (rdmsrl_safe(MSR_TEST_CTRL, &test_ctrl_val))
+>>>>> +		return;
+>>>>> +
+>>>>> +	if (wrmsrl_safe(MSR_TEST_CTRL,
+>>>>> +			test_ctrl_val | MSR_TEST_CTRL_SPLIT_LOCK_DETECT))
+>>>>> +		return;
+>>>>> +
+>>>>> +	if (wrmsrl_safe(MSR_TEST_CTRL, test_ctrl_val))
+>>>>> +		return;a
+>>>>
+>>>> Probing the MSR should be skipped if SLD is disabled in sld_options, i.e.
+>>>> move this code (and setup_force_cpu_cap() etc...) down below the
+>>>> match_option() logic.  The above would temporarily enable SLD even if the
+>>>> admin has explicitly disabled it, e.g. makes the kernel param useless for
+>>>> turning off the feature due to bugs.
+>>>
+>>> Hmm, but this prevents KVM from exposing SLD to a guest when it's off in
+>>> the kernel, which would be a useful debug/testing scenario.
+>>>
+>>> Maybe add another SLD state to forcefully disable SLD?  That way the admin
+>>> can turn of SLD in the host kernel but still allow KVM to expose it to its
+>>> guests.  E.g.
+>>
+>> I don't think we need do this.
+>>
+>> IMO, this a the bug of split_lock_init(), which assume the initial value of
+>> MSR_TEST_CTRL is zero, at least bit SPLIT_LOCK of which is zero.
+>> This is problem, it's possible that BIOS has set this bit.
+> 
+> Hmm, yeah, that's a bug.  But it's a separate bug.
+>   
+>> split_lock_setup() here, is to check if the feature really exists. So
+>> probing MSR_TEST_CTRL and bit MSR_TEST_CTRL_SPLIT_LOCK_DETECT here. If there
+>> all exist, setup_force_cpu_cap(X86_FEATURE_SPLIT_LOCK_DETECT) to indicate
+>> feature does exist.
+>> Only when feature exists, there is a need to parse the command line config
+>> of split_lock_detect.
+> 
+> Toggling SPLIT_LOCK before checking the kernel param is bad behavior, e.g.
+> if someone has broken silicon that causes explosions if SPLIT_LOCK=1.  The
+> behavior is especially bad because cpu_set_core_cap_bits() enumerates split
+> lock detection using FMS, i.e. clearcpuid to kill CORE_CAPABILITIES
+> wouldn't work either.
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- block/partitions/tegra.c | 122 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 110 insertions(+), 12 deletions(-)
+It makes things complicated when we take all into account.
 
-diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
-index 6f150a7e3275..153928eef60b 100644
---- a/block/partitions/tegra.c
-+++ b/block/partitions/tegra.c
-@@ -25,6 +25,7 @@
- #include <linux/mmc/blkdev.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
-+#include <linux/mmc/mmc.h>
- 
- #include <soc/tegra/common.h>
- #include <soc/tegra/partition.h>
-@@ -50,7 +51,10 @@
- struct tegra_partition_table_parser {
- 	struct tegra_partition_table *pt;
- 	struct parsed_partitions *state;
-+	struct mmc_card *card;
- 	bool pt_entry_checked;
-+	unsigned int boot_id;
-+	bool snapshot_mode;
- 	sector_t sector;
- 	int boot_offset;
- 	u32 dev_instance;
-@@ -67,6 +71,7 @@ struct tegra_partition_type {
- 	char *name;
- };
- 
-+static struct tegra_partition_table *scratch_pt;
- static sector_t tegra_pt_sector_address;
- static sector_t tegra_pt_sectors_num;
- 
-@@ -224,6 +229,10 @@ static bool tegra_partition_valid(struct tegra_partition_table_parser *ptp,
- 		return false;
- 	}
- 
-+	/* size will be validated when ptp->snapshot_mode=false */
-+	if (ptp->snapshot_mode && size)
-+		return true;
-+
- 	sect_end = get_capacity(ptp->state->bdev->bd_disk);
- 
- 	/* eMMC boot partitions are below ptp->boot_offset */
-@@ -369,6 +378,7 @@ tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
- {
- 	struct mmc_card *card = mmc_bdev_to_card(ptp->state->bdev);
- 	const struct of_device_id *matched;
-+	int part_type, area_type;
- 	const u32 *sdhci_bases;
- 	u32 sdhci_base;
- 	unsigned int i;
-@@ -404,6 +414,32 @@ tegra_partition_table_emmc_boot_offset(struct tegra_partition_table_parser *ptp)
- 	ptp->dev_id       = TEGRA_PT_SDHCI_DEVICE_ID;
- 	ptp->dev_instance = i;
- 
-+	area_type = mmc_bdev_to_area_type(ptp->state->bdev);
-+
-+	if (WARN_ON(area_type < 0))
-+		return -1;
-+
-+	switch (area_type) {
-+	case MMC_BLK_DATA_AREA_BOOT:
-+		part_type = mmc_bdev_to_part_type(ptp->state->bdev);
-+
-+		if (WARN_ON(part_type < 0))
-+			return -1;
-+
-+		ptp->boot_id = part_type - EXT_CSD_PART_CONFIG_ACC_BOOT0;
-+		ptp->snapshot_mode = true;
-+		break;
-+
-+	case MMC_BLK_DATA_AREA_MAIN:
-+		break;
-+
-+	default:
-+		TEGRA_PT_ERR(ptp, "unexpected area_type: %u\n", area_type);
-+		return -1;
-+	}
-+
-+	ptp->card = card;
-+
- 	/*
- 	 * eMMC storage has two special boot partitions in addition to the
- 	 * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
-@@ -427,6 +463,9 @@ static int tegra_read_partition_table(struct tegra_partition_table_parser *ptp)
- 	Sector sect;
- 	void *part;
- 
-+	if (scratch_pt)
-+		return 1;
-+
- 	for (i = 0; i < ARRAY_SIZE(ptu->pt_parts); i++) {
- 		/*
- 		 * Partition table takes at maximum 4096 bytes, but
-@@ -449,29 +488,77 @@ static int tegra_read_partition_table(struct tegra_partition_table_parser *ptp)
- 
- int tegra_partition(struct parsed_partitions *state)
- {
--	struct tegra_partition_table_parser ptp = { .state = state };
-+	struct tegra_partition_table_parser ptp = { 0 };
- 	sector_t end_sector;
- 	int ret = 0;
- 
- 	if (!soc_is_tegra())
- 		return 0;
- 
-+	ptp.state = state;
-+
- 	ptp.boot_offset = tegra_partition_table_emmc_boot_offset(&ptp);
- 	if (ptp.boot_offset < 0)
- 		return 0;
- 
--	if (tegra_pt_sector_address < ptp.boot_offset) {
--		TEGRA_PT_INFO(&ptp,
--			      "scanning eMMC boot partitions unimplemented\n");
--		return 0;
--	}
-+	/*
-+	 * Some devices store partition table on boot MMC partition.
-+	 * In this case a "snapshot mode" will be used, which will
-+	 * only read->check->store partition table, the stored table
-+	 * will be used for the main MMC partition later on.
-+	 */
-+	if (ptp.snapshot_mode) {
-+		sector_t boot_start, boot_end, boot_size;
- 
--	ptp.pt = kmalloc(sizeof(*ptp.pt), GFP_KERNEL);
--	if (!ptp.pt)
--		return 0;
-+		/* partition is already snapshoted, no need to proceed */
-+		if (scratch_pt)
-+			return 0;
-+
-+		boot_size  = ptp.boot_offset / MMC_NUM_BOOT_PARTITION;
-+		boot_start = ptp.boot_id * boot_size;
-+		boot_end   = boot_start + boot_size;
-+
-+		/*
-+		 * Bail out if partition table isn't located here, at this MMC
-+		 * partition.
-+		 */
-+		if (tegra_pt_sector_address < boot_start ||
-+		    tegra_pt_sector_address >= boot_end)
-+			return 0;
-+
-+		ptp.boot_offset = boot_start;
-+
-+		/*
-+		 * Note that mmc_blk_probe() always registers boot partitions
-+		 * after the main and we rely on this feature, otherwise
-+		 * scratch_pt won't be released (although this is not a big
-+		 * deal).
-+		 */
-+		ptp.pt = kmalloc(sizeof(*ptp.pt), GFP_KERNEL);
-+		if (!ptp.pt)
-+			return 0;
-+
-+		ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
-+		end_sector = ptp.sector + tegra_pt_sectors_num;
- 
--	ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
--	end_sector = ptp.sector + tegra_pt_sectors_num;
-+	} else if (scratch_pt) {
-+		TEGRA_PT_INFO(&ptp, "using stashed partition table\n");
-+
-+		ptp.pt     = scratch_pt;
-+		ptp.sector = 0;
-+		end_sector = 1;
-+
-+	} else {
-+		if (tegra_pt_sector_address < ptp.boot_offset)
-+			return 0;
-+
-+		ptp.pt = kmalloc(sizeof(*ptp.pt), GFP_KERNEL);
-+		if (!ptp.pt)
-+			return 0;
-+
-+		ptp.sector = tegra_pt_sector_address - ptp.boot_offset;
-+		end_sector = ptp.sector + tegra_pt_sectors_num;
-+	}
- 
- 	/*
- 	 * Partition table is duplicated till the end_sector.
-@@ -501,9 +588,20 @@ int tegra_partition(struct parsed_partitions *state)
- 		ptp.sector += TEGRA_PT_SECTOR_SZ;
- 	}
- 
--	if (ret == 1)
-+	if (ret == 1) {
-+		if (ptp.snapshot_mode) {
-+			ptp.card->quirks |= MMC_QUIRK_RESCAN_MAIN_BLKDEV;
-+			scratch_pt = ptp.pt;
-+
-+			TEGRA_PT_INFO(&ptp, "stashed partition table\n");
-+
-+			return 0;
-+		}
-+
- 		strlcat(state->pp_buf, "\n", PAGE_SIZE);
-+	}
- 
-+	scratch_pt = NULL;
- 	kfree(ptp.pt);
- 
- 	return ret;
--- 
-2.25.1
+We check kernel param first in BSP, if it's sld_off, we don't set flag 
+X86_FEATURE_SPLIT_LOCK_DETECT. Of course during APs booting, there is no 
+X86_FEATURE_SPLIT_LOCK_DETECT, it won't do split_lock_init().
+
+However, due to X86_FEATURE_SPLIT_LOCK_DETECT flag not being set, 
+clearing SLD bit in each AP when sld_off in case BIOS has set it, won't 
+work. So in split_lock_setup() here, if sld_off, we don't set flag 
+X86_FEATURE_SPLIT_LOCK_DETECT, and we also need to send IPI to each AP 
+to clear SLD bit ?
 
