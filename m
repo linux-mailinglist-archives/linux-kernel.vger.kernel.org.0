@@ -2,96 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476B417C195
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDDF017C19B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgCFPUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:20:07 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:48809 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbgCFPUG (ORCPT
+        id S1727000AbgCFPVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:21:13 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42442 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbgCFPVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:20:06 -0500
-Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N8GIg-1jNUMH03KC-0148iI; Fri, 06 Mar 2020 16:20:05 +0100
-Received: by mail-qk1-f174.google.com with SMTP id m2so2601004qka.7;
-        Fri, 06 Mar 2020 07:20:04 -0800 (PST)
-X-Gm-Message-State: ANhLgQ1ztapImf/TF7izxXZYY+yMZmpsq14Dy/VxnUEeUNbv3hG20jgq
-        ZoUKWuVLw3PwURcK7PaUJT9kXR+XSEfOxgSCpHk=
-X-Google-Smtp-Source: ADFU+vufZPHP+TppGOZW5QjlzXWUqAwno1bdHUSLyQt8BGmVonEBwnWghv2NJiZ/9FOo5rQAcp9UJZT+y9VpV1BQp2w=
-X-Received: by 2002:a37:6285:: with SMTP id w127mr3368332qkb.138.1583508003820;
- Fri, 06 Mar 2020 07:20:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20200306130731.938808030702@mail.baikalelectronics.ru>
-In-Reply-To: <20200306130731.938808030702@mail.baikalelectronics.ru>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 6 Mar 2020 16:19:47 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0PjNS9+sAiPnDgkmLsnJ6=hR_Vk8oqe493t-Ad_mGa9w@mail.gmail.com>
-Message-ID: <CAK8P3a0PjNS9+sAiPnDgkmLsnJ6=hR_Vk8oqe493t-Ad_mGa9w@mail.gmail.com>
-Subject: Re: [PATCH 0/6] soc: Add Baikal-T1 SoC APB/AXI EHB and L2-cache drivers
-To:     Sergey.Semin@baikalelectronics.ru
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:tWjSFtoMxD0+al/G5LcUpGozeIODMqEIzgvKS3RHs77zhysbgWy
- KkvUQaXgBMBp8aPw9hCDFul0gsWw3y5dh4t4LNj9t1T7jFmJt4Qia1IbNEtww/zcC92CkV7
- 0uqYkl10cCzHrp8xlRF/9cEiDY1wTpW4zBNjpz22ice21EP7RbOiaCdOCotLyaTrOcK5evG
- UEkTfdwjviK65oziltvLQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Y78nN/XHQXk=:cOmcmHQWnOtHX0ReQZyqIQ
- oqNesC31b5Sl8tr0/wqkML9XXhe011ALOX3worZU6mUrH3E+fM/krQmEqadqqy1s4XZoScBuv
- qE1oSkzwtgckqKT7F1PSM1OQkOx5zzJzoKCQKIsN1tuNzYkx5GrltplhhruCGFl4PtDFjkwT8
- 2xIi/+FEE0RiE5o6QB6VEFtVc1wZcJTj6SoQQNI+hBaOiXmAuXmW3Ei2khOqz/xZ4mT+vkfu9
- ofRYNXpQ+ywoyHDCcJ0zi8i+Im4E/1qv5vaPdeQOaKEZschidbKqSNmXDQormTNtFdZSzlxkn
- SjQ44QbuEm8cvO0tCb7mUzynRUWXgLzaMkw/vBz4UrbPjodmCXAWMZkZ9rHI2vf9lILsb5KU+
- t6d5vbG8k/5Elg2vDlYOUw6qSsEFrw5CUDpdUKPmsS+Jm5g85ZXDWqWTfLC+M4/T7+WvdP9rE
- FKI3LyRYcixvdTG+SqvSPqlz3myXNnzM/Z5muhfylFUVfOUmda9DG8q+zzBi6vtPDJ55UeZJm
- BZGvNEmMRZSorM7zgL/Yn+Zw+FnunVdZsFfi3NGzFcbXQGNOr2u/Lwa5oVf2AXrl2P6DQ/Q45
- DV3T+LtcWuTPv8VztAvNjHw8+AgehyFZ95CFqu7waFdo8MdIaPVDbBoTcnxhjM9tZhqotw527
- XxUIJ4Az1y6dasASBb3IDQFqjcXl8vHe3/Y7PifPgBWL8un/6vVMjDyJUbgf/hzawvQ0v/jLA
- SxHLP1lif4ZWtLSQw31HC+UV58WGT3tfVsUya69MFkmR3w2AKI6Ku6j/L5Zo/RPjbuX+akqNA
- O/ayOYMzoTpkXr/eE6jnKThMLFZR7tk61NW/KHH4Sd/5KRyMCQ=
+        Fri, 6 Mar 2020 10:21:13 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 66so2723909otd.9;
+        Fri, 06 Mar 2020 07:21:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=o1t9Luxf+r0rMs+OmKtEKltB7C3/OdTEjpCMSdTFkZw=;
+        b=H1Z/Ug6siFGjzeRxcp4r9XfRXG9TQOds+XglqTN8tmexLbwQkPy3YIu7Y6yw6XkIql
+         k6AVC051wI+2MFk/blWhJoijNBLWQ2Nl3iH9Ghkyx+VVI0168BEhB4HTYdaEsdGT5cgE
+         X84DHGXdOlQMFAijQ6IidqIaL0iHoKlDo15HHTlq0B6unOJAAZLV5gTwcW0sO3GIjkXt
+         te1sUNkeOVIim33WqSJJkI+GoudPdM/KuY+YITO0uCy5Ac3Gy3g5Aelc2w2kVSiJAJ9/
+         Fon/BRGRZpCK7nCyPyNDB40RDQ2I6eMVC70Ru1JYCrG12E7Waj5Vcrorfw6pKypVzYjP
+         Fj8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=o1t9Luxf+r0rMs+OmKtEKltB7C3/OdTEjpCMSdTFkZw=;
+        b=jtTF0HzVtZDpQk+isttEpMbI7r9c3oJ7vkjxaSB7L+5CHQuyq9NltrNSjYt2YGHB9M
+         Nt1zUTJ6w3XrIowwDPC3Yi1/wQ2HLj9l+q4HaWWwAs6nm6ItmAAkPSOe/D2GsjbB8JMc
+         4yEQGOxjpW2adQJJsxg6iD8gDz5MDX+hc3QPGh/O1kaolArxbeneZtcV0DEzuXHXkCvf
+         W/7qkK1fw3HAhSiYPCIbmXXv41YKfk2GuJyVxTwJ/qclT1DFEB6wVV+yIebpfPoO8nz5
+         iyJcabJo2TDNZ2uDPPbjlzHtyB50oOLR9YXallHQkp/x/ad9KiUnib2G+FYGnrMcZl6A
+         Nk+A==
+X-Gm-Message-State: ANhLgQ1iUKUjHt51iIZvN9HabcV2F0Z9UtZezR2ynTew4Es+X74z+BjJ
+        K0ZFdQ76TmmuDKrHiiAWNQ==
+X-Google-Smtp-Source: ADFU+vubFXnYaJY/462LGLlSD/6SHQ5yVkERr3a9xoPfpKLvHMzkQ+KASmxemOqzXdkWKjKf9PvrJA==
+X-Received: by 2002:a9d:6544:: with SMTP id q4mr2819247otl.269.1583508072222;
+        Fri, 06 Mar 2020 07:21:12 -0800 (PST)
+Received: from serve.minyard.net ([47.184.164.37])
+        by smtp.gmail.com with ESMTPSA id m69sm11459902otc.78.2020.03.06.07.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 07:21:11 -0800 (PST)
+Received: from t560.minyard.net (unknown [IPv6:2001:470:b8f6:1b:7891:d81e:d9b4:ab4b])
+        by serve.minyard.net (Postfix) with ESMTPA id 2E94A18004F;
+        Fri,  6 Mar 2020 15:21:11 +0000 (UTC)
+From:   minyard@acm.org
+To:     linux-kernel@vger.kernel.org
+Cc:     Corey Minyard <cminyard@mvista.com>, stable@vger.kernel.org,
+        Adrian Reber <areber@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>
+Subject: [PATCH] pid: Fix error return value in some cases
+Date:   Fri,  6 Mar 2020 09:20:01 -0600
+Message-Id: <20200306152001.30442-1-minyard@acm.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 2:07 PM <Sergey.Semin@baikalelectronics.ru> wrote:
->
-> From: Serge Semin <fancer.lancer@gmail.com>
->
-> Aside from PCIe/SATA/DDR/I2C/CPU-reboot specific settings the Baikal-T1
-> system controller provides three vendor-specific blocks. In particular
-> there are two Errors Handler Blocks to detect and report an info regarding
-> any problems discovered on the AXI and APB buses. These are the main buses
-> utilized by the SoC devices to interact with each other. In addition there
-> is a way to tune the MIPS P5600 CM2 L2-cache up by setting the Tag/Data/WS
-> L2-to-RAM latencies. All of this functionality is implemented in the
-> APB/AXI EHB and L2-cache control block drivers to be a part of the kernel soc
-> subsystem (as being specific to the Baikal-T1 SoC) and introduced in the
-> framework of this patchset.
->
-> This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
-> commit 98d54f81e36b ("Linux 5.6-rc4").
+From: Corey Minyard <cminyard@mvista.com>
 
-I have no objection to the drivers, but I wonder if these should be
-in drivers/bus and drivers/memory instead of drivers/soc, which have
-similar drivers already. The driver for the L2 cache is not really a
-memory controller driver, but it may be close enough, and we
-already have a couple of different things in there.
+Recent changes to alloc_pid() allow the pid number to be specified on
+the command line.  If set_tid_size is set, then the code scanning the
+levels will hard-set retval to -EPERM, overriding it's previous -ENOMEM
+value.
 
-          Arnd
+After the code scanning the levels, there are error returns that do not
+set retval, assuming it is still set to -ENOMEM.
+
+In the first place, pid_ns_prepare_proc() returns its own error, just
+use that.
+
+In the second place:
+
+	if (!(ns->pid_allocated & PIDNS_ADDING))
+		goto out_unlock;
+
+a return value of -ENOMEM is probably wrong, since that means that the
+namespace is in deletion while this happened.  -EINVAL is probably a
+better choice.
+
+Fixes: 49cb2fc42ce4 "fork: extend clone3() to support setting a PID"
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: <stable@vger.kernel.org> # 5.5
+Cc: Adrian Reber <areber@redhat.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ kernel/pid.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 0f4ecb57214c..1921f7f4b236 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -248,7 +248,8 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 	}
+ 
+ 	if (unlikely(is_child_reaper(pid))) {
+-		if (pid_ns_prepare_proc(ns))
++		retval = pid_ns_prepare_proc(ns);
++		if (retval)
+ 			goto out_free;
+ 	}
+ 
+@@ -261,8 +262,10 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 
+ 	upid = pid->numbers + ns->level;
+ 	spin_lock_irq(&pidmap_lock);
+-	if (!(ns->pid_allocated & PIDNS_ADDING))
++	if (!(ns->pid_allocated & PIDNS_ADDING)) {
++		retval = -EINVAL;
+ 		goto out_unlock;
++	}
+ 	for ( ; upid >= pid->numbers; --upid) {
+ 		/* Make the PID visible to find_pid_ns. */
+ 		idr_replace(&upid->ns->idr, pid, upid->nr);
+-- 
+2.17.1
+
