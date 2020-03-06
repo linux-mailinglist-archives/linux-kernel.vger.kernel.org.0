@@ -2,130 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D733717BB4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE70A17BB54
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:14:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbgCFLOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:14:00 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:60699 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbgCFLOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:14:00 -0500
-Received: from [192.168.100.1] ([82.252.135.106]) by mrelayeu.kundenserver.de
- (mreue011 [213.165.67.103]) with ESMTPSA (Nemesis) id
- 1MbAxU-1jlifD0RGy-00bcww; Fri, 06 Mar 2020 12:13:47 +0100
-Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     YunQiang Su <syq@debian.org>, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, James.Bottomley@hansenpartnership.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        libc-alpha@sourceware.org
-References: <20200306080905.173466-1-syq@debian.org>
- <87r1y53npd.fsf@mid.deneb.enyo.de>
- <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu>
- <87mu8t3mlw.fsf@mid.deneb.enyo.de>
-From:   Laurent Vivier <laurent@vivier.eu>
-Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
- mQINBFYFJhkBEAC2me7w2+RizYOKZM+vZCx69GTewOwqzHrrHSG07MUAxJ6AY29/+HYf6EY2
- WoeuLWDmXE7A3oJoIsRecD6BXHTb0OYS20lS608anr3B0xn5g0BX7es9Mw+hV/pL+63EOCVm
- SUVTEQwbGQN62guOKnJJJfphbbv82glIC/Ei4Ky8BwZkUuXd7d5NFJKC9/GDrbWdj75cDNQx
- UZ9XXbXEKY9MHX83Uy7JFoiFDMOVHn55HnncflUncO0zDzY7CxFeQFwYRbsCXOUL9yBtqLer
- Ky8/yjBskIlNrp0uQSt9LMoMsdSjYLYhvk1StsNPg74+s4u0Q6z45+l8RAsgLw5OLtTa+ePM
- JyS7OIGNYxAX6eZk1+91a6tnqfyPcMbduxyBaYXn94HUG162BeuyBkbNoIDkB7pCByed1A7q
- q9/FbuTDwgVGVLYthYSfTtN0Y60OgNkWCMtFwKxRaXt1WFA5ceqinN/XkgA+vf2Ch72zBkJL
- RBIhfOPFv5f2Hkkj0MvsUXpOWaOjatiu0fpPo6Hw14UEpywke1zN4NKubApQOlNKZZC4hu6/
- 8pv2t4HRi7s0K88jQYBRPObjrN5+owtI51xMaYzvPitHQ2053LmgsOdN9EKOqZeHAYG2SmRW
- LOxYWKX14YkZI5j/TXfKlTpwSMvXho+efN4kgFvFmP6WT+tPnwARAQABtCJMYXVyZW50IFZp
- dmllciA8bGF1cmVudEB2aXZpZXIuZXU+iQI4BBMBAgAiBQJWBTDeAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAAKCRDzDDi9Py++PCEdD/oD8LD5UWxhQrMQCsUgLlXCSM7sxGLkwmmF
- ozqSSljEGRhffxZvO35wMFcdX9Z0QOabVoFTKrT04YmvbjsErh/dP5zeM/4EhUByeOS7s6Yl
- HubMXVQTkak9Wa9Eq6irYC6L41QNzz/oTwNEqL1weV1+XC3TNnht9B76lIaELyrJvRfgsp9M
- rE+PzGPo5h7QHWdL/Cmu8yOtPLa8Y6l/ywEJ040IoiAUfzRoaJs2csMXf0eU6gVBhCJ4bs91
- jtWTXhkzdl4tdV+NOwj3j0ukPy+RjqeL2Ej+bomnPTOW8nAZ32dapmu7Fj7VApuQO/BSIHyO
- NkowMMjB46yohEepJaJZkcgseaus0x960c4ua/SUm/Nm6vioRsxyUmWd2nG0m089pp8LPopq
- WfAk1l4GciiMepp1Cxn7cnn1kmG6fhzedXZ/8FzsKjvx/aVeZwoEmucA42uGJ3Vk9TiVdZes
- lqMITkHqDIpHjC79xzlWkXOsDbA2UY/P18AtgJEZQPXbcrRBtdSifCuXdDfHvI+3exIdTpvj
- BfbgZAar8x+lcsQBugvktlQWPfAXZu4Shobi3/mDYMEDOE92dnNRD2ChNXg2IuvAL4OW40wh
- gXlkHC1ZgToNGoYVvGcZFug1NI+vCeCFchX+L3bXyLMg3rAfWMFPAZLzn42plIDMsBs+x2yP
- +bkCDQRWBSYZARAAvFJBFuX9A6eayxUPFaEczlMbGXugs0mazbOYGlyaWsiyfyc3PStHLFPj
- rSTaeJpPCjBJErwpZUN4BbpkBpaJiMuVO6egrC8Xy8/cnJakHPR2JPEvmj7Gm/L9DphTcE15
- 92rxXLesWzGBbuYxKsj8LEnrrvLyi3kNW6B5LY3Id+ZmU8YTQ2zLuGV5tLiWKKxc6s3eMXNq
- wrJTCzdVd6ThXrmUfAHbcFXOycUyf9vD+s+WKpcZzCXwKgm7x1LKsJx3UhuzT8ier1L363RW
- ZaJBZ9CTPiu8R5NCSn9V+BnrP3wlFbtLqXp6imGhazT9nJF86b5BVKpF8Vl3F0/Y+UZ4gUwL
- d9cmDKBcmQU/JaRUSWvvolNu1IewZZu3rFSVgcpdaj7F/1aC0t5vLdx9KQRyEAKvEOtCmP4m
- 38kU/6r33t3JuTJnkigda4+Sfu5kYGsogeYG6dNyjX5wpK5GJIJikEhdkwcLM+BUOOTi+I9u
- tX03BGSZo7FW/J7S9y0l5a8nooDs2gBRGmUgYKqQJHCDQyYut+hmcr+BGpUn9/pp2FTWijrP
- inb/Pc96YDQLQA1q2AeAFv3Rx3XoBTGl0RCY4KZ02c0kX/dm3eKfMX40XMegzlXCrqtzUk+N
- 8LeipEsnOoAQcEONAWWo1HcgUIgCjhJhBEF0AcELOQzitbJGG5UAEQEAAYkCHwQYAQIACQUC
- VgUmGQIbDAAKCRDzDDi9Py++PCD3D/9VCtydWDdOyMTJvEMRQGbx0GacqpydMEWbE3kUW0ha
- US5jz5gyJZHKR3wuf1En/3z+CEAEfP1M3xNGjZvpaKZXrgWaVWfXtGLoWAVTfE231NMQKGoB
- w2Dzx5ivIqxikXB6AanBSVpRpoaHWb06tPNxDL6SVV9lZpUn03DSR6gZEZvyPheNWkvz7bE6
- FcqszV/PNvwm0C5Ju7NlJA8PBAQjkIorGnvN/vonbVh5GsRbhYPOc/JVwNNr63P76rZL8Gk/
- hb3xtcIEi5CCzab45+URG/lzc6OV2nTj9Lg0SNcRhFZ2ILE3txrmI+aXmAu26+EkxLLfqCVT
- ohb2SffQha5KgGlOSBXustQSGH0yzzZVZb+HZPEvx6d/HjQ+t9sO1bCpEgPdZjyMuuMp9N1H
- ctbwGdQM2Qb5zgXO+8ZSzwC+6rHHIdtcB8PH2j+Nd88dVGYlWFKZ36ELeZxD7iJflsE8E8yg
- OpKgu3nD0ahBDqANU/ZmNNarBJEwvM2vfusmNnWm3QMIwxNuJghRyuFfx694Im1js0ZY3LEU
- JGSHFG4ZynA+ZFUPA6Xf0wHeJOxGKCGIyeKORsteIqgnkINW9fnKJw2pgk8qHkwVc3Vu+wGS
- ZiJK0xFusPQehjWTHn9WjMG1zvQ5TQQHxau/2FkP45+nRPco6vVFQe8JmgtRF8WFJA==
-Message-ID: <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
-Date:   Fri, 6 Mar 2020 12:13:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726910AbgCFLOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:14:23 -0500
+Received: from mail-eopbgr70057.outbound.protection.outlook.com ([40.107.7.57]:53582
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726162AbgCFLOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 06:14:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JMYrDJ+RiLV+fUzn0Lv+jhLmLDb0FgPUQbbnlBNnafGt/x8HB5wLI/Mn2wg8bzIVr2GzCEJJTUVG5TlsapCLQ7pS5MlhJXtO8vQaDjAk6i7bIHmZ+aM7/xjm2rAO2yT4WnaMZknHrSwzZN4P0jm8+1+ht5UjbQIDF3Cq0xct/2fXVNKaA1UtjnGx4j7ANpFui3qxvZiBQP3Eegg1K3jBX9BPNrD//0McNwRkRZ3ht/oPOqa40npMT+dUx4Apyl8Rx4ZuRn+1eECKhU3HoebaUJ8dbSuQs7kPqMxY1RGAo8x2UbOjyHxuzyU2lNTzKVZf5MXzcKWOOqPyD5oz8CJCMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ezsP6mbDe+fbWpsAiBJaO+eQ/7GhRZnesqHLLSKP1ek=;
+ b=G/nR84zVpRMAkMTOFsSofB+9tRD6onr5iTnpCyeg8VxmZptz4jiE8Kxlt8+eyLZMF6oO0gH7qUUQiJdIK504if0OB7HuCGbBuwM1dG4MQ3e2jObabTcXdkEEExezwTcHBFK9IxTc+uSFbPU45c6ZDxHCWnyAptbdrpKGVu0IioHvMHt+F7tfesAYmzIvIgF+/CT5CvRQEHerbKEELgzcgvKz1yYBUZVQ49tDvRhwVGyAmt3xTYL1qD2uTwqek2PKvHRIoTLNKGvx+w7wWQ+E1FbclKzK4M2C7Nsj3X6dR1Fy8ZH4TxSPTOVUlrl5a35XKUXlY0Os+f3mlDhF++bg0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ezsP6mbDe+fbWpsAiBJaO+eQ/7GhRZnesqHLLSKP1ek=;
+ b=iZJCUlFZ6g5pLDq6ggTZxgA32vwq2+Mj5MJ/LequhgSMT/a+1/5O5Xu3clnNqJ8BsvmWGX7I0faHAP+221Bzk/ssq0sneVrsfFTx+juVDbFa61gbxBRsAEVEgfSEIyWacD4JhlcLbjQzCNSuVJ+GeHvMF+0ALF8oYjGMTLdNfXk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=daniel.baluta@oss.nxp.com; 
+Received: from VI1PR0402MB3839.eurprd04.prod.outlook.com (52.134.16.147) by
+ VI1PR0402MB2830.eurprd04.prod.outlook.com (10.175.21.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.14; Fri, 6 Mar 2020 11:14:17 +0000
+Received: from VI1PR0402MB3839.eurprd04.prod.outlook.com
+ ([fe80::35d0:31bc:91d9:ceb0]) by VI1PR0402MB3839.eurprd04.prod.outlook.com
+ ([fe80::35d0:31bc:91d9:ceb0%7]) with mapi id 15.20.2793.013; Fri, 6 Mar 2020
+ 11:14:17 +0000
+From:   Daniel Baluta <daniel.baluta@oss.nxp.com>
+To:     pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        kuninori.morimoto.gx@renesas.com, peter.ujfalusi@ti.com,
+        broonie@kernel.org, linux-imx@nxp.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Xiubo.Lee@gmail.com, shengjiu.wang@nxp.com,
+        linux-kernel@vger.kernel.org, tiwai@suse.com,
+        ranjani.sridharan@linux.intel.com, liam.r.girdwood@linux.intel.com,
+        sound-open-firmware@alsa-project.org,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH v2 0/2] Add generic FSL CPU DAI driver
+Date:   Fri,  6 Mar 2020 13:13:51 +0200
+Message-Id: <20200306111353.12906-1-daniel.baluta@oss.nxp.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR02CA0039.eurprd02.prod.outlook.com
+ (2603:10a6:208:d2::16) To VI1PR0402MB3839.eurprd04.prod.outlook.com
+ (2603:10a6:803:21::19)
 MIME-Version: 1.0
-In-Reply-To: <87mu8t3mlw.fsf@mid.deneb.enyo.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:nDVU3gbXMhuIHaWA6igwrvEm8+DoLfcyUuAw6APtA6KC4CXvzZc
- mThvkbG1chNbalJyZBbfQFD6bzb0fnAUfRs2TjSkh4JedOUTSEgnNghcgMgcNOkJuhk8K/D
- XV4FLlD0T2izOYEIvVi93q8JxjD8KlzIcbgDzaeVira78hSbzV9i53kIn46/jiajZhvfV8/
- eiPLejg6uHRZpmttJj4zA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EvOmeNnvFrE=:MK7GqCIo1Ebv4pKEb9p1xI
- lay5dwr9KxVVz6Xl53xfEybnhKSD/asTsPBOP1BBx5vUpOyULIRezBM31DOpzTm8E8t1mKP7E
- y1AbzSRmdgCv73fzswdhn3XR1K6erIf+sryz6Pmn2jYVq38fo05I9CU16TNdUuHLOc+ygcT2s
- odtaZFsb97gAbRoVZ0RCqfFvF3FfGAuuMwkJmqIKaUo2iLBsl5/JSZQTbZ/x1IARcaA7BTWF9
- 4tu5riMi7+s0NZmcqGzF/gqsUqSRsz7/sHdylIh40QkqecmDPzxOZCnrbmXVJgEazJc07vArZ
- RclAKUi96liaJNxZaQKNIxlrwaRzcJKG6C/WcDt/MhZi+dGikJReYq6lSiPL0UlzO3I96KjKy
- nWmx4L2KL5Z1i1hBh+x1jss6fZnrsTEsADXm3TPbaZ8XETgHAu/a0tmddz3LIA+omKHP0JR/w
- m9YSf4cYy6zLsKPhNsysEbD9C2jJZX1t7V9GIqCAnGOHEQwAShg/zj/njVN6zBXlZCrU7SM3/
- DWi4K+N05r7Da6YIYpgAJWBh+v9mhrCZ/ypHmAZPGSt02ajbtmAp4NfWNKsvV8pnD9u1h4Lm8
- G+rE+URBQwmzhGuNMY3gnuvf1rlk8CSfuCyvGAkORC1M/hojYxGRYGWqXSlY0qQitRNjc9gUD
- FjgzPKLVVfN3j6Vi8esHtu/dDIGEaFlYmm4f8vv+Uw92fQHJhDPbM80NTewbjZw+FvOTZHfFM
- 1SmGNnpBAG79WZbpnVQWZCGKw8fwOglLY68at9D9eo7oHiuE7Qh1fUKjYU3yYaHTxp/4RrRuS
- vf+4dCz1XAp1EkhPi8R6usvt6o76uTvgeEz5tXOqx5bk4BdJbc1aUrDBm58xKd/vEdXC6JQ
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from fsr-ub1864-103.ro-buh02.nxp.com (89.37.124.34) by AM0PR02CA0039.eurprd02.prod.outlook.com (2603:10a6:208:d2::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Fri, 6 Mar 2020 11:14:16 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [89.37.124.34]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 7c4ea8a6-a15d-4e81-83b1-08d7c1bf82ab
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB2830:|VI1PR0402MB2830:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB28307DD46000678FE7B8F357B8E30@VI1PR0402MB2830.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-Forefront-PRVS: 0334223192
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(376002)(346002)(396003)(199004)(189003)(26005)(44832011)(6506007)(7416002)(186003)(956004)(16526019)(8936002)(81156014)(66946007)(66476007)(6486002)(2616005)(316002)(2906002)(4744005)(81166006)(8676002)(66556008)(478600001)(5660300002)(6512007)(4326008)(6666004)(1076003)(86362001)(52116002)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2830;H:VI1PR0402MB3839.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+Received-SPF: None (protection.outlook.com: oss.nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QLm3slKn9JPS+yGemICk3VCio56efBc3lYeUUjNxSpI+FOsTm4F8fXnI0vcoQrlS6y2brTujZp1f4QKYh6VieTq/g2Y3N2JN1/WOvCoFBORO5GWhQYCOqiw73l+km+7beoA58F/GWIZb2rL/T/EhCtCIK8vG/2np4jg2jNTp0KcvI8FCKdF8fRNReOEwzkLUrmQ6MXtLzBsylavOKkOHehPIptvs4x95jUxWMJC/1MWeIXxTuhR3tyiUMH0PoXSoETksrS0IGgAGbkA2gALQ37rTxOYJ0hf1ymkeZYo3/O32D1i3EJHSZf6mpZAELYN7yc0LWYPNWhGqMObQSzv56mUB3D7Ua2n2b7HQMNKp4V+H+0DAWAuUrSn+ZtB5ZwjFPAJVQzTk4RwqmUah9ul5gpVit/foSEeUw+gmeUVDNmT1MqP12nlVNAes+5AUpYq+iBuK3XZCkD1I+sVTHEDDmtBliLuzNMoQ8XMmwPhBJxa8esdKUZkwKRkxRoSr6BmI
+X-MS-Exchange-AntiSpam-MessageData: s9fYuQvGBrm0FRVF/he4iYTKVwpCa/xDclU4YmSeYU0wR3XA9ocwk5v+68Kw2uq0EAX6lgZoGsgQ4u1uQlz/rKe6oCcNTGtr59icSndUsBJDzznbndyZcnd3uh6DvfwSQyAkSiaKNlQ0BBrgNKS1hw==
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c4ea8a6-a15d-4e81-83b1-08d7c1bf82ab
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2020 11:14:17.6824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XdeAYfU6JppZXeRz/LjFwMBxy+v3EmpQYEVMvO44cU9tS0BalIrLcat8MoTiUqn7fVNdti/JFElMJPDxMG6PWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2830
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 06/03/2020 à 09:37, Florian Weimer a écrit :
-> * Laurent Vivier:
-> 
->> Le 06/03/2020 à 09:13, Florian Weimer a écrit :
->>> * YunQiang Su:
->>>
->>>> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
->>>> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
->>>> +	NEW_AUX_ENT(AT_FLAGS, flags);
->>>
->>> Is it necessary to reuse AT_FLAGS?  I think it's cleaner to define a
->>> separate AT_ tag dedicated to binfmt_misc.
->>
->> Not necessary, but it seemed simpler and cleaner to re-use a flag that
->> is marked as unused and with a name matching the new role. It avoids to
->> patch other packages (like glibc) to add it as it is already defined.
-> 
-> You still need to define AT_FLAGS_PRESERVE_ARGV0.  At that point, you
-> might as well define AT_BINFMT and AT_BINFMT_PRESERVE_ARGV0.
-> 
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-Yes, you're right.
+On platforms with a DSP we need to split the resource handling between
+Application Processor (AP) and DSP. On platforms where the DSP
+doesn't have an easy access to resources, the AP will take care of
+configuring them. Resources handled by this generic driver are:
+clocks, power domains, pinctrl.
 
-But is there any reason to not reuse AT_FLAGS?
+Changes since v1:
+	- added dt-bindings patch
+	- add missing signed-off-by
+	- do not hardcode the name of DAI driver but derive it from
+	newly introduced dai_index property.
 
-Thanks,
-Laurent
+Daniel Baluta (2):
+  dt-bindings: sound: Add FSL CPU DAI bindings
+  ASoC: fsl: Add generic CPU DAI driver
+
+ .../devicetree/bindings/sound/fsl,dai.yaml    |  97 ++++++
+ sound/soc/fsl/Kconfig                         |   8 +
+ sound/soc/fsl/Makefile                        |   2 +
+ sound/soc/fsl/fsl_dai.c                       | 288 ++++++++++++++++++
+ 4 files changed, 395 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/fsl,dai.yaml
+ create mode 100644 sound/soc/fsl/fsl_dai.c
+
+-- 
+2.17.1
+
