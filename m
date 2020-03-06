@@ -2,129 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7CA817C33A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491B517C330
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCFQop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:44:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbgCFQoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:44:44 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39A3A2072A;
-        Fri,  6 Mar 2020 16:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583513083;
-        bh=uM6BBzCXa6HAUuOEGiA8P2jf81J77c6GVb5q3IeM3R4=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=suKLdZ7u99Tu+TZXXLBW/DTPMhhpoblbweU/aMPVupcPWtgSo/+q6IAK70+gMPfRL
-         ah5o8KFpGEyp2Ul18AA3nzRoMfgJYb3P5A7YF5u3e5JqpvT3J9JTC8iW7bZG8EUK/I
-         jZckRz4TQB2vJtmbOVkawf2lRhrHScoF9i7hpsxg=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 0E85935226BF; Fri,  6 Mar 2020 08:44:43 -0800 (PST)
-Date:   Fri, 6 Mar 2020 08:44:43 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-Message-ID: <20200306164443.GU2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
- <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
- <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
- <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
- <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
+        id S1726397AbgCFQlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:41:42 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.182]:39254 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726178AbgCFQlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 11:41:42 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 45A02A73A4E
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 10:41:41 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id AG2fjuTCQEfyqAG2fjxwLD; Fri, 06 Mar 2020 10:41:41 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YGd4yOt6uoISkY81G59OqxRmykcrtE06U9TVbe/QucQ=; b=c1Z0UpyHFgs/ANLeLX1hAufEn4
+        vLKduJy9pbBG77cCmwNLTBWfzDETINqrHJwsnGmeV6NoSoYtn756/scrbX8FjAbLqpzKpmXj7ftR0
+        4Nz7xpxeEynkSnAd2S8/Ock0nYBWt3QfynaBfkwaxxLak05WHeg1EYsYxzU9kNxOxvTUrR27XaMkV
+        72TZw1kT231uWQhKVAiiK3s0V3YMXLj09kYH5CeAWOdX0WF+evQGnFZhNeO2yvvQvpRrJ6O/P66JP
+        ohl2HdtfLoJJAK1jUfOUOsNEiHYN523zbdc0bFZxTJsi98IDOouCHMwanp2vMp6rM2Cx0H35S0B8k
+        wClzpDaw==;
+Received: from [201.166.190.53] (port=51758 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jAG2c-001q4M-Nb; Fri, 06 Mar 2020 10:41:39 -0600
+Date:   Fri, 6 Mar 2020 10:44:46 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] aio: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200306164446.GA21604@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.190.53
+X-Source-L: No
+X-Exim-ID: 1jAG2c-001q4M-Nb
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.190.53]:51758
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 04:36:20PM +0100, Jann Horn wrote:
-> On Fri, Mar 6, 2020 at 4:34 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > On 3/6/20 7:57 AM, Jann Horn wrote:
-> > > +paulmck
-> > >
-> > > On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
-> > >> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
-> > >>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
-> > >>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
-> > >>>>
-> > >>>> Hello,
-> > >>>>
-> > >>>> syzbot found the following crash on:
-> > >>>>
-> > >>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
-> > >>>> git tree:       upstream
-> > >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
-> > >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
-> > >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
-> > >>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> > >>>>
-> > >>>> Unfortunately, I don't have any reproducer for this crash yet.
-> > >>>>
-> > >>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > >>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
-> > >>>
-> > >>> +io_uring maintainers
-> > >>>
-> > >>> Here is a repro:
-> > >>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
-> > >>
-> > >> I've queued up a fix for this:
-> > >>
-> > >> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
-> > >
-> > > I believe that this fix relies on call_rcu() having FIFO ordering; but
-> > > <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
-> > > says:
-> > >
-> > > | call_rcu() normally acts only on CPU-local state[...] It simply
-> > > enqueues the rcu_head structure on a per-CPU list,
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Indeed.  For but one example, if there was a CPU-to-CPU migration between
-the two call_rcu() invocations, it would not be at all surprising for
-the two callbacks to execute out of order.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> > > Is this fix really correct?
-> >
-> > That's a good point, there's a potentially stronger guarantee we need
-> > here that isn't "nobody is inside an RCU critical section", but rather
-> > that we're depending on a previous call_rcu() to have happened. Hence I
-> > think you are right - it'll shrink the window drastically, since the
-> > previous callback is already queued up, but it's not a full close.
-> >
-> > Hmm...
-> 
-> You could potentially hack up the semantics you want by doing a
-> call_rcu() whose callback does another call_rcu(), or something like
-> that - but I'd like to hear paulmck's opinion on this first.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-That would work!
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-Or, alternatively, do an rcu_barrier() between the two calls to
-call_rcu(), assuming that the use case can tolerate rcu_barrier()
-overhead and latency.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-							Thanx, Paul
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/aio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 94f2b9256c0c..13c4be7f00f0 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -68,7 +68,7 @@ struct aio_ring {
+ 	unsigned	header_length;	/* size of aio_ring */
+ 
+ 
+-	struct io_event		io_events[0];
++	struct io_event		io_events[];
+ }; /* 128 bytes + ring size */
+ 
+ /*
+-- 
+2.25.0
+
