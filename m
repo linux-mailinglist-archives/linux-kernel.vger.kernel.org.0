@@ -2,67 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84AC317BD0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E903B17BCD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgCFMqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:46:31 -0500
-Received: from mail.ampi.com.tw ([211.22.54.232]:58794 "EHLO
-        HQIMSVA.ampi.com.tw" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726162AbgCFMqa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:46:30 -0500
-X-Greylist: delayed 1199 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 07:46:29 EST
-Received: from HQIMSVA.ampi.com.tw (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09AA1FC591;
-        Fri,  6 Mar 2020 20:26:30 +0800 (CST)
-Received: from HQIMSVA.ampi.com.tw (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5017FC58F;
-        Fri,  6 Mar 2020 20:26:29 +0800 (CST)
-Received: from mail.ampi.com.tw (unknown [192.168.1.248])
-        by HQIMSVA.ampi.com.tw (Postfix) with ESMTPS;
-        Fri,  6 Mar 2020 20:26:29 +0800 (CST)
-Received: from ampi.com.tw (localhost [127.0.0.1])
-        by mail.ampi.com.tw (8.14.4/8.14.4) with ESMTP id 026CX4kZ022065;
-        Fri, 6 Mar 2020 20:33:04 +0800
-From:   "=?UTF-8?Q?PMB_=EF=BF=BD?=\=?UTF-8?Q?=EF=BF=BD?=}=?UTF-8?Q?=EF=BF=BDa?=" 
-        <re_shu@ampi.com.tw>
-Reply-To: margaritlouisdreyfus402@gmail.com
-Subject: Greetings
-Date:   Fri, 6 Mar 2020 20:33:04 +0800
-Message-Id: <20200306123225.M82630@ampi.com.tw>
-X-Mailer: OpenWebMail 3.00_beta4 20140806 79bb7cc
-X-OriginatingIP: 105.112.98.163 (re_shu)
+        id S1726676AbgCFMfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 07:35:19 -0500
+Received: from mga03.intel.com ([134.134.136.65]:53296 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726182AbgCFMfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 07:35:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 04:35:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,522,1574150400"; 
+   d="scan'208";a="275524609"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Mar 2020 04:35:14 -0800
+Subject: Re: [PATCH 01/10] mmc: sdhci: Add quirk SDHCI_QUIRK2_SET_BUS_VOLTAGE
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
+Cc:     ulf.hansson@linaro.org, f.fainelli@gmail.com, phil@raspberrypi.org,
+        linux-kernel@vger.kernel.org
+References: <20200306103857.23962-1-nsaenzjulienne@suse.de>
+ <20200306103857.23962-2-nsaenzjulienne@suse.de>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <55ef25ae-5c73-7778-dfda-976809cf9fe6@intel.com>
+Date:   Fri, 6 Mar 2020 14:34:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200306103857.23962-2-nsaenzjulienne@suse.de>
 Content-Type: text/plain; charset=utf-8
-To:     undisclosed-recipients:;
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSVA-9.1.0.1600-8.5.0.1020-25272.007
-X-TM-AS-Result: No-1.876-5.0-31-10
-X-imss-scan-details: No-1.876-5.0-31-10
-X-TMASE-Version: IMSVA-9.1.0.1600-8.5.1020-25272.007
-X-TMASE-Result: 10-1.875700-10.000000
-X-TMASE-MatchedRID: hhOSuvkWiUhDfz/5WactQfQajs/Ywumppnx3aOUcbhfBzPli8mk6+iHz
-        vqYKd/egb4b0aOFlLSzd9XGF28xPmNNfhIP7TA2Df8dNT84FpMbB9eXEq1hUvuOjezwlfd8eo8W
-        MkQWv6iVPF1RaZs9plWdwhBvpFq/brHEFvjQmpqKfu3hNq8UwX47SjorJpyrt0C1sQRfQzEHEQd
-        G7H66TyHEqm8QYBtMOM3bznZNVcah3xBaDdHqqJmVtfTG4Duz+/XLvIqT1L+AwtjJ/n5g2QYFpd
-        pKW0UkRF8iRqE0Fh8oJ4cJiOypl8quUeWG2qHOblExlQIQeRG0=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-12:0,22:0,33:0,34:0-0
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+On 6/03/20 12:38 pm, Nicolas Saenz Julienne wrote:
+> Adds quirk for controllers whose bus power select register has to be set
+> even when powering SD cards from a regulator.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  drivers/mmc/host/sdhci.c | 5 +++++
+>  drivers/mmc/host/sdhci.h | 2 ++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index c59566363a42..c7fd87447457 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1920,6 +1920,11 @@ static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char mode,
+>  
+>  	mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
+>  
+> +	if (host->quirks2 & SDHCI_QUIRK2_SET_BUS_VOLTAGE) {
 
-I tried reaching you earlier on but was unsuccessful which made me to 
-initiate this email conversation again with good faith hoping that you will 
-respond. Kindly get back to me in reply if you will allow me to trust you
-as my humanitarian project manager.
+We don't really want to replace callbacks by quirks.
 
-Kind Regards,
+Replace sdhci_milbeaut_set_power() etc by a common fn in sdhci.c if you want.
 
-Mrs. Margarita Louis-Dreyfus.
-Chairperson of Louis-Dreyfus Commodities,
-Zurich, Switzerland.  
+> +		sdhci_set_power_noreg(host, mode, vdd);
+> +		return;
+> +	}
+> +
+>  	if (mode != MMC_POWER_OFF)
+>  		sdhci_writeb(host, SDHCI_POWER_ON, SDHCI_POWER_CONTROL);
+>  	else
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index cac2d97782e6..9531a4e5b148 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -484,6 +484,8 @@ struct sdhci_host {
+>   * block count.
+>   */
+>  #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
+> +/* Set bus voltage even when powering from an external regulator */
+> +#define SDHCI_QUIRK2_SET_BUS_VOLTAGE			(1<<19)
+>  
+>  	int irq;		/* Device IRQ */
+>  	void __iomem *ioaddr;	/* Mapped address */
+> 
 
