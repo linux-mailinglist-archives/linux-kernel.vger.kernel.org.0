@@ -2,52 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4609417C779
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D11A17C783
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:05:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCFVAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 16:00:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48680 "EHLO mail.kernel.org"
+        id S1726798AbgCFVFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 16:05:46 -0500
+Received: from mga07.intel.com ([134.134.136.100]:11923 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbgCFVAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 16:00:06 -0500
-Subject: Re: [GIT PULL] Btrfs fix for 5.6-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583528406;
-        bh=0bQBUC30ukVWBt3o8n3o6kg3sYFkiEpbVf1bt28fNeM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=gqCk8Wj3UEqkvRNV4EuNKjCGsdrunzQcaw3A9QRwH2jVESYWUkRhtUj0aaKYM1c7s
-         2OJa+kD21NZq6kkbRj81kX4CIl+MCF8jjoxnIjAMC0GCNJoIdr1pmDfCKBEkBAOiuh
-         ELWnVyRTyqbxOZdmjpzn8Chq83SXaRZN+oSdNtYY=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1583514264.git.dsterba@suse.com>
-References: <cover.1583514264.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1583514264.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.6-rc4-tag
-X-PR-Tracked-Commit-Id: e7a04894c766daa4248cb736efee93550f2d5872
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 30fe0d07fd7b27d41d9b31a224052cc4e910947a
-Message-Id: <158352840641.8472.10740926899785889939.pr-tracker-bot@kernel.org>
-Date:   Fri, 06 Mar 2020 21:00:06 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726194AbgCFVFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 16:05:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 13:05:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
+   d="scan'208";a="275688904"
+Received: from jrbond-mobl.amr.corp.intel.com (HELO [10.254.11.58]) ([10.254.11.58])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Mar 2020 13:05:43 -0800
+Subject: Re: [PATCH 1/8] soundwire: bus_type: add master_device/driver support
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Hui Wang <hui.wang@canonical.com>, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200227223206.5020-1-pierre-louis.bossart@linux.intel.com>
+ <20200227223206.5020-2-pierre-louis.bossart@linux.intel.com>
+ <20200303054136.GP4148@vkoul-mobl>
+ <8a04eda6-cbcf-582f-c229-5d6e4557344b@linux.intel.com>
+ <20200304095312.GT4148@vkoul-mobl>
+ <05dbe43c-abf8-9d5a-d808-35bf4defe4ba@linux.intel.com>
+ <20200305063646.GW4148@vkoul-mobl>
+ <eb30ac49-788f-b856-6fcf-84ae580eb3c8@linux.intel.com>
+ <20200306050115.GC4148@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <4fabb135-6fbb-106f-44fd-8155ea716c00@linux.intel.com>
+Date:   Fri, 6 Mar 2020 09:40:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200306050115.GC4148@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri,  6 Mar 2020 18:29:47 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.6-rc4-tag
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/30fe0d07fd7b27d41d9b31a224052cc4e910947a
+>>> Why do you need a extra driver for this. Do you have another set of
+>>> device object and driver for DSP code? But you do manage that, right?
+>>> I am proposing to simplify the device model here and have only one
+>>> device (SOF PCI) and driver (SOF PCI driver), which is created by actual
+>>> bus (PCI here) as you have in rest of the driver like HDA, DSP etc.
+>>>
+>>> I have already recommended is to make the int-sdw a module which is
+>>> invoked by SOF PCI driver code (thereby all code uses SOF PCI device and
+>>> SOF PCI driver) directly. The DSP in my time for skl was a separate
+>>> module but used the parent objects.
+>>>
+>>> The SOF sdw init (the place where sdw routines are invoked after DSP
+>>> load) can call sdw_probe and startup. Based on DSP sequencing you can
+>>> call these functions directly without waiting for extra device to be
+>>> probed etc.
+>>>
+>>> I feel your flows will be greatly simplified as a result of this.
+>>
+>> Not at all, no. This is not a simplification but an extremely invasive
+>> proposal.
+>>
+>> The parent-child relationship is extremely useful for power management, and
+>> guarantees that the PCI device remains on while one or more of the masters
+>> are used, and conversely can suspend when all links are idle. I currently
+>> don't need to do anything, it's all taken care of by the framework.
+>>
+>> If I have to do all the power management at the PCI device level, then I
+>> will need to keep track of which links are currently active. All these links
+>> are used independently, so it's racy as hell to keep track of the usage when
+>> the pm framework already does so quite elegantly. You really want to use the
+>> pm_runtime_get/put refcount for each master device, not manage them from the
+>> PCI level.
+> 
+> Not at all, you still can call pm_runtime_get/put() calls in sdw module
+> for PCI device. That doesn't change at all.
+> 
+> Only change is for suspend/resume you have callbacks from PCI driver
+> rather than pm core.
+There are two other related issues that you didn't mention.
 
-Thank you!
+the ASoC layer does require a driver with a 'name' for the components 
+registered with the master device. So if you don't have a driver for the 
+master device, the DAIs will be associated with the PCI device.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+But the ASoC core does make pm_runtime calls on its own,
+
+soc_pcm_open(struct snd_pcm_substream *substream)
+{
+...
+	for_each_rtd_components(rtd, i, component)
+		pm_runtime_get_sync(component->dev);
+
+and if the device that's associated with the DAI is the PCI device, then 
+that will not result in the relevant master IP being activated, only the 
+PCI device refcount will be increased - meaning there is no hook that 
+would tell the PCI layer to turn on a specific link.
+
+What you are recommending would be an all-or-nothing solution with all 
+links on or all links off, which beats the purpose of having independent 
+link-level power management.
+
+Given these limitations, I am not willing to change directions on power 
+management. We have a tried-and-tested solution, backed by months of 
+validation, and you are sending down an unproven path with your suggestion.
+
+So what are the options?
+
+a) stay with the current approach and platform devices. Greg's vetoed 
+this so we can move to the next one.
+
+b) use a solution similar to what we suggested back in October, and very 
+similar to the GreyBus host device, which creates a master device but 
+did not require a full-blown master_driver, it only uses the name and 
+pm_ops fields of the raw driver structure, which is all we really need.
+
+the basic usage from the PCI layer was
+
+struct driver {
+    .name = "my-driver",
+    .pm_ops = &my_ops,
+} my_driver;
+
+md = sdw_master_device_add(&my_driver, parent, fw_node, link_id)
+
+and all the rest is platform-specific/optional.
+
+sdw_intel_master_device_init(md);
+      allocations and call to sdw_bus_master_add()
+sdw_intel_master_device_startup(md);
+      hardware enablement
+sdw_intel_master_device_wake_process(md).
+      deal with wake information coming from PCI layer.
+
+We liked this solution since it was as simple as can be, but you 
+rejected it on the grounds that the probe/init should be handled "by the 
+core" to quote your own words, but looking back it may be the best 
+solution for all. There is no additional overhead, and it deals with 
+both the ALSA name requirement and lets us us power management. If you 
+don't have power management at the link level you don't have to use the 
+pm_ops.
+
+c) use the proposal in this patch with a more elaborate driver handling. 
+Yes it requires a full-blown driver with callbacks but it addresses your 
+prior feedback that the core handles the probe/remove operations.
+
+All these solutions are proven to work. Pick one.
+
+If you want to suggest another, then please provide a pseudo API and 
+address the non-negotiable requirement of independent link-level power 
+management.
+
+Thanks
+-Pierre
+
+
+
+
+
+
+
+
