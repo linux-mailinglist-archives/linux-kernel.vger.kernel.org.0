@@ -2,64 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 110EF17C893
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 23:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 536D017C898
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 23:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbgCFWzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 17:55:03 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:38650 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbgCFWzD (ORCPT
+        id S1726359AbgCFW5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 17:57:30 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40206 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbgCFW53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 17:55:03 -0500
-Received: by mail-io1-f72.google.com with SMTP id x2so2513774iog.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 14:55:03 -0800 (PST)
+        Fri, 6 Mar 2020 17:57:29 -0500
+Received: by mail-io1-f66.google.com with SMTP id d8so3690474ion.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 14:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language;
+        bh=BeTIV8Blb2bscQU2tgJ8V+Zgbz1bhhhaWIgmESqFo5Y=;
+        b=UNfpX8cR+Bs+xh5MvTq64F9IxBwUvToUcCoUDlz1BA7+ijTynKh4wgGi27nRfcACGj
+         GZIJb3d6zsNHFneTmNI9Am2BAS+XC8rPBg5nVuUrDcUdTy83ajSJGsmEHi9l66Z911Om
+         qUz5hIgiFjT15ciqsoYf0bYsW3kfSOQ/DURx8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=m8ypvxz+cK1JIvyLt/BMDjKohGZTA1dUlqmR0UXYtMg=;
-        b=A+Ng3XWxnjcz2e+ASPnI+1zDq7UqMLpXBrAoOiPj5duBONNgHvXb6JI15yXqWVsALn
-         4FuK1SsmZnEi2muABRz4YuJRhY8xYNrUOxXHBlv66KH2E/3A+hMry3HD6fFRDoz5C403
-         1m1/APLGHw2Jzs4kl7xVDQ3GwI4Dd9IUaI9udK0UAV1rhbAH2DQcovYVPmNtEucC/NuM
-         TMElHEEXOpY9Ffa/KPek0Hzgf4vWmI2MdETwsTUdY9jFzrEBR0GN7oAR4IUf1qGuXC/K
-         xJde8/zz+pqp9GaSEPvxLICPXBl2MYF1jVMsTaagYM+8zoWTCup2E41Y1M5Zrt3K6rU8
-         AoSQ==
-X-Gm-Message-State: ANhLgQ3CesJQ1WPPS31Uu/AMj573NkX1S6YOggJSgGjyeQWB/w3+N1Mv
-        /iii5ntlqEV53gNH/RvBv13Dm9myt+igQ7xTV4yEYfqEawe+
-X-Google-Smtp-Source: ADFU+vvl/Pw/zrYZi3hTs86i/nHL37mFWPQxthR6YKLbvs4Bfi5y+N2n+47G78N/xSSVGDM+PUK1aVBGtLcC1MK5QKPC+D5KtvQh
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language;
+        bh=BeTIV8Blb2bscQU2tgJ8V+Zgbz1bhhhaWIgmESqFo5Y=;
+        b=kByIGdNih6j7Z+kH9TG5GB4wrQGKCUc9CxCA+fs9vdgZ8RKGKNBLpbTU/gNge6QJ0B
+         yEYToGkzuEAuUHncfklM/y3aeGK/rKT+fpTO5fsa+VH0PZm4pKJtmF034magrpdwsaPm
+         qegmQp4LzKtuF6CXhARsahA3QVzimufQhS9ZeVpzvlaYJUrl8SuiXlEbjQ7oDS66N8n7
+         idFybUzx9fhKiLZLv7h4QwTMkOS+u6WkHg9WpJIbgRuSAR+QV28NykoQw1RYSiHGDMX0
+         JQnipca2hy9hzm5GQs8tIB4j1X4c6Bkx1b9S0FgOasK41Ym6JOqh+gRVr0ZXFn/wEJVP
+         Hufg==
+X-Gm-Message-State: ANhLgQ0d+MNav2CdQGJUzGnZmiO4mmHp5yFRS7Yr2+B9LIRKVAyWuQzl
+        7HLBjqoH7j0aP45G/HdYrKtCUA==
+X-Google-Smtp-Source: ADFU+vusP6+faYm/JgMp+FqgBpC8rSfhwpjR2JYbjYaZQVPTgibO5YDm5Bwcd1q11M9ZbD9ER5gpqA==
+X-Received: by 2002:a02:962e:: with SMTP id c43mr5408955jai.26.1583535449050;
+        Fri, 06 Mar 2020 14:57:29 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id a21sm8637030ioh.29.2020.03.06.14.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2020 14:57:28 -0800 (PST)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Subject: [GIT PULL] Kselftest kunit update for Linux 5.6-rc5
+Message-ID: <4d298617-f061-dda0-bde0-901c48247b4a@linuxfoundation.org>
+Date:   Fri, 6 Mar 2020 15:57:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:17c4:: with SMTP id 187mr4941793iox.143.1583535302639;
- Fri, 06 Mar 2020 14:55:02 -0800 (PST)
-Date:   Fri, 06 Mar 2020 14:55:02 -0800
-In-Reply-To: <20200304135649.GE31668@ziepe.ca>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003406b805a0378b77@google.com>
-Subject: Re: BUG: corrupted list in cma_listen_on_dev
-From:   syzbot <syzbot+2b10b240fbbed30f10fb@syzkaller.appspotmail.com>
-To:     chuck.lever@oracle.com, dledford@redhat.com, jgg@ziepe.ca,
-        leon@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, parav@mellanox.com,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed;
+ boundary="------------0B8DD01EAE523C777F6EDB82"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This is a multi-part message in MIME format.
+--------------0B8DD01EAE523C777F6EDB82
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has tested the proposed patch and the reproducer did not trigger crash:
+Hi Linus,
 
-Reported-and-tested-by: syzbot+2b10b240fbbed30f10fb@syzkaller.appspotmail.com
+Please pull the following Keselftest update for Linux 5.6-rc5.
 
-Tested on:
+This Kselftest update for Linux 5.6-rc5 consists of a cleanup patch
+to undo changes to global .gitignore that added selftests/lkdtm
+objects and add them to a local selftests/lkdtm/.gitignore.
 
-commit:         5e29d144 RDMA/mlx5: Prevent UMR usage with RO only when we..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d613b606deeaad7
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b10b240fbbed30f10fb
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+Summary of Linus's comments on local vs. global gitignore scope:
 
-Note: testing is done by a robot and is best-effort only.
+- Keep local gitignore patterns in local files.
+- Put only global gitignore patterns in the top-level gitignore file.
+
+Local scope keeps things much better separated. It also incidentally
+means that if a directory gets renamed, the gitignore file continues
+to work unless in the case of renaming the actual files themselves that
+are named in the gitignore.
+
+Diff is attached.
+
+I took the liberty to include summary of your comments on local vs
+global gitignore scope in the commit message.
+
+thanks,
+-- Shuah
+
+----------------------------------------------------------------
+The following changes since commit ef89d0545132d685f73da6f58b7e7fe002536f91:
+
+   selftests/rseq: Fix out-of-tree compilation (2020-02-20 08:57:12 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
+tags/linux-kselftest-5.6-rc5
+
+for you to fetch changes up to f3a60268f5cec7dae0e9713f5fc65aecc3734c09:
+
+   selftest/lkdtm: Use local .gitignore (2020-03-02 08:39:39 -0700)
+
+----------------------------------------------------------------
+linux-kselftest-5.6-rc5
+
+This Kselftest update for Linux 5.6-rc5 consists of a cleanup patch
+to undo changes to global .gitignore that added selftests/lkdtm
+objects and add them to a local selftests/lkdtm/.gitignore.
+
+Summary of Linus's comments on local vs. global gitignore scope:
+
+- Keep local gitignore patterns in local files.
+- Put only global gitignore patterns in the top-level gitignore file.
+
+Local scope keeps things much better separated. It also incidentally
+means that if a directory gets renamed, the gitignore file continues
+to work unless in the case of renaming the actual files themselves that
+are named in the gitignore.
+
+----------------------------------------------------------------
+Christophe Leroy (1):
+       selftest/lkdtm: Use local .gitignore
+
+  .gitignore                               | 4 ----
+  tools/testing/selftests/lkdtm/.gitignore | 2 ++
+  2 files changed, 2 insertions(+), 4 deletions(-)
+  create mode 100644 tools/testing/selftests/lkdtm/.gitignore
+
+----------------------------------------------------------------
+
+--------------0B8DD01EAE523C777F6EDB82
+Content-Type: text/x-patch; charset=UTF-8;
+ name="linux-kselftest-5.6-rc5.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="linux-kselftest-5.6-rc5.diff"
+
+diff --git a/.gitignore b/.gitignore
+index 2763fce8766c..72ef86a5570d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -100,10 +100,6 @@ modules.order
+ /include/ksym/
+ /arch/*/include/generated/
+ 
+-# Generated lkdtm tests
+-/tools/testing/selftests/lkdtm/*.sh
+-!/tools/testing/selftests/lkdtm/run.sh
+-
+ # stgit generated dirs
+ patches-*
+ 
+diff --git a/tools/testing/selftests/lkdtm/.gitignore b/tools/testing/selftests/lkdtm/.gitignore
+new file mode 100644
+index 000000000000..f26212605b6b
+--- /dev/null
++++ b/tools/testing/selftests/lkdtm/.gitignore
+@@ -0,0 +1,2 @@
++*.sh
++!run.sh
+
+--------------0B8DD01EAE523C777F6EDB82--
