@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936FC17C078
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4442F17C0A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:44:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbgCFOm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 09:42:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53838 "EHLO
+        id S1727565AbgCFOnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 09:43:33 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53798 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbgCFOmV (ORCPT
+        with ESMTP id S1727097AbgCFOmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:42:21 -0500
+        Fri, 6 Mar 2020 09:42:17 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAEB5-0006Jv-QA; Fri, 06 Mar 2020 15:42:16 +0100
+        id 1jAEB2-0006KN-Dl; Fri, 06 Mar 2020 15:42:12 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0B24D1C21DB;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7D4221C21DC;
         Fri,  6 Mar 2020 15:42:08 +0100 (CET)
-Date:   Fri, 06 Mar 2020 14:42:07 -0000
-From:   "tip-bot2 for Valentin Schneider" <tip-bot2@linutronix.de>
+Date:   Fri, 06 Mar 2020 14:42:08 -0000
+From:   "tip-bot2 for Thara Gopinath" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Fix kernel build warning in
- test_idle_cores() for !SMT NUMA
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
+Subject: [tip: sched/core] sched/fair: Enable tuning of decay period
+Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200303110258.1092-3-mgorman@techsingularity.net>
-References: <20200303110258.1092-3-mgorman@techsingularity.net>
+In-Reply-To: <20200222005213.3873-10-thara.gopinath@linaro.org>
+References: <20200222005213.3873-10-thara.gopinath@linaro.org>
 MIME-Version: 1.0
-Message-ID: <158350572776.28353.575560040960927128.tip-bot2@tip-bot2>
+Message-ID: <158350572817.28353.10208505701731851476.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,81 +48,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     76c389ab2b5e300698eab87f9d4b7916f14117ba
-Gitweb:        https://git.kernel.org/tip/76c389ab2b5e300698eab87f9d4b7916f14117ba
-Author:        Valentin Schneider <valentin.schneider@arm.com>
-AuthorDate:    Tue, 03 Mar 2020 11:02:57 
+Commit-ID:     05289b90c2e40ae80f5c70431cd0be4cc8a6038d
+Gitweb:        https://git.kernel.org/tip/05289b90c2e40ae80f5c70431cd0be4cc8a6038d
+Author:        Thara Gopinath <thara.gopinath@linaro.org>
+AuthorDate:    Fri, 21 Feb 2020 19:52:13 -05:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Mar 2020 12:57:22 +01:00
+CommitterDate: Fri, 06 Mar 2020 12:57:21 +01:00
 
-sched/fair: Fix kernel build warning in test_idle_cores() for !SMT NUMA
+sched/fair: Enable tuning of decay period
 
-Building against the tip/sched/core as ff7db0bf24db ("sched/numa: Prefer
-using an idle CPU as a migration target instead of comparing tasks") with
-the arm64 defconfig (which doesn't have CONFIG_SCHED_SMT set) leads to:
+Thermal pressure follows pelt signals which means the decay period for
+thermal pressure is the default pelt decay period. Depending on SoC
+characteristics and thermal activity, it might be beneficial to decay
+thermal pressure slower, but still in-tune with the pelt signals.  One way
+to achieve this is to provide a command line parameter to set a decay
+shift parameter to an integer between 0 and 10.
 
-  kernel/sched/fair.c:1525:20: warning: 'test_idle_cores' declared 'static' but never defined [-Wunused-function]
-   static inline bool test_idle_cores(int cpu, bool def);
-		      ^~~~~~~~~~~~~~~
-
-Rather than define it in its own CONFIG_SCHED_SMT #define island, bunch it
-up with test_idle_cores().
-
-Reported-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-[mgorman@techsingularity.net: Edit changelog, minor style change]
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Fixes: ff7db0bf24db ("sched/numa: Prefer using an idle CPU as a migration target instead of comparing tasks")
-Link: https://lkml.kernel.org/r/20200303110258.1092-3-mgorman@techsingularity.net
+Link: https://lkml.kernel.org/r/20200222005213.3873-10-thara.gopinath@linaro.org
 ---
- kernel/sched/fair.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt | 16 ++++++++++++++-
+ kernel/sched/core.c                             |  2 +-
+ kernel/sched/fair.c                             | 15 ++++++++++++-
+ kernel/sched/sched.h                            | 18 ++++++++++++++++-
+ 4 files changed, 49 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c07815d..dac8245 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4392,6 +4392,22 @@
+ 			incurs a small amount of overhead in the scheduler
+ 			but is useful for debugging and performance tuning.
+ 
++	sched_thermal_decay_shift=
++			[KNL, SMP] Set a decay shift for scheduler thermal
++			pressure signal. Thermal pressure signal follows the
++			default decay period of other scheduler pelt
++			signals(usually 32 ms but configurable). Setting
++			sched_thermal_decay_shift will left shift the decay
++			period for the thermal pressure signal by the shift
++			value.
++			i.e. with the default pelt decay period of 32 ms
++			sched_thermal_decay_shift   thermal pressure decay pr
++				1			64 ms
++				2			128 ms
++			and so on.
++			Format: integer between 0 and 10
++			Default is 0.
++
+ 	skew_tick=	[KNL] Offset the periodic timer tick per cpu to mitigate
+ 			xtime_lock contention on larger systems, and/or RCU lock
+ 			contention on all systems with CONFIG_MAXSMP set.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 3e620fe..4d76df3 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3595,7 +3595,7 @@ void scheduler_tick(void)
+ 
+ 	update_rq_clock(rq);
+ 	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
+-	update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure);
++	update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure);
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 	calc_global_load_tick(rq);
+ 	psi_task_tick(rq);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 79bb423..bba9452 100644
+index aa51286..79bb423 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1533,9 +1533,6 @@ static inline bool is_core_idle(int cpu)
- 	return true;
- }
+@@ -86,6 +86,19 @@ static unsigned int normalized_sysctl_sched_wakeup_granularity	= 1000000UL;
  
--/* Forward declarations of select_idle_sibling helpers */
--static inline bool test_idle_cores(int cpu, bool def);
--
- struct task_numa_env {
- 	struct task_struct *p;
+ const_debug unsigned int sysctl_sched_migration_cost	= 500000UL;
  
-@@ -1571,9 +1568,11 @@ numa_type numa_classify(unsigned int imbalance_pct,
- 	return node_fully_busy;
- }
- 
-+#ifdef CONFIG_SCHED_SMT
-+/* Forward declarations of select_idle_sibling helpers */
-+static inline bool test_idle_cores(int cpu, bool def);
- static inline int numa_idle_core(int idle_core, int cpu)
- {
--#ifdef CONFIG_SCHED_SMT
- 	if (!static_branch_likely(&sched_smt_present) ||
- 	    idle_core >= 0 || !test_idle_cores(cpu, false))
- 		return idle_core;
-@@ -1584,10 +1583,15 @@ static inline int numa_idle_core(int idle_core, int cpu)
- 	 */
- 	if (is_core_idle(cpu))
- 		idle_core = cpu;
--#endif
- 
- 	return idle_core;
- }
-+#else
-+static inline int numa_idle_core(int idle_core, int cpu)
++int sched_thermal_decay_shift;
++static int __init setup_sched_thermal_decay_shift(char *str)
 +{
-+	return idle_core;
++	int _shift = 0;
++
++	if (kstrtoint(str, 0, &_shift))
++		pr_warn("Unable to set scheduler thermal pressure decay shift parameter\n");
++
++	sched_thermal_decay_shift = clamp(_shift, 0, 10);
++	return 1;
 +}
-+#endif
- 
++__setup("sched_thermal_decay_shift=", setup_sched_thermal_decay_shift);
++
+ #ifdef CONFIG_SMP
  /*
-  * Gather all necessary information to make NUMA balancing placement
+  * For asym packing, by default the lower numbered CPU has higher priority.
+@@ -7760,7 +7773,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ 
+ 	decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+ 		  update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
+-		  update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure) |
++		  update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure) |
+ 		  update_irq_load_avg(rq, 0);
+ 
+ 	if (others_have_blocked(rq))
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 6c839f8..7f1a85b 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1127,6 +1127,24 @@ static inline u64 rq_clock_task(struct rq *rq)
+ 	return rq->clock_task;
+ }
+ 
++/**
++ * By default the decay is the default pelt decay period.
++ * The decay shift can change the decay period in
++ * multiples of 32.
++ *  Decay shift		Decay period(ms)
++ *	0			32
++ *	1			64
++ *	2			128
++ *	3			256
++ *	4			512
++ */
++extern int sched_thermal_decay_shift;
++
++static inline u64 rq_clock_thermal(struct rq *rq)
++{
++	return rq_clock_task(rq) >> sched_thermal_decay_shift;
++}
++
+ static inline void rq_clock_skip_update(struct rq *rq)
+ {
+ 	lockdep_assert_held(&rq->lock);
