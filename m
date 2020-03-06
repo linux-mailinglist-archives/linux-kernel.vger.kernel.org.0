@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E75317BD65
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B08A017BD68
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:01:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbgCFNA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:00:59 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:36004 "EHLO
+        id S1726905AbgCFNBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:01:01 -0500
+Received: from mail.baikalelectronics.com ([87.245.175.226]:36028 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbgCFNA6 (ORCPT
+        with ESMTP id S1726382AbgCFNA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:00:58 -0500
+        Fri, 6 Mar 2020 08:00:59 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 7F70E8030793;
-        Fri,  6 Mar 2020 13:00:55 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 7434E80307C4;
+        Fri,  6 Mar 2020 13:00:56 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id AM2kRPbb_J9F; Fri,  6 Mar 2020 16:00:54 +0300 (MSK)
+        with ESMTP id fRCP2EswWlAL; Fri,  6 Mar 2020 16:00:55 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -33,15 +33,15 @@ CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Ralf Baechle <ralf@linux-mips.org>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/5] dt-bindings: clk: Add Baikal-T1 AXI-bus CCU bindings
-Date:   Fri, 6 Mar 2020 16:00:45 +0300
+Subject: [PATCH 3/5] dt-bindings: clk: Add Baikal-T1 System Devices CCU bindings
+Date:   Fri, 6 Mar 2020 16:00:46 +0300
 In-Reply-To: <20200306130048.8868-1-Sergey.Semin@baikalelectronics.ru>
 References: <20200306130048.8868-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306130055.7F70E8030793@mail.baikalelectronics.ru>
+Message-Id: <20200306130056.7434E80307C4@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
-After being gained by the CCU PLLs the signals must be transformed to
-be suitable for the clock-consumers. This is done by a set of dividers
-embedded into the CCU. A first block of dividers is used to create
-reference clocks for AXI-bus of high-speed peripheral IP-cores of the
-chip. So the AXI-bus CCU dts-node is an ordinary clock-provider with
-standard set of properties supported. But in addition to that each
-AXI-bus clock divider provide a way to reset the corresponding clock
-domain. This makes the AXI-bus CCU dts-node to be also a reset-provider.
+Aside from providing an individual reference clocks for AXI-bus the
+Baikal-T1 CCU dividers are used to alter the PLLs output signals for
+the SoC peripheral devices. These dividers are represented by means
+of the SYS CCU dts-node as an ordinary clock-provider with standard
+set of properties supported. In the same way as AXI-bus CCU dividers
+do they can be used to reset the APB and SATA clock domains, which
+also makes the SYS CCU dts-node to be a reset-controller.
 
 Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
@@ -64,31 +63,30 @@ Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: Paul Burton <paulburton@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 ---
- .../bindings/clock/be,bt1-ccu-axi.yaml        | 151 ++++++++++++++++++
- include/dt-bindings/clock/bt1-ccu.h           |  13 ++
- include/dt-bindings/reset/bt1-ccu.h           |  23 +++
- 3 files changed, 187 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/be,bt1-ccu-axi.yaml
- create mode 100644 include/dt-bindings/reset/bt1-ccu.h
+ .../bindings/clock/be,bt1-ccu-sys.yaml        | 169 ++++++++++++++++++
+ include/dt-bindings/clock/bt1-ccu.h           |  24 +++
+ include/dt-bindings/reset/bt1-ccu.h           |   4 +
+ 3 files changed, 197 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/be,bt1-ccu-sys.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/be,bt1-ccu-axi.yaml b/Documentation/devicetree/bindings/clock/be,bt1-ccu-axi.yaml
+diff --git a/Documentation/devicetree/bindings/clock/be,bt1-ccu-sys.yaml b/Documentation/devicetree/bindings/clock/be,bt1-ccu-sys.yaml
 new file mode 100644
-index 000000000000..6b1eefdead27
+index 000000000000..aea09fbafc89
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/be,bt1-ccu-axi.yaml
-@@ -0,0 +1,151 @@
++++ b/Documentation/devicetree/bindings/clock/be,bt1-ccu-sys.yaml
+@@ -0,0 +1,169 @@
 +# SPDX-License-Identifier: GPL-2.0
 +#
 +# Copyright (C) 2019 - 2020 BAIKAL ELECTRONICS, JSC
 +#
-+# Baikal-T1 AXI-bus Clocks Control Unit Device Tree Bindings.
++# Baikal-T1 System Devices Clocks Control Unit Device Tree Bindings.
 +#
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/be,bt1-ccu-axi.yaml#
++$id: http://devicetree.org/schemas/clock/be,bt1-ccu-sys.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Baikal-T1 AXI-bus Clock Control Unit
++title: Baikal-T1 System Devices Clock Control Unit
 +
 +maintainers:
 +  - Serge Semin <fancer.lancer@gmail.com>
@@ -99,14 +97,16 @@ index 000000000000..6b1eefdead27
 +  fixed rate oscillator, which signal is transformed into clocks of various
 +  frequencies and then propagated to either individual IP-blocks or to groups
 +  of blocks (clock domains). The transformation is done by means of an embedded
-+  into CCU PLLs and gateable/non-gateable dividers. Each clock domain can be
-+  also individually reset by using the domain clocks divider configuration
-+  registers. Baikal-T1 CCU is logically divided into the next components:
++  into CCU PLLs and gateable/non-gateable dividers. APB-bus divider register
++  provides a specific flag to initiate the full APB clock domain reset, so
++  causing each sub-device reset. Baikal-T1 CCU is logically divided into the
++  next components:
 +  1) External oscillator (normally XTAL's 25 MHz crystal oscillator, but
 +     in general can provide any frequency supported by the CCU PLLs).
 +  2) PLLs clocks generators (PLLs).
-+  3) AXI-bus clock dividers (AXI) - described in this bindings file.
-+  4) System devices reference clock dividers (SYS).
++  3) AXI-bus clock dividers (AXI).
++  4) System devices reference clock dividers (SYS) - described in this bindings
++     file.
 +  which are connected with each other as shown on the next figure:
 +          +---------------+
 +          | Baikal-T1 CCU |
@@ -126,9 +126,10 @@ index 000000000000..6b1eefdead27
 +  driver to be bound with.
 +
 +  In order to create signals of wide range frequencies the external oscillator
-+  output is primarily connected to a set of CCU PLLs. Some of PLLs CLKOUT are
-+  then passed over CCU dividers to create signals required for the target clock
-+  domain (like AXI-bus consumers). The dividers have the following structure:
++  output is primarily connected to a set of CCU PLLs. The PLLs CLKOUT is then
++  either directly connected with the corresponding clocks consumer (like P5600
++  cores or DDR controller) or passed over a CCU divider to create a signal
++  required for the clock domain. The dividers have the following structure
 +          +--------------+
 +  CLKIN --|->+----+ 1|\  |
 +  SETCLK--|--|/DIV|->| | |
@@ -139,19 +140,22 @@ index 000000000000..6b1eefdead27
 +  EN------|-----------+  |
 +  RST-----|--------------|->RSTOUT
 +          +--------------+
-+  where CLKIN is the reference clock coming either from a CCU PLL, SETCLK - a
-+  command to update the output clock in accordance with a set divider,
-+  CLKDIV - clocks divider, LOCK - a signal of the output clock stabilization,
-+  EN - enable/disable the divider block, RST/RSTOUT - reset clocks domain
-+  signal. Depending on the consumer IP-core peculiarities the dividers may lack
-+  of some functionality depicted on the figure above (like EN,
-+  CLKDIV/LOCK/SETCLK). In this case the corresponding clock provider just
-+  doesn't expose either switching functions, or the rate configuration, or
++  where CLKIN is the reference clock coming either from XTAL or from a CCU PLL,
++  SETCLK - a command to update the output clock in accordance with a set
++  divider, CLKDIV - clocks divider, LOCK - a signal of the output clock
++  stabilization, EN - enable/disable the divider block, RST/RSTOUT - reset
++  clocks domain signal. Depending on the consumer IP-core peculiarities the
++  dividers may lack of some functionality depicted on the figure above (like
++  EN, CLKDIV/LOCK/SETCLK or RST). In this case the corresponding clock provider
++  just doesn't expose either switching functions, or the rate configuration, or
 +  both of them.
 +
-+  The CCU AXI dts-node uses the common clock bindings [1] with no custom
-+  properties. The list of exported clocks and reset signals can be found in
-+  the files: 'dt-bindings/clock/bt1-ccu.h' and 'dt-bindings/reset/bt1-ccu.h'.
++  The clock dividers, which output clock is then consumed by the SoC individual
++  devices, are united into a single clocks provider called System Devices CCU.
++  The System Devices CCU dts-node uses the common clock bindings [1] with no
++  custom properties. The list of exported clocks and reset signals can be found
++  in the files: 'dt-bindings/clock/bt1-ccu.h' and
++  'dt-bindings/reset/bt1-ccu.h'.
 +
 +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 +
@@ -160,11 +164,12 @@ index 000000000000..6b1eefdead27
 +
 +properties:
 +  compatible:
-+    const: be,bt1-ccu-axi
++    const: be,bt1-ccu-sys
 +
 +  reg:
-+    description: AXI-bus CCU dividers sub-block base address.
-+    maxItems: 1
++    items:
++      - description: System Devices CCU sub-block base address.
++      - description: Watchdog clock divider register address in CCU.
 +
 +  "#clock-cells":
 +    description: |
@@ -174,18 +179,21 @@ index 000000000000..6b1eefdead27
 +
 +  "#reset-cells":
 +    description: |
-+      AXI-bus CCU sub-block provides a reset signal for each clock domain,
-+      which unique identifiers are in 'dt-bindings/reset/bt1-ccu.h'.
++      CCU system devices sub-block provides a reset signal for APB and SATA
++      clock domains, which unique identifiers reside in
++      'dt-bindings/reset/bt1-ccu.h'.
 +    const: 1
 +
 +  clocks:
 +    items:
++      - description: CCU external reference clock.
 +      - description: CCU SATA PLL output clock.
 +      - description: CCU PCIe PLL output clock.
 +      - description: CCU Ethernet PLL output clock.
 +
 +  clock-names:
 +    items:
++      - const: ref_clk
 +      - const: sata_clk
 +      - const: pcie_clk
 +      - const: eth_clk
@@ -209,76 +217,79 @@ index 000000000000..6b1eefdead27
 +  - |
 +    #include <dt-bindings/clock/bt1-ccu.h>
 +
-+    ccu_axi: ccu_axi@1F04D030 {
-+      compatible = "be,bt1-ccu-axi";
-+      reg = <0x1F04D030 0x030>;
++    ccu_sys: ccu_sys@1F04D060 {
++      compatible = "be,bt1-ccu-sys";
++      reg = <0x1F04D060 0x0A0>,
++            <0x1F04D150 0x004>;
 +      #clock-cells = <1>;
 +      #reset-cells = <1>;
 +
-+      clocks = <&ccu_pll CCU_SATA_PLL>,
++      clocks = <&osc25>,
++               <&ccu_pll CCU_SATA_PLL>,
 +               <&ccu_pll CCU_PCIE_PLL>,
 +               <&ccu_pll CCU_ETH_PLL>;
-+      clock-names = "sata_clk", "pcie_clk", "eth_clk";
++      clock-names = "ref_clk", "sata_clk", "pcie_clk",
++                    "eth_clk";
 +
-+      clock-output-names = "axi_main_clk", "axi_ddr_clk",
-+                           "axi_sata_clk", "axi_gmac0_clk",
-+                           "axi_gmac1_clk", "axi_xgmac_clk",
-+                           "axi_pcie_m_clk", "axi_pcie_s_clk",
-+                           "axi_usb_clk", "axi_hwa_clk",
-+                           "axi_sram_clk";
-+    };
++      clock-output-names = "sys_sata_ref_clk", "sys_apb_clk",
++                           "sys_gmac0_csr_clk", "sys_gmac0_tx_clk",
++                           "sys_gmac0_ptp_clk", "sys_gmac1_csr_clk",
++                           "sys_gmac1_tx_clk", "sys_gmac1_ptp_clk",
++                           "sys_xgmac_ref_clk", "sys_xgmac_ptp_clk",
++                           "sys_usb_clk", "sys_pvt_clk",
++                           "sys_hwa_clk", "sys_uart_clk",
++                           "sys_spi_clk", "sys_i2c1_clk",
++                           "sys_i2c2_clk", "sys_gpio_clk",
++                           "sys_timer0_clk", "sys_timer1_clk",
++                           "sys_timer2_clk", "sys_wdt_clk";
++      };
 +...
 diff --git a/include/dt-bindings/clock/bt1-ccu.h b/include/dt-bindings/clock/bt1-ccu.h
-index 86e63162ade0..ebe723c6e0a8 100644
+index ebe723c6e0a8..4dcad1eb721f 100644
 --- a/include/dt-bindings/clock/bt1-ccu.h
 +++ b/include/dt-bindings/clock/bt1-ccu.h
-@@ -14,4 +14,17 @@
- #define CCU_PCIE_PLL			3
- #define CCU_ETH_PLL			4
+@@ -27,4 +27,28 @@
+ #define CCU_AXI_HWA_CLK			9
+ #define CCU_AXI_SRAM_CLK		10
  
-+/* Baikal-T1 AXI-bus CCU Clocks indeces. */
-+#define CCU_AXI_MAIN_CLK		0
-+#define CCU_AXI_DDR_CLK			1
-+#define CCU_AXI_SATA_CLK		2
-+#define CCU_AXI_GMAC0_CLK		3
-+#define CCU_AXI_GMAC1_CLK		4
-+#define CCU_AXI_XGMAC_CLK		5
-+#define CCU_AXI_PCIE_M_CLK		6
-+#define CCU_AXI_PCIE_S_CLK		7
-+#define CCU_AXI_USB_CLK			8
-+#define CCU_AXI_HWA_CLK			9
-+#define CCU_AXI_SRAM_CLK		10
++/* Baikal-T1 System Devices CCU Clocks indeces. */
++#define CCU_SYS_SATA_REF_CLK		0
++#define CCU_SYS_APB_CLK			1
++#define CCU_SYS_GMAC0_CSR_CLK		2
++#define CCU_SYS_GMAC0_TX_CLK		3
++#define CCU_SYS_GMAC0_PTP_CLK		4
++#define CCU_SYS_GMAC1_CSR_CLK		5
++#define CCU_SYS_GMAC1_TX_CLK		6
++#define CCU_SYS_GMAC1_PTP_CLK		7
++#define CCU_SYS_XGMAC_REF_CLK		8
++#define CCU_SYS_XGMAC_PTP_CLK		9
++#define CCU_SYS_USB_CLK			10
++#define CCU_SYS_PVT_CLK			11
++#define CCU_SYS_HWA_CLK			12
++#define CCU_SYS_UART_CLK		13
++#define CCU_SYS_SPI_CLK			14
++#define CCU_SYS_I2C1_CLK		15
++#define CCU_SYS_I2C2_CLK		16
++#define CCU_SYS_GPIO_CLK		17
++#define CCU_SYS_TIMER0_CLK		18
++#define CCU_SYS_TIMER1_CLK		19
++#define CCU_SYS_TIMER2_CLK		20
++#define CCU_SYS_WDT_CLK			21
 +
  #endif /* __DT_BINDINGS_CLOCK_BT1_CCU_H */
 diff --git a/include/dt-bindings/reset/bt1-ccu.h b/include/dt-bindings/reset/bt1-ccu.h
-new file mode 100644
-index 000000000000..4de5b6bcd433
---- /dev/null
+index 4de5b6bcd433..0bd8fd0edb41 100644
+--- a/include/dt-bindings/reset/bt1-ccu.h
 +++ b/include/dt-bindings/reset/bt1-ccu.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
-+ *
-+ * Baikal-T1 CCU reset indeces.
-+ */
-+#ifndef __DT_BINDINGS_RESET_BT1_CCU_H
-+#define __DT_BINDINGS_RESET_BT1_CCU_H
+@@ -20,4 +20,8 @@
+ #define CCU_AXI_HWA_RST			9
+ #define CCU_AXI_SRAM_RST		10
+ 
++/* Baikal-T1 System Devices CCU Reset indeces. */
++#define CCU_SYS_SATA_REF_RST		0
++#define CCU_SYS_APB_RST			1
 +
-+/* Baikal-T1 AXI-bus CCU Reset indeces. */
-+#define CCU_AXI_MAIN_RST		0
-+#define CCU_AXI_DDR_RST			1
-+#define CCU_AXI_SATA_RST		2
-+#define CCU_AXI_GMAC0_RST		3
-+#define CCU_AXI_GMAC1_RST		4
-+#define CCU_AXI_XGMAC_RST		5
-+#define CCU_AXI_PCIE_M_RST		6
-+#define CCU_AXI_PCIE_S_RST		7
-+#define CCU_AXI_USB_RST			8
-+#define CCU_AXI_HWA_RST			9
-+#define CCU_AXI_SRAM_RST		10
-+
-+#endif /* __DT_BINDINGS_RESET_BT1_CCU_H */
+ #endif /* __DT_BINDINGS_RESET_BT1_CCU_H */
 -- 
 2.25.1
 
