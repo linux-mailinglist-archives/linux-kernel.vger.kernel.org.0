@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C2DF17C60A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9725017C610
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:12:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgCFTMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 14:12:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39256 "EHLO mail.kernel.org"
+        id S1727073AbgCFTMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 14:12:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbgCFTMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 14:12:06 -0500
+        id S1727060AbgCFTMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 14:12:10 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8907206D5;
-        Fri,  6 Mar 2020 19:12:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 747F22072D;
+        Fri,  6 Mar 2020 19:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583521926;
-        bh=Am6zFIgFOLL63uCAqolgYvyXNoh1jE5cQ+uHZXB+BS0=;
+        s=default; t=1583521929;
+        bh=FNaXMLj5/QcPnbgig1d0gx9+S/wnGuUyuMa2B5rCyGM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KBmHrTtYZeST2IVX1Ir4RGq8Wlx8eHcYa6PdylK7lJe08Lm70Cy21gFuIQykNnGc9
-         jdmzgwDulAs0yRuDL1Bxrh5DVq/twtXL0LCM3CW1INQhhLqlGBmLtCoztXhthpxNVj
-         N3bTE4luk/O6HCLiLs45GuwnhVoYFT9dyqBaf/AE=
+        b=qBRexjVcyOxnjVVfJcS3HxXV8bxwbjfn37vRr7g0ZKpIKP1zBBjzQrfbrB3QfCesr
+         5cDHDaz6Tiomwl9vbHS6mkZT9i+TtsQJnVMZPNa5iUJJsuiUJmWcrRpbn0sRBU+DfE
+         mzvg1nAGwMwb+s+0//z6QNtI6x1n2zYDZKxoVVTM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -32,12 +32,14 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Tommi Rantala <tommi.t.rantala@nokia.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
         Jiri Olsa <jolsa@redhat.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 2/6] perf top: Fix stdio interface input handling with glibc 2.28+
-Date:   Fri,  6 Mar 2020 16:11:37 -0300
-Message-Id: <20200306191144.12762-5-acme@kernel.org>
+Subject: [PATCH 3/6] perf bench futex-wake: Restore thread count default to online CPU count
+Date:   Fri,  6 Mar 2020 16:11:38 -0300
+Message-Id: <20200306191144.12762-6-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200306191144.12762-1-acme@kernel.org>
 References: <20200306191144.12762-1-acme@kernel.org>
@@ -50,50 +52,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tommi Rantala <tommi.t.rantala@nokia.com>
 
-Since glibc 2.28 when running 'perf top --stdio', input handling no
-longer works, but hitting any key always just prints the "Mapped keys"
-help text.
+Since commit 3b2323c2c1c4 ("perf bench futex: Use cpumaps") the default
+number of threads the benchmark uses got changed from number of online
+CPUs to zero:
 
-To fix it, call clearerr() in the display_thread() loop to clear any EOF
-sticky errors, as instructed in the glibc NEWS file
-(https://sourceware.org/git/?p=glibc.git;a=blob;f=NEWS):
+  $ perf bench futex wake
+  # Running 'futex/wake' benchmark:
+  Run summary [PID 15930]: blocking on 0 threads (at [private] futex 0x558b8ee4bfac), waking up 1 at a time.
+  [Run 1]: Wokeup 0 of 0 threads in 0.0000 ms
+  [...]
+  [Run 10]: Wokeup 0 of 0 threads in 0.0000 ms
+  Wokeup 0 of 0 threads in 0.0004 ms (+-40.82%)
 
- * All stdio functions now treat end-of-file as a sticky condition.  If you
-   read from a file until EOF, and then the file is enlarged by another
-   process, you must call clearerr or another function with the same effect
-   (e.g. fseek, rewind) before you can read the additional data.  This
-   corrects a longstanding C99 conformance bug.  It is most likely to affect
-   programs that use stdio to read interactive input from a terminal.
-   (Bug #1190.)
+Restore the old behavior by grabbing the number of online CPUs via
+cpu->nr:
 
+  $ perf bench futex wake
+  # Running 'futex/wake' benchmark:
+  Run summary [PID 18356]: blocking on 8 threads (at [private] futex 0xb3e62c), waking up 1 at a time.
+  [Run 1]: Wokeup 8 of 8 threads in 0.0260 ms
+  [...]
+  [Run 10]: Wokeup 8 of 8 threads in 0.0270 ms
+  Wokeup 8 of 8 threads in 0.0419 ms (+-24.35%)
+
+Fixes: 3b2323c2c1c4 ("perf bench futex: Use cpumaps")
 Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20200305083714.9381-2-tommi.t.rantala@nokia.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lore.kernel.org/lkml/20200305083714.9381-3-tommi.t.rantala@nokia.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/bench/futex-wake.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index f6dd1a63f159..d2539b793f9d 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -684,7 +684,9 @@ static void *display_thread(void *arg)
- 	delay_msecs = top->delay_secs * MSEC_PER_SEC;
- 	set_term_quiet_input(&save);
- 	/* trash return*/
--	getc(stdin);
-+	clearerr(stdin);
-+	if (poll(&stdin_poll, 1, 0) > 0)
-+		getc(stdin);
+diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
+index df810096abfe..58906e9499bb 100644
+--- a/tools/perf/bench/futex-wake.c
++++ b/tools/perf/bench/futex-wake.c
+@@ -43,7 +43,7 @@ static bool done = false, silent = false, fshared = false;
+ static pthread_mutex_t thread_lock;
+ static pthread_cond_t thread_parent, thread_worker;
+ static struct stats waketime_stats, wakeup_stats;
+-static unsigned int ncpus, threads_starting, nthreads = 0;
++static unsigned int threads_starting, nthreads = 0;
+ static int futex_flag = 0;
  
- 	while (!done) {
- 		perf_top__print_sym_table(top);
+ static const struct option options[] = {
+@@ -141,7 +141,7 @@ int bench_futex_wake(int argc, const char **argv)
+ 	sigaction(SIGINT, &act, NULL);
+ 
+ 	if (!nthreads)
+-		nthreads = ncpus;
++		nthreads = cpu->nr;
+ 
+ 	worker = calloc(nthreads, sizeof(*worker));
+ 	if (!worker)
 -- 
 2.21.1
 
