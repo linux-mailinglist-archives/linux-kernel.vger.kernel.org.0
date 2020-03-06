@@ -2,19 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E4C17B725
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 08:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA8AF17B726
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 08:02:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbgCFHBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 02:01:47 -0500
-Received: from lucky1.263xmail.com ([211.157.147.134]:45516 "EHLO
+        id S1726240AbgCFHCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 02:02:10 -0500
+Received: from lucky1.263xmail.com ([211.157.147.133]:36518 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbgCFHBr (ORCPT
+        with ESMTP id S1725905AbgCFHCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 02:01:47 -0500
+        Fri, 6 Mar 2020 02:02:09 -0500
 Received: from localhost (unknown [192.168.167.209])
-        by lucky1.263xmail.com (Postfix) with ESMTP id BF7D96E8A5;
-        Fri,  6 Mar 2020 15:01:40 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id DB3999F894;
+        Fri,  6 Mar 2020 15:01:41 +0800 (CST)
+X-MAIL-AUTO: 1
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -22,9 +23,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P32633T140274261014272S1583478094758456_;
-        Fri, 06 Mar 2020 15:01:37 +0800 (CST)
+        Fri, 06 Mar 2020 15:01:41 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <ff3b0c3381f088e0126292714aaa8293>
+X-UNIQUE-TAG: <72df5637c48843ecbb6e3b09abe72a59>
 X-RL-SENDER: cl@rock-chips.com
 X-SENDER: cl@rock-chips.com
 X-LOGIN-NAME: cl@rock-chips.com
@@ -48,10 +49,12 @@ Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         kstewart@linuxfoundation.org, allison@lohutok.net,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         huangtao@rock-chips.com, Liang Chen <cl@rock-chips.com>
-Subject: [PATCH v3 0/1] wait_task_inactive() spend too much time on system startup
-Date:   Fri,  6 Mar 2020 15:01:32 +0800
-Message-Id: <20200306070133.18335-1-cl@rock-chips.com>
+Subject: [PATCH v3 1/1] kthread: do not preempt current task if it is going to call schedule()
+Date:   Fri,  6 Mar 2020 15:01:33 +0800
+Message-Id: <20200306070133.18335-2-cl@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200306070133.18335-1-cl@rock-chips.com>
+References: <20200306070133.18335-1-cl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,18 +62,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Liang Chen <cl@rock-chips.com>
 
-Changelog:
-v1: wait_task_inactive() frequently call schedule_hrtimeout() and spend a lot of time,
-i am trying to optimize it on rockchip platform.
-v2: Use atomic_flags(PFA) instead of TIF flag, and add some comments.
-v3: Use a new method fix this issue to make the code simple.
+when we create a kthread with ktrhead_create_on_cpu(),the child thread
+entry is ktread.c:ktrhead() which will be preempted by the parent after
+call complete(done) while schedule() is not called yet,then the parent
+will call wait_task_inactive(child) but the child is still on the runqueue,
+so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
+time,especially on startup.
 
-Liang Chen (1):
-  kthread: do not preempt current task if it is going to call schedule()
+  parent                             child
+ktrhead_create_on_cpu()
+  wait_fo_completion(&done) -----> ktread.c:ktrhead()
+                             |----- complete(done);--wakeup and preempted by parent
+ kthread_bind() <------------|  |-> schedule();--dequeue here
+  wait_task_inactive(child)     |
+   schedule_hrtimeout(1 jiffy) -|
 
+So we hope the child just wakeup parent but not preempted by parent, and the
+child is going to call schedule() soon,then the parent will not call
+schedule_hrtimeout(1 jiffy) as the child is already dequeue.
+
+The same issue for ktrhead_park()&&kthread_parkme().
+This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
+
+Signed-off-by: Liang Chen <cl@rock-chips.com>
+---
  kernel/kthread.c | 17 +++++++++++++++--
  1 file changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index b262f47046ca..bfbfa481be3a 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -199,8 +199,15 @@ static void __kthread_parkme(struct kthread *self)
+ 		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+ 			break;
+ 
++		/*
++		 * Thread is going to call schedule(), do not preempt it,
++		 * or the caller of kthread_park() may spend more time in
++		 * wait_task_inactive().
++		 */
++		preempt_disable();
+ 		complete(&self->parked);
+-		schedule();
++		schedule_preempt_disabled();
++		preempt_enable();
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+ }
+@@ -245,8 +252,14 @@ static int kthread(void *_create)
+ 	/* OK, tell user we're spawned, wait for stop or wakeup */
+ 	__set_current_state(TASK_UNINTERRUPTIBLE);
+ 	create->result = current;
++	/*
++	 * Thread is going to call schedule(), do not preempt it,
++	 * or the creator may spend more time in wait_task_inactive().
++	 */
++	preempt_disable();
+ 	complete(done);
+-	schedule();
++	schedule_preempt_disabled();
++	preempt_enable();
+ 
+ 	ret = -EINTR;
+ 	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
 -- 
 2.17.1
 
