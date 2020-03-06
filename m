@@ -2,132 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78AFE17C40F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:17:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B22D217C419
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgCFRRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:17:55 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:55051 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbgCFRRy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:17:54 -0500
-Received: by mail-pj1-f68.google.com with SMTP id np16so1319819pjb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 09:17:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PqoNxF7YSq276eb0T6mYjC4MPZB53ux70sz8XMDxMWk=;
-        b=mVkfhhfUuFheVuWJ0iAe2Ivg9al6M3WovWk79tXXnm/dD57dm/XXH8HCfENjuK19oF
-         hDBdfbEqKasrEkZELvrkFAhM2OJcVmjiLuiWdu64TKgdd7M45nqwv19cdvBAniP5Wi1X
-         a4VSM/uaqN995/JTm1WonY0Y1KkLdhRAJQP4YBuqBTSTMYoTaE5wQTyoXDVFPVHTelgj
-         9KNBqhseYChMGMmDjNXtWjIxuYZuIWal2hy2QgOZZlZUug167egJ+2SxC21fArW3B130
-         0vTOeD1FSnQiX+LrmJT1AskZ6BAQqghsjLt0RlKDrYvb5QGridMOWkaYs1dmbhDBNszO
-         0eRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PqoNxF7YSq276eb0T6mYjC4MPZB53ux70sz8XMDxMWk=;
-        b=S5m4rnghEbCBKrlXm5nY4lDpRex4dusxbnIRSQ4ZrSAD7ONiUkRS32RCyJH5tu5oZx
-         +9O+gfkEPB39oFOnfQJrLo5vy0NOURUJ1Wl5cMBKuHx17GS9b9T3x8sl9bfAAJj0s3Lf
-         zqEfHc1sBc2dBBgIF73mUEUAguEOQUbIymLvlZfbIl+JoSfsE9RCIKKyNGnrPVRD9+6R
-         WlR8dPWVAZUNvYb1rq6oUS2T0u7eB5LakKEciYHNcDQHd2xxHUwys5S1uBYcJ6q2eH3E
-         rbdxrz5mmzzC89AB7SNVMal8Z8iXAPiXzwxSi7MoHcrDm+VtRsHkdyaUFPZhPSAUkwln
-         K6cw==
-X-Gm-Message-State: ANhLgQ1gYfO5TPOxaR9+2WZ0v1ixDtHSpSM01/R5C8M21JI9jUDwtAU0
-        5DAUfQSOj5nvIiv3gCQvUqp9mmKrdQ==
-X-Google-Smtp-Source: ADFU+vs9n504icpcgBRWS8dnnvqO26KvHaArPJDCaoPpwfCavpuYcrvN3HP5MAoT5BX8aEvuS8C0VQ==
-X-Received: by 2002:a17:90a:2370:: with SMTP id f103mr4437987pje.187.1583515071837;
-        Fri, 06 Mar 2020 09:17:51 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:6493:b6ea:b913:73f:c15a:6595])
-        by smtp.gmail.com with ESMTPSA id j12sm10349346pjd.4.2020.03.06.09.17.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Mar 2020 09:17:51 -0800 (PST)
-Date:   Fri, 6 Mar 2020 22:47:42 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Daniele Palmas <dnlplm@gmail.com>
-Cc:     David Miller <davem@davemloft.net>, kuba@kernel.org,
-        bjorn.andersson@linaro.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvalo@codeaurora.org
-Subject: Re: [PATCH v2 0/2] Migrate QRTR Nameservice to Kernel
-Message-ID: <20200306171742.GA14558@Mani-XPS-13-9360>
-References: <20200220151327.4823-1-manivannan.sadhasivam@linaro.org>
- <CAGRyCJGMxMO-8b3QniJP0XVgTT4zxSd=pm_O=4T5N3f3H3aM2w@mail.gmail.com>
+        id S1727065AbgCFRSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:18:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726894AbgCFRSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:18:39 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D179E2084E;
+        Fri,  6 Mar 2020 17:18:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583515119;
+        bh=UltXGOsa7bHzrhE8tvZXHxykcnPio34Cv7/Wbz7SWXg=;
+        h=Subject:From:To:Cc:Date:From;
+        b=0A2/qG+m7/cH9ADsqiokgIqsJr7j7Nsx3wHX3wXg3qmF/AEC5M9b9Cc3Ge2ZFu1fo
+         MsY43O0yhUmxm/dcESl+Pj/r8EkZ3xWqyiP6Co73HyXyWRD4rDfveb4/U4I9C6QttP
+         XLFibcVs/6CsVa04j+dfVRLH5em+A3Roughiqk/I=
+Message-ID: <a14229cc7aabebfdffd405018d939d7a0ae1f1cd.camel@kernel.org>
+Subject: [GIT PULL] file locking changes for v5.6
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Fri, 06 Mar 2020 12:18:15 -0500
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-34XoMFCiUFMKGzbgYQmp"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGRyCJGMxMO-8b3QniJP0XVgTT4zxSd=pm_O=4T5N3f3H3aM2w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Mar 06, 2020 at 05:18:01PM +0100, Daniele Palmas wrote:
-> Hello Mani,
-> 
-> Il giorno gio 20 feb 2020 alle ore 16:15 Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> ha scritto:
-> >
-> > Hello,
-> >
-> > This patchset migrates the Qualcomm IPC Router (QRTR) Nameservice from userspace
-> > to kernel under net/qrtr.
-> >
-> 
-> I saw those and the MHI driver related patches, thanks for doing them.
-> 
-> Are you going to submit also the controller and device (uci, netdev)
-> drivers for SDX55 modem?
-> 
+--=-34XoMFCiUFMKGzbgYQmp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is certainly on the TODO list but there is no fixed timeline. Current
-patchset focuses QCA6390 only, which does not need these drivers. So maybe
-sometime later, we can expect these drivers to get upstreamed.
+The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b=
+:
+
+  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/file=
+lock-v5.6-1
+
+for you to fetch changes up to 6d390e4b5d48ec03bb87e63cf0a2bff5f4e116da:
+
+  locks: fix a potential use-after-free problem when wakeup a waiter (2020-=
+03-06 11:54:13 -0500)
+
+----------------------------------------------------------------
+Just a couple of late-breaking patches for the file locking code. The
+second patch (from yangerkun) fixes a rather nasty looking potential
+use-after-free that should go to stable.
+
+The other patch could technically wait for 5.7, but it's fairly
+innocuous so I figured we might as well take it.
 
 Thanks,
-Mani
+Jeff
+----------------------------------------------------------------
+Kees Cook (1):
+      fcntl: Distribute switch variables for initialization
 
-> Thanks,
-> Daniele
-> 
-> > The userspace implementation of it can be found here:
-> > https://github.com/andersson/qrtr/blob/master/src/ns.c
-> >
-> > This change is required for enabling the WiFi functionality of some Qualcomm
-> > WLAN devices using ATH11K without any dependency on a userspace daemon. Since
-> > the QRTR NS is not usually packed in most of the distros, users need to clone,
-> > build and install it to get the WiFi working. It will become a hassle when the
-> > user doesn't have any other source of network connectivity.
-> >
-> > The original userspace code is published under BSD3 license. For migrating it
-> > to Linux kernel, I have adapted Dual BSD/GPL license.
-> >
-> > This patchset has been verified on Dragonboard410c and Intel NUC with QCA6390
-> > WLAN device.
-> >
-> > Thanks,
-> > Mani
-> >
-> > Changes in v2:
-> >
-> > * Sorted the local variables in reverse XMAS tree order
-> >
-> > Manivannan Sadhasivam (2):
-> >   net: qrtr: Migrate nameservice to kernel from userspace
-> >   net: qrtr: Fix the local node ID as 1
-> >
-> >  net/qrtr/Makefile |   2 +-
-> >  net/qrtr/ns.c     | 751 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  net/qrtr/qrtr.c   |  51 +---
-> >  net/qrtr/qrtr.h   |   4 +
-> >  4 files changed, 767 insertions(+), 41 deletions(-)
-> >  create mode 100644 net/qrtr/ns.c
-> >
-> > --
-> > 2.17.1
-> >
+yangerkun (1):
+      locks: fix a potential use-after-free problem when wakeup a waiter
+
+ fs/fcntl.c |  6 ++++--
+ fs/locks.c | 14 --------------
+ 2 files changed, 4 insertions(+), 16 deletions(-)
+
+--=20
+Jeff Layton <jlayton@kernel.org>
+
+--=-34XoMFCiUFMKGzbgYQmp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAABCAAxFiEES8DXskRxsqGE6vXTAA5oQRlWghUFAl5ihdcTHGpsYXl0b25A
+a2VybmVsLm9yZwAKCRAADmhBGVaCFYOMEACsbq0GmEER7l4x9BxClX1TbFIKxBk3
+eUP3QyW6F0QrGSaWQl8uIEf2oo0dLI8lzUazcRVsoAQbdd0mvod0U0rpCwTW2r4P
+2WL1lttQOTfEgTLiWBHp50nAA96AfSKeBvHzWtvrLyQfl7fRmVSGDMwhaDAvd/Gy
+5l9kZOgqqb/G0P4OqZqRUfTDCfGSvDq0RKyPlWdrSVXR6RcvsIsZJNShRMLD80j7
+466Xf7qLGeBOpYyXG+c+/UC44rmaEkeD7AqCzP3KfIpP/SvT5demJPHCo61sc/Fo
+F5cP3uR5N/JjXsK7NlOBfm+vWpNuSDmrgyLuKWX+yX0bRXqAfBurYfK7F9C1LcSv
+258pmm2DoOmRJJhdPzC2UBrpwFlBVncuoSkbQj7ABcoYubYMpAbkWZZRDSKMOaEn
+IAPmRU8Cc41f6EexNQ47YO3x31iLYpEoIBHpN+YUvkdJnmzVGR6ZZewh71aIauX6
+sNSk4hVqEeRIcU22JLcWHs3CnA3/RH8kx8/9HnKiXsK7XnA1P+VevNchwt2evp2E
+rB8Nhz3UcyqvIE+gYQFldoKa2J9szMedBMwoA8zgaFxul3tyknc2bmHewA39C+ic
+zNvK4nNfixNX+eQfHG5tcYlAMDCR9PLA3RUGiCOKxuYHvMbdQ6G9D1u/wVLO9Xd+
+hcnRAiFzzjaXJw==
+=yX6r
+-----END PGP SIGNATURE-----
+
+--=-34XoMFCiUFMKGzbgYQmp--
+
