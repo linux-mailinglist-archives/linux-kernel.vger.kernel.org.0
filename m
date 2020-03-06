@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB76817C545
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB9E17C544
 	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:19:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgCFSTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 13:19:49 -0500
-Received: from mga17.intel.com ([192.55.52.151]:62328 "EHLO mga17.intel.com"
+        id S1726490AbgCFSTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 13:19:46 -0500
+Received: from mga02.intel.com ([134.134.136.20]:22278 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbgCFSTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 13:19:48 -0500
+        id S1726178AbgCFSTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 13:19:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 10:19:47 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 10:19:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
-   d="scan'208";a="414014702"
+   d="scan'208";a="275632392"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 06 Mar 2020 10:19:45 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 06 Mar 2020 10:19:42 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jAHZY-000Dl3-Qd; Sat, 07 Mar 2020 02:19:44 +0800
-Date:   Sat, 07 Mar 2020 02:19:12 +0800
+        id 1jAHZW-000DSu-8V; Sat, 07 Mar 2020 02:19:42 +0800
+Date:   Sat, 07 Mar 2020 02:19:30 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     "x86-ml" <x86@kernel.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:locking/core] BUILD SUCCESS
- 5d0c9b0eb8ab2dd540919174abe75aa3b86b802f
-Message-ID: <5e629420.uSajKT1Q7vHQrRPB%lkp@intel.com>
+Subject: [tip:locking/urgent] BUILD SUCCESS
+ 8019ad13ef7f64be44d4f892af9c840179009254
+Message-ID: <5e629432.zUnY5ljQj1MA/YGa%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,12 +39,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git  locking/core
-branch HEAD: 5d0c9b0eb8ab2dd540919174abe75aa3b86b802f  asm-generic/bitops: Update stale comment
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git  locking/urgent
+branch HEAD: 8019ad13ef7f64be44d4f892af9c840179009254  futex: Fix inode life-time issue
 
 elapsed time: 483m
 
-configs tested: 212
+configs tested: 217
 configs skipped: 0
 
 The following configs have been built successfully.
@@ -65,6 +65,7 @@ arm                        shmobile_defconfig
 arm                           sunxi_defconfig
 arm64                               defconfig
 sparc                            allyesconfig
+c6x                        evmc6678_defconfig
 ia64                                defconfig
 powerpc                             defconfig
 ia64                             allmodconfig
@@ -77,7 +78,6 @@ ia64                             alldefconfig
 ia64                              allnoconfig
 ia64                             allyesconfig
 c6x                              allyesconfig
-c6x                        evmc6678_defconfig
 nios2                         10m50_defconfig
 nios2                         3c120_defconfig
 openrisc                    or1ksim_defconfig
@@ -94,13 +94,13 @@ h8300                       h8s-sim_defconfig
 m68k                             allmodconfig
 m68k                       m5475evb_defconfig
 m68k                           sun3_defconfig
-powerpc                          rhel-kconfig
-arc                              allyesconfig
 arc                                 defconfig
+arc                              allyesconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
 microblaze                      mmu_defconfig
 microblaze                    nommu_defconfig
 powerpc                           allnoconfig
-powerpc                       ppc64_defconfig
 mips                           32r2_defconfig
 mips                         64r6el_defconfig
 mips                             allmodconfig
@@ -109,9 +109,9 @@ mips                             allyesconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
 parisc                            allnoconfig
-parisc                           allyesconfig
-parisc                generic-32bit_defconfig
 parisc                generic-64bit_defconfig
+parisc                generic-32bit_defconfig
+parisc                           allyesconfig
 x86_64               randconfig-a001-20200306
 x86_64               randconfig-a002-20200306
 x86_64               randconfig-a003-20200306
@@ -146,6 +146,11 @@ openrisc             randconfig-a001-20200305
 s390                 randconfig-a001-20200305
 sh                   randconfig-a001-20200305
 xtensa               randconfig-a001-20200305
+csky                 randconfig-a001-20200306
+openrisc             randconfig-a001-20200306
+s390                 randconfig-a001-20200306
+sh                   randconfig-a001-20200306
+xtensa               randconfig-a001-20200306
 x86_64               randconfig-b001-20200306
 x86_64               randconfig-b002-20200306
 x86_64               randconfig-b003-20200306
