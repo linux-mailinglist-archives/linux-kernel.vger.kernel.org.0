@@ -2,198 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A09517B557
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86EBF17B55B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 05:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbgCFESF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 23:18:05 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42924 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgCFESF (ORCPT
+        id S1726682AbgCFEXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 23:23:09 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:43085 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbgCFEXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 23:18:05 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u3so310682plr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 20:18:04 -0800 (PST)
+        Thu, 5 Mar 2020 23:23:08 -0500
+Received: by mail-yw1-f68.google.com with SMTP id p69so1053312ywh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 20:23:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=q3CYCx+AG4CxtBXfsylfrlFjoEuF0NgtIwMxKz5QAI8=;
-        b=eZlIRuCjLntGgO2m3aH8kOFt0zPtFqbpGzvjgnQKyYZdHNo2EDf/b7lCfLhKARMn1e
-         N6ShRfuFaC+cerKwLrOmn6Qd27G6gZE14vUebKsOaTrN+leW6mSj9lXKFyRYV428Vbe/
-         oOAiJH2QUTamX0YL0rXv8qF2QlnOoHhmc8Pr51c2LH6Gk/yLMJoBMWVZaPlaoeGPbLZ7
-         0BkAZIE3pA38sRE+h8s71UEs+es9LBGUzds61VuA1UG59yp3WKQjBP8mkNnO6WhQn/BO
-         ell7vWOdVCZFkmt6uJUcwTRU5XKSP6HSYMbxCztBq2r1C5f2TqjBrKbkqctHW/T6bCJz
-         ebVw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sMbKOm76H5mFEqAkSoaE+7Ax6unR881JS91louKjFYc=;
+        b=jx1yPVJrJ8OhZLKw9kcHzaFARQHYix4WQLtIVg8KvBHwb5BvxZGrkRVE7oTlr3/hiW
+         rvPFGLy0+CUpnSW2v75STX3stcpTItrgyCFk6u+mEM+BHC6SRliDYQ5Viat26gUFT0Xd
+         H/ULVzneOWEd7zZ3ifibiT0d+nscbJj7pw/F1yT3ITsVt+u5DsoeNeeym42iPkkU8RwV
+         iyqz6ApW5KVrzWfQrqkRKLBanWGPPmyqp1wa2vdtxDsurRXxfqmz1FiR+NFSYLb4AZ6Z
+         4CP0qQItr8Y+99Ns1SpwcteVbRILIoOWwnej/CJtAaR+vte64DgEynnUhSoEPzZolvDj
+         xq5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=q3CYCx+AG4CxtBXfsylfrlFjoEuF0NgtIwMxKz5QAI8=;
-        b=aXom5o79QbPwlnN2XlfHtDVxzicYgWTvWdzHFo7KR9qHnH6s+GR8kQIJ9OSovYuSAP
-         DT1DjtOJv6UUFawUpYXlSISAglxwXO8MGSFPUkwe4d/t3ciOzCFyk52WZcKvqy3IDoN4
-         9yhHjl7GN9RF6e1oYSB6yhXkbVtwNbX8uak0yJSyUgwE/8/tHId5VtFpUNNbJ+XJPgVU
-         jWbMPJR2hWm/mCJDUyM83BJ/N6LVvCi88D4vzvxiQj+fvctTNBVpiHtq09chCaPlrc+f
-         37kEEaSCbCKQ7zyhCn4Z4V66T7/7cldlrofru1+Hq8sPOswn/oE8S1H0aJ0GtZlwUlqq
-         zOkg==
-X-Gm-Message-State: ANhLgQ3OYrOHqp19HjAi0UEmDQ9WIQtkg1VB1kN/+W10fsebZiJK025G
-        rsrXn3SOxbJI8ZUGFRee3K67GQ==
-X-Google-Smtp-Source: ADFU+vss1S9KBgZTzEnczUxldNHZlF9hyQrQHFKwPREdOhkflC3Zc5NIbYy83ASiBfs91sNxVF2p2w==
-X-Received: by 2002:a17:902:8f8a:: with SMTP id z10mr1182965plo.169.1583468283562;
-        Thu, 05 Mar 2020 20:18:03 -0800 (PST)
-Received: from [100.112.92.218] ([104.133.9.106])
-        by smtp.gmail.com with ESMTPSA id 129sm8559790pfw.84.2020.03.05.20.18.02
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Mar 2020 20:18:02 -0800 (PST)
-Date:   Thu, 5 Mar 2020 20:17:46 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Qian Cai <cai@lca.pw>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, aarcange@redhat.com,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        daniel.m.jordan@oracle.com, hannes@cmpxchg.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, kirill@shutemov.name,
-        kravetz@us.ibm.com, mhocko@kernel.org, mm-commits@vger.kernel.org,
-        tj@kernel.org, vdavydov.dev@gmail.com, yang.shi@linux.alibaba.com,
-        linux-mm@kvack.org
-Subject: Re: [failures] mm-vmscan-remove-unnecessary-lruvec-adding.patch
- removed from -mm tree
-In-Reply-To: <97EE83E1-FEC9-48B6-98E8-07FB3FECB961@lca.pw>
-Message-ID: <alpine.LSU.2.11.2003052008510.3016@eggly.anvils>
-References: <20200306025041.rERhvnYmB%akpm@linux-foundation.org> <211632B1-2D6F-4BFA-A5A0-3030339D3D2A@lca.pw> <20200306033850.GO29971@bombadil.infradead.org> <97EE83E1-FEC9-48B6-98E8-07FB3FECB961@lca.pw>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sMbKOm76H5mFEqAkSoaE+7Ax6unR881JS91louKjFYc=;
+        b=P0xL5PL2ysTrrgGRFDmPr9EsUF0aKvcUN4FbcJnw8TUqySdP0pqrXJ0fPKCgNCtUat
+         AWWI1mO2nWWywM6aiH7YEHl166h2V2bWBSh5Nu4sKqbk2QLERGEfhfp56DQL7cnjcvCO
+         BYelll1QW+fw/pfTPaGZppKf5MSDZxzLCmqUDeYkE5rf/QUbFPMg2G58Out6UdpvgCaq
+         SREMiE8KDK6O9HhJZQya5NJZ9NHw1FYNrZDp8U9CfWh1B/ptvpH+lkkZqOC80scrLRT4
+         ijjgReKWnftC5MlKZ96Mp8RpHzpFugbbkSfP9pguBdCWdCQKcm34MghsyeDwh/x9ANa0
+         FqFQ==
+X-Gm-Message-State: ANhLgQ1dS9YRQiWhGCzjFeQL/vcyPpOcYPY8uV1wbswbYNfVyMUSkP9r
+        xKs1RkNZ7Qa4ujh1/D8DsK0G5NRiB1E=
+X-Google-Smtp-Source: ADFU+vs+RcJ9Rr2DXgB3GM4Vg5uvj7uEkI72h0JZxT+0/pzRe+8+creExY50wqUf6HuTKeGEv50IvQ==
+X-Received: by 2002:a25:c945:: with SMTP id z66mr1913599ybf.206.1583468587657;
+        Thu, 05 Mar 2020 20:23:07 -0800 (PST)
+Received: from presto.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.gmail.com with ESMTPSA id t65sm11159465ywe.62.2020.03.05.20.23.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 20:23:06 -0800 (PST)
+From:   Alex Elder <elder@linaro.org>
+To:     David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] bitfield.h: add FIELD_MAX() and field_max()
+Date:   Thu,  5 Mar 2020 22:23:02 -0600
+Message-Id: <20200306042302.17602-1-elder@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="0-1123677523-1583468282=:3016"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Define FIELD_MAX(), which supplies the maximum value that can be
+represented by a bitfield.  Define field_max() as well, to go
+along with the lower-case forms of the field mask functions.
 
---0-1123677523-1583468282=:3016
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Signed-off-by: Alex Elder <elder@linaro.org>
+Acked-by: Jakub Kicinski <kuba@kernel.org>
+---
+v2: Added Acked-by from Jakub.
 
-On Thu, 5 Mar 2020, Qian Cai wrote:
-> > On Mar 5, 2020, at 10:38 PM, Matthew Wilcox <willy@infradead.org> wrote=
-:
-> >=20
-> > On Thu, Mar 05, 2020 at 10:32:18PM -0500, Qian Cai wrote:
-> >>> On Mar 5, 2020, at 9:50 PM, akpm@linux-foundation.org wrote:
-> >>> The patch titled
-> >>>    Subject: mm/vmscan: remove unnecessary lruvec adding
-> >>> has been removed from the -mm tree.  Its filename was
-> >>>    mm-vmscan-remove-unnecessary-lruvec-adding.patch
-> >>>=20
-> >>> This patch was dropped because it had testing failures
-> >>=20
-> >> Andrew, do you have more information about this failure? I hit a bug
-> >> here under memory pressure and am wondering if this is related
-> >> which might save me some time digging=E2=80=A6
+David, I added you to this because it's probably easiest to take
+this change in through your tree with the rest of the IPA code
+(which uses field_max(), defined here).
 
-Very likely related.
+					-Alex
 
-> >=20
-> > See Hugh's message from a few minutes ago:
+ include/linux/bitfield.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Thanks Matthew.
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index 4bbb5f1c8b5b..48ea093ff04c 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -55,6 +55,19 @@
+ 					      (1ULL << __bf_shf(_mask))); \
+ 	})
+ 
++/**
++ * FIELD_MAX() - produce the maximum value representable by a field
++ * @_mask: shifted mask defining the field's length and position
++ *
++ * FIELD_MAX() returns the maximum value that can be held in the field
++ * specified by @_mask.
++ */
++#define FIELD_MAX(_mask)						\
++	({								\
++		__BF_FIELD_CHECK(_mask, 0ULL, 0ULL, "FIELD_MAX: ");	\
++		(typeof(_mask))((_mask) >> __bf_shf(_mask));		\
++	})
++
+ /**
+  * FIELD_FIT() - check if value fits in the field
+  * @_mask: shifted mask defining the field's length and position
+@@ -110,6 +123,7 @@ static __always_inline u64 field_mask(u64 field)
+ {
+ 	return field / field_multiplier(field);
+ }
++#define field_max(field)	((typeof(field))field_mask(field))
+ #define ____MAKE_OP(type,base,to,from)					\
+ static __always_inline __##type type##_encode_bits(base v, base field)	\
+ {									\
+-- 
+2.20.1
 
-> >=20
-> > Subject: Re: [PATCH v9 00/21] per lruvec lru_lock for memcg
->=20
-> I don=E2=80=99t see it on lore.kernel or anywhere. Private email?
-
-You're right, sorry I didn't notice, lots of ccs but
-neither lkml nor linux-mm were on that thread from the start:
-
-From=20hughd@google.com Thu Mar  5 18:16:06 2020
-Date: Thu, 5 Mar 2020 18:15:40 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Andew Morton <akpm@linux-foundation.org>, Alex Shi <alex.shi@linux.alib=
-aba.com>
-Cc: cgroups@vger.kernel.org, mgorman@techsingularity.net, tj@kernel.org, hu=
-ghd@google.com, khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com, yang=
-=2Eshi@linux.alibaba.com, willy@infradead.org, hannes@cmpxchg.org, lkp@inte=
-l.com, Fengguang Wu <fengguang.wu@intel.com>, Rong Chen <rong.a.chen@intel.=
-com>
-Subject: Re: [PATCH v9 00/21] per lruvec lru_lock for memcg
-
-On Tue, 3 Mar 2020, Alex Shi wrote:
-> =E5=9C=A8 2020/3/3 =E4=B8=8A=E5=8D=886:12, Andrew Morton =E5=86=99=E9=81=
-=93:
-> >> Thanks for Testing support from Intel 0day and Rong Chen, Fengguang Wu=
-,
-> >> and Yun Wang.
-> > I'm not seeing a lot of evidence of review and test activity yet.  But
-> > I think I'll grab patches 01-06 as they look like fairly
-> > straightforward improvements.
->=20
-> cc Fengguang and Rong Chen
->=20
-> I did some local functional testing and kselftest, they all look fine.
-> 0day only warn me if some case failed. Is it no news is good news? :)
-
-And now the bad news.
-
-Andrew, please revert those six (or seven as they ended up in mmotm).
-5.6-rc4-mm1 without them runs my tmpfs+loop+swapping+memcg+ksm kernel
-build loads fine (did four hours just now), but 5.6-rc4-mm1 itself
-crashed just after starting - seconds or minutes I didn't see,
-but it did not complete an iteration.
-
-I thought maybe those six would be harmless (though I've not looked
-at them at all); but knew already that the full series is not good yet:
-I gave it a try over 5.6-rc4 on Monday, and crashed very soon on simpler
-testing, in different ways from what hits mmotm.
-
-The first thing wrong with the full set was when I tried tmpfs+loop+
-swapping kernel builds in "mem=3D700M cgroup_disabled=3Dmemory", of course
-with CONFIG_DEBUG_LIST=3Dy. That soon collapsed in a splurge of OOM kills
-and list_del corruption messages: __list_del_entry_valid < list_del <
-__page_cache_release < __put_page < put_page < __try_to_reclaim_swap <
-free_swap_and_cache < shmem_free_swap < shmem_undo_range.
-
-When I next tried with "mem=3D1G" and memcg enabled (but not being used),
-that managed some iterations, no OOM kills, no list_del warnings (was
-it swapping? perhaps, perhaps not, I was trying to go easy on it just
-to see if "cgroup_disabled=3Dmemory" had been the problem); but when
-rebooting after that, again list_del corruption messages and crash
-(I didn't note them down).
-
-So I didn't take much notice of what the mmotm crash backtrace showed
-(but IIRC shmem and swap were in it).
-
-Alex, I'm afraid you're focusing too much on performance results,
-without doing the basic testing needed - I thought we had given you
-some hints on the challenging areas (swapping, move_charge_at_immigrate,
-page migration) when we attached a *correctly working* 5.3 version back
-on 23rd August:
-
-https://lore.kernel.org/linux-mm/alpine.LSU.2.11.1908231736001.16920@eggly.=
-anvils/
-
-(Correctly working, except missing two patches I'd mistakenly dropped
-as unnecessary in earlier rebases: but our discussions with Johannes
-later showed to be very necessary, though their races rarely seen.)
-
-I have not had the time (and do not expect to have the time) to review
-your series: maybe it's one or two small fixes away from being complete,
-or maybe it's still fundamentally flawed, I do not know.  I had naively
-hoped that you would help with a patchset that worked, rather than
-cutting it down into something which does not.
-
-Submitting your series to routine testing is much easier for me than
-reviewing it: but then, yes, it's a pity that I don't find the time
-to report the results on intervening versions, which also crashed.
-
-What I have to do now, is set aside time today and tomorrow, to package
-up the old scripts I use, describe them and their environment, and send
-them to you (cc akpm in case I fall under a bus): so that you can
-reproduce the crashes for yourself, and get to work on them.
-
-Hugh
---0-1123677523-1583468282=:3016--
