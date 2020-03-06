@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA6D17C0AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE5B17C091
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgCFOnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 09:43:42 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53769 "EHLO
+        id S1727185AbgCFOmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 09:42:18 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53785 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbgCFOmO (ORCPT
+        with ESMTP id S1727066AbgCFOmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Mar 2020 09:42:14 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAEAw-0006Ho-Gy; Fri, 06 Mar 2020 15:42:06 +0100
+        id 1jAEAy-0006Ir-MR; Fri, 06 Mar 2020 15:42:08 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 21CF91C21D6;
-        Fri,  6 Mar 2020 15:42:05 +0100 (CET)
-Date:   Fri, 06 Mar 2020 14:42:04 -0000
-From:   "tip-bot2 for Qais Yousef" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 324841C21D8;
+        Fri,  6 Mar 2020 15:42:06 +0100 (CET)
+Date:   Fri, 06 Mar 2020 14:42:05 -0000
+From:   "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/rt: Re-instate old behavior in select_task_rq_rt()
-Cc:     Pavan Kondeti <pkondeti@codeaurora.org>,
-        Qais Yousef <qais.yousef@arm.com>,
+Subject: [tip: sched/core] sched/fair: Fix runnable_avg for throttled cfs
+Cc:     Ben Segall <bsegall@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200302132721.8353-3-qais.yousef@arm.com>
-References: <20200302132721.8353-3-qais.yousef@arm.com>
+In-Reply-To: <20200227154115.8332-1-vincent.guittot@linaro.org>
+References: <20200227154115.8332-1-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Message-ID: <158350572487.28353.5061886185700456995.tip-bot2@tip-bot2>
+Message-ID: <158350572588.28353.11229882686518065235.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,64 +49,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     b28bc1e002c23ff8a4999c4a2fb1d4d412bc6f5e
-Gitweb:        https://git.kernel.org/tip/b28bc1e002c23ff8a4999c4a2fb1d4d412bc6f5e
-Author:        Qais Yousef <qais.yousef@arm.com>
-AuthorDate:    Mon, 02 Mar 2020 13:27:17 
+Commit-ID:     6212437f0f6043e825e021e4afc5cd63e248a2b4
+Gitweb:        https://git.kernel.org/tip/6212437f0f6043e825e021e4afc5cd63e248a2b4
+Author:        Vincent Guittot <vincent.guittot@linaro.org>
+AuthorDate:    Thu, 27 Feb 2020 16:41:15 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Mar 2020 12:57:27 +01:00
+CommitterDate: Fri, 06 Mar 2020 12:57:25 +01:00
 
-sched/rt: Re-instate old behavior in select_task_rq_rt()
+sched/fair: Fix runnable_avg for throttled cfs
 
-When RT Capacity Aware support was added, the logic in select_task_rq_rt
-was modified to force a search for a fitting CPU if the task currently
-doesn't run on one.
+When a cfs_rq is throttled, its group entity is dequeued and its running
+tasks are removed. We must update runnable_avg with the old h_nr_running
+and update group_se->runnable_weight with the new h_nr_running at each
+level of the hierarchy.
 
-But if the search failed, and the search was only triggered to fulfill
-the fitness request; we could end up selecting a new CPU unnecessarily.
-
-Fix this and re-instate the original behavior by ensuring we bail out
-in that case.
-
-This behavior change only affected asymmetric systems that are using
-util_clamp to implement capacity aware. None asymmetric systems weren't
-affected.
-
-LINK: https://lore.kernel.org/lkml/20200218041620.GD28029@codeaurora.org/
-Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Reviewed-by: Ben Segall <bsegall@google.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Fixes: 804d402fb6f6 ("sched/rt: Make RT capacity-aware")
-Link: https://lkml.kernel.org/r/20200302132721.8353-3-qais.yousef@arm.com
+Fixes: 9f68395333ad ("sched/pelt: Add a new runnable average signal")
+Link: https://lkml.kernel.org/r/20200227154115.8332-1-vincent.guittot@linaro.org
 ---
- kernel/sched/rt.c |  9 +++++++++
- 1 file changed, 9 insertions(+)
+ kernel/sched/fair.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 55a4a50..f0071fa 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1475,6 +1475,13 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 		int target = find_lowest_rq(p);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3887b73..54bd628 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4720,8 +4720,13 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		if (!se->on_rq)
+ 			break;
  
- 		/*
-+		 * Bail out if we were forcing a migration to find a better
-+		 * fitting CPU but our search failed.
-+		 */
-+		if (!test && target != -1 && !rt_task_fits_capacity(p, target))
-+			goto out_unlock;
+-		if (dequeue)
++		if (dequeue) {
+ 			dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
++		} else {
++			update_load_avg(qcfs_rq, se, 0);
++			se_update_runnable(se);
++		}
 +
-+		/*
- 		 * Don't bother moving it if the destination CPU is
- 		 * not running a lower priority task.
- 		 */
-@@ -1482,6 +1489,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
- 			cpu = target;
- 	}
-+
-+out_unlock:
- 	rcu_read_unlock();
+ 		qcfs_rq->h_nr_running -= task_delta;
+ 		qcfs_rq->idle_h_nr_running -= idle_task_delta;
  
- out:
+@@ -4789,8 +4794,13 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 			enqueue = 0;
+ 
+ 		cfs_rq = cfs_rq_of(se);
+-		if (enqueue)
++		if (enqueue) {
+ 			enqueue_entity(cfs_rq, se, ENQUEUE_WAKEUP);
++		} else {
++			update_load_avg(cfs_rq, se, 0);
++			se_update_runnable(se);
++		}
++
+ 		cfs_rq->h_nr_running += task_delta;
+ 		cfs_rq->idle_h_nr_running += idle_task_delta;
+ 
