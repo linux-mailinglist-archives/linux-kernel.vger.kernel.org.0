@@ -2,84 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E71A17B748
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 08:22:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AEB017B74D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 08:24:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbgCFHWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 02:22:04 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54843 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbgCFHWD (ORCPT
+        id S1726070AbgCFHX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 02:23:57 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:13965 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725829AbgCFHX5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 02:22:03 -0500
-Received: by mail-wm1-f65.google.com with SMTP id i9so1166632wml.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 23:22:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Hu3/aCofoV9GF5k7D+bvdKBtAnHD6TZ4MwlP/bXT5AI=;
-        b=k6tSlUIEH3PmEyNNy1VP/w3c4DSL+QzxcWPGhDEU/w7ARlvJrn6vvWzcSt7HRfBuCV
-         2FjZ1Uqcv3g0DGzuQeK02GlSWQTqigasgjxR3X/O5p/n3FBJHNv8K6sHOsc5lEchz9RL
-         +0n4Tcnq6VQbHD4o+xZR4S0KZSzv/KteySWzVe7UpSlLkfwsHKZcvBg3evKmstU00pew
-         dXp5/Z1lkyC4lei6Th6PBFOdo2QJqhbOIe2Ib3lO6Y1MwXgv7d5cB2OiRKdOcpx28XAH
-         HfclPgnq/le9HebtZDVKGvCgAoTxQB+YzJC123Xw5alfHaR7wqnr0CF3WZKe5xTG2Qoa
-         tyjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Hu3/aCofoV9GF5k7D+bvdKBtAnHD6TZ4MwlP/bXT5AI=;
-        b=GM5O/JRHrb3sgVLnxSNUsSsEz8rOMFgfC93Qahhl9wvX3W1bA93jUKyv/8418+grrz
-         MnKqguNE+F4AbGfRYyKdkaqMYjBXSH9zDCvzYAKPOA2iIJJscH2Fd+1eicgsE9SxOPh3
-         56onbQzDUQnEheCwk4F2hWIrBx/LAay5fJ6uGb2sDmeGyyO4J2jOCuVsw03P0qVdUS2T
-         ToUrJrzLS164pb59asavVZSYS2TmNUPFB/6nP5nHn2LzYPPIn8sPb5zD8bXtFIWbjCBo
-         wBUUdYcKrjEkY0f5vcp8BBEw57PTQ5dG/08YND3Lv4Rck+ECfFa0mMRdulUnn9o7556i
-         rhTw==
-X-Gm-Message-State: ANhLgQ3pXMNB++93rTE8C91mihZ1WtZfZhiPSnSQKMOKGtSJq0nFIC6L
-        v12rz0FnIX15Gh7zAl654eMKCA==
-X-Google-Smtp-Source: ADFU+vudiCEvMit8BShDvyPfomy18ETJ5jFbkxGmnWGipfFDJ3asLxX5ZOYt/x9itLh0RYZ7P3Y4sA==
-X-Received: by 2002:a05:600c:146:: with SMTP id w6mr2364628wmm.75.1583479322692;
-        Thu, 05 Mar 2020 23:22:02 -0800 (PST)
-Received: from dell ([2.31.163.122])
-        by smtp.gmail.com with ESMTPSA id o11sm37467629wrn.6.2020.03.05.23.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 23:22:02 -0800 (PST)
-Date:   Fri, 6 Mar 2020 07:22:42 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: Re: [PATCH v1] mfd: intel-lpss: Add Intel Comet Lake PCH-V PCI IDs
-Message-ID: <20200306072242.GG3332@dell>
-References: <20200113125729.8576-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200113125729.8576-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 6 Mar 2020 02:23:57 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583479436; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=pNuHrGqCUbPfbsklbXCwMeTwekc6NKw2ZW7iJ5WEbXo=; b=PHiHMKXLqrlgTkgiN/XL4QJ4ljO9UvQbvhM2bSA37HvTWtD1ZTqtbHkJRu44f303mKGPOkoE
+ coCBIY2HoxgrG0kPPgn12h1AW0eF2beRFHpsGsCVyY/IqkkCgKxxMMTQz9oWwyjtkuJUSVtK
+ +Bxea0Y5LKrsaS0wwpq9koTtUXo=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e61fa7d.7fe2763b8998-smtp-out-n04;
+ Fri, 06 Mar 2020 07:23:41 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 57317C43637; Fri,  6 Mar 2020 07:23:40 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00450C433D2;
+        Fri,  6 Mar 2020 07:23:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00450C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+From:   Maulik Shah <mkshah@codeaurora.org>
+To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [PATCH v3 0/4] Introduce SoC sleep stats driver
+Date:   Fri,  6 Mar 2020 12:53:28 +0530
+Message-Id: <1583479412-18320-1-git-send-email-mkshah@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Jan 2020, Andy Shevchenko wrote:
+Changes in v3:
+- Address stephen's comments from v2 in change 1 and 2.
+- Address bjorn's comments from v2 in change 3 and 4.
+- Add Rob and bjorn's Reviewed-by on YAML change.
 
-> Intel Comet Lake PCH-V has the same LPSS than Intel Kaby Lake.
-> Add the new IDs to the list of supported devices.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/mfd/intel-lpss-pci.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+Changes in v2:
+- Convert Documentation to YAML.
+- Address stephen's comments from v1.
+- Use debugfs instead of sysfs.
+- Add sc7180 dts changes for sleep stats
+- Add defconfig changes to enable driver
+- Include subsystem stats from [1] in this single stats driver.
+- Address stephen's comments from [1]
+- Update cover letter inline to mention [1]
 
-Applied, thanks.
+Qualcomm Technologies, Inc. (QTI)'s chipsets support SoC level low power
+modes. SoCs Always On Processor/Resource Power Manager produces statistics
+of the SoC sleep modes involving lowering or powering down of the rails and
+the oscillator clock.
+
+Additionally multiple subsystems present on SoC like modem, spss, adsp,
+cdsp maintains their low power mode statistics in shared memory (SMEM).
+
+Statistics includes SoC sleep mode type, number of times LPM entered, time
+of last entry, exit, and accumulated sleep duration in seconds.
+
+This series adds a driver to read the stats and export to debugfs.
+
+[1] https://lore.kernel.org/patchwork/patch/1149381/
+
+Mahesh Sivasubramanian (2):
+  dt-bindings: Introduce soc sleep stats bindings for Qualcomm SoCs
+  soc: qcom: Add SoC sleep stats driver
+
+Maulik Shah (2):
+  arm64: dts: qcom: sc7180: Enable soc sleep stats
+  arm64: defconfig: Enable SoC sleep stats driver for Qualcomm
+
+ .../bindings/soc/qcom/soc-sleep-stats.yaml         |  47 ++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               |   5 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/soc/qcom/Kconfig                           |  10 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/soc_sleep_stats.c                 | 279 +++++++++++++++++++++
+ 6 files changed, 343 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.yaml
+ create mode 100644 drivers/soc/qcom/soc_sleep_stats.c
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
