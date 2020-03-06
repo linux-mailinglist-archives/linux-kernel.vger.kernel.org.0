@@ -2,127 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF9917BDE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:13:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99ABA17BDF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:16:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgCFNNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:13:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45870 "EHLO mx2.suse.de"
+        id S1727225AbgCFNQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:16:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbgCFNNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:13:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7837FAC1E;
-        Fri,  6 Mar 2020 13:13:51 +0000 (UTC)
-Subject: Re: [PATCH v7 7/7] mm/madvise: allow KSM hints for remote API
-To:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        linux-api@vger.kernel.org, oleksandr@redhat.com,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jann Horn <jannh@google.com>,
-        alexander.h.duyck@linux.intel.com, sj38.park@gmail.com,
-        SeongJae Park <sjpark@amazon.de>
-References: <20200302193630.68771-1-minchan@kernel.org>
- <20200302193630.68771-8-minchan@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <2a66abd8-4103-f11b-06d1-07762667eee6@suse.cz>
-Date:   Fri, 6 Mar 2020 14:13:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726781AbgCFNQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 08:16:01 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2757206E2;
+        Fri,  6 Mar 2020 13:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583500560;
+        bh=O7DyGs5X6WqiUvbbNzIrGmdLmE4umMZW5A0duTxIafY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lr9PiGlc4n4rCWo1HRZm5j2i4lLL0ZFcAeP+tJp17RVsKiWz3s8ZsK4MMyEgz8iRQ
+         z5taC+sqbOnEcE1UKcQ++5hi+Qm1fAeXtMW1JRKXnn73XyPnmU8iDDmeLPYuvtfj+c
+         oiVldnxvdr/fW5BXBLl73DP1MBwgzvP3K+9zPw1Q=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jACpb-00AZkS-1a; Fri, 06 Mar 2020 13:15:59 +0000
 MIME-Version: 1.0
-In-Reply-To: <20200302193630.68771-8-minchan@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Mar 2020 13:15:59 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: Re: [patch 1/7] genirq/debugfs: Add missing sanity checks to
+ interrupt injection
+In-Reply-To: <20200306130623.500019114@linutronix.de>
+References: <20200306130341.199467200@linutronix.de>
+ <20200306130623.500019114@linutronix.de>
+Message-ID: <8eaa5507e4cf77042d39688465c2b989@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.10
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/20 8:36 PM, Minchan Kim wrote:
-> From: Oleksandr Natalenko <oleksandr@redhat.com>
+On 2020-03-06 13:03, Thomas Gleixner wrote:
+> Interrupts cannot be injected when the interrupt is not activated and 
+> when
+> a replay is already in progress.
 > 
-> It all began with the fact that KSM works only on memory that is marked
-> by madvise(). And the only way to get around that is to either:
-> 
->   * use LD_PRELOAD; or
->   * patch the kernel with something like UKSM or PKSM.
-> 
-> (i skip ptrace can of worms here intentionally)
-> 
-> To overcome this restriction, lets employ a new remote madvise API. This
-> can be used by some small userspace helper daemon that will do auto-KSM
-> job for us.
-> 
-> I think of two major consumers of remote KSM hints:
-> 
->   * hosts, that run containers, especially similar ones and especially in
->     a trusted environment, sharing the same runtime like Node.js;
-> 
->   * heavy applications, that can be run in multiple instances, not
->     limited to opensource ones like Firefox, but also those that cannot be
->     modified since they are binary-only and, maybe, statically linked.
-> 
-> Speaking of statistics, more numbers can be found in the very first
-> submission, that is related to this one [1]. For my current setup with
-> two Firefox instances I get 100 to 200 MiB saved for the second instance
-> depending on the amount of tabs.
-> 
-> 1 FF instance with 15 tabs:
-> 
->    $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
->    410
-> 
-> 2 FF instances, second one has 12 tabs (all the tabs are different):
-> 
->    $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
->    592
-> 
-> At the very moment I do not have specific numbers for containerised
-> workload, but those should be comparable in case the containers share
-> similar/same runtime.
-> 
-> [1] https://lore.kernel.org/patchwork/patch/1012142/
-> 
-> Reviewed-by: SeongJae Park <sjpark@amazon.de>
-> Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-
-This will lead to one process calling unmerge_ksm_pages() of another. There's a
-(signal_pending(current)) test there, should it check also the other task,
-analogically to task 3?
-Then break_ksm() is fine as it is, as ksmd also calls it, right?
-
+> Fixes: 536e2e34bd00 ("genirq/debugfs: Triggering of interrupts from 
+> userspace")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: stable@vger.kernel.org
 > ---
->  mm/madvise.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  kernel/irq/debugfs.c |   11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 > 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index e77c6c1fad34..f4fa962ee74d 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1005,6 +1005,10 @@ process_madvise_behavior_valid(int behavior)
->  	switch (behavior) {
->  	case MADV_COLD:
->  	case MADV_PAGEOUT:
-> +#ifdef CONFIG_KSM
-> +	case MADV_MERGEABLE:
-> +	case MADV_UNMERGEABLE:
-> +#endif
->  		return true;
->  	default:
->  		return false;
+> --- a/kernel/irq/debugfs.c
+> +++ b/kernel/irq/debugfs.c
+> @@ -206,8 +206,15 @@ static ssize_t irq_debug_write(struct fi
+>  		chip_bus_lock(desc);
+>  		raw_spin_lock_irqsave(&desc->lock, flags);
 > 
+> -		if (irq_settings_is_level(desc) || desc->istate & IRQS_NMI) {
+> -			/* Can't do level nor NMIs, sorry */
+> +		/*
+> +		 * Don't allow injection when the interrupt is:
+> +		 *  - Level or NMI type
+> +		 *  - not activated
+> +		 *  - replaying already
+> +		 */
+> +		if (irq_settings_is_level(desc) ||
+> +		    !irqd_is_activated(&desc->irq_data) ||
+> +		    (desc->istate & (IRQS_NMI | IRQS_REPLAY)) {
+>  			err = -EINVAL;
+>  		} else {
+>  			desc->istate |= IRQS_PENDING;
 
+Huh, nice catch.
+
+Acked-by: Marc Zyngier <maz@kernel.org>
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
