@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B52E217BA9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E91B617BA7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:39:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbgCFKkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:40:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44240 "EHLO mx2.suse.de"
+        id S1727194AbgCFKjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:39:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44144 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbgCFKj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:39:26 -0500
+        id S1727067AbgCFKj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 05:39:27 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9FF06B22D;
-        Fri,  6 Mar 2020 10:39:24 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 987C7ADE8;
+        Fri,  6 Mar 2020 10:39:25 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        Hu Ziji <huziji@marvell.com>,
         Adrian Hunter <adrian.hunter@intel.com>
 Cc:     ulf.hansson@linaro.org, f.fainelli@gmail.com, phil@raspberrypi.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 05/10] mmc: sdhci: pxav3: Use quirk instead of custom set_power()
-Date:   Fri,  6 Mar 2020 11:38:50 +0100
-Message-Id: <20200306103857.23962-6-nsaenzjulienne@suse.de>
+Subject: [PATCH 06/10] mmc: sdhci: xenon: Use quirk instead of custom set_power()
+Date:   Fri,  6 Mar 2020 11:38:51 +0100
+Message-Id: <20200306103857.23962-7-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200306103857.23962-1-nsaenzjulienne@suse.de>
 References: <20200306103857.23962-1-nsaenzjulienne@suse.de>
@@ -43,19 +44,19 @@ regulator.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- drivers/mmc/host/sdhci-pxav3.c | 20 +-------------------
+ drivers/mmc/host/sdhci-xenon.c | 20 +-------------------
  1 file changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-index e55037ceda73..dc4a1e69e6f6 100644
---- a/drivers/mmc/host/sdhci-pxav3.c
-+++ b/drivers/mmc/host/sdhci-pxav3.c
-@@ -297,27 +297,8 @@ static void pxav3_set_uhs_signaling(struct sdhci_host *host, unsigned int uhs)
- 		__func__, uhs, ctrl_2);
+diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+index 1dea1ba66f7b..5bca5f9e5660 100644
+--- a/drivers/mmc/host/sdhci-xenon.c
++++ b/drivers/mmc/host/sdhci-xenon.c
+@@ -213,24 +213,6 @@ static void xenon_set_uhs_signaling(struct sdhci_host *host,
+ 	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
  }
  
--static void pxav3_set_power(struct sdhci_host *host, unsigned char mode,
--			    unsigned short vdd)
+-static void xenon_set_power(struct sdhci_host *host, unsigned char mode,
+-		unsigned short vdd)
 -{
 -	struct mmc_host *mmc = host->mmc;
 -	u8 pwr = host->pwr;
@@ -72,20 +73,25 @@ index e55037ceda73..dc4a1e69e6f6 100644
 -		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
 -}
 -
- static const struct sdhci_ops pxav3_sdhci_ops = {
- 	.set_clock = sdhci_set_clock,
--	.set_power = pxav3_set_power,
- 	.platform_send_init_74_clocks = pxav3_gen_init_74_clocks,
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
- 	.set_bus_width = sdhci_set_bus_width,
-@@ -330,6 +311,7 @@ static const struct sdhci_pltfm_data sdhci_pxav3_pdata = {
- 		| SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC
- 		| SDHCI_QUIRK_32BIT_ADMA_SIZE
- 		| SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ static void xenon_voltage_switch(struct sdhci_host *host)
+ {
+ 	/* Wait for 5ms after set 1.8V signal enable bit */
+@@ -240,7 +222,6 @@ static void xenon_voltage_switch(struct sdhci_host *host)
+ static const struct sdhci_ops sdhci_xenon_ops = {
+ 	.voltage_switch		= xenon_voltage_switch,
+ 	.set_clock		= sdhci_set_clock,
+-	.set_power		= xenon_set_power,
+ 	.set_bus_width		= sdhci_set_bus_width,
+ 	.reset			= xenon_reset,
+ 	.set_uhs_signaling	= xenon_set_uhs_signaling,
+@@ -252,6 +233,7 @@ static const struct sdhci_pltfm_data sdhci_xenon_pdata = {
+ 	.quirks = SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
+ 		  SDHCI_QUIRK_NO_SIMULT_VDD_AND_POWER |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
 +	.quirks2 = SDHCI_QUIRK2_SET_BUS_VOLTAGE,
- 	.ops = &pxav3_sdhci_ops,
  };
  
+ /*
 -- 
 2.25.1
 
