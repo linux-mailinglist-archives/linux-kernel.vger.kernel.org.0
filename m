@@ -2,114 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A792B17C343
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:48:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17AE417C33F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:46:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbgCFQsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:48:04 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36539 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbgCFQsE (ORCPT
+        id S1726892AbgCFQqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:46:08 -0500
+Received: from gateway21.websitewelcome.com ([192.185.46.113]:19884 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726099AbgCFQqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:48:04 -0500
-Received: by mail-yw1-f68.google.com with SMTP id j71so2801050ywb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 08:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lGrpixY/KajztTvkMkDBT1B96BNvHODkOsGOZbkrSZg=;
-        b=fFTuuzfOkYiCnZ22xZtNdK9HT0L4FN3pjpbu7Mt3PCD7eWN8c9uXTj4suVczbwfgy4
-         w0QciTMDNjeTdzLGDagG9s7rsUpGpF/p4waeA24sc8cpZ93QfT+UJYBOfauXZj7m8/CD
-         1rJDFb8dCv5HWMas6PsXUI7WCJ3pnGOOBtUzdAJI7DCkmmmb+bJYaH3o5O7gA+JK9qW7
-         8yS8va3re029AHujFSq0y9gJUVmgEeTRxV/mG4WJnCaBo1ptoankpLZDEm4Rmp4KoDmR
-         HQd9xo2eX5E5EPvHDeY552GSr8KCZFEEAc/wYJLlbAoOwlPXaZ72Jy1ywIh82fjtbjGX
-         wPow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lGrpixY/KajztTvkMkDBT1B96BNvHODkOsGOZbkrSZg=;
-        b=jxRKdE/gZhsPFHYwrm67icVdhNjBiwlbu8d/nb1f32sQMNKhWhMSMx7Ga9+ebioZuo
-         HkyNB9nmPQQQU3BhFxHRKhdjoiJFN+9X65K9e2Ip6cpCbIW728dssn+y+neh50c9HJnw
-         PV5Cr+W1fCvYvF/E089y5H8P7SEeOm9BReiTaBT7+440ytnZVY05gH7mcAlpmIFYPPkn
-         oU5uUSDOF7Vz3OpF/kvs/Nm0cn4qraDeijNebcBLzqU+et8VJM1I3Ek89ZTojGkbYto9
-         ODcgVsS2vYpqaECl0mh6gfoeABPaOIdXr4YjyrsrsIij8nmLvn3+N1Ryx91PzArJCUTy
-         5elQ==
-X-Gm-Message-State: ANhLgQ2vRQ7UxW4Bcmo2lYuFKzslLWIGPwVPsvd90i+FfCPbLrs83Y8h
-        s7JWjoKXrusljHmIiD+S0dqlwkKUgSegBV62kAUmiQ==
-X-Google-Smtp-Source: ADFU+vtO7hopVToGmyqZtDqH5TSGNHXMUiLaDYLuVNZRG1Jjfq/LNjpZ7Z+IgbsUaZxcC0SX4tqHJZrEi3kxL0r0eng=
-X-Received: by 2002:a25:c482:: with SMTP id u124mr4887325ybf.286.1583513282457;
- Fri, 06 Mar 2020 08:48:02 -0800 (PST)
+        Fri, 6 Mar 2020 11:46:08 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 7AD12401471A4
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 10:46:07 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id AG6xj4YoGXVkQAG6xjO7ZM; Fri, 06 Mar 2020 10:46:07 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=a0yfOiyYtsn67/xw854Gi9PS9vsekXy7OaHr3ZdUtSM=; b=fn4/ra0rE4bp/rosZ9RYHUFyv6
+        /N3piaBjmUoMihSThSuzygMoAc0Usf1H8YHqkSquw1IJdl1W+p1tj4QSHiw5n2DOKPghBAaktwpMM
+        GV9aLkXqxd/NNC3vMLXsZxkqkheCUDa11IDKcKDiSdh0EYKPcwhFnoWTIFK1s6bodSLETOioXbWDu
+        oe37C4vPDVQiKjERSxXRzBszarIUXU6YXMooHMQ+sCk9xQkSEGfsBCfokb9FLVdWyae80IOOaOl5z
+        uhlzZn3QlnP1fhwjoCMcO48Z2q0BbKI2yBfsJqL14TDiOXDMzWtO6nX7ccJCSx81pFHZdLcBrRt9S
+        mJRtLPHg==;
+Received: from [201.166.190.186] (port=51790 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jAG6v-001sRG-Bx; Fri, 06 Mar 2020 10:46:06 -0600
+Date:   Fri, 6 Mar 2020 10:49:12 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] Btrfs: delayed-inode.h: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200306164912.GA22197@embeddedor>
 MIME-Version: 1.0
-References: <20200306071110.130202-1-irogers@google.com> <20200306071110.130202-2-irogers@google.com>
- <20200306093355.GB281906@krava>
-In-Reply-To: <20200306093355.GB281906@krava>
-From:   Ian Rogers <irogers@google.com>
-Date:   Fri, 6 Mar 2020 08:47:51 -0800
-Message-ID: <CAP-5=fUAjMxGDWfev_q6vKhe1M5D1UdXhPK6x5Y9bxUbrJ-tNw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] tools: fix off-by 1 relative directory includes
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wei Li <liwei391@huawei.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.166.190.186
+X-Source-L: No
+X-Exim-ID: 1jAG6v-001sRG-Bx
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.166.190.186]:51790
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 1:34 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Thu, Mar 05, 2020 at 11:11:08PM -0800, Ian Rogers wrote:
-> > This is currently working due to extra include paths in the build.
->
-> if you're fixing this, why not remove that extra include path then?
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-TL;DR it is complicated, but the include paths are all currently
-necessary I believe and doing this way is necessary due to how header
-files may be copied out of the kernel.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-The current build uses multiple -Is to ensure the correct version of a
-file is included, for example there are 27 files called bitops.h and
-29 called bitsperlong.h. In
-Google we're using libraries and bazel build files:
-https://docs.bazel.build/versions/master/be/c-cpp.html#cc_library
-and there's no way to say if you depend on this library then you need
-this include path. We've tried to make perf this way but having tied
-ourselves in knots we decided instead to emulate the include path
-behaviour by rewriting includes when we import code using copybara:
-https://github.com/google/copybara
-We are able when doing this to prioritize the include paths we rewrite
-so that a local directory version of a header is preferred over say
-one in tools/lib/perf and perhaps tools/perf. Having full include
-paths isn't really an option upstream as the same header file may be
-copied into a libc project that has a different directory layout.
-As we have absolute include paths at the time of building we need
-relative include paths to be correct. Upstream -Is allow the build to
-find the file but it is a bit of a quirk of the C preprocessor, so
-fixing these off-by 1s feels like value add both for us and upstream.
-For upstream to do anything different I think is going to be a
-significant rewrite of how the Makefile build works and I'm not sure
-what the result would look like.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Thanks!
-Ian
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-> jirka
->
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/btrfs/delayed-inode.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/delayed-inode.h b/fs/btrfs/delayed-inode.h
+index 74ae226ffaf0..ca96ef007d8f 100644
+--- a/fs/btrfs/delayed-inode.h
++++ b/fs/btrfs/delayed-inode.h
+@@ -70,7 +70,7 @@ struct btrfs_delayed_item {
+ 	refcount_t refs;
+ 	int ins_or_del;
+ 	u32 data_len;
+-	char data[0];
++	char data[];
+ };
+ 
+ static inline void btrfs_init_delayed_root(
+-- 
+2.25.0
+
