@@ -2,93 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2D2017C20D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0097817C234
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbgCFPoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:44:19 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42147 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbgCFPoT (ORCPT
+        id S1727180AbgCFPuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:50:16 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46639 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726271AbgCFPuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:44:19 -0500
-Received: by mail-pg1-f193.google.com with SMTP id h8so1244348pgs.9;
-        Fri, 06 Mar 2020 07:44:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:message-id:in-reply-to:references:subject
-         :mime-version:content-transfer-encoding;
-        bh=GtC9IEB6Uytb3vSQk6jEoUpN+KV/FafY+w8suLJILpk=;
-        b=L4uJh5Wb8MP4t/bAj9XTu2OBHXt3YlYXexST74Y1B+TIaA4EWDUU62PQTTVzdMwRtD
-         gEdKEQfwjk3XN1Vja54+mgMVBgaBlo36koMAf2uZQtyBeiCnVT9fSqh5vVnOuU2GZrXE
-         tCRN1QomEDj3Uds2Mux+iuc6j0/hEBC7RM1I5imsBujG7LcE3vfPVqW4WbUJwgpK7I5e
-         ElqvCld9JKZfHUN/fYonvG0ANywfy9OzI0kAreSgcZPYUFdLoRahVxL2KWTQX6vNFr0L
-         YLJ7JDQoP7TB6uwUmw++xQKIo5tfnHjMpJ9DXywHbUk+VpUpI+iiuc8mT5kEiG8rSZ6T
-         kK7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
-         :references:subject:mime-version:content-transfer-encoding;
-        bh=GtC9IEB6Uytb3vSQk6jEoUpN+KV/FafY+w8suLJILpk=;
-        b=DEz+EVXJts+OJSVTCF9YWN2vWwdTS438w8AVV9R5xWD5Y5Sgh1/dXTe8yqKwbppIK3
-         KWTmn9tYoh2MzO+cyGN41mFDyNtRT+hFuEHoimvBPPy4GCpuSc56H5DcfS4GPli66VnU
-         BVb7wE4CWL1wb+n4jEAafQfkc6a2dV/k4qfWpQSIBVOcKv2hDXMK1MV0D1HlMgw+EiW5
-         u8fq58RNM1XXTUOvYf9dsB73vNp+48jo4zHKASP/ux1WjnV/1Yhg8p+G0sGYaZ4N8i8F
-         6dGnFhw4smwtbpURu6b98DzQERcE9Gxuz46cCWyY9CDdZAHCsSTauhReaco6rJTge52o
-         Eesw==
-X-Gm-Message-State: ANhLgQ0Nz6QOi/a3GO1BHEfj1lJVMwWMGM/Fd0kruhDd6XXgxHjoSyn3
-        w0cfN5cluZymow9ZcCrEK2E=
-X-Google-Smtp-Source: ADFU+vutdtX9QtAAGDh++ZIUrWRjm3jtgDDPIkmFcQOICy9S6ArXrQvpiKGBWcnFaFYM7ipR3BFKDQ==
-X-Received: by 2002:a63:b04f:: with SMTP id z15mr3841664pgo.58.1583509458041;
-        Fri, 06 Mar 2020 07:44:18 -0800 (PST)
-Received: from localhost ([184.63.162.180])
-        by smtp.gmail.com with ESMTPSA id z6sm11697764pfq.39.2020.03.06.07.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 07:44:17 -0800 (PST)
-Date:   Fri, 06 Mar 2020 07:44:11 -0800
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     Lorenz Bauer <lmb@cloudflare.com>, john.fastabend@gmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     kernel-team@cloudflare.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Message-ID: <5e626fcb1e39e_17502acca07205b4c7@john-XPS-13-9370.notmuch>
-In-Reply-To: <20200304101318.5225-8-lmb@cloudflare.com>
-References: <20200304101318.5225-1-lmb@cloudflare.com>
- <20200304101318.5225-8-lmb@cloudflare.com>
-Subject: RE: [PATCH bpf-next v3 07/12] bpf: add sockmap hooks for UDP sockets
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+        Fri, 6 Mar 2020 10:50:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583509815;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YMxkSL6yFboV4hL3iA1r2NbH/sCtc48z1ZRDDZkcdNY=;
+        b=FrnTlgWGnRLyWTCUywlL3JdKfaKYPnJovYYOiTDfappQancBJIxtlxAk9FIxVUM/C2bLvX
+        KYuFAkEfsfWVER8ui+C9y5ExEJMK+0PlFUJ7dVSXjJ/asRamDN4uJN/7L5SR4U2ZoerHw2
+        bJGejVq0mQc+I8s5tvRYuWEHwWmbpcE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-295-ijdBUH5eNBCXAmmXHiihLw-1; Fri, 06 Mar 2020 10:50:10 -0500
+X-MC-Unique: ijdBUH5eNBCXAmmXHiihLw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 168C91923184;
+        Fri,  6 Mar 2020 15:50:09 +0000 (UTC)
+Received: from x1.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81C0473892;
+        Fri,  6 Mar 2020 15:50:06 +0000 (UTC)
+Date:   Fri, 6 Mar 2020 08:50:05 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dev@dpdk.org" <dev@dpdk.org>,
+        "mtosatti@redhat.com" <mtosatti@redhat.com>,
+        "thomas@monjalon.net" <thomas@monjalon.net>,
+        "bluca@debian.org" <bluca@debian.org>,
+        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>
+Subject: Re: [PATCH v2 5/7] vfio/pci: Add sriov_configure support
+Message-ID: <20200306085005.465a0201@x1.home>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7C0A43@SHSMSX104.ccr.corp.intel.com>
+References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
+        <158213846731.17090.37693075723046377.stgit@gimli.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D79A943@SHSMSX104.ccr.corp.intel.com>
+        <20200305112230.0dd77712@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7C0A43@SHSMSX104.ccr.corp.intel.com>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lorenz Bauer wrote:
-> Add basic psock hooks for UDP sockets. This allows adding and
-> removing sockets, as well as automatic removal on unhash and close.
-> 
-> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
-> Signed-off-by: Jakub Sitnicki <jakub@cloudflare.com>
-> ---
->  MAINTAINERS        |  1 +
->  include/net/udp.h  |  5 +++++
->  net/ipv4/Makefile  |  1 +
->  net/ipv4/udp_bpf.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 60 insertions(+)
->  create mode 100644 net/ipv4/udp_bpf.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8f27f40d22bb..b2fae56dca9f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
+On Fri, 6 Mar 2020 09:45:40 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+> > From: Tian, Kevin
+> > Sent: Friday, March 6, 2020 3:57 PM
+> >   
+> > > From: Alex Williamson <alex.williamson@redhat.com>
+> > > Sent: Friday, March 6, 2020 2:23 AM
+> > >
+> > > On Tue, 25 Feb 2020 03:08:00 +0000
+> > > "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> > >  
+> > > > > From: Alex Williamson
+> > > > > Sent: Thursday, February 20, 2020 2:54 AM
+> > > > >
+> > > > > With the VF Token interface we can now expect that a vfio userspace
+> > > > > driver must be in collaboration with the PF driver, an unwitting
+> > > > > userspace driver will not be able to get past the GET_DEVICE_FD step
+> > > > > in accessing the device.  We can now move on to actually allowing
+> > > > > SR-IOV to be enabled by vfio-pci on the PF.  Support for this is not
+> > > > > enabled by default in this commit, but it does provide a module option
+> > > > > for this to be enabled (enable_sriov=1).  Enabling VFs is rather
+> > > > > straightforward, except we don't want to risk that a VF might get
+> > > > > autoprobed and bound to other drivers, so a bus notifier is used to
+> > > > > "capture" VFs to vfio-pci using the driver_override support.  We
+> > > > > assume any later action to bind the device to other drivers is
+> > > > > condoned by the system admin and allow it with a log warning.
+> > > > >
+> > > > > vfio-pci will disable SR-IOV on a PF before releasing the device,
+> > > > > allowing a VF driver to be assured other drivers cannot take over the
+> > > > > PF and that any other userspace driver must know the shared VF token.
+> > > > > This support also does not provide a mechanism for the PF userspace
+> > > > > driver itself to manipulate SR-IOV through the vfio API.  With this
+> > > > > patch SR-IOV can only be enabled via the host sysfs interface and the
+> > > > > PF driver user cannot create or remove VFs.  
+> > > >
+> > > > I'm not sure how many devices can be properly configured simply
+> > > > with pci_enable_sriov. It is not unusual to require PF driver prepare
+> > > > something before turning PCI SR-IOV capability. If you look kernel
+> > > > PF drivers, there are only two using generic pci_sriov_configure_
+> > > > simple (simple wrapper like pci_enable_sriov), while most others
+> > > > implementing their own callback. However vfio itself has no idea
+> > > > thus I'm not sure how an user knows whether using this option can
+> > > > actually meet his purpose. I may miss something here, possibly
+> > > > using DPDK as an example will make it clearer.  
+> > >
+> > > There is still the entire vfio userspace driver interface.  Imagine for
+> > > example that QEMU emulates the SR-IOV capability and makes a call out
+> > > to libvirt (or maybe runs with privs for the PF SR-IOV sysfs attribs)
+> > > when the guest enables SR-IOV.  Can't we assume that any PF specific
+> > > support can still be performed in the userspace/guest driver, leaving
+> > > us with a very simple and generic sriov_configure callback in vfio-pci?  
+> > 
+> > Makes sense. One concern, though, is how an user could be warned
+> > if he inadvertently uses sysfs to enable SR-IOV on a vfio device whose
+> > userspace driver is incapable of handling it. Note any VFIO device,
+> > if SR-IOV capable, will allow user to do so once the module option is
+> > turned on and the callback is registered. I felt such uncertainty can be
+> > contained by toggling SR-IOV through a vfio api, but from your description
+> > obviously it is what you want to avoid. Is it due to the sequence reason,
+> > e.g. that SR-IOV must be enabled before userspace PF driver sets the
+> > token?
+> >   
+> 
+> reading again I found that you specifically mentioned "the PF driver user 
+> cannot create or remove VFs.". However I failed to get the rationale 
+> behind. If the VF drivers have built the trust with the PF driver through
+> the token, what is the problem of allowing the PF driver to further manage 
+> SR-IOV itself? suppose any VF removal will be done in a cooperate way
+> to avoid surprise impact to related VF drivers. then possibly a new vfio
+> ioctl for setting the VF numbers plus a token from the userspace driver
+> could also serve the purpose of this patch series (GET_DEVICE_FD + sysfs)?
+
+If a user is allowed to create VFs, does that user automatically get
+ownership of those devices?  How is that accomplished?  What if we want
+to make use of the VF via a separate process?  How do we coordinate
+that with the PF driver?  All of these problems are resolved if we
+assume the userspace PF driver needs to operate in collaboration with a
+privileged entity to interact with sysfs to configure SR-IOV and manage
+the resulting VFs.  I have no desire to take on that responsibility
+within vfio-pci and I also feel that a user owning a PF device should
+not inherently grant that user the ability to create and remove other
+devices on the host, even if they are sourced from the PF.  Thanks,
+
+Alex
+
