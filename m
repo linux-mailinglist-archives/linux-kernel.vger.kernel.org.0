@@ -2,169 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1A2817C3AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E16FA17C3DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgCFRIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:08:16 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45644 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbgCFRIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:08:16 -0500
-Received: by mail-io1-f67.google.com with SMTP id w9so2753968iob.12
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 09:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kz7F9w9m8ZO7isygce7jzuADVkhqvNGk0rHiKeOUV28=;
-        b=hhZWK8fZp6R2bJvjZm23pEpYCjXEl/tKqzpidDMouyXr4lZ+/ttOlxzS+d2fVI1CAd
-         NNe5rbe4pQn/syiH0qRCT2B3SuO2YlNr1kGOt7hBpTU6DQMOXPw0jfXk/eX2hUJP9pN8
-         fM3rWBCs1PUa2Enu+2sYp6VVjf1XKdl/40vwGgNcjOkUkCTfXb41faAnaAdQD91hNiAj
-         ydVMUkgqJjUV4icfpRXWDoTUY54reM1oXnJVos5vYQU+S/avOxxVkCrF28lmw3NKBVO4
-         1BZGTvTEoNMJoS00OkujrzyMY7jbIaK70i80bL5ebuROi7tiNoRSTTVa2x7g0JW3SSHx
-         JZfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kz7F9w9m8ZO7isygce7jzuADVkhqvNGk0rHiKeOUV28=;
-        b=SUFgZe+lF7KoX1ZGBS/0bYu+Y2lh1Hw1LFVShd4iAlw+ZKvmKibrvOE1L6uhKt3wkC
-         qXedveJitGLCpAw/A9QgK1DmOBwxXjbC2xG6lStQOTJLE4hHQJsHmdkPhN/HkkeevHdP
-         Xc5TonF5zP9Y+c+9Hs1CZjKz+CnhcOPFY673ITbh5rBznvqs2BAvQwH7Akow/x+Ziwu/
-         AsQCA84iMfd/fhpiLiqjz08poEZxUClURmQ2AMRunsZTHFXXg8YNUnbr0zwXvNozBwaX
-         ZMBm6cz5FOC8d08IkFEoOxsdqZXf2HrLsD0OUrQBsQXvLmJwXaDcI0GpHFCDw5NTgNMY
-         JkXw==
-X-Gm-Message-State: ANhLgQ1Qi89PP+lzCSmBJVe4c4iGD8Yg42XvXKSuwBJ3cb0IjS6ky0/y
-        t5mwenPfcALduMt5kfiV4riVhA==
-X-Google-Smtp-Source: ADFU+vvePiQDyDOClLaaJfWxLjUd6Wuore2UNcMCRYiANtgsUDZ0ItNn/czzA9dx6XLBxVdITYoMfA==
-X-Received: by 2002:a6b:3c13:: with SMTP id k19mr3868711iob.25.1583514495003;
-        Fri, 06 Mar 2020 09:08:15 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w16sm11673783ilq.5.2020.03.06.09.08.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 09:08:14 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-From:   Jens Axboe <axboe@kernel.dk>
-To:     paulmck@kernel.org, Jann Horn <jannh@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        id S1727263AbgCFRJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:09:14 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:38414 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726892AbgCFRJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:09:04 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1jAGSz-0004aP-NE; Fri, 06 Mar 2020 10:08:54 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1jAGSv-0002RO-6X; Fri, 06 Mar 2020 10:08:49 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-mm@kvack.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
- <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
- <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
- <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
- <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
- <20200306164443.GU2935@paulmck-ThinkPad-P72>
- <11921f78-c6f2-660b-5e33-11599c2f9a4b@kernel.dk>
-Message-ID: <944a495e-8e4c-4efd-3560-565603bef3ac@kernel.dk>
-Date:   Fri, 6 Mar 2020 10:08:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Eric Badger <ebadger@gigaio.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Fri,  6 Mar 2020 10:08:39 -0700
+Message-Id: <20200306170846.9333-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <11921f78-c6f2-660b-5e33-11599c2f9a4b@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-mm@kvack.org, dan.j.williams@intel.com, akpm@linux-foundation.org, hch@lst.de, catalin.marinas@arm.com, benh@kernel.crashing.org, tglx@linutronix.de, david@redhat.com, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, mhocko@kernel.org, will@kernel.org, luto@kernel.org, peterz@infradead.org, ebadger@gigaio.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.2
+Subject: [PATCH v4 0/7] Allow setting caching mode in arch_add_memory() for P2PDMA
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/6/20 10:00 AM, Jens Axboe wrote:
-> On 3/6/20 9:44 AM, Paul E. McKenney wrote:
->> On Fri, Mar 06, 2020 at 04:36:20PM +0100, Jann Horn wrote:
->>> On Fri, Mar 6, 2020 at 4:34 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>> On 3/6/20 7:57 AM, Jann Horn wrote:
->>>>> +paulmck
->>>>>
->>>>> On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
->>>>>>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
->>>>>>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->>>>>>>>
->>>>>>>> Hello,
->>>>>>>>
->>>>>>>> syzbot found the following crash on:
->>>>>>>>
->>>>>>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
->>>>>>>> git tree:       upstream
->>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
->>>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
->>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
->>>>>>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>>>>>>>
->>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
->>>>>>>>
->>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>>>>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
->>>>>>>
->>>>>>> +io_uring maintainers
->>>>>>>
->>>>>>> Here is a repro:
->>>>>>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
->>>>>>
->>>>>> I've queued up a fix for this:
->>>>>>
->>>>>> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
->>>>>
->>>>> I believe that this fix relies on call_rcu() having FIFO ordering; but
->>>>> <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
->>>>> says:
->>>>>
->>>>> | call_rcu() normally acts only on CPU-local state[...] It simply
->>>>> enqueues the rcu_head structure on a per-CPU list,
->>
->> Indeed.  For but one example, if there was a CPU-to-CPU migration between
->> the two call_rcu() invocations, it would not be at all surprising for
->> the two callbacks to execute out of order.
->>
->>>>> Is this fix really correct?
->>>>
->>>> That's a good point, there's a potentially stronger guarantee we need
->>>> here that isn't "nobody is inside an RCU critical section", but rather
->>>> that we're depending on a previous call_rcu() to have happened. Hence I
->>>> think you are right - it'll shrink the window drastically, since the
->>>> previous callback is already queued up, but it's not a full close.
->>>>
->>>> Hmm...
->>>
->>> You could potentially hack up the semantics you want by doing a
->>> call_rcu() whose callback does another call_rcu(), or something like
->>> that - but I'd like to hear paulmck's opinion on this first.
->>
->> That would work!
->>
->> Or, alternatively, do an rcu_barrier() between the two calls to
->> call_rcu(), assuming that the use case can tolerate rcu_barrier()
->> overhead and latency.
-> 
-> If the nested call_rcu() works, that seems greatly preferable to needing
-> the rcu_barrier(), even if that would not be a showstopper for me. The
-> nested call_rcu() is just a bit odd, but with a comment it should be OK.
-> 
-> Incremental here I'm going to test, would just fold in of course.
+Hi,
 
-Been running for a few minutes just fine, I'm going to leave the
-reproducer beating on it for a few hours. But here's the folded in
-final:
+This is v4 of the patchset which cleans up a number of minor issues
+from the feedback of v3 and rebases onto v5.6-rc4. Additional feedback
+is welcome.
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=fae702294a6a0774ceb3cf250be79e7fe207250a
+Also worth noting, is that the kernel test robot reports[1] that Patch 3
+in this series improves will-it-scale.per_process_ops by 36%. Though,
+for the life of me, I can't understand why that would be. But it's
+reported the same thing twice now for different versions of the series.
 
--- 
-Jens Axboe
+Thanks,
 
+Logan
+
+[1] https://lists.01.org/hyperkitty/list/lkp@lists.01.org/thread/5APDKNBEJGVJTJRTI2IIA3P4OC2OEYPS/
+
+--
+
+Changes in v4:
+ * Rebased onto v5.6-rc4
+ * Collected tags form David, Dan and Michal
+ * Minor changes to the new _set_memory_prot() function and added some
+   comments as requested by Dan.
+ * Changed the default caching type for P2PDMA memory to UC instead of
+   WC per Jason's concerns that WC might be more generally unsafe.
+
+Changes in v3:
+ * Rebased onto v5.6-rc2
+ * Rename mhp_modifiers to mhp_params per David with an updated kernel
+   doc per Dan
+ * Drop support for s390 per David seeing it does not support
+   ZONE_DEVICE yet and there was a potential problem with huge pages.
+ * Added WARN_ON_ONCE in cases where arches recieve non PAGE_KERNEL
+   parameters
+ * Collected David and Micheal's Reviewed-By and Acked-by Tags
+
+Changes in v2:
+ * Rebased onto v5.5-rc5
+ * Renamed mhp_restrictions to mhp_modifiers and added the pgprot field
+   to that structure instead of using an argument for
+   arch_add_memory().
+ * Add patch to drop the unused flags field in mhp_restrictions
+
+A git branch is available here:
+
+https://github.com/sbates130272/linux-p2pmem remap_pages_cache_v4
+
+--
+
+Currently, the page tables created using memremap_pages() are always
+created with the PAGE_KERNEL cacheing mode. However, the P2PDMA code
+is creating pages for PCI BAR memory which should never be accessed
+through the cache and instead use either WC or UC. This still works in
+most cases, on x86, because the MTRR registers typically override the
+caching settings in the page tables for all of the IO memory to be
+UC-. However, this tends not to work so well on other arches or
+some rare x86 machines that have firmware which does not setup the
+MTRR registers in this way.
+
+Instead of this, this series proposes a change to arch_add_memory()
+to take the pgprot required by the mapping which allows us to
+explicitly set pagetable entries for P2PDMA memory to UC.
+
+This changes is pretty routine for most of the arches: x86_64, arm64
+and powerpc simply need to thread the pgprot through to where the page
+tables are setup. x86_32 unfortunately sets up the page tables at boot so
+must use _set_memory_prot() to change their caching mode. ia64, s390 and sh
+don't appear to have an easy way to change the page tables so, for now
+at least, we just return -EINVAL on such mappings and thus they will
+not support P2PDMA memory until the work for this is done. This should
+be fine as they don't yet support ZONE_DEVICE.
+
+--
+
+Logan Gunthorpe (7):
+  mm/memory_hotplug: Drop the flags field from struct mhp_restrictions
+  mm/memory_hotplug: Rename mhp_restrictions to mhp_params
+  x86/mm: Thread pgprot_t through init_memory_mapping()
+  x86/mm: Introduce __set_memory_prot()
+  powerpc/mm: Thread pgprot_t through create_section_mapping()
+  mm/memory_hotplug: Add pgprot_t to mhp_params
+  mm/memremap: Set caching mode for PCI P2PDMA memory to WC
+
+ arch/arm64/mm/mmu.c                        |  7 ++--
+ arch/ia64/mm/init.c                        |  7 ++--
+ arch/powerpc/include/asm/book3s/64/hash.h  |  3 +-
+ arch/powerpc/include/asm/book3s/64/radix.h |  3 +-
+ arch/powerpc/include/asm/sparsemem.h       |  3 +-
+ arch/powerpc/mm/book3s64/hash_utils.c      |  5 +--
+ arch/powerpc/mm/book3s64/pgtable.c         |  7 ++--
+ arch/powerpc/mm/book3s64/radix_pgtable.c   | 18 ++++++----
+ arch/powerpc/mm/mem.c                      | 10 +++---
+ arch/s390/mm/init.c                        |  9 +++--
+ arch/sh/mm/init.c                          |  7 ++--
+ arch/x86/include/asm/page_types.h          |  3 --
+ arch/x86/include/asm/pgtable.h             |  3 ++
+ arch/x86/include/asm/set_memory.h          |  1 +
+ arch/x86/kernel/amd_gart_64.c              |  3 +-
+ arch/x86/mm/init.c                         |  9 ++---
+ arch/x86/mm/init_32.c                      | 19 ++++++++--
+ arch/x86/mm/init_64.c                      | 40 ++++++++++++----------
+ arch/x86/mm/mm_internal.h                  |  3 +-
+ arch/x86/mm/pat/set_memory.c               | 13 +++++++
+ arch/x86/platform/uv/bios_uv.c             |  3 +-
+ include/linux/memory_hotplug.h             | 21 ++++++------
+ mm/memory_hotplug.c                        | 11 +++---
+ mm/memremap.c                              | 17 +++++----
+ 24 files changed, 144 insertions(+), 81 deletions(-)
+
+
+base-commit: 98d54f81e36ba3bf92172791eba5ca5bd813989b
+--
+2.20.1
