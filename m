@@ -2,60 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEBD17C57E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:37:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4566417C587
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:39:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgCFShO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 13:37:14 -0500
-Received: from mga12.intel.com ([192.55.52.136]:28577 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbgCFShO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 13:37:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 10:37:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
-   d="scan'208";a="275637536"
-Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Mar 2020 10:37:13 -0800
-Message-ID: <070d9d78981f0aad2baf740233e8dfc32ecd29d7.camel@intel.com>
-Subject: Re: [RFC PATCH v9 05/27] x86/cet/shstk: Add Kconfig option for
- user-mode Shadow Stack protection
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
-Date:   Fri, 06 Mar 2020 10:37:13 -0800
-In-Reply-To: <d4dabb84-5636-2657-c45e-795f3f2dcbbc@intel.com>
-References: <20200205181935.3712-1-yu-cheng.yu@intel.com>
-         <20200205181935.3712-6-yu-cheng.yu@intel.com>
-         <d4dabb84-5636-2657-c45e-795f3f2dcbbc@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726314AbgCFSjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 13:39:45 -0500
+Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:51492 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726083AbgCFSjp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 13:39:45 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id B38C5837F24A;
+        Fri,  6 Mar 2020 18:39:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1605:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3622:3653:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6691:7808:7903:8660:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12438:12663:12740:12760:12895:13148:13230:13439:14181:14659:14721:21080:21324:21433:21450:21451:21627:21660:21939:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: iron74_8edbf580f4f45
+X-Filterd-Recvd-Size: 4410
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  6 Mar 2020 18:39:41 +0000 (UTC)
+Message-ID: <442b7ace85a414c6a01040368f05d6d219f86536.camel@perches.com>
+Subject: Re: [PATCH] sched/cputime: silence a -Wunused-function warning
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>, Qian Cai <cai@lca.pw>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, juri.lelli@redhat.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        bsegall@google.com, mgorman@suse.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Date:   Fri, 06 Mar 2020 10:38:06 -0800
+In-Reply-To: <a7503afc9d561ae9c7116b97c7a960d7ad5cbff9.camel@perches.com>
+References: <1583509304-28508-1-git-send-email-cai@lca.pw>
+         <CAKwvOd=V44ksbiffN5UYw-oVfTK_wdeP59ipWANkOUS_zavxew@mail.gmail.com>
+         <a7503afc9d561ae9c7116b97c7a960d7ad5cbff9.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,40 +48,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-02-26 at 10:05 -0800, Dave Hansen wrote:
-> On 2/5/20 10:19 AM, Yu-cheng Yu wrote:
-> > +# Check assembler Shadow Stack suppot
+On Fri, 2020-03-06 at 09:25 -0800, Joe Perches wrote:
+> On Fri, 2020-03-06 at 09:13 -0800, Nick Desaulniers wrote:
+> > On Fri, Mar 6, 2020 at 7:42 AM Qian Cai <cai@lca.pw> wrote:
+> > > account_other_time() is only used when CONFIG_IRQ_TIME_ACCOUNTING=y (in
+> > > irqtime_account_process_tick()) or CONFIG_VIRT_CPU_ACCOUNTING_GEN=y (in
+> > > get_vtime_delta()). When both are off, it will generate a compilation
+> > > warning from Clang,
+> > > 
+> > > kernel/sched/cputime.c:255:19: warning: unused function
+> > > 'account_other_time' [-Wunused-function]
+> > > static inline u64 account_other_time(u64 max)
+> > > 
+> > > Rather than wrapping around this function with a macro expression,
+> > > 
+> > >  if defined(CONFIG_IRQ_TIME_ACCOUNTING) || \
+> > >     defined(CONFIG_VIRT_CPU_ACCOUNTING_GEN)
+> > > 
+> > > just use __maybe_unused for this small function which seems like a good
+> > > trade-off.
+> > 
+> > Generally, I'm not a fan of __maybe_unused.  It is a tool in the
+> > toolbox for solving this issue, but it's my least favorite.  Should
+> > the call sites be eliminated, this may mask an unused and entirely
+> > dead function from being removed.  Preprocessor guards based on config
+> > give more context into *why* a particular function may be unused.
+> > 
+> > So let's take a look at the call sites of account_other_time().  Looks
+> > like irqtime_account_process_tick() (guarded by
+> > CONFIG_IRQ_TIME_ACCOUNTING) and get_vtime_delta() (guarded by
+> > CONFIG_VIRT_CPU_ACCOUNTING_GEN).  If it were one config guard, then I
+> > would prefer to move the definition to be within the same guard, just
+> > before the function definition that calls it, but we have a more
+> > complicated case here.
+> > 
+> > The next thing I'd check to see is if there's a dependency between
+> > configs.  In this case, both CONFIG_IRQ_TIME_ACCOUNTING and
+> > CONFIG_VIRT_CPU_ACCOUNTING_GEN are defined in init/Kconfig.  In this
+> > case there's also no dependency between configs, so specifying one
+> > doesn't imply the other; so guarding on one of the two configs is also
+> > not an option.
+> > 
+> > So, as much as I'm not a fan of __maybe_unused, it is indeed the
+> > simplest option.  Though, I'd still prefer the ifdef you describe
+> > instead, maybe the maintainers can provide guidance/preference?
 > 
-> 				  ^ support
-> 
-> > +ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-> > +  ifeq ($(call as-instr, saveprevssp, y),)
-> > +      $(error CONFIG_X86_INTEL_SHADOW_STACK_USER not supported by the assembler)
-> > +  endif
-> > +endif
-> 
-> Is this *just* looking for instruction support in the assembler?
-> 
-> We usually just .byte them, like this for pkeys:
-> 
->         asm volatile(".byte 0x0f,0x01,0xee\n\t"
->                      : "=a" (pkru), "=d" (edx)
->                      : "c" (ecx));
-> 
-> That way everybody with old toolchains can still build the kernel (and
-> run/test code with your config option on, btw...).
+> Another option might be to move static inline functions
+> where possible to an #include file (like sched.h) but the
+> same possible dead function issue would still exist.
 
-We used to do this for CET instructions, but after adding kernel-mode
-instructions and inserting ENDBR's, the code becomes cluttered.  I also
-found an earlier discussion on the ENDBR:
+Turns out there are hundreds of unused static inline
+functions in kernel .h files.
 
-https://lore.kernel.org/lkml/CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com/
+A trivial script to find some of them (with likely
+false positives as some might actually be used via ##
+token pasting mechanisms).
 
-It makes sense to let the user know early on that the system cannot support
-CET and cannot build a CET-enabled kernel.
+(and there's almost certainly a better way to do this
+ too as it takes a _very_ long time to run)
 
-One thing we can do is to disable CET in Kconfig and not in kernel
-build, which I will do in the next version.
+$ grep-2.5.4 -rP --include=*.h '^[ \t]*static\s+inline\s+(?:\w+\s+){1,3}\w+[ \t]*\(' * | \
+  grep -P -oh '\w+\s*\(' | \
+  sort | uniq -c | sort -n | grep -P '^\s+1\b' | \
+  sed -r -e 's/^\s+1\s+//' -e 's/\(//' | \
+  while read line ; do \
+    echo -n "$line: " ; git grep -w $line | wc -l ; \
+  done | \
+  grep ": 1$"
 
-Yu-cheng
 
