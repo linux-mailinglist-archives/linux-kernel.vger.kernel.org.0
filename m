@@ -2,121 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491B517C330
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0DD217C33B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbgCFQlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:41:42 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.182]:39254 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726178AbgCFQlm (ORCPT
+        id S1726635AbgCFQpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:45:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52962 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbgCFQpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:41:42 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 45A02A73A4E
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 10:41:41 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id AG2fjuTCQEfyqAG2fjxwLD; Fri, 06 Mar 2020 10:41:41 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YGd4yOt6uoISkY81G59OqxRmykcrtE06U9TVbe/QucQ=; b=c1Z0UpyHFgs/ANLeLX1hAufEn4
-        vLKduJy9pbBG77cCmwNLTBWfzDETINqrHJwsnGmeV6NoSoYtn756/scrbX8FjAbLqpzKpmXj7ftR0
-        4Nz7xpxeEynkSnAd2S8/Ock0nYBWt3QfynaBfkwaxxLak05WHeg1EYsYxzU9kNxOxvTUrR27XaMkV
-        72TZw1kT231uWQhKVAiiK3s0V3YMXLj09kYH5CeAWOdX0WF+evQGnFZhNeO2yvvQvpRrJ6O/P66JP
-        ohl2HdtfLoJJAK1jUfOUOsNEiHYN523zbdc0bFZxTJsi98IDOouCHMwanp2vMp6rM2Cx0H35S0B8k
-        wClzpDaw==;
-Received: from [201.166.190.53] (port=51758 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jAG2c-001q4M-Nb; Fri, 06 Mar 2020 10:41:39 -0600
-Date:   Fri, 6 Mar 2020 10:44:46 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] aio: Replace zero-length array with flexible-array
- member
-Message-ID: <20200306164446.GA21604@embeddedor>
+        Fri, 6 Mar 2020 11:45:30 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p9so3201162wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 08:45:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gssi.it; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=f1jAW4H0IkyKSlaWbqUdo9Y0iTzcaoXCOSrb76HWcpQ=;
+        b=BJDdwnnYch4uEI3annx6gE5gXjIKB2h3hwun3QMq+KmyoRKQnNVr4g17Tm1+EVYLWq
+         LqCbzsyBcfGUAVFns1KZYBUituYiC7liaV56CvjkmkNvnqM9Hk/Y0bZKzyS2ab0zDHOf
+         QuipMUnVO9T2ih77VBp9jgZFzhkraGo1fIq9Exx9CEA7qkNaUbLE6YPDz7UFD5fo+5Gk
+         s80+5yIpfR6kjoZVYP0w1VhKMgG/Mx+JOZanzOqVQRrNmkCkdis5oPBU6BxBCBoOY8hG
+         1z60Ycdr+hutG/1PoLWTg1HTPNLBO2P/E5lTuKh4o+9nbwwsS+kYCZa0py5xLYhJtvUr
+         K6yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=f1jAW4H0IkyKSlaWbqUdo9Y0iTzcaoXCOSrb76HWcpQ=;
+        b=nHwvy2DvS77hXmoZYGpRzEhC8YcVgWG8rBbzzZj0zfcZhz0yp0q/y8o5lHOCydAcj8
+         fhYbXWdyGU6yK9Qe8bfLcBHLkfLhEkyQZ01z1gUuAozHqDmzWA6j9NujKXv0LpVXNGtH
+         rZ6JRqb1XuhI5Uduh0nJoIhM4eEMFWpeuxSFgD0RpF1M3FseaymFMEhgLmQ5RIDVwYyK
+         3tgD4T51CO1RRi7lCT2FlDV3ABU6Dg9gf/3Lq9G2A6mHt6MGjUov7iUtpfg75b/+O8q/
+         L55pQd6XCq7PMOfQHPJMZ+8VJlxsNFETesYzo125LrKl8gjrmFPEVRSSVF2RHlqf2Rrj
+         dqUg==
+X-Gm-Message-State: ANhLgQ1uvZ4te1FxwFlkCo0hV0zFUn1/Tz/BdYrFhqQI8jXPt4X6/4TA
+        q/wZR/S6tvFs3epKX0gtZffFoA==
+X-Google-Smtp-Source: ADFU+vvwgXTS/gGW17pEFyLijL3F59giKG9Rig9EHIsVd2K3b7BxzgGLv34Rt3qkFPlCnjz43GNffQ==
+X-Received: by 2002:a1c:9d43:: with SMTP id g64mr4727921wme.62.1583513128994;
+        Fri, 06 Mar 2020 08:45:28 -0800 (PST)
+Received: from [192.168.1.125] (dynamic-adsl-78-14-145-244.clienti.tiscali.it. [78.14.145.244])
+        by smtp.gmail.com with ESMTPSA id t18sm41756wml.17.2020.03.06.08.45.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2020 08:45:28 -0800 (PST)
+Subject: Re: [net-next 1/2] Perform IPv4 FIB lookup in a predefined FIB table
+To:     David Ahern <dsahern@gmail.com>,
+        Carmine Scarpitta <carmine.scarpitta@uniroma2.it>
+Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dav.lebrun@gmail.com,
+        andrea.mayer@uniroma2.it, paolo.lungaroni@cnit.it,
+        hiroki.shirokura@linecorp.com
+References: <20200213010932.11817-1-carmine.scarpitta@uniroma2.it>
+ <20200213010932.11817-2-carmine.scarpitta@uniroma2.it>
+ <7302c1f7-b6d1-90b7-5df1-3e5e0ba98f53@gmail.com>
+ <20200219005007.23d724b7f717ef89ad3d75e5@uniroma2.it>
+ <cd18410f-7065-ebea-74c5-4c016a3f1436@gmail.com>
+ <20200219034924.272d991505ee68d95566ff8d@uniroma2.it>
+ <a39867b0-c40f-e588-6cf9-1524581bb145@gmail.com>
+From:   Ahmed Abdelsalam <ahmed.abdelsalam@gssi.it>
+Message-ID: <4ed5aff3-43e8-0138-1848-22a3a1176e46@gssi.it>
+Date:   Fri, 6 Mar 2020 17:45:26 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.190.53
-X-Source-L: No
-X-Exim-ID: 1jAG2c-001q4M-Nb
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.190.53]:51758
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <a39867b0-c40f-e588-6cf9-1524581bb145@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hi David,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Thanks for the pointers for the VRF with MPLS.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+We have been looking at this for the last weeks also watched your videos 
+on the VRF and l3mdev implementation at the different netdev conferences.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+However, in the SRv6 we don’t really need a VRF device. The SRv6 
+functions (the already supported ones as well as the End.DT4 submitted 
+here) resides in the IPv6 FIB table.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+The way it works is as follows:
+1) create a table for the tenant
+$ echo 100 tenant1 >> /etc/iproute2/rt_tables
 
-This issue was found with the help of Coccinelle.
+You instantiate an SRv6 End.DT4 function at the Egress PE to decapsulate 
+the SRv6 encapsulation and lookup the inner packet in the tenant1 table. 
+The example iproute2 command to do so is as below.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+$ ip -6 route add A::B encap seg6local action End.DT4 table tenant1 dev 
+enp0s8
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/aio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This installs an IPv6 FIB entry as shown below.
+$ ip -6 r
+a::b  encap seg6local action End.DT4 table 100 dev enp0s8 metric 1024 
+pref medium
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 94f2b9256c0c..13c4be7f00f0 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -68,7 +68,7 @@ struct aio_ring {
- 	unsigned	header_length;	/* size of aio_ring */
- 
- 
--	struct io_event		io_events[0];
-+	struct io_event		io_events[];
- }; /* 128 bytes + ring size */
- 
- /*
--- 
-2.25.0
+Then the BGP routing daemon at the Egress PE is used to advertise this 
+VPN service. The BGP sub-TLV to support SRv6 IPv4 L3VPN is defined in [2].
 
+The SRv6 BGP extensions to support IPv4/IPv6 L3VPN are now merged in in 
+FRRouting/frr [3][4][5][6].
+
+There is also a pull request for the CLI to configure SRv6-locator on 
+zebra [7].
+
+The BGP daemon at the Ingress PE receives the BGP update and installs an 
+a FIB entry that this bound to SRv6 encapsulation.
+
+$ ip r
+30.0.0.0/24  encap seg6 mode encap segs 1 [ a::b ] dev enp0s9
+
+Traffic destined to that tenant will get encapsulated at the ingress 
+node and forwarded to the egress node on the IPv6 fabric.
+
+The encapsulation is in the form of outer IPv6 header that has the 
+destination address equal to the VPN service A::B instantiated at the 
+Egress PE.
+
+When the packet arrives at the Egress PE, the destination address 
+matches the FIB entry associated with the End.DT4 function which does 
+the decapsulation and the lookup inside the tenant table associated with 
+it (tenant1).
+
+Everything I explained is in the Linux kernel since a while. End.DT4 was 
+missing and this the reason we submitted this patch.
+
+In this multi-tenant DC fabric we leverage the IPv6 forwarding. No need 
+for MPLS dataplane in the fabric.
+
+We can submit a v2 of patch addressing your comments on the "tbl_known" 
+flag.
+
+Thanks,
+Ahmed
+
+[1] https://segment-routing.org/index.php/Implementation/AdvancedConf
+[2] https://tools.ietf.org/html/draft-ietf-bess-srv6-services-02
+[3] 
+https://github.com/FRRouting/frr/commit/7f1ace03c78ca57c7f8b5df5796c66fddb47e5fe
+[4] 
+https://github.com/FRRouting/frr/commit/e496b4203055c50806dc7193b9762304261c4bbd
+[5] 
+https://github.com/FRRouting/frr/commit/63d02478b557011b8606668f1e3c2edbf263794d
+[6] 
+https://github.com/FRRouting/frr/commit/c6ca155d73585b1ca383facd74e9973c281f1f93
+[7] https://github.com/FRRouting/frr/pull/5865
+
+
+On 19/02/2020 05:29, David Ahern wrote:
+> On 2/18/20 7:49 PM, Carmine Scarpitta wrote:
+>> Hi David,
+>> Thanks for the reply.
+>>
+>> The problem is not related to the table lookup. Calling fib_table_lookup and then rt_dst_alloc from seg6_local.c is good.
+>>
+> 
+> you did not answer my question. Why do all of the existing policy
+> options (mark, L3 domains, uid) to direct the lookup to the table of
+> interest not work for this use case?
+> 
+> What you want is not unique. There are many ways to make it happen.
+> Bleeding policy details to route.c and adding a flag that is always
+> present and checked even when not needed (e.g.,
+> CONFIG_IP_MULTIPLE_TABLES is disabled) is not the right way to do it.
+> 
