@@ -2,89 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF1917BA0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD9A17B9E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:12:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbgCFKTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:19:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44061 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbgCFKTK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:19:10 -0500
-Received: by mail-ot1-f66.google.com with SMTP id v22so1870031otq.11;
-        Fri, 06 Mar 2020 02:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IoHyFheQbLvWaqu8JmtXrevLVQ2eNF1/ry5EBSUAxhI=;
-        b=p9wLAfZ0san/NF6WFjAtmFuQ94dW+jXKMoUSjddo2ccb+2JWERyMVU3orURu6BMrLd
-         MV/YtCL21b7jaf9NhIrWkoH3FqdM0tSaJ4W9JNmBNYOIo1tev64UoSz7D/SLiE7+69PF
-         VplsjRc4fy4/0BE2lpf4mkytKpEHzAdEh2Ho0a7b6MucZsG4UDeflqYGjUiscFz0H/T/
-         63nGI1j+jrdvNPkdGJBUXRyf6hiELfw4aBF3B7CQTNATbaa0q8kvj7lF+dcdteIt8lYD
-         hWXpWvgquW9//nh5OydbcL3GJ+hzS1LN81drgOIQXSVf4h3y2badceTkjB6uTqNMuORR
-         o/cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IoHyFheQbLvWaqu8JmtXrevLVQ2eNF1/ry5EBSUAxhI=;
-        b=WFeyu/LH+dpMQAiKapV/Us48QH1EA6Z5VU0OvTCUI54nsMvDCl+88kc/TXRdMzAUso
-         W3bXdLYgYxbBN4yK8aTJUYoJkR7h4STWxmY231JI7iAJw4ksYkUkT7yFQOjxXOjWwDHE
-         VrjG9CktT/BwE/x3k9yasxI6AzZgVSeZSHBmnu2hO6pageSk49Lxm1JINTPAc0p3C0e3
-         hYQcY1Ft5SmOoJ4gk02j3khu4Yzgwv47Ik5tAOjerOoGhfp06NGMcL5GBhceGC9qTWcK
-         5N3cykoZSCW5g5InePFuCsyW9jF8G6wjlK4ydoBORs/VQsDi6bAP1tmkXb7O70xyOukF
-         KCSw==
-X-Gm-Message-State: ANhLgQ0mcWlB/w9vNaswxTX7mCAXv5+D3rItplG0tI7hKx3ZMJw4Zgxc
-        Z24dl5P8LIgF8kwrbtVjWVRfOtobQl6d/sy4Eiw=
-X-Google-Smtp-Source: ADFU+vt6mnTdWQ6RxyyFMqAxyTQC5gXDaaqEFjYr7pojs7qjmb5v1nf4DcANsuCgTC26YvQ/S5viKLF5TlIRf+PUEGk=
-X-Received: by 2002:a9d:6d85:: with SMTP id x5mr1917571otp.176.1583489949499;
- Fri, 06 Mar 2020 02:19:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20200228164126.17517-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200305114314.GP5379@paasikivi.fi.intel.com>
-In-Reply-To: <20200305114314.GP5379@paasikivi.fi.intel.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Fri, 6 Mar 2020 10:18:43 +0000
-Message-ID: <CA+V-a8tGEYT7sOqzLRu8cx3u1DySt4mOz0UujU57SZSGqXB=Pw@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: ov5645: Add virtual_channel module parameter
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726440AbgCFKMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:12:55 -0500
+Received: from mga17.intel.com ([192.55.52.151]:26192 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726212AbgCFKMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 05:12:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 02:12:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,521,1574150400"; 
+   d="scan'208";a="230020025"
+Received: from unknown (HELO linuxpc.iind.intel.com) ([10.223.107.108])
+  by orsmga007.jf.intel.com with ESMTP; 06 Mar 2020 02:12:52 -0800
+From:   Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+To:     rui.zhang@intel.com, srinivas.pandruvada@linux.intel.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+Subject: [PATCH V2] thermal: int340x: processor_thermal: Add Tiger Lake support
+Date:   Fri,  6 Mar 2020 15:49:12 +0530
+Message-Id: <1583489952-29612-1-git-send-email-sumeet.r.pawnikar@intel.com>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+Added new PCI id for Tiger Lake processor thermal device along with
+MMIO RAPL support.
 
-On Thu, Mar 5, 2020 at 11:43 AM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Feb 28, 2020 at 04:41:26PM +0000, Lad Prabhakar wrote:
-> > OV5645 can operate in virtual channel 0-3 in CSI2 interfaces, this patch
-> > adds support for module parameter virtual_channel to select the required
-> > channel. By default OV5645 operates in virtual channel 0.
->
-> What's your use case for different virtual channels?
->
-Just ability to switch to different virtual channel, based on ov5640
-driver. The rcar-csi2
-has capability to capture  from multiple channels so that we can
-capture simultaneously
-from two sensors.
+Signed-off-by: Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+---
+ .../int340x_thermal/processor_thermal_device.c     |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Cheers,
---Prabhakar
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index b1fd345..297db1d 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -45,6 +45,9 @@
+ /* JasperLake thermal reporting device */
+ #define PCI_DEVICE_ID_PROC_JSL_THERMAL	0x4503
+ 
++/* TigerLake thermal reporting device */
++#define PCI_DEVICE_ID_PROC_TGL_THERMAL	0x9A03
++
+ #define DRV_NAME "proc_thermal"
+ 
+ struct power_config {
+@@ -728,6 +731,8 @@ static int proc_thermal_resume(struct device *dev)
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_ICL_THERMAL),
+ 		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_JSL_THERMAL)},
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_TGL_THERMAL),
++		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ 0, },
+ };
+ 
+-- 
+1.7.9.5
 
-> --
-> Regards,
->
-> Sakari Ailus
