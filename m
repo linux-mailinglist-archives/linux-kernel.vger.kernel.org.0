@@ -2,103 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBC517BB2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A5517BB32
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:08:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgCFLII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:08:08 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:41637 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgCFLII (ORCPT
+        id S1726646AbgCFLIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:08:23 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50617 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbgCFLIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:08:08 -0500
-Received: from [192.168.178.45] ([109.104.54.216]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MQMqN-1ixKu61auv-00MMb3; Fri, 06 Mar 2020 12:07:43 +0100
-Subject: Re: [PATCH 10/10] ARM: dts: bcm2711: Add vmmc regulator in emmc2
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     ulf.hansson@linaro.org, f.fainelli@gmail.com, phil@raspberrypi.org,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org
-References: <20200306103857.23962-1-nsaenzjulienne@suse.de>
- <20200306103857.23962-11-nsaenzjulienne@suse.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <408aa93f-b5c8-c4b3-384b-c8d018a8d549@i2se.com>
-Date:   Fri, 6 Mar 2020 12:07:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 6 Mar 2020 06:08:22 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a5so1940946wmb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 03:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7sHD6CjQ22ZwQRigFX726J4p2bWMAR4ljphlUJcoYAY=;
+        b=Po4eTrKTy/hIT89j6SjWAKG3l7sTUwlpHMXmqtkp7pbCRmWtb4lPeWcxoj801ag9Ep
+         fHDomNyvJH3mgX40pqhUqCbNwxt0fsj8lTv085lm/A8Ex981ERxWeUd/rMFLwvPwgKQl
+         FdFaU5tzI/bMdYNhm7EZq1JnhHpniL+pxbrXw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=7sHD6CjQ22ZwQRigFX726J4p2bWMAR4ljphlUJcoYAY=;
+        b=bane30A3By73PDGaz9PFoiSilQbGV/z46G6w03LEI4ogdLuvHQuq/yMoKnsaHERwgZ
+         YuvQ/UVYtxAw3xndlfZSY/69n8NtCar/54SUpXOxE1RTz4FK+OzXSa5kaCREuKTLDo5P
+         9+Q0os678rhmh4mz9BpuYOXPOXyC8GoaYeNAELtNbePhxUFBsNetYEdXUzsXUxbHnSZ7
+         fzFewYUBzaWxw6kHLudgmvEfFctrsc4Lw/EvlLoZTrHSUb7ZnPbX9y6Wyq+EUs0/nIks
+         rEHqc+q/yKVeCqDbYZZ1++mqBmSGfYhXwuy53Eu1/B/rkRjBNptkB23Gh3ME231+fjk2
+         uNCg==
+X-Gm-Message-State: ANhLgQ3U6NdoAfDmr9ysEcfW+33Q7Do0XJaJJ2WOrbN+Bwcne2108Gki
+        nNcgpVyaUclbz/eV3gajXrWYAA==
+X-Google-Smtp-Source: ADFU+vtrTfTU2MnfW7j+yGNHZz5hdcacHAa5j7Yz7XI/rd1ollajRTpBJ+5mTOX4x6dxHsunYT4lEw==
+X-Received: by 2002:a1c:f214:: with SMTP id s20mr3328009wmc.57.1583492900393;
+        Fri, 06 Mar 2020 03:08:20 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id j20sm13605554wmj.46.2020.03.06.03.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 03:08:19 -0800 (PST)
+Date:   Fri, 6 Mar 2020 12:08:17 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
+        emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm: context: Clean up documentation
+Message-ID: <20200306110817.GZ2363188@phenom.ffwll.local>
+Mail-Followup-To: Benjamin Gaignard <benjamin.gaignard@st.com>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@linux.ie, emil.l.velikov@gmail.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20200306102937.4932-1-benjamin.gaignard@st.com>
+ <20200306102937.4932-4-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20200306103857.23962-11-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:YpscJjEb7mEkNDKWeYl5eBxFpbUACDSdSpaQQlnEqPk/ccGHsqI
- nz6WoYoxp+BtaxCRE6+qukgnfB+J/MQ4ap9KGS7bQIK1WfSIV4fHemVyB3Zqx4d+hY3uw1X
- bqQjVE+lfiMgDeYcwuhLfd0PoPn9EaqU3a2FU5S507VEkXXJwPLRIXBlmwRUSg/tNioj/Xq
- J75TNMkB6cOdAfhkLaGQg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:W9bOt0k6oe4=:ne+o+JZ25tk0J+jrXsL/h4
- 74klhx+ipS6ma+Jin4APOnQXtmvyABceMb75AWKtJwer2mgt4v+of3fY+mVDcnq3ITJzKjGvn
- tbLt2a/wxsBYrUTCapDUPrVLtK2IgxPUTSaB1R3gfg1QcbIb2y34WegsqL1BnAX+kg34rZqgr
- nTrRe28K55aM89qYhulTTXDYgInJH2sryHZl0HERhBJSEDdW8Ofb4v+nrNSXX17/8IqOtZ95f
- cUVWJwZYEIQexphhlY2I/QCKKmEDgxvBShl5rk+xu16wFrvLqBgaOBO8y7yKYMyVWl5q2RDQp
- SU4H4PV5aeWSn48fNBKUrJu5BYBSgUstdTqarigkfq2oA6hIMAmqY7KVusUe1qXuZ0Epivckf
- 7zBBM+D4f7f+zeLkD/82YYi9pVEB9r+iKDs1JapeLj6ih5LrEJtSFTRndeT6kFInkw4/tdosi
- p3KSCDb780NathvMMCZ3m39C39unbSwTcrcHJ5Rpvu1h83MhDfkdw9U6k+STheNCu1CzZm4QR
- eNMWHsNNu5U4mV0loRG1nOV/gBRCB0aUGhxgq33NTy8EhODbsPYT11ZxDoxnxEOFwT1PyfecG
- 75PVFHl++zj4RcdwAEh9gxp4puehkvgOV5eiIU2GRsDoeXFFB2itKWIJchsNFvwsq7X++Fxcq
- /TRx22b+1QhCm+1OuMEC2SViD44GjFOpuh2HiIjvDqZCj1S8NWd/zeRjIPkjcDwQF8ed87B80
- PLpJjQcYCxqLqpWZYWFFYFdaevCpDKN3i06gpwg29i8aF87I411975mEYgt12g6XKwXDyeTKw
- G4RZJJw7nQPtmZpdJYvyRjYpxPGUZalrJqqnngJ2NOVBhCCJ3Mi8t4sPWPfILz+CdiEWhqx3i
- amnvsTM6LrC3WAvto4K48spvxVappyZXysxe+ZRKFoL7KVBQYf7Z2EV39+pFGflG1ojsAsVI6
- kcJyk9d+6Ww==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306102937.4932-4-benjamin.gaignard@st.com>
+X-Operating-System: Linux phenom 5.3.0-3-amd64 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
-
-On 06.03.20 11:38, Nicolas Saenz Julienne wrote:
-> The SD card power can be controlled trough a pin routed into the board's
-> external GPIO expander. Turn that into a regulator and provide it to
-> emmc2.
->
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+On Fri, Mar 06, 2020 at 11:29:37AM +0100, Benjamin Gaignard wrote:
+> Fix kernel doc comments to avoid warnings when compiling with W=1.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 > ---
->  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-> index e26ea9006378..8e98e917f9f4 100644
-> --- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-> +++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-> @@ -56,6 +56,16 @@ sd_io_1v8_reg: sd_io_1v8_reg {
->  			  3300000 0x0>;
->  		status = "okay";
->  	};
-> +
-> +	sd_vcc_reg: sd_vcc_reg {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc-sd";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		enable-active-high;
-> +		gpio = <&expgpio 6 GPIO_ACTIVE_HIGH>;
-this new GPIO has an empty GPIO label, please add it.
-> +	};
->  };
+> version 2:
+> - Since it is legacy interface do not fix the description but
+>   replace /** by /* to remove kerneldoc validation warnings
+
+On the entire series:
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> 
+>  drivers/gpu/drm/drm_context.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_context.c b/drivers/gpu/drm/drm_context.c
+> index 1f802d8e5681..c99be950bf17 100644
+> --- a/drivers/gpu/drm/drm_context.c
+> +++ b/drivers/gpu/drm/drm_context.c
+> @@ -47,7 +47,7 @@ struct drm_ctx_list {
+>  /** \name Context bitmap support */
+>  /*@{*/
 >  
->  &firmware {
-> @@ -174,6 +184,7 @@ brcmf: wifi@1 {
->  /* EMMC2 is used to drive the SD card */
->  &emmc2 {
->  	vqmmc-supply = <&sd_io_1v8_reg>;
-> +	vmmc-supply = <&sd_vcc_reg>;
->  	broken-cd;
->  	status = "okay";
->  };
+> -/**
+> +/*
+>   * Free a handle from the context bitmap.
+>   *
+>   * \param dev DRM device.
+> @@ -68,7 +68,7 @@ void drm_legacy_ctxbitmap_free(struct drm_device * dev, int ctx_handle)
+>  	mutex_unlock(&dev->struct_mutex);
+>  }
+>  
+> -/**
+> +/*
+>   * Context bitmap allocation.
+>   *
+>   * \param dev DRM device.
+> @@ -88,7 +88,7 @@ static int drm_legacy_ctxbitmap_next(struct drm_device * dev)
+>  	return ret;
+>  }
+>  
+> -/**
+> +/*
+>   * Context bitmap initialization.
+>   *
+>   * \param dev DRM device.
+> @@ -104,7 +104,7 @@ void drm_legacy_ctxbitmap_init(struct drm_device * dev)
+>  	idr_init(&dev->ctx_idr);
+>  }
+>  
+> -/**
+> +/*
+>   * Context bitmap cleanup.
+>   *
+>   * \param dev DRM device.
+> @@ -163,7 +163,7 @@ void drm_legacy_ctxbitmap_flush(struct drm_device *dev, struct drm_file *file)
+>  /** \name Per Context SAREA Support */
+>  /*@{*/
+>  
+> -/**
+> +/*
+>   * Get per-context SAREA.
+>   *
+>   * \param inode device inode.
+> @@ -211,7 +211,7 @@ int drm_legacy_getsareactx(struct drm_device *dev, void *data,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Set per-context SAREA.
+>   *
+>   * \param inode device inode.
+> @@ -263,7 +263,7 @@ int drm_legacy_setsareactx(struct drm_device *dev, void *data,
+>  /** \name The actual DRM context handling routines */
+>  /*@{*/
+>  
+> -/**
+> +/*
+>   * Switch context.
+>   *
+>   * \param dev DRM device.
+> @@ -290,7 +290,7 @@ static int drm_context_switch(struct drm_device * dev, int old, int new)
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Complete context switch.
+>   *
+>   * \param dev DRM device.
+> @@ -318,7 +318,7 @@ static int drm_context_switch_complete(struct drm_device *dev,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Reserve contexts.
+>   *
+>   * \param inode device inode.
+> @@ -351,7 +351,7 @@ int drm_legacy_resctx(struct drm_device *dev, void *data,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Add context.
+>   *
+>   * \param inode device inode.
+> @@ -404,7 +404,7 @@ int drm_legacy_addctx(struct drm_device *dev, void *data,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Get context.
+>   *
+>   * \param inode device inode.
+> @@ -428,7 +428,7 @@ int drm_legacy_getctx(struct drm_device *dev, void *data,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Switch context.
+>   *
+>   * \param inode device inode.
+> @@ -452,7 +452,7 @@ int drm_legacy_switchctx(struct drm_device *dev, void *data,
+>  	return drm_context_switch(dev, dev->last_context, ctx->handle);
+>  }
+>  
+> -/**
+> +/*
+>   * New context.
+>   *
+>   * \param inode device inode.
+> @@ -478,7 +478,7 @@ int drm_legacy_newctx(struct drm_device *dev, void *data,
+>  	return 0;
+>  }
+>  
+> -/**
+> +/*
+>   * Remove context.
+>   *
+>   * \param inode device inode.
+> -- 
+> 2.15.0
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
