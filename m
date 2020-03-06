@@ -2,95 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0652117C098
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F79717C0AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgCFOnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 09:43:05 -0500
-Received: from mga01.intel.com ([192.55.52.88]:49905 "EHLO mga01.intel.com"
+        id S1727588AbgCFOnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 09:43:47 -0500
+Received: from foss.arm.com ([217.140.110.172]:34844 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726650AbgCFOnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:43:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 06:42:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,522,1574150400"; 
-   d="scan'208";a="234870124"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Mar 2020 06:42:51 -0800
-Received: from [10.251.20.182] (kliang2-mobl.ccr.corp.intel.com [10.251.20.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id E5D7A580298;
-        Fri,  6 Mar 2020 06:42:48 -0800 (PST)
-Subject: Re: [PATCH v1 01/11] perf/x86/core: Support KVM to assign a dedicated
- counter for guest PEBS
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Luwei Kang <luwei.kang@intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, bp@alien8.de,
-        hpa@zytor.com, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        pawan.kumar.gupta@linux.intel.com, ak@linux.intel.com,
-        thomas.lendacky@amd.com, fenghua.yu@intel.com,
-        like.xu@linux.intel.com
-References: <1583431025-19802-1-git-send-email-luwei.kang@intel.com>
- <1583431025-19802-2-git-send-email-luwei.kang@intel.com>
- <20200306135317.GD12561@hirez.programming.kicks-ass.net>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <b72cb68e-1a0a-eeff-21b4-ce412e939cfd@linux.intel.com>
-Date:   Fri, 6 Mar 2020 09:42:47 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727059AbgCFOno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 09:43:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F34831B;
+        Fri,  6 Mar 2020 06:43:43 -0800 (PST)
+Received: from arm.com (e112269-lin.cambridge.arm.com [10.1.195.32])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 132703F534;
+        Fri,  6 Mar 2020 06:43:40 -0800 (PST)
+Date:   Fri, 6 Mar 2020 14:43:36 +0000
+From:   Steven Price <steven.price@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Nick Fan <nick.fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Sj Huang <sj.huang@mediatek.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v4 1/7] dt-bindings: gpu: mali-bifrost: Add Mediatek
+ MT8183
+Message-ID: <20200306144336.GA9234@arm.com>
+References: <20200207052627.130118-1-drinkcat@chromium.org>
+ <20200207052627.130118-2-drinkcat@chromium.org>
+ <20200225171613.GA7063@bogus>
+ <CANMq1KAVX4o5yC7c_88Wq_O=F+MaSN_V4uNcs1nzS3wBS6A5AA@mail.gmail.com>
+ <1583462055.4947.6.camel@mtksdaap41>
+ <CAL_JsqLoUnxfrJh0WCs0jgro1KHAjWaYMsaKkKfAKA2KJ252_g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200306135317.GD12561@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqLoUnxfrJh0WCs0jgro1KHAjWaYMsaKkKfAKA2KJ252_g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/6/2020 8:53 AM, Peter Zijlstra wrote:
-> On Fri, Mar 06, 2020 at 01:56:55AM +0800, Luwei Kang wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The PEBS event created by host needs to be assigned specific counters
->> requested by the guest, which means the guest and host counter indexes
->> have to be the same or fail to create. This is needed because PEBS leaks
->> counter indexes into the guest. Otherwise, the guest driver will be
->> confused by the counter indexes in the status field of the PEBS record.
->>
->> A guest_dedicated_idx field is added to indicate the counter index
->> specifically requested by KVM. The dedicated event constraints would
->> constrain the counter in the host to the same numbered counter in guest.
->>
->> A intel_ctrl_guest_dedicated_mask field is added to indicate the enabled
->> counters for guest PEBS events. The IA32_PEBS_ENABLE MSR will be switched
->> during the VMX transitions if intel_ctrl_guest_owned is set.
->>
+On Fri, Mar 06, 2020 at 02:13:08PM +0000, Rob Herring wrote:
+> On Thu, Mar 5, 2020 at 8:34 PM Nick Fan <nick.fan@mediatek.com> wrote:
+> >
+> > Sorry for my late reply.
+> > I have checked internally.
+> > The MT8183_POWER_DOMAIN_MFG_2D is just a legacy name, not really 2D
+> > domain.
+> >
+> > If the naming too confusing, we can change this name to
+> > MT8183_POWER_DOMAIN_MFG_CORE2 for consistency.
 > 
->> +	/* the guest specified counter index of KVM owned event, e.g PEBS */
->> +	int				guest_dedicated_idx;
-> 
-> We've always objected to guest 'owned' counters, they destroy scheduling
-> freedom. Why are you expecting that to be any different this time?
->
+> Can you clarify what's in each domain? Are there actually 3 shader
+> cores (IIRC, that should be discoverable)?
 
-The new proposal tries to 'own' a counter by setting the event 
-constraint. It doesn't stop other events using the counter.
-If there is high priority event which requires the same counter, 
-scheduler can still reject the request from KVM.
-I don't think it destroys the scheduling freedom this time.
+The cover letter from Nicolas includes:
 
-Thanks,
-Kan
+> [  501.321752] panfrost 13040000.gpu: shader_present=0x7 l2_present=0x1
+
+0x7 is three bits set, so it certainly looks like there are 3 shader
+cores. Of course I wouldn't guarantee that it is as simple as each power
+domain has a shader core in. The job manager and tiler also need to be
+powered somehow, so they are either sharing with a shader core or
+there's something more complex going on.
+
+Steve
 
