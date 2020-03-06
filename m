@@ -2,103 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E69217ADB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:58:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC6217ADA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Mar 2020 18:56:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgCER6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 12:58:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbgCER6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:58:36 -0500
-Received: from tzanussi-mobl7 (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B00B52072D;
-        Thu,  5 Mar 2020 17:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583431115;
-        bh=hfXqSVx/myuEP6+ICWJ8cnf/KqlVsVU4J6nyP0XIjk4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qKSJyEad6J2TWe3CtG7UZzYFFd4titNuDlpvxKTy3PyKXHxM+6GOX5bg084YvbTUC
-         OXZhhVtwBhHm7Gur8ValiHFpWjvNfhl3MzEKJcJDOF+3zk9UkTyKHkNy35wi51wBDM
-         fJuZ/lGKJC1/cYF6DQrlJNeVgb8Zr94YLOK6UAl0=
-Message-ID: <1583431113.12738.63.camel@kernel.org>
-Subject: Re: [PATCH RT 21/23] sched: migrate_enable: Busy loop until the
- migration request is completed
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <wagi@monom.org>
-Cc:     Scott Wood <swood@redhat.com>
-Date:   Thu, 05 Mar 2020 11:58:33 -0600
-In-Reply-To: <9003e4a9e5774ecfa377d218c71c2ad2@AcuMS.aculab.com>
-References: <cover.1582814004.git.zanussi@kernel.org>
-         <fd4bda7ad49f46545a03424fd1327dff8a8b8171.1582814004.git.zanussi@kernel.org>
-         <9003e4a9e5774ecfa377d218c71c2ad2@AcuMS.aculab.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726382AbgCERz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 12:55:56 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37622 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbgCERzz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:55:55 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a141so6704880wme.2;
+        Thu, 05 Mar 2020 09:55:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YAZG2/hO05sl03MiRnCZ1W9e0grW3DaoEjXC3GXhXj4=;
+        b=S/5oNryUBD4ZFftRBagJ7C+oDjo0WCg8XDU5xuoPlrH272+nkWx960ZFh90qYe1u3F
+         62tTv1vb73nyqeAJlVZmebsYQrf+EX2t0Zg/Sg6YqJFQYznJd6atvD241dOnS7K1VKRN
+         3Yi0i7qW54H4mKgaQlrGJuLzvX4NDsHuWtfmEuKpvonTL19s1MCG5HR6k7Pgrm8t4VMh
+         O3whRaUUjhYjmDCcZ/ByjDWVwmJzwgS8WyWKlj+yupu48ARi56ER0RsS58Ja9ZiShSE6
+         VdQJCI0xkzIp8CMTOYikFzfVV8nsmogv0F1NMI0X96kXfPcREIErUfyqrGn1uu92KRFU
+         B4yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YAZG2/hO05sl03MiRnCZ1W9e0grW3DaoEjXC3GXhXj4=;
+        b=kKR18+fhkj8dDgj70IulEuGAZ4AuxjI89mLpHXsJ4GrxKweIUjqtBPnyPLvI6Tyxgj
+         AkYduw37pR5Fl+6K4SBHxJDIemVr1W4+AGrXL2lCZEbiKs1ec6ygJhhGG7J+ECIZfVrU
+         VoiPU9LJW2VD4l6FyhyAIrEkntq49h9KRh30LWXBxfD3dgqEniotbTJH52KzgDIlrMSH
+         4p4s9YBmxui+if/nJ7NhUidVuLzrW5KPXB8XSrXeuGVnnD0EK3BXyCvsY5BHVG3TZcbu
+         dM+SoARTtdLDBqAXBYrrR9SFn1Qe+v9cSX5YwdMZVbR6h724PGtNBu1RleLV4zsKS/HQ
+         9FjA==
+X-Gm-Message-State: ANhLgQ3Iis/FT3xCSJm6C9zSlm7ByLMXjyjH4zugSQRlnq7cIpviswVK
+        vUyiUVJzdbItFyHUOa7B/QquGzp6nW5d6A==
+X-Google-Smtp-Source: ADFU+vvfowrsZBhN4NuEGgRdvMRwAFkOslobhFI/xeIzfgz/EiMksoHc2N6XdWo8RU0Q5uqqSlsakw==
+X-Received: by 2002:a05:600c:280b:: with SMTP id m11mr10900679wmb.93.1583430953992;
+        Thu, 05 Mar 2020 09:55:53 -0800 (PST)
+Received: from localhost (hosting85.skyberate.net. [185.87.248.81])
+        by smtp.gmail.com with ESMTPSA id i1sm25493010wrs.18.2020.03.05.09.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 09:55:53 -0800 (PST)
+From:   Era Mayflower <mayflowerera@gmail.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Era Mayflower <mayflowerera@gmail.com>
+Subject: [PATCH 1/2] macsec: Backward compatibility bugfix of consts values
+Date:   Fri,  6 Mar 2020 02:55:22 +0000
+Message-Id: <20200306025523.63457-1-mayflowerera@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Fixed a compatibility bug, the value of the following consts changes:
+    * IFLA_MACSEC_PAD (include/uapi/linux/if_link.h)
+    * MACSEC_SECY_ATTR_PAD (include/uapi/linux/if_macsec.h)
+    * MACSEC_RXSC_ATTR_PAD (include/uapi/linux/if_macsec.h)
 
-On Thu, 2020-03-05 at 13:38 +0000, David Laight wrote:
-> From: zanussi@kernel.org
-> > Sent: 27 February 2020 14:34
-> > [ Upstream commit 140d7f54a5fff02898d2ca9802b39548bf7455f1 ]
-> > 
-> > If user task changes the CPU affinity mask of a running task it
-> > will
-> > dispatch migration request if the current CPU is no longer allowed.
-> > This
-> > might happen shortly before a task enters a migrate_disable()
-> > section.
-> > Upon leaving the migrate_disable() section, the task will notice
-> > that
-> > the current CPU is no longer allowed and will will dispatch its own
-> > migration request to move it off the current CPU.
-> > While invoking __schedule() the first migration request will be
-> > processed and the task returns on the "new" CPU with "arg.done =
-> > 0". Its
-> > own migration request will be processed shortly after and will
-> > result in
-> > memory corruption if the stack memory, designed for request, was
-> > used
-> > otherwise in the meantime.
-> > 
-> > Spin until the migration request has been processed if it was
-> > accepted.
-> 
-> What happens if the process changing the affinity mask is running
-> at a higher RT priority than that of the task being changed and
-> the new mask requires it run on the same cpu?
-> 
-> 	David
-> 
+Depends on: macsec: Netlink support of XPN cipher suites (IEEE 802.1AEbw)
 
-This patch, 'sched: migrate_enable: Use per-cpu cpu_stop_work', removes
-the busy wait and is queued for the next update:
+Signed-off-by: Era Mayflower <mayflowerera@gmail.com>
+---
+ include/uapi/linux/if_link.h   | 2 +-
+ include/uapi/linux/if_macsec.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-https://lore.kernel.org/linux-rt-users/20200203173732.ldbgbpwao7xm23mm@linutronix.de/T/#mf19a8af38ac4ea0cc01775835e9d715f175f0b7b
+diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
+index ee424d915..383316421 100644
+--- a/include/uapi/linux/if_link.h
++++ b/include/uapi/linux/if_link.h
+@@ -462,9 +462,9 @@ enum {
+ 	IFLA_MACSEC_SCB,
+ 	IFLA_MACSEC_REPLAY_PROTECT,
+ 	IFLA_MACSEC_VALIDATION,
++	IFLA_MACSEC_PAD,
+ 	IFLA_MACSEC_SSCI,
+ 	IFLA_MACSEC_SALT,
+-	IFLA_MACSEC_PAD,
+ 	__IFLA_MACSEC_MAX,
+ };
+ 
+diff --git a/include/uapi/linux/if_macsec.h b/include/uapi/linux/if_macsec.h
+index c8fab9673..a1132107d 100644
+--- a/include/uapi/linux/if_macsec.h
++++ b/include/uapi/linux/if_macsec.h
+@@ -68,9 +68,9 @@ enum macsec_secy_attrs {
+ 	MACSEC_SECY_ATTR_INC_SCI,
+ 	MACSEC_SECY_ATTR_ES,
+ 	MACSEC_SECY_ATTR_SCB,
++	MACSEC_SECY_ATTR_PAD,
+ 	MACSEC_SECY_ATTR_SSCI,
+ 	MACSEC_SECY_ATTR_SALT,
+-	MACSEC_SECY_ATTR_PAD,
+ 	__MACSEC_SECY_ATTR_END,
+ 	NUM_MACSEC_SECY_ATTR = __MACSEC_SECY_ATTR_END,
+ 	MACSEC_SECY_ATTR_MAX = __MACSEC_SECY_ATTR_END - 1,
+@@ -82,8 +82,8 @@ enum macsec_rxsc_attrs {
+ 	MACSEC_RXSC_ATTR_ACTIVE,  /* config/dump, u8 0..1 */
+ 	MACSEC_RXSC_ATTR_SA_LIST, /* dump, nested */
+ 	MACSEC_RXSC_ATTR_STATS,   /* dump, nested, macsec_rxsc_stats_attr */
+-	MACSEC_RXSC_ATTR_SSCI,    /* config/dump, u32 */
+ 	MACSEC_RXSC_ATTR_PAD,
++	MACSEC_RXSC_ATTR_SSCI,    /* config/dump, u32 */
+ 	__MACSEC_RXSC_ATTR_END,
+ 	NUM_MACSEC_RXSC_ATTR = __MACSEC_RXSC_ATTR_END,
+ 	MACSEC_RXSC_ATTR_MAX = __MACSEC_RXSC_ATTR_END - 1,
+-- 
+2.20.1
 
-Thanks,
-
-Tom
-
-
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes,
-> MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
