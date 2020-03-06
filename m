@@ -2,83 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5139117C889
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 23:52:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 591E717C87A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 23:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbgCFWwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 17:52:17 -0500
-Received: from chalk.uuid.uk ([51.68.227.198]:35576 "EHLO chalk.uuid.uk"
+        id S1726769AbgCFWpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 17:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbgCFWwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 17:52:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=octiron.net
-        ; s=20180214; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:References:Cc:To:Subject:From;
-        bh=rEvCkqukeIX0hyLei79ZYd+BK6bE20qe0Fox/V+xcf8=; b=r/7G9/sEVj9J6GRLPhCAKReTh1
-        K2WXCCHgxTdYHwONWEf0/e4Ckf2mZf2DGxZLzWg6cUoP4XEiFoSEzVpHeVHc6/q9aAvWYChAwF2mf
-        ITeFRDGIJgQMTlLTy929L2RX8BCyQCXTQiuWwHsILO2uCGAAbzXZfdSkmpji81wAnhz+NiWakDXc6
-        Zd+78h1DxO0L5d7eN6YC2sbkk7Jh9u2PjvmuWsdN+HsXN/K+nS2gngEHABxVPVaCvNUZPiFEamWOH
-        E9Uvvcxq9FNwUFGYs1cPCuhSwF9COaRJk/fensIUkSw+BJBQv4qYKF6XWauAtkbQVF5hWPQVBB1Bx
-        yOEhWZUw==;
-Received: by chalk.uuid.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <simon@octiron.net>)
-        id 1jALgP-0003Sq-ES; Fri, 06 Mar 2020 22:43:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=octiron.net
-        ; s=20180214; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:References:Cc:To:Subject:From;
-        bh=rEvCkqukeIX0hyLei79ZYd+BK6bE20qe0Fox/V+xcf8=; b=r/7G9/sEVj9J6GRLPhCAKReTh1
-        K2WXCCHgxTdYHwONWEf0/e4Ckf2mZf2DGxZLzWg6cUoP4XEiFoSEzVpHeVHc6/q9aAvWYChAwF2mf
-        ITeFRDGIJgQMTlLTy929L2RX8BCyQCXTQiuWwHsILO2uCGAAbzXZfdSkmpji81wAnhz+NiWakDXc6
-        Zd+78h1DxO0L5d7eN6YC2sbkk7Jh9u2PjvmuWsdN+HsXN/K+nS2gngEHABxVPVaCvNUZPiFEamWOH
-        E9Uvvcxq9FNwUFGYs1cPCuhSwF9COaRJk/fensIUkSw+BJBQv4qYKF6XWauAtkbQVF5hWPQVBB1Bx
-        yOEhWZUw==;
-Received: by tsort.uuid.uk with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <simon@octiron.net>)
-        id 1jALgN-0008WB-Uq; Fri, 06 Mar 2020 22:43:04 +0000
-From:   Simon Arlott <simon@octiron.net>
-Subject: Re: [PATCH v2] scsi: sr: get rid of sr global mutex
-To:     "Merlijn B.W. Wajer" <merlijn@archive.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <jens.axboe@oracle.com>,
-        James Bottomley <jejb@linux.ibm.com>
-Cc:     linux-scsi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>
-References: <9d50ecd4-9fd1-6865-5509-a5ef119828df () archive ! org>
-Message-ID: <8df4a060-0576-ebeb-f3f4-cc35fcbef3e2@0882a8b5-c6c3-11e9-b005-00805fc181fe>
-Date:   Fri, 6 Mar 2020 22:43:02 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <9d50ecd4-9fd1-6865-5509-a5ef119828df () archive ! org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1726090AbgCFWpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 17:45:05 -0500
+Subject: Re: [GIT PULL] RISC-V Fixes for 5.6-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583534704;
+        bh=yX6aPpHu7Ib0+yyhoAJCyIMSrKCwvDxeGj4jBZ4m5co=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=A/NfKyIDaH1GvuqGly+CRxQNg9P5Z6PSoqp1xsPHogX7kkyQ84vl0iJOLam7XaDB2
+         o0ZPjR0ZiLHXzikX+iQuxuYS74uxl825Ygs4VSKTaYmwcYSN4rSxsTGV9yb8lY70D2
+         BeIY/35XeyPi5MizzBv9L58rKqCb0F77iIS8t+V8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <mhng-ceb3e2ad-8656-4228-b1c3-b90731c84c5f@palmerdabbelt-glaptop1>
+References: <mhng-ceb3e2ad-8656-4228-b1c3-b90731c84c5f@palmerdabbelt-glaptop1>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <mhng-ceb3e2ad-8656-4228-b1c3-b90731c84c5f@palmerdabbelt-glaptop1>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
+ tags/riscv-for-linus-5.6-rc5
+X-PR-Tracked-Commit-Id: af33d2433b03d63ed31fcfda842f46676a5e1afc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7e6582ef32f6cbd55b9c752727847b0ee6710e78
+Message-Id: <158353470481.2424.9286208999466559244.pr-tracker-bot@kernel.org>
+Date:   Fri, 06 Mar 2020 22:45:04 +0000
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/02/2020 21:20, Merlijn B.W. Wajer wrote:
-> Just wanted to check if you planned to apply this v2 (you tried to apply
-> v1 but it didn't compile, so I rebased it onto 5.7/scsi-queue as you
-> requested). Please let me know if there's anything you'd like to see
-> changed.
+The pull request you sent on Fri, 06 Mar 2020 14:24:17 -0800 (PST):
 
-There's a missing call to mutex_destroy(&cd->lock) in sr_probe() if
-there are any failures after calling mutex_init(&cd->lock).
+> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-5.6-rc5
 
-> On 18/02/2020 20:21, Merlijn B.W. Wajer wrote:
->> Perhaps I or someone else can work on removing the usage of the locks,
->> but as it stands I think this addresses the performance issue present in
->> the current kernel, and removing locks and the associated testing
->> required with that is something I am not entirely comfortable doing.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7e6582ef32f6cbd55b9c752727847b0ee6710e78
 
-I have a patch to move the locks into the cdrom driver and I've got
-multiple PATA drives to test it with.
+Thank you!
 
 -- 
-Simon Arlott
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
