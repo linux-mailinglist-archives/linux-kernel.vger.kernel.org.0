@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9004D17C597
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6049917C58E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbgCFSky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 13:40:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
+        id S1727061AbgCFSkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 13:40:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726162AbgCFSky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 13:40:54 -0500
+        id S1726171AbgCFSkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 13:40:53 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 130CA20684;
+        by mail.kernel.org (Postfix) with ESMTPSA id 35803206D7;
         Fri,  6 Mar 2020 18:40:53 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1jAHtz-002dy5-WA; Fri, 06 Mar 2020 13:40:52 -0500
-Message-Id: <20200306184051.873964952@goodmis.org>
+        id 1jAHu0-002dya-4p; Fri, 06 Mar 2020 13:40:52 -0500
+Message-Id: <20200306184052.026866157@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 06 Mar 2020 13:40:36 -0500
+Date:   Fri, 06 Mar 2020 13:40:37 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -33,8 +33,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        stable-rt@vger.kernel.org
-Subject: [PATCH RT 1/8] userfaultfd: Use a seqlock instead of seqcount
+        Scott Wood <swood@redhat.com>
+Subject: [PATCH RT 2/8] sched: migrate_enable: Use per-cpu cpu_stop_work
 References: <20200306184035.948924528@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,79 +48,82 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Scott Wood <swood@redhat.com>
 
-[ Upstream commit dc952a564d02997330654be9628bbe97ba2a05d3 ]
+[ Upstream commit 2dcd94b443c5dcbc20281666321b7f025f9cc85c ]
 
-On RT write_seqcount_begin() disables preemption which leads to warning
-in add_wait_queue() while the spinlock_t is acquired.
-The waitqueue can't be converted to swait_queue because
-userfaultfd_wake_function() is used as a custom wake function.
+Commit e6c287b1512d ("sched: migrate_enable: Use stop_one_cpu_nowait()")
+adds a busy wait to deal with an edge case where the migrated thread
+can resume running on another CPU before the stopper has consumed
+cpu_stop_work.  However, this is done with preemption disabled and can
+potentially lead to deadlock.
 
-Use seqlock instead seqcount to avoid the preempt_disable() section
-during add_wait_queue().
+While it is not guaranteed that the cpu_stop_work will be consumed before
+the migrating thread resumes and exits the stack frame, it is guaranteed
+that nothing other than the stopper can run on the old cpu between the
+migrating thread scheduling out and the cpu_stop_work being consumed.
+Thus, we can store cpu_stop_work in per-cpu data without it being
+reused too early.
 
-Cc: stable-rt@vger.kernel.org
+Fixes: e6c287b1512d ("sched: migrate_enable: Use stop_one_cpu_nowait()")
+Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Scott Wood <swood@redhat.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- fs/userfaultfd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ kernel/sched/core.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index d269d1139f7f..ff6be687f68e 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -61,7 +61,7 @@ struct userfaultfd_ctx {
- 	/* waitqueue head for events */
- 	wait_queue_head_t event_wqh;
- 	/* a refile sequence protected by fault_pending_wqh lock */
--	struct seqcount refile_seq;
-+	seqlock_t refile_seq;
- 	/* pseudo fd refcounting */
- 	atomic_t refcount;
- 	/* userfaultfd syscall flags */
-@@ -1064,7 +1064,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 			 * waitqueue could become empty if this is the
- 			 * only userfault.
- 			 */
--			write_seqcount_begin(&ctx->refile_seq);
-+			write_seqlock(&ctx->refile_seq);
- 
- 			/*
- 			 * The fault_pending_wqh.lock prevents the uwq
-@@ -1090,7 +1090,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 			list_del(&uwq->wq.entry);
- 			add_wait_queue(&ctx->fault_wqh, &uwq->wq);
- 
--			write_seqcount_end(&ctx->refile_seq);
-+			write_sequnlock(&ctx->refile_seq);
- 
- 			/* careful to always initialize msg if ret == 0 */
- 			*msg = uwq->msg;
-@@ -1263,11 +1263,11 @@ static __always_inline void wake_userfault(struct userfaultfd_ctx *ctx,
- 	 * sure we've userfaults to wake.
- 	 */
- 	do {
--		seq = read_seqcount_begin(&ctx->refile_seq);
-+		seq = read_seqbegin(&ctx->refile_seq);
- 		need_wakeup = waitqueue_active(&ctx->fault_pending_wqh) ||
- 			waitqueue_active(&ctx->fault_wqh);
- 		cond_resched();
--	} while (read_seqcount_retry(&ctx->refile_seq, seq));
-+	} while (read_seqretry(&ctx->refile_seq, seq));
- 	if (need_wakeup)
- 		__wake_userfault(ctx, range);
- }
-@@ -1938,7 +1938,7 @@ static void init_once_userfaultfd_ctx(void *mem)
- 	init_waitqueue_head(&ctx->fault_wqh);
- 	init_waitqueue_head(&ctx->event_wqh);
- 	init_waitqueue_head(&ctx->fd_wqh);
--	seqcount_init(&ctx->refile_seq);
-+	seqlock_init(&ctx->refile_seq);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 4616c086dd26..c4290fa5c0b6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7291,6 +7291,9 @@ static void migrate_disabled_sched(struct task_struct *p)
+ 	p->migrate_disable_scheduled = 1;
  }
  
- SYSCALL_DEFINE1(userfaultfd, int, flags)
++static DEFINE_PER_CPU(struct cpu_stop_work, migrate_work);
++static DEFINE_PER_CPU(struct migration_arg, migrate_arg);
++
+ void migrate_enable(void)
+ {
+ 	struct task_struct *p = current;
+@@ -7329,23 +7332,26 @@ void migrate_enable(void)
+ 
+ 	WARN_ON(smp_processor_id() != cpu);
+ 	if (!is_cpu_allowed(p, cpu)) {
+-		struct migration_arg arg = { .task = p };
+-		struct cpu_stop_work work;
++		struct migration_arg __percpu *arg;
++		struct cpu_stop_work __percpu *work;
+ 		struct rq_flags rf;
+ 
++		work = this_cpu_ptr(&migrate_work);
++		arg = this_cpu_ptr(&migrate_arg);
++		WARN_ON_ONCE(!arg->done && !work->disabled && work->arg);
++
++		arg->task = p;
++		arg->done = false;
++
+ 		rq = task_rq_lock(p, &rf);
+ 		update_rq_clock(rq);
+-		arg.dest_cpu = select_fallback_rq(cpu, p);
++		arg->dest_cpu = select_fallback_rq(cpu, p);
+ 		task_rq_unlock(rq, p, &rf);
+ 
+ 		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
+-				    &arg, &work);
++				    arg, work);
+ 		tlb_migrate_finish(p->mm);
+ 		__schedule(true);
+-		if (!work.disabled) {
+-			while (!arg.done)
+-				cpu_relax();
+-		}
+ 	}
+ 
+ out:
 -- 
 2.25.0
 
