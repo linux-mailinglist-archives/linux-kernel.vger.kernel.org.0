@@ -2,94 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4CE17C3B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6117F17C3E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:10:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgCFRJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:09:02 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:31050 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCFRJB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:09:01 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id 026H8r3Y022896;
-        Sat, 7 Mar 2020 02:08:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 026H8r3Y022896
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1583514535;
-        bh=6guOWuBDvMw4PWtQqkZ3oG+qxRjsz1p8ylustGTOkRc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hKtYra30kFqdKeNcrhQ5uWZO+Iq4r9PNT5s5gQUO340oYIRCi75X1EU8mg/9bND4n
-         v9EyO9JOaNbQqr6Ejf4ttA8VdWf6YfRHjpbeIIX4y3ZbcJkHjpM7aZsfx1M8LMUF2N
-         arBCL4Pv9iaoRNiG4IPictaFdf/cyXhlbyJUmhqx1io/KaZZq1fEoPOzciycyPuHY4
-         IyqIMFvyVTOO6FQeFbIJV2XSOHayW0i7kcPynW2kx1EJzCujeAypsJhsMwvSMHyuXt
-         8ezBXPfPBbcz/ygac5N5E9tbIZTQCVRabS8N3e7YQ8qoKBYyYZTm5Ps2VyFYyJKn65
-         wfxvzK04L/4MQ==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 2/2] kbuild: refactor Makefile.dtbinst more
-Date:   Sat,  7 Mar 2020 02:08:52 +0900
-Message-Id: <20200306170852.17798-2-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200306170852.17798-1-masahiroy@kernel.org>
-References: <20200306170852.17798-1-masahiroy@kernel.org>
+        id S1727363AbgCFRJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:09:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726171AbgCFRJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:09:50 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCF7020658;
+        Fri,  6 Mar 2020 17:09:46 +0000 (UTC)
+Date:   Fri, 6 Mar 2020 12:09:45 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     <cl@rock-chips.com>
+Cc:     heiko@sntech.de, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        akpm@linux-foundation.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        surenb@google.com, ben.dooks@codethink.co.uk,
+        anshuman.khandual@arm.com, catalin.marinas@arm.com,
+        will@kernel.org, keescook@chromium.org, luto@amacapital.net,
+        wad@chromium.org, mark.rutland@arm.com, geert+renesas@glider.be,
+        george_davis@mentor.com, sudeep.holla@arm.com,
+        linux@armlinux.org.uk, gregkh@linuxfoundation.org, info@metux.net,
+        kstewart@linuxfoundation.org, allison@lohutok.net,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v3 1/1] kthread: do not preempt current task if it is
+ going to call schedule()
+Message-ID: <20200306120945.6a197172@gandalf.local.home>
+In-Reply-To: <20200306070133.18335-2-cl@rock-chips.com>
+References: <20200306070133.18335-1-cl@rock-chips.com>
+        <20200306070133.18335-2-cl@rock-chips.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor Makefile.dtbinst so it looks similar to other Makefiles.
+On Fri,  6 Mar 2020 15:01:33 +0800
+<cl@rock-chips.com> wrote:
 
-*.dtb should not be a phony target. Copy files based on the timestamps.
-Print installed dtb paths instead of in-kernel dtb paths.
+> From: Liang Chen <cl@rock-chips.com>
+> 
+> when we create a kthread with ktrhead_create_on_cpu(),the child thread
+> entry is ktread.c:ktrhead() which will be preempted by the parent after
+> call complete(done) while schedule() is not called yet,then the parent
+> will call wait_task_inactive(child) but the child is still on the runqueue,
+> so the parent will schedule_hrtimeout() for 1 jiffy,it will waste a lot of
+> time,especially on startup.
+> 
+>   parent                             child
+> ktrhead_create_on_cpu()
+>   wait_fo_completion(&done) -----> ktread.c:ktrhead()
+>                              |----- complete(done);--wakeup and preempted by parent
+>  kthread_bind() <------------|  |-> schedule();--dequeue here
+>   wait_task_inactive(child)     |
+>    schedule_hrtimeout(1 jiffy) -|
+> 
+> So we hope the child just wakeup parent but not preempted by parent, and the
+> child is going to call schedule() soon,then the parent will not call
+> schedule_hrtimeout(1 jiffy) as the child is already dequeue.
+> 
+> The same issue for ktrhead_park()&&kthread_parkme().
+> This patch can save 120ms on rk312x startup with CONFIG_HZ=300.
+> 
+> Signed-off-by: Liang Chen <cl@rock-chips.com>
+> ---
+>  kernel/kthread.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index b262f47046ca..bfbfa481be3a 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -199,8 +199,15 @@ static void __kthread_parkme(struct kthread *self)
+>  		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+>  			break;
+>  
+> +		/*
+> +		 * Thread is going to call schedule(), do not preempt it,
+> +		 * or the caller of kthread_park() may spend more time in
+> +		 * wait_task_inactive().
+> +		 */
+> +		preempt_disable();
+>  		complete(&self->parked);
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+I first was concerned that this could break PREEMPT_RT, as complete() calls
+spin_locks() which are turned into sleeping locks when PREEMPT_RT is
+enabled. But looking at the latest PREEMPT_RT patch, it appears that it
+converts the locks in complete() into raw_spin_locks (and using swake).
 
- scripts/Makefile.dtbinst | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+I don't see any other issue with this patch.
 
-diff --git a/scripts/Makefile.dtbinst b/scripts/Makefile.dtbinst
-index fcd5f2eaaad1..50d580d77ae9 100644
---- a/scripts/Makefile.dtbinst
-+++ b/scripts/Makefile.dtbinst
-@@ -17,20 +17,20 @@ include include/config/auto.conf
- include scripts/Kbuild.include
- include $(src)/Makefile
- 
--dtbinst-files	:= $(sort $(dtb-y) $(if $(CONFIG_OF_ALL_DTBS), $(dtb-)))
--dtbinst-dirs	:= $(subdir-y) $(subdir-m)
-+dtbs    := $(addprefix $(dst)/, $(dtb-y) $(if $(CONFIG_OF_ALL_DTBS),$(dtb-)))
-+subdirs := $(addprefix $(obj)/, $(subdir-y) $(subdir-m))
- 
--# Helper targets for Installing DTBs into the boot directory
--quiet_cmd_dtb_install =	INSTALL $<
--      cmd_dtb_install =	mkdir -p $(2); cp $< $(2)
-+__dtbs_install: $(dtbs) $(subdirs)
-+	@:
- 
--$(dtbinst-files): %.dtb: $(obj)/%.dtb
--	$(call cmd,dtb_install,$(dst))
-+quiet_cmd_dtb_install = INSTALL $@
-+      cmd_dtb_install = install -D $< $@
- 
--$(dtbinst-dirs):
--	$(Q)$(MAKE) $(dtbinst)=$(obj)/$@ dst=$(dst)/$@
-+$(dst)/%.dtb: $(obj)/%.dtb
-+	$(call cmd,dtb_install)
- 
--PHONY += $(dtbinst-files) $(dtbinst-dirs)
--__dtbs_install: $(dtbinst-files) $(dtbinst-dirs)
-+PHONY += $(subdirs)
-+$(subdirs):
-+	$(Q)$(MAKE) $(dtbinst)=$@ dst=$(patsubst $(obj)/%,$(dst)/%,$@)
- 
- .PHONY: $(PHONY)
--- 
-2.17.1
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+
+> -		schedule();
+> +		schedule_preempt_disabled();
+> +		preempt_enable();
+>  	}
+>  	__set_current_state(TASK_RUNNING);
+>  }
+> @@ -245,8 +252,14 @@ static int kthread(void *_create)
+>  	/* OK, tell user we're spawned, wait for stop or wakeup */
+>  	__set_current_state(TASK_UNINTERRUPTIBLE);
+>  	create->result = current;
+> +	/*
+> +	 * Thread is going to call schedule(), do not preempt it,
+> +	 * or the creator may spend more time in wait_task_inactive().
+> +	 */
+> +	preempt_disable();
+>  	complete(done);
+> -	schedule();
+> +	schedule_preempt_disabled();
+> +	preempt_enable();
+>  
+>  	ret = -EINTR;
+>  	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
 
