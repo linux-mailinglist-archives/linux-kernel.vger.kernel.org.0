@@ -2,50 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B7517BB5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B6DD17BB6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:16:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCFLOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:14:43 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46328 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgCFLOm (ORCPT
+        id S1726633AbgCFLPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:15:45 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:56130 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbgCFLPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:14:42 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026B95Gk063060;
-        Fri, 6 Mar 2020 11:14:36 GMT
+        Fri, 6 Mar 2020 06:15:45 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026B85Vl066611;
+        Fri, 6 Mar 2020 11:15:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=rKvKPAx+AQU3DjZ9vC2QGoS2Sf+HFABbBiwngFRi2WQ=;
- b=S28wPSpLEvqWOB/3bSBzxiXO6eDQanX8PTKH5sEl7Aw2pbfcIytrE4oakyGugrR5KfT2
- AIfVrcPKQ34IREC8ASVBO2sjQuliUHS8691MrFnitA4Fl/vQnM8SExufWaAnQYxQzfMQ
- M5w+ncg3SooeguF9w7yB6Rr9/TyPLDdT1/5IcQsOdV0gZGFPZJMyIr2uoeEGzkO65TxH
- rk/cmVtX1/D5wm3kIvooOr7KnEs12iGoPtEykFsgzR/L/Gk9QcCccvPM0JjGdN8jygU+
- 87Kcx0X1UEAJwY5alL2uof8VlOd0zqpWHv0KV61onEcbDDZIELU9ez0bMqo3/3vwQ3zq tA== 
+ bh=8cpphzaFJ1oOB2Ybb8mTHxcBaBMTt7AnX0lldDCaqgY=;
+ b=pgZjSnHI4zGe9nzlW2ouFUBm9RFpBm+FxCOjDULD/r8OoiPsjlnQNX7Q1jHrSHQF1Ul8
+ uUW6lZRnso5UMoaRQ+E9NxfzetpjS+zedMyGsLkMZOPZRnc13jb6VQPB3XC23yaRizee
+ Jd32M14LBlVRTnIZX8iHk/otneYk4r9i+ccV8COhjE10O3U8ssjYR/dy1Ur+CqZ7ZDkN
+ II+GrbXajhXkK0rC9sj5I5KN9+iG2Rq5BCFwP+nmxXknJuwyMw4/9397CJecKPFF0gGS
+ oALNrhbp9W7L1+a4n8XrcargEyh5k99c1PRh19mtXDImBkop/nCVJeAkHwN2QSVhY866 WA== 
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2yghn3ph6w-1
+        by userp2130.oracle.com with ESMTP id 2ykgys1cn1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Mar 2020 11:14:36 +0000
+        Fri, 06 Mar 2020 11:15:37 +0000
 Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026BE4aj117859;
-        Fri, 6 Mar 2020 11:14:35 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2yg1h5maxq-1
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026BE2eA117321;
+        Fri, 6 Mar 2020 11:15:36 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2yg1h5md0x-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Mar 2020 11:14:35 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 026BEZHb007514;
-        Fri, 6 Mar 2020 11:14:35 GMT
+        Fri, 06 Mar 2020 11:15:36 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 026BFY1j000922;
+        Fri, 6 Mar 2020 11:15:35 GMT
 Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Mar 2020 03:14:35 -0800
-Subject: Re: [PATCH] xen/xenbus: fix locking
+        with ESMTP ; Fri, 06 Mar 2020 03:15:34 -0800
+Subject: Re: [PATCH v3] xen/blkfront: fix ring info addressing
 To:     Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org
-Cc:     Stefano Stabellini <sstabellini@kernel.org>
-References: <20200305100323.16736-1-jgross@suse.com>
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+References: <20200305155129.28326-1-jgross@suse.com>
 From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Autocrypt: addr=boris.ostrovsky@oracle.com; keydata=
  xsFNBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
@@ -90,14 +93,14 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <578389b5-bf98-6470-7e0d-beba1ec4881a@oracle.com>
-Date:   Fri, 6 Mar 2020 06:14:30 -0500
+Message-ID: <53eef7b9-f4c5-0c84-4df7-f5599bb477e3@oracle.com>
+Date:   Fri, 6 Mar 2020 06:15:29 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200305100323.16736-1-jgross@suse.com>
+In-Reply-To: <20200305155129.28326-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
@@ -105,9 +108,9 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phis
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2003060080
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
- impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 lowpriorityscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 spamscore=0 clxscore=1015 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
  definitions=main-2003060080
 Sender: linux-kernel-owner@vger.kernel.org
@@ -117,16 +120,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 3/5/20 5:03 AM, Juergen Gross wrote:
-> Commit 060eabe8fbe726 ("xenbus/backend: Protect xenbus callback with
-> lock") introduced a bug by holding a lock while calling a function
-> which might schedule.
+On 3/5/20 10:51 AM, Juergen Gross wrote:
+> Commit 0265d6e8ddb890 ("xen/blkfront: limit allocated memory size to
+> actual use case") made struct blkfront_ring_info size dynamic. This is
+> fine when running with only one queue, but with multiple queues the
+> addressing of the single queues has to be adapted as the structs are
+> allocated in an array.
 >
-> Fix that by using a semaphore instead.
->
-> Fixes: 060eabe8fbe726 ("xenbus/backend: Protect xenbus callback with lock")
+> Fixes: 0265d6e8ddb890 ("xen/blkfront: limit allocated memory size to actual use case")
+> Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
+> Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
 > Signed-off-by: Juergen Gross <jgross@suse.com>
+> Acked-by: Roger Pau Monné <roger.pau@citrix.com>
 >
+
 
 
 Applied to for-linus-5.6b.
