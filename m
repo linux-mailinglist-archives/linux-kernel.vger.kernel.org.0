@@ -2,78 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6980817C4C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:44:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3744817C4CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbgCFRoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:44:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60580 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbgCFRoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:44:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8D8E5AEC5;
-        Fri,  6 Mar 2020 17:44:33 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     phil@raspberrypi.com, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
-        stefan.wahren@i2se.com, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 11/11] ARM: dts: bcm2711: Add vmmc regulator in emmc2
-Date:   Fri,  6 Mar 2020 18:44:13 +0100
-Message-Id: <20200306174413.20634-12-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200306174413.20634-1-nsaenzjulienne@suse.de>
-References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+        id S1726533AbgCFRpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:45:43 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48364 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726178AbgCFRpn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:45:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583516742;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CMTg0TedaIFOhx4o5LKmMRYaCsUrpsNojDNW2nk+DDU=;
+        b=Uslm4aXIqPcbneB/f0nldQek8/7fHw7R22yWDcHr+rw+QtE3Af6skCbh/L6AOX/sky61Wo
+        YTsPyhl/qC/nVL+/YNnqJnbRems3ws8tuwAyV7Yww7isyMbZPn9cxVG+9ZLRuJsgkArawS
+        hqnQ1esROZDkxzy2UoSi8z4SQs7ZKj4=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-432-pc48ZVlIPW63wn0sR5CNQA-1; Fri, 06 Mar 2020 12:45:40 -0500
+X-MC-Unique: pc48ZVlIPW63wn0sR5CNQA-1
+Received: by mail-qt1-f200.google.com with SMTP id i6so1847389qtw.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 09:45:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CMTg0TedaIFOhx4o5LKmMRYaCsUrpsNojDNW2nk+DDU=;
+        b=nPboWgw+a0KkuO6tWctj/ffOhyQE4E65Bj3+BOhOAbbzEW1iLjrZP+SLGjkH4bGGgh
+         0jjWCuJGS4SSZWLv8JVpGhDhr1e2yZswkFJ6vYsO7zwp736+362Hk1ygYGhCf84LSwX8
+         UkH6zWU0h5nfUu0cZZ++YQB2p3i4m76JwvSC5hFhxSkiBtbrENumf4e9nsAz3kF4fdWB
+         NdzxWcs6HlvvL1lAXStialKGE9yLVuL7bfSCnQfX5OcJBbCXFZxNObA1n4j2UCECJH7e
+         r4NgzLMW+Bv+7H9ApQm4VW6SqNcAgNYePD2Q4Hjn4nZ3mwQX2McNdrfQUbUQwr/NXwtn
+         ksuQ==
+X-Gm-Message-State: ANhLgQ30cEf7ohASQlAvh0MwQp+ZR3qE4p550UCDuaEXXOrEMEFeNHeq
+        tY5v053zcH20J25bdc9bdk7Lk6LxUhMcSi8bA93/vVgn6XS3H/9njBJAFEG3JQa+5y5RWWtcM2z
+        2N+LzmAwiUkF3khKNgM8AAW4eusjJ0jWEzqByVVQU
+X-Received: by 2002:a37:a1cc:: with SMTP id k195mr4124004qke.169.1583516738499;
+        Fri, 06 Mar 2020 09:45:38 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vtLkMqmAAE5g6XIxPekB6iUZaExraKcxW50QFZu1+5KPDAHpDrbYIAx376mvnWlzfYRLHDphukJ91rmSpoaWRM=
+X-Received: by 2002:a37:a1cc:: with SMTP id k195mr4123983qke.169.1583516738227;
+ Fri, 06 Mar 2020 09:45:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1582766000-23023-1-git-send-email-johnny.chuang.emc@gmail.com>
+In-Reply-To: <1582766000-23023-1-git-send-email-johnny.chuang.emc@gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 6 Mar 2020 18:45:26 +0100
+Message-ID: <CAO-hwJJo=oNTFNtS5DWtMP7FSiMXUYV5KTa1VDzH4LA4SBUCaQ@mail.gmail.com>
+Subject: Re: [PATCH] Input: elants_i2c - Report resolution information for
+ touch major
+To:     Johnny Chuang <johnny.chuang.emc@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Johnny Chuang <johnny.chuang@emc.com.tw>,
+        Jennifer Tsai <jennifer.tsai@emc.com.tw>,
+        James Chen <james.chen@emc.com.tw>,
+        Paul Liang <paul.liang@emc.com.tw>,
+        Jeff Chuang <jeff.chuang@emc.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SD card power can be controlled trough a pin routed into the board's
-external GPIO expander. Turn that into a regulator and provide it to
-emmc2.
+On Thu, Feb 27, 2020 at 2:13 AM Johnny Chuang
+<johnny.chuang.emc@gmail.com> wrote:
+>
+> From: Johnny Chuang <johnny.chuang@emc.com.tw>
+>
+> This patch supports reporting resolution for ABS_MT_TOUCH_MAJOR event.
+> This information is needed in showing pressure/width radius.
+>
+> Signed-off-by: Johnny Chuang <johnny.chuang@emc.com.tw>
+> ---
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index b0ea8233b636..a2da058396fe 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -55,6 +55,16 @@ sd_io_1v8_reg: sd_io_1v8_reg {
- 			  3300000 0x0>;
- 		status = "okay";
- 	};
-+
-+	sd_vcc_reg: sd_vcc_reg {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-sd";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpio = <&expgpio 6 GPIO_ACTIVE_HIGH>;
-+	};
- };
- 
- &firmware {
-@@ -173,6 +183,7 @@ brcmf: wifi@1 {
- /* EMMC2 is used to drive the SD card */
- &emmc2 {
- 	vqmmc-supply = <&sd_io_1v8_reg>;
-+	vmmc-supply = <&sd_vcc_reg>;
- 	broken-cd;
- 	status = "okay";
- };
--- 
-2.25.1
+Cheers,
+Benjamin
+
+>  drivers/input/touchscreen/elants_i2c.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+> index 4911799..14c577c 100644
+> --- a/drivers/input/touchscreen/elants_i2c.c
+> +++ b/drivers/input/touchscreen/elants_i2c.c
+> @@ -1309,6 +1309,7 @@ static int elants_i2c_probe(struct i2c_client *client,
+>         input_set_abs_params(ts->input, ABS_MT_PRESSURE, 0, 255, 0, 0);
+>         input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
+>         input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
+> +       input_abs_set_res(ts->input, ABS_MT_TOUCH_MAJOR, 1);
+>
+>         error = input_register_device(ts->input);
+>         if (error) {
+> --
+> 2.7.4
+>
 
