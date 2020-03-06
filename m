@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A75A817C7F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4693317C7FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 22:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgCFVor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 16:44:47 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:41037 "EHLO
+        id S1726860AbgCFVou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 16:44:50 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:47705 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgCFVor (ORCPT
+        with ESMTP id S1726245AbgCFVos (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 16:44:47 -0500
+        Fri, 6 Mar 2020 16:44:48 -0500
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 7AB0923E5A;
+        by ssl.serverraum.org (Postfix) with ESMTPSA id E7A4E23E5E;
         Fri,  6 Mar 2020 22:44:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1583531084;
+        t=1583531085;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=cxD5IohuBmq+S0fo3u31OLf+lK98IHcZz1tmd3ZCcyc=;
-        b=OvQjSoWUVujfGF9j+SNMpJOQd2egfJgzDuCHhrVWGEM1bqzHFynfwQAAxJeVWD3z9WIPNj
-        kYRjiNYDIa8DZ0PELxTdtbXtxzfIas+4/dvmkeNvvjteERU0I8FnlC22FgkDrPMyjaGefQ
-        QrPnz8g32OI+7hCqHzD7B1e/oA2hHOE=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zDrhaYq/UNcUn/Q+Hgg1mvdyxWFl9Z/CgmEYwca7d3c=;
+        b=K1hNFxD5aGUO//wj6j2N8HFL/nmVXsGXvwwvsmjkXXhck5OmEK6x/t6MesgCMMbPzpzad9
+        dFZUdhBq/C7y//3zCZy8Qjd32hwVBYccde4CaqKFdSAt9q44MOhUo4WWgHesx7A7F9DK7L
+        RqHBdTxNFYE1mfVP2I/Gkv78aSNTI5g=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v4 0/4] tty: serial: fsl_lpuart: various fixes and LS1028A support
-Date:   Fri,  6 Mar 2020 22:44:29 +0100
-Message-Id: <20200306214433.23215-1-michael@walle.cc>
+Subject: [PATCH v4 1/4] tty: serial: fsl_lpuart: fix DMA operation when using IOMMU
+Date:   Fri,  6 Mar 2020 22:44:30 +0100
+Message-Id: <20200306214433.23215-2-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200306214433.23215-1-michael@walle.cc>
+References: <20200306214433.23215-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spamd-Bar: ++++++
@@ -44,7 +47,7 @@ X-Spam-Level: ******
 X-Rspamd-Server: web
 X-Spam-Status: Yes, score=6.40
 X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: 7AB0923E5A
+X-Rspamd-Queue-Id: E7A4E23E5E
 X-Spamd-Result: default: False [6.40 / 15.00];
          FROM_HAS_DN(0.00)[];
          TO_DN_SOME(0.00)[];
@@ -53,7 +56,7 @@ X-Spamd-Result: default: False [6.40 / 15.00];
          TAGGED_RCPT(0.00)[dt];
          MIME_GOOD(-0.10)[text/plain];
          BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.545];
+         NEURAL_SPAM(0.00)[0.551];
          DKIM_SIGNED(0.00)[];
          RCPT_COUNT_SEVEN(0.00)[7];
          MID_CONTAINS_FROM(1.00)[];
@@ -68,44 +71,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are various fixes for problems I found during development of the
-LS1028A support for the LPUART.
+The DMA channel might not be available at probe time. This is esp. the
+case if the DMA controller has an IOMMU mapping.
 
-Changes since v3:
- - Dropped patches which were already picked up.
- - Changed the subject of the former patch
-     tty: serial: fsl_lpuart: handle EPROBE_DEFER for DMA
-   Thanks Rob.
- - Added errno to error/info messages. Thanks Rob.
- - Splitted this series and removed the dt-bindings patches as well as
-   the device tree patches. Thanks Leo.
+There is also another caveat. If there is no DMA controller at all,
+dma_request_chan() will also return -EPROBE_DEFER. Thus we cannot test
+for -EPROBE_DEFER in probe(). Otherwise the lpuart driver will fail to
+probe if, for example, the DMA driver is not enabled in the kernel
+configuration.
 
-Changes since v2:
-Changed DMA channel request handling. Spotted by Rob Herring. Thanks.
+To workaround this, we request the DMA channel in _startup(). Other
+serial drivers do it the same way.
 
-Modified patches:
-  tty: serial: fsl_lpuart: handle EPROBE_DEFER for DMA
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/tty/serial/fsl_lpuart.c | 88 +++++++++++++++++++++------------
+ 1 file changed, 57 insertions(+), 31 deletions(-)
 
-Changes since v1:
-DMA support fixes.
-
-New patches:
-  tty: serial: fsl_lpuart: fix DMA mapping
-  arm64: dts: ls1028a: add "fsl,vf610-edma" compatible
-
-Modified patches:
-  arm64: dts: ls1028a: add missing LPUART nodes
-   - add dma phandles
-
-Michael Walle (4):
-  tty: serial: fsl_lpuart: fix DMA operation when using IOMMU
-  tty: serial: fsl_lpuart: fix DMA mapping
-  tty: serial: fsl_lpuart: add LS1028A support
-  tty: serial: fsl_lpuart: add LS1028A earlycon support
-
- drivers/tty/serial/fsl_lpuart.c | 210 ++++++++++++++++++++++----------
- 1 file changed, 149 insertions(+), 61 deletions(-)
-
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index c31b8f3db6bf..33798df4d727 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1493,36 +1493,67 @@ static void rx_dma_timer_init(struct lpuart_port *sport)
+ static void lpuart_tx_dma_startup(struct lpuart_port *sport)
+ {
+ 	u32 uartbaud;
++	int ret;
+ 
+-	if (sport->dma_tx_chan && !lpuart_dma_tx_request(&sport->port)) {
+-		init_waitqueue_head(&sport->dma_wait);
+-		sport->lpuart_dma_tx_use = true;
+-		if (lpuart_is_32(sport)) {
+-			uartbaud = lpuart32_read(&sport->port, UARTBAUD);
+-			lpuart32_write(&sport->port,
+-				       uartbaud | UARTBAUD_TDMAE, UARTBAUD);
+-		} else {
+-			writeb(readb(sport->port.membase + UARTCR5) |
+-				UARTCR5_TDMAS, sport->port.membase + UARTCR5);
+-		}
++	sport->dma_tx_chan = dma_request_chan(sport->port.dev, "tx");
++	if (IS_ERR(sport->dma_tx_chan)) {
++		dev_info_once(sport->port.dev,
++			      "DMA tx channel request failed, operating without tx DMA (%ld)\n",
++			      PTR_ERR(sport->dma_tx_chan));
++		sport->dma_tx_chan = NULL;
++		goto err;
++	}
++
++	ret = lpuart_dma_tx_request(&sport->port);
++	if (!ret)
++		goto err;
++
++	init_waitqueue_head(&sport->dma_wait);
++	sport->lpuart_dma_tx_use = true;
++	if (lpuart_is_32(sport)) {
++		uartbaud = lpuart32_read(&sport->port, UARTBAUD);
++		lpuart32_write(&sport->port,
++			       uartbaud | UARTBAUD_TDMAE, UARTBAUD);
+ 	} else {
+-		sport->lpuart_dma_tx_use = false;
++		writeb(readb(sport->port.membase + UARTCR5) |
++		       UARTCR5_TDMAS, sport->port.membase + UARTCR5);
+ 	}
++
++	return;
++
++err:
++	sport->lpuart_dma_tx_use = false;
+ }
+ 
+ static void lpuart_rx_dma_startup(struct lpuart_port *sport)
+ {
+-	if (sport->dma_rx_chan && !lpuart_start_rx_dma(sport)) {
+-		/* set Rx DMA timeout */
+-		sport->dma_rx_timeout = msecs_to_jiffies(DMA_RX_TIMEOUT);
+-		if (!sport->dma_rx_timeout)
+-			sport->dma_rx_timeout = 1;
++	int ret;
+ 
+-		sport->lpuart_dma_rx_use = true;
+-		rx_dma_timer_init(sport);
+-	} else {
+-		sport->lpuart_dma_rx_use = false;
++	sport->dma_rx_chan = dma_request_chan(sport->port.dev, "rx");
++	if (IS_ERR(sport->dma_rx_chan)) {
++		dev_info_once(sport->port.dev,
++			      "DMA rx channel request failed, operating without rx DMA (%ld)\n",
++			      PTR_ERR(sport->dma_rx_chan));
++		sport->dma_rx_chan = NULL;
++		goto err;
+ 	}
++
++	ret = lpuart_start_rx_dma(sport);
++	if (ret)
++		goto err;
++
++	/* set Rx DMA timeout */
++	sport->dma_rx_timeout = msecs_to_jiffies(DMA_RX_TIMEOUT);
++	if (!sport->dma_rx_timeout)
++		sport->dma_rx_timeout = 1;
++
++	sport->lpuart_dma_rx_use = true;
++	rx_dma_timer_init(sport);
++
++	return;
++
++err:
++	sport->lpuart_dma_rx_use = false;
+ }
+ 
+ static int lpuart_startup(struct uart_port *port)
+@@ -1615,6 +1646,11 @@ static void lpuart_dma_shutdown(struct lpuart_port *sport)
+ 			dmaengine_terminate_all(sport->dma_tx_chan);
+ 		}
+ 	}
++
++	if (sport->dma_tx_chan)
++		dma_release_channel(sport->dma_tx_chan);
++	if (sport->dma_rx_chan)
++		dma_release_channel(sport->dma_rx_chan);
+ }
+ 
+ static void lpuart_shutdown(struct uart_port *port)
+@@ -2520,16 +2556,6 @@ static int lpuart_probe(struct platform_device *pdev)
+ 
+ 	sport->port.rs485_config(&sport->port, &sport->port.rs485);
+ 
+-	sport->dma_tx_chan = dma_request_slave_channel(sport->port.dev, "tx");
+-	if (!sport->dma_tx_chan)
+-		dev_info(sport->port.dev, "DMA tx channel request failed, "
+-				"operating without tx DMA\n");
+-
+-	sport->dma_rx_chan = dma_request_slave_channel(sport->port.dev, "rx");
+-	if (!sport->dma_rx_chan)
+-		dev_info(sport->port.dev, "DMA rx channel request failed, "
+-				"operating without rx DMA\n");
+-
+ 	return 0;
+ 
+ failed_attach_port:
 -- 
 2.20.1
 
