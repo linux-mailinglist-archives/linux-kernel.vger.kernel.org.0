@@ -2,188 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9272E17C589
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B02417C593
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 19:41:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbgCFSkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 13:40:18 -0500
-Received: from mga04.intel.com ([192.55.52.120]:27043 "EHLO mga04.intel.com"
+        id S1727131AbgCFSlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 13:41:07 -0500
+Received: from mout.web.de ([212.227.17.12]:38271 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbgCFSkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 13:40:18 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 10:40:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
-   d="scan'208";a="264542722"
-Received: from wbakowsk-mobl.ger.corp.intel.com (HELO localhost) ([10.252.27.142])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Mar 2020 10:40:13 -0800
-Date:   Fri, 6 Mar 2020 20:40:13 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH] KEYS: Don't write out to userspace while holding key
- semaphore
-Message-ID: <20200306184013.GC7472@linux.intel.com>
-References: <20200305210640.15315-1-longman@redhat.com>
+        id S1726194AbgCFSlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 13:41:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1583520029;
+        bh=VpQKds6DmBjxYxMo4bRHAneIntTDz8NFcYECzbjnX3U=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=myKIqTxvAquDWNPfVWg1Z+IkBKGTQ3yt3au4m7aA+IvjQJIOG2nTlsXJrOi/7cUoo
+         NZkStRFc3UMv3xyTU9vdpjle22YAapu301rMQcPj6vqfeilVD3OW/QyQPYKu07qpAL
+         GKlXppDUeLKVEwkJk0GwdPcQdOhcnCOfzLimnhR0=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.156.79]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M8zSL-1j55lo1Hav-00CRFS; Fri, 06
+ Mar 2020 19:40:29 +0100
+Subject: Re: [v5.1] Documentation: bootconfig: Update boot configuration
+ documentation
+To:     Masami Hiramatsu <mhiramat@kernel.org>, linux-doc@vger.kernel.org
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <ef820445-25c5-a312-57d4-25ff3b4d08cf@infradead.org>
+ <158341540688.4236.11231142256496896074.stgit@devnote2>
+ <f3c51b0a-2a55-6523-96e2-4f9ef0635d9f@web.de>
+ <20200306105107.afba066a97db1eb12f290aff@kernel.org>
+ <58f4d6b3-ce3d-d1a5-aa0f-c31c1bbec091@web.de>
+ <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <7a518d51-db04-ac56-fab8-5bc6be8f5b1c@web.de>
+Date:   Fri, 6 Mar 2020 19:40:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200305210640.15315-1-longman@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200306230406.dd9c7358f00f47ff5760c899@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8r4yBHVUsRNrpnFVx2TQdhqPZ2AbqA6iWe7oNyKM7pRszuOJsQ2
+ 9IOBinuYEBSY4lCTUCZgt5HcpoFFC1BS02g7r2E5Web+j4dfbib7EnZZAIAXGdVm8DoCx47
+ nynbhWHf2Nc2W/Xe7GgRvMVdmVqlXnturX62Aw/H9iGAy0FrHxc9Vy5KzQKvJ0A2WFC1M4z
+ JxeJyuifYvR74v3bWZjEA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5ZaFRmdW/WM=:DRfa/M33hHJFSzlR8x4iTP
+ 1RtcIzcY/vJZIyYaeOQpyY8O9MtABnMpnDPMqmqPmJNaC6s971ab6Y9Jpofsgy9ge4nMj+3eI
+ Dps7dTNUxaZdtXtY9N6ixFiPFky0i98Tdhugec0AZRJmcPC4JfQEl7Tk2cyWZPg5QO9jwZLIE
+ n3vt/5xScdv3H4VQKRrhiUUjSk6osjDnFB2p3zwyAnepXc098kNxUkBEaEIa5vxImYEOy2UFX
+ k91N0++IabfywDon3PFfme89RV7GBJ6vaQXa2CPlgsk7MJ4XE0fq9q/lM8sUHv+eaZ83AFbdm
+ Y2JEvQGjXgFTX4fl9O6wXJbpJQho5TfypwlvwWsxExyxGihNylK5wEefO+RaiRl1OXpzv63CX
+ E/13WZvjmvMqAWooT24BY5aLkfdxwfrI+lRfppMYGhKis5ukLGTeoCAXlNN0RTxFc0LPRHS2G
+ cxn3nL4bY3ayjxDu7QNkcYGtsJyjd85+y+IAEyfkA2QZZ3HbBnmRZKIVSdo28qOX86DdQuR/1
+ H5l1sgeM9jTHkq0QK7QwkRZEV82xaZaEzKRA7eVP+ZqfGzDt8kcq9TlA4FuryQ9RB+m5Hm3IN
+ PRAQ+lpZl5u+/2ZHXMEC/GmuLsecPRnJ1VT3p/FLjqHHWeTwQD6tJFJuX+CMqLJ7ZKOtprx4r
+ gK94rAAlbVCIHNUvEAk6iaijPcwwJfZRU/yR85lRTaa8stlzDJIk141/65I65cKAD3Qw9UrOU
+ B0tWi5kE0BqPhOguTfT9m4A7ubG9nuheJV9KQ2ayJiaydSNkzHHfYj6bXaKV1ugRg0IEp9M5p
+ GdvYPUVPD/g+9wWrw9IB7AExsse1ngydLnJiRWYRgl4Zc1lD59c3HQI3YlSdlQAueM/wx0p1P
+ 9UY+RGSrWqxcW23jI0loaetCcNhiSNys5WHCQlNTdycuApPcdG0gk0wB5oT02dWrbvXlNxgPn
+ M3iZRFKLkjv9WWGy0PG8sG8JFnjvpkRHV8DX/N7vj7UNOG9sTTOumMc2InCjje3iWOHM3Wi0U
+ 5Iz06c/kfHTQiWhKpSc6oAu8lEKa0X3Tw4LMG7DrDzyAu1IzzunMp1iDNNGCoKL+s1Oe94WLD
+ kLtP8YUgV+wwFTIhayws/nbt4gooE7/Cf8x+b1HLrrlppLMgd6CaN/DDbb/jTFGi8Ab7Uq8bo
+ MSlXasinW+jxwKZMYXz3A7sumRfoi9SGz+R53b/y/jTVYv8V1lEwBDTIl9/dRiAMpH6vUfTRV
+ ryW0VVx7MXdpGlE86
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 04:06:40PM -0500, Waiman Long wrote:
-> A lockdep circular locking dependency report was seen when running a
-> keyutils test:
-> 
-> [12537.027242] ======================================================
-> [12537.059309] WARNING: possible circular locking dependency detected
-> [12537.088148] 4.18.0-147.7.1.el8_1.x86_64+debug #1 Tainted: G OE    --------- -  -
-> [12537.125253] ------------------------------------------------------
-> [12537.153189] keyctl/25598 is trying to acquire lock:
-> [12537.175087] 000000007c39f96c (&mm->mmap_sem){++++}, at: __might_fault+0xc4/0x1b0
-> [12537.208365]
-> [12537.208365] but task is already holding lock:
-> [12537.234507] 000000003de5b58d (&type->lock_class){++++}, at: keyctl_read_key+0x15a/0x220
-> [12537.270476]
-> [12537.270476] which lock already depends on the new lock.
-> [12537.270476]
-> [12537.307209]
-> [12537.307209] the existing dependency chain (in reverse order) is:
-> [12537.340754]
-> [12537.340754] -> #3 (&type->lock_class){++++}:
-> [12537.367434]        down_write+0x4d/0x110
-> [12537.385202]        __key_link_begin+0x87/0x280
-> [12537.405232]        request_key_and_link+0x483/0xf70
-> [12537.427221]        request_key+0x3c/0x80
-> [12537.444839]        dns_query+0x1db/0x5a5 [dns_resolver]
-> [12537.468445]        dns_resolve_server_name_to_ip+0x1e1/0x4d0 [cifs]
-> [12537.496731]        cifs_reconnect+0xe04/0x2500 [cifs]
-> [12537.519418]        cifs_readv_from_socket+0x461/0x690 [cifs]
-> [12537.546263]        cifs_read_from_socket+0xa0/0xe0 [cifs]
-> [12537.573551]        cifs_demultiplex_thread+0x311/0x2db0 [cifs]
-> [12537.601045]        kthread+0x30c/0x3d0
-> [12537.617906]        ret_from_fork+0x3a/0x50
-> [12537.636225]
-> [12537.636225] -> #2 (root_key_user.cons_lock){+.+.}:
-> [12537.664525]        __mutex_lock+0x105/0x11f0
-> [12537.683734]        request_key_and_link+0x35a/0xf70
-> [12537.705640]        request_key+0x3c/0x80
-> [12537.723304]        dns_query+0x1db/0x5a5 [dns_resolver]
-> [12537.746773]        dns_resolve_server_name_to_ip+0x1e1/0x4d0 [cifs]
-> [12537.775607]        cifs_reconnect+0xe04/0x2500 [cifs]
-> [12537.798322]        cifs_readv_from_socket+0x461/0x690 [cifs]
-> [12537.823369]        cifs_read_from_socket+0xa0/0xe0 [cifs]
-> [12537.847262]        cifs_demultiplex_thread+0x311/0x2db0 [cifs]
-> [12537.873477]        kthread+0x30c/0x3d0
-> [12537.890281]        ret_from_fork+0x3a/0x50
-> [12537.908649]
-> [12537.908649] -> #1 (&tcp_ses->srv_mutex){+.+.}:
-> [12537.935225]        __mutex_lock+0x105/0x11f0
-> [12537.954450]        cifs_call_async+0x102/0x7f0 [cifs]
-> [12537.977250]        smb2_async_readv+0x6c3/0xc90 [cifs]
-> [12538.000659]        cifs_readpages+0x120a/0x1e50 [cifs]
-> [12538.023920]        read_pages+0xf5/0x560
-> [12538.041583]        __do_page_cache_readahead+0x41d/0x4b0
-> [12538.067047]        ondemand_readahead+0x44c/0xc10
-> [12538.092069]        filemap_fault+0xec1/0x1830
-> [12538.111637]        __do_fault+0x82/0x260
-> [12538.129216]        do_fault+0x419/0xfb0
-> [12538.146390]        __handle_mm_fault+0x862/0xdf0
-> [12538.167408]        handle_mm_fault+0x154/0x550
-> [12538.187401]        __do_page_fault+0x42f/0xa60
-> [12538.207395]        do_page_fault+0x38/0x5e0
-> [12538.225777]        page_fault+0x1e/0x30
-> [12538.243010]
-> [12538.243010] -> #0 (&mm->mmap_sem){++++}:
-> [12538.267875]        lock_acquire+0x14c/0x420
-> [12538.286848]        __might_fault+0x119/0x1b0
-> [12538.306006]        keyring_read_iterator+0x7e/0x170
-> [12538.327936]        assoc_array_subtree_iterate+0x97/0x280
-> [12538.352154]        keyring_read+0xe9/0x110
-> [12538.370558]        keyctl_read_key+0x1b9/0x220
-> [12538.391470]        do_syscall_64+0xa5/0x4b0
-> [12538.410511]        entry_SYSCALL_64_after_hwframe+0x6a/0xdf
-> [12538.435535]
-> [12538.435535] other info that might help us debug this:
-> [12538.435535]
-> [12538.472829] Chain exists of:
-> [12538.472829]   &mm->mmap_sem --> root_key_user.cons_lock --> &type->lock_class
-> [12538.472829]
-> [12538.524820]  Possible unsafe locking scenario:
-> [12538.524820]
-> [12538.551431]        CPU0                    CPU1
-> [12538.572654]        ----                    ----
-> [12538.595865]   lock(&type->lock_class);
-> [12538.613737]                                lock(root_key_user.cons_lock);
-> [12538.644234]                                lock(&type->lock_class);
-> [12538.672410]   lock(&mm->mmap_sem);
-> [12538.687758]
-> [12538.687758]  *** DEADLOCK ***
-> [12538.687758]
-> [12538.714455] 1 lock held by keyctl/25598:
-> [12538.732097]  #0: 000000003de5b58d (&type->lock_class){++++}, at: keyctl_read_key+0x15a/0x220
-> [12538.770573]
-> [12538.770573] stack backtrace:
-> [12538.790136] CPU: 2 PID: 25598 Comm: keyctl Kdump: loaded Tainted: G
-> [12538.844855] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen9, BIOS P89 12/27/2015
-> [12538.881963] Call Trace:
-> [12538.892897]  dump_stack+0x9a/0xf0
-> [12538.907908]  print_circular_bug.isra.25.cold.50+0x1bc/0x279
-> [12538.932891]  ? save_trace+0xd6/0x250
-> [12538.948979]  check_prev_add.constprop.32+0xc36/0x14f0
-> [12538.971643]  ? keyring_compare_object+0x104/0x190
-> [12538.992738]  ? check_usage+0x550/0x550
-> [12539.009845]  ? sched_clock+0x5/0x10
-> [12539.025484]  ? sched_clock_cpu+0x18/0x1e0
-> [12539.043555]  __lock_acquire+0x1f12/0x38d0
-> [12539.061551]  ? trace_hardirqs_on+0x10/0x10
-> [12539.080554]  lock_acquire+0x14c/0x420
-> [12539.100330]  ? __might_fault+0xc4/0x1b0
-> [12539.119079]  __might_fault+0x119/0x1b0
-> [12539.135869]  ? __might_fault+0xc4/0x1b0
-> [12539.153234]  keyring_read_iterator+0x7e/0x170
-> [12539.172787]  ? keyring_read+0x110/0x110
-> [12539.190059]  assoc_array_subtree_iterate+0x97/0x280
-> [12539.211526]  keyring_read+0xe9/0x110
-> [12539.227561]  ? keyring_gc_check_iterator+0xc0/0xc0
-> [12539.249076]  keyctl_read_key+0x1b9/0x220
-> [12539.266660]  do_syscall_64+0xa5/0x4b0
-> [12539.283091]  entry_SYSCALL_64_after_hwframe+0x6a/0xdf
-> 
-> One way to prevent this deadlock scenario from happening is to not
-> allow writing to userspace while holding the key semaphore. Instead,
-> an internal buffer is allocated for getting the keys out from the
-> read method first before copying them out to userspace without holding
-> the lock.
-> 
-> That requires taking out the __user modifier from the read methods as
-> well as additional changes to not use any userspace write helpers.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+>>>> =E2=80=A6
+>>>>> +++ b/Documentation/admin-guide/bootconfig.rst
+>>>> =E2=80=A6
+>>>>> +If you think that kernel/init options become too long to write in b=
+oot-loader
+>>>>> +configuration file or you want to comment on each option, the boot
+>>>>> +configuration may be suitable. =E2=80=A6
+>>>>
+>>>> Would you like to specify any settings in the boot configuration file
+>>>> because the provided storage capacity would be too limited by the ker=
+nel command line?
+>>>
+>>> Yes.
+>>
+>> How will affected places be improved after such an agreement?
+>
+> Would you please make a patch of new sentence?
 
-Hi, quickly checked this (it is Friday night in Finland) and did not
-see anything obvious that'd be wrong. I'll give a more detailed look
-next week.
+Not directly.
 
-Thank you.
+* If I would need to provide another wording alternative as a concrete pat=
+ch,
+  I would have to wait until previously accepted changes would become avai=
+lable
+  in a Linux development repository.
 
-/Jarkko
+* So I would find it easier to agree on wording variants during our curren=
+t
+  development discussion from which you would present results as a subsequ=
+ent patch.
+
+Regards,
+Markus
