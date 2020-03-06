@@ -2,114 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B3A017BF65
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 579D917BF57
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgCFNnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:43:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbgCFNnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:43:17 -0500
-Received: from localhost (unknown [122.178.250.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32F742072D;
-        Fri,  6 Mar 2020 13:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583502196;
-        bh=/FRMCH/2Aozcr11mGr2dYvfp97yiKC9ojfj5aDNFTnI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fLWyJmosr/DjDVlSdDo65STseH2BUvxWVhqdL7ieiMMtJeV6Pyi/eJYnw4rL53/i5
-         qFTqPgN75HOPJks/FX1ubsDa9yypYdkP1sH5K4WkPJkUIXMWZ+MJkWLdPIw5LjOYZB
-         rkIVOSPF6B40CIqtKncdAi2tqAyBhJlNg5vcoRfA=
-Date:   Fri, 6 Mar 2020 19:13:12 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Sergey.Semin@baikalelectronics.ru,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] dmaengine: dw: Take Baikal-T1 SoC DW DMAC
- peculiarities into account
-Message-ID: <20200306134312.GK4148@vkoul-mobl>
-References: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
- <20200306132912.GA1748204@smile.fi.intel.com>
- <20200306133035.GB1748204@smile.fi.intel.com>
+        id S1727067AbgCFNls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:41:48 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:6182 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726498AbgCFNls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 08:41:48 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 026DYTEA011765;
+        Fri, 6 Mar 2020 08:41:44 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ygm52k7v5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 06 Mar 2020 08:41:44 -0500
+Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 026DfgAI065008
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Fri, 6 Mar 2020 08:41:42 -0500
+Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
+ SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Fri, 6 Mar 2020 05:41:41 -0800
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Fri, 6 Mar 2020 05:41:08 -0800
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Fri, 6 Mar 2020 05:41:40 -0800
+Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 026DfbYm025629;
+        Fri, 6 Mar 2020 08:41:38 -0500
+From:   Beniamin Bia <beniamin.bia@analog.com>
+To:     <nios2-dev@lists.rocketboards.org>
+CC:     <ley.foon.tan@intel.com>, <biabeniamin@outlook.com>,
+        <linux-kernel@vger.kernel.org>,
+        Dragos Bogdan <dragos.bogdan@analog.com>,
+        Beniamin Bia <beniamin.bia@analog.com>
+Subject: [PATCH] arch: nios2: Enable the common clk subsystem on Nios2
+Date:   Fri, 6 Mar 2020 15:44:27 +0200
+Message-ID: <20200306134427.7487-1-beniamin.bia@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306133035.GB1748204@smile.fi.intel.com>
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-06_04:2020-03-06,2020-03-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0
+ impostorscore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003060098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-03-20, 15:30, Andy Shevchenko wrote:
-> On Fri, Mar 06, 2020 at 03:29:12PM +0200, Andy Shevchenko wrote:
-> > On Fri, Mar 06, 2020 at 04:10:29PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > > From: Serge Semin <fancer.lancer@gmail.com>
-> > > 
-> > > Baikal-T1 SoC has an DW DMAC on-board to provide a Mem-to-Mem, low-speed
-> > > peripherals Dev-to-Mem and Mem-to-Dev functionality. Mostly it's compatible
-> > > with currently implemented in the kernel DW DMAC driver, but there are some
-> > > peculiarities which must be taken into account in order to have the device
-> > > fully supported.
-> > > 
-> > > First of all traditionally we replaced the legacy plain text-based dt-binding
-> > > file with yaml-based one. Secondly Baikal-T1 DW DMA Controller provides eight
-> > > channels, which alas have different max burst length configuration.
-> > > In particular first two channels may burst up to 128 bits (16 bytes) at a time
-> > > while the rest of them just up to 32 bits. We must make sure that the DMA
-> > > subsystem doesn't set values exceeding these limitations otherwise the
-> > > controller will hang up. In third currently we discovered the problem in using
-> > > the DW APB SPI driver together with DW DMAC. The problem happens if there is no
-> > > natively implemented multi-block LLP transfers support and the SPI-transfer
-> > > length exceeds the max lock size. In this case due to asynchronous handling of
-> > > Tx- and Rx- SPI transfers interrupt we might end up with Dw APB SSI Rx FIFO
-> > > overflow. So if DW APB SSI (or any other DMAC service consumer) intends to use
-> > > the DMAC to asynchronously execute the transfers we'd have to at least warn
-> > > the user of the possible errors.
-> > > 
-> > > Finally there is a bug in the algorithm of the nollp flag detection.
-> > > In particular even if DW DMAC parameters state the multi-block transfers
-> > > support there is still HC_LLP (hardcode LLP) flag, which if set makes expected
-> > > by the driver true multi-block LLP functionality unusable. This happens cause'
-> > > if HC_LLP flag is set the LLP registers will be hardcoded to zero so the
-> > > contiguous multi-block transfers will be only supported. We must take the
-> > > flag into account when detecting the LLP support otherwise the driver just
-> > > won't work correctly.
-> > > 
-> > > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
-> > > commit 98d54f81e36b ("Linux 5.6-rc4").
-> > 
-> > Thank you for your series!
-> > 
-> > I'll definitely review it, but it will take time. So, I think due to late
-> > submission this is material at least for v5.8.
-> 
-> One thing that I can tell immediately is the broken email thread in this series.
-> Whenever you do a series, use `git format-patch --cover-letter --thread ...`,
-> so, it will link the mail properly.
+From: Dragos Bogdan <dragos.bogdan@analog.com>
 
-And all the dmaengine specific patches should be sent to dmaengine list,
-I see only few of them on the list.. that confuses tools like
-patchwork..
+This patch adds support for common clock framework on Nios2. Clock
+framework is commonly used in many drivers, and this patch makes it
+available for the entire architecture, not just on a per-driver basis.
 
-Pls fix these and resubmit
+Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
+---
+ arch/nios2/Kconfig             | 1 +
+ arch/nios2/platform/platform.c | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-Thanks
+diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
+index 44b5da37e8bd..4b7c951e80e2 100644
+--- a/arch/nios2/Kconfig
++++ b/arch/nios2/Kconfig
+@@ -6,6 +6,7 @@ config NIOS2
+ 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+ 	select ARCH_HAS_UNCACHED_SEGMENT
+ 	select ARCH_NO_SWAP
++	select COMMON_CLK
+ 	select TIMER_OF
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/nios2/platform/platform.c b/arch/nios2/platform/platform.c
+index 2a35154ca153..9737a87121fa 100644
+--- a/arch/nios2/platform/platform.c
++++ b/arch/nios2/platform/platform.c
+@@ -15,6 +15,12 @@
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
+ #include <linux/io.h>
++#include <linux/clk-provider.h>
++
++static const struct of_device_id clk_match[] __initconst = {
++	{ .compatible = "fixed-clock", .data = of_fixed_clk_setup, },
++	{}
++};
+ 
+ static int __init nios2_soc_device_init(void)
+ {
+@@ -38,6 +44,8 @@ static int __init nios2_soc_device_init(void)
+ 		}
+ 	}
+ 
++	of_clk_init(clk_match);
++
+ 	return 0;
+ }
+ 
 -- 
-~Vinod
+2.17.1
+
