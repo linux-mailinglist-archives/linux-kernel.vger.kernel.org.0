@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 854AF17BCCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:34:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FF017BCD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 13:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbgCFMeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 07:34:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49816 "EHLO mail.kernel.org"
+        id S1726860AbgCFMfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 07:35:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:60654 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726162AbgCFMep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:34:45 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D3D22072A;
-        Fri,  6 Mar 2020 12:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583498085;
-        bh=50FsvEWhVLCsXiT3fYUpxYQIEwnyRkjX2gQrIJs9pYk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MqS88dhL/XPiRJyhwQhpkh7U1ms/rZrTIJRsbADkPAKs9VTrlUcomFIxcDhFhjiaX
-         dnkB3CKGI+o0dgziPDIdgCiwUNXxIXGkAHBXBtpCO7DrjMUEHrYprqhrzYGFfDOdL3
-         W3CkeTz40TJ5zLMZ7CdvG6sL6igocRd5BtK/jyfQ=
-Date:   Fri, 6 Mar 2020 13:34:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.cz>, Johan Hovold <johan@kernel.org>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mfd: motmdm: Add Motorola TS 27.010 serdev modem
- driver for droid4
-Message-ID: <20200306123440.GA3691382@kroah.com>
-References: <20200220195943.15314-1-tony@atomide.com>
- <20200220195943.15314-3-tony@atomide.com>
- <20200226115548.GO3494@dell>
- <20200226144308.GM37466@atomide.com>
+        id S1726182AbgCFMfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 07:35:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF9F931B;
+        Fri,  6 Mar 2020 04:35:32 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53D413F6C4;
+        Fri,  6 Mar 2020 04:35:32 -0800 (PST)
+Date:   Fri, 6 Mar 2020 12:35:30 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] regulator: pwm: Don't warn on probe deferral
+Message-ID: <20200306123530.GA4114@sirena.org.uk>
+References: <20200224144048.6587-1-jonathanh@nvidia.com>
+ <20200224165859.GJ6215@sirena.org.uk>
+ <20200226161757.idpzbs3jmayt7ya6@pengutronix.de>
+ <20200226163905.GH4136@sirena.org.uk>
+ <20200306075129.mzs22yjitkmgrthh@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
 Content-Disposition: inline
-In-Reply-To: <20200226144308.GM37466@atomide.com>
+In-Reply-To: <20200306075129.mzs22yjitkmgrthh@pengutronix.de>
+X-Cookie: fortune: No such file or directory
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 06:43:08AM -0800, Tony Lindgren wrote:
-> * Lee Jones <lee.jones@linaro.org> [200226 11:56]:
-> > On Thu, 20 Feb 2020, Tony Lindgren wrote:
-> > 
-> > > Many Motorola phones are controlling the modem using a custom variant
-> > > of TS 27.010 serial line discipline. Devices on these modems have a
-> > > dedicated TS 27.010 channel for features like audio mixer, GNSS, voice
-> > > modem, SIM card reader and so on.
-> > > 
-> > > This driver allows using various devices on the modem. In order to do
-> > > that, we need to take care of the following three things:
-> > > 
-> > > 1. Provide /dev/motmdm* character devices for apps to use for talking
-> > >    to the various devices on the modem
-> > > 
-> > > 2. Handle Motorola custom protocol over TS 27.010 to make the channels
-> > >    usable for userspace
-> > > 
-> > > 3. Coordinate PM runtime with the USB PHY because of shared GPIO pins
-> > >    with the USB PHY
-> ...
-> > > ---
-> > >  drivers/mfd/Kconfig        |    9 +
-> > >  drivers/mfd/Makefile       |    1 +
-> > >  drivers/mfd/motorola-mdm.c | 1200 ++++++++++++++++++++++++++++++++++++
-> > 
-> > I'm not even going to start reviewing this as I can see, without even
-> > looking at the code, that this has too much functionality (stuff that
-> > does stuff) contained.
-> > 
-> > Please move as much functionality out into the subsystems as
-> > possible.  Ideally, MFDs should be responsible for obtaining and
-> > registering shared resources and registering child devices.  Anything
-> > else should be shifted out to an appropriate subsystem.
-> > 
-> > MFD is not Misc.
-> 
-> OK good point. So this is a serdev consumer driver that eventually will
-> also provide serdev style access to few device drivers too for the
-> device within the modem after decoding the Motorola specific protocol.
-> No special need for this driver to be under drivers/mfd though.
-> 
-> How about we add drivers/tty/serdev/protocol or similar directory for
-> drivers like this?
 
-Sure, that seems sane.
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Mar 06, 2020 at 08:51:29AM +0100, Uwe Kleine-K=F6nig wrote:
+
+> I wonder if we should do something like:
+
+> 	ret =3D some_call(some, args);
+> 	if (ret) {
+> 		if (emit_errmsg_for_err(ret))
+> 			dev_err(dev, "some_call failed: %pE\n", ERR_PTR(ret));
+> 		return ret;
+> 	}
+
+> and have emit_errmsg_for_err return true if ret !=3D -EPROBE_DEFER or some
+> kernel parameter is given.
+
+There was some effort in the past to have a dev_probe_err() or something
+which could have a similar implementation but that didn't end up going
+anywhere I think.  I do prefer the debug level log since it's much
+easier to have the information there without having to ask for it, that
+design would've supported that.
+
+--AqsLC8rIMeq19msA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5iQ5IACgkQJNaLcl1U
+h9BuHwf+PVNL4Sk9lvVXj3uZGPvOjvQ5AISnSi54O7gsRBhc+yGdANxc1ZpuIcxc
+URs2Khp5haI6dPXVVexp1Y0l/fHAi2k93GMep+8uQhosrQUZ7q08qdzrN54g1THK
+Y19+hSRF3KmBdoZPk3oqsTmX2j5Uq+Z6QU/U5WCO/j64WJJcAiR7zu35qEF7dDe2
+0SDzkQUvzz/EOqcPdt460hMXXhVrcKT/iqDD09cJXUjdWteEGbJfHFt845qPbR6o
+LEwoCZInR3P3q8bN2nwtkQa7BQESTjh4s/vNIq4QDYfbzdJ05WAqGZsETzb8/Vwr
+bYfbQDO11C3REAo8rUIj+i5yXdl9bQ==
+=uQ0f
+-----END PGP SIGNATURE-----
+
+--AqsLC8rIMeq19msA--
