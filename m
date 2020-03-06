@@ -2,54 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A3A317BBDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDDA117BBD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgCFLm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:42:27 -0500
-Received: from albireo.enyo.de ([37.24.231.21]:57960 "EHLO albireo.enyo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbgCFLm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:42:26 -0500
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1jABMw-00028i-VZ; Fri, 06 Mar 2020 11:42:18 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1jABLL-00050q-TL; Fri, 06 Mar 2020 12:40:39 +0100
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     YunQiang Su <syq@debian.org>
-Cc:     Laurent Vivier <laurent@vivier.eu>, torvalds@linux-foundation.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        akpm@linux-foundation.org, Al Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        libc-alpha@sourceware.org
-Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
-References: <20200306080905.173466-1-syq@debian.org>
-        <87r1y53npd.fsf@mid.deneb.enyo.de>
-        <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu>
-        <87mu8t3mlw.fsf@mid.deneb.enyo.de>
-        <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
-        <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
-Date:   Fri, 06 Mar 2020 12:40:39 +0100
-In-Reply-To: <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
-        (YunQiang Su's message of "Fri, 6 Mar 2020 19:29:57 +0800")
-Message-ID: <87v9nhzp6w.fsf@mid.deneb.enyo.de>
+        id S1726440AbgCFLk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:40:58 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33366 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbgCFLk6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 06:40:58 -0500
+Received: by mail-qk1-f194.google.com with SMTP id p62so1983971qkb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 03:40:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4pk90DW3tifrhVv5weuQmOO8XCqjEpeowZPJvyemYzw=;
+        b=OI/ad56NrGTbNVtPro/NOPV6T8O4BQ3FHoaKgQMEfp7BTnjYlHSDkQ9xNSv6wi6BHZ
+         s5oN1W/ZBCP5EsM2qWuPxNVOhkMB+yBBnsPfWPbwv0kpvHuxNC2PZI9KMAWTrv+Lvt8E
+         vBoqPR2J2G/1EuqVr+2XVfs1m5SapJw2bf3D2EmwIYewER20b90pV+My0B6fqHVvxE2S
+         7SNqw4TdlFgbHFQUjf4iItnB0/uHGcvZHf+/yNC4xkhGzcJBiNaUUl8QqpltXRl1puWJ
+         6sCfiYthfaKnDf+Ufm0uoymDqmQzZy21CE6f+fThoQ/TOGFr1r1avwh4Kgp1mawMuqZT
+         C/fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4pk90DW3tifrhVv5weuQmOO8XCqjEpeowZPJvyemYzw=;
+        b=GJg+4vxZhCaxxlX5eSdyF3nj9kqG3OUsK86lqKCG0v+40PMw2PBBYBJqX4coVyrsJd
+         gxzoyH9ALkAHOU2AgsqvFO14n7t+xQtozX3tb0bwayrEPQcTwntymMOxRpoZBS94B832
+         7MRc4JPIZf+lWkAAxrXtEzC4C5MPlM5e0tTCcu2nwbBTC7IPwwt/tc8kj/PFedmeazW6
+         2xYB1i1gubl0BIeBr8FI0N/HdCWjigtx0FBK18SH4b8u6XokMaPvIIeSWGNd725Ux00j
+         0RKcwgNlYAdeypf4SlWKyqDqD2S+cYZJZdSPbODF5K6JHD2BYM+2Ln86e6p/K2tjYj/U
+         oxYg==
+X-Gm-Message-State: ANhLgQ0aGyOI9+H0xFdrNW+WNQcIUju3Zysz5/MjFY3022rn77FP2XhL
+        F2stcxt1QFlyeQgNKBy2x+Q=
+X-Google-Smtp-Source: ADFU+vtxVHsqTQcTZCkMKjfbpmoSIP085wxEecOefgSlQA8ovx8aaD6kgf24X6hGTL2OnPcoVkHTKw==
+X-Received: by 2002:a37:9c15:: with SMTP id f21mr2492466qke.414.1583494856985;
+        Fri, 06 Mar 2020 03:40:56 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id m1sm9018732qkk.103.2020.03.06.03.40.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 03:40:56 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 82E0B403AD; Fri,  6 Mar 2020 08:40:54 -0300 (-03)
+Date:   Fri, 6 Mar 2020 08:40:54 -0300
+To:     Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc:     Ian Rogers <irogers@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wei Li <liwei391@huawei.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 3/3] tools/perf: build fixes for arch_errno_names.sh
+Message-ID: <20200306114054.GB27494@kernel.org>
+References: <20200306071110.130202-1-irogers@google.com>
+ <20200306071110.130202-4-irogers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306071110.130202-4-irogers@google.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* YunQiang Su:
+Em Thu, Mar 05, 2020 at 11:11:10PM -0800, Ian Rogers escreveu:
+> Allow the CC compiler to accept a CFLAGS environment variable.
+> Make the architecture test directory agree with the code comment.
+> This doesn't change the code generated but makes it easier to integrate
+> running the shell script in build systems like bazel.
 
-> AT_* only has 32 slot and now. I was afraid that maybe we shouldn't take one.
->    /* AT_* values 18 through 22 are reserved */
->    27,28,29,30 are not used now.
-> Which should we use?
+Hendrik and Thomas, can you please take a look at this and provide a
+Reviewed-by tag?
 
-Where does this limit of 32 tags come from?  I don't see it from a
-userspace perspective.
+Thanks,
+
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/trace/beauty/arch_errno_names.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/trace/beauty/arch_errno_names.sh b/tools/perf/trace/beauty/arch_errno_names.sh
+> index 22c9fc900c84..9f9ea45cddc4 100755
+> --- a/tools/perf/trace/beauty/arch_errno_names.sh
+> +++ b/tools/perf/trace/beauty/arch_errno_names.sh
+> @@ -57,7 +57,7 @@ process_arch()
+>  	local arch="$1"
+>  	local asm_errno=$(asm_errno_file "$arch")
+>  
+> -	$gcc $include_path -E -dM -x c $asm_errno \
+> +	$gcc $CFLAGS $include_path -E -dM -x c $asm_errno \
+>  		|grep -hE '^#define[[:blank:]]+(E[^[:blank:]]+)[[:blank:]]+([[:digit:]]+).*' \
+>  		|awk '{ print $2","$3; }' \
+>  		|sort -t, -k2 -nu \
+> @@ -91,7 +91,7 @@ EoHEADER
+>  # in tools/perf/arch
+>  archlist=""
+>  for arch in $(find $toolsdir/arch -maxdepth 1 -mindepth 1 -type d -printf "%f\n" | grep -v x86 | sort); do
+> -	test -d arch/$arch && archlist="$archlist $arch"
+> +	test -d $toolsdir/perf/arch/$arch && archlist="$archlist $arch"
+>  done
+>  
+>  for arch in x86 $archlist generic; do
+> -- 
+> 2.25.1.481.gfbce0eb801-goog
+> 
+
+-- 
+
+- Arnaldo
