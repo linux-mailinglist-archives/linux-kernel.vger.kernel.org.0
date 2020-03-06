@@ -2,142 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A2217C1A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84DC017C1B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:26:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbgCFPZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:25:44 -0500
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:44578 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbgCFPZn (ORCPT
+        id S1727190AbgCFP0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:26:41 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33530 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbgCFP0k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:25:43 -0500
-Received: by mail-pg1-f172.google.com with SMTP id n24so1215549pgk.11;
-        Fri, 06 Mar 2020 07:25:42 -0800 (PST)
+        Fri, 6 Mar 2020 10:26:40 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x7so2858889wrr.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 07:26:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:message-id:in-reply-to:references:subject
-         :mime-version:content-transfer-encoding;
-        bh=U0f7F5SJ5+QRDlAY1wTE5bYTykTqGGdr3VIDJvfMX9U=;
-        b=td1xiA8vNOG/zx1dA/9Svjes7a/vUU/L+C1MrQ9paZNHbMmIIvzK1CIUffxUlR/N9m
-         vuMRkdgTtceI34WKAhyQZThOH+j+GpOuGjSEav3MctVCUkHWiUG9Vx4xGNE+C0C/9IRb
-         bjgFi/EnuLcnhuVAhOZqP/3mzS8h/JPgM1r5bAxkuIJJpt5OrZWHUMFQwhuwMictEsnR
-         D1lrKqjdBm8PuCu0KsrZf+t4/rw/2fXSfI077UtQXy2i3m0kxngHOEs5bqXkvuy/uHD5
-         A1WfuMCosqPUMkNRcY64tfLmO3vTkwzNa3KI6A7G8UvHXv7tpd6Y9FR7vOFVgrSV+BDD
-         u2qg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ONRnUi9jCMqmOjWyWhiAOr6JoGLpum+q//SeY+50q00=;
+        b=EtBwOWCB8Ya/o0z2Yco05wvblUtQI2zyqVRqZpCasqMRRE4gDV0h7u2++BIVbdj+Mn
+         DKBCtp5W397rvpQ8Qdy3ZioawfGcJRWi3SdTdgY2QXHLdR0YnPv1imeM/i+MO6jYw/n3
+         dlrIbUH43oAWu0uNMi4LgUn7ncSRN9eCtnWeMivh+k63vtvd+XveKjqU+46wxfATiQGq
+         CDb/fdJSdcLW7DGOTToq4sILmAbrOA76IzusUbKITanbGVXJOr7dWUQMupaAU/6gcwHV
+         uqF8/hC9iNSZ+WYW3i1fx4UFgu6XzEUtVcUKYLx2JYumzdteBFq8tPUPlt3PpFPFn8+E
+         fZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
-         :references:subject:mime-version:content-transfer-encoding;
-        bh=U0f7F5SJ5+QRDlAY1wTE5bYTykTqGGdr3VIDJvfMX9U=;
-        b=SYBxsXW4+OskEd1ab4gwux/83pPCEa8rRHDttz0lXwxgUYnnFRCjDgYg0akvr9STRU
-         xEVRWRegxS7a1/eCNMg2ATeB9wvWB18waK2kSeOu0GfbYchLYCyTb0FZuylfzNhqP/Tw
-         qixgrtI5QKSurIVeYJOJf+LaYFoBCBlpcxM2YzMnpjvOnAT91AzUHQtrcYsDZvh1KIci
-         skj8/FlCj6KrIpSNMWnVwFZz7wjLx0KFZFA2eZP/g39IAgYbIUnbz5FgVhNOfbx4rsU5
-         oDAzLEz78vB+laVGUQbwl9pdVIY0giPoUkhTSZV7BIfAOWJPc+N4Htji5Gzu41fxoeNU
-         2RgA==
-X-Gm-Message-State: ANhLgQ3FM2WvDGnDfPJDdZnOYx9MMfCAcVdgDQLNNhwABG7VdIQOhipo
-        HULrhddpANfwC+GLQlpoo/s=
-X-Google-Smtp-Source: ADFU+vvFswTWSOFzoCgpKWpMnxUox1t9/PId67LHlatzi8Z2lX+XDaSQ7Z/XqGooyrLO0Zbwo0Iq1Q==
-X-Received: by 2002:a63:1459:: with SMTP id 25mr3941888pgu.427.1583508341870;
-        Fri, 06 Mar 2020 07:25:41 -0800 (PST)
-Received: from localhost ([184.63.162.180])
-        by smtp.gmail.com with ESMTPSA id q187sm35905013pfq.185.2020.03.06.07.25.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ONRnUi9jCMqmOjWyWhiAOr6JoGLpum+q//SeY+50q00=;
+        b=E2LWRoi+sfw9//q1BhPepYJpd++b+r9MK0YhcJ4E18CkIMrT8NcgFZ8BzGNq7GHasb
+         WG+wY9uv8a/jqxd6qK/vRyxIYROlG8zpX2RC3Nac0E21mbp570qaDU7EceQlghdQZSR/
+         1HvTDJotizrUXv/clXS/G4hKwegCPDkhlUWqk5gdHjFjaoAd5xf/VTTqtWNzqKR/upLn
+         EODDeXrioNyyHyfWfQgBH1ua1PNcXdTn6Fr0YHGQysSPSD5quU89U5igWTXbprf2LSIa
+         /awiDB0WyfdL8z2DX19G67wZkvPUIIRPtqw0FMyCqToHl7bTXXZrnxNbMEVKKVGP4N/S
+         2O+Q==
+X-Gm-Message-State: ANhLgQ1ps2+3UP28LQ+FHFu+2lqwkLEQyavMAO1dZm5OQ2tTmTgudaCJ
+        EcXiFi8OPSRlxTUabJ8rg0jdGg==
+X-Google-Smtp-Source: ADFU+vvm+PP7qjGjgcl5L4VdutX0/oiHXqeGOVQ/NtI7UQPw+oZlGMEa5zIUH/oKXKZzohqiAUPqSg==
+X-Received: by 2002:a5d:424c:: with SMTP id s12mr4488258wrr.244.1583508398849;
+        Fri, 06 Mar 2020 07:26:38 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id i14sm1902968wmb.25.2020.03.06.07.26.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 07:25:40 -0800 (PST)
-Date:   Fri, 06 Mar 2020 07:25:32 -0800
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     Lorenz Bauer <lmb@cloudflare.com>, john.fastabend@gmail.com,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     kernel-team@cloudflare.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Message-ID: <5e626b6c364eb_17502acca07205b427@john-XPS-13-9370.notmuch>
-In-Reply-To: <20200304101318.5225-4-lmb@cloudflare.com>
-References: <20200304101318.5225-1-lmb@cloudflare.com>
- <20200304101318.5225-4-lmb@cloudflare.com>
-Subject: RE: [PATCH bpf-next v3 03/12] bpf: tcp: move assertions into
- tcp_bpf_get_proto
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Fri, 06 Mar 2020 07:26:38 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] ASoC: wcd9335: fix address map representation
+Date:   Fri,  6 Mar 2020 15:26:33 +0000
+Message-Id: <20200306152633.25836-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lorenz Bauer wrote:
-> We need to ensure that sk->sk_prot uses certain callbacks, so that
-> code that directly calls e.g. tcp_sendmsg in certain corner cases
-> works. To avoid spurious asserts, we must to do this only if
-> sk_psock_update_proto has not yet been called. The same invariants
-> apply for tcp_bpf_check_v6_needs_rebuild, so move the call as well.
-> 
-> Doing so allows us to merge tcp_bpf_init and tcp_bpf_reinit.
-> 
-> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+slimbus addresses are 16 bit wide, masking page numbers
+to wcd register at offset of 12 will limit the number for pages.
+So it becomes impossible to write to page 0x10 registers.
+Remove masking 0x800 (slimbus address range) from register address
+and making use of window parameters in regmap config should fix it
+and also will represent the registers exactly inline with Datasheet.
 
-Small nit if you update it just carry the acks through.
+Remove this unnessary masking and make the registers be inline
+with datasheet.
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ sound/soc/codecs/wcd9335.c | 18 +++++++++---------
+ sound/soc/codecs/wcd9335.h |  7 ++++---
+ 2 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index f11ffa28683b..700cc1212770 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -4926,11 +4926,11 @@ static const struct regmap_range_cfg wcd9335_ranges[] = {
+ 		.name = "WCD9335",
+ 		.range_min =  0x0,
+ 		.range_max =  WCD9335_MAX_REGISTER,
+-		.selector_reg = WCD9335_REG(0x0, 0),
++		.selector_reg = WCD9335_SEL_REGISTER,
+ 		.selector_mask = 0xff,
+ 		.selector_shift = 0,
+-		.window_start = 0x0,
+-		.window_len = 0x1000,
++		.window_start = 0x800,
++		.window_len = 0x100,
+ 	},
+ };
  
->  	skb_verdict = READ_ONCE(progs->skb_verdict);
-> @@ -191,18 +191,14 @@ static int sock_map_link(struct bpf_map *map, struct sk_psock_progs *progs,
->  			ret = -ENOMEM;
->  			goto out_progs;
->  		}
-> -		sk_psock_is_new = true;
->  	}
->  
->  	if (msg_parser)
->  		psock_set_prog(&psock->progs.msg_parser, msg_parser);
-> -	if (sk_psock_is_new) {
-> -		ret = tcp_bpf_init(sk);
-> -		if (ret < 0)
-> -			goto out_drop;
-> -	} else {
-> -		tcp_bpf_reinit(sk);
-> -	}
-> +
-> +	ret = tcp_bpf_init(sk);
-> +	if (ret < 0)
-> +		goto out_drop;
->  
->  	write_lock_bh(&sk->sk_callback_lock);
->  	if (skb_progs && !psock->parser.enabled) {
-> @@ -239,12 +235,9 @@ static int sock_map_link_no_progs(struct bpf_map *map, struct sock *sk)
->  	if (IS_ERR(psock))
->  		return PTR_ERR(psock);
->  
-> -	if (psock) {
-> -		tcp_bpf_reinit(sk);
-> -		return 0;
-> -	}
-> +	if (!psock)
-> +		psock = sk_psock_init(sk, map->numa_node);
->  
-> -	psock = sk_psock_init(sk, map->numa_node);
->  	if (!psock)
->  		return -ENOMEM;
+@@ -4968,12 +4968,12 @@ static const struct regmap_range_cfg wcd9335_ifc_ranges[] = {
+ 	{
+ 		.name = "WCD9335-IFC-DEV",
+ 		.range_min =  0x0,
+-		.range_max = WCD9335_REG(0, 0x7ff),
+-		.selector_reg = WCD9335_REG(0, 0x0),
+-		.selector_mask = 0xff,
++		.range_max = WCD9335_MAX_REGISTER,
++		.selector_reg = WCD9335_SEL_REGISTER,
++		.selector_mask = 0xfff,
+ 		.selector_shift = 0,
+-		.window_start = 0x0,
+-		.window_len = 0x1000,
++		.window_start = 0x800,
++		.window_len = 0x400,
+ 	},
+ };
+ 
+@@ -4981,7 +4981,7 @@ static struct regmap_config wcd9335_ifc_regmap_config = {
+ 	.reg_bits = 16,
+ 	.val_bits = 8,
+ 	.can_multi_write = true,
+-	.max_register = WCD9335_REG(0, 0x7FF),
++	.max_register = WCD9335_MAX_REGISTER,
+ 	.ranges = wcd9335_ifc_ranges,
+ 	.num_ranges = ARRAY_SIZE(wcd9335_ifc_ranges),
+ };
+diff --git a/sound/soc/codecs/wcd9335.h b/sound/soc/codecs/wcd9335.h
+index 4d9be2496c30..72060824c743 100644
+--- a/sound/soc/codecs/wcd9335.h
++++ b/sound/soc/codecs/wcd9335.h
+@@ -8,9 +8,9 @@
+  * in slimbus mode the reg base starts from 0x800
+  * in i2s/i2c mode the reg base is 0x0
+  */
+-#define WCD9335_REG(pg, r)	((pg << 12) | (r) | 0x800)
++#define WCD9335_REG(pg, r)	((pg << 8) | (r))
+ #define WCD9335_REG_OFFSET(r)	(r & 0xFF)
+-#define WCD9335_PAGE_OFFSET(r)	((r >> 12) & 0xFF)
++#define WCD9335_PAGE_OFFSET(r)	((r >> 8) & 0xFF)
+ 
+ /* Page-0 Registers */
+ #define WCD9335_PAGE0_PAGE_REGISTER		WCD9335_REG(0x00, 0x000)
+@@ -600,7 +600,8 @@
+ #define WCD9335_CDC_CLK_RST_CTRL_FS_CNT_ENABLE	BIT(0)
+ #define WCD9335_CDC_CLK_RST_CTRL_FS_CNT_DISABLE	0
+ #define WCD9335_CDC_TOP_TOP_CFG1	WCD9335_REG(0x0d, 0x082)
+-#define WCD9335_MAX_REGISTER	WCD9335_REG(0x80, 0x0FF)
++#define WCD9335_MAX_REGISTER	0xffff
++#define WCD9335_SEL_REGISTER	0x800
+ 
+ /* SLIMBUS Slave Registers */
+ #define WCD9335_SLIM_PGD_PORT_INT_EN0	WCD9335_REG(0, 0x30)
+-- 
+2.21.0
 
-also small nit this reads,
-
- if (!psock)
-    psock = ...
- if (!psock)
-    return -ENOMEM
-
-how about,
-
- if (!psock) {
-   psock = ...
-   if (!psock) return -ENOMEM;
- }
