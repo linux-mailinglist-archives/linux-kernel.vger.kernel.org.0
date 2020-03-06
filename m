@@ -2,110 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C1017BE81
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2732717BE90
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:33:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbgCFNak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:30:40 -0500
-Received: from mga07.intel.com ([134.134.136.100]:45451 "EHLO mga07.intel.com"
+        id S1726974AbgCFNcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:32:55 -0500
+Received: from foss.arm.com ([217.140.110.172]:33262 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbgCFNak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:30:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 05:30:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,522,1574150400"; 
-   d="scan'208";a="413884310"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005.jf.intel.com with ESMTP; 06 Mar 2020 05:30:34 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jAD3j-007MyC-TM; Fri, 06 Mar 2020 15:30:35 +0200
-Date:   Fri, 6 Mar 2020 15:30:35 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Sergey.Semin@baikalelectronics.ru
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] dmaengine: dw: Take Baikal-T1 SoC DW DMAC
- peculiarities into account
-Message-ID: <20200306133035.GB1748204@smile.fi.intel.com>
-References: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
- <20200306132912.GA1748204@smile.fi.intel.com>
+        id S1726054AbgCFNcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 08:32:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05A3631B;
+        Fri,  6 Mar 2020 05:32:54 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 402E93F6CF;
+        Fri,  6 Mar 2020 05:32:51 -0800 (PST)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        clang-built-linux@googlegroups.com, x86@kernel.org
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH v2 00/20] Introduce common headers
+Date:   Fri,  6 Mar 2020 13:32:22 +0000
+Message-Id: <20200306133242.26279-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306132912.GA1748204@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 03:29:12PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 06, 2020 at 04:10:29PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > From: Serge Semin <fancer.lancer@gmail.com>
-> > 
-> > Baikal-T1 SoC has an DW DMAC on-board to provide a Mem-to-Mem, low-speed
-> > peripherals Dev-to-Mem and Mem-to-Dev functionality. Mostly it's compatible
-> > with currently implemented in the kernel DW DMAC driver, but there are some
-> > peculiarities which must be taken into account in order to have the device
-> > fully supported.
-> > 
-> > First of all traditionally we replaced the legacy plain text-based dt-binding
-> > file with yaml-based one. Secondly Baikal-T1 DW DMA Controller provides eight
-> > channels, which alas have different max burst length configuration.
-> > In particular first two channels may burst up to 128 bits (16 bytes) at a time
-> > while the rest of them just up to 32 bits. We must make sure that the DMA
-> > subsystem doesn't set values exceeding these limitations otherwise the
-> > controller will hang up. In third currently we discovered the problem in using
-> > the DW APB SPI driver together with DW DMAC. The problem happens if there is no
-> > natively implemented multi-block LLP transfers support and the SPI-transfer
-> > length exceeds the max lock size. In this case due to asynchronous handling of
-> > Tx- and Rx- SPI transfers interrupt we might end up with Dw APB SSI Rx FIFO
-> > overflow. So if DW APB SSI (or any other DMAC service consumer) intends to use
-> > the DMAC to asynchronously execute the transfers we'd have to at least warn
-> > the user of the possible errors.
-> > 
-> > Finally there is a bug in the algorithm of the nollp flag detection.
-> > In particular even if DW DMAC parameters state the multi-block transfers
-> > support there is still HC_LLP (hardcode LLP) flag, which if set makes expected
-> > by the driver true multi-block LLP functionality unusable. This happens cause'
-> > if HC_LLP flag is set the LLP registers will be hardcoded to zero so the
-> > contiguous multi-block transfers will be only supported. We must take the
-> > flag into account when detecting the LLP support otherwise the driver just
-> > won't work correctly.
-> > 
-> > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
-> > commit 98d54f81e36b ("Linux 5.6-rc4").
-> 
-> Thank you for your series!
-> 
-> I'll definitely review it, but it will take time. So, I think due to late
-> submission this is material at least for v5.8.
+Back in July last year we started having a problem in building compat
+vDSOs on arm64 [1] [2] that was not present when the arm64 porting to
+the Unified vDSO was done. In particular when the compat vDSO on such
+architecture is built with gcc it generates the warning below:
 
-One thing that I can tell immediately is the broken email thread in this series.
-Whenever you do a series, use `git format-patch --cover-letter --thread ...`,
-so, it will link the mail properly.
+In file included from ./arch/arm64/include/asm/thread_info.h:17:0,
+                 from ./include/linux/thread_info.h:38,
+                 from ./arch/arm64/include/asm/preempt.h:5,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:51,
+                 from ./include/linux/seqlock.h:36,
+                 from ./include/linux/time.h:6,
+                 from ./lib/vdso/gettimeofday.c:7,
+                 from <command-line>:0:
+./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
+./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer
+                to integer of different size [-Wpointer-to-int-cast]
+  u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+               ^
+In file included from ./arch/arm64/include/asm/pgtable-hwdef.h:8:0,
+                 from ./arch/arm64/include/asm/processor.h:34,
+                 from ./arch/arm64/include/asm/elf.h:118,
+                 from ./include/linux/elf.h:5,
+                 from ./include/linux/elfnote.h:62,
+                 from arch/arm64/kernel/vdso32/note.c:11:
+./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
+./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer
+                to integer of different size [-Wpointer-to-int-cast]
+  u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+
+The same porting does not build at all when the selected compiler is
+clang.
+
+I started an investigation to try to understand better the problem and
+after various discussions at Plumbers and Recipes last year the
+conclusion was that the vDSO library as it stands it is including more
+headers that it needs. In particular, being a user-space library, it
+should require only the UAPI and a minimal vDSO kernel interface instead
+of all the kernel-related inline functions which are not directly used
+and in some cases can have side effects.
+
+To solve the problem, I decided to use the approach below:
+  * Extract from include/linux/ the vDSO required kernel interface
+    and place it in include/common/
+  * Make sure that where meaningful the kernel includes "common"
+  * Limit the vDSO library to include headers coming only from UAPI
+    and "common" (with 2 exceptions compiler.h for barriers and
+    param.h for HZ).
+  * Adapt all the architectures that support the unified vDSO library
+    to use "common" headers.
+
+According to me this approach allows up to exercise a better control on
+what the vDSO library can include and to prevent potential issues in
+future.
+
+This patch series contains the implementation of the described approach.
+
+The "common" headers have been verified on all the architectures that support
+unified vDSO using the vdsotest [3] testsuite for what concerns the vDSO part
+and randconfig to verify that they are included in the correct places.
+
+To simplify the testing, a copy of the patchset on top of a recent linux
+tree can be found at [4].
+
+[1] https://github.com/ClangBuiltLinux/linux/issues/595
+[2] https://lore.kernel.org/lkml/20190926151704.GH9689@arrakis.emea.arm.com
+[3] https://github.com/nathanlynch/vdsotest
+[4] git://linux-arm.org/linux-vf.git common-headers/v2
+
+Changes:
+--------
+v2:
+  - Addressed review comments for clang support.
+  - Rebased on 5.6-rc4.
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Collingbourne <pcc@google.com>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Vincenzo Frascino (20):
+  linux/const.h: Extract common header for vDSO
+  linux/bits.h: Extract common header for vDSO
+  linux/limits.h: Extract common header for vDSO
+  linux/math64.h: Extract common header for vDSO
+  linux/time.h: Extract common header for vDSO
+  linux/time32.h: Extract common header for vDSO
+  linux/time64.h: Extract common header for vDSO
+  linux/jiffies.h: Extract common header for vDSO
+  linux/ktime.h: Extract common header for vDSO
+  common: Introduce processor.h
+  linux/elfnote.h: Replace elf.h with UAPI equivalent
+  arm64: Introduce asm/common/processor.h
+  arm64: vdso: Include common headers in the vdso library
+  arm64: vdso32: Include common headers in the vdso library
+  arm64: Introduce asm/common/arch_timer.h
+  mips: vdso: Enable mips to use common headers
+  x86: vdso: Enable x86 to use common headers
+  arm: vdso: Enable arm to use common headers
+  lib: vdso: Enable common headers
+  arm64: vdso32: Enable Clang Compilation
+
+ arch/arm/include/asm/common/cp15.h            | 38 +++++++++++++++++++
+ arch/arm/include/asm/common/processor.h       | 22 +++++++++++
+ arch/arm/include/asm/cp15.h                   | 20 +---------
+ arch/arm/include/asm/processor.h              | 11 +-----
+ arch/arm/include/asm/vdso/gettimeofday.h      |  4 +-
+ arch/arm64/include/asm/arch_timer.h           | 29 +++-----------
+ arch/arm64/include/asm/common/arch_timer.h    | 33 ++++++++++++++++
+ arch/arm64/include/asm/common/processor.h     | 31 +++++++++++++++
+ arch/arm64/include/asm/processor.h            | 16 +-------
+ .../include/asm/vdso/compat_gettimeofday.h    |  2 +-
+ arch/arm64/include/asm/vdso/gettimeofday.h    |  8 ++--
+ arch/arm64/kernel/vdso/vgettimeofday.c        |  2 -
+ arch/arm64/kernel/vdso32/Makefile             | 13 ++++++-
+ arch/arm64/kernel/vdso32/vgettimeofday.c      |  3 --
+ arch/mips/include/asm/common/processor.h      | 27 +++++++++++++
+ arch/mips/include/asm/processor.h             | 16 +-------
+ arch/mips/include/asm/vdso/gettimeofday.h     |  4 --
+ arch/x86/include/asm/common/processor.h       | 23 +++++++++++
+ arch/x86/include/asm/processor.h              | 12 +-----
+ include/common/bits.h                         |  9 +++++
+ include/common/const.h                        | 10 +++++
+ include/common/jiffies.h                      | 11 ++++++
+ include/common/ktime.h                        | 16 ++++++++
+ include/common/limits.h                       | 18 +++++++++
+ include/common/math64.h                       | 24 ++++++++++++
+ include/common/processor.h                    | 14 +++++++
+ include/common/time.h                         | 12 ++++++
+ include/common/time32.h                       | 17 +++++++++
+ include/common/time64.h                       | 14 +++++++
+ include/linux/bits.h                          |  2 +-
+ include/linux/const.h                         |  5 +--
+ include/linux/elfnote.h                       |  2 +-
+ include/linux/jiffies.h                       |  4 +-
+ include/linux/ktime.h                         |  9 +----
+ include/linux/limits.h                        | 13 +------
+ include/linux/math64.h                        | 20 +---------
+ include/linux/time.h                          |  5 +--
+ include/linux/time32.h                        | 13 +------
+ include/linux/time64.h                        | 10 +----
+ include/vdso/datapage.h                       | 32 ++++++++++++++--
+ lib/vdso/gettimeofday.c                       | 21 ----------
+ 41 files changed, 388 insertions(+), 207 deletions(-)
+ create mode 100644 arch/arm/include/asm/common/cp15.h
+ create mode 100644 arch/arm/include/asm/common/processor.h
+ create mode 100644 arch/arm64/include/asm/common/arch_timer.h
+ create mode 100644 arch/arm64/include/asm/common/processor.h
+ create mode 100644 arch/mips/include/asm/common/processor.h
+ create mode 100644 arch/x86/include/asm/common/processor.h
+ create mode 100644 include/common/bits.h
+ create mode 100644 include/common/const.h
+ create mode 100644 include/common/jiffies.h
+ create mode 100644 include/common/ktime.h
+ create mode 100644 include/common/limits.h
+ create mode 100644 include/common/math64.h
+ create mode 100644 include/common/processor.h
+ create mode 100644 include/common/time.h
+ create mode 100644 include/common/time32.h
+ create mode 100644 include/common/time64.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
