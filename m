@@ -2,120 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17AE417C33F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D902D17C345
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 17:49:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbgCFQqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 11:46:08 -0500
-Received: from gateway21.websitewelcome.com ([192.185.46.113]:19884 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726099AbgCFQqI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:46:08 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 7AD12401471A4
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 10:46:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id AG6xj4YoGXVkQAG6xjO7ZM; Fri, 06 Mar 2020 10:46:07 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=a0yfOiyYtsn67/xw854Gi9PS9vsekXy7OaHr3ZdUtSM=; b=fn4/ra0rE4bp/rosZ9RYHUFyv6
-        /N3piaBjmUoMihSThSuzygMoAc0Usf1H8YHqkSquw1IJdl1W+p1tj4QSHiw5n2DOKPghBAaktwpMM
-        GV9aLkXqxd/NNC3vMLXsZxkqkheCUDa11IDKcKDiSdh0EYKPcwhFnoWTIFK1s6bodSLETOioXbWDu
-        oe37C4vPDVQiKjERSxXRzBszarIUXU6YXMooHMQ+sCk9xQkSEGfsBCfokb9FLVdWyae80IOOaOl5z
-        uhlzZn3QlnP1fhwjoCMcO48Z2q0BbKI2yBfsJqL14TDiOXDMzWtO6nX7ccJCSx81pFHZdLcBrRt9S
-        mJRtLPHg==;
-Received: from [201.166.190.186] (port=51790 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jAG6v-001sRG-Bx; Fri, 06 Mar 2020 10:46:06 -0600
-Date:   Fri, 6 Mar 2020 10:49:12 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] Btrfs: delayed-inode.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200306164912.GA22197@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.166.190.186
-X-Source-L: No
-X-Exim-ID: 1jAG6v-001sRG-Bx
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.190.186]:51790
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1726300AbgCFQtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 11:49:52 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:2880 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbgCFQtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 11:49:52 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48YtrX5LCCz9v0DS;
+        Fri,  6 Mar 2020 17:49:48 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=HHxTmVII; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id w4rA5SjLa1tS; Fri,  6 Mar 2020 17:49:48 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48YtrX4C5mz9v0DQ;
+        Fri,  6 Mar 2020 17:49:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1583513388; bh=SIQXyXWwelcqc+qeZ+WYNegGKNceKMdyP7M7NjsPmX0=;
+        h=From:Subject:To:Cc:Date:From;
+        b=HHxTmVIIS3ZAyj0aykHgHgljQdz1abGbuCiRB7jYTQg9VcG7dTFeRVC25esgVtIey
+         Sz+P1LkPl+HERrM5W8DZ0nipllO3XIxcE+WVrSwEEHdfPHZQZC96/iTiOnhGDxSexa
+         3832hum+zdvmuj+lsMkyQb3ygp9lufxLnCTPn2zA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E73528B895;
+        Fri,  6 Mar 2020 17:49:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id R84HLGj6qG3t; Fri,  6 Mar 2020 17:49:49 +0100 (CET)
+Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5562A8B88B;
+        Fri,  6 Mar 2020 17:49:49 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 2974965470; Fri,  6 Mar 2020 16:49:49 +0000 (UTC)
+Message-Id: <ef5248fc1f496c6b0dfdb59380f24968f25f75c5.1583513368.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3] powerpc/kasan: Fix shadow memory protection with
+ CONFIG_KASAN_VMALLOC
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri,  6 Mar 2020 16:49:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+With CONFIG_KASAN_VMALLOC, new page tables are created at the time
+shadow memory for vmalloc area in unmapped. If some parts of the
+page table still has entries to the zero page shadow memory, the
+entries are wrongly marked RW.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+With CONFIG_KASAN_VMALLOC, almost the entire kernel address space
+is managed by KASAN. To make it simple, just create KASAN page tables
+for the entire kernel space at kasan_init(). That doesn't use much
+more space, and that's anyway already done for hash platforms.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fixes: 3d4247fcc938 ("powerpc/32: Add support of KASAN_VMALLOC")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- fs/btrfs/delayed-inode.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3: Split a too long line
 
-diff --git a/fs/btrfs/delayed-inode.h b/fs/btrfs/delayed-inode.h
-index 74ae226ffaf0..ca96ef007d8f 100644
---- a/fs/btrfs/delayed-inode.h
-+++ b/fs/btrfs/delayed-inode.h
-@@ -70,7 +70,7 @@ struct btrfs_delayed_item {
- 	refcount_t refs;
- 	int ins_or_del;
- 	u32 data_len;
--	char data[0];
-+	char data[];
- };
+v2: Allocate all tables at init instead of doing it when
+unmapping vmalloc space KASAN pages.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/mm/kasan/kasan_init_32.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/kasan_init_32.c
+index 1a29cf469903..cbcad369fcb2 100644
+--- a/arch/powerpc/mm/kasan/kasan_init_32.c
++++ b/arch/powerpc/mm/kasan/kasan_init_32.c
+@@ -120,12 +120,6 @@ static void __init kasan_unmap_early_shadow_vmalloc(void)
+ 	unsigned long k_cur;
+ 	phys_addr_t pa = __pa(kasan_early_shadow_page);
  
- static inline void btrfs_init_delayed_root(
+-	if (!early_mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
+-		int ret = kasan_init_shadow_page_tables(k_start, k_end);
+-
+-		if (ret)
+-			panic("kasan: kasan_init_shadow_page_tables() failed");
+-	}
+ 	for (k_cur = k_start & PAGE_MASK; k_cur < k_end; k_cur += PAGE_SIZE) {
+ 		pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
+ 		pte_t *ptep = pte_offset_kernel(pmd, k_cur);
+@@ -143,7 +137,8 @@ void __init kasan_mmu_init(void)
+ 	int ret;
+ 	struct memblock_region *reg;
+ 
+-	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
++	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE) ||
++	    IS_ENABLED(CONFIG_KASAN_VMALLOC)) {
+ 		ret = kasan_init_shadow_page_tables(KASAN_SHADOW_START, KASAN_SHADOW_END);
+ 
+ 		if (ret)
 -- 
 2.25.0
 
