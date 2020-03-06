@@ -2,101 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5DE317C873
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 23:40:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8C917C877
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 23:42:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgCFWke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 17:40:34 -0500
-Received: from mga03.intel.com ([134.134.136.65]:31326 "EHLO mga03.intel.com"
+        id S1726633AbgCFWma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 17:42:30 -0500
+Received: from mga01.intel.com ([192.55.52.88]:22898 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726237AbgCFWke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 17:40:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726240AbgCFWma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 17:42:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 14:40:33 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 14:42:29 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,523,1574150400"; 
-   d="scan'208";a="234943569"
-Received: from shenkel-mobl.ger.corp.intel.com (HELO localhost) ([10.252.23.162])
-  by orsmga008.jf.intel.com with ESMTP; 06 Mar 2020 14:40:27 -0800
-Date:   Sat, 7 Mar 2020 00:40:26 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Sumit Garg <sumit.garg@linaro.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        Sebastian Duda <sebastian.duda@fau.de>,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] MAINTAINERS: adjust to trusted keys subsystem creation
-Message-ID: <20200306224026.GA4095@linux.intel.com>
-References: <20200305203013.6189-1-lukas.bulwahn@gmail.com>
- <20200306193127.GJ7472@linux.intel.com>
- <alpine.DEB.2.21.2003062148050.2990@felia>
+   d="scan'208";a="234982972"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Mar 2020 14:42:28 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jALfo-0000kw-1y; Sat, 07 Mar 2020 06:42:28 +0800
+Date:   Sat, 07 Mar 2020 06:42:02 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD SUCCESS
+ 14533a16c46db70b8a75eda8fa633c25ac446d81
+Message-ID: <5e62d1ba.9+KDEyYKlGXTLcM6%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2003062148050.2990@felia>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 09:50:44PM +0100, Lukas Bulwahn wrote:
-> 
-> 
-> On Fri, 6 Mar 2020, Jarkko Sakkinen wrote:
-> 
-> > On Thu, Mar 05, 2020 at 09:30:13PM +0100, Lukas Bulwahn wrote:
-> > > Commit 47f9c2796891 ("KEYS: trusted: Create trusted keys subsystem")
-> > > renamed trusted.h to trusted_tpm.h in include/keys/, and moved trusted.c
-> > > to trusted-keys/trusted_tpm1.c in security/keys/.
-> > > 
-> > > Since then, ./scripts/get_maintainer.pl --self-test complains:
-> > > 
-> > >   warning: no file matches F: security/keys/trusted.c
-> > >   warning: no file matches F: include/keys/trusted.h
-> > > 
-> > > Rectify the KEYS-TRUSTED entry in MAINTAINERS now and ensure that all
-> > > files in security/keys/trusted-keys/ are identified as part of
-> > > KEYS-TRUSTED.
-> > > 
-> > > Co-developed-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > Signed-off-by: Sebastian Duda <sebastian.duda@fau.de>
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > ---
-> > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > > Changes to v1:
-> > >   - use a global pattern for matching the whole security/keys/trusted-keys/
-> > >     directory.
-> > > Changes to v2:
-> > >   - name the correct directory in the commit message
-> > > 
-> > > Sumit, please ack.
-> > > Jarkko, please pick this patch v3.
-> > 
-> > Please tell me why you emphasize the moment when a patch that does not
-> > fix a critical bug is picked?
-> > 
-> > Do you have systems that break because the MAINTAINERS file is not
-> > updated?
-> > 
-> > It will end up in v5.7 PR for sure but saying things like that is same
-> > as saying that there would be some catastrophically urgent need to still
-> > squeeze the patch into v5.6. Unless you actually have something critical
-> > in your hand, please stop doing that.
-> > 
-> 
-> Got it. I did not intend to emphasize any urgency; I will not continue 
-> to do that for patches of this clean-up type.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  sched/core
+branch HEAD: 14533a16c46db70b8a75eda8fa633c25ac446d81  thermal/cpu-cooling, sched/core: Move the arch_set_thermal_pressure() API to generic scheduler code
 
-Anyway, thank you and I've applied your patch and will include it to my
-v5.7 PR.
+elapsed time: 480m
 
-/Jarkko
+configs tested: 159
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+alpha                               defconfig
+riscv                    nommu_virt_defconfig
+m68k                           sun3_defconfig
+c6x                        evmc6678_defconfig
+m68k                          multi_defconfig
+s390                       zfcpdump_defconfig
+h8300                     edosk2674_defconfig
+ia64                              allnoconfig
+s390                          debug_defconfig
+i386                              allnoconfig
+i386                             alldefconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                             allyesconfig
+ia64                                defconfig
+nios2                         3c120_defconfig
+nios2                         10m50_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                 simple_smp_defconfig
+openrisc                    or1ksim_defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+mips                             allyesconfig
+mips                         64r6el_defconfig
+mips                              allnoconfig
+mips                           32r2_defconfig
+mips                             allmodconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200305
+x86_64               randconfig-a002-20200305
+x86_64               randconfig-a003-20200305
+i386                 randconfig-a001-20200305
+i386                 randconfig-a002-20200305
+i386                 randconfig-a003-20200305
+riscv                randconfig-a001-20200306
+alpha                randconfig-a001-20200306
+m68k                 randconfig-a001-20200306
+nds32                randconfig-a001-20200306
+mips                 randconfig-a001-20200306
+parisc               randconfig-a001-20200306
+csky                 randconfig-a001-20200305
+openrisc             randconfig-a001-20200305
+s390                 randconfig-a001-20200305
+sh                   randconfig-a001-20200305
+xtensa               randconfig-a001-20200305
+x86_64               randconfig-b001-20200305
+x86_64               randconfig-b002-20200305
+x86_64               randconfig-b003-20200305
+i386                 randconfig-b001-20200305
+i386                 randconfig-b002-20200305
+i386                 randconfig-b003-20200305
+x86_64               randconfig-c001-20200306
+x86_64               randconfig-c002-20200306
+x86_64               randconfig-c003-20200306
+i386                 randconfig-c001-20200306
+i386                 randconfig-c002-20200306
+i386                 randconfig-c003-20200306
+x86_64               randconfig-d001-20200306
+x86_64               randconfig-d002-20200306
+x86_64               randconfig-d003-20200306
+i386                 randconfig-d001-20200306
+i386                 randconfig-d002-20200306
+i386                 randconfig-d003-20200306
+x86_64               randconfig-e001-20200305
+x86_64               randconfig-e002-20200305
+x86_64               randconfig-e003-20200305
+i386                 randconfig-e001-20200305
+i386                 randconfig-e002-20200305
+i386                 randconfig-e003-20200305
+i386                 randconfig-f003-20200305
+x86_64               randconfig-f001-20200305
+i386                 randconfig-f001-20200305
+i386                 randconfig-f002-20200305
+x86_64               randconfig-f002-20200305
+x86_64               randconfig-f003-20200305
+x86_64               randconfig-f001-20200306
+x86_64               randconfig-f002-20200306
+x86_64               randconfig-f003-20200306
+i386                 randconfig-f001-20200306
+i386                 randconfig-f002-20200306
+i386                 randconfig-f003-20200306
+x86_64               randconfig-h001-20200306
+x86_64               randconfig-h002-20200306
+x86_64               randconfig-h003-20200306
+i386                 randconfig-h001-20200306
+i386                 randconfig-h002-20200306
+i386                 randconfig-h003-20200306
+arc                  randconfig-a001-20200306
+ia64                 randconfig-a001-20200306
+sparc                randconfig-a001-20200306
+arm                  randconfig-a001-20200306
+arm64                randconfig-a001-20200306
+powerpc              randconfig-a001-20200306
+riscv                            allyesconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             allyesconfig
+s390                              allnoconfig
+s390                             allmodconfig
+s390                             alldefconfig
+s390                                defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                             defconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                          allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
