@@ -2,128 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7433B17B8EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 10:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 799EE17B8F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 10:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbgCFJDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 04:03:43 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:36949 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726025AbgCFJDn (ORCPT
+        id S1726579AbgCFJE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 04:04:28 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:43646 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726091AbgCFJE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 04:03:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583485422;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=r6hHlu4u9pl0gr61Q0hqOcfTBLsfleChBZw4ki+HhSs=;
-        b=hIMd7g9EAM5NflZCGSNIiP5ipNk234D4ro5J3DxdtU06XAUZuYyC3hrmwdHttv+MvK3qBO
-        IoPgmHWInHgLL8Ihcc+On2WOOEsmtJAtyaKyf96hEGJRfl5H6eswf7QYgi8CTR/XsrFlxR
-        nt5zVLD/ZUzjJ+bEd7YzNyMYUtlaxM4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-97-qKHIxJqZOFi_uU3Lm9Ox9Q-1; Fri, 06 Mar 2020 04:03:40 -0500
-X-MC-Unique: qKHIxJqZOFi_uU3Lm9Ox9Q-1
-Received: by mail-wm1-f69.google.com with SMTP id w12so381640wmc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 01:03:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r6hHlu4u9pl0gr61Q0hqOcfTBLsfleChBZw4ki+HhSs=;
-        b=krzuEMTOd5OVSIT1dOjvg9DKs7zkgPivWw4o0IRjceYCVFcQ0hNCoWS0+IoAgJ+yPv
-         pMO3JZF1fenUQrUk7RvKBgFNQJUsYvv0/iLQXOAhrcjH+hgTSgy6AuvUholT5CuOtzEd
-         VVRtQUuqFo3KOYXE9FSjLhT5g79yEfNtyQDCxL1h57IGDX44Xv/43usDySP6xA8A0JB+
-         kfmnZaKtIrrY9dk4gjv4mNvESIybEYWStPOIFo0NMmSNxAIQKoMXrjwZe0qBNYUTHtpw
-         Bhx6G++ypVeQ1Z8A8e9iWU0+hxecWspSZiGdJjVx9u94i17r18W4v/jUPN8oIsYC07LT
-         f57w==
-X-Gm-Message-State: ANhLgQ2M9MrzM2MmzqST1fBPRdnki6a1HylnrzLWYORLH4q8d7/dJB+f
-        yIUDmF8DkdFdbh2jVPwIdQVsx92PEBYBCX9u7WZ5pR/8nur8n4EjmvpcdBZDqoCvN15/PqCsVUz
-        3jM8MGiZ8REx52PaZFG3wxTNj
-X-Received: by 2002:a7b:cc04:: with SMTP id f4mr2844683wmh.134.1583485419347;
-        Fri, 06 Mar 2020 01:03:39 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsZO2rja5Eg1hV4u0r3e03rSF/NHnpK/09XscrzRU6x3ksC1Fnqv688SJGqraKNNW3h7xNhIg==
-X-Received: by 2002:a7b:cc04:: with SMTP id f4mr2844629wmh.134.1583485418812;
-        Fri, 06 Mar 2020 01:03:38 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:b99a:4374:773d:f32e? ([2001:b07:6468:f312:b99a:4374:773d:f32e])
-        by smtp.gmail.com with ESMTPSA id v131sm13743426wme.23.2020.03.06.01.03.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 01:03:38 -0800 (PST)
-Subject: Re: [PATCH v2 4/7] KVM: x86: Fix CPUID range checks for Hypervisor
- and Centaur classes
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Pu Wen <puwen@hygon.cn>
-References: <20200305013437.8578-1-sean.j.christopherson@intel.com>
- <20200305013437.8578-5-sean.j.christopherson@intel.com>
- <CALMp9eRRWZ54kzMXdTqRCy2KmaUAq+HVVVzbxJNVdgktg65XCA@mail.gmail.com>
- <20200305192532.GN11500@linux.intel.com>
- <CALMp9eRxdGj0DL0_g-an0YC+gTMcWcSk7=md=k4-8S0Zcankbg@mail.gmail.com>
- <20200305215149.GS11500@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5567edf6-a04c-5810-8ed5-78a0db14b202@redhat.com>
-Date:   Fri, 6 Mar 2020 10:03:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 6 Mar 2020 04:04:28 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0TroHhKw_1583485460;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TroHhKw_1583485460)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 06 Mar 2020 17:04:21 +0800
+Subject: Re: [failures] mm-vmscan-remove-unnecessary-lruvec-adding.patch
+ removed from -mm tree
+To:     Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     aarcange@redhat.com, daniel.m.jordan@oracle.com,
+        hannes@cmpxchg.org, hughd@google.com, khlebnikov@yandex-team.ru,
+        kirill@shutemov.name, kravetz@us.ibm.com, mhocko@kernel.org,
+        mm-commits@vger.kernel.org, tj@kernel.org, vdavydov.dev@gmail.com,
+        willy@infradead.org, yang.shi@linux.alibaba.com
+References: <20200306025041.rERhvnYmB%akpm@linux-foundation.org>
+ <211632B1-2D6F-4BFA-A5A0-3030339D3D2A@lca.pw>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <b123f1d8-eab0-4689-9400-ba1f853728b7@linux.alibaba.com>
+Date:   Fri, 6 Mar 2020 17:04:20 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200305215149.GS11500@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <211632B1-2D6F-4BFA-A5A0-3030339D3D2A@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/20 22:51, Sean Christopherson wrote:
->> Ah. So cross-vendor CPUID specifications are not supported?
-> Cross-vendor CPUID is sort of allowed?  E.g. this plays nice with creating
-> a Centaur CPU on an Intel platform.  My interpretation of GET_SUPPORTED...
-> is that KVM won't prevent enumerating what you want in CPUID, but it only
-> promises to correctly support select leafs.
 
-But in practice does this change anything?  If the vendor is not Centaur 
-it's unlikely that there is a 0xc0000000 leaf.  The 0x80000000 bound is
-certainly not going to be at 0xc0000000 or beyond, and likewise to 0xc0000000
-bound is not going to be at 0xd0000000 or beyond.  So I'm not sure if
-anything is lost from this simplification:
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index ed5e0bda672c..f43a8875c126 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -963,8 +963,7 @@ static bool cpuid_function_in_range(struct kvm_vcpu *vcpu, u32 function)
- 
- 	if (function >= 0x40000000 && function <= 0x4fffffff)
- 		class = kvm_find_cpuid_entry(vcpu, function & 0xffffff00, 0);
--	else if (function >= 0xc0000000 && function <= 0xcfffffff &&
--		 is_guest_vendor_centaur(basic->ebx, basic->ecx, basic->edx))
-+	else if (function >= 0xc0000000)
- 		class = kvm_find_cpuid_entry(vcpu, 0xc0000000, 0);
- 	else
- 		class = kvm_find_cpuid_entry(vcpu, function & 0x80000000, 0);
-diff --git a/arch/x86/kvm/kvm_emulate.h b/arch/x86/kvm/kvm_emulate.h
-index 12ddfa493bae..3cb50eda606d 100644
---- a/arch/x86/kvm/kvm_emulate.h
-+++ b/arch/x86/kvm/kvm_emulate.h
-@@ -424,13 +424,6 @@ static inline bool is_guest_vendor_hygon(u32 ebx, u32 ecx, u32 edx)
- 	       edx == X86EMUL_CPUID_VENDOR_HygonGenuine_edx;
- }
- 
--static inline bool is_guest_vendor_centaur(u32 ebx, u32 ecx, u32 edx)
--{
--	return ebx == X86EMUL_CPUID_VENDOR_CentaurHauls_ebx &&
--	       ecx == X86EMUL_CPUID_VENDOR_CentaurHauls_ecx &&
--	       edx == X86EMUL_CPUID_VENDOR_CentaurHauls_edx;
--}
--
- enum x86_intercept_stage {
- 	X86_ICTP_NONE = 0,   /* Allow zero-init to not match anything */
- 	X86_ICPT_PRE_EXCEPT,
+在 2020/3/6 上午11:32, Qian Cai 写道:
+> 
+>> On Mar 5, 2020, at 9:50 PM, akpm@linux-foundation.org wrote:
+>>
+>>
+>> The patch titled
+>>     Subject: mm/vmscan: remove unnecessary lruvec adding
+>> has been removed from the -mm tree.  Its filename was
+>>     mm-vmscan-remove-unnecessary-lruvec-adding.patch
+>>
+>> This patch was dropped because it had testing failures
+> Andrew, do you have more information about this failure? I hit a bug
+> here under memory pressure and am wondering if this is related
+> which might save me some time digging…
+> 
+> [ 4389.727184][ T6600] mem_cgroup_update_lru_size(00000000bb31aaed, 0, -7): lru_size -1
 
+This bug seems failed due to a update_lru_size() missing or misplace, but
+what's I changed on this patch seems unlike to cause this bug.
+
+Anyway, Qian, could you do me a favor to remove this patch and try again?
+Since I am trying ltp's oom01 case,
+# i=0; while :; do echo $((i++)); oom01; sleep 5; done
+It runs well in dozens times on my qemu and hardware machine, on akpm branch commit f2cbd107a99b,
+which included my 6 patches.
+
+
+Andrew,
+
+What's the reproduce steps for this test failure?
+
+Thanks a lot for everyone!
+Alex
