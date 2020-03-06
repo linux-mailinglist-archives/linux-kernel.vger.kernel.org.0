@@ -2,51 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EBE917C75F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 21:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1721317C763
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 21:55:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgCFUzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 15:55:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43436 "EHLO mail.kernel.org"
+        id S1726970AbgCFUzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 15:55:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbgCFUzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 15:55:06 -0500
-Subject: Re: [GIT PULL] arm64 fixes for -rc5
+        id S1726769AbgCFUzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 15:55:08 -0500
+Subject: Re: [GIT PULL] regulator fixes for v5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583528106;
-        bh=mVBXtZ7m4qGrI0tw4H8tDeDwn8YJqRyDIflDA4DNpVI=;
+        s=default; t=1583528107;
+        bh=onhP/41HYZr5YmD1bk8FLUTpUtKJowNacFDouzGB/Ts=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=aZyV9NGtxLsX+ksK/ggee+zZPfO2+N4KxBEEYmwnvrdHR22Gl0FaxAEvDp6OFB4Qz
-         lroy5yI1ywMyRE/6L4hbTo43wUMXRsASmLXPatv4f8/2VFAhGNB9k7V57iCdmiesze
-         1CQMOroMFVIyjt1suDF3Kx8j82NbjKsdYjyMRdGs=
+        b=J+udSbFIHI61V9Wtl3XukEHOR5sEhrnPLGu+40Q8yEZU9hl6XNFayW9gUtkU8YV5o
+         qaEf9hJZbZfOuSYRjIo4cSiOZGr+fRn64zi89UcEejEdiqjYy74N2Y3No994zog0iD
+         khOyHUDwIvHJQmA0EDMKREWb/AvFAUyv+0G7WSk4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200306151219.GA8409@willie-the-truck>
-References: <20200306151219.GA8409@willie-the-truck>
+In-Reply-To: <20200306163906.GD4114@sirena.org.uk>
+References: <20200306163906.GD4114@sirena.org.uk>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200306151219.GA8409@willie-the-truck>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 9abd515a6e4a5c58c6eb4d04110430325eb5f5ac
+X-PR-Tracked-Message-Id: <20200306163906.GD4114@sirena.org.uk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
+ tags/regulator-fix-v5.6-rc4
+X-PR-Tracked-Commit-Id: 02fbabd5f4ed182d2c616e49309f5a3efd9ec671
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c20c4a084a878df35a7e394a7e646f303b505eaf
-Message-Id: <158352810621.1815.11142669191874815567.pr-tracker-bot@kernel.org>
-Date:   Fri, 06 Mar 2020 20:55:06 +0000
-To:     Will Deacon <will@kernel.org>
-Cc:     torvalds@linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, catalin.marinas@arm.com
+X-PR-Merge-Commit-Id: 43c63729c96f06f97367edf680d42d634041fd6a
+Message-Id: <158352810791.1815.5239989648101354919.pr-tracker-bot@kernel.org>
+Date:   Fri, 06 Mar 2020 20:55:07 +0000
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 6 Mar 2020 15:12:20 +0000:
+The pull request you sent on Fri, 6 Mar 2020 16:39:06 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v5.6-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c20c4a084a878df35a7e394a7e646f303b505eaf
+https://git.kernel.org/torvalds/c/43c63729c96f06f97367edf680d42d634041fd6a
 
 Thank you!
 
