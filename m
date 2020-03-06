@@ -2,143 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D47FF17B4E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 04:32:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 372CB17B4EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 04:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgCFDct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 22:32:49 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40970 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbgCFDcs (ORCPT
+        id S1726498AbgCFDeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 22:34:00 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:12355 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726162AbgCFDeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 22:32:48 -0500
-Received: by mail-yw1-f67.google.com with SMTP id p124so984451ywc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 19:32:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wHaCOyqP2WWjD8mfCv3YCZLYmNbyCJpMXSFySbHb144=;
-        b=FZCyClEkILXJtjPwL5CSf2dtrY8c4ImGIQ/3j9lq+y9O1DbCZjjdc62j4ndbnrSQQt
-         xyRFRzn0i9UYv3YxD4C+BLuxsek7aHlOi1JW1slWQIHI2/CLmoQISATML7f/If9uxxxx
-         Hssye2wCPwrcwn0dmHi6o9cMFJ0542xG1/n8V2YBcE8RdFZpkJhTY4eTQKbWQBJeBI6r
-         45qOnwYISNeigZ6laog+yt6oHcU58hEM/vKS3VgeIwlrmtGqCJDJx7sFdi6QBaaPQnC4
-         8z3KwdXqge3PrNNCSFGvljlvU2KSDOvmWeiY/2vOnZmYoMr8VYQXmZLbK8SMlxaaCfEe
-         DXYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wHaCOyqP2WWjD8mfCv3YCZLYmNbyCJpMXSFySbHb144=;
-        b=iQIfiaG/8gy9/6E/txRw+kscpGHrRt4tl4UiStXRwnakMDdZVk1Cb1du6utMuCWK0W
-         VzHeatIKHATB0zmJbxk1u22E5Cfjy7dIcWdjxsd7cooSCDHrHykoMCAUeEDcXBBJPYTs
-         UXsz0FhGOS2VG7JyLK90a2ott6U4SwA5TZ6R27+oxn9EvxbWCyP1mEUF0t9wSfvndhfv
-         YAlU4TtHLn3S0xRnxpQNtDOJSfeUfyBVKJTKCn5ByUKNECbZm00cWlEHQ73MTBtstHkG
-         Mmd7nmDOmHOJV75TAgQ//LVdvTukCyqy674JcNXG0ux5imTPVvcZ8VGVCUKewHXNbbeU
-         JVgw==
-X-Gm-Message-State: ANhLgQ0I43G9D5rDWr6VfsLZtgP2wICI/yLc3JxSLRFF0OnSx+Vsu3wS
-        eoReQJfEueSLfGHzUCCT4vhS3rkzvwzqzUYIJcU=
-X-Google-Smtp-Source: ADFU+vu1LIATmaD+zA7Z2GpCD+Eoo6JMw+w9RdOwO4k3qpEvMp6gaxrgoYzrb+hN/hkNLk97BezeQf4lXoqGN0Slj/o=
-X-Received: by 2002:a0d:ca8e:: with SMTP id m136mr1839136ywd.349.1583465566396;
- Thu, 05 Mar 2020 19:32:46 -0800 (PST)
+        Thu, 5 Mar 2020 22:34:00 -0500
+X-UUID: 45b2bf6554584c88bcd01bf3712092c2-20200306
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=itlYgQ45be2Ssn2Nzi2Lg0iTSRTOtSvZl1uOUtpZGFQ=;
+        b=to2V9PU8Ie1oJRyCv/CXkuG0op/0lQp9T6MXTLPZsW/Ds+40Glvq9zHlwcXd9slUyHq6/aEwa8G/qF2+iR47I1xzioLYjZ1nMo6J22L9DktjuWbza2O5MoLFDGQ/jwhR098DbOxPktOpxee4H6DWGXNWs+aSKTFOHco59dr4l2M=;
+X-UUID: 45b2bf6554584c88bcd01bf3712092c2-20200306
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <eason.yen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 926651444; Fri, 06 Mar 2020 11:33:55 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 6 Mar 2020 11:33:01 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 6 Mar 2020 11:33:55 +0800
+From:   Eason Yen <eason.yen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     <eason.yen@mediatek.com>, <jiaxin.yu@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Subject: [PATCH 0/2] Add mediatek codec mt6359 driver
+Date:   Fri, 6 Mar 2020 11:33:40 +0800
+Message-ID: <1583465622-16628-1-git-send-email-eason.yen@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <20200128022737.15371-1-atish.patra@wdc.com> <20200128022737.15371-2-atish.patra@wdc.com>
-In-Reply-To: <20200128022737.15371-2-atish.patra@wdc.com>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Fri, 6 Mar 2020 11:32:34 +0800
-Message-ID: <CAEUhbmXO1pQjtd=4gqxxM8V=6=7zQu=7Hx2rAQefK_JC5azRww@mail.gmail.com>
-Subject: Re: [PATCH v7 01/10] RISC-V: Mark existing SBI as 0.1 SBI.
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        "Chang, Abner (HPS SW/FW Technologist)" <abner.chang@hpe.com>,
-        Vincent Chen <vincent.chen@sifive.com>, nickhu@andestech.com,
-        Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, clin@suse.com,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Borislav Petkov <bp@suse.de>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Mao Han <han_mao@c-sky.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 10:28 AM Atish Patra <atish.patra@wdc.com> wrote:
->
-> As per the new SBI specification, current SBI implementation version
-> is defined as 0.1 and will be removed/replaced in future. Each of the
-> function call in 0.1 is defined as a separate extension which makes
-> easier to replace them one at a time.
->
-> Rename existing implementation to reflect that. This patch is just
-> a preparatory patch for SBI v0.2 and doesn't introduce any functional
-> changes.
->
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Reviewed-by: Anup Patel <anup@brainfault.org>
-> Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
-> ---
->  arch/riscv/include/asm/sbi.h | 44 ++++++++++++++++++++----------------
->  1 file changed, 24 insertions(+), 20 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 2570c1e683d3..b38bc36f7429 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -1,6 +1,7 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  /*
->   * Copyright (C) 2015 Regents of the University of California
-> + * Copyright (c) 2019 Western Digital Corporation or its affiliates.
->   */
->
->  #ifndef _ASM_RISCV_SBI_H
-> @@ -9,17 +10,17 @@
->  #include <linux/types.h>
->
->  #ifdef CONFIG_RISCV_SBI
-> -#define SBI_SET_TIMER 0
-> -#define SBI_CONSOLE_PUTCHAR 1
-> -#define SBI_CONSOLE_GETCHAR 2
-> -#define SBI_CLEAR_IPI 3
-> -#define SBI_SEND_IPI 4
-> -#define SBI_REMOTE_FENCE_I 5
-> -#define SBI_REMOTE_SFENCE_VMA 6
-> -#define SBI_REMOTE_SFENCE_VMA_ASID 7
-> -#define SBI_SHUTDOWN 8
-> +#define SBI_EXT_0_1_SET_TIMER 0x0
-> +#define SBI_EXT_0_1_CONSOLE_PUTCHAR 0x1
-> +#define SBI_EXT_0_1_CONSOLE_GETCHAR 0x2
-> +#define SBI_EXT_0_1_CLEAR_IPI 0x3
-> +#define SBI_EXT_0_1_SEND_IPI 0x4
-> +#define SBI_EXT_0_1_REMOTE_FENCE_I 0x5
-> +#define SBI_EXT_0_1_REMOTE_SFENCE_VMA 0x6
-> +#define SBI_EXT_0_1_REMOTE_SFENCE_VMA_ASID 0x7
-> +#define SBI_EXT_0_1_SHUTDOWN 0x8
->
-> -#define SBI_CALL(which, arg0, arg1, arg2, arg3) ({             \
-> +#define SBI_CALL(which, arg0, arg1, arg2, arg3) ({             \
+QWRkIG1lZGlhdGVrIGNvZGVjIChNVDYzNTkpIGRyaXZlcg0KDQpNVDYzNTkgc3VwcG9ydCBwbGF5
+YmFjaywgY2FwdHVyZSBhbmQgdm93IGZlYXR1cmUuDQoNCk9uIGRvd25saW5rIHBhdGgsIGl0IGlu
+Y2x1ZGVzIHRocmVlIERBQ3MgZm9yIGhhbmRzZXQsIGhlYWRzZXQsDQphbmQgbGluZW91dCBwYXRo
+LiBPbiB1bmxpbmsgcGF0aCwgaXQgaW5jbHVkZWRzIHRocmVlIEFEQ3MgZm9yDQptYWluIG1pYywg
+c2Vjb25kIG1pYywgM3JkIG1pYywgYW5kIGhlYWRzZXQgbWljLg0KDQpCeSBzY2VuYXJpbywgc2Vs
+ZWN0ICpfTVVYIHdpZGdldCB0byBjcmVhdGUgZGFtcCBwYXRoLg0KQW5kIGJ5IHNlbGVjdCBtaWNf
+dHlwZV9tdXggdG8gY2hvb3NlIERNSUMvQU1JQy8uLi4uDQoNCkZvciBleGFtcGxlLCBzZWxlY3Qg
+dGhlc2UgTVVYIHdpZGdldCB0byBjcmVhdGUgaGVhZHNldCBwYXRoDQooMSkgREFDIEluIE11eCAt
+LT4gIk5vcm1hbCBQYXRoIg0KKDIpIEhQTCBNdXggLS0+ICJBdWRpbyBQbGF5YmFjayINCigzKSBI
+UFIgTXV4IC0tPiAiQXVkaW8gUGxheWJhY2siDQoNCg0KRWFzb24gWWVuICgyKToNCiAgQVNvQzog
+bWVkaWF0ZWs6IG10NjM1OTogYWRkIGNvZGVjIGRvY3VtZW50DQogIEFTb0M6IGNvZGVjOiBtZWRp
+YXRlazogYWRkIG10NjM1OSBjb2RlYyBkcml2ZXINCg0KIERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9zb3VuZC9tdDYzNTkudHh0IHwgICAxNiArDQogc291bmQvc29jL2NvZGVjcy9L
+Y29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICA5ICsNCiBzb3VuZC9zb2MvY29k
+ZWNzL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDIgKw0KIHNvdW5kL3Nv
+Yy9jb2RlY3MvbXQ2MzU5LmMgICAgICAgICAgICAgICAgICAgICAgICAgIHwgNDIxNyArKysrKysr
+KysrKysrKysrKysrKw0KIHNvdW5kL3NvYy9jb2RlY3MvbXQ2MzU5LmggICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgMzIxMiArKysrKysrKysrKysrKysNCiA1IGZpbGVzIGNoYW5nZWQsIDc0NTYg
+aW5zZXJ0aW9ucygrKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3Mvc291bmQvbXQ2MzU5LnR4dA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBzb3VuZC9z
+b2MvY29kZWNzL210NjM1OS5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IHNvdW5kL3NvYy9jb2RlY3Mv
+bXQ2MzU5LmgNCg0KLS0gDQoxLjkuMQ0K
 
-nits: this line should not be changed
-
->         register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);   \
->         register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);   \
->         register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);   \
-> @@ -43,48 +44,50 @@
->
-
-[snip]
-
-Regards,
-Bin
