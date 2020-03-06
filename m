@@ -2,129 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 630DD17C4EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:51:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 140C017C4EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:54:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbgCFRvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:51:17 -0500
-Received: from foss.arm.com ([217.140.110.172]:37088 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbgCFRvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:51:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC28230E;
-        Fri,  6 Mar 2020 09:51:16 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BE3F3F6C4;
-        Fri,  6 Mar 2020 09:51:15 -0800 (PST)
-Date:   Fri, 6 Mar 2020 17:51:13 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] sched/rt: Fix pushing unfit tasks to a better CPU
-Message-ID: <20200306175112.vkpeouec2c47yujl@e107158-lin.cambridge.arm.com>
-References: <20200302132721.8353-1-qais.yousef@arm.com>
- <20200302132721.8353-7-qais.yousef@arm.com>
+        id S1726307AbgCFRyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:54:22 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:36839 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbgCFRyW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 12:54:22 -0500
+Received: by mail-yw1-f66.google.com with SMTP id j71so3012456ywb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 09:54:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4k+80Q3nQjCWteUyAhZ6YcboJW9HYZRVDGVL+kSyi/k=;
+        b=NYYuWZLsNuPaoJFvWxV1iHK0POM0eZCAjXZUdaWD1JjioAw57dddmMC4t52NAHvsw4
+         MblsPian0TkfDhRcdwvYMKUMtizW2OXMiTfa3NdZNEnHVQaD7pQioly3gWIa93F5QolV
+         IEHxYHxp98f14S6f9Rfr4mREwJ3VneZSKDhzguw/WjwY2hPd85fsNwMZhvqhbn9jzVGj
+         JJmKWt7irULB+qlRliAPUNRzGitVXRaASU/QCY3KWg/nZ9eUP64bW1nA/YJPzWXFDd8O
+         RI0mehRTXtEyvinjltr2KEYMt4cBF5Csu2rFHqWxcyGOQNIyJGHvt8AIAhM3HOFGFQ5L
+         R8sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4k+80Q3nQjCWteUyAhZ6YcboJW9HYZRVDGVL+kSyi/k=;
+        b=PrkMJjVgotxeZkoWZAr+7m6UXNHJfkx+JbYCjZX75jqEKIjP54HJEbMqBOtMUpsdyF
+         1V2YT5kH4pXbCFaRJLKG4bWQ5O5v8NMrDpiP3r5oYzsr9TqsTr+MX02+ODeQGHd+vdxY
+         d//PhXxe5ueD2zgtu6C2Z1UZilAX4kx16lNpuGJdxxbSyv8eQyH+Jc+0Vct6gKluTeKW
+         8oL6DufJ7RQp76VbAoz2m2NjI9uowKPZudENt/r2d40nfp9CqMO0/QqC1TLy/YO/BIGM
+         xrjT5mzBNG1VOsBF/LnRjfd/DvKv7ns4uPH8soOmWJDfXUWMbSYewD2Ek54VrghA4pgJ
+         eJnA==
+X-Gm-Message-State: ANhLgQ2pYVDtVSsM2altWfK3ARJXrjU8MgbajuVFzq1fsu0IpleBPTfG
+        LTeKUCP5Gyi2SUw1aHJx89fNecrCGamySFBmZCEtlA==
+X-Google-Smtp-Source: ADFU+vveCrlRXxx62/mHZj6Fy+BNRyuQ9buItwmzP03xyrVo60C0Foz2j5JCM6zIPwo+rEzoyKPoCf9EuPADmoiZ16E=
+X-Received: by 2002:a0d:ca8e:: with SMTP id m136mr5082180ywd.349.1583517260882;
+ Fri, 06 Mar 2020 09:54:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200302132721.8353-7-qais.yousef@arm.com>
-User-Agent: NeoMutt/20171215
+References: <20200306071110.130202-1-irogers@google.com> <20200306071110.130202-3-irogers@google.com>
+ <20200306113855.GA27494@kernel.org>
+In-Reply-To: <20200306113855.GA27494@kernel.org>
+From:   Ian Rogers <irogers@google.com>
+Date:   Fri, 6 Mar 2020 09:54:09 -0800
+Message-ID: <CAP-5=fUaFTR=CKaBiR1QTJ5VqS0xBNW8-YDp_junt6tLkzZdAw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] libperf: avoid redefining _GNU_SOURCE in test
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wei Li <liwei391@huawei.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavan
+On Fri, Mar 6, 2020 at 3:38 AM Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
+>
+> Em Thu, Mar 05, 2020 at 11:11:09PM -0800, Ian Rogers escreveu:
+> > _GNU_SOURCE needs to be globally defined to pick up features like
+> > asprintf. Add a guard against redefinition in this test.
+>
+> Humm, so you're completely sure that the Makefiles that drive the build
+> of this file don't set _GNU_SOURCE? I.e. some explanation in the cset
+> log message about that would help in processing the patch,
 
-On 03/02/20 13:27, Qais Yousef wrote:
-> If a task was running on unfit CPU we could ignore migrating if the
-> priority level of the new fitting CPU is the *same* as the unfit one.
-> 
-> Add an extra check to select_task_rq_rt() to allow the push in case:
-> 
-> 	* p->prio == new_cpu.highest_priority
-> 	* task_fits(p, new_cpu)
-> 
-> Fixes: 804d402fb6f6 ("sched/rt: Make RT capacity-aware")
-> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> ---
+The convention on _GNU_SOURCE isn't very clear. For our builds we set
+_GNU_SOURCE globally hence needing this patch. This patch won't
+interfere with a Makefile setting. Here is some of the inconsistency:
 
-Can you please confirm if you have any objection to this patch? Without it
-I see large delays in the 2 tasks test like I outlined in [1]. It wasn't clear
-from [2] whether you are in agreement now or not.
+tools/perf: sets _GNU_SOURCE:
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/perf/Makefile.config#n309
 
-[1] https://lore.kernel.org/lkml/20200217135306.cjc2225wdlwqiicu@e107158-lin.cambridge.arm.com/
-[2] https://lore.kernel.org/lkml/20200227033608.GN28029@codeaurora.org/
+tools/lib/perf: doesn't set _GNU_SOURCE <-- I'm inconsistent in
+setting _GNU_SOURCE when building files here
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/lib/perf/Makefile
 
-Thanks
+tools/lib/subcmd: sets _GNU_SOURCE
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/lib/subcmd/Makefile#n43
 
---
-Qais Yousef
+Some #defines of _GNU_SOURCE are already guarded to avoid redefinition:
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/lib/bpf/libbpf.c#n13
 
->  kernel/sched/rt.c | 41 ++++++++++++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index ce230bec6847..8aaa442e4867 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1474,20 +1474,35 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
->  	if (test || !rt_task_fits_capacity(p, cpu)) {
->  		int target = find_lowest_rq(p);
->  
-> -		/*
-> -		 * Bail out if we were forcing a migration to find a better
-> -		 * fitting CPU but our search failed.
-> -		 */
-> -		if (!test && target != -1 && !rt_task_fits_capacity(p, target))
-> -			goto out_unlock;
-> +		if (target != -1) {
-> +			bool fit_target = rt_task_fits_capacity(p, target);
->  
-> -		/*
-> -		 * Don't bother moving it if the destination CPU is
-> -		 * not running a lower priority task.
-> -		 */
-> -		if (target != -1 &&
-> -		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
-> -			cpu = target;
-> +			/*
-> +			 * Bail out if we were forcing a migration to find a
-> +			 * better fitting CPU but our search failed.
-> +			 */
-> +			if (!test && !fit_target)
-> +				goto out_unlock;
-> +
-> +			/*
-> +			 * Don't bother moving it if the destination CPU is
-> +			 * not running a lower priority task.
-> +			 */
-> +			if (p->prio < cpu_rq(target)->rt.highest_prio.curr) {
-> +
-> +				cpu = target;
-> +
-> +			} else if (p->prio == cpu_rq(target)->rt.highest_prio.curr) {
-> +
-> +				/*
-> +				 * If the priority is the same and the new CPU
-> +				 * is a better fit, then move, otherwise don't
-> +				 * bother here either.
-> +				 */
-> +				if (fit_target)
-> +					cpu = target;
-> +			}
-> +		}
->  	}
->  
->  out_unlock:
-> -- 
-> 2.17.1
-> 
+Some code explicitly undefines _GNU_SOURCE:
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/lib/str_error_r.c#n2
+
+I don't think this patch hurts, I'm not sure it adds value. I think
+there's a wider cleanup necessary here but I'm not sure what that
+would look like.
+
+Thanks,
+Ian
+
+> - Arnaldo
+>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/lib/perf/tests/test-evlist.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/tools/lib/perf/tests/test-evlist.c b/tools/lib/perf/tests/test-evlist.c
+> > index 6d8ebe0c2504..5a5ff104b668 100644
+> > --- a/tools/lib/perf/tests/test-evlist.c
+> > +++ b/tools/lib/perf/tests/test-evlist.c
+> > @@ -1,5 +1,7 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> > +#ifndef _GNU_SOURCE
+> >  #define _GNU_SOURCE // needed for sched.h to get sched_[gs]etaffinity and CPU_(ZERO,SET)
+> > +#endif
+> >  #include <sched.h>
+> >  #include <stdio.h>
+> >  #include <stdarg.h>
+> > --
+> > 2.25.1.481.gfbce0eb801-goog
+> >
+>
+> --
+>
+> - Arnaldo
