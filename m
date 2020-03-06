@@ -2,431 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EFA417BDB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8108717BD8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 14:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgCFNHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 08:07:43 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:36368 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbgCFNHi (ORCPT
+        id S1727060AbgCFNEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 08:04:08 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:54088 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbgCFNEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 08:07:38 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 37A948030707;
-        Fri,  6 Mar 2020 13:07:37 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qVCK_Moqb4Eg; Fri,  6 Mar 2020 16:07:36 +0300 (MSK)
-From:   <Sergey.Semin@baikalelectronics.ru>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        <soc@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6/6] soc: bt1: Add Baikal-T1 L2-cache Control Block driver
-Date:   Fri, 6 Mar 2020 16:07:21 +0300
-In-Reply-To: <20200306130721.10347-1-Sergey.Semin@baikalelectronics.ru>
-References: <20200306130721.10347-1-Sergey.Semin@baikalelectronics.ru>
+        Fri, 6 Mar 2020 08:04:06 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026D45a2076542;
+        Fri, 6 Mar 2020 07:04:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583499846;
+        bh=YGPGIjMx8NpAqoWqRIFkR0DHWMSpJffHZWteABIBptA=;
+        h=From:To:CC:Subject:Date;
+        b=zDRTKQ6V1wuFj+2ihF5TjttoKFCukldb45qddFXQctpFOblg/vCf6CWpf9yqOtWI8
+         h/Bbd1VDq9byySPBVzCLdSWx9sJ+Fnki177o9d0WBnwJmniyv0tp1KdOGqszUSVAJO
+         gn3pSCF0RTtToHGx1jbCjlTBQDaxH/w6HgDNbWfA=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 026D454T105721
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Mar 2020 07:04:05 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
+ 2020 07:04:05 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Mar 2020 07:04:05 -0600
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026D45Ne066327;
+        Fri, 6 Mar 2020 07:04:05 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Benoit Parrot <bparrot@ti.com>, <stable@vger.kernel.org>
+Subject: [Patch v2] media: ti-vpe: cal: fix a kernel oops when unloading module
+Date:   Fri, 6 Mar 2020 07:08:39 -0600
+Message-ID: <20200306130839.1209-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306130737.37A948030707@mail.baikalelectronics.ru>
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+After the switch to use v4l2_async_notifier_add_subdev() and
+v4l2_async_notifier_cleanup(), unloading the ti_cal module would casue a
+kernel oops.
 
-Baikal-T1 SoC provides a way to tune the MIPS P5600 CM2 L2-cache
-performance up. It can be done by changing the L2-RAM Data/Tag/WS
-latencies in a dedicated register exposed by the system controller.
-The driver added by this commit provides a dts properties-based and
-sysfs-based interface for it.
+This was root cause to the fact that v4l2_async_notifier_cleanup() tries
+to kfree the asd pointer passed into v4l2_async_notifier_add_subdev().
 
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: soc@kernel.org
+In our case the asd reference was from a statically allocated struct.
+So in effect v4l2_async_notifier_cleanup() was trying to free a pointer
+that was not kalloc.
+
+So here we switch to using a kzalloc struct instead of a static one.
+To acheive this we re-order some of the calls to prevent asd allocation
+from leaking.
+
+Fixes: d079f94c9046 ("media: platform: Switch to v4l2_async_notifier_add_subdev")
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
 ---
- drivers/soc/baikal-t1/Kconfig  |  12 ++
- drivers/soc/baikal-t1/Makefile |   1 +
- drivers/soc/baikal-t1/l2-ctl.c | 325 +++++++++++++++++++++++++++++++++
- 3 files changed, 338 insertions(+)
- create mode 100644 drivers/soc/baikal-t1/l2-ctl.c
+Changes since v1:
+- fix asd allocation leak
 
-diff --git a/drivers/soc/baikal-t1/Kconfig b/drivers/soc/baikal-t1/Kconfig
-index a021abea102f..b23675d4a097 100644
---- a/drivers/soc/baikal-t1/Kconfig
-+++ b/drivers/soc/baikal-t1/Kconfig
-@@ -34,4 +34,16 @@ config BT1_APB_EHB
+ drivers/media/platform/ti-vpe/cal.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
+index 6d4cbb8782ed..6c8f3702eac0 100644
+--- a/drivers/media/platform/ti-vpe/cal.c
++++ b/drivers/media/platform/ti-vpe/cal.c
+@@ -372,8 +372,6 @@ struct cal_ctx {
+ 	struct v4l2_subdev	*sensor;
+ 	struct v4l2_fwnode_endpoint	endpoint;
  
- 	  If unsure, say N.
+-	struct v4l2_async_subdev asd;
+-
+ 	struct v4l2_fh		fh;
+ 	struct cal_dev		*dev;
+ 	struct cc_data		*cc;
+@@ -2032,7 +2030,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
  
-+config BT1_L2_CTL
-+	bool "Baikal-T1 CM2 L2 Cache Control Block"
-+	depends on SOC_BAIKAL_T1 && OF
-+	help
-+	  Baikal-T1 CPU is based on the MIPS P5600 Warrior IP-core. The CPU
-+	  resides Coherency Manager V2 with embedded 1MB L2-cache. It's
-+	  possible to tune the L2 cache performance up by setting the data,
-+	  tags and way-select latencies. This driver provides a dts
-+	  properties-based and sysfs interface for it.
+ 	parent = pdev->dev.of_node;
+ 
+-	asd = &ctx->asd;
+ 	endpoint = &ctx->endpoint;
+ 
+ 	ep_node = NULL;
+@@ -2079,8 +2076,6 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
+ 		ctx_dbg(3, ctx, "can't get remote parent\n");
+ 		goto cleanup_exit;
+ 	}
+-	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
+-	asd->match.fwnode = of_fwnode_handle(sensor_node);
+ 
+ 	v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep_node), endpoint);
+ 
+@@ -2110,9 +2105,17 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
+ 
+ 	v4l2_async_notifier_init(&ctx->notifier);
+ 
++	asd = kzalloc(sizeof(*asd), GFP_KERNEL);
++	if (!asd)
++		goto cleanup_exit;
 +
-+	  If unsure, say N.
++	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
++	asd->match.fwnode = of_fwnode_handle(sensor_node);
 +
- endmenu
-diff --git a/drivers/soc/baikal-t1/Makefile b/drivers/soc/baikal-t1/Makefile
-index ffb035600e01..70918b79e17f 100644
---- a/drivers/soc/baikal-t1/Makefile
-+++ b/drivers/soc/baikal-t1/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_BT1_AXI_EHB) += axi-ehb.o
- obj-$(CONFIG_BT1_APB_EHB) += apb-ehb.o
-+obj-$(CONFIG_BT1_L2_CTL) += l2-ctl.o
-diff --git a/drivers/soc/baikal-t1/l2-ctl.c b/drivers/soc/baikal-t1/l2-ctl.c
-new file mode 100644
-index 000000000000..2136b9b8bad5
---- /dev/null
-+++ b/drivers/soc/baikal-t1/l2-ctl.c
-@@ -0,0 +1,325 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020 BAIKAL ELECTRONICS, JSC
-+ *
-+ * Authors:
-+ *   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-+ *
-+ * Baikal-T1 CM2 L2-cache Control Block driver.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+#include <linux/device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/sysfs.h>
-+#include <linux/of.h>
-+
-+#include "common.h"
-+
-+#define L2_CTL_REG			0x0
-+#define L2_CTL_DATA_STALL_FLD		0
-+#define L2_CTL_DATA_STALL_MASK		GENMASK(1, L2_CTL_DATA_STALL_FLD)
-+#define L2_CTL_TAG_STALL_FLD		2
-+#define L2_CTL_TAG_STALL_MASK		GENMASK(3, L2_CTL_TAG_STALL_FLD)
-+#define L2_CTL_WS_STALL_FLD		4
-+#define L2_CTL_WS_STALL_MASK		GENMASK(5, L2_CTL_WS_STALL_FLD)
-+#define L2_CTL_SET_CLKRATIO		BIT(13)
-+#define L2_CTL_CLKRATIO_LOCK		BIT(31)
-+
-+#define L2_CTL_STALL_MIN		0
-+#define L2_CTL_STALL_MAX		3
-+#define L2_CTL_STALL_SET_DELAY_US	1
-+#define L2_CTL_STALL_SET_TOUT_US	1000
-+
-+/*
-+ * struct l2_ctl - Baikal-T1 L2 Control block private data.
-+ * @dev: Pointer to the device structure.
-+ * @reg: Regmap of the control register.
-+ */
-+struct l2_ctl {
-+	struct device *dev;
-+
-+	struct regmap *reg;
-+};
-+
-+/*
-+ * enum l2_ctl_stall - Baikal-T1 L2-cache-RAM stall identifier.
-+ * @L2_WSSTALL: Way-select latency.
-+ * @L2_TAGSTALL: Tag latency.
-+ * @L2_DATASTALL: Data latency.
-+ */
-+enum l2_ctl_stall {
-+	L2_WS_STALL,
-+	L2_TAG_STALL,
-+	L2_DATA_STALL
-+};
-+
-+/*
-+ * struct l2_ctl_device_attribute - Baikal-T1 L2-cache device attribute.
-+ * @dev_attr: Actual sysfs device attribute.
-+ * @id: L2-cache stall field identifier.
-+ */
-+struct l2_ctl_device_attribute {
-+	struct device_attribute dev_attr;
-+	enum l2_ctl_stall id;
-+};
-+#define to_l2_ctl_dev_attr(_dev_attr) \
-+	container_of(_dev_attr, struct l2_ctl_device_attribute, dev_attr)
-+
-+#define L2_CTL_ATTR_RW(_name, _prefix, _id) \
-+	struct l2_ctl_device_attribute l2_ctl_attr_##_name = \
-+		{ __ATTR(_name, 0644, _prefix##_show, _prefix##_store),	_id }
-+
-+static int l2_ctl_get_latency(struct l2_ctl *l2, enum l2_ctl_stall id, u32 *val)
-+{
-+	u32 data = 0;
-+	int ret;
-+
-+	ret = regmap_read(l2->reg, L2_CTL_REG, &data);
-+	if (ret)
-+		return ret;
-+
-+	switch (id) {
-+	case L2_WS_STALL:
-+		*val = BT1_GET_FLD(L2_CTL_WS_STALL, data);
-+		break;
-+	case L2_TAG_STALL:
-+		*val = BT1_GET_FLD(L2_CTL_TAG_STALL, data);
-+		break;
-+	case L2_DATA_STALL:
-+		*val = BT1_GET_FLD(L2_CTL_DATA_STALL, data);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int l2_ctl_set_latency(struct l2_ctl *l2, enum l2_ctl_stall id, u32 val)
-+{
-+	u32 mask = 0, data = 0;
-+	int ret;
-+
-+	val = clamp_val(val, L2_CTL_STALL_MIN, L2_CTL_STALL_MAX);
-+
-+	switch (id) {
-+	case L2_WS_STALL:
-+		data = BT1_SET_FLD(L2_CTL_WS_STALL, 0, val);
-+		mask = L2_CTL_WS_STALL_MASK;
-+		break;
-+	case L2_TAG_STALL:
-+		data = BT1_SET_FLD(L2_CTL_TAG_STALL, 0, val);
-+		mask = L2_CTL_TAG_STALL_MASK;
-+		break;
-+	case L2_DATA_STALL:
-+		data = BT1_SET_FLD(L2_CTL_DATA_STALL, 0, val);
-+		mask = L2_CTL_DATA_STALL_MASK;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	data |= L2_CTL_SET_CLKRATIO;
-+	mask |= L2_CTL_SET_CLKRATIO;
-+
-+	ret = regmap_update_bits(l2->reg, L2_CTL_REG, mask, data);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_read_poll_timeout(l2->reg, L2_CTL_REG, data,
-+					data & L2_CTL_CLKRATIO_LOCK,
-+					L2_CTL_STALL_SET_DELAY_US,
-+					L2_CTL_STALL_SET_TOUT_US);
-+}
-+
-+static void l2_ctl_clear_data(void *data)
-+{
-+	struct l2_ctl *l2 = data;
-+	struct platform_device *pdev = to_platform_device(l2->dev);
-+
-+	platform_set_drvdata(pdev, NULL);
-+}
-+
-+static struct l2_ctl *l2_ctl_create_data(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct l2_ctl *l2;
-+	int ret;
-+
-+	l2 = devm_kzalloc(dev, sizeof(*l2), GFP_KERNEL);
-+	if (!l2)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = devm_add_action(dev, l2_ctl_clear_data, l2);
-+	if (ret) {
-+		dev_err(dev, "Can't add L2 CTL data clear action\n");
-+		return ERR_PTR(ret);
-+	}
-+
-+	l2->dev = dev;
-+	platform_set_drvdata(pdev, l2);
-+
-+	return l2;
-+}
-+
-+static int l2_ctl_request_reg(struct l2_ctl *l2)
-+{
-+	l2->reg = device_node_to_regmap(l2->dev->of_node);
-+	if (IS_ERR(l2->reg)) {
-+		dev_err(l2->dev, "Couldn't get L2 CTL register map\n");
-+		return PTR_ERR(l2->reg);
-+	}
-+
-+	return 0;
-+}
-+
-+static int l2_ctl_of_parse_property(struct l2_ctl *l2, enum l2_ctl_stall id,
-+				    const char *propname)
-+{
-+	int ret = 0;
-+	u32 data;
-+
-+	if (of_property_read_u32(l2->dev->of_node, propname, &data)) {
-+		ret = l2_ctl_set_latency(l2, id, data);
-+		if (ret)
-+			dev_err(l2->dev, "Invalid value of '%s'\n", propname);
-+	}
-+
-+	return ret;
-+}
-+
-+static int l2_ctl_of_parse(struct l2_ctl *l2)
-+{
-+	int ret;
-+
-+	ret = l2_ctl_of_parse_property(l2, L2_WS_STALL, "be,l2-ws-latency");
-+	if (ret)
-+		return ret;
-+
-+	ret = l2_ctl_of_parse_property(l2, L2_TAG_STALL, "be,l2-tag-latency");
-+	if (ret)
-+		return ret;
-+
-+	return l2_ctl_of_parse_property(l2, L2_DATA_STALL,
-+					"be,l2-data-latency");
-+}
-+
-+static ssize_t l2_ctl_latency_show(struct device *dev,
-+				   struct device_attribute *attr,
-+				   char *buf)
-+{
-+	struct l2_ctl_device_attribute *devattr = to_l2_ctl_dev_attr(attr);
-+	struct l2_ctl *l2 = dev_get_drvdata(dev);
-+	u32 data;
-+	int ret;
-+
-+	ret = l2_ctl_get_latency(l2, devattr->id, &data);
-+	if (ret)
-+		return ret;
-+
-+	return scnprintf(buf, PAGE_SIZE, "%u\n", data);
-+}
-+
-+static ssize_t l2_ctl_latency_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct l2_ctl_device_attribute *devattr = to_l2_ctl_dev_attr(attr);
-+	struct l2_ctl *l2 = dev_get_drvdata(dev);
-+	u32 data;
-+	int ret;
-+
-+	if (kstrtouint(buf, 0, &data) < 0)
-+		return -EINVAL;
-+
-+	ret = l2_ctl_set_latency(l2, devattr->id, data);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+static L2_CTL_ATTR_RW(l2_ws_latency, l2_ctl_latency, L2_WS_STALL);
-+static L2_CTL_ATTR_RW(l2_tag_latency, l2_ctl_latency, L2_TAG_STALL);
-+static L2_CTL_ATTR_RW(l2_data_latency, l2_ctl_latency, L2_DATA_STALL);
-+
-+static struct attribute *l2_ctl_sysfs_attrs[] = {
-+	&l2_ctl_attr_l2_ws_latency.dev_attr.attr,
-+	&l2_ctl_attr_l2_tag_latency.dev_attr.attr,
-+	&l2_ctl_attr_l2_data_latency.dev_attr.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(l2_ctl_sysfs);
-+
-+static void l2_ctl_remove_sysfs(void *data)
-+{
-+	struct l2_ctl *l2 = data;
-+
-+	device_remove_groups(l2->dev, l2_ctl_sysfs_groups);
-+}
-+
-+static int l2_ctl_init_sysfs(struct l2_ctl *l2)
-+{
-+	int ret;
-+
-+	ret = device_add_groups(l2->dev, l2_ctl_sysfs_groups);
-+	if (ret) {
-+		dev_err(l2->dev, "Failed to create L2 CTL sysfs nodes\n");
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(l2->dev, l2_ctl_remove_sysfs, l2);
-+	if (ret)
-+		dev_err(l2->dev, "Can't add L2 CTL sysfs remove action\n");
-+
-+	return ret;
-+}
-+
-+static int l2_ctl_probe(struct platform_device *pdev)
-+{
-+	struct l2_ctl *l2;
-+	int ret;
-+
-+	l2 = l2_ctl_create_data(pdev);
-+	if (IS_ERR(l2))
-+		return PTR_ERR(l2);
-+
-+	ret = l2_ctl_request_reg(l2);
-+	if (ret)
-+		return ret;
-+
-+	ret = l2_ctl_of_parse(l2);
-+	if (ret)
-+		return ret;
-+
-+	ret = l2_ctl_init_sysfs(l2);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(l2->dev, "L2-cache control driver installed\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id l2_ctl_of_match[] = {
-+	{ .compatible = "be,bt1-l2-ctl" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, l2_ctl_of_match);
-+
-+static struct platform_driver l2_ctl_driver = {
-+	.probe = l2_ctl_probe,
-+	.driver = {
-+		.name = "bt1-l2-ctl",
-+		.of_match_table = of_match_ptr(l2_ctl_of_match)
-+	}
-+};
-+module_platform_driver(l2_ctl_driver);
-+
-+MODULE_AUTHOR("Serge Semin <Sergey.Semin@baikalelectronics.ru>");
-+MODULE_DESCRIPTION("Baikal-T1 L2-cache driver");
-+MODULE_LICENSE("GPL v2");
+ 	ret = v4l2_async_notifier_add_subdev(&ctx->notifier, asd);
+ 	if (ret) {
+ 		ctx_err(ctx, "Error adding asd\n");
++		kfree(asd);
+ 		goto cleanup_exit;
+ 	}
+ 
 -- 
-2.25.1
+2.17.1
 
