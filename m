@@ -2,60 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB7BF17C20C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C896A17C1F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 16:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgCFPny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 10:43:54 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:35292 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbgCFPny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:43:54 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 66F65200BF2;
-        Fri,  6 Mar 2020 16:43:52 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EED8A200BED;
-        Fri,  6 Mar 2020 16:43:48 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6F9A240294;
-        Fri,  6 Mar 2020 23:43:44 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] thermal: add COMPILE_TEST support for i.MX8MM
-Date:   Fri,  6 Mar 2020 23:37:37 +0800
-Message-Id: <1583509057-8197-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727071AbgCFPjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 10:39:06 -0500
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:33209 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgCFPjG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 10:39:06 -0500
+Received: by mail-pg1-f173.google.com with SMTP id m5so1258843pgg.0;
+        Fri, 06 Mar 2020 07:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:message-id:in-reply-to:references:subject
+         :mime-version:content-transfer-encoding;
+        bh=s9BouoWrv85i1Z+k9ck/8nMkcn5seIvz/uJLFlUOq14=;
+        b=qAOXle/3VqVVFQ+RMj22i5BdFRMvgGhK4r25dNXVHSmWuCg8+QsWLOB8w20BB+mjGK
+         mdiVXs2RH1Y8rvdK04JBcMjfi4QxRB3qidrlkuvKQV5UO3L9O6zjsxy3b1wXq82ZMNVD
+         F073UUcXf86BsrdduYbMZY90CTyqzdOAIO6LcFNhI+A2hJMfto+AKlED2ji9G32YhouR
+         BF1MKhsPrFtUwZsqjv+ubAUPKa+rCmsqwgKtl/l65oHyeUC2TiJ4gmisMbtby/9IemY5
+         3YskNHjM1l8MZvSrScVAa8+XZ0VC7j1vHQMTwgv2l1wi8Vjh3njcZW+gqJfUmY6DeZOA
+         YhOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
+         :references:subject:mime-version:content-transfer-encoding;
+        bh=s9BouoWrv85i1Z+k9ck/8nMkcn5seIvz/uJLFlUOq14=;
+        b=mSeF/ODpSG0dd0zUzqEsCZr+tR5pPrsn2AN4PBaxVcKf1VAOEuRXqWs+YHwAmSf7hg
+         5p8cbQOxskKV5Ed12obNpig8N1r9+48cj4CtTzYdRtTtMa9L2vV+MkW9tVcmIMxOf0Cq
+         APr+/2HtmsSP1uwDAk1YDMhHRYClykc66/OgtdZQLcuwF2NK3y+jsi7CBmoNDnH20n+Q
+         ryBHrWSTX82Hh2ElfSkIKL8Mvdaw/NsluEoNqoJL6RlPPksK4r/ju6s24snYncV/cCcx
+         wom/WdjYsKFtLwTfDkHlGVHrkErLWia4jaQNjuUUuZ0QIqHlz5Z/1EyBdukVLkf20CH2
+         XbhA==
+X-Gm-Message-State: ANhLgQ1KdmcGzGtgl0XypVMCictcMatXbjWX2lFK9D/ouRYl7GpWBCzg
+        r8g1+gCZct5AFGLaRwZ3AL8=
+X-Google-Smtp-Source: ADFU+vts5rXDh8xSLUCqx2lq62PN5SnUMcIArJFJAh9hAHF58VqRlLMWbiTWMjHGnzUe1csTmHupFA==
+X-Received: by 2002:a63:f757:: with SMTP id f23mr3874563pgk.223.1583509145043;
+        Fri, 06 Mar 2020 07:39:05 -0800 (PST)
+Received: from localhost ([184.63.162.180])
+        by smtp.gmail.com with ESMTPSA id k5sm9692031pju.29.2020.03.06.07.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 07:39:04 -0800 (PST)
+Date:   Fri, 06 Mar 2020 07:38:55 -0800
+From:   John Fastabend <john.fastabend@gmail.com>
+To:     Lorenz Bauer <lmb@cloudflare.com>, john.fastabend@gmail.com,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <5e626e8f5fd69_17502acca07205b46e@john-XPS-13-9370.notmuch>
+In-Reply-To: <20200304101318.5225-11-lmb@cloudflare.com>
+References: <20200304101318.5225-1-lmb@cloudflare.com>
+ <20200304101318.5225-11-lmb@cloudflare.com>
+Subject: RE: [PATCH bpf-next v3 10/12] selftests: bpf: add tests for UDP
+ sockets in sockmap
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add COMPILE_TEST support to i.MX8MM thermal driver for better compile
-testing coverage.
+Lorenz Bauer wrote:
+> Expand the TCP sockmap test suite to also check UDP sockets.
+> 
+> Signed-off-by: Jakub Sitnicki <jakub@cloudflare.com>
+> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+> ---
+>  .../selftests/bpf/prog_tests/sockmap_listen.c | 157 ++++++++++++++----
+>  1 file changed, 127 insertions(+), 30 deletions(-)
+> 
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/thermal/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 4d6753f..91af271 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -265,7 +265,7 @@ config IMX_SC_THERMAL
- 
- config IMX8MM_THERMAL
- 	tristate "Temperature sensor driver for Freescale i.MX8MM SoC"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || COMPILE_TEST
- 	depends on OF
- 	help
- 	  Support for Thermal Monitoring Unit (TMU) found on Freescale i.MX8MM SoC.
--- 
-2.7.4
-
+Acked-by: John Fastabend <john.fastabend@gmail.com>
