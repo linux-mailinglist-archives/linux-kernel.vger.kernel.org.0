@@ -2,406 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 771C517C612
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B999717C605
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 20:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCFTMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 14:12:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39678 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727252AbgCFTMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 14:12:34 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1775D20684;
-        Fri,  6 Mar 2020 19:12:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583521953;
-        bh=xWEkUoNlSSMmHPDfQ0Md+CAJAvH4MPyz6CiY1kvKWFw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tarYQSTCvhZUV99ulZxwWM5pIeB8Wc0GhMXy2UF2ejkmCdFQoaFh6QazysyMZ2eJW
-         rPk/LVgu5t5SnW2gnQvDNdvebnlRJEK70CWeu3l4DXnH0WZ7Dj54B73wjmaTGHR44X
-         gKER+4R4Cb7sBCNfkykKkTV0ibHldzqAl+33xH5Y=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Ian Rogers <irogers@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        id S1726368AbgCFTLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 14:11:54 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37437 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgCFTLx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 14:11:53 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l20so879954qtp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 11:11:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FN8/MXzRR/AXYFjO0vMe+zxEp/BtF7qqa7fcYg79KnU=;
+        b=BUu6Upe9S3G6I5PeW0Q1FQ85eIdUbzTkGvjmhNjGzqT1r73rK6HoKQUOwGc0cV6us6
+         DTyGQRyLf2sEzesiNwzJw7peGyyI+m2vMW9HIdkjFzAUtI6AmJAIIeMHyHuG5wWJBVQj
+         OaC07p4s7+ken1hfrfc6OMhT/E1J3HOlV+/84=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FN8/MXzRR/AXYFjO0vMe+zxEp/BtF7qqa7fcYg79KnU=;
+        b=mM3/KaBuLiHTtOzNHkH0xyLLo55eKDZ+TMnbr8sJ1dlISUH7jRBbgMJAQ7SxYS+Fj+
+         WM0QHf/Ax4pOlC9CvmYnKBaPuN+N9rJON8kuI0/LU55xZcMLjGvSFiBm/pDV4xNFTJSl
+         Y/emYfXcwZ8EKC93gRZoWNx9H1AIzP2QGpQPQH1L97ihmUmpU5lquFx+SZ8AfDBpzrvA
+         7jDZKARPjrmGaoi33yVXIJm4f2TK+6gjtobn/ebPli6PipJEwf0rXiyoyp1BTTQ1yz6W
+         7Gi+Mg2keOw6PNixtMoC9VW517wJZHiPmPhT0afK7T3JtiSX15EKGJsYTz4flAYT68r3
+         j2Zw==
+X-Gm-Message-State: ANhLgQ1Y1xGUMUOuqBgBh4/7PCw7BZaStaXl9ZED32+XMmli2yBWekAC
+        B7lJaKf/mgHfzsRtRCLToOB6uw==
+X-Google-Smtp-Source: ADFU+vtFy4BcPn+yf6hyAkfbmKq4CxaGZBHUzQrdXiTB9EculEo5fZpCUaURb7/lshZypIXtQZY9xA==
+X-Received: by 2002:ac8:4c86:: with SMTP id j6mr4354875qtv.139.1583521911975;
+        Fri, 06 Mar 2020 11:11:51 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id v12sm16689955qti.84.2020.03.06.11.11.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 11:11:51 -0800 (PST)
+Date:   Fri, 6 Mar 2020 14:11:51 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     paulmck@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Wei Li <liwei391@huawei.com>
-Subject: [PATCH 6/6] tools: Fix off-by 1 relative directory includes
-Date:   Fri,  6 Mar 2020 16:11:44 -0300
-Message-Id: <20200306191144.12762-12-acme@kernel.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200306191144.12762-1-acme@kernel.org>
-References: <20200306191144.12762-1-acme@kernel.org>
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Subject: Re: [PATCH v2 3/9] rcu,tracing: Create trace_rcu_{enter,exit}()
+Message-ID: <20200306191151.GA60713@google.com>
+References: <20200213223918.GN2935@paulmck-ThinkPad-P72>
+ <20200214151906.b1354a7ed6b01fc3bf2de862@kernel.org>
+ <20200215145934.GD2935@paulmck-ThinkPad-P72>
+ <20200217175519.12a694a969c1a8fb2e49905e@kernel.org>
+ <20200217163112.GM2935@paulmck-ThinkPad-P72>
+ <20200218133335.c87d7b2399ee6532bf28b74a@kernel.org>
+ <20200218124609.1a33f868@gandalf.local.home>
+ <20200218201806.GI2935@paulmck-ThinkPad-P72>
+ <20200219114510.6f942b56868a97e06352738c@kernel.org>
+ <20200307030149.1f70bdb019ad5ea896bce5a7@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307030149.1f70bdb019ad5ea896bce5a7@kernel.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Rogers <irogers@google.com>
+On Sat, Mar 07, 2020 at 03:01:49AM +0900, Masami Hiramatsu wrote:
+> Hi,
+> 
+> On Wed, 19 Feb 2020 11:45:10 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > On Tue, 18 Feb 2020 12:18:06 -0800
+> > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > 
+> > > On Tue, Feb 18, 2020 at 12:46:09PM -0500, Steven Rostedt wrote:
+> > > > On Tue, 18 Feb 2020 13:33:35 +0900
+> > > > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > > > 
+> > > > > On Mon, 17 Feb 2020 08:31:12 -0800
+> > > > > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > > > > >   
+> > > > > > > BTW, if you consider the x86 specific code is in the generic file,
+> > > > > > > we can move NOKPROBE_SYMBOL() in arch/x86/kernel/traps.c.
+> > > > > > > (Sorry, I've hit this idea right now)  
+> > > > > > 
+> > > > > > Might this affect other architectures with NMIs and probe-like things?
+> > > > > > If so, it might make sense to leave it where it is.  
+> > > > > 
+> > > > > Yes, git grep shows that arm64 is using rcu_nmi_enter() in
+> > > > > debug_exception_enter().
+> > > > > OK, let's keep it, but maybe it is good to update the comment for
+> > > > > arm64 too. What about following?
+> > > > > 
+> > > > > +/*
+> > > > > + * All functions in do_int3() on x86, do_debug_exception() on arm64 must be
+> > > > > + * marked NOKPROBE before kprobes handler is called.
+> > > > > + * ist_enter() on x86 and debug_exception_enter() on arm64 which is called
+> > > > > + * before kprobes handle happens to call rcu_nmi_enter() which means
+> > > > > + * that rcu_nmi_enter() must be marked NOKRPOBE.
+> > > > > + */
+> > > > > 
+> > > > 
+> > > > Ah, why don't we just say...
+> > > > 
+> > > > /*
+> > > >  * All functions called in the breakpoint trap handler (e.g. do_int3()
+> > > >  * on x86), must not allow kprobes until the kprobe breakpoint handler
+> > > >  * is called, otherwise it can cause an infinite recursion.
+> > > >  * On some archs, rcu_nmi_enter() is called in the breakpoint handler
+> > > >  * before the kprobe breakpoint handler is called, thus it must be
+> > > >  * marked as NOKPROBE.
+> > > >  */
+> > > > 
+> > > > And that way we don't make this an arch specific comment.
+> > > 
+> > > That looks good to me.  Masami, does this work for you?
+> > 
+> > Yes, that looks good to me too :)
+> 
+> Oops, I'm guilty!
+> Sorry *rcu_nmi_exit()* also must be NOKPROBE, since even if we could catch
+> a recursive kprobe call, we can only skip the kprobe handler, but we must
+> exit from do_int3() and hit rcu_nmi_exit() again!
+> 
+> [45235.497591] Unrecoverable kprobe detected.
+> [45235.501400] Dumping kprobe:
+> [45235.502433] Name: (null)
+> [45235.502433] Offset: 0
+> [45235.502433] Address: rcu_nmi_exit+0x0/0x290
+> [45235.504044] ------------[ cut here ]------------
+> [45235.504855] kernel BUG at arch/x86/kernel/kprobes/core.c:646!
+> [45235.505816] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+> [45235.506615] CPU: 7 PID: 143 Comm: sh Not tainted 5.6.0-rc3+ #143
+> [45235.507662] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
+> [45235.509764] RIP: 0010:reenter_kprobe.cold+0x14/0x16
+> [45235.510630] Code: 48 8b 75 10 48 c7 c7 f0 70 0e 82 48 8b 56 28 e8 22 91 08 00 0f 0b 48 c7 c7 20 71 0e 82 e8 14 91 08 00 48 89 ef e8 23 ee 0f 00 <0f> 0b 48 89 ee 48 c7 c7 48 71 0e 82 e8 fb 90 08 00 e9 c3 fc ff ff
+> [45235.513948] RSP: 0018:ffffc90000347bf8 EFLAGS: 00010046
+> [45235.514906] RAX: 0000000000000036 RBX: 0000000000017f20 RCX: 0000000000000000
+> [45235.516109] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+> [45235.517278] RBP: ffff88807c9820c0 R08: 0000000000000000 R09: 0000000000000001
+> [45235.518415] R10: 0000000000000000 R11: ffff88807c9d1f18 R12: ffff88807d9d7f20
+> [45235.519609] R13: ffffc90000347c68 R14: ffffffff810e8a60 R15: ffffffff810e8a61
+> [45235.520787] FS:  0000000001d9a8c0(0000) GS:ffff88807d9c0000(0000) knlGS:0000000000000000
+> [45235.522198] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [45235.523172] CR2: 0000000001da9000 CR3: 000000007a880000 CR4: 00000000000006a0
+> [45235.524288] Call Trace:
+> [45235.524825]  kprobe_int3_handler+0x74/0x150
+> [45235.525627]  do_int3+0x36/0xf0
+> [45235.526244]  int3+0x42/0x50
+> [45235.526767] RIP: 0010:rcu_nmi_exit+0x1/0x290
+> [45235.527551] Code: a2 0d 82 be c2 01 00 00 48 c7 c7 d5 44 0f 82 c6 05 e7 ac 24 01 01 e8 1f ba fd ff eb b8 66 66 2e 0f 1f 84 00 00 00 00 00 90 cc <57> 41 56 41 55 41 54 55 48 c7 c5 40 c2 02 00 53 48 89 eb e8 77 75
+> [45235.530898] RSP: 0018:ffffc90000347d40 EFLAGS: 00000046
+> [45235.531816] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> [45235.533001] RDX: 0000000000000001 RSI: ffffffff8101e1fe RDI: ffffffff8101e1fe
+> [45235.534252] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+> [45235.535516] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> [45235.536759] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> [45235.537945]  ? ist_exit+0xe/0x20
+> [45235.538593]  ? ist_exit+0xe/0x20
+> [45235.539239]  ? rcu_nmi_exit+0x1/0x290
+> [45235.541182]  int3+0x42/0x50
+> [45235.541687] RIP: 0010:0xffffffffa000005a
+> [45235.542363] Code: 2e 16 13 e1 00 00 00 00 00 00 00 00 89 f8 e9 1f 16 13 e1 00 00 00 00 00 00 00 00 89 f8 e9 20 16 13 e1 00 00 00 00 00 00 00 00 <41> 57 e9 01 8a 0e e1 00 00 00 00 00 00 00 00 41 57 e9 f2 22 26 e1
+> [45235.545628] RSP: 0018:ffffc90000347e20 EFLAGS: 00000146
+> [45235.546596] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> [45235.547989] RDX: 0000000000000001 RSI: ffffffff8101e1fe RDI: ffffffff8101e1fe
+> [45235.550183] RBP: 0000000000000000 R08: 0000000000000001 R09: ffff88807d2aa000
+> [45235.551591] R10: 0000000000000a4c R11: ffff88807bfec600 R12: 0000000000000000
+> [45235.552893] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> [45235.554633]  ? ist_exit+0xe/0x20
+> [45235.555537]  ? ist_exit+0xe/0x20
+> [45235.556565]  ? rcu_nmi_exit+0x1/0x290
+> [45235.557909]  ? int3+0x42/0x50
+> [45235.559156]  ? 0xffffffffa0000069
+> [45235.560547]  ? vfs_read+0x1/0x150
+> [45235.561522]  ? ksys_read+0x60/0xe0
+> [45235.562458]  ? do_syscall_64+0x4b/0x1e0
+> [45235.563404]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [45235.564705] Modules linked in:
+> [45235.565556] ---[ end trace 870af8724dba9ac8 ]---
+> 
+> So all functions called from do_int3() must be NOKPROBE.
 
-This is currently working due to extra include paths in the build.
+Makes sense, I am curious though why you thought before that the breakpoint
+recursion was not possible *after* kprobe_int3_handler(). In the below thread
+you said it is to be marked only for functions *before*
+kprobe_int3_handler(). Was there a reason?
+https://lore.kernel.org/lkml/154998793571.31052.11301258949601150994.stgit@devbox/
 
-Committer testing:
+thanks,
 
-  $ cd tools/include/uapi/asm/
+ - Joel
 
-Before this patch:
 
-  $ ls -la ../../arch/x86/include/uapi/asm/errno.h
-  ls: cannot access '../../arch/x86/include/uapi/asm/errno.h': No such file or directory
-  $
-
-After this patch;
-
-  $ ls -la ../../../arch/x86/include/uapi/asm/errno.h
-  -rw-rw-r--. 1 acme acme 31 Feb 20 12:42 ../../../arch/x86/include/uapi/asm/errno.h
-  $
-
-Check that that is still under tools/, i.e. hasn't escaped into the main
-kernel sources:
-
-  $ cd ../../../arch/x86/include/uapi/asm/
-  $ pwd
-  /home/acme/git/perf/tools/arch/x86/include/uapi/asm
-  $
-
-Signed-off-by: Ian Rogers <irogers@google.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexios Zavras <alexios.zavras@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Igor Lubashev <ilubashe@akamai.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wei Li <liwei391@huawei.com>
-Link: http://lore.kernel.org/lkml/20200306071110.130202-2-irogers@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/uapi/asm/errno.h           | 14 +++++------
- tools/perf/arch/arm64/util/arm-spe.c     | 20 ++++++++--------
- tools/perf/arch/arm64/util/perf_regs.c   |  2 +-
- tools/perf/arch/powerpc/util/perf_regs.c |  4 ++--
- tools/perf/arch/x86/util/auxtrace.c      | 14 +++++------
- tools/perf/arch/x86/util/event.c         | 12 +++++-----
- tools/perf/arch/x86/util/header.c        |  4 ++--
- tools/perf/arch/x86/util/intel-bts.c     | 24 +++++++++----------
- tools/perf/arch/x86/util/intel-pt.c      | 30 ++++++++++++------------
- tools/perf/arch/x86/util/machine.c       |  6 ++---
- tools/perf/arch/x86/util/perf_regs.c     |  8 +++----
- tools/perf/arch/x86/util/pmu.c           |  6 ++---
- 12 files changed, 72 insertions(+), 72 deletions(-)
-
-diff --git a/tools/include/uapi/asm/errno.h b/tools/include/uapi/asm/errno.h
-index ce3c5945a1c4..637189ec1ab9 100644
---- a/tools/include/uapi/asm/errno.h
-+++ b/tools/include/uapi/asm/errno.h
-@@ -1,18 +1,18 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #if defined(__i386__) || defined(__x86_64__)
--#include "../../arch/x86/include/uapi/asm/errno.h"
-+#include "../../../arch/x86/include/uapi/asm/errno.h"
- #elif defined(__powerpc__)
--#include "../../arch/powerpc/include/uapi/asm/errno.h"
-+#include "../../../arch/powerpc/include/uapi/asm/errno.h"
- #elif defined(__sparc__)
--#include "../../arch/sparc/include/uapi/asm/errno.h"
-+#include "../../../arch/sparc/include/uapi/asm/errno.h"
- #elif defined(__alpha__)
--#include "../../arch/alpha/include/uapi/asm/errno.h"
-+#include "../../../arch/alpha/include/uapi/asm/errno.h"
- #elif defined(__mips__)
--#include "../../arch/mips/include/uapi/asm/errno.h"
-+#include "../../../arch/mips/include/uapi/asm/errno.h"
- #elif defined(__ia64__)
--#include "../../arch/ia64/include/uapi/asm/errno.h"
-+#include "../../../arch/ia64/include/uapi/asm/errno.h"
- #elif defined(__xtensa__)
--#include "../../arch/xtensa/include/uapi/asm/errno.h"
-+#include "../../../arch/xtensa/include/uapi/asm/errno.h"
- #else
- #include <asm-generic/errno.h>
- #endif
-diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
-index 8d6821d9c3f6..27653be24447 100644
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -11,17 +11,17 @@
- #include <linux/zalloc.h>
- #include <time.h>
- 
--#include "../../util/cpumap.h"
--#include "../../util/event.h"
--#include "../../util/evsel.h"
--#include "../../util/evlist.h"
--#include "../../util/session.h"
-+#include "../../../util/cpumap.h"
-+#include "../../../util/event.h"
-+#include "../../../util/evsel.h"
-+#include "../../../util/evlist.h"
-+#include "../../../util/session.h"
- #include <internal/lib.h> // page_size
--#include "../../util/pmu.h"
--#include "../../util/debug.h"
--#include "../../util/auxtrace.h"
--#include "../../util/record.h"
--#include "../../util/arm-spe.h"
-+#include "../../../util/pmu.h"
-+#include "../../../util/debug.h"
-+#include "../../../util/auxtrace.h"
-+#include "../../../util/record.h"
-+#include "../../../util/arm-spe.h"
- 
- #define KiB(x) ((x) * 1024)
- #define MiB(x) ((x) * 1024 * 1024)
-diff --git a/tools/perf/arch/arm64/util/perf_regs.c b/tools/perf/arch/arm64/util/perf_regs.c
-index 2864e2e3776d..2833e101a7c6 100644
---- a/tools/perf/arch/arm64/util/perf_regs.c
-+++ b/tools/perf/arch/arm64/util/perf_regs.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--#include "../../util/perf_regs.h"
-+#include "../../../util/perf_regs.h"
- 
- const struct sample_reg sample_reg_masks[] = {
- 	SMPL_REG_END
-diff --git a/tools/perf/arch/powerpc/util/perf_regs.c b/tools/perf/arch/powerpc/util/perf_regs.c
-index e9c436eeffc9..0a5242900248 100644
---- a/tools/perf/arch/powerpc/util/perf_regs.c
-+++ b/tools/perf/arch/powerpc/util/perf_regs.c
-@@ -4,8 +4,8 @@
- #include <regex.h>
- #include <linux/zalloc.h>
- 
--#include "../../util/perf_regs.h"
--#include "../../util/debug.h"
-+#include "../../../util/perf_regs.h"
-+#include "../../../util/debug.h"
- 
- #include <linux/kernel.h>
- 
-diff --git a/tools/perf/arch/x86/util/auxtrace.c b/tools/perf/arch/x86/util/auxtrace.c
-index 7abc9fd4cbec..3da506e13f49 100644
---- a/tools/perf/arch/x86/util/auxtrace.c
-+++ b/tools/perf/arch/x86/util/auxtrace.c
-@@ -7,13 +7,13 @@
- #include <errno.h>
- #include <stdbool.h>
- 
--#include "../../util/header.h"
--#include "../../util/debug.h"
--#include "../../util/pmu.h"
--#include "../../util/auxtrace.h"
--#include "../../util/intel-pt.h"
--#include "../../util/intel-bts.h"
--#include "../../util/evlist.h"
-+#include "../../../util/header.h"
-+#include "../../../util/debug.h"
-+#include "../../../util/pmu.h"
-+#include "../../../util/auxtrace.h"
-+#include "../../../util/intel-pt.h"
-+#include "../../../util/intel-bts.h"
-+#include "../../../util/evlist.h"
- 
- static
- struct auxtrace_record *auxtrace_record__init_intel(struct evlist *evlist,
-diff --git a/tools/perf/arch/x86/util/event.c b/tools/perf/arch/x86/util/event.c
-index ac45015cc6ba..047dc00eafa6 100644
---- a/tools/perf/arch/x86/util/event.c
-+++ b/tools/perf/arch/x86/util/event.c
-@@ -3,12 +3,12 @@
- #include <linux/string.h>
- #include <linux/zalloc.h>
- 
--#include "../../util/event.h"
--#include "../../util/synthetic-events.h"
--#include "../../util/machine.h"
--#include "../../util/tool.h"
--#include "../../util/map.h"
--#include "../../util/debug.h"
-+#include "../../../util/event.h"
-+#include "../../../util/synthetic-events.h"
-+#include "../../../util/machine.h"
-+#include "../../../util/tool.h"
-+#include "../../../util/map.h"
-+#include "../../../util/debug.h"
- 
- #if defined(__x86_64__)
- 
-diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util/header.c
-index aa6deb463bf3..578c8c568ffd 100644
---- a/tools/perf/arch/x86/util/header.c
-+++ b/tools/perf/arch/x86/util/header.c
-@@ -7,8 +7,8 @@
- #include <string.h>
- #include <regex.h>
- 
--#include "../../util/debug.h"
--#include "../../util/header.h"
-+#include "../../../util/debug.h"
-+#include "../../../util/header.h"
- 
- static inline void
- cpuid(unsigned int op, unsigned int *a, unsigned int *b, unsigned int *c,
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index 26cee1052179..09f93800bffd 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -11,18 +11,18 @@
- #include <linux/log2.h>
- #include <linux/zalloc.h>
- 
--#include "../../util/cpumap.h"
--#include "../../util/event.h"
--#include "../../util/evsel.h"
--#include "../../util/evlist.h"
--#include "../../util/mmap.h"
--#include "../../util/session.h"
--#include "../../util/pmu.h"
--#include "../../util/debug.h"
--#include "../../util/record.h"
--#include "../../util/tsc.h"
--#include "../../util/auxtrace.h"
--#include "../../util/intel-bts.h"
-+#include "../../../util/cpumap.h"
-+#include "../../../util/event.h"
-+#include "../../../util/evsel.h"
-+#include "../../../util/evlist.h"
-+#include "../../../util/mmap.h"
-+#include "../../../util/session.h"
-+#include "../../../util/pmu.h"
-+#include "../../../util/debug.h"
-+#include "../../../util/record.h"
-+#include "../../../util/tsc.h"
-+#include "../../../util/auxtrace.h"
-+#include "../../../util/intel-bts.h"
- #include <internal/lib.h> // page_size
- 
- #define KiB(x) ((x) * 1024)
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index 7eea4fd7ce58..1643aed8c4c8 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -13,23 +13,23 @@
- #include <linux/zalloc.h>
- #include <cpuid.h>
- 
--#include "../../util/session.h"
--#include "../../util/event.h"
--#include "../../util/evlist.h"
--#include "../../util/evsel.h"
--#include "../../util/evsel_config.h"
--#include "../../util/cpumap.h"
--#include "../../util/mmap.h"
-+#include "../../../util/session.h"
-+#include "../../../util/event.h"
-+#include "../../../util/evlist.h"
-+#include "../../../util/evsel.h"
-+#include "../../../util/evsel_config.h"
-+#include "../../../util/cpumap.h"
-+#include "../../../util/mmap.h"
- #include <subcmd/parse-options.h>
--#include "../../util/parse-events.h"
--#include "../../util/pmu.h"
--#include "../../util/debug.h"
--#include "../../util/auxtrace.h"
--#include "../../util/record.h"
--#include "../../util/target.h"
--#include "../../util/tsc.h"
-+#include "../../../util/parse-events.h"
-+#include "../../../util/pmu.h"
-+#include "../../../util/debug.h"
-+#include "../../../util/auxtrace.h"
-+#include "../../../util/record.h"
-+#include "../../../util/target.h"
-+#include "../../../util/tsc.h"
- #include <internal/lib.h> // page_size
--#include "../../util/intel-pt.h"
-+#include "../../../util/intel-pt.h"
- 
- #define KiB(x) ((x) * 1024)
- #define MiB(x) ((x) * 1024 * 1024)
-diff --git a/tools/perf/arch/x86/util/machine.c b/tools/perf/arch/x86/util/machine.c
-index e17e080e76f4..31679c35d493 100644
---- a/tools/perf/arch/x86/util/machine.c
-+++ b/tools/perf/arch/x86/util/machine.c
-@@ -5,9 +5,9 @@
- #include <stdlib.h>
- 
- #include <internal/lib.h> // page_size
--#include "../../util/machine.h"
--#include "../../util/map.h"
--#include "../../util/symbol.h"
-+#include "../../../util/machine.h"
-+#include "../../../util/map.h"
-+#include "../../../util/symbol.h"
- #include <linux/ctype.h>
- 
- #include <symbol/kallsyms.h>
-diff --git a/tools/perf/arch/x86/util/perf_regs.c b/tools/perf/arch/x86/util/perf_regs.c
-index c218b83e063b..fca81b39b09f 100644
---- a/tools/perf/arch/x86/util/perf_regs.c
-+++ b/tools/perf/arch/x86/util/perf_regs.c
-@@ -5,10 +5,10 @@
- #include <linux/kernel.h>
- #include <linux/zalloc.h>
- 
--#include "../../perf-sys.h"
--#include "../../util/perf_regs.h"
--#include "../../util/debug.h"
--#include "../../util/event.h"
-+#include "../../../perf-sys.h"
-+#include "../../../util/perf_regs.h"
-+#include "../../../util/debug.h"
-+#include "../../../util/event.h"
- 
- const struct sample_reg sample_reg_masks[] = {
- 	SMPL_REG(AX, PERF_REG_X86_AX),
-diff --git a/tools/perf/arch/x86/util/pmu.c b/tools/perf/arch/x86/util/pmu.c
-index e33ef5bc31c5..d48d608517fd 100644
---- a/tools/perf/arch/x86/util/pmu.c
-+++ b/tools/perf/arch/x86/util/pmu.c
-@@ -4,9 +4,9 @@
- #include <linux/stddef.h>
- #include <linux/perf_event.h>
- 
--#include "../../util/intel-pt.h"
--#include "../../util/intel-bts.h"
--#include "../../util/pmu.h"
-+#include "../../../util/intel-pt.h"
-+#include "../../../util/intel-bts.h"
-+#include "../../../util/pmu.h"
- 
- struct perf_event_attr *perf_pmu__get_default_config(struct perf_pmu *pmu __maybe_unused)
- {
--- 
-2.21.1
-
+> 
+> Thank you,
+> 
+> -- 
+> Masami Hiramatsu <mhiramat@kernel.org>
