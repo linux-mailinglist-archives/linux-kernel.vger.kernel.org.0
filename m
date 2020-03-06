@@ -2,119 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984F817C43D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:23:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C18F17C442
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 18:24:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCFRXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 12:23:22 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42267 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbgCFRXV (ORCPT
+        id S1726860AbgCFRYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 12:24:16 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36988 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbgCFRYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:23:21 -0500
-Received: by mail-oi1-f194.google.com with SMTP id l12so3267376oil.9;
-        Fri, 06 Mar 2020 09:23:21 -0800 (PST)
+        Fri, 6 Mar 2020 12:24:16 -0500
+Received: by mail-ed1-f65.google.com with SMTP id m9so3406433edl.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 09:24:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=mupmjwiAHLO8iDpFb95apJkaHWQ/TigGpL1KHSH4xms=;
-        b=mmjBEgbQSwlmZBkUWvBEhBbTakC8GIm7keMvXibT0uSILLN4w0088NkuioPZjJN/Kw
-         kESY0EFLWnkPNvV6RA/hPOzBj141OwBct0DPfvpHPYqqCYir1KD1CrD+kINPpEkC+B7s
-         Jd5fwyXz5jyLf9zSkNsizNLFaqee+e86JuAVu094AXn3JXGyiwu8hdCdq+8uINWypNoc
-         9IHls7U3oIaYiNODymX3x3tf6RpkpaSdq4SA+1zFy5vNDXurV6c49v6/x90a4o6/S04E
-         17N3iYPQzS8gzQ7iUiV+Tk4siIRPUOQynx5OR8h4sFxsAxDuIvq3Y+DfXmuibrxPgMBZ
-         5jdQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WZVF3WeW7a9wrdSl0zBcs9raA78Uf8UokFbAXMs0MtY=;
+        b=g8MbbuGfSPFiXaKugqYxPbsI+w1HDaJneroTSsByaWf9QRcxgtnRqXWjdFLdwGQ+NG
+         AMoljN6kLEhM9XqiFZViwOtz4THPxiF+zMkHIoxAKRJ70yI79J0zpc7iNgLOvZoOwLO3
+         h8+w9+UBXn5J/ytjOtHGJ8zaLSI38Mv+DEiQiHcWOx4Ew8XHC007awxBQzAEdrX3+kfb
+         qH1oumcl+U4aldZHNfmEJHOoNA6KZhtjrJSuutd+9qjRlnNECX7wb0T0h/fnMnjmFEfB
+         6usF1E3yTLbc6+Sda0Cq//wYp/ZVg7jMqIWnaejkuO1tNLs5rRONZJ1c1PbpC2sVLA3h
+         7EDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=mupmjwiAHLO8iDpFb95apJkaHWQ/TigGpL1KHSH4xms=;
-        b=DxzXCI7T6DTY/NKsa4kG8XQ4EoDkbqX4yWL2+Tx2tDK9S2PnvYVjXTrxJkdlPbg+F0
-         UTiKeBg6kRWz1oZbg/cjFfr6LREaBJ+JVDi20WyV7EvWZORipUeHLavCZpXHgDrkEEeK
-         Y9ZcizXizmTrb9m4RLpgzS27hyuXNp/7Y31MK5M9tHHYNAS6Upi0oGAfkyHhRqC4NbUX
-         7ecC7YbsQQ/vrpz6TcppRHb9tq50+3IrRlUY9RvLorZLNgE4oAdz0GlAoUlWicCPB3pg
-         dNQ8xo618Ur3RYqUd94oH4RRCOmSAMYUxKjMEafQhN5SiN0Ly8NeRtuqAZ6RX8idWQ0a
-         +vpQ==
-X-Gm-Message-State: ANhLgQ2iRlmhQlvf/+ruFhguy2NA9OeRFzwoqCu3gpA1YNq71WUdigPN
-        zpOxjQPKU5bykhXxT38u/Q==
-X-Google-Smtp-Source: ADFU+vvBg+x2eS3bDKBwRsXWeeqM6GNkqgJ/Cui1n9BXflU+I533ynTTHO4Y/CWBp8XW40MnFsCFsg==
-X-Received: by 2002:aca:4b93:: with SMTP id y141mr3470010oia.18.1583515401152;
-        Fri, 06 Mar 2020 09:23:21 -0800 (PST)
-Received: from serve.minyard.net ([47.184.164.37])
-        by smtp.gmail.com with ESMTPSA id g7sm11638601otk.17.2020.03.06.09.23.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 09:23:20 -0800 (PST)
-Received: from t560.minyard.net (unknown [IPv6:2001:470:b8f6:1b:7891:d81e:d9b4:ab4b])
-        by serve.minyard.net (Postfix) with ESMTPA id 193A6180002;
-        Fri,  6 Mar 2020 17:23:20 +0000 (UTC)
-From:   minyard@acm.org
-To:     linux-kernel@vger.kernel.org
-Cc:     Corey Minyard <cminyard@mvista.com>, stable@vger.kernel.org,
-        Adrian Reber <areber@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>
-Subject: [PATCH v2] pid: Fix error return value in some cases
-Date:   Fri,  6 Mar 2020 11:23:14 -0600
-Message-Id: <20200306172314.12232-1-minyard@acm.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WZVF3WeW7a9wrdSl0zBcs9raA78Uf8UokFbAXMs0MtY=;
+        b=MwRBZn4F4TAOzQILsAOcm+4hCHUx4yFkbhNMGhf+E7A7gHrdB6boK7+i/8J7RvFB19
+         egF7CSwQncEuIpPT+S9qgXPY08/LWhVgdFojLNSYbEUJ1V62v75Rj5isZa+eYf2tpAwb
+         suVx2BdfKkLbWYF74sSu+oSvv3I7dAi4wOHNKOqRdSTVkAkYXvuC5Vqngf0eY6dB0W3M
+         xiIpoTNtuYsPnag6mtR7V/+DIrOrvFnLhlpcG7gG+5AabSylX8+RErGRG6ypZEDhCe8E
+         D/MTCcJjtJrZQfbyHrlloPH/2UqQnBU6Spy6fAQA+Azdc4tzUdiqC2dM6eDZ3es2bl8g
+         dP6Q==
+X-Gm-Message-State: ANhLgQ3uG6oAiu8PAYtWTgOQ5sCkfhQmB/ykXE39xpZPzvzojaaOQ1fD
+        d5kAjQyzG7YkTdkpPmzGFZMZ5fgBEYscKCVn4Yc=
+X-Google-Smtp-Source: ADFU+vuoGR+71ZPoCut+EzCCatlJeD6qgkXezcS9qWz5QI/UUTv/UpbGhdYIFjKJIRV7iaq6SK4g/NSoYScbpb9n7y0=
+X-Received: by 2002:a17:906:1cc2:: with SMTP id i2mr3962727ejh.283.1583515453642;
+ Fri, 06 Mar 2020 09:24:13 -0800 (PST)
+MIME-Version: 1.0
+References: <alpine.DEB.2.21.2002172139310.152060@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.2002181828070.108053@chino.kir.corp.google.com>
+ <CAHbLzkrJ_=8f8STvZ2GPGH6Arup8cKgGqigj4FQXWpmD-C5wNQ@mail.gmail.com>
+ <alpine.DEB.2.21.2002181942460.155180@chino.kir.corp.google.com>
+ <CAHbLzkq20hzLdYM-EMOfWRqPOr+OQF8uq5yWR=Yb6vQY51LKwg@mail.gmail.com> <20200220131202.i77zt3zj53mimrnu@box>
+In-Reply-To: <20200220131202.i77zt3zj53mimrnu@box>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 6 Mar 2020 09:23:59 -0800
+Message-ID: <CAHbLzkpgyrFe6L+U=2hoAyc5o8+2K5r8uyMTKx780iR3EiRE5g@mail.gmail.com>
+Subject: Re: [patch 1/2] mm, shmem: add thp fault alloc and fallback stats
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jeremy Cline <jcline@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+On Thu, Feb 20, 2020 at 5:11 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Wed, Feb 19, 2020 at 09:01:23AM -0800, Yang Shi wrote:
+> > On Tue, Feb 18, 2020 at 7:44 PM David Rientjes <rientjes@google.com> wrote:
+> > >
+> > > On Tue, 18 Feb 2020, Yang Shi wrote:
+> > >
+> > > > > diff --git a/mm/shmem.c b/mm/shmem.c
+> > > > > --- a/mm/shmem.c
+> > > > > +++ b/mm/shmem.c
+> > > > > @@ -1502,9 +1502,8 @@ static struct page *shmem_alloc_page(gfp_t gfp,
+> > > > >         return page;
+> > > > >  }
+> > > > >
+> > > > > -static struct page *shmem_alloc_and_acct_page(gfp_t gfp,
+> > > > > -               struct inode *inode,
+> > > > > -               pgoff_t index, bool huge)
+> > > > > +static struct page *shmem_alloc_and_acct_page(gfp_t gfp, struct inode *inode,
+> > > > > +               pgoff_t index, bool fault, bool huge)
+> > > > >  {
+> > > > >         struct shmem_inode_info *info = SHMEM_I(inode);
+> > > > >         struct page *page;
+> > > > > @@ -1518,9 +1517,11 @@ static struct page *shmem_alloc_and_acct_page(gfp_t gfp,
+> > > > >         if (!shmem_inode_acct_block(inode, nr))
+> > > > >                 goto failed;
+> > > > >
+> > > > > -       if (huge)
+> > > > > +       if (huge) {
+> > > > >                 page = shmem_alloc_hugepage(gfp, info, index);
+> > > > > -       else
+> > > > > +               if (!page && fault)
+> > > > > +                       count_vm_event(THP_FAULT_FALLBACK);
+> > > > > +       } else
+> > > > >                 page = shmem_alloc_page(gfp, info, index);
+> > > > >         if (page) {
+> > > > >                 __SetPageLocked(page);
+> > > > > @@ -1832,11 +1833,10 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+> > > > >         }
+> > > > >
+> > > > >  alloc_huge:
+> > > > > -       page = shmem_alloc_and_acct_page(gfp, inode, index, true);
+> > > > > +       page = shmem_alloc_and_acct_page(gfp, inode, index, vmf, true);
+> > > > >         if (IS_ERR(page)) {
+> > > > >  alloc_nohuge:
+> > > > > -               page = shmem_alloc_and_acct_page(gfp, inode,
+> > > > > -                                                index, false);
+> > > > > +               page = shmem_alloc_and_acct_page(gfp, inode, index, vmf, false);
+> > > > >         }
+> > > > >         if (IS_ERR(page)) {
+> > > > >                 int retry = 5;
+> > > > > @@ -1871,8 +1871,11 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+> > > > >
+> > > > >         error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+> > > > >                                             PageTransHuge(page));
+> > > > > -       if (error)
+> > > > > +       if (error) {
+> > > > > +               if (vmf && PageTransHuge(page))
+> > > > > +                       count_vm_event(THP_FAULT_FALLBACK);
+> > > > >                 goto unacct;
+> > > > > +       }
+> > > > >         error = shmem_add_to_page_cache(page, mapping, hindex,
+> > > > >                                         NULL, gfp & GFP_RECLAIM_MASK);
+> > > > >         if (error) {
+> > > > > @@ -1883,6 +1886,8 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+> > > > >         mem_cgroup_commit_charge(page, memcg, false,
+> > > > >                                  PageTransHuge(page));
+> > > > >         lru_cache_add_anon(page);
+> > > > > +       if (vmf && PageTransHuge(page))
+> > > > > +               count_vm_event(THP_FAULT_ALLOC);
+> > > >
+> > > > I think shmem THP alloc is accounted to THP_FILE_ALLOC. And it has
+> > > > been accounted by shmem_add_to_page_cache(). So, it sounds like a
+> > > > double count.
+> > > >
+> > >
+> > > I think we can choose to either include file allocations into both
+> > > thp_fault_alloc and thp_fault_fallback or we can exclude them from both of
+> > > them.  I don't think we can account for only one of them.
+> >
+> > How's about the 3rd option, adding THP_FILE_FALLBACK.
+>
+> I like this option.
+>
+> Problem with THP_FAULT_* is that shmem_getpage_gfp() is called not only
+> from fault path, but also from syscalls.
 
-Recent changes to alloc_pid() allow the pid number to be specified on
-the command line.  If set_tid_size is set, then the code scanning the
-levels will hard-set retval to -EPERM, overriding it's previous -ENOMEM
-value.
+I found another usecase for THP_FILE_FALLBACK. I wanted to measure
+file THP allocation success rate in our uecase. It looks nr_file_alloc
+/ (nr_file_alloc + nr_file_fallback) is the most simple way.
 
-After the code scanning the levels, there are error returns that do not
-set retval, assuming it is still set to -ENOMEM.
+David, are you still working on this patch?
 
-So set retval back to -ENOMEM after scanning the levels.
-
-Fixes: 49cb2fc42ce4 "fork: extend clone3() to support setting a PID"
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: <stable@vger.kernel.org> # 5.5
-Cc: Adrian Reber <areber@redhat.com>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Andrei Vagin <avagin@gmail.com>
----
-
-Changes from v1:
-  Just set retval to -ENOMEM before the gotos that would use it.
-
-I do think that the second instance:
-
-        if (!(ns->pid_allocated & PIDNS_ADDING))
-                goto out_unlock;
-
-is returning the wrong error value, but that's probably not a big
-deal, and if it was fixed would probably need to be a separate change.
-
-In the first instance, the error return values are almost all -ENOMEM,
-anyway.
-
- kernel/pid.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 0f4ecb57214c..19645b25b77c 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -247,6 +247,8 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 		tmp = tmp->parent;
- 	}
- 
-+	retval = -ENOMEM;
-+
- 	if (unlikely(is_child_reaper(pid))) {
- 		if (pid_ns_prepare_proc(ns))
- 			goto out_free;
--- 
-2.17.1
-
+>
+> --
+>  Kirill A. Shutemov
