@@ -2,97 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698BF17B48A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7EB17B490
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgCFChG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 21:37:06 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:32844 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbgCFChG (ORCPT
+        id S1726498AbgCFCmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:42:55 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:50183 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbgCFCmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 21:37:06 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay11so236240plb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 18:37:05 -0800 (PST)
+        Thu, 5 Mar 2020 21:42:55 -0500
+Received: by mail-pj1-f65.google.com with SMTP id nm6so429305pjb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 18:42:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=2QSQagBk8OSnwRoBTGse7P63wd/qKZn7zPPbs//Oq18=;
-        b=ziG/FPpCvypm9vY7+OruvzJjZaHOkQ6Eqw6zf29DKAe7vl+dxC6DjySoy81waLuRgU
-         F8/iWLM1GOUxPpQwuSubo32CEJ3sNddl+YfG9Cnh6fjJZ9HaJ0y/dvI7+TAMlfsfaRwf
-         /0aO9rXEtpaSWFhT8O+mZdaUQ3vsSlsSQhd/HH5z9n46t0cIgcIItD/lfkrJmxK3s0TY
-         eblmwLLXevrdSYrh8nc9NZIcwkfJprINCsY+mB7oYDUPkhjv1zh5sOB8VBtbkGe5l5/F
-         ReNuico5Mb5TXINCKnMB5CJVvh0dEUAHsDx/iDxV89jpXeeAUPlsB+Sx+nPUqpFHXzhe
-         a1Uw==
+        d=labau-com-tw.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=X2iAqyMliBeJxX/WhSjVx//gMdFh6+oYc5QUw0Fxo34=;
+        b=qLzIGmeBwnujzG/8YvCvI7zU1vM+wXG8Iv7KS5wYQ0Q3jgVd2Ze6/RCjKYbcBVDLog
+         JHI8WYYo9LbJ6fLtaouJPTgPRoTSwMFEjUQ2kpniF6F0ZdxJFMLaYeVKAvdhbluo0UI0
+         e9oMMF3odmsw+vd6A+rWIAmaJVfhxyuHq6eqnpguxelF9/Wl6kWfMEm8+RFNnzb0ylAi
+         fIVtowr0XH5Bq61bJBtqe7nrDe6hW5f0jPl8TeHxIE/qvbDhWpnfYl1z1FxG1n0YK2zM
+         h/ix3auQW+oeaHtDajSzQwDNNXPlOuqZvX6ylyXrdnrsQYFnArFj68GkGeKDJer+S39f
+         IiZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=2QSQagBk8OSnwRoBTGse7P63wd/qKZn7zPPbs//Oq18=;
-        b=celHfu/ymOf831ICJ0sbIBKe3E/JVyWC8T4MpKCGUP3QKqehWI9hT7bq6YTqQyDcBL
-         5Ke7MLaczpV/SDlVo6cSAYCIRSF4Gk31ziE8TFDbg92w/cnxDRjEp2VkPW0cbU2WVOmS
-         1VaVm3cIOkTFqjVGx8f2RGMmT7pADYaetLIJW/jQPxUFA/MGL4XdnYDKUGthBC4jgTLc
-         OPwTFgjq6A+/zhXaNQ8j4hALDuhsqBBPvh4GnAvdWs4kqTEDHm3/Yll8r1Yeqi/Utdos
-         gE2kb+GhDvwCJBjrsPsN3jmuUWzHfGpPk9kgMPqox9VKToQ0J6svmU4IGQQJ5xpOcnZI
-         uXCw==
-X-Gm-Message-State: ANhLgQ0CqfsRdo0rGXq2CIUGZKIRGzl2Jj7S8YPm4kMFfMP2xl4wdQTK
-        Mvz0ZhaSNzGaKRAPGiB4KM/wPg==
-X-Google-Smtp-Source: ADFU+vubEpW42LJ68zq8890hphioBy3lQwPFQH72OCR1cxYvfmto8q1733nBuyqMtZUKUkcvRrJWQQ==
-X-Received: by 2002:a17:902:61:: with SMTP id 88mr827724pla.17.1583462225267;
-        Thu, 05 Mar 2020 18:37:05 -0800 (PST)
-Received: from [10.191.0.78] ([45.135.186.118])
-        by smtp.gmail.com with ESMTPSA id f127sm34474687pfa.112.2020.03.05.18.36.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Mar 2020 18:37:04 -0800 (PST)
-Subject: Re: [PATCH v2] uacce: unmap remaining mmapping from user space
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, jonathan.cameron@huawei.com,
-        dave.jiang@intel.com, grant.likely@arm.com,
-        jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org, linux-accelerators@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-References: <1582701126-5312-1-git-send-email-zhangfei.gao@linaro.org>
- <20200306015121.GH30653@gondor.apana.org.au>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <a8beaf1f-a510-7fca-d048-1327c87226fa@linaro.org>
-Date:   Fri, 6 Mar 2020 10:36:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200306015121.GH30653@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=X2iAqyMliBeJxX/WhSjVx//gMdFh6+oYc5QUw0Fxo34=;
+        b=rPDXKQ7F/ViApJEU+biTFuM+jbBxKepwJhrkcbTTQXf+NQQkDtNcjjHWcvIw1fXZch
+         axfyDd8DM4Ia4jpemM1dP20vuPFAIiTAtjp7EPukmk7efAjcuu7Ale3mLxsWJG525Doy
+         V9ZE7DJMRYLRDZDwTtaK+DG99A2JZVNjZlaSg2tA4zHtIV4NVmFH9SjwHMnvr+YSqNHv
+         gP1ieBJ3IeykvLu3bsKITPJVmcuUw6V1x5kGec/niz+upUvzooFaWiU+9Z912fTjN5LP
+         Cv1PyYqhyWl2RWYmYywKhjf5aTNAYbV+hg/eRPwhs8y5E9cBQ8NXYbVbpKZPOEjKH6LZ
+         gANw==
+X-Gm-Message-State: ANhLgQ2NEBYRGY3kS33oiCiS9CRnnz13JwTX2zFk/57erkwDmnctR8tE
+        /J9erPOaDyZii7oH7Iek5WzF6A==
+X-Google-Smtp-Source: ADFU+vsk3liOQkmtNF2K7LUtaWRZwQMJJnfXKTuYjW511Ti2qEiKj2FfCJN00oqlB2pKWAXOhbwmMg==
+X-Received: by 2002:a17:90b:1a8b:: with SMTP id ng11mr1252999pjb.194.1583462573915;
+        Thu, 05 Mar 2020 18:42:53 -0800 (PST)
+Received: from localhost.localdomain (60-251-64-13.HINET-IP.hinet.net. [60.251.64.13])
+        by smtp.gmail.com with ESMTPSA id q9sm32609064pgs.89.2020.03.05.18.42.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 18:42:53 -0800 (PST)
+From:   Scott Chen <scott@labau.com.tw>
+Cc:     young@labau.com.tw, jocelyn@labau.com.tw, roger@labau.com.tw,
+        Scott Chen <scott@labau.com.tw>,
+        Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Add a new PID for HP
+Date:   Fri,  6 Mar 2020 10:40:47 +0800
+Message-Id: <20200306024048.11408-1-scott@labau.com.tw>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add a device id for HP LD381 Display
+LD381:   03f0:0f7f
 
+Signed-off-by: Scott Chen <scott@labau.com.tw>
+---
+ drivers/usb/serial/pl2303.c | 1 +
+ drivers/usb/serial/pl2303.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-On 2020/3/6 上午9:51, Herbert Xu wrote:
-> On Wed, Feb 26, 2020 at 03:12:06PM +0800, Zhangfei Gao wrote:
->> When uacce parent device module is removed, user app may
->> still keep the mmaped area, which can be accessed unsafely.
->> When rmmod, Parent device driver will call uacce_remove,
->> which unmap all remaining mapping from user space for safety.
->> VM_FAULT_SIGBUS is also reported to user space accordingly.
->>
->> Suggested-by: Dave Jiang <dave.jiang@intel.com>
->> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
->> ---
->>   v2: Unmap before put_queue, where memory is freed, commented from Zaibo.
->>
->>   drivers/misc/uacce/uacce.c | 16 ++++++++++++++++
->>   include/linux/uacce.h      |  2 ++
->>   2 files changed, 18 insertions(+)
-> Patch applied.  Thanks.
-Thanks Herbert for the help.
+diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
+index aab737e1e7b6..5cb1c63295f5 100644
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -97,6 +97,7 @@ static const struct usb_device_id id_table[] = {
+ 	{ USB_DEVICE(COREGA_VENDOR_ID, COREGA_PRODUCT_ID) },
+ 	{ USB_DEVICE(YCCABLE_VENDOR_ID, YCCABLE_PRODUCT_ID) },
+ 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD381_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
+diff --git a/drivers/usb/serial/pl2303.h b/drivers/usb/serial/pl2303.h
+index a019ea7e6e0e..80b20e980064 100644
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -127,6 +127,7 @@
+ 
+ /* Hewlett-Packard POS Pole Displays */
+ #define HP_VENDOR_ID		0x03f0
++#define HP_LD381_PRODUCT_ID	0x0f7f
+ #define HP_LM920_PRODUCT_ID	0x026b
+ #define HP_TD620_PRODUCT_ID	0x0956
+ #define HP_LD960_PRODUCT_ID	0x0b39
+-- 
+2.17.1
+
