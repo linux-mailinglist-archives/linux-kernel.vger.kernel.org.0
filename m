@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA2517C09F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C600017C083
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 15:42:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbgCFOnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 09:43:16 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53832 "EHLO
+        id S1727439AbgCFOmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 09:42:47 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53873 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbgCFOmU (ORCPT
+        with ESMTP id S1727283AbgCFOm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:42:20 -0500
+        Fri, 6 Mar 2020 09:42:27 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAEB6-0006OA-3G; Fri, 06 Mar 2020 15:42:16 +0100
+        id 1jAEB8-0006Pr-C4; Fri, 06 Mar 2020 15:42:18 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7A7431C21D4;
-        Fri,  6 Mar 2020 15:42:10 +0100 (CET)
-Date:   Fri, 06 Mar 2020 14:42:10 -0000
-From:   "tip-bot2 for Thara Gopinath" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 052301C21DA;
+        Fri,  6 Mar 2020 15:42:12 +0100 (CET)
+Date:   Fri, 06 Mar 2020 14:42:11 -0000
+From:   "tip-bot2 for Chris Wilson" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] arm64/topology: Populate
- arch_scale_thermal_pressure() for arm64 platforms
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
+Subject: [tip: sched/core] sched/vtime: Prevent unstable evaluation of
+ WARN(vtime->state)
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Frederic Weisbecker <frederic@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200222005213.3873-5-thara.gopinath@linaro.org>
-References: <20200222005213.3873-5-thara.gopinath@linaro.org>
+In-Reply-To: <20200123180849.28486-1-frederic@kernel.org>
+References: <20200123180849.28486-1-frederic@kernel.org>
 MIME-Version: 1.0
-Message-ID: <158350573019.28353.350404434656839771.tip-bot2@tip-bot2>
+Message-ID: <158350573164.28353.4653670207940680914.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,37 +50,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     ae1677c0bbe23fe30d634ac0d9f5c147ee4adbc1
-Gitweb:        https://git.kernel.org/tip/ae1677c0bbe23fe30d634ac0d9f5c147ee4adbc1
-Author:        Thara Gopinath <thara.gopinath@linaro.org>
-AuthorDate:    Fri, 21 Feb 2020 19:52:08 -05:00
+Commit-ID:     f1dfdab694eb3838ac26f4b73695929c07d92a33
+Gitweb:        https://git.kernel.org/tip/f1dfdab694eb3838ac26f4b73695929c07d92a33
+Author:        Chris Wilson <chris@chris-wilson.co.uk>
+AuthorDate:    Thu, 23 Jan 2020 19:08:49 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Mar 2020 12:57:19 +01:00
+CommitterDate: Fri, 06 Mar 2020 12:57:16 +01:00
 
-arm64/topology: Populate arch_scale_thermal_pressure() for arm64 platforms
+sched/vtime: Prevent unstable evaluation of WARN(vtime->state)
 
-Hook up topology_get_thermal_pressure to arch_scale_thermal_pressure thus
-enabling scheduler to retrieve instantaneous thermal pressure of a CPU.
+As the vtime is sampled under loose seqcount protection by kcpustat, the
+vtime fields may change as the code flows. Where logic dictates a field
+has a static value, use a READ_ONCE.
 
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20200222005213.3873-5-thara.gopinath@linaro.org
+Fixes: 74722bb223d0 ("sched/vtime: Bring up complete kcpustat accessor")
+Link: https://lkml.kernel.org/r/20200123180849.28486-1-frederic@kernel.org
 ---
- arch/arm64/include/asm/topology.h | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/sched/cputime.c | 41 ++++++++++++++++++++++-------------------
+ 1 file changed, 22 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
-index a4d945d..cbd70d7 100644
---- a/arch/arm64/include/asm/topology.h
-+++ b/arch/arm64/include/asm/topology.h
-@@ -25,6 +25,9 @@ int pcibus_to_node(struct pci_bus *bus);
- /* Enable topology flag updates */
- #define arch_update_cpu_topology topology_update_cpu_topology
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index cff3e65..dac9104 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -909,8 +909,10 @@ void task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
+ 	} while (read_seqcount_retry(&vtime->seqcount, seq));
+ }
  
-+/* Replace task scheduler's default thermal pressure retrieve API */
-+#define arch_scale_thermal_pressure topology_get_thermal_pressure
+-static int vtime_state_check(struct vtime *vtime, int cpu)
++static int vtime_state_fetch(struct vtime *vtime, int cpu)
+ {
++	int state = READ_ONCE(vtime->state);
 +
- #include <asm-generic/topology.h>
+ 	/*
+ 	 * We raced against a context switch, fetch the
+ 	 * kcpustat task again.
+@@ -927,10 +929,10 @@ static int vtime_state_check(struct vtime *vtime, int cpu)
+ 	 *
+ 	 * Case 1) is ok but 2) is not. So wait for a safe VTIME state.
+ 	 */
+-	if (vtime->state == VTIME_INACTIVE)
++	if (state == VTIME_INACTIVE)
+ 		return -EAGAIN;
  
- #endif /* _ASM_ARM_TOPOLOGY_H */
+-	return 0;
++	return state;
+ }
+ 
+ static u64 kcpustat_user_vtime(struct vtime *vtime)
+@@ -949,14 +951,15 @@ static int kcpustat_field_vtime(u64 *cpustat,
+ {
+ 	struct vtime *vtime = &tsk->vtime;
+ 	unsigned int seq;
+-	int err;
+ 
+ 	do {
++		int state;
++
+ 		seq = read_seqcount_begin(&vtime->seqcount);
+ 
+-		err = vtime_state_check(vtime, cpu);
+-		if (err < 0)
+-			return err;
++		state = vtime_state_fetch(vtime, cpu);
++		if (state < 0)
++			return state;
+ 
+ 		*val = cpustat[usage];
+ 
+@@ -969,7 +972,7 @@ static int kcpustat_field_vtime(u64 *cpustat,
+ 		 */
+ 		switch (usage) {
+ 		case CPUTIME_SYSTEM:
+-			if (vtime->state == VTIME_SYS)
++			if (state == VTIME_SYS)
+ 				*val += vtime->stime + vtime_delta(vtime);
+ 			break;
+ 		case CPUTIME_USER:
+@@ -981,11 +984,11 @@ static int kcpustat_field_vtime(u64 *cpustat,
+ 				*val += kcpustat_user_vtime(vtime);
+ 			break;
+ 		case CPUTIME_GUEST:
+-			if (vtime->state == VTIME_GUEST && task_nice(tsk) <= 0)
++			if (state == VTIME_GUEST && task_nice(tsk) <= 0)
+ 				*val += vtime->gtime + vtime_delta(vtime);
+ 			break;
+ 		case CPUTIME_GUEST_NICE:
+-			if (vtime->state == VTIME_GUEST && task_nice(tsk) > 0)
++			if (state == VTIME_GUEST && task_nice(tsk) > 0)
+ 				*val += vtime->gtime + vtime_delta(vtime);
+ 			break;
+ 		default:
+@@ -1036,23 +1039,23 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
+ {
+ 	struct vtime *vtime = &tsk->vtime;
+ 	unsigned int seq;
+-	int err;
+ 
+ 	do {
+ 		u64 *cpustat;
+ 		u64 delta;
++		int state;
+ 
+ 		seq = read_seqcount_begin(&vtime->seqcount);
+ 
+-		err = vtime_state_check(vtime, cpu);
+-		if (err < 0)
+-			return err;
++		state = vtime_state_fetch(vtime, cpu);
++		if (state < 0)
++			return state;
+ 
+ 		*dst = *src;
+ 		cpustat = dst->cpustat;
+ 
+ 		/* Task is sleeping, dead or idle, nothing to add */
+-		if (vtime->state < VTIME_SYS)
++		if (state < VTIME_SYS)
+ 			continue;
+ 
+ 		delta = vtime_delta(vtime);
+@@ -1061,15 +1064,15 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
+ 		 * Task runs either in user (including guest) or kernel space,
+ 		 * add pending nohz time to the right place.
+ 		 */
+-		if (vtime->state == VTIME_SYS) {
++		if (state == VTIME_SYS) {
+ 			cpustat[CPUTIME_SYSTEM] += vtime->stime + delta;
+-		} else if (vtime->state == VTIME_USER) {
++		} else if (state == VTIME_USER) {
+ 			if (task_nice(tsk) > 0)
+ 				cpustat[CPUTIME_NICE] += vtime->utime + delta;
+ 			else
+ 				cpustat[CPUTIME_USER] += vtime->utime + delta;
+ 		} else {
+-			WARN_ON_ONCE(vtime->state != VTIME_GUEST);
++			WARN_ON_ONCE(state != VTIME_GUEST);
+ 			if (task_nice(tsk) > 0) {
+ 				cpustat[CPUTIME_GUEST_NICE] += vtime->gtime + delta;
+ 				cpustat[CPUTIME_NICE] += vtime->gtime + delta;
+@@ -1080,7 +1083,7 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
+ 		}
+ 	} while (read_seqcount_retry(&vtime->seqcount, seq));
+ 
+-	return err;
++	return 0;
+ }
+ 
+ void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
