@@ -2,206 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD5B17B4CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 04:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FCDB17B4D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 04:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbgCFDJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 22:09:03 -0500
-Received: from mo-csw1115.securemx.jp ([210.130.202.157]:55682 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbgCFDJD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 22:09:03 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 02638mXr029245; Fri, 6 Mar 2020 12:08:48 +0900
-X-Iguazu-Qid: 2wGrDj8Mc35JYvFk0m
-X-Iguazu-QSIG: v=2; s=0; t=1583464128; q=2wGrDj8Mc35JYvFk0m; m=30XSXFJA1rnp94hRBnSOkpVXRTzIW0024bvn1q+XQp0=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1113) id 02638l6W008534;
-        Fri, 6 Mar 2020 12:08:48 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id 02638lrE020487;
-        Fri, 6 Mar 2020 12:08:47 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 02638kFH000418;
-        Fri, 6 Mar 2020 12:08:46 +0900
-From:   Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-To:     miquel.raynal@bootlin.com, vigneshr@ti.com
-Cc:     linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: [PATCH v3 1/2] mtd: spinand: toshiba: Rename function name to change suffix and prefix (8Gbit)
-Date:   Fri,  6 Mar 2020 12:08:44 +0900
-X-TSB-HOP: ON
-Message-Id: <d6d53d2b5723e7c8b1818080626d0f0a48bb17d8.1583371913.git.ytc-mb-yfuruyama7@kioxia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1583371913.git.ytc-mb-yfuruyama7@kioxia.com>
-References: <cover.1583371913.git.ytc-mb-yfuruyama7@kioxia.com>
+        id S1726860AbgCFDSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 22:18:08 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43210 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726162AbgCFDSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Mar 2020 22:18:08 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9C69BC1D71A2CBE3C756;
+        Fri,  6 Mar 2020 11:18:04 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 6 Mar 2020
+ 11:17:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <shuah@kernel.org>, <tglx@linutronix.de>, <yuehaibing@huawei.com>,
+        <0x7f454c46@gmail.com>, <avagin@gmail.com>, <dima@arista.com>
+CC:     <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] selftests/timens: Remove duplicated include <time.h>
+Date:   Fri, 6 Mar 2020 11:17:05 +0800
+Message-ID: <20200306031705.25008-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The suffix was changed from "G" to "J" to classify between 1st generation
-and 2nd generation serial NAND devices (which now belong to the Kioxia
-brand).
-As reference that's
-1st generation device of 1Gbit product is "TC58CVG0S3HRAIG"
-2nd generation device of 1Gbit product is "TC58CVG0S3HRAIJ".
+Remove duplicated include.
 
-The 8Gbit type "TH58CxG3S0HRAIJ" is new to Kioxia's serial NAND lineup and
-the prefix was changed from "TC58" to "TH58".
-
-Thus the functions were renamed from tc58cxgxsx_*() to tx58cxgxsxraix_*().
-
-Signed-off-by: Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
-changelog[v3]:Fixed commit message to make it easier to understand.
-changelog[v2]:Split 2 patches, and add patch description.
+ tools/testing/selftests/timens/exec.c   | 1 -
+ tools/testing/selftests/timens/procfs.c | 1 -
+ tools/testing/selftests/timens/timens.c | 1 -
+ tools/testing/selftests/timens/timer.c  | 1 -
+ 4 files changed, 4 deletions(-)
 
- drivers/mtd/nand/spi/toshiba.c | 60 +++++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/mtd/nand/spi/toshiba.c b/drivers/mtd/nand/spi/toshiba.c
-index 0db5ee4..700d86f 100644
---- a/drivers/mtd/nand/spi/toshiba.c
-+++ b/drivers/mtd/nand/spi/toshiba.c
-@@ -25,8 +25,8 @@ static SPINAND_OP_VARIANTS(write_cache_variants,
- static SPINAND_OP_VARIANTS(update_cache_variants,
- 		SPINAND_PROG_LOAD(false, 0, NULL, 0));
+diff --git a/tools/testing/selftests/timens/exec.c b/tools/testing/selftests/timens/exec.c
+index 87b47b5..e40dc5b 100644
+--- a/tools/testing/selftests/timens/exec.c
++++ b/tools/testing/selftests/timens/exec.c
+@@ -11,7 +11,6 @@
+ #include <sys/wait.h>
+ #include <time.h>
+ #include <unistd.h>
+-#include <time.h>
+ #include <string.h>
  
--static int tc58cxgxsx_ooblayout_ecc(struct mtd_info *mtd, int section,
--				     struct mtd_oob_region *region)
-+static int tx58cxgxsxraix_ooblayout_ecc(struct mtd_info *mtd, int section,
-+					struct mtd_oob_region *region)
- {
- 	if (section > 0)
- 		return -ERANGE;
-@@ -37,8 +37,8 @@ static int tc58cxgxsx_ooblayout_ecc(struct mtd_info *mtd, int section,
- 	return 0;
- }
+ #include "log.h"
+diff --git a/tools/testing/selftests/timens/procfs.c b/tools/testing/selftests/timens/procfs.c
+index 43d93f4..7f14f0f 100644
+--- a/tools/testing/selftests/timens/procfs.c
++++ b/tools/testing/selftests/timens/procfs.c
+@@ -12,7 +12,6 @@
+ #include <sys/types.h>
+ #include <time.h>
+ #include <unistd.h>
+-#include <time.h>
  
--static int tc58cxgxsx_ooblayout_free(struct mtd_info *mtd, int section,
--				      struct mtd_oob_region *region)
-+static int tx58cxgxsxraix_ooblayout_free(struct mtd_info *mtd, int section,
-+					 struct mtd_oob_region *region)
- {
- 	if (section > 0)
- 		return -ERANGE;
-@@ -50,13 +50,13 @@ static int tc58cxgxsx_ooblayout_free(struct mtd_info *mtd, int section,
- 	return 0;
- }
+ #include "log.h"
+ #include "timens.h"
+diff --git a/tools/testing/selftests/timens/timens.c b/tools/testing/selftests/timens/timens.c
+index 559d26e..098be7c 100644
+--- a/tools/testing/selftests/timens/timens.c
++++ b/tools/testing/selftests/timens/timens.c
+@@ -10,7 +10,6 @@
+ #include <sys/types.h>
+ #include <time.h>
+ #include <unistd.h>
+-#include <time.h>
+ #include <string.h>
  
--static const struct mtd_ooblayout_ops tc58cxgxsx_ooblayout = {
--	.ecc = tc58cxgxsx_ooblayout_ecc,
--	.free = tc58cxgxsx_ooblayout_free,
-+static const struct mtd_ooblayout_ops tx58cxgxsxraix_ooblayout = {
-+	.ecc = tx58cxgxsxraix_ooblayout_ecc,
-+	.free = tx58cxgxsxraix_ooblayout_free,
- };
+ #include "log.h"
+diff --git a/tools/testing/selftests/timens/timer.c b/tools/testing/selftests/timens/timer.c
+index 0cca7aa..96dba11 100644
+--- a/tools/testing/selftests/timens/timer.c
++++ b/tools/testing/selftests/timens/timer.c
+@@ -11,7 +11,6 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <signal.h>
+-#include <time.h>
  
--static int tc58cxgxsx_ecc_get_status(struct spinand_device *spinand,
--				      u8 status)
-+static int tx58cxgxsxraix_ecc_get_status(struct spinand_device *spinand,
-+					 u8 status)
- {
- 	struct nand_device *nand = spinand_to_nand(spinand);
- 	u8 mbf = 0;
-@@ -95,75 +95,75 @@ static int tc58cxgxsx_ecc_get_status(struct spinand_device *spinand,
- 
- static const struct spinand_info toshiba_spinand_table[] = {
- 	/* 3.3V 1Gb */
--	SPINAND_INFO("TC58CVG0S3", 0xC2,
-+	SPINAND_INFO("TC58CVG0S3HRAIG", 0xC2,
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- 	/* 3.3V 2Gb */
--	SPINAND_INFO("TC58CVG1S3", 0xCB,
-+	SPINAND_INFO("TC58CVG1S3HRAIG", 0xCB,
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- 	/* 3.3V 4Gb */
--	SPINAND_INFO("TC58CVG2S0", 0xCD,
-+	SPINAND_INFO("TC58CVG2S0HRAIG", 0xCD,
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- 	/* 3.3V 4Gb */
--	SPINAND_INFO("TC58CVG2S0", 0xED,
-+	SPINAND_INFO("TC58CVG2S0HRAIJ", 0xED,
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- 	/* 1.8V 1Gb */
--	SPINAND_INFO("TC58CYG0S3", 0xB2,
-+	SPINAND_INFO("TC58CYG0S3HRAIG", 0xB2,
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- 	/* 1.8V 2Gb */
--	SPINAND_INFO("TC58CYG1S3", 0xBB,
-+	SPINAND_INFO("TC58CYG1S3HRAIG", 0xBB,
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- 	/* 1.8V 4Gb */
--	SPINAND_INFO("TC58CYG2S0", 0xBD,
-+	SPINAND_INFO("TC58CYG2S0HRAIG", 0xBD,
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&tc58cxgxsx_ooblayout,
--				     tc58cxgxsx_ecc_get_status)),
-+		     SPINAND_ECCINFO(&tx58cxgxsxraix_ooblayout,
-+				     tx58cxgxsxraix_ecc_get_status)),
- };
- 
- static int toshiba_spinand_detect(struct spinand_device *spinand)
+ #include "log.h"
+ #include "timens.h"
 -- 
-1.9.1
+2.7.4
+
 
