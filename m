@@ -2,140 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9689917B47A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF07F17B47F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:34:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbgCFCaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 21:30:46 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42292 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbgCFCaq (ORCPT
+        id S1726676AbgCFCe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:34:27 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:35962 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgCFCe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 21:30:46 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q19so539161ljp.9;
-        Thu, 05 Mar 2020 18:30:42 -0800 (PST)
+        Thu, 5 Mar 2020 21:34:27 -0500
+Received: by mail-pj1-f67.google.com with SMTP id l41so429700pjb.1;
+        Thu, 05 Mar 2020 18:34:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eH9bp9uRZgGX041TTGJP0RqQGDwpGGO3NTiYFhAbSX0=;
-        b=f51iBsa69izFo1z8fmVasqtE1/5vi7VYtzC0s1uoLRW1dMYdC2sYrepYi+oAxO/3RC
-         9sKaThX3cdL/uT54JSs0LOM/q5QKzcqOdY+A4g+gpzmTAhw7EhNArlzNCQ+QC5Lksg9G
-         qL4cF3YXbBLawWq5yCCq+iK1aO2hWlJ44nYEqpgyi32y8rEMKuTKja8yWo2SvAfbX9MG
-         x3d1mtLFpZULdwSKK1Ms4bboKtkr5+WN4s+bUyjcEnCTnyr/AT5JkXI7idWAcoQxIldM
-         48emlyjC4jyTi+tQxKR5e/lREfpBtDI56YIoMJyQXclypvAVxRXpFWoc7eexBLK2K19B
-         +www==
+        h=from:to:cc:subject:date:message-id;
+        bh=Ke0lWEigG8BKBEid+QNLchybndRR9eW4hf0oFbUv1Ok=;
+        b=HoOHi/Q9IQaGvD1oqtpyHKSzG1rhsHQW4xqqEouDilS3n/XjOsULN02JVajiwx6Y51
+         Q4vS9KDRYMOsxxrGhUq9S25hw6JtifKCdjzCis8U92xiyN81Ih0Z3Ee5nYW+dYC8jkJ7
+         JytS7r2U1kpez5gUM5NEp0w1t/8DfXZABx9JliexMIiuuKTS8/7L/IrRDARnVbyup8IY
+         TG6UpDGYloowOoEFEqdJ3tXbNejbMMTikCSz7143fwXs5rSCke3ILMn+CE/9uWhVgKsJ
+         0i9osjVtFidAGmYjbWlvUJLg+01+ZUBwwD6PLRoCvYrSarreC9Omi/t4dDoZjpbOlX9z
+         7W3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eH9bp9uRZgGX041TTGJP0RqQGDwpGGO3NTiYFhAbSX0=;
-        b=QtAfDO0I42aYcwU/k+LlQm4Kt3SyygBO+7GL90nVBw8uaJbl33TNaQh7+pfl5vTpAG
-         NkWtNUkiRLYjtJiC8VUhPmfk1aoYvZwsCo7WFjr+/S5ECe/VrPtJXC3PjozmvfnbxrMY
-         7RRwWae6lMSrci73RKYdl2+0T4sI3pTrIOzqYIRqRIo/qGb8cDjDDzaFLX7u/kufJ017
-         w1Mi7uCvnrf1g/stl+9RRkTDkPv/tvDwgwC5qnQxgpQckh0dANXV7bVYp/Iw0RGYtI2I
-         wWmed2QROL3bO8T03Mg7EWhIdi7Si94MMun0JQmRNXn6f5nMiU4Wkz6hTyYPkh3mjSgM
-         itZw==
-X-Gm-Message-State: ANhLgQ0YfYKWetttYjMDf27clZzXsty6JFfbnxkOB9lanX75BIqI5go3
-        ymOXJKvgitolZDLG/fz2Fx0V8K0b
-X-Google-Smtp-Source: ADFU+vuJV24RDwMbfIGoSzi9w5ISnp6gMhWI10jo+YMxOwYTt5uyC/d8vce+TpwHsecFCw0FIJTWKA==
-X-Received: by 2002:a2e:730b:: with SMTP id o11mr539097ljc.228.1583461841508;
-        Thu, 05 Mar 2020 18:30:41 -0800 (PST)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id j19sm13044730lfg.49.2020.03.05.18.30.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2020 18:30:40 -0800 (PST)
-Subject: Re: [PATCH v2 3/8] partitions: Introduce NVIDIA Tegra Partition Table
-To:     Randy Dunlap <rdunlap@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Billy Laws <blaws05@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrey Danin <danindrey@mail.ru>,
-        Gilles Grandou <gilles@grandou.net>,
-        Ryan Grachek <ryan@edited.us>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200306021220.22097-1-digetx@gmail.com>
- <20200306021220.22097-4-digetx@gmail.com>
- <14ebbc7f-91f3-16dd-b998-ddd71385c772@infradead.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d6e4a7b1-3412-7ccc-1941-04d28b847698@gmail.com>
-Date:   Fri, 6 Mar 2020 05:30:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <14ebbc7f-91f3-16dd-b998-ddd71385c772@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ke0lWEigG8BKBEid+QNLchybndRR9eW4hf0oFbUv1Ok=;
+        b=VlvqYyRaZHOBq6PJ7M5RevvUlnn4lI6zfvszow65Y2moTGs357I+PqQPAHnziUnNpa
+         mZgPMABEWiGiCNJRUXNV9rzCpIqXREFGc0+l51COx/A7dp9IIYNLOGqb06tWLQPc67aL
+         OM/X4pCyvzGIUwmOd+Z88RGHdm/an/iTq3OEBaeCML7Vz+ipqwax5yL4q8RFHhaoOUJk
+         5DkSsY/jEFzoGc5W5n9U/sHgo9YBMIvwayFVf1pOhDfear7x8E5QIEvBAJse0y75z72X
+         Ia5zYf2sKCvjj7O9wzZ2MKgJk9vTDQnuW0Nx/i29o4+KtgrkmUPMK+0w8IhCHStB76Gs
+         syTg==
+X-Gm-Message-State: ANhLgQ10V/oRARnhGun2WhlKFieozBjqCtmhsBcr+5HClwoCzNDm3ZFN
+        cNUllokIwkS6hr7T458JjA8=
+X-Google-Smtp-Source: ADFU+vsQfL+VUXcvJczGHkI11eMow7FWyFX82DecUQwjEAShJFar53/sKfD43LyxO7kC4kfR3sZTCg==
+X-Received: by 2002:a17:90b:1953:: with SMTP id nk19mr1186304pjb.98.1583462066207;
+        Thu, 05 Mar 2020 18:34:26 -0800 (PST)
+Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id r133sm5530709pgr.29.2020.03.05.18.34.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 05 Mar 2020 18:34:25 -0800 (PST)
+From:   Baolin Wang <baolin.wang7@gmail.com>
+To:     sre@kernel.org
+Cc:     baolin.wang7@gmail.com, orsonzhai@gmail.com, zhang.lyra@gmail.com,
+        saravanak@google.com, kernel-team@android.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] power: supply: Allow charger manager can be built as a module
+Date:   Fri,  6 Mar 2020 10:34:10 +0800
+Message-Id: <5e098be25c70e07c37e743f84a901f6f756090e0.1583461755.git.baolin.wang7@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.03.2020 05:22, Randy Dunlap пишет:
-> On 3/5/20 6:12 PM, Dmitry Osipenko wrote:
->> All NVIDIA Tegra devices use a special partition table format for the
->> internal storage partitioning. Most of Tegra devices have GPT partition
->> in addition to TegraPT, but some older Android consumer-grade devices do
->> not or GPT is placed in a wrong sector, and thus, the TegraPT is needed
->> in order to support these devices properly in the upstream kernel. This
->> patch adds support for NVIDIA Tegra Partition Table format that is used
->> at least by all NVIDIA Tegra20 and Tegra30 devices.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/mach-tegra/tegra.c   |  54 ++++
->>  block/partitions/Kconfig      |   9 +
->>  block/partitions/Makefile     |   1 +
->>  block/partitions/check.c      |   4 +
->>  block/partitions/tegra.c      | 510 ++++++++++++++++++++++++++++++++++
->>  block/partitions/tegra.h      |  83 ++++++
->>  include/soc/tegra/bootdata.h  |  46 +++
->>  include/soc/tegra/common.h    |   9 +
->>  include/soc/tegra/partition.h |  18 ++
->>  9 files changed, 734 insertions(+)
->>  create mode 100644 block/partitions/tegra.c
->>  create mode 100644 block/partitions/tegra.h
->>  create mode 100644 include/soc/tegra/bootdata.h
->>  create mode 100644 include/soc/tegra/partition.h
-> 
-> Hi Dmitry,
-> 
-> 
->> diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
->> index 702689a628f0..d3c5c6ad6d58 100644
->> --- a/block/partitions/Kconfig
->> +++ b/block/partitions/Kconfig
->> @@ -268,3 +268,12 @@ config CMDLINE_PARTITION
->>  	help
->>  	  Say Y here if you want to read the partition table from bootargs.
->>  	  The format for the command line is just like mtdparts.
->> +
->> +config TEGRA_PARTITION
->> +	bool "NVIDIA Tegra Partition support" if PARTITION_ADVANCED
->> +	default y if ARCH_TEGRA
->> +	depends on ARCH_TEGRA || COMPILE_TEST
->> +	select MMC_BLOCK
-> 
-> You shouldn't select MMC_BLOCK unless MMC is already enabled,
-> so this entire config should depend on MMC also.
-> As is, without MMC set/enabled, it should give you a kconfig warning.
-> 
-> (no, you should not also select MMC here.)
-> 
-> (This is just based on reading the patch--I haven't tested it
-> with CONFIG_MMC not set/enabled.  Have you?)
+Allow charger manager can be built as a module like other charger
+drivers.
 
-Hello Randy,
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+---
+Changes from v1:
+ - Use IS_ENABLED() instead.
+---
+ drivers/power/supply/Kconfig          | 2 +-
+ include/linux/power/charger-manager.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I haven't tested it with the disabled CONFIG_MMC, that's a good
-suggestion. I'll take it into account in a v3, thank you.
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index 9a5591a..195bc04 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -480,7 +480,7 @@ config CHARGER_GPIO
+ 	  called gpio-charger.
+ 
+ config CHARGER_MANAGER
+-	bool "Battery charger manager for multiple chargers"
++	tristate "Battery charger manager for multiple chargers"
+ 	depends on REGULATOR
+ 	select EXTCON
+ 	help
+diff --git a/include/linux/power/charger-manager.h b/include/linux/power/charger-manager.h
+index ad19e68..ae94dce 100644
+--- a/include/linux/power/charger-manager.h
++++ b/include/linux/power/charger-manager.h
+@@ -248,7 +248,7 @@ struct charger_manager {
+ 	u64 charging_end_time;
+ };
+ 
+-#ifdef CONFIG_CHARGER_MANAGER
++#if IS_ENABLED(CONFIG_CHARGER_MANAGER)
+ extern void cm_notify_event(struct power_supply *psy,
+ 				enum cm_event_types type, char *msg);
+ #else
+-- 
+1.9.1
+
