@@ -2,127 +2,326 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FB817B47D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B17617B483
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 03:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgCFCeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Mar 2020 21:34:20 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:7777 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726191AbgCFCeU (ORCPT
+        id S1726351AbgCFCfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Mar 2020 21:35:50 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38284 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbgCFCfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Mar 2020 21:34:20 -0500
-X-UUID: 0bcd69818ec44aa19b87aa0671e71ffa-20200306
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=lw7Z2hh6lxCttqw2IBWx1RQ1VaA6UHtHaJjaKiScxsU=;
-        b=e6ayxYvJPghsOeTmMKrxd+rDVv0LvxracPf2u1WBaq49Z7bf7awGJRY7Z9RXTt8/QyLyOp6nBUPB/iuIuHDkxt80A9kyPZ9ZMmjB8bJs6tJlqhBxcfDfOxmyxMltr6TCrFy6XOwb04o6zTxdOMyGNUjxdVoXWcum5c0B1+qgdZg=;
-X-UUID: 0bcd69818ec44aa19b87aa0671e71ffa-20200306
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <nick.fan@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1834358050; Fri, 06 Mar 2020 10:34:16 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 6 Mar 2020 10:33:05 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 6 Mar 2020 10:34:16 +0800
-Message-ID: <1583462055.4947.6.camel@mtksdaap41>
-Subject: Re: [PATCH v4 1/7] dt-bindings: gpu: mali-bifrost: Add Mediatek
- MT8183
-From:   Nick Fan <nick.fan@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-CC:     Rob Herring <robh@kernel.org>, Sj Huang <sj.huang@mediatek.com>,
-        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Tomeu Vizoso" <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 6 Mar 2020 10:34:15 +0800
-In-Reply-To: <CANMq1KAVX4o5yC7c_88Wq_O=F+MaSN_V4uNcs1nzS3wBS6A5AA@mail.gmail.com>
-References: <20200207052627.130118-1-drinkcat@chromium.org>
-         <20200207052627.130118-2-drinkcat@chromium.org>
-         <20200225171613.GA7063@bogus>
-         <CANMq1KAVX4o5yC7c_88Wq_O=F+MaSN_V4uNcs1nzS3wBS6A5AA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 5 Mar 2020 21:35:50 -0500
+Received: by mail-oi1-f195.google.com with SMTP id x75so1081232oix.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Mar 2020 18:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=st7rFi5+tigxm8DXMu+JVLUrGkxdt8+g7TRf3qNXqwg=;
+        b=QnGD6pInLENvKb2gJnmZ1WQpqK/MbGqryeHlxxKrLzb7+xp6Ef+g7UMmarpPvdE7JB
+         Q8QZAqKJl0QWxxznYrSqTMm+oqhDNumd87vI13HnsqvbyYhDIJhBRysAzriFCq+kNdkC
+         oCNVOAUT2b/Oqwkd6sCm06uGmv9U/nfkRbmco1aJTcQx1RM+srkElzhtNSw0VfrNoUhG
+         Cs8Xm8/4EeSAiCA8eZjojlXkfg2ETWcI44VS0YjKiqooOXnQS2KLy4L2En11JTuDCdp3
+         rnK5DEeU3y5lgoSWPFTaadLTlzqSNV0K1MMfiOTIWg5y6v3QWRWQd80+PajAF1YqVC5z
+         iTfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=st7rFi5+tigxm8DXMu+JVLUrGkxdt8+g7TRf3qNXqwg=;
+        b=osJ4109iYCONVCeR6VuyneX02b8o2FDHPpldI50ecYsdAlZ5csMCmLz1PPNLAZ150D
+         mDp6VYTpzmvTORuSQQcO1qhUKZcTelBZC54x5Neih1uQ3LGUS4H7cFa1zrOKXL/z0Bwx
+         JrTSWiILdIGeurGdC4y3njmJqyT5Ge2GQmk7786GPwIMMqCRmmp+p6z/iB0Qk2HT8Pfb
+         KpkwoixBHfx6EjJmx/8hf/QxFeqwtXe4waw0y4kTpgb4R3kqSxsHFfmUpu91YwWCT4KZ
+         WKiaO7pgfTrFqFBnKI7QQIsG6MCLh68QxBoiVoDzr6O26IrNDb3zlSHAvNuAi/D0ilT1
+         4gNQ==
+X-Gm-Message-State: ANhLgQ3oui4qh/HCD0xmMcD3E9XRuwyIysuC93xn0V9aG6SaM3U2Q5nY
+        QJBdDQhCXdF5YOlNKWLmnfkIxtItBSIKJpNSzubOVwlIX8U=
+X-Google-Smtp-Source: ADFU+vvBbK8TVAGoCqhS1nPpYaDpzrnbABIxMMYV8JPp1G5cQzEfWakv+pkLCAW0wtSPf+ViEEwAngDJIZU3xUIcomE=
+X-Received: by 2002:aca:3857:: with SMTP id f84mr1052131oia.150.1583462148584;
+ Thu, 05 Mar 2020 18:35:48 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 6 Mar 2020 12:35:37 +1000
+Message-ID: <CAPM=9tzi8ZaowmegAgeHSO3cLB5VRid9h=TMX=v+YcHEb5Cx_A@mail.gmail.com>
+Subject: [git pull] drm fixes for 5.6-rc5
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-U29ycnkgZm9yIG15IGxhdGUgcmVwbHkuDQpJIGhhdmUgY2hlY2tlZCBpbnRlcm5hbGx5Lg0KVGhl
-IE1UODE4M19QT1dFUl9ET01BSU5fTUZHXzJEIGlzIGp1c3QgYSBsZWdhY3kgbmFtZSwgbm90IHJl
-YWxseSAyRA0KZG9tYWluLg0KDQpJZiB0aGUgbmFtaW5nIHRvbyBjb25mdXNpbmcsIHdlIGNhbiBj
-aGFuZ2UgdGhpcyBuYW1lIHRvDQpNVDgxODNfUE9XRVJfRE9NQUlOX01GR19DT1JFMiBmb3IgY29u
-c2lzdGVuY3kuDQoNClRoYW5rcw0KDQpOaWNrIEZhbg0KDQpPbiBXZWQsIDIwMjAtMDItMjYgYXQg
-MDg6NTUgKzA4MDAsIE5pY29sYXMgQm9pY2hhdCB3cm90ZToNCg0KPiArTmljayBGYW4gK1NqIEh1
-YW5nIEAgTVRLDQo+IA0KPiBPbiBXZWQsIEZlYiAyNiwgMjAyMCBhdCAxOjE2IEFNIFJvYiBIZXJy
-aW5nIDxyb2JoQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gT24gRnJpLCBGZWIgMDcsIDIw
-MjAgYXQgMDE6MjY6MjFQTSArMDgwMCwgTmljb2xhcyBCb2ljaGF0IHdyb3RlOg0KPiA+ID4gRGVm
-aW5lIGEgY29tcGF0aWJsZSBzdHJpbmcgZm9yIHRoZSBNYWxpIEJpZnJvc3QgR1BVIGZvdW5kIGlu
-DQo+ID4gPiBNZWRpYXRlaydzIE1UODE4MyBTb0NzLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYt
-Ynk6IE5pY29sYXMgQm9pY2hhdCA8ZHJpbmtjYXRAY2hyb21pdW0ub3JnPg0KPiA+ID4gUmV2aWV3
-ZWQtYnk6IEFseXNzYSBSb3Nlbnp3ZWlnIDxhbHlzc2Eucm9zZW56d2VpZ0Bjb2xsYWJvcmEuY29t
-Pg0KPiA+ID4gLS0tDQo+ID4gPg0KPiA+ID4gdjQ6DQo+ID4gPiAgLSBBZGQgcG93ZXItZG9tYWlu
-LW5hbWVzIGRlc2NyaXB0aW9uDQo+ID4gPiAgICAoa2VwdCBBbHlzc2EncyByZXZpZXdlZC1ieSBh
-cyB0aGUgY2hhbmdlIGlzIG1pbm9yKQ0KPiA+ID4gdjM6DQo+ID4gPiAgLSBObyBjaGFuZ2UNCj4g
-PiA+DQo+ID4gPiAgLi4uL2JpbmRpbmdzL2dwdS9hcm0sbWFsaS1iaWZyb3N0LnlhbWwgICAgICAg
-IHwgMjUgKysrKysrKysrKysrKysrKysrKw0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyNSBpbnNl
-cnRpb25zKCspDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9ncHUvYXJtLG1hbGktYmlmcm9zdC55YW1sIGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9hcm0sbWFsaS1iaWZyb3N0LnlhbWwNCj4gPiA+IGluZGV4
-IDRlYTZhODc4OTY5OTcwOS4uMGQ5M2IzOTgxNDQ1OTc3IDEwMDY0NA0KPiA+ID4gLS0tIGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9hcm0sbWFsaS1iaWZyb3N0LnlhbWwN
-Cj4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvYXJtLG1h
-bGktYmlmcm9zdC55YW1sDQo+ID4gPiBAQCAtMTcsNiArMTcsNyBAQCBwcm9wZXJ0aWVzOg0KPiA+
-ID4gICAgICBpdGVtczoNCj4gPiA+ICAgICAgICAtIGVudW06DQo+ID4gPiAgICAgICAgICAgIC0g
-YW1sb2dpYyxtZXNvbi1nMTJhLW1hbGkNCj4gPiA+ICsgICAgICAgICAgLSBtZWRpYXRlayxtdDgx
-ODMtbWFsaQ0KPiA+ID4gICAgICAgICAgICAtIHJlYWx0ZWsscnRkMTYxOS1tYWxpDQo+ID4gPiAg
-ICAgICAgICAgIC0gcm9ja2NoaXAscHgzMC1tYWxpDQo+ID4gPiAgICAgICAgLSBjb25zdDogYXJt
-LG1hbGktYmlmcm9zdCAjIE1hbGkgQmlmcm9zdCBHUFUgbW9kZWwvcmV2aXNpb24gaXMgZnVsbHkg
-ZGlzY292ZXJhYmxlDQo+ID4gPiBAQCAtNjIsNiArNjMsMzAgQEAgYWxsT2Y6DQo+ID4gPiAgICAg
-ICAgICAgIG1pbkl0ZW1zOiAyDQo+ID4gPiAgICAgICAgcmVxdWlyZWQ6DQo+ID4gPiAgICAgICAg
-ICAtIHJlc2V0cw0KPiA+ID4gKyAgLSBpZjoNCj4gPiA+ICsgICAgICBwcm9wZXJ0aWVzOg0KPiA+
-ID4gKyAgICAgICAgY29tcGF0aWJsZToNCj4gPiA+ICsgICAgICAgICAgY29udGFpbnM6DQo+ID4g
-PiArICAgICAgICAgICAgY29uc3Q6IG1lZGlhdGVrLG10ODE4My1tYWxpDQo+ID4gPiArICAgIHRo
-ZW46DQo+ID4gPiArICAgICAgcHJvcGVydGllczoNCj4gPiA+ICsgICAgICAgIHNyYW0tc3VwcGx5
-OiB0cnVlDQo+ID4gPiArICAgICAgICBwb3dlci1kb21haW5zOg0KPiA+ID4gKyAgICAgICAgICBk
-ZXNjcmlwdGlvbjoNCj4gPiA+ICsgICAgICAgICAgICBMaXN0IG9mIHBoYW5kbGUgYW5kIFBNIGRv
-bWFpbiBzcGVjaWZpZXIgYXMgZG9jdW1lbnRlZCBpbg0KPiA+ID4gKyAgICAgICAgICAgIERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wb3dlci9wb3dlcl9kb21haW4udHh0DQo+ID4g
-PiArICAgICAgICAgIG1pbkl0ZW1zOiAzDQo+ID4gPiArICAgICAgICAgIG1heEl0ZW1zOiAzDQo+
-ID4gPiArICAgICAgICBwb3dlci1kb21haW4tbmFtZXM6DQo+ID4gPiArICAgICAgICAgIGl0ZW1z
-Og0KPiA+ID4gKyAgICAgICAgICAgIC0gY29uc3Q6IGNvcmUwDQo+ID4gPiArICAgICAgICAgICAg
-LSBjb25zdDogY29yZTENCj4gPiA+ICsgICAgICAgICAgICAtIGNvbnN0OiAyZA0KPiA+DQo+ID4g
-QUZBSUssIHRoZXJlJ3Mgbm8gJzJkJyBibG9jayBpbiBiaWZyb3N0IEdQVXMuIEEgcG93ZXIgZG9t
-YWluIGZvciBlYWNoDQo+ID4gY29yZSBncm91cCBpcyBjb3JyZWN0IHRob3VnaC4NCj4gDQo+IEdv
-b2QgcXVlc3Rpb24uLi4gSG9wZWZ1bGx5IE5pY2svU0pATVRLIGNhbiBjb21tZW50LCB0aGUgbm9u
-LXVwc3RyZWFtIERUUyBoYXM6DQo+IGdwdTogbWFsaUAxMzA0MDAwMCB7DQo+IGNvbXBhdGlibGUg
-PSAibWVkaWF0ZWssbXQ4MTgzLW1hbGkiLCAiYXJtLG1hbGktYmlmcm9zdCI7DQo+IHBvd2VyLWRv
-bWFpbnMgPSA8JnNjcHN5cyBNVDgxODNfUE9XRVJfRE9NQUlOX01GR19DT1JFMD47DQo+IC4uLg0K
-PiB9DQo+IA0KPiBncHVfY29yZTE6IG1hbGlfZ3B1X2NvcmUxIHsNCj4gY29tcGF0aWJsZSA9ICJt
-ZWRpYXRlayxncHVfY29yZTEiOw0KPiBwb3dlci1kb21haW5zID0gPCZzY3BzeXMgTVQ4MTgzX1BP
-V0VSX0RPTUFJTl9NRkdfQ09SRTE+Ow0KPiB9Ow0KPiANCj4gZ3B1X2NvcmUyOiBtYWxpX2dwdV9j
-b3JlMiB7DQo+IGNvbXBhdGlibGUgPSAibWVkaWF0ZWssZ3B1X2NvcmUyIjsNCj4gcG93ZXItZG9t
-YWlucyA9IDwmc2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fTUZHXzJEPjsNCj4gfTsNCj4gDQo+
-IFNvIEkgcGlja2VkIGNvcmUwL2NvcmUxLzJkIGFzIG5hbWVzLCBidXQgbG9va2luZyBhdCB0aGlz
-LCBpdCdzIGxpa2VseQ0KPiBjb3JlMiBpcyBtb3JlIGFwcHJvcHJpYXRlIChhbmQgTVQ4MTgzX1BP
-V0VSX0RPTUFJTl9NRkdfMkQgbWlnaHQganVzdA0KPiBiZSBhIGludGVybmFsL2xlZ2FjeSBuYW1l
-LCBpZiB0aGVyZSBpcyBubyByZWFsIDJkIGRvbWFpbikuDQo+IA0KPiBUaGFua3MuDQo+IA0KPiA+
-IFJvYg0KDQo=
+Hi Linus,
 
+Weekly fixes round, looks like a few people woke up, got a bunch of
+fixes across the drivers. Bit bigger than I'd like but they all seem
+fine and hopefully it quiets down now.
+
+sun4i, kirin, mediatek and exynos on the ARM side.
+virtio-gpu and core have some mmap fixes, and there is a dma-buf leak.
+one ttm fence leak is also fixed.
+
+Otherwise it's mostly amdgpu and i915. One of the i915 fixes is for a
+very long latency I was seeing (using latencytop) running gnome-shell
+locally when using firefox and eating nearly all my RAM, it really
+helps with desktop responsiveness esp when firefox is chewing a lot.
+
+Dave.
+
+drm-fixes-2020-03-06:
+drm fixes for 5.6-rc5
+
+dma-buf:
+- fix memory leak
+
+core:
+- shmem object mmap fix.
+
+ttm:
+- Fix fence leak in ttm_buffer_object_transfer().
+
+amdgpu:
+- Gfx reset fix for gfx9, 10
+- Fix for gfx10
+- DP MST fix
+- DCC fix
+- Renoir power fixes
+- Navi power fix
+
+i915:
+- Break up long lists of object reclaim with cond_resched()
+- PSR probe fix
+- TGL workarounds
+- Selftest return value fix
+- Drop timeline mutex while waiting for retirement
+- Wait for OA configuration completion before writes to OA buffer
+
+virtio:
+- Fix resource id creation race in virtio.
+- mmap fixes
+
+sun4i:
+- Fixes for sun4i VI layer format support.
+
+kirin:
+- kirin: Revert "Fix for hikey620 display offset problem"
+
+exynos:
+- fix a kernel oops problem in case that driver is loaded as module.
+- fix a regulator warning issue when I2C DDC adapter cannot be gathered.
+- print out an error message only in error case excepting -EPROBE_DEFER.
+
+mediatek:
+- overlay, cursor and gce fixes.
+`
+The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b=
+:
+
+  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2020-03-06
+
+for you to fetch changes up to 2ac4853e295bba53209917e14af701c45c99ce04:
+
+  Merge tag 'amd-drm-fixes-5.6-2020-03-05' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes (2020-03-06
+11:06:33 +1000)
+
+----------------------------------------------------------------
+drm fixes for 5.6-rc5
+
+dma-buf:
+- fix memory leak
+
+core:
+- shmem object mmap fix.
+
+ttm:
+- Fix fence leak in ttm_buffer_object_transfer().
+
+amdgpu:
+- Gfx reset fix for gfx9, 10
+- Fix for gfx10
+- DP MST fix
+- DCC fix
+- Renoir power fixes
+- Navi power fix
+
+i915:
+- Break up long lists of object reclaim with cond_resched()
+- PSR probe fix
+- TGL workarounds
+- Selftest return value fix
+- Drop timeline mutex while waiting for retirement
+- Wait for OA configuration completion before writes to OA buffer
+
+virtio:
+- Fix resource id creation race in virtio.
+- mmap fixes
+
+sun4i:
+- Fixes for sun4i VI layer format support.
+
+kirin:
+- kirin: Revert "Fix for hikey620 display offset problem"
+
+exynos:
+- fix a kernel oops problem in case that driver is loaded as module.
+- fix a regulator warning issue when I2C DDC adapter cannot be gathered.
+- print out an error message only in error case excepting -EPROBE_DEFER.
+
+mediatek:
+- overlay, cursor and gce fixes.
+`
+
+----------------------------------------------------------------
+Ahzo (1):
+      drm/ttm: fix leaking fences via ttm_buffer_object_transfer
+
+Bhawanpreet Lakha (1):
+      drm/amd/display: Clear link settings on MST disable connector
+
+Bibby Hsieh (4):
+      drm/mediatek: Add plane check in async_check function
+      drm/mediatek: Add fb swap in async_update
+      drm/mediatek: Move gce event property to mutex device node
+      drm/mediatek: Make sure previous message done or be aborted before se=
+nd
+
+Chris Wilson (4):
+      drm/i915/gem: Break up long lists of object reclaim
+      drm/i915: Protect i915_request_await_start from early waits
+      drm/i915/perf: Reintroduce wait on OA configuration completion
+      drm/i915/gt: Drop the timeline->mutex as we wait for retirement
+
+Cong Wang (1):
+      dma-buf: free dmabuf->name in dma_buf_release()
+
+Dan Carpenter (1):
+      drm/i915/selftests: Fix return in assert_mmap_offset()
+
+Dave Airlie (5):
+      Merge tag 'exynos-drm-fixes-for-v5.6-rc5' of
+git://git.kernel.org/.../daeinki/drm-exynos into drm-fixes
+      Merge tag 'mediatek-drm-fixes-5.6' of
+https://github.com/ckhu-mediatek/linux.git-tags into drm-fixes
+      Merge tag 'drm-misc-fixes-2020-03-05' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge tag 'drm-intel-fixes-2020-03-05' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge tag 'amd-drm-fixes-5.6-2020-03-05' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+
+Evan Benn (1):
+      drm/mediatek: Find the cursor plane instead of hard coding it
+
+Gerd Hoffmann (3):
+      drm/shmem: add support for per object caching flags.
+      drm/virtio: fix mmap page attributes
+      drm/shmem: drop pgprot_decrypted()
+
+Hersen Wu (1):
+      drm/amdgpu/display: navi1x copy dcn watermark clock settings to
+smu resume from s3 (v2)
+
+Icenowy Zheng (1):
+      drm/bridge: analogix-anx6345: fix set of link bandwidth
+
+Jernej Skrabec (3):
+      drm/sun4i: de2/de3: Remove unsupported VI layer formats
+      drm/sun4i: Add separate DE3 VI layer formats
+      drm/sun4i: Fix DE2 VI layer format support
+
+John Bates (1):
+      drm/virtio: fix resource id creation race
+
+John Stultz (1):
+      drm: kirin: Revert "Fix for hikey620 display offset problem"
+
+Josip Pavic (1):
+      drm/amd/display: fix dcc swath size calculations on dcn1
+
+Jos=C3=A9 Roberto de Souza (1):
+      drm/i915/psr: Force PSR probe only after full initialization
+
+Lucas De Marchi (1):
+      drm/i915/tgl: Add Wa_1608008084
+
+Marek Szyprowski (3):
+      drm/exynos: dsi: propagate error value and silence meaningless warnin=
+g
+      drm/exynos: dsi: fix workaround for the legacy clock name
+      drm/exynos: hdmi: don't leak enable HDMI_EN regulator if probe fails
+
+Matt Roper (2):
+      drm/i915: Program MBUS with rmw during initialization
+      drm/i915/tgl: Add Wa_22010178259:tgl
+
+Phong LE (1):
+      drm/mediatek: Handle component type MTK_DISP_OVL_2L correctly
+
+Prike Liang (2):
+      drm/amd/powerplay: fix pre-check condition for setting clock range
+      drm/amd/powerplay: map mclk to fclk for COMBINATIONAL_BYPASS case
+
+Sean Paul (1):
+      drm/mediatek: Ensure the cursor plane is on top of other overlays
+
+Tianci.Yin (1):
+      drm/amdgpu: disable 3D pipe 1 on Navi1x
+
+Tomeu Vizoso (1):
+      drm/panfrost: Don't try to map on error faults
+
+Yintian Tao (1):
+      drm/amdgpu: clean wptr on wb when gpu recovery
+
+ drivers/dma-buf/dma-buf.c                          |   1 +
+ drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c             |  98 ++++++++++-------=
+--
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c              |   1 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  69 ++++++++++++++
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |   1 +
+ .../gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c    |   4 +-
+ drivers/gpu/drm/amd/powerplay/amdgpu_smu.c         |   2 +-
+ drivers/gpu/drm/amd/powerplay/renoir_ppt.c         |   6 +-
+ drivers/gpu/drm/amd/powerplay/smu_v12_0.c          |   3 -
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   3 +-
+ drivers/gpu/drm/drm_gem_shmem_helper.c             |  16 +++-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  12 ++-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  22 +++--
+ drivers/gpu/drm/hisilicon/kirin/kirin_ade_reg.h    |   1 -
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c    |  20 ----
+ drivers/gpu/drm/i915/display/intel_display_power.c |  29 +++++-
+ drivers/gpu/drm/i915/display/intel_psr.c           |  25 ++++-
+ drivers/gpu/drm/i915/display/intel_psr.h           |   1 +
+ drivers/gpu/drm/i915/gem/i915_gem_object.c         |   1 +
+ drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c |   2 +-
+ drivers/gpu/drm/i915/gt/intel_gt_requests.c        |  14 ++-
+ drivers/gpu/drm/i915/gt/intel_workarounds.c        |  19 ++--
+ drivers/gpu/drm/i915/i915_drv.c                    |   3 +
+ drivers/gpu/drm/i915/i915_drv.h                    |   2 +-
+ drivers/gpu/drm/i915/i915_perf.c                   |  58 ++++++++----
+ drivers/gpu/drm/i915/i915_perf_types.h             |   3 +-
+ drivers/gpu/drm/i915/i915_reg.h                    |   1 +
+ drivers/gpu/drm/i915/i915_request.c                |  41 +++++---
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  30 ++++--
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c        |   1 +
+ drivers/gpu/drm/mediatek/mtk_drm_plane.c           |   7 ++
+ drivers/gpu/drm/panfrost/panfrost_mmu.c            |  44 ++++-----
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                | 104 +++++++++++++++++=
++---
+ drivers/gpu/drm/sun4i/sun8i_mixer.h                |  11 +++
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c             |  66 +++++++++++--
+ drivers/gpu/drm/ttm/ttm_bo_util.c                  |   1 +
+ drivers/gpu/drm/virtio/virtgpu_object.c            |   5 +-
+ include/drm/drm_gem_shmem_helper.h                 |   5 +
+ 38 files changed, 520 insertions(+), 212 deletions(-)
