@@ -2,94 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D71017BB5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A2717BB60
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 12:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbgCFLOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 06:14:30 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44357 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbgCFLO3 (ORCPT
+        id S1727121AbgCFLPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 06:15:07 -0500
+Received: from mail-vs1-f54.google.com ([209.85.217.54]:45977 "EHLO
+        mail-vs1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgCFLPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:14:29 -0500
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1jAAvv-0007qh-Fv; Fri, 06 Mar 2020 12:14:23 +0100
-Subject: Re: [PATCH] ARM: mach-imx6q: add ksz9131rn_phy_fixup
-To:     Philippe Schenker <philippe.schenker@toradex.com>,
-        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
-        "andrew@lunn.ch" <andrew@lunn.ch>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>
-References: <20200305134928.19775-1-philippe.schenker@toradex.com>
- <20200305143805.dk7fndblnqjnwxu6@pengutronix.de>
- <20200305165145.GA25183@lunn.ch>
- <7191ffe6-642a-477c-ec37-e37dc9be4bf8@pengutronix.de>
- <4e48d56f184ed56d15d2ae6706fdb29e4c849132.camel@toradex.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <f47a46b9-6d6a-e257-4309-7e49852bc88e@pengutronix.de>
-Date:   Fri, 6 Mar 2020 12:14:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 6 Mar 2020 06:15:06 -0500
+Received: by mail-vs1-f54.google.com with SMTP id x194so1235608vsc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 03:15:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RALxsLUaehfVlQvSftzg+Fa2mm4tOh4KA3MkWJBS1Wg=;
+        b=L1atKqdq+Sd3Hdsm7/3Om3qiUD7MEXQHhdSIB02f2vHyUBzfwL2ntphoeKdPS7HqWu
+         GA1SbtTT3XMAjS8DIFx8wap0iOQBn1/esVAlZXpsMH+VnW1fczqEj/9jqaj7+yVI08Qh
+         qLTtmUC74LNea1rG+hK+S6YrvexWiAw8V1nZJtL0Ocb9uYyoIJePnirVSj9JDaP5+fYX
+         NbY8kq90JZkrsmJ01kQ7amgyp0caa+m58V0KYtLyujSkMOpNETuUbQxPDNEHB3KoeFGD
+         oRURHTtpkyxUfc+fFB2nuuvhIssCHI13ejkYu6GfL5Hu+jnvJGooTG2Tc+l98n0UgCke
+         hKiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RALxsLUaehfVlQvSftzg+Fa2mm4tOh4KA3MkWJBS1Wg=;
+        b=GeaEZcjQxr/9JVLcxGgxI2O5pHHoeeAeMClOF1zmCVK894ZqIJufaUbDhhjjcn8iz3
+         2nE6bXQdsnOjpMSF7VHXOcLdSdAFLTtyQQ56lFJz2BwtaVKefmyT9FAndwxztBKV44+K
+         HSFlLypsk1mW3e7ofNXU2T3A125nPwuyjEH/yUD8j1pdPikMBGu3UrMpIP0ijAkbY4FZ
+         zCudPdnWmj7YfheL0S1NeRmskd6hEaWhcypAFVGJeH7LzixNLmdIt8wyehS/g9oLmLPP
+         U9S8Q+Z6F3Ue+RY5EoSI8ubdlKjzu28b+OqUMA5rnB85WmNO+q17HAvjgeY7eyRTGgxv
+         ekyQ==
+X-Gm-Message-State: ANhLgQ0wBMdna/ZLUvjBIZLfAtDLJ+DknadJZXxtWrmwud+t2ge9/VbE
+        G6rBS56HzjooV71RXM5YoU/p7z3BzGEF/fcW4uLklw==
+X-Google-Smtp-Source: ADFU+vu5ic0WXuqQCkTpsuPEoSJuLGAvJotbaObBa+yxHqWEywYiNwpxOLlyc0d5So2Sg6BN1yJw/KM7oGHOxKOCHCc=
+X-Received: by 2002:a67:7fd0:: with SMTP id a199mr1838473vsd.200.1583493304009;
+ Fri, 06 Mar 2020 03:15:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <4e48d56f184ed56d15d2ae6706fdb29e4c849132.camel@toradex.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
+ <6523119a-50ac-973a-d1cd-ab1569259411@nvidia.com> <f960aa98-5508-36fd-166d-7f41c7d85154@nvidia.com>
+ <CAPDyKFokE6x0mn+v5B9=so-SyrdTn0JBU8Mrp3Zdu6kSaCie2g@mail.gmail.com>
+ <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com> <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
+ <34fd84d7-387b-b6f3-7fb3-aa490909e205@ti.com> <CAPDyKFrrO4noYqdxWL9Y8Nx75LopbDudKGMotkGbGcAF1oq==w@mail.gmail.com>
+ <5e9b5646-bd48-e55b-54ee-1c2c41fc9218@nvidia.com> <CAPDyKFqpNo_4OePBR1KnJNO=kR8XEqbcsEd=icSceSdDH+Rk1Q@mail.gmail.com>
+ <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com> <d12fe142-7e72-ab58-33ab-17817e35096f@nvidia.com>
+ <c216f131-6f83-c9c9-9d17-8d44ec06972d@nvidia.com> <87ad7586-9569-4276-044a-adb64e84ca15@nvidia.com>
+ <a0962e0b-0f1d-9f32-f6e9-92f69f93167f@nvidia.com> <57ddddc2-3ee8-d867-bba0-0dd9929ba37d@nvidia.com>
+ <CAPDyKFqZSd9E3+16yFsmpee2JsbRJ-DGThxx7NJHu6UE00Xi1Q@mail.gmail.com> <26ee7225-9483-4664-c2d7-b5cefeadcd4b@nvidia.com>
+In-Reply-To: <26ee7225-9483-4664-c2d7-b5cefeadcd4b@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 6 Mar 2020 12:14:27 +0100
+Message-ID: <CAPDyKFqwVQDEnPNi33mc9ycTxpaT1cRLejbR3Ja4c8dha4gFRw@mail.gmail.com>
+Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Kishon <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Philippe,
+[...]
 
-On 3/6/20 10:46 AM, Philippe Schenker wrote:
-> Hi Andrew and Ahmad, thanks for your comments. I totally forgot about
-> those more specific phy-modes. But just because none of our driver
-> supports that. Either the i.MX6 fec-driver as well as the micrel.c PHY
-> driver supports this tags.
-> What do you guys suggest then how I should implement that skew stuff?
+> >>>>>>>>>
+> >>>>>>>>> Actually we always use R1B with CMD6 as per spec.
+> >>>>>>>> I fully agree that R1B is preferable, but it's not against the
+> >>>>>>>> spec to
+> >>>>>>>> send CMD13 to poll for busy.
+> >>>>>>>>
+> >>>>>>>> Moreover, we need to cope with the scenario when the host has
+> >>>>>>>> specified a maximum timeout that isn't sufficiently long enough for
+> >>>>>>>> the requested operation. Do you have another proposal for how to
+> >>>>>>>> manage this, but disabling MMC_RSP_BUSY?
+> >>>>>>>>
+> >>>>>>>> Let's assume you driver would get a R1B for the CMD6 (we force it),
+> >>>>>>>> then what timeout would the driver be using if we would set
+> >>>>>>>> cmd.busy_timeout to 30ms?
+> >>>>>>>>
+> >> Sorry didn't understood clearly. Are you asking with 30s timeout, whats
+> >> the data timeout counter used?
+> > Yes. It seems like it will pick the maximum, which is 11s?
+> yes
 
-I think implementing them in the Micrel driver would make sense.
-When more specific skews are supplied, these are used.
-If not, the rgmii_[tx]?id applies the appropriate timings for length matched
-lines. Device trees matching your use case will then only have to specify
-rgmii-txid. 
+Okay, thanks!
 
-> The problem is that i.MX6 has an asynchronic skew of -100 to 900ps only
-> enabling the PHY-delay on TXC and RXC is not in all cases within the
-> RGMII timing specs. That's why I implemented this 'weird' numbers.
+> >
+> >> Because of above mentioned issue on our host where CMD interrupt happens
+> >> after busy state, poll for busy returns right away as not busy.
+> > I see.
+> >
+> >> So issuing CMD13 after CMD6-R1 followed by busy poll should be working.
+> >> But weird that with small delay of 1ms or debug print before CMD13 it
+> >> doesn't timeout and works all the time.
+> > I have digested the information you provided in these emails. Let me
+> > summarize it, to see if I have understood correctly.
+> >
+> > 1.
+> > Your controller can't distinguish between R1 and R1B because of a
+> > limitation in the HW. So, in both cases you need to wait for the card
+> > to stop signal busy, before the controller can give an IRQ to notify
+> > that the R1 response has been received. Correct?
+> >
+> > In this context, I am wondering if sdhci_send_command(), really
+> > conforms to these requirements. For example, depending on if the CMD6
+> > has MMC_RSP_BUSY or not, it may pick either SDHCI_CMD_RESP_SHORT or
+> > SDHCI_CMD_RESP_SHORT_BUSY.
+> >
+> > Does this work as expected for your case?
+> Design team re-verified internally and bug where HW waits for busy state
+> before IRQ is only for R1B and R1 is spec compliant.
+>
+> So, with R1, CMD complete is generated after response received.
 
-I am not too well-versed with this. What's an asynchronic skew?
-A non-deterministic internal delay..? So, you try to be as accurate as
-possible, so the skew is within the acceptable margin?
+Okay.
 
-Cheers
-Ahmad
+So, the issue we see for CMD6 with R1, is a software problem that we
+should be able to fix.
 
+>
+> With R1B, CMD complete and xfer complete both are generated after
+> response received + device busy (max timeout of 11s)
+> DATA timeout interrupt will be asserted incase if HW busy detection fails.
+>
+> With R1B we may see DATA Timeout if operation takes more than max busy
+> timeout of 11s.
 
-> 
-> Philippe
-> 
+Okay, I see.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>
+> > 2.
+> > Assuming my interpretation of the above is somewhat correct. Then you
+> > always need to set a busy timeout for R1/R1B responses in the
+> > controller. The maximum timeout seems to be 11s long. Obviously, this
+> > isn't enough for all cases, such as cache flushing and erase, for
+> > example. So, what can we do to support a longer timeouts than 11s?
+> > Would it be possible to disable the HW timeout, if the requested
+> > timeout is longer than 11s and use a SW timeout instead?
+> >
+> > Kind regards
+> > Uffe
+>
+> For erase long operations we have register bit to enable for infinite
+> busy wait mode where host controller would be monitoring until card is busy.
+
+Alright, that sounds great!
+
+>
+> But so far for emmc devices we used on our platforms, we haven't seen
+> cache flush taking more than 11s.
+
+I understand that 11s is probably fine to use, for most cases.
+
+However, it's not spec compliant, as for some operations there are
+simply no timeout specified. BKOPS, cache flush, sanitize are cases
+like this - and then 11s is definitely not sufficient.
+
+>
+> Will get back on possibility of disabling HW timeout and using SW timeout..
+
+Thanks!
+
+I would like to get the regression fixed asap, but I also would like
+to avoid reverting patches, unless really necessary. May I propose the
+following two options.
+
+1. Find out why polling with ->card_busy() or CMD13, for a CMD6 with
+an R1 response doesn't work - and then fix that behaviour.
+
+2. Set the mmc->max_busy_timeout to zero for sdhci-tegra, which makes
+the core to always use R1B for CMD6 (and erase). This also means that
+when the cmd->busy_timeout becomes longer than 11s, sdhci-tegra must
+disable the HW busy timeout and just wait "forever".
+
+If you decide for 2, you can add the software timeout support on top,
+but make that can be considered as a next step of an improvement,
+rather than needed as fix. Note that, I believe there are some support
+for software timeout already in the sdhci core, maybe you need to
+tweak it a bit for your case, I don't know.
+
+Kind regards
+Uffe
