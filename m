@@ -2,69 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD9A17B9E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6DC617BA11
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Mar 2020 11:20:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgCFKMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 05:12:55 -0500
-Received: from mga17.intel.com ([192.55.52.151]:26192 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbgCFKMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:12:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 02:12:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,521,1574150400"; 
-   d="scan'208";a="230020025"
-Received: from unknown (HELO linuxpc.iind.intel.com) ([10.223.107.108])
-  by orsmga007.jf.intel.com with ESMTP; 06 Mar 2020 02:12:52 -0800
-From:   Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
-To:     rui.zhang@intel.com, srinivas.pandruvada@linux.intel.com,
-        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
-Subject: [PATCH V2] thermal: int340x: processor_thermal: Add Tiger Lake support
-Date:   Fri,  6 Mar 2020 15:49:12 +0530
-Message-Id: <1583489952-29612-1-git-send-email-sumeet.r.pawnikar@intel.com>
-X-Mailer: git-send-email 1.7.9.5
+        id S1726769AbgCFKUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 05:20:17 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:37453 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbgCFKUQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 05:20:16 -0500
+Received: by mail-yw1-f68.google.com with SMTP id g206so1729977ywb.4;
+        Fri, 06 Mar 2020 02:20:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JZtPV4lyilADfqy1eD7YIQ/XfyrDcGPt4PIlFlX/erI=;
+        b=bQyzRFDo+Vb/MswGw+eHElqyqGb3zJ0MWFv0WK6p0ACeczEHSnMryHED7qFSgioL1u
+         ZrXaPm0ePM6GoyFxEkW+IRFcu18hwLzdLW4X3oME9tiS72gbt9P5EBimS/62i8QBQjTY
+         IyL0P29Zjat1c2UWDQcdCMS2LCdflmaEc+LzAdD3ATQOtCmX2lu1Hn+m1QS8uK5L+sJ9
+         9Fks3eEusAer9qGOilctBHANj11MWxnB6W3eIXNjrf3So6IDXOeY+Rs992jHykbD8Pcs
+         U5fajFIk5S/WaQre6PSWpN21cJSE0D2dkxfBZlZ8ax55G67e23jIkvFZIMgwx5WhkFuq
+         gznQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JZtPV4lyilADfqy1eD7YIQ/XfyrDcGPt4PIlFlX/erI=;
+        b=CEFn6wpHr1mza7WLj8HwsElrCLSDbV7FaeD2KXMnK9Rkp+vAl9NrBtw3jBp04RWrwy
+         U97bknHSXy12dwlWjR7C/19GY3CeeZwAxWiXG06tXcmWXQ0ZwPquuSKc7RwbOECKfksk
+         FSA0Fl/m6HWzarVl/6G/A7IGD/IgMCjQltSvpJ560UG1IBjJItzO9kBpnhtI0KtXJ/oM
+         PCjdpGg/yFhJpGA+GgP5kU2Hmm3o7wqC/+5Z1S0Et4hamh54FucVfJWrad6SlO0Ce1xl
+         uo/BhqCgejz6GO4bD+h1LYBUUlgbe/t1483G2oiGNaeQhPBi/KBjYI7fqM/T9+jHJVuB
+         FDfQ==
+X-Gm-Message-State: ANhLgQ2wM62ZFpFN0IWu8Ss65K8pH3hvbj7sQfxIrZicOywXHbgyV/oq
+        LVgqktCTCq5J5z8X7A9580k=
+X-Google-Smtp-Source: ADFU+vteD7dUx1U48uUDIL7XDGNdrDmdW0/Uf18cgj4qg//uICALRMG5MYEWvbGkTm+FC7YAoWjqEA==
+X-Received: by 2002:a81:5e09:: with SMTP id s9mr3248359ywb.348.1583490014862;
+        Fri, 06 Mar 2020 02:20:14 -0800 (PST)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id p2sm13978658ywd.58.2020.03.06.02.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 02:20:14 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Han Xu <han.xu@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3] arm64: dts: enable fspi in imx8mm dts
+Date:   Fri,  6 Mar 2020 04:19:57 -0600
+Message-Id: <20200306101957.1229406-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added new PCI id for Tiger Lake processor thermal device along with
-MMIO RAPL support.
+Pull in upstream patch from NXP repo to:
+enable fspi in imx8mm DT file
 
-Signed-off-by: Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
+Signed-off-by: Han Xu <han.xu@nxp.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- .../int340x_thermal/processor_thermal_device.c     |    5 +++++
- 1 file changed, 5 insertions(+)
+V3: Move flexspi to order the unit address.
+V2: Reorder s-o-b lines to give credit in proper order.
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-index b1fd345..297db1d 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-@@ -45,6 +45,9 @@
- /* JasperLake thermal reporting device */
- #define PCI_DEVICE_ID_PROC_JSL_THERMAL	0x4503
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index 1e5e11592f7b..7e6c0722afa6 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -558,7 +558,8 @@ aips3: bus@30800000 {
+ 			compatible = "simple-bus";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			ranges = <0x30800000 0x30800000 0x400000>;
++			ranges = <0x30800000 0x30800000 0x400000>,
++				 <0x8000000 0x8000000 0x10000000>;
  
-+/* TigerLake thermal reporting device */
-+#define PCI_DEVICE_ID_PROC_TGL_THERMAL	0x9A03
+ 			ecspi1: spi@30820000 {
+ 				compatible = "fsl,imx8mm-ecspi", "fsl,imx51-ecspi";
+@@ -760,6 +761,19 @@ usdhc3: mmc@30b60000 {
+ 				status = "disabled";
+ 			};
+ 
++			flexspi: spi@30bb0000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "nxp,imx8mm-fspi";
++				reg = <0x30bb0000 0x10000>, <0x8000000 0x10000000>;
++				reg-names = "fspi_base", "fspi_mmap";
++				interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MM_CLK_QSPI_ROOT>,
++					 <&clk IMX8MM_CLK_QSPI_ROOT>;
++				clock-names = "fspi", "fspi_en";
++				status = "disabled";
++			};
 +
- #define DRV_NAME "proc_thermal"
- 
- struct power_config {
-@@ -728,6 +731,8 @@ static int proc_thermal_resume(struct device *dev)
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_ICL_THERMAL),
- 		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_JSL_THERMAL)},
-+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_TGL_THERMAL),
-+		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
- 	{ 0, },
- };
- 
+ 			sdma1: dma-controller@30bd0000 {
+ 				compatible = "fsl,imx8mm-sdma", "fsl,imx8mq-sdma";
+ 				reg = <0x30bd0000 0x10000>;
 -- 
-1.7.9.5
+2.25.0
 
