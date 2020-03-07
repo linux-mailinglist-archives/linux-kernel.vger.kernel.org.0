@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE6B17CEB9
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 15:30:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30EB317CEB7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 15:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbgCGOa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 09:30:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33674 "EHLO mail.kernel.org"
+        id S1726391AbgCGOaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 09:30:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbgCGOaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 09:30:06 -0500
-Subject: Re: [GIT PULL] xen: branch for v5.6-rc5
+        id S1726352AbgCGOaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 09:30:08 -0500
+Subject: Re: [GIT PULL] thread fixes v5.6-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583591406;
-        bh=aqx9wdW6cgs6DwzR9YqYO7lOArZ+awEW6YBOBGrp3MI=;
+        s=default; t=1583591407;
+        bh=cmeKlZ3OTGK49GoO54DeuHwQuLYZOFn+Qv0qSMEH/5A=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bDZ2G/PIeycTqk3YVEa2+GD4/ceIG/5gSwYbDresg1n+8o1Uoyp8qUYRc5l/3KxG3
-         xSbzjoys00uXWKTq8sOE3S9KDjaE74rfkKWOIVIJ8Ui4VXTEI7+dLtt00yBAH0BZ+k
-         dWaN7N2aoUV69HXw1AYPvjlvbRdF1ujIPQbZfZm4=
+        b=PMy/PPSzGbgC9ev2ud+Ce9PjqpSWhz2G3bv+hAx0L4PMUgCbwGc68miaPenreDBYJ
+         yO8IxCZ0G3O9h9thmXwLf5z1TXj6eM8PMgFOLobx8cI3F/rNMWW1FzeBoSwuMXDtpq
+         3lNy4a1CqZ8FlGx7gPBZL03lKFvGPeUqf6XGwbRo=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200307093617.11819-1-jgross@suse.com>
-References: <20200307093617.11819-1-jgross@suse.com>
+In-Reply-To: <20200307102213.2999137-1-christian.brauner@ubuntu.com>
+References: <20200307102213.2999137-1-christian.brauner@ubuntu.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200307093617.11819-1-jgross@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
- for-linus-5.6b-rc5-tag
-X-PR-Tracked-Commit-Id: 4ab50af63d2eb5da5c1571f8518948514f535782
+X-PR-Tracked-Message-Id: <20200307102213.2999137-1-christian.brauner@ubuntu.com>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux
+ tags/for-linus-2020-03-07
+X-PR-Tracked-Commit-Id: 186e28a18aeb0fec99cc586fda337e6b23190791
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cbee7c8b4485fb876895b82ddba19ae4e2e2d102
-Message-Id: <158359140623.13770.12361787339122894366.pr-tracker-bot@kernel.org>
-Date:   Sat, 07 Mar 2020 14:30:06 +0000
-To:     Juergen Gross <jgross@suse.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
+X-PR-Merge-Commit-Id: fa883d6afb158c3c9bf33262272da3b6f0489742
+Message-Id: <158359140748.13770.6380375576018361943.pr-tracker-bot@kernel.org>
+Date:   Sat, 07 Mar 2020 14:30:07 +0000
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat,  7 Mar 2020 10:36:17 +0100:
+The pull request you sent on Sat,  7 Mar 2020 11:22:14 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-5.6b-rc5-tag
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-2020-03-07
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cbee7c8b4485fb876895b82ddba19ae4e2e2d102
+https://git.kernel.org/torvalds/c/fa883d6afb158c3c9bf33262272da3b6f0489742
 
 Thank you!
 
