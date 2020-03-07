@@ -2,197 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1736917D055
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 22:43:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 192A017D05A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 22:47:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbgCGVnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 16:43:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbgCGVnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 16:43:13 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D6FD20684;
-        Sat,  7 Mar 2020 21:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583617392;
-        bh=EuZ8FGAG/nlMwc0huc4bMVpwKK827PeKRrSlxik5lsA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xh/hOuKOvQI3hjau5VbTwhsjvZSv6Y/ZHJb3HSn9OtZiOjjWP2/4XAnCaqWr/Xw/N
-         1VMYhb7B7VWmE0ATg79iR64VUbtGCi7M50/ZxK+l3TrkyW92eqB17WvJfqbW+q9JX9
-         kMFqAFTsjDlwXnJJ26lsZzsBDPK9cJpAzrDQDaw0=
-Date:   Sat, 7 Mar 2020 13:43:10 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org
-Cc:     syzbot <syzbot+7a0d9d0b26efefe61780@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, hughd@google.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [ashmem] possible deadlock in shmem_fallocate (4)
-Message-ID: <20200307214310.GP15444@sol.localdomain>
-References: <0000000000000b5f9d059aa2037f@google.com>
+        id S1726239AbgCGVrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 16:47:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36392 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726098AbgCGVrv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 16:47:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583617670;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IkOBexO04RVBl2l8ypAUnEz4Z2T/51GfLf5xq5+aDvY=;
+        b=HMHybRnjVHTv1Xh5afc/O+VNakdQyzTb3prpBYiMePNQVBMEQWH/Zc0WTS70fapHDVOFlc
+        YQh1IqsUbnuyiJYEHbe2OvwUJMXyzgDDmRVi1MEnW/MVu3XfujXke6pU+sAc300jR850SK
+        lOPwh1caOLrVY+qHeh1h9HFcUfBxLWs=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-289-YwNvcz96OoGFbYVd1W1FDw-1; Sat, 07 Mar 2020 16:47:47 -0500
+X-MC-Unique: YwNvcz96OoGFbYVd1W1FDw-1
+Received: by mail-qv1-f70.google.com with SMTP id w1so4061211qvp.23
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 13:47:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IkOBexO04RVBl2l8ypAUnEz4Z2T/51GfLf5xq5+aDvY=;
+        b=ufJUFw586klsP9oa/y8/t2CDRDMBeAQaW03pOIEQMGyGa2bhQX/kz8UrknVuIGeXuQ
+         /9Kry7JYrzk7n+pYmSi5CxgYDrfQXqAc5eRwa9HFhOHSaCAc5VlwBAYh8pBneWaT0Gnr
+         rwM3Q1zqc2MJntidD9K7SCQHqh3mNbRGVJEGl9xVn882Ei6gj6ShF8IhMuHHt5TtuApA
+         tWFto9VAHVJdvSAI3PlbjE+I9LgwstHdiHmMWH/ry4ujHZo8JTpHftC+D6ieBMWh13Q0
+         FFGPLKyO/FudHAzmn6nqP9EAYUf2onEGQLiM/yBM0fQNi5egdVjerat86Y3HwNVIWm60
+         DOgg==
+X-Gm-Message-State: ANhLgQ1/OySegRVuDBZeuLpyAY4Vf9fZKi+QX6fbqY3CNmrdk500gOF0
+        Aify1xM87yUScFeiS5HEJRxk/IwCevxO8HHV68/JajWzDG8g2IkQavP6pM7peidIIv0Xy0DqwMl
+        uY17yXQhTKd908anjpCkpbhyf
+X-Received: by 2002:a37:606:: with SMTP id 6mr9063576qkg.194.1583617667258;
+        Sat, 07 Mar 2020 13:47:47 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vuFg3WiUjDadRTm8H6xACsKd8IRm59QlCeklYibzU4D4eDdDdU2T9UUIl41chl/6P+PgPuIqQ==
+X-Received: by 2002:a37:606:: with SMTP id 6mr9063548qkg.194.1583617666811;
+        Sat, 07 Mar 2020 13:47:46 -0800 (PST)
+Received: from xz-x1 ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id h21sm110044qtu.58.2020.03.07.13.47.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Mar 2020 13:47:45 -0800 (PST)
+Date:   Sat, 7 Mar 2020 16:47:43 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Martin Cracauer <cracauer@cons.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Bobby Powers <bobbypowers@gmail.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mel Gorman <mgorman@suse.de>, Hugh Dickins <hughd@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
+Subject: Re: [PATCH RESEND v6 00/16] mm: Page fault enhancements
+Message-ID: <20200307214743.GA4206@xz-x1>
+References: <20200220155353.8676-1-peterx@redhat.com>
+ <1eb7bdd4-348f-da87-47a1-0b022b70e918@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0000000000000b5f9d059aa2037f@google.com>
+In-Reply-To: <1eb7bdd4-348f-da87-47a1-0b022b70e918@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ashmem is calling shmem_fallocate() during memory reclaim, which can deadlock on
-inode_lock().  +Cc maintainers of drivers/staging/android/ashmem.c.
+On Sat, Mar 07, 2020 at 09:33:08PM +0100, David Hildenbrand wrote:
+> On 20.02.20 16:53, Peter Xu wrote:
+> > [Resend v6]
+> > 
+> > This is v6 of the series.  It is majorly a rebase to 5.6-rc2, nothing
+> > else to be expected (plus some tests after the rebase).  Instead of
+> > rewrite the cover letter I decided to use what we have for v5.
+> > 
+> > Adding extra CCs for both Bobby Powers <bobbypowers@gmail.com> and
+> > Brian Geffon <bgeffon@google.com>.
+> > 
+> > Online repo: https://github.com/xzpeter/linux/tree/mm-pf-signal-retry
+> > 
+> > Any review comment is appreciated.  Thanks,
+> 
+> If I am not completely missing something (and all my testing today was
+> wrong) there is a very simple reason why I *LOVE* this series and it made
+> my weekend. It makes userfaultfd with concurrent discarding (e.g.,
+> MADV_DONTNEED) of pages actually usable.
 
-On Thu, Dec 26, 2019 at 01:25:09PM -0800, syzbot wrote:
-> Hello,
+Hi, David,
+
+Thanks for doing further test against this branch!
+
 > 
-> syzbot found the following crash on:
+> The issue in current code is that between placing a page and waking
+> up a waiter, somebody can zap the new placed page and trigger
+> re-fault, triggering a SIGBUS and crashing an application where all
+> memory is supposed to be accessible. And there is no real way to protect
+> from that, because when the fault handler will be woken up and retry
+> is not deterministic (e.g., making madvise(MADV_DONTNEED) and
+> UFFDIO_ZEROPAGE mutually exclusive does not help).
 > 
-> HEAD commit:    46cf053e Linux 5.5-rc3
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=162124aee00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7a0d9d0b26efefe61780
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> Find a simple reproducer at the end of this mail.
 > 
-> Unfortunately, I don't have any reproducer for this crash yet.
+> Before this series:
+> [root@localhost ~]# ./a.out 
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> Progress!
+> [   34.849604] FAULT_FLAG_ALLOW_RETRY missing 70
+> [   34.850466] CPU: 1 PID: 651 Comm: a.out Not tainted 5.6.0-rc2+ #92
+> [   34.851525] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.4
+> [   34.852818] Call Trace:
+> [   34.853045]  dump_stack+0x8f/0xd0
+> [   34.853338]  handle_userfault.cold+0x1a/0x2e
+> [   34.853704]  ? find_held_lock+0x2b/0x80
+> [   34.854031]  ? __handle_mm_fault+0x18c5/0x1900
+> [   34.854409]  __handle_mm_fault+0x18d4/0x1900
+> [   34.854784]  handle_mm_fault+0x169/0x360
+> [   34.855120]  do_user_addr_fault+0x20d/0x490
+> [   34.855478]  async_page_fault+0x43/0x50
+> [   34.855809] RIP: 0033:0x401659
+> [   34.856069] Code: ba 1f 00 00 00 be 01 00 00 00 bf 10 21 40 00 e8 ad fa ff ff bf ff ff ff ff e8 93 fa ff ff 48 8b8
+> [   34.857629] RSP: 002b:00007ffcfd536ec0 EFLAGS: 00010246
+> [   34.858076] RAX: 00007fcba86a4000 RBX: 0000000000000000 RCX: 00007fcba85784ef
+> [   34.858675] RDX: 00007fcba86a4007 RSI: 00000000016524e0 RDI: 00007fcba864b320
+> [   34.859272] RBP: 00007ffcfd536f20 R08: 000000000000000a R09: 0000000000000070
+> [   34.859876] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000401120
+> [   34.860472] R13: 00007ffcfd537000 R14: 0000000000000000 R15: 0000000000000000
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+7a0d9d0b26efefe61780@syzkaller.appspotmail.com
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 5.5.0-rc3-syzkaller #0 Not tainted
-> ------------------------------------------------------
-> kswapd0/1852 is trying to acquire lock:
-> ffff888098919cd8 (&sb->s_type->i_mutex_key#13){+.+.}, at: inode_lock
-> include/linux/fs.h:791 [inline]
-> ffff888098919cd8 (&sb->s_type->i_mutex_key#13){+.+.}, at:
-> shmem_fallocate+0x15a/0xd40 mm/shmem.c:2735
-> 
-> but task is already holding lock:
-> ffffffff89a41e00 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30
-> mm/page_alloc.c:4922
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (fs_reclaim){+.+.}:
->        __fs_reclaim_acquire mm/page_alloc.c:4084 [inline]
->        fs_reclaim_acquire.part.0+0x24/0x30 mm/page_alloc.c:4095
->        fs_reclaim_acquire mm/page_alloc.c:4695 [inline]
->        prepare_alloc_pages mm/page_alloc.c:4692 [inline]
->        __alloc_pages_nodemask+0x52d/0x910 mm/page_alloc.c:4744
->        alloc_pages_vma+0xdd/0x620 mm/mempolicy.c:2170
->        shmem_alloc_page+0xc0/0x180 mm/shmem.c:1499
->        shmem_alloc_and_acct_page+0x165/0x990 mm/shmem.c:1524
->        shmem_getpage_gfp+0x56d/0x29a0 mm/shmem.c:1838
->        shmem_getpage mm/shmem.c:154 [inline]
->        shmem_write_begin+0x105/0x1e0 mm/shmem.c:2487
->        generic_perform_write+0x23b/0x540 mm/filemap.c:3309
->        __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3438
->        generic_file_write_iter+0x420/0x68e mm/filemap.c:3470
->        call_write_iter include/linux/fs.h:1902 [inline]
->        new_sync_write+0x4d3/0x770 fs/read_write.c:483
->        __vfs_write+0xe1/0x110 fs/read_write.c:496
->        vfs_write+0x268/0x5d0 fs/read_write.c:558
->        ksys_write+0x14f/0x290 fs/read_write.c:611
->        __do_sys_write fs/read_write.c:623 [inline]
->        __se_sys_write fs/read_write.c:620 [inline]
->        __x64_sys_write+0x73/0xb0 fs/read_write.c:620
->        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> -> #0 (&sb->s_type->i_mutex_key#13){+.+.}:
->        check_prev_add kernel/locking/lockdep.c:2476 [inline]
->        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
->        validate_chain kernel/locking/lockdep.c:2971 [inline]
->        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
->        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
->        down_write+0x93/0x150 kernel/locking/rwsem.c:1534
->        inode_lock include/linux/fs.h:791 [inline]
->        shmem_fallocate+0x15a/0xd40 mm/shmem.c:2735
->        ashmem_shrink_scan drivers/staging/android/ashmem.c:462 [inline]
->        ashmem_shrink_scan+0x370/0x510 drivers/staging/android/ashmem.c:437
->        do_shrink_slab+0x40f/0xad0 mm/vmscan.c:526
->        shrink_slab mm/vmscan.c:687 [inline]
->        shrink_slab+0x19a/0x680 mm/vmscan.c:660
->        shrink_node_memcgs mm/vmscan.c:2687 [inline]
->        shrink_node+0x46a/0x1ad0 mm/vmscan.c:2791
->        kswapd_shrink_node mm/vmscan.c:3539 [inline]
->        balance_pgdat+0x7c8/0x11f0 mm/vmscan.c:3697
->        kswapd+0x5c3/0xf30 mm/vmscan.c:3948
->        kthread+0x361/0x430 kernel/kthread.c:255
->        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> 
-> other info that might help us debug this:
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(fs_reclaim);
->                                lock(&sb->s_type->i_mutex_key#13);
->                                lock(fs_reclaim);
->   lock(&sb->s_type->i_mutex_key#13);
-> 
->  *** DEADLOCK ***
-> 
-> 2 locks held by kswapd0/1852:
->  #0: ffffffff89a41e00 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30
-> mm/page_alloc.c:4922
->  #1: ffffffff89a1f948 (shrinker_rwsem){++++}, at: shrink_slab
-> mm/vmscan.c:677 [inline]
->  #1: ffffffff89a1f948 (shrinker_rwsem){++++}, at: shrink_slab+0xe6/0x680
-> mm/vmscan.c:660
-> 
-> stack backtrace:
-> CPU: 0 PID: 1852 Comm: kswapd0 Not tainted 5.5.0-rc3-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x197/0x210 lib/dump_stack.c:118
->  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
->  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
->  check_prev_add kernel/locking/lockdep.c:2476 [inline]
->  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
->  validate_chain kernel/locking/lockdep.c:2971 [inline]
->  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
->  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
->  down_write+0x93/0x150 kernel/locking/rwsem.c:1534
->  inode_lock include/linux/fs.h:791 [inline]
->  shmem_fallocate+0x15a/0xd40 mm/shmem.c:2735
->  ashmem_shrink_scan drivers/staging/android/ashmem.c:462 [inline]
->  ashmem_shrink_scan+0x370/0x510 drivers/staging/android/ashmem.c:437
->  do_shrink_slab+0x40f/0xad0 mm/vmscan.c:526
->  shrink_slab mm/vmscan.c:687 [inline]
->  shrink_slab+0x19a/0x680 mm/vmscan.c:660
->  shrink_node_memcgs mm/vmscan.c:2687 [inline]
->  shrink_node+0x46a/0x1ad0 mm/vmscan.c:2791
->  kswapd_shrink_node mm/vmscan.c:3539 [inline]
->  balance_pgdat+0x7c8/0x11f0 mm/vmscan.c:3697
->  kswapd+0x5c3/0xf30 mm/vmscan.c:3948
->  kthread+0x361/0x430 kernel/kthread.c:255
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> After this series:
+> Well, "Progress!" all day long.
+
+Yes, IIUC the race can happen like this in your below test:
+
+     main thread          uffd thread             disgard thread
+     ===========          ===========             ==============
+     access page
+       uffd page fault
+         wait for page
+                          UFFDIO_ZEROCOPY
+                            put a page P there
+                                                  MADV_DONTNEED on P
+                            wakeup main thread
+         return from fault
+       page still missing
+       uffd page fault again
+       (without ALLOW_RETRY)
+       --> SIGBUS.
+
+And I agree this should be one if the major issues that this series
+wants to address.
+
 > 
 > 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Can we please have a way to identify that this "feature" is available?
+> I'd appreciate a new read-only UFFD_FEAT_ , so we can detect this from
+> user space easily and use concurrent discards without crashing our applications.
+
+I'm not sure how others think about it, but to me this still fells
+into the bucket of "solving an existing problem" rather than a
+feature.  Also note that this should change the behavior for the page
+fault logic in general, rather than an uffd-only change. So I'm also
+not sure whether UFFD_FEAT_* suites here even if we want it.
+
 > 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> Questions:
+> 1. I assume KVM will do multiple retries as well, and have the same behavior, right?
+
+Yes I believe so, or we'll need to fix it.
+
+> 
+> 2. What will happen if I don't place a page on a pagefault, but only do a UFFDIO_WAKE?
+>    For now we were able to trigger a signal this way.
+
+If I'm not mistaken the UFFDIO_WAKE will directly trigger the sigbus
+even without the help of the MADV_DONTNEED race.
+
+> If the behavior is changed, can
+>    we make this configurable via a UFFD_FEAT?
+
+I'll still think that could be an overkill, but I'll leave the
+discussion to the experts.
+
+Thanks,
+
+> 
+> --- snip ---
+> #include <string.h>
+> #include <stdbool.h>
+> #include <stdint.h>
+> #include <sys/types.h>
+> #include <stdio.h>
+> #include <pthread.h>
+> #include <errno.h>
+> #include <unistd.h>
+> #include <stdlib.h>
+> #include <fcntl.h>
+> #include <poll.h>
+> #include <linux/userfaultfd.h>
+> #include <sys/mman.h>
+> #include <sys/syscall.h>
+> #include <sys/ioctl.h>
+> 
+> static int page_size;
+> 
+> static void *fault_handler_thread(void *arg)
+> {
+>     const long uffd = (long) arg;
+>     struct pollfd pollfd = {
+>         .fd = uffd,
+>         .events = POLLIN,
+>     };
+>     int ret;
+> 
+>     while (true) {
+>         struct uffdio_zeropage zeropage = {};
+>         struct uffd_msg msg;
+>         ssize_t nread;
+> 
+>         if (poll(&pollfd, 1, -1) == -1) {
+>             fprintf(stderr, "POLL failed: %s\n", strerror(errno));
+>             exit(-1);
+>         }
+>         if (read(uffd, &msg, sizeof(msg)) != sizeof(msg)) {
+>             fprintf(stderr, "READ failed\n");
+>             exit(-1);
+>         }
+>         if (msg.event != UFFD_EVENT_PAGEFAULT) {
+>             fprintf(stderr, "Not UFFD_EVENT_PAGEFAULT\n");
+>             exit(-1);
+>         }
+> 
+>         zeropage.range.start = msg.arg.pagefault.address;
+>         zeropage.range.len = page_size;
+>         do {
+>             ret = ioctl(uffd, UFFDIO_ZEROPAGE, &zeropage);
+>             if (ret && errno != EAGAIN) {
+>                 fprintf(stderr, "UFFDIO_ZEROPAGE failed:%s\n", strerror(errno));
+>                 exit(-1);
+>             }
+>         } while (ret);
+>     }
+> }
+> static void *discard_thread(void *arg)
+> {
+>     while (true) {
+>         if (madvise(arg, page_size, MADV_DONTNEED)) {
+>             fprintf(stderr, "MADV_DONTNEED failed:%s\n", strerror(errno));
+>             exit(-1);
+>         }
+>         usleep(1000);
+>     }
+> }
+> 
+> int main(void)
+> {
+>     struct uffdio_register reg;
+>     struct uffdio_api api = {
+>         .api = UFFD_API,
+>     };
+>     pthread_t fault, discard;
+>     long uffd;
+>     char *area;
+> 
+>     page_size = sysconf(_SC_PAGE_SIZE);
+> 
+>     uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK);
+>     if (uffd == -1) {
+>         fprintf(stderr, "Could not create uffd: %s\n", strerror(errno));
+>         exit(-1);
+>     }
+>     if (ioctl(uffd, UFFDIO_API, &api) == -1) {
+>         fprintf(stderr, "UFFDIO_API failed: %s\n", strerror(errno));
+>         exit(-1);
+>     }
+> 
+>     area = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
+>                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>     if (area == MAP_FAILED) {
+>         fprintf(stderr, "Could not allocate memory");
+>         exit(-1);
+>     }
+> 
+>     reg.range.start = (uint64_t) area;
+>     reg.range.len = page_size,
+>     reg.mode = UFFDIO_REGISTER_MODE_MISSING;
+>     if (ioctl(uffd, UFFDIO_REGISTER, &reg) == -1) {
+>         fprintf(stderr, "UFFDIO_REGISTER failed: %s\n", strerror(errno));
+>         exit(-1);
+>     }
+> 
+>     /* thread to provide zeropages */
+>     if (pthread_create(&fault, NULL, fault_handler_thread,
+>                        (void *) uffd)) {
+>         fprintf(stderr, "Could not create fault handling thread");
+>         exit(-1);
+>     }
+> 
+>     /* thread to discard the page */
+>     if (pthread_create(&discard, NULL, discard_thread,
+>                        (void *) area)) {
+>         fprintf(stderr, "Could not create discard thread");
+>         exit(-1);
+>     }
+> 
+>     /* keep reading/writing the page */
+>     while (true) {
+>         area[7] = area[1];
+>         usleep(10000);
+>         printf("Progress!\n");
+>     }
+>     return 0;
+> }
+> 
 > 
 > -- 
+> Thanks,
+> 
+> David / dhildenb
+> 
+
+-- 
+Peter Xu
+
