@@ -2,85 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2860717CD51
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 10:46:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E15F17CD56
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 10:49:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgCGJqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 04:46:38 -0500
-Received: from mail-pj1-f48.google.com ([209.85.216.48]:51528 "EHLO
-        mail-pj1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgCGJqi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 04:46:38 -0500
-Received: by mail-pj1-f48.google.com with SMTP id l8so2131285pjy.1
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 01:46:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RrUVYR+Ncmf3+5c5RCoXaObVour9qF7+lbeQrqlz+7c=;
-        b=MRcjzBNzTh5m3HSl5QjeZjeXKY2VA6NvugpKkaY9BkbYggMALXdwJmatwbyzt4HVaN
-         FNVwzPydWl9DfNHfnZpihcslmKiTLENkCGlOZ1pnwEXwB5KfPBF87uI20I4WeQLruafb
-         k51o3Yw1Kue72BUfoIjgvPAQ90aUwsFtPxcMs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RrUVYR+Ncmf3+5c5RCoXaObVour9qF7+lbeQrqlz+7c=;
-        b=G11lXpOpaL1opHf8j36+b+NSbQvDbeg9VxJqdH8lOCfzLxjDtJc07qD9MOdxhlLnyO
-         FAuF7U7ByHDumDew9TYfm9Jg3GCCdyHtGW7HWnCOGh0OgLLf6SyKIusPxuIwsxcRQjFC
-         CIZ2GwRwnK+LUAU1jb9aV+dS0eozL+PeNttwr6Tr8eBMxziMQlCuORXe3/Zi+1B45TCZ
-         r7dk4e8aNFqJ9gysFRMZuaqJ7p9sg9Wn3171/0eZ1LtPLpdPq7M0DIqPSqJ/B6Yu5Cjr
-         HqXxMvhvJqROAexn5Nvw7dSn+zCdBPCl7vYg4J7pnu6SsHVhT597OGIOYXUiXxIg426G
-         XtzQ==
-X-Gm-Message-State: ANhLgQ1csBggT1k3m/xvCpJgJm4SkQeC6DFFr3bVYYwSOSKZ6ZRiR2qV
-        wxDQPuF132KhZVPNMtmUZqfN1g==
-X-Google-Smtp-Source: ADFU+vu/3aSIwqudH328r7Q6d2ReouzpmLb4lMtmayKrIiBYtfhZmjNz5NkivGbIl4PV33pL8GnFfQ==
-X-Received: by 2002:a17:902:b497:: with SMTP id y23mr6987040plr.81.1583574397292;
-        Sat, 07 Mar 2020 01:46:37 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id b10sm11855226pjo.32.2020.03.07.01.46.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Mar 2020 01:46:36 -0800 (PST)
-Date:   Sat, 7 Mar 2020 18:46:34 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 01/11] videobuf2: add cache management members
-Message-ID: <20200307094634.GB29464@google.com>
-References: <20200302041213.27662-1-senozhatsky@chromium.org>
- <20200302041213.27662-2-senozhatsky@chromium.org>
- <17060663-9c30-de5e-da58-0c847b93e4d3@xs4all.nl>
+        id S1726307AbgCGJs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 04:48:59 -0500
+Received: from mout.web.de ([212.227.15.3]:45965 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbgCGJs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 04:48:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1583574507;
+        bh=NfYTLzzJkZUdCjUySaSerm1xfcOdkle+o2cN/pwHHvI=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=FoT6pFGPuFPu/Ab0sk/+Q8WlnXmAVnZh0PBMbIQLtTLz2gFPmlpRdewGU69GMZZeG
+         1RDW2n/JAek1ORfQToPEDI4624K7T4kBdXPoSw502OG4r5ALU8sQNcDROGand65+wb
+         qYDMT66X0hnDX8QSOUrZd4FdGIy5KM65iOE9oU/k=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.10] ([95.157.55.156]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MCqmp-1j0rHc0RZz-009jrJ; Sat, 07
+ Mar 2020 10:48:27 +0100
+Subject: Re: [PATCH 6/6] KVM: x86: Add requested index to the CPUID tracepoint
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+References: <20200302195736.24777-1-sean.j.christopherson@intel.com>
+ <20200302195736.24777-7-sean.j.christopherson@intel.com>
+From:   Jan Kiszka <jan.kiszka@web.de>
+Message-ID: <00827dc7-3338-ce1a-923a-784284cb26db@web.de>
+Date:   Sat, 7 Mar 2020 10:48:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17060663-9c30-de5e-da58-0c847b93e4d3@xs4all.nl>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200302195736.24777-7-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l1aUPNuFvYp9CoUQMSZJV7f6WzEVM9scmarRJ+A48HNxbxkcGoW
+ b33bxhIDH7cGv+BPRBUj0bkevbMX622nbNj79UZpUOZKAg6kb+YE7+/BoTChoh8pKlXfKWS
+ noh+Y+JaL7fRHvLv9Vq4ToClCGX3IJbN1+AzuSqjg/54G1h9xM//qE4BOVBEYHhX/B5mI0q
+ yCZ3yqzsTKx4YzGdTHwlg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wxVnwk6qj7E=:vxZjq4j7XV57YYVd4YaPlQ
+ WO1mR12AXAlyxAfonBYpuPnieU8mMSggPKPLCIC5u4WRMG+/K/i+ocK3J8vklu58888xuESNd
+ FnMpt6kh8xELgdtRoQeABwat7u30oYc5YYExLBsQkTiUFFiIrXyzIMTfy20P+F36T1hB/bSW0
+ S+wtanM5OXtxthsqV10Ae3L5uSvrvrdJXf+93RkLKYGCYz/ysykv9vci1LkNpfLhrT3eKd7T3
+ n6g62rYDlSWOCN3woJBGV/mE0gfOR5icq+zGVu+Baxa2HYI2+OPWqcDEofoxBDkCSt7LkCi1w
+ jkYlUuu4ddlf1SbhsCIdWYwWWevEawhVD1k+CEXTk1isfYLKMoDiuBuqP8xMjusrsvACZLUwR
+ /xAENSrZRiwcDuBJ2bhyyKgI+sR2gN2ZudPlYtYi6dBxvZMvuxoyEfwsQZUeLiUeDkcTwTMez
+ CZBaOR1Lc1NL+2HgLw6bcqGdYo7LMUWqhn1ia85VFIoL6iqQI8NUuS+c8ssbUufzqdNB5cHWO
+ yBbCRUW62wOTWMcHfeLtfKKwFSrJxXrCkhL9WPp9m3smoG84ojtFNZohi03y1agiBEhXldzpZ
+ eLonSxVlM8mAM9lRgMUkFt5ALABuKxO/+Ud4cHNS41ZN18ciFP9r9DN8Yyknl5ooDNmACK3aU
+ L7p3xSB2eTxrnLIaT4RFNBlMCnJkg5WiPfNWWwnlRMNVs+r0qtfTWB3Hvwi97LNjXhjHYDAsh
+ oW8K2CpuvxBy+ttWDM/T4qQjJ6XsfMRfo9ES2nfji6nDCq/sMppKai2xVgU79VN8DxUu+tgpz
+ poqHdS9jd6syqPU3s2vWS9EDSTVm6obk3cDm8BZwhH3bfF3gewK1aggBHl+rLPyFzCFvP43X7
+ XY07a1P+EUqSAZm7lWODPnd4lkqqBExuVKuZoFaGnED6/aK8JCkNwp3U1ESjzgVq9odiTVSIg
+ ZvNZiCQ33zRvZtpcIMPiLEi99a6YKSM+N33M7M8ycGQUg5ihVeL5vW9Z2hsaRudA9gejjQRAf
+ 7zCvvOqGar1pu+nEMd/2BAN2b1SbcFPXyeQywpPv5Nghu6doLeiRRRExS5J7KRFvtSTNgmrVM
+ V+es3X4XMRFlN7TSQd/+ZpQu9tkX4MhHwxWFsj5WK0n3hvZe7Yx7nF1yLhH3lQydQyuY0MNUq
+ WZymSnrNgdw/yNmbkdd3eohpX+aBAUTc4zrVw7f2VEDuO8dTzDZOirNN+R/PSHbryaVwgczYc
+ diJVkPoBlDlzD9YCe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/03/06 14:57), Hans Verkuil wrote:
-[..]
-> >   * @lock:	pointer to a mutex that protects the &struct vb2_queue. The
-> >   *		driver can set this to a mutex to let the v4l2 core serialize
-> >   *		the queuing ioctls. If the driver wants to handle locking
-> > @@ -564,6 +573,7 @@ struct vb2_queue {
-> >  	unsigned			requires_requests:1;
-> >  	unsigned			uses_qbuf:1;
-> >  	unsigned			uses_requests:1;
-> > +	unsigned			allow_cache_hints:1;
+On 02.03.20 20:57, Sean Christopherson wrote:
+> Output the requested index when tracing CPUID emulation; it's basically
+> mandatory for leafs where the index is meaningful, and is helpful for
+> verifying KVM correctness even when the index isn't meaningful, e.g. the
+> trace for a Linux guest's hypervisor_cpuid_base() probing appears to
+> be broken (returns all zeroes) at first glance, but is correct because
+> the index is non-zero, i.e. the output values correspond to random index
+> in the maximum basic leaf.
+>
+> Suggested-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>   arch/x86/kvm/cpuid.c |  3 ++-
+>   arch/x86/kvm/trace.h | 13 ++++++++-----
+>   2 files changed, 10 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index b0a4f3c17932..a3c9f6bf43f3 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -1047,7 +1047,8 @@ void kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u3=
+2 *ebx,
+>   			}
+>   		}
+>   	}
+> -	trace_kvm_cpuid(function, *eax, *ebx, *ecx, *edx, exact_entry_exists);
+> +	trace_kvm_cpuid(function, index, *eax, *ebx, *ecx, *edx,
+> +			exact_entry_exists);
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_cpuid);
+>
+> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+> index f194dd058470..aa372d0119f0 100644
+> --- a/arch/x86/kvm/trace.h
+> +++ b/arch/x86/kvm/trace.h
+> @@ -151,12 +151,14 @@ TRACE_EVENT(kvm_fast_mmio,
+>    * Tracepoint for cpuid.
+>    */
+>   TRACE_EVENT(kvm_cpuid,
+> -	TP_PROTO(unsigned int function, unsigned long rax, unsigned long rbx,
+> -		 unsigned long rcx, unsigned long rdx, bool found),
+> -	TP_ARGS(function, rax, rbx, rcx, rdx, found),
+> +	TP_PROTO(unsigned int function, unsigned int index, unsigned long rax,
+> +		 unsigned long rbx, unsigned long rcx, unsigned long rdx,
+> +		 bool found),
+> +	TP_ARGS(function, index, rax, rbx, rcx, rdx, found),
+>
+>   	TP_STRUCT__entry(
+>   		__field(	unsigned int,	function	)
+> +		__field(	unsigned int,	index		)
+>   		__field(	unsigned long,	rax		)
+>   		__field(	unsigned long,	rbx		)
+>   		__field(	unsigned long,	rcx		)
+> @@ -166,6 +168,7 @@ TRACE_EVENT(kvm_cpuid,
+>
+>   	TP_fast_assign(
+>   		__entry->function	=3D function;
+> +		__entry->index		=3D index;
+>   		__entry->rax		=3D rax;
+>   		__entry->rbx		=3D rbx;
+>   		__entry->rcx		=3D rcx;
+> @@ -173,8 +176,8 @@ TRACE_EVENT(kvm_cpuid,
+>   		__entry->found		=3D found;
+>   	),
+>
+> -	TP_printk("func %x rax %lx rbx %lx rcx %lx rdx %lx, cpuid entry %s",
+> -		  __entry->function, __entry->rax,
+> +	TP_printk("func %x idx %x rax %lx rbx %lx rcx %lx rdx %lx, cpuid entry=
+ %s",
+> +		  __entry->function, __entry->index, __entry->rax,
+>   		  __entry->rbx, __entry->rcx, __entry->rdx,
+>   		  __entry->found ? "found" : "not found")
+>   );
+>
 
-Shall I use "unsigned int" here instead of "unsigned"?
+What happened to this patch in your v2 round?
 
-	-ss
+Jan
