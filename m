@@ -2,102 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD9F17D0AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 00:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8CCF17D0B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 00:47:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbgCGXpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 18:45:34 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:46664 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgCGXpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 18:45:33 -0500
-Received: by mail-il1-f193.google.com with SMTP id e8so5417510ilc.13
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 15:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=6W0PydWbSO7FV7zSv4lpd4L/KA8aw5QASOufQ4Raoxc=;
-        b=JDL068LTdyyzf9yXK7nLUvxbChQEXLhAVV+WM6tE/cXmFZhjTaMY/AzAXEwLGoKA+B
-         vXHU324RjQmuaCuJIcnB137SDdowFZ4yiyzakKsdBSWSEQRZmQi5LU0Ni3imS7cM2ZX6
-         Ekbor3U/dbKHBP13chYB/Ic1AsGnwtJ/PtsCkMkjOT1U3jhQi2xxb1YUrYlcsEaCbewh
-         MJSCKFcLl0pyvrsA7TVL7SWRgkSpmkLZmWZ9XXArqqEJX1FwFUNZJ/kKOAfgZyhbxKCS
-         nxq+PnGQjl7/nSJBQC0ASQNIoZwh6aILXL9P/AQR7X/wHYWotjGhQOr6K1IHO2GvrJrX
-         MDGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=6W0PydWbSO7FV7zSv4lpd4L/KA8aw5QASOufQ4Raoxc=;
-        b=WPT3jxBQ4RSxo2sTcew0qNkAD2oZx0RcMLEgXN4j2EvoS4RV2tKJo1zecUfidtAPuR
-         FJvzocy8BCS14M0I5ii0wObzSFy07oMv8GHnGZ6RZn8/vVHZC9JN16zTLUAxBVjDK4BG
-         /h5ma6aoyelUtfrlEU4jEGrFGH21ePq2wLoeg0bEvmi5u46DNfOJeYbllXo5p6bPRKJe
-         I+Dd1Y3c52Z5ELFlXJveUdi1LzsCC+hUnAgkcIF7WWAzuzqfvLEgu8p+2Sl74K3PX2/S
-         9w+ubeuldloz9rLyEDnYo7Tthb7/HdrZfc8rsIZfhvnzldsezfNggvlYUxDhp9FRZTj5
-         nkkg==
-X-Gm-Message-State: ANhLgQ2LGBxWjyxahlSik9iOP2BAXZQRdyIURIfZ1AweU15b/plNQV9A
-        Wy5qSptrskXahGXbKFqDstsl6P3laQcHQhksmmo=
-X-Google-Smtp-Source: ADFU+vtDCf2566b3XWdtMtVHGYu9GTb4mpMYG/BAhZY6K8hT8BwycUPuUZy/GMEIjfX+jS7+Sq6Iqoiipn9gP0s+Qco=
-X-Received: by 2002:a92:d745:: with SMTP id e5mr9213077ilq.285.1583624731598;
- Sat, 07 Mar 2020 15:45:31 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a92:5ddd:0:0:0:0:0 with HTTP; Sat, 7 Mar 2020 15:45:31 -0800 (PST)
-Reply-To: wyne010@gmail.com
-From:   "Mrs. Maile .(A) Roberto" <barrister.c.o.mathins@gmail.com>
-Date:   Sat, 7 Mar 2020 15:45:31 -0800
-Message-ID: <CALWmkas5OkQKFd9+Y3VMo8-Ni3cp+6qHoCct39qeH3yt+a1EyA@mail.gmail.com>
-Subject: Hello Dear Friend.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1726298AbgCGXrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 18:47:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726109AbgCGXrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 18:47:46 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15B582070A;
+        Sat,  7 Mar 2020 23:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583624865;
+        bh=sO2549TXeIeA/LiuWHdqg4t8QGOOV438IVO1eJHrkPU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=retgJCHFk2bDFrUXZSlHH4zCjGooNSMmNg1dTKxvBs96tHWW3KF/zkp2bwFn5mIca
+         8nqLP7nJFnULtVzV9JqCSH1p4kOIwZDSnaxEUPYFlHhlwNLZqwiIZlivrUVKyb6iVs
+         G65ErDyoEdgzPQnwTjpN41sZ2GJddNk9wQ331gJs=
+Date:   Sat, 7 Mar 2020 15:47:44 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Jaewon Kim <jaewon31.kim@samsung.com>
+Cc:     walken@google.com, bp@suse.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jaewon31.kim@gmail.com
+Subject: Re: [PATCH] mm: mmap: show vm_unmapped_area error log
+Message-Id: <20200307154744.acd523831b45efa8d0fc1dfa@linux-foundation.org>
+In-Reply-To: <5E61EAB6.5080609@samsung.com>
+References: <CGME20200304030211epcas1p4da8cb569947aefb3aad1da039aaabce4@epcas1p4.samsung.com>
+        <20200304030206.1706-1-jaewon31.kim@samsung.com>
+        <5E605749.9050509@samsung.com>
+        <20200305202443.8de3598558336b1d75afbba7@linux-foundation.org>
+        <5E61EAB6.5080609@samsung.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings
+On Fri, 6 Mar 2020 15:16:22 +0900 Jaewon Kim <jaewon31.kim@samsung.com> wrote:
 
-My Name is Mrs. Maile .(A) Roberto, from Norway. I know that this message
-will be a surprise to you. Firstly, I am married to Mr. Patrick Roberto,
-A gold merchant who owns a small gold mine in Madrid   Spain; He died of
-Cardiovascular Disease in mid-March 2011. During his lifetime he
-deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
-d
-thousand Euros in a HSBC Bank  in Madrid the capital city of Spain.
-The deposited money was from the sale of the
-shares, death benefits payment and entitlements of my deceased
-husbandry his company.
+> 
+> Even on 64 bit kernel, the mmap failure can happen for a 32 bit task.
+> Virtual memory space shortage of a task on mmap is reported to userspace
+> as -ENOMEM. It can be confused as physical memory shortage of overall
+> system.
+> 
+> The vm_unmapped_area can be called to by some drivers or other kernel
+> core system like filesystem. It can be hard to know which code layer
+> returns the -ENOMEM.
+> 
+> Print error log of vm_unmapped_area with rate limited. Without rate
+> limited, soft lockup ocurrs on infinite mmap sytem call.
+> 
+> i.e.)
+> <4>[   68.556470]  [2:  mmap_infinite:12363] mmap: vm_unmapped_area err:-12 total_vm:0xf4c08 flags:0x1 len:0x100000 low:0x8000 high:0xf4583000 mask:0x0 offset:0x0
+> 
+> ...
+>
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
 
-I am sending this message to you praying that it will reach you in
-good health since I am not in good health condition in which I sleep
-every night without knowing if I may be alive to see the next day. I
-am suffering from long time cancer and presently I am partially
-suffering from a stroke illness which has become almost impossible for
-me to move around. I am married to my late husband for over 4 years
-before he died and is unfortunate that we don't have a child, my
-doctor confided in me that I have less chance to live. Having known my
-health condition, I decided to contact you to claim the fund since I
-don't have any relation I grew up from an orphanage home.
+This patch was messed up by your email client (tabs expanded to spaces).
 
-I have decided to donate what I have to you for the support of helping
-Motherless babies/Less privileged/Widows' because I am dying and
-diagnosed with cancer for about 2 years ago. I have been touched by
-God Almighty to donate from what I have inherited from my late husband
-to you for the good work of God Almighty. I have asked Almighty God to
-forgive me and believe he has because He is a Merciful God, I will be
-going in for an operation surgery soon
+> @@ -27,6 +27,7 @@
+>  #include <linux/memremap.h>
+>  #include <linux/overflow.h>
+>  #include <linux/sizes.h>
+> +#include <linux/ratelimit.h>
+>  
+>  struct mempolicy;
+>  struct anon_vma;
+> @@ -2379,10 +2380,20 @@ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+>  static inline unsigned long
+>  vm_unmapped_area(struct vm_unmapped_area_info *info)
+>  {
+> +    unsigned long addr;
+> +
+>      if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
+> -        return unmapped_area_topdown(info);
+> +        addr = unmapped_area_topdown(info);
+>      else
+> -        return unmapped_area(info);
+> +        addr = unmapped_area(info);
+> +
+> +    if (IS_ERR_VALUE(addr)) {
+> +        pr_warn_ratelimited("%s err:%ld total_vm:0x%lx flags:0x%lx len:0x%lx low:0x%lx high:0x%lx mask:0x%lx offset:0x%lx\n",
+> +            __func__, addr, current->mm->total_vm, info->flags,
+> +            info->length, info->low_limit, info->high_limit,
+> +            info->align_mask, info->align_offset);
+> +    }
+> +    return addr;
+>  }
 
-This is the reason I need your services to stand as my next of kin or
-the executor to claim the funds for charity purposes. If this money
-remains unclaimed after my death, the bank executives or the
-government will take the money as unclaimed fund and maybe use it for
-selfish and worthless ventures, I need a very honest person who can
-claim this money and use it for Charity works, for orphanages, widows
-and also build schools for less privilege that will be named after my
-late husband and my name; I need your urgent answer to know if you
-will be able to execute this project, and I will give you more
-information on how the fund will be transferred to your bank account.
+pr_warn_ratelimited() contains static state.  Using it in an inlined
+function means that each callsite gets its own copy of that state, so
+we're ratelimiting the vm_unmapped_area() output on a per-callsite
+basis, not on a kernelwide basis.
 
-Thanks
-Mrs. Maile .(A) Roberto
+Maybe that's what we want, maybe it's not.  But I think
+vm_unmapped_area() has become too large to be inlined anyway, so I
+suggest making it a regular out-of-line function in mmap.c.  I don't
+believe that function needs to be exported to modules.
+
