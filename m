@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3862917DAED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E25A17DAEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgCIIcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:32:23 -0400
-Received: from v6.sk ([167.172.42.174]:34204 "EHLO v6.sk"
+        id S1726487AbgCIIcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:32:33 -0400
+Received: from v6.sk ([167.172.42.174]:34238 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbgCIIcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:32:23 -0400
+        id S1725796AbgCIIcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 04:32:33 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id D353260EEC;
-        Mon,  9 Mar 2020 08:32:20 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id BB84860EEF;
+        Mon,  9 Mar 2020 08:32:31 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Andrzej Hajda <a.hajda@samsung.com>
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
@@ -25,11 +25,14 @@ Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 0/3] Add support for Chrontel CH7033 VGA/DVI Encoder
-Date:   Sat,  7 Mar 2020 20:07:57 +0100
-Message-Id: <20200307190800.142658-1-lkundrak@v3.sk>
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Rob Herring <robh@kernel.org>
+Subject: [RESEND PATCH v2 1/3] dt-bindings: Add vendor prefix for Chrontel, Inc.
+Date:   Sat,  7 Mar 2020 20:07:58 +0100
+Message-Id: <20200307190800.142658-2-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200307190800.142658-1-lkundrak@v3.sk>
+References: <20200307190800.142658-1-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -37,24 +40,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Chrontel makes encoders for video displays and perhaps other stuff.
+Their web site is http://www.chrontel.com/.
 
-chained to this message is a driver for CH7033 along with device tree
-binding docs. I'm hoping that it could perhaps make it into 5.7. Please
-take a look.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Previous submission [1] contained the exact same patches as this one,
-but at that time they relied on Laurent's omapdrm/bridge/devel branch tha=
-t
-has been merged since.
+---
+Changes since v1:
+- Collect Rob's ack
 
-[1] https://lore.kernel.org/lkml/20200221162743.14141-1-lkundrak@v3.sk/
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Tested to work well on MMP3-based Dell Wyse 3020. There's no datasheet or
-programming manual available.
-
-Thanks,
-Lubo
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
+umentation/devicetree/bindings/vendor-prefixes.yaml
+index a2da166df1bc7..0ab86d876f4d2 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -185,6 +185,8 @@ patternProperties:
+     description: ChipOne
+   "^chipspark,.*":
+     description: ChipSPARK
++  "^chrontel,.*":
++    description: Chrontel, Inc.
+   "^chrp,.*":
+     description: Common Hardware Reference Platform
+   "^chunghwa,.*":
+--=20
+2.24.1
 
 
