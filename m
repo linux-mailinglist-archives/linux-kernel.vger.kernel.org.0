@@ -2,94 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BB8017CE1E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 13:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73CA717CE28
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 13:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbgCGMTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 07:19:52 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43862 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgCGMTw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 07:19:52 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f8so1993180plt.10
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 04:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=7HTOMwbPMcXloRDeNOrjg29anvI1D5Ir6u53RoLLmao=;
-        b=ZV4GpNUc7L1doStfoNEEAW079Tyu7T0mLT4PccpWnfPulf4p/It9ziyGjRrln/9RFq
-         PEkE/gmLPcRYgumxOavM0srswnTpVafviYYztUhybkayCMZq7dtPwG/xMg35/BHcYEeE
-         T6ZljD5Gf6IdcR2RgBECrm1tgimeVkLMnTEkSLRSgGtdqd1mdL4M7Qcr1uaPpyD/D8vC
-         NMMlBvhSeVEkQG0nL2kRKXI5VrwX88NHyJ3wQLGLr1ajQWqFAoP8Lg0ov0E8fXnbcS1m
-         KsVoXDG2/vXppAf9OMDF8gLmzzl3nDglV7Na+GgBgK5Itdu9C6IQz7Wui5Dudy8xdpX5
-         3Osw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=7HTOMwbPMcXloRDeNOrjg29anvI1D5Ir6u53RoLLmao=;
-        b=O7pg7Gl0wnDmSVGYd1YWSg5OfI8mMO2LELrq7rYUdkNaYFhNkdgRof27WuxscSUzr0
-         oAtqVLdUK0nLwiKsm4k0LZgZF1fsbaTdMBtUu+LoCUdyhs9X5jwJU5coakdxtUV6SAaM
-         GxI6YKBq98aZOTgBVkxryNTm3eDhyDSeidPtVpjQMN8ZgSXDUCrJZzIq0J2xXdDpWs5G
-         ZDblN8M73mVT0Jz8qVmxSZtHOFWb0bfYcF2e/ZH02M7V7peJ/229F9t3KeIll2pw9eXi
-         T65kH9SwhE7zLAVf7V0CvF6LY++A0t3HM0kgNZt0yAPwm3tifw2BsXatGshmMW+ja/q0
-         RDZQ==
-X-Gm-Message-State: ANhLgQ1muQTZh87L426hFg/eM0B030ViFRelp8wU6G60d0Kcud1PM5Y/
-        ozrp8ObCLKhIse4Pl8QKqZEFJxpUAmwIesEZxxY=
-X-Google-Smtp-Source: ADFU+vvf61lkz96mkwgymtOGZKc8GeSpZ1FkCOrrT3Rhj8JC9vNvg4dkucinCz9ZK+sqpPR7sEDo5zxEiRdcVRl4lns=
-X-Received: by 2002:a17:902:b113:: with SMTP id q19mr7366514plr.199.1583583590872;
- Sat, 07 Mar 2020 04:19:50 -0800 (PST)
+        id S1726298AbgCGMeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 07:34:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38562 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726105AbgCGMeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 07:34:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 7E2AFADD7;
+        Sat,  7 Mar 2020 12:34:13 +0000 (UTC)
+Subject: Re: [PATCH v2 1/3] dt-bindings: Add vendor prefix for Caninos Loucos
+To:     Matheus Castello <matheus@castello.eng.br>
+Cc:     manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200229104358.GB19610@mani>
+ <20200307002453.350430-1-matheus@castello.eng.br>
+ <20200307002453.350430-2-matheus@castello.eng.br>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Organization: SUSE Software Solutions Germany GmbH
+Message-ID: <62e115af-9d8c-572a-a400-91bdef9d9292@suse.de>
+Date:   Sat, 7 Mar 2020 13:34:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Reply-To: bashamzebdani@gmail.com
-Received: by 2002:a17:90a:6c97:0:0:0:0 with HTTP; Sat, 7 Mar 2020 04:19:49
- -0800 (PST)
-From:   "Mr.Basham Zebdani" <bashamzebdani@gmail.com>
-Date:   Sat, 7 Mar 2020 04:19:49 -0800
-X-Google-Sender-Auth: zvBJFVv-gIeUd0jBeP8Er41VcOI
-Message-ID: <CADQawC1bBSKG71cFj0zOaG0u_zp6egexDp9JFei4sEVhQFM8dA@mail.gmail.com>
-Subject: Attention:My Dear Friend.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200307002453.350430-2-matheus@castello.eng.br>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attention:My Dear Friend.
+Hi Matheus,
 
-I=E2=80=99m sorry but happy to inform you about my success in getting those
-funds transfer under the cooperation of a new partner from India,
-though I tried my best to involve you in the business but God decided
-the whole situations.
+Am 07.03.20 um 01:24 schrieb Matheus Castello:
+> The Caninos Loucos Program develops Single Board Computers with an open
+> structure. The Program wants to form a community of developers to use
+> the IoT technology and disseminate the learning of embedded systems in
 
-Presently I=E2=80=99m in India for investment projects with my own share of
-the total sum; I decided to load your compensation fund of US1.860 000.
-one million eight hundred and sixty thoundsand dollars in an atm
-payment card and register it with Sonapost Courier Company here in
-Burkina Faso with
-registration code of (Shipment Code awb33xzs)
+I would suggest "IoT technologies" without "the".
 
-Please Contact the delivery manager of Sonapost Courier Company
-through his email address for more update on how to receive your
-compensation fund on ATM PAYMENT VISA CARD,
+> Brazil.
+> 
+> The boards are designed and manufactured by LSI-TEC NPO.
+> 
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> ---
+>   Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index 9e67944bec9c..3e974dd563cf 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -167,6 +167,8 @@ patternProperties:
+>       description: Calxeda
+>     "^capella,.*":
+>       description: Capella Microsystems, Inc
+> +  "^caninos,.*":
+> +    description: Caninos Loucos LSI-TEC NPO
 
-Contact them with the reconfirmation of your information below,
+Alphabetical order: n goes before p.
 
-1. Your full names.
-2. Your full contact address/country
-3. Your mobile or office phone numbers
-SONAPOST EMAIL ADDRESS BELOW
+I'm confused by the description... Either this Caninos Loucos is an 
+independent vendor and gets its own prefix, or it's LSI-Tec and uses 
+something like lsi-tec,caninosloucos-foo. Please clarify commit message 
+and/or description line, at least by inserting something like "program 
+by", "brand by" or the like rather than just concatenating names. Maybe 
+compare UDOO by SECO. Is caninos,foo unique enough or should it be 
+caninosloucos,foo? (crazy canines?)
 
-**************************************************************
+Note that I usually attempt to CC the organizations I'm assigning a 
+vendor prefix for. Do you represent them or coordinated with them?
 
-Name of the Director.
-Mr. Salam Ander
-of Sonapost Courier Company
-EMAIL ADDRESS BELOW:
-andermrsalam@gmail.com
+Regards,
+Andreas
 
-Best Regards
-Mr.Basham Zebdan
+>     "^cascoda,.*":
+>       description: Cascoda, Ltd.
+>     "^catalyst,.*":
+
+-- 
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer
+HRB 36809 (AG Nürnberg)
