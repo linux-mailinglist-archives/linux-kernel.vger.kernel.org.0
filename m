@@ -2,263 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C87017C949
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 01:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9BC617C95A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 01:03:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbgCGAAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 19:00:37 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36688 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbgCGAAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 19:00:35 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g12so1517607plo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 16:00:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=98Uju0+azKiOlYwuSiSydGCSog84zzMy3jPWb9kLFic=;
-        b=ck8aykfwZYXVBAIBrH7ILOupCp7Or9TAPtVEClv1oM7RzhyReJPiM0wdqsZb0pxG3m
-         uMh3zJ8YIEpyzWHXNbFzu0uWsq91Gp5/cXXio8SoGssZwIgypbRggz7To/x0XuFFplQA
-         +uyaYo/Ue9oN0XBExUFOjlaZ+GNkzCcGeyrKo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=98Uju0+azKiOlYwuSiSydGCSog84zzMy3jPWb9kLFic=;
-        b=Becr9/97LcjSbQkdqR+udt+xjMy/67y9u/T50KTg6yf0oUkar8A251PHyziYLH8loH
-         9+TU5haKg4aywMzqKiPp5qArenG2qiffz7TBgJIml2mUDYjvHCz2UbHhE4rdzKoi0yNh
-         OHUR+4uvEjQTJImucLpZTGHwrf7wv/zjD8S942fGYoplfYUMtX6lIz3O6lyUSJCjTYNJ
-         LnPDC/ndK3FAC6Y6xrNOZq8E5b8PeLbMOYSs7FatwbVzl/wpuuajIc4Di4qLYhKLxVI8
-         ztWaBHE1MICOirG55sERrjdP8UR+BoQ+hGkPBF3SS1Gxs3sx2s0+8h8KPPDw/iLIHHf7
-         cN4g==
-X-Gm-Message-State: ANhLgQ0SFNtxFx2ww4IdggJjK4TD/8fs2iuF2966Sc7oW7gXRUoGGvIj
-        MmV/VSqIozWk1NmSZCnlxaOgAQ==
-X-Google-Smtp-Source: ADFU+vvqOO6v+GHXzUjtZZHOPUSlKLGkg1DMFS2JYCLI+x9bxP/KLpw6prWAWUWnAfdKmHee4qHKaw==
-X-Received: by 2002:a17:902:ac8b:: with SMTP id h11mr5321924plr.131.1583539231638;
-        Fri, 06 Mar 2020 16:00:31 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id 9sm32302246pge.65.2020.03.06.16.00.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2020 16:00:31 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Maulik Shah <mkshah@codeaurora.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, mka@chromium.org,
-        evgreen@chromium.org, swboyd@chromium.org,
-        Lina Iyer <ilina@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFT PATCH 9/9] drivers: qcom: rpmh-rsc: Kill cmd_cache and find_match() with fire
-Date:   Fri,  6 Mar 2020 15:59:51 -0800
-Message-Id: <20200306155707.RFT.9.I6d3d0a3ec810dc72ff1df3cbf97deefdcdeb8eef@changeid>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-In-Reply-To: <20200306235951.214678-1-dianders@chromium.org>
-References: <20200306235951.214678-1-dianders@chromium.org>
+        id S1726674AbgCGAD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 19:03:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:39500 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726245AbgCGAD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 19:03:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A3A530E;
+        Fri,  6 Mar 2020 16:03:26 -0800 (PST)
+Received: from [10.163.1.59] (unknown [10.163.1.59])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 689F93F237;
+        Fri,  6 Mar 2020 16:03:17 -0800 (PST)
+Subject: Re: [PATCH V15] mm/debug: Add tests validating architecture page
+ table helpers
+To:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+References: <1583452659-11801-1-git-send-email-anshuman.khandual@arm.com>
+ <1583527481.7365.165.camel@lca.pw>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <61250cdc-f80b-2e50-5168-2ec67ec6f1e6@arm.com>
+Date:   Sat, 7 Mar 2020 05:33:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <1583527481.7365.165.camel@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As talked about in the comments introduced by the patch ("drivers:
-qcom: rpmh-rsc: A lot of comments"), the find_match() function()
-didn't seem very sensible.  Remove it and the cmd_cache array that it
-needed.
 
-Nothing should stop us from exploring some fancy ways to avoid fully
-invalidating the whole sleep/wake TCSs all the time in the future, but
-find_match() doesn't seem well enough thought out to keep while we
-wait for something better to arrive.
 
-This patch isn't quite a no-op.  Specifically:
+On 03/07/2020 02:14 AM, Qian Cai wrote:
+> On Fri, 2020-03-06 at 05:27 +0530, Anshuman Khandual wrote:
+>> This adds tests which will validate architecture page table helpers and
+>> other accessors in their compliance with expected generic MM semantics.
+>> This will help various architectures in validating changes to existing
+>> page table helpers or addition of new ones.
+>>
+>> This test covers basic page table entry transformations including but not
+>> limited to old, young, dirty, clean, write, write protect etc at various
+>> level along with populating intermediate entries with next page table page
+>> and validating them.
+>>
+>> Test page table pages are allocated from system memory with required size
+>> and alignments. The mapped pfns at page table levels are derived from a
+>> real pfn representing a valid kernel text symbol. This test gets called
+>> inside kernel_init() right after async_synchronize_full().
+>>
+>> This test gets built and run when CONFIG_DEBUG_VM_PGTABLE is selected. Any
+>> architecture, which is willing to subscribe this test will need to select
+>> ARCH_HAS_DEBUG_VM_PGTABLE. For now this is limited to arc, arm64, x86, s390
+>> and ppc32 platforms where the test is known to build and run successfully.
+>> Going forward, other architectures too can subscribe the test after fixing
+>> any build or runtime problems with their page table helpers. Meanwhile for
+>> better platform coverage, the test can also be enabled with CONFIG_EXPERT
+>> even without ARCH_HAS_DEBUG_VM_PGTABLE.
+>>
+>> Folks interested in making sure that a given platform's page table helpers
+>> conform to expected generic MM semantics should enable the above config
+>> which will just trigger this test during boot. Any non conformity here will
+>> be reported as an warning which would need to be fixed. This test will help
+>> catch any changes to the agreed upon semantics expected from generic MM and
+>> enable platforms to accommodate it thereafter.
+> 
+> OK, I get this working on powerpc hash MMU as well, so this?
+> 
+> diff --git a/Documentation/features/debug/debug-vm-pgtable/arch-support.txt
+> b/Documentation/features/debug/debug-vm-pgtable/arch-support.txt
+> index 64d0f9b15c49..c527d05c0459 100644
+> --- a/Documentation/features/debug/debug-vm-pgtable/arch-support.txt
+> +++ b/Documentation/features/debug/debug-vm-pgtable/arch-support.txt
+> @@ -22,8 +22,7 @@
+>      |       nios2: | TODO |
+>      |    openrisc: | TODO |
+>      |      parisc: | TODO |
+> -    |  powerpc/32: |  ok  |
+> -    |  powerpc/64: | TODO |
+> +    |     powerpc: |  ok  |
+>      |       riscv: | TODO |
+>      |        s390: |  ok  |
+>      |          sh: | TODO |
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 2e7eee523ba1..176930f40e07 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -116,7 +116,7 @@ config PPC
+>  	#
+>  	select ARCH_32BIT_OFF_T if PPC32
+>  	select ARCH_HAS_DEBUG_VIRTUAL
+> -	select ARCH_HAS_DEBUG_VM_PGTABLE if PPC32
+> +	select ARCH_HAS_DEBUG_VM_PGTABLE
+>  	select ARCH_HAS_DEVMEM_IS_ALLOWED
+>  	select ARCH_HAS_ELF_RANDOMIZE
+>  	select ARCH_HAS_FORTIFY_SOURCE
+> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> index 96a91bda3a85..98990a515268 100644
+> --- a/mm/debug_vm_pgtable.c
+> +++ b/mm/debug_vm_pgtable.c
+> @@ -256,7 +256,8 @@ static void __init pte_clear_tests(struct mm_struct *mm,
+> pte_t *ptep,
+>  	pte_t pte = READ_ONCE(*ptep);
+>  
+>  	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
+> -	WRITE_ONCE(*ptep, pte);
+> +	set_pte_at(mm, vaddr, ptep, pte);
 
-* It should be a slight performance boost of not searching through so
-  many arrays.
-* There is slightly less self-checking of commands written to the
-  sleep/wake sets.  If it truly is an error to write to the same
-  address more than once in a tcs_group then some cases (but not all)
-  would have been caught before.
+Hmm, set_pte_at() function is not preferred here for these tests. The idea
+is to avoid or atleast minimize TLB/cache flushes triggered from these sort
+of 'static' tests. set_pte_at() is platform provided and could/might trigger
+these flushes or some other platform specific synchronization stuff. Just
+wondering is there specific reason with respect to the soft lock up problem
+making it necessary to use set_pte_at() rather than a simple WRITE_ONCE() ?
 
-[1] https://lore.kernel.org/r/1583428023-19559-1-git-send-email-mkshah@codeaurora.org
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-It's possible that this might need the latest version of Maulik's
-rpmh.c patches to work properly so we can really be sure that we
-always invalidate before we flush.
-
- drivers/soc/qcom/rpmh-internal.h |   2 -
- drivers/soc/qcom/rpmh-rsc.c      | 104 +------------------------------
- 2 files changed, 1 insertion(+), 105 deletions(-)
-
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index 49df01af7701..7206a1ac97e8 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -34,7 +34,6 @@ struct rsc_drv;
-  *                    trigger
-  *             End: get irq, access req,
-  *                  grab drv->lock, clear tcs_in_use, drop drv->lock
-- * @cmd_cache: Flattened cache of cmds in sleep/wake TCS; num_tcs * ncpt big.
-  * @slots:     Indicates which of @cmd_addr are occupied; only used for
-  *             SLEEP / WAKE TCSs.  Things are tightly packed in the
-  *             case that (ncpt < MAX_CMDS_PER_TCS).  That is if ncpt = 2 and
-@@ -49,7 +48,6 @@ struct tcs_group {
- 	int ncpt;
- 	spinlock_t lock;
- 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
--	u32 *cmd_cache;
- 	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
- };
- 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 0297da5ceeaa..733373ed56bd 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -630,93 +630,6 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
- 	return ret;
- }
- 
--/**
-- * find_match() - Find if the cmd sequence is in the tcs_group
-- * @tcs: The tcs_group to search.  Either sleep or wake.
-- * @cmd: The command sequence to search for; only addr is looked at.
-- * @len: The number of commands in the sequence.
-- *
-- * Searches through the given tcs_group to see if a given command sequence
-- * is in there.
-- *
-- * Two sequences are matches if they modify the same set of addresses in
-- * the same order.  The value of the data is not considered when deciding if
-- * two things are matches.
-- *
-- * How this function works is best understood by example.  For our example,
-- * we'll imagine our tcs group contains these (cmd, data) tuples:
-- *   [(a, A), (b, B), (c, C), (d, D), (e, E), (f, F), (g, G), (h, H)]
-- * ...in other words it has an element where (addr=a, data=A), etc.
-- * ...we'll assume that there is one TCS in the group that can store 8 commands.
-- *
-- * - find_match([(a, X)]) => 0
-- * - find_match([(c, X), (d, X)]) => 2
-- * - find_match([(c, X), (d, X), (e, X)]) => 2
-- * - find_match([(z, X)]) => -ENODATA
-- * - find_match([(a, X), (y, X)]) => -EINVAL (and warning printed)
-- * - find_match([(g, X), (h, X), (i, X)]) => -EINVAL (and warning printed)
-- * - find_match([(y, X), (a, X)]) => -ENODATA
-- *
-- * NOTE: This function overall seems like it has questionable value.
-- * - It can be used to update a message in the TCS with new data, but I
-- *   don't believe we actually do that--we always fully invalidate and
-- *   re-write everything.  Specifically it would be too limiting to force
-- *   someone not to change the set of addresses written to each time.
-- * - This function could be attempting to avoid writing different data to
-- *   the same address twice in a tcs_group.  If that's the goal, it doesn't
-- *   do a great job since find_match([(y, X), (a, X)]) return -ENODATA in my
-- *   above example.
-- * - If you originally wrote [(a, A), (b, B), (c, C)] and later tried to
-- *   write [(a, A), (b, B)] it'd look like a match and we wouldn't consider
-- *   it an error that the size got shorter.
-- * - If two clients wrote sequences that happened to be placed in slots next
-- *   to each other then a later check could match a sequence that was the
-- *   size of both together.
-- *
-- * TODO: in light of the above, prehaps we can just remove this function?
-- * If we later come up with fancy algorithms for updating everything without
-- * full invalidations we can come up with something then.
-- *
-- * Only for use on sleep/wake TCSs since those are the only ones we maintain
-- * tcs->slots and tcs->cmd_cache for.
-- *
-- * Must be called with the tcs_lock for the group held.
-- *
-- * Return: If the given command sequence wasn't in the tcs_group: -ENODATA.
-- *         If the given command sequence was in the tcs_group: the index of
-- *         the slot in the tcs_group where the first command is.
-- *         In some error cases (see above), -EINVAL.
-- */
--static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
--		      int len)
--{
--	int i, j;
--
--	/* Check for already cached commands */
--	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
--		if (tcs->cmd_cache[i] != cmd[0].addr)
--			continue;
--		if (i + len >= tcs->num_tcs * tcs->ncpt)
--			goto seq_err;
--		for (j = 0; j < len; j++) {
--			/*
--			 * TODO: it's actually not valid to look at
--			 * "cmd_cache[x]" if "slots[x]" doesn't have a bit
--			 * set.  Should add a check.
--			 */
--			if (tcs->cmd_cache[i + j] != cmd[j].addr)
--				goto seq_err;
--		}
--		return i;
--	}
--
--	return -ENODATA;
--
--seq_err:
--	WARN(1, "Message does not match previous sequence.\n");
--	return -EINVAL;
--}
--
- /**
-  * find_slots() - Find a place to write the given message.
-  * @tcs:    The controller.
-@@ -728,7 +641,7 @@ static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
-  *          start writing the message.
-  *
-  * Only for use on sleep/wake TCSs since those are the only ones we maintain
-- * tcs->slots and tcs->cmd_cache for.
-+ * tcs->slots for.
-  *
-  * Must be called with the tcs_lock for the group held.
-  *
-@@ -740,11 +653,6 @@ static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
- 	int slot, offset;
- 	int i = 0;
- 
--	/* Find if we already have the msg in our TCS */
--	slot = find_match(tcs, msg->cmds, msg->num_cmds);
--	if (slot >= 0)
--		goto copy_data;
--
- 	/* Do over, until we can fit the full payload in a single TCS */
- 	do {
- 		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
-@@ -754,11 +662,7 @@ static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
- 		i += tcs->ncpt;
- 	} while (slot + msg->num_cmds - 1 >= i);
- 
--copy_data:
- 	bitmap_set(tcs->slots, slot, msg->num_cmds);
--	/* Copy the addresses of the resources over to the slots */
--	for (i = 0; i < msg->num_cmds; i++)
--		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
- 
- 	offset = slot / tcs->ncpt;
- 	*tcs_id = offset + tcs->offset;
-@@ -889,12 +793,6 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 		 */
- 		if (tcs->type == ACTIVE_TCS)
- 			continue;
--
--		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
--					      tcs->num_tcs * ncpt, sizeof(u32),
--					      GFP_KERNEL);
--		if (!tcs->cmd_cache)
--			return -ENOMEM;
- 	}
- 
- 	drv->num_tcs = st;
--- 
-2.25.1.481.gfbce0eb801-goog
-
+> +	barrier();
+>  	pte_clear(mm, vaddr, ptep);
+>  	pte = READ_ONCE(*ptep);
+>  	WARN_ON(!pte_none(pte));
+> 
