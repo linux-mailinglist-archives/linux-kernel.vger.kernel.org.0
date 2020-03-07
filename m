@@ -2,79 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D4B217CDB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 11:54:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A0117CDB3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 11:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbgCGKpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 05:45:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28704 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726017AbgCGKpS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 05:45:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583577917;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iPDCZ/KbzdltRPn25i5SoU+xFMCcgx/ga1DrivtTXmo=;
-        b=asksjxHHkLr0hWTZG48bI5UgC4g13dEQ8opotyMmrddoFjppZSx8gvwUJX0LfFSlYVKyUu
-        zS0kBegrZQUAUB/zoezsfAhjGg3OLL3Qf4YXxR2qzmcr1nVfAFH7nD0Viac7ANOZeri9sf
-        SDgRWDqit0Lf0OHtttYxWtTDyI5cNVY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-49-4Ya9bD6BNjmfUZ5RElNv9g-1; Sat, 07 Mar 2020 05:45:15 -0500
-X-MC-Unique: 4Ya9bD6BNjmfUZ5RElNv9g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 46C34107ACCA;
-        Sat,  7 Mar 2020 10:45:13 +0000 (UTC)
-Received: from krava (ovpn-205-205.brq.redhat.com [10.40.205.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CBD415C1BB;
-        Sat,  7 Mar 2020 10:45:06 +0000 (UTC)
-Date:   Sat, 7 Mar 2020 11:45:01 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH 1/1] perf/tool: fix read in event parsing
-Message-ID: <20200307104501.GA311316@krava>
-References: <20200307073121.203816-1-irogers@google.com>
+        id S1726239AbgCGKue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 05:50:34 -0500
+Received: from mout.gmx.net ([212.227.15.15]:40343 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725909AbgCGKue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 05:50:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1583578227;
+        bh=m/2yOii9GTOFmXitzlRFIRYOK4ogqrwhgzd5gIHiD2c=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=CrlEqLGfTluS781kQikcgSfuMNXwVTycxpScN4ET7vkgVn/zRuKQdx9C6XiCjPgpF
+         OXN0MTEGOB3qMSsTVy2jBnA0Xh9HZcWW9+dajJX0QmMYsksVQtk9urCxoRnq3NQScz
+         aUS3P/ymbRzuLweRDE8UiHlB0rrS2PUjWo0opWUc=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([83.52.229.196]) by mail.gmx.com
+ (mrgmx005 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 1MZTqW-1ioxbJ1T0A-00WY6y; Sat, 07 Mar 2020 11:50:27 +0100
+From:   Oscar Carter <oscar.carter@gmx.com>
+To:     Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
+        Malcolm Priestley <tvboxspy@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
+        Oscar Carter <oscar.carter@gmx.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vt6656: Use BIT_ULL() macro instead of bit shift operation
+Date:   Sat,  7 Mar 2020 11:49:29 +0100
+Message-Id: <20200307104929.7710-1-oscar.carter@gmx.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200307073121.203816-1-irogers@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jWIm+lfcudgmy2y27XLt/W6/L36/oomYEd3rwqai1CelUY23z3h
+ C57pIPeR6zLhm8xl1G1W8aZDffT4bY7dYSb3ANGBbO0BX0R2mlIp2JHW5P9u1w5vw4Bu1W/
+ ggH112BFIFhQNd+vDjFQtuE5+i5A718+WfPPe6OYRIbnNXsOndB/RmG8UJy6j75dTleh3+P
+ ZxRutwIYi3KgJPcW8z7QA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zF6BmCqcQmc=:iJO98o1L7n/lsy2XwjsOw5
+ nBS15YSBF0xJwAFdU/3m+GAhnmLuWhHxGVo8Uk6Z3aEZo9iULEHfhzo03kBzsPugMCnr5XKEv
+ gxGKvcJuU7yxuv4nABCBwdlMqQLueMq5/zLcT8zPMNtzatbu4Riby3gm/iHHgvcs/TZ2cnkd4
+ UaV3HeSlrq6dvgrp3bsSpAceJ/J7y0IAbhxQXgReFYZGFXaezVKZqVFVPsUDT0m6MaN8e6/H/
+ nf/OulJdjaJHJ6wr1h0QXsXSYwjJlzo9jqS2MpcKuIZ/qs9RymPcel+Vi2o2G4C0csvkVb/s8
+ DUXyRWnDCcFubEbZ5I8Op/rAWzpgnjv9+e64GZGTATtChhA2ngQHv4+HrIq2000FgRE016iQR
+ ziQ/5MbdSCKejawrh1x4Z1djiy3UMN7F+N/uptmAyAEyBuTqd3TSlz4SyI7075MUjEV52wDPx
+ WAiQwetlTlVz12u/NBOPxjLeN2ETbxuzbAwlRduDt+VxHweyBL8GytoS9v57zhyLvCiRC/ged
+ 5ZKv8eRiBIqj3NkKSJoQKa4HC1Kr5Hx0S6EB8f2F8IYBZfhvZn1rrjq1LJv1lxznk0f3x/VgS
+ ORZDULM+iEXbORPn1ntY4RhJBBTbgiars0V2kZu2iq0bf5UQ5azacrPCOXOxD1f/xEUTW/Sh5
+ bdh10eqUSt4fPyZMGWDBdCJ1aS+qN7J/VSX/PDqf+uL2nzGP/ShJjCfDeUGDM6GDHygefr16w
+ +7ENfqJwNlAIxMts+uIlj4haa5zEXC4AaBzjKFUEOqGnQUw0VPXUw+9Tdju6WcAKvYgtcLFhx
+ AO8437daahzDzpizmWKo26yW6Pph0LJJ1mD60q/lzsu9lRJqhek6hRpvQUwCELPlIcC+jyrSq
+ qDkQmENt4qmKiPltFEF7okzZDNMnMSy33lelQMkp23Vqm4UcWsG+AoMVtuFqHsJZdiEVBSGle
+ dQtsE8B4P7VYdwOHCN2IXhdOpco8sMROqe2G9SDfbf3E0jptrGO4EdJA2SP4HoK9VAf4IyPaP
+ 90LjOPmxHRmGNToubNPB1py9e09WxPISPgkMelSdH7OXHPEESiAXhTqvO31R6CZU64BatHAp5
+ dzxiO/NghwFcaQXZZO+ThxPzHw9odTEWA5t21gsBOpAz1mx6vHRVtz/j4FzEF4l1X379xJNPB
+ gnYKF0r8Fc2Zc/AZuzTvc4+T0YrLxzuvOFNuXtlVUiLFZXXtOlYiaU+d7kyYi9M45tBMOOkHb
+ nSeR96LgmWy1uwV5h
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 11:31:21PM -0800, Ian Rogers wrote:
-> ADD_CONFIG_TERM accesses term->weak, however, in get_config_chgs this
-> value is accessed outside of the list_for_each_entry and references
-> invalid memory. Add an argument for ADD_CONFIG_TERM for weak and set it
-> to false in the get_config_chgs case.
-> This bug was cause by clang's address sanitizer and libfuzzer. It can be
-> reproduced with a command line of:
->   perf stat -a -e i/bs,tsc,L2/o
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+Replace the bit left shift operation with the BIT_ULL() macro and remove
+the unnecessary "and" operation against the bit_nr variable.
 
-nice catch
+Signed-off-by: Oscar Carter <oscar.carter@gmx.com>
+=2D--
+ drivers/staging/vt6656/main_usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/ma=
+in_usb.c
+index 5e48b3ddb94c..f7ca9e97594d 100644
+=2D-- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -21,6 +21,7 @@
+  */
+ #undef __NO_VERSION__
 
-thanks,
-jirka
++#include <linux/bits.h>
+ #include <linux/etherdevice.h>
+ #include <linux/file.h>
+ #include "device.h"
+@@ -802,8 +803,7 @@ static u64 vnt_prepare_multicast(struct ieee80211_hw *=
+hw,
+
+ 	netdev_hw_addr_list_for_each(ha, mc_list) {
+ 		bit_nr =3D ether_crc(ETH_ALEN, ha->addr) >> 26;
+-
+-		mc_filter |=3D 1ULL << (bit_nr & 0x3f);
++		mc_filter |=3D BIT_ULL(bit_nr);
+ 	}
+
+ 	priv->mc_list_count =3D mc_list->count;
+=2D-
+2.20.1
 
