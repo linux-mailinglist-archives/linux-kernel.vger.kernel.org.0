@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA3F17CBBA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 04:52:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA2D417CB8E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 04:45:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbgCGDwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 22:52:39 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11606 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbgCGDwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 22:52:34 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1D32B87EBF5CB4F6D62E;
-        Sat,  7 Mar 2020 11:52:29 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 7 Mar 2020 11:52:21 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <kuba@kernel.org>,
-        Yufeng Mo <moyufeng@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH V2 net-next 9/9] net: hns3: delete unnecessary logs after kzalloc fails
-Date:   Sat, 7 Mar 2020 11:42:50 +0800
-Message-ID: <1583552570-51203-10-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583552570-51203-1-git-send-email-tanhuazhong@huawei.com>
-References: <1583552570-51203-1-git-send-email-tanhuazhong@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+        id S1726462AbgCGDn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 22:43:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34105 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCGDn4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 22:43:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t3so1993907pgn.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 19:43:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RyudsTdaiGHdFq2ORRXJ0vk3t3fWMudqINaDB7phCEY=;
+        b=J7rgDDLvA1rYGh/ekUcB7X11u9jS0nSXNVPy+Q7X5W2LpPG0jJLdniIuBRGqdQVmAm
+         77u75Y7RPHvgPiRn6+Fan50dZS9FifQYM76YNl5YBjCK62GfFScvfuj7CCwzFwOByCO7
+         zn9SFf13jig2uPdtsvfaC0BSdq7QbpKX1CNsf2/1SNQprOE0k4GpC8oQ8eghx9alURNR
+         NlICFDqKmDbSfjt1bhn4CNFdQPYf0/9JMYW7uSgibTkccJq6AxDN0l5L3sBN8M4fX0mH
+         80o8Rm6onazI2VAQa9Xnrcc+dSPCZrBcBefUWVqROSqmk4xy1TrzK4M4ejDZFVESCo/o
+         pvvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RyudsTdaiGHdFq2ORRXJ0vk3t3fWMudqINaDB7phCEY=;
+        b=UnH6Y+CUTlmm961LUDbIHnFpdWUoz+giIERuS1BTrbuX7iyiCRkR4fNpGjFqex25ro
+         KjO5dvyWNjhX7jDpqQl216Jwz58RAWd7nQyj4A1NbxxUqunddgJTJF+AerKudQg0qH43
+         dyuGAksBvHDuJJAFrnK6q9M0kNwryWkg3Vo8EmWtiT69q6RsZAfnA5e3K7iIDNnG2IQ0
+         EVadmiLpalt45r/76idxVP8J+o0NoydZoWtpXLCbx+lRxHHvcxo3AiSvT5s76lHb7ibl
+         ynBDIwEAENWLsM16EKiKVfU2eQLK2mauZJuh/nV3IH0LAqUq66Xuc+hf3H+Sy6V+aLrR
+         wkbg==
+X-Gm-Message-State: ANhLgQ3vFWeOlxoWJ48qHz2+X1uSpvP++S0CARgtWU4wFbuN1vdfT8uA
+        dS7bpLp1sp/mlRm5pRk0yeE=
+X-Google-Smtp-Source: ADFU+vuSv7ZAxDPkRs6S3la7AoljE7jfHdZexGf8PGawj2OmS/6Mr9r0F9PTxbm7HPXNju7DYOsvBQ==
+X-Received: by 2002:a63:5d51:: with SMTP id o17mr4841331pgm.159.1583552635497;
+        Fri, 06 Mar 2020 19:43:55 -0800 (PST)
+Received: from VM_0_35_centos.localdomain ([150.109.62.251])
+        by smtp.gmail.com with ESMTPSA id 127sm17520262pfb.130.2020.03.06.19.43.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Mar 2020 19:43:55 -0800 (PST)
+From:   Qiujun Huang <hqjagain@gmail.com>
+To:     mst@redhat.com
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>
+Subject: [PATCH] virtio: silence a -Wunused-label warning
+Date:   Sat,  7 Mar 2020 11:43:50 +0800
+Message-Id: <1583552630-20799-1-git-send-email-hqjagain@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufeng Mo <moyufeng@huawei.com>
+The label 'out_del_vqs:' is only used by CONFIG_BALLOON_COMPACTION,
+so move it to the region.
 
-Since kernel already has logs after kzalloc fails,
-it's unnecessary to print duplicate logs. So this
-patch deletes these logs.
-
-Signed-off-by: Yufeng Mo <moyufeng@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/virtio/virtio_balloon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-index 07b30f9..1722828 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -145,10 +145,8 @@ static void hclge_dbg_dump_reg_common(struct hclge_dev *hdev,
- 
- 	buf_len	= sizeof(struct hclge_desc) * bd_num;
- 	desc_src = kzalloc(buf_len, GFP_KERNEL);
--	if (!desc_src) {
--		dev_err(&hdev->pdev->dev, "call kzalloc failed\n");
-+	if (!desc_src)
- 		return;
--	}
- 
- 	desc = desc_src;
- 	ret = hclge_dbg_cmd_send(hdev, desc, index, bd_num, reg_msg->cmd);
-@@ -1082,11 +1080,8 @@ static void hclge_dbg_get_m7_stats_info(struct hclge_dev *hdev)
- 
- 	buf_len	 = sizeof(struct hclge_desc) * bd_num;
- 	desc_src = kzalloc(buf_len, GFP_KERNEL);
--	if (!desc_src) {
--		dev_err(&hdev->pdev->dev,
--			"allocate desc for get_m7_stats failed\n");
-+	if (!desc_src)
- 		return;
--	}
- 
- 	desc_tmp = desc_src;
- 	ret  = hclge_dbg_cmd_send(hdev, desc_tmp, 0, bd_num,
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 7bfe365..341458f 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -959,8 +959,8 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 	iput(vb->vb_dev_info.inode);
+ out_kern_unmount:
+ 	kern_unmount(balloon_mnt);
+-#endif
+ out_del_vqs:
++#endif
+ 	vdev->config->del_vqs(vdev);
+ out_free_vb:
+ 	kfree(vb);
 -- 
-2.7.4
+1.8.3.1
 
