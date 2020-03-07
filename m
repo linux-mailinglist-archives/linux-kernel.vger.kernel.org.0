@@ -2,185 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4ECF17CA20
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 02:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38BC217CA10
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 02:04:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgCGBFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 20:05:30 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:55008 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbgCGBFa (ORCPT
+        id S1726676AbgCGBEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 20:04:00 -0500
+Received: from mail-pj1-f74.google.com ([209.85.216.74]:54615 "EHLO
+        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbgCGBEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 20:05:30 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jANuA-0007Im-T1; Fri, 06 Mar 2020 18:05:26 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jANu8-0006Ld-L3; Fri, 06 Mar 2020 18:05:26 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87imjicxjw.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170375DBF699D4F3DC7A08DE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87k13yawpp.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170E9D0DB405EC051F7731CE4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87sgil87s3.fsf@x220.int.ebiederm.org>
-        <87a74t86cs.fsf@x220.int.ebiederm.org>
-Date:   Fri, 06 Mar 2020 19:03:10 -0600
-In-Reply-To: <87a74t86cs.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Fri, 06 Mar 2020 16:29:39 -0600")
-Message-ID: <87v9nh6koh.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jANu8-0006Ld-L3;;;mid=<87v9nh6koh.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19ga0TG/cHLdEFkXj9eUOD1GvS7qbzyimM=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4833]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1761 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.8 (0.2%), b_tie_ro: 1.96 (0.1%), parse: 1.12
-        (0.1%), extract_message_metadata: 15 (0.9%), get_uri_detail_list: 2.1
-        (0.1%), tests_pri_-1000: 24 (1.3%), tests_pri_-950: 1.30 (0.1%),
-        tests_pri_-900: 1.14 (0.1%), tests_pri_-90: 33 (1.9%), check_bayes: 31
-        (1.8%), b_tokenize: 13 (0.7%), b_tok_get_all: 9 (0.5%), b_comp_prob:
-        3.3 (0.2%), b_tok_touch_all: 3.8 (0.2%), b_finish: 0.79 (0.0%),
-        tests_pri_0: 585 (33.2%), check_dkim_signature: 0.67 (0.0%),
-        check_dkim_adsp: 2.5 (0.1%), poll_dns_idle: 1080 (61.3%),
-        tests_pri_10: 1.99 (0.1%), tests_pri_500: 1092 (62.0%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH 2/2] exec: Add a exec_update_mutex to replace cred_guard_mutex
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Fri, 6 Mar 2020 20:04:00 -0500
+Received: by mail-pj1-f74.google.com with SMTP id p3so2253782pjo.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 17:03:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=k5PT9JxXBQpJJ/C+GDUX6jmWCcLXzOHs3ae3IdX3WEA=;
+        b=sGMv+XNGTDlZ6FFrxPT9k1fNcQ7yH1R47bkY7h+ZdX2oLVSEpzVb82XJJKsZpuOLBr
+         3XWBoUv4Cd+TSerOyyV2W+cJUZUCVds+NnD4TGu4dGNdXOZUQJh4Le3IWSNX2JIaNgMj
+         yAqhO69Na7nSUOarO+5WrB8RNE8k4e1g8oZh/8oiORq60a/igK/nF/7Hpf4NnKFDXnsb
+         SCS7kylOeEpQdWySpXtj58F+IS927YQZXeJq5/0LsrBkPSr0W8q5B7265BTWUNhGA5vH
+         d5npvPYhCaQfB2y3MLr3BMjN4NUGZOARdQmPwovvMATvop+M9DdjvS34jQdYVBgU4ryF
+         nndw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=k5PT9JxXBQpJJ/C+GDUX6jmWCcLXzOHs3ae3IdX3WEA=;
+        b=NFeot+8h92Ywbu/12YTa8m1LOcLO2A/uCuXKYv1yfhN7Sa9sfyD/EELBz/Y6EsKrCj
+         4Asd01enGvgAIN9pC3rh1QzWzSYYiiYIUStofKayrohfNbZSdSFLCOzeStwzJJ+4lSWO
+         v9xgtJdMV809rey8QUCTGoOiIX60oudxl58wjTVHEi27TuEN65VBM/tjJvSDFgBYRQdC
+         zbe4e91W5tXFoP2KfhkCKIE3+UOynds7O1cQ82InJP0bmpv4V/h+EP7FpsuXUDPTrZNj
+         bfx+SIeR60qWZ1P0qF7idGwZAZLFZjIHQZn8juPfAyCx2wGupcZiLludDnfm0aruhWfW
+         NHEQ==
+X-Gm-Message-State: ANhLgQ2mkqT8dsF87mfMSV9+yWPX2JbXrzhy4SPkJOShDk5zor5toXS7
+        D7xAq1B3H0HzcOfQvFoZNLIoyRhP0//zBVm+tTri+Q==
+X-Google-Smtp-Source: ADFU+vvUOr966MeOJZYRYgzhAZ75k+n47egEVLnv6WjuAOclWUGWEQ9SauBzgRdPPwfykGBiVmc6LtU0PW/z0Mv/er0g5w==
+X-Received: by 2002:a63:1862:: with SMTP id 34mr2622428pgy.191.1583543037600;
+ Fri, 06 Mar 2020 17:03:57 -0800 (PST)
+Date:   Fri,  6 Mar 2020 17:03:53 -0800
+Message-Id: <20200307010353.172991-1-cannonmatthews@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH] mm: clear 1G pages with streaming stores on x86
+From:   Cannon Matthews <cannonmatthews@google.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Salman Qazi <sqazi@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Cannon Matthews <cannonmatthews@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+Reimplement clear_gigantic_page() to clear gigabytes pages using the
+non-temporal streaming store instructions that bypass the cache
+(movnti), since an entire 1GiB region will not fit in the cache anyway.
 
-> ebiederm@xmission.com (Eric W. Biederman) writes:
->
->> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->>
->>> On 3/6/20 6:17 AM, Eric W. Biederman wrote:
->>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->>>> 
->>>>> On 3/5/20 10:16 PM, Eric W. Biederman wrote:
->>>>>>
->>>>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
->>>>>> over the userspace accesses as the arguments from userspace are read.
->>>>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
->>>>>> threads are killed.  The cred_guard_mutex is held over
->>>>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
->>>>>>
->>>
->>> I am all for this patch, and the direction it is heading, Eric.
->>>
->>> I just wanted to add a note that I think it is
->>> possible that exec_mm_release can also invoke put_user(0, tsk->clear_child_tid),
->>> under the new exec_update_mutex, since vm_access increments the
->>> mm->mm_users, under the cred_update_mutex, but releases the mutex,
->>> and the caller can hold the reference for a while and then exec_mmap is not
->>> releasing the last reference.
->>
->> Good catch.  I really appreciate your close look at the details.
->>
->> I am wondering if process_vm_readv and process_vm_writev could be
->> safely changed to use mmgrab and mmdrop, instead of mmget and mmput.
->>
->> That would resolve the potential issue you have pointed out.  I just
->> haven't figured out if it is safe.  The mm code has been seriously
->> refactored since I knew how it all worked.
->
-> Nope, mmget can not be replaced by mmgrab.
->
-> It might be possible to do something creative like store a cred in place
-> of the userns on the mm and use that for mm_access permission checks.
-> Still we are talking a pretty narrow window, and a case that no one has
-> figured out how to trigger yet.  So I will leave that corner case as
-> something for future improvements.
+Doing an mlock() on a 512GiB 1G-hugetlb region previously would take on
+average 134 seconds, about 260ms/GiB which is quite slow. Using `movnti`
+and optimizing the control flow over the constituent small pages, this
+can be improved roughly by a factor of 3-4x, with the 512GiB mlock()
+taking only 34 seconds on average, or 67ms/GiB.
 
-My brain is restless and keep looking at it.
+The assembly code for the __clear_page_nt routine is more or less
+taken directly from the output of gcc with -O3 for this function with
+some tweaks to support arbitrary sizes and moving memory barriers:
 
-The worst case is processes created with CLONE_VM|CLONE_CHILD_CLEARTID
-but not CLONE_THREAD.  For those that put_user will occur ever time
-in exec_mmap.
+void clear_page_nt_64i (void *page)
+{
+  for (int i = 0; i < GiB /sizeof(long long int); ++i)
+    {
+      _mm_stream_si64 (((long long int*)page) + i, 0);
+    }
+  sfence();
+}
 
-The only solution that I can see is to move taking the new mutex after
-exec_mm_release.  Which may be feasible given how close exec_mmap
-follows de_thread.
+Tested:
+	Time to `mlock()` a 512GiB region on broadwell CPU
+				AVG time (s)	% imp.	ms/page
+	clear_page_erms		133.584		-	261
+	clear_page_nt		34.154		74.43%	67
 
-I am going to sleep on that and perhaps I will be able to see how to
-move taking the mutex lower.
+An earlier version of this code was sent as an RFC patch ~July 2018
+https://patchwork.kernel.org/patch/10543193/ but never merged.
 
-It would be very nice not to have a known issue going into this set of
-changes.
+Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
+---
+ MAINTAINERS                        |  1 +
+ arch/x86/Kconfig                   |  4 ++++
+ arch/x86/include/asm/page_64.h     |  1 +
+ arch/x86/lib/Makefile              |  2 +-
+ arch/x86/lib/clear_gigantic_page.c | 28 ++++++++++++++++++++++++++++
+ arch/x86/lib/clear_page_64.S       | 19 +++++++++++++++++++
+ include/linux/mm.h                 |  2 ++
+ mm/memory.c                        |  2 ++
+ 8 files changed, 58 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/lib/clear_gigantic_page.c
 
-Eric
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 68eebf3650ac..efe84f085404 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7702,6 +7702,7 @@ S:	Maintained
+ F:	fs/hugetlbfs/
+ F:	mm/hugetlb.c
+ F:	include/linux/hugetlb.h
++F:	arch/x86/lib/clear_gigantic_page.c
+ F:	Documentation/admin-guide/mm/hugetlbpage.rst
+ F:	Documentation/vm/hugetlbfs_reserv.rst
+ F:	Documentation/ABI/testing/sysfs-kernel-mm-hugepages
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index beea77046f9b..f49e7b6f6851 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -70,6 +70,7 @@ config X86
+ 	select ARCH_HAS_KCOV			if X86_64
+ 	select ARCH_HAS_MEM_ENCRYPT
+ 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
++	select ARCH_HAS_CLEAR_GIGANTIC_PAGE	if X86_64
+ 	select ARCH_HAS_PMEM_API		if X86_64
+ 	select ARCH_HAS_PTE_DEVMAP		if X86_64
+ 	select ARCH_HAS_PTE_SPECIAL
+@@ -290,6 +291,9 @@ config ARCH_MAY_HAVE_PC_FDC
+ config GENERIC_CALIBRATE_DELAY
+ 	def_bool y
+ 
++config ARCH_HAS_CLEAR_GIGANTIC_PAGE
++	bool
++
+ config ARCH_HAS_CPU_RELAX
+ 	def_bool y
+ 
+diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+index 939b1cff4a7b..6ea60883b6d6 100644
+--- a/arch/x86/include/asm/page_64.h
++++ b/arch/x86/include/asm/page_64.h
+@@ -55,6 +55,7 @@ static inline void clear_page(void *page)
+ }
+ 
+ void copy_page(void *to, void *from);
++void clear_page_nt(void *page, u64 page_size);
+ 
+ #endif	/* !__ASSEMBLY__ */
+ 
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 5246db42de45..a620c6636210 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -56,7 +56,7 @@ endif
+ else
+         obj-y += iomap_copy_64.o
+         lib-y += csum-partial_64.o csum-copy_64.o csum-wrappers_64.o
+-        lib-y += clear_page_64.o copy_page_64.o
++        lib-y += clear_page_64.o copy_page_64.o clear_gigantic_page.o
+         lib-y += memmove_64.o memset_64.o
+         lib-y += copy_user_64.o
+ 	lib-y += cmpxchg16b_emu.o
+diff --git a/arch/x86/lib/clear_gigantic_page.c b/arch/x86/lib/clear_gigantic_page.c
+new file mode 100644
+index 000000000000..6fcb494ec9bc
+--- /dev/null
++++ b/arch/x86/lib/clear_gigantic_page.c
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <asm/page.h>
++
++#include <linux/kernel.h>
++#include <linux/mm.h>
++#include <linux/sched.h>
++
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
++
++void clear_gigantic_page(struct page *page, unsigned long addr,
++			 unsigned int pages)
++{
++	int i;
++	void *dest = page_to_virt(page);
++
++	/*
++	 * cond_resched() every 2M. Hypothetical page sizes not divisible by
++	 * this are not supported.
++	 */
++	BUG_ON(pages % HPAGE_PMD_NR != 0);
++	for (i = 0; i < pages; i += HPAGE_PMD_NR) {
++		clear_page_nt(dest + (i * PAGE_SIZE), HPAGE_PMD_NR * PAGE_SIZE);
++		cond_resched();
++	}
++	/* clear_page_nt requires an `sfence` barrier. */
++	wmb();
++}
++#endif /* defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS) */
+diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
+index c4c7dd115953..1224094fd863 100644
+--- a/arch/x86/lib/clear_page_64.S
++++ b/arch/x86/lib/clear_page_64.S
+@@ -50,3 +50,22 @@ SYM_FUNC_START(clear_page_erms)
+ 	ret
+ SYM_FUNC_END(clear_page_erms)
+ EXPORT_SYMBOL_GPL(clear_page_erms)
++
++/*
++ * Zero memory using non temporal stores, bypassing the cache.
++ * Requires an `sfence` (wmb()) afterwards.
++ * %rdi - destination.
++ * %rsi - page size. Must be 64 bit aligned.
++*/
++SYM_FUNC_START(clear_page_nt)
++	leaq	(%rdi,%rsi), %rdx
++	xorl	%eax, %eax
++	.p2align 4,,10
++	.p2align 3
++.L2:
++	movnti	%rax, (%rdi)
++	addq	$8, %rdi
++	cmpq	%rdx, %rdi
++	jne	.L2
++	ret
++SYM_FUNC_END(clear_page_nt)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c54fb96cb1e6..a57f9007374b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2856,6 +2856,8 @@ enum mf_action_page_type {
+ };
+ 
+ #if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
++extern void clear_gigantic_page(struct page *page, unsigned long addr,
++				unsigned int pages);
+ extern void clear_huge_page(struct page *page,
+ 			    unsigned long addr_hint,
+ 			    unsigned int pages_per_huge_page);
+diff --git a/mm/memory.c b/mm/memory.c
+index e8bfdf0d9d1d..2a13bf102890 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4706,6 +4706,7 @@ static inline void process_huge_page(
+ 	}
+ }
+ 
++#ifndef CONFIG_ARCH_HAS_CLEAR_GIGANTIC_PAGE
+ static void clear_gigantic_page(struct page *page,
+ 				unsigned long addr,
+ 				unsigned int pages_per_huge_page)
+@@ -4720,6 +4721,7 @@ static void clear_gigantic_page(struct page *page,
+ 		clear_user_highpage(p, addr + i * PAGE_SIZE);
+ 	}
+ }
++#endif  /* CONFIG_ARCH_HAS_CLEAR_GIGANTIC_PAGE */
+ 
+ static void clear_subpage(unsigned long addr, int idx, void *arg)
+ {
+-- 
+2.25.1.481.gfbce0eb801-goog
 
