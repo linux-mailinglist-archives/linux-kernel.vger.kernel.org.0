@@ -2,174 +2,334 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EE417CEF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 16:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7646117CEE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 16:01:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgCGPRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 10:17:10 -0500
-Received: from 7.mo4.mail-out.ovh.net ([178.33.253.54]:53115 "EHLO
-        7.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbgCGPRK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 10:17:10 -0500
-Received: from player729.ha.ovh.net (unknown [10.108.42.145])
-        by mo4.mail-out.ovh.net (Postfix) with ESMTP id 8EB3A226612
-        for <linux-kernel@vger.kernel.org>; Sat,  7 Mar 2020 15:57:26 +0100 (CET)
-Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
-        (Authenticated sender: steve@sk2.org)
-        by player729.ha.ovh.net (Postfix) with ESMTPSA id A9C13104ED0CF;
-        Sat,  7 Mar 2020 14:57:17 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2] Document genhd capability flags
-Date:   Sat,  7 Mar 2020 15:56:59 +0100
-Message-Id: <20200307145659.22657-1-steve@sk2.org>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 13138688963716533573
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedruddugedgjeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrjedvledrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+        id S1726199AbgCGPBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 10:01:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbgCGPBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 10:01:33 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ACA820674;
+        Sat,  7 Mar 2020 15:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583593293;
+        bh=XtGD4Df9UP8bBp/OM5Affx133/DB+NR9MNKFeqJjTw4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hN0tuSNlP0eLxHH6BSndXedzXFU53sFTdoqFF2FwAAZDXN3Y4RlIk1vpdFW3bOF1L
+         dDF0T2gSCc7RAairTjlljGMckD+9llpAVMn2j6tBKCKZhm7AJPx1OjO7jHcx1uUIoH
+         F67/M0BELJNaO5a5nyDRILpqDVN08HHnGtQ7k8cY=
+Received: from [185.104.136.29] (helo=big-swifty.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jAaxG-00Aqqa-RM; Sat, 07 Mar 2020 15:01:31 +0000
+Date:   Sat, 07 Mar 2020 15:01:31 +0000
+Message-ID: <8636ak6wfo.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 03/10] irqchip: Add driver for Loongson-3 HyperTransport PIC controller
+In-Reply-To: <20200221050942.507775-4-jiaxun.yang@flygoat.com>
+References: <20200221050942.507775-1-jiaxun.yang@flygoat.com>
+        <20200221050942.507775-4-jiaxun.yang@flygoat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.104.136.29
+X-SA-Exim-Rcpt-To: jiaxun.yang@flygoat.com, linux-mips@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org, chenhc@lemote.com, allison@lohutok.net, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel documentation includes a brief section about genhd
-capabilities, but it turns out that the only documented
-capability (GENHD_FL_MEDIA_CHANGE_NOTIFY) isn't used any more.
+On Fri, 21 Feb 2020 05:09:18 +0000,
+Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+> 
+> This controller appeared on Loongson-3 family of chips to receive interrupts
+> from PCH PIC.
 
-This patch removes that flag, and documents the rest, based on my
-understanding of the current uses of these flags in the kernel. The
-documentation is kept in the header file, alongside the declarations,
-in the hope that it will be kept up-to-date in future; the kernel
-documentation is changed to include the documentation generated from
-the header file.
+Please explain for us mere mortals what the relationship is between
+this interrupt controller and the i8259.
 
-Because the ultimate goal is to provide some end-user
-documentation (or end-administrator documentation), the comments are
-perhaps more user-oriented than might be expected. Since the values
-are shown to users in hexadecimal, the documentation lists them in
-hexadecimal, and the constant declarations are adjusted to match.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  arch/mips/include/asm/i8259.h        |   1 +
+>  drivers/irqchip/Kconfig              |  10 ++
+>  drivers/irqchip/Makefile             |   1 +
+>  drivers/irqchip/irq-i8259.c          |   6 +-
+>  drivers/irqchip/irq-loongson-htpic.c | 146 +++++++++++++++++++++++++++
+>  5 files changed, 161 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/irqchip/irq-loongson-htpic.c
+> 
+> diff --git a/arch/mips/include/asm/i8259.h b/arch/mips/include/asm/i8259.h
+> index 97a5e41ed1ab..1ec3dbb1588f 100644
+> --- a/arch/mips/include/asm/i8259.h
+> +++ b/arch/mips/include/asm/i8259.h
+> @@ -36,6 +36,7 @@ extern raw_spinlock_t i8259A_lock;
+>  extern void make_8259A_irq(unsigned int irq);
+>  
+>  extern void init_i8259_irqs(void);
+> +extern struct irq_domain *of_init_i8259_irqs(struct device_node *node);
+>  
+>  /**
+>   * i8159_set_poll() - Override the i8259 polling function
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index c609eaa319d2..cae6f480c987 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -522,4 +522,14 @@ config LOONGSON_LIOINTC
+>  	help
+>  	  Support for the Loongson Local I/O Interrupt Controller.
+>  
+> +config LOONGSON_HTPIC
+> +	bool "Loongson3 HyperTransport PIC Controller"
+> +	depends on MACH_LOONGSON64
+> +	default y
+> +	select IRQ_DOMAIN
+> +	select GENERIC_IRQ_CHIP
+> +	select I8259
+> +	help
+> +	  Support for the Loongson-3 HyperTransport PIC Controller.
+> +
+>  endmenu
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index 5e7678efdfe6..37bbe39bf909 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -106,3 +106,4 @@ obj-$(CONFIG_LS1X_IRQ)			+= irq-ls1x.o
+>  obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
+>  obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)	+= irq-ti-sci-inta.o
+>  obj-$(CONFIG_LOONGSON_LIOINTC)		+= irq-loongson-liointc.o
+> +obj-$(CONFIG_LOONGSON_HTPIC)		+= irq-loongson-htpic.o
+> diff --git a/drivers/irqchip/irq-i8259.c b/drivers/irqchip/irq-i8259.c
+> index d000870d9b6b..9d79acce6c0c 100644
+> --- a/drivers/irqchip/irq-i8259.c
+> +++ b/drivers/irqchip/irq-i8259.c
+> @@ -309,7 +309,7 @@ static const struct irq_domain_ops i8259A_ops = {
+>   * driver compatibility reasons interrupts 0 - 15 to be the i8259
+>   * interrupts even if the hardware uses a different interrupt numbering.
+>   */
+> -struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+> +struct irq_domain * __init of_init_i8259_irqs(struct device_node *node)
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- Documentation/block/capability.rst | 16 ++-----
- include/linux/genhd.h              | 69 +++++++++++++++++++++++++-----
- 2 files changed, 62 insertions(+), 23 deletions(-)
+I don't think this renaming brings much to the table.
 
-diff --git a/Documentation/block/capability.rst b/Documentation/block/capability.rst
-index 2cf258d64bbe..160a5148b915 100644
---- a/Documentation/block/capability.rst
-+++ b/Documentation/block/capability.rst
-@@ -2,17 +2,9 @@
- Generic Block Device Capability
- ===============================
- 
--This file documents the sysfs file block/<disk>/capability
-+This file documents the sysfs file ``block/<disk>/capability``.
- 
--capability is a hex word indicating which capabilities a specific disk
--supports.  For more information on bits not listed here, see
--include/linux/genhd.h
-+``capability`` is a bitfield, printed in hexadecimal, indicating which
-+capabilities a specific block device supports:
- 
--GENHD_FL_MEDIA_CHANGE_NOTIFY
------------------------------
--
--Value: 4
--
--When this bit is set, the disk supports Asynchronous Notification
--of media change events.  These events will be broadcast to user
--space via kernel uevent.
-+.. kernel-doc:: include/linux/genhd.h
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 6fbe58538ad6..e7244fb6b6ad 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -133,17 +133,64 @@ struct hd_struct {
- 	struct rcu_work rcu_work;
- };
- 
--#define GENHD_FL_REMOVABLE			1
--/* 2 is unused */
--#define GENHD_FL_MEDIA_CHANGE_NOTIFY		4
--#define GENHD_FL_CD				8
--#define GENHD_FL_UP				16
--#define GENHD_FL_SUPPRESS_PARTITION_INFO	32
--#define GENHD_FL_EXT_DEVT			64 /* allow extended devt */
--#define GENHD_FL_NATIVE_CAPACITY		128
--#define GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE	256
--#define GENHD_FL_NO_PART_SCAN			512
--#define GENHD_FL_HIDDEN				1024
-+/**
-+ * DOC: genhd capability flags
-+ *
-+ * ``GENHD_FL_REMOVABLE`` (0x0001): indicates that the block device
-+ * gives access to removable media.
-+ * When set, the device remains present even when media is not
-+ * inserted.
-+ * Must not be set for devices which are removed entirely when the
-+ * media is removed.
-+ *
-+ * ``GENHD_FL_CD`` (0x0008): the block device is a CD-ROM-style
-+ * device.
-+ * Affects responses to the ``CDROM_GET_CAPABILITY`` ioctl.
-+ *
-+ * ``GENHD_FL_UP`` (0x0010): indicates that the block device is "up",
-+ * with a similar meaning to network interfaces.
-+ *
-+ * ``GENHD_FL_SUPPRESS_PARTITION_INFO`` (0x0020): don't include
-+ * partition information in ``/proc/partitions`` or in the output of
-+ * printk_all_partitions().
-+ * Used for the null block device and some MMC devices.
-+ *
-+ * ``GENHD_FL_EXT_DEVT`` (0x0040): the driver supports extended
-+ * dynamic ``dev_t``, i.e. it wants extended device numbers
-+ * (``BLOCK_EXT_MAJOR``).
-+ * This affects the maximum number of partitions.
-+ *
-+ * ``GENHD_FL_NATIVE_CAPACITY`` (0x0080): based on information in the
-+ * partition table, the device's capacity has been extended to its
-+ * native capacity; i.e. the device has hidden capacity used by one
-+ * of the partitions (this is a flag used so that native capacity is
-+ * only ever unlocked once).
-+ *
-+ * ``GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE`` (0x0100): event polling is
-+ * blocked whenever a writer holds an exclusive lock.
-+ *
-+ * ``GENHD_FL_NO_PART_SCAN`` (0x0200): partition scanning is disabled.
-+ * Used for loop devices in their default settings and some MMC
-+ * devices.
-+ *
-+ * ``GENHD_FL_HIDDEN`` (0x0400): the block device is hidden; it
-+ * doesn't produce events, doesn't appear in sysfs, and doesn't have
-+ * an associated ``bdev``.
-+ * Implies ``GENHD_FL_SUPPRESS_PARTITION_INFO`` and
-+ * ``GENHD_FL_NO_PART_SCAN``.
-+ * Used for multipath devices.
-+ */
-+#define GENHD_FL_REMOVABLE			0x0001
-+/* 2 is unused (used to be GENHD_FL_DRIVERFS) */
-+/* 4 is unused (used to be GENHD_FL_MEDIA_CHANGE_NOTIFY) */
-+#define GENHD_FL_CD				0x0008
-+#define GENHD_FL_UP				0x0010
-+#define GENHD_FL_SUPPRESS_PARTITION_INFO	0x0020
-+#define GENHD_FL_EXT_DEVT			0x0040
-+#define GENHD_FL_NATIVE_CAPACITY		0x0080
-+#define GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE	0x0100
-+#define GENHD_FL_NO_PART_SCAN			0x0200
-+#define GENHD_FL_HIDDEN				0x0400
- 
- enum {
- 	DISK_EVENT_MEDIA_CHANGE			= 1 << 0, /* media changed */
+>  {
+>  	struct irq_domain *domain;
+>  
+> @@ -330,7 +330,7 @@ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+>  
+>  void __init init_i8259_irqs(void)
+>  {
+> -	__init_i8259_irqs(NULL);
+> +	of_init_i8259_irqs(NULL);
+>  }
+>  
+>  static void i8259_irq_dispatch(struct irq_desc *desc)
+> @@ -351,7 +351,7 @@ int __init i8259_of_init(struct device_node *node, struct device_node *parent)
+>  	struct irq_domain *domain;
+>  	unsigned int parent_irq;
+>  
+> -	domain = __init_i8259_irqs(node);
+> +	domain = of_init_i8259_irqs(node);
+>  
+>  	parent_irq = irq_of_parse_and_map(node, 0);
+>  	if (!parent_irq) {
+> diff --git a/drivers/irqchip/irq-loongson-htpic.c b/drivers/irqchip/irq-loongson-htpic.c
+> new file mode 100644
+> index 000000000000..a90cf4357285
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-loongson-htpic.c
+> @@ -0,0 +1,146 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  Copyright (C) 2020, Jiaxun Yang <jiaxun.yang@flygoat.com>
+> + *  Loongson HTPIC IRQ support
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/irq.h>
+> +#include <linux/io.h>
+> +#include <linux/syscore_ops.h>
+> +
+> +#include <asm/i8259.h>
+> +
+> +#define HTPIC_MAX_PARENT_IRQ	4
+> +#define HTINT_NUM_VECTORS	8
+> +#define HTINT_EN_OFF		0x20
+> +
+> +struct loongson_htpic {
+> +	void __iomem *base;
+> +	struct irq_domain *domain;
+> +};
+> +
+> +struct loongson_htpic *htpic;
 
-base-commit: aeb542a1b5c507ea117d21c3e3e012ba16f065ac
+static?
+
+> +
+> +static void htpic_irq_dispatch(struct irq_desc *desc)
+> +{
+> +	struct loongson_htpic *priv = irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	uint32_t pending;
+> +
+> +	chained_irq_enter(chip, desc);
+> +	pending = readl(priv->base);
+> +	/* Ack all IRQs */
+> +	writel(pending, priv->base);
+
+Why isn't this done as part of the irq_ack() callback instead? If the
+flow handling is different from the 8259, then maybe you shouldn't be
+hijacking it...
+
+> +
+> +	if (!pending)
+> +		spurious_interrupt();
+> +
+> +	while (pending) {
+> +		int bit = __ffs(pending);
+> +
+> +		if (unlikely(bit > 15))
+> +			spurious_interrupt();
+
+and yet you continue handling it?
+
+> +
+> +		generic_handle_irq(irq_linear_revmap(priv->domain, bit));
+> +		pending &= ~BIT(bit);
+> +	}
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +static void htpic_reg_init(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < HTINT_NUM_VECTORS; i++) {
+> +		uint32_t val;
+> +
+> +		/* Disable all HT Vectors */
+> +		writel(0x0, htpic->base + HTINT_EN_OFF + i * 0x4);
+> +		val = readl(htpic->base + i * 0x4);
+> +		/* Ack all possible pending IRQs */
+> +		writel(GENMASK(31, 0), htpic->base + i * 0x4);
+> +	}
+> +
+> +	/* Enable 16 vectors for PIC */
+> +	writel(0xffff, htpic->base + HTINT_EN_OFF);
+> +}
+> +
+> +static void htpic_resume(void)
+> +{
+> +	htpic_reg_init();
+> +}
+> +
+> +struct syscore_ops htpic_syscore_ops = {
+> +	.resume		= htpic_resume,
+> +};
+> +
+> +int __init htpic_of_init(struct device_node *node, struct device_node *parent)
+> +{
+> +	unsigned int parent_irq[4];
+> +	int i, err;
+> +	int num_parents = 0;
+> +
+> +	if (htpic) {
+> +		pr_err("loongson-htpic: Only one HTPIC is allowed in the system\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	htpic = kzalloc(sizeof(*htpic), GFP_KERNEL);
+> +	if (!htpic) {
+> +		err = -ENOMEM;
+> +		goto out_free;
+> +	}
+> +
+> +	htpic->base = of_iomap(node, 0);
+> +	if (!htpic->base) {
+> +		err = -ENODEV;
+> +		goto out_free;
+> +	}
+> +
+> +	htpic->domain = of_init_i8259_irqs(node);
+> +	if (!htpic->domain) {
+> +		pr_err("loongson-htpic: Failed to initialize i8259 IRQs\n");
+> +		err = -ENOMEM;
+> +		goto out_iounmap;
+> +	}
+> +
+> +	for (i = 0; i < HTPIC_MAX_PARENT_IRQ; i++) {
+> +		parent_irq[i] = irq_of_parse_and_map(node, 0);
+
+So you only care about the first interrupt in the DT?
+
+> +		if (parent_irq[i] < 0)
+
+0 is an invalid interrupt.
+
+> +			break;
+> +
+> +		num_parents++;
+> +	}
+> +
+> +	if (!num_parents) {
+> +		pr_err("loongson-htpic: Failed to get parent irqs\n");
+> +		err = -ENODEV;
+> +		goto out_remove_domain;
+> +	}
+> +
+> +	htpic_reg_init();
+> +
+> +	for (i = 0; i < num_parents; i++) {
+> +		irq_set_chained_handler_and_data(parent_irq[i],
+> +						htpic_irq_dispatch, htpic);
+> +	}
+
+What is the mapping between the 16 inputs and the 4 outputs?
+
+> +
+> +	register_syscore_ops(&htpic_syscore_ops);
+> +
+> +	return 0;
+> +
+> +out_remove_domain:
+> +	irq_domain_remove(htpic->domain);
+> +out_iounmap:
+> +	iounmap(htpic->base);
+> +out_free:
+> +	kfree(htpic);
+> +	return err;
+> +}
+> +
+> +IRQCHIP_DECLARE(loongson_htpic, "loongson,htpic-1.0", htpic_of_init);
+
+Thanks,
+
+	M.
+
 -- 
-2.20.1
-
+Jazz is not dead, it just smells funny.
