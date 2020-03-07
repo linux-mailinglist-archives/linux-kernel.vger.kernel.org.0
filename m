@@ -2,87 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D240B17CF10
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 16:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDDC17CF11
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 16:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbgCGPaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 10:30:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbgCGPaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 10:30:05 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D377320656;
-        Sat,  7 Mar 2020 15:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583595005;
-        bh=ET+dIcC8U+H1cgo4LTQc3rW0ut0gu60CQqxHrhomVKc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bBdbyjEc3C69CrD/M7sxg/s75pzPy6npNrJFrHy8TXMR4m6vLzHv/xvbhnqFn5I75
-         Vy2Fcvz1By+weuWdtXIoONTa0ZN8izUa9PzMZr5Tbcxeek+czZzcLitMikr6Ss3Iml
-         0cqPjVVL4bCKE44LLjnPg7WytxfI07ny11vy+xmk=
-Date:   Sat, 7 Mar 2020 15:30:00 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Andreas Klinger <ak@it-klinger.de>
-Cc:     YueHaibing <yuehaibing@huawei.com>, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, Jonathan.Cameron@huawei.com,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] iio: ping: set pa_laser_ping_cfg in of_ping_match
-Message-ID: <20200307153000.3b6db32a@archlinux>
-In-Reply-To: <20200304115546.GA8509@arbad>
-References: <20200304113423.26920-1-yuehaibing@huawei.com>
-        <20200304115546.GA8509@arbad>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726295AbgCGPbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 10:31:13 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:41158 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726174AbgCGPbN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 10:31:13 -0500
+Received: by mail-ua1-f66.google.com with SMTP id d19so1793580uak.8
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 07:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=JFTXraxckdxLoPJDraz8bJ0VcXf2ZyMKBNvC1JzfIsA=;
+        b=JQX68sPhdDhtelNAk26UtIbZFfM4mU9y6nlaxrvRVfNFSay9VPtNI1YKjA0uU/Ob4x
+         Dwm6P99sycI/VKBDsmf7CXsaOGcpVB9gTR+Mhvw+fv7OABdoUx9ijap7KKQHW7zct9zT
+         hGz+YlEwpyn8uHWswBqHHTXjBK3GjRoUW1u76CaUGBtYpl5q5mnAhBUaD3EOMqT8Q1sF
+         GuHFoXsqiVEzopJQhXc92H2N+LVVM8bz3FL17bca3sB89Eyxd12EF24Oh6seRuDA6xKb
+         hI9vLSawP91BtP7dsbRtSNyO2ZRVsboDpqdPOw3bbE9CepW+izTfe+5Nq1hHYIIbg6hQ
+         ED1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=JFTXraxckdxLoPJDraz8bJ0VcXf2ZyMKBNvC1JzfIsA=;
+        b=NvJ7wfXlNqI6rLI6JaCsm50Ujf3SAFMSnlrSgyHAHOB2YbyBtmGW4yp1Ye/1QmdflZ
+         rxFy03ZM5x025CNfA/58B7MrgMVFmpTCgDz2SoksDrRv+MjaUTGGfrNz0YZKYc86zJg/
+         f1//9bF8l9FM60vmU7lBqLlqzwyu82wRncBvPCqGjTTqtTWL+IwirZL/GfzvyUC70pM4
+         jYksd1yvMRWtUF7lcX2nDjUKWfQG3bZqRvwD/3N9Q/xIPno/uFocpQoYXbDMl1abTxTI
+         KvUbUSGPBSeFv7jATDE30ICK5kdwBEclhHu64p6EsKzNaEwBArROsVaeL2rdrVVIdIGv
+         TTaA==
+X-Gm-Message-State: ANhLgQ3sCOJHMgv1+P3+tUJ6p486wo/VwmLYugR+Syxa/Tyq4i4gB6cT
+        rjgBPHx3gW/NxU0NmL2YRT3MefSc/vX0VFwC+Bs=
+X-Google-Smtp-Source: ADFU+vsop7hKeMHHCQ+8SwCaKX6DwtmhOBkkK9UXAf4IDwjH6LI2w7NCnIjNUrYWDvgnR3HYPMrfqYfO0AqLCLqwjh0=
+X-Received: by 2002:ab0:2a0c:: with SMTP id o12mr4688640uar.72.1583595071983;
+ Sat, 07 Mar 2020 07:31:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Received: by 2002:ab0:a83:0:0:0:0:0 with HTTP; Sat, 7 Mar 2020 07:31:10 -0800 (PST)
+Reply-To: bubasaraki03@gmail.com
+From:   Buka Saraki <bukasaraki@gmail.com>
+Date:   Sat, 7 Mar 2020 16:31:10 +0100
+Message-ID: <CAFZKTx53Eq1H3CjgnbENTLXzHz2mNVArqS2+=AzO08yZRX1+-g@mail.gmail.com>
+Subject: Reply
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Mar 2020 12:55:46 +0100
-Andreas Klinger <ak@it-klinger.de> wrote:
+Greeting,
 
-> Acked-by: Andreas Klinger <ak@it-klinger.de>
-Applied to the fixes-togreg branch of iio.git.
+I contacted you last two weeks and I got no response. I mentioned
+about my late client that has the same surname with you.He deposited
+the sum of US$10.5 million dollars in one of the bank here in our
+country and they have asked me to provide a next of kin.Kindly show
+your interest to work with me through my personal email
+addres(bubasaraki03@gmail.com)to enable me forward the details of this
+project to you.
 
-Btw this is also in mainline I believe, so the -next is probably an
-inappropriate marking.
+Regards,
 
-Thanks,
-
-Jonathan
-
->=20
-> YueHaibing <yuehaibing@huawei.com> schrieb am Mi, 04. M=C3=A4r 19:34:
-> > pa_laser_ping_cfg should be set in of_ping_match
-> > instead of pa_ping_cfg.
-> >=20
-> > Fixes: 7bb501f49ddb ("iio: ping: add parallax ping sensors")
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/iio/proximity/ping.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/iio/proximity/ping.c b/drivers/iio/proximity/ping.c
-> > index 34aff10..12b893c 100644
-> > --- a/drivers/iio/proximity/ping.c
-> > +++ b/drivers/iio/proximity/ping.c
-> > @@ -269,7 +269,7 @@ static const struct iio_chan_spec ping_chan_spec[] =
-=3D {
-> > =20
-> >  static const struct of_device_id of_ping_match[] =3D {
-> >  	{ .compatible =3D "parallax,ping", .data =3D &pa_ping_cfg},
-> > -	{ .compatible =3D "parallax,laserping", .data =3D &pa_ping_cfg},
-> > +	{ .compatible =3D "parallax,laserping", .data =3D &pa_laser_ping_cfg},
-> >  	{},
-> >  };
-> > =20
-> > --=20
-> > 2.7.4
-> >=20
-> >  =20
-
+Barrister Buka Saraki
+bubasaraki03@gmail.com
