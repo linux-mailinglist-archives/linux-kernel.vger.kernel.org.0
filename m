@@ -2,718 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A6517C96A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 01:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E7E17C97E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 01:12:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgCGAKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 19:10:05 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52770 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726231AbgCGAKF (ORCPT
+        id S1726954AbgCGAMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 19:12:54 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:53262 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726300AbgCGAMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 19:10:05 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 02709sxM004186
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Mar 2020 16:10:02 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=3BRQDMhKeNIOBRwgjv6a5dM15afjpRAyMwmGYgJxDt8=;
- b=VUqR+uN3ba5RzYMzyXzUvhEP6qawuYQmFhOquOxFzuNmC5tPHbKdJJW4hqMOHpmXE2iw
- ppnobndUHBhBS8R8QjB4juSUkfusyFndE8Dt1irP+wFWodXWssoDghjr3ZF4KSs4+tM8
- J65MhAIo26MsOb+IR2KL369gIBD+jX+2O30= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net with ESMTP id 2yk4mjqssj-12
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 16:10:02 -0800
-Received: from intmgw004.03.ash8.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 6 Mar 2020 16:09:49 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id D04E462E287F; Fri,  6 Mar 2020 16:09:43 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <peterz@infradead.org>, <linux-kernel@vger.kernel.org>
-CC:     <kernel-team@fb.com>, <arnaldo.melo@gmail.com>, <jolsa@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v11] perf: Sharing PMU counters across compatible events
-Date:   Fri, 6 Mar 2020 16:09:39 -0800
-Message-ID: <20200307000939.3533447-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Fri, 6 Mar 2020 19:12:53 -0500
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C121240363;
+        Sat,  7 Mar 2020 00:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1583539972; bh=K4DjTge5fKCxSjOxFd3X4QASyztdWM8e67ep58p2s4s=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=J41KuqeBS/4v3uPQ/lq3GNQbgkbfF+32ysGOYcQALRjg+oiWWqsunbSFpllKFVhSu
+         IOLY+R4S6fpV4GGuXWaRE/fyxNF2upVSVTEdX+RzxZfXKb9sULJMnl0ru+0Cd2Ey8b
+         JcWD+bHa7oRwbKTEOypHDZJK7b12Egv/p4QDZWEL7XLoy6B2bFBwcmXW+5TnVmTlIh
+         zRYw92HIdVTA7aMr13cq4RY1zw4RotsJN/vEozoHYlVkY95gRUNLlEtXDqTRzqCPJ1
+         HBZiAaY7XcEBzVbLMIfmrIU4z91Bsm9y6wPmJWZoeCGCyJuQv+1VmQZbK7fv6v7wu8
+         u1KCSpI1SfWOQ==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 7B46EA0069;
+        Sat,  7 Mar 2020 00:12:52 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 6 Mar 2020 16:12:36 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 6 Mar 2020 16:12:36 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=J1JbrxIJx/iVniy+3G7usCPmIMbMggnp0J3r53523MIS7bMaaA/7Onju+tSc06FK655LK7UZ1aUdzaTRQL+3jrHXF4t9bQtMRO15GZNzybJ4tEGbTmR5mmjT6Ae67kLMUj84CNyRpcHfc0WLSk+L0T1UBob4ONsxHaoDZH/PKc7YWB9CfDnNqCi3NPJsw6YNMIZZmYh2vAK6mFAdpxtMjqWmiEO6pj81yqaWBIycHk7ErjU3oNMhAKZqcf2ikuWQ73K7MWDibGYPBSow1rmTOLJ2TM4YNapM4ARIm1jKuuQGacaZTWLRkOMbHLHhscfS2TTAO4dpB+TDRZJgmu/CCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K4DjTge5fKCxSjOxFd3X4QASyztdWM8e67ep58p2s4s=;
+ b=aykENi3XS6OQUcLTIdJgygtTjaO9iuS1MPD2rcTGU9/wBhvj7kuvAb2MMw46P3eL9cO+X40bbJsHfjjfZAK3WQAoZLa5d0Zb7f6UE1G7/2KF0VCPskkpIYaMmufYf42V4zcV3rWT7YOf0z6o/41Cr4V6HpAVETKJUWK5uXj/hWi2OQP5GsA2VlQnabtR6dkNYDhCzYC9nzUM9gW6hkCCLEQiUpzPzrVwN1pNNA1ZIO1uVlftnXVa/1+0ReezUg5dixue5lrrPLp6hVLIeqq/E3RfIp+Z/Xtuo1Yt9Wu8OzQzcqtwIrACDXMEs3FcJ3LGszkzDy3bF7hQ/3twlGIfsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K4DjTge5fKCxSjOxFd3X4QASyztdWM8e67ep58p2s4s=;
+ b=n0p5D++xNXmtGTbOJrSzJH4M8uhGg+OBJpE7CJCnywHtIyrEKZiyHC9PoYiZymO9KpN2/uv4+nHxq2uwFydTY1dFbtRRK2V5SUtmkPIeLHsIC/o96j/CwFBPdhBLTqm+Chi8A7q2fx15S+YP2Beu8h/hup8xo0OjR0p4q1jH1RM=
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com (2603:10b6:a03:db::25)
+ by BYAPR12MB3029.namprd12.prod.outlook.com (2603:10b6:a03:ab::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16; Sat, 7 Mar
+ 2020 00:12:35 +0000
+Received: from BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::a45a:6a41:3fe5:2eb7]) by BYAPR12MB3592.namprd12.prod.outlook.com
+ ([fe80::a45a:6a41:3fe5:2eb7%7]) with mapi id 15.20.2793.013; Sat, 7 Mar 2020
+ 00:12:35 +0000
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] ARC: handle DSP presence in HW
+Thread-Topic: [PATCH v2 2/4] ARC: handle DSP presence in HW
+Thread-Index: AQHV8yku7EOtW/wWqUKB6P65LyNDjag8Q9+A
+Date:   Sat, 7 Mar 2020 00:12:35 +0000
+Message-ID: <2d11b6d9-a37a-8cc3-1feb-a9dbc345de12@synopsys.com>
+References: <20200305200252.14278-1-Eugeniy.Paltsev@synopsys.com>
+ <20200305200252.14278-3-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20200305200252.14278-3-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vgupta@synopsys.com; 
+x-originating-ip: [149.117.75.13]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5892b2d6-efc4-494d-20f5-08d7c22c3d0c
+x-ms-traffictypediagnostic: BYAPR12MB3029:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR12MB30294B12F6E5782F4F7BAAE8B6E00@BYAPR12MB3029.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 03355EE97E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(6506007)(53546011)(86362001)(8936002)(81166006)(81156014)(8676002)(66556008)(66946007)(66476007)(31696002)(76116006)(2616005)(64756008)(66446008)(26005)(186003)(6486002)(5660300002)(6512007)(4326008)(2906002)(31686004)(54906003)(478600001)(36756003)(316002)(71200400001)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR12MB3029;H:BYAPR12MB3592.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: oMXLEFkedWIOjclkss9PqMOghuCtVKsnOsy+9p2d5XDkEAeJ1Oaga6OQ9d0ZIbN+MgG1nlLoMC+B6h0jPgttLdyhpSvFx/i5yxG/mKEy9AzbrJioxDbxzvRblLnWTd3G4XyXWZuoZkRXku7dwqRyKmGlQ1+VxreJWkrCUAgqS63Op4KTuy7Ukv4irtxbbQo7+1pey8fgSt6dI+uJUW7FV2wUXDR1r2it95uZJ53SVPn+CIoS3qT/m7cbPAaRlBxm9AiwQspeUh2tv33QxthcYfw2UmVDB0WchUr6xwkf4rrpAG2G9VpXiIc/lGdmcbEVHUFHdMEKoks2moD1Y1YSv9TAI2MDxdeu/UE98pCzF9d1fVf3tN1LcwAVNB/F8ZmN7pQSYyN0woato50PKLzyfS1n20FVnEU2EgbnRIbE1RBNekoSiuNDy6LLpEGLOF9x
+x-ms-exchange-antispam-messagedata: 41P5w+HE/q7Wd8HSlqTThGeLu8SARcrv4pvs8J6uGehAsr58ZRIKmsbbHCSyl+GQH7bzPuk6L76oWnZBLD3J6Lh1qtuMxNWOH5BGld+2d23ca99q/D0lLlFQIT46Tz90s4Axdc7tF9j0/LpwUDitYg==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A9A7859ED4C2534C882847321EC6AE35@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-06_09:2020-03-06,2020-03-06 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003060142
-X-FB-Internal: deliver
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5892b2d6-efc4-494d-20f5-08d7c22c3d0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2020 00:12:35.3030
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XhX7cCGaTYO8C1NOa+eFNdDiGCen2SzLfCtaDAEqt0+l2W4TuUAa2hRzL8ahufw29f5htDFJeCgqQH2fnU2wzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3029
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch tries to enable PMU sharing. When multiple perf_events are
-counting the same metric, they can share the hardware PMU counter. We
-call these events as "compatible events".
-
-The PMU sharing are limited to events within the same perf_event_context
-(ctx). When a event is installed or enabled, search the ctx for compatible
-events. This is implemented in perf_event_setup_dup(). One of these
-compatible events are picked as the master (stored in event->dup_master).
-Similarly, when the event is removed or disabled, perf_event_remove_dup()
-is used to clean up sharing.
-
-If the master event is a cgroup event or a event in a group, it is
-possible that some slave events are ACTIVE, but the master event is not.
-To handle this scenario, we introduced PERF_EVENT_STATE_ENABLED. Also,
-since PMU drivers write into event->count, master event needs another
-variable (master_count) for the reading of this event.
-
-On the critical paths (add, del read), sharing PMU counters doesn't
-increase the complexity. Helper functions event_pmu_[add|del|read]() are
-introduced to cover these cases. All these functions have O(1) time
-complexity.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-
----
-
-Changes in v11:
-Fold in major fixes by Peter.
-In perf_event_remove_dup(), del() old master before add() new master.
-
-Changes in v10:
-Simplify logic that calls perf_event_setup_dup() and
-perf_event_remove_dup(). (Peter)
-Other small fixes. (Peter)
-
-Changes in v9:
-Avoid ctx_resched() on remove/disable event (Peter).
-Compare the whole perf_event_attr in perf_event_compatible().
-Small fixes/improvements (Peter).
-
-Changes in v8:
-Fix issues with task event (Jiri).
-Fix issues with event inherit.
-Fix mmap'ed events, i.e. perf test 4 (kernel test bot).
-
-Changes in v7:
-Major rewrite to avoid allocating extra master event.
----
- arch/x86/events/core.c     |   7 +
- include/linux/perf_event.h |  21 ++-
- kernel/events/core.c       | 355 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 361 insertions(+), 22 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 3bb738f5a472..32f836dbfae3 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2341,6 +2341,11 @@ static int x86_pmu_aux_output_match(struct perf_event *event)
- 	return 0;
- }
- 
-+static void x86_copy_hw_config(struct perf_event *old, struct perf_event *new)
-+{
-+	new->hw.idx = old->hw.idx;
-+}
-+
- static struct pmu pmu = {
- 	.pmu_enable		= x86_pmu_enable,
- 	.pmu_disable		= x86_pmu_disable,
-@@ -2369,6 +2374,8 @@ static struct pmu pmu = {
- 	.check_period		= x86_pmu_check_period,
- 
- 	.aux_output_match	= x86_pmu_aux_output_match,
-+
-+	.copy_hw_config		= x86_copy_hw_config,
- };
- 
- void arch_perf_update_userpage(struct perf_event *event,
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 547773f5894e..abb9bcb00ce1 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -491,6 +491,13 @@ struct pmu {
- 	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
- 	 */
- 	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
-+
-+	/*
-+	 * Copy hw configuration from one event to another. This is used
-+	 * to make switching master faster in PMC sharing.
-+	 */
-+	void (*copy_hw_config)		(struct perf_event *old,
-+					 struct perf_event *new); /* optional */
- };
- 
- enum perf_addr_filter_action_t {
-@@ -540,6 +547,10 @@ struct perf_addr_filter_range {
- 
- /**
-  * enum perf_event_state - the states of an event:
-+ *
-+ * PERF_EVENT_STATE_ENABLED:	Special state for PMC sharing: the hw PMC
-+ *				is enabled, but this event is not counting.
-+ *				See perf_event_init_dup_master().
-  */
- enum perf_event_state {
- 	PERF_EVENT_STATE_DEAD		= -4,
-@@ -547,7 +558,8 @@ enum perf_event_state {
- 	PERF_EVENT_STATE_ERROR		= -2,
- 	PERF_EVENT_STATE_OFF		= -1,
- 	PERF_EVENT_STATE_INACTIVE	=  0,
--	PERF_EVENT_STATE_ACTIVE		=  1,
-+	PERF_EVENT_STATE_ENABLED	=  1,
-+	PERF_EVENT_STATE_ACTIVE		=  2,
- };
- 
- struct file;
-@@ -633,6 +645,7 @@ struct perf_event {
- 	int				group_caps;
- 
- 	struct perf_event		*group_leader;
-+	struct perf_event		*dup_master;  /* for PMU sharing */
- 	struct pmu			*pmu;
- 	void				*pmu_private;
- 
-@@ -750,6 +763,12 @@ struct perf_event {
- 	void *security;
- #endif
- 	struct list_head		sb_list;
-+
-+	int				dup_active;
-+	/* See event_pmu_read_dup() */
-+	local64_t			dup_count;
-+	/* See perf_event_init_dup_master() */
-+	local64_t			master_count;
- #endif /* CONFIG_PERF_EVENTS */
- };
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 969a71db5487..fc7d0c972e5b 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1658,6 +1658,238 @@ perf_event_groups_next(struct perf_event *event)
- 		event = rb_entry_safe(rb_next(&event->group_node),	\
- 				typeof(*event), group_node))
- 
-+static inline bool perf_event_can_share(struct perf_event *event)
-+{
-+	/* only share hardware counting events */
-+	return !is_sampling_event(event);
-+	return !is_software_event(event) && !is_sampling_event(event);
-+}
-+
-+/*
-+ * Returns whether the two events can share a PMU counter.
-+ *
-+ * Note: This function does NOT check perf_event_can_share() for
-+ * the two events, they should be checked before this function
-+ */
-+static inline bool perf_event_compatible(struct perf_event *event_a,
-+					 struct perf_event *event_b)
-+{
-+	return memcmp(&event_a->attr, &event_b->attr, event_a->attr.size) == 0;
-+}
-+
-+static void perf_event_init_dup_master(struct perf_event *event)
-+{
-+	bool is_active = event->state == PERF_EVENT_STATE_ACTIVE;
-+	s64 count;
-+
-+	WARN_ON_ONCE(event->dup_active != 0);
-+	event->dup_master = event;
-+	/*
-+	 * The event sharing scheme allows for duplicate events to be ACTIVE
-+	 * while the master is not. In order to facilitate this, the master
-+	 * will be put in the ENABLED state whenever it has active duplicates
-+	 * but is itself *not* ACTIVE.
-+	 *
-+	 * When ENABLED the master event is scheduled, but its counter must
-+	 * appear stalled. Since the PMU driver updates event->count, the
-+	 * master must keep a shadow counter for itself, this is
-+	 * event->master_count.
-+	 */
-+	count = local64_read(&event->count);
-+	local64_set(&event->master_count, count);
-+
-+	if (is_active) {
-+		local64_set(&event->dup_count, count);
-+		event->dup_active = 1;
-+	}
-+
-+	barrier();
-+
-+	WRITE_ONCE(event->dup_master, event);
-+}
-+
-+/* tear down dup_master, no more sharing for this event */
-+static void perf_event_exit_dup_master(struct perf_event *event)
-+{
-+	WARN_ON_ONCE(event->state < PERF_EVENT_STATE_OFF ||
-+		     event->state > PERF_EVENT_STATE_INACTIVE);
-+
-+	/* restore event->count and event->child_count */
-+	local64_set(&event->count, local64_read(&event->master_count));
-+
-+	event->dup_active = 0;
-+	WRITE_ONCE(event->dup_master, NULL);
-+
-+	barrier();
-+}
-+
-+#define EVENT_TOMBSTONE ((void *)-1L)
-+
-+/*
-+ * sync data count from dup_master to event, called on event_pmu_read()
-+ * and event_pmu_del()
-+ */
-+static void
-+event_pmu_read_dup(struct perf_event *event, struct perf_event *master)
-+{
-+	u64 prev_count, new_count;
-+
-+	if (master == EVENT_TOMBSTONE)
-+		return;
-+
-+again:
-+	prev_count = local64_read(&event->dup_count);
-+	if (master->state > PERF_EVENT_STATE_INACTIVE)
-+		master->pmu->read(master);
-+	new_count = local64_read(&master->count);
-+	if (local64_cmpxchg(&event->dup_count, prev_count, new_count) != prev_count)
-+		goto again;
-+
-+	if (event == master)
-+		local64_add(new_count - prev_count, &event->master_count);
-+	else
-+		local64_add(new_count - prev_count, &event->count);
-+}
-+
-+/* After adding a event to the ctx, try find compatible event(s). */
-+static void
-+perf_event_setup_dup(struct perf_event *event, struct perf_event_context *ctx)
-+{
-+	struct perf_event *tmp;
-+
-+	if (!perf_event_can_share(event))
-+		return;
-+
-+	/* look for dup with other events */
-+	list_for_each_entry(tmp, &ctx->event_list, event_entry) {
-+		if (tmp == event ||
-+		    !perf_event_can_share(tmp) ||
-+		    !perf_event_compatible(event, tmp))
-+			continue;
-+
-+		/* first dup, pick tmp as the master */
-+		if (!tmp->dup_master) {
-+			if (tmp->state == PERF_EVENT_STATE_ACTIVE)
-+				tmp->pmu->read(tmp);
-+			perf_event_init_dup_master(tmp);
-+		}
-+
-+		event->dup_master = tmp->dup_master;
-+
-+		break;
-+	}
-+}
-+
-+/* Remove dup_master for the event */
-+static void
-+perf_event_remove_dup(struct perf_event *event, struct perf_event_context *ctx)
-+
-+{
-+	struct perf_event *tmp, *new_master;
-+	int dup_count, active_count;
-+	int ret;
-+
-+	/* no sharing */
-+	if (!event->dup_master)
-+		return;
-+
-+	WARN_ON_ONCE(event->state < PERF_EVENT_STATE_OFF ||
-+		     event->state > PERF_EVENT_STATE_ENABLED);
-+
-+	/* this event is not the master */
-+	if (event->dup_master != event) {
-+		event->dup_master = NULL;
-+		return;
-+	}
-+
-+	active_count = event->dup_active;
-+	if (active_count) {
-+		perf_pmu_disable(event->pmu);
-+		event->pmu->del(event, 0);
-+	}
-+
-+	/* this event is the master */
-+	dup_count = 0;
-+	new_master = NULL;
-+	list_for_each_entry(tmp, &ctx->event_list, event_entry) {
-+		u64 count;
-+
-+		if (tmp->dup_master != event || tmp == event)
-+			continue;
-+		if (!new_master)
-+			new_master = tmp;
-+
-+		if (tmp->state == PERF_EVENT_STATE_ACTIVE) {
-+			/* sync read from old master */
-+			event_pmu_read_dup(tmp, event);
-+		}
-+		/*
-+		 * Flip an active event to a new master; this is tricky
-+		 * because for an active event event_pmu_read() can be
-+		 * called at any time from NMI context.
-+		 *
-+		 * This means we need to have ->dup_master and ->dup_count
-+		 * consistent at all times. Of course we cannot do two
-+		 * writes at once :/
-+		 *
-+		 * Instead, flip ->dup_master to EVENT_TOMBSTONE, this will
-+		 * make event_pmu_read_dup() NOP. Then we can set
-+		 * ->dup_count and finally set ->dup_master to the
-+		 * new_master to let event_pmu_read_dup() rip.
-+		 */
-+		WRITE_ONCE(tmp->dup_master, EVENT_TOMBSTONE);
-+		barrier();
-+
-+		count = local64_read(&new_master->count);
-+		local64_set(&tmp->dup_count, count);
-+
-+		if (tmp == new_master)
-+			local64_set(&tmp->master_count, count);
-+
-+		barrier();
-+		WRITE_ONCE(tmp->dup_master, new_master);
-+		dup_count++;
-+	}
-+
-+	perf_event_exit_dup_master(event);
-+
-+	if (!dup_count)
-+		return;
-+
-+	if (active_count) {
-+		/* copy hardware configure to switch faster */
-+		if (event->pmu->copy_hw_config)
-+			event->pmu->copy_hw_config(event, new_master);
-+
-+		ret = new_master->pmu->add(new_master, PERF_EF_START);
-+		/*
-+		 * Since we just removed the old master (@event), it should be
-+		 * impossible to fail to schedule the new master, an identical
-+		 * event.
-+		 */
-+		WARN_ON_ONCE(ret);
-+		if (new_master->state == PERF_EVENT_STATE_INACTIVE) {
-+			/*
-+			 * We don't need to update time, so don't call
-+			 * perf_event_set_state().
-+			 */
-+			new_master->state = PERF_EVENT_STATE_ENABLED;
-+		}
-+		perf_pmu_enable(new_master->pmu);
-+	}
-+
-+	if (dup_count == 1) {
-+		/*
-+		 * We set up as a master, but there aren't any more duplicates.
-+		 * Simply clear ->dup_master, as ->master_count == ->count per
-+		 * the above.
-+		 */
-+		WRITE_ONCE(new_master->dup_master, NULL);
-+	} else {
-+		new_master->dup_active = active_count;
-+	}
-+}
-+
- /*
-  * Add an event from the lists for its context.
-  * Must be called with ctx->mutex and ctx->lock held.
-@@ -1862,6 +2094,7 @@ list_del_event(struct perf_event *event, struct perf_event_context *ctx)
- 	if (!(event->attach_state & PERF_ATTACH_CONTEXT))
- 		return;
- 
-+	perf_event_remove_dup(event, ctx);
- 	event->attach_state &= ~PERF_ATTACH_CONTEXT;
- 
- 	list_update_cgroup_event(event, ctx, false);
-@@ -2085,6 +2318,62 @@ event_filter_match(struct perf_event *event)
- 	       perf_cgroup_match(event) && pmu_filter_match(event);
- }
- 
-+/* PMU sharing aware version of event->pmu->add() */
-+static int event_pmu_add(struct perf_event *event,
-+			 struct perf_event_context *ctx)
-+{
-+	struct perf_event *master;
-+	s64 value;
-+	int ret;
-+
-+	/* no sharing, just do event->pmu->add() */
-+	if (!event->dup_master)
-+		return event->pmu->add(event, PERF_EF_START);
-+
-+	master = event->dup_master;
-+
-+	if (!master->dup_active) {
-+		ret = event->pmu->add(master, PERF_EF_START);
-+		if (ret)
-+			return ret;
-+
-+		if (master != event)
-+			perf_event_set_state(master, PERF_EVENT_STATE_ENABLED);
-+	}
-+
-+	master->dup_active++;
-+	master->pmu->read(master);
-+	value = local64_read(&master->count);
-+	local64_set(&event->dup_count, value);
-+	return 0;
-+}
-+
-+/* PMU sharing aware version of event->pmu->del() */
-+static void event_pmu_del(struct perf_event *event,
-+			  struct perf_event_context *ctx)
-+{
-+	struct perf_event *master;
-+
-+	if (!event->dup_master)
-+		return event->pmu->del(event, 0);
-+
-+	master = event->dup_master;
-+	if (!--master->dup_active) {
-+		event->pmu->del(master, 0);
-+		perf_event_set_state(master, PERF_EVENT_STATE_INACTIVE);
-+	}
-+	event_pmu_read_dup(event, master);
-+}
-+
-+/* PMU sharing aware version of event->pmu->read() */
-+static void event_pmu_read(struct perf_event *event)
-+{
-+	if (!event->dup_master)
-+		return event->pmu->read(event);
-+
-+	event_pmu_read_dup(event, event->dup_master);
-+}
-+
- static void
- event_sched_out(struct perf_event *event,
- 		  struct perf_cpu_context *cpuctx,
-@@ -2095,7 +2384,7 @@ event_sched_out(struct perf_event *event,
- 	WARN_ON_ONCE(event->ctx != ctx);
- 	lockdep_assert_held(&ctx->lock);
- 
--	if (event->state != PERF_EVENT_STATE_ACTIVE)
-+	if (event->state < PERF_EVENT_STATE_ENABLED)
- 		return;
- 
- 	/*
-@@ -2107,12 +2396,15 @@ event_sched_out(struct perf_event *event,
- 
- 	perf_pmu_disable(event->pmu);
- 
--	event->pmu->del(event, 0);
-+	event_pmu_del(event, ctx);
- 	event->oncpu = -1;
- 
- 	if (READ_ONCE(event->pending_disable) >= 0) {
- 		WRITE_ONCE(event->pending_disable, -1);
- 		state = PERF_EVENT_STATE_OFF;
-+	} else if (event->dup_active) {
-+		WARN_ON_ONCE(event->dup_master != event);
-+		state = PERF_EVENT_STATE_ENABLED;
- 	}
- 	perf_event_set_state(event, state);
- 
-@@ -2380,7 +2672,7 @@ event_sched_in(struct perf_event *event,
- 
- 	perf_log_itrace_start(event);
- 
--	if (event->pmu->add(event, PERF_EF_START)) {
-+	if (event_pmu_add(event, ctx)) {
- 		perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
- 		event->oncpu = -1;
- 		ret = -EAGAIN;
-@@ -2492,6 +2784,7 @@ static void add_event_to_ctx(struct perf_event *event,
- {
- 	list_add_event(event, ctx);
- 	perf_group_attach(event);
-+	perf_event_setup_dup(event, ctx);
- }
- 
- static void ctx_sched_out(struct perf_event_context *ctx,
-@@ -2791,8 +3084,10 @@ static void __perf_event_enable(struct perf_event *event,
- 
- 	perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
- 
--	if (!ctx->is_active)
-+	if (!ctx->is_active) {
-+		perf_event_setup_dup(event, ctx);
- 		return;
-+	}
- 
- 	if (!event_filter_match(event)) {
- 		ctx_sched_in(ctx, cpuctx, EVENT_TIME, current);
-@@ -2803,7 +3098,7 @@ static void __perf_event_enable(struct perf_event *event,
- 	 * If the event is in a group and isn't the group leader,
- 	 * then don't put it on unless the group is on.
- 	 */
--	if (leader != event && leader->state != PERF_EVENT_STATE_ACTIVE) {
-+	if (leader != event && leader->state <= PERF_EVENT_STATE_INACTIVE) {
- 		ctx_sched_in(ctx, cpuctx, EVENT_TIME, current);
- 		return;
- 	}
-@@ -3150,8 +3445,8 @@ static void __perf_event_sync_stat(struct perf_event *event,
- 	 * we know the event must be on the current CPU, therefore we
- 	 * don't need to use it.
- 	 */
--	if (event->state == PERF_EVENT_STATE_ACTIVE)
--		event->pmu->read(event);
-+	if (event->state > PERF_EVENT_STATE_INACTIVE)
-+		event_pmu_read(event);
- 
- 	perf_event_update_time(event);
- 
-@@ -4026,22 +4321,22 @@ static void __perf_event_read(void *info)
- 		goto unlock;
- 
- 	if (!data->group) {
--		pmu->read(event);
-+		event_pmu_read(event);
- 		data->ret = 0;
- 		goto unlock;
- 	}
- 
- 	pmu->start_txn(pmu, PERF_PMU_TXN_READ);
- 
--	pmu->read(event);
-+	event_pmu_read(event);
- 
- 	for_each_sibling_event(sub, event) {
--		if (sub->state == PERF_EVENT_STATE_ACTIVE) {
-+		if (sub->state > PERF_EVENT_STATE_INACTIVE) {
- 			/*
- 			 * Use sibling's PMU rather than @event's since
- 			 * sibling could be on different (eg: software) PMU.
- 			 */
--			sub->pmu->read(sub);
-+			event_pmu_read(sub);
- 		}
- 	}
- 
-@@ -4053,7 +4348,14 @@ static void __perf_event_read(void *info)
- 
- static inline u64 perf_event_count(struct perf_event *event)
- {
--	return local64_read(&event->count) + atomic64_read(&event->child_count);
-+	u64 count;
-+
-+	if (likely(event->dup_master != event))
-+		count = local64_read(&event->count);
-+	else
-+		count = local64_read(&event->master_count);
-+
-+	return count + atomic64_read(&event->child_count);
- }
- 
- /*
-@@ -4111,9 +4413,12 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- 	 * oncpu == -1).
- 	 */
- 	if (event->oncpu == smp_processor_id())
--		event->pmu->read(event);
-+		event_pmu_read(event);
- 
--	*value = local64_read(&event->count);
-+	if (event->dup_master == event)
-+		*value = local64_read(&event->master_count);
-+	else
-+		*value = local64_read(&event->count);
- 	if (enabled || running) {
- 		u64 now = event->shadow_ctx_time + perf_clock();
- 		u64 __enabled, __running;
-@@ -4140,7 +4445,7 @@ static int perf_event_read(struct perf_event *event, bool group)
- 	 * value in the event structure:
- 	 */
- again:
--	if (state == PERF_EVENT_STATE_ACTIVE) {
-+	if (state > PERF_EVENT_STATE_INACTIVE) {
- 		struct perf_read_data data;
- 
- 		/*
-@@ -6498,8 +6803,8 @@ static void perf_output_read_group(struct perf_output_handle *handle,
- 		values[n++] = running;
- 
- 	if ((leader != event) &&
--	    (leader->state == PERF_EVENT_STATE_ACTIVE))
--		leader->pmu->read(leader);
-+	    (leader->state > PERF_EVENT_STATE_INACTIVE))
-+		event_pmu_read(leader);
- 
- 	values[n++] = perf_event_count(leader);
- 	if (read_format & PERF_FORMAT_ID)
-@@ -6511,8 +6816,8 @@ static void perf_output_read_group(struct perf_output_handle *handle,
- 		n = 0;
- 
- 		if ((sub != event) &&
--		    (sub->state == PERF_EVENT_STATE_ACTIVE))
--			sub->pmu->read(sub);
-+		    (sub->state > PERF_EVENT_STATE_INACTIVE))
-+			event_pmu_read(sub);
- 
- 		values[n++] = perf_event_count(sub);
- 		if (read_format & PERF_FORMAT_ID)
-@@ -9810,10 +10115,10 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
- 
- 	event = container_of(hrtimer, struct perf_event, hw.hrtimer);
- 
--	if (event->state != PERF_EVENT_STATE_ACTIVE)
-+	if (event->state <= PERF_EVENT_STATE_INACTIVE)
- 		return HRTIMER_NORESTART;
- 
--	event->pmu->read(event);
-+	event_pmu_read(event);
- 
- 	perf_sample_data_init(&data, 0, event->hw.last_period);
- 	regs = get_irq_regs();
-@@ -11504,9 +11809,17 @@ SYSCALL_DEFINE5(perf_event_open,
- 		perf_remove_from_context(group_leader, 0);
- 		put_ctx(gctx);
- 
-+		/*
-+		 * move_group only happens to sw events, from sw ctx to hw
-+		 * ctx. The sw events should not have valid dup_master. So
-+		 * it is not necessary to handle dup_events.
-+		 */
-+		WARN_ON_ONCE(group_leader->dup_master);
-+
- 		for_each_sibling_event(sibling, group_leader) {
- 			perf_remove_from_context(sibling, 0);
- 			put_ctx(gctx);
-+			WARN_ON_ONCE(sibling->dup_master);
- 		}
- 
- 		/*
--- 
-2.17.1
-
+T24gMy81LzIwIDEyOjAyIFBNLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQo+IEluIGNhc2Ugb2Yg
+RFNQIGV4dGVuc2lvbiBwcmVzZW5jZSBpbiBIVyBzb21lIGluc3RydWN0aW9ucw0KPiAocmVsYXRl
+ZCB0byBpbnRlZ2VyIG11bHRpcGx5LCBtdWx0aXBseS1hY2N1bXVsYXRlLCBhbmQgZGl2aWRlDQo+
+IG9wZXJhdGlvbikgZXhlY3V0ZXMgb24gdGhpcyBEU1AgZXhlY3V0aW9uIHVuaXQuIFNvIHRoZWly
+DQo+IGV4ZWN1dGlvbiB3aWxsIGRlcGVuZCBvbiBkc3AgY29uZmlndXJhdGlvbiByZWdpc3RlciAo
+RFNQX0NUUkwpDQo+IA0KPiBBcyB3ZSB3YW50IHRoZXNlIGluc3RydWN0aW9ucyB0byBleGVjdXRl
+IHRoZSBzYW1lIHdheSByZWdhcmRsZXNzDQo+IG9mIERTUCBwcmVzZW5jZSB3ZSBuZWVkIHRvIHNl
+dCBEU1BfQ1RSTCBwcm9wZXJseS4gSG93ZXZlciB0aGlzDQo+IHJlZ2lzdGVyIGNhbiBiZSBtb2Rp
+ZmllZCBidSBhbnkgdXNlcnNhY2UgYXBwIHRoZXJlZm9yZSBhbnkNCj4gdXNlcnNhY2UgbWF5IGJy
+ZWFrIGtlcm5lbCBleGVjdXRpb24uDQo+IA0KPiBGaXggdGhhdCBieSBjb25maWd1cmUgRFNQX0NU
+UkwgaW4gQ1BVIGVhcmx5IGNvZGUgYW5kIGluIElSUXMNCj4gZW50cmllcy4NCg0KSG93IGFib3V0
+IGJlbG93IC4uLi4NCg0KIldoZW4gRFNQIGV4dGVuc2lvbnMgYXJlIHByZXNlbnQsIHNvbWUgb2Yg
+dGhlIHJlZ3VsYXIgaW50ZWdlciBpbnN0cnVjdGlvbnMgc3VjaCBhcw0KRElWLCBNQUNEIGV0YyBh
+cmUgZXhlY3V0ZWQgaW4gdGhlIERTUCB1bml0IHdpdGggc2VtYW50aWNzIGFsdGVyYWJsZSBieSBm
+bGFncyBpbg0KRFNQX0NUUkwgYXV4IHJlZ2lzdGVyLiBUaGlzIHJlZ2lzdGVyIGlzIHdyaXRhYmxl
+IGJ5IHVzZXJzcGFjZSBhbmQgdGh1cyBjYW4NCnBvdGVudGlhbGx5IGFmZmVjdCBjb3JyZXNwb25k
+aW5nIGluc3RydWN0aW9ucyBpbiBrZXJuZWwgY29kZSwgaW50ZW50aW9uYWxseSBvcg0Kb3RoZXJ3
+aXNlLiBTbyBzYWZlZ2F1cmQga2VybmVsIGJ5IGVmZmVjdGl2ZWx5IGRpc2FibGluZyBEU1BfQ1RS
+TCB1cG9uIGJvb3R1cCBhbmQNCmV2ZXJ5IGVudHJ5IHRvIGtlcm5lbC4NCg0KRG8gbm90ZSB0aGF0
+IGZvciB0aGlzIGNvbmZpZyB3ZSBzaW1wbHkgemVybyBvdXQgdGhlIERTUF9DVFJMIHJlZyBhc3N1
+bWluZw0KdXNlcnNwYWNlIGRvZXNuJ3QgcmVhbGx5IGNhcmUgYWJvdXQgRFNQLiBUaGUgbmV4dCBw
+YXRjaCBjYXRlcnMgdG8gdGhlIERTUCBhd2FyZQ0KdXNlcnNwYWNlIHdoaWNoIHRoaXMgYWN0dWFs
+bHkgc2F2ZWQvcmVzdG9yZWQgdXBvbiBrZXJuZWwgZW50cnkuIg0KDQoNCg0KPiANCj4gU2lnbmVk
+LW9mZi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29tPg0K
+PiAtLS0NCj4gIGFyY2gvYXJjL0tjb25maWcgICAgICAgICAgICAgICAgICAgfCAyOSArKysrKysr
+KysrKysrKystDQo+ICBhcmNoL2FyYy9pbmNsdWRlL2FzbS9hcmNyZWdzLmggICAgIHwgMTIgKysr
+KysrKw0KPiAgYXJjaC9hcmMvaW5jbHVkZS9hc20vZHNwLWltcGwuaCAgICB8IDU0ICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKw0KPiAgYXJjaC9hcmMvaW5jbHVkZS9hc20vZW50cnktYXJj
+djIuaCB8ICAzICsrDQo+ICBhcmNoL2FyYy9rZXJuZWwvaGVhZC5TICAgICAgICAgICAgIHwgIDQg
+KysrDQo+ICBhcmNoL2FyYy9rZXJuZWwvc2V0dXAuYyAgICAgICAgICAgIHwgIDMgKysNCj4gIDYg
+ZmlsZXMgY2hhbmdlZCwgMTA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBhcmNoL2FyYy9pbmNsdWRlL2FzbS9kc3AtaW1wbC5oDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvYXJjaC9hcmMvS2NvbmZpZyBiL2FyY2gvYXJjL0tjb25maWcNCj4gaW5kZXggNzEy
+NGFiODJkZmEzLi41NTQzMmE4ZmMyMGQgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJjL0tjb25maWcN
+Cj4gKysrIGIvYXJjaC9hcmMvS2NvbmZpZw0KPiBAQCAtNDAxLDEzICs0MDEsNDAgQEAgY29uZmln
+IEFSQ19IQVNfRElWX1JFTQ0KPiAgCWRlZmF1bHQgeQ0KPiAgDQo+ICBjb25maWcgQVJDX0hBU19B
+Q0NMX1JFR1MNCj4gLQlib29sICJSZWcgUGFpciBBQ0NMOkFDQ0ggKEZQVSBhbmQvb3IgTVBZID4g
+NikiDQo+ICsJYm9vbCAiUmVnIFBhaXIgQUNDTDpBQ0NIIChGUFUgYW5kL29yIE1QWSA+IDYgYW5k
+L29yIERTUCkiDQo+ICAJZGVmYXVsdCB5DQo+ICAJaGVscA0KPiAgCSAgRGVwZW5kaW5nIG9uIHRo
+ZSBjb25maWd1cmF0aW9uLCBDUFUgY2FuIGNvbnRhaW4gYWNjdW11bGF0b3IgcmVnLXBhaXINCj4g
+IAkgIChhbHNvIHJlZmVycmVkIHRvIGFzIHI1ODpyNTkpLiBUaGVzZSBjYW4gYWxzbyBiZSB1c2Vk
+IGJ5IGdjYyBhcyBHUFIgc28NCj4gIAkgIGtlcm5lbCBuZWVkcyB0byBzYXZlL3Jlc3RvcmUgcGVy
+IHByb2Nlc3MNCj4gIA0KPiArY29uZmlnIEFSQ19EU1BfSEFORExFRA0KPiArCWRlZl9ib29sIG4N
+Cj4gKw0KPiArY2hvaWNlDQo+ICsJcHJvbXB0ICJEU1Agc3VwcG9ydCINCj4gKwlkZWZhdWx0IEFS
+Q19EU1BfTk9ORQ0KPiArCWhlbHANCj4gKwkgIERlcGVuZGluZyBvbiB0aGUgY29uZmlndXJhdGlv
+biwgQ1BVIGNhbiBjb250YWluIERTUCByZWdpc3RlcnMNCj4gKwkgIChBQ0MwX0dMTywgQUNDMF9H
+SEksIERTUF9CRkxZMCwgRFNQX0NUUkwsIERTUF9GRlRfQ1RSTCkuDQo+ICsJICBCZWxsb3cgaXMg
+b3B0aW9ucyBkZXNjcmliaW5nIGhvdyB0byBoYW5kbGUgdGhlc2UgcmVnaXN0ZXJzIGluDQoNCnR5
+cG86IEJlbG93DQoNCkxvb2tzIGdvb2Qgb3RoZXJ3aXNlLiBObyBuZWVkIHRvIHJlc3BpbiBqdXN0
+IGZvciB0aGlzLg0KDQpSZXZpZXdlZC1ieTogVmluZWV0IEd1cHRhIDx2Z3VwdGFAc3lub3BzeXMu
+Y29tPg0K
