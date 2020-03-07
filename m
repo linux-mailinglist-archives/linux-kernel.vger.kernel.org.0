@@ -2,79 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 774A417CD54
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 10:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B68CB17CD5A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 10:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbgCGJsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 04:48:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbgCGJsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 04:48:40 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7A1D2070A;
-        Sat,  7 Mar 2020 09:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583574518;
-        bh=cPpuEcuoYPfsokOR2Tl6vph58NA3oVUGnjnGJvqn9Ys=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oW7gpCaBYbilRdEyOH3/KpNpwEewkJjAbXdf7AYJzWS07GeR53ATEYDJqIMsLgwTL
-         SEZXJyDNKbBvqx++GhTsIMN5Iqg8Nm0f3g4KiINFWqZENTVFo1VvukSSwFA0sciBmW
-         qR5zCQzwXdkWzgrZj9zdcjhzGyms2cYv0mBtrjCM=
-Date:   Sat, 7 Mar 2020 10:48:34 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-Message-ID: <20200307094834.GA3888906@kroah.com>
-References: <1582556135.3384.4.camel@HansenPartnership.com>
- <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
- <1582644535.3361.8.camel@HansenPartnership.com>
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
- <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <20200306162549.GA28467@miu.piliscsaba.redhat.com>
+        id S1726127AbgCGJyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 04:54:32 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35149 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbgCGJyc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 04:54:32 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z9so3875894lfa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 01:54:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+iY7vg8Db28lbZpkj8YbZ4nAiqLqC1ZkxS8MIhuLcMU=;
+        b=ylpat4kRdMth3tgWlvM26uho69yQ9OBDlJqz9C4W2FP/opded7R33Gs9dCZ441sDeE
+         XXcCUprakY2Zx3bRayE+q+uD4obMIAircprbTxdJYpe0/qTADFTqpBe8JJ2igckRHAvT
+         dP4JYIuo8Y/qjWN7nj4ykCDfVsEOCmPMALohd4iLGEzL4XbxBtw8A+esMWN4Y62zJU9t
+         eGNr4baLxZ2rUHx2gNf2f5QIze1ZEoBsuHtfznFaQerUm+yB8zo/NKsh2ibjgx4tEY6e
+         Hd8Xp1eCtoOc1T7H4kcg3+4wc1scUop9Bh1WiUdxKbXAe3XK/R1Nx3UcKD5Hdmv6qH/1
+         whIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+iY7vg8Db28lbZpkj8YbZ4nAiqLqC1ZkxS8MIhuLcMU=;
+        b=j3mB6jXlagV3Q1Ge+a+IeBEczHIonG9HVdlQ01afD9fK+8q1/+gK999JNXGJr13at1
+         I4u7q0iMt4td6zMuXb8Ocw1TWray3r+EUxIFhGrHK0wFqqZYgD+/1wMwXGlSPtoyiI5B
+         9NhNvEgFDlnfE7iEdjWdNRFYIfePgAjPOW58MppWJuYDG7QdokWfkNcwtPPwygoqmYGf
+         ncAyGJyNpBUi/jiTo72D2VA4co96l1vhMuwJ2sp9pogxcbOaTO65B36lyPX3gbCvpn1j
+         Xz46EC0aHBq+CDD6cM41Rs5G3PW2m+xnhg9qd2wuqgpehRzqec+tWqTprcHzGNy/8k8A
+         +76w==
+X-Gm-Message-State: ANhLgQ1+alRSptBWGL8swQz5n2n2EabTjZIM8U5kShP+vTTMrKsaYIKx
+        5ArQ9Ss7qaB7oIVftdmuTE1OoQ==
+X-Google-Smtp-Source: ADFU+vv6OIWzoXOg4mWHENdK4mbxgfXz8v6v9hX1jJMwhRRBJ60rFJUXuMg07DvgtCrrYsNkhjdr7Q==
+X-Received: by 2002:a05:6512:692:: with SMTP id t18mr4284908lfe.212.1583574870677;
+        Sat, 07 Mar 2020 01:54:30 -0800 (PST)
+Received: from ?IPv6:2a00:1fa0:402:864b:dd24:504:68eb:a9fe? ([2a00:1fa0:402:864b:dd24:504:68eb:a9fe])
+        by smtp.gmail.com with ESMTPSA id j17sm2554029ljc.0.2020.03.07.01.54.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Mar 2020 01:54:29 -0800 (PST)
+Subject: Re: [PATCH v4 4/4] USB: pci-quirks: Add Raspberry Pi 4 quirk
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@intel.com>
+Cc:     linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
+        gregkh@linuxfoundation.org, tim.gover@raspberrypi.org,
+        linux-pci@vger.kernel.org, wahrenst@gmx.net
+References: <20200306114348.5172-1-nsaenzjulienne@suse.de>
+ <20200306114348.5172-5-nsaenzjulienne@suse.de>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b4fb58f0-6d51-657b-bcf6-5f4b0c798312@cogentembedded.com>
+Date:   Sat, 7 Mar 2020 12:54:27 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306162549.GA28467@miu.piliscsaba.redhat.com>
+In-Reply-To: <20200306114348.5172-5-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 05:25:49PM +0100, Miklos Szeredi wrote:
-> On Tue, Mar 03, 2020 at 08:46:09AM +0100, Miklos Szeredi wrote:
-> > 
-> > I'm doing a patch.   Let's see how it fares in the face of all these
-> > preconceptions.
+Hello!
+
+On 06.03.2020 14:43, Nicolas Saenz Julienne wrote:
+
+> On the Raspberry Pi 4, after a PCI reset, VL805's firmware may either be
+> loaded directly from an EEPROM or, if not present, by the SoC's
+> VideCore. Inform VideCore that VL805 was just reset.
 > 
-> Here's a first cut.  Doesn't yet have superblock info, just mount info.
-> Probably has rough edges, but appears to work.
+> Also, as this creates a dependency between XHCI_PCI and VideoCore's
+> firmware interface, reflect that on the firmware interface Kconfg.
 > 
-> I started with sysfs, then kernfs, then went with a custom filesystem, because
-> neither could do what I wanted.
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+> 
+> Changes since v3:
+>   - Add more complete error message.
+>   - Add braces around if statement
+> 
+> Changes since v1:
+>   - Make RASPBERRYPI_FIRMWARE dependent on this quirk to make sure it
+>     gets compiled when needed.
+> 
+>   drivers/firmware/Kconfig      |  1 +
+>   drivers/usb/host/pci-quirks.c | 16 ++++++++++++++++
+>   2 files changed, 17 insertions(+)
+[...]
+> diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
+> index beb2efa71341..452f5f12b042 100644
+> --- a/drivers/usb/host/pci-quirks.c
+> +++ b/drivers/usb/host/pci-quirks.c
+> @@ -16,6 +16,9 @@
+>   #include <linux/export.h>
+>   #include <linux/acpi.h>
+>   #include <linux/dmi.h>
+> +
+> +#include <soc/bcm2835/raspberrypi-firmware.h>
+> +
+>   #include "pci-quirks.h"
+>   #include "xhci-ext-caps.h"
+>   
+> @@ -1243,11 +1246,24 @@ static void quirk_usb_handoff_xhci(struct pci_dev *pdev)
+>   
+>   static void quirk_usb_early_handoff(struct pci_dev *pdev)
+>   {
+> +	int ret;
+> +
+>   	/* Skip Netlogic mips SoC's internal PCI USB controller.
+>   	 * This device does not need/support EHCI/OHCI handoff
+>   	 */
+>   	if (pdev->vendor == 0x184e)	/* vendor Netlogic */
+>   		return;
+> +
+> +	if (pdev->vendor == PCI_VENDOR_ID_VIA && pdev->device == 0x3483) {
+> +		ret = rpi_firmware_init_vl805(pdev);
+> +		if (ret) {
+> +			/* Firmware might be outdated, or something failed */
+> +			dev_warn(&pdev->dev, "Failed to load VL805's firmware: %d\n", ret);
+> +			dev_warn(&pdev->dev, "Will continue to attempt to work, "
+> +				 "but bad things might happen. You should fix this...\n");
 
-Hm, what is wrong with kernfs that prevented you from using it here?
-Just complexity or something else?
+    Don't break up the long kernel messages (checkpatch.pl should not complain 
+about them).
 
-thanks,
+[...]
 
-greg k-h
+MBR, Sergei
