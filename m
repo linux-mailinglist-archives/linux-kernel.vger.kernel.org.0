@@ -2,93 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97EE317D07B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 23:39:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7671817D07E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 23:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbgCGWjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 17:39:52 -0500
-Received: from saul.pp3345.net ([163.172.111.124]:52078 "EHLO saul.pp3345.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbgCGWjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 17:39:52 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: dev@pp3345.net)
-        by saul.pp3345.net (Postcow) with ESMTPSA id CF43F9A4411;
-        Sat,  7 Mar 2020 23:39:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pp3345.net; s=saul;
-        t=1583620791; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:autocrypt;
-        bh=mFMFTtNNRFGMFKc9Dj+5ZTdNUIaj/o3jwaMi9W8rPrw=;
-        b=IQVbx8pEVsfWNpFhZuULP6wkqLkiQ+IOwqUNiFrxXrGAHDIghvuK39fvsfpIr57b+Jl6eU
-        9VFgqxhTfnpX0fxyLEvYVIzzCyFCJm0FCMPmmn5DZDwjC+ckHtPOtkQBz3FArgydn/UO2l
-        40J0VzrcfKNaJcqbKBPyCwbl/MYLBHPIvXLDnrkBf+IW3sVT+fmVnvZWQrlA/n+f0iurZ5
-        W+gyjMA67fFxc5HVEcxIcJLH4QemFlrmvuoRzEBz3cb2PCjN/Ruohu2+dx6nrfMc7xhCvf
-        J1qFU9oaXyl5Nx/D6s0sHbrD1OYx0Olzi8edYHtC8Seu5U0XUnr8NCVqtGAtGg==
-Subject: Re: [PATCH] Input: synaptics - Enable RMI on HP Envy 13-ad105ng
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200307213508.267187-1-dev@pp3345.net>
- <20200307221843.GR217608@dtor-ws>
-From:   Yussuf Khalil <dev@pp3345.net>
-Message-ID: <ca0d34cd-505d-5107-3528-ca6a9c7d13bf@pp3345.net>
-Date:   Sat, 7 Mar 2020 23:39:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200307221843.GR217608@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pp3345.net;
-        s=saul; t=1583620791; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:autocrypt;
-        bh=mFMFTtNNRFGMFKc9Dj+5ZTdNUIaj/o3jwaMi9W8rPrw=;
-        b=eGmsYshvtyeCjo35BbH2j6IV9HvtyBAk2yNUrp/A6K5Jo6mMFJlttDalQT91GySMI+KQQn
-        uB1KSifqwWTTqe0116A2XJ6kr4ZVvnp2oOFaD2HRWWt6I6nnl8J739n6nmkCAtHXHQryyi
-        cvKX0BiUJE2FuopTH/7GDhopPzIAmmSg1xDhIZbHIUaf1Aeqg7B2KpOrbrAISZ+B/JFqR4
-        feCrAaNX+YWCIRIC7UyEIfzNMEKPl7iWH3gVvlz334Lvmxi3vFPgvY7SqNANdAjuG5Ex4F
-        3ZzwcOSgeHEEk0bLW6oymLEWQDa5ymfiaF9Seuuay9BQLQlNgLDzfoWLqorhpg==
-ARC-Seal: i=1; s=saul; d=pp3345.net; t=1583620791; a=rsa-sha256; cv=none;
-        b=aK8dTX53CSvYztdlh6QUPsdVkPzAYHSPhnMH0cTZyWRksyeaI9xcG/pHg+6rUwZXOZF786
-        cMZQTBR+hdU5icx5cjQWbPqMywoVSAllBwvs6j898k2a0P0TvtBiXlJkgd9kq6GDoG0foI
-        vLaXP61u+ByyP7mRwSnxoiRoogl6EM94ongtp6gS3k/DGjr7zt6vMWKFt/tMWYjE1oDW+P
-        h0PKVkwFCpoJ2CmB1cQZdKl0rt6bj2SmXSlagCcEjw+/CLhaz/v6JIyWneTFgxncqh8I6z
-        eNuL1AVI0SembpeWcaISvKi5s7SmRdAFL5FbDjfL6heVW3qpsoqjumUKYbTD9A==
-ARC-Authentication-Results: i=1;
-        saul.pp3345.net;
-        auth=pass smtp.auth=dev@pp3345.net smtp.mailfrom=dev@pp3345.net
+        id S1726303AbgCGWzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 17:55:15 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33159 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbgCGWzP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 17:55:15 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c20so4715986lfb.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 14:55:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Lmy6sY3BuY2QrfOC8Hp11UcSzO3l1+fu6BuIO/tde+s=;
+        b=Ck+sA0a7Bh2+pT36DNBhLArjI2fLXSF/EZjL9wt60mmEoSudbOckrVquBxL/qTLzaE
+         CO+6bSfYguhj1lGXyoGJMd4YzPlqr3r0xUYL3ABWtqA2OMZk+AuoeBUYnqqe7eR26Mp4
+         XNVuDgfdBTSaoXmPgx0DoBvrxDcSPNpGifQIkOWWFu7GzHP8yLT9oItbDSuszECtssaw
+         vmEFhWd48gBi9rLYFZPA34FLbW877lQa4TENNPzTA3D08JNTiJR6tctceuEPudp4KUuS
+         FQihQ4KMLKPuOdHkgj4V7G3ze5k8gI5KZ1+EWSyNVhuaBfepmXcgndR9p/y0Xq5UZZnN
+         9tCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Lmy6sY3BuY2QrfOC8Hp11UcSzO3l1+fu6BuIO/tde+s=;
+        b=R4ZTsNj2+8yL+joWFu8j70rT9U4JTcDn5lxoLL2dEOe1n9vtCbTim6lsGeLYK7BQqZ
+         BansRRqmV081AbO3AF4FzijYAGU0DvD9dDL48SCYl+DxTseH0AAO/l2/X48GCYwTw0WK
+         btPfNN4eKeysURLvdlw2aqyFBSVCVh8oPMoQnooI5Vmv2emEZ4jRIy/CZsBWDCE+taSe
+         dUNk3dLW11SuZ14VIvfvqjf+KYK6BiK/KHGtXGc0szaYMb9FUL+YSfWHVDvWcSzreyCG
+         BkhwRHIIgdJFCtSRUPrDqNYOko84g0otbuUCzwMIwzMZZCSE5/FRZyUeJi9Z8KyBEvMk
+         vTOg==
+X-Gm-Message-State: ANhLgQ31yn7YO/Hj5Xe6MAOSgGNYHh6CnGOR9OnxG0hc5vLyV6grAb5R
+        8joMNWZkjlATSkdkpGZAwh4=
+X-Google-Smtp-Source: ADFU+vvWUa6/pPaqj/uFb25zlxb/uzdMqLjlzAPRBdX5/0+xW5Z9ge5inaMikdZA35Gr9e9M+fQe3Q==
+X-Received: by 2002:a05:6512:3089:: with SMTP id z9mr193983lfd.15.1583621713144;
+        Sat, 07 Mar 2020 14:55:13 -0800 (PST)
+Received: from localhost.localdomain (188.146.98.10.nat.umts.dynamic.t-mobile.pl. [188.146.98.10])
+        by smtp.gmail.com with ESMTPSA id v10sm19777324lfb.61.2020.03.07.14.55.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Mar 2020 14:55:12 -0800 (PST)
+From:   mateusznosek0@gmail.com
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Nosek <mateusznosek0@gmail.com>, akpm@linux-foundation.org
+Subject: [RFC PATCH] mm/page_alloc.c: Micro-optimisation Remove unnecessary branch
+Date:   Sat,  7 Mar 2020 23:53:35 +0100
+Message-Id: <20200307225335.31300-1-mateusznosek0@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+From: Mateusz Nosek <mateusznosek0@gmail.com>
 
-I currently don't have access to the device anymore, but apart from 
-missing gesture functionality, it seemed to have some issues with 
-selecting text by clicking and moving the cursor when running in PS/2 
-mode, so I guess it might be good to push the patch to stable.
+Previously if branch condition was false, the assignment was not executed.
+The assignment can be safely executed even when the condition is false and
+it is not incorrect as it assigns the value of 'nodemask' to 'ac.nodemask'
+which already has the same value.
 
-Regards
-Yussuf Khalil
+So as the assignment can be executed unconditionally, the branch can be
+removed.
 
-> Hi Yussuf,
-> 
-> On Sat, Mar 07, 2020 at 10:35:08PM +0100, Yussuf Khalil wrote:
->> This laptop (and perhaps other variants of the same model) reports an
->> SMBus-capable Synaptics touchpad. Everything (including suspend and
->> resume) works fine when RMI is enabled via the kernel command line, so
->> let's add it to the whitelist.
-> 
-> Are there issues with the touchpad when it works in the legacy (PS/2)
-> mode? I will be applying your patch, I just need to understand if it
-> needs to go into stable series, or we can just get it into 5.6 and later
-> versions.
-> 
-> Thanks!
-> 
+Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
+---
+ mm/page_alloc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 79e950d76ffc..75456d04b5c5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4819,8 +4819,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 	 * Restore the original nodemask if it was potentially replaced with
+ 	 * &cpuset_current_mems_allowed to optimize the fast-path attempt.
+ 	 */
+-	if (unlikely(ac.nodemask != nodemask))
+-		ac.nodemask = nodemask;
++	ac.nodemask = nodemask;
+ 
+ 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
+ 
+-- 
+2.17.1
+
