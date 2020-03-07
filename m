@@ -2,123 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A3E17D0AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 00:37:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD9F17D0AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 00:45:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgCGXfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 18:35:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:52557 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726180AbgCGXfA (ORCPT
+        id S1726284AbgCGXpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 18:45:34 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:46664 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgCGXpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 18:35:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583624099;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MC8apsGOpphabSR5XgDZNLHlrUNE2JXwiM3SmZulSA4=;
-        b=IOfdjY/OINS5mylp98OabjH7UyaDultq0WJ62gnFopFF0bHYhwx0X0l16P8/ZL0qh+9cRU
-        D5vm239g7RFy0a3j9kLmXy31NRo4rE44QyvAGLC7p0AqCpYuhD+QzIL+Iv9/hXjXASev5j
-        7NlLu9rUbeaLPuFxrou65+7SPmqCysA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-311-2HHPA9RFOgy0otFEzA1A0g-1; Sat, 07 Mar 2020 18:34:57 -0500
-X-MC-Unique: 2HHPA9RFOgy0otFEzA1A0g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F3322107ACC7;
-        Sat,  7 Mar 2020 23:34:55 +0000 (UTC)
-Received: from rhp50.localdomain (ovpn-120-185.rdu2.redhat.com [10.10.120.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A03CF1001B2C;
-        Sat,  7 Mar 2020 23:34:55 +0000 (UTC)
-From:   Mark Salter <msalter@redhat.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] irqchip/gic-v3: avoid reading typer2 if GICv3
-Date:   Sat,  7 Mar 2020 18:34:42 -0500
-Message-Id: <20200307233442.958122-1-msalter@redhat.com>
+        Sat, 7 Mar 2020 18:45:33 -0500
+Received: by mail-il1-f193.google.com with SMTP id e8so5417510ilc.13
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 15:45:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=6W0PydWbSO7FV7zSv4lpd4L/KA8aw5QASOufQ4Raoxc=;
+        b=JDL068LTdyyzf9yXK7nLUvxbChQEXLhAVV+WM6tE/cXmFZhjTaMY/AzAXEwLGoKA+B
+         vXHU324RjQmuaCuJIcnB137SDdowFZ4yiyzakKsdBSWSEQRZmQi5LU0Ni3imS7cM2ZX6
+         Ekbor3U/dbKHBP13chYB/Ic1AsGnwtJ/PtsCkMkjOT1U3jhQi2xxb1YUrYlcsEaCbewh
+         MJSCKFcLl0pyvrsA7TVL7SWRgkSpmkLZmWZ9XXArqqEJX1FwFUNZJ/kKOAfgZyhbxKCS
+         nxq+PnGQjl7/nSJBQC0ASQNIoZwh6aILXL9P/AQR7X/wHYWotjGhQOr6K1IHO2GvrJrX
+         MDGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=6W0PydWbSO7FV7zSv4lpd4L/KA8aw5QASOufQ4Raoxc=;
+        b=WPT3jxBQ4RSxo2sTcew0qNkAD2oZx0RcMLEgXN4j2EvoS4RV2tKJo1zecUfidtAPuR
+         FJvzocy8BCS14M0I5ii0wObzSFy07oMv8GHnGZ6RZn8/vVHZC9JN16zTLUAxBVjDK4BG
+         /h5ma6aoyelUtfrlEU4jEGrFGH21ePq2wLoeg0bEvmi5u46DNfOJeYbllXo5p6bPRKJe
+         I+Dd1Y3c52Z5ELFlXJveUdi1LzsCC+hUnAgkcIF7WWAzuzqfvLEgu8p+2Sl74K3PX2/S
+         9w+ubeuldloz9rLyEDnYo7Tthb7/HdrZfc8rsIZfhvnzldsezfNggvlYUxDhp9FRZTj5
+         nkkg==
+X-Gm-Message-State: ANhLgQ2LGBxWjyxahlSik9iOP2BAXZQRdyIURIfZ1AweU15b/plNQV9A
+        Wy5qSptrskXahGXbKFqDstsl6P3laQcHQhksmmo=
+X-Google-Smtp-Source: ADFU+vtDCf2566b3XWdtMtVHGYu9GTb4mpMYG/BAhZY6K8hT8BwycUPuUZy/GMEIjfX+jS7+Sq6Iqoiipn9gP0s+Qco=
+X-Received: by 2002:a92:d745:: with SMTP id e5mr9213077ilq.285.1583624731598;
+ Sat, 07 Mar 2020 15:45:31 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Received: by 2002:a92:5ddd:0:0:0:0:0 with HTTP; Sat, 7 Mar 2020 15:45:31 -0800 (PST)
+Reply-To: wyne010@gmail.com
+From:   "Mrs. Maile .(A) Roberto" <barrister.c.o.mathins@gmail.com>
+Date:   Sat, 7 Mar 2020 15:45:31 -0800
+Message-ID: <CALWmkas5OkQKFd9+Y3VMo8-Ni3cp+6qHoCct39qeH3yt+a1EyA@mail.gmail.com>
+Subject: Hello Dear Friend.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trying to boot v5.6-rc1 on a ThunderX platform leads to
-a SEA splat when trying to read the GICv4 TYPER2 register:
+Greetings
 
-[    0.000000] GICv3: 0 Extended SPIs implemented
-[    0.000000] Internal error: synchronous external abort: 96000210 [#1] =
-SMP
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-rc4+ #11
-[    0.000000] Hardware name: Cavium ThunderX CN88XX board (DT)
-[    0.000000] pstate: 60400085 (nZCv daIf +PAN -UAO)
-[    0.000000] pc : __raw_readl+0x0/0x8
-[    0.000000] lr : gic_init_bases+0x110/0x4b0
-[    0.000000] sp : ffff800011973dd0
-[    0.000000] x29: ffff800011973dd0 x28: 0000000002150018
-[    0.000000] x27: 0000000000000018 x26: 0000000000000000
-[    0.000000] x25: 0000000000000002 x24: ffff010fe7ef6700
-[    0.000000] x23: 0000000000000000 x22: ffff800010dc3b90
-[    0.000000] x21: ffff010fef138020 x20: 00000000009b0404
-[    0.000000] x19: ffff80001198c508 x18: 0000000000000005
-[    0.000000] x17: 000000006fc20c07 x16: 0000000000000001
-[    0.000000] x15: 0000000000000010 x14: ffffffffffffffff
-[    0.000000] x13: ffff800091973b4f x12: ffff800011973b5c
-[    0.000000] x11: ffff800011989000 x10: 0000000000000080
-[    0.000000] x9 : ffff8000101991e4 x8 : 0000000000040000
-[    0.000000] x7 : 000000000000413d x6 : 0000000000000000
-[    0.000000] x5 : 0000000000000000 x4 : 0000000000000000
-[    0.000000] x3 : 0000000000000080 x2 : ffff8000119c1f10
-[    0.000000] x1 : ffff800011991a40 x0 : ffff800013c9000c
-[    0.000000] Call trace:
-[    0.000000]  __raw_readl+0x0/0x8
-[    0.000000]  gic_of_init+0x170/0x1f8
-[    0.000000]  of_irq_init+0x1e4/0x3c4
-[    0.000000]  irqchip_init+0x1c/0x40
-[    0.000000]  init_IRQ+0x164/0x194
-[    0.000000]  start_kernel+0x334/0x4cc
+My Name is Mrs. Maile .(A) Roberto, from Norway. I know that this message
+will be a surprise to you. Firstly, I am married to Mr. Patrick Roberto,
+A gold merchant who owns a small gold mine in Madrid   Spain; He died of
+Cardiovascular Disease in mid-March 2011. During his lifetime he
+deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
+d
+thousand Euros in a HSBC Bank  in Madrid the capital city of Spain.
+The deposited money was from the sale of the
+shares, death benefits payment and entitlements of my deceased
+husbandry his company.
 
-So avoid reading TYPER2 on GICv3.
+I am sending this message to you praying that it will reach you in
+good health since I am not in good health condition in which I sleep
+every night without knowing if I may be alive to see the next day. I
+am suffering from long time cancer and presently I am partially
+suffering from a stroke illness which has become almost impossible for
+me to move around. I am married to my late husband for over 4 years
+before he died and is unfortunate that we don't have a child, my
+doctor confided in me that I have less chance to live. Having known my
+health condition, I decided to contact you to claim the fund since I
+don't have any relation I grew up from an orphanage home.
 
-Fixes: f2d834092ee2 ("irqchip/gic-v3: Add GICv4.1 VPEID size discovery")
-Signed-off-by: Mark Salter <msalter@redhat.com>
----
- drivers/irqchip/irq-gic-v3.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I have decided to donate what I have to you for the support of helping
+Motherless babies/Less privileged/Widows' because I am dying and
+diagnosed with cancer for about 2 years ago. I have been touched by
+God Almighty to donate from what I have inherited from my late husband
+to you for the good work of God Almighty. I have asked Almighty God to
+forgive me and believe he has because He is a Merciful God, I will be
+going in for an operation surgery soon
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index c1f7af9d9ae7..cd9a6c8fe68a 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1550,7 +1550,7 @@ static int __init gic_init_bases(void __iomem *dist=
-_base,
- 				 u64 redist_stride,
- 				 struct fwnode_handle *handle)
- {
--	u32 typer;
-+	u32 typer, pidr2;
- 	int err;
-=20
- 	if (!is_hyp_mode_available())
-@@ -1577,7 +1577,9 @@ static int __init gic_init_bases(void __iomem *dist=
-_base,
- 	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
- 	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
-=20
--	gic_data.rdists.gicd_typer2 =3D readl_relaxed(gic_data.dist_base + GICD=
-_TYPER2);
-+	pidr2 =3D readl_relaxed(dist_base + GICD_PIDR2) & GIC_PIDR2_ARCH_MASK;
-+	if (pidr2 !=3D GIC_PIDR2_ARCH_GICv3)
-+		gic_data.rdists.gicd_typer2 =3D readl_relaxed(gic_data.dist_base + GIC=
-D_TYPER2);
-=20
- 	gic_data.domain =3D irq_domain_create_tree(handle, &gic_irq_domain_ops,
- 						 &gic_data);
---=20
-2.24.1
+This is the reason I need your services to stand as my next of kin or
+the executor to claim the funds for charity purposes. If this money
+remains unclaimed after my death, the bank executives or the
+government will take the money as unclaimed fund and maybe use it for
+selfish and worthless ventures, I need a very honest person who can
+claim this money and use it for Charity works, for orphanages, widows
+and also build schools for less privilege that will be named after my
+late husband and my name; I need your urgent answer to know if you
+will be able to execute this project, and I will give you more
+information on how the fund will be transferred to your bank account.
 
+Thanks
+Mrs. Maile .(A) Roberto
