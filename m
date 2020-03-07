@@ -2,167 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C7A17CCB3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 08:38:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE1817CCB6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 08:47:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgCGHhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 02:37:16 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55247 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbgCGHhI (ORCPT
+        id S1726105AbgCGHrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 02:47:04 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:32772 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbgCGHrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 02:37:08 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jAU0v-0004Hm-8L; Sat, 07 Mar 2020 08:36:49 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E35DC1C21A5;
-        Sat,  7 Mar 2020 08:36:48 +0100 (CET)
-Date:   Sat, 07 Mar 2020 07:36:48 -0000
-From:   "tip-bot2 for Nick Desaulniers" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf diff: Fix undefined string comparision
- spotted by clang's -Wstring-compare
-Cc:     Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Ian Rogers <irogers@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, John Keeping <john@metanate.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Sat, 7 Mar 2020 02:47:04 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d22so3549831qtn.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Mar 2020 23:47:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CJaGuE6xjlwUdKde+nh834lDDnUaVIY1l9gUCqflQZs=;
+        b=mrboOzb015mzZ3cdDvl8jKCqwe6B++cNC3lPjplgSU3Rn2LrOOqmFKlya7+9SnKiKE
+         K9IGQleQRLSPUPNSg3t4FDzKjrls7eqdvZQjcrllrAbZl7OtPfK9NW8FB7y0xDgVZahC
+         UYHbP/kZVR6JzdYRDnaOaRBj3k1aF+6UR14kw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CJaGuE6xjlwUdKde+nh834lDDnUaVIY1l9gUCqflQZs=;
+        b=SruRzSxFr1VbLEcRR1tFpNqn2j1ptzQj1iBOch7f9OwS74d1W3DlkqPhaW2zPJKfTZ
+         atAvb4xUlyGkDL22SQm2Imuy23s/f8yyxr/fs/DZ73ZkSLtI7nEPssBAe8pZ31ExYKBH
+         UwWXGqReogPTy1S/IhqyZCBvsDDd2kSIMq6B4GfTXL956pk62InrOHlyGll6TDxC9Gqv
+         oduJRvGIC8n33jtTQZSELd9emGx+Pr/bZn3H4So397nms2pmhG3yDE9iC9KTolaMcrz5
+         pJqzK4oiq+RwoeZLkYuymClWGBUWNkcggPtgLbMeRcrffvGmLw5VgdpVYIwOVmqYeAvp
+         aBYQ==
+X-Gm-Message-State: ANhLgQ13REIjqFhk+b94Qu0RT3ixzRmPfwrYOj0+cpHg0j2o7QNst1cz
+        6KTofrh/0rrPjR2vzXJ1zagBIw==
+X-Google-Smtp-Source: ADFU+vtziRMfTg1yps/AiQZAfaYNlrFmOCmXTvfWuxMug3AFf0WhRHxfqc72oVQu22YI2hEdemYf6g==
+X-Received: by 2002:aed:38c8:: with SMTP id k66mr3241657qte.50.1583567223388;
+        Fri, 06 Mar 2020 23:47:03 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id i132sm19278276qke.41.2020.03.06.23.47.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2020 23:47:02 -0800 (PST)
+Date:   Sat, 7 Mar 2020 02:47:02 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        clang-built-linux@googlegroups.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200223193456.25291-1-nick.desaulniers@gmail.com>
-References: <20200223193456.25291-1-nick.desaulniers@gmail.com>
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        gregkh@linuxfoundation.org, gustavo@embeddedor.com,
+        tglx@linutronix.de, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] x86/kprobes: Prohibit probing on rcu_nmi_exit() and
+ ist_exit()
+Message-ID: <20200307074702.GA231616@google.com>
+References: <158355013189.14191.9105069890402942867.stgit@devnote2>
+ <20200307032831.GL2935@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Message-ID: <158356660863.28353.13163883291738121062.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307032831.GL2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Fri, Mar 06, 2020 at 07:28:31PM -0800, Paul E. McKenney wrote:
+> On Sat, Mar 07, 2020 at 12:02:12PM +0900, Masami Hiramatsu wrote:
+> > Prohibit probing on rcu_nmi_exit() and ist_exit() which
+> > are called from do_int3()'s kprobe path after kprobe_int3_handler().
+> > 
+> > The commit c13324a505c7 ("x86/kprobes: Prohibit probing on
+> > functions before kprobe_int3_handler()") tried to fix similar
+> > issue, but it only marks the functions before kprobe_int3_handler()
+> > in do_int3().
+> > 
+> > If we put a kprobe on rcu_nmi_exit() or ist_exit(), the kprobes
+> > will detect reentrance. However, it only skips the kprobe handler,
+> > exits from do_int3() and hits ist_exit() and rcu_nmi_exit() again.
+> > Thus, it causes another int3 exception and finally we will get
+> > the kernel panic with "Unrecoverable kprobe detected." error message.
+> > 
+> > This is reproducible by the following commands.
+> > 
+> > / # echo 0 > /proc/sys/debug/kprobes-optimization
+> > / # echo p vfs_read > /sys/kernel/debug/tracing/kprobe_events
+> > / # echo p rcu_nmi_exit >> /sys/kernel/debug/tracing/kprobe_events
+> > / # echo 1 > /sys/kernel/debug/tracing/events/kprobes/enable
+> > 
+> > Fixes: c13324a505c7 ("x86/kprobes: Prohibit probing on functions before kprobe_int3_handler()")
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Cc: stable@vger.kernel.org
+> 
+> From an RCU perspective:
+> 
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> 
 
-Commit-ID:     cfd3bc752a3f5529506d279deb42e3bc8055695b
-Gitweb:        https://git.kernel.org/tip/cfd3bc752a3f5529506d279deb42e3bc8055695b
-Author:        Nick Desaulniers <nick.desaulniers@gmail.com>
-AuthorDate:    Sun, 23 Feb 2020 11:34:49 -08:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Fri, 06 Mar 2020 08:30:29 -03:00
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-perf diff: Fix undefined string comparision spotted by clang's -Wstring-compare
+thanks,
 
-clang warns:
+ - Joel
 
-  util/block-info.c:298:18: error: result of comparison against a string
-  literal is unspecified (use an explicit string comparison function
-  instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                          ^  ~~~~~~~~~~~~~~~
-  util/block-info.c:298:51: error: result of comparison against a string
-  literal is unspecified (use an explicit string comparison function
-  instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                                                           ^  ~~~~~~~~~~~~~~~
-  util/block-info.c:298:18: error: result of comparison against a string
-  literal is unspecified (use an explicit string
-  comparison function instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                          ^  ~~~~~~~~~~~~~~~
-  util/block-info.c:298:51: error: result of comparison against a string
-  literal is unspecified (use an explicit string comparison function
-  instead) [-Werror,-Wstring-compare]
-          if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-                                                           ^  ~~~~~~~~~~~~~~~
-  util/map.c:434:15: error: result of comparison against a string literal
-  is unspecified (use an explicit string comparison function instead)
-  [-Werror,-Wstring-compare]
-                  if (srcline != SRCLINE_UNKNOWN)
-                              ^  ~~~~~~~~~~~~~~~
-
-Reviewer Notes:
-
-Looks good to me. Some more context:
-https://clang.llvm.org/docs/DiagnosticsReference.html#wstring-compare
-The spec says:
-J.1 Unspecified behavior
-The following are unspecified:
-.. Whether two string literals result in distinct arrays (6.4.5).
-
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Changbin Du <changbin.du@intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: John Keeping <john@metanate.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/900
-Link: http://lore.kernel.org/lkml/20200223193456.25291-1-nick.desaulniers@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-diff.c    | 3 ++-
- tools/perf/util/block-info.c | 3 ++-
- tools/perf/util/map.c        | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index f8b6ae5..c03c36f 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -1312,7 +1312,8 @@ static int cycles_printf(struct hist_entry *he, struct hist_entry *pair,
- 	end_line = map__srcline(he->ms.map, bi->sym->start + bi->end,
- 				he->ms.sym);
- 
--	if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-+	if ((strncmp(start_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0) &&
-+	    (strncmp(end_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0)) {
- 		scnprintf(buf, sizeof(buf), "[%s -> %s] %4ld",
- 			  start_line, end_line, block_he->diff.cycles);
- 	} else {
-diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
-index c4b030b..fbbb6d6 100644
---- a/tools/perf/util/block-info.c
-+++ b/tools/perf/util/block-info.c
-@@ -295,7 +295,8 @@ static int block_range_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
- 	end_line = map__srcline(he->ms.map, bi->sym->start + bi->end,
- 				he->ms.sym);
- 
--	if ((start_line != SRCLINE_UNKNOWN) && (end_line != SRCLINE_UNKNOWN)) {
-+	if ((strncmp(start_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0) &&
-+	    (strncmp(end_line, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0)) {
- 		scnprintf(buf, sizeof(buf), "[%s -> %s]",
- 			  start_line, end_line);
- 	} else {
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index a08ca27..9542851 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -431,7 +431,7 @@ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 
- 	if (map && map->dso) {
- 		char *srcline = map__srcline(map, addr, NULL);
--		if (srcline != SRCLINE_UNKNOWN)
-+		if (strncmp(srcline, SRCLINE_UNKNOWN, strlen(SRCLINE_UNKNOWN)) != 0)
- 			ret = fprintf(fp, "%s%s", prefix, srcline);
- 		free_srcline(srcline);
- 	}
+> > ---
+> >  arch/x86/kernel/traps.c |    1 +
+> >  kernel/rcu/tree.c       |    1 +
+> >  2 files changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> > index 6ef00eb6fbb9..c63fb7697794 100644
+> > --- a/arch/x86/kernel/traps.c
+> > +++ b/arch/x86/kernel/traps.c
+> > @@ -115,6 +115,7 @@ void ist_exit(struct pt_regs *regs)
+> >  	if (!user_mode(regs))
+> >  		rcu_nmi_exit();
+> >  }
+> > +NOKPROBE_SYMBOL(ist_exit);
+> >  
+> >  /**
+> >   * ist_begin_non_atomic() - begin a non-atomic section in an IST exception
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index d91c9156fab2..c49ea0e919f9 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -670,6 +670,7 @@ void rcu_nmi_exit(void)
+> >  {
+> >  	rcu_nmi_exit_common(false);
+> >  }
+> > +NOKPROBE_SYMBOL(rcu_nmi_exit);
+> >  
+> >  /**
+> >   * rcu_irq_exit - inform RCU that current CPU is exiting irq towards idle
+> > 
