@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB70917CE7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 14:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2879217CE7F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 14:49:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbgCGNs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 08:48:56 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37139 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbgCGNsx (ORCPT
+        id S1726422AbgCGNtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 08:49:01 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39597 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbgCGNsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 08:48:53 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a141so5264782wme.2;
+        Sat, 7 Mar 2020 08:48:55 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r15so563717wrx.6;
         Sat, 07 Mar 2020 05:48:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=STsCYmVzqE0DyGQSLcvjOSy6vdxPWBxzS0jjS6ORcro=;
-        b=rMI7D0qKgKibOcLcQS/QK9oNfgZ2LNDtF/Z/YgZsX1xLCBu6Hnc/lKSrbOQBIEPLSg
-         v33E7/H4iz+xsgbL6klyAa2fO1kLmSk9WFqB3c2ywEYP4BrQ5FQBwLJR/w/7ZVewQ5Er
-         x9vt6l9dgXR4fq1ZR+GjY5VwDC/kWtcYmlxiLWv67te7rD91XlNwNHh4dIFuaM6ZgYLV
-         j2IlO3Bkc1QfTXJmt9crdZlOMc29O3PBfvM+e6ecbZkXb2fT5WBtxaDiA7whoQLBhfu3
-         jsEv8QPE9yD2K3nbYB+voC9kE5WhA+/zYjgFrXL8V7e1RTiZYDXH3LBsGxem2LC4vzot
-         xd9Q==
+        bh=r8vU221Fl1wRDhepKyfW4xhkJN/Ivc1A7S2pOvLbFIU=;
+        b=NfYmzcoZPQlWO8KkyWMuaJlZPYo19zE/UOr4wWnKj0CXCeV5mI3VM14xv/GTDDfC+Q
+         aJ/I4k7kR2K3vFGUM17z8EpkkPdUESTEw4ap/uAmbuBrcmzcmPTxty/QVlNCPONcwRuB
+         VR3tL7aNU0JN7wHU0BjO7tk3165sP1n+4WkSaQEVnGI2rqi4PZkLK/X/rqpoESXw+C0y
+         iw51B9JbCFDuVX+lyFlUkJuBWsE6IUjCxBj5mlHzKLV85FVaB22hphOHsSl8IqPxsICM
+         JhM69/IXjbk7QAiwYopnQoBndYH12Ro1nhGPwlqVEM5P8EakCx2eDcAmJvYdcMDN9SBH
+         uUew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=STsCYmVzqE0DyGQSLcvjOSy6vdxPWBxzS0jjS6ORcro=;
-        b=TtJg0p7LGnfFylaeRAnhrhNzSgg24HJMQjY5QI2sxVd2sWebBNRAyP+Bvi4X09EGJN
-         7J4w6nfc4bMjzEQEknmHLDiiLbIVk9bT8OeUsvoUfcU/8NLIdnLlYWET/HYPcho7+luE
-         bpovDRVg04DJDXikqxl3MidXkiODRcuwhtOpYG9raBUgDBsU9TMR6pMIbJzZ6eUcfkqQ
-         TJpoZdM4q1+FV1ZMHMtQQJy/0QM6J3ysN47YkbI3UEZjn7+LWASVVUchz4I55JAABDYf
-         TKNix0OVuyAyl8jAqRdGycJgmnpQVeYhhqympwiruwnMhW4umF2LCpCDuN7DsmjpB656
-         steg==
-X-Gm-Message-State: ANhLgQ2/CcG3Jg26zDu0lK3P10Lj6Mm8U/ZUGOz9HaCOM1j+F1dpTZdG
-        0wst6ibzkEWB5v/Jo1pmljY=
-X-Google-Smtp-Source: ADFU+vs3yoiMYHy+aHEyVA2e2f6aaRqhgHSl816HFm9nXq+rhUBv2x3rBlfeJzF3+oI0XniuPhuGcw==
-X-Received: by 2002:a1c:e0d6:: with SMTP id x205mr9352590wmg.29.1583588931283;
-        Sat, 07 Mar 2020 05:48:51 -0800 (PST)
+        bh=r8vU221Fl1wRDhepKyfW4xhkJN/Ivc1A7S2pOvLbFIU=;
+        b=B0Fu7D1fE7uhKzxnjap5cw8D4S77EHbQkNwhAObdflkaICzZ6T3EvU7S8XXYBRBqSX
+         pcZdjzldVLP/4ZpSzvy6nXj+ofCRKSG66jiPVP+fwvJG0JtWEs7hlf6Nn2cVVdAhxH50
+         wzwwREaDJuFAWlIZZ5QWXv2MJRnNljgZ/KWq3jqLWazWauSs1juYw+JYFz4DXYABhKq0
+         4b8m0fAJmQS+s0VeXQcpOgzvJNPHC6TTCo/nkpuRKsuMyz/YkWyAGPhCOFBVVFxD7A8Y
+         qUjfn5S+vF8vONjHXXqWvlef0n7V22kw0pAlmWVP60bPpjjBsabu4crLPepwrImrFWjW
+         JDWw==
+X-Gm-Message-State: ANhLgQ254LWp4tEn+Sw5OEkOMmAmx2r+J5r3oI5jKQ6/B54WcUgkclZW
+        9kDNqpr+PIv+m8w+wqXVi0Y=
+X-Google-Smtp-Source: ADFU+vuqgLoogFvxDf8zmOIagX/6EgMcrmjZMR1lY83duVqibjH1wJOvkB2FC4KR1mQPDt79vOxiRw==
+X-Received: by 2002:a5d:5702:: with SMTP id a2mr3848479wrv.17.1583588932141;
+        Sat, 07 Mar 2020 05:48:52 -0800 (PST)
 Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id 9sm11767265wmx.32.2020.03.07.05.48.50
+        by smtp.gmail.com with ESMTPSA id 9sm11767265wmx.32.2020.03.07.05.48.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Mar 2020 05:48:50 -0800 (PST)
+        Sat, 07 Mar 2020 05:48:51 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/5] arm64: dts: rockchip: fix vqmmc-supply property name for rk3399 puma
-Date:   Sat,  7 Mar 2020 14:48:40 +0100
-Message-Id: <20200307134841.13803-4-jbx6244@gmail.com>
+Subject: [PATCH v1 5/5] arm64: dts: rockchip: replace clock-freq-min-max by max-frequency
+Date:   Sat,  7 Mar 2020 14:48:41 +0100
+Message-Id: <20200307134841.13803-5-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20200307134841.13803-1-jbx6244@gmail.com>
 References: <20200307134841.13803-1-jbx6244@gmail.com>
@@ -73,37 +73,50 @@ the immediate schema.
 
 First when we combine rockchip-dw-mshc.yaml,
 synopsys-dw-mshc-common.yaml and mmc-controller.yaml it gives
-this error:
+for example this error:
 
-arch/arm64/boot/dts/rockchip/rk3399-puma-haikou.dt.yaml: mmc@fe320000:
-'vqmmc' does not match any of the regexes:
+arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dt.yaml: mmc@fe320000:
+'clock-freq-min-max' does not match any of the regexes:
 '^.*@[0-9]+$', '^clk-phase-(legacy|sd-hs|mmc-(hs|hs[24]00|ddr52)|
 uhs-(sdr(12|25|50|104)|ddr50))$', 'pinctrl-[0-9]+'
 
-'vqmmc' is not a valid property name for mmc nodes.
-Fix this error by renaming it to 'vqmmc-supply'.
+'clock-freq-min-max' is deprecated, so replace it by 'max-frequency'.
 
 make ARCH=arm64 dtbs_check
 DT_SCHEMA_FILES=Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-index c1edca387..07694b196 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-@@ -480,7 +480,7 @@
- };
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+index d69a613fb..f2ffee639 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+@@ -555,7 +555,7 @@
  
  &sdmmc {
--	vqmmc = <&vcc_sd>;
-+	vqmmc-supply = <&vcc_sd>;
- };
- 
- &spi1 {
+ 	clock-frequency = <150000000>;
+-	clock-freq-min-max = <200000 150000000>;
++	max-frequency = <150000000>;
+ 	bus-width = <4>;
+ 	cap-mmc-highspeed;
+ 	cap-sd-highspeed;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+index b69f0f2cb..ba7c75c9f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+@@ -542,7 +542,7 @@
+ 	cap-mmc-highspeed;
+ 	cap-sd-highspeed;
+ 	clock-frequency = <100000000>;
+-	clock-freq-min-max = <100000 100000000>;
++	max-frequency = <100000000>;
+ 	cd-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+ 	disable-wp;
+ 	sd-uhs-sdr104;
 -- 
 2.11.0
 
