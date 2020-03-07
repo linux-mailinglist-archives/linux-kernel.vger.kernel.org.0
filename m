@@ -2,166 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88BB017C9B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 01:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AAC17C9DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 01:48:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgCGA2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 19:28:54 -0500
-Received: from mga11.intel.com ([192.55.52.93]:47074 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbgCGA2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 19:28:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 16:28:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,524,1574150400"; 
-   d="scan'208";a="440297238"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Mar 2020 16:28:53 -0800
-Date:   Fri, 6 Mar 2020 16:28:53 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] KVM: VMX: untangle VMXON revision_id setting when
- using eVMCS
-Message-ID: <20200307002852.GA28225@linux.intel.com>
-References: <20200306130215.150686-1-vkuznets@redhat.com>
- <20200306130215.150686-3-vkuznets@redhat.com>
- <908345f1-9bfd-004f-3ba6-0d6dce67d11e@oracle.com>
- <20200306230747.GA27868@linux.intel.com>
- <ceb19682-4374-313a-cf05-8af6cd8d6c3b@oracle.com>
+        id S1726490AbgCGAsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 19:48:37 -0500
+Received: from gateway21.websitewelcome.com ([192.185.46.113]:14411 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726231AbgCGAsh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 19:48:37 -0500
+X-Greylist: delayed 1391 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 19:48:37 EST
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 368BB40140FBD
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Mar 2020 18:25:26 -0600 (CST)
+Received: from br164.hostgator.com.br ([192.185.176.180])
+        by cmsmtp with SMTP
+        id ANHSjQxT38vkBANHSjKMAc; Fri, 06 Mar 2020 18:25:26 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Vr4PTEIUPfeCVb4sNJAre6LS7Nkwz1QQNQ1S4FDrvE4=; b=LGReLG1daaOJhM5OUM7i1ASloS
+        fklYe7+/grF0eeQtMb1b3wscEqx6BcKPMZDTKtD61xpG7DSI14z+i95ln8/U3VamF7zSP0ISB9Dl+
+        E9cuwP49jvUNi2bx6CIg6yGf7rL6Rv+lPEYo3ycQC74u3MY/QO0VdGhL2T68ccntZHVG1U9mPnpjP
+        80/HWoixgdSsnPyJFW4U2CQLcNmnLnn43nHbRZKKCdRqihFavF6ajjDb42HqVbn9EorkhrwFdGAVt
+        cMkTIaLT0fDa8PsoQrC5Ap6aVi6+2nnrHWmfmkWFWFkWGGEylRiic+IasYPFG3aUyOgJA5Av/Vt2f
+        M/U3+B6A==;
+Received: from [191.31.207.132] (port=48872 helo=castello.castello)
+        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <matheus@castello.eng.br>)
+        id 1jANHR-001YDM-Nk; Fri, 06 Mar 2020 21:25:26 -0300
+From:   Matheus Castello <matheus@castello.eng.br>
+To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        mark.rutland@arm.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v2 0/3] Add Caninos Loucos Labrador CoM and Base Board Device Tree
+Date:   Fri,  6 Mar 2020 21:24:50 -0300
+Message-Id: <20200307002453.350430-1-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200229104358.GB19610@mani>
+References: <20200229104358.GB19610@mani>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ceb19682-4374-313a-cf05-8af6cd8d6c3b@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.31.207.132
+X-Source-L: No
+X-Exim-ID: 1jANHR-001YDM-Nk
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (castello.castello) [191.31.207.132]:48872
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 1
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 03:57:25PM -0800, Krish Sadhukhan wrote:
-> 
-> On 3/6/20 3:07 PM, Sean Christopherson wrote:
-> >On Fri, Mar 06, 2020 at 02:20:13PM -0800, Krish Sadhukhan wrote:
-> >>>@@ -2599,7 +2607,7 @@ void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
-> >>>  int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
-> >>>  {
-> >>>-	loaded_vmcs->vmcs = alloc_vmcs(false);
-> >>>+	loaded_vmcs->vmcs = alloc_vmcs(VMCS_REGION);
-> >>>  	if (!loaded_vmcs->vmcs)
-> >>>  		return -ENOMEM;
-> >>>@@ -2652,25 +2660,13 @@ static __init int alloc_vmxon_regions(void)
-> >>>  	for_each_possible_cpu(cpu) {
-> >>>  		struct vmcs *vmcs;
-> >>>-		vmcs = alloc_vmcs_cpu(false, cpu, GFP_KERNEL);
-> >>>+		/* The VMXON region is really just a special type of VMCS. */
-> >>
-> >>Not sure if this is the right way to correlate the two.
-> >>
-> >>AFAIU, the SDM calls VMXON region as a memory area that holds the VMCS data
-> >>structure and it calls VMCS the data structure that is used by software to
-> >>switch between VMX root-mode and not-root-mode. So VMXON is a memory area
-> >>whereas VMCS is the structure of the data that resides in that memory area.
-> >>
-> >>So if we follow this interpretation, your enum should rather look like,
-> >>
-> >>enum vmcs_type {
-> >>+    VMCS,
-> >>+    EVMCS,
-> >>+    SHADOW_VMCS
-> >No (to the EVMCS suggestion), because this allocation needs to happen for
-> >!eVMCS.  The SDM never explictly calls the VMXON region a VMCS, but it's
-> >just being coy.  E.g. VMCLEAR doesn't fail if you point it at random
-> >memory, but point it at the VMXON region and it yells.
-> >
-> >We could call it VMXON_VMCS if that helps.
-> 
-> Are you saying,
-> 
-> + enum vmcs_type {
-> +     VMXON_REGION,
-> +     VMXON_VMCS,
-> +     SHADOW_VMCS_REGION,
-> +};
-> 
-> ?
-> 
-> In that case, "VMXON_REGION" and "VMXON_VMCS" are no different according to
-> your explanation.
+Thanks Mani for your time reviewing it.
 
-  enum vmcs_type {
-	VMXON_VMCS,
-	VMCS,
-	SHADOW_VMCS,
-  };
+Changes since v1:
+(Suggested by Manivannan Sadhasivam)
+- Sort the entries alphabetically on Makefile
+- Add title comment to the base board dts
+- Remove the dt-bindings/leds/common.h (garbage from tests, sorry about that)
+- Split the vendor-prefix and documentation in two patches
 
-alloc_vmcs_cpu() does more than just allocate the memory, it also
-initializes the data structure, e.g. "allocate and initalize a VMXON VMCS",
+Caninos Loucos Labrador is a Brazilian project of open System on Modules and
+Base Boards based on Lemaker Guitar. Is an initiative of LSI-TEC a non-profit
+organization.
 
-> >  The SDM does call the memory
-> >allocation for regular VMCSes a "VMCS region":
-> >
-> >   A logical processor associates a region in memory with each VMCS. This
-> >   region is called the VMCS region.
-> >
-> >I don't think I've ever heard anyone differentiate that two though, i.e.
-> >VMCS is used colloquially to mean both the data structure itself and the
-> >memory region containing the data structure.
-> >
-> >>>+		vmcs = alloc_vmcs_cpu(VMXON_REGION, cpu, GFP_KERNEL);
-> >>>  		if (!vmcs) {
-> >>>  			free_vmxon_regions();
-> >>>  			return -ENOMEM;
-> >>>  		}
-> >>>-		/*
-> >>>-		 * When eVMCS is enabled, alloc_vmcs_cpu() sets
-> >>>-		 * vmcs->revision_id to KVM_EVMCS_VERSION instead of
-> >>>-		 * revision_id reported by MSR_IA32_VMX_BASIC.
-> >>>-		 *
-> >>>-		 * However, even though not explicitly documented by
-> >>>-		 * TLFS, VMXArea passed as VMXON argument should
-> >>>-		 * still be marked with revision_id reported by
-> >>>-		 * physical CPU.
-> >>>-		 */
-> >>>-		if (static_branch_unlikely(&enable_evmcs))
-> >>>-			vmcs->hdr.revision_id = vmcs_config.revision_id;
-> >>>-
-> >>>  		per_cpu(vmxarea, cpu) = vmcs;
-> >>>  	}
-> >>>  	return 0;
-> >>>diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> >>>index e64da06c7009..a5eb92638ac2 100644
-> >>>--- a/arch/x86/kvm/vmx/vmx.h
-> >>>+++ b/arch/x86/kvm/vmx/vmx.h
-> >>>@@ -489,16 +489,22 @@ static inline struct pi_desc *vcpu_to_pi_desc(struct kvm_vcpu *vcpu)
-> >>>  	return &(to_vmx(vcpu)->pi_desc);
-> >>>  }
-> >>>-struct vmcs *alloc_vmcs_cpu(bool shadow, int cpu, gfp_t flags);
-> >>>+enum vmcs_type {
-> >>>+	VMXON_REGION,
-> >>>+	VMCS_REGION,
-> >>>+	SHADOW_VMCS_REGION,
-> >>>+};
-> >>>+
-> >>>+struct vmcs *alloc_vmcs_cpu(enum vmcs_type type, int cpu, gfp_t flags);
-> >>>  void free_vmcs(struct vmcs *vmcs);
-> >>>  int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs);
-> >>>  void free_loaded_vmcs(struct loaded_vmcs *loaded_vmcs);
-> >>>  void loaded_vmcs_init(struct loaded_vmcs *loaded_vmcs);
-> >>>  void loaded_vmcs_clear(struct loaded_vmcs *loaded_vmcs);
-> >>>-static inline struct vmcs *alloc_vmcs(bool shadow)
-> >>>+static inline struct vmcs *alloc_vmcs(enum vmcs_type type)
-> >>>  {
-> >>>-	return alloc_vmcs_cpu(shadow, raw_smp_processor_id(),
-> >>>+	return alloc_vmcs_cpu(type, raw_smp_processor_id(),
-> >>>  			      GFP_KERNEL_ACCOUNT);
-> >>>  }
+The Labrador CoM v2 is based on Actions Semi S500 processor with 16GB eMMC and
+2GB RAM.
+
+This series adds the initial work for device tree files and also adds the
+vendor-prefix for the Caninos program. The work was based on the Andreas FÃ¤rber
+device trees for Lemaker Guitar, thanks Andreas.
+
+Tested on my Caninos Labrador v2, only earlycon serial output is available for
+now, using the fake clock. I have already worked on something here to add the
+clocks and pinctrl nodes to owl-s500.dtsi, but I would like to first add the
+initial device tree files and then work on the other patches calmly.
+
+BR,
+Matheus Castello
+
+Matheus Castello (3):
+  dt-bindings: Add vendor prefix for Caninos Loucos
+  dt-bindings: arm: actions: Document Caninos Loucos Labrador
+  ARM: dts: Add Caninos Loucos Labrador
+
+ .../devicetree/bindings/arm/actions.yaml      |  5 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 ++
+ arch/arm/boot/dts/Makefile                    |  1 +
+ arch/arm/boot/dts/owl-s500-labrador-bb.dts    | 34 +++++++++++++++++++
+ arch/arm/boot/dts/owl-s500-labrador-v2.dtsi   | 21 ++++++++++++
+ 5 files changed, 63 insertions(+)
+ create mode 100644 arch/arm/boot/dts/owl-s500-labrador-bb.dts
+ create mode 100644 arch/arm/boot/dts/owl-s500-labrador-v2.dtsi
+
+--
+2.25.0
+
