@@ -2,174 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1802317CD21
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 10:13:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 860DE17CD34
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 10:20:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbgCGJN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 04:13:28 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:48439 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbgCGJNZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 04:13:25 -0500
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726269AbgCGJUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 04:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbgCGJUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 04:20:34 -0500
+Received: from onda.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 9B74C23EB7;
-        Sat,  7 Mar 2020 10:13:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1583572402;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=g1ACtH0H0GvtIkqKJiDBMWfJEJqdKgxNsfjSR0V/lTo=;
-        b=K6I2vz+ZcSSftmWfv2wd5BmSMENd3h5vWrQD045cBx3g1SWSSL3r5QywII6GYy9qvfzWXb
-        IYuAh6IFsVFRkw4BLqHNHkmqoHDN7nrBi5M4yin+vHSaovARmMi4iZFVmvMsXJUoiCxZxh
-        3BiWPM2qCGT0fPCIKoiPQV3o6AuXfqQ=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 2/2] arm64: dts: ls1028a: add missing LPUART nodes
-Date:   Sat,  7 Mar 2020 10:13:02 +0100
-Message-Id: <20200307091302.14881-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200307091302.14881-1-michael@walle.cc>
-References: <20200307091302.14881-1-michael@walle.cc>
+        by mail.kernel.org (Postfix) with ESMTPSA id 15BBF206D5;
+        Sat,  7 Mar 2020 09:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583572833;
+        bh=wlgpAmbKeDguIxSPBByU3V0+cqlnxN7p81t039LeKrI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QpCrE3KeN+phkLkeQDg/jY0Nx+kR1DdmieLLBfLCm4VfG3Hr4stdXmePsvoqVjK7q
+         Qv+QJoRoOqQNCsc8UQKnUqnTkRy3oadV1LNfppCBBptJm9LRtJj/iKrzF4eS7VayfV
+         2mwIK2YQR/+UNN9qcm3dqxQxsvlHlBW4ChQbQbDc=
+Date:   Sat, 7 Mar 2020 10:20:28 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH RFC 0/2] Move media uAPI and kAPI docs to a better place
+Message-ID: <20200307102028.539b7fc5@onda.lan>
+In-Reply-To: <20200306154853.7d5c3165@lwn.net>
+References: <cover.1583316037.git.mchehab+huawei@kernel.org>
+        <20200306154853.7d5c3165@lwn.net>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Spam-Level: ******
-X-Rspamd-Server: web
-X-Spam-Status: Yes, score=6.40
-X-Spam-Score: 6.40
-X-Rspamd-Queue-Id: 9B74C23EB7
-X-Spamd-Result: default: False [6.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         NEURAL_SPAM(0.00)[0.520];
-         DKIM_SIGNED(0.00)[];
-         DBL_PROHIBIT(0.00)[0.34.241.80:email,0.34.202.64:email,0.34.124.32:email,0.34.163.48:email];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A has six LPUART controllers. Add the nodes.
+Em Fri, 6 Mar 2020 15:48:53 -0700
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-This was tested on a custom board.
+> On Wed,  4 Mar 2020 11:51:01 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > This is something that you always wanted: move uAPI and kAPI to
+> > separate books.  
+> 
+> Oh goodie...Christmas is coming early this year...:)
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-changes since v1:
- - none
+:-)
 
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
+> 
+> > This RFC series start doing it for the media docs.
+> > 
+> > For now, this is just a RFC, being only an initial step for it. I'm sending
+> > it on this early stage just to rise some discussions.
+> > 
+> > This changeset basically moves:
+> > 
+> >   - the media kAPI files to be under driver-api/media;
+> >   - the media uAPI files to be under userspace-api/media.
+> > 
+> > This version keeps including both inside Documentation/media/index.rst.  
+> 
+> The moves make sense to me.  The including part I'm not so sure about.  It
+> seems kind of strange to have the structure of the rendered docs be
+> different from that of the plain-text docs; it suggests that one of the two
+> placements is wrong.
+> 
+> My own choice (as you suggest later) would be to keep the structure the
+> same in both domains, and to use cross-references to create paths where
+> they are needed.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 41c9633293fb..b152fa90cf5c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -372,6 +372,79 @@
- 			status = "disabled";
- 		};
- 
-+
-+		lpuart0: serial@2260000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2260000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 32>,
-+			       <&edma0 1 33>;
-+			status = "disabled";
-+		};
-+
-+		lpuart1: serial@2270000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2270000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 30>,
-+			       <&edma0 1 31>;
-+			status = "disabled";
-+		};
-+
-+		lpuart2: serial@2280000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2280000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 28>,
-+			       <&edma0 1 29>;
-+			status = "disabled";
-+		};
-+
-+		lpuart3: serial@2290000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x2290000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 26>,
-+			       <&edma0 1 27>;
-+			status = "disabled";
-+		};
-+
-+		lpuart4: serial@22a0000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x22a0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 24>,
-+			       <&edma0 1 25>;
-+			status = "disabled";
-+		};
-+
-+		lpuart5: serial@22b0000 {
-+			compatible = "fsl,ls1028a-lpuart";
-+			reg = <0x0 0x22b0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 1>;
-+			clock-names = "ipg";
-+			dma-names = "rx","tx";
-+			dmas = <&edma0 1 22>,
-+			       <&edma0 1 23>;
-+			status = "disabled";
-+		};
-+
- 		edma0: dma-controller@22c0000 {
- 			#dma-cells = <2>;
- 			compatible = "fsl,ls1028a-edma";
--- 
-2.20.1
+Ok. So, I would keep a Documentation/media/index.rst that will just
+have cross-references for the documentation elsewhere, right?
 
+Makes sense to me.
+
+> 
+> > The driver-specific information is messy, as each file there may contain
+> > either one or more of the following items:
+> > 
+> > 	- driver-development information;
+> > 	- on a few drivers, drivers-specific uAPI.
+> > 	- modprobe parameters;
+> > 	- List of devices supported by each driver;
+> > 
+> > The last two are probably contents for the admin-guide, but not sure
+> > where to place driver-specific development information. Does it
+> > belong to "driver-api" book too?
+> > 
+> > I guess that driver-specific uAPI could fit at the userspace-api, but I
+> > don't want them to be at the same place as the core media API stuff.
+> > 
+> > Suggestions?  
+> 
+> That is a good question.  I've wondered for a bit if we need a separate
+> hardware manual for documentation specific to a given device.  In cases
+> like this, it could perhaps consist mostly of cross-references to the
+> relevant documentation in the other manuals.  
+
+There are a large number of Kernel drivers (not only on media) that have
+"hardware manuals" inside Documentation.
+
+-
+
+Btw, I finished yesterday the split:
+
+	https://git.linuxtv.org/mchehab/experimental.git/log/?h=media-docs
+
+So, we can now see more concrete examples about how such change would
+like.
+
+I still intend to add some cross-references and toadd some extra entries at
+MAINTAINERS for the newer files and do some cleanups (on this series,
+I kept the contents pretty much untouched), but we can see already the big 
+picture.
+
+> It's hard to argue, for
+> example, that "modprobe parameters" should be somewhere other than with all
+> the other command-line parameters...
+
+Well, on media, several modprobe parameters require a long explanation, 
+as they're used to overcome some limitations of probing devices that
+don't have any BIOSes and share a common PCI ID (or USB ID) for completely
+different hardware. So, just blindly adding them at 
+Documentation/admin-guide/kernel-parameters.txt may not be the best
+(yet, we should do some efforts to place a short summary of them there,
+as I'm pretty sure that some of those aren't refleced there).
+
+One of the bad things on keeping kernel-parameters.txt as a text file
+(and having a .rst including it as a literal doc) is that we can't
+have cross-references there.
+
+-
+
+On this series, what I did with the driver information is that I placed:
+
+1) drivers release notes:
+
+	- https://git.linuxtv.org/mchehab/experimental.git/tree/Documentation/admin-guide/media?h=media-docs
+
+The stuff there are all focused on explaining users about some
+device-specific thing (supported cards, known problems, how to use drivers,
+etc).
+
+Those include modprobe parameters, and also other user-facing stuff, like
+command line examples about how to do some things. Some still include
+some (probably outdated) instructions about how to build a Kernel with
+such driver.
+
+2) Development-specific documentation:
+
+	- https://git.linuxtv.org/mchehab/experimental.git/tree/Documentation/driver-api/media/drivers?h=media-docs 
+
+A large part of that are related to things that the drivers' develpers
+seem to had figured out themselves. Only useful if someone would need
+to touch the source code. They work as some sort of  "Hardware manuals".
+
+The name "driver-api" is not really appropriate for it, as they don't
+define any API. They're pure "hardware API docs". Yet, developers
+needing such info also needs to know media kAPI. So, while not a perfect
+fit, it sounded better than placing them elsewhere.
+
+3) Driver-specific uAPI:
+
+	- https://git.linuxtv.org/mchehab/experimental.git/tree/Documentation/userspace-api/media/drivers?h=media-docs
+
+It covers extensions of the media API to cover driver-specific stuff that
+can't be generalized. This incudes some driver-specific formats, some
+extra controls to control some hardware-specific parameters and meta-data
+streaming (used by some image-enhancing algorithms for cellphone cameras).
+
+Btw, I'm very happy on having a separate session with all driver-specific
+APIs. As a maintainer, now I have a centralized place at the docs where I
+can see all device-specific userpace APIs, with is a good thing.
+
+Yet, for someone developing an application to work with some of those hardware
+it may now need to read on two separate places.
+
+For example, see the IMX driver documentation split:
+
+	https://git.linuxtv.org/mchehab/experimental.git/commit/?h=media-docs&id=da5a18aa27c564cdb4fa6f84026be1c72c1a877c
+
+Anyone working with such driver will need to be able to setup the hardware
+pipelines, via the standard media controller API. This is done using
+existing applications. So, the command line instructions and pipeline
+examples are at the driver's release notes:
+
+	https://git.linuxtv.org/mchehab/experimental.git/tree/Documentation/admin-guide/media/imx.rst?h=media-docs
+
+Also, to fully control the hardware, the userspace application will
+need to implement support for some device-specific controls and receive some
+events. This is covered at:
+
+	https://git.linuxtv.org/mchehab/experimental.git/tree/Documentation/userspace-api/media/drivers/imx-uapi.rst?h=media-docs
+
+On this specific split[1], I added cross-references at the admin-guide to the
+API documentation. Not sure if this is enough or if we would need more things
+to cross-reference the docs that got split.
+
+[1] I should do something similar to it with the other split documents.
+
+Comments?
+
+Regards,
+Mauro
