@@ -2,141 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9242417CAAB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 03:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FAF17CAEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 03:30:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgCGCMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Mar 2020 21:12:01 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2142 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbgCGCMB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Mar 2020 21:12:01 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e6302c50001>; Fri, 06 Mar 2020 18:11:18 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 06 Mar 2020 18:12:00 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 06 Mar 2020 18:12:00 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 7 Mar
- 2020 02:11:59 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sat, 7 Mar 2020 02:11:59 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e6302ef0000>; Fri, 06 Mar 2020 18:11:59 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Matthew Wilcox <willy@infradead.org>, <linux-doc@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH] mm/gup: fixup for ce35133be382 mm/gup: track FOLL_PIN pages
-Date:   Fri, 6 Mar 2020 18:11:57 -0800
-Message-ID: <20200307021157.235726-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1583547078; bh=iLW9L2KGSEmZt4RMbKRU9iH7ArJGdygY6FFfahuV/tQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
-         Content-Type;
-        b=ADvKaVVX6pXY8WUtRIsve54FkosMGm3HbHmXkN7J3MO7EqMeVD1eqfL4Xk4Uh4Pgl
-         RerHhHE24nq0mK2MEiC2Znu1sTxa8ZOv3xR9r1xj88KiHvtELgAUiLfKtfsxN0OySV
-         EtyPkb5UJOxQ5novejG+pBg61Uvmli8uUYiRhjjrlGPbo2QI0TTXkMZtwjzKmJcm6Z
-         s/6uRS1Yuo7AksZjDpzJJI/r2MaYVIJBnXDnWWDhQGOau6FYaxyQtOeOKC/m4Aiytt
-         fycklPSUQDfpMcO6LA2Aac2qxAveVZY/TutWbesqSrnUR0qWFwXtKqSTDLOHTJlRXW
-         OmrHPv/APW6qQ==
+        id S1726781AbgCGC3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Mar 2020 21:29:41 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:37174 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726397AbgCGC3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Mar 2020 21:29:17 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0947A1A0E38;
+        Sat,  7 Mar 2020 03:29:15 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A3E6B1A1975;
+        Sat,  7 Mar 2020 03:28:10 +0100 (CET)
+Received: from titan.ap.freescale.net (titan.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 434F840294;
+        Sat,  7 Mar 2020 10:27:59 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     Zhiqiang.Hou@nxp.com, Minghuan.Lian@nxp.com, mingkai.hu@nxp.com,
+        bhelgaas@google.com, robh+dt@kernel.org, shawnguo@kernel.org,
+        leoyang.li@nxp.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
+        roy.zang@nxp.com, amurray@thegoodpenguin.co.uk,
+        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCH v4 00/11] Add the multiple PF support for DWC and Layerscape
+Date:   Sat,  7 Mar 2020 10:14:19 +0800
+Message-Id: <20200307021430.36826-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a fixup for the mmotm commit ce35133be382
-("mm/gup: track FOLL_PIN pages").
+Add the PCIe EP multiple PF support for DWC and Layerscape, add
+the doorbell MSIX function for DWC, use list to manage the PF of
+one PCIe controller, and refactor the Layerscape EP driver due to
+some platforms difference.
 
-Add kerneldoc comments for pin_user_pages*() routines, in order
-to get rid of "make -W1" warnings when building mm/gup.o.
+Xiaowei Bao (11):
+  PCI: designware-ep: Add multiple PFs support for DWC
+  PCI: designware-ep: Add the doorbell mode of MSI-X in EP mode
+  PCI: designware-ep: Move the function of getting MSI capability
+    forward
+  PCI: designware-ep: Modify MSI and MSIX CAP way of finding
+  dt-bindings: pci: layerscape-pci: Add compatible strings for ls1088a
+    and ls2088a
+  PCI: layerscape: Fix some format issue of the code
+  PCI: layerscape: Modify the way of getting capability with different
+    PEX
+  PCI: layerscape: Modify the MSIX to the doorbell mode
+  PCI: layerscape: Add EP mode support for ls1088a and ls2088a
+  arm64: dts: layerscape: Add PCIe EP node for ls1088a
+  misc: pci_endpoint_test: Add LS1088a in pci_device_id table
 
-This just adds @param documentation of:
-    pin_user_pages()
-    pin_user_pages_fast()
-    pin_user_pages_remote()
+ .../devicetree/bindings/pci/layerscape-pci.txt     |   2 +
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi     |  31 +++
+ drivers/misc/pci_endpoint_test.c                   |   2 +
+ drivers/pci/controller/dwc/pci-layerscape-ep.c     | 100 ++++++--
+ drivers/pci/controller/dwc/pcie-designware-ep.c    | 255 +++++++++++++++++----
+ drivers/pci/controller/dwc/pcie-designware.c       |  59 +++--
+ drivers/pci/controller/dwc/pcie-designware.h       |  48 +++-
+ 7 files changed, 404 insertions(+), 93 deletions(-)
 
-The param documentation was stolen from other gup.c functions,
-because it looks reasonable enough.
-
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- mm/gup.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/mm/gup.c b/mm/gup.c
-index f589299b0d4a..54af3b290cb0 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2766,6 +2766,12 @@ EXPORT_SYMBOL_GPL(get_user_pages_fast);
- /**
-  * pin_user_pages_fast() - pin user pages in memory without taking locks
-  *
-+ * @start:      starting user address
-+ * @nr_pages:   number of pages from start to pin
-+ * @gup_flags:  flags modifying pin behaviour
-+ * @pages:      array that receives pointers to the pages pinned.
-+ *              Should be at least nr_pages long.
-+ *
-  * Nearly the same as get_user_pages_fast(), except that FOLL_PIN is set. =
-See
-  * get_user_pages_fast() for documentation on the function arguments, beca=
-use
-  * the arguments here are identical.
-@@ -2791,6 +2797,21 @@ EXPORT_SYMBOL_GPL(pin_user_pages_fast);
- /**
-  * pin_user_pages_remote() - pin pages of a remote process (task !=3D curr=
-ent)
-  *
-+ * @tsk:	the task_struct to use for page fault accounting, or
-+ *		NULL if faults are not to be recorded.
-+ * @mm:		mm_struct of target mm
-+ * @start:	starting user address
-+ * @nr_pages:	number of pages from start to pin
-+ * @gup_flags:	flags modifying lookup behaviour
-+ * @pages:	array that receives pointers to the pages pinned.
-+ *		Should be at least nr_pages long. Or NULL, if caller
-+ *		only intends to ensure the pages are faulted in.
-+ * @vmas:	array of pointers to vmas corresponding to each page.
-+ *		Or NULL if the caller does not require them.
-+ * @locked:	pointer to lock flag indicating whether lock is held and
-+ *		subsequently whether VM_FAULT_RETRY functionality can be
-+ *		utilised. Lock must initially be held.
-+ *
-  * Nearly the same as get_user_pages_remote(), except that FOLL_PIN is set=
-. See
-  * get_user_pages_remote() for documentation on the function arguments, be=
-cause
-  * the arguments here are identical.
-@@ -2819,6 +2840,15 @@ EXPORT_SYMBOL(pin_user_pages_remote);
- /**
-  * pin_user_pages() - pin user pages in memory for use by other devices
-  *
-+ * @start:	starting user address
-+ * @nr_pages:	number of pages from start to pin
-+ * @gup_flags:	flags modifying lookup behaviour
-+ * @pages:	array that receives pointers to the pages pinned.
-+ *		Should be at least nr_pages long. Or NULL, if caller
-+ *		only intends to ensure the pages are faulted in.
-+ * @vmas:	array of pointers to vmas corresponding to each page.
-+ *		Or NULL if the caller does not require them.
-+ *
-  * Nearly the same as get_user_pages(), except that FOLL_TOUCH is not set,=
- and
-  * FOLL_PIN is set.
-  *
---=20
-2.25.1
+-- 
+2.9.5
 
