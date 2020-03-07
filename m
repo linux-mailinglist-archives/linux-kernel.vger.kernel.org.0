@@ -2,173 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971D817CE09
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 13:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB8017CE1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Mar 2020 13:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbgCGMPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 07:15:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726073AbgCGMPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 07:15:15 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E390206D5;
-        Sat,  7 Mar 2020 12:15:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583583315;
-        bh=swjbPZsjwyYGkWKjMPGgDWT6H3gVa79oH1QNna5nIeg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Nj8SOrgy83YvxzIuzf9bGlm4QJ29ZdTP6slxRV/8dpTrFb6LNhIY4507njJj11Rha
-         WRY3DMHKcpvTUEtDz2CG/twz9ZOUKJradAduEp3Ty3mokU9oOUOzUN2cUV48JLkgT6
-         8zyOa4E+XWclBBGEXQGNNoyf+VL+BheB3gmoSQFg=
-Date:   Sat, 7 Mar 2020 12:15:10 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Tachici <alexandru.tachici@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/6] iio: accel: adxl372: add sysfs for time
- registers
-Message-ID: <20200307121510.01ebdd93@archlinux>
-In-Reply-To: <20200225120909.12629-3-alexandru.tachici@analog.com>
-References: <20200225120909.12629-1-alexandru.tachici@analog.com>
-        <20200225120909.12629-3-alexandru.tachici@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726225AbgCGMTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 07:19:52 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43862 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbgCGMTw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Mar 2020 07:19:52 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f8so1993180plt.10
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 04:19:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=7HTOMwbPMcXloRDeNOrjg29anvI1D5Ir6u53RoLLmao=;
+        b=ZV4GpNUc7L1doStfoNEEAW079Tyu7T0mLT4PccpWnfPulf4p/It9ziyGjRrln/9RFq
+         PEkE/gmLPcRYgumxOavM0srswnTpVafviYYztUhybkayCMZq7dtPwG/xMg35/BHcYEeE
+         T6ZljD5Gf6IdcR2RgBECrm1tgimeVkLMnTEkSLRSgGtdqd1mdL4M7Qcr1uaPpyD/D8vC
+         NMMlBvhSeVEkQG0nL2kRKXI5VrwX88NHyJ3wQLGLr1ajQWqFAoP8Lg0ov0E8fXnbcS1m
+         KsVoXDG2/vXppAf9OMDF8gLmzzl3nDglV7Na+GgBgK5Itdu9C6IQz7Wui5Dudy8xdpX5
+         3Osw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=7HTOMwbPMcXloRDeNOrjg29anvI1D5Ir6u53RoLLmao=;
+        b=O7pg7Gl0wnDmSVGYd1YWSg5OfI8mMO2LELrq7rYUdkNaYFhNkdgRof27WuxscSUzr0
+         oAtqVLdUK0nLwiKsm4k0LZgZF1fsbaTdMBtUu+LoCUdyhs9X5jwJU5coakdxtUV6SAaM
+         GxI6YKBq98aZOTgBVkxryNTm3eDhyDSeidPtVpjQMN8ZgSXDUCrJZzIq0J2xXdDpWs5G
+         ZDblN8M73mVT0Jz8qVmxSZtHOFWb0bfYcF2e/ZH02M7V7peJ/229F9t3KeIll2pw9eXi
+         T65kH9SwhE7zLAVf7V0CvF6LY++A0t3HM0kgNZt0yAPwm3tifw2BsXatGshmMW+ja/q0
+         RDZQ==
+X-Gm-Message-State: ANhLgQ1muQTZh87L426hFg/eM0B030ViFRelp8wU6G60d0Kcud1PM5Y/
+        ozrp8ObCLKhIse4Pl8QKqZEFJxpUAmwIesEZxxY=
+X-Google-Smtp-Source: ADFU+vvf61lkz96mkwgymtOGZKc8GeSpZ1FkCOrrT3Rhj8JC9vNvg4dkucinCz9ZK+sqpPR7sEDo5zxEiRdcVRl4lns=
+X-Received: by 2002:a17:902:b113:: with SMTP id q19mr7366514plr.199.1583583590872;
+ Sat, 07 Mar 2020 04:19:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Reply-To: bashamzebdani@gmail.com
+Received: by 2002:a17:90a:6c97:0:0:0:0 with HTTP; Sat, 7 Mar 2020 04:19:49
+ -0800 (PST)
+From:   "Mr.Basham Zebdani" <bashamzebdani@gmail.com>
+Date:   Sat, 7 Mar 2020 04:19:49 -0800
+X-Google-Sender-Auth: zvBJFVv-gIeUd0jBeP8Er41VcOI
+Message-ID: <CADQawC1bBSKG71cFj0zOaG0u_zp6egexDp9JFei4sEVhQFM8dA@mail.gmail.com>
+Subject: Attention:My Dear Friend.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Feb 2020 14:09:05 +0200
-Alexandru Tachici <alexandru.tachici@analog.com> wrote:
+Attention:My Dear Friend.
 
-> Currently the driver configures adxl372 to work in loop mode.
-> The inactivity and activity timings  decide how fast the chip
-> will loop through the awake and waiting states.
-> 
-> This patch adds standard events sysfs entries for the inactivity
-> and activity timings: thresh_falling_period/thresh_rising_period.
-> 
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
-I think this is a rare occasion where combining a couple of patches would
-have made it easier to see the whole scope of the 'event' side of things.
+I=E2=80=99m sorry but happy to inform you about my success in getting those
+funds transfer under the cooperation of a new partner from India,
+though I tried my best to involve you in the business but God decided
+the whole situations.
 
-Reality is that we need to configure enable / threshold  and period for
-this to make any sense, so I'd put them all in one patch.
+Presently I=E2=80=99m in India for investment projects with my own share of
+the total sum; I decided to load your compensation fund of US1.860 000.
+one million eight hundred and sixty thoundsand dollars in an atm
+payment card and register it with Sonapost Courier Company here in
+Burkina Faso with
+registration code of (Shipment Code awb33xzs)
 
-(noting that enable doesn't seem to exist currently..)
+Please Contact the delivery manager of Sonapost Courier Company
+through his email address for more update on how to receive your
+compensation fund on ATM PAYMENT VISA CARD,
 
-For the enable, we will definitely want to be able to turn these off.
-Not all users are going to open the even interface as they may not care
-what state we are in, just about the data that they get from the fifo.
+Contact them with the reconfirmation of your information below,
 
-Jonathan
+1. Your full names.
+2. Your full contact address/country
+3. Your mobile or office phone numbers
+SONAPOST EMAIL ADDRESS BELOW
 
-> ---
->  drivers/iio/accel/adxl372.c | 68 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
-> 
-> diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
-> index ed93534f8dba..5da3c924c62d 100644
-> --- a/drivers/iio/accel/adxl372.c
-> +++ b/drivers/iio/accel/adxl372.c
-> @@ -222,6 +222,18 @@ static const struct adxl372_axis_lookup adxl372_axis_lookup_table[] = {
->  	{ BIT(0) | BIT(1) | BIT(2), ADXL372_XYZ_FIFO },
->  };
->  
-> +static const struct iio_event_spec adxl372_events[] = {
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_RISING,
-> +		.mask_shared_by_all = BIT(IIO_EV_INFO_PERIOD),
-> +	}, {
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_FALLING,
-> +		.mask_shared_by_all = BIT(IIO_EV_INFO_PERIOD),
-> +	},
-> +};
-> +
->  #define ADXL372_ACCEL_CHANNEL(index, reg, axis) {			\
->  	.type = IIO_ACCEL,						\
->  	.address = reg,							\
-> @@ -238,6 +250,8 @@ static const struct adxl372_axis_lookup adxl372_axis_lookup_table[] = {
->  		.storagebits = 16,					\
->  		.shift = 4,						\
->  	},								\
-> +	.event_spec = adxl372_events,					\
-> +	.num_event_specs = 2						\
->  }
->  
->  static const struct iio_chan_spec adxl372_channels[] = {
-> @@ -723,6 +737,58 @@ static int adxl372_write_raw(struct iio_dev *indio_dev,
->  	}
->  }
->  
-> +int adxl372_read_event_value(struct iio_dev *indio_dev,
-> +			     const struct iio_chan_spec *chan,
-> +			     enum iio_event_type type,
-> +			     enum iio_event_direction dir,
-> +			     enum iio_event_info info, int *val, int *val2)
-> +{
-> +	struct adxl372_state *st = iio_priv(indio_dev);
-> +
-> +	switch (info) {
-> +	case IIO_EV_INFO_PERIOD:
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			*val = st->act_time_ms;
-> +			*val2 = 1000;
-> +			return IIO_VAL_FRACTIONAL;
-> +		case IIO_EV_DIR_FALLING:
-> +			*val = st->inact_time_ms;
-> +			*val2 = 1000;
-> +			return IIO_VAL_FRACTIONAL;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +int adxl372_write_event_value(struct iio_dev *indio_dev,
-> +			      const struct iio_chan_spec *chan,
-> +			      enum iio_event_type type,
-> +			      enum iio_event_direction dir,
-> +			      enum iio_event_info info, int val, int val2)
-> +{
-> +	struct adxl372_state *st = iio_priv(indio_dev);
-> +	unsigned int val_ms;
-> +
-> +	switch (info) {
-> +	case IIO_EV_INFO_PERIOD:
-> +		val_ms = val * 1000 + DIV_ROUND_UP(val2, 1000);
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			return adxl372_set_activity_time_ms(st, val_ms);
-> +		case IIO_EV_DIR_FALLING:
-> +			return adxl372_set_inactivity_time_ms(st, val_ms);
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static ssize_t adxl372_peak_fifo_en_get(struct device *dev,
->  					struct device_attribute *attr,
->  					char *buf)
-> @@ -952,6 +1018,8 @@ static const struct iio_info adxl372_info = {
->  	.attrs = &adxl372_attrs_group,
->  	.read_raw = adxl372_read_raw,
->  	.write_raw = adxl372_write_raw,
-> +	.read_event_value = adxl372_read_event_value,
-> +	.write_event_value = adxl372_write_event_value,
->  	.debugfs_reg_access = &adxl372_reg_access,
->  	.hwfifo_set_watermark = adxl372_set_watermark,
->  };
+**************************************************************
 
+Name of the Director.
+Mr. Salam Ander
+of Sonapost Courier Company
+EMAIL ADDRESS BELOW:
+andermrsalam@gmail.com
+
+Best Regards
+Mr.Basham Zebdan
