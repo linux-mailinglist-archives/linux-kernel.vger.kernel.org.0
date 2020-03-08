@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 554C417D70C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B10E217D722
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:26:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbgCHXY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:24:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57353 "EHLO
+        id S1727300AbgCHXZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:25:25 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57288 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbgCHXYP (ORCPT
+        with ESMTP id S1726824AbgCHXYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:24:15 -0400
+        Sun, 8 Mar 2020 19:24:04 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Gs-000389-EL; Mon, 09 Mar 2020 00:23:47 +0100
+        id 1jB5Gq-00038U-4v; Mon, 09 Mar 2020 00:23:44 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 8D527104097;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id C2B61104099;
         Mon,  9 Mar 2020 00:23:35 +0100 (CET)
-Message-Id: <20200308231718.634477991@linutronix.de>
+Message-Id: <20200308231718.730313428@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 09 Mar 2020 00:14:12 +0100
+Date:   Mon, 09 Mar 2020 00:14:13 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -31,7 +31,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [patch part-III V2 02/23] x86/entry/64: Avoid pointless code when CONTEXT_TRACKING=n
+Subject: [patch part-III V2 03/23] x86/entry/64: Reorder idtentries
 References: <20200308231410.905396057@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-GAS cannot optimize out the test and conditional jump when context tracking
-is disabled and CALL_enter_from_user_mode is an empty macro.
-
-Wrap it in #ifdeffery. Will go away once all this is moved to C.
+Move them all together so verifying the cleanup patches for binary
+equivalence will be easier.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
 Acked-by: Andy Lutomirski <luto@kernel.org>
 
 ---
- arch/x86/entry/entry_64.S |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/entry/entry_64.S |   42 +++++++++++++++++++-----------------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
 
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -884,12 +884,14 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
- 	TRACE_IRQS_OFF
- 	.endif
+@@ -1019,18 +1019,36 @@ SYM_CODE_END(\sym)
  
-+#ifdef CONFIG_CONTEXT_TRACKING
- 	.if \paranoid == 0
- 	testb	$3, CS(%rsp)
- 	jz	.Lfrom_kernel_no_context_tracking_\@
- 	CALL_enter_from_user_mode
- .Lfrom_kernel_no_context_tracking_\@:
- 	.endif
+ idtentry divide_error			do_divide_error			has_error_code=0
+ idtentry overflow			do_overflow			has_error_code=0
++idtentry int3				do_int3				has_error_code=0	create_gap=1
+ idtentry bounds				do_bounds			has_error_code=0
+ idtentry invalid_op			do_invalid_op			has_error_code=0
+ idtentry device_not_available		do_device_not_available		has_error_code=0
+-idtentry double_fault			do_double_fault			has_error_code=1 paranoid=2 read_cr2=1
+ idtentry coprocessor_segment_overrun	do_coprocessor_segment_overrun	has_error_code=0
+ idtentry invalid_TSS			do_invalid_TSS			has_error_code=1
+ idtentry segment_not_present		do_segment_not_present		has_error_code=1
++idtentry stack_segment			do_stack_segment		has_error_code=1
++idtentry general_protection		do_general_protection		has_error_code=1
+ idtentry spurious_interrupt_bug		do_spurious_interrupt_bug	has_error_code=0
+ idtentry coprocessor_error		do_coprocessor_error		has_error_code=0
+ idtentry alignment_check		do_alignment_check		has_error_code=1
+ idtentry simd_coprocessor_error		do_simd_coprocessor_error	has_error_code=0
+ 
++idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
++#ifdef CONFIG_KVM_GUEST
++idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
++#endif
++
++#ifdef CONFIG_X86_MCE
++idtentry machine_check		do_mce			has_error_code=0 paranoid=1
++#endif
++idtentry debug			do_debug		has_error_code=0 paranoid=1 shift_ist=IST_INDEX_DB ist_offset=DB_STACK_OFFSET
++idtentry double_fault		do_double_fault		has_error_code=1 paranoid=2 read_cr2=1
++
++#ifdef CONFIG_XEN_PV
++idtentry hypervisor_callback	xen_do_hypervisor_callback	has_error_code=0
++idtentry xennmi			do_nmi				has_error_code=0
++idtentry xendebug		do_debug			has_error_code=0
 +#endif
  
- 	movq	%rsp, %rdi			/* pt_regs pointer */
+ 	/*
+ 	 * Reload gs selector with exception handling
+@@ -1082,8 +1100,6 @@ SYM_FUNC_START(do_softirq_own_stack)
+ SYM_FUNC_END(do_softirq_own_stack)
  
+ #ifdef CONFIG_XEN_PV
+-idtentry hypervisor_callback xen_do_hypervisor_callback has_error_code=0
+-
+ /*
+  * A note on the "critical region" in our callback handler.
+  * We want to avoid stacking callback handlers due to events occurring
+@@ -1186,26 +1202,6 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTO
+ 	acrn_hv_callback_vector acrn_hv_vector_handler
+ #endif
+ 
+-idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=IST_INDEX_DB ist_offset=DB_STACK_OFFSET
+-idtentry int3			do_int3			has_error_code=0	create_gap=1
+-idtentry stack_segment		do_stack_segment	has_error_code=1
+-
+-#ifdef CONFIG_XEN_PV
+-idtentry xennmi			do_nmi			has_error_code=0
+-idtentry xendebug		do_debug		has_error_code=0
+-#endif
+-
+-idtentry general_protection	do_general_protection	has_error_code=1
+-idtentry page_fault		do_page_fault		has_error_code=1	read_cr2=1
+-
+-#ifdef CONFIG_KVM_GUEST
+-idtentry async_page_fault	do_async_page_fault	has_error_code=1	read_cr2=1
+-#endif
+-
+-#ifdef CONFIG_X86_MCE
+-idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+-#endif
+-
+ /*
+  * Save all registers in pt_regs, and switch gs if needed.
+  * Use slow, but surefire "are we in kernel?" check.
 
