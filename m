@@ -2,52 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A8717D43D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 15:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C337317D445
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 15:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgCHOkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 10:40:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56700 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbgCHOkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 10:40:14 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jAx6A-0006jN-Ha; Sun, 08 Mar 2020 15:40:10 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 0A492104096; Sun,  8 Mar 2020 15:40:08 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Marc Zyngier <maz@kernel.org>,
-        luanshi <zhangliguang@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqdomain: Fix function documentation of __irq_domain_alloc_fwnode
-In-Reply-To: <20200308135610.379db6da@why>
-References: <1583200125-58806-1-git-send-email-zhangliguang@linux.alibaba.com> <20200308135610.379db6da@why>
-Date:   Sun, 08 Mar 2020 15:40:08 +0100
-Message-ID: <87o8t69agn.fsf@nanos.tec.linutronix.de>
+        id S1726402AbgCHOzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 10:55:44 -0400
+Received: from v6.sk ([167.172.42.174]:33968 "EHLO v6.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbgCHOzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 10:55:43 -0400
+X-Greylist: delayed 574 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 10:55:43 EDT
+Received: from localhost (v6.sk [IPv6:::1])
+        by v6.sk (Postfix) with ESMTP id 45EF260FFA;
+        Sun,  8 Mar 2020 14:46:08 +0000 (UTC)
+Date:   Sun, 8 Mar 2020 15:46:04 +0100
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 0/2] irqchip/mmp: A pair of robustness fixed
+Message-ID: <20200308143814.GA150394@furthur.local>
+References: <20200219080024.4002-1-lkundrak@v3.sk>
+ <20200308140434.18b0f947@why>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200308140434.18b0f947@why>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc Zyngier <maz@kernel.org> writes:
+On Sun, Mar 08, 2020 at 02:04:34PM +0000, Marc Zyngier wrote:
+> On Wed, 19 Feb 2020 09:00:22 +0100
+> Lubomir Rintel <lkundrak@v3.sk> wrote:
+> 
+> [+RobH]
+> 
+> Lubomir,
+> 
+> > Hi,
+> > 
+> > please consider applying these two patches. Thery are not strictly
+> > necessary, but improve diagnostics in case the DT is faulty.
+> 
+> Can't we instead make sure our DT infrastructure checks for these? I'm
+> very reluctant to add more "DT validation" to the kernel, as it feels
+> like the wrong place to do this.
 
-> On Tue,  3 Mar 2020 09:48:45 +0800
-> luanshi <zhangliguang@linux.alibaba.com> wrote:
->
->> The function got renamed at some point, but the kernel-doc was not
->> updated.
->> 
->> Signed-off-by: luanshi <zhangliguang@linux.alibaba.com>
->
-> Queued for 5.7.
+These are not really problems of the DT infrastructure. It's that the
+driver has some constrains resulting from use of global data ([PATCH 1])
+and statically sized arrays ([PATCH 2]) without enforcing them.
 
-It's already in tip. You got a tip-bot mail telling you :)
+It's probably easier to mess up DT than to mess up board files, but
+regardless of that, being a little defensive and checking the bounds of
+arrays is probably a good programming practice anyways.
+
+Thank you
+Lubo
