@@ -2,128 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D958117D480
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC2C17D473
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbgCHPkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 11:40:14 -0400
-Received: from canardo.mork.no ([148.122.252.1]:58085 "EHLO canardo.mork.no"
+        id S1726346AbgCHPdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 11:33:50 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:58108 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbgCHPkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 11:40:14 -0400
-X-Greylist: delayed 824 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 11:40:13 EDT
-Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
-        (authenticated bits=0)
-        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id 028FQM2j015815
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 8 Mar 2020 16:26:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-        t=1583681182; bh=ScndAKvQHtkoAKJHKcvCgojYNjZdn3MZ2jAOKVkeCi8=;
-        h=From:To:Cc:Subject:References:Date:Message-ID:From;
-        b=DAa3yPISwfc5HFbHxC4Eqrr99/KfNjwMIpo46lz5BuhenW6xjgocpIO6VT8ZQVpGk
-         eIzuHguRgLLTVA7sHrWpgaKgTccjU5C1ad+b3pGQs6G5D5I1vlainOvt+g0fThSEkM
-         azEPJVSsnNKZu7GwEMoSCCiLJKbn5hidZQjuBcxg=
-Received: from bjorn by miraculix.mork.no with local (Exim 4.92)
-        (envelope-from <bjorn@mork.no>)
-        id 1jAxor-0000VM-QV; Sun, 08 Mar 2020 16:26:21 +0100
-From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To:     Paul Gildea <paul.gildea@gmail.com>
-Cc:     "davem\@davemloft.net" <davem@davemloft.net>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: qmi_wwan: Fix for packets being rejected in the ring buffer used by the xHCI controller.
-Organization: m
-References: <CA+4pmEueEiz0Act8X6t4y3+4LOaOh_-ZfzScH0CbOKT99x91NA@mail.gmail.com>
-Date:   Sun, 08 Mar 2020 16:26:21 +0100
-In-Reply-To: <CA+4pmEueEiz0Act8X6t4y3+4LOaOh_-ZfzScH0CbOKT99x91NA@mail.gmail.com>
-        (Paul Gildea's message of "Wed, 4 Mar 2020 14:20:28 +0000")
-Message-ID: <87wo7una02.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.102.1 at canardo
-X-Virus-Status: Clean
+        id S1726271AbgCHPdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 11:33:50 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 543A6200A42;
+        Sun,  8 Mar 2020 16:33:48 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3EE982013C5;
+        Sun,  8 Mar 2020 16:33:41 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 976C440294;
+        Sun,  8 Mar 2020 23:33:32 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/3] dt-bindings: thermal: imx8mm-thermal: Add support for i.MX8MP
+Date:   Sun,  8 Mar 2020 23:27:18 +0800
+Message-Id: <1583681240-14782-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paul Gildea <paul.gildea@gmail.com> writes:
+Add thermal binding doc for Freescale's i.MX8MP Thermal Monitoring Unit.
 
-> When MTU of modem is set to less than 1500 and a packet larger than MTU
-> arrives in Linux from a modem, it is discarded with -EOVERFLOW error
-> (Babble error). This is seen on USB3.0 and USB2.0 busses. This is
-> essentially because the MRU (Max Receive Size) is not a separate entity to
-> the MTU (Max Transmit Size) and the received packets can be larger than
-> those transmitted. Following the babble error there were an endless supply
-> of zero-length URBs which are rejected with -EPROTO (increasing the rx
-> input error counter each time). This is only seen on USB3.0. These contin=
-ue
-> to come ad infinitum until the modem is shutdown, rendering the modem
-> unusable. There is a bug in the core USB handling code in Linux that
-> doesn't deal well with network MTUs smaller than 1500 bytes. By default t=
-he
-> dev->hard_mtu (the "real" MTU) is in lockstep with dev->rx_urb_size
-> (essentially an MRU), and it's the latter that is causing trouble. This h=
-as
-> nothing to do with the modems; the issue can be reproduced by getting a
-> USB-Ethernet dongle, setting the MTU to 1430, and pinging with size great=
-er
-> than 1406.
->
-> Signed-off-by: Paul Gildea <Paul.Gildea@gmail.com>
-> ---
-> drivers/net/usb/qmi_wwan.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-> index 5754bb6..545c772 100644
-> --- a/drivers/net/usb/qmi_wwan.c
-> +++ b/drivers/net/usb/qmi_wwan.c
-> @@ -815,6 +815,13 @@ static int qmi_wwan_bind(struct usbnet *dev, struct
-> usb_interface *intf)
->     }
->     dev->net->netdev_ops =3D &qmi_wwan_netdev_ops;
->     dev->net->sysfs_groups[0] =3D &qmi_wwan_sysfs_attr_group;
-> +    /* LTE Networks don't always respect their own MTU on receive side;
-> +    * e.g. AT&T pushes 1430 MTU but still allows 1500 byte packets from
-> +    * far-end network. Make receive buffer large enough to accommodate
-> +    * them, and add four bytes so MTU does not equal MRU on network
-> +    * with 1500 MTU otherwise usbnet_change_mtu() will change both.
-> +    */
-> +   dev->rx_urb_size =3D ETH_DATA_LEN + 4;
->  err:
->     return status;
->  }
-> --
-> 1.9.1
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt b/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt
+index d09ae82..3629d3c 100644
+--- a/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/imx8mm-thermal.txt
+@@ -1,10 +1,10 @@
+ * Thermal Monitoring Unit (TMU) on Freescale i.MX8MM SoC
+ 
+ Required properties:
+-- compatible : Must be "fsl,imx8mm-tmu".
++- compatible : Must be "fsl,imx8mm-tmu" or "fsl,imx8mp-tmu".
+ - reg : Address range of TMU registers.
+ - clocks : TMU's clock source.
+-- #thermal-sensor-cells : Should be 0. See ./thermal.txt for a description.
++- #thermal-sensor-cells : Should be 0 or 1. See ./thermal.txt for a description.
+ 
+ Example:
+ tmu: tmu@30260000 {
+-- 
+2.7.4
 
-This is fine as a first step towards saner buffer handling in qmi_wwan.
-If real world devices use asymmetric MTUs, then we should just deal with
-that.
-
-So I was going to add my ack.  But the patch does not apply:
-
-
- bjorn@miraculix:/usr/local/src/git/linux$ git am /tmp/l
- Applying: net: usb: qmi_wwan: Fix for packets being rejected in the ring b=
-uffer used by the xHCI controller.
- error: corrupt patch at line 10
-
-and checkpatch says why:
-
- bjorn@miraculix:/usr/local/src/git/linux$ scripts/checkpatch.pl /tmp/l
- ERROR: patch seems to be corrupt (line wrapped?)
- #34: FILE: drivers/net/usb/qmi_wwan.c:814:
- usb_interface *intf)
-
-
-Could you fix up and resend? You might have to use a different email
-client.  See
-https://www.kernel.org/doc/html/latest/process/email-clients.html#email-cli=
-ents
-
-
-Bj=C3=B8rn
