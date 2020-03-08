@@ -2,76 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43A5917D444
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 15:57:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B8D17D446
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 15:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgCHOyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 10:54:36 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:35920 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbgCHOyf (ORCPT
+        id S1726368AbgCHO5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 10:57:01 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41496 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbgCHO5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 10:54:35 -0400
-Received: by mail-il1-f195.google.com with SMTP id b17so6393210iln.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 07:54:35 -0700 (PDT)
+        Sun, 8 Mar 2020 10:57:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v4so7908795wrs.8;
+        Sun, 08 Mar 2020 07:56:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=mfT1xq5uSMlc8Zc1INJ6fV3EAAi551FP5BskvvH5WrI=;
-        b=ICo1odl3nJYAq+fCV0jZBuIs34ez2cymnIWSyRCfBALeNeuEcHowAzWEzkhsy1VLqc
-         NKdVAdqhb9rs+T9poWFPvqClVoO2ird4LF6J68Ce+kLBpnJx8jcKM5YXmydlraJrVMm4
-         HQZ6+92jMLxz8+w98j/RYYeobVIfFH1qbLk1dahj/trY8xD5XmGbECyBr65RRokwOvqk
-         6BPJ0rprkwksqDMV5bdUbFyFSzGYZaLge8F32su1wWvp9IauPWFSf1QW2Fg7O+9D8vxc
-         fKsZOthHtTQcW7eRRt4r1yc+BvcJ24aC8K8+Qzuv1IOMumrsCeDPlraT6yPyHLgiJENK
-         DrzA==
+        h=from:to:cc:subject:date:message-id;
+        bh=+EPeOxBuzoV58k9L0dhngcCQgLP0uv9482M8AONuPXU=;
+        b=VGUfKdUinIcCH6/A0PnoOHKwOkFsC3gS17OnGQaEaHD46N3K2QbrN3R2u2tmK4wORg
+         UJ3CyWL3RYR718RAmhtZtY84TpyBDONy31ND75iqrxQndIkc5rpwx2yl0CEfZAXcsywq
+         Q4g9FhCkWerHtF5fgx6zXlHkBHJkG2GqcxeP/VfGm36YQCHwgJPVnip3W4Z1nT4UJbBX
+         LxaL9fo2eH6xBLIbGhjtXS4bZIfTHGR7VL87pzCznGCmYvhqWs9dLpYxkr/TDBKfqSKG
+         cwmv9aIWjLgZb2Fq6RZmgkvG/DRUFLiRzvJFJ8LLNQALk0fL/nuRS7KN1cIvKxnkBv7M
+         Ur+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=mfT1xq5uSMlc8Zc1INJ6fV3EAAi551FP5BskvvH5WrI=;
-        b=Bcv+fnjjj38LbABz+l3WyClrr4lLbfW/kU3Co5tdrlvX42SoIxa9bJhPRbT+FmTuID
-         5sZhCtshLPpjGdEfmQ7oz3i+u+x86qQ90kLUEdK+Yv9AohT/uIhPSU1xDpTproUNBpXa
-         0E9L23ySgoAeVha5BA/zz8OO9JpxwAuhq3Ka+J36VUKI91RqPlMjnA1NK48fO5SagAqo
-         n8LrSpypoWa9JTxXV4rT1ZaSZBytTNm0hziMks3k2XXZwUhrjJ0eHV4SWfB8glfDFFmr
-         ryQ99PSDksQ/Egrn+y+TbY37tH2YrkPYa3JHT1hBjQJRNJgZEzD2UazCNsieZDxu3ATr
-         Rg1g==
-X-Gm-Message-State: ANhLgQ2xl01z/0LCQXtM/eKqkwsd4AJKdVGdkaOLNFgIi1apZRyhQhUr
-        Z354iPU49HWIzBbikWqWddM8yX/4uXHG9ylfTG8=
-X-Google-Smtp-Source: ADFU+vvtkIkdx5azARIc/tXEJpFIJDw8wM0AqqmFEdghHBLKStR0S3QfqHTEqvmf5xim9dvKVOi6RDw5BCBoYFQ0PBI=
-X-Received: by 2002:a92:5cd4:: with SMTP id d81mr191344ilg.57.1583679275242;
- Sun, 08 Mar 2020 07:54:35 -0700 (PDT)
-MIME-Version: 1.0
-Reply-To: markjoseph0100@gmail.com
-Received: by 2002:ac0:e581:0:0:0:0:0 with HTTP; Sun, 8 Mar 2020 07:54:34 -0700 (PDT)
-From:   "Mr. Mark Joseph" <markjoseph01000@gmail.com>
-Date:   Sun, 8 Mar 2020 07:54:34 -0700
-X-Google-Sender-Auth: fc0Dd62Z9i4dEO8r7yRwlvzCm_8
-Message-ID: <CAP1hxC4uY-d_3=2w28FipjhGezjMigfLVFYUfDQ4cg+E5bNotw@mail.gmail.com>
-Subject: Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+EPeOxBuzoV58k9L0dhngcCQgLP0uv9482M8AONuPXU=;
+        b=o3tJH4MBjc4tQ/WNt8Ka1+RDUicRaIH6dKX/LSwP5bVDI1GEs38Yn6Hu2uQYjbQMPd
+         LGcWlt39ki+EOPwdAKuidnEZgVHOMpmv64jvVmfpl6AoCqOZE9MrlldCMdI+IMHDhOzT
+         NbUz4DpM7cS4y+VcaXG/FueWIQF2YM7p9t5zJJ0KsR+evuMfQkf4930G5k1xl3kh6Y0e
+         sbW7/jZGQ9nEfUkIvw5jjZGEs8dodf1rKTH1s0NtHb/N5/RKTtvjOx067taRBf38d3Wg
+         5pY7lC1YA4xEooVNqzFRQVPW2uCH2ZRn1R0OclScXGzb+wP/eugxjXaZIRh4lyShMvGE
+         MGHg==
+X-Gm-Message-State: ANhLgQ00kbOyd/D9hiHKVoAlMRkuvG1wQM5tKMh010On+RzAUVC+OJqZ
+        eboyGDjBDt6K/l0wzVid5kI=
+X-Google-Smtp-Source: ADFU+vsCvUJPsH+IwIxpsNF+YP246pFWI16C7KhrIitV3n531rJPfp6kW/DGioYkjVxd4RRquoIITQ==
+X-Received: by 2002:adf:fe84:: with SMTP id l4mr15531895wrr.1.1583679418976;
+        Sun, 08 Mar 2020 07:56:58 -0700 (PDT)
+Received: from localhost.localdomain (ip5f5bee49.dynamic.kabel-deutschland.de. [95.91.238.73])
+        by smtp.gmail.com with ESMTPSA id 61sm7383232wrd.58.2020.03.08.07.56.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Mar 2020 07:56:58 -0700 (PDT)
+From:   Bean Huo <huobean@gmail.com>
+X-Google-Original-From: Bean Huo <beanhuo@micron.com>
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com,
+        asutoshd@codeaurora.org, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, stanley.chu@mediatek.com,
+        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
+        cang@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2 0/1] scsi: ufs: fix lrbp pointer incorrect initialization issue
+Date:   Sun,  8 Mar 2020 15:56:47 +0100
+Message-Id: <20200308145648.28675-1-beanhuo@micron.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Hi, Martin and Bart
 
-I am Mr. Mark Joseph a banker in Ouagadougou, Burkina Faso .I
-Discovered the sum of seven million, two hundred thousand dollars
-(usd7.2) belonging to a deceased customer of this bank the fund has
-been lying in a suspense account without anybody coming to put claim
-over the money since the account late owner from Lebanese who was
-involved in terrorist attacks in month of January 15th 2016.
+This is the patch for fixing the issue introduced by the patch
 
-Therefore, I am soliciting for your assistance to come forward as the
-next of kin. I have agreed that 40% of this money will be for you as
-the beneficiary respect of the provision of your account and service
-rendered, 60% will be for me. Then immediately the money transferred
-to your account from this bank, I will proceed to your country for the
-sharing of the fund. If you think you are capable and will be
-committed to making this deal successes reply me back for more details
-to confirm your interest.
+[PATCH v2 4/4] ufs: Let the SCSI core allocate per-command UFS data.
 
-Yours faithful,
-Mr. Mark Joseph
+Bean Huo (1):
+  scsi: ufs: fix lrbp pointer incorrect initialization issue
+
+ drivers/scsi/ufs/ufshcd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+-- 
+2.17.1
+
