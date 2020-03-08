@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F5917D2F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 10:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CAFA17D2F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 10:53:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgCHJw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 05:52:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36746 "EHLO mail.kernel.org"
+        id S1726397AbgCHJxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 05:53:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbgCHJw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 05:52:58 -0400
+        id S1725306AbgCHJxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 05:53:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79C9F20828;
-        Sun,  8 Mar 2020 09:52:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A95020828;
+        Sun,  8 Mar 2020 09:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583661176;
-        bh=uI6wRp88u82M2uBM+594RPVrzMEJcS0P0ed+Qx0Vlpw=;
+        s=default; t=1583661193;
+        bh=7z5w5Mo9GoOfooKxpQz035prhFQReuF5ube04Cvb6hQ=;
         h=Date:From:To:Cc:Subject:From;
-        b=RHry37RbPKd4qMNIynP3Q4IuQz97/ytFdNoDIuj2CfUaFijTpe1E8SHUrkVFn6Cwj
-         4ddRIBaHabmDetRpl+843yiuw2lc66PAKmQthvRrpgSZgj4i0lSmBu40J6P3XN+bab
-         Mj9ntfs2VPAMbKDVCbGM2q4bcbc3wpxOqzFO9pbE=
-Date:   Sun, 8 Mar 2020 10:52:54 +0100
+        b=HJ+pqAVdDvlRtdCrERpwZaCxbdXeG5ID1Kq2h3Spb0Jpc6ElCTyFpzOn6XRw4qdxp
+         D2CnTb0W/sWOQGKE5QAJ2i9XpWicvqbI/tVtOJniV/lrfz2pcGGoQryxyKtPSb+Etk
+         5DhO2XUN5yeRUH8rj6MXPRluzI4ihNvAjq4y4+X0=
+Date:   Sun, 8 Mar 2020 10:53:10 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL] Driver core fixes for 5.6-rc5
-Message-ID: <20200308095254.GA4027132@kroah.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 5.6-rc5
+Message-ID: <20200308095310.GA4027283@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -39,47 +38,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+The following changes since commit f8788d86ab28f61f7b46eb6be375f8a726783636:
 
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+  Linux 5.6-rc3 (2020-02-23 16:17:42 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-5.6-rc5
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.6-rc5
 
-for you to fetch changes up to 77036165d8bcf7c7b2a2df28a601ec2c52bb172d:
+for you to fetch changes up to f0fe2c0f050d31babcad7d65f1d550d462a40064:
 
-  driver core: Skip unnecessary work when device doesn't have sync_state() (2020-03-04 13:46:03 +0100)
+  binder: prevent UAF for binderfs devices II (2020-03-03 19:58:37 +0100)
 
 ----------------------------------------------------------------
-Driver core / debugfs fixes for 5.6-rc5
+Char/Misc fixes for 5.6-rc5
 
-Here are 4 small driver core / debugfs patches for 5.6-rc3
+Here are 4 small char/misc driver fixes for reported issues for 5.6-rc5.
 
-They are:
-	- debugfs api cleanup now that all callers for
-	  debugfs_create_regset32() have been fixed up.  This was
-	  waiting until after the -rc1 merge as these fixes came in
-	  through different trees
-	- driver core sync state fixes based on reports of minor issues
-	  found in the feature
+These fixes are:
+	- binder fix for a potential use-after-free problem found (took
+	  2 tries to get it right)
+	- interconnect core fix
+	- altera-stapl driver fix
 
-All of these have been in linux-next with no reported issues.
+All 4 of these have been in linux-next for a while with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Greg Kroah-Hartman (1):
-      debugfs: remove return value of debugfs_create_regset32()
+Christian Brauner (2):
+      binder: prevent UAF for binderfs devices
+      binder: prevent UAF for binderfs devices II
 
-Saravana Kannan (3):
-      driver core: Call sync_state() even if supplier has no consumers
-      driver core: Add dev_has_sync_state()
-      driver core: Skip unnecessary work when device doesn't have sync_state()
+Daniel Axtens (1):
+      altera-stapl: altera_get_note: prevent write beyond end of 'key'
 
- Documentation/filesystems/debugfs.txt |  6 +++---
- drivers/base/core.c                   | 27 ++++++++++++++++++++-------
- fs/debugfs/file.c                     | 17 ++++-------------
- include/linux/debugfs.h               | 13 ++++++-------
- include/linux/device.h                | 11 +++++++++++
- 5 files changed, 44 insertions(+), 30 deletions(-)
+Georgi Djakov (1):
+      interconnect: Handle memory allocation errors
+
+ drivers/android/binder.c           |  9 +++++++++
+ drivers/android/binder_internal.h  |  2 ++
+ drivers/android/binderfs.c         |  7 +++++--
+ drivers/interconnect/core.c        |  9 +++++++++
+ drivers/misc/altera-stapl/altera.c | 12 ++++++------
+ 5 files changed, 31 insertions(+), 8 deletions(-)
