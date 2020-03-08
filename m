@@ -2,75 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5421717D6BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 23:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C62C817D6C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 23:32:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgCHWWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 18:22:23 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40952 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbgCHWWX (ORCPT
+        id S1726384AbgCHWcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 18:32:47 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:40274 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbgCHWcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 18:22:23 -0400
-Received: by mail-wm1-f65.google.com with SMTP id e26so7753311wme.5
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 15:22:20 -0700 (PDT)
+        Sun, 8 Mar 2020 18:32:47 -0400
+Received: by mail-yw1-f65.google.com with SMTP id c15so3739535ywn.7
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 15:32:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=URASEgXLCXmYqmGOZmBnXuA4vIEVErfWf/qZrIyg958=;
-        b=GH8rXg/RBoeVCHRmXU7UaG368GOcyNH1caDPqDVVF6GbTSgYso6W3DLUf7SrTbO6sA
-         bkwMeYCDv+XETt8/tzyMDVtZj5OZfWcoCNNHKpWIDyLFe3tbQVNgVqkPz22BD/em0q3f
-         hacqUYidd7GIJWHIe2nXG1VB2emWOM+LtvhnNXGEiq6ReuAVIAuo0wM6kwUA6AZHr7VX
-         9JWOxz4FT2imO1mc7qnLiZuBNrLI5agTs1E8VH3TPvUfO+Y6ep3uQytJzfYOG3xsD8Rr
-         tK1I2UcRyS5bprFNdWETLDrJmhSOu9pwrmnfplky0VTsnLFUGg/bqUjYNFCdzUopV2/T
-         4YPw==
+        bh=1XiIHjbFXRu9GcpXHs973G3osab43809kvN7/VuRkTY=;
+        b=molc4fTTx3EfNQFKqa2kGZbynhI0XqbMtvU3KV/NnQYHLWP3KSAfZxKeGAf94F+czz
+         WQ1J6XiWfxc6DHDUwdDizKyFCOlmf8xFJ+aNZnTY0qVTUFnu2seFDXR6Y7fWVTZHU+QC
+         DfvvUTIaFfGCbWiqBais34Qzfthsy+xqafc5SYH9Kt/jqtWQA72Hs/EXA1zlH+fbTFr9
+         INOTuFkuhE/yFrIr/T3XGsGGGOPPMUbuXKLCytRfNUW2HH+utuS3s1sdARIs3szpQ809
+         3vLhCYJhBEkXXPv5PtkUjt912ld3d2zP1bUoz0QlWaxSuavUQ0E7LL1GB+EbzT48E/JY
+         tlvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=URASEgXLCXmYqmGOZmBnXuA4vIEVErfWf/qZrIyg958=;
-        b=tj/79mjIg2NYp4KZanmRCiz9XMqLiRnveBR7DThNpA6p/ge7qmOK5W9uL7lqEGfnDk
-         mEPgniSjepuKfSSngtazBM4Oun4040djGKxqdjPpJHYK9FwcdkSltt08HWNzsmB4rTQC
-         D5JBkBzAStZ4F/GwCHmHoggYkIzkaejtWASYU3vfw6T/8+taRk6/9IZn4dnd4zkFDI+p
-         07M+jWkDf6OqBYCNM4SHZw+vkVooaS0nwTBaqPqjlh+aU4FZGhHidhrU8mrhf4RU6g2o
-         3aJ9vwQsxKspEQ5Vc7eRkrx/U4r/RUiahvGzUXUkHSjrodqJ//2IxV2JUM91bUBpqBPP
-         eSCA==
-X-Gm-Message-State: ANhLgQ2aaKjFKW9DcWyoGQxIb93XUA9OQ5Dru0xLuLotZtosp5hzjWwD
-        gytZZQrj3LpR4cGdP1mQAxnlyKb0SAQwWraOGuY=
-X-Google-Smtp-Source: ADFU+vvmDxhucOTTMIf2dZU/EvIWNTT6rVpb/WkHwSfEH980ZDe/pVqVUBboccsignoRfBDUB2/VxyGnIFC2zjAwXiY=
-X-Received: by 2002:a1c:2d88:: with SMTP id t130mr17785876wmt.68.1583706140146;
- Sun, 08 Mar 2020 15:22:20 -0700 (PDT)
+        bh=1XiIHjbFXRu9GcpXHs973G3osab43809kvN7/VuRkTY=;
+        b=Pa0ei49venpdVCnh5iLwB+CL2orZoNoLKlH6mm6mXosuKiu0oSD4bVYoiiKlgL37tE
+         1RsKVm8vTNB19hmK473OIQ9NZs51oPv5DF5VVw3zbGVbl0Hi6aNEcPNQ1pR3JWMpik5f
+         QATpNXAJMLBHcMnTU49w7PAMsO3ddz5HGbJx0MDLcWTS4VILB6/f5ziSOKb083kvORB6
+         XilgNYtWNI+VOVz7eJoSSKclfU2tGbGntZ64me7RBNDDl8EfxkZUrtiOk2bdzzzOLoVE
+         54LlhbkRRMh5HkZ68KHK8mogL3S7jah0AZgCZBZYmPcsCdLzdghinxdElxNSQmiylBaG
+         T5Vw==
+X-Gm-Message-State: ANhLgQ0I149ph5MckNLpqjRg5jpDIaPhrEnlhSxb9qwMtkN+nzb3ZUuv
+        8AENv2MlNz621qChNQirdosT9Fzw1k18oO514bY9SQ==
+X-Google-Smtp-Source: ADFU+vtxmx0EG4Cfm3oOUDllyASyoOmKq37AYtRDE8dVdXlGvQv7BYpHkU2WzolcnOtFY2aPYOfFjkzpWOGvEjaaFDU=
+X-Received: by 2002:a25:3255:: with SMTP id y82mr14227923yby.208.1583706765900;
+ Sun, 08 Mar 2020 15:32:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <1583228423-60816-1-git-send-email-chengzhihao1@huawei.com>
-In-Reply-To: <1583228423-60816-1-git-send-email-chengzhihao1@huawei.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Sun, 8 Mar 2020 23:22:08 +0100
-Message-ID: <CAFLxGvxgzPx=8VxqiamDxjdKwH6rhxJaXnqiJ+3w--p+i32vJA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix two mem leak bugs
-To:     Zhihao Cheng <chengzhihao1@huawei.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, linux-mtd@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Sun, 8 Mar 2020 15:32:35 -0700
+Message-ID: <CABXOdTcrxoBCz24Ap=YJYZnr+oLAmaR10xZ9ar2mYbE1=RAoug@mail.gmail.com>
+Subject: Re: [PATCH RFC] MAINTAINERS: include GOOGLE FIRMWARE entry
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 10:33 AM Zhihao Cheng <chengzhihao1@huawei.com> wrote:
+On Sun, Mar 8, 2020 at 12:51 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Zhihao Cheng (2):
->   ubifs: ubifs_jnl_write_inode: Fix a memory leak bug
->   ubifs: ubifs_add_orphan: Fix a memory leak bug
+> All files in drivers/firmware/google/ are identified as part of THE REST
+> according to MAINTAINERS, but they are really maintained by others.
 >
->  fs/ubifs/journal.c | 1 +
->  fs/ubifs/orphan.c  | 9 +++++++--
->  2 files changed, 8 insertions(+), 2 deletions(-)
+> Add a basic entry for drivers/firmware/google/ based on a simple statistics
+> on tags of commits in that directory:
+>
+>   $ git log drivers/firmware/google/ | grep '\-by:' \
+>       | sort | uniq -c | sort -nr
+>      62     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>      13     Reviewed-by: Guenter Roeck <groeck@chromium.org>
+>      12     Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>      11     Reviewed-by: Julius Werner <jwerner@chromium.org>
+>
+> There is no specific mailing list for this driver, based on observations
+> on the patch emails, and the git history suggests the driver is maintained.
+>
+> This was identified with a small script that finds all files belonging to
+> THE REST according to the current MAINTAINERS file, and I investigated
+> upon its output.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3a0f8115c92c..ed788804daab 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7111,6 +7111,14 @@ S:       Supported
+>  F:     Documentation/networking/device_drivers/google/gve.rst
+>  F:     drivers/net/ethernet/google
+>
+> +GOOGLE FIRMWARE
+> +M:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> +M:     Stephen Boyd <swboyd@chromium.org>
+> +R:     Guenter Roeck <groeck@chromium.org>
+> +R:     Julius Werner <jwerner@chromium.org>
+> +S:     Maintained
+> +F:     drivers/firmware/google/
+> +
 
-Thanks for fixing, applied!
+FWIW, I would not mind stepping up as maintainer if needed, but I
+think we should strongly discourage this kind of auto-assignment of
+maintainers and/or reviewers.
 
--- 
-Thanks,
-//richard
+Guenter
+
+>  GPD POCKET FAN DRIVER
+>  M:     Hans de Goede <hdegoede@redhat.com>
+>  L:     platform-driver-x86@vger.kernel.org
+> --
+> 2.17.1
+>
