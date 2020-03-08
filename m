@@ -2,168 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF4B17D477
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:33:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14CC117D486
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgCHPd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 11:33:56 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49978 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbgCHPdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 11:33:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9A3A61A1523;
-        Sun,  8 Mar 2020 16:33:50 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8D3F21A151C;
-        Sun,  8 Mar 2020 16:33:43 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EFF94402DA;
-        Sun,  8 Mar 2020 23:33:34 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] arm64: dts: imx8mp: Add thermal zones support
-Date:   Sun,  8 Mar 2020 23:27:20 +0800
-Message-Id: <1583681240-14782-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583681240-14782-1-git-send-email-Anson.Huang@nxp.com>
-References: <1583681240-14782-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726445AbgCHPxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 11:53:30 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46718 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbgCHPxa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 11:53:30 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w12so2963363pll.13
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 08:53:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z5IVpkp+fyASro0E/9D83qXZo66KVoFohVNxfCekD1g=;
+        b=D0CbxtqWFEDzUvuVzCtLmKBd3z4BY5IxuTmcAB81Cxub4VTxOMgiRgc/MNKE/xkQyb
+         W7jhAB46LnnVDDUhAKN0wH8ZS+ESCUR4+RzyETnDHpHwnIA+sSPFQFqz4qHvh5eQMnCa
+         FQI+g6O95nfQsLnz4pCDChSdLjotmBqYROhX9bp3Sq39SPvuWrhSOPiWIuhfx+9yv4OB
+         mfO9QcKRNJhSa+riMcDObo/bAaN3GDT+7vhM+K97Ord0SPFgdmdjEGTVYMIxbdUwyIjV
+         MDCZPGp4Z5WrSc0fL7QveflKNkkaQriWgHuSTYjrLD9O8ksp+F3g77wsN+N9RqFchk4z
+         gLBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z5IVpkp+fyASro0E/9D83qXZo66KVoFohVNxfCekD1g=;
+        b=CfI/L6wHnnORhSIiXRLxM3OjW/oC4wXXPVfTxvYWqZBftOuD+vBt56EKJ0s4BBXse3
+         pqwqYhn7e+ncCjEEEzbgYuyvqhALFTQoSDbNzUjliKJf1SiXCpzI0EdQgwSVk8l9mKGN
+         eXSf4DU2GLECvvHbBLav6FyFl46ba8R/ND5oVhENw88ZtBKRu3/a+XvG9lDFSwygzHB+
+         m9L9FuEDjHusFmeJINLglST1s3zlTTmFzALD3rdIEA8Fv8Ip1kvL8qzB3rTlG1tlxl5a
+         Q8MP5ykf0mR4cXLBX77Pi6kOx2FdUB9nJs8iYYaXpymgBzZA4GvXSnxkXHAl+3Uij3zQ
+         oKGw==
+X-Gm-Message-State: ANhLgQ0eGrxRVB3VJvIEcHzkpUpxMXmmBegmFf60mEDkJ7CbTeYeZ1rH
+        mcvK+gSTn9K8DDipj9G/Sc8=
+X-Google-Smtp-Source: ADFU+vsU1/L6T5B9WflOtlOlbFdYDGaAiZhTbvUqpIMov96u75fCDz7NoaUVPqjtzNgp9T3pkCrGqg==
+X-Received: by 2002:a17:90a:d80c:: with SMTP id a12mr8221590pjv.13.1583682808932;
+        Sun, 08 Mar 2020 08:53:28 -0700 (PDT)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id y9sm15729461pjj.17.2020.03.08.08.53.27
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sun, 08 Mar 2020 08:53:28 -0700 (PDT)
+From:   qiwuchen55@gmail.com
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de
+Cc:     linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: [PATCH] sched/fair: fix build warning about undefined test_idle_cores()
+Date:   Sun,  8 Mar 2020 23:53:12 +0800
+Message-Id: <1583682792-30844-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX8MP has a TMU inside which supports two thermal zones, add support
-for them.
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+The build with arm64's defconfig:
+CONFIG_SCHED_MC=y
+# CONFIG_SCHED_SMT is not set
+
+Trigger the following warning due to test_idle_cores()'s definition
+missing:
+kernel/sched/fair.c:1524:20: warning: ‘test_idle_cores’ declared ‘static’
+	but never defined [-Wunused-function]
+
+Move the CONFIG_SCHED_SMT ifdeffery around test_idle_cores()'s declaration
+to fix it.
+
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 63 +++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ kernel/sched/fair.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index a253c3f..c621988 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/thermal/thermal.h>
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 84594f8..d11d965 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1520,8 +1520,10 @@ static inline bool is_core_idle(int cpu)
+ 	return true;
+ }
  
- #include "imx8mp-pinfunc.h"
++#ifdef CONFIG_SCHED_SMT
+ /* Forward declarations of select_idle_sibling helpers */
+ static inline bool test_idle_cores(int cpu, bool def);
++#endif
  
-@@ -43,6 +44,7 @@
- 			clocks = <&clk IMX8MP_CLK_ARM>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_1: cpu@1 {
-@@ -53,6 +55,7 @@
- 			clocks = <&clk IMX8MP_CLK_ARM>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_2: cpu@2 {
-@@ -63,6 +66,7 @@
- 			clocks = <&clk IMX8MP_CLK_ARM>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_3: cpu@3 {
-@@ -73,6 +77,7 @@
- 			clocks = <&clk IMX8MP_CLK_ARM>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		A53_L2: l2-cache0 {
-@@ -127,6 +132,57 @@
- 		method = "smc";
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <2000>;
-+			thermal-sensors = <&tmu 0x0>;
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				cpu_crit0: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device =
-+						<&A53_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&A53_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		soc-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <2000>;
-+			thermal-sensors = <&tmu 0x1>;
-+			trips {
-+				soc_alert0: trip0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				soc_crit0: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -215,6 +271,13 @@
- 				gpio-ranges = <&iomuxc 0 114 30>;
- 			};
- 
-+			tmu: tmu@30260000 {
-+				compatible = "fsl,imx8mp-tmu";
-+				reg = <0x30260000 0x10000>;
-+				clocks = <&clk IMX8MP_CLK_TSENSOR_ROOT>;
-+				#thermal-sensor-cells = <1>;
-+			};
-+
- 			wdog1: watchdog@30280000 {
- 				compatible = "fsl,imx8mp-wdt", "fsl,imx21-wdt";
- 				reg = <0x30280000 0x10000>;
+ struct task_numa_env {
+ 	struct task_struct *p;
 -- 
-2.7.4
+1.9.1
 
