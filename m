@@ -2,95 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C793817D0E8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 03:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E339E17D0EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 03:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgCHCXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 21:23:40 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40876 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbgCHCXk (ORCPT
+        id S1726291AbgCHCbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Mar 2020 21:31:02 -0500
+Received: from sonic317-3.consmr.mail.bf2.yahoo.com ([74.6.129.186]:37527 "EHLO
+        sonic317-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726252AbgCHCbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 21:23:40 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t24so3042551pgj.7;
-        Sat, 07 Mar 2020 18:23:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=prRadkOgljmcVFZ0EQ43osDjYhqzZ8ylMyUcgnXfTLI=;
-        b=t+PyG7exAmaLMMrfercqQWvZ3tnDuEiKKh/KGEBxXuJOGbZGnWhE7PpOHipdbHHNxU
-         fZ/CqgNTLSO2RAP5OfK2KXlLcK7xJ7TJ8ZmAmoHW+zkAemmUAHb+7iLh368g9gXc4CEQ
-         bckl9jc2wXTP31Y1WnRiRUFvAebv41YxUoo4ra04eXuRxov4x9uRllu2184woQQseinr
-         27gYbI5Vo6N5me5EV8RIaNzv08YVyLHXVLieQARZ+kCmTIEQN4IuVZI378V47+BAsW8j
-         jQqRVBF+dfan88uzvIdBIoyb/TwnuQW3yDE8ezIUueEYfD43OQSviRHaLYwrnFnLkQH6
-         oS8g==
-X-Gm-Message-State: ANhLgQ0eA16H5TI5QKNZK/TxABZ0EN3qIvZz3uMpOCy6Z+rhr6EYRiJM
-        3N1/6r9PRx9ZHpA3Mn9nKR0=
-X-Google-Smtp-Source: ADFU+vvnClbMcuiLeqrDI5Lh99HdoJJA21S7J1NbeCWVEL9gbVNgSRgtAtCfZna2aKWto3/j77Rs5w==
-X-Received: by 2002:a63:fc1c:: with SMTP id j28mr10281377pgi.289.1583634219265;
-        Sat, 07 Mar 2020 18:23:39 -0800 (PST)
-Received: from ?IPv6:2601:647:4000:d7:b9ba:8890:46d5:d60d? ([2601:647:4000:d7:b9ba:8890:46d5:d60d])
-        by smtp.gmail.com with ESMTPSA id ay10sm13897002pjb.37.2020.03.07.18.23.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Mar 2020 18:23:38 -0800 (PST)
-Subject: Re: [PATCH v2] scsi: aacraid: fix -Wcast-function-type
-To:     Phong Tran <tranmanphong@gmail.com>, aacraid@microsemi.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org
-References: <20200307132103.4687-1-tranmanphong@gmail.com>
- <20200308020143.9351-1-tranmanphong@gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <d18e3d83-d1b5-5979-c2ec-235e4f5095a3@acm.org>
-Date:   Sat, 7 Mar 2020 18:23:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Sat, 7 Mar 2020 21:31:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1583634660; bh=VxFSqOLnoyhxZXWK73TPGK3hr8yutZ4yWmLQa/jSY/I=; h=Date:From:Reply-To:Subject:References:From:Subject; b=G6JgwleEsrOK61idFSNxC+SFrgUPkMRy6s4Af71gJlq0FgLoBMKXt5Wfy/zQtmZGM51vlKPYui8WQYNEFu36tKvmA9IpTm4gfOClT6/sMxn4yYEDpxHIBIr+jlOnIb5XJStS7yZ3sSjn9iqD7z+iWF2/KJrIoO2XIPp9zARhrbykfdrO1h0YnQ7Z1XTUbTuvpPexxuXeJtogNAaWXsOfZERnaLDZY4T3uob0foMvFCntfDcWlbViS8stpLPSN+dBL6xqIVjqab/9f8qUEGOrbUlX3MvkqrHM15a5oB7TLSYkrHDH4J8Bjf2QJyYBHvkEaxXvvBCuwhGoLcEtzr8MdA==
+X-YMail-OSG: 3mk97JQVM1mjCoeMX4cD00DNZw7rnWtXLocsTsOcysufTwbX.MuQJeSLdL8Wp11
+ b0NXDpc1dtGCjyO9.6mOVPM4D3BhRluc8nPSA1IVzUCkMlrtx7m87.yN9.WfnGRZQpdl3Lw62rwQ
+ EvMfUBo7Sd6yy9HXo3ToNbIwNsXp4Yg.FTQFgX1plkGtozZbBIL9q8QS82iDhtek7cTFSHrkEHCh
+ _0tqKxbyFFtjgtO87qoYzYYeDaq.ya_VNdKcP0_rL03u1H4r2KZVpnSnTkES0a5rmFCewY6O9CPU
+ LJOqBjenlQ37e4isHPWgJ.11a80AJEj087fh4gy3n9pAC.BygAbmEIX3ilE.YVu_uDQ5bdcNkYvy
+ JsdMvKPgzJyHfXC5KlSbzPRCGuGwKm.TqaO6O3DodqUfOjNrmVa9ptFk7kszZ5dzCkiNWRH3RUit
+ AA9px1LLH.iJASvC0tOjUbDxDHg2qbXQZPVUNOlqj9_yLwmh9q18yrvYPJFyNdPg8WsbanCB2QLM
+ rP1PJn0ZQU9A.KyrCyPIU4W2IRQxYzGI4f1NXDOyX3zLqeYbNfsqHolSkPsM5JBhcYkuQmB1zeds
+ 9WsqugDtgEGdWXYBAvyUr.lTGanm6j1MrXD2yayqbEwhuOZQCHAReYTm6SFS5WoBfBLx4Kph1GWH
+ bLr4DerK16IKKLUafO0YQZ2HQw31nudoGPS5AyTku5lWEkllDsBji3ZDAFSJG7oHZC_gM9UO_99A
+ 8_VrBc7u1G8gXJ3fHuDrQaX66l6N.9gF4zHIOcFBxlvGRJHoo3Qi0z.BeOHRBR1ZnQTXoVqIWzoT
+ JCv3Jt32aHN5tq9A5rVl0ejGLsBHTuZiyMyycueYNQnrzRkmKx3OfyWjKy9BNhFPu.V637DHmC8p
+ 3EFOxGs_JANBIO_xjp1Nh7HiNeawOTXqe14nNwsf6HTeESkXBn11aTTJTZ9oGzrq72fEpBYfEGKR
+ C_ujoMPdlNcMdMTbQrDvc7XffqEB0IQhhE9Tj753GpYELEhXEFmrR9yTdNM7wWZ11RKbVg8ilHRM
+ Rq1VjGjBZ_fmTG0UKqFwFafm86AVRqetDU75b7Fs_X8JN.gbK4pmcw6brgNsHro.U.HZ6unl9qDi
+ hnYbQxNMHn.xlwN.FeFI93Pe0zjOUIzohBFaAaGsU8LZ2WqKQp5V0YK_X_4FqkOFKczmkM_yjPnc
+ TcTvRaNltf89EiLBs9TadD7NvYy7ObPpq6umHyPQmRuMk5TA0gFdGkdTSsW28aw30YAwDodstPUN
+ ITMQeD5fBVJPsqeFojrqo1J.D5DoZNlOOHS5avxc6GhmBpDrRiGq5xMbeV6cq9GBkKJLeOvbMOnb
+ HMY8kE752mca7gozrTPWkpgiQmTJgGsJ2iA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Sun, 8 Mar 2020 02:31:00 +0000
+Date:   Sun, 8 Mar 2020 02:29:00 +0000 (UTC)
+From:   "Mrs. Maureen Hinckley" <ss31@gbaxm.com>
+Reply-To: maurhinck6@gmail.com
+Message-ID: <181840190.971354.1583634540242@mail.yahoo.com>
+Subject: 
 MIME-Version: 1.0
-In-Reply-To: <20200308020143.9351-1-tranmanphong@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+References: <181840190.971354.1583634540242.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15342 YMailNodin Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36 OPR/66.0.3515.115
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-07 18:01, Phong Tran wrote:
-> correct usage prototype of callback scsi_cmnd.scsi_done()
-> Report by: https://github.com/KSPP/linux/issues/20
-
-This description is confusing. I think a better description would have
-been "Make the aacraid driver -Wcast-function-type clean."
-
-Anyway:
-
-Reviewed-by: Bart van Assche <bvanassche@acm.org>
 
 
+I am Maureen Hinckley and my foundation is donating (Five hundred and fifty=
+ thousand USD) to you. Contact us via my email at (maurhinck6@gmail.com) fo=
+r further details.
 
-
+Best Regards,
+Mrs. Maureen Hinckley,
+Copyright =C2=A92020 The Maureen Hinckley Foundation All Rights Reserved.
