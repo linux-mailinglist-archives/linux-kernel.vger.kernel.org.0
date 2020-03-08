@@ -2,62 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B2917D16D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 05:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 139B117D171
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 06:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgCHEwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Mar 2020 23:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbgCHEwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Mar 2020 23:52:46 -0500
-Received: from DESKTOP-GFFITBK.localdomain (220-133-90-194.HINET-IP.hinet.net [220.133.90.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D34712072C;
-        Sun,  8 Mar 2020 04:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583643166;
-        bh=07rLvQ0WqPhuHx8qZF5jp9yGE4CzHoiFnGAEnIVs0gk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=m4Zj2xDSjTGoaTSoUSQs6A03ymGE8HVvObv62K525CY3HmsFNgl4Z5A1Z3iGevjsT
-         3cvQw3NuBTLUhe8anoVra/G9i1NlTCFUwY9+9+xVVh5i7vPTNKqVNP1fNodUqNOee3
-         YH8pFI7s90dQVQ01uqGxnnsCIIQp1kE86Fvz59fk=
-From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
-To:     CK Hu <ck.hu@mediatek.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Subject: [PATCH] MAINTAINERS: Update Chun-Kuang Hu's email address
-Date:   Sun,  8 Mar 2020 12:52:01 +0800
-Message-Id: <20200308045201.3163-1-chunkuang.hu@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726014AbgCHFAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 00:00:35 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40186 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbgCHFAf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 00:00:35 -0500
+Received: by mail-io1-f67.google.com with SMTP id d8so6008205ion.7
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 21:00:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=fkzTob+3bW1xRTGZ343yDpkgmFJWtVEeh+6HnOW5xMw=;
+        b=L6Nt7/sc0FV6mUZCIqn3ec30JLiE+iUUgClY5B9PRn5dkD1QQNezCp8T/0wcXKEGG/
+         xEyRqCQLqyBSjJRPx6Z2Jvl70yl7pajGNLUXNqq5z8Kjx3e4VpageOodr65VutFv0Fh+
+         9bafPTfh/Xx8tWN5kxuq1wOtuBvFvzKupefSwb5YwR8V42F9cv6eqOeLiUTOoUqbxBrw
+         MGusYofDSJiB5Aq3rLQAAwS2YzuuMpjowECV5OuB4sXbxmUA3vUYKWaam59BwnmZFPZl
+         D69fni2Lqki+DgL4UHRo6p78f9Xf42B55kqIzTrjW56h/YOhbhfVRhoZzpNujmG2Gd6K
+         UsLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=fkzTob+3bW1xRTGZ343yDpkgmFJWtVEeh+6HnOW5xMw=;
+        b=JzQweyecQrg8AseM1GBhJMXNMgrMIfD4yUL/tq0hVyfHvNXBwCnv0FpT+krwiR/aiv
+         8RtnGL3/eNNx0UWDbTDT3HAFmPXzhNixrefVb8w/B/4h6Ue13TOKtlXAfOO7ILEc2XAl
+         agynMw4JeQ0bhRQkTR1Q7Mz2lKLok6IYogD702kJSIOlm90KCx3RjWcQ2+VtIblkQzCx
+         sV6hpz7KkDd+TDwlYGy9R/+36cs8+/+9Ni1BFPavADcIk56UNZRFejrVkbc/wTKT5WYp
+         8GkH37wr8V/Xn5U7l27RF78CZ9//1MF6qdUq4xj3w4QIygMhCZ2nhIVrI2YKUGMejeQi
+         8DHQ==
+X-Gm-Message-State: ANhLgQ156+v232Q19h6ZgCq3Mr8O+a36UGcJDvzJnXW5YycTzxtu7RlM
+        nhouFr2KaIB02uqARF+WAIDOIorl5FRthZwc4wc=
+X-Google-Smtp-Source: ADFU+vvrnYgc5hUixNVd1fSqeMTqEgJvsqRJOcTcMw4WmWaOhAgJWey7GFp16miLY04ECF2c0LyTWMjZ/HHRNxZU8ms=
+X-Received: by 2002:a02:c8cd:: with SMTP id q13mr5906695jao.66.1583643633973;
+ Sat, 07 Mar 2020 21:00:33 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a5d:8882:0:0:0:0:0 with HTTP; Sat, 7 Mar 2020 21:00:33 -0800 (PST)
+Reply-To: dmouka6@gmail.com
+From:   DIOUF MOUKA <d.mouka600@gmail.com>
+Date:   Sat, 7 Mar 2020 21:00:33 -0800
+Message-ID: <CADin0Jb6b+nicr_ZWcvm6Mep_YWSret3k=LNvquCiw85n7nqFA@mail.gmail.com>
+Subject: Greetings To You Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update my email address to @kernel.org
-
-Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 38fe2f3f7b6f..dceaeebce52a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5607,7 +5607,7 @@ F:	include/uapi/drm/lima_drm.h
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- 
- DRM DRIVERS FOR MEDIATEK
--M:	CK Hu <ck.hu@mediatek.com>
-+M:	Chun-Kuang Hu <chunkuang.hu@kernel.org>
- M:	Philipp Zabel <p.zabel@pengutronix.de>
- L:	dri-devel@lists.freedesktop.org
- S:	Supported
 -- 
-2.17.1
+Greetings To You Friend,
+I Am Mr. Diouf Mouka From Burkina Faso I Have A Genuine
+Business Transaction Of 30million U.S Dollars To Do With You
+If You Are Interested Send To Me The Following Information
+Immediately.
 
+Your Full Name......
+
+Your Occupation.....
+
+Your Age........
+
+Your Marital Status.....
+
+Your Phone Number.....
+
+Your Country/Nationality.....
+
+Best Regard,
+
+Diouf Mouka.
