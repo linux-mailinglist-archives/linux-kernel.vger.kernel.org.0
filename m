@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5D417D723
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:26:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B25A117D703
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbgCHXZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:25:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57264 "EHLO
+        id S1726635AbgCHXXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:23:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57211 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbgCHXX7 (ORCPT
+        with ESMTP id S1726383AbgCHXXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:23:59 -0400
+        Sun, 8 Mar 2020 19:23:50 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Ga-00033M-MN; Mon, 09 Mar 2020 00:23:29 +0100
+        id 1jB5Ga-00033N-NS; Mon, 09 Mar 2020 00:23:29 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id E755B100292;
-        Mon,  9 Mar 2020 00:23:27 +0100 (CET)
-Message-Id: <20200308222359.370649591@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 2AC2610408A;
+        Mon,  9 Mar 2020 00:23:28 +0100 (CET)
+Message-Id: <20200308222609.017810037@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 08 Mar 2020 23:23:59 +0100
+Date:   Sun, 08 Mar 2020 23:24:00 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,10 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: [patch part-II V2 00/13]  x86/entry: Consolidation - Part II (syscalls)
+Subject: [patch part-II V2 01/13] context_tracking: Ensure that the critical path cannot be instrumented
+References: <20200308222359.370649591@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -39,55 +42,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+context tracking lacks a few protection mechanisms against instrumentation:
 
-This is the second version of the syscall entry code consolidation
-series. V1 can be found here:
+ - While the core functions are marked NOKPROBE they lack protection
+   against function tracing which is required as the function entry/exit
+   points can be utilized by BPF.
 
-  https://lore.kernel.org/r/20200225220801.571835584@linutronix.de
+ - static functions invoked from the protected functions need to be marked
+   as well as they can be instrumented otherwise.
 
-It applies on top of
+ - using plain inline allows the compiler to emit traceable and probable
+   functions.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/entry
+Fix this by adding the missing notrace/NOKPROBE annotations and converting
+the plain inlines to __always_inline.
 
-and is also available from git:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel entry-v2-part2
-
-The changes vs. V1:
-
-  - Addressed the review comments. The main change is the rework of
-    preparing the move of interrupt tracing to C-code. The new version
-    creates less churn which needs to be mopped up afterwards again.
-
-  - Provide new variants for trace_hardirqs_on() which are not using
-    the rcuidle tracepoint mechanism and do not call into lockdep.
-
-    This allows to split up lockdep and tracing in the enter from user and
-    exit to user implementation.
-
-    Aside of addressing the rcuidle issue of functions attached to
-    tracepoints which are not rcuidle safe, e.g. BPF, this also has a
-    performance advantage as it spares the srcu/rcu_irq dance around the
-    tracepoint before enter_from_user_mode() which turns RCU back on
-    anyway. Same on the way out.
-
-  - Picked up Reviewed-by and Acked-by tags
-
-Thanks,
-
-	tglx
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/entry/common.c                |  106 +++++++++++++++++++++++++--------
- arch/x86/entry/entry_32.S              |   26 +-------
- arch/x86/entry/entry_64.S              |    6 -
- arch/x86/entry/entry_64_compat.S       |   32 +--------
- arch/x86/include/asm/nospec-branch.h   |    4 -
- include/linux/context_tracking.h       |   14 ++--
- include/linux/context_tracking_state.h |    6 -
- include/linux/irqflags.h               |    4 +
- kernel/context_tracking.c              |    9 +-
- kernel/trace/trace_preemptirq.c        |   23 +++++++
- 10 files changed, 136 insertions(+), 94 deletions(-)
+ include/linux/context_tracking.h       |   14 +++++++-------
+ include/linux/context_tracking_state.h |    6 +++---
+ kernel/context_tracking.c              |    9 +++++----
+ 3 files changed, 15 insertions(+), 14 deletions(-)
 
+--- a/include/linux/context_tracking.h
++++ b/include/linux/context_tracking.h
+@@ -20,32 +20,32 @@ extern void context_tracking_exit(enum c
+ extern void context_tracking_user_enter(void);
+ extern void context_tracking_user_exit(void);
+ 
+-static inline void user_enter(void)
++static __always_inline void user_enter(void)
+ {
+ 	if (context_tracking_enabled())
+ 		context_tracking_enter(CONTEXT_USER);
+ 
+ }
+-static inline void user_exit(void)
++static __always_inline void user_exit(void)
+ {
+ 	if (context_tracking_enabled())
+ 		context_tracking_exit(CONTEXT_USER);
+ }
+ 
+ /* Called with interrupts disabled.  */
+-static inline void user_enter_irqoff(void)
++static __always_inline void user_enter_irqoff(void)
+ {
+ 	if (context_tracking_enabled())
+ 		__context_tracking_enter(CONTEXT_USER);
+ 
+ }
+-static inline void user_exit_irqoff(void)
++static __always_inline void user_exit_irqoff(void)
+ {
+ 	if (context_tracking_enabled())
+ 		__context_tracking_exit(CONTEXT_USER);
+ }
+ 
+-static inline enum ctx_state exception_enter(void)
++static __always_inline enum ctx_state exception_enter(void)
+ {
+ 	enum ctx_state prev_ctx;
+ 
+@@ -59,7 +59,7 @@ static inline enum ctx_state exception_e
+ 	return prev_ctx;
+ }
+ 
+-static inline void exception_exit(enum ctx_state prev_ctx)
++static __always_inline void exception_exit(enum ctx_state prev_ctx)
+ {
+ 	if (context_tracking_enabled()) {
+ 		if (prev_ctx != CONTEXT_KERNEL)
+@@ -75,7 +75,7 @@ static inline void exception_exit(enum c
+  * is enabled.  If context tracking is disabled, returns
+  * CONTEXT_DISABLED.  This should be used primarily for debugging.
+  */
+-static inline enum ctx_state ct_state(void)
++static __always_inline enum ctx_state ct_state(void)
+ {
+ 	return context_tracking_enabled() ?
+ 		this_cpu_read(context_tracking.state) : CONTEXT_DISABLED;
+--- a/include/linux/context_tracking_state.h
++++ b/include/linux/context_tracking_state.h
+@@ -26,12 +26,12 @@ struct context_tracking {
+ extern struct static_key_false context_tracking_key;
+ DECLARE_PER_CPU(struct context_tracking, context_tracking);
+ 
+-static inline bool context_tracking_enabled(void)
++static __always_inline bool context_tracking_enabled(void)
+ {
+ 	return static_branch_unlikely(&context_tracking_key);
+ }
+ 
+-static inline bool context_tracking_enabled_cpu(int cpu)
++static __always_inline bool context_tracking_enabled_cpu(int cpu)
+ {
+ 	return context_tracking_enabled() && per_cpu(context_tracking.active, cpu);
+ }
+@@ -41,7 +41,7 @@ static inline bool context_tracking_enab
+ 	return context_tracking_enabled() && __this_cpu_read(context_tracking.active);
+ }
+ 
+-static inline bool context_tracking_in_user(void)
++static __always_inline bool context_tracking_in_user(void)
+ {
+ 	return __this_cpu_read(context_tracking.state) == CONTEXT_USER;
+ }
+--- a/kernel/context_tracking.c
++++ b/kernel/context_tracking.c
+@@ -31,7 +31,7 @@ EXPORT_SYMBOL_GPL(context_tracking_key);
+ DEFINE_PER_CPU(struct context_tracking, context_tracking);
+ EXPORT_SYMBOL_GPL(context_tracking);
+ 
+-static bool context_tracking_recursion_enter(void)
++static notrace bool context_tracking_recursion_enter(void)
+ {
+ 	int recursion;
+ 
+@@ -44,8 +44,9 @@ static bool context_tracking_recursion_e
+ 
+ 	return false;
+ }
++NOKPROBE_SYMBOL(context_tracking_recursion_enter);
+ 
+-static void context_tracking_recursion_exit(void)
++static __always_inline void context_tracking_recursion_exit(void)
+ {
+ 	__this_cpu_dec(context_tracking.recursion);
+ }
+@@ -59,7 +60,7 @@ static void context_tracking_recursion_e
+  * instructions to execute won't use any RCU read side critical section
+  * because this function sets RCU in extended quiescent state.
+  */
+-void __context_tracking_enter(enum ctx_state state)
++void notrace __context_tracking_enter(enum ctx_state state)
+ {
+ 	/* Kernel threads aren't supposed to go to userspace */
+ 	WARN_ON_ONCE(!current->mm);
+@@ -142,7 +143,7 @@ NOKPROBE_SYMBOL(context_tracking_user_en
+  * This call supports re-entrancy. This way it can be called from any exception
+  * handler without needing to know if we came from userspace or not.
+  */
+-void __context_tracking_exit(enum ctx_state state)
++void notrace __context_tracking_exit(enum ctx_state state)
+ {
+ 	if (!context_tracking_recursion_enter())
+ 		return;
 
