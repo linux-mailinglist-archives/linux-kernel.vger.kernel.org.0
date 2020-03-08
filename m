@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4310A17D46C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D958117D480
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbgCHP3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 11:29:06 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43850 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCHP3G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 11:29:06 -0400
-Received: by mail-lj1-f194.google.com with SMTP id r7so7302112ljp.10
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 08:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WKqNMTrM2DApFRCZUksaRgpNCHpxLVxfx7dej2cNK1A=;
-        b=gHS0ecSWggkA/QdDjRk3dDNKHJyhqVq4+Zpi0JXbSCMTkEfEm065HPrnWvogfZQGTJ
-         UZ95Qmbs3aU8N0Bh2QPD8eF8lhEYrarz3iI4IoUa1wHilPgbtHBuKuuk/hRXZQhI3S/F
-         o2fL4uifeREy76rKJJ38QFFqPFDxUwjFMn01Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WKqNMTrM2DApFRCZUksaRgpNCHpxLVxfx7dej2cNK1A=;
-        b=pTZnWF9uXsENaopffOloD7pbeeMo8ChPdZn3ygUjFNMCiLBjmtU4zZ+1WF384LlrkA
-         PBnJbaRyx7oo0/oS+REsBOOz9eXfucSnEPKujKxHD2Lqqiid3AkKyPVbpPA0eDOgmBNK
-         0FV0h+5+yUkabNMYE7CQv9dH6Zc6TLS6GJitd+3ad0gmhhleHTmYDbZlfUgtc4IEvCEb
-         ajiDqPFJXWxtrsRE8uXx0SupChBecchCQwvuAZOH2U97taQYKZjde3+ZDg2HGSSKB1Ba
-         4Sp+PWHtYWpVu9fUcKfHhDBMaV4S/9Obt3mkcT/Ag9dt7E23rq9tg2gefuJrUcYNQSzN
-         Tfkg==
-X-Gm-Message-State: ANhLgQ38rZElOJkxD04GvnTxNyTLPN7U6ry/2w0K9KMJqgRIGejEFBWP
-        OfAjZ4GflSVXnNewMurKWst6MeDnkComCQ==
-X-Google-Smtp-Source: ADFU+vsdpETByQs61ni5tV1TrRD8Ia4DKKvaKjjc75+OnsoLnVN0QUzRZB1AGuVPxmIZj4pOpCg/Ew==
-X-Received: by 2002:a2e:86d0:: with SMTP id n16mr7351060ljj.117.1583681342082;
-        Sun, 08 Mar 2020 08:29:02 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id h13sm14784446lfp.80.2020.03.08.08.29.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Mar 2020 08:29:00 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id u12so3122827ljo.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 08:29:00 -0700 (PDT)
-X-Received: by 2002:a05:651c:502:: with SMTP id o2mr7402622ljp.150.1583681340245;
- Sun, 08 Mar 2020 08:29:00 -0700 (PDT)
+        id S1726340AbgCHPkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 11:40:14 -0400
+Received: from canardo.mork.no ([148.122.252.1]:58085 "EHLO canardo.mork.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbgCHPkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 11:40:14 -0400
+X-Greylist: delayed 824 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 11:40:13 EDT
+Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
+        (authenticated bits=0)
+        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id 028FQM2j015815
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 8 Mar 2020 16:26:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+        t=1583681182; bh=ScndAKvQHtkoAKJHKcvCgojYNjZdn3MZ2jAOKVkeCi8=;
+        h=From:To:Cc:Subject:References:Date:Message-ID:From;
+        b=DAa3yPISwfc5HFbHxC4Eqrr99/KfNjwMIpo46lz5BuhenW6xjgocpIO6VT8ZQVpGk
+         eIzuHguRgLLTVA7sHrWpgaKgTccjU5C1ad+b3pGQs6G5D5I1vlainOvt+g0fThSEkM
+         azEPJVSsnNKZu7GwEMoSCCiLJKbn5hidZQjuBcxg=
+Received: from bjorn by miraculix.mork.no with local (Exim 4.92)
+        (envelope-from <bjorn@mork.no>)
+        id 1jAxor-0000VM-QV; Sun, 08 Mar 2020 16:26:21 +0100
+From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To:     Paul Gildea <paul.gildea@gmail.com>
+Cc:     "davem\@davemloft.net" <davem@davemloft.net>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: usb: qmi_wwan: Fix for packets being rejected in the ring buffer used by the xHCI controller.
+Organization: m
+References: <CA+4pmEueEiz0Act8X6t4y3+4LOaOh_-ZfzScH0CbOKT99x91NA@mail.gmail.com>
+Date:   Sun, 08 Mar 2020 16:26:21 +0100
+In-Reply-To: <CA+4pmEueEiz0Act8X6t4y3+4LOaOh_-ZfzScH0CbOKT99x91NA@mail.gmail.com>
+        (Paul Gildea's message of "Wed, 4 Mar 2020 14:20:28 +0000")
+Message-ID: <87wo7una02.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20200308140200.GO5972@shao2-debian> <CAHk-=wgJV7xrxsTkOG203huPShzZBEC6N_BG0KGwHBmEq4yqWg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgJV7xrxsTkOG203huPShzZBEC6N_BG0KGwHBmEq4yqWg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 8 Mar 2020 10:28:44 -0500
-X-Gmail-Original-Message-ID: <CAHk-=whrpL8pbKLg3_s3+bxv6kbPnzbSP8dQkZ+Rv=jAT3aoKw@mail.gmail.com>
-Message-ID: <CAHk-=whrpL8pbKLg3_s3+bxv6kbPnzbSP8dQkZ+Rv=jAT3aoKw@mail.gmail.com>
-Subject: Re: [futex] 8019ad13ef: will-it-scale.per_process_ops -97.8% regression
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86-ml <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, lkp@lists.01.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.102.1 at canardo
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Just a re-send without html crud that makes all the lists unhappy.
-I'm still on the road, the flight I was supposed to be on yesterday
-got cancelled.. ]
+Paul Gildea <paul.gildea@gmail.com> writes:
 
-I do note that the futex hashing seems to be broken by that commit. Or
-at least it's questionable.  It keeps hashing on "both.word",  and
-doesn't use the u64 field at all for hashing.
-
-Maybe I'm mis-reading it - I didn't apply the patch, I just looked at
-the patch and my source base separately.
-
-But the 98% regression sure says something went wrong ;)
-
-           Linus
-
-On Sun, Mar 8, 2020 at 9:22 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+> When MTU of modem is set to less than 1500 and a packet larger than MTU
+> arrives in Linux from a modem, it is discarded with -EOVERFLOW error
+> (Babble error). This is seen on USB3.0 and USB2.0 busses. This is
+> essentially because the MRU (Max Receive Size) is not a separate entity to
+> the MTU (Max Transmit Size) and the received packets can be larger than
+> those transmitted. Following the babble error there were an endless supply
+> of zero-length URBs which are rejected with -EPROTO (increasing the rx
+> input error counter each time). This is only seen on USB3.0. These contin=
+ue
+> to come ad infinitum until the modem is shutdown, rendering the modem
+> unusable. There is a bug in the core USB handling code in Linux that
+> doesn't deal well with network MTUs smaller than 1500 bytes. By default t=
+he
+> dev->hard_mtu (the "real" MTU) is in lockstep with dev->rx_urb_size
+> (essentially an MRU), and it's the latter that is causing trouble. This h=
+as
+> nothing to do with the modems; the issue can be reproduced by getting a
+> USB-Ethernet dongle, setting the MTU to 1430, and pinging with size great=
+er
+> than 1406.
 >
-> On Sun, Mar 8, 2020, 08:02 kernel test robot <rong.a.chen@intel.com> wrote:
->>
->>
->> FYI, we noticed a -97.8% regression of will-it-scale.per_process_ops due to commit:
->>
->> commit: 8019ad13ef7f64be44d4f892af9c840179009254 ("futex: Fix inode life-time issue")
+> Signed-off-by: Paul Gildea <Paul.Gildea@gmail.com>
+> ---
+> drivers/net/usb/qmi_wwan.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
-> Well, that's not optimal.
->
-> Peter, any ideas? One of the things that worried me about changing to
-> an u64 was what I think it causes extra padding, I think. And maybe
-> that messes with the comparison and hashing of the futexes?
+> diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+> index 5754bb6..545c772 100644
+> --- a/drivers/net/usb/qmi_wwan.c
+> +++ b/drivers/net/usb/qmi_wwan.c
+> @@ -815,6 +815,13 @@ static int qmi_wwan_bind(struct usbnet *dev, struct
+> usb_interface *intf)
+>     }
+>     dev->net->netdev_ops =3D &qmi_wwan_netdev_ops;
+>     dev->net->sysfs_groups[0] =3D &qmi_wwan_sysfs_attr_group;
+> +    /* LTE Networks don't always respect their own MTU on receive side;
+> +    * e.g. AT&T pushes 1430 MTU but still allows 1500 byte packets from
+> +    * far-end network. Make receive buffer large enough to accommodate
+> +    * them, and add four bytes so MTU does not equal MRU on network
+> +    * with 1500 MTU otherwise usbnet_change_mtu() will change both.
+> +    */
+> +   dev->rx_urb_size =3D ETH_DATA_LEN + 4;
+>  err:
+>     return status;
+>  }
+> --
+> 1.9.1
+
+
+This is fine as a first step towards saner buffer handling in qmi_wwan.
+If real world devices use asymmetric MTUs, then we should just deal with
+that.
+
+So I was going to add my ack.  But the patch does not apply:
+
+
+ bjorn@miraculix:/usr/local/src/git/linux$ git am /tmp/l
+ Applying: net: usb: qmi_wwan: Fix for packets being rejected in the ring b=
+uffer used by the xHCI controller.
+ error: corrupt patch at line 10
+
+and checkpatch says why:
+
+ bjorn@miraculix:/usr/local/src/git/linux$ scripts/checkpatch.pl /tmp/l
+ ERROR: patch seems to be corrupt (line wrapped?)
+ #34: FILE: drivers/net/usb/qmi_wwan.c:814:
+ usb_interface *intf)
+
+
+Could you fix up and resend? You might have to use a different email
+client.  See
+https://www.kernel.org/doc/html/latest/process/email-clients.html#email-cli=
+ents
+
+
+Bj=C3=B8rn
