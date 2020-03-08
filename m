@@ -2,134 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 184E617D318
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 10:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1506117D2F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 10:51:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbgCHJxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 05:53:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38182 "EHLO mail.kernel.org"
+        id S1726332AbgCHJvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 05:51:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbgCHJxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 05:53:49 -0400
-Received: from localhost.localdomain (unknown [89.208.247.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726038AbgCHJvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 05:51:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98AFD2084E;
-        Sun,  8 Mar 2020 09:53:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE63B2072A;
+        Sun,  8 Mar 2020 09:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583661228;
-        bh=vOPL8owgSgHX9PhVmLyiyNWhrKKGWBWr9Xmd6jc428Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ILwKeyhsd6982qjaUQJRvl39FmYnrOLOuWH1SlhJ59HzVUtZHnuy6I0NtkIEOY4lf
-         iVTai79VidqtS7UMB2Zyi7M4n9NYwRYygwzj+eQOFfqCdD4I+himIPosKG8D2XwBiz
-         hd8KYJJxgSShjgWRn+8BwX2MjB3PNCgz0xugvjfY=
-From:   guoren@kernel.org
-To:     paul.walmsley@sifive.com, palmer@dabbelt.com, Anup.Patel@wdc.com,
-        greentime.hu@sifive.com
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        arnd@arndb.de, linux-csky@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Guo Ren <guoren@linux.alibaba.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: [RFC PATCH V3 11/11] riscv: Add sigcontext save/restore
-Date:   Sun,  8 Mar 2020 17:49:54 +0800
-Message-Id: <20200308094954.13258-12-guoren@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20200308094954.13258-1-guoren@kernel.org>
-References: <20200308094954.13258-1-guoren@kernel.org>
+        s=default; t=1583661080;
+        bh=/4yYO4GgZbxmA0zei073nwkDkE9sDQW5NYyQ+MEZxFs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Q244NCGRIsDq5YUL2s33zrUFkb7EzboKf7F2rI9VgH4mPMpFsTmKqy4xOmYZou0jO
+         UJEw5COrQnRlchYdMEi8Xo1aNjUekFU/0uU6wUhjb3Te0NdP6NmYSb3T9OEReNKpZH
+         05+lS5rNAvBdKpD1yQ2kZV55+1oCB94tVSjlArRM=
+Date:   Sun, 8 Mar 2020 10:51:18 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB/PHY fixes for 5.6-rc6
+Message-ID: <20200308095118.GA4026918@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <guoren@linux.alibaba.com>
+The following changes since commit f8788d86ab28f61f7b46eb6be375f8a726783636:
 
-This patch add sigcontext save/restore and it's very similar to
-fpu.
+  Linux 5.6-rc3 (2020-02-23 16:17:42 -0800)
 
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
----
- arch/riscv/include/uapi/asm/sigcontext.h |  1 +
- arch/riscv/kernel/signal.c               | 40 ++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+are available in the Git repository at:
 
-diff --git a/arch/riscv/include/uapi/asm/sigcontext.h b/arch/riscv/include/uapi/asm/sigcontext.h
-index 84f2dfcfdbce..f74b3c814423 100644
---- a/arch/riscv/include/uapi/asm/sigcontext.h
-+++ b/arch/riscv/include/uapi/asm/sigcontext.h
-@@ -17,6 +17,7 @@
- struct sigcontext {
- 	struct user_regs_struct sc_regs;
- 	union __riscv_fp_state sc_fpregs;
-+	struct __riscv_v_state sc_vregs;
- };
- 
- #endif /* _UAPI_ASM_RISCV_SIGCONTEXT_H */
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 17ba190e84a5..4295c00e8934 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -83,6 +83,40 @@ static long save_fp_state(struct pt_regs *regs,
- #define restore_fp_state(task, regs) (0)
- #endif
- 
-+#ifdef CONFIG_VECTOR
-+static long restore_v_state(struct pt_regs *regs,
-+			    struct __riscv_v_state *sc_vregs)
-+{
-+	long err;
-+	struct __riscv_v_state __user *state = sc_vregs;
-+
-+	err = __copy_from_user(&current->thread.vstate, state, sizeof(*state));
-+	if (unlikely(err))
-+		return err;
-+
-+	vstate_restore(current, regs);
-+
-+	return err;
-+}
-+
-+static long save_v_state(struct pt_regs *regs,
-+			 struct __riscv_v_state *sc_vregs)
-+{
-+	long err;
-+	struct __riscv_v_state __user *state = sc_vregs;
-+
-+	vstate_save(current, regs);
-+	err = __copy_to_user(state, &current->thread.vstate, sizeof(*state));
-+	if (unlikely(err))
-+		return err;
-+
-+	return err;
-+}
-+#else
-+#define save_v_state(task, regs) (0)
-+#define restore_v_state(task, regs) (0)
-+#endif
-+
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
- {
-@@ -92,6 +126,9 @@ static long restore_sigcontext(struct pt_regs *regs,
- 	/* Restore the floating-point state. */
- 	if (has_fpu)
- 		err |= restore_fp_state(regs, &sc->sc_fpregs);
-+	/* Restore the vector state. */
-+	if (has_vector)
-+		err |= restore_v_state(regs, &sc->sc_vregs);
- 	return err;
- }
- 
-@@ -145,6 +182,9 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- 	/* Save the floating-point state. */
- 	if (has_fpu)
- 		err |= save_fp_state(regs, &sc->sc_fpregs);
-+	/* Save the vector state. */
-+	if (has_vector)
-+		err |= save_v_state(regs, &sc->sc_vregs);
- 	return err;
- }
- 
--- 
-2.17.0
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.6-rc5
 
+for you to fetch changes up to 19f3c1e98bd1704fe22e5f8105c0677a1332cdef:
+
+  Merge tag 'phy-for-5.6-rc_v2' of git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy into usb-linus (2020-03-04 13:28:52 +0100)
+
+----------------------------------------------------------------
+USB/PHY fixes for 5.6-rc5
+
+Here are some small USB and PHY driver fixes for reported issues for
+5.6-rc5.
+
+Included in here are:
+	- phy driver fixes
+	- new USB quirks
+	- USB cdns3 gadget driver fixes
+	- USB hub core fixes
+
+All of these have been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Dan Lazewatsky (1):
+      usb: quirks: add NO_LPM quirk for Logitech Screen Share
+
+Eugeniu Rosca (3):
+      usb: core: hub: fix unhandled return by employing a void function
+      usb: core: hub: do error out if usb_autopm_get_interface() fails
+      usb: core: port: do error out if usb_autopm_get_interface() fails
+
+Florian Fainelli (1):
+      phy: brcm-sata: Correct MDIO operations for 40nm platforms
+
+Greg Kroah-Hartman (1):
+      Merge tag 'phy-for-5.6-rc_v2' of git://git.kernel.org/.../kishon/linux-phy into usb-linus
+
+Grygorii Strashko (2):
+      phy: ti: gmii-sel: fix set of copy-paste errors
+      phy: ti: gmii-sel: do not fail in case of gmii
+
+Jim Lin (1):
+      usb: storage: Add quirk for Samsung Fit flash
+
+Kishon Vijay Abraham I (1):
+      phy: core: Fix phy_get() to not return error on link creation failure
+
+Marco Felsch (1):
+      usb: usb251xb: fix regulator probe and error handling
+
+Peter Chen (2):
+      usb: cdns3: gadget: link trb should point to next request
+      usb: cdns3: gadget: toggle cycle bit before reset endpoint
+
+Pratham Pratap (1):
+      usb: dwc3: gadget: Update chain bit correctly when using sg list
+
+Rikard Falkeborn (1):
+      phy: allwinner: Fix GENMASK misuse
+
+Tony Lindgren (2):
+      phy: mapphone-mdm6600: Fix write timeouts with shorter GPIO toggle interval
+      phy: mapphone-mdm6600: Fix timeouts by adding wake-up handling
+
+ drivers/phy/allwinner/phy-sun50i-usb3.c     |   2 +-
+ drivers/phy/broadcom/phy-brcm-sata.c        | 148 ++++++++++++----------------
+ drivers/phy/motorola/phy-mapphone-mdm6600.c |  27 ++++-
+ drivers/phy/phy-core.c                      |  18 ++--
+ drivers/phy/ti/phy-gmii-sel.c               |  10 +-
+ drivers/usb/cdns3/gadget.c                  |  19 +++-
+ drivers/usb/core/hub.c                      |   8 +-
+ drivers/usb/core/port.c                     |  10 +-
+ drivers/usb/core/quirks.c                   |   3 +
+ drivers/usb/dwc3/gadget.c                   |   9 +-
+ drivers/usb/misc/usb251xb.c                 |  20 +++-
+ drivers/usb/storage/unusual_devs.h          |   6 ++
+ 12 files changed, 163 insertions(+), 117 deletions(-)
