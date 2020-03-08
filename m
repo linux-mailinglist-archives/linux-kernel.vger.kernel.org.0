@@ -2,104 +2,435 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA76617D54A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 18:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C78F17D54D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 18:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbgCHRto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 13:49:44 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34307 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbgCHRto (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 13:49:44 -0400
-Received: by mail-wm1-f65.google.com with SMTP id x3so8046813wmj.1;
-        Sun, 08 Mar 2020 10:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0QkyVCipab/iVvgADLKpSyucbBPGMCb4Gb3OlXlvpMc=;
-        b=bLyPXV+bJn7lRY0RoPCoSWMdmTrFH/0ZfiBKg38Xuin9CGUWm3FYZH/9++nJwq0nuq
-         5Xb07dyd6dSiklvOalw5Bl6iD6VIOfKzk8jBHVoXPt/qkfFOUj7SHtO09eTQpBV591SL
-         mEod4xQ8g6tlSgG+nrimT8mE37RgrcpJ0jn/abc4go9eDoYYABc6LhjhFz7oKNR+m5jh
-         gsioy+rMMvdS4+sAGV8w9u7bEts5As+xLKtUz+QGPfKXKsF9YkO75mTtNCnxli1khZm9
-         CDXn0sjhNZsu96lixM4+4mO7SsAtU/cWu7Y6oE565DTqPIOS5hsN+ZWu5HXgd0XTXk2y
-         YoKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0QkyVCipab/iVvgADLKpSyucbBPGMCb4Gb3OlXlvpMc=;
-        b=sePBizNgGY7JDG+d2y+8DZLO9XB5W+7Tdc4L/01PhME/cmNLaj10ipaEFHUNvMhGzC
-         pRVlXp539jvC3+gxKu0RCfp4h7+Q9ap/kZoH8ztbXVsnv/Fe10sJ3rCkUUhm0DdPxSst
-         5wwDJhR9zs9r99E/kiJlrXIFvTdt9jjZlEupHdVePWlCV4LbKAVBrcFiMAXAJUTYn1Bu
-         hlza6o7SCGcnyzD1PBV5a4HG2QGc2lZF/Vdssg7Wya5RD0eb4Oe/eF5hgojQW03lJaZn
-         uSHrSqfRq9trSjhfw7cm6LSktf5XGOW/zzA/plo0//zB44k/+CxNOQOMK62o6j4l0LWd
-         uX1Q==
-X-Gm-Message-State: ANhLgQ18mwKZ1XVxlIYkXHLY0rcwKqTWbzcIpF/1ZufJg3myRj4s/4XM
-        6RCnNPed3cS8p2/pZkb9i9o=
-X-Google-Smtp-Source: ADFU+vsX574pgK7YdEsgAtzH3+SYNKaMf+bVij+6RYE0MsNMilVRxowwmkNhTLouhGdvM3OtJRTwIQ==
-X-Received: by 2002:a05:600c:218d:: with SMTP id e13mr16103701wme.127.1583689782479;
-        Sun, 08 Mar 2020 10:49:42 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2dce:4a00:35ca:ddfb:aba3:f544])
-        by smtp.gmail.com with ESMTPSA id c5sm7386226wma.3.2020.03.08.10.49.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Mar 2020 10:49:41 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [RFC PATCH] MAINTAINERS: add headers and doc to SCHEDULER
-Date:   Sun,  8 Mar 2020 18:49:31 +0100
-Message-Id: <20200308174931.9118-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726340AbgCHR5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 13:57:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbgCHR5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 13:57:46 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 894EE20684;
+        Sun,  8 Mar 2020 17:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583690265;
+        bh=VAchi9Kqw5iP4YDp9ASK3XFKLiXzbasm8zCgNURPvmI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2XOPPrk1XwGZMpNAPuaxYNQ8IpH8sg+QG/LEW3scQp3BfYlgqpLMEN+/RA6SbAYKg
+         2Ln/fDKTfhhvUXpRXVrJOoRJUHFUbgNr3vKWwWllgJjTBszLV+zbP+ScWviAy8NG5h
+         /Caqx9sOWVOvT8y2ThvzXXKId2AtRmLS/pqJaI2M=
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=big-swifty.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jB0BL-00B50K-LL; Sun, 08 Mar 2020 17:57:43 +0000
+Date:   Sun, 08 Mar 2020 17:57:42 +0000
+Message-ID: <86zhcq686h.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Wells Lu =?UTF-8?B?5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>,
+        Dvorkin Dmitry <dvorkin@tibbo.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [RFC 09/11] irqchip: Add Sunplus SP7021 interrupt (mux) controller
+In-Reply-To: <20200308163230.4002-10-afaerber@suse.de>
+References: <20200308163230.4002-1-afaerber@suse.de>
+        <20200308163230.4002-10-afaerber@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: afaerber@suse.de, linux-arm-kernel@lists.infradead.org, wells.lu@sunplus.com, dvorkin@tibbo.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various files in include/linux/sched/ are identified as part of THE REST
-according to MAINTAINERS, but they are really belong to SCHEDULER.
+On Sun, 08 Mar 2020 16:32:27 +0000,
+Andreas F=C3=A4rber <afaerber@suse.de> wrote:
+>=20
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 
-Add include/linux/sched/, include/uapi/linux/sched/ and
-Documentation/scheduler/ to the SCHEDULER entry, and order the entry with
-parse-maintainers.pl.
+Since you've now given me full permission to complain, can I trouble
+you for a meaningful commit message. It's not like it is the first
+time you write a patch...
 
-This was identified with a small script that finds all files belonging to
-THE REST according to the current MAINTAINERS file, and I investigated
-upon its output.
+> ---
+>  drivers/irqchip/Makefile     |   1 +
+>  drivers/irqchip/irq-sp7021.c | 285 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 286 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-sp7021.c
+>=20
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index eae0d78cbf22..a6b70d666739 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -105,3 +105,4 @@ obj-$(CONFIG_MADERA_IRQ)		+=3D irq-madera.o
+>  obj-$(CONFIG_LS1X_IRQ)			+=3D irq-ls1x.o
+>  obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+=3D irq-ti-sci-intr.o
+>  obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)	+=3D irq-ti-sci-inta.o
+> +obj-$(CONFIG_ARCH_SUNPLUS)		+=3D irq-sp7021.o
+> diff --git a/drivers/irqchip/irq-sp7021.c b/drivers/irqchip/irq-sp7021.c
+> new file mode 100644
+> index 000000000000..a0b7972f2abb
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-sp7021.c
+> @@ -0,0 +1,285 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Sunplus Plus1 SP7021 SoC interrupt controller
+> + *
+> + * Copyright (c) 2020 Andreas F=C3=A4rber
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/bitops.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +
+> +#define REG_INTC_INTR_TYPE(i)		(0x0 + (i) * 4)
+> +#define REG_INTC_INTR_POLARITY(i)	(0x1c + (i) * 4)
+> +#define REG_INTC_INTR_PRIO(i)		(0x38 + (i) * 4)
+> +#define REG_INTC_INTR_MASK(i)		(0x54 + (i) * 4)
+> +
+> +#define REG_INTC_INTR_CLR(i)		(0x0 + (i) * 4)
+> +#define REG_INTC_MASKED_FIQS(i)		(0x1c + (i) * 4)
+> +#define REG_INTC_MASKED_IRQS(i)		(0x38 + (i) * 4)
+> +#define REG_INTC_INTR_GROUP		0x7c
+> +
+> +#define INTC_INTR_GROUP_FIQ	GENMASK(6, 0)
+> +#define INTC_INTR_GROUP_IRQ	GENMASK(14, 8)
+> +
+> +struct sp7021_intc_data {
+> +	void __iomem		*base0;
+> +	void __iomem		*base1;
+> +	int			ext0_irq;
+> +	int			ext1_irq;
+> +	struct irq_chip		chip;
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Why do you need this irq_chip on a per instance basis?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4869bd91b6ff..3a0f8115c92c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14754,13 +14754,16 @@ R:	Steven Rostedt <rostedt@goodmis.org> (SCHED_FIFO/SCHED_RR)
- R:	Ben Segall <bsegall@google.com> (CONFIG_CFS_BANDWIDTH)
- R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
- L:	linux-kernel@vger.kernel.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
- S:	Maintained
--F:	kernel/sched/
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-+F:	Documentation/scheduler/
-+F:	include/linux/preempt.h
- F:	include/linux/sched.h
--F:	include/uapi/linux/sched.h
-+F:	include/linux/sched/
- F:	include/linux/wait.h
--F:	include/linux/preempt.h
-+F:	include/uapi/linux/sched.h
-+F:	include/uapi/linux/sched/
-+F:	kernel/sched/
- 
- SCR24X CHIP CARD INTERFACE DRIVER
- M:	Lubomir Rintel <lkundrak@v3.sk>
--- 
-2.17.1
+> +	struct irq_domain	*domain;
+> +	raw_spinlock_t		lock;
+> +};
+> +
+> +static void sp7021_intc_ext0_irq_handle(struct irq_desc *desc)
+> +{
+> +	struct sp7021_intc_data *s =3D irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+> +	u32 mask, masked;
+> +	int i, j;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	mask =3D readl_relaxed(s->base1 + REG_INTC_INTR_GROUP);
+> +	mask =3D FIELD_GET(INTC_INTR_GROUP_IRQ, mask);
+> +	while (mask) {
+> +		i =3D fls(mask) - 1;
+> +		mask &=3D ~BIT(i);
+> +
+> +		masked =3D readl_relaxed(s->base1 + REG_INTC_MASKED_IRQS(i));
+> +		while (masked) {
+> +			j =3D fls(masked) - 1;
+> +			masked &=3D ~BIT(j);
+> +
+> +			generic_handle_irq(irq_find_mapping(s->domain,
+> +							    i * 32 + j));
+> +		}
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +static void sp7021_intc_ext1_irq_handle(struct irq_desc *desc)
+> +{
+> +	struct sp7021_intc_data *s =3D irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+> +	u32 mask, masked;
+> +	int i, j;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	mask =3D readl_relaxed(s->base1 + REG_INTC_INTR_GROUP);
+> +	mask =3D FIELD_GET(INTC_INTR_GROUP_FIQ, mask);
+> +	while (mask) {
+> +		i =3D fls(mask) - 1;
+> +		mask &=3D ~BIT(i);
+> +
+> +		masked =3D readl_relaxed(s->base1 + REG_INTC_MASKED_FIQS(i));
+> +		while (masked) {
+> +			j =3D fls(masked) - 1;
+> +			masked &=3D ~BIT(j);
+> +
+> +			generic_handle_irq(irq_find_mapping(s->domain,
+> +							    i * 32 + j));
+> +		}
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
 
+Given that the only difference between these two functions is
+INTC_INTR_GROUP_IRQ vs INTC_INTR_GROUP_FIQ (whatever that means for
+something connected to SPIs...), surely you can devise a way to make
+this common code.
+
+> +
+> +static void sp7021_intc_ack_irq(struct irq_data *data)
+> +{
+> +	struct sp7021_intc_data *s =3D irq_data_get_irq_chip_data(data);
+> +	unsigned int idx;
+> +	u32 mask;
+> +
+> +	idx =3D data->hwirq / 32;
+
+You have this construct everywhere. How about making all your offset
+helpers take a hwirq number instead? It would certainly make the whole
+thing look a little less fragile.
+
+> +
+> +	mask =3D BIT(data->hwirq % 32);
+> +	writel_relaxed(mask, s->base1 + REG_INTC_INTR_CLR(idx));
+> +}
+> +
+> +static void sp7021_intc_mask_irq(struct irq_data *data)
+> +{
+> +	struct sp7021_intc_data *s =3D irq_data_get_irq_chip_data(data);
+> +	unsigned long flags;
+> +	unsigned int idx;
+> +	u32 mask;
+> +
+> +	idx =3D data->hwirq / 32;
+> +
+> +	raw_spin_lock_irqsave(&s->lock, flags);
+> +
+> +	mask =3D readl_relaxed(s->base0 + REG_INTC_INTR_MASK(idx));
+> +	mask &=3D ~BIT(data->hwirq % 32);
+> +	writel_relaxed(mask, s->base0 + REG_INTC_INTR_MASK(idx));
+> +
+> +	raw_spin_unlock_irqrestore(&s->lock, flags);
+> +}
+> +
+> +static void sp7021_intc_unmask_irq(struct irq_data *data)
+> +{
+> +	struct sp7021_intc_data *s =3D irq_data_get_irq_chip_data(data);
+> +	unsigned long flags;
+> +	unsigned int idx;
+> +	u32 mask;
+> +
+> +	idx =3D data->hwirq / 32;
+> +
+> +	raw_spin_lock_irqsave(&s->lock, flags);
+> +
+> +	mask =3D readl_relaxed(s->base0 + REG_INTC_INTR_MASK(idx));
+> +	mask |=3D BIT(data->hwirq % 32);
+> +	writel_relaxed(mask, s->base0 + REG_INTC_INTR_MASK(idx));
+> +
+> +	raw_spin_unlock_irqrestore(&s->lock, flags);
+> +}
+> +
+> +static int sp7021_intc_set_irq_type(struct irq_data *data, unsigned int =
+flow_type)
+> +{
+> +	struct sp7021_intc_data *s =3D irq_data_get_irq_chip_data(data);
+> +	unsigned long flags;
+> +	unsigned int idx;
+> +	u32 mask, type, polarity;
+> +
+> +	idx =3D data->hwirq / 32;
+> +	mask =3D BIT(data->hwirq % 32);
+> +
+> +	if (flow_type & IRQ_TYPE_LEVEL_MASK)
+> +		irq_set_chip_handler_name_locked(data, &s->chip, handle_level_irq, NUL=
+L);
+> +	else
+> +		irq_set_chip_handler_name_locked(data, &s->chip, handle_edge_irq, NULL=
+);
+
+Now you've changed the flow type even if the checks below end-up
+failing. Don't do that. Also, please use irq_set_chip_handler_locked()
+instead. You don't need to change the irqchip.
+
+> +
+> +	raw_spin_lock_irqsave(&s->lock, flags);
+> +
+> +	type =3D readl_relaxed(s->base0 + REG_INTC_INTR_TYPE(idx));
+> +	polarity =3D readl_relaxed(s->base0 + REG_INTC_INTR_POLARITY(idx));
+> +
+> +	switch (flow_type) {
+> +	case IRQ_TYPE_EDGE_RISING:
+> +		type |=3D mask;
+> +		polarity &=3D ~mask;
+> +		break;
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +		type |=3D mask;
+> +		polarity |=3D mask;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_HIGH:
+> +		type &=3D ~mask;
+> +		polarity &=3D ~mask;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_LOW:
+> +		type &=3D ~mask;
+> +		polarity |=3D mask;
+> +		break;
+> +	default:
+> +		raw_spin_unlock_irqrestore(&s->lock, flags);
+> +		return -EBADR;
+
+The canonical error to use is -EINVAL.
+
+> +	}
+> +
+> +	writel_relaxed(type, s->base0 + REG_INTC_INTR_TYPE(idx));
+> +	writel_relaxed(polarity, s->base0 + REG_INTC_INTR_POLARITY(idx));
+> +
+> +	raw_spin_unlock_irqrestore(&s->lock, flags);
+> +
+> +	return IRQ_SET_MASK_OK;
+> +}
+> +
+> +static const struct irq_chip sp7021_intc_irq_chip =3D {
+> +	.name			=3D "SP7021-A",
+> +	.irq_ack		=3D sp7021_intc_ack_irq,
+> +	.irq_mask		=3D sp7021_intc_mask_irq,
+> +	.irq_unmask		=3D sp7021_intc_unmask_irq,
+> +	.irq_set_type		=3D sp7021_intc_set_irq_type,
+
+I assume this SoC is SMP. You need a set_affinity method that returns
+-EINVAL.
+
+> +};
+> +
+> +static int sp7021_intc_irq_domain_map(struct irq_domain *d,
+> +		unsigned int irq, irq_hw_number_t hw)
+> +{
+> +	struct sp7021_intc_data *s =3D d->host_data;
+> +	unsigned int idx;
+> +	u32 mask, type;
+> +
+> +	idx =3D hw / 32;
+> +	mask =3D BIT(hw % 32);
+> +
+> +	type =3D readl_relaxed(s->base0 + REG_INTC_INTR_TYPE(idx));
+> +
+> +	irq_set_chip_and_handler(irq, &s->chip, (type & mask) ? handle_edge_irq=
+ : handle_level_irq);
+> +	irq_set_chip_data(irq, s);
+> +	irq_set_probe(irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops sp7021_intc_domain_ops =3D {
+> +	.xlate	=3D irq_domain_xlate_onecell,
+
+If it is a single cell, how do you express the interrupt polarity in
+the DT? Specially when the DT binding says that #interrupt-cells =3D <2>.
+Clearly, you have never tested this.
+
+> +	.map	=3D sp7021_intc_irq_domain_map,
+> +};
+> +
+> +int __init sp7021_intc_init(struct device_node *node, struct device_node=
+ *parent)
+> +{
+> +	struct sp7021_intc_data *s;
+> +	void __iomem *base0, *base1;
+> +	int i;
+> +
+> +	base0 =3D of_iomap(node, 0);
+> +	if (!base0)
+> +		return -EIO;
+
+-ENOMEM.
+
+> +
+> +	base1 =3D of_iomap(node, 1);
+> +	if (!base1)
+> +		return -EIO;
+
+Leaking mapping.
+
+> +
+> +	s =3D kzalloc(sizeof(*s), GFP_KERNEL);
+> +	if (!s)
+> +		return -ENOMEM;
+
+Again.
+
+> +
+> +	s->base0 =3D base0;
+> +	s->base1 =3D base1;
+> +	s->chip =3D sp7021_intc_irq_chip;
+
+That's exactly what I was complaining about earlier: pointlessly
+storing a copy of a static const data structure that never gets
+updated. Drop this.
+
+> +
+> +	s->ext0_irq =3D irq_of_parse_and_map(node, 0);
+> +	if (s->ext0_irq <=3D 0) {
+> +		kfree(s);
+> +		return -EINVAL;
+> +	}
+> +
+> +	s->ext1_irq =3D irq_of_parse_and_map(node, 1);
+> +	if (s->ext1_irq <=3D 0) {
+> +		kfree(s);
+> +		return -EINVAL;
+> +	}
+> +
+> +	raw_spin_lock_init(&s->lock);
+> +
+> +	for (i =3D 0; i < 7; i++) {
+> +		writel_relaxed(0, s->base0 + REG_INTC_INTR_MASK(i));
+> +		writel_relaxed(~0, s->base0 + REG_INTC_INTR_TYPE(i));
+> +		writel_relaxed(0, s->base0 + REG_INTC_INTR_POLARITY(i));
+> +
+> +		/* irq, not fiq */
+> +		writel_relaxed(~0, s->base0 + REG_INTC_INTR_PRIO(i));
+> +
+> +		writel_relaxed(~0, s->base1 + REG_INTC_INTR_CLR(i));
+> +	}
+> +
+> +	s->domain =3D irq_domain_add_linear(node, 200, &sp7021_intc_domain_ops,
+
+Magic numbers.
+
+> +					  s);
+> +	if (!s->domain) {
+> +		kfree(s);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	irq_set_chained_handler_and_data(s->ext0_irq, sp7021_intc_ext0_irq_hand=
+le, s);
+> +	irq_set_chained_handler_and_data(s->ext1_irq, sp7021_intc_ext1_irq_hand=
+le, s);
+> +
+> +	return 0;
+> +}
+> +IRQCHIP_DECLARE(sp7021_intc, "sunplus,sp7021-intc", sp7021_intc_init);
+
+So yes, I complained a lot. Thanks for giving me the opportunity.
+
+	M.
+
+--=20
+Jazz is not dead, it just smells funny.
