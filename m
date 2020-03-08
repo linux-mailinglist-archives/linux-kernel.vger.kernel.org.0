@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA5517D704
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C230917D71C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:25:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgCHXXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:23:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57218 "EHLO
+        id S1726498AbgCHXX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:23:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57236 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbgCHXXw (ORCPT
+        with ESMTP id S1726373AbgCHXXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:23:52 -0400
+        Sun, 8 Mar 2020 19:23:54 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Gg-00034g-FB; Mon, 09 Mar 2020 00:23:35 +0100
+        id 1jB5Gh-00035J-Rn; Mon, 09 Mar 2020 00:23:37 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 8760E1040A9;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id C108B1040AA;
         Mon,  9 Mar 2020 00:23:29 +0100 (CET)
-Message-Id: <20200308222609.621492144@linutronix.de>
+Message-Id: <20200308222609.731890049@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 08 Mar 2020 23:24:06 +0100
+Date:   Sun, 08 Mar 2020 23:24:07 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: [patch part-II V2 07/13] x86/entry: Move irq tracing on syscall entry to C-code
+Subject: [patch part-II V2 08/13] tracing: Provide lockdep less trace_hardirqs_on/off() variants
 References: <20200308222359.370649591@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,112 +42,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the C entry points are safe, move the irq flags tracing code into
-the entry helper.
+trace_hardirqs_on/off() is only partially safe vs. RCU idle. The tracer
+core itself is safe, but the resulting tracepoints can be utilized by
+e.g. BPF which is unsafe.
+
+Provide variants which do not contain the lockdep invocation so the lockdep
+and tracer invocations can be split at the call site and placed properly.
+
+The new variants also do not use rcuidle as they are going to be called
+from entry code after/before context tracking.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-
 ---
- arch/x86/entry/common.c          |    5 +++++
- arch/x86/entry/entry_32.S        |   12 ------------
- arch/x86/entry/entry_64.S        |    2 --
- arch/x86/entry/entry_64_compat.S |   18 ------------------
- 4 files changed, 5 insertions(+), 32 deletions(-)
+V2: New patch
+---
+ include/linux/irqflags.h        |    4 ++++
+ kernel/trace/trace_preemptirq.c |   23 +++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -58,6 +58,11 @@ static inline void enter_from_user_mode(
-  */
- static __always_inline void syscall_entry_apply_fixups(void)
+--- a/include/linux/irqflags.h
++++ b/include/linux/irqflags.h
+@@ -29,6 +29,8 @@
+ #endif
+ 
+ #ifdef CONFIG_TRACE_IRQFLAGS
++  extern void __trace_hardirqs_on(void);
++  extern void __trace_hardirqs_off(void);
+   extern void trace_hardirqs_on(void);
+   extern void trace_hardirqs_off(void);
+ # define trace_hardirq_context(p)	((p)->hardirq_context)
+@@ -52,6 +54,8 @@ do {						\
+ 	current->softirq_context--;		\
+ } while (0)
+ #else
++# define __trace_hardirqs_on()		do { } while (0)
++# define __trace_hardirqs_off()		do { } while (0)
+ # define trace_hardirqs_on()		do { } while (0)
+ # define trace_hardirqs_off()		do { } while (0)
+ # define trace_hardirq_context(p)	0
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -19,6 +19,17 @@
+ /* Per-cpu variable to prevent redundant calls when IRQs already off */
+ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+ 
++void __trace_hardirqs_on(void)
++{
++	if (this_cpu_read(tracing_irq_cpu)) {
++		if (!in_nmi())
++			trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
++		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
++		this_cpu_write(tracing_irq_cpu, 0);
++	}
++}
++NOKPROBE_SYMBOL(__trace_hardirqs_on);
++
+ void trace_hardirqs_on(void)
  {
-+	/*
-+	 * Usermode is traced as interrupts enabled, but the syscall entry
-+	 * mechanisms disable interrupts. Tell the tracer.
-+	 */
-+	trace_hardirqs_off();
- 	enter_from_user_mode();
- 	local_irq_enable();
- }
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -960,12 +960,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 	jnz	.Lsysenter_fix_flags
- .Lsysenter_flags_fixed:
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+@@ -33,6 +44,18 @@ void trace_hardirqs_on(void)
+ EXPORT_SYMBOL(trace_hardirqs_on);
+ NOKPROBE_SYMBOL(trace_hardirqs_on);
  
--	/*
--	 * User mode is traced as though IRQs are on, and SYSENTER
--	 * turned them off.
--	 */
--	TRACE_IRQS_OFF
--
- 	movl	%esp, %eax
- 	call	do_fast_syscall_32
- 	/* XEN PV guests always use IRET path */
-@@ -1075,12 +1069,6 @@ SYM_FUNC_START(entry_INT80_32)
- 
- 	SAVE_ALL pt_regs_ax=$-ENOSYS switch_stacks=1	/* save rest */
- 
--	/*
--	 * User mode is traced as though IRQs are on, and the interrupt gate
--	 * turned them off.
--	 */
--	TRACE_IRQS_OFF
--
- 	movl	%esp, %eax
- 	call	do_int80_syscall_32
- .Lsyscall_32_done:
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -167,8 +167,6 @@ SYM_INNER_LABEL(entry_SYSCALL_64_after_h
- 
- 	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
- 
--	TRACE_IRQS_OFF
--
- 	/* IRQs are off. */
- 	movq	%rax, %rdi
- 	movq	%rsp, %rsi
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -129,12 +129,6 @@ SYM_FUNC_START(entry_SYSENTER_compat)
- 	jnz	.Lsysenter_fix_flags
- .Lsysenter_flags_fixed:
- 
--	/*
--	 * User mode is traced as though IRQs are on, and SYSENTER
--	 * turned them off.
--	 */
--	TRACE_IRQS_OFF
--
- 	movq	%rsp, %rdi
- 	call	do_fast_syscall_32
- 	/* XEN PV guests always use IRET path */
-@@ -247,12 +241,6 @@ SYM_INNER_LABEL(entry_SYSCALL_compat_aft
- 	pushq   $0			/* pt_regs->r15 = 0 */
- 	xorl	%r15d, %r15d		/* nospec   r15 */
- 
--	/*
--	 * User mode is traced as though IRQs are on, and SYSENTER
--	 * turned them off.
--	 */
--	TRACE_IRQS_OFF
--
- 	movq	%rsp, %rdi
- 	call	do_fast_syscall_32
- 	/* XEN PV guests always use IRET path */
-@@ -403,12 +391,6 @@ SYM_CODE_START(entry_INT80_compat)
- 	xorl	%r15d, %r15d		/* nospec   r15 */
- 	cld
- 
--	/*
--	 * User mode is traced as though IRQs are on, and the interrupt
--	 * gate turned them off.
--	 */
--	TRACE_IRQS_OFF
--
- 	movq	%rsp, %rdi
- 	call	do_int80_syscall_32
- .Lsyscall_32_done:
++void __trace_hardirqs_off(void)
++{
++	if (!this_cpu_read(tracing_irq_cpu)) {
++		this_cpu_write(tracing_irq_cpu, 1);
++		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
++		if (!in_nmi())
++			trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
++	}
++
++}
++NOKPROBE_SYMBOL(__trace_hardirqs_off);
++
+ void trace_hardirqs_off(void)
+ {
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
 
