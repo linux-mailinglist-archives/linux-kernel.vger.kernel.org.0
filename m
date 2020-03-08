@@ -2,54 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E7917D489
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:55:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 535C517D490
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 16:57:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgCHPzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 11:55:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43602 "EHLO mail.kernel.org"
+        id S1726352AbgCHP5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 11:57:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:45732 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbgCHPzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 11:55:07 -0400
-Subject: Re: [GIT PULL] Char/Misc driver fixes for 5.6-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583682907;
-        bh=F7A7UrFbb96ePTNkO/uyloNHxEfY9Goxf5S8be5Uwpo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=hkjVnoBPmDLA13SLl6MuLS91VSw3BulQ8X19NnImCLoXjswhX7pVQc7QKvEwxDro5
-         vIRD2EEQTvIrPWl4zOJ1AE614geW1oRvOz3Wnk3JPWYHlP+KWhEtSO5n/yd2o+0fcv
-         5xa3e5uwR15/NNvk9AsL+Mqc7qXSwSRYX6I3zfEo=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200308095310.GA4027283@kroah.com>
-References: <20200308095310.GA4027283@kroah.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200308095310.GA4027283@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
- tags/char-misc-5.6-rc5
-X-PR-Tracked-Commit-Id: f0fe2c0f050d31babcad7d65f1d550d462a40064
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 378fee2e6b12f31ab3749e0aa4ed0a63be23e822
-Message-Id: <158368290705.12496.3585322471902760186.pr-tracker-bot@kernel.org>
-Date:   Sun, 08 Mar 2020 15:55:07 +0000
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+        id S1726270AbgCHP5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 11:57:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F1A51FB;
+        Sun,  8 Mar 2020 08:57:21 -0700 (PDT)
+Received: from e110176-lin.kfn.arm.com (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 34BB73F6CF;
+        Sun,  8 Mar 2020 08:57:20 -0700 (PDT)
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Ofir Drang <ofir.drang@arm.com>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] crypto: ccree - cleanups
+Date:   Sun,  8 Mar 2020 17:57:03 +0200
+Message-Id: <20200308155710.14546-1-gilad@benyossef.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 8 Mar 2020 10:53:10 +0100:
+A bunch of code cleanups.
+No fixes or new features here.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.6-rc5
+Gilad Ben-Yossef (4):
+  crypto: ccree - remove ancient TODO remarks
+  crypto: ccree - only check condition if needed
+  crypto: ccree - use crypto_ipsec_check_assoclen()
+  crypto: ccree - refactor AEAD IV in AAD handling
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/378fee2e6b12f31ab3749e0aa4ed0a63be23e822
+Hadar Gat (2):
+  crypto: ccree - update register handling macros
+  crypto: ccree - remove pointless comment
 
-Thank you!
+ drivers/crypto/ccree/cc_aead.c          | 113 +++++++-----------------
+ drivers/crypto/ccree/cc_aead.h          |   3 +-
+ drivers/crypto/ccree/cc_buffer_mgr.c    |  91 +++----------------
+ drivers/crypto/ccree/cc_cipher.c        |   1 -
+ drivers/crypto/ccree/cc_driver.h        |   5 +-
+ drivers/crypto/ccree/cc_hash.c          |   3 -
+ drivers/crypto/ccree/cc_hw_queue_defs.h |  77 ++++++++--------
+ drivers/crypto/ccree/cc_request_mgr.c   |   1 -
+ 8 files changed, 80 insertions(+), 214 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.25.1
+
