@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413C217D702
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:23:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C198617D71A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgCHXXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:23:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57201 "EHLO
+        id S1726616AbgCHXXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:23:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57213 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbgCHXXt (ORCPT
+        with ESMTP id S1726518AbgCHXXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:23:49 -0400
+        Sun, 8 Mar 2020 19:23:50 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Ge-00033b-4F; Mon, 09 Mar 2020 00:23:32 +0100
+        id 1jB5Gf-00033c-5F; Mon, 09 Mar 2020 00:23:33 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 16CDB1040A5;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 4DF891040A7;
         Mon,  9 Mar 2020 00:23:29 +0100 (CET)
-Message-Id: <20200308222609.411187252@linutronix.de>
+Message-Id: <20200308222609.522613084@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 08 Mar 2020 23:24:04 +0100
+Date:   Sun, 08 Mar 2020 23:24:05 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: [patch part-II V2 05/13] x86/entry/common: Consolidate syscall entry code
+Subject: [patch part-II V2 06/13] x86/entry/common: Mark syscall entry points notrace and NOKPROBE
 References: <20200308222359.370649591@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,117 +42,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All syscall entry points call enter_from_user_mode() and local_irq_enable().
+The entry code has some limitations for instrumentation. Anything before
+invoking enter_from_user_mode() cannot be probed because kprobes depend on
+RCU and with NOHZ_FULL user mode can be accounted similar to idle from a
+RCU point of view. enter_from_user_mode() calls into context tracking which
+adjusts the RCU state.
 
-Move that into an inline helper so the interrupt tracing can be moved into
-that helper later instead of sprinkling it all over the place.
+A similar problem exists vs. function tracing. The function entry/exit
+points can be used by BPF which again is not safe before CONTEXT_KERNEL has
+been reached.
+
+Mark the C-entry points for the various syscalls with notrace and
+NOKPROBE_SYMBOL().
+
+Note, that this still leaves the ASM invocations of trace_hardirqs_off()
+unprotected. While this is safe vs. RCU at least from the ftrace POV, these
+are trace points which can be utilized by BPF... This will be addressed in
+later patches.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 ---
-V2: Rename helper to syscall_entry_apply_fixups()
+V2: Amend changelog
 ---
- arch/x86/entry/common.c |   48 +++++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+ arch/x86/entry/common.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -50,6 +50,18 @@ NOKPROBE_SYMBOL(enter_from_user_mode);
- static inline void enter_from_user_mode(void) {}
- #endif
- 
-+/*
-+ * All syscall entry variants call with interrupts disabled.
-+ *
-+ * Invoke context tracking if enabled and enable interrupts for further
-+ * processing.
-+ */
-+static __always_inline void syscall_entry_apply_fixups(void)
-+{
-+	enter_from_user_mode();
-+	local_irq_enable();
-+}
-+
- static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
- {
- #ifdef CONFIG_X86_64
-@@ -280,13 +292,11 @@ static void syscall_slow_exit_work(struc
- }
- 
- #ifdef CONFIG_X86_64
--__visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
-+static __always_inline
-+void do_syscall_64_irqs_on(unsigned long nr, struct pt_regs *regs)
- {
--	struct thread_info *ti;
-+	struct thread_info *ti = current_thread_info();
- 
--	enter_from_user_mode();
--	local_irq_enable();
--	ti = current_thread_info();
- 	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY)
- 		nr = syscall_trace_enter(regs);
- 
-@@ -304,6 +314,12 @@ static void syscall_slow_exit_work(struc
- 
+@@ -315,11 +315,12 @@ void do_syscall_64_irqs_on(unsigned long
  	syscall_return_slowpath(regs);
  }
-+
-+__visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
-+{
-+	syscall_entry_apply_fixups();
-+	do_syscall_64_irqs_on(nr, regs);
-+}
+ 
+-__visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
++__visible notrace void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+ {
+ 	syscall_entry_apply_fixups();
+ 	do_syscall_64_irqs_on(nr, regs);
+ }
++NOKPROBE_SYMBOL(do_syscall_64);
  #endif
  
  #if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
-@@ -356,19 +372,17 @@ static __always_inline void do_syscall_3
+@@ -370,11 +371,12 @@ static __always_inline void do_syscall_3
+ }
+ 
  /* Handles int $0x80 */
- __visible void do_int80_syscall_32(struct pt_regs *regs)
+-__visible void do_int80_syscall_32(struct pt_regs *regs)
++__visible notrace void do_int80_syscall_32(struct pt_regs *regs)
  {
--	enter_from_user_mode();
--	local_irq_enable();
-+	syscall_entry_apply_fixups();
+ 	syscall_entry_apply_fixups();
  	do_syscall_32_irqs_on(regs);
  }
++NOKPROBE_SYMBOL(do_int80_syscall_32);
  
--/* Returns 0 to return using IRET or 1 to return using SYSEXIT/SYSRETL. */
--__visible long do_fast_syscall_32(struct pt_regs *regs)
-+/* Fast syscall 32bit variant */
-+static __always_inline long do_fast_syscall_32_irqs_on(struct pt_regs *regs)
- {
- 	/*
- 	 * Called using the internal vDSO SYSENTER/SYSCALL32 calling
- 	 * convention.  Adjust regs so it looks like we entered using int80.
- 	 */
--
- 	unsigned long landing_pad = (unsigned long)current->mm->context.vdso +
- 		vdso_image_32.sym_int80_landing_pad;
- 
-@@ -379,10 +393,6 @@ static __always_inline void do_syscall_3
- 	 */
- 	regs->ip = landing_pad;
- 
--	enter_from_user_mode();
--
--	local_irq_enable();
--
- 	/* Fetch EBP from where the vDSO stashed it. */
- 	if (
- #ifdef CONFIG_X86_64
-@@ -438,4 +448,12 @@ static __always_inline void do_syscall_3
- 		(regs->flags & (X86_EFLAGS_RF | X86_EFLAGS_TF | X86_EFLAGS_VM)) == 0;
- #endif
+ /* Fast syscall 32bit variant */
+ static __always_inline long do_fast_syscall_32_irqs_on(struct pt_regs *regs)
+@@ -450,10 +452,11 @@ static __always_inline long do_fast_sysc
  }
--#endif
-+
-+/* Returns 0 to return using IRET or 1 to return using SYSEXIT/SYSRETL. */
-+__visible long do_fast_syscall_32(struct pt_regs *regs)
-+{
-+	syscall_entry_apply_fixups();
-+	return do_fast_syscall_32_irqs_on(regs);
-+}
-+
-+#endif /* CONFIG_X86_32 || CONFIG_IA32_EMULATION */
+ 
+ /* Returns 0 to return using IRET or 1 to return using SYSEXIT/SYSRETL. */
+-__visible long do_fast_syscall_32(struct pt_regs *regs)
++__visible notrace long do_fast_syscall_32(struct pt_regs *regs)
+ {
+ 	syscall_entry_apply_fixups();
+ 	return do_fast_syscall_32_irqs_on(regs);
+ }
++NOKPROBE_SYMBOL(do_fast_syscall_32);
+ 
+ #endif /* CONFIG_X86_32 || CONFIG_IA32_EMULATION */
 
