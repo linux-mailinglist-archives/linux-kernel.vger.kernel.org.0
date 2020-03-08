@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C307C17D71E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 554C417D70C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:24:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgCHXYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:24:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57282 "EHLO
+        id S1727069AbgCHXY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:24:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57353 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbgCHXYD (ORCPT
+        with ESMTP id S1726918AbgCHXYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:24:03 -0400
+        Sun, 8 Mar 2020 19:24:15 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Gp-00037g-7c; Mon, 09 Mar 2020 00:23:44 +0100
+        id 1jB5Gs-000389-EL; Mon, 09 Mar 2020 00:23:47 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 56E3910408A;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 8D527104097;
         Mon,  9 Mar 2020 00:23:35 +0100 (CET)
-Message-Id: <20200308231718.541278188@linutronix.de>
+Message-Id: <20200308231718.634477991@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 09 Mar 2020 00:14:11 +0100
+Date:   Mon, 09 Mar 2020 00:14:12 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -31,7 +31,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [patch part-III V2 01/23] x86/traps: Split trap numbers out in a seperate header
+Subject: [patch part-III V2 02/23] x86/entry/64: Avoid pointless code when CONTEXT_TRACKING=n
 References: <20200308231410.905396057@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,92 +45,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-So they can be used in ASM code. For this it is also necessary to convert
-them to defines. Will be used for the rework of the entry code.
+GAS cannot optimize out the test and conditional jump when context tracking
+is disabled and CALL_enter_from_user_mode is an empty macro.
+
+Wrap it in #ifdeffery. Will go away once all this is moved to C.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Andy Lutomirski <luto@kernel.org>
 
 ---
- arch/x86/include/asm/trapnr.h |   31 +++++++++++++++++++++++++++++++
- arch/x86/include/asm/traps.h  |   26 +-------------------------
- 2 files changed, 32 insertions(+), 25 deletions(-)
+ arch/x86/entry/entry_64.S |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- /dev/null
-+++ b/arch/x86/include/asm/trapnr.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_TRAPNR_H
-+#define _ASM_X86_TRAPNR_H
-+
-+/* Interrupts/Exceptions */
-+
-+#define X86_TRAP_DE		 0	/* Divide-by-zero */
-+#define X86_TRAP_DB		 1	/* Debug */
-+#define X86_TRAP_NMI		 2	/* Non-maskable Interrupt */
-+#define X86_TRAP_BP		 3	/* Breakpoint */
-+#define X86_TRAP_OF		 4	/* Overflow */
-+#define X86_TRAP_BR		 5	/* Bound Range Exceeded */
-+#define X86_TRAP_UD		 6	/* Invalid Opcode */
-+#define X86_TRAP_NM		 7	/* Device Not Available */
-+#define X86_TRAP_DF		 8	/* Double Fault */
-+#define X86_TRAP_OLD_MF		 9	/* Coprocessor Segment Overrun */
-+#define X86_TRAP_TS		10	/* Invalid TSS */
-+#define X86_TRAP_NP		11	/* Segment Not Present */
-+#define X86_TRAP_SS		12	/* Stack Segment Fault */
-+#define X86_TRAP_GP		13	/* General Protection Fault */
-+#define X86_TRAP_PF		14	/* Page Fault */
-+#define X86_TRAP_SPURIOUS	15	/* Spurious Interrupt */
-+#define X86_TRAP_MF		16	/* x87 Floating-Point Exception */
-+#define X86_TRAP_AC		17	/* Alignment Check */
-+#define X86_TRAP_MC		18	/* Machine Check */
-+#define X86_TRAP_XF		19	/* SIMD Floating-Point Exception */
-+#define X86_TRAP_VE		20	/* Virtualization Exception */
-+#define X86_TRAP_CP		21	/* Control Protection Exception */
-+#define X86_TRAP_IRET		32	/* IRET Exception */
-+
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -884,12 +884,14 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
+ 	TRACE_IRQS_OFF
+ 	.endif
+ 
++#ifdef CONFIG_CONTEXT_TRACKING
+ 	.if \paranoid == 0
+ 	testb	$3, CS(%rsp)
+ 	jz	.Lfrom_kernel_no_context_tracking_\@
+ 	CALL_enter_from_user_mode
+ .Lfrom_kernel_no_context_tracking_\@:
+ 	.endif
 +#endif
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -7,6 +7,7 @@
  
- #include <asm/debugreg.h>
- #include <asm/siginfo.h>			/* TRAP_TRACE, ... */
-+#include <asm/trapnr.h>
+ 	movq	%rsp, %rdi			/* pt_regs pointer */
  
- #define dotraplinkage __visible
- 
-@@ -129,31 +130,6 @@ void __noreturn handle_stack_overflow(co
- 				      unsigned long fault_address);
- #endif
- 
--/* Interrupts/Exceptions */
--enum {
--	X86_TRAP_DE = 0,	/*  0, Divide-by-zero */
--	X86_TRAP_DB,		/*  1, Debug */
--	X86_TRAP_NMI,		/*  2, Non-maskable Interrupt */
--	X86_TRAP_BP,		/*  3, Breakpoint */
--	X86_TRAP_OF,		/*  4, Overflow */
--	X86_TRAP_BR,		/*  5, Bound Range Exceeded */
--	X86_TRAP_UD,		/*  6, Invalid Opcode */
--	X86_TRAP_NM,		/*  7, Device Not Available */
--	X86_TRAP_DF,		/*  8, Double Fault */
--	X86_TRAP_OLD_MF,	/*  9, Coprocessor Segment Overrun */
--	X86_TRAP_TS,		/* 10, Invalid TSS */
--	X86_TRAP_NP,		/* 11, Segment Not Present */
--	X86_TRAP_SS,		/* 12, Stack Segment Fault */
--	X86_TRAP_GP,		/* 13, General Protection Fault */
--	X86_TRAP_PF,		/* 14, Page Fault */
--	X86_TRAP_SPURIOUS,	/* 15, Spurious Interrupt */
--	X86_TRAP_MF,		/* 16, x87 Floating-Point Exception */
--	X86_TRAP_AC,		/* 17, Alignment Check */
--	X86_TRAP_MC,		/* 18, Machine Check */
--	X86_TRAP_XF,		/* 19, SIMD Floating-Point Exception */
--	X86_TRAP_IRET = 32,	/* 32, IRET Exception */
--};
--
- /*
-  * Page fault error code bits:
-  *
 
