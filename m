@@ -2,151 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D32A617D5C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 20:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E2317D5CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 20:20:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgCHTLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 15:11:43 -0400
-Received: from gateway30.websitewelcome.com ([192.185.179.30]:16656 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726318AbgCHTLm (ORCPT
+        id S1726363AbgCHTUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 15:20:44 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43827 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbgCHTUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 15:11:42 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 1AED53CB1
-        for <linux-kernel@vger.kernel.org>; Sun,  8 Mar 2020 14:11:41 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id B1KvjgNXYSl8qB1KvjHu15; Sun, 08 Mar 2020 14:11:41 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=w0GiLmOLbA5HCQnuH94dMDibvP+0nV1CMPbAZeilLyQ=; b=a+U0hdLO+N+j/NsSklNMl+ms/s
-        QC884KeHxaoUuX3jjy5bjO9GZp9Dc3/V3XkLEwA7NwGNhUOXz1DMZZ1v5QQ7ycS4W0xGx7CqTKJ1z
-        ZM89vnW0GlWyBVO8pfVcfxLY94oLa39vG+oMpvnaj0l4rC/rY2s3oykq2y+N5tqESY8f2CIksr4La
-        dvjH3/30FYqD/W3SiewjMe6ELkjw9Q/BTefFziczKVxaq/dbYmCa4AavsTCEB0I68kWhe6ZqMta9v
-        SEWGCeRUgOab4k7ouY4Bgt+ODMnnk++bYyQAqMkZPV4MYGmbunEO4ZxBSRtMVAf/iIXI5OSUewIrf
-        /Y+AHecQ==;
-Received: from [201.162.167.15] (port=23945 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jB1Kt-000hNa-LH; Sun, 08 Mar 2020 14:11:40 -0500
-To:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Sun, 8 Mar 2020 15:20:44 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v9so8395668wrf.10;
+        Sun, 08 Mar 2020 12:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qALcG3CGuBaboVD1Vu6sKa7UNKTJMIZmbr5ctcnIjvQ=;
+        b=KuTzOrLQIYKb2aSSDndfU+R4OkG8+39CunsygU0n4TfXkT3rs607w8JdEwc7EkhXsh
+         SUI5U4xuqaM9u2kio3yF8L+iH80FaSzYKojyVif5EOGrwXyEC0Gkbe8H9x+6I9uVWaUI
+         RT/td7r6E8m4X97pUhBUDriTf1zOhmskFBfaaLvSXV09uCRoeWeGCxvzjDVCvADrX0m4
+         OGajyiizFLDGpLeKePswPh2ZPdrG2VOjhvLszoQZn4RX7Ym4zRLpiXb393YGlng3qaUl
+         NNvgvs6yjZUeroVVwUj2aJvhGwQCRM6pQEpwXfS1MoFKGf14J3Kxm6LJzSHPh6b6Dsqc
+         HcAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qALcG3CGuBaboVD1Vu6sKa7UNKTJMIZmbr5ctcnIjvQ=;
+        b=sg/JXf+KfmImKXo5DzZnUEwJbgMHkwVBwlCxFmJrQu6qKTwd6zcdwwSzms6N1AR86d
+         7XxBFArRTkP++/lbi2PfrhzdGnA5A8MvW/XivXsiREDgfA+QdOAXzghYMsuoXxPw4QhM
+         RrJ6taRqva78EObGHG8Y3gaKPLVl0jMWrhL8GxURTWF/CfFDXzzIIJxNVqzVxzXlW5Dv
+         cXbkQPPA5bhbftZ3sfdDjjsTp/V8rlr23PKeKwwSnxJffsde8/f8ZDjv0ikEYBq9DGLD
+         qNFbT+RLJKpl1iRzGx9P+S920+KSZHay+zDYYpoVxz0nv6UJAzTGkLPP33yqwKxNqhZ1
+         lN+A==
+X-Gm-Message-State: ANhLgQ3OI0qcKFk+kp9WD9s2tAKpT+TCBx+cvxIZLmOJEEOPs4I+fdBf
+        HG5w2NWhOaG7z/ZF95s7mZk=
+X-Google-Smtp-Source: ADFU+vv3rcWG5MMYWXUHe4T6UqDBb1TBfzXy2V9IGq5bFXchWpdP6YGsyWHg0RWNUP8FI7gV+0nbcA==
+X-Received: by 2002:adf:e98f:: with SMTP id h15mr16675277wrm.263.1583695241942;
+        Sun, 08 Mar 2020 12:20:41 -0700 (PDT)
+Received: from supervisor.net28 ([46.53.253.27])
+        by smtp.gmail.com with ESMTPSA id f127sm23281865wma.4.2020.03.08.12.20.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 08 Mar 2020 12:20:41 -0700 (PDT)
+From:   Arthur Demchenkov <spinal.by@gmail.com>
+Cc:     Arthur Demchenkov <spinal.by@gmail.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     clang-built-linux@googlegroups.com
-References: <b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe@perches.com>
- <576fe2ab-7937-4698-b32a-8599813d6ad1@embeddedor.com>
- <4304de54a44b7c8c22d8c2d9249d716664cf5ce8.camel@perches.com>
- <6773b7e3-8ce4-55d1-8bb7-bde6d9f6e887@embeddedor.com>
- <259f405155a948f90229d3fc8cad928d434b46f9.camel@perches.com>
- <1f71509d-6c58-412d-a817-45b1cc78c06e@embeddedor.com>
- <18d7df753cb90d6c6f5a6b5e2a12b4c102ac8749.camel@perches.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] cvt_fallthrough: A tool to convert /* fallthrough */
- comments to fallthrough;
-Message-ID: <7a0a3e7b-9c76-22f8-8dbf-acd9960d7950@embeddedor.com>
-Date:   Sun, 8 Mar 2020 14:14:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <18d7df753cb90d6c6f5a6b5e2a12b4c102ac8749.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.167.15
-X-Source-L: No
-X-Exim-ID: 1jB1Kt-000hNa-LH
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [201.162.167.15]:23945
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Subject: [PATCH] ARM: OMAP: DTS: N900: fix onenand timings
+Date:   Sun,  8 Mar 2020 22:19:33 +0300
+Message-Id: <20200308191934.8263-1-spinal.by@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+started using DT specified timings for GPMC, and as a result the
+OneNAND stopped working on N900 as we had wrong values in the DT.
+Fix by updating the values to bootloader timings that have been tested
+to be working on Nokia N900 with OneNAND manufacturers: Samsung,
+Numonyx.
 
+Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
+---
+ arch/arm/boot/dts/omap3-n900.dts | 44 +++++++++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 16 deletions(-)
 
-On 3/8/20 03:58, Joe Perches wrote:
-> On Sun, 2020-03-08 at 01:11 -0600, Gustavo A. R. Silva wrote:
->> On 3/8/20 01:02, Joe Perches wrote:
->>>> or if you are suggesting that
->>>> the maintainers will have the predisposition of applying
->>>> patches that will modify their coding style and then go and
->>>> willingly fix that. I doubt the latter, though.
->>>
->>> If any do actually use the script, I guess we'll see.
->>>
->> Yep. In the meantime is a NACK from me for this version
->> of your patch.
-> 
-> Generic code reformatters of comments to code are not
-> particularly common.
-> 
+diff --git a/arch/arm/boot/dts/omap3-n900.dts b/arch/arm/boot/dts/omap3-n900.dts
+index c3c6d7d04a76..4089d97405c9 100644
+--- a/arch/arm/boot/dts/omap3-n900.dts
++++ b/arch/arm/boot/dts/omap3-n900.dts
+@@ -854,34 +854,46 @@
+ 		compatible = "ti,omap2-onenand";
+ 		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
+ 
++		/*
++		 * These timings are based on CONFIG_OMAP_GPMC_DEBUG=y reported
++		 * bootloader set values when booted with v5.1
++		 * (OneNAND Manufacturer: Samsung):
++		 *
++		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
++		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
++		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
++		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
++		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
++		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
++		 */
+ 		gpmc,sync-read;
+ 		gpmc,sync-write;
+ 		gpmc,burst-length = <16>;
+ 		gpmc,burst-read;
+ 		gpmc,burst-wrap;
+ 		gpmc,burst-write;
+-		gpmc,device-width = <2>; /* GPMC_DEVWIDTH_16BIT */
+-		gpmc,mux-add-data = <2>; /* GPMC_MUX_AD */
++		gpmc,device-width = <2>;
++		gpmc,mux-add-data = <2>;
+ 		gpmc,cs-on-ns = <0>;
+-		gpmc,cs-rd-off-ns = <87>;
+-		gpmc,cs-wr-off-ns = <87>;
++		gpmc,cs-rd-off-ns = <102>;
++		gpmc,cs-wr-off-ns = <102>;
+ 		gpmc,adv-on-ns = <0>;
+-		gpmc,adv-rd-off-ns = <10>;
+-		gpmc,adv-wr-off-ns = <10>;
+-		gpmc,oe-on-ns = <15>;
+-		gpmc,oe-off-ns = <87>;
++		gpmc,adv-rd-off-ns = <12>;
++		gpmc,adv-wr-off-ns = <12>;
++		gpmc,oe-on-ns = <12>;
++		gpmc,oe-off-ns = <102>;
+ 		gpmc,we-on-ns = <0>;
+-		gpmc,we-off-ns = <87>;
+-		gpmc,rd-cycle-ns = <112>;
+-		gpmc,wr-cycle-ns = <112>;
+-		gpmc,access-ns = <81>;
+-		gpmc,page-burst-access-ns = <15>;
++		gpmc,we-off-ns = <102>;
++		gpmc,rd-cycle-ns = <132>;
++		gpmc,wr-cycle-ns = <132>;
++		gpmc,access-ns = <96>;
++		gpmc,page-burst-access-ns = <18>;
+ 		gpmc,bus-turnaround-ns = <0>;
+ 		gpmc,cycle2cycle-delay-ns = <0>;
+ 		gpmc,wait-monitoring-ns = <0>;
+-		gpmc,clk-activation-ns = <5>;
+-		gpmc,wr-data-mux-bus-ns = <30>;
+-		gpmc,wr-access-ns = <81>;
++		gpmc,clk-activation-ns = <6>;
++		gpmc,wr-data-mux-bus-ns = <36>;
++		gpmc,wr-access-ns = <96>;
+ 		gpmc,sync-clk-ps = <15000>;
+ 
+ 		/*
+-- 
+2.11.0
 
-I might not be getting my point across. It's no a matter of
-reformatting something. It's the opposite, it's a matter of
-not messing (removing existing blank lines) with the current
-format and merely focusing on replacing comments.
-
---
-Gustavo
