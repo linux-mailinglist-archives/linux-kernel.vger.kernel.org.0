@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C230917D71C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:25:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE9317D726
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:26:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbgCHXX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:23:56 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57236 "EHLO
+        id S1727340AbgCHXZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:25:45 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57239 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbgCHXXy (ORCPT
+        with ESMTP id S1726668AbgCHXXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:23:54 -0400
+        Sun, 8 Mar 2020 19:23:55 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Gh-00035J-Rn; Mon, 09 Mar 2020 00:23:37 +0100
+        id 1jB5Gg-00035I-LO; Mon, 09 Mar 2020 00:23:35 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id C108B1040AA;
-        Mon,  9 Mar 2020 00:23:29 +0100 (CET)
-Message-Id: <20200308222609.731890049@linutronix.de>
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 05C631040AD;
+        Mon,  9 Mar 2020 00:23:30 +0100 (CET)
+Message-Id: <20200308222609.825111830@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 08 Mar 2020 23:24:07 +0100
+Date:   Sun, 08 Mar 2020 23:24:08 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: [patch part-II V2 08/13] tracing: Provide lockdep less trace_hardirqs_on/off() variants
+Subject: [patch part-II V2 09/13] x86/entry/common: Split hardirq tracing into lockdep and ftrace parts
 References: <20200308222359.370649591@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,81 +42,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-trace_hardirqs_on/off() is only partially safe vs. RCU idle. The tracer
-core itself is safe, but the resulting tracepoints can be utilized by
-e.g. BPF which is unsafe.
+trace_hardirqs_off() is in fact a tracepoint which can be utilized by BPF,
+which is unsafe before calling enter_from_user_mode(), which in turn
+invokes context tracking. trace_hardirqs_off() also invokes
+lockdep_hardirqs_off() under the hood.
 
-Provide variants which do not contain the lockdep invocation so the lockdep
-and tracer invocations can be split at the call site and placed properly.
+OTOH lockdep needs to know about the interrupts disabled state before
+enter_from_user_mode(). lockdep_hardirqs_off() is safe to call at this
+point.
 
-The new variants also do not use rcuidle as they are going to be called
-from entry code after/before context tracking.
+Split it so lockdep knows about the state and invoke the tracepoint after
+the context is set straight.
+
+Even if the functions attached to a tracepoint would all be safe to be
+called in rcuidle having it split up is still giving a performance
+advantage because rcu_read_lock_sched() is avoiding the whole dance of:
+
+   scru_read_lock();
+   rcu_irq_enter_irqson();
+   ...
+   rcu_irq_exit_irqson();
+   scru_read_unlock();
+   
+around the tracepoint function invocation just to have the C entry points
+of syscalls call enter_from_user_mode() right after the above dance.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
 V2: New patch
 ---
- include/linux/irqflags.h        |    4 ++++
- kernel/trace/trace_preemptirq.c |   23 +++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ arch/x86/entry/common.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -29,6 +29,8 @@
- #endif
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
-+  extern void __trace_hardirqs_on(void);
-+  extern void __trace_hardirqs_off(void);
-   extern void trace_hardirqs_on(void);
-   extern void trace_hardirqs_off(void);
- # define trace_hardirq_context(p)	((p)->hardirq_context)
-@@ -52,6 +54,8 @@ do {						\
- 	current->softirq_context--;		\
- } while (0)
- #else
-+# define __trace_hardirqs_on()		do { } while (0)
-+# define __trace_hardirqs_off()		do { } while (0)
- # define trace_hardirqs_on()		do { } while (0)
- # define trace_hardirqs_off()		do { } while (0)
- # define trace_hardirq_context(p)	0
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -19,6 +19,17 @@
- /* Per-cpu variable to prevent redundant calls when IRQs already off */
- static DEFINE_PER_CPU(int, tracing_irq_cpu);
- 
-+void __trace_hardirqs_on(void)
-+{
-+	if (this_cpu_read(tracing_irq_cpu)) {
-+		if (!in_nmi())
-+			trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
-+		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
-+		this_cpu_write(tracing_irq_cpu, 0);
-+	}
-+}
-+NOKPROBE_SYMBOL(__trace_hardirqs_on);
-+
- void trace_hardirqs_on(void)
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -60,10 +60,19 @@ static __always_inline void syscall_entr
  {
- 	if (this_cpu_read(tracing_irq_cpu)) {
-@@ -33,6 +44,18 @@ void trace_hardirqs_on(void)
- EXPORT_SYMBOL(trace_hardirqs_on);
- NOKPROBE_SYMBOL(trace_hardirqs_on);
+ 	/*
+ 	 * Usermode is traced as interrupts enabled, but the syscall entry
+-	 * mechanisms disable interrupts. Tell the tracer.
++	 * mechanisms disable interrupts. Tell lockdep before calling
++	 * enter_from_user_mode(). This is safe vs. RCU while the
++	 * tracepoint is not.
+ 	 */
+-	trace_hardirqs_off();
++	lockdep_hardirqs_on(CALLER_ADDR0);
++
+ 	enter_from_user_mode();
++
++	/*
++	 * Tell the tracer about the irq state as well before enabling
++	 * interrupts.
++	 */
++	__trace_hardirqs_off();
+ 	local_irq_enable();
+ }
  
-+void __trace_hardirqs_off(void)
-+{
-+	if (!this_cpu_read(tracing_irq_cpu)) {
-+		this_cpu_write(tracing_irq_cpu, 1);
-+		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
-+		if (!in_nmi())
-+			trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
-+	}
-+
-+}
-+NOKPROBE_SYMBOL(__trace_hardirqs_off);
-+
- void trace_hardirqs_off(void)
- {
- 	if (!this_cpu_read(tracing_irq_cpu)) {
 
