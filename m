@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C198617D71A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA5517D704
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbgCHXXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:23:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57213 "EHLO
+        id S1726656AbgCHXXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:23:52 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57218 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgCHXXu (ORCPT
+        with ESMTP id S1726373AbgCHXXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:23:50 -0400
+        Sun, 8 Mar 2020 19:23:52 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jB5Gf-00033c-5F; Mon, 09 Mar 2020 00:23:33 +0100
+        id 1jB5Gg-00034g-FB; Mon, 09 Mar 2020 00:23:35 +0100
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 4DF891040A7;
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id 8760E1040A9;
         Mon,  9 Mar 2020 00:23:29 +0100 (CET)
-Message-Id: <20200308222609.522613084@linutronix.de>
+Message-Id: <20200308222609.621492144@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 08 Mar 2020 23:24:05 +0100
+Date:   Sun, 08 Mar 2020 23:24:06 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -30,7 +30,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Juergen Gross <jgross@suse.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: [patch part-II V2 06/13] x86/entry/common: Mark syscall entry points notrace and NOKPROBE
+Subject: [patch part-II V2 07/13] x86/entry: Move irq tracing on syscall entry to C-code
 References: <20200308222359.370649591@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,73 +42,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The entry code has some limitations for instrumentation. Anything before
-invoking enter_from_user_mode() cannot be probed because kprobes depend on
-RCU and with NOHZ_FULL user mode can be accounted similar to idle from a
-RCU point of view. enter_from_user_mode() calls into context tracking which
-adjusts the RCU state.
-
-A similar problem exists vs. function tracing. The function entry/exit
-points can be used by BPF which again is not safe before CONTEXT_KERNEL has
-been reached.
-
-Mark the C-entry points for the various syscalls with notrace and
-NOKPROBE_SYMBOL().
-
-Note, that this still leaves the ASM invocations of trace_hardirqs_off()
-unprotected. While this is safe vs. RCU at least from the ftrace POV, these
-are trace points which can be utilized by BPF... This will be addressed in
-later patches.
+Now that the C entry points are safe, move the irq flags tracing code into
+the entry helper.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+
 ---
-V2: Amend changelog
----
- arch/x86/entry/common.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/entry/common.c          |    5 +++++
+ arch/x86/entry/entry_32.S        |   12 ------------
+ arch/x86/entry/entry_64.S        |    2 --
+ arch/x86/entry/entry_64_compat.S |   18 ------------------
+ 4 files changed, 5 insertions(+), 32 deletions(-)
 
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -315,11 +315,12 @@ void do_syscall_64_irqs_on(unsigned long
- 	syscall_return_slowpath(regs);
- }
- 
--__visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
-+__visible notrace void do_syscall_64(unsigned long nr, struct pt_regs *regs)
+@@ -58,6 +58,11 @@ static inline void enter_from_user_mode(
+  */
+ static __always_inline void syscall_entry_apply_fixups(void)
  {
- 	syscall_entry_apply_fixups();
- 	do_syscall_64_irqs_on(nr, regs);
++	/*
++	 * Usermode is traced as interrupts enabled, but the syscall entry
++	 * mechanisms disable interrupts. Tell the tracer.
++	 */
++	trace_hardirqs_off();
+ 	enter_from_user_mode();
+ 	local_irq_enable();
  }
-+NOKPROBE_SYMBOL(do_syscall_64);
- #endif
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -960,12 +960,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
+ 	jnz	.Lsysenter_fix_flags
+ .Lsysenter_flags_fixed:
  
- #if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
-@@ -370,11 +371,12 @@ static __always_inline void do_syscall_3
- }
+-	/*
+-	 * User mode is traced as though IRQs are on, and SYSENTER
+-	 * turned them off.
+-	 */
+-	TRACE_IRQS_OFF
+-
+ 	movl	%esp, %eax
+ 	call	do_fast_syscall_32
+ 	/* XEN PV guests always use IRET path */
+@@ -1075,12 +1069,6 @@ SYM_FUNC_START(entry_INT80_32)
  
- /* Handles int $0x80 */
--__visible void do_int80_syscall_32(struct pt_regs *regs)
-+__visible notrace void do_int80_syscall_32(struct pt_regs *regs)
- {
- 	syscall_entry_apply_fixups();
- 	do_syscall_32_irqs_on(regs);
- }
-+NOKPROBE_SYMBOL(do_int80_syscall_32);
+ 	SAVE_ALL pt_regs_ax=$-ENOSYS switch_stacks=1	/* save rest */
  
- /* Fast syscall 32bit variant */
- static __always_inline long do_fast_syscall_32_irqs_on(struct pt_regs *regs)
-@@ -450,10 +452,11 @@ static __always_inline long do_fast_sysc
- }
+-	/*
+-	 * User mode is traced as though IRQs are on, and the interrupt gate
+-	 * turned them off.
+-	 */
+-	TRACE_IRQS_OFF
+-
+ 	movl	%esp, %eax
+ 	call	do_int80_syscall_32
+ .Lsyscall_32_done:
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -167,8 +167,6 @@ SYM_INNER_LABEL(entry_SYSCALL_64_after_h
  
- /* Returns 0 to return using IRET or 1 to return using SYSEXIT/SYSRETL. */
--__visible long do_fast_syscall_32(struct pt_regs *regs)
-+__visible notrace long do_fast_syscall_32(struct pt_regs *regs)
- {
- 	syscall_entry_apply_fixups();
- 	return do_fast_syscall_32_irqs_on(regs);
- }
-+NOKPROBE_SYMBOL(do_fast_syscall_32);
+ 	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
  
- #endif /* CONFIG_X86_32 || CONFIG_IA32_EMULATION */
+-	TRACE_IRQS_OFF
+-
+ 	/* IRQs are off. */
+ 	movq	%rax, %rdi
+ 	movq	%rsp, %rsi
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -129,12 +129,6 @@ SYM_FUNC_START(entry_SYSENTER_compat)
+ 	jnz	.Lsysenter_fix_flags
+ .Lsysenter_flags_fixed:
+ 
+-	/*
+-	 * User mode is traced as though IRQs are on, and SYSENTER
+-	 * turned them off.
+-	 */
+-	TRACE_IRQS_OFF
+-
+ 	movq	%rsp, %rdi
+ 	call	do_fast_syscall_32
+ 	/* XEN PV guests always use IRET path */
+@@ -247,12 +241,6 @@ SYM_INNER_LABEL(entry_SYSCALL_compat_aft
+ 	pushq   $0			/* pt_regs->r15 = 0 */
+ 	xorl	%r15d, %r15d		/* nospec   r15 */
+ 
+-	/*
+-	 * User mode is traced as though IRQs are on, and SYSENTER
+-	 * turned them off.
+-	 */
+-	TRACE_IRQS_OFF
+-
+ 	movq	%rsp, %rdi
+ 	call	do_fast_syscall_32
+ 	/* XEN PV guests always use IRET path */
+@@ -403,12 +391,6 @@ SYM_CODE_START(entry_INT80_compat)
+ 	xorl	%r15d, %r15d		/* nospec   r15 */
+ 	cld
+ 
+-	/*
+-	 * User mode is traced as though IRQs are on, and the interrupt
+-	 * gate turned them off.
+-	 */
+-	TRACE_IRQS_OFF
+-
+ 	movq	%rsp, %rdi
+ 	call	do_int80_syscall_32
+ .Lsyscall_32_done:
 
