@@ -2,79 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC4317D724
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:26:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E7D17D6EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 00:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbgCHXZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 19:25:31 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57260 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbgCHXX5 (ORCPT
+        id S1726444AbgCHXDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 19:03:13 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39855 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726332AbgCHXDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 19:23:57 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jB5Gl-00036r-Pt; Mon, 09 Mar 2020 00:23:41 +0100
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id E657E1040B5;
-        Mon,  9 Mar 2020 00:23:30 +0100 (CET)
-Message-Id: <20200308222610.245444311@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Sun, 08 Mar 2020 23:24:12 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: [patch part-II V2 13/13] x86/entry/common: Split irq tracing in prepare_exit_to_usermode()
-References: <20200308222359.370649591@linutronix.de>
+        Sun, 8 Mar 2020 19:03:13 -0400
+Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C32917E9739;
+        Mon,  9 Mar 2020 10:03:09 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jB4wt-0004sr-3Z; Mon, 09 Mar 2020 10:03:07 +1100
+Date:   Mon, 9 Mar 2020 10:03:07 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: clear PF_MEMALLOC before exiting xfsaild thread
+Message-ID: <20200308230307.GM10776@dread.disaster.area>
+References: <0000000000000e7156059f751d7b@google.com>
+ <20200308043540.1034779-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200308043540.1034779-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=SS2py6AdgQ4A:10
+        a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=eJfxgxciAAAA:8 a=hSkVLCK3AAAA:8
+        a=7-415B0cAAAA:8 a=dLdYvm8lChJJgMaHoBcA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=xM9caqqi1sUkTy8OJ5Uh:22
+        a=cQPPKAXgyycSBL8etih5:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As in entry from user mode, lockdep and tracing have different
-requirements. lockdep needs to know about the interrupts off state accross
-the call to user_enter_irqsoff() but tracing is unsafe after the call.
+On Sat, Mar 07, 2020 at 08:35:40PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Leaving PF_MEMALLOC set when exiting a kthread causes it to remain set
+> during do_exit().  That can confuse things.  For example, if BSD process
+> accounting is enabled, then it's possible for do_exit() to end up
+> calling ext4_write_inode().  That triggers the
+> WARN_ON_ONCE(current->flags & PF_MEMALLOC) there, as it assumes
+> (appropriately) that inodes aren't written when allocating memory.
 
-Split it up and tell the tracer that interrupts are going to be enabled
-before calling user_enter_irqsoff() and tell lockdep afterwards.
+And just how the hell does and XFS kernel thread end up calling
+ext4_write_inode()? That's kinda a key factor in all this, and
+it's not explained here.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/entry/common.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+> This case was reported by syzbot at
+> https://lkml.kernel.org/r/0000000000000e7156059f751d7b@google.com.
 
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -251,9 +251,19 @@ static noinline void __prepare_exit_to_u
- {
- 	__prepare_exit_to_usermode(regs);
- 
-+	/*
-+	 * Return to user space enables interrupts. Tell the tracer before
-+	 * invoking user_enter_irqsoff() which switches to CONTEXT_USER and
-+	 * RCU to rcuidle state. Lockdep still needs to keep the irqs
-+	 * disabled state.
-+	 */
-+	__trace_hardirqs_on();
-+
- 	user_enter_irqoff();
- 	mds_user_clear_cpu_buffers();
--	trace_hardirqs_on();
-+
-+	/* All done. Tell lockdep as well. */
-+	lockdep_hardirqs_on(CALLER_ADDR0);
- }
- NOKPROBE_SYMBOL(prepare_exit_to_usermode);
- 
+Which doesn't really explain it, either.
 
+What is the configuration conditions under which this triggers? It
+looks like some weird combination of a no-journal ext4 root
+filesystem and the audit subsystem being configured with O_SYNC
+files?
+
+People trying to decide if this is something that needs to be
+backported to stable kernels need to be able to unerstand how this
+bug is actually triggered so they can make sane decisions about
+it...
+
+/me tracks the PF_MEMALLOC flag back to commit 43ff2122e649 ("xfs:
+on-stack delayed write buffer lists") where is was inherited here
+from the buffer flush daemon that xfsaild took over from. Which also
+never cleared the PF_MEMALLOC flag. That goes back to 2002:
+
+commit d676c94914eb97d72061aff69c99406df4f395e9
+Author: Steve Lord <lord@sgi.com>
+Date:   Fri Jan 11 23:31:51 2002 +0000
+
+    Merge pagebuf module into XFS
+
+So this issue of calling do_exit() with PF_MEMALLOC set has been
+around for 18+ years without anyone noticing it.
+
+I also note that cifs_demultiplex_thread() has the same problem -
+can you please do a complete audit of all the users of PF_MEMALLOC
+and fix all of them?
+
+> Fix this in xfsaild() by using the helper functions to save and restore
+> PF_MEMALLOC.
+> 
+> Reported-by: syzbot+1f9dc49e8de2582d90c2@syzkaller.appspotmail.com
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/xfs/xfs_trans_ail.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+> index 00cc5b8734be..3bc570c90ad9 100644
+> --- a/fs/xfs/xfs_trans_ail.c
+> +++ b/fs/xfs/xfs_trans_ail.c
+> @@ -529,8 +529,9 @@ xfsaild(
+>  {
+>  	struct xfs_ail	*ailp = data;
+>  	long		tout = 0;	/* milliseconds */
+> +	unsigned int	noreclaim_flag;
+>  
+> -	current->flags |= PF_MEMALLOC;
+> +	noreclaim_flag = memalloc_noreclaim_save();
+>  	set_freezable();
+>  
+>  	while (1) {
+> @@ -601,6 +602,7 @@ xfsaild(
+>  		tout = xfsaild_push(ailp);
+>  	}
+>  
+> +	memalloc_noreclaim_restore(noreclaim_flag);
+>  	return 0;
+>  }
+
+The code looks fine - I considered doing this a couple of weeks ago
+just for cleaniness reasons - but the commit message needs work to
+explain the context of the bug...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
