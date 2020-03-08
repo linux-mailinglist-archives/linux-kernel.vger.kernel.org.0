@@ -2,175 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A43317D3CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 14:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE4817D3D4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 14:19:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbgCHNM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 09:12:28 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37611 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgCHNM2 (ORCPT
+        id S1726340AbgCHNTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 09:19:51 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40831 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgCHNTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 09:12:28 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j11so5451777lfg.4;
-        Sun, 08 Mar 2020 06:12:25 -0700 (PDT)
+        Sun, 8 Mar 2020 09:19:51 -0400
+Received: by mail-wm1-f68.google.com with SMTP id e26so6991728wme.5
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 06:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JtE0GdtEt7/HiG2oS0nuHmJGbnr3pvPyW/vanPbcLQY=;
+        b=p+wh5q8+v+1S1wIMD6XHhhm0IIIn9o/fOEsKsNUx9IwB/p6NslaqBAkDbaa2J2Etv4
+         0Cvsb1G9VPt3E5FxC+rx+H512jS68HQebfHiUaIIu1V0LaswF9bKAdJaw+vxa3K1YDO3
+         hJTFGt6IqxLZQzdfxkbFFeD23dMhqeo3BYnEO5Hj3K5OiMqZhQPdtgW59H+2g9aQs9/Z
+         IZzXMJsCgzP683xnoHaIqv2e/9C7ziDE4VWDe5/arSm3pQCNaOpULJEAn2lsf0FZL/kN
+         sIxSqhi6PuiyI/Z8bcsLMGBVVvepneknq23z9p2PFepNl3tNJ64mgviFpVdn/A23qpA6
+         /Xlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+Vaw8bBmhQ+Z1j0Ys0keo38e9WfzBC59wAMA1/zMo7M=;
-        b=Txy16obncE/vJyksDQoyAU5+AeUI405AcniLUMknR9DQrnwCnkl2/v3ySKnnRzJU4I
-         N7A7vimXZRPokotJQPTEdBhSfnFDE4ihok5ooMK6bTyAdLKmpjyQgc+N3pZ/f5QBNGFP
-         xLYzOhwTVez5oYqv8KXAufA+D9MQr4uRHLLznBqXbuPZSnIl70cPW9DuMjvLRxnlTWhN
-         Rmautr+eMvtXFRkO2jcwzqTMBovqtDZuxV636ON/F3x7hRIIwT8OSAMB1qlvYZUByO49
-         Nb6ikfWUYqGLGaGpF1zgl37SZrcwto7HRDh11aXRkBWaBzVSa/tBX0PWQWwtt0SIeNQh
-         W5CQ==
-X-Gm-Message-State: ANhLgQ07XQR3nSLyxpMv27t44gmdpAMUggv+44+AZUjNYsQkr4XCxYZg
-        K/QeWyWdFnD3Nj4oiMzzBdQo4Tck
-X-Google-Smtp-Source: ADFU+vu8i7qwxHwe2gMem9pPl8kj5/T4GBw4+shSXE5nvQ1O+12xxDO6jG3O1gXQRsNdtZ696XFKUw==
-X-Received: by 2002:ac2:4906:: with SMTP id n6mr6959117lfi.163.1583673144118;
-        Sun, 08 Mar 2020 06:12:24 -0700 (PDT)
-Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.gmail.com with ESMTPSA id z23sm17092713ljg.99.2020.03.08.06.12.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Mar 2020 06:12:23 -0700 (PDT)
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Ian Molton <spyro@f2s.com>,
-        Russell King <linux@armlinux.org.uk>
-References: <20200301195555.11154-1-w@1wt.eu>
-From:   Denis Efremov <efremov@linux.com>
-Autocrypt: addr=efremov@linux.com; keydata=
- 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
-Subject: Re: [PATCH v2 0/6] floppy: make use of the local/global fdc explicit
-Message-ID: <e925dc3d-53d3-b656-8c17-470ada66f3f7@linux.com>
-Date:   Sun, 8 Mar 2020 16:12:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JtE0GdtEt7/HiG2oS0nuHmJGbnr3pvPyW/vanPbcLQY=;
+        b=RIkwaeDNVL+e1uuGubt+39AAoaUp0n5apV1AsPwpU2Kb+RLdOx6H+dKjUaPJ51+sJ+
+         C+yzU3LXCz9oDfL1FLhvor+dXn55JJBPdbcaHbad49MA9qDuCvKRG2y2rkmWn2JcFJOD
+         0W9WlxB+N6UIzdsVluR6gbQmLb2soIRgtPSzwo6IO08ANZ/h0KPsujLB0gYqdUlEPWvI
+         ApcbyIumlzUd6KlEZDlgrpWZrmM/27kNaypPxb2/t1oEoNYwS5lO9GBi2a2NeUoeVElj
+         ck0B0Rt7MHM+xVB1q3CDxvNkXSDRpQGLBqEOsOD6xZCX8aDmgIyOS4Rs6TMdjSvkF6zW
+         b8jg==
+X-Gm-Message-State: ANhLgQ2RlL1Pb55IAoitGBHa3BabKeSq3mvreO0Mc6HDrQIJAfX/yeLG
+        EV6Ug4WEWgDDSbhful8VpjA=
+X-Google-Smtp-Source: ADFU+vsuKpMDH71NTKmQQEnEX3L/zLhoMcAfBF1HXCMjmeYM9g0hgt40yYxF3vJg8khYDT9VjNjOhA==
+X-Received: by 2002:a1c:3241:: with SMTP id y62mr11004089wmy.66.1583673588266;
+        Sun, 08 Mar 2020 06:19:48 -0700 (PDT)
+Received: from kbp1-lhp-F74019 (a81-14-236-68.net-htp.de. [81.14.236.68])
+        by smtp.gmail.com with ESMTPSA id a26sm22342748wmm.18.2020.03.08.06.19.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 08 Mar 2020 06:19:47 -0700 (PDT)
+Date:   Sun, 8 Mar 2020 15:19:44 +0200
+From:   Yan Yankovskyi <yyankovskyi@gmail.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Jan Beulich <jbeulich@suse.com>, Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] xen: Use evtchn_type_t as a type for event channels
+Message-ID: <20200308131944.GA18740@kbp1-lhp-F74019>
+References: <20200307134322.GA27756@kbp1-lhp-F74019>
+ <d190793c-fe6b-263e-7793-ccd73f9ccad4@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20200301195555.11154-1-w@1wt.eu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d190793c-fe6b-263e-7793-ccd73f9ccad4@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, Mar 07, 2020 at 02:41:44PM -0500, Boris Ostrovsky wrote:
+> 
+> 
+> On 3/7/20 8:43 AM, Yan Yankovskyi wrote:
+> > Make event channel functions pass event channel port using
+> > evtchn_port_t type. It eliminates signed <-> unsigned conversion.
+> >
+> 
+> 
+> >  static int find_virq(unsigned int virq, unsigned int cpu)
+> >  {
+> >  	struct evtchn_status status;
+> > -	int port, rc = -ENOENT;
+> > +	evtchn_port_t port;
+> > +	int rc = -ENOENT;
+> >  
+> >  	memset(&status, 0, sizeof(status));
+> >  	for (port = 0; port < xen_evtchn_max_channels(); port++) {
+> > @@ -962,7 +963,8 @@ EXPORT_SYMBOL_GPL(xen_evtchn_nr_channels);
+> >  int bind_virq_to_irq(unsigned int virq, unsigned int cpu, bool percpu)
+> >  {
+> >  	struct evtchn_bind_virq bind_virq;
+> > -	int evtchn, irq, ret;
+> > +	evtchn_port_t evtchn = xen_evtchn_max_channels();
+> > +	int irq, ret;
+> >  
+> >  	mutex_lock(&irq_mapping_update_lock);
+> >  
+> > @@ -990,7 +992,6 @@ int bind_virq_to_irq(unsigned int virq, unsigned int cpu, bool percpu)
+> >  			if (ret == -EEXIST)
+> >  				ret = find_virq(virq, cpu);
+> >  			BUG_ON(ret < 0);
+> > -			evtchn = ret;
+> 
+> 
+> This looks suspicious. What would you be passing to
+> xen_irq_info_virq_setup() below?
 
-On 3/1/20 10:55 PM, Willy Tarreau wrote:
-> This is an update to the first minimal cleanup of the floppy driver in
-> order to make use of the FDC number explicit so as to avoid bugs like
-> the one fixed by 2e90ca68 ("floppy: check FDC index for errors before
-> assigning it").
-> 
-> The purpose of this patchset is to rename the "fdc" global variable to
-> "current_fdc" as Linus suggested and adjust the macros which rely on it
-> depending on their context.
-> 
-> The most problematic part at this step are the FD_* macros derived
-> from FD_IOPORT, itself referencing the fdc to get its base address.
-> These are exclusively used by fd_outb() and fd_inb(). However on ARM
-> FD_DOR is also used to compare the register based on the port, hence
-> a small change in the ARM specific code to only check the register
-> without relying on this hidden memory access.
-> 
-> In order to avoid touching the fd_outb() and fd_inb() macros/functions
-> on all supported architectures, a new set of fdc_outb()/fdc_inb()
-> functions was added to the driver to call the former after adding
-> the register to the FDC's base address.
-> 
-> There are still opportunities for more cleanup, though it's uncertain
-> they're welcome in this old driver :
->   - the base address and register can be passed separately to fd_outb()
->     and fd_inb() in order to simplify register retrieval in some archs;
-> 
->   - a dozen of functions in the driver implicitly depend on current_fdc
->     while passing it as an argument makes the driver a bit more readable
->     but that represents less than half of the code and doesn't address
->     all the readability concerns;
-> 
->   - a test was done to limit support to a single FDC, but after these
->     cleanups it doesn't provide any significant benefit in terms of code
->     readability.
-> 
-> These patches are to be applied on top of Denis' floppy-next branch.
-> 
-> v2:
->   - CC arch maintainers in ARM patches
->   - fixed issues after Denis' review:
->       - extra braces in floppy.h in declaration of floppy_selects[]
->       - missing parenthesis in fd_outb() macro to silence a warning
->       - used the swap() macro in driveswap()
-> Willy Tarreau (6):
+Right, this line should be preserved.
 
-Applied, thanks!
-https://github.com/evdenis/linux-floppy/commits/floppy-next
-
-Ian, Russell, I hope you don't mind if these patches will go through
-the single tree. If you have any comments, please, write.
-
-Tested:
-[x] Eye-checked the changes
-[x] Checked that kernel builds after every commit on x86, arm (rpc_defconfig)
-[x] Checked that there is no binary difference on x86
+> I also think that, given that this patch is trying to get types in
+> order, find_virq() will need more changes: it is supposed to return
+> evtchn_port_t. But then it also wants to return a (signed) error.
  
->   floppy: remove dead code for drives scanning on ARM
-[x] Checked that there is no dead code left unnoticed
+As we don't care which error we got during find_virq call, we can just
+return 0 in case of error, and port number otherwise. Port 0 is never
+valid, so this approach can work for the other functions as well.
+On the other hand, passing port using pointer and returning actual
+error message, as it's done in xenbus_alloc_evtchn(), sounds like a
+better approach overall. What do you think?
 
->   floppy: remove incomplete support for second FDC from ARM code
->   floppy: prepare ARM code to simplify base address separation
->   floppy: introduce new functions fdc_inb() and fdc_outb()
->   floppy: separate the FDC's base address from its registers
->   floppy: rename the global "fdc" variable to "current_fdc"
+> >  		}
+> >  
+> >  		ret = xen_irq_info_virq_setup(cpu, irq, evtchn, virq);
+> > @@ -1019,7 +1020,7 @@ static void unbind_from_irq(unsigned int irq)
+> >  	mutex_unlock(&irq_mapping_update_lock);
+> >  }
+> >  
 > 
->  arch/arm/include/asm/floppy.h |  88 ++-----------
->  drivers/block/floppy.c        | 284 ++++++++++++++++++++++--------------------
->  include/uapi/linux/fdreg.h    |  18 +--
->  3 files changed, 168 insertions(+), 222 deletions(-)
 > 
+> 
+> >  {
+> >  	struct evtchn_close close;
+> >  	int err;
+> > @@ -423,7 +423,7 @@ int xenbus_free_evtchn(struct xenbus_device *dev, int port)
+> 
+> And why not here, especially since you updated format?
 
-Denis
+I missed it.
+
+> >  
+> >  	err = HYPERVISOR_event_channel_op(EVTCHNOP_close, &close);
+> >  	if (err)
+> > -		xenbus_dev_error(dev, err, "freeing event channel %d", port);
+> > +		xenbus_dev_error(dev, err, "freeing event channel %u", port);
+> >  
+> >  	return err;
+> >  }
+> 
+> 
+> 
+> >  
+> > diff --git a/include/xen/interface/event_channel.h b/include/xen/interface/event_channel.h
+> > index 45650c9a06d5..cf80e338fbb0 100644
+> > --- a/include/xen/interface/event_channel.h
+> > +++ b/include/xen/interface/event_channel.h
+> > @@ -220,7 +220,7 @@ struct evtchn_expand_array {
+> >  #define EVTCHNOP_set_priority    13
+> >  struct evtchn_set_priority {
+> >  	/* IN parameters. */
+> > -	uint32_t port;
+> > +	evtchn_port_t port;
+> 
+> This definition comes from Xen so I think it needs to be fixed there first.
+
+Will be done.
+
+> > --- a/drivers/xen/xenbus/xenbus_client.c
+> > +++ b/drivers/xen/xenbus/xenbus_client.c
+> > @@ -391,7 +391,7 @@ EXPORT_SYMBOL_GPL(xenbus_grant_ring);
+> >   * error, the device will switch to XenbusStateClosing, and the error will be
+> >   * saved in the store.
+> >   */
+> > -int xenbus_alloc_evtchn(struct xenbus_device *dev, int *port)
+> > +int xenbus_alloc_evtchn(struct xenbus_device *dev, evtchn_port_t *port)
+> 
+> Right. But then why is the declaration in include/xen/xenbus.h (at the
+> very end of the patch) different?
+> 
+> >  {
+> >  	struct evtchn_alloc_unbound alloc_unbound;
+> >  	int err;
+> > @@ -414,7 +414,7 @@ EXPORT_SYMBOL_GPL(xenbus_alloc_evtchn);
+> >  /**
+> >   * Free an existing event channel. Returns 0 on success or -errno on error.
+> >   */
+> > -int xenbus_free_evtchn(struct xenbus_device *dev, int port)
+> > +int xenbus_free_evtchn(struct xenbus_device *dev, evtchn_port_t port)
+> 
+> Here too.
+> 
+> >  	uint32_t priority;
+> >  };
+> >  
+> > diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> > index 89a889585ba0..4f35216064ba 100644
+> > --- a/include/xen/xenbus.h
+> > +++ b/include/xen/xenbus.h
+> > @@ -218,8 +218,8 @@ int xenbus_unmap_ring(struct xenbus_device *dev,
+> >  		      grant_handle_t *handles, unsigned int nr_handles,
+> >  		      unsigned long *vaddrs);
+> >  
+> > -int xenbus_alloc_evtchn(struct xenbus_device *dev, int *port);
+> > -int xenbus_free_evtchn(struct xenbus_device *dev, int port);
+> > +int xenbus_alloc_evtchn(struct xenbus_device *dev, unsigned int *port);
+> > +int xenbus_free_evtchn(struct xenbus_device *dev, unsigned int port);
+> 
+> These.
+
+I was reluctant with inclusion of event channel header into xenbus.
+Will be fixed.
+
+> -boris
+> 
