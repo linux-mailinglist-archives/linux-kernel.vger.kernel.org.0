@@ -2,53 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B1417D585
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 19:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B1C17D55C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 19:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgCHSZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 14:25:15 -0400
-Received: from www752.sakura.ne.jp ([59.106.19.202]:60600 "EHLO
-        www752.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbgCHSZO (ORCPT
+        id S1726368AbgCHSHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 14:07:39 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56891 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbgCHSHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 14:25:14 -0400
-X-Greylist: delayed 8426 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 14:25:13 EDT
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www752.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 028Fr1tm061822;
-        Mon, 9 Mar 2020 00:53:02 +0900 (JST)
-        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
-Received: from www752.sakura.ne.jp (59.106.19.202)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
- Mon, 09 Mar 2020 00:53:01 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
-Received: from www752.sakura.ne.jp (localhost [127.0.0.1])
-        by www752.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 028Fr053061805;
-        Mon, 9 Mar 2020 00:53:01 +0900 (JST)
-        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
-Received: (from hokusetubad@localhost)
-        by www752.sakura.ne.jp (8.15.2/8.15.2/Submit) id 028Fr0UG061804;
-        Mon, 9 Mar 2020 00:53:00 +0900 (JST)
-        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
-Message-Id: <202003081553.028Fr0UG061804@www752.sakura.ne.jp>
-X-Authentication-Warning: www752.sakura.ne.jp: hokusetubad set sender to postmaster@hokusetubad.sakura.ne.jp using -f
-Subject: BUSINESS PROPOSAL
-From:   postmaster@hokusetubad.sakura.ne.jp
-Reply-To: abulkareem461@gmail.com
-To:     xiyoulinuxkernelgroup@googlegroups.com
+        Sun, 8 Mar 2020 14:07:38 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jB0Kc-00082h-PX; Sun, 08 Mar 2020 19:07:19 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id DBBB11040A5; Sun,  8 Mar 2020 19:07:17 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        kernel test robot <rong.a.chen@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86-ml <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        lkp@lists.01.org
+Subject: Re: [futex] 8019ad13ef: will-it-scale.per_process_ops -97.8% regression
+In-Reply-To: <CAHk-=whrpL8pbKLg3_s3+bxv6kbPnzbSP8dQkZ+Rv=jAT3aoKw@mail.gmail.com>
+References: <20200308140200.GO5972@shao2-debian> <CAHk-=wgJV7xrxsTkOG203huPShzZBEC6N_BG0KGwHBmEq4yqWg@mail.gmail.com> <CAHk-=whrpL8pbKLg3_s3+bxv6kbPnzbSP8dQkZ+Rv=jAT3aoKw@mail.gmail.com>
+Date:   Sun, 08 Mar 2020 19:07:17 +0100
+Message-ID: <87h7yy90ve.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Date:   Mon, 09 Mar 2020 00:53:00 +0900
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dearest Friend
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-I am Mr Abdul Kareem working with Emirate NBD Bank Dubai,United Arab Emirate as Finance Manager.
-I have a very profitable Business that concerns you and will benefit both of us after completion.
-Kindly get back to me for more details.
-Awaiting your response.
-Regards
-Abdul Kareem
+> [ Just a re-send without html crud that makes all the lists unhappy.
+> I'm still on the road, the flight I was supposed to be on yesterday
+> got cancelled.. ]
+>
+> I do note that the futex hashing seems to be broken by that commit. Or
+> at least it's questionable.  It keeps hashing on "both.word",  and
+> doesn't use the u64 field at all for hashing.
+>
+> Maybe I'm mis-reading it - I didn't apply the patch, I just looked at
+> the patch and my source base separately.
+>
+> But the 98% regression sure says something went wrong ;)
+
+Right you are. The pointer needs to be the starting point as it moved
+ahead of word, which means it starts at word and hashes word and
+offset and an extra u32 beyond the end of the key.
+
+Thanks,
+
+        tglx
+----
+diff --git a/kernel/futex.c b/kernel/futex.c
+index e14f7cd45dbd..9f3251349f65 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -385,8 +385,8 @@ static inline int hb_waiters_pending(struct futex_hash_bucket *hb)
+  */
+ static struct futex_hash_bucket *hash_futex(union futex_key *key)
+ {
+-	u32 hash = jhash2((u32*)&key->both.word,
+-			  (sizeof(key->both.word)+sizeof(key->both.ptr))/4,
++	u32 hash = jhash2((u32*)&key->both.ptr,
++			  (sizeof(key->both.ptr) + sizeof(key->both.word)) / 4,
+ 			  key->both.offset);
+ 	return &futex_queues[hash & (futex_hashsize - 1)];
+ }
