@@ -2,104 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ECEC17D244
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 08:34:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0160A17D23C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 08:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbgCHHei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 03:34:38 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37394 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbgCHHeh (ORCPT
+        id S1726195AbgCHHeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 03:34:05 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:35638 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgCHHeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 03:34:37 -0400
-Received: by mail-ot1-f67.google.com with SMTP id b3so6617631otp.4;
-        Sat, 07 Mar 2020 23:34:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kZXL8stbtWpHPkKS7EK+cyY0hozJba2aSAxakIiEy5g=;
-        b=igl0JmZvPN2HJh0JviZsAzX2atyk0nTBX3LG0bNz6q5R9UhUR4cPYHRTut6zEdDy1W
-         mfRwzP6Iu1v71DbKO5fR70giDePF7/9QeqPsAbR4e3KakOjRa6U8lmKlfVf6Dt4jnX+8
-         4EZriKDQU3S15HWTmb/GvGASL08m//H4fcRfW1xyJHe1nJbAEX98WKkou1B55yoAKgxE
-         e7XS5ICiWoWj3HKWPRP5lCMLE7OR5qkZjdHrKYn/ieTrjggDvI2hdf+s6+caVdSbWQ61
-         Jxjias+4G/O8alolOCoLa90u2WVa7kIy8IPnd5jm0Y5x85kf+7MJqKO9jtjk5tMK3LYS
-         pLsA==
+        Sun, 8 Mar 2020 03:34:04 -0400
+Received: by mail-il1-f198.google.com with SMTP id h18so5131462ilc.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Mar 2020 23:34:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kZXL8stbtWpHPkKS7EK+cyY0hozJba2aSAxakIiEy5g=;
-        b=RhLEM0CVfayZWG28dliRcTVsLwRocIFfSv0DsVnnboS3iVgg8MzWdoULr6wlMzBFIz
-         XPwHlJAlwoewAMt72IZ7xoC0lbqN081GIy/XjNaVXadEzlpy2is44oBXexHbqJOwKJ2l
-         lrPPM1pls0BPLyt1cXY0Teo51JWqDc+9oljdQvZbvxkrfZV535Yt8Jj2Dyn/x6AYiIfS
-         ukDwP25T6U6xhdVjChCAFinv4lkogoA/eGlb76PIYdVirBMun9cQrk7bY/CykCGDMD7B
-         up+4Sp21Q1pXHA8nl+/C0fMfJHJqnva9s7xdSxM5urB5V82Q7FT7wZ7bVJ4MrgJ2y8ih
-         EQRQ==
-X-Gm-Message-State: ANhLgQ1sxHUXzo3YuPw0b/MWfodGogJ51t9nboY6xU19gJbPeD+Mpzzt
-        +2K++Ann8OvrOLAjZRqWv7I=
-X-Google-Smtp-Source: ADFU+vtJBYaHte1ffc6z2hmE6RbIWqvLdUc+MID7snSN1qteU2OXj8z5Lcxn94yg2vhYLQ3dafiVlQ==
-X-Received: by 2002:a05:6830:19:: with SMTP id c25mr8515454otp.349.1583652876964;
-        Sat, 07 Mar 2020 23:34:36 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id 2sm12812677otj.41.2020.03.07.23.34.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Mar 2020 23:34:36 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] kbuild: Disable -Wpointer-to-enum-cast
-Date:   Sun,  8 Mar 2020 00:34:00 -0700
-Message-Id: <20200308073400.23398-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Nrw2cp0bbSpLGRZ4GUAh0C3PbsjeyFM4BB9cqeU1ILc=;
+        b=CcZJgQYPrnMH4AVTw1AMTkbCc8Q/Z0kwUDulPbKL/aVkKaGRaxTTqfCXYgAdW086cl
+         HsgDh5wPGt8jwcyzFDExsk7sGSwbnHIoENVotbJ3qTSIrUCsvCBvDcv76wXiiAsfO4l5
+         FeDiunm8IsDo7h8cUreA1UFIZLPy5M2+SzXTOfDpjzkLw44TolvD+aEcAMyXgxh7X8zK
+         Zq9Kif9Ep0TwuQDpWTMOLkDJ3GN4Mek2xghKrJr8gCQc1mzgaS1VvySECOZL93xPkDna
+         msNpMg/OO/Nm75uCAcDSClkUAXtL0EonZ2ax2oDs3hosdcgFSnTHogKlElZeuZx0P/aw
+         jbAQ==
+X-Gm-Message-State: ANhLgQ3LT/D0/jNdFWhvSPeL1Xhx/52jEpgZo+GP26V1gC4jetd0oAUB
+        RBedF1eSADUg0D/HMV4BhIY0N4sdeU6VVENk9CgeSp0B/QZ2
+X-Google-Smtp-Source: ADFU+vti+qKcPR/q+EH0OJg+DCaWyVsiPWSqvPGeLcShP48CU2z8PGEImsHyNDvy0tIir0jwu8FqLHXIPVcaj2uJUaolzgshL6fp
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5d:9c93:: with SMTP id p19mr8956311iop.81.1583652842882;
+ Sat, 07 Mar 2020 23:34:02 -0800 (PST)
+Date:   Sat, 07 Mar 2020 23:34:02 -0800
+In-Reply-To: <000000000000b25ea005a02bcf21@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000025d0e305a052e97f@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in resample_shrink
+From:   syzbot <syzbot+e1fe9f44fb8ecf4fb5dd@syzkaller.appspotmail.com>
+To:     alsa-devel-owner@alsa-project.org, alsa-devel@alsa-project.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
+        tiwai@suse.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang's -Wpointer-to-int-cast deviates from GCC in that it warns when
-casting to enums. The kernel does this in certain places, such as device
-tree matches to set the version of the device being used, which allows
-the kernel to avoid using a gigantic union.
+syzbot has bisected this bug to:
 
-https://elixir.bootlin.com/linux/v5.5.8/source/drivers/ata/ahci_brcm.c#L428
-https://elixir.bootlin.com/linux/v5.5.8/source/drivers/ata/ahci_brcm.c#L402
-https://elixir.bootlin.com/linux/v5.5.8/source/include/linux/mod_devicetable.h#L264
+commit ca0214ee2802dd47239a4e39fb21c5b00ef61b22
+Author: Takashi Iwai <tiwai@suse.de>
+Date:   Fri Mar 22 15:00:54 2019 +0000
 
-To avoid a ton of false positive warnings, disable this particular part
-of the warning, which has been split off into a separate diagnostic so
-that the entire warning does not need to be turned off for clang.
+    ALSA: pcm: Fix possible OOB access in PCM oss plugins
 
-Cc: stable@vger.kernel.org
-Link: https://github.com/ClangBuiltLinux/linux/issues/887
-Link: https://github.com/llvm/llvm-project/commit/2a41b31fcdfcb67ab7038fc2ffb606fd50b83a84
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101931fde00000
+start commit:   63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=121931fde00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=141931fde00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d2e033af114153f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1fe9f44fb8ecf4fb5dd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160e2e91e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125f09fde00000
 
-diff --git a/Makefile b/Makefile
-index 86035d866f2c..90e56d5657c9 100644
---- a/Makefile
-+++ b/Makefile
-@@ -748,6 +748,10 @@ KBUILD_CFLAGS += -Wno-tautological-compare
- # source of a reference will be _MergedGlobals and not on of the whitelisted names.
- # See modpost pattern 2
- KBUILD_CFLAGS += -mno-global-merge
-+# clang's -Wpointer-to-int-cast warns when casting to enums, which does not match GCC.
-+# Disable that part of the warning because it is very noisy across the kernel and does
-+# not point out any real bugs.
-+KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
- else
- 
- # These warnings generated too much noise in a regular build.
--- 
-2.25.1
+Reported-by: syzbot+e1fe9f44fb8ecf4fb5dd@syzkaller.appspotmail.com
+Fixes: ca0214ee2802 ("ALSA: pcm: Fix possible OOB access in PCM oss plugins")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
