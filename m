@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 000F117D5EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 20:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 494AE17D5F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 20:57:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgCHTvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 15:51:44 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35771 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbgCHTvo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 15:51:44 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r7so8501472wro.2;
-        Sun, 08 Mar 2020 12:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=va/5kDgzicKNJcf6deuBNFPfL5yL1B6zjk8vK2SAYqg=;
-        b=jN+evST5603L9i65VpeFvYKdZt9X6LM0Mrk7Qop1teEOFvO9SEQM/C1arNnknX2+UK
-         yW6qN4GsUpN3Oh9PUa0V0RTB2Hb4CsRpdAdnrBgcLtuqAUZrpAGlLRnza7hbZ3AphT5k
-         /U2QfyVeikM8HHTP5lqDQ6cjci3HDNubFhruBkMdnsbbmQNbgcDVeACHzFOSWcC5zPJJ
-         mbp0G9PGfV/S7gdOFgWHZJ8vZLxh1flxv9Qv0yJEXbTANoVfpm9fCY4UgHQqBvFYKJBE
-         c4NIhv1H1GPU3Az56s76QxRJb5m8x2aISQm9q5TUZotdf4yEzTIcneq8+4oNnvVQ9gT/
-         keHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=va/5kDgzicKNJcf6deuBNFPfL5yL1B6zjk8vK2SAYqg=;
-        b=HjwIcAidOUbXQzAZgzFEbDFYd8NUHsQE/fxs+4I3oSLY61JzTBKp1mjTIx4eLsFIMx
-         La240Ks/V2GbmV8AwXs7BiqnDtokBm+c5lv9R084yqAx6L4Z5/ONe33UJz4ujrh9Rblg
-         hRxCzd3wrJ6xvk0baiogmS5XYZHcT2rULv6a7ZsYN3QITvkhLTAoUqxp6WUSUYfLjCum
-         dPeNK3wiir9+YqF6Wez8Iin3jr3ajGeMKF0tDmrsG2WMbH5ErjrE7tl8z8iJnMFcjnK6
-         i4jWvdwcKooWzgEETcpPXkLW/UZK4mQ9Xxhm0pRvIMlROxNqjSrpcyO7AdJi4dLFBwOD
-         a4xg==
-X-Gm-Message-State: ANhLgQ3PlBsqRrBp7FcfiHha5aEiMJAaWeLpt4k6cwiOSuxw//bpOYj4
-        N6B5KBSMvNCzCsNqGlkkZBpptWN0YWw=
-X-Google-Smtp-Source: ADFU+vuDwnAe/gtet0wO/NzJ8JcVQtvvKkVPjNdRolC/fbRnkpkzDlD1jgg5ocL531JJHTQa2VDDAQ==
-X-Received: by 2002:adf:f087:: with SMTP id n7mr15782115wro.328.1583697101955;
-        Sun, 08 Mar 2020 12:51:41 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2dce:4a00:35ca:ddfb:aba3:f544])
-        by smtp.gmail.com with ESMTPSA id f207sm26095392wme.9.2020.03.08.12.51.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Mar 2020 12:51:41 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Julius Werner <jwerner@chromium.org>
-Cc:     Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RFC] MAINTAINERS: include GOOGLE FIRMWARE entry
-Date:   Sun,  8 Mar 2020 20:51:16 +0100
-Message-Id: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726445AbgCHT5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 15:57:04 -0400
+Received: from mout.gmx.net ([212.227.15.19]:42973 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726403AbgCHT5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 15:57:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1583697395;
+        bh=k4B7xsbQs+bGw1/7XAkvqtfIygtmmkN+AUAITvCNN/c=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=dMwiXmLYL52XV8WSu9yMkmq0S+luVbFbLbWoj+XuVizgA/OBMQV0RbyDYuLEUGNZZ
+         SPsT4HG1k8jfjcIT8p7uzvFbaTviNgXFMCYnzXoObQisd35cFvjWrNJqMPtQuclLc5
+         ED+DLfpxgPG084xMFFyObMRNHx8Lj33Qjt8ftcjE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([37.201.214.212]) by mail.gmx.com (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MfYLa-1jqyUd0tRo-00g3N3; Sun, 08
+ Mar 2020 20:56:35 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-doc@vger.kernel.org
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH 0/3] docs: a few improvements for atomic_ops.rst
+Date:   Sun,  8 Mar 2020 20:56:15 +0100
+Message-Id: <20200308195618.22768-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2bg8Bw8rRMj0oQrgWU3DtrKtOTVoYSHypqxza7mwLqSU6cjHy7t
+ HpxSsUXtJnGg4PJvcF/WuMzdv5v8zwtOzwku9Rz/GUDhwJ+Ncj5MS5AR4JFAzLSW7UMxmV9
+ DusUfn8Z3oUJcMmh5KpTEu2gTm0vilnq6GAKaHcvNnqbviO4D+NtGHomHRHTzCkYF/i7RSy
+ 15mW72yvO88kd2Q/ovVFg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2km+uksWJ5M=:+BGq6we/viAuTeermSySs0
+ aLE3qtDiTK2CsCUTKziii8WMqPYrX9qlgVC5/7Kf7msmsF1brw86mqPfSANg9ZsODcHJG9ZFS
+ 0UYafyIirulDcvowp2v5pmpst8NXYnO2lli3D7BZ0lUoOH87icTr2mG1T7ZH5evSbFoJRn1k2
+ blUTUACesrC1Qm04hBlGxMa9sRddrjLlQTdBjwXSEuqWInYBJtjaj8o6dF2CF1eceAvBfjvS6
+ 9/PpkOcto8SWPP/rLZQ+OA1fsKjefWyWSozV8SY0TzXLgqayKo6sSahIL2hiy4FlD6oclGLNI
+ 1Kh6VuBzM1+jPWKq+pJVDMdsmAXRVlHuSL3RokNGrWTo4/pctEA5XXoYWdvD0qfpOxhqExwKD
+ i9m/ezrJiYe0Z+kdJvvdilZcsRCwuSfLgbjLxFmCVvj1Yk6YE29qP5nDkg2tIzWEW/X9zF49n
+ uCbzKN9baKwOtLauSNyy350l2VUFfM0pc3KwoQThuNMWgQwwNQqCQf9oO//gcOsrYu2SobRVO
+ Q7nsxC8jpUcpFQf15SeWyCduIQoVizINptckXx70blOsnPHV8wp/unClL5/BPX3NQGXG/nP8R
+ GIL+SRa9BUs58lFPsIdve7mQtD8Kc60r3rAwKDl9ci6bviIpeRlAJTnXxKeyvf7JDndOb+YHB
+ lGrEIkRpy2YGsn7Tium/VdCKw6HVSgtAx5L1tRmVBxGJxocBurMT6/yOw9GQVvjjDZDP7ksgv
+ +tSPixnXDcJxXk2Z0X2yZPeKrXYOUdF8/JtmiOJ+Z/e0VNQYwLGPs92DOtiC4WVNFSgBziNoK
+ qddxZZ79JPicJEriHCiPDkcBD4g+uDhJF35L/OS8W0UM/SdtayeErP9O4UCXH9iHoYsCaGVOh
+ sn9wYrTyWtV21I5ZNyfIJiYDmN+R/HRj1a2KONb1oUVSN/PsmV0H/Wd8Gvvz8SoqZIHVS96oM
+ n8tlEhAYx7nSRKYi6rg+xsb+H6Sq6V4XGFmHnroFnMTUSR7g9xpwvHStrTZZ/uVDtonmVgfVl
+ eMW9aDb8htQ7ORFbXs7AVoQ6nrnYUH24RckMI5epo1S9nj5ikPnjNpaKOubMk0SMxuN4qfWKj
+ pOQa3LC0Y6LSZQs3KkmoRXTZJv9THA1tSAv53k8mpJlrn/yb8q++NFiuPyy652dB65LNgMasN
+ JOAArZV8CkS/a6FXdHA7/eYRTwPSDKue23/9nF7ShjhcX3bTJwHqneW2WcIGKuWQyFI84tOnM
+ flTRSV0JpZZtWF2HZ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All files in drivers/firmware/google/ are identified as part of THE REST
-according to MAINTAINERS, but they are really maintained by others.
+Hi,
 
-Add a basic entry for drivers/firmware/google/ based on a simple statistics
-on tags of commits in that directory:
+this is a short series of unrelated fixes that make the atomic
+operations documentation look and read a bit better.
 
-  $ git log drivers/firmware/google/ | grep '\-by:' \
-      | sort | uniq -c | sort -nr
-     62     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-     13     Reviewed-by: Guenter Roeck <groeck@chromium.org>
-     12     Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-     11     Reviewed-by: Julius Werner <jwerner@chromium.org>
+Jonathan Neusch=C3=A4fer (3):
+  docs: atomic_ops: Remove colons where they don't make sense
+  docs: atomic_ops: Move two paragraphs into the warning block above
+  docs: atomic_ops: Steer readers towards using refcount_t for reference
+    counts
 
-There is no specific mailing list for this driver, based on observations
-on the patch emails, and the git history suggests the driver is maintained.
+ Documentation/core-api/atomic_ops.rst         | 24 ++++++++++++-------
+ Documentation/core-api/refcount-vs-atomic.rst |  2 ++
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
-This was identified with a small script that finds all files belonging to
-THE REST according to the current MAINTAINERS file, and I investigated
-upon its output.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3a0f8115c92c..ed788804daab 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7111,6 +7111,14 @@ S:	Supported
- F:	Documentation/networking/device_drivers/google/gve.rst
- F:	drivers/net/ethernet/google
- 
-+GOOGLE FIRMWARE
-+M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+M:	Stephen Boyd <swboyd@chromium.org>
-+R:	Guenter Roeck <groeck@chromium.org>
-+R:	Julius Werner <jwerner@chromium.org>
-+S:	Maintained
-+F:	drivers/firmware/google/
-+
- GPD POCKET FAN DRIVER
- M:	Hans de Goede <hdegoede@redhat.com>
- L:	platform-driver-x86@vger.kernel.org
--- 
-2.17.1
+=2D-
+2.20.1
 
