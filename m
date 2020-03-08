@@ -2,92 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37C6E17D68D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 22:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B13117D690
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 22:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbgCHVwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 17:52:49 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42199 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbgCHVws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 17:52:48 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t21so6031986lfe.9;
-        Sun, 08 Mar 2020 14:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UfPInF29HyA+ns2MPE9iODlTeIAJJSC5Tqib3KT01eM=;
-        b=MLC8yrSnJQEZ/PT1RSVAxboE1gfXel4xvUY7foQIRA7mC9QC3k8ty525GvFN8YrYJB
-         +iGtnyky/puZI+uJcT6bWLlkk0Hi9UmRkxuwtT8eci/1rP9bRzKFR6I8AVluhrqZYnp0
-         wj6k3wMF8ajc/f916NJ6G3H5RUj+g3l1tDZK7rBlygw2LwdhtI+WmOpYJusgHRa11EJ8
-         VzxIxD+zJcYhcq4mxB9Mb4K4e91K1DeKyrZ8eJpVJCX1+9p2qYLzSqde9EqURNWABrNG
-         6RKGFdqw2hLlGkIIGV0gmM6KfwlqXQRMz5GIznXvcDkvEWHPcqTuh3jx5rE5Q9t3kpWD
-         5AoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UfPInF29HyA+ns2MPE9iODlTeIAJJSC5Tqib3KT01eM=;
-        b=MYPTMKKqZ5ezTwQ3rJmTHIaC4LLhEJwe+QJOYVesZv6vrUpAn0niAjUcrO+QBt6CNI
-         VaShhwZBwxBB8W5xGGRnAqqHR0W7f87dMPopqq+zoApNeCu2porWgBAoqFq+4m6D+19R
-         DOTbly3wJYM5C8Z9C0xk5ptBPCZfUTNdmrFqcc22By3RGsO28zHnAl5mJQ5i0bwk5Wb2
-         uryoJKGrEnBWPblCF81qM08QojqDCL0aW9P+xwZdqzh9XuZTz3j58YJ3lGYJIkWwWFKm
-         1U9ihPFGzh+3Y5GR3cw99Mn4K+WVsiepupb1/GD2sU/c+N1Hetj119pSSKCeQd71fiUI
-         5QfQ==
-X-Gm-Message-State: ANhLgQ03yBiM2Y8GWyPpPUpOn/D/ry3q0iIZkLHWXPrLliEJAGbqJ1d0
-        Ih35ERmQ336yWzLBc61xRY0=
-X-Google-Smtp-Source: ADFU+vs4ORZYGJJG2HHeQFEH4DyLn8GTv8J+rLm2mAC6rJn8Whn+qjkuzVXKrAk47AiglMi9qUERTg==
-X-Received: by 2002:ac2:4a84:: with SMTP id l4mr7452588lfp.217.1583704366401;
-        Sun, 08 Mar 2020 14:52:46 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id x11sm19001540ljj.47.2020.03.08.14.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Mar 2020 14:52:45 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     "Andrew F. Davis" <afd@ti.com>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1] power: supply: bq27xxx_battery: Silence deferred-probe error
-Date:   Mon,  9 Mar 2020 00:51:43 +0300
-Message-Id: <20200308215143.27823-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726451AbgCHVzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 17:55:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26314 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726346AbgCHVzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 17:55:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Mar 2020 14:55:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,530,1574150400"; 
+   d="scan'208";a="414608277"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 08 Mar 2020 14:55:12 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jB3tA-000AcU-48; Mon, 09 Mar 2020 05:55:12 +0800
+Date:   Mon, 09 Mar 2020 05:54:15 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:irq/core] BUILD SUCCESS
+ 87f2d1c662fa1761359fdf558246f97e484d177a
+Message-ID: <5e656987./E/aVhblJmLagVbC%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver fails to probe with -EPROBE_DEFER if battery's power supply
-(charger driver) isn't ready yet and this results in a bit noisy error
-message in KMSG during kernel's boot up. Let's silence the harmless
-error message.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  irq/core
+branch HEAD: 87f2d1c662fa1761359fdf558246f97e484d177a  genirq/irqdomain: Check pointer in irq_domain_alloc_irqs_hierarchy()
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+elapsed time: 588m
+
+configs tested: 159
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm64                             allnoconfig
+arm                               allnoconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm                              allmodconfig
+arm                           efm32_defconfig
+arm                         at91_dt_defconfig
+arm                        shmobile_defconfig
+arm64                               defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                           sunxi_defconfig
+arm                        multi_v7_defconfig
+sparc                            allyesconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                                defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                             alldefconfig
+nios2                         3c120_defconfig
+nios2                         10m50_defconfig
+c6x                        evmc6678_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                 simple_smp_defconfig
+openrisc                    or1ksim_defconfig
+nds32                               defconfig
+nds32                             allnoconfig
+csky                                defconfig
+alpha                               defconfig
+h8300                       h8s-sim_defconfig
+h8300                     edosk2674_defconfig
+m68k                       m5475evb_defconfig
+m68k                             allmodconfig
+h8300                    h8300h-sim_defconfig
+m68k                           sun3_defconfig
+m68k                          multi_defconfig
+powerpc                             defconfig
+arc                                 defconfig
+arc                              allyesconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+mips                             allyesconfig
+mips                         64r6el_defconfig
+mips                              allnoconfig
+mips                           32r2_defconfig
+mips                             allmodconfig
+parisc                            allnoconfig
+parisc                generic-64bit_defconfig
+parisc                generic-32bit_defconfig
+parisc                           allyesconfig
+i386                 randconfig-a003-20200308
+i386                 randconfig-a001-20200308
+x86_64               randconfig-a001-20200308
+x86_64               randconfig-a003-20200308
+i386                 randconfig-a002-20200308
+x86_64               randconfig-a002-20200308
+riscv                randconfig-a001-20200308
+m68k                 randconfig-a001-20200308
+alpha                randconfig-a001-20200308
+mips                 randconfig-a001-20200308
+nds32                randconfig-a001-20200308
+parisc               randconfig-a001-20200308
+sparc64              randconfig-a001-20200308
+microblaze           randconfig-a001-20200308
+c6x                  randconfig-a001-20200308
+nios2                randconfig-a001-20200308
+h8300                randconfig-a001-20200308
+openrisc             randconfig-a001-20200308
+sh                   randconfig-a001-20200308
+csky                 randconfig-a001-20200308
+s390                 randconfig-a001-20200308
+xtensa               randconfig-a001-20200308
+x86_64               randconfig-b001-20200308
+x86_64               randconfig-b002-20200308
+i386                 randconfig-b001-20200308
+i386                 randconfig-b003-20200308
+x86_64               randconfig-b003-20200308
+i386                 randconfig-b002-20200308
+i386                 randconfig-c001-20200308
+x86_64               randconfig-c003-20200308
+i386                 randconfig-c002-20200308
+x86_64               randconfig-c002-20200308
+i386                 randconfig-c003-20200308
+x86_64               randconfig-c001-20200308
+i386                 randconfig-d001-20200308
+x86_64               randconfig-d003-20200308
+x86_64               randconfig-d001-20200308
+i386                 randconfig-d003-20200308
+x86_64               randconfig-d002-20200308
+i386                 randconfig-d002-20200308
+x86_64               randconfig-e001-20200308
+x86_64               randconfig-e002-20200308
+x86_64               randconfig-e003-20200308
+i386                 randconfig-e001-20200308
+i386                 randconfig-e002-20200308
+i386                 randconfig-e003-20200308
+i386                 randconfig-f003-20200308
+i386                 randconfig-g001-20200308
+x86_64               randconfig-g003-20200308
+i386                 randconfig-g003-20200308
+x86_64               randconfig-g001-20200308
+x86_64               randconfig-g002-20200308
+i386                 randconfig-g002-20200308
+i386                 randconfig-h001-20200308
+x86_64               randconfig-h001-20200308
+x86_64               randconfig-h002-20200308
+x86_64               randconfig-h003-20200308
+i386                 randconfig-h003-20200308
+i386                 randconfig-h002-20200308
+arc                  randconfig-a001-20200308
+sparc                randconfig-a001-20200308
+ia64                 randconfig-a001-20200308
+arm                  randconfig-a001-20200308
+arm64                randconfig-a001-20200308
+powerpc              randconfig-a001-20200308
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                          rsk7269_defconfig
+sh                               allmodconfig
+sh                            titan_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                                allnoconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
 ---
- drivers/power/supply/bq27xxx_battery.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-index 195c18c2f426..664e50103eaa 100644
---- a/drivers/power/supply/bq27xxx_battery.c
-+++ b/drivers/power/supply/bq27xxx_battery.c
-@@ -1885,7 +1885,10 @@ int bq27xxx_battery_setup(struct bq27xxx_device_info *di)
- 
- 	di->bat = power_supply_register_no_ws(di->dev, psy_desc, &psy_cfg);
- 	if (IS_ERR(di->bat)) {
--		dev_err(di->dev, "failed to register battery\n");
-+		if (PTR_ERR(di->bat) == -EPROBE_DEFER)
-+			dev_dbg(di->dev, "failed to register battery, deferring probe\n");
-+		else
-+			dev_err(di->dev, "failed to register battery\n");
- 		return PTR_ERR(di->bat);
- 	}
- 
--- 
-2.25.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
