@@ -2,177 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40DCD1967A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C59B1196774
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbgC1Qpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:54 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50049 "EHLO mx.sdf.org"
+        id S1727799AbgC1Qnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:41 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50129 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727702AbgC1Qn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:29 -0400
+        id S1727591AbgC1QnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:24 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhHGH020238
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhKRh017492
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:18 GMT
+        Sat, 28 Mar 2020 16:43:21 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhHZ7020889;
-        Sat, 28 Mar 2020 16:43:17 GMT
-Message-Id: <202003281643.02SGhHZ7020889@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhKg2024958;
+        Sat, 28 Mar 2020 16:43:20 GMT
+Message-Id: <202003281643.02SGhKg2024958@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Sun, 8 Mar 2020 04:51:35 -0400
-Subject: [RFC PATCH v1 28/50] drivers/target/iscsi: Replace O(n^2)
- randomization
+Date:   Sun, 8 Mar 2020 05:04:08 -0400
+Subject: [RFC PATCH v1 35/50] USB: serial: iuu_phoenix: Use pseudorandom for
+ xmas mode
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Nicholas Bellinger <nab@linux-iscsi.org>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        linux-scsi@vger.kernel.org
+Cc:     Johan Hovold <johan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous code would, to generate the nth value in the sequence,
-generate a random integer, linearly search the already-generated values
-for a duplicate, and repeat until a non-colliding number was found.
-That's an average of ln(n) + 0.577 attempts per number output, each
-attempt is O(n), and it takes O(n) numbers to fill the array, for a
-total of O(n^2 * log n).
+I also fixed a couple of buffer overrun bugs in iuu_led_activity_on,
+based on code not expecting the "*buf_ptr++" to have been incremented.
 
-For large n, the linear search would dominate, but the excess calls
-to get_random_bytes() are painful even with small n.
+- In xmas mode, the final setting of the period byte to 1 was
+  done to buf_ptr[7], which was past the end of the buffer.
+- In non-xmas mode, iuu_rgbf_fill_buffer() fills in 8 bytes starting
+  with the IUU_SET_LED command.  The net result is duplicating the
+  command and writing an extra byte off the end of the buffer.
 
-There were also other bizarre things in the code, like the fiddling with
-the sign bit, and "j = 10001 - j" when j is a random 32-bit integer.
+I rewrote the code to omit the ++, which is more legible.
 
-Replace with an O(n) Fisher-Yates shuffle, and use prandom_max()
-rather than expensive crypto-grade random numbers.
-
-In iscsit_randomize_pdu_lists, I even got rid of the temporary array
-entirely and shuffled directly in the PDUs.
-
-In iscsit_randomize_seq_lists(), the "seq_list[i].type == SEQTYPE_NORMAL"
-condition makes it hard to shuffle in-place, and I didn't want to
-dive too deep into the code, but perhaps someone else could.
+Not tested because I don't have the hardware, but I don't think
+this code has been exercised much anyway.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>
-Cc: Lee Duncan <lduncan@suse.com>
-Cc: Chris Leech <cleech@redhat.com>
-Cc: linux-scsi@vger.kernel.org
+Cc: Johan Hovold <johan@kernel.org>
 ---
- .../target/iscsi/iscsi_target_seq_pdu_list.c  | 72 +++++++------------
- 1 file changed, 24 insertions(+), 48 deletions(-)
+ drivers/usb/serial/iuu_phoenix.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_seq_pdu_list.c b/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
-index ea2b02a93e455..bc40657d4c7d6 100644
---- a/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
-+++ b/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
-@@ -88,40 +88,40 @@ static void iscsit_ordered_pdu_lists(
- }
- 
- /*
-- *	Generate count random values into array.
-- *	Use 0x80000000 to mark generates valued in array[].
-+ * Generate an array holding the values 0..count-1 in random order.
-+ * count is guaranteed non-zero.
-  */
- static void iscsit_create_random_array(u32 *array, u32 count)
- {
--	int i, j, k;
-+	int i;
- 
--	if (count == 1) {
--		array[0] = 0;
--		return;
-+	array[0] = 0;
+diff --git a/drivers/usb/serial/iuu_phoenix.c b/drivers/usb/serial/iuu_phoenix.c
+index d5bff69b1769b..7aeea7b5ba8db 100644
+--- a/drivers/usb/serial/iuu_phoenix.c
++++ b/drivers/usb/serial/iuu_phoenix.c
+@@ -353,10 +353,11 @@ static void iuu_led_activity_on(struct urb *urb)
+ 	struct usb_serial_port *port = urb->context;
+ 	int result;
+ 	char *buf_ptr = port->write_urb->transfer_buffer;
+-	*buf_ptr++ = IUU_SET_LED;
 +
-+	for (i = 1; i < count; i++) {
-+		int j = prandom_u32_max(i+1);
-+		array[i] = array[j];
-+		array[j] = i;
+ 	if (xmas) {
+-		get_random_bytes(buf_ptr, 6);
+-		*(buf_ptr+7) = 1;
++		buf_ptr[0] = IUU_SET_LED;
++		prandom_bytes(buf_ptr+1, 6);
++		buf_ptr[7] = 1;
+ 	} else {
+ 		iuu_rgbf_fill_buffer(buf_ptr, 255, 255, 0, 0, 0, 0, 255);
  	}
-+}
- 
--	for (i = 0; i < count; i++) {
--redo:
--		get_random_bytes(&j, sizeof(u32));
--		j = (1 + (int) (9999 + 1) - j) % count;
--		for (k = 0; k < i + 1; k++) {
--			j |= 0x80000000;
--			if ((array[k] & 0x80000000) && (array[k] == j))
--				goto redo;
--		}
--		array[i] = j;
-+/* A specialized version of the above for PDU send orders */
-+static void iscsit_random_send_order(struct iscsi_pdu *pdu, u32 count)
-+{
-+	int i;
-+
-+	pdu[0].pdu_send_order = 0;
-+	for (i = 1; i < count; i++) {
-+		int j = prandom_u32_max(i+1);
-+		pdu[i].pdu_send_order = pdu[j].pdu_send_order;
-+		pdu[j].pdu_send_order = i;
- 	}
--
--	for (i = 0; i < count; i++)
--		array[i] &= ~0x80000000;
- }
- 
- static int iscsit_randomize_pdu_lists(
- 	struct iscsi_cmd *cmd,
- 	u8 type)
- {
--	int i = 0;
--	u32 *array, pdu_count, seq_count = 0, seq_no = 0, seq_offset = 0;
-+	u32 pdu_count, seq_count = 0, seq_no = 0, seq_offset = 0;
- 
- 	for (pdu_count = 0; pdu_count < cmd->pdu_count; pdu_count++) {
- redo:
-@@ -129,39 +129,15 @@ static int iscsit_randomize_pdu_lists(
- 			seq_count++;
- 			continue;
- 		}
--		array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
--		if (!array) {
--			pr_err("Unable to allocate memory"
--				" for random array.\n");
--			return -ENOMEM;
--		}
--		iscsit_create_random_array(array, seq_count);
--
--		for (i = 0; i < seq_count; i++)
--			cmd->pdu_list[seq_offset+i].pdu_send_order = array[i];
--
--		kfree(array);
--
-+		iscsit_random_send_order(cmd->pdu_list + seq_offset, seq_count);
- 		seq_offset += seq_count;
- 		seq_count = 0;
- 		seq_no++;
- 		goto redo;
- 	}
- 
--	if (seq_count) {
--		array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
--		if (!array) {
--			pr_err("Unable to allocate memory for"
--				" random array.\n");
--			return -ENOMEM;
--		}
--		iscsit_create_random_array(array, seq_count);
--
--		for (i = 0; i < seq_count; i++)
--			cmd->pdu_list[seq_offset+i].pdu_send_order = array[i];
--
--		kfree(array);
--	}
-+	if (seq_count)
-+		iscsit_random_send_order(cmd->pdu_list + seq_offset, seq_count);
- 
- 	return 0;
- }
 -- 
 2.26.0
 
