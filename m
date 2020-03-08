@@ -2,79 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF2917D4BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 17:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EED417D4CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 17:33:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgCHQc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 12:32:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45012 "EHLO mx2.suse.de"
+        id S1726682AbgCHQdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 12:33:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45330 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbgCHQcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 12:32:53 -0400
+        id S1726292AbgCHQde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 12:33:34 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 79F1FB2F7;
-        Sun,  8 Mar 2020 16:32:51 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     =?UTF-8?q?Wells=20Lu=20=E5=91=82=E8=8A=B3=E9=A8=B0?= 
-        <wells.lu@sunplus.com>, Dvorkin Dmitry <dvorkin@tibbo.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [RFC 11/11] ARM: dts: sp7021-cpu: Add dummy UART0 clock and interrupt
-Date:   Sun,  8 Mar 2020 17:32:29 +0100
-Message-Id: <20200308163230.4002-12-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200308163230.4002-1-afaerber@suse.de>
-References: <20200308163230.4002-1-afaerber@suse.de>
+        by mx2.suse.de (Postfix) with ESMTP id A70BCAFF7;
+        Sun,  8 Mar 2020 16:33:32 +0000 (UTC)
+Date:   Sun, 8 Mar 2020 17:33:35 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC urgent fix for 5.6
+Message-ID: <20200308163335.GC12445@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
+Hi Linus,
+
+please pull the error reporting fix for synopsys_edac below. (Btw, doing
+signed tags only from now on.)
+
+Thx.
+
 ---
- arch/arm/boot/dts/pentagram-sp7021-bpi-f2s.dts | 7 +++++++
- arch/arm/boot/dts/pentagram-sp7021-cpu.dtsi    | 5 +++++
- 2 files changed, 12 insertions(+)
+The following changes since commit f8788d86ab28f61f7b46eb6be375f8a726783636:
 
-diff --git a/arch/arm/boot/dts/pentagram-sp7021-bpi-f2s.dts b/arch/arm/boot/dts/pentagram-sp7021-bpi-f2s.dts
-index 3c25b6e79fe2..455416ce9d82 100644
---- a/arch/arm/boot/dts/pentagram-sp7021-bpi-f2s.dts
-+++ b/arch/arm/boot/dts/pentagram-sp7021-bpi-f2s.dts
-@@ -15,8 +15,15 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	uart0_clk: clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <27000000>;
-+		#clock-cells = <0>;
-+	};
- };
+  Linux 5.6-rc3 (2020-02-23 16:17:42 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent-2020-03-08
+
+for you to fetch changes up to dfc6014e3b60713f375d0601d7549eed224c4615:
+
+  EDAC/synopsys: Do not print an error with back-to-back snprintf() calls (2020-02-27 16:44:25 +0100)
+
+----------------------------------------------------------------
+* Do not overwrite partial decoded error message in synopsys_edac (Sherry Sun)
+
+----------------------------------------------------------------
+Sherry Sun (1):
+      EDAC/synopsys: Do not print an error with back-to-back snprintf() calls
+
+ drivers/edac/synopsys_edac.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
+index 2d263382d797..880ffd833718 100644
+--- a/drivers/edac/synopsys_edac.c
++++ b/drivers/edac/synopsys_edac.c
+@@ -479,20 +479,14 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
+ 		pinf = &p->ceinfo;
+ 		if (!priv->p_data->quirks) {
+ 			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "DDR ECC error type:%s Row %d Bank %d Col %d ",
+-				  "CE", pinf->row, pinf->bank, pinf->col);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "Bit Position: %d Data: 0x%08x\n",
++				 "DDR ECC error type:%s Row %d Bank %d Col %d Bit Position: %d Data: 0x%08x",
++				 "CE", pinf->row, pinf->bank, pinf->col,
+ 				 pinf->bitpos, pinf->data);
+ 		} else {
+ 			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "DDR ECC error type:%s Row %d Bank %d Col %d ",
+-				  "CE", pinf->row, pinf->bank, pinf->col);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "BankGroup Number %d Block Number %d ",
+-				 pinf->bankgrpnr, pinf->blknr);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "Bit Position: %d Data: 0x%08x\n",
++				 "DDR ECC error type:%s Row %d Bank %d Col %d BankGroup Number %d Block Number %d Bit Position: %d Data: 0x%08x",
++				 "CE", pinf->row, pinf->bank, pinf->col,
++				 pinf->bankgrpnr, pinf->blknr,
+ 				 pinf->bitpos, pinf->data);
+ 		}
  
- &uart0 {
- 	status = "okay";
-+	clocks = <&uart0_clk>;
- };
-diff --git a/arch/arm/boot/dts/pentagram-sp7021-cpu.dtsi b/arch/arm/boot/dts/pentagram-sp7021-cpu.dtsi
-index 7e424baa9214..48c5986a31ed 100644
---- a/arch/arm/boot/dts/pentagram-sp7021-cpu.dtsi
-+++ b/arch/arm/boot/dts/pentagram-sp7021-cpu.dtsi
-@@ -86,3 +86,8 @@
- 		#interrupt-cells = <2>;
- 	};
- };
-+
-+&uart0 {
-+	interrupt-parent = <&intc>;
-+	interrupts = <53 IRQ_TYPE_LEVEL_HIGH>;
-+};
--- 
-2.16.4
+@@ -509,10 +503,8 @@ static void handle_error(struct mem_ctl_info *mci, struct synps_ecc_status *p)
+ 				"UE", pinf->row, pinf->bank, pinf->col);
+ 		} else {
+ 			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "DDR ECC error type :%s Row %d Bank %d Col %d ",
+-				 "UE", pinf->row, pinf->bank, pinf->col);
+-			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+-				 "BankGroup Number %d Block Number %d",
++				 "DDR ECC error type :%s Row %d Bank %d Col %d BankGroup Number %d Block Number %d",
++				 "UE", pinf->row, pinf->bank, pinf->col,
+ 				 pinf->bankgrpnr, pinf->blknr);
+ 		}
+ 
 
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
