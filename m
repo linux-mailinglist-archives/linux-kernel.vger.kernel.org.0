@@ -2,123 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10F3D17D5F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 20:57:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD2917D5FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 20:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbgCHT5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 15:57:02 -0400
-Received: from mout.gmx.net ([212.227.17.22]:51669 "EHLO mout.gmx.net"
+        id S1726461AbgCHT5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 15:57:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726322AbgCHT5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 15:57:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1583697399;
-        bh=swNXo8sf/A1Z5VWORhX8PS1wDsET0aIhHcJl33nMJa8=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=XhvPeb8bgnV8/IAZQYhe/hBjChfjtsV2UMgFtqhaOL5BS/3xv4J3BpoI30BZZeYHj
-         WX5GGb2vn2CWJy0MbyesiPpMF5lu0tn2Uuk2tORAQ2OjYBbNqnBSrmsThmtLgO7fEY
-         dCWUb/M3NkEz8LeoFDl9XdlfbDqewIT7ZMX9UJOo=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([37.201.214.212]) by mail.gmx.com (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M2f5T-1jCOYC0l9b-0048U7; Sun, 08
- Mar 2020 20:56:39 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-doc@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH 2/3] docs: atomic_ops: Move two paragraphs into the warning block above
-Date:   Sun,  8 Mar 2020 20:56:17 +0100
-Message-Id: <20200308195618.22768-3-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200308195618.22768-1-j.neuschaefer@gmx.net>
-References: <20200308195618.22768-1-j.neuschaefer@gmx.net>
+        id S1726332AbgCHT5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 15:57:39 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAB6B20848;
+        Sun,  8 Mar 2020 19:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583697459;
+        bh=gSf8v0EKhZ8Lf+hGO7tIZ+99EssllmxOy1l9Lll5u5A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KzzetlXqNlTtgLfmE1ROVd6MhxOTesXbfzNQOKcYJQwAR1YSaszsG2tcwm8e36FSP
+         cfXFXiBuec3YQV9jFsWXEhwzXzUYzlHwKAp1b7lSkYU+u6P140c2H+/TdQB3bRHw0I
+         CyHiqCf0iBLl2RGzaWDrdH4HUJ4Il3eyeJpCSFaA=
+Date:   Sun, 8 Mar 2020 20:57:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] MAINTAINERS: include GOOGLE FIRMWARE entry
+Message-ID: <20200308195734.GA4070981@kroah.com>
+References: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eVTShVIjcqITjrjrt3hSHiQJv3jRqCqEsB/zW9mt8QRJpl3Bw/Q
- pgjPvWebRuAt+Z7AqwbkR0NHGm+Mm2cImwkAJHZPlOG6bAhuNsXQZDPRFuP8+dpaZyeDulG
- GaSr0Boj5Wr/mzdrrVZU2ADCOQkWfb+5VMomxXAp8wfAm3wPYWtn1JyxKGeHazSpBpa7+KJ
- 4xcal4jwbfV+a5j6sJ0vg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Nwpz9xQ4q4A=:n8BILpeGYEEWHtbCQXwwu6
- ZF3mJ/j8kyR9jC+o5rYWTLcG3m3qFTuPrIEhVJvSxusZgBTVxjoV1Jemr0r+kw5yAb+/cwBRi
- TTvKUE0H/6hw3WfDA9vMuPik2wLESjCyujVEa1bl8m4b7HfhJOma46u073lbk9D5BcBhedOQv
- 2GhbhMQoGrLSDZNroBSNqA8/QBqh2pDwOmXfvxm22XTCgkbr3OUiGpKqfxN5+M6azwSVQLwf/
- 0UQEu4WSQis8I4WX+EwK1V/daC6wAghUMUnGwzfv4USByXOTXJChv5Dwj9PzRitFfczN3iH5r
- yQBYHLzY6FBV+LdjfCm3PPXo5F5eqh5Lj736+xmeEp7LjsvfjJ5N4pdv+/JnOmOtdnpttnovZ
- a+5rmFBC6DRcdAROx+xgPbIUnRbByCsmweaIYKzRRagTMtizZoqwjR65G8PSqNFP6ATGzLY2B
- LDsyL0JOL3IF0fMqtFOUTZhInvKTACesFyHYoPkiB+nPwEHj4ZzhC1fSnLbYdQkJ03E+pXAOu
- xDzvd7MmB2pBoKiXXNkf99DTBonzN0u2F9UaoxQe4+JISTMXeEXo9tvD9eaZzdaFSEL1dvf4/
- owrTRjU30k45Oyj2G+bWS/KIQEMuZ0UVCg1cQor4BNNXDfUpJpqrRHT3qXJU/G5bJW5cDBwmQ
- DOdZjU06kg4okRjyfFDEpsA+rGYyCNh/8QxG2j9gcxksiWQdyetzDT0EoazA/OH3VaHpj2ren
- +qY0KUCRVkyy93WUzj7nxJLltLVPYYKcDbSKUaFpnclORKcDkj9/lEC53YVYz5aj3K/79yOg1
- 4wSK/2vVhBwY8rpC2IyN5Ze5+yItUvMbg1E9U/cWdKUjK59aU4QyE9f77sCKpDQtx/WZCrjwr
- cYQVC3UkHdnzypgOfuAWxGLBe02NAVdLZ3nd44aQOcgOAOeePtEl6q5axrTKDVJ2ZBSE2JRra
- +gOSjuD4Qt9bWtmGJTM71SEJlX6GUwBGWTNfykfBikhwRXyg5+GFuM5OGHNMOGdBMbLfF5aPf
- CzHC2kUOGcaPnsNyhAtnIpSuYCkdj8zBB08u1LeJ/mAvnEQSf0eO9tmzlXwU60bauy9PAX2Jb
- hJmJyjCQI6LtyiJ+FVcXql8IKI0wiu81DsKTBbbRAxfihou4QnA+3mbabgYfjVekV/wC+c8un
- Y8a0GR8/ouCsU9r26p4OtivdZxJyKGxpVCcT4D5GDljlnp9cEA44kXxWSXhxLV1+oyXIyEl2R
- mCewJvfEjAf1m1qEX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two paragraphs seem to be semantically part of the warning text,
-so let's adjust the formatting accordingly.
+On Sun, Mar 08, 2020 at 08:51:16PM +0100, Lukas Bulwahn wrote:
+> All files in drivers/firmware/google/ are identified as part of THE REST
+> according to MAINTAINERS, but they are really maintained by others.
+> 
+> Add a basic entry for drivers/firmware/google/ based on a simple statistics
+> on tags of commits in that directory:
+> 
+>   $ git log drivers/firmware/google/ | grep '\-by:' \
+>       | sort | uniq -c | sort -nr
+>      62     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>      13     Reviewed-by: Guenter Roeck <groeck@chromium.org>
+>      12     Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>      11     Reviewed-by: Julius Werner <jwerner@chromium.org>
+> 
+> There is no specific mailing list for this driver, based on observations
+> on the patch emails, and the git history suggests the driver is maintained.
+> 
+> This was identified with a small script that finds all files belonging to
+> THE REST according to the current MAINTAINERS file, and I investigated
+> upon its output.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3a0f8115c92c..ed788804daab 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7111,6 +7111,14 @@ S:	Supported
+>  F:	Documentation/networking/device_drivers/google/gve.rst
+>  F:	drivers/net/ethernet/google
+>  
+> +GOOGLE FIRMWARE
+> +M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- Documentation/core-api/atomic_ops.rst | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+No, sorry, I am not the maintainer of this.  I'll be glad to be the
+person the maintainers send patches to to get into Linus's tree, but I
+am not going to be responsible for stuff I know nothing about :)
 
-diff --git a/Documentation/core-api/atomic_ops.rst b/Documentation/core-ap=
-i/atomic_ops.rst
-index 650b9693469a..73033fc954ad 100644
-=2D-- a/Documentation/core-api/atomic_ops.rst
-+++ b/Documentation/core-api/atomic_ops.rst
-@@ -473,14 +473,14 @@ operation.
-         above to return "long" and just returning something like "old_val=
- &
-         mask" because that will not work.
+thanks,
 
--For one thing, this return value gets truncated to int in many code
--paths using these interfaces, so on 64-bit if the bit is set in the
--upper 32-bits then testers will never see that.
--
--One great example of where this problem crops up are the thread_info
--flag operations.  Routines such as test_and_set_ti_thread_flag() chop
--the return value into an int.  There are other places where things
--like this occur as well.
-+        For one thing, this return value gets truncated to int in many co=
-de
-+        paths using these interfaces, so on 64-bit if the bit is set in t=
-he
-+        upper 32-bits then testers will never see that.
-+
-+        One great example of where this problem crops up are the thread_i=
-nfo
-+        flag operations.  Routines such as test_and_set_ti_thread_flag() =
-chop
-+        the return value into an int.  There are other places where thing=
-s
-+        like this occur as well.
-
- These routines, like the atomic_t counter operations returning values,
- must provide explicit memory barrier semantics around their execution.
-=2D-
-2.20.1
-
+greg k-h
