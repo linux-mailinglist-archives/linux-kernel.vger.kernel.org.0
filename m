@@ -2,83 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C242917D443
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 15:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A5917D444
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 15:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbgCHOxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 10:53:53 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40342 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbgCHOxx (ORCPT
+        id S1726385AbgCHOyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 10:54:36 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:35920 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbgCHOyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 10:53:53 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y1so2941232plp.7
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 07:53:51 -0700 (PDT)
+        Sun, 8 Mar 2020 10:54:35 -0400
+Received: by mail-il1-f195.google.com with SMTP id b17so6393210iln.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 07:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0YgvG98+C7Hv1PiMeKbN/HzqGCFiqwzwYpuxu1hQ9Ds=;
-        b=lHnfyxUPw8qagDvATBpNEN6eytsonnCFStS1tOUBAvZE8bP6n4jKSRSnWmEQj8phF0
-         BGkYZCWz9micqXeDaofS4Rf0bNCU3YY82TXv/tVRGsfOChDch2y9awmhyMnONb9xVLfY
-         7f2qBiuQw1kHa0ma2cDvMnfdDB9k77G6+y8ZX0y8qtpqyKk7nGLN5RRHCEI6c9cDv97r
-         LnHtmkvsk8obp0aKeIZapZXwWj6N0QPvVkWitFdyYwHZN09l7U3NZYYze0dJhZ5aIUr0
-         0qLRp+ur7VHXU2wzg5nK58XAgR1otd619cpuqnAv8fojiLB+16+G4SAav+27XjXd7o5x
-         Il4w==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=mfT1xq5uSMlc8Zc1INJ6fV3EAAi551FP5BskvvH5WrI=;
+        b=ICo1odl3nJYAq+fCV0jZBuIs34ez2cymnIWSyRCfBALeNeuEcHowAzWEzkhsy1VLqc
+         NKdVAdqhb9rs+T9poWFPvqClVoO2ird4LF6J68Ce+kLBpnJx8jcKM5YXmydlraJrVMm4
+         HQZ6+92jMLxz8+w98j/RYYeobVIfFH1qbLk1dahj/trY8xD5XmGbECyBr65RRokwOvqk
+         6BPJ0rprkwksqDMV5bdUbFyFSzGYZaLge8F32su1wWvp9IauPWFSf1QW2Fg7O+9D8vxc
+         fKsZOthHtTQcW7eRRt4r1yc+BvcJ24aC8K8+Qzuv1IOMumrsCeDPlraT6yPyHLgiJENK
+         DrzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0YgvG98+C7Hv1PiMeKbN/HzqGCFiqwzwYpuxu1hQ9Ds=;
-        b=JQS6gjfUSDSjV7exn07NHSPyZZ5YsqqyTU5moY8UKcEbBJAmqLOzEk8BB0l+1bCE2K
-         /OWFaVWOFC5waJVvszdVDyrrWfJ1597PDBZLp57ojvQSEakrJFjNomnNsQFNtDMzhS/q
-         F5+zOMR5A7uFFD69oo484W+Hq/F6kKL7TpEtRDN2KaxCNfl2m/H/FgYfJSRUmdrAuiqg
-         802er+Y2kUzdbk/BdBN0PSIYUw+AM2uapDBozPkSgRNArpGARaFSG6nnRh2sdiuAnWDI
-         xOKJWvFljr5mnBhg08T2ofD+zJnqDW55tOVu3igTEihBDtdbOUNsk7YLYuv0tzJrx7Ru
-         WecQ==
-X-Gm-Message-State: ANhLgQ2trimazpGR8IuyibGWrRvXT/62InFhtRKIstdVWPiwY/3eUFfR
-        TsEK98SwDIFpsa3J2lqIFdM=
-X-Google-Smtp-Source: ADFU+vtxl9gsgmIy/4MrHIgj8LXRJKUTbnhFHS0hHScpJXyVD+hesD+V9yp2+R3y1g6YuovXPgjB3A==
-X-Received: by 2002:a17:90a:a409:: with SMTP id y9mr11786777pjp.103.1583679230945;
-        Sun, 08 Mar 2020 07:53:50 -0700 (PDT)
-Received: from localhost ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id k21sm5229014pfi.115.2020.03.08.07.53.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 08 Mar 2020 07:53:50 -0700 (PDT)
-Date:   Sun, 8 Mar 2020 20:23:48 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: mmp: replace setup_irq() by request_irq()
-Message-ID: <20200308145348.GA7062@afzalpc>
-References: <20200301122243.4129-1-afzal.mohd.ma@gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=mfT1xq5uSMlc8Zc1INJ6fV3EAAi551FP5BskvvH5WrI=;
+        b=Bcv+fnjjj38LbABz+l3WyClrr4lLbfW/kU3Co5tdrlvX42SoIxa9bJhPRbT+FmTuID
+         5sZhCtshLPpjGdEfmQ7oz3i+u+x86qQ90kLUEdK+Yv9AohT/uIhPSU1xDpTproUNBpXa
+         0E9L23ySgoAeVha5BA/zz8OO9JpxwAuhq3Ka+J36VUKI91RqPlMjnA1NK48fO5SagAqo
+         n8LrSpypoWa9JTxXV4rT1ZaSZBytTNm0hziMks3k2XXZwUhrjJ0eHV4SWfB8glfDFFmr
+         ryQ99PSDksQ/Egrn+y+TbY37tH2YrkPYa3JHT1hBjQJRNJgZEzD2UazCNsieZDxu3ATr
+         Rg1g==
+X-Gm-Message-State: ANhLgQ2xl01z/0LCQXtM/eKqkwsd4AJKdVGdkaOLNFgIi1apZRyhQhUr
+        Z354iPU49HWIzBbikWqWddM8yX/4uXHG9ylfTG8=
+X-Google-Smtp-Source: ADFU+vvtkIkdx5azARIc/tXEJpFIJDw8wM0AqqmFEdghHBLKStR0S3QfqHTEqvmf5xim9dvKVOi6RDw5BCBoYFQ0PBI=
+X-Received: by 2002:a92:5cd4:: with SMTP id d81mr191344ilg.57.1583679275242;
+ Sun, 08 Mar 2020 07:54:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200301122243.4129-1-afzal.mohd.ma@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Reply-To: markjoseph0100@gmail.com
+Received: by 2002:ac0:e581:0:0:0:0:0 with HTTP; Sun, 8 Mar 2020 07:54:34 -0700 (PDT)
+From:   "Mr. Mark Joseph" <markjoseph01000@gmail.com>
+Date:   Sun, 8 Mar 2020 07:54:34 -0700
+X-Google-Sender-Auth: fc0Dd62Z9i4dEO8r7yRwlvzCm_8
+Message-ID: <CAP1hxC4uY-d_3=2w28FipjhGezjMigfLVFYUfDQ4cg+E5bNotw@mail.gmail.com>
+Subject: Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lubomir,
+Dear Friend,
 
-On Sun, Mar 01, 2020 at 05:52:41PM +0530, afzal mohammed wrote:
+I am Mr. Mark Joseph a banker in Ouagadougou, Burkina Faso .I
+Discovered the sum of seven million, two hundred thousand dollars
+(usd7.2) belonging to a deceased customer of this bank the fund has
+been lying in a suspense account without anybody coming to put claim
+over the money since the account late owner from Lebanese who was
+involved in terrorist attacks in month of January 15th 2016.
 
-> Hi sub-arch maintainers,
-> 
-> If the patch is okay, please take it thr' your tree.
+Therefore, I am soliciting for your assistance to come forward as the
+next of kin. I have agreed that 40% of this money will be for you as
+the beneficiary respect of the provision of your account and service
+rendered, 60% will be for me. Then immediately the money transferred
+to your account from this bank, I will proceed to your country for the
+sharing of the fund. If you think you are capable and will be
+committed to making this deal successes reply me back for more details
+to confirm your interest.
 
-get_maintainers doesn't show any maintainers for mmp, but it specifies
-you as the sole reviewer, please let me know the route upstream for this
-patch.
-
-Regards
-afzal
+Yours faithful,
+Mr. Mark Joseph
