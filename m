@@ -2,99 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FF817D20A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 07:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED0E17D218
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Mar 2020 07:49:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbgCHGRZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 01:17:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbgCHGRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 01:17:25 -0500
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3264E206D5;
-        Sun,  8 Mar 2020 06:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583648244;
-        bh=9ame7aB+gFjGXSnQ7vpAtpsVY6w+4/FfqozW1g4Cd+8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jpf30BGdmS+h5tKyDyU5YYG0AeLi7uZRjya69QEId/i/FFgx8lds/q+qxLi/uCXyU
-         cG6Hv4YpgVGuLvvhwSsygu893iLaDzZxS7+LfbEk2J4IxDWAjKg0+xfgGaVN7RXIWr
-         42DmzulKd0SkHRMWLYrtz4e+HPBv46g6MNMStg3Y=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-cifs@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] cifs: clear PF_MEMALLOC before exiting demultiplex thread
-Date:   Sat,  7 Mar 2020 22:16:11 -0800
-Message-Id: <20200308061611.1185481-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200308043645.1034870-1-ebiggers@kernel.org>
-References: <20200308043645.1034870-1-ebiggers@kernel.org>
+        id S1726307AbgCHGtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 01:49:52 -0500
+Received: from mailgw01.mediatek.com ([216.200.240.184]:38115 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbgCHGtw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 01:49:52 -0500
+X-Greylist: delayed 306 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 01:49:52 EST
+X-UUID: 8a60eed25dd843f99706394371675ac0-20200307
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=amPnNjmjefQsyk5bkPNYdHvxBnqS5HcVAeBUw7OCcuY=;
+        b=Ax2DXZTx9qOU0YVK64+DxYjQUgqiu5d8juThM7utccukdRnzfKT5jkACsIE29Qds6UArdWVk6pp3vnSEXP7yMJpWMVVWTms67vHtrtw+G0lKPZ8K+ldmZFyqQPUfowkrzvaj7sYtWYCxy9GCILk22PXWx9clUO591cAknpOev7U=;
+X-UUID: 8a60eed25dd843f99706394371675ac0-20200307
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 117259514; Sat, 07 Mar 2020 22:44:42 -0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 7 Mar 2020 22:34:40 -0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sun, 8 Mar 2020 14:34:38 +0800
+From:   <sean.wang@mediatek.com>
+To:     <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+CC:     <john@phrozen.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH] arm: dts: mt7623: add phy-mode property for gmac2
+Date:   Sun, 8 Mar 2020 14:34:37 +0800
+Message-ID: <70e3eff31ecd500ed4862d9de28325a4dbd15105.1583648927.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
-
-Leaving PF_MEMALLOC set when exiting a kthread causes it to remain set
-during do_exit().  That can confuse things.  For example, if BSD process
-accounting is enabled, then it's possible for do_exit() to end up
-calling ext4_write_inode().  That triggers the
-WARN_ON_ONCE(current->flags & PF_MEMALLOC) there, as it assumes
-(appropriately) that inodes aren't written when allocating memory.
-
-This case was reported by syzbot at
-https://lkml.kernel.org/r/0000000000000e7156059f751d7b@google.com.
-
-Fix this in cifs_demultiplex_thread() by using the helper functions to
-save and restore PF_MEMALLOC.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-v2: added missing include of <linux/sched/mm.h>
-    (I missed that I didn't actually have CONFIG_CIFS set...)
-
- fs/cifs/connect.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 4804d1df8c1c..97b8eb585cf9 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -21,6 +21,7 @@
- #include <linux/fs.h>
- #include <linux/net.h>
- #include <linux/string.h>
-+#include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/list.h>
- #include <linux/wait.h>
-@@ -1164,8 +1165,9 @@ cifs_demultiplex_thread(void *p)
- 	struct task_struct *task_to_wake = NULL;
- 	struct mid_q_entry *mids[MAX_COMPOUND];
- 	char *bufs[MAX_COMPOUND];
-+	unsigned int noreclaim_flag;
- 
--	current->flags |= PF_MEMALLOC;
-+	noreclaim_flag = memalloc_noreclaim_save();
- 	cifs_dbg(FYI, "Demultiplex PID: %d\n", task_pid_nr(current));
- 
- 	length = atomic_inc_return(&tcpSesAllocCount);
-@@ -1320,6 +1322,7 @@ cifs_demultiplex_thread(void *p)
- 		set_current_state(TASK_RUNNING);
- 	}
- 
-+	memalloc_noreclaim_restore(noreclaim_flag);
- 	module_put_and_exit(0);
- }
- 
--- 
-2.25.1
+RnJvbTogU2VhbiBXYW5nIDxzZWFuLndhbmdAbWVkaWF0ZWsuY29tPg0KDQpBZGQgcGh5LW1vZGUg
+cHJvcGVydHkgcmVxdWlyZWQgYnkgcGh5bGluayBvbiBnbWFjMg0KDQpGaXhlczogYjhmYzlmMzA4
+MjFlICgibmV0OiBldGhlcm5ldDogbWVkaWF0ZWs6IEFkZCBiYXNpYyBQSFlMSU5LIHN1cHBvcnQi
+KQ0KU2lnbmVkLW9mZi1ieTogU2VhbiBXYW5nIDxzZWFuLndhbmdAbWVkaWF0ZWsuY29tPg0KLS0t
+DQogYXJjaC9hcm0vYm9vdC9kdHMvbXQ3NjIzbi1yZmItZW1tYy5kdHMgfCAxICsNCiAxIGZpbGUg
+Y2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRz
+L210NzYyM24tcmZiLWVtbWMuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvbXQ3NjIzbi1yZmItZW1t
+Yy5kdHMNCmluZGV4IGI3NjA2MTMwYWRlOS4uMDQ0Nzc0OGY5ZmEwIDEwMDY0NA0KLS0tIGEvYXJj
+aC9hcm0vYm9vdC9kdHMvbXQ3NjIzbi1yZmItZW1tYy5kdHMNCisrKyBiL2FyY2gvYXJtL2Jvb3Qv
+ZHRzL210NzYyM24tcmZiLWVtbWMuZHRzDQpAQCAtMTM4LDYgKzEzOCw3IEBAIGZpeGVkLWxpbmsg
+ew0KIAltYWNAMSB7DQogCQljb21wYXRpYmxlID0gIm1lZGlhdGVrLGV0aC1tYWMiOw0KIAkJcmVn
+ID0gPDE+Ow0KKwkJcGh5LW1vZGUgPSAicmdtaWkiOw0KIAkJcGh5LWhhbmRsZSA9IDwmcGh5NT47
+DQogCX07DQogDQotLSANCjIuMjUuMQ0K
 
