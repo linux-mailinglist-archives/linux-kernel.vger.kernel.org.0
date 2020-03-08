@@ -2,147 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05A8719676A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:43:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40DCD1967A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbgC1QnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:43:16 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50251 "EHLO mx.sdf.org"
+        id S1728138AbgC1Qpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:45:54 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50049 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbgC1QnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:15 -0400
+        id S1727702AbgC1Qn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:29 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhAHP029768
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhHGH020238
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:10 GMT
+        Sat, 28 Mar 2020 16:43:18 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhAEl008453;
-        Sat, 28 Mar 2020 16:43:10 GMT
-Message-Id: <202003281643.02SGhAEl008453@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhHZ7020889;
+        Sat, 28 Mar 2020 16:43:17 GMT
+Message-Id: <202003281643.02SGhHZ7020889@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Fri, 20 Dec 2019 22:30:32 -0500
-Subject: [RFC PATCH v1 10/50] <linux/random.h> Make prandom_u32_max() exact
- for constant ranges
+Date:   Sun, 8 Mar 2020 04:51:35 -0400
+Subject: [RFC PATCH v1 28/50] drivers/target/iscsi: Replace O(n^2)
+ randomization
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>
+Cc:     Nicholas Bellinger <nab@linux-iscsi.org>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        linux-scsi@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cute hack I'm not sure should go into the kernel.
-Comments very much requested!
+The previous code would, to generate the nth value in the sequence,
+generate a random integer, linearly search the already-generated values
+for a duplicate, and repeat until a non-colliding number was found.
+That's an average of ln(n) + 0.577 attempts per number output, each
+attempt is O(n), and it takes O(n) numbers to fill the array, for a
+total of O(n^2 * log n).
 
-Getting rid of the last tiny bit of non-uniformity is quite cheap
-*if* the range is known at compile time: a compare with an immediate
-and a (rarely taken) conditional branch to retry.
+For large n, the linear search would dominate, but the excess calls
+to get_random_bytes() are painful even with small n.
 
-So for hack value, implement this for compile-time constant ranges.
+There were also other bizarre things in the code, like the fiddling with
+the sign bit, and "j = 10001 - j" when j is a random 32-bit integer.
 
-For variable ranges, it involves a division, so just live with the
-slight non-uniformity.
+Replace with an O(n) Fisher-Yates shuffle, and use prandom_max()
+rather than expensive crypto-grade random numbers.
 
-The style questions are:
-- Is a more accurate result *some* of the time actually worth anything?
-- Is the benefit enough to justify the ugly inconsistency?
+In iscsit_randomize_pdu_lists, I even got rid of the temporary array
+entirely and shuffled directly in the PDUs.
+
+In iscsit_randomize_seq_lists(), the "seq_list[i].type == SEQTYPE_NORMAL"
+condition makes it hard to shuffle in-place, and I didn't want to
+dive too deep into the code, but perhaps someone else could.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: Lee Duncan <lduncan@suse.com>
+Cc: Chris Leech <cleech@redhat.com>
+Cc: linux-scsi@vger.kernel.org
 ---
- include/linux/random.h | 63 ++++++++++++++++++++++++++++++------------
- 1 file changed, 46 insertions(+), 17 deletions(-)
+ .../target/iscsi/iscsi_target_seq_pdu_list.c  | 72 +++++++------------
+ 1 file changed, 24 insertions(+), 48 deletions(-)
 
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 109772175c833..82dd0d613e75c 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -9,6 +9,7 @@
- 
- #include <linux/list.h>
- #include <linux/once.h>
-+#include <linux/math64.h>
- 
- #include <uapi/linux/random.h>
- 
-@@ -147,9 +148,11 @@ void prandom_seed_full_state(struct rnd_state __percpu *pcpu_state);
-  * a property that is provided by prandom_u32().)
-  *
-  * It is possible to extend this to avoid all bias and return perfectly
-- * uniform pseudorandom numbers by discarding and regenerating sometimes,
-- * but if your needs are that stringent, you might want to use a stronger
-- * generator (like get_random_u32()).
-+ * uniform pseudorandom numbers by discarding and regenerating sometimes.
-+ * That's easy to do for constant ranges, so this code does it in that
-+ * case, but settles for the approimation for variable ranges.  If you
-+ * need exact uniformity, you might also want to use a stronger generator
-+ * (like get_random_u32()).
-  *
-  * Ref:
-  * 	Fast Random Integer Generation in an Interval
-@@ -160,21 +163,47 @@ void prandom_seed_full_state(struct rnd_state __percpu *pcpu_state);
-  */
- static inline u32 prandom_u32_max(u32 range)
- {
--	/*
--	 * If the range is a compile-time constant power of 2, then use
--	 * a simple shift.  This is mathematically equivalent to the
--	 * multiplication, but GCC 8.3 doesn't optimize that perfectly.
--	 *
--	 * We could do an AND with a mask, but
--	 * 1) The shift is the same speed on a decent CPU,
--	 * 2) It's generally smaller code (smaller immediate), and
--	 * 3) Many PRNGs have trouble with their low-order bits;
--	 *    using the msbits is generaly preferred.
--	 */
--	if (__builtin_constant_p(range) && (range & (range - 1)) == 0)
--		return prandom_u32() / (u32)(0x100000000 / range);
--	else
-+	if (!__builtin_constant_p(range)) {
-+		/*
-+		 * If range is a variable, prioritize speed over
-+		 * perfect uniformity.
-+		 */
- 		return reciprocal_scale(prandom_u32(), range);
-+	} else if (range & (range - 1)) {
-+		/*
-+		 * If the range is a compile-time constant, then achieving
-+		 * perfect uniformity is one compare with immediate and
-+		 * one unlikely branch, so go ahead and do it.
-+		 *
-+		 * Some 32-bit processors require an additional
-+		 * instruction to get the low half of a 64-bit product.
-+		 * PowerPC and NIOS have separate "multiply high" and
-+		 * "multiply low" instructions.  MIPS32 and ARC need to
-+		 * move the result from a special-purpose register to
-+		 * a GPR.
-+		 */
-+		u32 const lim = -range % range;
-+		u64 prod;
-+
-+		do
-+			prod = mul_u32_u32(prandom_u32(), range);
-+		while (unlikely((u32)prod < lim));
-+		return prod >> 32;
-+	} else {
-+		/*
-+		 * If the range is a compile-time constant power of 2,
-+		 * then use a simple shift.  This is mathematically
-+		 * equivalent to the multiplication, but GCC 8.3 doesn't
-+		 * optimize that perfectly.
-+		 *
-+		 * We could do an AND with a mask, but
-+		 * 1) The shift is the same speed on a decent CPU,
-+		 * 2) It's generally smaller code (smaller immediate), and
-+		 * 3) Many PRNGs have trouble with their low-order bits;
-+		 *    using the msbits is generaly preferred.
-+		 */
-+			return prandom_u32() / (u32)(0x100000000 / range);
-+	}
+diff --git a/drivers/target/iscsi/iscsi_target_seq_pdu_list.c b/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
+index ea2b02a93e455..bc40657d4c7d6 100644
+--- a/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
++++ b/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
+@@ -88,40 +88,40 @@ static void iscsit_ordered_pdu_lists(
  }
  
  /*
+- *	Generate count random values into array.
+- *	Use 0x80000000 to mark generates valued in array[].
++ * Generate an array holding the values 0..count-1 in random order.
++ * count is guaranteed non-zero.
+  */
+ static void iscsit_create_random_array(u32 *array, u32 count)
+ {
+-	int i, j, k;
++	int i;
+ 
+-	if (count == 1) {
+-		array[0] = 0;
+-		return;
++	array[0] = 0;
++
++	for (i = 1; i < count; i++) {
++		int j = prandom_u32_max(i+1);
++		array[i] = array[j];
++		array[j] = i;
+ 	}
++}
+ 
+-	for (i = 0; i < count; i++) {
+-redo:
+-		get_random_bytes(&j, sizeof(u32));
+-		j = (1 + (int) (9999 + 1) - j) % count;
+-		for (k = 0; k < i + 1; k++) {
+-			j |= 0x80000000;
+-			if ((array[k] & 0x80000000) && (array[k] == j))
+-				goto redo;
+-		}
+-		array[i] = j;
++/* A specialized version of the above for PDU send orders */
++static void iscsit_random_send_order(struct iscsi_pdu *pdu, u32 count)
++{
++	int i;
++
++	pdu[0].pdu_send_order = 0;
++	for (i = 1; i < count; i++) {
++		int j = prandom_u32_max(i+1);
++		pdu[i].pdu_send_order = pdu[j].pdu_send_order;
++		pdu[j].pdu_send_order = i;
+ 	}
+-
+-	for (i = 0; i < count; i++)
+-		array[i] &= ~0x80000000;
+ }
+ 
+ static int iscsit_randomize_pdu_lists(
+ 	struct iscsi_cmd *cmd,
+ 	u8 type)
+ {
+-	int i = 0;
+-	u32 *array, pdu_count, seq_count = 0, seq_no = 0, seq_offset = 0;
++	u32 pdu_count, seq_count = 0, seq_no = 0, seq_offset = 0;
+ 
+ 	for (pdu_count = 0; pdu_count < cmd->pdu_count; pdu_count++) {
+ redo:
+@@ -129,39 +129,15 @@ static int iscsit_randomize_pdu_lists(
+ 			seq_count++;
+ 			continue;
+ 		}
+-		array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
+-		if (!array) {
+-			pr_err("Unable to allocate memory"
+-				" for random array.\n");
+-			return -ENOMEM;
+-		}
+-		iscsit_create_random_array(array, seq_count);
+-
+-		for (i = 0; i < seq_count; i++)
+-			cmd->pdu_list[seq_offset+i].pdu_send_order = array[i];
+-
+-		kfree(array);
+-
++		iscsit_random_send_order(cmd->pdu_list + seq_offset, seq_count);
+ 		seq_offset += seq_count;
+ 		seq_count = 0;
+ 		seq_no++;
+ 		goto redo;
+ 	}
+ 
+-	if (seq_count) {
+-		array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
+-		if (!array) {
+-			pr_err("Unable to allocate memory for"
+-				" random array.\n");
+-			return -ENOMEM;
+-		}
+-		iscsit_create_random_array(array, seq_count);
+-
+-		for (i = 0; i < seq_count; i++)
+-			cmd->pdu_list[seq_offset+i].pdu_send_order = array[i];
+-
+-		kfree(array);
+-	}
++	if (seq_count)
++		iscsit_random_send_order(cmd->pdu_list + seq_offset, seq_count);
+ 
+ 	return 0;
+ }
 -- 
 2.26.0
 
