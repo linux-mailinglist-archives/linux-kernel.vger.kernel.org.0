@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1EF17E7FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECC917E801
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:07:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbgCITFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:05:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47878 "EHLO mail.kernel.org"
+        id S1727830AbgCITFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:05:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbgCITE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727613AbgCITE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Mar 2020 15:04:27 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF29021655;
-        Mon,  9 Mar 2020 19:04:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 191B62468D;
+        Mon,  9 Mar 2020 19:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583780667;
-        bh=h8NlL0BNWOOzGjbattsQHdPTR/D98Gipr0p/Cf1gauo=;
+        bh=64cjWCbiThdHFvvHyU3CCz9FjTHDjRwEeHSwlRZf0BQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IAd2hde4Obj2yUyEKiuD+RNlHhu9QkfyY8Nth3FZj/IclaMTSj/ebOWqxlv45Y85D
-         blN8y9OUDB9g57RMkn0YUQDlHK1g1sl0hr/mMJJvzeclAp/H4QLxlLtmjsd2ivSoIL
-         mZcz2bxPEMPjZJcSyDIdXq+KYMU3BAEG+l6rCRes=
+        b=Udws6YeYpOcyByJ+CcccVQH8qZfCiLSomJ08n0VhegRHjEwtpHU4Kt6ZNtjoAL2n7
+         vFBVbrcVx3KTSd8TjUv6rkYjR+hfHUvHSM/DkU7YNdxY7G1ZAtdg0aiNmyNfEFoF6L
+         JMhPt2TdLiaQvn6fuJr9HDMinMlovucALLyiVMHk=
 From:   paulmck@kernel.org
 To:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
         kernel-team@fb.com, mingo@kernel.org
 Cc:     elver@google.com, andreyknvl@google.com, glider@google.com,
         dvyukov@google.com, cai@lca.pw, boqun.feng@gmail.com,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH kcsan 19/32] kcsan: Expose core configuration parameters as module params
-Date:   Mon,  9 Mar 2020 12:04:07 -0700
-Message-Id: <20200309190420.6100-19-paulmck@kernel.org>
+Subject: [PATCH kcsan 20/32] kcsan: Fix misreporting if concurrent races on same address
+Date:   Mon,  9 Mar 2020 12:04:08 -0700
+Message-Id: <20200309190420.6100-20-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200309190359.GA5822@paulmck-ThinkPad-P72>
 References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
@@ -42,87 +42,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marco Elver <elver@google.com>
 
-This adds early_boot, udelay_{task,interrupt}, and skip_watch as module
-params. The latter parameters are useful to modify at runtime to tune
-KCSAN's performance on new systems. This will also permit auto-tuning
-these parameters to maximize overall system performance and KCSAN's race
-detection ability.
-
-None of the parameters are used in the fast-path and referring to them
-via static variables instead of CONFIG constants will not affect
-performance.
+If there are at least 4 threads racing on the same address, it can
+happen that one of the readers may observe another matching reader in
+other_info. To avoid locking up, we have to consume 'other_info'
+regardless, but skip the report. See the added comment for more details.
 
 Signed-off-by: Marco Elver <elver@google.com>
-Cc: Qian Cai <cai@lca.pw>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/kcsan/core.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ kernel/kcsan/report.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index 87ef01e..498b1eb 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -6,6 +6,7 @@
- #include <linux/export.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/moduleparam.h>
- #include <linux/percpu.h>
- #include <linux/preempt.h>
- #include <linux/random.h>
-@@ -16,6 +17,20 @@
- #include "encoding.h"
- #include "kcsan.h"
+diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
+index 3bc590e..abf6852 100644
+--- a/kernel/kcsan/report.c
++++ b/kernel/kcsan/report.c
+@@ -422,6 +422,44 @@ static bool prepare_report(unsigned long *flags, const volatile void *ptr,
+ 			return false;
+ 		}
  
-+static bool kcsan_early_enable = IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE);
-+static unsigned int kcsan_udelay_task = CONFIG_KCSAN_UDELAY_TASK;
-+static unsigned int kcsan_udelay_interrupt = CONFIG_KCSAN_UDELAY_INTERRUPT;
-+static long kcsan_skip_watch = CONFIG_KCSAN_SKIP_WATCH;
++		access_type |= other_info.access_type;
++		if ((access_type & KCSAN_ACCESS_WRITE) == 0) {
++			/*
++			 * While the address matches, this is not the other_info
++			 * from the thread that consumed our watchpoint, since
++			 * neither this nor the access in other_info is a write.
++			 * It is invalid to continue with the report, since we
++			 * only have information about reads.
++			 *
++			 * This can happen due to concurrent races on the same
++			 * address, with at least 4 threads. To avoid locking up
++			 * other_info and all other threads, we have to consume
++			 * it regardless.
++			 *
++			 * A concrete case to illustrate why we might lock up if
++			 * we do not consume other_info:
++			 *
++			 *   We have 4 threads, all accessing the same address
++			 *   (or matching address ranges). Assume the following
++			 *   watcher and watchpoint consumer pairs:
++			 *   write1-read1, read2-write2. The first to populate
++			 *   other_info is write2, however, write1 consumes it,
++			 *   resulting in a report of write1-write2. This report
++			 *   is valid, however, now read1 populates other_info;
++			 *   read2-read1 is an invalid conflict, yet, no other
++			 *   conflicting access is left. Therefore, we must
++			 *   consume read1's other_info.
++			 *
++			 * Since this case is assumed to be rare, it is
++			 * reasonable to omit this report: one of the other
++			 * reports includes information about the same shared
++			 * data, and at this point the likelihood that we
++			 * re-report the same race again is high.
++			 */
++			release_report(flags, KCSAN_REPORT_RACE_SIGNAL);
++			return false;
++		}
 +
-+#ifdef MODULE_PARAM_PREFIX
-+#undef MODULE_PARAM_PREFIX
-+#endif
-+#define MODULE_PARAM_PREFIX "kcsan."
-+module_param_named(early_enable, kcsan_early_enable, bool, 0);
-+module_param_named(udelay_task, kcsan_udelay_task, uint, 0644);
-+module_param_named(udelay_interrupt, kcsan_udelay_interrupt, uint, 0644);
-+module_param_named(skip_watch, kcsan_skip_watch, long, 0644);
-+
- bool kcsan_enabled;
- 
- /* Per-CPU kcsan_ctx for interrupts */
-@@ -239,9 +254,9 @@ should_watch(const volatile void *ptr, size_t size, int type)
- 
- static inline void reset_kcsan_skip(void)
- {
--	long skip_count = CONFIG_KCSAN_SKIP_WATCH -
-+	long skip_count = kcsan_skip_watch -
- 			  (IS_ENABLED(CONFIG_KCSAN_SKIP_WATCH_RANDOMIZE) ?
--				   prandom_u32_max(CONFIG_KCSAN_SKIP_WATCH) :
-+				   prandom_u32_max(kcsan_skip_watch) :
- 				   0);
- 	this_cpu_write(kcsan_skip, skip_count);
- }
-@@ -253,8 +268,7 @@ static __always_inline bool kcsan_is_enabled(void)
- 
- static inline unsigned int get_delay(void)
- {
--	unsigned int delay = in_task() ? CONFIG_KCSAN_UDELAY_TASK :
--					 CONFIG_KCSAN_UDELAY_INTERRUPT;
-+	unsigned int delay = in_task() ? kcsan_udelay_task : kcsan_udelay_interrupt;
- 	return delay - (IS_ENABLED(CONFIG_KCSAN_DELAY_RANDOMIZE) ?
- 				prandom_u32_max(delay) :
- 				0);
-@@ -527,7 +541,7 @@ void __init kcsan_init(void)
- 	 * We are in the init task, and no other tasks should be running;
- 	 * WRITE_ONCE without memory barrier is sufficient.
- 	 */
--	if (IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE))
-+	if (kcsan_early_enable)
- 		WRITE_ONCE(kcsan_enabled, true);
- }
- 
+ 		/*
+ 		 * Matching & usable access in other_info: keep other_info_lock
+ 		 * locked, as this thread consumes it to print the full report;
 -- 
 2.9.5
 
