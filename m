@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F9917E7EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF9117E7E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgCITEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:04:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
+        id S1727698AbgCITEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:04:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727627AbgCITE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727632AbgCITE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Mar 2020 15:04:29 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE14B2467D;
-        Mon,  9 Mar 2020 19:04:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1810A2464B;
+        Mon,  9 Mar 2020 19:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583780668;
-        bh=QuPGWf4HFHoMw989pkq4Hg6AKUy5/cHZ1CcwXX1Q5as=;
+        bh=bXQ23ihSEnUkTp24p0NNHFtzIlF3bdrUPM4liEoYSIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qeoOBVhhAGIGWSiOqZl6y0l1o0o1MIWqtPJywb7cDtAIEDmnYPCDxs5hd3dLRB5vp
-         pR95kB61EqvS/Cxohfnzi2YjqTEfvE72EH1SpUfgRdylg5bWp2tsbKWNBEo+H9Fown
-         Hwc7yP5JgjDYsB5ZqmL4Eb/Q6myG5OC5CqRQ1Nqo=
+        b=jbMGV/zpHQnfDssderoDJmNtLiAFL1H82cAMK/HVjWEhO+Xl8475TYl9R4FX2EBre
+         ZERqYEu44wgt+TTogWhF9O/ZX7puP0eckzGTT6ZD/KoJGV4q7qG+8NIJC885+UJvV4
+         kKf/2Fjm6P2EdxsWYG8fW12px9arT3ZT/uWx+Vmk=
 From:   paulmck@kernel.org
 To:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
         kernel-team@fb.com, mingo@kernel.org
 Cc:     elver@google.com, andreyknvl@google.com, glider@google.com,
         dvyukov@google.com, cai@lca.pw, boqun.feng@gmail.com,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH kcsan 23/32] kcsan: Introduce kcsan_value_change type
-Date:   Mon,  9 Mar 2020 12:04:11 -0700
-Message-Id: <20200309190420.6100-23-paulmck@kernel.org>
+Subject: [PATCH kcsan 24/32] kcsan: Add kcsan_set_access_mask() support
+Date:   Mon,  9 Mar 2020 12:04:12 -0700
+Message-Id: <20200309190420.6100-24-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200309190359.GA5822@paulmck-ThinkPad-P72>
 References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
@@ -42,225 +42,229 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marco Elver <elver@google.com>
 
-Introduces kcsan_value_change type, which explicitly points out if we
-either observed a value-change (TRUE), or we could not observe one but
-cannot rule out a value-change happened (MAYBE). The MAYBE state can
-either be reported or not, depending on configuration preferences.
-
-A follow-up patch introduces the FALSE state, which should never be
-reported.
-
-No functional change intended.
+When setting up an access mask with kcsan_set_access_mask(), KCSAN will
+only report races if concurrent changes to bits set in access_mask are
+observed. Conveying access_mask via a separate call avoids introducing
+overhead in the common-case fast-path.
 
 Signed-off-by: Marco Elver <elver@google.com>
 Acked-by: John Hubbard <jhubbard@nvidia.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/kcsan/core.c   | 38 ++++++++++++++++++++++----------------
- kernel/kcsan/kcsan.h  | 19 ++++++++++++++++++-
- kernel/kcsan/report.c | 26 ++++++++++++++------------
- 3 files changed, 54 insertions(+), 29 deletions(-)
+ include/linux/kcsan-checks.h | 11 +++++++++++
+ include/linux/kcsan.h        |  5 +++++
+ init/init_task.c             |  1 +
+ kernel/kcsan/core.c          | 43 +++++++++++++++++++++++++++++++++++++++----
+ kernel/kcsan/kcsan.h         |  5 +++++
+ kernel/kcsan/report.c        | 13 ++++++++++++-
+ 6 files changed, 73 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/kcsan-checks.h b/include/linux/kcsan-checks.h
+index 8675411..4ef5233 100644
+--- a/include/linux/kcsan-checks.h
++++ b/include/linux/kcsan-checks.h
+@@ -68,6 +68,16 @@ void kcsan_flat_atomic_end(void);
+  */
+ void kcsan_atomic_next(int n);
+ 
++/**
++ * kcsan_set_access_mask - set access mask
++ *
++ * Set the access mask for all accesses for the current context if non-zero.
++ * Only value changes to bits set in the mask will be reported.
++ *
++ * @mask bitmask
++ */
++void kcsan_set_access_mask(unsigned long mask);
++
+ #else /* CONFIG_KCSAN */
+ 
+ static inline void __kcsan_check_access(const volatile void *ptr, size_t size,
+@@ -78,6 +88,7 @@ static inline void kcsan_nestable_atomic_end(void)	{ }
+ static inline void kcsan_flat_atomic_begin(void)	{ }
+ static inline void kcsan_flat_atomic_end(void)		{ }
+ static inline void kcsan_atomic_next(int n)		{ }
++static inline void kcsan_set_access_mask(unsigned long mask) { }
+ 
+ #endif /* CONFIG_KCSAN */
+ 
+diff --git a/include/linux/kcsan.h b/include/linux/kcsan.h
+index 7a614ca..3b84606 100644
+--- a/include/linux/kcsan.h
++++ b/include/linux/kcsan.h
+@@ -35,6 +35,11 @@ struct kcsan_ctx {
+ 	 */
+ 	int atomic_nest_count;
+ 	bool in_flat_atomic;
++
++	/*
++	 * Access mask for all accesses if non-zero.
++	 */
++	unsigned long access_mask;
+ };
+ 
+ /**
+diff --git a/init/init_task.c b/init/init_task.c
+index 2b4fe98..096191d 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -167,6 +167,7 @@ struct task_struct init_task
+ 		.atomic_next		= 0,
+ 		.atomic_nest_count	= 0,
+ 		.in_flat_atomic		= false,
++		.access_mask		= 0,
+ 	},
+ #endif
+ #ifdef CONFIG_TRACE_IRQFLAGS
 diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index 498b1eb..3f89801 100644
+index 3f89801..589b1e7 100644
 --- a/kernel/kcsan/core.c
 +++ b/kernel/kcsan/core.c
-@@ -341,7 +341,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+@@ -39,6 +39,7 @@ static DEFINE_PER_CPU(struct kcsan_ctx, kcsan_cpu_ctx) = {
+ 	.atomic_next		= 0,
+ 	.atomic_nest_count	= 0,
+ 	.in_flat_atomic		= false,
++	.access_mask		= 0,
+ };
+ 
+ /*
+@@ -298,6 +299,15 @@ static noinline void kcsan_found_watchpoint(const volatile void *ptr,
+ 
+ 	if (!kcsan_is_enabled())
+ 		return;
++
++	/*
++	 * The access_mask check relies on value-change comparison. To avoid
++	 * reporting a race where e.g. the writer set up the watchpoint, but the
++	 * reader has access_mask!=0, we have to ignore the found watchpoint.
++	 */
++	if (get_ctx()->access_mask != 0)
++		return;
++
+ 	/*
+ 	 * Consume the watchpoint as soon as possible, to minimize the chances
+ 	 * of !consumed. Consuming the watchpoint must always be guarded by
+@@ -341,6 +351,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
  		u32 _4;
  		u64 _8;
  	} expect_value;
--	bool value_change = false;
-+	enum kcsan_value_change value_change = KCSAN_VALUE_CHANGE_MAYBE;
++	unsigned long access_mask;
+ 	enum kcsan_value_change value_change = KCSAN_VALUE_CHANGE_MAYBE;
  	unsigned long ua_flags = user_access_save();
  	unsigned long irq_flags;
- 
-@@ -398,6 +398,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 	 * Read the current value, to later check and infer a race if the data
- 	 * was modified via a non-instrumented access, e.g. from a device.
+@@ -435,18 +446,27 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+ 	 * Re-read value, and check if it is as expected; if not, we infer a
+ 	 * racy access.
  	 */
-+	expect_value._8 = 0;
++	access_mask = get_ctx()->access_mask;
  	switch (size) {
  	case 1:
- 		expect_value._1 = READ_ONCE(*(const u8 *)ptr);
-@@ -436,24 +437,37 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 	 */
- 	switch (size) {
- 	case 1:
--		value_change = expect_value._1 != READ_ONCE(*(const u8 *)ptr);
-+		expect_value._1 ^= READ_ONCE(*(const u8 *)ptr);
+ 		expect_value._1 ^= READ_ONCE(*(const u8 *)ptr);
++		if (access_mask)
++			expect_value._1 &= (u8)access_mask;
  		break;
  	case 2:
--		value_change = expect_value._2 != READ_ONCE(*(const u16 *)ptr);
-+		expect_value._2 ^= READ_ONCE(*(const u16 *)ptr);
+ 		expect_value._2 ^= READ_ONCE(*(const u16 *)ptr);
++		if (access_mask)
++			expect_value._2 &= (u16)access_mask;
  		break;
  	case 4:
--		value_change = expect_value._4 != READ_ONCE(*(const u32 *)ptr);
-+		expect_value._4 ^= READ_ONCE(*(const u32 *)ptr);
+ 		expect_value._4 ^= READ_ONCE(*(const u32 *)ptr);
++		if (access_mask)
++			expect_value._4 &= (u32)access_mask;
  		break;
  	case 8:
--		value_change = expect_value._8 != READ_ONCE(*(const u64 *)ptr);
-+		expect_value._8 ^= READ_ONCE(*(const u64 *)ptr);
+ 		expect_value._8 ^= READ_ONCE(*(const u64 *)ptr);
++		if (access_mask)
++			expect_value._8 &= (u64)access_mask;
  		break;
  	default:
  		break; /* ignore; we do not diff the values */
- 	}
- 
-+	/* Were we able to observe a value-change? */
-+	if (expect_value._8 != 0)
-+		value_change = KCSAN_VALUE_CHANGE_TRUE;
-+
- 	/* Check if this access raced with another. */
+@@ -460,11 +480,20 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
  	if (!remove_watchpoint(watchpoint)) {
  		/*
-+		 * Depending on the access type, map a value_change of MAYBE to
-+		 * TRUE (require reporting).
-+		 */
-+		if (value_change == KCSAN_VALUE_CHANGE_MAYBE && (size > 8 || is_assert)) {
-+			/* Always assume a value-change. */
-+			value_change = KCSAN_VALUE_CHANGE_TRUE;
-+		}
-+
-+		/*
- 		 * No need to increment 'data_races' counter, as the racing
- 		 * thread already did.
- 		 *
-@@ -461,20 +475,12 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 		 * therefore both this thread and the racing thread may
- 		 * increment this counter.
+ 		 * Depending on the access type, map a value_change of MAYBE to
+-		 * TRUE (require reporting).
++		 * TRUE (always report) or FALSE (never report).
  		 */
--		if (is_assert)
-+		if (is_assert && value_change == KCSAN_VALUE_CHANGE_TRUE)
- 			kcsan_counter_inc(KCSAN_COUNTER_ASSERT_FAILURES);
+-		if (value_change == KCSAN_VALUE_CHANGE_MAYBE && (size > 8 || is_assert)) {
+-			/* Always assume a value-change. */
+-			value_change = KCSAN_VALUE_CHANGE_TRUE;
++		if (value_change == KCSAN_VALUE_CHANGE_MAYBE) {
++			if (access_mask != 0) {
++				/*
++				 * For access with access_mask, we require a
++				 * value-change, as it is likely that races on
++				 * ~access_mask bits are expected.
++				 */
++				value_change = KCSAN_VALUE_CHANGE_FALSE;
++			} else if (size > 8 || is_assert) {
++				/* Always assume a value-change. */
++				value_change = KCSAN_VALUE_CHANGE_TRUE;
++			}
+ 		}
  
--		/*
--		 * - If we were not able to observe a value change due to size
--		 *   constraints, always assume a value change.
--		 * - If the access type is an assertion, we also always assume a
--		 *   value change to always report the race.
--		 */
--		value_change = value_change || size > 8 || is_assert;
--
- 		kcsan_report(ptr, size, type, value_change, smp_processor_id(),
- 			     KCSAN_REPORT_RACE_SIGNAL);
--	} else if (value_change) {
-+	} else if (value_change == KCSAN_VALUE_CHANGE_TRUE) {
- 		/* Inferring a race, since the value should not have changed. */
+ 		/*
+@@ -622,6 +651,12 @@ void kcsan_atomic_next(int n)
+ }
+ EXPORT_SYMBOL(kcsan_atomic_next);
  
- 		kcsan_counter_inc(KCSAN_COUNTER_RACES_UNKNOWN_ORIGIN);
-@@ -482,7 +488,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
- 			kcsan_counter_inc(KCSAN_COUNTER_ASSERT_FAILURES);
- 
- 		if (IS_ENABLED(CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN) || is_assert)
--			kcsan_report(ptr, size, type, true,
-+			kcsan_report(ptr, size, type, KCSAN_VALUE_CHANGE_TRUE,
- 				     smp_processor_id(),
- 				     KCSAN_REPORT_RACE_UNKNOWN_ORIGIN);
- 	}
++void kcsan_set_access_mask(unsigned long mask)
++{
++	get_ctx()->access_mask = mask;
++}
++EXPORT_SYMBOL(kcsan_set_access_mask);
++
+ void __kcsan_check_access(const volatile void *ptr, size_t size, int type)
+ {
+ 	check_access(ptr, size, type);
 diff --git a/kernel/kcsan/kcsan.h b/kernel/kcsan/kcsan.h
-index 50078e7..83a79b0 100644
+index 83a79b0..892de51 100644
 --- a/kernel/kcsan/kcsan.h
 +++ b/kernel/kcsan/kcsan.h
-@@ -88,6 +88,22 @@ extern void kcsan_counter_dec(enum kcsan_counter_id id);
-  */
- extern bool kcsan_skip_report_debugfs(unsigned long func_addr);
+@@ -99,6 +99,11 @@ enum kcsan_value_change {
+ 	KCSAN_VALUE_CHANGE_MAYBE,
  
-+/*
-+ * Value-change states.
-+ */
-+enum kcsan_value_change {
-+	/*
-+	 * Did not observe a value-change, however, it is valid to report the
-+	 * race, depending on preferences.
-+	 */
-+	KCSAN_VALUE_CHANGE_MAYBE,
-+
-+	/*
-+	 * The value was observed to change, and the race should be reported.
-+	 */
-+	KCSAN_VALUE_CHANGE_TRUE,
-+};
-+
- enum kcsan_report_type {
  	/*
- 	 * The thread that set up the watchpoint and briefly stalled was
-@@ -111,6 +127,7 @@ enum kcsan_report_type {
-  * Print a race report from thread that encountered the race.
-  */
- extern void kcsan_report(const volatile void *ptr, size_t size, int access_type,
--			 bool value_change, int cpu_id, enum kcsan_report_type type);
-+			 enum kcsan_value_change value_change, int cpu_id,
-+			 enum kcsan_report_type type);
- 
- #endif /* _KERNEL_KCSAN_KCSAN_H */
++	 * Did not observe a value-change, and it is invalid to report the race.
++	 */
++	KCSAN_VALUE_CHANGE_FALSE,
++
++	/*
+ 	 * The value was observed to change, and the race should be reported.
+ 	 */
+ 	KCSAN_VALUE_CHANGE_TRUE,
 diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
-index abf6852..d871476 100644
+index d871476..11c791b 100644
 --- a/kernel/kcsan/report.c
 +++ b/kernel/kcsan/report.c
-@@ -130,26 +130,27 @@ static bool rate_limit_report(unsigned long frame1, unsigned long frame2)
-  * Special rules to skip reporting.
-  */
+@@ -132,6 +132,9 @@ static bool rate_limit_report(unsigned long frame1, unsigned long frame2)
  static bool
--skip_report(bool value_change, unsigned long top_frame)
-+skip_report(enum kcsan_value_change value_change, unsigned long top_frame)
+ skip_report(enum kcsan_value_change value_change, unsigned long top_frame)
  {
++	/* Should never get here if value_change==FALSE. */
++	WARN_ON_ONCE(value_change == KCSAN_VALUE_CHANGE_FALSE);
++
  	/*
--	 * The first call to skip_report always has value_change==true, since we
-+	 * The first call to skip_report always has value_change==TRUE, since we
+ 	 * The first call to skip_report always has value_change==TRUE, since we
  	 * cannot know the value written of an instrumented access. For the 2nd
- 	 * call there are 6 cases with CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY:
- 	 *
--	 * 1. read watchpoint, conflicting write (value_change==true): report;
--	 * 2. read watchpoint, conflicting write (value_change==false): skip;
--	 * 3. write watchpoint, conflicting write (value_change==true): report;
--	 * 4. write watchpoint, conflicting write (value_change==false): skip;
--	 * 5. write watchpoint, conflicting read (value_change==false): skip;
--	 * 6. write watchpoint, conflicting read (value_change==true): report;
-+	 * 1. read watchpoint, conflicting write (value_change==TRUE): report;
-+	 * 2. read watchpoint, conflicting write (value_change==MAYBE): skip;
-+	 * 3. write watchpoint, conflicting write (value_change==TRUE): report;
-+	 * 4. write watchpoint, conflicting write (value_change==MAYBE): skip;
-+	 * 5. write watchpoint, conflicting read (value_change==MAYBE): skip;
-+	 * 6. write watchpoint, conflicting read (value_change==TRUE): report;
- 	 *
- 	 * Cases 1-4 are intuitive and expected; case 5 ensures we do not report
- 	 * data races where the write may have rewritten the same value; case 6
- 	 * is possible either if the size is larger than what we check value
- 	 * changes for or the access type is KCSAN_ACCESS_ASSERT.
- 	 */
--	if (IS_ENABLED(CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY) && !value_change) {
-+	if (IS_ENABLED(CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY) &&
-+	    value_change == KCSAN_VALUE_CHANGE_MAYBE) {
- 		/*
- 		 * The access is a write, but the data value did not change.
- 		 *
-@@ -245,7 +246,7 @@ static int sym_strcmp(void *addr1, void *addr2)
-  * Returns true if a report was generated, false otherwise.
-  */
- static bool print_report(const volatile void *ptr, size_t size, int access_type,
--			 bool value_change, int cpu_id,
-+			 enum kcsan_value_change value_change, int cpu_id,
- 			 enum kcsan_report_type type)
- {
- 	unsigned long stack_entries[NUM_STACK_ENTRIES] = { 0 };
-@@ -258,7 +259,7 @@ static bool print_report(const volatile void *ptr, size_t size, int access_type,
- 	/*
- 	 * Must check report filter rules before starting to print.
- 	 */
--	if (skip_report(true, stack_entries[skipnr]))
-+	if (skip_report(KCSAN_VALUE_CHANGE_TRUE, stack_entries[skipnr]))
- 		return false;
+@@ -493,7 +496,15 @@ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
  
- 	if (type == KCSAN_REPORT_RACE_SIGNAL) {
-@@ -477,7 +478,8 @@ static bool prepare_report(unsigned long *flags, const volatile void *ptr,
- }
+ 	kcsan_disable_current();
+ 	if (prepare_report(&flags, ptr, size, access_type, cpu_id, type)) {
+-		if (print_report(ptr, size, access_type, value_change, cpu_id, type) && panic_on_warn)
++		/*
++		 * Never report if value_change is FALSE, only if we it is
++		 * either TRUE or MAYBE. In case of MAYBE, further filtering may
++		 * be done once we know the full stack trace in print_report().
++		 */
++		bool reported = value_change != KCSAN_VALUE_CHANGE_FALSE &&
++				print_report(ptr, size, access_type, value_change, cpu_id, type);
++
++		if (reported && panic_on_warn)
+ 			panic("panic_on_warn set ...\n");
  
- void kcsan_report(const volatile void *ptr, size_t size, int access_type,
--		  bool value_change, int cpu_id, enum kcsan_report_type type)
-+		  enum kcsan_value_change value_change, int cpu_id,
-+		  enum kcsan_report_type type)
- {
- 	unsigned long flags = 0;
- 
+ 		release_report(&flags, type);
 -- 
 2.9.5
 
