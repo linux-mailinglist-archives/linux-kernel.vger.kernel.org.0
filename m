@@ -2,155 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9352317E5FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:47:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5B7E17E605
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:49:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgCIRrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 13:47:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:12899 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727311AbgCIRrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 13:47:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 10:47:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
-   d="scan'208";a="260490369"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
-  by orsmga002.jf.intel.com with ESMTP; 09 Mar 2020 10:47:41 -0700
-From:   kan.liang@linux.intel.com
-To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
-        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
-        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 9/9] perf hist: Add fast path for duplicate entries check approach
-Date:   Mon,  9 Mar 2020 10:46:39 -0700
-Message-Id: <20200309174639.4594-10-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200309174639.4594-1-kan.liang@linux.intel.com>
-References: <20200309174639.4594-1-kan.liang@linux.intel.com>
+        id S1727360AbgCIRtO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 13:49:14 -0400
+Received: from mail-oln040092253105.outbound.protection.outlook.com ([40.92.253.105]:6098
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726096AbgCIRtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 13:49:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zrc91E9iWp6/X08RfIZc8ee9pFJK5i2GfKi5J6MYgKmemp5LhupAjjcV6wTxJ/cCrREvX+Mn9weOYC7TdeCF7tu6PUzieEETrhMIZuACJ8pMpiaAaTnYe9ifOeb1mAKerk8fwAxLtquGhCNrF71ZHG5Vveezak20OORJBO5MwgBmcn1iH4fzzzCVEqYlDDRgNa9hWpmVjCJmFcGzdgnzQtxgSjChRxDhjPp1idHqPshhyYKXcST4COlLJssq8aLZLrIvPwFuWgRI8jBq/Ey5U5DQVL229WCkSUqCLcXL9bJ5vKACHNPnaFKN0QeFfrTbE2YiLiyOWuTA/czXu9U5kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RIDkSRkmjcwLgl9W/QQuRCOAqcvjbsDB0jpbuzxb/fw=;
+ b=LlqLhDTXIFErVslpqf0hDDfL6295vdtJpuwmjZn+JQtao3qBe+o/RFyd87rFdmZlwKwMyt8DAMiahrwHvZAWz7l3qmOVn6gpXLMyxPuG7gcg8n6sXl7LxNpSiJle9bOZ5cX/bd8qgrgjhLlPheKdwgNQdVzE4igqkNM0R485SbWPu8PR+n7Dv156X+09BAfR8D7MK8AoTqXI3qGjHSlEultx+c6ziNYFnT8rLncNW7f1OKSxTQmdl5VbDNpyZ/nmIvzPX8TsQAx4guUDAuoRjAteP8ztf343Q4hLDEPa25RfNa+KJ7Yj7/qn+XC4og/jZq9HLejoOqt9zqKScCxczw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HK2APC01FT045.eop-APC01.prod.protection.outlook.com
+ (2a01:111:e400:7ebc::37) by
+ HK2APC01HT118.eop-APC01.prod.protection.outlook.com (2a01:111:e400:7ebc::338)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 9 Mar
+ 2020 17:49:08 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (10.152.248.57) by
+ HK2APC01FT045.mail.protection.outlook.com (10.152.249.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Mon, 9 Mar 2020 17:49:08 +0000
+Received: from PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2]) by PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
+ ([fe80::a5dc:fc1:6544:5cb2%7]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
+ 17:49:08 +0000
+Received: from nicholas-dell-linux (2001:44b8:605f:11:6375:33df:328c:d925) by MEAPR01CA0029.ausprd01.prod.outlook.com (2603:10c6:201::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.14 via Frontend Transport; Mon, 9 Mar 2020 17:49:06 +0000
+From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Subject: [PATCH v3 0/2] nvmem: Add support for write-only instances, and
+ clean-up
+Thread-Topic: [PATCH v3 0/2] nvmem: Add support for write-only instances, and
+ clean-up
+Thread-Index: AQHV9jsIrwS6KhTqfEeGzuGXh51Jbw==
+Date:   Mon, 9 Mar 2020 17:49:08 +0000
+Message-ID: <PSXP216MB0438614877E3559E155F12AF80FE0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+Accept-Language: en-AU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MEAPR01CA0029.ausprd01.prod.outlook.com (2603:10c6:201::17)
+ To PSXP216MB0438.KORP216.PROD.OUTLOOK.COM (2603:1096:300:d::20)
+x-incomingtopheadermarker: OriginalChecksum:D72E65D032AB40DC6C58283FDB8E17632F3CE7DFD012717B3770DFD5F10D2147;UpperCasedChecksum:DD327475E681C02463FA0139663305666F425200C5F86A92F260531124A0CAA1;SizeAsReceived:7722;Count:48
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [TmusDcVuF0IrG326Pb3R99Pd9tiHnqjX10MKKPR1A0RxoR+Xq+jUAuOiH0DIKtj5]
+x-microsoft-original-message-id: <20200309174901.GA1830@nicholas-dell-linux>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 48
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 0fb723e0-cbae-4a3b-a092-08d7c4522ac1
+x-ms-exchange-slblob-mailprops: =?us-ascii?Q?rO8E+RXTnU/cEBXoKIq/8aFxnq9tHOwUXOjWzzghlKIS1cAfIWnNyZPqMm7j?=
+ =?us-ascii?Q?gJpGyBtbbkTH+YzAbDZIRY45VowEq+9R1CPHoRsePHF4qpkwMNT+3sUggBj1?=
+ =?us-ascii?Q?E98Gc2Sdi4yfkh4frzVeFcPmF946upkRc/sWhJytCoZgYbL9wWMbT/6MlmTy?=
+ =?us-ascii?Q?O/de/Qj3mxEEjSXGs4qCjrwKSt52WrJLpEz4tNjg5loiZFAgDntLiSduNfQQ?=
+ =?us-ascii?Q?6PExJ6ZnteTVyL6YY+eNIA4WT+b5G6cSVhUiX/O0Hn/FT/qHbIprMDiRuyJc?=
+ =?us-ascii?Q?jpKlBlCnkQjRYvygE1YeD5Tduq9p4qRrVw75BIYwF5USE8EJa8t0oyFFk4uo?=
+ =?us-ascii?Q?P5kCYOh0BAcghHZIrADVNTZQmbCLSKbBxdws6Kt6FLnYdJA9bLyPES315Sz1?=
+ =?us-ascii?Q?V+3lgiO0jaaqQar3OOAb3deT+gF23VbtEH9+4Y6ifyz64riOU9+mnDg78GTh?=
+ =?us-ascii?Q?g30dIWpPWx6GknBvEGXoCZZp25YiS7ZKYBAoBDKadJzdQx4rLTtNQk3o+eyD?=
+ =?us-ascii?Q?5YHY2ifMWJ9CcuosBRNoruHRexPtD97EUhsnNSYLkkCAHn7CjfMsF+DYr0Xr?=
+ =?us-ascii?Q?v3TNZFjUNN1cpTr5ZUg04YHdapD5ZKEEZQnJa9AO8E5UA6HWKY29yCmOmZ6q?=
+ =?us-ascii?Q?x0zRZXOg5JnhEfTiAvKkf1inAgdYOUwDrigumhuBh9avm5KViMKbDX80MLig?=
+ =?us-ascii?Q?NbLKA919bYh1kLJTfdsYZTDWJTVD8noS+riSUq88X+BYW8V2tftjvBXetcaZ?=
+ =?us-ascii?Q?t+AS6uZJhbvpfc8v8KEd6jXqVL93OBvXEvS3dzhmpqfuMCi6MxIbVE078uJF?=
+ =?us-ascii?Q?BqqTHtHmhqM89TbRwlbxGquIs0evEDJIN5TpczMXeYwlJXvmlWH8SyazBcII?=
+ =?us-ascii?Q?xfJP1PvG8gHQfh1YyxY2zToPVij81wCA0/TPPAen9t5eVkm3hPM105koFrnH?=
+ =?us-ascii?Q?Kr2wmfiblTAvBDvAxEFnBXJ/DpIAUksaCYa/mW1gasG82H5G9paUF4TuJMlU?=
+ =?us-ascii?Q?/P7atDAz8L58kzU54n//o6hPb6ZyOTpdJkcZhbB187zRrBEe2/6O9/GuCMvW?=
+ =?us-ascii?Q?eu3kRhylozz7JGuLKn29K4rIdds/eg=3D=3D?=
+x-ms-traffictypediagnostic: HK2APC01HT118:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Hl92k0Er96lN1QZfklXedpxpAno6zd9Qh/1HkuISTMNYcB3M76skezcvq6k/QurnD2y2shlb7U1wrSlPP+mYSVxxNmuWCcG/FfpFRveDrCNEqL2RenBYOJee09OCA1M5v80jLUnKSiVxvjGeghObhlh39XdQPySUl3FO2p8m6x0EdezZN0yMOhVAYf8TJKhTitI8ynW4xWhDDmWUZOMwxUoMUp3rINsIeatl9DSTPOc=
+x-ms-exchange-antispam-messagedata: rKfofwDVCs43RYS1vT0HTdRBjux66MeDDxfjdPcJ/daIlH2oEJ78Jzg/znes04JRA8Jy4g3cIo8JJV9uOTYHgyQQU6wsWKqTBi/DAR25CFswRikx12sj9IrBmxO/yLUlAISxrccF9UHwNyT8QzKhE9KYSDR3vjjFtSI1LaLNqQuGr4l8BYS0Jd9k2cl2Qdhh05kGTCzwSqSTmKkBCuwITQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D8BEAC0524B7BA4DB6B595EAD0A8EE67@KORP216.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fb723e0-cbae-4a3b-a092-08d7c4522ac1
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 17:49:08.6436
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2APC01HT118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hello all,
 
-Perf checks the duplicate entries in a callchain before adding an entry.
-However the check is very slow especially with deeper call stack.
-Almost ~50% elapsed time of perf report is spent on the check when the
-call stack is always depth of 32.
+Previous version: https://lkml.org/lkml/2020/3/2/693
 
-The hist_entry__cmp() is used to compare the new entry with the old
-entries. It will go through all the available sorts in the sort_list,
-and call the specific cmp of each sort, which is very slow.
-Actually, for most cases, there are no duplicate entries in callchain.
-The symbols are usually different. It's much faster to do a quick check
-for symbols first. Only do the full cmp when the symbols are exactly the
-same.
-The quick check is only to check symbols, not dso. Export
-_sort__sym_cmp.
+Changed since previous version:
 
- $perf record --call-graph lbr ./tchain_edit_64
+- Fixed memory leak when returning from nvmem_register().
 
- Without the patch
- $time perf report --stdio
- real    0m21.142s
- user    0m21.110s
- sys     0m0.033s
+- The patch 2/3 from last time was applied by Srinivas, so dropping it: 
+  https://lkml.org/lkml/2020/3/5/616
 
- With the patch
- $time perf report --stdio
- real    0m10.977s
- user    0m10.948s
- sys     0m0.027s
+- I split the patches into two as I said I would.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/hist.c | 23 +++++++++++++++++++++++
- tools/perf/util/sort.c |  2 +-
- tools/perf/util/sort.h |  2 ++
- 3 files changed, 26 insertions(+), 1 deletion(-)
+- Mika Westerberg asked me to send patch 3/3 to him again after v5.7-rc1 
+  is released, so drop it for now:
+  https://lore.kernel.org/lkml/20200306053455.GY2540@lahna.fi.intel.com/
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index e74a5acf66d9..311d6d119f3c 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -1057,6 +1057,20 @@ iter_next_cumulative_entry(struct hist_entry_iter *iter,
- 	return fill_callchain_info(al, node, iter->hide_unresolved);
- }
- 
-+static bool
-+hist_entry__fast__sym_diff(struct hist_entry *left,
-+			   struct hist_entry *right)
-+{
-+	struct symbol *sym_l = left->ms.sym;
-+	struct symbol *sym_r = right->ms.sym;
-+
-+	if (!sym_l && !sym_r)
-+		return left->ip != right->ip;
-+
-+	return !!_sort__sym_cmp(sym_l, sym_r);
-+}
-+
-+
- static int
- iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 			       struct addr_location *al)
-@@ -1083,6 +1097,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 	};
- 	int i;
- 	struct callchain_cursor cursor;
-+	bool fast = hists__has(he_tmp.hists, sym);
- 
- 	callchain_cursor_snapshot(&cursor, &callchain_cursor);
- 
-@@ -1093,6 +1108,14 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 	 * It's possible that it has cycles or recursive calls.
- 	 */
- 	for (i = 0; i < iter->curr; i++) {
-+		/*
-+		 * For most cases, there are no duplicate entries in callchain.
-+		 * The symbols are usually different. Do a quick check for
-+		 * symbols first.
-+		 */
-+		if (fast && hist_entry__fast__sym_diff(he_cache[i], &he_tmp))
-+			continue;
-+
- 		if (hist_entry__cmp(he_cache[i], &he_tmp) == 0) {
- 			/* to avoid calling callback function */
- 			iter->he = NULL;
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index ab0cfd790ad0..33e0fa1bc203 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -234,7 +234,7 @@ static int64_t _sort__addr_cmp(u64 left_ip, u64 right_ip)
- 	return (int64_t)(right_ip - left_ip);
- }
- 
--static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
-+int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
- {
- 	if (!sym_l || !sym_r)
- 		return cmp_null(sym_l, sym_r);
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 6c862d62d052..c3c3c68cbfdd 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -309,5 +309,7 @@ int64_t
- sort__daddr_cmp(struct hist_entry *left, struct hist_entry *right);
- int64_t
- sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right);
-+int64_t
-+_sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r);
- char *hist_entry__srcline(struct hist_entry *he);
- #endif	/* __PERF_SORT_H */
+- Removed comment from last return in nvmem_sysfs_get_groups() to avoid 
+  confusion.
+
+Nicholas Johnson (2):
+  nvmem: Allow nvmem_sysfs_get_groups() to return NULL as error
+    condition
+  nvmem: Add support for write-only instances
+
+ drivers/nvmem/core.c        |  4 +++
+ drivers/nvmem/nvmem-sysfs.c | 56 +++++++++++++++++++++++++++++++------
+ 2 files changed, 52 insertions(+), 8 deletions(-)
+
 -- 
-2.17.1
+2.25.1
 
