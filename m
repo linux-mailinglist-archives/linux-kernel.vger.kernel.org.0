@@ -2,120 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203D317E9C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F8217E9DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:20:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgCIUP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:15:59 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.28]:33129 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725992AbgCIUP6 (ORCPT
+        id S1726275AbgCIUUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:20:04 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:47977 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgCIUUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:15:58 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 92343EB2E
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:15:57 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BOofjZSOdAGTXBOofj1Dcl; Mon, 09 Mar 2020 15:15:57 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OFpxczpL0H3aEgaNATlcxEMIIo0HVwgN3oSVFlbxZBI=; b=ZKT+L6CED+NjpnzpUqDXl5oPHQ
-        7YMU7lCzhF5runUpXT3E/p0B9v0oQxYHcXfJ0Br0P78crQti/wvqbVAcL98uzQRyKp6UL85v20xmm
-        Ch0hqqszcYf0FGI2Obk8+8qYCZFnMmvGu8N+TlVIKunpa09rGiS6JQEIVXY7Iq8uXNYOMQTllovwx
-        L35FyWVvnY2CthbDgeqkQtwz6sWjNE4pCSLBWqr++3X8gWMjwpfsKq6Hy3PHcHB3p4PRprYPvXvI2
-        tuYGyK0wI71DmbcXZhvtnvbEDfTclMrEnJTaG/cWtDg7vgjnC6g59719Nm9kUHB6VidY0sJsHTCzc
-        7mKVfe+A==;
-Received: from [201.162.168.201] (port=12179 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBOod-000wWi-Jr; Mon, 09 Mar 2020 15:15:56 -0500
-Date:   Mon, 9 Mar 2020 15:19:07 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] ocfs2: cluster: Replace zero-length array with
- flexible-array member
-Message-ID: <20200309201907.GA8005@embeddedor>
+        Mon, 9 Mar 2020 16:20:04 -0400
+Received: by mail-io1-f72.google.com with SMTP id w21so1265318iod.14
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 13:20:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=gyTYavcaeh0FJZVoSDoUf1t6qJ3EWa/zCCs9/HoGRTA=;
+        b=eIvlXJYMmFfr62KEodP9m+Xa8zbxh0Wh/OqVO5/sLAQ6lpEbBXMaOZIe1HzctmTLoW
+         93QgM3nHTP3ZhHNs1b2AqN/g4wRoyqb5UqmfXCY2O/0btV8gmeD/Zm6pSco/z6eNnvuo
+         HuZioSoVn+ta93H1QsN/Vs2rdJtHFk3fHfXsZp/bT4E7Tqv6x2QlCaLAr0PbFdnF2Teo
+         L9YLxx1dSEnhZNGRnHMju2esX55+a0BRzKa/HOsReCOVnMsKk4RRK+9frzg27qQpsPwj
+         QMB6Ga1FB75BrKcgR3+cyVH/KrCszGBnIIOaC5GVb8F0P4Io3X2TJ0E8qmzNV4SsnHSw
+         ytdg==
+X-Gm-Message-State: ANhLgQ3PODd4VmT/PQL03aKOi+AiXMiyKwpTsCQscIf0gzOdsERWyrpm
+        e9e0VHewF15QggonqBuWDd6DIAzIaYKJMapbZDizbcrM96u0
+X-Google-Smtp-Source: ADFU+vtLpDu+/CtlDbPIe7Sj8SmC+jO0L8zvUKvlPaWQgCfWwBFwahCGzUuo1dV8TUz97cepb2d5B4KrdLVs1thpRVK88iWuf9/Q
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.168.201
-X-Source-L: No
-X-Exim-ID: 1jBOod-000wWi-Jr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.168.201]:12179
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Received: by 2002:a05:6638:618:: with SMTP id g24mr16405705jar.87.1583785204118;
+ Mon, 09 Mar 2020 13:20:04 -0700 (PDT)
+Date:   Mon, 09 Mar 2020 13:20:04 -0700
+In-Reply-To: <20200309172430.GV31668@ziepe.ca>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007dfeb705a071ba51@google.com>
+Subject: Re: BUG: corrupted list in _cma_attach_to_dev
+From:   syzbot <syzbot+06b50ee4a9bd73e8b89f@syzkaller.appspotmail.com>
+To:     chuck.lever@oracle.com, dledford@redhat.com, jgg@ziepe.ca,
+        leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, parav@mellanox.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hello,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+syzbot has tested the proposed patch and the reproducer did not trigger crash:
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Reported-and-tested-by: syzbot+06b50ee4a9bd73e8b89f@syzkaller.appspotmail.com
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Tested on:
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+commit:         0aeb3622 RDMA/hns: fix spelling mistake "attatch" -> "atta..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b58f96e9824c82cb
+dashboard link: https://syzkaller.appspot.com/bug?extid=06b50ee4a9bd73e8b89f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/ocfs2/cluster/tcp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ocfs2/cluster/tcp.h b/fs/ocfs2/cluster/tcp.h
-index de87cbffd175..736338f45c59 100644
---- a/fs/ocfs2/cluster/tcp.h
-+++ b/fs/ocfs2/cluster/tcp.h
-@@ -32,7 +32,7 @@ struct o2net_msg
- 	__be32 status;
- 	__be32 key;
- 	__be32 msg_num;
--	__u8  buf[0];
-+	__u8  buf[];
- };
- 
- typedef int (o2net_msg_handler_func)(struct o2net_msg *msg, u32 len, void *data,
--- 
-2.25.0
-
+Note: testing is done by a robot and is best-effort only.
