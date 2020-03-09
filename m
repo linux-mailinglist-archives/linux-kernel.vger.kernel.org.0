@@ -2,76 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 714E717D77C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 01:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D7E17D756
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 01:41:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbgCIApb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 20:45:31 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59558 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726956AbgCIApb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 20:45:31 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0157720151B;
-        Mon,  9 Mar 2020 01:45:29 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6BA57201527;
-        Mon,  9 Mar 2020 01:45:10 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BF832402E5;
-        Mon,  9 Mar 2020 08:44:46 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, dmitry.torokhov@gmail.com,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, daniel.baluta@nxp.com,
-        gregkh@linuxfoundation.org, linux@rempel-privat.de,
-        tglx@linutronix.de, m.felsch@pengutronix.de,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de,
-        ronald@innovation.ch, krzk@kernel.org, robh@kernel.org,
-        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3 7/7] thermal: add COMPILE_TEST support for IMX_SC_THERMAL
-Date:   Mon,  9 Mar 2020 08:38:20 +0800
-Message-Id: <1583714300-19085-7-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
-References: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726705AbgCIAlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 20:41:21 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:48723 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbgCIAlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 20:41:21 -0400
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 0290eso0024295
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Mar 2020 09:40:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 0290eso0024295
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1583714455;
+        bh=Zp+vgNpNVW0FeI5TnKPcJs7XrT2/R3BYpxjqyKXAZhE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dUOyaAMC3hAoJM4oTt3lDkKSQ9JhqOLYbs1LwUl5Mvlt51B9rg4UT1fZlnvANKmUS
+         L4oOX7sbHQ3ruD44JXNNc1e+aq4lM4aPGWsPQ6aeJMRmVLddYunh+lD6YXLRWZWq18
+         TvL75pYcsEVH2Ip+qyc4YxphFhdFDVD9B8XI3FSpWLe/2cTmdoXoD52Ezlgc18mzDa
+         uYcHF5XYIi2MDTjWHfPyO8VLNvy7D3DWuVqfXLNib28UsPsvZOvsJMBLMMTGrAUdWy
+         sm2cLvYtMbakdJaoGhlPrIJS1722s5Yo1TCSU2dVpGGanUOICxXtmIpzvPplwpvNgJ
+         8FqHLNimi1DwQ==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id b2so249194uas.13
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 17:40:54 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2kJb7EKexvMzjQznnpDvXdSm3vC+TYkyaMPLe/e1BvNaxElBI2
+        5voAtCHcug6hiWSnoZ1UEvjQ/gQoWgYl6zz+jtM=
+X-Google-Smtp-Source: ADFU+vuK90NERaSZutUzObSHlLcopxkRoeH64KbFM2rz/IJDFVXn35+kHG7NgCo/SoWrLWl54Sr0mfdSBe9O78Ht36Q=
+X-Received: by 2002:ab0:3485:: with SMTP id c5mr7077286uar.109.1583714453622;
+ Sun, 08 Mar 2020 17:40:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200306160206.5609-1-jeyu@kernel.org>
+In-Reply-To: <20200306160206.5609-1-jeyu@kernel.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 9 Mar 2020 09:40:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARZ4VgaCa_TiDBG-99amBGTTXTQMs9LsK3nO4k+y-5KDQ@mail.gmail.com>
+Message-ID: <CAK7LNARZ4VgaCa_TiDBG-99amBGTTXTQMs9LsK3nO4k+y-5KDQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] modpost: rework and consolidate logging interface
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Matthias Maennich <maennich@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add COMPILE_TEST support to i.MX SC thermal driver for better compile
-testing coverage.
+Hi Jessica,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
----
-No change.
----
- drivers/thermal/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 9f388ed..6235949 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -253,7 +253,7 @@ config IMX_THERMAL
- 
- config IMX_SC_THERMAL
- 	tristate "Temperature sensor driver for NXP i.MX SoCs with System Controller"
--	depends on IMX_SCU
-+	depends on IMX_SCU || COMPILE_TEST
- 	depends on OF
- 	help
- 	  Support for Temperature Monitor (TEMPMON) found on NXP i.MX SoCs with
--- 
-2.7.4
 
+On Sat, Mar 7, 2020 at 1:02 AM Jessica Yu <jeyu@kernel.org> wrote:
+>
+> Rework modpost's logging interface by consolidating merror(), warn(), and
+> fatal() to use a single function, modpost_log(). Introduce different
+> logging levels (WARN, ERROR, FATAL) as well. The purpose of this cleanup is
+> to reduce code duplication when deciding whether or not to warn or error
+> out based on a condition.
+>
+> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> ---
+> v3:
+>         - remove level variable from modpost_log and just call fprintf in each
+>           case
+>         - remove warn_unless and just call modpost_log() directly
+>         - fix checkpatch error:
+>                 ERROR: space required before the open parenthesis '('
+>         #102: FILE: scripts/mod/modpost.c:61:
+>         + switch(loglevel) {
+>
+>  scripts/mod/modpost.c | 68 ++++++++++++++++++++++-----------------------------
+>  scripts/mod/modpost.h | 14 ++++++++---
+>  2 files changed, 40 insertions(+), 42 deletions(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 7edfdb2f4497..a2329235a6db 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -51,41 +51,34 @@ enum export {
+>
+>  #define MODULE_NAME_LEN (64 - sizeof(Elf_Addr))
+>
+> -#define PRINTF __attribute__ ((format (printf, 1, 2)))
+> +#define PRINTF __attribute__ ((format (printf, 2, 3)))
+>
+> -PRINTF void fatal(const char *fmt, ...)
+> +PRINTF void modpost_log(enum loglevel loglevel, const char *fmt, ...)
+>  {
+
+
+This series looks good to me.
+
+I can queue it up to kbuild tree
+if there is no objection.
+
+
+I just noticed one nit.
+
+Now that modpost_log() is the only user of PRINTF,
+we can delete PRITNF, and directly add the attribute
+to modpost_log(), like this:
+
+
+void __attribute__((format(printf, 2, 3)))
+modpost_log(enum loglevel loglevel, const char *fmt, ...)
+{
+       ...
+}
+
+
+If you agree, I can modify it when I apply it.
+
+
+Thank you.
+
+
+
+--
+Best Regards
+Masahiro Yamada
