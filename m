@@ -2,71 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F9617DB7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 226ED17DB86
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:50:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgCIIsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:48:54 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37278 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbgCIIsx (ORCPT
+        id S1726518AbgCIIuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:50:01 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:57289 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgCIIuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:48:53 -0400
-Received: by mail-lj1-f193.google.com with SMTP id d12so9026708lji.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 01:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aLiM+hSWr4Lb1eqaNyxdBe8Br5UfdpHmR3SxiPso4DI=;
-        b=wpkrPCnIOZgbAFro5+M6HVkK0yq0WYD4JuqQT61zirDikgtKd/PG16EY8gWXN1krz4
-         0DFMXUMQjCmq2BoQ2LE9EdT/IKtceHN55AGnfs8ZmKyI7gH2kSaPihenqRshV5Hrfut0
-         CXgYxZggt+e+Vv0dF0KP6svs+sCgXHPYEOkdidGQ6BfIbQynwqq6WfonnUzkJ8smhyMf
-         LQFTW2WETHEIw0Br9aQAAwNWy54xteN4no0y2b/SjSmHUXZ2VDkOOQE/kRO+b+tl+2GW
-         49A9lKkzindwYXKBUJku2nu6js568D525XC5r+htW6tDUD4GxjfC7hjWmj+YrTehjUW+
-         zuwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aLiM+hSWr4Lb1eqaNyxdBe8Br5UfdpHmR3SxiPso4DI=;
-        b=bZ3VXw2fY8tsU3R54+ElsrIBS6lVsUezTjPlycEHdsPfQubYHsg2rISljQGJONnUeF
-         3TgHbwTlZkFWqpISeotPvVOY2rLWYKpvg3n30Uufti9UChQSfbWRjPz0XLfX+Lcrvzpd
-         rCO2nr6f9Vs6Eo0zdx8Tc2I6DnInl1czpXtGYPo9DuJvKFnLQeUxvy9Pcvx4lyGvaWol
-         5JPZhDzXKWXJCI1B290M6n2nceo8n6tc6x1kxAlHm6IyUdAKMsmmXRmFGyF3cxHLlAH4
-         i9T11bcPzd4Z97LnEzXkualInEmzQLNGZSpsiWLpePdSP794AacVrjK4auur5IBc10Jb
-         gDlQ==
-X-Gm-Message-State: ANhLgQ26qyDzV9VzhJw0t6tSKc79zIlLe/J1UhzlAOhnIYntJ4yeY8ol
-        Pl/XEzHdFmFGxS8RSCdNeOv1hLYOtt0kbnTqwp2BAw==
-X-Google-Smtp-Source: ADFU+vtH2nDhDJr8Ck7Ll+58DSvBZ5oP08xhPRwQFBizww8E448l5vDM4bjcByJIbCvYH5p2d7ueSs7f8oS0Ep0SdVU=
-X-Received: by 2002:a2e:9a90:: with SMTP id p16mr5845876lji.277.1583743731615;
- Mon, 09 Mar 2020 01:48:51 -0700 (PDT)
+        Mon, 9 Mar 2020 04:50:01 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: CtE5m+ELkGAVPTcPcGWF0bzBHDYq/y1TZA9/A/Lh6/eGyiKlxgVGEMrs2Xkv6LOIBeQBMvAmIu
+ WhBqEtZ2Lu4v8vuYsg2Hp5cw6tmkhWcowBBL2JDzSFrTvRgZAZGiqaj75MMA2IWMVOkym8kHl1
+ yaJaW9gcnpSVICSc+seTCSwjSMhcldrNPZCl+c2HPsqRlczDfhE8k3gKo9vUTOJs9nhGx5K1ud
+ qkyHCOCaWp0C65H04VHomaZTfE4EFlhTdtwRjKkaZQ6rtbWHB4PHv+OjuVYzgBiGxJ2XWvqGNF
+ 4Oo=
+X-IronPort-AV: E=Sophos;i="5.70,532,1574146800"; 
+   d="scan'208";a="69310236"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Mar 2020 01:49:59 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 9 Mar 2020 01:49:59 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Mon, 9 Mar 2020 01:49:56 -0700
+Date:   Mon, 9 Mar 2020 09:49:13 +0100
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+CC:     <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: at91: Fix a typo ("descibe")
+Message-ID: <20200309084913.sgecbf3h2ajog3d7@M43218.corp.atmel.com>
+Mail-Followup-To: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20200308214230.15193-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-References: <cover.1583182325.git.Asmaa@mellanox.com> <1680de9eb6d2b8855228dde9a2dd065f0dcbe1fb.1583182325.git.Asmaa@mellanox.com>
-In-Reply-To: <1680de9eb6d2b8855228dde9a2dd065f0dcbe1fb.1583182325.git.Asmaa@mellanox.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Mar 2020 09:48:40 +0100
-Message-ID: <CACRpkda_8Y6FOM=KokOD=p5Nhrqfw6MdOmcem3JEh+8ERiP0hA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] gpio: add driver for Mellanox BlueField 2 GPIO controller
-To:     Asmaa Mnebhi <Asmaa@mellanox.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200308214230.15193-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 10:04 PM Asmaa Mnebhi <Asmaa@mellanox.com> wrote:
+On Sun, Mar 08, 2020 at 10:42:30PM +0100, Jonathan Neuschäfer wrote:
+> 
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-> This patch adds support for the GPIO controller used by
-> Mellanox BlueField 2 SOCs.
->
-> Signed-off-by: Asmaa Mnebhi <Asmaa@mellanox.com>
-
-This is now a very nice driver!
-
-Patch applied.
-
-Yours,
-Linus Walleij
+> ---
+>  .../devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt          | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> index eb39f5051159..e8abbdad7b5d 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> @@ -38,7 +38,7 @@ Bank: 3 (A, B and C)
+>    0xffffffff 0x7fff3ccf  /* pioB */
+>    0xffffffff 0x007fffff  /* pioC */
+> 
+> -For each peripheral/bank we will descibe in a u32 if a pin can be
+> +For each peripheral/bank we will describe in a u32 if a pin can be
+>  configured in it by putting 1 to the pin bit (1 << pin)
+> 
+>  Let's take the pioA on peripheral B
+> --
+> 2.20.1
+> 
