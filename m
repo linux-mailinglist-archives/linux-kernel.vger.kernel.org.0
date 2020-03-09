@@ -2,135 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1474F17E86C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 157A017E87D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:32:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgCIT3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:29:23 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42493 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbgCIT3X (ORCPT
+        id S1726439AbgCITbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:31:51 -0400
+Received: from smtprelay0221.hostedemail.com ([216.40.44.221]:48014 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726106AbgCITbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:29:23 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t3so2138748plz.9
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 12:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PjCahE7HDbhWso9X6d1lzPSE1/CDEaSUn45Mvn78hrg=;
-        b=xRFA/xvQUxQ/6xcy+vthbrS8cMcvOJqFPfY+MOOQuO3UiIaxHA7QmLD2cXfq70ORvt
-         4YhDNRrAODTMYmGfjYzmYu+XJybODGw/rvX3F6BtSYPX/8tIicTuBNq65Hyp3qa18/XQ
-         dUmRnBBvrkGbjWXQbEwml0DRlZ3fRnI0jYtrufclmOfpOOvRh5NrOzXgBy+lE+YfVIqe
-         HQ/8W+P+YGcbgOOr5JzrVm4d12Y0Ms3Nze795sGA0ltPWoQVNc5+QLZdV9J/HZxfY3/J
-         Qinwu8ZFLQlg0NW5RpI6nCuaKZ5f1C6nngBuyuw+aR6ARGZwhzl1r2FqNzEE/Dz4u49z
-         oAaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PjCahE7HDbhWso9X6d1lzPSE1/CDEaSUn45Mvn78hrg=;
-        b=FRDHD94Wut2NTHEu+G3T0t3WhArAqjzTpHHZmuv710g4tp16bA3HxUgnzh2Ctbk8LS
-         BKorH5Htw0YLjrFy9EKAXSwa2uYf/uAfGfv1QfM5UN4WQUExfe4VrAGwwp29bqMfsDpR
-         IzKAOOrqKVrkpnjy3tbx5q+DZX7Q5jh/7ZE0qcdwyrEX2g4XCqnKDHY3Nqkxmm45gP2s
-         DsudQOehrIvAelYYW9tpkbdT1X2NpGVpoibN7ey5SlZFw7ZiXyStlwE23tb95c/kiPAj
-         3KRyf7LMzPqPUGi4XKup+dic/sJJffJs7lEnLw2iIYzqCo4izCpVd9shs8fTIKWwMugC
-         TsFw==
-X-Gm-Message-State: ANhLgQ0YdyzhcFF4/KStK7ocB2QuxJrIPZNt2T14bftDZa97cXObZ7md
-        jVV7w0TbQ1hVhqcbmkiDqcYIBwJJN5g=
-X-Google-Smtp-Source: ADFU+vuecIUzxw+F0r5oweE7mmL21uOUoxea3p5BAhmf7NogmqrAB9MM2idoTRwQXH0m8Xl/9Kc1Lg==
-X-Received: by 2002:a17:902:342:: with SMTP id 60mr16526200pld.206.1583782162073;
-        Mon, 09 Mar 2020 12:29:22 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u19sm31438770pgf.11.2020.03.09.12.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 12:29:21 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 12:29:19 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Sandeep Maheswaram <sanm@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
-Subject: Re: [PATCH v5 0/9] Add QUSB2 PHY support for SC7180
-Message-ID: <20200309192919.GE1098305@builder>
-References: <1583747589-17267-1-git-send-email-sanm@codeaurora.org>
+        Mon, 9 Mar 2020 15:31:51 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id D9FB01025604F;
+        Mon,  9 Mar 2020 19:31:49 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3867:3872:4321:4362:5007:8603:10004:10400:10848:11026:11232:11658:11914:12048:12296:12297:12555:12740:12760:12895:13069:13311:13357:13439:14181:14254:14659:14721:21080:21451:21627:21990:30001:30002:30003:30004:30005:30006:30007:30008:30009:30010:30011:30012:30013:30014:30015:30016:30017:30018:30019:30020:30021:30022:30023:30024:30025:30026:30027:30028:30029:30030:30031:30032:30033:30034:30035:30036:30037:30038:30039:30040:30041:30042:30043:30044:30045:30046:30047:30048:30049:30050:30051:30052:30053:30054:30055:30057:30058:30059:30060:30061:30062:30063:30064:30065:30066:30067:30068:30069:30070:30071:30072:30073:30074:30075:30076:30077:30078:30079:30080:30081:30082:30083:30084:30085:30086:30087:30088:30089:30090:30091,0,RBL:none,Cac
+X-HE-Tag: desk11_2ce8ed604532a
+X-Filterd-Recvd-Size: 1434
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  9 Mar 2020 19:31:48 +0000 (UTC)
+Message-ID: <19abedb11fae1b96aa052090e7a0d5bbea416824.camel@perches.com>
+Subject: Re: [PATCH] xattr: NULL initialize name in simple_xattr_alloc
+From:   Joe Perches <joe@perches.com>
+To:     Daniel Xu <dxu@dxuuu.xyz>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com
+Date:   Mon, 09 Mar 2020 12:30:07 -0700
+In-Reply-To: <20200309183719.3451-1-dxu@dxuuu.xyz>
+References: <20200309183719.3451-1-dxu@dxuuu.xyz>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583747589-17267-1-git-send-email-sanm@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09 Mar 02:53 PDT 2020, Sandeep Maheswaram wrote:
+On Mon, 2020-03-09 at 11:37 -0700, Daniel Xu wrote:
+> It's preferable to initialize structs to a deterministic state.
 
-Kishon, let me know if/when you're picking up patch 1-6 and I can pick
-the dts patches through the qcom soc tree.
+Thanks Daniel.
 
-Regards,
-Bjorn
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> ---
+>  fs/xattr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 90dd78f0eb27..92b324c265d2 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -821,6 +821,7 @@ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
+>  	if (!new_xattr)
+>  		return NULL;
+>  
+> +	new_xattr->name = NULL;
+>  	new_xattr->size = size;
+>  	memcpy(new_xattr->value, value, size);
+>  	return new_xattr;
 
-> Converting dt binding to yaml.
-> Adding compatible for SC7180 in dt bindings.
-> Added generic QUSB2 V2 PHY support and using the same SC7180 and SDM845.
-> 
-> Changes in v5:
-> *Added the dt bindings which are applicable only to QUSB2 V2 PHY in 
->  separate block as per comments from Matthias in patch 1/9 and patch 4/9
->  and addressed Rob's comment in patch 1/9.
-> *Separated the patch for new override params and added a local variable
->  to access overrides as per comments from Matthias patch 5/9 and 6/9.
-> 
-> Changes in v4:
-> *Addressed Rob Herrings comments in dt bindings.
-> *Added new structure for all the overriding tuning params.
-> *Removed the sc7180 and sdm845 compatible from driver and added qusb2 v2 phy. 
-> *Added the qusb2 v2 phy compatible in device tree for sc7180 and sdm845. 
-> 
-> Changes in v3:
-> *Using the generic phy cfg table for QUSB2 V2 phy.
-> *Added support for overriding tuning parameters in QUSB2 V2 PHY
-> from device tree.
-> 
-> Changes in v2:
-> Sorted the compatible in driver.
-> Converted dt binding to yaml.
-> Added compatible in yaml.
-> 
-> Sandeep Maheswaram (9):
->   dt-bindings: phy: qcom,qusb2: Convert QUSB2 phy bindings to yaml
->   dt-bindings: phy: qcom,qusb2: Add compatibles for QUSB2 V2 phy and
->     SC7180
->   phy: qcom-qusb2: Add generic QUSB2 V2 PHY support
->   dt-bindings: phy: qcom-qusb2: Add support for overriding Phy tuning
->     parameters
->   phy: qcom-qusb2: Add support for overriding tuning parameters in QUSB2
->     V2 PHY
->   phy: qcom-qusb2: Add new overriding tuning parameters in QUSB2 V2 PHY
->   arm64: dts: qcom: sc7180: Add generic QUSB2 V2 Phy compatible
->   arm64: dts: qcom: sdm845: Add generic QUSB2 V2 Phy compatible
->   arm64: dts: qcom: sc7180: Update QUSB2 V2 Phy params for SC7180 IDP
->     device
-> 
->  .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    | 187 +++++++++++++++++++++
->  .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |  68 --------
->  arch/arm64/boot/dts/qcom/sc7180-idp.dts            |   6 +-
->  arch/arm64/boot/dts/qcom/sc7180.dtsi               |   2 +-
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               |   4 +-
->  drivers/phy/qualcomm/phy-qcom-qusb2.c              | 144 +++++++++++-----
->  6 files changed, 297 insertions(+), 114 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
->  delete mode 100644 Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
