@@ -2,112 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DF817DA8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:19:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B41FC17DA8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:21:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgCIITR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:19:17 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:53958 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbgCIITO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:19:14 -0400
-Received: by mail-pj1-f66.google.com with SMTP id l36so1266317pjb.3;
-        Mon, 09 Mar 2020 01:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=IVmmUD2LX/XKO2jYcRB3hPlqs1LzccGE0vVFCynCeIQ=;
-        b=T8JfBJxZhiNslsh1cb88g0iyg5Q3MO7I8FbcK7sDEiY+HOhUV1r6ZjD9yFzTbVowZ0
-         yhAajULCJsCJDzfGvl+IBZr6CtwW3P/vDya2QGwsZl1NF2F1md+R00gz2G1sV3wveeu0
-         x2SBI3zwsF+yTfEYUWs+tT3vEc1gSGt5QmTjJKd8N+ru3PyGRjN/MbLvZ9n0J21vVUeG
-         hcTgpMqNnN2CBhlHVmfFEj0QazxS8MKT9jlUu6yFmorOjrjF3huvF+DZowAJJbuS/Nuo
-         fi5+0k4GUR7ZA6XKv+Gaw79IVQfaAZKO/Xi5HGTszOZ2Bn8o1AfrGkb0p6IDqROi2kXq
-         VKmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=IVmmUD2LX/XKO2jYcRB3hPlqs1LzccGE0vVFCynCeIQ=;
-        b=AJTENxVKyBBjCeUHowjqkWQwkUAY3IUx72kJvZ2l+4g6cavPydrp0mA7UXALB0kqbJ
-         Y+NMNOhTrX78rF6lniwgqFsH4SsGjH6932Rq2SbB5Ut/7LDiMyEFEXNqEaEGA1eQAmrB
-         u46C41fdDZRSbBuJ/tis54IrqTSSNsjd5SjUed6oTB8FZV82moFsmnSbAg27Mtcirpb+
-         vB3S/bvTUXaN5RhCGW7uNjJscNpqulT21J3jJFRsAHvS85R0gDYjkp1JbB7z0KNoK3ow
-         Waa0hh7yJuXmBioI+yxfe+QnhiflVZXLLRis9ATv8m2qsWog2HGT8WQg573btzK9Li0E
-         mm4g==
-X-Gm-Message-State: ANhLgQ364kVCp02gs5Tq7dVC0gBUSxma5B7rOU3Ll1wIO7L0vPChA5+4
-        XHhE61iEDNOJmQOgCwkJ2kUZ0MGM
-X-Google-Smtp-Source: ADFU+vt07ko5Ux+nhpJGcf/tTP4BM2pXWm5admO9dpIzsxJRVA5Fr5ezWQDfTL6XroDkJdOu+BrHvg==
-X-Received: by 2002:a17:90a:a483:: with SMTP id z3mr12870263pjp.43.1583741952723;
-        Mon, 09 Mar 2020 01:19:12 -0700 (PDT)
-Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id 193sm21862277pfu.181.2020.03.09.01.19.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Mar 2020 01:19:12 -0700 (PDT)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     sre@kernel.org
-Cc:     baolin.wang7@gmail.com, orsonzhai@gmail.com, zhang.lyra@gmail.com,
-        kernel-team@android.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] power: reset: sc27xx: Allow the SC27XX poweroff driver building into a module
-Date:   Mon,  9 Mar 2020 16:18:46 +0800
-Message-Id: <12b6c11ec62956173fcd84581720b4e0aed54a11.1583740881.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1583740881.git.baolin.wang7@gmail.com>
-References: <cover.1583740881.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1583740881.git.baolin.wang7@gmail.com>
-References: <cover.1583740881.git.baolin.wang7@gmail.com>
+        id S1726469AbgCIIVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:21:15 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55562 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726215AbgCIIVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 04:21:14 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E35596FD0CB43560891F;
+        Mon,  9 Mar 2020 16:20:26 +0800 (CST)
+Received: from [127.0.0.1] (10.133.205.80) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Mon, 9 Mar 2020
+ 16:20:24 +0800
+Subject: Re: [PATCH] timer_list: avoid other cpu soft lockup when printing
+ timer list
+To:     Stephen Boyd <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1582170152-69418-1-git-send-email-yangyingliang@huawei.com>
+ <158224928306.184098.11550548610262156729@swboyd.mtv.corp.google.com>
+CC:     <tglx@linutronix.de>, <john.stultz@linaro.org>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5E65FC47.8070102@huawei.com>
+Date:   Mon, 9 Mar 2020 16:20:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <158224928306.184098.11550548610262156729@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.205.80]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the config to 'tristate' and use module_platform_driver() to
-allow the SC27XX poweroff driver building into a module, as well as
-adding some mudule information.
+Hi,
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/power/reset/Kconfig           | 2 +-
- drivers/power/reset/sc27xx-poweroff.c | 7 ++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+sorry for the late reply.
 
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index 513efe8..8903803 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -248,7 +248,7 @@ config SYSCON_REBOOT_MODE
- 	  action according to the mode.
- 
- config POWER_RESET_SC27XX
--	bool "Spreadtrum SC27xx PMIC power-off driver"
-+	tristate "Spreadtrum SC27xx PMIC power-off driver"
- 	depends on MFD_SC27XX_PMIC || COMPILE_TEST
- 	help
- 	  This driver supports powering off a system through
-diff --git a/drivers/power/reset/sc27xx-poweroff.c b/drivers/power/reset/sc27xx-poweroff.c
-index 91b5ece..6986307 100644
---- a/drivers/power/reset/sc27xx-poweroff.c
-+++ b/drivers/power/reset/sc27xx-poweroff.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/cpu.h>
- #include <linux/kernel.h>
-+#include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/regmap.h>
-@@ -71,4 +72,8 @@ static int sc27xx_poweroff_probe(struct platform_device *pdev)
- 		.name = "sc27xx-poweroff",
- 	},
- };
--builtin_platform_driver(sc27xx_poweroff_driver);
-+module_platform_driver(sc27xx_poweroff_driver);
-+
-+MODULE_DESCRIPTION("Power off driver for SC27XX PMIC Device");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@unisoc.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+On 2020/2/21 9:41, Stephen Boyd wrote:
+> Quoting Yang Yingliang (2020-02-19 19:42:32)
+>> If system has many cpus (e.g. 128), it will spend a lot of time to
+>> print message to the console when execute echo q > /proc/sysrq-trigger.
+>>
+>> When /proc/sys/kernel/numa_balancing is enabled, if the migration threads
+>> are woke up, the migration thread that on print mesasage cpu can't run
+>> until the print finish, another migration thread may trigger soft lockup.
+>>
+>> PID: 619    TASK: ffffa02fdd8bec80  CPU: 121  COMMAND: "migration/121"
+>>    #0 [ffff00000a103b10] __crash_kexec at ffff0000081bf200
+>>    #1 [ffff00000a103ca0] panic at ffff0000080ec93c
+>>    #2 [ffff00000a103d80] watchdog_timer_fn at ffff0000081f8a14
+>>    #3 [ffff00000a103e00] __run_hrtimer at ffff00000819701c
+>>    #4 [ffff00000a103e40] __hrtimer_run_queues at ffff000008197420
+>>    #5 [ffff00000a103ea0] hrtimer_interrupt at ffff00000819831c
+>>    #6 [ffff00000a103f10] arch_timer_dying_cpu at ffff000008b53144
+>>    #7 [ffff00000a103f30] handle_percpu_devid_irq at ffff000008174e34
+>>    #8 [ffff00000a103f70] generic_handle_irq at ffff00000816c5e8
+>>    #9 [ffff00000a103f90] __handle_domain_irq at ffff00000816d1f4
+>>   #10 [ffff00000a103fd0] gic_handle_irq at ffff000008081860
+>>   --- <IRQ stack> ---
+>>   #11 [ffff00000d6e3d50] el1_irq at ffff0000080834c8
+>>   #12 [ffff00000d6e3d60] multi_cpu_stop at ffff0000081d9964
+>>   #13 [ffff00000d6e3db0] cpu_stopper_thread at ffff0000081d9cfc
+>>   #14 [ffff00000d6e3e10] smpboot_thread_fn at ffff00000811e0a8
+>>   #15 [ffff00000d6e3e70] kthread at ffff000008118988
+>>
+>> To avoid this soft lockup, add touch_all_softlockup_watchdogs()
+>> in sysrq_timer_list_show()
+>>
+>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>> ---
+>>   kernel/time/timer_list.c | 8 ++++++--
+>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+>> index acb326f..4cb0e6f 100644
+>> --- a/kernel/time/timer_list.c
+>> +++ b/kernel/time/timer_list.c
+>> @@ -289,13 +289,17 @@ void sysrq_timer_list_show(void)
+>>   
+>>          timer_list_header(NULL, now);
+>>   
+>> -       for_each_online_cpu(cpu)
+>> +       for_each_online_cpu(cpu) {
+>> +               touch_all_softlockup_watchdogs();
+> Usage of touch_all_softlockup_watchdogs() deserves a comment. Otherwise
+> the reader is left to git archaeology to understand why watchdogs are
+> being touched. Of course, we failed at that with commit 010704276865
+> ("sysrq: Reset the watchdog timers while displaying high-resolution
+> timers") which looks awfully similar to this.
+OK, I will add a comment later.
+>
+>>                  print_cpu(NULL, cpu, now);
+>> +       }
+>>   
+>>   #ifdef CONFIG_GENERIC_CLOCKEVENTS
+>>          timer_list_show_tickdevices_header(NULL);
+>> -       for_each_online_cpu(cpu)
+>> +       for_each_online_cpu(cpu) {
+>> +               touch_all_softlockup_watchdogs();
+>>                  print_tickdevice(NULL, tick_get_device(cpu), cpu);
+> print_tickdevice() already has touch_nmi_watchdog() which eventually
+> touches the softlockup watchdog. Is the problem that it isn't enough to
+> do that when the migration thread is also running?
+No, it's not enough.
+The soft lockup occurs on other cpu, so other cpu's soft watchdog need 
+to be touched.
+
+>
+>> +       }
+>>   #endif
+>>          return;
+> .
+>
+
 
