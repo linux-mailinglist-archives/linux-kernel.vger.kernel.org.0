@@ -2,160 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1025117D929
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 07:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F56817D910
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 06:39:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbgCIGAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 02:00:17 -0400
-Received: from 113.196.136.162.ll.static.sparqnet.net ([113.196.136.162]:34054
-        "EHLO mg.sunplus.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725796AbgCIGAQ (ORCPT
+        id S1726215AbgCIFhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 01:37:12 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:38447 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCIFhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 02:00:16 -0400
-X-Greylist: delayed 1202 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Mar 2020 02:00:15 EDT
-X-MailGates: (compute_score:DELIVER,40,3)
-Received: from 172.17.10.65
-        by mg01.sunplus.com with MailGates ESMTP Server V5.0(3652:0:AUTH_RELAY)
-        (envelope-from <wells.lu@sunplus.com>); Mon, 09 Mar 2020 13:42:04 +0800 (CST)
-Received: from sphcmbx01.sunplus.com.tw (unverified [172.17.9.202]) by SPHSML21.sunplus.com.tw
- (Mail System 5.5.1) with ESMTP id <Tddcbe78fe4ac110a41e00@SPHSML21.sunplus.com.tw>;
- Mon, 9 Mar 2020 13:32:02 +0800
-Received: from sphcmbx01.sunplus.com.tw (172.17.9.202) by
- sphcmbx01.sunplus.com.tw (172.17.9.202) with Microsoft SMTP Server (TLS) id
- 15.0.1365.1; Mon, 9 Mar 2020 13:32:01 +0800
-Received: from sphcmbx01.sunplus.com.tw ([fe80::e5fd:30e9:f438:74dc]) by
- sphcmbx01.sunplus.com.tw ([fe80::e5fd:30e9:f438:74dc%14]) with mapi id
- 15.00.1365.000; Mon, 9 Mar 2020 13:32:01 +0800
-From:   =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
-To:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     Dvorkin Dmitry <dvorkin@tibbo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Jason Cooper" <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        =?utf-8?B?5byg5p2w?= <j.zhang@sunmedia.com.cn>,
-        =?utf-8?B?6KaD5YGl?= <qinjian@sunmedia.com.cn>
-Subject: RE: [RFC 00/11] ARM: Initial Sunplus Plus1 SP7021 and BPI-F2S support
-Thread-Topic: [RFC 00/11] ARM: Initial Sunplus Plus1 SP7021 and BPI-F2S
- support
-Thread-Index: AQHV9Wc+iZ48JNOZtUa/UcV/cxjZDKg/u/EQ
-Date:   Mon, 9 Mar 2020 05:32:00 +0000
-Message-ID: <c2239e7cb2de43c28ee9195314f56383@sphcmbx01.sunplus.com.tw>
-References: <20200308163230.4002-1-afaerber@suse.de>
-In-Reply-To: <20200308163230.4002-1-afaerber@suse.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.25.108.39]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 9 Mar 2020 01:37:12 -0400
+Received: by mail-io1-f72.google.com with SMTP id x2so5970596iog.5
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 22:37:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=qR7L3Mw/sXzOkxDD0WkoV3TAHZKs07cskY4mOVvSiC4=;
+        b=ZRTaC0aClt5+rvVR/ugkXQT2t89Ns3B1S6hmp4flidyueqf3wOonZbLj6ux91LzInP
+         StI3sNIhUnSJV9S61Hulo1jk3e5BAvWPfUVwV6rVCEZCuz7fxk+gwXMHykaRU+SOTS39
+         Bbnpin67jCSuah9FCqq0CXcX7etq9PLvqH7kHNgCLdFzBD0S7lKqw23RXWi0ML/kQKFO
+         tukq3P9LLqiu5lBCqjcOsFWI2WWw5Q8dDud1Fwzc84Va9B7URzHtPSFpITJIy3FOppLm
+         cdeNNIH0mJdK/Q690LcNbVpkhKrVIFhV/m7FRqlWlU4OeFPShD8JGl0xnlNZZPToZllh
+         E6Bw==
+X-Gm-Message-State: ANhLgQ31dHZWne+klbSIju5VMz+yLN6wIWBKcdQbOK0FNLn0qj5np8T9
+        447r2tlRC3kSLgxqw2tkS+bFVfxdFhGIiusbEw3njs6GMlzm
+X-Google-Smtp-Source: ADFU+vum+r6hRGIYt4ee1APtBeB4MVtQKk1JWlXqJ8GrRMI4bdCX+pxHtkPSBAfALZTkbW8753D9sBQticAPB86qvseGjVvTv+5S
 MIME-Version: 1.0
+X-Received: by 2002:a05:6638:68c:: with SMTP id i12mr6476138jab.95.1583732231265;
+ Sun, 08 Mar 2020 22:37:11 -0700 (PDT)
+Date:   Sun, 08 Mar 2020 22:37:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000010600905a06565a7@google.com>
+Subject: BUG: unable to handle kernel NULL pointer dereference in
+ do_fast_syscall_32 (2)
+From:   syzbot <syzbot+7f0cd10fb4b63c9e7046@syzkaller.appspotmail.com>
+To:     bp@alien8.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        luto@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkZWQgSmllIFpoYW5nIGFuZCBKaWFuIFFpbiBpbiB0byBjYyBsaXN0Lg0KDQpKaWUgWmhhbmcg
-aXMgc29mdHdhcmUgbGVhZGVyIG9mIFN1bnBsdXMgUGx1cyAxIChTUDcwMjEpIHBsYXRmb3JtLg0K
-DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBBbmRyZWFzIEbDpHJiZXIgPGFm
-YWVyYmVyQHN1c2UuZGU+IA0KU2VudDogTW9uZGF5LCBNYXJjaCAwOSwgMjAyMCAxMjozMiBBTQ0K
-VG86IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KQ2M6IFdlbGxzIEx1IOWR
-guiKs+mosCA8d2VsbHMubHVAc3VucGx1cy5jb20+OyBEdm9ya2luIERtaXRyeSA8ZHZvcmtpbkB0
-aWJiby5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBBbmRyZWFzIEbDpHJiZXIg
-PGFmYWVyYmVyQHN1c2UuZGU+OyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgUm9iIEhlcnJp
-bmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4
-Zm91bmRhdGlvbi5vcmc+OyBsaW51eC1zZXJpYWxAdmdlci5rZXJuZWwub3JnOyBUaG9tYXMgR2xl
-aXhuZXIgPHRnbHhAbGludXRyb25peC5kZT47IEphc29uIENvb3BlciA8amFzb25AbGFrZWRhZW1v
-bi5uZXQ+OyBNYXJjIFp5bmdpZXIgPG1hekBrZXJuZWwub3JnPg0KU3ViamVjdDogW1JGQyAwMC8x
-MV0gQVJNOiBJbml0aWFsIFN1bnBsdXMgUGx1czEgU1A3MDIxIGFuZCBCUEktRjJTIHN1cHBvcnQN
-Cg0KSGVsbG8sDQoNClRoaXMgcGF0Y2ggc2VyaWVzIGFkZHMgaW5pdGlhbCBkcml2ZXJzIGFuZCBE
-ZXZpY2UgVHJlZXMgZm9yIFN1bnBsdXMgUGx1czEgc2VyaWVzIChjb2RlbmFtZSBQZW50YWdyYW0p
-IFNQNzAyMSBTb0MgYW5kIEJhbmFuYSBQaSBCUEktRjJTIFNCQy4NCg0KRmlyc3QsIG1pbmltYWwg
-S2NvbmZpZywgRFQgYW5kIGVhcmx5Y29uIGRyaXZlciBhcmUgcHJlcGFyZWQgdG8gZ2V0IHNlcmlh
-bCBvdXRwdXQgYXQgYWxsLiBOZXh0LCBpbnRlcnJ1cHQgY29udHJvbGxlciBhbmQgZnVsbCBzZXJp
-YWwgZHJpdmVyIGFyZSBhZGRlZCB0aGF0IGFsbG93IHRvIGJvb3QgaW50byBhbiBpbml0cmQgd2l0
-aCBpbnRlcmFjdGl2ZSBzZXJpYWwgY29uc29sZS4NCg0KRGV2aWNlIFRyZWUgZmlsZXMgYWRkZWQg
-YXJlIGZvciB0aGUgQ1BVLUNoaXAgKGFrYSBBLUNoaXApIHdpdGggcXVhZCBDb3J0ZXgtQTcsIGJ1
-dCB0aGUgZmlsZSBzcGxpdCBwcmVwYXJlcyBmb3IgYWxzbyBhZGRpbmcgdGhlIFBlcmlwaGVyYWwt
-Q2hpcCAoQi1DaGlwKSB3aXRoDQpBUk05IGxhdGVyLiBIb3dldmVyLCBmb3Igbm93IHRoaXMgaXMg
-bm90IHJlZmxlY3RlZCBpbiB0aGUgLmR0cyBmaWxlbmFtZTsgdGhpcyBjb3JyZXNwb25kcyB0byB0
-aGUgdmY2MTAtIHZzLiB2ZjYxMG00LSBuYW1pbmcgc2NoZW1lLCB3aGVyZWFzIGFuIGFsdGVybmF0
-aXZlIHdvdWxkIGJlIHRvIHVzZSBzcDcwMjEtY2NoaXAtIHZzLiAtcGNoaXAtIHByZWZpeCAoYXMg
-c3A3MDIxLWNwdS0gbG9va3Mgd2VpcmQpLg0KSXQgaXMgYXNzdW1lZCB3ZSBjYW4gcmV1c2UgdGhl
-IHNhbWUgU29DIGFuZCBib2FyZCBiaW5kaW5ncyBmb3IgQ0E3IGFuZCBBUk05IGFuZCBvbmx5IGRp
-ZmZlciBmb3IgSVAgYmxvY2tzIHdoZXJlIG5lZWRlZC4NCg0KTXkgaW5xdWlyeSB0byBTdW5wbHVz
-IGFib3V0IHRoZWlyIEdJQyAoYW50aWNpcGF0aW5nIGNvbXBsYWludHMgZnJvbSBNYXJjKSByZW1h
-aW5lZCB1bmFuc3dlcmVkLCBzbyBJJ3ZlIGFkZGVkIHRoZSB0d28gZXh0cmEgcmVnaW9ucyBhbmQg
-aXJxIG15c2VsZiwgd2l0aG91dCBiZWluZyBhYmxlIHRvIHRlc3QgS1ZNIGR1ZSB0byBCU1AgVS1C
-b290IG5vdCBib290aW5nIGluIEhZUCBtb2RlLg0KQWNjb3JkaW5nIHRvIFN1bnBsdXMgdGhlIG1v
-ZGUgY2FuIGJlIGNoYW5nZWQgaW4gVS1Cb290IChidXQgd2hlcmUvaG93PykuDQoNClNpbWlsYXJs
-eSwgdGhlIGFyY2hpdGVjdHVyYWwgdGltZXIgaXMgbm90IHByb3Blcmx5IGluaXRpYWxpemVkIGlu
-IEJTUCBVLUJvb3QsIHNvIHRoYXQgSSBjdXJyZW50bHkgaGF2ZSBhIG1hY2gtIGhhY2sgaW4gbXkg
-dHJlZSBiZWxvdy4gVW5saWtlIFJURDExOTUsIHdlIGRvIGhhdmUgVS1Cb290IHNvdXJjZXMgKHYy
-MDE5LjA0IGJhc2VkKSwgc28gc2hvdWxkIGJlIGFibGUgdG8gZml4IHRoaXMgaW4gdGhlIGJvb3Rs
-b2FkZXIgcmF0aGVyIHRoYW4gaW4gdGhlIGtlcm5lbCwgdGh1cyBub3QgaW5jbHVkZWQgYXMgcGF0
-Y2ggaGVyZS4NCg0KQmFzZWQgb24gU29DIG9ubGluZSBtYW51YWwgWzFdIGFuZCBkb3duc3RyZWFt
-IEJQSS1GMlMgQlNQIHRyZWUgWzJdIGFzIHdlbGwgYXMgbXkgcHJldmlvdXMgQWN0aW9ucyBzZXJp
-YWwgYW5kIFJlYWx0ZWsgaXJxY2hpcCBkcml2ZXJzIGFuZCBEVHMuDQoNCk1vcmUgZGV0YWlscyBh
-dDoNCmh0dHBzOi8vZW4ub3BlbnN1c2Uub3JnL0hDTDpCYW5hbmFQaV9GMlMNCg0KTGF0ZXN0IGV4
-cGVyaW1lbnRhbCBwYXRjaGVzIGF0Og0KaHR0cHM6Ly9naXRodWIuY29tL2FmYWVyYmVyL2xpbnV4
-L2NvbW1pdHMvZjJzLW5leHQNCg0KSGF2ZSBhIGxvdCBvZiBmdW4hDQoNCkNoZWVycywNCkFuZHJl
-YXMNCg0KWzFdIGh0dHBzOi8vc3VucGx1cy10aWJiby5hdGxhc3NpYW4ubmV0L3dpa2kvc3BhY2Vz
-L2RvYy9wYWdlcy80NzA0NTAyNTIvU1A3MDIxK1RlY2huaWNhbCtNYW51YWwNClsyXSBodHRwczov
-L2dpdGh1Yi5jb20vQlBJLVNJTk9WT0lQL0JQSS1GMlMtYnNwDQoNCkNjOiBkZXZpY2V0cmVlQHZn
-ZXIua2VybmVsLm9yZw0KQ2M6IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+DQpDYzog
-R3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4NCkNjOiBsaW51
-eC1zZXJpYWxAdmdlci5rZXJuZWwub3JnDQpDYzogVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0
-cm9uaXguZGU+DQpDYzogSmFzb24gQ29vcGVyIDxqYXNvbkBsYWtlZGFlbW9uLm5ldD4NCkNjOiBN
-YXJjIFp5bmdpZXIgPG1hekBrZXJuZWwub3JnPg0KQ2M6IFdlbGxzIEx1IOWRguiKs+mosCA8d2Vs
-bHMubHVAc3VucGx1cy5jb20+DQpDYzogRHZvcmtpbiBEbWl0cnkgPGR2b3JraW5AdGliYm8uY29t
-Pg0KDQpBbmRyZWFzIEbDpHJiZXIgKDExKToNCiAgZHQtYmluZGluZ3M6IHZlbmRvci1wcmVmaXhl
-czogQWRkIFN1bnBsdXMNCiAgZHQtYmluZGluZ3M6IGFybTogQWRkIFN1bnBsdXMgU1A3MDIxIGFu
-ZCBCYW5hbmEgUGkgQlBJLUYyUw0KICBBUk06IFByZXBhcmUgU3VucGx1cyBQbHVzMSBTb0MgZmFt
-aWx5DQogIGR0LWJpbmRpbmdzOiBpbnRlcnJ1cHQtY29udHJvbGxlcjogQWRkIFN1bnBsdXMgU1A3
-MDIxIG11eA0KICBkdC1iaW5kaW5nczogc2VyaWFsOiBBZGQgU3VucGx1cyBTUDcwMjEgVUFSVA0K
-ICB0dHk6IHNlcmlhbDogQWRkIFN1bnBsdXMgUGx1czEgVUFSVCBlYXJseWNvbg0KICBBUk06IGR0
-czogQWRkIFN1bnBsdXMgUGx1czEgU1A3MDIxIGFuZCBCYW5hbmEgUGkgRjJTDQogIHR0eTogc2Vy
-aWFsOiBzdW5wbHVzOiBJbXBsZW1lbnQgZnVsbCBVQVJUIGRyaXZlcg0KICBpcnFjaGlwOiBBZGQg
-U3VucGx1cyBTUDcwMjEgaW50ZXJydXB0IChtdXgpIGNvbnRyb2xsZXINCiAgQVJNOiBkdHM6IHNw
-NzAyMS1jcHU6IEFkZCBpbnRlcnJ1cHQgY29udHJvbGxlciBub2RlDQogIEFSTTogZHRzOiBzcDcw
-MjEtY3B1OiBBZGQgZHVtbXkgVUFSVDAgY2xvY2sgYW5kIGludGVycnVwdA0KDQogRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9zdW5wbHVzLnlhbWwgfCAgMjIgKw0KIC4uLi9z
-dW5wbHVzLHBlbnRhZ3JhbS1pbnRjLnlhbWwgICAgICAgICAgICAgICAgICAgIHwgIDUwICsrDQog
-Li4uL2JpbmRpbmdzL3NlcmlhbC9zdW5wbHVzLHBlbnRhZ3JhbS11YXJ0LnlhbWwgICAgfCAgMjQg
-Kw0KIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZlbmRvci1wcmVmaXhlcy55YW1sICAgICAgIHwg
-ICAyICsNCiBhcmNoL2FybS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICB8ICAgMiArDQogYXJjaC9hcm0vTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgfCAgIDEgKw0KIGFyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgICAyICsNCiBhcmNoL2FybS9ib290L2R0cy9wZW50YWdyYW0tc3A3MDIxLWJw
-aS1mMnMuZHRzICAgICB8ICAyOSArDQogYXJjaC9hcm0vYm9vdC9kdHMvcGVudGFncmFtLXNwNzAy
-MS1jcHUuZHRzaSAgICAgICAgfCAgOTMgKysrDQogYXJjaC9hcm0vYm9vdC9kdHMvcGVudGFncmFt
-LXNwNzAyMS5kdHNpICAgICAgICAgICAgfCAgNjEgKysNCiBhcmNoL2FybS9tYWNoLXN1bnBsdXMv
-S2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICB8ICAxMCArDQogZHJpdmVycy9pcnFjaGlwL01h
-a2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvaXJxY2hp
-cC9pcnEtc3A3MDIxLmMgICAgICAgICAgICAgICAgICAgICAgIHwgMjg1ICsrKysrKysrDQogZHJp
-dmVycy90dHkvc2VyaWFsL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTkgKw0K
-IGRyaXZlcnMvdHR5L3NlcmlhbC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgIHwgICAx
-ICsNCiBkcml2ZXJzL3R0eS9zZXJpYWwvc3VucGx1cy11YXJ0LmMgICAgICAgICAgICAgICAgICB8
-IDc3MCArKysrKysrKysrKysrKysrKysrKysNCiBpbmNsdWRlL3VhcGkvbGludXgvc2VyaWFsX2Nv
-cmUuaCAgICAgICAgICAgICAgICAgICB8ICAgMyArDQogMTcgZmlsZXMgY2hhbmdlZCwgMTM3NSBp
-bnNlcnRpb25zKCspDQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9hcm0vc3VucGx1cy55YW1sDQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9zdW5wbHVzLHBl
-bnRhZ3JhbS1pbnRjLnlhbWwNCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL3NlcmlhbC9zdW5wbHVzLHBlbnRhZ3JhbS11YXJ0LnlhbWwNCiBjcmVh
-dGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9vdC9kdHMvcGVudGFncmFtLXNwNzAyMS1icGktZjJz
-LmR0cw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9ib290L2R0cy9wZW50YWdyYW0tc3A3
-MDIxLWNwdS5kdHNpDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRzL3BlbnRh
-Z3JhbS1zcDcwMjEuZHRzaQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9tYWNoLXN1bnBs
-dXMvS2NvbmZpZyAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvaXJxY2hpcC9pcnEtc3A3MDIx
-LmMgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3R0eS9zZXJpYWwvc3VucGx1cy11YXJ0LmMN
-Cg0KLS0NCjIuMTYuNA0KDQo=
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    fb279f4e Merge branch 'i2c/for-current-fixed' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d84f31e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=751a68849f797e8b
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f0cd10fb4b63c9e7046
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7f0cd10fb4b63c9e7046@syzkaller.appspotmail.com
+
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+PGD 95be5067 P4D 95be5067 PUD a6eaf067 PMD 0 
+Oops: 0002 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 9527 Comm: syz-executor.3 Not tainted 5.6.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+RIP: 0010:do_fast_syscall_32+0x289/0xdfb arch/x86/entry/common.c:408
+Code: 00 0f 85 a7 0a 00 00 48 89 ef ff 14 dd a0 79 00 88 48 8d 7d 50 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 80 3c 11 00 <00> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+RSP: 0018:ffffc90002207f18 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000000000a2 RCX: 1ffff92000440ff5
+RDX: dffffc0000000000 RSI: ffffffff8162df47 RDI: ffffc90002207fa8
+RBP: ffffc90002207f58 R08: ffff8880613b2140 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 00000000f7f3be39
+R13: ffffffff8973b288 R14: ffffc90002207fd8 R15: ffffc90002207fd0
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0063) knlGS:00000000096ba900
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000a70f6000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace e097d86a02851000 ]---
+RIP: 0010:do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+RIP: 0010:do_fast_syscall_32+0x289/0xdfb arch/x86/entry/common.c:408
+Code: 00 0f 85 a7 0a 00 00 48 89 ef ff 14 dd a0 79 00 88 48 8d 7d 50 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 80 3c 11 00 <00> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+RSP: 0018:ffffc90002207f18 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000000000a2 RCX: 1ffff92000440ff5
+RDX: dffffc0000000000 RSI: ffffffff8162df47 RDI: ffffc90002207fa8
+RBP: ffffc90002207f58 R08: ffff8880613b2140 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 00000000f7f3be39
+R13: ffffffff8973b288 R14: ffffc90002207fd8 R15: ffffc90002207fd0
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0063) knlGS:00000000096ba900
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000a70f6000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
