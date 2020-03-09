@@ -2,138 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A68817E7A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:58:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB2217E7A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:58:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbgCIS6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:58:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbgCIS6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:58:50 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727504AbgCIS6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:58:07 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:33633 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbgCIS6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:58:07 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C906820866;
-        Mon,  9 Mar 2020 18:58:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583780330;
-        bh=B1UyNcxLW8PyJe3Q75G0rqEkEz05Wmj5+QamNjOuhpE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T7PsOBZw10bgq729PHYbEjWzwCGV7EzrsIszS8j0MmdQNps/ZBwz1vdlaqCCZT5TV
-         kYdLL1f3WRO8gXYwXh2WInGSNQZKlkEw/OwvgL8V95Zex7gvHoHc+q1daW5TZ5fXwS
-         nQgFwKiYLC9xg3s7LNqzl4cHDR7qK93ab5NWmqnQ=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] xfs: clear PF_MEMALLOC before exiting xfsaild thread
-Date:   Mon,  9 Mar 2020 11:57:14 -0700
-Message-Id: <20200309185714.42850-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200309181332.GJ1752567@magnolia>
-References: <20200309181332.GJ1752567@magnolia>
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 17AEC23EDA;
+        Mon,  9 Mar 2020 19:58:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1583780284;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hS0zEEOUXqG6QOkQ9z4+cDNB6shmJNlq0wBwtzctXZ4=;
+        b=tIdaUe6zUv3UV2sk/HK81rHp1tEgrSQ5b4Fy36wBTqUlU/bW4axlVYaHhsFA4lewm7WCr2
+        sT6Ahj6xzboRdmpfwrXMfeNg7iqBgprfgoPeIMjkPe7BGZbAUscl9rYSO4XmrnwxY5zRk0
+        NvXC9CvtcqrLXZKBK6JlE2iZtoMiSgk=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 09 Mar 2020 19:58:04 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Esben Haabendal <eha@deif.com>,
+        angelo@sysam.it, andrew.smirnov@gmail.com,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Wei Chen <weic@nvidia.com>, Mohamed Hosny <mhosny@nvidia.com>,
+        peng.ma@nxp.com
+Subject: Re: [PATCH 6/6] arm64: dts: ls1028a-rdb: Add a spidev node for the
+ mikroBUS
+In-Reply-To: <CA+h21hqOhM9+k9cKXoA8coYpxNFWpgD+FjETeB6uWLbsfrx0uw@mail.gmail.com>
+References: <20200309145624.10026-1-olteanv@gmail.com>
+ <20200309145624.10026-7-olteanv@gmail.com>
+ <f213388d924b63d0fe265a2d731647be@walle.cc>
+ <CA+h21hqOhM9+k9cKXoA8coYpxNFWpgD+FjETeB6uWLbsfrx0uw@mail.gmail.com>
+Message-ID: <0700435a8355c9a53049d571d41da222@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.10
+X-Spamd-Bar: +
+X-Spam-Level: *
+X-Rspamd-Server: web
+X-Spam-Status: No, score=1.40
+X-Spam-Score: 1.40
+X-Rspamd-Queue-Id: 17AEC23EDA
+X-Spamd-Result: default: False [1.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         DBL_PROHIBIT(0.00)[0.0.0.0:email];
+         RCPT_COUNT_TWELVE(0.00)[15];
+         NEURAL_HAM(-0.00)[-0.366];
+         FREEMAIL_TO(0.00)[gmail.com];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,arm.com,deif.com,sysam.it,gmail.com,embeddedor.com,nvidia.com,nxp.com];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Am 2020-03-09 19:50, schrieb Vladimir Oltean:
+> On Mon, 9 Mar 2020 at 20:35, Michael Walle <michael@walle.cc> wrote:
+>> 
+>> Am 2020-03-09 15:56, schrieb Vladimir Oltean:
+>> > From: Vladimir Oltean <vladimir.oltean@nxp.com>
+>> >
+>> > For debugging, it is useful to have access to the DSPI controller
+>> > signals. On the reference design board, these are exported to either
+>> > the
+>> > mikroBUS1 or mikroBUS2 connector (according to the CPLD register
+>> > BRDCFG3[SPI3]).
+>> >
+>> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+>> > ---
+>> >  arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts | 14 ++++++++++++++
+>> >  1 file changed, 14 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+>> > b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+>> > index bb7ba3bcbe56..43f403b30dae 100644
+>> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+>> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+>> > @@ -83,6 +83,20 @@
+>> >       };
+>> >  };
+>> >
+>> > +&dspi2 {
+>> > +     bus-num = <2>;
+>> > +     status = "okay";
+>> > +
+>> > +     /* mikroBUS1 */
+>> > +     spidev@0 {
+>> > +             compatible = "spidev";
+>> 
+>> As far as I know this throws a warning at boot that you
+>> shouldn't use the compatible = "spidev", doesn't it?
+>> 
+>> /*
+>>   * spidev should never be referenced in DT without a specific
+>>   * compatible string, it is a Linux implementation thing
+>>   * rather than a description of the hardware.
+>>   */
+>> 
+> 
+> If this is supposed to mean that the "spidev" string is less
+> adequate/expressive than "rohm,dh2228fv", then ok, I'll use that.
 
-Leaving PF_MEMALLOC set when exiting a kthread causes it to remain set
-during do_exit().  That can confuse things.  In particular, if BSD
-process accounting is enabled, then do_exit() writes data to an
-accounting file.  If that file has FS_SYNC_FL set, then this write
-occurs synchronously and can misbehave if PF_MEMALLOC is set.
+TBH I don't care, its your board ;) But I suppose that there is no
+Rohm DH2228FV on the (pluggable) mikroBUS board. I just noticed
+that compatible string. Don't shoot the messenger ;)
 
-For example, if the accounting file is located on an XFS filesystem,
-then a WARN_ON_ONCE() in iomap_do_writepage() is triggered and the data
-doesn't get written when it should.  Or if the accounting file is
-located on an ext4 filesystem without a journal, then a WARN_ON_ONCE()
-in ext4_write_inode() is triggered and the inode doesn't get written.
+-michael
 
-Fix this in xfsaild() by using the helper functions to save and restore
-PF_MEMALLOC.
-
-This can be reproduced as follows in the kvm-xfstests test appliance
-modified to add the 'acct' Debian package, and with kvm-xfstests's
-recommended kconfig modified to add CONFIG_BSD_PROCESS_ACCT=y:
-
-        mkfs.xfs -f /dev/vdb
-        mount /vdb
-        touch /vdb/file
-        chattr +S /vdb/file
-        accton /vdb/file
-        mkfs.xfs -f /dev/vdc
-        mount /vdc
-        umount /vdc
-
-It causes:
-	WARNING: CPU: 1 PID: 336 at fs/iomap/buffered-io.c:1534
-	CPU: 1 PID: 336 Comm: xfsaild/vdc Not tainted 5.6.0-rc5 #3
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191223_100556-anatol 04/01/2014
-	RIP: 0010:iomap_do_writepage+0x16b/0x1f0 fs/iomap/buffered-io.c:1534
-	[...]
-	Call Trace:
-	 write_cache_pages+0x189/0x4d0 mm/page-writeback.c:2238
-	 iomap_writepages+0x1c/0x33 fs/iomap/buffered-io.c:1642
-	 xfs_vm_writepages+0x65/0x90 fs/xfs/xfs_aops.c:578
-	 do_writepages+0x41/0xe0 mm/page-writeback.c:2344
-	 __filemap_fdatawrite_range+0xd2/0x120 mm/filemap.c:421
-	 file_write_and_wait_range+0x71/0xc0 mm/filemap.c:760
-	 xfs_file_fsync+0x7a/0x2b0 fs/xfs/xfs_file.c:114
-	 generic_write_sync include/linux/fs.h:2867 [inline]
-	 xfs_file_buffered_aio_write+0x379/0x3b0 fs/xfs/xfs_file.c:691
-	 call_write_iter include/linux/fs.h:1901 [inline]
-	 new_sync_write+0x130/0x1d0 fs/read_write.c:483
-	 __kernel_write+0x54/0xe0 fs/read_write.c:515
-	 do_acct_process+0x122/0x170 kernel/acct.c:522
-	 slow_acct_process kernel/acct.c:581 [inline]
-	 acct_process+0x1d4/0x27c kernel/acct.c:607
-	 do_exit+0x83d/0xbc0 kernel/exit.c:791
-	 kthread+0xf1/0x140 kernel/kthread.c:257
-	 ret_from_fork+0x27/0x50 arch/x86/entry/entry_64.S:352
-
-This bug was originally reported by syzbot at
-https://lore.kernel.org/r/0000000000000e7156059f751d7b@google.com.
-
-Reported-by: syzbot+1f9dc49e8de2582d90c2@syzkaller.appspotmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-v3: updated commit message again, this time to take into account the bug
-    also being reproducible when the accounting file is located on XFS.
-
-v2: include more details in the commit message.
-
- fs/xfs/xfs_trans_ail.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-index 00cc5b8734be8..3bc570c90ad97 100644
---- a/fs/xfs/xfs_trans_ail.c
-+++ b/fs/xfs/xfs_trans_ail.c
-@@ -529,8 +529,9 @@ xfsaild(
- {
- 	struct xfs_ail	*ailp = data;
- 	long		tout = 0;	/* milliseconds */
-+	unsigned int	noreclaim_flag;
- 
--	current->flags |= PF_MEMALLOC;
-+	noreclaim_flag = memalloc_noreclaim_save();
- 	set_freezable();
- 
- 	while (1) {
-@@ -601,6 +602,7 @@ xfsaild(
- 		tout = xfsaild_push(ailp);
- 	}
- 
-+	memalloc_noreclaim_restore(noreclaim_flag);
- 	return 0;
- }
- 
--- 
-2.25.1
-
+> 
+>> -michael
+>> 
+>> > +             reg = <0>;
+>> > +             spi-max-frequency = <20000000>;
+>> > +             fsl,spi-cs-sck-delay = <100>;
+>> > +             fsl,spi-sck-cs-delay = <100>;
+>> > +     };
+>> > +};
+>> > +
+>> >  &esdhc {
+>> >       sd-uhs-sdr104;
+>> >       sd-uhs-sdr50;
