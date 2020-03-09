@@ -2,127 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A83A17E70B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:26:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D988C17E713
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbgCIS0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727263AbgCIS0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:26:10 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BD39205F4;
-        Mon,  9 Mar 2020 18:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583778369;
-        bh=eT0kOzEakczMXlQYl1J8bn5DoxtQ2UnGAnmkEdwTmgk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uPDGYdnddJT0uTL17VGEK3PrRwbbVptbQmCBeHhmxmOEDzXlabplCxwWejYRzDz2F
-         YjHeHWZtvooRfv3hThH8oM4cid//RR4ZQzbALsq5XpN7WZIQHOqNvZCaNepFmNvVCr
-         cMqY0Ywiyk3ra0gJHqQYK+EjW/QCJhUQ4sgOsxOg=
-Date:   Mon, 9 Mar 2020 11:26:08 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
+        id S1727456AbgCIS1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:27:13 -0400
+Received: from mail-wm1-f73.google.com ([209.85.128.73]:50398 "EHLO
+        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727350AbgCIS1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:27:12 -0400
+Received: by mail-wm1-f73.google.com with SMTP id p186so179257wmp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 11:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=GdJNQzOJFOqKdISqoHHBK9SjrIVmjZPZx9ZPz8U0D/Q=;
+        b=tx4O/611hF+ZbF+8vaJD7WcRX5OInMP1WOHxCQKUTa3W3rIUCRRa0Pzbr2+XXke4id
+         5pD1evIXnvUfJCRQ4zZRPlUQrDTBGifP7DgXKYQ3Xr3ykk4OFLIswSR8dh27YXgoZyCs
+         DSYuLjTZ19uExvo6oR6613S3ecWt2O3GfpS4SenptNGaGjDx9K8a+HlI2DPoaXUCVPLl
+         3NYtdjengW8w0REmafpeMt+Qvvbgfo85IXnOV1QeKWOwiNWBnbq/2yqY7yNiQ1XuQFcx
+         Z2XLT+PVGoezeoLE7YBEHdzmh9liPSInWDvD+3EvfyuhJ6IeGb7AhroMscta9qfmBAzP
+         bPiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=GdJNQzOJFOqKdISqoHHBK9SjrIVmjZPZx9ZPz8U0D/Q=;
+        b=X1PUaZksauDkrQFJxV1MkRdYn6CT6eyRKCsFKFM+p9A9s+aTqnenGxNs+SqLmPAmwv
+         Qyh5MB9EPMocNudISQLRcUpmxCHsUe8Yxmk5vQlZAg0rmRZtFPNhusLxFrzK5b4KYQ0n
+         ISNYdHrHPxua2Sq8tMANgMbZtu6esBhKW2AcT0Bh8LPnbPgeq6FAOuGf4WTM2pBd2aiF
+         mowynIHoAsyO3Ty6QZKvEFPhCh5UmA0+p/Bu5Q4f4l1pMMEHVtZafdBje2hMv6JFzct3
+         LeM0KIvh2RJMKlu0lTSWiKph1VzgH+Op2BeL7H+sSQiUPsFh3espznBIxgCY8y8QPFrs
+         XJSQ==
+X-Gm-Message-State: ANhLgQ0Mjekc9ilM6pDpXM49J7MxqLS04Q/gYu+QYFN65gyiyY1Ujk4k
+        duzBOAYxYXjOY5jhVzW988N55KXZYs4zqdjp
+X-Google-Smtp-Source: ADFU+vtkEwBY/nTScyMNiVe58Ykd9fd07sDOnDWHkswsdgdjfDTZhoICv/rUfDfy4cqiqZpt6pB6VdIckbeAF6Aw
+X-Received: by 2002:adf:ea42:: with SMTP id j2mr21611992wrn.377.1583778429837;
+ Mon, 09 Mar 2020 11:27:09 -0700 (PDT)
+Date:   Mon,  9 Mar 2020 19:27:03 +0100
+Message-Id: <cover.1583778264.git.andreyknvl@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH v2 0/3] kcov: collect coverage from usb soft interrupts
+From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: general protection fault in syscall_return_slowpath
-Message-ID: <20200309182608.GC1073@sol.localdomain>
-References: <000000000000ff323f05a053100c@google.com>
- <CALCETrV7JcVt3ejMbHxTs4-CFmKjcmSbW2eMmmMZUM7dg2mBuA@mail.gmail.com>
- <87eeu28zzl.fsf@nanos.tec.linutronix.de>
- <CACT4Y+YX72sz2LsqQOTQ=TdDK_f7zURjA9j9VyYwj7GgLrajkQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+YX72sz2LsqQOTQ=TdDK_f7zURjA9j9VyYwj7GgLrajkQ@mail.gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 09:34:25AM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
-> 
-> I see the repro opens /dev/fb0, so this may be related to the exact
-> type of framebuffer on the machine. That's what Jann tried to figure
-> out.
-> 
-> There is a plenty of open bugs on dashboard related to fb/tty, just
-> doing a quick grep based on titles:
-> 
-> https://syzkaller.appspot.com/upstream
-> BUG: unable to handle kernel paging request in
-> drm_fb_helper_dirty_work 7 4d20h 90d
-> BUG: unable to handle kernel paging request in vga16fb_imageblit 1 74d 73d
-> divide error in fbcon_switch C cause 141 3d15h 96d
-> general protection fault in fbcon_cursor C cause 12 13h48m 87d
-> general protection fault in fbcon_fb_blanked 3 88d 90d
-> general protection fault in fbcon_invert_region 1 49d 48d
-> general protection fault in fbcon_modechanged 3 89d 90d
-> INFO: task hung in do_fb_ioctl 6 36d 57d
-> INFO: task hung in fb_compat_ioctl 1 87d 87d
-> INFO: task hung in fb_open C cause 171 1h06m 96d
-> INFO: task hung in fb_release C cause 23 2d12h 77d
-> INFO: task hung in release_tty 3 6d16h 62d
-> INFO: task hung in tty_ldisc_hangup C cause 15 17d 92d
-> INFO: trying to register non-static key in hci_uart_tty_receive (2) 1 103d 99d
-> KASAN: global-out-of-bounds Read in fbcon_get_font C cause 19 7d06h 90d
-> KASAN: global-out-of-bounds Read in fb_pad_aligned_buffer C cause 5 4d22h 92d
-> KASAN: global-out-of-bounds Read in vga16fb_imageblit C cause 225 1d11h 96d
-> KASAN: slab-out-of-bounds Read in fbcon_get_font C cause 42 5d04h 96d
-> KASAN: slab-out-of-bounds Read in fb_pad_aligned_buffer 4 9d00h 48d
-> KASAN: slab-out-of-bounds Write in fbcon_scroll 1 75d 73d
-> KASAN: use-after-free Read in fbcon_cursor syz cause 3 41d 84d
-> KASAN: use-after-free Read in fb_mode_is_equal syz cause 70 5h49m 92d
-> KASAN: use-after-free Read in tty_open C cause 7 42d 96d
-> KASAN: use-after-free Write in release_tty C cause 544 4h01m 96d
-> KASAN: vmalloc-out-of-bounds Read in drm_fb_helper_dirty_work 1 80d 80d
-> KASAN: vmalloc-out-of-bounds Write in drm_fb_helper_dirty_work 2 64d 76d
-> KCSAN: data-race in echo_char / n_tty_receive_buf_common 11 21d 125d
-> KMSAN: kernel-infoleak in tty_compat_ioctl C 81 2h17m 14d
-> memory leak in tty_init_dev C 3 121d 192d
-> possible deadlock in n_tty_receive_buf_common C cause 585 1h18m 23d
-> possible deadlock in tty_port_close_start C cause 4 9d18h 25d
-> WARNING in dlfb_submit_urb/usb_submit_urb C 190 8d23h 251d
-> 
-> So if you don't see something obvious here, it may be not worth
-> spending more time until these, more obvious ones are fixed. This may
-> be a previous silent memory corruption that wasn't caught by KASAN.
+This patchset extends kcov to allow collecting coverage from soft
+interrupts and then uses the new functionality to collect coverage from
+USB code.
 
-Yesterday I was looking at a similar bug
-"general protection fault in do_con_write"
-(https://syzkaller.appspot.com/bug?id=f82ab89451323208e343f4a8632014ef12b1252d).
+This has allowed to find at least one new HID bug [1], which was recently
+fixed by Alan [2].
 
-It has a simple single-threaded reproducer at
-https://syzkaller.appspot.com/text?tag=ReproC&x=169c4c81e00000 that just:
+[1] https://syzkaller.appspot.com/bug?extid=09ef48aa58261464b621
+[2] https://patchwork.kernel.org/patch/11283319/
 
-	1. Calls FBIOPUT_VSCREENINFO on /dev/fb0
-	2. Opens /dev/tty20 and writes something to it
+Any subsystem that uses softirqs (e.g. timers) can make use of this in
+the future. Looking at the recent syzbot reports, an obvious candidate
+is the networking subsystem [3, 4, 5 and many more].
 
-Presumably, to reproduce this you at least need some graphics hardware with a
-corresponding framebuffer driver (to get /dev/fb0), as well as
-CONFIG_FRAMEBUFFER_CONSOLE=y (so that the virtual console /dev/tty20 uses a
-framebuffer console and not something else like a VGA text mode console).
+[3] https://syzkaller.appspot.com/bug?extid=522ab502c69badc66ab7
+[4] https://syzkaller.appspot.com/bug?extid=57f89d05946c53dbbb31
+[5] https://syzkaller.appspot.com/bug?extid=df358e65d9c1b9d3f5f4
 
-However, when I tried to reproduce this locally in QEMU with the same kconfig
-(https://syzkaller.appspot.com/text?tag=KernelConfig&x=31018567b8f0fc70) and
-with graphics enabled (-vga std), it didn't work.
+This patchset has been pushed to the public Linux kernel Gerrit instance:
 
-I then tried to reproduce on a Google Compute Engine VM with the exact same
-kconfig, and it worked.  I think the framebuffer driver in use was vga16fb.c.
-It's odd because the same driver seems to be used in the QEMU case, and in both
-cases the virtual consoles were bound to the framebuffer console.
+https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2225
 
-I need to double-check all this though.
+Changes v1 -> v2:
+- Add local_irq_save/restore() critical sections to simplify dealing with
+  softirqs happening during kcov_remote_start/stop().
+- Set kcov_softirq after flag kcov_start() in kcov_remote_start().
 
-And yes, probably many of the above bugs have the same cause.
+Changes RFC -> v1:
+- Don't support hardirq or nmi, only softirq, to avoid issues with nested
+  interrupts.
+- Combined multiple per-cpu variables into one.
+- Used plain accesses and kcov_start/stop() instead of xchg()'s.
+- Simplified handling of per-cpu variables.
+- Avoid disabling interrupts for the whole kcov_remote_start/stop()
+  region.
+- Avoid overwriting t->kcov_sequence when saving/restoring state.
+- Move kcov_remote_start/stop_usb() annotations into
+  __usb_hcd_giveback_urb() to cover all urb complete() callbacks at once.
+- Drop unneeded Dummy HCD changes.
+- Split out a patch that removed debug messages.
 
-- Eric
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+
+Andrey Konovalov (3):
+  kcov: cleanup debug messages
+  kcov: collect coverage from interrupts
+  usb: core: kcov: collect coverage from usb complete callback
+
+ Documentation/dev-tools/kcov.rst |  17 +--
+ drivers/usb/core/hcd.c           |   3 +
+ include/linux/sched.h            |   3 +
+ kernel/kcov.c                    | 221 +++++++++++++++++++++----------
+ lib/Kconfig.debug                |   9 ++
+ 5 files changed, 178 insertions(+), 75 deletions(-)
+
+-- 
+2.25.1.481.gfbce0eb801-goog
+
