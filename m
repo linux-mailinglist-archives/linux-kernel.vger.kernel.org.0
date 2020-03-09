@@ -2,142 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 453AE17DF28
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E526A17DF2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgCIL5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:57:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45314 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCIL5d (ORCPT
+        id S1726567AbgCIL6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 07:58:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45422 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbgCIL6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:57:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m9so1708230wro.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vrTgttkZVf+7dJzhX83Z2t1NpSWLXcGu9YGJAFx5Xqc=;
-        b=vEiimkKWq0NHiQqLCBl/zNnWis5BV9Ta7t765xUFvMq/OTzlWKuMsmpB7rJQK5tVnP
-         XxmPE2weoncXR1//WGh4VqsygjvoJbzPtR4XDqnux9UP+SowXvyjwB6QBm/jeWuEvRY1
-         Ds6ZBqwfv/OZgSZeth6F2I9MsS1sf2gxDE1t1WkBdGxwEnhdattHNj+u8Rk8dTD8OFZN
-         JR/EyECJ8xUszKKLMT/VDreswvC476fn+ORNfS2Drj7KvJuZJv7jUaaLZtwgtyHclf5N
-         ZPH9j2EMxWPlEgCco/6AIDGoDdbNu3LMao3nN1OAUORt8GDZyR78AvuIFvIfIkaC8Pdv
-         Bbzg==
+        Mon, 9 Mar 2020 07:58:21 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m9so1711116wro.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:58:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vrTgttkZVf+7dJzhX83Z2t1NpSWLXcGu9YGJAFx5Xqc=;
-        b=SkJciiiTBNSiZIoElIjPN+L0iWE5/e6N581STg5zb0bPLOJF+b9hza71hB9SMYAoOc
-         xzSO2SDSgkiitgR0WUJHAbHjW1D7jQu9yehMrbEabHA+wlnT7CehPyKIZCGMmK/zpbYc
-         AflbqOBgkVo2lXYPKqgkeG8p49FrfaS+I2wYOfYkSqANfEZRz19djQOktOFQ+19wOimm
-         HJyoD0mN+ypOsXHYf3n1QowXVCpIH27jYkZvR7IraL1KOiVaBA24URP/L6RfNA6cnLrv
-         V9V5C5TZKp6jHgogc6WdC6dZBlrMjbHPNwyIWzmBjQPZvl3ex7xzhjqr7DGI9q1Pl2Rp
-         O/WQ==
-X-Gm-Message-State: ANhLgQ2PGExza/IuQCy4zYGugXI6bgzy5+4DbQy/Ui53l1C+5L/f0spo
-        iCYGHeC0FURwKoSmTavekAsg0lesQANX3LYJDUgY3A==
-X-Google-Smtp-Source: ADFU+vvMew+BCMC+wgpvAFNXyqhdGpFhtepZ8kbje7sd7mHHkOXIz3YohMYApyzE+QBfXAmwpEf0KlzE67eJaauIl0k=
-X-Received: by 2002:adf:a512:: with SMTP id i18mr20926329wrb.61.1583755051402;
- Mon, 09 Mar 2020 04:57:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=V2Ssma6CGptYN1B4ayzZk89MffFfSZ5Lvl/x2QnN3OI=;
+        b=nGrjD9MwNhFzlDk4wb6DbxnETVyNnC2I0eCaWrpYCJmXViRY3QXArQfoRHGD6K9cxY
+         +V9oqg2etjZtvDLtghJr0mEP4slWKDrGZeq98W1YTggq2aPkwLRbiAFfzGgqt4+rUmHm
+         cRaXZ+echwZZDtWZtJnyPgE9R2u5lfgowvvYDHKTlDn4Y03S8Rotbcyi9gdSScuGTyML
+         +387C6lbunUplClvMNwEqmIVxZhOLZtxLkCKI44HJq8ppyg27mQhX4Uwh34LhG9/T+pG
+         yCUqqS/1OQyBw7cGifWhGtq+C0MuAX1a0DAi/Rz9ptebU5JCqv6777P5EzsgRC7c4gLT
+         jibA==
+X-Gm-Message-State: ANhLgQ3+OAfIhBx4x+IKmunFU3edIAcJ6XLnw2WBgY5OKfFt9KkbquNh
+        GPiLehOfwaJ2ZlMXksq/TxQhWbta
+X-Google-Smtp-Source: ADFU+vsNVjsCmPNEvh3yD8H3Vxk5520qSyatBjlAbFdu4IR1M/u++zj5CIzrig4ZY5v2DToolkbAmA==
+X-Received: by 2002:adf:f9cd:: with SMTP id w13mr20423228wrr.406.1583755099729;
+        Mon, 09 Mar 2020 04:58:19 -0700 (PDT)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id h3sm64424256wrb.23.2020.03.09.04.58.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 04:58:18 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 12:58:18 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shaju Abraham <shajunutanix@gmail.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Shaju Abraham <shaju.abraham@nutanix.com>
+Subject: Re: [PATCH] mm/vmpressure.c: Include GFP_KERNEL flag to vmpressure
+Message-ID: <20200309115818.GK8447@dhcp22.suse.cz>
+References: <20200309113141.167289-1-shaju.abraham@nutanix.com>
 MIME-Version: 1.0
-References: <20200309110211.91130-1-anup.patel@wdc.com>
-In-Reply-To: <20200309110211.91130-1-anup.patel@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 9 Mar 2020 17:27:17 +0530
-Message-ID: <CAAhSdy0fJHAhmW202DT+2XfY5bADBUqoiyk9bY86dupuO9zhzA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] New RISC-V Local Interrupt Controller Driver
-To:     Anup Patel <anup.patel@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Atish Patra <atish.patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309113141.167289-1-shaju.abraham@nutanix.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed Marc's email address.
+On Mon 09-03-20 11:31:41, Shaju Abraham wrote:
+> The VM pressure notification flags have excluded GFP_KERNEL with the
+> reasoning that user land will not be able to take any action in case of
+> kernel memory being low. This is not true always. Consider the case of
+> a user land program managing all the huge memory pages. By including
+> GFP_KERNEL flag whenever the kernel memory is low, pressure notification
+> can be send, and the manager process can split huge pages to satisfy kernel
+> memory requirement.
 
-On Mon, Mar 9, 2020 at 4:32 PM Anup Patel <anup.patel@wdc.com> wrote:
->
-> This patchset provides a new RISC-V Local Interrupt Controller Driver
-> for managing per-CPU local interrupts. The overall approach is inspired
-> from the way per-CPU local interrupts are handled by Linux ARM64 and
-> ARM GICv3 driver.
->
-> Few advantages of this new driver over previous one are:
-> 1. It registers all local interrupts as per-CPU interrupts
-> 2. The KVM RISC-V can use this driver to implement interrupt
->    handler for per-HART guest external interrupt defined by
->    the RISC-V H-Extension
-> 3. In future, we can develop drivers for devices with per-HART
->    interrupts without changing arch code or this driver
->
-> With this patchset, output of "cat /proc/interrupts" looks as follows:
->            CPU0       CPU1       CPU2       CPU3
->   2:        379          0          0          0  SiFive PLIC  10  ttyS0
->   3:        591          0          0          0  SiFive PLIC   8  virtio0
->   5:       5079      10821       8435      12984  RISC-V INTC   5  riscv-timer
-> IPI0:      2045       2537        891        870  Rescheduling interrupts
-> IPI1:         9        269         91        168  Function call interrupts
-> IPI2:         0          0          0          0  CPU stop interrupts
->
-> The patchset is based up Linux-5.6-rc5 and can be found at riscv_intc_v4
-> branch of: https://github.com/avpatel/linux.git
->
-> Changes since v3:
->  - Rebased to Linux-5.6-rc5 and Atish's PLIC patches
->  - Added separate patch to rename and move plic_find_hart_id()
->    to arch directory
->  - Use riscv_of_parent_hartid() in riscv_intc_init() instead of
->    atomic counter
->
-> Changes since v2:
->  - Dropped PATCH2 since it was merged long-time back
->  - Rebased series from Linux-4.19-rc2 to Linux-5.6-rc2
->
-> Changes since v1:
->  - Removed changes related to puggable IPI triggering
->  - Separate patch for self-contained IPI handling routine
->  - Removed patch for GENERIC_IRQ kconfig options
->  - Added patch to remove do_IRQ() function
->  - Rebased upon Atish's SMP patches
->
-> Anup Patel (5):
->   RISC-V: self-contained IPI handling routine
->   RISC-V: Rename and move plic_find_hart_id() to arch directory
->   irqchip: RISC-V Per-HART Local Interrupt Controller Driver
->   clocksource: timer-riscv: Make timer interrupt as a per-CPU interrupt
->   RISC-V: Remove do_IRQ() function
->
->  arch/riscv/Kconfig                 |   1 +
->  arch/riscv/include/asm/irq.h       |   5 --
->  arch/riscv/include/asm/processor.h |   1 +
->  arch/riscv/include/asm/smp.h       |   3 +
->  arch/riscv/kernel/cpu.c            |  16 ++++
->  arch/riscv/kernel/entry.S          |   4 +-
->  arch/riscv/kernel/irq.c            |  33 +------
->  arch/riscv/kernel/smp.c            |  11 ++-
->  arch/riscv/kernel/traps.c          |   2 -
->  drivers/clocksource/timer-riscv.c  |  79 +++++++++++------
->  drivers/irqchip/Kconfig            |  13 +++
->  drivers/irqchip/Makefile           |   1 +
->  drivers/irqchip/irq-riscv-intc.c   | 134 +++++++++++++++++++++++++++++
->  drivers/irqchip/irq-sifive-plic.c  |  40 ++++-----
->  include/linux/cpuhotplug.h         |   1 +
->  15 files changed, 256 insertions(+), 88 deletions(-)
->  create mode 100644 drivers/irqchip/irq-riscv-intc.c
->
-> --
-> 2.17.1
->
+Are you sure about this reasoning? GFP_KERNEL = __GFP_FS | __GFP_IO | __GFP_RECLAIM
+Two of the flags mentioned there are already listed so we are talking
+about __GFP_RECLAIM here. Including it here would be a more appropriate
+change than GFP_KERNEL btw.
+
+But still I do not really understand what is the actual problem and how
+is this patch meant to fix it. vmpressure is triggered only from the
+reclaim path which inherently requires to have __GFP_RECLAIM present
+so I fail to see how this can make any change at all. How have you
+tested it?
+
+> This is a common scanario in cloud. Most of the host memory is reserved
+> as hugepages and can be broken down to small pages on demand. This is
+> done to minimise fragmentation so that Virtual Machine power on will be
+> successful always.
+> 
+> Signed-off-by: Shaju Abraham <shaju.abraham@nutanix.com>
+> ---
+>  mm/vmpressure.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmpressure.c b/mm/vmpressure.c
+> index 4bac22fe1aa2..7ccfb3dd8173 100644
+> --- a/mm/vmpressure.c
+> +++ b/mm/vmpressure.c
+> @@ -253,7 +253,8 @@ void vmpressure(gfp_t gfp, struct mem_cgroup *memcg, bool tree,
+>  	 * Indirect reclaim (kswapd) sets sc->gfp_mask to GFP_KERNEL, so
+>  	 * we account it too.
+>  	 */
+> -	if (!(gfp & (__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_IO | __GFP_FS)))
+> +	if (!(gfp & (__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_IO |
+> +		     __GFP_FS | GFP_KERNEL)))
+>  		return;
+>  
+>  	/*
+> -- 
+> 2.20.1
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
