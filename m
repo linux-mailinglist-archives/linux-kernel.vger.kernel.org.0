@@ -2,290 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4489C17E751
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDD0517E75D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgCIShn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:37:43 -0400
-Received: from mail.efficios.com ([167.114.26.124]:34780 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbgCIShn (ORCPT
+        id S1727511AbgCISiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:38:51 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:38299 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbgCISiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:37:43 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 13B9C26841E;
-        Mon,  9 Mar 2020 14:37:41 -0400 (EDT)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id GCS7b8QlowXb; Mon,  9 Mar 2020 14:37:40 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 84ED3268618;
-        Mon,  9 Mar 2020 14:37:40 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 84ED3268618
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1583779060;
-        bh=LlMp/GiagSXQO14+DKtDRbpQgsE6J0YT3BptXSLeEE0=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=E/dWLRr9nb4mhf7qiIQrr8pOkdvITE6IQAFGtTnM+Vq0MXZSOP/sL4pAooiGNlZTb
-         /d8TiGa2vg4QVetHEIzysqa8glGve42yESAlu9qryMhZAHygQMeEKzpN2w4koE26uz
-         XUZc84KZiC8E5Gy/wDj4oJjyiFoa7IMSKVdr2CDm1QlQiLbdZO/FRW3XEFnxXRXGr9
-         rgRpuRX6fFhoJTKBPW8WA12VANg3HuvNABY6NDlspOESsVZtMAYmLq2hiimOwF5Tu3
-         F7WjhQnC6Nz0TPNu88UQyx3fSCs/hAHRS55JzCIHP9Ox7qgB5YwBcmI/lzrdSF8sFp
-         l1MEV7zTjGWqw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id tegojSwnYypZ; Mon,  9 Mar 2020 14:37:40 -0400 (EDT)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id 6A9BF26841D;
-        Mon,  9 Mar 2020 14:37:40 -0400 (EDT)
-Date:   Mon, 9 Mar 2020 14:37:40 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        paulmck <paulmck@kernel.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Message-ID: <1403546357.21810.1583779060302.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87mu8p797b.fsf@nanos.tec.linutronix.de>
-References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
-Subject: Re: Instrumentation and RCU
+        Mon, 9 Mar 2020 14:38:50 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 517C323EDA;
+        Mon,  9 Mar 2020 19:38:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1583779128;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hIYhl3hOwDQGX1uE6iNMK8JIcA2bt00RM3gT2bSjN4M=;
+        b=sz0+gFHPZkigcov5P1QNKrsDGR4Axp+OmoxRrAPJxGuuxDsbOnsKUrfnnPLJiRLDxNlqGA
+        KKSA5dqNlSsnVUuVjJ1Ic74XGBKlodg+QsAzN8zShXwHe2mmBms8pjqTPdOJNToNJTnr0M
+        l/T0KqDFFhVy5t8FnyesfK8l4f43NJQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3901 (ZimbraWebClient - FF73 (Linux)/8.8.15_GA_3895)
-Thread-Topic: Instrumentation and RCU
-Thread-Index: ICHphKJwuuoVM3BZQGg2yVi7BdLxrQ==
+Date:   Mon, 09 Mar 2020 19:38:48 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     broonie@kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shawnguo@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
+        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
+        mhosny@nvidia.com, peng.ma@nxp.com
+Subject: Re: [PATCH 4/6] spi: spi-fsl-dspi: Add support for LS1028A
+In-Reply-To: <20200309145624.10026-5-olteanv@gmail.com>
+References: <20200309145624.10026-1-olteanv@gmail.com>
+ <20200309145624.10026-5-olteanv@gmail.com>
+Message-ID: <02a2816d2f39bf621dfee543ed612ae0@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.10
+X-Spamd-Bar: +
+X-Spam-Level: *
+X-Rspamd-Server: web
+X-Spam-Status: No, score=1.40
+X-Spam-Score: 1.40
+X-Rspamd-Queue-Id: 517C323EDA
+X-Spamd-Result: default: False [1.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[15];
+         NEURAL_HAM(-0.00)[-0.384];
+         FREEMAIL_TO(0.00)[gmail.com];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,arm.com,deif.com,sysam.it,gmail.com,embeddedor.com,nvidia.com,nxp.com];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Mar 9, 2020, at 1:02 PM, Thomas Gleixner tglx@linutronix.de wrote:
+Am 2020-03-09 15:56, schrieb Vladimir Oltean:
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> This is similar to the DSPI instantiation on LS1028A, except that:
+>  - The A-011218 erratum has been fixed, so DMA works
+>  - The endianness is different, which has implications on XSPI mode
+> 
+> Some benchmarking with the following command:
+> 
+> spidev_test --device /dev/spidev2.0 --bpw 8 --size 256 --cpha --iter
+> 10000000 --speed 20000000
+> 
+> shows that in DMA mode, it can achieve around 2400 kbps, and in XSPI
+> mode, the same command goes up to 4700 kbps. This is somewhat to be
+> expected, since the DMA buffer size is extremely small at 8 bytes, the
+> winner becomes whomever can prepare the buffers for transmission
+> quicker, and DMA mode has higher overhead there. So XSPI FIFO mode has
+> been chosen as the operating mode for this chip.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+>  drivers/spi/spi-fsl-dspi.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+> index 5624b9ee77db..264d184e7296 100644
+> --- a/drivers/spi/spi-fsl-dspi.c
+> +++ b/drivers/spi/spi-fsl-dspi.c
+> @@ -131,6 +131,7 @@ struct fsl_dspi_devtype_data {
+>  enum {
+>  	LS1021A,
+>  	LS1012A,
+> +	LS1028A,
+>  	LS1043A,
+>  	LS1046A,
+>  	LS2080A,
+> @@ -163,6 +164,14 @@ static const struct fsl_dspi_devtype_data
+> devtype_data[] = {
+>  		.pushr_cmd		= 0,
+>  		.pushr_tx		= 2,
+>  	},
+> +	[LS1028A] = {
+> +		.trans_mode		= DSPI_DMA_MODE,
 
-> Folks,
-> 
-> I'm starting a new conversation because there are about 20 different
-> threads which look at that problem in various ways and the information
-> is so scattered that creating a coherent picture is pretty much
-> impossible.
-> 
-> There are several problems to solve:
-> 
->   1) Fragile low level entry code
-> 
->   2) Breakpoint utilization
-> 
->   3) RCU idle
-> 
->   4) Callchain protection
-> 
-> #1 Fragile low level entry code
-> 
->   While I understand the desire of instrumentation to observe
->   everything we really have to ask the question whether it is worth the
->   trouble especially with entry trainwrecks like x86, PTI and other
->   horrors in that area.
-> 
->   I don't think so and we really should just bite the bullet and forbid
->   any instrumentation in that code unless it is explicitly designed
->   for that case, makes sense and has a real value from an observation
->   perspective.
-> 
->   This is very much related to #3..
+shouldn't this be DSPI_XSPI_MODE according to your cover letter?
 
-Do I understand correctly that you intend on moving all kernel low level
-entry/exit code into sections which cannot be instrumented by kprobes nor
-the function tracer, and require explicit whitelisting, either through
-annotations or use of explicit tracepoints ?
+-michael
 
-> 
-> #2) Breakpoint utilization
-> 
->    As recent findings have shown, breakpoint utilization needs to be
->    extremly careful about not creating infinite breakpoint recursions.
-> 
->    I think that's pretty much obvious, but falls into the overall
->    question of how to protect callchains.
-
-I think there is another question that arises here: the lack of automated
-continuous testing of the kprobes coverage. We have performed some testing of
-various random permutations of kprobes instrumentation, and have succeeded in
-crashing the kernel in various ways. Unfortunately, that testing is not done
-on a continuous basis, and maintainers understandably have little spare time
-to play the whack-a-mole game of adding missing nokprobes annotations as
-the kernel code evolves.
-
-> 
-> #3) RCU idle
-> 
->    Being able to trace code inside RCU idle sections is very similar to
->    the question raised in #1.
-> 
->    Assume all of the instrumentation would be doing conditional RCU
->    schemes, i.e.:
-> 
->    if (rcuidle)
->    	....
->    else
->        rcu_read_lock_sched()
-> 
->    before invoking the actual instrumentation functions and of course
->    undoing that right after it, that really begs the question whether
->    it's worth it.
-> 
->    Especially constructs like:
-> 
->    trace_hardirqs_off()
->       idx = srcu_read_lock()
->       rcu_irq_enter_irqson();
->       ...
->       rcu_irq_exit_irqson();
->       srcu_read_unlock(idx);
-> 
->    if (user_mode)
->       user_exit_irqsoff();
->    else
->       rcu_irq_enter();
-> 
->    are really more than questionable. For 99.9999% of instrumentation
->    users it's absolutely irrelevant whether this traces the interrupt
->    disabled time of user_exit_irqsoff() or rcu_irq_enter() or not.
-> 
->    But what's relevant is the tracer overhead which is e.g. inflicted
->    with todays trace_hardirqs_off/on() implementation because that
->    unconditionally uses the rcuidle variant with the scru/rcu_irq dance
->    around every tracepoint.
-
-I think one of the big issues here is that most of the uses of
-trace_hardirqs_off() are from sites which already have RCU watching,
-so we are doing heavy-weight operations for nothing.
-
-I strongly suspect that most of the overhead we've been trying to avoid when
-introducing use of SRCU in rcuidle tracepoints was actually caused by callsites
-which use rcuidle tracepoints while having RCU watching, just because there is a
-handful of callsites which don't have RCU watching. This is confirmed
-by the commit message of commit e6753f23d9 "tracepoint: Make rcuidle
-tracepoint callers use SRCU":
-
-   "In recent tests with IRQ on/off tracepoints, a large performance
-    overhead ~10% is noticed when running hackbench. This is root caused to
-    calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
-    tracepoint code. Following a long discussion on the list [1] about this,
-    we concluded that srcu is a better alternative for use during rcu idle.
-    Although it does involve extra barriers, its lighter than the sched-rcu
-    version which has to do additional RCU calls to notify RCU idle about
-    entry into RCU sections.
-[...]
-    Test: Tested idle and preempt/irq tracepoints."
-
-So I think we could go back to plain RCU for rcuidle tracepoints if we do
-the cheaper "rcu_is_watching()" check rather than invoking
-rcu_irq_{enter,exit}_irqson() unconditionally.
-
->    Even if the tracepoint sits in the ASM code it just covers about ~20
->    low level ASM instructions more. The tracer invocation, which is
->    even done twice when coming from user space on x86 (the second call
->    is optimized in the tracer C-code), costs definitely way more
->    cycles. When you take the scru/rcu_irq dance into account it's a
->    complete disaster performance wise.
-
-Part of the issue here is the current overhead of SRCU read-side lock,
-which contains memory barriers. The other part of the issue is the fact that
-rcu_irq_{enter,exit}_irqson() contains an atomic_add_return atomic instruction.
-
-We could use the approach proposed by Peterz's and Steven's patches to basically
-do a lightweight "is_rcu_watching()" check for rcuidle tracepoint, and only enable
-RCU for those cases. We could then simply go back on using regular RCU like so:
-
-#define __DO_TRACE(tp, proto, args, cond, rcuidle)                      \
-        do {                                                            \
-                struct tracepoint_func *it_func_ptr;                    \
-                void *it_func;                                          \
-                void *__data;                                           \
-                bool exit_rcu = false;                                  \
-                                                                        \
-                if (!(cond))                                            \
-                        return;                                         \
-                                                                        \
-                if (rcuidle && !rcu_is_watching()) {                    \
-                        rcu_irq_enter_irqson();                         \
-                        exit_rcu = true;                                \
-                }                                                       \
-                preempt_disable_notrace();                              \
-                it_func_ptr = rcu_dereference_raw((tp)->funcs);         \
-                if (it_func_ptr) {                                      \
-                        do {                                            \
-                                it_func = (it_func_ptr)->func;          \
-                                __data = (it_func_ptr)->data;           \
-                                ((void(*)(proto))(it_func))(args);      \
-                        } while ((++it_func_ptr)->func);                \
-                }                                                       \
-                preempt_enable_notrace();                               \
-                if (exit_rcu)                                           \
-                        rcu_irq_exit_irqson();                          \
-        } while (0)
-
-
-
-> #4 Protecting call chains
-> 
->   Our current approach of annotating functions with notrace/noprobe is
->   pretty much broken.
-> 
->   Functions which are marked NOPROBE or notrace call out into functions
->   which are not marked and while this might be ok, there are enough
->   places where it is not. But we have no way to verify that.
-> 
->   That's just a recipe for disaster. We really cannot request from
->   sysadmins who want to use instrumentation to stare at the code first
->   whether they can place/enable an instrumentation point somewhere.
->   That'd be just a bad joke.
-> 
->   I really think we need to have proper text sections which are off
->   limit for any form of instrumentation and have tooling to analyze the
->   calls into other sections. These calls need to be annotated as safe
->   and intentional.
-
-If we go all the way into that direction, I suspect it might even make sense
-to duplicate some kernel functions so they can still be part of the code which
-can be instrumented, but provide tracing-specific copy which would be hidden
-from instrumentation. I wonder what would be the size cost of this duplication.
-
-In addition to splitting tracing code into a separate section, which I think
-makes sense, I can think of another alternative way to provide call chains
-protection: adding a "in_tracing" flag somewhere alongside each kernel stack.
-Each thread and interrupt stack would have its own flag. However, trap handlers
-should share the "in_tracing" flag with the context which triggers the trap.
-
-If a tracer recurses, or if a tracer attempts to trace another tracer, the
-instrumentation would break the recursion chain by preventing instrumentation
-from firing. If we end up caring about tracers tracing other tracers, we could
-have one distinct flag per tracer and let each tracer break the recursion chain.
-
-Having this flag per kernel stack rather than per CPU or per thread would
-allow tracing of nested interrupt handlers (and NMIs), but would break
-call chains both within the same stack or going through a trap. I think
-it could be a nice complementary safety net to handle mishaps in a non-fatal
-way.
-
-Thanks,
-
-Mathieu
-
-> 
-> Thoughts?
-> 
-> Thanks,
-> 
->         tglx
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> +		.dma_bufsize		= 8,
+> +		.max_clock_factor	= 8,
+> +		.fifo_size		= 4,
+> +		.pushr_cmd		= 2,
+> +		.pushr_tx		= 0,
+> +	},
+>  	[LS1043A] = {
+>  		/* Has A-011218 DMA erratum */
+>  		.trans_mode		= DSPI_XSPI_MODE,
+> @@ -1113,6 +1122,9 @@ static const struct of_device_id 
+> fsl_dspi_dt_ids[] = {
+>  	}, {
+>  		.compatible = "fsl,ls1012a-dspi",
+>  		.data = &devtype_data[LS1012A],
+> +	}, {
+> +		.compatible = "fsl,ls1028a-dspi",
+> +		.data = &devtype_data[LS1028A],
+>  	}, {
+>  		.compatible = "fsl,ls1043a-dspi",
+>  		.data = &devtype_data[LS1043A],
