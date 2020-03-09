@@ -2,114 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B2F17D816
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 03:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0990417D818
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 03:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgCICRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 22:17:06 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38528 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbgCICRG (ORCPT
+        id S1727073AbgCICSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 22:18:09 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41554 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbgCICSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 22:17:06 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g21so4111500pfb.5
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 19:17:04 -0700 (PDT)
+        Sun, 8 Mar 2020 22:18:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t14so3344196plr.8
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 19:18:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sah9gLZTqUqU0I81LxravMIHbnOhX63QQcmQKAkQUow=;
-        b=K9clpEC4mqCP5m3LggsyttZ5WLsNeKIvPLMMUCLdxJZB+8pDr5uWeG3j6p2+ShXZZY
-         lU45Nx0lqjLQePc8KH+C4xw7Hg59WYZnDVhmi2GwfH9+4zIRXAWeQ/wzzhDxJLR8zaRu
-         fH3/z0wchAbfhXgEmkf4AipB/eJ2quqZ7qJmh18STmzHcLjhBaQlRxqL1TAVAkPH2/Sa
-         g+CRXoP3ARKEOj/slFdjrSMQgJANqhs7AAJ8gAtKK0JSUUZlc2ajd/bUs8i7CZmzl5VL
-         q+vtjr+ELeDmqlFq+rw5jaDEzDJxMkYAWpElVNV9CJMWqZ127Mtdw9QcdaqghrmxXpDp
-         5cuw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WLxH7ad0XRd0xt+wbIowBUivNdpU+jvJokFmcSJMpU8=;
+        b=ZU5fwAZKIgqaNdwVLrK/Xjt8rxOeawd5ZJVwsFEs+For+lnZYeVydn5MuI74RojCIv
+         2UEb/lsPJ4kGmLqJAAPzr1qxL/MdU0UOSdqHs4Lc4MDOK7mPSBYW8gDX1ZQcElM7a4Ap
+         Ku2EQpa1/3bevO11AmrDR5Vm78HEZyNfQ5loyg00hCFbI+wqwkapz0jaTyxu9yKsYFHs
+         cRT9B5UGzfi4NoR2R0gB6qUafL5rdD/fsqjSw+ijJX3GLgX9vJnbX9w9BIRsSCMLEK0h
+         aC7GMkmCIvR01htkt2hvt3i4oYqkqwryP66mWg9ETxIM5gyzLjzrdHAzH6RawjO2LTZL
+         fY9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sah9gLZTqUqU0I81LxravMIHbnOhX63QQcmQKAkQUow=;
-        b=cCu2iyX47SccW6b34dOJZXt8Z0bbaBCMjsZtXgjv5B1jcWG2mpM0eKWkGyjMEKMIp/
-         iNmYeCE9Yo00hYFo3X9G4Mur/PXzEhbeJXasWcr6yNcZev3UavbRKKibjWpxmynmUCZn
-         kxi/bmH+9ghPCqwNRZ5asFSa39IoOQRC1bbpccvw8dah3fU7OYd4zo78yDRjs+/HKKcP
-         00NRAD83mJUlLsyL+wai9p8hiRZajJEBahyJq8vIHSbykawgUKU9PgWGKViG3E6FCIvl
-         Rf9grg7VL7/dhFF6e8iT0Bxufb0jy01MQgRvD/2tfRRZvE8Yygp1i02Yhnts0J390Zvc
-         h+Hg==
-X-Gm-Message-State: ANhLgQ2bXtpXy0WF4uIVG14LzFI4yto06+ANN0m3BzhDlqAhBgBSqJ3V
-        McZsQOR/zBjBMdR31NyxPi5ULg==
-X-Google-Smtp-Source: ADFU+vtj6VW9hZWcmopICbuUwylcQpDz8olJjzSn1kttXjJQyLEfzRLL3i3XgayuL2ashk5MbeohIg==
-X-Received: by 2002:a63:485f:: with SMTP id x31mr12381883pgk.347.1583720223731;
-        Sun, 08 Mar 2020 19:17:03 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id o19sm15830487pjr.2.2020.03.08.19.17.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Mar 2020 19:17:03 -0700 (PDT)
-Subject: Re: general protection fault in __queue_work (2)
-To:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+889cc963ed79ee90f74f@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        schatzberg.dan@gmail.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com
-References: <20200308094448.15320-1-hdanton@sina.com>
- <20200309020900.16756-1-hdanton@sina.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <092fab4c-5308-4a14-ab3d-e63707efa2f6@kernel.dk>
-Date:   Sun, 8 Mar 2020 20:17:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200309020900.16756-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WLxH7ad0XRd0xt+wbIowBUivNdpU+jvJokFmcSJMpU8=;
+        b=Pm7AlLzN54YWKX0MlAHzwr9LfH30muRkv27ztmeTepD1UsT/SCGLmEPKtlqzxIJmBG
+         6qqGiIxnkt9C8B8xr76N0vzGyZEaUkWaYuOVIGzbkks/WUftRUjy+qnOgZbzHBO2PMas
+         c8KzqEnA/Q6Q7o5ToNv4fiD1dZRDuKOFU807VFHcZvxbx3RO+tHg8oX3rIE9qV1mZt9P
+         iV6vpW+UVIjpBq7IRw+HC6i5Uol/yXB2Rv997y4CMY7yCOlsErTVkxisr+XNlty6dORO
+         sph1dC8Vk5Bh/KEVBWoFGv73KIVFHb2xLultHQCZgCFAb0BFUXpbel5d9tt1YIgEOzig
+         lZIg==
+X-Gm-Message-State: ANhLgQ0MzPRx6PUKxrGSNtgqLqcb4efj5VtCGtshYB2tGyYwWTGhthp6
+        9dsObZdHxV95Cx2+A80c4ieIFmpD
+X-Google-Smtp-Source: ADFU+vtYEnqD78gBY+v9SfpDf7+QJlaYwfrB0bMuvj/AA3A6369f6DjMWKw8apOPoJXzS4tCsh4ktQ==
+X-Received: by 2002:a17:902:760a:: with SMTP id k10mr13733390pll.306.1583720288242;
+        Sun, 08 Mar 2020 19:18:08 -0700 (PDT)
+Received: from ZB-PF114XEA.360buyad.local ([103.90.76.242])
+        by smtp.gmail.com with ESMTPSA id r12sm42394043pgu.93.2020.03.08.19.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Mar 2020 19:18:07 -0700 (PDT)
+From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
+        miguel.ojeda.sandonis@gmail.com, willy@haproxy.com,
+        ksenija.stanojevic@gmail.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, mpm@selenic.com,
+        herbert@gondor.apana.org.au, jonathan@buzzard.org.uk,
+        benh@kernel.crashing.org, davem@davemloft.net,
+        b.zolnierkie@samsung.com, rjw@rjwysocki.net, pavel@ucw.cz,
+        len.brown@intel.com, Zhenzhong Duan <zhenzhong.duan@gmail.com>
+Subject: [PATCH RFC 0/3] clean up misc device minor numbers
+Date:   Mon,  9 Mar 2020 10:17:44 +0800
+Message-Id: <20200309021747.626-1-zhenzhong.duan@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/8/20 8:09 PM, Hillf Danton wrote:
-> 
-> On Sun, 8 Mar 2020 10:17:33 -0600 Jens Axboe wrote:
->> On 3/8/20 3:44 AM, Hillf Danton wrote:
->>> @@ -1208,8 +1211,16 @@ static int __loop_clr_fd(struct loop_dev
->>>  	 *
->>>  	 * 3) unlock, del_timer_sync so if timer raced it will be a no-op
->>>  	 */
->>> -	loop_unprepare_queue(lo);
->>>  	spin_lock_irq(&lo->lo_lock);
->>> +	do {
->>> +		struct workqueue_struct *wq = lo->workqueue;
->>> +
->>> +		lo->workqueue = ERR_PTR(-EINVAL);
->>> +		spin_unlock_irq(&lo->lo_lock);
->>> +		destroy_workqueue(wq);
->>> +		spin_lock_irq(&lo->lo_lock);
->>> +	} while (0);
->>
->> This looks highly suspicious, what's the point of this loop?
-> 
-> It is a while(0) loop that just gives me the chance for adding the
-> transient local variable wq.
+Some the misc device minor numbers definitions spread in different
+local c files, specially some are duplicate number with different
+name, some are same name with conflict numbers, some prefer dynamic
+minors.
 
-I think that adds more confusion than what is necessary, and I don't think
-the approach is great to begin with as you now need various checks as well
-for the workqueue pointer.
+This patchset try to address all of them.
 
-We're freezing the queue right after anyway, which will ensure that
-nobody is going to hit an invalid workqueue pointer in terms of queueing.
-This looks more like an ordering issue.
+To be honest, I didn't try build on arm or sparc arch which some
+drivers depend on as I have little experience on cross-compile.
+But I still checked the patch carefully to ensure it builds
+in theory. Appreciate if anyone willing to test build on those arch.
 
->> Also think this series a) might not be fully cooked, and b) really
->> should have gone through the block tree.
-> 
-> Gavel in your hand, Sir.
+Zhenzhong Duan (3):
+  misc: cleanup minor number definitions in c file into miscdevice.h
+  misc: move FLASH_MINOR into miscdevice.h and fix conflicts
+  speakup: misc: Use dynamic minor numbers for speakup devices
 
-Andrew, can you please drop this series so we can work out the kinks and
-get it properly queued up after?
+ arch/arm/include/asm/nwflash.h         |  1 -
+ arch/um/drivers/random.c               |  4 +---
+ drivers/auxdisplay/charlcd.c           |  2 --
+ drivers/auxdisplay/panel.c             |  2 --
+ drivers/char/applicom.c                |  1 -
+ drivers/char/hw_random/core.c          |  2 +-
+ drivers/char/nwbutton.h                |  1 -
+ drivers/char/nwflash.c                 |  2 +-
+ drivers/char/toshiba.c                 |  2 --
+ drivers/macintosh/ans-lcd.c            |  2 +-
+ drivers/macintosh/ans-lcd.h            |  2 --
+ drivers/macintosh/via-pmu.c            |  3 ---
+ drivers/sbus/char/envctrl.c            |  2 --
+ drivers/sbus/char/flash.c              |  4 +---
+ drivers/sbus/char/uctrl.c              |  2 --
+ drivers/staging/speakup/devsynth.c     | 10 +++-------
+ drivers/staging/speakup/speakup_soft.c | 14 +++++++-------
+ drivers/video/fbdev/pxa3xx-gcu.c       |  7 +++----
+ include/linux/miscdevice.h             | 14 +++++++++++++-
+ kernel/power/user.c                    |  2 --
+ 20 files changed, 31 insertions(+), 48 deletions(-)
 
 -- 
-Jens Axboe
+1.8.3.1
 
