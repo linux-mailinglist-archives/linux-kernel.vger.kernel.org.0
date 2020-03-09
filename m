@@ -2,129 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DBA117DB64
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E1117DB6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:45:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgCIIn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:43:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38639 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbgCIIn0 (ORCPT
+        id S1726620AbgCIIpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:45:02 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17820 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726071AbgCIIpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:43:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t11so9903415wrw.5;
-        Mon, 09 Mar 2020 01:43:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3dyCaH2EW2/yhe02ff2ihoVbT2xLpKUPZBSJ5O6aTkg=;
-        b=UlsaYbnawVwWDoz+SC65neHjnGA3JlFL/BKjzfb3XdecPlJ2q7iXUj/m/CxgL57NwA
-         jkWqz4tevZEOYjaAKDASvUCxSrjr2VGEDYyqmAJT+xLeUAb7y7hFIdq6vcduvAJF1RD/
-         AKgUtUptLfZUX1zAWluUCPjpqamMBz0lTYkk7hsggrYjyAKvtyFun7n0Tz6hgN/xRgr5
-         DCQovat/CwPRfdWIMRfI+WLcX7mmsXk6U+2+bu+clngAvEjOx44jOhlPftJSnReNLhVK
-         GYm0MQIS8hdy0fIfwcdQD8cvkgSEuiH1MD+0ro5qMKUgEBdSiJvu0rCWzztJaau7ym76
-         sQ4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3dyCaH2EW2/yhe02ff2ihoVbT2xLpKUPZBSJ5O6aTkg=;
-        b=I/Jk8m+gkurHPxrTMRGm/864g7Wbz2tDR9ZMFlguex/D1EbD350Na7T5ixy83sGGbn
-         jPevE/shyO87DNMjzWtzZL8grnzdrjxZVAIrtQ05qtr9lkYCEzSaeNFFoLQZzHl5/K+l
-         2nFePOs96diM0OgA14ufbjdJAMZYz9J8u0KJIB7mJ6dnXBYj3Pifk0RSuC3L25LzBHuG
-         9us2kGxpRvrB1xYKGjHq3EBvREkMMKEZuTbaOwWSIybnG2KJbj7FLXvaRA9IPqdDyxti
-         41giYkZA/o6q7Z6HLEMKfNzMc7t0W0ncxXDhNyO/AwPZKYt/NjK2N4o+j7jdheJs1SuD
-         K9Qg==
-X-Gm-Message-State: ANhLgQ2sD+1sDYKv3Tcd3mF9Z6pzWhnlmc9N0YlapdfvgwvVD4KyiMiM
-        OQ4OOYqvGDGeSgI3rvEWKQL1omOUDooTlHlw7LW1vw==
-X-Google-Smtp-Source: ADFU+vshR/9K1P4joj1qyXF1zngyt9MyksUpJP02ZOzlb7IUD8H4JCMFkF32Q2elfFLlWVYTyw6IrnLfB2TayQgWuk4=
-X-Received: by 2002:adf:fac3:: with SMTP id a3mr19960796wrs.370.1583743404409;
- Mon, 09 Mar 2020 01:43:24 -0700 (PDT)
+        Mon, 9 Mar 2020 04:45:02 -0400
+X-Greylist: delayed 456 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Mar 2020 04:44:58 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1583743463;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=KYW5g7g60jlqHjJZmnr0prG4/+Or022x+S4xgii01O8=;
+        b=alszJYuHTDjPCMOgeVyxkWaJ7mfBwId07TEPVKPtWuXJv2d3Fjit3+vBSqEYdF80
+        QoEnFTRiuRPhHyr/6EPQ+l7F1iOPd6QFOluLvXKIKqYkn0NHZIFAERZVTwM3BS7ueSx
+        vmi625jzdt+M78QphtL4MEO5r9GeMP0hhHdx/7VA=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1583743461607865.8077063393426; Mon, 9 Mar 2020 16:44:21 +0800 (CST)
+Date:   Mon, 09 Mar 2020 16:44:21 +0800
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     "Tiezhu Yang" <yangtiezhu@loongson.cn>
+Cc:     "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+        "Huacai Chen" <chenhc@lemote.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "linux-mips" <linux-mips@vger.kernel.org>,
+        "linux-pci" <linux-pci@vger.kernel.org>,
+        "linux-ide" <linux-ide@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Xuefeng Li" <lixuefeng@loongson.cn>
+Message-ID: <170be7768e3.c920b6d62296.161774605460069850@flygoat.com>
+In-Reply-To: <1583742206-29163-5-git-send-email-yangtiezhu@loongson.cn>
+References: <1583742206-29163-1-git-send-email-yangtiezhu@loongson.cn> <1583742206-29163-5-git-send-email-yangtiezhu@loongson.cn>
+Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[PATCH_4/6]_MIPS:_Loongso?=
+ =?UTF-8?Q?n:_Add_DMA_support_for_7A1000?=
 MIME-Version: 1.0
-References: <20200305103228.9686-1-zhang.lyra@gmail.com> <20200305103228.9686-2-zhang.lyra@gmail.com>
- <CAMuHMdU-gAhupHotQTHAZfopkGF_jQc-VrVxb24caw_BfzWd6g@mail.gmail.com>
- <CAAfSe-sonfA=6x9uvQXaHniQaXR8hWZa4uOcWxoo+Z_XT9QNhw@mail.gmail.com> <CAMuHMdUBkS+pPyPid2K=40jaTOSnAE_L-vJP5knmyVr8Fr5_hg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUBkS+pPyPid2K=40jaTOSnAE_L-vJP5knmyVr8Fr5_hg@mail.gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Mon, 9 Mar 2020 16:42:48 +0800
-Message-ID: <CAAfSe-uZSYZopDCGxQbGBQQ5+NZK6L79P+T62nfnL9CiZka++g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] tty: serial: make SERIAL_SPRD not depend on ARCH_SPRD
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Priority: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
 
-On Mon, 9 Mar 2020 at 16:01, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Chunyan,
->
-> On Mon, Mar 9, 2020 at 2:18 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> > On Fri, 6 Mar 2020 at 20:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Thu, Mar 5, 2020 at 11:33 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > >
-> > > > Remove the dependency with ARCH_SPRD from sprd serial/console Kconfig-s,
-> > > > since we want them can be built-in when ARCH_SPRD is set as 'm'.
-> > >
-> > > Why would you want a serial driver for a specific platform to be builtin,
-> > > while all other platform support is modular?
-> >
-> > Oh, that's not this patch means.
-> >
-> > We just want serial driver can be builtin for any platform, so it
->
-> What would be the benefit of the user to be able to have the SPRD serial
-> driver built-in on any platform?  AFAIU, it supports only Spreadtrum
-> platforms.
 
-Right, it does support Spreadtrum platforms only indeed.
-Like I said on the replay to patch 1/2, simply because I want serial
-driver can be builtin all the time, no matter ARCH_SPRD is m or y.
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2020-03-09 16:23:24 Tiezhu Yan=
+g <yangtiezhu@loongson.cn> =E6=92=B0=E5=86=99 ----
+ > Implement __phys_to_dma() and __dma_to_phys() according to the
+ > node id offset in 7A1000 DMA route config register.
 
-Regards,
-Chunyan
+That design shocked me a lot. And It is known that some firmware didn't con=
+figure
+HT Recieve window correctly to make it work. So probably for mainline kerne=
+l,
+just set DMA_MASK to limit LS7A DMA address to Node0 would be a better Opti=
+on?
+=20
+ > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+ > ---
+ >  arch/mips/include/asm/mach-loongson64/boot_param.h |  1 +
+ >  arch/mips/loongson64/dma.c                         | 49 +++++++++++++++=
+++++++-
+ >  arch/mips/loongson64/init.c                        | 13 ++++++
+ >  3 files changed, 61 insertions(+), 2 deletions(-)
+ >=20
+ > diff --git a/arch/mips/include/asm/mach-loongson64/boot_param.h b/arch/m=
+ips/include/asm/mach-loongson64/boot_param.h
+ > index 225a563..60e7a7e 100644
+ > --- a/arch/mips/include/asm/mach-loongson64/boot_param.h
+ > +++ b/arch/mips/include/asm/mach-loongson64/boot_param.h
+ > @@ -218,5 +218,6 @@ struct loongson_system_configuration {
+ >  extern struct efi_memory_map_loongson *loongson_memmap;
+ >  extern struct loongson_system_configuration loongson_sysconf;
+ >  extern struct board_devices *eboard;
+ > +extern u32 node_id_offset;
+ > =20
+ >  #endif
+ > diff --git a/arch/mips/loongson64/dma.c b/arch/mips/loongson64/dma.c
+ > index 5e86635..997c257 100644
+ > --- a/arch/mips/loongson64/dma.c
+ > +++ b/arch/mips/loongson64/dma.c
+ > @@ -2,24 +2,69 @@
+ >  #include <linux/dma-direct.h>
+ >  #include <linux/init.h>
+ >  #include <linux/swiotlb.h>
+ > +#include <boot_param.h>
+ > =20
+ > -dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
+ > +struct loongson_dma_ops {
+ > +    dma_addr_t (*phys_to_dma)(struct device *dev, phys_addr_t paddr);
+ > +    phys_addr_t (*dma_to_phys)(struct device *dev, dma_addr_t daddr);
+ > +};
+ > +
+ > +struct loongson_dma_ops loongson_dma;
+ > +
+ > +dma_addr_t __rs780e_phys_to_dma(struct device *dev, phys_addr_t paddr)
+ >  {
+ >      /* We extract 2bit node id (bit 44~47, only bit 44~45 used now) fro=
+m
+ >       * Loongson-3's 48bit address space and embed it into 40bit */
+ >      long nid =3D (paddr >> 44) & 0x3;
+ > +
+ >      return ((nid << 44) ^ paddr) | (nid << 37);
+ >  }
+ > =20
+ > -phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t daddr)
+ > +dma_addr_t __ls7a_phys_to_dma(struct device *dev, phys_addr_t paddr)
+ > +{
+ > +    long nid =3D (paddr >> 44) & 0x3;
+ > +
+ > +    return ((nid << 44) ^ paddr) | (nid << (36 + node_id_offset));
+ > +}
+ > +
+ > +
+ > +dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
+ > +{
+ > +    return loongson_dma.phys_to_dma(dev, paddr);
+ > +}
+ > +
+ > +phys_addr_t __rs780e_dma_to_phys(struct device *dev, dma_addr_t daddr)
+ >  {
+ >      /* We extract 2bit node id (bit 44~47, only bit 44~45 used now) fro=
+m
+ >       * Loongson-3's 48bit address space and embed it into 40bit */
+ >      long nid =3D (daddr >> 37) & 0x3;
+ > +
+ >      return ((nid << 37) ^ daddr) | (nid << 44);
+ >  }
+ > =20
+ > +phys_addr_t __ls7a_dma_to_phys(struct device *dev, dma_addr_t daddr)
+ > +{
+ > +    long nid =3D (daddr >> (36 + node_id_offset)) & 0x3;
+ > +
+ > +    return ((nid << (36 + node_id_offset)) ^ daddr) | (nid << 44);
+ > +}
+ > +
+ > +phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t daddr)
+ > +{
+ > +    return loongson_dma.dma_to_phys(dev, daddr);
+ > +}
+ > +
+ >  void __init plat_swiotlb_setup(void)
+ >  {
+ >      swiotlb_init(1);
+ > +
+ > +    if (strstr(eboard->name, "780E")) {
+ > +        loongson_dma.phys_to_dma =3D __rs780e_phys_to_dma;
+ > +        loongson_dma.dma_to_phys =3D __rs780e_dma_to_phys;
+ > +    }
+ > +
+ > +    if (strstr(eboard->name, "7A1000")) {
+ > +        loongson_dma.phys_to_dma =3D __ls7a_phys_to_dma;
+ > +        loongson_dma.dma_to_phys =3D __ls7a_dma_to_phys;
+ > +    }
+ >  }
+ > diff --git a/arch/mips/loongson64/init.c b/arch/mips/loongson64/init.c
+ > index 5ac1a0f..dd8463d 100644
+ > --- a/arch/mips/loongson64/init.c
+ > +++ b/arch/mips/loongson64/init.c
+ > @@ -12,6 +12,11 @@
+ >  #include <asm/fw/fw.h>
+ > =20
+ >  #include <loongson.h>
+ > +#include <boot_param.h>
+ > +
+ > +#define NODE_ID_OFFSET_ADDR     0x90000E001001041CULL
+ > +
+ > +u32 node_id_offset;
+ > =20
+ >  static void __init mips_nmi_setup(void)
+ >  {
+ > @@ -23,6 +28,11 @@ static void __init mips_nmi_setup(void)
+ >      flush_icache_range((unsigned long)base, (unsigned long)base + 0x80)=
+;
+ >  }
+ > =20
+ > +static void ls7a_early_config(void)
+ > +{
+ > +    node_id_offset =3D (*(u32 *)NODE_ID_OFFSET_ADDR >> 8) & 0x1F;
 
->
-> > should not depend on a config which can be set as 'm' (i.e. ARCH_SPRD)
-> > , otherwise if the config was set as 'm', the serial driver can't be
-> > selected as 'y' then.
->
-> I ask about that as a reply to PATCH 1/2.
->
-> > That's what I mean.
->
-> > > > --- a/drivers/tty/serial/Kconfig
-> > > > +++ b/drivers/tty/serial/Kconfig
-> > > > @@ -1452,7 +1452,6 @@ config SERIAL_MEN_Z135
-> > > >
-> > > >  config SERIAL_SPRD
-> > > >         tristate "Support for Spreadtrum serial"
-> > > > -       depends on ARCH_SPRD
-> > > >         select SERIAL_CORE
-> > > >         help
-> > > >           This enables the driver for the Spreadtrum's serial.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Please avoid raw pointer. Use readl/writel instead.
+
+ > +}
+ > +
+ >  void __init prom_init(void)
+ >  {
+ >      fw_init_cmdline();
+ > @@ -32,6 +42,9 @@ void __init prom_init(void)
+ >      set_io_port_base((unsigned long)
+ >          ioremap(LOONGSON_PCIIO_BASE, LOONGSON_PCIIO_SIZE));
+ > =20
+ > +    if (strstr(eboard->name, "7A1000"))
+ > +        ls7a_early_config();
+ > +
+ >      prom_init_numa_memory();
+ > =20
+ >      /* Hardcode to CPU UART 0 */
+ > --=20
+ > 2.1.0
+ >=20
+ >
