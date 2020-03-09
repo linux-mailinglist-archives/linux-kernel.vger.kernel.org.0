@@ -2,127 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15AF17E9D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:17:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4D417E9D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgCIURr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:17:47 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:43297 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgCIURq (ORCPT
+        id S1726640AbgCIUS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:18:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43046 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgCIUS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:17:46 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        Mon, 9 Mar 2020 16:18:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=TWIHUDy3jBW0cS7WR3QKj5Hh4Aa7h7NpiybbLVlDwD8=; b=btPRRmqpXB8zYUKvCBAnCYqbS8
+        zLOXODaCWXirdkuGQEu+x4UaVagtE/ql7+eji0mE0GDDQ1xci4BGXfnEFd+Gfy2+36YLHUc8HMQVm
+        Ku9dVwcwbcpsPaPHTm258mG5vuJmzZBrwXUSIDVLOrZm2pEH5FD8iOKze/wwGZpRURxjTeUeC2YKJ
+        3JBswWTz3orI/X4b6M8iAfLCn2llhLew6McPjYx8E/T4K1EvuRNAVgoRL5zwf52uEALeq6TarclTd
+        ERovtuTRXMakFf1nmoY3XQcmRz+mYMhFRJ9WByAtVbqMeSaP3WLdEod56mrUi8j/pVeX0IuT7lM3i
+        vPMaa0xQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jBOrN-0001up-J9; Mon, 09 Mar 2020 20:18:45 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 2C33223EB9;
-        Mon,  9 Mar 2020 21:17:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1583785062;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z4lMfHVJtv1/7tVOgY+2NWcDkuP/vkxxc0vG3i3iujk=;
-        b=NBn4ng5rW9oF8jRIKbzD31HivmfpG9BA77wMSo0PPFk6bAfzl3PR72WqOaR7fjDpHdA3sE
-        77UMpTWS/9sN2Naf6SKSh6yNpPZjkpJOcwGJxbP1PO5bDjUajSZyDnmbRtpReyBIMfb2VP
-        1JOHIrABm2aB7IU06lyO+tfP9+TnPVo=
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2F8C23011E0;
+        Mon,  9 Mar 2020 21:18:42 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DF2BF214344E6; Mon,  9 Mar 2020 21:18:42 +0100 (CET)
+Date:   Mon, 9 Mar 2020 21:18:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: Instrumentation and RCU
+Message-ID: <20200309201842.GL12561@hirez.programming.kicks-ass.net>
+References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 09 Mar 2020 21:17:42 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        angelo@sysam.it, andrew.smirnov@gmail.com,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Wei Chen <weic@nvidia.com>, Mohamed Hosny <mhosny@nvidia.com>,
-        peng.ma@nxp.com
-Subject: Re: [PATCH 5/6] arm64: dts: ls1028a: Specify the DMA channels for the
- DSPI controllers
-In-Reply-To: <CA+h21hp2MxLqLJL9AnufmW_-OQFdiY7p4Db97G3eTr_MUkH4TA@mail.gmail.com>
-References: <20200309145624.10026-1-olteanv@gmail.com>
- <20200309145624.10026-6-olteanv@gmail.com>
- <83af52172a3cabd662de1ed9574e4247@walle.cc>
- <CA+h21hp2MxLqLJL9AnufmW_-OQFdiY7p4Db97G3eTr_MUkH4TA@mail.gmail.com>
-Message-ID: <3b25c8b5fc9c433715e1fa99bc515822@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 2C33223EB9
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         NEURAL_HAM(-0.00)[-0.385];
-         FREEMAIL_TO(0.00)[gmail.com];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,arm.com,deif.com,sysam.it,gmail.com,embeddedor.com,nvidia.com,nxp.com];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mu8p797b.fsf@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 2020-03-09 20:59, schrieb Vladimir Oltean:
-> On Mon, 9 Mar 2020 at 21:06, Michael Walle <michael@walle.cc> wrote:
->> 
->> Am 2020-03-09 15:56, schrieb Vladimir Oltean:
->> > From: Vladimir Oltean <vladimir.oltean@nxp.com>
->> >
->> > LS1028A has a functional connection to the eDMA module. Even if the
->> > spi-fsl-dspi.c driver is not using DMA for LS1028A now, define the
->> > slots
->> > in the DMAMUX for connecting the eDMA channels to the 3 DSPI
->> > controllers.
->> >
->> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
->> > ---
->> >  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 6 ++++++
->> >  1 file changed, 6 insertions(+)
->> >
->> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> > b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> > index 515e0a1b934f..18155273a46e 100644
->> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> > @@ -298,6 +298,8 @@
->> >                       interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
->> >                       clock-names = "dspi";
->> >                       clocks = <&clockgen 4 1>;
->> > +                     dmas = <&edma0 0 62>, <&edma0 0 60>;
->> > +                     dma-names = "tx", "rx";
->> 
->> minor nit. Other nodes specified the dma channels as
->> 
->> dma-names = "tx", "rx";
->> dmas = <&edma0 0 62>,
->>         <&edma0 0 60>;
->> 
->> -michael
->> 
+On Mon, Mar 09, 2020 at 06:02:32PM +0100, Thomas Gleixner wrote:
+> #4 Protecting call chains
 > 
-> Does it matter?
+>    Our current approach of annotating functions with notrace/noprobe is
+>    pretty much broken.
+> 
+>    Functions which are marked NOPROBE or notrace call out into functions
+>    which are not marked and while this might be ok, there are enough
+>    places where it is not. But we have no way to verify that.
+> 
+>    That's just a recipe for disaster. We really cannot request from
+>    sysadmins who want to use instrumentation to stare at the code first
+>    whether they can place/enable an instrumentation point somewhere.
+>    That'd be just a bad joke.
+> 
+>    I really think we need to have proper text sections which are off
+>    limit for any form of instrumentation and have tooling to analyze the
+>    calls into other sections. These calls need to be annotated as safe
+>    and intentional.
 
-No, therefore "minor nit". Its just formatted other then everything else 
-in the file.
+So the only tool I know of that does full callchains is smatch. And in
+one of my series I did prod Dan about this.
 
--michael
+The alternative is that we bite the bullet and add a vmlinux objtool
+pass. This keeps getting mentioned, so maybe it is time :/ I'd hate it,
+because it will increase build time at the slowest point, but it'd get
+us the coverage we need here.
