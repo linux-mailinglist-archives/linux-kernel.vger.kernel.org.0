@@ -2,171 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6046E17DF0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:52:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9941E17DF15
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:55:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgCILwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:52:19 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46290 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCILwT (ORCPT
+        id S1726464AbgCILzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 07:55:35 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:45842 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCILzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:52:19 -0400
-Received: by mail-oi1-f194.google.com with SMTP id a22so9751478oid.13
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:52:18 -0700 (PDT)
+        Mon, 9 Mar 2020 07:55:35 -0400
+Received: by mail-wr1-f47.google.com with SMTP id m9so1700097wro.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R4HPoRw+ValB5ZbyEUy46k2en5A7aJXO+W5FltijQOQ=;
-        b=k6Yk57QAQsG+jr62EeMZFC2rxh4PDkZCHhrgk9UjV+35yOIWaVn2Xlje8cbGmQQS57
-         T4FripUMPXasCBwaPUdzqe6wANX7a2DxCQ9sSQtpKfA7HNjV4ajf5CA2lX75xD/AHP06
-         BpO/+1BZb1DzPdLny6RB42ufghknOZ3hfEMqTHREbv1+CQvfQB05IeV4vf/EtevYrhYH
-         k3wqMARQI//6vyQXxQU2zTxH9oIRhTn4bsucHdzwecxPNG7pTa9gQ1+JI/dK/1T/NR6j
-         mMAPx8ec+rYXV/Qiv/9uMzIAF25K1eS03O2TGTzIQBg27vJbV0p3q353y1dOdxOZ6GWi
-         k13w==
+        h=from:to:cc:subject:date:message-id;
+        bh=x3njD6+9rCh2R4ZtyRt9jkAQWO2ArwtXcsjyqU2Z3iM=;
+        b=ECV2TITwkXMm4zdIP2BzU2I+37Ph6om2K6g/pWjT8D7iGL22STIRcf1Qu+YhmyiYBT
+         LvPaIqyhIuL74OlMtJCFO8J70Ne7G3A9DwA0V/2W4/zb6GgWtTkINr4JnMfRzPRsXoYt
+         3s9MXzvkDUC80Qzbt4oxIN194VzZ6k+hMP1HHqWlcw1p9QDx+RrO6szBd5HwZgpAudw9
+         gcXMDOt1m6JRp3QAVLCD7536GdW6lyoC36fgLP9LhiIP07K4U1Zz0f+Pi+YZ5Gm9uiyF
+         RgvsmavCQjgiTvxtyvUNknpps6s/w75TRhpg9N3I/y+7Hnfz10ixObBl9YiEkIpFpRKG
+         a2Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R4HPoRw+ValB5ZbyEUy46k2en5A7aJXO+W5FltijQOQ=;
-        b=ukd7p63SgoW8KQwf1lbqZ+wC9wjBz7Xdzy5ZwZSdS6x7D1H1+uiGe0mzTcJdvKEaNv
-         zgU8w+ZnPGUeVaxFqEkfin5ZIQXrOdfC9Lgl3AsDF3R7smsXgg6v4rigdPPu1TgZqLMP
-         vNojZjA+NwH2ePiuScnVDjf2J6+Jxv55y9pCIyNNe6OMNnXLuDuNz0nvpdPucTaMp34k
-         8w0YNg+tj1ErVJmNwALtFa7HHkN3cPAqbtanPAWAsXpWzGMKm/uV4cirnwNOwkGR4XHx
-         d6mS3rCoZTTetefM2LHkhgMC7xXsE0sPhEnWIitN5gD0zuC7WMzs6coYMwC060Fz2v9K
-         Dt6g==
-X-Gm-Message-State: ANhLgQ0XLXric5N76OgFNRL7KznGSy0P0QANMJ25FkNFCUAExIC2s+3H
-        Eyuna63nL0wPmSKYtBLZdm613M4IH8RsR2nnA0TjOQ==
-X-Google-Smtp-Source: ADFU+vv1+chTLOhUJera67jlIXT1UdFlZALI0u8sTrfTccw0pNHY5BnNHlPCESLK/t/7gZ8HM+Fvx/w0k6AyTbriI6s=
-X-Received: by 2002:aca:5ed4:: with SMTP id s203mr6837973oib.102.1583754738385;
- Mon, 09 Mar 2020 04:52:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200309112547.22123-1-oshpigelman@habana.ai>
-In-Reply-To: <20200309112547.22123-1-oshpigelman@habana.ai>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Mon, 9 Mar 2020 13:51:40 +0200
-Message-ID: <CAFCwf11VL2S96Moi8M3rPXdNrPH02aXnGvxeHRgQ=w80GEfsVA@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs: add print upon clock change
-To:     Omer Shpigelman <oshpigelman@habana.ai>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=x3njD6+9rCh2R4ZtyRt9jkAQWO2ArwtXcsjyqU2Z3iM=;
+        b=CTq962+kqV3Nk6T5BlHOp9FB21GOw2cWUBdRC24UMQrRR/XJW2FhbS1vJJOhceGtrK
+         0wB6/cOB0qUrDf383mww5WNr8b9BJU8sEbyhoVn4MNBqzF/ihNBDxWzbZK/5HaErvYEG
+         eDla7kVmTnkYg5LX3q/UErahsoycW2kgRMWCD6cppy6TbrrAJGvWRdN1SeuaouGUZoJx
+         ZJZB3Y8vwEwnnvEfbjtYkqjrmL6WV5tdkM39+Nb0Kn9i8eqN+t33piN0jw48el9uaXwM
+         D/7+SOC88YJZVExPEUyy6CaNk+eISL4pBok1TDCs0QM6tEO712IlVdeLo/goc6wK3Z7J
+         MwKQ==
+X-Gm-Message-State: ANhLgQ0lq9ofxNdBKrAkgbaHve6X1vlDdLIv+pdMerIk5OrCauESQReF
+        T1cy+5XogTcAnwjtQ5Nt+YA=
+X-Google-Smtp-Source: ADFU+vtqAReD2EwH8fWWOIFACtOM1XV1H+C3VqllXEMUrnrrFkk9SUU8nXY5zaTNBoY3XQIYQuk73Q==
+X-Received: by 2002:adf:94c2:: with SMTP id 60mr13568774wrr.396.1583754933357;
+        Mon, 09 Mar 2020 04:55:33 -0700 (PDT)
+Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
+        by smtp.gmail.com with ESMTPSA id m21sm25035226wmi.27.2020.03.09.04.55.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 04:55:32 -0700 (PDT)
+From:   shiva.linuxworks@gmail.com
+X-Google-Original-From: sshivamurthy@micron.com
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: [PATCH v6 0/6] Add new series Micron SPI NAND devices
+Date:   Mon,  9 Mar 2020 12:52:24 +0100
+Message-Id: <20200309115230.7207-1-sshivamurthy@micron.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 1:25 PM Omer Shpigelman <oshpigelman@habana.ai> wrote:
->
-> Add print upon clock slow down due to power consumption or overheating.
-> In addition, add print when back to optimal clock.
->
-> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
-> ---
->  drivers/misc/habanalabs/goya/goya.c           | 50 ++++++++++++++++++-
->  .../include/goya/goya_async_events.h          |  4 ++
->  2 files changed, 53 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-> index 9d4295cc83cf..1ccf2ed9a8dc 100644
-> --- a/drivers/misc/habanalabs/goya/goya.c
-> +++ b/drivers/misc/habanalabs/goya/goya.c
-> @@ -324,7 +324,11 @@ static u32 goya_all_events[] = {
->         GOYA_ASYNC_EVENT_ID_DMA_BM_CH1,
->         GOYA_ASYNC_EVENT_ID_DMA_BM_CH2,
->         GOYA_ASYNC_EVENT_ID_DMA_BM_CH3,
-> -       GOYA_ASYNC_EVENT_ID_DMA_BM_CH4
-> +       GOYA_ASYNC_EVENT_ID_DMA_BM_CH4,
-> +       GOYA_ASYNC_EVENT_ID_POWER_ENV_S,
-> +       GOYA_ASYNC_EVENT_ID_POWER_ENV_E,
-> +       GOYA_ASYNC_EVENT_ID_THERMAL_ENV_S,
-> +       GOYA_ASYNC_EVENT_ID_THERMAL_ENV_E
->  };
->
->  static int goya_mmu_clear_pgt_range(struct hl_device *hdev);
-> @@ -4389,6 +4393,14 @@ static const char *_goya_get_event_desc(u16 event_type)
->                 return "TPC%d_bmon_spmu";
->         case GOYA_ASYNC_EVENT_ID_DMA_BM_CH0 ... GOYA_ASYNC_EVENT_ID_DMA_BM_CH4:
->                 return "DMA_bm_ch%d";
-> +       case GOYA_ASYNC_EVENT_ID_POWER_ENV_S:
-> +               return "POWER_ENV_S";
-> +       case GOYA_ASYNC_EVENT_ID_POWER_ENV_E:
-> +               return "POWER_ENV_E";
-> +       case GOYA_ASYNC_EVENT_ID_THERMAL_ENV_S:
-> +               return "THERMAL_ENV_S";
-> +       case GOYA_ASYNC_EVENT_ID_THERMAL_ENV_E:
-> +               return "THERMAL_ENV_E";
->         default:
->                 return "N/A";
->         }
-> @@ -4619,6 +4631,33 @@ static int goya_unmask_irq(struct hl_device *hdev, u16 event_type)
->         return rc;
->  }
->
-> +static void goya_print_clk_change_info(struct hl_device *hdev, u16 event_type)
-> +{
-> +       switch (event_type) {
-> +       case GOYA_ASYNC_EVENT_ID_POWER_ENV_S:
-> +               dev_info_ratelimited(hdev->dev,
-> +                       "Clock throttling due to power consumption\n");
-> +               break;
-> +       case GOYA_ASYNC_EVENT_ID_POWER_ENV_E:
-> +               dev_info_ratelimited(hdev->dev,
-> +                       "Power envelop is safe, back to optimal clock\n");
-> +               break;
-> +       case GOYA_ASYNC_EVENT_ID_THERMAL_ENV_S:
-> +               dev_info_ratelimited(hdev->dev,
-> +                       "Clock throttling due to overheating\n");
-> +               break;
-> +       case GOYA_ASYNC_EVENT_ID_THERMAL_ENV_E:
-> +               dev_info_ratelimited(hdev->dev,
-> +                       "Thermal envelop is safe, back to optimal clock\n");
-> +               break;
-> +
-> +       default:
-> +               dev_err(hdev->dev, "Received invalid clock change event %d\n",
-> +                       event_type);
-> +               break;
-> +       }
-> +}
-> +
->  void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
->  {
->         u32 ctl = le32_to_cpu(eq_entry->hdr.ctl);
-> @@ -4702,6 +4741,15 @@ void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
->                 goya_unmask_irq(hdev, event_type);
->                 break;
->
-> +       case GOYA_ASYNC_EVENT_ID_POWER_ENV_S:
-> +       case GOYA_ASYNC_EVENT_ID_POWER_ENV_E:
-> +       case GOYA_ASYNC_EVENT_ID_THERMAL_ENV_S:
-> +       case GOYA_ASYNC_EVENT_ID_THERMAL_ENV_E:
-> +               goya_print_irq_info(hdev, event_type, false);
-> +               goya_print_clk_change_info(hdev, event_type);
-> +               goya_unmask_irq(hdev, event_type);
-> +               break;
-> +
->         default:
->                 dev_err(hdev->dev, "Received invalid H/W interrupt %d\n",
->                                 event_type);
-> diff --git a/drivers/misc/habanalabs/include/goya/goya_async_events.h b/drivers/misc/habanalabs/include/goya/goya_async_events.h
-> index bb7a1aa3279e..6be41a846c99 100644
-> --- a/drivers/misc/habanalabs/include/goya/goya_async_events.h
-> +++ b/drivers/misc/habanalabs/include/goya/goya_async_events.h
-> @@ -188,6 +188,10 @@ enum goya_async_event_id {
->         GOYA_ASYNC_EVENT_ID_HALT_MACHINE = 485,
->         GOYA_ASYNC_EVENT_ID_INTS_REGISTER = 486,
->         GOYA_ASYNC_EVENT_ID_SOFT_RESET = 487,
-> +       GOYA_ASYNC_EVENT_ID_POWER_ENV_S = 507,
-> +       GOYA_ASYNC_EVENT_ID_POWER_ENV_E = 508,
-> +       GOYA_ASYNC_EVENT_ID_THERMAL_ENV_S = 509,
-> +       GOYA_ASYNC_EVENT_ID_THERMAL_ENV_E = 510,
->         GOYA_ASYNC_EVENT_ID_LAST_VALID_ID = 1023,
->         GOYA_ASYNC_EVENT_ID_SIZE
->  };
-> --
-> 2.17.1
->
+From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-This patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+This patchset is for the new series of Micron SPI NAND devices, and the
+following links are their datasheets.
+
+M78A:
+[1] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf
+[2] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf
+
+M79A:
+[3] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf
+[4] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf
+
+M70A:
+[5] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf
+[6] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf
+[7] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf
+[8] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf
+
+Changes since v5:
+-----------------
+
+1. Rebased series to v5.6-rc1.
+
+Changes since v4:
+-----------------
+
+1. Patch 2 is separated into two as per the comment by Boris.
+2. Renamed MICRON_CFG_CONTI_READ into MICRON_CFG_CR.
+3. Reworked die selection function as per the comment by Boris.
+
+Changes since v3:
+-----------------
+
+1. Patch 3 and 4 reworked as follows
+   - Patch 3 introducing the Continuous read feature
+   - Patch 4 adding devices with the feature
+
+Changes since v2:
+-----------------
+
+1. Patch commit messages have been modified.
+2. Handled devices with Continuous Read feature with vendor specific flag.
+3. Reworked die selection function as per the comment.
+
+Changes since v1:
+-----------------
+
+1. The patch split into multiple patches.
+2. Added comments for selecting the die.
+
+Shivamurthy Shastri (6):
+  mtd: spinand: micron: Generalize the OOB layout structure and function
+    names
+  mtd: spinand: micron: Describe the SPI NAND device MT29F2G01ABAGD
+  mtd: spinand: micron: Add new Micron SPI NAND devices
+  mtd: spinand: micron: identify SPI NAND device with Continuous Read
+    mode
+  mtd: spinand: micron: Add M70A series Micron SPI NAND devices
+  mtd: spinand: micron: Add new Micron SPI NAND devices with multiple
+    dies
+
+ drivers/mtd/nand/spi/micron.c | 150 ++++++++++++++++++++++++++++++----
+ include/linux/mtd/spinand.h   |   1 +
+ 2 files changed, 137 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
+
