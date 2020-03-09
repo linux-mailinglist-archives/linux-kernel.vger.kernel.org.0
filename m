@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FD917E135
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1660C17E13B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:31:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgCINae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:30:34 -0400
-Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:39050 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726427AbgCINad (ORCPT
+        id S1726647AbgCINbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:31:15 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42984 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbgCINbP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:30:33 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 568B040217;
-        Mon,  9 Mar 2020 13:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1583760633; bh=97U/sdHYXIUwOOXmojGePjGjAgvZEazHf2GWd8NdtTA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=azbGtfZaswH7QBuBAURz58oiW7DrrvpSItJTvgWGtGxGnFzgj7VGRVQNK8haQiKTc
-         07McFHwpGbWJ+Pt4uRJMauf4jAMRmiEjekuKx/StMXiSD/zl6Aye1B+YIa9svNlVwI
-         Zym7ZCfXuQVLIf4YWFxSuIFwuyFXjhoKtoNCekcmHYpREXOcC0Hvb0ogO7lmraoWhU
-         i4o0Al70y6P4siHk6mMBdn7ea9I8G+Ljx8NdP6wr7a+HsLAp83nJo4hWFaoi5ZvkzP
-         Z1V61c+JxACn4nzZwW3bsm7ZLC0pTwlKLqzfF2pTgXnLzEhrQC2hGlqd3cGQL24T9w
-         3v3F8X89Hhjrg==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7AC59A005C;
-        Mon,  9 Mar 2020 13:30:29 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: stmmac: selftests: Fix L3/L4 Filtering test
-Date:   Mon,  9 Mar 2020 14:30:22 +0100
-Message-Id: <4e5d8d273498a1c1c6b8f983e5dd7590c6dfd26a.1583760590.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 9 Mar 2020 09:31:15 -0400
+Received: by mail-qk1-f194.google.com with SMTP id e11so9112186qkg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 06:31:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=P6XoxJQMVL3p8wdS2Ew5v812zn19DVoEQr35exngzuA=;
+        b=rPBlxr6Dpa68FX+LWFqy32K6Y9WRXzVWuTzTkkCTkKm7q/wctlCYUDJlg1Y52jklbk
+         7cEmCb5pF4DU3qMZXmKdohW8RrZAxqqh5YcEgVAeK3b4JTQf0qLcrQvFtoKIXlI8UWiG
+         MN/Bsg2hxAy4gfNlFV+wELZXYnHx8B7vGjhgaRTdA8okD4u6nDfWVTPf8VpT5JwlbJlS
+         1uPKVUPjbQM6mSuWqFozdP/ptU+rIQS9nrasX8LQsBarXdhupnil71jxlG76d81bRhcv
+         mNcetHft5M2ZN35ZvyUnqyVOnzxVeTWM2HNlz68JMxKvHl34xeuYgJjxoXbVIYgHdJRa
+         37LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=P6XoxJQMVL3p8wdS2Ew5v812zn19DVoEQr35exngzuA=;
+        b=CdgklLOlBsLGbIqq78NyQ+REgAmtzsC5JIuSDSicavR+x2DnV1gWnma3S3HRKF8rHI
+         XREajJVnA5xiGOiSedDAUWKZnMrxqEhZzHFUVi/eO+RynazXaMFDTo76zmGu59W+IIzZ
+         Yz/2QUaW2KrF3RxgDuJm4aJJ7Z0diaB36K+6cKo6GcretMjiHLb/loGX5Z4YF6rYDqJx
+         ta50zBu+JN+yJstxXz6dFVQkwxEcVecpWPWVpF+mDRHrYjefeTxA07XT/NvdFFzdugjC
+         6UzPO+NCXFSvAp5pe0onIYkrzprGBqoyv5cuKzNFovg66RsB943ukzn30w3nlMNwwikI
+         12Ew==
+X-Gm-Message-State: ANhLgQ2Ctt/HXcHKrljm8b/s4OwyWxzLOt7pBtLRqFYmeen3J6oVYum/
+        eGnipzDwnWsRH+kP0lIaNY4=
+X-Google-Smtp-Source: ADFU+vuhbcQL0w+/96VAmg9Hv0GGmOUwgOBtIq1EL0ACTbszfPyZQ8Ku7TLdEsA1JKIsHbOOpRnJXQ==
+X-Received: by 2002:a37:8e45:: with SMTP id q66mr15221915qkd.129.1583760673926;
+        Mon, 09 Mar 2020 06:31:13 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id p16sm970542qkj.5.2020.03.09.06.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 06:31:13 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 598D940009; Mon,  9 Mar 2020 10:31:11 -0300 (-03)
+Date:   Mon, 9 Mar 2020 10:31:11 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Ian Rogers <irogers@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Leo Yan <leo.yan@linaro.org>, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 1/1] perf/tool: fix read in event parsing
+Message-ID: <20200309133111.GB477@kernel.org>
+References: <20200307073121.203816-1-irogers@google.com>
+ <20200307104501.GA311316@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307104501.GA311316@krava>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 319a1d19471e, stmmac only support basic HW stats type for
-action. Set this field in the L3/L4 Filtering test so that it correctly
-setups the filter instead of returning EOPNOTSUPP.
+Em Sat, Mar 07, 2020 at 11:45:01AM +0100, Jiri Olsa escreveu:
+> On Fri, Mar 06, 2020 at 11:31:21PM -0800, Ian Rogers wrote:
+> > ADD_CONFIG_TERM accesses term->weak, however, in get_config_chgs this
+> > value is accessed outside of the list_for_each_entry and references
+> > invalid memory. Add an argument for ADD_CONFIG_TERM for weak and set it
+> > to false in the get_config_chgs case.
+> > This bug was cause by clang's address sanitizer and libfuzzer. It can be
+> > reproduced with a command line of:
+> >   perf stat -a -e i/bs,tsc,L2/o
+> > 
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> 
+> nice catch
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Fixes: 319a1d19471e ("flow_offload: check for basic action hw stats type")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+Thanks, applied to perf/urgent.
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-index 586a657be984..07dbe4f5456e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-@@ -1387,6 +1387,7 @@ static int __stmmac_test_l3filt(struct stmmac_priv *priv, u32 dst, u32 src,
- 	cls->rule = rule;
- 
- 	rule->action.entries[0].id = FLOW_ACTION_DROP;
-+	rule->action.entries[0].hw_stats_type = FLOW_ACTION_HW_STATS_TYPE_ANY;
- 	rule->action.num_entries = 1;
- 
- 	attr.dst = priv->dev->dev_addr;
-@@ -1515,6 +1516,7 @@ static int __stmmac_test_l4filt(struct stmmac_priv *priv, u32 dst, u32 src,
- 	cls->rule = rule;
- 
- 	rule->action.entries[0].id = FLOW_ACTION_DROP;
-+	rule->action.entries[0].hw_stats_type = FLOW_ACTION_HW_STATS_TYPE_ANY;
- 	rule->action.num_entries = 1;
- 
- 	attr.dst = priv->dev->dev_addr;
--- 
-2.7.4
-
+- Arnaldo
