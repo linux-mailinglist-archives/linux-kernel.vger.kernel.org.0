@@ -2,117 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF6217EC78
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 00:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4E0017EC83
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 00:14:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbgCIXLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 19:11:42 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33827 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbgCIXLm (ORCPT
+        id S1727439AbgCIXOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 19:14:08 -0400
+Received: from smtprelay0151.hostedemail.com ([216.40.44.151]:38113 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726698AbgCIXOH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 19:11:42 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j16so11396669otl.1;
-        Mon, 09 Mar 2020 16:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LKRHxYimFMZUOSCFWBWPQEeraoRwWzQd26N8/GrplsA=;
-        b=rulg74NMqVMzZo2by+XKSp3K4FvZFLEJZX14TihGtvaEapM1a5FXYMGx4Y0CzF/XQb
-         p5dlHlN5peWB/cQQ+ltlHoDtJDdFFIH2cKE2/b21VuJ79VlmdZBJSNqtpUMpKFoqMtr+
-         vmTtA1Kb22Sjvk/j66aWnqe06zNZBrP/+eNgVAC4ii9Ag1J8R0Jw2KbLs5fAn2FxG/Wm
-         iDulToOeNyr0vnAEviO9klOQ4enf00c4roCnTPxv6qb6m9Uho20RwTMPGNjBPuuUef14
-         FVaiSZ7QGc6bkPz6hck+9VM+xv1ZB5pwevCFNa4q1ycFRFVouUkX/2NW8kMtZComw9kc
-         vmxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LKRHxYimFMZUOSCFWBWPQEeraoRwWzQd26N8/GrplsA=;
-        b=QoooLDU0OZ0mBJ4AXcfvmyn3m64Mx/RLByRaTjPR1IDD9QCqJMfaONEhgMpkCVCSwE
-         WitEoWCLPt/VNszX8dFQlmOhDfPbq62oRT6iexALTQUezRGKVhBJYo4b+5jA22uNQmp5
-         ueGQ5vadetrERNMxGW2AGxO+BNj8pS+ZLCiSZI9uJNS5ebTz2/3kvzbY0AGqSTMa7Auy
-         cY+YYNisAjFTdNoh0r3lJrg7QPnnuCrSNl+6M39jyg7g8UVR3GPptanAkz9bMgEa/QR7
-         6nUO7IpO3US4AvY2ycvewsTpi5flvZL4bjRgTscCCrMSEYwfRFMGofXVG5VQ31WW7ltx
-         9XtA==
-X-Gm-Message-State: ANhLgQ1QXK3Xq27G5I9gvlao4AHatUOuEY4U0GXcvrAPHeWqOjO23c8I
-        D37bW4j+bJlkhHu/QLmjfMBZwANXT2iOsNLpcaI=
-X-Google-Smtp-Source: ADFU+vtL/gChUunHBPDJ//510Fa7sEtCs5vnQQ5R8G6UMz//hGSWJNgzgLHodYMrsAEKImkJ7AcjxUHEpiE6XdjOIn8=
-X-Received: by 2002:a9d:6c94:: with SMTP id c20mr15239729otr.285.1583795499756;
- Mon, 09 Mar 2020 16:11:39 -0700 (PDT)
+        Mon, 9 Mar 2020 19:14:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 2F0F96125;
+        Mon,  9 Mar 2020 23:14:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6119:7903:9108:10004:10400:10848:11232:11658:11914:12297:12663:12740:12760:12895:13069:13161:13229:13311:13357:13439:14096:14097:14659:21080:21627:21939:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: vest79_5dc54df15e11b
+X-Filterd-Recvd-Size: 2015
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  9 Mar 2020 23:14:04 +0000 (UTC)
+Message-ID: <69ed8a468b3e4776d277292a2e4b2f9b3c266f23.camel@perches.com>
+Subject: Re: [PATCH RFC] MAINTAINERS: include GOOGLE FIRMWARE entry
+From:   Joe Perches <joe@perches.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Guenter Roeck <groeck@google.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Mon, 09 Mar 2020 16:12:24 -0700
+In-Reply-To: <alpine.DEB.2.21.2003092035300.2953@felia>
+References: <20200308195116.12836-1-lukas.bulwahn@gmail.com>
+         <CABXOdTcrxoBCz24Ap=YJYZnr+oLAmaR10xZ9ar2mYbE1=RAoug@mail.gmail.com>
+         <5129f7dbd8506cc9fd5a8f76dc993d789566af6c.camel@perches.com>
+         <alpine.DEB.2.21.2003090702440.3325@felia>
+         <20200309070534.GA4093795@kroah.com>
+         <alpine.DEB.2.21.2003092035300.2953@felia>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <CAMe9rOoRTVUzNC88Ho2XTTNJCymrd3L=XdB9xFcgxPVwAZ0FWA@mail.gmail.com>
- <AE81FEF5-ECC5-46AA-804D-9D64E656D16E@amacapital.net> <CAMe9rOoDMenvD9XRL1szR5yLQEwv9Q6f4O7CtwbdZ-cJqzezKA@mail.gmail.com>
- <0088001c-0b12-a7dc-ff2a-9d5c282fa36b@intel.com> <CAMe9rOqf0OHL9397Vikgb=UWhRMf+FmGq-9VAJNmfmzNMMDkCw@mail.gmail.com>
- <56ab33ac-865b-b37e-75f2-a489424566c3@intel.com>
-In-Reply-To: <56ab33ac-865b-b37e-75f2-a489424566c3@intel.com>
-From:   "H.J. Lu" <hjl.tools@gmail.com>
-Date:   Mon, 9 Mar 2020 16:11:03 -0700
-Message-ID: <CAMe9rOrzrXORQgcAwzGn+=PBvxCEgc5Km_TQq+P7uoqwiacJSA@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 01/27] Documentation/x86: Add CET description
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 3:19 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 3/9/20 2:12 PM, H.J. Lu wrote:
-> >> But what are the rules for clone()?  Should there be rules for
-> >> mismatches for CET enabling between threads if a process (not child
-> >> processes)?
-> > What did you mean? A threaded application is either CET enabled or not
-> > CET enabled.   A new thread from clone makes no difference.
->
-> Stacks are fundamentally thread-local resources.  The registers that
-> point to them and MSRs that manage shadow stacks are all CPU-thread
-> local.  Nothing is fundamentally tied to the address space shared across
-> the process.
->
-> A thread might also share *no* control flow with its child.  It might
-> ask the thread to start in code that the parent can never even reach.
->
-> It sounds like you've picked a Linux implementation that has
-> restrictions on top of the fundamentals.  That's not wrong per se, but
-> it does deserve explanation and deliberate, not experimental design.
->
-> Could you go back to the folks at Intel and try to figure out what this
-> was designed to *do*?  Yes, I'm probably one of those folks.  You know
-> where to find me. :)
+On Mon, 2020-03-09 at 22:03 +0100, Lukas Bulwahn wrote:
+> I am starting with the "bigger" clustered files in drivers, and then try 
+> > > to look at files in include and Documentation/ABI/.
 
-A threaded application is loaded from disk.  The object file on disk is
-either CET enabled or not CET enabled.
+If you want to spend the time tracking stuff down,
+it may be best to to
+start with include/
 
--- 
-H.J.
+> > > Here is a rough statistics on how many files from each directory are in
+> > > THE REST:
+> > > 
+> > >    1368 include
+
+There are very likely some files there that should
+actually be listed as part of a subsystem.
+
+> > >     327 lib
+
+Not many that aren't trivial or ancient.
+
+> > >     321 Documentation
+
+Probably a few
+
+> > >     100 drivers
+
+What's not already maintained is probably ancient.
+
+Everything else may not matter much.
+
