@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1675E17DF16
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:55:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D3417DF19
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbgCILzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:55:38 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44956 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbgCILzg (ORCPT
+        id S1726545AbgCILzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 07:55:41 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41032 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbgCILzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:55:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l18so628169wru.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:55:35 -0700 (PDT)
+        Mon, 9 Mar 2020 07:55:37 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v4so10709012wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=M993Xxg570Z0qNth+AfgZmhK2IPDaBi6vXhUHO9PeJw=;
-        b=eO/c66Jo81J/h9ylI6Ij1ZV0ARuX3/K0UAZVUQUJqiOUYNav6uE9nWVryGj+MBba/W
-         frXDBER5dI38Itmdq0khKT4tHhUV2rTFwLxqXtcA5L757P2+XLssy9O+49t4t0zjgNBi
-         izCnaPHtVtfo2ICtwH6ELMf3/4KzGZgE5WjgFhv5ghduyjCWhv741drHquSecGHVbNFN
-         14uEa8ig0tGAP1qmsPBrjr9xz3eR7Vhl2m9dr5dWm4trmSggnMANF/pzTkTJBC4xUgTh
-         rFJD0vXviJJd78OFgGvOXZGExzuXGanziNOVMO9mp/C7ncac/hYLRGniZH9k5irvhB17
-         OTMQ==
+        bh=wl7h7MB0G2BXUvEqAv+8JB5mpSUGz57zUw9UrFnUC+Q=;
+        b=QAI8LH89pXw1rDMEbEXXEcRXUEImMLQVXZY1W0zBN20emFSI2ilsE7szWqbgadPbFF
+         zZ7o4ceBNEq7fm/z6JCd0ZEtNMfI/0SpWxRODezMGMZuD2/eLZTDLMCtGcYiLBrWT4sQ
+         EZNO4yevAAKLj7kOk7igoenaPub6zzspcU/bnS1yfXucqYY/PZ3GCoE5zWML3QbdpTwV
+         ezH3zT3oi0kz8xRZ2XtzwylCmOSM0mM6ewTWjvXCixLEkjgeFwT5NlRTy8AA2NKBlvxe
+         YJwd4HeirCatJpAF1tO6x8KP80XrYmZ/SwYVnmo+ZSeosUlgD8xnF6UtNxu4zpLANq39
+         aIug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=M993Xxg570Z0qNth+AfgZmhK2IPDaBi6vXhUHO9PeJw=;
-        b=FjNyuLDd/CpACCJDycC8z3NxHk3xpM2NNn5fQZADiAbTNeFFIr8Bvwv9dgzGcgJrwa
-         VDRRfI5y71gJp0wRSaL5GcIc7KgPktLfiji1kIgNiUS5GeUhguoq6Ccupdb/zY27iVJR
-         WjP6gePlLKzUi3SLXNFnk7tQ2zKBNDzos87rbIxtsgDAKxkMXQ4J8V7iMNuoSjuintpR
-         6nHXs+kyyYjeF8iXsr/Gsehoil4tHh0LdP+2zAY5yCO1MxdmQNZniml/v1fmJiNBxJV7
-         qw+9CevJlt4p7Z/rT6Qp3MtibN9zcmweAy4UclV8O31EUrfXPTPWxky1lc/cgIFfe3vR
-         ZbQg==
-X-Gm-Message-State: ANhLgQ36fSy8+hc8Oqt8CIb/4/s+SqcSqnE+lyv3O8ay/Rc+LBZzOiPV
-        ex7fmM6FEHim1wGBuLmhclE=
-X-Google-Smtp-Source: ADFU+vsR4Ug2gciCuv+leVePyOHBqCXxvpvAEDC06Ybpr79hKygWqzH/+wTxC+MaiX9GNEOEilzuNA==
-X-Received: by 2002:adf:f584:: with SMTP id f4mr21816282wro.77.1583754934751;
-        Mon, 09 Mar 2020 04:55:34 -0700 (PDT)
+        bh=wl7h7MB0G2BXUvEqAv+8JB5mpSUGz57zUw9UrFnUC+Q=;
+        b=e2S4tirm6/asNw1q2J7rpxkRK64T3vkdEfQfFBihZJFsTTMA0nXWyZJfAXbW6deL+N
+         OPqzXPG8nfm9P5HFM11bqf5S56kxdPCb2jbWpQAnOKJ6iMyRUFczn+tr36xN9rvNE6Ae
+         iWqspCruTCeSDSlOnsRb8VFNoIa7g6xcxlhd+d4Guo7PLT80Gyk9CeGf3ueiwh2oePfo
+         ql5d5FDXyHTcTwTYCQW8PoMQ0t9ttj3LwlCb1X5kDr9NUjKvzOwoylWNvEHLtrjiftgk
+         ypsvOR+phKvg7LkUxg55dvFWP9JzSu7W/vVN4KAGhCf3vYEVrFukNWT828yByx6yIwG2
+         CUhw==
+X-Gm-Message-State: ANhLgQ2dBbi6gJwStHqOI94LEehQBJLCxywrrKnTRaCiWKUAs8V1LEwd
+        QHrNkjrsVR+LB8pvuZaRqJA=
+X-Google-Smtp-Source: ADFU+vskomjONPUto2Y90h1MwspfEtgonwvN9Uo7fg/xvCJd2O7UYZYYu7VoXJhLP+apOx0VDVmbRw==
+X-Received: by 2002:a5d:5681:: with SMTP id f1mr8425237wrv.137.1583754936503;
+        Mon, 09 Mar 2020 04:55:36 -0700 (PDT)
 Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id m21sm25035226wmi.27.2020.03.09.04.55.33
+        by smtp.gmail.com with ESMTPSA id m21sm25035226wmi.27.2020.03.09.04.55.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 04:55:34 -0700 (PDT)
+        Mon, 09 Mar 2020 04:55:35 -0700 (PDT)
 From:   shiva.linuxworks@gmail.com
 X-Google-Original-From: sshivamurthy@micron.com
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -53,9 +53,9 @@ To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Frieder Schrempf <frieder.schrempf@kontron.de>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: [PATCH v6 1/6] mtd: spinand: micron: Generalize the OOB layout structure and function names
-Date:   Mon,  9 Mar 2020 12:52:25 +0100
-Message-Id: <20200309115230.7207-2-sshivamurthy@micron.com>
+Subject: [PATCH v6 2/6] mtd: spinand: micron: Describe the SPI NAND device MT29F2G01ABAGD
+Date:   Mon,  9 Mar 2020 12:52:26 +0100
+Message-Id: <20200309115230.7207-3-sshivamurthy@micron.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200309115230.7207-1-sshivamurthy@micron.com>
 References: <20200309115230.7207-1-sshivamurthy@micron.com>
@@ -66,81 +66,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-In order to add new Micron SPI NAND devices, we generalized the OOB
-layout structure and function names.
+Add the SPI NAND device MT29F2G01ABAGD series number, size and voltage
+details as a comment.
 
 Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 ---
- drivers/mtd/nand/spi/micron.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/mtd/nand/spi/micron.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 7d7b1f7fcf71..c028d0d7e236 100644
+index c028d0d7e236..e4aeafc56f4e 100644
 --- a/drivers/mtd/nand/spi/micron.c
 +++ b/drivers/mtd/nand/spi/micron.c
-@@ -34,38 +34,38 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
- 		SPINAND_PROG_LOAD_X4(false, 0, NULL, 0),
- 		SPINAND_PROG_LOAD(false, 0, NULL, 0));
- 
--static int mt29f2g01abagd_ooblayout_ecc(struct mtd_info *mtd, int section,
--					struct mtd_oob_region *region)
-+static int micron_8_ooblayout_ecc(struct mtd_info *mtd, int section,
-+				  struct mtd_oob_region *region)
- {
- 	if (section)
- 		return -ERANGE;
- 
--	region->offset = 64;
--	region->length = 64;
-+	region->offset = mtd->oobsize / 2;
-+	region->length = mtd->oobsize / 2;
- 
- 	return 0;
+@@ -91,6 +91,7 @@ static int micron_8_ecc_get_status(struct spinand_device *spinand,
  }
  
--static int mt29f2g01abagd_ooblayout_free(struct mtd_info *mtd, int section,
--					 struct mtd_oob_region *region)
-+static int micron_8_ooblayout_free(struct mtd_info *mtd, int section,
-+				   struct mtd_oob_region *region)
- {
- 	if (section)
- 		return -ERANGE;
- 
- 	/* Reserve 2 bytes for the BBM. */
- 	region->offset = 2;
--	region->length = 62;
-+	region->length = (mtd->oobsize / 2) - 2;
- 
- 	return 0;
- }
- 
--static const struct mtd_ooblayout_ops mt29f2g01abagd_ooblayout = {
--	.ecc = mt29f2g01abagd_ooblayout_ecc,
--	.free = mt29f2g01abagd_ooblayout_free,
-+static const struct mtd_ooblayout_ops micron_8_ooblayout = {
-+	.ecc = micron_8_ooblayout_ecc,
-+	.free = micron_8_ooblayout_free,
- };
- 
--static int mt29f2g01abagd_ecc_get_status(struct spinand_device *spinand,
--					 u8 status)
-+static int micron_8_ecc_get_status(struct spinand_device *spinand,
-+				   u8 status)
- {
- 	switch (status & MICRON_STATUS_ECC_MASK) {
- 	case STATUS_ECC_NO_BITFLIPS:
-@@ -98,8 +98,8 @@ static const struct spinand_info micron_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
--		     SPINAND_ECCINFO(&mt29f2g01abagd_ooblayout,
--				     mt29f2g01abagd_ecc_get_status)),
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status)),
- };
- 
- static int micron_spinand_detect(struct spinand_device *spinand)
+ static const struct spinand_info micron_spinand_table[] = {
++	/* M79A 2Gb 3.3V */
+ 	SPINAND_INFO("MT29F2G01ABAGD", 0x24,
+ 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
+ 		     NAND_ECCREQ(8, 512),
 -- 
 2.17.1
 
