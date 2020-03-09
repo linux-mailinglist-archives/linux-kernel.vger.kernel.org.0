@@ -2,103 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92AB717DA45
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:08:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D3E17DA7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgCIIIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:08:36 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21009 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725956AbgCIIIg (ORCPT
+        id S1726391AbgCIIQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:16:11 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38396 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCIIQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:08:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583741315;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=T8KT/+n14Cn5HelmWM4TG6Zo6L21o7FLn2E43AQONUI=;
-        b=I7sjVMFrQyszBieK7l81PBbXu3hkzHcGu1wuxeWxaxy9mt8RSC0xHZHxIpqw6fCdX+kdjD
-        LJZeHKJOz3OCKFK+WvKMsJJkcgBYPptT+LM8wEl1p8plGMF4Dxb8a7S9QVfzUbhds9JWPM
-        eFNtJt5Hel2J2my9omQ3Hwovm7F6RS4=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-261-8tCvUCihOjyldnt_vtd-aw-1; Mon, 09 Mar 2020 04:08:33 -0400
-X-MC-Unique: 8tCvUCihOjyldnt_vtd-aw-1
-Received: by mail-qk1-f197.google.com with SMTP id n6so6727306qkk.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 01:08:33 -0700 (PDT)
+        Mon, 9 Mar 2020 04:16:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n2so2071654wmc.3;
+        Mon, 09 Mar 2020 01:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=21vOxRxDjKqcfrgbiaoQAsuWSgoqLHAftWopA3ShZhI=;
+        b=oIEHJnHDukzw19P80JbWF7J3wp/aDWOpD/frO9t4Av3oqEH1wlFFAKDwbw7ZxK5hdt
+         ovZKGRwTYKxENfkzlsCflHhjRJ4uX/8hyJ23ArR/BuaB8zyE6Cf75hA4tG8vbaPg4F7N
+         al6blJrPk47C5cwgWlf0P1Z161QWjiy8iJNQJsFUYPwA0O1iGNPleIa2v6YiWjF8aBN8
+         RhxEJz5dnfzgjMNqzmqAa4P3iIAo8yhtt2aukcdDJeYAxHFGO5G1RvJCGbCPfnI+4Jf8
+         V+GY5ch26FATDwdb3BTivgWx+EFi2pylYXY9MD5vSng24iNw1EsUbZVLd0SgBsVW9njh
+         DEIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=T8KT/+n14Cn5HelmWM4TG6Zo6L21o7FLn2E43AQONUI=;
-        b=PdEa0ct7kXnzi2LjI+QWocskLV+DWZRJCsVI6FU4k/7Qbo4aE7EfBhyrBxmLZ0lCot
-         IwouOiPkQd1avvVCF7jjHyvLnV9uavo7/UbbLmYjYg9Bq0t+kJyzNKo69Q/71hCfV1CB
-         90/K6jHGX7qQ9W12J6XQfGK0OUn5b8ZGL7VvR0wD9iXmRg7cxbA81TmAIid/T9lmHatj
-         9FeiJC28v6/ompSPMdASGcKivmp1+DYdgtXQEvdkAa6NZx7fMpwnq7F9lv16pbeURX+h
-         GPhGhyoBQgboCWkZ1EtetFeG5m3EU6s1Lt4XHSraZPNPoTr0r2Gdcb9bbmspPfJzf6dj
-         O6PQ==
-X-Gm-Message-State: ANhLgQ2Y5O7xWwC5qnjiFE0t+A3KFeG6zMPil24BPq9KBJj06JkQXLHi
-        6ptAy+AUsi884ecUwDy35BDHtaUM7bzK5/mlGFrk88N6Ny2ivvn3y82hZma5rqML7aZg17NP8vO
-        QymmONWmPFTNTMvTQ2XiVIcYj
-X-Received: by 2002:a0c:c244:: with SMTP id w4mr13815579qvh.104.1583741311603;
-        Mon, 09 Mar 2020 01:08:31 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vsDCYFx3tgEt/18zqy2Hj0onYaUrEMtYoBKu3yJ+l1tw+IzBr80xlV0fKvKv/QcwEaRhnxGPw==
-X-Received: by 2002:a0c:c244:: with SMTP id w4mr13815565qvh.104.1583741311386;
-        Mon, 09 Mar 2020 01:08:31 -0700 (PDT)
-Received: from redhat.com (bzq-79-178-2-19.red.bezeqint.net. [79.178.2.19])
-        by smtp.gmail.com with ESMTPSA id k11sm21885175qti.68.2020.03.09.01.08.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 01:08:30 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 04:08:25 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        axboe@kernel.dk, jasowang@redhat.com, mst@redhat.com,
-        natechancellor@gmail.com, pasic@linux.ibm.com, s-anna@ti.com
-Subject: [GIT PULL] virtio: fixes
-Message-ID: <20200309040825-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=21vOxRxDjKqcfrgbiaoQAsuWSgoqLHAftWopA3ShZhI=;
+        b=pAaW79Z7f2uVn2kt24QBKVtipy590hbd0jJPlGaZIne8XibZQORwhEmlw2Ql8nqUKz
+         Q6E44vwmtvhwFyVkjwK/bGPNh06qVbe/ZqMjM9/eAjWmDzY7enRrF3A3AlN0H3ZCl/1L
+         9e18i8D3IecgKDGqv3TDKMTbV6OfOlwTaoiRyt+5MO5R0nmZhEacuqvk+DHmABgbNBSQ
+         y+0GwA299bc1DthUgmXorGlvMBC7cpTcKU9P90yj33P5eGdiTudy2KIq+vG3kh7BJKWS
+         oPBc/djz2aRaATAOxMNNPFqvaHZbGSRs5g5Gh9oI1CFhkPEqxgnJkQkHQyH+CR8MVzRp
+         xVnw==
+X-Gm-Message-State: ANhLgQ28s0AVFne6Okq4V5p0qgzJ+yPeoQWVjve/bNhB66aAiyssynCr
+        /NMaWKl0Zhq23DzsqtsPsCA=
+X-Google-Smtp-Source: ADFU+vt3Yqf7ZPutJlxBROOJKc49aGfr7tYraWP+grvURFzG5aqwAEF03ai0VObc3auLb7YasfTsDg==
+X-Received: by 2002:a7b:c770:: with SMTP id x16mr4736819wmk.159.1583741769115;
+        Mon, 09 Mar 2020 01:16:09 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id q2sm1097096wrv.65.2020.03.09.01.16.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Mar 2020 01:16:08 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: remove rockchip,grf from vop nodes for px30
+Date:   Mon,  9 Mar 2020 09:16:00 +0100
+Message-Id: <20200309081600.3887-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b:
+An experimental test with the command below without
+additional properties in 'rockchip-vop.yaml' gives this error:
 
-  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
+arch/arm64/boot/dts/rockchip/px30-evb.dt.yaml: vop@ff470000:
+'power-domains', 'rockchip,grf'
+do not match any of the regexes: 'pinctrl-[0-9]+'
+arch/arm64/boot/dts/rockchip/px30-evb.dt.yaml: vop@ff460000:
+'power-domains', 'rockchip,grf'
+do not match any of the regexes: 'pinctrl-[0-9]+'
 
-are available in the Git repository at:
+'rockchip,grf' is not used by the Rockchip VOP driver,
+so remove it from 'vop' nodes in 'px30.dtsi'.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+make ARCH=arm64 dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/
+rockchip/rockchip-vop.yaml
 
-for you to fetch changes up to 6ae4edab2fbf86ec92fbf0a8f0c60b857d90d50f:
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ arch/arm64/boot/dts/rockchip/px30.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-  virtio_balloon: Adjust label in virtballoon_probe (2020-03-08 05:35:24 -0400)
-
-----------------------------------------------------------------
-virtio: fixes
-
-Some bug fixes all over the place.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-Halil Pasic (2):
-      virtio-blk: fix hw_queue stopped on arbitrary error
-      virtio-blk: improve virtqueue error to BLK_STS
-
-Nathan Chancellor (1):
-      virtio_balloon: Adjust label in virtballoon_probe
-
-Suman Anna (1):
-      virtio_ring: Fix mem leak with vring_new_virtqueue()
-
- drivers/block/virtio_blk.c      | 17 ++++++++++++-----
- drivers/virtio/virtio_balloon.c |  2 +-
- drivers/virtio/virtio_ring.c    |  4 ++--
- 3 files changed, 15 insertions(+), 8 deletions(-)
+diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
+index 215515ccb..1bbed660f 100644
+--- a/arch/arm64/boot/dts/rockchip/px30.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
+@@ -1030,7 +1030,6 @@
+ 		reset-names = "axi", "ahb", "dclk";
+ 		iommus = <&vopb_mmu>;
+ 		power-domains = <&power PX30_PD_VO>;
+-		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 
+ 		vopb_out: port {
+@@ -1072,7 +1071,6 @@
+ 		reset-names = "axi", "ahb", "dclk";
+ 		iommus = <&vopl_mmu>;
+ 		power-domains = <&power PX30_PD_VO>;
+-		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 
+ 		vopl_out: port {
+-- 
+2.11.0
 
