@@ -2,73 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 426DA17E10D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3761F17E129
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:28:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgCIN0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:26:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:52076 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726616AbgCIN0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:26:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A36DD30E;
-        Mon,  9 Mar 2020 06:26:50 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26E5A3F67D;
-        Mon,  9 Mar 2020 06:26:50 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 13:26:48 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        od@zcrc.me, Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Subject: Re: [PATCH 1/6] dt-bindings: sound: Convert jz4740-i2s doc to YAML
-Message-ID: <20200309132648.GG4101@sirena.org.uk>
-References: <20200306222931.39664-1-paul@crapouillou.net>
+        id S1726567AbgCIN2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:28:01 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:36207 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726659AbgCIN2B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:28:01 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Ts81o5L_1583760421;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Ts81o5L_1583760421)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 09 Mar 2020 21:27:01 +0800
+Subject: Re: linux-next test error: BUG: using __this_cpu_read() in
+ preemptible code in __mod_memcg_state
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        syzbot <syzbot+826543256ed3b8c37f62@syzkaller.appspotmail.com>
+Cc:     akpm@linux-foundation.org, cgroups@vger.kernel.org,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org,
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+References: <00000000000022640205a04a20d8@google.com>
+ <20200309092423.2ww3aw6yfyce7yty@box>
+ <5b1196be-09ce-51f7-f5e7-63f2e597f91e@linux.alibaba.com>
+Message-ID: <d3fb0593-e483-3b69-bf2c-99ad6cd03567@linux.alibaba.com>
+Date:   Mon, 9 Mar 2020 21:26:59 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Y+xroYBkGM9OatJL"
-Content-Disposition: inline
-In-Reply-To: <20200306222931.39664-1-paul@crapouillou.net>
-X-Cookie: Above all things, reverence yourself.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5b1196be-09ce-51f7-f5e7-63f2e597f91e@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Y+xroYBkGM9OatJL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Mar 06, 2020 at 11:29:26PM +0100, Paul Cercueil wrote:
-> Convert the textual binding documentation for the AIC (AC97/I2S
-> Controller) of Ingenic SoCs to a YAML schema, and add the new compatible
-> strings in the process.
+在 2020/3/9 下午5:56, Alex Shi 写道:
+> 
+> 
+> 在 2020/3/9 下午5:24, Kirill A. Shutemov 写道:
+>>> check_preemption_disabled: 3 callbacks suppressed
+>>> BUG: using __this_cpu_read() in preemptible [00000000] code: syz-fuzzer/9432
+>>> caller is __mod_memcg_state+0x27/0x1a0 mm/memcontrol.c:689
+>>> CPU: 1 PID: 9432 Comm: syz-fuzzer Not tainted 5.6.0-rc4-next-20200306-syzkaller #0
+>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>>> Call Trace:
+>>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>>  dump_stack+0x188/0x20d lib/dump_stack.c:118
+>>>  check_preemption_disabled lib/smp_processor_id.c:47 [inline]
+>>>  __this_cpu_preempt_check.cold+0x84/0x90 lib/smp_processor_id.c:64
+>>>  __mod_memcg_state+0x27/0x1a0 mm/memcontrol.c:689
+>>>  __split_huge_page mm/huge_memory.c:2575 [inline]
+>>>  split_huge_page_to_list+0x124b/0x3380 mm/huge_memory.c:2862
+>>>  split_huge_page include/linux/huge_mm.h:167 [inline]
+>> It looks like a regression due to c8cba0cc2a80 ("mm/thp: narrow lru
+>> locking").
+> 
+> yes, I guess so.
 
-Cleanup and new development patches like this should always come after
-any fixes to ensure that there are no dependencies which would prevent
-fixes being merged as such.
+Yes, it is a stupid mistake to pull out lock for __mod_memcg_state which
+should be in a lock.
 
---Y+xroYBkGM9OatJL
-Content-Type: application/pgp-signature; name="signature.asc"
+revert this patch should be all fine, since ClearPageCompound and page_ref_inc
+later may related with lru_list valid issue in release_pges.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5mRBcACgkQJNaLcl1U
-h9BiJwf+Pe/BdGSq2c2anqasfwrrUL4Abk4Cu+i1KO6pNmEVWD+KFE9ZvRA3YPSb
-lEPhE+2LfrkoEBPPx6mWVpvl28egf0kwTsX6tynIJsQi+eL1qlRr2fLfvKCEQzVL
-/OAnAMJVXJgSg+wF+p1/Fjv69bkPJUBPX+OK6ooyQNUraG//rSygcKSBtrdvzZOE
-vg02RvfhG9cp1JnhfW6uP7xwG+ISdzyQyDePpgHO1fFPhqUTlM95xRNTUzGGJo/L
-E+5Smb+rEKN3QRWa+J9Nynvrb+zdHtYMrmr/Hi1THgSsUiqfvNlfraITOiiUDCbj
-Rkbg8Bq3JOOSyC9jcOUzTQw3EJhK6g==
-=40Z2
------END PGP SIGNATURE-----
+Sorry for the disaster!
 
---Y+xroYBkGM9OatJL--
+Alex
