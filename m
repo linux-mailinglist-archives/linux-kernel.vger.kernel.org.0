@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D1417DA19
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 08:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21AA417DA4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbgCIHzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 03:55:45 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59946 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725942AbgCIHzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 03:55:45 -0400
-X-UUID: 7119ba7b7a6e46bcb84bdaed4b5b366d-20200309
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=d0wnLlS3PKlRwicESnqS4F2qX7BxraxwO4F/6cuzvFM=;
-        b=TvTU+oyqCuvB/dpVbfvu0kKeOdvaGuR0TXe4LK1eGwi+8IKZUxta4cn+iy/5g+zeKnkRjwu+zxKtOpDKhPOj8g83vj3cYLKgXzbFFMCAWt7WKoAAPWeeqSD4hxIZdJM8Dz8JxsMHj2HNr8FsY6UMor/pZY3sCobhsi8+7X0TdxI=;
-X-UUID: 7119ba7b7a6e46bcb84bdaed4b5b366d-20200309
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <nick.fan@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1475847732; Mon, 09 Mar 2020 15:55:40 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 9 Mar 2020 15:54:27 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 9 Mar 2020 15:55:55 +0800
-Message-ID: <1583740539.3995.15.camel@mtksdaap41>
-Subject: Re: [PATCH v4 1/7] dt-bindings: gpu: mali-bifrost: Add Mediatek
- MT8183
-From:   Nick Fan <nick.fan@mediatek.com>
-To:     Steven Price <steven.price@arm.com>
-CC:     Rob Herring <robh@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Sj Huang <sj.huang@mediatek.com>,
-        David Airlie <airlied@linux.ie>,
-        "Daniel Vetter" <daniel@ffwll.ch>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 9 Mar 2020 15:55:39 +0800
-In-Reply-To: <20200306144336.GA9234@arm.com>
-References: <20200207052627.130118-1-drinkcat@chromium.org>
-         <20200207052627.130118-2-drinkcat@chromium.org>
-         <20200225171613.GA7063@bogus>
-         <CANMq1KAVX4o5yC7c_88Wq_O=F+MaSN_V4uNcs1nzS3wBS6A5AA@mail.gmail.com>
-         <1583462055.4947.6.camel@mtksdaap41>
-         <CAL_JsqLoUnxfrJh0WCs0jgro1KHAjWaYMsaKkKfAKA2KJ252_g@mail.gmail.com>
-         <20200306144336.GA9234@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726451AbgCIIJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:09:12 -0400
+Received: from mga07.intel.com ([134.134.136.100]:11140 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726071AbgCIIJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 04:09:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 01:09:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,532,1574150400"; 
+   d="scan'208";a="353318738"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Mar 2020 01:09:08 -0700
+Date:   Mon, 9 Mar 2020 15:47:58 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, will@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, atull@kernel.org, yilun.xu@intel.com
+Subject: Re: [PATCH v8 0/2] add performance reporting support to FPGA DFL
+ drivers
+Message-ID: <20200309074758.GA4295@hao-dev>
+References: <1582503707-10737-1-git-send-email-hao.wu@intel.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582503707-10737-1-git-send-email-hao.wu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDIwLTAzLTA2IGF0IDE0OjQzICswMDAwLCBTdGV2ZW4gUHJpY2Ugd3JvdGU6DQo+
-IE9uIEZyaSwgTWFyIDA2LCAyMDIwIGF0IDAyOjEzOjA4UE0gKzAwMDAsIFJvYiBIZXJyaW5nIHdy
-b3RlOg0KPiA+IE9uIFRodSwgTWFyIDUsIDIwMjAgYXQgODozNCBQTSBOaWNrIEZhbiA8bmljay5m
-YW5AbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiA+DQo+ID4gPiBTb3JyeSBmb3IgbXkgbGF0ZSBy
-ZXBseS4NCj4gPiA+IEkgaGF2ZSBjaGVja2VkIGludGVybmFsbHkuDQo+ID4gPiBUaGUgTVQ4MTgz
-X1BPV0VSX0RPTUFJTl9NRkdfMkQgaXMganVzdCBhIGxlZ2FjeSBuYW1lLCBub3QgcmVhbGx5IDJE
-DQo+ID4gPiBkb21haW4uDQo+ID4gPg0KPiA+ID4gSWYgdGhlIG5hbWluZyB0b28gY29uZnVzaW5n
-LCB3ZSBjYW4gY2hhbmdlIHRoaXMgbmFtZSB0bw0KPiA+ID4gTVQ4MTgzX1BPV0VSX0RPTUFJTl9N
-RkdfQ09SRTIgZm9yIGNvbnNpc3RlbmN5Lg0KPiA+IA0KPiA+IENhbiB5b3UgY2xhcmlmeSB3aGF0
-J3MgaW4gZWFjaCBkb21haW4/IEFyZSB0aGVyZSBhY3R1YWxseSAzIHNoYWRlcg0KPiA+IGNvcmVz
-IChJSVJDLCB0aGF0IHNob3VsZCBiZSBkaXNjb3ZlcmFibGUpPw0KPiANCj4gVGhlIGNvdmVyIGxl
-dHRlciBmcm9tIE5pY29sYXMgaW5jbHVkZXM6DQo+IA0KPiA+IFsgIDUwMS4zMjE3NTJdIHBhbmZy
-b3N0IDEzMDQwMDAwLmdwdTogc2hhZGVyX3ByZXNlbnQ9MHg3IGwyX3ByZXNlbnQ9MHgxDQo+IA0K
-PiAweDcgaXMgdGhyZWUgYml0cyBzZXQsIHNvIGl0IGNlcnRhaW5seSBsb29rcyBsaWtlIHRoZXJl
-IGFyZSAzIHNoYWRlcg0KPiBjb3Jlcy4gT2YgY291cnNlIEkgd291bGRuJ3QgZ3VhcmFudGVlIHRo
-YXQgaXQgaXMgYXMgc2ltcGxlIGFzIGVhY2ggcG93ZXINCj4gZG9tYWluIGhhcyBhIHNoYWRlciBj
-b3JlIGluLiBUaGUgam9iIG1hbmFnZXIgYW5kIHRpbGVyIGFsc28gbmVlZCB0byBiZQ0KPiBwb3dl
-cmVkIHNvbWVob3csIHNvIHRoZXkgYXJlIGVpdGhlciBzaGFyaW5nIHdpdGggYSBzaGFkZXIgY29y
-ZSBvcg0KPiB0aGVyZSdzIHNvbWV0aGluZyBtb3JlIGNvbXBsZXggZ29pbmcgb24uDQo+IA0KPiBT
-dGV2ZQ0KPiANClRoZXJlIGFyZSBhY3R1YWxseSBmaXZlIHBvd2VyIGRvbWFpbnMgaW4gdG90YWwg
-Zm9yIE1UODE4MyBHUFUuDQoNClRoZXJlIGFyZSAzIHNoYWRlciBjb3JlcyBpbiBNVDgxODMuDQoN
-ClRoZXkgY2FuIGJlIGxpc3RlZCBhcyBmb2xsb3dpbmcgZm9yIGVhY2ggcG93ZXIgZG9tYWluOg0K
-MS5NVDgxODNfUE9XRVJfRE9NQUlOX01GR19BU1lOQyA6IFNPQyBidXMgbG9naWMNCjIuTVQ4MTgz
-X1BPV0VSX0RPTUFJTl9NRkcgOiBHUFUgam9iIG1hbmFnZXIgJiB0aWxlcg0KMy5NVDgxODNfUE9X
-RVJfRE9NQUlOX01GR19DT1JFMCA6IEdQVSBzaGFkZXIgY29yZSAwDQo0Lk1UODE4M19QT1dFUl9E
-T01BSU5fTUZHX0NPUkUxIDogR1BVIHNoYWRlciBjb3JlIDENCjUuTVQ4MTgzX1BPV0VSX0RPTUFJ
-Tl9NRkdfMkQgOiBHUFUgc2hhZGVyIGNvcmUgMg0KDQpUaGVyZSBhcmUgb3RoZXIgcG93ZXIgZG9t
-YWluIGRlcGVuZGVuY3kgY2FuIGJlIHJlZmVyZW5jZSBpbiB0aGUNCmZvbGxvd2luZyBsaW5rLg0K
-aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvMi8xLzE2Ng0KDQpZb3UgY2FuIGNoZWNrIHRoZSBw
-b3dlciBkb21haW4gZGVwZW5kZW5jaWVzIGFzIGZvbGxvd2luZw0KPT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KK3N0YXRpYyBjb25zdCBz
-dHJ1Y3Qgc2NwX3N1YmRvbWFpbiBzY3Bfc3ViZG9tYWluX210ODE4M1tdID0gew0KKwl7TVQ4MTgz
-X1BPV0VSX0RPTUFJTl9NRkdfQVNZTkMsIE1UODE4M19QT1dFUl9ET01BSU5fTUZHfSwNCisJe01U
-ODE4M19QT1dFUl9ET01BSU5fTUZHLCBNVDgxODNfUE9XRVJfRE9NQUlOX01GR18yRH0sDQorCXtN
-VDgxODNfUE9XRVJfRE9NQUlOX01GRywgTVQ4MTgzX1BPV0VSX0RPTUFJTl9NRkdfQ09SRTB9LA0K
-Kwl7TVQ4MTgzX1BPV0VSX0RPTUFJTl9NRkcsIE1UODE4M19QT1dFUl9ET01BSU5fTUZHX0NPUkUx
-fSwNCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT0NCg0KVGhhbmtzDQoNCk5pY2sgRmFuDQoNCg==
+Hi Will,
 
+Just a gentle ping. Do you have Any comments to this new version?
+
+Hao
+
+On Mon, Feb 24, 2020 at 08:21:45AM +0800, Wu Hao wrote:
+> Hi all,
+> 
+> This patchset adds performance reporting support for FPGA DFL drivers. It
+> introduces one pmu to expose userspace interfaces via standard perf API.
+> User could use standard perf tool to access perf events exposed via pmu.
+> 
+> This patchset is generated based on 5.6-rc2.
+> 
+> Main changes from v7:
+>  - rename pmu name from "fme%d" to "dfl_fme%d".
+>  - monitor cpu hotplug for cpumask sysfs and update cpumask sysfs doc.
+>  - add extra read for 64bit counter registers to avoid 2-32bit readl issue.
+> 
+> Main changes from v6:
+>  - add a new ABI/testing/ sysfs documentation in patch #2.
+>  - fix a warning reported by kbuild in patch #2.
+> 
+> Main changes from v5:
+>  - use dev_ext_attribute instead of fme_perf_event_attr.
+>  - use is_visible function to decide which events to expose per
+>    hardware capability, and add event_init checking for all events.
+> 
+> Main changes from v4:
+>  - rebase and clean up.
+>  - update Kconfig for PERF_EVENTS dependency.
+> 
+> Main changes from v3:
+>  - add more descriptions in doc, including how to use perf tool for these
+>    hardware counters. (patch #1)
+>  - use standard perf API instead of sysfs entries. (patch #2)
+> 
+> Wu Hao (1):
+>   fpga: dfl: fme: add performance reporting support
+> 
+> Xu Yilun (1):
+>   Documentation: fpga: dfl: add description for performance reporting
+>     support
+> 
+>  .../testing/sysfs-bus-event_source-devices-dfl_fme |  104 ++
+>  Documentation/fpga/dfl.rst                         |   84 ++
+>  drivers/fpga/Kconfig                               |    2 +-
+>  drivers/fpga/Makefile                              |    1 +
+>  drivers/fpga/dfl-fme-main.c                        |    4 +
+>  drivers/fpga/dfl-fme-perf.c                        | 1021 ++++++++++++++++++++
+>  drivers/fpga/dfl-fme.h                             |    2 +
+>  drivers/fpga/dfl.h                                 |    2 +
+>  8 files changed, 1219 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices-dfl_fme
+>  create mode 100644 drivers/fpga/dfl-fme-perf.c
+> 
+> -- 
+> 1.8.3.1
