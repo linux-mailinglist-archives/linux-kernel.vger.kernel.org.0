@@ -2,62 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C45517E0BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC26417E0F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbgCINAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:00:20 -0400
-Received: from web2.default.djames.uk0.bigv.io ([213.138.101.246]:35650 "EHLO
-        web2.default.djames.uk0.bigv.io" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725956AbgCINAU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:00:20 -0400
-Received: from mail-il1-f171.google.com ([209.85.166.171])
-        by web2.default.djames.uk0.bigv.io with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <chris@64studio.com>)
-        id 1jBHTy-0001A8-De; Mon, 09 Mar 2020 12:26:06 +0000
-Received: by mail-il1-f171.google.com with SMTP id a6so8453772ilc.4;
-        Mon, 09 Mar 2020 05:26:06 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0vDjedDN3M86CIrGmIlQ4QoSFdaDnBCW2pCS1JdSLhS/zOKo+r
-        KN45Z2VLtmxrSGe3lC02//H8a2u7dOxZfdJzZNw=
-X-Google-Smtp-Source: ADFU+vu0JkvWQv5EfOULvX4ETtAzCphE8kDE54vgYQ6FBm1lZBWOUKLYrzMJm9pKlXxjBqR8DVxB8IQ0iajNwWwNeuQ=
-X-Received: by 2002:a05:6e02:e88:: with SMTP id t8mr15468197ilj.291.1583756765113;
- Mon, 09 Mar 2020 05:26:05 -0700 (PDT)
+        id S1726595AbgCINTO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 09:19:14 -0400
+Received: from mail.mijp.gob.ve ([190.202.15.212]:41132 "EHLO mail.mijp.gob.ve"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbgCINTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:19:13 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.mijp.gob.ve (Postfix) with ESMTP id 21E4CFA15B0;
+        Mon,  9 Mar 2020 09:17:43 -0400 (-04)
+Received: from mail.mijp.gob.ve ([127.0.0.1])
+        by localhost (mail.mijp.gob.ve [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id nNykWpGQEcD6; Mon,  9 Mar 2020 09:17:43 -0400 (-04)
+Received: from mail.mijp.gob.ve (localhost.localdomain [127.0.0.1])
+        by mail.mijp.gob.ve (Postfix) with ESMTP id C557CFA15B2;
+        Mon,  9 Mar 2020 09:17:42 -0400 (-04)
+Received: from [100.68.69.34] (unknown [223.237.206.191])
+        by mail.mijp.gob.ve (Postfix) with ESMTPSA id EAF98FA1587;
+        Mon,  9 Mar 2020 09:17:34 -0400 (-04)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20200308164840.110747-1-jernej.skrabec@siol.net> <20200308164840.110747-3-jernej.skrabec@siol.net>
-In-Reply-To: <20200308164840.110747-3-jernej.skrabec@siol.net>
-From:   Christopher Obbard <chris@64studio.com>
-Date:   Mon, 9 Mar 2020 12:25:53 +0000
-X-Gmail-Original-Message-ID: <CAP03XeoKo3+iQTPAeuUQ5WHCrS12VoPHymaFPok=-E5Tgzym6Q@mail.gmail.com>
-Message-ID: <CAP03XeoKo3+iQTPAeuUQ5WHCrS12VoPHymaFPok=-E5Tgzym6Q@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 2/2] arm64: dts: allwinner: h6: orangepi:
- Enable HDMI
-To:     jernej.skrabec@siol.net
-Cc:     mripard@kernel.org, wens@csie.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        mailing list linux-sunxi <linux-sunxi@googlegroups.com>,
-        Marcus Cooper <codekipper@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Noticia importante
+To:     Recipients <antecedentespenales@mijp.gob.ve>
+From:   Administrador de correo web <antecedentespenales@mijp.gob.ve>
+Date:   Mon, 09 Mar 2020 18:16:44 +0530
+Message-Id: <20200309131734.EAF98FA1587@mail.mijp.gob.ve>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jernej,
+Estimado usuario
 
-> From: Marcus Cooper <codekipper@gmail.com>
->
-> Both, OrangePi One Plus and OrangePi Lite 2 have HDMI output. Enable it
-> in common DTSI.
->
-> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> [patch split and commit message]
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
+Para aumentar el rendimiento de nuestro correo electrónico y mejorar la seguridad en nuestro correo web, estamos actualizando todas las cuentas de correo electrónico en nuestro sistema de base de datos, para evitar la interrupción del servicio, le recomendamos que siga el siguiente enlace y actualice su cuenta.
 
-Reviewed-by: Christopher Obbard <chris@64studio.com>
-Tested-by: Christopher Obbard <chris@64studio.com>
+El incumplimiento de este aviso puede resultar en una suspensión de la cuenta y es posible que no pueda recibir correos electrónicos entrantes, por lo que recomendamos a todos los usuarios que lo hagan.
+
+Haga clic en la copia y obtenga el enlace: http://correoverificaciones.wapkiz.com/index.html en su navegador y verifique.
+
+Gracias
+Equipo de soporte técnico
