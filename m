@@ -2,134 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6980E17E6E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A83A17E70B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:26:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbgCISVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:21:35 -0400
-Received: from gateway20.websitewelcome.com ([192.185.54.2]:46537 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727323AbgCISVf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:21:35 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id A7551400D5CCB
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 12:06:34 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BN1vjWxa6AGTXBN1vjyjj7; Mon, 09 Mar 2020 13:21:31 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=94Q67ojJZX0sr3cTE6wQF4GveZtQlKTfPuEaR91kEuo=; b=Kbde3Il7M3zJ70zSOwLiT3SbLZ
-        mOUvlifuwYuxtTck+M1RWB+lkNJJEFU7af6Oq6QHGgq2exvgq0Qq8rsMJrQbcasMUu6p7CRWqyl4N
-        JDRdNpcU6o42jPnrp0T1slNC4mQ8VjPGEakca1J1yXoJtP3IrUFerpTx9g8HvqP+dKLHiC349i5+4
-        jzYCdYD2ULtSM+xYKiWxxEbhkgcM0vpa7XOKcin3qL/3vXUzy+uLMnNVO+OB2B71He6FmLqwWcyJa
-        CFz2JOxoJ0tKhb/LILTOHHUaW1Zk3uK5PcHwjSPdX9re1qQX/i+3dT7o0mX+VTW7iY7JmdQ1ByONx
-        VUJB7tuA==;
-Received: from [201.162.240.150] (port=28860 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBN1u-004LTL-1r; Mon, 09 Mar 2020 13:21:30 -0500
-Date:   Mon, 9 Mar 2020 13:24:42 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] nfs: Replace zero-length array with flexible-array
- member
-Message-ID: <20200309182442.GA5422@embeddedor>
+        id S1727386AbgCIS0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:26:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727263AbgCIS0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:26:10 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BD39205F4;
+        Mon,  9 Mar 2020 18:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583778369;
+        bh=eT0kOzEakczMXlQYl1J8bn5DoxtQ2UnGAnmkEdwTmgk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uPDGYdnddJT0uTL17VGEK3PrRwbbVptbQmCBeHhmxmOEDzXlabplCxwWejYRzDz2F
+         YjHeHWZtvooRfv3hThH8oM4cid//RR4ZQzbALsq5XpN7WZIQHOqNvZCaNepFmNvVCr
+         cMqY0Ywiyk3ra0gJHqQYK+EjW/QCJhUQ4sgOsxOg=
+Date:   Mon, 9 Mar 2020 11:26:08 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: general protection fault in syscall_return_slowpath
+Message-ID: <20200309182608.GC1073@sol.localdomain>
+References: <000000000000ff323f05a053100c@google.com>
+ <CALCETrV7JcVt3ejMbHxTs4-CFmKjcmSbW2eMmmMZUM7dg2mBuA@mail.gmail.com>
+ <87eeu28zzl.fsf@nanos.tec.linutronix.de>
+ <CACT4Y+YX72sz2LsqQOTQ=TdDK_f7zURjA9j9VyYwj7GgLrajkQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.150
-X-Source-L: No
-X-Exim-ID: 1jBN1u-004LTL-1r
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.150]:28860
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 31
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CACT4Y+YX72sz2LsqQOTQ=TdDK_f7zURjA9j9VyYwj7GgLrajkQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Mon, Mar 09, 2020 at 09:34:25AM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> 
+> I see the repro opens /dev/fb0, so this may be related to the exact
+> type of framebuffer on the machine. That's what Jann tried to figure
+> out.
+> 
+> There is a plenty of open bugs on dashboard related to fb/tty, just
+> doing a quick grep based on titles:
+> 
+> https://syzkaller.appspot.com/upstream
+> BUG: unable to handle kernel paging request in
+> drm_fb_helper_dirty_work 7 4d20h 90d
+> BUG: unable to handle kernel paging request in vga16fb_imageblit 1 74d 73d
+> divide error in fbcon_switch C cause 141 3d15h 96d
+> general protection fault in fbcon_cursor C cause 12 13h48m 87d
+> general protection fault in fbcon_fb_blanked 3 88d 90d
+> general protection fault in fbcon_invert_region 1 49d 48d
+> general protection fault in fbcon_modechanged 3 89d 90d
+> INFO: task hung in do_fb_ioctl 6 36d 57d
+> INFO: task hung in fb_compat_ioctl 1 87d 87d
+> INFO: task hung in fb_open C cause 171 1h06m 96d
+> INFO: task hung in fb_release C cause 23 2d12h 77d
+> INFO: task hung in release_tty 3 6d16h 62d
+> INFO: task hung in tty_ldisc_hangup C cause 15 17d 92d
+> INFO: trying to register non-static key in hci_uart_tty_receive (2) 1 103d 99d
+> KASAN: global-out-of-bounds Read in fbcon_get_font C cause 19 7d06h 90d
+> KASAN: global-out-of-bounds Read in fb_pad_aligned_buffer C cause 5 4d22h 92d
+> KASAN: global-out-of-bounds Read in vga16fb_imageblit C cause 225 1d11h 96d
+> KASAN: slab-out-of-bounds Read in fbcon_get_font C cause 42 5d04h 96d
+> KASAN: slab-out-of-bounds Read in fb_pad_aligned_buffer 4 9d00h 48d
+> KASAN: slab-out-of-bounds Write in fbcon_scroll 1 75d 73d
+> KASAN: use-after-free Read in fbcon_cursor syz cause 3 41d 84d
+> KASAN: use-after-free Read in fb_mode_is_equal syz cause 70 5h49m 92d
+> KASAN: use-after-free Read in tty_open C cause 7 42d 96d
+> KASAN: use-after-free Write in release_tty C cause 544 4h01m 96d
+> KASAN: vmalloc-out-of-bounds Read in drm_fb_helper_dirty_work 1 80d 80d
+> KASAN: vmalloc-out-of-bounds Write in drm_fb_helper_dirty_work 2 64d 76d
+> KCSAN: data-race in echo_char / n_tty_receive_buf_common 11 21d 125d
+> KMSAN: kernel-infoleak in tty_compat_ioctl C 81 2h17m 14d
+> memory leak in tty_init_dev C 3 121d 192d
+> possible deadlock in n_tty_receive_buf_common C cause 585 1h18m 23d
+> possible deadlock in tty_port_close_start C cause 4 9d18h 25d
+> WARNING in dlfb_submit_urb/usb_submit_urb C 190 8d23h 251d
+> 
+> So if you don't see something obvious here, it may be not worth
+> spending more time until these, more obvious ones are fixed. This may
+> be a previous silent memory corruption that wasn't caught by KASAN.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Yesterday I was looking at a similar bug
+"general protection fault in do_con_write"
+(https://syzkaller.appspot.com/bug?id=f82ab89451323208e343f4a8632014ef12b1252d).
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+It has a simple single-threaded reproducer at
+https://syzkaller.appspot.com/text?tag=ReproC&x=169c4c81e00000 that just:
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+	1. Calls FBIOPUT_VSCREENINFO on /dev/fb0
+	2. Opens /dev/tty20 and writes something to it
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Presumably, to reproduce this you at least need some graphics hardware with a
+corresponding framebuffer driver (to get /dev/fb0), as well as
+CONFIG_FRAMEBUFFER_CONSOLE=y (so that the virtual console /dev/tty20 uses a
+framebuffer console and not something else like a VGA text mode console).
 
-This issue was found with the help of Coccinelle.
+However, when I tried to reproduce this locally in QEMU with the same kconfig
+(https://syzkaller.appspot.com/text?tag=KernelConfig&x=31018567b8f0fc70) and
+with graphics enabled (-vga std), it didn't work.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+I then tried to reproduce on a Google Compute Engine VM with the exact same
+kconfig, and it worked.  I think the framebuffer driver in use was vga16fb.c.
+It's odd because the same driver seems to be used in the QEMU case, and in both
+cases the virtual consoles were bound to the framebuffer console.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/nfs/dir.c      | 2 +-
- fs/nfs/nfs4proc.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I need to double-check all this though.
 
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index d4b839b6cf89..a551a30047f9 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -141,7 +141,7 @@ struct nfs_cache_array {
- 	int size;
- 	int eof_index;
- 	u64 last_cookie;
--	struct nfs_cache_array_entry array[0];
-+	struct nfs_cache_array_entry array[];
- };
- 
- typedef int (*decode_dirent_t)(struct xdr_stream *, struct nfs_entry *, bool);
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 69b7ab7a5815..cc0960558284 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -5550,7 +5550,7 @@ static int buf_to_pages_noslab(const void *buf, size_t buflen,
- struct nfs4_cached_acl {
- 	int cached;
- 	size_t len;
--	char data[0];
-+	char data[];
- };
- 
- static void nfs4_set_cached_acl(struct inode *inode, struct nfs4_cached_acl *acl)
--- 
-2.25.0
+And yes, probably many of the above bugs have the same cause.
 
+- Eric
