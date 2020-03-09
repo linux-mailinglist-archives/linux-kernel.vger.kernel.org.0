@@ -2,440 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3194817E115
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:27:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D72A017E104
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:26:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgCIN07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:26:59 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:41055 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbgCIN05 (ORCPT
+        id S1726508AbgCIN0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:26:10 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:53794 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbgCIN0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:26:57 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583760416; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=7L55UhBp8NoiwW5mryWe0UjdRPpLvwz9LZ3QBhRjMgg=; b=uzkyexmdtHpP6a77cOWBigPVWEflNiREm9jEZ5OdYtF8M++t5RtvuQegbCnbTCxPB7ztx3W6
- rm6Q2wvbbsOGbJw+YKz6Ul7trub+1Zmiv8sSHzt6sBilT3U/+pUoT8WhsZoB/UxDFdnEqWAJ
- +yNe+CUMYG5Tiz0tP0CW9H1f40k=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e664417.7fcf4f0aab20-smtp-out-n04;
- Mon, 09 Mar 2020 13:26:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A6C96C44792; Mon,  9 Mar 2020 13:26:45 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kgunda)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C875CC43636;
-        Mon,  9 Mar 2020 13:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C875CC43636
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
-From:   Kiran Gunda <kgunda@codeaurora.org>
-To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Cc:     Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V3 2/4] backlight: qcom-wled: Add callback functions
-Date:   Mon,  9 Mar 2020 18:56:00 +0530
-Message-Id: <1583760362-26978-3-git-send-email-kgunda@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583760362-26978-1-git-send-email-kgunda@codeaurora.org>
-References: <1583760362-26978-1-git-send-email-kgunda@codeaurora.org>
+        Mon, 9 Mar 2020 09:26:10 -0400
+Received: by mail-pj1-f66.google.com with SMTP id l36so1600935pjb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 06:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SN/uB0D2Yzk6crG8CckiI8AbJhkaIxgSVOsdNRCejtQ=;
+        b=vZN2XnYDJ42k+ninu6A+IqHKelBwH0M+hvsD+QV5C1ROyLTi2CL/HhhIyjJdutTh/1
+         pm1NaWqdB3J+PCc/hmjN7jo8hHGJwXnBk4S+fbh5wZFbZ5jjP2Km+6L0VY7iMrY0L7aA
+         Y7p+WwwdH8DtI3Lb4sE1zsFcv5tQrvN4g/xCdPryr+YFKoAy2AZ2fR72wC2pJp4GuQKj
+         KcLsJGg4vKdABf8bMPdCfQuisRs+6A89s78laLH06lBhpeZBHPaDAyZYwR7gPXSVmw70
+         p6HMEoGKYu041hKfHOxlPj7MIZzisw82/ECfEnov4ZOLA/1j4hFO+xgcM4dmYDOiHlkl
+         EHlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SN/uB0D2Yzk6crG8CckiI8AbJhkaIxgSVOsdNRCejtQ=;
+        b=F5lGnMVnOvyCdCfkMeT+FXYxdnkKRGB5coFzD8s/J5Vb+tWFqXLJyMAihfFB+YXTZ4
+         jirVkGCey/z5uteG9YoIFLySWu9e8nFrjV6oLHI4vPBtcWwXlfecywGrEwUHZkBALdfU
+         cGvTDyO+i0L2GqX3E/eh8EGi7PYo49lGqlv50ALmm04/1hngjVNJABD1XzW4cJf4ILi4
+         comfRnUNypeVpwVizBffkUY2Q5AMiSkCqLIV7OgSR386SdgDcjHvjF6kha+cSDL+Aaj+
+         PNIMPLWDMQgk9JZOnk4CvD9L3z2aSI3UgYM1ECXemzvjELeP573UfsTLX7bEKVmQU1co
+         6Vww==
+X-Gm-Message-State: ANhLgQ07gP1M3/gTlWlXCSb9dmX+QugbBn12uDLutGTWQTGh7zTULlnP
+        F8gTEeG3KCd2JQmQVnjdBpE=
+X-Google-Smtp-Source: ADFU+vuvA9G9Mzw9D+dwlX93AP7zcnrABY3oCgOA0sXAqr3IsZ/b+/wj64/nixCwGiiRrOLixf9kiw==
+X-Received: by 2002:a17:90b:238c:: with SMTP id mr12mr3164241pjb.161.1583760368597;
+        Mon, 09 Mar 2020 06:26:08 -0700 (PDT)
+Received: from Shreeya-Patel ([2405:204:2188:9cfe:18bc:a849:c699:3914])
+        by smtp.googlemail.com with ESMTPSA id v133sm33700710pfc.68.2020.03.09.06.26.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Mar 2020 06:26:07 -0700 (PDT)
+Message-ID: <b2db452217ced8bbd6f85121bf4c8fef3881d6ba.camel@gmail.com>
+Subject: Re: [Outreachy kernel] [PATCH] Staging: rtl8188eu: Add space around
+ operators
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     Joe Perches <joe@perches.com>,
+        outreachy-kernel <outreachy-kernel@googlegroups.com>,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, sbrivio@redhat.com,
+        daniel.baluta@gmail.com, nramas@linux.microsoft.com,
+        hverkuil@xs4all.nl, Larry.Finger@lwfinger.net
+Date:   Mon, 09 Mar 2020 18:56:00 +0530
+In-Reply-To: <alpine.DEB.2.21.2003090825280.2676@hadrien>
+References: <20200308220004.9960-1-shreeya.patel23498@gmail.com>
+          <f1327099b774e141bbeaa8abc47f98b9c6d49264.camel@perches.com>
+         <af1a27fb8c5f7efbaf99ce3055cf3801b366d627.camel@gmail.com>
+         <alpine.DEB.2.21.2003090825280.2676@hadrien>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add cabc_config, sync_toggle, wled_ovp_fault_status and wled_ovp_delay
-callback functions to prepare the driver for adding WLED5 support.
+On Mon, 2020-03-09 at 08:35 +0100, Julia Lawall wrote:
+> On Mon, 9 Mar 2020, Shreeya Patel wrote:
+> 
+> > On Sun, 2020-03-08 at 16:05 -0700, Joe Perches wrote:
+> > > On Mon, 2020-03-09 at 03:30 +0530, Shreeya Patel wrote:
+> > > > Add space around operators for improving the code
+> > > > readability.
+> > > 
+> > > Hello again Shreeya.
+> > > 
+> > 
+> > I have some questions here...
+> > 
+> > > The subject isn't really quite appropriate as you
+> > > are not doing this space around operator addition
+> > > for the entire subsystem.
+> > > 
+> > > IMO, the subject should be:
+> > > 
+> > > [PATCH] staging: rtl8188eu: rtw_mlme: Add spaces around operators
+> > > 
+> > > because you are only performing this change on this
+> > > single file.
+> > > 
+> > > If you were to do this for every single file in the
+> > > subsystem, you could have many individual patches with
+> > > the exact same subject line.
+> > > 
+> > > And it would be good to show in the changelog that you
+> > > have compiled the file pre and post patch without object
+> > > code change.
+> > > 
+> > 
+> > I'm not sure how to show this. Do you mean to add the output of
+> > "make drivers/staging/rtl8188eu/core" before and after the changes?
+> 
+> You are working on one specific file, maybe foo.c.  Compile before
+> making changes, which will give you foo.o.  Rename that file to
+> something
+> else.  Make your changes and compile again.  Do a diff with the
+> previously
+> compiled file.  It should produce nothing, indicating no difference.
+> 
+> If this .o file doesn't change and you only changed this .c file, the
+> whole compiled driver won't change either.
+> 
 
-Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
----
- drivers/video/backlight/qcom-wled.c | 196 +++++++++++++++++++++++-------------
- 1 file changed, 126 insertions(+), 70 deletions(-)
+ok, got it.
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index 3d276b3..b73f273 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -128,6 +128,7 @@ struct wled_config {
- 	bool cs_out_en;
- 	bool ext_gen;
- 	bool cabc;
-+	bool en_cabc;
- 	bool external_pfet;
- 	bool auto_detection_enabled;
- };
-@@ -147,14 +148,20 @@ struct wled {
- 	u32 max_brightness;
- 	u32 short_count;
- 	u32 auto_detect_count;
-+	u32 version;
- 	bool disabled_by_short;
- 	bool has_short_detect;
-+	bool cabc_disabled;
- 	int short_irq;
- 	int ovp_irq;
- 
- 	struct wled_config cfg;
- 	struct delayed_work ovp_work;
- 	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
-+	int (*cabc_config)(struct wled *wled, bool enable);
-+	int (*wled_sync_toggle)(struct wled *wled);
-+	int (*wled_ovp_fault_status)(struct wled *wled, bool *fault_set);
-+	int (*wled_ovp_delay)(struct wled *wled);
- };
- 
- static int wled3_set_brightness(struct wled *wled, u16 brightness)
-@@ -237,7 +244,7 @@ static int wled_module_enable(struct wled *wled, int val)
- 	return 0;
- }
- 
--static int wled_sync_toggle(struct wled *wled)
-+static int wled3_sync_toggle(struct wled *wled)
- {
- 	int rc;
- 	unsigned int mask = GENMASK(wled->max_string_count - 1, 0);
-@@ -255,6 +262,46 @@ static int wled_sync_toggle(struct wled *wled)
- 	return rc;
- }
- 
-+static int wled4_ovp_fault_status(struct wled *wled, bool *fault_set)
-+{
-+	int rc;
-+	u32 int_rt_sts, fault_sts;
-+
-+	*fault_set = false;
-+	rc = regmap_read(wled->regmap,
-+			wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS,
-+			&int_rt_sts);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to read INT_RT_STS rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	rc = regmap_read(wled->regmap,
-+			wled->ctrl_addr + WLED3_CTRL_REG_FAULT_STATUS,
-+			&fault_sts);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to read FAULT_STATUS rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if (int_rt_sts & WLED3_CTRL_REG_OVP_FAULT_STATUS)
-+		*fault_set = true;
-+
-+	if (fault_sts & WLED3_CTRL_REG_OVP_FAULT_BIT)
-+		*fault_set = true;
-+
-+	if (*fault_set)
-+		dev_dbg(wled->dev, "WLED OVP fault detected, int_rt_sts=0x%x fault_sts=0x%x\n",
-+			int_rt_sts, fault_sts);
-+
-+	return rc;
-+}
-+
-+static int wled4_ovp_delay(struct wled *wled)
-+{
-+	return WLED_SOFT_START_DLY_US;
-+}
-+
- static int wled_update_status(struct backlight_device *bl)
- {
- 	struct wled *wled = bl_get_data(bl);
-@@ -275,7 +322,7 @@ static int wled_update_status(struct backlight_device *bl)
- 			goto unlock_mutex;
- 		}
- 
--		rc = wled_sync_toggle(wled);
-+		rc = wled->wled_sync_toggle(wled);
- 		if (rc < 0) {
- 			dev_err(wled->dev, "wled sync failed rc:%d\n", rc);
- 			goto unlock_mutex;
-@@ -298,6 +345,31 @@ static int wled_update_status(struct backlight_device *bl)
- 	return rc;
- }
- 
-+static int wled4_cabc_config(struct wled *wled, bool enable)
-+{
-+	int i, j, rc;
-+	u8 val;
-+
-+	if (wled->cabc_disabled)
-+		return 0;
-+
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		j = wled->cfg.enabled_strings[i];
-+
-+		val = enable ? WLED4_SINK_REG_STR_CABC_MASK : 0;
-+		rc = regmap_update_bits(wled->regmap, wled->sink_addr +
-+					WLED4_SINK_REG_STR_CABC(j),
-+					WLED4_SINK_REG_STR_CABC_MASK, val);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	if (!wled->cfg.en_cabc)
-+		wled->cabc_disabled = true;
-+
-+	return 0;
-+}
-+
- #define WLED_SHORT_DLY_MS			20
- #define WLED_SHORT_CNT_MAX			5
- #define WLED_SHORT_RESET_CNT_DLY_US		USEC_PER_SEC
-@@ -345,9 +417,10 @@ static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
- 
- static void wled_auto_string_detection(struct wled *wled)
- {
--	int rc = 0, i;
--	u32 sink_config = 0, int_sts;
-+	int rc = 0, i, delay_time_us;
-+	u32 sink_config = 0;
- 	u8 sink_test = 0, sink_valid = 0, val;
-+	bool fault_set;
- 
- 	/* Read configured sink configuration */
- 	rc = regmap_read(wled->regmap, wled->sink_addr +
-@@ -376,14 +449,9 @@ static void wled_auto_string_detection(struct wled *wled)
- 	}
- 
- 	if (wled->cfg.cabc) {
--		for (i = 0; i < wled->cfg.num_strings; i++) {
--			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
--						WLED4_SINK_REG_STR_CABC(i),
--						WLED4_SINK_REG_STR_CABC_MASK,
--						0);
--			if (rc < 0)
--				goto failed_detect;
--		}
-+		rc = wled->cabc_config(wled, 0);
-+		if (rc < 0)
-+			goto failed_detect;
- 	}
- 
- 	/* Disable all sinks */
-@@ -427,18 +495,17 @@ static void wled_auto_string_detection(struct wled *wled)
- 			goto failed_detect;
- 		}
- 
--		usleep_range(WLED_SOFT_START_DLY_US,
--			     WLED_SOFT_START_DLY_US + 1000);
-+		delay_time_us = wled->wled_ovp_delay(wled);
-+		usleep_range(delay_time_us, delay_time_us + 1000);
- 
--		rc = regmap_read(wled->regmap, wled->ctrl_addr +
--				 WLED3_CTRL_REG_INT_RT_STS, &int_sts);
-+		rc = wled->wled_ovp_fault_status(wled, &fault_set);
- 		if (rc < 0) {
--			dev_err(wled->dev, "Error in reading WLED3_CTRL_INT_RT_STS rc=%d\n",
-+			dev_err(wled->dev, "Error in getting OVP fault_sts, rc=%d\n",
- 				rc);
- 			goto failed_detect;
- 		}
- 
--		if (int_sts & WLED3_CTRL_REG_OVP_FAULT_STATUS)
-+		if (fault_set)
- 			dev_dbg(wled->dev, "WLED OVP fault detected with SINK %d\n",
- 				i + 1);
- 		else
-@@ -478,30 +545,30 @@ static void wled_auto_string_detection(struct wled *wled)
- 	}
- 
- 	/* Enable valid sinks */
--	for (i = 0; i < wled->cfg.num_strings; i++) {
--		if (wled->cfg.cabc) {
--			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
--						WLED4_SINK_REG_STR_CABC(i),
--						WLED4_SINK_REG_STR_CABC_MASK,
--						WLED4_SINK_REG_STR_CABC_MASK);
--			if (rc < 0)
-+	if (wled->version == 4) {
-+		for (i = 0; i < wled->cfg.num_strings; i++) {
-+			if (sink_config &
-+			    BIT(WLED4_SINK_REG_CURR_SINK_SHFT + i))
-+				val = WLED4_SINK_REG_STR_MOD_MASK;
-+			else
-+				/* Disable modulator_en for unused sink */
-+				val = 0x0;
-+
-+			rc = regmap_write(wled->regmap, wled->sink_addr +
-+					  WLED4_SINK_REG_STR_MOD_EN(i), val);
-+			if (rc < 0) {
-+				dev_err(wled->dev, "Failed to configure MODULATOR_EN rc=%d\n",
-+					rc);
- 				goto failed_detect;
--		}
--
--		if (sink_config & BIT(WLED4_SINK_REG_CURR_SINK_SHFT + i))
--			val = WLED4_SINK_REG_STR_MOD_MASK;
--		else
--			val = 0x0; /* Disable modulator_en for unused sink */
--
--		rc = regmap_write(wled->regmap, wled->sink_addr +
--				  WLED4_SINK_REG_STR_MOD_EN(i), val);
--		if (rc < 0) {
--			dev_err(wled->dev, "Failed to configure MODULATOR_EN rc=%d\n",
--				rc);
--			goto failed_detect;
-+			}
- 		}
- 	}
- 
-+	/* Enable CABC if it needs to be enabled */
-+	rc = wled->cabc_config(wled, true);
-+	if (rc < 0)
-+		goto failed_detect;
-+
- 	/* Restore the feedback setting */
- 	rc = regmap_write(wled->regmap,
- 			  wled->ctrl_addr + WLED3_CTRL_REG_FEEDBACK_CONTROL, 0);
-@@ -570,29 +637,19 @@ static bool wled_auto_detection_required(struct wled *wled)
- static int wled_auto_detection_at_init(struct wled *wled)
- {
- 	int rc;
--	u32 fault_status, rt_status;
-+	bool fault_set;
- 
- 	if (!wled->cfg.auto_detection_enabled)
- 		return 0;
- 
--	rc = regmap_read(wled->regmap,
--			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS,
--			 &rt_status);
-+	rc = wled->wled_ovp_fault_status(wled, &fault_set);
- 	if (rc < 0) {
--		dev_err(wled->dev, "Failed to read RT status rc=%d\n", rc);
--		return rc;
--	}
--
--	rc = regmap_read(wled->regmap,
--			 wled->ctrl_addr + WLED3_CTRL_REG_FAULT_STATUS,
--			 &fault_status);
--	if (rc < 0) {
--		dev_err(wled->dev, "Failed to read fault status rc=%d\n", rc);
-+		dev_err(wled->dev, "Error in getting OVP fault_sts, rc=%d\n",
-+			rc);
- 		return rc;
- 	}
- 
--	if ((rt_status & WLED3_CTRL_REG_OVP_FAULT_STATUS) ||
--	    (fault_status & WLED3_CTRL_REG_OVP_FAULT_BIT)) {
-+	if (fault_set) {
- 		mutex_lock(&wled->lock);
- 		wled_auto_string_detection(wled);
- 		mutex_unlock(&wled->lock);
-@@ -811,17 +868,12 @@ static int wled4_setup(struct wled *wled)
- 					wled->cfg.string_i_limit);
- 		if (rc < 0)
- 			return rc;
--
--		addr = wled->sink_addr +
--				WLED4_SINK_REG_STR_CABC(j);
--		rc = regmap_update_bits(wled->regmap, addr,
--					WLED4_SINK_REG_STR_CABC_MASK,
--					wled->cfg.cabc ?
--					WLED4_SINK_REG_STR_CABC_MASK : 0);
--		if (rc < 0)
--			return rc;
- 	}
- 
-+	rc = wled4_cabc_config(wled, wled->cfg.en_cabc);
-+	if (rc < 0)
-+		return rc;
-+
- 	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
- 				WLED3_CTRL_REG_MOD_EN,
- 				WLED3_CTRL_REG_MOD_EN_MASK,
-@@ -835,7 +887,7 @@ static int wled4_setup(struct wled *wled)
- 	if (rc < 0)
- 		return rc;
- 
--	rc = wled_sync_toggle(wled);
-+	rc = wled->wled_sync_toggle(wled);
- 	if (rc < 0) {
- 		dev_err(wled->dev, "Failed to toggle sync reg rc:%d\n", rc);
- 		return rc;
-@@ -951,7 +1003,7 @@ static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
- 	return idx;
- }
- 
--static int wled_configure(struct wled *wled, int version)
-+static int wled_configure(struct wled *wled)
- {
- 	struct wled_config *cfg = &wled->cfg;
- 	struct device *dev = wled->dev;
-@@ -1035,12 +1087,13 @@ static int wled_configure(struct wled *wled, int version)
- 	if (rc)
- 		wled->name = devm_kasprintf(dev, GFP_KERNEL, "%pOFn", dev->of_node);
- 
--	switch (version) {
-+	switch (wled->version) {
- 	case 3:
- 		u32_opts = wled3_opts;
- 		size = ARRAY_SIZE(wled3_opts);
- 		*cfg = wled3_config_defaults;
- 		wled->wled_set_brightness = wled3_set_brightness;
-+		wled->wled_sync_toggle = wled3_sync_toggle;
- 		wled->max_string_count = 3;
- 		wled->sink_addr = wled->ctrl_addr;
- 		break;
-@@ -1050,6 +1103,10 @@ static int wled_configure(struct wled *wled, int version)
- 		size = ARRAY_SIZE(wled4_opts);
- 		*cfg = wled4_config_defaults;
- 		wled->wled_set_brightness = wled4_set_brightness;
-+		wled->wled_sync_toggle = wled3_sync_toggle;
-+		wled->cabc_config = wled4_cabc_config;
-+		wled->wled_ovp_fault_status = wled4_ovp_fault_status;
-+		wled->wled_ovp_delay = wled4_ovp_delay;
- 		wled->max_string_count = 4;
- 
- 		prop_addr = of_get_address(dev->of_node, 1, NULL, NULL);
-@@ -1186,7 +1243,6 @@ static int wled_probe(struct platform_device *pdev)
- 	struct backlight_device *bl;
- 	struct wled *wled;
- 	struct regmap *regmap;
--	int version;
- 	u32 val;
- 	int rc;
- 
-@@ -1203,18 +1259,18 @@ static int wled_probe(struct platform_device *pdev)
- 	wled->regmap = regmap;
- 	wled->dev = &pdev->dev;
- 
--	version = (uintptr_t)of_device_get_match_data(&pdev->dev);
--	if (!version) {
-+	wled->version = (uintptr_t)of_device_get_match_data(&pdev->dev);
-+	if (!wled->version) {
- 		dev_err(&pdev->dev, "Unknown device version\n");
- 		return -ENODEV;
- 	}
- 
- 	mutex_init(&wled->lock);
--	rc = wled_configure(wled, version);
-+	rc = wled_configure(wled);
- 	if (rc)
- 		return rc;
- 
--	switch (version) {
-+	switch (wled->version) {
- 	case 3:
- 		wled->cfg.auto_detection_enabled = false;
- 		rc = wled3_setup(wled);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
- a Linux Foundation Collaborative Project
+> > I also don't understand the meaning of no object code change. If we
+> > are
+> > making the changes to code and then compiling it using the make
+> > command
+> > then a new file with .o extension is created and replaced by the
+> > previous one isn't it?
+> > 
+> > > Also, it's good to show that git diff -w shows no source
+> > > file changes.
+> > > 
+> > 
+> > And this has to be...
+> > git diff -w --shortstat drivers/staging/rtl8188eu/core/
+> 
+> --shortstat does not seem useful.  What you hope to see is that it
+> produces nothing.
+> 
+Okay.
+I will send a V2 with all the changes required.
+
+Btw Joe, I am working against staging-testing tree
+
+> julia
+> 
+> > Am I correct?
+> > 
+> > Thanks
+> > 
+> > > > Reported by checkpatch.pl
+> > > > 
+> > > > Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+> > > > ---
+> > > >  drivers/staging/rtl8188eu/core/rtw_mlme.c | 40 +++++++++++--
+> > > > ----
+> > > > ------
+> > > >  1 file changed, 20 insertions(+), 20 deletions(-)
+> > > 
+> > > When I try this using checkpatch --fix-inplace, I get
+> > > 21 changes against the latest -next tree.
+> > > 
+> > > What tree are you doing this against?
+> > > 
+> > > 
+> > 
+> > --
+> > You received this message because you are subscribed to the Google
+> > Groups "outreachy-kernel" group.
+> > To unsubscribe from this group and stop receiving emails from it,
+> > send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit 
+> > https://groups.google.com/d/msgid/outreachy-kernel/af1a27fb8c5f7efbaf99ce3055cf3801b366d627.camel%40gmail.com
+> > .
+> > 
+
