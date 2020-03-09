@@ -2,165 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE8517DDA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 11:32:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9442B17DDAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 11:33:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgCIKcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 06:32:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:50242 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbgCIKcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 06:32:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08E7D1FB;
-        Mon,  9 Mar 2020 03:32:31 -0700 (PDT)
-Received: from [10.1.195.32] (e112269-lin.cambridge.arm.com [10.1.195.32])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75E5F3F67D;
-        Mon,  9 Mar 2020 03:32:29 -0700 (PDT)
-Subject: Re: [PATCH] arm64: add check_wx_pages debugfs for CHECK_WX
-To:     Phong Tran <tranmanphong@gmail.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Steve Capper <Steve.Capper@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>
-References: <20200307093926.27145-1-tranmanphong@gmail.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <34739c99-3436-e88f-769b-43c48caa8817@arm.com>
-Date:   Mon, 9 Mar 2020 10:32:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726866AbgCIKdI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 06:33:08 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60075 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbgCIKdI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 06:33:08 -0400
+X-Originating-IP: 90.89.41.158
+Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 708D81C001A;
+        Mon,  9 Mar 2020 10:32:57 +0000 (UTC)
+Date:   Mon, 9 Mar 2020 11:32:56 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     shiva.linuxworks@gmail.com
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Shivamurthy Shastri <sshivamurthy@micron.com>
+Subject: Re: [PATCH v5 0/6] Add new series Micron SPI NAND devices
+Message-ID: <20200309113256.6c6751f8@xps13>
+In-Reply-To: <20200228150311.12184-1-sshivamurthy@micron.com>
+References: <20200228150311.12184-1-sshivamurthy@micron.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200307093926.27145-1-tranmanphong@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2020 09:39, Phong Tran wrote:
-> follow the suggestion from
-> https://github.com/KSPP/linux/issues/35
+Hi Shiva,
+
+shiva.linuxworks@gmail.com wrote on Fri, 28 Feb 2020 16:03:05 +0100:
+
+> From: Shivamurthy Shastri <sshivamurthy@micron.com>
 > 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  arch/arm64/Kconfig.debug        |  3 ++-
->  arch/arm64/include/asm/ptdump.h |  2 ++
->  arch/arm64/mm/dump.c            |  1 +
->  arch/arm64/mm/ptdump_debugfs.c  | 18 ++++++++++++++++++
->  4 files changed, 23 insertions(+), 1 deletion(-)
+> This patchset is for the new series of Micron SPI NAND devices, and the
+> following links are their datasheets.
 > 
-> diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
-> index 1c906d932d6b..be552fa351e2 100644
-> --- a/arch/arm64/Kconfig.debug
-> +++ b/arch/arm64/Kconfig.debug
-> @@ -48,7 +48,8 @@ config DEBUG_WX
->  	  of other unfixed kernel bugs easier.
->  
->  	  There is no runtime or memory usage effect of this option
-> -	  once the kernel has booted up - it's a one time check.
-> +	  once the kernel has booted up - it's a one time check and
-> +	  can be checked by echo "1" to "check_wx_pages" debugfs in runtime.
+> M78A:
+> [1] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_3v_nand_spi.pdf
+> [2] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m78a_1gb_1_8v_nand_spi.pdf
+> 
+> M79A:
+> [3] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_2gb_1_8v_nand_spi.pdf
+> [4] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m79a_ddp_4gb_3v_nand_spi.pdf
+> 
+> M70A:
+> [5] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_3v_nand_spi.pdf
+> [6] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_4gb_1_8v_nand_spi.pdf
+> [7] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_3v_nand_spi.pdf
+> [8] https://www.micron.com/~/media/documents/products/data-sheet/nand-flash/70-series/m70a_ddp_8gb_1_8v_nand_spi.pdf
+> 
+> Changes since v4:
+> -----------------
+> 
+> 1. Patch 2 is separated into two as per the comment by Boris.
+> 2. Renamed MICRON_CFG_CONTI_READ into MICRON_CFG_CR.
+> 3. Reworked die selection function as per the comment by Boris.
 
-I would suggest it may be better spelling this out a bit more, because
-at the moment it's a little confusing when the config option is "Warn on
-W+X mappings at boot", but your change makes it sound like it only
-happens when you do the echo. Perhaps something like:
-
-	  There is no runtime or memory usage effect of this option
-	  once the kernel has booted up - it's a one time check at
-	  boot, and can also be triggered at runtime by echo "1" to
-	  "check_wx_pages".
-
->  
->  	  If in doubt, say "Y".
->  
-> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-> index 38187f74e089..b80d6b4fc508 100644
-> --- a/arch/arm64/include/asm/ptdump.h
-> +++ b/arch/arm64/include/asm/ptdump.h
-> @@ -24,9 +24,11 @@ struct ptdump_info {
->  void ptdump_walk(struct seq_file *s, struct ptdump_info *info);
->  #ifdef CONFIG_PTDUMP_DEBUGFS
->  void ptdump_debugfs_register(struct ptdump_info *info, const char *name);
-> +int ptdump_check_wx_init(void);
->  #else
->  static inline void ptdump_debugfs_register(struct ptdump_info *info,
->  					   const char *name) { }
-> +static inline int ptdump_check_wx_init(void) { return 0; }
->  #endif
->  void ptdump_check_wx(void);
->  #endif /* CONFIG_PTDUMP_CORE */
-
-This is a confusing! Why have you made it dependent on
-CONFIG_PTDUMP_DEBUGFS?
-
-Well actually I can see why - it's because you've put the new functions
-in ptdump_debugfs.c which is (currently) only built when
-CONFIG_PTDUMP_DBEUGFS is enabled.
-
-So you need to either:
-
- a) Ensure the new code is built when CONFIG_PTDUMP_DEBUGFS isn't enabled.
-
- b) Update the Kconfig help text to say that the debugfs file for
-triggering a runtime W+X check is only available if
-CONFIG_PTDUMP_DEBUGFS is also enabled.
-
-Other than the confusion over config symbols this looks good.
+I was about to apply this series but unfortunately it is not based on
+v5.6-rc1 so no patch applies correctly. Can you please rebase and send
+a v6 soon?
 
 Thanks,
-
-Steve
-
-> diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-> index 860c00ec8bd3..60c99a047763 100644
-> --- a/arch/arm64/mm/dump.c
-> +++ b/arch/arm64/mm/dump.c
-> @@ -378,6 +378,7 @@ static int ptdump_init(void)
->  #endif
->  	ptdump_initialize();
->  	ptdump_debugfs_register(&kernel_ptdump_info, "kernel_page_tables");
-> +	ptdump_check_wx_init();
->  	return 0;
->  }
->  device_initcall(ptdump_init);
-> diff --git a/arch/arm64/mm/ptdump_debugfs.c b/arch/arm64/mm/ptdump_debugfs.c
-> index 1f2eae3e988b..73cddc12c3c2 100644
-> --- a/arch/arm64/mm/ptdump_debugfs.c
-> +++ b/arch/arm64/mm/ptdump_debugfs.c
-> @@ -16,3 +16,21 @@ void ptdump_debugfs_register(struct ptdump_info *info, const char *name)
->  {
->  	debugfs_create_file(name, 0400, NULL, info, &ptdump_fops);
->  }
-> +
-> +static int check_wx_debugfs_set(void *data, u64 val)
-> +{
-> +	if (val != 1ULL)
-> +		return -EINVAL;
-> +
-> +	ptdump_check_wx();
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_SIMPLE_ATTRIBUTE(check_wx_fops, NULL, check_wx_debugfs_set, "%llu\n");
-> +
-> +int ptdump_check_wx_init(void)
-> +{
-> +	return debugfs_create_file("check_wx_pages", 0200, NULL,
-> +				   NULL, &check_wx_fops) ? 0 : -ENOMEM;
-> +}
-> 
-
+Miquèl
