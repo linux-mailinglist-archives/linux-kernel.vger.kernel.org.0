@@ -2,85 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D4D417E9D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:19:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 203D317E9C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:16:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbgCIUS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:18:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43046 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbgCIUS4 (ORCPT
+        id S1726170AbgCIUP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:15:59 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.28]:33129 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbgCIUP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:18:56 -0400
+        Mon, 9 Mar 2020 16:15:58 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 92343EB2E
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:15:57 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BOofjZSOdAGTXBOofj1Dcl; Mon, 09 Mar 2020 15:15:57 -0500
+X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TWIHUDy3jBW0cS7WR3QKj5Hh4Aa7h7NpiybbLVlDwD8=; b=btPRRmqpXB8zYUKvCBAnCYqbS8
-        zLOXODaCWXirdkuGQEu+x4UaVagtE/ql7+eji0mE0GDDQ1xci4BGXfnEFd+Gfy2+36YLHUc8HMQVm
-        Ku9dVwcwbcpsPaPHTm258mG5vuJmzZBrwXUSIDVLOrZm2pEH5FD8iOKze/wwGZpRURxjTeUeC2YKJ
-        3JBswWTz3orI/X4b6M8iAfLCn2llhLew6McPjYx8E/T4K1EvuRNAVgoRL5zwf52uEALeq6TarclTd
-        ERovtuTRXMakFf1nmoY3XQcmRz+mYMhFRJ9WByAtVbqMeSaP3WLdEod56mrUi8j/pVeX0IuT7lM3i
-        vPMaa0xQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jBOrN-0001up-J9; Mon, 09 Mar 2020 20:18:45 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2F8C23011E0;
-        Mon,  9 Mar 2020 21:18:42 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DF2BF214344E6; Mon,  9 Mar 2020 21:18:42 +0100 (CET)
-Date:   Mon, 9 Mar 2020 21:18:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: Instrumentation and RCU
-Message-ID: <20200309201842.GL12561@hirez.programming.kicks-ass.net>
-References: <87mu8p797b.fsf@nanos.tec.linutronix.de>
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=OFpxczpL0H3aEgaNATlcxEMIIo0HVwgN3oSVFlbxZBI=; b=ZKT+L6CED+NjpnzpUqDXl5oPHQ
+        7YMU7lCzhF5runUpXT3E/p0B9v0oQxYHcXfJ0Br0P78crQti/wvqbVAcL98uzQRyKp6UL85v20xmm
+        Ch0hqqszcYf0FGI2Obk8+8qYCZFnMmvGu8N+TlVIKunpa09rGiS6JQEIVXY7Iq8uXNYOMQTllovwx
+        L35FyWVvnY2CthbDgeqkQtwz6sWjNE4pCSLBWqr++3X8gWMjwpfsKq6Hy3PHcHB3p4PRprYPvXvI2
+        tuYGyK0wI71DmbcXZhvtnvbEDfTclMrEnJTaG/cWtDg7vgjnC6g59719Nm9kUHB6VidY0sJsHTCzc
+        7mKVfe+A==;
+Received: from [201.162.168.201] (port=12179 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jBOod-000wWi-Jr; Mon, 09 Mar 2020 15:15:56 -0500
+Date:   Mon, 9 Mar 2020 15:19:07 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] ocfs2: cluster: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200309201907.GA8005@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87mu8p797b.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.168.201
+X-Source-L: No
+X-Exim-ID: 1jBOod-000wWi-Jr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.168.201]:12179
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 06:02:32PM +0100, Thomas Gleixner wrote:
-> #4 Protecting call chains
-> 
->    Our current approach of annotating functions with notrace/noprobe is
->    pretty much broken.
-> 
->    Functions which are marked NOPROBE or notrace call out into functions
->    which are not marked and while this might be ok, there are enough
->    places where it is not. But we have no way to verify that.
-> 
->    That's just a recipe for disaster. We really cannot request from
->    sysadmins who want to use instrumentation to stare at the code first
->    whether they can place/enable an instrumentation point somewhere.
->    That'd be just a bad joke.
-> 
->    I really think we need to have proper text sections which are off
->    limit for any form of instrumentation and have tooling to analyze the
->    calls into other sections. These calls need to be annotated as safe
->    and intentional.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-So the only tool I know of that does full callchains is smatch. And in
-one of my series I did prod Dan about this.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-The alternative is that we bite the bullet and add a vmlinux objtool
-pass. This keeps getting mentioned, so maybe it is time :/ I'd hate it,
-because it will increase build time at the slowest point, but it'd get
-us the coverage we need here.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
+
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/ocfs2/cluster/tcp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/cluster/tcp.h b/fs/ocfs2/cluster/tcp.h
+index de87cbffd175..736338f45c59 100644
+--- a/fs/ocfs2/cluster/tcp.h
++++ b/fs/ocfs2/cluster/tcp.h
+@@ -32,7 +32,7 @@ struct o2net_msg
+ 	__be32 status;
+ 	__be32 key;
+ 	__be32 msg_num;
+-	__u8  buf[0];
++	__u8  buf[];
+ };
+ 
+ typedef int (o2net_msg_handler_func)(struct o2net_msg *msg, u32 len, void *data,
+-- 
+2.25.0
+
