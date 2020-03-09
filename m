@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF0817E8E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C70C17E8EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgCITnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:43:42 -0400
-Received: from v6.sk ([167.172.42.174]:34678 "EHLO v6.sk"
+        id S1726910AbgCITnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:43:46 -0400
+Received: from v6.sk ([167.172.42.174]:34700 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbgCITnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:43:42 -0400
+        id S1726197AbgCITnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:43:46 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 1561F61305;
-        Mon,  9 Mar 2020 19:43:40 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id D131261308;
+        Mon,  9 Mar 2020 19:43:43 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -22,9 +22,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 10/17] ARM: dts: mmp3: Use the MMP3 compatible string for /clocks
-Date:   Mon,  9 Mar 2020 20:42:47 +0100
-Message-Id: <20200309194254.29009-11-lkundrak@v3.sk>
+Subject: [PATCH v2 11/17] dt-bindings: marvell,mmp2: Add clock ids for the GPU clocks
+Date:   Mon,  9 Mar 2020 20:42:48 +0100
+Message-Id: <20200309194254.29009-12-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200309194254.29009-1-lkundrak@v3.sk>
 References: <20200309194254.29009-1-lkundrak@v3.sk>
@@ -35,28 +35,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clocks are in fact slightly different on MMP3. In particular, PLL2 is
-fixed to a different frequency, there's an extra PLL3, and the GPU
-clocks are configured differently.
+MMP2 has a single GC860 core while MMP3 has a GC2000 and a GC300.
+On both platforms there's an AXI bus interface clock that's common for
+all GPUs and each GPU core has a separate clock.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- arch/arm/boot/dts/mmp3.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
-index 59a108e49b41e..3e28f0dc9df41 100644
---- a/arch/arm/boot/dts/mmp3.dtsi
-+++ b/arch/arm/boot/dts/mmp3.dtsi
-@@ -531,7 +531,7 @@ l2: l2-cache-controller@d0020000 {
- 		};
+---
+Changes since v1:
+- Added this patch
+
+ include/dt-bindings/clock/marvell,mmp2.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindings/clock/marvell,mmp2.h
+index 22006392b411b..dd5067bd92f22 100644
+--- a/include/dt-bindings/clock/marvell,mmp2.h
++++ b/include/dt-bindings/clock/marvell,mmp2.h
+@@ -77,6 +77,11 @@
+ #define MMP2_CLK_DISP0_LCDC		120
+ #define MMP2_CLK_USBHSIC0		121
+ #define MMP2_CLK_USBHSIC1		122
++#define MMP2_CLK_GPU_BUS		123
++#define MMP3_CLK_GPU_BUS		MMP2_CLK_GPU_BUS
++#define MMP2_CLK_GPU_3D			124
++#define MMP3_CLK_GPU_3D			MMP2_CLK_GPU_3D
++#define MMP3_CLK_GPU_2D			125
  
- 		soc_clocks: clocks@d4050000 {
--			compatible = "marvell,mmp2-clock";
-+			compatible = "marvell,mmp3-clock";
- 			reg = <0xd4050000 0x1000>,
- 			      <0xd4282800 0x400>,
- 			      <0xd4015000 0x1000>;
+ #define MMP2_NR_CLKS			200
+ #endif
 -- 
 2.25.1
 
