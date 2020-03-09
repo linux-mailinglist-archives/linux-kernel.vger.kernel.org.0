@@ -2,48 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B10017DB24
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67D6817DB27
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:37:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgCIIh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:37:26 -0400
-Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17899 "EHLO
-        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726215AbgCIIhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:37:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1583743004;
-        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
-        h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=fspPoWh79zaLVJtcCiuZPHpClxHc3HMz8kus+GU3cug=;
-        b=YbuUMczt+Flzmo9PiR+v1tbqyKOqjXiarABsnK0yVQyEU3cIXUA8Flomt/pQ3/zb
-        EhZm1g6u1W19YuqOmR4SzBDw8ALe8HixD94y6PpgzvK2f1GOSMeAw+GeHqIUii7eH58
-        Re4eRPxz/0Ny+V8XxGeJkYgR/ksbqEj5o542DP6E=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1583743001556858.9546748061696; Mon, 9 Mar 2020 16:36:41 +0800 (CST)
-Date:   Mon, 09 Mar 2020 16:36:41 +0800
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     "Tiezhu Yang" <yangtiezhu@loongson.cn>
-Cc:     "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
-        "Huacai Chen" <chenhc@lemote.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Jens Axboe" <axboe@kernel.dk>,
-        "linux-mips" <linux-mips@vger.kernel.org>,
-        "linux-pci" <linux-pci@vger.kernel.org>,
-        "linux-ide" <linux-ide@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "Xuefeng Li" <lixuefeng@loongson.cn>
-Message-ID: <170be7063d1.c7d52ae02285.4730966984142345992@flygoat.com>
-In-Reply-To: <1583742206-29163-4-git-send-email-yangtiezhu@loongson.cn>
-References: <1583742206-29163-1-git-send-email-yangtiezhu@loongson.cn> <1583742206-29163-4-git-send-email-yangtiezhu@loongson.cn>
-Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[PATCH_3/6]_MIPS:_Loongson:_Use_?=
- =?UTF-8?Q?firmware_arguments_to_get_board_name?=
+        id S1726814AbgCIIhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:37:39 -0400
+Received: from mga18.intel.com ([134.134.136.126]:59851 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726071AbgCIIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 04:37:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 01:37:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,532,1574150400"; 
+   d="scan'208";a="230853650"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.3]) ([10.239.13.3])
+  by orsmga007.jf.intel.com with ESMTP; 09 Mar 2020 01:37:36 -0700
+Subject: Re: [kbuild-all] Re: arch/x86/mm/fault.o: warning: objtool:
+ do_page_fault()+0x4fb: unreachable instruction
+To:     Frederic Weisbecker <frederic@kernel.org>,
+        kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+References: <202003061843.YVzsDc3A%lkp@intel.com>
+ <20200306142732.GA8590@lenoir>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <d242f3cb-e95b-441e-0a32-a0279100eeaf@intel.com>
+Date:   Mon, 9 Mar 2020 16:37:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Priority: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+In-Reply-To: <20200306142732.GA8590@lenoir>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,72 +45,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2020-03-09 16:23:23 Tiezhu Yan=
-g <yangtiezhu@loongson.cn> =E6=92=B0=E5=86=99 ----
- > In order to distinguish various types of bridge chip such as AMD RS780E
- > or Loongson 7A1000, we can use firmware arguments to get board name.
- >=20
-Hi Tiezhu,
+On 3/6/20 10:27 PM, Frederic Weisbecker wrote:
+> On Fri, Mar 06, 2020 at 06:48:47PM +0800, kbuild test robot wrote:
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>> head:   9f65ed5fe41ce08ed1cb1f6a950f9ec694c142ad
+>> commit: ee6352b2c47a24234398e06381edd93a8e965976 x86/context-tracking: Remove exception_enter/exit() from do_page_fault()
+>> date:   8 weeks ago
+>> config: x86_64-randconfig-a002-20200306 (attached as .config)
+>> compiler: gcc-4.9 (Debian 4.9.2-10+deb8u1) 4.9.2
+>> reproduce:
+>>          git checkout ee6352b2c47a24234398e06381edd93a8e965976
+>>          # save the attached .config to linux build tree
+>>          make ARCH=x86_64
+>>
+>> If you fix the issue, kindly add following tag
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>>
+>> All warnings (new ones prefixed by >>):
+>>
+>>>> arch/x86/mm/fault.o: warning: objtool: do_page_fault()+0x4fb: unreachable instruction
+> I tried several versions of gcc and I can't reproduce the warning. Also looking
+> at the code I fail to find an actual unreachable path. Do you still have the vmlinux around?
+>
+>
 
-Thanks for your contribution.
-Your series is sightly conflict with my "modernize" series. But that's fine=
-,
-if your code can meet mainline requirement, I'm going to adjust my works.=
-=20
+Hi Frederic,
 
-See my comments bellow.
+Sorry for the inconvenience, we checked again and only found this issue 
+on gcc-4.9.2,
+and there's no issue on gcc-4.9.3 or other new versions.
 
- > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
- > ---
- >  arch/mips/include/asm/mach-loongson64/boot_param.h | 1 +
- >  arch/mips/loongson64/env.c                         | 5 +++++
- >  2 files changed, 6 insertions(+)
- >=20
- > diff --git a/arch/mips/include/asm/mach-loongson64/boot_param.h b/arch/m=
-ips/include/asm/mach-loongson64/boot_param.h
- > index 8c286be..225a563 100644
- > --- a/arch/mips/include/asm/mach-loongson64/boot_param.h
- > +++ b/arch/mips/include/asm/mach-loongson64/boot_param.h
- > @@ -217,5 +217,6 @@ struct loongson_system_configuration {
- > =20
- >  extern struct efi_memory_map_loongson *loongson_memmap;
- >  extern struct loongson_system_configuration loongson_sysconf;
- > +extern struct board_devices *eboard;
- > =20
- >  #endif
- > diff --git a/arch/mips/loongson64/env.c b/arch/mips/loongson64/env.c
- > index 0daeb7b..a244a8c 100644
- > --- a/arch/mips/loongson64/env.c
- > +++ b/arch/mips/loongson64/env.c
- > @@ -24,6 +24,9 @@ EXPORT_SYMBOL(cpu_clock_freq);
- >  struct efi_memory_map_loongson *loongson_memmap;
- >  struct loongson_system_configuration loongson_sysconf;
- > =20
- > +struct board_devices *eboard;
- > +EXPORT_SYMBOL(eboard);
-
-Can we make it as a part of struct loongson_sysconf and export that struct?
-Memory of struct eboard is not managed by kernel,  we shouldn't export such=
- symbol.
-
-Also I noticed that you're checking PCH type repeatly in other subsystems. =
-Can you just
-determine the PCH type here?
-
- > +
- >  u64 loongson_chipcfg[MAX_PACKAGES] =3D {0xffffffffbfc00180};
- >  u64 loongson_chiptemp[MAX_PACKAGES];
- >  u64 loongson_freqctrl[MAX_PACKAGES];
- > @@ -51,6 +54,8 @@ void __init prom_init_env(void)
- >          ((u64)loongson_p + loongson_p->system_offset);
- >      ecpu =3D (struct efi_cpuinfo_loongson *)
- >          ((u64)loongson_p + loongson_p->cpu_offset);
- > +    eboard =3D (struct board_devices *)
- > +        ((u64)loongson_p + loongson_p->boarddev_table_offset);
- >      eirq_source =3D (struct irq_source_routing_table *)
- >          ((u64)loongson_p + loongson_p->irq_offset);
- >      loongson_memmap =3D (struct efi_memory_map_loongson *)
- > --=20
- > 2.1.0
- >=20
- >
+Best Regards,
+Rong Chen
