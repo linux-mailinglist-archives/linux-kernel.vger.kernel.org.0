@@ -2,267 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4806917DBF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1569317DBE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbgCII7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:59:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19496 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726946AbgCII7b (ORCPT
+        id S1726428AbgCII6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:58:40 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48395 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725796AbgCII6k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:59:31 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0298oBGQ038432
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Mar 2020 04:59:31 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ym6tmf9xu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:59:30 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 9 Mar 2020 08:59:28 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Mar 2020 08:59:23 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0298xMKB56492278
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Mar 2020 08:59:22 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72F16A404D;
-        Mon,  9 Mar 2020 08:59:22 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 032C5A4040;
-        Mon,  9 Mar 2020 08:59:20 +0000 (GMT)
-Received: from bangoria.in.ibm.com (unknown [9.124.31.44])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Mar 2020 08:59:19 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     mpe@ellerman.id.au, mikey@neuling.org
-Cc:     apopple@linux.ibm.com, paulus@samba.org, npiggin@gmail.com,
-        christophe.leroy@c-s.fr, naveen.n.rao@linux.vnet.ibm.com,
-        peterz@infradead.org, jolsa@kernel.org, oleg@redhat.com,
-        fweisbec@gmail.com, mingo@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 15/15] powerpc/watchpoint/xmon: Support 2nd dawr
-Date:   Mon,  9 Mar 2020 14:28:06 +0530
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
-References: <20200309085806.155823-1-ravi.bangoria@linux.ibm.com>
+        Mon, 9 Mar 2020 04:58:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583744318;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=rM8SCMKgbVq0dsxwT36P0gEDRUGcdYNOLo6h+hPX3dE=;
+        b=cux5itZWuiNCDgYo7G0HLzW2znn9r9THc56z0yeQPYj+zHpbWFI+5D/EFjBilXJT25T0X6
+        VyqXfFhArfnMFdx4CGmkPqOZn0j1t5mahK3VxLXScJcHzoGsia14hl0lpoE5GJ/DuQ+ul2
+        4x7bzhan6dwOPsPiBB+m+dXqaGmv/vg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-303-AktURqhXMZWfBXJxbeBmOQ-1; Mon, 09 Mar 2020 04:58:34 -0400
+X-MC-Unique: AktURqhXMZWfBXJxbeBmOQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D19118017CC;
+        Mon,  9 Mar 2020 08:58:32 +0000 (UTC)
+Received: from [10.36.118.32] (unknown [10.36.118.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 148298B75C;
+        Mon,  9 Mar 2020 08:58:29 +0000 (UTC)
+Subject: Re: [PATCH v3 1/7] mm/hotplug: fix hot remove failure in
+ SPARSEMEM|!VMEMMAP case
+To:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@suse.com,
+        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
+        osalvador@suse.de, rppt@linux.ibm.com
+References: <20200307084229.28251-1-bhe@redhat.com>
+ <20200307084229.28251-2-bhe@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <b0ff37b3-bae1-bdd6-8a4f-62f03e028839@redhat.com>
+Date:   Mon, 9 Mar 2020 09:58:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030908-4275-0000-0000-000003A9B441
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030908-4276-0000-0000-000038BECA00
-Message-Id: <20200309085806.155823-16-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-09_02:2020-03-06,2020-03-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015
- suspectscore=2 adultscore=0 impostorscore=0 mlxlogscore=999 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003090066
+In-Reply-To: <20200307084229.28251-2-bhe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for 2nd DAWR in xmon. With this, we can have two
-simultaneous breakpoints from xmon.
+On 07.03.20 09:42, Baoquan He wrote:
+> In section_deactivate(), pfn_to_page() doesn't work any more after
+> ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
+> It caused hot remove failure:
+> 
+> kernel BUG at mm/page_alloc.c:4806!
+> invalid opcode: 0000 [#1] SMP PTI
+> CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+> Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+> RIP: 0010:free_pages+0x85/0xa0
+> Call Trace:
+>  __remove_pages+0x99/0xc0
+>  arch_remove_memory+0x23/0x4d
+>  try_remove_memory+0xc8/0x130
+>  ? walk_memory_blocks+0x72/0xa0
+>  __remove_memory+0xa/0x11
+>  acpi_memory_device_remove+0x72/0x100
+>  acpi_bus_trim+0x55/0x90
+>  acpi_device_hotplug+0x2eb/0x3d0
+>  acpi_hotplug_work_fn+0x1a/0x30
+>  process_one_work+0x1a7/0x370
+>  worker_thread+0x30/0x380
+>  ? flush_rcu_work+0x30/0x30
+>  kthread+0x112/0x130
+>  ? kthread_create_on_node+0x60/0x60
+>  ret_from_fork+0x35/0x40
+> 
+> Let's move the ->section_mem_map resetting after depopulate_section_memmap()
+> to fix it.
+> 
+> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  mm/sparse.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 42c18a38ffaa..1b50c15677d7 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -734,6 +734,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  	struct mem_section *ms = __pfn_to_section(pfn);
+>  	bool section_is_early = early_section(ms);
+>  	struct page *memmap = NULL;
+> +	bool empty = false;
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- arch/powerpc/xmon/xmon.c | 101 ++++++++++++++++++++++++++-------------
- 1 file changed, 69 insertions(+), 32 deletions(-)
+Oh, one NIT: no need to initialize empty to false.
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index ac18fe3e4295..20adc83404c8 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -110,7 +110,7 @@ struct bpt {
- 
- #define NBPTS	256
- static struct bpt bpts[NBPTS];
--static struct bpt dabr;
-+static struct bpt dabr[HBP_NUM_MAX];
- static struct bpt *iabr;
- static unsigned bpinstr = 0x7fe00008;	/* trap */
- 
-@@ -786,10 +786,17 @@ static int xmon_sstep(struct pt_regs *regs)
- 
- static int xmon_break_match(struct pt_regs *regs)
- {
-+	int i;
-+
- 	if ((regs->msr & (MSR_IR|MSR_PR|MSR_64BIT)) != (MSR_IR|MSR_64BIT))
- 		return 0;
--	if (dabr.enabled == 0)
--		return 0;
-+	for (i = 0; i < nr_wp_slots(); i++) {
-+		if (dabr[i].enabled)
-+			goto found;
-+	}
-+	return 0;
-+
-+found:
- 	xmon_core(regs, 0);
- 	return 1;
- }
-@@ -928,13 +935,16 @@ static void insert_bpts(void)
- 
- static void insert_cpu_bpts(void)
- {
-+	int i;
- 	struct arch_hw_breakpoint brk;
- 
--	if (dabr.enabled) {
--		brk.address = dabr.address;
--		brk.type = (dabr.enabled & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
--		brk.len = DABR_MAX_LEN;
--		__set_breakpoint(&brk, 0);
-+	for (i = 0; i < nr_wp_slots(); i++) {
-+		if (dabr[i].enabled) {
-+			brk.address = dabr[i].address;
-+			brk.type = (dabr[i].enabled & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
-+			brk.len = 8;
-+			__set_breakpoint(&brk, i);
-+		}
- 	}
- 
- 	if (iabr)
-@@ -1348,6 +1358,35 @@ static long check_bp_loc(unsigned long addr)
- 	return 1;
- }
- 
-+static int free_data_bpt(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_wp_slots(); i++) {
-+		if (!dabr[i].enabled)
-+			return i;
-+	}
-+	printf("Couldn't find free breakpoint register\n");
-+	return -1;
-+}
-+
-+static void print_data_bpts(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_wp_slots(); i++) {
-+		if (!dabr[i].enabled)
-+			continue;
-+
-+		printf("   data   "REG"  [", dabr[i].address);
-+		if (dabr[i].enabled & 1)
-+			printf("r");
-+		if (dabr[i].enabled & 2)
-+			printf("w");
-+		printf("]\n");
-+	}
-+}
-+
- static char *breakpoint_help_string =
-     "Breakpoint command usage:\n"
-     "b                show breakpoints\n"
-@@ -1381,10 +1420,9 @@ bpt_cmds(void)
- 			printf("Hardware data breakpoint not supported on this cpu\n");
- 			break;
- 		}
--		if (dabr.enabled) {
--			printf("Couldn't find free breakpoint register\n");
-+		i = free_data_bpt();
-+		if (i < 0)
- 			break;
--		}
- 		mode = 7;
- 		cmd = inchar();
- 		if (cmd == 'r')
-@@ -1393,15 +1431,15 @@ bpt_cmds(void)
- 			mode = 6;
- 		else
- 			termch = cmd;
--		dabr.address = 0;
--		dabr.enabled = 0;
--		if (scanhex(&dabr.address)) {
--			if (!is_kernel_addr(dabr.address)) {
-+		dabr[i].address = 0;
-+		dabr[i].enabled = 0;
-+		if (scanhex(&dabr[i].address)) {
-+			if (!is_kernel_addr(dabr[i].address)) {
- 				printf(badaddr);
- 				break;
- 			}
--			dabr.address &= ~HW_BRK_TYPE_DABR;
--			dabr.enabled = mode | BP_DABR;
-+			dabr[i].address &= ~HW_BRK_TYPE_DABR;
-+			dabr[i].enabled = mode | BP_DABR;
- 		}
- 
- 		force_enable_xmon();
-@@ -1440,7 +1478,9 @@ bpt_cmds(void)
- 			for (i = 0; i < NBPTS; ++i)
- 				bpts[i].enabled = 0;
- 			iabr = NULL;
--			dabr.enabled = 0;
-+			for (i = 0; i < nr_wp_slots(); i++)
-+				dabr[i].enabled = 0;
-+
- 			printf("All breakpoints cleared\n");
- 			break;
- 		}
-@@ -1474,14 +1514,7 @@ bpt_cmds(void)
- 		if (xmon_is_ro || !scanhex(&a)) {
- 			/* print all breakpoints */
- 			printf("   type            address\n");
--			if (dabr.enabled) {
--				printf("   data   "REG"  [", dabr.address);
--				if (dabr.enabled & 1)
--					printf("r");
--				if (dabr.enabled & 2)
--					printf("w");
--				printf("]\n");
--			}
-+			print_data_bpts();
- 			for (bp = bpts; bp < &bpts[NBPTS]; ++bp) {
- 				if (!bp->enabled)
- 					continue;
-@@ -1941,8 +1974,13 @@ static void dump_207_sprs(void)
- 
- 	printf("hfscr  = %.16lx  dhdes = %.16lx rpr    = %.16lx\n",
- 		mfspr(SPRN_HFSCR), mfspr(SPRN_DHDES), mfspr(SPRN_RPR));
--	printf("dawr   = %.16lx  dawrx = %.16lx ciabr  = %.16lx\n",
--		mfspr(SPRN_DAWR0), mfspr(SPRN_DAWRX0), mfspr(SPRN_CIABR));
-+	printf("dawr0  = %.16lx dawrx0 = %.16lx\n",
-+		mfspr(SPRN_DAWR0), mfspr(SPRN_DAWRX0));
-+	if (nr_wp_slots() > 1) {
-+		printf("dawr1  = %.16lx dawrx1 = %.16lx\n",
-+			mfspr(SPRN_DAWR1), mfspr(SPRN_DAWRX1));
-+	}
-+	printf("ciabr  = %.16lx\n", mfspr(SPRN_CIABR));
- #endif
- }
- 
-@@ -3862,10 +3900,9 @@ static void clear_all_bpt(void)
- 		bpts[i].enabled = 0;
- 
- 	/* Clear any data or iabr breakpoints */
--	if (iabr || dabr.enabled) {
--		iabr = NULL;
--		dabr.enabled = 0;
--	}
-+	iabr = NULL;
-+	for (i = 0; i < nr_wp_slots(); i++)
-+		dabr[i].enabled = 0;
- }
- 
- #ifdef CONFIG_DEBUG_FS
+
 -- 
-2.21.1
+Thanks,
+
+David / dhildenb
 
