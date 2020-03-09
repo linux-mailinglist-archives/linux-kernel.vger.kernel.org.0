@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7198017D862
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 05:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A601817D864
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 05:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgCIEF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 00:05:29 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:37680 "EHLO inva021.nxp.com"
+        id S1726567AbgCIEFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 00:05:31 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:37758 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbgCIEF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 00:05:28 -0400
+        id S1725811AbgCIEFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 00:05:30 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 24AA52015B1;
-        Mon,  9 Mar 2020 05:05:27 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D73822015B5;
+        Mon,  9 Mar 2020 05:05:28 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1532620159B;
-        Mon,  9 Mar 2020 05:05:20 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BF7AD2015AB;
+        Mon,  9 Mar 2020 05:05:21 +0100 (CET)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BA0544024E;
-        Mon,  9 Mar 2020 12:05:10 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A4786402CA;
+        Mon,  9 Mar 2020 12:05:12 +0800 (SGT)
 From:   Shengjiu Wang <shengjiu.wang@nxp.com>
 To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
         festevam@gmail.com, broonie@kernel.org,
@@ -27,63 +27,51 @@ To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
         tiwai@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/7] ASoC: Add new module driver for new ASRC
-Date:   Mon,  9 Mar 2020 11:58:27 +0800
-Message-Id: <cover.1583725533.git.shengjiu.wang@nxp.com>
+Subject: [PATCH v5 1/7] ASoC: dt-bindings: fsl_asrc: Add new property fsl,asrc-format
+Date:   Mon,  9 Mar 2020 11:58:28 +0800
+Message-Id: <24f69c50925b93afd7a706bd888ee25d27247c78.1583725533.git.shengjiu.wang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1583725533.git.shengjiu.wang@nxp.com>
+References: <cover.1583725533.git.shengjiu.wang@nxp.com>
+In-Reply-To: <cover.1583725533.git.shengjiu.wang@nxp.com>
+References: <cover.1583725533.git.shengjiu.wang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new module driver for new ASRC in i.MX8MN, several commits
-are added for new property fsl,asrc-format
+In order to support new EASRC and simplify the code structure,
+We decide to share the common structure between them. This bring
+a problem that EASRC accept format directly from devicetree, but
+ASRC accept width from devicetree.
 
-Shengjiu Wang (7):
-  ASoC: dt-bindings: fsl_asrc: Add new property fsl,asrc-format
-  ASoC: fsl-asoc-card: Support new property fsl,asrc-format
-  ASoC: fsl_asrc: Support new property fsl,asrc-format
-  ASoC: fsl_asrc: rename asrc_priv to asrc
-  ASoC: fsl_asrc: Move common definition to fsl_asrc_common
-  ASoC: dt-bindings: fsl_easrc: Add document for EASRC
-  ASoC: fsl_easrc: Add EASRC ASoC CPU DAI drivers
+In order to align with new ESARC, we add new property fsl,asrc-format.
+The fsl,asrc-format can replace the fsl,asrc-width, then driver
+can accept format from devicetree, don't need to convert it to
+format through width.
 
-changes in v5
-- Add new property fsl,asrc-format, rather than change fsl,asrc-width
-  to fsl,asrc-formt.
-- code change for above change.
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ Documentation/devicetree/bindings/sound/fsl,asrc.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-changes in v4
-- Add several commit for changing DT binding asrc-width to asrc-format
-- rename asrc_priv to asrc
-
-changes in v3
-- add new commit "ASoC: fsl_asrc: Change asrc_width to asrc_format"
-- modify binding doc to yaml format
-- remove fsl_easrc_dma.c, make fsl_asrc_dma.c useable for easrc.
-
-changes in v2
-- change i.MX815 to i.MX8MN
-- Add changes in Kconfig and Makefile
-
- .../devicetree/bindings/sound/fsl,asrc.txt    |    5 +
- .../devicetree/bindings/sound/fsl,easrc.yaml  |  101 +
- sound/soc/fsl/Kconfig                         |   11 +
- sound/soc/fsl/Makefile                        |    2 +
- sound/soc/fsl/fsl-asoc-card.c                 |   20 +-
- sound/soc/fsl/fsl_asrc.c                      |  303 +--
- sound/soc/fsl/fsl_asrc.h                      |   74 +-
- sound/soc/fsl/fsl_asrc_common.h               |  105 +
- sound/soc/fsl/fsl_asrc_dma.c                  |   54 +-
- sound/soc/fsl/fsl_easrc.c                     | 2111 +++++++++++++++++
- sound/soc/fsl/fsl_easrc.h                     |  651 +++++
- 11 files changed, 3203 insertions(+), 234 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/fsl,easrc.yaml
- create mode 100644 sound/soc/fsl/fsl_asrc_common.h
- create mode 100644 sound/soc/fsl/fsl_easrc.c
- create mode 100644 sound/soc/fsl/fsl_easrc.h
-
+diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+index cb9a25165503..780455cf7f71 100644
+--- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
++++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
+@@ -51,6 +51,11 @@ Optional properties:
+ 			  will be in use as default. Otherwise, the big endian
+ 			  mode will be in use for all the device registers.
+ 
++   - fsl,asrc-format	: Defines a mutual sample format used by DPCM Back
++			  Ends, which can replace the fsl,asrc-width.
++			  The value is SNDRV_PCM_FORMAT_S16_LE, or
++			  SNDRV_PCM_FORMAT_S24_LE
++
+ Example:
+ 
+ asrc: asrc@2034000 {
 -- 
 2.21.0
 
