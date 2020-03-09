@@ -2,300 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4BB17E849
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:24:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E3C17E851
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:25:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgCITXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:23:50 -0400
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:44066 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbgCITXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:23:50 -0400
-Received: by mail-qv1-f66.google.com with SMTP id bp19so2573358qvb.11;
-        Mon, 09 Mar 2020 12:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=pSIEyt4pe+WfrawaMNkeNrr+5fcB3XjzVwsYTOF2ju0=;
-        b=Kw4d6e76TcK3JPkEWaPk5CH0RHqCb0npbnQP0OMms1q6K3WtZdJ5sTdCjIBrFJcJee
-         0Xt8PENpizYXH8ulqH72kXFIBx82e320O1Owcs4BxPRe3LT70eWZeLkJq6geQoDsQ3zA
-         IC2oyC6nuC8KHshLaS7Xl6d3sjxDW6jdkmkdAsM/74dl/dXUa9aMNzY/m46M0gTxmqCw
-         Sym9deDJwsRfWjZJ4BBhy4x/6IDpwebWGW8lVGn6P3II22SC8Bw1RlONEr15QRdgcOxG
-         UASMkDlZvVOuEnwjnLzRuM8na+nhDfk5lLTo2RIDyvamCM3EK0YUpyU+0pYR6TC8gWnL
-         eX2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=pSIEyt4pe+WfrawaMNkeNrr+5fcB3XjzVwsYTOF2ju0=;
-        b=iyHjUpdMi3p5Jw+ljMfPxsvv4v6h2sMmJTUUcr5QwbAVD0OAWSh1A3rDbsnxx08Cgt
-         MCdgOKGcucOT/8BCmXo4ZvSqVL09ektmAW66naRYaVXFQTcX+P499fK4+bBR5eRsg8PT
-         +8uD4fb57QlE/NVY+HC+urflMMkyqwa+GiRG4JvWw9Rk81/MxN2iTVNTkn8ocE8dWLJ8
-         cqMIUM9Ea9oR54f2Yx7BskzSoz+8kHdtCRsA/4adkNSUCCM/wYcljkbUYe0sIjXa3akQ
-         lWEP0IBZN7970xYAuN3CSnAe9igHDHF57pKBaI1/A6qBy8c20yXh6BnJ3WCvmoJHNDyY
-         hgFw==
-X-Gm-Message-State: ANhLgQ3g6DGfcvPz5it5KwqDTyZ9tFBrnQHwv2uaRrKz1bQ99YB3SfgG
-        5m07NkfWNB61YkNuLXlupTg=
-X-Google-Smtp-Source: ADFU+vtJWZ9FBeVdxfHMjWWlyGr88juN3wkE8igF9ZxYyJlm0+WtXnJbThPeZrghk9eEUe4IyrgjZQ==
-X-Received: by 2002:ad4:4a6e:: with SMTP id cn14mr15960454qvb.21.1583781827648;
-        Mon, 09 Mar 2020 12:23:47 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id c12sm1540995qtb.49.2020.03.09.12.23.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 12:23:46 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6E9A740009; Mon,  9 Mar 2020 16:23:43 -0300 (-03)
-Date:   Mon, 9 Mar 2020 16:23:43 -0300
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+        id S1726466AbgCITZE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 15:25:04 -0400
+Received: from mail-oln040092074084.outbound.protection.outlook.com ([40.92.74.84]:21838
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725956AbgCITZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:25:03 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P5fR3R6NRmtmYFXf90r1KviiRMR7E1L7qiV+TTXxEk2OZaJScmjYKT1+bdO8wsFAj98rWUpgLjUSYChGM98RgOr+jqcAekTSHIfm0hoDrwELnFNfCWERtepNkT0qCCtWI40uOuPQ5jn6cBEhVS6eq8P3+kvpOf9kAmxyRo7VPrSN5VD+OfDynNG2uhNl0Pt1Hxlqy4JUSlzNgrPgsmrBe0LfDtBdiF3n5YHiKMvEubCEFhbaKk75KgseWQYtlbKzWx9xgoL6xJba3MkfeTA+uaGDRk45DEBKOkXeLxrGL1qicLyHa9XGHAGqacotRR6a2s6orLmIml72x+i8fL6+Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LtVsWtk2lDzAfqdQxqczErsKzeZfKoLfMiXjfWi5gyI=;
+ b=ClyikgLAz2iIcV0Nk8UDJPBK4wy4xDUTlBecsqwpwTh1rT1og5FK2nkaboV3DmCS/OBQEl2QJRRH3sgveVZ/KIgh8kQH+uG9jZbOlaKMZpXINQmlKKJrFbrJavtLg67Pfw8qT/btpXfxhbw6ItVdGHwHlFJpusuWTDYz3zYZlSYlGhj6gKLCZ4RMAzBIEAbuc1ESNzPG04W70WEVkG/QJarEeLU5q5//zYeBPOsJWdPSxAlEJkUF7+VaKdGUNkVFiMaD72z1/ymLj7EvhXITr7banpy73duSHyfqpcbcq2d0OaqEVd7tprvQHmCtMakFs+iR6GoHf4oTDSmJCEBMaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HE1EUR04FT025.eop-eur04.prod.protection.outlook.com
+ (2a01:111:e400:7e0d::35) by
+ HE1EUR04HT225.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0d::410)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 9 Mar
+ 2020 19:24:58 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.26.60) by
+ HE1EUR04FT025.mail.protection.outlook.com (10.152.27.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Mon, 9 Mar 2020 19:24:58 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 9 Mar 2020
+ 19:24:58 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR0102CA0029.eurprd01.prod.exchangelabs.com (2603:10a6:208:14::42) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Mon, 9 Mar 2020 19:24:56 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org,
-        Ilie Halip <ilie.halip@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH 3/6] perf python: Fix clang detection when using
- CC=clang-version
-Message-ID: <20200309192343.GG477@kernel.org>
-References: <20200309185323.22583-1-acme@kernel.org>
- <20200309185323.22583-4-acme@kernel.org>
- <CAKwvOdm5RrdpOCMgRezLeHJ9GuocVoKqSUQGHjaCEcZdSr4AwA@mail.gmail.com>
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Thread-Topic: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Thread-Index: AQHV9ZJHYfsGvDLnM0SksOJ5MpqOZahARvEAgABCQ42AAAUtgIAAA0/bgAADytmAAANO2YAAAnOAgAAE4zCAAAWQgA==
+Date:   Mon, 9 Mar 2020 19:24:58 +0000
+Message-ID: <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+ <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <878sk94eay.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y12yc7.fsf@x220.int.ebiederm.org> <87k13t2xpd.fsf@x220.int.ebiederm.org>
+ <87d09l2x5n.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rq12vxu.fsf@x220.int.ebiederm.org>
+In-Reply-To: <871rq12vxu.fsf@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR0102CA0029.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:14::42) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:71A99711ADA16EC1C24CC5F8D4E994C5C61558DC91E28170A71D7A2DE7384D8B;UpperCasedChecksum:138B6000CDB757DAF3D086CF6285744E3811657112A8F186F10221148F6207F1;SizeAsReceived:9999;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [B/29M+tTQ8jZwO8bBX+aFjHrnBQUzxaI]
+x-microsoft-original-message-id: <8bc15c6d-2811-5965-cf3a-0dee5d3ef4a7@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 5b640f5a-1970-4e2f-2a79-08d7c45f8e32
+x-ms-traffictypediagnostic: HE1EUR04HT225:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: yRwriaax4luQh2eE4Kv/5gl1xgtV+JhFn3r4omhcZdQLtpEnZ5wArAUY4QNOr9h2IZIMedZxh+rethkj8ygU0pcUw/1z20Mmt+DeKfEBy6dVNVB9GGIRS0wJwO0n+/dU/4JSft9BH+xomh1RItAhwsuXYvw9U3slEuQRKa89/6j+UP2Oh6AidizbkcozgOSgMI2zIDI+G18wMkpMWz2COa8Mq1fFnGz9kBwFiCRCBe4=
+x-ms-exchange-antispam-messagedata: ihJ0a1uBNLzETZ0EmKa6rky1cWiaSkYyOGteR6EOKC18aVBNv+NQojy58E5NM24js9Phk+70KCAHX1D/k7WThPHE2uRSy6XlGK8SCQCnVBeuJlHfU+++kQzGOumEGPWBhsUPpC6BDlGBMcqv1aoohQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <D977AB8180FC5246BAA1C16ED22CAA18@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAKwvOdm5RrdpOCMgRezLeHJ9GuocVoKqSUQGHjaCEcZdSr4AwA@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b640f5a-1970-4e2f-2a79-08d7c45f8e32
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 19:24:58.6072
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR04HT225
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 09, 2020 at 11:58:33AM -0700, Nick Desaulniers escreveu:
-> On Mon, Mar 9, 2020 at 11:53 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > From: Ilie Halip <ilie.halip@gmail.com>
-> >
-> > Currently, the setup.py script detects the clang compiler only when inv=
-oked
-> > with CC=3Dclang. But when using a specific version (e.g. CC=3Dclang-11)=
-, this
-> > doesn't work correctly and wrong compiler flags are set, leading to bui=
-ld
-> > errors.
-> >
-> > To properly detect clang, invoke the compiler with -v and check the out=
-put.
-> > The first line should start with "clang version ...".
-> >
-> > Committer testing:
-> >
-> >   $ make CC=3Dclang-9 O=3D/tmp/build/perf -C tools/perf install-bin
-> >   <SNIP>
-> >   $ readelf -wi /tmp/build/perf/python/perf.cpython-37m-x86_64-linux-gn=
-u.so | grep DW_AT_producer | head -1
-> >     <c>   DW_AT_producer    : (indirect string, offset: 0x0): clang ver=
-sion 9.0.1 (Fedora 9.0.1-2.fc31) /usr/bin/clang-9 -Wno-unused-result -Wsign=
--compare -D DYNAMIC_ANNOTATIONS_ENABLED=3D1 -D NDEBUG -O2 -g -pipe -Wall -W=
-error=3Dformat-security -Wp,-D_FORTIFY_SOURCE=3D2 -Wp,-D_GLIBCXX_ASSERTIONS=
- -fexceptions -fstack-protector-strong -grecord-command-line -m64 -mtune=3D=
-generic -fasynchronous-unwind-tables -fcf-protection=3Dfull -D _GNU_SOURCE =
--fPIC -fwrapv -Wbad-function-cast -Wdeclaration-after-statement -Wformat-se=
-curity -Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes=
- -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked -Wred=
-undant-decls -Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef -Ww=
-rite-strings -Wformat -Wshadow -D HAVE_ARCH_X86_64_SUPPORT -I /tmp/build/pe=
-rf/arch/x86/include/generated -D HAVE_SYSCALL_TABLE_SUPPORT -D HAVE_PERF_RE=
-GS_SUPPORT -D HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET -Werror -O3 -fno-omit-fr=
-ame-pointer -ggdb3 -funwind-tables -Wall -Wextra -std=3Dgnu99 -fstack-prote=
-ctor-all -D _FORTIFY_SOURCE=3D2 -D _LARGEFILE64_SOURCE -D _FILE_OFFSET_BITS=
-=3D64 -D _GNU_SOURCE -I /home/acme/git/perf/tools/lib/perf/include -I /home=
-/acme/git/perf/tools/perf/util/include -I /home/acme/git/perf/tools/perf/ar=
-ch/x86/include -I /home/acme/git/perf/tools/include/ -I /home/acme/git/perf=
-/tools/arch/x86/include/uapi -I /home/acme/git/perf/tools/include/uapi -I /=
-home/acme/git/perf/tools/arch/x86/include/ -I /home/acme/git/perf/tools/arc=
-h/x86/ -I /tmp/build/perf//util -I /tmp/build/perf/ -I /home/acme/git/perf/=
-tools/perf/util -I /home/acme/git/perf/tools/perf -I /home/acme/git/perf/to=
-ols/lib/ -D HAVE_PTHREAD_ATTR_SETAFFINITY_NP -D HAVE_PTHREAD_BARRIER -D HAV=
-E_EVENTFD -D HAVE_GET_CURRENT_DIR_NAME -D HAVE_GETTID -D HAVE_DWARF_GETLOCA=
-TIONS_SUPPORT -D HAVE_GLIBC_SUPPORT -D HAVE_AIO_SUPPORT -D HAVE_SCHED_GETCP=
-U_SUPPORT -D HAVE_SETNS_SUPPORT -D HAVE_LIBELF_SUPPORT -D HAVE_LIBELF_MMAP_=
-SUPPORT -D HAVE_ELF_GETPHDRNUM_SUPPORT -D HAVE_GELF_GETNOTE_SUPPORT -D HAVE=
-_ELF_GETSHDRSTRNDX_SUPPORT -D HAVE_DWARF_SUPPORT -D HAVE_LIBBPF_SUPPORT -D =
-HAVE_BPF_PROLOGUE -D HAVE_SDT_EVENT -D HAVE_JITDUMP -D HAVE_DWARF_UNWIND_SU=
-PPORT -D NO_LIBUNWIND_DEBUG_FRAME -D HAVE_LIBUNWIND_SUPPORT -D HAVE_LIBCRYP=
-TO_SUPPORT -D HAVE_SLANG_SUPPORT -D HAVE_GTK2_SUPPORT -D NO_LIBPERL -D HAVE=
-_TIMERFD_SUPPORT -D HAVE_LIBPYTHON_SUPPORT -D HAVE_CPLUS_DEMANGLE_SUPPORT -=
-D HAVE_LIBBFD_SUPPORT -D HAVE_ZLIB_SUPPORT -D HAVE_LZMA_SUPPORT -D HAVE_ZST=
-D_SUPPORT -D HAVE_LIBCAP_SUPPORT -D HAVE_BACKTRACE_SUPPORT -D HAVE_LIBNUMA_=
-SUPPORT -D HAVE_KVM_STAT_SUPPORT -D DISASM_FOUR_ARGS_SIGNATURE -D HAVE_LIBB=
-ABELTRACE_SUPPORT -D HAVE_AUXTRACE_SUPPORT -D HAVE_JVMTI_CMLR -I /tmp/build=
-/perf/ -fPIC -I util/include -I /usr/include/python3.7m -c /home/acme/git/p=
-erf/tools/perf/util/python.c -o /tmp/build/perf/python_ext_build/tmp/home/a=
-cme/git/perf/tools/perf/util/python.o -Wbad-function-cast -Wdeclaration-aft=
-er-statement -Wformat-security -Wformat-y2k -Winit-self -Wmissing-declarati=
-ons -Wmissing-prototypes -Wnested-externs -Wno-system-headers -Wold-style-d=
-efinition -Wpacked -Wredundant-decls -Wstrict-prototypes -Wswitch-default -=
-Wswitch-enum -Wundef -Wwrite-strings -Wformat -Wshadow -D HAVE_ARCH_X86_64_=
-SUPPORT -I /tmp/build/perf/arch/x86/include/generated -D HAVE_SYSCALL_TABLE=
-_SUPPORT -D HAVE_PERF_REGS_SUPPORT -D HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET =
--Werror -O3 -fno-omit-frame-pointer -ggdb3 -funwind-tables -Wall -Wextra -s=
-td=3Dgnu99 -fstack-protector-all -D _FORTIFY_SOURCE=3D2 -D _LARGEFILE64_SOU=
-RCE -D _FILE_OFFSET_BITS=3D64 -D _GNU_SOURCE -I /home/acme/git/perf/tools/l=
-ib/perf/include -I /home/acme/git/perf/tools/perf/util/include -I /home/acm=
-e/git/perf/tools/perf/arch/x86/include -I /home/acme/git/perf/tools/include=
-/ -I /home/acme/git/perf/tools/arch/x86/include/uapi -I /home/acme/git/perf=
-/tools/include/uapi -I /home/acme/git/perf/tools/arch/x86/include/ -I /home=
-/acme/git/perf/tools/arch/x86/ -I /tmp/build/perf//util -I /tmp/build/perf/=
- -I /home/acme/git/perf/tools/perf/util -I /home/acme/git/perf/tools/perf -=
-I /home/acme/git/perf/tools/lib/ -D HAVE_PTHREAD_ATTR_SETAFFINITY_NP -D HAV=
-E_PTHREAD_BARRIER -D HAVE_EVENTFD -D HAVE_GET_CURRENT_DIR_NAME -D HAVE_GETT=
-ID -D HAVE_DWARF_GETLOCATIONS_SUPPORT -D HAVE_GLIBC_SUPPORT -D HAVE_AIO_SUP=
-PORT -D HAVE_SCHED_GETCPU_SUPPORT -D HAVE_SETNS_SUPPORT -D HAVE_LIBELF_SUPP=
-ORT -D HAVE_LIBELF_MMAP_SUPPORT -D HAVE_ELF_GETPHDRNUM_SUPPORT -D HAVE_GELF=
-_GETNOTE_SUPPORT -D HAVE_ELF_GETSHDRSTRNDX_SUPPORT -D HAVE_DWARF_SUPPORT -D=
- HAVE_LIBBPF_SUPPORT -D HAVE_BPF_PROLOGUE -D HAVE_SDT_EVENT -D HAVE_JITDUMP=
- -D HAVE_DWARF_UNWIND_SUPPORT -D NO_LIBUNWIND_DEBUG_FRAME -D HAVE_LIBUNWIND=
-_SUPPORT -D HAVE_LIBCRYPTO_SUPPORT -D HAVE_SLANG_SUPPORT -D HAVE_GTK2_SUPPO=
-RT -D NO_LIBPERL -D HAVE_TIMERFD_SUPPORT -D HAVE_LIBPYTHON_SUPPORT -D HAVE_=
-CPLUS_DEMANGLE_SUPPORT -D HAVE_LIBBFD_SUPPORT -D HAVE_ZLIB_SUPPORT -D HAVE_=
-LZMA_SUPPORT -D HAVE_ZSTD_SUPPORT -D HAVE_LIBCAP_SUPPORT -D HAVE_BACKTRACE_=
-SUPPORT -D HAVE_LIBNUMA_SUPPORT -D HAVE_KVM_STAT_SUPPORT -D DISASM_FOUR_ARG=
-S_SIGNATURE -D HAVE_LIBBABELTRACE_SUPPORT -D HAVE_AUXTRACE_SUPPORT -D HAVE_=
-JVMTI_CMLR -I /tmp/build/perf/ -fno-strict-aliasing -Wno-write-strings -Wno=
--unused-parameter -Wno-redundant-decls
->=20
-> Sorry for not speaking up sooner, but if you don't want to include
-> that mass of command line options above, I generally check which
-> toolchain has been used to produce a binary via:
-> $ readelf --string-dump=3D.comment <foo>
-> which may be more concise, but sometimes we strip out the `.comment`
-> section from binaries.
 
-Well, this doesn't produce what I needed, see:
 
-[root@five ~]# readelf --string-dump=3D.comment /tmp/build/perf/python/perf=
-=2Ecpython-37m-x86_64-linux-gnu.so
+On 3/9/20 8:02 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+>> On 3/9/20 7:36 PM, Eric W. Biederman wrote:
+>>>
+>>>
+>>> Does that sound better?
+>>>
+>>
+>> almost done.
+> 
+> I think this text is finally clean.
+> 
+>     exec: Add exec_update_mutex to replace cred_guard_mutex
+>     
+>     The cred_guard_mutex is problematic as it is held over possibly
+>     indefinite waits for userspace.  The possilbe indefinite waits for
+>     userspace that I have identified are: The cred_guard_mutex is held in
+>     PTRACE_EVENT_EXIT waiting for the tracer.  The cred_guard_mutex is
+>     held over "put_user(0, tsk->clear_child_tid)" in exit_mm().  The
+>     cred_guard_mutex is held over "get_user(futex_offset, ...")  in
+>     exit_robust_list.  The cred_guard_mutex held over copy_strings.
+>     
+>     The functions get_user and put_user can trigger a page fault which can
+>     potentially wait indefinitely in the case of userfaultfd or if
+>     userspace implements part of the page fault path.
+>     
+>     In any of those cases the userspace process that the kernel is waiting
+>     for might make a different system call that winds up taking the
+>     cred_guard_mutex and result in deadlock.
+>     
+>     Holding a mutex over any of those possibly indefinite waits for
+>     userspace does not appear necessary.  Add exec_update_mutex that will
+>     just cover updating the process during exec where the permissions and
+>     the objects pointed to by the task struct may be out of sync.
+>     
+>     The plan is to switch the users of cred_guard_mutex to
+>     exec_update_mutex one by one.  This lets us move forward while still
+>     being careful and not introducing any regressions.
+>     
+>     Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+>     Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
+>     Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+>     Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
+>     Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+>     Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
+>     Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
 
-String dump of section '.comment':
-  [     0]  GCC: (GNU) 9.2.1 20190827 (Red Hat 9.2.1-1)
+I checked the urls they all work.
+Just one last question, are these git references?
+I can't find them in my linux git tree (cloned from linus' git)?
 
-[root@five ~]#
+Sorry for being pedantically.
 
-See the part below, where I need to look at what compiler flags were
-used to build the python build, like -fcf-protection.
 
-- Arnaldo
+>     Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> 
+> Bernd do you want to give me your Reviewed-by for this part of the
+> series?
+> 
 
-=20
-> >   $
-> >
-> > And here is how tools/perf/util/setup.py checks if the used clang has
-> > options that the distro specific python extension building compiler
-> > defaults:
-> >
-> >   if cc_is_clang:
-> >       from distutils.sysconfig import get_config_vars
-> >       vars =3D get_config_vars()
-> >       for var in ('CFLAGS', 'OPT'):
-> >           vars[var] =3D sub("-specs=3D[^ ]+", "", vars[var])
-> >           if not clang_has_option("-mcet"):
-> >               vars[var] =3D sub("-mcet", "", vars[var])
-> >           if not clang_has_option("-fcf-protection"):
-> >               vars[var] =3D sub("-fcf-protection", "", vars[var])
-> >           if not clang_has_option("-fstack-clash-protection"):
-> >               vars[var] =3D sub("-fstack-clash-protection", "", vars[va=
-r])
-> >           if not clang_has_option("-fstack-protector-strong"):
-> >               vars[var] =3D sub("-fstack-protector-strong", "", vars[va=
-r])
-> >
-> > So "-fcf-protection=3Dfull" is used, clang-9 has this option and thus it
-> > was kept, the perf python extension was built with it and the build
-> > completed successfully.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/903
-> > Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
-> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Cc: Igor Lubashev <ilubashe@akamai.com>
-> > Cc: Jiri Olsa <jolsa@redhat.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: clang-built-linux@googlegroups.com
-> > Link: http://lore.kernel.org/lkml/20200309085618.14307-1-ilie.halip@gma=
-il.com
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> >  tools/perf/util/setup.py | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-> > index aa344a163eaf..8a065a6f9713 100644
-> > --- a/tools/perf/util/setup.py
-> > +++ b/tools/perf/util/setup.py
-> > @@ -2,11 +2,13 @@ from os import getenv
-> >  from subprocess import Popen, PIPE
-> >  from re import sub
-> >
-> > +cc =3D getenv("CC")
-> > +cc_is_clang =3D b"clang version" in Popen([cc, "-v"], stderr=3DPIPE).s=
-tderr.readline()
-> > +
-> >  def clang_has_option(option):
-> > -    return [o for o in Popen(['clang', option], stderr=3DPIPE).stderr.=
-readlines() if b"unknown argument" in o] =3D=3D [ ]
-> > +    return [o for o in Popen([cc, option], stderr=3DPIPE).stderr.readl=
-ines() if b"unknown argument" in o] =3D=3D [ ]
-> >
-> > -cc =3D getenv("CC")
-> > -if cc =3D=3D "clang":
-> > +if cc_is_clang:
-> >      from distutils.sysconfig import get_config_vars
-> >      vars =3D get_config_vars()
-> >      for var in ('CFLAGS', 'OPT'):
-> > @@ -40,7 +42,7 @@ class install_lib(_install_lib):
-> >  cflags =3D getenv('CFLAGS', '').split()
-> >  # switch off several checks (need to be at the end of cflags list)
-> >  cflags +=3D ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unuse=
-d-parameter', '-Wno-redundant-decls' ]
-> > -if cc !=3D "clang":
-> > +if not cc_is_clang:
-> >      cflags +=3D ['-Wno-cast-function-type' ]
-> >
-> >  src_perf  =3D getenv('srctree') + '/tools/perf'
-> > --
-> > 2.21.1
-> >
-> > --
-> > You received this message because you are subscribed to the Google Grou=
-ps "Clang Built Linux" group.
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to clang-built-linux+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/ms=
-gid/clang-built-linux/20200309185323.22583-4-acme%40kernel.org.
->=20
->=20
->=20
-> --=20
-> Thanks,
-> ~Nick Desaulniers
+Sure also the other parts of course.
 
---=20
+Reviewed-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-- Arnaldo
+> After that do you think you can write the obvious patch for mm_access?
+> 
+
+Yes, I can do that.
+I also have some typos in comments, will make them extra patches as well.
+
+I wonder if the test case is okay to include the ptrace_attach altough
+that is not yet passing?
+
+
+Thanks
+Bernd.
