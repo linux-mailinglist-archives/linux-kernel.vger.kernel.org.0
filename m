@@ -2,77 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3761F17E129
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8E317E11F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgCIN2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:28:01 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:36207 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726659AbgCIN2B (ORCPT
+        id S1726739AbgCIN1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:27:12 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:52978 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbgCIN1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:28:01 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Ts81o5L_1583760421;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Ts81o5L_1583760421)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 09 Mar 2020 21:27:01 +0800
-Subject: Re: linux-next test error: BUG: using __this_cpu_read() in
- preemptible code in __mod_memcg_state
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        syzbot <syzbot+826543256ed3b8c37f62@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, cgroups@vger.kernel.org,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
-References: <00000000000022640205a04a20d8@google.com>
- <20200309092423.2ww3aw6yfyce7yty@box>
- <5b1196be-09ce-51f7-f5e7-63f2e597f91e@linux.alibaba.com>
-Message-ID: <d3fb0593-e483-3b69-bf2c-99ad6cd03567@linux.alibaba.com>
-Date:   Mon, 9 Mar 2020 21:26:59 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.1
+        Mon, 9 Mar 2020 09:27:11 -0400
+Received: by mail-pj1-f65.google.com with SMTP id f15so751163pjq.2;
+        Mon, 09 Mar 2020 06:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m3PpZVx6r6+5xvb8l6EErTCA2Bsz648Lvmq8tEAM5es=;
+        b=lzGwP+aAq9nIqpeCOW2SXRqElwXbvj603k428+C0ecWeNtX9LGa9qu8eqz7fP1dbSr
+         LBbsSSYU2APtPaAiWssLuPW720Bu6rISMoWPvRKAV/9zuXNvRTSddtOr7c74LXDaZMyp
+         pTO5ZIBzlDFY6I7X43PQ+Ol0fV38A173Jjd2p6KBZjA8zu0A/MMqVCzZE85FqHnTksjT
+         u/3JyPPjb0SHpjKItRKj5Tu0sVyUvcFmXNwkHrJPjL2DFrR14chaljOEbk+qGe8jA6Fi
+         CB53wJQK/go3E/1NYp1A4vyveYBH8FWQB4LZHPMWHW1fj3Rg2WawtbZiFE3l3B1uTjlb
+         CYCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=m3PpZVx6r6+5xvb8l6EErTCA2Bsz648Lvmq8tEAM5es=;
+        b=tq9xtiZJMWZA7DxnAwfYTSq5xkjUlUqlB2G/x1DXZ60tAwdRKUy67UwWRtAsZVS5V7
+         WRTSy3pGOOsZrN4fUWwIuvkwZYcm2jONE5IkpIAeACO8zBMRN02PQnpJ3XrciiPl7hLp
+         stfdOXh2HPaMMF9AuaJAV5AuzP0fpFCn5QyjsFmkGCofPnHfyLWHVdnR/Avckr6pA4EX
+         UAp2WqgGyask1n/w/A2vYQO1fG7WTVIEJJx6mcNAfMqTyWtTXkxmV4ZAyaW8vS+Sxiwl
+         tbGk//Mb1v/XGkXB5y1IxkrWJo5BmCi+ixoe20CUoJ4RUoKspalYULPn78YBPl6yJCcS
+         yyKw==
+X-Gm-Message-State: ANhLgQ3FhjhjTZwgR7cM+ecYGxUcURI2tG32OVapcXqfyfrKCni9sdiz
+        yhRgL+aTlDYwyR4+ECTQFMXaMrzb
+X-Google-Smtp-Source: ADFU+vvv988RThXOkf/NnHHbMC1Ie7Hl+LQ68wuvUeOt1rKyVncN+RaulOYIRv1dH4kAbTgUQwlWIw==
+X-Received: by 2002:a17:90a:950e:: with SMTP id t14mr16447224pjo.123.1583760430025;
+        Mon, 09 Mar 2020 06:27:10 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s18sm18576959pjp.24.2020.03.09.06.27.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2020 06:27:09 -0700 (PDT)
+Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Anson Huang <Anson.Huang@nxp.com>
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, dmitry.torokhov@gmail.com,
+        a.zummo@towertech.it, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        wim@linux-watchdog.org, daniel.baluta@nxp.com,
+        gregkh@linuxfoundation.org, linux@rempel-privat.de,
+        tglx@linutronix.de, m.felsch@pengutronix.de,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de,
+        ronald@innovation.ch, krzk@kernel.org, robh@kernel.org,
+        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Linux-imx@nxp.com
+References: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
+ <20200309110609.GE3563@piout.net>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <1ad38cdb-bf0d-1c19-b233-15a5857bd6fa@roeck-us.net>
+Date:   Mon, 9 Mar 2020 06:27:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <5b1196be-09ce-51f7-f5e7-63f2e597f91e@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200309110609.GE3563@piout.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-在 2020/3/9 下午5:56, Alex Shi 写道:
+On 3/9/20 4:06 AM, Alexandre Belloni wrote:
+> On 09/03/2020 08:38:14+0800, Anson Huang wrote:
+>> Add stubs for those i.MX SCU APIs to make those modules depending
+>> on IMX_SCU can pass build when COMPILE_TEST is enabled.
+>>
+>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>> ---
+>> Changes since V2:
+>> 	- return error for stubs.
+> 
+> I'm not sure why you are sending v3 with the stubs as we determined that
+> 2/7 is enough to compile all the drivers with COMPILE_TEST.
 > 
 > 
-> 在 2020/3/9 下午5:24, Kirill A. Shutemov 写道:
->>> check_preemption_disabled: 3 callbacks suppressed
->>> BUG: using __this_cpu_read() in preemptible [00000000] code: syz-fuzzer/9432
->>> caller is __mod_memcg_state+0x27/0x1a0 mm/memcontrol.c:689
->>> CPU: 1 PID: 9432 Comm: syz-fuzzer Not tainted 5.6.0-rc4-next-20200306-syzkaller #0
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>> Call Trace:
->>>  __dump_stack lib/dump_stack.c:77 [inline]
->>>  dump_stack+0x188/0x20d lib/dump_stack.c:118
->>>  check_preemption_disabled lib/smp_processor_id.c:47 [inline]
->>>  __this_cpu_preempt_check.cold+0x84/0x90 lib/smp_processor_id.c:64
->>>  __mod_memcg_state+0x27/0x1a0 mm/memcontrol.c:689
->>>  __split_huge_page mm/huge_memory.c:2575 [inline]
->>>  split_huge_page_to_list+0x124b/0x3380 mm/huge_memory.c:2862
->>>  split_huge_page include/linux/huge_mm.h:167 [inline]
->> It looks like a regression due to c8cba0cc2a80 ("mm/thp: narrow lru
->> locking").
-> 
-> yes, I guess so.
+2/7 alone is not sufficient. With only 2/7, one can explicitly configure
+IMX_SCU=n, COMPILE_TEST=y, and get lots of compile failures. Granted,
+one should not do that, but 0day does (I don't know if that is the result
+of RANDCONFIG), and I am not looking forward having to deal with the
+fallout.
 
-Yes, it is a stupid mistake to pull out lock for __mod_memcg_state which
-should be in a lock.
-
-revert this patch should be all fine, since ClearPageCompound and page_ref_inc
-later may related with lru_list valid issue in release_pges.
-
-
-Sorry for the disaster!
-
-Alex
+Guenter
