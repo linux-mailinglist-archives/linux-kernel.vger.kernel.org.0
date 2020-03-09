@@ -2,75 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5726B17EAC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D7117EAD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgCIVHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:07:55 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33182 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgCIVHz (ORCPT
+        id S1727071AbgCIVIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:08:53 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40125 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbgCIVIt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:07:55 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g15so4977260otr.0;
-        Mon, 09 Mar 2020 14:07:54 -0700 (PDT)
+        Mon, 9 Mar 2020 17:08:49 -0400
+Received: by mail-wm1-f68.google.com with SMTP id e26so183624wme.5;
+        Mon, 09 Mar 2020 14:08:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=eLh2NjBBYW6TYqNhJcIQ0RQRuYbC50iGuec37O254s8=;
+        b=IHEMPvbKnUsleIzdoSoZFrMQWswYVIjuah/8IwTbpGVRMaPdwVtA1vqpDTEOcZ52fx
+         VTpyLmPsMZLJxwVCQkb+q/qLkSheGc2Cy0G6y0XwoZGtnx/92GThEN3hRdBTVQzTx2AA
+         tKEFpEj8F+v8Yvvurw68sHOtIuMEk2siC963UIHT8RDi19hRE+IvzT2H6nbqblk+enHR
+         aM5HkXZhhqAwgEsoHTlecpMuIpvTSs7bhmnuGOVECa9cvdQ/r4okEO/hDf1pfpehUoD2
+         AzUxydEC7h3QgB+aCJaEZCF4Quq34HK0Ke4OqOZUNU7xJ5Bo6LNI8ENC2fh8ZyGfoXrb
+         dsPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pMV++LytUtj3P6dSF++V99qkX7EhPLEm12vYJmHEnZw=;
-        b=Uo4yIFxYYw33dOkHHrM7bRMj9kfE4EMOF9wQTnB/OmFncAWwdqqbxtIM9gfjvriziu
-         rdp0FE4zc2K/O1TXvnks5+6rtn4+iFfj4XDPaqi2lcCMXUYvafRQQTBi299D/f4W8jx0
-         vgiW/zAO5X9+jbUpbmKpcuOKB5PDcO0/nVMvi/nfs0qnAgYxtagxb9s7IteuPNzSqIq7
-         Tg27VLL2Cugy6U4g8bPJNTuDjtLZJXur4y6GCEnmai/K08aRxvZqutn5xXEDcVf8y70M
-         dIipa/LKpFQZfjBLqopLMKILvwl5YoIYgPjfCrOj7m2H85L8mmV3KolGxCQQ9wvC5D59
-         WqJg==
-X-Gm-Message-State: ANhLgQ0JIIoia4fIdhYQcIGs5feDUW5aoY0eqxIEtf3Pbvru2j7P0Ai+
-        Gqfznyj/bSETknk1K8ffDA==
-X-Google-Smtp-Source: ADFU+vshu1EjqoKlJxPqEOxyh0K4Uwd9Ih8PrChG30GxNXBknM6ohPNCu7bxWTCS66Oxoqm8ACMmRg==
-X-Received: by 2002:a9d:77d7:: with SMTP id w23mr13695380otl.45.1583788073292;
-        Mon, 09 Mar 2020 14:07:53 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l4sm2688904oti.65.2020.03.09.14.07.51
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=eLh2NjBBYW6TYqNhJcIQ0RQRuYbC50iGuec37O254s8=;
+        b=m8WyWcaAiF1VcBVvaaEfMIe+u9BQCNFqnNJmSv2iD+rnB35SrVHPiKXVBpuYO8FK+Q
+         1NrFa2/HMLycyCaQGnyFdtEHdNoEgBxyVC740dLzgNibiDAqfI1icvJ5HRrQOOKnG9nU
+         enWRhGW2Bxo3UjRH0ixzfmYCbHonbZgKTC7+6ssJvVdSbUc7B4QqEDgE5FpP+127wxDT
+         WRbfHJPPrW9sASnt3Z+sRRDCwrY2fQaQKk/d7lzakhJwNyEdkWyGxGaUYQO+72CDkE84
+         TBYLYL4RUOFprS961B+JoAQhcUN+xfZtsGcjx/JvKTviTTFfohtelc8kYN0+Is1wM8ux
+         gaIg==
+X-Gm-Message-State: ANhLgQ3MoEt76awpSdbz+Bas/mlrfGf3B5HULkAk+9ULPasiphRK5yv1
+        KnODOhlDtiy87tYxfCnGOVM=
+X-Google-Smtp-Source: ADFU+vshM4FweUMxojHm86q+HJsdfR7vuFXRu8RG9OkcUeW+Bk5di7fPA1Gg4k2UsvTTLYsyzOOYfQ==
+X-Received: by 2002:a1c:1d15:: with SMTP id d21mr1054476wmd.101.1583788127416;
+        Mon, 09 Mar 2020 14:08:47 -0700 (PDT)
+Received: from localhost.localdomain ([79.115.60.40])
+        by smtp.gmail.com with ESMTPSA id j205sm1016275wma.42.2020.03.09.14.08.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 14:07:52 -0700 (PDT)
-Received: (nullmailer pid 10666 invoked by uid 1000);
-        Mon, 09 Mar 2020 21:07:51 -0000
-Date:   Mon, 9 Mar 2020 16:07:51 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: Add DT bindings for ipq6018 apss clock
- controller
-Message-ID: <20200309210751.GA7716@bogus>
-References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org>
- <1582797318-26288-2-git-send-email-sivaprak@codeaurora.org>
- <20200227171425.GA4211@bogus>
- <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 09 Mar 2020 14:08:46 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
+        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
+        mhosny@nvidia.com, michael@walle.cc, peng.ma@nxp.com
+Subject: [PATCH v2 3/6] spi: spi-fsl-dspi: Fix oper_word_size of zero for DMA mode
+Date:   Mon,  9 Mar 2020 23:07:52 +0200
+Message-Id: <20200309210755.6759-4-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200309210755.6759-1-olteanv@gmail.com>
+References: <20200309210755.6759-1-olteanv@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 10:54:56AM +0530, Sivaprakash Murugesan wrote:
-> Hi Rob,
-> 
-> I ran make dt_binding_check and dtbs_check both on mainline(5.6-rc4) and
-> linux-next both are successful.
-> 
-> The file qcom,gcc-ipq6018.h is merged in 5.6, not sure what is going wrong.
-> 
-> Could you please help?
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Sorry, my fault there. The checks have to be warning free and that 
-didn't happen til 5.6-rc5, so I was still based on 5.5.
+In DMA mode, dspi_setup_accel does not get called, which results in the
+dspi->oper_word_size variable (which is used by dspi_dma_xfer) to not be
+initialized properly.
 
-Rob
+Because oper_word_size is zero, a few calculations end up being
+incorrect, and the DMA transfer eventually times out instead of sending
+anything on the wire.
+
+Set up native transfers (or 8-on-16 acceleration) using dspi_setup_accel
+for DMA mode too.
+
+Fixes: 6c1c26ecd9a3 ("spi: spi-fsl-dspi: Accelerate transfers using larger word size if possible")
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+---
+Changes in v2:
+None.
+
+ drivers/spi/spi-fsl-dspi.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 0483abd403a4..43d2d9fc8b92 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -359,6 +359,8 @@ static void dspi_rx_dma_callback(void *arg)
+ 	complete(&dma->cmd_rx_complete);
+ }
+ 
++static void dspi_setup_accel(struct fsl_dspi *dspi);
++
+ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
+ {
+ 	struct device *dev = &dspi->pdev->dev;
+@@ -446,9 +448,10 @@ static int dspi_dma_xfer(struct fsl_dspi *dspi)
+ 	int bytes_per_buffer;
+ 	int ret = 0;
+ 
++	dspi_setup_accel(dspi);
++
+ 	curr_remaining_bytes = dspi->len;
+-	bytes_per_buffer = dspi->devtype_data->dma_bufsize /
+-			   dspi->devtype_data->fifo_size;
++	bytes_per_buffer = dspi->devtype_data->dma_bufsize;
+ 	while (curr_remaining_bytes) {
+ 		/* Check if current transfer fits the DMA buffer */
+ 		dma->curr_xfer_len = curr_remaining_bytes /
+-- 
+2.17.1
+
