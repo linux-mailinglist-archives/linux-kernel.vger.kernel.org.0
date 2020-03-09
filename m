@@ -2,92 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE83F17EAC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D7E17EAE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:11:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCIVIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:08:13 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:55437 "EHLO ozlabs.org"
+        id S1726705AbgCIVKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:10:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbgCIVIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:08:12 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726157AbgCIVKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 17:10:55 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48brRG0C09z9sRN;
-        Tue, 10 Mar 2020 08:08:03 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583788090;
-        bh=PvJIsVYHxPMFYB14Ey2gvRgzLeFBRUopGO6J+1r0pGo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QqAvgixF0LvbNT7cvUhkrt6gvas3f6Z8v4ETCcw2BTf9/G8wJjlGCrusJqitF1u6u
-         FxcGksl+DDk28wExnbI3cSV2dxkNYXsv5dqtPV3Dm3Aj2TzZdpZEOgjnxe2Ugf++7M
-         PIUtJRX9yMI6v5Q5Kf3MHZUIeWar4GF/DLWs1m7Z8vPn5H9jNWctvh0hDx3vG3QrCh
-         ElYxX4Sf9L/yByCU3GvFyktCTX1860b91c2yXX7c0blT7LR3kR7S/WSenNmNOIfHRh
-         vRiWX12mb9pFJep/sTOV7/QWj0CEI24BjQPWut0ABjmQOJTRPvgV1cSpMtrK5lQILs
-         vUAP+DurN6qZA==
-Date:   Tue, 10 Mar 2020 08:07:58 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warning after merge of the pidfd-fixes tree
-Message-ID: <20200310080758.0b7b6f6b@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id D84DF2146E;
+        Mon,  9 Mar 2020 21:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583788255;
+        bh=yU68s5HuqYhNTYUkzjC1U86mJUMTG72xWa99BdXa1bY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ZiHtmQcjssp3eqcwno/Z5O1qOGfIC18fPg9z1OUcICEZI42NWDZ6K1K5BWNv+P1uM
+         USxqOOwfqAdf8EDqwM8vqAoxXEWc6UQFXWyXUQsDR8/im7LeR09i+cT5LHc9fwoy4S
+         EkSQNZCoVaFh0602XoLwEmox69k44dEIyZshMPNk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/rW2OhgAG0fd3atcTMj2J=MI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200215021232.1149-1-mdtipton@codeaurora.org>
+References: <20200215021232.1149-1-mdtipton@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Wait for completion when enabling clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Tipton <mdtipton@codeaurora.org>
+To:     Mike Tipton <mdtipton@codeaurora.org>, tdas@codeaurora.org
+Date:   Mon, 09 Mar 2020 14:10:54 -0700
+Message-ID: <158378825407.66766.14135857856613969751@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rW2OhgAG0fd3atcTMj2J=MI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Quoting Mike Tipton (2020-02-14 18:12:32)
+> The current implementation always uses rpmh_write_async, which doesn't
+> wait for completion. That's fine for disable requests since there's no
+> immediate need for the clocks and they can be disabled in the
+> background. However, for enable requests we need to ensure the clocks
+> are actually enabled before returning to the client. Otherwise, clients
+> can end up accessing their HW before the necessary clocks are enabled,
+> which can lead to bus errors.
+>=20
+> Use the synchronous version of this API (rpmh_write) for enable requests
+> in the active set to ensure completion.
+>=20
+> Completion isn't required for sleep/wake sets, since they don't take
+> effect until after we enter sleep. All rpmh requests are automatically
+> flushed prior to entering sleep.
+>=20
+> Fixes: 9c7e47025a6b ("clk: qcom: clk-rpmh: Add QCOM RPMh clock driver")
+> Signed-off-by: Mike Tipton <mdtipton@codeaurora.org>
+> ---
 
-Hi all,
-
-After merging the pidfd-fixes tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
-
-In file included from include/linux/rwsem.h:18,
-                 from include/linux/mm_types.h:11,
-                 from include/linux/mmzone.h:21,
-                 from include/linux/gfp.h:6,
-                 from include/linux/mm.h:10,
-                 from kernel/pid.c:30:
-kernel/pid.c: In function 'alloc_pid':
-include/linux/err.h:26:9: warning: 'retval' may be used uninitialized in th=
-is function [-Wmaybe-uninitialized]
-   26 |  return (void *) error;
-      |         ^~~~~~~~~~~~~~
-kernel/pid.c:168:6: note: 'retval' was declared here
-  168 |  int retval;
-      |      ^~~~~~
-
-Introduced by commit
-
-  8deb24dcb89c ("pid: make ENOMEM return value more obvious")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rW2OhgAG0fd3atcTMj2J=MI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5msC4ACgkQAVBC80lX
-0GzSwwf/eyDQ2Lvm8QB/Dvowfw+331GLu+1fKl0Ic5PEmOFMiPBOncbgjONtNo15
-mLBOZuAcloxpHuz+WN7dGM3hytSxADAlAfpI/3UMEqEB9mZ2M9bBHqyU3rGrIkvn
-3QTcwXczsjPh/1qapn2BCn65KYvqplukx4DaFkUp+5OVg/akhS5+p3v+MtGsbZNY
-3wyyI9f9jqb/7uharBhogLVv690VaRtq3JSvNTTtJS5TrQobpL3qhqyjjJQtdrwM
-2/APs4v/QpbTOdnVqWcGI8MqWDw/3t/aw9XnzC8qa5oJcEQSTwhymiabv9kGnDmn
-YI1/XQ+omlHHFBH9IQw+cXy5pCEs9Q==
-=b0oZ
------END PGP SIGNATURE-----
-
---Sig_/rW2OhgAG0fd3atcTMj2J=MI--
+Applied to clk-next but I squashed in some changes to make it easier for
+me to read.
