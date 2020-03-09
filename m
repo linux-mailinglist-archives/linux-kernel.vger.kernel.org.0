@@ -2,133 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C16C417DFA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:17:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9BC517DFB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbgCIMRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 08:17:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:51340 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbgCIMRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 08:17:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9EC030E;
-        Mon,  9 Mar 2020 05:17:20 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19ABF3F6CF;
-        Mon,  9 Mar 2020 05:17:18 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 12:17:14 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     catalin.marinas@arm.com, will@kernel.org, alexios.zavras@intel.com,
-        tglx@linutronix.de, akpm@linux-foundation.org,
-        steven.price@arm.com, steve.capper@arm.com, broonie@kernel.org,
-        keescook@chromium.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH] arm64: add check_wx_pages debugfs for CHECK_WX
-Message-ID: <20200309121713.GA26309@lakrids.cambridge.arm.com>
-References: <20200307093926.27145-1-tranmanphong@gmail.com>
+        id S1726545AbgCIMRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 08:17:34 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32129 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726518AbgCIMRd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 08:17:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583756252;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=i32RwNIexlSTGjPdh8V9cz3m8rKQLmmbJ0m7mElrktI=;
+        b=jEabYTXk3NnMi0NAy9URjzAnwI1oRE2dQjcZQkuSboOrtLFfeFqKAyOwE/qLXxxRxb3n5v
+        kANidRHizt8C9FL5xz4qWuDgdcg52adF6u2ozCZ7vyj9TG0Q7s6C5kPeIMW3NIpUv/Jh8+
+        mBRbzY9gtosYE3q39j50+e5dcmhafhA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-145-bIeZIp8RObmFqOx2kn-jCA-1; Mon, 09 Mar 2020 08:17:28 -0400
+X-MC-Unique: bIeZIp8RObmFqOx2kn-jCA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B3F618A72CA;
+        Mon,  9 Mar 2020 12:17:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D328B5D9CA;
+        Mon,  9 Mar 2020 12:17:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH 01/17] uapi: General notification queue definitions [ver
+ #4]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, dhowells@redhat.com, casey@schaufler-ca.com,
+        sds@tycho.nsa.gov, nicolas.dichtel@6wind.com, raven@themaw.net,
+        christian@brauner.io, andres@anarazel.de, jlayton@redhat.com,
+        dray@redhat.com, kzak@redhat.com, keyrings@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 09 Mar 2020 12:17:21 +0000
+Message-ID: <158375624103.334846.15282432828559449957.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158375623086.334846.16121725232323108842.stgit@warthog.procyon.org.uk>
+References: <158375623086.334846.16121725232323108842.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.21
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200307093926.27145-1-tranmanphong@gmail.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 07, 2020 at 04:39:26PM +0700, Phong Tran wrote:
-> follow the suggestion from
-> https://github.com/KSPP/linux/issues/35
+Add UAPI definitions for the general notification queue, including the
+following pieces:
 
-That says:
+ (*) struct watch_notification.
 
-| This should be implemented for all architectures
+     This is the metadata header for notification messages.  It includes a
+     type and subtype that indicate the source of the message
+     (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
+     (eg. NOTIFY_MOUNT_NEW_MOUNT).
 
-... so surely this should be in generic code, rahter than being
-arm64-specific?
+     The header also contains an information field that conveys the
+     following information:
 
-Thanks,
-Mark.
+	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
+          length).
 
-> 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  arch/arm64/Kconfig.debug        |  3 ++-
->  arch/arm64/include/asm/ptdump.h |  2 ++
->  arch/arm64/mm/dump.c            |  1 +
->  arch/arm64/mm/ptdump_debugfs.c  | 18 ++++++++++++++++++
->  4 files changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
-> index 1c906d932d6b..be552fa351e2 100644
-> --- a/arch/arm64/Kconfig.debug
-> +++ b/arch/arm64/Kconfig.debug
-> @@ -48,7 +48,8 @@ config DEBUG_WX
->  	  of other unfixed kernel bugs easier.
->  
->  	  There is no runtime or memory usage effect of this option
-> -	  once the kernel has booted up - it's a one time check.
-> +	  once the kernel has booted up - it's a one time check and
-> +	  can be checked by echo "1" to "check_wx_pages" debugfs in runtime.
->  
->  	  If in doubt, say "Y".
->  
-> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-> index 38187f74e089..b80d6b4fc508 100644
-> --- a/arch/arm64/include/asm/ptdump.h
-> +++ b/arch/arm64/include/asm/ptdump.h
-> @@ -24,9 +24,11 @@ struct ptdump_info {
->  void ptdump_walk(struct seq_file *s, struct ptdump_info *info);
->  #ifdef CONFIG_PTDUMP_DEBUGFS
->  void ptdump_debugfs_register(struct ptdump_info *info, const char *name);
-> +int ptdump_check_wx_init(void);
->  #else
->  static inline void ptdump_debugfs_register(struct ptdump_info *info,
->  					   const char *name) { }
-> +static inline int ptdump_check_wx_init(void) { return 0; }
->  #endif
->  void ptdump_check_wx(void);
->  #endif /* CONFIG_PTDUMP_CORE */
-> diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-> index 860c00ec8bd3..60c99a047763 100644
-> --- a/arch/arm64/mm/dump.c
-> +++ b/arch/arm64/mm/dump.c
-> @@ -378,6 +378,7 @@ static int ptdump_init(void)
->  #endif
->  	ptdump_initialize();
->  	ptdump_debugfs_register(&kernel_ptdump_info, "kernel_page_tables");
-> +	ptdump_check_wx_init();
->  	return 0;
->  }
->  device_initcall(ptdump_init);
-> diff --git a/arch/arm64/mm/ptdump_debugfs.c b/arch/arm64/mm/ptdump_debugfs.c
-> index 1f2eae3e988b..73cddc12c3c2 100644
-> --- a/arch/arm64/mm/ptdump_debugfs.c
-> +++ b/arch/arm64/mm/ptdump_debugfs.c
-> @@ -16,3 +16,21 @@ void ptdump_debugfs_register(struct ptdump_info *info, const char *name)
->  {
->  	debugfs_create_file(name, 0400, NULL, info, &ptdump_fops);
->  }
-> +
-> +static int check_wx_debugfs_set(void *data, u64 val)
-> +{
-> +	if (val != 1ULL)
-> +		return -EINVAL;
-> +
-> +	ptdump_check_wx();
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_SIMPLE_ATTRIBUTE(check_wx_fops, NULL, check_wx_debugfs_set, "%llu\n");
-> +
-> +int ptdump_check_wx_init(void)
-> +{
-> +	return debugfs_create_file("check_wx_pages", 0200, NULL,
-> +				   NULL, &check_wx_fops) ? 0 : -ENOMEM;
-> +}
-> -- 
-> 2.20.1
-> 
+	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
+          set.
+
+	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
+
+	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
+          information.  For use by the type.
+
+     All the information in the header can be used in filtering messages at
+     the point of writing into the buffer.
+
+ (*) struct watch_notification_removal
+
+     This is an extended watch-removal notification record that includes an
+     'id' field that can indicate the identifier of the object being
+     removed if available (for instance, a keyring serial number).
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/uapi/linux/watch_queue.h |   55 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 include/uapi/linux/watch_queue.h
+
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+new file mode 100644
+index 000000000000..5f3d21e8a34b
+--- /dev/null
++++ b/include/uapi/linux/watch_queue.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_WATCH_QUEUE_H
++#define _UAPI_LINUX_WATCH_QUEUE_H
++
++#include <linux/types.h>
++
++enum watch_notification_type {
++	WATCH_TYPE_META		= 0,	/* Special record */
++	WATCH_TYPE__NR		= 1
++};
++
++enum watch_meta_notification_subtype {
++	WATCH_META_REMOVAL_NOTIFICATION	= 0,	/* Watched object was removed */
++	WATCH_META_LOSS_NOTIFICATION	= 1,	/* Data loss occurred */
++};
++
++/*
++ * Notification record header.  This is aligned to 64-bits so that subclasses
++ * can contain __u64 fields.
++ */
++struct watch_notification {
++	__u32			type:24;	/* enum watch_notification_type */
++	__u32			subtype:8;	/* Type-specific subtype (filterable) */
++	__u32			info;
++#define WATCH_INFO_LENGTH	0x0000007f	/* Length of record */
++#define WATCH_INFO_LENGTH__SHIFT 0
++#define WATCH_INFO_ID		0x0000ff00	/* ID of watchpoint */
++#define WATCH_INFO_ID__SHIFT	8
++#define WATCH_INFO_TYPE_INFO	0xffff0000	/* Type-specific info */
++#define WATCH_INFO_TYPE_INFO__SHIFT 16
++#define WATCH_INFO_FLAG_0	0x00010000	/* Type-specific info, flag bit 0 */
++#define WATCH_INFO_FLAG_1	0x00020000	/* ... */
++#define WATCH_INFO_FLAG_2	0x00040000
++#define WATCH_INFO_FLAG_3	0x00080000
++#define WATCH_INFO_FLAG_4	0x00100000
++#define WATCH_INFO_FLAG_5	0x00200000
++#define WATCH_INFO_FLAG_6	0x00400000
++#define WATCH_INFO_FLAG_7	0x00800000
++};
++
++
++/*
++ * Extended watch removal notification.  This is used optionally if the type
++ * wants to indicate an identifier for the object being watched, if there is
++ * such.  This can be distinguished by the length.
++ *
++ * type -> WATCH_TYPE_META
++ * subtype -> WATCH_META_REMOVAL_NOTIFICATION
++ */
++struct watch_notification_removal {
++	struct watch_notification watch;
++	__u64	id;		/* Type-dependent identifier */
++};
++
++#endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+
+
