@@ -2,119 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F00917DC98
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:42:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 853A117DC9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgCIJmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:42:09 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34144 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbgCIJmJ (ORCPT
+        id S1726461AbgCIJnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:43:42 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43046 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbgCIJnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:42:09 -0400
-Received: by mail-io1-f65.google.com with SMTP id h131so7754882iof.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 02:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=c/mZkIa4u1GFEY/oYjmFc+FR8PHQ8RKEpzXuSA50f5s=;
-        b=TAO5L0ecniR53erERzzlw9zh9lNJtnY42OapqHncQEEOT2zL1J/8GGNrCjbOLCATlU
-         JPIiYjDHU20WcrlU4aM6LCmooPG1ubaoK07kd3FikOiJVbbYnaBp+/Hj4as7Wt9dcKUt
-         8Hvvg9NiyVusI7+S0B9SCyRVfHoDLAMgJZPISXz4/9hmol7DeXY9w29RCtJJmPVWvJmT
-         E3DtEi7DQx9ka58NZPxQhumBxcEyuGXtzSM7+TTFMY4Q8UW7/MJb4slGLCUKbsts3xRr
-         EQl4ADEUM/NRImQu8woqDD4TcBW9JV7DAa4n5w2bqofVQD+K4dF/cTMg9oQG7QCHp+3T
-         oUVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=c/mZkIa4u1GFEY/oYjmFc+FR8PHQ8RKEpzXuSA50f5s=;
-        b=ap2wplvNwHOKsdE2G5mQABB451IW1bLWQj/BNW8iHuqj0iY2HXZP1jP5N+nzQUdc8S
-         cb5qMUTNKQiDWOtVJXj4TmlJ0i8ru83akPSzDrLCeDdYhJB1croLsjNgZSsdDApRYPy9
-         /wPoewlRVpXkMFknsGRsukm7YOjHdBuL77OO33cK3VC/TIWqiEbSP5RmiMuUOkhT5+H9
-         zTo54ZD0gaqURYzj9WE9io4twrOtZlvs/2ssmVdyGUqUWLicFsOzeSAPaFVLIy+/xbef
-         DCu0MDZuvHNQh7gd+CvOZ41hvoVYoZymLC2VVjQ2UH7P4YqiM2S+H1rab/PwVoufmwZe
-         irNQ==
-X-Gm-Message-State: ANhLgQ2uPmgkJkmC1dyR6Ij8qEaXf8o1UFdME89YQ/bR4dOd7cXC6o6o
-        Oe2IgPEIRLAXx7jeCSSuQBMA9IooJBnUSFF+sMo=
-X-Google-Smtp-Source: ADFU+vv44uZ3lIDmExqw+n+b41xFRnYa0Xm1qZPMM9dMXsAPy7QTHgPGHxzBTLrAe5H38M9jnXNgD0sq87cRrGzqPWI=
-X-Received: by 2002:a6b:f913:: with SMTP id j19mr12453608iog.124.1583746926678;
- Mon, 09 Mar 2020 02:42:06 -0700 (PDT)
+        Mon, 9 Mar 2020 05:43:41 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0299hQi3050123;
+        Mon, 9 Mar 2020 04:43:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583747006;
+        bh=RzlZesRpFJqS5mJhJut0NkSOELlsfKSMiUyjJ8TsFEc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Yt3uC7csFiagxt6uf3UP+yZDR/6dzb6qTY1gjp9YIsfRn7pkJmn2Y0c91Y+24gbdD
+         RNskelBfK//xg3/y4hfTAeUubV6WlzKJJC+z6jWuJfKvUJyH9P/i3K3f5O5Lr5viGE
+         amIoYITMXbruK0ayWo+/DSiveJkkP32spU5njSmI=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0299hQi5019087
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Mar 2020 04:43:26 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
+ 2020 04:43:26 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 9 Mar 2020 04:43:26 -0500
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0299hN6X114936;
+        Mon, 9 Mar 2020 04:43:23 -0500
+Subject: Re: [PATCH] ARM: OMAP: DTS: N900: fix onenand timings
+To:     Arthur Demchenkov <spinal.by@gmail.com>
+CC:     =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200308191934.8263-1-spinal.by@gmail.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <abd076bf-20aa-c981-bf4f-7bdf10ec58d1@ti.com>
+Date:   Mon, 9 Mar 2020 11:43:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Received: by 2002:a92:c98c:0:0:0:0:0 with HTTP; Mon, 9 Mar 2020 02:42:05 -0700 (PDT)
-Reply-To: robertandersonhappy1@gmail.com
-From:   robert <andersonrobertpass11@gmail.com>
-Date:   Mon, 9 Mar 2020 02:42:05 -0700
-Message-ID: <CAOga3cd-c2qv5imP6+2BVSXNGQ6-m1_FNzx1k54mupjW61eWBA@mail.gmail.com>
-Subject: good
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200308191934.8263-1-spinal.by@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MTE1Mi81MDAwDQoqINCS0L3QuNC80LDQvdC40LU6INCx0LXQvdC10YTQuNGG0LjQsNGAICoNCg0K
-KiDQodC+0L7QsdGJ0LjRgtC1LCDRh9GC0L4g0LzRiyDQv9C+0LvRg9GH0LjQu9C4INGD0YLQstC1
-0YDQttC00LXQvdC90YvQuSDRhNCw0LnQuyDQvtC/0LvQsNGC0Ysg0L7RgiBGRURFUkFMDQrQnNCY
-0J3QmNCh0KLQldCg0KHQotCS0J4g0KTQmNCd0JDQndCh0J7QkiDRgdC+0LLQvNC10YHRgtC90L4g
-0YEg0JzQtdC20LTRg9C90LDRgNC+0LTQvdGL0Lwg0LLQsNC70Y7RgtC90YvQvCDRhNC+0L3QtNC+
-0LwgKNCc0JLQpCkNCtC60L7QvNC/0LXQvdGB0LDRhtC40Y8g0LbQtdGA0YLQstCw0Lwg0LzQvtGI
-0LXQvdC90LjRh9C10YHRgtCy0LAg0Lgg0LLQsNGIINCw0LTRgNC10YEg0Y3Qu9C10LrRgtGA0L7Q
-vdC90L7QuSDQv9C+0YfRgtGLINCy0YXQvtC00LjRgiDQsiDRgdC/0LjRgdC+0LoNCtC20LXRgNGC
-0LLRiy4gKg0KDQoqINCvINC/0LjRiNGDLCDRh9GC0L7QsdGLINGB0L7QvtCx0YnQuNGC0Ywg0LLQ
-sNC8LCDRh9GC0L4g0LzRiyDQsdGD0LTQtdC8INC+0YLQv9GA0LDQstC70Y/RgtGMINCy0LDQvCAk
-IDUwMDAuMDBVU0QNCtC10LbQtdC00L3QtdCy0L3QviDRgQ0K0L3QsNGIINC+0YTQuNGBINC30LTQ
-tdGB0YwsINGC0LDQuiDQutCw0Log0LzRiyDQv9C+0LvRg9GH0LjQu9C4INC80LDQvdC00LDRgiDQ
-vdCwINC/0LXRgNC10LTQsNGH0YMg0LLQsNGI0LXQs9C+INC/0L7Qu9C90L7Qs9C+DQrQutC+0LzQ
-v9C10L3RgdCw0YbQuNC+0L3QvdGL0Lkg0L/Qu9Cw0YLQtdC2INCyINGA0LDQt9C80LXRgNC1IDgw
-MCAwMDAg0LTQvtC70LvQsNGA0L7QsiDQodCo0JAg0JzQtdC20LTRg9C90LDRgNC+0LTQvdGL0LwN
-CtCy0LDQu9GO0YLQvdGL0Lwg0YTQvtC90LTQvtC8DQoo0JzQktCkKSDQuCDQpNC10LTQtdGA0LDQ
-u9GM0L3QvtC1INC80LjQvdC40YHRgtC10YDRgdGC0LLQviDRhNC40L3QsNC90YHQvtCyLiDQktCw
-0Ygg0LvQuNGH0L3Ri9C5INC40LTQtdC90YLQuNGE0LjQutCw0YbQuNC+0L3QvdGL0Lkg0L3QvtC8
-0LXRgA0K0L/RgNC10LTQvtGB0YLQsNCy0LvQtdC90L4g0LrQvtC80LDQvdC00L7QuSBJLk0uRiBD
-UFAwOTIwVEcuICoNCg0KKiDQktC+0YIg0LjQvdGE0L7RgNC80LDRhtC40Y8g0L7QsSDQvtC/0LvQ
-sNGC0LUsINC60L7RgtC+0YDRg9GOINC80Ysg0LHRg9C00LXQvCDQuNGB0L/QvtC70YzQt9C+0LLQ
-sNGC0Ywg0LTQu9GPINC/0LXRgNC10YHRi9C70LrQuCDQstCw0YjQtdCz0L4NCtC10LbQtdC00L3Q
-tdCy0L3Ri9C5INC/0LXRgNC10LLQvtC0LiAqDQoNCiog0JjQvNGPINC+0YLQv9GA0LDQstC40YLQ
-tdC70Y86INCh0LjQvdGC0LjRjyDQmNC00LXQvSAqDQoqINCS0L7Qv9GA0L7RgTog0J7Qv9C70LDR
-gtCwICoNCiog0J7RgtCy0LXRgjog0JTQsCAqDQoqINCh0YPQvNC80LA6IDUgMDAwLDAwINC00L7Q
-u9C70LDRgNC+0LIg0KHQqNCQICoNCiog0JPQvtGA0L7QtDog0JvQvtC80LUgKg0KKiDQodGC0YDQ
-sNC90LA6INCi0L7Qs9C+ICoNCg0KKiDQn9Cg0JjQnNCV0KfQkNCd0JjQlTogTVRDTiDQsdGD0LTQ
-tdGCINC+0YLQv9GA0LDQstC70LXQvSDQstCw0Lwg0L/QvtGB0LvQtSDQstCw0YjQtdCz0L4g0L7R
-gtCy0LXRgtCwINC4INC/0L7QtNGC0LLQtdGA0LbQtNC10L3QuNGPDQrQmNC90YTQvtGA0LzQsNGG
-0LjRjyDQviDQstCw0YjQtdC8INC/0L7Qu9GD0YfQsNGC0LXQu9C1LCDRh9GC0L7QsdGLINC40LfQ
-sdC10LbQsNGC0Ywg0L3QtdC/0YDQsNCy0LjQu9GM0L3QvtC5INC/0LXRgNC10LTQsNGH0LguICoN
-Cg0KKiDQnNGLINC20LTQtdC8INCy0LDRiNC10LPQviDRgdGA0L7Rh9C90L7Qs9C+INC+0YLQstC1
-0YLQsCDQv9C+INGN0YLQvtC80YMg0LDQtNGA0LXRgdGDDQoobWlzc2N5bnRoaWFlZGVuNTZAZ21h
-aWwuY29tIDxtaXNzY3ludGhpYWVkZW41NkBnbWFpbC5jb20+KSwg0YfRgtC+0LHRiyDQv9C+0LfQ
-stC+0LvQuNGC0Ywg0L3QsNC8DQrQv9GA0L7QtNC+0LvQttC40YLRjCDQvtC/0LvQsNGC0YMuICoN
-Cg0KKtCY0YHQutGA0LXQvdC90LUg0LLQsNGILCoNCg0KKtCg0YPQutC+0LLQvtC00LjRgtC10LvR
-jCDRhNC40LvQuNCw0LvQsDoqDQoqINCc0LjRgdGBINCh0LjQvdGC0LjRjyDQmNC00LXQvSAqDQoq
-IFZuaW1hbml5ZTogYmVuZWZpdHNpYXIgKg0KDQoqIFNvb2JzaGNoaXRlLCBjaHRvIG15IHBvbHVj
-aGlsaSB1dHZlcnpoZGVubnl5IGZheWwgb3BsYXR5IG90IEZFREVSQUwNCk1JTklTVEVSU1RWTyBG
-SU5BTlNPViBzb3ZtZXN0bm8gcyBNZXpoZHVuYXJvZG55bSB2YWx5dXRueW0gZm9uZG9tIChNVkYp
-DQprb21wZW5zYXRzaXlhIHpoZXJ0dmFtIG1vc2hlbm5pY2hlc3R2YSBpIHZhc2ggYWRyZXMgZWxl
-a3Ryb25ub3kgcG9jaHR5DQp2a2hvZGl0IHYgc3Bpc29rDQp6aGVydHZ5LiAqDQoNCiogWUEgcGlz
-aHUsIGNodG9ieSBzb29ic2hjaGl0JyB2YW0sIGNodG8gbXkgYnVkZW0gb3RwcmF2bHlhdCcgdmFt
-ICQNCjUwMDAuMDBVU0QgeWV6aGVkbmV2bm8gcw0KbmFzaCBvZmlzIHpkZXMnLCB0YWsga2FrIG15
-IHBvbHVjaGlsaSBtYW5kYXQgbmEgcGVyZWRhY2h1IHZhc2hlZ28gcG9sbm9nbw0Ka29tcGVuc2F0
-c2lvbm55eSBwbGF0ZXpoIHYgcmF6bWVyZSA4MDAgMDAwIGRvbGxhcm92IFNTSEENCk1lemhkdW5h
-cm9kbnltIHZhbHl1dG55bSBmb25kb20NCihNVkYpIGkgRmVkZXJhbCdub3llIG1pbmlzdGVyc3R2
-byBmaW5hbnNvdi4gVmFzaCBsaWNobnl5DQppZGVudGlmaWthdHNpb25ueXkgbm9tZXINCnByZWRv
-c3Rhdmxlbm8ga29tYW5kb3kgSS5NLkYgQ1BQMDkyMFRHLiAqDQoNCiogVm90IGluZm9ybWF0c2l5
-YSBvYiBvcGxhdGUsIGtvdG9ydXl1IG15IGJ1ZGVtIGlzcG9sJ3pvdmF0JyBkbHlhDQpwZXJlc3ls
-a2kgdmFzaGVnbw0KeWV6aGVkbmV2bnl5IHBlcmV2b2QuICoNCg0KKiBJbXlhIG90cHJhdml0ZWx5
-YTogU2ludGl5YSBJZGVuICoNCiogVm9wcm9zOiBPcGxhdGEgKg0KKiBPdHZldDogRGEgKg0KKiBT
-dW1tYTogNSAwMDAsMDAgZG9sbGFyb3YgU1NIQSAqDQoqIEdvcm9kOiBMb21lICoNCiogU3RyYW5h
-OiBUb2dvICoNCg0KKiBQUklNRUNIQU5JWWU6IE1UQ04gYnVkZXQgb3RwcmF2bGVuIHZhbSBwb3Ns
-ZSB2YXNoZWdvIG90dmV0YSBpIHBvZHR2ZXJ6aGRlbml5YQ0KSW5mb3JtYXRzaXlhIG8gdmFzaGVt
-IHBvbHVjaGF0ZWxlLCBjaHRvYnkgaXpiZXpoYXQnIG5lcHJhdmlsJ25veSBwZXJlZGFjaGkuICoN
-Cg0KKiBNeSB6aGRlbSB2YXNoZWdvIHNyb2Nobm9nbyBvdHZldGEgcG8gZXRvbXUgYWRyZXN1DQoo
-bWlzc2N5bnRoaWFlZGVuNTZAZ21haWwuY29tIDxtaXNzY3ludGhpYWVkZW41NkBnbWFpbC5jb20+
-KSwgY2h0b2J5DQpwb3p2b2xpdCcgbmFtDQpwcm9kb2x6aGl0JyBvcGxhdHUuICoNCg0KKklza3Jl
-bm5lIHZhc2gsKg0KDQoqUnVrb3ZvZGl0ZWwnIGZpbGlhbGE6Kg0KKiBNaXNzIFNpbnRpeWEgSWRl
-biAqDQpBZmZpY2hlciBwbHVzDQpFbnZveWVyIGRlcyBjb21tZW50YWlyZXMNCkhpc3RvcmlxdWUN
-CkVucmVnaXN0csOpDQpDb21tdW5hdXTDqQ0K
+
+
+On 08/03/2020 21:19, Arthur Demchenkov wrote:
+> Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+> started using DT specified timings for GPMC, and as a result the
+> OneNAND stopped working on N900 as we had wrong values in the DT.
+> Fix by updating the values to bootloader timings that have been tested
+> to be working on Nokia N900 with OneNAND manufacturers: Samsung,
+> Numonyx.
+> 
+> Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+> Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
+
+Reviewed-by: Roger Quadros <rogerq@ti.com>
+
+> ---
+>   arch/arm/boot/dts/omap3-n900.dts | 44 +++++++++++++++++++++++++---------------
+>   1 file changed, 28 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/omap3-n900.dts b/arch/arm/boot/dts/omap3-n900.dts
+> index c3c6d7d04a76..4089d97405c9 100644
+> --- a/arch/arm/boot/dts/omap3-n900.dts
+> +++ b/arch/arm/boot/dts/omap3-n900.dts
+> @@ -854,34 +854,46 @@
+>   		compatible = "ti,omap2-onenand";
+>   		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
+>   
+> +		/*
+> +		 * These timings are based on CONFIG_OMAP_GPMC_DEBUG=y reported
+> +		 * bootloader set values when booted with v5.1
+> +		 * (OneNAND Manufacturer: Samsung):
+> +		 *
+> +		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
+> +		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
+> +		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
+> +		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
+> +		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
+> +		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
+> +		 */
+>   		gpmc,sync-read;
+>   		gpmc,sync-write;
+>   		gpmc,burst-length = <16>;
+>   		gpmc,burst-read;
+>   		gpmc,burst-wrap;
+>   		gpmc,burst-write;
+> -		gpmc,device-width = <2>; /* GPMC_DEVWIDTH_16BIT */
+> -		gpmc,mux-add-data = <2>; /* GPMC_MUX_AD */
+> +		gpmc,device-width = <2>;
+> +		gpmc,mux-add-data = <2>;
+>   		gpmc,cs-on-ns = <0>;
+> -		gpmc,cs-rd-off-ns = <87>;
+> -		gpmc,cs-wr-off-ns = <87>;
+> +		gpmc,cs-rd-off-ns = <102>;
+> +		gpmc,cs-wr-off-ns = <102>;
+>   		gpmc,adv-on-ns = <0>;
+> -		gpmc,adv-rd-off-ns = <10>;
+> -		gpmc,adv-wr-off-ns = <10>;
+> -		gpmc,oe-on-ns = <15>;
+> -		gpmc,oe-off-ns = <87>;
+> +		gpmc,adv-rd-off-ns = <12>;
+> +		gpmc,adv-wr-off-ns = <12>;
+> +		gpmc,oe-on-ns = <12>;
+> +		gpmc,oe-off-ns = <102>;
+>   		gpmc,we-on-ns = <0>;
+> -		gpmc,we-off-ns = <87>;
+> -		gpmc,rd-cycle-ns = <112>;
+> -		gpmc,wr-cycle-ns = <112>;
+> -		gpmc,access-ns = <81>;
+> -		gpmc,page-burst-access-ns = <15>;
+> +		gpmc,we-off-ns = <102>;
+> +		gpmc,rd-cycle-ns = <132>;
+> +		gpmc,wr-cycle-ns = <132>;
+> +		gpmc,access-ns = <96>;
+> +		gpmc,page-burst-access-ns = <18>;
+>   		gpmc,bus-turnaround-ns = <0>;
+>   		gpmc,cycle2cycle-delay-ns = <0>;
+>   		gpmc,wait-monitoring-ns = <0>;
+> -		gpmc,clk-activation-ns = <5>;
+> -		gpmc,wr-data-mux-bus-ns = <30>;
+> -		gpmc,wr-access-ns = <81>;
+> +		gpmc,clk-activation-ns = <6>;
+> +		gpmc,wr-data-mux-bus-ns = <36>;
+> +		gpmc,wr-access-ns = <96>;
+>   		gpmc,sync-clk-ps = <15000>;
+>   
+>   		/*
+> 
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
