@@ -2,82 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A26F417E1A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6BF17E199
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:45:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbgCINqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:46:34 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:58011 "EHLO ozlabs.org"
+        id S1726703AbgCINpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:45:52 -0400
+Received: from mail.manjaro.org ([176.9.38.148]:58810 "EHLO mail.manjaro.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbgCINqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:46:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48bfdg08qZz9sPg;
-        Tue, 10 Mar 2020 00:46:30 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1583761591;
-        bh=rimuX9bz6pCrVPaXzWio/u4bP/hMKmAmLkOVHJ1WVcY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rEX/2qtnvtXRmQ6W2PnEVHRBaMXQM37CpCeINjmM6oxY70pM1RmHqm/ZBENwijDAd
-         ELd4QIvJHuic2dQILAhKrsO46VHhB8xUJr1rqD1pX3Rwtaw983GUxLFaMey8H24Fwa
-         ONwz7PgM1jcSHXqdYlaRL9rIEY3HSmu+TyTU4je41sFHaQySCLfof80p0WGQkw6yFs
-         eTLx9N7pdg4/bOfdM6rx13q9Z1psL9Rgh26jXO3Rfqe3DAHFKLrXMXYPfvT/ZOOw+N
-         RYkgZO0O5ctVcHnMeEwQj9L4c8ln5UyaMNdaGEU0HB2Ma0dNiqhyxy1GM/89Dyeo0R
-         iRmUT1x8EITsw==
-Date:   Tue, 10 Mar 2020 00:46:29 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the tpmdd tree
-Message-ID: <20200310004629.5a752080@canb.auug.org.au>
+        id S1726383AbgCINpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:45:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.manjaro.org (Postfix) with ESMTP id C3A963701AC9;
+        Mon,  9 Mar 2020 14:45:50 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from mail.manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id oXfIn-hvP3mj; Mon,  9 Mar 2020 14:45:48 +0100 (CET)
+Subject: Re: [RFC PATCH 1/1] leds: add generic inverted led trigger support
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Tobias Schramm <t.schramm@manjaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200308142722.1199260-1-t.schramm@manjaro.org>
+ <20200308142722.1199260-2-t.schramm@manjaro.org>
+ <057e4efd-30a1-20df-d990-d11ef2573a3e@gmail.com>
+From:   Tobias Schramm <t.schramm@manjaro.org>
+Message-ID: <c799f3b7-2b55-0d8f-c54d-38b525d67e9c@manjaro.org>
+Date:   Mon, 9 Mar 2020 14:46:52 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YfJjuVGym98ukps0cP2f5Ys";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <057e4efd-30a1-20df-d990-d11ef2573a3e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YfJjuVGym98ukps0cP2f5Ys
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Jacek,
 
-Hi all,
+thanks dor the feedback.
 
-Commits
+> We have already some triggers that accomplish that by introducing
+> a custom sysfs file.
+[...]
+> You could also try to make this a generic feature
+> for all LED triggers.
 
-  4eecda6b7df2 ("tpm: tpm_tis_spi_cr50: use new structure for SPI transfer =
-delays")
-  0fbd8fe52759 ("tpm_tis_spi: use new 'delay' structure for SPI transfer de=
-lays")
+Based on the other feedback I got I will do just that. Pavel is right,
+we do already have a lot of triggers, doubling the number of triggers is
+probably not the best idea.
 
-are missing a Signed-off-by from their committer.
+Tobias
 
-Not really, but "Signed-off-by" is misspelled.  Please fix up what ever
-script produces this (or your finger memory :-)).
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/YfJjuVGym98ukps0cP2f5Ys
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl5mSLUACgkQAVBC80lX
-0Gw16gf+LRsH/H+I/LMr0+EhkdvrwGK/+JqYkzf1ZJCdCQPdFj9bP+tfU/vR3ljh
-sB42sEjQmsywLwJV5nJ1jiDq+JxV2ppZKI/jQDkNEYOkemXpNNO38VaHoxe1CAxY
-lzB56pezgbcYuYnIc8I6hEDamNiOdluI8MP9WhalRDy5Hq8LQ1+y06rrOkKb3Dld
-5caJEMPzJupo/RnuDVkQdCD2WAfR1HjLPfvcDfjk+NFbJIKHbdvzCATLVmH6jApM
-U++nwADkuQtxnMwDXlYdiannyADpR71x0TL9vMZXe4iE1iZzdK4XsvrUq7u4LWjW
-i77F3pXeoqvuwwz0Wuu84Zh40kX1Uw==
-=t7pC
------END PGP SIGNATURE-----
-
---Sig_/YfJjuVGym98ukps0cP2f5Ys--
