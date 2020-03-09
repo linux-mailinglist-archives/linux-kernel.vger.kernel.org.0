@@ -2,94 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1954817E9BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:11:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 493D217E9CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbgCIULf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:11:35 -0400
-Received: from mga18.intel.com ([134.134.136.126]:39979 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbgCIULf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:11:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 13:11:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,534,1574150400"; 
-   d="scan'208";a="245452962"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga006.jf.intel.com with ESMTP; 09 Mar 2020 13:11:34 -0700
-Date:   Mon, 9 Mar 2020 13:11:34 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: Re: [PATCH v2 00/66] KVM: x86: Introduce KVM cpu caps
-Message-ID: <20200309201134.GA10653@linux.intel.com>
-References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
- <cd8eae75-b85b-59a9-24ea-c8bde7bd7cee@redhat.com>
+        id S1726521AbgCIUQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:16:28 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33454 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgCIUQ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:16:27 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 029K8JTx141593;
+        Mon, 9 Mar 2020 20:16:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=BV2Jnn5mBU1Yoz/9sFxsLu4+VH7pPiDrzIggAJNSObA=;
+ b=eyM/doeVft43vVV18i6BOyBxMxTp3xE4b0pSWoGmli4URJruRKOwtj9V1+LQD4WLtPMt
+ AyBlQnTXz5toahWngjKRrOgXHbeJzvY8V5zp2Q4GSJSl3R8R2EvI2keK4VT6okEAqOa1
+ pfOcFipFPv5vhp8lBlTL1orDD5p2QKkxRweI3xa7farnNYOm5cxuXu+T4MDpDi35gJiX
+ p2PJAFqWc5kMj3xEmXlWy+xgXXXexd6M8OOYFM6U+1Y0DmB5N/oEuT8olds+4fE0RHm5
+ pzHZZxSevm9i+NXxJLrEwwCpgocJ9Vf6ogUlLrEotyq+USImKgp1UjlzCf3u3FbOf+42 nA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2ym3jqhdqh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Mar 2020 20:16:02 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 029K76EW178158;
+        Mon, 9 Mar 2020 20:16:01 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2ymn3grbe0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Mar 2020 20:16:01 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 029KG0mK006500;
+        Mon, 9 Mar 2020 20:16:00 GMT
+Received: from [192.168.0.190] (/68.201.65.98)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Mar 2020 13:15:59 -0700
+Subject: Re: [PATCH][next] jfs: Replace zero-length array with flexible-array
+ member
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20200309182308.GA5087@embeddedor>
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+Autocrypt: addr=dave.kleikamp@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ rnNNL3zBkwD3nWcTxFnX
+Message-ID: <4e067af3-1996-8ab9-2135-ec49d4adcb96@oracle.com>
+Date:   Mon, 9 Mar 2020 15:15:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd8eae75-b85b-59a9-24ea-c8bde7bd7cee@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200309182308.GA5087@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=960 phishscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003090123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 phishscore=0 mlxlogscore=999 impostorscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003090123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 09:27:48AM +0100, Paolo Bonzini wrote:
-> I put the complete series on the cpu-caps branch of kvm.git.
+Looks good. I'll queue this for linux-next.
 
-Looks good, arrived at more or less the same end result when rebasing my
-local branch to kvm/queue.  CPUID diff and smoke test on Icelake ran clean.
+Shaggy
 
-For supported_xss, would it make sense to handle it purely in common x86
-code, e.g. stub in something similar to supported_xcr0?  KVM_SUPPORTED_XSS
-would be 0 for now.  I assume whatever XSAVES features are supported will
-be "supported" by both VMX and SVM, in the sense that VMX/SVM won't need
-to mask off features that can exist on their respective hardware but can't
-be exposed to the guest.
-
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 4dca3579e740..c6e9910d1149 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1371,8 +1371,6 @@ static __init void svm_set_cpu_caps(void)
- {
-        kvm_set_cpu_caps();
- 
--       supported_xss = 0;
--
-        /* CPUID 0x80000001 and 0x8000000A (SVM features) */
-        if (nested) {
-                kvm_cpu_cap_set(X86_FEATURE_SVM);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 8001070b209c..e91a84bb251c 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7126,7 +7126,6 @@ static __init void vmx_set_cpu_caps(void)
-                kvm_cpu_cap_set(X86_FEATURE_UMIP);
- 
-        /* CPUID 0xD.1 */
--       supported_xss = 0;
-        if (!vmx_xsaves_supported())
-                kvm_cpu_cap_clear(X86_FEATURE_XSAVES);
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 96e897d38a63..29cfe80db4b4 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9628,6 +9628,8 @@ int kvm_arch_hardware_setup(void)
- 
-        if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
-                supported_xss = 0;
-+       else
-+               supported_xss = host_xss & KVM_SUPPORTED_XSS;
- 
-        cr4_reserved_bits = kvm_host_cr4_reserved_bits(&boot_cpu_data);
+On 3/9/20 1:23 PM, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
+> 
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
+> 
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
+> 
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
+> 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  fs/jfs/jfs_dtree.c | 2 +-
+>  fs/jfs/jfs_xattr.h | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+> index 3acc954f7c04..837d42f61464 100644
+> --- a/fs/jfs/jfs_dtree.c
+> +++ b/fs/jfs/jfs_dtree.c
+> @@ -2964,7 +2964,7 @@ struct jfs_dirent {
+>  	loff_t position;
+>  	int ino;
+>  	u16 name_len;
+> -	char name[0];
+> +	char name[];
+>  };
+>  
+>  /*
+> diff --git a/fs/jfs/jfs_xattr.h b/fs/jfs/jfs_xattr.h
+> index f0558b3348da..c50167a7bc50 100644
+> --- a/fs/jfs/jfs_xattr.h
+> +++ b/fs/jfs/jfs_xattr.h
+> @@ -17,12 +17,12 @@ struct jfs_ea {
+>  	u8 flag;	/* Unused? */
+>  	u8 namelen;	/* Length of name */
+>  	__le16 valuelen;	/* Length of value */
+> -	char name[0];	/* Attribute name (includes null-terminator) */
+> +	char name[];	/* Attribute name (includes null-terminator) */
+>  };			/* Value immediately follows name */
+>  
+>  struct jfs_ea_list {
+>  	__le32 size;		/* overall size */
+> -	struct jfs_ea ea[0];	/* Variable length list */
+> +	struct jfs_ea ea[];	/* Variable length list */
+>  };
+>  
+>  /* Macros for defining maxiumum number of bytes supported for EAs */
+> 
