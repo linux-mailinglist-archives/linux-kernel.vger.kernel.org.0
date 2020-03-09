@@ -2,67 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7833B17E254
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:11:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EEE17E25B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:15:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbgCIOLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 10:11:17 -0400
-Received: from mga03.intel.com ([134.134.136.65]:10543 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbgCIOLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:11:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 07:11:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,533,1574150400"; 
-   d="scan'208";a="288698406"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Mar 2020 07:11:12 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1A736193; Mon,  9 Mar 2020 16:11:12 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 3/3] driver core: Replace open-coded list_last_entry()
-Date:   Mon,  9 Mar 2020 16:11:11 +0200
-Message-Id: <20200309141111.40576-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200309141111.40576-1-andriy.shevchenko@linux.intel.com>
-References: <20200309141111.40576-1-andriy.shevchenko@linux.intel.com>
+        id S1726669AbgCIOPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 10:15:18 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:24398 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726233AbgCIOPS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 10:15:18 -0400
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 029EF0G3002512;
+        Mon, 9 Mar 2020 10:15:00 -0400
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ym6bcdr1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Mar 2020 10:14:59 -0400
+Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 029EEucm006118
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Mon, 9 Mar 2020 10:14:56 -0400
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQMBX10.ad.analog.com (10.77.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 9 Mar 2020 07:14:55 -0700
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Mon, 9 Mar 2020 07:14:55 -0700
+Received: from tachici-Precision-5530.ad.analog.com ([10.48.65.175])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 029EEpDS008094;
+        Mon, 9 Mar 2020 10:14:52 -0400
+From:   Alexandru Tachici <alexandru.tachici@analog.com>
+To:     <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux@roeck-us.net>,
+        Alexandru Tachici <alexandru.tachici@analog.com>
+Subject: [PATCH 0/2]  hwmon: pmbus: adm1266: add initial support
+Date:   Mon, 9 Mar 2020 16:14:20 +0200
+Message-ID: <20200309141422.10999-1-alexandru.tachici@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-09_05:2020-03-09,2020-03-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ mlxlogscore=982 spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ mlxscore=0 suspectscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003090098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a place in the code where open-coded version of list entry accessors
-list_last_entry() is used.
+Add initial support for the ADM1266 sequencer.
+ADM1266 has 17 voltage input channels connected
+to a 12 bit SAR ADC and supports standard VOUT
+pmbus commands.
 
-Replace that with the standard macro.
+Alexandru Tachici (2):
+  hwmon: pmbus: adm1266: add initial support
+  dt-bindings: hwmon: Add bindings for ADM1266
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/base/dd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/hwmon/adi,adm1266.yaml           |  47 ++++++
+ Documentation/hwmon/adm1266                   |  34 ++++
+ drivers/hwmon/pmbus/Kconfig                   |  10 ++
+ drivers/hwmon/pmbus/Makefile                  |   1 +
+ drivers/hwmon/pmbus/adm1266.c                 | 146 ++++++++++++++++++
+ 5 files changed, 238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/adi,adm1266.yaml
+ create mode 100644 Documentation/hwmon/adm1266
+ create mode 100644 drivers/hwmon/pmbus/adm1266.c
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index efd0e4c16ba5..27a4d51b5bba 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -1226,7 +1226,7 @@ void driver_detach(struct device_driver *drv)
- 			spin_unlock(&drv->p->klist_devices.k_lock);
- 			break;
- 		}
--		dev_prv = list_entry(drv->p->klist_devices.k_list.prev,
-+		dev_prv = list_last_entry(&drv->p->klist_devices.k_list,
- 				     struct device_private,
- 				     knode_driver.n_node);
- 		dev = dev_prv->device;
 -- 
-2.25.1
+2.20.1
 
