@@ -2,47 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47CA317EC22
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA53A17EC25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:34:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgCIWeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 18:34:00 -0400
-Received: from mga18.intel.com ([134.134.136.126]:49129 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727143AbgCIWeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 18:34:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 15:33:59 -0700
-X-IronPort-AV: E=Sophos;i="5.70,534,1574150400"; 
-   d="scan'208";a="245491074"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.251.21.24]) ([10.251.21.24])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Mar 2020 15:33:58 -0700
-Subject: Re: [PATCH V1 01/13] selftests/resctrl: Fix feature detection
-To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-        "babu.moger@amd.com" <babu.moger@amd.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
- <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
- <a7407b0d-4e4d-d0cf-621c-769d218fdace@intel.com>
- <FFF73D592F13FD46B8700F0A279B802F57307F89@ORSMSX114.amr.corp.intel.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <d0409729-b546-f0b9-4944-cbe5c9a74f76@intel.com>
-Date:   Mon, 9 Mar 2020 15:33:57 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+        id S1727422AbgCIWeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 18:34:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41567 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbgCIWeU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 18:34:20 -0400
+Received: from mail-pj1-f71.google.com ([209.85.216.71])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <matthew.ruffell@canonical.com>)
+        id 1jBQyX-0004k8-Rt
+        for linux-kernel@vger.kernel.org; Mon, 09 Mar 2020 22:34:18 +0000
+Received: by mail-pj1-f71.google.com with SMTP id z5so708866pjq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 15:34:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+KQcrw2yUpe9WcR5YMys+lGugYtYd9Ok8ZJgn9f16J4=;
+        b=sFbLTyOMdtKfT5TpUOt0+rw7FvmNxAxMBR7oE/4/EhY1ybUrLTZZ+TjIB0DJMAh0vL
+         cQXmA8QMy0WoNClv88GewTJsE2Z/uOybAECd6OccPh4Wwqf9Oh/mpK5YguoYzirVgDOS
+         rXgWUCcbomwXI2RdirF+mfJVta2z+RVyQsfad5xkR7I8leSt2FkGMEliZbEI6FzE654F
+         iHAga4swCXGIO8sbXvVQoCAP5oEIMzSPe8taHkNPWVYjWG3LdgBlGUnpgulLlcMRYEct
+         Kwd68aCkUK+EOCUJ6osWEgF3oZ1ohqnjhqrYtPep3akOvrh4bFhIGfpFYQGSi3d06+7d
+         TX3A==
+X-Gm-Message-State: ANhLgQ3S+W+ANG8+drM2nuLfGeoJwRMwC/TQ+wYWa6tYZ1mIaucVSt/n
+        77WcHluWJHBkUKKPQqChkj+KqWbTldIItAafrgy6Sf1CYidMWLmTWxCiDydKDty9REx/4/tfabT
+        fuvm14J36iU41y8joq0abe/5uYS8rK10B/LFa56/HFA==
+X-Received: by 2002:a17:90a:34f:: with SMTP id 15mr1519159pjf.94.1583793255496;
+        Mon, 09 Mar 2020 15:34:15 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vs9VxY4puLe/6q81FmP2tIbuWYuBZTOustWorHqidrzJwquI0Ks5GiUbA9IKsHYKfvh7tTcIQ==
+X-Received: by 2002:a17:90a:34f:: with SMTP id 15mr1519132pjf.94.1583793255202;
+        Mon, 09 Mar 2020 15:34:15 -0700 (PDT)
+Received: from [192.168.1.107] (222-154-99-146-fibre.sparkbb.co.nz. [222.154.99.146])
+        by smtp.gmail.com with ESMTPSA id t142sm36524584pgb.31.2020.03.09.15.34.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2020 15:34:14 -0700 (PDT)
+Subject: Re: [PATCH 0/1] coredump: Fix null pointer dereference when
+ kernel.core_pattern is "|"
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Paul Wise <pabs3@bonedaddy.net>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jakub Wilk <jwilk@jwilk.net>
+References: <20200220051015.14971-1-matthew.ruffell@canonical.com>
+ <645fcbdfdd1321ff3e0afaafe7eccfd034e57748.camel@bonedaddy.net>
+From:   Matthew Ruffell <matthew.ruffell@canonical.com>
+Message-ID: <87a47997-3cde-bc86-423b-6154849183e9@canonical.com>
+Date:   Tue, 10 Mar 2020 11:34:09 +1300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F57307F89@ORSMSX114.amr.corp.intel.com>
+In-Reply-To: <645fcbdfdd1321ff3e0afaafe7eccfd034e57748.camel@bonedaddy.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -51,35 +69,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sai,
+Hi,
 
-On 3/9/2020 3:22 PM, Prakhya, Sai Praneeth wrote:
-> Hi Reinette,
-> 
->> -----Original Message-----
->> From: Reinette Chatre <reinette.chatre@intel.com>
->> Sent: Monday, March 9, 2020 2:45 PM
->> On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
+Can I please get some feedback on this patch? Would be good to clear up the
+null pointer dereference.
 
-[SNIP]
-
->> Please note that this is only a partial fix. The current feature detection relies on
->> the feature flags found in /proc/cpuinfo. Quirks and kernel boot parameters are
->> not taken into account. This fix only addresses the parsing of feature flags. If a
->> feature has been disabled via kernel boot parameter or quirk then the resctrl
->> tests would still attempt to run the test for it.
-> 
-> That's a good point and makes sense to me. I think we could fix it in two ways
-> 1. grep for strings in dmesg but that will still leave ambiguity in deciding b/w mbm and cqm because kernel prints "resctrl: L3 monitoring detected" for both the features
-> 2. Check in "info" directory
-> 	a. For cat_l3, we could search for info/L3
-> 	b. For mba, we could search for info/MB
-> 	c. For cqm and mbm, we could search for specified string in info/L3_MON/mon_features
-> 
-> I think option 2 might be better because it can handle all cases, please let me know what you think.
-
-I agree. For the reasons you mention and also that (1) may not be
-possible if the loglevel prevents those lines from being printed.
-
-Reinette
-
+Thanks,
+Matthew
