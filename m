@@ -2,112 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BD0F17DA9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:23:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13B0717DAB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbgCIIXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:23:01 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38988 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbgCIIW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:22:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w65so3946264pfb.6
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 01:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=seWJfto8ScXH/WTie1kGmp0AZpPcjTPuoxrfVsKEou8=;
-        b=WjKcO9RUXrq2Owu6OwvIVyRHIjDygk6NNmdiZyD6x7GnB6m6Q6mEoRTwhDkr+ff9x4
-         E224ttLqthCf/OCP8hsjeb4HH8gHCxdmkCv6MKP5U5L74ojmT7qf93HvaDX/f7uvoJu1
-         zsXE6KEWswMvBYMTnX/otBAO1Cp5Oja5iyRG9lPJT4F09Wl3CdG7/ZeiC+sypc98OTOD
-         Fc5I9vaOpNvg5xbikor6HIVDEpTmop/FCoiGSZs/Wa3Jdc5vGlBoXB0KPZXFhcstXA+e
-         Nwt3BYhSeD88SsRSeY+Y1BSbuLYSBi3WlADGsEszCpTBDc55DgVSzxIdHX55r/TfRo3e
-         Bbig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=seWJfto8ScXH/WTie1kGmp0AZpPcjTPuoxrfVsKEou8=;
-        b=VFiU+4Nn4g9veh3HBwxdaIecgb/67CsCGJloB431nUuIzqMFr6kwhnnykUMKnbCzmn
-         9NqokzayZ+pYOtlZe+Q/mfv7a0+0yTcwtPgHpMAwXOI1YDy7vBZPlaz31Rrz11qzDz1K
-         VWHnHIaB0aFleF0wgSFg/I9Gs6NtyJpfL1d6wbF+hKz4jaFHb69JKTc/lcgukj+sEMu9
-         zi2f/gscB36jcF0kNsJGjv6co98Ash5n2mYrFLMq2GLdUtvRgxwBMzy1h5Ycvbf0KRSu
-         V10KbsGQkgcVhTN1AkNsAwu4iMCDL4iyxAD3sDF0mRJhbVd5gK3uH6DdRwG8cgiQI+W4
-         HKeg==
-X-Gm-Message-State: ANhLgQ1mQ+j0SL+eCgMWWakK4L2jr6ow1St4m9ZW1xsB+NrfJfYmoGa0
-        ZLA0YybE7kkdWEy9OGry41bzq6xwaAg=
-X-Google-Smtp-Source: ADFU+vsq0Ys1CvDxMRroE1tgaeaGQecNVeiwcD4kOHnsjkN23QBzakquwvKHGpIui1zLcaokU0myWA==
-X-Received: by 2002:a63:f447:: with SMTP id p7mr15266733pgk.326.1583742175247;
-        Mon, 09 Mar 2020 01:22:55 -0700 (PDT)
-Received: from hsinchu02.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id v5sm18364779pfn.64.2020.03.09.01.22.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 01:22:54 -0700 (PDT)
-From:   Zong Li <zong.li@sifive.com>
-To:     palmer@dabbelt.com, paul.walmsley@sifive.com,
-        aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v2 9/9] riscv: patch code by fixmap mapping
-Date:   Mon,  9 Mar 2020 16:22:29 +0800
-Message-Id: <4e0f705ad808e9e0ec2db346c548dd2c5522e109.1583741997.git.zong.li@sifive.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1583741997.git.zong.li@sifive.com>
-References: <cover.1583741997.git.zong.li@sifive.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726780AbgCIIXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:23:50 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:55952 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726391AbgCIIXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 04:23:47 -0400
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxb9_+_GVesb4YAA--.12S2;
+        Mon, 09 Mar 2020 16:23:27 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+Subject: [PATCH 0/6] Add basic support for Loongson 7A1000 bridge chip
+Date:   Mon,  9 Mar 2020 16:23:20 +0800
+Message-Id: <1583742206-29163-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9Dxb9_+_GVesb4YAA--.12S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCrWfZF1DZryrZrW3tF4Dtwb_yoW5GF48pa
+        y5A3Z5Grs8Wry7AFn3ZryUur4rArZ3JrZFqa12qr1UuasxX3WYvr93KF45Jr47Z348Kay8
+        WryrGrWUGFsxC3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+        1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+        8cxan2IY04v7MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+        WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+        67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+        IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1U
+        MIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+        VFxhVjvjDU0xZFpf9x0JU4a0PUUUUU=
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On strict kernel memory permission, the ftrace have to change the
-permission of text for dynamic patching the intructions. Use
-riscv_patch_text_nosync() to patch code instead of probe_kernel_write.
+The Loongson 7A1000 bridge chip has been released for several years
+since the second half of 2017, but it is not supported by the Linux
+mainline kernel while it only works well with the Loongson internal
+kernel version. When I update the latest version of Linux mainline
+kernel on the Loongson 3A3000 CPU and 7A1000 bridge chip system,
+the boot process failed and I feel depressed.
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
- arch/riscv/kernel/ftrace.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+The 7A1000 bridge chip is used a lot with 3A3000 or 3A4000 CPU in
+the most Loongson desktop and sever products, it is important to
+support Loongson 7A1000 bridge chip by the Linux mainline kernel.
 
-diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-index c40fdcdeb950..ce69b34ff55d 100644
---- a/arch/riscv/kernel/ftrace.c
-+++ b/arch/riscv/kernel/ftrace.c
-@@ -8,6 +8,7 @@
- #include <linux/ftrace.h>
- #include <linux/uaccess.h>
- #include <asm/cacheflush.h>
-+#include <asm/patch.h>
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- static int ftrace_check_current_call(unsigned long hook_pos,
-@@ -46,20 +47,14 @@ static int __ftrace_modify_call(unsigned long hook_pos, unsigned long target,
- {
- 	unsigned int call[2];
- 	unsigned int nops[2] = {NOP4, NOP4};
--	int ret = 0;
- 
- 	make_call(hook_pos, target, call);
- 
--	/* replace the auipc-jalr pair at once */
--	ret = probe_kernel_write((void *)hook_pos, enable ? call : nops,
--				 MCOUNT_INSN_SIZE);
--	/* return must be -EPERM on write error */
--	if (ret)
-+	/* Replace the auipc-jalr pair at once. Return -EPERM on write error. */
-+	if (riscv_patch_text_nosync
-+	    ((void *)hook_pos, enable ? call : nops, MCOUNT_INSN_SIZE))
- 		return -EPERM;
- 
--	smp_mb();
--	flush_icache_range((void *)hook_pos, (void *)hook_pos + MCOUNT_INSN_SIZE);
--
- 	return 0;
- }
- 
+This patch series adds the basic support for the Loongson 7A1000
+bridge chip, when apply these patches based on linux-5.6-rc5, the
+boot process is successful and we can login normally used with the
+latest firmware and discrete graphics card, the next work to do is
+power management and some other controller device drivers.
+
+Additionally, when I git clone mips code [1], the speed is too slow
+and clone always failed, so this patch series is based on the latest
+linux-5.6-rc5 [2].
+
+If you have any questions and suggestions, please let me know.
+
+Thanks,
+
+Tiezhu Yang
+
+[1] git clone https://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git
+[2] git clone https://github.com/torvalds/linux.git
+
+Tiezhu Yang (6):
+  PCI: Add Loongson vendor ID and 7A1000 device IDs
+  AHCI: Add support for Loongson 7A1000 SATA controller
+  MIPS: Loongson: Use firmware arguments to get board name
+  MIPS: Loongson: Add DMA support for 7A1000
+  MIPS: Loongson: Add PCI support for 7A1000
+  MIPS: Loongson: Add support for 7A1000 interrupt controller
+
+ arch/mips/include/asm/mach-loongson64/boot_param.h |   2 +
+ arch/mips/include/asm/mach-loongson64/ioaicu.h     | 166 +++++++++++
+ arch/mips/include/asm/mach-loongson64/irq.h        |   2 +
+ arch/mips/include/asm/mach-loongson64/pci.h        |   1 +
+ arch/mips/loongson64/Makefile                      |   2 +-
+ arch/mips/loongson64/dma.c                         |  49 +++-
+ arch/mips/loongson64/env.c                         |   5 +
+ arch/mips/loongson64/init.c                        |  13 +
+ arch/mips/loongson64/ioaicu.c                      | 305 +++++++++++++++++++++
+ arch/mips/loongson64/irq.c                         |  20 +-
+ arch/mips/loongson64/pci.c                         |  12 +-
+ arch/mips/loongson64/smp.c                         |  11 +-
+ arch/mips/pci/Makefile                             |   2 +-
+ arch/mips/pci/ops-loongson3-ls7a.c                 | 132 +++++++++
+ drivers/ata/ahci.c                                 |   8 +
+ include/linux/pci_ids.h                            |  18 ++
+ 16 files changed, 733 insertions(+), 15 deletions(-)
+ create mode 100644 arch/mips/include/asm/mach-loongson64/ioaicu.h
+ create mode 100644 arch/mips/loongson64/ioaicu.c
+ create mode 100644 arch/mips/pci/ops-loongson3-ls7a.c
+
 -- 
-2.25.1
+2.1.0
 
