@@ -2,106 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B442417E44F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:09:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE02417E456
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:11:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbgCIQJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 12:09:39 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50624 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbgCIQJj (ORCPT
+        id S1727195AbgCIQLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 12:11:16 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36629 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbgCIQLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 12:09:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4WJ6RRjRxj58Y2szEsveSp6vWyd/sdxRQxE7lizeTGg=; b=so5+iHtVgqSfai4qSOj1oxrE+
-        ZsvzKP9v8gREGRl/MnOEHqraNdvdCgWnOR4VC4jLNIf/7y2C9mFNsqDRtsDKr2onOebVCCrwu+y2p
-        k0cZmvafWm45Gll8Aq3YrRWOJMk6ofZPxt67qQRS96IiV0+eN63zp+4ZBbOkDRpfyA4NaJRn8kaED
-        1rnbleBN1ggg6DBqfxzJKpODVEdtQ1uow9Z5bLvHLw/DzcNjV/t6BUJgi/4spPloXQZQqvY/I7kCu
-        HZm5Fzt3WpbavxhUkfEVuZE4NRdpdtngH9REd60Rs3E5dGFSJqYiP0UrMN0L8ipP1n0cf4TZcmwOE
-        UGvaPY97A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34200)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jBKy7-0007tm-Qi; Mon, 09 Mar 2020 16:09:28 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jBKxz-0003Vd-9p; Mon, 09 Mar 2020 16:09:19 +0000
-Date:   Mon, 9 Mar 2020 16:09:19 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200309160919.GM25745@shell.armlinux.org.uk>
-References: <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
- <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk>
- <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
- <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
- <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
- <20200309155945.GA4124965@arrakis.emea.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200309155945.GA4124965@arrakis.emea.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 9 Mar 2020 12:11:16 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g62so1675wme.1;
+        Mon, 09 Mar 2020 09:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uWD6OmCc/Giz/7rKVyMfrzR5IhxZKcEZvTGrG7yLYLs=;
+        b=gfBo7b1Ffo9O4U5qquVVpcT52aKU2dNihOMsEcGR/9alUJ+yXukzI49SQExLztLQOx
+         ooo5hobvn2aVB9mvCknptB+IECv0XR18G3TKMF2cFnZH6+foWGfQZ6MsbnNawdEM7YtF
+         MXAZdKvDstdVslGORA27sEf1UFYFryx9X48S2WqzpfPO4poQzLVTpVT3FbhVxw97NOv0
+         YhgA0hkX1HbIgPBnpjD7AmCVIRFUp5pOzRI4WQTXltzJ9t5wjNHpUDirjWj14YXnCoGn
+         tB4Kv3ovJbVuySgHeHEQaNgRoFyb7aeoBkxEn1ugLS1ya37rFlX//EdHGOzwEBh7FO/G
+         uPPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uWD6OmCc/Giz/7rKVyMfrzR5IhxZKcEZvTGrG7yLYLs=;
+        b=WhPk5U+c3N44dwoTf+47cAEu3qvSuV3NUywf7lPTFkq0WJCsxe8Cn48ylCphLe+U9O
+         v0wn3yoWGYCBeeX/0hChM3Q9aBozlNcir+0GjctfPFeyXPQblXNZSvupDgJmrOdVcy2K
+         +uzbL5Vc0qylXvJI3siphk00xjuxHn/6BoCOTmRArdKJrm+34NxxQVXppe5w8pD8czZQ
+         5smp7BmQj9Y2OPD+2FJOX4wRo5cQKmUG0zsTTUW3XnOoKkA2u5l8rj2rV56LIEEgVZ2H
+         B5NXPD7dssPU0aIiOdmd4XO4QdEklO1hFa9SaI4E7p93ijRPFb/qPFLFVl4w4FQcUheW
+         OUmg==
+X-Gm-Message-State: ANhLgQ1FZ6QvfOguZ5p6UYWybbCNYC7jCSB6egGOaEvlD1KcttNGiJfV
+        cZMdxJLQjGsxU7p4ppMJqGc=
+X-Google-Smtp-Source: ADFU+vuw1Gn/gxv91C8ZwB+oVwi9gMsS2phal1+uxIjUXty+KwUa7GLLvqosl4RNPBebPvsCgW33Ug==
+X-Received: by 2002:a7b:c944:: with SMTP id i4mr29675wml.77.1583770273978;
+        Mon, 09 Mar 2020 09:11:13 -0700 (PDT)
+Received: from localhost.localdomain (ip5f5bee49.dynamic.kabel-deutschland.de. [95.91.238.73])
+        by smtp.gmail.com with ESMTPSA id s14sm50104932wrv.44.2020.03.09.09.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 09:11:12 -0700 (PDT)
+From:   huobean@gmail.com
+X-Google-Original-From: beanhuo@micron.com
+To:     alim.akhtar@samsung.com, avri.altman@wdc.com,
+        asutoshd@codeaurora.org, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, stanley.chu@mediatek.com,
+        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
+        cang@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/1] scsi: ufs: fix LRB pointer incorrect initialization issue
+Date:   Mon,  9 Mar 2020 17:10:56 +0100
+Message-Id: <20200309161057.9897-1-beanhuo@micron.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 03:59:45PM +0000, Catalin Marinas wrote:
-> On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
-> > - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
-> >   to see if it can be done, and what the overhead is. This is probably
-> >   more work than the others combined, but also the most promising
-> >   as it allows the most user address space and physical ram to be used.
-> 
-> A rough outline of such support (and likely to miss some corner cases):
-> 
-> 1. Kernel runs with its own ASID and non-global page tables.
-> 
-> 2. Trampoline code on exception entry/exit to handle the TTBR0 switching
->    between user and kernel.
-> 
-> 3. uaccess routines need to be reworked to pin the user pages in memory
->    (get_user_pages()) and access them via the kernel address space.
-> 
-> Point 3 is probably the ugliest and it would introduce a noticeable
-> slowdown in certain syscalls.
+From: Bean Huo <beanhuo@micron.com>
 
-We also need to consider that it has implications for the single-kernel
-support; a kernel doing this kind of switching would likely be horrid
-for a kernel supporting v6+ with VIPT aliasing caches.  Would we be
-adding a new red line between kernels supporting VIPT-aliasing caches
-(present in earlier v6 implementations) and kernels using this system?
+Hi, Martin and Bart
+
+Based on the Bart's suggestion, delete ufshcd_init_lrb(), and update the patch
+to v3. This version patch passed stress test.
+Thanks,
+
+//Bean
+
+Bean Huo (1):
+  scsi: ufs: fix LRB pointer incorrect initialization issue
+
+ drivers/scsi/ufs/ufshcd.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+2.17.1
+
