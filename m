@@ -2,87 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80B617E0B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:58:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C17F317E0B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgCIM5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 08:57:53 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34305 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbgCIM5v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 08:57:51 -0400
-Received: by mail-qt1-f195.google.com with SMTP id 59so6867899qtb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 05:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=miMLkBCmq91TU9yIA6m0qBL/sLuRcI7EOPQvuCnK0ME=;
-        b=PND02V6c5mkNsAkLk07pOXpP9XvnX4Sdm+ABzlZ1nv0JPQ/kAsdlU0JofrwLRESoPH
-         CJSDhAOJfPNqAeooa7Z4BlQjtvBloG7P9L7W4NK7c3icW41EFX4lohMbM/6TEwtXZQi1
-         SolkrNZGusb9a+Qt2Lk0k+QzLeMnnkBC61PKKgbKW/zug4QUS1Fg00KOrX5Lo2odMTeT
-         3wGJmYZFTq12k2X4iAQMIM9Ca5WBn2xilTCI9Bu8nVxSp+u6jQo2iw0/cjMLoQf0Jt1K
-         /OZGS+ljIeMI1n3j/DJkgTkS7k5+x5pgW+36xpoiPA+zcoZ/w9XChkMf/9rhpcITFlSE
-         l7Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=miMLkBCmq91TU9yIA6m0qBL/sLuRcI7EOPQvuCnK0ME=;
-        b=IFaQRpMKoJTw1/PNkYt1wWMwGCwhhnmAAg9tZaGVaJoaHL9sKYX0hP7fv/jR9IDYvN
-         1CN2qZrhpB3tgmd++u+cCyYBmx9jN4LeyoXsT0hJeZFlPEe2n+bQBheRMDqW5NLDpNXW
-         pjpNWj2Cg42QF4JdOvFRc9H36Kd33aV1Ox8tKN7hJHwjCrZvspamyXa1XpTvJ0Zu80ie
-         0coNLMirARZWtLwdrt+X5mEYYj7tNPqbnb8PfBSzGXVBDeWYKWLHsIpHevEXj+1uoahS
-         148R1p7QXLlooPZN33yDwSqtUHjcbHBbFTWdwxy2QqeLUTdq8+bwbr7PuMmYdOZ95CbQ
-         xfcg==
-X-Gm-Message-State: ANhLgQ3gmYdUjzqdOPL7lrERuTEQzJIsLgQdj0oqGlkxoYKw5A8MlYaK
-        n1iNUZTTRIZMCLIK6B7iljXDYA==
-X-Google-Smtp-Source: ADFU+vu6bvfxesOU9AguoQQ2yTyNVmKJCW8oR4oSVQnin4fkXmnK8mlGS93WLKLIinDLJYbIQny60Q==
-X-Received: by 2002:ac8:4659:: with SMTP id f25mr14091414qto.273.1583758668881;
-        Mon, 09 Mar 2020 05:57:48 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id x22sm870587qki.54.2020.03.09.05.57.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Mar 2020 05:57:48 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jBHyd-00087L-Pc; Mon, 09 Mar 2020 09:57:47 -0300
-Date:   Mon, 9 Mar 2020 09:57:47 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     syzbot <syzbot+3fbea977bd382a4e6140@syzkaller.appspotmail.com>
-Cc:     bmt@zurich.ibm.com, dledford@redhat.com,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in siw_create_listen
-Message-ID: <20200309125747.GP31668@ziepe.ca>
-References: <000000000000161ee805a039a49e@google.com>
- <000000000000002a8c05a0600814@google.com>
+        id S1726492AbgCIM6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 08:58:55 -0400
+Received: from v6.sk ([167.172.42.174]:34434 "EHLO v6.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbgCIM6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 08:58:55 -0400
+Received: from localhost (v6.sk [IPv6:::1])
+        by v6.sk (Postfix) with ESMTP id AF58360EEE;
+        Mon,  9 Mar 2020 12:58:52 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] phy: Add USB HSIC PHY driver for Marvell MMP3 SoC
+Date:   Mon,  9 Mar 2020 13:58:48 +0100
+Message-Id: <20200309125848.547664-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000002a8c05a0600814@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 08, 2020 at 04:13:15PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
-> 
-> HEAD commit:    425c075d Merge branch 'tun-debug'
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1531a0b1e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=598678fc6e800071
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3fbea977bd382a4e6140
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e3df31e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163d0439e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+3fbea977bd382a4e6140@syzkaller.appspotmail.com
+Add PHY driver for the HSICs found on Marvell MMP3 SoC. The driver is
+rather straightforward -- the PHY essentially just needs to be enabled.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/phy/marvell/Kconfig         | 12 +++++
+ drivers/phy/marvell/Makefile        |  1 +
+ drivers/phy/marvell/phy-mmp3-hsic.c | 82 +++++++++++++++++++++++++++++
+ 3 files changed, 95 insertions(+)
+ create mode 100644 drivers/phy/marvell/phy-mmp3-hsic.c
 
-Jason
+diff --git a/drivers/phy/marvell/Kconfig b/drivers/phy/marvell/Kconfig
+index 8f6273c837ec3..6c96f2bf52665 100644
+--- a/drivers/phy/marvell/Kconfig
++++ b/drivers/phy/marvell/Kconfig
+@@ -116,3 +116,15 @@ config PHY_MMP3_USB
+ 	  The PHY driver will be used by Marvell udc/ehci/otg driver.
+ 
+ 	  To compile this driver as a module, choose M here.
++
++config PHY_MMP3_HSIC
++	tristate "Marvell MMP3 USB HSIC PHY Driver"
++	depends on MACH_MMP3_DT || COMPILE_TEST
++	select GENERIC_PHY
++	help
++	  Enable this to support Marvell MMP3 USB HSIC PHY driver for
++	  Marvell MMP3 SoC. This driver will be used my the Marvell EHCI
++	  driver to initialize the interface to internal USB HSIC
++	  components on MMP3-based boards.
++
++	  To compile this driver as a module, choose M here.
+diff --git a/drivers/phy/marvell/Makefile b/drivers/phy/marvell/Makefile
+index 5a106b1549f41..7f296ef028292 100644
+--- a/drivers/phy/marvell/Makefile
++++ b/drivers/phy/marvell/Makefile
+@@ -3,6 +3,7 @@ obj-$(CONFIG_ARMADA375_USBCLUSTER_PHY)	+= phy-armada375-usb2.o
+ obj-$(CONFIG_PHY_BERLIN_SATA)		+= phy-berlin-sata.o
+ obj-$(CONFIG_PHY_BERLIN_USB)		+= phy-berlin-usb.o
+ obj-$(CONFIG_PHY_MMP3_USB)		+= phy-mmp3-usb.o
++obj-$(CONFIG_PHY_MMP3_HSIC)		+= phy-mmp3-hsic.o
+ obj-$(CONFIG_PHY_MVEBU_A3700_COMPHY)	+= phy-mvebu-a3700-comphy.o
+ obj-$(CONFIG_PHY_MVEBU_A3700_UTMI)	+= phy-mvebu-a3700-utmi.o
+ obj-$(CONFIG_PHY_MVEBU_A38X_COMPHY)	+= phy-armada38x-comphy.o
+diff --git a/drivers/phy/marvell/phy-mmp3-hsic.c b/drivers/phy/marvell/phy-mmp3-hsic.c
+new file mode 100644
+index 0000000000000..f7b430f6f6f05
+--- /dev/null
++++ b/drivers/phy/marvell/phy-mmp3-hsic.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2020 Lubomir Rintel <lkundrak@v3.sk>
++ */
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++
++#define HSIC_CTRL	0x08
++#define HSIC_ENABLE	BIT(7)
++#define PLL_BYPASS	BIT(4)
++
++static int mmp3_hsic_phy_init(struct phy *phy)
++{
++	void __iomem *base = phy_get_drvdata(phy);
++	u32 hsic_ctrl;
++
++	hsic_ctrl = readl_relaxed(base + HSIC_CTRL);
++	hsic_ctrl |= HSIC_ENABLE;
++	hsic_ctrl |= PLL_BYPASS;
++	writel_relaxed(hsic_ctrl, base + HSIC_CTRL);
++
++	return 0;
++}
++
++static const struct phy_ops mmp3_hsic_phy_ops = {
++	.init		= mmp3_hsic_phy_init,
++	.owner		= THIS_MODULE,
++};
++
++static const struct of_device_id mmp3_hsic_phy_of_match[] = {
++	{ .compatible = "marvell,mmp3-hsic-phy", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, mmp3_hsic_phy_of_match);
++
++static int mmp3_hsic_phy_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct phy_provider *provider;
++	struct resource *resource;
++	void __iomem *base;
++	struct phy *phy;
++
++	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, resource);
++	if (IS_ERR(base)) {
++		dev_err(dev, "failed to remap PHY regs\n");
++		return PTR_ERR(base);
++	}
++
++	phy = devm_phy_create(dev, NULL, &mmp3_hsic_phy_ops);
++	if (IS_ERR(phy)) {
++		dev_err(dev, "failed to create PHY\n");
++		return PTR_ERR(phy);
++	}
++
++	phy_set_drvdata(phy, base);
++	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(provider)) {
++		dev_err(dev, "failed to register PHY provider\n");
++		return PTR_ERR(provider);
++	}
++
++	return 0;
++}
++
++static struct platform_driver mmp3_hsic_phy_driver = {
++	.probe		= mmp3_hsic_phy_probe,
++	.driver		= {
++		.name	= "mmp3-hsic-phy",
++		.of_match_table = mmp3_hsic_phy_of_match,
++	},
++};
++module_platform_driver(mmp3_hsic_phy_driver);
++
++MODULE_AUTHOR("Lubomir Rintel <lkundrak@v3.sk>");
++MODULE_DESCRIPTION("Marvell MMP3 USB HSIC PHY Driver");
++MODULE_LICENSE("GPL");
+-- 
+2.25.1
+
