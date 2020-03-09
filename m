@@ -2,119 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCF517E97E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6668017E978
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgCIT7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:59:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38251 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgCIT7x (ORCPT
+        id S1726269AbgCIT7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:59:46 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35036 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgCIT7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:59:53 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jBOYR-0002mB-Lc; Mon, 09 Mar 2020 19:59:11 +0000
-Date:   Mon, 9 Mar 2020 20:59:09 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of
- de_thread
-Message-ID: <20200309195909.h2lv5uawce5wgryx@wittgenstein>
-References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
+        Mon, 9 Mar 2020 15:59:45 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a20so7545554edj.2;
+        Mon, 09 Mar 2020 12:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VmBXxLKmo+++3JevDuJgXXYNelP3ARfrGqq9jGQ7Y7E=;
+        b=ms/8ZoJQ8nLPB660/C1W5wBbhezgkvnTQ4JipsElaAt9WEAK7C3RspKMI05wCln7uH
+         vOjrZ+hEU8wRmNb7cV3l0iKwIXxvFNVNWOQmveMjVZUk/BXuAm3qkMYlHX/SHf/B5RRW
+         uUFD7T10eBMQNsE+3IvbNRAewmIdNmqoVC+tVMc0glgiOSNnId0iRCT/ALNOOxwVbuIl
+         qAUA5E3tQv2ToAcgD9PLekxJJ04FtHSTzWRI0le6cl1qKf4dgfMJfyRVxEbmyGaZlYOF
+         AUtRu4kjq46Jn3gTIHNUzDPJFbOQns50H/KyEiTCSboV7UlsQ8zbQDd4MWHpWBh9T1eX
+         V9tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VmBXxLKmo+++3JevDuJgXXYNelP3ARfrGqq9jGQ7Y7E=;
+        b=Ble8vhjCq4wmkm7lqc+teYGnlBYDRBZNy2xagLCmerocdu9ePmL9rPjjrI/G7VYc0L
+         hmjCAfkt3xWhIQjOfTRalD63ulGXQxWjMJ+/47LDIDNoOdvxg75fpiZCVX+yrAVhwU5v
+         RBEjNqtRokjE+REIc7O1T7M3ESRohq3uftTTIrPydbt0V+91hxuVd98JUwCwMgLxuLd9
+         XWLgyHu3FTsJAlbPgu0ZGnFHvVBumDKagoA6g/qLOREh8pDGb600/73WzsDKDjfqzyqc
+         rxO/qsWopkpAibHomAqiUj0hGYyRTjkuUIbpSDeOgs8sA8kPUIzVMtguqfiasiWXUHQo
+         1ZhA==
+X-Gm-Message-State: ANhLgQ1yHdaUx4RD+HtS35UGx2BJ9OEXrJdiui/XGQsqglUJXWjufrih
+        sSYP9krkkUgQb2zzH2X35wmaw0j6X+tffzZlnbg=
+X-Google-Smtp-Source: ADFU+vui/3sVmKBiJj2kgewtRz/H76d3oN3MyBRFSaJd5Yt5pd15za9zixZuGhwGvUsQxOOsjnSrE1+XaMuiRPIv2WQ=
+X-Received: by 2002:a17:906:f49:: with SMTP id h9mr16777311ejj.6.1583783983011;
+ Mon, 09 Mar 2020 12:59:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
+References: <20200309145624.10026-1-olteanv@gmail.com> <20200309145624.10026-6-olteanv@gmail.com>
+ <83af52172a3cabd662de1ed9574e4247@walle.cc>
+In-Reply-To: <83af52172a3cabd662de1ed9574e4247@walle.cc>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Mon, 9 Mar 2020 21:59:32 +0200
+Message-ID: <CA+h21hp2MxLqLJL9AnufmW_-OQFdiY7p4Db97G3eTr_MUkH4TA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: ls1028a: Specify the DMA channels for the
+ DSPI controllers
+To:     Michael Walle <michael@walle.cc>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Esben Haabendal <eha@deif.com>,
+        angelo@sysam.it, andrew.smirnov@gmail.com,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Wei Chen <weic@nvidia.com>, Mohamed Hosny <mhosny@nvidia.com>,
+        peng.ma@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 08, 2020 at 04:36:55PM -0500, Eric W. Biederman wrote:
-> 
-> These functions have very little to do with de_thread move them out
-> of de_thread an into flush_old_exec proper so it can be more clearly
-> seen what flush_old_exec is doing.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->  fs/exec.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index ff74b9a74d34..215d86f77b63 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1189,11 +1189,6 @@ static int de_thread(struct task_struct *tsk)
+On Mon, 9 Mar 2020 at 21:06, Michael Walle <michael@walle.cc> wrote:
+>
+> Am 2020-03-09 15:56, schrieb Vladimir Oltean:
+> > From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> >
+> > LS1028A has a functional connection to the eDMA module. Even if the
+> > spi-fsl-dspi.c driver is not using DMA for LS1028A now, define the
+> > slots
+> > in the DMAMUX for connecting the eDMA channels to the 3 DSPI
+> > controllers.
+> >
+> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> > b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> > index 515e0a1b934f..18155273a46e 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> > @@ -298,6 +298,8 @@
+> >                       interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> >                       clock-names = "dspi";
+> >                       clocks = <&clockgen 4 1>;
+> > +                     dmas = <&edma0 0 62>, <&edma0 0 60>;
+> > +                     dma-names = "tx", "rx";
+>
+> minor nit. Other nodes specified the dma channels as
+>
+> dma-names = "tx", "rx";
+> dmas = <&edma0 0 62>,
+>         <&edma0 0 60>;
+>
+> -michael
+>
 
-While you're cleaning up de_thread() wouldn't it be good to also take
-the opportunity and remove the task argument from de_thread(). It's only
-ever used with current. Could be done in one of your patches or as a
-separate patch.
+Does it matter?
 
-diff --git a/fs/exec.c b/fs/exec.c
-index db17be51b112..ee108707e4b0 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1061,8 +1061,9 @@ static int exec_mmap(struct mm_struct *mm)
-  * disturbing other processes.  (Other processes might share the signal
-  * table via the CLONE_SIGHAND option to clone().)
-  */
--static int de_thread(struct task_struct *tsk)
-+static int de_thread(void)
- {
-+       struct task_struct *tsk = current;
-        struct signal_struct *sig = tsk->signal;
-        struct sighand_struct *oldsighand = tsk->sighand;
-        spinlock_t *lock = &oldsighand->siglock;
-@@ -1266,7 +1267,7 @@ int flush_old_exec(struct linux_binprm * bprm)
-         * Make sure we have a private signal table and that
-         * we are unassociated from the previous thread group.
-         */
--       retval = de_thread(current);
-+       retval = de_thread();
-        if (retval)
-                goto out;
+Regards,
+-Vladimir
