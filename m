@@ -2,162 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65AD317E13E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E780417E144
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:34:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgCINcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:32:31 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45288 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726491AbgCINcb (ORCPT
+        id S1726616AbgCINdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:33:46 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:53183 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbgCINdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:32:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583760750;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+lf2F/Ud1PCpWWqigKJxrL+KrTYso3PbvC0kuJMa80U=;
-        b=h2se4coICFgMJyhNM16jcE2g/Qc56mc2Q58RwtGINMMNApNbWmckTU1s1BmpXGJojNtRm3
-        IaruqCBrpJvjyuFsvfxp2ebIJ3bvd/e2PhAL0w8ET8sTZIo/7ZyLcAwv2Mjr/K5gaydDZn
-        1BSlGxY/LPSDWLmNCWpFFfLOVJsfPiQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-299-npKZDscDPJu8v1gCTt2ZQw-1; Mon, 09 Mar 2020 09:32:26 -0400
-X-MC-Unique: npKZDscDPJu8v1gCTt2ZQw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D96D184C808;
-        Mon,  9 Mar 2020 13:32:25 +0000 (UTC)
-Received: from localhost (ovpn-12-179.pek2.redhat.com [10.72.12.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 49427272AF;
-        Mon,  9 Mar 2020 13:32:21 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 21:32:18 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, mhocko@suse.com,
-        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
-        osalvador@suse.de, rppt@linux.ibm.com
-Subject: Re: [PATCH v3 3/7] mm/sparse.c: introduce a new function
- clear_subsection_map()
-Message-ID: <20200309133218.GD27711@MiWiFi-R3L-srv>
-References: <20200307084229.28251-1-bhe@redhat.com>
- <20200307084229.28251-4-bhe@redhat.com>
- <d09c9598-4fbf-71c8-151f-f34921ed565b@redhat.com>
+        Mon, 9 Mar 2020 09:33:46 -0400
+Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mft3h-1jrX2P2EMT-00gDOE; Mon, 09 Mar 2020 14:33:44 +0100
+Received: by mail-qv1-f53.google.com with SMTP id m2so4309429qvu.13;
+        Mon, 09 Mar 2020 06:33:44 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2cGAClHxhhKYxLdxfmsD+WXhy1WPw1CGiz4PpyJrVPFMQhm1vZ
+        gxUOAsFjnRqYkKxWoVVmtYkFkSBzVSkA5bYA5zg=
+X-Google-Smtp-Source: ADFU+vsS4g4CC/jX/g0SgAYUCTcdMUWjdRoIcEGypTKOhZlhcLLVL+lmJ8nsucH78bEHlCzzMXlxQq29RStvENsZj44=
+X-Received: by 2002:a0c:f647:: with SMTP id s7mr14720813qvm.4.1583760823316;
+ Mon, 09 Mar 2020 06:33:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d09c9598-4fbf-71c8-151f-f34921ed565b@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+ <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
+ <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+ <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com> <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
+ <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com> <20200306203439.peytghdqragjfhdx@kahuna>
+ <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com> <20200308141923.GI25745@shell.armlinux.org.uk>
+In-Reply-To: <20200308141923.GI25745@shell.armlinux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 9 Mar 2020 14:33:26 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
+Message-ID: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:4Uk+eoxAdYLQYHRtietrYb/hTUc9UW68fZ0BAFbzJwMndYqTN4Y
+ sTOPub1ZgVM71gXs3eC8FIDH0TINzzRgwsAbaNrajuJNM8rOOm+L5YzOyby0c2wyVccUHbS
+ wvM2hT/dKoAJqHTNDktPnQmeRsPrd0uzzuqgJFJeAKkD+5iv7Er0Bp9nXGMn5MPodnNyptz
+ gPERQcI/KqH3hodQSIklQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H87OSnfdRG0=:3Huc2lYEQZdXcoQyysvwu/
+ MAAnJcFQsh7prCScZjCUCeiKCR14VSlb333panzZgcBxJAD2uCYrcZlk855x/hV/CoJY3jB5S
+ PIbzwXAPWyb0iWqwH6ASOSNT8CduNHk3JQqdF5HWk7jhvHblMPjltBtU2PzToD7HhYgSOMjI7
+ Hn9ttSzzgQARATgxNtTmzDCmc91V4u84BSf6NRle04a8gvGmFU76fxdXk71UGDLSRhpQa3clg
+ GqRxgn8w4TxBCmGZX6slaYcyHYKqe77Jdb1xYXAcuVVnMGqyWcYfsQaHdwpOnZLjIhmhGKKK2
+ /CbUu1MaRoat9o16AMShuyB+vYAqTcONL2pFPtW0+BUtAK7ZDl5IsaZv+/YgFpjo/MVAAKQTT
+ R5Q2TF3c9b1n6kbWYNWGYo3mMjjcQIjf16meh9Hx+oMEdl5w+kPH5T269PZ1GvL2b9UJPMoDK
+ 0+SdJZyP5Bgedn2COyuPlunE6Kyg1Oq4bslI4U48OyO7M4DKUFcEXrNfZRtzQT5YAUU9u9MTU
+ 1eOuRu894Wc2tlJzylqH0lvsG6QZsukyJ5ZwcSN/JPMEVpdStFgfSQneRiGrOoI8aERZAS6ak
+ JdSgN+jsLsO+M7m/G9qoDIFP8qH9V6KP0m0BGuPRszLZlUZgaKTVKY+6O4pNzetH97w9rIoAD
+ 9ugEDpjccUr6wYECB76ZMdz1oSDdEYN0AePLPptxXIN5Oxwu+fOJVZUDXngIPrOSqPRvY4VBU
+ +8rcPB4kJUA1r+HMyJjBivMwSPNM3+lIvUXOt/pjpURU8Hb6wrbU90B3YN3NiWKvdsKpCalGo
+ 7XVzyBzrmdDtDpJKubwKCqqB5Q03xmGDsnypK3l5VBB5Eukits=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/20 at 09:59am, David Hildenbrand wrote:
-> On 07.03.20 09:42, Baoquan He wrote:
-> > Factor out the code which clear subsection map of one memory region from
-> > section_deactivate() into clear_subsection_map().
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/sparse.c | 31 ++++++++++++++++++++++++-------
-> >  1 file changed, 24 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index e37c0abcdc89..d9dcd58d5c1d 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -726,15 +726,11 @@ static void free_map_bootmem(struct page *memmap)
-> >  }
-> >  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
-> >  
-> > -static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> > -		struct vmem_altmap *altmap)
-> > +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> >  {
-> >  	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> >  	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
-> >  	struct mem_section *ms = __pfn_to_section(pfn);
-> > -	bool section_is_early = early_section(ms);
-> > -	struct page *memmap = NULL;
-> > -	bool empty = false;
-> >  	unsigned long *subsection_map = ms->usage
-> >  		? &ms->usage->subsection_map[0] : NULL;
-> >  
-> > @@ -745,8 +741,31 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> >  	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
-> >  				"section already deactivated (%#lx + %ld)\n",
-> >  				pfn, nr_pages))
-> > +		return -EINVAL;
-> > +
-> > +	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> > +
-> 
-> Nit: I'd drop this line.
+On Sun, Mar 8, 2020 at 3:20 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+> On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
+> > On Fri, Mar 6, 2020 at 9:36 PM Nishanth Menon <nm@ti.com> wrote:
+> > > On 13:11-20200226, santosh.shilimkar@oracle.com wrote:
+>
+> > - extend zswap to use all the available high memory for swap space
+> >   when highmem is disabled.
+>
+> I don't think that's a good idea.  Running debian stable kernels on my
+> 8GB laptop, I have problems when leaving firefox running long before
+> even half the 16GB of swap gets consumed - the entire machine slows
+> down very quickly when it starts swapping more than about 2 or so GB.
+> It seems either the kernel has become quite bad at selecting pages to
+> evict.
+>
+> It gets to the point where any git operation has a battle to fight
+> for RAM, despite not touching anything else other than git.
+>
+> The behaviour is much like firefox is locking memory into core, but
+> that doesn't seem to be what's actually going on.  I've never really
+> got to the bottom of it though.
+>
+> This is with 64-bit kernel and userspace.
 
-It's fine to me. I usually keep one line for the returning. I will
-remove it when update.
+I agree there is something going wrong on your machine, but I
+don't really see how that relates to my suggestion.
 
-> 
-> > +	return 0;
-> > +}
-> > +
-> > +static bool is_subsection_map_empty(struct mem_section *ms)
-> > +{
-> > +	return bitmap_empty(&ms->usage->subsection_map[0],
-> > +			    SUBSECTIONS_PER_SECTION);
-> > +}
-> > +
-> > +static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> > +		struct vmem_altmap *altmap)
-> > +{
-> > +	struct mem_section *ms = __pfn_to_section(pfn);
-> > +	bool section_is_early = early_section(ms);
-> > +	struct page *memmap = NULL;
-> > +	bool empty = false;
-> 
-> Nit: No need to initialize empty.
+> So, I'd suggest that trading off RAM available through highmem for VM
+> space available through zswap is likely a bad idea if you have a
+> workload that requires 4GB of RAM on a 32-bit machine.
 
-This is inherited from patch 1.
+Aside from every workload being different, I was thinking of
+these general observations:
 
-> 
-> > +
-> > +	if (clear_subsection_map(pfn, nr_pages))
-> >  		return;
-> >  
-> 
-> Nit: I'd drop this empty line.
-> 
-> > +	empty = is_subsection_map_empty(ms);
-> >  	/*
-> >  	 * There are 3 cases to handle across two configurations
-> >  	 * (SPARSEMEM_VMEMMAP={y,n}):
-> > @@ -764,8 +783,6 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> >  	 *
-> >  	 * For 2/ and 3/ the SPARSEMEM_VMEMMAP={y,n} cases are unified
-> >  	 */
-> > -	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> > -	empty = bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION);
-> 
-> I do wonder why you moved this up the comment?
+- If we are looking at a future without highmem, then it's better to use
+  the extra memory for something than not using it. zswap seems like
+  a reasonable use.
 
-Since this empty will cover two places of handling, so moved it up,
-seems this is what I was thinking. Can move it back here.
+- A lot of embedded systems are configured to have no swap at all,
+  which can be for good or not-so-good reasons. Having some
+  swap space available often improves things, even if it comes
+  out of RAM.
 
-> 
-> >  	if (empty) {
-> >  		unsigned long section_nr = pfn_to_section_nr(pfn);
-> >  
-> > 
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> 
-> -- 
-> Thanks,
-> 
-> David / dhildenb
+- A particularly important case to optimize for is 2GB of RAM with
+  LPAE enabled. With CONFIG_VMSPLIT_2G and highmem, this
+  leads to the paradox -ENOMEM when 256MB of highmem are
+  full while plenty of lowmem is available. With highmem disabled,
+  you avoid that at the cost of losing 12% of RAM.
 
+- With 4GB+ of RAM and CONFIG_VMSPLIT_2G or
+  CONFIG_VMSPLIT_3G, using gigabytes of RAM for swap
+  space would usually be worse than highmem, but once
+  we have VMSPLIT_4G_4G, it's the same situation as above
+  with 6% of RAM used for zswap instead of highmem.
+
+       Arnd
