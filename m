@@ -2,124 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F5BA17E9B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:07:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1954817E9BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:11:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgCIUHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:07:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36530 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726384AbgCIUHD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:07:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583784422;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ftWHEpSAUbk0eoJjmPg+C+QzhYo5sgkwqXSro3PQIsQ=;
-        b=XEMMVrYMaZc+g9NvBN6kVZQXlFP2SPCMPESWlTn2YSGZMLgX0obSMrpCUyzxdTAu31RZ1I
-        fu3cRyyCG4Z5UBqgYbFX4osHOkIWcgh0DrB4WbiuxhVO78LHGwMLUZ7/inSuik/J93Hu8q
-        pDgOUPlXyIuDHA1LKD6mBcfPiyUYlFw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-394-ikgYpv8ZNqKPibZ96WJ9dA-1; Mon, 09 Mar 2020 16:07:00 -0400
-X-MC-Unique: ikgYpv8ZNqKPibZ96WJ9dA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 131001005509;
-        Mon,  9 Mar 2020 20:06:57 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 730E35D9CA;
-        Mon,  9 Mar 2020 20:06:56 +0000 (UTC)
-Received: from zmail19.collab.prod.int.phx2.redhat.com (zmail19.collab.prod.int.phx2.redhat.com [10.5.83.22])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 53F4486A04;
-        Mon,  9 Mar 2020 20:06:54 +0000 (UTC)
-Content-Type: text/plain;
-        charset=utf-8
-Content-Transfer-Encoding: base64
-From:   David Hildenbrand <dhildenb@redhat.com>
+        id S1726462AbgCIULf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:11:35 -0400
+Received: from mga18.intel.com ([134.134.136.126]:39979 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbgCIULf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:11:35 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 13:11:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,534,1574150400"; 
+   d="scan'208";a="245452962"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga006.jf.intel.com with ESMTP; 09 Mar 2020 13:11:34 -0700
+Date:   Mon, 9 Mar 2020 13:11:34 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH v2 00/66] KVM: x86: Introduce KVM cpu caps
+Message-ID: <20200309201134.GA10653@linux.intel.com>
+References: <20200302235709.27467-1-sean.j.christopherson@intel.com>
+ <cd8eae75-b85b-59a9-24ea-c8bde7bd7cee@redhat.com>
 MIME-Version: 1.0
-Subject: Re: [PATCH RESEND v6 00/16] mm: Page fault enhancements
-Date:   Mon, 9 Mar 2020 16:06:54 -0400 (EDT)
-Message-Id: <FD483CC3-26F1-4CEE-899E-7EB77C4D3277@redhat.com>
-References: <20200309195100.GD4206@xz-x1>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Martin Cracauer <cracauer@cons.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Bobby Powers <bobbypowers@gmail.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mel Gorman <mgorman@suse.de>, Hugh Dickins <hughd@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>
-In-Reply-To: <20200309195100.GD4206@xz-x1>
-To:     Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Thread-Topic: Page fault enhancements
-Thread-Index: VkIGmTyFztzfGbEHyyEMiVtHfLEZng==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd8eae75-b85b-59a9-24ea-c8bde7bd7cee@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gQW0gMDkuMDMuMjAyMCB1bSAyMDo1MSBzY2hyaWViIFBldGVyIFh1IDxwZXRlcnhAcmVk
-aGF0LmNvbT46DQo+IA0KPiDvu79PbiBTdW4sIE1hciAwOCwgMjAyMCBhdCAwMToxMjozNFBNICsw
-MTAwLCBEYXZpZCBIaWxkZW5icmFuZCB3cm90ZToNCj4+IFsuLi5dDQo+PiANCj4+PiBZZXMsIElJ
-VUMgdGhlIHJhY2UgY2FuIGhhcHBlbiBsaWtlIHRoaXMgaW4geW91ciBiZWxvdyB0ZXN0Og0KPj4+
-IA0KPj4+ICAgICBtYWluIHRocmVhZCAgICAgICAgICB1ZmZkIHRocmVhZCAgICAgICAgICAgICBk
-aXNnYXJkIHRocmVhZA0KPj4+ICAgICA9PT09PT09PT09PSAgICAgICAgICA9PT09PT09PT09PSAg
-ICAgICAgICAgICA9PT09PT09PT09PT09PQ0KPj4+ICAgICBhY2Nlc3MgcGFnZQ0KPj4+ICAgICAg
-IHVmZmQgcGFnZSBmYXVsdA0KPj4+ICAgICAgICAgd2FpdCBmb3IgcGFnZQ0KPj4+ICAgICAgICAg
-ICAgICAgICAgICAgICAgICBVRkZESU9fWkVST0NPUFkNCj4+PiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBwdXQgYSBwYWdlIFAgdGhlcmUNCj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgTUFEVl9ET05UTkVFRCBvbiBQDQo+Pj4gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgd2FrZXVwIG1haW4gdGhyZWFkDQo+Pj4gICAgICAgICByZXR1cm4g
-ZnJvbSBmYXVsdA0KPj4+ICAgICAgIHBhZ2Ugc3RpbGwgbWlzc2luZw0KPj4+ICAgICAgIHVmZmQg
-cGFnZSBmYXVsdCBhZ2Fpbg0KPj4+ICAgICAgICh3aXRob3V0IEFMTE9XX1JFVFJZKQ0KPj4+ICAg
-ICAgIC0tPiBTSUdCVVMuDQo+PiANCj4+IEV4YWN0bHkhDQo+PiANCj4+Pj4gQ2FuIHdlIHBsZWFz
-ZSBoYXZlIGEgd2F5IHRvIGlkZW50aWZ5IHRoYXQgdGhpcyAiZmVhdHVyZSIgaXMgYXZhaWxhYmxl
-Pw0KPj4+PiBJJ2QgYXBwcmVjaWF0ZSBhIG5ldyByZWFkLW9ubHkgVUZGRF9GRUFUXyAsIHNvIHdl
-IGNhbiBkZXRlY3QgdGhpcyBmcm9tDQo+Pj4+IHVzZXIgc3BhY2UgZWFzaWx5IGFuZCB1c2UgY29u
-Y3VycmVudCBkaXNjYXJkcyB3aXRob3V0IGNyYXNoaW5nIG91ciBhcHBsaWNhdGlvbnMuDQo+Pj4g
-DQo+Pj4gSSdtIG5vdCBzdXJlIGhvdyBvdGhlcnMgdGhpbmsgYWJvdXQgaXQsIGJ1dCB0byBtZSB0
-aGlzIHN0aWxsIGZlbGxzDQo+Pj4gaW50byB0aGUgYnVja2V0IG9mICJzb2x2aW5nIGFuIGV4aXN0
-aW5nIHByb2JsZW0iIHJhdGhlciB0aGFuIGENCj4+PiBmZWF0dXJlLiAgQWxzbyBub3RlIHRoYXQg
-dGhpcyBzaG91bGQgY2hhbmdlIHRoZSBiZWhhdmlvciBmb3IgdGhlIHBhZ2UNCj4+PiBmYXVsdCBs
-b2dpYyBpbiBnZW5lcmFsLCByYXRoZXIgdGhhbiBhbiB1ZmZkLW9ubHkgY2hhbmdlLiBTbyBJJ20g
-YWxzbw0KPj4+IG5vdCBzdXJlIHdoZXRoZXIgVUZGRF9GRUFUXyogc3VpdGVzIGhlcmUgZXZlbiBp
-ZiB3ZSB3YW50IGl0Lg0KPj4gDQo+PiBTbywgYXJlIHdlIHBsYW5uaW5nIG9uIGJhY2twb3J0aW5n
-IHRoaXMgdG8gc3RhYmxlIGtlcm5lbHM/DQo+IA0KPiBJIGRvbid0IGhhdmUgYSBwbGFuIHNvIGZh
-ci4gIEknbSBzdGlsbCBhdCB0aGUgcGhhc2UgdG8gb25seSB3b3JyeQ0KPiBhYm91dCB3aGV0aGVy
-IGl0IGNhbiBiZSBhdCBsZWFzdCBtZXJnZWQgaW4gbWFzdGVyLi4gOikNCj4gDQo+IEkgd291bGQg
-dGhpbmsgaXQgd29uJ3Qgd29ydGggaXQgdG8gYmFja3BvcnQgdGhpcyB0byBzdGFibGVzIHRob3Vn
-aCwNCj4gY29uc2lkZXJpbmcgdGhhdCBpdCBjb3VsZCBwb3RlbnRpYWxseSBjaGFuZ2UgcXVpdGUg
-YSBiaXQgZm9yIGZhdWx0aW5nDQo+IHByb2NlZHVyZXMsIGFuZCBhZnRlciBhbGwgdGhlIGlzc3Vl
-cyB3ZSdyZSBmaXhpbmcgc2hvdWxkbid0IGJlIGNvbW1vbg0KPiB0byBnZW5lcmFsIHVzZXJzLg0K
-PiANCj4+IA0KPj4gSW1hZ2luZSB1c2luZyB0aGlzIGluIFFFTVUvS1ZNIHRvIGFsbG93IGRpc2Nh
-cmRzIChlLmcuLCBiYWxsb29uDQo+PiBpbmZsYXRpb24pIHdoaWxlIHBvc3Rjb3B5IGlzIGFjdGl2
-ZSAuIFlvdSBjZXJ0YWlubHkgZG9uJ3Qgd2FudCByYW5kb20NCj4+IGd1ZXN0IGNyYXNoZXMuIFNv
-IGVpdGhlciwgd2UgdHJlYXQgdGhpcyBhcyBhIGZpeCAoYW5kIGJhY2twb3J0KSBvciBhcyBhDQo+
-PiBjaGFuZ2UgaW4gYmVoYXZpb3IvZmVhdHVyZS4NCj4gDQo+IEkgdGhpbmsgd2UgZG9uJ3QgbmVl
-ZCB0byB3b3JyeSBvbiB0aGF0IC0gUUVNVSB3aWxsIHByb2hpYml0IGJhbGxvb25pbmcNCj4gZHVy
-aW5nIHBvc3Rjb3B5IHN0YXJ0aW5nIGZyb20gdGhlIGZpcnN0IGRheS4gIEZlZWwgZnJlZSB0byBz
-ZWUgUUVNVQ0KPiBjb21taXQgMzcxZmY1YTNmMDRjZDcgKCJJbmhpYml0IGJhbGxvb25pbmcgZHVy
-aW5nIHBvc3Rjb3B5IikuDQoNCkltYWdpbmUgSSB3YW50IHRvIGNoYW5nZSB0aGF0IG9yIGltYWdp
-bmUgSSBoYXZlIGFub3RoZXIgdXNlciB0aGF0IGhlYXZpbHkgZGVwZW5kcyBvbiBzdWNoIHJhY2Vz
-IHRvIG5ldmVyIGhhcHBlbi4NCg0KSU9XIEkgd2FudCB0byBrbm93IGZvciBzdXJlIGlmIG15IGFw
-cGxpY2F0aW9uIGNhbiBjcmFzaCBvciBub3QuDQoNCkBBbmRyZWEgd2hhdCBhcmUgeW91ciB0aG91
-Z2h0cyBvbiBhIG5ldyBmZWF0dXJlIGZsYWcgdG8gaWRlbnRpZnkgdGhpcyBiZWhhdmlvcj8NCg0K
+On Fri, Mar 06, 2020 at 09:27:48AM +0100, Paolo Bonzini wrote:
+> I put the complete series on the cpu-caps branch of kvm.git.
 
+Looks good, arrived at more or less the same end result when rebasing my
+local branch to kvm/queue.  CPUID diff and smoke test on Icelake ran clean.
+
+For supported_xss, would it make sense to handle it purely in common x86
+code, e.g. stub in something similar to supported_xcr0?  KVM_SUPPORTED_XSS
+would be 0 for now.  I assume whatever XSAVES features are supported will
+be "supported" by both VMX and SVM, in the sense that VMX/SVM won't need
+to mask off features that can exist on their respective hardware but can't
+be exposed to the guest.
+
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 4dca3579e740..c6e9910d1149 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1371,8 +1371,6 @@ static __init void svm_set_cpu_caps(void)
+ {
+        kvm_set_cpu_caps();
+ 
+-       supported_xss = 0;
+-
+        /* CPUID 0x80000001 and 0x8000000A (SVM features) */
+        if (nested) {
+                kvm_cpu_cap_set(X86_FEATURE_SVM);
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 8001070b209c..e91a84bb251c 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7126,7 +7126,6 @@ static __init void vmx_set_cpu_caps(void)
+                kvm_cpu_cap_set(X86_FEATURE_UMIP);
+ 
+        /* CPUID 0xD.1 */
+-       supported_xss = 0;
+        if (!vmx_xsaves_supported())
+                kvm_cpu_cap_clear(X86_FEATURE_XSAVES);
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 96e897d38a63..29cfe80db4b4 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9628,6 +9628,8 @@ int kvm_arch_hardware_setup(void)
+ 
+        if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
+                supported_xss = 0;
++       else
++               supported_xss = host_xss & KVM_SUPPORTED_XSS;
+ 
+        cr4_reserved_bits = kvm_host_cr4_reserved_bits(&boot_cpu_data);
