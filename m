@@ -2,191 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A72A17E5E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:42:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD4F17E5F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgCIRmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 13:42:15 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53671 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbgCIRmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 13:42:15 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g134so446755wme.3;
-        Mon, 09 Mar 2020 10:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=O5XzlRhJXpNd17/Q76toYeUyU8DPAcT326EwGlOZF0s=;
-        b=Lj7DWSw+kOYjv01pETYilz6LW14y0nMDyeJQC8epwaQzKflWIeQw/Cbmh0qhmorkGz
-         eigKpe1tp2Ooo4Rao6mdypvT05TriZ0WZLJQmTwEGXIIdU+w+p+OrNnBnYl8tyoEjE8B
-         bLLDGjqhHa1WQL97KMBlUuAPEF5I3XrlyZJckaJHsGZGnYdDIiKRePNPpYoZsa8suUfJ
-         b9cMxxXPl7PrZVfDQGm5Akd7jqyz1sd+2zMpzIpzdhlyzVtRZ21MMzu2O1vrHSZLldYd
-         wWB90AtkNSdIIhK9c657+WT0sUlzWEdZ/nJpkEKK/UAO9WLNb1fdujX8sGw2kOC6QgFe
-         JpnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=O5XzlRhJXpNd17/Q76toYeUyU8DPAcT326EwGlOZF0s=;
-        b=r6ywhngrc9ZfdXNfK+rK2w0RAWGi3BQwtQkcgTEaEyH6wlHsgRBWgraXTRxvyOoz+x
-         pm/nGu8Sl+paQA+MWmL1TsWOxcifoypfhEPVp/0rlay+NlHcC8mOSYbK9P5wTg3MAoXY
-         jwXlbxaGdifj/q8sk3XlpxNgVhS8DdLC6BUtni3UKNZGJ3WIAr0eYOHoP3cKkvb8zvjp
-         9Fk7epvLSG7FVyt/mV7f2htVAPUYgW9DMHP6q/JmguYLyQ2ACakuS2JtdyBis+ykIm6V
-         YruFnOiSrvRqBwGRouOphk7TuX19uZg6/Hefd6cKS8Us2caVSLz0brwj0ffh8snWHwL7
-         mGQQ==
-X-Gm-Message-State: ANhLgQ17CM3Gu4X680w76tMAp6HjlbSxGSAcfYiX3vH2OOG7Np9rVjXJ
-        agOvc/IY8Z2VmLpBKePtuC300iL7
-X-Google-Smtp-Source: ADFU+vsgfcaDnGCgWzq7miqzip7oobaJk0VZBJ3UrJVPQc39Yk5G4P9OVGUsu05EbLby4faR/vJsQw==
-X-Received: by 2002:a1c:25c1:: with SMTP id l184mr367337wml.122.1583775732276;
-        Mon, 09 Mar 2020 10:42:12 -0700 (PDT)
-Received: from [10.67.49.112] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id c8sm1517272wrt.33.2020.03.09.10.42.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2020 10:42:11 -0700 (PDT)
-Subject: Re: [PATCH] gpio: brcmstb: support gpio-line-names property
-To:     Gregory Fong <gregory.0xf0@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1583539986-573-1-git-send-email-opendmb@gmail.com>
- <CADtm3G4eq_p1YZtQrtcx4LGPiY82BpgXf55YtJCW+WJSrM7siw@mail.gmail.com>
-From:   Doug Berger <opendmb@gmail.com>
-Autocrypt: addr=opendmb@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- rQQYjNSD8+NSdOsIpGNCZ9xhWw==
-Message-ID: <810d8c3d-482f-078c-70b5-c4123c2679b8@gmail.com>
-Date:   Mon, 9 Mar 2020 10:42:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CADtm3G4eq_p1YZtQrtcx4LGPiY82BpgXf55YtJCW+WJSrM7siw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726197AbgCIRrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 13:47:35 -0400
+Received: from mga14.intel.com ([192.55.52.115]:12899 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbgCIRre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 13:47:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 10:47:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="260490300"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by orsmga002.jf.intel.com with ESMTP; 09 Mar 2020 10:47:33 -0700
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc:     namhyung@kernel.org, adrian.hunter@intel.com,
+        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
+        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
+        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 0/9] Stitch LBR call stack (Perf Tools)
+Date:   Mon,  9 Mar 2020 10:46:30 -0700
+Message-Id: <20200309174639.4594-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/9/20 12:45 AM, Gregory Fong wrote:
-> Hi Doug,
-> 
-> On Fri, Mar 6, 2020 at 4:14 PM Doug Berger <opendmb@gmail.com> wrote:
->>
->> The default handling of the gpio-line-names property by the
->> gpiolib-of implementation does not work with the multiple
->> gpiochip banks per device structure used by the gpio-brcmstb
->> driver.
->>
->> This commit adds driver level support for the device tree
->> property so that GPIO lines can be assigned friendly names.
->>
->> Signed-off-by: Doug Berger <opendmb@gmail.com>
-> 
-> I've added a few comments below.  With the suggested updates:
-> Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
-> 
->> ---
->>  drivers/gpio/gpio-brcmstb.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 44 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
->> index 05e3f99ae59c..e9ab246e2d42 100644
->> --- a/drivers/gpio/gpio-brcmstb.c
->> +++ b/drivers/gpio/gpio-brcmstb.c
->> @@ -603,6 +603,49 @@ static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
->>         .resume_noirq = brcmstb_gpio_resume,
->>  };
->>
->> +static void brcmstb_gpio_set_names(struct device *dev,
->> +                                  struct brcmstb_gpio_bank *bank)
->> +{
->> +       struct device_node *np = dev->of_node;
->> +       const char **names;
->> +       int nstrings, base;
->> +       unsigned int i;
->> +
->> +       base = bank->id * MAX_GPIO_PER_BANK;
->> +
->> +       nstrings = of_property_count_strings(np, "gpio-line-names");
->> +       if (nstrings <= base)
->> +               /* Line names not present */
->> +               return;
->> +
->> +       names = devm_kcalloc(dev, MAX_GPIO_PER_BANK, sizeof(char *),
-> 
-> Please use sizeof(*names) instead of sizeof(char *).
-Good idea. Will do.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> 
->> +                            GFP_KERNEL);
->> +       if (!names)
->> +               return;
->> +
->> +       /*
->> +        * Make sure to not index beyond the end of the number of descriptors
->> +        * of the GPIO device.
->> +        */
->> +       for (i = 0; i < bank->width; i++) {
->> +               const char *name;
->> +               int ret;
->> +
->> +               ret = of_property_read_string_index(np, "gpio-line-names",
->> +                                                   base + i, &name);
->> +               if (ret) {
->> +                       if (ret != -ENODATA)
->> +                               dev_err(dev, "unable to name line %d: %d\n",
->> +                                       i, ret);
-> 
-> Recommend adding the GPIO bank ID to this error message.
-I'll use the absolute line number rather than the bank relative line
-number to reduce confusion, but since it's different from your
-suggestion I'll leave off your Ack in case you really want the bank
-number for some reason.
+Changes since V1:
+- Rebase on top of commit 5100c2b77049 ("perf header: Add check for
+  unexpected use of reserved membrs in event attr")
+- Fix compling error with GCC9 in patch 1.
 
-> 
-> Best regards,
-> Gregory
-> 
-Thanks Gregory!
-V2 coming soon.
+
+The kernel patches have been merged into linux-next.
+  commit bbfd5e4fab63 ("perf/core: Add new branch sample type for HW
+index of raw branch records")
+  commit db278b90c326 ("perf/x86/intel: Output LBR TOS information
+correctly")
+
+Start from Haswell, Linux perf can utilize the existing Last Branch
+Record (LBR) facility to record call stack. However, the depth of the
+reconstructed LBR call stack limits to the number of LBR registers.
+E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
+That's because HW will overwrite the oldest LBR registers when it's
+full.
+
+However, the overwritten LBRs may still be retrieved from previous
+sample. At that moment, HW hasn't overwritten the LBR registers yet.
+Perf tools can stitch those overwritten LBRs on current call stacks to
+get a more complete call stack.
+
+To determine if LBRs can be stitched, the maximum number of LBRs is
+required. Patch 1 & 2 retrieve the capabilities information from sysfs
+and save them in perf header.
+
+Patch 3 & 4 implements the LBR stitching approach.
+
+Users can use the options introduced in patch 5-8 to enable the LBR
+stitching approach for perf report, script, top and c2c.
+
+Patch 9 adds a fast path for duplicate entries check. It benefits all
+call stack parsing, not just for stitch LBR call stack. It can be
+merged independently.
+
+
+The stitching approach base on LBR call stack technology. The known
+limitations of LBR call stack technology still apply to the approach,
+e.g. Exception handing such as setjmp/longjmp will have calls/returns
+not match.
+This approach is not full proof. There can be cases where it creates
+incorrect call stacks from incorrect matches. There is no attempt
+to validate any matches in another way. So it is not enabled by default.
+However in many common cases with call stack overflows it can recreate
+better call stacks than the default lbr call stack output. So if there
+are problems with LBR overflows this is a possible workaround.
+
+Regression:
+Users may collect LBR call stack on a machine with new perf tool and
+new kernel (support LBR TOS). However, they may parse the perf.data with
+old perf tool (not support LBR TOS). The old tool doesn't check
+attr.branch_sample_type. Users probably get incorrect information
+without any warning.
+
+Performance impact:
+The processing time may increase with the LBR stitching approach
+enabled. The impact depends on the increased depth of call stacks.
+
+For a simple test case tchain_edit with 43 depth of call stacks.
+perf record --call-graph lbr -- ./tchain_edit
+perf report --stitch-lbr
+
+Without --stitch-lbr, perf report only display 32 depth of call stacks.
+With --stitch-lbr, perf report can display all 43 depth of call stacks.
+The depth of call stacks increase 34.3%.
+
+Correspondingly, the processing time of perf report increases 39%,
+Without --stitch-lbr:                           11.0 sec
+With --stitch-lbr:                              15.3 sec
+
+The source code of tchain_edit.c is something similar as below.
+noinline void f43(void)
+{
+        int i;
+        for (i = 0; i < 10000;) {
+
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+}
+
+noinline void f42(void)
+{
+        int i;
+        for (i = 0; i < 100; i++) {
+                f43();
+                f43();
+                f43();
+        }
+}
+
+noinline void f41(void)
+{
+        int i;
+        for (i = 0; i < 100; i++) {
+                f42();
+                f42();
+                f42();
+        }
+}
+noinline void f40(void)
+{
+        f41();
+}
+
+... ...
+
+noinline void f32(void)
+{
+        f33();
+}
+
+noinline void f31(void)
+{
+        int i;
+
+        for (i = 0; i < 10000; i++) {
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+
+        f32();
+}
+
+noinline void f30(void)
+{
+        f31();
+}
+
+... ...
+
+noinline void f1(void)
+{
+        f2();
+}
+
+int main()
+{
+        f1();
+}
+
+
+Kan Liang (9):
+  perf pmu: Add support for PMU capabilities
+  perf header: Support CPU PMU capabilities
+  perf machine: Refine the function for LBR call stack reconstruction
+  perf tools: Stitch LBR call stack
+  perf report: Add option to enable the LBR stitching approach
+  perf script: Add option to enable the LBR stitching approach
+  perf top: Add option to enable the LBR stitching approach
+  perf c2c: Add option to enable the LBR stitching approach
+  perf hist: Add fast path for duplicate entries check approach
+
+ tools/perf/Documentation/perf-c2c.txt         |  11 +
+ tools/perf/Documentation/perf-report.txt      |  11 +
+ tools/perf/Documentation/perf-script.txt      |  11 +
+ tools/perf/Documentation/perf-top.txt         |   9 +
+ .../Documentation/perf.data-file-format.txt   |  16 +
+ tools/perf/builtin-c2c.c                      |   6 +
+ tools/perf/builtin-record.c                   |   3 +
+ tools/perf/builtin-report.c                   |   6 +
+ tools/perf/builtin-script.c                   |   6 +
+ tools/perf/builtin-stat.c                     |   1 +
+ tools/perf/builtin-top.c                      |  11 +
+ tools/perf/util/branch.h                      |   5 +-
+ tools/perf/util/callchain.h                   |  12 +-
+ tools/perf/util/env.h                         |   3 +
+ tools/perf/util/header.c                      | 110 +++++
+ tools/perf/util/header.h                      |   1 +
+ tools/perf/util/hist.c                        |  23 +
+ tools/perf/util/machine.c                     | 411 +++++++++++++++---
+ tools/perf/util/pmu.c                         |  87 ++++
+ tools/perf/util/pmu.h                         |  12 +
+ tools/perf/util/sort.c                        |   2 +-
+ tools/perf/util/sort.h                        |   2 +
+ tools/perf/util/thread.c                      |   2 +
+ tools/perf/util/thread.h                      |  34 ++
+ tools/perf/util/top.h                         |   1 +
+ 25 files changed, 729 insertions(+), 67 deletions(-)
+
+-- 
+2.17.1
+
