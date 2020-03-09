@@ -2,104 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E2E617DEF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE51317DEF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:46:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgCILrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:47:00 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:31358 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725796AbgCILq7 (ORCPT
+        id S1726539AbgCILqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 07:46:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55572 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbgCILqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:46:59 -0400
-X-IronPort-AV: E=Sophos;i="5.70,533,1574089200"; 
-   d="scan'208";a="41172727"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Mar 2020 20:46:58 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 204C2421A42B;
-        Mon,  9 Mar 2020 20:46:54 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] media: i2c: ov5645: Switch to assigned-clock-rates
-Date:   Mon,  9 Mar 2020 11:46:13 +0000
-Message-Id: <1583754373-16510-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583754373-16510-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1583754373-16510-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 9 Mar 2020 07:46:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Zl0Sz0Q18LtoA4qBTOE/SgoGN85ceLUha/oEOfM3Njc=; b=bgLfa2jPgTpBDYmEXhvrY0xma2
+        t4W53a5sbVulwUw6a1rLRy4lvucVv7LUVePBkQ6gycBw/MemdfJuTLI30OV7WogTex0JgVj29dOn1
+        jFyFjSAF/mUuZgN7LV7fYIZrDYBxs259gj9oSqOzLZyWNvOydrQH76HDlCVNOio7iKWKbBHv4leQe
+        uAbzU8BuHMv6m/1wHxWOJztLYtNJdXZ68vBopPTLAjFd3GBHHn5fYyVB/tN3NxAiC0htooS0lEJEf
+        ELxmEZXIkJTD3oyxmU9jWeaaMq0iZxvc0CWbcvopXP2ASNK+go4nwFycwQHUlGHxvaQGjLckGblTt
+        MXlzmQMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jBGrv-00039P-0v; Mon, 09 Mar 2020 11:46:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1F37F3013A4;
+        Mon,  9 Mar 2020 12:46:45 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1766B20286A0C; Mon,  9 Mar 2020 12:46:45 +0100 (CET)
+Date:   Mon, 9 Mar 2020 12:46:45 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Will Deacon <will@kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Greg Ungerer <gerg@linux-m68k.org>
+Subject: Re: [PATCH -v2 00/10] Rewrite Motorola MMU page-table layout
+Message-ID: <20200309114645.GH12561@hirez.programming.kicks-ass.net>
+References: <20200131124531.623136425@infradead.org>
+ <CAMuHMdX-Vj-ewD7Kh+d5FdRs16eebwtM6hykZH62ha0Wq8dukQ@mail.gmail.com>
+ <CAMuHMdWz7BZ4_mbSRFbb0iDW7wMFcALD5NvHFHKX_nAoE+sHQQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWz7BZ4_mbSRFbb0iDW7wMFcALD5NvHFHKX_nAoE+sHQQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch switches to assigned-clock-rates for specifying the clock rate.
-The clk-conf.c internally handles setting the clock rate, as a result
-setting the clk rate from the driver is dropped.
+On Mon, Mar 09, 2020 at 11:15:31AM +0100, Geert Uytterhoeven wrote:
+> Hi Peter, Will
+> 
+> On Mon, Feb 10, 2020 at 12:16 PM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Fri, Jan 31, 2020 at 1:56 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > In order to faciliate Will's READ_ONCE() patches:
+> > >
+> > >   https://lkml.kernel.org/r/20200123153341.19947-1-will@kernel.org
+> > >
+> > > we need to fix m68k/motorola to not have a giant pmd_t. These patches do so and
+> > > are tested using ARAnyM/68040.
+> > >
+> > > Michael tested the previous version on his Atari Falcon/68030.
+> > >
+> > > Build tested for sun3/coldfire.
+> > >
+> > > Please consider!
+> >
+> > Thanks, applied and queued for v5.7, using an immutable branch named
+> > pgtable-layout-rewrite.
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git/log/?h=pgtable-layout-rewrite
+> 
+> Any plans to use this? Looks like it's still part of linux-next through the m68k
+> tree only.
 
-Correspondingly imx6qdl-wandboard.dtsi which references to ov5645 has been
-updated to use assigned-clock-rates in the same patch to avoid bisect
-failures.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm/boot/dts/imx6qdl-wandboard.dtsi | 3 ++-
- drivers/media/i2c/ov5645.c               | 9 ++-------
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
-index c070893..71f5f75 100644
---- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
-@@ -126,7 +126,8 @@
- 		reg = <0x3c>;
- 		clocks = <&clks IMX6QDL_CLK_CKO2>;
- 		clock-names = "xclk";
--		clock-frequency = <24000000>;
-+		assigned-clocks = <&clks IMX6QDL_CLK_CKO2>;
-+		assigned-clock-rates = <24000000>;
- 		vdddo-supply = <&reg_1p8v>;
- 		vdda-supply = <&reg_2p8v>;
- 		vddd-supply = <&reg_1p5v>;
-diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-index a6c17d1..2aa2677 100644
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -1094,7 +1094,8 @@ static int ov5645_probe(struct i2c_client *client)
- 		return PTR_ERR(ov5645->xclk);
- 	}
- 
--	ret = of_property_read_u32(dev->of_node, "clock-frequency", &xclk_freq);
-+	ret = of_property_read_u32(dev->of_node, "assigned-clock-rates",
-+				   &xclk_freq);
- 	if (ret) {
- 		dev_err(dev, "could not get xclk frequency\n");
- 		return ret;
-@@ -1107,12 +1108,6 @@ static int ov5645_probe(struct i2c_client *client)
- 		return -EINVAL;
- 	}
- 
--	ret = clk_set_rate(ov5645->xclk, xclk_freq);
--	if (ret) {
--		dev_err(dev, "could not set xclk frequency\n");
--		return ret;
--	}
--
- 	for (i = 0; i < OV5645_NUM_SUPPLIES; i++)
- 		ov5645->supplies[i].supply = ov5645_supply_name[i];
- 
--- 
-2.7.4
-
+Argh, yes. So we ran into sparc32 also need fixups, and both me and Will
+seem to have stalled on fixing that. I'll try and get back to that.
