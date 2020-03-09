@@ -2,182 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 493CE17E688
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:13:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2516317E684
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:11:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbgCISNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:13:16 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:58336 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgCISNQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:13:16 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBMtm-0006L5-Mh; Mon, 09 Mar 2020 12:13:06 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBMtl-0002m4-KU; Mon, 09 Mar 2020 12:13:06 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <878sk94eay.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Mon, 09 Mar 2020 13:10:48 -0500
-In-Reply-To: <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Mon, 9 Mar 2020 18:01:35 +0000")
-Message-ID: <87r1y12yc7.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1727369AbgCISL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:11:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726169AbgCISL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:11:56 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E71BE20578;
+        Mon,  9 Mar 2020 18:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583777516;
+        bh=g4rrfzjCL4hI6s6dopZcQt/VCDFZg5ds7WQUwVk+JNk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=brUnLUwvrCnMEr/yJII2YhYLe6aEfst7VS4X7H8UvrTWQGb82h1uCvWqFA5Gbh1HO
+         zIng1d3UkVO+F7/YioYf50YJn0eFxsn5wRbLdaxddQzcJuOwXuKk6E2Wlrj2liubmM
+         qJZdJCSs9gWk5mnh2e2JiR0NuZCZvMCfkSjyiztM=
+Date:   Mon, 9 Mar 2020 11:11:54 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     syzbot <syzbot+af962bf9e7e27bccd025@syzkaller.appspotmail.com>,
+        len.brown@intel.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: KMSAN: uninit-value in snapshot_compat_ioctl
+Message-ID: <20200309181154.GB1073@sol.localdomain>
+References: <000000000000938a57059f7cafe4@google.com>
+ <20200307235437.GW15444@sol.localdomain>
+ <20200308032434.GX15444@sol.localdomain>
+ <CAG_fn=X8UkYx5=3ARUtW3+asc+3tEdeBg=1NKS9VzChSCp33Yg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBMtl-0002m4-KU;;;mid=<87r1y12yc7.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18QzwMdGCf8P173K+LAq8xnIr+Kw2IIWJI=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4581]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 372 ms - load_scoreonly_sql: 0.16 (0.0%),
-        signal_user_changed: 8 (2.3%), b_tie_ro: 3.7 (1.0%), parse: 1.09
-        (0.3%), extract_message_metadata: 12 (3.1%), get_uri_detail_list: 1.60
-        (0.4%), tests_pri_-1000: 18 (4.8%), tests_pri_-950: 1.28 (0.3%),
-        tests_pri_-900: 1.12 (0.3%), tests_pri_-90: 31 (8.3%), check_bayes: 29
-        (7.9%), b_tokenize: 12 (3.3%), b_tok_get_all: 8 (2.2%), b_comp_prob:
-        2.7 (0.7%), b_tok_touch_all: 3.7 (1.0%), b_finish: 0.62 (0.2%),
-        tests_pri_0: 286 (76.8%), check_dkim_signature: 0.66 (0.2%),
-        check_dkim_adsp: 2.4 (0.6%), poll_dns_idle: 0.71 (0.2%), tests_pri_10:
-        2.4 (0.6%), tests_pri_500: 8 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG_fn=X8UkYx5=3ARUtW3+asc+3tEdeBg=1NKS9VzChSCp33Yg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+On Mon, Mar 09, 2020 at 12:53:28PM +0100, 'Alexander Potapenko' via syzkaller-bugs wrote:
+> > > Looks like a KMSAN false positive?  As far as I can tell, the memory is being
+> > > initialized by put_user() called under set_fs(KERNEL_DS).
+> 
+> Why? put_user() doesn't write to kernel memory, instead it copies a
+> value to the userspace.
+> That's why KMSAN performs kmsan_check_memory() on it.
+> It would actually be better if KMSAN printed an kernel-infoleak warning instead.
 
-> On 3/9/20 6:40 PM, Eric W. Biederman wrote:
->> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->> 
->>> On 3/8/20 10:38 PM, Eric W. Biederman wrote:
->>>>
->>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
->>>> over the userspace accesses as the arguments from userspace are read.
->>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
->>                                 ^ over
->>>
->>> ... is held while waiting for the trace parent to handle PTRACE_EVENT_EXIT
->>> or something?
->> 
->> Yes.  Let me see if I can phrase that better.
->> 
->>> I wonder if we also should mention that
->>> it is held while waiting for the trace parent to
->>> receive the exit code with "wait"?
->> 
->> I don't think we have to spell out the details of how it all works,
->> unless that makes things clearer.  Kernel developers can be expected
->> to figure out how the kernel works.  The critical thing is that it is
->> an indefinite wait for userspace to take action.
->> 
->> But I will look.
->> 
->>>> threads are killed.  The cred_guard_mutex is held over
->>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
->>>>
->>>> Any of those can result in deadlock, as the cred_guard_mutex is held
->>>> over a possible indefinite userspace waits for userspace.
->>>>
->>>> Add exec_update_mutex that is only held over exec updating process
->>>
->>> Add ?
->> 
->> Yes.  That is what the change does: add exec_update_mutex.
->> 
->
-> I just kind of missed the "subject" in this sentence,
-> like "This patch adds an exec_update_mutex that is ..."
-> but english is a foreign language for me, so may be okay as is.
+When under set_fs(KERNEL_DS), the userspace access functions like put_user() and
+copy_to_user() can write to kernel memory.  It's discouraged and people have
+been trying to get rid of uses of set_fs(), but a lot still remain, since
+sometimes it's useful to allow code to operate on both user and kernel memory.
+A common example is kernel_read().
 
-English has a lot of options.  I think this is a stylistic difference.
+> 
+> > Although, it also looks like the problematic code can just be removed, since
+> > always sizeof(compat_loff_t) == sizeof(loff_t).  I'll send a patch to do that...
+> 
+> Thanks!
+> 
 
-Instead of being an observer and describing what the change does:
-"This patch adds exec_update_mutex ..."  
-
-I was being there in the moment and saying/commading what is happening:
-"Add exec_update_mutex ..."
-
-Using the more immdediate form ends up with more concise and clearer
-sentences.
-
-Every one of my writing teachers in school emphasized that point
-and I see the who it works when I write things.  But writing is hard and
-I still tend toward long rambling sentences with many qualifiers that
-confuse and detract from the point rather than make it clear what is
-happening.
-
-Eric
+- Eric
