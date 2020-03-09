@@ -2,129 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A569B17E658
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:05:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A55D817E67C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbgCISFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:05:07 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.107]:31449 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726353AbgCISFG (ORCPT
+        id S1727386AbgCISJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:09:59 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42262 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbgCISJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:05:06 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 84301984A6
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 13:05:05 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BMm1jL3Ow8vkBBMm1jDv4u; Mon, 09 Mar 2020 13:05:05 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=M/+spNsZHyAg8E48D01jPchiqr2VpON3QaUIuLiE4zI=; b=nM5LyMf+ug8N0+yKKxSEt0RQFL
-        yXvC+Ggrf0AssBa4PKtsX5zlzfSmlVZWeGIRVws/AdO6jkACKRjzCYJaVYgtdnYcWrCIMAep9T8X/
-        Fiqi4MBuKb3qgZuWMBUcT5ithvxtb5qt05qjwyM1sgwG5VhHYlllU1o2IRGeHh3kJKxrDPpuqWp9K
-        lMRbNu4U059rr9yvP7gmuEtOKqrbZi4afar1Mpk1Xi/vUPJIlH2DH8FX1QNqXsh17b/LweyBXF3ar
-        A081rcBuXV5DOte4jBE5L9iTIh7yZHMzskJiPNaye9VCR8CXAp3WQC32lmpnWuTrj+BpCOXEB+yoM
-        UtHGmRAw==;
-Received: from [201.162.240.150] (port=3342 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBMlw-004D0Z-Ry; Mon, 09 Mar 2020 13:05:01 -0500
-Date:   Mon, 9 Mar 2020 13:08:13 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] ext4: xattr.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200309180813.GA3347@embeddedor>
+        Mon, 9 Mar 2020 14:09:59 -0400
+Received: by mail-ed1-f66.google.com with SMTP id n18so13087258edw.9;
+        Mon, 09 Mar 2020 11:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3ymUyoWzRfb02+hfegg+QB7d5gLRotDje0gN7Rw97jE=;
+        b=aZUNB8/m4hdNxkjniWKBlD+2MNKKa8FM0iAAyRr/tFj5vtS0wP6Ib6paQTtK8MAhVL
+         mxAsKJ5m9jlp4m2rwl57ZYIzPSaeBMEDy4dFXzgZFZr8aP0wOClYQamk+pPvCstbhL59
+         LhKjmZz+19wpA9/1HsXmOMEyvfJFo7OiM5vJxKCXi/fAo+jrhyjr+UCPw6n/z9QXqMho
+         1MbhnVKh1XMVgyC+OqWGEN4928e0teCk/kJqTX9/ggkscXhos6nT9OT/9kXjREIoOnLY
+         1mW6JoULcOEZr7p+xTvcZoFH6yduxJOZly3f5MZBY/F1xwFmHLX1YSn+FkGrRhnsOOdK
+         5+Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3ymUyoWzRfb02+hfegg+QB7d5gLRotDje0gN7Rw97jE=;
+        b=oZCcV1GeZ9bolHcciGXM9AZUPT8ZGjBu2v7xgFMAwpd3CtQWHcqOxWu38WmGzd2daz
+         m7lLT+jGWolEioDRf3jxHvRNWrvoD5onHN/P2DlvACMYzUYI1Ky/SC4BB+g78Frgk7hX
+         FndEvsrFxGkkwgicibg9f+vla3dQBkCnsghtTDGwQYeZeKi9ip8oB3GNqEQx354kq7SS
+         4o7W1JyRXlqkReUwGQzmotQ6djfKdMUWB13oQmZF8fbKUqk91pixBtoH0Now/LARZ/uw
+         dUpLA7Lukhv3oaxCcecgm99EQmBpeCKogTr6FK4x3c2FHu87GiAjjWjr4839GNviLK91
+         HzZQ==
+X-Gm-Message-State: ANhLgQ3lZH36tRFgtWQHxZpN56meiqIAp6v2GE1WAuGkxRzoBN4fKX9q
+        HPYmIEvI/Xzk7KYZVU1Jxir5ju4SY91sInCh/5U=
+X-Google-Smtp-Source: ADFU+vtiWM2hCTGldMzIEsZsmgDjW6xnZcnOLWNAFcwYZS5ihirWrPk0G2791uJ2wPG1rSuLGjegnUwNdP8AshjEvV4=
+X-Received: by 2002:a05:6402:128c:: with SMTP id w12mr18684596edv.368.1583777395945;
+ Mon, 09 Mar 2020 11:09:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.150
-X-Source-L: No
-X-Exim-ID: 1jBMlw-004D0Z-Ry
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.150]:3342
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200309145624.10026-1-olteanv@gmail.com> <20200309145624.10026-2-olteanv@gmail.com>
+ <c35b3c34123b43b26204a2cf360e7ec1@walle.cc>
+In-Reply-To: <c35b3c34123b43b26204a2cf360e7ec1@walle.cc>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Mon, 9 Mar 2020 20:09:44 +0200
+Message-ID: <CA+h21hquwbP-qg21EJKW6BpAVRSm0WE6OUWeg-zsorZrCFT=dQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] spi: spi-fsl-dspi: Don't access reserved fields in SPI_MCR
+To:     Michael Walle <michael@walle.cc>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Esben Haabendal <eha@deif.com>,
+        angelo@sysam.it, andrew.smirnov@gmail.com,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Wei Chen <weic@nvidia.com>, Mohamed Hosny <mhosny@nvidia.com>,
+        peng.ma@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Mon, 9 Mar 2020 at 20:05, Michael Walle <michael@walle.cc> wrote:
+>
+> Am 2020-03-09 15:56, schrieb Vladimir Oltean:
+> > From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> >
+> > The SPI_MCR_PCSIS macro assumes that the controller has a number of
+> > chip
+> > select signals equal to 6. That is not always the case, but actually is
+> > described through the driver-specific " signals equal to 6. That is not
+> > always the case, but actually is described through the driver-specific
+> > "spi-num-chipselects" device tree binding.
+>
+> Repeated sentence? Was this your intention?
+>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+No, I must have tripped over my vim shortcuts. Sorry.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
-
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/ext4/xattr.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/xattr.h b/fs/ext4/xattr.h
-index f39cad2abe2a..ffe21ac77f78 100644
---- a/fs/ext4/xattr.h
-+++ b/fs/ext4/xattr.h
-@@ -48,7 +48,7 @@ struct ext4_xattr_entry {
- 	__le32	e_value_inum;	/* inode in which the value is stored */
- 	__le32	e_value_size;	/* size of attribute value */
- 	__le32	e_hash;		/* hash value of name and value */
--	char	e_name[0];	/* attribute name */
-+	char	e_name[];	/* attribute name */
- };
- 
- #define EXT4_XATTR_PAD_BITS		2
-@@ -118,7 +118,7 @@ struct ext4_xattr_ibody_find {
- 
- struct ext4_xattr_inode_array {
- 	unsigned int count;		/* # of used items in the array */
--	struct inode *inodes[0];
-+	struct inode *inodes[];
- };
- 
- extern const struct xattr_handler ext4_xattr_user_handler;
--- 
-2.25.0
-
+-Vladimir
