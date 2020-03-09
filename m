@@ -2,157 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 853A117DC9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:43:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C5617DCBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgCIJnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:43:42 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43046 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbgCIJnl (ORCPT
+        id S1726769AbgCIJyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:54:31 -0400
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:36868 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726567AbgCIJyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:43:41 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0299hQi3050123;
-        Mon, 9 Mar 2020 04:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583747006;
-        bh=RzlZesRpFJqS5mJhJut0NkSOELlsfKSMiUyjJ8TsFEc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Yt3uC7csFiagxt6uf3UP+yZDR/6dzb6qTY1gjp9YIsfRn7pkJmn2Y0c91Y+24gbdD
-         RNskelBfK//xg3/y4hfTAeUubV6WlzKJJC+z6jWuJfKvUJyH9P/i3K3f5O5Lr5viGE
-         amIoYITMXbruK0ayWo+/DSiveJkkP32spU5njSmI=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0299hQi5019087
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Mar 2020 04:43:26 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
- 2020 04:43:26 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Mar 2020 04:43:26 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0299hN6X114936;
-        Mon, 9 Mar 2020 04:43:23 -0500
-Subject: Re: [PATCH] ARM: OMAP: DTS: N900: fix onenand timings
-To:     Arthur Demchenkov <spinal.by@gmail.com>
-CC:     =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        Mon, 9 Mar 2020 05:54:12 -0400
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 09 Mar 2020 15:24:03 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 09 Mar 2020 15:23:41 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 3AE86230B; Mon,  9 Mar 2020 15:23:40 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200308191934.8263-1-spinal.by@gmail.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <abd076bf-20aa-c981-bf4f-7bdf10ec58d1@ti.com>
-Date:   Mon, 9 Mar 2020 11:43:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200308191934.8263-1-spinal.by@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH v5 0/9] Add QUSB2 PHY support for SC7180
+Date:   Mon,  9 Mar 2020 15:23:00 +0530
+Message-Id: <1583747589-17267-1-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Converting dt binding to yaml.
+Adding compatible for SC7180 in dt bindings.
+Added generic QUSB2 V2 PHY support and using the same SC7180 and SDM845.
 
+Changes in v5:
+*Added the dt bindings which are applicable only to QUSB2 V2 PHY in 
+ separate block as per comments from Matthias in patch 1/9 and patch 4/9
+ and addressed Rob's comment in patch 1/9.
+*Separated the patch for new override params and added a local variable
+ to access overrides as per comments from Matthias patch 5/9 and 6/9.
 
-On 08/03/2020 21:19, Arthur Demchenkov wrote:
-> Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
-> started using DT specified timings for GPMC, and as a result the
-> OneNAND stopped working on N900 as we had wrong values in the DT.
-> Fix by updating the values to bootloader timings that have been tested
-> to be working on Nokia N900 with OneNAND manufacturers: Samsung,
-> Numonyx.
-> 
-> Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
-> Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
+Changes in v4:
+*Addressed Rob Herrings comments in dt bindings.
+*Added new structure for all the overriding tuning params.
+*Removed the sc7180 and sdm845 compatible from driver and added qusb2 v2 phy. 
+*Added the qusb2 v2 phy compatible in device tree for sc7180 and sdm845. 
 
-Reviewed-by: Roger Quadros <rogerq@ti.com>
+Changes in v3:
+*Using the generic phy cfg table for QUSB2 V2 phy.
+*Added support for overriding tuning parameters in QUSB2 V2 PHY
+from device tree.
 
-> ---
->   arch/arm/boot/dts/omap3-n900.dts | 44 +++++++++++++++++++++++++---------------
->   1 file changed, 28 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/omap3-n900.dts b/arch/arm/boot/dts/omap3-n900.dts
-> index c3c6d7d04a76..4089d97405c9 100644
-> --- a/arch/arm/boot/dts/omap3-n900.dts
-> +++ b/arch/arm/boot/dts/omap3-n900.dts
-> @@ -854,34 +854,46 @@
->   		compatible = "ti,omap2-onenand";
->   		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
->   
-> +		/*
-> +		 * These timings are based on CONFIG_OMAP_GPMC_DEBUG=y reported
-> +		 * bootloader set values when booted with v5.1
-> +		 * (OneNAND Manufacturer: Samsung):
-> +		 *
-> +		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
-> +		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
-> +		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
-> +		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
-> +		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
-> +		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
-> +		 */
->   		gpmc,sync-read;
->   		gpmc,sync-write;
->   		gpmc,burst-length = <16>;
->   		gpmc,burst-read;
->   		gpmc,burst-wrap;
->   		gpmc,burst-write;
-> -		gpmc,device-width = <2>; /* GPMC_DEVWIDTH_16BIT */
-> -		gpmc,mux-add-data = <2>; /* GPMC_MUX_AD */
-> +		gpmc,device-width = <2>;
-> +		gpmc,mux-add-data = <2>;
->   		gpmc,cs-on-ns = <0>;
-> -		gpmc,cs-rd-off-ns = <87>;
-> -		gpmc,cs-wr-off-ns = <87>;
-> +		gpmc,cs-rd-off-ns = <102>;
-> +		gpmc,cs-wr-off-ns = <102>;
->   		gpmc,adv-on-ns = <0>;
-> -		gpmc,adv-rd-off-ns = <10>;
-> -		gpmc,adv-wr-off-ns = <10>;
-> -		gpmc,oe-on-ns = <15>;
-> -		gpmc,oe-off-ns = <87>;
-> +		gpmc,adv-rd-off-ns = <12>;
-> +		gpmc,adv-wr-off-ns = <12>;
-> +		gpmc,oe-on-ns = <12>;
-> +		gpmc,oe-off-ns = <102>;
->   		gpmc,we-on-ns = <0>;
-> -		gpmc,we-off-ns = <87>;
-> -		gpmc,rd-cycle-ns = <112>;
-> -		gpmc,wr-cycle-ns = <112>;
-> -		gpmc,access-ns = <81>;
-> -		gpmc,page-burst-access-ns = <15>;
-> +		gpmc,we-off-ns = <102>;
-> +		gpmc,rd-cycle-ns = <132>;
-> +		gpmc,wr-cycle-ns = <132>;
-> +		gpmc,access-ns = <96>;
-> +		gpmc,page-burst-access-ns = <18>;
->   		gpmc,bus-turnaround-ns = <0>;
->   		gpmc,cycle2cycle-delay-ns = <0>;
->   		gpmc,wait-monitoring-ns = <0>;
-> -		gpmc,clk-activation-ns = <5>;
-> -		gpmc,wr-data-mux-bus-ns = <30>;
-> -		gpmc,wr-access-ns = <81>;
-> +		gpmc,clk-activation-ns = <6>;
-> +		gpmc,wr-data-mux-bus-ns = <36>;
-> +		gpmc,wr-access-ns = <96>;
->   		gpmc,sync-clk-ps = <15000>;
->   
->   		/*
-> 
+Changes in v2:
+Sorted the compatible in driver.
+Converted dt binding to yaml.
+Added compatible in yaml.
+
+Sandeep Maheswaram (9):
+  dt-bindings: phy: qcom,qusb2: Convert QUSB2 phy bindings to yaml
+  dt-bindings: phy: qcom,qusb2: Add compatibles for QUSB2 V2 phy and
+    SC7180
+  phy: qcom-qusb2: Add generic QUSB2 V2 PHY support
+  dt-bindings: phy: qcom-qusb2: Add support for overriding Phy tuning
+    parameters
+  phy: qcom-qusb2: Add support for overriding tuning parameters in QUSB2
+    V2 PHY
+  phy: qcom-qusb2: Add new overriding tuning parameters in QUSB2 V2 PHY
+  arm64: dts: qcom: sc7180: Add generic QUSB2 V2 Phy compatible
+  arm64: dts: qcom: sdm845: Add generic QUSB2 V2 Phy compatible
+  arm64: dts: qcom: sc7180: Update QUSB2 V2 Phy params for SC7180 IDP
+    device
+
+ .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    | 187 +++++++++++++++++++++
+ .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |  68 --------
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts            |   6 +-
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               |   2 +-
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   4 +-
+ drivers/phy/qualcomm/phy-qcom-qusb2.c              | 144 +++++++++++-----
+ 6 files changed, 297 insertions(+), 114 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
