@@ -2,221 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D77DA17E0D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AC917E0DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:12:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgCINL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:11:26 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58352 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726414AbgCINL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:11:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583759484;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xRJIUHA2CnOOeiHBMD4y+dr1ZXYznLSuwH0WgiBK5ck=;
-        b=SD8pWHFZtyclFsLyZychQ3WhfZaP7d9FJSQ3urFJU1Sj1cziI2MB0SJmtHjEPp1nhnGrZu
-        XKa7Xeo4iFXPYCwxGJ4SnVsdtX7C1fu77ghQL0pAjmR5Jcl0f+bcQ3MCAeY8EuANET5xIE
-        fpNfjKqaaXRit5vue6Tbd8x7Y2sjxG8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-438-MhwNH3oiPYieyfIk55V9iQ-1; Mon, 09 Mar 2020 09:11:20 -0400
-X-MC-Unique: MhwNH3oiPYieyfIk55V9iQ-1
-Received: by mail-wr1-f70.google.com with SMTP id b12so5221783wro.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 06:11:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xRJIUHA2CnOOeiHBMD4y+dr1ZXYznLSuwH0WgiBK5ck=;
-        b=mMNr5I77AYsQBXb7UPP73qrx0VWZQnY+Mypd/k98b1Pu0uSZX7U0oE5OPQD9AsXw0c
-         ph3/c1rN7xioqCpeKSQIUSanr9ffoJjGkNDR95NhG6Jb+aVW0kenj1tgOweUAQQK/xoG
-         rc/Pb6qDe48tWV08/V9+IB2dN3eyeZ1ZsvJ+6lpb1SazW9IE8Ha9vW1gSajFJLdOp5WR
-         AfXoJuvKoRYAN0XM70fMf+87AoAtOI7HkWfOdA1rn+VDt40svHKoP7x3uTyI5dIImAfP
-         xTs397iwiHRlDjsLp9jBFQHkMc3CokSawZ6Q/xaF+c28T7ltq7xeZO9ZOCosC6srXv2V
-         nJTQ==
-X-Gm-Message-State: ANhLgQ2G8kj01oKt8zxw1LYVdJGBJ8JclWmoHytMO+j0HAJ1Ln6Bvl6l
-        uEn0uy1j9pQ2pTH9HLOqZFdY7C3yks7Ghpw0XBAi5iQcU91XmdmbNYWoBr1lsDC9ROmOHAegSql
-        ZyuxXL0wnKHTK82y0HwmPNdap
-X-Received: by 2002:adf:e506:: with SMTP id j6mr20733582wrm.309.1583759479368;
-        Mon, 09 Mar 2020 06:11:19 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuCDJFZ7JTpz5uoFvZAVeKx+9vsgLNPQPPkBhoFe61RXjhOioyK15/Hhufdoq2jrHxA0uFd5Q==
-X-Received: by 2002:adf:e506:: with SMTP id j6mr20733564wrm.309.1583759479021;
-        Mon, 09 Mar 2020 06:11:19 -0700 (PDT)
-Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id y15sm5710650wrq.89.2020.03.09.06.11.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 06:11:18 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 14:11:17 +0100
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jann Horn <jannh@google.com>,
-        alexander.h.duyck@linux.intel.com, sj38.park@gmail.com,
-        SeongJae Park <sjpark@amazon.de>
-Subject: Re: [PATCH v7 7/7] mm/madvise: allow KSM hints for remote API
-Message-ID: <20200309131117.anvyjszaigpoz2kp@butterfly.localdomain>
-References: <20200302193630.68771-1-minchan@kernel.org>
- <20200302193630.68771-8-minchan@kernel.org>
- <2a66abd8-4103-f11b-06d1-07762667eee6@suse.cz>
- <20200306134146.mqiyvsdnqty7so53@butterfly.localdomain>
- <a63768c1-3959-563b-376b-1d8d90d79b41@suse.cz>
+        id S1726620AbgCINMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:12:53 -0400
+Received: from mga01.intel.com ([192.55.52.88]:56481 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbgCINMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:12:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 06:12:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,533,1574150400"; 
+   d="gz'50?scan'50,208,50";a="353365141"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Mar 2020 06:12:38 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jBICz-000Fe1-UK; Mon, 09 Mar 2020 21:12:37 +0800
+Date:   Mon, 9 Mar 2020 21:12:08 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Zong Li <zong.li@sifive.com>
+Cc:     kbuild-all@lists.01.org, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/9] riscv: introduce interfaces to patch kernel code
+Message-ID: <202003092121.lEcswcgH%lkp@intel.com>
+References: <e2a42afbce47b364bf790b4cf8edf76235e48d53.1583741997.git.zong.li@sifive.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="y0ulUmNC+osPPQO6"
 Content-Disposition: inline
-In-Reply-To: <a63768c1-3959-563b-376b-1d8d90d79b41@suse.cz>
+In-Reply-To: <e2a42afbce47b364bf790b4cf8edf76235e48d53.1583741997.git.zong.li@sifive.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 05:08:18PM +0100, Vlastimil Babka wrote:
-> On 3/6/20 2:41 PM, Oleksandr Natalenko wrote:
-> > On Fri, Mar 06, 2020 at 02:13:49PM +0100, Vlastimil Babka wrote:
-> >> On 3/2/20 8:36 PM, Minchan Kim wrote:
-> >> > From: Oleksandr Natalenko <oleksandr@redhat.com>
-> >> > 
-> >> > It all began with the fact that KSM works only on memory that is marked
-> >> > by madvise(). And the only way to get around that is to either:
-> >> > 
-> >> >   * use LD_PRELOAD; or
-> >> >   * patch the kernel with something like UKSM or PKSM.
-> >> > 
-> >> > (i skip ptrace can of worms here intentionally)
-> >> > 
-> >> > To overcome this restriction, lets employ a new remote madvise API. This
-> >> > can be used by some small userspace helper daemon that will do auto-KSM
-> >> > job for us.
-> >> > 
-> >> > I think of two major consumers of remote KSM hints:
-> >> > 
-> >> >   * hosts, that run containers, especially similar ones and especially in
-> >> >     a trusted environment, sharing the same runtime like Node.js;
-> 
-> Ah, I forgot to ask, given the discussion of races in patch 2 (Question 2),
-> where android can stop the tasks to apply the madvise hints in a race-free
-> manner, how does that work for remote KSM hints in your scenarios, especially
-> the one above?
 
-We have cgroup.freeze for that.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> >> > 
-> >> >   * heavy applications, that can be run in multiple instances, not
-> >> >     limited to opensource ones like Firefox, but also those that cannot be
-> >> >     modified since they are binary-only and, maybe, statically linked.
-> >> > 
-> >> > Speaking of statistics, more numbers can be found in the very first
-> >> > submission, that is related to this one [1]. For my current setup with
-> >> > two Firefox instances I get 100 to 200 MiB saved for the second instance
-> >> > depending on the amount of tabs.
-> >> > 
-> >> > 1 FF instance with 15 tabs:
-> >> > 
-> >> >    $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
-> >> >    410
-> >> > 
-> >> > 2 FF instances, second one has 12 tabs (all the tabs are different):
-> >> > 
-> >> >    $ echo "$(cat /sys/kernel/mm/ksm/pages_sharing) * 4 / 1024" | bc
-> >> >    592
-> >> > 
-> >> > At the very moment I do not have specific numbers for containerised
-> >> > workload, but those should be comparable in case the containers share
-> >> > similar/same runtime.
-> >> > 
-> >> > [1] https://lore.kernel.org/patchwork/patch/1012142/
-> >> > 
-> >> > Reviewed-by: SeongJae Park <sjpark@amazon.de>
-> >> > Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
-> >> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> >> 
-> >> This will lead to one process calling unmerge_ksm_pages() of another. There's a
-> >> (signal_pending(current)) test there, should it check also the other task,
-> >> analogically to task 3?
-> > 
-> > Do we care about current there then? Shall we just pass mm into unmerge_ksm_pages and check the signals of the target task only, be it current or something else?
-> 
-> Dunno, it's nice to react to signals quickly, for any proces that gets them, no?
+Hi Zong,
 
-So, do you mean something like this?
+Thank you for the patch! Yet something to improve:
 
-===
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 363ec8189561..b39c237cfcf4 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -849,7 +849,8 @@ static int unmerge_ksm_pages(struct vm_area_struct *vma,
- 	for (addr = start; addr < end && !err; addr += PAGE_SIZE) {
- 		if (ksm_test_exit(vma->vm_mm))
- 			break;
--		if (signal_pending(current))
-+		if (signal_pending(current) ||
-+		    signal_pending(rcu_dereference(vma->vm_mm->owner)))
- 			err = -ERESTARTSYS;
- 		else
- 			err = break_ksm(vma, addr);
-===
+[auto build test ERROR on v5.6-rc5]
+[also build test ERROR on next-20200306]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-BTW, this won't work with !CONFIG_MEMCG, so probably task_struct should be
-passed through instead. IIUC, this would also require amending struct
-mm_slot in order to share the same code path with ksmd.
+url:    https://github.com/0day-ci/linux/commits/Zong-Li/Support-strict-kernel-memory-permissions-for-security/20200309-172554
+base:    2c523b344dfa65a3738e7039832044aa133c75fb
+config: riscv-nommu_virt_defconfig (attached as .config)
+compiler: riscv64-linux-gcc (GCC) 7.5.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=7.5.0 make.cross ARCH=riscv 
 
-I'm not sure I've seen such a culprit anywhere else, so I'm in doubt
-this would be a correct thing to do.
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Ideas?
+All errors (new ones prefixed by >>):
 
-> 
-> >> Then break_ksm() is fine as it is, as ksmd also calls it, right?
-> > 
-> > I think break_ksm() cares only about mmap_sem protection, so we should
-> > be fine here.
-> > 
-> >> 
-> >> > ---
-> >> >  mm/madvise.c | 4 ++++
-> >> >  1 file changed, 4 insertions(+)
-> >> > 
-> >> > diff --git a/mm/madvise.c b/mm/madvise.c
-> >> > index e77c6c1fad34..f4fa962ee74d 100644
-> >> > --- a/mm/madvise.c
-> >> > +++ b/mm/madvise.c
-> >> > @@ -1005,6 +1005,10 @@ process_madvise_behavior_valid(int behavior)
-> >> >  	switch (behavior) {
-> >> >  	case MADV_COLD:
-> >> >  	case MADV_PAGEOUT:
-> >> > +#ifdef CONFIG_KSM
-> >> > +	case MADV_MERGEABLE:
-> >> > +	case MADV_UNMERGEABLE:
-> >> > +#endif
-> >> >  		return true;
-> >> >  	default:
-> >> >  		return false;
-> >> > 
-> >> 
-> > 
-> 
+   In file included from arch/riscv//kernel/patch.c:6:0:
+   arch/riscv//kernel/patch.c: In function 'riscv_insn_write':
+>> arch/riscv//kernel/patch.c:63:25: error: 'patch_lock' undeclared (first use in this function); did you mean 'patch_map'?
+     raw_spin_lock_irqsave(&patch_lock, flags);
+                            ^
+   include/linux/spinlock.h:250:34: note: in definition of macro 'raw_spin_lock_irqsave'
+      flags = _raw_spin_lock_irqsave(lock); \
+                                     ^~~~
+   arch/riscv//kernel/patch.c:63:25: note: each undeclared identifier is reported only once for each function it appears in
+     raw_spin_lock_irqsave(&patch_lock, flags);
+                            ^
+   include/linux/spinlock.h:250:34: note: in definition of macro 'raw_spin_lock_irqsave'
+      flags = _raw_spin_lock_irqsave(lock); \
+                                     ^~~~
+>> arch/riscv//kernel/patch.c:66:25: error: 'FIX_TEXT_POKE1' undeclared (first use in this function)
+      patch_map(addr + len, FIX_TEXT_POKE1);
+                            ^~~~~~~~~~~~~~
+>> arch/riscv//kernel/patch.c:68:26: error: 'FIX_TEXT_POKE0' undeclared (first use in this function); did you mean 'FIX_TEXT_POKE1'?
+     waddr = patch_map(addr, FIX_TEXT_POKE0);
+                             ^~~~~~~~~~~~~~
+                             FIX_TEXT_POKE1
 
--- 
-  Best regards,
-    Oleksandr Natalenko (post-factum)
-    Principal Software Maintenance Engineer
+vim +63 arch/riscv//kernel/patch.c
 
+    55	
+    56	static int __kprobes riscv_insn_write(void *addr, const void *insn, size_t len)
+    57	{
+    58		void *waddr = addr;
+    59		bool across_pages = (((uintptr_t) addr & ~PAGE_MASK) + len) > PAGE_SIZE;
+    60		unsigned long flags = 0;
+    61		int ret;
+    62	
+  > 63		raw_spin_lock_irqsave(&patch_lock, flags);
+    64	
+    65		if (across_pages)
+  > 66			patch_map(addr + len, FIX_TEXT_POKE1);
+    67	
+  > 68		waddr = patch_map(addr, FIX_TEXT_POKE0);
+    69	
+    70		ret = probe_kernel_write(waddr, insn, len);
+    71	
+    72		patch_unmap(FIX_TEXT_POKE0);
+    73	
+    74		if (across_pages)
+    75			patch_unmap(FIX_TEXT_POKE1);
+    76	
+    77		raw_spin_unlock_irqrestore(&patch_lock, flags);
+    78	
+    79		return ret;
+    80	}
+    81	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+
+--y0ulUmNC+osPPQO6
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--y0ulUmNC+osPPQO6--
