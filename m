@@ -2,287 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CBE017E34A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDAF17E357
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCIPSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:18:00 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:11938 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726922AbgCIPSA (ORCPT
+        id S1727113AbgCIPSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:18:10 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:40943 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726922AbgCIPSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:18:00 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1583767079; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=FG36tlScvIlW2p6aNKvKZLPCIVnMfuX6zVT3CFSEtyc=; b=aPCKZ5r0indbjiy4yDBRD4JTDAGY69noW6DQfRaaKR2Ygczh7d5SZCH5zB59Fp8wuH3gmoVd
- XIp+rnJ3LWtQpEG/bLOPKv0j0k6nPhSd+442mKC0mhlh5bBhfW0/noT43j2Yu+sBonbBJF0Q
- quM+eKAlJuGHsmWZJ9dDgKfdqEo=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e665e24.7f2cf0bbea78-smtp-out-n02;
- Mon, 09 Mar 2020 15:17:56 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7579DC44795; Mon,  9 Mar 2020 15:17:56 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5C5C9C44792;
-        Mon,  9 Mar 2020 15:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C5C9C44792
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     smasetty@codeaurora.org, John Stultz <john.stultz@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v5 2/2] drm/msm/a6xx: Use the DMA API for GMU memory objects
-Date:   Mon,  9 Mar 2020 09:17:46 -0600
-Message-Id: <1583767066-1555-3-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583767066-1555-1-git-send-email-jcrouse@codeaurora.org>
-References: <1583767066-1555-1-git-send-email-jcrouse@codeaurora.org>
+        Mon, 9 Mar 2020 11:18:09 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id BB9E322050;
+        Mon,  9 Mar 2020 11:18:08 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 09 Mar 2020 11:18:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=FzkSUNOJXK4eu8BOSDV7DOU/ZSv
+        0p8/ceeRaBi0OHNk=; b=mZjuohJ0nrVUq8Ue73mun2mtyARxgeJ/pndzyv8JVoq
+        LLGkv8gIoDpQWf9UIDMKntzoe4ZexFB43zTNvXtGLioHPhijF3FPUtaDAmnnf3UX
+        WAVwsMaH2V5m24509WN/OKYNSfSKDKu8GVzG2drbWNUpc04mnzOaSq2lj2J7XMge
+        8Y/UaH0ccDs6oC+xFPI2n491EXkRpEshZUij3YU/X12ZWlLFP2F3MWoM/IG2vcIG
+        b2qPqafr1n25DTUD6H8sYwqBpwFhR+CqDhOQubwHgY6oWOBtJuCcGMgeKlTGLcIo
+        p2iBrjXVZr6ZAOJP2xm35t3EyApvzDvhWoKkqfj2hqw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FzkSUN
+        OJXK4eu8BOSDV7DOU/ZSv0p8/ceeRaBi0OHNk=; b=A/PofnUFdfVssU2mni2W9H
+        7mnoSAT49qAooyCQVmUz+Cl42YTZU1JZERaZCdIqodYkLsdMS8IoLAAlFvZSASyj
+        9bDTSlonWFG2Q56WfNxysMbi1aR21Iza2m69qbsvi91RtIOLZxdP/RFmj3w9Hbr7
+        ApPni+iJY5xds7FKSWErx5YyVPRkEor+HpXgBXWTfSUF5Bx1trrFJQZFuIK1Q5YV
+        eSpGIpRUGXssK4crjdQHu2szfcVnKoo5ewBwh2Jtteilq4VV73ZEoD+/El77ZAtE
+        Qcv1DwI2BBw7keImgiSz4BIdiXPzy5iVoz2izn0oaERaozRlSZS0UJ2/6F5pq7+A
+        ==
+X-ME-Sender: <xms:MF5mXr180yGr00Kr_31--sZ11gGHmIwUmROBtRXaV9Yr-SRyuqnDQQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddukedgjeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:MF5mXkWdGVq1UT1bBxS1jkvlAh__HZ4myBbz4np9x0C676ie2lrZYA>
+    <xmx:MF5mXhWQ-M6iLmYQXobJM0O8J3Z-dlhsr5XUXP-8mX_YV3qTAMUSdA>
+    <xmx:MF5mXnFWQ8WVdg27LQrhLc17QJJ6oNnFrU-OnznAdkQTZvqaFeKOCA>
+    <xmx:MF5mXgUrUSNa6IpyrNAGFYeYHfV5k2i-0hwIypr3y7mqm3vIdqKdvQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id EFFB4328005D;
+        Mon,  9 Mar 2020 11:18:07 -0400 (EDT)
+Date:   Mon, 9 Mar 2020 16:18:06 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: allwinner: h6: Move ext. oscillator
+ to board DTs
+Message-ID: <20200309151806.7sxgis4akb6zdmuv@gilmour.lan>
+References: <20200308135849.106333-1-jernej.skrabec@siol.net>
+ <20200308135849.106333-3-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="elcgw7ieqvmk4fns"
+Content-Disposition: inline
+In-Reply-To: <20200308135849.106333-3-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GMU has very few memory allocations and uses a flat memory space so
-there is no good reason to go out of our way to bypass the DMA APIs which
-were basically designed for this exact scenario.
 
-v4: Use dma_alloc_wc()
-v3: Set the dma mask correctly and use dma_addr_t for the iova type
-v2: Pass force_dma false to of_dma_configure to require that the DMA
-region be set up and return error from of_dma_configure to fail probe.
+--elcgw7ieqvmk4fns
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
+On Sun, Mar 08, 2020 at 02:58:49PM +0100, Jernej Skrabec wrote:
+> It turns out that not all H6 boards have external 32kHz oscillator.
+> Currently the only one known such H6 board is Tanix TX6.
+>
+> Move external oscillator node from common H6 dtsi to board specific dts
+> files where present.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 113 ++++------------------------------
- drivers/gpu/drm/msm/adreno/a6xx_gmu.h |   6 +-
- 2 files changed, 12 insertions(+), 107 deletions(-)
+Applied, thanks
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 748cd37..dd51dd0 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -2,6 +2,7 @@
- /* Copyright (c) 2017-2019 The Linux Foundation. All rights reserved. */
- 
- #include <linux/clk.h>
-+#include <linux/dma-mapping.h>
- #include <linux/interconnect.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_opp.h>
-@@ -920,21 +921,10 @@ int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
- 
- static void a6xx_gmu_memory_free(struct a6xx_gmu *gmu, struct a6xx_gmu_bo *bo)
- {
--	int count, i;
--	u64 iova;
--
- 	if (IS_ERR_OR_NULL(bo))
- 		return;
- 
--	count = bo->size >> PAGE_SHIFT;
--	iova = bo->iova;
--
--	for (i = 0; i < count; i++, iova += PAGE_SIZE) {
--		iommu_unmap(gmu->domain, iova, PAGE_SIZE);
--		__free_pages(bo->pages[i], 0);
--	}
--
--	kfree(bo->pages);
-+	dma_free_wc(gmu->dev, bo->size, bo->virt, bo->iova);
- 	kfree(bo);
- }
- 
-@@ -942,7 +932,6 @@ static struct a6xx_gmu_bo *a6xx_gmu_memory_alloc(struct a6xx_gmu *gmu,
- 		size_t size)
- {
- 	struct a6xx_gmu_bo *bo;
--	int ret, count, i;
- 
- 	bo = kzalloc(sizeof(*bo), GFP_KERNEL);
- 	if (!bo)
-@@ -950,86 +939,14 @@ static struct a6xx_gmu_bo *a6xx_gmu_memory_alloc(struct a6xx_gmu *gmu,
- 
- 	bo->size = PAGE_ALIGN(size);
- 
--	count = bo->size >> PAGE_SHIFT;
-+	bo->virt = dma_alloc_wc(gmu->dev, bo->size, &bo->iova, GFP_KERNEL);
- 
--	bo->pages = kcalloc(count, sizeof(struct page *), GFP_KERNEL);
--	if (!bo->pages) {
-+	if (!bo->virt) {
- 		kfree(bo);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	for (i = 0; i < count; i++) {
--		bo->pages[i] = alloc_page(GFP_KERNEL);
--		if (!bo->pages[i])
--			goto err;
--	}
--
--	bo->iova = gmu->uncached_iova_base;
--
--	for (i = 0; i < count; i++) {
--		ret = iommu_map(gmu->domain,
--			bo->iova + (PAGE_SIZE * i),
--			page_to_phys(bo->pages[i]), PAGE_SIZE,
--			IOMMU_READ | IOMMU_WRITE);
--
--		if (ret) {
--			DRM_DEV_ERROR(gmu->dev, "Unable to map GMU buffer object\n");
--
--			for (i = i - 1 ; i >= 0; i--)
--				iommu_unmap(gmu->domain,
--					bo->iova + (PAGE_SIZE * i),
--					PAGE_SIZE);
--
--			goto err;
--		}
--	}
--
--	bo->virt = vmap(bo->pages, count, VM_IOREMAP,
--		pgprot_writecombine(PAGE_KERNEL));
--	if (!bo->virt)
--		goto err;
--
--	/* Align future IOVA addresses on 1MB boundaries */
--	gmu->uncached_iova_base += ALIGN(size, SZ_1M);
--
- 	return bo;
--
--err:
--	for (i = 0; i < count; i++) {
--		if (bo->pages[i])
--			__free_pages(bo->pages[i], 0);
--	}
--
--	kfree(bo->pages);
--	kfree(bo);
--
--	return ERR_PTR(-ENOMEM);
--}
--
--static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
--{
--	int ret;
--
--	/*
--	 * The GMU address space is hardcoded to treat the range
--	 * 0x60000000 - 0x80000000 as un-cached memory. All buffers shared
--	 * between the GMU and the CPU will live in this space
--	 */
--	gmu->uncached_iova_base = 0x60000000;
--
--
--	gmu->domain = iommu_domain_alloc(&platform_bus_type);
--	if (!gmu->domain)
--		return -ENODEV;
--
--	ret = iommu_attach_device(gmu->domain, gmu->dev);
--
--	if (ret) {
--		iommu_domain_free(gmu->domain);
--		gmu->domain = NULL;
--	}
--
--	return ret;
- }
- 
- /* Return the 'arc-level' for the given frequency */
-@@ -1289,10 +1206,6 @@ void a6xx_gmu_remove(struct a6xx_gpu *a6xx_gpu)
- 
- 	a6xx_gmu_memory_free(gmu, gmu->hfi);
- 
--	iommu_detach_device(gmu->domain, gmu->dev);
--
--	iommu_domain_free(gmu->domain);
--
- 	free_irq(gmu->gmu_irq, gmu);
- 	free_irq(gmu->hfi_irq, gmu);
- 
-@@ -1313,7 +1226,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 
- 	gmu->dev = &pdev->dev;
- 
--	of_dma_configure(gmu->dev, node, true);
-+	/* Pass force_dma false to require the DT to set the dma region */
-+	ret = of_dma_configure(gmu->dev, node, false);
-+	if (ret)
-+		return ret;
-+
-+	/* Set the mask after the of_dma_configure() */
-+	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(31));
- 
- 	/* Fow now, don't do anything fancy until we get our feet under us */
- 	gmu->idle_level = GMU_IDLE_STATE_ACTIVE;
-@@ -1325,11 +1244,6 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 	if (ret)
- 		goto err_put_device;
- 
--	/* Set up the IOMMU context bank */
--	ret = a6xx_gmu_memory_probe(gmu);
--	if (ret)
--		goto err_put_device;
--
- 	/* Allocate memory for for the HFI queues */
- 	gmu->hfi = a6xx_gmu_memory_alloc(gmu, SZ_16K);
- 	if (IS_ERR(gmu->hfi))
-@@ -1375,11 +1289,6 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- err_memory:
- 	a6xx_gmu_memory_free(gmu, gmu->hfi);
- 
--	if (gmu->domain) {
--		iommu_detach_device(gmu->domain, gmu->dev);
--
--		iommu_domain_free(gmu->domain);
--	}
- 	ret = -ENODEV;
- 
- err_put_device:
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-index 2af91ed..4af65a3 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-@@ -12,8 +12,7 @@
- struct a6xx_gmu_bo {
- 	void *virt;
- 	size_t size;
--	u64 iova;
--	struct page **pages;
-+	dma_addr_t iova;
- };
- 
- /*
-@@ -49,9 +48,6 @@ struct a6xx_gmu {
- 	int hfi_irq;
- 	int gmu_irq;
- 
--	struct iommu_domain *domain;
--	u64 uncached_iova_base;
--
- 	struct device *gxpd;
- 
- 	int idle_level;
--- 
-2.7.4
+Maxime
+
+--elcgw7ieqvmk4fns
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXmZeLgAKCRDj7w1vZxhR
+xellAP97yFvv1suUpEeMYtlmRBIx/T+Noww6myEv6ikcflh4ZwD9E0I1jVOnDbbP
+S3hbh1vdMREygEhT05r0c3C4QcQ26A0=
+=+m/H
+-----END PGP SIGNATURE-----
+
+--elcgw7ieqvmk4fns--
