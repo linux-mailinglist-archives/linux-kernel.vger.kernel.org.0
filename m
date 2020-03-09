@@ -2,176 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABDC17E5DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:36:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B7D17E5D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbgCIRgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 13:36:48 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:60476 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbgCIRgr (ORCPT
+        id S1727413AbgCIRe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 13:34:56 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:46370 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbgCIRe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 13:36:47 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBMKZ-00016U-Gy; Mon, 09 Mar 2020 11:36:43 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBMKY-0007sX-Iu; Mon, 09 Mar 2020 11:36:43 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nmjulm.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87pndm5y3l.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170FBDA2F0F19ECF2906703E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Mon, 09 Mar 2020 12:34:24 -0500
-In-Reply-To: <AM6PR03MB5170FBDA2F0F19ECF2906703E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Mon, 9 Mar 2020 13:56:54 +0000")
-Message-ID: <87mu8p4elb.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 9 Mar 2020 13:34:56 -0400
+Received: by mail-il1-f193.google.com with SMTP id e8so9416165ilc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 10:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ApATodv8Am9ujhMEtBHZPqW70inNY25NHpEVeLaEJS8=;
+        b=BMwB3RStSKIJiDZ+rW1tapXVJFXrpECngEU4yoCfBahr42ryFItvJr9PHV2F+7H2ql
+         a8lqk8hqOd4jtPkjOefQtqDub0bgKYOf6QwAnJmDwRqU7ESBf5GnqwpZRtKxfXMfjpK0
+         AhNQvI5+pyifRJNG02Hdt5GTurHg+dcJnniFq6ma9gwvL8cCK+p25JlS5QnhAiarswax
+         HnD8Avp5zBg0RVK6kw6cIof6SrjxjjiTZNl+yrulZZq39MCbChr3OZgXBSKgfh0wqDld
+         HYcyeSjeBDok9FSrbExR3DEFA8idA84jnAcW+2IRuEawpzf0lQ5shuJzMc+PDEtFD+iY
+         w2hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ApATodv8Am9ujhMEtBHZPqW70inNY25NHpEVeLaEJS8=;
+        b=YplkiKzlBTknBMS6oS1cW/q0CXwkJ7Fb3c4YskjN59emVs49vRUeiOigR/oCZDOFJg
+         UpHkatbtPxVcOuYMibMZ3Mm2qn5H6zGdCioPV0r/BRyqVcOb6/mC++uyEt/MosMl7wAD
+         z/Qt76XUjlYE2unheoaUysPvUdxvTWqf03R6gpD6RywcWK+wtpOAXLgqymozdN1Ovwm5
+         QUtqP2B5rBg/1pFobeUp4gx85iSk7GA3eTkKU1azMcaGd0uxgN/aP5If36cMorrK4nrW
+         L+vH/RpA4y3luzlFnF5/nf+LhnDZr3eoSw8nQtP/UQAcCgYVR0SUV6MTUhBCzRlNZDqO
+         up6g==
+X-Gm-Message-State: ANhLgQ1RLwAPVWoDGNS1OmtQPhFQHLadGNQJj/3LwQ2S0A0hmOXAcyp+
+        TITOEawc6ZNe8wixcF+mENzVdTNNOEHuED4sazkWyg==
+X-Google-Smtp-Source: ADFU+vsWUJUgLPEpHpmSHEuF+s3xAiAj1cYQfkg//rVgbBCo9iYjZ+Tk1b+JfpGL8M5a27rDabsK1Y0BpfiMQYafmlY=
+X-Received: by 2002:a92:8586:: with SMTP id f128mr5107434ilh.50.1583775294490;
+ Mon, 09 Mar 2020 10:34:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBMKY-0007sX-Iu;;;mid=<87mu8p4elb.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/gNgifOiuTUXAnVHdP8jsGgkYYuPh4Nbk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 329 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.7 (0.8%), b_tie_ro: 1.94 (0.6%), parse: 0.99
-        (0.3%), extract_message_metadata: 14 (4.1%), get_uri_detail_list: 1.33
-        (0.4%), tests_pri_-1000: 17 (5.3%), tests_pri_-950: 1.16 (0.4%),
-        tests_pri_-900: 1.04 (0.3%), tests_pri_-90: 31 (9.4%), check_bayes: 30
-        (9.0%), b_tokenize: 12 (3.5%), b_tok_get_all: 9 (2.6%), b_comp_prob:
-        2.8 (0.8%), b_tok_touch_all: 4.4 (1.3%), b_finish: 0.68 (0.2%),
-        tests_pri_0: 249 (75.6%), check_dkim_signature: 0.54 (0.2%),
-        check_dkim_adsp: 10 (3.0%), poll_dns_idle: 0.45 (0.1%), tests_pri_10:
-        2.0 (0.6%), tests_pri_500: 7 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 1/5] exec: Only compute current once in flush_old_exec
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
+ <1582167465-2549-7-git-send-email-sidgup@codeaurora.org> <20200227215940.GC20116@xps15>
+ <1a615fcd5a5c435d1d8babe8d5c3f8c3@codeaurora.org> <20200228183832.GA23026@xps15>
+ <cac45f2726a272ccd0ce82e12e46756f@codeaurora.org> <CANLsYkzUh_BRjapX_jDZZ00Lj8MMgMPM12+otYHDKqad1s-qHQ@mail.gmail.com>
+ <050a8613cd00a84678b4478ef3387465@codeaurora.org>
+In-Reply-To: <050a8613cd00a84678b4478ef3387465@codeaurora.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 9 Mar 2020 11:34:43 -0600
+Message-ID: <CANLsYkyrzNPUymuJzehEOAA2FV+WDohUpgCYTNdbGCJBoat2cg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Add notification types to SSR
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, tsoni@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>,
+        psodagud@codeaurora.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-remoteproc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-
-> On 3/8/20 10:35 PM, Eric W. Biederman wrote:
->> 
->> Make it clear that current only needs to be computed once in
->> flush_old_exec.  This may have some efficiency improvements and it
->> makes the code easier to change.
->> 
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> ---
->>  fs/exec.c | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->> 
->> diff --git a/fs/exec.c b/fs/exec.c
->> index db17be51b112..c3f34791f2f0 100644
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -1260,13 +1260,14 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
->>   */
->>  int flush_old_exec(struct linux_binprm * bprm)
->>  {
->> +	struct task_struct *me = current;
->>  	int retval;
->>  
->>  	/*
->>  	 * Make sure we have a private signal table and that
->>  	 * we are unassociated from the previous thread group.
->>  	 */
->> -	retval = de_thread(current);
->> +	retval = de_thread(me);
->>  	if (retval)
->>  		goto out;
->>  
->> @@ -1294,10 +1295,10 @@ int flush_old_exec(struct linux_binprm * bprm)
->>  	bprm->mm = NULL;
->>  
->>  	set_fs(USER_DS);
->> -	current->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
->> +	me->flags &= ~(PF_RANDOMIZE | PF_FORKNOEXEC | PF_KTHREAD |
->>  					PF_NOFREEZE | PF_NO_SETAFFINITY);
+On Tue, 3 Mar 2020 at 16:30, <rishabhb@codeaurora.org> wrote:
 >
-> I wonder if this line should be aligned with the previous?
+> On 2020-03-03 10:05, Mathieu Poirier wrote:
+> > On Mon, 2 Mar 2020 at 13:54, <rishabhb@codeaurora.org> wrote:
+> >>
+> >> On 2020-02-28 10:38, Mathieu Poirier wrote:
+> >> > On Thu, Feb 27, 2020 at 04:00:21PM -0800, rishabhb@codeaurora.org
+> >> > wrote:
+> >> >> On 2020-02-27 13:59, Mathieu Poirier wrote:
+> >> >> > On Wed, Feb 19, 2020 at 06:57:45PM -0800, Siddharth Gupta wrote:
+> >> >> > > The SSR subdevice only adds callback for the unprepare event. Add
+> >> >> > > callbacks
+> >> >> > > for unprepare, start and prepare events. The client driver for a
+> >> >> > > particular
+> >> >> > > remoteproc might be interested in knowing the status of the remoteproc
+> >> >> > > while undergoing SSR, not just when the remoteproc has finished
+> >> >> > > shutting
+> >> >> > > down.
+> >> >> > >
+> >> >> > > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> >> >> > > ---
+> >> >> > >  drivers/remoteproc/qcom_common.c | 39
+> >> >> > > +++++++++++++++++++++++++++++++++++----
+> >> >> > >  include/linux/remoteproc.h       | 15 +++++++++++++++
+> >> >> > >  2 files changed, 50 insertions(+), 4 deletions(-)
+> >> >> > >
+> >> >> > > diff --git a/drivers/remoteproc/qcom_common.c
+> >> >> > > b/drivers/remoteproc/qcom_common.c
+> >> >> > > index 6714f27..6f04a5b 100644
+> >> >> > > --- a/drivers/remoteproc/qcom_common.c
+> >> >> > > +++ b/drivers/remoteproc/qcom_common.c
+> >> >> > > @@ -183,9 +183,9 @@ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
+> >> >> > >   *
+> >> >> > >   * Returns pointer to srcu notifier head on success, ERR_PTR on
+> >> >> > > failure.
+> >> >> > >   *
+> >> >> > > - * This registers the @notify function as handler for restart
+> >> >> > > notifications. As
+> >> >> > > - * remote processors are stopped this function will be called, with
+> >> >> > > the rproc
+> >> >> > > - * pointer passed as a parameter.
+> >> >> > > + * This registers the @notify function as handler for
+> >> >> > > powerup/shutdown
+> >> >> > > + * notifications. This function will be invoked inside the
+> >> >> > > callbacks registered
+> >> >> > > + * for the ssr subdevice, with the rproc pointer passed as a
+> >> >> > > parameter.
+> >> >> > >   */
+> >> >> > >  void *qcom_register_ssr_notifier(struct rproc *rproc, struct
+> >> >> > > notifier_block *nb)
+> >> >> > >  {
+> >> >> > > @@ -227,11 +227,39 @@ int qcom_unregister_ssr_notifier(void *notify,
+> >> >> > > struct notifier_block *nb)
+> >> >> > >  }
+> >> >> > >  EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+> >> >> > >
+> >> >> > > +static int ssr_notify_prepare(struct rproc_subdev *subdev)
+> >> >> > > +{
+> >> >> > > +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> >> > > +
+> >> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> >> > > +                                 RPROC_BEFORE_POWERUP, (void *)ssr->name);
+> >> >> > > +        return 0;
+> >> >> > > +}
+> >> >> > > +
+> >> >> > > +static int ssr_notify_start(struct rproc_subdev *subdev)
+> >> >> > > +{
+> >> >> > > +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> >> > > +
+> >> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> >> > > +                                 RPROC_AFTER_POWERUP, (void *)ssr->name);
+> >> >> > > +        return 0;
+> >> >> > > +}
+> >> >> > > +
+> >> >> > > +static void ssr_notify_stop(struct rproc_subdev *subdev, bool
+> >> >> > > crashed)
+> >> >> > > +{
+> >> >> > > +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> >> > > +
+> >> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> >> > > +                                 RPROC_BEFORE_SHUTDOWN, (void *)ssr->name);
+> >> >> > > +}
+> >> >> > > +
+> >> >> > > +
+> >> >> > >  static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+> >> >> > >  {
+> >> >> > >          struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> >> >> > >
+> >> >> > > -        srcu_notifier_call_chain(ssr->rproc_notif_list, 0, (void
+> >> >> > > *)ssr->name);
+> >> >> > > +        srcu_notifier_call_chain(ssr->rproc_notif_list,
+> >> >> > > +                                 RPROC_AFTER_SHUTDOWN, (void *)ssr->name);
+> >> >> > >  }
+> >> >> > >
+> >> >> > >  /**
+> >> >> > > @@ -248,6 +276,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc,
+> >> >> > > struct qcom_rproc_ssr *ssr,
+> >> >> > >  {
+> >> >> > >          ssr->name = ssr_name;
+> >> >> > >          ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
+> >> >> > > +        ssr->subdev.prepare = ssr_notify_prepare;
+> >> >> > > +        ssr->subdev.start = ssr_notify_start;
+> >> >> > > +        ssr->subdev.stop = ssr_notify_stop;
+> >> >> >
+> >> >> > Now that I have a better understanding of what this patchset is doing, I
+> >> >> > realise
+> >> >> > my comments in patch 04 won't work.  To differentiate the subdevs of an
+> >> >> > rproc I
+> >> >> > suggest to wrap them in a generic structure with a type and an enum.
+> >> >> > That way
+> >> >> > you can differenciate between subdevices without having to add to the
+> >> >> > core.
+> >> >> Ok. I can try that.
+> >> >> >
+> >> >> > That being said, I don't understand what patches 5 and 6 are doing...
+> >> >> > Registering with the global ssr_notifiers allowed to gracefully shutdown
+> >> >> > all the
+> >> >> > MCUs in the system when one of them would go down.  But now that we are
+> >> >> > using
+> >> >> > the notifier on a per MCU, I really don't see why each subdev couldn't
+> >> >> > implement
+> >> >> > the right prepare/start/stop functions.
+> >> >> >
+> >> >> > Am I missing something here?
+> >> >> We only want kernel clients to be notified when the Remoteproc they
+> >> >> are
+> >> >> interested
+> >> >> in changes state. For e.g. audio kernel driver should be notified when
+> >> >> audio
+> >> >> processor goes down but it does not care about any other remoteproc.
+> >> >> If you are suggesting that these kernel clients be added as subdevices
+> >> >> then
+> >> >> we will end up having many subdevices registered to each remoteproc.
+> >> >> So we
+> >> >> implemented a notifier chain per Remoteproc. This keeps the SSR
+> >> >> notifications as
+> >> >> the subdevice per remoteproc, and all interested clients can register
+> >> >> to it.
+> >> >
+> >> > It seems like I am missing information...  Your are referring to
+> >> > "kernel
+> >> > clients" and as such I must assume some drivers that are not part of
+> >> > the
+> >> > remoteproc/rpmsg subsystems are calling qcom_register_ssr_notifier().
+> >> > I must
+> >> Yes these are not part of remoteproc framework and they will register
+> >> for notifications.
+> >> > also assume these drivers (or that functionality) are not yet upsream
+> >> > because
+> >> > all I can see calling qcom_register_ssr_notifier() is
+> >> > qcom_glink_ssr_probe().
+> >> Correct.These are not upstreamed.
+> >
+> > Ok, things are starting to make sense.
+> >
+> >> >
+> >> > Speaking of which, what is the role of the qcom_glink_ssr_driver?  Is
+> >> > the glink
+> >> > device that driver is handling the same as the glink device registed in
+> >> > adsp_probe() and q6v5_probe()?
+> >> glink ssr driver will send out notifications to remoteprocs that have
+> >> opened the
+> >> "glink_ssr" channel that some subsystem has gone down or booted up.
+> >> This
+> >> helps notify
+> >> neighboring subsystems about change in state of any other subsystem.
+> >
+> > I am still looking for an answer to my second question.
+> Yes its the subdevice of the glink device that is registered in
+> adsp_probe.
+> It uses the "glink_ssr" glink channel.
 
-In this case I don't think so.  The style used for second line is indent
-with tabs as much as possible to the right.  I haven't changed that.
+Since this is confining events to a single MCU, I was mostly worried
+about opening the "glink_ssr" channel for nothing but taking a step
+back and thinking further on this, there might be other purposes for
+the channel than only receiving notifications of other MCUs in the
+system going down.
 
-Further mixing a change in indentation style with just a variable rename
-will make the patch confusing to read because two things have to be
-verified at the same time.
+Please spin off a new revision of this set and I will take another look.
 
-So while I see why you ask I think this bit needs to stay as is.
+Thanks,
+Mathieu
 
-Eric
-
-
-
-
+> >
+> >> >
+> >> >> >
+> >> >> >
+> >> >> > >          ssr->subdev.unprepare = ssr_notify_unprepare;
+> >> >> > >          ssr->rproc_notif_list = kzalloc(sizeof(struct srcu_notifier_head),
+> >> >> > >                                                                  GFP_KERNEL);
+> >> >> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> >> > > index e2f60cc..4be4478 100644
+> >> >> > > --- a/include/linux/remoteproc.h
+> >> >> > > +++ b/include/linux/remoteproc.h
+> >> >> > > @@ -449,6 +449,21 @@ struct rproc_dump_segment {
+> >> >> > >  };
+> >> >> > >
+> >> >> > >  /**
+> >> >> > > + * enum rproc_notif_type - Different stages of remoteproc
+> >> >> > > notifications
+> >> >> > > + * @RPROC_BEFORE_SHUTDOWN:      unprepare stage of  remoteproc
+> >> >> > > + * @RPROC_AFTER_SHUTDOWN:       stop stage of  remoteproc
+> >> >> > > + * @RPROC_BEFORE_POWERUP:       prepare stage of  remoteproc
+> >> >> > > + * @RPROC_AFTER_POWERUP:        start stage of  remoteproc
+> >> >> > > + */
+> >> >> > > +enum rproc_notif_type {
+> >> >> > > +        RPROC_BEFORE_SHUTDOWN,
+> >> >> > > +        RPROC_AFTER_SHUTDOWN,
+> >> >> > > +        RPROC_BEFORE_POWERUP,
+> >> >> > > +        RPROC_AFTER_POWERUP,
+> >> >> > > +        RPROC_MAX
+> >> >> > > +};
+> >> >> > > +
+> >> >> > > +/**
+> >> >> > >   * struct rproc - represents a physical remote processor device
+> >> >> > >   * @node: list node of this rproc object
+> >> >> > >   * @domain: iommu domain
+> >> >> > > --
+> >> >> > > Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> >> >> > > a Linux Foundation Collaborative Project
+> >> >> > >
+> >> >> > > _______________________________________________
+> >> >> > > linux-arm-kernel mailing list
+> >> >> > > linux-arm-kernel@lists.infradead.org
+> >> >> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >>
+> >> _______________________________________________
+> >> linux-arm-kernel mailing list
+> >> linux-arm-kernel@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
