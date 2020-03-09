@@ -2,90 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B8017D85F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 05:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC3A17D88A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 05:15:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgCIEDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 00:03:10 -0400
-Received: from mail-pl1-f180.google.com ([209.85.214.180]:41915 "EHLO
-        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbgCIEDJ (ORCPT
+        id S1726403AbgCIEP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 00:15:57 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43132 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgCIEP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 00:03:09 -0400
-Received: by mail-pl1-f180.google.com with SMTP id t14so3427442plr.8
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 21:03:07 -0700 (PDT)
+        Mon, 9 Mar 2020 00:15:56 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u12so4097757pgb.10;
+        Sun, 08 Mar 2020 21:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MePM1LXmB9zu10CipKCKT3AOCH0ORjlABBFj6iXCvwo=;
-        b=g98VXD5fWvExJ1O1zTNwK2U30AXvWKVY+rszXkxQb4p4RypmzbUbGoKjultjn8YWKf
-         Cc3+YRCE/xZo+6pNSg6+mUgMRDvTBTafPeUbeaTFY8+iPw7E2FSjUlKTW0xmBEcG81ci
-         KmijLJmDOXv2p0lOtqJIWLKmTWgITI9OSPx5o=
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jAoReLNBniwrpa0uZH66RQ2ZZJ/sNHlyqQJ+mmk89mc=;
+        b=sBKY5ixcRQOrBOp/pyft+S4zvUPqjKpmc1HKbQidmstpOHLfoLeJUB1bAXwWgVi69/
+         pj8YKammOpCOOeWyV1Xxbdv/T3MXi30h8eRzLa2mPwqNTAJb+gLZaopAGcW3uUeLI812
+         dMdtMcbJQ8HRq2UZj1N1Zi+t69UXv6EIX8g1b7sTXNHHrmRvJ2kgfR5MqM/9Y1q8UNof
+         uYQIYzxhqeBGzDigDR6Wn8ClhubyphvMXYhQIXuwUuo4ZO7FrS6xBMn+oQsK1fNrtVtE
+         XddnpDf4RfwwEI/eLAd43eEaVqe2VOWsY1xL8HM6rHNTAq4TaJFBfX8Ext1Sr/dfMQDw
+         xv1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MePM1LXmB9zu10CipKCKT3AOCH0ORjlABBFj6iXCvwo=;
-        b=qGc/scSIZUjtZ7B3TWvqAgwVjo0AKisqSgmY5JJ6unN9Qe2HN6758cnI411aiqoBfN
-         8v1wyaX+7s1bgHcdsgWW5lDIyhkLT7Rf8LdLytdNjsafv12+KfG13G3C7m+QGoyDHtr5
-         MKoQflhzbr9D6k46Rr+jvp9gaXUFfLfSiI1MRXWt1GY3RDfWH28vSFHlISQSWBBkzUNw
-         paBLnxb5yEq2bZksKeLjS30IVTlfLUhKvkKty92m15F2pfmRKNfQFBidzS3aT0rqjMp1
-         8EmXygWlRJJbmS2eMwIRAkldwNEAIwniHCLjN4m80BhKMHytUBB2U5m7B8N0jWcVOgsi
-         ZvEw==
-X-Gm-Message-State: ANhLgQ0yjCnotibpOt4sM1AtUbI9pDggQ3nj29gqirZN90RdrbNizMiL
-        inOkPnfTKMcKkQnv+gbuKW6wkQ==
-X-Google-Smtp-Source: ADFU+vtw1v/LUtTzhPiRwFAG99XIoB6s3/fRb+QC53epenxq92s4BOkmVBFa4hEM9XaA1/1M7jNzkg==
-X-Received: by 2002:a17:90a:8586:: with SMTP id m6mr16360811pjn.121.1583726587196;
-        Sun, 08 Mar 2020 21:03:07 -0700 (PDT)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id l13sm16686316pjq.23.2020.03.08.21.03.06
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jAoReLNBniwrpa0uZH66RQ2ZZJ/sNHlyqQJ+mmk89mc=;
+        b=ekDaYCDTwLis9hGBx0GI1oZB3anFtM2rY0IZtVQFQwPVBmwCSiJSY7IuBSbrktndc6
+         bvbTZtMgMIJhW+G9KmJpo9h52oSYwRuGVOON6fY+RYCph17MfHof9Mo9sasI/BeRe0pF
+         Y7gAmhwAFDVNzyYjZ/6EpA5QrNrPDbfXj5mH63w9aDQ6t6CABAQSkfZAilDTq8CsX5/9
+         S2b0A4ekKwcW2rdUk1rv1eRajV9A7kS+JWfSl32O4ctRWrDQkUbrlGEu5K0J8nfYIP9O
+         KLrtv8uPJ0xqovhyr7o/TtlpvnTlSYYy08Swwjo6pD/TQY0la4LMiAuepAuGwvZpart4
+         duMg==
+X-Gm-Message-State: ANhLgQ3E2T7ja8HMHbYfcBkHLvvQcinsnkksZkp8sCZFaFHt9q7CPGJY
+        N2Kf3dpzRhWrJlJxr46UJ6o=
+X-Google-Smtp-Source: ADFU+vthYSO4whGtyJkvhi5ehKTwuNj8TmTNW7ywtWsnfm7afsf05M5urNVmcZjEuJEY90+DirFWAQ==
+X-Received: by 2002:a63:2701:: with SMTP id n1mr14600491pgn.332.1583727355102;
+        Sun, 08 Mar 2020 21:15:55 -0700 (PDT)
+Received: from localhost ([2a00:79e1:abc:f604:6e29:95ff:fe2d:8f34])
+        by smtp.gmail.com with ESMTPSA id cq15sm16910709pjb.31.2020.03.08.21.15.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Mar 2020 21:03:06 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 13:03:05 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 01/11] videobuf2: add cache management members
-Message-ID: <20200309040305.GB9460@google.com>
-References: <20200302041213.27662-1-senozhatsky@chromium.org>
- <20200302041213.27662-2-senozhatsky@chromium.org>
- <17060663-9c30-de5e-da58-0c847b93e4d3@xs4all.nl>
- <20200307094634.GB29464@google.com>
- <6f5916dd-63f6-5d19-13f4-edd523205a1f@xs4all.nl>
- <20200307112838.GA125961@google.com>
- <a4d85ac3-0eea-bc19-cd44-0c8f5b71f6bc@xs4all.nl>
+        Sun, 08 Mar 2020 21:15:54 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Mon, 9 Mar 2020 13:15:51 +0900
+To:     Joe Perches <joe@perches.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH] mm: Use fallthrough;
+Message-ID: <20200309041551.GA1765@jagdpanzerIV.localdomain>
+References: <f62fea5d10eb0ccfc05d87c242a620c261219b66.camel@perches.com>
+ <20200308031825.GB1125@jagdpanzerIV.localdomain>
+ <5f297e8995b22c9ccf06d4d0a04f7d9a37d3cd77.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a4d85ac3-0eea-bc19-cd44-0c8f5b71f6bc@xs4all.nl>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <5f297e8995b22c9ccf06d4d0a04f7d9a37d3cd77.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/03/07 12:47), Hans Verkuil wrote:
+On (20/03/07 19:54), Joe Perches wrote:
+> On Sun, 2020-03-08 at 12:18 +0900, Sergey Senozhatsky wrote:
+> > On (20/03/06 23:58), Joe Perches wrote:
+> > [..]
+> > > --- a/mm/mempolicy.c
+> > > +++ b/mm/mempolicy.c
+> > > @@ -907,7 +907,6 @@ static void get_policy_nodemask(struct mempolicy *p, nodemask_t *nodes)
+> > >  
+> > >  	switch (p->mode) {
+> > >  	case MPOL_BIND:
+> > > -		/* Fall through */
+> > >  	case MPOL_INTERLEAVE:
 > 
-> 1) attempting to use V4L2_FLAG_MEMORY_NON_CONSISTENT will clear the flag
->    upon return (test with both reqbufs and create_bufs).
-> 2) attempting to use V4L2_BUF_FLAG_NO_CACHE_INVALIDATE or V4L2_BUF_FLAG_NO_CACHE_CLEAN
->
-[..]
->
-> All these tests can be done in testReqBufs().
+> Consecutive case labels do not need an interleaving fallthrough;
+> 
+> ie: ditto
 
-MEMORY_NON_CONSISTENT is a queue property, we set it during queue setup.
-NO_CACHE_INVALIDATE/FLAG_NO_CACHE_CLEAN is a buffer property, we set it
-when we qbuf. I'm not sure if all of these can be done in testReqBufts().
+I see. Shall this be mentioned in the commit message, maybe?
 
 	-ss
