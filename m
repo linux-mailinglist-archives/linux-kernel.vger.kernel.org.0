@@ -2,120 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8AB17E697
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C5217E6A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:19:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbgCISPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:15:06 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.109]:21987 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726594AbgCISPG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:15:06 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 9399C1C6A5
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 13:14:19 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BMuxjRDbtRP4zBMuxjnhy4; Mon, 09 Mar 2020 13:14:19 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vYQCUGL8WumeOljv/tFtg8GMy2fmDWSq54tfp3yvR1k=; b=JlJqa8bMCe6Uu467Ig6hPMZ6Xa
-        Y9J2KXLqm8ZydzgY2DSlqdugt9OUFmN5pudvQRxXp7lOviaHe/43Nlt2wOe6uCs29v4rKmEWDIIBW
-        MW1+HAOp8rVwpFc4X72dx/mM1EJLHI6JNcPweXxKrwhXc3QWVIu+Wv5lXX5XARDD4GTGLapNZ6yf/
-        qPeAGQVllAJuQPCLvgTR3wnZALj0rHax1hB91T+XBIiWfUuL4ia6r7TAmZwhIERl4mxfiigP/jnze
-        z11Mu7IYSLup0UgNh5qiPgS9ih4PkaurO/YJb9dxtlzpRKVN4JtVNgDQCMvJH2X18GWObCqWEqXro
-        mgSTByvw==;
-Received: from [201.162.240.150] (port=16463 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBMuv-004Hez-7K; Mon, 09 Mar 2020 13:14:17 -0500
-Date:   Mon, 9 Mar 2020 13:17:29 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Richard Weinberger <richard@nod.at>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] jffs2: nodelist.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200309181729.GA4420@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.150
-X-Source-L: No
-X-Exim-ID: 1jBMuv-004Hez-7K
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.150]:16463
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1727400AbgCISTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:19:04 -0400
+Received: from foss.arm.com ([217.140.110.172]:55612 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbgCISTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:19:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F32031FB;
+        Mon,  9 Mar 2020 11:19:02 -0700 (PDT)
+Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A35A23F67D;
+        Mon,  9 Mar 2020 11:19:01 -0700 (PDT)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        Robert Hancock <hancock@sedsystems.ca>, netdev@vger.kernel.org,
+        rmk+kernel@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v2 00/14] net: axienet: Update error handling and add 64-bit DMA support
+Date:   Mon,  9 Mar 2020 18:18:37 +0000
+Message-Id: <20200309181851.190164-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hi,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+this is an update to the axienet improvement/64-bit support series.
+Compared to v1 I fixed the issues mentioned in the reviews, removed
+the hackish and wrong SGMII fix (there is now a much better solution
+by Russell), and reworked the 64-bit DMA detection. We get away without
+a DT property now: the MSB registers are autodetected, and the full
+64 bit DMA mask is used when they are available.
+Also I fixed two additional existing bugs/issues in the driver.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+This series is based on net-next as of today (e2f5cb7280f8), which
+includes Russell's fixes [1].
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+A git branch is available at:
+http://www.linux-arm.org/git?p=linux-ap.git;a=shortlog;h=refs/heads/axienet/v2
+git://linux-arm.org/linux-ap.git branch axienet/v2
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+Thanks,
+Andre
 
-This issue was found with the help of Coccinelle.
+[1] https://lore.kernel.org/netdev/E1j6trA-0003GY-N1@rmk-PC.armlinux.org.uk/
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+Changelog v1 .. v2:
+- Add Reviewed-by: tags from Radhey
+- Extend kerndoc documentation
+- Convert DMA error handler tasklet to work queue
+- log DMA mapping errors
+- mark DMA mapping error checks as unlikely (in "hot" paths)
+- return NETDEV_TX_OK on TX DMA mapping error (increasing TX drop counter)
+- Request eth IRQ as an optional IRQ
+- Remove no longer needed MDIO IRQ register names
+- Drop DT propery check for address width, assume full 64 bit
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/jffs2/nodelist.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+===============
+This series updates the Xilinx Axienet driver to work on our board
+here. One big issue was broken SGMII support, which Russell fixed already
+(in net-next).
+While debugging and understanding the driver, I found several problems
+in the error handling and cleanup paths, which patches 2-7 address.
+Patch 8 removes a annoying error message, patch 9 paves the way for newer
+revisions of the IP. The next patch adds mii-tool support, just for good
+measure.
 
-diff --git a/fs/jffs2/nodelist.h b/fs/jffs2/nodelist.h
-index 0637271f3770..8ff4d1a1e774 100644
---- a/fs/jffs2/nodelist.h
-+++ b/fs/jffs2/nodelist.h
-@@ -259,7 +259,7 @@ struct jffs2_full_dirent
- 	uint32_t ino; /* == zero for unlink */
- 	unsigned int nhash;
- 	unsigned char type;
--	unsigned char name[0];
-+	unsigned char name[];
- };
- 
- /*
+The next four patches add support for 64-bit DMA. This is an integration
+option on newer IP revisions (>= v7.1), and expects MSB bits in formerly
+reserved registers. Without writing to those MSB registers, the state
+machine won't trigger, so it's mandatory to access them, even if they
+are zero. Patches 11 and 12 prepare the code by adding accessors, to
+wrap this properly and keep it working on older IP revisions.
+Patch 13 enables access to the MSB registers, by trying to write a
+non-zero value to them and checking if that sticks. Older IP revisions
+always read those registers as zero.
+Patch 14 then adjusts the DMA mask, based on the autodetected MSB
+feature. It uses the full 64 bits in this case, the rest of the system
+(actual physical addresses in use) should provide a natural limit if the
+chip has connected fewer address lines. If not, the parent DT node can
+use a dma-range property.
+
+The Xilinx PG138 and PG021 documents (in versions 7.1 in both cases)
+were used for this series.
+
+Andre Przywara (14):
+  net: xilinx: temac: Relax Kconfig dependencies
+  net: axienet: Convert DMA error handler to a work queue
+  net: axienet: Propagate failure of DMA descriptor setup
+  net: axienet: Fix DMA descriptor cleanup path
+  net: axienet: Improve DMA error handling
+  net: axienet: Factor out TX descriptor chain cleanup
+  net: axienet: Check for DMA mapping errors
+  net: axienet: Mark eth_irq as optional
+  net: axienet: Drop MDIO interrupt registers from ethtools dump
+  net: axienet: Add mii-tool support
+  net: axienet: Wrap DMA pointer writes to prepare for 64 bit
+  net: axienet: Upgrade descriptors to hold 64-bit addresses
+  net: axienet: Autodetect 64-bit DMA capability
+  net: axienet: Allow DMA to beyond 4GB
+
+ drivers/net/ethernet/xilinx/Kconfig           |   1 -
+ drivers/net/ethernet/xilinx/xilinx_axienet.h  |  19 +-
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 378 +++++++++++++-----
+ 3 files changed, 284 insertions(+), 114 deletions(-)
+
 -- 
-2.25.0
+2.17.1
 
