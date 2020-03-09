@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69EC17E80E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1117217E7F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:07:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgCITGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47630 "EHLO mail.kernel.org"
+        id S1727607AbgCITE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:04:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbgCITEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:04:25 -0400
+        id S1727562AbgCITEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:04:24 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 138AD22522;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A1A924655;
         Mon,  9 Mar 2020 19:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583780664;
-        bh=waUFtpzIpXo4DKIMDCsKU7y8p4HO6XSCAfrlGT1GuQw=;
+        bh=IV2OCIzL8o/G3c8N0UqNGOhcDLXi0dMFsmrby4Hi70s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rV93/R6qKlAtfdSqYFKebaVeJZa7a/QoIMU/E0H+jy+TwsKkeHYwi6ezVkzFPbhj3
-         faEsiQPhhyl8rA5Wf1VUzeXelglwpg1UH6B9omgKWh8W++PEyfGuq/s4MrubYFpiS3
-         C6ktNcTo+/abi803OCpjzF74jquElLotxml8AoKg=
+        b=R/Ut1NOC6if2/wiXN7hYDLDfUS0TApohmXlO51VHLcxC3BBAPdBMlbwTNn+g4HhKm
+         hrau8eiDYjwFCx3uLFZzaFDjQsB1DdC8Atd76ajrSO1OShZcS2IErJgB4/8ad/4GLB
+         ThCuh7dhT6TLrm7+cVHvv3MxSVQNk/nL/svTJcJ8=
 From:   paulmck@kernel.org
 To:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
         kernel-team@fb.com, mingo@kernel.org
 Cc:     elver@google.com, andreyknvl@google.com, glider@google.com,
         dvyukov@google.com, cai@lca.pw, boqun.feng@gmail.com,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH kcsan 08/32] asm-generic, kcsan: Add KCSAN instrumentation for bitops
-Date:   Mon,  9 Mar 2020 12:03:56 -0700
-Message-Id: <20200309190420.6100-8-paulmck@kernel.org>
+Subject: [PATCH kcsan 09/32] iov_iter: Use generic instrumented.h
+Date:   Mon,  9 Mar 2020 12:03:57 -0700
+Message-Id: <20200309190420.6100-9-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200309190359.GA5822@paulmck-ThinkPad-P72>
 References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
@@ -42,209 +42,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marco Elver <elver@google.com>
 
-Add explicit KCSAN checks for bitops.
+This replaces the kasan instrumentation with generic instrumentation,
+implicitly adding KCSAN instrumentation support.
 
+For KASAN no functional change is intended.
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Marco Elver <elver@google.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- include/asm-generic/bitops/instrumented-atomic.h     | 14 +++++++-------
- include/asm-generic/bitops/instrumented-lock.h       | 10 +++++-----
- include/asm-generic/bitops/instrumented-non-atomic.h | 16 ++++++++--------
- 3 files changed, 20 insertions(+), 20 deletions(-)
+ lib/iov_iter.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/include/asm-generic/bitops/instrumented-atomic.h b/include/asm-generic/bitops/instrumented-atomic.h
-index 18ce3c9..fb2cb33 100644
---- a/include/asm-generic/bitops/instrumented-atomic.h
-+++ b/include/asm-generic/bitops/instrumented-atomic.h
-@@ -11,7 +11,7 @@
- #ifndef _ASM_GENERIC_BITOPS_INSTRUMENTED_ATOMIC_H
- #define _ASM_GENERIC_BITOPS_INSTRUMENTED_ATOMIC_H
- 
--#include <linux/kasan-checks.h>
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index fb29c02..614b699 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -8,6 +8,7 @@
+ #include <linux/splice.h>
+ #include <net/checksum.h>
+ #include <linux/scatterlist.h>
 +#include <linux/instrumented.h>
  
- /**
-  * set_bit - Atomically set a bit in memory
-@@ -25,7 +25,7 @@
-  */
- static inline void set_bit(long nr, volatile unsigned long *addr)
+ #define PIPE_PARANOIA /* for now */
+ 
+@@ -138,7 +139,7 @@
+ static int copyout(void __user *to, const void *from, size_t n)
  {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch_set_bit(nr, addr);
- }
- 
-@@ -38,7 +38,7 @@ static inline void set_bit(long nr, volatile unsigned long *addr)
-  */
- static inline void clear_bit(long nr, volatile unsigned long *addr)
+ 	if (access_ok(to, n)) {
+-		kasan_check_read(from, n);
++		instrument_copy_to_user(to, from, n);
+ 		n = raw_copy_to_user(to, from, n);
+ 	}
+ 	return n;
+@@ -147,7 +148,7 @@ static int copyout(void __user *to, const void *from, size_t n)
+ static int copyin(void *to, const void __user *from, size_t n)
  {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch_clear_bit(nr, addr);
- }
- 
-@@ -54,7 +54,7 @@ static inline void clear_bit(long nr, volatile unsigned long *addr)
-  */
- static inline void change_bit(long nr, volatile unsigned long *addr)
+ 	if (access_ok(from, n)) {
+-		kasan_check_write(to, n);
++		instrument_copy_from_user(to, from, n);
+ 		n = raw_copy_from_user(to, from, n);
+ 	}
+ 	return n;
+@@ -639,7 +640,7 @@ EXPORT_SYMBOL(_copy_to_iter);
+ static int copyout_mcsafe(void __user *to, const void *from, size_t n)
  {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch_change_bit(nr, addr);
- }
- 
-@@ -67,7 +67,7 @@ static inline void change_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool test_and_set_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch_test_and_set_bit(nr, addr);
- }
- 
-@@ -80,7 +80,7 @@ static inline bool test_and_set_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool test_and_clear_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch_test_and_clear_bit(nr, addr);
- }
- 
-@@ -93,7 +93,7 @@ static inline bool test_and_clear_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool test_and_change_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch_test_and_change_bit(nr, addr);
- }
- 
-diff --git a/include/asm-generic/bitops/instrumented-lock.h b/include/asm-generic/bitops/instrumented-lock.h
-index ec53fde..b9bec46 100644
---- a/include/asm-generic/bitops/instrumented-lock.h
-+++ b/include/asm-generic/bitops/instrumented-lock.h
-@@ -11,7 +11,7 @@
- #ifndef _ASM_GENERIC_BITOPS_INSTRUMENTED_LOCK_H
- #define _ASM_GENERIC_BITOPS_INSTRUMENTED_LOCK_H
- 
--#include <linux/kasan-checks.h>
-+#include <linux/instrumented.h>
- 
- /**
-  * clear_bit_unlock - Clear a bit in memory, for unlock
-@@ -22,7 +22,7 @@
-  */
- static inline void clear_bit_unlock(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch_clear_bit_unlock(nr, addr);
- }
- 
-@@ -37,7 +37,7 @@ static inline void clear_bit_unlock(long nr, volatile unsigned long *addr)
-  */
- static inline void __clear_bit_unlock(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch___clear_bit_unlock(nr, addr);
- }
- 
-@@ -52,7 +52,7 @@ static inline void __clear_bit_unlock(long nr, volatile unsigned long *addr)
-  */
- static inline bool test_and_set_bit_lock(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch_test_and_set_bit_lock(nr, addr);
- }
- 
-@@ -71,7 +71,7 @@ static inline bool test_and_set_bit_lock(long nr, volatile unsigned long *addr)
- static inline bool
- clear_bit_unlock_is_negative_byte(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch_clear_bit_unlock_is_negative_byte(nr, addr);
- }
- /* Let everybody know we have it. */
-diff --git a/include/asm-generic/bitops/instrumented-non-atomic.h b/include/asm-generic/bitops/instrumented-non-atomic.h
-index 95ff28d..20f788a 100644
---- a/include/asm-generic/bitops/instrumented-non-atomic.h
-+++ b/include/asm-generic/bitops/instrumented-non-atomic.h
-@@ -11,7 +11,7 @@
- #ifndef _ASM_GENERIC_BITOPS_INSTRUMENTED_NON_ATOMIC_H
- #define _ASM_GENERIC_BITOPS_INSTRUMENTED_NON_ATOMIC_H
- 
--#include <linux/kasan-checks.h>
-+#include <linux/instrumented.h>
- 
- /**
-  * __set_bit - Set a bit in memory
-@@ -24,7 +24,7 @@
-  */
- static inline void __set_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch___set_bit(nr, addr);
- }
- 
-@@ -39,7 +39,7 @@ static inline void __set_bit(long nr, volatile unsigned long *addr)
-  */
- static inline void __clear_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch___clear_bit(nr, addr);
- }
- 
-@@ -54,7 +54,7 @@ static inline void __clear_bit(long nr, volatile unsigned long *addr)
-  */
- static inline void __change_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	arch___change_bit(nr, addr);
- }
- 
-@@ -68,7 +68,7 @@ static inline void __change_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool __test_and_set_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch___test_and_set_bit(nr, addr);
- }
- 
-@@ -82,7 +82,7 @@ static inline bool __test_and_set_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool __test_and_clear_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch___test_and_clear_bit(nr, addr);
- }
- 
-@@ -96,7 +96,7 @@ static inline bool __test_and_clear_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool __test_and_change_bit(long nr, volatile unsigned long *addr)
- {
--	kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_write(addr + BIT_WORD(nr), sizeof(long));
- 	return arch___test_and_change_bit(nr, addr);
- }
- 
-@@ -107,7 +107,7 @@ static inline bool __test_and_change_bit(long nr, volatile unsigned long *addr)
-  */
- static inline bool test_bit(long nr, const volatile unsigned long *addr)
- {
--	kasan_check_read(addr + BIT_WORD(nr), sizeof(long));
-+	instrument_atomic_read(addr + BIT_WORD(nr), sizeof(long));
- 	return arch_test_bit(nr, addr);
- }
- 
+ 	if (access_ok(to, n)) {
+-		kasan_check_read(from, n);
++		instrument_copy_to_user(to, from, n);
+ 		n = copy_to_user_mcsafe((__force void *) to, from, n);
+ 	}
+ 	return n;
 -- 
 2.9.5
 
