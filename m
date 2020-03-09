@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F5317E918
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22CB517E91D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:49:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgCITsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:48:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38314 "EHLO mail.kernel.org"
+        id S1727018AbgCITse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbgCITsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:48:20 -0400
+        id S1726809AbgCITsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:48:21 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22A6424673;
-        Mon,  9 Mar 2020 19:48:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2891024677;
+        Mon,  9 Mar 2020 19:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583783299;
-        bh=jk7Pvpx0sd6QCQwzSvQUmXSsA5DYpbI+9cKslUmsgnw=;
+        s=default; t=1583783300;
+        bh=j9EFBRUeGEgaJou7VzJyPRqtYH74YJhWOcl/Fg2SBEc=;
         h=From:To:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=EjSwCduPsfpPDGQ3IJIy1A7IYqdC8nbDqNFqAkmf6lqW7iS4EBhtXArFa0zWAQ+q1
-         aajLPPBZa9wqSMVf7iEC8mzEsESrQ193C0yfA2OLeo4jrO+6J7ItGt1y67n0UhiwLw
-         V8hKBvAKiRXSCrIuslcUpY7U4gR0W127sKUl01MY=
+        b=N76Iv7B7LuNwOci4o5wYZZxDF9JgCRR1cIZi+Ds659KD/vHryPrcf/0tAyu8nu0Ze
+         BVfnOmuEmjzAPzAHUmYaL3qUSdkILHqs5YFKpYS9oc3qZI/qGm28fDzveS68lvR8vv
+         xnBiTSLAFYOrCt9VIUZ+h2Q+8/StGW05GKFnkuis=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -34,9 +34,9 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 5/8] locallock: Include header for the `current' macro
-Date:   Mon,  9 Mar 2020 14:47:50 -0500
-Message-Id: <ac7f08d313acd30e95a4876056fdf62c5654c407.1583783251.git.zanussi@kernel.org>
+Subject: [PATCH RT 6/8] drm/vmwgfx: Drop preempt_disable() in vmw_fifo_ping_host()
+Date:   Mon,  9 Mar 2020 14:47:51 -0500
+Message-Id: <7b50a4187b38dd305b91907c235c2382cc87bca1.1583783251.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1583783251.git.zanussi@kernel.org>
 References: <cover.1583783251.git.zanussi@kernel.org>
@@ -55,29 +55,41 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit e693075a5fd852043fa8d2b0467e078d9e5cb782 ]
+[ Upstream commit b901491e7b9b7a676818d84e482b69be72fc142f ]
 
-Include the header for `current' macro so that
-CONFIG_KERNEL_HEADER_TEST=y passes.
+vmw_fifo_ping_host() disables preemption around a test and a register
+write via vmw_write(). The write function acquires a spinlock_t typed
+lock which is not allowed in a preempt_disable()ed section on
+PREEMPT_RT. This has been reported in the bugzilla.
 
+It has been explained by Thomas Hellstrom that this preempt_disable()ed
+section is not required for correctness.
+
+Remove the preempt_disable() section.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206591
+Link: https://lkml.kernel.org/r/0b5e1c65d89951de993deab06d1d197b40fd67aa.camel@vmware.com
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 ---
- include/linux/locallock.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/locallock.h b/include/linux/locallock.h
-index 921eab83cd34a..81c89d87723b5 100644
---- a/include/linux/locallock.h
-+++ b/include/linux/locallock.h
-@@ -3,6 +3,7 @@
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+index a1c68e6a689e3..713f202fca2cd 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+@@ -167,10 +167,8 @@ void vmw_fifo_ping_host(struct vmw_private *dev_priv, uint32_t reason)
+ {
+ 	u32 *fifo_mem = dev_priv->mmio_virt;
  
- #include <linux/percpu.h>
- #include <linux/spinlock.h>
-+#include <asm/current.h>
+-	preempt_disable();
+ 	if (cmpxchg(fifo_mem + SVGA_FIFO_BUSY, 0, 1) == 0)
+ 		vmw_write(dev_priv, SVGA_REG_SYNC, reason);
+-	preempt_enable();
+ }
  
- #ifdef CONFIG_PREEMPT_RT_BASE
- 
+ void vmw_fifo_release(struct vmw_private *dev_priv, struct vmw_fifo_state *fifo)
 -- 
 2.14.1
 
