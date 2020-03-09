@@ -2,131 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C7017DF14
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF95B17DF20
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgCILyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:54:37 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39769 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCILyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:54:36 -0400
-Received: by mail-pj1-f66.google.com with SMTP id d8so4343481pje.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=abu2PXvKyEh7FiwWYE1/n8QkqI1vCalv5ypEuLBZrAg=;
-        b=Vlfi4vXVfKddx6AlYl2YEsqaM3xEiq6ZMvC3PV4jGWGnJG8WEidONQaI5/avfS85YV
-         wkn4+NPlpUmdaUkRIaOMVy+nuXvZ9hGT++k7QpF1j+5W1LHyHtYButuMREKoBbaMi3kn
-         WYSWyrS15Xx3+qb8vnglxYojuPfd66G2l5x1XkA3XZc8LcbDvBXhOk310qxhwSJ2igKN
-         +LGIbESE5oaGTr4FHmr7si4wBeD6H7/iCMvFZWr+cNbNy6j/XLM+8F8vSnqml5ws7lwM
-         2hTv/f1q11ZLFJe4Xy5vdLVGKEUKkto+gsqc86/irw5FyJGByK+D61Qp4hRf2bDttYQZ
-         CX3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=abu2PXvKyEh7FiwWYE1/n8QkqI1vCalv5ypEuLBZrAg=;
-        b=d2Wfd79z+Vv5mri9TvAWraGICCH/7fnW4ZMg3/4RRx4mAZ719ZMDUa/QgL5UfauyXW
-         cKnk2rbq3zRWHf7CqtXP3eo8VFFI/Il6mz6y4SHP6FmO9Q0Urb7CIaOy1LhB5sGlESSp
-         mO84ns9LLRM8Lg/HKgzNSIDLSY+kkkPjXf3bo9NGmx2xDlUHxqQD/WohkVMSpvbrLT3x
-         LkAlYuxLr17O2d6iMlDKltG0R5PYYCT/HxaKbfNP5vgLG/K6Ykjl+G8FhLs716X7uoHe
-         yTUmK7djzia9NwT+NZtf5yqmniuqT6aVfZrGZ7uRhfMwaZY4DfS2kkggaY2EWIrL+/we
-         7+5w==
-X-Gm-Message-State: ANhLgQ2T0hYoQDDDuJug3owfVU9+MzmkmzSTJRFlqPjkDOUjZTqC5VOt
-        U0YqcnjnCu9nD3Ye7lYtrnE=
-X-Google-Smtp-Source: ADFU+vvgDXaNZWK2nJV6Bm5zx/Ji+GJIRgENeV2jBrQh0ImAPRGl+XO0uM4WYmW4XOuqQ1l9MPqKyw==
-X-Received: by 2002:a17:902:7087:: with SMTP id z7mr15865171plk.270.1583754875883;
-        Mon, 09 Mar 2020 04:54:35 -0700 (PDT)
-Received: from masabert (i118-21-156-233.s30.a048.ap.plala.or.jp. [118.21.156.233])
-        by smtp.gmail.com with ESMTPSA id d10sm18322537pjc.34.2020.03.09.04.54.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 04:54:35 -0700 (PDT)
-Received: by masabert (Postfix, from userid 1000)
-        id 0D9D22360374; Mon,  9 Mar 2020 20:54:33 +0900 (JST)
-From:   Masanari Iida <standby24x7@gmail.com>
-To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        rdunlap@infradead.org
-Cc:     Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH] ktest: Fix typos in ktest.pl
-Date:   Mon,  9 Mar 2020 20:54:30 +0900
-Message-Id: <20200309115430.57540-1-standby24x7@gmail.com>
-X-Mailer: git-send-email 2.26.0.rc0
+        id S1726674AbgCIL4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 07:56:16 -0400
+Received: from mga07.intel.com ([134.134.136.100]:23453 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725942AbgCIL4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 07:56:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 04:56:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,533,1574150400"; 
+   d="scan'208";a="235664047"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga008.jf.intel.com with ESMTP; 09 Mar 2020 04:56:11 -0700
+Subject: Re: [PATCH v2 06/11] mmc: sdhci: xenon: Use
+ sdhci_set_power_and_voltage()
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org, Hu Ziji <huziji@marvell.com>
+Cc:     phil@raspberrypi.com, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
+        stefan.wahren@i2se.com, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+ <20200306174413.20634-7-nsaenzjulienne@suse.de>
+ <4e74203a-5444-2b7a-3555-9615cc45aaae@intel.com>
+ <06fc4d492f66bfbe7260937efa849f77c7c12b0d.camel@suse.de>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <eb9cc6e8-0f15-a609-9f99-c8677eb3354f@intel.com>
+Date:   Mon, 9 Mar 2020 13:55:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <06fc4d492f66bfbe7260937efa849f77c7c12b0d.camel@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes multipe spelling typo found in ktest.pl.
+On 9/03/20 12:53 pm, Nicolas Saenz Julienne wrote:
+> On Mon, 2020-03-09 at 09:20 +0200, Adrian Hunter wrote:
+>>> -static void xenon_set_power(struct sdhci_host *host, unsigned char mode,
+>>> -		unsigned short vdd)
+>>> -{
+>>> -	struct mmc_host *mmc = host->mmc;
+>>> -	u8 pwr = host->pwr;
+>>> -
+>>> -	sdhci_set_power_noreg(host, mode, vdd);
+>>> -
+>>> -	if (host->pwr == pwr)
+>>> -		return;
+>>> -
+>>> -	if (host->pwr == 0)
+>>> -		vdd = 0;
+>>> -
+>>> -	if (!IS_ERR(mmc->supply.vmmc))
+>>> -		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
+>>> -}
+>>
+>> This code is different.  The commit message should explain why it is
+>> equivalent.  Has it been tested?
+> 
+> Yes, I should've pointed it out. The rationale behind including sdhci-xenon and
+> sdhci-pxav3 is based on xenon's original commit message (99c14fc360dbb):
+> 
+> 	mmc: sdhci-xenon: add set_power callback
+> 
+> 	Xenon sdh controller requests proper SD bus voltage select
+> 	bits programmed even with vmmc power supply. Any reserved
+> 	value(100b-000b) programmed in this field will lead to controller
+> 	ignore SD bus power bit and keep its value at zero.
+> 	Add set_power callback to handle this.
+> 
+> I can't test it, but it felt to me as the implementation differences are only
+> there as different people wrote the code. Ultimately, I'll be happy to drop
+> them from the series if you feel it's too much of an assumption, I can see how
+> the controllers could react badly to the ordering change. If not I can send a
+> v3 with fixed commit messages.
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
----
- tools/testing/ktest/ktest.pl | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
-index 6a605ba75dd6..dab03d80c902 100755
---- a/tools/testing/ktest/ktest.pl
-+++ b/tools/testing/ktest/ktest.pl
-@@ -1030,7 +1030,7 @@ sub __read_config {
- 	    }
- 
- 	    if (!$skip && $rest !~ /^\s*$/) {
--		die "$name: $.: Gargbage found after $type\n$_";
-+		die "$name: $.: Garbage found after $type\n$_";
- 	    }
- 
- 	    if ($skip && $type eq "TEST_START") {
-@@ -1063,7 +1063,7 @@ sub __read_config {
- 	    }
- 
- 	    if ($rest !~ /^\s*$/) {
--		die "$name: $.: Gargbage found after DEFAULTS\n$_";
-+		die "$name: $.: Garbage found after DEFAULTS\n$_";
- 	    }
- 
- 	} elsif (/^\s*INCLUDE\s+(\S+)/) {
-@@ -1154,7 +1154,7 @@ sub __read_config {
- 	    # on of these sections that have SKIP defined.
- 	    # The save variable can be
- 	    # defined multiple times and the new one simply overrides
--	    # the prevous one.
-+	    # the previous one.
- 	    set_variable($lvalue, $rvalue);
- 
- 	} else {
-@@ -1234,7 +1234,7 @@ sub read_config {
- 	foreach my $option (keys %not_used) {
- 	    print "$option\n";
- 	}
--	print "Set IGRNORE_UNUSED = 1 to have ktest ignore unused variables\n";
-+	print "Set IGNORE_UNUSED = 1 to have ktest ignore unused variables\n";
- 	if (!read_yn "Do you want to continue?") {
- 	    exit -1;
- 	}
-@@ -1345,7 +1345,7 @@ sub eval_option {
- 	# Check for recursive evaluations.
- 	# 100 deep should be more than enough.
- 	if ($r++ > 100) {
--	    die "Over 100 evaluations accurred with $option\n" .
-+	    die "Over 100 evaluations occurred with $option\n" .
- 		"Check for recursive variables\n";
- 	}
- 	$prev = $option;
-@@ -1461,7 +1461,7 @@ sub get_test_name() {
- 
- sub dodie {
- 
--    # avoid recusion
-+    # avoid recursion
-     return if ($in_die);
-     $in_die = 1;
- 
--- 
-2.26.0.rc0
-
+We can wait a bit and see if anyone provides a Tested-by tag, otherwise
+safer to drop it.
