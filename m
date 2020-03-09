@@ -2,140 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022B617E65C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C696317E665
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:07:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbgCISFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:05:24 -0400
-Received: from mga11.intel.com ([192.55.52.93]:59940 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726859AbgCISFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:05:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 11:05:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,534,1574150400"; 
-   d="scan'208";a="231020439"
-Received: from jdbostic-mobl1.amr.corp.intel.com (HELO [10.251.152.35]) ([10.251.152.35])
-  by orsmga007.jf.intel.com with ESMTP; 09 Mar 2020 11:05:22 -0700
-Subject: Re: [RFC PATCH] soundwire: bus: Add flag to mark DPN_BlockCtrl1 as
- readonly
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        vkoul@kernel.org
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20200309173755.955-1-srinivas.kandagatla@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <d94fca16-ed61-632a-6f8c-84e3a97869c7@linux.intel.com>
-Date:   Mon, 9 Mar 2020 13:05:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727397AbgCISHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:07:03 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41532 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgCISHB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:07:01 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s15so2264493otq.8;
+        Mon, 09 Mar 2020 11:07:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+8twmAkYC8gLumwmIlw3+TNjk4YZIpc4Yf4Svt7khAE=;
+        b=hxesS+HJMdaYe7v+UFydhi9C5U/FqzuaAy9qlXBA2GSEkMunxcXVolep1eD4r6yIdU
+         08r6nIU4cjh1Vg5fwUNl583j9qZO3+W/+hRj7FCUXFgOncW7LsMLqPNrCp4+SMW/KcpK
+         buVbkXi2YChKqDhoAiBhXmOMa8LthzdAdrie4BMcHYg/fCNkHi2BBqa0cq5m5hhlkar7
+         DrSuAjWL00jnhjE90N4Kkd2mfR3U1lEwVm/SaTtIG+eXf3VCMDaphi/5lFTfPZPCox+L
+         sEZeqLy4wO9ZKqXUXJ0b6yfSuLAn5D2D4EDMJl8Shba/DxR3g1cht/csV6oKYMwb2dpn
+         DgQw==
+X-Gm-Message-State: ANhLgQ11Wl+ZDz/4yX8B/slT/vnmidmj3yxbSVgkLhcYxiMjEaF9a5Rm
+        B3pLtRk+5KOvG2iNU0zgTw==
+X-Google-Smtp-Source: ADFU+vs3IQ3wz+qJ/67vqIo0mD/X0qf+y/Hptx7ec/9FGLi0njnEexI24zE2V0heF26J/Ax0sA1e+g==
+X-Received: by 2002:a9d:5f7:: with SMTP id 110mr8301002otd.73.1583777220691;
+        Mon, 09 Mar 2020 11:07:00 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t193sm3355321oif.34.2020.03.09.11.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 11:06:59 -0700 (PDT)
+Received: (nullmailer pid 18575 invoked by uid 1000);
+        Mon, 09 Mar 2020 18:06:58 -0000
+Date:   Mon, 9 Mar 2020 13:06:58 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krishna Manikandan <mkrishn@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        Krishna Manikandan <mkrishn@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: Re: [v1] dt-bindings: msm: disp: add yaml schemas for DPU and DSI
+ bindings
+Message-ID: <20200309180658.GA15631@bogus>
+References: <1583494560-25336-1-git-send-email-mkrishn@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200309173755.955-1-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583494560-25336-1-git-send-email-mkrishn@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/9/20 12:37 PM, Srinivas Kandagatla wrote:
-> According to SoundWire Specification Version 1.2.
-> "A Data Port number X (in the range 0-14) which supports only one
-> value of WordLength may implement the WordLength field in the
-> DPX_BlockCtrl1 Register as Read-Only, returning the fixed value of
-> WordLength in response to reads."
-
-Interesting.
-
-I think it's a spec issue that you want to bring to the MIPI Audio WG 
-attention.
-
-The note below says 'the DPx_BlockCtrl1 Register remains as Read-Write, 
-but the value written to the Read-Only field is not used'
-
-Ignoring a value and returning an error are two different behaviors indeed.
-
-My recommendation would be to add a DisCo property stating the 
-WordLength value can be used by the bus code but not written to the 
-Slave device registers.
-
+On Fri,  6 Mar 2020 17:06:00 +0530, Krishna Manikandan wrote:
+> MSM Mobile Display Subsytem(MDSS) encapsulates sub-blocks
+> like DPU display controller, DSI etc. Add YAML schema
+> for the device tree bindings for the same.
 > 
-> As WSA881x interfaces in PDM mode making the only field "WordLength"
-> in DPX_BlockCtrl1" fixed and read-only. Behaviour of writing to this
-> register on WSA881x soundwire slave with Qualcomm Soundwire Controller
-> is throwing up an error. Not sure how other controllers deal with
-> writing to readonly registers, but this patch provides a way to avoid
-> writes to DPN_BlockCtrl1 register by providing a ro_blockctrl1_reg
-> flag in struct sdw_port_runtime.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Krishna Manikandan <mkrishn@codeaurora.org>
 > ---
+>  .../bindings/display/msm/dpu-sc7180.yaml           | 269 +++++++++++++++
+>  .../bindings/display/msm/dpu-sdm845.yaml           | 265 +++++++++++++++
+>  .../bindings/display/msm/dsi-sc7180.yaml           | 369 +++++++++++++++++++++
+>  .../bindings/display/msm/dsi-sdm845.yaml           | 369 +++++++++++++++++++++
+>  4 files changed, 1272 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/dpu-sc7180.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/dpu-sdm845.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/dsi-sc7180.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/dsi-sdm845.yaml
 > 
-> I will send patch for WSA881x to include this change once this patch
-> is accepted.
-> 
->   drivers/soundwire/bus.h    |  2 ++
->   drivers/soundwire/stream.c | 17 ++++++++++-------
->   2 files changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-> index 204204a26db8..791e8d14093e 100644
-> --- a/drivers/soundwire/bus.h
-> +++ b/drivers/soundwire/bus.h
-> @@ -79,6 +79,7 @@ int sdw_find_col_index(int col);
->    * @num: Port number. For audio streams, valid port number ranges from
->    * [1,14]
->    * @ch_mask: Channel mask
-> + * @ro_blockctrl1_reg: Read Only flag for DPN_BlockCtrl1 register
->    * @transport_params: Transport parameters
->    * @port_params: Port parameters
->    * @port_node: List node for Master or Slave port_list
-> @@ -89,6 +90,7 @@ int sdw_find_col_index(int col);
->   struct sdw_port_runtime {
->   	int num;
->   	int ch_mask;
-> +	bool ro_blockctrl1_reg;
->   	struct sdw_transport_params transport_params;
->   	struct sdw_port_params port_params;
->   	struct list_head port_node;
-> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-> index 00348d1fc606..4491643aeb4a 100644
-> --- a/drivers/soundwire/stream.c
-> +++ b/drivers/soundwire/stream.c
-> @@ -167,13 +167,15 @@ static int sdw_program_slave_port_params(struct sdw_bus *bus,
->   		return ret;
->   	}
->   
-> -	/* Program DPN_BlockCtrl1 register */
-> -	ret = sdw_write(s_rt->slave, addr2, (p_params->bps - 1));
-> -	if (ret < 0) {
-> -		dev_err(&s_rt->slave->dev,
-> -			"DPN_BlockCtrl1 register write failed for port %d\n",
-> -			t_params->port_num);
-> -		return ret;
-> +	if (!p_rt->ro_blockctrl1_reg) {
-> +		/* Program DPN_BlockCtrl1 register */
-> +		ret = sdw_write(s_rt->slave, addr2, (p_params->bps - 1));
-> +		if (ret < 0) {
-> +			dev_err(&s_rt->slave->dev,
-> +				"DPN_BlockCtrl1 register write failed for port %d\n",
-> +				t_params->port_num);
-> +			return ret;
-> +		}
->   	}
->   
->   	/* Program DPN_SampleCtrl1 register */
-> @@ -1195,6 +1197,7 @@ static struct sdw_port_runtime
->   
->   	p_rt->ch_mask = port_config[port_index].ch_mask;
->   	p_rt->num = port_config[port_index].num;
-> +	p_rt->ro_blockctrl1_reg = port_config[port_index].ro_blockctrl1_reg;
->   
->   	return p_rt;
->   }
-> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+Documentation/devicetree/bindings/display/msm/dpu-sc7180.example.dts:17:10: fatal error: dt-bindings/clock/qcom,dispcc-sc7180.h: No such file or directory
+ #include <dt-bindings/clock/qcom,dispcc-sc7180.h>
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/display/msm/dpu-sc7180.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/display/msm/dpu-sc7180.example.dt.yaml] Error 1
+Makefile:1263: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1250230
+Please check and re-submit.
