@@ -2,89 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A99B217DE5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C53A417DE77
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbgCILNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:13:40 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36648 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbgCILNb (ORCPT
+        id S1726858AbgCILOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 07:14:31 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:54874 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726215AbgCILOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:13:31 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s5so6624279wrg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vzahiIr6twtVt6VsSfZyuBvY9ZwGAcuWVXdLGiISKKI=;
-        b=vL188LnzEsS+MsKXijsoJluXMPgIutt8/sArmz7u8w2jTAIn9HLd5FDsnv9iuhYX+p
-         avQyieMf2HVcYZunpIGMh/orN7X6vV5YORoDbtlRuDfBwP8c+ODaShEJbzTHssWOsUG3
-         iK44quOq9mHpXIO71HTFbLiU+TQBM1XuzFBjQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vzahiIr6twtVt6VsSfZyuBvY9ZwGAcuWVXdLGiISKKI=;
-        b=P4DG0WiVvwTQ/xzg9TQpuYAmROJmjXi9gwRDSflwBJnk7Y0KXFqJO70ihWgfQSH4Ff
-         jl6/S7D+Cpj08502bNuHZFiveE0J4IkudT++QTmUKln8ubAOhNXZNlLaeqUXOWL689w0
-         9S6DsdOzsje3o2KOFS4AIBT+B7JBZv8fGaENG+f6SXcolDzcT3I8lRM8UJxAbwDesxtj
-         sSdFwtDxf85NKYWdQ6ON+p2sRRvPvqXQ4lu6ukOji0XqqPtCdA536QiyXPj8ZSc6uWkR
-         ppYSZhI9xlqA+NBnp5gUR0J1qHaVgiMLvZLPPZ/WshR2oH5Y3d8/ULCK/Bf1hzdR0EDX
-         pfNw==
-X-Gm-Message-State: ANhLgQ1Tv37ALmpPs+UZDHvchbtIPm+n2dRMJtxbSjXAE6Gy5U0H5dTw
-        kenBwKa//ISFTIwspR/DRsGT8g==
-X-Google-Smtp-Source: ADFU+vsNhSDq+4c6qa3NLLHn3/xIV3phZyRLu07jB2TtZmct8F2GzqbRAyf6VGtqPNUqtLII7mdYEA==
-X-Received: by 2002:adf:f0c6:: with SMTP id x6mr19533874wro.273.1583752409755;
-        Mon, 09 Mar 2020 04:13:29 -0700 (PDT)
-Received: from localhost.localdomain ([2a06:98c0:1000:8250:3dcc:c1d:7f05:4873])
-        by smtp.gmail.com with ESMTPSA id a5sm25732846wmb.37.2020.03.09.04.13.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 04:13:29 -0700 (PDT)
-From:   Lorenz Bauer <lmb@cloudflare.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH bpf-next v4 12/12] bpf, doc: update maintainers for L7 BPF
-Date:   Mon,  9 Mar 2020 11:12:43 +0000
-Message-Id: <20200309111243.6982-13-lmb@cloudflare.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200309111243.6982-1-lmb@cloudflare.com>
-References: <20200309111243.6982-1-lmb@cloudflare.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 9 Mar 2020 07:14:30 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583752470; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=W9V6Jvf8Nv7owF8TF5GKbqjgK7vv05rxHi1O+GD3BRE=; b=naGY4lcZFbiurE+13F5IA/y8mqj1XmYH21YXkGON0VhX5tSezX/07qpfgUgSR0n4iY8gRLlj
+ YLEnX6s93HaYHc15kjuJxlIqIHBllibipLK7UH0ECvREi6l55N9mg8Ajzt5wy0L0cXpr5KwB
+ Q+oEPq2m0ciNfNEKNoWlXuPqQ3k=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e662513.7f63e9336500-smtp-out-n01;
+ Mon, 09 Mar 2020 11:14:27 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id CDDBEC433CB; Mon,  9 Mar 2020 11:14:27 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 72D59C433D2;
+        Mon,  9 Mar 2020 11:14:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72D59C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+From:   Maulik Shah <mkshah@codeaurora.org>
+To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [PATCH v4 0/4] Introduce SoC sleep stats driver
+Date:   Mon,  9 Mar 2020 16:44:13 +0530
+Message-Id: <1583752457-21159-1-git-send-email-mkshah@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Jakub and myself as maintainers for sockmap related code.
+Changes in v4:
+- Address bjorn's comments from v3 on change 2.
+- Add bjorn's Reviewed-by on change 3 and 4.
 
-Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
-Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v3:
+- Address stephen's comments from v2 in change 1 and 2.
+- Address bjorn's comments from v2 in change 3 and 4.
+- Add Rob and bjorn's Reviewed-by on YAML change.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 14554bde1c06..adc7fa8e5880 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9363,6 +9363,8 @@ F:	include/net/l3mdev.h
- L7 BPF FRAMEWORK
- M:	John Fastabend <john.fastabend@gmail.com>
- M:	Daniel Borkmann <daniel@iogearbox.net>
-+M:	Jakub Sitnicki <jakub@cloudflare.com>
-+M:	Lorenz Bauer <lmb@cloudflare.com>
- L:	netdev@vger.kernel.org
- L:	bpf@vger.kernel.org
- S:	Maintained
+Changes in v2:
+- Convert Documentation to YAML.
+- Address stephen's comments from v1.
+- Use debugfs instead of sysfs.
+- Add sc7180 dts changes for sleep stats
+- Add defconfig changes to enable driver
+- Include subsystem stats from [1] in this single stats driver.
+- Address stephen's comments from [1]
+- Update cover letter inline to mention [1]
+
+Qualcomm Technologies, Inc. (QTI)'s chipsets support SoC level low power
+modes. SoCs Always On Processor/Resource Power Manager produces statistics
+of the SoC sleep modes involving lowering or powering down of the rails and
+the oscillator clock.
+
+Additionally multiple subsystems present on SoC like modem, spss, adsp,
+cdsp maintains their low power mode statistics in shared memory (SMEM).
+
+Statistics includes SoC sleep mode type, number of times LPM entered, time
+of last entry, exit, and accumulated sleep duration in seconds.
+
+This series adds a driver to read the stats and export to debugfs.
+
+[1] https://lore.kernel.org/patchwork/patch/1149381/
+
+Mahesh Sivasubramanian (2):
+  dt-bindings: Introduce soc sleep stats bindings for Qualcomm SoCs
+  soc: qcom: Add SoC sleep stats driver
+
+Maulik Shah (2):
+  arm64: dts: qcom: sc7180: Enable soc sleep stats
+  arm64: defconfig: Enable SoC sleep stats driver for Qualcomm
+
+ .../bindings/soc/qcom/soc-sleep-stats.yaml         |  47 ++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               |   5 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/soc/qcom/Kconfig                           |  10 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/soc_sleep_stats.c                 | 279 +++++++++++++++++++++
+ 6 files changed, 343 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/soc-sleep-stats.yaml
+ create mode 100644 drivers/soc/qcom/soc_sleep_stats.c
+
 -- 
-2.20.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
