@@ -2,146 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F8E317E11F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F8E317E125
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:27:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbgCIN1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:27:12 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:52978 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbgCIN1L (ORCPT
+        id S1726803AbgCIN1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:27:20 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33560 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbgCIN1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:27:11 -0400
-Received: by mail-pj1-f65.google.com with SMTP id f15so751163pjq.2;
-        Mon, 09 Mar 2020 06:27:10 -0700 (PDT)
+        Mon, 9 Mar 2020 09:27:16 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p62so9173175qkb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 06:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=m3PpZVx6r6+5xvb8l6EErTCA2Bsz648Lvmq8tEAM5es=;
-        b=lzGwP+aAq9nIqpeCOW2SXRqElwXbvj603k428+C0ecWeNtX9LGa9qu8eqz7fP1dbSr
-         LBbsSSYU2APtPaAiWssLuPW720Bu6rISMoWPvRKAV/9zuXNvRTSddtOr7c74LXDaZMyp
-         pTO5ZIBzlDFY6I7X43PQ+Ol0fV38A173Jjd2p6KBZjA8zu0A/MMqVCzZE85FqHnTksjT
-         u/3JyPPjb0SHpjKItRKj5Tu0sVyUvcFmXNwkHrJPjL2DFrR14chaljOEbk+qGe8jA6Fi
-         CB53wJQK/go3E/1NYp1A4vyveYBH8FWQB4LZHPMWHW1fj3Rg2WawtbZiFE3l3B1uTjlb
-         CYCg==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=CkpyZVM4qc6rvH01h9mhJ0L3H6e6RlzQmeQDPa3isww=;
+        b=AnWHnWr0EAok5vbRz2SoOeI9TSqGkM8pEkD93/xilcV6hI+GMIY3bdM3dsBFKdldJQ
+         VwAS5HddBfQ1GeZCnHazjWY8pyR07sRfmBmtYOVpvXUJv+FsjFtlP1O7QSylm6hdeEYm
+         wRoJ2uz7lV2FEzC8Y4PWJmrL1ynJmBy3UGGjmz64y3jF1eAThLQLUsujbyJN+d6AQVpP
+         QAdUh518x2AQfN1lyvw788/izdM1SB3+MUM7scN9hjyQ7klP/pP1S2J46dAbwGnzO0uG
+         PezkK/sXX67W6DwGXaa51Kl39rLXfOS7C+PmguiZqnVnDR7gQ5OJq0O1/WbBYy+NM93+
+         wUbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=m3PpZVx6r6+5xvb8l6EErTCA2Bsz648Lvmq8tEAM5es=;
-        b=tq9xtiZJMWZA7DxnAwfYTSq5xkjUlUqlB2G/x1DXZ60tAwdRKUy67UwWRtAsZVS5V7
-         WRTSy3pGOOsZrN4fUWwIuvkwZYcm2jONE5IkpIAeACO8zBMRN02PQnpJ3XrciiPl7hLp
-         stfdOXh2HPaMMF9AuaJAV5AuzP0fpFCn5QyjsFmkGCofPnHfyLWHVdnR/Avckr6pA4EX
-         UAp2WqgGyask1n/w/A2vYQO1fG7WTVIEJJx6mcNAfMqTyWtTXkxmV4ZAyaW8vS+Sxiwl
-         tbGk//Mb1v/XGkXB5y1IxkrWJo5BmCi+ixoe20CUoJ4RUoKspalYULPn78YBPl6yJCcS
-         yyKw==
-X-Gm-Message-State: ANhLgQ3FhjhjTZwgR7cM+ecYGxUcURI2tG32OVapcXqfyfrKCni9sdiz
-        yhRgL+aTlDYwyR4+ECTQFMXaMrzb
-X-Google-Smtp-Source: ADFU+vvv988RThXOkf/NnHHbMC1Ie7Hl+LQ68wuvUeOt1rKyVncN+RaulOYIRv1dH4kAbTgUQwlWIw==
-X-Received: by 2002:a17:90a:950e:: with SMTP id t14mr16447224pjo.123.1583760430025;
-        Mon, 09 Mar 2020 06:27:10 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s18sm18576959pjp.24.2020.03.09.06.27.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2020 06:27:09 -0700 (PDT)
-Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, dmitry.torokhov@gmail.com,
-        a.zummo@towertech.it, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        wim@linux-watchdog.org, daniel.baluta@nxp.com,
-        gregkh@linuxfoundation.org, linux@rempel-privat.de,
-        tglx@linutronix.de, m.felsch@pengutronix.de,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de,
-        ronald@innovation.ch, krzk@kernel.org, robh@kernel.org,
-        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Linux-imx@nxp.com
-References: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
- <20200309110609.GE3563@piout.net>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <1ad38cdb-bf0d-1c19-b233-15a5857bd6fa@roeck-us.net>
-Date:   Mon, 9 Mar 2020 06:27:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=CkpyZVM4qc6rvH01h9mhJ0L3H6e6RlzQmeQDPa3isww=;
+        b=CuXZUZwuE5jntkebYK76jSsntYyQKsoA4a6aewgP4CpCwWw6m0krE/aeErG6pOwV+0
+         nubUfIX97et+dhy35kk8M0oZcpG72bynLM1DQL9UeSV6/ndvJE1ZeTSfqy1nLtFVn49T
+         77leJ3wPK7OLutTTXLOjpfkVBlJu72IOB4m7YhmVfRdglMjj0rKVIEfVvWUF9zfQDnXR
+         TrYoxNP/HlAmNjflOHfdchV88O8pXQWOrzbiEFByqTLjD91KvZKYNCEvOLgbHCh33ECg
+         JvJSx7GgQaYQJjiXoUdFUbwtbCSgX0o5fL/1jcOGuloC1j9Bympm3b2S4w210WGnfVMj
+         yBJA==
+X-Gm-Message-State: ANhLgQ3G9rhtM5ikeGRYMAgboQWeWixoFwFIffYe7A0QSD6UjIlcn+mN
+        +7m98Yc0lB8uyacVaQy1KZI=
+X-Google-Smtp-Source: ADFU+vtDstsbIVWiekKDZd3Y3iIJX218MsrMaPEEWaHYYtn159XRC1IwaraGjLAL7R0ZyT/WyYURSA==
+X-Received: by 2002:ae9:c10c:: with SMTP id z12mr14083265qki.56.1583760433882;
+        Mon, 09 Mar 2020 06:27:13 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id o14sm2655166qtq.12.2020.03.09.06.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 06:27:13 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 88F9E40009; Mon,  9 Mar 2020 10:27:10 -0300 (-03)
+Date:   Mon, 9 Mar 2020 10:27:10 -0300
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, peterz@infradead.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, adrian.hunter@intel.com,
+        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
+        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
+        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
+        ak@linux.intel.com
+Subject: Re: [PATCH 00/12] Stitch LBR call stack (Perf Tools)
+Message-ID: <20200309132710.GA477@kernel.org>
+References: <20200228163011.19358-1-kan.liang@linux.intel.com>
+ <20200306093940.GD281906@krava>
+ <243484a9-5d64-707e-4abb-dd8813a8755e@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200309110609.GE3563@piout.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <243484a9-5d64-707e-4abb-dd8813a8755e@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/9/20 4:06 AM, Alexandre Belloni wrote:
-> On 09/03/2020 08:38:14+0800, Anson Huang wrote:
->> Add stubs for those i.MX SCU APIs to make those modules depending
->> on IMX_SCU can pass build when COMPILE_TEST is enabled.
->>
->> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->> ---
->> Changes since V2:
->> 	- return error for stubs.
-> 
-> I'm not sure why you are sending v3 with the stubs as we determined that
-> 2/7 is enough to compile all the drivers with COMPILE_TEST.
+Em Fri, Mar 06, 2020 at 02:13:15PM -0500, Liang, Kan escreveu:
 > 
 > 
-2/7 alone is not sufficient. With only 2/7, one can explicitly configure
-IMX_SCU=n, COMPILE_TEST=y, and get lots of compile failures. Granted,
-one should not do that, but 0day does (I don't know if that is the result
-of RANDCONFIG), and I am not looking forward having to deal with the
-fallout.
+> On 3/6/2020 4:39 AM, Jiri Olsa wrote:
+> > On Fri, Feb 28, 2020 at 08:29:59AM -0800, kan.liang@linux.intel.com wrote:
+> > 
+> > SNIP
+> > 
+> > > Kan Liang (12):
+> > >    perf tools: Add hw_idx in struct branch_stack
+> > >    perf tools: Support PERF_SAMPLE_BRANCH_HW_INDEX
+> > >    perf header: Add check for event attr
+> > >    perf pmu: Add support for PMU capabilities
+> > 
+> > hi,
+> > I'm getting compile error:
+> > 
+> > 	util/pmu.c: In function ‘perf_pmu__caps_parse’:
+> > 	util/pmu.c:1620:32: error: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size between 0 and 4095 [-Werror=format-truncation=]
+> > 	 1620 |   snprintf(path, PATH_MAX, "%s/%s", caps_path, name);
+> > 	      |                                ^~
+> > 	In file included from /usr/include/stdio.h:867,
+> > 			 from util/pmu.c:12:
+> > 	/usr/include/bits/stdio2.h:67:10: note: ‘__builtin___snprintf_chk’ output between 2 and 4352 bytes into a destination of size 4096
+> > 	   67 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+> > 	      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 	   68 |        __bos (__s), __fmt, __va_arg_pack ());
+> > 	      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 	cc1: all warnings being treated as errors
+> > 
+> > 	[jolsa@krava perf]$ gcc --version
+> > 	gcc (GCC) 9.2.1 20190827 (Red Hat 9.2.1-1)
+> 
+> My GCC version is too old. I will send V2 later to fix the error.
 
-Guenter
+So I stopped at the patch just before the one introducing this problem,
+i.e. now I have:
+
+[acme@seventh perf]$ git log --oneline -10
+5100c2b77049 (HEAD -> perf/core, five/perf/core, acme/perf/core) perf header: Add check for unexpected use of reserved membrs in event attr
+1d2fc2bd7c1c perf evsel: Support PERF_SAMPLE_BRANCH_HW_INDEX
+1fa65c5092da perf tools: Add hw_idx in struct branch_stack
+6339998d22ec tools headers UAPI: Update tools's copy of linux/perf_event.h
+401d61cbd4d4 tools lib traceevent: Remove extra '\n' in print_event_time()
+76ce02651dab libperf: Add counting example
+dabce16bd292 perf annotate: Get rid of annotation->nr_jumps
+357a5d24c471 perf llvm: Add debug hint message about missing kernel-devel package
+1af62ce61cd8 perf stat: Show percore counts in per CPU output
+7982a8985150 tools lib api fs: Move cgroupsfs_find_mountpoint()
+[acme@seventh perf]$
+
+Please continue from there, I'll process some other patchsets,
+
+Thanks,
+
+- Arnaldo
