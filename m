@@ -2,125 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B766E17E97C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F84117E985
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbgCIT7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:59:51 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:40888 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgCIT7v (ORCPT
+        id S1726599AbgCIUAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:00:16 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:36757 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgCIUAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:59:51 -0400
-Received: by mail-pj1-f66.google.com with SMTP id gv19so361162pjb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 12:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ApMKbaT9NZPQVt7nAnTk1K0Wu/E7soJBK3O0vo/SsBI=;
-        b=uj+iurUiPPTN/m54RipwDMNCj/ZFTmGmma6tPr5qy7yx1JDe4cH79ULnBnxcPRP/Og
-         md7ebg2FJ3cuwjmQnhIv/Chm5i/pDlsGyeVR/4cdgUCTieZxNTxNmWMsYwjopfyj6ukm
-         5XnHYgJImG3HTdcqFvQBSgkkfk6IEyD8n3dASgh82mxq0nvLjbn3MID0aa1BJ36a+wR8
-         3y48DGUq1LGF7/F1MQzpoj4YhaL3FU3CcUdUfzYn0etFpnwLELdAZLIuHxtNLeI6Lt+W
-         KvfbiPZDedzFXvWTY6P2iynfn7wTplBQF+jr0/9/1suEtOx/DaBB/vIbhMGG11HxHPHh
-         wJkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ApMKbaT9NZPQVt7nAnTk1K0Wu/E7soJBK3O0vo/SsBI=;
-        b=m1nUEx49uJcH0ukpiUso7Fh3I8geCSkNnyi4La6+ekFSCRzb3ZpnvB8vSjngbc13hs
-         Rpq2a3AEA14kIMwtQPcHAJ/XOjJcJxHNa1KtLsj8mgyYrfZOqSZ7mBsKsCGVtxeBOb50
-         HziZ+lF2wKALVAj4oMB/z5Q2PDptIqa4TExEnt/JID1vSUEhHI/HhX0UMWwDSPQWaCMY
-         yzeyoiVAW4kq2lgHNF/MUYie/pZbnX6uqiDb4TIWiJ9JBL5rq3t0ujFwnPV6M8S9DTQs
-         XIAf0QUx4DrdZxnQIdLO0++gDOGcSWsymqsqBJYFZzVoUcpaomAJ7R7U7HXTimimXnUd
-         XIEA==
-X-Gm-Message-State: ANhLgQ0ATnuShnRHjagrdtf+8jMgXBcQP1CkR4wvFPPjjsJe/77bpubs
-        80eWzaAQ4PqXhY08SWwMsdcR6kDgzpC70nnz7Fz2lQ==
-X-Google-Smtp-Source: ADFU+vtsf1Md+4e2wEt1Zur/kdkx9d2TXsNK4tOYi8XXqHW1aWgk1gYEWEd7EcK3brqq+XCwbnqL8TPLWTz3MXfesjU=
-X-Received: by 2002:a17:90a:1f8d:: with SMTP id x13mr999711pja.27.1583783989605;
- Mon, 09 Mar 2020 12:59:49 -0700 (PDT)
+        Mon, 9 Mar 2020 16:00:15 -0400
+Received: from [192.168.1.183] ([37.4.249.171]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MKbXu-1iuygH0Nf2-00Kyiu; Mon, 09 Mar 2020 21:00:01 +0100
+Subject: Re: [PATCH v2 11/11] ARM: dts: bcm2711: Add vmmc regulator in emmc2
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     phil@raspberrypi.com, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+ <20200306174413.20634-12-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ xsFNBFt6gBMBEACub/pBevHxbvJefyZG32JINmn2bsEPX25V6fejmyYwmCGKjFtL/DoUMEVH
+ DxCJ47BMXo344fHV1C3AnudgN1BehLoBtLHxmneCzgH3KcPtWW7ptj4GtJv9CQDZy27SKoEP
+ xyaI8CF0ygRxJc72M9I9wmsPZ5bUHsLuYWMqQ7JcRmPs6D8gBkk+8/yngEyNExwxJpR1ylj5
+ bjxWDHyYQvuJ5LzZKuO9LB3lXVsc4bqXEjc6VFuZFCCk/syio/Yhse8N+Qsx7MQagz4wKUkQ
+ QbfXg1VqkTnAivXs42VnIkmu5gzIw/0tRJv50FRhHhxpyKAI8B8nhN8Qvx7MVkPc5vDfd3uG
+ YW47JPhVQBcUwJwNk/49F9eAvg2mtMPFnFORkWURvP+G6FJfm6+CvOv7YfP1uewAi4ln+JO1
+ g+gjVIWl/WJpy0nTipdfeH9dHkgSifQunYcucisMyoRbF955tCgkEY9EMEdY1t8iGDiCgX6s
+ 50LHbi3k453uacpxfQXSaAwPksl8MkCOsv2eEr4INCHYQDyZiclBuuCg8ENbR6AGVtZSPcQb
+ enzSzKRZoO9CaqID+favLiB/dhzmHA+9bgIhmXfvXRLDZze8po1dyt3E1shXiddZPA8NuJVz
+ EIt2lmI6V8pZDpn221rfKjivRQiaos54TgZjjMYI7nnJ7e6xzwARAQABzSlTdGVmYW4gV2Fo
+ cmVuIDxzdGVmYW4ud2FocmVuQGluLXRlY2guY29tPsLBdwQTAQgAIQUCXIdehwIbAwULCQgH
+ AgYVCAkKCwIEFgIDAQIeAQIXgAAKCRCUgewPEZDy2yHTD/9UF7QlDkGxzQ7AaCI6N95iQf8/
+ 1oSUaDNu2Y6IK+DzQpb1TbTOr3VJwwY8a3OWz5NLSOLMWeVxt+osMmlQIGubD3ODZJ8izPlG
+ /JrNt5zSdmN5IA5f3esWWQVKvghZAgTDqdpv+ZHW2EmxnAJ1uLFXXeQd3UZcC5r3/g/vSaMo
+ 9xek3J5mNuDm71lEWsAs/BAcFc+ynLhxwBWBWwsvwR8bHtJ5DOMWvaKuDskpIGFUe/Kb2B+j
+ ravQ3Tn6s/HqJM0cexSHz5pe+0sGvP+t9J7234BFQweFExriey8UIxOr4XAbaabSryYnU/zV
+ H9U1i2AIQZMWJAevCvVgQ/U+NeRhXude9YUmDMDo2sB2VAFEAqiF2QUHPA2m8a7EO3yfL4rM
+ k0iHzLIKvh6/rH8QCY8i3XxTNL9iCLzBWu/NOnCAbS+zlvLZaiSMh5EfuxTtv4PlVdEjf62P
+ +ZHID16gUDwEmazLAMrx666jH5kuUCTVymbL0TvB+6L6ARl8ANyM4ADmkWkpyM22kCuISYAE
+ fQR3uWXZ9YgxaPMqbV+wBrhJg4HaN6C6xTqGv3r4B2aqb77/CVoRJ1Z9cpHCwiOzIaAmvyzP
+ U6MxCDXZ8FgYlT4v23G5imJP2zgX5s+F6ACUJ9UQPD0uTf+J9Da2r+skh/sWOnZ+ycoHNBQv
+ ocZENAHQf87BTQRbeoATARAA2Hd0fsDVK72RLSDHby0OhgDcDlVBM2M+hYYpO3fX1r++shiq
+ PKCHVAsQ5bxe7HmJimHa4KKYs2kv/mlt/CauCJ//pmcycBM7GvwnKzmuXzuAGmVTZC6WR5Lk
+ akFrtHOzVmsEGpNv5Rc9l6HYFpLkbSkVi5SPQZJy+EMgMCFgjrZfVF6yotwE1af7HNtMhNPa
+ LDN1oUKF5j+RyRg5iwJuCDknHjwBQV4pgw2/5vS8A7ZQv2MbW/TLEypKXif78IhgAzXtE2Xr
+ M1n/o6ZH71oRFFKOz42lFdzdrSX0YsqXgHCX5gItLfqzj1psMa9o1eiNTEm1dVQrTqnys0l1
+ 8oalRNswYlQmnYBwpwCkaTHLMHwKfGBbo5dLPEshtVowI6nsgqLTyQHmqHYqUZYIpigmmC3S
+ wBWY1V6ffUEmkqpAACEnL4/gUgn7yQ/5d0seqnAq2pSBHMUUoCcTzEQUWVkiDv3Rk7hTFmhT
+ sMq78xv2XRsXMR6yQhSTPFZCYDUExElEsSo9FWHWr6zHyYcc8qDLFvG9FPhmQuT2s9Blx6gI
+ 323GnEq1lwWPJVzP4jQkJKIAXwFpv+W8CWLqzDWOvdlrDaTaVMscFTeH5W6Uprl65jqFQGMp
+ cRGCs8GCUW13H0IyOtQtwWXA4ny+SL81pviAmaSXU8laKaRu91VOVaF9f4sAEQEAAcLBXwQY
+ AQIACQUCW3qAEwIbDAAKCRCUgewPEZDy2+oXD/9cHHRkBZOfkmSq14Svx062PtU0KV470TSn
+ p/jWoYJnKIw3G0mXIRgrtH2dPwpIgVjsYyRSVMKmSpt5ZrDf9NtTbNWgk8VoLeZzYEo+J3oP
+ qFrTMs3aYYv7e4+JK695YnmQ+mOD9nia915tr5AZj95UfSTlyUmyic1d8ovsf1fP7XCUVRFc
+ RjfNfDF1oL/pDgMP5GZ2OwaTejmyCuHjM8IR1CiavBpYDmBnTYk7Pthy6atWvYl0fy/CqajT
+ Ksx7+p9xziu8ZfVX+iKBCc+He+EDEdGIDhvNZ/IQHfOB2PUXWGS+s9FNTxr/A6nLGXnA9Y6w
+ 93iPdYIwxS7KXLoKJee10DjlzsYsRflFOW0ZOiSihICXiQV1uqM6tzFG9gtRcius5UAthWaO
+ 1OwUSCQmfCOm4fvMIJIA9rxtoS6OqRQciF3crmo0rJCtN2awZfgi8XEif7d6hjv0EKM9XZoi
+ AZYZD+/iLm5TaKWN6oGIti0VjJv8ZZOZOfCb6vqFIkJW+aOu4orTLFMz28aoU3QyWpNC8FFm
+ dYsVua8s6gN1NIa6y3qa/ZB8bA/iky59AEz4iDIRrgUzMEg8Ak7Tfm1KiYeiTtBDCo25BvXj
+ bqsyxkQD1nkRm6FAVzEuOPIe8JuqW2xD9ixGYvjU5hkRgJp3gP5b+cnG3LPqquQ2E6goKUML AQ==
+Message-ID: <3bd022a6-922f-c20a-8d07-383817549960@i2se.com>
+Date:   Mon, 9 Mar 2020 21:00:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200309023910.25370-1-masahiroy@kernel.org> <202003091801.6KQQKZ1Y%lkp@intel.com>
-In-Reply-To: <202003091801.6KQQKZ1Y%lkp@intel.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 9 Mar 2020 12:59:37 -0700
-Message-ID: <CAKwvOdksxVa=NGtyT3hsuHg6SJG4CbNWAepf+dxwVDC1+36zyw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: link lib-y objects to vmlinux forcibly when CONFIG_MODULES=y
-To:     "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Cc:     kbuild-all@lists.01.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        =?UTF-8?B?Ru+/ve+/ve+/vW5nLXJ177+977+977+9IFPvv73vv73vv71uZw==?= 
-        <maskray@google.com>, Ilie Halip <ilie.halip@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200306174413.20634-12-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:HLq74eK/5uYp9FuDYB8nlYhQ+L1Iy16XuKUVj0/NO++R6Vyw8bS
+ /mWXFYiUpH8XsOLxW+0Q1LUtIHfUZD10r1Tp2MjSKhLZBDDPCjHLSxAXnrYUr9LainLLHNE
+ 5zo32AxrZ87ogn3ujsQ9CcpsYr8c8gvPlpdXaBlkZ66zElrN0brGSZ8hZJNntE8qtzqDDtT
+ mGPm9nMSXh7b7TR4xQR8Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:J0AK1UndQlM=:omVXShDsl6kG//to/aRKy4
+ zUEFAtmKVgE/H4EhRCHw9crOIH34eYeqXeOVqgSjUHo/xWwGt/mRrNGXdPzmdbzkAlPYHd8J0
+ xqSS25nm2ikaI54jHmWpJ3BQBTB0tq1fI0jMGiy6IVSWOSpSggAbYLMCtGFF9u1rDh5HtGWYP
+ RXTEuMbLKv0EDovM/usgo3RP5Ovab09P/NA0rPMZV9IX96b2q4lfy3HdyI4qHlx2VM/2irqUJ
+ g9MVTJV8155GnQQQTRSNEpTwOfIHbLYqO3H+8EqRLyB59ECuJH6EUZTvdOU6yxn7BDLqnX8hl
+ SAqWqIfaEQ76v3+PTnqYRPLQZPoWlbyBwSRE2iizh+sv6W75x8p+LRCHH2GudXBBFy/xpD+Uo
+ I7iw1PTMJCJ5SipvsJ2tBNKRpO9A3HUqaguqSNJQ6gfVg5EQYsZ+T2EGHogKjwcFqIEkWwl2j
+ xSIapX6eKh9JnSDmKrVwodAg4YM1q7WOgqtz5gVho5r4YpP5EGnNCUWWYcAp25ZS6v/s2WwPE
+ 59kptDoQvZeNxXLlWyDYLAHBs3yK23c76tpbJqGonsoT0qqamtdyT3gYF/tTsOPHRz9yZLCG2
+ SqMjbeA+HbEcCBZt5DuLtEqlzdlWnRgL7P93g29qHlQH8LPPqG4lq90BjQO2u68iNrT3dLQhq
+ q8bfLgyRv33NokTONt4u5ZUZ63JA+2qJodbONQxUmHnGKoYyzaoOIXhbz+f+2y+cAGM30LhRv
+ vMEY/wPM5yOt+rEoma4iLm8IE/+KCsi4W7nfFCEsXCedTnfS9rNuxkkDhK1UfWwIRCtXRTSoV
+ q0SWOsQGnkVx5VE4cyAXc7Zcp+vDBDQNGI2gdc6luPaxkG9KZCN9vnyuWRbE9vhZ+xSXnxg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 3:55 AM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Masahiro,
->
-> I love your patch! Yet something to improve:
->
-> [auto build test ERROR on kbuild/for-next]
-> [also build test ERROR on linux/master linus/master v5.6-rc5 next-20200306]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->
-> url:    https://github.com/0day-ci/linux/commits/Masahiro-Yamada/kbuild-link-lib-y-objects-to-vmlinux-forcibly-when-CONFIG_MODULES-y/20200309-115312
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
-> config: sparc-defconfig (attached as .config)
-> compiler: sparc-linux-gcc (GCC) 7.5.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.5.0 make.cross ARCH=sparc
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->    arch/sparc/lib/strlen.o: In function `strlen':
-> >> (.text+0x0): multiple definition of `strlen'
->    lib/string.o:string.c:(.text+0x2b0): first defined here
+Hi Nicolas,
 
-So this looks like a bug in 32b Sparc, that we should fix first.
+Am 06.03.20 um 18:44 schrieb Nicolas Saenz Julienne:
+> The SD card power can be controlled trough a pin routed into the board's
+> external GPIO expander. Turn that into a regulator and provide it to
+> emmc2.
+>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> index b0ea8233b636..a2da058396fe 100644
+> --- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> +++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> @@ -55,6 +55,16 @@ sd_io_1v8_reg: sd_io_1v8_reg {
+>  			  3300000 0x0>;
+>  		status = "okay";
+>  	};
+> +
+> +	sd_vcc_reg: sd_vcc_reg {
+> +		compatible = "regulator-fixed";
 
-arch/sparc/lib/strlen.S provides a definition of strlen, but it does
-not define the preprocessor token __HAVE_ARCH_STRLEN to avoid multiple
-definitions from producing a link error.
+i think we need to enable CONFIG_REGULATOR_FIXED_VOLTAGE in
+bcm2835_defconfig
 
-Or rather, __HAVE_ARCH_STRLEN is provided in include/asm/string_64.h,
-but not for 32b sparc.  arch/sparc/strlen.o is unconditionally
-required in lib-y in arch/sparc/lib/Makefile.
+Best regards
+Stefan
 
-Either:
-1. arch/sparc/lib/strlen.S supports 32b sparc, then __HAVE_ARCH_STRLEN
-and a forward declaration of strlen should be provided in
-arch/sparc/include/asm/string.h rather than
-arch/sparc/include/asm/string_64.h, or...
-2. arch/sparc/lib/strlen.S does not support 32b sparc, then the
-inclusion of strlen.o in arch/sparc/lib/Makefile should be predicated
-on CONFIG_SPARC64.
-
-+ Dave who maybe can provide guidance on how to proceed?  The use of
-the BRANCH32 macro in arch/sparc/lib/strlen.S seems to have different
-definitions based on CONFIG_SPARC64 vs CONFIG_SPARC32, which makes me
-thing it's case 1 above, but I'm not familiar with Sparc assembly to
-be confident.
--- 
-Thanks,
-~Nick Desaulniers
+> +		regulator-name = "vcc-sd";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		enable-active-high;
+> +		gpio = <&expgpio 6 GPIO_ACTIVE_HIGH>;
+> +	};
+>  };
+>  
+>  &firmware {
+> @@ -173,6 +183,7 @@ brcmf: wifi@1 {
+>  /* EMMC2 is used to drive the SD card */
+>  &emmc2 {
+>  	vqmmc-supply = <&sd_io_1v8_reg>;
+> +	vmmc-supply = <&sd_vcc_reg>;
+>  	broken-cd;
+>  	status = "okay";
+>  };
