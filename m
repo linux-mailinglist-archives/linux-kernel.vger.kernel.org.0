@@ -2,302 +2,584 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C1917E2E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B3817E2DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbgCIO4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 10:56:46 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:59200 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726928AbgCIO4n (ORCPT
+        id S1727152AbgCIO5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 10:57:07 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53966 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbgCIO5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:56:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583765802;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ODfRe6uEVeZq3vqEM4WfZ+r6PXYR5n68FRLYtTpLTVU=;
-        b=cP49DCFnSjEOonKJREbpVz+zeglYAVHOpIgr1J72qUeI9yekI1cIRo3zgpjY83E3B8156o
-        WX6LV8zBX+e5BgD1ZqkC49wj8YnGGGM1sIL8ccKBiHdmWiPzeuOg08w0XfyZKDRvdlZ9iw
-        xpgYdGILMdc4XRKL+cacjoVNEyO1pOQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-306-IbxpYgV8PpCV01KNoee4PA-1; Mon, 09 Mar 2020 10:56:37 -0400
-X-MC-Unique: IbxpYgV8PpCV01KNoee4PA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0A8AA1005509;
-        Mon,  9 Mar 2020 14:56:36 +0000 (UTC)
-Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B21675D9CA;
-        Mon,  9 Mar 2020 14:56:32 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 08:56:32 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dev@dpdk.org" <dev@dpdk.org>,
-        "mtosatti@redhat.com" <mtosatti@redhat.com>,
-        "thomas@monjalon.net" <thomas@monjalon.net>,
-        "bluca@debian.org" <bluca@debian.org>,
-        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
-        "Richardson, Bruce" <bruce.richardson@intel.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>
-Subject: Re: [PATCH v2 5/7] vfio/pci: Add sriov_configure support
-Message-ID: <20200309085632.32a1e07d@w520.home>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7C36CC@SHSMSX104.ccr.corp.intel.com>
-References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
-        <158213846731.17090.37693075723046377.stgit@gimli.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D79A943@SHSMSX104.ccr.corp.intel.com>
-        <20200305112230.0dd77712@w520.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7C07A0@SHSMSX104.ccr.corp.intel.com>
-        <20200306151734.741d1d58@x1.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7C208E@SHSMSX104.ccr.corp.intel.com>
-        <20200308184610.647b70f4@x1.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7C36CC@SHSMSX104.ccr.corp.intel.com>
+        Mon, 9 Mar 2020 10:57:01 -0400
+Received: by mail-pj1-f65.google.com with SMTP id l36so1706845pjb.3;
+        Mon, 09 Mar 2020 07:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=eSoHXBFfI6Cg9QiCIUgyPKSeCGlztcqxEYCuiDIBPbE=;
+        b=N6Mcn37LKTk1HhxFGGXXUDDruw7EeFh1XlfWb30Sx+OtbN0kzFZIALAAAGyHqz0n1f
+         UE77mE7x0M4N6GW8KyDPwsPnSTGUkCT8Dp7CU0E/Nbf0K2XYvC2yFizbhePWc63QqlFB
+         ARD9tSaECBGTAs3tNJbJIIUYle0SHJojVKMMkX0Q0AC8A1SkHektoxNxCtzO6U2oixVN
+         hQFb1K0qticdMoYrA3SaoxWTctJldiDg4EwS8Oz1vgefOF6R+p4pekCFPlkcBsPtxXXy
+         MZhviUh9ishDiMv/Iss8dc3TPjRaxLWfx1RptSN3SYRSd0RuEDWTNXH6OluSSo2ab1PD
+         HMGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=eSoHXBFfI6Cg9QiCIUgyPKSeCGlztcqxEYCuiDIBPbE=;
+        b=q2fditB3P/EW46mkevy8OIwoX7R8lUbCw92ule9n/Lu30bd/YNVyGf4ek9KTpwLtc5
+         5zbfJh0X6PsVtOSVF3DtuYAEUx4zpdfE9GUMMRwqDkCzYtoBmZrNfR4+/P12/U/CxzLw
+         PX3T1YgMXE9LwjgvFWKriZdAhkjP3wfSskEbJvadGTC746SgybPtMDyG06J9fRt3n1Sk
+         4HBE64iU2upYIz5jD+enUgu64mmdh5ft0y4dfhuKcJojvUfsxQVa9UJMuOa22Yf5AaF/
+         9eo+N1pUY/2M7QCf9whcBTozPb7c18KeV2NtGXXqYiNTh8Wz3/2J1l0Gxnw0oW4Z70nd
+         08+Q==
+X-Gm-Message-State: ANhLgQ0wXhHq2BwfGvuiqRoqE4VoxeT8XRBUhmlF/1q8IkwAzyM/zlfm
+        BOzlyaIonPbECSEofpMA9WA=
+X-Google-Smtp-Source: ADFU+vvAIpBS70nLs9aiIMD6NUSZlvL8wKi8nQWOduNRjxYWMn9szeSfZ/f1c4EZX3Cqcnq+Y4hGKA==
+X-Received: by 2002:a17:902:524:: with SMTP id 33mr16775682plf.241.1583765819701;
+        Mon, 09 Mar 2020 07:56:59 -0700 (PDT)
+Received: from syed.domain.name ([103.201.127.32])
+        by smtp.gmail.com with ESMTPSA id h65sm22800393pfg.12.2020.03.09.07.56.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Mar 2020 07:56:59 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 20:26:53 +0530
+From:   Syed Nayyar Waris <syednwaris@gmail.com>
+To:     vilhelm.gray@gmail.com
+Cc:     jic23@kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] counter: 104-quad-8: Add lock protection
+Message-ID: <20200309145653.GA3329@syed.domain.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Mar 2020 01:48:11 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Add lock protection from race conditions in the 104-quad-8 counter
+driver. There is no IRQ handling so spin_lock calls are used for
+protection.
 
-> > From: Alex Williamson
-> > Sent: Monday, March 9, 2020 8:46 AM
-> >=20
-> > On Sat, 7 Mar 2020 01:35:23 +0000
-> > "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> >  =20
-> > > > From: Alex Williamson
-> > > > Sent: Saturday, March 7, 2020 6:18 AM
-> > > >
-> > > > On Fri, 6 Mar 2020 07:57:19 +0000
-> > > > "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> > > > =20
-> > > > > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > > > > Sent: Friday, March 6, 2020 2:23 AM
-> > > > > >
-> > > > > > On Tue, 25 Feb 2020 03:08:00 +0000
-> > > > > > "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> > > > > > =20
-> > > > > > > > From: Alex Williamson
-> > > > > > > > Sent: Thursday, February 20, 2020 2:54 AM
-> > > > > > > >
-> > > > > > > > With the VF Token interface we can now expect that a vfio =
-=20
-> > userspace =20
-> > > > > > > > driver must be in collaboration with the PF driver, an unwi=
-tting
-> > > > > > > > userspace driver will not be able to get past the GET_DEVIC=
-E_FD =20
-> > step =20
-> > > > > > > > in accessing the device.  We can now move on to actually al=
-lowing
-> > > > > > > > SR-IOV to be enabled by vfio-pci on the PF.  Support for th=
-is is not
-> > > > > > > > enabled by default in this commit, but it does provide a mo=
-dule =20
-> > > > option =20
-> > > > > > > > for this to be enabled (enable_sriov=3D1).  Enabling VFs is=
- rather
-> > > > > > > > straightforward, except we don't want to risk that a VF mig=
-ht get
-> > > > > > > > autoprobed and bound to other drivers, so a bus notifier is=
- used =20
-> > to =20
-> > > > > > > > "capture" VFs to vfio-pci using the driver_override support=
-.  We
-> > > > > > > > assume any later action to bind the device to other drivers=
- is
-> > > > > > > > condoned by the system admin and allow it with a log warnin=
-g.
-> > > > > > > >
-> > > > > > > > vfio-pci will disable SR-IOV on a PF before releasing the d=
-evice,
-> > > > > > > > allowing a VF driver to be assured other drivers cannot tak=
-e over =20
-> > the =20
-> > > > > > > > PF and that any other userspace driver must know the shared=
- VF =20
-> > > > token. =20
-> > > > > > > > This support also does not provide a mechanism for the PF =
-=20
-> > userspace =20
-> > > > > > > > driver itself to manipulate SR-IOV through the vfio API.  W=
-ith this
-> > > > > > > > patch SR-IOV can only be enabled via the host sysfs interfa=
-ce and =20
-> > the =20
-> > > > > > > > PF driver user cannot create or remove VFs. =20
-> > > > > > >
-> > > > > > > I'm not sure how many devices can be properly configured simp=
-ly
-> > > > > > > with pci_enable_sriov. It is not unusual to require PF driver=
- prepare
-> > > > > > > something before turning PCI SR-IOV capability. If you look k=
-ernel
-> > > > > > > PF drivers, there are only two using generic pci_sriov_config=
-ure_
-> > > > > > > simple (simple wrapper like pci_enable_sriov), while most oth=
-ers
-> > > > > > > implementing their own callback. However vfio itself has no i=
-dea
-> > > > > > > thus I'm not sure how an user knows whether using this option=
- can
-> > > > > > > actually meet his purpose. I may miss something here, possibly
-> > > > > > > using DPDK as an example will make it clearer. =20
-> > > > > >
-> > > > > > There is still the entire vfio userspace driver interface.  Ima=
-gine for
-> > > > > > example that QEMU emulates the SR-IOV capability and makes a ca=
-ll =20
-> > out =20
-> > > > > > to libvirt (or maybe runs with privs for the PF SR-IOV sysfs at=
-tribs)
-> > > > > > when the guest enables SR-IOV.  Can't we assume that any PF spe=
-cific
-> > > > > > support can still be performed in the userspace/guest driver, l=
-eaving
-> > > > > > us with a very simple and generic sriov_configure callback in v=
-fio-pci? =20
-> > > > >
-> > > > > Makes sense. One concern, though, is how an user could be warned
-> > > > > if he inadvertently uses sysfs to enable SR-IOV on a vfio device =
-whose
-> > > > > userspace driver is incapable of handling it. Note any VFIO devic=
-e,
-> > > > > if SR-IOV capable, will allow user to do so once the module optio=
-n is
-> > > > > turned on and the callback is registered. I felt such uncertainty=
- can be
-> > > > > contained by toggling SR-IOV through a vfio api, but from your =20
-> > description =20
-> > > > > obviously it is what you want to avoid. Is it due to the sequence=
- reason,
-> > > > > e.g. that SR-IOV must be enabled before userspace PF driver sets =
-the
-> > > > > token? =20
-> > > >
-> > > > As in my other reply, enabling SR-IOV via a vfio API suggests that
-> > > > we're not only granting the user owning the PF device access to the
-> > > > device itself, but also the ability to create and remove subordinate
-> > > > devices on the host.  That implies an extended degree of trust in t=
-he
-> > > > user beyond the PF device itself and raises questions about whether=
- a
-> > > > user who is allowed to create VF devices should automatically be
-> > > > granted access to those VF devices, what the mechanism would be for
-> > > > that, and how we might re-assign those devices to other users,
-> > > > potentially including host kernel usage.  What I'm proposing here
-> > > > doesn't preclude some future extension in that direction, but inste=
-ad
-> > > > tries to simplify a first step towards enabling SR-IOV by leaving t=
-he
-> > > > SR-IOV enablement and VF assignment in the realm of a privileged sy=
-stem
-> > > > entity. =20
-> > >
-> > > the intention is clear to me now.
-> > > =20
-> > > >
-> > > > So, what I think you're suggesting here is that we should restrict
-> > > > vfio_pci_sriov_configure() to reject enabling SR-IOV until a user
-> > > > driver has configured a VF token.  That requires both that the
-> > > > userspace driver has initialized to this point before SR-IOV can be
-> > > > enabled and that we would be forced to define a termination point f=
-or
-> > > > the user set VF token.  Logically, this would need to be when the
-> > > > userspace driver exits or closes the PF device, which implies that =
-we
-> > > > need to disable SR-IOV on the PF at this point, or we're left in an
-> > > > inconsistent state where VFs are enabled but cannot be disabled bec=
-ause
-> > > > we don't have a valid VF token.  Now we're back to nearly a state w=
-here
-> > > > the user has control of not creating devices on the host, but remov=
-ing
-> > > > them by closing the device, which will necessarily require that any=
- VF
-> > > > driver release the device, whether userspace or kernel.
-> > > >
-> > > > I'm not sure what we're gaining by doing this though.  I agree that
-> > > > there will be users that enable SR-IOV on a PF and then try to, for
-> > > > example, assign the PF and all the VFs to a VM.  The VFs will fail =
-due
-> > > > to lacking VF token support, unless they've patch QEMU with my test
-> > > > code, but depending on the PF driver in the guest, it may, or more
-> > > > likely won't work.  But don't you think the VFs and probably PF not
-> > > > working is a sufficient clue that the configuration is invalid?  OT=
-OH,
-> > > > from what I've heard of the device in the ID table of the pci-pf-st=
-ub
-> > > > driver, they might very well be able to work with both PF and VFs in
-> > > > QEMU using only my test code to set the VF token.
-> > > >
-> > > > Therefore, I'm afraid what you're asking for here is to impose a us=
-age
-> > > > restriction as a sanity test, when we don't really know what might =
-be
-> > > > sane for this particular piece of hardware or use case.  There are
-> > > > infinite ways that a vfio based userspace driver can fail to config=
-ure
-> > > > their hardware and make it work correctly, many of them are device
-> > > > specific.  Isn't this just one of those cases?  Thanks,
-> > > > =20
-> > >
-> > > what you said all makes sense. so I withdraw the idea of manipulating
-> > > SR-IOV through vfio ioctl. However I still feel that simply registeri=
-ng
-> > > sriov_configuration callback by vfio-pci somehow violates the typical
-> > > expectation of the sysfs interface. Before this patch, the success re=
-turn
-> > > of writing non-zero value to numvfs implies VFs are in sane state and
-> > > functionally ready for immediate use. However now the behavior of
-> > > success return becomes undefined for vfio devices, since even vfio-pci
-> > > itself doesn't know whether VFs are functional for a random device
-> > > (may know some if carrying the same device IDs from pci-pf-stub). It
-> > > simply relies on the privileged entity who knows exactly the implicat=
-ion
-> > > of such write, while there is no way to warn inadvertent users which
-> > > to me is not a good design from kernel API p.o.v. Of course we may
-> > > document such restriction and the driver_override may also be an
-> > > indirect way to warn such user if he wants to use VFs for other purpo=
-se.
-> > > But it is still less elegant than reporting it in the first place. Ma=
-ybe
-> > > what we really require is a new sysfs attribute purely for enabling
-> > > PCI SR-IOV capability, which doesn't imply making VFs actually
-> > > functional as did through the existing numvfs? =20
-> >=20
-> > I don't read the same guarantee into the sysfs SR-IOV interface.  If
-> > such a guarantee exists, it's already broken by pci-pf-stub, which like
-> > vfio-pci allows dynamic IDs and driver_override to bind to any PF device
-> > allowing the ability to create (potentially) non-functional VFs.  I =20
->=20
-> I don't know whether others raised the similar concern and how=20
-> it was addressed for pci-pf-stub before. Many places describe=20
-> numvfs as the preferred interface to enable/disable VFs while=20
-> 'enable' just reads functional to me.
+Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
+---
+ drivers/counter/104-quad-8.c | 138 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 136 insertions(+), 2 deletions(-)
 
-=46rom a PCI perspective, they are functional.  We've enabled them in the
-sense that they appear on the bus.  Whether they are functional or not
-depends on device specific configuration.  If I take your definition to
-an extreme, it seems that we might for example not allow SR-IOV to be
-enabled unless an 82576 PF has the network link up because the VF
-wouldn't be able to route packets until that point.  Do we require that
-the igb PF driver generates a warning that VFs might not be functional
-if the link is down when SR-IOV is enabled?  I'm absolutely not
-recommending we do this, I'm just pointing out that I think a different
-standard is being suggested here than actually exists.  Thanks,
-
-Alex
+diff --git a/drivers/counter/104-quad-8.c b/drivers/counter/104-quad-8.c
+index 9dab190..431c754 100644
+--- a/drivers/counter/104-quad-8.c
++++ b/drivers/counter/104-quad-8.c
+@@ -45,6 +45,7 @@ MODULE_PARM_DESC(base, "ACCES 104-QUAD-8 base addresses");
+  */
+ struct quad8_iio {
+ 	struct counter_device counter;
++	spinlock_t lock;
+ 	unsigned int fck_prescaler[QUAD8_NUM_COUNTERS];
+ 	unsigned int preset[QUAD8_NUM_COUNTERS];
+ 	unsigned int count_mode[QUAD8_NUM_COUNTERS];
+@@ -111,15 +112,24 @@ static int quad8_read_raw(struct iio_dev *indio_dev,
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		if (chan->type == IIO_INDEX) {
++			spin_lock(&priv->lock);
+ 			*val = !!(inb(priv->base + QUAD8_REG_INDEX_INPUT_LEVELS)
+ 				& BIT(chan->channel));
++			spin_unlock(&priv->lock);
+ 			return IIO_VAL_INT;
+ 		}
+ 
++		spin_lock(&priv->lock);
++
+ 		flags = inb(base_offset + 1);
++
++		spin_unlock(&priv->lock);
++
+ 		borrow = flags & QUAD8_FLAG_BT;
+ 		carry = !!(flags & QUAD8_FLAG_CT);
+ 
++		spin_lock(&priv->lock);
++
+ 		/* Borrow XOR Carry effectively doubles count range */
+ 		*val = (borrow ^ carry) << 24;
+ 
+@@ -130,6 +140,8 @@ static int quad8_read_raw(struct iio_dev *indio_dev,
+ 		for (i = 0; i < 3; i++)
+ 			*val |= (unsigned int)inb(base_offset) << (8 * i);
+ 
++		spin_unlock(&priv->lock);
++
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_ENABLE:
+ 		*val = priv->ab_enable[chan->channel];
+@@ -160,6 +172,8 @@ static int quad8_write_raw(struct iio_dev *indio_dev,
+ 		if ((unsigned int)val > 0xFFFFFF)
+ 			return -EINVAL;
+ 
++		spin_lock(&priv->lock);
++
+ 		/* Reset Byte Pointer */
+ 		outb(QUAD8_CTR_RLD | QUAD8_RLD_RESET_BP, base_offset + 1);
+ 
+@@ -183,12 +197,16 @@ static int quad8_write_raw(struct iio_dev *indio_dev,
+ 		/* Reset Error flag */
+ 		outb(QUAD8_CTR_RLD | QUAD8_RLD_RESET_E, base_offset + 1);
+ 
++		spin_unlock(&priv->lock);
++
+ 		return 0;
+ 	case IIO_CHAN_INFO_ENABLE:
+ 		/* only boolean values accepted */
+ 		if (val < 0 || val > 1)
+ 			return -EINVAL;
+ 
++		spin_lock(&priv->lock);
++
+ 		priv->ab_enable[chan->channel] = val;
+ 
+ 		ior_cfg = val | priv->preset_enable[chan->channel] << 1;
+@@ -196,6 +214,8 @@ static int quad8_write_raw(struct iio_dev *indio_dev,
+ 		/* Load I/O control configuration */
+ 		outb(QUAD8_CTR_IOR | ior_cfg, base_offset + 1);
+ 
++		spin_unlock(&priv->lock);
++
+ 		return 0;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		/* Quadrature scaling only available in quadrature mode */
+@@ -255,6 +275,8 @@ static ssize_t quad8_write_preset(struct iio_dev *indio_dev, uintptr_t private,
+ 	if (preset > 0xFFFFFF)
+ 		return -EINVAL;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->preset[chan->channel] = preset;
+ 
+ 	/* Reset Byte Pointer */
+@@ -264,6 +286,8 @@ static ssize_t quad8_write_preset(struct iio_dev *indio_dev, uintptr_t private,
+ 	for (i = 0; i < 3; i++)
+ 		outb(preset >> (8 * i), base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -293,6 +317,8 @@ static ssize_t quad8_write_set_to_preset_on_index(struct iio_dev *indio_dev,
+ 	/* Preset enable is active low in Input/Output Control register */
+ 	preset_enable = !preset_enable;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->preset_enable[chan->channel] = preset_enable;
+ 
+ 	ior_cfg = priv->ab_enable[chan->channel] |
+@@ -301,6 +327,8 @@ static ssize_t quad8_write_set_to_preset_on_index(struct iio_dev *indio_dev,
+ 	/* Load I/O control configuration to Input / Output Control Register */
+ 	outb(QUAD8_CTR_IOR | ior_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -314,8 +342,15 @@ static int quad8_get_noise_error(struct iio_dev *indio_dev,
+ {
+ 	struct quad8_iio *const priv = iio_priv(indio_dev);
+ 	const int base_offset = priv->base + 2 * chan->channel + 1;
++	int quad8_noise_error;
+ 
+-	return !!(inb(base_offset) & QUAD8_FLAG_E);
++	spin_lock(&priv->lock);
++
++	quad8_noise_error = !!(inb(base_offset) & QUAD8_FLAG_E);
++
++	spin_unlock(&priv->lock);
++
++	return quad8_noise_error;
+ }
+ 
+ static const struct iio_enum quad8_noise_error_enum = {
+@@ -334,8 +369,15 @@ static int quad8_get_count_direction(struct iio_dev *indio_dev,
+ {
+ 	struct quad8_iio *const priv = iio_priv(indio_dev);
+ 	const int base_offset = priv->base + 2 * chan->channel + 1;
++	int quad8_count_direction;
++
++	spin_lock(&priv->lock);
+ 
+-	return !!(inb(base_offset) & QUAD8_FLAG_UD);
++	quad8_count_direction = !!(inb(base_offset) & QUAD8_FLAG_UD);
++
++	spin_unlock(&priv->lock);
++
++	return quad8_count_direction;
+ }
+ 
+ static const struct iio_enum quad8_count_direction_enum = {
+@@ -358,6 +400,8 @@ static int quad8_set_count_mode(struct iio_dev *indio_dev,
+ 	unsigned int mode_cfg = cnt_mode << 1;
+ 	const int base_offset = priv->base + 2 * chan->channel + 1;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->count_mode[chan->channel] = cnt_mode;
+ 
+ 	/* Add quadrature mode configuration */
+@@ -367,6 +411,8 @@ static int quad8_set_count_mode(struct iio_dev *indio_dev,
+ 	/* Load mode configuration to Counter Mode Register */
+ 	outb(QUAD8_CTR_CMR | mode_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -402,11 +448,15 @@ static int quad8_set_synchronous_mode(struct iio_dev *indio_dev,
+ 	if (synchronous_mode && !priv->quadrature_mode[chan->channel])
+ 		return -EINVAL;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->synchronous_mode[chan->channel] = synchronous_mode;
+ 
+ 	/* Load Index Control configuration to Index Control Register */
+ 	outb(QUAD8_CTR_IDR | idr_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -448,11 +498,15 @@ static int quad8_set_quadrature_mode(struct iio_dev *indio_dev,
+ 			quad8_set_synchronous_mode(indio_dev, chan, 0);
+ 	}
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->quadrature_mode[chan->channel] = quadrature_mode;
+ 
+ 	/* Load mode configuration to Counter Mode Register */
+ 	outb(QUAD8_CTR_CMR | mode_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -484,11 +538,15 @@ static int quad8_set_index_polarity(struct iio_dev *indio_dev,
+ 		index_polarity << 1;
+ 	const int base_offset = priv->base + 2 * chan->channel + 1;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->index_polarity[chan->channel] = index_polarity;
+ 
+ 	/* Load Index Control configuration to Index Control Register */
+ 	outb(QUAD8_CTR_IDR | idr_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -578,9 +636,13 @@ static int quad8_signal_read(struct counter_device *counter,
+ 	if (signal->id < 16)
+ 		return -EINVAL;
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	state = inb(priv->base + QUAD8_REG_INDEX_INPUT_LEVELS)
+ 		& BIT(signal->id - 16);
+ 
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	*val = (state) ? COUNTER_SIGNAL_HIGH : COUNTER_SIGNAL_LOW;
+ 
+ 	return 0;
+@@ -596,10 +658,17 @@ static int quad8_count_read(struct counter_device *counter,
+ 	unsigned int carry;
+ 	int i;
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	flags = inb(base_offset + 1);
++
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	borrow = flags & QUAD8_FLAG_BT;
+ 	carry = !!(flags & QUAD8_FLAG_CT);
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	/* Borrow XOR Carry effectively doubles count range */
+ 	*val = (unsigned long)(borrow ^ carry) << 24;
+ 
+@@ -610,6 +679,8 @@ static int quad8_count_read(struct counter_device *counter,
+ 	for (i = 0; i < 3; i++)
+ 		*val |= (unsigned long)inb(base_offset) << (8 * i);
+ 
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	return 0;
+ }
+ 
+@@ -624,6 +695,8 @@ static int quad8_count_write(struct counter_device *counter,
+ 	if (val > 0xFFFFFF)
+ 		return -EINVAL;
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	/* Reset Byte Pointer */
+ 	outb(QUAD8_CTR_RLD | QUAD8_RLD_RESET_BP, base_offset + 1);
+ 
+@@ -647,6 +720,8 @@ static int quad8_count_write(struct counter_device *counter,
+ 	/* Reset Error flag */
+ 	outb(QUAD8_CTR_RLD | QUAD8_RLD_RESET_E, base_offset + 1);
+ 
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	return 0;
+ }
+ 
+@@ -711,8 +786,11 @@ static int quad8_function_set(struct counter_device *counter,
+ 		/* Synchronous function not supported in non-quadrature mode */
+ 		if (*synchronous_mode) {
+ 			*synchronous_mode = 0;
++			spin_lock(&priv->lock);
+ 			/* Disable synchronous function mode */
+ 			outb(QUAD8_CTR_IDR | idr_cfg, base_offset);
++			spin_unlock(&priv->lock);
++
+ 		}
+ 	} else {
+ 		*quadrature_mode = 1;
+@@ -733,9 +811,13 @@ static int quad8_function_set(struct counter_device *counter,
+ 		}
+ 	}
+ 
++	spin_lock(&priv->lock);
++
+ 	/* Load mode configuration to Counter Mode Register */
+ 	outb(QUAD8_CTR_CMR | mode_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -746,9 +828,13 @@ static void quad8_direction_get(struct counter_device *counter,
+ 	unsigned int ud_flag;
+ 	const unsigned int flag_addr = priv->base + 2 * count->id + 1;
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	/* U/D flag: nonzero = up, zero = down */
+ 	ud_flag = inb(flag_addr) & QUAD8_FLAG_UD;
+ 
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	*direction = (ud_flag) ? COUNTER_COUNT_DIRECTION_FORWARD :
+ 		COUNTER_COUNT_DIRECTION_BACKWARD;
+ }
+@@ -856,11 +942,15 @@ static int quad8_index_polarity_set(struct counter_device *counter,
+ 		index_polarity << 1;
+ 	const int base_offset = priv->base + 2 * channel_id + 1;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->index_polarity[channel_id] = index_polarity;
+ 
+ 	/* Load Index Control configuration to Index Control Register */
+ 	outb(QUAD8_CTR_IDR | idr_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -895,11 +985,15 @@ static int quad8_synchronous_mode_set(struct counter_device *counter,
+ 	if (synchronous_mode && !priv->quadrature_mode[channel_id])
+ 		return -EINVAL;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->synchronous_mode[channel_id] = synchronous_mode;
+ 
+ 	/* Load Index Control configuration to Index Control Register */
+ 	outb(QUAD8_CTR_IDR | idr_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -964,6 +1058,8 @@ static int quad8_count_mode_set(struct counter_device *counter,
+ 		break;
+ 	}
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->count_mode[count->id] = cnt_mode;
+ 
+ 	/* Set count mode configuration value */
+@@ -976,6 +1072,8 @@ static int quad8_count_mode_set(struct counter_device *counter,
+ 	/* Load mode configuration to Counter Mode Register */
+ 	outb(QUAD8_CTR_CMR | mode_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -1017,6 +1115,8 @@ static ssize_t quad8_count_enable_write(struct counter_device *counter,
+ 	if (err)
+ 		return err;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->ab_enable[count->id] = ab_enable;
+ 
+ 	ior_cfg = ab_enable | priv->preset_enable[count->id] << 1;
+@@ -1024,6 +1124,8 @@ static ssize_t quad8_count_enable_write(struct counter_device *counter,
+ 	/* Load I/O control configuration */
+ 	outb(QUAD8_CTR_IOR | ior_cfg, base_offset + 1);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -1033,8 +1135,12 @@ static int quad8_error_noise_get(struct counter_device *counter,
+ 	const struct quad8_iio *const priv = counter->priv;
+ 	const int base_offset = priv->base + 2 * count->id + 1;
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	*noise_error = !!(inb(base_offset) & QUAD8_FLAG_E);
+ 
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	return 0;
+ }
+ 
+@@ -1069,6 +1175,8 @@ static ssize_t quad8_count_preset_write(struct counter_device *counter,
+ 	if (preset > 0xFFFFFF)
+ 		return -EINVAL;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->preset[count->id] = preset;
+ 
+ 	/* Reset Byte Pointer */
+@@ -1078,6 +1186,8 @@ static ssize_t quad8_count_preset_write(struct counter_device *counter,
+ 	for (i = 0; i < 3; i++)
+ 		outb(preset >> (8 * i), base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -1137,6 +1247,8 @@ static ssize_t quad8_count_preset_enable_write(struct counter_device *counter,
+ 	/* Preset enable is active low in Input/Output Control register */
+ 	preset_enable = !preset_enable;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->preset_enable[count->id] = preset_enable;
+ 
+ 	ior_cfg = priv->ab_enable[count->id] | (unsigned int)preset_enable << 1;
+@@ -1144,6 +1256,8 @@ static ssize_t quad8_count_preset_enable_write(struct counter_device *counter,
+ 	/* Load I/O control configuration to Input / Output Control Register */
+ 	outb(QUAD8_CTR_IOR | ior_cfg, base_offset);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -1160,9 +1274,13 @@ static ssize_t quad8_signal_cable_fault_read(struct counter_device *counter,
+ 	if (disabled)
+ 		return -EINVAL;
+ 
++	spin_lock(&((struct quad8_iio *)priv)->lock);
++
+ 	/* Logic 0 = cable fault */
+ 	status = inb(priv->base + QUAD8_DIFF_ENCODER_CABLE_STATUS);
+ 
++	spin_unlock(&((struct quad8_iio *)priv)->lock);
++
+ 	/* Mask respective channel and invert logic */
+ 	fault = !(status & BIT(channel_id));
+ 
+@@ -1194,6 +1312,8 @@ static ssize_t quad8_signal_cable_fault_enable_write(
+ 	if (ret)
+ 		return ret;
+ 
++	spin_lock(&priv->lock);
++
+ 	if (enable)
+ 		priv->cable_fault_enable |= BIT(channel_id);
+ 	else
+@@ -1204,6 +1324,8 @@ static ssize_t quad8_signal_cable_fault_enable_write(
+ 
+ 	outb(cable_fault_enable, priv->base + QUAD8_DIFF_ENCODER_CABLE_STATUS);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -1230,6 +1352,8 @@ static ssize_t quad8_signal_fck_prescaler_write(struct counter_device *counter,
+ 	if (ret)
+ 		return ret;
+ 
++	spin_lock(&priv->lock);
++
+ 	priv->fck_prescaler[channel_id] = prescaler;
+ 
+ 	/* Reset Byte Pointer */
+@@ -1240,6 +1364,8 @@ static ssize_t quad8_signal_fck_prescaler_write(struct counter_device *counter,
+ 	outb(QUAD8_CTR_RLD | QUAD8_RLD_RESET_BP | QUAD8_RLD_PRESET_PSC,
+ 	     base_offset + 1);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return len;
+ }
+ 
+@@ -1429,6 +1555,11 @@ static int quad8_probe(struct device *dev, unsigned int id)
+ 	quad8iio->counter.priv = quad8iio;
+ 	quad8iio->base = base[id];
+ 
++	/* Initialize spin lock */
++	spin_lock_init(&quad8iio->lock);
++
++	spin_lock(&quad8iio->lock);
++
+ 	/* Reset all counters and disable interrupt function */
+ 	outb(QUAD8_CHAN_OP_RESET_COUNTERS, base[id] + QUAD8_REG_CHAN_OP);
+ 	/* Set initial configuration for all counters */
+@@ -1456,11 +1587,14 @@ static int quad8_probe(struct device *dev, unsigned int id)
+ 		/* Disable index function; negative index polarity */
+ 		outb(QUAD8_CTR_IDR, base_offset + 1);
+ 	}
++
+ 	/* Disable Differential Encoder Cable Status for all channels */
+ 	outb(0xFF, base[id] + QUAD8_DIFF_ENCODER_CABLE_STATUS);
+ 	/* Enable all counters */
+ 	outb(QUAD8_CHAN_OP_ENABLE_COUNTERS, base[id] + QUAD8_REG_CHAN_OP);
+ 
++	spin_unlock(&quad8iio->lock);
++
+ 	/* Register IIO device */
+ 	err = devm_iio_device_register(dev, indio_dev);
+ 	if (err)
+-- 
+2.7.4
 
