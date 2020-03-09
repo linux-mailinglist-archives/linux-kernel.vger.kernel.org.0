@@ -2,66 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 868D217EAE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:12:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C13E017EAF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:13:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbgCIVMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:12:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbgCIVMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:12:50 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726905AbgCIVNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:13:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52152 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726847AbgCIVNQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 17:13:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583788395;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Il8BHXhlu0rpVwjSDD1TcJtiqIzjydKT/JxTacOBPvo=;
+        b=Y2fjlUgDtFy6Pds85CMnvq0q3siGbhQb6NlsCecRi71wgKjr5GtZDQ6P1Ml736vDcOINKV
+        XzdrfujVF/RFO3MQnWO9z6dQ+uYuNhqHT6KmvfZ0Ue1DtyRmUSGkW3CJZuzqOW034kJLe3
+        tCsPN7tgcmwUAmQr3amFu8eB8fUgXhk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-408-8LJQfvrlOuG6Zr6VQp3twA-1; Mon, 09 Mar 2020 17:13:10 -0400
+X-MC-Unique: 8LJQfvrlOuG6Zr6VQp3twA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14F442146E;
-        Mon,  9 Mar 2020 21:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583788370;
-        bh=Y0kKsp4ZEnxt99dXihUsJMZ1guyBaJ+F1Weo+/PYGs4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eXK8cNmTVPNbMfKh1qidZ8533eaE3KDpSjdbGaYWWzBy4J+Pb6z9aV9HLtXAGYDfW
-         zWoimguT592f2yFQ5JzeBA1p/Ajuscu8Sm4TzNK6Xckm8l17MeWzVd3M2mzjOei7cq
-         bEfy/NqQ0126Uw366gzm+AiB/+mpU0G+1qbrzJu0=
-Content-Type: text/plain; charset="utf-8"
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4C9F3107ACC9;
+        Mon,  9 Mar 2020 21:13:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 499805D9CA;
+        Mon,  9 Mar 2020 21:13:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <a2012ba2-e322-39e2-fa80-c8d4aef501de@samba.org>
+References: <a2012ba2-e322-39e2-fa80-c8d4aef501de@samba.org> <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk> <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, Aleksa Sarai <cyphar@cyphar.com>,
+        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
+        jannh@google.com, darrick.wong@oracle.com, kzak@redhat.com,
+        jlayton@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200303145920.GA32328@bogus>
-References: <robh@kernel.org> <20200226214812.390-1-ansuelsmth@gmail.com> <20200303145920.GA32328@bogus>
-Subject: Re: [PATCH v2] clk: qcom: clk-rpm: add missing rpm clk for ipq806x
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Ansuel Smith <ansuelsmth@gmail.com>, Rob Herring <robh@kernel.org>
-Date:   Mon, 09 Mar 2020 14:12:49 -0700
-Message-ID: <158378836931.66766.851774184706134250@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <530114.1583788384.1@warthog.procyon.org.uk>
+Date:   Mon, 09 Mar 2020 21:13:04 +0000
+Message-ID: <530115.1583788384@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2020-03-03 06:59:20)
-> On Wed, 26 Feb 2020 22:48:12 +0100, Ansuel Smith wrote:
-> > Add missing definition of rpm clk for ipq806x soc
-> >=20
-> > Signed-off-by: John Crispin <john@phrozen.org>
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > Acked-by: John Crispin <john@phrozen.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
-> >  drivers/clk/qcom/clk-rpm.c                    | 35 +++++++++++++++++++
-> >  include/dt-bindings/clock/qcom,rpmcc.h        |  4 +++
-> >  3 files changed, 40 insertions(+)
-> >=20
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
+Stefan Metzmacher <metze@samba.org> wrote:
 
-Ansuel, can you send this again and address it To: somebody like me? My
-MUA fails at getting emails when they're addressed to nobody.
+> > Automounting is currently forced by doing an open(), so adding support to
+> > openat2() for RESOLVE_NO_TRAILING_AUTOMOUNTS is not trivial.
+> 
+> lookup_flags &= ~LOOKUP_AUTOMOUNT won't work?
+
+No.  LOOKUP_OPEN overrides that.
+
+David
+
