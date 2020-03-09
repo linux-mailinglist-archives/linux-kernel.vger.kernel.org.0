@@ -2,132 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8E317E125
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:27:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7235B17E12B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:28:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgCIN1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:27:20 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33560 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbgCIN1Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:27:16 -0400
-Received: by mail-qk1-f195.google.com with SMTP id p62so9173175qkb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 06:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=CkpyZVM4qc6rvH01h9mhJ0L3H6e6RlzQmeQDPa3isww=;
-        b=AnWHnWr0EAok5vbRz2SoOeI9TSqGkM8pEkD93/xilcV6hI+GMIY3bdM3dsBFKdldJQ
-         VwAS5HddBfQ1GeZCnHazjWY8pyR07sRfmBmtYOVpvXUJv+FsjFtlP1O7QSylm6hdeEYm
-         wRoJ2uz7lV2FEzC8Y4PWJmrL1ynJmBy3UGGjmz64y3jF1eAThLQLUsujbyJN+d6AQVpP
-         QAdUh518x2AQfN1lyvw788/izdM1SB3+MUM7scN9hjyQ7klP/pP1S2J46dAbwGnzO0uG
-         PezkK/sXX67W6DwGXaa51Kl39rLXfOS7C+PmguiZqnVnDR7gQ5OJq0O1/WbBYy+NM93+
-         wUbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=CkpyZVM4qc6rvH01h9mhJ0L3H6e6RlzQmeQDPa3isww=;
-        b=CuXZUZwuE5jntkebYK76jSsntYyQKsoA4a6aewgP4CpCwWw6m0krE/aeErG6pOwV+0
-         nubUfIX97et+dhy35kk8M0oZcpG72bynLM1DQL9UeSV6/ndvJE1ZeTSfqy1nLtFVn49T
-         77leJ3wPK7OLutTTXLOjpfkVBlJu72IOB4m7YhmVfRdglMjj0rKVIEfVvWUF9zfQDnXR
-         TrYoxNP/HlAmNjflOHfdchV88O8pXQWOrzbiEFByqTLjD91KvZKYNCEvOLgbHCh33ECg
-         JvJSx7GgQaYQJjiXoUdFUbwtbCSgX0o5fL/1jcOGuloC1j9Bympm3b2S4w210WGnfVMj
-         yBJA==
-X-Gm-Message-State: ANhLgQ3G9rhtM5ikeGRYMAgboQWeWixoFwFIffYe7A0QSD6UjIlcn+mN
-        +7m98Yc0lB8uyacVaQy1KZI=
-X-Google-Smtp-Source: ADFU+vtDstsbIVWiekKDZd3Y3iIJX218MsrMaPEEWaHYYtn159XRC1IwaraGjLAL7R0ZyT/WyYURSA==
-X-Received: by 2002:ae9:c10c:: with SMTP id z12mr14083265qki.56.1583760433882;
-        Mon, 09 Mar 2020 06:27:13 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id o14sm2655166qtq.12.2020.03.09.06.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 06:27:13 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 88F9E40009; Mon,  9 Mar 2020 10:27:10 -0300 (-03)
-Date:   Mon, 9 Mar 2020 10:27:10 -0300
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, adrian.hunter@intel.com,
-        mathieu.poirier@linaro.org, ravi.bangoria@linux.ibm.com,
-        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, mpe@ellerman.id.au, eranian@google.com,
-        ak@linux.intel.com
-Subject: Re: [PATCH 00/12] Stitch LBR call stack (Perf Tools)
-Message-ID: <20200309132710.GA477@kernel.org>
-References: <20200228163011.19358-1-kan.liang@linux.intel.com>
- <20200306093940.GD281906@krava>
- <243484a9-5d64-707e-4abb-dd8813a8755e@linux.intel.com>
+        id S1726557AbgCIN2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:28:40 -0400
+Received: from mail-am6eur05on2042.outbound.protection.outlook.com ([40.107.22.42]:29852
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726463AbgCIN2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:28:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HfKTG5u5lsukCJyGlx8NHs7Xghkl3pOXOgOcx+QmIyPsGFZcFiT/PyyfCpsBfXhPAzrhNoSSIS39qbpClf01U0uez9bBv01OzRgQ+CUioWtYltPQaIKvvgpwtNSjELRDPNv76eHsY2gQCsc3+vVBvDnt0H9lylj9cKUpY0RKNunLvxGJFsu2Ii4H3saZLpZygl//P5fG+dNqgvqSvaOissxqJHQEb+m3bSfe5e1QH+PJCdo+/wlDb6UkA3noWo+F5rHxbkQBpw7p8U/oQhgLFcgculPM8w5pP7+7LT6KPSZHMl/DhXXOQhX0MS33Re4bcqAQJzTVBvXf0mSJ0vjdww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7KiMQjdhKshysxHpWF2uKsXIN9uhFZ0MEIK7BPmSOfc=;
+ b=WBxnxrQrrexMRCUhKlAQ5g9CtfzK3PohE0JF4M2FmMJ+0t38jBuk5vL/7I/x6FCCsVbhe6nPCqVxwfI909+R5XJqclWVgFPZ9UFVQVZr2gLk/m9SKL9ixDWpdvZPJwWWdQjWYointZR/GkxUCV7UrY4WqBWc9sPalMyRCgwxlqlpS2l03BBLY6FG1+ixbjJpML2b9QpB4kkP3Yg16BFl3LUUDesJHQKyiVrGy9AKe/BVqE2fMdOhCTUtJpyKM53E8V4L1e2eA8tz3ZArrQbQu7zIO3draQ4v67M5cn1xvQ9z/w5rsca8roRAQttFoEkt8LMVSFD1m5TC+FGXZF5E+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7KiMQjdhKshysxHpWF2uKsXIN9uhFZ0MEIK7BPmSOfc=;
+ b=sSSUpw9SEnuJyvsIUcCifAD9fFc2EfMQFkU1LG/hBZY88RoqzqoquoYLJRwAjLDfe6/lgZUKIMCZyHILRvNBfpy3sYrOWPHMmuYNZSs3EvVFceck8LLOqUUgV4fYyJUvFOfH65Vw74HM7NGIYYGwAu0Ed0Av6FZ4VqjL68IjURc=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4353.eurprd04.prod.outlook.com (52.134.125.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11; Mon, 9 Mar 2020 13:28:33 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
+ 13:28:32 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Adam Ford <aford173@gmail.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] soc: imx: Makefile: only build soc-imx8 when CONFIG_ARM64
+Thread-Topic: [PATCH] soc: imx: Makefile: only build soc-imx8 when
+ CONFIG_ARM64
+Thread-Index: AQHVyrHXB0HrD3qW50ui9P9S7z/H8qfp0NaAgAADRlCAACnrAIABBSNwgACHbgCADn0MAIAEANYwgAAfBYCAQm8QcA==
+Date:   Mon, 9 Mar 2020 13:28:32 +0000
+Message-ID: <AM0PR04MB44813F8292A36D84B3F80AEA88FE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1578989048-10162-1-git-send-email-peng.fan@nxp.com>
+ <20200114081751.3wjbbnaem7lbnn3v@pengutronix.de>
+ <AM0PR04MB4481A2FB7E2C56C2386297E888340@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <CAK8P3a3x55A8y9kR34zy8YyRhto8uay7PZGbDAufupiNS3+ihA@mail.gmail.com>
+ <AM0PR04MB44813A1D55659658E3FA203188370@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <CAK8P3a29=KWrhO8uu7mMS2gbeCGpkL7Q-xaaUVO2wcVD9MN93g@mail.gmail.com>
+ <CAHCN7xKtfKVQeaAg9sjvc3cHjLoAqAX6F-JyvkG5u23w1OG8CA@mail.gmail.com>
+ <AM0PR04MB4481B8BDAD2CD7376208B5F2880B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <CAK8P3a2gOq=qv5C6_0QwBXPuENqhBinK_KkzL5AcAEJtTDyB1w@mail.gmail.com>
+In-Reply-To: <CAK8P3a2gOq=qv5C6_0QwBXPuENqhBinK_KkzL5AcAEJtTDyB1w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2a2849fe-c318-40d2-1761-08d7c42dc392
+x-ms-traffictypediagnostic: AM0PR04MB4353:|AM0PR04MB4353:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB4353351F992C13ACF00113DA88FE0@AM0PR04MB4353.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0337AFFE9A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(396003)(136003)(366004)(376002)(189003)(199004)(86362001)(26005)(8936002)(2906002)(6506007)(478600001)(53546011)(44832011)(8676002)(71200400001)(33656002)(66946007)(76116006)(66446008)(7696005)(316002)(66476007)(81156014)(64756008)(81166006)(66556008)(4326008)(9686003)(55016002)(6916009)(52536014)(186003)(54906003)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4353;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZEiKaUaU9TFwvl2CJ338VPh8kkpc0rj2iuYskq8zt9eSYKuWk1Kz3eycL5RcJQQfeLTkZGqFx3ArN1sCVtqhEojZtNVVmZkVqPbbiX6uRizoLNzUsz8tz9Yz9O7owzTiV+sXbDdLHaFFIygJhxzNl8UQX3XyGgaeQMTe2HE7zu81Prznh6br251Xo3J/nv3KVqDXBOxKFX3iZXWLmR/oSUXiYVx00lDeJGta5mqbhWsLDroFCYndVa7ErbDyM1Hs77vP9GwAgX69Bolh1SI1AZk+Mq1W3l4m52HlA25i+L57F3n1Xgem60qGKtuMxIMxCyGivVBjRKoy3vrQqtLKwStwjGWZI8MmZU4KZvE+xRkql2qToqhrhRt0Uuu9+6m9rNhcJhHldlbQ409lA8Shbuf3Kpp3NVpj2uZz/DaquGU29PEp0/IJ35Kz2BUVgy3F
+x-ms-exchange-antispam-messagedata: EyqSxMuOOBS5n9Bn0WEdzewEbd7lYM2Fn5OL0q6g+/2HRHwBXAAXOvqd38iDhBIjI1BYuoeV6m+D0AI60dDg+9a5xfS0Io3eBCPOi6pYwDfbD0gDdcM247+kAN3YKvSSbUqcQM9ViBykLkryAeCFxQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <243484a9-5d64-707e-4abb-dd8813a8755e@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a2849fe-c318-40d2-1761-08d7c42dc392
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 13:28:32.9628
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +AUFQk54uAG48aeC+8W8uTSF/yi4zhFC+hGU8o1GCaKorhCaraPE7v8IYY7ErLxLNiiCD883elGt12dsObQ0mw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4353
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Mar 06, 2020 at 02:13:15PM -0500, Liang, Kan escreveu:
-> 
-> 
-> On 3/6/2020 4:39 AM, Jiri Olsa wrote:
-> > On Fri, Feb 28, 2020 at 08:29:59AM -0800, kan.liang@linux.intel.com wrote:
-> > 
-> > SNIP
-> > 
-> > > Kan Liang (12):
-> > >    perf tools: Add hw_idx in struct branch_stack
-> > >    perf tools: Support PERF_SAMPLE_BRANCH_HW_INDEX
-> > >    perf header: Add check for event attr
-> > >    perf pmu: Add support for PMU capabilities
-> > 
-> > hi,
-> > I'm getting compile error:
-> > 
-> > 	util/pmu.c: In function ‘perf_pmu__caps_parse’:
-> > 	util/pmu.c:1620:32: error: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size between 0 and 4095 [-Werror=format-truncation=]
-> > 	 1620 |   snprintf(path, PATH_MAX, "%s/%s", caps_path, name);
-> > 	      |                                ^~
-> > 	In file included from /usr/include/stdio.h:867,
-> > 			 from util/pmu.c:12:
-> > 	/usr/include/bits/stdio2.h:67:10: note: ‘__builtin___snprintf_chk’ output between 2 and 4352 bytes into a destination of size 4096
-> > 	   67 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
-> > 	      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 	   68 |        __bos (__s), __fmt, __va_arg_pack ());
-> > 	      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 	cc1: all warnings being treated as errors
-> > 
-> > 	[jolsa@krava perf]$ gcc --version
-> > 	gcc (GCC) 9.2.1 20190827 (Red Hat 9.2.1-1)
-> 
-> My GCC version is too old. I will send V2 later to fix the error.
-
-So I stopped at the patch just before the one introducing this problem,
-i.e. now I have:
-
-[acme@seventh perf]$ git log --oneline -10
-5100c2b77049 (HEAD -> perf/core, five/perf/core, acme/perf/core) perf header: Add check for unexpected use of reserved membrs in event attr
-1d2fc2bd7c1c perf evsel: Support PERF_SAMPLE_BRANCH_HW_INDEX
-1fa65c5092da perf tools: Add hw_idx in struct branch_stack
-6339998d22ec tools headers UAPI: Update tools's copy of linux/perf_event.h
-401d61cbd4d4 tools lib traceevent: Remove extra '\n' in print_event_time()
-76ce02651dab libperf: Add counting example
-dabce16bd292 perf annotate: Get rid of annotation->nr_jumps
-357a5d24c471 perf llvm: Add debug hint message about missing kernel-devel package
-1af62ce61cd8 perf stat: Show percore counts in per CPU output
-7982a8985150 tools lib api fs: Move cgroupsfs_find_mountpoint()
-[acme@seventh perf]$
-
-Please continue from there, I'll process some other patchsets,
-
-Thanks,
-
-- Arnaldo
+SGkgQXJuZCwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBzb2M6IGlteDogTWFrZWZpbGU6IG9u
+bHkgYnVpbGQgc29jLWlteDggd2hlbg0KPiBDT05GSUdfQVJNNjQNCj4gDQo+IE9uIE1vbiwgSmFu
+IDI3LCAyMDIwIGF0IDY6MDUgQU0gUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+IHdyb3RlOg0K
+PiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSF0gc29jOiBpbXg6IE1ha2VmaWxlOiBvbmx5IGJ1aWxk
+IHNvYy1pbXg4IHdoZW4NCj4gPiA+IERvZXMgYW55b25lIGhhdmUgYW55IHN1Z2dlc3Rpb25zIG9u
+IHdoZXJlIEkgbWlnaHQgZmluZCBzb21lIGdlbmVyaWMNCj4gPiA+IHN0dWZmIGZvciBlaXRoZXIg
+aU1YOE0gb3IgZ2VuZXJpYyBBUk12OCBkb2NzIGZvciBkb2luZyBzb21ldGhpbmcgbGlrZQ0KPiB0
+aGlzPw0KPiA+DQo+ID4gV2UgZGlkIGEgcG9ydGluZyBmb3Igb25lIGN1c3RvbWVyLCBidXQgY29k
+ZSBpcyBub3QgcHVibGljIGF2YWlsYWJsZS4NCj4gPg0KPiA+IEZpcnN0IGxldCB1Ym9vdCBzd2l0
+Y2ggdG8gQUFSQ0gzMiBtb2RlIHdoZW4gYm9vdGluZyBMaW51eCwgdGhpcyBpcw0KPiA+IGFscmVh
+ZHkgc3VwcG9ydGVkIGJ5IHVib290IG1haWxpbmUuDQo+ID4NCj4gPiBTZWNvbmQsIGNyZWF0ZSBh
+IG1hY2gtaW14OG0uYyB1bmRlciBhcmNoL2FybS9tYWNoLWlteCB0byBoYW5kbGUNCj4gaS5NWDhN
+DQo+ID4ganVzdCBsaWtlIG90aGVyIGkubXggYXJtMzIgc29jcy4gVGhpcyBpcyBub3QgcHJlZmVy
+cmVkIGJ5IExpbnV4IGNvbW11bml0eS4NCj4gPg0KPiA+IDNyZCwgYnVpbGQgaS5NWDhNIGRyaXZl
+cnMgd2hlbiB1c2luZyBpbXhfdjdfZGVmY29uZmlnKCBvcg0KPiA+IGlteF92Nl92N19kZWZjb25m
+aWcgaW4gdXBzdHJlYW0pDQo+IA0KPiBJIHRoaW5rIHRoZSB0aGlyZCBwYXJ0IGlzIHNvbWV0aGlu
+ZyB3ZSBjYW4gY2xlYXJseSBkbyBvbmNlIGl0IGFjdHVhbGx5IGJvb3RzLg0KPiANCj4gQ2FuIHlv
+dSBwb3N0IHRoZSBwYXRjaCBmb3IgdGhlIHNlY29uZCBwYXJ0IGZvciByZWZlcmVuY2U/IEluIHRo
+ZW9yeSBub3RoaW5nDQo+IHNob3VsZCBiZSBuZWNlc3NhcnkgdGhlcmUsIHNvIEkgd29uZGVyIHdo
+YXQgSSdtIG1pc3NpbmcgKGFzIHdlIG5lZWQgbm8gY29kZQ0KPiBmb3IgYXJjaC9hcm02NCkgYW5k
+IHdoYXQgd2UgY2FuIGRvIGRpZmZlcmVudGx5IHRvIG1ha2UgaXQgd29yayBvdXQgb2YgdGhlDQo+
+IGJveC4NCj4gDQo+IElzIHRoZSBwcm9ibGVtIHRoYXQgdGhlIFNNUCBicmluZ3VwIHVzaW5nIFBT
+Q0kgZm9yIGFybTY0IGRvZXNuJ3Qgd29yayB3aXRoDQo+IHRoZSAzMi1iaXQga2VybmVsIGZvciBz
+b21lIHJlYXNvbj8NCg0KU29ycnkgZm9yIGxvbmcgdGltZSBkZWxheS4gSSBmb3Jnb3QgeW91ciBt
+YWlsLiBJIGRpZCBzb21lIHRyeSBhZ2Fpbiwgc2VlbXMgb25seSBuZWVkDQp0aGUgZm9sbG93aW5n
+IHBpZWNlIGNvZGUgdG8gbWFrZSBpdCBib290LCBhbHNvIHNlbGVjdCBHSUNfVjMgYW5kIGRyb3Ag
+c29tZSBBUk02NA0KZGVwZW5kZW5jaWVzIGluIEtjb25maWcgZm9yIHNvbWUgaS5NWCBkcml2ZXJz
+Lg0KTmVlZCBzb21lIGFkZGl0aW9uIHdvcmsgaW4gQVRGL1UtQm9vdA0KdG8gbWFrZSBzbXAgd29y
+aywgdGhhdCBpcyBub3QgTGludXggcmVsYXRlZC4NCg0KK3N0YXRpYyBjb25zdCBjaGFyICpjb25z
+dCBpbXg4bW1fZHRfY29tcGF0W10gX19pbml0Y29uc3QgPSB7DQorICAgICAgICJmc2wsaW14OG1t
+IiwNCisgICAgICAgTlVMTCwNCit9Ow0KKw0KKyNpbmNsdWRlIDxhc20vbWFjaC9hcmNoLmg+DQor
+RFRfTUFDSElORV9TVEFSVChJTVg3RCwgIkZyZWVzY2FsZSBpLk1YOE1NIChEZXZpY2UgVHJlZSki
+KQ0KKyAgICAgICAuZHRfY29tcGF0ICAgICAgPSBpbXg4bW1fZHRfY29tcGF0LA0KK01BQ0hJTkVf
+RU5EDQoNCg0KQXJlIHlvdSBvayB3ZSBhZGQgc3VjaCBwaWVjZSBjb2RlIGluIGRyaXZlcnMvc29j
+L2lteC9zb2MtaW14OC5jIHRvIHN1cHBvcnQNCmFhcmNoMzIgbGludXg/DQoNClRoYW5rcywNClBl
+bmcuDQo+IA0KPiAgICAgICBBcm5kDQo=
