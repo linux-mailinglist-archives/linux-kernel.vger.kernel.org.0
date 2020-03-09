@@ -2,152 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CAFF17E9EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF0617E9E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:21:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgCIUYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:24:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbgCIUYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:24:36 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D87F62146E;
-        Mon,  9 Mar 2020 20:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583785476;
-        bh=StFL5QvmItJfOwz5VxmHCR0sM7EiUH0ldEUy/9kuvBI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mEltg4vcLqtYrMmRBSqoDNjFIEKXPWo+0y9RcaDbIdUbJgApQjySqLUB03QgQkVHQ
-         MiLGalrDdPxg9svfAdIjRCd5U7eMPLG7pUgeFQr/CgHNkq2dj1Mtn71lHcXyn5XBVP
-         3ShE/8zhFEQvjPWlCh8RuqexbeyA1TD3J/wmlz8I=
-Content-Type: text/plain; charset="utf-8"
+        id S1726266AbgCIUVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:21:40 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.72]:23542 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbgCIUVk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:21:40 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id BF0FD67A64F
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:21:38 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BOuAjUlJ7vBMdBOuAjOFy5; Mon, 09 Mar 2020 15:21:38 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=KLV5yJSsYHCCLskrtRv6u1HK/r2QKBRZk7ghDZkHXAU=; b=Pz7R/rVH3x7D6lgGJyt/IlsXFD
+        euImYoH8hRNDBfV4BZ1XYhTVwl1dQ3eFEbQSbi/XvbNTaWgdhpQkVllgtvc6mrbtk0f8EV+furKzM
+        qooxbDinjvIfFFn0ZrfSsgA1m7ElwKde3cs6fLA91c77zfAkPGGBVrvCdO8pooJH2w3ZeHygnTMiO
+        y9du0YzGWeBAKfUp4zXuBPrnBWAMzVLtzof7wUVSW038K0ArGnJ7dxtc4aRB3y7sRdseQSRsSIfyb
+        MdUFhVvfrNsNxVXII1zwbitya6AEqT753Rh/rZ5yywk13JzP9MLorXZyUE/OetoKt2VztUICOHp89
+        PJvm55Jw==;
+Received: from [201.162.168.201] (port=20442 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jBOu8-000zkz-PA; Mon, 09 Mar 2020 15:21:37 -0500
+Date:   Mon, 9 Mar 2020 15:24:49 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] fs: select: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200309202449.GA9027@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1582797318-26288-3-git-send-email-sivaprak@codeaurora.org>
-References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org> <1582797318-26288-3-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: Add ipq6018 apss clock controller
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     sivaprak@codeaurora.org
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Mon, 09 Mar 2020 13:24:35 -0700
-Message-ID: <158378547505.66766.155212878365765346@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.168.201
+X-Source-L: No
+X-Exim-ID: 1jBOu8-000zkz-PA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.168.201]:20442
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 26
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-02-27 01:55:18)
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 15cdcdc..37e4ce2 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -89,6 +89,14 @@ config APQ_MMCC_8084
->           Say Y if you want to support multimedia devices such as display,
->           graphics, video encode/decode, camera, etc.
-> =20
-> +config IPQ_APSS_6018
-> +       tristate "IPQ6018 APSS Clock Controller"
-> +       select IPQ_GCC_6018
-> +       help
-> +         Support for APSS clock controller on ipq6018 devices. The
-> +         APSS clock controller supports frequencies higher than 800Mhz.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-supports CPU frequencies? It's not clear what APSS is to a lot of people
-out there.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-> +         Say Y if you want to support higher frequencies on ipq6018 devi=
-ces.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-support CPU frequency scaling on ipq6018?
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-> +
->  config IPQ_GCC_4019
->         tristate "IPQ4019 Global Clock Controller"
->         help
-> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6=
-018.c
-> new file mode 100644
-> index 0000000..04b8962
-> --- /dev/null
-> +++ b/drivers/clk/qcom/apss-ipq6018.c
-> @@ -0,0 +1,210 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
+This issue was found with the help of Coccinelle.
 
-Are these two includes needed at all?
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <linux/reset-controller.h>
-> +#include <dt-bindings/clock/qcom,apss-ipq6018.h>
-> +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-branch.h"
-> +#include "clk-alpha-pll.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +#include "reset.h"
-> +
-> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/select.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This can be removed. It's common in clk-rcg.h now
+diff --git a/fs/select.c b/fs/select.c
+index 11d0285d46b7..f38a8a7480f7 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -97,7 +97,7 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
+ struct poll_table_page {
+ 	struct poll_table_page * next;
+ 	struct poll_table_entry * entry;
+-	struct poll_table_entry entries[0];
++	struct poll_table_entry entries[];
+ };
+ 
+ #define POLL_TABLE_FULL(table) \
+@@ -826,7 +826,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
+ struct poll_list {
+ 	struct poll_list *next;
+ 	int len;
+-	struct pollfd entries[0];
++	struct pollfd entries[];
+ };
+ 
+ #define POLLFD_PER_PAGE  ((PAGE_SIZE-sizeof(struct poll_list)) / sizeof(struct pollfd))
+-- 
+2.25.0
 
-> +
-> +static struct clk_branch apcs_alias0_core_clk =3D {
-> +       .halt_reg =3D 0x004c,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x004c,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "apcs_alias0_core_clk",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &apcs_alias0_clk_src.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-
-Please add a comment about why CLK_IS_CRITICAL is here. Presumably in
-the case that a cpufreq driver doesn't probe and claim this clk?
-
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +
-[...]
-> +
-> +static int __init apss_ipq6018_init(void)
-> +{
-> +       return platform_driver_register(&apss_ipq6018_driver);
-> +}
-> +core_initcall(apss_ipq6018_init);
-> +
-> +static void __exit apss_ipq6018_exit(void)
-> +{
-> +       platform_driver_unregister(&apss_ipq6018_driver);
-> +}
-> +module_exit(apss_ipq6018_exit);
-
-Any reason this can't just be module_platform_driver()?
