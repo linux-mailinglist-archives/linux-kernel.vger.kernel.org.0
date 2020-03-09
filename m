@@ -2,62 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AFD417D8B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 06:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BEE17D8BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 06:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgCIFEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 01:04:05 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:54182 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCIFEF (ORCPT
+        id S1726403AbgCIFIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 01:08:48 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:45334 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCIFIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 01:04:05 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4BFE6158B8427;
-        Sun,  8 Mar 2020 22:04:04 -0700 (PDT)
-Date:   Sun, 08 Mar 2020 22:04:03 -0700 (PDT)
-Message-Id: <20200308.220403.2013988891795466479.davem@davemloft.net>
-To:     bay@hackerdom.ru
-Cc:     oliver@neukum.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-        info@metux.net, allison@lohutok.net, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cdc_ncm: Implement the 32-bit version of NCM Transfer
- Block
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200305203318.8980-1-bay@hackerdom.ru>
-References: <20200305203318.8980-1-bay@hackerdom.ru>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 08 Mar 2020 22:04:04 -0700 (PDT)
+        Mon, 9 Mar 2020 01:08:47 -0400
+Received: by mail-il1-f194.google.com with SMTP id p1so3496066ils.12
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 22:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nFl7NgmNLIN8sQCgq3SBAsrmBATnujIqCfwAlf8PKYE=;
+        b=qPtfIydVgk/wqNHn9NwbDAly+4O+yXDUY3c8bmpD9FU94RbdUWiU15RLKAMG2sTn8K
+         UsJEhr89um0gwKNBjJR0sqk3G9VkSWC1Dr6jPHEFRjeNJgwVifo0RaWzrg9A4nc9FMyz
+         6YuhvTKJ2tU79qkYnaEcIaVmPi0BJvWgZyorroKfw/pFwALbfyBg83qdsJsOrpG77vjL
+         qcxVkF19srsLMwMrq+2/8c7mjN3S9XaFtEsMeeBi1ku/2eknDOECbyA0qI8Ztpour1yI
+         PTfkq6kV2ggvMI2zVGZnJy5yp9HTYIgLLvnX9tGOwiBZ/OBtnevsWtoFP+X5tqL40y4V
+         kScg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nFl7NgmNLIN8sQCgq3SBAsrmBATnujIqCfwAlf8PKYE=;
+        b=OAQAn4awuTwqfv5tWqWrvtzAETKHjbugbFXGq9K4cfOK6uSmGmme9+BarfldVHtr7y
+         ya25UWRbjpD0JcWOKrofjFVFNEFZrdhGP4GIIkPSDk6cH+fmM4x0EwrElJFo2s96fBub
+         /8a76re8ZxDgj8mzpXooGC+HyQRKdqBR8KZsRZuZtoVPP9hzBK63fnNtdxaTPLcYTdn9
+         kQnK4FwXhu65QZNh62XQs/qFYXVinSjWUdmRwf9Q67xISBHOiJm3LdgkltHVxNIrgnON
+         VAkUKO4G7jpjzkymbiKEGJEVaCNQShF8iy1IhijydNeGM1ckE1BHS65baGorgUXe7quh
+         Fagg==
+X-Gm-Message-State: ANhLgQ26J2J2C+H+++ybx9e2EEcX9nTAodbYCo2NR1MtbV005zwPW0eq
+        7ENdMUL1FN+mtWRTvNkyRBpJo0auwNuZDIjH6w==
+X-Google-Smtp-Source: ADFU+vuxb0JoiJXDiaFojwaBw6Me+xOIjGPm3wjhX0IS47/PKP326GKTKeTyid+DdxyeDhuQ+lNJhkYJYOmYqdcLdDI=
+X-Received: by 2002:a92:dad0:: with SMTP id o16mr1372961ilq.27.1583730526906;
+ Sun, 08 Mar 2020 22:08:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200308231410.905396057@linutronix.de> <20200308231718.931465601@linutronix.de>
+In-Reply-To: <20200308231718.931465601@linutronix.de>
+From:   Brian Gerst <brgerst@gmail.com>
+Date:   Mon, 9 Mar 2020 01:08:35 -0400
+Message-ID: <CAMzpN2itqrztb+wA1k-KDwYMyQw3nZaMjzkHCu4GLr=t10ug=w@mail.gmail.com>
+Subject: Re: [patch part-III V2 05/23] x86/entry/32: Provide macro to emit IDT
+ entry stubs
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Juergen Gross <jgross@suse.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Bersenev <bay@hackerdom.ru>
-Date: Fri,  6 Mar 2020 01:33:16 +0500
+On Sun, Mar 8, 2020 at 7:24 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> From: Thomas Gleixner <tglx@linutronix.de>
+>
+> 32 and 64 bit have unnecessary different ways to populate the exception
+> entry code. Provide a idtentry macro which allows to consolidate all of
+> that.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+>
+> ---
+>  arch/x86/entry/entry_32.S |   42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -44,6 +44,7 @@
+>  #include <asm/asm.h>
+>  #include <asm/smap.h>
+>  #include <asm/frame.h>
+> +#include <asm/trapnr.h>
+>  #include <asm/nospec-branch.h>
+>
+>  #include "calling.h"
+> @@ -726,6 +727,47 @@
+>
+>  .Lend_\@:
+>  .endm
+> +
+> +#ifdef CONFIG_X86_INVD_BUG
+> +.macro idtentry_push_func vector cfunc
+> +       .if \vector == X86_TRAP_XF
+> +               /* AMD 486 bug: invd from userspace calls exception 19 instead of #GP */
+> +               ALTERNATIVE "pushl      $do_general_protection",        \
+> +                           "pushl      $do_simd_coprocessor_error",    \
+> +                           X86_FEATURE_XMM
+> +       .else
+> +               pushl $\cfunc
+> +       .endif
+> +.endm
+> +#else
+> +.macro idtentry_push_func vector cfunc
+> +       pushl $\cfunc
+> +.endm
+> +#endif
 
-> The NCM specification defines two formats of transfer blocks: with 16-bit
-> fields (NTB-16) and with 32-bit fields (NTB-32). Currently only NTB-16 is
-> implemented.
-> 
-> This patch adds the support of NTB-32. The motivation behind this is that
-> some devices such as E5785 or E5885 from the current generation of Huawei
-> LTE routers do not support NTB-16. The previous generations of Huawei
-> devices are also use NTB-32 by default.
-> 
-> Also this patch enables NTB-32 by default for Huawei devices.
-> 
-> During the 2019 ValdikSS made five attempts to contact Huawei to add the
-> NTB-16 support to their router firmware, but they were unsuccessful.
-> 
-> Signed-off-by: Alexander Bersenev <bay@hackerdom.ru>
+IMHO it would be better to push this to the C code and not make the
+asm more complicated.  Something like:
 
-Oliver et al., please review.
+dotraplinkage void
+do_simd_coprocessor_error(struct pt_regs *regs, long error_code)
+{
+#ifdef CONFIG_X86_INVD_BUG
+        /* AMD 486 bug: invd from userspace calls exception 19 instead of #GP */
+        if (!static_cpu_has(X86_FEATURE_XMM)) {
+                do_general_protection(regs, error_code);
+                return;
+        }
+#endif
+        RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+        math_error(regs, error_code, X86_TRAP_XF);
+}
 
-Thank you.
+--
+Brian Gerst
