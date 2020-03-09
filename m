@@ -2,174 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E55917E08A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A941C17E092
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:51:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgCIMtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 08:49:00 -0400
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:43703 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbgCIMtA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 08:49:00 -0400
-Received: by mail-qv1-f65.google.com with SMTP id c28so798703qvb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 05:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=SoganfhT/6kmEF7NdyeYTuLLQky225D7XquJINa2klo=;
-        b=mbxRNMC5nCU6PxmjoR1povA7LMJYLLU4AQeOzNZBXS+/jgRG4+GMnrNijvUtRZHD6i
-         8pFjW68OK2PlyhPmMqZdpqwGTePVx8Mg7xguB+dPQcqv2vCAOns7Qf4sKrW4GfBql0QW
-         7QdSpeqUDUclu2P6VV48YBXZxuUSJJ8Y3k6dX5SEB+5u/jPTUOpyV+qaKul7v6e4TeNu
-         mDYB/3Ag2m4G+VEdneqGLSbZz4aUJVoikDPLh1/wT5u3oi2qUyUqfiokZdcXYqrf9GVD
-         TeLV/ZfGOWqEOtaFlgloSowXL1POXSrYiPs/n/xYOeEoAlLT69JI2vfcY6QeLQZZ91n3
-         HYEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SoganfhT/6kmEF7NdyeYTuLLQky225D7XquJINa2klo=;
-        b=Eo6hqu4ENoC15CrJ8J4pYjZbPDw8q5PS/aYMVD8xIa8WSaIjdlQ9Vq11Q6haFU/j9v
-         zdhKAeibSepnbnqksLTBKqY0gYBOCzzQbzr7/9ImK8JCcJY68U1/44aurb182HwGTgXk
-         UXfnYA9fSJqJirbwx8+z3B39iPh6nzZffYZch3+GZGgwje4QqM+a+8v4mqhnWc3eH/ah
-         C/oHN6IrsBq2Yr/AqYdDBbH9GK4euGwdo7om7dJus2VL53WXJb8y0/iw3MEsazn47jEw
-         tV2K3mC1WZKeFuLvXYU6VjeNgnJxXCV9b4sBEu/zowb2SfsdRYJHwEscn7LzMKbz6+Cl
-         fvMA==
-X-Gm-Message-State: ANhLgQ1wz2tJ0GjDHTVPihMpi2nDGPTYkCRcOxs0epzaHsj3TnXw81aO
-        RFgONtl5l+XWpWa1B2PCxX8=
-X-Google-Smtp-Source: ADFU+vsN5Dq3NqzlpTuAnY1dRkkpY5zzhlYz2TNaKIm70hcGssWjZvUKr5RerptGt5rhdh/+XdkFXg==
-X-Received: by 2002:a05:6214:421:: with SMTP id a1mr9436305qvy.185.1583758139165;
-        Mon, 09 Mar 2020 05:48:59 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id g19sm351454qka.95.2020.03.09.05.48.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 05:48:58 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7E6F040009; Mon,  9 Mar 2020 09:48:56 -0300 (-03)
-Date:   Mon, 9 Mar 2020 09:48:56 -0300
-To:     Dominik 'disconnect3d' Czarnota <dominik.b.czarnota@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        John Keeping <john@metanate.com>,
-        Changbin Du <changbin.du@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Michael Lentine <mlentine@google.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] Fix off by one in tools/perf strncpy size argument
-Message-ID: <20200309124856.GB29841@kernel.org>
-References: <20200309104855.3775-1-dominik.b.czarnota@gmail.com>
- <20200309123940.GA29841@kernel.org>
+        id S1726515AbgCIMuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 08:50:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:37533 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbgCIMuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 08:50:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 05:50:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,533,1574150400"; 
+   d="gz'50?scan'50,208,50";a="353360605"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Mar 2020 05:50:29 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jBHrY-000Hhk-Rt; Mon, 09 Mar 2020 20:50:28 +0800
+Date:   Mon, 9 Mar 2020 20:49:40 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Zong Li <zong.li@sifive.com>
+Cc:     kbuild-all@lists.01.org, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/9] riscv: introduce interfaces to patch kernel code
+Message-ID: <202003092006.4aw3aHrv%lkp@intel.com>
+References: <e2a42afbce47b364bf790b4cf8edf76235e48d53.1583741997.git.zong.li@sifive.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="BOKacYhQ+x31HxR3"
 Content-Disposition: inline
-In-Reply-To: <20200309123940.GA29841@kernel.org>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <e2a42afbce47b364bf790b4cf8edf76235e48d53.1583741997.git.zong.li@sifive.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 09, 2020 at 09:39:40AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Mon, Mar 09, 2020 at 11:48:53AM +0100, Dominik 'disconnect3d' Czarnota escreveu:
-> > From: disconnect3d <dominik.b.czarnota@gmail.com>
-> > 
-> > This patch fixes an off-by-one error in strncpy size argument in
-> > tools/perf/util/map.c. The issue is that in:
-> > 
-> >         strncmp(filename, "/system/lib/", 11)
-> > 
-> > the passed string literal: "/system/lib/" has 12 bytes (without the NULL
-> > byte) and the passed size argument is 11. As a result, the logic won't
-> > match the ending "/" byte and will pass filepaths that are stored in
-> > other directories e.g. "/system/libmalicious/bin" or just
-> > "/system/libmalicious".
-> > 
-> > This functionality seems to be present only on Android. I assume the
-> > /system/ directory is only writable by the root user, so I don't
-> > think this bug has much (or any) security impact.
-> > 
-> > Signed-off-by: disconnect3d <dominik.b.czarnota@gmail.com>
-> > ---
-> > 
-> > Notes:
-> >     I can't test this patch, so if someone can, please, do so.
-> >     
-> >     The bug could also be fixed by changing the size argument to `sizeof("string literal")-1` but I am not proposing this change as that would have to be changed in other places.
-> 
-> So, there are parts of this tools/perf/util/map.c that uses the idiom
-> you mention, for instance:
-> 
-> static inline int is_anon_memory(const char *filename, u32 flags)
-> {
->         return flags & MAP_HUGETLB ||
->                !strcmp(filename, "//anon") ||
->                !strncmp(filename, "/dev/zero", sizeof("/dev/zero") - 1) ||
->                !strncmp(filename, "/anon_hugepage", sizeof("/anon_hugepage") - 1);
-> }
-> 
-> So I think we should make all cases use this idim to avoid these
-> problems.
-> 
-> So I'll add your patch, then another, on top, that fixes the other
-> off-by-one errors introduced by the android specific code in this patch:
 
-This is the only such off-by-one in that file, and I remembered we have
-strstarts(), that we adopted from the kernel sources, so I think its a
-better fit, no?
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[acme@five linux]$ find . -name "*.c" | grep -v tools/ | xargs grep -w strstarts | wc -l
-55
-[acme@five linux]$ find tools/ -name "*.c" | xargs grep -w strstarts | wc -l
-40
-[acme@five linux]$
- 
-> Fixes: eca818369996 ("perf tools: Add automatic remapping of Android libraries")
-> 
-> Put this in perf/urgent and then in perf/core move to the more robust
-> idiom,
-> 
-> Thanks,
-> 
-> - Arnaldo
->      
-> >     There are also more cases like this in kernel sources which I am going to report soon.
-> >     
-> >     Also please note that other path comparisons in this file lack the "/" at the end and it seems they may imply similar issue. I haven't analysed the code deeply to see if that is a real issue.
-> >     
-> >     This bug has been found by running a massive grep-like search using Google's BigQuery on GitHub repositories data. I am also going to work on a CodeQL/Semmle query to be able to find more sophisticated cases like this that can't be found via grepping.
-> > 
-> >  tools/perf/util/map.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-> > index a08ca276098e..addd7edb0486 100644
-> > --- a/tools/perf/util/map.c
-> > +++ b/tools/perf/util/map.c
-> > @@ -89,7 +89,7 @@ static inline bool replace_android_lib(const char *filename, char *newfilename)
-> >  		return true;
-> >  	}
-> >  
-> > -	if (!strncmp(filename, "/system/lib/", 11)) {
-> > +	if (!strncmp(filename, "/system/lib/", 12)) {
-> >  		char *ndk, *app;
-> >  		const char *arch;
-> >  		size_t ndk_length;
-> > -- 
-> > 2.25.1
-> > 
-> 
-> -- 
-> 
-> - Arnaldo
+Hi Zong,
 
--- 
+Thank you for the patch! Perhaps something to improve:
 
-- Arnaldo
+[auto build test WARNING on v5.6-rc5]
+[also build test WARNING on next-20200306]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Zong-Li/Support-strict-kernel-memory-permissions-for-security/20200309-172554
+base:    2c523b344dfa65a3738e7039832044aa133c75fb
+config: riscv-allnoconfig (attached as .config)
+compiler: riscv64-linux-gcc (GCC) 7.5.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=7.5.0 make.cross ARCH=riscv 
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/spinlock.h:318:0,
+                    from arch/riscv/kernel/patch.c:6:
+   arch/riscv/kernel/patch.c: In function 'riscv_insn_write':
+   arch/riscv/kernel/patch.c:63:25: error: 'patch_lock' undeclared (first use in this function); did you mean 'patch_map'?
+     raw_spin_lock_irqsave(&patch_lock, flags);
+                            ^
+   include/linux/spinlock_api_up.h:28:32: note: in definition of macro '___LOCK'
+      do { __acquire(lock); (void)(lock); } while (0)
+                                   ^~~~
+>> include/linux/spinlock_api_up.h:40:31: note: in expansion of macro '__LOCK'
+      do { local_irq_save(flags); __LOCK(lock); } while (0)
+                                  ^~~~~~
+>> include/linux/spinlock_api_up.h:68:45: note: in expansion of macro '__LOCK_IRQSAVE'
+    #define _raw_spin_lock_irqsave(lock, flags) __LOCK_IRQSAVE(lock, flags)
+                                                ^~~~~~~~~~~~~~
+>> include/linux/spinlock.h:272:3: note: in expansion of macro '_raw_spin_lock_irqsave'
+      _raw_spin_lock_irqsave(lock, flags); \
+      ^~~~~~~~~~~~~~~~~~~~~~
+>> arch/riscv/kernel/patch.c:63:2: note: in expansion of macro 'raw_spin_lock_irqsave'
+     raw_spin_lock_irqsave(&patch_lock, flags);
+     ^~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/kernel/patch.c:63:25: note: each undeclared identifier is reported only once for each function it appears in
+     raw_spin_lock_irqsave(&patch_lock, flags);
+                            ^
+   include/linux/spinlock_api_up.h:28:32: note: in definition of macro '___LOCK'
+      do { __acquire(lock); (void)(lock); } while (0)
+                                   ^~~~
+>> include/linux/spinlock_api_up.h:40:31: note: in expansion of macro '__LOCK'
+      do { local_irq_save(flags); __LOCK(lock); } while (0)
+                                  ^~~~~~
+>> include/linux/spinlock_api_up.h:68:45: note: in expansion of macro '__LOCK_IRQSAVE'
+    #define _raw_spin_lock_irqsave(lock, flags) __LOCK_IRQSAVE(lock, flags)
+                                                ^~~~~~~~~~~~~~
+>> include/linux/spinlock.h:272:3: note: in expansion of macro '_raw_spin_lock_irqsave'
+      _raw_spin_lock_irqsave(lock, flags); \
+      ^~~~~~~~~~~~~~~~~~~~~~
+>> arch/riscv/kernel/patch.c:63:2: note: in expansion of macro 'raw_spin_lock_irqsave'
+     raw_spin_lock_irqsave(&patch_lock, flags);
+     ^~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/kernel/patch.c:66:25: error: 'FIX_TEXT_POKE1' undeclared (first use in this function)
+      patch_map(addr + len, FIX_TEXT_POKE1);
+                            ^~~~~~~~~~~~~~
+   arch/riscv/kernel/patch.c:68:26: error: 'FIX_TEXT_POKE0' undeclared (first use in this function); did you mean 'FIX_TEXT_POKE1'?
+     waddr = patch_map(addr, FIX_TEXT_POKE0);
+                             ^~~~~~~~~~~~~~
+                             FIX_TEXT_POKE1
+--
+   In file included from include/linux/spinlock.h:318:0,
+                    from arch/riscv//kernel/patch.c:6:
+   arch/riscv//kernel/patch.c: In function 'riscv_insn_write':
+   arch/riscv//kernel/patch.c:63:25: error: 'patch_lock' undeclared (first use in this function); did you mean 'patch_map'?
+     raw_spin_lock_irqsave(&patch_lock, flags);
+                            ^
+   include/linux/spinlock_api_up.h:28:32: note: in definition of macro '___LOCK'
+      do { __acquire(lock); (void)(lock); } while (0)
+                                   ^~~~
+>> include/linux/spinlock_api_up.h:40:31: note: in expansion of macro '__LOCK'
+      do { local_irq_save(flags); __LOCK(lock); } while (0)
+                                  ^~~~~~
+>> include/linux/spinlock_api_up.h:68:45: note: in expansion of macro '__LOCK_IRQSAVE'
+    #define _raw_spin_lock_irqsave(lock, flags) __LOCK_IRQSAVE(lock, flags)
+                                                ^~~~~~~~~~~~~~
+>> include/linux/spinlock.h:272:3: note: in expansion of macro '_raw_spin_lock_irqsave'
+      _raw_spin_lock_irqsave(lock, flags); \
+      ^~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv//kernel/patch.c:63:2: note: in expansion of macro 'raw_spin_lock_irqsave'
+     raw_spin_lock_irqsave(&patch_lock, flags);
+     ^~~~~~~~~~~~~~~~~~~~~
+   arch/riscv//kernel/patch.c:63:25: note: each undeclared identifier is reported only once for each function it appears in
+     raw_spin_lock_irqsave(&patch_lock, flags);
+                            ^
+   include/linux/spinlock_api_up.h:28:32: note: in definition of macro '___LOCK'
+      do { __acquire(lock); (void)(lock); } while (0)
+                                   ^~~~
+>> include/linux/spinlock_api_up.h:40:31: note: in expansion of macro '__LOCK'
+      do { local_irq_save(flags); __LOCK(lock); } while (0)
+                                  ^~~~~~
+>> include/linux/spinlock_api_up.h:68:45: note: in expansion of macro '__LOCK_IRQSAVE'
+    #define _raw_spin_lock_irqsave(lock, flags) __LOCK_IRQSAVE(lock, flags)
+                                                ^~~~~~~~~~~~~~
+>> include/linux/spinlock.h:272:3: note: in expansion of macro '_raw_spin_lock_irqsave'
+      _raw_spin_lock_irqsave(lock, flags); \
+      ^~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv//kernel/patch.c:63:2: note: in expansion of macro 'raw_spin_lock_irqsave'
+     raw_spin_lock_irqsave(&patch_lock, flags);
+     ^~~~~~~~~~~~~~~~~~~~~
+   arch/riscv//kernel/patch.c:66:25: error: 'FIX_TEXT_POKE1' undeclared (first use in this function)
+      patch_map(addr + len, FIX_TEXT_POKE1);
+                            ^~~~~~~~~~~~~~
+   arch/riscv//kernel/patch.c:68:26: error: 'FIX_TEXT_POKE0' undeclared (first use in this function); did you mean 'FIX_TEXT_POKE1'?
+     waddr = patch_map(addr, FIX_TEXT_POKE0);
+                             ^~~~~~~~~~~~~~
+                             FIX_TEXT_POKE1
+
+vim +/_raw_spin_lock_irqsave +272 include/linux/spinlock.h
+
+b8e6ec865fd1d8 Linus Torvalds  2006-11-26  268  
+c2f21ce2e31286 Thomas Gleixner 2009-12-02  269  #define raw_spin_lock_irqsave(lock, flags)		\
+3f307891ce0e7b Steven Rostedt  2008-07-25  270  	do {						\
+3f307891ce0e7b Steven Rostedt  2008-07-25  271  		typecheck(unsigned long, flags);	\
+9c1721aa4994f6 Thomas Gleixner 2009-12-03 @272  		_raw_spin_lock_irqsave(lock, flags);	\
+3f307891ce0e7b Steven Rostedt  2008-07-25  273  	} while (0)
+ef12f10994281e Thomas Gleixner 2009-11-07  274  
+
+:::::: The code at line 272 was first introduced by commit
+:::::: 9c1721aa4994f6625decbd915241f3a94ee2fe67 locking: Cleanup the name space completely
+
+:::::: TO: Thomas Gleixner <tglx@linutronix.de>
+:::::: CC: Thomas Gleixner <tglx@linutronix.de>
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+
+--BOKacYhQ+x31HxR3
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+H4sICNo3Zl4AAy5jb25maWcAnVxvc9s4j3+/n0LTnblp52m7aZJ2u3eTF7RE2Xwsiaoo2U7f
+aFxHST1N7Jz/7Lb36Q8gJYuSQLd3O7vdlAApEgSBH0Awv//2u8eOh+3T8rBeLR8ff3gP1aba
+LQ/VnXe/fqz+ywukl8jc44HI3wJztN4cv/+xW+9Xf3vv3354e/Fmt3rvTavdpnr0/O3mfv1w
+hO7r7ea333+Df3+HxqdnGGn3n57u9eH6zSOO8eZhtfJejn3/lffn2/dvL4DXl0koxqXvl0KV
+QLn50TTBX8oZz5SQyc2fF+8vLk68EUvGJ9KFNcSEqZKpuBzLXLYDWQSRRCLhA9KcZUkZs9sR
+L4tEJCIXLBKfedAy5pOMswD6hxL+KHOmpkDUax1r4T16++pwfG5XNMrklCelTEoVp+1AOHrJ
+k1nJsnEZiVjkN1eXKLF6QjJORcTLnKvcW++9zfaAAze9I+mzqFn5ixdtP5tQsiKXROdRIaKg
+VCzKsWvdGPCQFVFeTqTKExbzmxcvN9tN9coaW92qmUh9e8QTrVA8EiPiYxM247BGfwKzATWC
+MWCCUSMzkX3y9scv+x/7Q/XUymzME54JUIXsU6kmcm6JDVoCGTORtG0qZZniSIK2371qc+dt
+73tDUyPHsF4BE0yCiGeWvtUsPshyymc8yVUz3Xz9VO321Iwnn8sUeslA+HoSdXMikSLgA6TU
+NJmkTMR4UmZclbmIYTe7PPUKB7NpJpNmnMdpDsNrHT8N2rTPZFQkOctuyU/XXDbNnOW0+CNf
+7r95B/iut4Q57A/Lw95brlbb4+aw3jy04siFPy2hQ8l8X8K3RDLuTEQJckW/8Ak9lcwvPDXc
+BPjMbQk0+1Pw15IvYG+oY6QMs91dNf3rKXU/1Y4rpuYHYtRGgZQ/4YFRo0aB1OprdXcEg+jd
+V8vDcVftdXP9LYLaM1Aiyd9dfmynrA+WKtJUZrlFbc3IOJNFqsh9htn501RCJ1S0XGa0jppV
+oCnRY5E8GY8YrUyjaAqmZabNXRbQLFLmpVOYsHCZwiEAM1yGMsNTBv+LWeJ3VLvPpuAHasPB
+/OQRKITPgRtMZJ4x3/IDRlPsgbWRAOuW0cIZ8zwGH1DWdo1mulWhOssRGiNEH0epxII0A6fz
+Cls4pUVbjOl2BvYyLFyzKXK+ICk8la41inHCopDeYT15B00bWAeNCUm2C1kWsGh6bSyYCVhd
+LW5aZDGPRyzLhGNXp9jxNqb7jtKQ2stmOfGIB4GNGLQDRK0tT76k3Tr/3cX1wNDWgCqtdvfb
+3dNys6o8/ne1ATvIwE74aAnB7hubXI/TDk/a1V8csR1wFpvhSm29XZqHIIXlgHBo7VMRoxCB
+ioqRLQQVyZGzP2xVNuYNOnGzheC0IqHAlMFJkvEvME5YFoChpjVPTYowBPiVMvg47DSgKjCQ
+tC7FLNUs8y5mdJxVGYpooLr1NnURZCOvD9cjkbf6lAnlz3oeQM8hS4ISOFUZAzh69/EcA1vc
+XF53BizjMpZBx6TGcUHs3mfAFGUQs6vLdg4zpse9ufrrhEDqlvcf2haQpAxDxfObi+8fL8w/
+nUmGEcvhZAIqZqOI95Y4Z6CN2rOyqJwUYHejkcsPBhwMn/6i3joLKd6qlqseJFQWPWf+VLuE
+hs1CB7oZcCNMc6yG9BNshO0fZSxHpQWvSDCoIh62TuYcIJ81XjrOUQxlBAcxAtnWAGLrw248
+Vqs6ymo1VgLgEKGYObw4kGciy0m96w6qR00flwe0Fd7hx3Nlf0dLOptdXQpCOWrih2vR8c2o
+WRGc5AAOCeXiT3SW3HY0kC3Sya1CnbgcU6bEYgDgM+6alTgleuQFqG8t8w5M1IdAKFbS8U2Y
+FqTounKyzXcH4LVRwruLCypK+lxevr+wJwQtV13W3ij0MDcwjCUD7qONPucTWqSJ8xxtgW37
+jHqwt4LyONDhsg406+4dTqMy238AuYJ3WT5UT+BcrHFa+xfTUnR17QTWy93q6/oAWgrzfXNX
+PUPn7mcGIac+sxMpp8PzBuqh47I6ou+ZEsTaYKkQKMjs1kEMRMZ94GFpz9tjhgF0ug7DVY/q
+R1MKHWR83OfU7Yg9jWEqgyIefEobPrPNJbiW3I5k66BBdwbPk8NsARrXUaE9ClqGXriGgqJM
+MFpN2MYAXCTL+uP4Mr1tUiR5ZC0HgiA4dyOYxxzcbgcD1SDi6hIchkaKLrtilgJ7l5dTniVg
+MbL5wrbdQ5JRH1/O3nxZ7qs775vR+efd9n792AlYT19A7tpNa89vx4LnRjqZ7agYi0SnUXz/
+5sXDv/71Yujgf6LJp0QNwnQV4yzeWVZRBkXEHeAUg01CgCbfVaoUplYkyFSnS7p0vXGGfo5G
+9p1nIueuzjax2/sk+DgWcj5qNo1/r1bHw/LLY6VTkZ7GrYeOLRmJJIxziE8zkVLB/WnkmhHh
+ha14VjMtS0OPwTM40G/G8USSFs01f72AuHra7n54MWUqG39jsFArJ2yAoxtwtEmEzcGQRkvX
+8Nh0lUZwtNJck+GUq5u/9D8nlQUXCmFTkJV5H2wmElBgWaNaMKci1rGzUqCQDQvnAVoqbT+m
+cedoRxzidOZPaEzyOZWSjiY/jwoHfuYZfgYsWj/Sacx7kZYjnviTmGXUQTgpRZrjceA+rMs+
+4u6tsbJ2nFI3vQsco8N/awnqnQ6qv9cQbAW79d8mZOuYd78Dk+Cv9Jp9n3VTJ61XXK/qsT05
+dLaFCeEmPEodgW7AZ3mchrQoQchJwNBwu9KEevhQZDEYdW7SyoNphuvd0z/LXeU9bpd31c6e
+XzgvI8mC/tzqneh3tCCoDrYwq0QfwdPiMAoIMoDErtVrBj7LHNbUMGAKvh4GjGAsZ5SHOoF7
+0E4YUcAZ6XgOerMM5jruvTutJ51koN1s6XeiHCmNPCCmFeRW9CNDW91kiPFq7rhgACpanByi
+ZXuAkrMsuqVJaEHQMthtHVMvEeQAmpmBwTC2zZ4MyDVzZRFTlmGwNVCuZAZwQR2fn7e7gy27
+Trsxuev9qiPlRkBFHN/iNOnkVALARRWg3Dht3FT6pGSMzjgsMNZflCoIOe1D0lnKEuHwL5fk
+mjkHdBJ7e2vVzWw1pfzryl98oJ1St6u50qi+L/ee2OwPu+OTTgntv8Kpu/MOu+Vmj3we4JvK
+uwMBrp/xR1vQ/4/eujt7PAAQ8sJ0zMA/1gf9bvvPBg+797TFLLj3clf993ENsYknLv1XzZWi
+2BwAeMUgtP/wdtWjvq0khDGT4AgKOh12bghLnP5Ekt07umSicl+JusWaS6MdQETQZtsDqkO9
+uufjYThUm/pM0mKoE5Pl7k6LUPwhPezS0XGFF1O0t2Qx7yvZaY7UoK0EiWmab8L+L1ewu9Rp
+y3P6fIPFBIPgIk1dNFwYwBL0BIOtbuSVxqcrPjqYnp9LGeY+/NcPWtvDHd26VGwoBivXoL8H
+aKoAx4K3H0MvaHTh0idV4NKntdpit7ivaOsCoYCjPaYJk/6dXWPCutdLJhWQp97qcbv6Zs3f
+GK+NhsSAOPG2GC/4AEzNZTZFEKqjP0AdcYoJ0sMWxqu8w9fKW97drdFhQuSkR92/tW3Q8GPW
+5ETi5xkNMsepkL076xNt/s5xFzMHEMBmjosYTUUXRwcUho6Jw4g+BpN5LBNaDyc8gziQnivL
+/UkgqcszpUZ4f6SEyae2m6yobNrIjxnJjoTBHsfHx8P6/rjRScPGFNydgG4LTMKgxFgmAtQA
+sYPjoLVck8gPaJVFnhhPCnOSJ+LD9eW7Mo0dPnWS+wAmlPCvnENMeZxGdPShJ5B/uPrrTydZ
+xe8vaN1ho8X7iwsNWd29b5Xv0AAk56Jk8dXV+0WZK5+dkVL+KV58pDHA2W2zbBQfF5H7zoMH
+gjUp8GFksls+f12v9pTxCrJ4wM+gjQDAdrPh81PvJTverbeev013WyDst7tXg8qjdoRf6mDC
+lN3yqfK+HO/vwWQHQ88Vjkhpkt0Mql+uvj2uH74eAGOARp9x6UDFUial6sDBcWPrTyO8IDjD
+2gQOP/nyKSbpb5NlH2SRUOFEAfZETnxRRhA4RBDuJqAHVpoQ6e3FSBuIQnMRpaLvpS3yKS6f
++EGv60BfsE1Dy9banNrTrz/2WMzmRcsf6HyH9igBYIhfXPhczEgBnhmnu6YxC8YOW5/fpg7I
+jx0zCcJTcwGG23Gn6DjbPFZYWkMSEw7xNA9o38R8zNqIEQQkXQzWgN2A+dTWZblvNI4GZ2iO
+B3GRyXzEbFSE1B2Auk18TFXTim76lRPO+mUr9e70BraWWCwCoVJXDKlz3CaMpxeDDEKCjJNi
+sJp4vdpt99v7gzf58Vzt3sy8h2O1P3SO8yk6OM9qCSJnY1cVw1hGQSjUhNgqP5oi4o2knBb9
+LCDQMDGTdlLz4HMBV9T3Dk1Z5hNYf1+jJm3D/tnuvtmbhANNVEBrWjsg7OMCo/nYEWAgC3Ur
+2aBkeh42IsKUdT+pbSaqO6ntcdfBHc35w5ITk/HotEAAPLJEY679NKlz8Sj8TPoTkQKAzD9c
+07afnIA1BhPRSC4G886qp+2hegZvRFknTDDlGKbTGJ/obAZ9fto/kOOlsWpUmx6x07PnAuai
+C1ZMsAtze6l0PZwnYfO+rp9fefvnarW+P2W4TjaZPT1uH6AZr5jt6TUemiCbfjAgROWubkOq
+cbq77fJutX1y9SPpJpO0SP8Id1W1B5tfeZ+2O/HJNcjPWDXv+m28cA0woGnip+PyEabmnDtJ
+t/fLBz0ebNYCb6e+D8bs5qdmPn25TXU+ZTB+SQus4CdGzBJm3JFpW+RO5KvvYOno3mF20vkQ
+ZWKObwWzHCZogIJn3TYADKIVRwhhzFmZRn26VXfc+Y413RRvcV2pCh04YiFkDvAgIvIBECJ3
+ql5bZ1Enn5GBBI9+XE5lwhB7XDq5MAKHqIInPi8DOqXeZTkzTqiiUkAMEn/qI7gOWwzeI4I/
+ARqeHS5dsPLyYxJjEsKRSLW5cJlOLpHk8E0+gFhNNqEj5F7w7jNaLrFPrzFjQ2DENne77fqu
+U1OTBJkUATmfht1CSIwuzkz6OTSTGpxjLna13jxQsYfK6XDcCCmfkFMihrQCJUzpUkOGjvyR
+EpJej4pE7EzrYVEi/Jxwn8bfdd0ijSC7l3L1NRXYcrPpHQs5Y5EIsJgrVKV+ZkAHxHyBwBl4
+zB2sdJRc66IC5HDBPhgBDld2q4uTXRyAYIUrkZrIXIQOY2lopbOYOWRnen8qZE5vLJaGh+q6
+dFwjGrKLGhZYiUzT6huhHtnsznL1tRegK+KiuUFqhtsY0X11vNvqS3liuxF4uaajaeAooiDj
+9N7oQm8679TUGhJ4vi09EWOW5GjH2bhb3K7/RwixsVnDNdlYVplwC2aXc0dRc+IolC4S4cuA
+lmrnyBhkWK2Ou/XhBxX1Tfmt4/KM+wXqM0R+XGkvqAt5zvKSctQBUFPVq7VclyOdqnc71XV9
+NvpzOcPtQB4sURxepDenrn471S6FWdeukYpvXmCsgPdbr38sn5av8Zbreb15vV/eVzDO+u71
+enOoHlB2LzpFhF+Xu7tqg5a2FaldQrLerA/r5eP6f5rc1+msi7wuGus/AtIkfByGcjlN3WFt
+Gmasmnbydksn+lPq1RsSKzpByr76WCcATaIcmIFo/WW3hG/utsfDetM1CIi1ema2gUMix9oF
+MObdQ5YFXXBxcuJojHWZSB9v+aIU0tTaWFMFK+GL3OGXMv/dBxelzN9dBCJ0kkVelNRlPdB0
+ObbNfHUJ6hiFjuv9mgEwLB/dfiS6Gsq1ayrIwrI5OMYzHCBnF/WDc2Qngc65R2KkP+a4Qs/8
+jw5ghldwDhm14dFn0HlKJfRTLNmpzzJNiAL6xVkKc1q9gjdocVRcIQU+GrEMyyknHHxNJyGn
+eyJe5q7HPfi0sf9Op5VWGFgfK0xaEEMsP+2UXqMRTsYO8dTndXD6Bo8sZcaNMLo2bfXN1F7q
+1ucd2L5v+i7w7qnaPxDlxzJRUgOnsS6GbwzRzZ9Ojk+F4PnN6YkDeBaF7w8GI1zbzjseSVD7
+kmcZPoAll+ycbJNWw9fOb/TrRYAcq297zbqqX0FTftHUGOF7YhpY6rcQZYxXxfrBHrGrYQbT
+1W+Xby4vrj92NzHV1cjO10xY1am/AFw0cuF444ZvC8GdkEp1enenaz17Lz3N8sAx6td2gEVi
+5kp695nMa2yZRFS+ui1INqvX7xhhnva3OxQaLuvZhTKDeHbO2bSpY3QlK39tdzvlebXSB9WX
+48MDuj2rWKZzTcrGWJV+qxylSPVUHTBtpFhCSEm3g6cX4yRu7EivIu3s/H7rfNyUVg93t18h
+awOU07hd1wxnkS9ynihXmNN7wkMDcv2kaJ44NleTYfeVTFzhlvlKJiHCY4On9j0uOfo3KOi5
+QkGDtwq0NLSC65e0hosnwfA898abxS7F107F8IgsLxixKTXhzPCmtjfjY3yjcIbP5N80FKSQ
+hHljMGWoae3Dmgb162a9ZF3C3oWKrXIMRDnpleTV1bTA78nt8/61FwGgPj6bEzhZbh562A/i
+FsStsheJU3SM8Qve/v4IQ8Q7AVnkN/ZrGhnqGuoihVmaxxQOsSERYj5woPgLIkim+SeycMNK
+Upxb62/dx+TdUzZ4Te6WM65yynnaOyAGXOP1RmsXXu4hYtHVN6+9p+Oh+l7BD9Vh9fbt21dD
+h0Zd2/T1Cp8Zn628zebKFbAaBgjrYrSaESzhDFudcdG4qUE09LA6ewP7mmPNp9MgzOdm8j+B
+R/8H+XVizvoJIv1p9IlgEiEyV5wHYE/OVK/VZttYLsdpqh+y3C0PSw8N/2rwaK2WoThrHdOf
+0NU5A6zTTsJ1L6uNb1JqGw1BWlYQybHOoXEsqf9VPwP5JfiwYZhfwt/6QLou/HUS+lmWUzmQ
+46capJmcm6x/Z8UnRWF867dSuE812BaDabIBmrFzJWGR+O0vQch6V8kn6jhj6cTBYx7Fxjrb
+Cq4EY+geS/1U3vTXWMyqEMdGHWYMCw9Ct3gUi9OIKDkwv5jI3jY77MirPf4CEW1E/e3f1W75
+0HnYOi0SR7zaqCdGBjIDR/hvg1QdSVRMkZA8XY8JjhGfmhkJpt3HqPgELzbqg+LplyS0oJHH
+TvNzdtmDpIwJyf4XIjd2QhJKAAA=
+
+--BOKacYhQ+x31HxR3--
