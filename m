@@ -2,125 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF1A17DB83
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAE9C17DB8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:50:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgCIItv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:49:51 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47999 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725956AbgCIItu (ORCPT
+        id S1726490AbgCIIuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:50:50 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17842 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725956AbgCIIut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:49:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583743789;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8QZ2VpmXmGjbC2jzOGtJlLDEr7srXarmJid3qae+hIk=;
-        b=WcNCx5NYwumGHMTwpCIK5mikEOHZ+dDOul6QY3o4Ra0u+bBCbSsdmN+dqR+ltUYBUnorcl
-        e/O5mufUcPc0+sC7ZMfK0izZuo/sbn9SkQC6pkG4dV5vMdY688K7PL44vETWNVbXJoISvO
-        1rDFa8j4dU+5VrjGnzUD2nwW4hLEIaM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-31-lzLAc4gnPQ6CJwC1rmfv3Q-1; Mon, 09 Mar 2020 04:49:47 -0400
-X-MC-Unique: lzLAc4gnPQ6CJwC1rmfv3Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59F1DA3743;
-        Mon,  9 Mar 2020 08:49:45 +0000 (UTC)
-Received: from krava (ovpn-205-132.brq.redhat.com [10.40.205.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 14E2519C58;
-        Mon,  9 Mar 2020 08:49:41 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 09:49:24 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, will@kernel.org, ak@linux.intel.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        james.clark@arm.com, qiangqing.zhang@nxp.com
-Subject: Re: [PATCH 6/6] perf test: Add pmu-events test
-Message-ID: <20200309084924.GA65888@krava>
-References: <1583406486-154841-1-git-send-email-john.garry@huawei.com>
- <1583406486-154841-7-git-send-email-john.garry@huawei.com>
+        Mon, 9 Mar 2020 04:50:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1583743805;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=arbMPqUJNmVr7z8xDGX4dxhr0Jiu/21GH9BeGGFEGqM=;
+        b=c9gPUBVssKTdnoFnpfLyta/PBYHPP/eNOKjJboGMgjuf+KpKU/ErK1jko5L5RUDe
+        e6M40FwTByqvsri6OqJNxafWBFFp9nZyJac3G61SiT9bqqDL3MHXg41EkGbbe8BQOis
+        DhQPwqyOvO110mqrpmmmtgbWZTavGMQLcHpfI5GM=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 15837438034103.9039562753517885; Mon, 9 Mar 2020 16:50:03 +0800 (CST)
+Date:   Mon, 09 Mar 2020 16:50:03 +0800
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     "Tiezhu Yang" <yangtiezhu@loongson.cn>
+Cc:     "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+        "Huacai Chen" <chenhc@lemote.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "linux-mips" <linux-mips@vger.kernel.org>,
+        "linux-pci" <linux-pci@vger.kernel.org>,
+        "linux-ide" <linux-ide@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Xuefeng Li" <lixuefeng@loongson.cn>
+Message-ID: <170be7ca00e.133ea84fa2305.7803335422925759322@flygoat.com>
+In-Reply-To: <1583742206-29163-2-git-send-email-yangtiezhu@loongson.cn>
+References: <1583742206-29163-1-git-send-email-yangtiezhu@loongson.cn> <1583742206-29163-2-git-send-email-yangtiezhu@loongson.cn>
+Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[PATCH_1/6]_PCI:_Add_Loongson?=
+ =?UTF-8?Q?_vendor_ID_and_7A1000_device_IDs?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583406486-154841-7-git-send-email-john.garry@huawei.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Priority: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 05, 2020 at 07:08:06PM +0800, John Garry wrote:
-> Add a pmu-events test.
-> 
-> This test will scan all PMUs in the system, and run a PMU event aliasing
-> test for each CPU or uncore PMU.
-> 
-> For known aliases added in pmu-events/arch/test, we need to add an entry
-> in test_cpu_aliases[] or test_uncore_aliases[].
 
-heya, awesome! ;-)
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2020-03-09 16:23:21 Tiezhu Yan=
+g <yangtiezhu@loongson.cn> =E6=92=B0=E5=86=99 ----
+ > Add the Loongson vendor ID and 7A1000 device IDs to pci_ids.h
+ > to be used by the controller driver in the future.
+ >=20
+ > The Loongson IDs can be found at the following link:
+ > https://git.kernel.org/pub/scm/utils/pciutils/pciutils.git/tree/pci.ids
+ >=20
+ > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+ > ---
+ >  include/linux/pci_ids.h | 18 ++++++++++++++++++
+ >  1 file changed, 18 insertions(+)
+ >=20
+ > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+ > index 352c0d7..0125ab4 100644
+ > --- a/include/linux/pci_ids.h
+ > +++ b/include/linux/pci_ids.h
+ > @@ -3113,4 +3113,22 @@
+ > =20
+ >  #define PCI_VENDOR_ID_NCUBE        0x10ff
+ > =20
+ > +#define PCI_VENDOR_ID_LOONGSON            0x0014
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_HT    0x7a00
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_APB    0x7a02
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_GMAC    0x7a03
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_OTG    0x7a04
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_DC    0x7a06
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_HDA    0x7a07
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_SATA    0x7a08
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_PCIE_X1    0x7a09
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_SPI    0x7a0b
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_LPC    0x7a0c
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_DMA    0x7a0f
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_EHCI    0x7a14
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_GPU    0x7a15
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_PCIE_X4    0x7a19
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_OHCI    0x7a24
+ > +#define PCI_DEVICE_ID_LOONGSON_7A1000_PCIE_X8    0x7a29
 
-> 
-> A sample run is as follows for x86:
-> 
-> Couldn't bump rlimit(MEMLOCK), failures may take place when creating BPF maps, etc
-> 10: PMU event aliases                                     :
-> --- start ---
-> test child forked, pid 30869
-> Using CPUID GenuineIntel-6-9E-9
-> intel_pt default config: tsc,mtc,mtc_period=3,psb_period=3,pt,branch
-> skipping testing PMU software
-> testing PMU power: skip
-> testing PMU cpu: matched event segment_reg_loads.any
-> testing PMU cpu: matched event dispatch_blocked.any
-> testing PMU cpu: matched event eist_trans
-> testing PMU cpu: matched event bp_l1_btb_correct
-> testing PMU cpu: matched event bp_l2_btb_correct
-> testing PMU cpu: pass
-> testing PMU cstate_core: skip
-> testing PMU uncore_cbox_2: matched event unc_cbo_xsnp_response.miss_eviction
-> testing PMU uncore_cbox_2: pass
-> skipping testing PMU breakpoint
-> testing PMU uncore_cbox_0: matched event unc_cbo_xsnp_response.miss_eviction
-> testing PMU uncore_cbox_0: pass
-> skipping testing PMU tracepoint
-> testing PMU cstate_pkg: skip
-> testing PMU uncore_arb: skip
-> testing PMU msr: skip
-> testing PMU uncore_cbox_3: matched event unc_cbo_xsnp_response.miss_eviction
-> testing PMU uncore_cbox_3: pass
-> testing PMU intel_pt: skip
-> testing PMU uncore_cbox_1: matched event unc_cbo_xsnp_response.miss_eviction
-> testing PMU uncore_cbox_1: pass
-> test child finished with 0
-> ---- end ----
-> PMU event aliases: Ok
-
-SNIP
-
-> +int test__pmu_event_aliases(struct test *test __maybe_unused,
-> +			    int subtest __maybe_unused)
-> +{
-> +	struct perf_pmu *pmu = NULL;
+Devices IDs are unlikely to be reused by mutiple subsystems, so probably we=
+ don't need
+to add them here?
+=20
 > +
-> +	while ((pmu = perf_pmu__scan(pmu)) != NULL) {
-> +		int count = 0;
-
-I don't follow the pmu iteration in here.. I'd expect
-we create 'test' pmu and check that all the aliasses
-are in place as we expect them.. why do we match them
-to existing events?
-
-or as I'm thinking about that now, would it be enough
-to check pme_test_cpu array to have string that we
-expect?
-
-thanks for doing this,
-jirka
-
+ >  #endif /* _LINUX_PCI_IDS_H */
+ > --=20
+ > 2.1.0
+ >=20
+ >
