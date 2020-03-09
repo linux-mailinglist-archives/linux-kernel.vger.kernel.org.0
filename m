@@ -2,101 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21AA417DA4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A11E17DA23
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbgCIIJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:09:12 -0400
-Received: from mga07.intel.com ([134.134.136.100]:11140 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726071AbgCIIJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:09:11 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 01:09:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,532,1574150400"; 
-   d="scan'208";a="353318738"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Mar 2020 01:09:08 -0700
-Date:   Mon, 9 Mar 2020 15:47:58 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     mdf@kernel.org, will@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, atull@kernel.org, yilun.xu@intel.com
-Subject: Re: [PATCH v8 0/2] add performance reporting support to FPGA DFL
- drivers
-Message-ID: <20200309074758.GA4295@hao-dev>
-References: <1582503707-10737-1-git-send-email-hao.wu@intel.com>
+        id S1726414AbgCIIBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:01:14 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44557 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCIIBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 04:01:13 -0400
+Received: by mail-ot1-f68.google.com with SMTP id v22so8624001otq.11;
+        Mon, 09 Mar 2020 01:01:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5KNQrDe0l6oCFPtPg6ftsB3rjrTR1HyU2LsJupipGE8=;
+        b=QMBcEx6xHAL00m9ofm9CCbYJYgdp+E0JA7ZDV//TxPyQk7kV7wNZRt/BUNyOIF/Cx8
+         /A2ifIqGoapZ5mZcC+4Zf0fI7Z/KQkvSQbWDDU60pp1WTSzmDWEDR9bV0BfgeX4Zrxn6
+         Db8M7TEc2UGD7BHScMjWWSsFkxvx8z4Q5K3hMjmBuFcup8nMldv5pjKouy1CuEIqe2ng
+         7mwLgC4RT1iHhOLF7oVGHMhT2tF9FKNI8eFwvodLDTALrmFtCve92ERwKyVzimoBHxqX
+         qNmHBjnmiSp680vOSs0U7Rh/WeVKtEJrMDB1tk9BwaQ8uqnk0l/Q5wXWnmUzpihk/BjD
+         cmWw==
+X-Gm-Message-State: ANhLgQ0Ps40Fe10oKeBXSrzNB3AQZ/rnkr+D0nfNkxadALnZL2tYrB61
+        +nQ5jx5k8tb9z/FIDR57gzxijDwRzQZsKsorhks=
+X-Google-Smtp-Source: ADFU+vsDTCa3jjZ1zeDrCbvPHrDJy5j6vGE23gbOBny//ko/4PRaNwTR9xHABVzOcF6wEE35AvzQODCVrLJwiijRM9I=
+X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr12090100otk.145.1583740871801;
+ Mon, 09 Mar 2020 01:01:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582503707-10737-1-git-send-email-hao.wu@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200305103228.9686-1-zhang.lyra@gmail.com> <20200305103228.9686-2-zhang.lyra@gmail.com>
+ <CAMuHMdU-gAhupHotQTHAZfopkGF_jQc-VrVxb24caw_BfzWd6g@mail.gmail.com> <CAAfSe-sonfA=6x9uvQXaHniQaXR8hWZa4uOcWxoo+Z_XT9QNhw@mail.gmail.com>
+In-Reply-To: <CAAfSe-sonfA=6x9uvQXaHniQaXR8hWZa4uOcWxoo+Z_XT9QNhw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Mar 2020 09:01:00 +0100
+Message-ID: <CAMuHMdUBkS+pPyPid2K=40jaTOSnAE_L-vJP5knmyVr8Fr5_hg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] tty: serial: make SERIAL_SPRD not depend on ARCH_SPRD
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+Hi Chunyan,
 
-Just a gentle ping. Do you have Any comments to this new version?
+On Mon, Mar 9, 2020 at 2:18 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> On Fri, 6 Mar 2020 at 20:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Thu, Mar 5, 2020 at 11:33 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > >
+> > > Remove the dependency with ARCH_SPRD from sprd serial/console Kconfig-s,
+> > > since we want them can be built-in when ARCH_SPRD is set as 'm'.
+> >
+> > Why would you want a serial driver for a specific platform to be builtin,
+> > while all other platform support is modular?
+>
+> Oh, that's not this patch means.
+>
+> We just want serial driver can be builtin for any platform, so it
 
-Hao
+What would be the benefit of the user to be able to have the SPRD serial
+driver built-in on any platform?  AFAIU, it supports only Spreadtrum
+platforms.
 
-On Mon, Feb 24, 2020 at 08:21:45AM +0800, Wu Hao wrote:
-> Hi all,
-> 
-> This patchset adds performance reporting support for FPGA DFL drivers. It
-> introduces one pmu to expose userspace interfaces via standard perf API.
-> User could use standard perf tool to access perf events exposed via pmu.
-> 
-> This patchset is generated based on 5.6-rc2.
-> 
-> Main changes from v7:
->  - rename pmu name from "fme%d" to "dfl_fme%d".
->  - monitor cpu hotplug for cpumask sysfs and update cpumask sysfs doc.
->  - add extra read for 64bit counter registers to avoid 2-32bit readl issue.
-> 
-> Main changes from v6:
->  - add a new ABI/testing/ sysfs documentation in patch #2.
->  - fix a warning reported by kbuild in patch #2.
-> 
-> Main changes from v5:
->  - use dev_ext_attribute instead of fme_perf_event_attr.
->  - use is_visible function to decide which events to expose per
->    hardware capability, and add event_init checking for all events.
-> 
-> Main changes from v4:
->  - rebase and clean up.
->  - update Kconfig for PERF_EVENTS dependency.
-> 
-> Main changes from v3:
->  - add more descriptions in doc, including how to use perf tool for these
->    hardware counters. (patch #1)
->  - use standard perf API instead of sysfs entries. (patch #2)
-> 
-> Wu Hao (1):
->   fpga: dfl: fme: add performance reporting support
-> 
-> Xu Yilun (1):
->   Documentation: fpga: dfl: add description for performance reporting
->     support
-> 
->  .../testing/sysfs-bus-event_source-devices-dfl_fme |  104 ++
->  Documentation/fpga/dfl.rst                         |   84 ++
->  drivers/fpga/Kconfig                               |    2 +-
->  drivers/fpga/Makefile                              |    1 +
->  drivers/fpga/dfl-fme-main.c                        |    4 +
->  drivers/fpga/dfl-fme-perf.c                        | 1021 ++++++++++++++++++++
->  drivers/fpga/dfl-fme.h                             |    2 +
->  drivers/fpga/dfl.h                                 |    2 +
->  8 files changed, 1219 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices-dfl_fme
->  create mode 100644 drivers/fpga/dfl-fme-perf.c
-> 
-> -- 
-> 1.8.3.1
+> should not depend on a config which can be set as 'm' (i.e. ARCH_SPRD)
+> , otherwise if the config was set as 'm', the serial driver can't be
+> selected as 'y' then.
+
+I ask about that as a reply to PATCH 1/2.
+
+> That's what I mean.
+
+> > > --- a/drivers/tty/serial/Kconfig
+> > > +++ b/drivers/tty/serial/Kconfig
+> > > @@ -1452,7 +1452,6 @@ config SERIAL_MEN_Z135
+> > >
+> > >  config SERIAL_SPRD
+> > >         tristate "Support for Spreadtrum serial"
+> > > -       depends on ARCH_SPRD
+> > >         select SERIAL_CORE
+> > >         help
+> > >           This enables the driver for the Spreadtrum's serial.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
