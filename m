@@ -2,204 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A19A017EB66
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A6F17EB6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:44:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbgCIVn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:43:27 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43803 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbgCIVn0 (ORCPT
+        id S1727061AbgCIVod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:44:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30475 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726439AbgCIVod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:43:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u12so5309897pgb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 14:43:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F4gTp56ur6uQjTLhO+QT0ClKii4W0AXDeyJ/ghlfGhY=;
-        b=uDnfx1vsQ5N3XqdFswJkqxPXBlJuHQ04vErZOpQ0DLuCbL184RwjKJOLrUSTIjoa7r
-         vyagJEmiedu/orTidbRCGjWJMqKaJQhzlGCUOW1zq6eYtoZ8KE7wjwaIKlxuYHaB31CY
-         EuZcmtE80Ibs9gDTLFcUjz5bHDhUFG4+lk1A+3ZVCl6LWUgKOTnvwc2mkaLazbT0uV+c
-         EoxG1vgCIBErMheYCNUEZZ3KSMCQaiZvX/ahNk3+mtjJ4WsDF2KXkOia7xb4HFUaBFIH
-         Te2HXrY2x4WRe3guNuHV2DKO4U3cMCcG/+b46LaLIM4Aur7Zi/Fy3LpTHpGbv/MHQYtJ
-         RxGA==
+        Mon, 9 Mar 2020 17:44:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583790271;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+ICtR2v0xNomH1WLkex46Nm+YSPs83aCqTW2zuVdMA4=;
+        b=KfggPge5R51zEnrozMLwxsTSWUAjVuCTznd3SN1LJhpj8GOs8BtmvloEFdB4wlXOasRvCZ
+        0CFcakKCEkA8Yu9xMNlfzd3o/YoyMTLlZafN53U9S9xBddwjHWNVogRt00dKC+eUrbDC0b
+        jkU29E7vuTNPHqEswmktUx8X/2dsHeQ=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-28-1U5yz-hBN1Coeo3Cx-Tv6g-1; Mon, 09 Mar 2020 17:44:28 -0400
+X-MC-Unique: 1U5yz-hBN1Coeo3Cx-Tv6g-1
+Received: by mail-qv1-f70.google.com with SMTP id v19so1570309qvk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 14:44:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F4gTp56ur6uQjTLhO+QT0ClKii4W0AXDeyJ/ghlfGhY=;
-        b=ST3RApZMHQarDy7/2aVOtWlooKma/Oa/HRt17rUCTTHYQkub00xVt2XO4OCNbC9kem
-         PriA3vkxUhXVIXjD8hRRHyr6kGS00PAe2UDfQpXFX+bDYRsIzyft//4uv2Ge6pJ/6FdW
-         yX4hC30mUmbGjRmZKbmV71et4Rt99jEx0iKa6nmbMb7fCc7wda6mJIE+HHJJ+z9+UnKr
-         JJJx4ot7KvnbOPfa0oFg7WKB9QvYMS52toHg9aKSLsw9e9UHTl7iUgIk8yrbkojf6uhy
-         lKVR+gfQ1IKSPRLyI+ZDhkE+jQcsE5Ge9m+j6VVIH4QFfkL1j+heeBwgThPKDrNWvimA
-         Zu3g==
-X-Gm-Message-State: ANhLgQ1eqeh5Gk0go2ckrgqp8owBbVgnrnprCbnTzTbLsjYBs7W3m3Ki
-        T8KzOYMzc/UmkxjcgFMfzPFo+xraKUPYBIxaRPiKCQ==
-X-Google-Smtp-Source: ADFU+vuHt49TZ9CHks3Y4yLQe2o5AbwW2en0PWT6GmyYy455v6utArIU5J7kuHNsjwFMTgzL5hxqmXAIRnaUXBKDZMA=
-X-Received: by 2002:a62:6842:: with SMTP id d63mr18560202pfc.113.1583790204937;
- Mon, 09 Mar 2020 14:43:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+ICtR2v0xNomH1WLkex46Nm+YSPs83aCqTW2zuVdMA4=;
+        b=DbjFGwVBPZdxF5S1W2nktxPFm99wA9M7hg6ksW+9I5hLWcDV+wlQzwdNtpXpWpNY1s
+         8gcyp7Td35pe86+SBIVw8yMXLq9qJ9e/iAC04HrlnoPslBLW540c1focSSesxY4OS+E5
+         gPbaTDrHKCm1da4POTh7XyKbFC1YluYIafxYwLJYEMbS98tPyvVM78cJfrYimrMiLi9u
+         6gAmaR6ZxOGfphO4SZAXSZVpNnM4yRAM3uA2/ikCRe6qvVT9ZbgUaLDaLCu7onoUgg4k
+         HCJ2rrJJo9Ops9io4qk/akqcF4EnI+iN9DcAq0Tlm9ER9OdGWBPrNhOp0yYEcfw6kgR3
+         SRrw==
+X-Gm-Message-State: ANhLgQ0DN+TugVv3mSlEKPOinfpd1gcRBgPPzsxMcTL7g8b6gdvrnrfM
+        Sz14xbqyR1E4Qp/5ZoqO5CRR3bFCG+JmzYacqYGRcDS0Bt9UrHc5gm2cIsxKzmgSFSfEe+J1gcv
+        cwZy2f21iyP8phbx/fksnKzZH
+X-Received: by 2002:a37:4ec1:: with SMTP id c184mr2019109qkb.0.1583790266997;
+        Mon, 09 Mar 2020 14:44:26 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vstAS1kAHk1yzYK0Qv2/bUTpVaVnkqEMcxpVeMGOT8PFcgZlWN3qpoiuGO6oI0meC5+JHYWaw==
+X-Received: by 2002:a37:4ec1:: with SMTP id c184mr2019077qkb.0.1583790266685;
+        Mon, 09 Mar 2020 14:44:26 -0700 (PDT)
+Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id 82sm10504502qko.91.2020.03.09.14.44.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 14:44:25 -0700 (PDT)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Yan Zhao <yan.y.zhao@intel.com>, Jason Wang <jasowang@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH v6 00/14] KVM: Dirty ring interface
+Date:   Mon,  9 Mar 2020 17:44:10 -0400
+Message-Id: <20200309214424.330363-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CA+G9fYvRZ9eCE29FjXkv1dQfrdGO3uWp4Tvkip5Z_jsgjVJeAQ@mail.gmail.com>
- <CAHp75VfhKoLtWkLHUyzg6m=rx833qiCVimWJVKU13qrX+aJz-Q@mail.gmail.com>
- <CAFd5g45GbSX1BkuaH=8639ESHi-MCGkpFhEZZpycm9=jQb93rg@mail.gmail.com>
- <CAFd5g47aaE+tGeHPrQmhfi6_nrvi1K4DvtRodh=zN21-uiQ1DQ@mail.gmail.com>
- <20200305223350.GA2852@mara.localdomain> <20200306120525.GC68079@kuha.fi.intel.com>
- <CAFd5g45c9L4BBRNtxtQf_NFr2bR6Wgt9uOHW86gzb6Ozeb0SBA@mail.gmail.com>
-In-Reply-To: <CAFd5g45c9L4BBRNtxtQf_NFr2bR6Wgt9uOHW86gzb6Ozeb0SBA@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 9 Mar 2020 14:43:13 -0700
-Message-ID: <CAFd5g45cdygYfxGoCkk710tLXFADeLNb+6w-=vhkDMLP9OM7bw@mail.gmail.com>
-Subject: Re: BUG: kernel NULL pointer dereference, address: 00 - ida_free+0x76/0x140
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        hdegoede@redhat.com,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        lkft-triage@lists.linaro.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 1:35 PM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> On Fri, Mar 6, 2020 at 4:05 AM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > On Fri, Mar 06, 2020 at 12:33:50AM +0200, Sakari Ailus wrote:
-> > > Hi Brendan,
-> > >
-> > > On Thu, Mar 05, 2020 at 11:51:20AM -0800, Brendan Higgins wrote:
-> > > > On Thu, Mar 5, 2020 at 11:40 AM Brendan Higgins
-> > > > <brendanhiggins@google.com> wrote:
-> > > > >
-> > > > > On Thu, Mar 5, 2020 at 11:18 AM Andy Shevchenko
-> > > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > >
-> > > > > > +Cc: Sakari
-> > > > > >
-> > > > > > On Thu, Mar 5, 2020 at 6:00 PM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> > > > > > >
-> > > > > > > Regression reported on Linux next 5.6.0-rc4-next-20200305 on x86_64,
-> > > > > > > i386, arm and arm64. The steps to reproduce is running kselftests lib
-> > > > > > > printf.sh test case.
-> > > > > > > Which is doing modprobe operations.
-> > > > > > >
-> > > > > > > BTW, there are few RCU warnings from the boot log.
-> > > > > > > Please refer below link for more details.
-> > > > > > >
-> > > > > > > Steps reproduce by using kselftests,
-> > > > > > >
-> > > > > > >           - lsmod || true
-> > > > > > >           - cd /opt/kselftests/default-in-kernel/lib/
-> > > > > > >           - export PATH=/opt/kselftests/default-in-kernel/kselftest:$PATH
-> > > > > > >           - ./printf.sh || true
-> > > > > > >           - ./bitmap.sh || true
-> > > > > > >           - ./prime_numbers.sh || true
-> > > > > > >           - ./strscpy.sh || true
-> > > > > > >
-> > > > > > > x86_64 kernel BUG dump.
-> > > > > > > + ./printf.sh
-> > > > >
-> > > > > Oops, I am wondering if I broke this with my change "Revert "software
-> > > > > node: Simplify software_node_release() function"":
-> > > > >
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=d1c19322388d6935b534b494a2c223dd089e30dd
-> > > > >
-> > > > > I am still investigating, will update later.
-> > > >
-> > > > Okay, yeah, I am pretty sure I caused the breakage. I got an email
-> > > > from kernel test robot a couple days ago that I didn't see:
-> > > >
-> > > > https://lists.01.org/hyperkitty/list/lkp@lists.01.org/thread/N3ZN5XH7HK24JVEJ5WSQD2SK6YCDRILR/
-> > > >
-> > > > It shows the same breakage after applying this change.
-> > > >
-> > > > I am still investigating how my change broke it, nevertheless.
-> > >
-> > > As nodes in the tree are being removed, the code before the patch that
-> > > "simplified" the software_node_release() function accessed the node's parent
-> > > in its release function.
-> > >
-> > > And if CONFIG_DEBUG_KOBJECT_RELEASE is defined, the release functions are no
-> > > longer necessarily called in order, leading to referencing released memory.
-> > > Oops!
-> > >
-> > > So Heikki's patch actually fixed a bug. :-)
-> >
-> > Well, I think it just hid the problem. It looks like the core
-> > (lib/kobject.c) allows the parent kobject to be released before the
-> > last child kobject is released. To be honest, that does not sound
-> > right to me...
-> >
-> > I think we can workaround this problem by taking reference to the
-> > parent when the child is added, and then releasing it when the child
-> > is released, and in that way be guaranteed that the parent will not
-> > disappear before the child is fully released, but that still does not
-> > feel right. It feels more like the core is not doing it's job to me.
-> > The parent just should not be released before its children.
-> >
-> > Either I'm wrong about that, and we still should take the reference on
-> > the parent, or we revert my patch like Brendan proposed and then fix
->
-> Either way, isn't it wrong to release the node ID before deleting the
-> sysfs entry? I am not sure that my fix was the correct one, but I
-> believe the bug that Heidi and I found is actually a bug.
->
-> > the core with something like this (warning, I did not even try to
-> > compile that):
->
-> I will try it out.
->
-> > diff --git a/lib/kobject.c b/lib/kobject.c
-> > index 83198cb37d8d..ec5774992337 100644
-> > --- a/lib/kobject.c
-> > +++ b/lib/kobject.c
-> > @@ -680,6 +680,12 @@ static void kobject_cleanup(struct kobject *kobj)
-> >                 kobject_uevent(kobj, KOBJ_REMOVE);
-> >         }
-> >
-> > +       if (t && t->release) {
-> > +               pr_debug("kobject: '%s' (%p): calling ktype release\n",
-> > +                        kobject_name(kobj), kobj);
-> > +               t->release(kobj);
-> > +       }
-> > +
-> >         /* remove from sysfs if the caller did not do it */
-> >         if (kobj->state_in_sysfs) {
-> >                 pr_debug("kobject: '%s' (%p): auto cleanup kobject_del\n",
-> > @@ -687,12 +693,6 @@ static void kobject_cleanup(struct kobject *kobj)
-> >                 kobject_del(kobj);
-> >         }
-> >
-> > -       if (t && t->release) {
-> > -               pr_debug("kobject: '%s' (%p): calling ktype release\n",
-> > -                        kobject_name(kobj), kobj);
-> > -               t->release(kobj);
-> > -       }
-> > -
-> >         /* free name if we allocated it */
-> >         if (name) {
-> >                 pr_debug("kobject: '%s': free name\n", name);
+KVM branch:=0D
+  https://github.com/xzpeter/linux/tree/kvm-dirty-ring=0D
+=0D
+QEMU branch for testing:=0D
+  https://github.com/xzpeter/qemu/tree/kvm-dirty-ring=0D
+=0D
+v6:=0D
+- fix typo in test case (LOG_MODE_CLERA_LOG) [Dave]=0D
+- fix s390 build (again), by moving kvm_reset_dirty_gfn into=0D
+  kvm_dirty_ring.c, with some macro movements [syzbot]=0D
+=0D
+For previous versions, please refer to:=0D
+=0D
+V1: https://lore.kernel.org/kvm/20191129213505.18472-1-peterx@redhat.com=0D
+V2: https://lore.kernel.org/kvm/20191221014938.58831-1-peterx@redhat.com=0D
+V3: https://lore.kernel.org/kvm/20200109145729.32898-1-peterx@redhat.com=0D
+V4: https://lore.kernel.org/kvm/20200205025105.367213-1-peterx@redhat.com=0D
+V5: https://lore.kernel.org/kvm/20200304174947.69595-1-peterx@redhat.com=0D
+=0D
+Overview=0D
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0D
+=0D
+This is a continued work from Lei Cao <lei.cao@stratus.com> and Paolo=0D
+Bonzini on the KVM dirty ring interface.=0D
+=0D
+The new dirty ring interface is another way to collect dirty pages for=0D
+the virtual machines. It is different from the existing dirty logging=0D
+interface in a few ways, majorly:=0D
+=0D
+  - Data format: The dirty data was in a ring format rather than a=0D
+    bitmap format, so dirty bits to sync for dirty logging does not=0D
+    depend on the size of guest memory any more, but speed of=0D
+    dirtying.  Also, the dirty ring is per-vcpu, while the dirty=0D
+    bitmap is per-vm.=0D
+=0D
+  - Data copy: The sync of dirty pages does not need data copy any more,=0D
+    but instead the ring is shared between the userspace and kernel by=0D
+    page sharings (mmap() on vcpu fd)=0D
+=0D
+  - Interface: Instead of using the old KVM_GET_DIRTY_LOG,=0D
+    KVM_CLEAR_DIRTY_LOG interfaces, the new ring uses the new=0D
+    KVM_RESET_DIRTY_RINGS ioctl when we want to reset the collected=0D
+    dirty pages to protected mode again (works like=0D
+    KVM_CLEAR_DIRTY_LOG, but ring based).  To collecting dirty bits,=0D
+    we only need to read the ring data, no ioctl is needed.=0D
+=0D
+Ring Layout=0D
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0D
+=0D
+KVM dirty ring is per-vcpu.  Each ring is an array of kvm_dirty_gfn=0D
+defined as:=0D
+=0D
+struct kvm_dirty_gfn {=0D
+        __u32 flags;=0D
+        __u32 slot; /* as_id | slot_id */=0D
+        __u64 offset;=0D
+};=0D
+=0D
+Each GFN is a state machine itself.  The state is embeded in the flags=0D
+field, as defined in the uapi header:=0D
+=0D
+/*=0D
+ * KVM dirty GFN flags, defined as:=0D
+ *=0D
+ * |---------------+---------------+--------------|=0D
+ * | bit 1 (reset) | bit 0 (dirty) | Status       |=0D
+ * |---------------+---------------+--------------|=0D
+ * |             0 |             0 | Invalid GFN  |=0D
+ * |             0 |             1 | Dirty GFN    |=0D
+ * |             1 |             X | GFN to reset |=0D
+ * |---------------+---------------+--------------|=0D
+ *=0D
+ * Lifecycle of a dirty GFN goes like:=0D
+ *=0D
+ *      dirtied         collected        reset=0D
+ * 00 -----------> 01 -------------> 1X -------+=0D
+ *  ^                                          |=0D
+ *  |                                          |=0D
+ *  +------------------------------------------+=0D
+ *=0D
+ * The userspace program is only responsible for the 01->1X state=0D
+ * conversion (to collect dirty bits).  Also, it must not skip any=0D
+ * dirty bits so that dirty bits are always collected in sequence.=0D
+ */=0D
+=0D
+Testing=0D
+=3D=3D=3D=3D=3D=3D=3D=0D
+=0D
+This series provided both the implementation of the KVM dirty ring and=0D
+the test case.  Also I've implemented the QEMU counterpart that can=0D
+run with the new KVM, link can be found at the top of the cover=0D
+letter.  However that's still a very initial version which is prone to=0D
+change and future optimizations.=0D
+=0D
+I did some measurement with the new method with 24G guest running some=0D
+dirty workload, I don't see any speedup so far, even in some heavy=0D
+dirty load it'll be slower (e.g., when 800MB/s random dirty rate, kvm=0D
+dirty ring takes average of ~73s to complete migration while dirty=0D
+logging only needs average of ~55s).  However that's understandable=0D
+because 24G guest means only 1M dirty bitmap, that's still a suitable=0D
+case for dirty logging.  Meanwhile heavier workload means worst case=0D
+for dirty ring.=0D
+=0D
+More tests are welcomed if there's bigger host/guest, especially on=0D
+COLO-like workload.=0D
+=0D
+Please review, thanks.=0D
+=0D
+Peter Xu (14):=0D
+  KVM: X86: Change parameter for fast_page_fault tracepoint=0D
+  KVM: Cache as_id in kvm_memory_slot=0D
+  KVM: X86: Don't track dirty for KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]=0D
+  KVM: Pass in kvm pointer into mark_page_dirty_in_slot()=0D
+  KVM: X86: Implement ring-based dirty memory tracking=0D
+  KVM: Make dirty ring exclusive to dirty bitmap log=0D
+  KVM: Don't allocate dirty bitmap if dirty ring is enabled=0D
+  KVM: selftests: Always clear dirty bitmap after iteration=0D
+  KVM: selftests: Sync uapi/linux/kvm.h to tools/=0D
+  KVM: selftests: Use a single binary for dirty/clear log test=0D
+  KVM: selftests: Introduce after_vcpu_run hook for dirty log test=0D
+  KVM: selftests: Add dirty ring buffer test=0D
+  KVM: selftests: Let dirty_log_test async for dirty ring test=0D
+  KVM: selftests: Add "-c" parameter to dirty log test=0D
+=0D
+ Documentation/virt/kvm/api.rst                | 123 +++++=0D
+ arch/x86/include/asm/kvm_host.h               |   6 +-=0D
+ arch/x86/include/uapi/asm/kvm.h               |   1 +=0D
+ arch/x86/kvm/Makefile                         |   3 +-=0D
+ arch/x86/kvm/mmu/mmu.c                        |  10 +-=0D
+ arch/x86/kvm/mmutrace.h                       |   9 +-=0D
+ arch/x86/kvm/svm.c                            |   9 +-=0D
+ arch/x86/kvm/vmx/vmx.c                        |  85 +--=0D
+ arch/x86/kvm/x86.c                            |  49 +-=0D
+ include/linux/kvm_dirty_ring.h                | 103 ++++=0D
+ include/linux/kvm_host.h                      |  19 +=0D
+ include/trace/events/kvm.h                    |  78 +++=0D
+ include/uapi/linux/kvm.h                      |  53 ++=0D
+ tools/include/uapi/linux/kvm.h                |  44 ++=0D
+ tools/testing/selftests/kvm/Makefile          |   2 -=0D
+ .../selftests/kvm/clear_dirty_log_test.c      |   2 -=0D
+ tools/testing/selftests/kvm/dirty_log_test.c  | 488 ++++++++++++++++--=0D
+ .../testing/selftests/kvm/include/kvm_util.h  |   4 +=0D
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  67 +++=0D
+ .../selftests/kvm/lib/kvm_util_internal.h     |   4 +=0D
+ virt/kvm/dirty_ring.c                         | 195 +++++++=0D
+ virt/kvm/kvm_main.c                           | 164 +++++-=0D
+ 22 files changed, 1393 insertions(+), 125 deletions(-)=0D
+ create mode 100644 include/linux/kvm_dirty_ring.h=0D
+ delete mode 100644 tools/testing/selftests/kvm/clear_dirty_log_test.c=0D
+ create mode 100644 virt/kvm/dirty_ring.c=0D
+=0D
+-- =0D
+2.24.1=0D
+=0D
 
-Alright, so I tried it and it looks like Heikki's suggestion worked.
-
-Is everyone comfortable going this route?
-
-Also, should I send this fix as a separate patch? Or do people want me
-to send an updated revision of my revert patch with the fix?
