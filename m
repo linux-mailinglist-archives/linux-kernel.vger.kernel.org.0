@@ -2,78 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 464E217DAE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AD7417DAF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:32:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgCIIbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:31:05 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41831 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCIIbF (ORCPT
+        id S1726558AbgCIIcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:32:46 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34521 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726533AbgCIIcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:31:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id o10so2225152ljc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 01:31:04 -0700 (PDT)
+        Mon, 9 Mar 2020 04:32:45 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z15so9881756wrl.1;
+        Mon, 09 Mar 2020 01:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=af2cfZjf9x1S9FZ9MDXkYOztGP6qP0GOneEhB/eEIC0=;
+        b=Avi03q8clgrFOrP5q3tRQewNL0Fw0MR443djbetfTNlO/BnS3HlkfETHL3Tu63qtNv
+         gvsi9LD2DzFzpVf0OPveF87+GFgPH4S16hoDLA+KSBIhEpn+v56HrnhqkgWcnzwpcvs0
+         xzcKX1XCRmZUfGbbDPLo5wyOzbQ6H8f6Ieo8y4XmMs+tN1NWsU8gvW4yOLLK39rBcji8
+         yqan3UVUJ9K/wW4TknQtHZ5r/iuBzOqAxVNMQHHG8VtjKlnfOv0OHlqVW595w/AWK7rP
+         K2D6GjaTeqgQ6o99g8I6aOPQ/Jbc/HVZlJ24l+VrsYYumIbiXLL69FiR7dwrVhrCGWsC
+         kPKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NJLkCkuMzzpPuugQcQ0p8avakDTUhh8cOIKlBZwAH50=;
-        b=SHI+D42vIKCfVfhubgrE7mQySwz2KY4n7wex8dsyr3e8XOz+JBMlyTe/gOyfXIx53U
-         EBUU8o6CNYM0PoOzFre/BYvTVgDBDd3FoB9PV/j414GLVkHS7KpUmh6b1ZTxmUDFjuAI
-         qtRLI5R3lDhj4p+xyz9WgQ1T3QdUYLk3X6ElaCx0URctgwnrItlmdL6a5WzCfgu56+Y2
-         brz/B0SX6CYBIi2C/NgP/SF5v3GOExYSB+CBxsDpzUcV8vJ8jpseKUah1NFHMmfLIhqu
-         +M02MiacGiwHp9JspNqmM5YRQqN1E8DJIq2G/+GtjobR9ocWxyWMhzK+Z24gkAECCIrl
-         eRZQ==
-X-Gm-Message-State: ANhLgQ3rIcRmTgduqusxAC95xR4Cb0NvIrT9/H3CBpHaWrueZyV3m8Jv
-        SC6S3blIw/NfWjgqsX+6V4ukMCP0
-X-Google-Smtp-Source: ADFU+vstW8cNSfPuh7HcES1v35XdnhqmfHlxAQ2GEL9hma2Cnbdj+5C4Kn5Ha+yDjLUgikjjxUWlBg==
-X-Received: by 2002:a2e:978d:: with SMTP id y13mr8365758lji.287.1583742663353;
-        Mon, 09 Mar 2020 01:31:03 -0700 (PDT)
-Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
-        by smtp.gmail.com with ESMTPSA id u15sm11477985ljl.34.2020.03.09.01.31.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 01:31:02 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@kernel.org>)
-        id 1jBDoH-0004nB-23; Mon, 09 Mar 2020 09:30:49 +0100
-Date:   Mon, 9 Mar 2020 09:30:49 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org
-Subject: Re: [PATCH] staging: greybus: Fix the irq API abuse
-Message-ID: <20200309083049.GA14211@localhost>
-References: <87o8t9boqq.fsf@nanos.tec.linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=af2cfZjf9x1S9FZ9MDXkYOztGP6qP0GOneEhB/eEIC0=;
+        b=VYSlpNIpbYAHLoBXH8xo4ZEkAfJLL5mMqJPMOzLrc1ESKzVfkWR5a+fafBD0RL6Sh7
+         06nUmTPz4c55lpQJTcWPOstMmrlPjtbh/l+ElrLu9eCVWIQNF1di/1e66kOcGUxNCf4Y
+         M95ShbbJgPPOINe//wf8f1gWM8akl/0yNswkVu//WtipLZNEQ1lZ7LtkASiEQ69lfFe1
+         x9WZxU+Eg6ZxTox+RqpdgMw4i/Leu9TJgAxc7jN76q9zdzTWnfChjOHKPMniYVBlkzI4
+         Ot7Gh7Qk5VWaBMJZIWNPILPEBO8Zu1FVGACmPHYZix4r2CBh3VL9VZp086hYOUHVrX5j
+         YD2g==
+X-Gm-Message-State: ANhLgQ3AsJhxXh1DWLyz+SV+p2SKcUyaWPShI/LTHwWyqk2L/MIpCRsH
+        Aw1bvCjGsrp0arfY/lc4QkIbMiSzJz1ZlUrX/RY=
+X-Google-Smtp-Source: ADFU+vse2mrhpQWQ46FGqAThVW5dYVYVNTdtnUQxbnZFtx6sP4gIg5N4+80B7pi4VKVVc7UzQq04sWlnL39gJJ/hXbs=
+X-Received: by 2002:adf:e408:: with SMTP id g8mr20764712wrm.198.1583742761475;
+ Mon, 09 Mar 2020 01:32:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o8t9boqq.fsf@nanos.tec.linutronix.de>
+References: <20200305103228.9686-1-zhang.lyra@gmail.com> <CAMuHMdVyy3v24zBxJFe5hYdnzdj80dvE2Z9GO4=AC1N8fD64pw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVyy3v24zBxJFe5hYdnzdj80dvE2Z9GO4=AC1N8fD64pw@mail.gmail.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Mon, 9 Mar 2020 16:32:04 +0800
+Message-ID: <CAAfSe-spu2oNmfEYt+WQvRQy1bCC0e1MFjbUyBAFzghd5XNBfw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: change ARCH_SPRD Kconfig to tristate
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 02:24:13PM +0100, Thomas Gleixner wrote:
-> Nothing outside of low level architecture code is supposed to look up
-> interrupt descriptors and fiddle with them.
-> 
-> Replace the open coded abuse by calling generic_handle_irq().
-> 
-> This still does not explain why and in which context this connection
-> magic is injecting interrupts in the first place and why this is correct
-> and safe, but at least the API abuse is gone.
+Hi Geert,
 
-Yeah, there's more to that story. The interrupt-handling was known to
-have issues, but I can't seem to find the details right now.
+On Mon, 9 Mar 2020 at 16:03, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Chunyan.
+>
+> On Thu, Mar 5, 2020 at 11:33 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> >
+> > The default value of Kconfig for almost all sprd drivers are the same with
+> > ARCH_SPRD, making these drivers built as modules as default would be easier
+> > if we can set ARCH_SPRD as 'm', so this patch change ARCH_SPRD to tristate.
+> >
+> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+>
+> Can you actually boot a kernel on a Spreadtrum platform when all platform
+> and driver support is modular?
 
-> Fixes: 036aad9d0224 ("greybus: gpio: add interrupt handling support")
-> Fixes: 2611ebef8322 ("greybus: gpio: don't call irq-flow handler directly")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Yes, even if all drivers are modular.
+But I hope serial can be builtin, then I can have a console to see
+kernel output before loading modules.
+Also, this's what Google GKI [1] asked :)
 
-Acked-by: Johan Hovold <johan@kernel.org>
+Regards,
+Chunyan
 
-Johan
+[1] https://arstechnica.com/gadgets/2019/11/google-outlines-plans-for-mainline-linux-kernel-support-in-android/
+
+>
+> > +++ b/arch/arm64/Kconfig.platforms
+> > @@ -249,7 +249,7 @@ config ARCH_TEGRA
+> >           This enables support for the NVIDIA Tegra SoC family.
+> >
+> >  config ARCH_SPRD
+> > -       bool "Spreadtrum SoC platform"
+> > +       tristate "Spreadtrum SoC platform"
+> >         help
+> >           Support for Spreadtrum ARM based SoCs
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
