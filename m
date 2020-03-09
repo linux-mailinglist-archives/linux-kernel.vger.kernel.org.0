@@ -2,114 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3917317EB75
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67B5717EB7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:46:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbgCIVpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:45:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:29758 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727233AbgCIVo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:44:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 14:44:55 -0700
-X-IronPort-AV: E=Sophos;i="5.70,534,1574150400"; 
-   d="scan'208";a="245476220"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.251.21.24]) ([10.251.21.24])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Mar 2020 14:44:54 -0700
-Subject: Re: [PATCH V1 01/13] selftests/resctrl: Fix feature detection
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        shuah@kernel.org, linux-kselftest@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        tony.luck@intel.com, babu.moger@amd.com, james.morse@arm.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1583657204.git.sai.praneeth.prakhya@intel.com>
- <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <a7407b0d-4e4d-d0cf-621c-769d218fdace@intel.com>
-Date:   Mon, 9 Mar 2020 14:44:53 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727000AbgCIVql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:46:41 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:43830 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgCIVql (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 17:46:41 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 8150B803087C;
+        Mon,  9 Mar 2020 21:46:36 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id EgbOXeQlax4M; Tue, 10 Mar 2020 00:46:35 +0300 (MSK)
+Date:   Tue, 10 Mar 2020 00:45:38 +0300
+From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] dmaengine: dw: Take Baikal-T1 SoC DW DMAC
+ peculiarities into account
+References: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
+ <20200306132912.GA1748204@smile.fi.intel.com>
+ <20200306133035.GB1748204@smile.fi.intel.com>
+ <20200306135050.40094803087C@mail.baikalelectronics.ru>
 MIME-Version: 1.0
-In-Reply-To: <7e3e4b91f5786a489e68eecda21e1d8049b60181.1583657204.git.sai.praneeth.prakhya@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200306135050.40094803087C@mail.baikalelectronics.ru>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Message-Id: <20200309214636.8150B803087C@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sai,
-
-On 3/6/2020 7:40 PM, Sai Praneeth Prakhya wrote:
-> From: Reinette Chatre <reinette.chatre@intel.com>
+On Fri, Mar 06, 2020 at 07:13:12PM +0530, Vinod Koul wrote:
+> On 06-03-20, 15:30, Andy Shevchenko wrote:
+> > On Fri, Mar 06, 2020 at 03:29:12PM +0200, Andy Shevchenko wrote:
+> > > On Fri, Mar 06, 2020 at 04:10:29PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+> > > > From: Serge Semin <fancer.lancer@gmail.com>
+> > > > 
+> > > > Baikal-T1 SoC has an DW DMAC on-board to provide a Mem-to-Mem, low-speed
+> > > > peripherals Dev-to-Mem and Mem-to-Dev functionality. Mostly it's compatible
+> > > > with currently implemented in the kernel DW DMAC driver, but there are some
+> > > > peculiarities which must be taken into account in order to have the device
+> > > > fully supported.
+> > > > 
+> > > > First of all traditionally we replaced the legacy plain text-based dt-binding
+> > > > file with yaml-based one. Secondly Baikal-T1 DW DMA Controller provides eight
+> > > > channels, which alas have different max burst length configuration.
+> > > > In particular first two channels may burst up to 128 bits (16 bytes) at a time
+> > > > while the rest of them just up to 32 bits. We must make sure that the DMA
+> > > > subsystem doesn't set values exceeding these limitations otherwise the
+> > > > controller will hang up. In third currently we discovered the problem in using
+> > > > the DW APB SPI driver together with DW DMAC. The problem happens if there is no
+> > > > natively implemented multi-block LLP transfers support and the SPI-transfer
+> > > > length exceeds the max lock size. In this case due to asynchronous handling of
+> > > > Tx- and Rx- SPI transfers interrupt we might end up with Dw APB SSI Rx FIFO
+> > > > overflow. So if DW APB SSI (or any other DMAC service consumer) intends to use
+> > > > the DMAC to asynchronously execute the transfers we'd have to at least warn
+> > > > the user of the possible errors.
+> > > > 
+> > > > Finally there is a bug in the algorithm of the nollp flag detection.
+> > > > In particular even if DW DMAC parameters state the multi-block transfers
+> > > > support there is still HC_LLP (hardcode LLP) flag, which if set makes expected
+> > > > by the driver true multi-block LLP functionality unusable. This happens cause'
+> > > > if HC_LLP flag is set the LLP registers will be hardcoded to zero so the
+> > > > contiguous multi-block transfers will be only supported. We must take the
+> > > > flag into account when detecting the LLP support otherwise the driver just
+> > > > won't work correctly.
+> > > > 
+> > > > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+> > > > commit 98d54f81e36b ("Linux 5.6-rc4").
+> > > 
+> > > Thank you for your series!
+> > > 
+> > > I'll definitely review it, but it will take time. So, I think due to late
+> > > submission this is material at least for v5.8.
+> > 
+> > One thing that I can tell immediately is the broken email thread in this series.
+> > Whenever you do a series, use `git format-patch --cover-letter --thread ...`,
+> > so, it will link the mail properly.
 > 
-> The intention of the resctrl selftests is to only run the tests
-> associated with the feature(s) supported by the platform. Through
-> parsing of the feature flags found in /proc/cpuinfo it is possible
-> to learn which features are supported by the plaform.
+> And all the dmaengine specific patches should be sent to dmaengine list,
+> I see only few of them on the list.. that confuses tools like
+> patchwork..
 > 
-> There are currently two issues with the platform feature detection that
-> together result in tests always being run, whether the platform supports
-> a feature or not. First, the parsing of the the feature flags loads the
-> line containing the flags in a buffer that is too small (256 bytes) to
-> always contain all flags. The consequence is that the flags of the features
-> being tested for may not be present in the buffer. Second, the actual
-> test for presence of a feature has an error in the logic, negating the
-> test for a particular feature flag instead of testing for the presence of a
-> particular feature flag.
-> 
-> These two issues combined results in all tests being run on all
-> platforms, whether the feature is supported or not.
-> 
-> Fix these issue by (1) increasing the buffer size being used to parse
-> the feature flags, and (2) change the logic to test for presence of the
-> feature being tested for.
-> 
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> ---
->  tools/testing/selftests/resctrl/resctrlfs.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
-> index 19c0ec4045a4..226dd7fdcfb1 100644
-> --- a/tools/testing/selftests/resctrl/resctrlfs.c
-> +++ b/tools/testing/selftests/resctrl/resctrlfs.c
-> @@ -596,11 +596,11 @@ bool check_resctrlfs_support(void)
->  
->  char *fgrep(FILE *inf, const char *str)
->  {
-> -	char line[256];
->  	int slen = strlen(str);
-> +	char line[2048];
->  
->  	while (!feof(inf)) {
-> -		if (!fgets(line, 256, inf))
-> +		if (!fgets(line, 2048, inf))
->  			break;
->  		if (strncmp(line, str, slen))
->  			continue;
-> @@ -631,7 +631,7 @@ bool validate_resctrl_feature_request(char *resctrl_val)
->  	if (res) {
->  		char *s = strchr(res, ':');
->  
-> -		found = s && !strstr(s, resctrl_val);
-> +		found = s && strstr(s, resctrl_val);
->  		free(res);
->  	}
->  	fclose(inf);
+> Pls fix these and resubmit
 > 
 
-Please note that this is only a partial fix. The current feature
-detection relies on the feature flags found in /proc/cpuinfo. Quirks and
-kernel boot parameters are not taken into account. This fix only
-addresses the parsing of feature flags. If a feature has been disabled
-via kernel boot parameter or quirk then the resctrl tests would still
-attempt to run the test for it.
+Folks. I've found out what was wrong with the emails threading. As I
+said my gitconfig had the next settings set: chainreplyto = false,
+thread = true. So the emails should have been formatted as expected by
+the requirements. And they were on my emails client side, so I didn't see
+the problem you've got.
 
-Reinette
+It wasn't a first time I was submitting patches to the kernel, but it was
+a first time of me using the corporate exchange server for it. It turned out
+the damn server changed the Message-Id field of the emails header on the
+way of transmitting the messages. If you take a look at the non-cover-letter
+emails you've got from me you'll see that they actually have the In-Reply-To
+and References fields with Id's referring to the original Message-Id. After
+our system administrator fixes that problem and we come up with solutions
+for the issues you've found in the patches I'll definitely resend the
+patchset. This time I'll also make sure the emailing lists are also included
+in Cc. Sorry for the inconvenience.
+
+Regards,
+-Sergey
+
+> Thanks
+> -- 
+> ~Vinod
