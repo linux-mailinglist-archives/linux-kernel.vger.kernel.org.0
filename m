@@ -2,99 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6644017E3DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63AFF17E3C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:39:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbgCIPnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:43:41 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46367 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbgCIPnl (ORCPT
+        id S1727140AbgCIPjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:39:20 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57448 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbgCIPjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:43:41 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v6so8074908lfo.13
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 08:43:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JBQPPc6gkr+d84LVVJkI64k6X5AqrfYE5BRX0YEPsdo=;
-        b=D+FEN8xfPVc+PvzK+1vPW80nAPFQhHDVjnc+TbmqVrQ2qh3oiE6sMfprzc9BsTTJsk
-         96IGi0iRButqQzwvxdJG9ikk+Mj8nEyA2QwaSt6EDEAGpAqu1SV0wxmtw1mqrc90H7OJ
-         4JqiCDWfPPOdHzbNVw1QCF3ggc4gjqsbpDnQPqzGXBKR4Vj5W4+fbIy0pDXFF3WiUHDA
-         WyxlLufjesspiaMU181i8pqDhuYJR0AS8AvsyxiDF6V/hoIUOgU1usLkeT6A3PVqPO3a
-         Je44seZS8zQLVHJ3GPWZIekfid4FHSkupiPzWmz7Mzi1M5oID+vn4oRqNwn8UUz01omK
-         ZumA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JBQPPc6gkr+d84LVVJkI64k6X5AqrfYE5BRX0YEPsdo=;
-        b=sBUAC5g+DfQRrbae7Ys9wj7FN5xpeXGRYCHskn9wyscrOxJfiD6vO8ZHEOBbfQrrxN
-         pgoeS93g2G2xeUft1wkWL6Jp9ZepyGhH40hEit5viowWzMY0YT7XWhpW5SmcsGbCAQpf
-         pLeSvapJgqzxwyqhGRJZlBFTqyQ6PHpvIQ9D0KQ4j5u+Edd3nAR3TIobpX8p6dSvRisF
-         ybXo5OHapNxCBNaeTRTGj6nFi2FBgfFUfneRL2grqSj9Z7mdKgWdPPr6jYH2WirHPTL8
-         gieg8B5R+lnU82HQ+r/usQxWBMrSzhTWbvTS3Udw7qALozC5wUAmz9n3PKF68RVG5hUA
-         pqpQ==
-X-Gm-Message-State: ANhLgQ0YBMrv7wSNP4ibD8dHPLB9VBXBwT7EvV18QlWQVC5sdH7byA4C
-        3iEvWCMeoBjLYCcaAKFt8YCvDw==
-X-Google-Smtp-Source: ADFU+vsr6lztDniL//P/rxc9yqHeoDa8XafafFDzvarpIb6Vp3idr1AfjM6e06ADJfKtuw35ursNtg==
-X-Received: by 2002:ac2:5c44:: with SMTP id s4mr6432083lfp.129.1583768618999;
-        Mon, 09 Mar 2020 08:43:38 -0700 (PDT)
-Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id a2sm20314056ljn.50.2020.03.09.08.43.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 08:43:37 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        Mon, 9 Mar 2020 11:39:19 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 029FdEgD057358;
+        Mon, 9 Mar 2020 10:39:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583768354;
+        bh=5NMdHScQpOzmekHtb8MLspeqES1SnaeW3nR3WGI9oxk=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=WvmVXXNMq+oeJY9LSUEt8Q+Hov1Mf1dNbjoyPKl+9fpve0/zEo+Zv3g+73KSbgdiG
+         AsPRL7vRdPBRwjZ23BvcA1ubznfkJjfUF5+HriEagTz1zOK/BC7VhK+u+SLldIdNmy
+         GjCQcm+WLtCqKO2yWaStw5O+spc8I72uNz+PWndo=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029FdEZC054556;
+        Mon, 9 Mar 2020 10:39:14 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
+ 2020 10:38:13 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 9 Mar 2020 10:38:13 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029FcD4i106953;
+        Mon, 9 Mar 2020 10:38:13 -0500
+Date:   Mon, 9 Mar 2020 10:44:01 -0500
+From:   Bin Liu <b-liu@ti.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] usb: musb: jz4740: Register USB role switch
+Message-ID: <20200309154401.GB31115@iaqt7>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v5.6-rc6
-Date:   Mon,  9 Mar 2020 16:43:36 +0100
-Message-Id: <20200309154336.22598-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.20.1
+References: <20200224014008.27114-1-paul@crapouillou.net>
+ <20200224014008.27114-3-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200224014008.27114-3-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Here's a PR with a few MMC fixes intended for v5.6-rc6. Details about the
-highlights are as usual found in the signed tag.
+On Sun, Feb 23, 2020 at 10:40:06PM -0300, Paul Cercueil wrote:
+> Register a USB role switch, in order to get notified by the connector
+> driver when the USB role changes. The notification is then transmitted
+> to the PHY.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>     v2: No change
+> 
+>  drivers/usb/musb/Kconfig  |  1 +
+>  drivers/usb/musb/jz4740.c | 46 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 47 insertions(+)
+> 
+> diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
+> index c4b349e074c1..3268adb7d7cf 100644
+> --- a/drivers/usb/musb/Kconfig
+> +++ b/drivers/usb/musb/Kconfig
+> @@ -113,6 +113,7 @@ config USB_MUSB_JZ4740
+>  	depends on MIPS || COMPILE_TEST
+>  	depends on USB_MUSB_GADGET
+>  	depends on USB=n || USB_OTG_BLACKLIST_HUB
+> +	select USB_ROLE_SWITCH
+>  
+>  config USB_MUSB_MEDIATEK
+>  	tristate "MediaTek platforms"
+> diff --git a/drivers/usb/musb/jz4740.c b/drivers/usb/musb/jz4740.c
+> index aa32b5af0c1f..bbfeb9881788 100644
+> --- a/drivers/usb/musb/jz4740.c
+> +++ b/drivers/usb/musb/jz4740.c
+> @@ -12,13 +12,16 @@
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/usb/role.h>
+>  #include <linux/usb/usb_phy_generic.h>
+>  
+>  #include "musb_core.h"
+>  
+>  struct jz4740_glue {
+>  	struct platform_device	*pdev;
+> +	struct musb		*musb;
+>  	struct clk		*clk;
+> +	struct usb_role_switch	*role_sw;
+>  };
+>  
+>  static irqreturn_t jz4740_musb_interrupt(int irq, void *__hci)
+> @@ -72,11 +75,38 @@ static const struct musb_hdrc_config jz4740_musb_config = {
+>  	.fifo_cfg_size	= ARRAY_SIZE(jz4740_musb_fifo_cfg),
+>  };
+>  
+> +static int jz4740_musb_role_switch_set(struct device *dev, enum usb_role role)
 
-Please pull this in!
+The prototype has been changed by bce3052f0c16 ("usb: roles: Provide the
+switch drivers handle to the switch in the API"). Please update.
 
-Kind regards
-Ulf Hansson
-
-
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.6-rc1
-
-for you to fetch changes up to 31e43f31890ca6e909b27dcb539252b46aa465da:
-
-  mmc: sdhci-pci-gli: Enable MSI interrupt for GL975x (2020-03-04 15:41:22 +0100)
-
-----------------------------------------------------------------
-MMC host:
- - sdhci-msm: Silence warning about turning function into static
- - sdhci-pci-gli: Fix support for GL975x by enabling MSI interrupt
-
-----------------------------------------------------------------
-Ben Chuang (1):
-      mmc: sdhci-pci-gli: Enable MSI interrupt for GL975x
-
-Stephen Boyd (1):
-      mmc: sdhci-msm: Mark sdhci_msm_cqe_disable static
-
- drivers/mmc/host/sdhci-msm.c     |  2 +-
- drivers/mmc/host/sdhci-pci-gli.c | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+), 1 deletion(-)
+Thanks,
+-Bin.
