@@ -2,287 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE0D17DB7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE1C17DB80
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 09:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbgCIIrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 04:47:43 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46585 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbgCIIrm (ORCPT
+        id S1726475AbgCIItc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 04:49:32 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17809 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725956AbgCIItb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:47:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n15so9882529wrw.13
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 01:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:autocrypt:organization:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yZSkurjpoUr/pyNIQZil7/1iCdhd0AGftcyCBmdbwhY=;
-        b=uwzRD8LEGYFDs0zEnvCaBnPoYnvPmF7kxm7eA7NEioXVHbDoH+YBqciUHVRPXdk7+y
-         j7b6ATMLE1qyO2bgeX+v3ekMxpayKKyLJAjp0kYViJTxw7D2Cbe+/t8R3+llbB/hnXyA
-         5vi4V32NI4YBRqaw6p3YfA1bCRCCxf/ZkOPMSBqA/BXDV+gQPsZ5Hw+vXwLN8srS7aii
-         wYXnKwyK50J1xFxVsYbH/YldUa4vaZVJ0yyeK9PI+6IqgPY5Pl8ldDVjyG92KZpd8/Fz
-         aasYdczhmBt9JTyLQ0CiL5d94KOt9fi8gBE7cwwWfJNaACOLHZgzKDEsHu4DUrIw2ujK
-         Wtww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=yZSkurjpoUr/pyNIQZil7/1iCdhd0AGftcyCBmdbwhY=;
-        b=invWSWE0N0kcQQ+z/CXSvDFzQecKEP+ISsrl4f1TvgTCXg2RSQhVlXvoeEIjRcEwhK
-         wKiY8fDH5D4jHA80mw726eGe2o2k4Z4sY4uDE6w3q7+PAslIB5lbixHePa6O0Q+jKas+
-         ZiKIp13JlFX6RMGPm+iHHra0DNTYgXC6JX4EIYnezltp139YnopOwAHZhcd8zO2BrTHY
-         uf6zqWyrfrrHwmKmb5U+YdQdN/br94CXcT61VfnaWiB5EChduIHOx7stkhHnLVgoXb0K
-         gNmO2YK0TQFyRQl1HsAXuw+dynGwjIumfBpnkQVuLXrahGS83SwfdIA7lF1pPYgLY6T1
-         gbJw==
-X-Gm-Message-State: ANhLgQ3hqcIN8HZzyzXvs1ndQFTNS6Lmpq7nDhvUXnWuGovvOEdS8nY9
-        3v6pvV6U0GPurj7POFjxZwI2vA==
-X-Google-Smtp-Source: ADFU+vu3etELhKv/3Io0PH0BUypRvmNuhWe4I4/L4ROv7FiAkLp9XgLVVJL2uoJ+3++EDuyzAWrudg==
-X-Received: by 2002:a05:6000:12d2:: with SMTP id l18mr19169634wrx.240.1583743658130;
-        Mon, 09 Mar 2020 01:47:38 -0700 (PDT)
-Received: from ?IPv6:2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2? ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id o11sm50979101wrn.6.2020.03.09.01.47.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2020 01:47:37 -0700 (PDT)
-Subject: Re: [PATCH v2] pinctrl: meson: add tsin pinctrl for meson
- gxbb/gxl/gxm
-To:     Christian Hewitt <christianshewitt@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Igor Vavro <afl2001@gmail.com>, Otto Meier <gf435@gmx.net>
-References: <1583377666-13378-1-git-send-email-christianshewitt@gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- BSwxi7g3Mu7u5kUByanqHyA=
-Organization: Baylibre
-Message-ID: <f352d398-c805-7fae-64c3-dd674e77ca5c@baylibre.com>
-Date:   Mon, 9 Mar 2020 09:47:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 9 Mar 2020 04:49:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1583743681;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=leohfUa2RdovFtYX/evd4uHfcOnbnNPz/2a+lo3Wdpo=;
+        b=YjL+otoqAK9RWzRHivckv71J8QywOsbSSeR8tBDPqLNoqsyhs61/pmfX/jEkGu/w
+        edEam879PVao+c0s3sjwQIHOPPgPZwrHiwWMQf6ujBXtWVZ3cShYpQTF2aCY7IIjWwQ
+        cUBOg1BiMXj4PHwZGVr0KrpkEVgnFOHFHWo21oG0=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1583743679601492.4287888170346; Mon, 9 Mar 2020 16:47:59 +0800 (CST)
+Date:   Mon, 09 Mar 2020 16:47:59 +0800
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     "Tiezhu Yang" <yangtiezhu@loongson.cn>
+Cc:     "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+        "Huacai Chen" <chenhc@lemote.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "linux-mips" <linux-mips@vger.kernel.org>,
+        "linux-pci" <linux-pci@vger.kernel.org>,
+        "linux-ide" <linux-ide@vger.kernel.org>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "Xuefeng Li" <lixuefeng@loongson.cn>,
+        "Jianmin Lv" <lvjianmin@loongson.cn>
+Message-ID: <170be7abc6d.d0ea51502303.7109395874638183132@flygoat.com>
+In-Reply-To: <1583742206-29163-6-git-send-email-yangtiezhu@loongson.cn>
+References: <1583742206-29163-1-git-send-email-yangtiezhu@loongson.cn> <1583742206-29163-6-git-send-email-yangtiezhu@loongson.cn>
+Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[PATCH_5/6]_MIPS:_Loongso?=
+ =?UTF-8?Q?n:_Add_PCI_support_for_7A1000?=
 MIME-Version: 1.0
-In-Reply-To: <1583377666-13378-1-git-send-email-christianshewitt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Priority: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/2020 04:07, Christian Hewitt wrote:
-> From: Igor Vavro <afl2001@gmail.com>
-> 
-> Add the tsin pinctrl definitions needed for integrated DVB hardware
-> support on Meson GXBB/GXL/GXM boards.
-> 
-> changes in v2
-> - fix ordering and numbering of uart_c ping flagged by Otto in [1]
-> 
-> [1] http://lists.infradead.org/pipermail/linux-amlogic/2020-March/015906.html
-> 
-> Signed-off-by: Igor Vavro <afl2001@gmail.com>
-> [updated commit message]
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->  drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 35 ++++++++++++++++++++++++++++++
->  drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 27 +++++++++++++++++++++++
->  2 files changed, 62 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-> index 926b999..d130c63 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-> @@ -231,10 +231,24 @@ static const unsigned int hdmi_hpd_pins[]	= { GPIOH_0 };
->  static const unsigned int hdmi_sda_pins[]	= { GPIOH_1 };
->  static const unsigned int hdmi_scl_pins[]	= { GPIOH_2 };
->  
-> +static const unsigned int tsin_a_d_valid_pins[] = { GPIOY_0 };
-> +static const unsigned int tsin_a_sop_pins[]	= { GPIOY_1 };
-> +static const unsigned int tsin_a_clk_pins[]	= { GPIOY_2 };
-> +static const unsigned int tsin_a_d0_pins[]	= { GPIOY_3 };
-> +static const unsigned int tsin_a_dp_pins[]	= {
-> +	GPIOY_4, GPIOY_5, GPIOY_6, GPIOY_7, GPIOY_8, GPIOY_9, GPIOY_10
-> +};
-> +
-> +static const unsigned int tsin_a_fail_pins[]	= { GPIOY_11 };
->  static const unsigned int i2s_out_ch23_y_pins[]	= { GPIOY_8 };
->  static const unsigned int i2s_out_ch45_y_pins[]	= { GPIOY_9 };
->  static const unsigned int i2s_out_ch67_y_pins[]	= { GPIOY_10 };
->  
-> +static const unsigned int tsin_b_d_valid_pins[] = { GPIOX_6 };
-> +static const unsigned int tsin_b_sop_pins[]	= { GPIOX_7 };
-> +static const unsigned int tsin_b_clk_pins[]	= { GPIOX_8 };
-> +static const unsigned int tsin_b_d0_pins[]	= { GPIOX_9 };
-> +
->  static const unsigned int spdif_out_y_pins[]	= { GPIOY_12 };
->  
->  static const unsigned int gen_clk_out_pins[]	= { GPIOY_15 };
-> @@ -437,12 +451,22 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
->  	GROUP(pwm_a_x,		3,	17),
->  	GROUP(pwm_e,		2,	30),
->  	GROUP(pwm_f_x,		3,	18),
-> +	GROUP(tsin_b_d_valid,	3,	9),
-> +	GROUP(tsin_b_sop,	3,	8),
-> +	GROUP(tsin_b_clk,	3,	10),
-> +	GROUP(tsin_b_d0,	3,	7),
->  
->  	/* Bank Y */
->  	GROUP(uart_cts_c,	1,	17),
->  	GROUP(uart_rts_c,	1,	16),
->  	GROUP(uart_tx_c,	1,	19),
->  	GROUP(uart_rx_c,	1,	18),
-> +	GROUP(tsin_a_fail,	3,	3),
-> +	GROUP(tsin_a_d_valid,	3,	2),
-> +	GROUP(tsin_a_sop,	3,	1),
-> +	GROUP(tsin_a_clk,	3,	0),
-> +	GROUP(tsin_a_d0,	3,	4),
-> +	GROUP(tsin_a_dp,	3,	5),
->  	GROUP(pwm_a_y,		1,	21),
->  	GROUP(pwm_f_y,		1,	20),
->  	GROUP(i2s_out_ch23_y,	1,	5),
-> @@ -601,6 +625,15 @@ static const char * const gpio_periphs_groups[] = {
->  	"GPIOX_20", "GPIOX_21", "GPIOX_22",
->  };
->  
-> +static const char * const tsin_a_groups[] = {
-> +	"tsin_a_clk", "tsin_a_sop", "tsin_a_d_valid", "tsin_a_d0",
-> +	"tsin_a_dp", "tsin_a_fail",
-> +};
-> +
-> +static const char * const tsin_b_groups[] = {
-> +	"tsin_b_clk", "tsin_b_sop", "tsin_b_d_valid", "tsin_b_d0",
-> +};
-> +
->  static const char * const emmc_groups[] = {
->  	"emmc_nand_d07", "emmc_clk", "emmc_cmd", "emmc_ds",
->  };
-> @@ -792,6 +825,8 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
->  	FUNCTION(i2s_out),
->  	FUNCTION(spdif_out),
->  	FUNCTION(gen_clk_out),
-> +	FUNCTION(tsin_a),
-> +	FUNCTION(tsin_b),
->  };
->  
->  static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> index 1b6e864..45d5831 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> @@ -241,6 +241,17 @@ static const unsigned int tsin_a_dp_pins[] = {
->  	GPIODV_1, GPIODV_2, GPIODV_3, GPIODV_4, GPIODV_5, GPIODV_6, GPIODV_7,
->  };
->  
-> +static const unsigned int tsin_b_clk_pins[]	= { GPIOH_6 };
-> +static const unsigned int tsin_b_d0_pins[]	= { GPIOH_7 };
-> +static const unsigned int tsin_b_sop_pins[]	= { GPIOH_8 };
-> +static const unsigned int tsin_b_d_valid_pins[] = { GPIOH_9 };
-> +
-> +static const unsigned int tsin_b_fail_z4_pins[] = { GPIOZ_4 };
-> +static const unsigned int tsin_b_clk_z3_pins[]	= { GPIOZ_3 };
-> +static const unsigned int tsin_b_d0_z2_pins[]	= { GPIOZ_2 };
-> +static const unsigned int tsin_b_sop_z1_pins[]	= { GPIOZ_1 };
-> +static const unsigned int tsin_b_d_valid_z0_pins[] = { GPIOZ_0 };
-> +
->  static const struct pinctrl_pin_desc meson_gxl_aobus_pins[] = {
->  	MESON_PIN(GPIOAO_0),
->  	MESON_PIN(GPIOAO_1),
-> @@ -438,6 +449,11 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
->  	GROUP(eth_txd1,		4,	12),
->  	GROUP(eth_txd2,		4,	11),
->  	GROUP(eth_txd3,		4,	10),
-> +	GROUP(tsin_b_fail_z4,	3,	15),
-> +	GROUP(tsin_b_clk_z3,	3,	16),
-> +	GROUP(tsin_b_d0_z2,	3,	17),
-> +	GROUP(tsin_b_sop_z1,	3,	18),
-> +	GROUP(tsin_b_d_valid_z0, 3,	19),
->  	GROUP(pwm_c,		3,	20),
->  	GROUP(i2s_out_ch23_z,	3,	26),
->  	GROUP(i2s_out_ch45_z,	3,	25),
-> @@ -454,6 +470,10 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
->  	GROUP(i2s_out_lr_clk,	6,	24),
->  	GROUP(i2s_out_ch01,	6,	23),
->  	GROUP(spdif_out_h,	6,	28),
-> +	GROUP(tsin_b_d0,	6,	17),
-> +	GROUP(tsin_b_sop,	6,	18),
-> +	GROUP(tsin_b_d_valid,	6,	19),
-> +	GROUP(tsin_b_clk,	6,	20),
->  
->  	/* Bank DV */
->  	GROUP(uart_tx_b,	2,	16),
-> @@ -689,6 +709,12 @@ static const char * const tsin_a_groups[] = {
->  	"tsin_a_dp", "tsin_a_fail",
->  };
->  
-> +static const char * const tsin_b_groups[] = {
-> +	"tsin_b_clk", "tsin_b_sop", "tsin_b_d_valid", "tsin_b_d0",
-> +	"tsin_b_clk_z3", "tsin_b_sop_z1", "tsin_b_d_valid_z0", "tsin_b_d0_z2",
-> +	"tsin_b_fail_z4",
-> +};
-> +
->  static const char * const gpio_aobus_groups[] = {
->  	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
->  	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-> @@ -764,6 +790,7 @@ static struct meson_pmx_func meson_gxl_periphs_functions[] = {
->  	FUNCTION(spdif_out),
->  	FUNCTION(eth_led),
->  	FUNCTION(tsin_a),
-> +	FUNCTION(tsin_b),
->  };
->  
->  static struct meson_pmx_func meson_gxl_aobus_functions[] = {
-> 
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=B8=80, 2020-03-09 16:23:25 Tiezhu Yan=
+g <yangtiezhu@loongson.cn> =E6=92=B0=E5=86=99 ----
+ > Add PCI support for 7A1000 to detect PCI device.
+ >=20
+ > Co-developed-by: Jianmin Lv <lvjianmin@loongson.cn>
+ > Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+ > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+ > ---
+ >  arch/mips/include/asm/mach-loongson64/pci.h |   1 +
+ >  arch/mips/loongson64/pci.c                  |  12 ++-
+ >  arch/mips/pci/Makefile                      |   2 +-
+ >  arch/mips/pci/ops-loongson3-ls7a.c          | 132 +++++++++++++++++++++=
++++++++
+ >  4 files changed, 143 insertions(+), 4 deletions(-)
+ >  create mode 100644 arch/mips/pci/ops-loongson3-ls7a.c
+ >=20
+ > diff --git a/arch/mips/include/asm/mach-loongson64/pci.h b/arch/mips/inc=
+lude/asm/mach-loongson64/pci.h
+ > index 8b59d64..42c9744 100644
+ > --- a/arch/mips/include/asm/mach-loongson64/pci.h
+ > +++ b/arch/mips/include/asm/mach-loongson64/pci.h
+ > @@ -8,6 +8,7 @@
+ >  #define __ASM_MACH_LOONGSON64_PCI_H_
+ > =20
+ >  extern struct pci_ops loongson_pci_ops;
+ > +extern struct pci_ops loongson_ls7a_pci_ops;
+ > =20
+ >  /* this is an offset from mips_io_port_base */
+ >  #define LOONGSON_PCI_IO_START    0x00004000UL
+ > diff --git a/arch/mips/loongson64/pci.c b/arch/mips/loongson64/pci.c
+ > index e84ae20..b79368f 100644
+ > --- a/arch/mips/loongson64/pci.c
+ > +++ b/arch/mips/loongson64/pci.c
+ > @@ -23,8 +23,8 @@ static struct resource loongson_pci_io_resource =3D {
+ >      .flags    =3D IORESOURCE_IO,
+ >  };
+ > =20
+ > -static struct pci_controller  loongson_pci_controller =3D {
+ > -    .pci_ops    =3D &loongson_pci_ops,
+ > +static struct pci_controller loongson_pci_controller =3D {
+ > +    .pci_ops    =3D NULL,
+ >      .io_resource    =3D &loongson_pci_io_resource,
+ >      .mem_resource    =3D &loongson_pci_mem_resource,
+ >      .mem_offset    =3D 0x00000000UL,
+ > @@ -36,6 +36,11 @@ extern int sbx00_acpi_init(void);
+ > =20
+ >  static int __init pcibios_init(void)
+ >  {
+ > +    if (strstr(eboard->name, "780E"))
+ > +        loongson_pci_controller.pci_ops =3D &loongson_pci_ops;
+ > +
+ > +    if (strstr(eboard->name, "7A1000"))
+ > +        loongson_pci_controller.pci_ops =3D &loongson_ls7a_pci_ops;
+
+Please do not check PCH type everywhere.
+
+ > =20
+ >      loongson_pci_controller.io_map_base =3D mips_io_port_base;
+ >      loongson_pci_mem_resource.start =3D loongson_sysconf.pci_mem_start_=
+addr;
+ > @@ -43,7 +48,8 @@ static int __init pcibios_init(void)
+ > =20
+ >      register_pci_controller(&loongson_pci_controller);
+ > =20
+ > -    sbx00_acpi_init();
+ > +    if (strstr(eboard->name, "780E"))
+ > +        sbx00_acpi_init();
+ > =20
+ >      return 0;
+ >  }
+ > diff --git a/arch/mips/pci/Makefile b/arch/mips/pci/Makefile
+ > index 342ce10..7256bb1 100644
+ > --- a/arch/mips/pci/Makefile
+ > +++ b/arch/mips/pci/Makefile
+ > @@ -35,7 +35,7 @@ obj-$(CONFIG_LASAT)        +=3D pci-lasat.o
+ >  obj-$(CONFIG_MIPS_COBALT)    +=3D fixup-cobalt.o
+ >  obj-$(CONFIG_LEMOTE_FULOONG2E)    +=3D fixup-fuloong2e.o ops-loongson2.=
+o
+ >  obj-$(CONFIG_LEMOTE_MACH2F)    +=3D fixup-lemote2f.o ops-loongson2.o
+ > -obj-$(CONFIG_MACH_LOONGSON64)    +=3D fixup-loongson3.o ops-loongson3.o
+ > +obj-$(CONFIG_MACH_LOONGSON64)    +=3D fixup-loongson3.o ops-loongson3.o=
+ ops-loongson3-ls7a.o
+ >  obj-$(CONFIG_MIPS_MALTA)    +=3D fixup-malta.o pci-malta.o
+ >  obj-$(CONFIG_PMC_MSP7120_GW)    +=3D fixup-pmcmsp.o ops-pmcmsp.o
+ >  obj-$(CONFIG_PMC_MSP7120_EVAL)    +=3D fixup-pmcmsp.o ops-pmcmsp.o
+ > diff --git a/arch/mips/pci/ops-loongson3-ls7a.c b/arch/mips/pci/ops-loon=
+gson3-ls7a.c
+ > new file mode 100644
+ > index 0000000..4ed6c40
+ > --- /dev/null
+ > +++ b/arch/mips/pci/ops-loongson3-ls7a.c
+ > @@ -0,0 +1,132 @@
+ > +// SPDX-License-Identifier: GPL-2.0
+ > +/*
+ > + * Copyright (C) 2020 Loongson Technology Corporation Limited
+ > + *
+ > + * Author: Jianmin Lv <lvjianmin@loongson.cn>
+ > + * Author: Tiezhu Yang <yangtiezhu@loongson.cn>
+ > + */
+ > +
+ > +#include <linux/types.h>
+ > +#include <linux/pci.h>
+ > +#include <linux/kernel.h>
+ > +
+ > +#include <asm/mips-boards/bonito64.h>
+
+Why we need this?
+
+ > +
+ > +#include <loongson.h>
+ > +
+ > +#define PCI_ACCESS_READ 0
+ > +#define PCI_ACCESS_WRITE 1
+ > +
+ > +#define HT1LO_PCICFG_BASE 0x1a000000
+ > +#define HT1LO_PCICFG_BASE_TP1 0x1b000000
+ > +
+ > +#define HT1LO_PCICFG_BASE_EXT 0xefe00000000
+ > +#define HT1LO_PCICFG_BASE_TP1_EXT 0xefe10000000
+ > +
+ > +static int ls7a_pci_config_access(unsigned char access_type,
+ > +        struct pci_bus *bus, unsigned int devfn,
+ > +        int where, u32 *data)
+ > +{
+ > +    u_int64_t addr;
+ > +    void *addrp;
+ > +    unsigned char busnum =3D bus->number;
+ > +    int device =3D PCI_SLOT(devfn);
+ > +    int function =3D PCI_FUNC(devfn);
+ > +    int reg =3D where & ~3;
+ > +
+ > +    if (where >=3D PCI_CFG_SPACE_EXP_SIZE)
+ > +        return PCIBIOS_DEVICE_NOT_FOUND;
+ > +
+ > +    if (busnum =3D=3D 0 && device > 23)
+ > +        return PCIBIOS_DEVICE_NOT_FOUND;
+ > +
+ > +    if (where < PCI_CFG_SPACE_SIZE) { /* standard config */
+ > +        addr =3D (busnum << 16) | (device << 11) | (function << 8) | re=
+g;
+ > +        if (busnum =3D=3D 0) {
+ > +            addr =3D HT1LO_PCICFG_BASE | addr;
+ > +            addrp =3D (void *)TO_UNCAC(addr);
+ > +        } else {
+ > +            addr =3D HT1LO_PCICFG_BASE_TP1 | addr;
+ > +            addrp =3D (void *)TO_UNCAC(addr);
+ > +        }
+ > +    } else { /* extended config */
+ > +        reg =3D (reg & 0xff) | ((reg & 0xf00) << 16);
+ > +        addr =3D (busnum << 16) | (device << 11) | (function << 8) | re=
+g;
+ > +        if (busnum =3D=3D 0) {
+ > +            addr =3D HT1LO_PCICFG_BASE_EXT | addr;
+ > +            addrp =3D (void *)TO_UNCAC(addr);
+ > +        } else {
+ > +            addr =3D HT1LO_PCICFG_BASE_TP1_EXT | addr;
+ > +            addrp =3D (void *)TO_UNCAC(addr);
+ > +        }
+ > +    }
+ > +
+ > +    if (access_type =3D=3D PCI_ACCESS_WRITE)
+ > +        *(unsigned int *)addrp =3D cpu_to_le32(*data);
+ > +    else {
+ > +        *data =3D le32_to_cpu(*(unsigned int *)addrp);
+ > +        if (busnum =3D=3D 0 &&
+ > +            reg =3D=3D PCI_CLASS_REVISION && *data =3D=3D 0x06000001)
+ > +            *data =3D (PCI_CLASS_BRIDGE_PCI << 16) | (*data & 0xffff);
+
+It should be a part of quirk. Not a part of accessing.
+
+ > +
+ > +        if (*data =3D=3D 0xffffffff) {
+ > +            *data =3D -1;
+ > +            return PCIBIOS_DEVICE_NOT_FOUND;
+ > +        }
+ > +    }
+ > +
+ > +    return PCIBIOS_SUCCESSFUL;
+ > +}
+ > +
+ > +static int ls7a_pci_pcibios_read(struct pci_bus *bus, unsigned int devf=
+n,
+ > +                 int where, int size, u32 *val)
+ > +{
+ > +    int ret;
+ > +    u32 data =3D 0;
+ > +
+ > +    ret =3D ls7a_pci_config_access(PCI_ACCESS_READ, bus, devfn, where, =
+&data);
+ > +    if (ret !=3D PCIBIOS_SUCCESSFUL)
+ > +        return ret;
+ > +
+ > +    if (size =3D=3D 1)
+ > +        *val =3D (data >> ((where & 3) << 3)) & 0xff;
+ > +    else if (size =3D=3D 2)
+ > +        *val =3D (data >> ((where & 3) << 3)) & 0xffff;
+ > +    else
+ > +        *val =3D data;
+
+That  loggic seems identical with RS780E one, can we reuse them?
+
+> +
+ > +    return PCIBIOS_SUCCESSFUL;
+ > +}
+ > +
+ > +static int ls7a_pci_pcibios_write(struct pci_bus *bus, unsigned int dev=
+fn,
+ > +                  int where, int size, u32 val)
+ > +{
+ > +    int ret;
+ > +    u32 data =3D 0;
+ > +
+ > +    if (size =3D=3D 4)
+ > +        data =3D val;
+ > +    else {
+ > +        ret =3D ls7a_pci_config_access(PCI_ACCESS_READ, bus,
+ > +                        devfn, where, &data);
+ > +        if (ret !=3D PCIBIOS_SUCCESSFUL)
+ > +            return ret;
+ > +
+ > +        if (size =3D=3D 1)
+ > +            data =3D (data & ~(0xff << ((where & 3) << 3))) |
+ > +                (val << ((where & 3) << 3));
+ > +        else if (size =3D=3D 2)
+ > +            data =3D (data & ~(0xffff << ((where & 3) << 3))) |
+ > +                (val << ((where & 3) << 3));
+ > +    }
+ > +
+ > +    ret =3D ls7a_pci_config_access(PCI_ACCESS_WRITE, bus,
+ > +                    devfn, where, &data);
+ > +
+ > +    return ret;
+ > +}
+ > +
+ > +struct pci_ops loongson_ls7a_pci_ops =3D {
+ > +    .read =3D ls7a_pci_pcibios_read,
+ > +    .write =3D ls7a_pci_pcibios_write
+ > +};
+ > --=20
+ > 2.1.0
+ >=20
+ >
