@@ -2,239 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 471C817E426
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1CD17E414
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgCIP5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:57:40 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:37546 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbgCIP5k (ORCPT
+        id S1727254AbgCIPyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:54:14 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.9]:37146 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726758AbgCIPyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:57:40 -0400
-Received: by mail-ua1-f66.google.com with SMTP id h32so3504851uah.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 08:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pCRd2UEbEJTn5mfXepX9c61lhmQ/IqiJL7ywIto/CQw=;
-        b=wGb7G/oj6hspozY0jRklGG9i3hdO4FwSj1vwBXsKEq7SgzsswMznpltaAZp3zoa5f6
-         n/oq31BIy+k3AODVPylffydQIJtTFJMpght6yOR86WM4gDzVhsNFB8QcI1e3b3VJ9+0c
-         b38AK8ylGkFmW48/4FRvjLFS9PT7+PiS1GNPK37JE+EWavPu8qqV2SbvbuUtwY6iqxjO
-         onQ0dLrgFyIlJsSbVaKYfh823nESfyTZxb3aMIZDdlH0awx5q+BuJ0YE6wko3sk+NVUS
-         xujcScGOmNNviQWC0MuJ+eKutyaAjz4JkNA7Cngty5jYWleivrYGioI4YGlM99SanOX9
-         ET2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pCRd2UEbEJTn5mfXepX9c61lhmQ/IqiJL7ywIto/CQw=;
-        b=nS7fsFZAU03RuG+FU+UUl3E1UjmOQ5K+KpnJCHoJCS/8XagPbCO8d4X8QF6Ym9L9uM
-         icelAANnAnpDLWQA9YBGWq7llAsed7vroQYO9PlBTTNM+5cEG8ZWjIw1yuAKtgOMBvHM
-         PovvjFh8NVqkgGDYodsQoyfuDn0FuhXSx6OhC0niWGuswQXcQnvAulNVoNya9hy+vGyc
-         618beyltSm0p6S2OEks+dYBjKlip6Kadgekwm2VLFL+qT9fI5+sizZ0/yVOxC8RXlAnd
-         LgHbEt2hk0U4cbwWZ009I/vE2FNREB1PhZiR8KHxwLeCSY+tPBuvP/gdECb2gdWmvwgo
-         geaA==
-X-Gm-Message-State: ANhLgQ2fVnzNHa5du1ZCYYwlXXQYhxSwmzK72wOpgMcierajBAvh3U3b
-        hPDGYg6oBg5b8/8CUHHJEx/1yQl8/xMSRP5ExKXP2Q==
-X-Google-Smtp-Source: ADFU+vtFgOOCmRSQPSf7CEJwiUNA+g1wHtqy+hLf7WB6ZnEytbypnc3boO4lzqtz6KH7aUm6G/dQPc06T/1yNYg/jp8=
-X-Received: by 2002:ab0:7802:: with SMTP id x2mr9482796uaq.100.1583769457230;
- Mon, 09 Mar 2020 08:57:37 -0700 (PDT)
+        Mon, 9 Mar 2020 11:54:13 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0477B114CE
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 10:54:13 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BKjMjTcbYAGTXBKjMjvPxB; Mon, 09 Mar 2020 10:54:13 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+BaSL/NXH+vKbe1CVWfTOyE0XFeJdExgkXsHwEW8bZA=; b=Rvl9bUmzCsVQ3LxP1VqzX3BCk1
+        6h2vTBkMtniXzllZDDb3PQ7uaU2W8Z45i8ii3SBRxiPvbiXn0C/DMXvazcyNzeyyGW3vCNmD3N14E
+        Ukyu9Jsz1lW9aXxhsN1Xe1l5Hxg+EIOhZc99ZnFJkCyv2hUFX2Jcp5tg2li3THZe9E9v3D7zYhID9
+        9Il3xJ5qJ7Iq9RMx6/3c0alGj9kiTcJJ0acMzTvyD7W6Okr97kJDf4u76sY4+ewapl5MwKPMBxAAT
+        RGpj/duv1MFvplmfVWBk+h7quQxOgJI/QRoKUPHkaiWKXfyZhcmoy9SpsKZxLVwQNwduc7vcTIiZ7
+        WcYgO0/Q==;
+Received: from [201.162.240.150] (port=24477 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jBKjK-0030kr-LK; Mon, 09 Mar 2020 10:54:11 -0500
+Date:   Mon, 9 Mar 2020 10:57:22 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>
+Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] dlm: user: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200309155722.GA32023@embeddedor>
 MIME-Version: 1.0
-References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
- <CAPDyKFokE6x0mn+v5B9=so-SyrdTn0JBU8Mrp3Zdu6kSaCie2g@mail.gmail.com>
- <0963b60f-15e7-4bc6-10df-6fc8003e4d42@nvidia.com> <CAPDyKFq5NoeHEBK3sv3yOSD2+pm9FueH1gaTyPq0j7GLfa6vnA@mail.gmail.com>
- <34fd84d7-387b-b6f3-7fb3-aa490909e205@ti.com> <CAPDyKFrrO4noYqdxWL9Y8Nx75LopbDudKGMotkGbGcAF1oq==w@mail.gmail.com>
- <5e9b5646-bd48-e55b-54ee-1c2c41fc9218@nvidia.com> <CAPDyKFqpNo_4OePBR1KnJNO=kR8XEqbcsEd=icSceSdDH+Rk1Q@mail.gmail.com>
- <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com> <d12fe142-7e72-ab58-33ab-17817e35096f@nvidia.com>
- <c216f131-6f83-c9c9-9d17-8d44ec06972d@nvidia.com> <87ad7586-9569-4276-044a-adb64e84ca15@nvidia.com>
- <a0962e0b-0f1d-9f32-f6e9-92f69f93167f@nvidia.com> <57ddddc2-3ee8-d867-bba0-0dd9929ba37d@nvidia.com>
- <CAPDyKFqZSd9E3+16yFsmpee2JsbRJ-DGThxx7NJHu6UE00Xi1Q@mail.gmail.com>
- <26ee7225-9483-4664-c2d7-b5cefeadcd4b@nvidia.com> <CAPDyKFqwVQDEnPNi33mc9ycTxpaT1cRLejbR3Ja4c8dha4gFRw@mail.gmail.com>
- <a67b2831-3eff-545a-de67-102dffe4a0d9@ti.com>
-In-Reply-To: <a67b2831-3eff-545a-de67-102dffe4a0d9@ti.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 9 Mar 2020 16:57:00 +0100
-Message-ID: <CAPDyKFpDUnaZ_x=Xoj625t=t1J_+xZWmkxwK78ruELsvLi+x+g@mail.gmail.com>
-Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kishon <kishon@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.240.150
+X-Source-L: No
+X-Exim-ID: 1jBKjK-0030kr-LK
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.240.150]:24477
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Mar 2020 at 15:06, Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Uffe,
->
-> On 06/03/20 4:44 pm, Ulf Hansson wrote:
-> > [...]
-> >
-> >>>>>>>>>>>
-> >>>>>>>>>>> Actually we always use R1B with CMD6 as per spec.
-> >>>>>>>>>> I fully agree that R1B is preferable, but it's not against the
-> >>>>>>>>>> spec to
-> >>>>>>>>>> send CMD13 to poll for busy.
-> >>>>>>>>>>
-> >>>>>>>>>> Moreover, we need to cope with the scenario when the host has
-> >>>>>>>>>> specified a maximum timeout that isn't sufficiently long enough for
-> >>>>>>>>>> the requested operation. Do you have another proposal for how to
-> >>>>>>>>>> manage this, but disabling MMC_RSP_BUSY?
-> >>>>>>>>>>
-> >>>>>>>>>> Let's assume you driver would get a R1B for the CMD6 (we force it),
-> >>>>>>>>>> then what timeout would the driver be using if we would set
-> >>>>>>>>>> cmd.busy_timeout to 30ms?
-> >>>>>>>>>>
-> >>>> Sorry didn't understood clearly. Are you asking with 30s timeout, whats
-> >>>> the data timeout counter used?
-> >>> Yes. It seems like it will pick the maximum, which is 11s?
-> >> yes
-> >
-> > Okay, thanks!
-> >
-> >>>
-> >>>> Because of above mentioned issue on our host where CMD interrupt happens
-> >>>> after busy state, poll for busy returns right away as not busy.
-> >>> I see.
-> >>>
-> >>>> So issuing CMD13 after CMD6-R1 followed by busy poll should be working.
-> >>>> But weird that with small delay of 1ms or debug print before CMD13 it
-> >>>> doesn't timeout and works all the time.
-> >>> I have digested the information you provided in these emails. Let me
-> >>> summarize it, to see if I have understood correctly.
-> >>>
-> >>> 1.
-> >>> Your controller can't distinguish between R1 and R1B because of a
-> >>> limitation in the HW. So, in both cases you need to wait for the card
-> >>> to stop signal busy, before the controller can give an IRQ to notify
-> >>> that the R1 response has been received. Correct?
-> >>>
-> >>> In this context, I am wondering if sdhci_send_command(), really
-> >>> conforms to these requirements. For example, depending on if the CMD6
-> >>> has MMC_RSP_BUSY or not, it may pick either SDHCI_CMD_RESP_SHORT or
-> >>> SDHCI_CMD_RESP_SHORT_BUSY.
-> >>>
-> >>> Does this work as expected for your case?
-> >> Design team re-verified internally and bug where HW waits for busy state
-> >> before IRQ is only for R1B and R1 is spec compliant.
-> >>
-> >> So, with R1, CMD complete is generated after response received.
-> >
-> > Okay.
-> >
-> > So, the issue we see for CMD6 with R1, is a software problem that we
-> > should be able to fix.
-> >
-> >>
-> >> With R1B, CMD complete and xfer complete both are generated after
-> >> response received + device busy (max timeout of 11s)
-> >> DATA timeout interrupt will be asserted incase if HW busy detection fails.
-> >>
-> >> With R1B we may see DATA Timeout if operation takes more than max busy
-> >> timeout of 11s.
-> >
-> > Okay, I see.
-> >
-> >>
-> >>> 2.
-> >>> Assuming my interpretation of the above is somewhat correct. Then you
-> >>> always need to set a busy timeout for R1/R1B responses in the
-> >>> controller. The maximum timeout seems to be 11s long. Obviously, this
-> >>> isn't enough for all cases, such as cache flushing and erase, for
-> >>> example. So, what can we do to support a longer timeouts than 11s?
-> >>> Would it be possible to disable the HW timeout, if the requested
-> >>> timeout is longer than 11s and use a SW timeout instead?
-> >>>
-> >>> Kind regards
-> >>> Uffe
-> >>
-> >> For erase long operations we have register bit to enable for infinite
-> >> busy wait mode where host controller would be monitoring until card is busy.
-> >
-> > Alright, that sounds great!
-> >
-> >>
-> >> But so far for emmc devices we used on our platforms, we haven't seen
-> >> cache flush taking more than 11s.
-> >
-> > I understand that 11s is probably fine to use, for most cases.
-> >
-> > However, it's not spec compliant, as for some operations there are
-> > simply no timeout specified. BKOPS, cache flush, sanitize are cases
-> > like this - and then 11s is definitely not sufficient.
-> >
-> >>
-> >> Will get back on possibility of disabling HW timeout and using SW timeout..
-> >
-> > Thanks!
-> >
-> > I would like to get the regression fixed asap, but I also would like
-> > to avoid reverting patches, unless really necessary. May I propose the
-> > following two options.
-> >
-> > 1. Find out why polling with ->card_busy() or CMD13, for a CMD6 with
-> > an R1 response doesn't work - and then fix that behaviour.
-> >
-> > 2. Set the mmc->max_busy_timeout to zero for sdhci-tegra, which makes
-> > the core to always use R1B for CMD6 (and erase). This also means that
-> > when the cmd->busy_timeout becomes longer than 11s, sdhci-tegra must
-> > disable the HW busy timeout and just wait "forever".
-> >
-> > If you decide for 2, you can add the software timeout support on top,
-> > but make that can be considered as a next step of an improvement,
-> > rather than needed as fix. Note that, I believe there are some support
-> > for software timeout already in the sdhci core, maybe you need to
-> > tweak it a bit for your case, I don't know.
-> >
->
-> I was able to reproduce the issue on sdhci-omap with your patch applied.
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Great, thanks for confirming!
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
->
-> In our case, the dat0 line never comes back up when trying to send a
-> CMD6 with R1. It needs an R1b to work properly. I also set
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Do you know if that is because of how the driver manages R1B/R1 or
-because of a limitation in the HW?
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-> mmc->max_busy_timeout to 0 and that made it work as well.
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-Okay, good.
+This issue was found with the help of Coccinelle.
 
->
-> I wanna try it out with other R1b commands like erase to see if it works
-> properly if the delay is actually very long.
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-Right, it probably works for most cases. In any case, this was broken
-even before my three patches that screwed things up.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/dlm/user.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BTW, what HW busy time out will you be using for sdhci omap if
-cmd->busy_timeout exceeds it? Is it 2581ms for all sdhci-omap
-instances or does it differ depending on platform?
+diff --git a/fs/dlm/user.c b/fs/dlm/user.c
+index 5264bac75115..e5cefa90b1ce 100644
+--- a/fs/dlm/user.c
++++ b/fs/dlm/user.c
+@@ -46,7 +46,7 @@ struct dlm_lock_params32 {
+ 	__u32 bastaddr;
+ 	__u32 lksb;
+ 	char lvb[DLM_USER_LVB_LEN];
+-	char name[0];
++	char name[];
+ };
+ 
+ struct dlm_write_request32 {
+-- 
+2.25.0
 
-Anyway, in this phase, it sounds like we should move forward with a
-patch setting max_busy_timeout to zero for sdhci omap, as that
-restores things to the earlier behavior. Would you mind posting a
-patch, or do you want me to manage it?
-
-Kind regards
-Uffe
