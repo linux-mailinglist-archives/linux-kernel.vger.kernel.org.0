@@ -2,48 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBDB617E0F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:18:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB5C917E0BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:00:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbgCINSN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 09:18:13 -0400
-Received: from mail.mijp.gob.ve ([190.202.15.212]:28842 "EHLO mail.mijp.gob.ve"
+        id S1726533AbgCINAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:00:25 -0400
+Received: from v6.sk ([167.172.42.174]:34444 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbgCINSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:18:12 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.mijp.gob.ve (Postfix) with ESMTP id A8932C41482;
-        Mon,  9 Mar 2020 09:28:13 -0400 (-04)
-Received: from mail.mijp.gob.ve ([127.0.0.1])
-        by localhost (mail.mijp.gob.ve [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id LIyOhTdYtXG3; Mon,  9 Mar 2020 09:28:13 -0400 (-04)
-Received: from mail.mijp.gob.ve (localhost.localdomain [127.0.0.1])
-        by mail.mijp.gob.ve (Postfix) with ESMTP id 739DFC41509;
-        Mon,  9 Mar 2020 09:28:13 -0400 (-04)
-Received: from [100.68.69.34] (unknown [223.237.206.191])
-        by mail.mijp.gob.ve (Postfix) with ESMTPSA id 09FBDC41482;
-        Mon,  9 Mar 2020 09:28:05 -0400 (-04)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1725956AbgCINAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:00:25 -0400
+Received: from localhost (v6.sk [IPv6:::1])
+        by v6.sk (Postfix) with ESMTP id A96E260EEE;
+        Mon,  9 Mar 2020 13:00:23 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 1/2] USB: EHCI: ehci-mv: switch the HSIC HCI to HSIC mode
+Date:   Mon,  9 Mar 2020 14:00:13 +0100
+Message-Id: <20200309130014.548168-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Noticia importante
-To:     Recipients <antecedentespenales@mijp.gob.ve>
-From:   Administrador de correo web <antecedentespenales@mijp.gob.ve>
-Date:   Mon, 09 Mar 2020 18:27:16 +0530
-Message-Id: <20200309132806.09FBDC41482@mail.mijp.gob.ve>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario
+Turns out the undocumented and reserved bits of port status/control
+register of the root port need to be set to use the HCI in HSIC mode.
 
-Para aumentar el rendimiento de nuestro correo electrónico y mejorar la seguridad en nuestro correo web, estamos actualizando todas las cuentas de correo electrónico en nuestro sistema de base de datos, para evitar la interrupción del servicio, le recomendamos que siga el siguiente enlace y actualice su cuenta.
+Typically the firmware does this, but that is not always good enough,
+because the bits get lost if the HSIC clock is disabled (e.g. when
+ehci-mv is build as a module).
 
-El incumplimiento de este aviso puede resultar en una suspensión de la cuenta y es posible que no pueda recibir correos electrónicos entrantes, por lo que recomendamos a todos los usuarios que lo hagan.
+This supplements commit 7b104f890ade ("USB: EHCI: ehci-mv: add HSIC
+support").
 
-Haga clic en la copia y obtenga el enlace: http://correoverificaciones.wapkiz.com/index.html en su navegador y verifique.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/usb/host/ehci-mv.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Gracias
-Equipo de soporte técnico
+diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
+index bd4f6ef534d96..ddb668963955f 100644
+--- a/drivers/usb/host/ehci-mv.c
++++ b/drivers/usb/host/ehci-mv.c
+@@ -110,6 +110,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 	struct resource *r;
+ 	int retval = -ENODEV;
+ 	u32 offset;
++	u32 status;
+ 
+ 	if (usb_disabled())
+ 		return -ENODEV;
+@@ -213,6 +214,14 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 		device_wakeup_enable(hcd->self.controller);
+ 	}
+ 
++	if (of_usb_get_phy_mode(pdev->dev.of_node) == USBPHY_INTERFACE_MODE_HSIC) {
++		status = ehci_readl(ehci, &ehci->regs->port_status[0]);
++		/* These "reserved" bits actually enable HSIC mode. */
++		status |= BIT(25);
++		status &= ~GENMASK(31, 30);
++		ehci_writel(ehci, status, &ehci->regs->port_status[0]);
++	}
++
+ 	dev_info(&pdev->dev,
+ 		 "successful find EHCI device with regs 0x%p irq %d"
+ 		 " working in %s mode\n", hcd->regs, hcd->irq,
+-- 
+2.25.1
+
