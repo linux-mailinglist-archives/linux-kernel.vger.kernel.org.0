@@ -2,71 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1955317DC94
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F00917DC98
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:42:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgCIJjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:39:25 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42051 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgCIJjZ (ORCPT
+        id S1726402AbgCIJmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:42:09 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34144 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbgCIJmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:39:25 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q19so9156710ljp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 02:39:22 -0700 (PDT)
+        Mon, 9 Mar 2020 05:42:09 -0400
+Received: by mail-io1-f65.google.com with SMTP id h131so7754882iof.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 02:42:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GWafhgkHqGjhRe8y+m1pE0quFmlowBtOnAE/oPWGyN0=;
-        b=vXkFRFdzlpOZtT+31ydgd9FX6Z1Zvo7ZtEaYUUUUW+uBV0RVnItMZc3YcFbcE7StgI
-         vFAu7B5k5ORVKbJJlmV5EaSIhBSm06bToQPWxW2sw0hcVM+qy6K+yhMcZaQzIacJvJnk
-         me07kNBcAGV55Bm1xfEIxflpbzWiBrTxe/u04FpXKoHPfK+iddC/bwDnFI2tr0SQIOyd
-         iElasMAdPOJOJjbiD8Df9etU+Xl/hIVTSSAN4OFehXJBCj5AukvJdc+mEHgduzN6ckSU
-         pA9oabtckEopSKnlebbTUOLNLAse71uhJXUJks5a8jE7XQC1qt36yei5GNrrB10bz5C7
-         UIvw==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=c/mZkIa4u1GFEY/oYjmFc+FR8PHQ8RKEpzXuSA50f5s=;
+        b=TAO5L0ecniR53erERzzlw9zh9lNJtnY42OapqHncQEEOT2zL1J/8GGNrCjbOLCATlU
+         JPIiYjDHU20WcrlU4aM6LCmooPG1ubaoK07kd3FikOiJVbbYnaBp+/Hj4as7Wt9dcKUt
+         8Hvvg9NiyVusI7+S0B9SCyRVfHoDLAMgJZPISXz4/9hmol7DeXY9w29RCtJJmPVWvJmT
+         E3DtEi7DQx9ka58NZPxQhumBxcEyuGXtzSM7+TTFMY4Q8UW7/MJb4slGLCUKbsts3xRr
+         EQl4ADEUM/NRImQu8woqDD4TcBW9JV7DAa4n5w2bqofVQD+K4dF/cTMg9oQG7QCHp+3T
+         oUVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GWafhgkHqGjhRe8y+m1pE0quFmlowBtOnAE/oPWGyN0=;
-        b=dmO66drECLc5H4Yw6bfHqQhO5xCgK/dfqcLaLoCQ13H1p6+A7nm9r882HwNf1m604D
-         Rd4UqTQN8rPvWehGAb7GPgaqNNb4NNhrGkzv22HwFvbcsJlrmQTpciLZUo9Aq4ekvV+W
-         xUAN+dFyepuwo9ObO/a8L7Yzpd5KU7PAKW1ybzc0N8ct8iKJrCmczzvQNfqm9RZ0iYrZ
-         Xr9ooyZWTsTCMOxcDTu47v5w/LmtS14tY2tKDkNZ+9Fkc9F6L69x11AB9hj4P0T2mbp0
-         gRoDR4w08E7LwQmwGejVbjRBlaFtRBBnbkxKmmIFBBhEhGIqxfO0WFD9BBXTSoA5WqV9
-         9xjQ==
-X-Gm-Message-State: ANhLgQ3GvTzCPHCl3DznahliNPN6Mmr2EVwnSJJEQbRXP6L2SXhrV3IL
-        mph19EMZ4AcA1G2nD7hTRjqMA/V/AUZ3X5807gCpWg==
-X-Google-Smtp-Source: ADFU+vu6HqaH4j3SJuv247SDzYUyvCKTi4MauowZ3Ck69fFNO8x9HHykET10xqulLd8bodNOiiPts9wgXPa49Wa6eH0=
-X-Received: by 2002:a2e:894d:: with SMTP id b13mr8156479ljk.99.1583746761788;
- Mon, 09 Mar 2020 02:39:21 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=c/mZkIa4u1GFEY/oYjmFc+FR8PHQ8RKEpzXuSA50f5s=;
+        b=ap2wplvNwHOKsdE2G5mQABB451IW1bLWQj/BNW8iHuqj0iY2HXZP1jP5N+nzQUdc8S
+         cb5qMUTNKQiDWOtVJXj4TmlJ0i8ru83akPSzDrLCeDdYhJB1croLsjNgZSsdDApRYPy9
+         /wPoewlRVpXkMFknsGRsukm7YOjHdBuL77OO33cK3VC/TIWqiEbSP5RmiMuUOkhT5+H9
+         zTo54ZD0gaqURYzj9WE9io4twrOtZlvs/2ssmVdyGUqUWLicFsOzeSAPaFVLIy+/xbef
+         DCu0MDZuvHNQh7gd+CvOZ41hvoVYoZymLC2VVjQ2UH7P4YqiM2S+H1rab/PwVoufmwZe
+         irNQ==
+X-Gm-Message-State: ANhLgQ2uPmgkJkmC1dyR6Ij8qEaXf8o1UFdME89YQ/bR4dOd7cXC6o6o
+        Oe2IgPEIRLAXx7jeCSSuQBMA9IooJBnUSFF+sMo=
+X-Google-Smtp-Source: ADFU+vv44uZ3lIDmExqw+n+b41xFRnYa0Xm1qZPMM9dMXsAPy7QTHgPGHxzBTLrAe5H38M9jnXNgD0sq87cRrGzqPWI=
+X-Received: by 2002:a6b:f913:: with SMTP id j19mr12453608iog.124.1583746926678;
+ Mon, 09 Mar 2020 02:42:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200306010101.39517-1-alexandre.belloni@bootlin.com>
-In-Reply-To: <20200306010101.39517-1-alexandre.belloni@bootlin.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Mar 2020 10:39:10 +0100
-Message-ID: <CACRpkdZ_GdA=37mng6OBA=9JAVGxesAJF2_DeYBOzJy3Y1UvDg@mail.gmail.com>
-Subject: Re: [PATCH] rtc: ab8500: switch to rtc_time64_to_tm/rtc_tm_to_time64
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Received: by 2002:a92:c98c:0:0:0:0:0 with HTTP; Mon, 9 Mar 2020 02:42:05 -0700 (PDT)
+Reply-To: robertandersonhappy1@gmail.com
+From:   robert <andersonrobertpass11@gmail.com>
+Date:   Mon, 9 Mar 2020 02:42:05 -0700
+Message-ID: <CAOga3cd-c2qv5imP6+2BVSXNGQ6-m1_FNzx1k54mupjW61eWBA@mail.gmail.com>
+Subject: good
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 2:01 AM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-
-> Call the 64bit versions of rtc_tm time conversion.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+MTE1Mi81MDAwDQoqINCS0L3QuNC80LDQvdC40LU6INCx0LXQvdC10YTQuNGG0LjQsNGAICoNCg0K
+KiDQodC+0L7QsdGJ0LjRgtC1LCDRh9GC0L4g0LzRiyDQv9C+0LvRg9GH0LjQu9C4INGD0YLQstC1
+0YDQttC00LXQvdC90YvQuSDRhNCw0LnQuyDQvtC/0LvQsNGC0Ysg0L7RgiBGRURFUkFMDQrQnNCY
+0J3QmNCh0KLQldCg0KHQotCS0J4g0KTQmNCd0JDQndCh0J7QkiDRgdC+0LLQvNC10YHRgtC90L4g
+0YEg0JzQtdC20LTRg9C90LDRgNC+0LTQvdGL0Lwg0LLQsNC70Y7RgtC90YvQvCDRhNC+0L3QtNC+
+0LwgKNCc0JLQpCkNCtC60L7QvNC/0LXQvdGB0LDRhtC40Y8g0LbQtdGA0YLQstCw0Lwg0LzQvtGI
+0LXQvdC90LjRh9C10YHRgtCy0LAg0Lgg0LLQsNGIINCw0LTRgNC10YEg0Y3Qu9C10LrRgtGA0L7Q
+vdC90L7QuSDQv9C+0YfRgtGLINCy0YXQvtC00LjRgiDQsiDRgdC/0LjRgdC+0LoNCtC20LXRgNGC
+0LLRiy4gKg0KDQoqINCvINC/0LjRiNGDLCDRh9GC0L7QsdGLINGB0L7QvtCx0YnQuNGC0Ywg0LLQ
+sNC8LCDRh9GC0L4g0LzRiyDQsdGD0LTQtdC8INC+0YLQv9GA0LDQstC70Y/RgtGMINCy0LDQvCAk
+IDUwMDAuMDBVU0QNCtC10LbQtdC00L3QtdCy0L3QviDRgQ0K0L3QsNGIINC+0YTQuNGBINC30LTQ
+tdGB0YwsINGC0LDQuiDQutCw0Log0LzRiyDQv9C+0LvRg9GH0LjQu9C4INC80LDQvdC00LDRgiDQ
+vdCwINC/0LXRgNC10LTQsNGH0YMg0LLQsNGI0LXQs9C+INC/0L7Qu9C90L7Qs9C+DQrQutC+0LzQ
+v9C10L3RgdCw0YbQuNC+0L3QvdGL0Lkg0L/Qu9Cw0YLQtdC2INCyINGA0LDQt9C80LXRgNC1IDgw
+MCAwMDAg0LTQvtC70LvQsNGA0L7QsiDQodCo0JAg0JzQtdC20LTRg9C90LDRgNC+0LTQvdGL0LwN
+CtCy0LDQu9GO0YLQvdGL0Lwg0YTQvtC90LTQvtC8DQoo0JzQktCkKSDQuCDQpNC10LTQtdGA0LDQ
+u9GM0L3QvtC1INC80LjQvdC40YHRgtC10YDRgdGC0LLQviDRhNC40L3QsNC90YHQvtCyLiDQktCw
+0Ygg0LvQuNGH0L3Ri9C5INC40LTQtdC90YLQuNGE0LjQutCw0YbQuNC+0L3QvdGL0Lkg0L3QvtC8
+0LXRgA0K0L/RgNC10LTQvtGB0YLQsNCy0LvQtdC90L4g0LrQvtC80LDQvdC00L7QuSBJLk0uRiBD
+UFAwOTIwVEcuICoNCg0KKiDQktC+0YIg0LjQvdGE0L7RgNC80LDRhtC40Y8g0L7QsSDQvtC/0LvQ
+sNGC0LUsINC60L7RgtC+0YDRg9GOINC80Ysg0LHRg9C00LXQvCDQuNGB0L/QvtC70YzQt9C+0LLQ
+sNGC0Ywg0LTQu9GPINC/0LXRgNC10YHRi9C70LrQuCDQstCw0YjQtdCz0L4NCtC10LbQtdC00L3Q
+tdCy0L3Ri9C5INC/0LXRgNC10LLQvtC0LiAqDQoNCiog0JjQvNGPINC+0YLQv9GA0LDQstC40YLQ
+tdC70Y86INCh0LjQvdGC0LjRjyDQmNC00LXQvSAqDQoqINCS0L7Qv9GA0L7RgTog0J7Qv9C70LDR
+gtCwICoNCiog0J7RgtCy0LXRgjog0JTQsCAqDQoqINCh0YPQvNC80LA6IDUgMDAwLDAwINC00L7Q
+u9C70LDRgNC+0LIg0KHQqNCQICoNCiog0JPQvtGA0L7QtDog0JvQvtC80LUgKg0KKiDQodGC0YDQ
+sNC90LA6INCi0L7Qs9C+ICoNCg0KKiDQn9Cg0JjQnNCV0KfQkNCd0JjQlTogTVRDTiDQsdGD0LTQ
+tdGCINC+0YLQv9GA0LDQstC70LXQvSDQstCw0Lwg0L/QvtGB0LvQtSDQstCw0YjQtdCz0L4g0L7R
+gtCy0LXRgtCwINC4INC/0L7QtNGC0LLQtdGA0LbQtNC10L3QuNGPDQrQmNC90YTQvtGA0LzQsNGG
+0LjRjyDQviDQstCw0YjQtdC8INC/0L7Qu9GD0YfQsNGC0LXQu9C1LCDRh9GC0L7QsdGLINC40LfQ
+sdC10LbQsNGC0Ywg0L3QtdC/0YDQsNCy0LjQu9GM0L3QvtC5INC/0LXRgNC10LTQsNGH0LguICoN
+Cg0KKiDQnNGLINC20LTQtdC8INCy0LDRiNC10LPQviDRgdGA0L7Rh9C90L7Qs9C+INC+0YLQstC1
+0YLQsCDQv9C+INGN0YLQvtC80YMg0LDQtNGA0LXRgdGDDQoobWlzc2N5bnRoaWFlZGVuNTZAZ21h
+aWwuY29tIDxtaXNzY3ludGhpYWVkZW41NkBnbWFpbC5jb20+KSwg0YfRgtC+0LHRiyDQv9C+0LfQ
+stC+0LvQuNGC0Ywg0L3QsNC8DQrQv9GA0L7QtNC+0LvQttC40YLRjCDQvtC/0LvQsNGC0YMuICoN
+Cg0KKtCY0YHQutGA0LXQvdC90LUg0LLQsNGILCoNCg0KKtCg0YPQutC+0LLQvtC00LjRgtC10LvR
+jCDRhNC40LvQuNCw0LvQsDoqDQoqINCc0LjRgdGBINCh0LjQvdGC0LjRjyDQmNC00LXQvSAqDQoq
+IFZuaW1hbml5ZTogYmVuZWZpdHNpYXIgKg0KDQoqIFNvb2JzaGNoaXRlLCBjaHRvIG15IHBvbHVj
+aGlsaSB1dHZlcnpoZGVubnl5IGZheWwgb3BsYXR5IG90IEZFREVSQUwNCk1JTklTVEVSU1RWTyBG
+SU5BTlNPViBzb3ZtZXN0bm8gcyBNZXpoZHVuYXJvZG55bSB2YWx5dXRueW0gZm9uZG9tIChNVkYp
+DQprb21wZW5zYXRzaXlhIHpoZXJ0dmFtIG1vc2hlbm5pY2hlc3R2YSBpIHZhc2ggYWRyZXMgZWxl
+a3Ryb25ub3kgcG9jaHR5DQp2a2hvZGl0IHYgc3Bpc29rDQp6aGVydHZ5LiAqDQoNCiogWUEgcGlz
+aHUsIGNodG9ieSBzb29ic2hjaGl0JyB2YW0sIGNodG8gbXkgYnVkZW0gb3RwcmF2bHlhdCcgdmFt
+ICQNCjUwMDAuMDBVU0QgeWV6aGVkbmV2bm8gcw0KbmFzaCBvZmlzIHpkZXMnLCB0YWsga2FrIG15
+IHBvbHVjaGlsaSBtYW5kYXQgbmEgcGVyZWRhY2h1IHZhc2hlZ28gcG9sbm9nbw0Ka29tcGVuc2F0
+c2lvbm55eSBwbGF0ZXpoIHYgcmF6bWVyZSA4MDAgMDAwIGRvbGxhcm92IFNTSEENCk1lemhkdW5h
+cm9kbnltIHZhbHl1dG55bSBmb25kb20NCihNVkYpIGkgRmVkZXJhbCdub3llIG1pbmlzdGVyc3R2
+byBmaW5hbnNvdi4gVmFzaCBsaWNobnl5DQppZGVudGlmaWthdHNpb25ueXkgbm9tZXINCnByZWRv
+c3Rhdmxlbm8ga29tYW5kb3kgSS5NLkYgQ1BQMDkyMFRHLiAqDQoNCiogVm90IGluZm9ybWF0c2l5
+YSBvYiBvcGxhdGUsIGtvdG9ydXl1IG15IGJ1ZGVtIGlzcG9sJ3pvdmF0JyBkbHlhDQpwZXJlc3ls
+a2kgdmFzaGVnbw0KeWV6aGVkbmV2bnl5IHBlcmV2b2QuICoNCg0KKiBJbXlhIG90cHJhdml0ZWx5
+YTogU2ludGl5YSBJZGVuICoNCiogVm9wcm9zOiBPcGxhdGEgKg0KKiBPdHZldDogRGEgKg0KKiBT
+dW1tYTogNSAwMDAsMDAgZG9sbGFyb3YgU1NIQSAqDQoqIEdvcm9kOiBMb21lICoNCiogU3RyYW5h
+OiBUb2dvICoNCg0KKiBQUklNRUNIQU5JWWU6IE1UQ04gYnVkZXQgb3RwcmF2bGVuIHZhbSBwb3Ns
+ZSB2YXNoZWdvIG90dmV0YSBpIHBvZHR2ZXJ6aGRlbml5YQ0KSW5mb3JtYXRzaXlhIG8gdmFzaGVt
+IHBvbHVjaGF0ZWxlLCBjaHRvYnkgaXpiZXpoYXQnIG5lcHJhdmlsJ25veSBwZXJlZGFjaGkuICoN
+Cg0KKiBNeSB6aGRlbSB2YXNoZWdvIHNyb2Nobm9nbyBvdHZldGEgcG8gZXRvbXUgYWRyZXN1DQoo
+bWlzc2N5bnRoaWFlZGVuNTZAZ21haWwuY29tIDxtaXNzY3ludGhpYWVkZW41NkBnbWFpbC5jb20+
+KSwgY2h0b2J5DQpwb3p2b2xpdCcgbmFtDQpwcm9kb2x6aGl0JyBvcGxhdHUuICoNCg0KKklza3Jl
+bm5lIHZhc2gsKg0KDQoqUnVrb3ZvZGl0ZWwnIGZpbGlhbGE6Kg0KKiBNaXNzIFNpbnRpeWEgSWRl
+biAqDQpBZmZpY2hlciBwbHVzDQpFbnZveWVyIGRlcyBjb21tZW50YWlyZXMNCkhpc3RvcmlxdWUN
+CkVucmVnaXN0csOpDQpDb21tdW5hdXTDqQ0K
