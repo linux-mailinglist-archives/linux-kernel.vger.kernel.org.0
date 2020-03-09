@@ -2,120 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB91117E5C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B136117E5CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 18:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbgCIRdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 13:33:35 -0400
-Received: from mail-lf1-f44.google.com ([209.85.167.44]:44209 "EHLO
-        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbgCIRde (ORCPT
+        id S1727405AbgCIReY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 13:34:24 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34527 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbgCIReY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 13:33:34 -0400
-Received: by mail-lf1-f44.google.com with SMTP id i10so8393566lfg.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 10:33:34 -0700 (PDT)
+        Mon, 9 Mar 2020 13:34:24 -0400
+Received: by mail-lf1-f68.google.com with SMTP id i19so2485866lfl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 10:34:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:references:in-reply-to:mime-version:thread-index:date
-         :message-id:subject:to:cc;
-        bh=bgiHSLTQXM8E0mv0SF7G09UBPAaNCg/++oKU9IO6Jv0=;
-        b=DQxdAFgBLzOAYx5M0Q2Fh/zkVoV6kRmCETSjJWCX2qfbDblPeSMRSyXVWiyOt5Ig3w
-         gMJcpRqwnRBelmbxOy+sO0cchBZqoMdedCWSBBTnV3n3ng/yHVlq3GqcCNbjCr0OjUSN
-         bIhthscycsWpgsCe1Hw6pRZIVFPhvr5K67Giw=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OKwweRnte1MOD7p9TA/S2S3zf2g/0Z5sCRLZSuMOcIs=;
+        b=gRt7ekmOg8rl5K+/4iBSCKcg6XtIM8giPFm9yVKDZMspyiOsDz19mv7YtW0EjPRmh+
+         p1RLG4nYMhBc0w3RcvGOU1aYRVjPKHgqcD26DAfRgks0ixDF/rPNrNduwPv8pX0XwjXa
+         U0ZIgtMaqHvJ6AhJ3iG5FSSA1anL8uvx569WyECwfgYmr6nUNg2v2W5Bm7pdNJHLZTWn
+         KQjYMRvSXsO8CslfFBsouUi7OOPyTVO2pa/hTgJOzs5tuGtCPRq2Jvt737L3IxXxzGEH
+         XH6HfGZZbNWgs0bzI+d/Bld6xU1ebtB0AFslJkd+SxjLYgRI3cWjdDnb9Xqb8te3jZj8
+         JyJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:in-reply-to:mime-version
-         :thread-index:date:message-id:subject:to:cc;
-        bh=bgiHSLTQXM8E0mv0SF7G09UBPAaNCg/++oKU9IO6Jv0=;
-        b=DINjUTw2IJl2/VmJTKLktwyru+wPIVLVormH82ZKOX7iPtguV66ySjfuJhQSI9AQcR
-         nx0JTKiMZp/YW0HbJOsa6Ny6lpvxb6ieskvFReiVga0bzJaBvMtDG7a56uDMWOicFtdH
-         KES8YDLJLgNLu5/IMUzaKuIKhcgxhQQpWFs1gvucmtYm1Z89/QdA5O8FLpWj1q/jDprK
-         ZOj+pue1T5p9MT3OiyBvU4UDy6ssTzXCA9HzJL5MUsE8TKPj9TnXcDwLj45DhAmm/Sq7
-         +kqekqJ1T+0kLoqybmaQW89mvr5ZtH3o0oKRzwCHF+P2IypStDYRsZ0oJIjeeBY6EUsg
-         0GKw==
-X-Gm-Message-State: ANhLgQ1Kz9L0W61OM98sH0m3X9seSNI4BmmIMmTTTa83BLzNcogtIS7h
-        uu2xr/BiYVRSf5/nbQdpHky6L/TffClO5aWa6Zh9QA==
-X-Google-Smtp-Source: ADFU+vuq3eH9wkuVNiO3iVGw7rhwXN2qPoAEtL/Vxw8RjRXO3sz1OPnFMpu3+6cw1VwM6E+14wRoY4uUL6ksq3D8aLA=
-X-Received: by 2002:ac2:4834:: with SMTP id 20mr9943688lft.93.1583775213105;
- Mon, 09 Mar 2020 10:33:33 -0700 (PDT)
-From:   Kevin Li <kevin-ke.li@broadcom.com>
-References: <20200306222705.13309-1-kevin-ke.li@broadcom.com> <20200309123307.GE4101@sirena.org.uk>
-In-Reply-To: <20200309123307.GE4101@sirena.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OKwweRnte1MOD7p9TA/S2S3zf2g/0Z5sCRLZSuMOcIs=;
+        b=QlxfyACasNtIiajXpNnuL8gv7IJJkMQ5oqkZzU2MHvy8rt0+H03Dti6+1DlV6O/9k1
+         8p65GwhXVp4Wrgk2+j3MKQyN+QOBrVrCHIbnpKljXaoo2QuqhoUDgrhLZgOEAGs1JQju
+         BC5HenHW6RLAY+TjW5QHnuUMQRbBgP5RS6kQCy2Sr5iGeXpKl42iyhb2kk89qPRtWVIC
+         TOUHFTJ3v3DDlgB92GRz9GR1ngQa7DUc63nl++3t2iBq+8DJlRKsr1gH/ZDPjI1GGz8K
+         QrzvZ/EdP4GwJecg0RI2HeKW731etR+Y2/4muHPhMVnInT1F71sRhQav60tKDyw/fMeD
+         +V/A==
+X-Gm-Message-State: ANhLgQ1EVcn+4Lg6qHYN/B4Vr59P9HnZDjO5iFpsQaGOymvrGmFr9Bz1
+        pGWcvFNN1uEGpRJZfwW0/bJxdtkjSC5E6RhTLe26rQ==
+X-Google-Smtp-Source: ADFU+vuICxdS5HcWd7C+Tu3VndUCAPMP28WDkPVH8R+sJ4h8bsJf+5vcfGqb2LvTsz7pvpD2B2HIZdzAE0cuPTRXa8k=
+X-Received: by 2002:a05:6512:304c:: with SMTP id b12mr10177018lfb.196.1583775261668;
+ Mon, 09 Mar 2020 10:34:21 -0700 (PDT)
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQK6AtPk+W1UvlC/8YJn5FlJAEq5hQGCyJpIpmw/bzA=
-Date:   Mon, 9 Mar 2020 10:33:30 -0700
-Message-ID: <69138568e9c18afa57d5edba6be9887b@mail.gmail.com>
-Subject: RE: [PATCH] ASoC: brcm: Add DSL/PON SoC audio driver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Jaroslav Kysela <perex@perex.cz>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+References: <1583241493-21212-1-git-send-email-okukatla@codeaurora.org> <1583241493-21212-3-git-send-email-okukatla@codeaurora.org>
+In-Reply-To: <1583241493-21212-3-git-send-email-okukatla@codeaurora.org>
+From:   Evan Green <evgreen@google.com>
+Date:   Mon, 9 Mar 2020 10:33:45 -0700
+Message-ID: <CAE=gft5LE=_hBLbkWHDAQ6O9vrbfF=LtS7B=1tWWDE3euZov_g@mail.gmail.com>
+Subject: Re: [v5, 2/3] interconnect: qcom: Add SC7180 interconnect provider driver
+To:     Odelu Kukatla <okukatla@codeaurora.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-pm@vger.kernel.org, sboyd@kernel.org,
+        Lina Iyer <ilina@codeaurora.org>,
+        Sean Sweeney <seansw@qti.qualcomm.com>,
+        Alex Elder <elder@linaro.org>,
+        linux-arm-msm-owner@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-The SoC I2S block we currently have shares one clock and frame sync signal
-for both playback and capture stream, plus playback and capture can only
-have one master at a time. If we set playback and capture master at same
-time, it will have jitter on clock and FS.
-
-Based on above, for playback and capture, whichever starts first, it will
-be master, another stream will be slave if it starts before the first
-stream shutting  down. So working as master or slave for a stream is
-depending on another stream's status.
-
-Same thing for shutting down a stream. A master stream shutting down will
-have to set another stream to master if another stream is on working
-status as a slave. A glitch/Jitter will happen at this moment. But we
-minimize it.
-
-That is why this master/slave mode handles in startup/shutdown functions.
-Not sure how other company handles this kind of I2S block.
-
-Let me know if it is still not clear.
-
-Yes, set_fmt() is not needed. Will be addressed along with rest questions
-you mentioned on the next patch, with a patch version.
-
-
-Thanks!
-Kevin
-
-
-> +	struct bcm_i2s_priv *i2s_priv = snd_soc_dai_get_drvdata(dai);
-> +	struct regmap *regmap_i2s = i2s_priv->regmap_i2s;
+On Tue, Mar 3, 2020 at 5:18 AM Odelu Kukatla <okukatla@codeaurora.org> wrote:
+>
+> Add driver for the Qualcomm interconnect buses found in SC7180 based
+> platforms. The topology consists of several NoCs that are controlled by
+> a remote processor that collects the aggregated bandwidth for each
+> master-slave pairs.
+>
+> Signed-off-by: Odelu Kukatla <okukatla@codeaurora.org>
+> ---
+>  drivers/interconnect/qcom/Kconfig  |  10 +
+>  drivers/interconnect/qcom/Makefile |   2 +
+>  drivers/interconnect/qcom/sc7180.c | 641 +++++++++++++++++++++++++++++++++++++
+>  drivers/interconnect/qcom/sc7180.h | 149 +++++++++
+>  4 files changed, 802 insertions(+)
+>  create mode 100644 drivers/interconnect/qcom/sc7180.c
+>  create mode 100644 drivers/interconnect/qcom/sc7180.h
+>
+> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
+> index f6418a6..482c5be 100644
+> --- a/drivers/interconnect/qcom/Kconfig
+> +++ b/drivers/interconnect/qcom/Kconfig
+> @@ -42,6 +42,16 @@ config INTERCONNECT_QCOM_RPMH
+>         depends on INTERCONNECT_QCOM || COMPILE_TEST
+>         depends on QCOM_COMMAND_DB
+>
+> +config INTERCONNECT_QCOM_SC7180
+> +       tristate "Qualcomm SC7180 interconnect driver"
+> +       depends on INTERCONNECT_QCOM
+> +       depends on (QCOM_RPMH && QCOM_COMMAND_DB && OF) || COMPILE_TEST
+> +       select INTERCONNECT_QCOM_RPMH
+> +       select INTERCONNECT_QCOM_BCM_VOTER
+> +       help
+> +         This is a driver for the Qualcomm Network-on-Chip on sc7180-based
+> +         platforms.
 > +
-> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-> +		regmap_update_bits(regmap_i2s, I2S_TX_CFG,
-> +				   I2S_TX_OUT_R | I2S_TX_DATA_ALIGNMENT |
-> +				   I2S_TX_DATA_ENABLE |
-I2S_TX_CLOCK_ENABLE,
-> +				   I2S_TX_OUT_R | I2S_TX_DATA_ALIGNMENT |
-> +				   I2S_TX_DATA_ENABLE |
-I2S_TX_CLOCK_ENABLE);
-> +		regmap_write(regmap_i2s, I2S_TX_IRQ_CTL, 0);
-> +		regmap_write(regmap_i2s, I2S_TX_IRQ_IFF_THLD, 0);
-> +		regmap_write(regmap_i2s, I2S_TX_IRQ_OFF_THLD, 1);
+>  config INTERCONNECT_QCOM_SDM845
+>         tristate "Qualcomm SDM845 interconnect driver"
+>         depends on INTERCONNECT_QCOM
+> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
+> index d591bb5..5325558 100644
+> --- a/drivers/interconnect/qcom/Makefile
+> +++ b/drivers/interconnect/qcom/Makefile
+> @@ -5,6 +5,7 @@ qnoc-msm8916-objs                       := msm8916.o
+>  qnoc-msm8974-objs                      := msm8974.o
+>  qnoc-qcs404-objs                       := qcs404.o
+>  icc-rpmh-obj                           := icc-rpmh.o
+> +qnoc-sc7180-objs                       := sc7180.o
+>  qnoc-sdm845-objs                       := sdm845.o
+>  icc-smd-rpm-objs                       := smd-rpm.o
+>
+> @@ -13,5 +14,6 @@ obj-$(CONFIG_INTERCONNECT_QCOM_MSM8916) += qnoc-msm8916.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_MSM8974) += qnoc-msm8974.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_QCS404) += qnoc-qcs404.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_RPMH) += icc-rpmh.o
+> +obj-$(CONFIG_INTERCONNECT_QCOM_SC7180) += qnoc-sc7180.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_SDM845) += qnoc-sdm845.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += icc-smd-rpm.o
+> diff --git a/drivers/interconnect/qcom/sc7180.c b/drivers/interconnect/qcom/sc7180.c
+> new file mode 100644
+> index 0000000..dcf493d
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/sc7180.c
+> @@ -0,0 +1,641 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + *
+> + */
 > +
-> +		regmap_read(regmap_i2s, I2S_RX_CFG_2, &slaveMode);
-> +		if (slaveMode & I2S_RX_SLAVE_MODE_MASK)
-> +			regmap_update_bits(regmap_i2s, I2S_TX_CFG_2,
-> +					   I2S_TX_SLAVE_MODE_MASK,
-> +					   I2S_TX_MASTER_MODE);
-> +		else
-> +			regmap_update_bits(regmap_i2s, I2S_TX_CFG_2,
-> +					   I2S_TX_SLAVE_MODE_MASK,
-> +					   I2S_TX_SLAVE_MODE);
+> +#include <linux/device.h>
+> +#include <linux/interconnect.h>
+> +#include <linux/interconnect-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
 
-Setting master or slave mode should be done with a set_fmt() operation but
-your set_fmt() operation was empty.  How would this be configured?
+Nit: As Georgi mentioned in the previous review, you can remove this
+an replace it with of_device.h. No need to spin for just that, though.
+
+Reviewed-by: Evan Green <evgreen@chromium.org>
