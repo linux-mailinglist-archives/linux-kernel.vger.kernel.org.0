@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9744117E91E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B78B517E91A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:49:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbgCITso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:48:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38280 "EHLO mail.kernel.org"
+        id S1726893AbgCITsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:48:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbgCITsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:48:18 -0400
+        id S1726739AbgCITsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:48:19 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0ED124676;
-        Mon,  9 Mar 2020 19:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BA742465A;
+        Mon,  9 Mar 2020 19:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583783297;
-        bh=t5E4LYaQi3hLF0ZQnDleGqngq0///iKC3muWnbwhvos=;
+        s=default; t=1583783298;
+        bh=lsMfP3k9nqqOalUYsdvpoPo/rDyn6TAlb80enEyNUoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=G9pFhIVSforCc9xPpZFfoKmL0cEmzc1qDZ6RmU/cCg85aAsvHSeLjn3jTCGrx8SnH
-         vZpUjOFYkdDfsus9ROEJvg3v4+z9wR9JKgHM3C0d/UVwj19esUYY0WAPxgVNgrn54H
-         My8oK5vREsjuTtnX/SlnhJWORuaGDJ9eiRiMVc9o=
+        b=n6Y2l5ThdUW1TT2tyZooM+zBtPKplMlOY/1Di9xgtM2W0zRt4htjUAZRcvw9bkrHd
+         ULmbmZcnZspko55eTUN6exkXwpmV4i8HqjpL1kYggAMxKbeWOsnPAuwXO5uhqdAgTH
+         zIImgJmaLVhpty9qaqnKo1kUnvW/jIWNeXkSF6tE=
 From:   zanussi@kernel.org
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -34,10 +34,10 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>
-Cc:     Scott Wood <swood@redhat.com>
-Subject: [PATCH RT 3/8] sched: migrate_enable: Remove __schedule() call
-Date:   Mon,  9 Mar 2020 14:47:48 -0500
-Message-Id: <f0a8c1fd33e6f0311487e055bb8318f265628f60.1583783251.git.zanussi@kernel.org>
+Cc:     Matt Fleming <matt@codeblueprint.co.uk>
+Subject: [PATCH RT 4/8] mm/memcontrol: Move misplaced local_unlock_irqrestore()
+Date:   Mon,  9 Mar 2020 14:47:49 -0500
+Message-Id: <41b2fe158cc09157964879dce19e74e1de962f27.1583783251.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1583783251.git.zanussi@kernel.org>
 References: <cover.1583783251.git.zanussi@kernel.org>
@@ -48,7 +48,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Scott Wood <swood@redhat.com>
+From: Matt Fleming <matt@codeblueprint.co.uk>
 
 v4.14.172-rt78-rc1 stable review patch.
 If anyone has any objections, please let me know.
@@ -56,41 +56,38 @@ If anyone has any objections, please let me know.
 -----------
 
 
-[ Upstream commit b8162e61e9a33bd1de6452eb838fbf50a93ddd9a ]
+[ Upstream commit 071a1d6a6e14d0dec240a8c67b425140d7f92f6a ]
 
-We can rely on preempt_enable() to schedule.  Besides simplifying the
-code, this potentially allows sequences such as the following to be
-permitted:
+The comment about local_lock_irqsave() mentions just the counters and
+css_put_many()'s callback just invokes a worker so it is safe to move the
+unlock function after memcg_check_events() so css_put_many() can be invoked
+without the lock acquired.
 
-migrate_disable();
-preempt_disable();
-migrate_enable();
-preempt_enable();
-
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Scott Wood <swood@redhat.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Daniel Wagner <wagi@monom.org>
+Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
+[bigeasy: rewrote the patch description]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-
- Conflicts:
-	kernel/sched/core.c
 ---
- kernel/sched/core.c | 1 -
- 1 file changed, 1 deletion(-)
+ mm/memcontrol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 960daa6bc7f04..3ff48df25cff8 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7024,7 +7024,6 @@ void migrate_enable(void)
- 		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
- 				    arg, work);
- 		tlb_migrate_finish(p->mm);
--		__schedule(true);
- 	}
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 0503b31e2a873..a359a24ebd9f0 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -6102,10 +6102,10 @@ void mem_cgroup_swapout(struct page *page, swp_entry_t entry)
+ 	mem_cgroup_charge_statistics(memcg, page, PageTransHuge(page),
+ 				     -nr_entries);
+ 	memcg_check_events(memcg, page);
++	local_unlock_irqrestore(event_lock, flags);
  
- out:
+ 	if (!mem_cgroup_is_root(memcg))
+ 		css_put_many(&memcg->css, nr_entries);
+-	local_unlock_irqrestore(event_lock, flags);
+ }
+ 
+ /**
 -- 
 2.14.1
 
