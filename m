@@ -2,92 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F176D17DC06
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:01:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1578B17DC18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgCIJBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:01:33 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33370 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgCIJBd (ORCPT
+        id S1726469AbgCIJGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:06:35 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46005 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbgCIJGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:01:33 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02991VlY088460;
-        Mon, 9 Mar 2020 04:01:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583744491;
-        bh=mDssdW4CESBzqR0FRW9NV2aVOuzmk9PsDFL1wyptnLs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=V8wRSWUVVXJqysDSAx+eNJJo4D7E07j5+KLrB3444Mqf2VD94O/ieuxBBJa0Oikp2
-         tqH/rD0R2KqNtoRFO9m48T+YLioOJp+0K0IPt5rYhmZd9+OuV6/I7+9+AAAXBGBADb
-         fSUDmxPuzbgpIRYIyKtbCyFVyY6Qd9h+LlBk4sww=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02991U9l018016;
-        Mon, 9 Mar 2020 04:01:30 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
- 2020 04:01:30 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Mar 2020 04:01:30 -0500
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02991TP8068879;
-        Mon, 9 Mar 2020 04:01:30 -0500
-Subject: Re: [GIT PULL] PHY: For 5.6 -rc
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>
-References: <20200221115356.6587-1-kishon@ti.com>
- <20200304124104.GA1629188@kroah.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <66e2637d-a9b7-82f5-16a5-1dfaf513374f@ti.com>
-Date:   Mon, 9 Mar 2020 14:36:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 9 Mar 2020 05:06:34 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m9so976503wro.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 02:06:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=advhTaiPpBd3xMDHQ5EkNV5OtDpYm/5MCYtszs2MKcE=;
+        b=GX82LCvTQ7q2vFkl1oLBnUSER3OHI0vCscpUfSRcj5g4pJufqar7rcrwEviRfyqoqQ
+         vJ5QLMdy7mCR+XimEfritT7xZL23chcQabbs4LQoOr5bY0nCEO4cZlKDTF5ThAw8nWNk
+         uQYWo9ESv03pOFZFR1trRF87unLVJtl9hlg+3ZkN05Ts3uAd4L6ZY+LwVfBpD7ozrXX1
+         Kkr72/w9sAf2NfIgDvftKXBaZQFJDei/scYsdXDstSyGfHmDiVOP1zsTwalyOb01AMwl
+         MqHuHQzdprZV7XS92KLdWbTPh+g7iRIDN6DFi/1dePNCGnZ7A9EPzw/bCaOYxIr18w5q
+         mihQ==
+X-Gm-Message-State: ANhLgQ2xjN7S+Vh3oE9B/yOQadRS+nh2wkp8d38d17o/ramLXew9/1dU
+        kQwk7tw4jVIPSi1ZD1kIeJs=
+X-Google-Smtp-Source: ADFU+vuwHtxz+a1BYeGUzK3Wpd1FIviWQ7fbUSfjosvB/Cg4HKU8TP5LGAhdAO8Dnz5SL4yn5zBdKg==
+X-Received: by 2002:adf:e911:: with SMTP id f17mr19002170wrm.87.1583744792202;
+        Mon, 09 Mar 2020 02:06:32 -0700 (PDT)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id q72sm6102065wme.31.2020.03.09.02.06.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 02:06:31 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 10:06:30 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Cannon Matthews <cannonmatthews@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Salman Qazi <sqazi@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, x86@kernel.org
+Subject: Re: [PATCH] mm: clear 1G pages with streaming stores on x86
+Message-ID: <20200309090630.GC8447@dhcp22.suse.cz>
+References: <20200307010353.172991-1-cannonmatthews@google.com>
+ <20200309000820.f37opzmppm67g6et@box>
 MIME-Version: 1.0
-In-Reply-To: <20200304124104.GA1629188@kroah.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309000820.f37opzmppm67g6et@box>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
-
-On 04/03/20 6:11 pm, Greg Kroah-Hartman wrote:
-> On Fri, Feb 21, 2020 at 05:23:56PM +0530, Kishon Vijay Abraham I wrote:
->> Hi Greg,
->>
->> Please find the pull request for 5.6 -rc cycle below.
->>
->> It fixes an issue caused because of adding device_link_add() on platforms
->> which have cyclic dependency between PHY consumer and PHY provider.
->>
->> It also includes misc fixes in Motorola, TI and Broadcom's PHY driver.
->> Please see the tag message for the complete list of changes and let me
->> know if I have to change something.
->>
->> Thanks
->> Kishon
->>
->> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
->>
->>   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
->>
->> are available in the Git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.6-rc
+On Mon 09-03-20 03:08:20, Kirill A. Shutemov wrote:
+> On Fri, Mar 06, 2020 at 05:03:53PM -0800, Cannon Matthews wrote:
+> > Reimplement clear_gigantic_page() to clear gigabytes pages using the
+> > non-temporal streaming store instructions that bypass the cache
+> > (movnti), since an entire 1GiB region will not fit in the cache anyway.
+> > 
+> > Doing an mlock() on a 512GiB 1G-hugetlb region previously would take on
+> > average 134 seconds, about 260ms/GiB which is quite slow. Using `movnti`
+> > and optimizing the control flow over the constituent small pages, this
+> > can be improved roughly by a factor of 3-4x, with the 512GiB mlock()
+> > taking only 34 seconds on average, or 67ms/GiB.
+> > 
+> > The assembly code for the __clear_page_nt routine is more or less
+> > taken directly from the output of gcc with -O3 for this function with
+> > some tweaks to support arbitrary sizes and moving memory barriers:
+> > 
+> > void clear_page_nt_64i (void *page)
+> > {
+> >   for (int i = 0; i < GiB /sizeof(long long int); ++i)
+> >     {
+> >       _mm_stream_si64 (((long long int*)page) + i, 0);
+> >     }
+> >   sfence();
+> > }
+> > 
+> > Tested:
+> > 	Time to `mlock()` a 512GiB region on broadwell CPU
+> > 				AVG time (s)	% imp.	ms/page
+> > 	clear_page_erms		133.584		-	261
+> > 	clear_page_nt		34.154		74.43%	67
 > 
-> Oops, just saw this now, sorry for not getting to it.  HOpefully all of
-> these were in the pull request I just took.
+> Some macrobenchmark would be great too.
+> 
+> > An earlier version of this code was sent as an RFC patch ~July 2018
+> > https://patchwork.kernel.org/patch/10543193/ but never merged.
+> 
+> Andi and I tried to use MOVNTI for large/gigantic page clearing back in
+> 2012[1]. Maybe it can be useful.
+> 
+> That patchset is somewhat more complex trying to keep the memory around
+> the fault address hot in cache. In theory it should help to reduce latency
+> on the first access to the memory.
+> 
+> I was not able to get convincing numbers back then for the hardware of the
+> time. Maybe it's better now.
+> 
+> https://lore.kernel.org/r/1345470757-12005-1-git-send-email-kirill.shutemov@linux.intel.com
 
-No issues. All these were also part of my v2 pull request which you
-already merged.
+Thanks for the reminder. I've had only a very vague recollection. Your
+series had a much wider scope indeed. Since then we have gained
+process_huge_page which tries to optimize normal huge pages.
 
-Thanks
-Kishon
+Gigantic huge pages are a bit different. They are much less dynamic from
+the usage POV in my experience. Micro-optimizations for the first access
+tends to not matter at all as it is usually pre-allocation scenario. On
+the other hand, speeding up the initialization sounds like a good thing
+in general. It will be a single time benefit but if the additional code
+is not hard to maintain then I would be inclined to take it even with
+"artificial" numbers state above. There really shouldn't be other downsides
+except for the code maintenance, right?
+-- 
+Michal Hocko
+SUSE Labs
