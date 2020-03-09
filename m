@@ -2,66 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D7E17EAE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95CEF17EAEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:13:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbgCIVKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:10:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbgCIVKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:10:55 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D84DF2146E;
-        Mon,  9 Mar 2020 21:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583788255;
-        bh=yU68s5HuqYhNTYUkzjC1U86mJUMTG72xWa99BdXa1bY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZiHtmQcjssp3eqcwno/Z5O1qOGfIC18fPg9z1OUcICEZI42NWDZ6K1K5BWNv+P1uM
-         USxqOOwfqAdf8EDqwM8vqAoxXEWc6UQFXWyXUQsDR8/im7LeR09i+cT5LHc9fwoy4S
-         EkSQNZCoVaFh0602XoLwEmox69k44dEIyZshMPNk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726810AbgCIVNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:13:10 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36337 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgCIVNK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 17:13:10 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t24so11715073oij.3;
+        Mon, 09 Mar 2020 14:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3z8EHLpMCQvcYpt6UukodjjMPaKQSfJoSvh+H1FwXpE=;
+        b=Uo33X2KRJb36R+pDGYk+8RIeN85dKzwpgdLbDUPr+9B9BMZ85RveP6Gg4P9oyZxbm4
+         2K3e4tdKvGoGtgRpjcwgMiWQZt8UJb/UFNJHw5tLF0NOWHFrNFdyRXTkFSbkf5H4tsc6
+         IcpYpKYWqffJV6s2v90EZdhLsDqIKsO+RfndJ8vdAPvApbSRQC+o9evQVkA1fncfVn94
+         /r1A5ShhXUejgZgxKKIPCMr3s+3DprNyhVawLwBIFSWp9lSWYYnxpaTqXttawWDI94Z0
+         rwKxBj33qEtxur5xqGdRtakBXCrM+5cjMBQn/XmEncvVst15+znYnLuBqtLxKgb9OaTt
+         ARPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3z8EHLpMCQvcYpt6UukodjjMPaKQSfJoSvh+H1FwXpE=;
+        b=XaRcRA0nnFmk6hUImivNgx9D/4/iz6PE4iE+71d3TjFW9RVjTA2V2/+5wjvWgMBhBm
+         XNclZSpwrGhfWJ8JL/Nwc6u+duX3OLhmim5PkI3qae1HbRus1MGcpGjMu0j2pt8ytvJI
+         YLPlcXa7Lolo6e1mUbj1GkTBR+4zmpzr+A/0pu68C6C9nEpLYVsZEOIh5rS2Jr7KO/Ub
+         P7JozaSqeZ9SfzuNVOWa4IrZsVMr77HR03H5Fq8JSHN51EANQ1n8FzPrGmpC+D61y0u7
+         mSPH65yPrq9PfxKCFkdiLTlK3PM7tlbciDKtKIMvEtZyBVNVIpqiCAgufA8YCxnAeOHN
+         MfXQ==
+X-Gm-Message-State: ANhLgQ2vVITex+zonIROH+r5Hv99/GsMYcyolwHIvlO9BfOSB3U7Fi5W
+        y0bz+nEgO9yO6/QhMgOhE7flTErhC4mO8WOUCP8=
+X-Google-Smtp-Source: ADFU+vuIWAeuG6fp3KaR1L5/2IvghcQfrXPwsJh/m5EVZSNOWjVc3Evh0yp9ILZ/129trtK5JRkTF3lPbT5uuTXehkU=
+X-Received: by 2002:aca:aa12:: with SMTP id t18mr853523oie.95.1583788387706;
+ Mon, 09 Mar 2020 14:13:07 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAMe9rOoRTVUzNC88Ho2XTTNJCymrd3L=XdB9xFcgxPVwAZ0FWA@mail.gmail.com>
+ <AE81FEF5-ECC5-46AA-804D-9D64E656D16E@amacapital.net> <CAMe9rOoDMenvD9XRL1szR5yLQEwv9Q6f4O7CtwbdZ-cJqzezKA@mail.gmail.com>
+ <0088001c-0b12-a7dc-ff2a-9d5c282fa36b@intel.com>
+In-Reply-To: <0088001c-0b12-a7dc-ff2a-9d5c282fa36b@intel.com>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Mon, 9 Mar 2020 14:12:31 -0700
+Message-ID: <CAMe9rOqf0OHL9397Vikgb=UWhRMf+FmGq-9VAJNmfmzNMMDkCw@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 01/27] Documentation/x86: Add CET description
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, x86-patch-review@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200215021232.1149-1-mdtipton@codeaurora.org>
-References: <20200215021232.1149-1-mdtipton@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: Wait for completion when enabling clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Tipton <mdtipton@codeaurora.org>
-To:     Mike Tipton <mdtipton@codeaurora.org>, tdas@codeaurora.org
-Date:   Mon, 09 Mar 2020 14:10:54 -0700
-Message-ID: <158378825407.66766.14135857856613969751@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mike Tipton (2020-02-14 18:12:32)
-> The current implementation always uses rpmh_write_async, which doesn't
-> wait for completion. That's fine for disable requests since there's no
-> immediate need for the clocks and they can be disabled in the
-> background. However, for enable requests we need to ensure the clocks
-> are actually enabled before returning to the client. Otherwise, clients
-> can end up accessing their HW before the necessary clocks are enabled,
-> which can lead to bus errors.
->=20
-> Use the synchronous version of this API (rpmh_write) for enable requests
-> in the active set to ensure completion.
->=20
-> Completion isn't required for sleep/wake sets, since they don't take
-> effect until after we enter sleep. All rpmh requests are automatically
-> flushed prior to entering sleep.
->=20
-> Fixes: 9c7e47025a6b ("clk: qcom: clk-rpmh: Add QCOM RPMh clock driver")
-> Signed-off-by: Mike Tipton <mdtipton@codeaurora.org>
-> ---
+On Mon, Mar 9, 2020 at 1:59 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 3/9/20 1:54 PM, H.J. Lu wrote:
+> >> If a program with the magic ELF CET flags missing can=E2=80=99t make a
+> >> thread with IBT and/or SHSTK enabled, then I think we=E2=80=99ve made =
+an
+> >> error and should fix it.
+> >>
+> > A non-CET program can start a CET program and vice versa.
+>
+> Could we be specific here, please?
+>
+> HJ are you saying that:
+> * CET program can execve() a non-CET program, and
+> * a non-CET program can execve() a CET program
+>
+> ?
 
-Applied to clk-next but I squashed in some changes to make it easier for
-me to read.
+Yes.
+
+> That's obvious.
+>
+> But what are the rules for clone()?  Should there be rules for
+> mismatches for CET enabling between threads if a process (not child
+> processes)?
+
+What did you mean? A threaded application is either CET enabled or not
+CET enabled.   A new thread from clone makes no difference.
+
+--=20
+H.J.
