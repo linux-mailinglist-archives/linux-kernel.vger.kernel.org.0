@@ -2,118 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2C317E974
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCF517E97E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:00:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgCIT5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:57:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbgCIT5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:57:25 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8C1A24654;
-        Mon,  9 Mar 2020 19:57:23 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 15:57:22 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     paulmck@kernel.org
-Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        kernel-team@fb.com, mingo@kernel.org, elver@google.com,
-        andreyknvl@google.com, glider@google.com, dvyukov@google.com,
-        cai@lca.pw, boqun.feng@gmail.com
-Subject: Re: [PATCH kcsan 26/32] kcsan, trace: Make KCSAN compatible with
- tracing
-Message-ID: <20200309155722.49d6bb93@gandalf.local.home>
-In-Reply-To: <20200309190420.6100-26-paulmck@kernel.org>
-References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
-        <20200309190420.6100-26-paulmck@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726557AbgCIT7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:59:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38251 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgCIT7x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:59:53 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBOYR-0002mB-Lc; Mon, 09 Mar 2020 19:59:11 +0000
+Date:   Mon, 9 Mar 2020 20:59:09 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of
+ de_thread
+Message-ID: <20200309195909.h2lv5uawce5wgryx@wittgenstein>
+References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Mar 2020 12:04:14 -0700
-paulmck@kernel.org wrote:
-
-> From: Marco Elver <elver@google.com>
+On Sun, Mar 08, 2020 at 04:36:55PM -0500, Eric W. Biederman wrote:
 > 
-> Previously the system would lock up if ftrace was enabled together with
-> KCSAN. This is due to recursion on reporting if the tracer code is
-> instrumented with KCSAN.
+> These functions have very little to do with de_thread move them out
+> of de_thread an into flush_old_exec proper so it can be more clearly
+> seen what flush_old_exec is doing.
 > 
-> To avoid this for all types of tracing, disable KCSAN instrumentation
-> for all of kernel/trace.
-> 
-> Furthermore, since KCSAN relies on udelay() to introduce delay, we have
-> to disable ftrace for udelay() (currently done for x86) in case KCSAN is
-> used together with lockdep and ftrace. The reason is that it may corrupt
-> lockdep IRQ flags tracing state due to a peculiar case of recursion
-> (details in Makefile comment).
-> 
-> Signed-off-by: Marco Elver <elver@google.com>
-> Reported-by: Qian Cai <cai@lca.pw>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Tested-by: Qian Cai <cai@lca.pw>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 > ---
->  arch/x86/lib/Makefile | 5 +++++
->  kernel/kcsan/Makefile | 2 ++
->  kernel/trace/Makefile | 3 +++
->  3 files changed, 10 insertions(+)
+>  fs/exec.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-> index 432a077..6110bce7 100644
-> --- a/arch/x86/lib/Makefile
-> +++ b/arch/x86/lib/Makefile
-> @@ -8,6 +8,11 @@ KCOV_INSTRUMENT_delay.o	:= n
->  
->  # KCSAN uses udelay for introducing watchpoint delay; avoid recursion.
->  KCSAN_SANITIZE_delay.o := n
-> +ifdef CONFIG_KCSAN
-> +# In case KCSAN+lockdep+ftrace are enabled, disable ftrace for delay.o to avoid
-> +# lockdep -> [other libs] -> KCSAN -> udelay -> ftrace -> lockdep recursion.
-> +CFLAGS_REMOVE_delay.o = $(CC_FLAGS_FTRACE)
-> +endif
->  
->  # Early boot use of cmdline; don't instrument it
->  ifdef CONFIG_AMD_MEM_ENCRYPT
-> diff --git a/kernel/kcsan/Makefile b/kernel/kcsan/Makefile
-> index df6b779..d4999b3 100644
-> --- a/kernel/kcsan/Makefile
-> +++ b/kernel/kcsan/Makefile
-> @@ -4,6 +4,8 @@ KCOV_INSTRUMENT := n
->  UBSAN_SANITIZE := n
->  
->  CFLAGS_REMOVE_core.o = $(CC_FLAGS_FTRACE)
-> +CFLAGS_REMOVE_debugfs.o = $(CC_FLAGS_FTRACE)
-> +CFLAGS_REMOVE_report.o = $(CC_FLAGS_FTRACE)
->  
->  CFLAGS_core.o := $(call cc-option,-fno-conserve-stack,) \
->  	$(call cc-option,-fno-stack-protector,)
-> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-> index 0e63db6..9072486 100644
-> --- a/kernel/trace/Makefile
-> +++ b/kernel/trace/Makefile
-> @@ -6,6 +6,9 @@ ifdef CONFIG_FUNCTION_TRACER
->  ORIG_CFLAGS := $(KBUILD_CFLAGS)
->  KBUILD_CFLAGS = $(subst $(CC_FLAGS_FTRACE),,$(ORIG_CFLAGS))
->  
-> +# Avoid recursion due to instrumentation.
-> +KCSAN_SANITIZE := n
-> +
->  ifdef CONFIG_FTRACE_SELFTEST
->  # selftest needs instrumentation
->  CFLAGS_trace_selftest_dynamic.o = $(CC_FLAGS_FTRACE)
+> diff --git a/fs/exec.c b/fs/exec.c
+> index ff74b9a74d34..215d86f77b63 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1189,11 +1189,6 @@ static int de_thread(struct task_struct *tsk)
 
+While you're cleaning up de_thread() wouldn't it be good to also take
+the opportunity and remove the task argument from de_thread(). It's only
+ever used with current. Could be done in one of your patches or as a
+separate patch.
+
+diff --git a/fs/exec.c b/fs/exec.c
+index db17be51b112..ee108707e4b0 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1061,8 +1061,9 @@ static int exec_mmap(struct mm_struct *mm)
+  * disturbing other processes.  (Other processes might share the signal
+  * table via the CLONE_SIGHAND option to clone().)
+  */
+-static int de_thread(struct task_struct *tsk)
++static int de_thread(void)
+ {
++       struct task_struct *tsk = current;
+        struct signal_struct *sig = tsk->signal;
+        struct sighand_struct *oldsighand = tsk->sighand;
+        spinlock_t *lock = &oldsighand->siglock;
+@@ -1266,7 +1267,7 @@ int flush_old_exec(struct linux_binprm * bprm)
+         * Make sure we have a private signal table and that
+         * we are unassociated from the previous thread group.
+         */
+-       retval = de_thread(current);
++       retval = de_thread();
+        if (retval)
+                goto out;
