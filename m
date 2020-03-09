@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A41D117E7EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:04:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F9917E7EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:04:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgCITEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:04:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47902 "EHLO mail.kernel.org"
+        id S1727659AbgCITEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:04:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727621AbgCITE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:04:28 -0400
+        id S1727627AbgCITE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:04:29 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92FA72467F;
+        by mail.kernel.org (Postfix) with ESMTPSA id CE14B2467D;
         Mon,  9 Mar 2020 19:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583780667;
-        bh=i+1jmjTjWHxCmraBO7UxjK4l0oHxOIm/j4QSytAN0iA=;
+        s=default; t=1583780668;
+        bh=QuPGWf4HFHoMw989pkq4Hg6AKUy5/cHZ1CcwXX1Q5as=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oNQ6AOwV329LYLxza1NJpLQL7L3OTaC9PYmogRcWf/SMqsAwKnNHWUPrBqLxKH5+8
-         08XyG2JsehP2TROUFa0+IfwLykmVAcUOZ2+fntOYFo+ffw4zieRDOvcHyG+TGP7F9C
-         4+893RdVsZBT36B0UhBp753mk8xL2oeO2pdj3+7M=
+        b=qeoOBVhhAGIGWSiOqZl6y0l1o0o1MIWqtPJywb7cDtAIEDmnYPCDxs5hd3dLRB5vp
+         pR95kB61EqvS/Cxohfnzi2YjqTEfvE72EH1SpUfgRdylg5bWp2tsbKWNBEo+H9Fown
+         Hwc7yP5JgjDYsB5ZqmL4Eb/Q6myG5OC5CqRQ1Nqo=
 From:   paulmck@kernel.org
 To:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
         kernel-team@fb.com, mingo@kernel.org
 Cc:     elver@google.com, andreyknvl@google.com, glider@google.com,
         dvyukov@google.com, cai@lca.pw, boqun.feng@gmail.com,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH kcsan 22/32] compiler.h, seqlock.h: Remove unnecessary kcsan.h includes
-Date:   Mon,  9 Mar 2020 12:04:10 -0700
-Message-Id: <20200309190420.6100-22-paulmck@kernel.org>
+Subject: [PATCH kcsan 23/32] kcsan: Introduce kcsan_value_change type
+Date:   Mon,  9 Mar 2020 12:04:11 -0700
+Message-Id: <20200309190420.6100-23-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200309190359.GA5822@paulmck-ThinkPad-P72>
 References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
@@ -42,43 +42,225 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marco Elver <elver@google.com>
 
-No we longer have to include kcsan.h, since the required KCSAN interface
-for both compiler.h and seqlock.h are now provided by kcsan-checks.h.
+Introduces kcsan_value_change type, which explicitly points out if we
+either observed a value-change (TRUE), or we could not observe one but
+cannot rule out a value-change happened (MAYBE). The MAYBE state can
+either be reported or not, depending on configuration preferences.
+
+A follow-up patch introduces the FALSE state, which should never be
+reported.
+
+No functional change intended.
 
 Signed-off-by: Marco Elver <elver@google.com>
 Acked-by: John Hubbard <jhubbard@nvidia.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- include/linux/compiler.h | 2 --
- include/linux/seqlock.h  | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ kernel/kcsan/core.c   | 38 ++++++++++++++++++++++----------------
+ kernel/kcsan/kcsan.h  | 19 ++++++++++++++++++-
+ kernel/kcsan/report.c | 26 ++++++++++++++------------
+ 3 files changed, 54 insertions(+), 29 deletions(-)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index c1bdf37..f504ede 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -313,8 +313,6 @@ unsigned long read_word_at_a_time(const void *addr)
- 	__u.__val;					\
- })
+diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+index 498b1eb..3f89801 100644
+--- a/kernel/kcsan/core.c
++++ b/kernel/kcsan/core.c
+@@ -341,7 +341,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+ 		u32 _4;
+ 		u64 _8;
+ 	} expect_value;
+-	bool value_change = false;
++	enum kcsan_value_change value_change = KCSAN_VALUE_CHANGE_MAYBE;
+ 	unsigned long ua_flags = user_access_save();
+ 	unsigned long irq_flags;
  
--#include <linux/kcsan.h>
+@@ -398,6 +398,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+ 	 * Read the current value, to later check and infer a race if the data
+ 	 * was modified via a non-instrumented access, e.g. from a device.
+ 	 */
++	expect_value._8 = 0;
+ 	switch (size) {
+ 	case 1:
+ 		expect_value._1 = READ_ONCE(*(const u8 *)ptr);
+@@ -436,24 +437,37 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+ 	 */
+ 	switch (size) {
+ 	case 1:
+-		value_change = expect_value._1 != READ_ONCE(*(const u8 *)ptr);
++		expect_value._1 ^= READ_ONCE(*(const u8 *)ptr);
+ 		break;
+ 	case 2:
+-		value_change = expect_value._2 != READ_ONCE(*(const u16 *)ptr);
++		expect_value._2 ^= READ_ONCE(*(const u16 *)ptr);
+ 		break;
+ 	case 4:
+-		value_change = expect_value._4 != READ_ONCE(*(const u32 *)ptr);
++		expect_value._4 ^= READ_ONCE(*(const u32 *)ptr);
+ 		break;
+ 	case 8:
+-		value_change = expect_value._8 != READ_ONCE(*(const u64 *)ptr);
++		expect_value._8 ^= READ_ONCE(*(const u64 *)ptr);
+ 		break;
+ 	default:
+ 		break; /* ignore; we do not diff the values */
+ 	}
+ 
++	/* Were we able to observe a value-change? */
++	if (expect_value._8 != 0)
++		value_change = KCSAN_VALUE_CHANGE_TRUE;
++
+ 	/* Check if this access raced with another. */
+ 	if (!remove_watchpoint(watchpoint)) {
+ 		/*
++		 * Depending on the access type, map a value_change of MAYBE to
++		 * TRUE (require reporting).
++		 */
++		if (value_change == KCSAN_VALUE_CHANGE_MAYBE && (size > 8 || is_assert)) {
++			/* Always assume a value-change. */
++			value_change = KCSAN_VALUE_CHANGE_TRUE;
++		}
++
++		/*
+ 		 * No need to increment 'data_races' counter, as the racing
+ 		 * thread already did.
+ 		 *
+@@ -461,20 +475,12 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+ 		 * therefore both this thread and the racing thread may
+ 		 * increment this counter.
+ 		 */
+-		if (is_assert)
++		if (is_assert && value_change == KCSAN_VALUE_CHANGE_TRUE)
+ 			kcsan_counter_inc(KCSAN_COUNTER_ASSERT_FAILURES);
+ 
+-		/*
+-		 * - If we were not able to observe a value change due to size
+-		 *   constraints, always assume a value change.
+-		 * - If the access type is an assertion, we also always assume a
+-		 *   value change to always report the race.
+-		 */
+-		value_change = value_change || size > 8 || is_assert;
 -
- /**
-  * data_race - mark an expression as containing intentional data races
-  *
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index 239701c..8b97204 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -37,7 +37,7 @@
- #include <linux/preempt.h>
- #include <linux/lockdep.h>
- #include <linux/compiler.h>
--#include <linux/kcsan.h>
-+#include <linux/kcsan-checks.h>
- #include <asm/processor.h>
+ 		kcsan_report(ptr, size, type, value_change, smp_processor_id(),
+ 			     KCSAN_REPORT_RACE_SIGNAL);
+-	} else if (value_change) {
++	} else if (value_change == KCSAN_VALUE_CHANGE_TRUE) {
+ 		/* Inferring a race, since the value should not have changed. */
  
- /*
+ 		kcsan_counter_inc(KCSAN_COUNTER_RACES_UNKNOWN_ORIGIN);
+@@ -482,7 +488,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
+ 			kcsan_counter_inc(KCSAN_COUNTER_ASSERT_FAILURES);
+ 
+ 		if (IS_ENABLED(CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN) || is_assert)
+-			kcsan_report(ptr, size, type, true,
++			kcsan_report(ptr, size, type, KCSAN_VALUE_CHANGE_TRUE,
+ 				     smp_processor_id(),
+ 				     KCSAN_REPORT_RACE_UNKNOWN_ORIGIN);
+ 	}
+diff --git a/kernel/kcsan/kcsan.h b/kernel/kcsan/kcsan.h
+index 50078e7..83a79b0 100644
+--- a/kernel/kcsan/kcsan.h
++++ b/kernel/kcsan/kcsan.h
+@@ -88,6 +88,22 @@ extern void kcsan_counter_dec(enum kcsan_counter_id id);
+  */
+ extern bool kcsan_skip_report_debugfs(unsigned long func_addr);
+ 
++/*
++ * Value-change states.
++ */
++enum kcsan_value_change {
++	/*
++	 * Did not observe a value-change, however, it is valid to report the
++	 * race, depending on preferences.
++	 */
++	KCSAN_VALUE_CHANGE_MAYBE,
++
++	/*
++	 * The value was observed to change, and the race should be reported.
++	 */
++	KCSAN_VALUE_CHANGE_TRUE,
++};
++
+ enum kcsan_report_type {
+ 	/*
+ 	 * The thread that set up the watchpoint and briefly stalled was
+@@ -111,6 +127,7 @@ enum kcsan_report_type {
+  * Print a race report from thread that encountered the race.
+  */
+ extern void kcsan_report(const volatile void *ptr, size_t size, int access_type,
+-			 bool value_change, int cpu_id, enum kcsan_report_type type);
++			 enum kcsan_value_change value_change, int cpu_id,
++			 enum kcsan_report_type type);
+ 
+ #endif /* _KERNEL_KCSAN_KCSAN_H */
+diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
+index abf6852..d871476 100644
+--- a/kernel/kcsan/report.c
++++ b/kernel/kcsan/report.c
+@@ -130,26 +130,27 @@ static bool rate_limit_report(unsigned long frame1, unsigned long frame2)
+  * Special rules to skip reporting.
+  */
+ static bool
+-skip_report(bool value_change, unsigned long top_frame)
++skip_report(enum kcsan_value_change value_change, unsigned long top_frame)
+ {
+ 	/*
+-	 * The first call to skip_report always has value_change==true, since we
++	 * The first call to skip_report always has value_change==TRUE, since we
+ 	 * cannot know the value written of an instrumented access. For the 2nd
+ 	 * call there are 6 cases with CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY:
+ 	 *
+-	 * 1. read watchpoint, conflicting write (value_change==true): report;
+-	 * 2. read watchpoint, conflicting write (value_change==false): skip;
+-	 * 3. write watchpoint, conflicting write (value_change==true): report;
+-	 * 4. write watchpoint, conflicting write (value_change==false): skip;
+-	 * 5. write watchpoint, conflicting read (value_change==false): skip;
+-	 * 6. write watchpoint, conflicting read (value_change==true): report;
++	 * 1. read watchpoint, conflicting write (value_change==TRUE): report;
++	 * 2. read watchpoint, conflicting write (value_change==MAYBE): skip;
++	 * 3. write watchpoint, conflicting write (value_change==TRUE): report;
++	 * 4. write watchpoint, conflicting write (value_change==MAYBE): skip;
++	 * 5. write watchpoint, conflicting read (value_change==MAYBE): skip;
++	 * 6. write watchpoint, conflicting read (value_change==TRUE): report;
+ 	 *
+ 	 * Cases 1-4 are intuitive and expected; case 5 ensures we do not report
+ 	 * data races where the write may have rewritten the same value; case 6
+ 	 * is possible either if the size is larger than what we check value
+ 	 * changes for or the access type is KCSAN_ACCESS_ASSERT.
+ 	 */
+-	if (IS_ENABLED(CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY) && !value_change) {
++	if (IS_ENABLED(CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY) &&
++	    value_change == KCSAN_VALUE_CHANGE_MAYBE) {
+ 		/*
+ 		 * The access is a write, but the data value did not change.
+ 		 *
+@@ -245,7 +246,7 @@ static int sym_strcmp(void *addr1, void *addr2)
+  * Returns true if a report was generated, false otherwise.
+  */
+ static bool print_report(const volatile void *ptr, size_t size, int access_type,
+-			 bool value_change, int cpu_id,
++			 enum kcsan_value_change value_change, int cpu_id,
+ 			 enum kcsan_report_type type)
+ {
+ 	unsigned long stack_entries[NUM_STACK_ENTRIES] = { 0 };
+@@ -258,7 +259,7 @@ static bool print_report(const volatile void *ptr, size_t size, int access_type,
+ 	/*
+ 	 * Must check report filter rules before starting to print.
+ 	 */
+-	if (skip_report(true, stack_entries[skipnr]))
++	if (skip_report(KCSAN_VALUE_CHANGE_TRUE, stack_entries[skipnr]))
+ 		return false;
+ 
+ 	if (type == KCSAN_REPORT_RACE_SIGNAL) {
+@@ -477,7 +478,8 @@ static bool prepare_report(unsigned long *flags, const volatile void *ptr,
+ }
+ 
+ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
+-		  bool value_change, int cpu_id, enum kcsan_report_type type)
++		  enum kcsan_value_change value_change, int cpu_id,
++		  enum kcsan_report_type type)
+ {
+ 	unsigned long flags = 0;
+ 
 -- 
 2.9.5
 
