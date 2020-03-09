@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE42017EA5E
+	by mail.lfdr.de (Postfix) with ESMTP id 02D2617EA5C
 	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbgCIUoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:44:12 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38111 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgCIUoB (ORCPT
+        id S1726971AbgCIUoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:44:05 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46574 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbgCIUoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:44:01 -0400
-Received: by mail-yw1-f66.google.com with SMTP id 10so11552740ywv.5;
-        Mon, 09 Mar 2020 13:43:59 -0700 (PDT)
+        Mon, 9 Mar 2020 16:44:03 -0400
+Received: by mail-yw1-f68.google.com with SMTP id x5so10671165ywb.13;
+        Mon, 09 Mar 2020 13:44:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W/fceep5tK7g/cQy1ebhtOFWEM+NoOwKfSWVqLp3Aas=;
-        b=Hz2vFwc0nYdeV5cd546SsYwQDnc6xvKjsYhz9+iARd6xTUmC+dKt2Uz46n/7Bb7bgk
-         hIoX0r6POdCmsZVB4KFJsOr2JUJuofE/M1mICkLwSyLMs/MXlvn1VU8GNiJfkMCsrE6Z
-         aT+vHyDRafh8vLTeqARgh1iCaJ8vVH85VLoqi2fRHRJllMDe/vH3Jg69Cg+LwUeI6+J2
-         3ByoOCYoAJx0riAfyjbERcckrVqxnUSzkF5iGn8/ZA0hEHL0gc8VRrgLLBhg+NKpo748
-         zxIOYQVf/aA06RaE73lOcqtb94dPKCAEg4GvKuM3nF2AnAU9HbF7hvQ4rFoNGP1pjE0f
-         mfQA==
+        bh=MBcxGM+xg8655uWg7t9Ib3kXfSw3gEEMPIVTQzo5+Rs=;
+        b=ONz7v0fqYeRn0zcALLN/4P4bMyGbz2MgW8lGOr49LjkuZn3h8ux5u7QEdc6oTCrBD3
+         ElO28rEudO61WDEkso8azH2g5cl6RhOAaP4NWCagn3oFmT64R5liaBhvJVDnwEyvNr9a
+         wkiwxEzinL4H9UyL+5iMKBnocsgMb+kzyvG7bNz8yqr+hnZOGJIZntpf/ojjp0d5UYxu
+         Egp54pcC8qM4vtcS+PXF+6GTZxhDhgNqRf4sGzyrPUj6csTlcCjb/RvewzgzcHphbIJK
+         s/KvWaFqWWlTrTml2e9M6yynxfnUpHC0M0VlvPBBKG0rAN+Y9H+srxi/U0MrTqW+wyiB
+         DxkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W/fceep5tK7g/cQy1ebhtOFWEM+NoOwKfSWVqLp3Aas=;
-        b=HKmF67j1UzxHBiMco8rLlFuzvbCkoZXnKdVwtwFefMKWblJz+D2N+r4MqVTyv9omoK
-         CDdhw3HdmmiLWRGeVWkm/L4x9AQEwiQd7gJn+d808fexcotFc5o0OWULKPvCiwCwIlvo
-         7yZTlbUonmimo4g9EQCLN5DUMVZ7EY7kFdDPaU2bDhptxFHMaaAcv06S01QBjRy0ks2U
-         jrePzBmYgjPuGnvG38qiEYfZPq6KP4LLQGSydoPH9cRkVCjuI0FcKdsgz5Ig0rK90Aok
-         W0hyvUIjIFBlAyG5lFPpO5lEgTHpayM9i6QKuljXIww/Vvd4vUfyGH0IpAWrmoVDwZM5
-         hzuQ==
-X-Gm-Message-State: ANhLgQ0M8uHZJJdsANbBcXIh4g2XyBhwdd5E3YDsR1vZvs9PGrV6AkaZ
-        eeefrIxGzHDgidgPHuOLfms=
-X-Google-Smtp-Source: ADFU+vuVvvHYjwOnjefwzxrZhA+8mJhrosC/3BG4D4ARSmu8fOt3CsQ1Tzv8g+xFANVj3y7QuViFWA==
-X-Received: by 2002:a81:a3c9:: with SMTP id a192mr2854047ywh.244.1583786638964;
-        Mon, 09 Mar 2020 13:43:58 -0700 (PDT)
+        bh=MBcxGM+xg8655uWg7t9Ib3kXfSw3gEEMPIVTQzo5+Rs=;
+        b=fF+PNW7icdRF04G1kuEuDMvjuzbJqoEdxRwHklWtf1IZXzLyead2Fua1R8eiGDEXqL
+         38khAT3gXHVY7Yh4OcwnfkOfR5Vbx4O7iY98z//9ieTX/kmm7yu0vtJoMGxNGjwUN56G
+         hbk9divYE5z5Yk9FcMXPZdwcW3HUkOq3aTj4TRJ94zz68Aa8wAmAh7YLtUtDVwBv5s9B
+         IIUCiXRAIz3Yt2yWGZJfuedS/7iLN+EDtUhqWufY8qEG8T7qxEmNPv6mMq+4UY4bqvQX
+         tkQizBfSu5oe7jSelFCsaFwbYvVuMVPXr2c+9Eqa6ui0kruPju1q0IfkbD2cAKssC4Q1
+         8J7Q==
+X-Gm-Message-State: ANhLgQ2pAIjMhve0iE4g6mb5ekZXf8vRxmQtCRp543u1E4X4UQrlmhgj
+        uHXUFeYZEnVAnvH0IIaEqOcO54+Yuv2wVQ==
+X-Google-Smtp-Source: ADFU+vsaIO/P07C7w1s7BaKD1YxR9Se0rUoQ5L/YtqXvN0v/OzPcI7nJd47/9gc9F+t/jMYjRbEApw==
+X-Received: by 2002:a81:2f45:: with SMTP id v66mr8784924ywv.76.1583786640048;
+        Mon, 09 Mar 2020 13:44:00 -0700 (PDT)
 Received: from farregard-ubuntu.kopismobile.org (c-73-177-17-21.hsd1.ms.comcast.net. [73.177.17.21])
-        by smtp.gmail.com with ESMTPSA id s63sm17998768ywd.82.2020.03.09.13.43.58
+        by smtp.gmail.com with ESMTPSA id s63sm17998768ywd.82.2020.03.09.13.43.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 13:43:58 -0700 (PDT)
+        Mon, 09 Mar 2020 13:43:59 -0700 (PDT)
 From:   George Hilliard <thirtythreeforty@gmail.com>
 To:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Icenowy Zheng <icenowy@aosc.io>, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         George Hilliard <thirtythreeforty@gmail.com>
-Subject: [RESEND PATCH 4/5] ARM: suniv: add USB-related device nodes
-Date:   Mon,  9 Mar 2020 15:43:25 -0500
-Message-Id: <20200309204326.27403-5-thirtythreeforty@gmail.com>
+Subject: [RESEND PATCH 5/5] ARM: suniv: f1c100s: enable USB on Lichee Pi Nano
+Date:   Mon,  9 Mar 2020 15:43:26 -0500
+Message-Id: <20200309204326.27403-6-thirtythreeforty@gmail.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200309204326.27403-1-thirtythreeforty@gmail.com>
 References: <20200309204326.27403-1-thirtythreeforty@gmail.com>
@@ -66,63 +66,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Icenowy Zheng <icenowy@aosc.io>
 
-The suniv SoC has a USB OTG controller and a USB PHY like other
-Allwinner SoCs.
+Lichee Pi Nano has a Micro-USB connector, with its D+, D- pins connected
+to the USB pins of the SoC and ID pin connected to PE2 GPIO.
 
-Add their device tree node.
+Enable the USB functionality.
+
+This patch depends on the previous change to the F1C100s device tree.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
 ---
- arch/arm/boot/dts/suniv-f1c100s.dtsi | 29 ++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-index 6100d3b75f61..ec9f248ba889 100644
---- a/arch/arm/boot/dts/suniv-f1c100s.dtsi
-+++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-@@ -4,6 +4,9 @@
-  * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
-  */
+diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+index a1154e6c7cb5..c42186e22d45 100644
+--- a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
++++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+@@ -6,6 +6,8 @@
+ /dts-v1/;
+ #include "suniv-f1c100s.dtsi"
  
-+#include <dt-bindings/clock/suniv-ccu-f1c100s.h>
-+#include <dt-bindings/reset/suniv-ccu-f1c100s.h>
++#include <dt-bindings/gpio/gpio.h>
 +
  / {
- 	#address-cells = <1>;
- 	#size-cells = <1>;
-@@ -140,5 +143,31 @@ uart2: serial@1c25800 {
- 			resets = <&ccu 26>;
- 			status = "disabled";
- 		};
-+
-+		usb_otg: usb@1c13000 {
-+			compatible = "allwinner,suniv-f1c100s-musb";
-+			reg = <0x01c13000 0x0400>;
-+			clocks = <&ccu CLK_BUS_OTG>;
-+			resets = <&ccu RST_BUS_OTG>;
-+			interrupts = <26>;
-+			interrupt-names = "mc";
-+			phys = <&usbphy 0>;
-+			phy-names = "usb";
-+			extcon = <&usbphy 0>;
-+			allwinner,sram = <&otg_sram 1>;
-+			status = "disabled";
-+		};
-+
-+		usbphy: phy@1c13400 {
-+			compatible = "allwinner,suniv-f1c100s-usb-phy";
-+			reg = <0x01c13400 0x10>;
-+			reg-names = "phy_ctrl";
-+			clocks = <&ccu CLK_USB_PHY0>;
-+			clock-names = "usb0_phy";
-+			resets = <&ccu RST_USB_PHY0>;
-+			reset-names = "usb0_reset";
-+			#phy-cells = <1>;
-+			status = "disabled";
-+		};
+ 	model = "Lichee Pi Nano";
+ 	compatible = "licheepi,licheepi-nano", "allwinner,suniv-f1c100s";
+@@ -19,8 +21,22 @@ chosen {
  	};
  };
+ 
++&otg_sram {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pe_pins>;
+ 	status = "okay";
+ };
++
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usbphy {
++	usb0_id_det-gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
++	status = "okay";
++};
 -- 
 2.25.0
 
