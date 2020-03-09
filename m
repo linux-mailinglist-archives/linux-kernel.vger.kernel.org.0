@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDD217E7FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1EF17E7FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:07:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgCITFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
+        id S1727788AbgCITFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 15:05:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727606AbgCITE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727562AbgCITE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Mar 2020 15:04:27 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9267A24671;
+        by mail.kernel.org (Postfix) with ESMTPSA id CF29021655;
         Mon,  9 Mar 2020 19:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583780666;
-        bh=2qRYs3AkcvUa9jHTA5GkpCiMXL6SrOQVADR4ZNytqkI=;
+        s=default; t=1583780667;
+        bh=h8NlL0BNWOOzGjbattsQHdPTR/D98Gipr0p/Cf1gauo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gI9orPO8oQrhwRLAlgU6+neZjuooOQXx6RoKGvY2+R/bav3X4X8NldOVTFyAxESZJ
-         M7xdg80utDDp/1htkxPOWR8HMcuNYIXAyf0rcew+bEEC2HQNlHgNAFLPp0QCLf4d1Q
-         pY9xoomq6Scgxy4rhakyOxj2CeyzDa+kBU59UY8Q=
+        b=IAd2hde4Obj2yUyEKiuD+RNlHhu9QkfyY8Nth3FZj/IclaMTSj/ebOWqxlv45Y85D
+         blN8y9OUDB9g57RMkn0YUQDlHK1g1sl0hr/mMJJvzeclAp/H4QLxlLtmjsd2ivSoIL
+         mZcz2bxPEMPjZJcSyDIdXq+KYMU3BAEG+l6rCRes=
 From:   paulmck@kernel.org
 To:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
         kernel-team@fb.com, mingo@kernel.org
 Cc:     elver@google.com, andreyknvl@google.com, glider@google.com,
         dvyukov@google.com, cai@lca.pw, boqun.feng@gmail.com,
         "Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH kcsan 18/32] kcsan: Add test to generate conflicts via debugfs
-Date:   Mon,  9 Mar 2020 12:04:06 -0700
-Message-Id: <20200309190420.6100-18-paulmck@kernel.org>
+Subject: [PATCH kcsan 19/32] kcsan: Expose core configuration parameters as module params
+Date:   Mon,  9 Mar 2020 12:04:07 -0700
+Message-Id: <20200309190420.6100-19-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200309190359.GA5822@paulmck-ThinkPad-P72>
 References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
@@ -42,110 +42,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marco Elver <elver@google.com>
 
-Add 'test=<iters>' option to KCSAN's debugfs interface to invoke KCSAN
-checks on a dummy variable. By writing 'test=<iters>' to the debugfs
-file from multiple tasks, we can generate real conflicts, and trigger
-data race reports.
+This adds early_boot, udelay_{task,interrupt}, and skip_watch as module
+params. The latter parameters are useful to modify at runtime to tune
+KCSAN's performance on new systems. This will also permit auto-tuning
+these parameters to maximize overall system performance and KCSAN's race
+detection ability.
+
+None of the parameters are used in the fast-path and referring to them
+via static variables instead of CONFIG constants will not affect
+performance.
 
 Signed-off-by: Marco Elver <elver@google.com>
+Cc: Qian Cai <cai@lca.pw>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/kcsan/debugfs.c | 51 +++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 46 insertions(+), 5 deletions(-)
+ kernel/kcsan/core.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
-index a9dad44..9bbba0e 100644
---- a/kernel/kcsan/debugfs.c
-+++ b/kernel/kcsan/debugfs.c
+diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+index 87ef01e..498b1eb 100644
+--- a/kernel/kcsan/core.c
++++ b/kernel/kcsan/core.c
 @@ -6,6 +6,7 @@
- #include <linux/debugfs.h>
+ #include <linux/export.h>
  #include <linux/init.h>
- #include <linux/kallsyms.h>
-+#include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/sort.h>
-@@ -69,9 +70,9 @@ void kcsan_counter_dec(enum kcsan_counter_id id)
- /*
-  * The microbenchmark allows benchmarking KCSAN core runtime only. To run
-  * multiple threads, pipe 'microbench=<iters>' from multiple tasks into the
-- * debugfs file.
-+ * debugfs file. This will not generate any conflicts, and tests fast-path only.
-  */
--static void microbenchmark(unsigned long iters)
-+static noinline void microbenchmark(unsigned long iters)
+ #include <linux/kernel.h>
++#include <linux/moduleparam.h>
+ #include <linux/percpu.h>
+ #include <linux/preempt.h>
+ #include <linux/random.h>
+@@ -16,6 +17,20 @@
+ #include "encoding.h"
+ #include "kcsan.h"
+ 
++static bool kcsan_early_enable = IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE);
++static unsigned int kcsan_udelay_task = CONFIG_KCSAN_UDELAY_TASK;
++static unsigned int kcsan_udelay_interrupt = CONFIG_KCSAN_UDELAY_INTERRUPT;
++static long kcsan_skip_watch = CONFIG_KCSAN_SKIP_WATCH;
++
++#ifdef MODULE_PARAM_PREFIX
++#undef MODULE_PARAM_PREFIX
++#endif
++#define MODULE_PARAM_PREFIX "kcsan."
++module_param_named(early_enable, kcsan_early_enable, bool, 0);
++module_param_named(udelay_task, kcsan_udelay_task, uint, 0644);
++module_param_named(udelay_interrupt, kcsan_udelay_interrupt, uint, 0644);
++module_param_named(skip_watch, kcsan_skip_watch, long, 0644);
++
+ bool kcsan_enabled;
+ 
+ /* Per-CPU kcsan_ctx for interrupts */
+@@ -239,9 +254,9 @@ should_watch(const volatile void *ptr, size_t size, int type)
+ 
+ static inline void reset_kcsan_skip(void)
  {
- 	cycles_t cycles;
+-	long skip_count = CONFIG_KCSAN_SKIP_WATCH -
++	long skip_count = kcsan_skip_watch -
+ 			  (IS_ENABLED(CONFIG_KCSAN_SKIP_WATCH_RANDOMIZE) ?
+-				   prandom_u32_max(CONFIG_KCSAN_SKIP_WATCH) :
++				   prandom_u32_max(kcsan_skip_watch) :
+ 				   0);
+ 	this_cpu_write(kcsan_skip, skip_count);
+ }
+@@ -253,8 +268,7 @@ static __always_inline bool kcsan_is_enabled(void)
  
-@@ -81,18 +82,52 @@ static void microbenchmark(unsigned long iters)
- 	while (iters--) {
- 		/*
- 		 * We can run this benchmark from multiple tasks; this address
--		 * calculation increases likelyhood of some accesses overlapping
--		 * (they still won't conflict because all are reads).
-+		 * calculation increases likelyhood of some accesses
-+		 * overlapping. Make the access type an atomic read, to never
-+		 * set up watchpoints and test the fast-path only.
- 		 */
- 		unsigned long addr =
- 			iters % (CONFIG_KCSAN_NUM_WATCHPOINTS * PAGE_SIZE);
--		__kcsan_check_read((void *)addr, sizeof(long));
-+		__kcsan_check_access((void *)addr, sizeof(long), KCSAN_ACCESS_ATOMIC);
- 	}
- 	cycles = get_cycles() - cycles;
- 
- 	pr_info("KCSAN: %s end   | cycles: %llu\n", __func__, cycles);
+ static inline unsigned int get_delay(void)
+ {
+-	unsigned int delay = in_task() ? CONFIG_KCSAN_UDELAY_TASK :
+-					 CONFIG_KCSAN_UDELAY_INTERRUPT;
++	unsigned int delay = in_task() ? kcsan_udelay_task : kcsan_udelay_interrupt;
+ 	return delay - (IS_ENABLED(CONFIG_KCSAN_DELAY_RANDOMIZE) ?
+ 				prandom_u32_max(delay) :
+ 				0);
+@@ -527,7 +541,7 @@ void __init kcsan_init(void)
+ 	 * We are in the init task, and no other tasks should be running;
+ 	 * WRITE_ONCE without memory barrier is sufficient.
+ 	 */
+-	if (IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE))
++	if (kcsan_early_enable)
+ 		WRITE_ONCE(kcsan_enabled, true);
  }
  
-+/*
-+ * Simple test to create conflicting accesses. Write 'test=<iters>' to KCSAN's
-+ * debugfs file from multiple tasks to generate real conflicts and show reports.
-+ */
-+static long test_dummy;
-+static noinline void test_thread(unsigned long iters)
-+{
-+	const struct kcsan_ctx ctx_save = current->kcsan_ctx;
-+	cycles_t cycles;
-+
-+	/* We may have been called from an atomic region; reset context. */
-+	memset(&current->kcsan_ctx, 0, sizeof(current->kcsan_ctx));
-+
-+	pr_info("KCSAN: %s begin | iters: %lu\n", __func__, iters);
-+
-+	cycles = get_cycles();
-+	while (iters--) {
-+		__kcsan_check_read(&test_dummy, sizeof(test_dummy));
-+		__kcsan_check_write(&test_dummy, sizeof(test_dummy));
-+		ASSERT_EXCLUSIVE_WRITER(test_dummy);
-+		ASSERT_EXCLUSIVE_ACCESS(test_dummy);
-+
-+		/* not actually instrumented */
-+		WRITE_ONCE(test_dummy, iters);  /* to observe value-change */
-+	}
-+	cycles = get_cycles() - cycles;
-+
-+	pr_info("KCSAN: %s end   | cycles: %llu\n", __func__, cycles);
-+
-+	/* restore context */
-+	current->kcsan_ctx = ctx_save;
-+}
-+
- static int cmp_filterlist_addrs(const void *rhs, const void *lhs)
- {
- 	const unsigned long a = *(const unsigned long *)rhs;
-@@ -242,6 +277,12 @@ debugfs_write(struct file *file, const char __user *buf, size_t count, loff_t *o
- 		if (kstrtoul(&arg[sizeof("microbench=") - 1], 0, &iters))
- 			return -EINVAL;
- 		microbenchmark(iters);
-+	} else if (!strncmp(arg, "test=", sizeof("test=") - 1)) {
-+		unsigned long iters;
-+
-+		if (kstrtoul(&arg[sizeof("test=") - 1], 0, &iters))
-+			return -EINVAL;
-+		test_thread(iters);
- 	} else if (!strcmp(arg, "whitelist")) {
- 		set_report_filterlist_whitelist(true);
- 	} else if (!strcmp(arg, "blacklist")) {
 -- 
 2.9.5
 
