@@ -2,120 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E42817E403
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:52:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5FE017E40A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgCIPwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:52:40 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:36939 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727224AbgCIPwi (ORCPT
+        id S1727282AbgCIPxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:53:04 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34510 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727196AbgCIPxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:52:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583769157;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gpdJ6Cg1tIsPQIU8l639Qlh3t2/IFpSBkTvWUWG8TI0=;
-        b=dDUWyFjq4MA3tZETP9GPTkN7Oi3RXHahq/Ccz1Y4rc9ushbBA3KAo/SV9/dGGRZ83oe4D3
-        XZtRVKRf0PUYUMPsf4rzIOS4CB/aTHEh7sU/zelIpSHG/IkJQ3dfb1Aebzrvz4n4/2w3aW
-        raDa21RqJut1sEQDXYsfLTk2cO06950=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-131-U5FZplORPxWqBrA9hfwPFg-1; Mon, 09 Mar 2020 11:52:35 -0400
-X-MC-Unique: U5FZplORPxWqBrA9hfwPFg-1
-Received: by mail-wr1-f70.google.com with SMTP id c6so5365135wrm.18
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 08:52:35 -0700 (PDT)
+        Mon, 9 Mar 2020 11:53:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s13so1274550ljm.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 08:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EXfBgHukxBvsUIUUHVjFpSxz9MtCVwuKfkDGjmbjA74=;
+        b=TUfdKwyMIdzZABuGfaz29jdL4jBWhfe9EDROAoWo7k6cs3dhd+ODiA8Fuv0zwjS7aR
+         kaKK1YDIK5c5LCpnpOC9idRXWgQRLP0+CSXvTrz1Mfum6aCAyVhgPh163mCqXrvVGstE
+         th+lI57YSlrxDwtOGDYLNp/qugF7/3vQm9KV4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gpdJ6Cg1tIsPQIU8l639Qlh3t2/IFpSBkTvWUWG8TI0=;
-        b=AzLsCWKYIqOmUENlGIKF+R6C+8zBkchkQ/ug3AzK9BaDur2ViCRpQlSUOqgAyefx7i
-         C5E1DvBqvVhKhDIC5xvnEc5yz8ioqA9Dff/xhGgIK2MyFKrxYj6p23eI5VhSxDArC7dr
-         giohMRGsq7lEPVHyxlBuyTrS7h08xzWC8KUsJAiQjeXYlP7R0I4A3U50/IWaRKLd5EEz
-         Ldd+O0SYAYZamz9Hjjr96+Z5TXWiBjj7awUN49DwjZBfceZSy1A0gf57ImPW2BBQKgxx
-         vacMBW2SavMvpsxPsTDwX3gg8IYs2nZtlCTfVWA5OKSSwwZEmoTcJn0pRyvwYtqykpg5
-         HwBQ==
-X-Gm-Message-State: ANhLgQ0h5/xSKTEU1aY6WmmLC1LSKNdB2ei798krsE1mQYoJDacExwmZ
-        cYUkuV8UaMoL8kEiGLDy/BaT+B66CUHs31R1BjmtgPfep/uEzzV7Qej9BpQrCocnaauW2yZDBTC
-        jAG7CF2npMq2CcBSBfBwhSGNd
-X-Received: by 2002:a1c:9d41:: with SMTP id g62mr19391301wme.131.1583769154409;
-        Mon, 09 Mar 2020 08:52:34 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vucLw7YOCnn8HRRRJAIb3+rjAedSA1dvQR96Or6tajfe9jl5CymLzC/u8rLXBoNjwCxXzD9vw==
-X-Received: by 2002:a1c:9d41:: with SMTP id g62mr19391282wme.131.1583769154229;
-        Mon, 09 Mar 2020 08:52:34 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id q4sm17294521wro.56.2020.03.09.08.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 08:52:32 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Liran Alon <liran.alon@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>
-Subject: [PATCH 6/6] KVM: selftests: enlightened VMPTRLD with an incorrect GPA
-Date:   Mon,  9 Mar 2020 16:52:16 +0100
-Message-Id: <20200309155216.204752-7-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200309155216.204752-1-vkuznets@redhat.com>
-References: <20200309155216.204752-1-vkuznets@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EXfBgHukxBvsUIUUHVjFpSxz9MtCVwuKfkDGjmbjA74=;
+        b=kES7Fojmeejgjo3DA5xAGThAHj7XsYN5WezM7MSvNSv9+TMYznfuHaOmMHTHUkT8wg
+         WpSY90VJwE7jFdxNG95csqEkIXYkRI384CwconONcky7IuJFdamfVHWsyE/4MeLggGZX
+         J6WQgiYc6a6CdmjAZsVKJ8c5yYaH4/p9lZ9AzmZd+DiYTa+Iwg2r/liZUYsJY+6A644/
+         YsAPNgzrasPoY/+uAuD9f81ejM2y2z93/UcFz2LFCG3+/uEhlMYWpEc7Q0v2rJhcMSNP
+         NDLsC5ts8/X1jc6+ZQnLXrxcBbauh3TGhNR7rtenNcRc0a3qILUCj1NKgkYVTdqRRZf7
+         jM+A==
+X-Gm-Message-State: ANhLgQ3+AGM0+SjU5L6E7mmAHLxie7Hx+kwU3KgzhtnsywxUA0134LtH
+        mF6iVPkrp6X+fgL9w4yGBwp4mOstP48=
+X-Google-Smtp-Source: ADFU+vskVYLFU7Qg5OXkUaOT5v4RyS6fAybzsvJ+Geg2dA6Tu9qGP8tYovZI5rIhPvlYZZaD0N16zQ==
+X-Received: by 2002:a05:651c:201d:: with SMTP id s29mr4035841ljo.240.1583769180356;
+        Mon, 09 Mar 2020 08:53:00 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id x23sm8433088ljj.8.2020.03.09.08.52.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2020 08:52:58 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id w1so10495106ljh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 08:52:57 -0700 (PDT)
+X-Received: by 2002:a2e:5850:: with SMTP id x16mr9457422ljd.209.1583769177624;
+ Mon, 09 Mar 2020 08:52:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200308140314.GQ5972@shao2-debian> <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org>
+In-Reply-To: <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 9 Mar 2020 08:52:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com>
+Message-ID: <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com>
+Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6% regression
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        yangerkun <yangerkun@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Neil Brown <neilb@suse.de>,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: multipart/mixed; boundary="0000000000003d346305a06dff90"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that guest doesn't hang when an invalid eVMCS GPA is specified.
-Testing that #UD is injected would probably be better but selftests lack
-the infrastructure currently.
+--0000000000003d346305a06dff90
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- tools/testing/selftests/kvm/x86_64/evmcs_test.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+On Mon, Mar 9, 2020 at 7:36 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Sun, 2020-03-08 at 22:03 +0800, kernel test robot wrote:
+> >
+> > FYI, we noticed a -96.6% regression of will-it-scale.per_process_ops due to commit:
+>
+> This is not completely unexpected as we're banging on the global
+> blocked_lock_lock now for every unlock. This test just thrashes file
+> locks and unlocks without doing anything in between, so the workload
+> looks pretty artificial [1].
+>
+> It would be nice to avoid the global lock in this codepath, but it
+> doesn't look simple to do. I'll keep thinking about it, but for now I'm
+> inclined to ignore this result unless we see a problem in more realistic
+> workloads.
 
-diff --git a/tools/testing/selftests/kvm/x86_64/evmcs_test.c b/tools/testing/selftests/kvm/x86_64/evmcs_test.c
-index 10e9c158dc96..fed8f933748b 100644
---- a/tools/testing/selftests/kvm/x86_64/evmcs_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/evmcs_test.c
-@@ -72,6 +72,10 @@ void guest_code(struct vmx_pages *vmx_pages)
- 		l1_guest_code(vmx_pages);
- 
- 	GUEST_DONE();
-+
-+	/* Try enlightened vmptrld with an incorrect GPA */
-+	evmcs_vmptrld(0xdeadbeef, vmx_pages->enlightened_vmcs);
-+	GUEST_ASSERT(vmlaunch());
- }
- 
- int main(int argc, char *argv[])
-@@ -120,7 +124,7 @@ int main(int argc, char *argv[])
- 		case UCALL_SYNC:
- 			break;
- 		case UCALL_DONE:
--			goto done;
-+			goto part1_done;
- 		default:
- 			TEST_ASSERT(false, "Unknown ucall 0x%x.", uc.cmd);
- 		}
-@@ -152,6 +156,10 @@ int main(int argc, char *argv[])
- 			    (ulong) regs2.rdi, (ulong) regs2.rsi);
- 	}
- 
--done:
-+part1_done:
-+	_vcpu_run(vm, VCPU_ID);
-+	TEST_ASSERT(run->exit_reason == KVM_EXIT_SHUTDOWN,
-+		    "Unexpected successful VMEnter with invalid eVMCS pointer!");
-+
- 	kvm_vm_free(vm);
- }
--- 
-2.24.1
+That is a _huge_ regression, though.
 
+What about something like the attached? Wouldn't that work? And make
+the code actually match the old comment about wow "fl_blocker" being
+NULL being special.
+
+The old code seemed to not know about things like memory ordering either.
+
+Patch is entirely untested, but aims to have that "smp_store_release()
+means I'm done and not going to touch it any more", making that
+smp_load_acquire() test hopefully be valid as per the comment..
+
+Hmm?
+
+                    Linus
+
+--0000000000003d346305a06dff90
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k7kn615a0>
+X-Attachment-Id: f_k7kn615a0
+
+IGZzL2xvY2tzLmMgfCAyOSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLQogMSBmaWxlIGNo
+YW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9mcy9s
+b2Nrcy5jIGIvZnMvbG9ja3MuYwppbmRleCA0MjZiNTVkMzMzZDUuLmJjNWNhNTRhMDc0OSAxMDA2
+NDQKLS0tIGEvZnMvbG9ja3MuYworKysgYi9mcy9sb2Nrcy5jCkBAIC03MjUsNyArNzI1LDYgQEAg
+c3RhdGljIHZvaWQgX19sb2Nrc19kZWxldGVfYmxvY2soc3RydWN0IGZpbGVfbG9jayAqd2FpdGVy
+KQogewogCWxvY2tzX2RlbGV0ZV9nbG9iYWxfYmxvY2tlZCh3YWl0ZXIpOwogCWxpc3RfZGVsX2lu
+aXQoJndhaXRlci0+ZmxfYmxvY2tlZF9tZW1iZXIpOwotCXdhaXRlci0+ZmxfYmxvY2tlciA9IE5V
+TEw7CiB9CiAKIHN0YXRpYyB2b2lkIF9fbG9ja3Nfd2FrZV91cF9ibG9ja3Moc3RydWN0IGZpbGVf
+bG9jayAqYmxvY2tlcikKQEAgLTc0MCw2ICs3MzksMTIgQEAgc3RhdGljIHZvaWQgX19sb2Nrc193
+YWtlX3VwX2Jsb2NrcyhzdHJ1Y3QgZmlsZV9sb2NrICpibG9ja2VyKQogCQkJd2FpdGVyLT5mbF9s
+bW9wcy0+bG1fbm90aWZ5KHdhaXRlcik7CiAJCWVsc2UKIAkJCXdha2VfdXAoJndhaXRlci0+Zmxf
+d2FpdCk7CisKKwkJLyoKKwkJICogVGVsbCB0aGUgd29ybGQgd2UncmUgZG9uZSB3aXRoIGl0IC0g
+c2VlIGNvbW1lbnQgYXQKKwkJICogdG9wIG9mIGxvY2tzX2RlbGV0ZV9ibG9jaygpLgorCQkgKi8K
+KwkJc21wX3N0b3JlX3JlbGVhc2UoJndhaXRlci0+ZmxfYmxvY2tlciwgTlVMTCk7CiAJfQogfQog
+CkBAIC03NTMsMTEgKzc1OCwzMyBAQCBpbnQgbG9ja3NfZGVsZXRlX2Jsb2NrKHN0cnVjdCBmaWxl
+X2xvY2sgKndhaXRlcikKIHsKIAlpbnQgc3RhdHVzID0gLUVOT0VOVDsKIAorCS8qCisJICogSWYg
+ZmxfYmxvY2tlciBpcyBOVUxMLCBpdCB3b24ndCBiZSBzZXQgYWdhaW4gYXMgdGhpcyB0aHJlYWQK
+KwkgKiAib3ducyIgdGhlIGxvY2sgYW5kIGlzIHRoZSBvbmx5IG9uZSB0aGF0IG1pZ2h0IHRyeSB0
+byBjbGFpbQorCSAqIHRoZSBsb2NrLiAgU28gaXQgaXMgc2FmZSB0byB0ZXN0IGZsX2Jsb2NrZXIg
+bG9ja2xlc3NseS4KKwkgKiBBbHNvIGlmIGZsX2Jsb2NrZXIgaXMgTlVMTCwgdGhpcyB3YWl0ZXIg
+aXMgbm90IGxpc3RlZCBvbgorCSAqIGZsX2Jsb2NrZWRfcmVxdWVzdHMgZm9yIHNvbWUgbG9jaywg
+c28gbm8gb3RoZXIgcmVxdWVzdCBjYW4KKwkgKiBiZSBhZGRlZCB0byB0aGUgbGlzdCBvZiBmbF9i
+bG9ja2VkX3JlcXVlc3RzIGZvciB0aGlzCisJICogcmVxdWVzdC4gIFNvIGlmIGZsX2Jsb2NrZXIg
+aXMgTlVMTCwgaXQgaXMgc2FmZSB0bworCSAqIGxvY2tsZXNzbHkgY2hlY2sgaWYgZmxfYmxvY2tl
+ZF9yZXF1ZXN0cyBpcyBlbXB0eS4gIElmIGJvdGgKKwkgKiBvZiB0aGVzZSBjaGVja3Mgc3VjY2Vl
+ZCwgdGhlcmUgaXMgbm8gbmVlZCB0byB0YWtlIHRoZSBsb2NrLgorCSAqLworCWlmICghc21wX2xv
+YWRfYWNxdWlyZSgmd2FpdGVyLT5mbF9ibG9ja2VyKSkgeworCQlpZiAobGlzdF9lbXB0eSgmd2Fp
+dGVyLT5mbF9ibG9ja2VkX3JlcXVlc3RzKSkKKwkJICAgICAgICByZXR1cm4gc3RhdHVzOworCX0K
+KwogCXNwaW5fbG9jaygmYmxvY2tlZF9sb2NrX2xvY2spOwogCWlmICh3YWl0ZXItPmZsX2Jsb2Nr
+ZXIpCiAJCXN0YXR1cyA9IDA7CiAJX19sb2Nrc193YWtlX3VwX2Jsb2Nrcyh3YWl0ZXIpOwogCV9f
+bG9ja3NfZGVsZXRlX2Jsb2NrKHdhaXRlcik7CisKKwkvKgorCSAqIFRlbGwgdGhlIHdvcmxkIHdl
+J3JlIGRvbmUgd2l0aCBpdCAtIHNlZSBjb21taXQgYXQgdG9wCisJICogb2YgdGhpcyBmdW5jdGlv
+bgorCSAqLworCXNtcF9zdG9yZV9yZWxlYXNlKCZ3YWl0ZXItPmZsX2Jsb2NrZXIsIE5VTEwpOwog
+CXNwaW5fdW5sb2NrKCZibG9ja2VkX2xvY2tfbG9jayk7CiAJcmV0dXJuIHN0YXR1czsKIH0K
+--0000000000003d346305a06dff90--
