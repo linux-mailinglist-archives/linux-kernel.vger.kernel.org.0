@@ -2,170 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6E417E296
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 514D117E29A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:36:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbgCIOf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 10:35:57 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39041 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgCIOf5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:35:57 -0400
-Received: by mail-qk1-f194.google.com with SMTP id e16so9396400qkl.6;
-        Mon, 09 Mar 2020 07:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5jAy914ctIMdKta9JuUGrpnLf6WaH5WzoC+86aivxiI=;
-        b=Vod/MyYbR1Dx57lAsnEqZPeHZr9tyCwDnK+o0lvYZc/yGoeG5Zkw7CZ8kT5elNxeET
-         WCvV606gKdzZ5BaBqNV9kFav25u78hItE24J7zWedXDF9RiBY8mnR++LAPYyaSkj8Owm
-         TEfN4h6hoWcUKnepRRBhc70Fe1enkjr6IJ1fsj0egtXMsL7MkIWVIikXBhPbUg4DrHrm
-         hsLd40H7pWYfheUDbVLO4fds7pnLwPA7aqg0F8lg26nh7bKEjjk+mMAXgWg2T2QPo59U
-         T/9xWCGKnn1atfS4StLR0AU9yw+Y+9UfY48Htb8TtnC/IElGiSL6qMjKwcd+pOSrli9+
-         nGHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5jAy914ctIMdKta9JuUGrpnLf6WaH5WzoC+86aivxiI=;
-        b=luRhWHhY/C6X+ttPcHo8foyKeOMFsnxIH8Ov2rM2urvhezS7R/wTBdZaGcvLm0zzsX
-         LYp9b79ICKvcIJWmPwPXd5jjIhlovadjgagPBp/O7tyhjCqWdF0BrH0fgVoYk+B7qeOA
-         5T9Ic0wmm4ssT8QGcKpKyB9GmdQk7wQllb2Ibs9qpm51kcbbqvk5SJxhZ7PUlZRuE2/H
-         jJXcBnsvGtDgTI79k6BxMhd/zKbZ1TbfHscOmvMUX4rprokCURbHqOwzl81S+WsL8LIK
-         axyoYHDivqh8xt7p9VNl3sx9AH9ui7Rxg/NwK1LNjVKyQMl7GewMWvpPBWvFwgTboQ6E
-         dc/A==
-X-Gm-Message-State: ANhLgQ3Il4e82fYnUFXBasJsyMrx6zAdf0ffzxfJlj87R9872JmR9Et5
-        9izRLSerK5aJoIde2N/UtbY=
-X-Google-Smtp-Source: ADFU+vsKCcBzRKWf1W59h0lUF1gUHp4hBeMziSwnCnlwUZ3NK0Xa2PKr2UG9Epf8gMM6h0BqAQsmmg==
-X-Received: by 2002:a37:67c4:: with SMTP id b187mr7681788qkc.209.1583764555383;
-        Mon, 09 Mar 2020 07:35:55 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id p16sm22360496qkp.12.2020.03.09.07.35.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Mar 2020 07:35:53 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 0786022148;
-        Mon,  9 Mar 2020 10:35:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 09 Mar 2020 10:35:52 -0400
-X-ME-Sender: <xms:RlRmXh7AhVcgDalB_YgnDdCKIk9Cw4yFlgdun8y9ZgunLxIiENoeMg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddukedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuffhomhgrih
-    hnpehkvghrnhgvlhdrohhrghenucfkphephedvrdduheehrdduuddurdejudenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvg
-    hsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheeh
-    hedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:RlRmXvyESB274MuNPqwBvmeuuDIpkZZIsJKS-4GP_DH8P-fo2ApRSA>
-    <xmx:RlRmXpc0aLy-UzpXL4M6i3X152o-XVdssVXbhfZUsVQhyQv91Oasfw>
-    <xmx:RlRmXsGhCxIzUY-W_t-VC1u3qWDVLhAmhPBAvm0olHuhVrrPsd9iEw>
-    <xmx:SFRmXpuz8Gn8qa90c8fLB50qXqcHDDcwz4iSNzcJmKoyhwmQ5ZG-HmWSNEQ>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 03317306130A;
-        Mon,  9 Mar 2020 10:35:49 -0400 (EDT)
-Date:   Mon, 9 Mar 2020 22:35:48 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Kelley <mikelley@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v3 0/3] PCI: hv: Generify pci-hyperv.c
-Message-ID: <20200309143548.GB118238@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <20200210033953.99692-1-boqun.feng@gmail.com>
- <20200221023344.GJ69864@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
- <20200221104454.GA8595@e121166-lin.cambridge.arm.com>
+        id S1726810AbgCIOgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 10:36:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbgCIOge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 10:36:34 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2B912067C;
+        Mon,  9 Mar 2020 14:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583764594;
+        bh=SagHTacFC7nUvUy/V0aicAWyNUl19D+O0X84xGBwYR4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=z4OU62tiqctI6JpAwROtj9AshzZtgak8fRMdxDLU71NHK7Trb7flfIV+UrcOzua0i
+         l26ifi10dO5vo+vtIROBhhLtKpDcFnaxPFpDBGwVcIQn0D1IffTmzIXwvnSrNU8Rb0
+         +TUIMu+p2wPrTatTi7ckYWAsL86o8pASee4a7oGw=
+Message-ID: <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org>
+Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6%
+ regression
+From:   Jeff Layton <jlayton@kernel.org>
+To:     kernel test robot <rong.a.chen@intel.com>,
+        yangerkun <yangerkun@huawei.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        lkp@lists.01.org, Neil Brown <neilb@suse.de>,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon, 09 Mar 2020 10:36:32 -0400
+In-Reply-To: <20200308140314.GQ5972@shao2-debian>
+References: <20200308140314.GQ5972@shao2-debian>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221104454.GA8595@e121166-lin.cambridge.arm.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
-
-On Fri, Feb 21, 2020 at 10:44:54AM +0000, Lorenzo Pieralisi wrote:
-> On Fri, Feb 21, 2020 at 10:33:44AM +0800, Boqun Feng wrote:
-> > Ping ;-)
-> > 
-> > Any suggestion or plan on this patchset?
+On Sun, 2020-03-08 at 22:03 +0800, kernel test robot wrote:
+> Greeting,
 > 
-> Hi,
+> FYI, we noticed a -96.6% regression of will-it-scale.per_process_ops due to commit:
 > 
-> I shall have a look shortly, thanks.
+> 
+> commit: 6d390e4b5d48ec03bb87e63cf0a2bff5f4e116da ("locks: fix a potential use-after-free problem when wakeup a waiter")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> in testcase: will-it-scale
+> on test machine: 288 threads Intel(R) Xeon Phi(TM) CPU 7295 @ 1.50GHz with 80G memory
+> with following parameters:
+> 
+> 	nr_task: 100%
+> 	mode: process
+> 	test: lock1
+> 	cpufreq_governor: performance
+> 	ucode: 0x11
+> 
+> test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
+> test-url: https://github.com/antonblanchard/will-it-scale
+> 
+> In addition to that, the commit also has significant impact on the following tests:
+> 
+> +------------------+----------------------------------------------------------------------+
+> > testcase: change | will-it-scale: will-it-scale.per_thread_ops -51.3% regression        |
+> > test machine     | 288 threads Intel(R) Xeon Phi(TM) CPU 7295 @ 1.50GHz with 80G memory |
+> > test parameters  | cpufreq_governor=performance                                         |
+> >                  | mode=thread                                                          |
+> >                  | nr_task=100%                                                         |
+> >                  | test=lock1                                                           |
+> >                  | ucode=0x11                                                           |
+> +------------------+----------------------------------------------------------------------+
 > 
 
-Any chance you got some time to look into this?
+This is not completely unexpected as we're banging on the global
+blocked_lock_lock now for every unlock. This test just thrashes file
+locks and unlocks without doing anything in between, so the workload
+looks pretty artificial [1].
 
-Regards,
-Boqun
+It would be nice to avoid the global lock in this codepath, but it
+doesn't look simple to do. I'll keep thinking about it, but for now I'm
+inclined to ignore this result unless we see a problem in more realistic
+workloads.
 
-> Lorenzo
-> 
-> > Thanks and Regards,
-> > Boqun
-> > 
-> > On Mon, Feb 10, 2020 at 11:39:50AM +0800, Boqun Feng wrote:
-> > > Hi,
-> > > 
-> > > This is the first part for virtual PCI support of Hyper-V guest on
-> > > ARM64. The whole patchset doesn't have any functional change, but only
-> > > refactors the pci-hyperv.c code to make it more arch-independent.
-> > > 
-> > > Previous version:
-> > > v1: https://lore.kernel.org/lkml/20200121015713.69691-1-boqun.feng@gmail.com/
-> > > v2: https://lore.kernel.org/linux-arm-kernel/20200203050313.69247-1-boqun.feng@gmail.com/
-> > > 
-> > > Changes since v2:
-> > > 
-> > > *	Rebased on 5.6-rc1
-> > > 
-> > > *	Reword commit logs as per Andrew's suggestion.
-> > > 
-> > > *	It makes more sense to have a generic interface to set the whole
-> > > 	msi_entry rather than only the "address" field. So change
-> > > 	hv_set_msi_address_from_desc() to hv_set_msi_entry_from_desc().
-> > > 	Additionally, make it an inline function as per the suggestion
-> > > 	of Andrew and Thomas.
-> > > 
-> > > *	Add the missing comment saying the partition_id of
-> > > 	hv_retarget_device_interrupt must be self.
-> > > 
-> > > *	Add the explanation for why "__packed" is needed for TLFS
-> > > 	structures.
-> > > 
-> > > I've done compile and boot test of this patchset, also done some tests
-> > > with a pass-through NVMe device.
-> > > 
-> > > Suggestions and comments are welcome!
-> > > 
-> > > Regards,
-> > > Boqun
-> > > 
-> > > Boqun Feng (3):
-> > >   PCI: hv: Move hypercall related definitions into tlfs header
-> > >   PCI: hv: Move retarget related structures into tlfs header
-> > >   PCI: hv: Introduce hv_msi_entry
-> > > 
-> > >  arch/x86/include/asm/hyperv-tlfs.h  | 41 +++++++++++++++++++++++++++
-> > >  arch/x86/include/asm/mshyperv.h     |  8 ++++++
-> > >  drivers/pci/controller/pci-hyperv.c | 43 ++---------------------------
-> > >  3 files changed, 52 insertions(+), 40 deletions(-)
-> > > 
-> > > -- 
-> > > 2.24.1
-> > > 
+[1]: https://github.com/antonblanchard/will-it-scale/blob/master/tests/lock1.c
+-- 
+Jeff Layton <jlayton@kernel.org>
+
