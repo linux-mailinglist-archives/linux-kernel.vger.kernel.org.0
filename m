@@ -2,171 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0101B17E23D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C60E417E24A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:11:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgCIOJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 10:09:08 -0400
-Received: from mail-eopbgr40080.outbound.protection.outlook.com ([40.107.4.80]:44964
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726233AbgCIOJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:09:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k3PUDEG2WiEMCi7ZI+a5r61NOg2JgiQrB1MIFlSCXYh8xaPfP409rJs+PkQrwPcpmJNUMl469fNo/FtAhfc/0M+bZ1t8WmqvA1wV3DqXkZEHW63fCmXtn70ipVzj2PJahAAom0dZu7mFg9c3NNqxxlShHJwjl8EB2RddDiI+b2D/6yHctpbd/MmfPqacG/8KuYJRphf6vs9sh6CvEmghisTg4c16bVjIyeW/F204gF7eAerTupjyfF2hAGL24SiG7GHQw+y4e0RrPF2W/8ji8JgEi+JokZDKTZyYjJHqiAV9oeQbPWH+Q6okvONHhbzOnmT69Tj0jbLoSRi8anbRPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l6QW/wY1tp0T4HdD1BZX5dsHxITHlG1M6PLh4Uc95PE=;
- b=bX5EMUEMxRkWFrLmQXbX/ObpB7oW14+Msq7OeQ7GEvvah/xnViR/mZcdnBodPhZvh8DGFV8QF/lwhids7jpXcznkdmRhDRezRLT5CrLDAB4Lf97fQsbcZdRyGX7kcoEtfiEY+Lqq2hPtM+D5axWY9i9CrULrIgVFLiLOz/XFqlYv/HmtvjszcnY1QIyY/iKb8Y9r+xNAQJev4bfcQUS6wCLGN4IG1CLpOFnRhgd7GpV1El/3bpGIiDnbtaa3YnmsjkNp0FZsU38Czr1NJTw5xYJzRzQ5YQG5DiFUwdsRPsEq/XOScbdCDIMKtkFvSkkO1KcwetHLARwFruwsrPojGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l6QW/wY1tp0T4HdD1BZX5dsHxITHlG1M6PLh4Uc95PE=;
- b=UZ+32TGpYRh6up+cYJ9NTusaYSlB43bqT22xV+WiVvs5P6PbBMDJARCteOsadufnSizhcnTRDztUOOvy7Qe2VycFggf3iPnAfovhQX2u8M/HgCqhrdcM7FkID4/Lhy4BS73UBmK2gEhGWnNGuWkkjtsbjwAqx7H/mVj8Gb9X6To=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3914.eurprd04.prod.outlook.com (52.134.71.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Mon, 9 Mar 2020 14:09:00 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e44d:fa34:a0af:d96]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e44d:fa34:a0af:d96%5]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
- 14:09:00 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux@rempel-privat.de" <linux@rempel-privat.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "ronald@innovation.ch" <ronald@innovation.ch>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-Thread-Topic: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-Thread-Index: AQHV9av62LAReQhoZkKZ9LnT5dFdbahARTIAgAAHnnA=
-Date:   Mon, 9 Mar 2020 14:09:00 +0000
-Message-ID: <DB3PR0402MB39160749F06C0CD4C752AF88F5FE0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481F087AC3CDA691300710288FE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4481F087AC3CDA691300710288FE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ec31ce58-33e0-4fab-a460-08d7c4336abe
-x-ms-traffictypediagnostic: DB3PR0402MB3914:|DB3PR0402MB3914:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB391412630D5EA7024E788352F5FE0@DB3PR0402MB3914.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3631;
-x-forefront-prvs: 0337AFFE9A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(39860400002)(376002)(346002)(189003)(199004)(478600001)(4326008)(7416002)(8936002)(66946007)(76116006)(86362001)(186003)(33656002)(66476007)(44832011)(966005)(9686003)(26005)(55016002)(66556008)(6506007)(8676002)(316002)(64756008)(110136005)(81166006)(81156014)(5660300002)(52536014)(7696005)(71200400001)(66446008)(2906002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3914;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1anTmzqJGit4agYAh/pyy6cn+nxwm4hnondXlirTW2cbDoM7Ldp5/ekI9CQXCW25R55agpa/8+cAJOBvCzmAzjy0im3jc7yW2wme3cks9KPbo7Bx39IvDgVAyU7sm6/DSRRMqYY9ze8ZjCI21fcGWAmqijZEQBv+UCXenWOuaF39lAXcYOPjeuZWIf43/NN8li0kaGtmBKdROXMrkVV2jmbwcJnmrOzXDJvEAkLrb03N5AbZC/g1o5ZkdTEoVNe/BYmytgJRL9Sjy5b0Vgjf5IxXFTMj5M9XhfGe00w2NV8vaR5hE1Izq3/iR3sWi20yG0TcGLZhwTIKQkrb2IRitbBobaYtRwTSxynf9fiQevbD9u5rH3w/9GUFbZ1CHRTG38d8mpIJbgStxBMtApClCIUzg3yxoJzkVbHpdFCT24sUUZKTkFrpjLE1wlf/SlJYojOHmbz0pziDYc1uhyChl6D36kt1msyv/JhYXdDKcpESXwonsiW7EP81dBeYxatv6HG3fLr440Qjhmsm6ICtkPj50uBC6uZi2c52oAbNvaMbT0R4n1Kjq8afXydyIGC+34EwR1+2U0G3u92A1R3qcA==
-x-ms-exchange-antispam-messagedata: YRBg7086ld7yyMINmDemmCMLVTwaCKcO1718my+ekBV9udKqxrYmtZCv+5HzkpGuSUgoNaINYW16fenbeqW7o3ASbozbcQzq/7kvNcSFlPQIrAWRr/NJyPaPnzY23w6Ivk+Jx1gZnOaocnQFZ7XuRw==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726804AbgCIOLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 10:11:01 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34456 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbgCIOLB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 10:11:01 -0400
+Received: by mail-lf1-f66.google.com with SMTP id i19so1889086lfl.1;
+        Mon, 09 Mar 2020 07:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1DONZyJhzIw61vc2b8VyfHEnmtSL8XmCoaWpkr0Q6yQ=;
+        b=ZYDWaVXI+O+RUpYxYfXm8ia4oOLkw/O+R89i+fHtsyE7gL+aPkvQ6/74KlAZ7upBOy
+         mVkW/vEl9ymGQtMH96WKfn9Hl9vP2enpx2WSUQVt5eNiOZcBSPMGvWaD1xhAx24j218x
+         TssPVDmyorIu6yhB4IZASsU3vvyEwVPLv2jnnokvy9Y5/c7QhkrdURMMpyYom7hAAf83
+         0+1LWvmFyikllT7rr9CQOxn7hYse57X0T2WNRzV76ixDvKlEOO/B3d2skZ4yPNRtbbPT
+         BMfcq/IX+sZXcbLGV2NFlvHPnT/i864dbduIhTa+QK+inCG7Vr8hhA627LXSrkzIyzMl
+         Pcsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1DONZyJhzIw61vc2b8VyfHEnmtSL8XmCoaWpkr0Q6yQ=;
+        b=IX+ZH8980MnJmLCrj/u0QfGrR/1yXcamX1onMf+PcogmqlX6c1P7k3qtyFEhDrEK2v
+         Cte+YEAK9oymvKWTagb0Qnzkw2O54zSDIkb8h1aUZINjia9XfW5KjfGS1vCWh4vml+no
+         cBMxLzCQ4Ty54y6Mtsy4JA8m4J7IAO8aLLPAWaLi2J+SIrbmnUXwMvH6FXd3lsQe975O
+         c79p+QgfX/XlPhM9u3NZ5w1N3uB7DEZwxw0i94+Tq5KBULL5E5qYfLK5UbOmOg68k/66
+         zkg/9l6QjhD4v7/Hyw65CtMMsJBixvuLk/u00XoCrsiUBWNx20yNktQrHdg7n97Sj0+m
+         5bZg==
+X-Gm-Message-State: ANhLgQ14T1ZLB6as7KimGcQkNAl9MJMW5G1nhlBFLbj8TlXWJr04/R2F
+        AxlSbpQ3mu4LQeulZ6z5YZYWVIqxw9wW5keuuBM=
+X-Google-Smtp-Source: ADFU+vvx9Zry9HVFrw2gJwvh8jIGcVMrga/iTAAcWL9fq/CZaQKdL1vmx4qaRTpNg/N7VZXOUKv1Ct6BP9Ehy3e7OIY=
+X-Received: by 2002:ac2:5328:: with SMTP id f8mr9426587lfh.47.1583763059624;
+ Mon, 09 Mar 2020 07:10:59 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec31ce58-33e0-4fab-a460-08d7c4336abe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 14:09:00.8709
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: l5KPTdm4+SGbIFxyqv9Nujz6dhORiNgyOF7o9TISRwCg0SOObOgGWE4iFDNGXapXlL03zWGcCba8OgXIF1yU7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3914
+References: <20200305103228.9686-1-zhang.lyra@gmail.com> <20200305103228.9686-2-zhang.lyra@gmail.com>
+ <CAMuHMdU-gAhupHotQTHAZfopkGF_jQc-VrVxb24caw_BfzWd6g@mail.gmail.com>
+ <CAAfSe-sonfA=6x9uvQXaHniQaXR8hWZa4uOcWxoo+Z_XT9QNhw@mail.gmail.com> <CAMuHMdUBkS+pPyPid2K=40jaTOSnAE_L-vJP5knmyVr8Fr5_hg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUBkS+pPyPid2K=40jaTOSnAE_L-vJP5knmyVr8Fr5_hg@mail.gmail.com>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Mon, 9 Mar 2020 22:10:41 +0800
+Message-ID: <CA+H2tpFBDSGfwYT--G_FsaEceNJW_xBJjjiSMnhZDVhZamj_QQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] tty: serial: make SERIAL_SPRD not depend on ARCH_SPRD
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggVjMgMS83XSBmaXJtd2FyZTogaW14OiBBZGQgc3R1YnMg
-Zm9yICFDT05GSUdfSU1YX1NDVQ0KPiBjYXNlDQo+IA0KPiA+IFN1YmplY3Q6IFtQQVRDSCBWMyAx
-LzddIGZpcm13YXJlOiBpbXg6IEFkZCBzdHVicyBmb3IgIUNPTkZJR19JTVhfU0NVDQo+ID4gY2Fz
-ZQ0KPiANCj4gSSBoYXZlIG9uZSBwYXRjaCBwZW5kaW5nIHJldmlld2luZy4NCj4gaHR0cHM6Ly9w
-YXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMTM5NTI0Ny8NCg0KT0ssIGlmIHlvdXIgcGF0Y2gg
-aXMgcGlja2VkIHVwLCB0aGVuIDEvNyBpcyB1bm5lY2Vzc2FyeSBmb3IgdGhpcyBwYXRjaCBzZXJp
-ZXMsIGJ1dA0KdGhlIHJlc3QgYXJlIHN0aWxsIG5lZWRlZC4NCg0KQW5zb24NCg0KDQo+IA0KPiBU
-aGFua3MsDQo+IFBlbmcuDQo+IA0KPiA+DQo+ID4gQWRkIHN0dWJzIGZvciB0aG9zZSBpLk1YIFND
-VSBBUElzIHRvIG1ha2UgdGhvc2UgbW9kdWxlcyBkZXBlbmRpbmcgb24NCj4gPiBJTVhfU0NVIGNh
-biBwYXNzIGJ1aWxkIHdoZW4gQ09NUElMRV9URVNUIGlzIGVuYWJsZWQuDQo+ID4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPiAtLS0NCj4g
-PiBDaGFuZ2VzIHNpbmNlIFYyOg0KPiA+IAktIHJldHVybiBlcnJvciBmb3Igc3R1YnMuDQo+ID4g
-LS0tDQo+ID4gIGluY2x1ZGUvbGludXgvZmlybXdhcmUvaW14L2lwYy5oIHwgMTEgKysrKysrKysr
-KysNCj4gPiBpbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9zY2kuaCB8IDE5ICsrKysrKysrKysr
-KysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspDQo+ID4NCj4g
-PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvaXBjLmgNCj4gPiBiL2lu
-Y2x1ZGUvbGludXgvZmlybXdhcmUvaW14L2lwYy5oDQo+ID4gaW5kZXggODkxMDU3NC4uOWUzZDgw
-OCAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9pcGMuaA0KPiA+
-ICsrKyBiL2luY2x1ZGUvbGludXgvZmlybXdhcmUvaW14L2lwYy5oDQo+ID4gQEAgLTM0LDYgKzM0
-LDcgQEAgc3RydWN0IGlteF9zY19ycGNfbXNnIHsNCj4gPiAgCXVpbnQ4X3QgZnVuYzsNCj4gPiAg
-fTsNCj4gPg0KPiA+ICsjaWZkZWYgQ09ORklHX0lNWF9TQ1UNCj4gPiAgLyoNCj4gPiAgICogVGhp
-cyBpcyBhbiBmdW5jdGlvbiB0byBzZW5kIGFuIFJQQyBtZXNzYWdlIG92ZXIgYW4gSVBDIGNoYW5u
-ZWwuDQo+ID4gICAqIEl0IGlzIGNhbGxlZCBieSBjbGllbnQtc2lkZSBTQ0ZXIEFQSSBmdW5jdGlv
-biBzaGltcy4NCj4gPiBAQCAtNTUsNCArNTYsMTQgQEAgaW50IGlteF9zY3VfY2FsbF9ycGMoc3Ry
-dWN0IGlteF9zY19pcGMgKmlwYywgdm9pZA0KPiA+ICptc2csIGJvb2wgaGF2ZV9yZXNwKTsNCj4g
-PiAgICogQHJldHVybiBSZXR1cm5zIGFuIGVycm9yIGNvZGUgKDAgPSBzdWNjZXNzLCBmYWlsZWQg
-aWYgPCAwKQ0KPiA+ICAgKi8NCj4gPiAgaW50IGlteF9zY3VfZ2V0X2hhbmRsZShzdHJ1Y3QgaW14
-X3NjX2lwYyAqKmlwYyk7DQo+ID4gKyNlbHNlDQo+ID4gK3N0YXRpYyBpbmxpbmUgaW50IGlteF9z
-Y3VfY2FsbF9ycGMoc3RydWN0IGlteF9zY19pcGMgKmlwYywgdm9pZCAqbXNnLA0KPiA+ICtib29s
-IGhhdmVfcmVzcCkgew0KPiA+ICsJcmV0dXJuIC1FTk9FTlQ7DQo+ID4gK30NCj4gPiArc3RhdGlj
-IGlubGluZSBpbnQgaW14X3NjdV9nZXRfaGFuZGxlKHN0cnVjdCBpbXhfc2NfaXBjICoqaXBjKSB7
-DQo+ID4gKwlyZXR1cm4gLUVOT0VOVDsNCj4gPiArfQ0KPiA+ICsjZW5kaWYNCj4gPiAgI2VuZGlm
-IC8qIF9TQ19JUENfSCAqLw0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2Zpcm13YXJl
-L2lteC9zY2kuaA0KPiA+IGIvaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvc2NpLmgNCj4gPiBp
-bmRleCAxN2JhNGU0Li4wMjIxMjliIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvZmly
-bXdhcmUvaW14L3NjaS5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvc2Np
-LmgNCj4gPiBAQCAtMTYsOCArMTYsMjcgQEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Zpcm13YXJl
-L2lteC9zdmMvbWlzYy5oPiAgI2luY2x1ZGUNCj4gPiA8bGludXgvZmlybXdhcmUvaW14L3N2Yy9w
-bS5oPg0KPiA+DQo+ID4gKyNpZmRlZiBDT05GSUdfSU1YX1NDVQ0KPiA+ICBpbnQgaW14X3NjdV9l
-bmFibGVfZ2VuZXJhbF9pcnFfY2hhbm5lbChzdHJ1Y3QgZGV2aWNlICpkZXYpOyAgaW50DQo+ID4g
-aW14X3NjdV9pcnFfcmVnaXN0ZXJfbm90aWZpZXIoc3RydWN0IG5vdGlmaWVyX2Jsb2NrICpuYik7
-ICBpbnQNCj4gPiBpbXhfc2N1X2lycV91bnJlZ2lzdGVyX25vdGlmaWVyKHN0cnVjdCBub3RpZmll
-cl9ibG9jayAqbmIpOyAgaW50DQo+ID4gaW14X3NjdV9pcnFfZ3JvdXBfZW5hYmxlKHU4IGdyb3Vw
-LCB1MzIgbWFzaywgdTggZW5hYmxlKTsNCj4gPiArI2Vsc2UNCj4gPiArc3RhdGljIGlubGluZSBp
-bnQgaW14X3NjdV9lbmFibGVfZ2VuZXJhbF9pcnFfY2hhbm5lbChzdHJ1Y3QgZGV2aWNlDQo+ID4g
-KypkZXYpIHsNCj4gPiArCXJldHVybiAtRU5PRU5UOw0KPiA+ICt9DQo+ID4gK3N0YXRpYyBpbmxp
-bmUgaW50IGlteF9zY3VfaXJxX3JlZ2lzdGVyX25vdGlmaWVyKHN0cnVjdCBub3RpZmllcl9ibG9j
-aw0KPiA+ICsqbmIpIHsNCj4gPiArCXJldHVybiAtRU5PRU5UOw0KPiA+ICt9DQo+ID4gK3N0YXRp
-YyBpbmxpbmUgaW50IGlteF9zY3VfaXJxX3VucmVnaXN0ZXJfbm90aWZpZXIoc3RydWN0DQo+ID4g
-K25vdGlmaWVyX2Jsb2NrDQo+ID4gKypuYikgew0KPiA+ICsJcmV0dXJuIC1FTk9FTlQ7DQo+ID4g
-K30NCj4gPiArc3RhdGljIGlubGluZSBpbnQgaW14X3NjdV9pcnFfZ3JvdXBfZW5hYmxlKHU4IGdy
-b3VwLCB1MzIgbWFzaywgdTgNCj4gPiArZW5hYmxlKSB7DQo+ID4gKwlyZXR1cm4gLUVOT0VOVDsN
-Cj4gPiArfQ0KPiA+ICsjZW5kaWYNCj4gPiAgI2VuZGlmIC8qIF9TQ19TQ0lfSCAqLw0KPiA+IC0t
-DQo+ID4gMi43LjQNCg0K
+Hi Geert,
+
+
+On Mon, Mar 9, 2020 at 4:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Chunyan,
+>
+> On Mon, Mar 9, 2020 at 2:18 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > On Fri, 6 Mar 2020 at 20:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Thu, Mar 5, 2020 at 11:33 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > >
+> > > > Remove the dependency with ARCH_SPRD from sprd serial/console Kconfig-s,
+> > > > since we want them can be built-in when ARCH_SPRD is set as 'm'.
+> > >
+> > > Why would you want a serial driver for a specific platform to be builtin,
+> > > while all other platform support is modular?
+> >
+> > Oh, that's not this patch means.
+> >
+> > We just want serial driver can be builtin for any platform, so it
+>
+> What would be the benefit of the user to be able to have the SPRD serial
+> driver built-in on any platform?  AFAIU, it supports only Spreadtrum
+> platforms.
+>
+Assume there is a all-in-one common kernel binary image say arm64 for
+all SoC platform and all
+device drivers are built as modules from different vendors for each
+specific devices.
+But for serial driver it is too late to be initialized as a module if
+users want to check early console log.
+At this circumstance vendors prefer to set their serial driver to be
+built into that all-in-one image as easy
+as to only set one config instead of enabling whole platform then
+disabling many out of serial.
+
+-Orson
+
+> > should not depend on a config which can be set as 'm' (i.e. ARCH_SPRD)
+> > , otherwise if the config was set as 'm', the serial driver can't be
+> > selected as 'y' then.
+>
+> I ask about that as a reply to PATCH 1/2.
+>
+> > That's what I mean.
+>
+> > > > --- a/drivers/tty/serial/Kconfig
+> > > > +++ b/drivers/tty/serial/Kconfig
+> > > > @@ -1452,7 +1452,6 @@ config SERIAL_MEN_Z135
+> > > >
+> > > >  config SERIAL_SPRD
+> > > >         tristate "Support for Spreadtrum serial"
+> > > > -       depends on ARCH_SPRD
+> > > >         select SERIAL_CORE
+> > > >         help
+> > > >           This enables the driver for the Spreadtrum's serial.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
