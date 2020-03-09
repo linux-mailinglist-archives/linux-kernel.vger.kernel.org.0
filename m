@@ -2,115 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E275617E63D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6EA17E640
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgCISB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:01:28 -0400
-Received: from muru.com ([72.249.23.125]:59418 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbgCISB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:01:28 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A5E9C80FA;
-        Mon,  9 Mar 2020 18:02:12 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 11:01:23 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v2 4/6] pwm: omap-dmtimer: Fix pwm disabling sequence
-Message-ID: <20200309180123.GP37466@atomide.com>
-References: <20200228095651.32464-1-lokeshvutla@ti.com>
- <20200228095651.32464-5-lokeshvutla@ti.com>
- <20200306181443.GJ37466@atomide.com>
- <9129d4fe-a17e-2fa6-764c-6a746fa5096d@ti.com>
+        id S1727364AbgCISBl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 14:01:41 -0400
+Received: from mail-oln040092066098.outbound.protection.outlook.com ([40.92.66.98]:17472
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726920AbgCISBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:01:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IEGyhtOykNBYhYJXTrU5BYn5Nw1jiW0u9AbUkiS+/Nr0gFQy2G6G6mYj3pfard+/DP5MH9SncGjGTX6Ck54BD+UFtR0hSlg45/QitPqhhUZhiU0F6BHRrq8OAkguttHUyifUwuaGGbA4tiAIxYXtTIDSVAApztC8U4KRPCrhXtCd12VcjIy/cbRL8WJPsK8nNZYd//NSWMqx3yHmL/jaPazVaSJws1NddE8VJb1s+PudacD3igxifd2TKofE5JI4kGujEN0kv9jyK+OakqRD71FRfIEO7hiPA1DpuXVT0co957n/cinj6UWSC+/p1aZEool05WRRM9pEKAhxOHuszA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iaFADDnkPuGl8Zmq7Kn5QVuRowweiKh7NmWI4heORTw=;
+ b=YbrpeNR2H6J46Ndn6G0jwycGLPJYT3DIaLKxorsINcRvumORPVVkey8GAbY21Jp9wTOltIKJiQvQzWRCRFiQupw0PYNgRcQfNQ+AJiOPr9fOe1nvadQmf23wSa6Hg+tS8IW3mD4te+3HJPt+hzHPLGv7AmaXKD3zF1FA8EqqSkKye0OeKv1KzqFe/D5jibblUrSBR9x3eXKhe8/xlnJLff2fka5DWHaATUn4K3RNhvL2JxOtxPIAXewe9Gpan0wTmVR9/ix4E+3kMyvDVYw3vnjTxnoQjwEWcR+ux28Ql8HNWZ1/7gl3qjZFpMvAtITfpH0ZVd2So9JKi261SlW9Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from DB5EUR01FT058.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:e400:7e1a::35) by
+ DB5EUR01HT079.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e1a::189)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 9 Mar
+ 2020 18:01:35 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.4.51) by
+ DB5EUR01FT058.mail.protection.outlook.com (10.152.5.46) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Mon, 9 Mar 2020 18:01:35 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 9 Mar 2020
+ 18:01:35 +0000
+Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0034.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1c::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Mon, 9 Mar 2020 18:01:33 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Thread-Topic: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Thread-Index: AQHV9ZJHYfsGvDLnM0SksOJ5MpqOZahARvEAgABCQ42AAAUtgA==
+Date:   Mon, 9 Mar 2020 18:01:35 +0000
+Message-ID: <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+ <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <878sk94eay.fsf@x220.int.ebiederm.org>
+In-Reply-To: <878sk94eay.fsf@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: ZR0P278CA0034.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1c::21) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:A57AD5DF42E7681DD1A5E9478BCCAE97A758CE38338C8F4FF21105D5B882CB10;UpperCasedChecksum:E220060974F10C0CB68726E7BBB16EF0EACD99CD78B5974A67339EC0E43D0DB4;SizeAsReceived:9897;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [/ILZkTKjw93Tvir6ADJQOGFs7+aME87d]
+x-microsoft-original-message-id: <884bc59f-da81-2d41-c998-fed8957a975b@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: fc7261d3-faa1-4e64-ed3b-08d7c453e7fc
+x-ms-traffictypediagnostic: DB5EUR01HT079:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Jn3KF51toENzP2Npoicxyji9z9CjEqjFVpiaBq3OioOaW8mVuFMLz38ecOcJ8OMgLMyc6LYfTXdL7bKJS9AclD2FbTkFhFVdBEg5DYVak8oKphPtI9brsNYx9kLK5OQrCF7Zj5a9TQPdCO0KDXMJz1gBSdpPfiVdST0OeocMUnnLkFYjo0pSilENj3EcL9X6
+x-ms-exchange-antispam-messagedata: ma3dbFshHeEX2/XVIdEgnMUAGPt0IfYjmRRt0SUCVgOJOlgA5mkWBs6td6o2PaaPOWhZDvQsWsvJOWjIJQz+7G2b49gsm3J+WeHQ8uMbUgEQqcyb51ip8HnGft4SJhYmWQFKzLl5J8u3xZ+j0q14zA==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <972EFA2F9B6F6F4DA42C93C492443383@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9129d4fe-a17e-2fa6-764c-6a746fa5096d@ti.com>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc7261d3-faa1-4e64-ed3b-08d7c453e7fc
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 18:01:35.2755
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR01HT079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Lokesh Vutla <lokeshvutla@ti.com> [200309 04:53]:
-> Hi Tony,
+On 3/9/20 6:40 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 > 
-> On 06/03/20 11:44 PM, Tony Lindgren wrote:
-> > * Lokesh Vutla <lokeshvutla@ti.com> [200228 09:58]:
-> >> pwm_omap_dmtimer_disable() calls .stop callback which abruptly stops the
-> >> timer counter. This doesn't complete the current pwm cycle and
-> >> immediately disables the pwm. Instead disable the auto reload
-> >> functionality which allows to complete the current pwm cycle and then
-> >> disables the timer.
-> >>
-> >> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> >> ---
-> >>  drivers/pwm/pwm-omap-dmtimer.c | 10 +++++++++-
-> >>  1 file changed, 9 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
-> >> index bc338619232d..89b3c25d02b8 100644
-> >> --- a/drivers/pwm/pwm-omap-dmtimer.c
-> >> +++ b/drivers/pwm/pwm-omap-dmtimer.c
-> >> @@ -93,8 +93,16 @@ static void pwm_omap_dmtimer_disable(struct pwm_chip *chip,
-> >>  {
-> >>  	struct pwm_omap_dmtimer_chip *omap = to_pwm_omap_dmtimer_chip(chip);
-> >>  
-> >> +	/*
-> >> +	 * Disable auto reload so that the current cycle gets completed and
-> >> +	 * then the counter stops.
-> >> +	 */
-> >>  	mutex_lock(&omap->mutex);
-> >> -	omap->pdata->stop(omap->dm_timer);
-> >> +	omap->pdata->set_pwm(omap->dm_timer,
-> >> +			     pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED,
-> >> +			     true, OMAP_TIMER_TRIGGER_OVERFLOW_AND_COMPARE,
-> >> +			     false);
-> >> +
-> >>  	mutex_unlock(&omap->mutex);
-> >>  }
-> > 
-> > I'm seeing an issue with this patch where after use something is
-> > left on and power consumption stays higher by about 30 mW after
-> > use.
+>> On 3/8/20 10:38 PM, Eric W. Biederman wrote:
+>>>
+>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+>>> over the userspace accesses as the arguments from userspace are read.
+>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+>                                 ^ over
+>>
+>> ... is held while waiting for the trace parent to handle PTRACE_EVENT_EXIT
+>> or something?
 > 
-> Interesting...What is the PWM period and duty cycle in the test case?
-> Can you dump the following registers before and after disabling:
-> - TLDR
-> - TMAR
-> - TCLR
-
-Here's the state dumped before and after in omap_dm_timer_set_pwm():
-
-omap_timer 4803e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00000040
-omap_timer 4803e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001842
-omap_timer 4013e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00000040
-omap_timer 4013e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001842
-omap_timer 4013e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00001843
-omap_timer 4013e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001841
-omap_timer 4803e000.timer: XXX set_pwm before: tldr: fffffeb8 tmar: fffffffe tclr: 00001843
-omap_timer 4803e000.timer: XXX set_pwm after: tldr: fffffeb8 tmar: fffffffe tclr: 00001841
-
-So looks like the start bit is still enabled after use?
-
-I think the duty cycle depends on the strength set for rumble-test.c.
-
-> > I can reproduce this easily on droid4 with Sebastian's rumble-test
-> > app[0]. After use, I sometimes also hear the vibrator keep chirping
-> > quietly, so there seems to be some pwm still happening after disable :)
+> Yes.  Let me see if I can phrase that better.
 > 
-> hmm..The line clearly goes down on the scope after the current pwm duty cycle is
-> done and never comes back.
+>> I wonder if we also should mention that
+>> it is held while waiting for the trace parent to
+>> receive the exit code with "wait"?
+> 
+> I don't think we have to spell out the details of how it all works,
+> unless that makes things clearer.  Kernel developers can be expected
+> to figure out how the kernel works.  The critical thing is that it is
+> an indefinite wait for userspace to take action.
+> 
+> But I will look.
+> 
+>>> threads are killed.  The cred_guard_mutex is held over
+>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+>>>
+>>> Any of those can result in deadlock, as the cred_guard_mutex is held
+>>> over a possible indefinite userspace waits for userspace.
+>>>
+>>> Add exec_update_mutex that is only held over exec updating process
+>>
+>> Add ?
+> 
+> Yes.  That is what the change does: add exec_update_mutex.
+> 
 
-OK
+I just kind of missed the "subject" in this sentence,
+like "This patch adds an exec_update_mutex that is ..."
+but english is a foreign language for me, so may be okay as is.
 
-Regards,
 
-Tony
+Bernd.
+
+>>> with the new contents of exec, so that code that needs not to be
+>>> confused by exec changing the mm and the cred in ways that can not
+>>> happen during ordinary execution of a process.
+>>>
+>>> The plan is to switch the users of cred_guard_mutex to
+>>> exec_udpate_mutex one by one.  This lets us move forward while still
+>>
+>> s/udpate/update/
+> 
+> Yes.  Very much so.
+> 
+> Eric
+> 
