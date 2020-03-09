@@ -2,129 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F034717E83D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:22:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9BE17E84C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 20:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgCITWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 15:22:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52992 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbgCITWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:22:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 55DADB06A;
-        Mon,  9 Mar 2020 19:22:47 +0000 (UTC)
-Message-ID: <9e685fce547d808f269e59e2290331e75c66f3e4.camel@suse.de>
-Subject: Re: [PATCH] ARM: dts: bcm283x: Use firmware PM driver for V3D
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        wahrenst@gmx.net
-Date:   Mon, 09 Mar 2020 20:22:45 +0100
-In-Reply-To: <ddcb8fd5-9e35-454c-b38d-d36e7b41ef07@i2se.com>
-References: <20200303173217.3987-1-nsaenzjulienne@suse.de>
-         <736f0c59-352b-03b2-f77f-bfc22171b3fb@i2se.com>
-         <03fcb1e2bc7f3ff389b6dfbf3964e159a93ae835.camel@suse.de>
-         <d3d40174-9c08-f42f-e088-08e23c2dc029@i2se.com>
-         <f2ec22160ac86aec8d252ade7d6eb8789777cc42.camel@suse.de>
-         <01ceb60e-a791-b6ca-352e-ad2e79f264e3@i2se.com>
-         <ddcb8fd5-9e35-454c-b38d-d36e7b41ef07@i2se.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-tZ303xiG7cDiGT02SWOp"
-User-Agent: Evolution 3.34.4 
+        id S1726283AbgCITXz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 15:23:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60073 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbgCITXy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:23:54 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jBNzw-0005xU-TG; Mon, 09 Mar 2020 20:23:33 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 2F3E610408A; Mon,  9 Mar 2020 20:23:32 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, clang-built-linux@googlegroups.com,
+        x86@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Collingbourne <pcc@google.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2 00/20] Introduce common headers
+In-Reply-To: <20200309122429.GB26309@lakrids.cambridge.arm.com>
+References: <20200306133242.26279-1-vincenzo.frascino@arm.com> <3278D604-28F1-47A1-BAB8-D8EB439995E8@amacapital.net> <b18c7ce1-0948-a9e2-2d7e-d019669a71e1@arm.com> <20200309122429.GB26309@lakrids.cambridge.arm.com>
+Date:   Mon, 09 Mar 2020 20:23:32 +0100
+Message-ID: <877dzt72ob.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mark Rutland <mark.rutland@arm.com> writes:
+> On Mon, Mar 09, 2020 at 11:07:08AM +0000, Vincenzo Frascino wrote:
+>> On 3/6/20 4:04 PM, Andy Lutomirski wrote:
+>> >> To solve the problem, I decided to use the approach below:
+>> >>  * Extract from include/linux/ the vDSO required kernel interface
+>> >>    and place it in include/common/
+>> > 
+>> > I really like the approach, but I’m wondering if “common” is the
+>> > right name. This directory is headers that aren’t stable ABI like
+>> > uapi but are shared between the kernel and the vDSO. Regular user
+>> > code should *not* include these, right?
+>> > 
+>> > Would “vdso” or perhaps “private-abi” be clearer?
+>> 
+>> Thanks! These headers are definitely not "uapi" like and they are meant to
+>> evolve in future like any other kernel header. We have just to make sure that
+>> the evolution does not break what we are trying to achieve with this series.
+>
+> Given we already include uapi/* headers in kernel code, I think placing
+> these in a vdso/* namespace would be fine. I think that more clearly
+> expresses the constraints on the headers than private-abi/* would.
 
---=-tZ303xiG7cDiGT02SWOp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yes, that makes most sense.
 
-Hi Stefan,
+Thanks,
 
-On Mon, 2020-03-09 at 16:41 +0100, Stefan Wahren wrote:
-> Hi Nicolas,
->=20
-> On 06.03.20 21:33, Stefan Wahren wrote:
-> > Hi Nicolas,
-> >=20
-> > Am 05.03.20 um 11:44 schrieb Nicolas Saenz Julienne:
-> > > Hi Stefan,
-> > >=20
-> > > On Tue, 2020-03-03 at 20:24 +0100, Stefan Wahren wrote:
-> > > > > > > Note: I tested this on RPi3b, RPi3a+ and RPi2b.
-> > > > > > as i already wrote this prevent X to start on current Raspbian =
-on my
-> > > > > > Raspberry Pi 3A+ (multi_v7_defconfig, no u-boot). We must be ca=
-reful
-> > > > > > here.
-> > > > > >=20
-> > > > > > I will take a look at the debug UART. Maybe there are more help=
-ful
-> > > > > > information.
-> > > > > It seems we're seeing different things, I tested this on raspbian
-> > > > > (multi_v7_defconfig) and on arm64. I'll try again from scratch
-> > > > > tomorrow.
-> > > > My modifications to the Raspbian image (from 13.2.2020) are little:
-> > > >=20
-> > > > - specify devicetree to config.txt
-> > > > - change console to ttyS1 and remove "silent" in cmdline.txt
-> > > > - rename all original kernel7*.img
-> > > > - copy dtb and kernel7.img to boot partition
-> > > > - copy kernel modules to root partition
-> > > Would you mind retesting with the latest linux-next? I validated an i=
-mage
-> > > based
-> > > on 5.6.0-rc4-next-20200305-00001-g285a7a64cd56 and a fresh raspbian
-> > > download on
-> > > RPi3a+ without X issues.
-> > i retested with todays linux-next and the issue persists on my RPi 3A+ =
-/
-> > HP ZR2440w with this patch applied.
->=20
-> I tested my display with a RPI 3B, 3B+ and a Zero W. All of them had the
-> same issue. Btw i used this display the last years for testing the
-> Raspberry Pi.
->=20
-> After that i connected the RPI 3B to my TV screen and it works with the
-> patch applied.
-
-Thanks for taking the time on this. I guess all we have left is looking dee=
-per
-into it. I'll add it to my backlog for now.
-
-Regards,
-Nicolas
-
-
---=-tZ303xiG7cDiGT02SWOp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5ml4UACgkQlfZmHno8
-x/43iAgAkAzhEC+LqzxtkdHiNML8ngJfJVRbuYYwyH9gHGl/3lrYW1ecvisK9ZwB
-aJkbQkDEpPceupdXb9TsNr98lJ1Idhk4b8yZbm2FCzVFnHuIYc2NsxlkGc6fvp9a
-S6BIgQYnfRyBzmMBpLofF7rDmdcd9SBtLqkLTKmJx4WROMK17jREEkOSYLF3//RO
-Z1urTNh2l1hUHq5DGyJvGQX5KMPGYfxoZ1IL4FgLB54DelxscpQxxdgli2RNHKxA
-9WkI0l6XlcL1b5ke6KcoU0lKbPQ3SEcLrZUukqd37JxhgIXu8ow1RK5dAtWOGZVK
-oo6I7gSafUtvGrFpqlNpc9hepfltCQ==
-=/qXY
------END PGP SIGNATURE-----
-
---=-tZ303xiG7cDiGT02SWOp--
-
+        tglx
