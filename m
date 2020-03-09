@@ -2,66 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C69A917E989
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:00:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1FE917E990
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:01:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgCIUAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:00:32 -0400
-Received: from smtprelay0027.hostedemail.com ([216.40.44.27]:55570 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725992AbgCIUAc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:00:32 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id E7891181D3030;
-        Mon,  9 Mar 2020 20:00:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2692:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3873:4321:5007:7903:8603:10004:10400:10848:11232:11658:11914:12296:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:14721:21080:21627:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: angle62_44c5bace4011
-X-Filterd-Recvd-Size: 1773
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  9 Mar 2020 20:00:29 +0000 (UTC)
-Message-ID: <84ef5548ee27e7150d0b7a5702ce50536cea975a.camel@perches.com>
-Subject: Re: [PATCH v2 1/4] kernfs: kvmalloc xattr value instead of kmalloc
-From:   Joe Perches <joe@perches.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Daniel Xu <dxu@dxuuu.xyz>, cgroups@vger.kernel.org,
-        lizefan@huawei.com, hannes@cmpxchg.org, shakeelb@google.com,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        kernel-team@fb.com
-Date:   Mon, 09 Mar 2020 12:58:49 -0700
-In-Reply-To: <20200309195104.GA77841@mtj.thefacebook.com>
-References: <C16IH7NEXW4J.440OGTNY7CWX@dlxu-fedora-R90QNFJV>
-         <6bbfc8b8c9c206d80de43a64bfe4b8083cc2c02f.camel@perches.com>
-         <20200309195104.GA77841@mtj.thefacebook.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1726674AbgCIUBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:01:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37234 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbgCIUBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:01:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 188F3AC15;
+        Mon,  9 Mar 2020 20:01:18 +0000 (UTC)
+Message-ID: <c4f9da4d57374f90632c39fd1403c339a4ed299d.camel@suse.de>
+Subject: Re: [PATCH v2 11/11] ARM: dts: bcm2711: Add vmmc regulator in emmc2
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, f.fainelli@gmail.com,
+        linux-mmc@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
+        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 09 Mar 2020 21:01:16 +0100
+In-Reply-To: <3bd022a6-922f-c20a-8d07-383817549960@i2se.com>
+References: <20200306174413.20634-1-nsaenzjulienne@suse.de>
+         <20200306174413.20634-12-nsaenzjulienne@suse.de>
+         <3bd022a6-922f-c20a-8d07-383817549960@i2se.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-6KLHT23j0gCs6Gdp3wLG"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-03-09 at 15:51 -0400, Tejun Heo wrote:
-> On Mon, Mar 09, 2020 at 12:41:05PM -0700, Joe Perches wrote:
-> > If the need is to allocate from a single block of memory,
-> > perhaps you need a submemory allocator like gen_pool.
-> > (gennalloc.h)
-> > 
-> > Dunno.  Maybe i just don't quite understand your need.
-> 
-> vmalloc is the right thing to do here. vmalloc space isn't a scarce
-> resource on any 64bit machines. On 32bits, which basically are tiny
-> machines at this point, these allocations are both size and quantity
-> limited by other factors (e.g. each cgroup consumes way more memory).
 
-This feels like driving spikes into a living thing
-more than into a
-corpse.
+--=-6KLHT23j0gCs6Gdp3wLG
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I've still got more than a few 32-bit devices around.
+On Mon, 2020-03-09 at 21:00 +0100, Stefan Wahren wrote:
+> Hi Nicolas,
+>=20
+> Am 06.03.20 um 18:44 schrieb Nicolas Saenz Julienne:
+> > The SD card power can be controlled trough a pin routed into the board'=
+s
+> > external GPIO expander. Turn that into a regulator and provide it to
+> > emmc2.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+> >  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >=20
+> > diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> > b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> > index b0ea8233b636..a2da058396fe 100644
+> > --- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> > +++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+> > @@ -55,6 +55,16 @@ sd_io_1v8_reg: sd_io_1v8_reg {
+> >  			  3300000 0x0>;
+> >  		status =3D "okay";
+> >  	};
+> > +
+> > +	sd_vcc_reg: sd_vcc_reg {
+> > +		compatible =3D "regulator-fixed";
+>=20
+> i think we need to enable CONFIG_REGULATOR_FIXED_VOLTAGE in
+> bcm2835_defconfig
 
+I'll take it into account for v3,
+
+Thanks!
+Nicolas
+
+
+--=-6KLHT23j0gCs6Gdp3wLG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5moIwACgkQlfZmHno8
+x/4VHAf/QZBKav2zxLbotNZcl2AuN7wPf98F0DkRScSdf/GHbyP5a/Zvu4oOFMyg
+FELLHQSEsK0cO+2vYoTf+u59oT2m36XksJjMVBjU1diVaavrmOS7QruV9FnLlo7t
+tfmbC5LMuLRnhFy2jFe4WAIFANIAi6EK8+G/z9QZemwupAIFn8DMmYDkm6xjgyKg
+YIRR2/l7RQ9L1mfUXFWZrzA6gMdxGJQX8998BNNdWJktPrGC5ijdazJvmA+ceC1v
+nptYWQqVxEl864u5eiy1rinVYFNXk4/XucTlFShMAHVdTi2nQvJN6bsDQXWeCDnX
+cHm9lkUI0i1KDAQBCtcMflqwEW+fpQ==
+=YTCh
+-----END PGP SIGNATURE-----
+
+--=-6KLHT23j0gCs6Gdp3wLG--
 
