@@ -2,179 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F4917E9E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:23:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 684E417E9FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgCIUWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:22:53 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.72]:29439 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726096AbgCIUWw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:22:52 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id E4CEBEC12
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:22:51 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BOvLj5XlDSl8qBOvLjgmcP; Mon, 09 Mar 2020 15:22:51 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jMunP9V0d2u36jTKl+ej5qOp8rIOFeGZYKT65z+gTFU=; b=g8S7dm5B0nbkMWqRAFALSxChfs
-        RqzmZHbK/ljT7/LfvfOZKT8f166SHIXM/44h2aI2ypZXsCqaT3plrohRWk4KXZSl8y9Titmf5D09W
-        fKfF067lg03NkOI3OYfOD0O6bPgRooJGpqbpk+76c6eG1B2L86Nwx8JskhzSKckOKL+xZWGzcmDFy
-        wdj5+4Vgcpmbi8J3+6eczzV5iDRyEG9iZxLpjQnsBXY0oA1S9hbidLRcUGmpI77bXysNSG7XNlxBc
-        xguXuLrjYTOjL0nZiTfgkZiTyLAL4yLqt2R74UYEx1gbycvN5jgR37b4j5/W2KZEu6WXKZqaMvkXR
-        Wd9G8ljw==;
-Received: from [201.162.168.201] (port=4007 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBOvJ-0010Ml-SA; Mon, 09 Mar 2020 15:22:50 -0500
-Date:   Mon, 9 Mar 2020 15:26:02 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Phillip Lougher <phillip@squashfs.org.uk>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] squashfs: squashfs_fs.h: Replace zero-length array
- with flexible-array member
-Message-ID: <20200309202602.GA9219@embeddedor>
+        id S1726275AbgCIU1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:27:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbgCIU1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:27:16 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2675620409;
+        Mon,  9 Mar 2020 20:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583785635;
+        bh=Cp2OSP+6393xKUwgxAT6OGHAr/9fHNhb62H4ClztTX8=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=wKWOOwaEs7ml5tl0PLrde2wyBO0l8WOs6GCqSpiDv0Aq14wakbNp25Y0Hn0MFW2Nx
+         osCbeJkh/eNAAvRDA3k098kq5lRApEBb9lMfioQKyS6mddhlx8eB0mWTgRRaBzmFpL
+         EW/OI6UcUFaELfFoNFy8LQ6Wm0MndX2RcOrZgsI4=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id EB47E3522730; Mon,  9 Mar 2020 13:27:14 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 13:27:14 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        kernel-team@fb.com, mingo@kernel.org, elver@google.com,
+        andreyknvl@google.com, glider@google.com, dvyukov@google.com,
+        cai@lca.pw, boqun.feng@gmail.com
+Subject: Re: [PATCH kcsan 26/32] kcsan, trace: Make KCSAN compatible with
+ tracing
+Message-ID: <20200309202714.GT2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200309190359.GA5822@paulmck-ThinkPad-P72>
+ <20200309190420.6100-26-paulmck@kernel.org>
+ <20200309155722.49d6bb93@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20200309155722.49d6bb93@gandalf.local.home>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.168.201
-X-Source-L: No
-X-Exim-ID: 1jBOvJ-0010Ml-SA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.168.201]:4007
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 28
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Mon, Mar 09, 2020 at 03:57:22PM -0400, Steven Rostedt wrote:
+> On Mon,  9 Mar 2020 12:04:14 -0700
+> paulmck@kernel.org wrote:
+> 
+> > From: Marco Elver <elver@google.com>
+> > 
+> > Previously the system would lock up if ftrace was enabled together with
+> > KCSAN. This is due to recursion on reporting if the tracer code is
+> > instrumented with KCSAN.
+> > 
+> > To avoid this for all types of tracing, disable KCSAN instrumentation
+> > for all of kernel/trace.
+> > 
+> > Furthermore, since KCSAN relies on udelay() to introduce delay, we have
+> > to disable ftrace for udelay() (currently done for x86) in case KCSAN is
+> > used together with lockdep and ftrace. The reason is that it may corrupt
+> > lockdep IRQ flags tracing state due to a peculiar case of recursion
+> > (details in Makefile comment).
+> > 
+> > Signed-off-by: Marco Elver <elver@google.com>
+> > Reported-by: Qian Cai <cai@lca.pw>
+> > Cc: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Applied, thank you!
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+							Thanx, Paul
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/squashfs/squashfs_fs.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/fs/squashfs/squashfs_fs.h b/fs/squashfs/squashfs_fs.h
-index 7187bd1a30ea..8d64edb80ebf 100644
---- a/fs/squashfs/squashfs_fs.h
-+++ b/fs/squashfs/squashfs_fs.h
-@@ -262,7 +262,7 @@ struct squashfs_dir_index {
- 	__le32			index;
- 	__le32			start_block;
- 	__le32			size;
--	unsigned char		name[0];
-+	unsigned char		name[];
- };
- 
- struct squashfs_base_inode {
-@@ -327,7 +327,7 @@ struct squashfs_symlink_inode {
- 	__le32			inode_number;
- 	__le32			nlink;
- 	__le32			symlink_size;
--	char			symlink[0];
-+	char			symlink[];
- };
- 
- struct squashfs_reg_inode {
-@@ -341,7 +341,7 @@ struct squashfs_reg_inode {
- 	__le32			fragment;
- 	__le32			offset;
- 	__le32			file_size;
--	__le16			block_list[0];
-+	__le16			block_list[];
- };
- 
- struct squashfs_lreg_inode {
-@@ -358,7 +358,7 @@ struct squashfs_lreg_inode {
- 	__le32			fragment;
- 	__le32			offset;
- 	__le32			xattr;
--	__le16			block_list[0];
-+	__le16			block_list[];
- };
- 
- struct squashfs_dir_inode {
-@@ -389,7 +389,7 @@ struct squashfs_ldir_inode {
- 	__le16			i_count;
- 	__le16			offset;
- 	__le32			xattr;
--	struct squashfs_dir_index	index[0];
-+	struct squashfs_dir_index	index[];
- };
- 
- union squashfs_inode {
-@@ -410,7 +410,7 @@ struct squashfs_dir_entry {
- 	__le16			inode_number;
- 	__le16			type;
- 	__le16			size;
--	char			name[0];
-+	char			name[];
- };
- 
- struct squashfs_dir_header {
-@@ -428,12 +428,12 @@ struct squashfs_fragment_entry {
- struct squashfs_xattr_entry {
- 	__le16			type;
- 	__le16			size;
--	char			data[0];
-+	char			data[];
- };
- 
- struct squashfs_xattr_val {
- 	__le32			vsize;
--	char			value[0];
-+	char			value[];
- };
- 
- struct squashfs_xattr_id {
--- 
-2.25.0
-
+> -- Steve
+> 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Tested-by: Qian Cai <cai@lca.pw>
+> > ---
+> >  arch/x86/lib/Makefile | 5 +++++
+> >  kernel/kcsan/Makefile | 2 ++
+> >  kernel/trace/Makefile | 3 +++
+> >  3 files changed, 10 insertions(+)
+> > 
+> > diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+> > index 432a077..6110bce7 100644
+> > --- a/arch/x86/lib/Makefile
+> > +++ b/arch/x86/lib/Makefile
+> > @@ -8,6 +8,11 @@ KCOV_INSTRUMENT_delay.o	:= n
+> >  
+> >  # KCSAN uses udelay for introducing watchpoint delay; avoid recursion.
+> >  KCSAN_SANITIZE_delay.o := n
+> > +ifdef CONFIG_KCSAN
+> > +# In case KCSAN+lockdep+ftrace are enabled, disable ftrace for delay.o to avoid
+> > +# lockdep -> [other libs] -> KCSAN -> udelay -> ftrace -> lockdep recursion.
+> > +CFLAGS_REMOVE_delay.o = $(CC_FLAGS_FTRACE)
+> > +endif
+> >  
+> >  # Early boot use of cmdline; don't instrument it
+> >  ifdef CONFIG_AMD_MEM_ENCRYPT
+> > diff --git a/kernel/kcsan/Makefile b/kernel/kcsan/Makefile
+> > index df6b779..d4999b3 100644
+> > --- a/kernel/kcsan/Makefile
+> > +++ b/kernel/kcsan/Makefile
+> > @@ -4,6 +4,8 @@ KCOV_INSTRUMENT := n
+> >  UBSAN_SANITIZE := n
+> >  
+> >  CFLAGS_REMOVE_core.o = $(CC_FLAGS_FTRACE)
+> > +CFLAGS_REMOVE_debugfs.o = $(CC_FLAGS_FTRACE)
+> > +CFLAGS_REMOVE_report.o = $(CC_FLAGS_FTRACE)
+> >  
+> >  CFLAGS_core.o := $(call cc-option,-fno-conserve-stack,) \
+> >  	$(call cc-option,-fno-stack-protector,)
+> > diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+> > index 0e63db6..9072486 100644
+> > --- a/kernel/trace/Makefile
+> > +++ b/kernel/trace/Makefile
+> > @@ -6,6 +6,9 @@ ifdef CONFIG_FUNCTION_TRACER
+> >  ORIG_CFLAGS := $(KBUILD_CFLAGS)
+> >  KBUILD_CFLAGS = $(subst $(CC_FLAGS_FTRACE),,$(ORIG_CFLAGS))
+> >  
+> > +# Avoid recursion due to instrumentation.
+> > +KCSAN_SANITIZE := n
+> > +
+> >  ifdef CONFIG_FTRACE_SELFTEST
+> >  # selftest needs instrumentation
+> >  CFLAGS_trace_selftest_dynamic.o = $(CC_FLAGS_FTRACE)
+> 
