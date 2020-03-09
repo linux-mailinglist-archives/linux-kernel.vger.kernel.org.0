@@ -2,97 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D1117EAC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF63A17EAD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgCIVH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:07:58 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36321 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgCIVH4 (ORCPT
+        id S1727089AbgCIVIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:08:55 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42910 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbgCIVIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:07:56 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g12so4508382plo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 14:07:55 -0700 (PDT)
+        Mon, 9 Mar 2020 17:08:52 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v11so13021448wrm.9;
+        Mon, 09 Mar 2020 14:08:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Wg7ehxrunSfoR3umIXJG6GeJRSgWVF/eVhTjd0DeUpo=;
-        b=czH3TJwKaynTxAvppZyJ015RDYBkBPs2pb5+XLo29ytW+Ib2kKleMNca9WHbclK+ut
-         s40C6dyix2Rh5Dng2HUhh6pbw3+n4CtUwPtKc/By8YuLfx/lG4emfrekiHNNKd8R3DFa
-         lgt3hjPrRhh7RCQYwjI0Ie4IXv6jEvCuzh0Lo=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3+pDepDyRd9WIgsrKAnVdJt5zeWPjx4zXJajcwJEkC8=;
+        b=YYjBZ90UQunn2F8G3mVjPWqz4msh8jVIw2W+YsV4erRhiDx3EgaPVm47CrxFLKX5iD
+         fdZdCIOv4SBPx8tdJKJt7Bc69XMYFF/UJbBbTgVcbH6Qif20OGc2A/SsfX230CVAMMaZ
+         SjJgnG1FpYfPyp+n3i3ExSQqaAwZJD9uLwIxnT6ogwxmyZLUBrD1zOzM8cht/JeTEHje
+         2uKeION61n0HiUQbW5ChJ8gZOPrL6uqPRTiitJRH0F6GR9ITVTxhL+WI2zD/Ye7xNAMQ
+         +VMXSNUvYOA83qwBdhHDx/loaeify5KtNI2xsTVcMFVR5Jb/BoInCMl4VGQX8i9hZrS3
+         ApqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Wg7ehxrunSfoR3umIXJG6GeJRSgWVF/eVhTjd0DeUpo=;
-        b=CI0prWqbN/OEJv7OqPYQu0yXWLbKCVrMia3qlfJvXHm5IR4+pT6Bq0qm8Ktzj1E3qq
-         4MlIJq/N9/RFx6abFKK0D0CN39xQmDuz7ZMypNc6MbFe94aHsll+QsIgwyYfhv1gR97u
-         ZLyyFxe8RUT97UGyoZfmU9xM0NIl/vG4h1HED+BRevHXGwc91R0eJjl9/Ux3ZOoIlH8I
-         5U0UjqGhQOIb6FZxcf9UdzJQ4GsthNxsXi1TIT4A9KCDCIr5/ZjkvIGTA1rQ2LTER+Ne
-         Xf9FDji3P7WM5ZE9tFfnlilIu4EjQG5M5XRfW76j6cOmS+oR/7XUJy7QKxWjsfKF3s2i
-         0OoA==
-X-Gm-Message-State: ANhLgQ3mMyCirOFH1XX7KMseOFsT0P3Lode9l0KP5VjkBPUsITQB4H5z
-        QRRBvhzvfnJqTYV51WFPgYqnRg==
-X-Google-Smtp-Source: ADFU+vtxrF3SIlgRDL8tah3k0WYVLq8W7zIdoqLKtPNGtefE87yW3fuwxIJr+qp9R7BfS0ylIEkFOw==
-X-Received: by 2002:a17:90a:21ce:: with SMTP id q72mr926921pjc.160.1583788075123;
-        Mon, 09 Mar 2020 14:07:55 -0700 (PDT)
-Received: from dev-psajeepa.dev.purestorage.com ([192.30.188.252])
-        by smtp.googlemail.com with ESMTPSA id w206sm2876936pfc.54.2020.03.09.14.07.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Mar 2020 14:07:54 -0700 (PDT)
-From:   Prabhath Sajeepa <psajeepa@purestorage.com>
-To:     kbusch@kernel.org, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     psajeepa@purestorage.com, roland@purestorage.com
-Subject: [PATCH] nvme-rdma: Avoid double freeing of async event data
-Date:   Mon,  9 Mar 2020 15:07:53 -0600
-Message-Id: <1583788073-39681-1-git-send-email-psajeepa@purestorage.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3+pDepDyRd9WIgsrKAnVdJt5zeWPjx4zXJajcwJEkC8=;
+        b=mmffplLlc+g4JwLMMSKXQBWf5ecCMEXwI7Ijq3ypdzPfoenzbEcYziC5WvuLhUrHVo
+         Y7CWtniVQy8LuqQBaQVPizV7kjzl69P1JbhgW4u8kRKMqhhSotddOlzavXueEwnByWSG
+         46u/mBheET+1VSwEHcw2AoMQNgIIKFUvnQNR+da4VkdErgCfB0zAlBDPtDjy7O4Egs1L
+         M9cu5kqPiF4IkazJDjZ7qCQNMKlYOLRruZ1y1kS9lEOborT2HScJH5o+jQKMDPt1KZL7
+         s6Nr0Bsgc72u2XwlKmsnpEev2Kf3ZE6noB9Iyq+/Fpcot+DfBQkiSePsOjmPxiTX1Wbn
+         SD+g==
+X-Gm-Message-State: ANhLgQ272zccZxfy8ovsMCLTtVWkGl3219ms7nQZmoqESzMceFBdxER5
+        1TJEe3gId8fAp67cIthaUhc=
+X-Google-Smtp-Source: ADFU+vuLGgm5z604QlSI/vPeJh9b9W6r9PDuFcm3SzqgCTn7hktSoOptMylhwduYM0hpwRj6iiyR6w==
+X-Received: by 2002:a05:6000:44:: with SMTP id k4mr8141644wrx.205.1583788130125;
+        Mon, 09 Mar 2020 14:08:50 -0700 (PDT)
+Received: from localhost.localdomain ([79.115.60.40])
+        by smtp.gmail.com with ESMTPSA id j205sm1016275wma.42.2020.03.09.14.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 14:08:49 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
+        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
+        mhosny@nvidia.com, michael@walle.cc, peng.ma@nxp.com
+Subject: [PATCH v2 5/6] arm64: dts: ls1028a: Specify the DMA channels for the DSPI controllers
+Date:   Mon,  9 Mar 2020 23:07:54 +0200
+Message-Id: <20200309210755.6759-6-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200309210755.6759-1-olteanv@gmail.com>
+References: <20200309210755.6759-1-olteanv@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timeout of identify cmd, which is invoked as part of admin queue
-creation, can result in freeing of async event data both in
-nvme_rdma_timeout handler and error handling path of
-nvme_rdma_configure_admin queue thus causing NULL pointer reference.
-Call Trace:
- ? nvme_rdma_setup_ctrl+0x223/0x800 [nvme_rdma]
- nvme_rdma_create_ctrl+0x2ba/0x3f7 [nvme_rdma]
- nvmf_dev_write+0xa54/0xcc6 [nvme_fabrics]
- __vfs_write+0x1b/0x40
- vfs_write+0xb2/0x1b0
- ksys_write+0x61/0xd0
- __x64_sys_write+0x1a/0x20
- do_syscall_64+0x60/0x1e0
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
-Reviewed-by: Roland Dreier <roland@purestorage.com>
+LS1028A has a functional connection to the eDMA module. Even if the
+spi-fsl-dspi.c driver is not using DMA for LS1028A now, define the slots
+in the DMAMUX for connecting the eDMA channels to the 3 DSPI
+controllers.
+
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
- drivers/nvme/host/rdma.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Changes in v2:
+None.
 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index 3e85c5c..0fe08c4 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -850,9 +850,11 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- 	if (new)
- 		blk_mq_free_tag_set(ctrl->ctrl.admin_tagset);
- out_free_async_qe:
--	nvme_rdma_free_qe(ctrl->device->dev, &ctrl->async_event_sqe,
--		sizeof(struct nvme_command), DMA_TO_DEVICE);
--	ctrl->async_event_sqe.data = NULL;
-+	if (ctrl->async_event_sqe.data) {
-+		nvme_rdma_free_qe(ctrl->device->dev, &ctrl->async_event_sqe,
-+			sizeof(struct nvme_command), DMA_TO_DEVICE);
-+		ctrl->async_event_sqe.data = NULL;
-+	}
- out_free_queue:
- 	nvme_rdma_free_queue(&ctrl->queues[0]);
- 	return error;
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 515e0a1b934f..18155273a46e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -298,6 +298,8 @@
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "dspi";
+ 			clocks = <&clockgen 4 1>;
++			dmas = <&edma0 0 62>, <&edma0 0 60>;
++			dma-names = "tx", "rx";
+ 			spi-num-chipselects = <4>;
+ 			little-endian;
+ 			status = "disabled";
+@@ -311,6 +313,8 @@
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "dspi";
+ 			clocks = <&clockgen 4 1>;
++			dmas = <&edma0 0 58>, <&edma0 0 56>;
++			dma-names = "tx", "rx";
+ 			spi-num-chipselects = <4>;
+ 			little-endian;
+ 			status = "disabled";
+@@ -324,6 +328,8 @@
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "dspi";
+ 			clocks = <&clockgen 4 1>;
++			dmas = <&edma0 0 54>, <&edma0 0 2>;
++			dma-names = "tx", "rx";
+ 			spi-num-chipselects = <3>;
+ 			little-endian;
+ 			status = "disabled";
 -- 
-2.7.4
+2.17.1
 
