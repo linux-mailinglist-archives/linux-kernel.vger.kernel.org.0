@@ -2,95 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DA8717E0A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:53:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7390F17E0AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 13:56:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgCIMwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 08:52:51 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56882 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgCIMwu (ORCPT
+        id S1726427AbgCIM4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 08:56:21 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38396 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgCIM4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 08:52:50 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 029CpxOA012547;
-        Mon, 9 Mar 2020 07:51:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583758319;
-        bh=J/GfNup1LbUZmzynPCLejvsNC0QrUORNG+Rvtweybn0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=dBopjlb1HaIwBaw1TQwj0v5NuTqCLZgs6UnQLgTxJYosKuHNXUyNZ2uHd8M4Wk8xA
-         BrtOGFBSHMiTccdV4W5BhD7woUMHzVeMYY9zEHE9ZL0UHPMCDAupnQzfec+O0UhNPb
-         vnH6//EB6fWZaxEr8XWheZYeWW0n8aDWyBt6bY1g=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 029CpxZ8022346
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Mar 2020 07:51:59 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
- 2020 07:51:59 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Mar 2020 07:51:59 -0500
-Received: from [10.250.77.18] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029CpwtI045259;
-        Mon, 9 Mar 2020 07:51:58 -0500
-Subject: Re: [PATCH v1] power: supply: bq27xxx_battery: Silence deferred-probe
- error
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200308215143.27823-1-digetx@gmail.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <7493a430-905e-baf4-1265-a6b3eb31f79f@ti.com>
-Date:   Mon, 9 Mar 2020 08:51:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 9 Mar 2020 08:56:21 -0400
+Received: by mail-wm1-f65.google.com with SMTP id n2so2974930wmc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 05:56:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gq8lvDnUmFCRgH6sF6xrnqEuLK4v2Ud/2P7jS7ef2Bo=;
+        b=PfwQ3S/u1vkreU2Wtg6IVlJOFZUNrKL5U/1cxy331BEg4A/CgmaX1212jj1/lBhFVr
+         Zm0kXYMTSTy1Z+AMSSO2+vMSrJuGdnHbxxfoNpQo96aeswrDkCkSEu2TOmAMBSFqNkLQ
+         +XK8BwyzKdU9epLMXEOM6Zr80gtJF4BqfbCjsqA8wsohoqJJ8ScthCTfLT4RhRROsNkj
+         TkERNGr05edx0JZmaiodZeLVAC5IHZCUBQ5T5HjkFfJggFu2DvPV3IhmkfLq2/4MWOkd
+         /qTxM/BL0EonXrp0PKFAP22JDMBlv+RtpwxWu2U/3hJBF+AIjsno9fnk4c6KNFKFH3Bf
+         E6vg==
+X-Gm-Message-State: ANhLgQ09YwmqfhIbxoAt/vEhdvdstPe8B1MzXwcOEfA9ZSMvfPYBclcT
+        BlQ3obIZCUqL38LCE1C96fA=
+X-Google-Smtp-Source: ADFU+vsP+Jrln3/r7fb9RQkXChPfF5rGSDid6SM6LWBFHSC/65uEv1bVz/YB4D7HcoTj4W+A+t63gg==
+X-Received: by 2002:a7b:c2a2:: with SMTP id c2mr19703362wmk.19.1583758579074;
+        Mon, 09 Mar 2020 05:56:19 -0700 (PDT)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id c8sm52475887wru.7.2020.03.09.05.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 05:56:18 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 13:56:17 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, david@redhat.com,
+        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
+        osalvador@suse.de, rppt@linux.ibm.com
+Subject: Re: [PATCH v3 1/7] mm/hotplug: fix hot remove failure in
+ SPARSEMEM|!VMEMMAP case
+Message-ID: <20200309125617.GO8447@dhcp22.suse.cz>
+References: <20200307084229.28251-1-bhe@redhat.com>
+ <20200307084229.28251-2-bhe@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200308215143.27823-1-digetx@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307084229.28251-2-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/8/20 5:51 PM, Dmitry Osipenko wrote:
-> The driver fails to probe with -EPROBE_DEFER if battery's power supply
-> (charger driver) isn't ready yet and this results in a bit noisy error
-> message in KMSG during kernel's boot up. Let's silence the harmless
-> error message.
+On Sat 07-03-20 16:42:23, Baoquan He wrote:
+> In section_deactivate(), pfn_to_page() doesn't work any more after
+> ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
+> It caused hot remove failure:
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> kernel BUG at mm/page_alloc.c:4806!
+> invalid opcode: 0000 [#1] SMP PTI
+> CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+> Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+> RIP: 0010:free_pages+0x85/0xa0
+> Call Trace:
+>  __remove_pages+0x99/0xc0
+>  arch_remove_memory+0x23/0x4d
+>  try_remove_memory+0xc8/0x130
+>  ? walk_memory_blocks+0x72/0xa0
+>  __remove_memory+0xa/0x11
+>  acpi_memory_device_remove+0x72/0x100
+>  acpi_bus_trim+0x55/0x90
+>  acpi_device_hotplug+0x2eb/0x3d0
+>  acpi_hotplug_work_fn+0x1a/0x30
+>  process_one_work+0x1a7/0x370
+>  worker_thread+0x30/0x380
+>  ? flush_rcu_work+0x30/0x30
+>  kthread+0x112/0x130
+>  ? kthread_create_on_node+0x60/0x60
+>  ret_from_fork+0x35/0x40
+> 
+> Let's move the ->section_mem_map resetting after depopulate_section_memmap()
+> to fix it.
+> 
+> Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Cc: stable@vger.kernel.org
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
 > ---
-
-
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-
-
->  drivers/power/supply/bq27xxx_battery.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  mm/sparse.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-> index 195c18c2f426..664e50103eaa 100644
-> --- a/drivers/power/supply/bq27xxx_battery.c
-> +++ b/drivers/power/supply/bq27xxx_battery.c
-> @@ -1885,7 +1885,10 @@ int bq27xxx_battery_setup(struct bq27xxx_device_info *di)
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 42c18a38ffaa..1b50c15677d7 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -734,6 +734,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  	struct mem_section *ms = __pfn_to_section(pfn);
+>  	bool section_is_early = early_section(ms);
+>  	struct page *memmap = NULL;
+> +	bool empty = false;
+>  	unsigned long *subsection_map = ms->usage
+>  		? &ms->usage->subsection_map[0] : NULL;
 >  
->  	di->bat = power_supply_register_no_ws(di->dev, psy_desc, &psy_cfg);
->  	if (IS_ERR(di->bat)) {
-> -		dev_err(di->dev, "failed to register battery\n");
-> +		if (PTR_ERR(di->bat) == -EPROBE_DEFER)
-> +			dev_dbg(di->dev, "failed to register battery, deferring probe\n");
-> +		else
-> +			dev_err(di->dev, "failed to register battery\n");
->  		return PTR_ERR(di->bat);
+> @@ -764,7 +765,8 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  	 * For 2/ and 3/ the SPARSEMEM_VMEMMAP={y,n} cases are unified
+>  	 */
+>  	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
+> -	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION)) {
+> +	empty = bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION);
+> +	if (empty) {
+>  		unsigned long section_nr = pfn_to_section_nr(pfn);
+>  
+>  		/*
+> @@ -779,13 +781,15 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+>  			ms->usage = NULL;
+>  		}
+>  		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
+> -		ms->section_mem_map = (unsigned long)NULL;
 >  	}
 >  
+>  	if (section_is_early && memmap)
+>  		free_map_bootmem(memmap);
+>  	else
+>  		depopulate_section_memmap(pfn, nr_pages, altmap);
+> +
+> +	if (empty)
+> +		ms->section_mem_map = (unsigned long)NULL;
+>  }
+>  
+>  static struct page * __meminit section_activate(int nid, unsigned long pfn,
+> -- 
+> 2.17.2
 > 
+
+-- 
+Michal Hocko
+SUSE Labs
