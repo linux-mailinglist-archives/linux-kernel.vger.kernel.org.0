@@ -2,219 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4189517DC00
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C8717DC1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:07:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgCIJAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:00:50 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51529 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726027AbgCIJAt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:00:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583744448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=Ol0a10fhXS7pBH4kUfBRUpwmxg7Xm0ZhyzgQDM9wbok=;
-        b=fSvjJy/V50helgmqLpVbEhfQt0apeKQjxWQhdOWjV2ehpvD1d9gcHbqZ6psyQZjN4Yc+A6
-        7xFbvAsg3nnjt3XMaYSo2f0ghbtywtqJVhhW7y8V+7p1QRC4u/+yqIaYGaWHxabQSoTfzi
-        LTM2DBmuXSkYoQBcWeKMB/eSKOG+2bA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-189--AK_XTlCO_ushKVhLG7THA-1; Mon, 09 Mar 2020 05:00:44 -0400
-X-MC-Unique: -AK_XTlCO_ushKVhLG7THA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B82B78010E7;
-        Mon,  9 Mar 2020 09:00:42 +0000 (UTC)
-Received: from [10.36.118.32] (unknown [10.36.118.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 467B362667;
-        Mon,  9 Mar 2020 09:00:39 +0000 (UTC)
-Subject: Re: [PATCH v3 4/7] mm/sparse.c: only use subsection map in VMEMMAP
- case
-To:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@suse.com,
-        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
-        osalvador@suse.de, rppt@linux.ibm.com
-References: <20200307084229.28251-1-bhe@redhat.com>
- <20200307084229.28251-5-bhe@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- mQINBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABtCREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT6JAlgEEwEIAEICGwMFCQlmAYAGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl3pImkCGQEACgkQTd4Q
- 9wD/g1o+VA//SFvIHUAvul05u6wKv/pIR6aICPdpF9EIgEU448g+7FfDgQwcEny1pbEzAmiw
- zAXIQ9H0NZh96lcq+yDLtONnXk/bEYWHHUA014A1wqcYNRY8RvY1+eVHb0uu0KYQoXkzvu+s
- Dncuguk470XPnscL27hs8PgOP6QjG4jt75K2LfZ0eAqTOUCZTJxA8A7E9+XTYuU0hs7QVrWJ
- jQdFxQbRMrYz7uP8KmTK9/Cnvqehgl4EzyRaZppshruKMeyheBgvgJd5On1wWq4ZUV5PFM4x
- II3QbD3EJfWbaJMR55jI9dMFa+vK7MFz3rhWOkEx/QR959lfdRSTXdxs8V3zDvChcmRVGN8U
- Vo93d1YNtWnA9w6oCW1dnDZ4kgQZZSBIjp6iHcA08apzh7DPi08jL7M9UQByeYGr8KuR4i6e
- RZI6xhlZerUScVzn35ONwOC91VdYiQgjemiVLq1WDDZ3B7DIzUZ4RQTOaIWdtXBWb8zWakt/
- ztGhsx0e39Gvt3391O1PgcA7ilhvqrBPemJrlb9xSPPRbaNAW39P8ws/UJnzSJqnHMVxbRZC
- Am4add/SM+OCP0w3xYss1jy9T+XdZa0lhUvJfLy7tNcjVG/sxkBXOaSC24MFPuwnoC9WvCVQ
- ZBxouph3kqc4Dt5X1EeXVLeba+466P1fe1rC8MbcwDkoUo65Ag0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAGJAiUEGAECAA8FAlXLn5ECGwwFCQlmAYAACgkQTd4Q
- 9wD/g1qA6w/+M+ggFv+JdVsz5+ZIc6MSyGUozASX+bmIuPeIecc9UsFRatc91LuJCKMkD9Uv
- GOcWSeFpLrSGRQ1Z7EMzFVU//qVs6uzhsNk0RYMyS0B6oloW3FpyQ+zOVylFWQCzoyyf227y
- GW8HnXunJSC+4PtlL2AY4yZjAVAPLK2l6mhgClVXTQ/S7cBoTQKP+jvVJOoYkpnFxWE9pn4t
- H5QIFk7Ip8TKr5k3fXVWk4lnUi9MTF/5L/mWqdyIO1s7cjharQCstfWCzWrVeVctpVoDfJWp
- 4LwTuQ5yEM2KcPeElLg5fR7WB2zH97oI6/Ko2DlovmfQqXh9xWozQt0iGy5tWzh6I0JrlcxJ
- ileZWLccC4XKD1037Hy2FLAjzfoWgwBLA6ULu0exOOdIa58H4PsXtkFPrUF980EEibUp0zFz
- GotRVekFAceUaRvAj7dh76cToeZkfsjAvBVb4COXuhgX6N4pofgNkW2AtgYu1nUsPAo+NftU
- CxrhjHtLn4QEBpkbErnXQyMjHpIatlYGutVMS91XTQXYydCh5crMPs7hYVsvnmGHIaB9ZMfB
- njnuI31KBiLUks+paRkHQlFcgS2N3gkRBzH7xSZ+t7Re3jvXdXEzKBbQ+dC3lpJB0wPnyMcX
- FOTT3aZT7IgePkt5iC/BKBk3hqKteTnJFeVIT7EC+a6YUFg=
-Organization: Red Hat GmbH
-Message-ID: <b62c23fe-e137-db65-8818-2b8f5013ef74@redhat.com>
-Date:   Mon, 9 Mar 2020 10:00:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726497AbgCIJHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:07:44 -0400
+Received: from mga01.intel.com ([192.55.52.88]:41673 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbgCIJHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 05:07:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 02:07:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,532,1574150400"; 
+   d="scan'208";a="276438111"
+Received: from pgsmsx108.gar.corp.intel.com ([10.221.44.103])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Mar 2020 02:07:41 -0700
+Received: from pgsmsx102.gar.corp.intel.com ([169.254.6.245]) by
+ PGSMSX108.gar.corp.intel.com ([169.254.8.177]) with mapi id 14.03.0439.000;
+ Mon, 9 Mar 2020 17:02:58 +0800
+From:   "Pan, Harry" <harry.pan@intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, Harry Pan <gs0622@gmail.com>,
+        "Jacob Pan" <jacob.jun.pan@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH v3] intel_idle: Add Comet Lake support
+Thread-Topic: [PATCH v3] intel_idle: Add Comet Lake support
+Thread-Index: AQHV8TuIsnm0plXkJ0qxTNV1fBgP1Kg3rPoAgACovO2AABVjAIAHke5k
+Date:   Mon, 9 Mar 2020 09:02:57 +0000
+Message-ID: <6089B7674E6F464F847AB76B599E0EAA78AB6A98@PGSMSX102.gar.corp.intel.com>
+References: <20200227013411.1.Ica3bb9fa898499d94e0b0a2bfa08ec46c89d84fa@changeid>
+ <20200303170948.1.I108734f38ade020c3e5da825839dca11d2a2ff87@changeid>
+ <CAJZ5v0j+bx5fh1wv738MNoui_SaZ-c21rDnZkWOqi_GCVg5stQ@mail.gmail.com>
+ <F8C6368A-1537-482B-8FE5-350A18D936A8@intel.com>,<CAJZ5v0iBMiGKeFXRTLkR8oFQbdCJq0TnhpFZkMBK4gF0VNjumA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iBMiGKeFXRTLkR8oFQbdCJq0TnhpFZkMBK4gF0VNjumA@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.9.41]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20200307084229.28251-5-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.03.20 09:42, Baoquan He wrote:
-> Currently, to support subsection aligned memory region adding for pmem,
-> subsection map is added to track which subsection is present.
-> 
-> However, config ZONE_DEVICE depends on SPARSEMEM_VMEMMAP. It means
-> subsection map only makes sense when SPARSEMEM_VMEMMAP enabled. For the
-> classic sparse, subsection map is meaningless and confusing.
-> 
-> About the classic sparse which doesn't support subsection hotplug, Dan
-> said it's more because the effort and maintenance burden outweighs the
-> benefit. Besides, the current 64 bit ARCHes all enable
-> SPARSEMEM_VMEMMAP_ENABLE by default.
-> 
-> Combining the above reasons, no need to provide subsection map and the
-> relevant handling for the classic sparse. Handle it with this patch.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  include/linux/mmzone.h |  2 ++
->  mm/sparse.c            | 25 +++++++++++++++++++++++++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 42b77d3b68e8..f3f264826423 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1143,7 +1143,9 @@ static inline unsigned long section_nr_to_pfn(unsigned long sec)
->  #define SUBSECTION_ALIGN_DOWN(pfn) ((pfn) & PAGE_SUBSECTION_MASK)
->  
->  struct mem_section_usage {
-> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
->  	DECLARE_BITMAP(subsection_map, SUBSECTIONS_PER_SECTION);
-> +#endif
->  	/* See declaration of similar field in struct zone */
->  	unsigned long pageblock_flags[0];
->  };
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index d9dcd58d5c1d..2142045ab5c5 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -209,6 +209,7 @@ static inline unsigned long first_present_section_nr(void)
->  	return next_present_section_nr(-1);
->  }
->  
-> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
->  static void subsection_mask_set(unsigned long *map, unsigned long pfn,
->  		unsigned long nr_pages)
->  {
-> @@ -243,6 +244,11 @@ void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
->  		nr_pages -= pfns;
->  	}
->  }
-> +#else
-> +void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +}
-> +#endif
->  
->  /* Record a memory area against a node. */
->  void __init memory_present(int nid, unsigned long start, unsigned long end)
-> @@ -726,6 +732,7 @@ static void free_map_bootmem(struct page *memmap)
->  }
->  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
->  
-> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
->  static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
->  {
->  	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> @@ -753,6 +760,17 @@ static bool is_subsection_map_empty(struct mem_section *ms)
->  	return bitmap_empty(&ms->usage->subsection_map[0],
->  			    SUBSECTIONS_PER_SECTION);
->  }
-> +#else
-> +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +	return 0;
-> +}
-> +
-> +static bool is_subsection_map_empty(struct mem_section *ms)
-> +{
-> +	return true;
-> +}
-> +#endif
->  
->  static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
->  		struct vmem_altmap *altmap)
-> @@ -809,6 +827,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
->  		ms->section_mem_map = (unsigned long)NULL;
->  }
->  
-> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
->  static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
->  {
->  	struct mem_section *ms = __pfn_to_section(pfn);
-> @@ -830,6 +849,12 @@ static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
->  
->  	return rc;
->  }
-> +#else
-> +static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +	return 0;
-> +}
-> +#endif
->  
->  static struct page * __meminit section_activate(int nid, unsigned long pfn,
->  		unsigned long nr_pages, struct vmem_altmap *altmap)
-> 
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
--- 
-Thanks,
-
-David / dhildenb
-
+SGkgUmFmYWVsLA0KDQpUaGFua3MgZm9yIHRoZSBjb21tZW50cy4NCkkgaGF2ZSBzb21lIHF1ZXN0
+aW9ucywgSSBhbSB3b25kZXJpbmcgaWYgeW91IGNhbiBzaGFyZSB1cHN0cmVhbSB0aG91Z2h0IHcu
+ci50IHRoZSBmdXR1cmUgZGV2ZWxvcG1lbnQgb2YgaW50ZWxfaWRsZS4NCg0KIC0gSXQgbG9va3Mg
+dG8gbWUgc2luY2UgdjUuNiBpbnRlbF9pZGxlIHdpbGwgcHJlZmVyIF9DU1Qgb2YgQUNQSSByYXRo
+ZXIgdGhhbiB0aGUgZ2VuZXJhbCB0YWJsZSBlbWJlZGRlZCBpbiB0aGlzIGRyaXZlci4NCiAtIEFu
+eSBwcm9zIGFuZCBjb25zIG9mIHVzaW5nIHRoZSB0YWJsZXMgb2YgX0NTVCBpbiBmaXJtd2FyZSBh
+bmQgZW1iZWRkZWQgb25lIGluIHRoZSBrZXJuZWw/DQogLSBDYW4gdGhlIHRhYmxlIGluIF9DU1Qg
+YXJjaGl2ZSBtb3JlIG9wdGltYWwgaWRsZSBzdGF0ZXMgbWFuYWdlbWVudD8gDQoNCklmIHRoZXJl
+IGlzIGFscmVhZHkgYW55IHJlZmVyZW5jZSwgZG9jdW1lbnRzIEkgbWlzc2VkLCBraW5kbHkgZW5s
+aWdodGVuIG1lIHRoZW4gSSB3b3VsZCBsaWtlIHRvIHJlYWQgaXQgZmlyc3QgYmVmb3JlIHJlZmlu
+aW5nIHRoZSBxdWVzdGlvbnMuDQoNClRoYW5rcyBhbmQgdGFrZSBjYXJlLA0KSGFycnkNCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCuW+njogUmFmYWVsIEouIFd5c29j
+a2kgW3JhZmFlbEBrZXJuZWwub3JnXQ0K5a+E5Lu25pel5pyfOiAyMDIw5bm0M+aciDXml6Ug5LiK
+5Y2IIDA1OjE0DQroh7M6IFBhbiwgSGFycnkNCuWJr+acrDogUmFmYWVsIEouIFd5c29ja2k7IExL
+TUw7IEhhcnJ5IFBhbjsgSmFjb2IgUGFuOyBMZW4gQnJvd247IExpbnV4IFBNDQrkuLvml6g6IFJl
+OiBbUEFUQ0ggdjNdIGludGVsX2lkbGU6IEFkZCBDb21ldCBMYWtlIHN1cHBvcnQNCg0KT24gV2Vk
+LCBNYXIgNCwgMjAyMCBhdCAxMjo1NyBQTSBQYW4sIEhhcnJ5IDxoYXJyeS5wYW5AaW50ZWwuY29t
+PiB3cm90ZToNCj4NCj4gSGkgUmFmYWVsLA0KPg0KPiBZZXMsIEkgc2tpcHBlZCBpdCBjb25zaWRl
+cmluZyB0byBhbGlnbiBDTUwtVSBWMCBhbmQgQTAgc3RlcHBpbmcgdy8gdGhlIHNhbWUgdGFibGU7
+IEkgc2VudCB2NCBmb3IgeW91ciByZXZpZXcuDQoNClNraXBwaW5nIHRoYXQgZmxhZyBpcyByaXNr
+eSwgYmVjYXVzZSBpdCBtYXkgY2F1c2Ugc29tZSBDLXN0YXRlcyB0byBiZQ0KZW5hYmxlZCBvbiBz
+eXN0ZW1zIHdoZXJlIHRoZXkgaGF2ZSBub3QgYmVlbiB2YWxpZGF0ZWQgKGUuZy4gc3lzdGVtcw0K
+c2hpcHBpbmcgd2l0aCBvdGhlciBPU2VzIHdoaWNoIG9ubHkgdXNlIF9DU1QgQy1zdGF0ZXMpLiAg
+VGhlcmUgd2VyZQ0KcHJvYmxlbXMgcmVsYXRlZCB0byB0aGF0IGluIHRoZSBwYXN0IHdoaWNoIGlz
+IG9uZSBvZiB0aGUgcmVhc29ucyBmb3INCmFkZGluZyBfQ1NUIHN1cHBvcnQgdG8gaW50ZWxfaWRs
+ZS4gIHVzZV9hY3BpIHNob3VsZCBiZSBzZXQgZm9yIGFsbCBuZXcNCnBsYXRmb3JtcyBnb2luZyBm
+b3J3YXJkIGFzIGEgcnVsZS4NCg0KPiBJbiB0aGUgb3RoZXIgaGFuZCwgSSBhbSBwcm9wb3Npbmcg
+dXNpbmcgX0NTVCBhcyBsb25nIHRlcm0gcGxhbiBpbiBDck9TIGRldiB0ZWFtcy4NCg0KVGhhdCBJ
+IG9idmlvdXNseSBhZ3JlZSB3aXRoLiA6LSkNCg0KDQo+ID4gT24gTWFyIDQsIDIwMjAsIGF0IDE3
+OjUzLCBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+DQo+
+ID4g77u/T24gVHVlLCBNYXIgMywgMjAyMCBhdCAxMDoxMCBBTSBIYXJyeSBQYW4gPGhhcnJ5LnBh
+bkBpbnRlbC5jb20+IHdyb3RlOg0KPiA+Pg0KPiA+PiBBZGQgYSBnZW5lcmFsIEMtc3RhdGUgdGFi
+bGUgaW4gb3JkZXIgdG8gc3VwcG9ydCBDb21ldCBMYWtlLg0KPiA+Pg0KPiA+PiBTaWduZWQtb2Zm
+LWJ5OiBIYXJyeSBQYW4gPGhhcnJ5LnBhbkBpbnRlbC5jb20+DQo+ID4+DQo+ID4+IC0tLQ0KPiA+
+Pg0KPiA+PiBkcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5jIHwgNyArKysrKysrDQo+ID4+IDEgZmls
+ZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKykNCj4gPj4NCj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvaWRsZS9pbnRlbF9pZGxlLmMgYi9kcml2ZXJzL2lkbGUvaW50ZWxfaWRsZS5jDQo+ID4+IGlu
+ZGV4IGQ1NTYwNjYwOGFjOC4uMDViY2U1OTVmYWZlIDEwMDY0NA0KPiA+PiAtLS0gYS9kcml2ZXJz
+L2lkbGUvaW50ZWxfaWRsZS5jDQo+ID4+ICsrKyBiL2RyaXZlcnMvaWRsZS9pbnRlbF9pZGxlLmMN
+Cj4gPj4gQEAgLTEwNjcsNiArMTA2NywxMSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGlkbGVfY3B1
+IGlkbGVfY3B1X2RudiA9IHsNCj4gPj4gICAgICAgIC51c2VfYWNwaSA9IHRydWUsDQo+ID4+IH07
+DQo+ID4+DQo+ID4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGlkbGVfY3B1IGlkbGVfY3B1X2NtbCA9
+IHsNCj4gPj4gKyAgICAgICAuc3RhdGVfdGFibGUgPSBza2xfY3N0YXRlcywNCj4gPj4gKyAgICAg
+ICAuZGlzYWJsZV9wcm9tb3Rpb25fdG9fYzFlID0gdHJ1ZSwNCj4gPg0KPiA+IC51c2VfYWNwaSA9
+IHRydWUsDQo+ID4NCj4gPiBtaXNzaW5nPyAgT3RoZXJ3aXNlIHlvdSBjYW4ganVzdCB1c2UgaWRs
+ZV9jcHVfc2tsIGFzIGlzLCBjYW4ndCB5b3U/DQo+ID4NCj4gPj4gK307DQo+ID4+ICsNCj4gPj4g
+c3RhdGljIGNvbnN0IHN0cnVjdCB4ODZfY3B1X2lkIGludGVsX2lkbGVfaWRzW10gX19pbml0Y29u
+c3QgPSB7DQo+ID4+ICAgICAgICBJTlRFTF9DUFVfRkFNNihORUhBTEVNX0VQLCAgICAgICAgICAg
+ICAgaWRsZV9jcHVfbmh4KSwNCj4gPj4gICAgICAgIElOVEVMX0NQVV9GQU02KE5FSEFMRU0sICAg
+ICAgICAgICAgICAgICBpZGxlX2NwdV9uZWhhbGVtKSwNCj4gPj4gQEAgLTExMDUsNiArMTExMCw4
+IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgeDg2X2NwdV9pZCBpbnRlbF9pZGxlX2lkc1tdIF9faW5p
+dGNvbnN0ID0gew0KPiA+PiAgICAgICAgSU5URUxfQ1BVX0ZBTTYoQVRPTV9HT0xETU9OVF9QTFVT
+LCAgICAgIGlkbGVfY3B1X2J4dCksDQo+ID4+ICAgICAgICBJTlRFTF9DUFVfRkFNNihBVE9NX0dP
+TERNT05UX0QsICAgICAgICAgaWRsZV9jcHVfZG52KSwNCj4gPj4gICAgICAgIElOVEVMX0NQVV9G
+QU02KEFUT01fVFJFTU9OVF9ELCAgICAgICAgICBpZGxlX2NwdV9kbnYpLA0KPiA+PiArICAgICAg
+IElOVEVMX0NQVV9GQU02KENPTUVUTEFLRV9MLCAgICAgICAgICAgICBpZGxlX2NwdV9jbWwpLA0K
+PiA+PiArICAgICAgIElOVEVMX0NQVV9GQU02KENPTUVUTEFLRSwgICAgICAgICAgICAgICBpZGxl
+X2NwdV9jbWwpLA0KPiA+PiAgICAgICAge30NCj4gPj4gfTsNCj4gPj4NCj4gPj4gLS0NCj4gPj4g
+Mi4yNC4xDQo+ID4+DQo=
