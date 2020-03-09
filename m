@@ -2,115 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEAC717E0F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 392A517E0F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgCINSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 09:18:34 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:22260 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725956AbgCINSe (ORCPT
+        id S1726536AbgCINTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:19:06 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37658 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgCINTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:18:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583759912;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1K5R56oPivAmrjTNpcDkpowCNoJPz3om5lUYieNs7Bw=;
-        b=hmfQfJvs2kq+xY3ZzfGOA4w8iCBI+88wwb7I0jLGJ05kGmd1XbBW9umub/+KAN/SrEUh4e
-        zm5sEZeaVxWxbKzKFV71PCjyN4DQIj/La7rZCOtyl255FfDXtg0o5OI4PN0QmYAQZxk8RP
-        apaHEd1+fPEilykI4+sJLmOgQ7uscWw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-197-Qr1mgu6CMmm_3by9S08W0Q-1; Mon, 09 Mar 2020 09:18:29 -0400
-X-MC-Unique: Qr1mgu6CMmm_3by9S08W0Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2C4F08010D9;
-        Mon,  9 Mar 2020 13:18:26 +0000 (UTC)
-Received: from localhost (ovpn-12-179.pek2.redhat.com [10.72.12.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8BB48882D;
-        Mon,  9 Mar 2020 13:18:16 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 21:18:12 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, mhocko@suse.com,
-        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
-        osalvador@suse.de, rppt@linux.ibm.com
-Subject: Re: [PATCH v3 1/7] mm/hotplug: fix hot remove failure in
- SPARSEMEM|!VMEMMAP case
-Message-ID: <20200309131812.GN4937@MiWiFi-R3L-srv>
-References: <20200307084229.28251-1-bhe@redhat.com>
- <20200307084229.28251-2-bhe@redhat.com>
- <b0ff37b3-bae1-bdd6-8a4f-62f03e028839@redhat.com>
+        Mon, 9 Mar 2020 09:19:05 -0400
+Received: by mail-oi1-f194.google.com with SMTP id q65so10080576oif.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 06:19:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=kWnVEQaqw33o+KQ29GDEIX5Hj55rS4iA2dde+0h/XqdBoE5ufxgBlYVIMW97yydsq7
+         EZQdWhzPX3VWm3ChOotWC1DgYCmo3bkOZ9Rvf0KcBB1LqM8vZKGCcyg6IYmlxE6lv14R
+         XW/QC8JUlsEbyVG6F1t/7+algWkFi/YU0SasmeytEldKDwwMvDBnGxZrTWXjHv1xc3Tu
+         qMqe/z7bF3q4jRm+h9AtQFriR5CahGFbxSpUccfalmG2CIbvYCK37LZdkbKggWuRpYHF
+         QCYzzuZP0TJoji8z+PBTVqW5Je2mHzZ6G0KCPxSxhXu+Ptqz9SgjDQkaz43LZr/EAO1o
+         ENWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=co66NqLqxqgS/SJwaJiouP/QTw9IZOA9T2Sw95Oh/0nfSeRXJvarqcHRNjQJ2u6ywD
+         sYDGVnOcHx/pDocc3gyppsj+X0wJhiYqotAqjUPFe44yLYYQY28sq8D0X286rJ3VYLS2
+         0wCF8XtLY5KnECkpXPwiLzY27x3Q+HuMCqiFf+55dIe/ZsP0HykNs7ByOLYl63MJ9iP9
+         HTOSq8MmzQ5A1mfA7mQAGuawzenUIdrSxatjRn1iB75WbTX9bSua6zmzh6IGWYLvW8WS
+         j4f6e7s8PFyiq3UWNfVt7RJBYdi3imVTGnmgwn4Zh2JrPhz/N1p7QrsSZnK7nqkTrd7G
+         6FFQ==
+X-Gm-Message-State: ANhLgQ25Tvx24s9ZBVtvU6r3XF9HPHVYAiAi+v/82RTXhztrt6GH+Fwz
+        gz4jD2he+lEGRPqrEEoN6lP+8N5iSKC2UH0dLEw=
+X-Google-Smtp-Source: ADFU+vuHA5evp4aRBXCsuWtOSLy0BhVsWPilHLnYyxvlEEPQRHqqKuD/3L5lmTZKwYWY5Sg1mjfWWACDvfLZHVwL7Ko=
+X-Received: by 2002:a05:6808:907:: with SMTP id w7mr10863218oih.78.1583759944746;
+ Mon, 09 Mar 2020 06:19:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0ff37b3-bae1-bdd6-8a4f-62f03e028839@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Received: by 2002:a4a:df4a:0:0:0:0:0 with HTTP; Mon, 9 Mar 2020 06:19:04 -0700 (PDT)
+Reply-To: sulembello879@gmail.com
+From:   Mr Suleman Bello <frankoleka77@gmail.com>
+Date:   Mon, 9 Mar 2020 06:19:04 -0700
+Message-ID: <CAHQPQhDQhxwiBNBRDGsd9dn+yKOCQR-jMdSiReNn3FKv-2CO5g@mail.gmail.com>
+Subject: CAN I TRUST YOU?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/20 at 09:58am, David Hildenbrand wrote:
-> On 07.03.20 09:42, Baoquan He wrote:
-> > In section_deactivate(), pfn_to_page() doesn't work any more after
-> > ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
-> > It caused hot remove failure:
-> > 
-> > kernel BUG at mm/page_alloc.c:4806!
-> > invalid opcode: 0000 [#1] SMP PTI
-> > CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-> > Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-> > RIP: 0010:free_pages+0x85/0xa0
-> > Call Trace:
-> >  __remove_pages+0x99/0xc0
-> >  arch_remove_memory+0x23/0x4d
-> >  try_remove_memory+0xc8/0x130
-> >  ? walk_memory_blocks+0x72/0xa0
-> >  __remove_memory+0xa/0x11
-> >  acpi_memory_device_remove+0x72/0x100
-> >  acpi_bus_trim+0x55/0x90
-> >  acpi_device_hotplug+0x2eb/0x3d0
-> >  acpi_hotplug_work_fn+0x1a/0x30
-> >  process_one_work+0x1a7/0x370
-> >  worker_thread+0x30/0x380
-> >  ? flush_rcu_work+0x30/0x30
-> >  kthread+0x112/0x130
-> >  ? kthread_create_on_node+0x60/0x60
-> >  ret_from_fork+0x35/0x40
-> > 
-> > Let's move the ->section_mem_map resetting after depopulate_section_memmap()
-> > to fix it.
-> > 
-> > Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  mm/sparse.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index 42c18a38ffaa..1b50c15677d7 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -734,6 +734,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
-> >  	struct mem_section *ms = __pfn_to_section(pfn);
-> >  	bool section_is_early = early_section(ms);
-> >  	struct page *memmap = NULL;
-> > +	bool empty = false;
-> 
-> Oh, one NIT: no need to initialize empty to false.
+Dear Friend,
 
-Thanks for careful reviewing, David.
+Please i want you to read this letter very carefully and i must
+apologize for berging this message into your mail box without any
+formal introduction due to the urgency and confidential of this issue
+and i know that this message will come to you as a surprise, Please
+this is not a joke and i will not like you to joke with it.I am
+Mr.Suleman Bello, a staff in African Development Bank (A.D.B)
+Ouagadougou, Burkina faso West Africa.I discovered existing dormant
+account for years. When I discovered that there had been neither
+continuation nor withdrawals from this account for this long period
+and according to the laws and constitution guiding this banking
+institution, any unserviceable account for more than (7) seven years,
+that fund will be transferred to national treasury as unclaimed fund.
 
-Not very sure about this, do you have a doc or discussion thread about
-not initializing local variable? Maybe Andrew can help update it if this
-is not suggested. 
+I Hoped that you will not expose or betray this trust and confident
+that i am about to extablish with you for the mutual benefit of you
+and i.I need your urgent assistance in transferring the sum of $10.5
+)million usd into your account within 7 banking days. This money has
+been dormant for years in our Bank, and The request of foreigner in
+this transaction is necessary because our late customer was a
+foreigner and a burkinabe cannot stand as next of kin to a
+foreigner.Because of the static of this transaction I want you to
+stand as the next of kin so that our bank will accord you the
+recognition and have the fund transferred to your account.
 
+Upon your response, I shall then provide you with further information
+and more deities that will help you understand the transaction. I am
+expecting your urgent response to enable me inform you on how the
+business will be executed. Please I would like you to keep this
+transaction confidential and as a top secret or delete if you are not
+interested.
+
+Thanks
+Mr.Suleman Bello.
