@@ -2,85 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A521517EA20
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E6A917EA2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbgCIUgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:36:32 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60688 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbgCIUgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:36:31 -0400
-Received: from zn.tnic (p200300EC2F05B2005D451D18BD3BAF8F.dip0.t-ipconnect.de [IPv6:2003:ec:2f05:b200:5d45:1d18:bd3b:af8f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E1EF1EC0C97;
-        Mon,  9 Mar 2020 21:36:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1583786189;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=wtbqXGqFEsNw2L5GSHjcVunNBOZCwH6CYFPC9DsGy+w=;
-        b=j+KSXz+4nd0wrtAVWhGIOSmW6wmKEN1gOm0zZm5rlbhdykhPdRi8iYV2/PxoBjXOf90eT8
-        d/sowrm3c2Ox20zrA2NGpZyF4Qp9OGGEsfv/vGQYVBOfNYz61Jx/+og/BR0KH0yLcVUWjo
-        ASGFC52u+i96n+qFLF0L8juTCb+kX8M=
-Date:   Mon, 9 Mar 2020 21:36:32 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        DavidWang@zhaoxin.com, CooperYan@zhaoxin.com,
-        QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com, CobeChen@zhaoxin.com
-Subject: Re: [PATCH] x86/Kconfig: make X86_UMIP to cover any X86 CPU
-Message-ID: <20200309203632.GB9002@zn.tnic>
-References: <1583733990-2587-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+        id S1726926AbgCIUhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:37:14 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44402 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbgCIUhN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:37:13 -0400
+Received: by mail-ot1-f68.google.com with SMTP id v22so10954672otq.11;
+        Mon, 09 Mar 2020 13:37:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1n4yXD8CThTOxD2EDR7I2aRpPsppUZVF3HLI87zQ4ZY=;
+        b=go0dVBjgRN87R/f7y7T8y5AItvvdkRgUs/xYZe7kqzytFhavX9tv46YfeTf1uJ3q5g
+         UJAzixwSlwm2K/WibdZpSMLNEGhZLBSbgfG/rEdbNHxrWBrU987sQV4/49jsgX+/h6Qc
+         wv6eRlqPQjDxThE57/yD9LfkiRG+Xe3FNzagfeeEJ8CDVKh+0vDotqDKQtFaWDV7kF6S
+         78nB8tytw2GXXLQ8gBuEfh/LGzKEgBAywJT+jusYs+MksEmVlKZpugNSExTcsEV5uSgC
+         rje8OjXy6jhGOktO3tuY8ESosWJytC3PYNvmefT9KzujaKuNwbTyeR0AmLVmd6IOZgYQ
+         bbpg==
+X-Gm-Message-State: ANhLgQ3hoaGoTRl2IZc4zeIwq7yU68+a+ph3a5legtfoedrShHd1kjBo
+        gv33Zew+s5DAzfgJ97pvW7YPhco=
+X-Google-Smtp-Source: ADFU+vt7V3uyoj4pVmg02Jxf/Z1VF/kbucOhU+qbtUfrGu4N3GDlO3Br9L3hOmcZncjvzboSC3Tyhw==
+X-Received: by 2002:a05:6830:1345:: with SMTP id r5mr987211otq.342.1583786232592;
+        Mon, 09 Mar 2020 13:37:12 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w15sm3464104oiw.43.2020.03.09.13.37.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 13:37:11 -0700 (PDT)
+Received: (nullmailer pid 27764 invoked by uid 1000);
+        Mon, 09 Mar 2020 20:37:11 -0000
+Date:   Mon, 9 Mar 2020 15:37:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
+        devicetree@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH net-next v2 4/9] dt-binding: ti: am65x: document mcu cpsw
+ nuss
+Message-ID: <20200309203711.GA15678@bogus>
+References: <20200306234734.15014-1-grygorii.strashko@ti.com>
+ <20200306234734.15014-5-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1583733990-2587-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+In-Reply-To: <20200306234734.15014-5-grygorii.strashko@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 02:06:30PM +0800, Tony W Wang-oc wrote:
-> While the UMIP (User-Mode Instruction Prevention) is a generic X86 CPU
-> feature, there is no need to tie X86_UMIP only to Intel and AMD.
-
-It is not generic - it just lost the "INTEL" in its name.
-
-> So remove that dependency from the Kconfig rules.
+On Sat, 7 Mar 2020 01:47:29 +0200, Grygorii Strashko wrote:
+> Document device tree bindings for The TI AM654x/J721E SoC Gigabit Ethernet MAC
+> (Media Access Controller - CPSW2G NUSS). The CPSW NUSS provides Ethernet packet
+> communication for the device.
 > 
-> Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 > ---
->  arch/x86/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
+>  .../bindings/net/ti,k3-am654-cpsw-nuss.yaml   | 225 ++++++++++++++++++
+>  1 file changed, 225 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 5ad3957..ca16b762 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1871,7 +1871,6 @@ config X86_SMAP
->  
->  config X86_UMIP
->  	def_bool y
-> -	depends on CPU_SUP_INTEL || CPU_SUP_AMD
->  	prompt "User Mode Instruction Prevention" if EXPERT
->  	---help---
->  	  User Mode Instruction Prevention (UMIP) is a security feature in
-> -- 
 
-If you're going to do that, is there even any use for that config option
-at all?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-AFAICT, it adds ~1K to kernel text so we might just as well remove the
-ifdeffery completely. The code ends up built in in 99% of the cases
-anyway...
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.example.dt.yaml: ethernet@46000000: 'pinctrl-0' is a dependency of 'pinctrl-names'
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+See https://patchwork.ozlabs.org/patch/1250679
+Please check and re-submit.
