@@ -2,73 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BDAC17DC6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:30:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF7817DC74
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:31:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbgCIJaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:30:22 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39828 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgCIJaW (ORCPT
+        id S1726515AbgCIJbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:31:20 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:16559 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726215AbgCIJbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:30:22 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j15so7073081lfk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 02:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5BPdUCBHlhfxC1rf07ErhiV9Y3RjZ/uMH/FRYyL0Tdo=;
-        b=NT6VnCACPTlfQ6tWkirEMRPIFXPc5uK7jgSYi0wnLddxfiCCEj05iElpYaDaH3cZ75
-         LqklW21zdCUaNQtn3QFqKyHl0yqr3btYYcm5H6Ka7nVRYJi04kLWL8ehoZFX1T24ci5g
-         68/yypQ2HROcI28ReRXFtzEcA7Ukj6JPraEAdjarZILSamvIOefZJJWw3gLWYzIwGyGC
-         3rpk0OwRTmQqrGN3iAIz8L9gh1kwpAMa+0uGcPJsfKdGw3qvXLH5MFsbn2Q6I5rsamHy
-         i56/xRCkG/2LfWs+C5mD5MK4iVGp5H+Tq4JO1XVq4f0TI9JDDCKnLuIw71tA9Kuzi0/w
-         GcEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5BPdUCBHlhfxC1rf07ErhiV9Y3RjZ/uMH/FRYyL0Tdo=;
-        b=Ft/YAiUPwy7RSt3mtHaBDvmsBD+ndBGw+pB/t2Ns/gZSmG17cHVrtnxroG/rBTWIec
-         0sxbTSg8SH+Y3SaYKy0RqMH6CnjGkaSMu6/FI6akoKuBJzAzJ5zZG5A/PU+T0ntLt6Gv
-         gYEKqGLAIkDk5BblXNE46MPv6XEqR1ZPpUJgpVERE3BDzk4POzHCgSk6SsbccxZG/oqq
-         7JbQ3ThSWlS4hBYJd/K3gSV1J07ghQt6QzAwqzSKlfCFhzoQ/1c4v6WhUaSWr5ut43/O
-         8VWdJN+SaEpaGr44afwN92sNO3qLxGAp14CyBBVxHZsrqj4Zftq5ZDIi78thgZMoVOmw
-         Z4OA==
-X-Gm-Message-State: ANhLgQ1oifvdeLO3D1zJgLdePnZFwsyecUWlixy2tLPOyEzZzvtIhGRD
-        nevbgWv1q1neJoyltcH84tn5lt3SF7vfWJx1RBQ4hQ==
-X-Google-Smtp-Source: ADFU+vvOV5BngHUN/iOXkIp0aCZj3DO7RIX6/Jfe8ek7Mb4Q3qAwKJPpaPcDy0NqYQc1dT6I+NcBqHSrx9nC2FYST9M=
-X-Received: by 2002:ac2:5e6d:: with SMTP id a13mr9224214lfr.89.1583746219481;
- Mon, 09 Mar 2020 02:30:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200306005809.38530-1-alexandre.belloni@bootlin.com> <20200306005809.38530-2-alexandre.belloni@bootlin.com>
-In-Reply-To: <20200306005809.38530-2-alexandre.belloni@bootlin.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Mar 2020 10:30:08 +0100
-Message-ID: <CACRpkdbs_wtyU5wjqFcdpYanA9ZMRczysw4kwkA7y+qeB0pHEw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] rtc: pl031: set range
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Mar 2020 05:31:19 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583746279; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=H8picCvqAZghNPZkAMS4gu/lM11YWZUJhrH1NlMPqJ4=; b=UUMygzqFd2MS77PIjyAiR/QXKTzxfoAPGjGd1f70Ci/Ih8df8/ud6dWr0G29VvI0dkQtqSCF
+ lMr7cij+q0GFkoC18ZfMu2fF3P6Kobew9Z5PKG+INAB6+bOPb3eHElxFlP4RdKWxeusaxxOX
+ cLOP5yTufroiwP7kXzIB9adXtgw=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e660ce6.7f636be5dbc8-smtp-out-n03;
+ Mon, 09 Mar 2020 09:31:18 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3D395C43636; Mon,  9 Mar 2020 09:31:18 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C6DACC433D2;
+        Mon,  9 Mar 2020 09:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6DACC433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+From:   Maulik Shah <mkshah@codeaurora.org>
+To:     swboyd@chromium.org, mka@chromium.org, evgreen@chromium.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [PATCH v13 0/4] Invoke rpmh_flush for non OSI targets
+Date:   Mon,  9 Mar 2020 15:00:31 +0530
+Message-Id: <1583746236-13325-1-git-send-email-mkshah@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 1:58 AM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
+Changes in v13:
+- Address Stephen's comment to maintain COMPILE_TEST
+- Address Doug's comments and add new APIs for start and end transaction
 
-> The PL031 and ST v1 RTC are 32bit seconds counters. STv2 is a BCD RTC
-> apparently going from 0000 to 9999, hopefully handling the leap days
-> properly until then.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Changes in v12:
+- Kconfig change to remove COMPILE_TEST was dropped in v11, reinclude it.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Changes in v11:
+- Address Doug's comments on change 2 and 3
+- Include change to invalidate TCSes before flush from [4]
 
-Yours,
-Linus Walleij
+Changes in v10:
+- Address Evan's comments to update commit message on change 2
+- Add Evan's Reviewed by on change 2
+- Remove comment from rpmh_flush() related to last CPU invoking it
+- Rebase all changes on top of next-20200302
+
+Changes in v9:
+- Keep rpmh_flush() to invoke from within cache_lock
+- Remove comments related to only last cpu invoking rpmh_flush()
+
+Changes in v8:
+- Address Stephen's comments on changes 2 and 3
+- Add Reviewed by from Stephen on change 1
+
+Changes in v7:
+- Address Srinivas's comments to update commit text
+- Add Reviewed by from Srinivas
+
+Changes in v6:
+- Drop 1 & 2 changes from v5 as they already landed in maintainer tree
+- Drop 3 & 4 changes from v5 as no user at present for power domain in rsc
+- Rename subject to appropriate since power domain changes are dropped
+- Rebase other changes on top of next-20200221
+
+Changes in v5:
+- Add Rob's Acked by on dt-bindings change
+- Drop firmware psci change
+- Update cpuidle stats in dtsi to follow PC mode
+- Include change to update dirty flag when data is updated from [4]
+- Add change to invoke rpmh_flush when caches are dirty
+
+Changes in v4:
+- Add change to allow hierarchical topology in PC mode
+- Drop hierarchical domain idle states converter from v3
+- Address Merge sc7180 dtsi change to add low power modes
+
+Changes in v3:
+- Address Rob's comment on dt property value
+- Address Stephen's comments on rpmh-rsc driver change
+- Include sc7180 cpuidle low power mode changes from [1]
+- Include hierarchical domain idle states converter change from [2]
+
+Changes in v2:
+- Add Stephen's Reviewed-By to the first three patches
+- Addressed Stephen's comments on fourth patch
+- Include changes to connect rpmh domain to cpuidle and genpds
+
+Resource State Coordinator (RSC) is responsible for powering off/lowering
+the requirements from CPU subsystem for the associated hardware like buses,
+clocks, and regulators when all CPUs and cluster is powered down.
+
+RSC power domain uses last-man activities provided by genpd framework based
+on Ulf Hansoon's patch series[3], when the cluster of CPUs enter deepest
+idle states. As a part of domain poweroff, RSC can lower resource state
+requirements by flushing the cached sleep and wake state votes for various
+resources.
+
+[1] https://patchwork.kernel.org/patch/11218965
+[2] https://patchwork.kernel.org/patch/10941671
+[3] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=222355
+[4] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=236503
+
+Maulik Shah (3):
+  arm64: dts: qcom: sc7180: Add cpuidle low power states
+  soc: qcom: rpmh: Update dirty flag only when data changes
+  soc: qcom: rpmh: Invoke rpmh_flush for dirty caches
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 78 ++++++++++++++++++++++++++++++++++++
+ drivers/soc/qcom/rpmh.c              | 27 ++++++++++---
+ 2 files changed, 100 insertions(+), 5 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
