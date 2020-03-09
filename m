@@ -2,126 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0A517EADA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:09:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D1117EAC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 22:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCIVJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 17:09:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32782 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbgCIVIu (ORCPT
+        id S1726742AbgCIVH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 17:07:58 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36321 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgCIVH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:08:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a25so9250243wrd.0;
-        Mon, 09 Mar 2020 14:08:49 -0700 (PDT)
+        Mon, 9 Mar 2020 17:07:56 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g12so4508382plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 14:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zJ+BhiqzAPedLjVQEzNhhBhXg2/bvt9dVT7qP5vBemU=;
-        b=ZiEzEQt6vNy+N4xNVB0KXZJU7owNHZYL5iP87LNrU8MvE1L93LDbVteZFUUFkz5kSE
-         QfocY0uE0Q7u06YabklbBZ9GbcSv3TvMKqFJP2/KYqEbBVYXr/Yy02UoCdZBWpOkYemt
-         vnyLnrqf3oellAbEestRNziCKKocxorHa43xDD6OsRe+T0wAmQB2Iri72glzamGxu9uU
-         C7nTePcqtuE+UC11YZx0n+ydax2oWM0gH6Wv7N3++3zCEmMirLpaKtnS4MCGvj6lpDbD
-         LTlDv4z7181BIL9A7znAy0fX9/4ZD93+gv50RInZ/kmFCLEmdiga/orVpklqT45rW91T
-         J6TA==
+        d=purestorage.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Wg7ehxrunSfoR3umIXJG6GeJRSgWVF/eVhTjd0DeUpo=;
+        b=czH3TJwKaynTxAvppZyJ015RDYBkBPs2pb5+XLo29ytW+Ib2kKleMNca9WHbclK+ut
+         s40C6dyix2Rh5Dng2HUhh6pbw3+n4CtUwPtKc/By8YuLfx/lG4emfrekiHNNKd8R3DFa
+         lgt3hjPrRhh7RCQYwjI0Ie4IXv6jEvCuzh0Lo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=zJ+BhiqzAPedLjVQEzNhhBhXg2/bvt9dVT7qP5vBemU=;
-        b=j78tEXQJ9QdgRkgF0FIeIQvNk4jwrUEWfmpr9KQuDkas9B3K7/32ybA/Dn2OqhmoWn
-         7u8FY2HPHsT59lTxZaqEqPXqBJP7vTe+YhpTL/S+iptZmrqu3UT81Lc04W6O8/YtMn+C
-         TNgt64yE61epSS7j+KG37d2BUzZtmzEKzZ2dk5eSqqPipghsnKtEVGuP9arJOIicXCZC
-         K8uDfNgsoArxfhaOwb0DsPQJTktwwSCLwnNpQgGVlJ3LKwKgpQv4g8BVHT/YoazIixxG
-         Lvnprz8zm3U6I74hL5KYVX4lpI7+NAz5LjpuzbBVk5YT6dkZOjuqPt+BxmI7uIfg3Mij
-         NKgg==
-X-Gm-Message-State: ANhLgQ1kyat/b5lpEsgzO9CxqK0BlTbpZFfP80J+IOVYmf63mhwp76fY
-        l4B/vzTB0omntn0waT+M3oE=
-X-Google-Smtp-Source: ADFU+vv04R9WwYrPLPQl3d9L/uANpvTzTdjm3jAsbSVEfMlurizTxdPXVYyjejTHnjhKeW0qne7jJw==
-X-Received: by 2002:a5d:61c9:: with SMTP id q9mr10749218wrv.164.1583788128740;
-        Mon, 09 Mar 2020 14:08:48 -0700 (PDT)
-Received: from localhost.localdomain ([79.115.60.40])
-        by smtp.gmail.com with ESMTPSA id j205sm1016275wma.42.2020.03.09.14.08.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 14:08:48 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, eha@deif.com, angelo@sysam.it,
-        andrew.smirnov@gmail.com, gustavo@embeddedor.com, weic@nvidia.com,
-        mhosny@nvidia.com, michael@walle.cc, peng.ma@nxp.com
-Subject: [PATCH v2 4/6] spi: spi-fsl-dspi: Add support for LS1028A
-Date:   Mon,  9 Mar 2020 23:07:53 +0200
-Message-Id: <20200309210755.6759-5-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200309210755.6759-1-olteanv@gmail.com>
-References: <20200309210755.6759-1-olteanv@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Wg7ehxrunSfoR3umIXJG6GeJRSgWVF/eVhTjd0DeUpo=;
+        b=CI0prWqbN/OEJv7OqPYQu0yXWLbKCVrMia3qlfJvXHm5IR4+pT6Bq0qm8Ktzj1E3qq
+         4MlIJq/N9/RFx6abFKK0D0CN39xQmDuz7ZMypNc6MbFe94aHsll+QsIgwyYfhv1gR97u
+         ZLyyFxe8RUT97UGyoZfmU9xM0NIl/vG4h1HED+BRevHXGwc91R0eJjl9/Ux3ZOoIlH8I
+         5U0UjqGhQOIb6FZxcf9UdzJQ4GsthNxsXi1TIT4A9KCDCIr5/ZjkvIGTA1rQ2LTER+Ne
+         Xf9FDji3P7WM5ZE9tFfnlilIu4EjQG5M5XRfW76j6cOmS+oR/7XUJy7QKxWjsfKF3s2i
+         0OoA==
+X-Gm-Message-State: ANhLgQ3mMyCirOFH1XX7KMseOFsT0P3Lode9l0KP5VjkBPUsITQB4H5z
+        QRRBvhzvfnJqTYV51WFPgYqnRg==
+X-Google-Smtp-Source: ADFU+vtxrF3SIlgRDL8tah3k0WYVLq8W7zIdoqLKtPNGtefE87yW3fuwxIJr+qp9R7BfS0ylIEkFOw==
+X-Received: by 2002:a17:90a:21ce:: with SMTP id q72mr926921pjc.160.1583788075123;
+        Mon, 09 Mar 2020 14:07:55 -0700 (PDT)
+Received: from dev-psajeepa.dev.purestorage.com ([192.30.188.252])
+        by smtp.googlemail.com with ESMTPSA id w206sm2876936pfc.54.2020.03.09.14.07.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Mar 2020 14:07:54 -0700 (PDT)
+From:   Prabhath Sajeepa <psajeepa@purestorage.com>
+To:     kbusch@kernel.org, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     psajeepa@purestorage.com, roland@purestorage.com
+Subject: [PATCH] nvme-rdma: Avoid double freeing of async event data
+Date:   Mon,  9 Mar 2020 15:07:53 -0600
+Message-Id: <1583788073-39681-1-git-send-email-psajeepa@purestorage.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+The timeout of identify cmd, which is invoked as part of admin queue
+creation, can result in freeing of async event data both in
+nvme_rdma_timeout handler and error handling path of
+nvme_rdma_configure_admin queue thus causing NULL pointer reference.
+Call Trace:
+ ? nvme_rdma_setup_ctrl+0x223/0x800 [nvme_rdma]
+ nvme_rdma_create_ctrl+0x2ba/0x3f7 [nvme_rdma]
+ nvmf_dev_write+0xa54/0xcc6 [nvme_fabrics]
+ __vfs_write+0x1b/0x40
+ vfs_write+0xb2/0x1b0
+ ksys_write+0x61/0xd0
+ __x64_sys_write+0x1a/0x20
+ do_syscall_64+0x60/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-This is similar to the DSPI instantiation on LS1028A, except that:
- - The A-011218 erratum has been fixed, so DMA works
- - The endianness is different, which has implications on XSPI mode
-
-Some benchmarking with the following command:
-
-spidev_test --device /dev/spidev2.0 --bpw 8 --size 256 --cpha --iter 10000000 --speed 20000000
-
-shows that in DMA mode, it can achieve around 2400 kbps, and in XSPI
-mode, the same command goes up to 4700 kbps. This is somewhat to be
-expected, since the DMA buffer size is extremely small at 8 bytes, the
-winner becomes whomever can prepare the buffers for transmission
-quicker, and DMA mode has higher overhead there. So XSPI FIFO mode has
-been chosen as the operating mode for this chip.
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
+Reviewed-by: Roland Dreier <roland@purestorage.com>
 ---
-Changes in v2:
-Switch to DSPI_XSPI_MODE.
+ drivers/nvme/host/rdma.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
- drivers/spi/spi-fsl-dspi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 43d2d9fc8b92..cf8a141bbaf2 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -125,6 +125,7 @@ struct fsl_dspi_devtype_data {
- enum {
- 	LS1021A,
- 	LS1012A,
-+	LS1028A,
- 	LS1043A,
- 	LS1046A,
- 	LS2080A,
-@@ -153,6 +154,12 @@ static const struct fsl_dspi_devtype_data devtype_data[] = {
- 		.max_clock_factor	= 8,
- 		.fifo_size		= 16,
- 	},
-+	[LS1028A] = {
-+		.trans_mode		= DSPI_XSPI_MODE,
-+		.dma_bufsize		= 8,
-+		.max_clock_factor	= 8,
-+		.fifo_size		= 4,
-+	},
- 	[LS1043A] = {
- 		/* Has A-011218 DMA erratum */
- 		.trans_mode		= DSPI_XSPI_MODE,
-@@ -1100,6 +1107,9 @@ static const struct of_device_id fsl_dspi_dt_ids[] = {
- 	}, {
- 		.compatible = "fsl,ls1012a-dspi",
- 		.data = &devtype_data[LS1012A],
-+	}, {
-+		.compatible = "fsl,ls1028a-dspi",
-+		.data = &devtype_data[LS1028A],
- 	}, {
- 		.compatible = "fsl,ls1043a-dspi",
- 		.data = &devtype_data[LS1043A],
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index 3e85c5c..0fe08c4 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -850,9 +850,11 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
+ 	if (new)
+ 		blk_mq_free_tag_set(ctrl->ctrl.admin_tagset);
+ out_free_async_qe:
+-	nvme_rdma_free_qe(ctrl->device->dev, &ctrl->async_event_sqe,
+-		sizeof(struct nvme_command), DMA_TO_DEVICE);
+-	ctrl->async_event_sqe.data = NULL;
++	if (ctrl->async_event_sqe.data) {
++		nvme_rdma_free_qe(ctrl->device->dev, &ctrl->async_event_sqe,
++			sizeof(struct nvme_command), DMA_TO_DEVICE);
++		ctrl->async_event_sqe.data = NULL;
++	}
+ out_free_queue:
+ 	nvme_rdma_free_queue(&ctrl->queues[0]);
+ 	return error;
 -- 
-2.17.1
+2.7.4
 
