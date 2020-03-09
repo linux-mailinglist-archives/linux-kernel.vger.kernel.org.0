@@ -2,75 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FD9D17D97A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 07:58:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0CDD17D980
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 08:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbgCIG6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 02:58:05 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:55704 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgCIG6F (ORCPT
+        id S1726427AbgCIHDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 03:03:55 -0400
+Received: from m177134.mail.qiye.163.com ([123.58.177.134]:61130 "EHLO
+        m177134.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCIHDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 02:58:05 -0400
-Received: by mail-il1-f199.google.com with SMTP id p7so6743033ilr.22
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Mar 2020 23:58:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=3vbHTdYQ67mib1pqhw7RfSE7n4B7fPNmRK2m1Cb8iPU=;
-        b=SdlW65lGl19tcXiGRQHFtUnaANjDmIb/FXrs/qF9dITBW2kExO/j5eEJ6e4++GIPPT
-         UXN//CRS9wReOoFmnZH3Nx16GB3hjEA4ulHxK4chRRrFr6P9qRTIRrjNAgrOuf9g9vVx
-         xzkfylGJ2t2tV/irWn+c0uYCfCKEtBUwvAiWdz9eQmqu7hpNy80Pgvg6LYQgoVyyHEiO
-         db/hB4GQw6ZXKFLsoyzPyOBfP5P7opT1qENqBE87er43DNOxZ/erIuIHnoO+ib1rf9Px
-         E4lYv2Y6KjS3oNIHKVMDctiMiLOJlsvQb4hBbYdJCw+0ybCeFRJ9nIJhhEBnKyGv/p/4
-         2DYA==
-X-Gm-Message-State: ANhLgQ3zcLv0Kqw9Jf1rpci1eQ08xqAcOjPiqL2Wmxu119yJgNM6Y7Vi
-        7q71v1anpmGnm9sUDsQlFyOSnF/cji/hLF7h7n4Y1rMLH+/g
-X-Google-Smtp-Source: ADFU+vtRpURm6U4wUgm5w3Q/LMCwhNNEMjTRsTn2XqAL2qLJHVJT0lEdDhwiPvd5cYSVN+QMhS0AUF7kTWiMSzfA+d9Rg3PvE9EA
+        Mon, 9 Mar 2020 03:03:55 -0400
+X-Greylist: delayed 792 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Mar 2020 03:03:53 EDT
+Received: from ubuntu.localdomain (unknown [58.251.74.226])
+        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id 8610F261D10;
+        Mon,  9 Mar 2020 14:49:37 +0800 (CST)
+From:   WANG Wenhu <wenhu.wang@vivo.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        WANG Wenhu <wenhu.wang@vivo.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     trivial@kernel.org, wenhu.pku@gmail.com
+Subject: [PATCH] powerpc/fsl-85xx: fix compile error
+Date:   Sun,  8 Mar 2020 23:49:22 -0700
+Message-Id: <20200309064926.27107-1-wenhu.wang@vivo.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9bc8:: with SMTP id d8mr12563436ion.142.1583737083027;
- Sun, 08 Mar 2020 23:58:03 -0700 (PDT)
-Date:   Sun, 08 Mar 2020 23:58:03 -0700
-In-Reply-To: <000000000000161ee805a039a49e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000406a7f05a066861d@google.com>
-Subject: Re: possible deadlock in siw_create_listen
-From:   syzbot <syzbot+3fbea977bd382a4e6140@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bmt@zurich.ibm.com, bpf@vger.kernel.org,
-        daniel@iogearbox.net, davem@davemloft.net, dledford@redhat.com,
-        dsahern@gmail.com, hawk@kernel.org, jakub.kicinski@netronome.com,
-        jgg@ziepe.ca, jiri@mellanox.com, johannes.berg@intel.com,
-        john.fastabend@gmail.com, kafai@fb.com,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        mkubecek@suse.cz, netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUlXWQgYFAkeWUFZTVVITkxCQkJDS0pNSE5MT1lXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Njo6Cgw6ATgzEj0YGUIpTDcZ
+        HiFPCy1VSlVKTkNITEhNTkNLS0NNVTMWGhIXVQweFRMOVQwaFRw7DRINFFUYFBZFWVdZEgtZQVlO
+        Q1VJTkpVTE9VSUlNWVdZCAFZQUlDSEs3Bg++
+X-HM-Tid: 0a70be0e5fb09375kuws8610f261d10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Include "linux/of_address.h" to fix the compile error
+while compiling file fsl_85xx_cache_sram.c.
 
-commit bfcccfe78b361f5f6ef48554aed5bcd30c72f67f
-Author: Jakub Kicinski <jakub.kicinski@netronome.com>
-Date:   Tue Nov 5 21:26:11 2019 +0000
+  CC      arch/powerpc/sysdev/fsl_85xx_l2ctlr.o
+arch/powerpc/sysdev/fsl_85xx_l2ctlr.c: In function ‘mpc85xx_l2ctlr_of_probe’:
+arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:11: error: implicit declaration of function ‘of_iomap’; did you mean ‘pci_iomap’? [-Werror=implicit-function-declaration]
+  l2ctlr = of_iomap(dev->dev.of_node, 0);
+           ^~~~~~~~
+           pci_iomap
+arch/powerpc/sysdev/fsl_85xx_l2ctlr.c:90:9: error: assignment makes pointer from integer without a cast [-Werror=int-conversion]
+  l2ctlr = of_iomap(dev->dev.of_node, 0);
+         ^
+cc1: all warnings being treated as errors
+scripts/Makefile.build:267: recipe for target 'arch/powerpc/sysdev/fsl_85xx_l2ctlr.o' failed
+make[2]: *** [arch/powerpc/sysdev/fsl_85xx_l2ctlr.o] Error 1
 
-    netdevsim: drop code duplicated by a merge
+Fixed: commit 6db92cc9d07d ("powerpc/85xx: add cache-sram support")
+Signed-off-by: WANG Wenhu <wenhu.wang@vivo.com>
+---
+ arch/powerpc/sysdev/fsl_85xx_l2ctlr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=166d11c3e00000
-start commit:   425c075d Merge branch 'tun-debug'
-git tree:       net-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=156d11c3e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=116d11c3e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=598678fc6e800071
-dashboard link: https://syzkaller.appspot.com/bug?extid=3fbea977bd382a4e6140
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e3df31e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163d0439e00000
+diff --git a/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c b/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c
+index 2d0af0c517bb..7533572492f0 100644
+--- a/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c
++++ b/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of_platform.h>
++#include <linux/of_address.h>
+ #include <asm/io.h>
+ 
+ #include "fsl_85xx_cache_ctlr.h"
+-- 
+2.17.1
 
-Reported-by: syzbot+3fbea977bd382a4e6140@syzkaller.appspotmail.com
-Fixes: bfcccfe78b36 ("netdevsim: drop code duplicated by a merge")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
