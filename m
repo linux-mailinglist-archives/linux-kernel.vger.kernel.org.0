@@ -2,69 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB3D17E531
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE85E17E535
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbgCIQ7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 12:59:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:54744 "EHLO foss.arm.com"
+        id S1727328AbgCIQ7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 12:59:49 -0400
+Received: from muru.com ([72.249.23.125]:59394 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbgCIQ7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 12:59:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E48A41FB;
-        Mon,  9 Mar 2020 09:59:20 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 68E9A3F534;
-        Mon,  9 Mar 2020 09:59:20 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 16:59:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     jbrunet@baylibre.com, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound/soc/meson: fix irq leak in error path
-Message-ID: <20200309165918.GI4101@sirena.org.uk>
-References: <20200309162912.GA21498@amd>
+        id S1727185AbgCIQ7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 12:59:48 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 4451C80FA;
+        Mon,  9 Mar 2020 17:00:33 +0000 (UTC)
+Date:   Mon, 9 Mar 2020 09:59:44 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Arthur Demchenkov <spinal.by@gmail.com>
+Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: OMAP: DTS: N900: fix onenand timings
+Message-ID: <20200309165944.GO37466@atomide.com>
+References: <20200308191934.8263-1-spinal.by@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FUFe+yI/t+r3nyH4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309162912.GA21498@amd>
-X-Cookie: Above all things, reverence yourself.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200308191934.8263-1-spinal.by@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Arthur Demchenkov <spinal.by@gmail.com> [200308 12:21]:
+> Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+> started using DT specified timings for GPMC, and as a result the
+> OneNAND stopped working on N900 as we had wrong values in the DT.
+> Fix by updating the values to bootloader timings that have been tested
+> to be working on Nokia N900 with OneNAND manufacturers: Samsung,
+> Numonyx.
+> 
+> Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
 
---FUFe+yI/t+r3nyH4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applying into fixes thanks.
 
-On Mon, Mar 09, 2020 at 05:29:12PM +0100, Pavel Machek wrote:
-> Irq seems to be leaked in error path. Fix that.
-
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---FUFe+yI/t+r3nyH4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5mdeYACgkQJNaLcl1U
-h9CCoAf/Tg1V9NN7lBma6RAUr7lr0CLFWaDKyjqFXtwx7isnFIrUOkc4mXutsnch
-oDQPhuU/xFmiASiebvnpQfRl0OV/76zo9EE05eoDSJ2cxlZvoi21bPBQzJGmPpMW
-AYKwHtxF74xlqW93UdNk+ldRhSAkYg8piOt4vhKDEacLZXFhfWzbewCtsWkg5sER
-+6cIAlYelohDbZCjKgxvyO1xCKNx2XM5LBhSZ3YZNABVR6Ft9hPPySv+8/qBDj4u
-bhbO5FaCY23DGdsylPzCHvg3IabQCWuc1GVSRGLrJcPWcaw9FD2uoMWfA3C4+eHw
-V1NnOlUZCmbhbesMUHZg1nVEtO+gdg==
-=71Fr
------END PGP SIGNATURE-----
-
---FUFe+yI/t+r3nyH4--
+Tony
