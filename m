@@ -2,71 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 991D617EA00
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78AF617EA54
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:43:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbgCIU12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:27:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbgCIU12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:27:28 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC4C120828;
-        Mon,  9 Mar 2020 20:27:27 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 16:27:26 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        John 'Warthog9' Hawley <warthog9@kernel.org>
-Subject: [GIT PULL] ktest: Updates and fixes for 5.6
-Message-ID: <20200309162726.71fe6060@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726656AbgCIUno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:43:44 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.190]:15566 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725992AbgCIUnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 16:43:43 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id AD065E75618
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:18:44 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BOrMj5S5oSl8qBOrMjggzc; Mon, 09 Mar 2020 15:18:44 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YxdVOLQLPHQl4Tnob3dnblm195MuDbXhF271io02DL0=; b=YRs+Hb9oMWEE+EdHIJ6VZ+Rryx
+        DnkktfJxpW4l5N/TXXF5Xdh+VdN7dBbp1UGxeTeITyjwhMM1ko0MjxdkLu9Tm5upubmkCK2BwzY0R
+        GEdtZbgFBBuo+yC2DiehQZAVWnpvZOmohKX39q3QKY2IzFr84sTC9XFKTCDBIvQuwckrSv7oDXUjA
+        1DXtRTNif4TgAwVNg+JlmMLdt6cCh06GTyB9ndWwcBFLshvTXtTRi8B7/KMFP+mboU+QHDXPg8qi6
+        4yuShXXCwFrkIxBXoynZKlZ2VM89AuxqADi4WwSYNxQuJch0drJaB47IlALGuWa3/cYbt7X0Yasgb
+        VB0YGjsg==;
+Received: from [201.162.168.201] (port=19736 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jBOrK-000xqo-O9; Mon, 09 Mar 2020 15:18:43 -0500
+Date:   Mon, 9 Mar 2020 15:21:55 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] ocfs2: ocfs2_fs.h: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200309202155.GA8432@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.168.201
+X-Source-L: No
+X-Exim-ID: 1jBOrK-000xqo-O9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.168.201]:19736
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Linus,
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Ktest fixes and clean ups
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-- Make the default option oldconfig instead of randconfig
-  (one too many times I lost my config because I left the build type out)
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
-- Add timeout to ssh sync to sync before reboot (prevents test hangs)
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
 
-- A couple of spelling fix patches
+This issue was found with the help of Coccinelle.
 
-[ I had a couple of patches I forgot to push before, as this tree
-  isn't updated much. But this shouldn't affect the stability of
-  the kernel any. ]
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-Please pull the latest ktest-v5.6 tree, which can be found at:
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/ocfs2/ocfs2_fs.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index 0db4a7ec58a2..0dd8c41bafd4 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -470,7 +470,7 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[0];	/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
+ };
+ 
+ /*
+@@ -484,7 +484,7 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[0];	/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
+ };
+ 
+ /*
+@@ -496,7 +496,7 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[0];	/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
+ };
+ 
+ /*
+@@ -640,7 +640,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[0];
++/*10*/	__u8   la_bitmap[];
+ };
+ 
+ /*
+@@ -653,7 +653,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[0];	/* Start of user data */
++	__u8	id_data[];	/* Start of user data */
+ };
+ 
+ /*
+@@ -798,7 +798,7 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[0];	/* Indexed dir entries
++	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+ 							 * in a packed array of
+ 							 * length de_num_used */
+ };
+@@ -935,7 +935,7 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[0];	/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
+ };
+ 
+ 
+@@ -1021,7 +1021,7 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[0]; /* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
+ };
+ 
+ /*
+@@ -1207,7 +1207,7 @@ struct ocfs2_local_disk_dqinfo {
+ /* Header of one chunk of a quota file */
+ struct ocfs2_local_disk_chunk {
+ 	__le32 dqc_free;	/* Number of free entries in the bitmap */
+-	__u8 dqc_bitmap[0];	/* Bitmap of entries in the corresponding
++	__u8 dqc_bitmap[];	/* Bitmap of entries in the corresponding
+ 				 * chunk of quota file */
+ };
+ 
+-- 
+2.25.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
-ktest-v5.6
-
-Tag SHA1: 72ff3685b8f4346bbb71515e9c4655524523c7d1
-Head SHA1: 1091c8fce8aa9c5abe1a73acab4bcaf58a729005
-
-
-Masanari Iida (2):
-      ktest: Fix some typos in sample.conf
-      ktest: Fix typos in ktest.pl
-
-Steven Rostedt (VMware) (2):
-      ktest: Make default build option oldconfig not randconfig
-      ktest: Add timeout for ssh sync testing
-
-----
- tools/testing/ktest/ktest.pl    | 16 ++++++++--------
- tools/testing/ktest/sample.conf | 22 +++++++++++-----------
- 2 files changed, 19 insertions(+), 19 deletions(-)
