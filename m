@@ -2,188 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DAA17E70D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6980E17E6E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:22:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbgCIS0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:26:53 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:36482 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbgCIS0x (ORCPT
+        id S1727397AbgCISVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:21:35 -0400
+Received: from gateway20.websitewelcome.com ([192.185.54.2]:46537 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727323AbgCISVf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:26:53 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBN72-0001Yq-SW; Mon, 09 Mar 2020 12:26:48 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBN71-00066p-Tz; Mon, 09 Mar 2020 12:26:48 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <878sk94eay.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y12yc7.fsf@x220.int.ebiederm.org>
-Date:   Mon, 09 Mar 2020 13:24:30 -0500
-In-Reply-To: <87r1y12yc7.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Mon, 09 Mar 2020 13:10:48 -0500")
-Message-ID: <87k13t2xpd.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 9 Mar 2020 14:21:35 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id A7551400D5CCB
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 12:06:34 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BN1vjWxa6AGTXBN1vjyjj7; Mon, 09 Mar 2020 13:21:31 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=94Q67ojJZX0sr3cTE6wQF4GveZtQlKTfPuEaR91kEuo=; b=Kbde3Il7M3zJ70zSOwLiT3SbLZ
+        mOUvlifuwYuxtTck+M1RWB+lkNJJEFU7af6Oq6QHGgq2exvgq0Qq8rsMJrQbcasMUu6p7CRWqyl4N
+        JDRdNpcU6o42jPnrp0T1slNC4mQ8VjPGEakca1J1yXoJtP3IrUFerpTx9g8HvqP+dKLHiC349i5+4
+        jzYCdYD2ULtSM+xYKiWxxEbhkgcM0vpa7XOKcin3qL/3vXUzy+uLMnNVO+OB2B71He6FmLqwWcyJa
+        CFz2JOxoJ0tKhb/LILTOHHUaW1Zk3uK5PcHwjSPdX9re1qQX/i+3dT7o0mX+VTW7iY7JmdQ1ByONx
+        VUJB7tuA==;
+Received: from [201.162.240.150] (port=28860 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jBN1u-004LTL-1r; Mon, 09 Mar 2020 13:21:30 -0500
+Date:   Mon, 9 Mar 2020 13:24:42 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] nfs: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200309182442.GA5422@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBN71-00066p-Tz;;;mid=<87k13t2xpd.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/WnV4wYiwwbgU9GE0A9FUPBqxzJcDuRb4=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4897]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 441 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.1 (0.7%), b_tie_ro: 2.1 (0.5%), parse: 1.10
-        (0.2%), extract_message_metadata: 15 (3.4%), get_uri_detail_list: 1.92
-        (0.4%), tests_pri_-1000: 18 (4.0%), tests_pri_-950: 1.16 (0.3%),
-        tests_pri_-900: 1.02 (0.2%), tests_pri_-90: 30 (6.8%), check_bayes: 29
-        (6.5%), b_tokenize: 12 (2.7%), b_tok_get_all: 9 (1.9%), b_comp_prob:
-        2.7 (0.6%), b_tok_touch_all: 3.5 (0.8%), b_finish: 0.63 (0.1%),
-        tests_pri_0: 355 (80.3%), check_dkim_signature: 0.56 (0.1%),
-        check_dkim_adsp: 2.3 (0.5%), poll_dns_idle: 0.32 (0.1%), tests_pri_10:
-        3.9 (0.9%), tests_pri_500: 11 (2.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.162.240.150
+X-Source-L: No
+X-Exim-ID: 1jBN1u-004LTL-1r
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [201.162.240.150]:28860
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 31
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->
->> On 3/9/20 6:40 PM, Eric W. Biederman wrote:
->>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->>> 
->>>> On 3/8/20 10:38 PM, Eric W. Biederman wrote:
->>>>>
->>>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
->>>>> over the userspace accesses as the arguments from userspace are read.
->>>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
->>>                                 ^ over
->>>>
->>>> ... is held while waiting for the trace parent to handle PTRACE_EVENT_EXIT
->>>> or something?
->>> 
->>> Yes.  Let me see if I can phrase that better.
->>> 
->>>> I wonder if we also should mention that
->>>> it is held while waiting for the trace parent to
->>>> receive the exit code with "wait"?
->>> 
->>> I don't think we have to spell out the details of how it all works,
->>> unless that makes things clearer.  Kernel developers can be expected
->>> to figure out how the kernel works.  The critical thing is that it is
->>> an indefinite wait for userspace to take action.
->>> 
->>> But I will look.
->>> 
->>>>> threads are killed.  The cred_guard_mutex is held over
->>>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
->>>>>
->>>>> Any of those can result in deadlock, as the cred_guard_mutex is held
->>>>> over a possible indefinite userspace waits for userspace.
->>>>>
->>>>> Add exec_update_mutex that is only held over exec updating process
->>>>
->>>> Add ?
->>> 
->>> Yes.  That is what the change does: add exec_update_mutex.
->>> 
->>
->> I just kind of missed the "subject" in this sentence,
->> like "This patch adds an exec_update_mutex that is ..."
->> but english is a foreign language for me, so may be okay as is.
->
-> English has a lot of options.  I think this is a stylistic difference.
->
-> Instead of being an observer and describing what the change does:
-> "This patch adds exec_update_mutex ..."  
->
-> I was being there in the moment and saying/commading what is happening:
-> "Add exec_update_mutex ..."
->
-> Using the more immdediate form ends up with more concise and clearer
-> sentences.
->
-> Every one of my writing teachers in school emphasized that point
-> and I see the who it works when I write things.  But writing is hard and
-> I still tend toward long rambling sentences with many qualifiers that
-> confuse and detract from the point rather than make it clear what is
-> happening.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-And reading through it all now I can see your confusion.  That
-description of my changes was not well done.  Reworking it now.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-Eric
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/nfs/dir.c      | 2 +-
+ fs/nfs/nfs4proc.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index d4b839b6cf89..a551a30047f9 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -141,7 +141,7 @@ struct nfs_cache_array {
+ 	int size;
+ 	int eof_index;
+ 	u64 last_cookie;
+-	struct nfs_cache_array_entry array[0];
++	struct nfs_cache_array_entry array[];
+ };
+ 
+ typedef int (*decode_dirent_t)(struct xdr_stream *, struct nfs_entry *, bool);
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 69b7ab7a5815..cc0960558284 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -5550,7 +5550,7 @@ static int buf_to_pages_noslab(const void *buf, size_t buflen,
+ struct nfs4_cached_acl {
+ 	int cached;
+ 	size_t len;
+-	char data[0];
++	char data[];
+ };
+ 
+ static void nfs4_set_cached_acl(struct inode *inode, struct nfs4_cached_acl *acl)
+-- 
+2.25.0
+
