@@ -2,120 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1CD17E414
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D1B17E42A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbgCIPyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:54:14 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.9]:37146 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726758AbgCIPyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:54:13 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0477B114CE
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 10:54:13 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BKjMjTcbYAGTXBKjMjvPxB; Mon, 09 Mar 2020 10:54:13 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+BaSL/NXH+vKbe1CVWfTOyE0XFeJdExgkXsHwEW8bZA=; b=Rvl9bUmzCsVQ3LxP1VqzX3BCk1
-        6h2vTBkMtniXzllZDDb3PQ7uaU2W8Z45i8ii3SBRxiPvbiXn0C/DMXvazcyNzeyyGW3vCNmD3N14E
-        Ukyu9Jsz1lW9aXxhsN1Xe1l5Hxg+EIOhZc99ZnFJkCyv2hUFX2Jcp5tg2li3THZe9E9v3D7zYhID9
-        9Il3xJ5qJ7Iq9RMx6/3c0alGj9kiTcJJ0acMzTvyD7W6Okr97kJDf4u76sY4+ewapl5MwKPMBxAAT
-        RGpj/duv1MFvplmfVWBk+h7quQxOgJI/QRoKUPHkaiWKXfyZhcmoy9SpsKZxLVwQNwduc7vcTIiZ7
-        WcYgO0/Q==;
-Received: from [201.162.240.150] (port=24477 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBKjK-0030kr-LK; Mon, 09 Mar 2020 10:54:11 -0500
-Date:   Mon, 9 Mar 2020 10:57:22 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>
-Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] dlm: user: Replace zero-length array with
- flexible-array member
-Message-ID: <20200309155722.GA32023@embeddedor>
+        id S1727060AbgCIP7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:59:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:53974 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726488AbgCIP7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 11:59:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4142930E;
+        Mon,  9 Mar 2020 08:59:50 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3D203F534;
+        Mon,  9 Mar 2020 08:59:47 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 15:59:45 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200309155945.GA4124965@arrakis.emea.arm.com>
+References: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+ <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
+ <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+ <20200212085004.GL25745@shell.armlinux.org.uk>
+ <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
+ <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
+ <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
+ <20200306203439.peytghdqragjfhdx@kahuna>
+ <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.150
-X-Source-L: No
-X-Exim-ID: 1jBKjK-0030kr-LK
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.150]:24477
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
+> - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
+>   to see if it can be done, and what the overhead is. This is probably
+>   more work than the others combined, but also the most promising
+>   as it allows the most user address space and physical ram to be used.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+A rough outline of such support (and likely to miss some corner cases):
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+1. Kernel runs with its own ASID and non-global page tables.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+2. Trampoline code on exception entry/exit to handle the TTBR0 switching
+   between user and kernel.
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+3. uaccess routines need to be reworked to pin the user pages in memory
+   (get_user_pages()) and access them via the kernel address space.
 
-This issue was found with the help of Coccinelle.
+Point 3 is probably the ugliest and it would introduce a noticeable
+slowdown in certain syscalls.
 
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/dlm/user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/dlm/user.c b/fs/dlm/user.c
-index 5264bac75115..e5cefa90b1ce 100644
---- a/fs/dlm/user.c
-+++ b/fs/dlm/user.c
-@@ -46,7 +46,7 @@ struct dlm_lock_params32 {
- 	__u32 bastaddr;
- 	__u32 lksb;
- 	char lvb[DLM_USER_LVB_LEN];
--	char name[0];
-+	char name[];
- };
- 
- struct dlm_write_request32 {
 -- 
-2.25.0
-
+Catalin
