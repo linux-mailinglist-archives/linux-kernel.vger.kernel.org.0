@@ -2,120 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C124C17E6BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C9417E6C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:20:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbgCISTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:19:31 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33991 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbgCIST2 (ORCPT
+        id S1727686AbgCIST6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:19:58 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36243 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbgCIST4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:19:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t3so5093953pgn.1;
-        Mon, 09 Mar 2020 11:19:27 -0700 (PDT)
+        Mon, 9 Mar 2020 14:19:56 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g12so4324844plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 11:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZUgRxVNWWI4/X6MpRA1miIl6BKxEX3f9Er1YPxkTvvw=;
-        b=sNlPIoM2gt3GGdSuObomrqoffsAtxhxZft2ETl+N3lZ3JSsCVtomAdJeaNPkTfheFa
-         dzxMu8ssE23gZE1OxWJNZ+9Hf25JLpasSBaBdGGq+lY4kZHw/HCniVudCE2Aaozjad7L
-         A8AQC+hDjh+vOvWgARydrt917tpg7seq13OcylBlfc0LT86PMepy+F+tkYc9mzbybEOn
-         S/jxBlUMHRG5Lu//z3iUZDoUrnAQtczHnWp8BBBzHs/avjK67sKc/0ROBmcZUg4IzzUx
-         2O0ctvHZor8KZ5oNC0Uxta9UOSkSJaY7BP1zdgX3G/b5qyfWyeLiYL9t5K4YNuB60gSk
-         vKtA==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=P0TPxg5BSkLkFp0OlEKDiNJneMcG58MKCj4X0aj+r18=;
+        b=LUFJKaI21+lFFDVRrC+d/G2PcPrZYvgqh+0oWuSPROHxW7Ea7z8UadjeAOplciaBz8
+         X5EJXkfpuwXox4OXgu9iL+IJhvgbCazq00mu609wxGNv4KxblVbtut496ggXNd2yvNCs
+         F5sZmlcQ5SgH1QEXcBsMeRlZZBgZjm+g9tqb8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZUgRxVNWWI4/X6MpRA1miIl6BKxEX3f9Er1YPxkTvvw=;
-        b=sbSThMvcRuPzgi5//HM3Y1XVqmAMxwttBRIUMTHkbgQNHEZ2yd9BXBsy0LIcSr5tPZ
-         w8/ln1HgYB5saCmtGge7Qfevf1f6g5QsisgWgifUsnP1MYq6M0x1nj4M6Dc3nvwIGW+o
-         0v6K9+aHQUPjFo9iEULC93mG8lZm1TOsrNakOcvGswN5uWMm++KLCqlBTTg5SoYzxXbx
-         KHmZ+L0aMUS/5q+2F69cdDGJ9RlUdayhUPra99wFGlscNw+3mLJ5965z/NYqxCxfiZuk
-         +xG1u9Z+dxaQ1xWlJvj/jGc2zIa2qL2pOsCnCCjQxcEnt+FkQ/UScwRYy7hulZwnzkve
-         riOw==
-X-Gm-Message-State: ANhLgQ3WzHe1AF+iE2Gx53KOHRe+Du2E+6wRUpt5bQfErSPncHi4f8Yi
-        RlZDGr0MBwaHUYkDXrZBlS0=
-X-Google-Smtp-Source: ADFU+vuOgWAHVSJ7870Wsdc6jp9jt1VM/hwbVvbgrPsGlhP3zO4qktaIEgcY6kj2q1SiRmCkNaL7zA==
-X-Received: by 2002:a63:6841:: with SMTP id d62mr16700934pgc.86.1583777967062;
-        Mon, 09 Mar 2020 11:19:27 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c190sm1023630pga.35.2020.03.09.11.19.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Mar 2020 11:19:25 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 11:19:24 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Anson Huang <Anson.Huang@nxp.com>, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        dmitry.torokhov@gmail.com, a.zummo@towertech.it,
-        rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, wim@linux-watchdog.org,
-        daniel.baluta@nxp.com, gregkh@linuxfoundation.org,
-        linux@rempel-privat.de, tglx@linutronix.de,
-        m.felsch@pengutronix.de, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, ronald@innovation.ch, krzk@kernel.org,
-        robh@kernel.org, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V3 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
-Message-ID: <20200309181924.GA27218@roeck-us.net>
-References: <1583714300-19085-1-git-send-email-Anson.Huang@nxp.com>
- <20200309110609.GE3563@piout.net>
- <1ad38cdb-bf0d-1c19-b233-15a5857bd6fa@roeck-us.net>
- <20200309164705.GG3563@piout.net>
- <20200309171012.GA24802@roeck-us.net>
- <20200309171556.GH3563@piout.net>
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=P0TPxg5BSkLkFp0OlEKDiNJneMcG58MKCj4X0aj+r18=;
+        b=EpkmBmXq0HNo2Ltecg6BcqoyzXtaRJCOl72bt+0nSq4txhftSkzshJjfjL2hfm3qHA
+         pGB0nUN2YQTUd7H76Sk0zrk/0jne1Ma2sCjohPpneBBcrgBa2+RFIKwnYQDIn0URWqjN
+         lvNvMzN9+4vqJz1Gu+Bu+SpM0eY16avFZNSCvWAPA4hSuMy7tH32S7ShshatUdLWmcY9
+         jMJoTKgEE8tBgCiWnDFKgCISMMdH7eT0ad9S6LnCDPpc6BYlPyV5BM5RKnx3oG+nZciu
+         MUmnbi3lT044sJ3lM5RlAOE0w8Z6FQ028vrDJ27k/IGY21JueUnYTeRu/7XN7EnonOqH
+         f5NA==
+X-Gm-Message-State: ANhLgQ2FxzhpA/5vUBHASws0qWZ3X6eOgf0M3niu+KgjVKHD5v2vIPQ4
+        Nu9MJxw/k+sO0ijSqcVEwKq5dA==
+X-Google-Smtp-Source: ADFU+vteH3EUGOgnDI/8G2cbcdr7iPU8YaxSDDMpRLpCXHo30kxiDLe9pP9m3jr4gYNbbsfAKqWLUA==
+X-Received: by 2002:a17:902:904c:: with SMTP id w12mr17536870plz.35.1583777994619;
+        Mon, 09 Mar 2020 11:19:54 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id p21sm16194246pff.91.2020.03.09.11.19.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 11:19:54 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200309171556.GH3563@piout.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e1133bcd-b1fe-98b3-3a28-c12d07ff8ebc@codeaurora.org>
+References: <1583479412-18320-1-git-send-email-mkshah@codeaurora.org> <1583479412-18320-3-git-send-email-mkshah@codeaurora.org> <20200307064231.GF1094083@builder> <e1133bcd-b1fe-98b3-3a28-c12d07ff8ebc@codeaurora.org>
+Subject: Re: [PATCH v3 2/4] soc: qcom: Add SoC sleep stats driver
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     mka@chromium.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Maulik Shah <mkshah@codeaurora.org>
+Date:   Mon, 09 Mar 2020 11:19:53 -0700
+Message-ID: <158377799320.66766.16447517220100414599@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 06:30:54PM +0100, Alexandre Belloni wrote:
-> On 09/03/2020 10:10:12-0700, Guenter Roeck wrote:
-> > On Mon, Mar 09, 2020 at 05:47:05PM +0100, Alexandre Belloni wrote:
-> > > On 09/03/2020 06:27:06-0700, Guenter Roeck wrote:
-> > > > On 3/9/20 4:06 AM, Alexandre Belloni wrote:
-> > > > > On 09/03/2020 08:38:14+0800, Anson Huang wrote:
-> > > > >> Add stubs for those i.MX SCU APIs to make those modules depending
-> > > > >> on IMX_SCU can pass build when COMPILE_TEST is enabled.
-> > > > >>
-> > > > >> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > >> ---
-> > > > >> Changes since V2:
-> > > > >> 	- return error for stubs.
-> > > > > 
-> > > > > I'm not sure why you are sending v3 with the stubs as we determined that
-> > > > > 2/7 is enough to compile all the drivers with COMPILE_TEST.
-> > > > > 
-> > > > > 
-> > > > 2/7 alone is not sufficient. With only 2/7, one can explicitly configure
-> > > > IMX_SCU=n, COMPILE_TEST=y, and get lots of compile failures. Granted,
-> > > > one should not do that, but 0day does (I don't know if that is the result
-> > > > of RANDCONFIG), and I am not looking forward having to deal with the
-> > > > fallout.
-> > > > 
-> > > 
-> > > How would that be possible if the drivers all depend on IMX_SCU?
-> > > 
-> > That dependency is being changed to IMX_SCU || COMPILE_TEST
-> > as part of the series.
-> > 
-> 
-> Yes, my point is that those patches should not be applied at all, only
-> 2/7.
+Quoting Maulik Shah (2020-03-09 03:58:27)
+>=20
+> On 3/7/2020 12:12 PM, Bjorn Andersson wrote:
+> > On Thu 05 Mar 23:23 PST 2020, Maulik Shah wrote:
+> >> diff --git a/drivers/soc/qcom/soc_sleep_stats.c b/drivers/soc/qcom/soc=
+_sleep_stats.c
+> >> new file mode 100644
+> >> index 00000000..79a14d2
+> >> --- /dev/null
+> >> +++ b/drivers/soc/qcom/soc_sleep_stats.c
+> >> @@ -0,0 +1,248 @@
+[...]
+> >> +    u32 pid;
+> >> +};
+> >> +
+> >> +static struct subsystem_data subsystems[] =3D {
+> >> +    { "modem", MODEM_ITEM_ID, PID_MODEM },
+> >> +    { "adsp", ADSP_ITEM_ID, PID_ADSP },
+> >> +    { "cdsp", CDSP_ITEM_ID, PID_CDSP },
+> >> +    { "slpi", SLPI_ITEM_ID, PID_SLPI },
+> >> +    { "gpu", GPU_ITEM_ID, PID_APSS },
+> >> +    { "display", DISPLAY_ITEM_ID, PID_APSS },
+> >> +};
+> >> +
+> >> +struct stats_config {
+> >> +    unsigned int offset_addr;
+> >> +    unsigned int num_records;
+> >> +    bool appended_stats_avail;
+> >> +};
+> >> +
+> >> +static const struct stats_config *config;
+> > Add this to soc_sleep_stats_data and pass that as s->private instead of
+> > just the reg, to avoid the global variable.
+>=20
+> No, this is required to keep global. we are not passing just reg as s->pr=
+ivate,
+> we are passing "reg + offset" which differs for each stat.
 
-Ah, now I get it. Sorry, I missed that part. You are correct, that would
-be sufficient, and I would very much prefer that approach.
+Can you please stop sending these review comment replies and then
+immediately turning around and sending the next revision of the patch
+series. I doubt that the changes take less than an hour to write and it
+would be helpful for everyone involved to have constructive discussions
+about the code if there's ever a response besides "done" or "ok".
 
-Thanks,
-Guenter
+In this case it should be possible to get rid of the global 'config'.
+Make a new container struct to hold the config and offset or figure out
+what actually needs to be passed into the functions instead and do that
+when the files are created.
