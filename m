@@ -2,128 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD3217E28B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:29:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D4317E298
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbgCIO3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 10:29:12 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49386 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgCIO3L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:29:11 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 029ESbNs038839;
-        Mon, 9 Mar 2020 09:28:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583764118;
-        bh=PK9HkNhFkjhSgbGPGf8aZjBq6q1NmO8OJkQ0UtLLUrY=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=SAn3421TiO84EvcU9BpsikWSA7JcG9TeTbS74dJ9CuUaj/W4qCxM8fB1bLvYwzywm
-         IZI88wB5cUFyHKslgUJH4OPJ2CNLN+wQQYzklbnNR3RrJTP3/Sd/ftkFhxU0EArGqX
-         tGaKORIcLhVvGK4/hxqc3NAglL8E/IP3Jvk8WNy8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029ESbBw082094;
-        Mon, 9 Mar 2020 09:28:37 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
- 2020 09:28:37 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Mar 2020 09:28:37 -0500
-Received: from [10.24.69.157] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029ESXq0049548;
-        Mon, 9 Mar 2020 09:28:34 -0500
-Subject: Re: [PATCH v2 1/3] dt-bindings: m_can: Add Documentation for
- transceiver regulator
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <wg@grandegger.com>, <sriram.dash@samsung.com>, <dmurphy@ti.com>
-References: <20200217142836.23702-1-faiz_abbas@ti.com>
- <20200217142836.23702-2-faiz_abbas@ti.com> <20200219203529.GA21085@bogus>
- <a987bcd7-ca1c-dfda-72f3-cd2004a87ea5@ti.com>
- <20b86553-9b98-1a9d-3757-54174aa67c62@pengutronix.de>
- <72e4b1f4-e7f1-cccd-6327-0c8ab6f9f9a7@ti.com>
- <679bdfd3-5325-b903-de5f-1beb5b577d73@ti.com>
-Message-ID: <8400282d-8003-549b-3560-5b55b318e57a@ti.com>
-Date:   Mon, 9 Mar 2020 20:00:23 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726774AbgCIOgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 10:36:13 -0400
+Received: from mail-dm6nam12on2057.outbound.protection.outlook.com ([40.107.243.57]:27918
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726400AbgCIOgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 10:36:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cnigjiLEMboGCdT2uqW50C346Nj39btkGSwiZrFx/fYnxCYPR+xt77e+9oNFPTFb0jB9yH50PqqzgH5LWXq0yXOiJS3GnF1eHJB3yXnx81VYptvncXCpyp3V0q7GPWsVR2enWOooCG9LmEU0qK3FCJBOY1qdxdY/JP2lQOsFDBTxBmvxTwG1GcZS4v1aRTO5wMkvXhZhY94bAHtJuX5PrqzuxGL2TlU0cTbLGrUleOspuVdVR+CClCO3rDs8hGI0ZvFQKuVkV0X/YUmgILwpKficDu8FH4utspClydOpk7bNMyUCuVa9nlKv58J443EmZf98nHlU7xZMxaJcVhYz4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wq09/sQIiNENeUIMS+XUWlWvLaYLS4q0l2IQjh+cCZU=;
+ b=gj5BagGUDEGe8viBlH6Mbya+fRZ2zV7LgGd/KdgEXaOHi1kbZaPhlY1i+gG0/V4QvS7FB92KvKoj781DljcZtUUv3lAa/T59OmSSzymQne9+pBBYF/Ou8PWXS+G7Eqvqdd/jhqzqu4juDFcqZiNH2tQPnfjo9Wf5cy8QF96+sLFhMSC6cSK4qV3yLKc7aeZ9nnGW0yTAT20Aa3YTFzeTwvGenVFM1a1/6UZxljCsMN5pHMIudvzOvvAdsw16kzbaEU8D+ddE2UlYTV3k1nM7e7Jr2VcTkrb7iUe8PN7fv/+3s3x3pKW5AtcCxi6buqLIOoUTmv6ns52Oz5UeXeXa+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wq09/sQIiNENeUIMS+XUWlWvLaYLS4q0l2IQjh+cCZU=;
+ b=BzhaLXqZier+FhgRFArMoSsk8Np/pnNsDr3Cax8k4RvY4mApRk/yYOwiX62ASrG6TSPENVFS8B+MR+NyEIO4CfD4SrIy8JCApQ1yXdC1rL9vp80cdd5E4Z/F9I/d4nRr2tjUNPdrnwJdA/gYZCZYJVdNqG4Is8By0ZpPlZhA6ko=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Xinhui.Pan@amd.com; 
+Received: from SN6PR12MB2800.namprd12.prod.outlook.com (2603:10b6:805:6c::10)
+ by SN6PR12MB2800.namprd12.prod.outlook.com (2603:10b6:805:6c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Mon, 9 Mar
+ 2020 14:36:10 +0000
+Received: from SN6PR12MB2800.namprd12.prod.outlook.com
+ ([fe80::f458:67f4:2379:b6da]) by SN6PR12MB2800.namprd12.prod.outlook.com
+ ([fe80::f458:67f4:2379:b6da%5]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
+ 14:36:10 +0000
+From:   xinhui pan <xinhui.pan@amd.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     nicholas.johnson-opensource@outlook.com.au, Felix.Kuehling@amd.com,
+        Christian.Koenig@amd.com, Alexander.Deucher@amd.com,
+        xinhui pan <xinhui.pan@amd.com>
+Subject: [PATCH] drm/amdgpu: Correct the condition of warning while bo release
+Date:   Mon,  9 Mar 2020 22:34:58 +0800
+Message-Id: <20200309143458.18411-1-xinhui.pan@amd.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR02CA0196.apcprd02.prod.outlook.com
+ (2603:1096:201:21::32) To SN6PR12MB2800.namprd12.prod.outlook.com
+ (2603:10b6:805:6c::10)
 MIME-Version: 1.0
-In-Reply-To: <679bdfd3-5325-b903-de5f-1beb5b577d73@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from pp-server-two.amd.com (180.167.199.189) by HK2PR02CA0196.apcprd02.prod.outlook.com (2603:1096:201:21::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Mon, 9 Mar 2020 14:36:07 +0000
+X-Mailer: git-send-email 2.17.1
+X-Originating-IP: [180.167.199.189]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 283322ba-d766-4778-2f25-08d7c43735b0
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2800:|SN6PR12MB2800:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN6PR12MB28009921CF2696EABD9F7DD187FE0@SN6PR12MB2800.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
+X-Forefront-PRVS: 0337AFFE9A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(376002)(346002)(136003)(366004)(189003)(199004)(316002)(66476007)(66556008)(86362001)(4326008)(478600001)(2616005)(81166006)(16526019)(186003)(8676002)(26005)(81156014)(36756003)(8936002)(956004)(66946007)(6916009)(6666004)(4744005)(1076003)(7696005)(52116002)(6486002)(2906002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2800;H:SN6PR12MB2800.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OunQ9Gs/Hx1Ghl6hW0osST0ipfgWJvINqT5tFmOc/rlh44khB3BfxxVSuW3ZPD+d5uzZbaqhovTWcC/uEZ/khMH/4QAYcH3WSVhD5z1sKwwmHA47JnuZO8BnA3uJ0aSZQdRP/6ZJ6WkrgYh48YPOrdwLRrRifWKTJ4zhTJCGk3RQflwDHVqE+uIAOTyMo0Q/z17dH2D9B4Th46FC8iVh8AWvNdSTTlR6aOa9GI8k9O5uKv2oHnsf6CXFpVDcyoPqZCBSzQjtDDK8pVixaAVrdpW8tbRaXcBkfindL3sXe56fjQGx2oyidNAqO+kR95mYyGbwSAwybW3FtypHLm7EWFPkR4rr8xGcsjwvzIYuCPP2fTq8VXzw+i9wyeDIWOD5KzzLZa7mK1rXhnS769HuDDYymfQndFIyw/xCgpXM33Imeq4U4MzfPC0QgH/5zUrm
+X-MS-Exchange-AntiSpam-MessageData: 8N+4LhsuNvKNMJwATqqVpBjOyZIuskc90cDw6xR9DS8MMpM4pWbNCLzR2f0mOPpj0tqMEajJq6Ei+7WksCtdRBRAAskI0w7ByqzPfcEmX0+EjtKGp/8chREFDuHjMlQ7LoMeXwh1sy426FsQqTHoPQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 283322ba-d766-4778-2f25-08d7c43735b0
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2020 14:36:10.3256
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rbu+w5Tp8icZPINOVio4/EA8Z2U5zWa3rzcAuXspm98f8CTA+7hKRuRLbsm1jUAE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Only kernel bo has kfd eviction fence.
+This warning is to give a notice that kfd only remove eviction fence on
+individual bos.
 
-On 02/03/20 1:46 pm, Faiz Abbas wrote:
-> Marc,
-> 
-> On 26/02/20 2:40 pm, Faiz Abbas wrote:
->> Hi Marc,
->>
->> On 21/02/20 2:01 pm, Marc Kleine-Budde wrote:
->>> On 2/21/20 9:31 AM, Faiz Abbas wrote:
->>>> Hi Rob,
->>>>
->>>> On 20/02/20 2:05 am, Rob Herring wrote:
->>>>> On Mon, Feb 17, 2020 at 07:58:34PM +0530, Faiz Abbas wrote:
->>>>>> Some CAN transceivers have a standby line that needs to be asserted
->>>>>> before they can be used. Model this GPIO lines as an optional
->>>>>> fixed-regulator node. Document bindings for the same.
->>>>>>
->>>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->>>>>> ---
->>>>>>  Documentation/devicetree/bindings/net/can/m_can.txt | 3 +++
->>>>>>  1 file changed, 3 insertions(+)
->>>>>
->>>>> This has moved to DT schema in my tree, so please adjust it and resend.
->>>>
->>>> Ok.
->>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt b/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> index ed614383af9c..f17e2a5207dc 100644
->>>>>> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
->>>>>> @@ -48,6 +48,9 @@ Optional Subnode:
->>>>>>  			  that can be used for CAN/CAN-FD modes. See
->>>>>>  			  Documentation/devicetree/bindings/net/can/can-transceiver.txt
->>>>>>  			  for details.
->>>>>> +
->>>>>> +- xceiver-supply: Regulator that powers the CAN transceiver.
->>>>>
->>>>> The supply for a transceiver should go in the transceiver node.
->>>>>
->>>>
->>>> Marc, while I have you here, do you agree with this?
->>>
->>> I'll look into the details later today.
->>>
->>
->> Sure. Be sure to take another look at my attempt to use the transceiver
->> with a phy driver some time ago.
->>
->> https://lore.kernel.org/patchwork/patch/1006238/
->>
-> 
-> Do you have any comments?
-> 
+Signed-off-by: xinhui pan <xinhui.pan@amd.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Gentle ping.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index 5766d20f29d8..e99f68af2bf7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -1308,7 +1308,8 @@ void amdgpu_bo_release_notify(struct ttm_buffer_object *bo)
+ 		amdgpu_amdkfd_unreserve_memory_limit(abo);
+ 
+ 	/* We only remove the fence if the resv has individualized. */
+-	WARN_ON_ONCE(bo->base.resv != &bo->base._resv);
++	WARN_ON_ONCE(bo->type == ttm_bo_type_kernel
++			&& bo->base.resv != &bo->base._resv);
+ 	if (bo->base.resv == &bo->base._resv)
+ 		amdgpu_amdkfd_remove_fence_on_pt_pd_bos(abo);
+ 
+-- 
+2.17.1
 
-Thanks,
-Faiz
