@@ -2,63 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B5B17E0E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEAC717E0F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 14:18:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgCINOM convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 09:14:12 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:33165 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgCINOM (ORCPT
+        id S1726492AbgCINSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 09:18:34 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:22260 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725956AbgCINSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:14:12 -0400
-Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 0C204100007;
-        Mon,  9 Mar 2020 13:14:04 +0000 (UTC)
-Date:   Mon, 9 Mar 2020 14:14:03 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     richard@nod.at, vigneshr@ti.com, frieder.schrempf@kontron.de,
-        tglx@linutronix.de, stefan@agner.ch, juliensu@mxic.com.tw,
-        allison@lohutok.net, linux-kernel@vger.kernel.org,
-        bbrezillon@kernel.org, rfontana@redhat.com,
-        linux-mtd@lists.infradead.org, yuehaibing@huawei.com,
-        s.hauer@pengutronix.de
-Subject: Re: [PATCH v3 0/4] mtd: rawnand: Add support Macronix Block
- Portection & Deep Power Down mode
-Message-ID: <20200309141403.241e773e@xps13>
-In-Reply-To: <1583220084-10890-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1583220084-10890-1-git-send-email-masonccyang@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 9 Mar 2020 09:18:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583759912;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1K5R56oPivAmrjTNpcDkpowCNoJPz3om5lUYieNs7Bw=;
+        b=hmfQfJvs2kq+xY3ZzfGOA4w8iCBI+88wwb7I0jLGJ05kGmd1XbBW9umub/+KAN/SrEUh4e
+        zm5sEZeaVxWxbKzKFV71PCjyN4DQIj/La7rZCOtyl255FfDXtg0o5OI4PN0QmYAQZxk8RP
+        apaHEd1+fPEilykI4+sJLmOgQ7uscWw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-197-Qr1mgu6CMmm_3by9S08W0Q-1; Mon, 09 Mar 2020 09:18:29 -0400
+X-MC-Unique: Qr1mgu6CMmm_3by9S08W0Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2C4F08010D9;
+        Mon,  9 Mar 2020 13:18:26 +0000 (UTC)
+Received: from localhost (ovpn-12-179.pek2.redhat.com [10.72.12.179])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8BB48882D;
+        Mon,  9 Mar 2020 13:18:16 +0000 (UTC)
+Date:   Mon, 9 Mar 2020 21:18:12 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, mhocko@suse.com,
+        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
+        osalvador@suse.de, rppt@linux.ibm.com
+Subject: Re: [PATCH v3 1/7] mm/hotplug: fix hot remove failure in
+ SPARSEMEM|!VMEMMAP case
+Message-ID: <20200309131812.GN4937@MiWiFi-R3L-srv>
+References: <20200307084229.28251-1-bhe@redhat.com>
+ <20200307084229.28251-2-bhe@redhat.com>
+ <b0ff37b3-bae1-bdd6-8a4f-62f03e028839@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0ff37b3-bae1-bdd6-8a4f-62f03e028839@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
-
-Mason Yang <masonccyang@mxic.com.tw> wrote on Tue,  3 Mar 2020 15:21:20
-+0800:
-
-> Hi,
+On 03/09/20 at 09:58am, David Hildenbrand wrote:
+> On 07.03.20 09:42, Baoquan He wrote:
+> > In section_deactivate(), pfn_to_page() doesn't work any more after
+> > ms->section_mem_map is resetting to NULL in SPARSEMEM|!VMEMMAP case.
+> > It caused hot remove failure:
+> > 
+> > kernel BUG at mm/page_alloc.c:4806!
+> > invalid opcode: 0000 [#1] SMP PTI
+> > CPU: 3 PID: 8 Comm: kworker/u16:0 Tainted: G        W         5.5.0-next-20200205+ #340
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+> > Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+> > RIP: 0010:free_pages+0x85/0xa0
+> > Call Trace:
+> >  __remove_pages+0x99/0xc0
+> >  arch_remove_memory+0x23/0x4d
+> >  try_remove_memory+0xc8/0x130
+> >  ? walk_memory_blocks+0x72/0xa0
+> >  __remove_memory+0xa/0x11
+> >  acpi_memory_device_remove+0x72/0x100
+> >  acpi_bus_trim+0x55/0x90
+> >  acpi_device_hotplug+0x2eb/0x3d0
+> >  acpi_hotplug_work_fn+0x1a/0x30
+> >  process_one_work+0x1a7/0x370
+> >  worker_thread+0x30/0x380
+> >  ? flush_rcu_work+0x30/0x30
+> >  kthread+0x112/0x130
+> >  ? kthread_create_on_node+0x60/0x60
+> >  ret_from_fork+0x35/0x40
+> > 
+> > Let's move the ->section_mem_map resetting after depopulate_section_memmap()
+> > to fix it.
+> > 
+> > Fixes: ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  mm/sparse.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index 42c18a38ffaa..1b50c15677d7 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -734,6 +734,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
+> >  	struct mem_section *ms = __pfn_to_section(pfn);
+> >  	bool section_is_early = early_section(ms);
+> >  	struct page *memmap = NULL;
+> > +	bool empty = false;
 > 
-> Changelog
-> 
-> v3:
-> patch nand_lock_area/nand_unlock_area.
-> fixed kbuidtest robot warnings and reviewer's comments.
+> Oh, one NIT: no need to initialize empty to false.
 
-I know it is painful for the contributor but I really need more details
-in the changelog. This is something I care about because I can speed-up
-my reviews when I know what I already acked or not. "fixing reviewer's
-comments" is way too vague, I have absolutely no idea of what I told
-you last time :) So please, for the next iterations, be more verbose in
-these changelogs! (that's fine for this one, I'll check myself).
+Thanks for careful reviewing, David.
 
-Cheers,
-Miquèl
+Not very sure about this, do you have a doc or discussion thread about
+not initializing local variable? Maybe Andrew can help update it if this
+is not suggested. 
+
