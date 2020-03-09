@@ -2,145 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F54517E685
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2A617E698
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbgCISMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:12:25 -0400
-Received: from gateway36.websitewelcome.com ([192.185.187.5]:19477 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726169AbgCISMY (ORCPT
+        id S1727461AbgCISPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:15:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59880 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgCISPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:12:24 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 54CC1400C8B41
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 12:27:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id BMt6jLEUW8vkBBMt6jE66l; Mon, 09 Mar 2020 13:12:24 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1BqnBgcIZWcdwyXyY58wkKDJ6z4EHF65kFVf0+SX/4w=; b=UBOITjMP3k/jvlJ5kjBGGWr3B2
-        UNwDEomSNJ1MOMY9++ZkkTeJklnYIbdJ1zy8nQPWqN0zaphfLTsZ34VeKesKuT91HzZSLfXZhAcDQ
-        1EMe4Zwm9Is+lH0v5zCAyeVbI4hQYS9rTJRZg8W6OPotRgXi14zAC0wFQPw5tI+zU1umuuPXfDk4O
-        2TW04y1iARAOoepNU96R1v2I8Rh4nCH4W/eyQSTActhVEHDyLZEoYFmZ+JdE83jhi0qCk+w6btzG7
-        2FGFDBTtprjpmE4dkKfoqSNm1KnW3O23zUaNTy2NJ4s0q+kIcFEhttL2j8xWWwlpgIDWxN6YI9Axo
-        Prs3BUjg==;
-Received: from [201.162.240.150] (port=22004 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jBMt4-004GjZ-D5; Mon, 09 Mar 2020 13:12:23 -0500
-Date:   Mon, 9 Mar 2020 13:15:27 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] isofs: rock.h: Replace zero-length array with
- flexible-array member
-Message-ID: <20200309181527.GA4134@embeddedor>
+        Mon, 9 Mar 2020 14:15:33 -0400
+Received: from [5.158.153.53] (helo=debian-buster-darwi.lab.linutronix.de.)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <a.darwish@linutronix.de>)
+        id 1jBMw6-0004Yd-M5; Mon, 09 Mar 2020 19:15:30 +0100
+From:   "Ahmed S. Darwish" <a.darwish@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Ahmed S . Darwish" <a.darwish@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sched/clock: expire timer in hardirq context
+Date:   Mon,  9 Mar 2020 18:15:29 +0000
+Message-Id: <20200309181529.26558-1-a.darwish@linutronix.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.150
-X-Source-L: No
-X-Exim-ID: 1jBMt4-004GjZ-D5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.150]:22004
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+To minimize latency, PREEMPT_RT kernels expires hrtimes in preemptible
+softirq context by default. This can be overriden by marking the timer's
+expiry with HRTIMER_MODE_HARD.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+sched_clock_timer is missing this annotation: if its callback is
+preempted and the duration of the preemption exceeds the wrap around
+time of the underlying clocksource, sched clock will get out of sync.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+Mark the sched_clock_timer for expiry in hard interrupt context.
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
 ---
- fs/isofs/rock.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/time/sched_clock.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/isofs/rock.h b/fs/isofs/rock.h
-index 1558cf22ef8a..ee9660e9671c 100644
---- a/fs/isofs/rock.h
-+++ b/fs/isofs/rock.h
-@@ -22,7 +22,7 @@ struct SU_ER_s {
- 	__u8 len_des;
- 	__u8 len_src;
- 	__u8 ext_ver;
--	__u8 data[0];
-+	__u8 data[];
- } __attribute__ ((packed));
+diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+index e4332e3e2d56..fa3f800d7d76 100644
+--- a/kernel/time/sched_clock.c
++++ b/kernel/time/sched_clock.c
+@@ -208,7 +208,8 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
  
- struct RR_RR_s {
-@@ -44,7 +44,7 @@ struct RR_PN_s {
- struct SL_component {
- 	__u8 flags;
- 	__u8 len;
--	__u8 text[0];
-+	__u8 text[];
- } __attribute__ ((packed));
+ 	if (sched_clock_timer.function != NULL) {
+ 		/* update timeout for clock wrap */
+-		hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
++		hrtimer_start(&sched_clock_timer, cd.wrap_kt,
++			      HRTIMER_MODE_REL_HARD);
+ 	}
  
- struct RR_SL_s {
-@@ -54,7 +54,7 @@ struct RR_SL_s {
+ 	r = rate;
+@@ -254,9 +255,9 @@ void __init generic_sched_clock_init(void)
+ 	 * Start the timer to keep sched_clock() properly updated and
+ 	 * sets the initial epoch.
+ 	 */
+-	hrtimer_init(&sched_clock_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&sched_clock_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	sched_clock_timer.function = sched_clock_poll;
+-	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
++	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL_HARD);
+ }
  
- struct RR_NM_s {
- 	__u8 flags;
--	char name[0];
-+	char name[];
- } __attribute__ ((packed));
+ /*
+@@ -293,7 +294,7 @@ void sched_clock_resume(void)
+ 	struct clock_read_data *rd = &cd.read_data[0];
  
- struct RR_CL_s {
-@@ -71,7 +71,7 @@ struct stamp {
+ 	rd->epoch_cyc = cd.actual_read_sched_clock();
+-	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
++	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL_HARD);
+ 	rd->read_sched_clock = cd.actual_read_sched_clock;
+ }
  
- struct RR_TF_s {
- 	__u8 flags;
--	struct stamp times[0];	/* Variable number of these beasts */
-+	struct stamp times[];	/* Variable number of these beasts */
- } __attribute__ ((packed));
- 
- /* Linux-specific extension for transparent decompression */
 -- 
-2.25.0
+2.20.1
 
