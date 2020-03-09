@@ -2,62 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 478D117EC33
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C2217EC43
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:49:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbgCIWhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 18:37:35 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41599 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgCIWhf (ORCPT
+        id S1727289AbgCIWt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 18:49:29 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:37754 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbgCIWt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 18:37:35 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jBR1h-0004um-7Y; Mon, 09 Mar 2020 22:37:33 +0000
-Date:   Mon, 9 Mar 2020 23:37:32 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pidfd-fixes tree
-Message-ID: <20200309223732.c4fr7p4lxzebqzn7@wittgenstein>
-References: <20200310080758.0b7b6f6b@canb.auug.org.au>
+        Mon, 9 Mar 2020 18:49:29 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 5B0EC1C0316; Mon,  9 Mar 2020 23:49:27 +0100 (CET)
+Date:   Mon, 9 Mar 2020 23:49:27 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     Luca Weiss <luca@z3ntu.xyz>, linux-leds@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>, Heiko Stuebner <heiko@sntech.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 3/3] leds: add sgm3140 driver
+Message-ID: <20200309224926.GA2917@duo.ucw.cz>
+References: <20200309203558.305725-1-luca@z3ntu.xyz>
+ <20200309203558.305725-4-luca@z3ntu.xyz>
+ <20200309221805.GD2619@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
 Content-Disposition: inline
-In-Reply-To: <20200310080758.0b7b6f6b@canb.auug.org.au>
+In-Reply-To: <20200309221805.GD2619@valkosipuli.retiisi.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 08:07:58AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the pidfd-fixes tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> In file included from include/linux/rwsem.h:18,
->                  from include/linux/mm_types.h:11,
->                  from include/linux/mmzone.h:21,
->                  from include/linux/gfp.h:6,
->                  from include/linux/mm.h:10,
->                  from kernel/pid.c:30:
-> kernel/pid.c: In function 'alloc_pid':
-> include/linux/err.h:26:9: warning: 'retval' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    26 |  return (void *) error;
->       |         ^~~~~~~~~~~~~~
-> kernel/pid.c:168:6: note: 'retval' was declared here
->   168 |  int retval;
->       |      ^~~~~~
-> 
-> Introduced by commit
-> 
->   8deb24dcb89c ("pid: make ENOMEM return value more obvious")
 
-Thanks, will fix now. Sorry for the noise!
-Christian;
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > +#define FLASH_TIMEOUT_DEFAULT		250000 /* 250ms */
+> > +#define FLASH_MAX_TIMEOUT_DEFAULT	300000 /* 300ms */
+>=20
+> Add U, and you can remove the cast elsewhere.
+
+I'll disagree here. Avoid U, avoid cast. Neither is needed.
+
+Best regards,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXmbH9gAKCRAw5/Bqldv6
+8poqAJ9rNACtL9JpyMpvqirtegESYwcK8QCeN8Z00hKiQr3cmj19Hi3HDqYsp9A=
+=T86U
+-----END PGP SIGNATURE-----
+
+--Dxnq1zWXvFF0Q93v--
