@@ -2,262 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A5B17D755
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 01:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 553F517D786
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 01:45:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgCIAlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 20:41:05 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:15732 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbgCIAlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 20:41:04 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200309004101epoutp0238f01e9c5e2fc06eb6ae03feca9a175c~6e_lxArd11286912869epoutp02s
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 00:41:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200309004101epoutp0238f01e9c5e2fc06eb6ae03feca9a175c~6e_lxArd11286912869epoutp02s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583714461;
-        bh=XZ9yoeNX+hkQonqKUDRvDFm0GYq1xg16IKUz5yY2Agg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=U1S9abl/M9uAQuxA6mcrhyCxx1h/ZmK/61fJjbAwYswoYazXmoHm+wSwYqARcha9q
-         Y893G1zvo0uvUHMzDqc7d59P43x2UpizXiai+9CLPg/TWhP6jXezBPE84u0c6/de/t
-         JQyGy7esVyZSy+fnvVi5L5Xfe2epwsKhHYpYckGU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200309004100epcas1p3e13fae332c5d0350ab3e4b092091110e~6e_k6cll71944319443epcas1p3h;
-        Mon,  9 Mar 2020 00:41:00 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48bKCF5TBfzMqYkZ; Mon,  9 Mar
-        2020 00:40:57 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6B.7A.48019.890956E5; Mon,  9 Mar 2020 09:40:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309004056epcas1p264978098770f6a81ea6d7a9c1c1df256~6e_hACnr33000430004epcas1p2g;
-        Mon,  9 Mar 2020 00:40:56 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200309004056epsmtrp1720d241cefb1d59063b2a4f3468e626e~6e_g-JLgC2492024920epsmtrp1F;
-        Mon,  9 Mar 2020 00:40:56 +0000 (GMT)
-X-AuditID: b6c32a38-23fff7000001bb93-71-5e659098584f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5D.FD.10238.890956E5; Mon,  9 Mar 2020 09:40:56 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309004056epsmtip22b2048432a3af7077f66fa5ae195b41e~6e_gqbYL42713127131epsmtip2d;
-        Mon,  9 Mar 2020 00:40:56 +0000 (GMT)
-Subject: Re: [PATCH] drm/exynos: Fix memory leak and release IOMMU mapping
- structures
-To:     Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
-        kgene@kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
-        a.hajda@samsung.com, Dietmar.Eggemann@arm.com
-From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <c69c1163-a75b-6667-1979-f3aa356dc0b4@samsung.com>
-Date:   Mon, 9 Mar 2020 09:45:24 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200304220022.8003-1-lukasz.luba@arm.com>
+        id S1727030AbgCIApg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 20:45:36 -0400
+Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:30693
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726958AbgCIApd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Mar 2020 20:45:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UH7iAURSpw39b8JPLJ5h9YaMn60Yu5Gxox2LcWqf1Xu1bE6q7pOVLJ7MMAVGFjYbXGaxTdPZeBQqfDTHFQf4hl96kHLk4Rui9ffeOqGaQzuPOrbiHjGeeAaAJUWradhmKF/oQgKTitkeX3cbOKJBbUXeVvjIiHu7O8+dSLyUZ/ADx01QSixv5TNtrzTryEug9fKiZRVm1TcKXElODCa1163y6CtA8XTMr1zexY9KbQuPdiPD+7GrIeXMpKDjyla5SVttmAPgpMwTDi1z5hcexOL6yMraOjpJfYFtWxCDLl6rChf0Ps+MEcTXEZEll662BmnO/PfZn9pH2hKAJjygiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7ZYlF98l73Xk1yo7Rhbc2KoRItKsdu1F7yHHdelc+eY=;
+ b=cWz+MKr13ZctPUlWFNcwcMO4ER8aqND3TJXWqseSQCGtC5OmniwlUmd5UPxoq0budCKRroXA5e5LSMYnZJ+zGnW1V6+BtYUDXnqOFve35vBAzmK5notr6yxKUVsGB3kTCbLY1msKi4MJFRin3YpKtQ88P6aR6NiVuVuKJ+IAw9refkBLac7M9r7x0ZaEgNK9Mimb5wLg+SL7Yz4NXtvT+DLEVeTGTtsIsLNwKjUvWjdCV5uvoHPIqN+cR4xq5UP86JQPOI5u0AoVmcJLdsr6SAtj1AxXkSemjn+z5z26O9KyODAfApyBviXqeeX3+QMuNFp1LDMxYLdadd5KYLHrjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7ZYlF98l73Xk1yo7Rhbc2KoRItKsdu1F7yHHdelc+eY=;
+ b=H/6vRhTwITjSysWJJuYIUWWEDUXwWW7VmvsB5idKJuPXDt4l/HiX/BRgy1ZCmRDgMdJkflE2VCWuU3UBbjYbDPVPiEwn8jV5Km7xh/4ZDq8IgarRewvc2cW/D60HiYwyfmo2E9UXIPfRNAXYl1vIv4zTphEJJsOwybHRNu5QLR4=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3897.eurprd04.prod.outlook.com (52.134.73.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Mon, 9 Mar 2020 00:45:27 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e44d:fa34:a0af:d96]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e44d:fa34:a0af:d96%5]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
+ 00:45:27 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amit.kucheria@verdurent.com" <amit.kucheria@verdurent.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        "ronald@innovation.ch" <ronald@innovation.ch>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V2 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
+Thread-Topic: [PATCH V2 1/7] firmware: imx: Add stubs for !CONFIG_IMX_SCU case
+Thread-Index: AQHV9CBLTCB9eihrjkCYi2RNsTJEoqg/Y1uAgAAMPsA=
+Date:   Mon, 9 Mar 2020 00:45:27 +0000
+Message-ID: <DB3PR0402MB3916F180023599ED4A983384F5FE0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1583544359-515-1-git-send-email-Anson.Huang@nxp.com>
+ <63862bdf-874f-86d3-3bb5-b41185efffe1@roeck-us.net>
+In-Reply-To: <63862bdf-874f-86d3-3bb5-b41185efffe1@roeck-us.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTZxjOd3e9HsTOWxF50yUCly2mJNiepfrpKNkyt5yZ2UiWbW4m1Ev5
-        AoT22vQKG+oyhMUodoMOY7rCNk0YQ8KmVAUlMBQTGRp+zZ9xU1A0E5mSaGAubba1PZfx3/O8
-        3/PmfZ73+z6ONv7GmrgKJUD8iuwW2HSm55zZmh9uIiXWjvtmfOPHMR3+fGyEwt3hozr8T0+I
-        xveaTtL48sI8i+/fmmRw48wcjcfHj+nxaN0fehyduarDl/paWRwe/4nCh+s+0+Nw8yz7ynKp
-        65suJA0sHmKkaOc+VupdnNZJU/uHKel426fSFyc6kfQkuqqY+7CysJzIpcSfQxSXt7RCKXMI
-        b77jfM1pX2cV88UNeL2Qo8ge4hA2bSnOf6PCnTAv5FTL7qpEqVhWVcFSVOj3VgVITrlXDTgE
-        4it1+zb41qiyR61Syta4vJ6NotW61p4Qbq8snwvW074+8eP4dJ2uFv26ugFxHPAFcHwwuwGl
-        c0b+FIL2eJzWyGMEwSsxSiOLCOb7DqAGlJbq6J6L6bWDAQRHgpdZjcwjODbSRiVVGfz7cObW
-        n6mDFXw3gutdp1GS0PwMgn3Rg0xSxfIvQahjik1iA18EU8PfpzDDvwgPwhN00mEmvxUuLsia
-        5HkY+eoukyyn8RjafxGTZZrPght3v6U0nA31J1tSGYDv0cOFnqeUZnsTBEPtrIYz4MHwCb2G
-        TTDbuEevNdQjCIUvUhrZi+DmzDVGU9lg8LtmKjmZ5s1wtM+ilXPhdOxrpE1+Dh4tBHXaVg2w
-        d49RkwhwfvL6s9UBTLSFnnmQYHI2zjSh3MiSaJEleSJL8kT+H3wIMZ1oJfGpnjKiir6Cpdcd
-        RamXnYdPof6xLUOI55CwzDCdTUqMOrlarfEMIeBoYYVhd56rxGgolWt2EL/X6a9yE3UI2ROL
-        D9GmTJc38U+UgFO0r7XZbLhAXGcXRSHLcPsDc4mRL5MDpJIQH/H/10dxaaZa9HLwrKu/d3mx
-        bZv3yO+R/R07c2OWuPOF1idPW5TRhzXNm69lZGWeO3vhbcdul6/3LUuWeDC4K65O+He4Y04O
-        Br9c3Hj49VhL/MzqmLly9Pyl9Q/vCNtfze7+ZFg80Fpk/msVpFf/YNm22fSectORW2ud+3nn
-        u393NO4q7B+4+lF0a6HAqOWymEf7Vflf7AsHAu8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCSvO6MCalxBrPn8lncWneO1aL33Ekm
-        i40z1rNa/N82kdni6YStzBZXvr5ns3hx7yKLRf/j18wW589vYLc42/SG3WLT42usFpd3zWGz
-        mHF+H5PFwqYWdosZk1+yOfB7rJm3htFj77cFLB6bVnWyeWz/9oDV4373cSaPzUvqPfq2rGL0
-        +LxJLoAjissmJTUnsyy1SN8ugSvjdU8zc8Euw4o/D5pYGxhvq3cxcnJICJhIbHz9m72LkYtD
-        SGA3o8SzU7eAHA6ghITElq0cEKawxOHDxRAlbxklrj9rYgHpFRYIlzhw7zsbSEJEYCOjxPzz
-        K1hAHGaBx4wSzVvOMkO0dDNKrJnRzQbSwiagKjFxxX0wm1fATuL+8eVgNouAisSrGReYQWxR
-        gQiJ59tvMELUCEqcnPmEBeQMTgELiWWXDEHCzALqEn/mXWKGsMUlbj2ZzwRhy0s0b53NPIFR
-        aBaS7llIWmYhaZmFpGUBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgGNXS3MF4
-        eUn8IUYBDkYlHt4H8qlxQqyJZcWVuYcYJTiYlUR4G7WS44R4UxIrq1KL8uOLSnNSiw8xSnOw
-        KInzPs07FikkkJ5YkpqdmlqQWgSTZeLglGpg1FgpPOPbvr+LGniqVa8+mGpvN02l2ezbqtdy
-        /A98P8WXyjsE7DxgXPWXgaOnNzrB5+bhbd+qc/ol2XWCf71sf5LKOF+8229fSiKHxSwTTa20
-        f7ul2vVnnGwX/25/LNU5tYG3ff35x3ufJdvqXos5Xbhc73mFhcBW0ZSn3ZkfWU/xnzdpn/tT
-        iaU4I9FQi7moOBEA86vmLM0CAAA=
-X-CMS-MailID: 20200309004056epcas1p264978098770f6a81ea6d7a9c1c1df256
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 34605ca5-822f-42bf-c6a5-08d7c3c32967
+x-ms-traffictypediagnostic: DB3PR0402MB3897:|DB3PR0402MB3897:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB38971F0DC5BECD0BBDC0D824F5FE0@DB3PR0402MB3897.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-forefront-prvs: 0337AFFE9A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(346002)(39860400002)(136003)(189003)(199004)(55016002)(81156014)(53546011)(33656002)(86362001)(81166006)(4326008)(7416002)(7696005)(9686003)(6506007)(8676002)(110136005)(52536014)(186003)(5660300002)(316002)(66556008)(66946007)(76116006)(64756008)(66446008)(71200400001)(44832011)(2906002)(8936002)(478600001)(26005)(66476007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3897;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: MltNxdzNZzVv3au0ow2A2tTKaqp4dlSDABEsWLk4K1x2N4gzi+GLS01rLYQiMsb867z7STu7sqSCY0IyKsV4ZfghuBzBN2o5DOKXZU3n1j6Cvn4wzDvniCU7qyDVeSCbPEa//JEpV+OI69FmZYMJDDZHhp0p8NaZ2hbN22K4K1/yWMtGB42C67JumBIqX10GrivwDBYgGUB11H+QF3olOW9i/T8xyLDedUDBOLxg6o8Y0P/Wbi0oEJZLl7GJTKlfmPfv41aGeYDhRCyfZwmkk8KqErQJ+H2oRJbIDdsHhKicajMhXwBgq3prskFWVrWQoBniMEiEXX/Lm7RC8GTLOAejsrl1kCi5T2dgIMi5lYVoYA7HsDxWoWiI3VOqJaYhj5+7VHBkiZZVyEhSMFZAk7Z2uygaDJUuw3NQGb9/cyDMS2b+ga3+lcE+16z/ynakKK63XSkdIydra4T0d6JrsiV/kJgRby78NNc5Nmp3IS0ZO0DeP/mMSgQt6+BRFWKa
+x-ms-exchange-antispam-messagedata: YU58KKl3vaoVxREzRLp5YFXeN3UFbUkJ2Pby+hAy93gaWCSUVVs8EBDlL1cDBUEh/afcoemJahS90JIDdnNXuGzPxkyzs0wS+ClH1trOxH9BfkSjsqahoe0VjaasD0v+ixGLtW6MCNRjjQfNQb3Qjw==
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200304220104epcas1p2d65f8ab31df6aa5373787b695b14f8ff
-References: <CGME20200304220104epcas1p2d65f8ab31df6aa5373787b695b14f8ff@epcas1p2.samsung.com>
-        <20200304220022.8003-1-lukasz.luba@arm.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34605ca5-822f-42bf-c6a5-08d7c3c32967
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 00:45:27.4821
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UPquhdx4QlX7BKfZJKfSskTPlUvBD+ETs5nNWalIRr7AbS80ykmNn+5GK4AAg8Af3NNE86eYwhBcnwFoCu2Bdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3897
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
-
-20. 3. 5. 오전 7:00에 Lukasz Luba 이(가) 쓴 글:
-> There is a memory leak which left some objects not freed. The reference
-> counter of mapping: 'mapping->kref' was 2 when calling
-> arm_iommu_detach_device(), so the release_iommu_mapping() won't be called.
-> Since the old mapping structure is not going to be used any more (because
-> it is detached and new one attached), call arm_iommu_release_mapping()
-> to trigger cleanup.
-> 
-> Found using kmemleak detector, the output:
-> 
-> unreferenced object 0xc2137640 (size 64):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     50 a3 14 c2 80 a2 14 c2 01 00 00 00 20 00 00 00  P........... ...
->     00 10 00 00 00 80 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
->     [<8cd12507>] 0x0
-> unreferenced object 0xc214a280 (size 128):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     00 a0 ec ed 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
->     [<8cd12507>] 0x0
-> unreferenced object 0xedeca000 (size 4096):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
->     [<8cd12507>] 0x0
-> unreferenced object 0xc214a300 (size 128):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     00 a3 14 c2 00 a3 14 c2 00 40 18 c2 00 80 18 c2  .........@......
->     02 00 02 00 ad 4e ad de ff ff ff ff ff ff ff ff  .....N..........
->   backtrace:
->     [<08cbd8bc>] iommu_domain_alloc+0x24/0x50
->     [<b835abee>] arm_iommu_create_mapping+0xe4/0x134
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
-> 
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
-> 
-> Hi all,
-> 
-> I have discovered this issue on OdroidXU4 while running some stress tests
-> for upcoming Energy Model. To reproduce it, kernel must be compiled with
-> DEBUG_KMEMLEAK. When the boot has finished, type:
-> # echo scan > /sys/kernel/debug/kmemleak
-> # cat /sys/kernel/debug/kmemleak
-> You should expect similar output to the one from the commit message.
-> 
-> I don't know if it should go via stable tree as well. I can resend with CC
-> stable, if there is a need.
-
-Thanks for fixup. BTW, as you commented on Marek's patch thread, with Marek's patch the memory leak will be solved.
-Do you want Marek to rework his patch on top of your patch or are you ok me to pick up only Marek's one?
-
-Marek's patch is conflicted with your one.
-
-Thanks,
-Inki Dae
-
-> 
-> Regards,
-> Lukasz Luba
-> 
->  drivers/gpu/drm/exynos/exynos_drm_dma.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> index 9ebc02768847..45f209ec107f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> @@ -74,8 +74,13 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
->  		return ret;
->  
->  	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
-> -		if (to_dma_iommu_mapping(subdrv_dev))
-> +		struct dma_iommu_mapping *mapping =
-> +					to_dma_iommu_mapping(subdrv_dev);
-> +
-> +		if (mapping) {
->  			arm_iommu_detach_device(subdrv_dev);
-> +			arm_iommu_release_mapping(mapping);
-> +		}
->  
->  		ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
->  	} else if (IS_ENABLED(CONFIG_IOMMU_DMA)) {
-> 
+SGksIEd1ZW50ZXINCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFYyIDEvN10gZmlybXdhcmU6IGlt
+eDogQWRkIHN0dWJzIGZvciAhQ09ORklHX0lNWF9TQ1UNCj4gY2FzZQ0KPiANCj4gT24gMy82LzIw
+IDU6MjUgUE0sIEFuc29uIEh1YW5nIHdyb3RlOg0KPiA+IEFkZCBzdHVicyBmb3IgdGhvc2UgaS5N
+WCBTQ1UgQVBJcyB0byBtYWtlIHRob3NlIG1vZHVsZXMgZGVwZW5kaW5nIG9uDQo+ID4gSU1YX1ND
+VSBjYW4gcGFzcyBidWlsZCB3aGVuIENPTVBJTEVfVEVTVCBpcyBlbmFibGVkLg0KPiA+DQo+ID4g
+U2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+ID4gLS0t
+DQo+ID4gbmV3IHBhdGNoLg0KPiA+IC0tLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lt
+eC9pcGMuaCB8IDExICsrKysrKysrKysrDQo+ID4gaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgv
+c2NpLmggfCAxOSArKysrKysrKysrKysrKysrKysrDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMzAg
+aW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZmlybXdh
+cmUvaW14L2lwYy5oDQo+ID4gYi9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9pcGMuaA0KPiA+
+IGluZGV4IDg5MTA1NzQuLjNmZmYwZTIgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9saW51eC9m
+aXJtd2FyZS9pbXgvaXBjLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9p
+cGMuaA0KPiA+IEBAIC0zNCw2ICszNCw3IEBAIHN0cnVjdCBpbXhfc2NfcnBjX21zZyB7DQo+ID4g
+IAl1aW50OF90IGZ1bmM7DQo+ID4gIH07DQo+ID4NCj4gPiArI2lmZGVmIENPTkZJR19JTVhfU0NV
+DQo+ID4gIC8qDQo+ID4gICAqIFRoaXMgaXMgYW4gZnVuY3Rpb24gdG8gc2VuZCBhbiBSUEMgbWVz
+c2FnZSBvdmVyIGFuIElQQyBjaGFubmVsLg0KPiA+ICAgKiBJdCBpcyBjYWxsZWQgYnkgY2xpZW50
+LXNpZGUgU0NGVyBBUEkgZnVuY3Rpb24gc2hpbXMuDQo+ID4gQEAgLTU1LDQgKzU2LDE0IEBAIGlu
+dCBpbXhfc2N1X2NhbGxfcnBjKHN0cnVjdCBpbXhfc2NfaXBjICppcGMsIHZvaWQNCj4gKm1zZywg
+Ym9vbCBoYXZlX3Jlc3ApOw0KPiA+ICAgKiBAcmV0dXJuIFJldHVybnMgYW4gZXJyb3IgY29kZSAo
+MCA9IHN1Y2Nlc3MsIGZhaWxlZCBpZiA8IDApDQo+ID4gICAqLw0KPiA+ICBpbnQgaW14X3NjdV9n
+ZXRfaGFuZGxlKHN0cnVjdCBpbXhfc2NfaXBjICoqaXBjKTsNCj4gPiArI2Vsc2UNCj4gPiArc3Rh
+dGljIGlubGluZSBpbnQgaW14X3NjdV9jYWxsX3JwYyhzdHJ1Y3QgaW14X3NjX2lwYyAqaXBjLCB2
+b2lkICptc2csDQo+ID4gK2Jvb2wgaGF2ZV9yZXNwKSB7DQo+ID4gKwlyZXR1cm4gMDsNCj4gPiAr
+fQ0KPiA+ICtzdGF0aWMgaW5saW5lIGludCBpbXhfc2N1X2dldF9oYW5kbGUoc3RydWN0IGlteF9z
+Y19pcGMgKippcGMpIHsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+ID4gKyNlbmRpZg0KPiA+
+ICAjZW5kaWYgLyogX1NDX0lQQ19IICovDQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
+ZmlybXdhcmUvaW14L3NjaS5oDQo+ID4gYi9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9zY2ku
+aA0KPiA+IGluZGV4IDE3YmE0ZTQuLjQ2ODhiNjAgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9s
+aW51eC9maXJtd2FyZS9pbXgvc2NpLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L2Zpcm13YXJl
+L2lteC9zY2kuaA0KPiA+IEBAIC0xNiw4ICsxNiwyNyBAQA0KPiA+ICAjaW5jbHVkZSA8bGludXgv
+ZmlybXdhcmUvaW14L3N2Yy9taXNjLmg+ICAjaW5jbHVkZQ0KPiA+IDxsaW51eC9maXJtd2FyZS9p
+bXgvc3ZjL3BtLmg+DQo+ID4NCj4gPiArI2lmZGVmIENPTkZJR19JTVhfU0NVDQo+ID4gIGludCBp
+bXhfc2N1X2VuYWJsZV9nZW5lcmFsX2lycV9jaGFubmVsKHN0cnVjdCBkZXZpY2UgKmRldik7ICBp
+bnQNCj4gPiBpbXhfc2N1X2lycV9yZWdpc3Rlcl9ub3RpZmllcihzdHJ1Y3Qgbm90aWZpZXJfYmxv
+Y2sgKm5iKTsgIGludA0KPiA+IGlteF9zY3VfaXJxX3VucmVnaXN0ZXJfbm90aWZpZXIoc3RydWN0
+IG5vdGlmaWVyX2Jsb2NrICpuYik7ICBpbnQNCj4gPiBpbXhfc2N1X2lycV9ncm91cF9lbmFibGUo
+dTggZ3JvdXAsIHUzMiBtYXNrLCB1OCBlbmFibGUpOw0KPiA+ICsjZWxzZQ0KPiA+ICtzdGF0aWMg
+aW5saW5lIGludCBpbXhfc2N1X2VuYWJsZV9nZW5lcmFsX2lycV9jaGFubmVsKHN0cnVjdCBkZXZp
+Y2UNCj4gPiArKmRldikgew0KPiA+ICsJcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArc3RhdGljIGlu
+bGluZSBpbnQgaW14X3NjdV9pcnFfcmVnaXN0ZXJfbm90aWZpZXIoc3RydWN0IG5vdGlmaWVyX2Js
+b2NrDQo+ID4gKypuYikgew0KPiA+ICsJcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArc3RhdGljIGlu
+bGluZSBpbnQgaW14X3NjdV9pcnFfdW5yZWdpc3Rlcl9ub3RpZmllcihzdHJ1Y3QNCj4gPiArbm90
+aWZpZXJfYmxvY2sgKm5iKSB7DQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICtzdGF0aWMg
+aW5saW5lIGludCBpbXhfc2N1X2lycV9ncm91cF9lbmFibGUodTggZ3JvdXAsIHUzMiBtYXNrLCB1
+OA0KPiA+ICtlbmFibGUpIHsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+IA0KPiBJdCB3b3Vs
+ZCBwcm9iYWJseSBiZSBtb3JlIGFwcHJvcHJpYXRlIHRvIHJldHVybiBlcnJvcnMgZnJvbSB0aGUg
+c3R1Yg0KPiBmdW5jdGlvbnMuDQoNCkFncmVlZCwgaW1wcm92ZSB0aGVtIGluIFYzIHBhdGNoIHNl
+cmllcy4NCg0KVGhhbmtzLA0KQW5zb24NCg==
