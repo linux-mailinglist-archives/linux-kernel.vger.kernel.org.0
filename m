@@ -2,126 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1BB17DDBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 11:35:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 185A417DDCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 11:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgCIKfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 06:35:13 -0400
-Received: from mail-dm6nam12on2072.outbound.protection.outlook.com ([40.107.243.72]:6126
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725962AbgCIKfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 06:35:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dt4E8CnHoTyYdBYMByvFIJ1WZOs+gRj371xaYH/o+a0Cuc8B2z7iOYcMsThcSnKkIa8E+vc/gP2S1GGt5LvKygVn0Fj2J6BfEw4N21jWyyb77CDxz1IOgF54QAWVtpLL3z9YqyZLBPe6sIZr7bVkit7fu7iFNRxq0rvtEhsG6KkJ8XBQZrQLy2odo+qnBEd6fADGLEH30xuhapziNilQEyxhyxA4a81awLdZkI1rqu33XLw5U+fGfO0mEM5ZVCyr/7jrKGJhDb7DSjgg1lEH34utStLYOYj78NpyReyRG8xV4QI5tCz3qTSzUpmTLTdx1nzaTTa8z0ekvOiWHe1/nQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3G12k4CnTN/LxeCnLhY+q8Mq8GIC1Fyx5m7V/IJySAk=;
- b=GsJkMpOWq81pyhS2dmZF/Az4c8W0T+WWc1g+JoKSGg1x93SAl+pnz2PP5BC4DuhUzfGXM62QKCphwIC/KEwA0lizu/ZRe4UjgFiCYLWzHH/IkSqLsPLWP06ksJuguNlsKMScOqDtvJlOhT+wNCYr24mVumMGUIglpPDtcnkOr7MDjV8lPySX81cb+vOkjmWIAQN8yTlgapJmi9UeQaII4Vi8nADS6uohwp/s1mKOq9N+QSeqPskZPnIHdvQWoXX4kjGkgfxVEyGqvBObtkbCqjXpAYsby78+5JGgFa1HnNMLMcoR/NaFE8S1ADu1NHADvB+L8lzBcIsNLzp1lrgHmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3G12k4CnTN/LxeCnLhY+q8Mq8GIC1Fyx5m7V/IJySAk=;
- b=SF4KwZgbCp9f6sgYr8m9w3ww8FdcsTim4/i/JYgIc+Gmhy/ks5YFjk59GElxiSumlSxV3vXNVjVIeosnL3VAICuG5pdOM/3V5vGW0FPMEV1ZT6TxIk/GVuwGkY8ujTRk+ogOmMThlMJ/DcWuADRNP89E0xWb3hg1fz9T2iILEsU=
-Received: from MN2PR08MB6397.namprd08.prod.outlook.com (2603:10b6:208:1aa::10)
- by MN2PR08MB6399.namprd08.prod.outlook.com (2603:10b6:208:1b2::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Mon, 9 Mar
- 2020 10:35:11 +0000
-Received: from MN2PR08MB6397.namprd08.prod.outlook.com
- ([fe80::884a:b0f5:3cf5:f4a4]) by MN2PR08MB6397.namprd08.prod.outlook.com
- ([fe80::884a:b0f5:3cf5:f4a4%4]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
- 10:35:11 +0000
-From:   "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        "shiva.linuxworks@gmail.com" <shiva.linuxworks@gmail.com>
-CC:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH v5 0/6] Add new series Micron SPI NAND devices
-Thread-Topic: [EXT] Re: [PATCH v5 0/6] Add new series Micron SPI NAND devices
-Thread-Index: AQHV9f4hHhuTnsoUdkK9rZQqVPh4kKhAEIOA
-Date:   Mon, 9 Mar 2020 10:35:10 +0000
-Message-ID: <MN2PR08MB6397F6BCA6F0D597C66C0B44B8FE0@MN2PR08MB6397.namprd08.prod.outlook.com>
-References: <20200228150311.12184-1-sshivamurthy@micron.com>
- <20200309113256.6c6751f8@xps13>
-In-Reply-To: <20200309113256.6c6751f8@xps13>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-rorf: true
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcc3NoaXZhbXVydGh5XGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYTU3OWI3NmMtNjFmMS0xMWVhLWIxZWEtOTgzYjhmNzQ1MjUxXGFtZS10ZXN0XGE1NzliNzZlLTYxZjEtMTFlYS1iMWVhLTk4M2I4Zjc0NTI1MWJvZHkudHh0IiBzej0iMTkwMSIgdD0iMTMyMjgyMjM3MDg5NjUxNTgwIiBoPSIrM0xUOFphNElFZGlzQ1oxbHFzcmlaMTlqOEk9IiBpZD0iIiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFIQUFBQUI4bTlKbi92WFZBZHRaWHBsTEdZK0kyMWxlbVVzWmo0Z0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFCQUFBQUlTQjI1d0FBQUFBQUFBQUFBQUFBQUE9PSIvPjwvbWV0YT4=
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sshivamurthy@micron.com; 
-x-originating-ip: [165.225.86.94]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 78490234-f4e9-4647-5378-08d7c4158b82
-x-ms-traffictypediagnostic: MN2PR08MB6399:|MN2PR08MB6399:|MN2PR08MB6399:
-x-microsoft-antispam-prvs: <MN2PR08MB6399246402B39FA8D1BECD2EB8FE0@MN2PR08MB6399.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-forefront-prvs: 0337AFFE9A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(376002)(346002)(39860400002)(189003)(199004)(7696005)(54906003)(6506007)(110136005)(55236004)(316002)(66574012)(86362001)(4326008)(478600001)(71200400001)(81166006)(186003)(26005)(2906002)(33656002)(8936002)(81156014)(8676002)(9686003)(966005)(55016002)(52536014)(66946007)(66556008)(66476007)(64756008)(66446008)(5660300002)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR08MB6399;H:MN2PR08MB6397.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: zwXeaQEWvh6EKSaprj35i7zKF7+Jgw0RBBJhpK5qiVDmn13yUCQJilFZFGsY/PKzpKSIT9M4+gRlbkC57493AIPa8zJQpURU5tGJydj9ixAGDGjVvKtvpyqqj4VWH35SGbkW2QPuLXAnXCL3CZDPMlBlmE4hVMT3AgWq1oiDGqJuqBpOBdrF2Inz+19B1yCVsxXXeqJZ6f7LNCDQoktomizkNoGPgjRp3AeqQ33qPPMGybwQtCjkTmCUSTN2PqL/hbU17Sx81toBZG4fLKdT/w+5ZJb5V9rtuG8SNQVVFnZesS4Umv+h5vwZZahW/JWwjINYcWNv8pEw1OyvFMAQOzThY1FDe0N/aZYTIV/WW2wJZ6X4ulOlsyOYNdaaXXgrNeje+cWDr6YDchRs32y00DfzNjbmLpiZeVidVsM3IhR1CrMmS6g3wfw9YlCNX+W29KTk44HuAR7e3NI0feVwNTI8kJFCznkhnz7WvBRLQw1WmTKA+xfOMrOls8/ryMf6a6+hHXCcN+tf7kJD5VLsvg==
-x-ms-exchange-antispam-messagedata: ZJL8U+dplhY9Pp3l3Qpiztan0WQ6nLygFsmllKYoKwZX6tdfY+TKx9caarG6mNmqMCobtJInEFpm6Y6IeG9iKNHoI6MGDz7qXqBIgy9ezyDdqxPzjsD34P4pw4NA4bsOD8NKL6d5dmKpTzj2RFaUvw==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726530AbgCIKkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 06:40:01 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:45585 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726469AbgCIKkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 06:40:00 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 029AScac025793;
+        Mon, 9 Mar 2020 11:39:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=iqtz+8jVUcIa98vBWaQrx9xYUGQQ4Q8iCdRJjvFbN7g=;
+ b=G6+lcIPLfe/fl3LP3qkR7/r+NE9RTxcXW7XSciIUVUQSJK3eE9FScRHwmTpU5LH1/sVJ
+ 2RyQ/++eefGINPkMcxZeB86JDPwRqhBF1jxYqFag5ePmd04XpK04F8pYOfiBqzAIei0h
+ jr6i1PCprE/vHVfsajmuVXlb/lfOUiu18r7n0EEABc4zJp2WqPTCQhh5Z5Cv1g3drOwy
+ VIXy8OkskezCz1fbFhoUJwp9FfOJ2eEWNvG3T1EilpM3tkGqnLZKpJYR+jxt0ySQjlXC
+ FJEkVp1/YA15p8ghk3FyltBAr1//TZ7LGj06u/HP1/+BFfXg198qs6rQeO9koPoSgY0q IQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2ym2923gbu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Mar 2020 11:39:37 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8235A100034;
+        Mon,  9 Mar 2020 11:39:33 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5112E2AE6B7;
+        Mon,  9 Mar 2020 11:39:33 +0100 (CET)
+Received: from [10.48.0.71] (10.75.127.46) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Mar
+ 2020 11:39:32 +0100
+Subject: Re: [PATCH v2] iio: adc: stm32-adc: fix sleep in atomic context
+To:     Olivier Moysan <olivier.moysan@st.com>, <jic23@kernel.org>,
+        <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <alexandre.torgue@st.com>, <benjamin.gaignard@st.com>
+CC:     <linux-iio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200309100212.16499-1-olivier.moysan@st.com>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <288fb604-16c6-da52-533f-7f1440ed9daa@st.com>
+Date:   Mon, 9 Mar 2020 11:39:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78490234-f4e9-4647-5378-08d7c4158b82
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 10:35:10.8473
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qHNK+U6MIu6oTekujtelOLbxHpacyeJOOE2g/QC2NT1OcFiV6LrIMe+VuDqoXGc9ua8WJJmqnc/MN11atGGsxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR08MB6399
+In-Reply-To: <20200309100212.16499-1-olivier.moysan@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-09_02:2020-03-08,2020-03-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWlxdWVsLA0KDQo+IA0KPiBIaSBTaGl2YSwNCj4gDQo+IHNoaXZhLmxpbnV4d29ya3NAZ21h
-aWwuY29tIHdyb3RlIG9uIEZyaSwgMjggRmViIDIwMjAgMTY6MDM6MDUgKzAxMDA6DQo+IA0KPiA+
-IEZyb206IFNoaXZhbXVydGh5IFNoYXN0cmkgPHNzaGl2YW11cnRoeUBtaWNyb24uY29tPg0KPiA+
-DQo+ID4gVGhpcyBwYXRjaHNldCBpcyBmb3IgdGhlIG5ldyBzZXJpZXMgb2YgTWljcm9uIFNQSSBO
-QU5EIGRldmljZXMsIGFuZCB0aGUNCj4gPiBmb2xsb3dpbmcgbGlua3MgYXJlIHRoZWlyIGRhdGFz
-aGVldHMuDQo+ID4NCj4gPiBNNzhBOg0KPiA+IFsxXSBodHRwczovL3d3dy5taWNyb24uY29tL34v
-bWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2RhdGEtDQo+IHNoZWV0L25hbmQtZmxhc2gvNzAtc2Vy
-aWVzL203OGFfMWdiXzN2X25hbmRfc3BpLnBkZg0KPiA+IFsyXSBodHRwczovL3d3dy5taWNyb24u
-Y29tL34vbWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2RhdGEtDQo+IHNoZWV0L25hbmQtZmxhc2gv
-NzAtc2VyaWVzL203OGFfMWdiXzFfOHZfbmFuZF9zcGkucGRmDQo+ID4NCj4gPiBNNzlBOg0KPiA+
-IFszXSBodHRwczovL3d3dy5taWNyb24uY29tL34vbWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2Rh
-dGEtDQo+IHNoZWV0L25hbmQtZmxhc2gvNzAtc2VyaWVzL203OWFfMmdiXzFfOHZfbmFuZF9zcGku
-cGRmDQo+ID4gWzRdIGh0dHBzOi8vd3d3Lm1pY3Jvbi5jb20vfi9tZWRpYS9kb2N1bWVudHMvcHJv
-ZHVjdHMvZGF0YS0NCj4gc2hlZXQvbmFuZC1mbGFzaC83MC1zZXJpZXMvbTc5YV9kZHBfNGdiXzN2
-X25hbmRfc3BpLnBkZg0KPiA+DQo+ID4gTTcwQToNCj4gPiBbNV0gaHR0cHM6Ly93d3cubWljcm9u
-LmNvbS9+L21lZGlhL2RvY3VtZW50cy9wcm9kdWN0cy9kYXRhLQ0KPiBzaGVldC9uYW5kLWZsYXNo
-LzcwLXNlcmllcy9tNzBhXzRnYl8zdl9uYW5kX3NwaS5wZGYNCj4gPiBbNl0gaHR0cHM6Ly93d3cu
-bWljcm9uLmNvbS9+L21lZGlhL2RvY3VtZW50cy9wcm9kdWN0cy9kYXRhLQ0KPiBzaGVldC9uYW5k
-LWZsYXNoLzcwLXNlcmllcy9tNzBhXzRnYl8xXzh2X25hbmRfc3BpLnBkZg0KPiA+IFs3XSBodHRw
-czovL3d3dy5taWNyb24uY29tL34vbWVkaWEvZG9jdW1lbnRzL3Byb2R1Y3RzL2RhdGEtDQo+IHNo
-ZWV0L25hbmQtZmxhc2gvNzAtc2VyaWVzL203MGFfZGRwXzhnYl8zdl9uYW5kX3NwaS5wZGYNCj4g
-PiBbOF0gaHR0cHM6Ly93d3cubWljcm9uLmNvbS9+L21lZGlhL2RvY3VtZW50cy9wcm9kdWN0cy9k
-YXRhLQ0KPiBzaGVldC9uYW5kLWZsYXNoLzcwLXNlcmllcy9tNzBhX2RkcF84Z2JfMV84dl9uYW5k
-X3NwaS5wZGYNCj4gPg0KPiA+IENoYW5nZXMgc2luY2UgdjQ6DQo+ID4gLS0tLS0tLS0tLS0tLS0t
-LS0NCj4gPg0KPiA+IDEuIFBhdGNoIDIgaXMgc2VwYXJhdGVkIGludG8gdHdvIGFzIHBlciB0aGUg
-Y29tbWVudCBieSBCb3Jpcy4NCj4gPiAyLiBSZW5hbWVkIE1JQ1JPTl9DRkdfQ09OVElfUkVBRCBp
-bnRvIE1JQ1JPTl9DRkdfQ1IuDQo+ID4gMy4gUmV3b3JrZWQgZGllIHNlbGVjdGlvbiBmdW5jdGlv
-biBhcyBwZXIgdGhlIGNvbW1lbnQgYnkgQm9yaXMuDQo+IA0KPiBJIHdhcyBhYm91dCB0byBhcHBs
-eSB0aGlzIHNlcmllcyBidXQgdW5mb3J0dW5hdGVseSBpdCBpcyBub3QgYmFzZWQgb24NCj4gdjUu
-Ni1yYzEgc28gbm8gcGF0Y2ggYXBwbGllcyBjb3JyZWN0bHkuIENhbiB5b3UgcGxlYXNlIHJlYmFz
-ZSBhbmQgc2VuZA0KPiBhIHY2IHNvb24/DQoNClN1cmUsIEkgd2lsbCBkbyBpdC4NCg0KVGhhbmtz
-LA0KU2hpdmENCg0KPiANCj4gVGhhbmtzLA0KPiBNaXF1w6hsDQo=
+On 3/9/20 11:02 AM, Olivier Moysan wrote:
+> This commit fixes the following error:
+> "BUG: sleeping function called from invalid context at kernel/irq/chip.c"
+> 
+> In DMA mode suppress the trigger irq handler, and make the buffer
+> transfers directly in DMA callback, instead.
+> 
+> Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+
+Hi Olivier,
+
+Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+
+Thanks,
+Fabrice
+
+> ---
+> Changes in v2:
+> - Add "Fixes" tag in commit message
+> 
+> This solution has been already discussed in the thread
+> https://lkml.org/lkml/2019/3/30/171, and applied in STM32 DFSDM driver:
+> e19ac9d9a978 ("iio: adc: stm32-dfsdm: fix sleep in atomic context")
+> ---
+>  drivers/iio/adc/stm32-adc.c | 31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
+> index 80c3f963527b..ae622ee6d08c 100644
+> --- a/drivers/iio/adc/stm32-adc.c
+> +++ b/drivers/iio/adc/stm32-adc.c
+> @@ -1418,8 +1418,30 @@ static unsigned int stm32_adc_dma_residue(struct stm32_adc *adc)
+>  static void stm32_adc_dma_buffer_done(void *data)
+>  {
+>  	struct iio_dev *indio_dev = data;
+> +	struct stm32_adc *adc = iio_priv(indio_dev);
+> +	int residue = stm32_adc_dma_residue(adc);
+> +
+> +	/*
+> +	 * In DMA mode the trigger services of IIO are not used
+> +	 * (e.g. no call to iio_trigger_poll).
+> +	 * Calling irq handler associated to the hardware trigger is not
+> +	 * relevant as the conversions have already been done. Data
+> +	 * transfers are performed directly in DMA callback instead.
+> +	 * This implementation avoids to call trigger irq handler that
+> +	 * may sleep, in an atomic context (DMA irq handler context).
+> +	 */
+> +	dev_dbg(&indio_dev->dev, "%s bufi=%d\n", __func__, adc->bufi);
+>  
+> -	iio_trigger_poll_chained(indio_dev->trig);
+> +	while (residue >= indio_dev->scan_bytes) {
+> +		u16 *buffer = (u16 *)&adc->rx_buf[adc->bufi];
+> +
+> +		iio_push_to_buffers(indio_dev, buffer);
+> +
+> +		residue -= indio_dev->scan_bytes;
+> +		adc->bufi += indio_dev->scan_bytes;
+> +		if (adc->bufi >= adc->rx_buf_sz)
+> +			adc->bufi = 0;
+> +	}
+>  }
+>  
+>  static int stm32_adc_dma_start(struct iio_dev *indio_dev)
+> @@ -1845,6 +1867,7 @@ static int stm32_adc_probe(struct platform_device *pdev)
+>  {
+>  	struct iio_dev *indio_dev;
+>  	struct device *dev = &pdev->dev;
+> +	irqreturn_t (*handler)(int irq, void *p) = NULL;
+>  	struct stm32_adc *adc;
+>  	int ret;
+>  
+> @@ -1911,9 +1934,11 @@ static int stm32_adc_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (!adc->dma_chan)
+> +		handler = &stm32_adc_trigger_handler;
+> +
+>  	ret = iio_triggered_buffer_setup(indio_dev,
+> -					 &iio_pollfunc_store_time,
+> -					 &stm32_adc_trigger_handler,
+> +					 &iio_pollfunc_store_time, handler,
+>  					 &stm32_adc_buffer_setup_ops);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "buffer setup failed\n");
+> 
