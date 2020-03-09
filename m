@@ -2,47 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B0717E3C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D7A17E3A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCIPiX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 11:38:23 -0400
-Received: from mail.funvisis.gob.ve ([200.11.216.34]:35500 "EHLO
-        mail.funvisis.gob.ve" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbgCIPiX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:38:23 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by linuxmail.funvisis.gob.ve (Postfix) with ESMTP id 82DAB15E5FB5;
-        Mon,  9 Mar 2020 11:34:50 -0400 (BOT)
-X-Virus-Scanned: by amavisd-new-2.7.1 (20120429) (Debian) at funvisis.gob.ve
-Received: from mail.funvisis.gob.ve ([127.0.0.1])
-        by localhost (linuxmail.funvisis.gob.ve [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id d1_MtTNmNyRG; Mon,  9 Mar 2020 11:34:48 -0400 (BOT)
-Received: from [100.90.8.145] (unknown [106.197.248.47])
-        by linuxmail.funvisis.gob.ve (Postfix) with ESMTPSA id 2792B15E6693;
-        Mon,  9 Mar 2020 11:25:46 -0400 (BOT)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726901AbgCIPd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:33:26 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58296 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726729AbgCIPd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 11:33:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 08:33:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="260450098"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by orsmga002.jf.intel.com with ESMTP; 09 Mar 2020 08:33:25 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id B93A2301BCC; Mon,  9 Mar 2020 08:33:25 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 08:33:25 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Cannon Matthews <cannonmatthews@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Salman Qazi <sqazi@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] mm: clear 1G pages with streaming stores on x86
+Message-ID: <20200309153325.GJ1454533@tassilo.jf.intel.com>
+References: <20200307010353.172991-1-cannonmatthews@google.com>
+ <20200309000820.f37opzmppm67g6et@box>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Noticia importante
-To:     Recipients <presidencia@funvisis.gob.ve>
-From:   Administrador de correo web <presidencia@funvisis.gob.ve>
-Date:   Mon, 09 Mar 2020 20:55:33 +0530
-Message-Id: <20200309153450.82DAB15E5FB5@linuxmail.funvisis.gob.ve>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309000820.f37opzmppm67g6et@box>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario
+> > Tested:
+> > 	Time to `mlock()` a 512GiB region on broadwell CPU
+> > 				AVG time (s)	% imp.	ms/page
+> > 	clear_page_erms		133.584		-	261
+> > 	clear_page_nt		34.154		74.43%	67
+> 
+> Some macrobenchmark would be great too.
 
-Para aumentar el rendimiento de nuestro correo electrónico y mejorar la seguridad en nuestro correo web, estamos actualizando todas las cuentas de correo electrónico en nuestro sistema de base de datos, para evitar la interrupción del servicio, le recomendamos que siga el siguiente enlace y actualice su cuenta.
+Yes especially something that actually uses the memory. I suspect you'll need
+something like the below
 
-El incumplimiento de este aviso puede resultar en una suspensión de la cuenta y es posible que no pueda recibir correos electrónicos entrantes, por lo que recomendamos a todos los usuarios que lo hagan.
+> That patchset is somewhat more complex trying to keep the memory around
+> the fault address hot in cache. In theory it should help to reduce latency
+> on the first access to the memory.
 
-Haga clic en la copia y obtenga el enlace: http://correoverificaciones.wapkiz.com/index.html en su navegador y verifique.
-
-Gracias
-Equipo de soporte técnico
+-Andi
