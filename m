@@ -2,284 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CD7F17DC22
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:08:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 541C517DC29
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 10:09:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbgCIJIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 05:08:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20522 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726027AbgCIJIh (ORCPT
+        id S1726647AbgCIJJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 05:09:06 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58275 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbgCIJJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 05:08:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583744916;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=ui+vsM4EZA4C9qRbwqzArF2Gu3IiffJ8PyjzfQECUJA=;
-        b=boKSTWdFJl8Y3COPCvEp4Ct8+oz81+NJM2rektMLxRWVrXr1YV3n2941LNsMIiyOb7msBZ
-        L96WbWMxJVD8OtOLo77uoRS3LILddD7ZbimbLU85KNs1M+B/NmyeKayiFvn+8NA2Vd7hjx
-        V0yxK2XIyPPgH4IQgG5d2LW85DKLn/o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-104-kyfYlm2IN0af0D1PIcaoSQ-1; Mon, 09 Mar 2020 05:08:34 -0400
-X-MC-Unique: kyfYlm2IN0af0D1PIcaoSQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3DC008017CC;
-        Mon,  9 Mar 2020 09:08:33 +0000 (UTC)
-Received: from [10.36.118.32] (unknown [10.36.118.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9CB047386B;
-        Mon,  9 Mar 2020 09:08:29 +0000 (UTC)
-Subject: Re: [PATCH v3 6/7] mm/sparse.c: move subsection_map related codes
- together
-To:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@suse.com,
-        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
-        osalvador@suse.de, rppt@linux.ibm.com
-References: <20200307084229.28251-1-bhe@redhat.com>
- <20200307084229.28251-7-bhe@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <8462ca2b-822f-52c0-5986-93377d252fac@redhat.com>
-Date:   Mon, 9 Mar 2020 10:08:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 9 Mar 2020 05:09:05 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jBEPF-0004Dh-IA; Mon, 09 Mar 2020 10:09:01 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id A737310408A; Mon,  9 Mar 2020 10:09:00 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        kvm list <kvm@vger.kernel.org>, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/kvm: Disable KVM_ASYNC_PF_SEND_ALWAYS
+In-Reply-To: <37440ade-1657-648b-bf72-2b8ca4ac21ce@redhat.com>
+References: <ed71d0967113a35f670a9625a058b8e6e0b2f104.1583547991.git.luto@kernel.org> <CALCETrVmsF9JSMLSd44-3GGWEz6siJQxudeaYiVnvv__YDT1BQ@mail.gmail.com> <87ftek9ngq.fsf@nanos.tec.linutronix.de> <CALCETrVsc-t=tDRPbCg5dWHDY0NFv2zjz12ahD-vnGPn8T+RXA@mail.gmail.com> <87a74s9ehb.fsf@nanos.tec.linutronix.de> <87wo7v8g4j.fsf@nanos.tec.linutronix.de> <877dzu8178.fsf@nanos.tec.linutronix.de> <37440ade-1657-648b-bf72-2b8ca4ac21ce@redhat.com>
+Date:   Mon, 09 Mar 2020 10:09:00 +0100
+Message-ID: <871rq199oz.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20200307084229.28251-7-bhe@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.03.20 09:42, Baoquan He wrote:
-> No functional change.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  mm/sparse.c | 134 +++++++++++++++++++++++++---------------------------
->  1 file changed, 65 insertions(+), 69 deletions(-)
-> 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 0fbd79c4ad81..fde651ab8741 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -244,10 +244,75 @@ void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
->  		nr_pages -= pfns;
->  	}
->  }
-> +
-> +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> +	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
-> +	struct mem_section *ms = __pfn_to_section(pfn);
-> +	unsigned long *subsection_map = ms->usage
-> +		? &ms->usage->subsection_map[0] : NULL;
-> +
-> +	subsection_mask_set(map, pfn, nr_pages);
-> +	if (subsection_map)
-> +		bitmap_and(tmp, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> +
-> +	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
-> +				"section already deactivated (%#lx + %ld)\n",
-> +				pfn, nr_pages))
-> +		return -EINVAL;
-> +
-> +	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> +
-> +	return 0;
-> +}
-> +
-> +static bool is_subsection_map_empty(struct mem_section *ms)
-> +{
-> +	return bitmap_empty(&ms->usage->subsection_map[0],
-> +			    SUBSECTIONS_PER_SECTION);
-> +}
-> +
-> +static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +	struct mem_section *ms = __pfn_to_section(pfn);
-> +	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> +	unsigned long *subsection_map;
-> +	int rc = 0;
-> +
-> +	subsection_mask_set(map, pfn, nr_pages);
-> +
-> +	subsection_map = &ms->usage->subsection_map[0];
-> +
-> +	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
-> +		rc = -EINVAL;
-> +	else if (bitmap_intersects(map, subsection_map, SUBSECTIONS_PER_SECTION))
-> +		rc = -EEXIST;
-> +	else
-> +		bitmap_or(subsection_map, map, subsection_map,
-> +				SUBSECTIONS_PER_SECTION);
-> +
-> +	return rc;
-> +}
->  #else
->  void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
->  {
->  }
-> +
-> +static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +	return 0;
-> +}
-> +
-> +static bool is_subsection_map_empty(struct mem_section *ms)
-> +{
-> +	return true;
-> +}
-> +
-> +static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> +{
-> +	return 0;
-> +}
->  #endif
->  
->  /* Record a memory area against a node. */
-> @@ -732,46 +797,6 @@ static void free_map_bootmem(struct page *memmap)
->  }
->  #endif /* CONFIG_SPARSEMEM_VMEMMAP */
->  
-> -#ifdef CONFIG_SPARSEMEM_VMEMMAP
-> -static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> -{
-> -	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> -	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
-> -	struct mem_section *ms = __pfn_to_section(pfn);
-> -	unsigned long *subsection_map = ms->usage
-> -		? &ms->usage->subsection_map[0] : NULL;
-> -
-> -	subsection_mask_set(map, pfn, nr_pages);
-> -	if (subsection_map)
-> -		bitmap_and(tmp, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> -
-> -	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
-> -				"section already deactivated (%#lx + %ld)\n",
-> -				pfn, nr_pages))
-> -		return -EINVAL;
-> -
-> -	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
-> -
-> -	return 0;
-> -}
-> -
-> -static bool is_subsection_map_empty(struct mem_section *ms)
-> -{
-> -	return bitmap_empty(&ms->usage->subsection_map[0],
-> -			    SUBSECTIONS_PER_SECTION);
-> -}
-> -#else
-> -static int clear_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> -{
-> -	return 0;
-> -}
-> -
-> -static bool is_subsection_map_empty(struct mem_section *ms)
-> -{
-> -	return true;
-> -}
-> -#endif
-> -
->  /*
->   * To deactivate a memory region, there are 3 cases to handle across
->   * two configurations (SPARSEMEM_VMEMMAP={y,n}):
-> @@ -826,35 +851,6 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
->  		ms->section_mem_map = (unsigned long)NULL;
->  }
->  
-> -#ifdef CONFIG_SPARSEMEM_VMEMMAP
-> -static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> -{
-> -	struct mem_section *ms = __pfn_to_section(pfn);
-> -	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
-> -	unsigned long *subsection_map;
-> -	int rc = 0;
-> -
-> -	subsection_mask_set(map, pfn, nr_pages);
-> -
-> -	subsection_map = &ms->usage->subsection_map[0];
-> -
-> -	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
-> -		rc = -EINVAL;
-> -	else if (bitmap_intersects(map, subsection_map, SUBSECTIONS_PER_SECTION))
-> -		rc = -EEXIST;
-> -	else
-> -		bitmap_or(subsection_map, map, subsection_map,
-> -				SUBSECTIONS_PER_SECTION);
-> -
-> -	return rc;
-> -}
-> -#else
-> -static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-> -{
-> -	return 0;
-> -}
-> -#endif
-> -
->  static struct page * __meminit section_activate(int nid, unsigned long pfn,
->  		unsigned long nr_pages, struct vmem_altmap *altmap)
->  {
-> 
+Paolo Bonzini <pbonzini@redhat.com> writes:
+> On 09/03/20 07:57, Thomas Gleixner wrote:
+>> Thomas Gleixner <tglx@linutronix.de> writes:
+>>
+>> guest side:
+>> 
+>>    nmi()/mce() ...
+>>    
+>>         stash_crs();
+>> 
+>> +       stash_and_clear_apf_reason();
+>> 
+>>         ....
+>> 
+>> +       restore_apf_reason();
+>> 
+>> 	restore_cr2();
+>> 
+>> Too obvious, isn't it?
+>
+> Yes, this works but Andy was not happy about adding more
+> save-and-restore to NMIs.  If you do not want to do that, I'm okay with
+> disabling async page fault support for now.
 
-IMHO, we don't need this patch - but just my personal opinion. Change
-itself looks good on a quick glance.
+I'm fine with doing that save/restore dance, but I have no strong
+opinion either.
 
--- 
+> Storing the page fault reason in memory was not a good idea.  Better
+> options would be to co-opt the page fault error code (e.g. store the
+> reason in bits 31:16, mark bits 15:0 with the invalid error code
+> RSVD=1/P=0), or to use the virtualization exception area.
+
+Memory store is not the problem. The real problem is hijacking #PF.
+
+If you'd have just used a separate VECTOR_ASYNC_PF then none of these
+problems would exist at all.
+
 Thanks,
 
-David / dhildenb
-
+        tglx
