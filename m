@@ -2,81 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D23817E453
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9952817E475
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbgCIQLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 12:11:07 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51184 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbgCIQLG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 12:11:06 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 029GB1Ti064923;
-        Mon, 9 Mar 2020 11:11:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583770261;
-        bh=BoPPFSIyv/x3zMoh4vQgW2YRQN7431G4sFt8c/J7vYc=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=EqYwQhUbuF3q890fCxM+d4REL/Eqtuv8qr6Tm0fiXm95JwcuTHhOGJRTzO0BoE1Wq
-         gVwXxl9d1JMJh/vBAzjXSbcSwrJRnlPLPsrn18c6ts/CmvNwMzAS57E+u3Wojlo5GS
-         LBXjoIWQJ8Ms0rR8pue03bKCCoxB+s6wBDcHqxl8=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 029GB1gI071804
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Mar 2020 11:11:01 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
- 2020 11:10:23 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Mar 2020 11:10:23 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029GAM4O038113;
-        Mon, 9 Mar 2020 11:10:22 -0500
-Date:   Mon, 9 Mar 2020 11:16:11 -0500
-From:   Bin Liu <b-liu@ti.com>
-To:     Mans Rullgard <mans@mansr.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] usb: musb: fix crash with highmen PIO and usbmon
-Message-ID: <20200309161611.GC31115@iaqt7>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>, Mans Rullgard <mans@mansr.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200309152653.29161-1-mans@mansr.com>
+        id S1727143AbgCIQQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 12:16:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58928 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbgCIQQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 12:16:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 17E1BAB92;
+        Mon,  9 Mar 2020 16:16:45 +0000 (UTC)
+Received: from localhost (webern.olymp [local])
+        by webern.olymp (OpenSMTPD) with ESMTPA id 2bb7b078;
+        Mon, 9 Mar 2020 16:16:43 +0000 (WET)
+Date:   Mon, 9 Mar 2020 16:16:43 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] fscache: drop fscache_cookie_put on duplicated cookies in
+ the hash
+Message-ID: <20200309161643.GA92486@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309152653.29161-1-mans@mansr.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 03:26:53PM +0000, Mans Rullgard wrote:
-> When handling a PIO bulk transfer with highmem buffer, a temporary
-> mapping is assigned to urb->transfer_buffer.  After the transfer is
-> complete, an invalid address is left behind in this pointer.  This is
-> not ordinarily a problem since nothing touches that buffer before the
-> urb is released.  However, when usbmon is active, usbmon_urb_complete()
-> calls (indirectly) mon_bin_get_data() which does access the transfer
-> buffer if it is set.  To prevent an invalid memory access here, reset
-> urb->tranfer_buffer to NULL when finished (musb_host_rx()), or do not
+When there's a collision due to a duplicate cookie, __fscache_register_netfs
+will do an fscache_cookie_put.  This, however, isn't required as
+fscache_cookie_get hasn't been executed, and will lead to a NULL pointer as
+fscache_unhash_cookie will be called.
 
-WARNING: 'tranfer' may be misspelled
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+---
+ fs/fscache/netfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I have fixed it locally.
-
-> set it at all (musb_host_tx()).
-> 
-> Fixes: 8e8a55165469 ("usb: musb: host: Handle highmem in PIO mode")
-> Signed-off-by: Mans Rullgard <mans@mansr.com>
-
-Applied. Thanks.
--Bin.
+diff --git a/fs/fscache/netfs.c b/fs/fscache/netfs.c
+index cce92216fa28..07a55371f0a4 100644
+--- a/fs/fscache/netfs.c
++++ b/fs/fscache/netfs.c
+@@ -52,7 +52,6 @@ int __fscache_register_netfs(struct fscache_netfs *netfs)
+ 	return 0;
+ 
+ already_registered:
+-	fscache_cookie_put(candidate, fscache_cookie_put_dup_netfs);
+ 	_leave(" = -EEXIST");
+ 	return -EEXIST;
+ }
