@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF0617E9E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F4917E9E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 21:23:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbgCIUVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 16:21:40 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.72]:23542 "EHLO
+        id S1726488AbgCIUWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 16:22:53 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.72]:29439 "EHLO
         gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725992AbgCIUVk (ORCPT
+        by vger.kernel.org with ESMTP id S1726096AbgCIUWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:21:40 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id BF0FD67A64F
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:21:38 -0500 (CDT)
+        Mon, 9 Mar 2020 16:22:52 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id E4CEBEC12
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 15:22:51 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id BOuAjUlJ7vBMdBOuAjOFy5; Mon, 09 Mar 2020 15:21:38 -0500
+        id BOvLj5XlDSl8qBOvLjgmcP; Mon, 09 Mar 2020 15:22:51 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,24 +25,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KLV5yJSsYHCCLskrtRv6u1HK/r2QKBRZk7ghDZkHXAU=; b=Pz7R/rVH3x7D6lgGJyt/IlsXFD
-        euImYoH8hRNDBfV4BZ1XYhTVwl1dQ3eFEbQSbi/XvbNTaWgdhpQkVllgtvc6mrbtk0f8EV+furKzM
-        qooxbDinjvIfFFn0ZrfSsgA1m7ElwKde3cs6fLA91c77zfAkPGGBVrvCdO8pooJH2w3ZeHygnTMiO
-        y9du0YzGWeBAKfUp4zXuBPrnBWAMzVLtzof7wUVSW038K0ArGnJ7dxtc4aRB3y7sRdseQSRsSIfyb
-        MdUFhVvfrNsNxVXII1zwbitya6AEqT753Rh/rZ5yywk13JzP9MLorXZyUE/OetoKt2VztUICOHp89
-        PJvm55Jw==;
-Received: from [201.162.168.201] (port=20442 helo=embeddedor)
+        bh=jMunP9V0d2u36jTKl+ej5qOp8rIOFeGZYKT65z+gTFU=; b=g8S7dm5B0nbkMWqRAFALSxChfs
+        RqzmZHbK/ljT7/LfvfOZKT8f166SHIXM/44h2aI2ypZXsCqaT3plrohRWk4KXZSl8y9Titmf5D09W
+        fKfF067lg03NkOI3OYfOD0O6bPgRooJGpqbpk+76c6eG1B2L86Nwx8JskhzSKckOKL+xZWGzcmDFy
+        wdj5+4Vgcpmbi8J3+6eczzV5iDRyEG9iZxLpjQnsBXY0oA1S9hbidLRcUGmpI77bXysNSG7XNlxBc
+        xguXuLrjYTOjL0nZiTfgkZiTyLAL4yLqt2R74UYEx1gbycvN5jgR37b4j5/W2KZEu6WXKZqaMvkXR
+        Wd9G8ljw==;
+Received: from [201.162.168.201] (port=4007 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1jBOu8-000zkz-PA; Mon, 09 Mar 2020 15:21:37 -0500
-Date:   Mon, 9 Mar 2020 15:24:49 -0500
+        id 1jBOvJ-0010Ml-SA; Mon, 09 Mar 2020 15:22:50 -0500
+Date:   Mon, 9 Mar 2020 15:26:02 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Phillip Lougher <phillip@squashfs.org.uk>
+Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] fs: select: Replace zero-length array with
- flexible-array member
-Message-ID: <20200309202449.GA9027@embeddedor>
+Subject: [PATCH][next] squashfs: squashfs_fs.h: Replace zero-length array
+ with flexible-array member
+Message-ID: <20200309202602.GA9219@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -55,13 +55,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 201.162.168.201
 X-Source-L: No
-X-Exim-ID: 1jBOu8-000zkz-PA
+X-Exim-ID: 1jBOvJ-0010Ml-SA
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.168.201]:20442
+X-Source-Sender: (embeddedor) [201.162.168.201]:4007
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 26
+X-Email-Count: 28
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -99,31 +99,82 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/select.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/squashfs/squashfs_fs.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/select.c b/fs/select.c
-index 11d0285d46b7..f38a8a7480f7 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -97,7 +97,7 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
- struct poll_table_page {
- 	struct poll_table_page * next;
- 	struct poll_table_entry * entry;
--	struct poll_table_entry entries[0];
-+	struct poll_table_entry entries[];
+diff --git a/fs/squashfs/squashfs_fs.h b/fs/squashfs/squashfs_fs.h
+index 7187bd1a30ea..8d64edb80ebf 100644
+--- a/fs/squashfs/squashfs_fs.h
++++ b/fs/squashfs/squashfs_fs.h
+@@ -262,7 +262,7 @@ struct squashfs_dir_index {
+ 	__le32			index;
+ 	__le32			start_block;
+ 	__le32			size;
+-	unsigned char		name[0];
++	unsigned char		name[];
  };
  
- #define POLL_TABLE_FULL(table) \
-@@ -826,7 +826,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
- struct poll_list {
- 	struct poll_list *next;
- 	int len;
--	struct pollfd entries[0];
-+	struct pollfd entries[];
+ struct squashfs_base_inode {
+@@ -327,7 +327,7 @@ struct squashfs_symlink_inode {
+ 	__le32			inode_number;
+ 	__le32			nlink;
+ 	__le32			symlink_size;
+-	char			symlink[0];
++	char			symlink[];
  };
  
- #define POLLFD_PER_PAGE  ((PAGE_SIZE-sizeof(struct poll_list)) / sizeof(struct pollfd))
+ struct squashfs_reg_inode {
+@@ -341,7 +341,7 @@ struct squashfs_reg_inode {
+ 	__le32			fragment;
+ 	__le32			offset;
+ 	__le32			file_size;
+-	__le16			block_list[0];
++	__le16			block_list[];
+ };
+ 
+ struct squashfs_lreg_inode {
+@@ -358,7 +358,7 @@ struct squashfs_lreg_inode {
+ 	__le32			fragment;
+ 	__le32			offset;
+ 	__le32			xattr;
+-	__le16			block_list[0];
++	__le16			block_list[];
+ };
+ 
+ struct squashfs_dir_inode {
+@@ -389,7 +389,7 @@ struct squashfs_ldir_inode {
+ 	__le16			i_count;
+ 	__le16			offset;
+ 	__le32			xattr;
+-	struct squashfs_dir_index	index[0];
++	struct squashfs_dir_index	index[];
+ };
+ 
+ union squashfs_inode {
+@@ -410,7 +410,7 @@ struct squashfs_dir_entry {
+ 	__le16			inode_number;
+ 	__le16			type;
+ 	__le16			size;
+-	char			name[0];
++	char			name[];
+ };
+ 
+ struct squashfs_dir_header {
+@@ -428,12 +428,12 @@ struct squashfs_fragment_entry {
+ struct squashfs_xattr_entry {
+ 	__le16			type;
+ 	__le16			size;
+-	char			data[0];
++	char			data[];
+ };
+ 
+ struct squashfs_xattr_val {
+ 	__le32			vsize;
+-	char			value[0];
++	char			value[];
+ };
+ 
+ struct squashfs_xattr_id {
 -- 
 2.25.0
 
