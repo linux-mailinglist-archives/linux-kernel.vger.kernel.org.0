@@ -2,112 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3981517E521
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DBE17E52A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgCIQ4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 12:56:13 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39577 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbgCIQ4J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 12:56:09 -0400
-Received: by mail-pj1-f66.google.com with SMTP id d8so108633pje.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 09:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=seWJfto8ScXH/WTie1kGmp0AZpPcjTPuoxrfVsKEou8=;
-        b=ZYOiXfiY0tuckfLvllImLc1PbkvyeyMedOVlEVYN8R2vuqmWY3Pk58X31O6HtH1cMQ
-         F4wo1cSGiZlx5pD2FM2mTALZXAGQH8b7G9UU8YcW1TVdW8l9z+94mEs2fqOCJ8XnGhxX
-         oGfN+MV06tnAAhEY1DcVv6yHEnbmLysfoigH9gIClmGeVe7y4ctJGqO4ScJCk8JPIEP3
-         3y92APRfOMk/ipYJEKKDf6HnMqwP1duhPyvlvgAYg2cl4CwZ0yLqOMoYxRm7EI33JsG/
-         Wq4+HmnQATpQgd0JT1TJVWY1eznEda9oruz+3TYhG8zlO01YOkECSxW8VWmkyPYZDujq
-         evlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=seWJfto8ScXH/WTie1kGmp0AZpPcjTPuoxrfVsKEou8=;
-        b=TtfE0KbpCpiLZo18Xo9noSLD+iTeu7VZZsWd/e6whw/NEZICZDYoyHwtlXHtOluBxR
-         zibGs9f2TuBio8KniS0ld9TbpUlDBAsBW1pidzQzOKsL830/eGBifPvTDUs9i9sCTRTL
-         z774AoD+ZGBcINFTRVtTVDAHscJR5JvXLWftEU5f9Wxo+k2UXMr9OiHsETjQgENtpGTm
-         lNtOj35tGuJoJAGB+HTDhIry5OEYeFdPc1vlCspaVnVAf2FUR8FyLYiFdyD0TGaAS9jf
-         l5apWTISCbdE6LaollvqDotRCmvT7qF6WkXzOev5Yvc6HyoDUmCshpA3GmRtYBb7I4xK
-         IDhQ==
-X-Gm-Message-State: ANhLgQ1mm/OSz40u8ooY1XRPWoQjzQJZMjNPtHO1HLQg6GDZyfCCRBuJ
-        Pkd1Wifjlh/HenGtoc9qpyu3Ag==
-X-Google-Smtp-Source: ADFU+vsyfd5fnD7Id1YJ9cBBLv47NvOkkKzY+u5QBKpwxGSA2UnrFBvvrspWMG1D+5N/ft+289Ji3g==
-X-Received: by 2002:a17:90a:202f:: with SMTP id n44mr255862pjc.150.1583772967759;
-        Mon, 09 Mar 2020 09:56:07 -0700 (PDT)
-Received: from hsinchu02.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id cm2sm104013pjb.23.2020.03.09.09.56.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 09:56:07 -0700 (PDT)
-From:   Zong Li <zong.li@sifive.com>
-To:     palmer@dabbelt.com, paul.walmsley@sifive.com,
-        aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v3 9/9] riscv: patch code by fixmap mapping
-Date:   Tue, 10 Mar 2020 00:55:44 +0800
-Message-Id: <b414b96a2d9b2d2837550306a4c71b8b0f2e6c7e.1583772574.git.zong.li@sifive.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1583772574.git.zong.li@sifive.com>
-References: <cover.1583772574.git.zong.li@sifive.com>
+        id S1727222AbgCIQ5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 12:57:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:54694 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727101AbgCIQ5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 12:57:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2E1C1FB;
+        Mon,  9 Mar 2020 09:57:53 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 332003F534;
+        Mon,  9 Mar 2020 09:57:51 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 16:57:49 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200309165749.GB4124965@arrakis.emea.arm.com>
+References: <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+ <20200212085004.GL25745@shell.armlinux.org.uk>
+ <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
+ <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
+ <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
+ <20200306203439.peytghdqragjfhdx@kahuna>
+ <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
+ <20200309155945.GA4124965@arrakis.emea.arm.com>
+ <20200309160919.GM25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309160919.GM25745@shell.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On strict kernel memory permission, the ftrace have to change the
-permission of text for dynamic patching the intructions. Use
-riscv_patch_text_nosync() to patch code instead of probe_kernel_write.
+On Mon, Mar 09, 2020 at 04:09:19PM +0000, Russell King wrote:
+> On Mon, Mar 09, 2020 at 03:59:45PM +0000, Catalin Marinas wrote:
+> > On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
+> > > - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
+> > >   to see if it can be done, and what the overhead is. This is probably
+> > >   more work than the others combined, but also the most promising
+> > >   as it allows the most user address space and physical ram to be used.
+> > 
+> > A rough outline of such support (and likely to miss some corner cases):
+> > 
+> > 1. Kernel runs with its own ASID and non-global page tables.
+> > 
+> > 2. Trampoline code on exception entry/exit to handle the TTBR0 switching
+> >    between user and kernel.
+> > 
+> > 3. uaccess routines need to be reworked to pin the user pages in memory
+> >    (get_user_pages()) and access them via the kernel address space.
+> > 
+> > Point 3 is probably the ugliest and it would introduce a noticeable
+> > slowdown in certain syscalls.
+> 
+> We also need to consider that it has implications for the single-kernel
+> support; a kernel doing this kind of switching would likely be horrid
+> for a kernel supporting v6+ with VIPT aliasing caches.
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
- arch/riscv/kernel/ftrace.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Good point. I think with VIPT aliasing cache uaccess would have to flush
+the cache before/after access, depending on direction.
 
-diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-index c40fdcdeb950..ce69b34ff55d 100644
---- a/arch/riscv/kernel/ftrace.c
-+++ b/arch/riscv/kernel/ftrace.c
-@@ -8,6 +8,7 @@
- #include <linux/ftrace.h>
- #include <linux/uaccess.h>
- #include <asm/cacheflush.h>
-+#include <asm/patch.h>
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
- static int ftrace_check_current_call(unsigned long hook_pos,
-@@ -46,20 +47,14 @@ static int __ftrace_modify_call(unsigned long hook_pos, unsigned long target,
- {
- 	unsigned int call[2];
- 	unsigned int nops[2] = {NOP4, NOP4};
--	int ret = 0;
- 
- 	make_call(hook_pos, target, call);
- 
--	/* replace the auipc-jalr pair at once */
--	ret = probe_kernel_write((void *)hook_pos, enable ? call : nops,
--				 MCOUNT_INSN_SIZE);
--	/* return must be -EPERM on write error */
--	if (ret)
-+	/* Replace the auipc-jalr pair at once. Return -EPERM on write error. */
-+	if (riscv_patch_text_nosync
-+	    ((void *)hook_pos, enable ? call : nops, MCOUNT_INSN_SIZE))
- 		return -EPERM;
- 
--	smp_mb();
--	flush_icache_range((void *)hook_pos, (void *)hook_pos + MCOUNT_INSN_SIZE);
--
- 	return 0;
- }
- 
+> Would we be adding a new red line between kernels supporting
+> VIPT-aliasing caches (present in earlier v6 implementations) and
+> kernels using this system?
+
+get_user_pages() should handle the flush_dcache_page() call and the
+latter would dial with the aliases. But this adds heavily to the cost of
+the uaccess.
+
+Maybe some trick with temporarily locking the user page table and
+copying the user pmd into a dedicated kernel pmd, then accessing the
+user via this location. The fault handler would need to figure out the
+real user address and I'm not sure how we deal with the page table lock
+(or mmap_sem).
+
+An alternative to the above would be to have all uaccess routines in a
+trampoline which restores the user pgd but with only a couple of pmds
+for mapping the kernel address temporarily. This would avoid the issue
+of concurrent modification of the user page tables.
+
+Anyway, I don't think any of the above looks better than highmem.
+
 -- 
-2.25.1
-
+Catalin
