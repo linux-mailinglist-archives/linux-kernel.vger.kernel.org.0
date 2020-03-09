@@ -2,49 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E5A17ECB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 00:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E52217ECB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 00:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgCIXkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 19:40:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44378 "EHLO mail.kernel.org"
+        id S1727490AbgCIXkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 19:40:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgCIXkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727468AbgCIXkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Mar 2020 19:40:07 -0400
-Subject: Re: [GIT PULL] MMC fixes for v5.6-rc6
+Subject: Re: [GIT PULL] ktest: Updates and fixes for 5.6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1583797207;
-        bh=oW9dYCrh/741KAP4Zl39z1XztqvyWrWSjONJF8a0AfI=;
+        bh=DaPeSR+evs/0yveH1K6pt04ScdqLgbL9vAH8gGbvhkU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=zbGsdai+E2Q+ZO2c2O/aD+xAnkPLQjoDkwsyOxPh+SFK7JoRZtLpIvkTqo03LIsMK
-         3sdtaskfj8eaVEbD/3g7wPR86aFOw93WIyXG87Ima7mlesFvhqL1X52XGe/mBWl/P0
-         DW6JiX2eMokuCW+bmuFohuV1YuNdZL1PLyZWjLpc=
+        b=TYKkNbEwXX0YFOFewRzvQUNV2AahDou+xhjNlnrBq1Rc8+BMoXR83i8i2aNpc7ICV
+         D8loTdLSAXbYWYub3d/8fb8WWjU8ruwZoAKJfs3VtZx+VG6MjAyrr8plTiDYGvGf0m
+         rXv1MFb2BgI+aZ1f6o4A2mfH1LQ8Uzs0uIQqvC6c=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200309154336.22598-1-ulf.hansson@linaro.org>
-References: <20200309154336.22598-1-ulf.hansson@linaro.org>
+In-Reply-To: <20200309162726.71fe6060@gandalf.local.home>
+References: <20200309162726.71fe6060@gandalf.local.home>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200309154336.22598-1-ulf.hansson@linaro.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.6-rc1
-X-PR-Tracked-Commit-Id: 31e43f31890ca6e909b27dcb539252b46aa465da
+X-PR-Tracked-Message-Id: <20200309162726.71fe6060@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
+ ktest-v5.6
+X-PR-Tracked-Commit-Id: 1091c8fce8aa9c5abe1a73acab4bcaf58a729005
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d397a82b7ccaa4c4fe3e149ecb763dd6214abc93
-Message-Id: <158379720717.7202.15051008030468380095.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 30bb5572ce7a8710fa9ea720b6ecb382791c9800
+Message-Id: <158379720745.7202.8635621257082930121.pr-tracker-bot@kernel.org>
 Date:   Mon, 09 Mar 2020 23:40:07 +0000
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John 'Warthog9' Hawley <warthog9@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon,  9 Mar 2020 16:43:36 +0100:
+The pull request you sent on Mon, 9 Mar 2020 16:27:26 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.6-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git ktest-v5.6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d397a82b7ccaa4c4fe3e149ecb763dd6214abc93
+https://git.kernel.org/torvalds/c/30bb5572ce7a8710fa9ea720b6ecb382791c9800
 
 Thank you!
 
