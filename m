@@ -2,124 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63AFF17E3C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:39:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B12DE17E3E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbgCIPjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:39:20 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:57448 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbgCIPjT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:39:19 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 029FdEgD057358;
-        Mon, 9 Mar 2020 10:39:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583768354;
-        bh=5NMdHScQpOzmekHtb8MLspeqES1SnaeW3nR3WGI9oxk=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=WvmVXXNMq+oeJY9LSUEt8Q+Hov1Mf1dNbjoyPKl+9fpve0/zEo+Zv3g+73KSbgdiG
-         AsPRL7vRdPBRwjZ23BvcA1ubznfkJjfUF5+HriEagTz1zOK/BC7VhK+u+SLldIdNmy
-         GjCQcm+WLtCqKO2yWaStw5O+spc8I72uNz+PWndo=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029FdEZC054556;
-        Mon, 9 Mar 2020 10:39:14 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
- 2020 10:38:13 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 9 Mar 2020 10:38:13 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029FcD4i106953;
-        Mon, 9 Mar 2020 10:38:13 -0500
-Date:   Mon, 9 Mar 2020 10:44:01 -0500
-From:   Bin Liu <b-liu@ti.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] usb: musb: jz4740: Register USB role switch
-Message-ID: <20200309154401.GB31115@iaqt7>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200224014008.27114-1-paul@crapouillou.net>
- <20200224014008.27114-3-paul@crapouillou.net>
+        id S1727173AbgCIPoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:44:46 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48920 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726804AbgCIPoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 11:44:46 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 08:44:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,533,1574150400"; 
+   d="scan'208";a="245377488"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by orsmga006.jf.intel.com with ESMTP; 09 Mar 2020 08:44:45 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id A0610301BCC; Mon,  9 Mar 2020 08:44:45 -0700 (PDT)
+Date:   Mon, 9 Mar 2020 08:44:45 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        Luwei Kang <luwei.kang@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, pbonzini@redhat.com,
+        sean.j.christopherson@intel.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        pawan.kumar.gupta@linux.intel.com, thomas.lendacky@amd.com,
+        fenghua.yu@intel.com, like.xu@linux.intel.com
+Subject: Re: [PATCH v1 01/11] perf/x86/core: Support KVM to assign a
+ dedicated counter for guest PEBS
+Message-ID: <20200309154445.GL1454533@tassilo.jf.intel.com>
+References: <1583431025-19802-1-git-send-email-luwei.kang@intel.com>
+ <1583431025-19802-2-git-send-email-luwei.kang@intel.com>
+ <20200306135317.GD12561@hirez.programming.kicks-ass.net>
+ <b72cb68e-1a0a-eeff-21b4-ce412e939cfd@linux.intel.com>
+ <20200309100443.GG12561@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200224014008.27114-3-paul@crapouillou.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200309100443.GG12561@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> Suppose your KVM thing claims counter 0/2 (ICL/SKL) for some random PEBS
+> event, and then the host wants to use PREC_DIST.. Then one of them will
+> be screwed for no reason what so ever.
 
-On Sun, Feb 23, 2020 at 10:40:06PM -0300, Paul Cercueil wrote:
-> Register a USB role switch, in order to get notified by the connector
-> driver when the USB role changes. The notification is then transmitted
-> to the PHY.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->     v2: No change
-> 
->  drivers/usb/musb/Kconfig  |  1 +
->  drivers/usb/musb/jz4740.c | 46 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
-> 
-> diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
-> index c4b349e074c1..3268adb7d7cf 100644
-> --- a/drivers/usb/musb/Kconfig
-> +++ b/drivers/usb/musb/Kconfig
-> @@ -113,6 +113,7 @@ config USB_MUSB_JZ4740
->  	depends on MIPS || COMPILE_TEST
->  	depends on USB_MUSB_GADGET
->  	depends on USB=n || USB_OTG_BLACKLIST_HUB
-> +	select USB_ROLE_SWITCH
->  
->  config USB_MUSB_MEDIATEK
->  	tristate "MediaTek platforms"
-> diff --git a/drivers/usb/musb/jz4740.c b/drivers/usb/musb/jz4740.c
-> index aa32b5af0c1f..bbfeb9881788 100644
-> --- a/drivers/usb/musb/jz4740.c
-> +++ b/drivers/usb/musb/jz4740.c
-> @@ -12,13 +12,16 @@
->  #include <linux/module.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/usb/role.h>
->  #include <linux/usb/usb_phy_generic.h>
->  
->  #include "musb_core.h"
->  
->  struct jz4740_glue {
->  	struct platform_device	*pdev;
-> +	struct musb		*musb;
->  	struct clk		*clk;
-> +	struct usb_role_switch	*role_sw;
->  };
->  
->  static irqreturn_t jz4740_musb_interrupt(int irq, void *__hci)
-> @@ -72,11 +75,38 @@ static const struct musb_hdrc_config jz4740_musb_config = {
->  	.fifo_cfg_size	= ARRAY_SIZE(jz4740_musb_fifo_cfg),
->  };
->  
-> +static int jz4740_musb_role_switch_set(struct device *dev, enum usb_role role)
+It's no different from some user using an event that requires some
+specific counter.
 
-The prototype has been changed by bce3052f0c16 ("usb: roles: Provide the
-switch drivers handle to the switch in the API"). Please update.
+> 
+> How is that not destroying scheduling freedom? Any other situation we'd
+> have moved the !PREC_DIST PEBS event to another counter.
 
-Thanks,
--Bin.
+Anyways what are you suggesting to do instead? Do you have a better proposal?
+
+The only alternative I know to doing this would be to go through the PEBS
+buffer in the guest and patch the applicable counter field up on each PMI.
+
+I tried that at some point (still have code somewhere), but it was
+quite complicated and tricky and somewhat slow, so I gave up eventually.
+
+It's also inherently racy because if the guest starts looking at
+the PEBS buffer before an PMI it could see the unpatched values
+Given I don't know any real software which would break from this,
+but such "polled PEBS" usages are certainly concievable.
+
+The artificial constraint is a lot simpler and straight forward,
+and also doesn't have any holes like this.
+
+-Andi
+
