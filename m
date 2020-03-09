@@ -2,107 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2EF17E40F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:53:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4486917E417
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 16:54:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbgCIPxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 11:53:36 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:47015 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbgCIPxg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 11:53:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y30so4867961pga.13;
-        Mon, 09 Mar 2020 08:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0QOwGWZDroTuYZKUvEz4ThZBE28k0R9BlVBpj2B89t4=;
-        b=Y5wSdA1sUAyKXpPWRphvCWwfduXynvra+u0WNhAfzkPhfNscROVbGY1S/bkaVAtR0d
-         DWMvs8OIREJ2zcLq4NdG0hahwt1OzZt2yRnkl7O5eDMvo3y7kE/ujGZIGHRI7Tdp844p
-         PBvypNHY1xNK/dsjrSC5IB/6EysRnW3R9ehUfxBd8dbMeyyS6mcs+V5dZYdnDZfV0SCY
-         60WQA2j3zEZQ9Sv9UYyTU/rf4JJRqKbPXsvRewmszm/qQgtdpewpwyyvdysdb8ROXcVj
-         Ti4UFYqV1Xp5vL87P/TG+TtI1QU22yrhdESprjAPQyapSkpHbXI+Ea4QsO5OxvEphEEg
-         Gwkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0QOwGWZDroTuYZKUvEz4ThZBE28k0R9BlVBpj2B89t4=;
-        b=iqu/wZSi/w3IsN//BSOcRQJNz/Up/UoNNwAjqHd86lFJcrOfLNchLKLycgGGQHK2za
-         AKiKpYnkTOptXWUQVWqrY771FJ50zwVgpD7k4/CjdwXxOl5q7gKYHOfO6RcNFbxiCQTA
-         Gzw/mM6bQnvgcU5epJc9QXVFwvkEalRtUcxOzwiWmbpHTx1sDe+lVKbaWxm1s8Csb+zz
-         DeWmTFeH6+pdcTO17QEo8HcYFasO81IVShLiaU1RVTyjGNIZeO1v/UEpp7Ak9plnDO62
-         wi+j3Ze6ADZ7UkrMhOF30RfCT2ZqJrIuPfuGHCJAAR5pcJsqLCVw6SbZb/LE86nwbGDV
-         A8wg==
-X-Gm-Message-State: ANhLgQ0gDNnx0Ys2fo4nxK43NdSWTwTikPIuG66TreEpXFN7op7r1Hbz
-        vVpGm4traA1u5XF+X3KTSHQ=
-X-Google-Smtp-Source: ADFU+vuQluF3zszB7MLftbqie/sqdqSHh8ucl+t/SkIiqtpGEtE4K7yJ2sP012gDBJrIwKyGUerv9w==
-X-Received: by 2002:a63:1862:: with SMTP id 34mr13988788pgy.191.1583769214024;
-        Mon, 09 Mar 2020 08:53:34 -0700 (PDT)
-Received: from debian.net.fpt ([2405:4800:58c7:2b5b:996c:8b3a:a70f:c38a])
-        by smtp.gmail.com with ESMTPSA id w31sm19138587pgl.84.2020.03.09.08.53.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 08:53:33 -0700 (PDT)
-From:   Phong Tran <tranmanphong@gmail.com>
-To:     john.garry@huawei.com
-Cc:     aacraid@microsemi.com, bvanassche@acm.org, jejb@linux.ibm.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-        tranmanphong@gmail.com
-Subject: [PATCH v3] scsi: aacraid: cleanup warning cast-function-type
-Date:   Mon,  9 Mar 2020 22:53:19 +0700
-Message-Id: <20200309155319.12658-1-tranmanphong@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <9a0e6373-b4a3-0822-3b65-e3b326266832@huawei.com>
-References: <9a0e6373-b4a3-0822-3b65-e3b326266832@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727101AbgCIPyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 11:54:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45816 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726973AbgCIPyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 11:54:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id BD0C1AE84;
+        Mon,  9 Mar 2020 15:54:46 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Subject: [PATCH] xen/xenbus: remove unused xenbus_map_ring()
+Date:   Mon,  9 Mar 2020 16:54:41 +0100
+Message-Id: <20200309155441.30997-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the aacraid driver -Wcast-function-type clean
-Report by: https://github.com/KSPP/linux/issues/20
+xenbus_map_ring() is used nowhere in the tree, remove it.
+xenbus_unmap_ring() is used only locally, so make it static and move it
+up.
 
-drivers/scsi/aacraid/aachba.c:813:23:
-warning: cast between incompatible function types from
-'int (*)(struct scsi_cmnd *)' to 'void (*)(struct scsi_cmnd *)'
-[-Wcast-function-type]
-
-Reviewed-by: Bart van Assche <bvanassche@acm.org>
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- drivers/scsi/aacraid/aachba.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/xen/xenbus/xenbus_client.c | 126 +++++++++++++------------------------
+ include/xen/xenbus.h               |   7 ---
+ 2 files changed, 42 insertions(+), 91 deletions(-)
 
-diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
-index 33dbc051bff9..ebfb42af67f5 100644
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -798,6 +798,11 @@ static int aac_probe_container_callback1(struct scsi_cmnd * scsicmd)
- 	return 0;
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index 77905b08a343..99a8343a90b9 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -523,6 +523,48 @@ static int __xenbus_map_ring(struct xenbus_device *dev,
+ 	return err;
  }
  
-+static void aac_probe_container_scsi_done(struct scsi_cmnd *scsi_cmnd)
++/**
++ * xenbus_unmap_ring
++ * @dev: xenbus device
++ * @handles: grant handle array
++ * @nr_handles: number of handles in the array
++ * @vaddrs: addresses to unmap
++ *
++ * Unmap memory in this domain that was imported from another domain.
++ * Returns 0 on success and returns GNTST_* on error
++ * (see xen/include/interface/grant_table.h).
++ */
++static int xenbus_unmap_ring(struct xenbus_device *dev, grant_handle_t *handles,
++			     unsigned int nr_handles, unsigned long *vaddrs)
 +{
-+	aac_probe_container_callback1(scsi_cmnd);
++	struct gnttab_unmap_grant_ref unmap[XENBUS_MAX_RING_GRANTS];
++	int i;
++	int err;
++
++	if (nr_handles > XENBUS_MAX_RING_GRANTS)
++		return -EINVAL;
++
++	for (i = 0; i < nr_handles; i++)
++		gnttab_set_unmap_op(&unmap[i], vaddrs[i],
++				    GNTMAP_host_map, handles[i]);
++
++	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap, i))
++		BUG();
++
++	err = GNTST_okay;
++	for (i = 0; i < nr_handles; i++) {
++		if (unmap[i].status != GNTST_okay) {
++			xenbus_dev_error(dev, unmap[i].status,
++					 "unmapping page at handle %d error %d",
++					 handles[i], unmap[i].status);
++			err = unmap[i].status;
++			break;
++		}
++	}
++
++	return err;
 +}
 +
- int aac_probe_container(struct aac_dev *dev, int cid)
+ struct map_ring_valloc_hvm
  {
- 	struct scsi_cmnd *scsicmd = kmalloc(sizeof(*scsicmd), GFP_KERNEL);
-@@ -810,7 +815,7 @@ int aac_probe_container(struct aac_dev *dev, int cid)
- 		return -ENOMEM;
- 	}
- 	scsicmd->list.next = NULL;
--	scsicmd->scsi_done = (void (*)(struct scsi_cmnd*))aac_probe_container_callback1;
-+	scsicmd->scsi_done = aac_probe_container_scsi_done;
+ 	unsigned int idx;
+@@ -614,45 +656,6 @@ static int xenbus_map_ring_valloc_hvm(struct xenbus_device *dev,
+ 	return err;
+ }
  
- 	scsicmd->device = scsidev;
- 	scsidev->sdev_state = 0;
+-
+-/**
+- * xenbus_map_ring
+- * @dev: xenbus device
+- * @gnt_refs: grant reference array
+- * @nr_grefs: number of grant reference
+- * @handles: pointer to grant handle to be filled
+- * @vaddrs: addresses to be mapped to
+- * @leaked: fail to clean up a failed map, caller should not free vaddr
+- *
+- * Map pages of memory into this domain from another domain's grant table.
+- * xenbus_map_ring does not allocate the virtual address space (you must do
+- * this yourself!). It only maps in the pages to the specified address.
+- * Returns 0 on success, and GNTST_* (see xen/include/interface/grant_table.h)
+- * or -ENOMEM / -EINVAL on error. If an error is returned, device will switch to
+- * XenbusStateClosing and the first error message will be saved in XenStore.
+- * Further more if we fail to map the ring, caller should check @leaked.
+- * If @leaked is not zero it means xenbus_map_ring fails to clean up, caller
+- * should not free the address space of @vaddr.
+- */
+-int xenbus_map_ring(struct xenbus_device *dev, grant_ref_t *gnt_refs,
+-		    unsigned int nr_grefs, grant_handle_t *handles,
+-		    unsigned long *vaddrs, bool *leaked)
+-{
+-	phys_addr_t phys_addrs[XENBUS_MAX_RING_GRANTS];
+-	int i;
+-
+-	if (nr_grefs > XENBUS_MAX_RING_GRANTS)
+-		return -EINVAL;
+-
+-	for (i = 0; i < nr_grefs; i++)
+-		phys_addrs[i] = (unsigned long)vaddrs[i];
+-
+-	return __xenbus_map_ring(dev, gnt_refs, nr_grefs, handles,
+-				 phys_addrs, GNTMAP_host_map, leaked);
+-}
+-EXPORT_SYMBOL_GPL(xenbus_map_ring);
+-
+-
+ /**
+  * xenbus_unmap_ring_vfree
+  * @dev: xenbus device
+@@ -864,51 +867,6 @@ static int xenbus_unmap_ring_vfree_hvm(struct xenbus_device *dev, void *vaddr)
+ 	return rv;
+ }
+ 
+-/**
+- * xenbus_unmap_ring
+- * @dev: xenbus device
+- * @handles: grant handle array
+- * @nr_handles: number of handles in the array
+- * @vaddrs: addresses to unmap
+- *
+- * Unmap memory in this domain that was imported from another domain.
+- * Returns 0 on success and returns GNTST_* on error
+- * (see xen/include/interface/grant_table.h).
+- */
+-int xenbus_unmap_ring(struct xenbus_device *dev,
+-		      grant_handle_t *handles, unsigned int nr_handles,
+-		      unsigned long *vaddrs)
+-{
+-	struct gnttab_unmap_grant_ref unmap[XENBUS_MAX_RING_GRANTS];
+-	int i;
+-	int err;
+-
+-	if (nr_handles > XENBUS_MAX_RING_GRANTS)
+-		return -EINVAL;
+-
+-	for (i = 0; i < nr_handles; i++)
+-		gnttab_set_unmap_op(&unmap[i], vaddrs[i],
+-				    GNTMAP_host_map, handles[i]);
+-
+-	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap, i))
+-		BUG();
+-
+-	err = GNTST_okay;
+-	for (i = 0; i < nr_handles; i++) {
+-		if (unmap[i].status != GNTST_okay) {
+-			xenbus_dev_error(dev, unmap[i].status,
+-					 "unmapping page at handle %d error %d",
+-					 handles[i], unmap[i].status);
+-			err = unmap[i].status;
+-			break;
+-		}
+-	}
+-
+-	return err;
+-}
+-EXPORT_SYMBOL_GPL(xenbus_unmap_ring);
+-
+-
+ /**
+  * xenbus_read_driver_state
+  * @path: path for driver
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 850a43bd69d3..8c0d1edc121c 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -209,15 +209,8 @@ int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
+ 		      unsigned int nr_pages, grant_ref_t *grefs);
+ int xenbus_map_ring_valloc(struct xenbus_device *dev, grant_ref_t *gnt_refs,
+ 			   unsigned int nr_grefs, void **vaddr);
+-int xenbus_map_ring(struct xenbus_device *dev,
+-		    grant_ref_t *gnt_refs, unsigned int nr_grefs,
+-		    grant_handle_t *handles, unsigned long *vaddrs,
+-		    bool *leaked);
+ 
+ int xenbus_unmap_ring_vfree(struct xenbus_device *dev, void *vaddr);
+-int xenbus_unmap_ring(struct xenbus_device *dev,
+-		      grant_handle_t *handles, unsigned int nr_handles,
+-		      unsigned long *vaddrs);
+ 
+ int xenbus_alloc_evtchn(struct xenbus_device *dev, int *port);
+ int xenbus_free_evtchn(struct xenbus_device *dev, int port);
 -- 
-2.20.1
+2.16.4
 
