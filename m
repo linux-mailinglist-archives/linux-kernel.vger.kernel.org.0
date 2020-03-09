@@ -2,74 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1C817D84A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 04:35:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A0017D850
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 04:37:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbgCIDfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Mar 2020 23:35:54 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:22526 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726352AbgCIDfy (ORCPT
+        id S1726846AbgCIDhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Mar 2020 23:37:04 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:20756 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726352AbgCIDhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Mar 2020 23:35:54 -0400
-X-UUID: 8e2c851f376f42a38f3789f6b06f7bf0-20200309
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=NPplXrKgtKtz1x0Ix8YmImoSvkv1+1IC9efSsIgz5rA=;
-        b=sV0mNfSJjS+svi/9q1NwYqHr4RZWLuxhCKB0eLroOX/wZXNm/TC6aZY/7H6MiaA1xGuyuxp7Dlk/OtE3hTAC/SZeNEaD36hd9l52IL5CPMdqHLjt/lB+40RlMcM5NECuZfPVN6nRL3/zUEDhTEMlsXZ8fsC2LeBNR7NRg+vU+JY=;
-X-UUID: 8e2c851f376f42a38f3789f6b06f7bf0-20200309
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1428586009; Mon, 09 Mar 2020 11:35:43 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 9 Mar 2020 11:35:41 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 9 Mar 2020 11:35:38 +0800
-Message-ID: <1583724941.15393.8.camel@mtksdccf07>
-Subject: Re: [PATCH v2 1/1] pwm: mediatek: add longer period support
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        "Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=" 
-        <u.kleine-koenig@pengutronix.de>
-CC:     <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        "John Crispin" <john@phrozen.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Mon, 9 Mar 2020 11:35:41 +0800
-In-Reply-To: <20200308201811.hlac57s3h4p4cgev@pengutronix.de>
-References: <1583230755-25986-1-git-send-email-sam.shih@mediatek.com>
-         <1583230755-25986-2-git-send-email-sam.shih@mediatek.com>
-         <1a3a523e-62ff-e380-c67b-12f742d348ea@gmail.com>
-         <20200308201811.hlac57s3h4p4cgev@pengutronix.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Sun, 8 Mar 2020 23:37:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583725023;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S0qLVKfYZK8pYenESepAxVRIXfABKBnhJdpq7W8RSUA=;
+        b=FvS6f/w4SECuy2VxxH9RF8pAfMk+pi28SOrL1tsBMMv/h4oejTIllrxz06xG91EJ1OpvDw
+        wMTQtNlLVxozKTly+Vh9wEIEbPb2pNFFm+KFoFXbkXYso0QefymMuIsExrDEyhfUmQoq/v
+        HVgv7ypj4e/pNQXoimtrx4KTrLc1amQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-47-VoLRSUGNOjaqQVz4KT5Ihg-1; Sun, 08 Mar 2020 23:36:59 -0400
+X-MC-Unique: VoLRSUGNOjaqQVz4KT5Ihg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 65DFC477;
+        Mon,  9 Mar 2020 03:36:57 +0000 (UTC)
+Received: from [10.72.13.185] (ovpn-13-185.pek2.redhat.com [10.72.13.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A06D9008F;
+        Mon,  9 Mar 2020 03:36:47 +0000 (UTC)
+Subject: Re: [PATCH v2 0/7] vfio/pci: SR-IOV support
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dev@dpdk.org" <dev@dpdk.org>,
+        "mtosatti@redhat.com" <mtosatti@redhat.com>,
+        "thomas@monjalon.net" <thomas@monjalon.net>,
+        "bluca@debian.org" <bluca@debian.org>,
+        "jerinjacobk@gmail.com" <jerinjacobk@gmail.com>,
+        "Richardson, Bruce" <bruce.richardson@intel.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>
+References: <158213716959.17090.8399427017403507114.stgit@gimli.home>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D79A8A7@SHSMSX104.ccr.corp.intel.com>
+ <a6c04bac-0a37-f4c0-876e-e5cf2a8a6c3f@redhat.com>
+ <20200305101406.02703e2a@w520.home>
+ <3e8db1d0-8afc-f1e9-e857-aead4717fa11@redhat.com>
+ <20200306092445.1bd4611c@x1.home>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <d9ac428f-c764-014c-db5b-3f94d8f3e626@redhat.com>
+Date:   Mon, 9 Mar 2020 11:36:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: BF9287628D924EBECDF23B1AA8716029622345E5AC47F06F0882C90E7795C30A2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20200306092445.1bd4611c@x1.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCk9uIFN1biwgMjAyMC0wMy0wOCBhdCAyMToxOCArMDEwMCwgVXdlIEtsZWluZS1L
-9m5pZyB3cm90ZToNCj4gSGVsbG8sDQo+IA0KPiBPbiBTYXQsIE1hciAwNywgMjAyMCBhdCAxMDoy
-ODozNlBNICswMTAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3RlOg0KPiA+IE9uIDAzLzAzLzIwMjAg
-MTE6MTksIFNhbSBTaGloIHdyb3RlOg0KPiA+ID4gVGhlIHB3bSBjbG9jayBzb3VyY2UgY291bGQg
-YmUgZGl2aWRlZCBieSAxNjI1IHdpdGggUFdNX0NPTg0KPiA+ID4gQklUKDMpIHNldHRpbmcgaW4g
-bWVkaWF0ZWsgaGFyZHdhcmUuDQo+ID4gPiANCj4gPiA+IFRoaXMgcGF0Y2ggYWRkIHN1cHBvcnQg
-Zm9yIGxvbmdlciBwd20gcGVyaW9kIGNvbmZpZ3VyYXRpb24sDQo+ID4gPiB3aGljaCBhbGxvd2lu
-ZyBibGlua2luZyBMRURzIHZpYSBwd20gaW50ZXJmYWNlLg0KPiA+IA0KPiA+IElzIHRoaXMgYSBm
-aXg/IEluIHRoaXMgY2FzZSBwbGVhc2UgcHJvdmlkZSBhIEZpeGVzIHRhZyB3aXRoIHRoZSBjb21t
-aXQgSUQgd2hpY2gNCj4gPiBpbnRyb2R1Y2VkIHRoZSBidWcuDQo+IA0KPiBJJ2Qgc2F5IGl0IHF1
-YWxpZmllcyBhcyBhIGZpeCBpZiB3aXRob3V0IGl0IGEgcmVxdWVzdCB3aXRoIGEgbG9uZyBwZXJp
-b2QNCj4gcmV0dXJucyBzdWNjZXNzIGJ1dCBpc24ndCBwcm9wZXJseSBpbXBsZW1lbnRlZC4gT3Ro
-ZXJ3aXNlIGl0J3Mgb25seSBhDQo+IG5ldyBmZWF0dXJlLg0KPiANCg0KSXQncyBvbmx5IGEgbmV3
-IGZlYXR1cmUuDQoNCldpdGhvdXQgdGhpcyBwYXRjaCwgcHdtX21lZGlhdGVrX2NvbmZpZyByZXR1
-cm4gLUVJTlZBTCB3aGVuIHJlY2VpdmUgYQ0KbG9uZyBwZXJpb2QgcmVxdWVzdC4NCg0KSSB3aWxs
-IHNlbmQgdjMgdG8gcmVwbHkgVXdlJ3MgY29tbWVudC4NCg0KDQpCZXN0IFJlZ2FyZHMsDQpTYW0g
-U2hpaA0KDQo=
+
+On 2020/3/7 =E4=B8=8A=E5=8D=8812:24, Alex Williamson wrote:
+> On Fri, 6 Mar 2020 11:35:21 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
+>
+>> On 2020/3/6 =E4=B8=8A=E5=8D=881:14, Alex Williamson wrote:
+>>> On Tue, 25 Feb 2020 14:09:07 +0800
+>>> Jason Wang <jasowang@redhat.com> wrote:
+>>>  =20
+>>>> On 2020/2/25 =E4=B8=8A=E5=8D=8810:33, Tian, Kevin wrote:
+>>>>>> From: Alex Williamson
+>>>>>> Sent: Thursday, February 20, 2020 2:54 AM
+>>>>>>
+>>>>>> Changes since v1 are primarily to patch 3/7 where the commit log i=
+s
+>>>>>> rewritten, along with option parsing and failure logging based on
+>>>>>> upstream discussions.  The primary user visible difference is that
+>>>>>> option parsing is now much more strict.  If a vf_token option is
+>>>>>> provided that cannot be used, we generate an error.  As a result o=
+f
+>>>>>> this, opening a PF with a vf_token option will serve as a mechanis=
+m of
+>>>>>> setting the vf_token.  This seems like a more user friendly API th=
+an
+>>>>>> the alternative of sometimes requiring the option (VFs in use) and
+>>>>>> sometimes rejecting it, and upholds our desire that the option is
+>>>>>> always either used or rejected.
+>>>>>>
+>>>>>> This also means that the VFIO_DEVICE_FEATURE ioctl is not the only
+>>>>>> means of setting the VF token, which might call into question whet=
+her
+>>>>>> we absolutely need this new ioctl.  Currently I'm keeping it becau=
+se I
+>>>>>> can imagine use cases, for example if a hypervisor were to support
+>>>>>> SR-IOV, the PF device might be opened without consideration for a =
+VF
+>>>>>> token and we'd require the hypservisor to close and re-open the PF=
+ in
+>>>>>> order to set a known VF token, which is impractical.
+>>>>>>
+>>>>>> Series overview (same as provided with v1):
+>>>>> Thanks for doing this!
+>>>>>     =20
+>>>>>> The synopsis of this series is that we have an ongoing desire to d=
+rive
+>>>>>> PCIe SR-IOV PFs from userspace with VFIO.  There's an immediate ne=
+ed
+>>>>>> for this with DPDK drivers and potentially interesting future use
+>>>>> Can you provide a link to the DPDK discussion?
+>>>>>     =20
+>>>>>> cases in virtualization.  We've been reluctant to add this support
+>>>>>> previously due to the dependency and trust relationship between th=
+e
+>>>>>> VF device and PF driver.  Minimally the PF driver can induce a den=
+ial
+>>>>>> of service to the VF, but depending on the specific implementation=
+,
+>>>>>> the PF driver might also be responsible for moving data between VF=
+s
+>>>>>> or have direct access to the state of the VF, including data or st=
+ate
+>>>>>> otherwise private to the VF or VF driver.
+>>>>> Just a loud thinking. While the motivation of VF token sounds reaso=
+nable
+>>>>> to me, I'm curious why the same concern is not raised in other usag=
+es.
+>>>>> For example, there is no such design in virtio framework, where the
+>>>>> virtio device could also be restarted, putting in separate process =
+(vhost-user),
+>>>>> and even in separate VM (virtio-vhost-user), etc.
+>>>> AFAIK, the restart could only be triggered by either VM or qemu. But
+>>>> yes, the datapath could be offloaded.
+>>>>
+>>>> But I'm not sure introducing another dedicated mechanism is better t=
+han
+>>>> using the exist generic POSIX mechanism to make sure the connection
+>>>> (AF_UINX) is secure.
+>>>>
+>>>>  =20
+>>>>>     Of course the para-
+>>>>> virtualized attribute of virtio implies some degree of trust, but a=
+s you
+>>>>> mentioned many SR-IOV implementations support VF->PF communication
+>>>>> which also implies some level of trust. It's perfectly fine if VFIO=
+ just tries
+>>>>> to do better than other sub-systems, but knowing how other people
+>>>>> tackle the similar problem may make the whole picture clearer. =F0=9F=
+=98=8A
+>>>>>
+>>>>> +Jason.
+>>>> I'm not quite sure e.g allowing userspace PF driver with kernel VF
+>>>> driver would not break the assumption of kernel security model. At l=
+east
+>>>> we should forbid a unprivileged PF driver running in userspace.
+>>> It might be useful to have your opinion on this series, because that'=
+s
+>>> exactly what we're trying to do here.  Various environments, DPDK
+>>> specifically, want a userspace PF driver.  This series takes steps to
+>>> mitigate the risk of having such a driver, such as requiring this VF
+>>> token interface to extend the VFIO interface and validate participati=
+on
+>>> around a PF that is not considered trusted by the kernel.
+>>
+>> I may miss something. But what happens if:
+>>
+>> - PF driver is running by unprivileged user
+>> - PF is programmed to send translated DMA request
+>> - Then unprivileged user can mangle the kernel data
+> ATS is a security risk regardless of SR-IOV, how does this change it?
+> Thanks,
+
+
+My understanding is the ATS only happen for some bugous devices. Some=20
+hardware has on-chip IOMMU, this probably means unprivileged userspace=20
+PF driver can control the on-chip IOMMU in this case.
+
+Thanks
+
+
+>
+> Alex
+>
+>>> We also set
+>>> a driver_override to try to make sure no host kernel driver can
+>>> automatically bind to a VF of a user owned PF, only vfio-pci, but we
+>>> don't prevent the admin from creating configurations where the VFs ar=
+e
+>>> used by other host kernel drivers.
+>>>
+>>> I think the question Kevin is inquiring about is whether virtio devic=
+es
+>>> are susceptible to the type of collaborative, shared key environment
+>>> we're creating here.  For example, can a VM or qemu have access to
+>>> reset a virtio device in a way that could affect other devices, ex. F=
+LR
+>>> on a PF that could interfere with VF operation.  Thanks,
+>>
+>> Right, but I'm not sure it can be done only via virtio or need support
+>> from transport (e.g PCI).
+>>
+>> Thanks
+>>
+>>
+>>> Alex
+>>>  =20
 
