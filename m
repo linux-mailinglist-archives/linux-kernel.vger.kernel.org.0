@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08FFF17E51C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AC1D17E527
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 17:56:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbgCIQ4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 12:56:06 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:51923 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727317AbgCIQ4B (ORCPT
+        id S1727406AbgCIQ4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 12:56:21 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:37626 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbgCIQ4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 12:56:01 -0400
-Received: by mail-pj1-f66.google.com with SMTP id y7so115130pjn.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 09:56:01 -0700 (PDT)
+        Mon, 9 Mar 2020 12:56:03 -0400
+Received: by mail-pj1-f67.google.com with SMTP id ca13so115125pjb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 09:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eOvGoomldlItgrTMe3b4RPvPtMpqmI4vOPIxgU5N5dw=;
-        b=Sx5t7i4qo7aZC3e6rBAaMwJOSvAe94WC6mvx/MQEjX+d/7LAbkmXgEXeV1meT/5Rgx
-         WQYUaQkMp2UN5BeERTN/yq/g384+aAor82Dq3CQsz8s3fhSQIgfhNA4Mog8V77Psp6KN
-         CE8ZLqsaaRqY+gH5n7M+rHmJ6CmUOak7gZ02LWQbYgTGSKbPkQ2hmDWSDeuHYUR+lvm9
-         Dz5+6J7fnjLxSNK333c7nXq2/D0eJWn6+RIhnWK4bWLBb1ztsE459vR/CerehyiWRdS8
-         BiNmV3bfU/7SPip+wqhSyQR3OZckv4l7CqoOwRNyqHSIHlRL5P0s8GQtv38mgDU68BAn
-         MFQg==
+        bh=xY84tDONTtbk2uTeIT3VIK8abrA7sFeiX9nBiqOTOno=;
+        b=gqj0dx0+9O/PE/Ao8bweu2u+birAb0nGJCfIkBAwDQSn/SGLUmrx94rqv39Lde9Fc3
+         ntUMyFTVnMqHoFeFW5qwD50st2uFwzUJXqQAbZbY/jse5cNOYHMJN0LCpkZoAVByBh9v
+         SZC4iABowHXDDyqOJ5l3JvAIH1edUm/DlDyp0WwQVN368zus1Uw4JLje87iTo7XRKaCV
+         FFohQ2MkOYbqUq6wRtCvVT2tOLIIHkUzuT6i9JdHf/idhJgvq1gZuSxKfgy3s9xov6hR
+         BRk5kz8cfTWGPL0KdhkR8QK3myFA5Di4/mfF+eZmFJUENKcLqYo05qJ1n0Zt9LsRRDoQ
+         GCWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eOvGoomldlItgrTMe3b4RPvPtMpqmI4vOPIxgU5N5dw=;
-        b=DKBrEiVmoYmKpX28kzL9YfN+Q4mayYJQER6pZAqL+nc93wIxhjK5CHZkkkYBPgcroY
-         OES9tyWUp/qKGJT7ks3xw8NqK3v+wmj03aC3U2ZBseJ14srDAPzpw01i3vF5fuR+0ej+
-         aSHCT0DVoI61N0NdTOMd1cUyn2EwWHIi51OXcLMzjc7TlVUpEO8fz/cTaiUF0V5EOCFV
-         E+7ZZ1+BQi0DiFFJ1Z7adhHKS6a8HJX01GDXMBju5VUDr1XDIjxC/wLqvRI0Gx2y1EzL
-         u4o/gaRbFzuBZ+sthWzBeftajJFIpQJrCYbWOTydGyXhrpn/456s4s5Mz+UFeqC6h7bC
-         DhFA==
-X-Gm-Message-State: ANhLgQ3goUsu4pNo8hx7rNW/+6/6bf7eHdtMQXZ5lYDqpNQ3BAcM6RnP
-        496XqWERTp+0oYtMuDFStLMwvg==
-X-Google-Smtp-Source: ADFU+vs7rseCVIQDvOgK+WTfSYKco3QVTCiqheNNtMu77pT1JjgjykTot1HoW3biIyEloUH6n7nrtg==
-X-Received: by 2002:a17:902:b485:: with SMTP id y5mr15847694plr.4.1583772960751;
-        Mon, 09 Mar 2020 09:56:00 -0700 (PDT)
+        bh=xY84tDONTtbk2uTeIT3VIK8abrA7sFeiX9nBiqOTOno=;
+        b=l/0O+IcEgeKvK+zSufYU2e02pHk6aYf9uuc+uQ/m6FC3WKX9Bri3oyRXdMnP6LzPjD
+         s5rvmE4NaNoUXnAYtVujXEm2AkaMShD2ffJv/gTAdc95y4gssT7r4T8AH68fHiGHqHZ4
+         tIX63fJYuZzm+IYwKrOiQjt/sn/dFamytujzEP0CyDf2gp3sfEJGv4urqODJ/IiI56fe
+         PDU5m+BSKeXYzBvHMzOFnC0/iJkvqF7gcVvnt6T+eP78SJ1KryA6nAufSGqx9Z/WZDs/
+         LRCNGBBlEo+b/NeyjRn4i72g8D3ZwKygARfX1Bxp/w/PzGh1rQqTZ11YV1ZHjJUnXwme
+         yleA==
+X-Gm-Message-State: ANhLgQ14KrrmvaXEFt14rUVY0mXcXGRH6PplCLlFggJe1rtEhAAtV4oE
+        aL53T1Eba0oN+weucys2tWuy4A==
+X-Google-Smtp-Source: ADFU+vsDlsfwouc5MSdCv5eUC+2v+e5BTgSZmKhRcQcTRWEMxZs/7La1lI5QlKBgCq+kLHOHvA9gpA==
+X-Received: by 2002:a17:90a:9af:: with SMTP id 44mr260267pjo.160.1583772962532;
+        Mon, 09 Mar 2020 09:56:02 -0700 (PDT)
 Received: from hsinchu02.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id cm2sm104013pjb.23.2020.03.09.09.55.59
+        by smtp.gmail.com with ESMTPSA id cm2sm104013pjb.23.2020.03.09.09.56.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 09:56:00 -0700 (PDT)
+        Mon, 09 Mar 2020 09:56:02 -0700 (PDT)
 From:   Zong Li <zong.li@sifive.com>
 To:     palmer@dabbelt.com, paul.walmsley@sifive.com,
         aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v3 5/9] riscv: add alignment for text, rodata and data sections
-Date:   Tue, 10 Mar 2020 00:55:40 +0800
-Message-Id: <0e60e503eefbebeb9c9a24a125feef876a80c148.1583772574.git.zong.li@sifive.com>
+Subject: [PATCH v3 6/9] riscv: add STRICT_KERNEL_RWX support
+Date:   Tue, 10 Mar 2020 00:55:41 +0800
+Message-Id: <8359c2289e12d54a34b69e95842f8fc219343460.1583772574.git.zong.li@sifive.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1583772574.git.zong.li@sifive.com>
 References: <cover.1583772574.git.zong.li@sifive.com>
@@ -63,87 +63,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel mapping will tried to optimize its mapping by using bigger
-size. In rv64, it tries to use PMD_SIZE, and tryies to use PGDIR_SIZE in
-rv32. To ensure that the start address of these sections could fit the
-mapping entry size, make them align to the biggest alignment.
+The commit contains that make text section as non-writable, rodata
+section as read-only, and data section as non-executable.
 
-Define a macro SECTION_ALIGN because the HPAGE_SIZE or PMD_SIZE, etc.,
-are invisible in linker script.
-
-This patch is prepared for STRICT_KERNEL_RWX support.
+The init section should be changed to non-executable.
 
 Signed-off-by: Zong Li <zong.li@sifive.com>
 ---
- arch/riscv/include/asm/set_memory.h | 13 +++++++++++++
- arch/riscv/kernel/vmlinux.lds.S     |  5 ++++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ arch/riscv/Kconfig                  |  1 +
+ arch/riscv/include/asm/set_memory.h |  8 ++++++
+ arch/riscv/mm/init.c                | 44 +++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+)
 
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 54437d7662a5..5fbae6380b32 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -62,6 +62,7 @@ config RISCV
+ 	select ARCH_HAS_GIGANTIC_PAGE
+ 	select ARCH_HAS_SET_DIRECT_MAP
+ 	select ARCH_HAS_SET_MEMORY
++	select ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
+ 	select SPARSEMEM_STATIC if 32BIT
+ 	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
 diff --git a/arch/riscv/include/asm/set_memory.h b/arch/riscv/include/asm/set_memory.h
-index 620d81c372d9..4c5bae7ca01c 100644
+index 4c5bae7ca01c..c38df4771c09 100644
 --- a/arch/riscv/include/asm/set_memory.h
 +++ b/arch/riscv/include/asm/set_memory.h
-@@ -6,6 +6,7 @@
- #ifndef _ASM_RISCV_SET_MEMORY_H
- #define _ASM_RISCV_SET_MEMORY_H
+@@ -22,6 +22,14 @@ static inline int set_memory_x(unsigned long addr, int numpages) { return 0; }
+ static inline int set_memory_nx(unsigned long addr, int numpages) { return 0; }
+ #endif
  
-+#ifndef __ASSEMBLY__
- /*
-  * Functions to change memory attributes.
-  */
-@@ -24,4 +25,16 @@ static inline int set_memory_nx(unsigned long addr, int numpages) { return 0; }
++#ifdef CONFIG_STRICT_KERNEL_RWX
++void set_kernel_text_ro(void);
++void set_kernel_text_rw(void);
++#else
++static inline void set_kernel_text_ro(void) { }
++static inline void set_kernel_text_rw(void) { }
++#endif
++
  int set_direct_map_invalid_noflush(struct page *page);
  int set_direct_map_default_noflush(struct page *page);
  
-+#endif /* __ASSEMBLY__ */
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index fab855963c73..b55be44ff9bd 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -12,6 +12,7 @@
+ #include <linux/sizes.h>
+ #include <linux/of_fdt.h>
+ #include <linux/libfdt.h>
++#include <linux/set_memory.h>
+ 
+ #include <asm/fixmap.h>
+ #include <asm/tlbflush.h>
+@@ -477,6 +478,17 @@ static void __init setup_vm_final(void)
+ 	csr_write(CSR_SATP, PFN_DOWN(__pa_symbol(swapper_pg_dir)) | SATP_MODE);
+ 	local_flush_tlb_all();
+ }
 +
-+#ifdef CONFIG_ARCH_HAS_STRICT_KERNEL_RWX
-+#ifdef CONFIG_64BIT
-+#define SECTION_ALIGN (1 << 21)
-+#else
-+#define SECTION_ALIGN (1 << 22)
++void free_initmem(void)
++{
++	unsigned long init_begin = (unsigned long)__init_begin;
++	unsigned long init_end = (unsigned long)__init_end;
++
++	/* Make the region as non-execuatble. */
++	set_memory_nx(init_begin, (init_end - init_begin) >> PAGE_SHIFT);
++	free_initmem_default(POISON_FREE_INITMEM);
++}
++
+ #else
+ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+ {
+@@ -488,6 +500,38 @@ static inline void setup_vm_final(void)
+ }
+ #endif /* CONFIG_MMU */
+ 
++#ifdef CONFIG_STRICT_KERNEL_RWX
++void set_kernel_text_rw(void)
++{
++	unsigned long text_start = (unsigned long)_text;
++	unsigned long text_end = (unsigned long)_etext;
++
++	set_memory_rw(text_start, (text_end - text_start) >> PAGE_SHIFT);
++}
++
++void set_kernel_text_ro(void)
++{
++	unsigned long text_start = (unsigned long)_text;
++	unsigned long text_end = (unsigned long)_etext;
++
++	set_memory_ro(text_start, (text_end - text_start) >> PAGE_SHIFT);
++}
++
++void mark_rodata_ro(void)
++{
++	unsigned long text_start = (unsigned long)_text;
++	unsigned long text_end = (unsigned long)_etext;
++	unsigned long rodata_start = (unsigned long)__start_rodata;
++	unsigned long data_start = (unsigned long)_data;
++	unsigned long max_low = (unsigned long)(__va(PFN_PHYS(max_low_pfn)));
++
++	set_memory_ro(text_start, (text_end - text_start) >> PAGE_SHIFT);
++	set_memory_ro(rodata_start, (data_start - rodata_start) >> PAGE_SHIFT);
++	set_memory_nx(rodata_start, (data_start - rodata_start) >> PAGE_SHIFT);
++	set_memory_nx(data_start, (max_low - data_start) >> PAGE_SHIFT);
++}
 +#endif
-+#else /* !CONFIG_ARCH_HAS_STRICT_KERNEL_RWX */
-+#define SECTION_ALIGN L1_CACHE_BYTES
-+#endif /* CONFIG_ARCH_HAS_STRICT_KERNEL_RWX */
 +
- #endif /* _ASM_RISCV_SET_MEMORY_H */
-diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
-index 02e948b620af..ef87deea0350 100644
---- a/arch/riscv/kernel/vmlinux.lds.S
-+++ b/arch/riscv/kernel/vmlinux.lds.S
-@@ -9,6 +9,7 @@
- #include <asm/page.h>
- #include <asm/cache.h>
- #include <asm/thread_info.h>
-+#include <asm/set_memory.h>
- 
- OUTPUT_ARCH(riscv)
- ENTRY(_start)
-@@ -36,6 +37,7 @@ SECTIONS
- 	PERCPU_SECTION(L1_CACHE_BYTES)
- 	__init_end = .;
- 
-+	. = ALIGN(SECTION_ALIGN);
- 	.text : {
- 		_text = .;
- 		_stext = .;
-@@ -53,13 +55,14 @@ SECTIONS
- 
- 	/* Start of data section */
- 	_sdata = .;
--	RO_DATA(L1_CACHE_BYTES)
-+	RO_DATA(SECTION_ALIGN)
- 	.srodata : {
- 		*(.srodata*)
- 	}
- 
- 	EXCEPTION_TABLE(0x10)
- 
-+	. = ALIGN(SECTION_ALIGN);
- 	_data = .;
- 
- 	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE, THREAD_SIZE)
+ void __init paging_init(void)
+ {
+ 	setup_vm_final();
 -- 
 2.25.1
 
