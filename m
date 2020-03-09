@@ -2,167 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03C7A17EBB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07AB717EBBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbgCIWI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 18:08:56 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:43922 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgCIWI4 (ORCPT
+        id S1727176AbgCIWMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 18:12:13 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:43060 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726937AbgCIWMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 18:08:56 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id E3E7880307C8;
-        Mon,  9 Mar 2020 22:08:53 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Mhon-ZlolZyP; Tue, 10 Mar 2020 01:08:53 +0300 (MSK)
-Date:   Tue, 10 Mar 2020 01:08:02 +0300
-From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] dmaengine: dw: Take Baikal-T1 SoC DW DMAC
- peculiarities into account
-References: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
- <20200306132912.GA1748204@smile.fi.intel.com>
- <20200306133756.0F74C8030793@mail.baikalelectronics.ru>
- <20200306134829.342F4803087C@mail.baikalelectronics.ru>
- <20200306141135.9C4F380307C2@mail.baikalelectronics.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 9 Mar 2020 18:12:12 -0400
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 029M4tRA018885;
+        Mon, 9 Mar 2020 15:11:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=date : from : to :
+ cc : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pfpt0818; bh=7l5Ki506dw3DtLR0mKDYMwyIWifxjwloNRbDO0VMy28=;
+ b=dON+NzP4/u+1gkQGmW8tDqxk/wCWG3rpfcd6JUStk42qBgwHjzPE68eeK5hL7gdoHPwF
+ O0RvOzsM+6L+KwipHWrTXwqVCBkmporgJIZLxXd8V3AlNDnRmnKaXfFtqBJ9aNzhiKay
+ ULyKndMgMNX4Q+SQeQ/dXpZU7V8w8ekLxXUKLjST8iJmlYmoH3rESOLWqL7X0EZw/cG8
+ HGsnur+6ZX4nUOSEDi54SMgZkt8w2Y7W+UckhcBPeN3Je1lZCD0kv7DXeCTG7CMV9xGo
+ AYvycuv1ub/B/QnKe4g/YOmDEyquoV/ntkgU3SZQiMQOL53lqs+szp4ZFNifPXIaPR86 jQ== 
+Received: from sc-exch01.marvell.com ([199.233.58.181])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2ym9uwj0p4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 09 Mar 2020 15:11:49 -0700
+Received: from DC5-EXCH01.marvell.com (10.69.176.38) by SC-EXCH01.marvell.com
+ (10.93.176.81) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 9 Mar
+ 2020 15:11:48 -0700
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by DC5-EXCH01.marvell.com
+ (10.69.176.38) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 9 Mar
+ 2020 15:11:47 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.103)
+ by SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Mon, 9 Mar 2020 15:11:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=U4M3d/bb9u/NM9tajFXMmbUqOTTqDfJMZ0TQF3iYpDKNHw1j+eZQlRXIZW6W3KaJs6IlN7Za4LcHMwnK6Fcf1tFhSw1OziIbDpOql3v1UIn4WxfzgQXUqXiPtFEPP+coFmQWAgyCYlViRCrLbDAO3hrBlSJc1fvnw+kXum8h7kCaN2i73NLA4S83CBaXJxWpbgGLZb4gpnZiU0a/E34uurXbCAeBpdTiE9vr61gCmxRs+bw9Of6gLTOMcdiqQS+xJoK9HVm/LE04S0WcL8tuSUW2IBKD/f0OgK7bT6DQKNJvCRubV/nLu5lQWkCpVfEQefRCQXNajxPMvwOWKWESPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7l5Ki506dw3DtLR0mKDYMwyIWifxjwloNRbDO0VMy28=;
+ b=HR/KvrO8KHDuvFGYWKMhh7Q8fqG7xQm71HqgKaJQnINOH4gDZ+C0RaDS3P1qZFprIriyugVg//xJe2ESOdM6wOWqMpidezSdOYn2ggwKuKYSQJEBHqTT72/LsXDWzVHOzJxIzRmCLmwUkEABjehZv/ZxML/br3OUM1Uo2jG3n24MR5x6v99YsiuuqJWP2NNEGwEMdGSQd1Wx/9Eib1VfIH6w5LilZaLqMZCfwZDD4By2si4+BX8Ol4CZTkogZPNKy+ikkV0Y0WAMTLD+XcXZC6A6hJphjQ9jYRRoVyzKUa6DgLMpFBQdfakA4NhnOuz/oiTzY4ATNPKqRbhvPa5wDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7l5Ki506dw3DtLR0mKDYMwyIWifxjwloNRbDO0VMy28=;
+ b=eypv9d/YlOpJfwvuBGFu3v8L9HSU4JGf/Xb5i+8ehVnCv7k92SL7Ras1LY7aq7fFVxVBa3PLuNAQiRkWeyjVqUW0hmQ5ca8pKAubP0PdFQ7zjsJQkYs83EtQbeYwzSx3v/tdHKfWwZid2QIyjZSyhzVfKHPvIJ3u/w0d3a7JnYA=
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com (2603:10b6:208:165::10)
+ by MN2PR18MB3390.namprd18.prod.outlook.com (2603:10b6:208:161::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16; Mon, 9 Mar
+ 2020 22:11:46 +0000
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::30c4:52fe:fdf8:faff]) by MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::30c4:52fe:fdf8:faff%7]) with mapi id 15.20.2793.013; Mon, 9 Mar 2020
+ 22:11:46 +0000
+Date:   Mon, 9 Mar 2020 23:11:38 +0100
+From:   Robert Richter <rrichter@marvell.com>
+To:     Marc Zyngier <maz@kernel.org>
+CC:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <Andrew.Murray@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v3 03/32] irqchip/gic-v3: Workaround Cavium TX1 erratum
+ when reading GICD_TYPER2
+Message-ID: <20200309221137.5pjh4vkc62ft3h2a@rric.localdomain>
+References: <20191224111055.11836-1-maz@kernel.org>
+ <20191224111055.11836-4-maz@kernel.org>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200306141135.9C4F380307C2@mail.baikalelectronics.ru>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200309220853.E3E7880307C8@mail.baikalelectronics.ru>
+In-Reply-To: <20191224111055.11836-4-maz@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: HE1PR08CA0077.eurprd08.prod.outlook.com
+ (2603:10a6:7:2a::48) To MN2PR18MB3408.namprd18.prod.outlook.com
+ (2603:10b6:208:165::10)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from rric.localdomain (31.208.96.227) by HE1PR08CA0077.eurprd08.prod.outlook.com (2603:10a6:7:2a::48) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Mon, 9 Mar 2020 22:11:44 +0000
+X-Originating-IP: [31.208.96.227]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4af0b874-6dfa-4178-e01b-08d7c476db30
+X-MS-TrafficTypeDiagnostic: MN2PR18MB3390:
+X-Microsoft-Antispam-PRVS: <MN2PR18MB33906A6A947423C0D0F6A47ED9FE0@MN2PR18MB3390.namprd18.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0337AFFE9A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(366004)(39860400002)(346002)(189003)(199004)(45080400002)(66556008)(66946007)(86362001)(66476007)(6506007)(2906002)(6916009)(478600001)(53546011)(7416002)(8936002)(81166006)(186003)(81156014)(8676002)(26005)(16526019)(956004)(1076003)(6666004)(316002)(54906003)(5660300002)(52116002)(7696005)(9686003)(55016002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3390;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qVG6aBidd19vK9NIEuCCb9/P2zVNLNN2Sv57nEeYkDcVSOjkCyA1MSOYmIyc68v+k3ux7dENIONZI4WW0v63UTEvJQ8Ix10w26GmahsN2+WZPh7uwafpboDnmmm2IdNnNZNpXSbzBigYtvtndjnykLajSsvHBGusYX+dsbxP4J8G6xpIULJadD7RK786FLCpuLQXm44pzt+N8BPbwpsGlAm8ah1Wd2zp/QKMNOpXjfZfwmxAK28XfuKZMZDZScOxyYCcN9zLtEvV3ovo8S/O+73/yHTOZy/LW5v+nGrLZ1p4nR9SVQFMkI1CBGB7bEivI+nuxMB1LrTpmLWjPobeGlPk6S7hOjRgKSTrow9uFCFet8dRnp42cGt8AITPuSG1VJ5ncKhbbVV3TfXr4C09fU3Go0hBCQNvisWZqM/7noqbaMIY3gEuQQyvkk6818lW
+X-MS-Exchange-AntiSpam-MessageData: 4gVS9hHtvutLD+fZPlbbMwiih2S52juhTm7V+HsPc99i4F6a9RSMQAZPeP/qccOJln5tuEfTuS2qMQgflIJ+C9YSl55h7HAG+ZUhM7WEfFVw1N0719AOVRGt8d8J+avAPAb5TrdHXNrXRjwyvf4O3Q==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4af0b874-6dfa-4178-e01b-08d7c476db30
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2020 22:11:46.0402
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tv8piyVM8lcChJSfpLVtfusdpqRv1ZiLcAJF/pSieEJtwAP/6HHIDjNDp5pRhE+O9cj/ODCI8+4yFYyD1K9giQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3390
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-09_11:2020-03-09,2020-03-09 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 04:11:28PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 06, 2020 at 04:47:20PM +0300, Sergey Semin wrote:
-> > On Fri, Mar 06, 2020 at 03:30:35PM +0200, Andy Shevchenko wrote:
-> > > On Fri, Mar 06, 2020 at 03:29:12PM +0200, Andy Shevchenko wrote:
-> > > > On Fri, Mar 06, 2020 at 04:10:29PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > > > > From: Serge Semin <fancer.lancer@gmail.com>
-> > > > > 
-> > > > > Baikal-T1 SoC has an DW DMAC on-board to provide a Mem-to-Mem, low-speed
-> > > > > peripherals Dev-to-Mem and Mem-to-Dev functionality. Mostly it's compatible
-> > > > > with currently implemented in the kernel DW DMAC driver, but there are some
-> > > > > peculiarities which must be taken into account in order to have the device
-> > > > > fully supported.
-> > > > > 
-> > > > > First of all traditionally we replaced the legacy plain text-based dt-binding
-> > > > > file with yaml-based one. Secondly Baikal-T1 DW DMA Controller provides eight
-> > > > > channels, which alas have different max burst length configuration.
-> > > > > In particular first two channels may burst up to 128 bits (16 bytes) at a time
-> > > > > while the rest of them just up to 32 bits. We must make sure that the DMA
-> > > > > subsystem doesn't set values exceeding these limitations otherwise the
-> > > > > controller will hang up. In third currently we discovered the problem in using
-> > > > > the DW APB SPI driver together with DW DMAC. The problem happens if there is no
-> > > > > natively implemented multi-block LLP transfers support and the SPI-transfer
-> > > > > length exceeds the max lock size. In this case due to asynchronous handling of
-> > > > > Tx- and Rx- SPI transfers interrupt we might end up with Dw APB SSI Rx FIFO
-> > > > > overflow. So if DW APB SSI (or any other DMAC service consumer) intends to use
-> > > > > the DMAC to asynchronously execute the transfers we'd have to at least warn
-> > > > > the user of the possible errors.
-> > > > > 
-> > > > > Finally there is a bug in the algorithm of the nollp flag detection.
-> > > > > In particular even if DW DMAC parameters state the multi-block transfers
-> > > > > support there is still HC_LLP (hardcode LLP) flag, which if set makes expected
-> > > > > by the driver true multi-block LLP functionality unusable. This happens cause'
-> > > > > if HC_LLP flag is set the LLP registers will be hardcoded to zero so the
-> > > > > contiguous multi-block transfers will be only supported. We must take the
-> > > > > flag into account when detecting the LLP support otherwise the driver just
-> > > > > won't work correctly.
-> > > > > 
-> > > > > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
-> > > > > commit 98d54f81e36b ("Linux 5.6-rc4").
-> > > > 
-> > > > Thank you for your series!
-> > > > 
-> > > > I'll definitely review it, but it will take time. So, I think due to late
-> > > > submission this is material at least for v5.8.
-> > > 
-> > 
-> > Hello Andy,
-> > Thanks for the quick response. Looking forward to get the patches
-> > reviewed and move on with the next patchset I'll send after this. It concerns
-> > DW APB SSI driver, which uses the changes introduced by this one.
+On 24.12.19 11:10:26, Marc Zyngier wrote:
+> Despite the architecture spec being extremely clear about the fact
+> that reserved registers in the GIC distributor memory map are RES0
+> (and thus are not allowed to generate an exception), the Cavium
+> ThunderX (aka TX1) SoC explodes as such:
 > 
-> > So the
-> > sooner we finished with this patchset the better.
+> [    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
+> [    0.000000] GICv3: 128 SPIs implemented
+> [    0.000000] GICv3: 0 Extended SPIs implemented
+> [    0.000000] Internal error: synchronous external abort: 96000210 [#1] SMP
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc4-00035-g3cf6a3d5725f #7956
+> [    0.000000] Hardware name: cavium,thunder-88xx (DT)
+> [    0.000000] pstate: 60000085 (nZCv daIf -PAN -UAO)
+> [    0.000000] pc : __raw_readl+0x0/0x8
+> [    0.000000] lr : gic_init_bases+0x110/0x560
+> [    0.000000] sp : ffff800011243d90
+> [    0.000000] x29: ffff800011243d90 x28: 0000000000000000
+> [    0.000000] x27: 0000000000000018 x26: 0000000000000002
+> [    0.000000] x25: ffff8000116f0000 x24: ffff000fbe6a2c80
+> [    0.000000] x23: 0000000000000000 x22: ffff010fdc322b68
+> [    0.000000] x21: ffff800010a7a208 x20: 00000000009b0404
+> [    0.000000] x19: ffff80001124dad0 x18: 0000000000000010
+> [    0.000000] x17: 000000004d8d492b x16: 00000000f67eb9af
+> [    0.000000] x15: ffffffffffffffff x14: ffff800011249908
+> [    0.000000] x13: ffff800091243ae7 x12: ffff800011243af4
+> [    0.000000] x11: ffff80001126e000 x10: ffff800011243a70
+> [    0.000000] x9 : 00000000ffffffd0 x8 : ffff80001069c828
+> [    0.000000] x7 : 0000000000000059 x6 : ffff8000113fb4d1
+> [    0.000000] x5 : 0000000000000001 x4 : 0000000000000000
+> [    0.000000] x3 : 0000000000000000 x2 : 0000000000000000
+> [    0.000000] x1 : 0000000000000000 x0 : ffff8000116f000c
+> [    0.000000] Call trace:
+> [    0.000000]  __raw_readl+0x0/0x8
+> [    0.000000]  gic_of_init+0x188/0x224
+> [    0.000000]  of_irq_init+0x200/0x3cc
+> [    0.000000]  irqchip_init+0x1c/0x40
+> [    0.000000]  init_IRQ+0x160/0x1d0
+> [    0.000000]  start_kernel+0x2ec/0x4b8
+> [    0.000000] Code: a8c47bfd d65f03c0 d538d080 d65f03c0 (b9400000)
 > 
-> Everybody will win, but review will take as long as it take. And for sure it
-> will miss v5.7 release cycle. Because too many patch sets sent at once
-> followed by schedule, we almost at v5.6-rc5.
+> when reading the GICv4.1 GICD_TYPER2 register, which is unexpected...
 > 
-
-Yeah. 13 patchsets is a lot of work to review. I was just saying, that
-even though there are many patches sent, there are even more being
-scheduled for submission after that, which rely on the alterations
-provided by these patches. Though the pacthes dependency may change
-seeing you have issues regarding some of them.)
-
-> > Although I understand
-> > that it may take some time. I've just sent over 12 patchset, which have a lot
-> > of fixups and new drivers.)
-> > 
-> > > One thing that I can tell immediately is the broken email thread in this series.
-> > > Whenever you do a series, use `git format-patch --cover-letter --thread ...`,
-> > > so, it will link the mail properly.
-> > > 
-> > 
-> > I've got thread=true in my gitconfig file, so each email should have
-> > the proper reference and in-reply-to to the cover-letter (I see it from
-> > the log). The problem popped up from a different place. For some reason the
-> > automatic CC/To list extraction command didn't do the job right, so we ended
-> > up with lacking of mailing lists in Cc's in this patchset. The command look like
-> > this:
-> > 
-> > git send-email --cc-cmd "scripts/get_maintainer.pl --separator , --nokeywords --nogit --nogit-fallback --norolestats --nom" \
-> >                    --to-cmd "scripts/get_maintainer.pl --separator , --nokeywords --nogit --nogit-fallback --norolestats --nol" \
-> >                    --from "Serge Semin <Sergey.Semin at baikalelectronics.ru>" \
-> >                    --smtp-server-option="-abaikal" --cover-letter -5
+> Work around it by adding a new quirk flagging all the A1 revisions
+> of the distributor, but it remains unknown whether this could affect
+> other revisions of this SoC (or even other SoCs from the same silicon
+> vendor).
 > 
-> I'm talking about one which makes your Message-Id/Reference headers broken
-> between cover letter and the rest of the series. It might be because of missed
-> patches in the chain.
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/irqchip/irq-gic-v3.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 286f98222878..640d4db65b78 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -34,6 +34,7 @@
+>  #define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
+>  
+>  #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+> +#define FLAGS_WORKAROUND_GICD_TYPER2_TX1	(1ULL << 1)
+>  
+>  struct redist_region {
+>  	void __iomem		*redist_base;
+> @@ -1464,6 +1465,15 @@ static bool gic_enable_quirk_msm8996(void *data)
+>  	return true;
+>  }
+>  
+> +static bool gic_enable_quirk_tx1(void *data)
+> +{
+> +	struct gic_chip_data *d = data;
+> +
+> +	d->flags |= FLAGS_WORKAROUND_GICD_TYPER2_TX1;
+> +
+> +	return true;
+> +}
+> +
+>  static bool gic_enable_quirk_hip06_07(void *data)
+>  {
+>  	struct gic_chip_data *d = data;
+> @@ -1502,6 +1512,12 @@ static const struct gic_quirk gic_quirks[] = {
+>  		.mask	= 0xffffffff,
+>  		.init	= gic_enable_quirk_hip06_07,
+>  	},
+> +	{
+> +		.desc	= "GICv3: Cavium TX1 GICD_TYPER2 erratum",
 
-Ok. Now I see what you meant. First I had a thought there was some
-misunderstanding on your or my side, because my neomutt client didn't
-show any Ids confusion. But after another maintainer complained about
-the same problem I realized that the issue must be at someplace I
-couldn't have noticed. Then I thought that the outgoing email server
-could have changed the order of the sent emails. But it turned out the
-problem was in the message Ids replacement performed by our corporate
-exchange server. Please see the email I've sent in reply to the Vinod
-comment regarding the emailing list Ccing. It describes what was really
-wrong with the threading config.
+There is no errata number yet.
 
-Regards,
--Segey
+> +		.iidr	= 0xa100034c,
+> +		.mask	= 0xfff00fff,
+> +		.init	= gic_enable_quirk_tx1,
 
+All TX1 and OcteonTX parts are affected, which is a0-a7 and b0-b7. So
+the iidr/mask should be:
+
+		.iidr   = 0xa000034c,
+		.mask   = 0xe8f00fff,
+
+> +	},
+>  	{
+>  	}
+>  };
+> @@ -1577,7 +1593,12 @@ static int __init gic_init_bases(void __iomem *dist_base,
+>  	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
+>  	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
+>  
+> -	gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
+> +	/*
+> +	 * ThunderX1 explodes on reading GICD_TYPER2, in total violation
+> +	 * of the spec (which says that reserved addresses are RES0).
+> +	 */
+> +	if (!(gic_data.flags & FLAGS_WORKAROUND_GICD_TYPER2_TX1))
+> +		gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
+
+You already said that checking for ArchRev of GICD_PIDR2 isn't an
+option here. Though, it could...
+
+Thanks,
+
+-Robert
+
+>  
+>  	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
+>  						 &gic_data);
 > -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
+> 2.20.1
 > 
