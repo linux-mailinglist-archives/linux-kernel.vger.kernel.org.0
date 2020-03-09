@@ -2,69 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87DF317E290
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD3217E28B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 15:29:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgCIOaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 10:30:02 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39133 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgCIOaC (ORCPT
+        id S1726774AbgCIO3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 10:29:12 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49386 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbgCIO3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:30:02 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f10so10163603ljn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 07:30:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=mz5fjrs0mSsUajUrEzM9h0IKulimwf8waudUxb2Og00=;
-        b=Yb91KURW9BPiCoPWZVfj7+N9R9aJ1dksKE+s3u0ej6HeX3rbJqrAIYJqvab1/ih+7s
-         fHOouIixdl6c30FiR5uYJnJTT8U06PLqyWJW+boqiBqWjVAXXpUThCvkycVPPTTCvf3j
-         w1m3rtpTrLAjdEJlJWWK6wdn2h9EK+0i6DVZNHUBS79MAD6vq7/D8NZj0nD5hPhW0MpP
-         MTJx6F74OshFqryA69fHCeo/Lc4gSQZF04PmMlGqH8Ec0wvKoSSNkv19UTarvJOpomji
-         V1w+UxZkg1ETfzzmcd2Sh9cpLesS14FKfy95+CVcuoxSe8LdXG5rgPMfInLkSeYa5/T3
-         mSgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=mz5fjrs0mSsUajUrEzM9h0IKulimwf8waudUxb2Og00=;
-        b=T0kzrOXtb1Mhl5TZWDf1LKzWl3e/jeuNhXucYpD+7a1zpSandv8QevsZqjJ1nq4KWb
-         Aj6a1Vq4vbYJD7CY7ZE+qgOL3MutCEHunu/Mo/Pki2UCPOV6VD3Pg0RD5+YDW0x/HbmM
-         6pEjmlRFKzSWKZC+/SyVOEEVjB3fL53f20HFRHU5sPbQQhoObnJpMG3Vt9geSmNDC07F
-         E4BBzB4pZr16uXdHc2zl+wf0xol9mr+X0mQd3/pNaxCEKR1PYoL9HEDmV4Zmvmc3aiMU
-         BsFG/XolM/E5kFq6lXHfP6acQ5d8YeY9aWU+h27H1hlAGMACyKBD+tEDbYP+fXivN3Eh
-         MKQA==
-X-Gm-Message-State: ANhLgQ3awCMhln6w2accDA3FA7zgarmnRPsq+VTMSSIt8vRHdqVVaWA3
-        FEYvbtDhzK5C8saOcIuyD5n/v5oXSBeW9xHflNo=
-X-Google-Smtp-Source: ADFU+vupXMaseVQiR6flU6pkZaIoR2XulFWJJ9RDirxkyBkop3rZqjTa7dltlD7SIlAR0fu2MU+bmsZxa+yNANz2GPQ=
-X-Received: by 2002:a2e:9d11:: with SMTP id t17mr10166145lji.169.1583764200329;
- Mon, 09 Mar 2020 07:30:00 -0700 (PDT)
+        Mon, 9 Mar 2020 10:29:11 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 029ESbNs038839;
+        Mon, 9 Mar 2020 09:28:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583764118;
+        bh=PK9HkNhFkjhSgbGPGf8aZjBq6q1NmO8OJkQ0UtLLUrY=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=SAn3421TiO84EvcU9BpsikWSA7JcG9TeTbS74dJ9CuUaj/W4qCxM8fB1bLvYwzywm
+         IZI88wB5cUFyHKslgUJH4OPJ2CNLN+wQQYzklbnNR3RrJTP3/Sd/ftkFhxU0EArGqX
+         tGaKORIcLhVvGK4/hxqc3NAglL8E/IP3Jvk8WNy8=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029ESbBw082094;
+        Mon, 9 Mar 2020 09:28:37 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 9 Mar
+ 2020 09:28:37 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 9 Mar 2020 09:28:37 -0500
+Received: from [10.24.69.157] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 029ESXq0049548;
+        Mon, 9 Mar 2020 09:28:34 -0500
+Subject: Re: [PATCH v2 1/3] dt-bindings: m_can: Add Documentation for
+ transceiver regulator
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
+        <wg@grandegger.com>, <sriram.dash@samsung.com>, <dmurphy@ti.com>
+References: <20200217142836.23702-1-faiz_abbas@ti.com>
+ <20200217142836.23702-2-faiz_abbas@ti.com> <20200219203529.GA21085@bogus>
+ <a987bcd7-ca1c-dfda-72f3-cd2004a87ea5@ti.com>
+ <20b86553-9b98-1a9d-3757-54174aa67c62@pengutronix.de>
+ <72e4b1f4-e7f1-cccd-6327-0c8ab6f9f9a7@ti.com>
+ <679bdfd3-5325-b903-de5f-1beb5b577d73@ti.com>
+Message-ID: <8400282d-8003-549b-3560-5b55b318e57a@ti.com>
+Date:   Mon, 9 Mar 2020 20:00:23 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Received: by 2002:a19:4a17:0:0:0:0:0 with HTTP; Mon, 9 Mar 2020 07:29:59 -0700 (PDT)
-Reply-To: aakkaavvii@gmail.com
-From:   Abraham Morrison <chamber00000001@gmail.com>
-Date:   Mon, 9 Mar 2020 07:29:59 -0700
-Message-ID: <CABLDrx51XAAL4bgOqH3BjZwkiVupUPdj4+oFkJxsCBws+TGz1A@mail.gmail.com>
-Subject: Good day!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+In-Reply-To: <679bdfd3-5325-b903-de5f-1beb5b577d73@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGVhciBmcmllbmQsIEkgYW0gTXIuIEFicmFoYW0gTW9ycmlzb24sIGRpZCB5b3UgcmVjZWl2ZSBt
-eSBwcmV2aW91cw0KbGV0dGVyPyBJIGhhdmUgYW4gaW1wb3J0YW50IGluZm9ybWF0aW9uIGZvciB5
-b3UuIFNvIGlmIHlvdSBhcmUNCmludGVyZXN0ZWQgZ2V0IGJhY2sgdG8gbWUgZm9yIG1vcmUgZGV0
-YWlscy4NClRoYW5rIHlvdS4NCk1yLiBBYnJhaGFtIE1vcnJpc29uLg0KLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uDQrQlNC+0YDQvtCz0L7QuSDQtNGA0YPQsywg0Y8g0LzQuNGB0YLQtdGAINCQ0LLRgNCw
-0LDQvCDQnNC+0YDRgNC40YHQvtC9LCDQstGLINC/0L7Qu9GD0YfQuNC70Lgg0LzQvtC1INC/0YDQ
-tdC00YvQtNGD0YnQtdC1DQrQv9C40YHRjNC80L4/INCjINC80LXQvdGPINC10YHRgtGMINCy0LDQ
-ttC90LDRjyDQuNC90YTQvtGA0LzQsNGG0LjRjyDQtNC70Y8g0LLQsNGBLiDQotCw0Log0YfRgtC+
-LCDQtdGB0LvQuCDQstGLDQrQt9Cw0LjQvdGC0LXRgNC10YHQvtCy0LDQvdGLLCDRgdCy0Y/QttC4
-0YLQtdGB0Ywg0YHQviDQvNC90L7QuSDQtNC70Y8g0LHQvtC70LXQtSDQv9C+0LTRgNC+0LHQvdC+
-0Lkg0LjQvdGE0L7RgNC80LDRhtC40LguDQrQodC/0LDRgdC40LHQvi4NCtCc0LjRgdGC0LXRgCDQ
-kNCy0YDQsNCw0Lwg0JzQvtGA0YDQuNGB0L7QvS4NCg==
+Hi Marc,
+
+On 02/03/20 1:46 pm, Faiz Abbas wrote:
+> Marc,
+> 
+> On 26/02/20 2:40 pm, Faiz Abbas wrote:
+>> Hi Marc,
+>>
+>> On 21/02/20 2:01 pm, Marc Kleine-Budde wrote:
+>>> On 2/21/20 9:31 AM, Faiz Abbas wrote:
+>>>> Hi Rob,
+>>>>
+>>>> On 20/02/20 2:05 am, Rob Herring wrote:
+>>>>> On Mon, Feb 17, 2020 at 07:58:34PM +0530, Faiz Abbas wrote:
+>>>>>> Some CAN transceivers have a standby line that needs to be asserted
+>>>>>> before they can be used. Model this GPIO lines as an optional
+>>>>>> fixed-regulator node. Document bindings for the same.
+>>>>>>
+>>>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>>>>>> ---
+>>>>>>  Documentation/devicetree/bindings/net/can/m_can.txt | 3 +++
+>>>>>>  1 file changed, 3 insertions(+)
+>>>>>
+>>>>> This has moved to DT schema in my tree, so please adjust it and resend.
+>>>>
+>>>> Ok.
+>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt b/Documentation/devicetree/bindings/net/can/m_can.txt
+>>>>>> index ed614383af9c..f17e2a5207dc 100644
+>>>>>> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
+>>>>>> @@ -48,6 +48,9 @@ Optional Subnode:
+>>>>>>  			  that can be used for CAN/CAN-FD modes. See
+>>>>>>  			  Documentation/devicetree/bindings/net/can/can-transceiver.txt
+>>>>>>  			  for details.
+>>>>>> +
+>>>>>> +- xceiver-supply: Regulator that powers the CAN transceiver.
+>>>>>
+>>>>> The supply for a transceiver should go in the transceiver node.
+>>>>>
+>>>>
+>>>> Marc, while I have you here, do you agree with this?
+>>>
+>>> I'll look into the details later today.
+>>>
+>>
+>> Sure. Be sure to take another look at my attempt to use the transceiver
+>> with a phy driver some time ago.
+>>
+>> https://lore.kernel.org/patchwork/patch/1006238/
+>>
+> 
+> Do you have any comments?
+> 
+
+Gentle ping.
+
+Thanks,
+Faiz
