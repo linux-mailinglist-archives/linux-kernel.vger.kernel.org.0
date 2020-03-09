@@ -2,56 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7657C17E7A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A68817E7A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:58:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbgCIS5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:57:07 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35781 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbgCIS5G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:57:06 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g6so4375050plt.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 11:57:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g2u/OLAgiInGN4xLm0+9cr6hTH+ZT1QAXVX+7llX76w=;
-        b=HTGfEeseSiG/j8RRQVcEwDBh/c1A0F9xo9jtWZIJetjxQKhi7UIJGvJWIxidZf1gQA
-         EfqEPOEfd6nFdkI2/0YCKJar2DBNmKMbJo7oETTCLZDm12GO7A/66QrZORz1hqVDu89o
-         Oz6vvrF4PTJVd96BjlozF/GAsU4V4TY4R6U7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g2u/OLAgiInGN4xLm0+9cr6hTH+ZT1QAXVX+7llX76w=;
-        b=SEPBu54DS3fTzGQCaO7XjqyJ3gND6ynDK0mkmu+kF+kf9DzUkA0BxtmtO+blwNZ624
-         tc6dey2gpMEAqvVbSqAWKEw6eeTzfcwK0VbRviwIzo1SB1/MTTDcaxy6655Cj/+YStk7
-         7/uQN40pR+SJYNJD4TwgzIEBhTH1Uh57sVxSbbtojMWFOpL7PvCmS+2HzTqJpT9WIa2l
-         dIn4Ce6iyVuh0lrPqHaOg2luPpZyEuPfmeVsyizvaaRBio0vaJYY8nGkNDOZnYY2TBmD
-         PaNY7G0oUfWUO4YB4GyfJhLEDUcdcX27CkxMK7V8viK6ljjjhMKmmFPGuynmjfKb+Af5
-         /EpQ==
-X-Gm-Message-State: ANhLgQ3OZNBrHCc10UbMP148h59tZSb/m/kKti1ruoQ4RCUaXC42CrqC
-        GhRp4369vdNOxcKVwWQNlz8wOg==
-X-Google-Smtp-Source: ADFU+vtbNCkmpmFcbgvojdaMhluhfjve5urSrj7UFBlkS7+pLKle++6ipFzEC3JezKdUs1qmXGN61g==
-X-Received: by 2002:a17:90a:a616:: with SMTP id c22mr761854pjq.47.1583780225613;
-        Mon, 09 Mar 2020 11:57:05 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id k8sm9007674pfk.1.2020.03.09.11.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 11:57:05 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Lina Iyer <ilina@codeaurora.org>,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH] soc: qcom: cmd-db: Add debugfs dumping file
-Date:   Mon,  9 Mar 2020 11:57:04 -0700
-Message-Id: <20200309185704.2491-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+        id S1727506AbgCIS6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:58:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727387AbgCIS6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 14:58:50 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C906820866;
+        Mon,  9 Mar 2020 18:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583780330;
+        bh=B1UyNcxLW8PyJe3Q75G0rqEkEz05Wmj5+QamNjOuhpE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=T7PsOBZw10bgq729PHYbEjWzwCGV7EzrsIszS8j0MmdQNps/ZBwz1vdlaqCCZT5TV
+         kYdLL1f3WRO8gXYwXh2WInGSNQZKlkEw/OwvgL8V95Zex7gvHoHc+q1daW5TZ5fXwS
+         nQgFwKiYLC9xg3s7LNqzl4cHDR7qK93ab5NWmqnQ=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] xfs: clear PF_MEMALLOC before exiting xfsaild thread
+Date:   Mon,  9 Mar 2020 11:57:14 -0700
+Message-Id: <20200309185714.42850-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200309181332.GJ1752567@magnolia>
+References: <20200309181332.GJ1752567@magnolia>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,142 +40,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's useful for kernel devs to understand what resources and data is
-stored inside command db. Add a file in debugufs called 'cmd-db' to dump
-the memory contents and strings for resources along with their
-addresses. E.g.
+From: Eric Biggers <ebiggers@google.com>
 
- Command DB DUMP
- Slave ARC (v16.0)
- -------------------------
- 0x00030000: cx.lvl [00 00 10 00 40 00 80 00 c0 00 00 01 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]
- 0x00030004: cx.tmr
- 0x00030010: mx.lvl [00 00 10 00 00 01 80 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]
- 0x00030014: mx.tmr
+Leaving PF_MEMALLOC set when exiting a kthread causes it to remain set
+during do_exit().  That can confuse things.  In particular, if BSD
+process accounting is enabled, then do_exit() writes data to an
+accounting file.  If that file has FS_SYNC_FL set, then this write
+occurs synchronously and can misbehave if PF_MEMALLOC is set.
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Maulik Shah <mkshah@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+For example, if the accounting file is located on an XFS filesystem,
+then a WARN_ON_ONCE() in iomap_do_writepage() is triggered and the data
+doesn't get written when it should.  Or if the accounting file is
+located on an ext4 filesystem without a journal, then a WARN_ON_ONCE()
+in ext4_write_inode() is triggered and the inode doesn't get written.
+
+Fix this in xfsaild() by using the helper functions to save and restore
+PF_MEMALLOC.
+
+This can be reproduced as follows in the kvm-xfstests test appliance
+modified to add the 'acct' Debian package, and with kvm-xfstests's
+recommended kconfig modified to add CONFIG_BSD_PROCESS_ACCT=y:
+
+        mkfs.xfs -f /dev/vdb
+        mount /vdb
+        touch /vdb/file
+        chattr +S /vdb/file
+        accton /vdb/file
+        mkfs.xfs -f /dev/vdc
+        mount /vdc
+        umount /vdc
+
+It causes:
+	WARNING: CPU: 1 PID: 336 at fs/iomap/buffered-io.c:1534
+	CPU: 1 PID: 336 Comm: xfsaild/vdc Not tainted 5.6.0-rc5 #3
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191223_100556-anatol 04/01/2014
+	RIP: 0010:iomap_do_writepage+0x16b/0x1f0 fs/iomap/buffered-io.c:1534
+	[...]
+	Call Trace:
+	 write_cache_pages+0x189/0x4d0 mm/page-writeback.c:2238
+	 iomap_writepages+0x1c/0x33 fs/iomap/buffered-io.c:1642
+	 xfs_vm_writepages+0x65/0x90 fs/xfs/xfs_aops.c:578
+	 do_writepages+0x41/0xe0 mm/page-writeback.c:2344
+	 __filemap_fdatawrite_range+0xd2/0x120 mm/filemap.c:421
+	 file_write_and_wait_range+0x71/0xc0 mm/filemap.c:760
+	 xfs_file_fsync+0x7a/0x2b0 fs/xfs/xfs_file.c:114
+	 generic_write_sync include/linux/fs.h:2867 [inline]
+	 xfs_file_buffered_aio_write+0x379/0x3b0 fs/xfs/xfs_file.c:691
+	 call_write_iter include/linux/fs.h:1901 [inline]
+	 new_sync_write+0x130/0x1d0 fs/read_write.c:483
+	 __kernel_write+0x54/0xe0 fs/read_write.c:515
+	 do_acct_process+0x122/0x170 kernel/acct.c:522
+	 slow_acct_process kernel/acct.c:581 [inline]
+	 acct_process+0x1d4/0x27c kernel/acct.c:607
+	 do_exit+0x83d/0xbc0 kernel/exit.c:791
+	 kthread+0xf1/0x140 kernel/kthread.c:257
+	 ret_from_fork+0x27/0x50 arch/x86/entry/entry_64.S:352
+
+This bug was originally reported by syzbot at
+https://lore.kernel.org/r/0000000000000e7156059f751d7b@google.com.
+
+Reported-by: syzbot+1f9dc49e8de2582d90c2@syzkaller.appspotmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- drivers/soc/qcom/cmd-db.c | 79 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index f6c3d17b05c7..6c308f92a13c 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -1,12 +1,13 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
- 
-+#include <linux/debugfs.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_platform.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
-+#include <linux/seq_file.h>
- #include <linux/types.h>
- 
- #include <soc/qcom/cmd-db.h>
-@@ -236,6 +237,78 @@ enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
- }
- EXPORT_SYMBOL(cmd_db_read_slave_id);
- 
-+#ifdef CONFIG_DEBUG_FS
-+static int cmd_db_debugfs_dump(struct seq_file *seq, void *p)
-+{
-+	int i, j;
-+	const struct rsc_hdr *rsc;
-+	const struct entry_header *ent;
-+	const char *name;
-+	u16 len, version;
-+	u8 major, minor;
-+
-+	seq_puts(seq, "Command DB DUMP\n");
-+
-+	for (i = 0; i < MAX_SLV_ID; i++) {
-+
-+		rsc = &cmd_db_header->header[i];
-+		if (!rsc->slv_id)
-+			break;
-+
-+		switch (rsc->slv_id) {
-+		case CMD_DB_HW_ARC:
-+			name = "ARC";
-+			break;
-+		case CMD_DB_HW_VRM:
-+			name = "VRM";
-+			break;
-+		case CMD_DB_HW_BCM:
-+			name = "BCM";
-+			break;
-+		default:
-+			name = "Unknown";
-+			break;
-+		}
-+
-+		version = le16_to_cpu(rsc->version);
-+		major = version >> 8;
-+		minor = version;
-+
-+		seq_printf(seq, "Slave %s (v%u.%u)\n", name, major, minor);
-+		seq_puts(seq, "-------------------------\n");
-+
-+		ent = rsc_to_entry_header(rsc);
-+		for (j = 0; j < le16_to_cpu(rsc->cnt); j++, ent++) {
-+			seq_printf(seq, "0x%08x: %*pEp", le32_to_cpu(ent->addr),
-+				   sizeof(ent->id), ent->id);
-+
-+			len = le16_to_cpu(ent->len);
-+			if (len) {
-+				seq_printf(seq, " [%*ph]",
-+					   len, rsc_offset(rsc, ent));
-+			}
-+			seq_putc(seq, '\n');
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int open_cmd_db_debugfs(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, cmd_db_debugfs_dump, inode->i_private);
-+}
-+#endif
-+
-+static const struct file_operations cmd_db_debugfs_ops = {
-+#ifdef CONFIG_DEBUG_FS
-+	.open = open_cmd_db_debugfs,
-+#endif
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
- static int cmd_db_dev_probe(struct platform_device *pdev)
+v3: updated commit message again, this time to take into account the bug
+    also being reproducible when the accounting file is located on XFS.
+
+v2: include more details in the commit message.
+
+ fs/xfs/xfs_trans_ail.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+index 00cc5b8734be8..3bc570c90ad97 100644
+--- a/fs/xfs/xfs_trans_ail.c
++++ b/fs/xfs/xfs_trans_ail.c
+@@ -529,8 +529,9 @@ xfsaild(
  {
- 	struct reserved_mem *rmem;
-@@ -259,12 +332,14 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- 		return -EINVAL;
+ 	struct xfs_ail	*ailp = data;
+ 	long		tout = 0;	/* milliseconds */
++	unsigned int	noreclaim_flag;
+ 
+-	current->flags |= PF_MEMALLOC;
++	noreclaim_flag = memalloc_noreclaim_save();
+ 	set_freezable();
+ 
+ 	while (1) {
+@@ -601,6 +602,7 @@ xfsaild(
+ 		tout = xfsaild_push(ailp);
  	}
  
-+	debugfs_create_file("cmd-db", 0400, NULL, NULL, &cmd_db_debugfs_ops);
-+
++	memalloc_noreclaim_restore(noreclaim_flag);
  	return 0;
  }
  
- static const struct of_device_id cmd_db_match_table[] = {
- 	{ .compatible = "qcom,cmd-db" },
--	{ },
-+	{ }
- };
- 
- static struct platform_driver cmd_db_dev_driver = {
-
-base-commit: 2c523b344dfa65a3738e7039832044aa133c75fb
 -- 
-Sent by a computer, using git, on the internet
+2.25.1
 
