@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F77117E676
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF80217E67E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 19:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbgCISJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 14:09:09 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.5]:18642 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726169AbgCISJI (ORCPT
+        id S1727393AbgCISKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 14:10:21 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.107]:41038 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726169AbgCISKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 14:09:08 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 112A64A81D1
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 13:09:08 -0500 (CDT)
+        Mon, 9 Mar 2020 14:10:20 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 546A72FAC
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Mar 2020 13:10:19 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id BMpvjWgDWAGTXBMpwjySRv; Mon, 09 Mar 2020 13:09:08 -0500
+        id BMr5jR7q7RP4zBMr5jncEY; Mon, 09 Mar 2020 13:10:19 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -25,23 +25,23 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=VaFeJjrfVfGbP6nC6hR/+viONEvctW389EGllFCxNwA=; b=buYf55WK6wJoaFmjmzJEPQYS0e
-        K5qYs4LxuKVnFZ+Gew78N9Lk/o9q9ikGI1lvR+8mJmjrfV6aZ+rELNG2m4Ywf2HaF4P3iNrq3OS1U
-        KMd6f1Dg0UPjnWm9WKNkR00+f0RtetxV0Pdw4tdmirNNofrXvJe5lX0M0nLiVRLi0wmevsBeUWDaC
-        7rmpd1HdMxHgEvW6EMhzDpqHTXwvlDE+3khTn01oqOTBtJjnq4e72+GsL2bdO/yGVDZR0mKWeXG35
-        y13XWAyn616nmACgmDK7UXagQWiOmqWcOocLLr6uVatZlCYCrszASmVqoeM5X2AU27bOsR1XgtKGm
-        IveJNKRw==;
-Received: from [201.162.240.150] (port=6525 helo=embeddedor)
+        bh=RyR+AnHFtg8ENe4FqD1p4qkHhSuKpxiB0Z6NTI7dKPk=; b=zjAn8OAcZerZeuOTAPs7yu0wq7
+        NZ0gyMiRZ1hSKI0AlWbcWHF8HOurzuz1D7KN3dy7B1Jj2EETPYetwmXZnrhofciakuRqq3HL0AD/c
+        EmoGKNvhqjhAfb9ein4ilFbJlf+BWgzra1OAEuSzRisBFB28h3z7KcpbeeD2zdIyUBtOTRmmdXzaK
+        LZIcBwBr1eeBshrSI2Zp8dz3bitl4AnNZHrs1q5adc5Bcl0xo8edyiE6ydF3FmGmvnMHg9wpdQD0K
+        Ywk2bl4gThm55+yR7X0MpC9Hmb/SxSA4JSpfbkyI9NlcZFCO5Uun5iTsrhLYFiVE+rc0z5Ad9BeuI
+        4gM/I0YQ==;
+Received: from [201.162.240.150] (port=7181 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1jBMpu-004F5Y-70; Mon, 09 Mar 2020 13:09:06 -0500
-Date:   Mon, 9 Mar 2020 13:12:18 -0500
+        id 1jBMr3-004FeC-G9; Mon, 09 Mar 2020 13:10:17 -0500
+Date:   Mon, 9 Mar 2020 13:13:29 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] hfs: btree.h: Replace zero-length array with
+Subject: [PATCH][next] hfsplus: hfsplus_fs.h: Replace zero-length array with
  flexible-array member
-Message-ID: <20200309181218.GA3726@embeddedor>
+Message-ID: <20200309181329.GA3925@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -54,13 +54,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 201.162.240.150
 X-Source-L: No
-X-Exim-ID: 1jBMpu-004F5Y-70
+X-Exim-ID: 1jBMr3-004FeC-G9
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.162.240.150]:6525
+X-Source-Sender: (embeddedor) [201.162.240.150]:7181
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
+X-Email-Count: 15
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -98,14 +98,14 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/hfs/btree.h | 2 +-
+ fs/hfsplus/hfsplus_fs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
-index dcc2aab1b2c4..4ba45caf5939 100644
---- a/fs/hfs/btree.h
-+++ b/fs/hfs/btree.h
-@@ -60,7 +60,7 @@ struct hfs_bnode {
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 3b03fff68543..a92de5199ec3 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -117,7 +117,7 @@ struct hfs_bnode {
  	wait_queue_head_t lock_wq;
  	atomic_t refcnt;
  	unsigned int page_offset;
@@ -113,7 +113,7 @@ index dcc2aab1b2c4..4ba45caf5939 100644
 +	struct page *page[];
  };
  
- #define HFS_BNODE_ERROR		0
+ #define HFS_BNODE_LOCK		0
 -- 
 2.25.0
 
