@@ -2,167 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F67917DF1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FC517DF0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 12:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbgCILzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 07:55:46 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50824 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgCILzo (ORCPT
+        id S1726490AbgCILwm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Mar 2020 07:52:42 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56437 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgCILwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 07:55:44 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a5so9551973wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 04:55:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fZEHZVAiXu8sfQoYawsUmY7xOYvR1LEo4KSCSXP/S8s=;
-        b=dXFK10TdPpfScl01k0ffiiqX07TxuSqLkEVjdgqcmmMkTChsCfUmnYlw5CQXwrSvvQ
-         Ij+vgNTpHseWIFeMpDjWGXWd+wQHZzwtM9wRtl6IRzA+yI3cSTT5c7sLxHzugTp8KFdI
-         k5xaRdT42Uylzwdi9Rf4Q9aAc3Z2cL8rzIXNDdRjD9IWENGXEutg2j8hxw5qDVe63CUD
-         FZq8dK5561EP+BYH1Sjl6IbLNiYPLkRu/Efs9MfiOYDMIsPHrMLzF/PsJj1bwhiE0Jrv
-         g50Fa/7HqmA4oeE+3kquhriHMpYN+q8R/VHxfCYAGzCOHlYaxfMJQnIYHx/bypCmel6l
-         MQkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=fZEHZVAiXu8sfQoYawsUmY7xOYvR1LEo4KSCSXP/S8s=;
-        b=dNGGrZhgePUSuqJhP5qaTdeVcPqexKP3EUJ81VadaP01eyUCK10txtSyyuRMd04fyo
-         lbgPNDLoNAV46eQc5KhDotfRcKt2uJ5US+v9w2r0bizRF4fA7UhJWRxFhTqqDIL7MXcd
-         0gdD3NzItOAyU08KKjj89KjEnJW+X3t48AHBv6g089NmGXvJ90oTbJr1iwqdPe5hxMr6
-         FuwZzvf7wSaau/blDZmdWQCqKgxlfa9L+9RVpLjAgin3WjqVBzQF3OBjefQKTU14ze8p
-         5GMhihcmQcaB5Fnm+VKAvmPIWq3sKQq/AziVEajsrOhAatfH1TC6fg2NfILT2Zh0pyYy
-         8ScA==
-X-Gm-Message-State: ANhLgQ0jAfY3c4Ma54rEbzr32X3dVg6xBzJXoQ7pIJ8WbQHUk8BqxA0s
-        Zi9pO/+xXa2g6pJ+7oqyTEk=
-X-Google-Smtp-Source: ADFU+vtHW7gernPaKXQhWvxnUv09zon4nD4dRnylsMxdwqyt22NSmRVi3uIhx4q6fzqx8tF53mqq0w==
-X-Received: by 2002:a1c:4054:: with SMTP id n81mr10155732wma.114.1583754942047;
-        Mon, 09 Mar 2020 04:55:42 -0700 (PDT)
-Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id m21sm25035226wmi.27.2020.03.09.04.55.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 04:55:41 -0700 (PDT)
-From:   shiva.linuxworks@gmail.com
-X-Google-Original-From: sshivamurthy@micron.com
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: [PATCH v6 6/6] mtd: spinand: micron: Add new Micron SPI NAND devices with multiple dies
-Date:   Mon,  9 Mar 2020 12:52:30 +0100
-Message-Id: <20200309115230.7207-7-sshivamurthy@micron.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200309115230.7207-1-sshivamurthy@micron.com>
-References: <20200309115230.7207-1-sshivamurthy@micron.com>
+        Mon, 9 Mar 2020 07:52:42 -0400
+X-Originating-IP: 90.89.41.158
+Received: from xps13 (lfbn-tou-1-1473-158.w90-89.abo.wanadoo.fr [90.89.41.158])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 4492A1C0013;
+        Mon,  9 Mar 2020 11:52:40 +0000 (UTC)
+Date:   Mon, 9 Mar 2020 12:52:39 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v3 0/2] mtd: spinand: toshiba: Support for new Kioxia
+ Serial NAND
+Message-ID: <20200309125239.39879af3@xps13>
+In-Reply-To: <cover.1583371913.git.ytc-mb-yfuruyama7@kioxia.com>
+References: <cover.1583371913.git.ytc-mb-yfuruyama7@kioxia.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shivamurthy Shastri <sshivamurthy@micron.com>
+Hi Yoshio,
 
-Add device table for new Micron SPI NAND devices, which have multiple
-dies.
+Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com> wrote on Fri,  6 Mar
+2020 12:08:21 +0900:
 
-Also, enable support to select the dies.
+> First patch is to rename function name becase of add new device.
+> Second patch is to supprot for new device.
+> 
+> Yoshio Furuyama (2):
+>   mtd: spinand: toshiba: Rename function name to change suffix and
+>     prefix (8Gbit)
+>   mtd: spinand: toshiba: Support for new Kioxia Serial NAND
+> 
+>  drivers/mtd/nand/spi/toshiba.c | 173 +++++++++++++++++++++++++++++++----------
+>  1 file changed, 130 insertions(+), 43 deletions(-)
+> 
 
-Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
----
- drivers/mtd/nand/spi/micron.c | 55 +++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+Please be careful when sending your series: I received the cover
+letter, then twice patch 2/2 then patch 1/2.
 
-diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 9db1ab71fcae..f7d148aaa476 100644
---- a/drivers/mtd/nand/spi/micron.c
-+++ b/drivers/mtd/nand/spi/micron.c
-@@ -20,6 +20,14 @@
- 
- #define MICRON_CFG_CR			BIT(0)
- 
-+/*
-+ * As per datasheet, die selection is done by the 6th bit of Die
-+ * Select Register (Address 0xD0).
-+ */
-+#define MICRON_DIE_SELECT_REG	0xD0
-+
-+#define MICRON_SELECT_DIE(x)	((x) << 6)
-+
- static SPINAND_OP_VARIANTS(read_cache_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
-@@ -66,6 +74,20 @@ static const struct mtd_ooblayout_ops micron_8_ooblayout = {
- 	.free = micron_8_ooblayout_free,
- };
- 
-+static int micron_select_target(struct spinand_device *spinand,
-+				unsigned int target)
-+{
-+	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(MICRON_DIE_SELECT_REG,
-+						      spinand->scratchbuf);
-+
-+	if (target > 1)
-+		return -EINVAL;
-+
-+	*spinand->scratchbuf = MICRON_SELECT_DIE(target);
-+
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static int micron_8_ecc_get_status(struct spinand_device *spinand,
- 				   u8 status)
- {
-@@ -133,6 +155,17 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     0,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
- 				     micron_8_ecc_get_status)),
-+	/* M79A 4Gb 3.3V */
-+	SPINAND_INFO("MT29F4G01ADAGD", 0x36,
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 80, 2, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
- 	/* M70A 4Gb 3.3V */
- 	SPINAND_INFO("MT29F4G01ABAFD", 0x34,
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -153,6 +186,28 @@ static const struct spinand_info micron_spinand_table[] = {
- 		     SPINAND_HAS_CR_FEAT_BIT,
- 		     SPINAND_ECCINFO(&micron_8_ooblayout,
- 				     micron_8_ecc_get_status)),
-+	/* M70A 8Gb 3.3V */
-+	SPINAND_INFO("MT29F8G01ADAFD", 0x46,
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_CR_FEAT_BIT,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
-+	/* M70A 8Gb 1.8V */
-+	SPINAND_INFO("MT29F8G01ADBFD", 0x47,
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 2),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_CR_FEAT_BIT,
-+		     SPINAND_ECCINFO(&micron_8_ooblayout,
-+				     micron_8_ecc_get_status),
-+		     SPINAND_SELECT_TARGET(micron_select_target)),
- };
- 
- static int micron_spinand_detect(struct spinand_device *spinand)
--- 
-2.17.1
+Also, I cannot apply this series as-is, please rebase on top of the
+last -rc.
 
+I'll apply these patches as soon as you resend.
+
+Thanks,
+Miquèl
