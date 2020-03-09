@@ -2,206 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5F917EBAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03C7A17EBB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Mar 2020 23:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbgCIWHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 18:07:25 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:36010 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbgCIWHY (ORCPT
+        id S1727212AbgCIWI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 18:08:56 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:43922 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgCIWI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 18:07:24 -0400
-Received: by mail-yw1-f66.google.com with SMTP id j71so11810340ywb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Mar 2020 15:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C2C2IyR8ADVQXo6q1zpX2vt9Gg5duZt3BO1njA9FKss=;
-        b=hzKtLxXOYKMEfxDYep/kUlMuXGnaSBQQwbXE0PdylQNjl880YZVe5LQnjdkKWRBeRe
-         1krPhRDjkJBW54vBntLvB/5tAcvcz4+j9o2Kqq5WWqJkbr92goEQplWBUtZ6y7+fOfCr
-         RNgupV59pQcE5IMLuCkj8vnYNz9cCwS8Z89LQSEzBV+weHY0mPKdyxu9CIQOx3bc1SVT
-         o8z5UwdXavYLslQShe+bYedaNiocKz8P2hPQ68OBGxacOuL/mp4rKyYt0boE4Ya0U8+n
-         zzIsSrHkQkJ+tgTU18rZn4hZYkkQV/ia4sLAXR4KoZ/IUov85T2zM59XpzLYPiqakz+Q
-         DTpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C2C2IyR8ADVQXo6q1zpX2vt9Gg5duZt3BO1njA9FKss=;
-        b=plRdYVyjYoGVzanQqvBq6Llijoa/jmRlIz7gs+CUxMY+SDsbObZtwf5nY6D00MAdu+
-         ojQ8hRrTwrkcXs+NhwG77IO7KjtnW9V8KL3LUJLJlDjukEqogR/X27SXrGjZW+5CudN/
-         YFKzssV2cK9SBtCZ1/dmVji09zBb+0TN9Tz6WmN5biS52U82gjrI/dPr/dGsw08Zvgpu
-         Tp5FlrKcAjN+H8iOV1oPV2oRzN9llVNWHpKDI6H1zYMkjLYu71slL6KlLeem8VvKm+Yf
-         pfw4wwjmO5Ef84tdOaduNxLLrp7/6MfIFbsKt3xYWU6HdYAmWDXFeh8oD2aFqb/udlw5
-         M8tQ==
-X-Gm-Message-State: ANhLgQ3IR0ZMcMiA/JF0eA0Eoj1CtahcByekta7cAJyHPV+tAbBjvhzD
-        X9602v9Snoxtui7g48ewuhTfWEs02wtn9+x1HdIyfEc=
-X-Google-Smtp-Source: ADFU+vuoelPKbp3P8CWhPi+RqgvmvUoBO9h7BgOIMQhjAKzFvKXLYQa4eBwhg4rbdH3YDsQPttGT9D8NPxUlkVKEdMw=
-X-Received: by 2002:a0d:ddc7:: with SMTP id g190mr19393852ywe.147.1583791643313;
- Mon, 09 Mar 2020 15:07:23 -0700 (PDT)
+        Mon, 9 Mar 2020 18:08:56 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id E3E7880307C8;
+        Mon,  9 Mar 2020 22:08:53 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Mhon-ZlolZyP; Tue, 10 Mar 2020 01:08:53 +0300 (MSK)
+Date:   Tue, 10 Mar 2020 01:08:02 +0300
+From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] dmaengine: dw: Take Baikal-T1 SoC DW DMAC
+ peculiarities into account
+References: <20200306131048.ADBE18030797@mail.baikalelectronics.ru>
+ <20200306132912.GA1748204@smile.fi.intel.com>
+ <20200306133756.0F74C8030793@mail.baikalelectronics.ru>
+ <20200306134829.342F4803087C@mail.baikalelectronics.ru>
+ <20200306141135.9C4F380307C2@mail.baikalelectronics.ru>
 MIME-Version: 1.0
-References: <1583472756-7611-1-git-send-email-mansur@codeaurora.org> <CAPBb6MW-zxK+=HHUP5=+pO4Mswkhm=hDX7V56ABDm+BCzDaGHg@mail.gmail.com>
-In-Reply-To: <CAPBb6MW-zxK+=HHUP5=+pO4Mswkhm=hDX7V56ABDm+BCzDaGHg@mail.gmail.com>
-From:   Jeffrey Kardatzke <jkardatzke@google.com>
-Date:   Mon, 9 Mar 2020 15:07:11 -0700
-Message-ID: <CA+ddPcNdC4r3XBd+dQmv2oHwF6MA3bTJrWZZpJthruBQR_THBA@mail.gmail.com>
-Subject: Re: [PATCH] venus: avoid extra locking in driver
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Mansur Alisha Shaik <mansur@codeaurora.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200306141135.9C4F380307C2@mail.baikalelectronics.ru>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Message-Id: <20200309220853.E3E7880307C8@mail.baikalelectronics.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 11:50 PM Alexandre Courbot <acourbot@chromium.org> wrote:
->
-> On Fri, Mar 6, 2020 at 2:34 PM Mansur Alisha Shaik
-> <mansur@codeaurora.org> wrote:
-> >
-> > This change will avoid extra locking in driver.
->
-> Could you elaborate a bit more on the problem that this patch solves?
+On Fri, Mar 06, 2020 at 04:11:28PM +0200, Andy Shevchenko wrote:
+> On Fri, Mar 06, 2020 at 04:47:20PM +0300, Sergey Semin wrote:
+> > On Fri, Mar 06, 2020 at 03:30:35PM +0200, Andy Shevchenko wrote:
+> > > On Fri, Mar 06, 2020 at 03:29:12PM +0200, Andy Shevchenko wrote:
+> > > > On Fri, Mar 06, 2020 at 04:10:29PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+> > > > > From: Serge Semin <fancer.lancer@gmail.com>
+> > > > > 
+> > > > > Baikal-T1 SoC has an DW DMAC on-board to provide a Mem-to-Mem, low-speed
+> > > > > peripherals Dev-to-Mem and Mem-to-Dev functionality. Mostly it's compatible
+> > > > > with currently implemented in the kernel DW DMAC driver, but there are some
+> > > > > peculiarities which must be taken into account in order to have the device
+> > > > > fully supported.
+> > > > > 
+> > > > > First of all traditionally we replaced the legacy plain text-based dt-binding
+> > > > > file with yaml-based one. Secondly Baikal-T1 DW DMA Controller provides eight
+> > > > > channels, which alas have different max burst length configuration.
+> > > > > In particular first two channels may burst up to 128 bits (16 bytes) at a time
+> > > > > while the rest of them just up to 32 bits. We must make sure that the DMA
+> > > > > subsystem doesn't set values exceeding these limitations otherwise the
+> > > > > controller will hang up. In third currently we discovered the problem in using
+> > > > > the DW APB SPI driver together with DW DMAC. The problem happens if there is no
+> > > > > natively implemented multi-block LLP transfers support and the SPI-transfer
+> > > > > length exceeds the max lock size. In this case due to asynchronous handling of
+> > > > > Tx- and Rx- SPI transfers interrupt we might end up with Dw APB SSI Rx FIFO
+> > > > > overflow. So if DW APB SSI (or any other DMAC service consumer) intends to use
+> > > > > the DMAC to asynchronously execute the transfers we'd have to at least warn
+> > > > > the user of the possible errors.
+> > > > > 
+> > > > > Finally there is a bug in the algorithm of the nollp flag detection.
+> > > > > In particular even if DW DMAC parameters state the multi-block transfers
+> > > > > support there is still HC_LLP (hardcode LLP) flag, which if set makes expected
+> > > > > by the driver true multi-block LLP functionality unusable. This happens cause'
+> > > > > if HC_LLP flag is set the LLP registers will be hardcoded to zero so the
+> > > > > contiguous multi-block transfers will be only supported. We must take the
+> > > > > flag into account when detecting the LLP support otherwise the driver just
+> > > > > won't work correctly.
+> > > > > 
+> > > > > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+> > > > > commit 98d54f81e36b ("Linux 5.6-rc4").
+> > > > 
+> > > > Thank you for your series!
+> > > > 
+> > > > I'll definitely review it, but it will take time. So, I think due to late
+> > > > submission this is material at least for v5.8.
+> > > 
+> > 
+> > Hello Andy,
+> > Thanks for the quick response. Looking forward to get the patches
+> > reviewed and move on with the next patchset I'll send after this. It concerns
+> > DW APB SSI driver, which uses the changes introduced by this one.
+> 
+> > So the
+> > sooner we finished with this patchset the better.
+> 
+> Everybody will win, but review will take as long as it take. And for sure it
+> will miss v5.7 release cycle. Because too many patch sets sent at once
+> followed by schedule, we almost at v5.6-rc5.
+> 
 
-For us it fixes a kernel null deref that happens when we run the
-MultipleEncoders test (I've verified this to be true).
+Yeah. 13 patchsets is a lot of work to review. I was just saying, that
+even though there are many patches sent, there are even more being
+scheduled for submission after that, which rely on the alterations
+provided by these patches. Though the pacthes dependency may change
+seeing you have issues regarding some of them.)
 
->
-> >
-> > Signed-off-by: Mansur Alisha Shaik <mansur@codeaurora.org>
-> > ---
-> >  drivers/media/platform/qcom/venus/core.c       |  2 +-
-> >  drivers/media/platform/qcom/venus/core.h       |  2 +-
-> >  drivers/media/platform/qcom/venus/helpers.c    | 11 +++++++++--
-> >  drivers/media/platform/qcom/venus/pm_helpers.c |  8 ++++----
-> >  4 files changed, 15 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> > index 194b10b9..75d38b8 100644
-> > --- a/drivers/media/platform/qcom/venus/core.c
-> > +++ b/drivers/media/platform/qcom/venus/core.c
-> > @@ -447,7 +447,7 @@ static const struct freq_tbl sdm845_freq_table[] = {
-> >         {  244800, 100000000 }, /* 1920x1080@30 */
-> >  };
-> >
-> > -static struct codec_freq_data sdm845_codec_freq_data[] =  {
-> > +static const struct codec_freq_data sdm845_codec_freq_data[] =  {
-> >         { V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> >         { V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> >         { V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> > diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> > index ab7c360..8c8d0e9 100644
-> > --- a/drivers/media/platform/qcom/venus/core.h
-> > +++ b/drivers/media/platform/qcom/venus/core.h
-> > @@ -245,7 +245,7 @@ struct venus_buffer {
-> >  struct clock_data {
-> >         u32 core_id;
-> >         unsigned long freq;
-> > -       const struct codec_freq_data *codec_freq_data;
-> > +       struct codec_freq_data codec_freq_data;
-> >  };
-> >
-> >  #define to_venus_buffer(ptr)   container_of(ptr, struct venus_buffer, vb)
-> > diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> > index bcc6038..550c4ff 100644
-> > --- a/drivers/media/platform/qcom/venus/helpers.c
-> > +++ b/drivers/media/platform/qcom/venus/helpers.c
-> > @@ -807,6 +807,7 @@ int venus_helper_init_codec_freq_data(struct venus_inst *inst)
-> >         unsigned int i, data_size;
-> >         u32 pixfmt;
-> >         int ret = 0;
-> > +       bool found = false;
-> >
-> >         if (!IS_V4(inst->core))
-> >                 return 0;
-> > @@ -816,16 +817,22 @@ int venus_helper_init_codec_freq_data(struct venus_inst *inst)
-> >         pixfmt = inst->session_type == VIDC_SESSION_TYPE_DEC ?
-> >                         inst->fmt_out->pixfmt : inst->fmt_cap->pixfmt;
-> >
-> > +       memset(&inst->clk_data.codec_freq_data, 0,
-> > +               sizeof(inst->clk_data.codec_freq_data));
-> > +
-> >         for (i = 0; i < data_size; i++) {
-> >                 if (data[i].pixfmt == pixfmt &&
-> >                     data[i].session_type == inst->session_type) {
-> > -                       inst->clk_data.codec_freq_data = &data[i];
-> > +                       inst->clk_data.codec_freq_data = data[i];
->
-> From the patch I'd infer that inst->clk_data.codec_freq_data needs to
-> change at runtime. Is this what happens? Why? I'd expect that
-> frequency tables remain constant, and thus that the global
-> sdm845_codec_freq_data can remain constant while
-> clock_data::codec_freq_data is a const reference to it. What prevents
-> this from happening?
->
-> > +                       found = true;
-> >                         break;
-> >                 }
-> >         }
-> >
-> > -       if (!inst->clk_data.codec_freq_data)
-> > +       if (!found) {
-> > +               dev_err(inst->core->dev, "cannot find codec freq data\n");
-> >                 ret = -EINVAL;
-> > +       }
-> >
-> >         return ret;
-> >  }
-> > diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > index abf9315..240845e 100644
-> > --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> > +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > @@ -496,7 +496,7 @@ min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u32 *min_load)
-> >         list_for_each_entry(inst_pos, &core->instances, list) {
-> >                 if (inst_pos == inst)
-> >                         continue;
-> > -               vpp_freq = inst_pos->clk_data.codec_freq_data->vpp_freq;
-> > +               vpp_freq = inst_pos->clk_data.codec_freq_data.vpp_freq;
+> > Although I understand
+> > that it may take some time. I've just sent over 12 patchset, which have a lot
+> > of fixups and new drivers.)
+> > 
+> > > One thing that I can tell immediately is the broken email thread in this series.
+> > > Whenever you do a series, use `git format-patch --cover-letter --thread ...`,
+> > > so, it will link the mail properly.
+> > > 
+> > 
+> > I've got thread=true in my gitconfig file, so each email should have
+> > the proper reference and in-reply-to to the cover-letter (I see it from
+> > the log). The problem popped up from a different place. For some reason the
+> > automatic CC/To list extraction command didn't do the job right, so we ended
+> > up with lacking of mailing lists in Cc's in this patchset. The command look like
+> > this:
+> > 
+> > git send-email --cc-cmd "scripts/get_maintainer.pl --separator , --nokeywords --nogit --nogit-fallback --norolestats --nom" \
+> >                    --to-cmd "scripts/get_maintainer.pl --separator , --nokeywords --nogit --nogit-fallback --norolestats --nol" \
+> >                    --from "Serge Semin <Sergey.Semin at baikalelectronics.ru>" \
+> >                    --smtp-server-option="-abaikal" --cover-letter -5
+> 
+> I'm talking about one which makes your Message-Id/Reference headers broken
+> between cover letter and the rest of the series. It might be because of missed
+> patches in the chain.
+> 
 
-This is the main thing it fixes (this is where the null deref occurs).
-If there's multiple instances in use and the other instance hasn't
-populated the codec_freq_data pointer then we'll hit a null deref
-here.
+Ok. Now I see what you meant. First I had a thought there was some
+misunderstanding on your or my side, because my neomutt client didn't
+show any Ids confusion. But after another maintainer complained about
+the same problem I realized that the issue must be at someplace I
+couldn't have noticed. Then I thought that the outgoing email server
+could have changed the order of the sent emails. But it turned out the
+problem was in the message Ids replacement performed by our corporate
+exchange server. Please see the email I've sent in reply to the Vinod
+comment regarding the emailing list Ccing. It describes what was really
+wrong with the threading config.
 
-> >                 coreid = inst_pos->clk_data.core_id;
-> >
-> >                 mbs_per_sec = load_per_instance(inst_pos);
-> > @@ -545,7 +545,7 @@ static int decide_core(struct venus_inst *inst)
-> >                 return 0;
-> >
-> >         inst_load = load_per_instance(inst);
-> > -       inst_load *= inst->clk_data.codec_freq_data->vpp_freq;
-> > +       inst_load *= inst->clk_data.codec_freq_data.vpp_freq;
-> >         max_freq = core->res->freq_tbl[0].freq;
-> >
-> >         min_loaded_core(inst, &min_coreid, &min_load);
-> > @@ -848,10 +848,10 @@ static unsigned long calculate_inst_freq(struct venus_inst *inst,
-> >
-> >         mbs_per_sec = load_per_instance(inst) / fps;
-> >
-> > -       vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vpp_freq;
-> > +       vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data.vpp_freq;
-> >         /* 21 / 20 is overhead factor */
-> >         vpp_freq += vpp_freq / 20;
-> > -       vsp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vsp_freq;
-> > +       vsp_freq = mbs_per_sec * inst->clk_data.codec_freq_data.vsp_freq;
-> >
-> >         /* 10 / 7 is overhead factor */
-> >         if (inst->session_type == VIDC_SESSION_TYPE_ENC)
-> > --
-> > 2.7.4
-> >
+Regards,
+-Segey
 
-
-
--- 
-Jeffrey Kardatzke
-jkardatzke@google.com
-Google, Inc.
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
