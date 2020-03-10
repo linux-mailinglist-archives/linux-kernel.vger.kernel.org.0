@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C1BD17F990
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE1217F8A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbgCJM56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:57:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37784 "EHLO mail.kernel.org"
+        id S1727361AbgCJMtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:49:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729842AbgCJM54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:57:56 -0400
+        id S1728490AbgCJMtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:49:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53A912468E;
-        Tue, 10 Mar 2020 12:57:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3470F24692;
+        Tue, 10 Mar 2020 12:49:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845075;
-        bh=F4Lhoeop5jyc/HLHpAGZSESF9WLzwH4clZlIidY28eo=;
+        s=default; t=1583844582;
+        bh=EpB+hNHyM4aBcJsJprlm1tfQc8ejGExjREpw2qKL+j4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b+WQ9Ih4AzhlXTwZqrmDRaoSKphhcOrQ5ESb/sDIpIBBkSFwjAadmVF1oDU4kJ0hI
-         mbWFP2tKj8Usp4nHJrEAG/2XtKuMBY5i4kU28G3XesODIxJAP7AW6Bs/D1bHEWW5YZ
-         N2+3gvETL5PWrpxGdrgUASqQrZKe7DeLLIdc1cVo=
+        b=UINbbs+J5jhoDvpwTbiYCH68KSGDouSsI/xoUA1rKDAi26Z+9ORfu6qXvbDwKy5mN
+         3drwk2z2Foh/khNkh5+wn+kPF19sHmLtWhlHt/mgr2mbrRTqiEjeIpINW0u8xUqNP4
+         3jrWNaJFc6dgeMW4szN2AsWW7HeuUnYhcaJSuvrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guo Ren <guoren@linux.alibaba.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 053/189] csky/smp: Fixup boot failed when CONFIG_SMP
+        stable@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
+        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 044/168] x86/boot/compressed: Dont declare __force_order in kaslr_64.c
 Date:   Tue, 10 Mar 2020 13:38:10 +0100
-Message-Id: <20200310123644.900655536@linuxfoundation.org>
+Message-Id: <20200310123639.823300645@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <guoren@linux.alibaba.com>
+From: H.J. Lu <hjl.tools@gmail.com>
 
-[ Upstream commit c9492737b25ca32679ba3163609d938c9abfd508 ]
+[ Upstream commit df6d4f9db79c1a5d6f48b59db35ccd1e9ff9adfc ]
 
-If we use a non-ipi-support interrupt controller, it will cause panic here.
-We should let cpu up and work with CONFIG_SMP, when we use a non-ipi intc.
+GCC 10 changed the default to -fno-common, which leads to
 
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+    LD      arch/x86/boot/compressed/vmlinux
+  ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; \
+    arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
+  make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
+
+Since __force_order is already provided in pgtable_64.c, there is no
+need to declare __force_order in kaslr_64.c.
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200124181811.4780-1-hjl.tools@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/boot/compressed/kaslr_64.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-index b753d382e4cef..0bb0954d55709 100644
---- a/arch/csky/kernel/smp.c
-+++ b/arch/csky/kernel/smp.c
-@@ -120,7 +120,7 @@ void __init setup_smp_ipi(void)
- 	int rc;
+diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
+index 748456c365f46..9557c5a15b91e 100644
+--- a/arch/x86/boot/compressed/kaslr_64.c
++++ b/arch/x86/boot/compressed/kaslr_64.c
+@@ -29,9 +29,6 @@
+ #define __PAGE_OFFSET __PAGE_OFFSET_BASE
+ #include "../../mm/ident_map.c"
  
- 	if (ipi_irq == 0)
--		panic("%s IRQ mapping failed\n", __func__);
-+		return;
- 
- 	rc = request_percpu_irq(ipi_irq, handle_ipi, "IPI Interrupt",
- 				&ipi_dummy_dev);
+-/* Used by pgtable.h asm code to force instruction serialization. */
+-unsigned long __force_order;
+-
+ /* Used to track our page table allocation area. */
+ struct alloc_pgt_data {
+ 	unsigned char *pgt_buf;
 -- 
 2.20.1
 
