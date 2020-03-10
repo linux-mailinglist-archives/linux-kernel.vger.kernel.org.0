@@ -2,144 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA7E17FDE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72AE017FDF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbgCJNbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:31:06 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43458 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728271AbgCJNbE (ORCPT
+        id S1729123AbgCJNbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:31:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33233 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbgCJNba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:31:04 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02ADSOLi087988;
-        Tue, 10 Mar 2020 13:30:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=DSgnezMb2QdUmnV2xd4QebInlsJvoxs50foHZWkt7og=;
- b=tuj17UKPx9J7QqbR7M85Pd8GQvPPx9R579HUFkMsQyiKOns+XVZHgUXbj6NOPXsEJMgh
- uV8AkXKeBlcYvMWjGzT32D+WiWmnnAFQ1OoqLi/Erz6sA5XZ0Ck4kRlib42hOSrfsE6z
- 1k3YyGgtftQ+N94i23tD/VxhouvKxA8PvFWAkukVf7ENghg3in7hK+ne+SrS1+xOTiyW
- PCuC23+mCjBSWC70vm8KSjg3TA+lyYgGUyZK+2fzEqIFDj4ebeAqweL40TLEIPFeJV+o
- lleR/SyzS226lyzV8fN9Q40ruee96oqhj+w+S43F+g1t7xEyhHE5uSvO30BsRaJzBdL3 6w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2yp9v60m2m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Mar 2020 13:30:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02ADRDDI178975;
-        Tue, 10 Mar 2020 13:28:23 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2yp8qn7ax6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Mar 2020 13:28:23 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02ADSKog014517;
-        Tue, 10 Mar 2020 13:28:20 GMT
-Received: from [192.168.8.5] (/213.41.92.70)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Mar 2020 06:28:20 -0700
-Subject: Re: [patch part-II V2 09/13] x86/entry/common: Split hardirq tracing
- into lockdep and ftrace parts
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Frederic Weisbecker <frederic@kernel.org>
-References: <20200308222359.370649591@linutronix.de>
- <20200308222609.825111830@linutronix.de>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e7b7bc51-33a4-1370-68e4-b1e1b9d2360e@oracle.com>
-Date:   Tue, 10 Mar 2020 14:28:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 10 Mar 2020 09:31:30 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a25so12092348wrd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n+AaYfOR1wnxBM1UyhiMJATpoI1M1VsyY4kmM1JkCJM=;
+        b=sFvOVqT4cituQqCiIE/3IQKTicsxfagkwyO34fOf7aQxw6F57CglO7DZUQFYKQk1fD
+         2/1/3kKeVnKiQa26Ed7Hb7MzQ7BgVK/iU2/H4C+AlTsSh0TgbYWRClRp/OSfyRzLTve3
+         2vCer/gGbmFEyolW1HyAEGmtCmby8joUH/dKC5j/OHIUBor8h8JayH6iFZBBvt7HOXkS
+         zC1LzLn+9TNfhjveh6CBKvfUtk/7vqlyl5fzd5JEHDadQ8goufiHv6JKPA6mv1su+1yI
+         nT8GQSnDXqZbsAL8JUDmR3nHFLatEYgWKNYiKFdf3w86EZW0WK/w5b1JWbo7Zh3QU3GP
+         pWJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n+AaYfOR1wnxBM1UyhiMJATpoI1M1VsyY4kmM1JkCJM=;
+        b=eaMaoT5rcLz4UwIVQId02Ak1MnN27CXSLP7JRo0iW6WLvyN0K++M3E4RSXbh9DXbC3
+         MZ+SNPUSOVXLHGUfnyYipYySzAYQOnyM/bcKP/MCM3MihH3t0tWEfVfIfr0QiM9B1M+7
+         RLHG3bOJx1eWCWxnFbMvV1L4RKSL/F/fv9kEos0a+nD1mUIhrfOETGz8/7XBuEBZIinm
+         bXzEpEHjKR5fqA5Ms9MMJcMv4wVNYCIu3l87qiwNL3ABgcEZTHUvc4ilHl6WxuXvmqwI
+         8ivnPQ0E/UoJEXX20ZGyoj1ssjJ30aj4b8k5Hu1dVF5RFJ1wrzgdyn6Ek9W53JxEUdbD
+         gzCw==
+X-Gm-Message-State: ANhLgQ1zWGnlx8EObRSmYlT74E2Zeo0/WS4M8mjXdRLmaubj1bNaJq2W
+        KicaBRaXsmVMN9TrEsiHung=
+X-Google-Smtp-Source: ADFU+vtIMlTgA2JO19QReP8CAkx20BGfjqLewkecDbptY9AHHaVUrpZfIUTw0mEzQHyqaJ9AmhBAUA==
+X-Received: by 2002:adf:f70f:: with SMTP id r15mr27908592wrp.269.1583847087056;
+        Tue, 10 Mar 2020 06:31:27 -0700 (PDT)
+Received: from localhost.localdomain ([197.248.222.210])
+        by smtp.googlemail.com with ESMTPSA id o7sm14047141wrx.60.2020.03.10.06.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 06:31:25 -0700 (PDT)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     airlied@linux.ie, daniel@ffwll.ch,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org
+Subject: [PATCH v2 00/17] drm: subsytem-wide debugfs functions refactor
+Date:   Tue, 10 Mar 2020 16:31:04 +0300
+Message-Id: <20200310133121.27913-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200308222609.825111830@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 mlxscore=0
- adultscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003100090
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9555 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003100090
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series includes work on various debugfs functions both in drm/core
+and across various drivers in the subsystem.
+Since commit 987d65d01356 (drm: debugfs: make drm_debugfs_create_files()
+never fail), drm_debugfs_create_files() does not fail and only returns
+zero. This series therefore removes the left over error handling and
+checks for its return value across drm drivers.
 
-On 3/8/20 11:24 PM, Thomas Gleixner wrote:
-> trace_hardirqs_off() is in fact a tracepoint which can be utilized by BPF,
-> which is unsafe before calling enter_from_user_mode(), which in turn
-> invokes context tracking. trace_hardirqs_off() also invokes
-> lockdep_hardirqs_off() under the hood.
-> 
-> OTOH lockdep needs to know about the interrupts disabled state before
-> enter_from_user_mode(). lockdep_hardirqs_off() is safe to call at this
-> point.
-> 
-> Split it so lockdep knows about the state and invoke the tracepoint after
-> the context is set straight.
-> 
-> Even if the functions attached to a tracepoint would all be safe to be
-> called in rcuidle having it split up is still giving a performance
-> advantage because rcu_read_lock_sched() is avoiding the whole dance of:
-> 
->     scru_read_lock();
->     rcu_irq_enter_irqson();
->     ...
->     rcu_irq_exit_irqson();
->     scru_read_unlock();
->     
-> around the tracepoint function invocation just to have the C entry points
-> of syscalls call enter_from_user_mode() right after the above dance.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
-> V2: New patch
-> ---
->   arch/x86/entry/common.c |   13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
+As a result of these changes, most drm_debugfs functions are converted
+to return void in this series. This also enables the
+drm_driver, debugfs_init() hook to be changed to return void. 
 
+v2: individual driver patches have been converted to have debugfs
+functions return 0 instead of void to prevent breaking individual driver
+builds.
+The last patch then converts the .debugfs_hook() and its users across
+all drivers to return void.
 
-Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Wambui Karuga (17):
+  drm/tegra: remove checks for debugfs functions return value
+  drm/tilcdc: remove check for return value of debugfs functions.
+  drm/v3d: make v3d_debugfs_init() return 0
+  drm/vc4: remove check of return value of drm_debugfs functions
+  drm/arc: make arcgpu_debugfs_init() return 0.
+  drm/arm: make hdlcd_debugfs_init() return 0
+  drm/etnaviv: remove check for return value of
+    drm_debugfs_create_files()
+  drm/msm: remove checks for return value of drm_debugfs_create_files()
+  drm/sti: remove use of drm_debugfs functions as return values
+  drm/vram-helper: make drm_vram_mm_debugfs_init() return 0
+  drm/nouveau: make nouveau_drm_debugfs_init() return 0
+  drm/pl111: make pl111_debugfs_init return 0
+  drm/omap: remove checks for return value of drm_debugfs functions
+  drm/i915: have *_debugfs_init() functions return void.
+  drm: make various debugfs_init() functions return 0
+  drm/debugfs: remove checks for return value of drm_debugfs functions.
+  drm: convert .debugfs_init() hook to return void.
 
-alex.
+ drivers/gpu/drm/arc/arcpgu_drv.c              |  7 +--
+ drivers/gpu/drm/arm/hdlcd_drv.c               |  7 +--
+ drivers/gpu/drm/arm/malidp_drv.c              |  3 +-
+ drivers/gpu/drm/drm_atomic.c                  |  8 ++--
+ drivers/gpu/drm/drm_client.c                  |  8 ++--
+ drivers/gpu/drm/drm_crtc_internal.h           |  2 +-
+ drivers/gpu/drm/drm_debugfs.c                 | 45 +++++--------------
+ drivers/gpu/drm/drm_framebuffer.c             |  8 ++--
+ drivers/gpu/drm/drm_gem_vram_helper.c         | 14 ++----
+ drivers/gpu/drm/drm_internal.h                |  2 +-
+ drivers/gpu/drm/drm_mipi_dbi.c                |  6 +--
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 18 ++------
+ .../drm/i915/display/intel_display_debugfs.c  |  8 ++--
+ .../drm/i915/display/intel_display_debugfs.h  |  4 +-
+ drivers/gpu/drm/i915/i915_debugfs.c           |  8 ++--
+ drivers/gpu/drm/i915/i915_debugfs.h           |  4 +-
+ drivers/gpu/drm/msm/adreno/a5xx_debugfs.c     | 18 +++-----
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.h         |  2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c      | 14 ++----
+ drivers/gpu/drm/msm/msm_debugfs.c             | 23 +++-------
+ drivers/gpu/drm/msm/msm_debugfs.h             |  2 +-
+ drivers/gpu/drm/msm/msm_gpu.h                 |  2 +-
+ drivers/gpu/drm/nouveau/nouveau_debugfs.c     | 26 +++++------
+ drivers/gpu/drm/nouveau/nouveau_debugfs.h     |  8 ++--
+ drivers/gpu/drm/omapdrm/omap_debugfs.c        | 29 +++---------
+ drivers/gpu/drm/omapdrm/omap_drv.h            |  2 +-
+ drivers/gpu/drm/pl111/pl111_debugfs.c         |  8 ++--
+ drivers/gpu/drm/pl111/pl111_drm.h             |  2 +-
+ drivers/gpu/drm/qxl/qxl_debugfs.c             | 21 +++------
+ drivers/gpu/drm/qxl/qxl_drv.h                 | 13 +++---
+ drivers/gpu/drm/qxl/qxl_ttm.c                 |  6 +--
+ drivers/gpu/drm/sti/sti_compositor.c          |  6 +--
+ drivers/gpu/drm/sti/sti_compositor.h          |  4 +-
+ drivers/gpu/drm/sti/sti_crtc.c                |  2 +-
+ drivers/gpu/drm/sti/sti_cursor.c              | 14 +++---
+ drivers/gpu/drm/sti/sti_drv.c                 | 16 ++-----
+ drivers/gpu/drm/sti/sti_dvo.c                 | 13 +++---
+ drivers/gpu/drm/sti/sti_gdp.c                 |  7 +--
+ drivers/gpu/drm/sti/sti_hda.c                 | 13 +++---
+ drivers/gpu/drm/sti/sti_hdmi.c                | 13 +++---
+ drivers/gpu/drm/sti/sti_hqvdp.c               | 12 ++---
+ drivers/gpu/drm/sti/sti_mixer.c               | 10 ++---
+ drivers/gpu/drm/sti/sti_mixer.h               |  2 +-
+ drivers/gpu/drm/sti/sti_tvout.c               | 13 +++---
+ drivers/gpu/drm/sti/sti_vid.c                 |  8 ++--
+ drivers/gpu/drm/sti/sti_vid.h                 |  2 +-
+ drivers/gpu/drm/tegra/dc.c                    | 11 +----
+ drivers/gpu/drm/tegra/drm.c                   |  8 ++--
+ drivers/gpu/drm/tegra/dsi.c                   | 11 +----
+ drivers/gpu/drm/tegra/hdmi.c                  | 11 +----
+ drivers/gpu/drm/tegra/sor.c                   | 11 +----
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c           | 17 ++-----
+ drivers/gpu/drm/v3d/v3d_debugfs.c             |  8 ++--
+ drivers/gpu/drm/v3d/v3d_drv.h                 |  2 +-
+ drivers/gpu/drm/vc4/vc4_debugfs.c             | 11 ++---
+ drivers/gpu/drm/vc4/vc4_drv.h                 |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_debugfs.c      |  3 +-
+ drivers/gpu/drm/virtio/virtgpu_drv.h          |  2 +-
+ include/drm/drm_client.h                      |  2 +-
+ include/drm/drm_debugfs.h                     | 16 +++----
+ include/drm/drm_drv.h                         |  2 +-
+ include/drm/drm_gem_vram_helper.h             |  2 +-
+ include/drm/drm_mipi_dbi.h                    |  2 +-
+ 63 files changed, 204 insertions(+), 380 deletions(-)
 
+-- 
+2.25.1
 
-> --- a/arch/x86/entry/common.c
-> +++ b/arch/x86/entry/common.c
-> @@ -60,10 +60,19 @@ static __always_inline void syscall_entr
->   {
->   	/*
->   	 * Usermode is traced as interrupts enabled, but the syscall entry
-> -	 * mechanisms disable interrupts. Tell the tracer.
-> +	 * mechanisms disable interrupts. Tell lockdep before calling
-> +	 * enter_from_user_mode(). This is safe vs. RCU while the
-> +	 * tracepoint is not.
->   	 */
-> -	trace_hardirqs_off();
-> +	lockdep_hardirqs_on(CALLER_ADDR0);
-> +
->   	enter_from_user_mode();
-> +
-> +	/*
-> +	 * Tell the tracer about the irq state as well before enabling
-> +	 * interrupts.
-> +	 */
-> +	__trace_hardirqs_off();
->   	local_irq_enable();
->   }
->   
-> 
