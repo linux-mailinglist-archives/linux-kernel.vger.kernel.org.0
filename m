@@ -2,112 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC0A6180950
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0E0B180938
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:33:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCJUlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 16:41:19 -0400
-Received: from shelob.oktetlabs.ru ([91.220.146.113]:48909 "EHLO
-        shelob.oktetlabs.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbgCJUlT (ORCPT
+        id S1726411AbgCJUdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 16:33:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30366 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726283AbgCJUdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:41:19 -0400
-Received: by shelob.oktetlabs.ru (Postfix, from userid 122)
-        id 74E5C7F5AC; Tue, 10 Mar 2020 23:33:39 +0300 (MSK)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on shelob.oktetlabs.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=0.8 required=5.0 tests=ALL_TRUSTED,DKIM_ADSP_DISCARD
-        autolearn=no autolearn_force=no version=3.4.2
-Received: from varda.oktetlabs.ru (varda.oktetlabs.ru [192.168.37.38])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 10 Mar 2020 16:33:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583872415;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IuAk3iiyWjaaAHQcjrLbiVUBF9ti+LNH3LoLdVoeonk=;
+        b=LXzaQHj5j5Y6SOl7RB0xcm6Q9fyHEjR6dQwqOXSa0kLPhH3ZXskNkQD7urrLEO0PAcJWSO
+        O84t3oE1pIso/NEbXQ1GjbZZVQm2S7BGV3X8bHSZSrMnRW8uJht7wTymbDiYsPmaxL8UUX
+        Ut/M8+vHnheYuNgPjAiYfh1y3sC/v8I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-436-KXglNHPLN0iwC4j7ViQC-w-1; Tue, 10 Mar 2020 16:33:31 -0400
+X-MC-Unique: KXglNHPLN0iwC4j7ViQC-w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by shelob.oktetlabs.ru (Postfix) with ESMTPS id 8B5F37F594;
-        Tue, 10 Mar 2020 23:33:26 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 8B5F37F594
-Authentication-Results: shelob.oktetlabs.ru/8B5F37F594; dkim=none;
-        dkim-atps=neutral
-Received: from mkshevetskiy by varda.oktetlabs.ru with local (Exim 4.92)
-        (envelope-from <mkshevetskiy@varda.oktetlabs.ru>)
-        id 1jBlZ8-001inJ-AD; Tue, 10 Mar 2020 23:33:26 +0300
-From:   Mikhail Kshevetskiy <mikhail.kshevetskiy@oktetlabs.ru>
-To:     miquel.raynal@bootlin.com, richard@nod.at
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mikhail Kshevetskiy <mikhail.kshevetskiy@oktetlabs.ru>
-Subject: [PATCH 2/2] mtd: spinand: fix bad block marker writing
-Date:   Tue, 10 Mar 2020 23:32:24 +0300
-Message-Id: <20200310203224.410198-2-mikhail.kshevetskiy@oktetlabs.ru>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200310203224.410198-1-mikhail.kshevetskiy@oktetlabs.ru>
-References: <20200310203224.410198-1-mikhail.kshevetskiy@oktetlabs.ru>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 41916184C80F;
+        Tue, 10 Mar 2020 20:33:30 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A76C5D9CA;
+        Tue, 10 Mar 2020 20:33:22 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 0E4F122021D; Tue, 10 Mar 2020 16:33:22 -0400 (EDT)
+Date:   Tue, 10 Mar 2020 16:33:21 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>
+Subject: Re: [PATCH 12/20] fuse: Introduce setupmapping/removemapping commands
+Message-ID: <20200310203321.GF38440@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-13-vgoyal@redhat.com>
+ <CAJfpeguY8gDYVp_q3-W6JNA24zCry+SfWmEW2zuHLQLhmyUB3Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguY8gDYVp_q3-W6JNA24zCry+SfWmEW2zuHLQLhmyUB3Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In spinand_markbad() we use spinand->oobbuf as a bad block marker, fill
-it with zeroes and issue spinand_write_page() operation:
+On Tue, Mar 10, 2020 at 08:49:49PM +0100, Miklos Szeredi wrote:
+> On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > Introduce two new fuse commands to setup/remove memory mappings. This
+> > will be used to setup/tear down file mapping in dax window.
+> >
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
+> > ---
+> >  include/uapi/linux/fuse.h | 37 +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> >
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 5b85819e045f..62633555d547 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -894,4 +894,41 @@ struct fuse_copy_file_range_in {
+> >         uint64_t        flags;
+> >  };
+> >
+> > +#define FUSE_SETUPMAPPING_ENTRIES 8
+> > +#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
+> > +struct fuse_setupmapping_in {
+> > +       /* An already open handle */
+> > +       uint64_t        fh;
+> > +       /* Offset into the file to start the mapping */
+> > +       uint64_t        foffset;
+> > +       /* Length of mapping required */
+> > +       uint64_t        len;
+> > +       /* Flags, FUSE_SETUPMAPPING_FLAG_* */
+> > +       uint64_t        flags;
+> > +       /* Offset in Memory Window */
+> > +       uint64_t        moffset;
+> > +};
+> > +
+> > +struct fuse_setupmapping_out {
+> > +       /* Offsets into the cache of mappings */
+> > +       uint64_t        coffset[FUSE_SETUPMAPPING_ENTRIES];
+> > +        /* Lengths of each mapping */
+> > +        uint64_t       len[FUSE_SETUPMAPPING_ENTRIES];
+> > +};
+> 
+> fuse_setupmapping_out together with FUSE_SETUPMAPPING_ENTRIES seem to be unused.
 
-        struct nand_page_io_req req = {
-                .pos = *pos,
-                .ooboffs = 0,
-                .ooblen = 2,
-                .oobbuf.out = spinand->oobbuf,
-        };
-        ...
-        memset(spinand->oobbuf, 0, 2);
-        return spinand_write_page(spinand, &req);
+This looks like leftover from the old code. I will get rid of it. Thanks.
 
-spinand_write_page() will call spinand_write_to_cache_op() at some
-moment. In spinand_write_to_cache_op() we have:
-
-        nbytes = nanddev_page_size(nand) + nanddev_per_page_oobsize(nand);
-        memset(spinand->databuf, 0xff, nbytes);
-
-This will fill spinand->databuf with 0xff, but spinand->oobbuf is the
-part of spinand->databuf (see spinand_init()):
-
-        spinand->oobbuf = spinand->databuf + nanddev_page_size(nand);
-
-As result bad block marker will be overwrited by 0xff values, hence
-bad block will NOT be marked.
-
-A separate buffer for bad block marker used to fix this issue.
-
-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@oktetlabs.ru>
----
- drivers/mtd/nand/spi/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index bb4eac400b0f..d1355773d484 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -603,11 +603,12 @@ static int spinand_mtd_block_isbad(struct mtd_info *mtd, loff_t offs)
- static int spinand_markbad(struct nand_device *nand, const struct nand_pos *pos)
- {
- 	struct spinand_device *spinand = nand_to_spinand(nand);
-+	char bad_block_marker[2] = {0, 0};
- 	struct nand_page_io_req req = {
- 		.pos = *pos,
- 		.ooboffs = 0,
--		.ooblen = 2,
--		.oobbuf.out = spinand->oobbuf,
-+		.ooblen = sizeof(bad_block_marker),
-+		.oobbuf.out = bad_block_marker,
- 	};
- 	int ret;
- 	u8 status;
-@@ -630,7 +631,6 @@ static int spinand_markbad(struct nand_device *nand, const struct nand_pos *pos)
- 	if (ret)
- 		return ret;
- 
--	memset(spinand->oobbuf, 0, 2);
- 	return spinand_write_page(spinand, &req);
- }
- 
--- 
-2.25.0
+Vivek
 
