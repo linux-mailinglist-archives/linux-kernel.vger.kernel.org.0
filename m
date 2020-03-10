@@ -2,171 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23D991804B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 211DE1804C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 18:28:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgCJRZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 13:25:16 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14586 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJRZQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:25:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e67cd200000>; Tue, 10 Mar 2020 10:23:44 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 10 Mar 2020 10:25:14 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 10 Mar 2020 10:25:14 -0700
-Received: from [10.2.175.232] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Mar
- 2020 17:25:13 +0000
-Subject: Re: LKFT: arm x15: mmc1: cache flush error -110
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Jon Hunter <jonathanh@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        <lkft-triage@lists.linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kishon <kishon@ti.com>
-References: <CA+G9fYuqAQfhzF2BzHr7vMHx68bo8-jT+ob_F3eHQ3=oFjgYdg@mail.gmail.com>
- <CAPDyKFrrO4noYqdxWL9Y8Nx75LopbDudKGMotkGbGcAF1oq==w@mail.gmail.com>
- <5e9b5646-bd48-e55b-54ee-1c2c41fc9218@nvidia.com>
- <CAPDyKFqpNo_4OePBR1KnJNO=kR8XEqbcsEd=icSceSdDH+Rk1Q@mail.gmail.com>
- <757853cf-987e-f6b6-9259-b4560a031692@nvidia.com>
- <d12fe142-7e72-ab58-33ab-17817e35096f@nvidia.com>
- <c216f131-6f83-c9c9-9d17-8d44ec06972d@nvidia.com>
- <87ad7586-9569-4276-044a-adb64e84ca15@nvidia.com>
- <a0962e0b-0f1d-9f32-f6e9-92f69f93167f@nvidia.com>
- <57ddddc2-3ee8-d867-bba0-0dd9929ba37d@nvidia.com>
- <CAPDyKFqZSd9E3+16yFsmpee2JsbRJ-DGThxx7NJHu6UE00Xi1Q@mail.gmail.com>
- <26ee7225-9483-4664-c2d7-b5cefeadcd4b@nvidia.com>
- <CAPDyKFqwVQDEnPNi33mc9ycTxpaT1cRLejbR3Ja4c8dha4gFRw@mail.gmail.com>
- <0301bbd5-8d4d-4a77-42c7-8a1391c2d60a@nvidia.com>
- <CAPDyKFp93H0=ttazofW9NMBtL5VnjB4PdkwN0FDCtWR0pMHrPA@mail.gmail.com>
- <f01b5533-124a-d978-a90a-9c9c6235fb65@nvidia.com>
- <CAPDyKFqJjsuHect-azQKO8cCoq5JJQrZ=eShsdLHq97NXgXnuQ@mail.gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <227d9f08-582e-fd79-e1dc-7695bddd162d@nvidia.com>
-Date:   Tue, 10 Mar 2020 10:27:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726851AbgCJR16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 13:27:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbgCJR15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 13:27:57 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D7C221927;
+        Tue, 10 Mar 2020 17:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583861277;
+        bh=etd2RAuoX9TSRMZgA+S2nVEr4Gkcu8K2bN8hk5b+bds=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ZB5x0FuQ2gdj5DJFXUT11LRtHSdD5LSaeDVhUIMIfctSJJnhJ04uiQTDWES41uE9V
+         Is+Jz9XXOND4txKG0HKSdJFfemSyaOV1bXRW+1L2w2dB4PKCRD0FIRA/wXTHwqqNI7
+         N5XXZ3w3sxJ1vtr+LacNmLljqb/my3VcSt46r2y8=
+Message-ID: <36c58a6d07b67aac751fca27a4938dc1759d9267.camel@kernel.org>
+Subject: Re: [locks] 6d390e4b5d: will-it-scale.per_process_ops -96.6%
+ regression
+From:   Jeff Layton <jlayton@kernel.org>
+To:     yangerkun <yangerkun@huawei.com>, NeilBrown <neilb@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Tue, 10 Mar 2020 13:27:55 -0400
+In-Reply-To: <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org>
+References: <20200308140314.GQ5972@shao2-debian>
+         <e3783d060c778cb41b77380ad3e278133b52f57e.camel@kernel.org>
+         <CAHk-=whGK712fPqmQ3FSHxqe3Aqny4bEeWEvfaytLeLV2+ijCQ@mail.gmail.com>
+         <34355c4fe6c3968b1f619c60d5ff2ca11a313096.camel@kernel.org>
+         <1bfba96b4bf0d3ca9a18a2bced3ef3a2a7b44dad.camel@kernel.org>
+         <87blp5urwq.fsf@notabene.neil.brown.name>
+         <41c83d34ae4c166f48e7969b2b71e43a0f69028d.camel@kernel.org>
+         <ed73fb5d-ddd5-fefd-67ae-2d786e68544a@huawei.com>
+         <923487db2c9396c79f8e8dd4f846b2b1762635c8.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqJjsuHect-azQKO8cCoq5JJQrZ=eShsdLHq97NXgXnuQ@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1583861024; bh=u81zjZkUGBM+2adtEa1nBZaymHCbzrmBFSnlbj7WlR4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=WuyfZGd69+yiiObkV6kiAq5Y13ZBDkr6Fd/CfP0IOyohs7XadcGaMpSEPK9+OcFdd
-         mbM40Sh4IfKYvbfDayRdQwHe20MEzCZMwzE1dL3ZOB6oIYQKW7bz/Px1SCqmRuZZ04
-         3fu5dRy4Ict2DrxUvis8S4i+e8TV8iXCjShSXxNkW/z4BHgsCUKSeRXTSkw8PnMBg0
-         qm9/IKMnT8+SVcQerASRUpuRlEPfPYXkO3zdYGjVKlKDo0lfvvEJky5zwwUdUyN5P0
-         xK1drhaFbDKXn9wA7vdrBQNqllcFeQS2ndch5TtxQhONrl0xvixgOHtM+eS5pTNuzw
-         D+stW+XqcH3ig==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2020-03-10 at 08:52 -0400, Jeff Layton wrote:
 
-On 3/10/20 10:09 AM, Ulf Hansson wrote:
-> External email: Use caution opening links or attachments
->
->
-> [...]
->
->>>>> I would like to get the regression fixed asap, but I also would like
->>>>> to avoid reverting patches, unless really necessary. May I propose the
->>>>> following two options.
->>>>>
->>>>> 1. Find out why polling with ->card_busy() or CMD13, for a CMD6 with
->>>>> an R1 response doesn't work - and then fix that behaviour.
->>>>>
->>>>> 2. Set the mmc->max_busy_timeout to zero for sdhci-tegra, which makes
->>>>> the core to always use R1B for CMD6 (and erase). This also means that
->>>>> when the cmd->busy_timeout becomes longer than 11s, sdhci-tegra must
->>>>> disable the HW busy timeout and just wait "forever".
->>>>>
->>>>> If you decide for 2, you can add the software timeout support on top,
->>>>> but make that can be considered as a next step of an improvement,
->>>>> rather than needed as fix. Note that, I believe there are some support
->>>>> for software timeout already in the sdhci core, maybe you need to
->>>>> tweak it a bit for your case, I don't know.
->>>>>
->>>>> Kind regards
->>>>> Uffe
->>>> Hi Uffe
->>>>
->>>> Will go with 2nd option and will send patches out when ready.
->>> Okay, good.
->>>
->>>> BTW, Tegra host also supports SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK for
->>>> data timeout based on host clock when using finite mode (HW busy
->>>> detection based on DATA TIMEOUT count value when cmd operation timeout
->>>> is < 11s for tegra host).
->>>>
->>>> So, looks like we cant set host max_busy_timeout to 0 for Tegra host to
->>>> force R1B during SWITCH and SLEEP_AWAKE.
->>>>
->>>> So, was thinking to introduce host capability MMC_CAP2_LONG_WAIT_HW_BUSY
->>>> which can be used for hosts supporting long or infinite HW busy wait
->>>> detection and will update mmc and mmc_ops drivers to not allow convert
->>>> R1B to R1B for hosts with this capability during SLEEP_AWAKE and SWITCH.
->>> That seems reasonable, it becomes probably both easier and clearer by
->>> adding a new host cap.
->>>
->>> In any case, let me help out and cook a patch for this for the core
->>> part (I leave the sdhci change to you). It may be a bit tricky,
->>> especially since I have currently queued a bunch of new changes for
->>> v5.7, that enables more users of mmc_poll_for_busy() in the core.
->>> Maybe I need to temporarily drop them, so we can fix these problems
->>> first. I will check.
->>>
->>> Probably, I would also name the cap MMC_CAP_HW_NEED_RSP_BUSY, as that
->>> seems to be describing the common problem we have for sdhci
->>> omap/tegra.
->>>
->>> Finally, it seems like MMC_CAP_WAIT_WHILE_BUSY should be set for
->>> sdhci- tegra, so while at it, perhaps you can cook a patch for that as
->>> well.
->>>
->>> Kind regards
->>> Uffe
->> OK, I sent v1 yesterday. Please ignore them then.
-> Oh, I haven't seen them. In any case, I am ignoring them.
->
->> Will send out patches only for HW busy wait modes program based on cmd
->> timeout and WAIT_WHILE_BUSY enabled.
-> Great, thanks!
->
-> Please help test the series I just posted as well, if you have the
-> time ofcourse.
->
-> Kind regards
-> Uffe
+[snip]
 
-Sure,
+> On Tue, 2020-03-10 at 11:24 +0800, yangerkun wrote:
+> > > 
+> > Something others. I think there is no need to call locks_delete_block 
+> > for all case in function like flock_lock_inode_wait. What we should do 
+> > as the patch '16306a61d3b7 ("fs/locks: always delete_block after 
+> > waiting.")' describes is that we need call locks_delete_block not only 
+> > for error equal to -ERESTARTSYS(please point out if I am wrong). And 
+> > this patch may fix the regression too since simple lock that success or 
+> > unlock will not try to acquire blocked_lock_lock.
+> > 
+> > 
+> 
+> Nice! This looks like it would work too, and it's a simpler fix.
+> 
+> I'd be inclined to add a WARN_ON_ONCE(fl->fl_blocker) after the if
+> statements to make sure we never exit with one still queued. Also, I
+> think we can do a similar optimization in __break_lease.
+> 
+> There are some other callers of locks_delete_block:
+> 
+> cifs_posix_lock_set: already only calls it in these cases
+> 
+> nlmsvc_unlink_block: I think we need to call this in most cases, and
+> they're not going to be high-performance codepaths in general
+> 
+> nfsd4 callback handling: Several calls here, most need to always be
+> called. find_blocked_lock could be reworked to take the
+> blocked_lock_lock only once (I'll do that in a separate patch).
+> 
+> How about something like this (
+> 
+> ----------------------8<---------------------
+> 
+> From: yangerkun <yangerkun@huawei.com>
+> 
+> [PATCH] filelock: fix regression in unlock performance
+> 
+> '6d390e4b5d48 ("locks: fix a potential use-after-free problem when
+> wakeup a waiter")' introduces a regression since we will acquire
+> blocked_lock_lock every time locks_delete_block is called.
+> 
+> In many cases we can just avoid calling locks_delete_block at all,
+> when we know that the wait was awoken by the condition becoming true.
+> Change several callers of locks_delete_block to only call it when
+> waking up due to signal or other error condition.
+> 
+> [ jlayton: add similar optimization to __break_lease, reword changelog,
+> 	   add WARN_ON_ONCE calls ]
+> 
+> Fixes: 16306a61d3b7 ("fs/locks: always delete_block after waiting.")
+> Fixes: 6d390e4b5d48 ("locks: fix a potential use-after-free problem when wakeup a waiter")
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/locks.c | 29 ++++++++++++++++++++++-------
+>  1 file changed, 22 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 426b55d333d5..b88a5b11c464 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1354,7 +1354,10 @@ static int posix_lock_inode_wait(struct inode *inode, struct file_lock *fl)
+>  		if (error)
+>  			break;
+>  	}
+> -	locks_delete_block(fl);
+> +	if (error)
+> +		locks_delete_block(fl);
+> +	WARN_ON_ONCE(fl->fl_blocker);
+> +
+>  	return error;
+>  }
+>  
+> @@ -1447,7 +1450,9 @@ int locks_mandatory_area(struct inode *inode, struct file *filp, loff_t start,
+>  
+>  		break;
+>  	}
+> -	locks_delete_block(&fl);
+> +	if (error)
+> +		locks_delete_block(&fl);
+> +	WARN_ON_ONCE(fl.fl_blocker);
+>  
+>  	return error;
+>  }
+> @@ -1638,23 +1643,28 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+>  
+>  	locks_dispose_list(&dispose);
+>  	error = wait_event_interruptible_timeout(new_fl->fl_wait,
+> -						!new_fl->fl_blocker, break_time);
+> +						 !new_fl->fl_blocker,
+> +						 break_time);
+>  
+>  	percpu_down_read(&file_rwsem);
+>  	spin_lock(&ctx->flc_lock);
+>  	trace_break_lease_unblock(inode, new_fl);
+> -	locks_delete_block(new_fl);
+>  	if (error >= 0) {
+>  		/*
+>  		 * Wait for the next conflicting lease that has not been
+>  		 * broken yet
+>  		 */
+> -		if (error == 0)
+> +		if (error == 0) {
+> +			locks_delete_block(new_fl);
+>  			time_out_leases(inode, &dispose);
+> +		}
+>  		if (any_leases_conflict(inode, new_fl))
+>  			goto restart;
+>  		error = 0;
+> +	} else {
+> +		locks_delete_block(new_fl);
+>  	}
+> +	WARN_ON_ONCE(fl->fl_blocker);
+>  out:
+>  	spin_unlock(&ctx->flc_lock);
+>  	percpu_up_read(&file_rwsem);
+> @@ -2126,7 +2136,10 @@ static int flock_lock_inode_wait(struct inode *inode, struct file_lock *fl)
+>  		if (error)
+>  			break;
+>  	}
+> -	locks_delete_block(fl);
+> +	if (error)
+> +		locks_delete_block(fl);
+> +	WARN_ON_ONCE(fl->fl_blocker);
+> +
+>  	return error;
+>  }
+>  
+> @@ -2403,7 +2416,9 @@ static int do_lock_file_wait(struct file *filp, unsigned int cmd,
+>  		if (error)
+>  			break;
+>  	}
+> -	locks_delete_block(fl);
+> +	if (error)
+> +		locks_delete_block(fl);
+> +	WARN_ON_ONCE(fl->fl_blocker);
+>  
+>  	return error;
+>  }
 
-Thanks
+I've gone ahead and added the above patch to linux-next. Linus, Neil,
+are you ok with this one? I think this is probably the simplest
+approach.
 
-Sowjanya
+Assuming so and that this tests out OK, I'll a PR in a few days, after
+it has had a bit of soak time in next.
+
+Thanks for the effort everyone! 
+-- 
+Jeff Layton <jlayton@kernel.org>
 
