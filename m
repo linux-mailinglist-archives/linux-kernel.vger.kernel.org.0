@@ -2,98 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A479C17FC5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 640D417FAAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730933AbgCJNHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:07:14 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50289 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730923AbgCJNHL (ORCPT
+        id S1730961AbgCJNHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:07:21 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:23931 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730920AbgCJNHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:07:11 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a5so1334746wmb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PP63n4exnMNKX7lpvmvyJwMQWnXIxOlpOmy5QQY9xLA=;
-        b=MFD38q7BzBjfElXqAV7xBgBy4BXd4rBDKr7W+kAopPCUZCNA/zrSAWTJTKbG+oxOPr
-         AmfDSgyk63mq6fscWU8aPQOChW8ehrZdp1sE5NpXlcEV4hUUgdkkGaG8I2hP3td7kksZ
-         zie2znp15Ow4/+KpsIM28rxV5SVJyLX9y4cH2W2iIMBZpg7SsmWGQdU085OXLbZwyws4
-         eUCwyhhgiT+fpl/lnKbL0axo6NoVsJgrexFSl1X/1mmSXIG+72e8bOG63QW/a+/RuntM
-         hveu9qnbXmI6vIJYuZJSpplVYSeQKraoaKTtH2s2pEEFgQd66L8m2f2iOa4PkmZNzI5N
-         8kHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PP63n4exnMNKX7lpvmvyJwMQWnXIxOlpOmy5QQY9xLA=;
-        b=gi1stOWMGrWhYpZUNJaoVdOAGsrz/8XuMsRoEXKxLXk904pTcIrFO9LUrBAHmiN8qZ
-         pnuxv1HGYy8SqZf+A/RVShNta1Q+Xt+AZkrGjDHnsvcWQYgyzZKxPG/4hcMbf/1cRt1V
-         MENjTSKDXRpgesbWGYBl3W7s0h3fgqO7/E5dTEqTIxXqxxZ1AeXz+bkYNqLVPi8wZolO
-         Z2eaHp34XDT09oS7f0n60Q+YB0dyUeXwrGQq5w4Dk0ZplzRPt4Y22TGHQKxSpg6RoUJs
-         KhS2KyZaymZ7RYKgn2t4KUSq5ZHzqFeABzA8iQY2E0zGPiOGrqVFBy5DDJ5xEVOhxKT1
-         fvSg==
-X-Gm-Message-State: ANhLgQ2/AGZ1LCcSTlfnp+zpn65ZIBl2u/C9inKTxcddSZHsQwqNbH1O
-        M+QGR7zuWj5MH/Z0PRKRuGwUkA==
-X-Google-Smtp-Source: ADFU+vtEsPNZPcMrSWBibyD6jxev3SWQJHDu3DoFC+EAYrSBKkEFpF1BuZh38BFU06MmgQFunOgrFQ==
-X-Received: by 2002:a1c:4642:: with SMTP id t63mr2084570wma.164.1583845628929;
-        Tue, 10 Mar 2020 06:07:08 -0700 (PDT)
-Received: from maco2.ams.corp.google.com (a83-162-234-235.adsl.xs4all.nl. [83.162.234.235])
-        by smtp.gmail.com with ESMTPSA id w22sm4129323wmk.34.2020.03.10.06.07.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 06:07:07 -0700 (PDT)
-From:   Martijn Coenen <maco@android.com>
-To:     axboe@kernel.dk, hch@lst.de
-Cc:     bvanassche@acm.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Martijn Coenen <maco@android.com>
-Subject: [PATCH] loop: Only freeze block queue when needed.
-Date:   Tue, 10 Mar 2020 14:06:54 +0100
-Message-Id: <20200310130654.92205-1-maco@android.com>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+        Tue, 10 Mar 2020 09:07:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1583845632;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:References:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=6R1RKm2q+lEZhuVelK1a77+oRAAsa1Xp6grAc/+xsXE=;
+        b=URt7zzUnEnTvofORtuRgOgsWVLD++cxyB1eUte9R8PgJvMMdtcvxgwHUCFCa9LImKO
+        51t5J47ocVi6hlmyIrNuQthH+E2HtNSyJCIp7tzvLs2W3GwEjiW0uga6aUMkWfzdEWaW
+        z99GXggdOYGskCGrR92Gr5TYR2wdKJZfT+H1VQifAJy30uq+Fu/GmWhfB68Ipu4DSjOP
+        kqUxb5ljm/um1iOBa35XmzcaHv5sEO0Ny6KbT86vsWax36ja1+6OGPMt28hmpDzmGCOK
+        u6zayrTUprrHAVuH4WkGFyzAWAGUGZcQqJilbqpDLcEm43kfqMWd650XMsPZRqWwyuxs
+        qhaw==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3PMaViOoLMJVch5lEq7"
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.1.177]
+        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
+        with ESMTPSA id e0a4ffw2AD78XAp
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Tue, 10 Mar 2020 14:07:08 +0100 (CET)
+Subject: Re: [PATCH] net: slcan, slip -- no need for goto when if () will do
+To:     Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        yangerkun@huawei.com, davem@davemloft.net, mkl@pengutronix.de,
+        wg@grandegger.com
+References: <20200309223323.GA1634@duo.ucw.cz>
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <0d9a5f11-1dc9-03ad-cecb-af38ad421c95@hartkopp.net>
+Date:   Tue, 10 Mar 2020 14:07:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200309223323.GA1634@duo.ucw.cz>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__loop_update_dio() can be called as a part of loop_set_fd(), when the
-block queue is not yet up and running; avoid freezing the block queue in
-that case, since that is an expensive operation.
 
-Signed-off-by: Martijn Coenen <maco@android.com>
----
- drivers/block/loop.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 739b372a5112..c1c844ad6b1a 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -214,7 +214,8 @@ static void __loop_update_dio(struct loop_device *lo, bool dio)
- 	 * LO_FLAGS_READ_ONLY, both are set from kernel, and losetup
- 	 * will get updated by ioctl(LOOP_GET_STATUS)
- 	 */
--	blk_mq_freeze_queue(lo->lo_queue);
-+	if (lo->lo_state == Lo_bound)
-+		blk_mq_freeze_queue(lo->lo_queue);
- 	lo->use_dio = use_dio;
- 	if (use_dio) {
- 		blk_queue_flag_clear(QUEUE_FLAG_NOMERGES, lo->lo_queue);
-@@ -223,7 +224,8 @@ static void __loop_update_dio(struct loop_device *lo, bool dio)
- 		blk_queue_flag_set(QUEUE_FLAG_NOMERGES, lo->lo_queue);
- 		lo->lo_flags &= ~LO_FLAGS_DIRECT_IO;
- 	}
--	blk_mq_unfreeze_queue(lo->lo_queue);
-+	if (lo->lo_state == Lo_bound)
-+		blk_mq_unfreeze_queue(lo->lo_queue);
- }
- 
- static int
--- 
-2.25.1.481.gfbce0eb801-goog
+On 09/03/2020 23.33, Pavel Machek wrote:
+> 
+> No need to play with gotos to jump over single statement.
+> 
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> diff --git a/drivers/net/can/slcan.c b/drivers/net/can/slcan.c
+> index 2f5c287eac95..686d853fc249 100644
+> --- a/drivers/net/can/slcan.c
+> +++ b/drivers/net/can/slcan.c
+> @@ -348,11 +348,8 @@ static void slcan_write_wakeup(struct tty_struct *tty)
+>   
+>   	rcu_read_lock();
+>   	sl = rcu_dereference(tty->disc_data);
+> -	if (!sl)
+> -		goto out;
+> -
+> -	schedule_work(&sl->tx_work);
+> -out:
+> +	if (sl)
+> +		schedule_work(&sl->tx_work);
+>   	rcu_read_unlock();
+>   }
 
+Haha. Yes, that looks indeed much better ...
+
+Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+
+>   
+> diff --git a/drivers/net/slip/slip.c b/drivers/net/slip/slip.c
+> index babb01888b78..f81fb0b13a94 100644
+> --- a/drivers/net/slip/slip.c
+> +++ b/drivers/net/slip/slip.c
+> @@ -456,11 +456,8 @@ static void slip_write_wakeup(struct tty_struct *tty)
+>   
+>   	rcu_read_lock();
+>   	sl = rcu_dereference(tty->disc_data);
+> -	if (!sl)
+> -		goto out;
+> -
+> -	schedule_work(&sl->tx_work);
+> -out:
+> +	if (sl)
+> +		schedule_work(&sl->tx_work);
+>   	rcu_read_unlock();
+>   }
+>   
+> 
