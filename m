@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD5017F8EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0FA417F7DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:43:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgCJMwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:52:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57878 "EHLO mail.kernel.org"
+        id S1727432AbgCJMms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:42:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729024AbgCJMwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:52:16 -0400
+        id S1727408AbgCJMmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:42:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232FA20674;
-        Tue, 10 Mar 2020 12:52:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0675024695;
+        Tue, 10 Mar 2020 12:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844733;
-        bh=Hv/zFigUtWuyvjMe+xMgpy36FHJ+5DjFT0Oop1pwdqY=;
+        s=default; t=1583844159;
+        bh=6V+qKlGFkICzagPae7H5K7ezraI3PlEi9w4UkSTzxms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IOe1Sqtw8EI77wSW5CMqM/UVblBiVXzqn0S64KzGtDwAbp/XcIAeBuGp23eJ+nz5N
-         4BmrHjXP5V8AoVUe9PwBvRdji5/JcCywJIRiStZGBuvCLHW5xhOhKo9UzvYky+TgKM
-         g2rnAvjDAN+blceyYlSiLx6R6sDZ94gXdpj/t/RY=
+        b=CWY/R3lfwrR1+ugUTf2jpqxT45LP8Ea1ewfKzuvpjbf09onhtAh0dJBwYtpmA+Jeb
+         4c+0oeeJhj06kCaSN5M3w3VBZfFX4ghOoaN1Aq/R0pvzuEIZyqYIVgeNQUgs0mOcs8
+         uYldRNND5qOVoVznDJp5+aV7EQz9JGbw5H+VS/d8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.4 098/168] s390/pci: Fix unexpected write combine on resource
+        stable@vger.kernel.org, Jim Lin <jilin@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.4 51/72] usb: storage: Add quirk for Samsung Fit flash
 Date:   Tue, 10 Mar 2020 13:39:04 +0100
-Message-Id: <20200310123645.304199904@linuxfoundation.org>
+Message-Id: <20200310123613.916120848@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
-References: <20200310123635.322799692@linuxfoundation.org>
+In-Reply-To: <20200310123601.053680753@linuxfoundation.org>
+References: <20200310123601.053680753@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Schnelle <schnelle@linux.ibm.com>
+From: Jim Lin <jilin@nvidia.com>
 
-commit df057c914a9c219ac8b8ed22caf7da2f80c1fe26 upstream.
+commit 86d92f5465958752481269348d474414dccb1552 upstream.
 
-In the initial MIO support introduced in
+Current driver has 240 (USB2.0) and 2048 (USB3.0) as max_sectors,
+e.g., /sys/bus/scsi/devices/0:0:0:0/max_sectors
 
-commit 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions")
+If data access times out, driver error handling will issue a port
+reset.
+Sometimes Samsung Fit (090C:1000) flash disk will not respond to
+later Set Address or Get Descriptor command.
 
-zpci_map_resource() and zpci_setup_resources() default to using the
-mio_wb address as the resource's start address. This means users of the
-mapping, which includes most drivers, will get write combining on PCI
-Stores. This may lead to problems when drivers expect write through
-behavior when not using an explicit ioremap_wc().
+Adding this quirk to limit max_sectors to 64 sectors to avoid issue
+occurring.
 
-Cc: stable@vger.kernel.org
-Fixes: 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions")
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Jim Lin <jilin@nvidia.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/1583158895-31342-1-git-send-email-jilin@nvidia.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/pci/pci.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/storage/unusual_devs.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/s390/pci/pci.c
-+++ b/arch/s390/pci/pci.c
-@@ -423,7 +423,7 @@ static void zpci_map_resources(struct pc
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1206,6 +1206,12 @@ UNUSUAL_DEV( 0x090a, 0x1200, 0x0000, 0x9
+ 		USB_SC_RBC, USB_PR_BULK, NULL,
+ 		0 ),
  
- 		if (zpci_use_mio(zdev))
- 			pdev->resource[i].start =
--				(resource_size_t __force) zdev->bars[i].mio_wb;
-+				(resource_size_t __force) zdev->bars[i].mio_wt;
- 		else
- 			pdev->resource[i].start = (resource_size_t __force)
- 				pci_iomap_range_fh(pdev, i, 0, 0);
-@@ -530,7 +530,7 @@ static int zpci_setup_bus_resources(stru
- 			flags |= IORESOURCE_MEM_64;
- 
- 		if (zpci_use_mio(zdev))
--			addr = (unsigned long) zdev->bars[i].mio_wb;
-+			addr = (unsigned long) zdev->bars[i].mio_wt;
- 		else
- 			addr = ZPCI_ADDR(entry);
- 		size = 1UL << zdev->bars[i].size;
++UNUSUAL_DEV(0x090c, 0x1000, 0x1100, 0x1100,
++		"Samsung",
++		"Flash Drive FIT",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_MAX_SECTORS_64),
++
+ /* aeb */
+ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
+ 		"Feiya",
 
 
