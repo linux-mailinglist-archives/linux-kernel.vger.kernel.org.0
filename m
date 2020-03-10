@@ -2,238 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 485F61800DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:56:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF7C21800D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 15:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgCJO4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 10:56:54 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44939 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbgCJO4y (ORCPT
+        id S1727661AbgCJO4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 10:56:51 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43177 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbgCJO4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 10:56:54 -0400
-Received: by mail-ed1-f67.google.com with SMTP id g19so16658507eds.11;
-        Tue, 10 Mar 2020 07:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3tBZ7IlogX5/PA8Gk/q6l+Q+QQ9JEW0HnkSIb+T0XY8=;
-        b=BKkCb0vnCaYKiD8zFlTBrP+dwrak2K1qXKhs7nDNLNKtnIMiPtN2hQxnBt4PAYKhVm
-         ftDc9lzxtxDHDBYQilawEfB+/4jdxtfctVnRZZ3komg/hxrc9+J1Z+4TELcwNYpfffZ/
-         uXzmk7zzExhNfZxqRyj7rnQMtZehQ3betPOcMcz+IHRgdPiciGLiKJoJclokySzsi5jp
-         AzMsr8aiaC+GWeuZ/Yw16eKM0YDzDbNgtXgDniiO88jWoT5K6T22Kxqjett1ExJ+AHeg
-         7KJLl1c0OgylHvJ/XD05VvrSUO6D891l++3AnPRi6KqDA2qG5XJ1RLTh37VUW0dfttvI
-         027g==
+        Tue, 10 Mar 2020 10:56:51 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v9so16256127wrf.10
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 07:56:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3tBZ7IlogX5/PA8Gk/q6l+Q+QQ9JEW0HnkSIb+T0XY8=;
-        b=Bp183aljcmRWr91l8U+xrVCdfib6WR3VyndatmA24/sCxXdRTznT6xHc4wWTD+qD3e
-         2uMVhjSrRkJ1SNQkRr6azonrLC9LyXaFMx+m6NJ1TlgCeVRwtYx35FbMdn02kCu2QiDf
-         gq3d9zkhTIWGpWtTfYRzdNcANAd1eAhEyrU3axDDeWRTk43LC8uwo7UvQ1kHQECHXjjg
-         Ll8p3h3dTG+l4e2WwLEF4zklyH6B78njI8bblhVvztqIPiQg7EVdhgpr88Q+4WumbNAc
-         vL9HkX6MUIk8zV78kNIqja3/nbg6MatOfWg+3ztD9+/YyKcclcUYS4qbxkTGAs5qM3/K
-         o7lg==
-X-Gm-Message-State: ANhLgQ3dlMVeAKNZr0naxUfuX43551Zhl5RUwyDQCRGOzNgnX/hr6jbN
-        tmkqKT+y4eqjJOjJqL5ChYjTrvDYZAs+l3deg7Y=
-X-Google-Smtp-Source: ADFU+vvV4BJ5Q01DPTC1SXAIfh/z8Wj4OYX4DvkBj6FtrhuQgaiDZaJI4i0vQNonaDpV/NYMAD4l7KAUvVSi/I0hMjA=
-X-Received: by 2002:aa7:d98b:: with SMTP id u11mr23211295eds.318.1583852212265;
- Tue, 10 Mar 2020 07:56:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GrLGwCNgXbztCMRReSyKuUa/Wr+RcCmi95sU2m2TGR8=;
+        b=qvnde8v7iN8TCwGS6/VfKrVINF5iVEpnULFuQN1TGydWJCBpqpYUdBHpAKtOJ9ECfy
+         F2RU2S0pE8ByMgklLNv7DcWnn1XKYvh6ZV0/OSDiQGwk5rGBHPXLSdL7F/syg3/qiV+M
+         z/9eut78uYzZk5J1mbCmOHQJXWxVVscSV+Ih37oPMcEFfe5FpQ4Md47fKEUaFjLw9YkO
+         BeL589UAD5xhgt15hkFwT8wfvZvV8DzIt16NBax57C7myTBCHY33UweSa//XJh995YXA
+         b/kQFZsSt07S9ksD8LCy9gZ56VxsVrrrEClPAb9dM+AZK1E5hGRnwCR0YwMerOvN17KL
+         /h9A==
+X-Gm-Message-State: ANhLgQ2RAXPygRyEZqXIuoOy5cseNVoqyBYMygw4tHLXV3pTI2VSderc
+        /Z3m3AkoHZIk+Wuuzg6S6lE=
+X-Google-Smtp-Source: ADFU+vuByKdUn9XJ2iY4aPSdnV5FvFJXdIwLh05Qa4WphMsMCFkF1Y3x+YJKcDeKdLoKQsCKZ8USog==
+X-Received: by 2002:a5d:6082:: with SMTP id w2mr27809592wrt.300.1583852209062;
+        Tue, 10 Mar 2020 07:56:49 -0700 (PDT)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id h18sm4141209wmm.6.2020.03.10.07.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 07:56:48 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 15:56:47 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, david@redhat.com,
+        richardw.yang@linux.intel.com, dan.j.williams@intel.com,
+        osalvador@suse.de, rppt@linux.ibm.com
+Subject: Re: [PATCH v3 7/7] mm/sparse.c: Use __get_free_pages() instead in
+ populate_section_memmap()
+Message-ID: <20200310145647.GN8447@dhcp22.suse.cz>
+References: <20200307084229.28251-1-bhe@redhat.com>
+ <20200307084229.28251-8-bhe@redhat.com>
 MIME-Version: 1.0
-References: <20200310125542.5939-1-olteanv@gmail.com> <615284875b709f602d57e4a4621a83c1@walle.cc>
-In-Reply-To: <615284875b709f602d57e4a4621a83c1@walle.cc>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Tue, 10 Mar 2020 16:56:39 +0200
-Message-ID: <CA+h21hrYoHVDvsxT1EPWhYprL+zNHfE4MW7k4HxiK7ma4ZWn1g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] NXP DSPI bugfixes and support for LS1028A
-To:     Michael Walle <michael@walle.cc>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        angelo@sysam.it, andrew.smirnov@gmail.com,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Wei Chen <weic@nvidia.com>, Mohamed Hosny <mhosny@nvidia.com>,
-        peng.ma@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200307084229.28251-8-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+On Sat 07-03-20 16:42:29, Baoquan He wrote:
+> This removes the unnecessary goto, and simplify codes.
+> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
+> ---
+>  mm/sparse.c | 16 ++++++----------
+>  1 file changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index fde651ab8741..266f7f5040fb 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -735,23 +735,19 @@ static void free_map_bootmem(struct page *memmap)
+>  struct page * __meminit populate_section_memmap(unsigned long pfn,
+>  		unsigned long nr_pages, int nid, struct vmem_altmap *altmap)
+>  {
+> -	struct page *page, *ret;
+> +	struct page *ret;
+>  	unsigned long memmap_size = sizeof(struct page) * PAGES_PER_SECTION;
+>  
+> -	page = alloc_pages(GFP_KERNEL|__GFP_NOWARN, get_order(memmap_size));
+> -	if (page)
+> -		goto got_map_page;
+> +	ret = (void*)__get_free_pages(GFP_KERNEL|__GFP_NOWARN,
+> +				get_order(memmap_size));
+> +	if (ret)
+> +		return ret;
+>  
+>  	ret = vmalloc(memmap_size);
+>  	if (ret)
+> -		goto got_map_ptr;
+> +		return ret;
+>  
+>  	return NULL;
+> -got_map_page:
+> -	ret = (struct page *)pfn_to_kaddr(page_to_pfn(page));
+> -got_map_ptr:
+> -
+> -	return ret;
+>  }
 
-On Tue, 10 Mar 2020 at 16:11, Michael Walle <michael@walle.cc> wrote:
->
+Boy this code is ugly. Is there any reason we cannot simply use
+kvmalloc_array(PAGES_PER_SECTION, sizeof(struct page), GFP_KERNEL | __GFP_NOWARN)
 
->
-> XSPI mode, while now I cannot reproduce the kernel oops anymore, I've
-> found two
-> other problems (1), (2). Which are likely the same underlying problem.
-> DMA mode
-> works "better" now, still one problem (3).
->
-> (1) It seems like the first write/read/erase after the aborted
-> instruction
-> don't get through:
->
-> # hexdump -C /dev/mtd0
-> 00000000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> [  627.914654] fsl-dspi 2120000.spi: Waiting for transfer to complete
-> failed!
-> ^C[  627.921649] spi_master spi1: failed to transfer one message from
-> queue
->
-> #
-> # echo huhu > /dev/mtd0
-> # hexdump -C /dev/mtd0
-> 00000000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> hexdump: /dev/mtd0: Input/output error
-> 003df000
-> # echo huhu > /dev/mtd0
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> [  642.738905] fsl-dspi 2120000.spi: Waiting for transfer to complete
-> failed!
-> ^C[  642.745832] spi_master spi1: failed to transfer one message from
-> queue
-> #
-> # flash_erase /dev/mtd0 0 1
-> Erasing 4 Kibyte @ 0 -- 100 % complete
-> #
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> hexdump: /dev/mtd0: Input/output error
-> 0023d000
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
->
-> (2) Also, reading the flash, every second time there is (reproducibly)
-> an
-> IO error:
->
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> 01000000
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> hexdump: /dev/mtd0: Input/output error
-> 00dc0000
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> 01000000
-> # hexdump -C /dev/mtd0
-> 00000000  68 75 68 75 0a ff ff ff  ff ff ff ff ff ff ff ff
-> |huhu............|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> hexdump: /dev/mtd0: Input/output error
-> 00e6a000
->
+And if we care about locality then go even one step further
+kvmalloc_node(PAGES_PER_SECTION * sizeof(struct page), GFP_KERNEL | __GFP_NOWARN, nid)
 
-Just to be clear, issue 2 is seen only after you abort another
-transaction, right?
-
-> (3) Depening on the content length there is also an IO error. Funny
-> enough,
-> the content is still written to the SPI flash.
->
-> # echo -n 1 > /dev/mtd10
-> # echo -n 12 > /dev/mtd10
-> # echo -n 123 > /dev/mtd10
-> # echo -n 1234 > /dev/mtd10
-> # echo -n 12345 > /dev/mtd10
-> sh: write error: Input/output error
-> # echo -n 123456 > /dev/mtd10
-> # echo -n 1234567 > /dev/mtd10
-> sh: write error: Input/output error
-> # echo -n 12345678 > /dev/mtd10
-> # echo -n 123456789 > /dev/mtd10
-> # echo -n 1234567890 > /dev/mtd10
-> # echo -n 12345678901 > /dev/mtd10
-> # echo -n 123456789012 > /dev/mtd10
-> # echo -n 1234567890123 > /dev/mtd10
-> sh: write error: Input/output error
-> # echo -n 12345678901234 > /dev/mtd10
-> # echo -n 123456789012345 > /dev/mtd10
-> sh: write error: Input/output error
-> # echo -n 1234567890123456 > /dev/mtd10
-> # echo -n 12345678901234567 > /dev/mtd10
-> # echo -n 123456789012345678 > /dev/mtd10
->
->
-> # flash_erase /dev/mtd10 0 1
-> Erasing 4 Kibyte @ 0 -- 100 % complete
-> # hexdump -C /dev/mtd10
-> 00000000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> ^C
-> # echo -n 12345 > /dev/mtd10
-> sh: write error: Input/output error
-> # hexdump -C /dev/mtd10
-> 00000000  31 32 33 34 35 ff ff ff  ff ff ff ff ff ff ff ff
-> |12345...........|
-> 00000010  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff
-> |................|
-> *
-> ^C
->
-
-For this one, I think the reported message->actual_length is incorrect
-in dspi_dma_xfer, which makes spi-mem scream.
-
->
-> -michael
->
-> >
-> > Vladimir Oltean (7):
-> >   spi: spi-fsl-dspi: Don't access reserved fields in SPI_MCR
-> >   spi: spi-fsl-dspi: Avoid use-after-free in interrupt mode
-> >   spi: spi-fsl-dspi: Fix little endian access to PUSHR CMD and TXDATA
-> >   spi: spi-fsl-dspi: Fix bits-per-word acceleration in DMA mode
-> >   spi: spi-fsl-dspi: Add support for LS1028A
-> >   arm64: dts: ls1028a: Specify the DMA channels for the DSPI
-> > controllers
-> >   arm64: dts: ls1028a-rdb: Add a spidev node for the mikroBUS
-> >
-> >  .../boot/dts/freescale/fsl-ls1028a-rdb.dts    |  14 ++
-> >  .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 +
-> >  drivers/spi/spi-fsl-dspi.c                    | 188 +++++++++++-------
-> >  3 files changed, 134 insertions(+), 74 deletions(-)
-
-Thanks,
--Vladimir
+-- 
+Michal Hocko
+SUSE Labs
