@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF0FB17F793
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:40:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 381B017F93A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 13:54:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbgCJMkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:40:01 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35664 "EHLO mail.skyhub.de"
+        id S1729423AbgCJMyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:54:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbgCJMkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:40:00 -0400
-Received: from zn.tnic (p200300EC2F09B400B9A98D8D0B62C6C9.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:b400:b9a9:8d8d:b62:c6c9])
+        id S1729412AbgCJMyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:54:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A30A51EC0CD1;
-        Tue, 10 Mar 2020 13:39:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1583843998;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JNxa356xMiMYcOhZxcJVg2pdOP2CCzDRhw8kQvxntFE=;
-        b=M+1KJt5fj95okOKnzkUz0LTHzVcELFFy3zXGL4rWgw9FhLmqGtVxHOlM6h6722fvTU8YUF
-        22OW56yTfootMxs8nUT83Pls1jOXkOqlsDVHkq5eTT60bxZ5IZeo1fEsJz5Jm1dolSNNlE
-        yGt8xjj4gt1psneh6e92loQbj9CCLSI=
-Date:   Tue, 10 Mar 2020 13:40:03 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Bruce Rogers <brogers@suse.com>, Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH] x86/ioremap: Map EFI runtime services data as encrypted
- for SEV
-Message-ID: <20200310124003.GE29372@zn.tnic>
-References: <2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 33E5620674;
+        Tue, 10 Mar 2020 12:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583844892;
+        bh=9RiMgh8QPyWIuQfhiMeAtqfXBCzae0ghcsVZphTMLKs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=r/4FeE5tg16wC0IfRcIO+y1eez2arrrhaOdQojmBYY92rBNdXS8xhXuZU2XqPNoAk
+         0IoKAMF2K8BKB3PYlfZ/pzH9HqPD137oK3KlVqr5BSA2IZtxlsn2giNr1rzshOEeZV
+         DDPzpw4/l7GamMBmFR90rpdqa5woBEg09U0sOeEI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 5.4 158/168] ARM: dts: imx7-colibri: Fix frequency for sd/mmc
+Date:   Tue, 10 Mar 2020 13:40:04 +0100
+Message-Id: <20200310123651.514115742@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200310123635.322799692@linuxfoundation.org>
+References: <20200310123635.322799692@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2d9e16eb5b53dc82665c95c6764b7407719df7a0.1582645327.git.thomas.lendacky@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 09:42:07AM -0600, Tom Lendacky wrote:
-> The dmidecode program fails to properly decode the SMBIOS data supplied
-> by OVMF/UEFI when running on an SEV guest. The SMBIOS area, under SEV, is
-> encrypted and resides in reserved memory that is marked as EFI runtime
-> services data. As a result, when memremap() is attempted for the SMBIOS
-> data, it can't be mapped as regular RAM (through try_ram_remap()) and,
-> since the address isn't part of the iomem resources list, it isn't mapped
-> encrypted through the fallback ioremap().
-> 
-> Update __ioremap_check_mem() to set the IORES_MAP_ENCRYPTED flag if SEV is
-> active and the memory being mapped is part of EFI runtime services data.
-> This allows any runtime services data, which has been created encrypted,
-> to be mapped encrypted.
-> 
-> Cc: Bruce Rogers <brogers@suse.com>
-> Cc: Joerg Roedel <jroedel@suse.de>
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  arch/x86/mm/ioremap.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index 44e4beb4239f..382b6ca66820 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-> @@ -135,6 +135,13 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
->  	memset(desc, 0, sizeof(struct ioremap_desc));
->  
->  	walk_mem_res(start, end, desc, __ioremap_collect_map_flags);
-> +
-> +	/*
-> +	 * The EFI runtime services data area is not covered by walk_mem_res(),
-> +	 * but must be mapped encrypted when SEV is active.
-> +	 */
-> +	if (sev_active() && efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
-> +		desc->flags |= IORES_MAP_ENCRYPTED;
->  }
+From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 
-Why isn't this done in __ioremap_check_encrypted() which is exactly for
-SEV stuff like that?
+commit 2773fe1d31c42ffae2a9cb9a6055d99dd86e2fee upstream.
 
--- 
-Regards/Gruss,
-    Boris.
+SD/MMC on Colibri iMX7S/D modules successfully support
+200Mhz frequency in HS200 mode.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Removing the unnecessary max-frequency limit significantly
+increases the performance:
+
+== before fix ====
+root@colibri-imx7-emmc:~# hdparm -t /dev/mmcblk0
+/dev/mmcblk0:
+ Timing buffered disk reads: 252 MB in  3.02 seconds =  83.54 MB/sec
+==================
+
+=== after fix ====
+root@colibri-imx7-emmc:~# hdparm -t /dev/mmcblk0
+/dev/mmcblk0:
+ Timing buffered disk reads: 408 MB in  3.00 seconds = 135.94 MB/sec
+==================
+
+Fixes: f928a4a377e4 ("ARM: dts: imx7: add Toradex Colibri iMX7D 1GB (eMMC) support")
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/arm/boot/dts/imx7-colibri.dtsi |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/arch/arm/boot/dts/imx7-colibri.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri.dtsi
+@@ -337,7 +337,6 @@
+ 	assigned-clock-rates = <400000000>;
+ 	bus-width = <8>;
+ 	fsl,tuning-step = <2>;
+-	max-frequency = <100000000>;
+ 	vmmc-supply = <&reg_module_3v3>;
+ 	vqmmc-supply = <&reg_DCDC3>;
+ 	non-removable;
+
+
