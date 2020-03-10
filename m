@@ -2,125 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE5217FF48
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:45:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF8717FF51
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:46:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbgCJNp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:45:29 -0400
-Received: from www381.your-server.de ([78.46.137.84]:38168 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgCJNpT (ORCPT
+        id S1727384AbgCJNqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:46:11 -0400
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:36104 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgCJNqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:45:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NnM1QCunpjC6c6Up1F4TLwXN2QNnaCmd0eqQ9fsv1U8=; b=ByxP7Rr0IqQDfX69D6GKlInxYy
-        fwEBixIKZjzFgnSUdJ5M38R8uA5lOim4aZiKaU+Yz5ghNDHwUXxQNhvavvL7grSjyEzreVXqN9Sai
-        GNgzIc622oMkxsCof8B3BG82R+jarN+X9kqo6vGUqmovTb5/+QRp1OXyFVzko5GDcrjBokQ8RMP4l
-        wQ/O+F1OZlhe/uRdY/AZvqvt1A5eDFqzQCpvXwEii0DEuuw0g7PUbcH0kgr2c5z6dzzIPkEd/d3m3
-        kw1nF3ZcKrYOBqMbpWO7QC84eR4ZOlkxEWC0jNm8Y1v1tQ3SH9SrKlVmwtxl7YNK5fZSdNFFhlBzv
-        z3MH2xYg==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <lars@metafoo.de>)
-        id 1jBfC7-0000qB-CC; Tue, 10 Mar 2020 14:45:15 +0100
-Received: from [93.104.100.58] (helo=[192.168.178.20])
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <lars@metafoo.de>)
-        id 1jBfC7-0005Jq-2u; Tue, 10 Mar 2020 14:45:15 +0100
-Subject: Re: [PATCH][RESEND] usb: dwc3: gadget: Handle dequeuing of non queued
- URB gracefully
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "balbi@kernel.org" <balbi@kernel.org>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-        "m.olbrich@pengutronix.de" <m.olbrich@pengutronix.de>
-References: <20191106144553.16956-1-alexandru.ardelean@analog.com>
- <20200116132459.22383-1-alexandru.ardelean@analog.com>
- <87d0b1885e.fsf@kernel.org>
- <5313c926109f39699e63342b4ff71102d3cfa495.camel@analog.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <1df6e9be-2233-a0b2-1ddc-76de9d62a397@metafoo.de>
-Date:   Tue, 10 Mar 2020 14:45:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 10 Mar 2020 09:46:10 -0400
+Received: by mail-wm1-f41.google.com with SMTP id g62so1419770wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 06:46:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wD/rjwDaFSH4m0qLvYcsJe5uINdhvscpogJ3gh+ddBE=;
+        b=abZrokerv1XQs4CdYgMZDC/O5UauiH6mqKC2Rrdy1tv4xSXq1RKsr+iLSyaMu5QRrY
+         eNToWk64+vZzKd5eeIFecdjcgvg5U62vU7dexhWjTJGcM9vb+TmvA6P4A4xsOXQvW2fi
+         wb2/v2YN1HJGBWhNsaZaJsTHq9C+BIA4ID0FoIbZUuGmip1war0RJ9oU2O6ca/Eb8bnp
+         lKwQxo9FxcvxnukaM01tLAXT2mdTHQ+BWTwNmBjHEBFWXKM+WWrV9KQRZ9Gjn8GzG1NP
+         UzG8pjbwxIVQlVYsWb8vQaUL2aaeAjFaIZ9pL5L7SBi0tKFDOAG5ttq+QXKgWrlHYdsw
+         mQKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wD/rjwDaFSH4m0qLvYcsJe5uINdhvscpogJ3gh+ddBE=;
+        b=Cf5VqJa9EIiwizGuEH97ATNDXNSgaHqfou7bWHDqSp8MuNZSXTP6PB3mWAsQ+pcWHP
+         IUG2i9/1wMzGp0jl9s1EmL5evp4GoZgKNevWUcQHybN5cylluLSxUaMMY969fQxw/zUA
+         8C+K/JRSZnNjYCjQNrwb/D3wWDGLaGBXQk5b3G3h8VphzhTKDnrgqDwKn+KZa9BDBM9e
+         qZDwx2pBMMGBNfhtHXXptpr+voPumMbmn9GZ/jZjDaBSoof7o7gLVolVg+tHNOUvrrWl
+         doQZZGKYu1Rj/L5OcFlgKQ1XbpYYtY+R9viIWH7ZLdhirXVpJHPM/tkiKaIw1eoQXT/j
+         ZDhQ==
+X-Gm-Message-State: ANhLgQ12K7yxvI6kXFmMNQ9nNH7WDgOlA4Gl7iIgrEf763vzmSUmzxXu
+        tr/KQAZ4anudUcsO2SN3gibfrw==
+X-Google-Smtp-Source: ADFU+vsAqODaD7c54dhNVCiGo6mkHHmbHDjZbcCM9Ns8rtR6QHeWU2SEQUgGGnzoUNA8SRhX+nS2rA==
+X-Received: by 2002:a1c:f60d:: with SMTP id w13mr628899wmc.171.1583847967491;
+        Tue, 10 Mar 2020 06:46:07 -0700 (PDT)
+Received: from xps7590.local ([2a02:2450:102f:13b8:e50c:c780:9a1:8b61])
+        by smtp.gmail.com with ESMTPSA id d63sm4074009wmd.44.2020.03.10.06.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 06:46:06 -0700 (PDT)
+From:   Robert Foss <robert.foss@linaro.org>
+To:     ben.kao@intel.com, mchehab@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, matthias.bgg@gmail.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        andriy.shevchenko@linux.intel.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Dongchun Zhu <dongchun.zhu@mediatek.com>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Robert Foss <robert.foss@linaro.org>
+Subject: [v1 0/3] media: ov8856: Add sensor modes & devicetree support
+Date:   Tue, 10 Mar 2020 14:46:00 +0100
+Message-Id: <20200310134603.30260-1-robert.foss@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <5313c926109f39699e63342b4ff71102d3cfa495.camel@analog.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.102.2/25747/Tue Mar 10 12:06:29 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/20 2:22 PM, Ardelean, Alexandru wrote:
-> On Thu, 2020-01-30 at 14:02 +0200, Felipe Balbi wrote:
->> [External]
->>
->>
->> Hi,
->>
->> Alexandru Ardelean <alexandru.ardelean@analog.com> writes:
->>
->>> From: Lars-Peter Clausen <lars@metafoo.de>
->>>
->>> Trying to dequeue and URB that is currently not queued should be a no-op
->>> and be handled gracefully.
->>>
->>> Use the list field of the URB to indicate whether it is queued or not by
->>> setting it to the empty list when it is not queued.
->>>
->>> Handling this gracefully allows for race condition free synchronization
->>> between the complete callback being called to to a completed transfer and
->>> trying to call usb_ep_dequeue() at the same time.
->> We need a little more information here. Can you further explain what
->> happens and how you caught this?
-> Apologies for the delay [of this reply].
-> It's been a while since this patch was created, and it was on a 4.14 kernel.
-> Lars was trying to fix various crashes with USB DWC3 OTG + some Xilinx patches.
-> I did not track the status of the OTG stuff upstream. I think it's a lot of
-> patches in the Xilinx tree.
->
-> The context has changed from 4.14 [obviously], and there were many things that
-> could have influenced things.
-> I've been trying to RFC some of these patches now.
-> [ yeah I know: maybe I should have [probably] also added an RFC tag :) ]
-> Some of the patches [including this one] seemed to make sense, even outside of
-> the context of the crashes that were happening on 4.14.
-> Atm, we're at 4.19 and we don't see issues, but we still have this patch.
-> We may drop it and see what happens.
-> ¯\_(ツ)_/¯
->
-> But in any case, it does require a bit more re-investigation.
-> Apologies for the noise that this patch created :)
+This adds devicetree support to the ov8856 driver.
+In order to to aid debugging and enable future sensor
+modes to be supported, module revision detection is also added.
 
-The race condition is between a gadget calling usb_ep_dequeue() and the 
-driver completing the URB.
+Dongchun Zhu (1):
+  media: dt-bindings: ov8856: Document YAML bindings
 
-Lets say in a thread you have a reference to a in-flight URB and you 
-want to abort the request, e.g. because the application that sent the 
-request has been closed. But concurrently to that the URB is completed 
-by the hardware and the interrupt fires and marks the URB as complete. 
-Your thread is suspended while the interrupt is running, once the 
-interrupt has finished the thread wakes up, still has the reference to 
-the URB, but now it has been completed. The thread still calls 
-usb_ep_dequeue() though and then undefined behavior occurs.
+Robert Foss (2):
+  media: ov8856: Add devicetree support
+  media: ov8856: Implement sensor module revision identification
 
-The context in which we observed the issue is when using function fs to 
-create a userspace gadget and using aio_cancel() to abort a pending URB. 
-But really any gadget that aborts a transfer before it is completed or 
-before the timeout occurred can run into this issue.
+ .../devicetree/bindings/media/i2c/ov8856.yaml | 129 +++++++++++++++
+ MAINTAINERS                                   |   1 +
+ drivers/media/i2c/ov8856.c                    | 153 +++++++++++++++++-
+ 3 files changed, 281 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ov8856.yaml
 
-- Lars
+-- 
+2.20.1
 
