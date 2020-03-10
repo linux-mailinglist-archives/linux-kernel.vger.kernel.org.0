@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FAAD17FE53
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:34:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8A9F17FE50
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgCJMqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 08:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49758 "EHLO mail.kernel.org"
+        id S1726616AbgCJMqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 08:46:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbgCJMq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:46:29 -0400
+        id S1726847AbgCJMqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:46:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FD7324691;
-        Tue, 10 Mar 2020 12:46:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20A392468D;
+        Tue, 10 Mar 2020 12:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583844389;
-        bh=iX2h9xIM0kJfdo1vtwCYCI/uuVOptRR5Y8/LX5Tsfas=;
+        s=default; t=1583844391;
+        bh=ewhqRxtaE9Vq08pfP77RGCsTISd7n1fBGBXrjGoNLZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQbNqbXGy37wqauy8434gX2+FAQa5YdaLGnb5rZdQxjPn47Re7tsY8V/MuoyNK06v
-         LKjTtd0IzX4PALNQ4XSeeGZwBokoGM/zfPRhbH8BDbkfDFwCm4eXt+wujpLY5qlfJu
-         efLcLVGtIDl7M+NWOp6xBXH5c8Vrnr/tE/+ZQxYA=
+        b=J/xd067Eq2WGUL75t0iuWmqR5HfM0M8nUDY8rnRCBzC/NZOlneiNziTACQr8hJPq5
+         mJRZJoXx5/V3lLlWgh/Z0cOtrX3YI+kUV3aOR/pbpCQemob2VbLfxrW1FwEUB4hNLW
+         b3XnjEkTI2IE/8NSUcA3RMS9GNS+lID02tHrUPQs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
-        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 62/88] x86/boot/compressed: Dont declare __force_order in kaslr_64.c
-Date:   Tue, 10 Mar 2020 13:39:10 +0100
-Message-Id: <20200310123621.868809541@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>
+Subject: [PATCH 4.9 63/88] cifs: dont leak -EAGAIN for stat() during reconnect
+Date:   Tue, 10 Mar 2020 13:39:11 +0100
+Message-Id: <20200310123622.064771415@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200310123606.543939933@linuxfoundation.org>
 References: <20200310123606.543939933@linuxfoundation.org>
@@ -43,44 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: H.J. Lu <hjl.tools@gmail.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-[ Upstream commit df6d4f9db79c1a5d6f48b59db35ccd1e9ff9adfc ]
+commit fc513fac56e1b626ae48a74d7551d9c35c50129e upstream.
 
-GCC 10 changed the default to -fno-common, which leads to
+If from cifs_revalidate_dentry_attr() the SMB2/QUERY_INFO call fails with an
+error, such as STATUS_SESSION_EXPIRED, causing the session to be reconnected
+it is possible we will leak -EAGAIN back to the application even for
+system calls such as stat() where this is not a valid error.
 
-    LD      arch/x86/boot/compressed/vmlinux
-  ld: arch/x86/boot/compressed/pgtable_64.o:(.bss+0x0): multiple definition of `__force_order'; \
-    arch/x86/boot/compressed/kaslr_64.o:(.bss+0x0): first defined here
-  make[2]: *** [arch/x86/boot/compressed/Makefile:119: arch/x86/boot/compressed/vmlinux] Error 1
+Fix this by re-trying the operation from within cifs_revalidate_dentry_attr()
+if cifs_get_inode_info*() returns -EAGAIN.
 
-Since __force_order is already provided in pgtable_64.c, there is no
-need to declare __force_order in kaslr_64.c.
+This fixes stat() and possibly also other system calls that uses
+cifs_revalidate_dentry*().
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200124181811.4780-1-hjl.tools@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/boot/compressed/pagetable.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/cifs/inode.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/pagetable.c b/arch/x86/boot/compressed/pagetable.c
-index 56589d0a804b1..2591f8f6d45f2 100644
---- a/arch/x86/boot/compressed/pagetable.c
-+++ b/arch/x86/boot/compressed/pagetable.c
-@@ -25,9 +25,6 @@
- #define __PAGE_OFFSET __PAGE_OFFSET_BASE
- #include "../../mm/ident_map.c"
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -1990,6 +1990,7 @@ int cifs_revalidate_dentry_attr(struct d
+ 	struct inode *inode = d_inode(dentry);
+ 	struct super_block *sb = dentry->d_sb;
+ 	char *full_path = NULL;
++	int count = 0;
  
--/* Used by pgtable.h asm code to force instruction serialization. */
--unsigned long __force_order;
+ 	if (inode == NULL)
+ 		return -ENOENT;
+@@ -2011,15 +2012,18 @@ int cifs_revalidate_dentry_attr(struct d
+ 		 full_path, inode, inode->i_count.counter,
+ 		 dentry, cifs_get_time(dentry), jiffies);
+ 
++again:
+ 	if (cifs_sb_master_tcon(CIFS_SB(sb))->unix_ext)
+ 		rc = cifs_get_inode_info_unix(&inode, full_path, sb, xid);
+ 	else
+ 		rc = cifs_get_inode_info(&inode, full_path, NULL, sb,
+ 					 xid, NULL);
 -
- /* Used to track our page table allocation area. */
- struct alloc_pgt_data {
- 	unsigned char *pgt_buf;
--- 
-2.20.1
-
++	if (rc == -EAGAIN && count++ < 10)
++		goto again;
+ out:
+ 	kfree(full_path);
+ 	free_xid(xid);
++
+ 	return rc;
+ }
+ 
 
 
