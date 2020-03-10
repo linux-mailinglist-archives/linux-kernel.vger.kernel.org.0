@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 423BF183E6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D0A183E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Mar 2020 02:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbgCMBL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Mar 2020 21:11:26 -0400
-Received: from 97-93-29-23.dhcp.snlo.ca.charter.com ([97.93.29.23]:54444 "EHLO
+        id S1727317AbgCMBLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Mar 2020 21:11:32 -0400
+Received: from 97-93-29-23.dhcp.snlo.ca.charter.com ([97.93.29.23]:54446 "EHLO
         skomatineni-linux.nvidia.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726971AbgCMBL0 (ORCPT
+        by vger.kernel.org with ESMTP id S1727027AbgCMBL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Mar 2020 21:11:26 -0400
 Received: by skomatineni-linux.nvidia.com (Postfix, from userid 1000)
-        id 402D0104006E; Mon,  9 Mar 2020 17:13:27 -0700 (PDT)
+        id 42B071040069; Mon,  9 Mar 2020 17:13:27 -0700 (PDT)
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
         baolin.wang@linaro.org, kstewart@linuxfoundation.org,
@@ -23,73 +23,98 @@ To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
 Cc:     skomatineni@nvidia.com, anrao@nvidia.com,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
-Subject: [PATCH v1 1/3] mmc: core: Add capability for hosts supporting long HW busy wait
-Date:   Mon,  9 Mar 2020 17:13:23 -0700
-Message-Id: <1583799205-8442-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 2/3] mmc: tegra: Implement HW busy wait timeout based on command busy time
+Date:   Mon,  9 Mar 2020 17:13:24 -0700
+Message-Id: <1583799205-8442-2-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1583799205-8442-1-git-send-email-skomatineni@nvidia.com>
+References: <1583799205-8442-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some mmc operation like SLEEP_AWAKE and cache flush through SWITCH
-command takes longer time and for host controllers supporting HW
-busy detection, core driver converts R1B type to R1 type response
-for these commands if operation time is more than HW busy timeout
-and uses SW poll for busy state.
+Tegra host supports HW busy detection and timeouts based on the
+count programmed in SDHCI_TIMEOUT_CONTROL register and max busy
+timeout it supports is 11s in finite busy wait mode.
 
-This patch adds a host capability MMC_CAP2_LONG_WAIT_HW_BUSY for
-hosts supporting long or infinite busy wait of HW busy detection
-for these long mmc operations and prevents core driver from
-converting R1B to R1 response type.
+Some operations like SLEEP_AWAKE, ERASE and flush cache through
+SWITCH commands take longer than 11s and Tegra host supports
+infinite HW busy wait mode where HW waits forever till the card
+is busy without HW timeout.
+
+This patch implements Tegra specific set_timeout sdhci_ops to allow
+switching between finite and infinite HW busy detection wait modes
+based on the device command expected operation time.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/mmc/core/mmc.c     | 3 ++-
- drivers/mmc/core/mmc_ops.c | 3 ++-
- include/linux/mmc/host.h   | 1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index c2abd41..5aea3a6 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1916,7 +1916,8 @@ static int mmc_sleep(struct mmc_host *host)
- 	 * from doing hw busy detection, which is done by converting to a R1
- 	 * response instead of a R1B.
- 	 */
--	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout)) {
-+	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout) &&
-+	    !(host->caps2 & MMC_CAP2_LONG_WAIT_HW_BUSY)) {
- 		cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
- 	} else {
- 		cmd.flags = MMC_RSP_R1B | MMC_CMD_AC;
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index aa0cab1..251b4c7 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -579,7 +579,8 @@ int __mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
- 	 * the host to avoid HW busy detection, by converting to a R1 response
- 	 * instead of a R1B.
- 	 */
--	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout))
-+	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout) &&
-+	    !(host->caps2 & MMC_CAP2_LONG_WAIT_HW_BUSY))
- 		use_r1b_resp = false;
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 403ac44..40a221d 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -45,6 +45,7 @@
+ #define SDHCI_TEGRA_CAP_OVERRIDES_DQS_TRIM_SHIFT	8
  
- 	cmd.opcode = MMC_SWITCH;
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 6aaa15e..1cda4dd 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -371,6 +371,7 @@ struct mmc_host {
- #define MMC_CAP2_CQE_DCMD	(1 << 24)	/* CQE can issue a direct command */
- #define MMC_CAP2_AVOID_3_3V	(1 << 25)	/* Host must negotiate down from 3.3V */
- #define MMC_CAP2_MERGE_CAPABLE	(1 << 26)	/* Host can merge a segment over the segment size */
-+#define MMC_CAP2_LONG_WAIT_HW_BUSY (1 << 27)	/* Host can support long busy timeout, do not convert R1B to R1 response */
+ #define SDHCI_TEGRA_VENDOR_MISC_CTRL			0x120
++#define SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT		BIT(0)
+ #define SDHCI_MISC_CTRL_ENABLE_SDR104			0x8
+ #define SDHCI_MISC_CTRL_ENABLE_SDR50			0x10
+ #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300		0x20
+@@ -1227,6 +1228,34 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+ 	return 0;
+ }
  
- 	int			fixed_drv_type;	/* fixed driver type for non-removable media */
++static void tegra_sdhci_set_timeout(struct sdhci_host *host,
++				    struct mmc_command *cmd)
++{
++	u32 val;
++
++	/*
++	 * HW busy detection timeout is based on programmed data timeout
++	 * counter and maximum supported timeout is 11s which may not be
++	 * enough for long operations like cache flush, sleep awake, erase.
++	 *
++	 * ERASE_TIMEOUT_LIMIT bit of VENDOR_MISC_CTRL register allows
++	 * host controller to wait for busy state until the card is busy
++	 * without HW timeout.
++	 *
++	 * So, use infinite busy wait mode for operations that may take
++	 * more than maximum HW busy timeout of 11s otherwise use finite
++	 * busy wait mode.
++	 */
++	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
++	if (cmd && cmd->busy_timeout >= 11 * HZ)
++		val |= SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
++	else
++		val &= ~SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
++	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_MISC_CTRL);
++
++	__sdhci_set_timeout(host, cmd);
++}
++
+ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+ 	.write_l    = tegra_cqhci_writel,
+ 	.enable	= sdhci_tegra_cqe_enable,
+@@ -1366,6 +1395,7 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
+ 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
++	.set_timeout = tegra_sdhci_set_timeout,
+ };
  
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+@@ -1403,6 +1433,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
+ 	.irq = sdhci_tegra_cqhci_irq,
++	.set_timeout = tegra_sdhci_set_timeout,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
 -- 
 2.7.4
 
