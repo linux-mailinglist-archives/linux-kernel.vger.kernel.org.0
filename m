@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A165717FA50
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB5C17FA8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 14:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgCJNEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 09:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49416 "EHLO mail.kernel.org"
+        id S1730786AbgCJNGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 09:06:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbgCJNEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:04:22 -0400
+        id S1730607AbgCJNFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:05:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0223A246AA;
-        Tue, 10 Mar 2020 13:04:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 110D3208E4;
+        Tue, 10 Mar 2020 13:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583845461;
-        bh=KJoKLhjYPFyRWD4d0UPL8yDXl4UR0+scisZD6bxeLpY=;
+        s=default; t=1583845545;
+        bh=YtPBR0nkaVCMtqMjv17lPUpNC7kM+qkgKQDoZjkHLQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AMFxedS33TPownaWMRCMO2chcfyPx2ogwHvH8BI1ctTUTNpCMNVM9seaULOrB8dS4
-         dZsFQ9uaFRa5q5qrOMU9aCADTgE8Q9R0SEa94P2YKPTlRJrDIum/arUcxDWUKhrPYb
-         NiyEnLSk5qoYLuo52mWoDfNEdsKK1wUCWs5yqVRE=
+        b=nXOGxE2I6ByKvTV4B9xbh1n6X5X7mLxdkUfbc0d02UK63nPQo4vGXkoyF4cULLfkj
+         WF5pxFY08jaqgRmI7YXYa+F3VNkgm7ePwQNrevDZ40QQSHXOdzoUqep5NYimJupctv
+         k8esjvov/Z+2RUFVyOWzgLtpgbwGvhzy8I0sO8AA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 189/189] net: stmmac: fix notifier registration
-Date:   Tue, 10 Mar 2020 13:40:26 +0100
-Message-Id: <20200310123658.506018546@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Corey Minyard <cminyard@mvista.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 006/126] ipmi:ssif: Handle a possible NULL pointer reference
+Date:   Tue, 10 Mar 2020 13:40:27 +0100
+Message-Id: <20200310124204.266551658@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310123639.608886314@linuxfoundation.org>
-References: <20200310123639.608886314@linuxfoundation.org>
+In-Reply-To: <20200310124203.704193207@linuxfoundation.org>
+References: <20200310124203.704193207@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,83 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@nokia.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 474a31e13a4e9749fb3ee55794d69d0f17ee0998 upstream.
+[ Upstream commit 6b8526d3abc02c08a2f888e8c20b7ac9e5776dfe ]
 
-We cannot register the same netdev notifier multiple times when probing
-stmmac devices. Register the notifier only once in module init, and also
-make debugfs creation/deletion safe against simultaneous notifier call.
+In error cases a NULL can be passed to memcpy.  The length will always
+be zero, so it doesn't really matter, but go ahead and check for NULL,
+anyway, to be more precise and avoid static analysis errors.
 
-Fixes: 481a7d154cbb ("stmmac: debugfs entry name is not be changed when udev rename device name.")
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/char/ipmi/ipmi_ssif.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4289,6 +4289,8 @@ static void stmmac_init_fs(struct net_de
- {
- 	struct stmmac_priv *priv = netdev_priv(dev);
+diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+index 941bffd9b49cd..0146bc3252c5a 100644
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -750,10 +750,14 @@ static void msg_done_handler(struct ssif_info *ssif_info, int result,
+ 	flags = ipmi_ssif_lock_cond(ssif_info, &oflags);
+ 	msg = ssif_info->curr_msg;
+ 	if (msg) {
++		if (data) {
++			if (len > IPMI_MAX_MSG_LENGTH)
++				len = IPMI_MAX_MSG_LENGTH;
++			memcpy(msg->rsp, data, len);
++		} else {
++			len = 0;
++		}
+ 		msg->rsp_size = len;
+-		if (msg->rsp_size > IPMI_MAX_MSG_LENGTH)
+-			msg->rsp_size = IPMI_MAX_MSG_LENGTH;
+-		memcpy(msg->rsp, data, msg->rsp_size);
+ 		ssif_info->curr_msg = NULL;
+ 	}
  
-+	rtnl_lock();
-+
- 	/* Create per netdev entries */
- 	priv->dbgfs_dir = debugfs_create_dir(dev->name, stmmac_fs_dir);
- 
-@@ -4300,14 +4302,13 @@ static void stmmac_init_fs(struct net_de
- 	debugfs_create_file("dma_cap", 0444, priv->dbgfs_dir, dev,
- 			    &stmmac_dma_cap_fops);
- 
--	register_netdevice_notifier(&stmmac_notifier);
-+	rtnl_unlock();
- }
- 
- static void stmmac_exit_fs(struct net_device *dev)
- {
- 	struct stmmac_priv *priv = netdev_priv(dev);
- 
--	unregister_netdevice_notifier(&stmmac_notifier);
- 	debugfs_remove_recursive(priv->dbgfs_dir);
- }
- #endif /* CONFIG_DEBUG_FS */
-@@ -4825,14 +4826,14 @@ int stmmac_dvr_remove(struct device *dev
- 
- 	netdev_info(priv->dev, "%s: removing driver", __func__);
- 
--#ifdef CONFIG_DEBUG_FS
--	stmmac_exit_fs(ndev);
--#endif
- 	stmmac_stop_all_dma(priv);
- 
- 	stmmac_mac_set(priv, priv->ioaddr, false);
- 	netif_carrier_off(ndev);
- 	unregister_netdev(ndev);
-+#ifdef CONFIG_DEBUG_FS
-+	stmmac_exit_fs(ndev);
-+#endif
- 	phylink_destroy(priv->phylink);
- 	if (priv->plat->stmmac_rst)
- 		reset_control_assert(priv->plat->stmmac_rst);
-@@ -5052,6 +5053,7 @@ static int __init stmmac_init(void)
- 	/* Create debugfs main directory if it doesn't exist yet */
- 	if (!stmmac_fs_dir)
- 		stmmac_fs_dir = debugfs_create_dir(STMMAC_RESOURCE_NAME, NULL);
-+	register_netdevice_notifier(&stmmac_notifier);
- #endif
- 
- 	return 0;
-@@ -5060,6 +5062,7 @@ static int __init stmmac_init(void)
- static void __exit stmmac_exit(void)
- {
- #ifdef CONFIG_DEBUG_FS
-+	unregister_netdevice_notifier(&stmmac_notifier);
- 	debugfs_remove_recursive(stmmac_fs_dir);
- #endif
- }
+-- 
+2.20.1
+
 
 
