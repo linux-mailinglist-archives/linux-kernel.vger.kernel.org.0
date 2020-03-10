@@ -2,104 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 534D818090C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:19:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43471180904
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 21:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgCJUTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 16:19:49 -0400
-Received: from mail-lf1-f53.google.com ([209.85.167.53]:45932 "EHLO
-        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgCJUTt (ORCPT
+        id S1727141AbgCJUTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 16:19:16 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33995 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgCJUTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:19:49 -0400
-Received: by mail-lf1-f53.google.com with SMTP id b13so12013038lfb.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Mar 2020 13:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ph0vbxjhiVWxt5rg3nkX2vAEthsG0dcjm7RlaAwg098=;
-        b=FTRhK5wRW+NRGmaoV4Ks4Odxss3oisU/sts3+fM0oGm2ippT+eDkr1IaNE6RESk+lr
-         uP42CT/VBEM8RxZzRhXu7OdoPtl5ghIZEFU0Sv2IQsJ3dsb3HDE68bjkrG/0JEnJJzf0
-         h6OdM2SCHqYO8CccNpImf0UM6jUH0ewQIPYtbBJzBYWqxTlfX+DXwC0GZqRBGhDFShoh
-         XCfYyNmsQDQ3gC5kkVw7Uuas1zPz/IW24F0I0iX7Q/Ik/pIlrdUPuv0Qa8NVg21pd4QD
-         oVdancEdjuYHMTQh2nox/OksTwzF4NxKTaM0bkelHD5AejJfdXyGtde0aTBYJcvQlxAN
-         WqKQ==
+        Tue, 10 Mar 2020 16:19:15 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g6so15317002oiy.1;
+        Tue, 10 Mar 2020 13:19:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ph0vbxjhiVWxt5rg3nkX2vAEthsG0dcjm7RlaAwg098=;
-        b=lZO5HNySNoa4M9KBOLwVKIyjif9Gq8rUyd9zs1NWlvDxIPOId1WU0TOvavowUW/X1S
-         jKKnqpxuY8gFB4Q6Xm/J7eBNDzPEhl6ugYJeMSewfg0Cd036Hiex+Y/nEs7ILt1lzjgM
-         Gcp+ayrtTxk4ZpG7J1yVygxVb2sl3NoGbpovZ6G/fDqMxSvxaVPONfPWqDLQK+xJUSvh
-         GIRO9giUx4DJq3y2ibD2oGFEuG8qPmRo2azfkxTK1An2WIMd426LDwfr+3vR53s1txBn
-         qmwhnb4Vbbq0qCmjaPtOkdp0hfuCfgDQ6Y2SlxQfMpvTRIJcslVux2JW1kvPDYdYm09+
-         9VoQ==
-X-Gm-Message-State: ANhLgQ0KBhBxO/yw/gve7GbJXaj+J9nI6iGL/FUFCWnLPJIQL6Uui8TW
-        6gxrMFLilB4PdVH+jFkr15ZLkYQo+s0vJSepjTzPfQ==
-X-Google-Smtp-Source: ADFU+vtmwZqppStJchtpo+FXaK2zYi5y4NF4w2GV6ag8hGufCvRmr98qaLuzObauOhshhDxAZdF9relJA+CJ5k6OMUc=
-X-Received: by 2002:a05:6512:68a:: with SMTP id t10mr13869220lfe.126.1583871586843;
- Tue, 10 Mar 2020 13:19:46 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AFq1DdnvEPEiWUIBZ8XMuzd1FRD5fPx8e3pkYB6x7lA=;
+        b=eEZi5xsYYS+MEVVRmuKMdsQ9PSWiLL57+1rihYjAyQX5TAZN0jEHTaTPfMNEngdvvK
+         Z7qa6hqGBharr+zUBjBXpaOHfCbqv7dBMj0W+RKTaJzMYhLA6YbAizJ/G4bl3JT49NTJ
+         o1pKiaQTZv/Sk7Pdpwl27eObLkcdcpKRupwgn+eUOHiOfcL75Dh/RBwS/PAaGUJ6h+FS
+         isnLTtc3WUIdRM6u4y/agViVA3RKzRST9ozVxUZjzV4WpEEOc9WhLnehNX6v94eT0qGE
+         71LyNPdpKcjKBqfd8h6Yofmch9tctoToLgGGqyRJWKErCzQMVAK8Yl7Lyp3hawn+Fequ
+         Hj8g==
+X-Gm-Message-State: ANhLgQ2BbqhR6fLUV403cXS/aUDLxDXZFcaqOvZ4EshHL0zxBnTanK3/
+        r0l6n6z672X+g01c+wpzAg==
+X-Google-Smtp-Source: ADFU+vvvg/ETQnv8QslVQHIZ0sV61kxtcOyz2SY3bt9I0ZnGmiT8R7zO6pDr8Jh91tKE6yR0zXuznA==
+X-Received: by 2002:aca:600b:: with SMTP id u11mr2481775oib.6.1583871554816;
+        Tue, 10 Mar 2020 13:19:14 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l1sm288460otp.76.2020.03.10.13.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 13:19:13 -0700 (PDT)
+Received: (nullmailer pid 2066 invoked by uid 1000);
+        Tue, 10 Mar 2020 20:19:12 -0000
+Date:   Tue, 10 Mar 2020 15:19:12 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC 10/11] reset: imx: Add audiomix reset controller support
+Message-ID: <20200310201912.GA31651@bogus>
+References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
+ <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-References: <CAG48ez0G3JkMq61gUmyQAaCq=_TwHbi1XKzWRooxZkv08PQKuw@mail.gmail.com>
- <20200310184814.GA8447@dhcp22.suse.cz>
-In-Reply-To: <20200310184814.GA8447@dhcp22.suse.cz>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 10 Mar 2020 13:19:09 -0700
-Message-ID: <CAKOZueua_v8jHCpmEtTB6f3i9e2YnmX4mqdYVWhV4E=Z-n+zRQ@mail.gmail.com>
-Subject: Re: interaction of MADV_PAGEOUT with CoW anonymous mappings?
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jann Horn <jannh@google.com>, Minchan Kim <minchan@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 11:48 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Tue 10-03-20 19:08:28, Jann Horn wrote:
-> > Hi!
-> >
-> > >From looking at the source code, it looks to me as if using
-> > MADV_PAGEOUT on a CoW anonymous mapping will page out the page if
-> > possible, even if other processes still have the same page mapped. Is
-> > that correct?
-> >
-> > If so, that's probably bad in environments where many processes (with
-> > different privileges) are forked from a single zygote process (like
-> > Android and Chrome), I think? If you accidentally call it on a CoW
-> > anonymous mapping with shared pages, you'll degrade the performance of
-> > other processes. And if an attacker does it intentionally, they could
-> > use that to aid with exploiting race conditions or weird
-> > microarchitectural stuff (e.g. the new https://lviattack.eu/lvi.pdf
-> > talks about "the assumption that attackers can provoke page faults or
-> > microcode assists for (arbitrary) load operations in the victim
-> > domain").
-> >
-> > Should madvise_cold_or_pageout_pte_range() maybe refuse to operate on
-> > pages with mapcount>1, or something like that? Or does it already do
-> > that, and I just missed the check?
->
-> I have brought up side channel attacks earlier [1] but only in the
-> context of shared page cache pages. I didn't really consider shared
-> anonymous pages to be a real problem. I was under impression that CoW
-> pages shouldn't be a real problem because any security sensible
-> applications shouldn't allow untrusted code to be forked and CoW
-> anything really important. I believe we have made this assumption
-> in other places - IIRC on gup with FOLL_FORCE but I admit I have
-> very happily forgot most details.
+On Tue, Mar 03, 2020 at 11:03:25AM +0200, Abel Vesa wrote:
+> The imx-mix MFD driver registers some devices, one of which, in case of
+> audiomix, maps correctly to a reset controller type. This driver registers
+> a reset controller for that. For now, only the EARC specific resets are added.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  drivers/reset/Kconfig                          |   7 ++
+>  drivers/reset/Makefile                         |   1 +
+>  drivers/reset/reset-imx-audiomix.c             | 122 +++++++++++++++++++++++++
+>  include/dt-bindings/reset/imx-audiomix-reset.h |  15 +++
 
-I'm more worried about the performance implications. Consider
-libc.so's data section: that's a COW mapping, and we COW it during
-zygote initialization as we load and relocate libc.so. Child processes
-shouldn't be dirtying and re-COWing those relocated pages. If I
-understand Jann's message correctly, MADV_PAGEOUT would force the
-pages corresponding to the libc.so data segment out to zram just
-because we MADV_PAGEOUT-ed a single process that happened to use libc.
-We should leave those pages in memory, IMHO.
+This should be in a binding patch which makes me wonder where is the 
+binding patch?
+
+Rob
