@@ -2,201 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AAF3180B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E9B180B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 23:02:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbgCJWB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Mar 2020 18:01:29 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:44020 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbgCJWB2 (ORCPT
+        id S1727753AbgCJWCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Mar 2020 18:02:47 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45737 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgCJWCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Mar 2020 18:01:28 -0400
-Received: from zyt.lan (unknown [IPv6:2a02:169:3df5::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7CE245C4F77;
-        Tue, 10 Mar 2020 23:01:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1583877685;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iuHVTJkLweKCJuZWDefjVMbM1hgCkPZXzUUonobozno=;
-        b=ahIkeuJRhZukJATJRseCals6g6MH0+Qu2ES2ZbEFAcH1YkiXBeyQorphoQwymeQVrPcKrh
-        m5UiR0FS9IR1SIFz7yJEE6EyZczjv/9anSy69AYWj3kkqCF7G2RUXAKVT4aeWLq97PfoJa
-        c+ESNj+WLhN1gryd/AR9SQlSZXUqrhQ=
-From:   Stefan Agner <stefan@agner.ch>
-To:     linux@armlinux.org.uk
-Cc:     arnd@arndb.de, ard.biesheuvel@linaro.org, robin.murphy@arm.com,
-        yamada.masahiro@socionext.com, ndesaulniers@google.com,
-        manojgupta@google.com, jiancai@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 3/3] ARM: use VFP assembler mnemonics if available
-Date:   Tue, 10 Mar 2020 23:01:21 +0100
-Message-Id: <3c8127839ced991fadb08c0a5a7beebb3ff489af.1583360296.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1583360296.git.stefan@agner.ch>
-References: <cover.1583360296.git.stefan@agner.ch>
+        Tue, 10 Mar 2020 18:02:45 -0400
+Received: by mail-ot1-f66.google.com with SMTP id f21so14750047otp.12;
+        Tue, 10 Mar 2020 15:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SF/rLdHGOUkZmCUHks4hnv/hgG7mXzY0mjAu3eORSKc=;
+        b=dP0qwPIoqktkEhRgFZTVTTWxkcFRfYDGvzuin4BmCyx1dFeyQ0uOwyb4eBHicOUILm
+         DI3VMZq1rLcTrvMuznKSlRjP7zuiHhlLoneeAP2Ukbu89NsY5cjbW5zupm8KmYjnPOQC
+         PhyMikcYH7oAz4FvqHke97OV+X/SBipPp1vmICbL+MLCxrA9ighbLPrG6XKNtMJfpKKl
+         OSmo7GIymlx5q2EcDMB1TCAheYxf6xqD7Pwng4RkPs8Zy8Esc+4aTjqft250RJeGUwcz
+         VTG6cyYyRJg83R8lsAHOiWf8xK6gxrrkg9NP8zaiqd+XvIp5Gx+JaBnF6WdRX6NPXNaV
+         GR4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SF/rLdHGOUkZmCUHks4hnv/hgG7mXzY0mjAu3eORSKc=;
+        b=iXpcxP4ZtSotvmhH/6V4tv86MDBDMbyVRa/Ba1KXgGsOpqOnqGdreHTqHNeatAH6rq
+         bZ1kopUp8iVJZB4QAeRn8yH3sRz0pZsb8kOc/SYjnnzwlhZvS+MKdyAjoVdFAV5GfnfO
+         OsJ/O9/gB78doGEf4IbMgYvoLG2cV2pQR8MWVEqmtZLHZqs1tFztXJQTjAtXWuOwj2Dg
+         Q7P3TFes+TrYTsaAErv9oA2901HFn7bPb0QFK7500ARDAyWtRhU0gJFYRuziztj2qY+J
+         adoKVca45bvadmAoobycWjft+zsGMAb6vqHUqKJKt6hzESyhpoWr4hxgzv/fgp0xCLZK
+         9DpA==
+X-Gm-Message-State: ANhLgQ0YU7H26zFqEucBI5rcekY3iS+ECKQjEVp40FvfASAFGq5W1R4p
+        o/Mth7S576Sm87n4zYtg+6iypyPUK5gbz+Ryl7k=
+X-Google-Smtp-Source: ADFU+vueS+uiLnK7xdhsPHDa9dL2BYINp7cvAGX4mf8Z/DEw5HjuYJXCQGm60Z4IpnUSa5E1ExpmM2OF+ASb4BYIOrM=
+X-Received: by 2002:a9d:4702:: with SMTP id a2mr18202147otf.319.1583877763719;
+ Tue, 10 Mar 2020 15:02:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <00000000000034513e05a05cfc23@google.com> <CAM_iQpVgQ+Mc16CVds-ywp6YHEbwbGtJwqoQXBFbrMTOUZS0YQ@mail.gmail.com>
+ <635ab023-d180-7ddf-a280-78080040512c@gmail.com>
+In-Reply-To: <635ab023-d180-7ddf-a280-78080040512c@gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Tue, 10 Mar 2020 15:02:32 -0700
+Message-ID: <CAM_iQpUwkLeOtbxeQ6uPA6Zm6t2Xdm08rvKOX8yJ-UCckKq9Eg@mail.gmail.com>
+Subject: Re: KASAN: invalid-free in tcf_exts_destroy
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     syzbot <syzbot+dcc34d54d68ef7d2d53d@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang's integrated assembler does not allow to to use the mcr
-instruction to access floating point co-processor registers:
-arch/arm/vfp/vfpmodule.c:342:2: error: invalid operand for instruction
-        fmxr(FPEXC, fpexc & ~(FPEXC_EX|FPEXC_DEX|FPEXC_FP2V|FPEXC_VV|FPEXC_TRAP_MASK));
-        ^
-arch/arm/vfp/vfpinstr.h:79:6: note: expanded from macro 'fmxr'
-        asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr   " #_vfp_ ", %0" \
-            ^
-<inline asm>:1:6: note: instantiated into assembly here
-        mcr p10, 7, r0, cr8, cr0, 0 @ fmxr      FPEXC, r0
-            ^
+On Tue, Mar 10, 2020 at 1:36 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+>
+> On 3/10/20 11:33 AM, Cong Wang wrote:
+> > On Sun, Mar 8, 2020 at 12:35 PM syzbot
+> > <syzbot+dcc34d54d68ef7d2d53d@syzkaller.appspotmail.com> wrote:
+> >>
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    c2003765 Merge tag 'io_uring-5.6-2020-03-07' of git://git...
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10cd2ae3e00000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=4527d1e2fb19fd5c
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=dcc34d54d68ef7d2d53d
+> >> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >> userspace arch: i386
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1561b01de00000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15aad2f9e00000
+> >>
+> >> The bug was bisected to:
+> >>
+> >> commit 599be01ee567b61f4471ee8078870847d0a11e8e
+> >> Author: Cong Wang <xiyou.wangcong@gmail.com>
+> >> Date:   Mon Feb 3 05:14:35 2020 +0000
+> >>
+> >>     net_sched: fix an OOB access in cls_tcindex
+> >>
+> >> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10a275fde00000
+> >> final crash:    https://syzkaller.appspot.com/x/report.txt?x=12a275fde00000
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=14a275fde00000
+> >>
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+dcc34d54d68ef7d2d53d@syzkaller.appspotmail.com
+> >> Fixes: 599be01ee567 ("net_sched: fix an OOB access in cls_tcindex")
+> >>
+> >> IPVS: ftp: loaded support on port[0] = 21
+> >> ==================================================================
+> >> BUG: KASAN: double-free or invalid-free in tcf_exts_destroy+0x62/0xc0 net/sched/cls_api.c:3002
+> >>
+> >> CPU: 1 PID: 9507 Comm: syz-executor467 Not tainted 5.6.0-rc4-syzkaller #0
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> >> Call Trace:
+> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x188/0x20d lib/dump_stack.c:118
+> >>  print_address_description.constprop.0.cold+0xd3/0x315 mm/kasan/report.c:374
+> >>  kasan_report_invalid_free+0x61/0xa0 mm/kasan/report.c:468
+> >>  __kasan_slab_free+0x129/0x140 mm/kasan/common.c:455
+> >>  __cache_free mm/slab.c:3426 [inline]
+> >>  kfree+0x109/0x2b0 mm/slab.c:3757
+> >>  tcf_exts_destroy+0x62/0xc0 net/sched/cls_api.c:3002
+> >>  tcf_exts_change+0xf4/0x150 net/sched/cls_api.c:3059
+> >>  tcindex_set_parms+0xed8/0x1a00 net/sched/cls_tcindex.c:456
+> >
+> > Looks like a consequence of "slab-out-of-bounds Write in tcindex_set_parms".
+> >
+> > Thanks.
+> >
+>
+> I have a dozen more syzbot reports involving net/sched code, do you want
+> me to release them right now ?
 
-Ideally we would replace this code with the unified assembler language
-mnemonics vmrs/vmsr on call sites along with .fpu assembler directives.
-The GNU assembler supports the .fpu directive at least since 2.17 (when
-documentation has been added). Since Linux requires binutils 2.21 it is
-safe to use .fpu directive. However, binutils does not allow to use
-FPINST or FPINST2 as an argument to vmrs/vmsr instructions up to
-binutils 2.24 (see binutils commit 16d02dc907c5).
+I have no problem with this, at least I can close them as dup etc.. Please
+go ahead.
 
-Use as-instr to check if FPINST/FPINST2 can be used. If they can be used
-make use of .fpu directives and UAL VFP mnemonics for register access.
-
-This allows to build vfpmodule.c with Clang and its integrated assembler.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/905
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/include/asm/vfp.h       |  2 ++
- arch/arm/include/asm/vfpmacros.h | 12 +++++++++++-
- arch/arm/vfp/Makefile            |  5 +++++
- arch/arm/vfp/vfphw.S             |  1 +
- arch/arm/vfp/vfpinstr.h          | 23 +++++++++++++++++++----
- 5 files changed, 38 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/include/asm/vfp.h b/arch/arm/include/asm/vfp.h
-index 7157d2a30a49..a73c29ff4d1f 100644
---- a/arch/arm/include/asm/vfp.h
-+++ b/arch/arm/include/asm/vfp.h
-@@ -9,6 +9,7 @@
- #ifndef __ASM_VFP_H
- #define __ASM_VFP_H
- 
-+#ifndef HAVE_VMRS_FPINST
- #define FPSID			cr0
- #define FPSCR			cr1
- #define MVFR1			cr6
-@@ -16,6 +17,7 @@
- #define FPEXC			cr8
- #define FPINST			cr9
- #define FPINST2			cr10
-+#endif
- 
- /* FPSID bits */
- #define FPSID_IMPLEMENTER_BIT	(24)
-diff --git a/arch/arm/include/asm/vfpmacros.h b/arch/arm/include/asm/vfpmacros.h
-index 947ee5395e1f..eb8d3738f227 100644
---- a/arch/arm/include/asm/vfpmacros.h
-+++ b/arch/arm/include/asm/vfpmacros.h
-@@ -8,7 +8,16 @@
- 
- #include <asm/vfp.h>
- 
--@ Macros to allow building with old toolkits (with no VFP support)
-+#ifdef HAVE_VMRS_FPINST
-+	.macro	VFPFMRX, rd, sysreg, cond
-+	vmrs\cond	\rd, \sysreg
-+	.endm
-+
-+	.macro	VFPFMXR, sysreg, rd, cond
-+	vmsr\cond	\sysreg, \rd
-+	.endm
-+#else
-+	@ Macros to allow building with old toolkits (with no VFP support)
- 	.macro	VFPFMRX, rd, sysreg, cond
- 	MRC\cond	p10, 7, \rd, \sysreg, cr0, 0	@ FMRX	\rd, \sysreg
- 	.endm
-@@ -16,6 +25,7 @@
- 	.macro	VFPFMXR, sysreg, rd, cond
- 	MCR\cond	p10, 7, \rd, \sysreg, cr0, 0	@ FMXR	\sysreg, \rd
- 	.endm
-+#endif
- 
- 	@ read all the working registers back into the VFP
- 	.macro	VFPFLDMIA, base, tmp
-diff --git a/arch/arm/vfp/Makefile b/arch/arm/vfp/Makefile
-index 749901a72d6d..f145c99fba6b 100644
---- a/arch/arm/vfp/Makefile
-+++ b/arch/arm/vfp/Makefile
-@@ -8,4 +8,9 @@
- # ccflags-y := -DDEBUG
- # asflags-y := -DDEBUG
- 
-+vmrs_fpinst    := $(call as-instr,.fpu vfpv2\nvmrs r0$(comma)FPINST,-DHAVE_VMRS_FPINST=1)
-+
-+KBUILD_CFLAGS  += $(vmrs_fpinst)
-+KBUILD_AFLAGS  += $(vmrs_fpinst)
-+
- obj-y		+= vfpmodule.o entry.o vfphw.o vfpsingle.o vfpdouble.o
-diff --git a/arch/arm/vfp/vfphw.S b/arch/arm/vfp/vfphw.S
-index e214007a20a2..90e5659827c7 100644
---- a/arch/arm/vfp/vfphw.S
-+++ b/arch/arm/vfp/vfphw.S
-@@ -78,6 +78,7 @@
- ENTRY(vfp_support_entry)
- 	DBGSTR3	"instr %08x pc %08x state %p", r0, r2, r10
- 
-+	.fpu	vfpv2
- 	ldr	r3, [sp, #S_PSR]	@ Neither lazy restore nor FP exceptions
- 	and	r3, r3, #MODE_MASK	@ are supported in kernel mode
- 	teq	r3, #USR_MODE
-diff --git a/arch/arm/vfp/vfpinstr.h b/arch/arm/vfp/vfpinstr.h
-index 38dc154e39ff..0db3825c4b4f 100644
---- a/arch/arm/vfp/vfpinstr.h
-+++ b/arch/arm/vfp/vfpinstr.h
-@@ -62,10 +62,23 @@
- #define FPSCR_C (1 << 29)
- #define FPSCR_V	(1 << 28)
- 
--/*
-- * Since we aren't building with -mfpu=vfp, we need to code
-- * these instructions using their MRC/MCR equivalents.
-- */
-+#ifdef HAVE_VMRS_FPINST
-+
-+#define fmrx(_vfp_) ({			\
-+	u32 __v;			\
-+	asm(".fpu	vfpv2\n"	\
-+	    "vmrs	%0, " #_vfp_	\
-+	    : "=r" (__v) : : "cc");	\
-+	__v;				\
-+ })
-+
-+#define fmxr(_vfp_,_var_)		\
-+	asm(".fpu	vfpv2\n"	\
-+	    "vmsr	" #_vfp_ ", %0"	\
-+	   : : "r" (_var_) : "cc")
-+
-+#else
-+
- #define vfpreg(_vfp_) #_vfp_
- 
- #define fmrx(_vfp_) ({			\
-@@ -79,6 +92,8 @@
- 	asm("mcr p10, 7, %0, " vfpreg(_vfp_) ", cr0, 0 @ fmxr	" #_vfp_ ", %0"	\
- 	   : : "r" (_var_) : "cc")
- 
-+#endif
-+
- u32 vfp_single_cpdo(u32 inst, u32 fpscr);
- u32 vfp_single_cprt(u32 inst, u32 fpscr, struct pt_regs *regs);
- 
--- 
-2.25.1
-
+Thanks.
