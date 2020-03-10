@@ -2,97 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D82117EF63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 04:42:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F5B17EF6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Mar 2020 04:45:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbgCJDmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Mar 2020 23:42:31 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:58538 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726195AbgCJDma (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Mar 2020 23:42:30 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TsBJEkt_1583811746;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TsBJEkt_1583811746)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 10 Mar 2020 11:42:26 +0800
-Subject: Re: [RFC PATCH] sched: fix the nonsense shares when load of cfs_rq is
- too, small
-To:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-References: <44fa1cee-08db-e4ab-e5ab-08d6fbd421d7@linux.alibaba.com>
- <20200303195245.GF2596@hirez.programming.kicks-ass.net>
- <xm26o8tc3qkv.fsf@bsegall-linux.svl.corp.google.com>
- <1180c6cd-ff61-2c9f-d689-ffe58f8c5a68@linux.alibaba.com>
- <xm267dzx47k9.fsf@bsegall-linux.svl.corp.google.com>
- <CAKfTPtDKTp_G1VNgAXnh=_yLS_T6YkipOsQQ52tBRp-m612JEw@mail.gmail.com>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <49a4dd4a-e7b6-5182-150d-16fff2d101cf@linux.alibaba.com>
-Date:   Tue, 10 Mar 2020 11:42:26 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.2
+        id S1726438AbgCJDpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Mar 2020 23:45:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726170AbgCJDpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Mar 2020 23:45:19 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 125CD24649;
+        Tue, 10 Mar 2020 03:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583811918;
+        bh=XU1iaEoFKeDSPhyM0B1RGxdNirA5m5Riwf4RccYZs6Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tKO1iKnqIswkp3yypbOocsMQQtQU0I5BoVoL1ifXV41HcmVT9Fb4uan7rt2pnwRjN
+         IhkYcgq7H/J3yZ1aRGsAPoDEDc3HjX40OjfskfPCsh7VAQU4C4lEvxJPG6LGwuIBW7
+         32PC/s4h03GSYz415BKZpbDLos6SNn0Ti/rLvSvc=
+Date:   Tue, 10 Mar 2020 11:45:11 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, leonard.crestez@nxp.com,
+        daniel.baluta@nxp.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
+        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] clk: imx: imx8qxp: Enable SCU and LPCG clocks for
+ I2C in CM40 SS
+Message-ID: <20200310034506.GC15729@dragon>
+References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
+ <1581909561-12058-5-git-send-email-qiangqing.zhang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtDKTp_G1VNgAXnh=_yLS_T6YkipOsQQ52tBRp-m612JEw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1581909561-12058-5-git-send-email-qiangqing.zhang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2020/3/9 下午7:15, Vincent Guittot wrote:
-[snip]
->>>> -       load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
->>>> +       load = max(cfs_rq->load.weight, scale_load(cfs_rq->avg.load_avg));
->>>>
->>>>         tg_weight = atomic_long_read(&tg->load_avg);
->>>
->>> Get the point, but IMHO fix scale_load_down() sounds better, to
->>> cover all the similar cases, let's first try that way see if it's
->>> working :-)
->>
->> Yeah, that might not be a bad idea as well; it's just that doing this
->> fix would keep you from losing all your precision (and I'd have to think
->> if that would result in fairness issues like having all the group ses
->> having the full tg shares, or something like that).
+On Mon, Feb 17, 2020 at 11:19:18AM +0800, Joakim Zhang wrote:
+> Enable SCU and LPCG clocks for I2C in CM40 SS.
 > 
-> AFAICT, we already have a fairness problem case because
-> scale_load_down is used in calc_delta_fair() so all sched groups that
-> have a weight lower than 1024 will end up with the same increase of
-> their vruntime when running.
-> Then the load_avg is used to balance between rq so load_balance will
-> ensure at least 1 task per CPU but not more because the load_avg which
-> is then used will stay null.
+> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+
+So you decided to stop waiting for Aisheng's new imx8qxp clock driver?
+
+Shawn
+
+> ---
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c | 12 ++++++++++++
+>  drivers/clk/imx/clk-imx8qxp-lpcg.h |  3 +++
+>  drivers/clk/imx/clk-imx8qxp.c      |  4 ++++
+>  3 files changed, 19 insertions(+)
 > 
-> That being said, having a min of 2 for scale_load_down will enable us
-> to have the tg->load_avg != 0 so a tg_weight != 0 and each sched group
-> will not have the full shares. But it will make those group completely
-> fair anyway.
-> The best solution would be not to scale down the weight but that's a
-> bigger change
-
-Does that means a changing for all those 'load.weight' related
-calculation, to reserve the scaled weight?
-
-I suppose u64 is capable for 'cfs_rq.load' to reserve the scaled up load,
-changing all those places could be annoying but still fine.
-
-However, I'm not quite sure about the benefit, how much more precision
-we'll gain and does that really matters? better to have some testing to
-demonstrate it.
-
-Regards,
-Michael Wang
-
-
+> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> index 04c8ee35e14c..795909ecfba6 100644
+> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> @@ -151,6 +151,17 @@ static const struct imx8qxp_lpcg_data imx8qxp_lpcg_lsio[] = {
+>  	{ IMX_LSIO_LPCG_PWM6_IPG_MSTR_CLK, "pwm6_lpcg_ipg_mstr_clk", "pwm6_clk", 0, LSIO_PWM_6_LPCG, 24, 0, },
+>  };
+>  
+> +static const struct imx8qxp_lpcg_data imx8qxp_lpcg_cm40[] = {
+> +	{ IMX_CM40_LPCG_I2C_CLK, "cm40_lpcg_i2c_clk", "cm40_i2c_clk", 0, CM40_I2C_LPCG, 0, 0, },
+> +	{ IMX_CM40_LPCG_I2C_IPG_CLK, "cm40_lpcg_i2c_ipg_clk", "cm40_ipg_clk_root", 0, CM40_I2C_LPCG, 16, 0, },
+> +};
+> +
+> +static const struct imx8qxp_ss_lpcg imx8qxp_ss_cm40 = {
+> +	.lpcg = imx8qxp_lpcg_cm40,
+> +	.num_lpcg = ARRAY_SIZE(imx8qxp_lpcg_cm40),
+> +	.num_max = IMX_CM40_LPCG_CLK_END,
+> +};
+> +
+>  static const struct imx8qxp_ss_lpcg imx8qxp_ss_lsio = {
+>  	.lpcg = imx8qxp_lpcg_lsio,
+>  	.num_lpcg = ARRAY_SIZE(imx8qxp_lpcg_lsio),
+> @@ -219,6 +230,7 @@ static const struct of_device_id imx8qxp_lpcg_match[] = {
+>  	{ .compatible = "fsl,imx8qxp-lpcg-adma", &imx8qxp_ss_adma, },
+>  	{ .compatible = "fsl,imx8qxp-lpcg-conn", &imx8qxp_ss_conn, },
+>  	{ .compatible = "fsl,imx8qxp-lpcg-lsio", &imx8qxp_ss_lsio, },
+> +	{ .compatible = "fsl,imx8qxp-lpcg-cm40", &imx8qxp_ss_cm40, },
+>  	{ /* sentinel */ }
+>  };
+>  
+> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.h b/drivers/clk/imx/clk-imx8qxp-lpcg.h
+> index 2a37ce57c500..28ca730dd135 100644
+> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.h
+> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.h
+> @@ -99,4 +99,7 @@
+>  #define ADMA_FLEXCAN_1_LPCG		0x1ce0000
+>  #define ADMA_FLEXCAN_2_LPCG		0x1cf0000
+>  
+> +/* CM40 SS */
+> +#define CM40_I2C_LPCG			0x60000
+> +
+>  #endif /* _IMX8QXP_LPCG_H */
+> diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+> index 5e2903efc488..d051073ff042 100644
+> --- a/drivers/clk/imx/clk-imx8qxp.c
+> +++ b/drivers/clk/imx/clk-imx8qxp.c
+> @@ -53,6 +53,7 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  	clks[IMX_HSIO_PER_CLK]		= clk_hw_register_fixed_rate(NULL, "hsio_per_clk_root", NULL, 0, 133333333);
+>  	clks[IMX_LSIO_MEM_CLK]		= clk_hw_register_fixed_rate(NULL, "lsio_mem_clk_root", NULL, 0, 200000000);
+>  	clks[IMX_LSIO_BUS_CLK]		= clk_hw_register_fixed_rate(NULL, "lsio_bus_clk_root", NULL, 0, 100000000);
+> +	clks[IMX_CM40_IPG_CLK]		= clk_hw_register_fixed_rate(NULL, "cm40_ipg_clk_root", NULL, 0, 132000000);
+>  
+>  	/* ARM core */
+>  	clks[IMX_A35_CLK]		= imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_PM_CLK_CPU);
+> @@ -128,6 +129,9 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+>  	clks[IMX_GPU0_CORE_CLK]		= imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_PER);
+>  	clks[IMX_GPU0_SHADER_CLK]	= imx_clk_scu("gpu_shader0_clk", IMX_SC_R_GPU_0_PID0, IMX_SC_PM_CLK_MISC);
+>  
+> +	/* CM40 SS */
+> +	clks[IMX_CM40_I2C_CLK]		= imx_clk_scu("cm40_i2c_clk", IMX_SC_R_M4_0_I2C, IMX_SC_PM_CLK_PER);
+> +
+>  	for (i = 0; i < clk_data->num; i++) {
+>  		if (IS_ERR(clks[i]))
+>  			pr_warn("i.MX clk %u: register failed with %ld\n",
+> -- 
+> 2.17.1
 > 
